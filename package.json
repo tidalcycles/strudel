@@ -1,0 +1,29 @@
+{
+  "name": "strudel",
+  "version": "1.0.0",
+  "description": "Experimental port of tidalcycles to javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yaxu/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Alex McLean",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/yaxu/strudel/issues"
+  },
+  "homepage": "https://github.com/yaxu/strudel#readme",
+  "devDependencies": {
+    "fraction.js": "^4.1.2"
+  }
+}
