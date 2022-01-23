@@ -30,7 +30,7 @@ class TimeSpan {
 
         while (end.gt(begin)) {
             // If begin and end are in the same cycle, we're done.
-            if (begin.sam() == end_sam) {
+            if (begin.sam().equals(end_sam)) {
                 spans.push(new TimeSpan(begin, this.end))
                 break
             }
@@ -73,7 +73,7 @@ class TimeSpan {
     intersection_e(other) {
         // Like 'sect', but raises an exception if the timespans don't intersect.
         result = this.intersection(other)
-        if (result == None) {
+        if (result.equals(None)) {
             // TODO - raise exception
             // raise ValueError(f'TimeSpan {self} and TimeSpan {other} do not intersect')
         }
@@ -89,7 +89,7 @@ class TimeSpan {
     }
 }
 
-class Event {
+class Hap {
 
     /*
     Event class, representing a value active during the timespan
@@ -111,28 +111,19 @@ class Event {
     with_span(func) {
         // Returns a new event with the function f applies to the event timespan.
         var whole = this.whole ? func(self.whole) : undefined
-        return new Event(whole, func(this.part), this.value)
+        return new Hap(whole, func(this.part), this.value)
     }
 
     with_value(func) {
         // Returns a new event with the function f applies to the event value.
-        return new Event(this.whole, this.part, func(this.value))
+        return new Hap(this.whole, this.part, func(this.value))
     }
 
     has_onset() {
         // Test whether the event contains the onset, i.e that
         // the beginning of the part is the same as that of the whole timespan."""
-        return (this.whole != undefined) && (this.whole.begin == this.part.begin)
+        return (this.whole != undefined) && (this.whole.begin.equals(this.part.begin))
     }
 }
 
-window.bar = function() {
-    console.log("aha" + typeof(Fraction(3.5)));
-}
-
-//console.log((new TimeSpan(3.5,4)).midpoint);
-
-var ts = new TimeSpan(0,4)
-console.log((new Event(new TimeSpan(0,2), new TimeSpan(0,2), "aha")).has_onset());
-var x = new TimeSpan(0,4)
-console.log(ts.equals(x))
+export {TimeSpan, Hap}
