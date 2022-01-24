@@ -1,9 +1,8 @@
-
-import 'fraction.js';
+import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap} from "../js/strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure} from "../js/strudel.mjs";
 
 describe('TimeSpan', function() {
   describe('equal()', function() {
@@ -11,6 +10,11 @@ describe('TimeSpan', function() {
       assert.equal((new TimeSpan(0,4)).equals(new TimeSpan(0,4)), true);
     });
   });
+  describe('splitCycles', function() {
+    it('Should split two cycles into two', function() {
+      assert.equal(new TimeSpan(Fraction(0),Fraction(2)).spanCycles.length, 2)
+    })
+  })
 });
 
 describe('Hap', function() {
@@ -21,3 +25,10 @@ describe('Hap', function() {
     });
   });
   
+describe('Pattern', function() {
+  describe('pure', function () {
+    it('Can make a pattern', function() {
+      assert.equal(pure("hello").query(new TimeSpan(Fraction(0.5), Fraction(2.5))).length, 3)
+    })
+  })
+})

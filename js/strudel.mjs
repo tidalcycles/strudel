@@ -148,7 +148,7 @@ class Pattern {
 
 
 
-    split_queries() {
+    splitQueries() {
         // Splits queries at cycle boundaries. This makes some calculations 
         // easier to express, as all events are then constrained to happen within 
         // a cycle.
