@@ -1,5 +1,10 @@
 import Fraction from 'fraction.js'
 
+var removeUndefineds = function(xs) {
+    // Removes 'None' values from given list
+    return xs.filter(x => x != undefined)
+}
+
 // Returns the start of the cycle.
 Fraction.prototype.sam = function() {
     return Fraction(Math.floor(this))
@@ -123,13 +128,13 @@ class Hap {
         this.value = value
     }
 
-    with_span(func) {
+    withSpan(func) {
         // Returns a new event with the function f applies to the event timespan.
         var whole = this.whole ? func(self.whole) : undefined
         return new Hap(whole, func(this.part), this.value)
     }
 
-    with_value(func) {
+    withValue(func) {
         // Returns a new event with the function f applies to the event value.
         return new Hap(this.whole, this.part, func(this.value))
     }
@@ -180,115 +185,110 @@ class Pattern {
         return new Pattern(span => this.query(span.withTime(func)))
     }
 
-    //withEventSpan(func) {
+    withEventSpan(func) {
+        // Returns a new pattern, with the function applied to each event
+        // timespan.
+        return new Pattern(span => this.query(span).map(hap => hap.withSpan(func)))
+    }
 
-    //}
+    withEventTime(func) {
+        // Returns a new pattern, with the function applied to both the begin
+        // and end of each event timespan. 
+        return this.withEventSpan(span => span.withTime(func))
+    }
 
-//     def with_event_span(self, func):
-//         """ Returns a new pattern, with the function applied to each event
-//         timespan. """
-//         def query(span):
-//             return [event.with_span(func) for event in self.query(span)]
-//         return Pattern(query)
+    withValue(func) {
+        // Returns a new pattern, with the function applied to the value of
+        // each event. It has the alias 'fmap'.
+        return new Pattern(this.query(span).map(hap => hap.withValue(func)))
+    }
 
-//     def with_event_time(self, func):
-//         """ Returns a new pattern, with the function applied to both the begin
-//         and end of each event timespan.
-//         """
-//         return self.with_event_span(lambda span: span.with_time(func))
+    // alias
+    fmap(func) {
+        this.withValue(func)
+    }
 
-//     def with_value(self, func):
-//         """Returns a new pattern, with the function applied to the value of
-//         each event. It has the alias 'fmap'.
+    _filterEvents(event_test) {
+        return new Pattern(span => this.query(span).filter(event_test))
+    }
 
-//         """
-//         def query(span):
-//             return [event.with_value(func) for event in self.query(span)]
-//         return Pattern(query)
+    _filterValues(self, value_test) {
+         return new Pattern(span => this.query(span).filter(hap => value_test(hap.value)))
+    }
 
-//     # alias
-//     fmap = with_value
-    
-//     def _filter_events(self, event_test):
-//         return Pattern(lambda span: list(filter(event_test, self.query(span))))
+    onsetsOnly() {
+        // Returns a new pattern that will only return events where the start
+        // of the 'whole' timespan matches the start of the 'part'
+        // timespan, i.e. the events that include their 'onset'.
+        return(this._filterEvents(hap => hap.hasOnset()))
+    }
 
-//     def _filter_values(self, value_test):
-//         return Pattern(lambda span: list(filter(lambda event: value_test(event.value), self.query(span))))
+    _appWhole(whole_func, pat_val) {
+        // Assumes 'this' is a pattern of functions, and given a function to
+        // resolve wholes, applies a given pattern of values to that
+        // pattern of functions.
+        pat_func = this
+        query = function(span) {
+            event_funcs = pat_func.query(span)
+            event_vals = pat_val.query(span)
+            apply = function(event_func, event_val) {
+                s = event_func.part.intersection(event_val.part)
+                if (s === undefined) {
+                    return undefined
+                }
+                return new Hap(whole_func(event_func.whole, event_val.whole), s, event_func.value(event_val.value))
+            }
+            return event_funcs.map(event_func => removeUndefineds(event_vals.map(event_val => apply(event_func, event_val)))).concat    
+        }
+        return new Pattern(query)
+        }
 
-//     def onsets_only(self):
-//         """Returns a new pattern that will only return events where the start
-//         of the 'whole' timespan matches the start of the 'part'
-//         timespan, i.e. the events that include their 'onset'.
-//         """
-//         return(self._filter_events(Event.has_onset))
+    appBoth(self, pat_val) {
+        // Tidal's <*>
+        var whole_func = function(span_a, span_b) {
+            if (span_a == undefined || span_B == undefined) {
+                return undefined
+            }
+            return span_a.intersection_e(span_b)
+        }
+        return this._appWhole(whole_func, pat_val)
+    }
 
-// #applyPatToPatLeft :: Pattern (a -> b) -> Pattern a -> Pattern b
-// #applyPatToPatLeft pf px = Pattern q
-// #    where q st = catMaybes $ concatMap match $ query pf st
-// #            where
-// #              match ef = map (withFX ef) (query px $ st {arc = wholeOrPart ef})
-// #              withFX ef ex = do let whole' = whole ef
-// #                                part' <- subArc (part ef) (part ex)
-// #                                return (Event (combineContexts [context ef, context ex]) whole' part' (value ef $ value ex))
+    appLeft(pat_val) {
+        pat_func = this
+        var query = function(span) {
+            events = []
+            for (event_func in pat_func.query(span)) {
+                event_vals = pat_val.query(event_func.part)
+                for (event_val in event_vals) {
+                    new_whole = event_func.whole
+                    new_part = event_func.part.intersection_e(event_val.part)
+                    new_value = event_func.value(event_val.value)
+                    events.push(new Event(new_whole, new_part, new_value))
+                }
+            }
+            return events
+        }
+        return Pattern(query)
+    }
 
-//     def _app_whole(self, whole_func, pat_val):
-//         """
-//         Assumes self is a pattern of functions, and given a function to
-//         resolve wholes, applies a given pattern of values to that
-//         pattern of functions.
-//         """
-//         pat_func = self
-//         def query(span):
-//             event_funcs = pat_func.query(span)
-//             event_vals = pat_val.query(span)
-//             def apply(event_funcs, event_vals):
-//                 s = event_funcs.part.intersection(event_vals.part)
-//                 if s == None:
-//                     return None
-//                 return Event(whole_func(event_funcs.whole, event_vals.whole), s, event_funcs.value(event_vals.value))
-//             return concat([remove_nones([apply(event_func, event_val) for event_val in event_vals])
-//                            for event_func in event_funcs
-//                           ]
-//                          )
-//         return Pattern(query)
-
-//     # A bit more complicated than this..
-//     def app_both(self, pat_val):
-//         """ Tidal's <*> """
-//         def whole_func(span_a, span_B):
-//             if span_a == None or span_B == None:
-//                 return None
-//             return span_a.intersection_e(span_B)
-
-//         return self._app_whole(whole_func, pat_val)
-
-//     def app_left(self, pat_val):
-//         pat_func = self
-//         def query(span):
-//             events = []
-//             for event_func in pat_func.query(span):
-//                 event_vals = pat_val.query(event_func.part)
-//                 for event_val in event_vals:
-//                     new_whole = event_func.whole
-//                     new_part = event_func.part.intersection_e(event_val.part)
-//                     new_value = event_func.value(event_val.value)
-//                     events.append(Event(new_whole, new_part, new_value))
-//             return events
-//         return Pattern(query)
-
-//     def app_right(self, pat_val):
-//         pat_func = self
-//         def query(span):
-//             events = []
-//             for event_val in pat_val.query(span):
-//                 event_funcs = pat_func.query(event_val.part)
-//                 for event_func in event_funcs:
-//                     new_whole = event_val.whole
-//                     new_part = event_func.part.intersection_e(event_val.part)
-//                     new_value = event_func.value(event_val.value)
-//                     events.append(Event(new_whole, new_part, new_value))
-//             return events
-//         return Pattern(query)
+    appRight(pat_val) {
+        pat_func = this
+        var query = function(span) {
+            events = []
+            for (event_val in pat_val.query(span)) {
+                event_funcs = pat_func.query(event_val.part)
+                for (event_func in event_funcs) {
+                    new_whole = event_val.whole
+                    new_part = event_func.part.intersection_e(event_val.part)
+                    new_value = event_func.value(event_val.value)
+                    events.push(new Event(new_whole, new_part, new_value))
+                }
+            }
+            return events
+        }
+        return new Pattern(query)
+    }
 
 //     def __add__(self, other):
 //         return self.fmap(lambda x: lambda y: x + y).app_left(reify(other))
