@@ -15,6 +15,15 @@ describe('TimeSpan', function() {
       assert.equal(new TimeSpan(Fraction(0),Fraction(2)).spanCycles.length, 2)
     })
   })
+  describe('intersection_e', function () {
+  var a = new TimeSpan(Fraction(0), Fraction(2))
+  var b = new TimeSpan(Fraction(1), Fraction(3))
+  var c = new TimeSpan(Fraction(1), Fraction(2))
+  var d = new TimeSpan(Fraction(1), Fraction(2))
+  it('Should create an intersection', function () {
+      assert.equal(a.intersection_e(b).equals(c), true)
+    })
+  })
 });
 
 describe('Hap', function() {
@@ -45,6 +54,16 @@ describe('Pattern', function() {
   describe('pure', function () {
     it('Can make a pattern', function() {
       assert.equal(pure("hello").query(new TimeSpan(Fraction(0.5), Fraction(2.5))).length, 3)
+    })
+  })
+  describe('fmap()', function () {
+    it('Can add things', function () {
+      assert.equal(pure(3).fmap(x => x + 4).firstCycle[0].value, 7)
+    })
+  })
+  describe('add()', function () {
+    it('Can add things', function() {
+      assert.equal(pure(3).add(pure(4)).query(new TimeSpan(Fraction(0), Fraction(1)))[0].value, 7)
     })
   })
 })

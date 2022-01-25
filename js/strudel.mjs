@@ -5,6 +5,10 @@ var removeUndefineds = function(xs) {
     return xs.filter(x => x != undefined)
 }
 
+function flatten(arr) {
+    return [].concat(...arr)
+}
+
 // Returns the start of the cycle.
 Fraction.prototype.sam = function() {
     return Fraction(Math.floor(this))
@@ -34,6 +38,18 @@ Fraction.prototype.lte = function(other) {
 
 Fraction.prototype.gte = function(other) {
     return this.compare(other) >= 0
+}
+
+Fraction.prototype.max = function(other) {
+    return this.gt(other) ? this : other
+}
+
+Fraction.prototype.min = function(other) {
+    return this.lt(other) ? this : other
+}
+
+Fraction.prototype.show = function () {
+    return  this.n + "/" + this.d
 }
 
 class TimeSpan {
@@ -71,8 +87,8 @@ class TimeSpan {
 
     intersection(other) {
         // Intersection of two timespans, returns None if they don't intersect.
-        intersect_begin = Math.max(this.begin, other.begin)
-        intersect_end = Math.min(this.end, other.end)
+        var intersect_begin = this.begin.max(other.begin)
+        var intersect_end = this.end.min(other.end)
 
         if (intersect_begin.gt(intersect_end)) {
             return(undefined)
@@ -92,12 +108,12 @@ class TimeSpan {
 
     intersection_e(other) {
         // Like 'sect', but raises an exception if the timespans don't intersect.
-        result = this.intersection(other)
-        if (result.equals(None)) {
+        var result = this.intersection(other)
+        if (result == undefined) {
             // TODO - raise exception
             // raise ValueError(f'TimeSpan {self} and TimeSpan {other} do not intersect')
         }
-        return(result)
+        return result
     }
 
     get midpoint() {
@@ -106,6 +122,10 @@ class TimeSpan {
 
     equals(other) {
         return this.begin.equals(other.begin) && this.end.equals(other.end)
+    }
+
+    show() {
+        return this.begin.show() + " -> " + this.end.show()
     }
 }
 
@@ -158,6 +178,10 @@ class Hap {
                && this.value === other.value
         )
     }
+
+    show() {
+        return "(" + (this.whole == undefined ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + this.value + ")"
+    }
 }
 
 class Pattern {
@@ -170,7 +194,7 @@ class Pattern {
         // easier to express, as all events are then constrained to happen within 
         // a cycle.
         var query = function(span) {
-            return span.spanCycles.map(subspan => this.query(subspan)).concat
+            return flatten(span.spanCycles.map(subspan => this.query(subspan)))
         }
         return new Pattern(query)
     }
@@ -200,16 +224,16 @@ class Pattern {
     withValue(func) {
         // Returns a new pattern, with the function applied to the value of
         // each event. It has the alias 'fmap'.
-        return new Pattern(this.query(span).map(hap => hap.withValue(func)))
+        return new Pattern(span => this.query(span).map(hap => hap.withValue(func)))
     }
 
     // alias
     fmap(func) {
-        this.withValue(func)
+        return this.withValue(func)
     }
 
     _filterEvents(event_test) {
-        return new Pattern(span => this.query(span).filter(event_test))
+        return new Pattern(span => this.query(span).filter(event_tespanCyclesst))
     }
 
     _filterValues(self, value_test) {
@@ -227,18 +251,18 @@ class Pattern {
         // Assumes 'this' is a pattern of functions, and given a function to
         // resolve wholes, applies a given pattern of values to that
         // pattern of functions.
-        pat_func = this
+        var pat_func = this
         query = function(span) {
-            event_funcs = pat_func.query(span)
-            event_vals = pat_val.query(span)
+            var event_funcs = pat_func.query(span)
+            var event_vals = pat_val.query(span)
             apply = function(event_func, event_val) {
-                s = event_func.part.intersection(event_val.part)
+                var s = event_func.part.intersection(event_val.part)
                 if (s === undefined) {
                     return undefined
                 }
                 return new Hap(whole_func(event_func.whole, event_val.whole), s, event_func.value(event_val.value))
             }
-            return event_funcs.map(event_func => removeUndefineds(event_vals.map(event_val => apply(event_func, event_val)))).concat    
+            return flatten(event_funcs.map(event_func => removeUndefineds(event_vals.map(event_val => apply(event_func, event_val)))))
         }
         return new Pattern(query)
         }
@@ -255,43 +279,53 @@ class Pattern {
     }
 
     appLeft(pat_val) {
-        pat_func = this
-        var query = function(span) {
-            events = []
-            for (event_func in pat_func.query(span)) {
-                event_vals = pat_val.query(event_func.part)
-                for (event_val in event_vals) {
-                    new_whole = event_func.whole
-                    new_part = event_func.part.intersection_e(event_val.part)
-                    new_value = event_func.value(event_val.value)
-                    events.push(new Event(new_whole, new_part, new_value))
-                }
-            }
-            return events
-        }
-        return Pattern(query)
-    }
+        var pat_func = this
 
-    appRight(pat_val) {
-        pat_func = this
         var query = function(span) {
-            events = []
-            for (event_val in pat_val.query(span)) {
-                event_funcs = pat_func.query(event_val.part)
-                for (event_func in event_funcs) {
-                    new_whole = event_val.whole
-                    new_part = event_func.part.intersection_e(event_val.part)
-                    new_value = event_func.value(event_val.value)
-                    events.push(new Event(new_whole, new_part, new_value))
+            var haps = []
+            for (var hap_func of pat_func.query(span)) {
+                var event_vals = pat_val.query(hap_func.part)
+                for (var hap_val of event_vals) {
+                    var new_whole = hap_func.whole
+                    var new_part = hap_func.part.intersection_e(hap_val.part)
+                    var new_value = hap_func.value(hap_val.value)
+                    var hap = new Hap(new_whole, new_part, new_value)
+                    haps.push(hap)
                 }
             }
-            return events
+            return haps
         }
         return new Pattern(query)
     }
 
-//     def __add__(self, other):
-//         return self.fmap(lambda x: lambda y: x + y).app_left(reify(other))
+    appRight(pat_val) {
+        var pat_func = this
+
+        var query = function(span) {
+            var haps = []
+            for (var hap_val of pat_val.query(span)) {
+                var hap_funcs = pat_func.query(hap_val.part)
+                for (var hap_func of hap_funcs) {
+                    var new_whole = hap_val.whole
+                    var new_part = hap_func.part.intersection_e(hap_val.part)
+                    var new_value = hap_func.value(hap_val.value)
+                    var hap = new Hap(new_whole, new_part, new_value)
+                    haps.push(hap)
+                }
+            }
+            return haps
+        }
+        return new Pattern(query)
+    }
+
+    add(other) {
+        // TODO - reify other
+        return this.fmap(x => y => x + y).appLeft(other)
+    }
+
+    get firstCycle() {
+        return this.query(new TimeSpan(Fraction(0), Fraction(1)))
+    }
 
 //     def __radd__(self, other):
 //         return self.__add__(other)
