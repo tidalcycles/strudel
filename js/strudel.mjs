@@ -134,10 +134,24 @@ class Hap {
         return new Hap(this.whole, this.part, func(this.value))
     }
 
-    has_onset() {
+    hasOnset() {
         // Test whether the event contains the onset, i.e that
         // the beginning of the part is the same as that of the whole timespan."""
         return (this.whole != undefined) && (this.whole.begin.equals(this.part.begin))
+    }
+
+    spanEquals(other) {
+        return((this.whole === undefined && other.whole === undefined)
+               || this.whole.equals(other.whole)
+              )
+    }
+
+    equals(other) {
+        return(this.spanEquals(other)
+               && this.part.equals(other.part)
+               // TODO would == be better ??
+               && this.value === other.value
+        )
     }
 }
 
@@ -145,8 +159,6 @@ class Pattern {
     constructor(query) {
         this.query = query
     }
-
-
 
     splitQueries() {
         // Splits queries at cycle boundaries. This makes some calculations 
@@ -157,14 +169,20 @@ class Pattern {
         }
         return new Pattern(query)
     }
-//     def with_query_span(self, func):
-//         """ Returns a new pattern, with the function applied to the timespan of the query. """
-//         return Pattern(lambda span: self.query(func(span)))
 
-//     def with_query_time(self, func):
-//         """ Returns a new pattern, with the function applied to both the begin
-//         and end of the the query timespan. """
-//         return Pattern(lambda span: self.query(span.with_time(func)))
+    withQuerySpan(func) {
+        return new Pattern(span => this.query(func(span)))
+    }
+
+    withQueryTime(func) {
+        // Returns a new pattern, with the function applied to both the begin
+        // and end of the the query timespan
+        return new Pattern(span => this.query(span.withTime(func)))
+    }
+
+    //withEventSpan(func) {
+
+    //}
 
 //     def with_event_span(self, func):
 //         """ Returns a new pattern, with the function applied to each event
@@ -431,3 +449,4 @@ function pure(value) {
 }
 
 export {TimeSpan, Hap, Pattern, pure, Fraction}
+
