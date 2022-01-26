@@ -340,7 +340,7 @@ class Pattern {
         return this._opleft(other, a => b => Object.assign({}, a, b))
     }
     
-    _bind_whole(choose_whole, func) {
+    _bindWhole(choose_whole, func) {
         var pat_val = this
         var query = function(span) {
             var withWhole = function(a, b) {
@@ -363,7 +363,7 @@ class Pattern {
             }
             return a.intersection_e(b)
         }
-        return this._bind_whole(whole_func, func)
+        return this._bindWhole(whole_func, func)
     }
 
     join() {
@@ -372,24 +372,24 @@ class Pattern {
         return this.bind(id)
     }
 
-    inner_bind(func) {
-        return this._bind_whole((a, _) => a, func)
+    innerBind(func) {
+        return this._bindWhole((a, _) => a, func)
     }
 
-    inner_join() {
+    innerJoin() {
         // Flattens a pattern of patterns into a pattern, where wholes are
         // taken from inner events.
-        return this.inner_bind(id)
+        return this.innerBind(id)
     }
     
-    outer_bind(func) {
-        return this._bind_whole((_, b) => b, func)
+    outerBind(func) {
+        return this._bindWhole((_, b) => b, func)
     }
 
-    outer_join() {
+    outerJoin() {
         // Flattens a pattern of patterns into a pattern, where wholes are
         // taken from inner events.
-        return this.outer_bind(id)
+        return this.outerBind(id)
     }
 
 //     def _patternify(method):
@@ -431,39 +431,48 @@ class Pattern {
         return stack(with_pat, without_pat)
     }
 
-//     def off(self, time_pat, func):
-//         return stack(self, self.early(time_pat))
+    off(time_pat, func) {
+        return stack(this, func(this.early(time_pat)))
+    }
 
-//     def every(self, n, func):
-//         pats = [func(self)] + ([self] * (n-1))
-//         return slowcat(*pats)
-    
-//     def append(self, other):
-//         return fastcat(self,other)
+    every(n, func) {
+        pats = Array(n-1).fill(this)
+        pats.unshift(this)
+        return slowcat(pats)
+    }
 
-//     def rev(self):
-//         def query(span):
-//             cycle = span.begin.sam()
-//             next_cycle = span.begin.next_sam()
-//             def reflect(to_reflect):
-//                 reflected = to_reflect.with_time(lambda time: cycle + (next_cycle - time))
-//                 (reflected.begin, reflected.end) = (reflected.end, reflected.begin)
-//                 return reflected
-//             events = self.query(reflect(span))
-//             return [event.with_span(reflect) for event in events]
-//         return Pattern(query).split_queries()
+    append(other) {
+        return fastcat([this, other])
+    }
 
-//     def jux(self, func, by=1):
-//         by = by / 2
-//         def elem_or(dict, key, default):
-//             if key in dict:
-//                 return dict[key]
-//             return default
-        
-//         left  = self.with_value(lambda val: dict(list(val.items()) + [("pan", elem_or(val, "pan", 0.5) - by)]))
-//         right = self.with_value(lambda val: dict(list(val.items()) + [("pan", elem_or(val, "pan", 0.5) + by)]))
+    rev() {
+        var query = function(span) {
+            var cycle = span.begin.sam()
+            var next_cycle = span.begin.nextSam()
+            var reflect = function(to_reflect) {
+                var reflected = to_reflect.withTime(time => cycle + (next_cycle - time))
+                [reflected.begin, reflected.end] = [reflected.end, reflected.begin]
+                return reflected
+            }
+            var haps = this.query(reflect(span))
+            return haps.map(hap => hap.with_span(reflect))
+        }
+        return Pattern(query).split_queries()
+    }
 
-//         return stack(left,func(right))
+    // jux(func, by=1) {
+    //     by /= 2
+    //     var elem_or = function(dict, key, dflt) {
+    //         if (key in dict) {
+    //             return dict[key]
+    //         }
+    //         return dflt
+    //     }
+    //     var left = this.withValue(val => {...a, pan: elem_or(val, "pan", 0.5) - by})
+    //     var right = this.withValue(val => {...a, pan: elem_or(val, "pan", 0.5) + by})
+
+    //     return stack(left,func(right))
+    // }
 
 //     def first_cycle(self):
 //         return self.query(TimeSpan(Fraction(0), Fraction(1)))
