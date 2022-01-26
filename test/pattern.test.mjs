@@ -2,7 +2,7 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure} from "../js/strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure, stack} from "../js/strudel.mjs";
 
 describe('TimeSpan', function() {
   describe('equals()', function() {
@@ -64,6 +64,31 @@ describe('Pattern', function() {
   describe('add()', function () {
     it('Can add things', function() {
       assert.equal(pure(3).add(pure(4)).query(new TimeSpan(Fraction(0), Fraction(1)))[0].value, 7)
+    })
+  })
+  describe('sub()', function () {
+    it('Can subtract things', function() {
+      assert.equal(pure(3).sub(pure(4)).query(new TimeSpan(Fraction(0), Fraction(1)))[0].value, -1)
+    })
+  })
+  describe('union()', function () {
+    it('Can union things', function () {
+      assert.deepStrictEqual(pure({a: 4, b: 6}).union(pure({c: 7})).firstCycle[0].value, {a: 4, b: 6, c: 7})
+    })
+  })
+  describe('stack()', function () {
+    it('Can stack things', function () {
+      assert.deepStrictEqual(stack([pure("a"), pure("b"), pure("c")]).firstCycle.map(h => h.value), ["a", "b", "c"])
+    })
+  })
+  describe('_fast()', function () {
+    it('Makes things faster', function () {
+      assert.equal(pure("a")._fast(2).firstCycle.length, 2)
+    })
+  })
+  describe('_slow()', function () {
+    it('Makes things slower', function () {
+      assert.deepStrictEqual(pure("a")._slow(2).firstCycle[0], new Hap(new TimeSpan(Fraction(0),Fraction(2)), new TimeSpan(Fraction(0), Fraction(1)), "a"))
     })
   })
 })

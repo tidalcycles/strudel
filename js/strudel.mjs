@@ -9,6 +9,8 @@ function flatten(arr) {
     return [].concat(...arr)
 }
 
+var id = a => a
+
 // Returns the start of the cycle.
 Fraction.prototype.sam = function() {
     return Fraction(Math.floor(this))
@@ -150,7 +152,7 @@ class Hap {
 
     withSpan(func) {
         // Returns a new event with the function f applies to the event timespan.
-        var whole = this.whole ? func(self.whole) : undefined
+        var whole = this.whole ? func(this.whole) : undefined
         return new Hap(whole, func(this.part), this.value)
     }
 
@@ -166,7 +168,7 @@ class Hap {
     }
 
     spanEquals(other) {
-        return((this.whole === undefined && other.whole === undefined)
+        return((this.whole == undefined && other.whole == undefined)
                || this.whole.equals(other.whole)
               )
     }
@@ -236,7 +238,7 @@ class Pattern {
         return new Pattern(span => this.query(span).filter(event_tespanCyclesst))
     }
 
-    _filterValues(self, value_test) {
+    _filterValues(value_test) {
          return new Pattern(span => this.query(span).filter(hap => value_test(hap.value)))
     }
 
@@ -257,7 +259,7 @@ class Pattern {
             var event_vals = pat_val.query(span)
             apply = function(event_func, event_val) {
                 var s = event_func.part.intersection(event_val.part)
-                if (s === undefined) {
+                if (s == undefined) {
                     return undefined
                 }
                 return new Hap(whole_func(event_func.whole, event_val.whole), s, event_func.value(event_val.value))
@@ -267,7 +269,7 @@ class Pattern {
         return new Pattern(query)
         }
 
-    appBoth(self, pat_val) {
+    appBoth(pat_val) {
         // Tidal's <*>
         var whole_func = function(span_a, span_b) {
             if (span_a == undefined || span_B == undefined) {
@@ -318,83 +320,77 @@ class Pattern {
         return new Pattern(query)
     }
 
-    add(other) {
-        // TODO - reify other
-        return this.fmap(x => y => x + y).appLeft(other)
-    }
-
     get firstCycle() {
         return this.query(new TimeSpan(Fraction(0), Fraction(1)))
     }
 
-//     def __radd__(self, other):
-//         return self.__add__(other)
+    _opleft(other, func) {
+        return this.fmap(func).appLeft(reify(other))
+    }
+
+    add(other) {
+        return this._opleft(other, a => b => a + b)
+    }
+
+    sub(other) {
+        return this._opleft(other, a => b => a - b)
+    }
     
-//     def __sub__(self, other):
-//         return self.fmap(lambda x: lambda y: x - y).app_left(reify(other))
-
-//     def __rsub__(self, other):
-//         raise ValueError # or return NotImplemented?
-
-//     def union(self, other):
-//         return self.fmap(lambda x: lambda y: {**x, **y}).app_left(other)
-
-//     def __rshift__(self, other):
-//         """Overrides the >> operator to support combining patterns of
-//         dictionaries (AKA 'control patterns'). Produces the union of
-//         two patterns of dictionaries, with values from right replacing
-//         any with the same name from the left
-//         """
-//         return self.union(other)
-
-//     def __lshift__(self, other):
-//         """Like >>, but matching values from left replace those on the right"""
-//         return self.fmap(lambda x: lambda y: {**y, **x}).app_left(other)
+    union(other) {
+        return this._opleft(other, a => b => Object.assign({}, a, b))
+    }
     
-//     def _bind_whole(self, choose_whole, func):
-//         pat_val = self
-//         def query(span):
-//             def withWhole(a, b):
-//                 return Event(choose_whole(a.whole, b.whole), b.part,
-//                              b.value
-//                             )
-//             def match(a):
-//                 return [withWhole(a, b) for b in func(a.value).query(a.part)]
+    _bind_whole(choose_whole, func) {
+        var pat_val = this
+        var query = function(span) {
+            var withWhole = function(a, b) {
+                return new Hap(choose_whole(a.whole, b.whole), b.part,
+                               b.value
+                             )
+            }
+            var match = function (a) {
+                return func(a.value).query(a.part).map(b => withWhole(a, b))
+            }
+            return flatten(pat_val.query(span).map(match))
+        }
+        return new Pattern(query)
+    }
 
-//             return concat([match(ev) for ev in pat_val.query(span)])
-//         return Pattern(query)
+    bind(func) {
+        var whole_func = function(a, b) {
+            if (a == undefined || b == undefined) {
+                return undefined
+            }
+            return a.intersection_e(b)
+        }
+        return this._bind_whole(whole_func, func)
+    }
 
-//     def bind(self, func):
-//         def whole_func(a, b):
-//             if a == None or b == None:
-//                 return None
-//             return a.intersection_e(b)
-//         return self._bind_whole(whole_func, func)
+    join() {
+        // Flattens a pattern of patterns into a pattern, where wholes are
+        // the intersection of matched inner and outer events.
+        return this.bind(id)
+    }
 
-//     def join(self):
-//         """Flattens a pattern of patterns into a pattern, where wholes are
-//         the intersection of matched inner and outer events."""
-//         return self.bind(id)
+    inner_bind(func) {
+        return this._bind_whole((a, _) => a, func)
+    }
 
-//     def inner_bind(self, func):
-//         def whole_func(a, b):
-//             return a
-//         return self._bind_whole(whole_func, func)
-
-//     def inner_join(self):
-//         """Flattens a pattern of patterns into a pattern, where wholes are
-//         taken from inner events."""
-//         return self.inner_bind(id)
+    inner_join() {
+        // Flattens a pattern of patterns into a pattern, where wholes are
+        // taken from inner events.
+        return this.inner_bind(id)
+    }
     
-//     def outer_bind(self, func):
-//         def whole_func(a, b):
-//             return b
-//         return self._bind_whole(whole_func, func)
+    outer_bind(func) {
+        return this._bind_whole((_, b) => b, func)
+    }
 
-//     def outer_join(self):
-//         """Flattens a pattern of patterns into a pattern, where wholes are
-//         taken from outer events."""
-//         return self.outer_bind(id)
+    outer_join() {
+        // Flattens a pattern of patterns into a pattern, where wholes are
+        // taken from inner events.
+        return this.outer_bind(id)
+    }
 
 //     def _patternify(method):
 //         def patterned(self, *args):
@@ -402,36 +398,38 @@ class Pattern {
 //             return pat_arg.fmap(lambda arg: method(self,arg)).outer_join()
 //         return patterned
 
-//     def _fast(self, factor):
-//         """ Speeds up a pattern by the given factor"""
-//         fastQuery = self.with_query_time(lambda t: t*factor)
-//         fastEvents = fastQuery.with_event_time(lambda t: t/factor)
-//         return fastEvents
+    _fast(factor) {
+        var fastQuery = this.withQueryTime(t => t.mul(factor))
+        return fastQuery.withEventTime(t => t.div(factor))
+    }
 //     fast = _patternify(_fast)
 
-//     def _slow(self, factor):
-//         """ Slow slows down a pattern """
-//         return self._fast(1/factor)
+    _slow(factor) {
+        return this._fast(1/factor)
+    }
 //     slow = _patternify(_slow)
 
-//     def _early(self, offset):
-//         """ Equivalent of Tidal's <~ operator """
-//         offset = Fraction(offset)
-//         return self.with_query_time(lambda t: t+offset).with_event_time(lambda t: t-offset)
+    _early(offset) {
+        // Equivalent of Tidal's <~ operator
+        offset = Fraction(offset)
+        return this.withQueryTime(t => t.add(offset)).withEventTime(t => t.sub(offset))
+    }
 //     early = _patternify(_early)
 
-//     def _late(self, offset):
-//         """ Equivalent of Tidal's ~> operator """
-//         return self._early(0-offset)
-//     late = _patternify(_late)
+    _late(offset) {
+        // Equivalent of Tidal's ~> operator
+        return this._early(0-offset)
+    }
+//    late = _patternify(_late)
 
-//     def when(self, binary_pat, func):
-//         binary_pat = sequence(binary_pat)
-//         true_pat = binary_pat._filter_values(id)
-//         false_pat = binary_pat._filter_values(lambda val: not val)
-//         with_pat = true_pat.fmap(lambda _: lambda y: y).app_right(func(self))
-//         without_pat = false_pat.fmap(lambda _: lambda y: y).app_right(self)
-//         return stack(with_pat, without_pat)
+    when(binary_pat, func) {
+        //binary_pat = sequence(binary_pat)
+        var true_pat = binary_pat._filter_values(id)
+        var false_pat = binary_pat._filter_values(val => !val)
+        var with_pat = true_pat.fmap(_ => y => y).app_right(func(this))
+        var without_pat = false_pat.fmap(_ => y => y).app_right(this)
+        return stack(with_pat, without_pat)
+    }
 
 //     def off(self, time_pat, func):
 //         return stack(self, self.early(time_pat))
@@ -474,6 +472,13 @@ class Pattern {
 //         return str(self.first_cycle())
 }
 
+function reify(thing) {
+    if (thing.constructor.name == "Pattern") {
+        return thing
+    }
+    return pure(thing)
+}
+
 function pure(value) {
     // Returns a pattern that repeats the given value once per cycle
     function query(span) {
@@ -482,5 +487,13 @@ function pure(value) {
     return new Pattern(query)
 }
 
-export {TimeSpan, Hap, Pattern, pure, Fraction}
+function stack(pats) {
+    var pats = pats.map(reify)
+    var query = function(span) {
+        return flatten(pats.map(pat => pat.query(span)))
+    }
+    return new Pattern(query)
+}
+
+export {Fraction, TimeSpan, Hap, Pattern, pure, stack}
 
