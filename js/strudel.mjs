@@ -433,6 +433,10 @@ class Pattern {
         return stack([with_pat, without_pat])
     }
 
+    off(time_pat, func) {
+        return stack([this, func(this._early(time_pat))])
+    }
+
 //     def off(self, time_pat, func):
 //         return stack(self, self.early(time_pat))
 
