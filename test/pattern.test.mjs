@@ -109,4 +109,10 @@ describe('Pattern', function() {
       assert.deepStrictEqual(fastcat([pure("a"), pure("b")]).firstCycle.map(x => x.value), ["a", "b"])
     })
   })
+  describe('slowcat()', function () {
+    it('Can concatenate things slowly', function () {
+      assert.deepStrictEqual(slowcat([pure("a"), pure("b")]).firstCycle.map(x => x.value), ["a"])
+      assert.deepStrictEqual(slowcat([pure("a"), pure("b")])._early(1).firstCycle.map(x => x.value), ["b"])
+    })
+  })
 })
