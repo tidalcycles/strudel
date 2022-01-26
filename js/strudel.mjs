@@ -191,15 +191,17 @@ class Pattern {
         this.query = query
     }
 
-    splitQueries() {
+    _splitQueries() {
         // Splits queries at cycle boundaries. This makes some calculations 
         // easier to express, as all events are then constrained to happen within 
         // a cycle.
-        var query = function(span) {
-            return flatten(span.spanCycles.map(subspan => this.query(subspan)))
+        var pat = this
+        var q = function(span) {
+            return flatten(span.spanCycles.map(subspan => pat.query(subspan)))
         }
-        return new Pattern(query)
+        return new Pattern(q)
     }
+
 
     withQuerySpan(func) {
         return new Pattern(span => this.query(func(span)))
@@ -235,7 +237,7 @@ class Pattern {
     }
 
     _filterEvents(event_test) {
-        return new Pattern(span => this.query(span).filter(event_tespanCyclesst))
+        return new Pattern(span => this.query(span).filter(event_test))
     }
 
     _filterValues(value_test) {
@@ -424,11 +426,11 @@ class Pattern {
 
     when(binary_pat, func) {
         //binary_pat = sequence(binary_pat)
-        var true_pat = binary_pat._filter_values(id)
-        var false_pat = binary_pat._filter_values(val => !val)
-        var with_pat = true_pat.fmap(_ => y => y).app_right(func(this))
-        var without_pat = false_pat.fmap(_ => y => y).app_right(this)
-        return stack(with_pat, without_pat)
+        var true_pat = binary_pat._filterValues(id)
+        var false_pat = binary_pat._filterValues(val => !val)
+        var with_pat = true_pat.fmap(_ => y => y).appRight(func(this))
+        var without_pat = false_pat.fmap(_ => y => y).appRight(this)
+        return stack([with_pat, without_pat])
     }
 
 //     def off(self, time_pat, func):
@@ -495,5 +497,27 @@ function stack(pats) {
     return new Pattern(query)
 }
 
-export {Fraction, TimeSpan, Hap, Pattern, pure, stack}
+function slowcat(pats) {
+    // Concatenation: combines a list of patterns, switching between them
+    // successively, one per cycle.
+    // (currently behaves slightly differently from Tidal)
+    //var pats = pats.map(reify)
+    var query = function(span) {
+        var pat = pats[Math.floor(span.begin) % pats.length]
+        return pat.query(span)
+    }
+    return new Pattern(query)._splitQueries()
+}
+
+function fastcat(pats) {
+    // Concatenation: as with slowcat, but squashes a cycle from each
+    // pattern into one cycle
+    return slowcat(pats)._fast(pats.length)
+}
+
+function cat(pats) {
+    return fastcat(pats)
+}
+
+export {Fraction, TimeSpan, Hap, Pattern, pure, stack, slowcat, fastcat, cat}
 

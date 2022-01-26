@@ -2,7 +2,7 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure, stack} from "../js/strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat} from "../js/strudel.mjs";
 
 describe('TimeSpan', function() {
   describe('equals()', function() {
@@ -89,6 +89,24 @@ describe('Pattern', function() {
   describe('_slow()', function () {
     it('Makes things slower', function () {
       assert.deepStrictEqual(pure("a")._slow(2).firstCycle[0], new Hap(new TimeSpan(Fraction(0),Fraction(2)), new TimeSpan(Fraction(0), Fraction(1)), "a"))
+    })
+  })  
+  describe('_filterValues()', function () {
+    it('Filters true', function () {
+      assert.equal(pure(true)._filterValues(x => x).firstCycle.length, 1)
+    })
+  })
+  describe('when()', function () {
+    it('Always faster', function () {
+      assert.equal(pure("a").when(pure(true), x => x._fast(2)).firstCycle.length, 2)
+    })
+    it('Never faster', function () {
+      assert.equal(pure("a").when(pure(false), x => x._fast(2)).firstCycle.length, 1)
+    })
+  })
+  describe('fastcat()', function () {
+    it('Can concatenate two things', function () {
+      assert.deepStrictEqual(fastcat([pure("a"), pure("b")]).firstCycle.map(x => x.value), ["a", "b"])
     })
   })
 })
