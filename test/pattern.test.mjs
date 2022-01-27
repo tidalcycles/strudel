@@ -115,4 +115,9 @@ describe('Pattern', function() {
       assert.deepStrictEqual(slowcat([pure("a"), pure("b")])._early(1).firstCycle.map(x => x.value), ["b"])
     })
   })
+  describe('rev()', function () {
+    it('Can reverse things', function () {
+      assert.deepStrictEqual(fastcat([pure("a"), pure("b"), pure("c")]).rev().firstCycle.sort((a,b) => a.part.begin.sub(b.part.begin)).map(a => a.value), ["c", "b","a"])
+    })
+  })
 })

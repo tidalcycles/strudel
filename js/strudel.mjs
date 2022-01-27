@@ -452,18 +452,22 @@ class Pattern {
     }
 
     rev() {
+        var pat = this
         var query = function(span) {
             var cycle = span.begin.sam()
             var next_cycle = span.begin.nextSam()
             var reflect = function(to_reflect) {
-                var reflected = to_reflect.withTime(time => cycle + (next_cycle - time))
-                [reflected.begin, reflected.end] = [reflected.end, reflected.begin]
+                var reflected = to_reflect.withTime(time => cycle.add(next_cycle.sub(time)))
+                // [reflected.begin, reflected.end] = [reflected.end, reflected.begin] -- didn't work
+                var tmp = reflected.begin
+                reflected.begin = reflected.end
+                reflected.end = tmp
                 return reflected
             }
-            var haps = this.query(reflect(span))
-            return haps.map(hap => hap.with_span(reflect))
+            var haps = pat.query(reflect(span))
+            return haps.map(hap => hap.withSpan(reflect))
         }
-        return Pattern(query).split_queries()
+        return new Pattern(query)._splitQueries()
     }
 
     // jux(func, by=1) {
