@@ -470,19 +470,19 @@ class Pattern {
         return new Pattern(query)._splitQueries()
     }
 
-    // jux(func, by=1) {
-    //     by /= 2
-    //     var elem_or = function(dict, key, dflt) {
-    //         if (key in dict) {
-    //             return dict[key]
-    //         }
-    //         return dflt
-    //     }
-    //     var left = this.withValue(val => {...a, pan: elem_or(val, "pan", 0.5) - by})
-    //     var right = this.withValue(val => {...a, pan: elem_or(val, "pan", 0.5) + by})
+    jux(func, by=1) {
+        by /= 2
+        var elem_or = function(dict, key, dflt) {
+            if (key in dict) {
+                return dict[key]
+            }
+            return dflt
+        }
+        var left = this.withValue(val => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) - by}))
+        var right = this.withValue(val => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) + by}))
 
-    //     return stack(left,func(right))
-    // }
+        return stack([left,func(right)])
+    }
 
 //     def first_cycle(self):
 //         return self.query(TimeSpan(Fraction(0), Fraction(1)))
