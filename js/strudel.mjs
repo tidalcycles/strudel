@@ -483,12 +483,6 @@ class Pattern {
 
         return stack([left,func(right)])
     }
-
-//     def first_cycle(self):
-//         return self.query(TimeSpan(Fraction(0), Fraction(1)))
-
-//     def __repr__(self):
-//         return str(self.first_cycle())
 }
 
 function reify(thing) {
@@ -504,6 +498,10 @@ function pure(value) {
         return span.spanCycles.map(subspan => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value))
     }
     return new Pattern(query)
+}
+
+function steady(value) {
+    return new Pattern(span => Hap(undefined, span, value))
 }
 
 function stack(pats) {
@@ -536,5 +534,65 @@ function cat(pats) {
     return fastcat(pats)
 }
 
-export {Fraction, TimeSpan, Hap, Pattern, pure, stack, slowcat, fastcat, cat}
+function _sequenceCount(x) {
+    if(Array.isArray(x)) {
+        if (x.length == 0) {
+            return [silence(),0]
+        }
+        if (x.length == 1) {
+            return _sequenceCount(x[0])
+        }
+        return [fastcat(x.map(a => _sequenceCount(a)[0])), x.length]
+    }
+    return [reify(x), 1]
+}
+
+function sequence(...xs) {
+    return _sequenceCount(xs)[0]
+}
+
+function polymeter(steps=0, ...args) {
+    var seqs = args.map(_sequenceCount)
+    if (seqs.length == 0) {
+        return silence()
+    }
+    if (steps  == 0) {
+        steps = seqs[0][1]
+    }
+    var pats = []
+    for (var seq of seqs) {
+        if (seq[1] == 0) {
+            next
+        }
+        if (steps == seq[1]) {
+            pats.push(seq[0])
+        }
+        else {
+            pats.push(seq[0]._fast(Fraction(steps).div(Fraction(seq[1]))))
+        }
+    }
+    return stack(pats)
+}
+
+function silence() {
+    return new Pattern(_ => [])
+}
+
+// # alias
+// pm = polymeter
+
+// def polyrhythm(*xs):
+//     seqs = [sequence(x) for x in xs]
+
+//     if len(seqs) == 0:
+//         return silence()
+
+//     return stack(seqs)
+
+// # alias
+// pr = polyrhythm
+
+
+export {Fraction, TimeSpan, Hap, Pattern, 
+    pure, stack, slowcat, fastcat, cat, sequence, polymeter}
 

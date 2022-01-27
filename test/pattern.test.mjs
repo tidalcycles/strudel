@@ -2,7 +2,7 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat} from "../js/strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence} from "../js/strudel.mjs";
 
 describe('TimeSpan', function() {
   describe('equals()', function() {
@@ -118,6 +118,11 @@ describe('Pattern', function() {
   describe('rev()', function () {
     it('Can reverse things', function () {
       assert.deepStrictEqual(fastcat([pure("a"), pure("b"), pure("c")]).rev().firstCycle.sort((a,b) => a.part.begin.sub(b.part.begin)).map(a => a.value), ["c", "b","a"])
+    })
+  })
+  describe('sequence()', function () {
+    it('Can work like fastcat', function () {
+      assert.deepStrictEqual(sequence(1,2,3).firstCycle, fastcat([pure(1), pure(2), pure(3)]).firstCycle)
     })
   })
 })
