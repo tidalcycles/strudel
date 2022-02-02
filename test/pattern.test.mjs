@@ -2,7 +2,7 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence} from "../js/strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence} from "../strudel.mjs";
 
 describe('TimeSpan', function() {
   describe('equals()', function() {
