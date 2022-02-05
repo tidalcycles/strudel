@@ -11,16 +11,41 @@ const { Fraction, TimeSpan } = strudel;
 const fr = (v: number) => new Fraction(v);
 const ts = (start: number, end: number) => new TimeSpan(fr(start), fr(end));
 const parse = (code: string): Pattern => {
-  const { sequence, stack, pure, slowcat, slow } = strudel; // make available to eval
+  const { sequence, pure, reify, slowcat, fastcat, cat, stack, silence } = strudel; // make available to eval
   return eval(code);
 };
 
-const synth = new Tone.Synth().toDestination();
+const synth = new Tone.PolySynth().toDestination();
+synth.set({
+  oscillator: { type: 'triangle' },
+  envelope: {
+    release: 0.01,
+  },
+});
 
 function App() {
   const [code, setCode] = useState<string>(
     // "sequence('c3', 'eb3', sequence('g3', 'f3'))" //
-    "slow(sequence('c3', 'eb3', sequence('g3', 'f3')), 'g3')" //
+    /* `sequence(
+      stack('c4','eb4','g4'),
+      stack('bb3','d4','f4'),
+      stack('ab3','c4','eb4'),
+      stack('g3','b3','d4')
+    )._slow(4)`, */ //
+    `slowcat(
+      stack('c4','eb4','g4'),
+      stack('bb3','d4','f4'),
+      stack('ab3','c4','eb4'),
+      stack('g3','b3','d4')
+    )`
+    /* `fastcat(
+      stack('c4','eb4','g4'),
+      stack('bb3','d4','f4'),
+      stack('ab3','c4','eb4'),
+      stack('g3','b3','d4')
+    )._slow(4)` */ //
+    // "slow(sequence('c3', 'eb3', sequence('g3', 'f3')), 'g3')" //
+    // "sequence('c3', 'eb3')._fast(2)" //
   );
   const [log, setLog] = useState('');
   const logBox = useRef<any>();
@@ -74,7 +99,7 @@ function App() {
         <div className="relative">
           <div className="absolute right-2 bottom-2 text-red-500">{error?.message}</div>
           <textarea
-            className={cx('w-full h-32 bg-slate-600', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}
+            className={cx('w-full h-64 bg-slate-600', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}
             value={code}
             onChange={(e) => {
               setLog((log) => log + `${log ? '\n\n' : ''}✏️ edit\n${code}\n${e.target.value}`);
