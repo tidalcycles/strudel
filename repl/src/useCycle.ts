@@ -34,10 +34,18 @@ function useCycle(props: UseCycleProps) {
     const cancelFrom = timespan.begin.valueOf();
     Tone.Transport.cancel(cancelFrom);
     const queryNextTime = (cycle + 1) * cycleDuration - 0.1;
-    Tone.Transport.schedule(() => {
-      // TODO: find out why this event is sometimes swallowed
+    const delta = queryNextTime - Tone.Transport.seconds;
+    if (delta < 0.2) {
+      // if calling Tone.Transport.schedule barely before the scheduled time, it sometimes happen that the event is swallowed
+      // i think this has something to do with the fact that Tone.Transport.schedule is called with a time that is slightly before the scheduled time
+      // so, if the delta is too small (using 0.2 for no specific reason), just schedule directly
+      // this if branch should only be entered if the user triggers the scheduling, to make sure no endless recursion is happening
       query(cycle + 1);
-    }, queryNextTime);
+    } else {
+      Tone.Transport.schedule(() => {
+        query(cycle + 1);
+      }, queryNextTime);
+    }
     // schedule events for next cycle
     events?.forEach((event) => {
       Tone.Transport.schedule((time) => {
