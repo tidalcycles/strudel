@@ -8,12 +8,23 @@ const {Fraction, TimeSpan} = strudel;
 const fr = (v) => new Fraction(v);
 const ts = (start, end) => new TimeSpan(fr(start), fr(end));
 const parse = (code) => {
-  const {sequence, stack, pure, slowcat, slow} = strudel;
+  const {sequence, pure, reify, slowcat, fastcat, cat, stack, silence} = strudel;
   return eval(code);
 };
-const synth = new Tone.Synth().toDestination();
+const synth = new Tone.PolySynth().toDestination();
+synth.set({
+  oscillator: {type: "triangle"},
+  envelope: {
+    release: 0.01
+  }
+});
 function App() {
-  const [code, setCode] = useState("slow(sequence('c3', 'eb3', sequence('g3', 'f3')), 'g3')");
+  const [code, setCode] = useState(`slowcat(
+      stack('c4','eb4','g4'),
+      stack('bb3','d4','f4'),
+      stack('ab3','c4','eb4'),
+      stack('g3','b3','d4')
+    )`);
   const [log, setLog] = useState("");
   const logBox = useRef();
   const [error, setError] = useState();
@@ -63,7 +74,7 @@ function App() {
   }, /* @__PURE__ */ React.createElement("div", {
     className: "absolute right-2 bottom-2 text-red-500"
   }, error?.message), /* @__PURE__ */ React.createElement("textarea", {
-    className: cx("w-full h-32 bg-slate-600", error ? "focus:ring-red-500" : "focus:ring-slate-800"),
+    className: cx("w-full h-64 bg-slate-600", error ? "focus:ring-red-500" : "focus:ring-slate-800"),
     value: code,
     onChange: (e) => {
       setLog((log2) => log2 + `${log2 ? "\n\n" : ""}✏️ edit

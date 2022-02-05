@@ -297,12 +297,12 @@ class Pattern {
     return stack(this, func(this.early(time_pat)));
   }
   every(n, func) {
-    pats = Array(n - 1).fill(this);
+    const pats = Array(n - 1).fill(this);
     pats.unshift(this);
-    return slowcat(pats);
+    return slowcat(...pats);
   }
   append(other) {
-    return fastcat([this, other]);
+    return fastcat(...[this, other]);
   }
   rev() {
     var pat = this;
@@ -349,29 +349,26 @@ function pure(value) {
 function steady(value) {
   return new Pattern((span) => Hap(void 0, span, value));
 }
-function stack(pats2) {
-  var pats2 = pats2.map(reify);
+function stack(...pats) {
+  pats = pats.map(reify);
   var query2 = function(span) {
-    return flatten(pats2.map((pat) => pat.query(span)));
+    return flatten(pats.map((pat) => pat.query(span)));
   };
   return new Pattern(query2);
 }
-function slowcat(pats2) {
+function slowcat(...pats) {
+  pats = pats.map(reify);
   var query2 = function(span) {
-    var pat = pats2[Math.floor(span.begin) % pats2.length];
+    var pat = pats[Math.floor(span.begin) % pats.length];
     return pat.query(span);
   };
   return new Pattern(query2)._splitQueries();
 }
-function slow(...pats2) {
-  pats2 = pats2.map((pat) => reify(pat));
-  return slowcat(pats2);
+function fastcat(...pats) {
+  return slowcat(...pats)._fast(pats.length);
 }
-function fastcat(pats2) {
-  return slowcat(pats2)._fast(pats2.length);
-}
-function cat(pats2) {
-  return fastcat(pats2);
+function cat(...pats) {
+  return fastcat(...pats);
 }
 function _sequenceCount(x) {
   if (Array.isArray(x)) {
@@ -381,7 +378,7 @@ function _sequenceCount(x) {
     if (x.length == 1) {
       return _sequenceCount(x[0]);
     }
-    return [fastcat(x.map((a) => _sequenceCount(a)[0])), x.length];
+    return [fastcat(...x.map((a) => _sequenceCount(a)[0])), x.length];
   }
   return [reify(x), 1];
 }
@@ -396,18 +393,18 @@ function polymeter(steps = 0, ...args) {
   if (steps == 0) {
     steps = seqs[0][1];
   }
-  var pats2 = [];
+  var pats = [];
   for (var seq of seqs) {
     if (seq[1] == 0) {
       next;
     }
     if (steps == seq[1]) {
-      pats2.push(seq[0]);
+      pats.push(seq[0]);
     } else {
-      pats2.push(seq[0]._fast(Fraction(steps).div(Fraction(seq[1]))));
+      pats.push(seq[0]._fast(Fraction(steps).div(Fraction(seq[1]))));
     }
   }
-  return stack(pats2);
+  return stack(pats);
 }
 function silence() {
   return new Pattern((_) => []);
@@ -418,11 +415,12 @@ export {
   Hap,
   Pattern,
   pure,
+  reify,
   stack,
   slowcat,
-  slow,
   fastcat,
   cat,
   sequence,
-  polymeter
+  polymeter,
+  silence
 };

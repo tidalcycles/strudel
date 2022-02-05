@@ -17,9 +17,14 @@ function useCycle(props) {
     const cancelFrom = timespan.begin.valueOf();
     Tone.Transport.cancel(cancelFrom);
     const queryNextTime = (cycle + 1) * cycleDuration - 0.1;
-    Tone.Transport.schedule(() => {
+    const delta = queryNextTime - Tone.Transport.seconds;
+    if (delta < 0.2) {
       query(cycle + 1);
-    }, queryNextTime);
+    } else {
+      Tone.Transport.schedule(() => {
+        query(cycle + 1);
+      }, queryNextTime);
+    }
     events?.forEach((event) => {
       Tone.Transport.schedule((time) => {
         const toneEvent = {
