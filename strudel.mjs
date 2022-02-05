@@ -469,11 +469,11 @@ class Pattern {
     every(n, func) {
         var pats = Array(n-1).fill(this)
         pats.unshift(this)
-        return slowcat(pats)
+        return slowcat(...pats)
     }
 
     append(other) {
-        return fastcat([this, other])
+        return fastcat(...[this, other])
     }
 
     rev() {
@@ -539,11 +539,11 @@ function stack(...pats) {
     return new Pattern(query)
 }
 
-function slowcat(pats) {
+function slowcat(...pats) {
     // Concatenation: combines a list of patterns, switching between them
     // successively, one per cycle.
     // (currently behaves slightly differently from Tidal)
-    //var pats = pats.map(reify)
+    pats = pats.map(reify)
     var query = function(span) {
         var pat = pats[Math.floor(span.begin) % pats.length]
         return pat.query(span)
@@ -551,14 +551,14 @@ function slowcat(pats) {
     return new Pattern(query)._splitQueries()
 }
 
-function fastcat(pats) {
+function fastcat(...pats) {
     // Concatenation: as with slowcat, but squashes a cycle from each
     // pattern into one cycle
-    return slowcat(pats)._fast(pats.length)
+    return slowcat(...pats)._fast(pats.length)
 }
 
-function cat(pats) {
-    return fastcat(pats)
+function cat(...pats) {
+    return fastcat(...pats)
 }
 
 function _sequenceCount(x) {
@@ -569,7 +569,7 @@ function _sequenceCount(x) {
         if (x.length == 1) {
             return _sequenceCount(x[0])
         }
-        return [fastcat(x.map(a => _sequenceCount(a)[0])), x.length]
+        return [fastcat(...x.map(a => _sequenceCount(a)[0])), x.length]
     }
     return [reify(x), 1]
 }
@@ -621,5 +621,5 @@ function pr(args) {
 }
 
 export {Fraction, TimeSpan, Hap, Pattern, 
-    pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr}
+    pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, reify, silence}
 
