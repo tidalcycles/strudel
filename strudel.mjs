@@ -11,6 +11,19 @@ function flatten(arr) {
 
 var id = a => a
 
+function curry(func) {
+    return function curried(...args) {
+        if (args.length >= func.length) {
+            return func.apply(this, args)
+        } 
+        else {
+            return function(...args2) {
+                return curried.apply(this, args.concat(args2))
+            }
+        }
+    }
+}
+
 // Returns the start of the cycle.
 Fraction.prototype.sam = function() {
     return Fraction(Math.floor(this))
@@ -42,6 +55,10 @@ Fraction.prototype.gte = function(other) {
     return this.compare(other) >= 0
 }
 
+Fraction.prototype.eq = function(other) {
+    return this.compare(other) == 0
+}
+
 Fraction.prototype.max = function(other) {
     return this.gt(other) ? this : other
 }
@@ -51,7 +68,11 @@ Fraction.prototype.min = function(other) {
 }
 
 Fraction.prototype.show = function () {
-    return  this.n + "/" + this.d
+    return this.n + "/" + this.d
+}
+
+Fraction.prototype.or = function(other) {
+    return this.eq(0) ? other : this
 }
 
 class TimeSpan {
@@ -225,6 +246,10 @@ class Pattern {
         return this.withEventSpan(span => span.withTime(func))
     }
 
+    _withEvents(func) {
+        return new Pattern(span => func(this.query(span)))
+    }
+
     withValue(func) {
         // Returns a new pattern, with the function applied to the value of
         // each event. It has the alias 'fmap'.
@@ -326,6 +351,10 @@ class Pattern {
         return this.query(new TimeSpan(Fraction(0), Fraction(1)))
     }
 
+    _sortEventsByPart() {
+        return this._withEvents(events => events.sort((a,b) => a.part.begin.sub(b.part.begin).or(a.part.end.sub(b.part.end)).or(a.whole.begin.sub(b.whole.begin).or(a.whole.end.sub(b.whole.end)))))
+    }
+
     _opleft(other, func) {
         return this.fmap(func).appLeft(reify(other))
     }
@@ -353,7 +382,7 @@ class Pattern {
             var match = function (a) {
                 return func(a.value).query(a.part).map(b => withWhole(a, b))
             }
-            return flatten(pat_val.query(span).map(match))
+            return flatten(pat_val.query(span).map(a => match(a)))
         }
         return new Pattern(query)
     }
@@ -430,19 +459,15 @@ class Pattern {
         var false_pat = binary_pat._filterValues(val => !val)
         var with_pat = true_pat.fmap(_ => y => y).appRight(func(this))
         var without_pat = false_pat.fmap(_ => y => y).appRight(this)
-        return stack([with_pat, without_pat])
+        return stack(with_pat, without_pat)
     }
 
     off(time_pat, func) {
         return stack([this, func(this._early(time_pat))])
     }
 
-    off(time_pat, func) {
-        return stack(this, func(this.early(time_pat)))
-    }
-
     every(n, func) {
-        const pats = Array(n-1).fill(this)
+        var pats = Array(n-1).fill(this)
         pats.unshift(this)
         return slowcat(...pats)
     }
@@ -485,12 +510,7 @@ class Pattern {
     }
 }
 
-function reify(thing) {
-    if (thing.constructor.name == "Pattern") {
-        return thing
-    }
-    return pure(thing)
-}
+const silence = new Pattern(_ => [])
 
 function pure(value) {
     // Returns a pattern that repeats the given value once per cycle
@@ -504,8 +524,15 @@ function steady(value) {
     return new Pattern(span => Hap(undefined, span, value))
 }
 
+function reify(thing) {
+    if (thing.constructor.name == "Pattern") {
+        return thing
+    }
+    return pure(thing)
+}
+
 function stack(...pats) {
-    pats = pats.map(reify)
+    var pats = pats.map(pat => reify(pat))
     var query = function(span) {
         return flatten(pats.map(pat => pat.query(span)))
     }
@@ -537,7 +564,7 @@ function cat(...pats) {
 function _sequenceCount(x) {
     if(Array.isArray(x)) {
         if (x.length == 0) {
-            return [silence(),0]
+            return [silence,0]
         }
         if (x.length == 1) {
             return _sequenceCount(x[0])
@@ -552,9 +579,9 @@ function sequence(...xs) {
 }
 
 function polymeter(steps=0, ...args) {
-    var seqs = args.map(_sequenceCount)
+    var seqs = args.map(a => _sequenceCount(a))
     if (seqs.length == 0) {
-        return silence()
+        return silence
     }
     if (steps  == 0) {
         steps = seqs[0][1]
@@ -574,25 +601,25 @@ function polymeter(steps=0, ...args) {
     return stack(pats)
 }
 
-function silence() {
-    return new Pattern(_ => [])
+// alias
+function pm(args) {
+    polymeter(args)
 }
 
-// # alias
-// pm = polymeter
+function polyrhythm(...xs) {
+    var seqs = xs.map(a => sequence(a))
 
-// def polyrhythm(*xs):
-//     seqs = [sequence(x) for x in xs]
+    if (seqs.length == 0) {
+        return silence
+    }
+    return stack(...seqs)
+}
 
-//     if len(seqs) == 0:
-//         return silence()
-
-//     return stack(seqs)
-
-// # alias
-// pr = polyrhythm
-
+// alias
+function pr(args) {
+    polyrhythm(args)
+}
 
 export {Fraction, TimeSpan, Hap, Pattern, 
-    pure, reify, stack, slowcat, fastcat, cat, sequence, polymeter, silence}
+    pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, reify, silence}
 
