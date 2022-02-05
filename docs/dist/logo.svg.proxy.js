@@ -1,1 +1,1 @@
-export default "/strudel/dist/logo.svg";
+export default "/dist/logo.svg";
