@@ -4,6 +4,7 @@ import * as strudel from "../_snowpack/link/strudel.js";
 import cx from "./cx.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
 import useCycle from "./useCycle.js";
+import {tetris} from "./tunes.js";
 const {Fraction, TimeSpan} = strudel;
 const fr = (v) => new Fraction(v);
 const ts = (start, end) => new TimeSpan(fr(start), fr(end));
@@ -19,12 +20,7 @@ synth.set({
   }
 });
 function App() {
-  const [code, setCode] = useState(`slowcat(
-      stack('c4','eb4','g4'),
-      stack('bb3','d4','f4'),
-      stack('ab3','c4','eb4'),
-      stack('g3','b3','d4')
-    )`);
+  const [code, setCode] = useState(tetris);
   const [log, setLog] = useState("");
   const logBox = useRef();
   const [error, setError] = useState();
@@ -39,7 +35,14 @@ function App() {
     onEvent: useCallback((time, event) => {
       synth.triggerAttackRelease(event.value, event.duration, time);
     }, []),
-    onQuery: useCallback((span) => pattern?.query(span) || [], [pattern]),
+    onQuery: useCallback((span) => {
+      try {
+        return pattern?.query(span) || [];
+      } catch (err) {
+        setError(err);
+        return [];
+      }
+    }, [pattern]),
     onSchedule: useCallback((_events, cycle2) => {
       logCycle(_events, cycle2);
     }, [pattern]),
