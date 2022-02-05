@@ -35,5 +35,6 @@ export default {
   buildOptions: {
     /* ... */
     out: '../docs',
+    baseUrl: '/strudel',
   },
 };
