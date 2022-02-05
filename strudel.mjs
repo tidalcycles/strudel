@@ -442,13 +442,13 @@ class Pattern {
     }
 
     every(n, func) {
-        pats = Array(n-1).fill(this)
+        const pats = Array(n-1).fill(this)
         pats.unshift(this)
-        return slowcat(pats)
+        return slowcat(...pats)
     }
 
     append(other) {
-        return fastcat([this, other])
+        return fastcat(...[this, other])
     }
 
     rev() {
@@ -504,19 +504,19 @@ function steady(value) {
     return new Pattern(span => Hap(undefined, span, value))
 }
 
-function stack(pats) {
-    var pats = pats.map(reify)
+function stack(...pats) {
+    pats = pats.map(reify)
     var query = function(span) {
         return flatten(pats.map(pat => pat.query(span)))
     }
     return new Pattern(query)
 }
 
-function slowcat(pats) {
+function slowcat(...pats) {
     // Concatenation: combines a list of patterns, switching between them
     // successively, one per cycle.
     // (currently behaves slightly differently from Tidal)
-    //var pats = pats.map(reify)
+    pats = pats.map(reify)
     var query = function(span) {
         var pat = pats[Math.floor(span.begin) % pats.length]
         return pat.query(span)
@@ -524,19 +524,14 @@ function slowcat(pats) {
     return new Pattern(query)._splitQueries()
 }
 
-function slow(...pats) {
-  pats = pats.map(pat => reify(pat));
-  return slowcat(pats);
-}
-
-function fastcat(pats) {
+function fastcat(...pats) {
     // Concatenation: as with slowcat, but squashes a cycle from each
     // pattern into one cycle
-    return slowcat(pats)._fast(pats.length)
+    return slowcat(...pats)._fast(pats.length)
 }
 
-function cat(pats) {
-    return fastcat(pats)
+function cat(...pats) {
+    return fastcat(...pats)
 }
 
 function _sequenceCount(x) {
@@ -547,7 +542,7 @@ function _sequenceCount(x) {
         if (x.length == 1) {
             return _sequenceCount(x[0])
         }
-        return [fastcat(x.map(a => _sequenceCount(a)[0])), x.length]
+        return [fastcat(...x.map(a => _sequenceCount(a)[0])), x.length]
     }
     return [reify(x), 1]
 }
@@ -599,5 +594,5 @@ function silence() {
 
 
 export {Fraction, TimeSpan, Hap, Pattern, 
-    pure, stack, slowcat, slow, fastcat, cat, sequence, polymeter}
+    pure, reify, stack, slowcat, fastcat, cat, sequence, polymeter, silence}
 
