@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "tone": "^14.7.77"
   },
   "devDependencies": {
     "@snowpack/plugin-dotenv": "^2.1.0",

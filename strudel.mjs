@@ -524,6 +524,11 @@ function slowcat(pats) {
     return new Pattern(query)._splitQueries()
 }
 
+function slow(...pats) {
+  pats = pats.map(pat => reify(pat));
+  return slowcat(pats);
+}
+
 function fastcat(pats) {
     // Concatenation: as with slowcat, but squashes a cycle from each
     // pattern into one cycle
@@ -594,5 +599,5 @@ function silence() {
 
 
 export {Fraction, TimeSpan, Hap, Pattern, 
-    pure, stack, slowcat, fastcat, cat, sequence, polymeter}
+    pure, stack, slowcat, slow, fastcat, cat, sequence, polymeter}
 
