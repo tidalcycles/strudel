@@ -423,35 +423,51 @@ class Pattern {
         return this.outerBind(id)
     }
 
-//     def _patternify(method):
-//         def patterned(self, *args):
-//             pat_arg = sequence(*args)
-//             return pat_arg.fmap(lambda arg: method(self,arg)).outer_join()
-//         return patterned
+    _patternify(func) {
+        const pat = this
+        const patterned = function (...args) {
+           const pat_arg = sequence(...args)
+           return pat_arg.fmap(arg => func.call(pat,arg)).outerJoin()
+        }
+        return patterned
+   }
 
     _fast(factor) {
         var fastQuery = this.withQueryTime(t => t.mul(factor))
         return fastQuery.withEventTime(t => t.div(factor))
     }
-//     fast = _patternify(_fast)
+
+    fast(factor) {
+        return this._patternify(Pattern.prototype._fast)(factor)
+    }
 
     _slow(factor) {
         return this._fast(1/factor)
     }
-//     slow = _patternify(_slow)
+
+    slow(factor) {
+        return this._patternify(Pattern.prototype._slow)(factor)
+    }
 
     _early(offset) {
         // Equivalent of Tidal's <~ operator
         offset = Fraction(offset)
         return this.withQueryTime(t => t.add(offset)).withEventTime(t => t.sub(offset))
     }
-//     early = _patternify(_early)
+
+    early(factor) {
+        return this._patternify(Pattern.prototype._early)(factor)
+    }
 
     _late(offset) {
         // Equivalent of Tidal's ~> operator
         return this._early(0-offset)
     }
-//    late = _patternify(_late)
+
+
+    late(factor) {
+        return this._patternify(Pattern.prototype._late)(factor)
+    }
 
     when(binary_pat, func) {
         //binary_pat = sequence(binary_pat)
