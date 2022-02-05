@@ -5,6 +5,7 @@ import cx from './cx';
 import * as Tone from 'tone';
 import useCycle from './useCycle';
 import type { Hap, Pattern } from './types';
+import { tetris } from './tunes';
 
 const { Fraction, TimeSpan } = strudel;
 
@@ -24,29 +25,7 @@ synth.set({
 });
 
 function App() {
-  const [code, setCode] = useState<string>(
-    // "sequence('c3', 'eb3', sequence('g3', 'f3'))" //
-    /* `sequence(
-      stack('c4','eb4','g4'),
-      stack('bb3','d4','f4'),
-      stack('ab3','c4','eb4'),
-      stack('g3','b3','d4')
-    )._slow(4)`, */ //
-    `slowcat(
-      stack('c4','eb4','g4'),
-      stack('bb3','d4','f4'),
-      stack('ab3','c4','eb4'),
-      stack('g3','b3','d4')
-    )`
-    /* `fastcat(
-      stack('c4','eb4','g4'),
-      stack('bb3','d4','f4'),
-      stack('ab3','c4','eb4'),
-      stack('g3','b3','d4')
-    )._slow(4)` */ //
-    // "slow(sequence('c3', 'eb3', sequence('g3', 'f3')), 'g3')" //
-    // "sequence('c3', 'eb3')._fast(2)" //
-  );
+  const [code, setCode] = useState<string>(tetris);
   const [log, setLog] = useState('');
   const logBox = useRef<any>();
   const [error, setError] = useState<Error>();
@@ -63,7 +42,17 @@ function App() {
       // console.log('event', event, time);
       synth.triggerAttackRelease(event.value, event.duration, time);
     }, []),
-    onQuery: useCallback((span) => pattern?.query(span) || [], [pattern]),
+    onQuery: useCallback(
+      (span) => {
+        try {
+          return pattern?.query(span) || [];
+        } catch (err: any) {
+          setError(err);
+          return [];
+        }
+      },
+      [pattern]
+    ),
     onSchedule: useCallback(
       (_events, cycle) => {
         // console.log('schedule', _events, cycle);
