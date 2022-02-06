@@ -5,13 +5,10 @@ import cx from "./cx.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
 import useCycle from "./useCycle.js";
 import {tetris} from "./tunes.js";
-const {Fraction, TimeSpan} = strudel;
-const fr = (v) => new Fraction(v);
-const ts = (start, end) => new TimeSpan(fr(start), fr(end));
-const parse = (code) => {
-  const {sequence, pure, reify, slowcat, fastcat, cat, stack, silence} = strudel;
-  return eval(code);
-};
+import _mini from "./mini.js";
+const {sequence, pure, reify, slowcat, fastcat, cat, stack, silence} = strudel;
+const mini = _mini;
+const parse = (code) => eval(code);
 const synth = new Tone.PolySynth().toDestination();
 synth.set({
   oscillator: {type: "triangle"},

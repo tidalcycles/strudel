@@ -292,19 +292,39 @@ class Pattern {
   outerJoin() {
     return this.outerBind(id);
   }
+  _patternify(func) {
+    const pat = this;
+    const patterned = function(...args) {
+      const pat_arg = sequence(...args);
+      return pat_arg.fmap((arg) => func.call(pat, arg)).outerJoin();
+    };
+    return patterned;
+  }
   _fast(factor) {
     var fastQuery = this.withQueryTime((t) => t.mul(factor));
     return fastQuery.withEventTime((t) => t.div(factor));
   }
+  fast(factor) {
+    return this._patternify(Pattern.prototype._fast)(factor);
+  }
   _slow(factor) {
     return this._fast(1 / factor);
+  }
+  slow(factor) {
+    return this._patternify(Pattern.prototype._slow)(factor);
   }
   _early(offset) {
     offset = Fraction(offset);
     return this.withQueryTime((t) => t.add(offset)).withEventTime((t) => t.sub(offset));
   }
+  early(factor) {
+    return this._patternify(Pattern.prototype._early)(factor);
+  }
   _late(offset) {
     return this._early(0 - offset);
+  }
+  late(factor) {
+    return this._patternify(Pattern.prototype._late)(factor);
   }
   when(binary_pat, func) {
     var true_pat = binary_pat._filterValues(id);
