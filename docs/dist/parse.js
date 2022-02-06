@@ -76,6 +76,5 @@ export const mini = (...strings) => {
 };
 export const h = (string) => {
   const ast = krill.parse(string);
-  console.log("ast", ast);
   return patternifyAST(ast);
 };

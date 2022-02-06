@@ -19,6 +19,7 @@ synth.set({
   }
 });
 function App() {
+  const [mode, setMode] = useState("javascript");
   const [code, setCode] = useState(tetrisHaskell);
   const [log, setLog] = useState("");
   const logBox = useRef();
@@ -49,7 +50,14 @@ function App() {
   });
   useEffect(() => {
     try {
-      const _pattern = parse(code);
+      let _pattern;
+      try {
+        _pattern = h(code);
+        setMode("pegjs");
+      } catch (err) {
+        setMode("javascript");
+        _pattern = parse(code);
+      }
       setPattern(_pattern);
       setError(void 0);
     } catch (err) {
@@ -78,6 +86,11 @@ function App() {
     className: cx("h-full bg-slate-600", error ? "focus:ring-red-500" : "focus:ring-slate-800")
   }, /* @__PURE__ */ React.createElement(CodeMirror, {
     value: code,
+    options: {
+      mode,
+      theme: "material",
+      lineNumbers: true
+    },
     onChange: (_, __, value) => {
       setLog((log2) => log2 + `${log2 ? "\n\n" : ""}✏️ edit
 ${code}
