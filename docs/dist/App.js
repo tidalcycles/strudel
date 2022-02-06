@@ -4,8 +4,9 @@ import * as strudel from "../_snowpack/link/strudel.js";
 import cx from "./cx.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
 import useCycle from "./useCycle.js";
-import {tetris} from "./tunes.js";
+import * as tunes from "./tunes.js";
 import _mini from "./mini.js";
+const {tetris, tetrisMini} = tunes;
 const {sequence, pure, reify, slowcat, fastcat, cat, stack, silence} = strudel;
 const mini = _mini;
 const parse = (code) => eval(code);
@@ -17,7 +18,7 @@ synth.set({
   }
 });
 function App() {
-  const [code, setCode] = useState(tetris);
+  const [code, setCode] = useState(tetrisMini);
   const [log, setLog] = useState("");
   const logBox = useRef();
   const [error, setError] = useState();
