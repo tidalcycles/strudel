@@ -2,7 +2,7 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence} from "../strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm} from "../strudel.mjs";
 
 describe('TimeSpan', function() {
   describe('equals()', function() {
@@ -78,7 +78,7 @@ describe('Pattern', function() {
   })
   describe('stack()', function () {
     it('Can stack things', function () {
-      assert.deepStrictEqual(stack([pure("a"), pure("b"), pure("c")]).firstCycle.map(h => h.value), ["a", "b", "c"])
+      assert.deepStrictEqual(stack(pure("a"), pure("b"), pure("c")).firstCycle.map(h => h.value), ["a", "b", "c"])
     })
   })
   describe('_fast()', function () {
@@ -120,9 +120,25 @@ describe('Pattern', function() {
       assert.deepStrictEqual(fastcat([pure("a"), pure("b"), pure("c")]).rev().firstCycle.sort((a,b) => a.part.begin.sub(b.part.begin)).map(a => a.value), ["c", "b","a"])
     })
   })
-  describe('sequence()', function () {
-    it('Can work like fastcat', function () {
+  describe('sequence()', () => {
+    it('Can work like fastcat', () => {
       assert.deepStrictEqual(sequence(1,2,3).firstCycle, fastcat([pure(1), pure(2), pure(3)]).firstCycle)
+    })
+  })
+  describe('polyrhythm()', () => {
+    it('Can layer up cycles', () => {
+      assert.deepStrictEqual(
+        polyrhythm(["a","b"],["c"])._sortEventsByPart().firstCycle,
+        stack([fastcat(pure("a"),pure("b")),pure("c")])._sortEventsByPart().firstCycle
+      )
+    })
+  })
+  describe('every()', () => {
+    it('Can apply a function every 3rd time', () => {
+      assert.deepStrictEqual(
+        pure("a").every(3, x => x._fast(2)._fast(3)).firstCycle,
+        sequence(sequence("a", "a"), "a", "a").firstCycle
+      )
     })
   })
 })
