@@ -605,26 +605,32 @@ select {
 .flex {
   display: flex;
 }
-.h-\[100vh\] {
+.h-screen {
   height: 100vh;
 }
 .h-16 {
   height: 4rem;
 }
+.h-full {
+  height: 100%;
+}
 .h-64 {
   height: 16rem;
-}
-.w-16 {
-  width: 4rem;
 }
 .w-full {
   width: 100%;
 }
+.w-16 {
+  width: 4rem;
+}
+.flex-none {
+  flex: none;
+}
 .grow {
   flex-grow: 1;
 }
-.flex-row {
-  flex-direction: row;
+.flex-col {
+  flex-direction: column;
 }
 .items-center {
   align-items: center;
@@ -636,6 +642,9 @@ select {
 }
 .border {
   border-width: 1px;
+}
+.border-0 {
+  border-width: 0px;
 }
 .border-b {
   border-bottom-width: 1px;
@@ -664,6 +673,10 @@ select {
   --tw-bg-opacity: 1;
   background-color: rgb(51 65 85 / var(--tw-bg-opacity));
 }
+.bg-\[\#283237\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(40 50 55 / var(--tw-bg-opacity));
+}
 .p-2 {
   padding: 0.5rem;
 }
@@ -686,14 +699,22 @@ select {
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
+
+.react-codemirror2,
+.CodeMirror {
+  height: 100% !important;
+}
+
 .hover\:bg-slate-500:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(100 116 139 / var(--tw-bg-opacity));
 }
+
 .focus\:ring-red-500:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(239 68 68 / var(--tw-ring-opacity));
 }
+
 .focus\:ring-slate-800:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(30 41 59 / var(--tw-ring-opacity));

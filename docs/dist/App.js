@@ -6,6 +6,7 @@ import * as Tone from "../_snowpack/pkg/tone.js";
 import useCycle from "./useCycle.js";
 import * as tunes from "./tunes.js";
 import * as krill from "./parse.js";
+import CodeMirror from "./CodeMirror.js";
 const {tetris, tetrisMini, tetrisHaskell} = tunes;
 const {sequence, pure, reify, slowcat, fastcat, cat, stack, silence} = strudel;
 const {mini, h} = krill;
@@ -52,6 +53,7 @@ function App() {
       setPattern(_pattern);
       setError(void 0);
     } catch (err) {
+      console.warn(err);
       setError(err);
     }
   }, [code]);
@@ -59,9 +61,9 @@ function App() {
     logBox.current.scrollTop = logBox.current?.scrollHeight;
   }, [log]);
   return /* @__PURE__ */ React.createElement("div", {
-    className: "h-[100vh] bg-slate-900 flex-row"
+    className: "h-screen bg-slate-900 flex flex-col"
   }, /* @__PURE__ */ React.createElement("header", {
-    className: "px-2 flex items-center space-x-2 border-b border-gray-200 bg-white"
+    className: "flex-none w-full h-16 px-2 flex items-center space-x-2 border-b border-gray-200 bg-white"
   }, /* @__PURE__ */ React.createElement("img", {
     src: logo,
     className: "Tidal-logo w-16 h-16",
@@ -69,29 +71,30 @@ function App() {
   }), /* @__PURE__ */ React.createElement("h1", {
     className: "text-2xl"
   }, "Strudel REPL")), /* @__PURE__ */ React.createElement("section", {
-    className: "grow p-2 text-gray-100"
+    className: "grow flex flex-col p-2 text-gray-100"
   }, /* @__PURE__ */ React.createElement("div", {
-    className: "relative"
+    className: "grow relative"
   }, /* @__PURE__ */ React.createElement("div", {
-    className: "absolute right-2 bottom-2 text-red-500"
-  }, error?.message), /* @__PURE__ */ React.createElement("textarea", {
-    className: cx("w-full h-64 bg-slate-600", error ? "focus:ring-red-500" : "focus:ring-slate-800"),
+    className: cx("h-full bg-slate-600", error ? "focus:ring-red-500" : "focus:ring-slate-800")
+  }, /* @__PURE__ */ React.createElement(CodeMirror, {
     value: code,
-    onChange: (e) => {
+    onChange: (_, __, value) => {
       setLog((log2) => log2 + `${log2 ? "\n\n" : ""}✏️ edit
 ${code}
-${e.target.value}`);
-      setCode(e.target.value);
+${value}`);
+      setCode(value);
     }
-  })), /* @__PURE__ */ React.createElement("textarea", {
-    className: "w-full h-64 bg-slate-600",
+  })), error && /* @__PURE__ */ React.createElement("div", {
+    className: "absolute right-2 bottom-2 text-red-500"
+  }, error?.message || "unknown error")), /* @__PURE__ */ React.createElement("button", {
+    className: "flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500",
+    onClick: () => cycle.toggle()
+  }, cycle.started ? "pause" : "play"), /* @__PURE__ */ React.createElement("textarea", {
+    className: "grow bg-[#283237] border-0",
     value: log,
     readOnly: true,
     ref: logBox,
     style: {fontFamily: "monospace"}
-  }), /* @__PURE__ */ React.createElement("button", {
-    className: "w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500",
-    onClick: () => cycle.toggle()
-  }, cycle.started ? "pause" : "play")));
+  })));
 }
 export default App;
