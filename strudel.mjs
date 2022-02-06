@@ -423,17 +423,23 @@ class Pattern {
         return this.outerBind(id)
     }
 
-//     def _patternify(method):
-//         def patterned(self, *args):
-//             pat_arg = sequence(*args)
-//             return pat_arg.fmap(lambda arg: method(self,arg)).outer_join()
-//         return patterned
+    _patternify(func) {
+        const pat = this
+        const patterned = function (...args) {
+           const pat_arg = sequence(...args)
+           return pat_arg.fmap(arg => func.call(pat,arg)).outerJoin()
+        }
+        return patterned
+   }
 
     _fast(factor) {
         var fastQuery = this.withQueryTime(t => t.mul(factor))
         return fastQuery.withEventTime(t => t.div(factor))
     }
-//     fast = _patternify(_fast)
+
+    fast(factor) {
+        return this._patternify(Pattern.prototype._fast)(factor)
+    }
 
     _slow(factor) {
         return this._fast(1/factor)
