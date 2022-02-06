@@ -6,12 +6,12 @@ import * as Tone from 'tone';
 import useCycle from './useCycle';
 import type { Hap, Pattern } from './types';
 import * as tunes from './tunes';
-import _mini from './mini';
+import * as krill from './parse';
 
-const { tetris, tetrisMini } = tunes;
+const { tetris, tetrisMini, tetrisHaskell } = tunes;
 
 const { sequence, pure, reify, slowcat, fastcat, cat, stack, silence } = strudel; // make available to eval
-const mini = _mini; // for eval (direct import wont work somehow)
+const { mini, h } = krill; // for eval (direct import wont work somehow)
 const parse = (code: string): Pattern => eval(code);
 
 const synth = new Tone.PolySynth().toDestination();
@@ -23,7 +23,7 @@ synth.set({
 });
 
 function App() {
-  const [code, setCode] = useState<string>(tetrisMini);
+  const [code, setCode] = useState<string>(tetrisHaskell);
   const [log, setLog] = useState('');
   const logBox = useRef<any>();
   const [error, setError] = useState<Error>();
