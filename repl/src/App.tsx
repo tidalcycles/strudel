@@ -6,15 +6,11 @@ import * as Tone from 'tone';
 import useCycle from './useCycle';
 import type { Hap, Pattern } from './types';
 import { tetris } from './tunes';
+import _mini from './mini';
 
-const { Fraction, TimeSpan } = strudel;
-
-const fr = (v: number) => new Fraction(v);
-const ts = (start: number, end: number) => new TimeSpan(fr(start), fr(end));
-const parse = (code: string): Pattern => {
-  const { sequence, pure, reify, slowcat, fastcat, cat, stack, silence } = strudel; // make available to eval
-  return eval(code);
-};
+const { sequence, pure, reify, slowcat, fastcat, cat, stack, silence } = strudel; // make available to eval
+const mini = _mini; // for eval (direct import wont work somehow)
+const parse = (code: string): Pattern => eval(code);
 
 const synth = new Tone.PolySynth().toDestination();
 synth.set({
