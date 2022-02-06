@@ -5,8 +5,10 @@ import cx from './cx';
 import * as Tone from 'tone';
 import useCycle from './useCycle';
 import type { Hap, Pattern } from './types';
-import { tetris } from './tunes';
+import * as tunes from './tunes';
 import _mini from './mini';
+
+const { tetris, tetrisMini } = tunes;
 
 const { sequence, pure, reify, slowcat, fastcat, cat, stack, silence } = strudel; // make available to eval
 const mini = _mini; // for eval (direct import wont work somehow)
@@ -21,7 +23,7 @@ synth.set({
 });
 
 function App() {
-  const [code, setCode] = useState<string>(tetris);
+  const [code, setCode] = useState<string>(tetrisMini);
   const [log, setLog] = useState('');
   const logBox = useRef<any>();
   const [error, setError] = useState<Error>();
