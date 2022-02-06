@@ -24,6 +24,7 @@ synth.set({
 });
 
 function App() {
+  const [mode, setMode] = useState<string>('javascript');
   const [code, setCode] = useState<string>(tetrisHaskell);
   const [log, setLog] = useState('');
   const logBox = useRef<any>();
@@ -64,7 +65,17 @@ function App() {
   // parse pattern when code changes
   useEffect(() => {
     try {
-      const _pattern = parse(code);
+      let _pattern;
+      try {
+        _pattern = h(code);
+        setMode('pegjs'); // haskell mode does not recognize quotes, pegjs looks ok by accident..
+        // console.log('h _pattern', _pattern);
+      } catch (err) {
+        setMode('javascript');
+        // code is not haskell like
+        _pattern = parse(code);
+        // console.log('not haskell..', _pattern);
+      }
       setPattern(_pattern);
       // cycle.query(cycle.activeCycle()); // reschedule active cycle
       setError(undefined);
@@ -88,6 +99,11 @@ function App() {
           <div className={cx('h-full bg-slate-600', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}>
             <CodeMirror
               value={code}
+              options={{
+                mode,
+                theme: 'material',
+                lineNumbers: true,
+              }}
               onChange={(_: any, __: any, value: any) => {
                 setLog((log) => log + `${log ? '\n\n' : ''}✏️ edit\n${code}\n${value}`);
                 setCode(value);
@@ -110,7 +126,13 @@ function App() {
         >
           {cycle.started ? 'pause' : 'play'}
         </button>
-        <textarea className="grow bg-[#283237] border-0" value={log} readOnly ref={logBox} style={{ fontFamily: 'monospace' }} />
+        <textarea
+          className="grow bg-[#283237] border-0"
+          value={log}
+          readOnly
+          ref={logBox}
+          style={{ fontFamily: 'monospace' }}
+        />
       </section>
     </div>
   );
