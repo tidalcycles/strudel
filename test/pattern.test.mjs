@@ -4,6 +4,9 @@ import { strict as assert } from 'assert';
 
 import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm} from "../strudel.mjs";
 
+const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
+const hap = (whole, part, value) => new Hap(whole, part, value)
+
 describe('TimeSpan', function() {
   describe('equals()', function() {
     it('Should be equal to the same value', function() {
@@ -99,6 +102,21 @@ describe('Pattern', function() {
   describe('_slow()', function () {
     it('Makes things slower', function () {
       assert.deepStrictEqual(pure("a")._slow(2).firstCycle[0], new Hap(new TimeSpan(Fraction(0),Fraction(2)), new TimeSpan(Fraction(0), Fraction(1)), "a"))
+
+      const pat = sequence(pure('c3'), pure('eb3')._slow(2)); // => try mini('c3 eb3/2') in repl
+      assert.deepStrictEqual(
+        pat.query(ts(0,1))[1],
+        hap(ts(0,1), ts(1/2,1), "eb3")
+      )
+      // the following test fails
+      /* assert.deepStrictEqual(
+        pat.query(ts(1,2))[1], undefined
+      ) */
+      // expecting [c3 eb3] [c3 ~]
+      // what happens [c3 eb3] [c3 eb3]
+      // notable examples:
+      // mini('[c3 g3]/2 eb3') always plays [c3 eb3]
+      // mini('eb3 [c3 g3]/2 ') always plays [c3 g3]
     })
   })  
   describe('_filterValues()', function () {
