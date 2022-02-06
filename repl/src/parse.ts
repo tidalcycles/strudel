@@ -20,7 +20,7 @@ const applyOptions = (parent: any) => (pat: any, i: number) => {
       case 'stretch':
         const speed = new Fraction(operator.arguments_.amount).inverse().valueOf();
         return reify(pat).fast(speed);
-      // case 'fixed-step': "%" // https://github.com/Mdashdotdashn/krill#patterns---a-more-traditional-approach
+      // TODO: case 'fixed-step': "%"
     }
     console.warn(`operator "${operator.type_}" not implemented`);
   }
