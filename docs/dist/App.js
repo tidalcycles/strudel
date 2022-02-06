@@ -5,10 +5,10 @@ import cx from "./cx.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
 import useCycle from "./useCycle.js";
 import * as tunes from "./tunes.js";
-import _mini from "./mini.js";
-const {tetris, tetrisMini} = tunes;
+import * as krill from "./parse.js";
+const {tetris, tetrisMini, tetrisHaskell} = tunes;
 const {sequence, pure, reify, slowcat, fastcat, cat, stack, silence} = strudel;
-const mini = _mini;
+const {mini, h} = krill;
 const parse = (code) => eval(code);
 const synth = new Tone.PolySynth().toDestination();
 synth.set({
@@ -18,7 +18,7 @@ synth.set({
   }
 });
 function App() {
-  const [code, setCode] = useState(tetrisMini);
+  const [code, setCode] = useState(tetrisHaskell);
   const [log, setLog] = useState("");
   const logBox = useRef();
   const [error, setError] = useState();

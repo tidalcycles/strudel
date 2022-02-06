@@ -1,5 +1,6 @@
 {
   "imports": {
+    "@tonaljs/tonal": "./@tonaljs/tonal.js",
     "fraction.js": "./fractionjs.js",
     "react": "./react.js",
     "react-dom": "./react-dom.js",
