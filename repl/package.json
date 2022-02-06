@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "@tonaljs/tonal": "^4.6.5",
+    "codemirror": "^5.65.1",
     "react": "^17.0.2",
+    "react-codemirror2": "^7.2.1",
     "react-dom": "^17.0.2",
     "tone": "^14.7.77"
   },

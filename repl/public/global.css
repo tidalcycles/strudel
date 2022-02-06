@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.react-codemirror2,
+.CodeMirror {
+  height: 100% !important;
+}
