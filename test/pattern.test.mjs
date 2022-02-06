@@ -92,6 +92,8 @@ describe('Pattern', function() {
     })
     it('Makes things faster, with a pattern of factors', function () {
       assert.equal(pure("a").fast(sequence(1,4)).firstCycle.length, 3)
+      // not working..
+      // assert.deepStrictEqual(pure("a").fast(sequence(1,4)).firstCycle, sequence("a",sequence("a","a")).firstCycle)
     })
   })
   describe('_slow()', function () {
