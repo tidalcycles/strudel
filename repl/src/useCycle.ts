@@ -53,7 +53,7 @@ function useCycle(props: UseCycleProps) {
         Tone.Transport.schedule((time) => {
           const toneEvent = {
             time: event.part.begin.valueOf(),
-            duration: event.part.end.valueOf() - event.part.begin.valueOf(),
+            duration: event.whole.end.valueOf() - event.whole.begin.valueOf(),
             value: event.value,
           };
           onEvent(time, toneEvent);
