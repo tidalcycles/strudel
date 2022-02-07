@@ -43,9 +43,7 @@ function App() {
         return [];
       }
     }, [pattern]),
-    onSchedule: useCallback((_events, cycle2) => {
-      logCycle(_events, cycle2);
-    }, [pattern]),
+    onSchedule: useCallback((_events, cycle2) => logCycle(_events, cycle2), [pattern]),
     ready: !!pattern
   });
   useEffect(() => {
@@ -57,8 +55,12 @@ function App() {
       } catch (err) {
         setMode("javascript");
         _pattern = parse(code);
+        if (_pattern?.constructor?.name !== "Pattern") {
+          const message = `got "${typeof _pattern}" instead of pattern`;
+          throw new Error(message + (typeof _pattern === "function" ? "did you foget to call a function?" : ""));
+        }
       }
-      setPattern(_pattern);
+      setPattern(() => _pattern);
       setError(void 0);
     } catch (err) {
       console.warn(err);

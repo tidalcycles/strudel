@@ -53,31 +53,26 @@ function App() {
       },
       [pattern]
     ),
-    onSchedule: useCallback(
-      (_events, cycle) => {
-        // console.log('schedule', _events, cycle);
-        logCycle(_events, cycle);
-      },
-      [pattern]
-    ),
+    onSchedule: useCallback((_events, cycle) => logCycle(_events, cycle), [pattern]),
     ready: !!pattern,
   });
   // parse pattern when code changes
   useEffect(() => {
     try {
-      let _pattern;
+      let _pattern: Pattern;
       try {
         _pattern = h(code);
         setMode('pegjs'); // haskell mode does not recognize quotes, pegjs looks ok by accident..
-        // console.log('h _pattern', _pattern);
       } catch (err) {
         setMode('javascript');
         // code is not haskell like
         _pattern = parse(code);
-        // console.log('not haskell..', _pattern);
+        if (_pattern?.constructor?.name !== 'Pattern') {
+          const message = `got "${typeof _pattern}" instead of pattern`;
+          throw new Error(message + (typeof _pattern === 'function' ? ', did you forget to call a function?' : '.'));
+        }
       }
-      setPattern(_pattern);
-      // cycle.query(cycle.activeCycle()); // reschedule active cycle
+      setPattern(() => _pattern); // need arrow function here! otherwise if user returns a function, react will think it's a state reducer
       setError(undefined);
     } catch (err: any) {
       console.warn(err);
