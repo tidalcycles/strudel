@@ -69,7 +69,7 @@ function App() {
         _pattern = parse(code);
         if (_pattern?.constructor?.name !== 'Pattern') {
           const message = `got "${typeof _pattern}" instead of pattern`;
-          throw new Error(message + (typeof _pattern === 'function' ? 'did you foget to call a function?' : ''));
+          throw new Error(message + (typeof _pattern === 'function' ? ', did you forget to call a function?' : '.'));
         }
       }
       setPattern(() => _pattern); // need arrow function here! otherwise if user returns a function, react will think it's a state reducer
