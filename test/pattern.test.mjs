@@ -150,19 +150,19 @@ describe('Pattern', function() {
       assert.deepStrictEqual(fastcat("a","b","c").rev().firstCycle.sort((a,b) => a.part.begin.sub(b.part.begin)).map(a => a.value), ["c", "b","a"])
     })
   })
-  // describe('sequence()', () => {
-  //   it('Can work like fastcat', () => {
-  //     assert.deepStrictEqual(sequence(1,2,3).firstCycle, fastcat([pure(1), pure(2), pure(3)]).firstCycle)
-  //   })
-  // })
-  // describe('polyrhythm()', () => {
-  //   it('Can layer up cycles', () => {
-  //     assert.deepStrictEqual(
-  //       polyrhythm(["a","b"],["c"])._sortEventsByPart().firstCycle,
-  //       stack([fastcat(pure("a"),pure("b")),pure("c")])._sortEventsByPart().firstCycle
-  //     )
-  //   })
-  // })
+  describe('sequence()', () => {
+    it('Can work like fastcat', () => {
+      assert.deepStrictEqual(sequence(1,2,3).firstCycle, fastcat(1,2,3).firstCycle)
+    })
+  })
+  describe('polyrhythm()', () => {
+    it('Can layer up cycles', () => {
+      assert.deepStrictEqual(
+        polyrhythm(["a","b"],["c"]).firstCycle,
+        stack(fastcat(pure("a"),pure("b")),pure("c")).firstCycle
+      )
+    })
+  })
   describe('every()', () => {
     it('Can apply a function every 3rd time', () => {
       assert.deepStrictEqual(
