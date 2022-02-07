@@ -47,16 +47,18 @@ function useCycle(props: UseCycleProps) {
       }, queryNextTime);
     }
     // schedule events for next cycle
-    events?.forEach((event) => {
-      Tone.Transport.schedule((time) => {
-        const toneEvent = {
-          time: event.part.begin.valueOf(),
-          duration: event.part.end.valueOf() - event.part.begin.valueOf(),
-          value: event.value,
-        };
-        onEvent(time, toneEvent);
-      }, event.part.begin.valueOf());
-    });
+    events
+      ?.filter((event) => event.part.begin.valueOf() === event.whole.begin.valueOf())
+      .forEach((event) => {
+        Tone.Transport.schedule((time) => {
+          const toneEvent = {
+            time: event.part.begin.valueOf(),
+            duration: event.part.end.valueOf() - event.part.begin.valueOf(),
+            value: event.value,
+          };
+          onEvent(time, toneEvent);
+        }, event.part.begin.valueOf());
+      });
   };
 
   useEffect(() => {
