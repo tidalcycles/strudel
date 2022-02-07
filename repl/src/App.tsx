@@ -5,16 +5,15 @@ import cx from './cx';
 import * as Tone from 'tone';
 import useCycle from './useCycle';
 import type { Hap, Pattern } from './types';
-import { tetris } from './tunes';
+import * as tunes from './tunes';
+import * as krill from './parse';
+import CodeMirror from './CodeMirror';
 
-const { Fraction, TimeSpan } = strudel;
+const { tetris, tetrisMini, tetrisHaskell } = tunes;
 
-const fr = (v: number) => new Fraction(v);
-const ts = (start: number, end: number) => new TimeSpan(fr(start), fr(end));
-const parse = (code: string): Pattern => {
-  const { sequence, pure, reify, slowcat, fastcat, cat, stack, silence } = strudel; // make available to eval
-  return eval(code);
-};
+const { sequence, pure, reify, slowcat, fastcat, cat, stack, silence } = strudel; // make available to eval
+const { mini, h } = krill; // for eval (direct import wont work somehow)
+const parse = (code: string): Pattern => eval(code);
 
 const synth = new Tone.PolySynth().toDestination();
 synth.set({
@@ -25,7 +24,8 @@ synth.set({
 });
 
 function App() {
-  const [code, setCode] = useState<string>(tetris);
+  const [mode, setMode] = useState<string>('javascript');
+  const [code, setCode] = useState<string>(tetrisHaskell);
   const [log, setLog] = useState('');
   const logBox = useRef<any>();
   const [error, setError] = useState<Error>();
@@ -65,11 +65,22 @@ function App() {
   // parse pattern when code changes
   useEffect(() => {
     try {
-      const _pattern = parse(code);
+      let _pattern;
+      try {
+        _pattern = h(code);
+        setMode('pegjs'); // haskell mode does not recognize quotes, pegjs looks ok by accident..
+        // console.log('h _pattern', _pattern);
+      } catch (err) {
+        setMode('javascript');
+        // code is not haskell like
+        _pattern = parse(code);
+        // console.log('not haskell..', _pattern);
+      }
       setPattern(_pattern);
       // cycle.query(cycle.activeCycle()); // reschedule active cycle
       setError(undefined);
     } catch (err: any) {
+      console.warn(err);
       setError(err);
     }
   }, [code]);
@@ -77,38 +88,51 @@ function App() {
   useLayoutEffect(() => {
     logBox.current.scrollTop = logBox.current?.scrollHeight;
   }, [log]);
-
   return (
-    <div className="h-[100vh] bg-slate-900 flex-row">
-      <header className="px-2 flex items-center space-x-2 border-b border-gray-200 bg-white">
+    <div className="h-screen bg-slate-900 flex flex-col">
+      <header className="flex-none w-full h-16 px-2 flex items-center space-x-2 border-b border-gray-200 bg-white">
         <img src={logo} className="Tidal-logo w-16 h-16" alt="logo" />
         <h1 className="text-2xl">Strudel REPL</h1>
       </header>
-      <section className="grow p-2 text-gray-100">
-        <div className="relative">
-          <div className="absolute right-2 bottom-2 text-red-500">{error?.message}</div>
-          <textarea
+      <section className="grow flex flex-col p-2 text-gray-100">
+        <div className="grow relative">
+          <div className={cx('h-full bg-slate-600', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}>
+            <CodeMirror
+              value={code}
+              options={{
+                mode,
+                theme: 'material',
+                lineNumbers: true,
+              }}
+              onChange={(_: any, __: any, value: any) => {
+                setLog((log) => log + `${log ? '\n\n' : ''}✏️ edit\n${code}\n${value}`);
+                setCode(value);
+              }}
+            />
+          </div>
+          {error && <div className="absolute right-2 bottom-2 text-red-500">{error?.message || 'unknown error'}</div>}
+          {/* <textarea
             className={cx('w-full h-64 bg-slate-600', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}
             value={code}
             onChange={(e) => {
               setLog((log) => log + `${log ? '\n\n' : ''}✏️ edit\n${code}\n${e.target.value}`);
               setCode(e.target.value);
             }}
-          />
+          /> */}
         </div>
+        <button
+          className="flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500"
+          onClick={() => cycle.toggle()}
+        >
+          {cycle.started ? 'pause' : 'play'}
+        </button>
         <textarea
-          className="w-full h-64 bg-slate-600"
+          className="grow bg-[#283237] border-0"
           value={log}
           readOnly
           ref={logBox}
           style={{ fontFamily: 'monospace' }}
         />
-        <button
-          className="w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500"
-          onClick={() => cycle.toggle()}
-        >
-          {cycle.started ? 'pause' : 'play'}
-        </button>
       </section>
     </div>
   );

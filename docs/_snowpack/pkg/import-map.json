@@ -1,7 +1,13 @@
 {
   "imports": {
+    "@tonaljs/tonal": "./@tonaljs/tonal.js",
+    "codemirror/lib/codemirror.css": "./codemirror/lib/codemirror.css",
+    "codemirror/mode/javascript/javascript.js": "./codemirror/mode/javascript/javascript.js",
+    "codemirror/mode/pegjs/pegjs.js": "./codemirror/mode/pegjs/pegjs.js",
+    "codemirror/theme/material.css": "./codemirror/theme/material.css",
     "fraction.js": "./fractionjs.js",
     "react": "./react.js",
+    "react-codemirror2": "./react-codemirror2.js",
     "react-dom": "./react-dom.js",
     "tone": "./tone.js"
   }

@@ -4,10 +4,14 @@
     "build": "snowpack build && cp ./public/.nojekyll ../docs",
     "test": "web-test-runner \"src/**/*.test.tsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
-    "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\""
+    "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
+    "peggy": "peggy -o krill-parser.js --format es ./krill.pegjs"
   },
   "dependencies": {
+    "@tonaljs/tonal": "^4.6.5",
+    "codemirror": "^5.65.1",
     "react": "^17.0.2",
+    "react-codemirror2": "^7.2.1",
     "react-dom": "^17.0.2",
     "tone": "^14.7.77"
   },
@@ -27,6 +31,7 @@
     "@web/test-runner": "^0.13.3",
     "autoprefixer": "^10.4.2",
     "chai": "^4.3.4",
+    "peggy": "^1.2.0",
     "postcss": "^8.4.6",
     "prettier": "^2.2.1",
     "snowpack": "^3.3.7",

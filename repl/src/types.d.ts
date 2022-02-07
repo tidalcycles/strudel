@@ -19,4 +19,5 @@ export declare interface Hap<T = any> {
 }
 export declare interface Pattern<T = any> {
   query: (span: TimeSpan) => Hap<T>[];
+  fmap: (v: T) => T;
 }
