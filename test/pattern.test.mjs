@@ -163,12 +163,12 @@ describe('Pattern', function() {
   //     )
   //   })
   // })
-  // describe('every()', () => {
-  //   it('Can apply a function every 3rd time', () => {
-  //     assert.deepStrictEqual(
-  //       pure("a").every(3, x => x._fast(2)._fast(3)).firstCycle,
-  //       sequence(sequence("a", "a"), "a", "a").firstCycle
-  //     )
-  //   })
-  // })
+  describe('every()', () => {
+    it('Can apply a function every 3rd time', () => {
+      assert.deepStrictEqual(
+        pure("a").every(3, x => x._fast(2))._fast(3).firstCycle,
+        sequence(sequence("a", "a"), "a", "a").firstCycle
+      )
+    })
+  })
 })

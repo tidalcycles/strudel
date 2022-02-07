@@ -338,7 +338,7 @@ class Pattern {
   }
   every(n, func) {
     var pats = Array(n - 1).fill(this);
-    pats.unshift(this);
+    pats.unshift(func(this));
     return slowcat(...pats);
   }
   append(other) {
