@@ -106,7 +106,7 @@ describe('Pattern', function() {
       const pat = sequence(pure('c3'), pure('eb3')._slow(2)); // => try mini('c3 eb3/2') in repl
       assert.deepStrictEqual(
         pat.query(ts(0,1))[1],
-        hap(ts(0,1), ts(1/2,1), "eb3")
+        hap(ts(0.5,1.5), ts(1/2,1), "eb3")
       )
       // the following test fails
       /* assert.deepStrictEqual(
