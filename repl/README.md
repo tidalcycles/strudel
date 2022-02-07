@@ -11,11 +11,6 @@
 - more [mini notation features](https://tidalcycles.org/docs/patternlib/tutorials/mini_notation)
 - not tested
 
-### strudel
-
-- slow doesn't work when nested
-- reify should also work for strings
-
 ## Default Snowpack Readme
 
 > ✨ Bootstrapped with Create Snowpack App (CSA).
