@@ -121,13 +121,15 @@ describe('Pattern', function() {
   })
   describe('slowcat()', function () {
     it('Can concatenate things slowly', function () {
-      assert.deepStrictEqual(slowcat(pure("a"), pure("b")).firstCycle.map(x => x.value), ["a"])
-      assert.deepStrictEqual(slowcat(pure("a"), pure("b"))._early(1).firstCycle.map(x => x.value), ["b"])
+      assert.deepStrictEqual(slowcat("a", "b").firstCycle.map(x => x.value), ["a"])
+      assert.deepStrictEqual(slowcat("a", "b")._early(1).firstCycle.map(x => x.value), ["b"])
+      assert.deepStrictEqual(slowcat("a", slowcat("b", "c"))._early(1).firstCycle.map(x => x.value), ["b"])
+      assert.deepStrictEqual(slowcat("a", slowcat("b", "c"))._early(3).firstCycle.map(x => x.value), ["c"])
     })
   })
   describe('rev()', function () {
     it('Can reverse things', function () {
-      assert.deepStrictEqual(fastcat(pure("a"), pure("b"), pure("c")).rev().firstCycle.sort((a,b) => a.part.begin.sub(b.part.begin)).map(a => a.value), ["c", "b","a"])
+      assert.deepStrictEqual(fastcat("a","b","c").rev().firstCycle.sort((a,b) => a.part.begin.sub(b.part.begin)).map(a => a.value), ["c", "b","a"])
     })
   })
   // describe('sequence()', () => {

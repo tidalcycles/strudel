@@ -558,11 +558,15 @@ function stack(...pats) {
 function slowcat(...pats) {
     // Concatenation: combines a list of patterns, switching between them
     // successively, one per cycle.
-    // (currently behaves slightly differently from Tidal)
     pats = pats.map(reify)
-    var query = function(span) {
-        var pat = pats[Math.floor(span.begin) % pats.length]
-        return pat.query(span)
+    const query = function(span) {
+        const pat_n = Math.floor(span.begin) % pats.length
+        const pat = pats[pat_n]
+        // A bit of maths to make sure that cycles from constituent patterns aren't skipped.
+        // For example if three patterns are slowcat-ed, the fourth cycle of the result should 
+        // be the second (rather than fourth) cycle from the first pattern.
+        const offset = span.begin.floor().sub(span.begin.div(pats.length).floor())
+        return pat.withEventTime(t => t.add(offset)).query(span.withTime(t => t.sub(offset)))
     }
     return new Pattern(query)._splitQueries()
 }
