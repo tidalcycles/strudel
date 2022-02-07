@@ -399,9 +399,11 @@ function stack(...pats) {
 }
 function slowcat(...pats) {
   pats = pats.map(reify);
-  var query2 = function(span) {
-    var pat = pats[Math.floor(span.begin) % pats.length];
-    return pat.query(span);
+  const query2 = function(span) {
+    const pat_n = Math.floor(span.begin) % pats.length;
+    const pat = pats[pat_n];
+    const offset = span.begin.floor().sub(span.begin.div(pats.length).floor());
+    return pat.withEventTime((t) => t.add(offset)).query(span.withTime((t) => t.sub(offset)));
   };
   return new Pattern(query2)._splitQueries();
 }
