@@ -28,6 +28,11 @@
     "snowpack": "^3.8.8"
   },
   "dependencies": {
-    "fraction.js": "^4.1.2"
+    "automation-events": "^4.0.12",
+    "fraction.js": "^4.1.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "standardized-audio-context": "^25.3.20",
+    "tone": "^14.7.77"
   }
 }
