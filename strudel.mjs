@@ -1,6 +1,6 @@
 import Fraction from 'fraction.js'
 
-var removeUndefineds = function(xs) {
+const removeUndefineds = function(xs) {
     // Removes 'None' values from given list
     return xs.filter(x => x != undefined)
 }
@@ -9,7 +9,7 @@ function flatten(arr) {
     return [].concat(...arr)
 }
 
-var id = a => a
+const id = a => a
 
 function curry(func) {
     return function curried(...args) {
@@ -82,10 +82,10 @@ class TimeSpan {
     }
 
     get spanCycles() {
-        var spans = []
+        const spans = []
         var begin = this.begin
-        var end = this.end
-        var end_sam = end.sam()
+        const end = this.end
+        const end_sam = end.sam()
 
         while (end.gt(begin)) {
             // If begin and end are in the same cycle, we're done.
@@ -94,7 +94,7 @@ class TimeSpan {
                 break
             }
             // add a timespan up to the next sam
-            var next_begin = begin.nextSam()
+            const next_begin = begin.nextSam()
             spans.push(new TimeSpan(begin, next_begin))
 
             // continue with the next cycle
@@ -110,8 +110,8 @@ class TimeSpan {
 
     intersection(other) {
         // Intersection of two timespans, returns None if they don't intersect.
-        var intersect_begin = this.begin.max(other.begin)
-        var intersect_end = this.end.min(other.end)
+        const intersect_begin = this.begin.max(other.begin)
+        const intersect_end = this.end.min(other.end)
 
         if (intersect_begin.gt(intersect_end)) {
             return(undefined)
@@ -131,7 +131,7 @@ class TimeSpan {
 
     intersection_e(other) {
         // Like 'sect', but raises an exception if the timespans don't intersect.
-        var result = this.intersection(other)
+        const result = this.intersection(other)
         if (result == undefined) {
             // TODO - raise exception
             // raise ValueError(f'TimeSpan {self} and TimeSpan {other} do not intersect')
@@ -173,7 +173,7 @@ class Hap {
 
     withSpan(func) {
         // Returns a new event with the function f applies to the event timespan.
-        var whole = this.whole ? func(this.whole) : undefined
+        const whole = this.whole ? func(this.whole) : undefined
         return new Hap(whole, func(this.part), this.value)
     }
 
@@ -216,10 +216,8 @@ class Pattern {
         // Splits queries at cycle boundaries. This makes some calculations 
         // easier to express, as all events are then constrained to happen within 
         // a cycle.
-        var pat = this
-        var q = function(span) {
-            return flatten(span.spanCycles.map(subspan => pat.query(subspan)))
-        }
+        const pat = this
+        const q = span => flatten(span.spanCycles.map(subspan => pat.query(subspan)))
         return new Pattern(q)
     }
 
@@ -280,12 +278,12 @@ class Pattern {
         // Assumes 'this' is a pattern of functions, and given a function to
         // resolve wholes, applies a given pattern of values to that
         // pattern of functions.
-        var pat_func = this
+        const pat_func = this
         query = function(span) {
-            var event_funcs = pat_func.query(span)
-            var event_vals = pat_val.query(span)
+            const event_funcs = pat_func.query(span)
+            const event_vals = pat_val.query(span)
             apply = function(event_func, event_val) {
-                var s = event_func.part.intersection(event_val.part)
+                const s = event_func.part.intersection(event_val.part)
                 if (s == undefined) {
                     return undefined
                 }
@@ -298,7 +296,7 @@ class Pattern {
 
     appBoth(pat_val) {
         // Tidal's <*>
-        var whole_func = function(span_a, span_b) {
+        const whole_func = function(span_a, span_b) {
             if (span_a == undefined || span_B == undefined) {
                 return undefined
             }
@@ -308,17 +306,17 @@ class Pattern {
     }
 
     appLeft(pat_val) {
-        var pat_func = this
+        const pat_func = this
 
-        var query = function(span) {
-            var haps = []
-            for (var hap_func of pat_func.query(span)) {
-                var event_vals = pat_val.query(hap_func.part)
-                for (var hap_val of event_vals) {
-                    var new_whole = hap_func.whole
-                    var new_part = hap_func.part.intersection_e(hap_val.part)
-                    var new_value = hap_func.value(hap_val.value)
-                    var hap = new Hap(new_whole, new_part, new_value)
+        const query = function(span) {
+            const haps = []
+            for (const hap_func of pat_func.query(span)) {
+                const event_vals = pat_val.query(hap_func.part)
+                for (const hap_val of event_vals) {
+                    const new_whole = hap_func.whole
+                    const new_part = hap_func.part.intersection_e(hap_val.part)
+                    const new_value = hap_func.value(hap_val.value)
+                    const hap = new Hap(new_whole, new_part, new_value)
                     haps.push(hap)
                 }
             }
@@ -328,17 +326,17 @@ class Pattern {
     }
 
     appRight(pat_val) {
-        var pat_func = this
+        const pat_func = this
 
-        var query = function(span) {
-            var haps = []
-            for (var hap_val of pat_val.query(span)) {
-                var hap_funcs = pat_func.query(hap_val.part)
-                for (var hap_func of hap_funcs) {
-                    var new_whole = hap_val.whole
-                    var new_part = hap_func.part.intersection_e(hap_val.part)
-                    var new_value = hap_func.value(hap_val.value)
-                    var hap = new Hap(new_whole, new_part, new_value)
+        const query = function(span) {
+            let haps = []
+            for (const hap_val of pat_val.query(span)) {
+                const hap_funcs = pat_func.query(hap_val.part)
+                for (const hap_func of hap_funcs) {
+                    const new_whole = hap_val.whole
+                    const new_part = hap_func.part.intersection_e(hap_val.part)
+                    const new_value = hap_func.value(hap_val.value)
+                    const hap = new Hap(new_whole, new_part, new_value)
                     haps.push(hap)
                 }
             }
@@ -372,14 +370,14 @@ class Pattern {
     }
     
     _bindWhole(choose_whole, func) {
-        var pat_val = this
-        var query = function(span) {
-            var withWhole = function(a, b) {
+        const pat_val = this
+        const query = function(span) {
+            const withWhole = function(a, b) {
                 return new Hap(choose_whole(a.whole, b.whole), b.part,
                                b.value
                              )
             }
-            var match = function (a) {
+            const match = function (a) {
                 return func(a.value).query(a.part).map(b => withWhole(a, b))
             }
             return flatten(pat_val.query(span).map(a => match(a)))
@@ -388,7 +386,7 @@ class Pattern {
     }
 
     bind(func) {
-        var whole_func = function(a, b) {
+        const whole_func = function(a, b) {
             if (a == undefined || b == undefined) {
                 return undefined
             }
@@ -433,7 +431,7 @@ class Pattern {
    }
 
     _fast(factor) {
-        var fastQuery = this.withQueryTime(t => t.mul(factor))
+        const fastQuery = this.withQueryTime(t => t.mul(factor))
         return fastQuery.withEventTime(t => t.div(factor))
     }
 
@@ -471,10 +469,10 @@ class Pattern {
 
     when(binary_pat, func) {
         //binary_pat = sequence(binary_pat)
-        var true_pat = binary_pat._filterValues(id)
-        var false_pat = binary_pat._filterValues(val => !val)
-        var with_pat = true_pat.fmap(_ => y => y).appRight(func(this))
-        var without_pat = false_pat.fmap(_ => y => y).appRight(this)
+        const true_pat = binary_pat._filterValues(id)
+        const false_pat = binary_pat._filterValues(val => !val)
+        const with_pat = true_pat.fmap(_ => y => y).appRight(func(this))
+        const without_pat = false_pat.fmap(_ => y => y).appRight(this)
         return stack(with_pat, without_pat)
     }
 
@@ -483,7 +481,7 @@ class Pattern {
     }
 
     every(n, func) {
-        var pats = Array(n-1).fill(this)
+        const pats = Array(n-1).fill(this)
         pats.unshift(func(this))
         return slowcat(...pats)
     }
@@ -493,19 +491,19 @@ class Pattern {
     }
 
     rev() {
-        var pat = this
-        var query = function(span) {
-            var cycle = span.begin.sam()
-            var next_cycle = span.begin.nextSam()
-            var reflect = function(to_reflect) {
-                var reflected = to_reflect.withTime(time => cycle.add(next_cycle.sub(time)))
+        const pat = this
+        const query = function(span) {
+            const cycle = span.begin.sam()
+            const next_cycle = span.begin.nextSam()
+            const reflect = function(to_reflect) {
+                const reflected = to_reflect.withTime(time => cycle.add(next_cycle.sub(time)))
                 // [reflected.begin, reflected.end] = [reflected.end, reflected.begin] -- didn't work
-                var tmp = reflected.begin
+                const tmp = reflected.begin
                 reflected.begin = reflected.end
                 reflected.end = tmp
                 return reflected
             }
-            var haps = pat.query(reflect(span))
+            const haps = pat.query(reflect(span))
             return haps.map(hap => hap.withSpan(reflect))
         }
         return new Pattern(query)._splitQueries()
@@ -513,14 +511,14 @@ class Pattern {
 
     jux(func, by=1) {
         by /= 2
-        var elem_or = function(dict, key, dflt) {
+        const elem_or = function(dict, key, dflt) {
             if (key in dict) {
                 return dict[key]
             }
             return dflt
         }
-        var left = this.withValue(val => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) - by}))
-        var right = this.withValue(val => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) + by}))
+        const left = this.withValue(val => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) - by}))
+        const right = this.withValue(val => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) + by}))
 
         return stack([left,func(right)])
     }
@@ -548,9 +546,9 @@ function reify(thing) {
 }
 
 function stack(...pats) {
-    var pats = pats.map(pat => reify(pat))
-    var query = function(span) {
-        return flatten(pats.map(pat => pat.query(span)))
+    const reified = pats.map(pat => reify(pat))
+    const query = function(span) {
+        return flatten(reified.map(pat => pat.query(span)))
     }
     return new Pattern(query)
 }
@@ -599,15 +597,15 @@ function sequence(...xs) {
 }
 
 function polymeter(steps=0, ...args) {
-    var seqs = args.map(a => _sequenceCount(a))
+    const seqs = args.map(a => _sequenceCount(a))
     if (seqs.length == 0) {
         return silence
     }
     if (steps  == 0) {
         steps = seqs[0][1]
     }
-    var pats = []
-    for (var seq of seqs) {
+    const pats = []
+    for (const seq of seqs) {
         if (seq[1] == 0) {
             next
         }
@@ -627,7 +625,7 @@ function pm(args) {
 }
 
 function polyrhythm(...xs) {
-    var seqs = xs.map(a => sequence(a))
+    const seqs = xs.map(a => sequence(a))
 
     if (seqs.length == 0) {
         return silence
