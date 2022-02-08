@@ -2,7 +2,7 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm} from "../strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence} from "../strudel.mjs";
 
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
 const hap = (whole, part, value) => new Hap(whole, part, value)
@@ -95,8 +95,8 @@ describe('Pattern', function() {
     })
     it('Makes things faster, with a pattern of factors', function () {
       assert.equal(pure("a").fast(sequence(1,4)).firstCycle.length, 3)
-      // not working..
-      // assert.deepStrictEqual(pure("a").fast(sequence(1,4)).firstCycle, sequence("a",sequence("a","a")).firstCycle)
+      // .fast(sequence(1,silence) is a quick hack to cut an event in two..
+      assert.deepStrictEqual(pure("a").fast(sequence(1,4)).firstCycle, stack(pure("a").fast(sequence(1,silence)), sequence(silence, ["a","a"])).firstCycle)
     })
   })
   describe('_slow()', function () {
