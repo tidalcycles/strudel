@@ -1,8 +1,13 @@
 import * as krill from '../krill-parser';
 import * as strudel from '../../strudel.mjs';
 import { Scale, Note, Interval } from '@tonaljs/tonal';
+import './tone';
+import * as toneStuff from './tone';
 
-const { sequence, stack, silence, Fraction, pure } = strudel;
+// even if some functions are not used, we need them to be available in eval
+const { pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, /* reify, */ silence, Fraction } =
+  strudel;
+const { autofilter, filter, gain } = toneStuff;
 
 function reify(thing: any) {
   if (thing?.constructor?.name === 'Pattern') {
@@ -98,4 +103,22 @@ export const h = (string: string) => {
   const ast = krill.parse(string);
   // console.log('ast', ast);
   return patternifyAST(ast);
+};
+
+export const parse: any = (code: string) => {
+  let _pattern;
+  let mode;
+  try {
+    _pattern = h(code);
+    mode = 'pegjs';
+  } catch (err) {
+    // code is not haskell like
+    mode = 'javascript';
+    _pattern = eval(code);
+    if (_pattern?.constructor?.name !== 'Pattern') {
+      const message = `got "${typeof _pattern}" instead of pattern`;
+      throw new Error(message + (typeof _pattern === 'function' ? ', did you forget to call a function?' : '.'));
+    }
+  }
+  return { mode, pattern: _pattern };
 };

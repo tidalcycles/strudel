@@ -44,7 +44,44 @@ export const tetris = `stack(
       'a1 a2 a1 a2 a1 a2 a1 a2'
     )
   )
-)._slow(16);`;
+).slow(16).synth({
+  oscillator: {type: 'sawtooth'}
+})`;
+
+export const tetrisRev = `stack(
+  sequence(
+    mini(
+      'e5 [b4 c5] d5 [c5 b4]',
+      'a4 [a4 c5] e5 [d5 c5]',
+      'b4 [~ c5] d5 e5',
+      'c5 a4 a4 ~',
+      '[~ d5] [~ f5] a5 [g5 f5]',
+      'e5 [~ c5] e5 [d5 c5]',
+      'b4 [b4 c5] d5 e5',
+      'c5 a4 a4 ~'
+    ).rev()
+  ),
+  sequence(
+    mini(
+      'e2 e3 e2 e3 e2 e3 e2 e3',
+      'a2 a3 a2 a3 a2 a3 a2 a3',
+      'g#2 g#3 g#2 g#3 e2 e3 e2 e3',
+      'a2 a3 a2 a3 a2 a3 b1 c2',
+      'd2 d3 d2 d3 d2 d3 d2 d3',
+      'c2 c3 c2 c3 c2 c3 c2 c3',
+      'b1 b2 b1 b2 e2 e3 e2 e3',
+      'a1 a2 a1 a2 a1 a2 a1 a2'
+    ).rev()
+  )
+).slow(16).synth('sawtooth').filter(1000).gain(0.6)`;
+
+/* 
+.synth({
+  oscillator: {type: 'sawtooth'},
+  envelope: { attack: 0.1 }
+}).filter(1200).gain(0.8)
+
+*/
 
 export const tetrisMini1 = `mini('[[e5 [b4 c5] d5 [c5 b4]] [a4 [a4 c5] e5 [d5 c5]] [b4 [~ c5] d5 e5] [c5 a4 a4 ~] [[~ d5] [~ f5] a5 [g5 f5]] [e5 [~ c5] e5 [d5 c5]] [b4 [b4 c5] d5 e5] [c5 a4 a4 ~]],[[e2 e3 e2 e3 e2 e3 e2 e3] [a2 a3 a2 a3 a2 a3 a2 a3] [g#2 g#3 g#2 g#3 e2 e3 e2 e3] [a2 a3 a2 a3 a2 a3 b1 c2] [d2 d3 d2 d3 d2 d3 d2 d3] [c2 c3 c2 c3 c2 c3 c2 c3] [b1 b2 b1 b2 e2 e3 e2 e3] [a1 a2 a1 a2 a1 a2 a1 a2]]')._slow(16);`;
 export const tetrisMini = `mini(\`[[e5 [b4 c5] d5 [c5 b4]]
@@ -103,25 +140,15 @@ export const tetrisHaskell = `slow 16 $ "[[e5 [b4 c5] d5 [c5 b4]]
 /*
 export const tetrisHaskell = `h(\`slow 16 $ "[[e5 [b4 c5] d5 [c5 b4]] [a4 [a4 c5] e5 [d5 c5]] [b4 [~ c5] d5 e5] [c5 a4 a4 ~] [[~ d5] [~ f5] a5 [g5 f5]] [e5 [~ c5] e5 [d5 c5]] [b4 [b4 c5] d5 e5] [c5 a4 a4 ~]], [[e2 e3]*4] [[a2 a3]*4] [[g#2 g#3]*2 [e2 e3]*2] [a2 a3 a2 a3 a2 a3 b1 c2] [[d2 d3]*4] [[c2 c3]*4] [[b1 b2]*2 [e2 e3]*2] [[a1 a2]*4]"\`)`;
 */
-
-// "sequence('c3', 'eb3', sequence('g3', 'f3'))" //
-/* `sequence(
-      stack('c4','eb4','g4'),
-      stack('bb3','d4','f4'),
-      stack('ab3','c4','eb4'),
-      stack('g3','b3','d4')
-    )._slow(4)`, */ //
 export const spanish = `slowcat(
       stack('c4','eb4','g4'),
       stack('bb3','d4','f4'),
       stack('ab3','c4','eb4'),
       stack('g3','b3','d4')
     )`;
-/* `fastcat(
-      stack('c4','eb4','g4'),
-      stack('bb3','d4','f4'),
-      stack('ab3','c4','eb4'),
-      stack('g3','b3','d4')
-    )._slow(4)` */ //
-// "slow(sequence('c3', 'eb3', sequence('g3', 'f3')), 'g3')" //
-// "sequence('c3', 'eb3')._fast(2)" //
+
+export const whirlyStrudel = `mini("[e4 [b2  b3] c4]")
+  .every(4, x => x.fast(2))
+  .every(3, x => x.slow(1.5))
+  .fast(slowcat(1.25,1,1.5))
+  .every(2, _ => mini("e4 ~ e3 d4 ~"))`;

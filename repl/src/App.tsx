@@ -1,22 +1,27 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import logo from './logo.svg';
-import * as strudel from '../../strudel.mjs';
 import cx from './cx';
 import * as Tone from 'tone';
 import useCycle from './useCycle';
-import type { Hap, Pattern } from './types';
+import type { Pattern } from './types';
 import * as tunes from './tunes';
-import * as krill from './parse';
+import * as parser from './parse';
 import CodeMirror from './CodeMirror';
+import hot from '../public/hot';
 
-const { tetris, tetrisMini, tetrisHaskell } = tunes;
+const { tetris, tetrisRev } = tunes;
+const { parse } = parser;
 
-const { sequence, pure, reify, slowcat, fastcat, cat, stack, silence } = strudel; // make available to eval
-const { mini, h } = krill; // for eval (direct import wont work somehow)
-const parse = (code: string): Pattern => eval(code);
+const getHotCode = async () => {
+  return fetch('/hot.js')
+    .then((res) => res.text())
+    .then((src) => {
+      return src.split('export default').slice(-1)[0].trim();
+    });
+};
 
-const synth = new Tone.PolySynth().toDestination();
-synth.set({
+const defaultSynth = new Tone.PolySynth().toDestination();
+defaultSynth.set({
   oscillator: { type: 'triangle' },
   envelope: {
     release: 0.01,
@@ -25,11 +30,13 @@ synth.set({
 
 function App() {
   const [mode, setMode] = useState<string>('javascript');
-  const [code, setCode] = useState<string>(tetrisHaskell);
+  const [code, setCode] = useState<string>(tetrisRev);
   const [log, setLog] = useState('');
   const logBox = useRef<any>();
   const [error, setError] = useState<Error>();
   const [pattern, setPattern] = useState<Pattern>();
+  const [activePattern, setActivePattern] = useState<Pattern>();
+  const [isHot, setIsHot] = useState(false); // set to true to enable live coding in hot.js, using dev server
   // logs events of cycle
   const logCycle = (_events: any, cycle: any) => {
     if (_events.length) {
@@ -39,81 +46,137 @@ function App() {
   // cycle hook to control scheduling
   const cycle = useCycle({
     onEvent: useCallback((time, event) => {
-      // console.log('event', event, time);
-      synth.triggerAttackRelease(event.value, event.duration, time);
+      try {
+        if (typeof event.value === 'string') {
+          defaultSynth.triggerAttackRelease(event.value, event.duration, time);
+          /* console.warn('no instrument chosen', event);
+          throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
+        } else {
+          const { onTrigger } = event.value;
+          onTrigger(time, event);
+        }
+        setError(undefined);
+      } catch (err: any) {
+        console.warn(err);
+        err.message = 'unplayable event: ' + err?.message;
+        setError(err);
+      }
     }, []),
     onQuery: useCallback(
       (span) => {
         try {
-          return pattern?.query(span) || [];
+          return activePattern?.query(span) || [];
         } catch (err: any) {
           setError(err);
           return [];
         }
       },
-      [pattern]
+      [activePattern]
     ),
-    onSchedule: useCallback((_events, cycle) => logCycle(_events, cycle), [pattern]),
-    ready: !!pattern,
+    onSchedule: useCallback((_events, cycle) => logCycle(_events, cycle), [activePattern]),
+    ready: !!activePattern,
   });
+
+  // set active pattern on ctrl+enter
+  useLayoutEffect(() => {
+    const handleKeyPress = (e: any) => {
+      if (e.ctrlKey && e.code === 'Enter') {
+        setActivePattern(() => pattern);
+        !cycle.started && cycle.start();
+      }
+    };
+    document.addEventListener('keypress', handleKeyPress);
+    return () => document.removeEventListener('keypress', handleKeyPress);
+  }, [pattern]);
+
   // parse pattern when code changes
   useEffect(() => {
-    try {
-      let _pattern: Pattern;
-      try {
-        _pattern = h(code);
-        setMode('pegjs'); // haskell mode does not recognize quotes, pegjs looks ok by accident..
-      } catch (err) {
-        setMode('javascript');
-        // code is not haskell like
-        _pattern = parse(code);
-        if (_pattern?.constructor?.name !== 'Pattern') {
-          const message = `got "${typeof _pattern}" instead of pattern`;
-          throw new Error(message + (typeof _pattern === 'function' ? ', did you forget to call a function?' : '.'));
-        }
+    let _code = code;
+    // handle hot mode
+    if (isHot) {
+      if (typeof hot !== 'string') {
+        getHotCode().then((_code) => {
+          setCode(_code);
+          setMode('javascript');
+        }); // if using HMR, just use changed file
+        setActivePattern(hot);
+        return;
+      } else {
+        _code = hot;
+        setCode(_code);
       }
-      setPattern(() => _pattern); // need arrow function here! otherwise if user returns a function, react will think it's a state reducer
+    }
+    // normal mode
+    try {
+      const parsed = parse(_code);
+      // need arrow function here! otherwise if user returns a function, react will think it's a state reducer
+      // only first time, then need ctrl+enter
+      pattern;
+      setPattern(() => parsed.pattern);
+      if (!activePattern || isHot) {
+        setActivePattern(() => parsed.pattern);
+      }
+      setMode(parsed.mode);
       setError(undefined);
     } catch (err: any) {
       console.warn(err);
       setError(err);
     }
-  }, [code]);
+  }, [code, isHot]);
+
   // scroll log box to bottom when log changes
   useLayoutEffect(() => {
     logBox.current.scrollTop = logBox.current?.scrollHeight;
   }, [log]);
+
   return (
     <div className="h-screen bg-slate-900 flex flex-col">
-      <header className="flex-none w-full h-16 px-2 flex items-center space-x-2 border-b border-gray-200 bg-white">
-        <img src={logo} className="Tidal-logo w-16 h-16" alt="logo" />
-        <h1 className="text-2xl">Strudel REPL</h1>
+      <header className="flex-none w-full h-16 px-2 flex border-b border-gray-200 bg-white justify-between">
+        <div className="flex items-center space-x-2">
+          <img src={logo} className="Tidal-logo w-16 h-16" alt="logo" />
+          <h1 className="text-2xl">Strudel REPL</h1>
+        </div>
+        {window.location.href.includes('http://localhost:8080') && (
+          <button
+            onClick={() => {
+              if (isHot || confirm('Really switch? You might loose your current pattern..')) {
+                setIsHot((h) => !h);
+              }
+            }}
+          >
+            {isHot ? '🔥' : ' '} toggle hot mode
+          </button>
+        )}
       </header>
       <section className="grow flex flex-col p-2 text-gray-100">
         <div className="grow relative">
-          <div className={cx('h-full bg-slate-600', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}>
+          <div className={cx('h-full bg-[#2A3236]', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}>
             <CodeMirror
               value={code}
+              readOnly={isHot}
               options={{
                 mode,
                 theme: 'material',
                 lineNumbers: true,
               }}
               onChange={(_: any, __: any, value: any) => {
-                setLog((log) => log + `${log ? '\n\n' : ''}✏️ edit\n${code}\n${value}`);
-                setCode(value);
+                if (!isHot) {
+                  // setLog((log) => log + `${log ? '\n\n' : ''}✏️ edit\n${code}\n${value}`);
+                  setCode(value);
+                }
               }}
             />
+            <span className="p-4 absolute bottom-0 left-0 text-xs whitespace-pre">
+              {!cycle.started
+                ? `press ctrl+enter to play\n`
+                : !isHot && activePattern !== pattern
+                ? `ctrl+enter to update\n`
+                : 'no changes\n'}
+              {!isHot && <>{{ pegjs: 'mini' }[mode] || mode} mode</>}
+              {isHot && '🔥 hot mode: go to hot.js to edit pattern, then save'}
+            </span>
           </div>
           {error && <div className="absolute right-2 bottom-2 text-red-500">{error?.message || 'unknown error'}</div>}
-          {/* <textarea
-            className={cx('w-full h-64 bg-slate-600', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}
-            value={code}
-            onChange={(e) => {
-              setLog((log) => log + `${log ? '\n\n' : ''}✏️ edit\n${code}\n${e.target.value}`);
-              setCode(e.target.value);
-            }}
-          /> */}
         </div>
         <button
           className="flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500"
@@ -122,7 +185,7 @@ function App() {
           {cycle.started ? 'pause' : 'play'}
         </button>
         <textarea
-          className="grow bg-[#283237] border-0"
+          className="grow bg-[#283237] border-0 text-xs"
           value={log}
           readOnly
           ref={logBox}

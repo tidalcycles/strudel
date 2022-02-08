@@ -6,7 +6,7 @@ ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById('root'),
+  document.getElementById('root')
 );
 
 // Hot Module Replacement (HMR) - Remove this snippet to remove HMR.

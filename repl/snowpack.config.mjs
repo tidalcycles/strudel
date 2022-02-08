@@ -27,7 +27,7 @@ export default {
   },
   packageOptions: {
     /* ... */
-    knownEntrypoints: ['fraction.js'],
+    knownEntrypoints: ['fraction.js', 'codemirror'],
   },
   devOptions: {
     tailwindConfig: './tailwind.config.js',
