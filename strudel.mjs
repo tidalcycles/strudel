@@ -1,13 +1,9 @@
 import Fraction from 'fraction.js'
 
-const removeUndefineds = function(xs) {
-    // Removes 'None' values from given list
-    return xs.filter(x => x != undefined)
-}
+// Removes 'None' values from given list
+const removeUndefineds = xs => xs.filter(x => x != undefined)
 
-function flatten(arr) {
-    return [].concat(...arr)
-}
+const flatten = arr => [].concat(...arr)
 
 const id = a => a
 
@@ -329,7 +325,7 @@ class Pattern {
         const pat_func = this
 
         const query = function(span) {
-            let haps = []
+            const haps = []
             for (const hap_val of pat_val.query(span)) {
                 const hap_funcs = pat_func.query(hap_val.part)
                 for (const hap_func of hap_funcs) {
@@ -547,9 +543,7 @@ function reify(thing) {
 
 function stack(...pats) {
     const reified = pats.map(pat => reify(pat))
-    const query = function(span) {
-        return flatten(reified.map(pat => pat.query(span)))
-    }
+    const query = span => flatten(reified.map(pat => pat.query(span)))
     return new Pattern(query)
 }
 
