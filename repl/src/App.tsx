@@ -111,7 +111,6 @@ function App() {
       const parsed = parse(_code);
       // need arrow function here! otherwise if user returns a function, react will think it's a state reducer
       // only first time, then need ctrl+enter
-      pattern;
       setPattern(() => parsed.pattern);
       if (!activePattern || isHot) {
         setActivePattern(() => parsed.pattern);
