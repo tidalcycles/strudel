@@ -632,6 +632,14 @@ function pr(args) {
     polyrhythm(args)
 }
 
+const fast  = curry((a, pat) => pat.fast(a))
+const slow  = curry((a, pat) => pat.slow(a))
+const early = curry((a, pat) => pat.early(a))
+const late  = curry((a, pat) => pat.late(a))
+const rev   = pat => pat.rev()
+
 export {Fraction, TimeSpan, Hap, Pattern, 
-    pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, reify, silence}
+    pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, reify, silence,
+    fast, slow, early, late, rev
+}
 
