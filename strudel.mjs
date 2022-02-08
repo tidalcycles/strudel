@@ -431,16 +431,16 @@ class Pattern {
         return fastQuery.withEventTime(t => t.div(factor))
     }
 
-    fast(factor) {
-        return this._patternify(Pattern.prototype._fast)(factor)
+    fast(...factor) {
+        return this._patternify(Pattern.prototype._fast)(...factor)
     }
 
     _slow(factor) {
         return this._fast(1/factor)
     }
 
-    slow(factor) {
-        return this._patternify(Pattern.prototype._slow)(factor)
+    slow(...factor) {
+        return this._patternify(Pattern.prototype._slow)(...factor)
     }
 
     _early(offset) {
@@ -449,8 +449,8 @@ class Pattern {
         return this.withQueryTime(t => t.add(offset)).withEventTime(t => t.sub(offset))
     }
 
-    early(factor) {
-        return this._patternify(Pattern.prototype._early)(factor)
+    early(...factor) {
+        return this._patternify(Pattern.prototype._early)(...factor)
     }
 
     _late(offset) {
@@ -459,8 +459,8 @@ class Pattern {
     }
 
 
-    late(factor) {
-        return this._patternify(Pattern.prototype._late)(factor)
+    late(...factor) {
+        return this._patternify(Pattern.prototype._late)(...factor)
     }
 
     when(binary_pat, func) {

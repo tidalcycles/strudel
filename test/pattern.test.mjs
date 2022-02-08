@@ -98,6 +98,12 @@ describe('Pattern', function() {
       // .fast(sequence(1,silence) is a quick hack to cut an event in two..
       assert.deepStrictEqual(pure("a").fast(sequence(1,4)).firstCycle, stack(pure("a").fast(sequence(1,silence)), sequence(silence, ["a","a"])).firstCycle)
     })
+    it('defaults to accepting sequences', function () {
+      assert.deepStrictEqual(
+        sequence(1,2,3).fast(sequence(1.5,2)).firstCycle,
+        sequence(1,2,3).fast(1.5,2).firstCycle
+      )
+    })
   })
   describe('_slow()', function () {
     it('Makes things slower', function () {
