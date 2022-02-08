@@ -2,7 +2,7 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence} from "../strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast} from "../strudel.mjs";
 
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
 const hap = (whole, part, value) => new Hap(whole, part, value)
@@ -98,6 +98,24 @@ describe('Pattern', function() {
       // .fast(sequence(1,silence) is a quick hack to cut an event in two..
       assert.deepStrictEqual(pure("a").fast(sequence(1,4)).firstCycle, stack(pure("a").fast(sequence(1,silence)), sequence(silence, ["a","a"])).firstCycle)
     })
+    it('defaults to accepting sequences', function () {
+      assert.deepStrictEqual(
+        sequence(1,2,3).fast(sequence(1.5,2)).firstCycle,
+        sequence(1,2,3).fast(1.5,2).firstCycle
+      )
+    })
+    it("works as a static function", function () {
+      assert.deepStrictEqual(
+        sequence(1,2,3).fast(1,2).firstCycle,
+        fast(sequence(1,2), sequence(1,2,3)).firstCycle
+      )
+    })
+    it("works as a curried static function", function () {
+      assert.deepStrictEqual(
+        sequence(1,2,3).fast(1,2).firstCycle,
+        fast(sequence(1,2))(sequence(1,2,3)).firstCycle
+      )
+    })
   })
   describe('_slow()', function () {
     it('Makes things slower', function () {
@@ -169,6 +187,12 @@ describe('Pattern', function() {
         pure("a").every(3, x => x._fast(2))._fast(3).firstCycle,
         sequence(sequence("a", "a"), "a", "a").firstCycle
       )
+    })
+    it("works with currying", () => {
+      assert.deepStrictEqual(
+        pure("a").every(3, fast(2))._fast(3).firstCycle,
+        sequence(sequence("a", "a"), "a", "a").firstCycle
+      )      
     })
   })
 })

@@ -431,16 +431,16 @@ class Pattern {
         return fastQuery.withEventTime(t => t.div(factor))
     }
 
-    fast(factor) {
-        return this._patternify(Pattern.prototype._fast)(factor)
+    fast(...factor) {
+        return this._patternify(Pattern.prototype._fast)(...factor)
     }
 
     _slow(factor) {
         return this._fast(1/factor)
     }
 
-    slow(factor) {
-        return this._patternify(Pattern.prototype._slow)(factor)
+    slow(...factor) {
+        return this._patternify(Pattern.prototype._slow)(...factor)
     }
 
     _early(offset) {
@@ -449,8 +449,8 @@ class Pattern {
         return this.withQueryTime(t => t.add(offset)).withEventTime(t => t.sub(offset))
     }
 
-    early(factor) {
-        return this._patternify(Pattern.prototype._early)(factor)
+    early(...factor) {
+        return this._patternify(Pattern.prototype._early)(...factor)
     }
 
     _late(offset) {
@@ -459,8 +459,8 @@ class Pattern {
     }
 
 
-    late(factor) {
-        return this._patternify(Pattern.prototype._late)(factor)
+    late(...factor) {
+        return this._patternify(Pattern.prototype._late)(...factor)
     }
 
     when(binary_pat, func) {
@@ -632,6 +632,14 @@ function pr(args) {
     polyrhythm(args)
 }
 
+const fast  = curry((a, pat) => pat.fast(a))
+const slow  = curry((a, pat) => pat.slow(a))
+const early = curry((a, pat) => pat.early(a))
+const late  = curry((a, pat) => pat.late(a))
+const rev   = pat => pat.rev()
+
 export {Fraction, TimeSpan, Hap, Pattern, 
-    pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, reify, silence}
+    pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, reify, silence,
+    fast, slow, early, late, rev
+}
 
