@@ -99,6 +99,8 @@ export const mini = (...strings: string[]) => {
   return pattern;
 };
 
+const m = mini;
+
 // includes haskell style (raw krill parsing)
 export const h = (string: string) => {
   const ast = krill.parse(string);
