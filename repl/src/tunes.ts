@@ -1,3 +1,26 @@
+export const shapeShifted = `stack(
+  sequence(
+    e5, [b4, c5], d5, [c5, b4],
+    a4, [a4, c5], e5, [d5, c5],
+    b4, [r, c5], d5, e5,
+    c5, a4, a4, r,
+    [r, d5], [r, f5], a5, [g5, f5],
+    e5, [r, c5], e5, [d5, c5],
+    b4, [b4, c5], d5, e5,
+    c5, a4, a4, r,
+  ).rev(),
+  sequence(
+    e2, e3, e2, e3, e2, e3, e2, e3,
+    a2, a3, a2, a3, a2, a3, a2, a3,
+    gs2, gs3, gs2, gs3, e2, e3, e2, e3,
+    a2, a3, a2, a3, a2, a3, b1, c2,
+    d2, d3, d2, d3, d2, d3, d2, d3,
+    c2, c3, c2, c3, c2, c3, c2, c3,
+    b1, b2, b1, b2, e2, e3, e2, e3,
+    a1, a2, a1, a2, a1, a2, a1, a2,
+  ).rev()
+).slow(16).rev()`;
+
 export const tetrisWithFunctions = `stack(sequence(
   'e5', sequence('b4', 'c5'), 'd5', sequence('c5', 'b4'),
   'a4', sequence('a4', 'c5'), 'e5', sequence('d5', 'c5'),

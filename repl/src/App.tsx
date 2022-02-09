@@ -8,8 +8,9 @@ import * as tunes from './tunes';
 import * as parser from './parse';
 import CodeMirror from './CodeMirror';
 import hot from '../public/hot';
+import { isNote } from 'tone';
 
-const { tetris, tetrisRev } = tunes;
+const { tetris, tetrisRev, shapeShifted } = tunes;
 const { parse } = parser;
 
 const getHotCode = async () => {
@@ -30,17 +31,18 @@ defaultSynth.set({
 
 function App() {
   const [mode, setMode] = useState<string>('javascript');
-  const [code, setCode] = useState<string>(tetrisRev);
+  const [code, setCode] = useState<string>(shapeShifted);
   const [log, setLog] = useState('');
   const logBox = useRef<any>();
   const [error, setError] = useState<Error>();
   const [pattern, setPattern] = useState<Pattern>();
   const [activePattern, setActivePattern] = useState<Pattern>();
   const [isHot, setIsHot] = useState(false); // set to true to enable live coding in hot.js, using dev server
+  const pushLog = (message: string) => setLog((log) => log + `${log ? '\n\n' : ''}${message}`);
   // logs events of cycle
   const logCycle = (_events: any, cycle: any) => {
     if (_events.length) {
-      setLog((log) => log + `${log ? '\n\n' : ''}# cycle ${cycle}\n` + _events.map((e: any) => e.show()).join('\n'));
+      pushLog(`# cycle ${cycle}\n` + _events.map((e: any) => e.show()).join('\n'));
     }
   };
   // cycle hook to control scheduling
@@ -48,6 +50,9 @@ function App() {
     onEvent: useCallback((time, event) => {
       try {
         if (typeof event.value === 'string') {
+          if (!isNote(event.value)) {
+            throw new Error('not a note: ' + event.value);
+          }
           defaultSynth.triggerAttackRelease(event.value, event.duration, time);
           /* console.warn('no instrument chosen', event);
           throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
@@ -55,11 +60,10 @@ function App() {
           const { onTrigger } = event.value;
           onTrigger(time, event);
         }
-        setError(undefined);
       } catch (err: any) {
         console.warn(err);
         err.message = 'unplayable event: ' + err?.message;
-        setError(err);
+        pushLog(err.message); // not with setError, because then we would have to setError(undefined) on next playable event
       }
     }, []),
     onQuery: useCallback(

@@ -3,6 +3,7 @@ import * as strudel from '../../strudel.mjs';
 import { Scale, Note, Interval } from '@tonaljs/tonal';
 import './tone';
 import * as toneStuff from './tone';
+import shapeshifter from './shapeshifter';
 
 // even if some functions are not used, we need them to be available in eval
 const { pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, /* reify, */ silence, Fraction } =
@@ -114,6 +115,7 @@ export const parse: any = (code: string) => {
   } catch (err) {
     // code is not haskell like
     mode = 'javascript';
+    code = shapeshifter(code);
     _pattern = eval(code);
     if (_pattern?.constructor?.name !== 'Pattern') {
       const message = `got "${typeof _pattern}" instead of pattern`;

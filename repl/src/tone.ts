@@ -1,14 +1,18 @@
 import { Pattern as _Pattern } from '../../strudel.mjs';
-import { AutoFilter, Destination, Filter, Gain, Transport, Synth } from 'tone';
+import { AutoFilter, Destination, Filter, Gain, isNote, Synth } from 'tone';
 
 const Pattern = _Pattern as any;
 
 const getTrigger = (getChain: any, value: any) => (time: number, event: any) => {
-  const chain = getChain(time); // make sure this returns a node that is connected toDestination
+  const chain = getChain(); // make sure this returns a node that is connected toDestination // time
+  if (!isNote(value)) {
+    throw new Error('not a note: ' + value);
+  }
   chain.triggerAttackRelease(value, event.duration, time);
-  Transport.scheduleOnce(() => {
+  setTimeout(() => {
+    // setTimeout is a little bit better compared to Transport.scheduleOnce
     chain.dispose(); // mark for garbage collection
-  }, '+' + event.duration * 2);
+  }, event.duration * 2000);
 };
 
 Pattern.prototype._synth = function (type: any = 'triangle') {
@@ -54,8 +58,8 @@ Pattern.prototype.chain = function (...effectGetters: any) {
       throw new Error('cannot chain: need instrument first (like synth)');
     }
     const chain = (value.chain || []).concat(effectGetters);
-    const getChain = (time: number) => {
-      const effects = chain.map((getEffect: any) => getEffect(time));
+    const getChain = () => {
+      const effects = chain.map((getEffect: any) => getEffect());
       return value.getInstrument().chain(...effects, Destination);
     };
     const onTrigger = getTrigger(getChain, value.value);
