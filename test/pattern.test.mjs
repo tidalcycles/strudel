@@ -89,6 +89,24 @@ describe('Pattern', function() {
       assert.equal(pure("a")._fast(2).firstCycle.length, 2)
     })
   })
+  describe('_fastGap()', function () {
+    it('Makes things faster, with a gap', function () {
+      assert.deepStrictEqual(
+        sequence("a", "b", "c")._fastGap(2).firstCycle,
+        sequence(["a","b","c"], silence).firstCycle
+      )
+      assert.deepStrictEqual(
+        sequence("a", "b", "c")._fastGap(3).firstCycle,
+        sequence(["a","b","c"], silence, silence).firstCycle
+      )
+    })
+    it('Makes things faster, with a gap, when speeded up further', function () {
+      assert.deepStrictEqual(
+        sequence("a", "b", "c")._fastGap(2).fast(2).firstCycle,
+        sequence(["a","b","c"], silence, ["a","b","c"], silence).firstCycle
+      )
+    })
+  })
   describe('fast()', function () {
     it('Makes things faster', function () {
       assert.equal(pure("a").fast(2).firstCycle.length, 2)
