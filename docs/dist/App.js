@@ -1,18 +1,22 @@
 import React, {useCallback, useEffect, useLayoutEffect, useRef, useState} from "../_snowpack/pkg/react.js";
 import logo from "./logo.svg.proxy.js";
-import * as strudel from "../_snowpack/link/strudel.js";
 import cx from "./cx.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
 import useCycle from "./useCycle.js";
 import * as tunes from "./tunes.js";
-import * as krill from "./parse.js";
+import * as parser from "./parse.js";
 import CodeMirror from "./CodeMirror.js";
-const {tetris, tetrisMini, tetrisHaskell} = tunes;
-const {sequence, pure, reify, slowcat, fastcat, cat, stack, silence} = strudel;
-const {mini, h} = krill;
-const parse = (code) => eval(code);
-const synth = new Tone.PolySynth().toDestination();
-synth.set({
+import hot from "../hot.js";
+import {isNote} from "../_snowpack/pkg/tone.js";
+const {tetris, tetrisRev, shapeShifted} = tunes;
+const {parse} = parser;
+const getHotCode = async () => {
+  return fetch("/hot.js").then((res) => res.text()).then((src) => {
+    return src.split("export default").slice(-1)[0].trim();
+  });
+};
+const defaultSynth = new Tone.PolySynth().toDestination();
+defaultSynth.set({
   oscillator: {type: "triangle"},
   envelope: {
     release: 0.01
@@ -20,92 +24,138 @@ synth.set({
 });
 function App() {
   const [mode, setMode] = useState("javascript");
-  const [code, setCode] = useState(tetrisHaskell);
+  const [code, setCode] = useState(shapeShifted);
   const [log, setLog] = useState("");
   const logBox = useRef();
   const [error, setError] = useState();
   const [pattern, setPattern] = useState();
+  const [activePattern, setActivePattern] = useState();
+  const [isHot, setIsHot] = useState(false);
+  const pushLog = (message) => setLog((log2) => log2 + `${log2 ? "\n\n" : ""}${message}`);
   const logCycle = (_events, cycle2) => {
     if (_events.length) {
-      setLog((log2) => log2 + `${log2 ? "\n\n" : ""}# cycle ${cycle2}
+      pushLog(`# cycle ${cycle2}
 ` + _events.map((e) => e.show()).join("\n"));
     }
   };
   const cycle = useCycle({
     onEvent: useCallback((time, event) => {
-      synth.triggerAttackRelease(event.value, event.duration, time);
+      try {
+        if (typeof event.value === "string") {
+          if (!isNote(event.value)) {
+            throw new Error("not a note: " + event.value);
+          }
+          defaultSynth.triggerAttackRelease(event.value, event.duration, time);
+        } else {
+          const {onTrigger} = event.value;
+          onTrigger(time, event);
+        }
+      } catch (err) {
+        console.warn(err);
+        err.message = "unplayable event: " + err?.message;
+        pushLog(err.message);
+      }
     }, []),
     onQuery: useCallback((span) => {
       try {
-        return pattern?.query(span) || [];
+        return activePattern?.query(span) || [];
       } catch (err) {
         setError(err);
         return [];
       }
-    }, [pattern]),
-    onSchedule: useCallback((_events, cycle2) => logCycle(_events, cycle2), [pattern]),
-    ready: !!pattern
+    }, [activePattern]),
+    onSchedule: useCallback((_events, cycle2) => logCycle(_events, cycle2), [activePattern]),
+    ready: !!activePattern
   });
-  useEffect(() => {
-    try {
-      let _pattern;
-      try {
-        _pattern = h(code);
-        setMode("pegjs");
-      } catch (err) {
-        setMode("javascript");
-        _pattern = parse(code);
-        if (_pattern?.constructor?.name !== "Pattern") {
-          const message = `got "${typeof _pattern}" instead of pattern`;
-          throw new Error(message + (typeof _pattern === "function" ? "did you foget to call a function?" : ""));
-        }
+  useLayoutEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.ctrlKey && e.code === "Enter") {
+        setActivePattern(() => pattern);
+        !cycle.started && cycle.start();
       }
-      setPattern(() => _pattern);
+    };
+    document.addEventListener("keypress", handleKeyPress);
+    return () => document.removeEventListener("keypress", handleKeyPress);
+  }, [pattern]);
+  useEffect(() => {
+    let _code = code;
+    if (isHot) {
+      if (typeof hot !== "string") {
+        getHotCode().then((_code2) => {
+          setCode(_code2);
+          setMode("javascript");
+        });
+        setActivePattern(hot);
+        return;
+      } else {
+        _code = hot;
+        setCode(_code);
+      }
+    }
+    try {
+      const parsed = parse(_code);
+      setPattern(() => parsed.pattern);
+      if (!activePattern || isHot) {
+        setActivePattern(() => parsed.pattern);
+      }
+      setMode(parsed.mode);
       setError(void 0);
     } catch (err) {
       console.warn(err);
       setError(err);
     }
-  }, [code]);
+  }, [code, isHot]);
   useLayoutEffect(() => {
     logBox.current.scrollTop = logBox.current?.scrollHeight;
   }, [log]);
   return /* @__PURE__ */ React.createElement("div", {
     className: "h-screen bg-slate-900 flex flex-col"
   }, /* @__PURE__ */ React.createElement("header", {
-    className: "flex-none w-full h-16 px-2 flex items-center space-x-2 border-b border-gray-200 bg-white"
+    className: "flex-none w-full h-16 px-2 flex border-b border-gray-200 bg-white justify-between"
+  }, /* @__PURE__ */ React.createElement("div", {
+    className: "flex items-center space-x-2"
   }, /* @__PURE__ */ React.createElement("img", {
     src: logo,
     className: "Tidal-logo w-16 h-16",
     alt: "logo"
   }), /* @__PURE__ */ React.createElement("h1", {
     className: "text-2xl"
-  }, "Strudel REPL")), /* @__PURE__ */ React.createElement("section", {
+  }, "Strudel REPL")), window.location.href.includes("http://localhost:8080") && /* @__PURE__ */ React.createElement("button", {
+    onClick: () => {
+      if (isHot || confirm("Really switch? You might loose your current pattern..")) {
+        setIsHot((h) => !h);
+      }
+    }
+  }, isHot ? "🔥" : " ", " toggle hot mode")), /* @__PURE__ */ React.createElement("section", {
     className: "grow flex flex-col p-2 text-gray-100"
   }, /* @__PURE__ */ React.createElement("div", {
     className: "grow relative"
   }, /* @__PURE__ */ React.createElement("div", {
-    className: cx("h-full bg-slate-600", error ? "focus:ring-red-500" : "focus:ring-slate-800")
+    className: cx("h-full bg-[#2A3236]", error ? "focus:ring-red-500" : "focus:ring-slate-800")
   }, /* @__PURE__ */ React.createElement(CodeMirror, {
     value: code,
+    readOnly: isHot,
     options: {
       mode,
       theme: "material",
       lineNumbers: true
     },
     onChange: (_, __, value) => {
-      setLog((log2) => log2 + `${log2 ? "\n\n" : ""}✏️ edit
-${code}
-${value}`);
-      setCode(value);
+      if (!isHot) {
+        setCode(value);
+      }
     }
-  })), error && /* @__PURE__ */ React.createElement("div", {
+  }), /* @__PURE__ */ React.createElement("span", {
+    className: "p-4 absolute bottom-0 left-0 text-xs whitespace-pre"
+  }, !cycle.started ? `press ctrl+enter to play
+` : !isHot && activePattern !== pattern ? `ctrl+enter to update
+` : "no changes\n", !isHot && /* @__PURE__ */ React.createElement(React.Fragment, null, {pegjs: "mini"}[mode] || mode, " mode"), isHot && "🔥 hot mode: go to hot.js to edit pattern, then save")), error && /* @__PURE__ */ React.createElement("div", {
     className: "absolute right-2 bottom-2 text-red-500"
   }, error?.message || "unknown error")), /* @__PURE__ */ React.createElement("button", {
     className: "flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500",
     onClick: () => cycle.toggle()
   }, cycle.started ? "pause" : "play"), /* @__PURE__ */ React.createElement("textarea", {
-    className: "grow bg-[#283237] border-0",
+    className: "grow bg-[#283237] border-0 text-xs",
     value: log,
     readOnly: true,
     ref: logBox,

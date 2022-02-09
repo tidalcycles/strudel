@@ -1,7 +1,11 @@
 import * as krill from "../_snowpack/link/repl/krill-parser.js";
 import * as strudel from "../_snowpack/link/strudel.js";
 import {Scale, Note, Interval} from "../_snowpack/pkg/@tonaljs/tonal.js";
-const {sequence, stack, silence, Fraction, pure} = strudel;
+import "./tone.js";
+import * as toneStuff from "./tone.js";
+import shapeshifter from "./shapeshifter.js";
+const {pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, silence, Fraction} = strudel;
+const {autofilter, filter, gain} = toneStuff;
 function reify(thing) {
   if (thing?.constructor?.name === "Pattern") {
     return thing;
@@ -57,7 +61,7 @@ export function patternifyAST(ast) {
           return step;
         }
         const octaves = Math.floor(step / intervals.length);
-        const mod = (n, m) => n < 0 ? mod(n + m, m) : n % m;
+        const mod = (n, m2) => n < 0 ? mod(n + m2, m2) : n % m2;
         const index = mod(step, intervals.length);
         const interval = Interval.add(intervals[index], Interval.fromSemitones(octaves * 12));
         return Note.transpose(tonic, interval || "1P");
@@ -74,7 +78,25 @@ export const mini = (...strings) => {
   }));
   return pattern;
 };
+const m = mini;
 export const h = (string) => {
   const ast = krill.parse(string);
   return patternifyAST(ast);
+};
+export const parse = (code) => {
+  let _pattern;
+  let mode;
+  try {
+    _pattern = h(code);
+    mode = "pegjs";
+  } catch (err) {
+    mode = "javascript";
+    code = shapeshifter(code);
+    _pattern = eval(code);
+    if (_pattern?.constructor?.name !== "Pattern") {
+      const message = `got "${typeof _pattern}" instead of pattern`;
+      throw new Error(message + (typeof _pattern === "function" ? ", did you forget to call a function?" : "."));
+    }
+  }
+  return {mode, pattern: _pattern};
 };
