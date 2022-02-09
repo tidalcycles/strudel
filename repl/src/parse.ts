@@ -2,6 +2,7 @@ import * as krill from '../krill-parser';
 import * as strudel from '../../strudel.mjs';
 import { Scale, Note, Interval } from '@tonaljs/tonal';
 import './tone';
+import './midi';
 import * as toneStuff from './tone';
 import shapeshifter from './shapeshifter';
 

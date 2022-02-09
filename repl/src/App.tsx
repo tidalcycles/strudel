@@ -9,6 +9,7 @@ import * as parser from './parse';
 import CodeMirror from './CodeMirror';
 import hot from '../public/hot';
 import { isNote } from 'tone';
+import { useWebMidi } from './midi';
 
 const { tetris, tetrisRev, shapeShifted } = tunes;
 const { parse } = parser;
@@ -131,6 +132,18 @@ function App() {
   useLayoutEffect(() => {
     logBox.current.scrollTop = logBox.current?.scrollHeight;
   }, [log]);
+
+  useWebMidi({
+    ready: useCallback(({ outputs }) => {
+      pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `"${o.name}"`).join(' | ')}) to the pattern. `);
+    }, []),
+    connected: useCallback(({ outputs }) => {
+      pushLog(`Midi device connected! Available: ${outputs.map((o) => `"${o.name}"`).join(', ')}`);
+    }, []),
+    disconnected: useCallback(({ outputs }) => {
+      pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `"${o.name}"`).join(', ')}`);
+    }, []),
+  });
 
   return (
     <div className="h-screen bg-slate-900 flex flex-col">
