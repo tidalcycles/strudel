@@ -2,7 +2,10 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast} from "../strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast, timeCat} from "../strudel.mjs";
+//import { Time } from 'tone';
+import pkg from 'tone';
+const { Time } = pkg;
 
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
 const hap = (whole, part, value) => new Hap(whole, part, value)
@@ -87,6 +90,32 @@ describe('Pattern', function() {
   describe('_fast()', function () {
     it('Makes things faster', function () {
       assert.equal(pure("a")._fast(2).firstCycle.length, 2)
+    })
+  })
+  describe('_fastGap()', function () {
+    it('Makes things faster, with a gap', function () {
+      assert.deepStrictEqual(
+        sequence("a", "b", "c")._fastGap(2).firstCycle,
+        sequence(["a","b","c"], silence).firstCycle
+      )
+      assert.deepStrictEqual(
+        sequence("a", "b", "c")._fastGap(3).firstCycle,
+        sequence(["a","b","c"], silence, silence).firstCycle
+      )
+    })
+    it('Makes things faster, with a gap, when speeded up further', function () {
+      assert.deepStrictEqual(
+        sequence("a", "b", "c")._fastGap(2).fast(2).firstCycle,
+        sequence(["a","b","c"], silence, ["a","b","c"], silence).firstCycle
+      )
+    })
+  })
+  describe('_compressSpan()', function () {
+    it('Can squash cycles of a pattern into a given timespan', function () {
+      assert.deepStrictEqual(
+        pure("a")._compressSpan(new TimeSpan(0.25, 0.5)).firstCycle,
+        sequence(silence, "a", silence, silence).firstCycle
+      )
     })
   })
   describe('fast()', function () {
@@ -193,6 +222,14 @@ describe('Pattern', function() {
         pure("a").every(3, fast(2))._fast(3).firstCycle,
         sequence(sequence("a", "a"), "a", "a").firstCycle
       )      
+    })
+  })
+  describe('timeCat()', function() {
+    it('Can concatenate patterns with different relative durations', function() {
+      assert.deepStrictEqual(
+        sequence("a", ["a", "a"]).firstCycle,
+        timeCat([1,"a"], [0.5, "a"], [0.5, "a"]).firstCycle
+      )
     })
   })
 })
