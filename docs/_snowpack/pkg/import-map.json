@@ -15,6 +15,7 @@
     "shift-codegen": "./shift-codegen.js",
     "shift-regexp-acceptor": "./shift-regexp-acceptor.js",
     "shift-spec": "./shift-spec.js",
-    "tone": "./tone.js"
+    "tone": "./tone.js",
+    "webmidi": "./webmidi.js"
   }
 }

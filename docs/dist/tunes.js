@@ -20,6 +20,7 @@ export const shapeShifted = `stack(
     a1, a2, a1, a2, a1, a2, a1, a2,
   ).rev()
 ).slow(16).rev()`;
+export const tetrisMidi = `${shapeShifted}.midi('IAC-Treiber Bus 1')`;
 export const tetrisWithFunctions = `stack(sequence(
   'e5', sequence('b4', 'c5'), 'd5', sequence('c5', 'b4'),
   'a4', sequence('a4', 'c5'), 'e5', sequence('d5', 'c5'),

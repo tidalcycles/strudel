@@ -2,6 +2,7 @@ import * as krill from "../_snowpack/link/repl/krill-parser.js";
 import * as strudel from "../_snowpack/link/strudel.js";
 import {Scale, Note, Interval} from "../_snowpack/pkg/@tonaljs/tonal.js";
 import "./tone.js";
+import "./midi.js";
 import * as toneStuff from "./tone.js";
 import shapeshifter from "./shapeshifter.js";
 const {pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, silence, Fraction} = strudel;

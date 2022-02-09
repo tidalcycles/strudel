@@ -8,6 +8,7 @@ import * as parser from "./parse.js";
 import CodeMirror from "./CodeMirror.js";
 import hot from "../hot.js";
 import {isNote} from "../_snowpack/pkg/tone.js";
+import {useWebMidi} from "./midi.js";
 const {tetris, tetrisRev, shapeShifted} = tunes;
 const {parse} = parser;
 const getHotCode = async () => {
@@ -108,6 +109,17 @@ function App() {
   useLayoutEffect(() => {
     logBox.current.scrollTop = logBox.current?.scrollHeight;
   }, [log]);
+  useWebMidi({
+    ready: useCallback(({outputs}) => {
+      pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `"${o.name}"`).join(" | ")}) to the pattern. `);
+    }, []),
+    connected: useCallback(({outputs}) => {
+      pushLog(`Midi device connected! Available: ${outputs.map((o) => `"${o.name}"`).join(", ")}`);
+    }, []),
+    disconnected: useCallback(({outputs}) => {
+      pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `"${o.name}"`).join(", ")}`);
+    }, [])
+  });
   return /* @__PURE__ */ React.createElement("div", {
     className: "h-screen bg-slate-900 flex flex-col"
   }, /* @__PURE__ */ React.createElement("header", {
