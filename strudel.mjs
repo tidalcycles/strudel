@@ -456,7 +456,6 @@ class Pattern {
         return this._fastGap(Fraction(1).div(e.sub(b)))._late(b)
     }
 
-
     _fast(factor) {
         const fastQuery = this.withQueryTime(t => t.mul(factor))
         return fastQuery.withEventTime(t => t.div(factor))
@@ -604,6 +603,18 @@ function cat(...pats) {
     return fastcat(...pats)
 }
 
+function timeCat(...timepats) {
+    const total = timepats.map(a => a[0]).reduce((a,b) => a.add(b), Fraction(0))
+    let begin = Fraction(0)
+    const pats = []
+    for (const [time, pat] of timepats) {
+        const end = begin.add(time)
+        pats.push(reify(pat)._compressSpan(new TimeSpan(begin.div(total), end.div(total))))
+        begin = end
+    }
+    return stack(...pats)
+}
+
 function _sequenceCount(x) {
     if(Array.isArray(x)) {
         if (x.length == 0) {
@@ -670,7 +681,7 @@ const late  = curry((a, pat) => pat.late(a))
 const rev   = pat => pat.rev()
 
 export {Fraction, TimeSpan, Hap, Pattern, 
-    pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, reify, silence,
+    pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr, reify, silence,
     fast, slow, early, late, rev
 }
 

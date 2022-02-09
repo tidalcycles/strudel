@@ -2,7 +2,7 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast} from "../strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast, timeCat} from "../strudel.mjs";
 //import { Time } from 'tone';
 import pkg from 'tone';
 const { Time } = pkg;
@@ -222,6 +222,14 @@ describe('Pattern', function() {
         pure("a").every(3, fast(2))._fast(3).firstCycle,
         sequence(sequence("a", "a"), "a", "a").firstCycle
       )      
+    })
+  })
+  describe('timeCat()', function() {
+    it('Can concatenate patterns with different relative durations', function() {
+      assert.deepStrictEqual(
+        sequence("a", ["a", "a"]).firstCycle,
+        timeCat([1,"a"], [0.5, "a"], [0.5, "a"]).firstCycle
+      )
     })
   })
 })
