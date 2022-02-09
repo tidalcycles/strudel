@@ -434,18 +434,28 @@ class Pattern {
         // }
         const qf = function(span) { 
             const cycle = span.begin.sam()
-            const begin = cycle.add(span.begin.sub(span.cycle).mul(factor).min(1))
-            const end   = cycle.add(span.end.sub(span.cycle).mul(factor).min(1))
+            const begin = cycle.add(span.begin.sub(cycle).mul(factor).min(1))
+            const end   = cycle.add(span.end.sub(cycle).mul(factor).min(1))
             return new TimeSpan(begin, end)
         }
         const ef = function(span) { 
             const cycle = span.begin.sam()
-            const begin = cycle.add(span.begin.sub(span.cycle).div(factor).min(1))
-            const end   = cycle.add(span.end.sub(span.cycle).div(factor).min(1))
+            const begin = cycle.add(span.begin.sub(cycle).div(factor).min(1))
+            const end   = cycle.add(span.end.sub(cycle).div(factor).min(1))
             return new TimeSpan(begin, end)
         }
         return this.withQuerySpan(qf).withEventSpan(ef)._splitQueries()
     }
+
+    _compressSpan(span) {
+        const b = span.begin
+        const e = span.end
+        if (b > e || b > 1 || e > 1 || b < 0 || e < 0) {
+            return silence
+        }
+        return this._fastGap(Fraction(1).div(e.sub(b)))._late(b)
+    }
+
 
     _fast(factor) {
         const fastQuery = this.withQueryTime(t => t.mul(factor))

@@ -3,6 +3,9 @@ import Fraction from 'fraction.js'
 import { strict as assert } from 'assert';
 
 import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast} from "../strudel.mjs";
+//import { Time } from 'tone';
+import pkg from 'tone';
+const { Time } = pkg;
 
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
 const hap = (whole, part, value) => new Hap(whole, part, value)
@@ -104,6 +107,14 @@ describe('Pattern', function() {
       assert.deepStrictEqual(
         sequence("a", "b", "c")._fastGap(2).fast(2).firstCycle,
         sequence(["a","b","c"], silence, ["a","b","c"], silence).firstCycle
+      )
+    })
+  })
+  describe('_compressSpan()', function () {
+    it('Can squash cycles of a pattern into a given timespan', function () {
+      assert.deepStrictEqual(
+        pure("a")._compressSpan(new TimeSpan(0.25, 0.5)).firstCycle,
+        sequence(silence, "a", silence, silence).firstCycle
       )
     })
   })
