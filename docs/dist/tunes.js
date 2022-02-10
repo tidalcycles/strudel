@@ -32,7 +32,7 @@ export const shapeShifted = `stack(
     b1, b2, b1, b2, e2, e3, e2, e3,
     a1, a2, a1, a2, a1, a2, a1, a2,
   ).rev()
-).slow(16).rev()`;
+).slow(16)`;
 export const tetrisMidi = `${shapeShifted}.midi('IAC-Treiber Bus 1')`;
 export const tetrisWithFunctions = `stack(sequence(
   'e5', sequence('b4', 'c5'), 'd5', sequence('c5', 'b4'),
@@ -171,3 +171,4 @@ export const whirlyStrudel = `mini("[e4 [b2  b3] c4]")
   .every(3, x => x.slow(1.5))
   .fast(slowcat(1.25,1,1.5))
   .every(2, _ => mini("e4 ~ e3 d4 ~"))`;
+export default shapeShifted;

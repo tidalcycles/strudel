@@ -3,14 +3,15 @@ import logo from "./logo.svg.proxy.js";
 import cx from "./cx.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
 import useCycle from "./useCycle.js";
-import * as tunes from "./tunes.js";
+import defaultTune from "./tunes.js";
 import * as parser from "./parse.js";
 import CodeMirror from "./CodeMirror.js";
 import hot from "../hot.js";
 import {isNote} from "../_snowpack/pkg/tone.js";
 import {useWebMidi} from "./midi.js";
-const {tetris, tetrisRev, shapeShifted} = tunes;
 const {parse} = parser;
+const [_, codeParam] = window.location.href.split("#");
+const decoded = atob(codeParam || "");
 const getHotCode = async () => {
   return fetch("/hot.js").then((res) => res.text()).then((src) => {
     return src.split("export default").slice(-1)[0].trim();
@@ -25,12 +26,17 @@ defaultSynth.set({
 });
 function App() {
   const [mode, setMode] = useState("javascript");
-  const [code, setCode] = useState(shapeShifted);
+  const [code, setCode] = useState(decoded || defaultTune);
   const [log, setLog] = useState("");
   const logBox = useRef();
   const [error, setError] = useState();
   const [pattern, setPattern] = useState();
   const [activePattern, setActivePattern] = useState();
+  const activatePattern = (_pattern = pattern) => {
+    setActivePattern(() => _pattern);
+    window.location.hash = "#" + btoa(code);
+    !cycle.started && cycle.start();
+  };
   const [isHot, setIsHot] = useState(false);
   const pushLog = (message) => setLog((log2) => log2 + `${log2 ? "\n\n" : ""}${message}`);
   const logCycle = (_events, cycle2) => {
@@ -71,8 +77,7 @@ function App() {
   useLayoutEffect(() => {
     const handleKeyPress = (e) => {
       if (e.ctrlKey && e.code === "Enter") {
-        setActivePattern(() => pattern);
-        !cycle.started && cycle.start();
+        activatePattern();
       }
     };
     document.addEventListener("keypress", handleKeyPress);
@@ -86,7 +91,7 @@ function App() {
           setCode(_code2);
           setMode("javascript");
         });
-        setActivePattern(hot);
+        activatePattern(hot);
         return;
       } else {
         _code = hot;
@@ -96,8 +101,8 @@ function App() {
     try {
       const parsed = parse(_code);
       setPattern(() => parsed.pattern);
-      if (!activePattern || isHot) {
-        setActivePattern(() => parsed.pattern);
+      if (isHot) {
+        activatePattern(parsed.pattern);
       }
       setMode(parsed.mode);
       setError(void 0);
@@ -152,7 +157,7 @@ function App() {
       theme: "material",
       lineNumbers: true
     },
-    onChange: (_, __, value) => {
+    onChange: (_2, __, value) => {
       if (!isHot) {
         setCode(value);
       }
@@ -165,7 +170,13 @@ function App() {
     className: "absolute right-2 bottom-2 text-red-500"
   }, error?.message || "unknown error")), /* @__PURE__ */ React.createElement("button", {
     className: "flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500",
-    onClick: () => cycle.toggle()
+    onClick: () => {
+      if (!cycle.started) {
+        activatePattern();
+      } else {
+        cycle.stop();
+      }
+    }
   }, cycle.started ? "pause" : "play"), /* @__PURE__ */ React.createElement("textarea", {
     className: "grow bg-[#283237] border-0 text-xs",
     value: log,

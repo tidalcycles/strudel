@@ -41,7 +41,7 @@ Pattern.prototype.midi = function(output, channel = 1) {
       time = time * 1e3 + timingOffset;
       device.playNote(value, channel, {
         time,
-        duration: event.duration * 1e3,
+        duration: event.duration * 1e3 - 5,
         velocity: 0.9
       });
     }
