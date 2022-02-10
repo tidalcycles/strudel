@@ -181,7 +181,7 @@ describe('Pattern', function() {
     it('Can alternate', function () {
       assert.deepStrictEqual(
         pure(10).when(slowcat(true,false),add(3)).fast(4).firstCycle,
-        slowcat(10,13,10,10).firstCycle
+        slowcat(13,10,13,10).firstCycle
       )
     })
   })
