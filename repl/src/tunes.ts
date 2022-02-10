@@ -1,7 +1,7 @@
 export const timeCatMini = `s(
   'c3@3 [eb3, g3, [c4 d4]/2]',
   'c2 g2',
-  m\`[eb4@5 [f4 eb4 d4]@3] [eb4 c4]/2\`.slow(8)
+  m('[eb4@5 [f4 eb4 d4]@3] [eb4 c4]/2').slow(8)
 )`;
 
 export const timeCat = `stack(
