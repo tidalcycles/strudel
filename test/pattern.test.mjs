@@ -2,7 +2,7 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast, timeCat} from "../strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast, timeCat,add,sub,mul,div} from "../strudel.mjs";
 //import { Time } from 'tone';
 import pkg from 'tone';
 const { Time } = pkg;
@@ -221,7 +221,19 @@ describe('Pattern', function() {
       assert.deepStrictEqual(
         pure("a").every(3, fast(2))._fast(3).firstCycle,
         sequence(sequence("a", "a"), "a", "a").firstCycle
-      )      
+      )
+      assert.deepStrictEqual(
+        sequence(3,4,5).every(3, add(3)).fast(5).firstCycle,
+        sequence(6,7,8,3,4,5,3,4,5,6,7,8,3,4,5).firstCycle
+      )
+      assert.deepStrictEqual(
+        sequence(3,4,5).every(2, sub(1)).fast(5).firstCycle,
+        sequence(2,3,4,3,4,5,2,3,4,3,4,5,2,3,4).firstCycle
+      )
+      assert.deepStrictEqual(
+        sequence(3,4,5).every(3, add(3)).every(2, sub(1)).fast(2).firstCycle,
+        sequence(5,6,7,3,4,5).firstCycle
+      )
     })
   })
   describe('timeCat()', function() {
