@@ -4,15 +4,16 @@ import cx from './cx';
 import * as Tone from 'tone';
 import useCycle from './useCycle';
 import type { Pattern } from './types';
-import * as tunes from './tunes';
+import defaultTune from './tunes';
 import * as parser from './parse';
 import CodeMirror from './CodeMirror';
 import hot from '../public/hot';
 import { isNote } from 'tone';
 import { useWebMidi } from './midi';
-
-const { tetris, tetrisRev, shapeShifted } = tunes;
 const { parse } = parser;
+
+const [_, codeParam] = window.location.href.split('#');
+const decoded = atob(codeParam || '');
 
 const getHotCode = async () => {
   return fetch('/hot.js')
@@ -32,12 +33,17 @@ defaultSynth.set({
 
 function App() {
   const [mode, setMode] = useState<string>('javascript');
-  const [code, setCode] = useState<string>(shapeShifted);
+  const [code, setCode] = useState<string>(decoded || defaultTune);
   const [log, setLog] = useState('');
   const logBox = useRef<any>();
   const [error, setError] = useState<Error>();
   const [pattern, setPattern] = useState<Pattern>();
   const [activePattern, setActivePattern] = useState<Pattern>();
+  const activatePattern = (_pattern = pattern) => {
+    setActivePattern(() => _pattern);
+    window.location.hash = '#' + btoa(code);
+    !cycle.started && cycle.start();
+  };
   const [isHot, setIsHot] = useState(false); // set to true to enable live coding in hot.js, using dev server
   const pushLog = (message: string) => setLog((log) => log + `${log ? '\n\n' : ''}${message}`);
   // logs events of cycle
@@ -86,8 +92,7 @@ function App() {
   useLayoutEffect(() => {
     const handleKeyPress = (e: any) => {
       if (e.ctrlKey && e.code === 'Enter') {
-        setActivePattern(() => pattern);
-        !cycle.started && cycle.start();
+        activatePattern();
       }
     };
     document.addEventListener('keypress', handleKeyPress);
@@ -104,7 +109,7 @@ function App() {
           setCode(_code);
           setMode('javascript');
         }); // if using HMR, just use changed file
-        setActivePattern(hot);
+        activatePattern(hot);
         return;
       } else {
         _code = hot;
@@ -117,8 +122,8 @@ function App() {
       // need arrow function here! otherwise if user returns a function, react will think it's a state reducer
       // only first time, then need ctrl+enter
       setPattern(() => parsed.pattern);
-      if (!activePattern || isHot) {
-        setActivePattern(() => parsed.pattern);
+      if (isHot) {
+        activatePattern(parsed.pattern);
       }
       setMode(parsed.mode);
       setError(undefined);
@@ -196,7 +201,13 @@ function App() {
         </div>
         <button
           className="flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500"
-          onClick={() => cycle.toggle()}
+          onClick={() => {
+            if (!cycle.started) {
+              activatePattern();
+            } else {
+              cycle.stop();
+            }
+          }}
         >
           {cycle.started ? 'pause' : 'play'}
         </button>
