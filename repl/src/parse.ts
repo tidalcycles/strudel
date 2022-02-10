@@ -31,6 +31,13 @@ function reify(thing: any) {
   return pure(thing);
 }
 
+function minify(thing: any) {
+  if (typeof thing === 'string') {
+    return mini(thing);
+  }
+  return reify(thing);
+}
+
 const applyOptions = (parent: any) => (pat: any, i: number) => {
   const ast = parent.source_[i];
   const options = ast.options_;
@@ -44,7 +51,10 @@ const applyOptions = (parent: any) => (pat: any, i: number) => {
     }
     console.warn(`operator "${operator.type_}" not implemented`);
   }
-  // TODO: options.weight = "@"
+  if (options?.weight) {
+    // weight is handled by parent
+    return pat;
+  }
   // TODO: bjorklund e.g. "c3(5,8)"
   const unimplemented = Object.keys(options || {}).filter((key) => key !== 'operator');
   if (unimplemented.length) {
@@ -61,6 +71,10 @@ export function patternifyAST(ast: any): any {
       const children = ast.source_.map(patternifyAST).map(applyOptions(ast));
       if (ast.arguments_.alignment === 'v') {
         return stack(...children);
+      }
+      const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
+      if (weightedChildren) {
+        return timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
       }
       return sequence(...children);
     case 'element':
@@ -113,7 +127,13 @@ export const mini = (...strings: string[]) => {
   return pattern;
 };
 
+// shorthand for mini
 const m = mini;
+// shorthand for stack, automatically minifying strings
+const s = (...strings) => {
+  const patternified = strings.map((s) => minify(s));
+  return stack(...patternified);
+};
 
 // includes haskell style (raw krill parsing)
 export const h = (string: string) => {
