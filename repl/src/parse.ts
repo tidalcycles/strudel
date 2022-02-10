@@ -7,8 +7,21 @@ import * as toneStuff from './tone';
 import shapeshifter from './shapeshifter';
 
 // even if some functions are not used, we need them to be available in eval
-const { pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, /* reify, */ silence, Fraction } =
-  strudel;
+const {
+  pure,
+  stack,
+  slowcat,
+  fastcat,
+  cat,
+  sequence,
+  polymeter,
+  pm,
+  polyrhythm,
+  pr,
+  /* reify, */ silence,
+  Fraction,
+  timeCat,
+} = strudel;
 const { autofilter, filter, gain } = toneStuff;
 
 function reify(thing: any) {

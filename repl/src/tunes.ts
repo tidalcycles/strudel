@@ -1,3 +1,12 @@
+export const timeCat = `stack(
+  timeCat([3, c3], [1, stack(eb3, g3, m(c4, d4).slow(2))]),
+  m(c2, g2),
+  sequence(
+    timeCat([5, eb4], [3, m(f4, eb4, d4)]), 
+    m(eb4, c4).slow(2)
+  ).slow(4)
+)`;
+
 export const shapeShifted = `stack(
   sequence(
     e5, [b4, c5], d5, [c5, b4],
