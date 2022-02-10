@@ -5,7 +5,21 @@ import "./tone.js";
 import "./midi.js";
 import * as toneStuff from "./tone.js";
 import shapeshifter from "./shapeshifter.js";
-const {pure, stack, slowcat, fastcat, cat, sequence, polymeter, pm, polyrhythm, pr, silence, Fraction} = strudel;
+const {
+  pure,
+  stack,
+  slowcat,
+  fastcat,
+  cat,
+  sequence,
+  polymeter,
+  pm,
+  polyrhythm,
+  pr,
+  silence,
+  Fraction,
+  timeCat
+} = strudel;
 const {autofilter, filter, gain} = toneStuff;
 function reify(thing) {
   if (thing?.constructor?.name === "Pattern") {

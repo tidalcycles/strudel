@@ -294,6 +294,29 @@ class Pattern {
     };
     return patterned;
   }
+  _fastGap(factor) {
+    const qf = function(span) {
+      const cycle = span.begin.sam();
+      const begin = cycle.add(span.begin.sub(cycle).mul(factor).min(1));
+      const end = cycle.add(span.end.sub(cycle).mul(factor).min(1));
+      return new TimeSpan(begin, end);
+    };
+    const ef = function(span) {
+      const cycle = span.begin.sam();
+      const begin = cycle.add(span.begin.sub(cycle).div(factor).min(1));
+      const end = cycle.add(span.end.sub(cycle).div(factor).min(1));
+      return new TimeSpan(begin, end);
+    };
+    return this.withQuerySpan(qf).withEventSpan(ef)._splitQueries();
+  }
+  _compressSpan(span) {
+    const b = span.begin;
+    const e = span.end;
+    if (b > e || b > 1 || e > 1 || b < 0 || e < 0) {
+      return silence;
+    }
+    return this._fastGap(Fraction(1).div(e.sub(b)))._late(b);
+  }
   _fast(factor) {
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
     return fastQuery.withEventTime((t) => t.div(factor));
@@ -405,6 +428,17 @@ function fastcat(...pats) {
 function cat(...pats) {
   return fastcat(...pats);
 }
+function timeCat(...timepats) {
+  const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
+  let begin = Fraction(0);
+  const pats = [];
+  for (const [time, pat] of timepats) {
+    const end = begin.add(time);
+    pats.push(reify(pat)._compressSpan(new TimeSpan(begin.div(total), end.div(total))));
+    begin = end;
+  }
+  return stack(...pats);
+}
 function _sequenceCount(x) {
   if (Array.isArray(x)) {
     if (x.length == 0) {
@@ -469,6 +503,7 @@ export {
   slowcat,
   fastcat,
   cat,
+  timeCat,
   sequence,
   polymeter,
   pm,
