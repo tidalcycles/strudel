@@ -1,3 +1,8 @@
+export const timeCatMini = `s(
+  'c3@3 [eb3, g3, [c4 d4]/2]',
+  'c2 g2',
+  m('[eb4@5 [f4 eb4 d4]@3] [eb4 c4]/2').slow(8)
+)`;
 export const timeCat = `stack(
   timeCat([3, c3], [1, stack(eb3, g3, m(c4, d4).slow(2))]),
   m(c2, g2),

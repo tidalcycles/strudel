@@ -27,6 +27,12 @@ function reify(thing) {
   }
   return pure(thing);
 }
+function minify(thing) {
+  if (typeof thing === "string") {
+    return mini(thing);
+  }
+  return reify(thing);
+}
 const applyOptions = (parent) => (pat, i) => {
   const ast = parent.source_[i];
   const options = ast.options_;
@@ -38,6 +44,9 @@ const applyOptions = (parent) => (pat, i) => {
         return reify(pat).fast(speed);
     }
     console.warn(`operator "${operator.type_}" not implemented`);
+  }
+  if (options?.weight) {
+    return pat;
   }
   const unimplemented = Object.keys(options || {}).filter((key) => key !== "operator");
   if (unimplemented.length) {
@@ -51,6 +60,10 @@ export function patternifyAST(ast) {
       const children = ast.source_.map(patternifyAST).map(applyOptions(ast));
       if (ast.arguments_.alignment === "v") {
         return stack(...children);
+      }
+      const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
+      if (weightedChildren) {
+        return timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
       }
       return sequence(...children);
     case "element":
@@ -94,6 +107,10 @@ export const mini = (...strings) => {
   return pattern;
 };
 const m = mini;
+const s = (...strings) => {
+  const patternified = strings.map((s2) => minify(s2));
+  return stack(...patternified);
+};
 export const h = (string) => {
   const ast = krill.parse(string);
   return patternifyAST(ast);
