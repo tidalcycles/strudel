@@ -126,7 +126,7 @@ function App() {
     }, [])
   });
   return /* @__PURE__ */ React.createElement("div", {
-    className: "h-screen bg-slate-900 flex flex-col"
+    className: "min-h-screen bg-[#2A3236] flex flex-col"
   }, /* @__PURE__ */ React.createElement("header", {
     className: "flex-none w-full h-16 px-2 flex border-b border-gray-200 bg-white justify-between"
   }, /* @__PURE__ */ React.createElement("div", {
@@ -144,11 +144,11 @@ function App() {
       }
     }
   }, isHot ? "🔥" : " ", " toggle hot mode")), /* @__PURE__ */ React.createElement("section", {
-    className: "grow flex flex-col p-2 text-gray-100"
+    className: "grow flex flex-col text-gray-100"
   }, /* @__PURE__ */ React.createElement("div", {
     className: "grow relative"
   }, /* @__PURE__ */ React.createElement("div", {
-    className: cx("h-full bg-[#2A3236]", error ? "focus:ring-red-500" : "focus:ring-slate-800")
+    className: cx("h-full  bg-[#2A3236]", error ? "focus:ring-red-500" : "focus:ring-slate-800")
   }, /* @__PURE__ */ React.createElement(CodeMirror, {
     value: code,
     readOnly: isHot,
@@ -163,7 +163,7 @@ function App() {
       }
     }
   }), /* @__PURE__ */ React.createElement("span", {
-    className: "p-4 absolute bottom-0 left-0 text-xs whitespace-pre"
+    className: "p-4 absolute bottom-0 right-0 text-xs whitespace-pre text-right"
   }, !cycle.started ? `press ctrl+enter to play
 ` : !isHot && activePattern !== pattern ? `ctrl+enter to update
 ` : "no changes\n", !isHot && /* @__PURE__ */ React.createElement(React.Fragment, null, {pegjs: "mini"}[mode] || mode, " mode"), isHot && "🔥 hot mode: go to hot.js to edit pattern, then save")), error && /* @__PURE__ */ React.createElement("div", {
@@ -178,7 +178,7 @@ function App() {
       }
     }
   }, cycle.started ? "pause" : "play"), /* @__PURE__ */ React.createElement("textarea", {
-    className: "grow bg-[#283237] border-0 text-xs",
+    className: "grow bg-[#283237] border-0 text-xs min-h-[200px]",
     value: log,
     readOnly: true,
     ref: logBox,

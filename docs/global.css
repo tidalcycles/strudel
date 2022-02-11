@@ -606,8 +606,8 @@ select {
 .bottom-0 {
   bottom: 0px;
 }
-.left-0 {
-  left: 0px;
+.right-0 {
+  right: 0px;
 }
 .right-2 {
   right: 0.5rem;
@@ -621,14 +621,17 @@ select {
 .flex {
   display: flex;
 }
-.h-screen {
-  height: 100vh;
-}
 .h-16 {
   height: 4rem;
 }
 .h-full {
   height: 100%;
+}
+.min-h-screen {
+  min-height: 100vh;
+}
+.min-h-\[200px\] {
+  min-height: 200px;
 }
 .w-full {
   width: 100%;
@@ -676,17 +679,13 @@ select {
   --tw-border-opacity: 1;
   border-color: rgb(55 65 81 / var(--tw-border-opacity));
 }
-.bg-slate-900 {
+.bg-\[\#2A3236\] {
   --tw-bg-opacity: 1;
-  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+  background-color: rgb(42 50 54 / var(--tw-bg-opacity));
 }
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-.bg-\[\#2A3236\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(42 50 54 / var(--tw-bg-opacity));
 }
 .bg-slate-700 {
   --tw-bg-opacity: 1;
@@ -696,15 +695,18 @@ select {
   --tw-bg-opacity: 1;
   background-color: rgb(40 50 55 / var(--tw-bg-opacity));
 }
-.p-2 {
-  padding: 0.5rem;
-}
 .p-4 {
   padding: 1rem;
+}
+.p-2 {
+  padding: 0.5rem;
 }
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+}
+.text-right {
+  text-align: right;
 }
 .text-2xl {
   font-size: 1.5rem;

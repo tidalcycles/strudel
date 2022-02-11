@@ -354,9 +354,10 @@ class Pattern {
     return stack([this, func(this._early(time_pat))]);
   }
   every(n, func) {
-    const pats = Array(n - 1).fill(this);
-    pats.unshift(func(this));
-    return slowcat(...pats);
+    const pat = this;
+    const pats = Array(n - 1).fill(pat);
+    pats.unshift(func(pat));
+    return slowcatPrime(...pats);
   }
   append(other) {
     return fastcat(...[this, other]);
@@ -419,6 +420,15 @@ function slowcat(...pats) {
     const pat = pats[pat_n];
     const offset = span.begin.floor().sub(span.begin.div(pats.length).floor());
     return pat.withEventTime((t) => t.add(offset)).query(span.withTime((t) => t.sub(offset)));
+  };
+  return new Pattern(query2)._splitQueries();
+}
+function slowcatPrime(...pats) {
+  pats = pats.map(reify);
+  const query2 = function(span) {
+    const pat_n = Math.floor(span.begin) % pats.length;
+    const pat = pats[pat_n];
+    return pat.query(span);
   };
   return new Pattern(query2)._splitQueries();
 }
@@ -493,6 +503,16 @@ const slow = curry((a, pat) => pat.slow(a));
 const early = curry((a, pat) => pat.early(a));
 const late = curry((a, pat) => pat.late(a));
 const rev = (pat) => pat.rev();
+const add = curry((a, pat) => pat.add(a));
+const sub = curry((a, pat) => pat.sub(a));
+const mul = curry((a, pat) => pat.mul(a));
+const div = curry((a, pat) => pat.div(a));
+const union = curry((a, pat) => pat.union(a));
+const every = curry((i, f, pat) => pat.every(i, f));
+const when = curry((binary, f, pat) => pat.when(binary, f));
+const off = curry((t, f, pat) => pat.off(t, f));
+const jux = curry((f, pat) => pat.jux(f));
+const append = curry((a, pat) => pat.append(a));
 export {
   Fraction,
   TimeSpan,
@@ -515,5 +535,15 @@ export {
   slow,
   early,
   late,
-  rev
+  rev,
+  add,
+  sub,
+  mul,
+  div,
+  union,
+  every,
+  when,
+  off,
+  jux,
+  append
 };
