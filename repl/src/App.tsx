@@ -151,7 +151,7 @@ function App() {
   });
 
   return (
-    <div className="h-screen bg-slate-900 flex flex-col">
+    <div className="min-h-screen bg-[#2A3236] flex flex-col">
       <header className="flex-none w-full h-16 px-2 flex border-b border-gray-200 bg-white justify-between">
         <div className="flex items-center space-x-2">
           <img src={logo} className="Tidal-logo w-16 h-16" alt="logo" />
@@ -169,9 +169,9 @@ function App() {
           </button>
         )}
       </header>
-      <section className="grow flex flex-col p-2 text-gray-100">
+      <section className="grow flex flex-col text-gray-100">
         <div className="grow relative">
-          <div className={cx('h-full bg-[#2A3236]', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}>
+          <div className={cx('h-full  bg-[#2A3236]', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}>
             <CodeMirror
               value={code}
               readOnly={isHot}
@@ -187,7 +187,7 @@ function App() {
                 }
               }}
             />
-            <span className="p-4 absolute bottom-0 left-0 text-xs whitespace-pre">
+            <span className="p-4 absolute bottom-0 right-0 text-xs whitespace-pre text-right">
               {!cycle.started
                 ? `press ctrl+enter to play\n`
                 : !isHot && activePattern !== pattern
@@ -212,7 +212,7 @@ function App() {
           {cycle.started ? 'pause' : 'play'}
         </button>
         <textarea
-          className="grow bg-[#283237] border-0 text-xs"
+          className="grow bg-[#283237] border-0 text-xs min-h-[200px]"
           value={log}
           readOnly
           ref={logBox}
