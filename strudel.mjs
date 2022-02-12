@@ -275,10 +275,10 @@ class Pattern {
         // resolve wholes, applies a given pattern of values to that
         // pattern of functions.
         const pat_func = this
-        query = function(span) {
+        const query = function(span) {
             const event_funcs = pat_func.query(span)
             const event_vals = pat_val.query(span)
-            apply = function(event_func, event_val) {
+            const apply = function(event_func, event_val) {
                 const s = event_func.part.intersection(event_val.part)
                 if (s == undefined) {
                     return undefined
@@ -293,7 +293,7 @@ class Pattern {
     appBoth(pat_val) {
         // Tidal's <*>
         const whole_func = function(span_a, span_b) {
-            if (span_a == undefined || span_B == undefined) {
+            if (span_a == undefined || span_b == undefined) {
                 return undefined
             }
             return span_a.intersection_e(span_b)
