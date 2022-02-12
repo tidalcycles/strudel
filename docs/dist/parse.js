@@ -18,8 +18,11 @@ const {
   polyrhythm,
   pr,
   silence,
+  timeCat,
   Fraction,
-  timeCat
+  Pattern,
+  TimeSpan,
+  Hap
 } = strudel;
 const {autofilter, filter, gain} = toneStuff;
 function reify(thing) {
