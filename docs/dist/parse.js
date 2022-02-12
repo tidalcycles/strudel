@@ -3,6 +3,7 @@ import * as strudel from "../_snowpack/link/strudel.js";
 import {Scale, Note, Interval} from "../_snowpack/pkg/@tonaljs/tonal.js";
 import "./tone.js";
 import "./midi.js";
+import "./voicings.js";
 import * as toneStuff from "./tone.js";
 import shapeshifter from "./shapeshifter.js";
 const {

@@ -1,6 +1,7 @@
 {
   "imports": {
     "@tonaljs/tonal": "./@tonaljs/tonal.js",
+    "chord-voicings": "./chord-voicings.js",
     "codemirror/lib/codemirror.css": "./codemirror/lib/codemirror.css",
     "codemirror/mode/javascript/javascript.js": "./codemirror/mode/javascript/javascript.js",
     "codemirror/mode/pegjs/pegjs.js": "./codemirror/mode/pegjs/pegjs.js",
