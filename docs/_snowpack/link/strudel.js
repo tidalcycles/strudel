@@ -132,8 +132,8 @@ class Hap {
   }
 }
 class Pattern {
-  constructor(query2) {
-    this.query = query2;
+  constructor(query) {
+    this.query = query;
   }
   _splitQueries() {
     const pat = this;
@@ -172,10 +172,10 @@ class Pattern {
   }
   _appWhole(whole_func, pat_val) {
     const pat_func = this;
-    query = function(span) {
+    const query = function(span) {
       const event_funcs = pat_func.query(span);
       const event_vals = pat_val.query(span);
-      apply = function(event_func, event_val) {
+      const apply = function(event_func, event_val) {
         const s = event_func.part.intersection(event_val.part);
         if (s == void 0) {
           return void 0;
@@ -188,7 +188,7 @@ class Pattern {
   }
   appBoth(pat_val) {
     const whole_func = function(span_a, span_b) {
-      if (span_a == void 0 || span_B == void 0) {
+      if (span_a == void 0 || span_b == void 0) {
         return void 0;
       }
       return span_a.intersection_e(span_b);
@@ -197,7 +197,7 @@ class Pattern {
   }
   appLeft(pat_val) {
     const pat_func = this;
-    const query2 = function(span) {
+    const query = function(span) {
       const haps = [];
       for (const hap_func of pat_func.query(span)) {
         const event_vals = pat_val.query(hap_func.part);
@@ -211,11 +211,11 @@ class Pattern {
       }
       return haps;
     };
-    return new Pattern(query2);
+    return new Pattern(query);
   }
   appRight(pat_val) {
     const pat_func = this;
-    const query2 = function(span) {
+    const query = function(span) {
       const haps = [];
       for (const hap_val of pat_val.query(span)) {
         const hap_funcs = pat_func.query(hap_val.part);
@@ -229,7 +229,7 @@ class Pattern {
       }
       return haps;
     };
-    return new Pattern(query2);
+    return new Pattern(query);
   }
   get firstCycle() {
     return this.query(new TimeSpan(Fraction(0), Fraction(1)));
@@ -251,7 +251,7 @@ class Pattern {
   }
   _bindWhole(choose_whole, func) {
     const pat_val = this;
-    const query2 = function(span) {
+    const query = function(span) {
       const withWhole = function(a, b) {
         return new Hap(choose_whole(a.whole, b.whole), b.part, b.value);
       };
@@ -260,7 +260,7 @@ class Pattern {
       };
       return flatten(pat_val.query(span).map((a) => match(a)));
     };
-    return new Pattern(query2);
+    return new Pattern(query);
   }
   bind(func) {
     const whole_func = function(a, b) {
@@ -364,7 +364,7 @@ class Pattern {
   }
   rev() {
     const pat = this;
-    const query2 = function(span) {
+    const query = function(span) {
       const cycle = span.begin.sam();
       const next_cycle = span.begin.nextSam();
       const reflect = function(to_reflect) {
@@ -377,7 +377,7 @@ class Pattern {
       const haps = pat.query(reflect(span));
       return haps.map((hap) => hap.withSpan(reflect));
     };
-    return new Pattern(query2)._splitQueries();
+    return new Pattern(query)._splitQueries();
   }
   jux(func, by = 1) {
     by /= 2;
@@ -394,10 +394,10 @@ class Pattern {
 }
 const silence = new Pattern((_) => []);
 function pure(value) {
-  function query2(span) {
+  function query(span) {
     return span.spanCycles.map((subspan) => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value));
   }
-  return new Pattern(query2);
+  return new Pattern(query);
 }
 function steady(value) {
   return new Pattern((span) => Hap(void 0, span, value));
@@ -410,27 +410,27 @@ function reify(thing) {
 }
 function stack(...pats) {
   const reified = pats.map((pat) => reify(pat));
-  const query2 = (span) => flatten(reified.map((pat) => pat.query(span)));
-  return new Pattern(query2);
+  const query = (span) => flatten(reified.map((pat) => pat.query(span)));
+  return new Pattern(query);
 }
 function slowcat(...pats) {
   pats = pats.map(reify);
-  const query2 = function(span) {
+  const query = function(span) {
     const pat_n = Math.floor(span.begin) % pats.length;
     const pat = pats[pat_n];
     const offset = span.begin.floor().sub(span.begin.div(pats.length).floor());
     return pat.withEventTime((t) => t.add(offset)).query(span.withTime((t) => t.sub(offset)));
   };
-  return new Pattern(query2)._splitQueries();
+  return new Pattern(query)._splitQueries();
 }
 function slowcatPrime(...pats) {
   pats = pats.map(reify);
-  const query2 = function(span) {
+  const query = function(span) {
     const pat_n = Math.floor(span.begin) % pats.length;
     const pat = pats[pat_n];
     return pat.query(span);
   };
-  return new Pattern(query2)._splitQueries();
+  return new Pattern(query)._splitQueries();
 }
 function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);
