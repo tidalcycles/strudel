@@ -3,6 +3,7 @@ import * as strudel from '../../strudel.mjs';
 import { Scale, Note, Interval } from '@tonaljs/tonal';
 import './tone';
 import './midi';
+import './voicings';
 import * as toneStuff from './tone';
 import shapeshifter from './shapeshifter';
 

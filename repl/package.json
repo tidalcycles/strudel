@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tonaljs/tonal": "^4.6.5",
+    "chord-voicings": "^0.0.1",
     "codemirror": "^5.65.1",
     "estraverse": "^5.3.0",
     "multimap": "^1.1.0",
