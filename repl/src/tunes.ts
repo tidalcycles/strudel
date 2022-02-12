@@ -256,25 +256,25 @@ export const swimming = `stack(
 
 export const giantSteps = `stack(
   // melody
-  sequence(
-    [['F#5', 'D5'], ['B4','G4'], 'Bb4', ['B4','A4']],
-    [['D5', 'Bb4'], ['G4', 'Eb4'], 'F#4', ['G4','F4']],
-    ['Bb4', ['B4', 'A4'], 'D5', ['D#5', 'C#5']],
-    ['F#5', ['G5', 'F5'], 'Bb5', ['F#5', 'F#5']],
+  mini(
+    '[F#5 D5] [B4 G4] Bb4 [B4 A4]',
+    '[D5 Bb4] [G4 Eb4] F#4 [G4 F4]',
+    'Bb4 [B4 A4] D5 [D#5 C#5]',
+    'F#5 [G5 F5] Bb5 [F#5 F#5]',
   ),
   // chords
-  sequence(
-    [['B^7', 'D7'], ['G^7', 'Bb7'], 'Eb^7', ['Am7', 'D7']],
-    [['G^7', 'Bb7'], ['Eb^7', 'F#7'], 'B^7', ['Fm7', 'Bb7']],
-    ['Eb^7', ['Am7', 'D7'], 'G^7', ['C#m7', 'F#7']],
-    ['B^7', ['Fm7', 'Bb7'], 'Eb^7', ['C#m7', 'F#7']]
+  mini(
+    '[B^7 D7] [G^7 Bb7] Eb^7 [Am7 D7]',
+    '[G^7 Bb7] [Eb^7 F#7] B^7 [Fm7 Bb7]',
+    'Eb^7 [Am7 D7] G^7 [C#m7 F#7]',
+    'B^7 [Fm7 Bb7] Eb^7 [C#m7 F#7]'
   ).voicings(['E3', 'G4']),
   // bass
-  sequence(
-    [['B2', 'D2'], ['G2', 'Bb2'], ['Eb2', 'Bb3'], ['A2', 'D2']],
-    [['G2', 'Bb2'], ['Eb2', 'F#2'], ['B2', 'F#2'], ['F2', 'Bb2']],
-    [['Eb2','Bb2'], ['A2', 'D2'], ['G2', 'D2'], ['C#2', 'F#2']],
-    [['B2', 'F#2'], ['F2', 'Bb2'], ['Eb2', 'Bb3'], ['C#2', 'F#2']]
+  mini(
+    '[B2 D2] [G2 Bb2] [Eb2 Bb3] [A2 D2]',
+    '[G2 Bb2] [Eb2 F#2] [B2 F#2] [F2 Bb2]',
+    '[Eb2 Bb2] [A2 D2] [G2 D2] [C#2 F#2]',
+    '[B2 F#2] [F2 Bb2] [Eb2 Bb3] [C#2 F#2]'
   )
 ).slow(20);`;
 
