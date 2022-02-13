@@ -48,11 +48,12 @@ function App() {
   const cycle = useCycle({
     onEvent: useCallback((time, event) => {
       try {
-        if (typeof event.value === "string") {
-          if (!isNote(event.value)) {
-            throw new Error("not a note: " + event.value);
+        if (!event.value?.onTrigger) {
+          const note = event.value?.value || event.value;
+          if (!isNote(note)) {
+            throw new Error("not a note: " + note);
           }
-          defaultSynth.triggerAttackRelease(event.value, event.duration, time);
+          defaultSynth.triggerAttackRelease(note, event.duration, time);
         } else {
           const {onTrigger} = event.value;
           onTrigger(time, event);

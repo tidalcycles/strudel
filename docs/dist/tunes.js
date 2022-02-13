@@ -254,4 +254,17 @@ export const giantSteps = `stack(
     '[B2 F#2] [F2 Bb2] [Eb2 Bb3] [C#2 F#2]'
   )
 ).slow(20);`;
+export const transposedChords = `stack(
+  m('c2 eb2 g2'),
+  m('Cm7').voicings(['g2','c4']).slow(2)
+).transpose(
+  slowcat(1, 2, 3, 2).slow(2)
+).transpose(5)`;
+export const scaleTranspose = `stack(f2, f3, c4, ab4)
+.scale(sequence('F minor', 'F harmonic minor').slow(4))
+.scaleTranspose(sequence(0, -1, -2, -3).slow(4))
+.transpose(sequence(0, 1).slow(16))
+.synth('sawtooth')
+.filter(800)
+.gain(0.5)`;
 export default swimming;
