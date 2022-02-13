@@ -293,4 +293,18 @@ export const scaleTranspose = `stack(f2, f3, c4, ab4)
 .filter(800)
 .gain(0.5)`;
 
+export const groove = `stack(
+  m('c2 g2 a2 [e2@2 eb2] d2 a2 g2 [d2 ~ db2]')
+  .synth('sawtooth')
+  .filter(500)
+  .gain(.6),
+  m('[C^7 A7] [Dm7 G7]')
+  .groove(m('[x@2 x] [~@2 x] [~ x@2]@2 [x ~@2] ~ [~@2 x@4]@2'))
+  .voicings(['G3','A4'])
+  .synth('square')
+  .filter(1000)
+  .adsr(.1,.1,.2)
+  .gain(0.25)
+).slow(4.5)`;
+
 export default swimming;

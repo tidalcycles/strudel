@@ -5,6 +5,7 @@ import './tone';
 import './midi';
 import './voicings';
 import './tonal';
+import './groove';
 import * as toneStuff from './tone';
 import shapeshifter from './shapeshifter';
 
