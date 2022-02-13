@@ -10,9 +10,7 @@ const getVoicing = (chord, lastVoicing, range = ["F3", "A4"]) => dictionaryVoici
 });
 const Pattern = _Pattern;
 Pattern.prototype.fmapNested = function(func) {
-  return new Pattern((span) => this.query(span).map((event) => {
-    return reify(func(event)).query(span).map((hap) => new Hap(event.whole, event.part, hap.value));
-  }).flat());
+  return new Pattern((span) => this.query(span).map((event) => reify(func(event)).query(span).map((hap) => new Hap(event.whole, event.part, hap.value))).flat());
 };
 Pattern.prototype.voicings = function(range = ["F3", "A4"]) {
   let lastVoicing;

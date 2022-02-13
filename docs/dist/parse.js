@@ -4,6 +4,7 @@ import {Scale, Note, Interval} from "../_snowpack/pkg/@tonaljs/tonal.js";
 import "./tone.js";
 import "./midi.js";
 import "./voicings.js";
+import "./tonal.js";
 import * as toneStuff from "./tone.js";
 import shapeshifter from "./shapeshifter.js";
 const {
