@@ -16,11 +16,11 @@ const Pattern = _Pattern as any;
 Pattern.prototype.fmapNested = function (func) {
   return new Pattern((span) =>
     this.query(span)
-      .map((event) => {
-        return reify(func(event))
+      .map((event) =>
+        reify(func(event))
           .query(span)
-          .map((hap) => new Hap(event.whole, event.part, hap.value));
-      })
+          .map((hap) => new Hap(event.whole, event.part, hap.value))
+      )
       .flat()
   );
 };

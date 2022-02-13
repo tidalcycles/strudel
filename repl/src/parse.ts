@@ -4,6 +4,7 @@ import { Scale, Note, Interval } from '@tonaljs/tonal';
 import './tone';
 import './midi';
 import './voicings';
+import './tonal';
 import * as toneStuff from './tone';
 import shapeshifter from './shapeshifter';
 
