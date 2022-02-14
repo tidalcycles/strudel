@@ -27,9 +27,6 @@ Pattern.prototype._synth = function(type = "triangle") {
     return {...value, getInstrument, instrumentConfig, onTrigger};
   });
 };
-Pattern.prototype.synth = function(type = "triangle") {
-  return this._patternify(Pattern.prototype._synth)(type);
-};
 Pattern.prototype.adsr = function(attack = 0.01, decay = 0.01, sustain = 0.6, release = 0.01) {
   return this.fmap((value) => {
     if (!value?.getInstrument) {
@@ -65,15 +62,10 @@ export const gain = (gain2 = 0.9) => () => new Gain(gain2);
 Pattern.prototype._gain = function(g) {
   return this.chain(gain(g));
 };
-Pattern.prototype.gain = function(g) {
-  return this._patternify(Pattern.prototype._gain)(g);
-};
 Pattern.prototype._filter = function(freq, q, type = "lowpass") {
   return this.chain(filter(freq, q, type));
-};
-Pattern.prototype.filter = function(freq) {
-  return this._patternify(Pattern.prototype._filter)(freq);
 };
 Pattern.prototype.autofilter = function(g) {
   return this.chain(autofilter(g));
 };
+Pattern.prototype.patternified = Pattern.prototype.patternified.concat(["synth", "gain", "filter"]);

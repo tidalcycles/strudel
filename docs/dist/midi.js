@@ -24,6 +24,7 @@ Pattern.prototype.midi = function(output, channel = 1) {
   return this.fmap((value) => ({
     ...value,
     onTrigger: (time, event) => {
+      value = value.value || value;
       if (!isNote(value)) {
         throw new Error("not a note: " + value);
       }

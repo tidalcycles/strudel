@@ -77,8 +77,14 @@ function App() {
   });
   useLayoutEffect(() => {
     const handleKeyPress = (e) => {
-      if (e.ctrlKey && e.code === "Enter") {
-        activatePattern();
+      if (e.ctrlKey || e.altKey) {
+        switch (e.code) {
+          case "Enter":
+            activatePattern();
+            break;
+          case "Period":
+            cycle.stop();
+        }
       }
     };
     document.addEventListener("keypress", handleKeyPress);
@@ -164,7 +170,7 @@ function App() {
       }
     }
   }), /* @__PURE__ */ React.createElement("span", {
-    className: "p-4 absolute bottom-0 right-0 text-xs whitespace-pre text-right"
+    className: "p-4 absolute top-0 right-0 text-xs whitespace-pre text-right"
   }, !cycle.started ? `press ctrl+enter to play
 ` : !isHot && activePattern !== pattern ? `ctrl+enter to update
 ` : "no changes\n", !isHot && /* @__PURE__ */ React.createElement(React.Fragment, null, {pegjs: "mini"}[mode] || mode, " mode"), isHot && "🔥 hot mode: go to hot.js to edit pattern, then save")), error && /* @__PURE__ */ React.createElement("div", {

@@ -2,7 +2,7 @@ import Fraction from "../pkg/fractionjs.js";
 const removeUndefineds = (xs) => xs.filter((x) => x != void 0);
 const flatten = (arr) => [].concat(...arr);
 const id = (a) => a;
-function curry(func) {
+export function curry(func) {
   return function curried(...args) {
     if (args.length >= func.length) {
       return func.apply(this, args);
@@ -134,6 +134,14 @@ class Hap {
 class Pattern {
   constructor(query) {
     this.query = query;
+    const proto = Object.getPrototypeOf(this);
+    proto.patternified.forEach((prop) => {
+      this[prop] = (...args) => this._patternify(Pattern.prototype["_" + prop])(...args);
+      Object.assign(this[prop], Object.fromEntries(Object.entries(Pattern.prototype.factories).map(([type, func]) => [
+        type,
+        (...args) => this[prop](func(...args))
+      ])));
+    });
   }
   _splitQueries() {
     const pat = this;
@@ -321,27 +329,15 @@ class Pattern {
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
     return fastQuery.withEventTime((t) => t.div(factor));
   }
-  fast(...factor) {
-    return this._patternify(Pattern.prototype._fast)(...factor);
-  }
   _slow(factor) {
     return this._fast(1 / factor);
-  }
-  slow(...factor) {
-    return this._patternify(Pattern.prototype._slow)(...factor);
   }
   _early(offset) {
     offset = Fraction(offset);
     return this.withQueryTime((t) => t.add(offset)).withEventTime((t) => t.sub(offset));
   }
-  early(...factor) {
-    return this._patternify(Pattern.prototype._early)(...factor);
-  }
   _late(offset) {
     return this._early(0 - offset);
-  }
-  late(...factor) {
-    return this._patternify(Pattern.prototype._late)(...factor);
   }
   when(binary_pat, func) {
     const true_pat = binary_pat._filterValues(id);
@@ -391,7 +387,28 @@ class Pattern {
     const right = this.withValue((val) => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) + by}));
     return stack([left, func(right)]);
   }
+  stack(...pats) {
+    return stack(this, ...pats);
+  }
+  sequence(...pats) {
+    return sequence(this, ...pats);
+  }
+  superimpose(...funcs) {
+    return this.stack(...funcs.map((func) => func(this)));
+  }
 }
+Pattern.prototype.patternified = ["fast", "slow", "early", "late"];
+Pattern.prototype.factories = {pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
+const hackStrings = () => {
+  const pureGetter = {
+    get: function() {
+      return pure(String(this));
+    }
+  };
+  Object.defineProperty(String.prototype, "pure", pureGetter);
+  Object.defineProperty(String.prototype, "p", pureGetter);
+};
+hackStrings();
 const silence = new Pattern((_) => []);
 function pure(value) {
   function query(span) {
@@ -418,6 +435,9 @@ function slowcat(...pats) {
   const query = function(span) {
     const pat_n = Math.floor(span.begin) % pats.length;
     const pat = pats[pat_n];
+    if (!pat) {
+      return [];
+    }
     const offset = span.begin.floor().sub(span.begin.div(pats.length).floor());
     return pat.withEventTime((t) => t.add(offset)).query(span.withTime((t) => t.sub(offset)));
   };

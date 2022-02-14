@@ -5,28 +5,45 @@ import "./tone.js";
 import "./midi.js";
 import "./voicings.js";
 import "./tonal.js";
+import * as tonalStuff from "./tonal.js";
 import "./groove.js";
 import * as toneStuff from "./tone.js";
 import shapeshifter from "./shapeshifter.js";
 const {
+  Fraction,
+  TimeSpan,
+  Hap,
+  Pattern,
   pure,
   stack,
   slowcat,
   fastcat,
   cat,
+  timeCat,
   sequence,
   polymeter,
   pm,
   polyrhythm,
   pr,
   silence,
-  timeCat,
-  Fraction,
-  Pattern,
-  TimeSpan,
-  Hap
+  fast,
+  slow,
+  early,
+  late,
+  rev,
+  add,
+  sub,
+  mul,
+  div,
+  union,
+  every,
+  when,
+  off,
+  jux,
+  append
 } = strudel;
 const {autofilter, filter, gain} = toneStuff;
+const {transpose} = tonalStuff;
 function reify(thing) {
   if (thing?.constructor?.name === "Pattern") {
     return thing;
@@ -113,10 +130,16 @@ export const mini = (...strings) => {
   return pattern;
 };
 const m = mini;
-const s = (...strings) => {
-  const patternified = strings.map((s2) => minify(s2));
-  return stack(...patternified);
+const hackStrings = () => {
+  const miniGetter = {
+    get: function() {
+      return mini(String(this));
+    }
+  };
+  Object.defineProperty(String.prototype, "mini", miniGetter);
+  Object.defineProperty(String.prototype, "m", miniGetter);
 };
+hackStrings();
 export const h = (string) => {
   const ast = krill.parse(string);
   return patternifyAST(ast);
@@ -124,17 +147,12 @@ export const h = (string) => {
 export const parse = (code) => {
   let _pattern;
   let mode;
-  try {
-    _pattern = h(code);
-    mode = "pegjs";
-  } catch (err) {
-    mode = "javascript";
-    code = shapeshifter(code);
-    _pattern = eval(code);
-    if (_pattern?.constructor?.name !== "Pattern") {
-      const message = `got "${typeof _pattern}" instead of pattern`;
-      throw new Error(message + (typeof _pattern === "function" ? ", did you forget to call a function?" : "."));
-    }
+  mode = "javascript";
+  code = shapeshifter(code);
+  _pattern = minify(eval(code));
+  if (_pattern?.constructor?.name !== "Pattern") {
+    const message = `got "${typeof _pattern}" instead of pattern`;
+    throw new Error(message + (typeof _pattern === "function" ? ", did you forget to call a function?" : "."));
   }
   return {mode, pattern: _pattern};
 };
