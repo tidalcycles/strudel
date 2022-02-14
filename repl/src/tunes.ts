@@ -1,7 +1,7 @@
-export const timeCatMini = `s(
-  'c3@3 [eb3, g3, [c4 d4]/2]',
-  'c2 g2',
-  m('[eb4@5 [f4 eb4 d4]@3] [eb4 c4]/2').slow(8)
+export const timeCatMini = `stack(
+  'c3@3 [eb3, g3, [c4 d4]/2]'.mini,
+  'c2 g2'.mini,
+  '[eb4@5 [f4 eb4 d4]@3] [eb4 c4]/2'.mini.slow(8)
 )`;
 
 export const timeCat = `stack(
@@ -285,6 +285,13 @@ export const transposedChords = `stack(
   slowcat(1, 2, 3, 2).slow(2)
 ).transpose(5)`;
 
+export const transposedChordsHacked = `stack(
+  'c2 eb2 g2'.mini,
+  'Cm7'.pure.voicings(['g2','c4']).slow(2)
+).transpose(
+  slowcat(1, 2, 3, 2).slow(2)
+).transpose(5)`;
+
 export const scaleTranspose = `stack(f2, f3, c4, ab4)
 .scale(sequence('F minor', 'F harmonic minor').slow(4))
 .scaleTranspose(sequence(0, -1, -2, -3).slow(4))
@@ -306,5 +313,54 @@ export const groove = `stack(
   .adsr(.1,.1,.2)
   .gain(0.25)
 ).slow(4.5)`;
+
+export const grooveHacked = `stack(
+  'c2 g2 a2 [e2@2 eb2] d2 a2 g2 [d2 ~ db2]'.mini
+  .synth('sawtooth')
+  .filter(500)
+  .gain(.6),
+  '[C^7 A7] [Dm7 G7]'.mini.groove('[x@2 x] [~@2 x] [~ x@2]@2 [x ~@2] ~ [~@2 x@4]@2'.mini)
+  .voicings(['G3','A4'])
+  .synth('square')
+  .filter(1000)
+  .adsr(.1,.1,.2)
+  .gain(0.25)
+).slow(4.5)`;
+
+export const magicSofa = `stack(
+  m('[C^7 F^7 ~]/3 [Dm7 G7 A7 ~]/4')
+   .every(2, fast(2))
+   .voicings(),
+  m('[c2 f2 g2]/3 [d2 g2 a2 e2]/4')
+).slow(1)
+  .transpose.slowcat(0, 2, 3, 4).midi()`;
+
+export const magicSofaHacked = `stack(
+  '[C^7 F^7 ~]/3 [Dm7 G7 A7 ~]/4'.mini
+   .every(2, fast(2))
+   .voicings(),
+  '[c2 f2 g2]/3 [d2 g2 a2 e2]/4'.mini
+).slow(1)
+  .transpose.slowcat(0, 2, 3, 4).midi()`;
+
+export const confusedPhone = `stack('[g2 ~@1.3] [c3 ~@1.3]'.mini.slow(2))
+.superimpose(
+  x => transpose(-12,x).late(0),
+  x => transpose(7,x).late(0.2),
+  x => transpose(10,x).late(0.4),
+  x => transpose(12,x).late(0.6),
+  x => transpose(24,x).late(0.8)
+)
+.scale(sequence('C dorian', 'C mixolydian').slow(4))
+.scaleTranspose(slowcat(0,1,2,1).slow(2))
+.synth('triangle').gain(0.2).filter(1500)`;
+
+export const confusedPhoneDynamic = `stack('[g2 ~@1.3] [c3 ~@1.3]'.mini.slow(2))
+.superimpose(
+  ...[-12,7,10,12,24].slice(0,5).map((t,i,{length}) => x => transpose(t,x).late(i/length))
+)
+.scale(sequence('C dorian', 'C mixolydian').slow(4))
+.scaleTranspose(slowcat(0,1,2,1).slow(2))
+.synth('triangle').gain(0.2).filter(1500)`;
 
 export default swimming;

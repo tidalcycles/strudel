@@ -1,5 +1,5 @@
 import { Note, Interval, Scale } from '@tonaljs/tonal';
-import { Pattern as _Pattern } from '../../strudel.mjs';
+import { Pattern as _Pattern, curry } from '../../strudel.mjs';
 
 const Pattern = _Pattern as any;
 
@@ -74,9 +74,11 @@ Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
     return { value: Note.transpose(value, interval), scale };
   });
 };
-Pattern.prototype.transpose = function (intervalOrSemitones: string | number) {
-  return this._patternify(Pattern.prototype._transpose)(intervalOrSemitones);
-};
+
+// TODO: find out how to patternify this function when it's standalone 
+// e.g. `stack(c3).superimpose(transpose(slowcat(7, 5)))` or
+// or even `stack(c3).superimpose(transpose.slowcat(7, 5))` or
+export const transpose = curry((a, pat) => pat.transpose(a))
 
 Pattern.prototype._scaleTranspose = function (offset: number | string) {
   return this._mapNotes(({ value, scale }: NoteEvent) => {
@@ -86,14 +88,9 @@ Pattern.prototype._scaleTranspose = function (offset: number | string) {
     return { value: scaleTranspose(scale, Number(offset), value), scale };
   });
 };
-Pattern.prototype.scaleTranspose = function (offset: number | string) {
-  return this._patternify(Pattern.prototype._scaleTranspose)(offset);
-};
-
 Pattern.prototype._scale = function (scale: string) {
   return this._mapNotes((value) => ({ ...value, scale }));
 };
 
-Pattern.prototype.scale = function (scale: string) {
-  return this._patternify(Pattern.prototype._scale)(scale);
-};
+Pattern.prototype.patternified = Pattern.prototype.patternified.concat(['transpose', 'scaleTranspose', 'scale']);
+// Object.assign(Pattern.prototype.modifiers, { transpose })

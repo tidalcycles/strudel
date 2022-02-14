@@ -7,7 +7,7 @@ const flatten = arr => [].concat(...arr)
 
 const id = a => a
 
-function curry(func) {
+export function curry(func) {
     return function curried(...args) {
         if (args.length >= func.length) {
             return func.apply(this, args)
@@ -204,8 +204,26 @@ class Hap {
 }
 
 class Pattern {
+    // the following functions will get patternFactories as nested functions:
     constructor(query) {
-        this.query = query
+        this.query = query;
+        // the following code will assign `patternFactories` as child functions to all methods of Pattern that don't start with '_'
+        const proto = Object.getPrototypeOf(this);
+        // proto.patternified is defined below Pattern class. You can add more patternified functions from outside.
+        proto.patternified.forEach((prop) => {
+          // patternify function
+          this[prop] = (...args) => this._patternify(Pattern.prototype['_' + prop])(...args);
+          // with the following, you can do, e.g. `stack(c3).fast.slowcat(1, 2, 4, 8)` instead of `stack(c3).fast(slowcat(1, 2, 4, 8))`
+          Object.assign(
+            this[prop],
+            Object.fromEntries(
+              Object.entries(Pattern.prototype.factories).map(([type, func]) => [
+                type,
+                (...args) => this[prop](func(...args)),
+              ])
+            )
+          );
+        });
     }
 
     _splitQueries() {
@@ -461,16 +479,8 @@ class Pattern {
         return fastQuery.withEventTime(t => t.div(factor))
     }
 
-    fast(...factor) {
-        return this._patternify(Pattern.prototype._fast)(...factor)
-    }
-
     _slow(factor) {
         return this._fast(1/factor)
-    }
-
-    slow(...factor) {
-        return this._patternify(Pattern.prototype._slow)(...factor)
     }
 
     _early(offset) {
@@ -479,18 +489,9 @@ class Pattern {
         return this.withQueryTime(t => t.add(offset)).withEventTime(t => t.sub(offset))
     }
 
-    early(...factor) {
-        return this._patternify(Pattern.prototype._early)(...factor)
-    }
-
     _late(offset) {
         // Equivalent of Tidal's ~> operator
         return this._early(0-offset)
-    }
-
-
-    late(...factor) {
-        return this._patternify(Pattern.prototype._late)(...factor)
     }
 
     when(binary_pat, func) {
@@ -549,7 +550,39 @@ class Pattern {
 
         return stack([left,func(right)])
     }
+
+    // is there a different name for those in tidal?
+    stack(...pats) {
+      return stack(this, ...pats)
+    }
+    sequence(...pats) {
+      return sequence(this, ...pats)
+    }
+
+    superimpose(...funcs) {
+      return this.stack(...funcs.map((func) => func(this)));
+    }
 }
+
+// methods of Pattern that get callable factories
+Pattern.prototype.patternified = ['fast', 'slow', 'early', 'late'];
+// methods that create patterns, which are added to patternified Pattern methods
+Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
+// the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
+
+// let's hack built in strings
+const hackStrings = () => {
+  const pureGetter = {
+    get: function () {
+      return pure(String(this));
+    },
+  };
+  // with this, you can do 'c2'.pure.fast(2) or 'c2'.p.fast(2)
+  Object.defineProperty(String.prototype, 'pure', pureGetter);
+  Object.defineProperty(String.prototype, 'p', pureGetter);
+};
+
+hackStrings(); // comment out this line if you panic
 
 const silence = new Pattern(_ => [])
 
@@ -583,8 +616,12 @@ function slowcat(...pats) {
     // successively, one per cycle.
     pats = pats.map(reify)
     const query = function(span) {
-        const pat_n = Math.floor(span.begin) % pats.length
+        const pat_n = Math.floor(span.begin) % pats.length; 
         const pat = pats[pat_n]
+        if (!pat) {
+          // pat_n can be negative, if the span is in the past..
+          return [];
+        }
         // A bit of maths to make sure that cycles from constituent patterns aren't skipped.
         // For example if three patterns are slowcat-ed, the fourth cycle of the result should 
         // be the second (rather than fourth) cycle from the first pattern.

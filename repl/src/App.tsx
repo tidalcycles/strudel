@@ -92,8 +92,14 @@ function App() {
   // set active pattern on ctrl+enter
   useLayoutEffect(() => {
     const handleKeyPress = (e: any) => {
-      if (e.ctrlKey && e.code === 'Enter') {
-        activatePattern();
+      if (e.ctrlKey || e.altKey) {
+        switch (e.code) {
+          case 'Enter':
+            activatePattern();
+            break;
+          case 'Period':
+            cycle.stop();
+        }
       }
     };
     document.addEventListener('keypress', handleKeyPress);
@@ -188,7 +194,7 @@ function App() {
                 }
               }}
             />
-            <span className="p-4 absolute bottom-0 right-0 text-xs whitespace-pre text-right">
+            <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right">
               {!cycle.started
                 ? `press ctrl+enter to play\n`
                 : !isHot && activePattern !== pattern

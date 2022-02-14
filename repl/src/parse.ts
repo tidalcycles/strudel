@@ -5,30 +5,49 @@ import './tone';
 import './midi';
 import './voicings';
 import './tonal';
+import * as tonalStuff from './tonal';
 import './groove';
 import * as toneStuff from './tone';
 import shapeshifter from './shapeshifter';
 
 // even if some functions are not used, we need them to be available in eval
 const {
+  Fraction,
+  TimeSpan,
+  Hap,
+  Pattern,
   pure,
   stack,
   slowcat,
   fastcat,
   cat,
+  timeCat,
   sequence,
   polymeter,
   pm,
   polyrhythm,
   pr,
-  /* reify, */ silence,
-  timeCat,
-  Fraction,
-  Pattern,
-  TimeSpan,
-  Hap,
+  // reify,
+  silence,
+  fast,
+  slow,
+  early,
+  late,
+  rev,
+  add,
+  sub,
+  mul,
+  div,
+  union,
+  every,
+  when,
+  off,
+  jux,
+  append,
 } = strudel;
 const { autofilter, filter, gain } = toneStuff;
+
+const { transpose } = tonalStuff;
 
 function reify(thing: any) {
   if (thing?.constructor?.name === 'Pattern') {
@@ -135,11 +154,19 @@ export const mini = (...strings: string[]) => {
 
 // shorthand for mini
 const m = mini;
-// shorthand for stack, automatically minifying strings
-const s = (...strings) => {
-  const patternified = strings.map((s) => minify(s));
-  return stack(...patternified);
+
+const hackStrings = () => {
+  const miniGetter = {
+    get: function () {
+      return mini(String(this));
+    },
+  };
+  // with this, you can do 'c2 [eb2 g2]'.mini.fast(2) or 'c2 [eb2 g2]'.m.fast(2),
+  Object.defineProperty(String.prototype, 'mini', miniGetter);
+  Object.defineProperty(String.prototype, 'm', miniGetter);
 };
+
+hackStrings(); // comment out this line if you panic
 
 // includes haskell style (raw krill parsing)
 export const h = (string: string) => {
@@ -151,18 +178,18 @@ export const h = (string: string) => {
 export const parse: any = (code: string) => {
   let _pattern;
   let mode;
-  try {
+  /* try {
     _pattern = h(code);
     mode = 'pegjs';
-  } catch (err) {
-    // code is not haskell like
-    mode = 'javascript';
-    code = shapeshifter(code);
-    _pattern = eval(code);
-    if (_pattern?.constructor?.name !== 'Pattern') {
-      const message = `got "${typeof _pattern}" instead of pattern`;
-      throw new Error(message + (typeof _pattern === 'function' ? ', did you forget to call a function?' : '.'));
-    }
+  } catch (err) { */
+  // code is not haskell like
+  mode = 'javascript';
+  code = shapeshifter(code);
+  _pattern = minify(eval(code));
+  if (_pattern?.constructor?.name !== 'Pattern') {
+    const message = `got "${typeof _pattern}" instead of pattern`;
+    throw new Error(message + (typeof _pattern === 'function' ? ', did you forget to call a function?' : '.'));
   }
+  /* } */
   return { mode, pattern: _pattern };
 };
