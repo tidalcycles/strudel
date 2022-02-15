@@ -1,4 +1,5 @@
 import Fraction from 'fraction.js'
+import { compose } from 'ramda'; // will remove this as soon as compose is implemented here
 
 // Removes 'None' values from given list
 const removeUndefineds = xs => xs.filter(x => x != undefined)
@@ -7,15 +8,19 @@ const flatten = arr => [].concat(...arr)
 
 const id = a => a
 
-export function curry(func) {
+export function curry(func, overload) {
     return function curried(...args) {
         if (args.length >= func.length) {
             return func.apply(this, args)
         } 
         else {
-            return function(...args2) {
+            const partial = function(...args2) {
                 return curried.apply(this, args.concat(args2))
             }
+            if (overload) {
+                overload(partial, args);
+            }
+            return partial;
         }
     }
 }
@@ -739,6 +744,22 @@ const when  = curry((binary, f, pat) => pat.when(binary, f))
 const off   = curry((t, f, pat) => pat.off(t,f))
 const jux   = curry((f, pat) => pat.jux(f))
 const append = curry((a, pat) => pat.append(a))
+
+Pattern.prototype.composable = { fast, slow, early, late }
+
+// adds Pattern.prototype.composable to given function as child functions
+// then you can do transpose(2).late(0.2) instead of x => x.transpose(2).late(0.2)
+export function makeComposable(func) {
+  Object.entries(Pattern.prototype.composable).forEach(([functionName, composable]) => {
+    // compose with dot
+    func[functionName] = (...args) => {
+      // console.log(`called ${functionName}(${args.join(',')})`);
+      return compose(func, composable(...args));
+    };
+  });
+}
+// TODO: automatically make curried functions curried functions composable
+// see tonal.ts#transpose for an example
 
 export {Fraction, TimeSpan, Hap, Pattern, 
     pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr, reify, silence,
