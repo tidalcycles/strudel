@@ -4,13 +4,12 @@ import cx from './cx';
 import * as Tone from 'tone';
 import useCycle from './useCycle';
 import type { Pattern } from './types';
-import defaultTune from './tunes';
-import * as parser from './parse';
+import * as tunes from './tunes';
+import { evaluate } from './evaluate';
 import CodeMirror from './CodeMirror';
 import hot from '../public/hot';
 import { isNote } from 'tone';
 import { useWebMidi } from './midi';
-const { parse } = parser;
 
 const [_, codeParam] = window.location.href.split('#');
 const decoded = atob(codeParam || '');
@@ -23,7 +22,7 @@ const getHotCode = async () => {
     });
 };
 
-const defaultSynth = new Tone.PolySynth().toDestination();
+const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination);
 defaultSynth.set({
   oscillator: { type: 'triangle' },
   envelope: {
@@ -31,9 +30,17 @@ defaultSynth.set({
   },
 });
 
+function getRandomTune() {
+  const allTunes = Object.values(tunes);
+  const randomItem = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
+  return randomItem(allTunes);
+}
+
+const randomTune = getRandomTune();
+
 function App() {
   const [mode, setMode] = useState<string>('javascript');
-  const [code, setCode] = useState<string>(decoded || defaultTune);
+  const [code, setCode] = useState<string>(decoded || randomTune);
   const [log, setLog] = useState('');
   const logBox = useRef<any>();
   const [error, setError] = useState<Error>();
@@ -125,7 +132,7 @@ function App() {
     }
     // normal mode
     try {
-      const parsed = parse(_code);
+      const parsed = evaluate(_code);
       // need arrow function here! otherwise if user returns a function, react will think it's a state reducer
       // only first time, then need ctrl+enter
       setPattern(() => parsed.pattern);
@@ -164,17 +171,31 @@ function App() {
           <img src={logo} className="Tidal-logo w-16 h-16" alt="logo" />
           <h1 className="text-2xl">Strudel REPL</h1>
         </div>
-        {window.location.href.includes('http://localhost:8080') && (
+        <div className="flex space-x-4">
           <button
             onClick={() => {
-              if (isHot || confirm('Really switch? You might loose your current pattern..')) {
-                setIsHot((h) => !h);
-              }
+              const _code = getRandomTune();
+              console.log('tune',_code); // uncomment this to debug when random code fails
+              setCode(_code);
+              const parsed = evaluate(_code);
+              // Tone.Transport.cancel(Tone.Transport.seconds);
+              setActivePattern(parsed.pattern);
             }}
           >
-            {isHot ? '🔥' : ' '} toggle hot mode
+            🎲 random tune
           </button>
-        )}
+          {window.location.href.includes('http://localhost:8080') && (
+            <button
+              onClick={() => {
+                if (isHot || confirm('Really switch? You might loose your current pattern..')) {
+                  setIsHot((h) => !h);
+                }
+              }}
+            >
+              🔥 toggle hot mode
+            </button>
+          )}
+        </div>
       </header>
       <section className="grow flex flex-col text-gray-100">
         <div className="grow relative">

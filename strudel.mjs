@@ -9,7 +9,7 @@ const flatten = arr => [].concat(...arr)
 const id = a => a
 
 export function curry(func, overload) {
-    return function curried(...args) {
+    const fn = function curried(...args) {
         if (args.length >= func.length) {
             return func.apply(this, args)
         } 
@@ -23,6 +23,10 @@ export function curry(func, overload) {
             return partial;
         }
     }
+    if (overload) { // overload function without args... needed for chordBass.transpose(2)
+        overload(fn, []); 
+    }
+    return fn;
 }
 
 // Returns the start of the cycle.
@@ -567,6 +571,10 @@ class Pattern {
     superimpose(...funcs) {
       return this.stack(...funcs.map((func) => func(this)));
     }
+
+    edit(...funcs) {
+      return stack(...funcs.map(func => func(this)));
+    }
 }
 
 // methods of Pattern that get callable factories
@@ -574,20 +582,6 @@ Pattern.prototype.patternified = ['fast', 'slow', 'early', 'late'];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
-
-// let's hack built in strings
-const hackStrings = () => {
-  const pureGetter = {
-    get: function () {
-      return pure(String(this));
-    },
-  };
-  // with this, you can do 'c2'.pure.fast(2) or 'c2'.p.fast(2)
-  Object.defineProperty(String.prototype, 'pure', pureGetter);
-  Object.defineProperty(String.prototype, 'p', pureGetter);
-};
-
-hackStrings(); // comment out this line if you panic
 
 const silence = new Pattern(_ => [])
 
@@ -604,7 +598,7 @@ function steady(value) {
 }
 
 function reify(thing) {
-    if (thing.constructor.name == "Pattern") {
+    if (thing?.constructor?.name == "Pattern") {
         return thing
     }
     return pure(thing)
@@ -744,8 +738,13 @@ const when  = curry((binary, f, pat) => pat.when(binary, f))
 const off   = curry((t, f, pat) => pat.off(t,f))
 const jux   = curry((f, pat) => pat.jux(f))
 const append = curry((a, pat) => pat.append(a))
+const superimpose = curry((array, pat) => pat.superimpose(...array))
 
-Pattern.prototype.composable = { fast, slow, early, late }
+// problem: curried functions with spread arguments must have pat at the beginning
+// with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
+
+// these are the core composable functions. they are extended with Pattern.prototype.define below
+Pattern.prototype.composable = { fast, slow, early, late, superimpose }
 
 // adds Pattern.prototype.composable to given function as child functions
 // then you can do transpose(2).late(0.2) instead of x => x.transpose(2).late(0.2)
@@ -754,16 +753,42 @@ export function makeComposable(func) {
     // compose with dot
     func[functionName] = (...args) => {
       // console.log(`called ${functionName}(${args.join(',')})`);
-      return compose(func, composable(...args));
+      const composition = compose(func, composable(...args));
+      // the composition itself must be composable too :)
+      // then you can do endless chaining transpose(2).late(0.2).fast(2) ...
+      return makeComposable(composition);
     };
   });
+  return func;
 }
-// TODO: automatically make curried functions curried functions composable
-// see tonal.ts#transpose for an example
+
+// this will add func as name to list of composable / patternified functions.
+// those lists will be used in bootstrap to curry and compose everything, to support various call patterns
+Pattern.prototype.define = (name, func, options = {}) => {
+  if (options.composable) {
+    Pattern.prototype.composable[name] = func;
+  }
+  if(options.patternified) {
+    Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
+  }
+}
+
+// call this after all Patter.prototype.define calls have been executed! (right before evaluate)
+Pattern.prototype.bootstrap = () => {
+  // makeComposable(Pattern.prototype);
+  const bootstrapped = Object.fromEntries(Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
+    if(Pattern.prototype[functionName]) {
+      // without this, 'C^7'.m.chordBass.transpose(2) will throw "C^7".m.chordBass.transpose is not a function
+      Pattern.prototype[functionName] = makeComposable(Pattern.prototype[functionName]); // is this needed?
+    }
+    return [functionName, curry(composable, makeComposable)];
+  }));
+  return bootstrapped;
+}
 
 export {Fraction, TimeSpan, Hap, Pattern, 
     pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr, reify, silence,
     fast, slow, early, late, rev,
-    add, sub, mul, div, union, every, when, off, jux, append
+    add, sub, mul, div, union, every, when, off, jux, append, superimpose
 }
 

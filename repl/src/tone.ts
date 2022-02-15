@@ -89,3 +89,7 @@ Pattern.prototype.autofilter = function (g: number) {
 };
 
 Pattern.prototype.patternified = Pattern.prototype.patternified.concat(['synth', 'gain', 'filter']);
+
+Pattern.prototype.define('synth', (type, pat) => pat.synth(type), { composable: true, patternified: true });
+Pattern.prototype.define('gain', (gain, pat) => pat.synth(gain), { composable: true, patternified: true });
+Pattern.prototype.define('filter', (cutoff, pat) => pat.filter(cutoff), { composable: true, patternified: true });

@@ -6,3 +6,5 @@ const Pattern = _Pattern as any;
 Pattern.prototype.groove = function (groove) {
   return groove.fmap(() => (v) => v).appLeft(this);
 };
+
+Pattern.prototype.define('groove', (groove, pat) => pat.groove(groove), { composable: true });

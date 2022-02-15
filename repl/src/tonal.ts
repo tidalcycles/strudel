@@ -1,5 +1,5 @@
 import { Note, Interval, Scale } from '@tonaljs/tonal';
-import { Pattern as _Pattern, curry, makeComposable } from '../../strudel.mjs';
+import { Pattern as _Pattern } from '../../strudel.mjs';
 
 const Pattern = _Pattern as any;
 
@@ -76,10 +76,6 @@ Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
 };
 
 // example: transpose(3).late(0.2) will be equivalent to compose(transpose(3), late(0.2))
-export const transpose = curry(
-  (a, pat) => pat.transpose(a),
-  (partial) => makeComposable(partial)
-);
 // TODO: add Pattern.define(name, function, options) that handles all the meta programming stuff
 // TODO: find out how to patternify this function when it's standalone
 // e.g. `stack(c3).superimpose(transpose(slowcat(7, 5)))` or
@@ -97,5 +93,6 @@ Pattern.prototype._scale = function (scale: string) {
   return this._mapNotes((value) => ({ ...value, scale }));
 };
 
-Pattern.prototype.patternified = Pattern.prototype.patternified.concat(['transpose', 'scaleTranspose', 'scale']);
-Object.assign(Pattern.prototype.composable, { transpose });
+Pattern.prototype.define('transpose', (a, pat) => pat.transpose(a), { composable: true, patternified: true });
+Pattern.prototype.define('scale', (a, pat) => pat.scale(a), { composable: true, patternified: true });
+Pattern.prototype.define('scaleTranspose', (a, pat) => pat.scaleTranspose(a), { composable: true, patternified: true });

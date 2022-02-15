@@ -1,67 +1,10 @@
 import * as krill from '../krill-parser';
 import * as strudel from '../../strudel.mjs';
 import { Scale, Note, Interval } from '@tonaljs/tonal';
-import './tone';
-import './midi';
-import './voicings';
-import './tonal';
-import * as tonalStuff from './tonal';
-import './groove';
-import * as toneStuff from './tone';
-import shapeshifter from './shapeshifter';
 
-// even if some functions are not used, we need them to be available in eval
-const {
-  Fraction,
-  TimeSpan,
-  Hap,
-  Pattern,
-  pure,
-  stack,
-  slowcat,
-  fastcat,
-  cat,
-  timeCat,
-  sequence,
-  polymeter,
-  pm,
-  polyrhythm,
-  pr,
-  // reify,
-  silence,
-  fast,
-  slow,
-  early,
-  late,
-  rev,
-  add,
-  sub,
-  mul,
-  div,
-  union,
-  every,
-  when,
-  off,
-  jux,
-  append,
-} = strudel;
-const { autofilter, filter, gain } = toneStuff;
+const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence } = strudel;
 
-const { transpose } = tonalStuff;
 
-function reify(thing: any) {
-  if (thing?.constructor?.name === 'Pattern') {
-    return thing;
-  }
-  return pure(thing);
-}
-
-function minify(thing: any) {
-  if (typeof thing === 'string') {
-    return mini(thing);
-  }
-  return reify(thing);
-}
 
 const applyOptions = (parent: any) => (pat: any, i: number) => {
   const ast = parent.source_[i];
@@ -94,12 +37,20 @@ export function patternifyAST(ast: any): any {
   switch (ast.type_) {
     case 'pattern':
       const children = ast.source_.map(patternifyAST).map(applyOptions(ast));
-      if (ast.arguments_.alignment === 'v') {
+      const alignment = ast.arguments_.alignment;
+      if (alignment === 'v') {
         return stack(...children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
+      if (!weightedChildren && alignment === 't') {
+        return slowcat(...children);
+      }
       if (weightedChildren) {
-        return timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
+        const pat = timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
+        if (alignment === 't') {
+          return pat._slow(children.length); // timecat + slow
+        }
+        return pat;
       }
       return sequence(...children);
     case 'element':
@@ -142,31 +93,12 @@ export function patternifyAST(ast: any): any {
 
 // mini notation only (wraps in "")
 export const mini = (...strings: string[]) => {
-  const pattern = sequence(
-    ...strings.map((str) => {
-      const ast = krill.parse(`"${str}"`);
-      // console.log('ast', ast);
-      return patternifyAST(ast);
-    })
-  );
-  return pattern;
+  const pats = strings.map((str) => {
+    const ast = krill.parse(`"${str}"`);
+    return patternifyAST(ast);
+  });
+  return sequence(...pats);
 };
-
-// shorthand for mini
-const m = mini;
-
-const hackStrings = () => {
-  const miniGetter = {
-    get: function () {
-      return mini(String(this));
-    },
-  };
-  // with this, you can do 'c2 [eb2 g2]'.mini.fast(2) or 'c2 [eb2 g2]'.m.fast(2),
-  Object.defineProperty(String.prototype, 'mini', miniGetter);
-  Object.defineProperty(String.prototype, 'm', miniGetter);
-};
-
-hackStrings(); // comment out this line if you panic
 
 // includes haskell style (raw krill parsing)
 export const h = (string: string) => {
@@ -175,21 +107,22 @@ export const h = (string: string) => {
   return patternifyAST(ast);
 };
 
-export const parse: any = (code: string) => {
-  let _pattern;
-  let mode;
-  /* try {
-    _pattern = h(code);
-    mode = 'pegjs';
-  } catch (err) { */
-  // code is not haskell like
-  mode = 'javascript';
-  code = shapeshifter(code);
-  _pattern = minify(eval(code));
-  if (_pattern?.constructor?.name !== 'Pattern') {
-    const message = `got "${typeof _pattern}" instead of pattern`;
-    throw new Error(message + (typeof _pattern === 'function' ? ', did you forget to call a function?' : '.'));
+// shorthand for mini
+Pattern.prototype.define('mini', mini, { composable: true });
+Pattern.prototype.define('m', mini, { composable: true });
+Pattern.prototype.define('h', h, { composable: true });
+
+// TODO: move this to strudel?
+export function reify(thing: any) {
+  if (thing?.constructor?.name === 'Pattern') {
+    return thing;
   }
-  /* } */
-  return { mode, pattern: _pattern };
-};
+  return pure(thing);
+}
+
+export function minify(thing: any) {
+  if (typeof thing === 'string') {
+    return mini(thing);
+  }
+  return reify(thing);
+}
