@@ -4,7 +4,7 @@ const removeUndefineds = (xs) => xs.filter((x) => x != void 0);
 const flatten = (arr) => [].concat(...arr);
 const id = (a) => a;
 export function curry(func, overload) {
-  return function curried(...args) {
+  const fn = function curried(...args) {
     if (args.length >= func.length) {
       return func.apply(this, args);
     } else {
@@ -17,6 +17,10 @@ export function curry(func, overload) {
       return partial;
     }
   };
+  if (overload) {
+    overload(fn, []);
+  }
+  return fn;
 }
 Fraction.prototype.sam = function() {
   return Fraction(Math.floor(this));
@@ -401,19 +405,12 @@ class Pattern {
   superimpose(...funcs) {
     return this.stack(...funcs.map((func) => func(this)));
   }
+  edit(...funcs) {
+    return stack(...funcs.map((func) => func(this)));
+  }
 }
 Pattern.prototype.patternified = ["fast", "slow", "early", "late"];
 Pattern.prototype.factories = {pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
-const hackStrings = () => {
-  const pureGetter = {
-    get: function() {
-      return pure(String(this));
-    }
-  };
-  Object.defineProperty(String.prototype, "pure", pureGetter);
-  Object.defineProperty(String.prototype, "p", pureGetter);
-};
-hackStrings();
 const silence = new Pattern((_) => []);
 function pure(value) {
   function query(span) {
@@ -425,7 +422,7 @@ function steady(value) {
   return new Pattern((span) => Hap(void 0, span, value));
 }
 function reify(thing) {
-  if (thing.constructor.name == "Pattern") {
+  if (thing?.constructor?.name == "Pattern") {
     return thing;
   }
   return pure(thing);
@@ -538,14 +535,34 @@ const when = curry((binary, f, pat) => pat.when(binary, f));
 const off = curry((t, f, pat) => pat.off(t, f));
 const jux = curry((f, pat) => pat.jux(f));
 const append = curry((a, pat) => pat.append(a));
-Pattern.prototype.composable = {fast, slow, early, late};
+const superimpose = curry((array, pat) => pat.superimpose(...array));
+Pattern.prototype.composable = {fast, slow, early, late, superimpose};
 export function makeComposable(func) {
   Object.entries(Pattern.prototype.composable).forEach(([functionName, composable]) => {
     func[functionName] = (...args) => {
-      return compose(func, composable(...args));
+      const composition = compose(func, composable(...args));
+      return makeComposable(composition);
     };
   });
+  return func;
 }
+Pattern.prototype.define = (name, func, options = {}) => {
+  if (options.composable) {
+    Pattern.prototype.composable[name] = func;
+  }
+  if (options.patternified) {
+    Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
+  }
+};
+Pattern.prototype.bootstrap = () => {
+  const bootstrapped = Object.fromEntries(Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
+    if (Pattern.prototype[functionName]) {
+      Pattern.prototype[functionName] = makeComposable(Pattern.prototype[functionName]);
+    }
+    return [functionName, curry(composable, makeComposable)];
+  }));
+  return bootstrapped;
+};
 export {
   Fraction,
   TimeSpan,
@@ -578,5 +595,6 @@ export {
   when,
   off,
   jux,
-  append
+  append,
+  superimpose
 };

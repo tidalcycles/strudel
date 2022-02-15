@@ -1,5 +1,5 @@
 import {Note, Interval, Scale} from "../_snowpack/pkg/@tonaljs/tonal.js";
-import {Pattern as _Pattern, curry, makeComposable} from "../_snowpack/link/strudel.js";
+import {Pattern as _Pattern} from "../_snowpack/link/strudel.js";
 const Pattern = _Pattern;
 function toNoteEvent(event) {
   if (typeof event === "string") {
@@ -55,7 +55,6 @@ Pattern.prototype._transpose = function(intervalOrSemitones) {
     return {value: Note.transpose(value, interval), scale};
   });
 };
-export const transpose = curry((a, pat) => pat.transpose(a), (partial) => makeComposable(partial));
 Pattern.prototype._scaleTranspose = function(offset) {
   return this._mapNotes(({value, scale}) => {
     if (!scale) {
@@ -67,5 +66,6 @@ Pattern.prototype._scaleTranspose = function(offset) {
 Pattern.prototype._scale = function(scale) {
   return this._mapNotes((value) => ({...value, scale}));
 };
-Pattern.prototype.patternified = Pattern.prototype.patternified.concat(["transpose", "scaleTranspose", "scale"]);
-Object.assign(Pattern.prototype.composable, {transpose});
+Pattern.prototype.define("transpose", (a, pat) => pat.transpose(a), {composable: true, patternified: true});
+Pattern.prototype.define("scale", (a, pat) => pat.scale(a), {composable: true, patternified: true});
+Pattern.prototype.define("scaleTranspose", (a, pat) => pat.scaleTranspose(a), {composable: true, patternified: true});

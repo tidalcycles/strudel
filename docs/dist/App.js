@@ -3,13 +3,12 @@ import logo from "./logo.svg.proxy.js";
 import cx from "./cx.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
 import useCycle from "./useCycle.js";
-import defaultTune from "./tunes.js";
-import * as parser from "./parse.js";
+import * as tunes from "./tunes.js";
+import {evaluate} from "./evaluate.js";
 import CodeMirror from "./CodeMirror.js";
 import hot from "../hot.js";
 import {isNote} from "../_snowpack/pkg/tone.js";
 import {useWebMidi} from "./midi.js";
-const {parse} = parser;
 const [_, codeParam] = window.location.href.split("#");
 const decoded = atob(codeParam || "");
 const getHotCode = async () => {
@@ -17,16 +16,22 @@ const getHotCode = async () => {
     return src.split("export default").slice(-1)[0].trim();
   });
 };
-const defaultSynth = new Tone.PolySynth().toDestination();
+const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination);
 defaultSynth.set({
   oscillator: {type: "triangle"},
   envelope: {
     release: 0.01
   }
 });
+function getRandomTune() {
+  const allTunes = Object.values(tunes);
+  const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  return randomItem(allTunes);
+}
+const randomTune = getRandomTune();
 function App() {
   const [mode, setMode] = useState("javascript");
-  const [code, setCode] = useState(decoded || defaultTune);
+  const [code, setCode] = useState(decoded || randomTune);
   const [log, setLog] = useState("");
   const logBox = useRef();
   const [error, setError] = useState();
@@ -106,7 +111,7 @@ function App() {
       }
     }
     try {
-      const parsed = parse(_code);
+      const parsed = evaluate(_code);
       setPattern(() => parsed.pattern);
       if (isHot) {
         activatePattern(parsed.pattern);
@@ -144,13 +149,23 @@ function App() {
     alt: "logo"
   }), /* @__PURE__ */ React.createElement("h1", {
     className: "text-2xl"
-  }, "Strudel REPL")), window.location.href.includes("http://localhost:8080") && /* @__PURE__ */ React.createElement("button", {
+  }, "Strudel REPL")), /* @__PURE__ */ React.createElement("div", {
+    className: "flex space-x-4"
+  }, /* @__PURE__ */ React.createElement("button", {
+    onClick: () => {
+      const _code = getRandomTune();
+      console.log("tune", _code);
+      setCode(_code);
+      const parsed = evaluate(_code);
+      setActivePattern(parsed.pattern);
+    }
+  }, "🎲 random tune"), window.location.href.includes("http://localhost:8080") && /* @__PURE__ */ React.createElement("button", {
     onClick: () => {
       if (isHot || confirm("Really switch? You might loose your current pattern..")) {
         setIsHot((h) => !h);
       }
     }
-  }, isHot ? "🔥" : " ", " toggle hot mode")), /* @__PURE__ */ React.createElement("section", {
+  }, "🔥 toggle hot mode"))), /* @__PURE__ */ React.createElement("section", {
     className: "grow flex flex-col text-gray-100"
   }, /* @__PURE__ */ React.createElement("div", {
     className: "grow relative"

@@ -1,61 +1,7 @@
 import * as krill from "../_snowpack/link/repl/krill-parser.js";
 import * as strudel from "../_snowpack/link/strudel.js";
 import {Scale, Note, Interval} from "../_snowpack/pkg/@tonaljs/tonal.js";
-import "./tone.js";
-import "./midi.js";
-import "./voicings.js";
-import "./tonal.js";
-import * as tonalStuff from "./tonal.js";
-import "./groove.js";
-import * as toneStuff from "./tone.js";
-import shapeshifter from "./shapeshifter.js";
-const {
-  Fraction,
-  TimeSpan,
-  Hap,
-  Pattern,
-  pure,
-  stack,
-  slowcat,
-  fastcat,
-  cat,
-  timeCat,
-  sequence,
-  polymeter,
-  pm,
-  polyrhythm,
-  pr,
-  silence,
-  fast,
-  slow,
-  early,
-  late,
-  rev,
-  add,
-  sub,
-  mul,
-  div,
-  union,
-  every,
-  when,
-  off,
-  jux,
-  append
-} = strudel;
-const {autofilter, filter, gain} = toneStuff;
-const {transpose} = tonalStuff;
-function reify(thing) {
-  if (thing?.constructor?.name === "Pattern") {
-    return thing;
-  }
-  return pure(thing);
-}
-function minify(thing) {
-  if (typeof thing === "string") {
-    return mini(thing);
-  }
-  return reify(thing);
-}
+const {pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence} = strudel;
 const applyOptions = (parent) => (pat, i) => {
   const ast = parent.source_[i];
   const options = ast.options_;
@@ -81,12 +27,20 @@ export function patternifyAST(ast) {
   switch (ast.type_) {
     case "pattern":
       const children = ast.source_.map(patternifyAST).map(applyOptions(ast));
-      if (ast.arguments_.alignment === "v") {
+      const alignment = ast.arguments_.alignment;
+      if (alignment === "v") {
         return stack(...children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
+      if (!weightedChildren && alignment === "t") {
+        return slowcat(...children);
+      }
       if (weightedChildren) {
-        return timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
+        const pat = timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
+        if (alignment === "t") {
+          return pat._slow(children.length);
+        }
+        return pat;
       }
       return sequence(...children);
     case "element":
@@ -112,7 +66,7 @@ export function patternifyAST(ast) {
           return step;
         }
         const octaves = Math.floor(step / intervals.length);
-        const mod = (n, m2) => n < 0 ? mod(n + m2, m2) : n % m2;
+        const mod = (n, m) => n < 0 ? mod(n + m, m) : n % m;
         const index = mod(step, intervals.length);
         const interval = Interval.add(intervals[index], Interval.fromSemitones(octaves * 12));
         return Note.transpose(tonic, interval || "1P");
@@ -123,36 +77,28 @@ export function patternifyAST(ast) {
   }
 }
 export const mini = (...strings) => {
-  const pattern = sequence(...strings.map((str) => {
+  const pats = strings.map((str) => {
     const ast = krill.parse(`"${str}"`);
     return patternifyAST(ast);
-  }));
-  return pattern;
+  });
+  return sequence(...pats);
 };
-const m = mini;
-const hackStrings = () => {
-  const miniGetter = {
-    get: function() {
-      return mini(String(this));
-    }
-  };
-  Object.defineProperty(String.prototype, "mini", miniGetter);
-  Object.defineProperty(String.prototype, "m", miniGetter);
-};
-hackStrings();
 export const h = (string) => {
   const ast = krill.parse(string);
   return patternifyAST(ast);
 };
-export const parse = (code) => {
-  let _pattern;
-  let mode;
-  mode = "javascript";
-  code = shapeshifter(code);
-  _pattern = minify(eval(code));
-  if (_pattern?.constructor?.name !== "Pattern") {
-    const message = `got "${typeof _pattern}" instead of pattern`;
-    throw new Error(message + (typeof _pattern === "function" ? ", did you forget to call a function?" : "."));
+Pattern.prototype.define("mini", mini, {composable: true});
+Pattern.prototype.define("m", mini, {composable: true});
+Pattern.prototype.define("h", h, {composable: true});
+export function reify(thing) {
+  if (thing?.constructor?.name === "Pattern") {
+    return thing;
   }
-  return {mode, pattern: _pattern};
-};
+  return pure(thing);
+}
+export function minify(thing) {
+  if (typeof thing === "string") {
+    return mini(thing);
+  }
+  return reify(thing);
+}
