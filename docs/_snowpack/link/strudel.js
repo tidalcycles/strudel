@@ -1,15 +1,20 @@
 import Fraction from "../pkg/fractionjs.js";
+import {compose} from "../pkg/ramda.js";
 const removeUndefineds = (xs) => xs.filter((x) => x != void 0);
 const flatten = (arr) => [].concat(...arr);
 const id = (a) => a;
-export function curry(func) {
+export function curry(func, overload) {
   return function curried(...args) {
     if (args.length >= func.length) {
       return func.apply(this, args);
     } else {
-      return function(...args2) {
+      const partial = function(...args2) {
         return curried.apply(this, args.concat(args2));
       };
+      if (overload) {
+        overload(partial, args);
+      }
+      return partial;
     }
   };
 }
@@ -533,6 +538,14 @@ const when = curry((binary, f, pat) => pat.when(binary, f));
 const off = curry((t, f, pat) => pat.off(t, f));
 const jux = curry((f, pat) => pat.jux(f));
 const append = curry((a, pat) => pat.append(a));
+Pattern.prototype.composable = {fast, slow, early, late};
+export function makeComposable(func) {
+  Object.entries(Pattern.prototype.composable).forEach(([functionName, composable]) => {
+    func[functionName] = (...args) => {
+      return compose(func, composable(...args));
+    };
+  });
+}
 export {
   Fraction,
   TimeSpan,

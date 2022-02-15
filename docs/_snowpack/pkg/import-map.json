@@ -9,6 +9,7 @@
     "estraverse": "./estraverse.js",
     "fraction.js": "./fractionjs.js",
     "multimap": "./multimap.js",
+    "ramda": "./ramda.js",
     "react": "./react.js",
     "react-codemirror2": "./react-codemirror2.js",
     "react-dom": "./react-dom.js",

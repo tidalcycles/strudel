@@ -330,4 +330,15 @@ export const confusedPhoneDynamic = `stack('[g2 ~@1.3] [c3 ~@1.3]'.mini.slow(2))
 .scale(sequence('C dorian', 'C mixolydian').slow(4))
 .scaleTranspose(slowcat(0,1,2,1).slow(2))
 .synth('triangle').gain(0.2).filter(1500)`;
+export const confusedPhonePartial = `stack('[g2 ~@1.3] [c3 ~@1.3]'.mini.slow(2))
+.superimpose(
+  transpose(-12).late(0),
+  transpose(7).late(0.2),
+  transpose(10).late(0.4),
+  transpose(12).late(0.6),
+  transpose(24).late(0.8)
+)
+.scale(sequence('C dorian', 'C mixolydian').slow(4))
+.scaleTranspose(slowcat(0,1,2,1).slow(2))
+.synth('triangle').gain(0.2).filter(1500)`;
 export default swimming;
