@@ -109,8 +109,12 @@ class TimeSpan {
     }
 
     withTime(func_time) {
-        // Applies given function to both the begin and end time value of the timespan"""
-        return(new TimeSpan(func_time(this.begin), func_time(this.end)))
+      // Applies given function to both the begin and end time value of the timespan"""
+      return(new TimeSpan(func_time(this.begin), func_time(this.end)))
+    }
+    withEnd(func_time) {
+      // Applies given function to both the begin and end time value of the timespan"""
+      return(new TimeSpan(this.begin, func_time(this.end)))
     }
 
     intersection(other) {
@@ -575,6 +579,15 @@ class Pattern {
     edit(...funcs) {
       return stack(...funcs.map(func => func(this)));
     }
+
+    _bypass(on) {
+      on = Boolean(parseInt(on));
+      return on ? silence : this;
+    }
+
+    hush() {
+      return silence;
+    }
 }
 
 // methods of Pattern that get callable factories
@@ -772,6 +785,10 @@ Pattern.prototype.define = (name, func, options = {}) => {
     Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
   }
 }
+
+// Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
+Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
+Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = () => {
