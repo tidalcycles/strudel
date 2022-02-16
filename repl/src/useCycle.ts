@@ -21,15 +21,10 @@ function useCycle(props: UseCycleProps) {
   // pull events with onQuery + count up to next cycle
   const query = (cycle = activeCycle()) => {
     const timespan = new TimeSpan(cycle, cycle + 1);
-    const _events = onQuery?.(timespan) || [];
-    onSchedule?.(_events, cycle);
-    schedule(_events, cycle);
-  };
-
-  const schedule = (events: any[], cycle = activeCycle()) => {
+    const events = onQuery?.(timespan) || [];
+    onSchedule?.(events, cycle);
     // cancel events after current query. makes sure no old events are player for rescheduled cycles
     // console.log('schedule', cycle);
-    const timespan = new TimeSpan(cycle, cycle + 1);
     // query next cycle in the middle of the current
     const cancelFrom = timespan.begin.valueOf();
     Tone.Transport.cancel(cancelFrom);
@@ -53,7 +48,7 @@ function useCycle(props: UseCycleProps) {
         Tone.Transport.schedule((time) => {
           const toneEvent = {
             time: event.part.begin.valueOf(),
-            duration: event.whole.end.valueOf() - event.whole.begin.valueOf(),
+            duration: event.whole.end.sub(event.whole.begin).valueOf(),
             value: event.value,
           };
           onEvent(time, toneEvent);
@@ -77,7 +72,7 @@ function useCycle(props: UseCycleProps) {
     Tone.Transport.pause();
   };
   const toggle = () => (started ? stop() : start());
-  return { start, stop, onEvent, started, toggle, schedule, query, activeCycle };
+  return { start, stop, onEvent, started, toggle, query, activeCycle };
 }
 
 export default useCycle;
