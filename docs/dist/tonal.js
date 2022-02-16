@@ -46,7 +46,7 @@ function scaleTranspose(scale, offset, note) {
 Pattern.prototype._mapNotes = function(func) {
   return this.fmap((event) => {
     const noteEvent = toNoteEvent(event);
-    return func(noteEvent);
+    return {...noteEvent, ...func(noteEvent)};
   });
 };
 Pattern.prototype._transpose = function(intervalOrSemitones) {

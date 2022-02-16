@@ -82,6 +82,9 @@ class TimeSpan {
   withTime(func_time) {
     return new TimeSpan(func_time(this.begin), func_time(this.end));
   }
+  withEnd(func_time) {
+    return new TimeSpan(this.begin, func_time(this.end));
+  }
   intersection(other) {
     const intersect_begin = this.begin.max(other.begin);
     const intersect_end = this.end.min(other.end);
@@ -408,6 +411,13 @@ class Pattern {
   edit(...funcs) {
     return stack(...funcs.map((func) => func(this)));
   }
+  _bypass(on2) {
+    on2 = Boolean(parseInt(on2));
+    return on2 ? silence : this;
+  }
+  hush() {
+    return silence;
+  }
 }
 Pattern.prototype.patternified = ["fast", "slow", "early", "late"];
 Pattern.prototype.factories = {pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
@@ -554,6 +564,8 @@ Pattern.prototype.define = (name, func, options = {}) => {
     Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
   }
 };
+Pattern.prototype.define("hush", (pat) => pat.hush(), {patternified: false, composable: true});
+Pattern.prototype.define("bypass", (pat) => pat.bypass(on), {patternified: true, composable: true});
 Pattern.prototype.bootstrap = () => {
   const bootstrapped = Object.fromEntries(Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
     if (Pattern.prototype[functionName]) {

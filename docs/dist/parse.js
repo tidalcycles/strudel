@@ -23,9 +23,40 @@ const applyOptions = (parent) => (pat, i) => {
   }
   return pat;
 };
+function resolveReplications(ast) {
+  ast.source_ = ast.source_.map((child) => {
+    const {replicate, ...options} = child.options_ || {};
+    if (replicate) {
+      return {
+        ...child,
+        options_: {...options, weight: replicate},
+        source_: {
+          type_: "pattern",
+          arguments_: {
+            alignment: "h"
+          },
+          source_: [
+            {
+              type_: "element",
+              source_: child.source_,
+              options_: {
+                operator: {
+                  type_: "stretch",
+                  arguments_: {amount: String(new Fraction(replicate).inverse().valueOf())}
+                }
+              }
+            }
+          ]
+        }
+      };
+    }
+    return child;
+  });
+}
 export function patternifyAST(ast) {
   switch (ast.type_) {
     case "pattern":
+      resolveReplications(ast);
       const children = ast.source_.map(patternifyAST).map(applyOptions(ast));
       const alignment = ast.arguments_.alignment;
       if (alignment === "v") {
@@ -38,7 +69,8 @@ export function patternifyAST(ast) {
       if (weightedChildren) {
         const pat = timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
         if (alignment === "t") {
-          return pat._slow(children.length);
+          const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
+          return pat._slow(weightSum);
         }
         return pat;
       }

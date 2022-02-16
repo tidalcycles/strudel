@@ -8,12 +8,8 @@ function useCycle(props) {
   const activeCycle = () => Math.floor(Tone.Transport.seconds / cycleDuration);
   const query = (cycle = activeCycle()) => {
     const timespan = new TimeSpan(cycle, cycle + 1);
-    const _events = onQuery?.(timespan) || [];
-    onSchedule?.(_events, cycle);
-    schedule(_events, cycle);
-  };
-  const schedule = (events, cycle = activeCycle()) => {
-    const timespan = new TimeSpan(cycle, cycle + 1);
+    const events = onQuery?.(timespan) || [];
+    onSchedule?.(events, cycle);
     const cancelFrom = timespan.begin.valueOf();
     Tone.Transport.cancel(cancelFrom);
     const queryNextTime = (cycle + 1) * cycleDuration - 0.1;
@@ -29,7 +25,7 @@ function useCycle(props) {
       Tone.Transport.schedule((time) => {
         const toneEvent = {
           time: event.part.begin.valueOf(),
-          duration: event.whole.end.valueOf() - event.whole.begin.valueOf(),
+          duration: event.whole.end.sub(event.whole.begin).valueOf(),
           value: event.value
         };
         onEvent(time, toneEvent);
@@ -51,6 +47,6 @@ function useCycle(props) {
     Tone.Transport.pause();
   };
   const toggle = () => started ? stop() : start();
-  return {start, stop, onEvent, started, toggle, schedule, query, activeCycle};
+  return {start, stop, onEvent, started, toggle, query, activeCycle};
 }
 export default useCycle;

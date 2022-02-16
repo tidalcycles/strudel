@@ -10,7 +10,7 @@ import hot from "../hot.js";
 import {isNote} from "../_snowpack/pkg/tone.js";
 import {useWebMidi} from "./midi.js";
 const [_, codeParam] = window.location.href.split("#");
-const decoded = atob(codeParam || "");
+const decoded = atob(decodeURIComponent(codeParam || ""));
 const getHotCode = async () => {
   return fetch("/hot.js").then((res) => res.text()).then((src) => {
     return src.split("export default").slice(-1)[0].trim();
@@ -30,17 +30,37 @@ function getRandomTune() {
 }
 const randomTune = getRandomTune();
 function App() {
-  const [mode, setMode] = useState("javascript");
   const [code, setCode] = useState(decoded || randomTune);
+  const [activeCode, setActiveCode] = useState();
   const [log, setLog] = useState("");
   const logBox = useRef();
   const [error, setError] = useState();
   const [pattern, setPattern] = useState();
   const [activePattern, setActivePattern] = useState();
-  const activatePattern = (_pattern = pattern) => {
-    setActivePattern(() => _pattern);
-    window.location.hash = "#" + btoa(code);
-    !cycle.started && cycle.start();
+  const dirty = code !== activeCode;
+  const activateCode = (_code = code) => {
+    if (activeCode && !dirty) {
+      setError(void 0);
+      return;
+    }
+    try {
+      const parsed = evaluate(_code);
+      setPattern(() => parsed.pattern);
+      activatePattern(parsed.pattern);
+      setError(void 0);
+      setActiveCode(_code);
+    } catch (err) {
+      setError(err);
+    }
+  };
+  const activatePattern = (_pattern) => {
+    try {
+      setActivePattern(() => _pattern);
+      window.location.hash = "#" + encodeURIComponent(btoa(code));
+      !cycle.started && cycle.start();
+    } catch (err) {
+      setError(err);
+    }
   };
   const [isHot, setIsHot] = useState(false);
   const pushLog = (message) => setLog((log2) => log2 + `${log2 ? "\n\n" : ""}${message}`);
@@ -85,7 +105,7 @@ function App() {
       if (e.ctrlKey || e.altKey) {
         switch (e.code) {
           case "Enter":
-            activatePattern();
+            activateCode();
             break;
           case "Period":
             cycle.stop();
@@ -94,33 +114,18 @@ function App() {
     };
     document.addEventListener("keypress", handleKeyPress);
     return () => document.removeEventListener("keypress", handleKeyPress);
-  }, [pattern]);
+  }, [pattern, code]);
   useEffect(() => {
-    let _code = code;
     if (isHot) {
       if (typeof hot !== "string") {
-        getHotCode().then((_code2) => {
-          setCode(_code2);
-          setMode("javascript");
+        getHotCode().then((_code) => {
         });
         activatePattern(hot);
         return;
       } else {
-        _code = hot;
-        setCode(_code);
+        setCode(hot);
+        activateCode(hot);
       }
-    }
-    try {
-      const parsed = evaluate(_code);
-      setPattern(() => parsed.pattern);
-      if (isHot) {
-        activatePattern(parsed.pattern);
-      }
-      setMode(parsed.mode);
-      setError(void 0);
-    } catch (err) {
-      console.warn(err);
-      setError(err);
     }
   }, [code, isHot]);
   useLayoutEffect(() => {
@@ -175,7 +180,7 @@ function App() {
     value: code,
     readOnly: isHot,
     options: {
-      mode,
+      mode: "javascript",
       theme: "material",
       lineNumbers: true
     },
@@ -187,14 +192,14 @@ function App() {
   }), /* @__PURE__ */ React.createElement("span", {
     className: "p-4 absolute top-0 right-0 text-xs whitespace-pre text-right"
   }, !cycle.started ? `press ctrl+enter to play
-` : !isHot && activePattern !== pattern ? `ctrl+enter to update
-` : "no changes\n", !isHot && /* @__PURE__ */ React.createElement(React.Fragment, null, {pegjs: "mini"}[mode] || mode, " mode"), isHot && "🔥 hot mode: go to hot.js to edit pattern, then save")), error && /* @__PURE__ */ React.createElement("div", {
-    className: "absolute right-2 bottom-2 text-red-500"
+` : !isHot && code !== activeCode ? `ctrl+enter to update
+` : "no changes\n", isHot && "🔥 hot mode: go to hot.js to edit pattern, then save")), error && /* @__PURE__ */ React.createElement("div", {
+    className: cx("absolute right-2 bottom-2", "text-red-500")
   }, error?.message || "unknown error")), /* @__PURE__ */ React.createElement("button", {
     className: "flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500",
     onClick: () => {
       if (!cycle.started) {
-        activatePattern();
+        activateCode();
       } else {
         cycle.stop();
       }

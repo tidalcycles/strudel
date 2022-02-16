@@ -250,12 +250,11 @@ export const groove = `stack(
   .voicings(['G3','A4'])
 ).slow(4)`;
 export const magicSofa = `stack(
-  '[C^7 F^7 ~]/3 [Dm7 G7 A7 ~]/4'.mini
+  '<C^7 F^7 ~> <Dm7 G7 A7 ~>'.m
    .every(2, fast(2))
    .voicings(),
-  '[c2 f2 g2]/3 [d2 g2 a2 e2]/4'.mini
-).slow(1)
-  .transpose.slowcat(0, 2, 3, 4)`;
+  '<c2 f2 g2> <d2 g2 a2 e2>'.m
+).slow(1).transpose.slowcat(0, 2, 3, 4)`;
 export const confusedPhoneDynamic = `stack('[g2 ~@1.3] [c3 ~@1.3]'.mini.slow(2))
 .superimpose(
   ...[-12,7,10,12,24].slice(0,5).map((t,i,{length}) => x => transpose(t,x).late(i/length))
@@ -274,3 +273,87 @@ export const confusedPhone = `'[g2 ~@1.3] [c3 ~@1.3]'.mini
 .scale(slowcat('C dorian', 'C mixolydian'))
 .scaleTranspose(slowcat(0,1,2,1))
 .slow(2)`;
+export const zeldasRescue = `stack(
+  // melody
+  \`[B3@2 D4] [A3@2 [G3 A3]] [B3@2 D4] [A3] 
+  [B3@2 D4] [A4@2 G4] [D4@2 [C4 B3]] [A3]
+  [B3@2 D4] [A3@2 [G3 A3]] [B3@2 D4] [A3]
+  [B3@2 D4] [A4@2 G4] D5@2 
+  [D5@2 [C5 B4]] [[C5 B4] G4@2] [C5@2 [B4 A4]] [[B4 A4] E4@2]
+  [D5@2 [C5 B4]] [[C5 B4] G4 C5] [G5] [~ ~ B3]\`.mini,
+  // bass
+  \`[[C2 G2] E3@2] [[C2 G2] F#3@2] [[C2 G2] E3@2] [[C2 G2] F#3@2]
+  [[B1 D3] G3@2] [[Bb1 Db3] G3@2] [[A1 C3] G3@2] [[D2 C3] F#3@2]
+  [[C2 G2] E3@2] [[C2 G2] F#3@2] [[C2 G2] E3@2] [[C2 G2] F#3@2]
+  [[B1 D3] G3@2] [[Bb1 Db3] G3@2] [[A1 C3] G3@2] [[D2 C3] F#3@2]
+  [[F2 C3] E3@2] [[E2 B2] D3@2] [[D2 A2] C3@2] [[C2 G2] B2@2]
+  [[F2 C3] E3@2] [[E2 B2] D3@2] [[Eb2 Bb2] Db3@2] [[D2 A2] C3 [F3,G2]]\`.mini
+).transpose(12).slow(48).tone(
+  new PolySynth().chain(
+    new Gain(0.3), 
+    new Chorus(2, 2.5, 0.5).start(), 
+    new Freeverb(), 
+    Destination)
+)`;
+export const technoDrums = `stack(
+  'c1*2'.m.tone(new Tone.MembraneSynth().toDestination()),
+  '~ x'.m.tone(new Tone.NoiseSynth().toDestination()),
+  '[~ c4]*2'.m.tone(new Tone.MetalSynth().set({envelope:{decay:0.06,sustain:0}}).chain(new Gain(0.5),Destination))
+)`;
+export const loungerave = `() => {
+  const delay = new FeedbackDelay(1/8, .2).chain(vol(0.5), out);
+  const kick = new MembraneSynth().chain(vol(.8), out);
+  const snare = new NoiseSynth().chain(vol(.8), out);
+  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out);
+  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out);
+  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out);
+  
+  const drums = stack(
+    'c1*2'.m.tone(kick).bypass('<0@7 1>/8'.m),
+    '~ <x!7 [x@3 x]>'.m.tone(snare).bypass('<0@7 1>/4'.m),
+    '[~ c4]*2'.m.tone(hihat)
+  );
+  
+  const thru = (x) => x.transpose('<0 1>/8'.m).transpose(1);
+  const synths = stack(
+    '<C2 Bb1 Ab1 [G1 [G2 G1]]>/2'.m.groove('[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2'.m).edit(thru).tone(bass),
+    '<Cm7 Bb7 Fm7 G7b9>/2'.m.groove('~ [x@0.1 ~]'.m).voicings().edit(thru).every(2, early(1/4)).tone(keys).bypass('<0@7 1>/8'.m.early(1/4))
+  )
+  return stack(
+    drums, 
+    synths
+  )
+  //.bypass('<0 1>*4'.m)
+  //.early('0.25 0'.m);
+}`;
+export const caverave = `() => {
+  const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out);
+  const kick = new MembraneSynth().chain(vol(.8), out);
+  const snare = new NoiseSynth().chain(vol(.8), out);
+  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out);
+  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out);
+  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out);
+  
+  const drums = stack(
+    'c1*2'.m.tone(kick).bypass('<0@7 1>/8'.m),
+    '~ <x!7 [x@3 x]>'.m.tone(snare).bypass('<0@7 1>/4'.m),
+    '[~ c4]*2'.m.tone(hihat)
+  );
+  
+  const thru = (x) => x.transpose('<0 1>/8'.m).transpose(-1);
+  const synths = stack(
+    '<eb4 d4 c4 b3>/2'.m.scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).groove('[~ x]*2'.m)
+    .edit(
+      scaleTranspose(0).early(0),
+      scaleTranspose(2).early(1/8),
+      scaleTranspose(7).early(1/4),
+      scaleTranspose(8).early(3/8)
+    ).edit(thru).tone(keys).bypass('<1 0>/16'.m),
+    '<C2 Bb1 Ab1 [G1 [G2 G1]]>/2'.m.groove('[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2'.m.fast(2)).edit(thru).tone(bass),
+    '<Cm7 Bb7 Fm7 G7b13>/2'.m.groove('~ [x@0.1 ~]'.m.fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass('<0@7 1>/8'.m.early(1/4))
+  )
+  return stack(
+    drums.fast(2), 
+    synths
+  ).slow(2);
+}`;
