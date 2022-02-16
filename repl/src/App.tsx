@@ -12,7 +12,7 @@ import { isNote } from 'tone';
 import { useWebMidi } from './midi';
 
 const [_, codeParam] = window.location.href.split('#');
-const decoded = atob(codeParam || '');
+const decoded = atob(decodeURIComponent(codeParam || ''));
 
 const getHotCode = async () => {
   return fetch('/hot.js')
@@ -39,17 +39,37 @@ function getRandomTune() {
 const randomTune = getRandomTune();
 
 function App() {
-  const [mode, setMode] = useState<string>('javascript');
   const [code, setCode] = useState<string>(decoded || randomTune);
+  const [activeCode, setActiveCode] = useState<string>();
   const [log, setLog] = useState('');
   const logBox = useRef<any>();
   const [error, setError] = useState<Error>();
   const [pattern, setPattern] = useState<Pattern>();
   const [activePattern, setActivePattern] = useState<Pattern>();
-  const activatePattern = (_pattern = pattern) => {
-    setActivePattern(() => _pattern);
-    window.location.hash = '#' + btoa(code);
-    !cycle.started && cycle.start();
+  const dirty = code !== activeCode;
+  const activateCode = (_code = code) => {
+    if (activeCode && !dirty) {
+      setError(undefined);
+      return;
+    }
+    try {
+      const parsed = evaluate(_code);
+      setPattern(() => parsed.pattern);
+      activatePattern(parsed.pattern);
+      setError(undefined);
+      setActiveCode(_code);
+    } catch (err: any) {
+      setError(err);
+    }
+  };
+  const activatePattern = (_pattern) => {
+    try {
+      setActivePattern(() => _pattern);
+      window.location.hash = '#' + encodeURIComponent(btoa(code));
+      !cycle.started && cycle.start();
+    } catch (err: any) {
+      setError(err);
+    }
   };
   const [isHot, setIsHot] = useState(false); // set to true to enable live coding in hot.js, using dev server
   const pushLog = (message: string) => setLog((log) => log + `${log ? '\n\n' : ''}${message}`);
@@ -102,7 +122,7 @@ function App() {
       if (e.ctrlKey || e.altKey) {
         switch (e.code) {
           case 'Enter':
-            activatePattern();
+            activateCode();
             break;
           case 'Period':
             cycle.stop();
@@ -111,39 +131,21 @@ function App() {
     };
     document.addEventListener('keypress', handleKeyPress);
     return () => document.removeEventListener('keypress', handleKeyPress);
-  }, [pattern]);
+  }, [pattern, code]);
 
   // parse pattern when code changes
   useEffect(() => {
-    let _code = code;
-    // handle hot mode
     if (isHot) {
       if (typeof hot !== 'string') {
         getHotCode().then((_code) => {
-          setCode(_code);
-          setMode('javascript');
+          // setCode(_code);
         }); // if using HMR, just use changed file
         activatePattern(hot);
         return;
       } else {
-        _code = hot;
-        setCode(_code);
+        setCode(hot);
+        activateCode(hot);
       }
-    }
-    // normal mode
-    try {
-      const parsed = evaluate(_code);
-      // need arrow function here! otherwise if user returns a function, react will think it's a state reducer
-      // only first time, then need ctrl+enter
-      setPattern(() => parsed.pattern);
-      if (isHot) {
-        activatePattern(parsed.pattern);
-      }
-      setMode(parsed.mode);
-      setError(undefined);
-    } catch (err: any) {
-      console.warn(err);
-      setError(err);
     }
   }, [code, isHot]);
 
@@ -175,7 +177,7 @@ function App() {
           <button
             onClick={() => {
               const _code = getRandomTune();
-              console.log('tune',_code); // uncomment this to debug when random code fails
+              console.log('tune', _code); // uncomment this to debug when random code fails
               setCode(_code);
               const parsed = evaluate(_code);
               // Tone.Transport.cancel(Tone.Transport.seconds);
@@ -204,7 +206,7 @@ function App() {
               value={code}
               readOnly={isHot}
               options={{
-                mode,
+                mode: 'javascript',
                 theme: 'material',
                 lineNumbers: true,
               }}
@@ -218,20 +220,22 @@ function App() {
             <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right">
               {!cycle.started
                 ? `press ctrl+enter to play\n`
-                : !isHot && activePattern !== pattern
+                : !isHot && code !== activeCode
                 ? `ctrl+enter to update\n`
                 : 'no changes\n'}
-              {!isHot && <>{{ pegjs: 'mini' }[mode] || mode} mode</>}
               {isHot && '🔥 hot mode: go to hot.js to edit pattern, then save'}
             </span>
           </div>
-          {error && <div className="absolute right-2 bottom-2 text-red-500">{error?.message || 'unknown error'}</div>}
+          {error && (
+            <div className={cx('absolute right-2 bottom-2', 'text-red-500')}>{error?.message || 'unknown error'}</div>
+          )}
         </div>
         <button
           className="flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500"
           onClick={() => {
             if (!cycle.started) {
-              activatePattern();
+              // activatePattern();
+              activateCode();
             } else {
               cycle.stop();
             }
