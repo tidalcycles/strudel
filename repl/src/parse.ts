@@ -4,8 +4,6 @@ import { Scale, Note, Interval } from '@tonaljs/tonal';
 
 const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence } = strudel;
 
-
-
 const applyOptions = (parent: any) => (pat: any, i: number) => {
   const ast = parent.source_[i];
   const options = ast.options_;
@@ -33,9 +31,43 @@ const applyOptions = (parent: any) => (pat: any, i: number) => {
   return pat;
 };
 
+function resolveReplications(ast) {
+  // the general idea here: x!3 = [x*3]@3
+  // could this be made easier?!
+  ast.source_ = ast.source_.map((child) => {
+    const { replicate, ...options } = child.options_ || {};
+    if (replicate) {
+      return {
+        ...child,
+        options_: { ...options, weight: replicate },
+        source_: {
+          type_: 'pattern',
+          arguments_: {
+            alignment: 'h',
+          },
+          source_: [
+            {
+              type_: 'element',
+              source_: child.source_,
+              options_: {
+                operator: {
+                  type_: 'stretch',
+                  arguments_: { amount: String(new Fraction(replicate).inverse().valueOf()) },
+                },
+              },
+            },
+          ],
+        },
+      };
+    }
+    return child;
+  });
+}
+
 export function patternifyAST(ast: any): any {
   switch (ast.type_) {
     case 'pattern':
+      resolveReplications(ast);
       const children = ast.source_.map(patternifyAST).map(applyOptions(ast));
       const alignment = ast.arguments_.alignment;
       if (alignment === 'v') {
@@ -48,7 +80,8 @@ export function patternifyAST(ast: any): any {
       if (weightedChildren) {
         const pat = timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
         if (alignment === 't') {
-          return pat._slow(children.length); // timecat + slow
+          const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
+          return pat._slow(weightSum); // timecat + slow
         }
         return pat;
       }
