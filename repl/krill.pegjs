@@ -80,7 +80,7 @@ quote = '"' / "'"
 // ------------------ steps and cycles ---------------------------
 
 // single step definition (e.g bd)
-step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^"
+step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" / "_"
 step = ws chars:step_char+ ws { return chars.join("") }
 
 // define a sub cycle e.g. [1 2, 3 [4]]
@@ -95,10 +95,13 @@ slice = step / sub_cycle  / timeline
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
-slice_modifier = slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_fixed_step
+slice_modifier = slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_fixed_step / slice_replicate
 
 slice_weight =  "@" a:number
   { return { weight: a} }
+  
+slice_replicate = "!"a:number
+  { return { replicate: a  } }
 
 slice_bjorklund = "(" ws p:number ws comma ws s:number ws")"
   { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s } } } }
