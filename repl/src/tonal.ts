@@ -62,7 +62,8 @@ function scaleTranspose(scale: string, offset: number, note: string) {
 Pattern.prototype._mapNotes = function (func: (note: NoteEvent) => NoteEvent) {
   return this.fmap((event: string | NoteEvent) => {
     const noteEvent = toNoteEvent(event);
-    return func(noteEvent);
+    // TODO: generalize? this is practical for any event that is expected to be an object with
+    return { ...noteEvent, ...func(noteEvent) }; 
   });
 };
 
