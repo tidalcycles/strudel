@@ -21,14 +21,6 @@ try {
   console.warn('failed to decode', err);
 }
 
-const getHotCode = async () => {
-  return fetch('/hot.js')
-    .then((res) => res.text())
-    .then((src) => {
-      return src.split('export default').slice(-1)[0].trim();
-    });
-};
-
 const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination);
 defaultSynth.set({
   oscillator: { type: 'triangle' },
@@ -52,7 +44,6 @@ function App() {
   const logBox = useRef<any>();
   const [error, setError] = useState<Error>();
   const [pattern, setPattern] = useState<Pattern>();
-  const [activePattern, setActivePattern] = useState<Pattern>();
   const dirty = code !== activeCode;
   const activateCode = (_code = code) => {
     !cycle.started && cycle.start();
@@ -63,23 +54,13 @@ function App() {
     try {
       const parsed = evaluate(_code);
       setPattern(() => parsed.pattern);
-      activatePattern(parsed.pattern);
+      window.location.hash = '#' + encodeURIComponent(btoa(code));
       setError(undefined);
       setActiveCode(_code);
     } catch (err: any) {
       setError(err);
     }
   };
-  // TODO: move to activateCode + remove hot mode..
-  const activatePattern = (_pattern) => {
-    try {
-      setActivePattern(() => _pattern);
-      window.location.hash = '#' + encodeURIComponent(btoa(code));
-    } catch (err: any) {
-      setError(err);
-    }
-  };
-  const [isHot, setIsHot] = useState(false); // set to true to enable live coding in hot.js, using dev server
   const pushLog = (message: string) => setLog((log) => log + `${log ? '\n\n' : ''}${message}`);
   // logs events of cycle
   const logCycle = (_events: any, cycle: any) => {
@@ -112,16 +93,16 @@ function App() {
     onQuery: useCallback(
       (span) => {
         try {
-          return activePattern?.query(span) || [];
+          return pattern?.query(span) || [];
         } catch (err: any) {
           setError(err);
           return [];
         }
       },
-      [activePattern]
+      [pattern]
     ),
-    onSchedule: useCallback((_events, cycle) => logCycle(_events, cycle), [activePattern]),
-    ready: !!activePattern,
+    onSchedule: useCallback((_events, cycle) => logCycle(_events, cycle), [pattern]),
+    ready: !!pattern,
   });
 
   // set active pattern on ctrl+enter
@@ -141,22 +122,6 @@ function App() {
     document.addEventListener('keypress', handleKeyPress);
     return () => document.removeEventListener('keypress', handleKeyPress);
   }, [pattern, code]);
-
-  // parse pattern when code changes
-  useEffect(() => {
-    if (isHot) {
-      if (typeof hot !== 'string') {
-        getHotCode().then((_code) => {
-          // setCode(_code);
-        }); // if using HMR, just use changed file
-        activatePattern(hot);
-        return;
-      } else {
-        setCode(hot);
-        activateCode(hot);
-      }
-    }
-  }, [code, isHot]);
 
   // scroll log box to bottom when log changes
   useLayoutEffect(() => {
@@ -190,22 +155,11 @@ function App() {
               setCode(_code);
               const parsed = evaluate(_code);
               // Tone.Transport.cancel(Tone.Transport.seconds);
-              setActivePattern(parsed.pattern);
+              setPattern(parsed.pattern);
             }}
           >
             🎲 random tune
           </button>
-          {window.location.href.includes('http://localhost:8080') && (
-            <button
-              onClick={() => {
-                if (isHot || confirm('Really switch? You might loose your current pattern..')) {
-                  setIsHot((h) => !h);
-                }
-              }}
-            >
-              🔥 toggle hot mode
-            </button>
-          )}
         </div>
       </header>
       <section className="grow flex flex-col text-gray-100">
@@ -213,26 +167,19 @@ function App() {
           <div className={cx('h-full  bg-[#2A3236]', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}>
             <CodeMirror
               value={code}
-              readOnly={isHot}
               options={{
                 mode: 'javascript',
                 theme: 'material',
                 lineNumbers: true,
               }}
-              onChange={(_: any, __: any, value: any) => {
-                if (!isHot) {
-                  // setLog((log) => log + `${log ? '\n\n' : ''}✏️ edit\n${code}\n${value}`);
-                  setCode(value);
-                }
-              }}
+              onChange={(_: any, __: any, value: any) => setCode(value)}
             />
             <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right">
               {!cycle.started
                 ? `press ctrl+enter to play\n`
-                : !isHot && code !== activeCode
+                : code !== activeCode
                 ? `ctrl+enter to update\n`
                 : 'no changes\n'}
-              {isHot && '🔥 hot mode: go to hot.js to edit pattern, then save'}
             </span>
           </div>
           {error && (
@@ -245,7 +192,6 @@ function App() {
             // TODO: find out why sometimes, after a longer time coming back to the strudel repl, the button wont do anything
             if (!cycle.started) {
               // console.log('start');
-              // activatePattern();
               activateCode();
             } else {
               // console.log('stop');
