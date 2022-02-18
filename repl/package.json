@@ -6,7 +6,8 @@
     "test": "web-test-runner \"src/**/*.test.tsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
-    "peggy": "peggy -o krill-parser.js --format es ./krill.pegjs"
+    "peggy": "peggy -o krill-parser.js --format es ./krill.pegjs",
+    "tutorial": "parcel src/tutorial/index.html"
   },
   "dependencies": {
     "@tonaljs/tonal": "^4.6.5",
@@ -26,6 +27,8 @@
     "webmidi": "^2.5.2"
   },
   "devDependencies": {
+    "@mdx-js/react": "^1.6.22",
+    "@parcel/transformer-mdx": "^2.3.1",
     "@snowpack/plugin-dotenv": "^2.1.0",
     "@snowpack/plugin-postcss": "^1.4.3",
     "@snowpack/plugin-react-refresh": "^2.5.0",
@@ -41,6 +44,7 @@
     "@web/test-runner": "^0.13.3",
     "autoprefixer": "^10.4.2",
     "chai": "^4.3.4",
+    "parcel": "^2.3.1",
     "peggy": "^1.2.0",
     "postcss": "^8.4.6",
     "prettier": "^2.2.1",
