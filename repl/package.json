@@ -8,7 +8,7 @@
     "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
     "peggy": "peggy -o krill-parser.js --format es ./krill.pegjs",
     "tutorial": "parcel src/tutorial/index.html",
-    "build-tutorial": "parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-optimize --no-scope-hoist"
+    "build-tutorial": "parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-optimize --no-scope-hoist --no-cache"
   },
   "dependencies": {
     "@tonaljs/tonal": "^4.6.5",
