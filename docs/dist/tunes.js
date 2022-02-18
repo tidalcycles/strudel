@@ -357,3 +357,64 @@ export const caverave = `() => {
     synths
   ).slow(2);
 }`;
+export const caveravefuture = `() => {
+  const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out);
+  const kick = new MembraneSynth().chain(vol(.8), out);
+  const snare = new NoiseSynth().chain(vol(.8), out);
+  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out);
+  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out);
+  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out);
+  
+  const drums = stack(
+    \`c1*2\`.tone(kick).bypass(\`<0@7 1>/8\`),
+    \`~ <x!7 [x@3 x]>\`.tone(snare).bypass(\`<0@7 1>/4\`),
+    \`[~ c4]*2\`.tone(hihat)
+  );
+  
+  const thru = (x) => x.transpose(\`<0 1>/8\`).transpose(-1);
+  const synths = stack(
+    \`<eb4 d4 c4 b3>/2\`.scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).groove(\`[~ x]*2\`)
+    .edit(
+      scaleTranspose(0).early(0),
+      scaleTranspose(2).early(1/8),
+      scaleTranspose(7).early(1/4),
+      scaleTranspose(8).early(3/8)
+    ).edit(thru).tone(keys).bypass(\`<1 0>/16\`),
+    \`<C2 Bb1 Ab1 [G1 [G2 G1]]>/2\`.groove(\`x [~ x] <[~ [~ x]]!3 [x x]>@2\`).edit(thru).tone(bass),
+    \`<Cm7 Bb7 Fm7 G7b13>/2\`.groove(\`~ [x@0.5 ~]\`.fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass(\`<0@7 1>/8\`.early(1/4)),
+  )
+  return stack(
+    drums.fast(2),
+    synths
+  ).slow(2);
+}`;
+export const caveravefuture2 = `const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out);
+const kick = new MembraneSynth().chain(vol(.8), out);
+const snare = new NoiseSynth().chain(vol(.8), out);
+const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out);
+const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out);
+const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out);
+
+const drums = stack(
+  "c1*2".tone(kick).bypass("<0@7 1>/8"),
+  "~ <x!7 [x@3 x]>".tone(snare).bypass("<0@7 1>/4"),
+  "[~ c4]*2".tone(hihat)
+);
+
+const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
+const synths = stack(
+  "<eb4 d4 c4 b3>/2".scale(timeCat([3, 'C minor'], [1, 'C melodic minor']).slow(8)).groove("[~ x]*2")
+  .edit(
+    scaleTranspose(0).early(0),
+    scaleTranspose(2).early(1/8),
+    scaleTranspose(7).early(1/4),
+    scaleTranspose(8).early(3/8)
+  ).edit(thru).tone(keys).bypass("<1 0>/16"),
+  "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".groove("x [~ x] <[~ [~ x]]!3 [x x]>@2").edit(thru).tone(bass),
+  "<Cm7 Bb7 Fm7 G7b13>/2".groove("~ [x@0.5 ~]".fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass("<0@7 1>/8".early(1/4)),
+)
+$: stack(
+  drums.fast(2),
+  synths
+).slow(2);
+`;

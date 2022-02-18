@@ -10,7 +10,12 @@ import hot from "../hot.js";
 import {isNote} from "../_snowpack/pkg/tone.js";
 import {useWebMidi} from "./midi.js";
 const [_, codeParam] = window.location.href.split("#");
-const decoded = atob(decodeURIComponent(codeParam || ""));
+let decoded;
+try {
+  decoded = atob(decodeURIComponent(codeParam || ""));
+} catch (err) {
+  console.warn("failed to decode", err);
+}
 const getHotCode = async () => {
   return fetch("/hot.js").then((res) => res.text()).then((src) => {
     return src.split("export default").slice(-1)[0].trim();
@@ -39,6 +44,7 @@ function App() {
   const [activePattern, setActivePattern] = useState();
   const dirty = code !== activeCode;
   const activateCode = (_code = code) => {
+    !cycle.started && cycle.start();
     if (activeCode && !dirty) {
       setError(void 0);
       return;
@@ -57,7 +63,6 @@ function App() {
     try {
       setActivePattern(() => _pattern);
       window.location.hash = "#" + encodeURIComponent(btoa(code));
-      !cycle.started && cycle.start();
     } catch (err) {
       setError(err);
     }
@@ -106,6 +111,7 @@ function App() {
         switch (e.code) {
           case "Enter":
             activateCode();
+            !cycle.started && cycle.start();
             break;
           case "Period":
             cycle.stop();
