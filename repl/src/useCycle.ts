@@ -58,7 +58,7 @@ function useCycle(props: UseCycleProps) {
 
   useEffect(() => {
     ready && query();
-  }, [onEvent, onSchedule, onQuery]);
+  }, [onEvent, onSchedule, onQuery, ready]);
 
   const start = async () => {
     console.log('start');

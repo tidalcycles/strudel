@@ -1,13 +1,14 @@
 {
   "scripts": {
     "start": "snowpack dev",
-    "build": "snowpack build && cp ./public/.nojekyll ../docs",
+    "build": "snowpack build && cp ./public/.nojekyll ../docs && npm run build-tutorial",
     "static": "npx serve ../docs",
     "test": "web-test-runner \"src/**/*.test.tsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
     "peggy": "peggy -o krill-parser.js --format es ./krill.pegjs",
-    "tutorial": "parcel src/tutorial/index.html"
+    "tutorial": "parcel src/tutorial/index.html",
+    "build-tutorial": "parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-optimize --no-scope-hoist"
   },
   "dependencies": {
     "@tonaljs/tonal": "^4.6.5",
