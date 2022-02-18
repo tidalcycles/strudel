@@ -11,8 +11,15 @@ import hot from '../public/hot';
 import { isNote } from 'tone';
 import { useWebMidi } from './midi';
 
+// TODO: use https://www.npmjs.com/package/@monaco-editor/react
+
 const [_, codeParam] = window.location.href.split('#');
-const decoded = atob(decodeURIComponent(codeParam || ''));
+let decoded;
+try {
+  decoded = atob(decodeURIComponent(codeParam || ''));
+} catch (err) {
+  console.warn('failed to decode', err);
+}
 
 const getHotCode = async () => {
   return fetch('/hot.js')
@@ -48,6 +55,7 @@ function App() {
   const [activePattern, setActivePattern] = useState<Pattern>();
   const dirty = code !== activeCode;
   const activateCode = (_code = code) => {
+    !cycle.started && cycle.start();
     if (activeCode && !dirty) {
       setError(undefined);
       return;
@@ -62,11 +70,11 @@ function App() {
       setError(err);
     }
   };
+  // TODO: move to activateCode + remove hot mode..
   const activatePattern = (_pattern) => {
     try {
       setActivePattern(() => _pattern);
       window.location.hash = '#' + encodeURIComponent(btoa(code));
-      !cycle.started && cycle.start();
     } catch (err: any) {
       setError(err);
     }
@@ -123,6 +131,7 @@ function App() {
         switch (e.code) {
           case 'Enter':
             activateCode();
+            !cycle.started && cycle.start();
             break;
           case 'Period':
             cycle.stop();
@@ -233,10 +242,13 @@ function App() {
         <button
           className="flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500"
           onClick={() => {
+            // TODO: find out why sometimes, after a longer time coming back to the strudel repl, the button wont do anything
             if (!cycle.started) {
+              // console.log('start');
               // activatePattern();
               activateCode();
             } else {
+              // console.log('stop');
               cycle.stop();
             }
           }}

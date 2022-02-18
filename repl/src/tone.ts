@@ -1,6 +1,9 @@
 import { Pattern as _Pattern } from '../../strudel.mjs';
 import { AutoFilter, Destination, Filter, Gain, isNote, Synth, PolySynth } from 'tone';
 
+// what about 
+// https://www.charlie-roberts.com/gibberish/playground/
+
 const Pattern = _Pattern as any;
 
 // with this function, you can play the pattern with any tone synth

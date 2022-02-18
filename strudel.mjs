@@ -588,6 +588,22 @@ class Pattern {
     hush() {
       return silence;
     }
+/* 
+    _resolveTies() {
+      return this._withEvents((events)=>{
+        return events.reduce((tied, event, i) => {
+          const value = event.value?.value || event.value;
+          if (value !== '_') {
+            return tied.concat([event]);
+          }
+          console.log('tie!', lastEvent);
+          tied[i - 1] = tied[i - 1].withSpan((span) => span.withEnd((_) => event.part.end));
+          // above only works if the tie is not across a cycle boundary... how to do that???
+          // TODO: handle case that there is a gap between tied[i-1].part.end and event.part.begin => tie would make no sense
+          return tied;
+        }, []);
+      })
+    } */
 }
 
 // methods of Pattern that get callable factories
