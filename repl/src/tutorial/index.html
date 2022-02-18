@@ -1,14 +1,16 @@
-<div id="root"></div>
-<script type="module">
-  import React from 'react';
-  import ReactDOM from 'react-dom';
-  import * as React from 'react';
-  import Tutorial from './tutorial.mdx';
-
-  ReactDOM.render(
-    <React.StrictMode>
-      <Tutorial />
-    </React.StrictMode>,
-    document.getElementById('root')
-  );
-</script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="../../public/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Strudel REPL" />
+    <title>Strudel Tutorial</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script type="module" src="Tutorial.js"></script>
+  </body>
+</html>
