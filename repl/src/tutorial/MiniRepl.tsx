@@ -12,17 +12,10 @@ const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destina
 });
 
 function MiniRepl({ tune, height = 100 }) {
-  /* const defaultSynth = useMemo(() => {
-    return new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination).set({
-      oscillator: { type: 'triangle' },
-      envelope: {
-        release: 0.01,
-      },
-    });
-  }, []); */
   const { code, setCode, activateCode, activeCode, setPattern, error, cycle, dirty, log, togglePlay } = useRepl({
     tune,
     defaultSynth,
+    autolink: false,
   });
   return (
     <div className="flex space-y-0 overflow-auto" style={{ height }}>

@@ -12,7 +12,7 @@ let s4 = () => {
     .substring(1);
 };
 
-function useRepl({ tune, defaultSynth }) {
+function useRepl({ tune, defaultSynth, autolink = true }) {
   const id = useMemo(() => s4(), []);
   const [code, setCode] = useState<string>(tune);
   const [activeCode, setActiveCode] = useState<string>();
@@ -30,7 +30,9 @@ function useRepl({ tune, defaultSynth }) {
     try {
       const parsed = evaluate(_code);
       setPattern(() => parsed.pattern);
-      window.location.hash = '#' + encodeURIComponent(btoa(code));
+      if (autolink) {
+        window.location.hash = '#' + encodeURIComponent(btoa(code));
+      }
       setError(undefined);
       setActiveCode(_code);
     } catch (err: any) {
