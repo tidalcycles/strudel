@@ -1,11 +1,19 @@
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useState, useMemo, useEffect } from 'react';
 import { isNote } from 'tone';
 import { evaluate } from './evaluate';
 import { useWebMidi } from './midi';
 import type { Pattern } from './types';
 import useCycle from './useCycle';
+import usePostMessage from './usePostMessage';
+
+let s4 = () => {
+  return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
+};
 
 function useRepl({ tune, defaultSynth }) {
+  const id = useMemo(() => s4(), []);
   const [code, setCode] = useState<string>(tune);
   const [activeCode, setActiveCode] = useState<string>();
   const [log, setLog] = useState('');
@@ -14,6 +22,7 @@ function useRepl({ tune, defaultSynth }) {
   const dirty = code !== activeCode;
   const activateCode = (_code = code) => {
     !cycle.started && cycle.start();
+    broadcast({ type: 'start', from: id });
     if (activeCode && !dirty) {
       setError(undefined);
       return;
@@ -74,6 +83,14 @@ function useRepl({ tune, defaultSynth }) {
     ),
     onSchedule: useCallback((_events, cycle) => logCycle(_events, cycle), [pattern]),
     ready: !!pattern,
+  });
+
+  const broadcast = usePostMessage(({ data: { from, type } }) => {
+    if (type === 'start' && from !== id) {
+      // console.log('message', from, type);
+      cycle.setStarted(false);
+      setActiveCode(undefined);
+    }
   });
 
   // set active pattern on ctrl+enter

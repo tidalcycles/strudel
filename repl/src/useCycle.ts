@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ToneEventCallback } from 'tone';
 import * as Tone from 'tone';
 import { TimeSpan } from '../../strudel.mjs';
 import type { Hap } from './types';
+import usePostMessage from './usePostMessage';
 
 export declare interface UseCycleProps {
   onEvent: ToneEventCallback<any>;
@@ -61,7 +62,6 @@ function useCycle(props: UseCycleProps) {
   }, [onEvent, onSchedule, onQuery, ready]);
 
   const start = async () => {
-    console.log('start');
     setStarted(true);
     await Tone.start();
     Tone.Transport.start('+0.1');
@@ -72,7 +72,7 @@ function useCycle(props: UseCycleProps) {
     Tone.Transport.pause();
   };
   const toggle = () => (started ? stop() : start());
-  return { start, stop, onEvent, started, toggle, query, activeCycle };
+  return { start, stop, setStarted, onEvent, started, toggle, query, activeCycle };
 }
 
 export default useCycle;
