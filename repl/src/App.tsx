@@ -96,6 +96,9 @@ function App() {
           >
             🎲 random tune
           </button>
+          <button>
+            <a href="./tutorial">📚 tutorial</a>
+          </button>
         </div>
       </header>
       <section className="grow flex flex-col text-gray-100">

@@ -21,6 +21,7 @@ export default {
     /* Enable an SPA Fallback in development: */
     // {"match": "routes", "src": ".*", "dest": "/index.html"},
   ],
+  exclude: ['**/node_modules/**/*', '**/tutorial/**/*'],
   optimize: {
     /* Example: Bundle your final build: */
     // "bundle": true,
