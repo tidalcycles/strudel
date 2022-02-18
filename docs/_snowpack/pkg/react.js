@@ -8,6 +8,7 @@ import './common/index-d01087d6.js';
 var useCallback = react.useCallback;
 var useEffect = react.useEffect;
 var useLayoutEffect = react.useLayoutEffect;
+var useMemo = react.useMemo;
 var useRef = react.useRef;
 var useState = react.useState;
-export { useCallback, useEffect, useLayoutEffect, useRef, useState };
+export { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState };

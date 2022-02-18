@@ -34,9 +34,8 @@ function useCycle(props) {
   };
   useEffect(() => {
     ready && query();
-  }, [onEvent, onSchedule, onQuery]);
+  }, [onEvent, onSchedule, onQuery, ready]);
   const start = async () => {
-    console.log("start");
     setStarted(true);
     await Tone.start();
     Tone.Transport.start("+0.1");
@@ -47,6 +46,6 @@ function useCycle(props) {
     Tone.Transport.pause();
   };
   const toggle = () => started ? stop() : start();
-  return {start, stop, onEvent, started, toggle, query, activeCycle};
+  return {start, stop, setStarted, onEvent, started, toggle, query, activeCycle};
 }
 export default useCycle;
