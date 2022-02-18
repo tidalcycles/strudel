@@ -1,9 +1,10 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useLayoutEffect, useRef } from 'react';
 import * as Tone from 'tone';
 import CodeMirror from './CodeMirror';
 import cx from './cx';
 import { evaluate } from './evaluate';
 import logo from './logo.svg';
+import { useWebMidi } from './midi';
 import * as tunes from './tunes';
 import useRepl from './useRepl';
 
@@ -34,7 +35,7 @@ function getRandomTune() {
 const randomTune = getRandomTune();
 
 function App() {
-  const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay } = useRepl({
+  const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog } = useRepl({
     tune: decoded || randomTune,
     defaultSynth,
   });
@@ -43,6 +44,37 @@ function App() {
   useLayoutEffect(() => {
     logBox.current.scrollTop = logBox.current?.scrollHeight;
   }, [log]);
+
+  // set active pattern on ctrl+enter
+  useLayoutEffect(() => {
+    // TODO: make sure this is only fired when editor has focus
+    const handleKeyPress = (e: any) => {
+      if (e.ctrlKey || e.altKey) {
+        switch (e.code) {
+          case 'Enter':
+            activateCode();
+            !cycle.started && cycle.start();
+            break;
+          case 'Period':
+            cycle.stop();
+        }
+      }
+    };
+    document.addEventListener('keypress', handleKeyPress);
+    return () => document.removeEventListener('keypress', handleKeyPress);
+  }, [pattern, code]);
+
+  useWebMidi({
+    ready: useCallback(({ outputs }) => {
+      pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `"${o.name}"`).join(' | ')}) to the pattern. `);
+    }, []),
+    connected: useCallback(({ outputs }) => {
+      pushLog(`Midi device connected! Available: ${outputs.map((o) => `"${o.name}"`).join(', ')}`);
+    }, []),
+    disconnected: useCallback(({ outputs }) => {
+      pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `"${o.name}"`).join(', ')}`);
+    }, []),
+  });
 
   return (
     <div className="min-h-screen bg-[#2A3236] flex flex-col">

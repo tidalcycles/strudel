@@ -94,7 +94,8 @@ function useRepl({ tune, defaultSynth }) {
   });
 
   // set active pattern on ctrl+enter
-  useLayoutEffect(() => {
+  /* useLayoutEffect(() => {
+    // TODO: make sure this is only fired when editor has focus
     const handleKeyPress = (e: any) => {
       if (e.ctrlKey || e.altKey) {
         switch (e.code) {
@@ -109,9 +110,9 @@ function useRepl({ tune, defaultSynth }) {
     };
     document.addEventListener('keypress', handleKeyPress);
     return () => document.removeEventListener('keypress', handleKeyPress);
-  }, [pattern, code]);
+  }, [pattern, code]); */
 
-  useWebMidi({
+  /* useWebMidi({
     ready: useCallback(({ outputs }) => {
       pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `"${o.name}"`).join(' | ')}) to the pattern. `);
     }, []),
@@ -121,7 +122,7 @@ function useRepl({ tune, defaultSynth }) {
     disconnected: useCallback(({ outputs }) => {
       pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `"${o.name}"`).join(', ')}`);
     }, []),
-  });
+  }); */
 
   const togglePlay = () => {
     if (!cycle.started) {
@@ -131,7 +132,20 @@ function useRepl({ tune, defaultSynth }) {
     }
   };
 
-  return { code, setCode, pattern, error, cycle, setPattern, dirty, log, togglePlay };
+  return {
+    code,
+    setCode,
+    pattern,
+    error,
+    cycle,
+    setPattern,
+    dirty,
+    log,
+    togglePlay,
+    activateCode,
+    activeCode,
+    pushLog,
+  };
 }
 
 export default useRepl;
