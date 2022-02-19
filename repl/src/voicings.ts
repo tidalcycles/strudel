@@ -37,17 +37,21 @@ Pattern.prototype.voicings = function (range) {
   });
 };
 
-Pattern.prototype.chordBass = function () { // range = ['G1', 'C3']
+Pattern.prototype.rootNotes = function (octave = 2) {
+  // range = ['G1', 'C3']
   return this._mapNotes((value) => {
-    console.log('value',value);
-    const [_, root] = value.value.match(/^([a-gC-G])[b#]?.*$/);
-    const bassNote = root + '2';
+    const [_, root] = value.value.match(/^([a-gA-G])[b#]?.*$/);
+    const bassNote = root + octave;
     return { ...value, value: bassNote };
   });
 };
 
 Pattern.prototype.define('voicings', (range, pat) => pat.voicings(range), { composable: true });
-Pattern.prototype.define('chordBass', (pat) => {
-  console.log('call chordBass ...', pat);
-  return pat.chordBass()
-}, { composable: true });
+Pattern.prototype.define(
+  'rootNotes',
+  (pat) => {
+    // console.log('call rootNotes ...', pat);
+    return pat.rootNotes();
+  },
+  { composable: true }
+);
