@@ -526,10 +526,69 @@ synth('sawtooth16').autofilter('<1 4 8>'.m)`}
 
 ## Tonal API
 
-TODO, see
+The Tonal API, uses [tonaljs](https://github.com/tonaljs/tonal) to provide helpers for musical operations.
 
-- https://github.com/tidalcycles/strudel/blob/main/repl/src/tonal.ts
-- https://github.com/tidalcycles/strudel/blob/main/repl/src/voicings.ts
+### transpose(semitones)
+
+Transposes all notes to the given number of semitones:
+
+<MiniRepl tune={`"c2 c3".m.fast(2).transpose('<0 -2 5 3>'.m.slow(2)).transpose(0)`} />
+
+This method gets really exciting when we use it with a pattern as above.
+
+Instead of numbers, scientific interval notation can be used as well:
+
+<MiniRepl tune={`"c2 c3".m.fast(2).transpose('<1P -2M 4P 3m>'.m.slow(2)).transpose(1)`} />
+
+### scale(name)
+
+Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like scaleTranpose.
+
+<MiniRepl
+  tune={`"0 2 4 6 4 2".m
+.scale(slowcat('C2 major', 'C2 minor').slow(2))`}
+/>
+
+Note that the scale root is octaved here. You can also omit the octave, then index zero will default to octave 3.
+
+All the available scale names can be found [here](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).
+
+### scaleTranspose(steps)
+
+Transposes notes inside the scale by the number of steps:
+
+<MiniRepl
+  tune={`"-8 [2,4,6]".m
+.scale('C4 bebop major')
+.scaleTranspose('<0 -1 -2 -3 -4 -5 -6 -4>'.m)`}
+/>
+
+### voicings(range?)
+
+Turns chord symbols into voicings, using the smoothest voice leading possible:
+
+<MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".m.voicings(), '<C3 A2 D3 G2>'.m)`} />
+
+TODO: use voicing collection as first param + patternify.
+
+### rootNotes(octave = 2)
+
+Turns chord symbols into root notes of chords in given octave.
+
+<MiniRepl tune={`"<C^7 A7b13 Dm7 G7>".m.rootNotes(3)`} />
+
+Together with edit, groove and voicings, this can be used to create a basic backing track:
+
+<MiniRepl
+  tune={`"<C^7 A7b13 Dm7 G7>".m.edit(
+  x => x.voicings(['d3','g4']).groove('~ x'.m),
+  x => x.rootNotes(2).tone(synth(osc('sawtooth4')).chain(out))
+)`}
+  height={150}
+/>
+
+TODO: use range instead of octave.
+TODO: find out why composition does not work
 
 ## MIDI API
 
