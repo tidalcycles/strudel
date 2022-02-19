@@ -371,7 +371,158 @@ TODO: should the function really run the first cycle?
 
 ## Tone API
 
-TODO, see https://github.com/tidalcycles/strudel/blob/main/repl/src/tone.ts
+To make the sounds more interesting, we can use Tone.js instruments ands effects.
+
+[Show Source on Github](https://github.com/tidalcycles/strudel/blob/main/repl/src/tone.ts)
+
+<MiniRepl
+  tune={`stack(
+    "[c5 c5 bb4 c5] [~ g4 ~ g4] [c5 f5 e5 c5] ~".m
+      .tone(synth(adsr(0,.1,0,0)).chain(out)),
+    "[c2 c3]*8".m
+      .tone(synth({
+        ...osc('sawtooth'),
+        ...adsr(0,.1,0.4,0)
+      }).chain(lowpass(300), out))
+  ).slow(4)`}
+  height={300}
+/>
+
+### tone(instrument)
+
+To change the instrument of a pattern, you can pass any [Tone.js Source](https://tonejs.github.io/docs/14.7.77/index.html) to .tone:
+
+<MiniRepl
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+.tone(new FMSynth().toDestination())`}
+/>
+
+While this works, it is a little bit verbose. To simplify things, all Tone Synths have a shortcut:
+
+```js
+const amsynth = (options) => new AMSynth(options);
+const duosynth = (options) => new DuoSynth(options);
+const fmsynth = (options) => new FMSynth(options);
+const membrane = (options) => new MembraneSynth(options);
+const metal = (options) => new MetalSynth(options);
+const monosynth = (options) => new MonoSynth(options);
+const noise = (options) => new NoiseSynth(options);
+const pluck = (options) => new PluckSynth(options);
+const polysynth = (options) => new PolySynth(options);
+const sampler = (options) => new Sampler(options);
+const synth = (options) => new Synth(options);
+```
+
+### out
+
+Shortcut for Tone.Destination. Intended to be used with Tone's .chain:
+
+<MiniRepl
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+.tone(membrane().chain(out))`}
+/>
+
+This alone is not really useful, so read on..
+
+### vol(volume)
+
+Helper that returns a Gain Node with the given volume. Intended to be used with Tone's .chain:
+
+<MiniRepl
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+.tone(noise().chain(vol(0.5), out))`}
+/>
+
+### osc(type)
+
+Helper to set the waveform of a synth, monosynth or polysynth:
+
+<MiniRepl
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+.tone(synth(osc('sawtooth4')).chain(out))`}
+/>
+
+The base types are `sine`, `square`, `sawtooth`, `triangle`. You can also append a number between 1 and 32 to reduce the harmonic partials.
+
+### lowpass(cutoff)
+
+Helper that returns a Filter Node of type lowpass with the given cutoff. Intended to be used with Tone's .chain:
+
+<MiniRepl
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+.tone(synth(osc('sawtooth')).chain(lowpass(800), out))`}
+/>
+
+### highpass(cutoff)
+
+Helper that returns a Filter Node of type highpass with the given cutoff. Intended to be used with Tone's .chain:
+
+<MiniRepl
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+.tone(synth(osc('sawtooth')).chain(highpass(2000), out))`}
+/>
+
+### adsr(attack, decay?, sustain?, release?)
+
+Helper to set the envelope of a Tone.js instrument. Intended to be used with Tone's .set:
+
+<MiniRepl
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+.tone(synth(adsr(0,.1,0,0)).chain(out))`}
+/>
+
+### Experimental: Patternification
+
+While the above methods work for static sounds, there is also the option to patternify tone methods.
+This is currently experimental, because the performance is not stable, and audio glitches will appear after some time.
+It would be great to get this to work without glitches though, because it is fun!
+
+#### synth(type)
+
+With .synth, you can create a synth with a variable wave type:
+
+<MiniRepl
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.
+synth('<sawtooth8 square8>'.m).slow(4)`}
+/>
+
+#### adsr(attack, decay?, sustain?, release?)
+
+Chainable Envelope helper:
+
+<MiniRepl
+  tune={`"[c5 c5 bb4 c5] [~ g4 ~ g4] [c5 f5 e5 c5] ~".m.slow(4).
+synth('sawtooth16').adsr(0,.1,0,0)`}
+/>
+
+Due to having more than one argument, this method is not patternified.
+
+#### filter(cuttoff)
+
+Patternified filter:
+
+<MiniRepl
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.
+synth('sawtooth16').filter('[500 2000]*8'.m).slow(4)`}
+/>
+
+#### gain(value)
+
+Patternified gain:
+
+<MiniRepl
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.
+synth('sawtooth16').gain('[.2 .8]*8'.m).slow(4)`}
+/>
+
+#### autofilter(value)
+
+Patternified autofilter:
+
+<MiniRepl
+  tune={`"c2 c3".m.
+synth('sawtooth16').autofilter('<1 4 8>'.m)`}
+/>
 
 ## Tonal API
 
