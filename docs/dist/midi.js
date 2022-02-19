@@ -24,6 +24,7 @@ Pattern.prototype.midi = function(output, channel = 1) {
   return this.fmap((value) => ({
     ...value,
     onTrigger: (time, event) => {
+      value = value.value || value;
       if (!isNote(value)) {
         throw new Error("not a note: " + value);
       }
@@ -41,7 +42,7 @@ Pattern.prototype.midi = function(output, channel = 1) {
       time = time * 1e3 + timingOffset;
       device.playNote(value, channel, {
         time,
-        duration: event.duration * 1e3,
+        duration: event.duration * 1e3 - 5,
         velocity: 0.9
       });
     }

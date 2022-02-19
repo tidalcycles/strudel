@@ -1,16 +1,5 @@
 # Strudel REPL
 
-## TODO
-
-### mini notation ([krill docs](https://github.com/Mdashdotdashn/krill#general-principles))
-
-- "@" aka elongation / weight: how to write in strudel?
-- "%" fixed step: how to write in strudel?
-- "struct" not sure how to do this
-- "c3(5,8)" bjorklund algorithm
-- more [mini notation features](https://tidalcycles.org/docs/patternlib/tutorials/mini_notation)
-- not tested
-
 ## Default Snowpack Readme
 
 > ✨ Bootstrapped with Create Snowpack App (CSA).

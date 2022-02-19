@@ -24,3 +24,7 @@ export default (code) => {
   });
   return codegen(shifted);
 };
+
+// TODO: turn x.groove['[~ x]*2'] into x.groove('[~ x]*2'.m)
+// and ['c1*2'].xx into 'c1*2'.m.xx ??
+// or just all templated strings?? x.groove(`[~ x]*2`)

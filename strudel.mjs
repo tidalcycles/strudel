@@ -1,4 +1,5 @@
 import Fraction from 'fraction.js'
+import { compose } from 'ramda'; // will remove this as soon as compose is implemented here
 
 // Removes 'None' values from given list
 const removeUndefineds = xs => xs.filter(x => x != undefined)
@@ -7,17 +8,25 @@ const flatten = arr => [].concat(...arr)
 
 const id = a => a
 
-function curry(func) {
-    return function curried(...args) {
+export function curry(func, overload) {
+    const fn = function curried(...args) {
         if (args.length >= func.length) {
             return func.apply(this, args)
         } 
         else {
-            return function(...args2) {
+            const partial = function(...args2) {
                 return curried.apply(this, args.concat(args2))
             }
+            if (overload) {
+                overload(partial, args);
+            }
+            return partial;
         }
     }
+    if (overload) { // overload function without args... needed for chordBass.transpose(2)
+        overload(fn, []); 
+    }
+    return fn;
 }
 
 // Returns the start of the cycle.
@@ -100,8 +109,12 @@ class TimeSpan {
     }
 
     withTime(func_time) {
-        // Applies given function to both the begin and end time value of the timespan"""
-        return(new TimeSpan(func_time(this.begin), func_time(this.end)))
+      // Applies given function to both the begin and end time value of the timespan"""
+      return(new TimeSpan(func_time(this.begin), func_time(this.end)))
+    }
+    withEnd(func_time) {
+      // Applies given function to both the begin and end time value of the timespan"""
+      return(new TimeSpan(this.begin, func_time(this.end)))
     }
 
     intersection(other) {
@@ -204,8 +217,26 @@ class Hap {
 }
 
 class Pattern {
+    // the following functions will get patternFactories as nested functions:
     constructor(query) {
-        this.query = query
+        this.query = query;
+        // the following code will assign `patternFactories` as child functions to all methods of Pattern that don't start with '_'
+        const proto = Object.getPrototypeOf(this);
+        // proto.patternified is defined below Pattern class. You can add more patternified functions from outside.
+        proto.patternified.forEach((prop) => {
+          // patternify function
+          this[prop] = (...args) => this._patternify(Pattern.prototype['_' + prop])(...args);
+          // with the following, you can do, e.g. `stack(c3).fast.slowcat(1, 2, 4, 8)` instead of `stack(c3).fast(slowcat(1, 2, 4, 8))`
+          Object.assign(
+            this[prop],
+            Object.fromEntries(
+              Object.entries(Pattern.prototype.factories).map(([type, func]) => [
+                type,
+                (...args) => this[prop](func(...args)),
+              ])
+            )
+          );
+        });
     }
 
     _splitQueries() {
@@ -275,10 +306,10 @@ class Pattern {
         // resolve wholes, applies a given pattern of values to that
         // pattern of functions.
         const pat_func = this
-        query = function(span) {
+        const query = function(span) {
             const event_funcs = pat_func.query(span)
             const event_vals = pat_val.query(span)
-            apply = function(event_func, event_val) {
+            const apply = function(event_func, event_val) {
                 const s = event_func.part.intersection(event_val.part)
                 if (s == undefined) {
                     return undefined
@@ -293,7 +324,7 @@ class Pattern {
     appBoth(pat_val) {
         // Tidal's <*>
         const whole_func = function(span_a, span_b) {
-            if (span_a == undefined || span_B == undefined) {
+            if (span_a == undefined || span_b == undefined) {
                 return undefined
             }
             return span_a.intersection_e(span_b)
@@ -461,16 +492,8 @@ class Pattern {
         return fastQuery.withEventTime(t => t.div(factor))
     }
 
-    fast(...factor) {
-        return this._patternify(Pattern.prototype._fast)(...factor)
-    }
-
     _slow(factor) {
         return this._fast(1/factor)
-    }
-
-    slow(...factor) {
-        return this._patternify(Pattern.prototype._slow)(...factor)
     }
 
     _early(offset) {
@@ -479,18 +502,9 @@ class Pattern {
         return this.withQueryTime(t => t.add(offset)).withEventTime(t => t.sub(offset))
     }
 
-    early(...factor) {
-        return this._patternify(Pattern.prototype._early)(...factor)
-    }
-
     _late(offset) {
         // Equivalent of Tidal's ~> operator
         return this._early(0-offset)
-    }
-
-
-    late(...factor) {
-        return this._patternify(Pattern.prototype._late)(...factor)
     }
 
     when(binary_pat, func) {
@@ -549,7 +563,54 @@ class Pattern {
 
         return stack([left,func(right)])
     }
+
+    // is there a different name for those in tidal?
+    stack(...pats) {
+      return stack(this, ...pats)
+    }
+    sequence(...pats) {
+      return sequence(this, ...pats)
+    }
+
+    superimpose(...funcs) {
+      return this.stack(...funcs.map((func) => func(this)));
+    }
+
+    edit(...funcs) {
+      return stack(...funcs.map(func => func(this)));
+    }
+
+    _bypass(on) {
+      on = Boolean(parseInt(on));
+      return on ? silence : this;
+    }
+
+    hush() {
+      return silence;
+    }
+/* 
+    _resolveTies() {
+      return this._withEvents((events)=>{
+        return events.reduce((tied, event, i) => {
+          const value = event.value?.value || event.value;
+          if (value !== '_') {
+            return tied.concat([event]);
+          }
+          console.log('tie!', lastEvent);
+          tied[i - 1] = tied[i - 1].withSpan((span) => span.withEnd((_) => event.part.end));
+          // above only works if the tie is not across a cycle boundary... how to do that???
+          // TODO: handle case that there is a gap between tied[i-1].part.end and event.part.begin => tie would make no sense
+          return tied;
+        }, []);
+      })
+    } */
 }
+
+// methods of Pattern that get callable factories
+Pattern.prototype.patternified = ['fast', 'slow', 'early', 'late'];
+// methods that create patterns, which are added to patternified Pattern methods
+Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
+// the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
 
 const silence = new Pattern(_ => [])
 
@@ -566,7 +627,7 @@ function steady(value) {
 }
 
 function reify(thing) {
-    if (thing.constructor.name == "Pattern") {
+    if (thing?.constructor?.name == "Pattern") {
         return thing
     }
     return pure(thing)
@@ -583,8 +644,12 @@ function slowcat(...pats) {
     // successively, one per cycle.
     pats = pats.map(reify)
     const query = function(span) {
-        const pat_n = Math.floor(span.begin) % pats.length
+        const pat_n = Math.floor(span.begin) % pats.length; 
         const pat = pats[pat_n]
+        if (!pat) {
+          // pat_n can be negative, if the span is in the past..
+          return [];
+        }
         // A bit of maths to make sure that cycles from constituent patterns aren't skipped.
         // For example if three patterns are slowcat-ed, the fourth cycle of the result should 
         // be the second (rather than fourth) cycle from the first pattern.
@@ -702,10 +767,61 @@ const when  = curry((binary, f, pat) => pat.when(binary, f))
 const off   = curry((t, f, pat) => pat.off(t,f))
 const jux   = curry((f, pat) => pat.jux(f))
 const append = curry((a, pat) => pat.append(a))
+const superimpose = curry((array, pat) => pat.superimpose(...array))
+
+// problem: curried functions with spread arguments must have pat at the beginning
+// with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
+
+// these are the core composable functions. they are extended with Pattern.prototype.define below
+Pattern.prototype.composable = { fast, slow, early, late, superimpose }
+
+// adds Pattern.prototype.composable to given function as child functions
+// then you can do transpose(2).late(0.2) instead of x => x.transpose(2).late(0.2)
+export function makeComposable(func) {
+  Object.entries(Pattern.prototype.composable).forEach(([functionName, composable]) => {
+    // compose with dot
+    func[functionName] = (...args) => {
+      // console.log(`called ${functionName}(${args.join(',')})`);
+      const composition = compose(func, composable(...args));
+      // the composition itself must be composable too :)
+      // then you can do endless chaining transpose(2).late(0.2).fast(2) ...
+      return makeComposable(composition);
+    };
+  });
+  return func;
+}
+
+// this will add func as name to list of composable / patternified functions.
+// those lists will be used in bootstrap to curry and compose everything, to support various call patterns
+Pattern.prototype.define = (name, func, options = {}) => {
+  if (options.composable) {
+    Pattern.prototype.composable[name] = func;
+  }
+  if(options.patternified) {
+    Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
+  }
+}
+
+// Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
+Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
+Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
+
+// call this after all Patter.prototype.define calls have been executed! (right before evaluate)
+Pattern.prototype.bootstrap = () => {
+  // makeComposable(Pattern.prototype);
+  const bootstrapped = Object.fromEntries(Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
+    if(Pattern.prototype[functionName]) {
+      // without this, 'C^7'.m.chordBass.transpose(2) will throw "C^7".m.chordBass.transpose is not a function
+      Pattern.prototype[functionName] = makeComposable(Pattern.prototype[functionName]); // is this needed?
+    }
+    return [functionName, curry(composable, makeComposable)];
+  }));
+  return bootstrapped;
+}
 
 export {Fraction, TimeSpan, Hap, Pattern, 
     pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr, reify, silence,
     fast, slow, early, late, rev,
-    add, sub, mul, div, union, every, when, off, jux, append
+    add, sub, mul, div, union, every, when, off, jux, append, superimpose
 }
 

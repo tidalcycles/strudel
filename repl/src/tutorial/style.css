@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.react-codemirror2,
+.CodeMirror {
+  width: 100% !important;
+  height: inherit !important;
+}
+
+.justify-center {
+  justify-content: center;
+}

@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ToneEventCallback } from 'tone';
 import * as Tone from 'tone';
 import { TimeSpan } from '../../strudel.mjs';
 import type { Hap } from './types';
+import usePostMessage from './usePostMessage';
 
 export declare interface UseCycleProps {
   onEvent: ToneEventCallback<any>;
@@ -21,31 +22,22 @@ function useCycle(props: UseCycleProps) {
   // pull events with onQuery + count up to next cycle
   const query = (cycle = activeCycle()) => {
     const timespan = new TimeSpan(cycle, cycle + 1);
-    const _events = onQuery?.(timespan) || [];
-    onSchedule?.(_events, cycle);
-    schedule(_events, cycle);
-  };
-
-  const schedule = (events: any[], cycle = activeCycle()) => {
+    const events = onQuery?.(timespan) || [];
+    onSchedule?.(events, cycle);
     // cancel events after current query. makes sure no old events are player for rescheduled cycles
     // console.log('schedule', cycle);
-    const timespan = new TimeSpan(cycle, cycle + 1);
     // query next cycle in the middle of the current
     const cancelFrom = timespan.begin.valueOf();
     Tone.Transport.cancel(cancelFrom);
-    const queryNextTime = (cycle + 1) * cycleDuration - 0.1;
-    const delta = queryNextTime - Tone.Transport.seconds;
-    if (delta < 0.2) {
-      // if calling Tone.Transport.schedule barely before the scheduled time, it sometimes happen that the event is swallowed
-      // i think this has something to do with the fact that Tone.Transport.schedule is called with a time that is slightly before the scheduled time
-      // so, if the delta is too small (using 0.2 for no specific reason), just schedule directly
-      // this if branch should only be entered if the user triggers the scheduling, to make sure no endless recursion is happening
+    // const queryNextTime = (cycle + 1) * cycleDuration - 0.1;
+    const queryNextTime = (cycle + 1) * cycleDuration - 0.5;
+
+    // if queryNextTime would be before current time, execute directly (+0.1 for safety that it won't miss)
+    const t = Math.max(Tone.Transport.seconds, queryNextTime) + 0.1;
+    Tone.Transport.schedule(() => {
       query(cycle + 1);
-    } else {
-      Tone.Transport.schedule(() => {
-        query(cycle + 1);
-      }, queryNextTime);
-    }
+    }, t);
+
     // schedule events for next cycle
     events
       ?.filter((event) => event.part.begin.valueOf() === event.whole.begin.valueOf())
@@ -53,7 +45,7 @@ function useCycle(props: UseCycleProps) {
         Tone.Transport.schedule((time) => {
           const toneEvent = {
             time: event.part.begin.valueOf(),
-            duration: event.whole.end.valueOf() - event.whole.begin.valueOf(),
+            duration: event.whole.end.sub(event.whole.begin).valueOf(),
             value: event.value,
           };
           onEvent(time, toneEvent);
@@ -63,10 +55,9 @@ function useCycle(props: UseCycleProps) {
 
   useEffect(() => {
     ready && query();
-  }, [onEvent, onSchedule, onQuery]);
+  }, [onEvent, onSchedule, onQuery, ready]);
 
   const start = async () => {
-    console.log('start');
     setStarted(true);
     await Tone.start();
     Tone.Transport.start('+0.1');
@@ -77,7 +68,7 @@ function useCycle(props: UseCycleProps) {
     Tone.Transport.pause();
   };
   const toggle = () => (started ? stop() : start());
-  return { start, stop, onEvent, started, toggle, schedule, query, activeCycle };
+  return { start, stop, setStarted, onEvent, started, toggle, query, activeCycle };
 }
 
 export default useCycle;

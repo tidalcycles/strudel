@@ -1,17 +1,26 @@
 import Fraction from "../pkg/fractionjs.js";
+import {compose} from "../pkg/ramda.js";
 const removeUndefineds = (xs) => xs.filter((x) => x != void 0);
 const flatten = (arr) => [].concat(...arr);
 const id = (a) => a;
-function curry(func) {
-  return function curried(...args) {
+export function curry(func, overload) {
+  const fn = function curried(...args) {
     if (args.length >= func.length) {
       return func.apply(this, args);
     } else {
-      return function(...args2) {
+      const partial = function(...args2) {
         return curried.apply(this, args.concat(args2));
       };
+      if (overload) {
+        overload(partial, args);
+      }
+      return partial;
     }
   };
+  if (overload) {
+    overload(fn, []);
+  }
+  return fn;
 }
 Fraction.prototype.sam = function() {
   return Fraction(Math.floor(this));
@@ -73,6 +82,9 @@ class TimeSpan {
   withTime(func_time) {
     return new TimeSpan(func_time(this.begin), func_time(this.end));
   }
+  withEnd(func_time) {
+    return new TimeSpan(this.begin, func_time(this.end));
+  }
   intersection(other) {
     const intersect_begin = this.begin.max(other.begin);
     const intersect_end = this.end.min(other.end);
@@ -132,8 +144,16 @@ class Hap {
   }
 }
 class Pattern {
-  constructor(query2) {
-    this.query = query2;
+  constructor(query) {
+    this.query = query;
+    const proto = Object.getPrototypeOf(this);
+    proto.patternified.forEach((prop) => {
+      this[prop] = (...args) => this._patternify(Pattern.prototype["_" + prop])(...args);
+      Object.assign(this[prop], Object.fromEntries(Object.entries(Pattern.prototype.factories).map(([type, func]) => [
+        type,
+        (...args) => this[prop](func(...args))
+      ])));
+    });
   }
   _splitQueries() {
     const pat = this;
@@ -172,10 +192,10 @@ class Pattern {
   }
   _appWhole(whole_func, pat_val) {
     const pat_func = this;
-    query = function(span) {
+    const query = function(span) {
       const event_funcs = pat_func.query(span);
       const event_vals = pat_val.query(span);
-      apply = function(event_func, event_val) {
+      const apply = function(event_func, event_val) {
         const s = event_func.part.intersection(event_val.part);
         if (s == void 0) {
           return void 0;
@@ -188,7 +208,7 @@ class Pattern {
   }
   appBoth(pat_val) {
     const whole_func = function(span_a, span_b) {
-      if (span_a == void 0 || span_B == void 0) {
+      if (span_a == void 0 || span_b == void 0) {
         return void 0;
       }
       return span_a.intersection_e(span_b);
@@ -197,7 +217,7 @@ class Pattern {
   }
   appLeft(pat_val) {
     const pat_func = this;
-    const query2 = function(span) {
+    const query = function(span) {
       const haps = [];
       for (const hap_func of pat_func.query(span)) {
         const event_vals = pat_val.query(hap_func.part);
@@ -211,11 +231,11 @@ class Pattern {
       }
       return haps;
     };
-    return new Pattern(query2);
+    return new Pattern(query);
   }
   appRight(pat_val) {
     const pat_func = this;
-    const query2 = function(span) {
+    const query = function(span) {
       const haps = [];
       for (const hap_val of pat_val.query(span)) {
         const hap_funcs = pat_func.query(hap_val.part);
@@ -229,7 +249,7 @@ class Pattern {
       }
       return haps;
     };
-    return new Pattern(query2);
+    return new Pattern(query);
   }
   get firstCycle() {
     return this.query(new TimeSpan(Fraction(0), Fraction(1)));
@@ -251,7 +271,7 @@ class Pattern {
   }
   _bindWhole(choose_whole, func) {
     const pat_val = this;
-    const query2 = function(span) {
+    const query = function(span) {
       const withWhole = function(a, b) {
         return new Hap(choose_whole(a.whole, b.whole), b.part, b.value);
       };
@@ -260,7 +280,7 @@ class Pattern {
       };
       return flatten(pat_val.query(span).map((a) => match(a)));
     };
-    return new Pattern(query2);
+    return new Pattern(query);
   }
   bind(func) {
     const whole_func = function(a, b) {
@@ -321,27 +341,15 @@ class Pattern {
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
     return fastQuery.withEventTime((t) => t.div(factor));
   }
-  fast(...factor) {
-    return this._patternify(Pattern.prototype._fast)(...factor);
-  }
   _slow(factor) {
     return this._fast(1 / factor);
-  }
-  slow(...factor) {
-    return this._patternify(Pattern.prototype._slow)(...factor);
   }
   _early(offset) {
     offset = Fraction(offset);
     return this.withQueryTime((t) => t.add(offset)).withEventTime((t) => t.sub(offset));
   }
-  early(...factor) {
-    return this._patternify(Pattern.prototype._early)(...factor);
-  }
   _late(offset) {
     return this._early(0 - offset);
-  }
-  late(...factor) {
-    return this._patternify(Pattern.prototype._late)(...factor);
   }
   when(binary_pat, func) {
     const true_pat = binary_pat._filterValues(id);
@@ -354,16 +362,17 @@ class Pattern {
     return stack([this, func(this._early(time_pat))]);
   }
   every(n, func) {
-    const pats = Array(n - 1).fill(this);
-    pats.unshift(func(this));
-    return slowcat(...pats);
+    const pat = this;
+    const pats = Array(n - 1).fill(pat);
+    pats.unshift(func(pat));
+    return slowcatPrime(...pats);
   }
   append(other) {
     return fastcat(...[this, other]);
   }
   rev() {
     const pat = this;
-    const query2 = function(span) {
+    const query = function(span) {
       const cycle = span.begin.sam();
       const next_cycle = span.begin.nextSam();
       const reflect = function(to_reflect) {
@@ -376,7 +385,7 @@ class Pattern {
       const haps = pat.query(reflect(span));
       return haps.map((hap) => hap.withSpan(reflect));
     };
-    return new Pattern(query2)._splitQueries();
+    return new Pattern(query)._splitQueries();
   }
   jux(func, by = 1) {
     by /= 2;
@@ -390,37 +399,70 @@ class Pattern {
     const right = this.withValue((val) => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) + by}));
     return stack([left, func(right)]);
   }
+  stack(...pats) {
+    return stack(this, ...pats);
+  }
+  sequence(...pats) {
+    return sequence(this, ...pats);
+  }
+  superimpose(...funcs) {
+    return this.stack(...funcs.map((func) => func(this)));
+  }
+  edit(...funcs) {
+    return stack(...funcs.map((func) => func(this)));
+  }
+  _bypass(on2) {
+    on2 = Boolean(parseInt(on2));
+    return on2 ? silence : this;
+  }
+  hush() {
+    return silence;
+  }
 }
+Pattern.prototype.patternified = ["fast", "slow", "early", "late"];
+Pattern.prototype.factories = {pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 const silence = new Pattern((_) => []);
 function pure(value) {
-  function query2(span) {
+  function query(span) {
     return span.spanCycles.map((subspan) => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value));
   }
-  return new Pattern(query2);
+  return new Pattern(query);
 }
 function steady(value) {
   return new Pattern((span) => Hap(void 0, span, value));
 }
 function reify(thing) {
-  if (thing.constructor.name == "Pattern") {
+  if (thing?.constructor?.name == "Pattern") {
     return thing;
   }
   return pure(thing);
 }
 function stack(...pats) {
   const reified = pats.map((pat) => reify(pat));
-  const query2 = (span) => flatten(reified.map((pat) => pat.query(span)));
-  return new Pattern(query2);
+  const query = (span) => flatten(reified.map((pat) => pat.query(span)));
+  return new Pattern(query);
 }
 function slowcat(...pats) {
   pats = pats.map(reify);
-  const query2 = function(span) {
+  const query = function(span) {
     const pat_n = Math.floor(span.begin) % pats.length;
     const pat = pats[pat_n];
+    if (!pat) {
+      return [];
+    }
     const offset = span.begin.floor().sub(span.begin.div(pats.length).floor());
     return pat.withEventTime((t) => t.add(offset)).query(span.withTime((t) => t.sub(offset)));
   };
-  return new Pattern(query2)._splitQueries();
+  return new Pattern(query)._splitQueries();
+}
+function slowcatPrime(...pats) {
+  pats = pats.map(reify);
+  const query = function(span) {
+    const pat_n = Math.floor(span.begin) % pats.length;
+    const pat = pats[pat_n];
+    return pat.query(span);
+  };
+  return new Pattern(query)._splitQueries();
 }
 function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);
@@ -493,6 +535,46 @@ const slow = curry((a, pat) => pat.slow(a));
 const early = curry((a, pat) => pat.early(a));
 const late = curry((a, pat) => pat.late(a));
 const rev = (pat) => pat.rev();
+const add = curry((a, pat) => pat.add(a));
+const sub = curry((a, pat) => pat.sub(a));
+const mul = curry((a, pat) => pat.mul(a));
+const div = curry((a, pat) => pat.div(a));
+const union = curry((a, pat) => pat.union(a));
+const every = curry((i, f, pat) => pat.every(i, f));
+const when = curry((binary, f, pat) => pat.when(binary, f));
+const off = curry((t, f, pat) => pat.off(t, f));
+const jux = curry((f, pat) => pat.jux(f));
+const append = curry((a, pat) => pat.append(a));
+const superimpose = curry((array, pat) => pat.superimpose(...array));
+Pattern.prototype.composable = {fast, slow, early, late, superimpose};
+export function makeComposable(func) {
+  Object.entries(Pattern.prototype.composable).forEach(([functionName, composable]) => {
+    func[functionName] = (...args) => {
+      const composition = compose(func, composable(...args));
+      return makeComposable(composition);
+    };
+  });
+  return func;
+}
+Pattern.prototype.define = (name, func, options = {}) => {
+  if (options.composable) {
+    Pattern.prototype.composable[name] = func;
+  }
+  if (options.patternified) {
+    Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
+  }
+};
+Pattern.prototype.define("hush", (pat) => pat.hush(), {patternified: false, composable: true});
+Pattern.prototype.define("bypass", (pat) => pat.bypass(on), {patternified: true, composable: true});
+Pattern.prototype.bootstrap = () => {
+  const bootstrapped = Object.fromEntries(Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
+    if (Pattern.prototype[functionName]) {
+      Pattern.prototype[functionName] = makeComposable(Pattern.prototype[functionName]);
+    }
+    return [functionName, curry(composable, makeComposable)];
+  }));
+  return bootstrapped;
+};
 export {
   Fraction,
   TimeSpan,
@@ -515,5 +597,16 @@ export {
   slow,
   early,
   late,
-  rev
+  rev,
+  add,
+  sub,
+  mul,
+  div,
+  union,
+  every,
+  when,
+  off,
+  jux,
+  append,
+  superimpose
 };

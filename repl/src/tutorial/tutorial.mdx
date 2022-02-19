@@ -1,0 +1,402 @@
+import MiniRepl from './MiniRepl';
+
+# What is Strudel?
+
+With Strudel, you can expressively write dynamic music pieces.
+It aims to be [Tidal Cycles](https://tidalcycles.org/) for JavaScript (started by the same author).
+
+You don't need to know JavaScript or Tidal Cycles to make music with Strudel.
+
+This interactive tutorial will guide you through the basics of Strudel.
+
+The best place to actually make music with Strudel is the [Strudel REPL](https://strudel.tidalcycles.org/).
+
+## Show me a Demo
+
+To get a taste of what Strudel can do, check out this track:
+
+<MiniRepl
+  tune={`() => {
+  const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out);
+  const kick = new MembraneSynth().chain(vol(.8), out);
+  const snare = new NoiseSynth().chain(vol(.8), out);
+  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out);
+  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out);
+  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out);
+  
+  const drums = stack(
+    'c1*2'.m.tone(kick).bypass('<0@7 1>/8'.m),
+    '~ <x!7 [x@3 x]>'.m.tone(snare).bypass('<0@7 1>/4'.m),
+    '[~ c4]*2'.m.tone(hihat)
+  );
+  
+  const thru = (x) => x.transpose('<0 1>/8'.m).transpose(-1);
+  const synths = stack(
+    '<eb4 d4 c4 b3>/2'.m.scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).groove('[~ x]*2'.m)
+    .edit(
+      scaleTranspose(0).early(0),
+      scaleTranspose(2).early(1/8),
+      scaleTranspose(7).early(1/4),
+      scaleTranspose(8).early(3/8)
+    ).edit(thru).tone(keys).bypass('<1 0>/16'.m),
+    '<C2 Bb1 Ab1 [G1 [G2 G1]]>/2'.m.groove('[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2'.m.fast(2)).edit(thru).tone(bass),
+    '<Cm7 Bb7 Fm7 G7b13>/2'.m.groove('~ [x@0.1 ~]'.m.fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass('<0@7 1>/8'.m.early(1/4))
+  )
+  return stack(
+    drums.fast(2), 
+    synths
+  ).slow(2);
+}`}
+  height={400}
+/>
+
+[Open this track in the REPL](https://strudel.tidalcycles.org/#KCkgPT4gewogIGNvbnN0IGRlbGF5ID0gbmV3IEZlZWRiYWNrRGVsYXkoMS84LCAuNCkuY2hhaW4odm9sKDAuNSksIG91dCk7CiAgY29uc3Qga2ljayA9IG5ldyBNZW1icmFuZVN5bnRoKCkuY2hhaW4odm9sKC44KSwgb3V0KTsKICBjb25zdCBzbmFyZSA9IG5ldyBOb2lzZVN5bnRoKCkuY2hhaW4odm9sKC44KSwgb3V0KTsKICBjb25zdCBoaWhhdCA9IG5ldyBNZXRhbFN5bnRoKCkuc2V0KGFkc3IoMCwgLjA4LCAwLCAuMSkpLmNoYWluKHZvbCguMykuY29ubmVjdChkZWxheSksb3V0KTsKICBjb25zdCBiYXNzID0gbmV3IFN5bnRoKCkuc2V0KHsgLi4ub3NjKCdzYXd0b290aCcpLCAuLi5hZHNyKDAsIC4xLCAuNCkgfSkuY2hhaW4obG93cGFzcyg5MDApLCB2b2woLjUpLCBvdXQpOwogIGNvbnN0IGtleXMgPSBuZXcgUG9seVN5bnRoKCkuc2V0KHsgLi4ub3NjKCdzYXd0b290aCcpLCAuLi5hZHNyKDAsIC41LCAuMiwgLjcpIH0pLmNoYWluKGxvd3Bhc3MoMTIwMCksIHZvbCguNSksIG91dCk7CiAgCiAgY29uc3QgZHJ1bXMgPSBzdGFjaygKICAgICdjMSoyJy5tLnRvbmUoa2ljaykuYnlwYXNzKCc8MEA3IDE%2BLzgnLm0pLAogICAgJ34gPHghNyBbeEAzIHhdPicubS50b25lKHNuYXJlKS5ieXBhc3MoJzwwQDcgMT4vNCcubSksCiAgICAnW34gYzRdKjInLm0udG9uZShoaWhhdCkKICApOwogIAogIGNvbnN0IHRocnUgPSAoeCkgPT4geC50cmFuc3Bvc2UoJzwwIDE%2BLzgnLm0pLnRyYW5zcG9zZSgtMSk7CiAgY29uc3Qgc3ludGhzID0gc3RhY2soCiAgICAnPGViNCBkNCBjNCBiMz4vMicubS5zY2FsZSh0aW1lQ2F0KFszLCdDIG1pbm9yJ10sWzEsJ0MgbWVsb2RpYyBtaW5vciddKS5zbG93KDgpKS5ncm9vdmUoJ1t%2BIHhdKjInLm0pCiAgICAuZWRpdCgKICAgICAgc2NhbGVUcmFuc3Bvc2UoMCkuZWFybHkoMCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDIpLmVhcmx5KDEvOCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDcpLmVhcmx5KDEvNCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDgpLmVhcmx5KDMvOCkKICAgICkuZWRpdCh0aHJ1KS50b25lKGtleXMpLmJ5cGFzcygnPDEgMD4vMTYnLm0pLAogICAgJzxDMiBCYjEgQWIxIFtHMSBbRzIgRzFdXT4vMicubS5ncm9vdmUoJ1t4IFt%2BIHhdIDxbfiBbfiB4XV0hMyBbeCB4XT5AMl0vMicubS5mYXN0KDIpKS5lZGl0KHRocnUpLnRvbmUoYmFzcyksCiAgICAnPENtNyBCYjcgRm03IEc3YjEzPi8yJy5tLmdyb292ZSgnfiBbeEAwLjEgfl0nLm0uZmFzdCgyKSkudm9pY2luZ3MoKS5lZGl0KHRocnUpLmV2ZXJ5KDIsIGVhcmx5KDEvOCkpLnRvbmUoa2V5cykuYnlwYXNzKCc8MEA3IDE%2BLzgnLm0uZWFybHkoMS80KSkKICApCiAgcmV0dXJuIHN0YWNrKAogICAgZHJ1bXMuZmFzdCgyKSwgCiAgICBzeW50aHMKICApLnNsb3coMik7Cn0%3D)
+
+## Disclaimer
+
+- This project is still in its experimental state. In the future, parts of it might change significantly.
+- This tutorial is far from complete.
+
+<br />
+
+# Mini Notation
+
+Similar to Tidal Cycles, Strudel has an embedded mini language that is designed to write rhythmic patterns in a short manner.
+Before diving deeper into the details, here is a flavor of how the mini language looks like:
+
+<MiniRepl
+  tune={`\`[
+  [
+    [e5 [b4 c5] d5 [c5 b4]]
+    [a4 [a4 c5] e5 [d5 c5]]
+    [b4 [~ c5] d5 e5]
+    [c5 a4 a4 ~]
+    [[~ d5] [~ f5] a5 [g5 f5]]
+    [e5 [~ c5] e5 [d5 c5]]
+    [b4 [b4 c5] d5 e5]
+    [c5 a4 a4 ~]
+  ],[
+    [[e2 e3]*4]
+    [[a2 a3]*4]
+    [[g#2 g#3]*2 [e2 e3]*2]
+    [a2 a3 a2 a3 a2 a3 b1 c2]
+    [[d2 d3]*4]
+    [[c2 c3]*4]
+    [[b1 b2]*2 [e2 e3]*2]
+    [[a1 a2]*4]
+  ]
+]/16\``}
+  height={600}
+/>
+
+The snippet above is enclosed in backticks (`), which allows you to write multi-line strings.
+You can also use double quotes (") for single line mini notation.
+
+## Notes
+
+Notes are notated with the note letter, followed by the octave number. You can notate flats with `b` and sharps with `#`.
+
+<MiniRepl tune={`"e5"`} />
+
+Here, the same note is played over and over again, once a second. This one second is the default length of one so called "cycle".
+
+By the way, you can edit the contents of the player, and press "update" to hear your change!
+You can also press "play" on the next player without needing to stop the last one.
+
+## Sequences
+
+We can play more notes by seperating them with spaces:
+
+<MiniRepl tune={`"e5 b4 d5 c5"`} />
+
+Here, those four notes are squashed into one cycle, so each note is a quarter second long.
+
+## Division
+
+We can slow the sequence down by enclosing it in brackets and dividing it by a number:
+
+<MiniRepl tune={`"[e5 b4 d5 c5]/2"`} />
+
+The division by two means that the sequence will be played over the course of two cycles.
+You can also use decimal numbers for any tempo you like.
+
+## Angle Brackets
+
+Using angle brackets, we can define the sequence length based on the number of children:
+
+<MiniRepl tune={`"<e5 b4 d5 c5>"`} />
+
+The above snippet is the same as:
+
+<MiniRepl tune={`"[e5 b4 d5 c5]/4"`} />
+
+The advantage of the angle brackets, is that we can add more children without needing to change the number at the end.
+
+## Multiplication
+
+Contrary to division, a sequence can be sped up by multiplying it by a number:
+
+<MiniRepl tune={`"[e5 b4 d5 c5]*2"`} />
+
+The multiplication by 2 here means that the sequence will play twice a cycle.
+
+## Bracket Nesting
+
+To create more interesting rhythms, you can nest sequences with brackets, like this:
+
+<MiniRepl tune={`"e5 [b4 c5] d5 [c5 b4]"`} />
+
+## Rests
+
+The "~" represents a rest:
+
+<MiniRepl tune={`"[b4 [~ c5] d5 e5]"`} />
+
+## Parallel
+
+Using commas, we can play chords:
+
+<MiniRepl tune={`"g3,b3,e4"`} />
+
+To play multiple chords in a sequence, we have to wrap them in brackets:
+
+<MiniRepl tune={`"<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>"`} />
+
+## Elongation
+
+With the "@" symbol, we can specify temporal "weight" of a sequence child:
+
+<MiniRepl tune={`"<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>"`} />
+
+Here, the first chord has a weight of 2, making it twice the length of the other chords. The default weight is 1.
+
+## Replication
+
+Using "!" we can repeat without speeding up:
+
+<MiniRepl tune={`"<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>"`} />
+
+In essence, the `x!n` is like a shortcut for `[x*n]@n`.
+
+## Mini Notation TODO
+
+Compared to [tidal mini notation](https://tidalcycles.org/docs/patternlib/tutorials/mini_notation/), the following mini notation features are missing from Strudel:
+
+- Tie symbols "\_"
+- Euclidean algorithm "c3(3,2,1)"
+- feet marking "."
+- random choice "|"
+- Random removal "?"
+- Polymetric sequences "{ ... }"
+- Fixed steps using "%"
+
+<br />
+
+# Core API
+
+While the mini notation is powerful on its own, there is much more to discover.
+Internally, the mini notation will expand to use the actual functional JavaScript API.
+
+## Notes
+
+Notes are automatically available as variables:
+
+<MiniRepl tune={`e4`} />
+
+An important difference to the mini notation:
+For sharp notes, the letter "s" is used instead of "#", because JavaScript does not support "#" in a variable name.
+
+The above is the same as:
+
+<MiniRepl tune={`"e4"`} />
+
+Using strings, you can also use "#".
+
+## Functions that create Patterns
+
+The following functions will return a pattern. We will see later what that means.
+
+## pure(value)
+
+To create a pattern from a value, you can wrap the value in pure:
+
+<MiniRepl tune={`pure(e4)`} />
+
+Most of the time, you won't need that function as input values of pattern creating functions are purified by default.
+
+### cat(...values)
+
+The given items are con**cat**enated spread evenly over one cycle:
+
+<MiniRepl tune={`cat(e5, b4, d5, c5)`} />
+
+The function **fastcat** does the same as **cat**.
+
+### sequence(...values)
+
+Like **cat**, but allows nesting with arrays:
+
+<MiniRepl tune={`sequence(e5, [b4, c5], d5, [c5, b4])`} />
+
+### stack(...values)
+
+The given items are played at the same time at the same length:
+
+<MiniRepl tune={`stack(g3,b3,e4)`} />
+
+### slowcat(...values)
+
+Like cat, but each item has the length of one cycle:
+
+<MiniRepl tune={`slowcat(e5, b4, d5, c5)`} />
+
+<!-- ## slowcatPrime ? -->
+
+### Nesting functions
+
+You can nest functions inside one another:
+
+<MiniRepl
+  tune={`slowcat(
+  stack(g3,b3,e4),
+  stack(a3,c3,e4),
+  stack(b3,d3,fs4),
+  stack(b3,e4,g4)
+)`}
+  height={200}
+/>
+
+The above is equivalent to
+
+<MiniRepl tune={`"<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>"`} />
+
+### timeCat(...[weight,value])
+
+Like with "@" in mini notation, we can specify weights to the items in a sequence:
+
+<MiniRepl tune={`timeCat([3,e3],[1, g3])`} />
+
+<!-- ## polymeter
+
+how to use?
+
+<MiniRepl tune={`polymeter(3, e3, g3, b3)`} /> -->
+
+### polyrhythm(...[...values])
+
+Plays the given items at the same time, within the same length:
+
+<MiniRepl tune={`polyrhythm([e3, g3], [e4, g4, b4])`} />
+
+We can write the same with **stack** and **cat**:
+
+<MiniRepl tune={`stack(cat(e3, g3), cat(e4, g4, b4))`} />
+
+You can also use the shorthand **pr** instead of **polyrhythm**.
+
+## Pattern modifier functions
+
+The following functions modify a pattern.
+
+### slow(factor)
+
+Like "/" in mini notation, **slow** will slow down a pattern over the given number of cycles:
+
+<MiniRepl tune={`cat(e5, b4, d5, c5).slow(2)`} />
+
+The same in mini notation:
+
+<MiniRepl tune={`"[e5 b4 d5 c5]/2"`} />
+
+### fast(factor)
+
+Like "\*" in mini notation, **fast** will play a pattern times the given number in one cycle:
+
+<MiniRepl tune={`cat(e5, b4, d5, c5).fast(2)`} />
+
+### early(cycles)
+
+With early, you can nudge a pattern to start earlier in time:
+
+<MiniRepl tune={`cat(e5, pure(b4).late(0.5))`} />
+
+Note that we have to wrap b4 in **pure** to be able to call a the pattern modifier **early**.
+
+There is the shorthand **p** for this:
+
+<MiniRepl tune={`cat(e5, b4.p.late(0.5))`} />
+
+### late(cycles)
+
+Like early, but in the other direction:
+
+<MiniRepl tune={`cat(e5, b4.p.late(0.5))`} />
+
+TODO: shouldn't it sound different?
+
+### rev()
+
+Will reverse the pattern:
+
+<MiniRepl tune={`cat(c3,d3,e3,f3).rev()`} />
+
+### every(n, func)
+
+Will apply the given function every n cycles:
+
+<MiniRepl tune={`cat(e5, b4.p.every(4, late(0.5)))`} />
+
+Note that late is called directly. This is a shortcut for:
+
+<MiniRepl tune={`cat(e5, b4.p.every(4, x => x.late(0.5)))`} />
+
+TODO: should the function really run the first cycle?
+
+### Functions not documented yet
+
+- add
+- sub
+- sub
+- mul
+- div
+- union
+- every
+- when
+- off
+- jux
+- append
+- superimpose
+- internal Pattern functions?
+- groove, TODO move to core from https://github.com/tidalcycles/strudel/blob/main/repl/src/groove.ts
+
+## Tone API
+
+TODO, see https://github.com/tidalcycles/strudel/blob/main/repl/src/tone.ts
+
+## Tonal API
+
+TODO, see
+
+- https://github.com/tidalcycles/strudel/blob/main/repl/src/tonal.ts
+- https://github.com/tidalcycles/strudel/blob/main/repl/src/voicings.ts
+
+## MIDI API
+
+TODO, see https://github.com/tidalcycles/strudel/blob/main/repl/src/midi.ts
+
+# Contributing
+
+Contributions of any sort are very welcome! You can contribute by editing [this file](https://github.com/tidalcycles/strudel/blob/main/repl/src/tutorial/tutorial.mdx).
+All you need is a github account.
+
+If you want to run the tutorial locally, you can clone the and run:
+
+```sh
+cd repl && npm i && npm run tutorial
+```
+
+If you want to contribute in another way, either
+
+- [fork strudel repo on GitHub](https://github.com/tidalcycles/strudel)
+- [Join the Discord Channel](https://discord.gg/remJ6gQA)
+- [play with the Strudel REPL](https://strudel.tidalcycles.org/)

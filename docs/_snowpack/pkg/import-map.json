@@ -1,6 +1,7 @@
 {
   "imports": {
     "@tonaljs/tonal": "./@tonaljs/tonal.js",
+    "chord-voicings": "./chord-voicings.js",
     "codemirror/lib/codemirror.css": "./codemirror/lib/codemirror.css",
     "codemirror/mode/javascript/javascript.js": "./codemirror/mode/javascript/javascript.js",
     "codemirror/mode/pegjs/pegjs.js": "./codemirror/mode/pegjs/pegjs.js",
@@ -8,6 +9,7 @@
     "estraverse": "./estraverse.js",
     "fraction.js": "./fractionjs.js",
     "multimap": "./multimap.js",
+    "ramda": "./ramda.js",
     "react": "./react.js",
     "react-codemirror2": "./react-codemirror2.js",
     "react-dom": "./react-dom.js",

@@ -1,5 +1,5 @@
 {
-  "include": ["src", "types", "public/hot.js"],
+  "include": ["src", "types", "public/hot.js", "tutorial"],
   "compilerOptions": {
     "allowJs": true,
     "module": "esnext",
