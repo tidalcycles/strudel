@@ -1,5 +1,22 @@
 import {Pattern as _Pattern} from "../_snowpack/link/strudel.js";
-import {AutoFilter, Destination, Filter, Gain, isNote, Synth, PolySynth} from "../_snowpack/pkg/tone.js";
+import {
+  AutoFilter,
+  Destination,
+  Filter,
+  Gain,
+  isNote,
+  Synth,
+  PolySynth,
+  MembraneSynth,
+  MetalSynth,
+  MonoSynth,
+  AMSynth,
+  DuoSynth,
+  FMSynth,
+  NoiseSynth,
+  PluckSynth,
+  Sampler
+} from "../_snowpack/pkg/tone.js";
 const Pattern = _Pattern;
 Pattern.prototype.tone = function(instrument) {
   return this.fmap((value) => {
@@ -17,6 +34,17 @@ Pattern.prototype.tone = function(instrument) {
   });
 };
 Pattern.prototype.define("tone", (type, pat) => pat.tone(type), {composable: true, patternified: false});
+export const amsynth = (options) => new AMSynth(options);
+export const duosynth = (options) => new DuoSynth(options);
+export const fmsynth = (options) => new FMSynth(options);
+export const membrane = (options) => new MembraneSynth(options);
+export const metal = (options) => new MetalSynth(options);
+export const monosynth = (options) => new MonoSynth(options);
+export const noise = (options) => new NoiseSynth(options);
+export const pluck = (options) => new PluckSynth(options);
+export const polysynth = (options) => new PolySynth(options);
+export const sampler = (options) => new Sampler(options);
+export const synth = (options) => new Synth(options);
 export const vol = (v) => new Gain(v);
 export const lowpass = (v) => new Filter(v, "lowpass");
 export const highpass = (v) => new Filter(v, "highpass");
@@ -121,9 +149,10 @@ Pattern.prototype._gain = function(g) {
 Pattern.prototype._filter = function(freq, q, type = "lowpass") {
   return this.chain(filter(freq, q, type));
 };
-Pattern.prototype.autofilter = function(g) {
+Pattern.prototype._autofilter = function(g) {
   return this.chain(autofilter(g));
 };
 Pattern.prototype.define("synth", (type, pat) => pat.synth(type), {composable: true, patternified: true});
 Pattern.prototype.define("gain", (gain2, pat) => pat.synth(gain2), {composable: true, patternified: true});
 Pattern.prototype.define("filter", (cutoff, pat) => pat.filter(cutoff), {composable: true, patternified: true});
+Pattern.prototype.define("autofilter", (cutoff, pat) => pat.filter(cutoff), {composable: true, patternified: true});
