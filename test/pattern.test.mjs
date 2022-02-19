@@ -180,8 +180,8 @@ describe('Pattern', function() {
     })
     it('Can alternate', function () {
       assert.deepStrictEqual(
-        pure(10).when(slowcat(true,false),add(3)).fast(4).firstCycle,
-        slowcat(13,10,13,10).firstCycle
+        pure(10).when(slowcat(true,false),add(3)).fast(4)._sortEventsByPart().firstCycle,
+        fastcat(13,10,13,10).firstCycle
       )
     })
   })
