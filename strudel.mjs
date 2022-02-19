@@ -514,12 +514,23 @@ class Pattern {
     struct(...binary_pats) {
         // Re structure the pattern according to a binary pattern (false values are dropped)
         const binary_pat = sequence(binary_pats)
-        return binary_pat.fmap(b => val => b ? val : undefined).appRight(this)._removeUndefineds()
+        return binary_pat.fmap(b => val => b ? val : undefined).appLeft(this)._removeUndefineds()        
+    }
+
+    mask(...binary_pats) {
+        // Only let through parts of pattern corresponding to true values in the given binary pattern
+        const binary_pat = sequence(binary_pats)
+        return binary_pat.fmap(b => val => b ? val : undefined).appRight(this)._removeUndefineds()        
+    }
+
+    invert() {
+        // Swap true/false in a binary pattern
+        return this.fmap(x => !x)
     }
 
     inv() {
-        // Swap true/false in a binary pattern
-        return this.fmap(x => !x)
+        // alias for invert()
+        return this.invert()
     }
 
     when(binary_pat, func) {
@@ -791,6 +802,10 @@ const off   = curry((t, f, pat) => pat.off(t,f))
 const jux   = curry((f, pat) => pat.jux(f))
 const append = curry((a, pat) => pat.append(a))
 const superimpose = curry((array, pat) => pat.superimpose(...array))
+const struct = curry((a, pat) => pat.struct(a))
+const mask   = curry((a, pat) => pat.mask(a))
+const invert = pat => pat.invert()
+const inv    = pat => pat.inv()
 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
@@ -845,6 +860,7 @@ Pattern.prototype.bootstrap = () => {
 export {Fraction, TimeSpan, Hap, Pattern, 
     pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr, reify, silence,
     fast, slow, early, late, rev,
-    add, sub, mul, div, union, every, when, off, jux, append, superimpose
+    add, sub, mul, div, union, every, when, off, jux, append, superimpose, 
+    struct, mask, invert, inv
 }
 
