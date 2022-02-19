@@ -30,7 +30,8 @@ export function intervalDirection(from, to, direction = 1) {
 // transpose note inside scale by offset steps
 function scaleTranspose(scale: string, offset: number, note: string) {
   let [tonic, scaleName] = Scale.tokenize(scale);
-  const { notes } = Scale.get(`${tonic} ${scaleName}`);
+  let { notes } = Scale.get(`${tonic} ${scaleName}`);
+  notes = notes.map((note) => Note.get(note).pc); // use only pc!
   offset = Number(offset);
   if (isNaN(offset)) {
     throw new Error(`scale offset "${offset}" not a number`);
@@ -63,7 +64,7 @@ Pattern.prototype._mapNotes = function (func: (note: NoteEvent) => NoteEvent) {
   return this.fmap((event: string | NoteEvent) => {
     const noteEvent = toNoteEvent(event);
     // TODO: generalize? this is practical for any event that is expected to be an object with
-    return { ...noteEvent, ...func(noteEvent) }; 
+    return { ...noteEvent, ...func(noteEvent) };
   });
 };
 
@@ -91,7 +92,16 @@ Pattern.prototype._scaleTranspose = function (offset: number | string) {
   });
 };
 Pattern.prototype._scale = function (scale: string) {
-  return this._mapNotes((value) => ({ ...value, scale }));
+  return this._mapNotes((value) => {
+    let note = value.value;
+    const asNumber = Number(note);
+    if (!isNaN(asNumber)) {
+      let [tonic, scaleName] = Scale.tokenize(scale);
+      const { pc, oct = 3 } = Note.get(tonic);
+      note = scaleTranspose(pc + ' ' + scaleName, asNumber, pc + oct);
+    }
+    return { ...value, value: note, scale };
+  });
 };
 
 Pattern.prototype.define('transpose', (a, pat) => pat.transpose(a), { composable: true, patternified: true });
