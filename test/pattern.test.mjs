@@ -257,6 +257,18 @@ describe('Pattern', function() {
          hap(ts(twothirds, 1), ts(twothirds, 1),       "b")
         ]
       )
+      assert.deepStrictEqual(
+        pure("a").struct(sequence(true, [true,false], true)).firstCycle,
+        sequence("a", ["a", silence], "a").firstCycle,
+      )
+      assert.deepStrictEqual(
+        pure("a").struct(sequence(true, [true,false], true).invert()).firstCycle,
+        sequence(silence, [silence, "a"], silence).firstCycle,
+      )
+      assert.deepStrictEqual(
+        pure("a").struct(sequence(true, [true,silence], true)).firstCycle,
+        sequence("a", ["a", silence], "a").firstCycle,
+      )
     })
   })
   describe('mask()', function() {
