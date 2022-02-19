@@ -294,6 +294,10 @@ class Pattern {
          return new Pattern(span => this.query(span).filter(hap => value_test(hap.value)))
     }
 
+    _removeUndefineds() {
+        return(this._filterValues(val => val != undefined))
+    }
+
     onsetsOnly() {
         // Returns a new pattern that will only return events where the start
         // of the 'whole' timespan matches the start of the 'part'
@@ -507,6 +511,28 @@ class Pattern {
         return this._early(0-offset)
     }
 
+    struct(...binary_pats) {
+        // Re structure the pattern according to a binary pattern (false values are dropped)
+        const binary_pat = sequence(binary_pats)
+        return binary_pat.fmap(b => val => b ? val : undefined).appLeft(this)._removeUndefineds()        
+    }
+
+    mask(...binary_pats) {
+        // Only let through parts of pattern corresponding to true values in the given binary pattern
+        const binary_pat = sequence(binary_pats)
+        return binary_pat.fmap(b => val => b ? val : undefined).appRight(this)._removeUndefineds()        
+    }
+
+    invert() {
+        // Swap true/false in a binary pattern
+        return this.fmap(x => !x)
+    }
+
+    inv() {
+        // alias for invert()
+        return this.invert()
+    }
+
     when(binary_pat, func) {
         //binary_pat = sequence(binary_pat)
         const true_pat = binary_pat._filterValues(id)
@@ -612,10 +638,13 @@ Pattern.prototype.patternified = ['fast', 'slow', 'early', 'late'];
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
 
+// Elemental patterns
+
+// Nothing
 const silence = new Pattern(_ => [])
 
 function pure(value) {
-    // Returns a pattern that repeats the given value once per cycle
+    // A discrete value that repeats once per cycle
     function query(span) {
         return span.spanCycles.map(subspan => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value))
     }
@@ -623,15 +652,19 @@ function pure(value) {
 }
 
 function steady(value) {
+    // A continuous value
     return new Pattern(span => Hap(undefined, span, value))
 }
 
 function reify(thing) {
+    // Tunrs something into a pattern, unless it's already a pattern
     if (thing?.constructor?.name == "Pattern") {
         return thing
     }
     return pure(thing)
 }
+
+// Basic functions for combining patterns
 
 function stack(...pats) {
     const reified = pats.map(pat => reify(pat))
@@ -682,6 +715,7 @@ function cat(...pats) {
 }
 
 function timeCat(...timepats) {
+    // Like cat, but where each step has a temporal 'weight'
     const total = timepats.map(a => a[0]).reduce((a,b) => a.add(b), Fraction(0))
     let begin = Fraction(0)
     const pats = []
@@ -768,6 +802,10 @@ const off   = curry((t, f, pat) => pat.off(t,f))
 const jux   = curry((f, pat) => pat.jux(f))
 const append = curry((a, pat) => pat.append(a))
 const superimpose = curry((array, pat) => pat.superimpose(...array))
+const struct = curry((a, pat) => pat.struct(a))
+const mask   = curry((a, pat) => pat.mask(a))
+const invert = pat => pat.invert()
+const inv    = pat => pat.inv()
 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
@@ -822,6 +860,7 @@ Pattern.prototype.bootstrap = () => {
 export {Fraction, TimeSpan, Hap, Pattern, 
     pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr, reify, silence,
     fast, slow, early, late, rev,
-    add, sub, mul, div, union, every, when, off, jux, append, superimpose
+    add, sub, mul, div, union, every, when, off, jux, append, superimpose, 
+    struct, mask, invert, inv
 }
 

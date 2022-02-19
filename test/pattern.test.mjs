@@ -10,6 +10,9 @@ const { Time } = pkg;
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
 const hap = (whole, part, value) => new Hap(whole, part, value)
 
+const third = Fraction(1,3)
+const twothirds = Fraction(2,3)
+
 describe('TimeSpan', function() {
   describe('equals()', function() {
     it('Should be equal to the same value', function() {
@@ -247,6 +250,60 @@ describe('Pattern', function() {
       assert.deepStrictEqual(
         sequence("a", ["a", "a"]).firstCycle,
         timeCat([1,"a"], [0.5, "a"], [0.5, "a"]).firstCycle
+      )
+    })
+  })
+  describe('struct()', function() {
+    it('Can restructure a pattern', function() {
+      assert.deepStrictEqual(
+        sequence("a", "b").struct(sequence(true, true, true)).firstCycle,
+        [hap(ts(0,third), ts(0,third),                 "a"),
+         hap(ts(third, twothirds), ts(third, 0.5),     "a"),
+         hap(ts(third, twothirds), ts(0.5, twothirds), "b"),
+         hap(ts(twothirds, 1), ts(twothirds, 1),       "b")
+        ]
+      )
+      assert.deepStrictEqual(
+        pure("a").struct(sequence(true, [true,false], true)).firstCycle,
+        sequence("a", ["a", silence], "a").firstCycle,
+      )
+      assert.deepStrictEqual(
+        pure("a").struct(sequence(true, [true,false], true).invert()).firstCycle,
+        sequence(silence, [silence, "a"], silence).firstCycle,
+      )
+      assert.deepStrictEqual(
+        pure("a").struct(sequence(true, [true,silence], true)).firstCycle,
+        sequence("a", ["a", silence], "a").firstCycle,
+      )
+    })
+  })
+  describe('mask()', function() {
+    it('Can fragment a pattern', function() {
+      assert.deepStrictEqual(
+        sequence("a", "b").mask(sequence(true, true, true)).firstCycle,
+        [hap(ts(0, 0.5), ts(0,third),        "a"),
+         hap(ts(0, 0.5), ts(third, 0.5),     "a"),
+         hap(ts(0.5, 1), ts(0.5, twothirds), "b"),
+         hap(ts(0.5, 1), ts(twothirds, 1),   "b")
+        ]
+      )
+    })
+    it('Can mask off parts of a pattern', function() {
+      assert.deepStrictEqual(
+        sequence(["a", "b"], "c").mask(sequence(true, false)).firstCycle,
+        sequence(["a","b"], silence).firstCycle
+      )
+      assert.deepStrictEqual(
+        sequence("a").mask(sequence(true, false)).firstCycle,
+        [hap(ts(0,1),ts(0,0.5), "a")]
+      )
+    })
+  })
+  describe('invert()', function() {
+    it('Can invert a binary pattern', function() {
+      assert.deepStrictEqual(
+        sequence(true, false, [true, false]).invert().firstCycle,
+        sequence(false, true, [false, true]).firstCycle
       )
     })
   })
