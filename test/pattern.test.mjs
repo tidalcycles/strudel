@@ -178,6 +178,12 @@ describe('Pattern', function() {
     it('Never faster', function () {
       assert.equal(pure("a").when(pure(false), x => x._fast(2)).firstCycle.length, 1)
     })
+    it('Can alternate', function () {
+      assert.deepStrictEqual(
+        pure(10).when(slowcat(true,false),add(3)).fast(4)._sortEventsByPart().firstCycle,
+        fastcat(13,10,13,10).firstCycle
+      )
+    })
   })
   describe('fastcat()', function () {
     it('Can concatenate two things', function () {
