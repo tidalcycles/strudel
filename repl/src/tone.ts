@@ -1,7 +1,24 @@
 import { Pattern as _Pattern } from '../../strudel.mjs';
-import { AutoFilter, Destination, Filter, Gain, isNote, Synth, PolySynth } from 'tone';
+import {
+  AutoFilter,
+  Destination,
+  Filter,
+  Gain,
+  isNote,
+  Synth,
+  PolySynth,
+  MembraneSynth,
+  MetalSynth,
+  MonoSynth,
+  AMSynth,
+  DuoSynth,
+  FMSynth,
+  NoiseSynth,
+  PluckSynth,
+  Sampler,
+} from 'tone';
 
-// what about 
+// what about
 // https://www.charlie-roberts.com/gibberish/playground/
 
 const Pattern = _Pattern as any;
@@ -26,8 +43,20 @@ Pattern.prototype.tone = function (instrument) {
 
 Pattern.prototype.define('tone', (type, pat) => pat.tone(type), { composable: true, patternified: false });
 
-// helpers
+// synth helpers
+export const amsynth = (options) => new AMSynth(options);
+export const duosynth = (options) => new DuoSynth(options);
+export const fmsynth = (options) => new FMSynth(options);
+export const membrane = (options) => new MembraneSynth(options);
+export const metal = (options) => new MetalSynth(options);
+export const monosynth = (options) => new MonoSynth(options);
+export const noise = (options) => new NoiseSynth(options);
+export const pluck = (options) => new PluckSynth(options);
+export const polysynth = (options) => new PolySynth(options);
+export const sampler = (options) => new Sampler(options);
+export const synth = (options) => new Synth(options);
 
+// effect helpers
 export const vol = (v) => new Gain(v);
 export const lowpass = (v) => new Filter(v, 'lowpass');
 export const highpass = (v) => new Filter(v, 'highpass');
@@ -177,10 +206,11 @@ Pattern.prototype._gain = function (g: number) {
 Pattern.prototype._filter = function (freq: number, q: number, type: BiquadFilterType = 'lowpass') {
   return this.chain(filter(freq, q, type));
 };
-Pattern.prototype.autofilter = function (g: number) {
+Pattern.prototype._autofilter = function (g: number) {
   return this.chain(autofilter(g));
 };
 
 Pattern.prototype.define('synth', (type, pat) => pat.synth(type), { composable: true, patternified: true });
 Pattern.prototype.define('gain', (gain, pat) => pat.synth(gain), { composable: true, patternified: true });
 Pattern.prototype.define('filter', (cutoff, pat) => pat.filter(cutoff), { composable: true, patternified: true });
+Pattern.prototype.define('autofilter', (cutoff, pat) => pat.filter(cutoff), { composable: true, patternified: true });
