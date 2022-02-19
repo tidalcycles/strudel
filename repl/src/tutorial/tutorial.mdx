@@ -592,7 +592,21 @@ TODO: find out why composition does not work
 
 ## MIDI API
 
-TODO, see https://github.com/tidalcycles/strudel/blob/main/repl/src/midi.ts
+Strudel also supports midi via [webmidi](https://npmjs.com/package/webmidi).
+
+### midi(outputName?)
+
+Make sure to have a midi device connected or to use an IAC Driver.
+If no outputName is given, it uses the first midi output it finds.
+
+Midi is currently not supported by the mini repl used here, but you can [open the midi example in the repl](https://strudel.tidalcycles.org/#c3RhY2soIjxDXjcgQTcgRG03IEc3PiIubS52b2ljaW5ncygpLCAnPEMzIEEyIEQzIEcyPicubSkKICAubWlkaSgp).
+
+In the REPL, you will se a log of the available MIDI devices.
+
+<!--<MiniRepl
+  tune={`stack("<C^7 A7 Dm7 G7>".m.voicings(), '<C3 A2 D3 G2>'.m)
+  .midi()`}
+/>-->
 
 # Contributing
 
