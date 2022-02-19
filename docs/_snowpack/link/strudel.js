@@ -187,6 +187,9 @@ class Pattern {
   _filterValues(value_test) {
     return new Pattern((span) => this.query(span).filter((hap) => value_test(hap.value)));
   }
+  _removeUndefineds() {
+    return this._filterValues((val) => val != void 0);
+  }
   onsetsOnly() {
     return this._filterEvents((hap) => hap.hasOnset());
   }
@@ -350,6 +353,20 @@ class Pattern {
   }
   _late(offset) {
     return this._early(0 - offset);
+  }
+  struct(...binary_pats) {
+    const binary_pat = sequence(binary_pats);
+    return binary_pat.fmap((b) => (val) => b ? val : void 0).appLeft(this)._removeUndefineds();
+  }
+  mask(...binary_pats) {
+    const binary_pat = sequence(binary_pats);
+    return binary_pat.fmap((b) => (val) => b ? val : void 0).appRight(this)._removeUndefineds();
+  }
+  invert() {
+    return this.fmap((x) => !x);
+  }
+  inv() {
+    return this.invert();
   }
   when(binary_pat, func) {
     const true_pat = binary_pat._filterValues(id);
@@ -546,6 +563,10 @@ const off = curry((t, f, pat) => pat.off(t, f));
 const jux = curry((f, pat) => pat.jux(f));
 const append = curry((a, pat) => pat.append(a));
 const superimpose = curry((array, pat) => pat.superimpose(...array));
+const struct = curry((a, pat) => pat.struct(a));
+const mask = curry((a, pat) => pat.mask(a));
+const invert = (pat) => pat.invert();
+const inv = (pat) => pat.inv();
 Pattern.prototype.composable = {fast, slow, early, late, superimpose};
 export function makeComposable(func) {
   Object.entries(Pattern.prototype.composable).forEach(([functionName, composable]) => {
@@ -608,5 +629,9 @@ export {
   off,
   jux,
   append,
-  superimpose
+  superimpose,
+  struct,
+  mask,
+  invert,
+  inv
 };
