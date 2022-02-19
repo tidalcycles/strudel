@@ -294,6 +294,10 @@ class Pattern {
          return new Pattern(span => this.query(span).filter(hap => value_test(hap.value)))
     }
 
+    _removeUndefineds() {
+        return(this._filterValues(val => val != undefined))
+    }
+
     onsetsOnly() {
         // Returns a new pattern that will only return events where the start
         // of the 'whole' timespan matches the start of the 'part'
@@ -507,6 +511,17 @@ class Pattern {
         return this._early(0-offset)
     }
 
+    struct(...binary_pats) {
+        // Re structure the pattern according to a binary pattern (false values are dropped)
+        const binary_pat = sequence(binary_pats)
+        return binary_pat.fmap(b => val => b ? val : undefined).appRight(this)._removeUndefineds()
+    }
+
+    inv() {
+        // Swap true/false in a binary pattern
+        return this.fmap(x => !x)
+    }
+
     when(binary_pat, func) {
         //binary_pat = sequence(binary_pat)
         const true_pat = binary_pat._filterValues(id)
@@ -612,10 +627,13 @@ Pattern.prototype.patternified = ['fast', 'slow', 'early', 'late'];
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
 
+// Elemental patterns
+
+// Nothing
 const silence = new Pattern(_ => [])
 
 function pure(value) {
-    // Returns a pattern that repeats the given value once per cycle
+    // A discrete value that repeats once per cycle
     function query(span) {
         return span.spanCycles.map(subspan => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value))
     }
@@ -623,15 +641,19 @@ function pure(value) {
 }
 
 function steady(value) {
+    // A continuous value
     return new Pattern(span => Hap(undefined, span, value))
 }
 
 function reify(thing) {
+    // Tunrs something into a pattern, unless it's already a pattern
     if (thing?.constructor?.name == "Pattern") {
         return thing
     }
     return pure(thing)
 }
+
+// Basic functions for combining patterns
 
 function stack(...pats) {
     const reified = pats.map(pat => reify(pat))
@@ -682,6 +704,7 @@ function cat(...pats) {
 }
 
 function timeCat(...timepats) {
+    // Like cat, but where each step has a temporal 'weight'
     const total = timepats.map(a => a[0]).reduce((a,b) => a.add(b), Fraction(0))
     let begin = Fraction(0)
     const pats = []
