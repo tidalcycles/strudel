@@ -22,16 +22,14 @@ Pattern.prototype.voicings = function(range) {
     return stack(...lastVoicing);
   });
 };
-Pattern.prototype.chordBass = function() {
+Pattern.prototype.rootNotes = function(octave = 2) {
   return this._mapNotes((value) => {
-    console.log("value", value);
-    const [_, root] = value.value.match(/^([a-gC-G])[b#]?.*$/);
-    const bassNote = root + "2";
+    const [_, root] = value.value.match(/^([a-gA-G])[b#]?.*$/);
+    const bassNote = root + octave;
     return {...value, value: bassNote};
   });
 };
 Pattern.prototype.define("voicings", (range, pat) => pat.voicings(range), {composable: true});
-Pattern.prototype.define("chordBass", (pat) => {
-  console.log("call chordBass ...", pat);
-  return pat.chordBass();
+Pattern.prototype.define("rootNotes", (pat) => {
+  return pat.rootNotes();
 }, {composable: true});
