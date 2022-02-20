@@ -4,12 +4,12 @@ import { Pattern as _Pattern } from '../../strudel.mjs';
 const Pattern = _Pattern as any;
 
 export declare interface NoteEvent {
-  value: string;
+  value: string | number;
   scale?: string;
 }
 
 function toNoteEvent(event: string | NoteEvent): NoteEvent {
-  if (typeof event === 'string') {
+  if (typeof event === 'string' || typeof event === 'number') {
     return { value: event };
   }
   if (event.value) {
@@ -73,6 +73,10 @@ Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
     const interval = !isNaN(Number(intervalOrSemitones))
       ? Interval.fromSemitones(intervalOrSemitones as number)
       : String(intervalOrSemitones);
+    if (typeof value === 'number') {
+      const semitones = typeof interval === 'string' ? Interval.semitones(interval) || 0 : interval;
+      return { value: value + semitones };
+    }
     return { value: Note.transpose(value, interval), scale };
   });
 };
@@ -86,7 +90,10 @@ Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
 Pattern.prototype._scaleTranspose = function (offset: number | string) {
   return this._mapNotes(({ value, scale }: NoteEvent) => {
     if (!scale) {
-      throw new Error('can only use scaleOffset after .scale');
+      throw new Error('can only use scaleTranspose after .scale');
+    }
+    if (typeof value !== 'string') {
+      throw new Error('can only use scaleTranspose with notes');
     }
     return { value: scaleTranspose(scale, Number(offset), value), scale };
   });
