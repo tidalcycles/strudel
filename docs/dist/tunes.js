@@ -4,11 +4,11 @@ export const timeCatMini = `stack(
   '[eb4@5 [f4 eb4 d4]@3] [eb4 c4]/2'.mini.slow(8)
 )`;
 export const timeCat = `stack(
-  timeCat([3, c3], [1, stack(eb3, g3, m(c4, d4).slow(2))]),
-  m(c2, g2),
+  timeCat([3, c3], [1, stack(eb3, g3, cat(c4, d4).slow(2))]),
+  cat(c2, g2),
   sequence(
-    timeCat([5, eb4], [3, m(f4, eb4, d4)]), 
-    m(eb4, c4).slow(2)
+    timeCat([5, eb4], [3, cat(f4, eb4, d4)]), 
+    cat(eb4, c4).slow(2)
   ).slow(4)
 )`;
 export const shapeShifted = `stack(
@@ -120,11 +120,11 @@ export const spanish = `slowcat(
  stack(ab3,c4,eb4),
  stack(g3,b3,d4)
 )`;
-export const whirlyStrudel = `mini("[e4 [b2  b3] c4]")
+export const whirlyStrudel = `sequence(e4, [b2,  b3], c4)
 .every(4, fast(2))
 .every(3, slow(1.5))
 .fast(slowcat(1.25, 1, 1.5))
-.every(2, _ => mini("e4 ~ e3 d4 ~"))`;
+.every(2, _ => sequence(e4, r, e3, d4, r))`;
 export const swimming = `stack(
   mini(
     '~',
@@ -357,64 +357,3 @@ export const caverave = `() => {
     synths
   ).slow(2);
 }`;
-export const caveravefuture = `() => {
-  const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out);
-  const kick = new MembraneSynth().chain(vol(.8), out);
-  const snare = new NoiseSynth().chain(vol(.8), out);
-  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out);
-  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out);
-  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out);
-  
-  const drums = stack(
-    \`c1*2\`.tone(kick).bypass(\`<0@7 1>/8\`),
-    \`~ <x!7 [x@3 x]>\`.tone(snare).bypass(\`<0@7 1>/4\`),
-    \`[~ c4]*2\`.tone(hihat)
-  );
-  
-  const thru = (x) => x.transpose(\`<0 1>/8\`).transpose(-1);
-  const synths = stack(
-    \`<eb4 d4 c4 b3>/2\`.scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).groove(\`[~ x]*2\`)
-    .edit(
-      scaleTranspose(0).early(0),
-      scaleTranspose(2).early(1/8),
-      scaleTranspose(7).early(1/4),
-      scaleTranspose(8).early(3/8)
-    ).edit(thru).tone(keys).bypass(\`<1 0>/16\`),
-    \`<C2 Bb1 Ab1 [G1 [G2 G1]]>/2\`.groove(\`x [~ x] <[~ [~ x]]!3 [x x]>@2\`).edit(thru).tone(bass),
-    \`<Cm7 Bb7 Fm7 G7b13>/2\`.groove(\`~ [x@0.5 ~]\`.fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass(\`<0@7 1>/8\`.early(1/4)),
-  )
-  return stack(
-    drums.fast(2),
-    synths
-  ).slow(2);
-}`;
-export const caveravefuture2 = `const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out);
-const kick = new MembraneSynth().chain(vol(.8), out);
-const snare = new NoiseSynth().chain(vol(.8), out);
-const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out);
-const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out);
-const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out);
-
-const drums = stack(
-  "c1*2".tone(kick).bypass("<0@7 1>/8"),
-  "~ <x!7 [x@3 x]>".tone(snare).bypass("<0@7 1>/4"),
-  "[~ c4]*2".tone(hihat)
-);
-
-const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
-const synths = stack(
-  "<eb4 d4 c4 b3>/2".scale(timeCat([3, 'C minor'], [1, 'C melodic minor']).slow(8)).groove("[~ x]*2")
-  .edit(
-    scaleTranspose(0).early(0),
-    scaleTranspose(2).early(1/8),
-    scaleTranspose(7).early(1/4),
-    scaleTranspose(8).early(3/8)
-  ).edit(thru).tone(keys).bypass("<1 0>/16"),
-  "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".groove("x [~ x] <[~ [~ x]]!3 [x x]>@2").edit(thru).tone(bass),
-  "<Cm7 Bb7 Fm7 G7b13>/2".groove("~ [x@0.5 ~]".fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass("<0@7 1>/8".early(1/4)),
-)
-$: stack(
-  drums.fast(2),
-  synths
-).slow(2);
-`;

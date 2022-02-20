@@ -175,6 +175,13 @@ class Pattern {
   _withEvents(func) {
     return new Pattern((span) => func(this.query(span)));
   }
+  withLocation(location) {
+    return this.fmap((value) => {
+      value = typeof value === "object" && !Array.isArray(value) ? value : {value};
+      const locations = (value.locations || []).concat([location]);
+      return {...value, locations};
+    });
+  }
   withValue(func) {
     return new Pattern((span) => this.query(span).map((hap) => hap.withValue(func)));
   }
@@ -312,6 +319,7 @@ class Pattern {
   _patternify(func) {
     const pat = this;
     const patterned = function(...args) {
+      args = args.map((arg) => arg.constructor?.name === "Pattern" ? arg.fmap((value) => value.value || value) : arg);
       const pat_arg = sequence(...args);
       return pat_arg.fmap((arg) => func.call(pat, arg)).outerJoin();
     };
