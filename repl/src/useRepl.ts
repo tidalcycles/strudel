@@ -35,6 +35,8 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
       setError(undefined);
       setActiveCode(_code);
     } catch (err: any) {
+      err.message = 'evaluation error: ' + err.message;
+      console.warn(err)
       setError(err);
     }
   };
@@ -80,6 +82,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
         try {
           return pattern?.query(span) || [];
         } catch (err: any) {
+          err.message = 'query error: ' + err.message;
           setError(err);
           return [];
         }
@@ -149,7 +152,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
     togglePlay,
     activateCode,
     activeCode,
-    pushLog
+    pushLog,
   };
 }
 
