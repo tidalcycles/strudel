@@ -50,6 +50,7 @@ function resolveReplications(ast) {
             {
               type_: 'element',
               source_: child.source_,
+              location_: child.location_,
               options_: {
                 operator: {
                   type_: 'stretch',
