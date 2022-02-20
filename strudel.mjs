@@ -275,6 +275,14 @@ class Pattern {
         return new Pattern(span => func(this.query(span)))
     }
 
+    withLocation(location) {
+      return this.fmap(value => {
+        value = typeof value === 'object' && !Array.isArray(value) ? value : { value };
+        const locations = (value.locations || []).concat([location]);
+        return {...value, locations }
+      })
+    }
+
     withValue(func) {
         // Returns a new pattern, with the function applied to the value of
         // each event. It has the alias 'fmap'.
@@ -455,7 +463,14 @@ class Pattern {
     _patternify(func) {
         const pat = this
         const patterned = function (...args) {
+          // the problem here: args could a pattern that has been turned into an object to add location
+          // to avoid object checking for every pattern method, we can remove it here...
+          // in the future, patternified args should be marked as well + some better object handling
+           args = args.map((arg) =>
+            arg.constructor?.name === 'Pattern' ? arg.fmap((value) => value.value || value) : arg
+           );
            const pat_arg = sequence(...args)
+           // arg.locations has to go somewhere..
            return pat_arg.fmap(arg => func.call(pat,arg)).outerJoin()
         }
         return patterned
