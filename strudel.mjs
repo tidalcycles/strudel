@@ -872,10 +872,33 @@ Pattern.prototype.bootstrap = () => {
   return bootstrapped;
 }
 
+// this is wrapped around mini patterns to offset krill parser location into the global js code space
+function withLocationOffset(pat, offset) {
+  // console.log('with offfset',pat,offset);
+  return pat.fmap((value) => {
+    value = typeof value === 'object' && !Array.isArray(value) ? value : { value };
+    const locations = (value.locations || []).map(({ start, end }) => ({
+      start: {
+        ...start,
+        line: start.line - 1 + (offset.start.line - 1) + 1,
+        column: start.column - 1 + offset.start.column,
+      },
+      end: {
+        ...end,
+        line: end.line - 1 + (offset.start.line - 1) + 1,
+        column: end.column - 1 + offset.start.column,
+      },
+    }));
+    // console.log(value.value, 'location', locations[0]);
+    return {...value, locations }
+  });
+}
+
 export {Fraction, TimeSpan, Hap, Pattern, 
     pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr, reify, silence,
     fast, slow, early, late, rev,
     add, sub, mul, div, union, every, when, off, jux, append, superimpose, 
-    struct, mask, invert, inv
+    struct, mask, invert, inv,
+    withLocationOffset
 }
 

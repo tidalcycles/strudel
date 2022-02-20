@@ -10,6 +10,7 @@ const { Pattern } = strudel;
 const isNote = (name) => /^[a-gC-G][bs]?[0-9]$/.test(name);
 
 const addLocations = true;
+export const addMiniLocations = false;
 
 export default (code) => {
   const ast = parseScriptWithLocation(code);
@@ -44,6 +45,25 @@ export default (code) => {
         // console.log('add', node);
         return addPureWithLocation(node.value, node, ast.locations, nodesWithLocation);
       }
+      if (!addMiniLocations) {
+        return node;
+      }
+      // mini notation location handling
+      const miniFunctions = ['mini', 'm'];
+      const isAlreadyWrapped = parent?.type === 'CallExpression' && parent.callee.name === 'withLocationOffset';
+      if (node.type === 'CallExpression' && miniFunctions.includes(node.callee.name) && !isAlreadyWrapped) {
+        // mini('c3')
+        if (node.arguments.length > 1) {
+          // TODO: transform mini(...args) to cat(...args.map(mini)) ?
+          console.warn('multi arg mini locations not supported yet...');
+          return node;
+        }
+        return wrapLocationOffset(node, node.arguments, ast.locations, nodesWithLocation);
+      }
+      if (node.type === 'StaticMemberExpression' && miniFunctions.includes(node.property) && !isAlreadyWrapped) {
+        // 'c3'.mini or 'c3'.m
+        return wrapLocationOffset(node, node.object, ast.locations, nodesWithLocation);
+      }
       return node;
     },
     leave() {
@@ -52,6 +72,22 @@ export default (code) => {
   });
   return codegen(shifted);
 };
+
+// turn node into withLocationOffset(node, location)
+function wrapLocationOffset(node, stringNode, locations, nodesWithLocation) {
+  // console.log('wrapppp', stringNode);
+  const expression = {
+    type: 'CallExpression',
+    callee: {
+      type: 'IdentifierExpression',
+      name: 'withLocationOffset',
+    },
+    arguments: [node, getLocationObject(stringNode, locations)],
+  };
+  nodesWithLocation.push(expression);
+  // console.log('wrapped', codegen(expression));
+  return expression;
+}
 
 // turns node in pure(value).withLocation(location), where location is the node's location in the source code
 // with this, the pure pattern can pass its location to the event, to know where to highlight when it's active
