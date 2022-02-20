@@ -32,6 +32,7 @@ Object.assign(globalThis, bootstrapped, Tone, toneHelpers);
 
 export const evaluate: any = (code: string) => {
   const shapeshifted = shapeshifter(code); // transform syntactically correct js code to semantically usable code
+  // console.log('shapeshifted', shapeshifted);
   let evaluated = eval(shapeshifted);
   if (typeof evaluated === 'function') {
     evaluated = evaluated();

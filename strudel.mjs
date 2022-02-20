@@ -875,21 +875,25 @@ Pattern.prototype.bootstrap = () => {
 // this is wrapped around mini patterns to offset krill parser location into the global js code space
 function withLocationOffset(pat, offset) {
   // console.log('with offfset',pat,offset);
+  let startLine;
   return pat.fmap((value) => {
     value = typeof value === 'object' && !Array.isArray(value) ? value : { value };
-    const locations = (value.locations || []).map(({ start, end }) => ({
+    let locations = (value.locations || []);
+    startLine = startLine || locations[0].start.line;
+    locations = locations.map(({ start, end }) => {
+      const colOffset = startLine === end.line ? offset.start.column : 0;
+      return {
       start: {
         ...start,
         line: start.line - 1 + (offset.start.line - 1) + 1,
-        column: start.column - 1 + offset.start.column,
+        column: start.column - 1 + colOffset,
       },
       end: {
         ...end,
         line: end.line - 1 + (offset.start.line - 1) + 1,
-        column: end.column - 1 + offset.start.column,
+        column: end.column - 1 + colOffset,
       },
-    }));
-    // console.log(value.value, 'location', locations[0]);
+    }});
     return {...value, locations }
   });
 }

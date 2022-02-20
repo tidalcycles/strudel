@@ -10,7 +10,7 @@ const { Pattern } = strudel;
 const isNote = (name) => /^[a-gC-G][bs]?[0-9]$/.test(name);
 
 const addLocations = true;
-export const addMiniLocations = false;
+export const addMiniLocations = true;
 
 export default (code) => {
   const ast = parseScriptWithLocation(code);
@@ -24,16 +24,39 @@ export default (code) => {
         return node;
       }
       const grandparent = parents[parents.length - 2];
-      const isPatternArg = (parent) =>
-        parent?.type === 'CallExpression' && Object.keys(Pattern.prototype.factories).includes(parent.callee.name);
-      const isTimeCat = parent?.type === 'ArrayExpression' && isPatternArg(grandparent);
-      const isMarkable = isPatternArg(parent) || isTimeCat;
+      const isTimeCat = parent?.type === 'ArrayExpression' && isPatternFactory(grandparent);
+      const isMarkable = isPatternFactory(parent) || isTimeCat;
+      // operator overloading => still not done
+      const operators = {
+        '*': 'fast',
+        '/': 'slow',
+        '&': 'stack',
+        '&&': 'append',
+      };
+      if (
+        node.type === 'BinaryExpression' &&
+        operators[node.operator] &&
+        ['LiteralNumericExpression', 'LiteralStringExpression', 'IdentifierExpression'].includes(node.right?.type) &&
+        canBeOverloaded(node.left)
+      ) {
+        let arg = node.left;
+        if (node.left.type === 'IdentifierExpression') {
+          arg = wrapReify(node.left);
+        }
+        return new CallExpression({
+          callee: new StaticMemberExpression({
+            property: operators[node.operator],
+            object: wrapReify(arg),
+          }),
+          arguments: [node.right],
+        });
+      }
       // replace pseudo note variables
       if (node.type === 'IdentifierExpression') {
         if (isNote(node.name)) {
           const value = node.name[1] === 's' ? node.name.replace('s', '#') : node.name;
           if (addLocations && isMarkable) {
-            return addPureWithLocation(value, node, ast.locations, nodesWithLocation);
+            return reifyWithLocation(value, node, ast.locations, nodesWithLocation);
           }
           return new LiteralStringExpression({ value });
         }
@@ -43,7 +66,7 @@ export default (code) => {
       }
       if (addLocations && node.type === 'LiteralStringExpression' && isMarkable) {
         // console.log('add', node);
-        return addPureWithLocation(node.value, node, ast.locations, nodesWithLocation);
+        return reifyWithLocation(node.value, node, ast.locations, nodesWithLocation);
       }
       if (!addMiniLocations) {
         return node;
@@ -73,6 +96,24 @@ export default (code) => {
   return codegen(shifted);
 };
 
+function wrapReify(node) {
+  return new CallExpression({
+    callee: new IdentifierExpression({
+      name: 'reify',
+    }),
+    arguments: [node],
+  });
+}
+
+function isPatternFactory(node) {
+  return node?.type === 'CallExpression' && Object.keys(Pattern.prototype.factories).includes(node.callee.name);
+}
+
+function canBeOverloaded(node) {
+  return (node.type === 'IdentifierExpression' && isNote(node.name)) || isPatternFactory(node);
+  // TODO: support sequence(c3).transpose(3).x.y.z
+}
+
 // turn node into withLocationOffset(node, location)
 function wrapLocationOffset(node, stringNode, locations, nodesWithLocation) {
   // console.log('wrapppp', stringNode);
@@ -89,15 +130,15 @@ function wrapLocationOffset(node, stringNode, locations, nodesWithLocation) {
   return expression;
 }
 
-// turns node in pure(value).withLocation(location), where location is the node's location in the source code
-// with this, the pure pattern can pass its location to the event, to know where to highlight when it's active
-function addPureWithLocation(value, node, locations, nodesWithLocation) {
-  // console.log('addPure', value, node);
+// turns node in reify(value).withLocation(location), where location is the node's location in the source code
+// with this, the reified pattern can pass its location to the event, to know where to highlight when it's active
+function reifyWithLocation(value, node, locations, nodesWithLocation) {
+  // console.log('reifyWithLocation', value, node);
   const withLocation = new CallExpression({
     callee: new StaticMemberExpression({
       object: new CallExpression({
         callee: new IdentifierExpression({
-          name: 'pure',
+          name: 'reify',
         }),
         arguments: [new LiteralStringExpression({ value })],
       }),
@@ -118,7 +159,7 @@ function getLocationObject(node, locations) {
   console.log("locationAST", locationAST);*/
 
   /*const callAST = parseScript(
-    `pure(${node.name}).withLocation(${JSON.stringify(
+    `reify(${node.name}).withLocation(${JSON.stringify(
       ast.locations.get(node)
     )})`
   ).statements[0].expression;*/
