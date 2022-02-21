@@ -874,14 +874,11 @@ Pattern.prototype.bootstrap = () => {
 
 // this is wrapped around mini patterns to offset krill parser location into the global js code space
 function withLocationOffset(pat, offset) {
-  // console.log('with offfset',pat,offset);
-  let startLine;
   return pat.fmap((value) => {
     value = typeof value === 'object' && !Array.isArray(value) ? value : { value };
     let locations = (value.locations || []);
-    startLine = startLine || locations[0].start.line;
     locations = locations.map(({ start, end }) => {
-      const colOffset = startLine === end.line ? offset.start.column : 0;
+      const colOffset = start.line === 1 ? offset.start.column : 0;
       return {
       start: {
         ...start,
