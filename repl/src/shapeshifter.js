@@ -138,10 +138,10 @@ export default (code) => {
   return codegen(shifted);
 };
 
-function wrapFunction(name, ...arguments) {
+function wrapFunction(name, ...args) {
   return new CallExpression({
     callee: new IdentifierExpression({ name }),
-    arguments,
+    arguments: args,
   });
 }
 
