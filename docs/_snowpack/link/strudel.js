@@ -605,13 +605,11 @@ Pattern.prototype.bootstrap = () => {
   return bootstrapped;
 };
 function withLocationOffset(pat, offset) {
-  let startLine;
   return pat.fmap((value) => {
     value = typeof value === "object" && !Array.isArray(value) ? value : {value};
     let locations = value.locations || [];
-    startLine = startLine || locations[0].start.line;
     locations = locations.map(({start, end}) => {
-      const colOffset = startLine === end.line ? offset.start.column : 0;
+      const colOffset = start.line === 1 ? offset.start.column : 0;
       return {
         start: {
           ...start,
