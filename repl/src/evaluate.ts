@@ -37,10 +37,12 @@ export const evaluate: any = (code: string) => {
   if (typeof evaluated === 'function') {
     evaluated = evaluated();
   }
-  const pattern = minify(evaluated); // eval and minify (if user entered a string)
-  if (pattern?.constructor?.name !== 'Pattern') {
-    const message = `got "${typeof pattern}" instead of pattern`;
-    throw new Error(message + (typeof pattern === 'function' ? ', did you forget to call a function?' : '.'));
+  if (typeof evaluated === 'string') {
+    evaluated = strudel.withLocationOffset(minify(evaluated), { start: { line: 1, column: -1 } });
   }
-  return { mode: 'javascript', pattern: pattern };
+  if (evaluated?.constructor?.name !== 'Pattern') {
+    const message = `got "${typeof evaluated}" instead of pattern`;
+    throw new Error(message + (typeof evaluated === 'function' ? ', did you forget to call a function?' : '.'));
+  }
+  return { mode: 'javascript', pattern: evaluated };
 };

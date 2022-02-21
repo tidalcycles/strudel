@@ -440,3 +440,20 @@ export const caverave = `() => {
     synths
   ).slow(2);
 }`;
+
+export const callcenterhero = `()=>{
+  const bpm = 90;
+  const lead = polysynth().set({...osc('sine4'),...adsr(.004)}).chain(vol(0.15),out)
+  const bass = fmsynth({...osc('sawtooth6'),...adsr(0.05,.6,0.8,0.1)}).chain(vol(0.6), out);
+  const s = scale(slowcat('F3 minor', 'Ab3 major', 'Bb3 dorian', 'C4 phrygian dominant').slow(4));
+  return stack(
+    "0 2".groove("<x ~> [x ~]").edit(s).scaleTranspose(stack(0,2)).tone(lead),
+    "<6 7 9 7>".groove("[~ [x ~]*2]*2").edit(s).scaleTranspose('[0,2] [2,4]'.m.fast(2).every(4,rev)).tone(lead),
+  	"-14".groove("[~ x@0.8]*2".early(0.01)).edit(s).tone(bass),
+    "c2*2".tone(membrane().chain(vol(0.6), out)),
+    "~ c2".tone(noise().chain(vol(0.2), out)),
+    "c4*4".tone(metal(adsr(0,.05,0)).chain(vol(0.03), out))
+  )
+  .slow(120 / bpm)
+}
+`;

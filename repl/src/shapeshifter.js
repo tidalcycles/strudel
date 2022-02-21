@@ -1,7 +1,13 @@
 import { parseScriptWithLocation } from './shift-parser/index.js'; // npm module does not work in the browser
 import traverser from './shift-traverser'; // npm module does not work in the browser
 const { replace } = traverser;
-import { LiteralStringExpression, IdentifierExpression, CallExpression, StaticMemberExpression } from 'shift-ast';
+import {
+  LiteralStringExpression,
+  IdentifierExpression,
+  CallExpression,
+  StaticMemberExpression,
+  Script,
+} from 'shift-ast';
 import codegen from 'shift-codegen';
 import * as strudel from '../../strudel.mjs';
 
@@ -12,20 +18,50 @@ const isNote = (name) => /^[a-gC-G][bs]?[0-9]$/.test(name);
 const addLocations = true;
 export const addMiniLocations = true;
 
+/*
+not supported for highlighting:
+- 'b3'.p
+- mini('b3') / m('b3')
+- 'b3'.m / 'b3'.mini
+*/
+
 export default (code) => {
   const ast = parseScriptWithLocation(code);
-  const nodesWithLocation = [];
+  const artificialNodes = [];
   const parents = [];
   const shifted = replace(ast.tree, {
     enter(node, parent) {
       parents.push(parent);
-      const isSynthetic = parents.some((p) => nodesWithLocation.includes(p));
+      const isSynthetic = parents.some((p) => artificialNodes.includes(p));
       if (isSynthetic) {
         return node;
       }
-      const grandparent = parents[parents.length - 2];
-      const isTimeCat = parent?.type === 'ArrayExpression' && isPatternFactory(grandparent);
-      const isMarkable = isPatternFactory(parent) || isTimeCat;
+
+      // replace template string `xxx` with 'xxx'.m
+      if (isBackTickString(node)) {
+        const minified = getMinified(node.elements[0].rawValue);
+        return wrapLocationOffset(minified, node, ast.locations, artificialNodes);
+      }
+
+      // allows to use top level strings, which are normally directives... but we don't need directives
+      if (node.type === 'Script' && node.directives.length === 1 && !node.statements.length) {
+        const minified = getMinified(node.directives[0].rawValue);
+        const wrapped = wrapLocationOffset(minified, node.directives[0], ast.locations, artificialNodes);
+        return new Script({ directives: [], statements: [wrapped] });
+      }
+
+      // replace double quote string "xxx" with 'xxx'.m
+      if (isStringWithDoubleQuotes(node, ast.locations, code)) {
+        const minified = getMinified(node.value);
+        return wrapLocationOffset(minified, node, ast.locations, artificialNodes);
+      }
+
+      // replace double quote string "xxx" with 'xxx'.m
+      if (isStringWithDoubleQuotes(node, ast.locations, code)) {
+        const minified = getMinified(node.value);
+        return wrapLocationOffset(minified, node, ast.locations, artificialNodes);
+      }
+
       // operator overloading => still not done
       const operators = {
         '*': 'fast',
@@ -41,22 +77,28 @@ export default (code) => {
       ) {
         let arg = node.left;
         if (node.left.type === 'IdentifierExpression') {
-          arg = wrapReify(node.left);
+          arg = wrapFunction('reify', node.left);
         }
         return new CallExpression({
           callee: new StaticMemberExpression({
             property: operators[node.operator],
-            object: wrapReify(arg),
+            object: wrapFunction('reify', arg),
           }),
           arguments: [node.right],
         });
+      }
+
+      const isMarkable = isPatternArg(parents) || hasModifierCall(parent);
+      // add to location to pure(x) calls
+      if (node.type === 'CallExpression' && node.callee.name === 'pure') {
+        return reifyWithLocation(node.arguments[0].name, node.arguments[0], ast.locations, artificialNodes);
       }
       // replace pseudo note variables
       if (node.type === 'IdentifierExpression') {
         if (isNote(node.name)) {
           const value = node.name[1] === 's' ? node.name.replace('s', '#') : node.name;
           if (addLocations && isMarkable) {
-            return reifyWithLocation(value, node, ast.locations, nodesWithLocation);
+            return reifyWithLocation(value, node, ast.locations, artificialNodes);
           }
           return new LiteralStringExpression({ value });
         }
@@ -66,10 +108,10 @@ export default (code) => {
       }
       if (addLocations && node.type === 'LiteralStringExpression' && isMarkable) {
         // console.log('add', node);
-        return reifyWithLocation(node.value, node, ast.locations, nodesWithLocation);
+        return reifyWithLocation(node.value, node, ast.locations, artificialNodes);
       }
       if (!addMiniLocations) {
-        return node;
+        return wrapFunction('reify', node);
       }
       // mini notation location handling
       const miniFunctions = ['mini', 'm'];
@@ -81,11 +123,11 @@ export default (code) => {
           console.warn('multi arg mini locations not supported yet...');
           return node;
         }
-        return wrapLocationOffset(node, node.arguments, ast.locations, nodesWithLocation);
+        return wrapLocationOffset(node, node.arguments, ast.locations, artificialNodes);
       }
       if (node.type === 'StaticMemberExpression' && miniFunctions.includes(node.property) && !isAlreadyWrapped) {
         // 'c3'.mini or 'c3'.m
-        return wrapLocationOffset(node, node.object, ast.locations, nodesWithLocation);
+        return wrapLocationOffset(node, node.object, ast.locations, artificialNodes);
       }
       return node;
     },
@@ -96,13 +138,56 @@ export default (code) => {
   return codegen(shifted);
 };
 
-function wrapReify(node) {
+function wrapFunction(name, ...arguments) {
   return new CallExpression({
-    callee: new IdentifierExpression({
-      name: 'reify',
-    }),
-    arguments: [node],
+    callee: new IdentifierExpression({ name }),
+    arguments,
   });
+}
+
+function getMinified(value) {
+  return new StaticMemberExpression({
+    object: new LiteralStringExpression({ value }),
+    property: 'm',
+  });
+}
+
+function isBackTickString(node) {
+  return node.type === 'TemplateExpression' && node.elements.length === 1;
+}
+
+function isStringWithDoubleQuotes(node, locations, code) {
+  if (node.type !== 'LiteralStringExpression') {
+    return false;
+  }
+  const loc = locations.get(node);
+  const snippet = code.slice(loc.start.offset, loc.end.offset);
+  return snippet[0] === '"'; // we can trust the end is also ", as the parsing did not fail
+}
+
+// returns true if the given parents belong to a pattern argument node
+// this is used to check if a node should receive a location for highlighting
+function isPatternArg(parents) {
+  if (!parents.length) {
+    return false;
+  }
+  const ancestors = parents.slice(0, -1);
+  const parent = parents[parents.length - 1];
+  if (isPatternFactory(parent)) {
+    return true;
+  }
+  if (parent?.type === 'ArrayExpression') {
+    return isPatternArg(ancestors);
+  }
+  return false;
+}
+
+function hasModifierCall(parent) {
+  // TODO: modifiers are more than composables, for example every is not composable but should be seen as modifier..
+  // need all prototypes of Pattern
+  return (
+    parent?.type === 'StaticMemberExpression' && Object.keys(Pattern.prototype.composable).includes(parent.property)
+  );
 }
 
 function isPatternFactory(node) {
@@ -115,7 +200,7 @@ function canBeOverloaded(node) {
 }
 
 // turn node into withLocationOffset(node, location)
-function wrapLocationOffset(node, stringNode, locations, nodesWithLocation) {
+function wrapLocationOffset(node, stringNode, locations, artificialNodes) {
   // console.log('wrapppp', stringNode);
   const expression = {
     type: 'CallExpression',
@@ -125,28 +210,22 @@ function wrapLocationOffset(node, stringNode, locations, nodesWithLocation) {
     },
     arguments: [node, getLocationObject(stringNode, locations)],
   };
-  nodesWithLocation.push(expression);
+  artificialNodes.push(expression);
   // console.log('wrapped', codegen(expression));
   return expression;
 }
 
 // turns node in reify(value).withLocation(location), where location is the node's location in the source code
 // with this, the reified pattern can pass its location to the event, to know where to highlight when it's active
-function reifyWithLocation(value, node, locations, nodesWithLocation) {
-  // console.log('reifyWithLocation', value, node);
+function reifyWithLocation(value, node, locations, artificialNodes) {
   const withLocation = new CallExpression({
     callee: new StaticMemberExpression({
-      object: new CallExpression({
-        callee: new IdentifierExpression({
-          name: 'reify',
-        }),
-        arguments: [new LiteralStringExpression({ value })],
-      }),
+      object: wrapFunction('reify', new LiteralStringExpression({ value })),
       property: 'withLocation',
     }),
     arguments: [getLocationObject(node, locations)],
   });
-  nodesWithLocation.push(withLocation);
+  artificialNodes.push(withLocation);
   return withLocation;
 }
 

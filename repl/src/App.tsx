@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import * as Tone from 'tone';
-import CodeMirror from './CodeMirror';
+import CodeMirror, { markEvent } from './CodeMirror';
 import cx from './cx';
 import { evaluate } from './evaluate';
 import logo from './logo.svg';
@@ -36,32 +36,10 @@ const randomTune = getRandomTune();
 
 function App() {
   const [editor, setEditor] = useState<any>();
-  const doc = useMemo(() => editor?.getDoc(), [editor]);
   const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog } = useRepl({
     tune: decoded || randomTune,
     defaultSynth,
-    onEvent: useCallback(
-      (event) => {
-        const locs = event.value.locations;
-        if (!locs) {
-          return;
-        }
-        // mark active event
-        const marks = locs.map(({ start, end }) =>
-          doc.markText(
-            { line: start.line - 1, ch: start.column },
-            { line: end.line - 1, ch: end.column },
-            { css: 'background-color: gray;' }
-          )
-        );
-        //Tone.Transport.schedule(() => { // problem: this can be cleared by scheduler...
-        setTimeout(() => {
-          marks.forEach((mark) => mark.clear());
-          // }, '+' + event.duration * 0.5);
-        }, event.duration * 0.9 * 1000);
-      },
-      [doc]
-    ),
+    onEvent: useCallback(markEvent(editor), [editor]),
   });
   const logBox = useRef<any>();
   // scroll log box to bottom when log changes
@@ -136,6 +114,7 @@ function App() {
                 theme: 'material',
                 lineNumbers: true,
                 styleSelectedText: true,
+                cursorBlinkRate: 0,
               }}
               onChange={(_: any, __: any, value: any) => setCode(value)}
             />
