@@ -604,6 +604,30 @@ Pattern.prototype.bootstrap = () => {
   }));
   return bootstrapped;
 };
+function withLocationOffset(pat, offset) {
+  let startLine;
+  return pat.fmap((value) => {
+    value = typeof value === "object" && !Array.isArray(value) ? value : {value};
+    let locations = value.locations || [];
+    startLine = startLine || locations[0].start.line;
+    locations = locations.map(({start, end}) => {
+      const colOffset = startLine === end.line ? offset.start.column : 0;
+      return {
+        start: {
+          ...start,
+          line: start.line - 1 + (offset.start.line - 1) + 1,
+          column: start.column - 1 + colOffset
+        },
+        end: {
+          ...end,
+          line: end.line - 1 + (offset.start.line - 1) + 1,
+          column: end.column - 1 + colOffset
+        }
+      };
+    });
+    return {...value, locations};
+  });
+}
 export {
   Fraction,
   TimeSpan,
@@ -641,5 +665,6 @@ export {
   struct,
   mask,
   invert,
-  inv
+  inv,
+  withLocationOffset
 };

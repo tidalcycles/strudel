@@ -30,6 +30,8 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent}) {
       setError(void 0);
       setActiveCode(_code);
     } catch (err) {
+      err.message = "evaluation error: " + err.message;
+      console.warn(err);
       setError(err);
     }
   };
@@ -68,6 +70,7 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent}) {
       try {
         return pattern?.query(span) || [];
       } catch (err) {
+        err.message = "query error: " + err.message;
         setError(err);
         return [];
       }
