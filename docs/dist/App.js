@@ -1,6 +1,6 @@
-import React, {useCallback, useLayoutEffect, useMemo, useRef, useState} from "../_snowpack/pkg/react.js";
+import React, {useCallback, useLayoutEffect, useRef, useState} from "../_snowpack/pkg/react.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
-import CodeMirror from "./CodeMirror.js";
+import CodeMirror, {markEvent} from "./CodeMirror.js";
 import cx from "./cx.js";
 import {evaluate} from "./evaluate.js";
 import logo from "./logo.svg.proxy.js";
@@ -29,20 +29,10 @@ function getRandomTune() {
 const randomTune = getRandomTune();
 function App() {
   const [editor, setEditor] = useState();
-  const doc = useMemo(() => editor?.getDoc(), [editor]);
   const {setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog} = useRepl({
     tune: decoded || randomTune,
     defaultSynth,
-    onEvent: useCallback((event) => {
-      const locs = event.value.locations;
-      if (!locs) {
-        return;
-      }
-      const marks = locs.map(({start, end}) => doc.markText({line: start.line - 1, ch: start.column}, {line: end.line - 1, ch: end.column}, {css: "background-color: gray;"}));
-      setTimeout(() => {
-        marks.forEach((mark) => mark.clear());
-      }, event.duration * 0.9 * 1e3);
-    }, [doc])
+    onEvent: useCallback(markEvent(editor), [editor])
   });
   const logBox = useRef();
   useLayoutEffect(() => {
@@ -112,7 +102,8 @@ function App() {
       mode: "javascript",
       theme: "material",
       lineNumbers: true,
-      styleSelectedText: true
+      styleSelectedText: true,
+      cursorBlinkRate: 0
     },
     onChange: (_2, __, value) => setCode(value)
   }), /* @__PURE__ */ React.createElement("span", {

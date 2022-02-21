@@ -12,8 +12,10 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent}) {
   const [activeCode, setActiveCode] = useState();
   const [log, setLog] = useState("");
   const [error, setError] = useState();
+  const [hash, setHash] = useState("");
   const [pattern, setPattern] = useState();
-  const dirty = code !== activeCode;
+  const dirty = code !== activeCode || error;
+  const generateHash = () => encodeURIComponent(btoa(code));
   const activateCode = (_code = code) => {
     !cycle.started && cycle.start();
     broadcast({type: "start", from: id});
@@ -27,6 +29,7 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent}) {
       if (autolink) {
         window.location.hash = "#" + encodeURIComponent(btoa(code));
       }
+      setHash(generateHash());
       setError(void 0);
       setActiveCode(_code);
     } catch (err) {
@@ -103,7 +106,8 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent}) {
     togglePlay,
     activateCode,
     activeCode,
-    pushLog
+    pushLog,
+    hash
   };
 }
 export default useRepl;

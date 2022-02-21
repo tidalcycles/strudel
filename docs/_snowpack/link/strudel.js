@@ -107,7 +107,7 @@ class TimeSpan {
     }
     return result;
   }
-  get midpoint() {
+  midpoint() {
     return this.begin.add(this.end.sub(this.begin).div(Fraction(2)));
   }
   equals(other) {
@@ -436,6 +436,9 @@ class Pattern {
   edit(...funcs) {
     return stack(...funcs.map((func) => func(this)));
   }
+  pipe(func) {
+    return func(this);
+  }
   _bypass(on2) {
     on2 = Boolean(parseInt(on2));
     return on2 ? silence : this;
@@ -456,6 +459,24 @@ function pure(value) {
 function steady(value) {
   return new Pattern((span) => Hap(void 0, span, value));
 }
+export const signal = (func) => {
+  const query = (span) => [new Hap(void 0, span, func(span.midpoint()))];
+  return new Pattern(query);
+};
+const _toBipolar = (pat) => pat.fmap((x) => x * 2 - 1);
+const _fromBipolar = (pat) => pat.fmap((x) => (x + 1) / 2);
+export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
+export const sine = _fromBipolar(sine2);
+export const cosine2 = sine2._early(0.25);
+export const cosine = sine._early(0.25);
+export const saw = signal((t) => t % 1);
+export const saw2 = _toBipolar(saw);
+export const isaw = signal((t) => 1 - t % 1);
+export const isaw2 = _toBipolar(isaw);
+export const tri2 = fastcat(isaw2, saw2);
+export const tri = fastcat(isaw, saw);
+export const square = signal((t) => Math.floor(t * 2 % 2));
+export const square2 = _toBipolar(square);
 function reify(thing) {
   if (thing?.constructor?.name == "Pattern") {
     return thing;
