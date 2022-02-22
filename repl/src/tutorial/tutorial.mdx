@@ -32,15 +32,15 @@ To get a taste of what Strudel can do, check out this track:
   
   const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
   const synths = stack(
-    "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).groove("[~ x]*2")
+    "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]*2")
     .edit(
       scaleTranspose(0).early(0),
       scaleTranspose(2).early(1/8),
       scaleTranspose(7).early(1/4),
       scaleTranspose(8).early(3/8)
     ).edit(thru).tone(keys).bypass("<1 0>/16"),
-    "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".groove("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).edit(thru).tone(bass),
-    "<Cm7 Bb7 Fm7 G7b13>/2".groove("~ [x@0.1 ~]".fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass("<0@7 1>/8".early(1/4))
+    "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).edit(thru).tone(bass),
+    "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass("<0@7 1>/8".early(1/4))
   )
   return stack(
     drums.fast(2), 
@@ -364,7 +364,7 @@ TODO: should the function really run the first cycle?
 - append
 - superimpose
 - internal Pattern functions?
-- groove, TODO move to core from https://github.com/tidalcycles/strudel/blob/main/repl/src/groove.ts
+- struct
 
 ## Tone API
 
@@ -573,11 +573,11 @@ Turns chord symbols into root notes of chords in given octave.
 
 <MiniRepl tune={`"<C^7 A7b13 Dm7 G7>".rootNotes(3)`} />
 
-Together with edit, groove and voicings, this can be used to create a basic backing track:
+Together with edit, struct and voicings, this can be used to create a basic backing track:
 
 <MiniRepl
   tune={`"<C^7 A7b13 Dm7 G7>".edit(
-  x => x.voicings(['d3','g4']).groove("~ x"),
+  x => x.voicings(['d3','g4']).struct("~ x"),
   x => x.rootNotes(2).tone(synth(osc('sawtooth4')).chain(out))
 )`}
 />

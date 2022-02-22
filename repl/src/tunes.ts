@@ -284,7 +284,7 @@ export const giantStepsReggae = `stack(
     "Eb^7 [Am7 D7] G^7 [C#m7 F#7]",
     "B^7 [Fm7 Bb7] Eb^7 [C#m7 F#7]"
   )
-  .groove("~ [x ~]".fast(4*8))
+  .struct("~ [x ~]".fast(4*8))
   .voicings(['E3', 'G4']),
   // bass
   cat(
@@ -293,7 +293,7 @@ export const giantStepsReggae = `stack(
     "[Eb2 Bb2] [A2 D2] [G2 D2] [C#2 F#2]",
     "[B2 F#2] [F2 Bb2] [Eb2 Bb2] [C#2 F#2]"
   )
-  .groove("x ~".fast(4*8))
+  .struct("x ~".fast(4*8))
 ).slow(25)`;
 
 export const transposedChordsHacked = `stack(
@@ -308,9 +308,9 @@ export const scaleTranspose = `stack(f2, f3, c4, ab4)
 .scaleTranspose(sequence(0, -1, -2, -3).slow(4))
 .transpose(sequence(0, 1).slow(16))`;
 
-export const groove = `stack(
+export const struct = `stack(
   "c2 g2 a2 [e2@2 eb2] d2 a2 g2 [d2 ~ db2]",
-  "[C^7 A7] [Dm7 G7]".groove("[x@2 x] [~@2 x] [~ x@2]@2 [x ~@2] ~ [~@2 x@4]@2")
+  "[C^7 A7] [Dm7 G7]".struct("[x@2 x] [~@2 x] [~ x@2]@2 [x ~@2] ~ [~@2 x@4]@2")
   .voicings(['G3','A4'])
 ).slow(4)`;
 
@@ -398,8 +398,8 @@ export const loungerave = `() => {
   
   const thru = (x) => x.transpose("<0 1>/8").transpose(1);
   const synths = stack(
-    "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".groove("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2").edit(thru).tone(bass),
-    "<Cm7 Bb7 Fm7 G7b9>/2".groove("~ [x@0.1 ~]").voicings().edit(thru).every(2, early(1/4)).tone(keys).bypass("<0@7 1>/8".early(1/4))
+    "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2").edit(thru).tone(bass),
+    "<Cm7 Bb7 Fm7 G7b9>/2".struct("~ [x@0.1 ~]").voicings().edit(thru).every(2, early(1/4)).tone(keys).bypass("<0@7 1>/8".early(1/4))
   )
   return stack(
     drums, 
@@ -425,15 +425,15 @@ export const caverave = `() => {
   
   const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
   const synths = stack(
-    "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).groove("[~ x]*2")
+    "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]*2")
     .edit(
       scaleTranspose(0).early(0),
       scaleTranspose(2).early(1/8),
       scaleTranspose(7).early(1/4),
       scaleTranspose(8).early(3/8)
     ).edit(thru).tone(keys).bypass("<1 0>/16"),
-    "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".groove("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).edit(thru).tone(bass),
-    "<Cm7 Bb7 Fm7 G7b13>/2".groove("~ [x@0.1 ~]".fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass("<0@7 1>/8".early(1/4))
+    "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).edit(thru).tone(bass),
+    "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass("<0@7 1>/8".early(1/4))
   )
   return stack(
     drums.fast(2), 
@@ -447,9 +447,9 @@ export const callcenterhero = `()=>{
   const bass = fmsynth({...osc('sawtooth6'),...adsr(0.05,.6,0.8,0.1)}).chain(vol(0.6), out);
   const s = scale(slowcat('F3 minor', 'Ab3 major', 'Bb3 dorian', 'C4 phrygian dominant').slow(4));
   return stack(
-    "0 2".groove("<x ~> [x ~]").edit(s).scaleTranspose(stack(0,2)).tone(lead),
-    "<6 7 9 7>".groove("[~ [x ~]*2]*2").edit(s).scaleTranspose("[0,2] [2,4]".fast(2).every(4,rev)).tone(lead),
-  	"-14".groove("[~ x@0.8]*2".early(0.01)).edit(s).tone(bass),
+    "0 2".struct("<x ~> [x ~]").edit(s).scaleTranspose(stack(0,2)).tone(lead),
+    "<6 7 9 7>".struct("[~ [x ~]*2]*2").edit(s).scaleTranspose("[0,2] [2,4]".fast(2).every(4,rev)).tone(lead),
+  	"-14".struct("[~ x@0.8]*2".early(0.01)).edit(s).tone(bass),
     "c2*2".tone(membrane().chain(vol(0.6), out)),
     "~ c2".tone(noise().chain(vol(0.2), out)),
     "c4*4".tone(metal(adsr(0,.05,0)).chain(vol(0.03), out))
