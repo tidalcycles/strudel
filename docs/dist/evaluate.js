@@ -3,7 +3,6 @@ import "./tone.js";
 import "./midi.js";
 import "./voicings.js";
 import "./tonal.js";
-import "./groove.js";
 import shapeshifter from "./shapeshifter.js";
 import {minify} from "./parse.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
