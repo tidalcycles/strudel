@@ -329,4 +329,30 @@ describe('Pattern', function() {
       )
     })
   })
+  describe("apply", () => {
+    it('Can apply a function', () => {
+      assert.deepStrictEqual(
+        sequence("a", "b")._apply(fast(2)).firstCycle,
+        sequence("a", "b").fast(2).firstCycle
+      )
+    }),
+    it('Can apply a pattern of functions', () => {
+      assert.deepStrictEqual(
+        sequence("a", "b").apply(fast(2)).firstCycle,
+        sequence("a", "b").fast(2).firstCycle
+      )
+      assert.deepStrictEqual(
+        sequence("a", "b").apply(fast(2),fast(3)).firstCycle,
+        sequence("a", "b").fast(2,3).firstCycle
+      )
+    })
+  })
+  describe("layer", () => {
+    it('Can layer up multiple functions', () => {
+      assert.deepStrictEqual(
+        sequence(1,2,3).layer(fast(2), pat => pat.add(3,4)).firstCycle,
+        stack(sequence(1,2,3).fast(2), sequence(1,2,3).add(3,4)).firstCycle
+      )
+    })
+  })
 })
