@@ -1,6 +1,6 @@
-import React, {useCallback, useLayoutEffect, useRef} from "../_snowpack/pkg/react.js";
+import React, {useCallback, useLayoutEffect, useRef, useState} from "../_snowpack/pkg/react.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
-import CodeMirror from "./CodeMirror.js";
+import CodeMirror, {markEvent} from "./CodeMirror.js";
 import cx from "./cx.js";
 import {evaluate} from "./evaluate.js";
 import logo from "./logo.svg.proxy.js";
@@ -28,9 +28,11 @@ function getRandomTune() {
 }
 const randomTune = getRandomTune();
 function App() {
+  const [editor, setEditor] = useState();
   const {setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog} = useRepl({
     tune: decoded || randomTune,
-    defaultSynth
+    defaultSynth,
+    onEvent: useCallback(markEvent(editor), [editor])
   });
   const logBox = useRef();
   useLayoutEffect(() => {
@@ -95,10 +97,13 @@ function App() {
     className: cx("h-full  bg-[#2A3236]", error ? "focus:ring-red-500" : "focus:ring-slate-800")
   }, /* @__PURE__ */ React.createElement(CodeMirror, {
     value: code,
+    editorDidMount: setEditor,
     options: {
       mode: "javascript",
       theme: "material",
-      lineNumbers: true
+      lineNumbers: true,
+      styleSelectedText: true,
+      cursorBlinkRate: 0
     },
     onChange: (_2, __, value) => setCode(value)
   }), /* @__PURE__ */ React.createElement("span", {

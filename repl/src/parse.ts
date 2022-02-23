@@ -1,6 +1,7 @@
 import * as krill from '../krill-parser';
 import * as strudel from '../../strudel.mjs';
 import { Scale, Note, Interval } from '@tonaljs/tonal';
+import { addMiniLocations } from './shapeshifter';
 
 const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence } = strudel;
 
@@ -49,6 +50,7 @@ function resolveReplications(ast) {
             {
               type_: 'element',
               source_: child.source_,
+              location_: child.location_,
               options_: {
                 operator: {
                   type_: 'stretch',
@@ -91,7 +93,18 @@ export function patternifyAST(ast: any): any {
         return silence;
       }
       if (typeof ast.source_ !== 'object') {
-        return ast.source_;
+        if (!addMiniLocations) {
+          return ast.source_;
+        }
+        if (!ast.location_) {
+          console.warn('no location for', ast);
+          return ast.source_;
+        }
+        const { start, end } = ast.location_;
+        // return ast.source_;
+        // the following line expects the shapeshifter to wrap this in withLocationOffset
+        // because location_ is only relative to the mini string, but we need it relative to whole code
+        return pure(ast.source_).withLocation({ start, end });
       }
       return patternifyAST(ast.source_);
     case 'stretch':

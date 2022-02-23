@@ -25,29 +25,28 @@ To get a taste of what Strudel can do, check out this track:
   const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out);
   
   const drums = stack(
-    'c1*2'.m.tone(kick).bypass('<0@7 1>/8'.m),
-    '~ <x!7 [x@3 x]>'.m.tone(snare).bypass('<0@7 1>/4'.m),
-    '[~ c4]*2'.m.tone(hihat)
+    "c1*2".tone(kick).bypass("<0@7 1>/8"),
+    "~ <x!7 [x@3 x]>".tone(snare).bypass("<0@7 1>/4"),
+    "[~ c4]*2".tone(hihat)
   );
   
-  const thru = (x) => x.transpose('<0 1>/8'.m).transpose(-1);
+  const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
   const synths = stack(
-    '<eb4 d4 c4 b3>/2'.m.scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).groove('[~ x]*2'.m)
+    "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]*2")
     .edit(
       scaleTranspose(0).early(0),
       scaleTranspose(2).early(1/8),
       scaleTranspose(7).early(1/4),
       scaleTranspose(8).early(3/8)
-    ).edit(thru).tone(keys).bypass('<1 0>/16'.m),
-    '<C2 Bb1 Ab1 [G1 [G2 G1]]>/2'.m.groove('[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2'.m.fast(2)).edit(thru).tone(bass),
-    '<Cm7 Bb7 Fm7 G7b13>/2'.m.groove('~ [x@0.1 ~]'.m.fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass('<0@7 1>/8'.m.early(1/4))
+    ).edit(thru).tone(keys).bypass("<1 0>/16"),
+    "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).edit(thru).tone(bass),
+    "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass("<0@7 1>/8".early(1/4))
   )
   return stack(
     drums.fast(2), 
     synths
   ).slow(2);
 }`}
-  height={400}
 />
 
 [Open this track in the REPL](https://strudel.tidalcycles.org/#KCkgPT4gewogIGNvbnN0IGRlbGF5ID0gbmV3IEZlZWRiYWNrRGVsYXkoMS84LCAuNCkuY2hhaW4odm9sKDAuNSksIG91dCk7CiAgY29uc3Qga2ljayA9IG5ldyBNZW1icmFuZVN5bnRoKCkuY2hhaW4odm9sKC44KSwgb3V0KTsKICBjb25zdCBzbmFyZSA9IG5ldyBOb2lzZVN5bnRoKCkuY2hhaW4odm9sKC44KSwgb3V0KTsKICBjb25zdCBoaWhhdCA9IG5ldyBNZXRhbFN5bnRoKCkuc2V0KGFkc3IoMCwgLjA4LCAwLCAuMSkpLmNoYWluKHZvbCguMykuY29ubmVjdChkZWxheSksb3V0KTsKICBjb25zdCBiYXNzID0gbmV3IFN5bnRoKCkuc2V0KHsgLi4ub3NjKCdzYXd0b290aCcpLCAuLi5hZHNyKDAsIC4xLCAuNCkgfSkuY2hhaW4obG93cGFzcyg5MDApLCB2b2woLjUpLCBvdXQpOwogIGNvbnN0IGtleXMgPSBuZXcgUG9seVN5bnRoKCkuc2V0KHsgLi4ub3NjKCdzYXd0b290aCcpLCAuLi5hZHNyKDAsIC41LCAuMiwgLjcpIH0pLmNoYWluKGxvd3Bhc3MoMTIwMCksIHZvbCguNSksIG91dCk7CiAgCiAgY29uc3QgZHJ1bXMgPSBzdGFjaygKICAgICdjMSoyJy5tLnRvbmUoa2ljaykuYnlwYXNzKCc8MEA3IDE%2BLzgnLm0pLAogICAgJ34gPHghNyBbeEAzIHhdPicubS50b25lKHNuYXJlKS5ieXBhc3MoJzwwQDcgMT4vNCcubSksCiAgICAnW34gYzRdKjInLm0udG9uZShoaWhhdCkKICApOwogIAogIGNvbnN0IHRocnUgPSAoeCkgPT4geC50cmFuc3Bvc2UoJzwwIDE%2BLzgnLm0pLnRyYW5zcG9zZSgtMSk7CiAgY29uc3Qgc3ludGhzID0gc3RhY2soCiAgICAnPGViNCBkNCBjNCBiMz4vMicubS5zY2FsZSh0aW1lQ2F0KFszLCdDIG1pbm9yJ10sWzEsJ0MgbWVsb2RpYyBtaW5vciddKS5zbG93KDgpKS5ncm9vdmUoJ1t%2BIHhdKjInLm0pCiAgICAuZWRpdCgKICAgICAgc2NhbGVUcmFuc3Bvc2UoMCkuZWFybHkoMCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDIpLmVhcmx5KDEvOCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDcpLmVhcmx5KDEvNCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDgpLmVhcmx5KDMvOCkKICAgICkuZWRpdCh0aHJ1KS50b25lKGtleXMpLmJ5cGFzcygnPDEgMD4vMTYnLm0pLAogICAgJzxDMiBCYjEgQWIxIFtHMSBbRzIgRzFdXT4vMicubS5ncm9vdmUoJ1t4IFt%2BIHhdIDxbfiBbfiB4XV0hMyBbeCB4XT5AMl0vMicubS5mYXN0KDIpKS5lZGl0KHRocnUpLnRvbmUoYmFzcyksCiAgICAnPENtNyBCYjcgRm03IEc3YjEzPi8yJy5tLmdyb292ZSgnfiBbeEAwLjEgfl0nLm0uZmFzdCgyKSkudm9pY2luZ3MoKS5lZGl0KHRocnUpLmV2ZXJ5KDIsIGVhcmx5KDEvOCkpLnRvbmUoa2V5cykuYnlwYXNzKCc8MEA3IDE%2BLzgnLm0uZWFybHkoMS80KSkKICApCiAgcmV0dXJuIHN0YWNrKAogICAgZHJ1bXMuZmFzdCgyKSwgCiAgICBzeW50aHMKICApLnNsb3coMik7Cn0%3D)
@@ -86,7 +85,6 @@ Before diving deeper into the details, here is a flavor of how the mini language
     [[a1 a2]*4]
   ]
 ]/16\``}
-  height={600}
 />
 
 The snippet above is enclosed in backticks (`), which allows you to write multi-line strings.
@@ -263,7 +261,6 @@ You can nest functions inside one another:
   stack(b3,d3,fs4),
   stack(b3,e4,g4)
 )`}
-  height={200}
 />
 
 The above is equivalent to
@@ -324,7 +321,7 @@ Note that we have to wrap b4 in **pure** to be able to call a the pattern modifi
 
 There is the shorthand **p** for this:
 
-<MiniRepl tune={`cat(e5, b4.p.late(0.5))`} />
+<MiniRepl tune={`cat(e5, b4.late(0.5))`} />
 
 ### late(cycles)
 
@@ -344,11 +341,11 @@ Will reverse the pattern:
 
 Will apply the given function every n cycles:
 
-<MiniRepl tune={`cat(e5, b4.p.every(4, late(0.5)))`} />
+<MiniRepl tune={`cat(e5, pure(b4).every(4, late(0.5)))`} />
 
 Note that late is called directly. This is a shortcut for:
 
-<MiniRepl tune={`cat(e5, b4.p.every(4, x => x.late(0.5)))`} />
+<MiniRepl tune={`cat(e5, pure(b4).every(4, x => x.late(0.5)))`} />
 
 TODO: should the function really run the first cycle?
 
@@ -367,7 +364,7 @@ TODO: should the function really run the first cycle?
 - append
 - superimpose
 - internal Pattern functions?
-- groove, TODO move to core from https://github.com/tidalcycles/strudel/blob/main/repl/src/groove.ts
+- struct
 
 ## Tone API
 
@@ -377,15 +374,14 @@ To make the sounds more interesting, we can use Tone.js instruments ands effects
 
 <MiniRepl
   tune={`stack(
-    "[c5 c5 bb4 c5] [~ g4 ~ g4] [c5 f5 e5 c5] ~".m
+    "[c5 c5 bb4 c5] [~ g4 ~ g4] [c5 f5 e5 c5] ~"
       .tone(synth(adsr(0,.1,0,0)).chain(out)),
-    "[c2 c3]*8".m
+    "[c2 c3]*8"
       .tone(synth({
         ...osc('sawtooth'),
         ...adsr(0,.1,0.4,0)
       }).chain(lowpass(300), out))
   ).slow(4)`}
-  height={300}
 />
 
 ### tone(instrument)
@@ -393,7 +389,7 @@ To make the sounds more interesting, we can use Tone.js instruments ands effects
 To change the instrument of a pattern, you can pass any [Tone.js Source](https://tonejs.github.io/docs/14.7.77/index.html) to .tone:
 
 <MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
 .tone(new FMSynth().toDestination())`}
 />
 
@@ -418,7 +414,7 @@ const synth = (options) => new Synth(options);
 Shortcut for Tone.Destination. Intended to be used with Tone's .chain:
 
 <MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
 .tone(membrane().chain(out))`}
 />
 
@@ -429,7 +425,7 @@ This alone is not really useful, so read on..
 Helper that returns a Gain Node with the given volume. Intended to be used with Tone's .chain:
 
 <MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
 .tone(noise().chain(vol(0.5), out))`}
 />
 
@@ -438,7 +434,7 @@ Helper that returns a Gain Node with the given volume. Intended to be used with 
 Helper to set the waveform of a synth, monosynth or polysynth:
 
 <MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
 .tone(synth(osc('sawtooth4')).chain(out))`}
 />
 
@@ -449,7 +445,7 @@ The base types are `sine`, `square`, `sawtooth`, `triangle`. You can also append
 Helper that returns a Filter Node of type lowpass with the given cutoff. Intended to be used with Tone's .chain:
 
 <MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
 .tone(synth(osc('sawtooth')).chain(lowpass(800), out))`}
 />
 
@@ -458,7 +454,7 @@ Helper that returns a Filter Node of type lowpass with the given cutoff. Intende
 Helper that returns a Filter Node of type highpass with the given cutoff. Intended to be used with Tone's .chain:
 
 <MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
 .tone(synth(osc('sawtooth')).chain(highpass(2000), out))`}
 />
 
@@ -467,7 +463,7 @@ Helper that returns a Filter Node of type highpass with the given cutoff. Intend
 Helper to set the envelope of a Tone.js instrument. Intended to be used with Tone's .set:
 
 <MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.slow(4)
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
 .tone(synth(adsr(0,.1,0,0)).chain(out))`}
 />
 
@@ -482,8 +478,8 @@ It would be great to get this to work without glitches though, because it is fun
 With .synth, you can create a synth with a variable wave type:
 
 <MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.
-synth('<sawtooth8 square8>'.m).slow(4)`}
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~"
+.synth("<sawtooth8 square8>").slow(4)`}
 />
 
 #### adsr(attack, decay?, sustain?, release?)
@@ -491,8 +487,8 @@ synth('<sawtooth8 square8>'.m).slow(4)`}
 Chainable Envelope helper:
 
 <MiniRepl
-  tune={`"[c5 c5 bb4 c5] [~ g4 ~ g4] [c5 f5 e5 c5] ~".m.slow(4).
-synth('sawtooth16').adsr(0,.1,0,0)`}
+  tune={`"[c5 c5 bb4 c5] [~ g4 ~ g4] [c5 f5 e5 c5] ~".slow(4)
+  .synth('sawtooth16').adsr(0,.1,0,0)`}
 />
 
 Due to having more than one argument, this method is not patternified.
@@ -502,8 +498,8 @@ Due to having more than one argument, this method is not patternified.
 Patternified filter:
 
 <MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.
-synth('sawtooth16').filter('[500 2000]*8'.m).slow(4)`}
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~"
+  .synth('sawtooth16').filter("[500 2000]*8").slow(4)`}
 />
 
 #### gain(value)
@@ -511,8 +507,8 @@ synth('sawtooth16').filter('[500 2000]*8'.m).slow(4)`}
 Patternified gain:
 
 <MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".m.
-synth('sawtooth16').gain('[.2 .8]*8'.m).slow(4)`}
+  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~"
+  .synth('sawtooth16').gain("[.2 .8]*8").slow(4)`}
 />
 
 #### autofilter(value)
@@ -520,8 +516,8 @@ synth('sawtooth16').gain('[.2 .8]*8'.m).slow(4)`}
 Patternified autofilter:
 
 <MiniRepl
-  tune={`"c2 c3".m.
-synth('sawtooth16').autofilter('<1 4 8>'.m)`}
+  tune={`"c2 c3"
+  .synth('sawtooth16').autofilter("<1 4 8>"")`}
 />
 
 ## Tonal API
@@ -532,20 +528,20 @@ The Tonal API, uses [tonaljs](https://github.com/tonaljs/tonal) to provide helpe
 
 Transposes all notes to the given number of semitones:
 
-<MiniRepl tune={`"c2 c3".m.fast(2).transpose('<0 -2 5 3>'.m.slow(2)).transpose(0)`} />
+<MiniRepl tune={`"c2 c3".fast(2).transpose("<0 -2 5 3>".slow(2)).transpose(0)`} />
 
 This method gets really exciting when we use it with a pattern as above.
 
 Instead of numbers, scientific interval notation can be used as well:
 
-<MiniRepl tune={`"c2 c3".m.fast(2).transpose('<1P -2M 4P 3m>'.m.slow(2)).transpose(1)`} />
+<MiniRepl tune={`"c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).transpose(1)`} />
 
 ### scale(name)
 
 Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like scaleTranpose.
 
 <MiniRepl
-  tune={`"0 2 4 6 4 2".m
+  tune={`"0 2 4 6 4 2"
 .scale(slowcat('C2 major', 'C2 minor').slow(2))`}
 />
 
@@ -558,16 +554,16 @@ All the available scale names can be found [here](https://github.com/tonaljs/ton
 Transposes notes inside the scale by the number of steps:
 
 <MiniRepl
-  tune={`"-8 [2,4,6]".m
+  tune={`"-8 [2,4,6]"
 .scale('C4 bebop major')
-.scaleTranspose('<0 -1 -2 -3 -4 -5 -6 -4>'.m)`}
+.scaleTranspose("<0 -1 -2 -3 -4 -5 -6 -4>")`}
 />
 
 ### voicings(range?)
 
 Turns chord symbols into voicings, using the smoothest voice leading possible:
 
-<MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".m.voicings(), '<C3 A2 D3 G2>'.m)`} />
+<MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")`} />
 
 TODO: use voicing collection as first param + patternify.
 
@@ -575,16 +571,15 @@ TODO: use voicing collection as first param + patternify.
 
 Turns chord symbols into root notes of chords in given octave.
 
-<MiniRepl tune={`"<C^7 A7b13 Dm7 G7>".m.rootNotes(3)`} />
+<MiniRepl tune={`"<C^7 A7b13 Dm7 G7>".rootNotes(3)`} />
 
-Together with edit, groove and voicings, this can be used to create a basic backing track:
+Together with edit, struct and voicings, this can be used to create a basic backing track:
 
 <MiniRepl
-  tune={`"<C^7 A7b13 Dm7 G7>".m.edit(
-  x => x.voicings(['d3','g4']).groove('~ x'.m),
+  tune={`"<C^7 A7b13 Dm7 G7>".edit(
+  x => x.voicings(['d3','g4']).struct("~ x"),
   x => x.rootNotes(2).tone(synth(osc('sawtooth4')).chain(out))
 )`}
-  height={150}
 />
 
 TODO: use range instead of octave.
@@ -604,7 +599,7 @@ Midi is currently not supported by the mini repl used here, but you can [open th
 In the REPL, you will se a log of the available MIDI devices.
 
 <!--<MiniRepl
-  tune={`stack("<C^7 A7 Dm7 G7>".m.voicings(), '<C3 A2 D3 G2>'.m)
+  tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")
   .midi()`}
 />-->
 

@@ -1,6 +1,6 @@
-import React, { useCallback, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import * as Tone from 'tone';
-import CodeMirror from './CodeMirror';
+import CodeMirror, { markEvent } from './CodeMirror';
 import cx from './cx';
 import { evaluate } from './evaluate';
 import logo from './logo.svg';
@@ -35,9 +35,11 @@ function getRandomTune() {
 const randomTune = getRandomTune();
 
 function App() {
+  const [editor, setEditor] = useState<any>();
   const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog } = useRepl({
     tune: decoded || randomTune,
     defaultSynth,
+    onEvent: useCallback(markEvent(editor), [editor]),
   });
   const logBox = useRef<any>();
   // scroll log box to bottom when log changes
@@ -106,10 +108,13 @@ function App() {
           <div className={cx('h-full  bg-[#2A3236]', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}>
             <CodeMirror
               value={code}
+              editorDidMount={setEditor}
               options={{
                 mode: 'javascript',
                 theme: 'material',
                 lineNumbers: true,
+                styleSelectedText: true,
+                cursorBlinkRate: 0,
               }}
               onChange={(_: any, __: any, value: any) => setCode(value)}
             />

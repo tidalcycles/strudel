@@ -6,14 +6,16 @@ import usePostMessage from "./usePostMessage.js";
 let s4 = () => {
   return Math.floor((1 + Math.random()) * 65536).toString(16).substring(1);
 };
-function useRepl({tune, defaultSynth, autolink = true}) {
+function useRepl({tune, defaultSynth, autolink = true, onEvent}) {
   const id = useMemo(() => s4(), []);
   const [code, setCode] = useState(tune);
   const [activeCode, setActiveCode] = useState();
   const [log, setLog] = useState("");
   const [error, setError] = useState();
+  const [hash, setHash] = useState("");
   const [pattern, setPattern] = useState();
-  const dirty = code !== activeCode;
+  const dirty = code !== activeCode || error;
+  const generateHash = () => encodeURIComponent(btoa(code));
   const activateCode = (_code = code) => {
     !cycle.started && cycle.start();
     broadcast({type: "start", from: id});
@@ -27,9 +29,12 @@ function useRepl({tune, defaultSynth, autolink = true}) {
       if (autolink) {
         window.location.hash = "#" + encodeURIComponent(btoa(code));
       }
+      setHash(generateHash());
       setError(void 0);
       setActiveCode(_code);
     } catch (err) {
+      err.message = "evaluation error: " + err.message;
+      console.warn(err);
       setError(err);
     }
   };
@@ -43,6 +48,7 @@ function useRepl({tune, defaultSynth, autolink = true}) {
   const cycle = useCycle({
     onEvent: useCallback((time, event) => {
       try {
+        onEvent?.(event);
         if (!event.value?.onTrigger) {
           const note = event.value?.value || event.value;
           if (!isNote(note)) {
@@ -62,11 +68,12 @@ function useRepl({tune, defaultSynth, autolink = true}) {
         err.message = "unplayable event: " + err?.message;
         pushLog(err.message);
       }
-    }, []),
+    }, [onEvent]),
     onQuery: useCallback((span) => {
       try {
         return pattern?.query(span) || [];
       } catch (err) {
+        err.message = "query error: " + err.message;
         setError(err);
         return [];
       }
@@ -99,7 +106,8 @@ function useRepl({tune, defaultSynth, autolink = true}) {
     togglePlay,
     activateCode,
     activeCode,
-    pushLog
+    pushLog,
+    hash
   };
 }
 export default useRepl;

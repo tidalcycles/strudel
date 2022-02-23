@@ -1,7 +1,6 @@
-import { useCallback, useLayoutEffect, useState, useMemo, useEffect } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import { isNote } from 'tone';
 import { evaluate } from './evaluate';
-import { useWebMidi } from './midi';
 import type { Pattern } from './types';
 import useCycle from './useCycle';
 import usePostMessage from './usePostMessage';
@@ -12,14 +11,16 @@ let s4 = () => {
     .substring(1);
 };
 
-function useRepl({ tune, defaultSynth, autolink = true }) {
+function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
   const id = useMemo(() => s4(), []);
   const [code, setCode] = useState<string>(tune);
   const [activeCode, setActiveCode] = useState<string>();
   const [log, setLog] = useState('');
   const [error, setError] = useState<Error>();
+  const [hash, setHash] = useState('');
   const [pattern, setPattern] = useState<Pattern>();
-  const dirty = code !== activeCode;
+  const dirty = code !== activeCode || error;
+  const generateHash = () => encodeURIComponent(btoa(code));
   const activateCode = (_code = code) => {
     !cycle.started && cycle.start();
     broadcast({ type: 'start', from: id });
@@ -33,9 +34,12 @@ function useRepl({ tune, defaultSynth, autolink = true }) {
       if (autolink) {
         window.location.hash = '#' + encodeURIComponent(btoa(code));
       }
+      setHash(generateHash());
       setError(undefined);
       setActiveCode(_code);
     } catch (err: any) {
+      err.message = 'evaluation error: ' + err.message;
+      console.warn(err);
       setError(err);
     }
   };
@@ -48,35 +52,40 @@ function useRepl({ tune, defaultSynth, autolink = true }) {
   };
   // cycle hook to control scheduling
   const cycle = useCycle({
-    onEvent: useCallback((time, event) => {
-      try {
-        if (!event.value?.onTrigger) {
-          const note = event.value?.value || event.value;
-          if (!isNote(note)) {
-            throw new Error('not a note: ' + note);
-          }
-          if (defaultSynth) {
-            defaultSynth.triggerAttackRelease(note, event.duration, time);
-          } else {
-            throw new Error('no defaultSynth passed to useRepl.');
-          }
-          /* console.warn('no instrument chosen', event);
+    onEvent: useCallback(
+      (time, event) => {
+        try {
+          onEvent?.(event);
+          if (!event.value?.onTrigger) {
+            const note = event.value?.value || event.value;
+            if (!isNote(note)) {
+              throw new Error('not a note: ' + note);
+            }
+            if (defaultSynth) {
+              defaultSynth.triggerAttackRelease(note, event.duration, time);
+            } else {
+              throw new Error('no defaultSynth passed to useRepl.');
+            }
+            /* console.warn('no instrument chosen', event);
           throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
-        } else {
-          const { onTrigger } = event.value;
-          onTrigger(time, event);
+          } else {
+            const { onTrigger } = event.value;
+            onTrigger(time, event);
+          }
+        } catch (err: any) {
+          console.warn(err);
+          err.message = 'unplayable event: ' + err?.message;
+          pushLog(err.message); // not with setError, because then we would have to setError(undefined) on next playable event
         }
-      } catch (err: any) {
-        console.warn(err);
-        err.message = 'unplayable event: ' + err?.message;
-        pushLog(err.message); // not with setError, because then we would have to setError(undefined) on next playable event
-      }
-    }, []),
+      },
+      [onEvent]
+    ),
     onQuery: useCallback(
       (span) => {
         try {
           return pattern?.query(span) || [];
         } catch (err: any) {
+          err.message = 'query error: ' + err.message;
           setError(err);
           return [];
         }
@@ -147,6 +156,7 @@ function useRepl({ tune, defaultSynth, autolink = true }) {
     activateCode,
     activeCode,
     pushLog,
+    hash,
   };
 }
 

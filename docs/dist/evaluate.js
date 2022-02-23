@@ -3,7 +3,6 @@ import "./tone.js";
 import "./midi.js";
 import "./voicings.js";
 import "./tonal.js";
-import "./groove.js";
 import shapeshifter from "./shapeshifter.js";
 import {minify} from "./parse.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
@@ -27,10 +26,12 @@ export const evaluate = (code) => {
   if (typeof evaluated === "function") {
     evaluated = evaluated();
   }
-  const pattern = minify(evaluated);
-  if (pattern?.constructor?.name !== "Pattern") {
-    const message = `got "${typeof pattern}" instead of pattern`;
-    throw new Error(message + (typeof pattern === "function" ? ", did you forget to call a function?" : "."));
+  if (typeof evaluated === "string") {
+    evaluated = strudel.withLocationOffset(minify(evaluated), {start: {line: 1, column: -1}});
   }
-  return {mode: "javascript", pattern};
+  if (evaluated?.constructor?.name !== "Pattern") {
+    const message = `got "${typeof evaluated}" instead of pattern`;
+    throw new Error(message + (typeof evaluated === "function" ? ", did you forget to call a function?" : "."));
+  }
+  return {mode: "javascript", pattern: evaluated};
 };

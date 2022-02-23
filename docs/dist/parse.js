@@ -1,6 +1,7 @@
 import * as krill from "../_snowpack/link/repl/krill-parser.js";
 import * as strudel from "../_snowpack/link/strudel.js";
 import {Scale, Note, Interval} from "../_snowpack/pkg/@tonaljs/tonal.js";
+import {addMiniLocations} from "./shapeshifter.js";
 const {pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence} = strudel;
 const applyOptions = (parent) => (pat, i) => {
   const ast = parent.source_[i];
@@ -39,6 +40,7 @@ function resolveReplications(ast) {
             {
               type_: "element",
               source_: child.source_,
+              location_: child.location_,
               options_: {
                 operator: {
                   type_: "stretch",
@@ -80,7 +82,15 @@ export function patternifyAST(ast) {
         return silence;
       }
       if (typeof ast.source_ !== "object") {
-        return ast.source_;
+        if (!addMiniLocations) {
+          return ast.source_;
+        }
+        if (!ast.location_) {
+          console.warn("no location for", ast);
+          return ast.source_;
+        }
+        const {start, end} = ast.location_;
+        return pure(ast.source_).withLocation({start, end});
       }
       return patternifyAST(ast.source_);
     case "stretch":
