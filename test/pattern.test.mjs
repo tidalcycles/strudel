@@ -2,11 +2,12 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast, timeCat,add,sub,mul,div} from "../strudel.mjs";
+import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast, timeCat,add,sub,mul,div, State} from "../strudel.mjs";
 //import { Time } from 'tone';
 import pkg from 'tone';
 const { Time } = pkg;
 
+const st = (begin, end) => new State(ts(begin, end))
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
 const hap = (whole, part, value) => new Hap(whole, part, value)
 
@@ -62,7 +63,7 @@ describe('Hap', function() {
 describe('Pattern', function() {
   describe('pure', function () {
     it('Can make a pattern', function() {
-      assert.equal(pure("hello").query(new TimeSpan(Fraction(0.5), Fraction(2.5))).length, 3)
+      assert.equal(pure("hello").query(st(0.5, 2.5)).length, 3)
     })
   })
   describe('fmap()', function () {
@@ -72,12 +73,12 @@ describe('Pattern', function() {
   })
   describe('add()', function () {
     it('Can add things', function() {
-      assert.equal(pure(3).add(pure(4)).query(new TimeSpan(Fraction(0), Fraction(1)))[0].value, 7)
+      assert.equal(pure(3).add(pure(4)).query(st(0,1))[0].value, 7)
     })
   })
   describe('sub()', function () {
     it('Can subtract things', function() {
-      assert.equal(pure(3).sub(pure(4)).query(new TimeSpan(Fraction(0), Fraction(1)))[0].value, -1)
+      assert.equal(pure(3).sub(pure(4)).query(st(0,1))[0].value, -1)
     })
   })
   describe('union()', function () {
@@ -155,7 +156,7 @@ describe('Pattern', function() {
 
       const pat = sequence(pure('c3'), pure('eb3')._slow(2)); // => try mini('c3 eb3/2') in repl
       assert.deepStrictEqual(
-        pat.query(ts(0,1))[1],
+        pat.query(st(0,1))[1],
         hap(ts(0.5,1.5), ts(1/2,1), "eb3")
       )
       // the following test fails

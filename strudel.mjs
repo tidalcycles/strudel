@@ -216,6 +216,27 @@ class Hap {
     }
 }
 
+export class State {
+    constructor(span, controls={}) {
+        this.span = span
+        this.controls = controls
+    }
+
+    // Returns new State with different span
+    setSpan(span) {
+        return new State(span, this.controls)
+    }
+
+    withSpan(func) {
+        return this.setSpan(func(this.span))
+    }
+
+    // Returns new State with different controls
+    setControls(controls) {
+        return new State(this.span, controls)
+    }
+}
+
 class Pattern {
     // the following functions will get patternFactories as nested functions:
     constructor(query) {
@@ -244,25 +265,27 @@ class Pattern {
         // easier to express, as all events are then constrained to happen within 
         // a cycle.
         const pat = this
-        const q = span => flatten(span.spanCycles.map(subspan => pat.query(subspan)))
+        const q = state => {
+            return flatten(state.span.spanCycles.map(subspan => pat.query(state.setSpan(subspan))))
+        }
         return new Pattern(q)
     }
 
 
     withQuerySpan(func) {
-        return new Pattern(span => this.query(func(span)))
+        return new Pattern(state => this.query(state.withSpan(func)))
     }
 
     withQueryTime(func) {
         // Returns a new pattern, with the function applied to both the begin
         // and end of the the query timespan
-        return new Pattern(span => this.query(span.withTime(func)))
+        return new Pattern(state => this.query(state.withSpan(span => span.withTime(func))))
     }
 
     withEventSpan(func) {
         // Returns a new pattern, with the function applied to each event
         // timespan.
-        return new Pattern(span => this.query(span).map(hap => hap.withSpan(func)))
+        return new Pattern(state => this.query(state).map(hap => hap.withSpan(func)))
     }
 
     withEventTime(func) {
@@ -272,13 +295,13 @@ class Pattern {
     }
 
     _withEvents(func) {
-        return new Pattern(span => func(this.query(span)))
+        return new Pattern(state => func(this.query(state)))
     }
 
     withValue(func) {
         // Returns a new pattern, with the function applied to the value of
         // each event. It has the alias 'fmap'.
-        return new Pattern(span => this.query(span).map(hap => hap.withValue(func)))
+        return new Pattern(state => this.query(state).map(hap => hap.withValue(func)))
     }
 
     // alias
@@ -287,11 +310,11 @@ class Pattern {
     }
 
     _filterEvents(event_test) {
-        return new Pattern(span => this.query(span).filter(event_test))
+        return new Pattern(state => this.query(state).filter(event_test))
     }
 
     _filterValues(value_test) {
-         return new Pattern(span => this.query(span).filter(hap => value_test(hap.value)))
+         return new Pattern(state => this.query(state).filter(hap => value_test(hap.value)))
     }
 
     _removeUndefineds() {
@@ -310,9 +333,9 @@ class Pattern {
         // resolve wholes, applies a given pattern of values to that
         // pattern of functions.
         const pat_func = this
-        const query = function(span) {
-            const event_funcs = pat_func.query(span)
-            const event_vals = pat_val.query(span)
+        const query = function(state) {
+            const event_funcs = pat_func.query(state)
+            const event_vals = pat_val.query(state)
             const apply = function(event_func, event_val) {
                 const s = event_func.part.intersection(event_val.part)
                 if (s == undefined) {
@@ -339,10 +362,10 @@ class Pattern {
     appLeft(pat_val) {
         const pat_func = this
 
-        const query = function(span) {
+        const query = function(state) {
             const haps = []
-            for (const hap_func of pat_func.query(span)) {
-                const event_vals = pat_val.query(hap_func.part)
+            for (const hap_func of pat_func.query(state)) {
+                const event_vals = pat_val.query(state.setSpan(hap_func.part))
                 for (const hap_val of event_vals) {
                     const new_whole = hap_func.whole
                     const new_part = hap_func.part.intersection_e(hap_val.part)
@@ -359,10 +382,10 @@ class Pattern {
     appRight(pat_val) {
         const pat_func = this
 
-        const query = function(span) {
+        const query = function(state) {
             const haps = []
-            for (const hap_val of pat_val.query(span)) {
-                const hap_funcs = pat_func.query(hap_val.part)
+            for (const hap_val of pat_val.query(state)) {
+                const hap_funcs = pat_func.query(state.setSpan(hap_val.part))
                 for (const hap_func of hap_funcs) {
                     const new_whole = hap_val.whole
                     const new_part = hap_func.part.intersection_e(hap_val.part)
@@ -377,7 +400,7 @@ class Pattern {
     }
 
     get firstCycle() {
-        return this.query(new TimeSpan(Fraction(0), Fraction(1)))
+        return this.query(new State(new TimeSpan(Fraction(0), Fraction(1))))
     }
 
     _sortEventsByPart() {
@@ -402,16 +425,16 @@ class Pattern {
     
     _bindWhole(choose_whole, func) {
         const pat_val = this
-        const query = function(span) {
+        const query = function(state) {
             const withWhole = function(a, b) {
                 return new Hap(choose_whole(a.whole, b.whole), b.part,
                                b.value
                              )
             }
             const match = function (a) {
-                return func(a.value).query(a.part).map(b => withWhole(a, b))
+                return func(a.value).query(state.setSpan(a.part)).map(b => withWhole(a, b))
             }
-            return flatten(pat_val.query(span).map(a => match(a)))
+            return flatten(pat_val.query(state).map(a => match(a)))
         }
         return new Pattern(query)
     }
@@ -559,7 +582,8 @@ class Pattern {
 
     rev() {
         const pat = this
-        const query = function(span) {
+        const query = function(state) {
+            const span = state.span
             const cycle = span.begin.sam()
             const next_cycle = span.begin.nextSam()
             const reflect = function(to_reflect) {
@@ -570,7 +594,7 @@ class Pattern {
                 reflected.end = tmp
                 return reflected
             }
-            const haps = pat.query(reflect(span))
+            const haps = pat.query(state.setSpan(reflect(span)))
             return haps.map(hap => hap.withSpan(reflect))
         }
         return new Pattern(query)._splitQueries()
@@ -645,8 +669,8 @@ const silence = new Pattern(_ => [])
 
 function pure(value) {
     // A discrete value that repeats once per cycle
-    function query(span) {
-        return span.spanCycles.map(subspan => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value))
+    function query(state) {
+        return state.span.spanCycles.map(subspan => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value))
     }
     return new Pattern(query)
 }
@@ -668,7 +692,7 @@ function reify(thing) {
 
 function stack(...pats) {
     const reified = pats.map(pat => reify(pat))
-    const query = span => flatten(reified.map(pat => pat.query(span)))
+    const query = state => flatten(reified.map(pat => pat.query(state)))
     return new Pattern(query)
 }
 
@@ -676,7 +700,8 @@ function slowcat(...pats) {
     // Concatenation: combines a list of patterns, switching between them
     // successively, one per cycle.
     pats = pats.map(reify)
-    const query = function(span) {
+    const query = function(state) {
+        const span = state.span
         const pat_n = Math.floor(span.begin) % pats.length; 
         const pat = pats[pat_n]
         if (!pat) {
@@ -687,7 +712,7 @@ function slowcat(...pats) {
         // For example if three patterns are slowcat-ed, the fourth cycle of the result should 
         // be the second (rather than fourth) cycle from the first pattern.
         const offset = span.begin.floor().sub(span.begin.div(pats.length).floor())
-        return pat.withEventTime(t => t.add(offset)).query(span.withTime(t => t.sub(offset)))
+        return pat.withEventTime(t => t.add(offset)).query(state.setSpan(span.withTime(t => t.sub(offset))))
     }
     return new Pattern(query)._splitQueries()
 }
@@ -696,10 +721,10 @@ function slowcatPrime(...pats) {
     // Concatenation: combines a list of patterns, switching between them
     // successively, one per cycle. Unlike slowcat, this version will skip cycles.
     pats = pats.map(reify)
-    const query = function(span) {
-        const pat_n = Math.floor(span.begin) % pats.length
+    const query = function(state) {
+        const pat_n = Math.floor(state.span.begin) % pats.length
         const pat = pats[pat_n]
-        return pat.query(span)
+        return pat.query(state)
     }
     return new Pattern(query)._splitQueries()
 }
