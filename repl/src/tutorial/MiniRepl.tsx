@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import * as Tone from 'tone';
 import useRepl from '../useRepl';
-import CodeMirror from '../CodeMirror';
+import CodeMirror, { markEvent } from '../CodeMirror';
 import cx from '../cx';
 
 const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination).set({
@@ -11,42 +11,87 @@ const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destina
   },
 });
 
-function MiniRepl({ tune, height = 100 }) {
-  const { code, setCode, activateCode, activeCode, setPattern, error, cycle, dirty, log, togglePlay } = useRepl({
+function MiniRepl({ tune, maxHeight = 500 }) {
+  const [editor, setEditor] = useState<any>();
+  const { code, setCode, activateCode, activeCode, setPattern, error, cycle, dirty, log, togglePlay, hash } = useRepl({
     tune,
     defaultSynth,
     autolink: false,
+    onEvent: useCallback(markEvent(editor), [editor]),
   });
+  const lines = code.split('\n').length;
+  const height = Math.min(lines * 30 + 30, maxHeight);
   return (
-    <div className="flex space-y-0 overflow-auto" style={{ height }}>
-      <div className="w-16 flex flex-col">
-        <button
-          className="grow bg-slate-700 border-b border-slate-500  text-white hover:bg-slate-600 "
-          onClick={() => togglePlay()}
-        >
-          {cycle.started ? 'pause' : 'play'}
-        </button>
-        <button
-          className={cx(
-            'grow  border-slate-500  hover:bg-slate-600',
-            activeCode && dirty ? 'bg-slate-700 text-white' : 'bg-slate-600 text-slate-400 cursor-not-allowed'
-          )}
-          onClick={() => activateCode()}
-        >
-          update
-        </button>
+    <div className="rounded-md overflow-hidden">
+      <div className="flex justify-between bg-slate-700 border-t border-slate-500">
+        <div className="flex">
+          <button
+            className={cx(
+              'w-16 flex items-center justify-center p-1 bg-slate-700 border-r border-slate-500  text-white hover:bg-slate-600',
+              cycle.started ? 'animate-pulse' : ''
+            )}
+            onClick={() => togglePlay()}
+          >
+            {!cycle.started ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            )}
+          </button>
+          <button
+            className={cx(
+              'w-16 flex items-center justify-center p-1 border-slate-500  hover:bg-slate-600',
+              dirty
+                ? 'bg-slate-700 border-r border-slate-500 text-white'
+                : 'bg-slate-600 text-slate-400 cursor-not-allowed'
+            )}
+            onClick={() => activateCode()}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
+        <div className="text-right p-1 text-sm">{error && <span className="text-red-200">{error.message}</span>}</div>{' '}
       </div>
-      <CodeMirror
-        className="w-full"
-        value={code}
-        options={{
-          mode: 'javascript',
-          theme: 'material',
-          lineNumbers: true,
-        }}
-        onChange={(_: any, __: any, value: any) => setCode(value)}
-      />
-      {/* <textarea className="w-full" value={code} onChange={(e) => setCode(e.target.value)} /> */}
+      <div className="flex space-y-0 overflow-auto" style={{ height }}>
+        <CodeMirror
+          className="w-full"
+          value={code}
+          editorDidMount={setEditor}
+          options={{
+            mode: 'javascript',
+            theme: 'material',
+            lineNumbers: true,
+          }}
+          onChange={(_: any, __: any, value: any) => setCode(value)}
+        />
+      </div>
+      {/* <div className="bg-slate-700 border-t border-slate-500 content-right pr-2 text-right">
+        <a href={`https://strudel.tidalcycles.org/#${hash}`} className="text-white items-center inline-flex">
+          <span>open in REPL</span>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+            <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+          </svg>
+        </a>
+      </div> */}
     </div>
   );
 }

@@ -17,8 +17,10 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
   const [activeCode, setActiveCode] = useState<string>();
   const [log, setLog] = useState('');
   const [error, setError] = useState<Error>();
+  const [hash, setHash] = useState('');
   const [pattern, setPattern] = useState<Pattern>();
-  const dirty = code !== activeCode;
+  const dirty = code !== activeCode || error;
+  const generateHash = () => encodeURIComponent(btoa(code));
   const activateCode = (_code = code) => {
     !cycle.started && cycle.start();
     broadcast({ type: 'start', from: id });
@@ -32,11 +34,12 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
       if (autolink) {
         window.location.hash = '#' + encodeURIComponent(btoa(code));
       }
+      setHash(generateHash());
       setError(undefined);
       setActiveCode(_code);
     } catch (err: any) {
       err.message = 'evaluation error: ' + err.message;
-      console.warn(err)
+      console.warn(err);
       setError(err);
     }
   };
@@ -153,6 +156,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
     activateCode,
     activeCode,
     pushLog,
+    hash,
   };
 }
 
