@@ -3,7 +3,6 @@ import type { ToneEventCallback } from 'tone';
 import * as Tone from 'tone';
 import { TimeSpan } from '../../strudel.mjs';
 import type { Hap } from './types';
-import usePostMessage from './usePostMessage';
 
 export declare interface UseCycleProps {
   onEvent: ToneEventCallback<any>;

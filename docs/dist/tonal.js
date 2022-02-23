@@ -2,7 +2,7 @@ import {Note, Interval, Scale} from "../_snowpack/pkg/@tonaljs/tonal.js";
 import {Pattern as _Pattern} from "../_snowpack/link/strudel.js";
 const Pattern = _Pattern;
 function toNoteEvent(event) {
-  if (typeof event === "string") {
+  if (typeof event === "string" || typeof event === "number") {
     return {value: event};
   }
   if (event.value) {
@@ -53,13 +53,20 @@ Pattern.prototype._mapNotes = function(func) {
 Pattern.prototype._transpose = function(intervalOrSemitones) {
   return this._mapNotes(({value, scale}) => {
     const interval = !isNaN(Number(intervalOrSemitones)) ? Interval.fromSemitones(intervalOrSemitones) : String(intervalOrSemitones);
+    if (typeof value === "number") {
+      const semitones = typeof interval === "string" ? Interval.semitones(interval) || 0 : interval;
+      return {value: value + semitones};
+    }
     return {value: Note.transpose(value, interval), scale};
   });
 };
 Pattern.prototype._scaleTranspose = function(offset) {
   return this._mapNotes(({value, scale}) => {
     if (!scale) {
-      throw new Error("can only use scaleOffset after .scale");
+      throw new Error("can only use scaleTranspose after .scale");
+    }
+    if (typeof value !== "string") {
+      throw new Error("can only use scaleTranspose with notes");
     }
     return {value: scaleTranspose(scale, Number(offset), value), scale};
   });

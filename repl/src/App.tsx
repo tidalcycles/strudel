@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import * as Tone from 'tone';
 import CodeMirror from './CodeMirror';
 import cx from './cx';
@@ -35,9 +35,33 @@ function getRandomTune() {
 const randomTune = getRandomTune();
 
 function App() {
+  const [editor, setEditor] = useState<any>();
+  const doc = useMemo(() => editor?.getDoc(), [editor]);
   const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog } = useRepl({
     tune: decoded || randomTune,
     defaultSynth,
+    onEvent: useCallback(
+      (event) => {
+        const locs = event.value.locations;
+        if (!locs) {
+          return;
+        }
+        // mark active event
+        const marks = locs.map(({ start, end }) =>
+          doc.markText(
+            { line: start.line - 1, ch: start.column },
+            { line: end.line - 1, ch: end.column },
+            { css: 'background-color: gray;' }
+          )
+        );
+        //Tone.Transport.schedule(() => { // problem: this can be cleared by scheduler...
+        setTimeout(() => {
+          marks.forEach((mark) => mark.clear());
+          // }, '+' + event.duration * 0.5);
+        }, event.duration * 0.9 * 1000);
+      },
+      [doc]
+    ),
   });
   const logBox = useRef<any>();
   // scroll log box to bottom when log changes
@@ -106,10 +130,12 @@ function App() {
           <div className={cx('h-full  bg-[#2A3236]', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}>
             <CodeMirror
               value={code}
+              editorDidMount={setEditor}
               options={{
                 mode: 'javascript',
                 theme: 'material',
                 lineNumbers: true,
+                styleSelectedText: true,
               }}
               onChange={(_: any, __: any, value: any) => setCode(value)}
             />

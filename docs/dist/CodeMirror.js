@@ -4,15 +4,17 @@ import "../_snowpack/pkg/codemirror/mode/javascript/javascript.js";
 import "../_snowpack/pkg/codemirror/mode/pegjs/pegjs.js";
 import "../_snowpack/pkg/codemirror/theme/material.css.proxy.js";
 import "../_snowpack/pkg/codemirror/lib/codemirror.css.proxy.js";
-export default function CodeMirror({value, onChange, options}) {
+export default function CodeMirror({value, onChange, options, editorDidMount}) {
   options = options || {
     mode: "javascript",
     theme: "material",
-    lineNumbers: true
+    lineNumbers: true,
+    styleSelectedText: true
   };
   return /* @__PURE__ */ React.createElement(CodeMirror2, {
     value,
     options,
-    onBeforeChange: onChange
+    onBeforeChange: onChange,
+    editorDidMount
   });
 }

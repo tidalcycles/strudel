@@ -24,6 +24,7 @@
     this.type_ = "element";
     this.source_ = source;
     this.options_ = options;
+    this.location_ = location();
   }
 
   var CommandStub = function(name, options)

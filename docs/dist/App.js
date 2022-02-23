@@ -1,4 +1,4 @@
-import React, {useCallback, useLayoutEffect, useRef} from "../_snowpack/pkg/react.js";
+import React, {useCallback, useLayoutEffect, useMemo, useRef, useState} from "../_snowpack/pkg/react.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
 import CodeMirror from "./CodeMirror.js";
 import cx from "./cx.js";
@@ -28,9 +28,21 @@ function getRandomTune() {
 }
 const randomTune = getRandomTune();
 function App() {
+  const [editor, setEditor] = useState();
+  const doc = useMemo(() => editor?.getDoc(), [editor]);
   const {setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog} = useRepl({
     tune: decoded || randomTune,
-    defaultSynth
+    defaultSynth,
+    onEvent: useCallback((event) => {
+      const locs = event.value.locations;
+      if (!locs) {
+        return;
+      }
+      const marks = locs.map(({start, end}) => doc.markText({line: start.line - 1, ch: start.column}, {line: end.line - 1, ch: end.column}, {css: "background-color: gray;"}));
+      setTimeout(() => {
+        marks.forEach((mark) => mark.clear());
+      }, event.duration * 0.9 * 1e3);
+    }, [doc])
   });
   const logBox = useRef();
   useLayoutEffect(() => {
@@ -95,10 +107,12 @@ function App() {
     className: cx("h-full  bg-[#2A3236]", error ? "focus:ring-red-500" : "focus:ring-slate-800")
   }, /* @__PURE__ */ React.createElement(CodeMirror, {
     value: code,
+    editorDidMount: setEditor,
     options: {
       mode: "javascript",
       theme: "material",
-      lineNumbers: true
+      lineNumbers: true,
+      styleSelectedText: true
     },
     onChange: (_2, __, value) => setCode(value)
   }), /* @__PURE__ */ React.createElement("span", {

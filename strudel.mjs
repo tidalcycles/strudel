@@ -148,7 +148,7 @@ class TimeSpan {
         return result
     }
 
-    get midpoint() {
+    midpoint() {
         return(this.begin.add((this.end.sub(this.begin)).div(Fraction(2))))
     }
 
@@ -296,6 +296,14 @@ class Pattern {
 
     _withEvents(func) {
         return new Pattern(state => func(this.query(state)))
+    }
+
+    withLocation(location) {
+      return this.fmap(value => {
+        value = typeof value === 'object' && !Array.isArray(value) ? value : { value };
+        const locations = (value.locations || []).concat([location]);
+        return {...value, locations }
+      })
     }
 
     withValue(func) {
@@ -478,7 +486,14 @@ class Pattern {
     _patternify(func) {
         const pat = this
         const patterned = function (...args) {
+          // the problem here: args could a pattern that has been turned into an object to add location
+          // to avoid object checking for every pattern method, we can remove it here...
+          // in the future, patternified args should be marked as well + some better object handling
+           args = args.map((arg) =>
+            arg.constructor?.name === 'Pattern' ? arg.fmap((value) => value.value || value) : arg
+           );
            const pat_arg = sequence(...args)
+           // arg.locations has to go somewhere..
            return pat_arg.fmap(arg => func.call(pat,arg)).outerJoin()
         }
         return patterned
@@ -679,6 +694,32 @@ function steady(value) {
     // A continuous value
     return new Pattern(span => Hap(undefined, span, value))
 }
+
+export const signal = func => {
+    const query = span => [new Hap(undefined, span, func(span.midpoint()))]
+    return new Pattern(query)
+}
+
+const _toBipolar = pat => pat.fmap(x => (x * 2) - 1)
+const _fromBipolar = pat => pat.fmap(x => (x + 1) / 2)
+
+export const sine2   = signal(t => Math.sin(Math.PI * 2 * t))
+export const sine    = _fromBipolar(sine2)
+
+export const cosine2 = sine2._early(0.25)
+export const cosine  = sine._early(0.25)
+
+export const saw     = signal(t => t % 1)
+export const saw2    = _toBipolar(saw)
+
+export const isaw    = signal(t => 1 - (t % 1))
+export const isaw2   = _toBipolar(isaw)
+
+export const tri2    = fastcat(isaw2, saw2)
+export const tri     = fastcat(isaw, saw)
+
+export const square  = signal(t => Math.floor((t*2) % 2))
+export const square2 = _toBipolar(square)
 
 function reify(thing) {
     // Tunrs something into a pattern, unless it's already a pattern
@@ -882,10 +923,34 @@ Pattern.prototype.bootstrap = () => {
   return bootstrapped;
 }
 
+// this is wrapped around mini patterns to offset krill parser location into the global js code space
+function withLocationOffset(pat, offset) {
+  return pat.fmap((value) => {
+    value = typeof value === 'object' && !Array.isArray(value) ? value : { value };
+    let locations = (value.locations || []);
+    locations = locations.map(({ start, end }) => {
+      const colOffset = start.line === 1 ? offset.start.column : 0;
+      return {
+      start: {
+        ...start,
+        line: start.line - 1 + (offset.start.line - 1) + 1,
+        column: start.column - 1 + colOffset,
+      },
+      end: {
+        ...end,
+        line: end.line - 1 + (offset.start.line - 1) + 1,
+        column: end.column - 1 + colOffset,
+      },
+    }});
+    return {...value, locations }
+  });
+}
+
 export {Fraction, TimeSpan, Hap, Pattern, 
     pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr, reify, silence,
     fast, slow, early, late, rev,
     add, sub, mul, div, union, every, when, off, jux, append, superimpose, 
-    struct, mask, invert, inv
+    struct, mask, invert, inv,
+    withLocationOffset
 }
 

@@ -32,7 +32,7 @@ Pattern.prototype.voicings = function (range) {
     range = ['F3', 'A4'];
   }
   return this.fmapNested((event) => {
-    lastVoicing = getVoicing(event.value, lastVoicing, range);
+    lastVoicing = getVoicing(event.value?.value || event.value, lastVoicing, range);
     return stack(...lastVoicing);
   });
 };

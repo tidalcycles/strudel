@@ -175,6 +175,13 @@ class Pattern {
   _withEvents(func) {
     return new Pattern((span) => func(this.query(span)));
   }
+  withLocation(location) {
+    return this.fmap((value) => {
+      value = typeof value === "object" && !Array.isArray(value) ? value : {value};
+      const locations = (value.locations || []).concat([location]);
+      return {...value, locations};
+    });
+  }
   withValue(func) {
     return new Pattern((span) => this.query(span).map((hap) => hap.withValue(func)));
   }
@@ -312,6 +319,7 @@ class Pattern {
   _patternify(func) {
     const pat = this;
     const patterned = function(...args) {
+      args = args.map((arg) => arg.constructor?.name === "Pattern" ? arg.fmap((value) => value.value || value) : arg);
       const pat_arg = sequence(...args);
       return pat_arg.fmap((arg) => func.call(pat, arg)).outerJoin();
     };
@@ -596,6 +604,28 @@ Pattern.prototype.bootstrap = () => {
   }));
   return bootstrapped;
 };
+function withLocationOffset(pat, offset) {
+  return pat.fmap((value) => {
+    value = typeof value === "object" && !Array.isArray(value) ? value : {value};
+    let locations = value.locations || [];
+    locations = locations.map(({start, end}) => {
+      const colOffset = start.line === 1 ? offset.start.column : 0;
+      return {
+        start: {
+          ...start,
+          line: start.line - 1 + (offset.start.line - 1) + 1,
+          column: start.column - 1 + colOffset
+        },
+        end: {
+          ...end,
+          line: end.line - 1 + (offset.start.line - 1) + 1,
+          column: end.column - 1 + colOffset
+        }
+      };
+    });
+    return {...value, locations};
+  });
+}
 export {
   Fraction,
   TimeSpan,
@@ -633,5 +663,6 @@ export {
   struct,
   mask,
   invert,
-  inv
+  inv,
+  withLocationOffset
 };

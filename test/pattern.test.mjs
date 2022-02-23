@@ -2,7 +2,7 @@ import Fraction from 'fraction.js'
 
 import { strict as assert } from 'assert';
 
-import {TimeSpan, Hap, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast, timeCat,add,sub,mul,div, State} from "../strudel.mjs";
+import {TimeSpan, Hap, State, Pattern, pure, stack, fastcat, slowcat, cat, sequence, polyrhythm, silence, fast, timeCat,add,sub,mul,div,saw,saw2,isaw,isaw2,sine,sine2,square,square2,tri,tri2} from "../strudel.mjs";
 //import { Time } from 'tone';
 import pkg from 'tone';
 const { Time } = pkg;
@@ -305,6 +305,28 @@ describe('Pattern', function() {
       assert.deepStrictEqual(
         sequence(true, false, [true, false]).invert().firstCycle,
         sequence(false, true, [false, true]).firstCycle
+      )
+    })
+  })
+  describe('signal()', function() {
+    it('Can make saw/saw2', function() {
+      assert.deepStrictEqual(
+        saw.struct(true,true,true,true).firstCycle,
+        sequence(1/8,3/8,5/8,7/8).firstCycle
+      )
+      assert.deepStrictEqual(
+        saw2.struct(true,true,true,true).firstCycle,
+        sequence(-3/4,-1/4,1/4,3/4).firstCycle
+      )
+    })
+    it('Can make isaw/isaw2', function() {
+      assert.deepStrictEqual(
+        isaw.struct(true,true,true,true).firstCycle,
+        sequence(7/8,5/8,3/8,1/8).firstCycle
+      )
+      assert.deepStrictEqual(
+        isaw2.struct(true,true,true,true).firstCycle,
+        sequence(3/4,1/4,-1/4,-3/4).firstCycle
       )
     })
   })
