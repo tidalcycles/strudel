@@ -315,19 +315,13 @@ Like "\*" in mini notation, **fast** will play a pattern times the given number 
 
 With early, you can nudge a pattern to start earlier in time:
 
-<MiniRepl tune={`cat(e5, pure(b4).late(0.5))`} />
-
-Note that we have to wrap b4 in **pure** to be able to call a the pattern modifier **early**.
-
-There is the shorthand **p** for this:
-
 <MiniRepl tune={`cat(e5, b4.late(0.5))`} />
 
 ### late(cycles)
 
 Like early, but in the other direction:
 
-<MiniRepl tune={`cat(e5, b4.p.late(0.5))`} />
+<MiniRepl tune={`cat(e5, b4.late(0.5))`} />
 
 TODO: shouldn't it sound different?
 
@@ -342,6 +336,8 @@ Will reverse the pattern:
 Will apply the given function every n cycles:
 
 <MiniRepl tune={`cat(e5, pure(b4).every(4, late(0.5)))`} />
+
+TODO: should be able to do b4.every => like already possible with fast slow etc..
 
 Note that late is called directly. This is a shortcut for:
 
