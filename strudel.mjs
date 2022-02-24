@@ -73,7 +73,7 @@ Fraction.prototype.min = function(other) {
 }
 
 Fraction.prototype.show = function () {
-    return this.n + "/" + this.d
+    return (this.s * this.n) + "/" + this.d
 }
 
 Fraction.prototype.or = function(other) {
@@ -212,7 +212,7 @@ class Hap {
     }
 
     show() {
-        return "(" + (this.whole == undefined ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + this.value + ")"
+        return "(" + (this.whole == undefined ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + JSON.stringify(this.value?.value ?? this.value) + ")"
     }
 }
 
@@ -574,7 +574,7 @@ class Pattern {
     }
 
     off(time_pat, func) {
-        return stack([this, func(this._early(time_pat))])
+        return stack(this, func(this.late(time_pat)))
     }
 
     every(n, func) {
@@ -635,9 +635,6 @@ class Pattern {
 
     edit(...funcs) {
       return stack(...funcs.map(func => func(this)));
-    }
-    pipe(func) {
-      return func(this);
     }
 
     _bypass(on) {
