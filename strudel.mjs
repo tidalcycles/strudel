@@ -636,9 +636,6 @@ class Pattern {
     edit(...funcs) {
       return stack(...funcs.map(func => func(this)));
     }
-    pipe(func) {
-      return func(this);
-    }
 
     _bypass(on) {
       on = Boolean(parseInt(on));
