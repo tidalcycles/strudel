@@ -329,4 +329,52 @@ describe('Pattern', function() {
       )
     })
   })
+  describe("apply", () => {
+    it('Can apply a function', () => {
+      assert.deepStrictEqual(
+        sequence("a", "b")._apply(fast(2)).firstCycle,
+        sequence("a", "b").fast(2).firstCycle
+      )
+    }),
+    it('Can apply a pattern of functions', () => {
+      assert.deepStrictEqual(
+        sequence("a", "b").apply(fast(2)).firstCycle,
+        sequence("a", "b").fast(2).firstCycle
+      )
+      assert.deepStrictEqual(
+        sequence("a", "b").apply(fast(2),fast(3)).firstCycle,
+        sequence("a", "b").fast(2,3).firstCycle
+      )
+    })
+  })
+  describe("layer", () => {
+    it('Can layer up multiple functions', () => {
+      assert.deepStrictEqual(
+        sequence(1,2,3).layer(fast(2), pat => pat.add(3,4)).firstCycle,
+        stack(sequence(1,2,3).fast(2), sequence(1,2,3).add(3,4)).firstCycle
+      )
+    })
+  })
+  describe("early", () => {
+    it("Can shift an event earlier", () => {
+      assert.deepStrictEqual(
+        pure(30)._late(0.25).query(ts(1,2)),
+        [hap(ts(1/4,5/4), ts(1,5/4), 30), hap(ts(5/4,9/4), ts(5/4,2), 30)]
+      )
+    })
+    it("Can shift an event earlier, into negative time", () => {
+      assert.deepStrictEqual(
+        pure(30)._late(0.25).query(ts(0,1)),
+        [hap(ts(-3/4,1/4), ts(0,1/4), 30), hap(ts(1/4,5/4), ts(1/4,1), 30)]
+      )
+    })    
+  })
+  describe("off", () => {
+    it("Can offset a transformed pattern from the original", () => {
+      assert.deepStrictEqual(
+        pure(30).off(0.25, add(2)).firstCycle,
+        stack(pure(30), pure(30).early(0.25).add(2)).firstCycle
+      )
+    })
+  })
 })
