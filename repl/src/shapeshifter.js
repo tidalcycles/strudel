@@ -91,7 +91,9 @@ export default (code) => {
       const isMarkable = isPatternArg(parents) || hasModifierCall(parent);
       // add to location to pure(x) calls
       if (node.type === 'CallExpression' && node.callee.name === 'pure') {
-        return reifyWithLocation(node.arguments[0].name, node.arguments[0], ast.locations, artificialNodes);
+        const literal = node.arguments[0];
+        const value = literal[{ LiteralNumericExpression: 'value', LiteralStringExpression: 'name' }[literal.type]];
+        return reifyWithLocation(value + '', node.arguments[0], ast.locations, artificialNodes);
       }
       // replace pseudo note variables
       if (node.type === 'IdentifierExpression') {
@@ -339,4 +341,3 @@ function getLocationObject(node, locations) {
     ],
   };
 }
-

@@ -212,7 +212,7 @@ class Hap {
     }
 
     show() {
-        return "(" + (this.whole == undefined ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + this.value + ")"
+        return "(" + (this.whole == undefined ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + JSON.stringify(this.value?.value ?? this.value) + ")"
     }
 }
 
