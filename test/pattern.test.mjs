@@ -383,7 +383,15 @@ describe('Pattern', function() {
     it("Can offset a transformed pattern from the original", () => {
       assert.deepStrictEqual(
         pure(30).off(0.25, add(2)).firstCycle,
-        stack(pure(30), pure(30).early(0.25).add(2)).firstCycle
+        stack(pure(30), pure(30).late(0.25).add(2)).firstCycle
+      )
+    })
+  })
+  describe("jux", () => {
+    it("Can juxtapose", () => {
+      assert.deepStrictEqual(
+        pure({a: 1}).jux(fast(2))._sortEventsByPart().firstCycle,
+        stack(pure({a:1, pan: 0}), pure({a:1, pan: 1}).fast(2))._sortEventsByPart().firstCycle
       )
     })
   })

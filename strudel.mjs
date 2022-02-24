@@ -618,7 +618,7 @@ class Pattern {
         const left = this.withValue(val => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) - by}))
         const right = this.withValue(val => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) + by}))
 
-        return stack([left,func(right)])
+        return stack(left,func(right))
     }
 
     // is there a different name for those in tidal?
