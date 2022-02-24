@@ -73,7 +73,7 @@ Fraction.prototype.min = function(other) {
 }
 
 Fraction.prototype.show = function () {
-    return this.n + "/" + this.d
+    return (this.s * this.n) + "/" + this.d
 }
 
 Fraction.prototype.or = function(other) {
@@ -574,7 +574,7 @@ class Pattern {
     }
 
     off(time_pat, func) {
-        return stack([this, func(this._early(time_pat))])
+        return stack(this, func(this.late(time_pat)))
     }
 
     every(n, func) {
