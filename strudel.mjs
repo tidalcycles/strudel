@@ -396,7 +396,11 @@ class Pattern {
                     const new_whole = hap_func.whole
                     const new_part = hap_func.part.intersection_e(hap_val.part)
                     const new_value = hap_func.value(hap_val.value)
-                    const hap = new Hap(new_whole, new_part, new_value, hap_val.context)
+                    const hap = new Hap(new_whole, new_part, new_value, {
+                      ...hap_val.context,
+                      ...hap_func.context,
+                      locations: (hap_val.context.locations || []).concat(hap_func.context.locations || []),
+                    });
                     haps.push(hap)
                 }
             }
@@ -416,7 +420,11 @@ class Pattern {
                     const new_whole = hap_val.whole
                     const new_part = hap_func.part.intersection_e(hap_val.part)
                     const new_value = hap_func.value(hap_val.value)
-                    const hap = new Hap(new_whole, new_part, new_value, hap_val.context)
+                    const hap = new Hap(new_whole, new_part, new_value, {
+                      ...hap_func.context,
+                      ...hap_val.context,
+                      locations: (hap_val.context.locations || []).concat(hap_func.context.locations || []),
+                    })
                     haps.push(hap)
                 }
             }
@@ -461,10 +469,11 @@ class Pattern {
         const pat_val = this
         const query = function(state) {
             const withWhole = function(a, b) {
-              // TODO: what to do with a.context here?
-                return new Hap(choose_whole(a.whole, b.whole), b.part,
-                               b.value, b.context
-                             )
+                return new Hap(choose_whole(a.whole, b.whole), b.part, b.value, {
+                  ...a.context,
+                  ...b.context,
+                  locations: (a.context.locations || []).concat(b.context.locations || []),
+                });
             }
             const match = function (a) {
                 return func(a.value).query(state.setSpan(a.part)).map(b => withWhole(a, b))
