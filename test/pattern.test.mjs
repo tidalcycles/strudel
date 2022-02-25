@@ -80,6 +80,16 @@ describe('Pattern', function() {
       assert.equal(pure(3).sub(pure(4)).query(new TimeSpan(Fraction(0), Fraction(1)))[0].value, -1)
     })
   })
+  describe('mul()', function () {
+    it('Can multiply things', function() {
+      assert.equal(pure(3).mul(pure(2)).firstCycle[0].value, 6)
+    })
+  })
+  describe('div()', function () {
+    it('Can divide things', function() {
+      assert.equal(pure(3).div(pure(2)).firstCycle[0].value, 1.5)
+    })
+  })
   describe('union()', function () {
     it('Can union things', function () {
       assert.deepStrictEqual(pure({a: 4, b: 6}).union(pure({c: 7})).firstCycle[0].value, {a: 4, b: 6, c: 7})
@@ -373,7 +383,15 @@ describe('Pattern', function() {
     it("Can offset a transformed pattern from the original", () => {
       assert.deepStrictEqual(
         pure(30).off(0.25, add(2)).firstCycle,
-        stack(pure(30), pure(30).early(0.25).add(2)).firstCycle
+        stack(pure(30), pure(30).late(0.25).add(2)).firstCycle
+      )
+    })
+  })
+  describe("jux", () => {
+    it("Can juxtapose", () => {
+      assert.deepStrictEqual(
+        pure({a: 1}).jux(fast(2))._sortEventsByPart().firstCycle,
+        stack(pure({a:1, pan: 0}), pure({a:1, pan: 1}).fast(2))._sortEventsByPart().firstCycle
       )
     })
   })
