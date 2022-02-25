@@ -125,13 +125,13 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
 
   /* useWebMidi({
     ready: useCallback(({ outputs }) => {
-      pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `"${o.name}"`).join(' | ')}) to the pattern. `);
+      pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `'${o.name}'`).join(' | ')}) to the pattern. `);
     }, []),
     connected: useCallback(({ outputs }) => {
-      pushLog(`Midi device connected! Available: ${outputs.map((o) => `"${o.name}"`).join(', ')}`);
+      pushLog(`Midi device connected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`);
     }, []),
     disconnected: useCallback(({ outputs }) => {
-      pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `"${o.name}"`).join(', ')}`);
+      pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`);
     }, []),
   }); */
 

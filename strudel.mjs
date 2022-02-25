@@ -73,7 +73,7 @@ Fraction.prototype.min = function(other) {
 }
 
 Fraction.prototype.show = function () {
-    return this.n + "/" + this.d
+    return (this.s * this.n) + "/" + this.d
 }
 
 Fraction.prototype.or = function(other) {
@@ -214,7 +214,7 @@ class Hap {
     }
 
     show() {
-        return "(" + (this.whole == undefined ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + this.value + ")"
+        return "(" + (this.whole == undefined ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + JSON.stringify(this.value?.value ?? this.value) + ")"
     }
 
     setContext(context) {
@@ -441,6 +441,14 @@ class Pattern {
         return this._opleft(other, a => b => a - b)
     }
     
+    mul(other) {
+        return this._opleft(other, a => b => a * b)
+    }
+
+    div(other) {
+        return this._opleft(other, a => b => a / b)
+    }
+
     union(other) {
         return this._opleft(other, a => b => Object.assign({}, a, b))
     }
@@ -495,6 +503,14 @@ class Pattern {
         // Flattens a pattern of patterns into a pattern, where wholes are
         // taken from inner events.
         return this.outerBind(id)
+    }
+
+    _apply(func) {
+        return func(this)
+    }
+
+    layer(...funcs) {
+        return stack(...funcs.map(func => func(this)))
     }
 
     _patternify(func) {
@@ -595,7 +611,7 @@ class Pattern {
     }
 
     off(time_pat, func) {
-        return stack([this, func(this._early(time_pat))])
+        return stack(this, func(this.late(time_pat)))
     }
 
     every(n, func) {
@@ -640,7 +656,7 @@ class Pattern {
         const left = this.withValue(val => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) - by}))
         const right = this.withValue(val => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) + by}))
 
-        return stack([left,func(right)])
+        return stack(left,func(right))
     }
 
     // is there a different name for those in tidal?
@@ -657,9 +673,6 @@ class Pattern {
 
     edit(...funcs) {
       return stack(...funcs.map(func => func(this)));
-    }
-    pipe(func) {
-      return func(this);
     }
 
     _bypass(on) {
@@ -689,7 +702,7 @@ class Pattern {
 }
 
 // methods of Pattern that get callable factories
-Pattern.prototype.patternified = ['fast', 'slow', 'early', 'late'];
+Pattern.prototype.patternified = ['apply', 'fast', 'slow', 'early', 'late'];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)

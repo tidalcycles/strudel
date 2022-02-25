@@ -53,7 +53,7 @@ Fraction.prototype.min = function(other) {
   return this.lt(other) ? this : other;
 };
 Fraction.prototype.show = function() {
-  return this.n + "/" + this.d;
+  return this.s * this.n + "/" + this.d;
 };
 Fraction.prototype.or = function(other) {
   return this.eq(0) ? other : this;
@@ -276,6 +276,12 @@ class Pattern {
   sub(other) {
     return this._opleft(other, (a) => (b) => a - b);
   }
+  mul(other) {
+    return this._opleft(other, (a) => (b) => a * b);
+  }
+  div(other) {
+    return this._opleft(other, (a) => (b) => a / b);
+  }
   union(other) {
     return this._opleft(other, (a) => (b) => Object.assign({}, a, b));
   }
@@ -315,6 +321,12 @@ class Pattern {
   }
   outerJoin() {
     return this.outerBind(id);
+  }
+  _apply(func) {
+    return func(this);
+  }
+  layer(...funcs) {
+    return stack(...funcs.map((func) => func(this)));
   }
   _patternify(func) {
     const pat = this;
@@ -384,7 +396,7 @@ class Pattern {
     return stack(with_pat, without_pat);
   }
   off(time_pat, func) {
-    return stack([this, func(this._early(time_pat))]);
+    return stack(this, func(this.late(time_pat)));
   }
   every(n, func) {
     const pat = this;
@@ -447,7 +459,7 @@ class Pattern {
     return silence;
   }
 }
-Pattern.prototype.patternified = ["fast", "slow", "early", "late"];
+Pattern.prototype.patternified = ["apply", "fast", "slow", "early", "late"];
 Pattern.prototype.factories = {pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 const silence = new Pattern((_) => []);
 function pure(value) {
