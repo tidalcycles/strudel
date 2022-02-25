@@ -726,7 +726,7 @@ function steady(value) {
 }
 
 export const signal = func => {
-    const query = span => [new Hap(undefined, span, func(span.midpoint()))]
+    const query = state => [new Hap(undefined, state.span, func(state.span.midpoint()))]
     return new Pattern(query)
 }
 

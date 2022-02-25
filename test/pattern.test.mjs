@@ -382,13 +382,13 @@ describe('Pattern', function() {
   describe("early", () => {
     it("Can shift an event earlier", () => {
       assert.deepStrictEqual(
-        pure(30)._late(0.25).query(ts(1,2)),
+        pure(30)._late(0.25).query(st(1,2)),
         [hap(ts(1/4,5/4), ts(1,5/4), 30), hap(ts(5/4,9/4), ts(5/4,2), 30)]
       )
     })
     it("Can shift an event earlier, into negative time", () => {
       assert.deepStrictEqual(
-        pure(30)._late(0.25).query(ts(0,1)),
+        pure(30)._late(0.25).query(st(0,1)),
         [hap(ts(-3/4,1/4), ts(0,1/4), 30), hap(ts(1/4,5/4), ts(1/4,1), 30)]
       )
     })    
