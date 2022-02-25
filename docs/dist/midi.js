@@ -21,6 +21,9 @@ export default function enableWebMidi() {
 }
 const outputByName = (name) => WebMidi.getOutputByName(name);
 Pattern.prototype.midi = function(output, channel = 1) {
+  if (output?.constructor?.name === "Pattern") {
+    throw new Error(`.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${WebMidi.outputs?.[0]?.name || "IAC Driver Bus 1"}')`);
+  }
   return this.fmap((value) => ({
     ...value,
     onTrigger: (time, event) => {
@@ -36,7 +39,7 @@ Pattern.prototype.midi = function(output, channel = 1) {
       }
       const device = output ? outputByName(output) : WebMidi.outputs[0];
       if (!device) {
-        throw new Error(`🔌 MIDI device ${output ? output : ""} not found. Use one of ${WebMidi.outputs.map((o) => `"${o.name}"`).join(" | ")}`);
+        throw new Error(`🔌 MIDI device '${output ? output : ""}' not found. Use one of ${WebMidi.outputs.map((o) => `'${o.name}'`).join(" | ")}`);
       }
       const timingOffset = WebMidi.time - Tone.context.currentTime * 1e3;
       time = time * 1e3 + timingOffset;

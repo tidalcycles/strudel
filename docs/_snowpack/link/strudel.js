@@ -140,7 +140,7 @@ class Hap {
     return this.spanEquals(other) && this.part.equals(other.part) && this.value === other.value;
   }
   show() {
-    return "(" + (this.whole == void 0 ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + this.value + ")";
+    return "(" + (this.whole == void 0 ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + JSON.stringify(this.value?.value ?? this.value) + ")";
   }
 }
 class Pattern {
@@ -434,7 +434,7 @@ class Pattern {
     };
     const left = this.withValue((val) => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) - by}));
     const right = this.withValue((val) => Object.assign({}, val, {pan: elem_or(val, "pan", 0.5) + by}));
-    return stack([left, func(right)]);
+    return stack(left, func(right));
   }
   stack(...pats) {
     return stack(this, ...pats);
