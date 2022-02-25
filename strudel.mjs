@@ -172,12 +172,14 @@ class Hap {
     then the whole will be returned as None, in which case the given
     value will have been sampled from the point halfway between the
     start and end of the 'part' timespan.
+    The context is to store a list of source code locations causing the event
     */
 
-    constructor(whole, part, value) {
+    constructor(whole, part, value, context=[]) {
         this.whole = whole
         this.part = part
         this.value = value
+        this.context = context
     }
 
     withSpan(func) {
@@ -213,6 +215,10 @@ class Hap {
 
     show() {
         return "(" + (this.whole == undefined ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + this.value + ")"
+    }
+
+    setContext(context) {
+        return new Hap(this.whole, this.part, this.value, context)
     }
 }
 
@@ -296,6 +302,14 @@ class Pattern {
 
     _withEvents(func) {
         return new Pattern(state => func(this.query(state)))
+    }
+
+    _withEvent(func) {
+        return this._withEvents(events => events.map(func))
+    }
+
+    _setContext(context) {
+        return this._withEvent(event => event.setContext(context))
     }
 
     withLocation(location) {

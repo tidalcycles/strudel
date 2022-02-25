@@ -9,7 +9,7 @@ const { Time } = pkg;
 
 const st = (begin, end) => new State(ts(begin, end))
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
-const hap = (whole, part, value) => new Hap(whole, part, value)
+const hap = (whole, part, value, context=[]) => new Hap(whole, part, value, context)
 
 const third = Fraction(1,3)
 const twothirds = Fraction(2,3)
@@ -327,6 +327,19 @@ describe('Pattern', function() {
       assert.deepStrictEqual(
         isaw2.struct(true,true,true,true).firstCycle,
         sequence(3/4,1/4,-1/4,-3/4).firstCycle
+      )
+    })    
+  })
+  describe('_setContext()', () => {
+    it('Can set the event context', () => {
+      assert.deepStrictEqual(
+        pure("a")._setContext([[[0,1],[1,2]]]).firstCycle,
+        [hap(ts(0,1),
+             ts(0,1), 
+             "a", 
+             [[[0,1],[1,2]]]
+            )
+        ]
       )
     })
   })
