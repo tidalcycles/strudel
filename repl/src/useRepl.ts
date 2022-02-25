@@ -56,8 +56,9 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
       (time, event) => {
         try {
           onEvent?.(event);
-          if (!event.value?.onTrigger) {
-            const note = event.value?.value || event.value;
+          const { onTrigger } = event.context;
+          if (!onTrigger) {
+            const note = event.value;
             if (!isNote(note)) {
               throw new Error('not a note: ' + note);
             }
@@ -69,7 +70,6 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
             /* console.warn('no instrument chosen', event);
           throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
           } else {
-            const { onTrigger } = event.value;
             onTrigger(time, event);
           }
         } catch (err: any) {
