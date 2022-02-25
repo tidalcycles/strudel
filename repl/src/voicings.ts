@@ -19,7 +19,7 @@ Pattern.prototype.fmapNested = function (func) {
       .map((event) =>
         reify(func(event))
           .query(span)
-          .map((hap) => new Hap(event.whole, event.part, hap.value))
+          .map((hap) => new Hap(event.whole, event.part, hap.value, hap.context))
       )
       .flat()
   );
@@ -33,7 +33,9 @@ Pattern.prototype.voicings = function (range) {
   }
   return this.fmapNested((event) => {
     lastVoicing = getVoicing(event.value, lastVoicing, range);
-    return stack(...lastVoicing);
+    return stack(...lastVoicing)._withContext(() => ({
+      locations: event.context.locations || [],
+    }));
   });
 };
 
