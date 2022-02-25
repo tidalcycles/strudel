@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ToneEventCallback } from 'tone';
 import * as Tone from 'tone';
-import { TimeSpan } from '../../strudel.mjs';
+import { TimeSpan, State } from '../../strudel.mjs';
 import type { Hap } from './types';
 
 export declare interface UseCycleProps {
   onEvent: ToneEventCallback<any>;
-  onQuery?: (query: TimeSpan) => Hap[];
+  onQuery?: (state: State) => Hap[];
   onSchedule?: (events: Hap[], cycle: number) => void;
   ready?: boolean; // if false, query will not be called on change props
 }
@@ -21,7 +21,7 @@ function useCycle(props: UseCycleProps) {
   // pull events with onQuery + count up to next cycle
   const query = (cycle = activeCycle()) => {
     const timespan = new TimeSpan(cycle, cycle + 1);
-    const events = onQuery?.(timespan) || [];
+    const events = onQuery?.(new State(timespan)) || [];
     onSchedule?.(events, cycle);
     // cancel events after current query. makes sure no old events are player for rescheduled cycles
     // console.log('schedule', cycle);
@@ -46,6 +46,7 @@ function useCycle(props: UseCycleProps) {
             time: event.part.begin.valueOf(),
             duration: event.whole.end.sub(event.whole.begin).valueOf(),
             value: event.value,
+            context: event.context,
           };
           onEvent(time, toneEvent);
         }, event.part.begin.valueOf());

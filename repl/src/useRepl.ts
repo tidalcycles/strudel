@@ -81,9 +81,9 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
       [onEvent]
     ),
     onQuery: useCallback(
-      (span) => {
+      (state) => {
         try {
-          return pattern?.query(span) || [];
+          return pattern?.query(state) || [];
         } catch (err: any) {
           err.message = 'query error: ' + err.message;
           setError(err);

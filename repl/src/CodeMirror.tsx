@@ -18,7 +18,7 @@ export default function CodeMirror({ value, onChange, options, editorDidMount }:
 }
 
 export const markEvent = (editor) => (event) => {
-  const locs = event.value.locations;
+  const locs = event.context.locations;
   if (!locs || !editor) {
     return;
   }

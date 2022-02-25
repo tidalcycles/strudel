@@ -175,7 +175,7 @@ class Hap {
     The context is to store a list of source code locations causing the event
     */
 
-    constructor(whole, part, value, context=[]) {
+    constructor(whole, part, value, context = {}) {
         this.whole = whole
         this.part = part
         this.value = value
@@ -185,12 +185,12 @@ class Hap {
     withSpan(func) {
         // Returns a new event with the function f applies to the event timespan.
         const whole = this.whole ? func(this.whole) : undefined
-        return new Hap(whole, func(this.part), this.value)
+        return new Hap(whole, func(this.part), this.value, this.context)
     }
 
     withValue(func) {
         // Returns a new event with the function f applies to the event value.
-        return new Hap(this.whole, this.part, func(this.value))
+        return new Hap(this.whole, this.part, func(this.value), this.context)
     }
 
     hasOnset() {
@@ -317,11 +317,10 @@ class Pattern {
     }
 
     withLocation(location) {
-      return this.fmap(value => {
-        value = typeof value === 'object' && !Array.isArray(value) ? value : { value };
-        const locations = (value.locations || []).concat([location]);
-        return {...value, locations }
-      })
+      return this._withContext((context) => {
+        const locations = (context.locations || []).concat([location])
+        return { ...context, locations }
+      });
     }
 
     withValue(func) {
@@ -367,7 +366,8 @@ class Pattern {
                 if (s == undefined) {
                     return undefined
                 }
-                return new Hap(whole_func(event_func.whole, event_val.whole), s, event_func.value(event_val.value))
+                // TODO: is it right to add event_val.context here?
+                return new Hap(whole_func(event_func.whole, event_val.whole), s, event_func.value(event_val.value), event_val.context)
             }
             return flatten(event_funcs.map(event_func => removeUndefineds(event_vals.map(event_val => apply(event_func, event_val)))))
         }
@@ -396,7 +396,7 @@ class Pattern {
                     const new_whole = hap_func.whole
                     const new_part = hap_func.part.intersection_e(hap_val.part)
                     const new_value = hap_func.value(hap_val.value)
-                    const hap = new Hap(new_whole, new_part, new_value)
+                    const hap = new Hap(new_whole, new_part, new_value, hap_val.context)
                     haps.push(hap)
                 }
             }
@@ -416,7 +416,7 @@ class Pattern {
                     const new_whole = hap_val.whole
                     const new_part = hap_func.part.intersection_e(hap_val.part)
                     const new_value = hap_func.value(hap_val.value)
-                    const hap = new Hap(new_whole, new_part, new_value)
+                    const hap = new Hap(new_whole, new_part, new_value, hap_val.context)
                     haps.push(hap)
                 }
             }
@@ -461,8 +461,9 @@ class Pattern {
         const pat_val = this
         const query = function(state) {
             const withWhole = function(a, b) {
+              // TODO: what to do with a.context here?
                 return new Hap(choose_whole(a.whole, b.whole), b.part,
-                               b.value
+                               b.value, b.context
                              )
             }
             const match = function (a) {
@@ -959,9 +960,8 @@ Pattern.prototype.bootstrap = () => {
 
 // this is wrapped around mini patterns to offset krill parser location into the global js code space
 function withLocationOffset(pat, offset) {
-  return pat.fmap((value) => {
-    value = typeof value === 'object' && !Array.isArray(value) ? value : { value };
-    let locations = (value.locations || []);
+  return pat._withContext((context) => {
+    let locations = (context.locations || []);
     locations = locations.map(({ start, end }) => {
       const colOffset = start.line === 1 ? offset.start.column : 0;
       return {
@@ -976,7 +976,7 @@ function withLocationOffset(pat, offset) {
         column: end.column - 1 + colOffset,
       },
     }});
-    return {...value, locations }
+    return {...context, locations }
   });
 }
 
