@@ -52,9 +52,9 @@ Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
       : String(intervalOrSemitones);
     if (typeof event.value === 'number') {
       const semitones = typeof interval === 'string' ? Interval.semitones(interval) || 0 : interval;
-      return event.withValue(event.value + semitones);
+      return event.withValue(() => event.value + semitones);
     }
-    return event.withValue((v) => Note.transpose(event.value, interval));
+    return event.withValue(() => Note.transpose(event.value, interval));
   });
 };
 
