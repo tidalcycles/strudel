@@ -92,15 +92,16 @@ export default (code) => {
       // add to location to pure(x) calls
       if (node.type === 'CallExpression' && node.callee.name === 'pure') {
         const literal = node.arguments[0];
-        const value = literal[{ LiteralNumericExpression: 'value', LiteralStringExpression: 'name' }[literal.type]];
-        return reifyWithLocation(value + '', node.arguments[0], ast.locations, artificialNodes);
+        // const value = literal[{ LiteralNumericExpression: 'value', LiteralStringExpression: 'name' }[literal.type]];
+        // console.log('value',value);
+        return reifyWithLocation(literal, node.arguments[0], ast.locations, artificialNodes);
       }
       // replace pseudo note variables
       if (node.type === 'IdentifierExpression') {
         if (isNote(node.name)) {
           const value = node.name[1] === 's' ? node.name.replace('s', '#') : node.name;
           if (addLocations && isMarkable) {
-            return reifyWithLocation(value, node, ast.locations, artificialNodes);
+            return reifyWithLocation(new LiteralStringExpression({ value }), node, ast.locations, artificialNodes);
           }
           return new LiteralStringExpression({ value });
         }
@@ -110,7 +111,7 @@ export default (code) => {
       }
       if (addLocations && node.type === 'LiteralStringExpression' && isMarkable) {
         // console.log('add', node);
-        return reifyWithLocation(node.value, node, ast.locations, artificialNodes);
+        return reifyWithLocation(node, node, ast.locations, artificialNodes);
       }
       if (!addMiniLocations) {
         return wrapFunction('reify', node);
@@ -219,10 +220,10 @@ function wrapLocationOffset(node, stringNode, locations, artificialNodes) {
 
 // turns node in reify(value).withLocation(location), where location is the node's location in the source code
 // with this, the reified pattern can pass its location to the event, to know where to highlight when it's active
-function reifyWithLocation(value, node, locations, artificialNodes) {
+function reifyWithLocation(literalNode, node, locations, artificialNodes) {
   const withLocation = new CallExpression({
     callee: new StaticMemberExpression({
-      object: wrapFunction('reify', new LiteralStringExpression({ value })),
+      object: wrapFunction('reify', literalNode),
       property: 'withLocation',
     }),
     arguments: [getLocationObject(node, locations)],
