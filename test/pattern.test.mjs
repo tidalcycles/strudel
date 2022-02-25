@@ -353,6 +353,19 @@ describe('Pattern', function() {
       )
     })
   })
+  describe('_withContext()', () => {
+    it('Can update the event context', () => {
+      assert.deepStrictEqual(
+        pure("a")._setContext([[[0,1],[1,2]]])._withContext(c => [...c,[[3,4],[3,4]]]).firstCycle,
+        [hap(ts(0,1),
+             ts(0,1), 
+             "a", 
+             [[[0,1],[1,2]],[[3,4],[3,4]]]
+            )
+        ]
+      )
+    })
+  })
   describe("apply", () => {
     it('Can apply a function', () => {
       assert.deepStrictEqual(

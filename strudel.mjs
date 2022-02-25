@@ -312,6 +312,10 @@ class Pattern {
         return this._withEvent(event => event.setContext(context))
     }
 
+    _withContext(func) {
+        return this._withEvent(event => event.setContext(func(event.context)))
+    }
+
     withLocation(location) {
       return this.fmap(value => {
         value = typeof value === 'object' && !Array.isArray(value) ? value : { value };
