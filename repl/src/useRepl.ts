@@ -47,7 +47,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
   // logs events of cycle
   const logCycle = (_events: any, cycle: any) => {
     if (_events.length) {
-      pushLog(`# cycle ${cycle}\n` + _events.map((e: any) => e.show()).join('\n'));
+      // pushLog(`# cycle ${cycle}\n` + _events.map((e: any) => e.show()).join('\n'));
     }
   };
   // cycle hook to control scheduling
