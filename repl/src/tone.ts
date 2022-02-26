@@ -16,6 +16,7 @@ import {
   NoiseSynth,
   PluckSynth,
   Sampler,
+  getDestination
 } from 'tone';
 
 // what about
@@ -62,7 +63,7 @@ export const lowpass = (v) => new Filter(v, 'lowpass');
 export const highpass = (v) => new Filter(v, 'highpass');
 export const adsr = (a, d = 0.1, s = 0.4, r = 0.01) => ({ envelope: { attack: a, decay: d, sustain: s, release: r } });
 export const osc = (type) => ({ oscillator: { type } });
-export const out = Destination;
+export const out = () => getDestination();
 
 /*
 
@@ -78,7 +79,7 @@ const chainable = function (instr) {
   instr.chain = (...args) => {
     chained = chained.concat(args);
     instr.disconnect(); // disconnect from destination / previous chain
-    return _chain(...chained, Destination);
+    return _chain(...chained, getDestination());
   };
   // shortcuts: chaining multiple won't work forn now.. like filter(1000).gain(0.5). use chain + native Tone calls instead
   instr.filter = (freq = 1000, type: BiquadFilterType = 'lowpass') =>
@@ -178,7 +179,7 @@ Pattern.prototype.chain = function (...effectGetters: any) {
     const chain = (value.chain || []).concat(effectGetters);
     const getChain = () => {
       const effects = chain.map((getEffect: any) => getEffect());
-      return value.getInstrument().chain(...effects, Destination);
+      return value.getInstrument().chain(...effects, getDestination());
     };
     const onTrigger = getTrigger(getChain, value.value);
     return { ...value, getChain, onTrigger, chain };
