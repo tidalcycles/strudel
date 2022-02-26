@@ -175,11 +175,15 @@ class Hap {
     The context is to store a list of source code locations causing the event
     */
 
-    constructor(whole, part, value, context = {}) {
+    constructor(whole, part, value, context = {}, stateful = false) {
         this.whole = whole
         this.part = part
         this.value = value
         this.context = context
+        this.stateful = stateful
+        if (stateful) {
+            assert(typeof this.value === "function", "Stateful values must be functions");
+        }
     }
 
     withSpan(func) {
@@ -197,6 +201,15 @@ class Hap {
         // Test whether the event contains the onset, i.e that
         // the beginning of the part is the same as that of the whole timespan."""
         return (this.whole != undefined) && (this.whole.begin.equals(this.part.begin))
+    }
+
+    resolveState(state) {
+        if (this.stateful && this.hasOnset()) {
+            const func = this.value
+            [newState, newValue] = func(state)
+            return [newState, this.withValue(() => newValue)]
+        }
+        return [state, this]
     }
 
     spanEquals(other) {
@@ -316,6 +329,10 @@ class Pattern {
         return this._withEvent(event => event.setContext(func(event.context)))
     }
 
+    _stripContext() {
+        return this._withEvent(event => event.setContext({}))
+    }
+
     withLocation(location) {
       return this._withContext((context) => {
         const locations = (context.locations || []).concat([location])
@@ -372,7 +389,7 @@ class Pattern {
             return flatten(event_funcs.map(event_func => removeUndefineds(event_vals.map(event_val => apply(event_func, event_val)))))
         }
         return new Pattern(query)
-        }
+    }
 
     appBoth(pat_val) {
         // Tidal's <*>
@@ -433,8 +450,12 @@ class Pattern {
         return new Pattern(query)
     }
 
-    get firstCycle() {
-        return this.query(new State(new TimeSpan(Fraction(0), Fraction(1))))
+    firstCycle(with_context=false) {
+        var self = this
+        if (!with_context) {
+            self = self._stripContext()
+        }
+        return self.query(new State(new TimeSpan(Fraction(0), Fraction(1))))
     }
 
     _sortEventsByPart() {
