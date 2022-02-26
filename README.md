@@ -1,4 +1,6 @@
-# strudel ![Strudel test status](https://github.com/tidalcycles/strudel/actions/workflows/test.yml/badge.svg)
+# strudel 
+
+![Strudel test status](https://github.com/tidalcycles/strudel/actions/workflows/test.yml/badge.svg)
 
 ## Local development
 
