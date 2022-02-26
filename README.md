@@ -1,4 +1,4 @@
-# strudel
+# strudel ![Strudel test status](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
 
 ## Local development
 
