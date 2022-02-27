@@ -37,11 +37,12 @@ const randomTune = getRandomTune();
 
 function App() {
   const [editor, setEditor] = useState<any>();
-  const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog } = useRepl({
-    tune: decoded || randomTune,
-    defaultSynth,
-    onDraw: useCallback(markEvent(editor), [editor]),
-  });
+  const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog, pending } =
+    useRepl({
+      tune: decoded || randomTune,
+      defaultSynth,
+      onDraw: useCallback(markEvent(editor), [editor]),
+    });
   const logBox = useRef<any>();
   // scroll log box to bottom when log changes
   useLayoutEffect(() => {
@@ -56,7 +57,6 @@ function App() {
         switch (e.code) {
           case 'Enter':
             await activateCode();
-            !cycle.started && cycle.start();
             break;
           case 'Period':
             cycle.stop();
@@ -133,7 +133,7 @@ function App() {
           className="flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500"
           onClick={() => togglePlay()}
         >
-          {cycle.started ? 'pause' : 'play'}
+          {!pending ? <>{cycle.started ? 'pause' : 'play'}</> : <>loading...</>}
         </button>
         <textarea
           className="grow bg-[#283237] border-0 text-xs min-h-[200px]"
