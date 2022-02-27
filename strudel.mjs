@@ -469,23 +469,23 @@ class Pattern {
 
     _asNumber() {
       return this._withEvent(event => {
-        const asNumber = Number(event.value)
-        if(!isNaN(asNumber)) {
-          return asNumber;
+        const asNumber = Number(event.value);
+        if (!isNaN(asNumber)) {
+          return event.withValue(() => asNumber);
         }
         const specialValue = {
           e: Math.E,
-          pi: Math.PI
+          pi: Math.PI,
         }[event.value];
-        if(typeof specialValue !== 'undefined') {
-          return specialValue;
+        if (typeof specialValue !== 'undefined') {
+          return event.withValue(() => specialValue);
         }
-        if(isNote(event.value)) {
+        if (isNote(event.value)) {
           // set context type to midi to let the player know its meant as midi number and not as frequency
           return new Hap(event.whole, event.part, toMidi(event.value), { ...event.context, type: 'midi' });
         }
         throw new Error('cannot parse as number: "' + event.value + '"');
-      })
+      });
     }
 
     add(other) {
