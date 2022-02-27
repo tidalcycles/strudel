@@ -8,12 +8,13 @@ export declare interface UseCycleProps {
   onEvent: ToneEventCallback<any>;
   onQuery?: (query: TimeSpan) => Hap[];
   onSchedule?: (events: Hap[], cycle: number) => void;
+  onDraw?: ToneEventCallback<any>;
   ready?: boolean; // if false, query will not be called on change props
 }
 
 function useCycle(props: UseCycleProps) {
   // onX must use useCallback!
-  const { onEvent, onQuery, onSchedule, ready = true } = props;
+  const { onEvent, onQuery, onSchedule, ready = true, onDraw } = props;
   const [started, setStarted] = useState<boolean>(false);
   const cycleDuration = 1;
   const activeCycle = () => Math.floor(Tone.getTransport().seconds / cycleDuration);
@@ -48,6 +49,10 @@ function useCycle(props: UseCycleProps) {
             value: event.value,
           };
           onEvent(time, toneEvent);
+          Tone.Draw.schedule(() => {
+            // do drawing or DOM manipulation here
+            onDraw?.(time, toneEvent);
+          }, time);
         }, event.part.begin.valueOf());
       });
   };

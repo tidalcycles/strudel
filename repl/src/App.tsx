@@ -17,8 +17,8 @@ try {
 } catch (err) {
   console.warn('failed to decode', err);
 }
-
-Tone.setContext( new Tone.Context({ latencyHint : .5, lookAhead:1 }))
+// "balanced" | "interactive" | "playback";
+Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));
 const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.getDestination());
 defaultSynth.set({
   oscillator: { type: 'triangle' },
@@ -40,7 +40,7 @@ function App() {
   const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog } = useRepl({
     tune: decoded || randomTune,
     defaultSynth,
-    onEvent: useCallback(markEvent(editor), [editor]),
+    onDraw: useCallback(markEvent(editor), [editor]),
   });
   const logBox = useRef<any>();
   // scroll log box to bottom when log changes
@@ -124,7 +124,9 @@ function App() {
             </span>
           </div>
           {error && (
-            <div className={cx('absolute right-2 bottom-2 px-2', 'text-red-500')}>{error?.message || 'unknown error'}</div>
+            <div className={cx('absolute right-2 bottom-2 px-2', 'text-red-500')}>
+              {error?.message || 'unknown error'}
+            </div>
           )}
         </div>
         <button
