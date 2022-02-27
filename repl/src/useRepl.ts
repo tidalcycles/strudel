@@ -1,5 +1,6 @@
 import { useCallback, useState, useMemo } from 'react';
 import { isNote } from 'tone';
+import { fromMidi } from '../../util.mjs';
 import { evaluate } from './evaluate';
 import type { Pattern } from './types';
 import useCycle from './useCycle';
@@ -63,8 +64,12 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
           onEvent?.(event);
           const { onTrigger } = event.context;
           if (!onTrigger) {
-            const note = event.value;
-            if (!isNote(note)) {
+            let note = event.value;
+            // if value is number => interpret as midi number...
+            // TODO: what if value is meant as frequency? => check context
+            if (typeof event.value === 'number') {
+              note = fromMidi(event.value);
+            } else if (!isNote(note)) {
               throw new Error('not a note: ' + note);
             }
             if (defaultSynth) {

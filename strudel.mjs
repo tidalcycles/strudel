@@ -1,5 +1,6 @@
 import Fraction from 'fraction.js'
 import { compose } from 'ramda'; // will remove this as soon as compose is implemented here
+import { isNote, toMidi } from './util.mjs';
 
 // Removes 'None' values from given list
 const removeUndefineds = xs => xs.filter(x => x != undefined)
@@ -466,20 +467,41 @@ class Pattern {
         return this.fmap(func).appLeft(reify(other))
     }
 
+    _asNumber() {
+      return this._withEvent(event => {
+        const asNumber = Number(event.value)
+        if(!isNaN(asNumber)) {
+          return asNumber;
+        }
+        const specialValue = {
+          e: Math.E,
+          pi: Math.PI
+        }[event.value];
+        if(typeof specialValue !== 'undefined') {
+          return specialValue;
+        }
+        if(isNote(event.value)) {
+          // set context type to midi to let the player know its meant as midi number and not as frequency
+          return new Hap(event.whole, event.part, toMidi(event.value), { ...event.context, type: 'midi' });
+        }
+        throw new Error('cannot parse as number: "' + event.value + '"');
+      })
+    }
+
     add(other) {
-        return this._opleft(other, a => b => a + b)
+        return this._asNumber()._opleft(other, a => b => a + b)
     }
 
     sub(other) {
-        return this._opleft(other, a => b => a - b)
+        return this._asNumber()._opleft(other, a => b => a - b)
     }
     
     mul(other) {
-        return this._opleft(other, a => b => a * b)
+        return this._asNumber()._opleft(other, a => b => a * b)
     }
 
     div(other) {
-        return this._opleft(other, a => b => a / b)
+        return this._asNumber()._opleft(other, a => b => a / b)
     }
 
     union(other) {
