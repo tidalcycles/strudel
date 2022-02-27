@@ -7,7 +7,7 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
     "peggy": "peggy -o krill-parser.js --format es ./krill.pegjs",
-    "tutorial": "parcel src/tutorial/index.html",
+    "tutorial": "parcel src/tutorial/index.html --no-cache",
     "build-tutorial": "parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-optimize --no-scope-hoist --no-cache"
   },
   "dependencies": {

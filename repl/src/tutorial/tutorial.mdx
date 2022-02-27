@@ -17,12 +17,12 @@ To get a taste of what Strudel can do, check out this track:
 
 <MiniRepl
   tune={`() => {
-  const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out);
-  const kick = new MembraneSynth().chain(vol(.8), out);
-  const snare = new NoiseSynth().chain(vol(.8), out);
-  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out);
-  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out);
-  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out);
+  const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
+  const kick = new MembraneSynth().chain(vol(.8), out());
+  const snare = new NoiseSynth().chain(vol(.8), out());
+  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
+  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
+  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
   
   const drums = stack(
     "c1*2".tone(kick).bypass("<0@7 1>/8"),
@@ -371,12 +371,12 @@ To make the sounds more interesting, we can use Tone.js instruments ands effects
 <MiniRepl
   tune={`stack(
     "[c5 c5 bb4 c5] [~ g4 ~ g4] [c5 f5 e5 c5] ~"
-      .tone(synth(adsr(0,.1,0,0)).chain(out)),
+      .tone(synth(adsr(0,.1,0,0)).chain(out())),
     "[c2 c3]*8"
       .tone(synth({
         ...osc('sawtooth'),
         ...adsr(0,.1,0.4,0)
-      }).chain(lowpass(300), out))
+      }).chain(lowpass(300), out()))
   ).slow(4)`}
 />
 
@@ -411,7 +411,7 @@ Shortcut for Tone.Destination. Intended to be used with Tone's .chain:
 
 <MiniRepl
   tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(membrane().chain(out))`}
+.tone(membrane().chain(out()))`}
 />
 
 This alone is not really useful, so read on..
@@ -422,7 +422,7 @@ Helper that returns a Gain Node with the given volume. Intended to be used with 
 
 <MiniRepl
   tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(noise().chain(vol(0.5), out))`}
+.tone(noise().chain(vol(0.5), out()))`}
 />
 
 ### osc(type)
@@ -431,7 +431,7 @@ Helper to set the waveform of a synth, monosynth or polysynth:
 
 <MiniRepl
   tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(synth(osc('sawtooth4')).chain(out))`}
+.tone(synth(osc('sawtooth4')).chain(out()))`}
 />
 
 The base types are `sine`, `square`, `sawtooth`, `triangle`. You can also append a number between 1 and 32 to reduce the harmonic partials.
@@ -442,7 +442,7 @@ Helper that returns a Filter Node of type lowpass with the given cutoff. Intende
 
 <MiniRepl
   tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(synth(osc('sawtooth')).chain(lowpass(800), out))`}
+.tone(synth(osc('sawtooth')).chain(lowpass(800), out()))`}
 />
 
 ### highpass(cutoff)
@@ -451,7 +451,7 @@ Helper that returns a Filter Node of type highpass with the given cutoff. Intend
 
 <MiniRepl
   tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(synth(osc('sawtooth')).chain(highpass(2000), out))`}
+.tone(synth(osc('sawtooth')).chain(highpass(2000), out()))`}
 />
 
 ### adsr(attack, decay?, sustain?, release?)
@@ -460,7 +460,7 @@ Helper to set the envelope of a Tone.js instrument. Intended to be used with Ton
 
 <MiniRepl
   tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(synth(adsr(0,.1,0,0)).chain(out))`}
+.tone(synth(adsr(0,.1,0,0)).chain(out()))`}
 />
 
 ### Experimental: Patternification
@@ -574,7 +574,7 @@ Together with edit, struct and voicings, this can be used to create a basic back
 <MiniRepl
   tune={`"<C^7 A7b13 Dm7 G7>".edit(
   x => x.voicings(['d3','g4']).struct("~ x"),
-  x => x.rootNotes(2).tone(synth(osc('sawtooth4')).chain(out))
+  x => x.rootNotes(2).tone(synth(osc('sawtooth4')).chain(out()))
 )`}
 />
 

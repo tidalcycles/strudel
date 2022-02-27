@@ -86,6 +86,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
         try {
           return pattern?.query(span) || [];
         } catch (err: any) {
+          console.warn(err);
           err.message = 'query error: ' + err.message;
           setError(err);
           return [];
