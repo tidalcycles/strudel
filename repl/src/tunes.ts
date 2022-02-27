@@ -451,7 +451,7 @@ export const sowhatelse = `()=> {
 }`;
 
 export const barryHarris = `piano()
-.then(p => "0,7,2,[7 6]"
+.then(p => "0,2,[7 6]"
   .add("<0 1 2 3 4 5 7 8>")
   .scale('C bebop major')
   .transpose("<0 1 2 1>/8")
