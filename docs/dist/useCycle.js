@@ -2,29 +2,32 @@ import {useEffect, useState} from "../_snowpack/pkg/react.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
 import {TimeSpan} from "../_snowpack/link/strudel.js";
 function useCycle(props) {
-  const {onEvent, onQuery, onSchedule, ready = true} = props;
+  const {onEvent, onQuery, onSchedule, ready = true, onDraw} = props;
   const [started, setStarted] = useState(false);
   const cycleDuration = 1;
-  const activeCycle = () => Math.floor(Tone.Transport.seconds / cycleDuration);
+  const activeCycle = () => Math.floor(Tone.getTransport().seconds / cycleDuration);
   const query = (cycle = activeCycle()) => {
     const timespan = new TimeSpan(cycle, cycle + 1);
     const events = onQuery?.(timespan) || [];
     onSchedule?.(events, cycle);
     const cancelFrom = timespan.begin.valueOf();
-    Tone.Transport.cancel(cancelFrom);
+    Tone.getTransport().cancel(cancelFrom);
     const queryNextTime = (cycle + 1) * cycleDuration - 0.5;
-    const t = Math.max(Tone.Transport.seconds, queryNextTime) + 0.1;
-    Tone.Transport.schedule(() => {
+    const t = Math.max(Tone.getTransport().seconds, queryNextTime) + 0.1;
+    Tone.getTransport().schedule(() => {
       query(cycle + 1);
     }, t);
     events?.filter((event) => event.part.begin.valueOf() === event.whole.begin.valueOf()).forEach((event) => {
-      Tone.Transport.schedule((time) => {
+      Tone.getTransport().schedule((time) => {
         const toneEvent = {
           time: event.part.begin.valueOf(),
           duration: event.whole.end.sub(event.whole.begin).valueOf(),
           value: event.value
         };
         onEvent(time, toneEvent);
+        Tone.Draw.schedule(() => {
+          onDraw?.(time, toneEvent);
+        }, time);
       }, event.part.begin.valueOf());
     });
   };
@@ -34,12 +37,12 @@ function useCycle(props) {
   const start = async () => {
     setStarted(true);
     await Tone.start();
-    Tone.Transport.start("+0.1");
+    Tone.getTransport().start("+0.1");
   };
   const stop = () => {
     console.log("stop");
     setStarted(false);
-    Tone.Transport.pause();
+    Tone.getTransport().pause();
   };
   const toggle = () => started ? stop() : start();
   return {start, stop, setStarted, onEvent, started, toggle, query, activeCycle};

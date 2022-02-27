@@ -6,7 +6,7 @@ import usePostMessage from "./usePostMessage.js";
 let s4 = () => {
   return Math.floor((1 + Math.random()) * 65536).toString(16).substring(1);
 };
-function useRepl({tune, defaultSynth, autolink = true, onEvent}) {
+function useRepl({tune, defaultSynth, autolink = true, onEvent, onDraw}) {
   const id = useMemo(() => s4(), []);
   const [code, setCode] = useState(tune);
   const [activeCode, setActiveCode] = useState();
@@ -44,6 +44,7 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent}) {
     }
   };
   const cycle = useCycle({
+    onDraw,
     onEvent: useCallback((time, event) => {
       try {
         onEvent?.(event);
@@ -71,6 +72,7 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent}) {
       try {
         return pattern?.query(span) || [];
       } catch (err) {
+        console.warn(err);
         err.message = "query error: " + err.message;
         setError(err);
         return [];

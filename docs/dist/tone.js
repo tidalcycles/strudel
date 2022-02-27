@@ -1,7 +1,6 @@
 import {Pattern as _Pattern} from "../_snowpack/link/strudel.js";
 import {
   AutoFilter,
-  Destination,
   Filter,
   Gain,
   isNote,
@@ -15,7 +14,8 @@ import {
   FMSynth,
   NoiseSynth,
   PluckSynth,
-  Sampler
+  Sampler,
+  getDestination
 } from "../_snowpack/pkg/tone.js";
 const Pattern = _Pattern;
 Pattern.prototype.tone = function(instrument) {
@@ -50,14 +50,14 @@ export const lowpass = (v) => new Filter(v, "lowpass");
 export const highpass = (v) => new Filter(v, "highpass");
 export const adsr = (a, d = 0.1, s = 0.4, r = 0.01) => ({envelope: {attack: a, decay: d, sustain: s, release: r}});
 export const osc = (type) => ({oscillator: {type}});
-export const out = Destination;
+export const out = () => getDestination();
 const chainable = function(instr) {
   const _chain = instr.chain.bind(instr);
   let chained = [];
   instr.chain = (...args) => {
     chained = chained.concat(args);
     instr.disconnect();
-    return _chain(...chained, Destination);
+    return _chain(...chained, getDestination());
   };
   instr.filter = (freq = 1e3, type = "lowpass") => instr.chain(new Filter(freq, type));
   instr.gain = (gain2 = 0.9) => instr.chain(new Gain(gain2));
@@ -134,7 +134,7 @@ Pattern.prototype.chain = function(...effectGetters) {
     const chain = (value.chain || []).concat(effectGetters);
     const getChain = () => {
       const effects = chain.map((getEffect) => getEffect());
-      return value.getInstrument().chain(...effects, Destination);
+      return value.getInstrument().chain(...effects, getDestination());
     };
     const onTrigger = getTrigger(getChain, value.value);
     return {...value, getChain, onTrigger, chain};

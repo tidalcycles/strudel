@@ -14,7 +14,7 @@ try {
 } catch (err) {
   console.warn("failed to decode", err);
 }
-const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination);
+const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.getDestination());
 defaultSynth.set({
   oscillator: {type: "triangle"},
   envelope: {
@@ -32,7 +32,7 @@ function App() {
   const {setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog} = useRepl({
     tune: decoded || randomTune,
     defaultSynth,
-    onEvent: useCallback(markEvent(editor), [editor])
+    onDraw: useCallback(markEvent(editor), [editor])
   });
   const logBox = useRef();
   useLayoutEffect(() => {

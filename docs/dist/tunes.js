@@ -258,20 +258,20 @@ export const zeldasRescue = `stack(
     new Gain(0.3), 
     new Chorus(2, 2.5, 0.5).start(), 
     new Freeverb(), 
-    Destination)
+    getDestination())
 )`;
 export const technoDrums = `stack(
   "c1*2".tone(new Tone.MembraneSynth().toDestination()),
   "~ x".tone(new Tone.NoiseSynth().toDestination()),
-  "[~ c4]*2".tone(new Tone.MetalSynth().set({envelope:{decay:0.06,sustain:0}}).chain(new Gain(0.5),Destination))
+  "[~ c4]*2".tone(new Tone.MetalSynth().set({envelope:{decay:0.06,sustain:0}}).chain(new Gain(0.5),getDestination()))
 )`;
 export const loungerave = `() => {
-  const delay = new FeedbackDelay(1/8, .2).chain(vol(0.5), out);
-  const kick = new MembraneSynth().chain(vol(.8), out);
-  const snare = new NoiseSynth().chain(vol(.8), out);
-  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out);
-  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out);
-  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out);
+  const delay = new FeedbackDelay(1/8, .2).chain(vol(0.5), out());
+  const kick = new MembraneSynth().chain(vol(.8), out());
+  const snare = new NoiseSynth().chain(vol(.8), out());
+  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
+  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
+  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
   
   const drums = stack(
     "c1*2".tone(kick).mask("<x@7 ~>/8"),
@@ -292,12 +292,12 @@ export const loungerave = `() => {
   //.early("0.25 0");
 }`;
 export const caverave = `() => {
-  const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out);
-  const kick = new MembraneSynth().chain(vol(.8), out);
-  const snare = new NoiseSynth().chain(vol(.8), out);
-  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out);
-  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out);
-  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out);
+  const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
+  const kick = new MembraneSynth().chain(vol(.8), out());
+  const snare = new NoiseSynth().chain(vol(.8), out());
+  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
+  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
+  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
   
   const drums = stack(
     "c1*2".tone(kick).mask("<x@7 ~>/8"),
@@ -324,16 +324,16 @@ export const caverave = `() => {
 }`;
 export const callcenterhero = `()=>{
   const bpm = 90;
-  const lead = polysynth().set({...osc('sine4'),...adsr(.004)}).chain(vol(0.15),out)
-  const bass = fmsynth({...osc('sawtooth6'),...adsr(0.05,.6,0.8,0.1)}).chain(vol(0.6), out);
+  const lead = polysynth().set({...osc('sine4'),...adsr(.004)}).chain(vol(0.15),out())
+  const bass = fmsynth({...osc('sawtooth6'),...adsr(0.05,.6,0.8,0.1)}).chain(vol(0.6), out());
   const s = scale(slowcat('F3 minor', 'Ab3 major', 'Bb3 dorian', 'C4 phrygian dominant').slow(4));
   return stack(
     "0 2".struct("<x ~> [x ~]").apply(s).scaleTranspose(stack(0,2)).tone(lead),
     "<6 7 9 7>".struct("[~ [x ~]*2]*2").apply(s).scaleTranspose("[0,2] [2,4]".fast(2).every(4,rev)).tone(lead),
   	"-14".struct("[~ x@0.8]*2".early(0.01)).apply(s).tone(bass),
-    "c2*2".tone(membrane().chain(vol(0.6), out)),
-    "~ c2".tone(noise().chain(vol(0.2), out)),
-    "c4*4".tone(metal(adsr(0,.05,0)).chain(vol(0.03), out))
+    "c2*2".tone(membrane().chain(vol(0.6), out())),
+    "~ c2".tone(noise().chain(vol(0.2), out())),
+    "c4*4".tone(metal(adsr(0,.05,0)).chain(vol(0.03), out()))
   )
   .slow(120 / bpm)
 }
@@ -342,20 +342,20 @@ export const primalEnemy = `()=>{
   const f = fast("<1 <2 [4 8]>>");
   return stack(
     "c3,g3,c4".struct("[x ~]*2").apply(f).transpose("<0 <3 [5 [7 [9 [11 13]]]]>>"),
-    "c2 [c2 ~]*2".tone(synth(osc('sawtooth8')).chain(vol(0.8),out)),
-    "c1*2".tone(membrane().chain(vol(0.8),out))
+    "c2 [c2 ~]*2".tone(synth(osc('sawtooth8')).chain(vol(0.8),out())),
+    "c1*2".tone(membrane().chain(vol(0.8),out()))
   ).slow(1)
 }`;
 export const drums = `stack(
-  "c1*2".tone(membrane().chain(vol(0.8),out)),
-  "~ c3".tone(noise().chain(vol(0.8),out)),
-  "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.015)).chain(vol(0.8),out))
+  "c1*2".tone(membrane().chain(vol(0.8),out())),
+  "~ c3".tone(noise().chain(vol(0.8),out())),
+  "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.015)).chain(vol(0.8),out()))
 )
 `;
 export const xylophoneCalling = `()=>{
   const t = x=> x.scaleTranspose("<0 2 4 3>/4").transpose(-2)
   const s = x => x.scale(slowcat('C3 minor pentatonic','G3 minor pentatonic').slow(4))
-  const delay = new FeedbackDelay(1/8, .6).chain(vol(0.1), out);
+  const delay = new FeedbackDelay(1/8, .6).chain(vol(0.1), out());
   const chorus = new Chorus(1,2.5,0.5).start();
   return stack(
     // melody
@@ -365,28 +365,28 @@ export const xylophoneCalling = `()=>{
     .apply(t).tone(polysynth().set({
       ...osc('triangle4'),
       ...adsr(0,.08,0)
-    }).chain(vol(0.2).connect(delay),chorus,out)).mask("<~@3 x>/16".early(1/8)),
+    }).chain(vol(0.2).connect(delay),chorus,out())).mask("<~@3 x>/16".early(1/8)),
     // pad
     "[1,3]/4".scale('G3 minor pentatonic').apply(t).tone(polysynth().set({
       ...osc('square2'),
       ...adsr(0.1,.4,0.8)
-    }).chain(vol(0.2),chorus,out)).mask("<~ x>/32"),
+    }).chain(vol(0.2),chorus,out())).mask("<~ x>/32"),
     // xylophone
     "c3,g3,c4".struct("<x*2 x>").fast("<1 <2!3 [4 8]>>").apply(s).scaleTranspose("<0 <1 [2 [3 <4 5>]]>>").apply(t).tone(polysynth().set({
       ...osc('sawtooth4'),
       ...adsr(0,.1,0)
-    }).chain(vol(0.4).connect(delay),out)).mask("<x@3 ~>/16".early(1/8)),
+    }).chain(vol(0.4).connect(delay),out())).mask("<x@3 ~>/16".early(1/8)),
     // bass
     "c2 [c2 ~]*2".scale('C hirajoshi').apply(t).tone(synth({
       ...osc('sawtooth6'),
       ...adsr(0,.03,.4,.1)
-    }).chain(vol(0.4),out)),
+    }).chain(vol(0.4),out())),
     // kick
-    "<c1!3 [c1 ~]*2>*2".tone(membrane().chain(vol(0.8),out)),
+    "<c1!3 [c1 ~]*2>*2".tone(membrane().chain(vol(0.8),out())),
     // snare
-    "~ <c3!7 [c3 c3*2]>".tone(noise().chain(vol(0.8),out)),
+    "~ <c3!7 [c3 c3*2]>".tone(noise().chain(vol(0.8),out())),
     // hihat
-    "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.02)).chain(vol(0.5).connect(delay),out))
+    "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.02)).chain(vol(0.5).connect(delay),out()))
 ).slow(1)
 }`;
 export const sowhatelse = `()=> {
@@ -399,18 +399,18 @@ export const sowhatelse = `()=> {
     kick:  .9,
     hihat: .35,
   }[key]||0);
-  const delay = new FeedbackDelay(1/6, .3).chain(vol(.7), out);
-  const delay2 = new FeedbackDelay(1/6, .2).chain(vol(.15), out);
+  const delay = new FeedbackDelay(1/6, .3).chain(vol(.7), out());
+  const delay2 = new FeedbackDelay(1/6, .2).chain(vol(.15), out());
   const chorus = new Chorus(1,2.5,0.5).start();
   // instruments
   const instr = (instrument) => ({
-    organ: polysynth().set({...osc('sawtooth4'), ...adsr(.01,.2,0)}).chain(mix('chords').connect(delay),out),
-    lead: polysynth().set({...osc('triangle4'),...adsr(0.01,.05,0)}).chain(mix('lead').connect(delay2), out),
-    bass: polysynth().set({...osc('sawtooth8'),...adsr(.02,.05,.3,.2)}).chain(mix('bass'),lowpass(3000), out),
-    pad: polysynth().set({...osc('square2'),...adsr(0.1,.4,0.8)}).chain(vol(0.15),chorus,out),
-    hihat: metal(adsr(0, .02, 0)).chain(mix('hihat'), out),
-    snare: noise(adsr(0, .15,  0.01)).chain(mix('snare'), lowpass(5000), out),
-    kick: membrane().chain(mix('kick'), out)
+    organ: polysynth().set({...osc('sawtooth4'), ...adsr(.01,.2,0)}).chain(mix('chords').connect(delay),out()),
+    lead: polysynth().set({...osc('triangle4'),...adsr(0.01,.05,0)}).chain(mix('lead').connect(delay2), out()),
+    bass: polysynth().set({...osc('sawtooth8'),...adsr(.02,.05,.3,.2)}).chain(mix('bass'),lowpass(3000), out()),
+    pad: polysynth().set({...osc('square2'),...adsr(0.1,.4,0.8)}).chain(vol(0.15),chorus,out()),
+    hihat: metal(adsr(0, .02, 0)).chain(mix('hihat'), out()),
+    snare: noise(adsr(0, .15,  0.01)).chain(mix('snare'), lowpass(5000), out()),
+    kick: membrane().chain(mix('kick'), out())
   }[instrument]);
   // harmony
   const t = transpose("<0 0 1 0>/8");
