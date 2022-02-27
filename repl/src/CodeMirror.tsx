@@ -17,7 +17,7 @@ export default function CodeMirror({ value, onChange, options, editorDidMount }:
   return <CodeMirror2 value={value} options={options} onBeforeChange={onChange} editorDidMount={editorDidMount} />;
 }
 
-export const markEvent = (editor) => (event) => {
+export const markEvent = (editor) => (time, event) => {
   const locs = event.context.locations;
   if (!locs || !editor) {
     return;

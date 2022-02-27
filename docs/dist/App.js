@@ -56,13 +56,13 @@ function App() {
   }, [pattern, code]);
   useWebMidi({
     ready: useCallback(({outputs}) => {
-      pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `"${o.name}"`).join(" | ")}) to the pattern. `);
+      pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `'${o.name}'`).join(" | ")}) to the pattern. `);
     }, []),
     connected: useCallback(({outputs}) => {
-      pushLog(`Midi device connected! Available: ${outputs.map((o) => `"${o.name}"`).join(", ")}`);
+      pushLog(`Midi device connected! Available: ${outputs.map((o) => `'${o.name}'`).join(", ")}`);
     }, []),
     disconnected: useCallback(({outputs}) => {
-      pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `"${o.name}"`).join(", ")}`);
+      pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `'${o.name}'`).join(", ")}`);
     }, [])
   });
   return /* @__PURE__ */ React.createElement("div", {
@@ -111,7 +111,7 @@ function App() {
   }, !cycle.started ? `press ctrl+enter to play
 ` : dirty ? `ctrl+enter to update
 ` : "no changes\n")), error && /* @__PURE__ */ React.createElement("div", {
-    className: cx("absolute right-2 bottom-2", "text-red-500")
+    className: cx("absolute right-2 bottom-2 px-2", "text-red-500")
   }, error?.message || "unknown error")), /* @__PURE__ */ React.createElement("button", {
     className: "flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500",
     onClick: () => togglePlay()

@@ -41,8 +41,6 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent}) {
   const pushLog = (message) => setLog((log2) => log2 + `${log2 ? "\n\n" : ""}${message}`);
   const logCycle = (_events, cycle2) => {
     if (_events.length) {
-      pushLog(`# cycle ${cycle2}
-` + _events.map((e) => e.show()).join("\n"));
     }
   };
   const cycle = useCycle({

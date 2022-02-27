@@ -8,15 +8,16 @@ export declare interface UseCycleProps {
   onEvent: ToneEventCallback<any>;
   onQuery?: (state: State) => Hap[];
   onSchedule?: (events: Hap[], cycle: number) => void;
+  onDraw?: ToneEventCallback<any>;
   ready?: boolean; // if false, query will not be called on change props
 }
 
 function useCycle(props: UseCycleProps) {
   // onX must use useCallback!
-  const { onEvent, onQuery, onSchedule, ready = true } = props;
+  const { onEvent, onQuery, onSchedule, ready = true, onDraw } = props;
   const [started, setStarted] = useState<boolean>(false);
   const cycleDuration = 1;
-  const activeCycle = () => Math.floor(Tone.Transport.seconds / cycleDuration);
+  const activeCycle = () => Math.floor(Tone.getTransport().seconds / cycleDuration);
 
   // pull events with onQuery + count up to next cycle
   const query = (cycle = activeCycle()) => {
@@ -27,13 +28,13 @@ function useCycle(props: UseCycleProps) {
     // console.log('schedule', cycle);
     // query next cycle in the middle of the current
     const cancelFrom = timespan.begin.valueOf();
-    Tone.Transport.cancel(cancelFrom);
+    Tone.getTransport().cancel(cancelFrom);
     // const queryNextTime = (cycle + 1) * cycleDuration - 0.1;
     const queryNextTime = (cycle + 1) * cycleDuration - 0.5;
 
     // if queryNextTime would be before current time, execute directly (+0.1 for safety that it won't miss)
-    const t = Math.max(Tone.Transport.seconds, queryNextTime) + 0.1;
-    Tone.Transport.schedule(() => {
+    const t = Math.max(Tone.getTransport().seconds, queryNextTime) + 0.1;
+    Tone.getTransport().schedule(() => {
       query(cycle + 1);
     }, t);
 
@@ -41,7 +42,7 @@ function useCycle(props: UseCycleProps) {
     events
       ?.filter((event) => event.part.begin.valueOf() === event.whole.begin.valueOf())
       .forEach((event) => {
-        Tone.Transport.schedule((time) => {
+        Tone.getTransport().schedule((time) => {
           const toneEvent = {
             time: event.part.begin.valueOf(),
             duration: event.whole.end.sub(event.whole.begin).valueOf(),
@@ -49,6 +50,10 @@ function useCycle(props: UseCycleProps) {
             context: event.context,
           };
           onEvent(time, toneEvent);
+          Tone.Draw.schedule(() => {
+            // do drawing or DOM manipulation here
+            onDraw?.(time, toneEvent);
+          }, time);
         }, event.part.begin.valueOf());
       });
   };
@@ -60,12 +65,12 @@ function useCycle(props: UseCycleProps) {
   const start = async () => {
     setStarted(true);
     await Tone.start();
-    Tone.Transport.start('+0.1');
+    Tone.getTransport().start('+0.1');
   };
   const stop = () => {
     console.log('stop');
     setStarted(false);
-    Tone.Transport.pause();
+    Tone.getTransport().pause();
   };
   const toggle = () => (started ? stop() : start());
   return { start, stop, setStarted, onEvent, started, toggle, query, activeCycle };

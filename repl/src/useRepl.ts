@@ -11,7 +11,7 @@ let s4 = () => {
     .substring(1);
 };
 
-function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
+function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) {
   const id = useMemo(() => s4(), []);
   const [code, setCode] = useState<string>(tune);
   const [activeCode, setActiveCode] = useState<string>();
@@ -52,6 +52,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent }: any) {
   };
   // cycle hook to control scheduling
   const cycle = useCycle({
+    onDraw,
     onEvent: useCallback(
       (time, event) => {
         try {

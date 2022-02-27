@@ -4,7 +4,7 @@
   "description": "Experimental port of tidalcycles to javascript",
   "main": "strudel.mjs",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --colors"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
   "homepage": "https://github.com/yaxu/strudel#readme",
   "devDependencies": {
     "mocha": "^9.1.4",
+    "ramda": "^0.28.0",
     "snowpack": "^3.8.8"
   },
   "dependencies": {
