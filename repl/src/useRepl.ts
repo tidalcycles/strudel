@@ -17,19 +17,22 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
   const [activeCode, setActiveCode] = useState<string>();
   const [log, setLog] = useState('');
   const [error, setError] = useState<Error>();
+  const [pending, setPending] = useState(false);
   const [hash, setHash] = useState('');
   const [pattern, setPattern] = useState<Pattern>();
   const dirty = code !== activeCode || error;
   const generateHash = () => encodeURIComponent(btoa(code));
-  const activateCode = (_code = code) => {
-    !cycle.started && cycle.start();
-    broadcast({ type: 'start', from: id });
+  const activateCode = async (_code = code) => {
     if (activeCode && !dirty) {
       setError(undefined);
+      !cycle.started && cycle.start();
       return;
     }
     try {
-      const parsed = evaluate(_code);
+      setPending(true);
+      const parsed = await evaluate(_code);
+      !cycle.started && cycle.start();
+      broadcast({ type: 'start', from: id });
       setPattern(() => parsed.pattern);
       if (autolink) {
         window.location.hash = '#' + encodeURIComponent(btoa(code));
@@ -37,6 +40,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
       setHash(generateHash());
       setError(undefined);
       setActiveCode(_code);
+      setPending(false);
     } catch (err: any) {
       err.message = 'evaluation error: ' + err.message;
       console.warn(err);
@@ -47,7 +51,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
   // logs events of cycle
   const logCycle = (_events: any, cycle: any) => {
     if (_events.length) {
-      //pushLog(`# cycle ${cycle}\n` + _events.map((e: any) => e.show()).join('\n'));
+      // pushLog(`# cycle ${cycle}\n` + _events.map((e: any) => e.show()).join('\n'));
     }
   };
   // cycle hook to control scheduling
@@ -57,8 +61,9 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
       (time, event) => {
         try {
           onEvent?.(event);
-          if (!event.value?.onTrigger) {
-            const note = event.value?.value || event.value;
+          const { onTrigger } = event.context;
+          if (!onTrigger) {
+            const note = event.value;
             if (!isNote(note)) {
               throw new Error('not a note: ' + note);
             }
@@ -70,7 +75,6 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
             /* console.warn('no instrument chosen', event);
           throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
           } else {
-            const { onTrigger } = event.value;
             onTrigger(time, event);
           }
         } catch (err: any) {
@@ -82,9 +86,9 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
       [onEvent]
     ),
     onQuery: useCallback(
-      (span) => {
+      (state) => {
         try {
-          return pattern?.query(span) || [];
+          return pattern?.query(state) || [];
         } catch (err: any) {
           console.warn(err);
           err.message = 'query error: ' + err.message;
@@ -146,6 +150,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
   };
 
   return {
+    pending,
     code,
     setCode,
     pattern,

@@ -15,6 +15,7 @@ export declare interface Hap<T = any> {
   whole: TimeSpan;
   part: TimeSpan;
   value: T;
+  context: any;
   show: () => string;
 }
 export declare interface Pattern<T = any> {

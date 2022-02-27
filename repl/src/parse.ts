@@ -101,10 +101,11 @@ export function patternifyAST(ast: any): any {
           return ast.source_;
         }
         const { start, end } = ast.location_;
+        const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
         // return ast.source_;
         // the following line expects the shapeshifter to wrap this in withLocationOffset
         // because location_ is only relative to the mini string, but we need it relative to whole code
-        return pure(ast.source_).withLocation({ start, end });
+        return pure(value).withLocation({ start, end });
       }
       return patternifyAST(ast.source_);
     case 'stretch':

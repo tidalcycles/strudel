@@ -3,21 +3,6 @@ import { Pattern as _Pattern } from '../../strudel.mjs';
 
 const Pattern = _Pattern as any;
 
-export declare interface NoteEvent {
-  value: string | number;
-  scale?: string;
-}
-
-function toNoteEvent(event: string | NoteEvent): NoteEvent {
-  if (typeof event === 'string' || typeof event === 'number') {
-    return { value: event };
-  }
-  if (event.value) {
-    return event;
-  }
-  throw new Error('not a valid note event: ' + JSON.stringify(event));
-}
-
 // modulo that works with negative numbers e.g. mod(-1, 3) = 2
 const mod = (n: number, m: number): number => (n < 0 ? mod(n + m, m) : n % m);
 
@@ -60,24 +45,16 @@ function scaleTranspose(scale: string, offset: number, note: string) {
   return n + o;
 }
 
-Pattern.prototype._mapNotes = function (func: (note: NoteEvent) => NoteEvent) {
-  return this.fmap((event: string | NoteEvent) => {
-    const noteEvent = toNoteEvent(event);
-    // TODO: generalize? this is practical for any event that is expected to be an object with
-    return { ...noteEvent, ...func(noteEvent) };
-  });
-};
-
 Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
-  return this._mapNotes(({ value, scale }: NoteEvent) => {
+  return this._withEvent((event) => {
     const interval = !isNaN(Number(intervalOrSemitones))
       ? Interval.fromSemitones(intervalOrSemitones as number)
       : String(intervalOrSemitones);
-    if (typeof value === 'number') {
+    if (typeof event.value === 'number') {
       const semitones = typeof interval === 'string' ? Interval.semitones(interval) || 0 : interval;
-      return { value: value + semitones };
+      return event.withValue(() => event.value + semitones);
     }
-    return { value: Note.transpose(value, interval), scale };
+    return event.withValue(() => Note.transpose(event.value, interval));
   });
 };
 
@@ -88,26 +65,26 @@ Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
 // or even `stack(c3).superimpose(transpose.slowcat(7, 5))` or
 
 Pattern.prototype._scaleTranspose = function (offset: number | string) {
-  return this._mapNotes(({ value, scale }: NoteEvent) => {
-    if (!scale) {
+  return this._withEvent((event) => {
+    if (!event.context.scale) {
       throw new Error('can only use scaleTranspose after .scale');
     }
-    if (typeof value !== 'string') {
+    if (typeof event.value !== 'string') {
       throw new Error('can only use scaleTranspose with notes');
     }
-    return { value: scaleTranspose(scale, Number(offset), value), scale };
+    return event.withValue(() => scaleTranspose(event.context.scale, Number(offset), event.value));
   });
 };
 Pattern.prototype._scale = function (scale: string) {
-  return this._mapNotes((value) => {
-    let note = value.value;
+  return this._withEvent((event) => {
+    let note = event.value;
     const asNumber = Number(note);
     if (!isNaN(asNumber)) {
       let [tonic, scaleName] = Scale.tokenize(scale);
       const { pc, oct = 3 } = Note.get(tonic);
       note = scaleTranspose(pc + ' ' + scaleName, asNumber, pc + oct);
     }
-    return { ...value, value: note, scale };
+    return event.withValue(() => note).setContext({ ...event.context, scale });
   });
 };
 

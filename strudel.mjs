@@ -172,29 +172,44 @@ class Hap {
     then the whole will be returned as None, in which case the given
     value will have been sampled from the point halfway between the
     start and end of the 'part' timespan.
+    The context is to store a list of source code locations causing the event
     */
 
-    constructor(whole, part, value) {
+    constructor(whole, part, value, context = {}, stateful = false) {
         this.whole = whole
         this.part = part
         this.value = value
+        this.context = context
+        this.stateful = stateful
+        if (stateful) {
+            assert(typeof this.value === "function", "Stateful values must be functions");
+        }
     }
 
     withSpan(func) {
         // Returns a new event with the function f applies to the event timespan.
         const whole = this.whole ? func(this.whole) : undefined
-        return new Hap(whole, func(this.part), this.value)
+        return new Hap(whole, func(this.part), this.value, this.context)
     }
 
     withValue(func) {
         // Returns a new event with the function f applies to the event value.
-        return new Hap(this.whole, this.part, func(this.value))
+        return new Hap(this.whole, this.part, func(this.value), this.context)
     }
 
     hasOnset() {
         // Test whether the event contains the onset, i.e that
         // the beginning of the part is the same as that of the whole timespan."""
         return (this.whole != undefined) && (this.whole.begin.equals(this.part.begin))
+    }
+
+    resolveState(state) {
+        if (this.stateful && this.hasOnset()) {
+            const func = this.value
+            [newState, newValue] = func(state)
+            return [newState, this.withValue(() => newValue)]
+        }
+        return [state, this]
     }
 
     spanEquals(other) {
@@ -212,7 +227,32 @@ class Hap {
     }
 
     show() {
-        return "(" + (this.whole == undefined ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + JSON.stringify(this.value?.value ?? this.value) + ")"
+        return "(" + (this.whole == undefined ? "~" : this.whole.show()) + ", " + this.part.show() + ", " + this.value + ")"
+    }
+
+    setContext(context) {
+        return new Hap(this.whole, this.part, this.value, context)
+    }
+}
+
+export class State {
+    constructor(span, controls={}) {
+        this.span = span
+        this.controls = controls
+    }
+
+    // Returns new State with different span
+    setSpan(span) {
+        return new State(span, this.controls)
+    }
+
+    withSpan(func) {
+        return this.setSpan(func(this.span))
+    }
+
+    // Returns new State with different controls
+    setControls(controls) {
+        return new State(this.span, controls)
     }
 }
 
@@ -244,25 +284,27 @@ class Pattern {
         // easier to express, as all events are then constrained to happen within 
         // a cycle.
         const pat = this
-        const q = span => flatten(span.spanCycles.map(subspan => pat.query(subspan)))
+        const q = state => {
+            return flatten(state.span.spanCycles.map(subspan => pat.query(state.setSpan(subspan))))
+        }
         return new Pattern(q)
     }
 
 
     withQuerySpan(func) {
-        return new Pattern(span => this.query(func(span)))
+        return new Pattern(state => this.query(state.withSpan(func)))
     }
 
     withQueryTime(func) {
         // Returns a new pattern, with the function applied to both the begin
         // and end of the the query timespan
-        return new Pattern(span => this.query(span.withTime(func)))
+        return new Pattern(state => this.query(state.withSpan(span => span.withTime(func))))
     }
 
     withEventSpan(func) {
         // Returns a new pattern, with the function applied to each event
         // timespan.
-        return new Pattern(span => this.query(span).map(hap => hap.withSpan(func)))
+        return new Pattern(state => this.query(state).map(hap => hap.withSpan(func)))
     }
 
     withEventTime(func) {
@@ -272,21 +314,36 @@ class Pattern {
     }
 
     _withEvents(func) {
-        return new Pattern(span => func(this.query(span)))
+        return new Pattern(state => func(this.query(state)))
+    }
+
+    _withEvent(func) {
+        return this._withEvents(events => events.map(func))
+    }
+
+    _setContext(context) {
+        return this._withEvent(event => event.setContext(context))
+    }
+
+    _withContext(func) {
+        return this._withEvent(event => event.setContext(func(event.context)))
+    }
+
+    _stripContext() {
+        return this._withEvent(event => event.setContext({}))
     }
 
     withLocation(location) {
-      return this.fmap(value => {
-        value = typeof value === 'object' && !Array.isArray(value) ? value : { value };
-        const locations = (value.locations || []).concat([location]);
-        return {...value, locations }
-      })
+      return this._withContext((context) => {
+        const locations = (context.locations || []).concat([location])
+        return { ...context, locations }
+      });
     }
 
     withValue(func) {
         // Returns a new pattern, with the function applied to the value of
         // each event. It has the alias 'fmap'.
-        return new Pattern(span => this.query(span).map(hap => hap.withValue(func)))
+        return new Pattern(state => this.query(state).map(hap => hap.withValue(func)))
     }
 
     // alias
@@ -295,11 +352,11 @@ class Pattern {
     }
 
     _filterEvents(event_test) {
-        return new Pattern(span => this.query(span).filter(event_test))
+        return new Pattern(state => this.query(state).filter(event_test))
     }
 
     _filterValues(value_test) {
-         return new Pattern(span => this.query(span).filter(hap => value_test(hap.value)))
+         return new Pattern(state => this.query(state).filter(hap => value_test(hap.value)))
     }
 
     _removeUndefineds() {
@@ -318,20 +375,21 @@ class Pattern {
         // resolve wholes, applies a given pattern of values to that
         // pattern of functions.
         const pat_func = this
-        const query = function(span) {
-            const event_funcs = pat_func.query(span)
-            const event_vals = pat_val.query(span)
+        const query = function(state) {
+            const event_funcs = pat_func.query(state)
+            const event_vals = pat_val.query(state)
             const apply = function(event_func, event_val) {
                 const s = event_func.part.intersection(event_val.part)
                 if (s == undefined) {
                     return undefined
                 }
-                return new Hap(whole_func(event_func.whole, event_val.whole), s, event_func.value(event_val.value))
+                // TODO: is it right to add event_val.context here?
+                return new Hap(whole_func(event_func.whole, event_val.whole), s, event_func.value(event_val.value), event_val.context)
             }
             return flatten(event_funcs.map(event_func => removeUndefineds(event_vals.map(event_val => apply(event_func, event_val)))))
         }
         return new Pattern(query)
-        }
+    }
 
     appBoth(pat_val) {
         // Tidal's <*>
@@ -347,15 +405,19 @@ class Pattern {
     appLeft(pat_val) {
         const pat_func = this
 
-        const query = function(span) {
+        const query = function(state) {
             const haps = []
-            for (const hap_func of pat_func.query(span)) {
-                const event_vals = pat_val.query(hap_func.part)
+            for (const hap_func of pat_func.query(state)) {
+                const event_vals = pat_val.query(state.setSpan(hap_func.part))
                 for (const hap_val of event_vals) {
                     const new_whole = hap_func.whole
                     const new_part = hap_func.part.intersection_e(hap_val.part)
                     const new_value = hap_func.value(hap_val.value)
-                    const hap = new Hap(new_whole, new_part, new_value)
+                    const hap = new Hap(new_whole, new_part, new_value, {
+                      ...hap_val.context,
+                      ...hap_func.context,
+                      locations: (hap_val.context.locations || []).concat(hap_func.context.locations || []),
+                    });
                     haps.push(hap)
                 }
             }
@@ -367,15 +429,19 @@ class Pattern {
     appRight(pat_val) {
         const pat_func = this
 
-        const query = function(span) {
+        const query = function(state) {
             const haps = []
-            for (const hap_val of pat_val.query(span)) {
-                const hap_funcs = pat_func.query(hap_val.part)
+            for (const hap_val of pat_val.query(state)) {
+                const hap_funcs = pat_func.query(state.setSpan(hap_val.part))
                 for (const hap_func of hap_funcs) {
                     const new_whole = hap_val.whole
                     const new_part = hap_func.part.intersection_e(hap_val.part)
                     const new_value = hap_func.value(hap_val.value)
-                    const hap = new Hap(new_whole, new_part, new_value)
+                    const hap = new Hap(new_whole, new_part, new_value, {
+                      ...hap_func.context,
+                      ...hap_val.context,
+                      locations: (hap_val.context.locations || []).concat(hap_func.context.locations || []),
+                    })
                     haps.push(hap)
                 }
             }
@@ -384,8 +450,12 @@ class Pattern {
         return new Pattern(query)
     }
 
-    get firstCycle() {
-        return this.query(new TimeSpan(Fraction(0), Fraction(1)))
+    firstCycle(with_context=false) {
+        var self = this
+        if (!with_context) {
+            self = self._stripContext()
+        }
+        return self.query(new State(new TimeSpan(Fraction(0), Fraction(1))))
     }
 
     _sortEventsByPart() {
@@ -418,16 +488,18 @@ class Pattern {
     
     _bindWhole(choose_whole, func) {
         const pat_val = this
-        const query = function(span) {
+        const query = function(state) {
             const withWhole = function(a, b) {
-                return new Hap(choose_whole(a.whole, b.whole), b.part,
-                               b.value
-                             )
+                return new Hap(choose_whole(a.whole, b.whole), b.part, b.value, {
+                  ...a.context,
+                  ...b.context,
+                  locations: (a.context.locations || []).concat(b.context.locations || []),
+                });
             }
             const match = function (a) {
-                return func(a.value).query(a.part).map(b => withWhole(a, b))
+                return func(a.value).query(state.setSpan(a.part)).map(b => withWhole(a, b))
             }
-            return flatten(pat_val.query(span).map(a => match(a)))
+            return flatten(pat_val.query(state).map(a => match(a)))
         }
         return new Pattern(query)
     }
@@ -590,7 +662,8 @@ class Pattern {
 
     rev() {
         const pat = this
-        const query = function(span) {
+        const query = function(state) {
+            const span = state.span
             const cycle = span.begin.sam()
             const next_cycle = span.begin.nextSam()
             const reflect = function(to_reflect) {
@@ -601,7 +674,7 @@ class Pattern {
                 reflected.end = tmp
                 return reflected
             }
-            const haps = pat.query(reflect(span))
+            const haps = pat.query(state.setSpan(reflect(span)))
             return haps.map(hap => hap.withSpan(reflect))
         }
         return new Pattern(query)._splitQueries()
@@ -679,8 +752,8 @@ const silence = new Pattern(_ => [])
 
 function pure(value) {
     // A discrete value that repeats once per cycle
-    function query(span) {
-        return span.spanCycles.map(subspan => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value))
+    function query(state) {
+        return state.span.spanCycles.map(subspan => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value))
     }
     return new Pattern(query)
 }
@@ -691,7 +764,7 @@ function steady(value) {
 }
 
 export const signal = func => {
-    const query = span => [new Hap(undefined, span, func(span.midpoint()))]
+    const query = state => [new Hap(undefined, state.span, func(state.span.midpoint()))]
     return new Pattern(query)
 }
 
@@ -728,7 +801,7 @@ function reify(thing) {
 
 function stack(...pats) {
     const reified = pats.map(pat => reify(pat))
-    const query = span => flatten(reified.map(pat => pat.query(span)))
+    const query = state => flatten(reified.map(pat => pat.query(state)))
     return new Pattern(query)
 }
 
@@ -736,7 +809,8 @@ function slowcat(...pats) {
     // Concatenation: combines a list of patterns, switching between them
     // successively, one per cycle.
     pats = pats.map(reify)
-    const query = function(span) {
+    const query = function(state) {
+        const span = state.span
         const pat_n = Math.floor(span.begin) % pats.length; 
         const pat = pats[pat_n]
         if (!pat) {
@@ -747,7 +821,7 @@ function slowcat(...pats) {
         // For example if three patterns are slowcat-ed, the fourth cycle of the result should 
         // be the second (rather than fourth) cycle from the first pattern.
         const offset = span.begin.floor().sub(span.begin.div(pats.length).floor())
-        return pat.withEventTime(t => t.add(offset)).query(span.withTime(t => t.sub(offset)))
+        return pat.withEventTime(t => t.add(offset)).query(state.setSpan(span.withTime(t => t.sub(offset))))
     }
     return new Pattern(query)._splitQueries()
 }
@@ -756,10 +830,10 @@ function slowcatPrime(...pats) {
     // Concatenation: combines a list of patterns, switching between them
     // successively, one per cycle. Unlike slowcat, this version will skip cycles.
     pats = pats.map(reify)
-    const query = function(span) {
-        const pat_n = Math.floor(span.begin) % pats.length
+    const query = function(state) {
+        const pat_n = Math.floor(state.span.begin) % pats.length
         const pat = pats[pat_n]
-        return pat.query(span)
+        return pat.query(state)
     }
     return new Pattern(query)._splitQueries()
 }
@@ -919,9 +993,8 @@ Pattern.prototype.bootstrap = () => {
 
 // this is wrapped around mini patterns to offset krill parser location into the global js code space
 function withLocationOffset(pat, offset) {
-  return pat.fmap((value) => {
-    value = typeof value === 'object' && !Array.isArray(value) ? value : { value };
-    let locations = (value.locations || []);
+  return pat._withContext((context) => {
+    let locations = (context.locations || []);
     locations = locations.map(({ start, end }) => {
       const colOffset = start.line === 1 ? offset.start.column : 0;
       return {
@@ -936,7 +1009,7 @@ function withLocationOffset(pat, offset) {
         column: end.column - 1 + colOffset,
       },
     }});
-    return {...value, locations }
+    return {...context, locations }
   });
 }
 

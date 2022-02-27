@@ -19,7 +19,7 @@ Pattern.prototype.fmapNested = function (func) {
       .map((event) =>
         reify(func(event))
           .query(span)
-          .map((hap) => new Hap(event.whole, event.part, hap.value))
+          .map((hap) => new Hap(event.whole, event.part, hap.value, hap.context))
       )
       .flat()
   );
@@ -32,17 +32,18 @@ Pattern.prototype.voicings = function (range) {
     range = ['F3', 'A4'];
   }
   return this.fmapNested((event) => {
-    lastVoicing = getVoicing(event.value?.value || event.value, lastVoicing, range);
-    return stack(...lastVoicing);
+    lastVoicing = getVoicing(event.value, lastVoicing, range);
+    return stack(...lastVoicing)._withContext(() => ({
+      locations: event.context.locations || [],
+    }));
   });
 };
 
 Pattern.prototype.rootNotes = function (octave = 2) {
   // range = ['G1', 'C3']
-  return this._mapNotes((value) => {
-    const [_, root] = value.value.match(/^([a-gA-G])[b#]?.*$/);
-    const bassNote = root + octave;
-    return { ...value, value: bassNote };
+  return this.fmap((value) => {
+    const [_, root] = value.match(/^([a-gA-G])[b#]?.*$/);
+    return root + octave;
   });
 };
 

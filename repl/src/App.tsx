@@ -18,7 +18,7 @@ try {
   console.warn('failed to decode', err);
 }
 // "balanced" | "interactive" | "playback";
-Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));
+// Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));
 const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.getDestination());
 defaultSynth.set({
   oscillator: { type: 'triangle' },
@@ -37,11 +37,12 @@ const randomTune = getRandomTune();
 
 function App() {
   const [editor, setEditor] = useState<any>();
-  const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog } = useRepl({
-    tune: decoded || randomTune,
-    defaultSynth,
-    onDraw: useCallback(markEvent(editor), [editor]),
-  });
+  const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog, pending } =
+    useRepl({
+      tune: decoded || randomTune,
+      defaultSynth,
+      onDraw: useCallback(markEvent(editor), [editor]),
+    });
   const logBox = useRef<any>();
   // scroll log box to bottom when log changes
   useLayoutEffect(() => {
@@ -51,12 +52,11 @@ function App() {
   // set active pattern on ctrl+enter
   useLayoutEffect(() => {
     // TODO: make sure this is only fired when editor has focus
-    const handleKeyPress = (e: any) => {
+    const handleKeyPress = async (e: any) => {
       if (e.ctrlKey || e.altKey) {
         switch (e.code) {
           case 'Enter':
-            activateCode();
-            !cycle.started && cycle.start();
+            await activateCode();
             break;
           case 'Period':
             cycle.stop();
@@ -88,11 +88,11 @@ function App() {
         </div>
         <div className="flex space-x-4">
           <button
-            onClick={() => {
+            onClick={async () => {
               const _code = getRandomTune();
               console.log('tune', _code); // uncomment this to debug when random code fails
               setCode(_code);
-              const parsed = evaluate(_code);
+              const parsed = await evaluate(_code);
               // Tone.Transport.cancel(Tone.Transport.seconds);
               setPattern(parsed.pattern);
             }}
@@ -133,7 +133,7 @@ function App() {
           className="flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500"
           onClick={() => togglePlay()}
         >
-          {cycle.started ? 'pause' : 'play'}
+          {!pending ? <>{cycle.started ? 'pause' : 'play'}</> : <>loading...</>}
         </button>
         <textarea
           className="grow bg-[#283237] border-0 text-xs min-h-[200px]"
