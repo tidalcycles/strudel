@@ -8,6 +8,6 @@
   height: inherit !important;
 }
 
-.justify-center {
-  justify-content: center;
+main {
+  margin: 0 auto;
 }
