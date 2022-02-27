@@ -90,7 +90,8 @@ export function patternifyAST(ast) {
           return ast.source_;
         }
         const {start, end} = ast.location_;
-        return pure(ast.source_).withLocation({start, end});
+        const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
+        return pure(value).withLocation({start, end});
       }
       return patternifyAST(ast.source_);
     case "stretch":

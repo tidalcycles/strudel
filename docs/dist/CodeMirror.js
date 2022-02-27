@@ -20,7 +20,7 @@ export default function CodeMirror({value, onChange, options, editorDidMount}) {
   });
 }
 export const markEvent = (editor) => (time, event) => {
-  const locs = event.value.locations;
+  const locs = event.context.locations;
   if (!locs || !editor) {
     return;
   }

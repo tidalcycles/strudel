@@ -12,19 +12,22 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent, onDraw}) {
   const [activeCode, setActiveCode] = useState();
   const [log, setLog] = useState("");
   const [error, setError] = useState();
+  const [pending, setPending] = useState(false);
   const [hash, setHash] = useState("");
   const [pattern, setPattern] = useState();
   const dirty = code !== activeCode || error;
   const generateHash = () => encodeURIComponent(btoa(code));
-  const activateCode = (_code = code) => {
-    !cycle.started && cycle.start();
-    broadcast({type: "start", from: id});
+  const activateCode = async (_code = code) => {
     if (activeCode && !dirty) {
       setError(void 0);
+      !cycle.started && cycle.start();
       return;
     }
     try {
-      const parsed = evaluate(_code);
+      setPending(true);
+      const parsed = await evaluate(_code);
+      !cycle.started && cycle.start();
+      broadcast({type: "start", from: id});
       setPattern(() => parsed.pattern);
       if (autolink) {
         window.location.hash = "#" + encodeURIComponent(btoa(code));
@@ -32,6 +35,7 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent, onDraw}) {
       setHash(generateHash());
       setError(void 0);
       setActiveCode(_code);
+      setPending(false);
     } catch (err) {
       err.message = "evaluation error: " + err.message;
       console.warn(err);
@@ -48,8 +52,9 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent, onDraw}) {
     onEvent: useCallback((time, event) => {
       try {
         onEvent?.(event);
-        if (!event.value?.onTrigger) {
-          const note = event.value?.value || event.value;
+        const {onTrigger} = event.context;
+        if (!onTrigger) {
+          const note = event.value;
           if (!isNote(note)) {
             throw new Error("not a note: " + note);
           }
@@ -59,7 +64,6 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent, onDraw}) {
             throw new Error("no defaultSynth passed to useRepl.");
           }
         } else {
-          const {onTrigger} = event.value;
           onTrigger(time, event);
         }
       } catch (err) {
@@ -68,9 +72,9 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent, onDraw}) {
         pushLog(err.message);
       }
     }, [onEvent]),
-    onQuery: useCallback((span) => {
+    onQuery: useCallback((state) => {
       try {
-        return pattern?.query(span) || [];
+        return pattern?.query(state) || [];
       } catch (err) {
         console.warn(err);
         err.message = "query error: " + err.message;
@@ -95,6 +99,7 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent, onDraw}) {
     }
   };
   return {
+    pending,
     code,
     setCode,
     pattern,

@@ -1,6 +1,6 @@
 import {useEffect, useState} from "../_snowpack/pkg/react.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
-import {TimeSpan} from "../_snowpack/link/strudel.js";
+import {TimeSpan, State} from "../_snowpack/link/strudel.js";
 function useCycle(props) {
   const {onEvent, onQuery, onSchedule, ready = true, onDraw} = props;
   const [started, setStarted] = useState(false);
@@ -8,7 +8,7 @@ function useCycle(props) {
   const activeCycle = () => Math.floor(Tone.getTransport().seconds / cycleDuration);
   const query = (cycle = activeCycle()) => {
     const timespan = new TimeSpan(cycle, cycle + 1);
-    const events = onQuery?.(timespan) || [];
+    const events = onQuery?.(new State(timespan)) || [];
     onSchedule?.(events, cycle);
     const cancelFrom = timespan.begin.valueOf();
     Tone.getTransport().cancel(cancelFrom);
@@ -22,7 +22,8 @@ function useCycle(props) {
         const toneEvent = {
           time: event.part.begin.valueOf(),
           duration: event.whole.end.sub(event.whole.begin).valueOf(),
-          value: event.value
+          value: event.value,
+          context: event.context
         };
         onEvent(time, toneEvent);
         Tone.Draw.schedule(() => {
