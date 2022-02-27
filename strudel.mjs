@@ -182,7 +182,7 @@ class Hap {
         this.context = context
         this.stateful = stateful
         if (stateful) {
-            assert(typeof this.value === "function", "Stateful values must be functions");
+            console.assert(typeof this.value === "function", "Stateful values must be functions");
         }
     }
 
@@ -205,9 +205,10 @@ class Hap {
 
     resolveState(state) {
         if (this.stateful && this.hasOnset()) {
+            console.log("stateful")
             const func = this.value
-            [newState, newValue] = func(state)
-            return [newState, this.withValue(() => newValue)]
+            const [newState, newValue] = func(state)
+            return [newState, new Hap(this.whole, this.part, newValue, this.context, false)]
         }
         return [state, this]
     }
