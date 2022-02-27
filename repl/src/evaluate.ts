@@ -29,10 +29,10 @@ hackLiteral(String, ['pure', 'p'], bootstrapped.pure); // comment out this line 
 // this will add everything to global scope, which is accessed by eval
 Object.assign(globalThis, bootstrapped, Tone, toneHelpers);
 
-export const evaluate: any = (code: string) => {
+export const evaluate: any = async (code: string) => {
   const shapeshifted = shapeshifter(code); // transform syntactically correct js code to semantically usable code
   // console.log('shapeshifted', shapeshifted);
-  let evaluated = eval(shapeshifted);
+  let evaluated = await eval(shapeshifted);
   if (typeof evaluated === 'function') {
     evaluated = evaluated();
   }

@@ -21,15 +21,15 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
   const [pattern, setPattern] = useState<Pattern>();
   const dirty = code !== activeCode || error;
   const generateHash = () => encodeURIComponent(btoa(code));
-  const activateCode = (_code = code) => {
-    !cycle.started && cycle.start();
-    broadcast({ type: 'start', from: id });
+  const activateCode = async (_code = code) => {
     if (activeCode && !dirty) {
       setError(undefined);
       return;
     }
     try {
-      const parsed = evaluate(_code);
+      const parsed = await evaluate(_code);
+      !cycle.started && cycle.start();
+      broadcast({ type: 'start', from: id });
       setPattern(() => parsed.pattern);
       if (autolink) {
         window.location.hash = '#' + encodeURIComponent(btoa(code));

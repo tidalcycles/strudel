@@ -51,11 +51,11 @@ function App() {
   // set active pattern on ctrl+enter
   useLayoutEffect(() => {
     // TODO: make sure this is only fired when editor has focus
-    const handleKeyPress = (e: any) => {
+    const handleKeyPress = async (e: any) => {
       if (e.ctrlKey || e.altKey) {
         switch (e.code) {
           case 'Enter':
-            activateCode();
+            await activateCode();
             !cycle.started && cycle.start();
             break;
           case 'Period':
@@ -88,11 +88,11 @@ function App() {
         </div>
         <div className="flex space-x-4">
           <button
-            onClick={() => {
+            onClick={async () => {
               const _code = getRandomTune();
               console.log('tune', _code); // uncomment this to debug when random code fails
               setCode(_code);
-              const parsed = evaluate(_code);
+              const parsed = await evaluate(_code);
               // Tone.Transport.cancel(Tone.Transport.seconds);
               setPattern(parsed.pattern);
             }}
