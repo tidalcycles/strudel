@@ -19,11 +19,9 @@ ReactDOM.render(
           )}
         </div>
       </header>
-      <div className="flex justify-center">
-        <main className="p-4 max-w-3xl prose">
-          <Tutorial />
-        </main>
-      </div>
+      <main className="p-4 max-w-3xl prose">
+        <Tutorial />
+      </main>
     </div>
   </React.StrictMode>,
   document.getElementById('root')
