@@ -58,6 +58,27 @@ describe('Hap', function() {
         assert.equal(d.spanEquals(e), true)
       })
     })
+    describe('resolveState()', () => {
+      it('Can increment some state', function() {
+        const stateful_value = state => {
+          const newValue = state["incrementme"]
+          // TODO Does the state *need* duplicating here?
+          const newState = {...state}
+          newState["incrementme"]++
+          return [newState, newValue]
+        }
+        const state = {incrementme: 10}
+        const ev1 = new Hap(ts(0,1), ts(0,1), stateful_value, {}, true)
+        const [state2, ev2] = ev1.resolveState(state)
+        const [state3, ev3] = ev1.resolveState(state2)
+        assert.deepStrictEqual(
+          ev3, new Hap(ts(0,1),ts(0,1),11,{},false)
+        )
+        assert.deepStrictEqual(
+          state3, {incrementme: 12}
+        )
+      })
+    })
   });
   
 describe('Pattern', function() {
