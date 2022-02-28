@@ -17,20 +17,23 @@ import {
   Sampler,
   getDestination
 } from "../_snowpack/pkg/tone.js";
+import {Piano} from "../_snowpack/pkg/@tonejs/piano.js";
 const Pattern = _Pattern;
 Pattern.prototype.tone = function(instrument) {
-  return this.fmap((value) => {
-    value = typeof value !== "object" && !Array.isArray(value) ? {value} : value;
-    const onTrigger = (time, event) => {
+  return this._withEvent((event) => {
+    const onTrigger = (time, event2) => {
       if (instrument.constructor.name === "PluckSynth") {
-        instrument.triggerAttack(value.value, time);
+        instrument.triggerAttack(event2.value, time);
       } else if (instrument.constructor.name === "NoiseSynth") {
-        instrument.triggerAttackRelease(event.duration, time);
+        instrument.triggerAttackRelease(event2.duration, time);
+      } else if (instrument.constructor.name === "Piano") {
+        instrument.keyDown({note: event2.value, time, velocity: 0.5});
+        instrument.keyUp({note: event2.value, time: time + event2.duration});
       } else {
-        instrument.triggerAttackRelease(value.value, event.duration, time);
+        instrument.triggerAttackRelease(event2.value, event2.duration, time);
       }
     };
-    return {...value, instrument, onTrigger};
+    return event.setContext({...event.context, instrument, onTrigger});
   });
 };
 Pattern.prototype.define("tone", (type, pat) => pat.tone(type), {composable: true, patternified: false});
@@ -45,6 +48,11 @@ export const pluck = (options) => new PluckSynth(options);
 export const polysynth = (options) => new PolySynth(options);
 export const sampler = (options) => new Sampler(options);
 export const synth = (options) => new Synth(options);
+export const piano = async (options = {velocities: 1}) => {
+  const p = new Piano(options);
+  await p.load();
+  return p;
+};
 export const vol = (v) => new Gain(v);
 export const lowpass = (v) => new Filter(v, "lowpass");
 export const highpass = (v) => new Filter(v, "highpass");
@@ -75,13 +83,12 @@ Pattern.prototype._poly = function(type = "triangle") {
   if (!this.instrument) {
     this.instrument = poly(type);
   }
-  return this.fmap((value) => {
-    value = typeof value !== "object" && !Array.isArray(value) ? {value} : value;
-    const onTrigger = (time, event) => {
+  return this._withEvent((event) => {
+    const onTrigger = (time, event2) => {
       this.instrument.set(instrumentConfig);
-      this.instrument.triggerAttackRelease(value.value, event.duration, time);
+      this.instrument.triggerAttackRelease(event2.value, event2.duration, time);
     };
-    return {...value, instrumentConfig, onTrigger};
+    return event.setContext({...event.context, instrumentConfig, onTrigger});
   });
 };
 Pattern.prototype.define("poly", (type, pat) => pat.poly(type), {composable: true, patternified: true});
@@ -96,8 +103,7 @@ const getTrigger = (getChain, value) => (time, event) => {
   }, event.duration * 2e3);
 };
 Pattern.prototype._synth = function(type = "triangle") {
-  return this.fmap((value) => {
-    value = typeof value !== "object" && !Array.isArray(value) ? {value} : value;
+  return this._withEvent((event) => {
     const instrumentConfig = {
       oscillator: {type},
       envelope: {attack: 0.01, decay: 0.01, sustain: 0.6, release: 0.01}
@@ -107,37 +113,37 @@ Pattern.prototype._synth = function(type = "triangle") {
       instrument.set(instrumentConfig);
       return instrument;
     };
-    const onTrigger = getTrigger(() => getInstrument().toDestination(), value.value);
-    return {...value, getInstrument, instrumentConfig, onTrigger};
+    const onTrigger = getTrigger(() => getInstrument().toDestination(), event.value);
+    return event.setContext({...event.context, getInstrument, instrumentConfig, onTrigger});
   });
 };
 Pattern.prototype.adsr = function(attack = 0.01, decay = 0.01, sustain = 0.6, release = 0.01) {
-  return this.fmap((value) => {
-    if (!value?.getInstrument) {
+  return this._withEvent((event) => {
+    if (!event.context.getInstrument) {
       throw new Error("cannot chain adsr: need instrument first (like synth)");
     }
-    const instrumentConfig = {...value.instrumentConfig, envelope: {attack, decay, sustain, release}};
+    const instrumentConfig = {...event.context.instrumentConfig, envelope: {attack, decay, sustain, release}};
     const getInstrument = () => {
-      const instrument = value.getInstrument();
+      const instrument = event.context.getInstrument();
       instrument.set(instrumentConfig);
       return instrument;
     };
-    const onTrigger = getTrigger(() => getInstrument().toDestination(), value.value);
-    return {...value, getInstrument, instrumentConfig, onTrigger};
+    const onTrigger = getTrigger(() => getInstrument().toDestination(), event.value);
+    return event.setContext({...event.context, getInstrument, instrumentConfig, onTrigger});
   });
 };
 Pattern.prototype.chain = function(...effectGetters) {
-  return this.fmap((value) => {
-    if (!value?.getInstrument) {
+  return this._withEvent((event) => {
+    if (!event.context?.getInstrument) {
       throw new Error("cannot chain: need instrument first (like synth)");
     }
-    const chain = (value.chain || []).concat(effectGetters);
+    const chain = (event.context.chain || []).concat(effectGetters);
     const getChain = () => {
       const effects = chain.map((getEffect) => getEffect());
-      return value.getInstrument().chain(...effects, getDestination());
+      return event.context.getInstrument().chain(...effects, getDestination());
     };
-    const onTrigger = getTrigger(getChain, value.value);
-    return {...value, getChain, onTrigger, chain};
+    const onTrigger = getTrigger(getChain, event.value);
+    return event.setContext({...event.context, getChain, onTrigger, chain});
   });
 };
 export const autofilter = (freq = 1) => () => new AutoFilter(freq).start();

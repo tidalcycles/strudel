@@ -323,7 +323,7 @@ Like early, but in the other direction:
 
 <MiniRepl tune={`cat(e5, b4.late(0.5))`} />
 
-TODO: shouldn't it sound different?
+<!-- TODO: shouldn't it sound different? -->
 
 ### rev()
 
@@ -337,13 +337,19 @@ Will apply the given function every n cycles:
 
 <MiniRepl tune={`cat(e5, pure(b4).every(4, late(0.5)))`} />
 
-TODO: should be able to do b4.every => like already possible with fast slow etc..
+<!-- TODO: should be able to do b4.every => like already possible with fast slow etc.. -->
 
 Note that late is called directly. This is a shortcut for:
 
 <MiniRepl tune={`cat(e5, pure(b4).every(4, x => x.late(0.5)))`} />
 
-TODO: should the function really run the first cycle?
+<!-- TODO: should the function really run the first cycle? -->
+
+### add(n)
+
+Adds the given number to each item in the pattern:
+
+<MiniRepl tune={`stack(0, 2, 4).add(slowcat(0, -2, -4, -5)).scale('C minor')`} />
 
 ### Functions not documented yet
 
@@ -561,7 +567,7 @@ Turns chord symbols into voicings, using the smoothest voice leading possible:
 
 <MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")`} />
 
-TODO: use voicing collection as first param + patternify.
+<!-- TODO: use voicing collection as first param + patternify. -->
 
 ### rootNotes(octave = 2)
 
@@ -578,8 +584,8 @@ Together with edit, struct and voicings, this can be used to create a basic back
 )`}
 />
 
-TODO: use range instead of octave.
-TODO: find out why composition does not work
+<!-- TODO: use range instead of octave. -->
+<!-- TODO: find out why composition does not work -->
 
 ## MIDI API
 

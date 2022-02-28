@@ -55,7 +55,9 @@ Pattern.prototype._transpose = function (intervalOrSemitones) {
       const semitones = typeof interval === 'string' ? Interval.semitones(interval) || 0 : interval;
       return event.withValue(() => event.value + semitones);
     }
-    return event.withValue(() => Note.transpose(event.value, interval));
+    // TODO: move simplify to player to preserve enharmonics
+    // tone.js doesn't understand multiple sharps flats e.g. F##3 has to be turned into G3
+    return event.withValue(() => Note.simplify(Note.transpose(event.value, interval)));
   });
 };
 

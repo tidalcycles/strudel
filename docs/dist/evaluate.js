@@ -20,9 +20,9 @@ function hackLiteral(literal, names, func) {
 hackLiteral(String, ["mini", "m"], bootstrapped.mini);
 hackLiteral(String, ["pure", "p"], bootstrapped.pure);
 Object.assign(globalThis, bootstrapped, Tone, toneHelpers);
-export const evaluate = (code) => {
+export const evaluate = async (code) => {
   const shapeshifted = shapeshifter(code);
-  let evaluated = eval(shapeshifted);
+  let evaluated = await eval(shapeshifted);
   if (typeof evaluated === "function") {
     evaluated = evaluated();
   }

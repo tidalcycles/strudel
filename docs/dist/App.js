@@ -14,7 +14,6 @@ try {
 } catch (err) {
   console.warn("failed to decode", err);
 }
-Tone.setContext(new Tone.Context({latencyHint: "playback", lookAhead: 1}));
 const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.getDestination());
 defaultSynth.set({
   oscillator: {type: "triangle"},
@@ -30,7 +29,7 @@ function getRandomTune() {
 const randomTune = getRandomTune();
 function App() {
   const [editor, setEditor] = useState();
-  const {setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog} = useRepl({
+  const {setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog, pending} = useRepl({
     tune: decoded || randomTune,
     defaultSynth,
     onDraw: useCallback(markEvent(editor), [editor])
@@ -40,12 +39,11 @@ function App() {
     logBox.current.scrollTop = logBox.current?.scrollHeight;
   }, [log]);
   useLayoutEffect(() => {
-    const handleKeyPress = (e) => {
+    const handleKeyPress = async (e) => {
       if (e.ctrlKey || e.altKey) {
         switch (e.code) {
           case "Enter":
-            activateCode();
-            !cycle.started && cycle.start();
+            await activateCode();
             break;
           case "Period":
             cycle.stop();
@@ -81,11 +79,11 @@ function App() {
   }, "Strudel REPL")), /* @__PURE__ */ React.createElement("div", {
     className: "flex space-x-4"
   }, /* @__PURE__ */ React.createElement("button", {
-    onClick: () => {
+    onClick: async () => {
       const _code = getRandomTune();
       console.log("tune", _code);
       setCode(_code);
-      const parsed = evaluate(_code);
+      const parsed = await evaluate(_code);
       setPattern(parsed.pattern);
     }
   }, "🎲 random tune"), /* @__PURE__ */ React.createElement("button", null, /* @__PURE__ */ React.createElement("a", {
@@ -116,7 +114,7 @@ function App() {
   }, error?.message || "unknown error")), /* @__PURE__ */ React.createElement("button", {
     className: "flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500",
     onClick: () => togglePlay()
-  }, cycle.started ? "pause" : "play"), /* @__PURE__ */ React.createElement("textarea", {
+  }, !pending ? /* @__PURE__ */ React.createElement(React.Fragment, null, cycle.started ? "pause" : "play") : /* @__PURE__ */ React.createElement(React.Fragment, null, "loading...")), /* @__PURE__ */ React.createElement("textarea", {
     className: "grow bg-[#283237] border-0 text-xs min-h-[200px]",
     value: log,
     readOnly: true,

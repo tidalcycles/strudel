@@ -426,3 +426,11 @@ export const sowhatelse = `()=> {
     "[2,4]/4".scale('D dorian').apply(t).tone(instr('pad')).mask("<x x x ~>/8")
   ).fast(6/8)
 }`;
+export const barryHarris = `piano()
+.then(p => "0,2,[7 6]"
+  .add("<0 1 2 3 4 5 7 8>")
+  .scale('C bebop major')
+  .transpose("<0 1 2 1>/8")
+  .slow(2)
+  .tone(p.toDestination()))
+`;
