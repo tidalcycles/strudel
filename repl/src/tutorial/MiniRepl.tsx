@@ -12,7 +12,7 @@ const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destina
 });
 
 // "balanced" | "interactive" | "playback";
-Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));
+// Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));
 function MiniRepl({ tune, maxHeight = 500 }) {
   const [editor, setEditor] = useState<any>();
   const { code, setCode, activateCode, activeCode, setPattern, error, cycle, dirty, log, togglePlay, hash } = useRepl({
