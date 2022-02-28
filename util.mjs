@@ -28,3 +28,14 @@ export const fromMidi = (n) => {
 // modulo that works with negative numbers e.g. mod(-1, 3) = 2
 // const mod = (n: number, m: number): number => (n < 0 ? mod(n + m, m) : n % m);
 export const mod = (n, m) => (n < 0 ? mod(n + m, m) : n % m);
+
+export const getPlayableNoteValue = (event) => {
+  let { value: note, context } = event;
+  // if value is number => interpret as midi number as long as its not marked as frequency
+  if (typeof note === 'number' && context.type !== 'frequency') {
+    note = fromMidi(event.value);
+  } else if (typeof note === 'string' && !isNote(note)) {
+    throw new Error('not a note: ' + note);
+  }
+  return note;
+};

@@ -16,9 +16,10 @@ import {
   NoiseSynth,
   PluckSynth,
   Sampler,
-  getDestination
+  getDestination,
 } from 'tone';
 import { Piano } from '@tonejs/piano';
+import { getPlayableNoteValue } from '../../util.mjs';
 
 // what about
 // https://www.charlie-roberts.com/gibberish/playground/
@@ -30,13 +31,15 @@ Pattern.prototype.tone = function (instrument) {
   // instrument.toDestination();
   return this._withEvent((event) => {
     const onTrigger = (time, event) => {
+      const note = getPlayableNoteValue(event);
+      // TODO: test if all tonejs instruments can handle freqs
       if (instrument.constructor.name === 'PluckSynth') {
-        instrument.triggerAttack(event.value, time);
+        instrument.triggerAttack(note, time);
       } else if (instrument.constructor.name === 'NoiseSynth') {
         instrument.triggerAttackRelease(event.duration, time); // noise has no value
       } else if (instrument.constructor.name === 'Piano') {
-        instrument.keyDown({ note: event.value, time, velocity: 0.5 });
-        instrument.keyUp({ note: event.value, time: time + event.duration });
+        instrument.keyDown({ note, time, velocity: 0.5 });
+        instrument.keyUp({ note, time: time + event.duration });
       } else {
         instrument.triggerAttackRelease(event.value, event.duration, time);
       }
