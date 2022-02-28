@@ -34,11 +34,11 @@ function scaleTranspose(scale: string, offset: number, note: string) {
   while (Math.abs(i - noteIndex) < Math.abs(offset)) {
     i += direction;
     const index = mod(i, notes.length);
-    if (direction < 0 && n === 'C') {
+    if (direction < 0 && n[0] === 'C') {
       o += direction;
     }
     n = notes[index];
-    if (direction > 0 && n === 'C') {
+    if (direction > 0 && n[0] === 'C') {
       o += direction;
     }
   }
@@ -54,7 +54,9 @@ Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
       const semitones = typeof interval === 'string' ? Interval.semitones(interval) || 0 : interval;
       return event.withValue(() => event.value + semitones);
     }
-    return event.withValue(() => Note.transpose(event.value, interval));
+    // TODO: move simplify to player to preserve enharmonics
+    // tone.js doesn't understand multiple sharps flats e.g. F##3 has to be turned into G3
+    return event.withValue(() => Note.simplify(Note.transpose(event.value, interval)));
   });
 };
 
