@@ -9,10 +9,17 @@ function edo(name) {
   return Array.from({ length: divisions }, (_, i) => Math.pow(2, i / divisions));
 }
 
+const presets = {
+  '12ji': [1 / 1, 16 / 15, 9 / 8, 6 / 5, 5 / 4, 4 / 3, 45 / 32, 3 / 2, 8 / 5, 5 / 3, 16 / 9, 15 / 8],
+};
+
 function getXenScale(scale, indices) {
   if (typeof scale === 'string') {
     if (/^[1-9]+edo$/.test(scale)) {
       return edo(scale);
+    }
+    if (presets[scale]) {
+      return presets[scale];
     }
     throw new Error('unknown scale name: "' + scale + '"');
   }
@@ -34,4 +41,11 @@ Pattern.prototype._xen = function (scaleNameOrRatios) {
     return event.withValue(() => frequency).setContext({ ...event.context, type: 'frequency' });
   });
 };
+Pattern.prototype.tuning = function (steps) {
+  return this._asNumber()._withEvent((event) => {
+    const frequency = xenOffset(steps, event.value);
+    return event.withValue(() => frequency).setContext({ ...event.context, type: 'frequency' });
+  });
+};
 Pattern.prototype.define('xen', (scale, pat) => pat.xen(scale), { composable: true, patternified: true });
+// Pattern.prototype.define('tuning', (scale, pat) => pat.xen(scale), { composable: true, patternified: false });
