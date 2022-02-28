@@ -3,6 +3,7 @@ import './tone';
 import './midi';
 import './voicings';
 import './tonal.mjs';
+import './xen.mjs';
 import shapeshifter from './shapeshifter';
 import { minify } from './parse';
 import * as Tone from 'tone';
