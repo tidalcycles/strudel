@@ -33,6 +33,9 @@ describe('scaleTranspose', () => {
     scaleTranspose('C minor', -1, 'Bb2');
     scaleTranspose('C minor', 8, 'C4');
     scaleTranspose('C4 minor', 8, 'C5');
+    scaleTranspose('C# major', 8, 'C#4');
+    scaleTranspose('C# major', -1, 'B#2');
+    scaleTranspose('C# major', -2, 'A#2');
   });
 });
 

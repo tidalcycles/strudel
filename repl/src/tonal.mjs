@@ -21,11 +21,11 @@ export function scaleOffset(scale, offset, index = 0) {
   while (Math.abs(i) < Math.abs(offset)) {
     i += direction;
     const index = mod(i, notes.length);
-    if (direction < 0 && n === 'C') {
+    if (direction < 0 && n[0] === 'C') {
       o += direction;
     }
     n = notes[index];
-    if (direction > 0 && n === 'C') {
+    if (direction > 0 && n[0] === 'C') {
       o += direction;
     }
   }
