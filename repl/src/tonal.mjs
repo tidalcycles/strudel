@@ -1,37 +1,24 @@
 import { Note, Interval, Scale } from '@tonaljs/tonal';
 import { Pattern as _Pattern } from '../../strudel.mjs';
+import { mod, tokenizeNote } from '../../util.mjs';
 
-const Pattern = _Pattern as any;
+const Pattern = _Pattern; // as any;
 
-// modulo that works with negative numbers e.g. mod(-1, 3) = 2
-const mod = (n: number, m: number): number => (n < 0 ? mod(n + m, m) : n % m);
-
-export function intervalDirection(from, to, direction = 1) {
-  const sign = Math.sign(direction);
-  const interval = sign < 0 ? Interval.distance(to, from) : Interval.distance(from, to);
-  return (sign < 0 ? '-' : '') + interval;
-}
-
-// transpose note inside scale by offset steps
-function scaleTranspose(scale: string, offset: number, note: string) {
+export function scaleOffset(scale, offset, index = 0) {
   let [tonic, scaleName] = Scale.tokenize(scale);
+  const [pc, acc, oct = 3] = tokenizeNote(tonic);
   let { notes } = Scale.get(`${tonic} ${scaleName}`);
   notes = notes.map((note) => Note.get(note).pc); // use only pc!
   offset = Number(offset);
   if (isNaN(offset)) {
     throw new Error(`scale offset "${offset}" not a number`);
   }
-  const { pc: fromPc, oct = 3 } = Note.get(note);
-  const noteIndex = notes.indexOf(fromPc);
-  if (noteIndex === -1) {
-    throw new Error(`note "${note}" is not in scale "${scale}"`);
-  }
-  let i = noteIndex,
+  let i = index,
     o = oct,
-    n = fromPc;
+    n = notes[0];
   const direction = Math.sign(offset);
   // TODO: find way to do this smarter
-  while (Math.abs(i - noteIndex) < Math.abs(offset)) {
+  while (Math.abs(i) < Math.abs(offset)) {
     i += direction;
     const index = mod(i, notes.length);
     if (direction < 0 && n === 'C') {
@@ -44,11 +31,25 @@ function scaleTranspose(scale: string, offset: number, note: string) {
   }
   return n + o;
 }
+// transpose note inside scale by offset steps
+// function scaleTranspose(scale: string, offset: number, note: string) {
+export function scaleTranspose(scale, offset, note) {
+  let [tonic, scaleName] = Scale.tokenize(scale);
+  const { pc: fromPc } = Note.get(note);
+  let { notes } = Scale.get(`${tonic} ${scaleName}`);
+  const scalePcs = notes.map((n) => Note.get(n).pc);
+  const noteIndex = scalePcs.indexOf(fromPc);
+  if (noteIndex === -1) {
+    throw new Error(`note "${fromPc}" is not in scale "${scale}". Use one of ${scalePcs.join('|')}`);
+  }
+  return scaleOffset(scale, offset, noteIndex);
+}
 
-Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
+// Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
+Pattern.prototype._transpose = function (intervalOrSemitones) {
   return this._withEvent((event) => {
     const interval = !isNaN(Number(intervalOrSemitones))
-      ? Interval.fromSemitones(intervalOrSemitones as number)
+      ? Interval.fromSemitones(intervalOrSemitones /*  as number */)
       : String(intervalOrSemitones);
     if (typeof event.value === 'number') {
       const semitones = typeof interval === 'string' ? Interval.semitones(interval) || 0 : interval;
@@ -64,7 +65,7 @@ Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
 // e.g. `stack(c3).superimpose(transpose(slowcat(7, 5)))` or
 // or even `stack(c3).superimpose(transpose.slowcat(7, 5))` or
 
-Pattern.prototype._scaleTranspose = function (offset: number | string) {
+Pattern.prototype._scaleTranspose = function (offset /* : number | string */) {
   return this._withEvent((event) => {
     if (!event.context.scale) {
       throw new Error('can only use scaleTranspose after .scale');
@@ -75,7 +76,7 @@ Pattern.prototype._scaleTranspose = function (offset: number | string) {
     return event.withValue(() => scaleTranspose(event.context.scale, Number(offset), event.value));
   });
 };
-Pattern.prototype._scale = function (scale: string) {
+Pattern.prototype._scale = function (scale /* : string */) {
   return this._withEvent((event) => {
     let note = event.value;
     const asNumber = Number(note);

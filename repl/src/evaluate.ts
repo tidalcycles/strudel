@@ -2,7 +2,7 @@ import * as strudel from '../../strudel.mjs';
 import './tone';
 import './midi';
 import './voicings';
-import './tonal';
+import './tonal.mjs';
 import shapeshifter from './shapeshifter';
 import { minify } from './parse';
 import * as Tone from 'tone';

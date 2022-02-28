@@ -1,11 +1,17 @@
+// returns true if the given string is a note
 export const isNote = (name) => /^[a-gA-G][#b]*[0-9]$/.test(name);
-export const tokenizeNote = (note) =>
-  typeof note === 'string'
-    ? note
-        .match(/^([a-gA-G])([#b]*)([0-9])?$/)
-        ?.slice(1)
-        ?.map((x) => (x === undefined ? '' : x)) || []
-    : [];
+export const tokenizeNote = (note) => {
+  if (typeof note !== 'string') {
+    return [];
+  }
+  const [pc, acc = '', oct] = note.match(/^([a-gA-G])([#b]*)([0-9])?$/)?.slice(1) || [];
+  if (!pc) {
+    return [];
+  }
+  return [pc, acc, oct ? Number(oct) : undefined];
+};
+
+// turns the given note into its midi number representation
 export const toMidi = (note) => {
   const [pc, acc, oct] = tokenizeNote(note);
   if (!pc) {
@@ -18,3 +24,7 @@ export const toMidi = (note) => {
 export const fromMidi = (n) => {
   return Math.pow(2, (n - 69) / 12) * 440;
 };
+
+// modulo that works with negative numbers e.g. mod(-1, 3) = 2
+// const mod = (n: number, m: number): number => (n < 0 ? mod(n + m, m) : n % m);
+export const mod = (n, m) => (n < 0 ? mod(n + m, m) : n % m);
