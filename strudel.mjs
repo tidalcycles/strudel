@@ -505,6 +505,10 @@ class Pattern {
         return this._asNumber()._opleft(other, a => b => a / b)
     }
 
+    round() {
+      return this._asNumber().fmap((v) => Math.round(v));
+    }
+
     union(other) {
         return this._opleft(other, a => b => Object.assign({}, a, b))
     }
