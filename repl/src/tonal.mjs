@@ -4,21 +4,27 @@ import { mod, tokenizeNote } from '../../util.mjs';
 
 const Pattern = _Pattern; // as any;
 
-export function scaleOffset(scale, offset, index = 0) {
+// transpose note inside scale by offset steps
+// function scaleTranspose(scale: string, offset: number, note: string) {
+export function scaleTranspose(scale, offset, note) {
   let [tonic, scaleName] = Scale.tokenize(scale);
-  const [pc, acc, oct = 3] = tokenizeNote(tonic);
   let { notes } = Scale.get(`${tonic} ${scaleName}`);
   notes = notes.map((note) => Note.get(note).pc); // use only pc!
   offset = Number(offset);
   if (isNaN(offset)) {
     throw new Error(`scale offset "${offset}" not a number`);
   }
-  let i = index,
+  const { pc: fromPc, oct = 3 } = Note.get(note);
+  const noteIndex = notes.indexOf(fromPc);
+  if (noteIndex === -1) {
+    throw new Error(`note "${note}" is not in scale "${scale}"`);
+  }
+  let i = noteIndex,
     o = oct,
-    n = notes[0];
+    n = fromPc;
   const direction = Math.sign(offset);
   // TODO: find way to do this smarter
-  while (Math.abs(i) < Math.abs(offset)) {
+  while (Math.abs(i - noteIndex) < Math.abs(offset)) {
     i += direction;
     const index = mod(i, notes.length);
     if (direction < 0 && n[0] === 'C') {
@@ -30,19 +36,6 @@ export function scaleOffset(scale, offset, index = 0) {
     }
   }
   return n + o;
-}
-// transpose note inside scale by offset steps
-// function scaleTranspose(scale: string, offset: number, note: string) {
-export function scaleTranspose(scale, offset, note) {
-  let [tonic, scaleName] = Scale.tokenize(scale);
-  const { pc: fromPc } = Note.get(note);
-  let { notes } = Scale.get(`${tonic} ${scaleName}`);
-  const scalePcs = notes.map((n) => Note.get(n).pc);
-  const noteIndex = scalePcs.indexOf(fromPc);
-  if (noteIndex === -1) {
-    throw new Error(`note "${fromPc}" is not in scale "${scale}". Use one of ${scalePcs.join('|')}`);
-  }
-  return scaleOffset(scale, offset, noteIndex);
 }
 
 // Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
