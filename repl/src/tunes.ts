@@ -474,9 +474,11 @@ export const jemblung = `() => {
       // melody
       "12 11*3 12 ~".len(0.005) 
     )
-    .add("<0 1>").mul(5/5).round().tune("jemblung2").tone(s),
-    //.add("<0 1>").mul(22/5).round().xen("22edo").tone(s),
-    //.add("<0 1>").mul(12/5).round().xen("12edo").tone(s),
+    .add("<0 1>")
+    .tune("jemblung2")
+    //.mul(22/5).round().xen("22edo")
+    //.mul(12/5).round().xen("12edo")
+    .tone(s),
     // kick
     "[c2 ~]*2".len(0.05).tone(membrane().chain(out())), 
     // snare
