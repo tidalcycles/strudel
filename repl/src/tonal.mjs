@@ -1,19 +1,12 @@
 import { Note, Interval, Scale } from '@tonaljs/tonal';
 import { Pattern as _Pattern } from '../../strudel.mjs';
+import { mod, tokenizeNote } from '../../util.mjs';
 
-const Pattern = _Pattern as any;
-
-// modulo that works with negative numbers e.g. mod(-1, 3) = 2
-const mod = (n: number, m: number): number => (n < 0 ? mod(n + m, m) : n % m);
-
-export function intervalDirection(from, to, direction = 1) {
-  const sign = Math.sign(direction);
-  const interval = sign < 0 ? Interval.distance(to, from) : Interval.distance(from, to);
-  return (sign < 0 ? '-' : '') + interval;
-}
+const Pattern = _Pattern; // as any;
 
 // transpose note inside scale by offset steps
-function scaleTranspose(scale: string, offset: number, note: string) {
+// function scaleTranspose(scale: string, offset: number, note: string) {
+export function scaleTranspose(scale, offset, note) {
   let [tonic, scaleName] = Scale.tokenize(scale);
   let { notes } = Scale.get(`${tonic} ${scaleName}`);
   notes = notes.map((note) => Note.get(note).pc); // use only pc!
@@ -45,10 +38,11 @@ function scaleTranspose(scale: string, offset: number, note: string) {
   return n + o;
 }
 
-Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
+// Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
+Pattern.prototype._transpose = function (intervalOrSemitones) {
   return this._withEvent((event) => {
     const interval = !isNaN(Number(intervalOrSemitones))
-      ? Interval.fromSemitones(intervalOrSemitones as number)
+      ? Interval.fromSemitones(intervalOrSemitones /*  as number */)
       : String(intervalOrSemitones);
     if (typeof event.value === 'number') {
       const semitones = typeof interval === 'string' ? Interval.semitones(interval) || 0 : interval;
@@ -66,7 +60,7 @@ Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
 // e.g. `stack(c3).superimpose(transpose(slowcat(7, 5)))` or
 // or even `stack(c3).superimpose(transpose.slowcat(7, 5))` or
 
-Pattern.prototype._scaleTranspose = function (offset: number | string) {
+Pattern.prototype._scaleTranspose = function (offset /* : number | string */) {
   return this._withEvent((event) => {
     if (!event.context.scale) {
       throw new Error('can only use scaleTranspose after .scale');
@@ -77,7 +71,7 @@ Pattern.prototype._scaleTranspose = function (offset: number | string) {
     return event.withValue(() => scaleTranspose(event.context.scale, Number(offset), event.value));
   });
 };
-Pattern.prototype._scale = function (scale: string) {
+Pattern.prototype._scale = function (scale /* : string */) {
   return this._withEvent((event) => {
     let note = event.value;
     const asNumber = Number(note);

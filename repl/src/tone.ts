@@ -20,6 +20,7 @@ import {
   Players,
 } from 'tone';
 import { Piano } from '@tonejs/piano';
+import { getPlayableNoteValue } from '../../util.mjs';
 
 // what about
 // https://www.charlie-roberts.com/gibberish/playground/
@@ -31,24 +32,23 @@ Pattern.prototype.tone = function (instrument) {
   // instrument.toDestination();
   return this._withEvent((event) => {
     const onTrigger = (time, event) => {
-      let note = event.value;
+      let note;
       let velocity = event.context?.velocity ?? 0.75;
       switch (instrument.constructor.name) {
         case 'PluckSynth':
-          // note = getPlayableNoteValue(event);
-          // velocity?
+          note = getPlayableNoteValue(event);
           instrument.triggerAttack(note, time);
           break;
         case 'NoiseSynth':
           instrument.triggerAttackRelease(event.duration, time); // noise has no value
           break;
         case 'Piano':
-          // note = getPlayableNoteValue(event);
+          note = getPlayableNoteValue(event);
           instrument.keyDown({ note, time, velocity: 0.5 });
           instrument.keyUp({ note, time: time + event.duration, velocity });
           break;
         case 'Sampler':
-          // note = getPlayableNoteValue(event);
+          note = getPlayableNoteValue(event);
           instrument.triggerAttackRelease(note, event.duration, time, velocity);
           break;
         case 'Players':
@@ -61,7 +61,7 @@ Pattern.prototype.tone = function (instrument) {
           player.stop(time + event.duration);
           break;
         default:
-          // note = getPlayableNoteValue(event);
+          note = getPlayableNoteValue(event);
           instrument.triggerAttackRelease(note, event.duration, time, velocity);
       }
     };

@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/yaxu/strudel#readme",
   "devDependencies": {
+    "@tonaljs/tonal": "^4.6.5",
     "mocha": "^9.1.4",
     "ramda": "^0.28.0",
     "snowpack": "^3.8.8"

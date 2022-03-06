@@ -38,3 +38,9 @@ export const markEvent = (editor) => (time, event) => {
     // }, '+' + event.duration * 0.5);
   }, event.duration * 0.9 * 1000);
 };
+
+// idea: to improve highlighting, all patterns that appear anywhere in the code could be queried seperately
+// the created events could then be used to highlight primitives as long as they are active
+// this would create a less flickery output, with no duplications
+// it would be seperated completely from the querying that happens to get the sound output
+// it would also allow highlighting primitives that don't even end up in the sounding events (just for visual purposes)

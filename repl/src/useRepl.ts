@@ -1,5 +1,5 @@
 import { useCallback, useState, useMemo } from 'react';
-import { isNote } from 'tone';
+import { getPlayableNoteValue } from '../../util.mjs';
 import { evaluate } from './evaluate';
 import type { Pattern } from './types';
 import useCycle from './useCycle';
@@ -63,11 +63,8 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
           onEvent?.(event);
           const { onTrigger, velocity } = event.context;
           if (!onTrigger) {
-            const note = event.value;
-            if (!isNote(note)) {
-              throw new Error('not a note: ' + note);
-            }
             if (defaultSynth) {
+              const note = getPlayableNoteValue(event);
               defaultSynth.triggerAttackRelease(note, event.duration, time, velocity);
             } else {
               throw new Error('no defaultSynth passed to useRepl.');

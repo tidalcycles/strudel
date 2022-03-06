@@ -27,6 +27,7 @@
     "shift-regexp-acceptor": "^2.0.3",
     "shift-spec": "^2018.0.2",
     "tone": "^14.7.77",
+    "tune.js": "^1.0.1",
     "webmidi": "^2.5.2"
   },
   "devDependencies": {

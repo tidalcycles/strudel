@@ -516,3 +516,31 @@ export const wavyKalimba = `sampler({
     .fast(1)
 })`;
 
+export const jemblung = `() => {
+  const delay = new FeedbackDelay(1/8, .6).chain(vol(0.15), out());
+  const snare = noise({type:'white',...adsr(0,0.2,0)}).chain(lowpass(5000),vol(1.8),out());
+  const s = polysynth().set({...osc('sawtooth4'),...adsr(0.01,.2,.6,0.2)}).chain(vol(.23).connect(delay),out());
+  return stack(
+    stack(
+      "0 1 4 [3!2 5]".edit(
+        // chords
+        x=>x.add("0,3").duration("0.05!3 0.02"),
+        // bass
+        x=>x.add("-8").struct("x*8").duration(0.1) 
+      ),
+      // melody
+      "12 11*3 12 ~".duration(0.005) 
+    )
+    .add("<0 1>")
+    .tune("jemblung2")
+    //.mul(22/5).round().xen("22edo")
+    //.mul(12/5).round().xen("12edo")
+    .tone(s),
+    // kick
+    "[c2 ~]*2".duration(0.05).tone(membrane().chain(out())), 
+    // snare
+    "[~ c1]*2".early(0.001).tone(snare),
+    // hihat
+    "c2*8".tone(noise().chain(highpass(6000),vol(0.5).connect(delay),out())),
+  ).slow(3)
+}`;
