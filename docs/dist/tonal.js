@@ -1,13 +1,8 @@
 import {Note, Interval, Scale} from "../_snowpack/pkg/@tonaljs/tonal.js";
 import {Pattern as _Pattern} from "../_snowpack/link/strudel.js";
+import {mod, tokenizeNote} from "../_snowpack/link/util.js";
 const Pattern = _Pattern;
-const mod = (n, m) => n < 0 ? mod(n + m, m) : n % m;
-export function intervalDirection(from, to, direction = 1) {
-  const sign = Math.sign(direction);
-  const interval = sign < 0 ? Interval.distance(to, from) : Interval.distance(from, to);
-  return (sign < 0 ? "-" : "") + interval;
-}
-function scaleTranspose(scale, offset, note) {
+export function scaleTranspose(scale, offset, note) {
   let [tonic, scaleName] = Scale.tokenize(scale);
   let {notes} = Scale.get(`${tonic} ${scaleName}`);
   notes = notes.map((note2) => Note.get(note2).pc);

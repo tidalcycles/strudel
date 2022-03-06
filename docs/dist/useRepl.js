@@ -1,5 +1,5 @@
 import {useCallback, useState, useMemo} from "../_snowpack/pkg/react.js";
-import {isNote} from "../_snowpack/pkg/tone.js";
+import {getPlayableNoteValue} from "../_snowpack/link/util.js";
 import {evaluate} from "./evaluate.js";
 import useCycle from "./useCycle.js";
 import usePostMessage from "./usePostMessage.js";
@@ -54,11 +54,8 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent, onDraw}) {
         onEvent?.(event);
         const {onTrigger, velocity} = event.context;
         if (!onTrigger) {
-          const note = event.value;
-          if (!isNote(note)) {
-            throw new Error("not a note: " + note);
-          }
           if (defaultSynth) {
+            const note = getPlayableNoteValue(event);
             defaultSynth.triggerAttackRelease(note, event.duration, time, velocity);
           } else {
             throw new Error("no defaultSynth passed to useRepl.");

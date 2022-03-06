@@ -19,24 +19,28 @@ import {
   Players
 } from "../_snowpack/pkg/tone.js";
 import {Piano} from "../_snowpack/pkg/@tonejs/piano.js";
+import {getPlayableNoteValue} from "../_snowpack/link/util.js";
 const Pattern = _Pattern;
 Pattern.prototype.tone = function(instrument) {
   return this._withEvent((event) => {
     const onTrigger = (time, event2) => {
-      let note = event2.value;
+      let note;
       let velocity = event2.context?.velocity ?? 0.75;
       switch (instrument.constructor.name) {
         case "PluckSynth":
+          note = getPlayableNoteValue(event2);
           instrument.triggerAttack(note, time);
           break;
         case "NoiseSynth":
           instrument.triggerAttackRelease(event2.duration, time);
           break;
         case "Piano":
+          note = getPlayableNoteValue(event2);
           instrument.keyDown({note, time, velocity: 0.5});
           instrument.keyUp({note, time: time + event2.duration, velocity});
           break;
         case "Sampler":
+          note = getPlayableNoteValue(event2);
           instrument.triggerAttackRelease(note, event2.duration, time, velocity);
           break;
         case "Players":
@@ -48,6 +52,7 @@ Pattern.prototype.tone = function(instrument) {
           player.stop(time + event2.duration);
           break;
         default:
+          note = getPlayableNoteValue(event2);
           instrument.triggerAttackRelease(note, event2.duration, time, velocity);
       }
     };

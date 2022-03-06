@@ -5,7 +5,7 @@ import './voicings';
 import './tonal.mjs';
 import './xen.mjs';
 import './tune.mjs';
-import './tonal';
+import './tonal.mjs';
 import gist from './gist.js';
 import shapeshifter from './shapeshifter';
 import { minify } from './parse';

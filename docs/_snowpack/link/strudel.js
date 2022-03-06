@@ -1,5 +1,6 @@
 import Fraction from "../pkg/fractionjs.js";
 import {compose} from "../pkg/ramda.js";
+import {isNote, toMidi} from "./util.js";
 const removeUndefineds = (xs) => xs.filter((x) => x != void 0);
 const flatten = (arr) => [].concat(...arr);
 const id = (a) => a;
@@ -327,17 +328,39 @@ class Pattern {
   _opleft(other, func) {
     return this.fmap(func).appLeft(reify(other));
   }
+  _asNumber() {
+    return this._withEvent((event) => {
+      const asNumber = Number(event.value);
+      if (!isNaN(asNumber)) {
+        return event.withValue(() => asNumber);
+      }
+      const specialValue = {
+        e: Math.E,
+        pi: Math.PI
+      }[event.value];
+      if (typeof specialValue !== "undefined") {
+        return event.withValue(() => specialValue);
+      }
+      if (isNote(event.value)) {
+        return new Hap(event.whole, event.part, toMidi(event.value), {...event.context, type: "midi"});
+      }
+      throw new Error('cannot parse as number: "' + event.value + '"');
+    });
+  }
   add(other) {
-    return this._opleft(other, (a) => (b) => a + b);
+    return this._asNumber()._opleft(other, (a) => (b) => a + b);
   }
   sub(other) {
-    return this._opleft(other, (a) => (b) => a - b);
+    return this._asNumber()._opleft(other, (a) => (b) => a - b);
   }
   mul(other) {
-    return this._opleft(other, (a) => (b) => a * b);
+    return this._asNumber()._opleft(other, (a) => (b) => a * b);
   }
   div(other) {
-    return this._opleft(other, (a) => (b) => a / b);
+    return this._asNumber()._opleft(other, (a) => (b) => a / b);
+  }
+  round() {
+    return this._asNumber().fmap((v) => Math.round(v));
   }
   union(other) {
     return this._opleft(other, (a) => (b) => Object.assign({}, a, b));
