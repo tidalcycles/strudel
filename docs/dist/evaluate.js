@@ -3,6 +3,7 @@ import "./tone.js";
 import "./midi.js";
 import "./voicings.js";
 import "./tonal.js";
+import gist from "./gist.js";
 import shapeshifter from "./shapeshifter.js";
 import {minify} from "./parse.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
@@ -19,7 +20,7 @@ function hackLiteral(literal, names, func) {
 }
 hackLiteral(String, ["mini", "m"], bootstrapped.mini);
 hackLiteral(String, ["pure", "p"], bootstrapped.pure);
-Object.assign(globalThis, bootstrapped, Tone, toneHelpers);
+Object.assign(globalThis, bootstrapped, Tone, toneHelpers, {gist});
 export const evaluate = async (code) => {
   const shapeshifted = shapeshifter(code);
   let evaluated = await eval(shapeshifted);
