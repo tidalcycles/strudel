@@ -458,3 +458,52 @@ export const barryHarris = `piano()
   .slow(2)
   .tone(p.toDestination()))
 `;
+
+
+export const blippyRhodes = `Promise.all([
+  players({
+    bd: 'samples/tidal/bd/BT0A0D0.wav',
+    sn: 'samples/tidal/sn/ST0T0S3.wav',
+    hh: 'samples/tidal/hh/000_hh3closedhh.wav'
+  }, 'https://loophole-letters.vercel.app/'),
+  sampler({
+    E1: 'samples/rhodes/MK2Md2000.mp3',
+    E2: 'samples/rhodes/MK2Md2012.mp3',
+    E3: 'samples/rhodes/MK2Md2024.mp3',
+    E4: 'samples/rhodes/MK2Md2036.mp3',
+    E5: 'samples/rhodes/MK2Md2048.mp3',
+    E6: 'samples/rhodes/MK2Md2060.mp3',
+    E7: 'samples/rhodes/MK2Md2072.mp3'
+  }, 'https://loophole-letters.vercel.app/')
+])
+  .then(([drums, rhodes])=>{
+  const delay = new FeedbackDelay(1/12, .4).chain(vol(0.3), out());
+  rhodes = rhodes.chain(vol(0.5).connect(delay), out());
+  const bass = synth(osc('sawtooth8')).chain(vol(.5),out());
+  const scales = ['C major', 'C mixolydian', 'F lydian', ['F minor',slowcat('Db major','Db mixolydian')]];
+  const t = x => x.scale(sequence(...scales).slow(4));
+  return stack(
+    "<bd sn> <hh hh*2 hh*3>".tone(drums.chain(out())),
+    "<g4 c5 a4 [ab4 <eb5 f5>]>".apply(t).struct("x*8").apply(scaleTranspose("0 [-5,-2] -7 [-9,-2]")).legato(.2).slow(2).tone(rhodes),
+    //"<C^7 C7 F^7 [Fm7 <Db^7 Db7>]>".slow(2).voicings().struct("~ x").legato(.25).tone(rhodes),
+    "<c2 c3 f2 [[F2 C2] db2]>".legato("<1@3 [.3 1]>").slow(2).tone(bass),
+  ).fast(3/2)
+})`;
+
+export const wavyRhodes = `sampler({
+  E1: 'MK2Md2000.mp3',
+  E2: 'MK2Md2012.mp3',
+  E3: 'MK2Md2024.mp3',
+  E4: 'MK2Md2036.mp3',
+  E5: 'MK2Md2048.mp3',
+  E6: 'MK2Md2060.mp3',
+  E7: 'MK2Md2072.mp3'
+}, 'https://loophole-letters.vercel.app/samples/rhodes/').then((rhodes)=>{
+const delay = new FeedbackDelay(1/6, .5).chain(vol(.2), out());
+rhodes = rhodes.chain(vol(0.5).connect(delay), out());
+const scales = sequence('C major', 'C mixolydian', 'F lydian', ['F minor', 'Db major']).slow(4);
+return stack(
+  "[0 2 4 6 9 2 0 -2]*3".add("<0 2>/4").scale(scales).struct("x*8").slow(2).tone(rhodes),
+  "<c2 c2 f2 [[F2 C2] db2]>".scale(scales).scaleTranspose("[0 <2 4>]*2").struct("x*4").slow(2).tone(rhodes),
+).legato("<.2 .4 .8 1 1.2 1.4 1.6 1.8 2>/8")
+})`;
