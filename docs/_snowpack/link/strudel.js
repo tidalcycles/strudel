@@ -125,7 +125,7 @@ class Hap {
     this.context = context;
     this.stateful = stateful;
     if (stateful) {
-      assert(typeof this.value === "function", "Stateful values must be functions");
+      console.assert(typeof this.value === "function", "Stateful values must be functions");
     }
   }
   withSpan(func) {
@@ -140,8 +140,10 @@ class Hap {
   }
   resolveState(state) {
     if (this.stateful && this.hasOnset()) {
-      const func = this.value[newState, newValue] = func(state);
-      return [newState, this.withValue(() => newValue)];
+      console.log("stateful");
+      const func = this.value;
+      const [newState, newValue] = func(state);
+      return [newState, new Hap(this.whole, this.part, newValue, this.context, false)];
     }
     return [state, this];
   }
@@ -518,8 +520,14 @@ class Pattern {
   hush() {
     return silence;
   }
+  _duration(value) {
+    return this.withEventSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
+  }
+  _legato(value) {
+    return this.withEventSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
+  }
 }
-Pattern.prototype.patternified = ["apply", "fast", "slow", "early", "late"];
+Pattern.prototype.patternified = ["apply", "fast", "slow", "early", "late", "duration", "legato"];
 Pattern.prototype.factories = {pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 const silence = new Pattern((_) => []);
 function pure(value) {

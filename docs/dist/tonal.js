@@ -25,11 +25,11 @@ function scaleTranspose(scale, offset, note) {
   while (Math.abs(i - noteIndex) < Math.abs(offset)) {
     i += direction;
     const index = mod(i, notes.length);
-    if (direction < 0 && n === "C") {
+    if (direction < 0 && n[0] === "C") {
       o += direction;
     }
     n = notes[index];
-    if (direction > 0 && n === "C") {
+    if (direction > 0 && n[0] === "C") {
       o += direction;
     }
   }
@@ -42,7 +42,7 @@ Pattern.prototype._transpose = function(intervalOrSemitones) {
       const semitones = typeof interval === "string" ? Interval.semitones(interval) || 0 : interval;
       return event.withValue(() => event.value + semitones);
     }
-    return event.withValue(() => Note.transpose(event.value, interval));
+    return event.withValue(() => Note.simplify(Note.transpose(event.value, interval)));
   });
 };
 Pattern.prototype._scaleTranspose = function(offset) {
