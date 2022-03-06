@@ -722,26 +722,20 @@ class Pattern {
     hush() {
       return silence;
     }
-/* 
-    _resolveTies() {
-      return this._withEvents((events)=>{
-        return events.reduce((tied, event, i) => {
-          const value = event.value?.value || event.value;
-          if (value !== '_') {
-            return tied.concat([event]);
-          }
-          console.log('tie!', lastEvent);
-          tied[i - 1] = tied[i - 1].withSpan((span) => span.withEnd((_) => event.part.end));
-          // above only works if the tie is not across a cycle boundary... how to do that???
-          // TODO: handle case that there is a gap between tied[i-1].part.end and event.part.begin => tie would make no sense
-          return tied;
-        }, []);
-      })
-    } */
+
+    // sets absolute duration of events
+    _duration(value) {
+      return this.withEventSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
+    }
+
+    // sets event relative duration of events
+    _legato(value) {
+      return this.withEventSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
+    }
 }
 
 // methods of Pattern that get callable factories
-Pattern.prototype.patternified = ['apply', 'fast', 'slow', 'early', 'late'];
+Pattern.prototype.patternified = ['apply', 'fast', 'slow', 'early', 'late', 'duration', 'legato'];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
