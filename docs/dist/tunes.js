@@ -463,20 +463,29 @@ export const blippyRhodes = `Promise.all([
     "<c2 c3 f2 [[F2 C2] db2]>".legato("<1@3 [.3 1]>").slow(2).tone(bass),
   ).fast(3/2)
 })`;
-export const wavyRhodes = `sampler({
-  E1: 'MK2Md2000.mp3',
-  E2: 'MK2Md2012.mp3',
-  E3: 'MK2Md2024.mp3',
-  E4: 'MK2Md2036.mp3',
-  E5: 'MK2Md2048.mp3',
-  E6: 'MK2Md2060.mp3',
-  E7: 'MK2Md2072.mp3'
-}, 'https://loophole-letters.vercel.app/samples/rhodes/').then((rhodes)=>{
-const delay = new FeedbackDelay(1/6, .5).chain(vol(.2), out());
-rhodes = rhodes.chain(vol(0.5).connect(delay), out());
-const scales = sequence('C major', 'C mixolydian', 'F lydian', ['F minor', 'Db major']).slow(4);
-return stack(
-  "[0 2 4 6 9 2 0 -2]*3".add("<0 2>/4").scale(scales).struct("x*8").slow(2).tone(rhodes),
-  "<c2 c2 f2 [[F2 C2] db2]>".scale(scales).scaleTranspose("[0 <2 4>]*2").struct("x*4").slow(2).tone(rhodes),
-).legato("<.2 .4 .8 1 1.2 1.4 1.6 1.8 2>/8")
+export const wavyKalimba = `sampler({
+  C5: 'https://freesound.org/data/previews/536/536549_11935698-lq.mp3'
+}).then((kalimba)=>{
+  const delay = new FeedbackDelay(1/3, .5).chain(vol(.2), out());
+  kalimba = kalimba.chain(vol(0.6).connect(delay),out());
+  const scales = sequence('C major', 'C mixolydian', 'F lydian', ['F minor', 'Db major']).slow(4);
+  return stack(
+    "[0 2 4 6 9 2 0 -2]*3"
+    .add("<0 2>/4")
+    .scale(scales)
+    .struct("x*8")
+    .velocity("<.8 .3 .6>*8")
+    .slow(2)
+    .tone(kalimba),
+    "<c2 c2 f2 [[F2 C2] db2]>"
+    .scale(scales)
+    .scaleTranspose("[0 <2 4>]*2")
+    .struct("x*4")
+    .velocity("<.8 .5>*4")
+    .velocity(0.8)
+    .slow(2)
+    .tone(kalimba)
+  )
+    .legato("<.4 .8 1 1.2 1.4 1.6 1.8 2>/8")
+    .fast(1)
 })`;

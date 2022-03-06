@@ -24,6 +24,7 @@ Pattern.prototype.tone = function(instrument) {
   return this._withEvent((event) => {
     const onTrigger = (time, event2) => {
       let note = event2.value;
+      let velocity = event2.context?.velocity ?? 0.75;
       switch (instrument.constructor.name) {
         case "PluckSynth":
           instrument.triggerAttack(note, time);
@@ -33,10 +34,10 @@ Pattern.prototype.tone = function(instrument) {
           break;
         case "Piano":
           instrument.keyDown({note, time, velocity: 0.5});
-          instrument.keyUp({note, time: time + event2.duration});
+          instrument.keyUp({note, time: time + event2.duration, velocity});
           break;
         case "Sampler":
-          instrument.triggerAttackRelease(note, event2.duration, time);
+          instrument.triggerAttackRelease(note, event2.duration, time, velocity);
           break;
         case "Players":
           if (!instrument.has(event2.value)) {
@@ -47,7 +48,7 @@ Pattern.prototype.tone = function(instrument) {
           player.stop(time + event2.duration);
           break;
         default:
-          instrument.triggerAttackRelease(note, event2.duration, time);
+          instrument.triggerAttackRelease(note, event2.duration, time, velocity);
       }
     };
     return event.setContext({...event.context, instrument, onTrigger});

@@ -24,12 +24,12 @@ Pattern.prototype.midi = function(output, channel = 1) {
   if (output?.constructor?.name === "Pattern") {
     throw new Error(`.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${WebMidi.outputs?.[0]?.name || "IAC Driver Bus 1"}')`);
   }
-  return this.fmap((value) => ({
-    ...value,
-    onTrigger: (time, event) => {
-      value = value.value || value;
-      if (!isNote(value)) {
-        throw new Error("not a note: " + value);
+  return this._withEvent((event) => {
+    const onTrigger = (time, event2) => {
+      let note = event2.value;
+      const velocity = event2.context?.velocity ?? 0.9;
+      if (!isNote(note)) {
+        throw new Error("not a note: " + note);
       }
       if (!WebMidi.enabled) {
         throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
@@ -43,13 +43,14 @@ Pattern.prototype.midi = function(output, channel = 1) {
       }
       const timingOffset = WebMidi.time - Tone.context.currentTime * 1e3;
       time = time * 1e3 + timingOffset;
-      device.playNote(value, channel, {
+      device.playNote(note, channel, {
         time,
-        duration: event.duration * 1e3 - 5,
-        velocity: 0.9
+        duration: event2.duration * 1e3 - 5,
+        velocity
       });
-    }
-  }));
+    };
+    return event.setContext({...event.context, onTrigger});
+  });
 };
 export function useWebMidi(props) {
   const {ready, connected, disconnected} = props;
