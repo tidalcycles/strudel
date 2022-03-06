@@ -16,7 +16,8 @@ import {
   NoiseSynth,
   PluckSynth,
   Sampler,
-  getDestination
+  getDestination,
+  Players,
 } from 'tone';
 import { Piano } from '@tonejs/piano';
 
@@ -30,15 +31,35 @@ Pattern.prototype.tone = function (instrument) {
   // instrument.toDestination();
   return this._withEvent((event) => {
     const onTrigger = (time, event) => {
-      if (instrument.constructor.name === 'PluckSynth') {
-        instrument.triggerAttack(event.value, time);
-      } else if (instrument.constructor.name === 'NoiseSynth') {
-        instrument.triggerAttackRelease(event.duration, time); // noise has no value
-      } else if (instrument.constructor.name === 'Piano') {
-        instrument.keyDown({ note: event.value, time, velocity: 0.5 });
-        instrument.keyUp({ note: event.value, time: time + event.duration });
-      } else {
-        instrument.triggerAttackRelease(event.value, event.duration, time);
+      let note = event.value;
+      switch (instrument.constructor.name) {
+        case 'PluckSynth':
+          // note = getPlayableNoteValue(event);
+          instrument.triggerAttack(note, time);
+          break;
+        case 'NoiseSynth':
+          instrument.triggerAttackRelease(event.duration, time); // noise has no value
+          break;
+        case 'Piano':
+          // note = getPlayableNoteValue(event);
+          instrument.keyDown({ note, time, velocity: 0.5 });
+          instrument.keyUp({ note, time: time + event.duration });
+          break;
+        case 'Sampler':
+          // note = getPlayableNoteValue(event);
+          instrument.triggerAttackRelease(note, event.duration, time);
+          break;
+        case 'Players':
+          if (!instrument.has(event.value)) {
+            throw new Error(`name "${event.value}" not defined for players`);
+          }
+          const player = instrument.player(event.value);
+          player.start(time);
+          player.stop(time + event.duration);
+          break;
+        default:
+          // note = getPlayableNoteValue(event);
+          instrument.triggerAttackRelease(note, event.duration, time);
       }
     };
     return event.setContext({ ...event.context, instrument, onTrigger });
@@ -57,7 +78,18 @@ export const monosynth = (options) => new MonoSynth(options);
 export const noise = (options) => new NoiseSynth(options);
 export const pluck = (options) => new PluckSynth(options);
 export const polysynth = (options) => new PolySynth(options);
-export const sampler = (options) => new Sampler(options);
+export const sampler = (options, baseUrl) =>
+  new Promise((resolve) => {
+    const s = new Sampler(options, () => resolve(s), baseUrl);
+  });
+export const players = (options, baseUrl = '') => {
+  options = !baseUrl
+    ? options
+    : Object.fromEntries(Object.entries(options).map(([key, value]: any) => [key, baseUrl + value]));
+  return new Promise((resolve) => {
+    const s = new Players(options, () => resolve(s));
+  });
+};
 export const synth = (options) => new Synth(options);
 export const piano = async (options = { velocities: 1 }) => {
   const p = new Piano(options);
