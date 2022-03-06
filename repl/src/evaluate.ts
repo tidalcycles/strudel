@@ -3,6 +3,7 @@ import './tone';
 import './midi';
 import './voicings';
 import './tonal';
+import gist from './gist.js';
 import shapeshifter from './shapeshifter';
 import { minify } from './parse';
 import * as Tone from 'tone';
@@ -27,7 +28,7 @@ hackLiteral(String, ['mini', 'm'], bootstrapped.mini); // comment out this line 
 hackLiteral(String, ['pure', 'p'], bootstrapped.pure); // comment out this line if you panic
 
 // this will add everything to global scope, which is accessed by eval
-Object.assign(globalThis, bootstrapped, Tone, toneHelpers);
+Object.assign(globalThis, bootstrapped, Tone, toneHelpers, { gist });
 
 export const evaluate: any = async (code: string) => {
   const shapeshifted = shapeshifter(code); // transform syntactically correct js code to semantically usable code
