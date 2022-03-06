@@ -32,9 +32,11 @@ Pattern.prototype.tone = function (instrument) {
   return this._withEvent((event) => {
     const onTrigger = (time, event) => {
       let note = event.value;
+      let velocity = event.context?.velocity ?? 0.75;
       switch (instrument.constructor.name) {
         case 'PluckSynth':
           // note = getPlayableNoteValue(event);
+          // velocity?
           instrument.triggerAttack(note, time);
           break;
         case 'NoiseSynth':
@@ -43,23 +45,24 @@ Pattern.prototype.tone = function (instrument) {
         case 'Piano':
           // note = getPlayableNoteValue(event);
           instrument.keyDown({ note, time, velocity: 0.5 });
-          instrument.keyUp({ note, time: time + event.duration });
+          instrument.keyUp({ note, time: time + event.duration, velocity });
           break;
         case 'Sampler':
           // note = getPlayableNoteValue(event);
-          instrument.triggerAttackRelease(note, event.duration, time);
+          instrument.triggerAttackRelease(note, event.duration, time, velocity);
           break;
         case 'Players':
           if (!instrument.has(event.value)) {
             throw new Error(`name "${event.value}" not defined for players`);
           }
           const player = instrument.player(event.value);
+          // velocity ?
           player.start(time);
           player.stop(time + event.duration);
           break;
         default:
           // note = getPlayableNoteValue(event);
-          instrument.triggerAttackRelease(note, event.duration, time);
+          instrument.triggerAttackRelease(note, event.duration, time, velocity);
       }
     };
     return event.setContext({ ...event.context, instrument, onTrigger });

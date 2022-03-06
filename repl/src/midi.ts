@@ -32,12 +32,12 @@ Pattern.prototype.midi = function (output: string, channel = 1) {
       }')`
     );
   }
-  return this.fmap((value: any) => ({
-    ...value,
-    onTrigger: (time: number, event: any) => {
-      value = value.value || value;
-      if (!isNote(value)) {
-        throw new Error('not a note: ' + value);
+  return this._withEvent((event: any) => {
+    const onTrigger = (time: number, event: any) => {
+      let note = event.value;
+      const velocity = event.context?.velocity ?? 0.9;
+      if (!isNote(note)) {
+        throw new Error('not a note: ' + note);
       }
       if (!WebMidi.enabled) {
         throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
@@ -58,14 +58,14 @@ Pattern.prototype.midi = function (output: string, channel = 1) {
       time = time * 1000 + timingOffset;
       // const inMs = '+' + (time - Tone.context.currentTime) * 1000;
       // await enableWebMidi()
-      device.playNote(value, channel, {
+      device.playNote(note, channel, {
         time,
         duration: event.duration * 1000 - 5,
-        // velocity: velocity ?? 0.5,
-        velocity: 0.9,
+        velocity,
       });
-    },
-  }));
+    };
+    return event.setContext({ ...event.context, onTrigger });
+  });
 };
 
 export function useWebMidi(props?: any) {
