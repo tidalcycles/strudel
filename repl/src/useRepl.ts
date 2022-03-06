@@ -61,11 +61,11 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
       (time, event) => {
         try {
           onEvent?.(event);
-          const { onTrigger } = event.context;
+          const { onTrigger, velocity } = event.context;
           if (!onTrigger) {
             if (defaultSynth) {
               const note = getPlayableNoteValue(event);
-              defaultSynth.triggerAttackRelease(note, event.duration, time);
+              defaultSynth.triggerAttackRelease(note, event.duration, time, velocity);
             } else {
               throw new Error('no defaultSynth passed to useRepl.');
             }

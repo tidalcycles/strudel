@@ -15,22 +15,40 @@ import {
   NoiseSynth,
   PluckSynth,
   Sampler,
-  getDestination
+  getDestination,
+  Players
 } from "../_snowpack/pkg/tone.js";
 import {Piano} from "../_snowpack/pkg/@tonejs/piano.js";
 const Pattern = _Pattern;
 Pattern.prototype.tone = function(instrument) {
   return this._withEvent((event) => {
     const onTrigger = (time, event2) => {
-      if (instrument.constructor.name === "PluckSynth") {
-        instrument.triggerAttack(event2.value, time);
-      } else if (instrument.constructor.name === "NoiseSynth") {
-        instrument.triggerAttackRelease(event2.duration, time);
-      } else if (instrument.constructor.name === "Piano") {
-        instrument.keyDown({note: event2.value, time, velocity: 0.5});
-        instrument.keyUp({note: event2.value, time: time + event2.duration});
-      } else {
-        instrument.triggerAttackRelease(event2.value, event2.duration, time);
+      let note = event2.value;
+      let velocity = event2.context?.velocity ?? 0.75;
+      switch (instrument.constructor.name) {
+        case "PluckSynth":
+          instrument.triggerAttack(note, time);
+          break;
+        case "NoiseSynth":
+          instrument.triggerAttackRelease(event2.duration, time);
+          break;
+        case "Piano":
+          instrument.keyDown({note, time, velocity: 0.5});
+          instrument.keyUp({note, time: time + event2.duration, velocity});
+          break;
+        case "Sampler":
+          instrument.triggerAttackRelease(note, event2.duration, time, velocity);
+          break;
+        case "Players":
+          if (!instrument.has(event2.value)) {
+            throw new Error(`name "${event2.value}" not defined for players`);
+          }
+          const player = instrument.player(event2.value);
+          player.start(time);
+          player.stop(time + event2.duration);
+          break;
+        default:
+          instrument.triggerAttackRelease(note, event2.duration, time, velocity);
       }
     };
     return event.setContext({...event.context, instrument, onTrigger});
@@ -46,7 +64,15 @@ export const monosynth = (options) => new MonoSynth(options);
 export const noise = (options) => new NoiseSynth(options);
 export const pluck = (options) => new PluckSynth(options);
 export const polysynth = (options) => new PolySynth(options);
-export const sampler = (options) => new Sampler(options);
+export const sampler = (options, baseUrl) => new Promise((resolve) => {
+  const s = new Sampler(options, () => resolve(s), baseUrl);
+});
+export const players = (options, baseUrl = "") => {
+  options = !baseUrl ? options : Object.fromEntries(Object.entries(options).map(([key, value]) => [key, baseUrl + value]));
+  return new Promise((resolve) => {
+    const s = new Players(options, () => resolve(s));
+  });
+};
 export const synth = (options) => new Synth(options);
 export const piano = async (options = {velocities: 1}) => {
   const p = new Piano(options);
