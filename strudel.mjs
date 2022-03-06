@@ -732,10 +732,14 @@ class Pattern {
     _legato(value) {
       return this.withEventSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
     }
+
+    _velocity(velocity) {
+      return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
+    }
 }
 
 // methods of Pattern that get callable factories
-Pattern.prototype.patternified = ['apply', 'fast', 'slow', 'early', 'late', 'duration', 'legato'];
+Pattern.prototype.patternified = ['apply', 'fast', 'slow', 'early', 'late', 'duration', 'legato', 'velocity'];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
