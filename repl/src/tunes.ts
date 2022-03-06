@@ -459,7 +459,6 @@ export const barryHarris = `piano()
   .tone(p.toDestination()))
 `;
 
-
 export const blippyRhodes = `Promise.all([
   players({
     bd: 'samples/tidal/bd/BT0A0D0.wav',
@@ -503,7 +502,47 @@ const delay = new FeedbackDelay(1/6, .5).chain(vol(.2), out());
 rhodes = rhodes.chain(vol(0.5).connect(delay), out());
 const scales = sequence('C major', 'C mixolydian', 'F lydian', ['F minor', 'Db major']).slow(4);
 return stack(
-  "[0 2 4 6 9 2 0 -2]*3".add("<0 2>/4").scale(scales).struct("x*8").slow(2).tone(rhodes),
-  "<c2 c2 f2 [[F2 C2] db2]>".scale(scales).scaleTranspose("[0 <2 4>]*2").struct("x*4").slow(2).tone(rhodes),
+    "[0 2 4 6 9 2 0 -2]*3"
+    .add("<0 2>/4")
+    .scale(scales)
+    .struct("x*8")
+    .velocity("<.8 .3 .6>*8")
+    .slow(2)
+    .tone(rhodes),
+    "<c2 c2 f2 [[F2 C2] db2]>"
+    .scale(scales)
+    .scaleTranspose("[0 <2 4>]*2")
+    .struct("x*4")
+    .velocity("<.8 .5>*4")
+    .velocity(0.8)
+    .slow(2)
+    .tone(rhodes)
 ).legato("<.2 .4 .8 1 1.2 1.4 1.6 1.8 2>/8")
 })`;
+
+export const wavySynths = `() => {
+  const delay = new FeedbackDelay(1/6, .5).chain(vol(.2), out());
+  const o1 = polysynth().set(osc('sine4')).chain(vol(.4).connect(delay),out());
+  const o2 = polysynth().set(osc('sawtooth8')).chain(vol(.6),out());
+  const scales = sequence('C major', 'C mixolydian', 'F lydian', ['F minor', 'Db major']).slow(4);
+  return stack(
+    "[0 2 4 6 9 2 0 -2]*3"
+    .add("<0 2>/4")
+    .scale(scales)
+    .struct("x*8")
+    .velocity("<.8 .3 .6>*8")
+    .slow(2)
+    .tone(o1),
+    "<c2 c2 f2 [[F2 C2] db2]>"
+    .scale(scales)
+    .scaleTranspose("[0 <2 4>]*2")
+    .struct("x*4")
+    .velocity("<.8 .5>*4")
+    .velocity(0.8)
+    .slow(2)
+    .tone(o2)
+  )
+    .legato("<.2 .4 .8 1 1.2 1.4 1.6 1.8 2>/8")
+    .fast(1)
+    .transpose(6)
+}`;
