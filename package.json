@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yaxu/strudel.git"
+    "url": "git+https://github.com/tidalcycles/strudel.git"
   },
   "keywords": [
     "tidalcycles",
@@ -20,9 +20,9 @@
   "author": "Alex McLean <alex@slab.org> (https://slab.org)",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/yaxu/strudel/issues"
+    "url": "https://github.com/tidalcycles/strudel/issues"
   },
-  "homepage": "https://github.com/yaxu/strudel#readme",
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
   "devDependencies": {
     "@tonaljs/tonal": "^4.6.5",
     "mocha": "^9.1.4",
