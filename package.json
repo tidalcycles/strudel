@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
-  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "homepage": "https://strudel.tidalcycles.org",
   "devDependencies": {
     "@tonaljs/tonal": "^4.6.5",
     "mocha": "^9.1.4",
