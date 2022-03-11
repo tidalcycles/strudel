@@ -5,12 +5,15 @@ import './voicings';
 import './tonal.mjs';
 import './xen.mjs';
 import './tune.mjs';
-import './tonal.mjs';
+import './tune.mjs';
+import './pianoroll.mjs';
+import * as drawHelpers from './draw.mjs';
 import gist from './gist.js';
 import shapeshifter from './shapeshifter';
 import { minify } from './parse';
 import * as Tone from 'tone';
 import * as toneHelpers from './tone';
+import * as voicingHelpers from './voicings';
 
 // this will add all methods from definedMethod to strudel + connect all the partial application stuff
 const bootstrapped: any = { ...strudel, ...strudel.Pattern.prototype.bootstrap() };
@@ -31,7 +34,7 @@ hackLiteral(String, ['mini', 'm'], bootstrapped.mini); // comment out this line 
 hackLiteral(String, ['pure', 'p'], bootstrapped.pure); // comment out this line if you panic
 
 // this will add everything to global scope, which is accessed by eval
-Object.assign(globalThis, bootstrapped, Tone, toneHelpers, { gist });
+Object.assign(globalThis, bootstrapped, Tone, toneHelpers, voicingHelpers, drawHelpers, { gist });
 
 export const evaluate: any = async (code: string) => {
   const shapeshifted = shapeshifter(code); // transform syntactically correct js code to semantically usable code

@@ -80,8 +80,8 @@ function App() {
   });
 
   return (
-    <div className="min-h-screen bg-[#2A3236] flex flex-col">
-      <header className="flex-none w-full h-16 px-2 flex border-b border-gray-200 bg-white justify-between">
+    <div className="min-h-screen flex flex-col">
+      <header className="flex-none w-full h-16 px-2 flex border-b border-gray-200 bg-white justify-between z-[10]">
         <div className="flex items-center space-x-2">
           <img src={logo} className="Tidal-logo w-16 h-16" alt="logo" />
           <h1 className="text-2xl">Strudel REPL</h1>
@@ -106,14 +106,14 @@ function App() {
       </header>
       <section className="grow flex flex-col text-gray-100">
         <div className="grow relative">
-          <div className={cx('h-full  bg-[#2A3236]', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}>
+          <div className={cx('h-full', error ? 'focus:ring-red-500' : 'focus:ring-slate-800')}>
             <CodeMirror
               value={code}
               editorDidMount={setEditor}
               options={{
                 mode: 'javascript',
                 theme: 'material',
-                lineNumbers: true,
+                lineNumbers: false,
                 styleSelectedText: true,
                 cursorBlinkRate: 0,
               }}
@@ -130,13 +130,13 @@ function App() {
           )}
         </div>
         <button
-          className="flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500"
+          className="z-[10] flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500"
           onClick={() => togglePlay()}
         >
           {!pending ? <>{cycle.started ? 'pause' : 'play'}</> : <>loading...</>}
         </button>
         <textarea
-          className="grow bg-[#283237] border-0 text-xs min-h-[200px]"
+          className="z-[10] grow border-0 text-xs min-h-[200px] bg-[transparent]"
           value={log}
           readOnly
           ref={logBox}

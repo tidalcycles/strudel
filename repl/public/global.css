@@ -2,7 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-color: #2a3236;
+}
+
 .react-codemirror2,
 .CodeMirror {
   height: 100% !important;
+  background-color: transparent !important;
+  //font-size: 15px;
+}
+
+.CodeMirror-line span {
+  background-color: #2a323660;
+}
+
+.CodeMirror-code {
+  //padding: 10px;
+}
+
+.CodeMirror-linenumber {
+  background-color: transparent !important;
 }
