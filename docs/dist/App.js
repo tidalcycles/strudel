@@ -65,9 +65,9 @@ function App() {
     }, [])
   });
   return /* @__PURE__ */ React.createElement("div", {
-    className: "min-h-screen bg-[#2A3236] flex flex-col"
+    className: "min-h-screen flex flex-col"
   }, /* @__PURE__ */ React.createElement("header", {
-    className: "flex-none w-full h-16 px-2 flex border-b border-gray-200 bg-white justify-between"
+    className: "flex-none w-full h-16 px-2 flex border-b border-gray-200 bg-white justify-between z-[10]"
   }, /* @__PURE__ */ React.createElement("div", {
     className: "flex items-center space-x-2"
   }, /* @__PURE__ */ React.createElement("img", {
@@ -93,14 +93,14 @@ function App() {
   }, /* @__PURE__ */ React.createElement("div", {
     className: "grow relative"
   }, /* @__PURE__ */ React.createElement("div", {
-    className: cx("h-full  bg-[#2A3236]", error ? "focus:ring-red-500" : "focus:ring-slate-800")
+    className: cx("h-full", error ? "focus:ring-red-500" : "focus:ring-slate-800")
   }, /* @__PURE__ */ React.createElement(CodeMirror, {
     value: code,
     editorDidMount: setEditor,
     options: {
       mode: "javascript",
       theme: "material",
-      lineNumbers: true,
+      lineNumbers: false,
       styleSelectedText: true,
       cursorBlinkRate: 0
     },
@@ -112,10 +112,10 @@ function App() {
 ` : "no changes\n")), error && /* @__PURE__ */ React.createElement("div", {
     className: cx("absolute right-2 bottom-2 px-2", "text-red-500")
   }, error?.message || "unknown error")), /* @__PURE__ */ React.createElement("button", {
-    className: "flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500",
+    className: "z-[10] flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500",
     onClick: () => togglePlay()
   }, !pending ? /* @__PURE__ */ React.createElement(React.Fragment, null, cycle.started ? "pause" : "play") : /* @__PURE__ */ React.createElement(React.Fragment, null, "loading...")), /* @__PURE__ */ React.createElement("textarea", {
-    className: "grow bg-[#283237] border-0 text-xs min-h-[200px]",
+    className: "z-[10] grow border-0 text-xs min-h-[200px] bg-[transparent]",
     value: log,
     readOnly: true,
     ref: logBox,

@@ -952,6 +952,9 @@ select {
 .bottom-2 {
   bottom: 0.5rem;
 }
+.z-\[10\] {
+  z-index: 10;
+}
 .block {
   display: block;
 }
@@ -1090,10 +1093,6 @@ select {
   --tw-border-opacity: 1;
   border-color: rgb(100 116 139 / var(--tw-border-opacity));
 }
-.bg-\[\#2A3236\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(42 50 54 / var(--tw-bg-opacity));
-}
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
@@ -1102,9 +1101,8 @@ select {
   --tw-bg-opacity: 1;
   background-color: rgb(51 65 85 / var(--tw-bg-opacity));
 }
-.bg-\[\#283237\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(40 50 55 / var(--tw-bg-opacity));
+.bg-\[transparent\] {
+  background-color: transparent;
 }
 .bg-slate-600 {
   --tw-bg-opacity: 1;
@@ -1165,9 +1163,27 @@ select {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
+body {
+  background-color: #2a3236;
+}
+
 .react-codemirror2,
 .CodeMirror {
   height: 100% !important;
+  background-color: transparent !important;
+  //font-size: 15px;
+}
+
+.CodeMirror-line span {
+  background-color: #2a323660;
+}
+
+.CodeMirror-code {
+  //padding: 10px;
+}
+
+.CodeMirror-linenumber {
+  background-color: transparent !important;
 }
 
 .hover\:bg-slate-500:hover {
