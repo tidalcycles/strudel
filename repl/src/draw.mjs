@@ -41,3 +41,14 @@ export const queryEvents = (pattern, callback, seconds) => {
     queryEvents();
   }, seconds * 1.5 * 1000);
 };
+
+export const cleanup = () => {
+  const ctx = getDrawContext();
+  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  if (window.strudelAnimation) {
+    cancelAnimationFrame(window.strudelAnimation);
+  }
+  if (window.strudelScheduler) {
+    clearInterval(window.strudelScheduler);
+  }
+};
