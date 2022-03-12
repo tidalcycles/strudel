@@ -34,6 +34,7 @@ function App() {
     defaultSynth,
     onDraw: useCallback(markEvent(editor), [editor])
   });
+  const [uiHidden, setUiHidden] = useState(false);
   const logBox = useRef();
   useLayoutEffect(() => {
     logBox.current.scrollTop = logBox.current?.scrollHeight;
@@ -67,18 +68,40 @@ function App() {
   return /* @__PURE__ */ React.createElement("div", {
     className: "min-h-screen flex flex-col"
   }, /* @__PURE__ */ React.createElement("header", {
-    className: "flex-none w-full h-16 px-2 flex border-b border-gray-200 bg-white justify-between z-[10]"
+    className: cx("flex-none w-full h-14 px-2 flex border-b border-gray-200  justify-between z-[10]", uiHidden ? "bg-transparent text-white" : "bg-white")
   }, /* @__PURE__ */ React.createElement("div", {
     className: "flex items-center space-x-2"
   }, /* @__PURE__ */ React.createElement("img", {
     src: logo,
-    className: "Tidal-logo w-16 h-16",
+    className: "Tidal-logo w-12 h-12",
     alt: "logo"
   }), /* @__PURE__ */ React.createElement("h1", {
     className: "text-2xl"
   }, "Strudel REPL")), /* @__PURE__ */ React.createElement("div", {
     className: "flex space-x-4"
   }, /* @__PURE__ */ React.createElement("button", {
+    onClick: () => togglePlay()
+  }, !pending ? /* @__PURE__ */ React.createElement("span", {
+    className: "flex items-center w-16"
+  }, cycle.started ? /* @__PURE__ */ React.createElement("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    className: "h-5 w-5",
+    viewBox: "0 0 20 20",
+    fill: "currentColor"
+  }, /* @__PURE__ */ React.createElement("path", {
+    fillRule: "evenodd",
+    d: "M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z",
+    clipRule: "evenodd"
+  })) : /* @__PURE__ */ React.createElement("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    className: "h-5 w-5",
+    viewBox: "0 0 20 20",
+    fill: "currentColor"
+  }, /* @__PURE__ */ React.createElement("path", {
+    fillRule: "evenodd",
+    d: "M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z",
+    clipRule: "evenodd"
+  })), cycle.started ? "pause" : "play") : /* @__PURE__ */ React.createElement(React.Fragment, null, "loading...")), /* @__PURE__ */ React.createElement("button", {
     onClick: async () => {
       const _code = getRandomTune();
       console.log("tune", _code);
@@ -86,14 +109,16 @@ function App() {
       const parsed = await evaluate(_code);
       setPattern(parsed.pattern);
     }
-  }, "🎲 random tune"), /* @__PURE__ */ React.createElement("button", null, /* @__PURE__ */ React.createElement("a", {
+  }, "🎲 random"), /* @__PURE__ */ React.createElement("button", null, /* @__PURE__ */ React.createElement("a", {
     href: "./tutorial"
-  }, "📚 tutorial")))), /* @__PURE__ */ React.createElement("section", {
+  }, "📚 tutorial")), /* @__PURE__ */ React.createElement("button", {
+    onClick: () => setUiHidden((c) => !c)
+  }, "👀 ", uiHidden ? "show ui" : "hide ui"))), /* @__PURE__ */ React.createElement("section", {
     className: "grow flex flex-col text-gray-100"
   }, /* @__PURE__ */ React.createElement("div", {
     className: "grow relative"
   }, /* @__PURE__ */ React.createElement("div", {
-    className: cx("h-full", error ? "focus:ring-red-500" : "focus:ring-slate-800")
+    className: cx("h-full transition-opacity", error ? "focus:ring-red-500" : "focus:ring-slate-800", uiHidden ? "opacity-0" : "opacity-100")
   }, /* @__PURE__ */ React.createElement(CodeMirror, {
     value: code,
     editorDidMount: setEditor,
@@ -106,16 +131,13 @@ function App() {
     },
     onChange: (_2, __, value) => setCode(value)
   }), /* @__PURE__ */ React.createElement("span", {
-    className: "p-4 absolute top-0 right-0 text-xs whitespace-pre text-right"
+    className: "p-4 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none"
   }, !cycle.started ? `press ctrl+enter to play
 ` : dirty ? `ctrl+enter to update
 ` : "no changes\n")), error && /* @__PURE__ */ React.createElement("div", {
     className: cx("absolute right-2 bottom-2 px-2", "text-red-500")
-  }, error?.message || "unknown error")), /* @__PURE__ */ React.createElement("button", {
-    className: "z-[10] flex-none w-full border border-gray-700 p-2 bg-slate-700 hover:bg-slate-500",
-    onClick: () => togglePlay()
-  }, !pending ? /* @__PURE__ */ React.createElement(React.Fragment, null, cycle.started ? "pause" : "play") : /* @__PURE__ */ React.createElement(React.Fragment, null, "loading...")), /* @__PURE__ */ React.createElement("textarea", {
-    className: "z-[10] grow border-0 text-xs min-h-[200px] bg-[transparent]",
+  }, error?.message || "unknown error")), /* @__PURE__ */ React.createElement("textarea", {
+    className: "z-[10] h-16 border-0 text-xs bg-[transparent] border-t border-slate-600 resize-none",
     value: log,
     readOnly: true,
     ref: logBox,

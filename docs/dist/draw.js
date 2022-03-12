@@ -1,4 +1,5 @@
 import * as Tone from "../_snowpack/pkg/tone.js";
+import {Pattern} from "../_snowpack/link/strudel.js";
 export const getDrawContext = (id = "test-canvas") => {
   let canvas = document.querySelector("#" + id);
   if (!canvas) {
@@ -11,31 +12,28 @@ export const getDrawContext = (id = "test-canvas") => {
   }
   return canvas.getContext("2d");
 };
-export const draw = (callback) => {
+Pattern.prototype.draw = function(callback, queryDuration) {
   if (window.strudelAnimation) {
     cancelAnimationFrame(window.strudelAnimation);
   }
-  const animate = (t) => {
-    callback(t);
+  const ctx = getDrawContext();
+  let cycle, events = [];
+  const animate = (time) => {
+    const t = Tone.getTransport().seconds;
+    if (queryDuration) {
+      const currentCycle = Math.floor(t / queryDuration);
+      if (cycle !== currentCycle) {
+        cycle = currentCycle;
+        const begin = currentCycle * queryDuration;
+        const end = (currentCycle + 1) * queryDuration;
+        events = this.add(0).query(new State(new TimeSpan(begin, end)));
+      }
+    }
+    callback(ctx, events, t, queryDuration, time);
     window.strudelAnimation = requestAnimationFrame(animate);
   };
   requestAnimationFrame(animate);
-};
-export const queryEvents = (pattern, callback, seconds) => {
-  const queryEvents2 = () => {
-    const t = Tone.getTransport().seconds;
-    const begin = Math.floor(t / seconds) * seconds;
-    const end = begin + seconds * 4;
-    const events = pattern.add(0).query(new State(new TimeSpan(begin, end)));
-    callback(events);
-  };
-  queryEvents2();
-  if (window.strudelScheduler) {
-    clearInterval(window.strudelScheduler);
-  }
-  window.strudelScheduler = setInterval(() => {
-    queryEvents2();
-  }, seconds * 1.5 * 1e3);
+  return this;
 };
 export const cleanup = () => {
   const ctx = getDrawContext();
