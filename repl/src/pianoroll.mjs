@@ -2,7 +2,7 @@ import { Pattern } from '../../strudel.mjs';
 
 Pattern.prototype.pianoroll = function ({
   timeframe = 10,
-  inactive = '#88ABF8',
+  inactive = '#C9E597',
   active = '#FFCA28',
   background = '#2A3236',
   maxMidi = 90,
@@ -25,6 +25,6 @@ Pattern.prototype.pianoroll = function ({
       const margin = 0;
       ctx.fillRect(x - offset + margin + 1, y + 1, width - 2, height - 2);
     });
-  }, timeframe);
+  }, timeframe * 2);
   return this;
 };

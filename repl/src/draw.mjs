@@ -28,11 +28,11 @@ Pattern.prototype.draw = function (callback, queryDuration) {
       if (cycle !== currentCycle) {
         cycle = currentCycle;
         const begin = currentCycle * queryDuration;
-        const end = (currentCycle + 2) * queryDuration;
+        const end = (currentCycle + 1) * queryDuration;
         events = this.add(0).query(new State(new TimeSpan(begin, end)));
       }
     }
-    callback(ctx, events, t, time);
+    callback(ctx, events, t, queryDuration, time);
     window.strudelAnimation = requestAnimationFrame(animate);
   };
   requestAnimationFrame(animate);

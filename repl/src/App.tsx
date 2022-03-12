@@ -158,7 +158,7 @@ function App() {
               }}
               onChange={(_: any, __: any, value: any) => setCode(value)}
             />
-            <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right">
+            <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none">
               {!cycle.started ? `press ctrl+enter to play\n` : dirty ? `ctrl+enter to update\n` : 'no changes\n'}
             </span>
           </div>
