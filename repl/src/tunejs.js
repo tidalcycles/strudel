@@ -143,10 +143,10 @@ Tune.prototype.loadScale = function(name){
 	}
 
 	/* visualize in console */
-	console.log(" ");
+/* 	console.log(" ");
 	console.log("LOADED "+name);
 	console.log(TuningList[name].description);
-	console.log(this.scale);
+	console.log(this.scale); */
 	var vis = [];
 	for (var i=0;i<100;i++) {
 		vis[i] = " ";
@@ -163,8 +163,8 @@ Tune.prototype.loadScale = function(name){
 	for (var i=0;i<vis.length;i++) {
 		textvis += vis[i];
 	}
-	console.log(name)
-	console.log(textvis)
+/* 	console.log(name)
+	console.log(textvis) */
 	// ET scale vis
 	var vis = [];
 	for (var i=0;i<100;i++) {
@@ -183,8 +183,8 @@ Tune.prototype.loadScale = function(name){
 	for (var i=0;i<vis.length;i++) {
 		textvis += vis[i];
 	}
-	console.log(textvis)
-	console.log("equal-tempered major (reference)")
+/* 	console.log(textvis)
+	console.log("equal-tempered major (reference)") */
 
 }
 
