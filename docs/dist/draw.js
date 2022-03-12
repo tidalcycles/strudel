@@ -12,7 +12,7 @@ export const getDrawContext = (id = "test-canvas") => {
   }
   return canvas.getContext("2d");
 };
-Pattern.prototype.draw = function(callback, queryDuration) {
+Pattern.prototype.draw = function(callback, cycleSpan, lookaheadCycles = 1) {
   if (window.strudelAnimation) {
     cancelAnimationFrame(window.strudelAnimation);
   }
@@ -20,16 +20,16 @@ Pattern.prototype.draw = function(callback, queryDuration) {
   let cycle, events = [];
   const animate = (time) => {
     const t = Tone.getTransport().seconds;
-    if (queryDuration) {
-      const currentCycle = Math.floor(t / queryDuration);
+    if (cycleSpan) {
+      const currentCycle = Math.floor(t / cycleSpan);
       if (cycle !== currentCycle) {
         cycle = currentCycle;
-        const begin = currentCycle * queryDuration;
-        const end = (currentCycle + 1) * queryDuration;
+        const begin = currentCycle * cycleSpan;
+        const end = (currentCycle + lookaheadCycles) * cycleSpan;
         events = this.add(0).query(new State(new TimeSpan(begin, end)));
       }
     }
-    callback(ctx, events, t, queryDuration, time);
+    callback(ctx, events, t, cycleSpan, time);
     window.strudelAnimation = requestAnimationFrame(animate);
   };
   requestAnimationFrame(animate);

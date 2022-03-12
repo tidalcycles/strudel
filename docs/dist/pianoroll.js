@@ -24,6 +24,6 @@ Pattern.prototype.pianoroll = function({
       const margin = 0;
       ctx.fillRect(x - offset + margin + 1, y + 1, width - 2, height - 2);
     });
-  }, timeframe * 2);
+  }, timeframe, 2);
   return this;
 };
