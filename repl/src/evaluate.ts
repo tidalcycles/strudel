@@ -7,6 +7,7 @@ import './xen.mjs';
 import './tune.mjs';
 import './tune.mjs';
 import './pianoroll.mjs';
+import './draw.mjs';
 import * as drawHelpers from './draw.mjs';
 import gist from './gist.js';
 import shapeshifter from './shapeshifter';

@@ -1,4 +1,5 @@
 import * as Tone from 'tone';
+import { Pattern } from '../../strudel.mjs';
 
 export const getDrawContext = (id = 'test-canvas') => {
   let canvas = document.querySelector('#' + id);
@@ -13,33 +14,25 @@ export const getDrawContext = (id = 'test-canvas') => {
   return canvas.getContext('2d');
 };
 
-export const draw = (callback) => {
+Pattern.prototype.draw = function (callback, duration) {
   if (window.strudelAnimation) {
     cancelAnimationFrame(window.strudelAnimation);
   }
-  const animate = (t) => {
-    callback(t);
+  const ctx = getDrawContext();
+  let cycle, events;
+  const animate = (time) => {
+    const t = Tone.getTransport().seconds;
+    const currentCycle = Math.floor(t / duration);
+    if (cycle !== currentCycle) {
+      cycle = currentCycle;
+      const begin = currentCycle * duration;
+      const end = (currentCycle + 2) * duration;
+      events = this.add(0).query(new State(new TimeSpan(begin, end)));
+    }
+    callback(ctx, events, t, time);
     window.strudelAnimation = requestAnimationFrame(animate);
   };
   requestAnimationFrame(animate);
-};
-
-export const queryEvents = (pattern, callback, seconds) => {
-  const queryEvents = () => {
-    const t = Tone.getTransport().seconds;
-    const begin = Math.floor(t / seconds) * seconds;
-    const end = begin + seconds * 4;
-    // console.log('query', t, begin, end);
-    const events = pattern.add(0).query(new State(new TimeSpan(begin, end)));
-    callback(events);
-  };
-  queryEvents();
-  if (window.strudelScheduler) {
-    clearInterval(window.strudelScheduler);
-  }
-  window.strudelScheduler = setInterval(() => {
-    queryEvents();
-  }, seconds * 1.5 * 1000);
 };
 
 export const cleanup = () => {
