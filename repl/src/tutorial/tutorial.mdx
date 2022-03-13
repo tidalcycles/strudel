@@ -218,7 +218,7 @@ The following functions will return a pattern. We will see later what that means
 
 To create a pattern from a value, you can wrap the value in pure:
 
-<MiniRepl tune={`pure(e4)`} />
+<MiniRepl tune={`pure('e4')`} />
 
 Most of the time, you won't need that function as input values of pattern creating functions are purified by default.
 
@@ -349,24 +349,108 @@ Note that late is called directly. This is a shortcut for:
 
 Adds the given number to each item in the pattern:
 
-<MiniRepl tune={`stack(0, 2, 4).add(slowcat(0, -2, -4, -5)).scale('C minor')`} />
+<MiniRepl tune={`"0 2 4".add("<0 3 4 0>").scale('C major')`} />
 
-### Functions not documented yet
+Here, the triad `0, 2, 4` is shifted by different amounts. Without add, the equivalent would be:
 
-- add
-- sub
-- sub
-- mul
-- div
-- union
-- every
-- when
-- off
-- jux
-- append
-- superimpose
-- internal Pattern functions?
-- struct
+<MiniRepl tune={`"<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>".scale('C major')`} />
+
+You can also use add with notes:
+
+<MiniRepl tune={`"c3 e3 g3".add("<0 5 7 0>")`} />
+
+Behind the scenes, the notes are converted to midi numbers as soon before add is applied, which is equivalent to:
+
+<MiniRepl tune={`"48 52 55".add("<0 5 7 0>")`} />
+
+### sub(n)
+
+Like add, but the given numbers are subtracted:
+
+<MiniRepl tune={`"0 2 4".sub("<0 1 2 3>").scale('C4 minor')`} />
+
+See add for more information.
+
+### mul(n)
+
+Multiplies each number by the given factor:
+
+<MiniRepl tune={`"0,1,2".mul("<2 3 4 3>").scale('C4 minor')`} />
+
+... is equivalent to:
+
+<MiniRepl tune={`"<[0,2,4] [0,3,6] [0,4,8] [0,3,6]>".scale('C4 minor')`} />
+
+This function is really useful in combination with signals:
+
+<MiniRepl tune={`sine.struct("x*16").mul(7).round().scale('C major')`} />
+
+Here, we sample a sine wave 16 times, and multiply each sample by 7. This way, we let values oscillate between 0 and 7.
+
+### div(n)
+
+Like mul, but dividing by the given number.
+
+### round()
+
+Rounds all values to the nearest integer:
+
+<MiniRepl tune={`"0.5 1.5 2.5".round().scale('C major')`} />
+
+### struct(binary_pat)
+
+Applies the given structure to the pattern:
+
+<MiniRepl tune={`"c3,eb3,g3".struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~").slow(4)`} />
+
+This is also useful to sample signals:
+
+<MiniRepl
+  tune={`sine.struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~").mul(7).round()
+.scale('C minor').slow(4)`}
+/>
+
+### when(binary_pat, func)
+
+Applies the given function whenever the given pattern is in a true state.
+
+<MiniRepl tune={`"c3 eb3 g3".when("<0 1>/2", sub(5))`} />
+
+### superimpose(...func)
+
+Superimposes the result of the given function(s) on top of the original pattern:
+
+<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').superimpose(scaleTranspose("2,4"))`} />
+
+### layer(...func)
+
+Layers the result of the given function(s) on top of each other. Like superimpose, but the original pattern is not part of the result.
+
+<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').layer(scaleTranspose("0,2,4"))`} />
+
+### apply(func)
+
+Like layer, but with a single function:
+
+<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4"))`} />
+
+### off(time, func)
+
+Applies the given function by the given time offset:
+
+<MiniRepl tune={`"c3 eb3 g3".off(1/8, add(7))`} />
+
+### append(pat)
+
+Appends the given pattern after the current pattern:
+
+<MiniRepl tune={`"c4,eb4,g4".append("c4,f4,ab4")`} />
+
+### stack(pat)
+
+Stacks the given pattern to the current pattern:
+
+<MiniRepl tune={`"c4,eb4,g4".stack("bb4,d5")`} />
 
 ## Tone API
 
@@ -407,9 +491,50 @@ const monosynth = (options) => new MonoSynth(options);
 const noise = (options) => new NoiseSynth(options);
 const pluck = (options) => new PluckSynth(options);
 const polysynth = (options) => new PolySynth(options);
-const sampler = (options) => new Sampler(options);
 const synth = (options) => new Synth(options);
+const sampler = (options, baseUrl?) => new Sampler(options); // promisified, see below
+const players = (options, baseUrl?) => new Sampler(options); // promisified, see below
 ```
+
+### sampler
+
+With sampler, you can create tonal instruments from samples:
+
+<MiniRepl
+  tune={`sampler({
+  C5: 'https://freesound.org/data/previews/536/536549_11935698-lq.mp3'
+}).then(kalimba => 
+  saw.struct("x*8").mul(16).round()
+  .legato(4).scale('D dorian').slow(2)
+  .tone(kalimba.toDestination())
+)`}
+/>
+
+The sampler function promisifies [Tone.js Sampler](https://tonejs.github.io/docs/14.7.77/Sampler).
+
+Note that this function currently only works with this promise notation, but in the future,
+it will be possible to use async instruments in a synchronous fashion.
+
+### players
+
+With players, you can create sound banks:
+
+<MiniRepl
+  tune={`players({
+    bd: 'samples/tidal/bd/BT0A0D0.wav',
+    sn: 'samples/tidal/sn/ST0T0S3.wav',
+    hh: 'samples/tidal/hh/000_hh3closedhh.wav'
+  }, 'https://loophole-letters.vercel.app/')
+  .then(drums=>
+  "bd hh sn hh".tone(drums.toDestination())
+)
+  `}
+/>
+
+The sampler function promisifies [Tone.js Players](https://tonejs.github.io/docs/14.7.77/Players).
+
+Note that this function currently only works with this promise notation, but in the future,
+it will be possible to use async instruments in a synchronous fashion.
 
 ### out
 
@@ -586,6 +711,10 @@ Together with edit, struct and voicings, this can be used to create a basic back
 
 <!-- TODO: use range instead of octave. -->
 <!-- TODO: find out why composition does not work -->
+
+## Microtonal API
+
+TODO
 
 ## MIDI API
 
