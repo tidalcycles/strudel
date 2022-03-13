@@ -44,7 +44,7 @@ function useCycle(props: UseCycleProps) {
       .forEach((event) => {
         Tone.getTransport().schedule((time) => {
           const toneEvent = {
-            time: event.part.begin.valueOf(),
+            time: event.whole.begin.valueOf(),
             duration: event.whole.end.sub(event.whole.begin).valueOf(),
             value: event.value,
             context: event.context,

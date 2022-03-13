@@ -29,7 +29,9 @@ Pattern.prototype.draw = function (callback, cycleSpan, lookaheadCycles = 1) {
         cycle = currentCycle;
         const begin = currentCycle * cycleSpan;
         const end = (currentCycle + lookaheadCycles) * cycleSpan;
-        events = this.add(0).query(new State(new TimeSpan(begin, end)));
+        events = this.add(0)
+          .query(new State(new TimeSpan(begin, end)))
+          .filter((event) => event.part.begin.valueOf() === event.whole.begin.valueOf());
       }
     }
     callback(ctx, events, t, cycleSpan, time);
