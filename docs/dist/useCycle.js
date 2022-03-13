@@ -20,7 +20,7 @@ function useCycle(props) {
     events?.filter((event) => event.part.begin.valueOf() === event.whole.begin.valueOf()).forEach((event) => {
       Tone.getTransport().schedule((time) => {
         const toneEvent = {
-          time: event.part.begin.valueOf(),
+          time: event.whole.begin.valueOf(),
           duration: event.whole.end.sub(event.whole.begin).valueOf(),
           value: event.value,
           context: event.context

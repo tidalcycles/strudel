@@ -328,7 +328,7 @@ class Pattern {
   _opleft(other, func) {
     return this.fmap(func).appLeft(reify(other));
   }
-  _asNumber() {
+  _asNumber(silent = false) {
     return this._withEvent((event) => {
       const asNumber = Number(event.value);
       if (!isNaN(asNumber)) {
@@ -344,8 +344,11 @@ class Pattern {
       if (isNote(event.value)) {
         return new Hap(event.whole, event.part, toMidi(event.value), {...event.context, type: "midi"});
       }
-      throw new Error('cannot parse as number: "' + event.value + '"');
-    });
+      if (!silent) {
+        throw new Error('cannot parse as number: "' + event.value + '"');
+      }
+      return event.withValue(() => void 0);
+    })._removeUndefineds();
   }
   add(other) {
     return this._asNumber()._opleft(other, (a) => (b) => a + b);
