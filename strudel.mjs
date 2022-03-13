@@ -468,8 +468,8 @@ class Pattern {
         return this.fmap(func).appLeft(reify(other))
     }
 
-    _asNumber() {
-      return this._withEvent(event => {
+    _asNumber(silent = false) {
+      return this._withEvent((event) => {
         const asNumber = Number(event.value);
         if (!isNaN(asNumber)) {
           return event.withValue(() => asNumber);
@@ -485,8 +485,11 @@ class Pattern {
           // set context type to midi to let the player know its meant as midi number and not as frequency
           return new Hap(event.whole, event.part, toMidi(event.value), { ...event.context, type: 'midi' });
         }
-        throw new Error('cannot parse as number: "' + event.value + '"');
-      });
+        if (!silent) {
+          throw new Error('cannot parse as number: "' + event.value + '"');
+        }
+        return event.withValue(() => undefined); // silent error
+      })._removeUndefineds();
     }
 
     add(other) {
