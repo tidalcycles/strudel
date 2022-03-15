@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import * as Tone from 'tone';
-import CodeMirror, { markEvent } from './CodeMirror';
+import CodeMirror, { markEvent, markParens } from './CodeMirror';
 import cx from './cx';
 import { evaluate } from './evaluate';
 import logo from './logo.svg';
@@ -156,6 +156,7 @@ function App() {
                 styleSelectedText: true,
                 cursorBlinkRate: 0,
               }}
+              onCursor={markParens}
               onChange={(_: any, __: any, value: any) => setCode(value)}
             />
             <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none">
