@@ -282,64 +282,58 @@ export const technoDrums = `stack(
   "[~ c4]*2".tone(new Tone.MetalSynth().set({envelope:{decay:0.06,sustain:0}}).chain(new Gain(0.5),getDestination()))
 )`;
 
-export const loungerave = `() => {
-  const delay = new FeedbackDelay(1/8, .2).chain(vol(0.5), out());
-  const kick = new MembraneSynth().chain(vol(.8), out());
-  const snare = new NoiseSynth().chain(vol(.8), out());
-  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
-  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
-  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
-  
-  const drums = stack(
-    "c1*2".tone(kick).mask("<x@7 ~>/8"),
-    "~ <x!7 [x@3 x]>".tone(snare).mask("<x@7 ~>/4"),
-    "[~ c4]*2".tone(hihat)
-  );
-  
-  const thru = (x) => x.transpose("<0 1>/8").transpose(1);
-  const synths = stack(
-    "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2").edit(thru).tone(bass),
-    "<Cm7 Bb7 Fm7 G7b9>/2".struct("~ [x@0.1 ~]").voicings().edit(thru).every(2, early(1/4)).tone(keys).mask("<x@7 ~>/8".early(1/4))
-  )
-  return stack(
-    drums, 
-    synths
-  )
-  //.mask("<x ~>*4")
-  //.early("0.25 0");
-}`;
+export const loungerave = `const delay = new FeedbackDelay(1/8, .2).chain(vol(0.5), out());
+const kick = new MembraneSynth().chain(vol(.8), out());
+const snare = new NoiseSynth().chain(vol(.8), out());
+const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
+const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
+const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
 
-export const caverave = `() => {
-  const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
-  const kick = new MembraneSynth().chain(vol(.8), out());
-  const snare = new NoiseSynth().chain(vol(.8), out());
-  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
-  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
-  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
-  
-  const drums = stack(
-    "c1*2".tone(kick).mask("<x@7 ~>/8"),
-    "~ <x!7 [x@3 x]>".tone(snare).mask("<x@7 ~>/4"),
-    "[~ c4]*2".tone(hihat)
-  );
-  
-  const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
-  const synths = stack(
-    "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]*2")
-    .edit(
-      scaleTranspose(0).early(0),
-      scaleTranspose(2).early(1/8),
-      scaleTranspose(7).early(1/4),
-      scaleTranspose(8).early(3/8)
-    ).apply(thru).tone(keys).mask("<~ x>/16"),
-    "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).apply(thru).tone(bass),
-    "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().apply(thru).every(2, early(1/8)).tone(keys).mask("<x@7 ~>/8".early(1/4))
-  )
-  return stack(
-    drums.fast(2), 
-    synths
-  ).slow(2);
-}`;
+const drums = stack(
+  "c1*2".tone(kick).mask("<x@7 ~>/8"),
+  "~ <x!7 [x@3 x]>".tone(snare).mask("<x@7 ~>/4"),
+  "[~ c4]*2".tone(hihat)
+);
+
+const thru = (x) => x.transpose("<0 1>/8").transpose(1);
+const synths = stack(
+  "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2").edit(thru).tone(bass),
+  "<Cm7 Bb7 Fm7 G7b9>/2".struct("~ [x@0.1 ~]").voicings().edit(thru).every(2, early(1/4)).tone(keys).mask("<x@7 ~>/8".early(1/4))
+)
+stack(
+  drums, 
+  synths
+)`;
+
+export const caverave = `const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
+const kick = new MembraneSynth().chain(vol(.8), out());
+const snare = new NoiseSynth().chain(vol(.8), out());
+const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
+const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
+const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
+
+const drums = stack(
+  "c1*2".tone(kick).mask("<x@7 ~>/8"),
+  "~ <x!7 [x@3 x]>".tone(snare).mask("<x@7 ~>/4"),
+  "[~ c4]*2".tone(hihat)
+);
+
+const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
+const synths = stack(
+  "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]*2")
+  .edit(
+    scaleTranspose(0).early(0),
+    scaleTranspose(2).early(1/8),
+    scaleTranspose(7).early(1/4),
+    scaleTranspose(8).early(3/8)
+  ).apply(thru).tone(keys).mask("<~ x>/16"),
+  "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).apply(thru).tone(bass),
+  "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().apply(thru).every(2, early(1/8)).tone(keys).mask("<x@7 ~>/8".early(1/4))
+)
+stack(
+  drums.fast(2), 
+  synths
+).slow(2)`;
 
 export const callcenterhero = `()=>{
   const bpm = 90;
@@ -516,31 +510,45 @@ export const wavyKalimba = `sampler({
     .fast(1)
 })`;
 
-export const jemblung = `() => {
-  const delay = new FeedbackDelay(1/8, .6).chain(vol(0.15), out());
-  const snare = noise({type:'white',...adsr(0,0.2,0)}).chain(lowpass(5000),vol(1.8),out());
-  const s = polysynth().set({...osc('sawtooth4'),...adsr(0.01,.2,.6,0.2)}).chain(vol(.23).connect(delay),out());
-  return stack(
-    stack(
-      "0 1 4 [3!2 5]".edit(
-        // chords
-        x=>x.add("0,3").duration("0.05!3 0.02"),
-        // bass
-        x=>x.add("-8").struct("x*8").duration(0.1) 
-      ),
-      // melody
-      "12 11*3 12 ~".duration(0.005) 
-    )
-    .add("<0 1>")
-    .tune("jemblung2")
-    //.mul(22/5).round().xen("22edo")
-    //.mul(12/5).round().xen("12edo")
-    .tone(s),
-    // kick
-    "[c2 ~]*2".duration(0.05).tone(membrane().chain(out())), 
-    // snare
-    "[~ c1]*2".early(0.001).tone(snare),
-    // hihat
-    "c2*8".tone(noise().chain(highpass(6000),vol(0.5).connect(delay),out())),
-  ).slow(3)
-}`;
+export const jemblung = `const delay = new FeedbackDelay(1/8, .6).chain(vol(0.15), out());
+const snare = noise({type:'white',...adsr(0,0.2,0)}).chain(lowpass(5000),vol(1.8),out());
+const s = polysynth().set({...osc('sawtooth4'),...adsr(0.01,.2,.6,0.2)}).chain(vol(.23).connect(delay),out());
+stack(
+  stack(
+    "0 1 4 [3!2 5]".edit(
+      // chords
+      x=>x.add("0,3").duration("0.05!3 0.02"),
+      // bass
+      x=>x.add("-8").struct("x*8").duration(0.1) 
+    ),
+    // melody
+    "12 11*3 12 ~".duration(0.005) 
+  )
+  .add("<0 1>")
+  .tune("jemblung2")
+  //.mul(22/5).round().xen("22edo")
+  //.mul(12/5).round().xen("12edo")
+  .tone(s),
+  // kick
+  "[c2 ~]*2".duration(0.05).tone(membrane().chain(out())), 
+  // snare
+  "[~ c1]*2".early(0.001).tone(snare),
+  // hihat
+  "c2*8".tone(noise().chain(highpass(6000),vol(0.5).connect(delay),out())),
+).slow(3)`;
+
+export const risingEnemy = `piano().then((p) =>
+stack(
+  "2,6"
+    .scale('F3 dorian')
+    .transpose(sine2.struct("x*64").slow(4).mul(2).round())
+    .fast(2)
+    .struct("x x*3")
+    .legato(".9 .3"),
+  "0@3 -3*3".legato(".95@3 .4").scale('F2 dorian')
+)
+  .transpose("<0 1 2 1>/2".early(0.5))
+  .transpose(5)
+  .fast(2 / 3)
+  .tone(p.toDestination())
+)`;
