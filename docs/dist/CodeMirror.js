@@ -25,7 +25,7 @@ export const markEvent = (editor) => (time, event) => {
   if (!locs || !editor) {
     return;
   }
-  const marks = locs.map(({start, end}) => editor.getDoc().markText({line: start.line - 1, ch: start.column}, {line: end.line - 1, ch: end.column}, {css: "outline: 2px solid #FFCA28; box-sizing:border-box"}));
+  const marks = locs.map(({start, end}) => editor.getDoc().markText({line: start.line - 1, ch: start.column}, {line: end.line - 1, ch: end.column}, {css: "outline: 1px solid #FFCA28; box-sizing:border-box"}));
   setTimeout(() => {
     marks.forEach((mark) => mark.clear());
   }, event.duration * 1e3);
@@ -35,7 +35,7 @@ export const markParens = (editor, data) => {
   const v = editor.getDoc().getValue();
   const marked = getCurrentParenArea(v, data);
   parenMark?.clear();
-  parenMark = editor.getDoc().markText(...marked, {css: "background-color: #0000dd20"});
+  parenMark = editor.getDoc().markText(...marked, {css: "background-color: #00007720"});
 };
 export function offsetToPosition(offset, code) {
   const lines = code.split("\n");

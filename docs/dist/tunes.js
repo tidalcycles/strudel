@@ -316,110 +316,101 @@ stack(
   drums.fast(2), 
   synths
 ).slow(2)`;
-export const callcenterhero = `()=>{
-  const bpm = 90;
-  const lead = polysynth().set({...osc('sine4'),...adsr(.004)}).chain(vol(0.15),out())
-  const bass = fmsynth({...osc('sawtooth6'),...adsr(0.05,.6,0.8,0.1)}).chain(vol(0.6), out());
-  const s = scale(slowcat('F3 minor', 'Ab3 major', 'Bb3 dorian', 'C4 phrygian dominant').slow(4));
-  return stack(
-    "0 2".struct("<x ~> [x ~]").apply(s).scaleTranspose(stack(0,2)).tone(lead),
-    "<6 7 9 7>".struct("[~ [x ~]*2]*2").apply(s).scaleTranspose("[0,2] [2,4]".fast(2).every(4,rev)).tone(lead),
-  	"-14".struct("[~ x@0.8]*2".early(0.01)).apply(s).tone(bass),
-    "c2*2".tone(membrane().chain(vol(0.6), out())),
-    "~ c2".tone(noise().chain(vol(0.2), out())),
-    "c4*4".tone(metal(adsr(0,.05,0)).chain(vol(0.03), out()))
-  )
-  .slow(120 / bpm)
-}
-`;
-export const primalEnemy = `()=>{
-  const f = fast("<1 <2 [4 8]>>");
-  return stack(
-    "c3,g3,c4".struct("[x ~]*2").apply(f).transpose("<0 <3 [5 [7 [9 [11 13]]]]>>"),
-    "c2 [c2 ~]*2".tone(synth(osc('sawtooth8')).chain(vol(0.8),out())),
-    "c1*2".tone(membrane().chain(vol(0.8),out()))
-  ).slow(1)
-}`;
+export const callcenterhero = `const bpm = 90;
+const lead = polysynth().set({...osc('sine4'),...adsr(.004)}).chain(vol(0.15),out())
+const bass = fmsynth({...osc('sawtooth6'),...adsr(0.05,.6,0.8,0.1)}).chain(vol(0.6), out());
+const s = scale(slowcat('F3 minor', 'Ab3 major', 'Bb3 dorian', 'C4 phrygian dominant').slow(4));
+stack(
+  "0 2".struct("<x ~> [x ~]").apply(s).scaleTranspose(stack(0,2)).tone(lead),
+  "<6 7 9 7>".struct("[~ [x ~]*2]*2").apply(s).scaleTranspose("[0,2] [2,4]".fast(2).every(4,rev)).tone(lead),
+	"-14".struct("[~ x@0.8]*2".early(0.01)).apply(s).tone(bass),
+  "c2*2".tone(membrane().chain(vol(0.6), out())),
+  "~ c2".tone(noise().chain(vol(0.2), out())),
+  "c4*4".tone(metal(adsr(0,.05,0)).chain(vol(0.03), out()))
+)
+.slow(120 / bpm)`;
+export const primalEnemy = `const f = fast("<1 <2 [4 8]>>");
+stack(
+  "c3,g3,c4".struct("[x ~]*2").apply(f).transpose("<0 <3 [5 [7 [9 [11 13]]]]>>"),
+  "c2 [c2 ~]*2".tone(synth(osc('sawtooth8')).chain(vol(0.8),out())),
+  "c1*2".tone(membrane().chain(vol(0.8),out()))
+).slow(1)`;
 export const drums = `stack(
   "c1*2".tone(membrane().chain(vol(0.8),out())),
   "~ c3".tone(noise().chain(vol(0.8),out())),
   "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.015)).chain(vol(0.8),out()))
 )
 `;
-export const xylophoneCalling = `()=>{
-  const t = x=> x.scaleTranspose("<0 2 4 3>/4").transpose(-2)
-  const s = x => x.scale(slowcat('C3 minor pentatonic','G3 minor pentatonic').slow(4))
-  const delay = new FeedbackDelay(1/8, .6).chain(vol(0.1), out());
-  const chorus = new Chorus(1,2.5,0.5).start();
-  return stack(
-    // melody
-    "<<10 7> <8 3>>/4".struct("x*3").apply(s)
-    .scaleTranspose("<0 3 2> <1 4 3>")
-    .superimpose(scaleTranspose(2).early(1/8))
-    .apply(t).tone(polysynth().set({
-      ...osc('triangle4'),
-      ...adsr(0,.08,0)
-    }).chain(vol(0.2).connect(delay),chorus,out())).mask("<~@3 x>/16".early(1/8)),
-    // pad
-    "[1,3]/4".scale('G3 minor pentatonic').apply(t).tone(polysynth().set({
-      ...osc('square2'),
-      ...adsr(0.1,.4,0.8)
-    }).chain(vol(0.2),chorus,out())).mask("<~ x>/32"),
-    // xylophone
-    "c3,g3,c4".struct("<x*2 x>").fast("<1 <2!3 [4 8]>>").apply(s).scaleTranspose("<0 <1 [2 [3 <4 5>]]>>").apply(t).tone(polysynth().set({
-      ...osc('sawtooth4'),
-      ...adsr(0,.1,0)
-    }).chain(vol(0.4).connect(delay),out())).mask("<x@3 ~>/16".early(1/8)),
-    // bass
-    "c2 [c2 ~]*2".scale('C hirajoshi').apply(t).tone(synth({
-      ...osc('sawtooth6'),
-      ...adsr(0,.03,.4,.1)
-    }).chain(vol(0.4),out())),
-    // kick
-    "<c1!3 [c1 ~]*2>*2".tone(membrane().chain(vol(0.8),out())),
-    // snare
-    "~ <c3!7 [c3 c3*2]>".tone(noise().chain(vol(0.8),out())),
-    // hihat
-    "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.02)).chain(vol(0.5).connect(delay),out()))
-).slow(1)
-}`;
-export const sowhatelse = `()=> {
-  // mixer
-  const mix = (key) => vol({
-    chords: .2,
-    lead: 0.8,
-    bass:  .4,
-    snare: .95, 
-    kick:  .9,
-    hihat: .35,
-  }[key]||0);
-  const delay = new FeedbackDelay(1/6, .3).chain(vol(.7), out());
-  const delay2 = new FeedbackDelay(1/6, .2).chain(vol(.15), out());
-  const chorus = new Chorus(1,2.5,0.5).start();
-  // instruments
-  const instr = (instrument) => ({
-    organ: polysynth().set({...osc('sawtooth4'), ...adsr(.01,.2,0)}).chain(mix('chords').connect(delay),out()),
-    lead: polysynth().set({...osc('triangle4'),...adsr(0.01,.05,0)}).chain(mix('lead').connect(delay2), out()),
-    bass: polysynth().set({...osc('sawtooth8'),...adsr(.02,.05,.3,.2)}).chain(mix('bass'),lowpass(3000), out()),
-    pad: polysynth().set({...osc('square2'),...adsr(0.1,.4,0.8)}).chain(vol(0.15),chorus,out()),
-    hihat: metal(adsr(0, .02, 0)).chain(mix('hihat'), out()),
-    snare: noise(adsr(0, .15,  0.01)).chain(mix('snare'), lowpass(5000), out()),
-    kick: membrane().chain(mix('kick'), out())
-  }[instrument]);
-  // harmony
-  const t = transpose("<0 0 1 0>/8");
-  const sowhat = scaleTranspose("0,3,6,9,11");
-  // track
-  return stack(
-    "[<0 4 [3 [2 1]]>]/4".struct("[x]*3").mask("[~ x ~]").scale('D5 dorian').off(1/6, scaleTranspose(-7)).off(1/3, scaleTranspose(-5)).apply(t).tone(instr('lead')).mask("<~ ~ x x>/8"),
-    "<<e3 [~@2 a3]> <[d3 ~] [c3 f3] g3>>".scale('D dorian').apply(sowhat).apply(t).tone(instr('organ')).mask("<x x x ~>/8"),
-    "<[d2 [d2 ~]*3]!3 <a1*2 c2*3 [a1 e2]>>".apply(t).tone(instr('bass')),
-    "c1*6".tone(instr('hihat')),
-    "~ c3".tone(instr('snare')),
-    "<[c1@5 c1] <c1 [[c1@2 c1] ~] [c1 ~ c1] [c1!2 ~ c1!3]>>".tone(instr('kick')),
-    "[2,4]/4".scale('D dorian').apply(t).tone(instr('pad')).mask("<x x x ~>/8")
-  ).fast(6/8)
-}`;
+export const xylophoneCalling = `const t = x => x.scaleTranspose("<0 2 4 3>/4").transpose(-2)
+const s = x => x.scale(slowcat('C3 minor pentatonic','G3 minor pentatonic').slow(4))
+const delay = new FeedbackDelay(1/8, .6).chain(vol(0.1), out());
+const chorus = new Chorus(1,2.5,0.5).start();
+stack(
+  // melody
+  "<<10 7> <8 3>>/4".struct("x*3").apply(s)
+  .scaleTranspose("<0 3 2> <1 4 3>")
+  .superimpose(scaleTranspose(2).early(1/8))
+  .apply(t).tone(polysynth().set({
+    ...osc('triangle4'),
+    ...adsr(0,.08,0)
+  }).chain(vol(0.2).connect(delay),chorus,out())).mask("<~@3 x>/16".early(1/8)),
+  // pad
+  "[1,3]/4".scale('G3 minor pentatonic').apply(t).tone(polysynth().set({
+    ...osc('square2'),
+    ...adsr(0.1,.4,0.8)
+  }).chain(vol(0.2),chorus,out())).mask("<~ x>/32"),
+  // xylophone
+  "c3,g3,c4".struct("<x*2 x>").fast("<1 <2!3 [4 8]>>").apply(s).scaleTranspose("<0 <1 [2 [3 <4 5>]]>>").apply(t).tone(polysynth().set({
+    ...osc('sawtooth4'),
+    ...adsr(0,.1,0)
+  }).chain(vol(0.4).connect(delay),out())).mask("<x@3 ~>/16".early(1/8)),
+  // bass
+  "c2 [c2 ~]*2".scale('C hirajoshi').apply(t).tone(synth({
+    ...osc('sawtooth6'),
+    ...adsr(0,.03,.4,.1)
+  }).chain(vol(0.4),out())),
+  // kick
+  "<c1!3 [c1 ~]*2>*2".tone(membrane().chain(vol(0.8),out())),
+  // snare
+  "~ <c3!7 [c3 c3*2]>".tone(noise().chain(vol(0.8),out())),
+  // hihat
+  "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.02)).chain(vol(0.5).connect(delay),out()))
+).slow(1)`;
+export const sowhatelse = `// mixer
+const mix = (key) => vol({
+  chords: .2,
+  lead: 0.8,
+  bass:  .4,
+  snare: .95, 
+  kick:  .9,
+  hihat: .35,
+}[key]||0);
+const delay = new FeedbackDelay(1/6, .3).chain(vol(.7), out());
+const delay2 = new FeedbackDelay(1/6, .2).chain(vol(.15), out());
+const chorus = new Chorus(1,2.5,0.5).start();
+// instruments
+const instr = (instrument) => ({
+  organ: polysynth().set({...osc('sawtooth4'), ...adsr(.01,.2,0)}).chain(mix('chords').connect(delay),out()),
+  lead: polysynth().set({...osc('triangle4'),...adsr(0.01,.05,0)}).chain(mix('lead').connect(delay2), out()),
+  bass: polysynth().set({...osc('sawtooth8'),...adsr(.02,.05,.3,.2)}).chain(mix('bass'),lowpass(3000), out()),
+  pad: polysynth().set({...osc('square2'),...adsr(0.1,.4,0.8)}).chain(vol(0.15),chorus,out()),
+  hihat: metal(adsr(0, .02, 0)).chain(mix('hihat'), out()),
+  snare: noise(adsr(0, .15,  0.01)).chain(mix('snare'), lowpass(5000), out()),
+  kick: membrane().chain(mix('kick'), out())
+}[instrument]);
+// harmony
+const t = transpose("<0 0 1 0>/8");
+const sowhat = scaleTranspose("0,3,6,9,11");
+// track
+stack(
+  "[<0 4 [3 [2 1]]>]/4".struct("[x]*3").mask("[~ x ~]").scale('D5 dorian').off(1/6, scaleTranspose(-7)).off(1/3, scaleTranspose(-5)).apply(t).tone(instr('lead')).mask("<~ ~ x x>/8"),
+  "<<e3 [~@2 a3]> <[d3 ~] [c3 f3] g3>>".scale('D dorian').apply(sowhat).apply(t).tone(instr('organ')).mask("<x x x ~>/8"),
+  "<[d2 [d2 ~]*3]!3 <a1*2 c2*3 [a1 e2]>>".apply(t).tone(instr('bass')),
+  "c1*6".tone(instr('hihat')),
+  "~ c3".tone(instr('snare')),
+  "<[c1@5 c1] <c1 [[c1@2 c1] ~] [c1 ~ c1] [c1!2 ~ c1!3]>>".tone(instr('kick')),
+  "[2,4]/4".scale('D dorian').apply(t).tone(instr('pad')).mask("<x x x ~>/8")
+).fast(6/8)`;
 export const barryHarris = `piano()
 .then(p => "0,2,[7 6]"
   .add("<0 1 2 3 4 5 7 8>")
@@ -448,8 +439,8 @@ export const blippyRhodes = `Promise.all([
   const delay = new FeedbackDelay(1/12, .4).chain(vol(0.3), out());
   rhodes = rhodes.chain(vol(0.5).connect(delay), out());
   const bass = synth(osc('sawtooth8')).chain(vol(.5),out());
-  const scales = ['C major', 'C mixolydian', 'F lydian', ['F minor',slowcat('Db major','Db mixolydian')]];
-  const t = x => x.scale(sequence(...scales).slow(4));
+  const scales = sequence('C major', 'C mixolydian', 'F lydian', ['F minor', slowcat('Db major','Db mixolydian')]).slow(4);
+  const t = x => x.scale(scales);
   return stack(
     "<bd sn> <hh hh*2 hh*3>".tone(drums.chain(out())),
     "<g4 c5 a4 [ab4 <eb5 f5>]>".apply(t).struct("x*8").apply(scaleTranspose("0 [-5,-2] -7 [-9,-2]")).legato(.2).slow(2).tone(rhodes),
