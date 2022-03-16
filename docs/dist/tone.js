@@ -36,7 +36,7 @@ Pattern.prototype.tone = function(instrument) {
           break;
         case "Piano":
           note = getPlayableNoteValue(event2);
-          instrument.keyDown({note, time, velocity: 0.5});
+          instrument.keyDown({note, time, velocity});
           instrument.keyUp({note, time: time + event2.duration, velocity});
           break;
         case "Sampler":

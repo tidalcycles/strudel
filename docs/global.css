@@ -1177,6 +1177,9 @@ select {
 .opacity-100 {
   opacity: 1;
 }
+.outline {
+  outline-style: solid;
+}
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
@@ -1198,7 +1201,19 @@ body {
 }
 
 .CodeMirror-line > span {
-  background-color: #2a323690;
+  background-color: #2a323699;
+}
+
+.darken::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  background: black;
+  opacity: 0.5;
 }
 
 .hover\:bg-slate-600:hover {

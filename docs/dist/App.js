@@ -1,6 +1,6 @@
 import React, {useCallback, useLayoutEffect, useRef, useState} from "../_snowpack/pkg/react.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
-import CodeMirror, {markEvent} from "./CodeMirror.js";
+import CodeMirror, {markEvent, markParens} from "./CodeMirror.js";
 import cx from "./cx.js";
 import {evaluate} from "./evaluate.js";
 import logo from "./logo.svg.proxy.js";
@@ -68,6 +68,7 @@ function App() {
   return /* @__PURE__ */ React.createElement("div", {
     className: "min-h-screen flex flex-col"
   }, /* @__PURE__ */ React.createElement("header", {
+    id: "header",
     className: cx("flex-none w-full h-14 px-2 flex border-b border-gray-200  justify-between z-[10]", uiHidden ? "bg-transparent text-white" : "bg-white")
   }, /* @__PURE__ */ React.createElement("div", {
     className: "flex items-center space-x-2"
@@ -116,7 +117,8 @@ function App() {
   }, "👀 ", uiHidden ? "show ui" : "hide ui"))), /* @__PURE__ */ React.createElement("section", {
     className: "grow flex flex-col text-gray-100"
   }, /* @__PURE__ */ React.createElement("div", {
-    className: "grow relative"
+    className: "grow relative",
+    id: "code"
   }, /* @__PURE__ */ React.createElement("div", {
     className: cx("h-full transition-opacity", error ? "focus:ring-red-500" : "focus:ring-slate-800", uiHidden ? "opacity-0" : "opacity-100")
   }, /* @__PURE__ */ React.createElement(CodeMirror, {
@@ -129,6 +131,7 @@ function App() {
       styleSelectedText: true,
       cursorBlinkRate: 0
     },
+    onCursor: markParens,
     onChange: (_2, __, value) => setCode(value)
   }), /* @__PURE__ */ React.createElement("span", {
     className: "p-4 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none"

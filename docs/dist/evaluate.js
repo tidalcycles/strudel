@@ -8,6 +8,7 @@ import "./tune.js";
 import "./tune.js";
 import "./pianoroll.js";
 import "./draw.js";
+import * as uiHelpers from "./ui.js";
 import * as drawHelpers from "./draw.js";
 import gist from "./gist.js";
 import shapeshifter from "./shapeshifter.js";
@@ -27,7 +28,7 @@ function hackLiteral(literal, names, func) {
 }
 hackLiteral(String, ["mini", "m"], bootstrapped.mini);
 hackLiteral(String, ["pure", "p"], bootstrapped.pure);
-Object.assign(globalThis, bootstrapped, Tone, toneHelpers, voicingHelpers, drawHelpers, {gist});
+Object.assign(globalThis, bootstrapped, Tone, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {gist});
 export const evaluate = async (code) => {
   const shapeshifted = shapeshifter(code);
   drawHelpers.cleanup();
