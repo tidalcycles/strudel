@@ -16,7 +16,7 @@ function frame(callback) {
   requestAnimationFrame(animate);
 }
 
-export const backgroundImage = function (src, animateOptions) {
+export const backgroundImage = function (src, animateOptions = {}) {
   const container = document.getElementById('code');
   const bg = 'background-image:url(' + src + ');background-size:contain;';
   container.style = bg;
