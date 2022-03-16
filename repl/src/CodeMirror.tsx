@@ -36,7 +36,7 @@ export const markEvent = (editor) => (time, event) => {
       { line: start.line - 1, ch: start.column },
       { line: end.line - 1, ch: end.column },
       //{ css: 'background-color: #FFCA28; color: black' } // background-color is now used by parent marking
-      { css: 'outline: 1px solid #FFCA28; box-sizing:border-box' }
+      { css: 'outline: 2px solid #FFCA28; box-sizing:border-box' }
     )
   );
   //Tone.Transport.schedule(() => { // problem: this can be cleared by scheduler...
@@ -51,7 +51,7 @@ export const markParens = (editor, data) => {
   const v = editor.getDoc().getValue();
   const marked = getCurrentParenArea(v, data);
   parenMark?.clear();
-  parenMark = editor.getDoc().markText(...marked, { css: 'background-color: #00000020' }); //
+  parenMark = editor.getDoc().markText(...marked, { css: 'background-color: #0000dd20' }); //
 };
 
 // returns { line, ch } from absolute character offset

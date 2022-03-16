@@ -83,6 +83,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <header
+        id="header"
         className={cx(
           'flex-none w-full h-14 px-2 flex border-b border-gray-200  justify-between z-[10]',
           uiHidden ? 'bg-transparent text-white' : 'bg-white'
@@ -138,7 +139,7 @@ function App() {
         </div>
       </header>
       <section className="grow flex flex-col text-gray-100">
-        <div className="grow relative">
+        <div className="grow relative" id="code">
           <div
             className={cx(
               'h-full transition-opacity',

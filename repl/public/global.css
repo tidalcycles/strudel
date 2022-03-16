@@ -14,5 +14,17 @@ body {
 }
 
 .CodeMirror-line > span {
-  background-color: #2a323690;
+  background-color: #2a323699;
+}
+
+.darken::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  background: black;
+  opacity: 0.5;
 }
