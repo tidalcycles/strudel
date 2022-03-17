@@ -1,4 +1,4 @@
-import { Pattern } from '../../strudel.mjs';
+import { Pattern, timeCat } from '../../strudel.mjs';
 import bjork from 'bjork';
 import { rotate } from '../../util.mjs';
 
@@ -12,6 +12,17 @@ const euclid = (pulses, steps, rotation = 0) => {
 
 Pattern.prototype.euclid = function (pulses, steps, rotation = 0) {
   return this.struct(euclid(pulses, steps, rotation));
+};
+
+Pattern.prototype.euclidLegato = function (pulses, steps, rotation = 0) {
+  const bin_pat = euclid(pulses, steps, rotation);
+  const firstOne = bin_pat.indexOf(1);
+  const gapless = rotate(bin_pat, firstOne)
+    .join('')
+    .split('1')
+    .slice(1)
+    .map((s) => [s.length + 1, true]);
+  return this.struct(timeCat(...gapless)).late(firstOne / steps);
 };
 
 export default euclid;
