@@ -39,8 +39,7 @@ Pattern.prototype.voicings = function (range) {
   });
 };
 
-Pattern.prototype.rootNotes = function (octave = 2) {
-  // range = ['G1', 'C3']
+Pattern.prototype._rootNotes = function (octave = 2) {
   return this.fmap((value) => {
     const [_, root] = value.match(/^([a-gA-G][b#]?).*$/);
     return root + octave;
@@ -48,11 +47,4 @@ Pattern.prototype.rootNotes = function (octave = 2) {
 };
 
 Pattern.prototype.define('voicings', (range, pat) => pat.voicings(range), { composable: true });
-Pattern.prototype.define(
-  'rootNotes',
-  (pat) => {
-    // console.log('call rootNotes ...', pat);
-    return pat.rootNotes();
-  },
-  { composable: true }
-);
+Pattern.prototype.define('rootNotes', (oct, pat) => pat.rootNotes(oct), { composable: true, patternified: true });
