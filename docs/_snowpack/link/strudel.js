@@ -365,6 +365,12 @@ class Pattern {
   round() {
     return this._asNumber().fmap((v) => Math.round(v));
   }
+  floor() {
+    return this._asNumber().fmap((v) => Math.floor(v));
+  }
+  ceil() {
+    return this._asNumber().fmap((v) => Math.ceil(v));
+  }
   union(other) {
     return this._opleft(other, (a) => (b) => Object.assign({}, a, b));
   }
@@ -469,6 +475,9 @@ class Pattern {
     const binary_pat = sequence(binary_pats);
     return binary_pat.fmap((b) => (val) => b ? val : void 0).appRight(this)._removeUndefineds();
   }
+  _segment(rate) {
+    return this.struct(pure(true).fast(rate));
+  }
   invert() {
     return this.fmap((x) => !x);
   }
@@ -556,7 +565,7 @@ class Pattern {
     return this._withContext((context) => ({...context, velocity: (context.velocity || 1) * velocity}));
   }
 }
-Pattern.prototype.patternified = ["apply", "fast", "slow", "early", "late", "duration", "legato", "velocity"];
+Pattern.prototype.patternified = ["apply", "fast", "slow", "early", "late", "duration", "legato", "velocity", "segment"];
 Pattern.prototype.factories = {pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 const silence = new Pattern((_) => []);
 function pure(value) {
