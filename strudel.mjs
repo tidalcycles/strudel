@@ -512,6 +512,14 @@ class Pattern {
       return this._asNumber().fmap((v) => Math.round(v));
     }
 
+    floor() {
+      return this._asNumber().fmap((v) => Math.floor(v));
+    }
+
+    ceil() {
+      return this._asNumber().fmap((v) => Math.ceil(v));
+    }
+
     union(other) {
         return this._opleft(other, a => b => Object.assign({}, a, b))
     }
@@ -656,6 +664,10 @@ class Pattern {
         return binary_pat.fmap(b => val => b ? val : undefined).appRight(this)._removeUndefineds()        
     }
 
+    _segment(rate) {
+      return this.struct(pure(true).fast(rate));
+    }
+
     invert() {
         // Swap true/false in a binary pattern
         return this.fmap(x => !x)
@@ -768,7 +780,7 @@ class Pattern {
 }
 
 // methods of Pattern that get callable factories
-Pattern.prototype.patternified = ['apply', 'fast', 'slow', 'early', 'late', 'duration', 'legato', 'velocity'];
+Pattern.prototype.patternified = ['apply', 'fast', 'slow', 'early', 'late', 'duration', 'legato', 'velocity', 'segment'];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
