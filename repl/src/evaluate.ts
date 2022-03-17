@@ -5,7 +5,8 @@ import './voicings';
 import './tonal.mjs';
 import './xen.mjs';
 import './tune.mjs';
-import './tune.mjs';
+import './euclid.mjs';
+import euclid from './euclid.mjs';
 import './pianoroll.mjs';
 import './draw.mjs';
 import * as uiHelpers from './ui.mjs';
@@ -36,7 +37,7 @@ hackLiteral(String, ['mini', 'm'], bootstrapped.mini); // comment out this line 
 hackLiteral(String, ['pure', 'p'], bootstrapped.pure); // comment out this line if you panic
 
 // this will add everything to global scope, which is accessed by eval
-Object.assign(globalThis, bootstrapped, Tone, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, { gist });
+Object.assign(globalThis, bootstrapped, Tone, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, { gist, euclid });
 
 export const evaluate: any = async (code: string) => {
   const shapeshifted = shapeshifter(code); // transform syntactically correct js code to semantically usable code

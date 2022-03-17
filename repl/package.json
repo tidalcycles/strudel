@@ -13,6 +13,7 @@
   "dependencies": {
     "@tonaljs/tonal": "^4.6.5",
     "@tonejs/piano": "^0.2.1",
+    "bjork": "^0.0.1",
     "chord-voicings": "^0.0.1",
     "codemirror": "^5.65.1",
     "estraverse": "^5.3.0",

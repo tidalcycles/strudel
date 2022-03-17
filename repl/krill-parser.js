@@ -262,7 +262,7 @@ function peg$parse(input, options) {
   var peg$f3 = function(sc) { sc.arguments_.alignment = "t"; return sc;};
   var peg$f4 = function(a) { return { weight: a} };
   var peg$f5 = function(a) { return { replicate: a  } };
-  var peg$f6 = function(p, s) { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s } } } };
+  var peg$f6 = function(p, s, r) { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r || 0 } } } };
   var peg$f7 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:a } } } };
   var peg$f8 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:"1/"+a } } } };
   var peg$f9 = function(a) { return { operator : { type_: "fixed-step", arguments_ :{ amount:a } } } };
@@ -273,7 +273,7 @@ function peg$parse(input, options) {
   var peg$f14 = function(s) { return s; };
   var peg$f15 = function(s) { return { name: "struct", args: { sequence:s }}};
   var peg$f16 = function(s) { return { name: "target", args : { name:s}}};
-  var peg$f17 = function(p, s) { return { name: "bjorklund", args :{ pulse: parseInt(p), step:parseInt(s) }}};
+  var peg$f17 = function(p, s, r) { return { name: "bjorklund", args :{ pulse: parseInt(p), step:parseInt(s) }}};
   var peg$f18 = function(a) { return { name: "stretch", args :{ amount: a}}};
   var peg$f19 = function(a) { return { name: "shift", args :{ amount: "-"+a}}};
   var peg$f20 = function(a) { return { name: "shift", args :{ amount: a}}};
@@ -1022,7 +1022,7 @@ function peg$parse(input, options) {
   }
 
   function peg$parseslice_bjorklund() {
-    var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
+    var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
 
     s0 = peg$currPos;
     if (input.charCodeAt(peg$currPos) === 40) {
@@ -1043,16 +1043,26 @@ function peg$parse(input, options) {
           s7 = peg$parsenumber();
           if (s7 !== peg$FAILED) {
             s8 = peg$parsews();
+            s9 = peg$parsecomma();
+            if (s9 === peg$FAILED) {
+              s9 = null;
+            }
+            s10 = peg$parsews();
+            s11 = peg$parsenumber();
+            if (s11 === peg$FAILED) {
+              s11 = null;
+            }
+            s12 = peg$parsews();
             if (input.charCodeAt(peg$currPos) === 41) {
-              s9 = peg$c17;
+              s13 = peg$c17;
               peg$currPos++;
             } else {
-              s9 = peg$FAILED;
+              s13 = peg$FAILED;
               if (peg$silentFails === 0) { peg$fail(peg$e24); }
             }
-            if (s9 !== peg$FAILED) {
+            if (s13 !== peg$FAILED) {
               peg$savedPos = s0;
-              s0 = peg$f6(s3, s7);
+              s0 = peg$f6(s3, s7, s11);
             } else {
               peg$currPos = s0;
               s0 = peg$FAILED;
@@ -1383,7 +1393,7 @@ function peg$parse(input, options) {
   }
 
   function peg$parsebjorklund() {
-    var s0, s1, s2, s3, s4, s5;
+    var s0, s1, s2, s3, s4, s5, s6, s7;
 
     s0 = peg$currPos;
     if (input.substr(peg$currPos, 6) === peg$c23) {
@@ -1400,8 +1410,13 @@ function peg$parse(input, options) {
         s4 = peg$parsews();
         s5 = peg$parseint();
         if (s5 !== peg$FAILED) {
+          s6 = peg$parsews();
+          s7 = peg$parseint();
+          if (s7 === peg$FAILED) {
+            s7 = null;
+          }
           peg$savedPos = s0;
-          s0 = peg$f17(s3, s5);
+          s0 = peg$f17(s3, s5, s7);
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;

@@ -104,8 +104,8 @@ slice_weight =  "@" a:number
 slice_replicate = "!"a:number
   { return { replicate: a  } }
 
-slice_bjorklund = "(" ws p:number ws comma ws s:number ws")"
-  { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s } } } }
+slice_bjorklund = "(" ws p:number ws comma ws s:number ws comma? ws r:number? ws ")"
+  { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r || 0 } } } }
 
 slice_slow = "/"a:number
   { return { operator : { type_: "stretch", arguments_ :{ amount:a } } } }
@@ -145,7 +145,7 @@ struct = "struct" ws s:sequence_or_operator
 target = "target" ws quote s:step quote
   { return { name: "target", args : { name:s}}}
 
-bjorklund = "euclid" ws p:int ws s:int
+bjorklund = "euclid" ws p:int ws s:int ws r:int?
   { return { name: "bjorklund", args :{ pulse: parseInt(p), step:parseInt(s) }}}
 
 slow = "slow" ws a:number

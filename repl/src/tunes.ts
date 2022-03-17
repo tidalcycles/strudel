@@ -543,3 +543,32 @@ stack(
   .fast(2 / 3)
   .tone(p.toDestination())
 )`;
+
+export const festivalOfFingers = `const chords = "<Cm7 Fm7 G7 F#7>";
+piano().then(p=>stack(
+  chords.voicings().struct("x(3,8,-1)").velocity(.5).off(1/7,x=>x.transpose(12).velocity(.2)),
+  chords.rootNotes(2).struct("x(4,8,-2)"),
+  chords.rootNotes(4)
+  .scale(slowcat('C minor','F dorian','G dorian','F# mixolydian'))
+  .struct("x(3,8,-2)".fast(2))
+  .scaleTranspose("0 4 0 6".early(".125 .5")).layer(scaleTranspose("0,<2 [4,6] [5,7]>/4"))
+).slow(2)
+             //.pianoroll()
+ .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
+ .tone(p.chain(out())))`;
+
+export const festivalOfFingers2 = `const chords =       "<Cm7       Fm7        G7         F#7            >";
+ const scales = slowcat('C minor','F dorian','G dorian','F# mixolydian')
+ piano().then(p=>stack(
+   chords.voicings().struct("x(3,8,-1)").velocity(.5).off(1/7,x=>x.transpose(12).velocity(.2)),
+   chords.rootNotes(2).struct("x(4,8)"),
+   chords.rootNotes(4)
+   .scale(scales)
+   .struct("x(3,8,-2)".fast(2))
+   .scaleTranspose("0 4 0 6".early(".125 .5")).layer(scaleTranspose("0,<2 [4,6] [5,7]>/3"))
+ ).slow(2).transpose(-1)            
+  .legato(cosine.struct("x*8").add(4/5).mul(4/5).fast(8))
+  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
+  // .pianoroll()
+  .tone(p.chain(out())).fast(3/4)
+ )`;
