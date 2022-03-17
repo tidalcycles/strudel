@@ -2,6 +2,7 @@
   "imports": {
     "@tonaljs/tonal": "./@tonaljs/tonal.js",
     "@tonejs/piano": "./@tonejs/piano.js",
+    "bjork": "./bjork.js",
     "chord-voicings": "./chord-voicings.js",
     "codemirror/lib/codemirror.css": "./codemirror/lib/codemirror.css",
     "codemirror/mode/javascript/javascript.js": "./codemirror/mode/javascript/javascript.js",

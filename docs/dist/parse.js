@@ -12,6 +12,8 @@ const applyOptions = (parent) => (pat, i) => {
       case "stretch":
         const speed = new Fraction(operator.arguments_.amount).inverse().valueOf();
         return reify(pat).fast(speed);
+      case "bjorklund":
+        return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
     }
     console.warn(`operator "${operator.type_}" not implemented`);
   }

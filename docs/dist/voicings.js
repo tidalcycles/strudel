@@ -26,7 +26,7 @@ Pattern.prototype.voicings = function(range) {
 };
 Pattern.prototype.rootNotes = function(octave = 2) {
   return this.fmap((value) => {
-    const [_, root] = value.match(/^([a-gA-G])[b#]?.*$/);
+    const [_, root] = value.match(/^([a-gA-G][b#]?).*$/);
     return root + octave;
   });
 };

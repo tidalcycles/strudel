@@ -31,3 +31,4 @@ export const getPlayableNoteValue = (event) => {
   }
   return note;
 };
+export const rotate = (arr, n) => arr.slice(n).concat(arr.slice(0, n));
