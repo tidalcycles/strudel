@@ -34,7 +34,7 @@ function useCycle(props) {
   };
   useEffect(() => {
     ready && query();
-  }, [onEvent, onSchedule, onQuery, ready]);
+  }, [onEvent, onSchedule, onQuery, onDraw, ready]);
   const start = async () => {
     setStarted(true);
     await Tone.start();

@@ -47,6 +47,11 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent, onDraw}) {
     if (_events.length) {
     }
   };
+  onDraw = useMemo(() => {
+    if (activeCode && !activeCode.includes("strudel disable-highlighting")) {
+      return onDraw;
+    }
+  }, [activeCode]);
   const cycle = useCycle({
     onDraw,
     onEvent: useCallback((time, event) => {

@@ -179,14 +179,6 @@ export class State {
 class Pattern {
   constructor(query) {
     this.query = query;
-    const proto = Object.getPrototypeOf(this);
-    proto.patternified.forEach((prop) => {
-      this[prop] = (...args) => this._patternify(Pattern.prototype["_" + prop])(...args);
-      Object.assign(this[prop], Object.fromEntries(Object.entries(Pattern.prototype.factories).map(([type, func]) => [
-        type,
-        (...args) => this[prop](func(...args))
-      ])));
-    });
   }
   _splitQueries() {
     const pat = this;
@@ -735,13 +727,18 @@ Pattern.prototype.define = (name, func, options = {}) => {
 };
 Pattern.prototype.define("hush", (pat) => pat.hush(), {patternified: false, composable: true});
 Pattern.prototype.define("bypass", (pat) => pat.bypass(on), {patternified: true, composable: true});
-Pattern.prototype.bootstrap = () => {
+Pattern.prototype.bootstrap = function() {
   const bootstrapped = Object.fromEntries(Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
     if (Pattern.prototype[functionName]) {
       Pattern.prototype[functionName] = makeComposable(Pattern.prototype[functionName]);
     }
     return [functionName, curry(composable, makeComposable)];
   }));
+  this.patternified.forEach((prop) => {
+    Pattern.prototype[prop] = function(...args) {
+      return this._patternify(Pattern.prototype["_" + prop])(...args);
+    };
+  });
   return bootstrapped;
 };
 function withLocationOffset(pat, offset) {
