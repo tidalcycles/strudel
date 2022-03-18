@@ -1,5 +1,6 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as Tone from 'tone';
+import { State, TimeSpan } from '../../strudel.mjs';
 import CodeMirror, { markEvent, markParens } from './CodeMirror';
 import cx from './cx';
 import { evaluate } from './evaluate';
@@ -94,6 +95,18 @@ function App() {
           <h1 className="text-2xl">Strudel REPL</h1>
         </div>
         <div className="flex space-x-4">
+          {/* <button
+            onClick={() => {
+              console.log('log..');
+              const start = performance.now();
+              const events = pattern?.query(new State(new TimeSpan(0, 100)));
+              const took = performance.now() - start;
+              console.log('took', took / 1000);
+              console.log('events', events);
+            }}
+          >
+            log 100s
+          </button> */}
           <button onClick={() => togglePlay()}>
             {!pending ? (
               <span className="flex items-center w-16">

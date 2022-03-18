@@ -1,3 +1,5 @@
+import type { State } from '../../strudel.mjs';
+
 export declare interface Fraction {
   (v: number): Fraction;
   d: number;
@@ -19,6 +21,6 @@ export declare interface Hap<T = any> {
   show: () => string;
 }
 export declare interface Pattern<T = any> {
-  query: (span: TimeSpan) => Hap<T>[];
+  query: (span: State) => Hap<T>[];
   fmap: (v: T) => T;
 }
