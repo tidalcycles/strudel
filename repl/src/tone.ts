@@ -22,6 +22,16 @@ import {
 import { Piano } from '@tonejs/piano';
 import { getPlayableNoteValue } from '../../util.mjs';
 
+// "balanced" | "interactive" | "playback";
+// Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));
+export const defaultSynth = new PolySynth().chain(new Gain(0.5), getDestination());
+defaultSynth.set({
+  oscillator: { type: 'triangle' },
+  envelope: {
+    release: 0.01,
+  },
+});
+
 // what about
 // https://www.charlie-roberts.com/gibberish/playground/
 

@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as Tone from 'tone';
-import { State, TimeSpan } from '../../strudel.mjs';
 import CodeMirror, { markEvent, markParens } from './CodeMirror';
 import cx from './cx';
 import { evaluate } from './evaluate';
 import logo from './logo.svg';
 import { useWebMidi } from './midi';
+import playStatic from './static.mjs';
+import { defaultSynth } from './tone';
 import * as tunes from './tunes';
 import useRepl from './useRepl';
 
@@ -18,15 +18,6 @@ try {
 } catch (err) {
   console.warn('failed to decode', err);
 }
-// "balanced" | "interactive" | "playback";
-// Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));
-const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.getDestination());
-defaultSynth.set({
-  oscillator: { type: 'triangle' },
-  envelope: {
-    release: 0.01,
-  },
-});
 
 function getRandomTune() {
   const allTunes = Object.values(tunes);
@@ -95,18 +86,6 @@ function App() {
           <h1 className="text-2xl">Strudel REPL</h1>
         </div>
         <div className="flex space-x-4">
-          {/* <button
-            onClick={() => {
-              console.log('log..');
-              const start = performance.now();
-              const events = pattern?.query(new State(new TimeSpan(0, 100)));
-              const took = performance.now() - start;
-              console.log('took', took / 1000);
-              console.log('events', events);
-            }}
-          >
-            log 100s
-          </button> */}
           <button onClick={() => togglePlay()}>
             {!pending ? (
               <span className="flex items-center w-16">
@@ -139,7 +118,6 @@ function App() {
               console.log('tune', _code); // uncomment this to debug when random code fails
               setCode(_code);
               const parsed = await evaluate(_code);
-              // Tone.Transport.cancel(Tone.Transport.seconds);
               setPattern(parsed.pattern);
             }}
           >
@@ -191,6 +169,7 @@ function App() {
           style={{ fontFamily: 'monospace' }}
         />
       </section>
+      <button className="fixed right-4 bottom-2 z-[11]" onClick={() => playStatic(code)}>static</button>
     </div>
   );
 }

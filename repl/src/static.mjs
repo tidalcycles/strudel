@@ -1,0 +1,61 @@
+import * as Tone from 'tone';
+import { State, TimeSpan } from '../../strudel.mjs';
+import { getPlayableNoteValue } from '../../util.mjs';
+import { evaluate } from './evaluate';
+
+// this is a test to play back events with as less runtime code as possible..
+// the code asks for the number of seconds to prequery
+// after the querying is done, the events are scheduled
+// after the scheduling is done, the transport is started
+// nothing happens while tone.js runs except the schedule callback, which is a thin wrapper around triggerAttackRelease calls
+// so all glitches that appear here should have nothing to do with strudel and or the repl
+
+async function playStatic(code) {
+  let start, took;
+  const seconds = Number(prompt('How many seconds to run?')) || 60;
+  start = performance.now();
+  const { pattern: pat } = await evaluate(code);
+  took = performance.now() - start;
+  console.log('evaluate took', took, 'ms');
+  Tone.getTransport().stop();
+  start = performance.now();
+  const events = pat
+    ?.query(new State(new TimeSpan(0, seconds)))
+    ?.filter((event) => event.part.begin.valueOf() === event.whole.begin.valueOf())
+    ?.map((event) => ({
+      time: event.whole.begin.valueOf(),
+      duration: event.whole.end.sub(event.whole.begin).valueOf(),
+      value: event.value,
+      context: event.context,
+    }));
+  took = performance.now() - start;
+  console.log('query took', took, 'ms');
+  start = performance.now();
+  events.forEach((event) => {
+    Tone.getTransport().schedule((time) => {
+      try {
+        const { onTrigger, velocity } = event.context;
+        if (!onTrigger) {
+          if (defaultSynth) {
+            const note = getPlayableNoteValue(event);
+            defaultSynth.triggerAttackRelease(note, event.duration, time, velocity);
+          } else {
+            throw new Error('no defaultSynth passed to useRepl.');
+          }
+        } else {
+          onTrigger(time, event);
+        }
+      } catch (err) {
+        console.warn(err);
+        err.message = 'unplayable event: ' + err?.message;
+        pushLog(err.message); // not with setError, because then we would have to setError(undefined) on next playable event
+      }
+    }, event.time);
+  });
+  took = performance.now() - start;
+  console.log('schedule took', took, 'ms');
+
+  Tone.getTransport().start('+0.5');
+}
+
+export default playStatic;
