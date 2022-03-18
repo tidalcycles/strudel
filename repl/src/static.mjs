@@ -11,6 +11,8 @@ import { evaluate } from './evaluate';
 // so all glitches that appear here should have nothing to do with strudel and or the repl
 
 async function playStatic(code) {
+  Tone.getTransport().cancel();
+  Tone.getTransport().stop();
   let start, took;
   const seconds = Number(prompt('How many seconds to run?')) || 60;
   start = performance.now();
@@ -19,7 +21,6 @@ async function playStatic(code) {
   took = performance.now() - start;
   console.log('evaluate took', took, 'ms');
   console.log('querying..');
-  Tone.getTransport().stop();
   start = performance.now();
   const events = pat
     ?.query(new State(new TimeSpan(0, seconds)))
