@@ -239,7 +239,9 @@ export const magicSofa = `stack(
    .every(2, fast(2))
    .voicings(),
   "<c2 f2 g2> <d2 g2 a2 e2>"
-).slow(1).transpose.slowcat(0, 2, 3, 4)`;
+).slow(1).transpose(slowcat(0, 2, 3, 4))`;
+// below doesn't work anymore due to constructor cleanup
+// ).slow(1).transpose.slowcat(0, 2, 3, 4)`;
 
 export const confusedPhone = `"[g2 ~@1.3] [c3 ~@1.3]"
 .superimpose(

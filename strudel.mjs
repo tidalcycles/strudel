@@ -262,23 +262,6 @@ class Pattern {
     // the following functions will get patternFactories as nested functions:
     constructor(query) {
         this.query = query;
-        // the following code will assign `patternFactories` as child functions to all methods of Pattern that don't start with '_'
-        const proto = Object.getPrototypeOf(this);
-        // proto.patternified is defined below Pattern class. You can add more patternified functions from outside.
-        proto.patternified.forEach((prop) => {
-          // patternify function
-          this[prop] = (...args) => this._patternify(Pattern.prototype['_' + prop])(...args);
-          // with the following, you can do, e.g. `stack(c3).fast.slowcat(1, 2, 4, 8)` instead of `stack(c3).fast(slowcat(1, 2, 4, 8))`
-          Object.assign(
-            this[prop],
-            Object.fromEntries(
-              Object.entries(Pattern.prototype.factories).map(([type, func]) => [
-                type,
-                (...args) => this[prop](func(...args)),
-              ])
-            )
-          );
-        });
     }
 
     _splitQueries() {
@@ -1019,7 +1002,7 @@ Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, com
 Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)
-Pattern.prototype.bootstrap = () => {
+Pattern.prototype.bootstrap = function() {
   // makeComposable(Pattern.prototype);
   const bootstrapped = Object.fromEntries(Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
     if(Pattern.prototype[functionName]) {
@@ -1028,6 +1011,28 @@ Pattern.prototype.bootstrap = () => {
     }
     return [functionName, curry(composable, makeComposable)];
   }));
+  
+  // note: this === Pattern.prototypetgh6z
+  this.patternified.forEach((prop) => {
+    // the following will patternify all functions in Pattern.prototype.patternified
+    Pattern.prototype[prop] = function(...args) {
+      return this._patternify(Pattern.prototype['_' + prop])(...args)
+    }
+    // with the following, you can do, e.g. `stack(c3).fast.slowcat(1, 2, 4, 8)` instead of `stack(c3).fast(slowcat(1, 2, 4, 8))`
+    // TODO: find a way to implement below outside of constructor (code only worked there)
+    /* Object.assign(
+      Pattern.prototype[prop],
+      Object.fromEntries(
+        Object.entries(Pattern.prototype.factories).map(([type, func]) => [
+          type,
+          function(...args) {
+            console.log('this', this);
+            return this[prop](func(...args)) 
+          }
+        ])
+      )
+    ); */
+  });
   return bootstrapped;
 }
 
