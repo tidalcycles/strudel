@@ -1,10 +1,11 @@
 import React, {useCallback, useLayoutEffect, useRef, useState} from "../_snowpack/pkg/react.js";
-import * as Tone from "../_snowpack/pkg/tone.js";
 import CodeMirror, {markEvent, markParens} from "./CodeMirror.js";
 import cx from "./cx.js";
 import {evaluate} from "./evaluate.js";
 import logo from "./logo.svg.proxy.js";
 import {useWebMidi} from "./midi.js";
+import playStatic from "./static.js";
+import {defaultSynth} from "./tone.js";
 import * as tunes from "./tunes.js";
 import useRepl from "./useRepl.js";
 const [_, codeParam] = window.location.href.split("#");
@@ -14,13 +15,6 @@ try {
 } catch (err) {
   console.warn("failed to decode", err);
 }
-const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.getDestination());
-defaultSynth.set({
-  oscillator: {type: "triangle"},
-  envelope: {
-    release: 0.01
-  }
-});
 function getRandomTune() {
   const allTunes = Object.values(tunes);
   const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -145,6 +139,9 @@ function App() {
     readOnly: true,
     ref: logBox,
     style: {fontFamily: "monospace"}
-  })));
+  })), /* @__PURE__ */ React.createElement("button", {
+    className: "fixed right-4 bottom-2 z-[11]",
+    onClick: () => playStatic(code)
+  }, "static"));
 }
 export default App;

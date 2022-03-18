@@ -933,6 +933,9 @@ select {
 .static {
   position: static;
 }
+.fixed {
+  position: fixed;
+}
 .absolute {
   position: absolute;
 }
@@ -955,8 +958,14 @@ select {
 .bottom-2 {
   bottom: 0.5rem;
 }
+.right-4 {
+  right: 1rem;
+}
 .z-\[10\] {
   z-index: 10;
+}
+.z-\[11\] {
+  z-index: 11;
 }
 .block {
   display: block;

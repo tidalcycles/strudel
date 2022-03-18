@@ -20,6 +20,13 @@ import {
 } from "../_snowpack/pkg/tone.js";
 import {Piano} from "../_snowpack/pkg/@tonejs/piano.js";
 import {getPlayableNoteValue} from "../_snowpack/link/util.js";
+export const defaultSynth = new PolySynth().chain(new Gain(0.5), getDestination());
+defaultSynth.set({
+  oscillator: {type: "triangle"},
+  envelope: {
+    release: 0.01
+  }
+});
 const Pattern = _Pattern;
 Pattern.prototype.tone = function(instrument) {
   return this._withEvent((event) => {
