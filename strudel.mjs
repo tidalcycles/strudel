@@ -986,21 +986,6 @@ export function makeComposable(func) {
   return func;
 }
 
-// this will add func as name to list of composable / patternified functions.
-// those lists will be used in bootstrap to curry and compose everything, to support various call patterns
-Pattern.prototype.define = (name, func, options = {}) => {
-  if (options.composable) {
-    Pattern.prototype.composable[name] = func;
-  }
-  if(options.patternified) {
-    Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
-  }
-}
-
-// Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
-Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
-Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
-
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = function() {
   // makeComposable(Pattern.prototype);
@@ -1035,6 +1020,22 @@ Pattern.prototype.bootstrap = function() {
   });
   return bootstrapped;
 }
+
+// this will add func as name to list of composable / patternified functions.
+// those lists will be used in bootstrap to curry and compose everything, to support various call patterns
+Pattern.prototype.define = (name, func, options = {}) => {
+  if (options.composable) {
+    Pattern.prototype.composable[name] = func;
+  }
+  if(options.patternified) {
+    Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
+  }
+  Pattern.prototype.bootstrap(); // automatically bootstrap after new definition
+}
+
+// Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
+Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
+Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
 
 // this is wrapped around mini patterns to offset krill parser location into the global js code space
 function withLocationOffset(pat, offset) {
