@@ -9,7 +9,6 @@
     "codemirror/mode/pegjs/pegjs.js": "./codemirror/mode/pegjs/pegjs.js",
     "codemirror/theme/material.css": "./codemirror/theme/material.css",
     "estraverse": "./estraverse.js",
-    "fraction.js": "./fractionjs.js",
     "multimap": "./multimap.js",
     "ramda": "./ramda.js",
     "react": "./react.js",

@@ -56,12 +56,6 @@ export default (code) => {
         return wrapLocationOffset(minified, node, ast.locations, artificialNodes);
       }
 
-      // replace double quote string "xxx" with 'xxx'.m
-      if (isStringWithDoubleQuotes(node, ast.locations, code)) {
-        const minified = getMinified(node.value);
-        return wrapLocationOffset(minified, node, ast.locations, artificialNodes);
-      }
-
       // operator overloading => still not done
       const operators = {
         '*': 'fast',

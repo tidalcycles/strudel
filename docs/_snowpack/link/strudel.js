@@ -1,4 +1,4 @@
-import Fraction from "../pkg/fractionjs.js";
+import Fraction from "./fraction.js";
 import {compose} from "../pkg/ramda.js";
 import {isNote, toMidi} from "./util.js";
 const removeUndefineds = (xs) => xs.filter((x) => x != void 0);
@@ -24,7 +24,7 @@ export function curry(func, overload) {
   return fn;
 }
 Fraction.prototype.sam = function() {
-  return Fraction(Math.floor(this));
+  return this.floor();
 };
 Fraction.prototype.nextSam = function() {
   return this.sam().add(1);
@@ -450,14 +450,15 @@ class Pattern {
     return fastQuery.withEventTime((t) => t.div(factor));
   }
   _slow(factor) {
-    return this._fast(1 / factor);
+    return this._fast(Fraction(1).div(factor));
   }
   _early(offset) {
     offset = Fraction(offset);
     return this.withQueryTime((t) => t.add(offset)).withEventTime((t) => t.sub(offset));
   }
   _late(offset) {
-    return this._early(0 - offset);
+    offset = Fraction(offset);
+    return this._early(Fraction(0).sub(offset));
   }
   struct(...binary_pats) {
     const binary_pat = sequence(binary_pats);
