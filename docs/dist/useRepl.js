@@ -85,7 +85,7 @@ function useRepl({tune, defaultSynth, autolink = true, onEvent, onDraw}) {
       }
     }, [pattern]),
     onSchedule: useCallback((_events, cycle2) => logCycle(_events, cycle2), [pattern]),
-    ready: !!pattern
+    ready: !!pattern && !!activeCode
   });
   const broadcast = usePostMessage(({data: {from, type}}) => {
     if (type === "start" && from !== id) {

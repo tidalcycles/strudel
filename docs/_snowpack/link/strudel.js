@@ -717,16 +717,6 @@ export function makeComposable(func) {
   });
   return func;
 }
-Pattern.prototype.define = (name, func, options = {}) => {
-  if (options.composable) {
-    Pattern.prototype.composable[name] = func;
-  }
-  if (options.patternified) {
-    Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
-  }
-};
-Pattern.prototype.define("hush", (pat) => pat.hush(), {patternified: false, composable: true});
-Pattern.prototype.define("bypass", (pat) => pat.bypass(on), {patternified: true, composable: true});
 Pattern.prototype.bootstrap = function() {
   const bootstrapped = Object.fromEntries(Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
     if (Pattern.prototype[functionName]) {
@@ -741,6 +731,17 @@ Pattern.prototype.bootstrap = function() {
   });
   return bootstrapped;
 };
+Pattern.prototype.define = (name, func, options = {}) => {
+  if (options.composable) {
+    Pattern.prototype.composable[name] = func;
+  }
+  if (options.patternified) {
+    Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
+  }
+  Pattern.prototype.bootstrap();
+};
+Pattern.prototype.define("hush", (pat) => pat.hush(), {patternified: false, composable: true});
+Pattern.prototype.define("bypass", (pat) => pat.bypass(on), {patternified: true, composable: true});
 function withLocationOffset(pat, offset) {
   return pat._withContext((context) => {
     let locations = context.locations || [];
