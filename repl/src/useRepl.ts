@@ -54,6 +54,14 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
       // pushLog(`# cycle ${cycle}\n` + _events.map((e: any) => e.show()).join('\n'));
     }
   };
+
+  // below block allows disabling the highlighting by including "strudel disable-highlighting" in the code (as comment)
+  onDraw = useMemo(() => {
+    if (activeCode && !activeCode.includes('strudel disable-highlighting')) {
+      return onDraw;
+    }
+  }, [activeCode]);
+
   // cycle hook to control scheduling
   const cycle = useCycle({
     onDraw,

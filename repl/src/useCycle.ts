@@ -60,7 +60,7 @@ function useCycle(props: UseCycleProps) {
 
   useEffect(() => {
     ready && query();
-  }, [onEvent, onSchedule, onQuery, ready]);
+  }, [onEvent, onSchedule, onQuery, onDraw, ready]);
 
   const start = async () => {
     setStarted(true);
