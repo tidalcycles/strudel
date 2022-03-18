@@ -32,7 +32,7 @@ export function curry(func, overload) {
 
 // Returns the start of the cycle.
 Fraction.prototype.sam = function() {
-    return Fraction(Math.floor(this))
+    return this.floor()
 }
 
 // Returns the start of the next cycle.
@@ -621,7 +621,7 @@ class Pattern {
     }
 
     _slow(factor) {
-        return this._fast(1/factor)
+        return this._fast(Fraction(1).div(factor))
     }
 
     _early(offset) {
@@ -632,7 +632,8 @@ class Pattern {
 
     _late(offset) {
         // Equivalent of Tidal's ~> operator
-        return this._early(0-offset)
+        offset = Fraction(offset)
+        return this._early(Fraction(0).sub(offset))
     }
 
     struct(...binary_pats) {
