@@ -56,9 +56,7 @@ function resolveReplications(ast) {
               options_: {
                 operator: {
                   type_: 'stretch',
-                  // valueOf should be ok here, as we turn it into a string
-                  // fraction.js doc: "If you want to keep the number as it is, convert it to a string, as the string parser will not perform any further observations"
-                  arguments_: { amount: String(new Fraction(replicate).inverse().valueOf()) }, 
+                  arguments_: { amount: new Fraction(replicate).inverse().toString() },
                 },
               },
             },
