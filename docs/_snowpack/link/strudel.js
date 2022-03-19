@@ -1,4 +1,4 @@
-import Fraction from "./fraction.js";
+import Fraction from "../pkg/fractionjs.js";
 import {compose} from "../pkg/ramda.js";
 import {isNote, toMidi} from "./util.js";
 const removeUndefineds = (xs) => xs.filter((x) => x != void 0);
@@ -370,11 +370,9 @@ class Pattern {
     const pat_val = this;
     const query = function(state) {
       const withWhole = function(a, b) {
-        return new Hap(choose_whole(a.whole, b.whole), b.part, b.value, {
-          ...a.context,
-          ...b.context,
+        return new Hap(choose_whole(a.whole, b.whole), b.part, b.value, Object.assign({}, a.context, b.context, {
           locations: (a.context.locations || []).concat(b.context.locations || [])
-        });
+        }));
       };
       const match = function(a) {
         return func(a.value).query(state.setSpan(a.part)).map((b) => withWhole(a, b));
@@ -578,8 +576,8 @@ const _toBipolar = (pat) => pat.fmap((x) => x * 2 - 1);
 const _fromBipolar = (pat) => pat.fmap((x) => (x + 1) / 2);
 export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
 export const sine = _fromBipolar(sine2);
-export const cosine2 = sine2._early(0.25);
-export const cosine = sine._early(0.25);
+export const cosine2 = sine2._early(Fraction(1).div(4));
+export const cosine = sine._early(Fraction(1).div(4));
 export const saw = signal((t) => t % 1);
 export const saw2 = _toBipolar(saw);
 export const isaw = signal((t) => 1 - t % 1);

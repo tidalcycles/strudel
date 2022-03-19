@@ -10,7 +10,7 @@ const applyOptions = (parent) => (pat, i) => {
   if (operator) {
     switch (operator.type_) {
       case "stretch":
-        const speed = new Fraction(operator.arguments_.amount).inverse().valueOf();
+        const speed = new Fraction(operator.arguments_.amount).inverse();
         return reify(pat).fast(speed);
       case "bjorklund":
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);

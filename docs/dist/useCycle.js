@@ -17,7 +17,7 @@ function useCycle(props) {
     Tone.getTransport().schedule(() => {
       query(cycle + 1);
     }, t);
-    events?.filter((event) => event.part.begin.valueOf() === event.whole.begin.valueOf()).forEach((event) => {
+    events?.filter((event) => event.part.begin.equals(event.whole.begin)).forEach((event) => {
       Tone.getTransport().schedule((time) => {
         const toneEvent = {
           time: event.whole.begin.valueOf(),
