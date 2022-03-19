@@ -1,4 +1,4 @@
-import Fraction from 'fraction.js'
+import Fraction from './fraction.js'
 import { compose } from 'ramda'; // will remove this as soon as compose is implemented here
 import { isNote, toMidi } from './util.mjs';
 
