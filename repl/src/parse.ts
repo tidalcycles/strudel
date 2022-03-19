@@ -12,7 +12,7 @@ const applyOptions = (parent: any) => (pat: any, i: number) => {
   if (operator) {
     switch (operator.type_) {
       case 'stretch':
-        const speed = new Fraction(operator.arguments_.amount).inverse();
+        const speed = Fraction(operator.arguments_.amount).inverse();
         return reify(pat).fast(speed);
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
@@ -56,7 +56,7 @@ function resolveReplications(ast) {
               options_: {
                 operator: {
                   type_: 'stretch',
-                  arguments_: { amount: new Fraction(replicate).inverse().toString() },
+                  arguments_: { amount: Fraction(replicate).inverse().toString() },
                 },
               },
             },

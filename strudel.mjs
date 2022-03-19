@@ -1,4 +1,4 @@
-import Fraction from './fraction.js'
+import Fraction from './fraction.mjs'
 import { compose } from 'ramda'; // will remove this as soon as compose is implemented here
 import { isNote, toMidi } from './util.mjs';
 
@@ -28,57 +28,6 @@ export function curry(func, overload) {
         overload(fn, []); 
     }
     return fn;
-}
-
-// Returns the start of the cycle.
-Fraction.prototype.sam = function() {
-    return this.floor();
-}
-
-// Returns the start of the next cycle.
-Fraction.prototype.nextSam = function() {
-    return this.sam().add(1)
-}
-
-// Returns a TimeSpan representing the begin and end of the Time value's cycle
-Fraction.prototype.wholeCycle = function() {
-    return new TimeSpan(this.sam(), this.nextSam())
-}
-
-Fraction.prototype.lt = function(other) {
-    return this.compare(other) < 0
-}
-
-Fraction.prototype.gt = function(other) {
-    return this.compare(other) > 0
-}
-
-Fraction.prototype.lte = function(other) {
-    return this.compare(other) <= 0
-}
-
-Fraction.prototype.gte = function(other) {
-    return this.compare(other) >= 0
-}
-
-Fraction.prototype.eq = function(other) {
-    return this.compare(other) == 0
-}
-
-Fraction.prototype.max = function(other) {
-    return this.gt(other) ? this : other
-}
-
-Fraction.prototype.min = function(other) {
-    return this.lt(other) ? this : other
-}
-
-Fraction.prototype.show = function () {
-    return (this.s * this.n) + "/" + this.d
-}
-
-Fraction.prototype.or = function(other) {
-    return this.eq(0) ? other : this
 }
 
 class TimeSpan {
