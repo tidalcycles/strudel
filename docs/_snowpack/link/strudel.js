@@ -1,4 +1,4 @@
-import Fraction from "../pkg/fractionjs.js";
+import Fraction from "./fraction.js";
 import {compose} from "../pkg/ramda.js";
 import {isNote, toMidi} from "./util.js";
 const removeUndefineds = (xs) => xs.filter((x) => x != void 0);

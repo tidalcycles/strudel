@@ -46,7 +46,7 @@ function resolveReplications(ast) {
               options_: {
                 operator: {
                   type_: "stretch",
-                  arguments_: {amount: String(new Fraction(replicate).inverse().valueOf())}
+                  arguments_: {amount: new Fraction(replicate).inverse().toString()}
                 }
               }
             }
