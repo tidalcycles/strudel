@@ -1,4 +1,4 @@
-import Fraction from './fraction.js'
+import Fraction from 'fraction.js'
 import { compose } from 'ramda'; // will remove this as soon as compose is implemented here
 import { isNote, toMidi } from './util.mjs';
 
@@ -32,7 +32,7 @@ export function curry(func, overload) {
 
 // Returns the start of the cycle.
 Fraction.prototype.sam = function() {
-    return this.floor()
+    return this.floor();
 }
 
 // Returns the start of the next cycle.
@@ -510,13 +510,16 @@ class Pattern {
     _bindWhole(choose_whole, func) {
         const pat_val = this
         const query = function(state) {
-            const withWhole = function(a, b) {
-                return new Hap(choose_whole(a.whole, b.whole), b.part, b.value, {
-                  ...a.context,
-                  ...b.context,
+            const withWhole = function (a, b) {
+              return new Hap(
+                choose_whole(a.whole, b.whole),
+                b.part,
+                b.value,
+                Object.assign({}, a.context, b.context, {
                   locations: (a.context.locations || []).concat(b.context.locations || []),
-                });
-            }
+                })
+              );
+            };
             const match = function (a) {
                 return func(a.value).query(state.setSpan(a.part)).map(b => withWhole(a, b))
             }
@@ -798,8 +801,8 @@ const _fromBipolar = pat => pat.fmap(x => (x + 1) / 2)
 export const sine2   = signal(t => Math.sin(Math.PI * 2 * t))
 export const sine    = _fromBipolar(sine2)
 
-export const cosine2 = sine2._early(0.25)
-export const cosine  = sine._early(0.25)
+export const cosine2 = sine2._early(Fraction(1).div(4))
+export const cosine  = sine._early(Fraction(1).div(4))
 
 export const saw     = signal(t => t % 1)
 export const saw2    = _toBipolar(saw)

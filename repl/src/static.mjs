@@ -24,7 +24,7 @@ async function playStatic(code) {
   start = performance.now();
   const events = pat
     ?.query(new State(new TimeSpan(0, seconds)))
-    ?.filter((event) => event.part.begin.valueOf() === event.whole.begin.valueOf())
+    ?.filter((event) => event.part.begin.equals(event.whole.begin))
     ?.map((event) => ({
       time: event.whole.begin.valueOf(),
       duration: event.whole.end.sub(event.whole.begin).valueOf(),

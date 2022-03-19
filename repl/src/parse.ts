@@ -12,7 +12,7 @@ const applyOptions = (parent: any) => (pat: any, i: number) => {
   if (operator) {
     switch (operator.type_) {
       case 'stretch':
-        const speed = new Fraction(operator.arguments_.amount).inverse().valueOf();
+        const speed = new Fraction(operator.arguments_.amount).inverse();
         return reify(pat).fast(speed);
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
@@ -56,7 +56,9 @@ function resolveReplications(ast) {
               options_: {
                 operator: {
                   type_: 'stretch',
-                  arguments_: { amount: String(new Fraction(replicate).inverse().valueOf()) },
+                  // valueOf should be ok here, as we turn it into a string
+                  // fraction.js doc: "If you want to keep the number as it is, convert it to a string, as the string parser will not perform any further observations"
+                  arguments_: { amount: String(new Fraction(replicate).inverse().valueOf()) }, 
                 },
               },
             },
@@ -103,6 +105,7 @@ export function patternifyAST(ast: any): any {
           return ast.source_;
         }
         const { start, end } = ast.location_;
+        // should we really parse as number here? strings wont be fareyed...
         const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
         // return ast.source_;
         // the following line expects the shapeshifter to wrap this in withLocationOffset

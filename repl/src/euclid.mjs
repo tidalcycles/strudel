@@ -1,6 +1,7 @@
 import { Pattern, timeCat } from '../../strudel.mjs';
 import bjork from 'bjork';
 import { rotate } from '../../util.mjs';
+import Fraction from 'fraction.js';
 
 const euclid = (pulses, steps, rotation = 0) => {
   const b = bjork(steps, pulses);
@@ -22,7 +23,7 @@ Pattern.prototype.euclidLegato = function (pulses, steps, rotation = 0) {
     .split('1')
     .slice(1)
     .map((s) => [s.length + 1, true]);
-  return this.struct(timeCat(...gapless)).late(firstOne / steps);
+  return this.struct(timeCat(...gapless)).late(Fraction(firstOne).div(steps));
 };
 
 export default euclid;

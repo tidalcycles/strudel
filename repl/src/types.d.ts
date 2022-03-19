@@ -7,6 +7,7 @@ export declare interface Fraction {
   s: number;
   sub: (f: Fraction) => Fraction;
   sam: () => Fraction;
+  equals: (f: Fraction) => boolean;
 }
 export declare interface TimeSpan {
   constructor: any; //?

@@ -40,7 +40,7 @@ function useCycle(props: UseCycleProps) {
 
     // schedule events for next cycle
     events
-      ?.filter((event) => event.part.begin.valueOf() === event.whole.begin.valueOf())
+      ?.filter((event) => event.part.begin.equals(event.whole.begin))
       .forEach((event) => {
         Tone.getTransport().schedule((time) => {
           const toneEvent = {
