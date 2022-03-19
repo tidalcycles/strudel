@@ -1,7 +1,7 @@
 import {Pattern, timeCat} from "../_snowpack/link/strudel.js";
 import bjork from "../_snowpack/pkg/bjork.js";
 import {rotate} from "../_snowpack/link/util.js";
-import Fraction from "../_snowpack/pkg/fractionjs.js";
+import Fraction from "../_snowpack/link/fraction.js";
 const euclid = (pulses, steps, rotation = 0) => {
   const b = bjork(steps, pulses);
   if (rotation) {
