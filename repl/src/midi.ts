@@ -24,7 +24,7 @@ export default function enableWebMidi() {
 }
 const outputByName = (name: string) => WebMidi.getOutputByName(name);
 
-Pattern.prototype.midi = function (output: string, channel = 1) {
+Pattern.prototype.midi = function (output: string | number, channel = 1) {
   if (output?.constructor?.name === 'Pattern') {
     throw new Error(
       `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
@@ -45,7 +45,14 @@ Pattern.prototype.midi = function (output: string, channel = 1) {
       if (!WebMidi.outputs.length) {
         throw new Error(`🔌 No MIDI devices found. Connect a device or enable IAC Driver.`);
       }
-      const device = output ? outputByName(output) : WebMidi.outputs[0];
+      let device;
+      if (typeof output === 'number') {
+        device = WebMidi.outputs[output];
+      } else if (typeof output === 'string') {
+        device = outputByName(output);
+      } else {
+        device = WebMidi.outputs[0];
+      }
       if (!device) {
         throw new Error(
           `🔌 MIDI device '${output ? output : ''}' not found. Use one of ${WebMidi.outputs
