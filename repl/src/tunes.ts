@@ -358,11 +358,24 @@ stack(
   "c1*2".tone(membrane().chain(vol(0.8),out()))
 ).slow(1)`;
 
-export const drums = `stack(
+export const synthDrums = `stack(
   "c1*2".tone(membrane().chain(vol(0.8),out())),
   "~ c3".tone(noise().chain(vol(0.8),out())),
   "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.015)).chain(vol(0.8),out()))
 )
+`;
+
+export const sampleDrums = `const drums = await players({
+  bd: 'bd/BT0A0D0.wav',
+  sn: 'sn/ST0T0S3.wav',
+  hh: 'hh/000_hh3closedhh.wav'
+}, 'https://loophole-letters.vercel.app/samples/tidal/')
+
+stack(
+  "<bd!3 bd(3,4,2)>",
+  "hh*4",
+  "~ <sn!3 sn(3,4,1)>"
+).tone(drums.chain(out()))
 `;
 
 export const xylophoneCalling = `const t = x => x.scaleTranspose("<0 2 4 3>/4").transpose(-2)
@@ -437,71 +450,82 @@ stack(
   "[2,4]/4".scale('D dorian').apply(t).tone(instr('pad')).mask("<x x x ~>/8")
 ).fast(6/8)`;
 
-export const barryHarris = `piano()
-.then(p => "0,2,[7 6]"
+export const barryHarris = `backgroundImage(
+  'https://media.npr.org/assets/img/2017/02/03/barryharris_600dpi_wide-7eb49998aa1af377d62bb098041624c0a0d1a454.jpg',
+  {style:'background-size:cover'})
+  
+"0,2,[7 6]"
   .add("<0 1 2 3 4 5 7 8>")
   .scale('C bebop major')
   .transpose("<0 1 2 1>/8")
   .slow(2)
-  .tone(p.toDestination()))
+  .tone((await piano()).toDestination())
 `;
 
-export const blippyRhodes = `Promise.all([
-  players({
-    bd: 'samples/tidal/bd/BT0A0D0.wav',
-    sn: 'samples/tidal/sn/ST0T0S3.wav',
-    hh: 'samples/tidal/hh/000_hh3closedhh.wav'
-  }, 'https://loophole-letters.vercel.app/'),
-  sampler({
-    E1: 'samples/rhodes/MK2Md2000.mp3',
-    E2: 'samples/rhodes/MK2Md2012.mp3',
-    E3: 'samples/rhodes/MK2Md2024.mp3',
-    E4: 'samples/rhodes/MK2Md2036.mp3',
-    E5: 'samples/rhodes/MK2Md2048.mp3',
-    E6: 'samples/rhodes/MK2Md2060.mp3',
-    E7: 'samples/rhodes/MK2Md2072.mp3'
-  }, 'https://loophole-letters.vercel.app/')
-])
-  .then(([drums, rhodes])=>{
-  const delay = new FeedbackDelay(1/12, .4).chain(vol(0.3), out());
-  rhodes = rhodes.chain(vol(0.5).connect(delay), out());
-  const bass = synth(osc('sawtooth8')).chain(vol(.5),out());
-  const scales = sequence('C major', 'C mixolydian', 'F lydian', ['F minor', slowcat('Db major','Db mixolydian')]).slow(4);
-  const t = x => x.scale(scales);
-  return stack(
-    "<bd sn> <hh hh*2 hh*3>".tone(drums.chain(out())),
-    "<g4 c5 a4 [ab4 <eb5 f5>]>".apply(t).struct("x*8").apply(scaleTranspose("0 [-5,-2] -7 [-9,-2]")).legato(.2).slow(2).tone(rhodes),
-    //"<C^7 C7 F^7 [Fm7 <Db^7 Db7>]>".slow(2).voicings().struct("~ x").legato(.25).tone(rhodes),
-    "<c2 c3 f2 [[F2 C2] db2]>".legato("<1@3 [.3 1]>").slow(2).tone(bass),
-  ).fast(3/2)
-})`;
+export const blippyRhodes = `const delay = new FeedbackDelay(1/12, .4).chain(vol(0.3), out());
 
-export const wavyKalimba = `sampler({
+const drums = await players({
+  bd: 'samples/tidal/bd/BT0A0D0.wav',
+  sn: 'samples/tidal/sn/ST0T0S3.wav',
+  hh: 'samples/tidal/hh/000_hh3closedhh.wav'
+}, 'https://loophole-letters.vercel.app/')
+
+const rhodes = await sampler({
+  E1: 'samples/rhodes/MK2Md2000.mp3',
+  E2: 'samples/rhodes/MK2Md2012.mp3',
+  E3: 'samples/rhodes/MK2Md2024.mp3',
+  E4: 'samples/rhodes/MK2Md2036.mp3',
+  E5: 'samples/rhodes/MK2Md2048.mp3',
+  E6: 'samples/rhodes/MK2Md2060.mp3',
+  E7: 'samples/rhodes/MK2Md2072.mp3'
+}, 'https://loophole-letters.vercel.app/')
+
+const bass = synth(osc('sawtooth8')).chain(vol(.5),out())
+const scales = sequence('C major', 'C mixolydian', 'F lydian', ['F minor', slowcat('Db major','Db mixolydian')]).slow(4)
+
+stack(
+  "<bd sn> <hh hh*2 hh*3>"
+  .tone(drums.chain(out())),
+  "<g4 c5 a4 [ab4 <eb5 f5>]>"
+  .scale(scales)
+  .struct("x*8")
+  .scaleTranspose("0 [-5,-2] -7 [-9,-2]")
+  .legato(.3)
+  .slow(2)
+  .tone(rhodes.chain(vol(0.5).connect(delay), out())),
+  //"<C^7 C7 F^7 [Fm7 <Db^7 Db7>]>".slow(2).voicings().struct("~ x").legato(.25).tone(rhodes),
+  "<c2 c3 f2 [[F2 C2] db2]>"
+  .legato("<1@3 [.3 1]>")
+  .slow(2)
+  .tone(bass),
+).fast(3/2)`;
+
+export const wavyKalimba = `const delay = new FeedbackDelay(1/3, .5).chain(vol(.2), out());
+let kalimba = await sampler({
   C5: 'https://freesound.org/data/previews/536/536549_11935698-lq.mp3'
-}).then((kalimba)=>{
-  const delay = new FeedbackDelay(1/3, .5).chain(vol(.2), out());
-  kalimba = kalimba.chain(vol(0.6).connect(delay),out());
-  const scales = sequence('C major', 'C mixolydian', 'F lydian', ['F minor', 'Db major']).slow(4);
-  return stack(
-    "[0 2 4 6 9 2 0 -2]*3"
-    .add("<0 2>/4")
-    .scale(scales)
-    .struct("x*8")
-    .velocity("<.8 .3 .6>*8")
-    .slow(2)
-    .tone(kalimba),
-    "<c2 c2 f2 [[F2 C2] db2]>"
-    .scale(scales)
-    .scaleTranspose("[0 <2 4>]*2")
-    .struct("x*4")
-    .velocity("<.8 .5>*4")
-    .velocity(0.8)
-    .slow(2)
-    .tone(kalimba)
-  )
-    .legato("<.4 .8 1 1.2 1.4 1.6 1.8 2>/8")
-    .fast(1)
-})`;
+})
+kalimba = kalimba.chain(vol(0.6).connect(delay),out());
+const scales = sequence('C major', 'C mixolydian', 'F lydian', ['F minor', 'Db major']).slow(4);
+
+stack(
+  "[0 2 4 6 9 2 0 -2]*3"
+  .add("<0 2>/4")
+  .scale(scales)
+  .struct("x*8")
+  .velocity("<.8 .3 .6>*8")
+  .slow(2)
+  .tone(kalimba),
+  "<c2 c2 f2 [[F2 C2] db2]>"
+  .scale(scales)
+  .scaleTranspose("[0 <2 4>]*2")
+  .struct("x*4")
+  .velocity("<.8 .5>*4")
+  .velocity(0.8)
+  .slow(2)
+  .tone(kalimba)
+)
+  .legato("<.4 .8 1 1.2 1.4 1.6 1.8 2>/8")
+  .fast(1)`;
 
 export const jemblung = `const delay = new FeedbackDelay(1/8, .6).chain(vol(0.15), out());
 const snare = noise({type:'white',...adsr(0,0.2,0)}).chain(lowpass(5000),vol(1.8),out());
@@ -530,8 +554,7 @@ stack(
   "c2*8".tone(noise().chain(highpass(6000),vol(0.5).connect(delay),out())),
 ).slow(3)`;
 
-export const risingEnemy = `piano().then((p) =>
-stack(
+export const risingEnemy = `stack(
   "2,6"
     .scale('F3 dorian')
     .transpose(sine2.struct("x*64").slow(4).mul(2).round())
@@ -543,11 +566,10 @@ stack(
   .transpose("<0 1 2 1>/2".early(0.5))
   .transpose(5)
   .fast(2 / 3)
-  .tone(p.toDestination())
-)`;
+  .tone((await piano()).toDestination())`;
 
 export const festivalOfFingers = `const chords = "<Cm7 Fm7 G7 F#7>";
-piano().then(p=>stack(
+stack(
   chords.voicings().struct("x(3,8,-1)").velocity(.5).off(1/7,x=>x.transpose(12).velocity(.2)),
   chords.rootNotes(2).struct("x(4,8,-2)"),
   chords.rootNotes(4)
@@ -555,22 +577,19 @@ piano().then(p=>stack(
   .struct("x(3,8,-2)".fast(2))
   .scaleTranspose("0 4 0 6".early(".125 .5")).layer(scaleTranspose("0,<2 [4,6] [5,7]>/4"))
 ).slow(2)
-             //.pianoroll()
  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
- .tone(p.chain(out())))`;
+ .tone((await piano()).chain(out()))`;
 
 export const festivalOfFingers2 = `const chords =       "<Cm7       Fm7        G7         F#7            >";
- const scales = slowcat('C minor','F dorian','G dorian','F# mixolydian')
- piano().then(p=>stack(
-   chords.voicings().struct("x(3,8,-1)").velocity(.5).off(1/7,x=>x.transpose(12).velocity(.2)),
-   chords.rootNotes(2).struct("x(4,8)"),
-   chords.rootNotes(4)
-   .scale(scales)
-   .struct("x(3,8,-2)".fast(2))
-   .scaleTranspose("0 4 0 6".early(".125 .5")).layer(scaleTranspose("0,<2 [4,6] [5,7]>/3"))
- ).slow(2).transpose(-1)            
-  .legato(cosine.struct("x*8").add(4/5).mul(4/5).fast(8))
-  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
-  // .pianoroll()
-  .tone(p.chain(out())).fast(3/4)
- )`;
+const scales = slowcat('C minor','F dorian','G dorian','F# mixolydian')
+stack(
+  chords.voicings().struct("x(3,8,-1)").velocity(.5).off(1/7,x=>x.transpose(12).velocity(.2)),
+  chords.rootNotes(2).struct("x(4,8)"),
+  chords.rootNotes(4)
+  .scale(scales)
+  .struct("x(3,8,-2)".fast(2))
+  .scaleTranspose("0 4 0 6".early(".125 .5")).layer(scaleTranspose("0,<2 [4,6] [5,7]>/3"))
+).slow(2).transpose(-1)            
+ .legato(cosine.struct("x*8").add(4/5).mul(4/5).fast(8))
+ .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
+ .tone((await piano()).chain(out())).fast(3/4)`;

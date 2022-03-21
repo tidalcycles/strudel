@@ -28,7 +28,7 @@ const applyOptions = (parent: any) => (pat: any, i: number) => {
   const unimplemented = Object.keys(options || {}).filter((key) => key !== 'operator');
   if (unimplemented.length) {
     console.warn(
-      `option${unimplemented.length > 1 ? 's' : ''} ${unimplemented.map((o) => `"${o}"`).join(', ')} not implemented`
+      `option${unimplemented.length > 1 ? 's' : ''} ${unimplemented.map((o) => `"${o}"`).join(', ')} not implemented`,
     );
   }
   return pat;
@@ -103,12 +103,10 @@ export function patternifyAST(ast: any): any {
           return ast.source_;
         }
         const { start, end } = ast.location_;
-        // should we really parse as number here? strings wont be fareyed...
         const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
-        // return ast.source_;
-        // the following line expects the shapeshifter to wrap this in withLocationOffset
+        // the following line expects the shapeshifter append .withMiniLocation
         // because location_ is only relative to the mini string, but we need it relative to whole code
-        return pure(value).withLocation({ start, end });
+        return pure(value).withLocation([start.line, start.column, start.offset], [end.line, end.column, end.offset]);
       }
       return patternifyAST(ast.source_);
     case 'stretch':

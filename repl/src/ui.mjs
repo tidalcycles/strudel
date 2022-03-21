@@ -37,6 +37,12 @@ export const backgroundImage = function (src, animateOptions = {}) {
   frame((_, t) =>
     funcOptions.forEach(([option, value]) => {
       handleOption(option, value(t));
-    })
+    }),
   );
+};
+
+export const cleanup = () => {
+  const container = document.getElementById('code');
+  container.style = '';
+  container.className = 'grow relative'; // has to match App.tsx
 };
