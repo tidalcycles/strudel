@@ -11,6 +11,7 @@ body {
   height: 100% !important;
   background-color: transparent !important;
   font-size: 15px;
+  z-index:20
 }
 
 .CodeMirror-line > span {

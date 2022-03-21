@@ -78,7 +78,7 @@ function App() {
         id="header"
         className={cx(
           'flex-none w-full h-14 px-2 flex border-b border-gray-200  justify-between z-[10]',
-          uiHidden ? 'bg-transparent text-white' : 'bg-white'
+          uiHidden ? 'bg-transparent text-white' : 'bg-white',
         )}
       >
         <div className="flex items-center space-x-2">
@@ -135,7 +135,7 @@ function App() {
             className={cx(
               'h-full transition-opacity',
               error ? 'focus:ring-red-500' : 'focus:ring-slate-800',
-              uiHidden ? 'opacity-0' : 'opacity-100'
+              uiHidden ? 'opacity-0' : 'opacity-100',
             )}
           >
             <CodeMirror
@@ -169,7 +169,9 @@ function App() {
           style={{ fontFamily: 'monospace' }}
         />
       </section>
-      <button className="fixed right-4 bottom-2 z-[11]" onClick={() => playStatic(code)}>static</button>
+      <button className="fixed right-4 bottom-2 z-[11]" onClick={() => playStatic(code)}>
+        static
+      </button>
     </div>
   );
 }
