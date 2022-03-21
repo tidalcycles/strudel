@@ -34,3 +34,8 @@ export const backgroundImage = function(src, animateOptions = {}) {
     handleOption(option, value(t));
   }));
 };
+export const cleanup = () => {
+  const container = document.getElementById("code");
+  container.style = "";
+  container.className = "grow relative";
+};

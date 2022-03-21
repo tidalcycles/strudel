@@ -7,7 +7,7 @@ export const getDrawContext = (id = "test-canvas") => {
     canvas.id = id;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    canvas.style = "pointer-events:none;width:100%;height:100%;position:fixed;top:0;left:0";
+    canvas.style = "pointer-events:none;width:100%;height:100%;position:fixed;top:0;left:0;z-index:5";
     document.body.prepend(canvas);
   }
   return canvas.getContext("2d");

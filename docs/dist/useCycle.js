@@ -41,11 +41,19 @@ function useCycle(props) {
     Tone.getTransport().start("+0.1");
   };
   const stop = () => {
-    console.log("stop");
-    setStarted(false);
     Tone.getTransport().pause();
+    setStarted(false);
   };
   const toggle = () => started ? stop() : start();
-  return {start, stop, setStarted, onEvent, started, toggle, query, activeCycle};
+  return {
+    start,
+    stop,
+    onEvent,
+    started,
+    setStarted,
+    toggle,
+    query,
+    activeCycle
+  };
 }
 export default useCycle;

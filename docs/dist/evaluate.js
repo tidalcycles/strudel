@@ -13,7 +13,7 @@ import * as uiHelpers from "./ui.js";
 import * as drawHelpers from "./draw.js";
 import gist from "./gist.js";
 import shapeshifter from "./shapeshifter.js";
-import {minify} from "./parse.js";
+import {mini} from "./parse.js";
 import * as Tone from "../_snowpack/pkg/tone.js";
 import * as toneHelpers from "./tone.js";
 import * as voicingHelpers from "./voicings.js";
@@ -29,17 +29,16 @@ function hackLiteral(literal, names, func) {
 }
 hackLiteral(String, ["mini", "m"], bootstrapped.mini);
 hackLiteral(String, ["pure", "p"], bootstrapped.pure);
-Object.assign(globalThis, bootstrapped, Tone, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {gist, euclid});
+Object.assign(globalThis, bootstrapped, Tone, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
+  gist,
+  euclid,
+  mini
+});
 export const evaluate = async (code) => {
   const shapeshifted = shapeshifter(code);
   drawHelpers.cleanup();
+  uiHelpers.cleanup();
   let evaluated = await eval(shapeshifted);
-  if (typeof evaluated === "function") {
-    evaluated = evaluated();
-  }
-  if (typeof evaluated === "string") {
-    evaluated = strudel.withLocationOffset(minify(evaluated), {start: {line: 1, column: -1}});
-  }
   if (evaluated?.constructor?.name !== "Pattern") {
     const message = `got "${typeof evaluated}" instead of pattern`;
     throw new Error(message + (typeof evaluated === "function" ? ", did you forget to call a function?" : "."));

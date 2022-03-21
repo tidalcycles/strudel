@@ -13,6 +13,7 @@ Pattern.prototype.pianoroll = function({
   const height = h / midiRange;
   this.draw((ctx, events, t) => {
     ctx.fillStyle = background;
+    ctx.clearRect(0, 0, w, h);
     ctx.fillRect(0, 0, w, h);
     events.forEach((event) => {
       const isActive = event.whole.begin <= t && event.whole.end >= t;

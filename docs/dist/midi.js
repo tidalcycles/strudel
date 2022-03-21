@@ -37,7 +37,14 @@ Pattern.prototype.midi = function(output, channel = 1) {
       if (!WebMidi.outputs.length) {
         throw new Error(`🔌 No MIDI devices found. Connect a device or enable IAC Driver.`);
       }
-      const device = output ? outputByName(output) : WebMidi.outputs[0];
+      let device;
+      if (typeof output === "number") {
+        device = WebMidi.outputs[output];
+      } else if (typeof output === "string") {
+        device = outputByName(output);
+      } else {
+        device = WebMidi.outputs[0];
+      }
       if (!device) {
         throw new Error(`🔌 MIDI device '${output ? output : ""}' not found. Use one of ${WebMidi.outputs.map((o) => `'${o.name}'`).join(" | ")}`);
       }

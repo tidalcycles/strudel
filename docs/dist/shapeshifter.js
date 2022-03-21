@@ -6,7 +6,9 @@ import {
   IdentifierExpression,
   CallExpression,
   StaticMemberExpression,
-  Script,
+  ReturnStatement,
+  ArrayExpression,
+  LiteralNumericExpression,
 } from '../_snowpack/pkg/shift-ast.js';
 import codegen from '../_snowpack/pkg/shift-codegen.js';
 import * as strudel from '../_snowpack/link/strudel.js';
@@ -18,14 +20,8 @@ const isNote = (name) => /^[a-gC-G][bs]?[0-9]$/.test(name);
 const addLocations = true;
 export const addMiniLocations = true;
 
-/*
-not supported for highlighting:
-- 'b3'.p
-- mini('b3') / m('b3')
-- 'b3'.m / 'b3'.mini
-*/
-
-export default (code) => {
+export default (_code) => {
+  const { code, addReturn } = wrapAsync(_code);
   const ast = parseScriptWithLocation(code);
   const artificialNodes = [];
   const parents = [];
@@ -37,23 +33,20 @@ export default (code) => {
         return node;
       }
 
-      // replace template string `xxx` with 'xxx'.m
+      // replace template string `xxx` with mini(`xxx`)
       if (isBackTickString(node)) {
-        const minified = getMinified(node.elements[0].rawValue);
-        return wrapLocationOffset(minified, node, ast.locations, artificialNodes);
+        return minifyWithLocation(node, node, ast.locations, artificialNodes);
       }
-
       // allows to use top level strings, which are normally directives... but we don't need directives
-      if (node.type === 'Script' && node.directives.length === 1 && !node.statements.length) {
-        const minified = getMinified(node.directives[0].rawValue);
-        const wrapped = wrapLocationOffset(minified, node.directives[0], ast.locations, artificialNodes);
-        return new Script({ directives: [], statements: [wrapped] });
+      if (node.directives?.length === 1 && !node.statements?.length) {
+        const str = new LiteralStringExpression({ value: node.directives[0].rawValue });
+        const wrapped = minifyWithLocation(str, node.directives[0], ast.locations, artificialNodes);
+        return { ...node, directives: [], statements: [wrapped] };
       }
 
-      // replace double quote string "xxx" with 'xxx'.m
+      // replace double quote string "xxx" with mini('xxx')
       if (isStringWithDoubleQuotes(node, ast.locations, code)) {
-        const minified = getMinified(node.value);
-        return wrapLocationOffset(minified, node, ast.locations, artificialNodes);
+        return minifyWithLocation(node, node, ast.locations, artificialNodes);
       }
 
       // operator overloading => still not done
@@ -87,7 +80,6 @@ export default (code) => {
       if (node.type === 'CallExpression' && node.callee.name === 'pure') {
         const literal = node.arguments[0];
         // const value = literal[{ LiteralNumericExpression: 'value', LiteralStringExpression: 'name' }[literal.type]];
-        // console.log('value',value);
         return reifyWithLocation(literal, node.arguments[0], ast.locations, artificialNodes);
       }
       // replace pseudo note variables
@@ -103,28 +95,16 @@ export default (code) => {
           return new IdentifierExpression({ name: 'silence' });
         }
       }
-      if (addLocations && node.type === 'LiteralStringExpression' && isMarkable) {
-        // console.log('add', node);
+      if (
+        addLocations &&
+        ['LiteralStringExpression' /* , 'LiteralNumericExpression' */].includes(node.type) &&
+        isMarkable
+      ) {
+        // TODO: to make LiteralNumericExpression work, we need to make sure we're not inside timeCat...
         return reifyWithLocation(node, node, ast.locations, artificialNodes);
       }
-      if (!addMiniLocations) {
-        return wrapFunction('reify', node);
-      }
-      // mini notation location handling
-      const miniFunctions = ['mini', 'm'];
-      const isAlreadyWrapped = parent?.type === 'CallExpression' && parent.callee.name === 'withLocationOffset';
-      if (node.type === 'CallExpression' && miniFunctions.includes(node.callee.name) && !isAlreadyWrapped) {
-        // mini('c3')
-        if (node.arguments.length > 1) {
-          // TODO: transform mini(...args) to cat(...args.map(mini)) ?
-          console.warn('multi arg mini locations not supported yet...');
-          return node;
-        }
-        return wrapLocationOffset(node, node.arguments, ast.locations, artificialNodes);
-      }
-      if (node.type === 'StaticMemberExpression' && miniFunctions.includes(node.property) && !isAlreadyWrapped) {
-        // 'c3'.mini or 'c3'.m
-        return wrapLocationOffset(node, node.object, ast.locations, artificialNodes);
+      if (addMiniLocations) {
+        return addMiniNotationLocations(node, ast.locations, artificialNodes);
       }
       return node;
     },
@@ -132,20 +112,54 @@ export default (code) => {
       parents.pop();
     },
   });
-  return codegen(shifted);
+  // add return to last statement (because it's wrapped in an async function artificially)
+  addReturn(shifted);
+  const generated = codegen(shifted);
+  return generated;
 };
+
+function wrapAsync(code) {
+  // wrap code in async to make await work on top level => this will create 1 line offset to locations
+  // this is why line offset is -1 in getLocationObject calls below
+  code = `(async () => {
+${code}
+})()`;
+  const addReturn = (ast) => {
+    const body = ast.statements[0].expression.callee.body; // actual code ast inside async function body
+    body.statements = body.statements
+      .slice(0, -1)
+      .concat([new ReturnStatement({ expression: body.statements.slice(-1)[0] })]);
+  };
+  return {
+    code,
+    addReturn,
+  };
+}
+
+function addMiniNotationLocations(node, locations, artificialNodes) {
+  const miniFunctions = ['mini', 'm'];
+  // const isAlreadyWrapped = parent?.type === 'CallExpression' && parent.callee.name === 'withLocationOffset';
+  if (node.type === 'CallExpression' && miniFunctions.includes(node.callee.name)) {
+    // mini('c3')
+    if (node.arguments.length > 1) {
+      // TODO: transform mini(...args) to cat(...args.map(mini)) ?
+      console.warn('multi arg mini locations not supported yet...');
+      return node;
+    }
+    const str = node.arguments[0];
+    return minifyWithLocation(str, str, locations, artificialNodes);
+  }
+  if (node.type === 'StaticMemberExpression' && miniFunctions.includes(node.property)) {
+    // 'c3'.mini or 'c3'.m
+    return minifyWithLocation(node.object, node, locations, artificialNodes);
+  }
+  return node;
+}
 
 function wrapFunction(name, ...args) {
   return new CallExpression({
     callee: new IdentifierExpression({ name }),
     arguments: args,
-  });
-}
-
-function getMinified(value) {
-  return new StaticMemberExpression({
-    object: new LiteralStringExpression({ value }),
-    property: 'm',
   });
 }
 
@@ -196,143 +210,52 @@ function canBeOverloaded(node) {
   // TODO: support sequence(c3).transpose(3).x.y.z
 }
 
-// turn node into withLocationOffset(node, location)
-function wrapLocationOffset(node, stringNode, locations, artificialNodes) {
-  // console.log('wrapppp', stringNode);
-  const expression = {
-    type: 'CallExpression',
-    callee: {
-      type: 'IdentifierExpression',
-      name: 'withLocationOffset',
-    },
-    arguments: [node, getLocationObject(stringNode, locations)],
-  };
-  artificialNodes.push(expression);
-  // console.log('wrapped', codegen(expression));
-  return expression;
-}
-
 // turns node in reify(value).withLocation(location), where location is the node's location in the source code
 // with this, the reified pattern can pass its location to the event, to know where to highlight when it's active
 function reifyWithLocation(literalNode, node, locations, artificialNodes) {
+  const args = getLocationArguments(node, locations);
   const withLocation = new CallExpression({
     callee: new StaticMemberExpression({
       object: wrapFunction('reify', literalNode),
       property: 'withLocation',
     }),
-    arguments: [getLocationObject(node, locations)],
+    arguments: args,
   });
   artificialNodes.push(withLocation);
   return withLocation;
 }
 
-// returns ast for source location object
-function getLocationObject(node, locations) {
-  /*const locationAST = parseScript(
-    "x=" + JSON.stringify(ast.locations.get(node))
-  ).statements[0].expression.expression;
+// turns node in reify(value).withLocation(location), where location is the node's location in the source code
+// with this, the reified pattern can pass its location to the event, to know where to highlight when it's active
+function minifyWithLocation(literalNode, node, locations, artificialNodes) {
+  const args = getLocationArguments(node, locations);
+  const withLocation = new CallExpression({
+    callee: new StaticMemberExpression({
+      object: wrapFunction('mini', literalNode),
+      property: 'withMiniLocation',
+    }),
+    arguments: args,
+  });
+  artificialNodes.push(withLocation);
+  return withLocation;
+}
 
-  console.log("locationAST", locationAST);*/
-
-  /*const callAST = parseScript(
-    `reify(${node.name}).withLocation(${JSON.stringify(
-      ast.locations.get(node)
-    )})`
-  ).statements[0].expression;*/
+function getLocationArguments(node, locations) {
   const loc = locations.get(node);
-  return {
-    type: 'ObjectExpression',
-    properties: [
-      {
-        type: 'DataProperty',
-        name: {
-          type: 'StaticPropertyName',
-          value: 'start',
-        },
-        expression: {
-          type: 'ObjectExpression',
-          properties: [
-            {
-              type: 'DataProperty',
-              name: {
-                type: 'StaticPropertyName',
-                value: 'line',
-              },
-              expression: {
-                type: 'LiteralNumericExpression',
-                value: loc.start.line,
-              },
-            },
-            {
-              type: 'DataProperty',
-              name: {
-                type: 'StaticPropertyName',
-                value: 'column',
-              },
-              expression: {
-                type: 'LiteralNumericExpression',
-                value: loc.start.column,
-              },
-            },
-            {
-              type: 'DataProperty',
-              name: {
-                type: 'StaticPropertyName',
-                value: 'offset',
-              },
-              expression: {
-                type: 'LiteralNumericExpression',
-                value: loc.start.offset,
-              },
-            },
-          ],
-        },
-      },
-      {
-        type: 'DataProperty',
-        name: {
-          type: 'StaticPropertyName',
-          value: 'end',
-        },
-        expression: {
-          type: 'ObjectExpression',
-          properties: [
-            {
-              type: 'DataProperty',
-              name: {
-                type: 'StaticPropertyName',
-                value: 'line',
-              },
-              expression: {
-                type: 'LiteralNumericExpression',
-                value: loc.end.line,
-              },
-            },
-            {
-              type: 'DataProperty',
-              name: {
-                type: 'StaticPropertyName',
-                value: 'column',
-              },
-              expression: {
-                type: 'LiteralNumericExpression',
-                value: loc.end.column,
-              },
-            },
-            {
-              type: 'DataProperty',
-              name: {
-                type: 'StaticPropertyName',
-                value: 'offset',
-              },
-              expression: {
-                type: 'LiteralNumericExpression',
-                value: loc.end.offset,
-              },
-            },
-          ],
-        },
-      },
-    ],
-  };
+  return [
+    new ArrayExpression({
+      elements: [
+        new LiteralNumericExpression({ value: loc.start.line - 1 }), // the minus 1 assumes the code has been wrapped in async iife
+        new LiteralNumericExpression({ value: loc.start.column }),
+        new LiteralNumericExpression({ value: loc.start.offset }),
+      ],
+    }),
+    new ArrayExpression({
+      elements: [
+        new LiteralNumericExpression({ value: loc.end.line - 1 }), // the minus 1 assumes the code has been wrapped in async iife
+        new LiteralNumericExpression({ value: loc.end.column }),
+        new LiteralNumericExpression({ value: loc.end.offset }),
+      ],
+    }),
+  ];
 }

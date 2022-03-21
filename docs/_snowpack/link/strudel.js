@@ -178,9 +178,38 @@ class Pattern {
   _stripContext() {
     return this._withEvent((event) => event.setContext({}));
   }
-  withLocation(location) {
+  withLocation(start, end) {
+    const location = {
+      start: {line: start[0], column: start[1], offset: start[2]},
+      end: {line: end[0], column: end[1], offset: end[2]}
+    };
     return this._withContext((context) => {
       const locations = (context.locations || []).concat([location]);
+      return {...context, locations};
+    });
+  }
+  withMiniLocation(start, end) {
+    const offset = {
+      start: {line: start[0], column: start[1], offset: start[2]},
+      end: {line: end[0], column: end[1], offset: end[2]}
+    };
+    return this._withContext((context) => {
+      let locations = context.locations || [];
+      locations = locations.map(({start: start2, end: end2}) => {
+        const colOffset = start2.line === 1 ? offset.start.column : 0;
+        return {
+          start: {
+            ...start2,
+            line: start2.line - 1 + (offset.start.line - 1) + 1,
+            column: start2.column - 1 + colOffset
+          },
+          end: {
+            ...end2,
+            line: end2.line - 1 + (offset.start.line - 1) + 1,
+            column: end2.column - 1 + colOffset
+          }
+        };
+      });
       return {...context, locations};
     });
   }
@@ -705,27 +734,6 @@ Pattern.prototype.define = (name, func, options = {}) => {
 };
 Pattern.prototype.define("hush", (pat) => pat.hush(), {patternified: false, composable: true});
 Pattern.prototype.define("bypass", (pat) => pat.bypass(on), {patternified: true, composable: true});
-function withLocationOffset(pat, offset) {
-  return pat._withContext((context) => {
-    let locations = context.locations || [];
-    locations = locations.map(({start, end}) => {
-      const colOffset = start.line === 1 ? offset.start.column : 0;
-      return {
-        start: {
-          ...start,
-          line: start.line - 1 + (offset.start.line - 1) + 1,
-          column: start.column - 1 + colOffset
-        },
-        end: {
-          ...end,
-          line: end.line - 1 + (offset.start.line - 1) + 1,
-          column: end.column - 1 + colOffset
-        }
-      };
-    });
-    return {...context, locations};
-  });
-}
 export {
   Fraction,
   TimeSpan,
@@ -763,6 +771,5 @@ export {
   struct,
   mask,
   invert,
-  inv,
-  withLocationOffset
+  inv
 };
