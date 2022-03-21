@@ -25,13 +25,13 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
   const activateCode = async (_code = code) => {
     if (activeCode && !dirty) {
       setError(undefined);
-      !cycle.started && cycle.start();
+      cycle.start();
       return;
     }
     try {
       setPending(true);
       const parsed = await evaluate(_code);
-      !cycle.started && cycle.start();
+      cycle.start();
       broadcast({ type: 'start', from: id });
       setPattern(() => parsed.pattern);
       if (autolink) {
