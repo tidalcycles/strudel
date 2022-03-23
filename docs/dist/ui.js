@@ -36,6 +36,8 @@ export const backgroundImage = function(src, animateOptions = {}) {
 };
 export const cleanup = () => {
   const container = document.getElementById("code");
-  container.style = "";
-  container.className = "grow relative";
+  if (container) {
+    container.style = "";
+    container.className = "grow relative";
+  }
 };
