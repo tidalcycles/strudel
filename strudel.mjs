@@ -607,6 +607,11 @@ class Pattern {
         return this._fast(Fraction(1).div(factor))
     }
 
+    // cpm = cycles per minute
+    _cpm(cpm) {
+      return this._fast(cpm / 60);
+    }
+
     _early(offset) {
         // Equivalent of Tidal's <~ operator
         offset = Fraction(offset)
@@ -759,7 +764,7 @@ class Pattern {
 }
 
 // methods of Pattern that get callable factories
-Pattern.prototype.patternified = ['apply', 'fast', 'slow', 'early', 'late', 'duration', 'legato', 'velocity', 'segment'];
+Pattern.prototype.patternified = ['apply', 'fast', 'slow', 'cpm', 'early', 'late', 'duration', 'legato', 'velocity', 'segment'];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
