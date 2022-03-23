@@ -444,6 +444,9 @@ class Pattern {
   _slow(factor) {
     return this._fast(Fraction(1).div(factor));
   }
+  _cpm(cpm) {
+    return this._fast(cpm / 60);
+  }
   _early(offset) {
     offset = Fraction(offset);
     return this.withQueryTime((t) => t.add(offset)).withEventTime((t) => t.sub(offset));
@@ -559,7 +562,7 @@ class Pattern {
     return this._withContext((context) => ({...context, velocity: (context.velocity || 1) * velocity}));
   }
 }
-Pattern.prototype.patternified = ["apply", "fast", "slow", "early", "late", "duration", "legato", "velocity", "segment"];
+Pattern.prototype.patternified = ["apply", "fast", "slow", "cpm", "early", "late", "duration", "legato", "velocity", "segment"];
 Pattern.prototype.factories = {pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 const silence = new Pattern((_) => []);
 function pure(value) {
