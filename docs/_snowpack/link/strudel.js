@@ -4,6 +4,7 @@ import {isNote, toMidi} from "./util.js";
 const removeUndefineds = (xs) => xs.filter((x) => x != void 0);
 const flatten = (arr) => [].concat(...arr);
 const id = (a) => a;
+const range = (min, max) => Array.from({length: max - min + 1}, (_, i) => i + min);
 export function curry(func, overload) {
   const fn = function curried(...args) {
     if (args.length >= func.length) {
@@ -526,6 +527,15 @@ class Pattern {
   superimpose(...funcs) {
     return this.stack(...funcs.map((func) => func(this)));
   }
+  stutWith(times, time, func) {
+    return stack(...range(0, times - 1).map((i) => func(this.late(i * time), i)));
+  }
+  stut(times, feedback, time) {
+    return this.stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+  }
+  iter(times) {
+    return slowcat(...range(0, times - 1).map((i) => this.early(i / times)));
+  }
   edit(...funcs) {
     return stack(...funcs.map((func) => func(this)));
   }
@@ -771,5 +781,7 @@ export {
   struct,
   mask,
   invert,
-  inv
+  inv,
+  id,
+  range
 };

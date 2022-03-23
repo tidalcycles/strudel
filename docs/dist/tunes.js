@@ -560,3 +560,27 @@ stack(
  .legato(cosine.struct("x*8").add(4/5).mul(4/5).fast(8))
  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
  .tone((await piano()).chain(out())).fast(3/4)`;
+export const undergroundPlumber = `backgroundImage('https://images.nintendolife.com/news/2016/08/video_exploring_the_funky_inspiration_for_the_super_mario_bros_underground_theme/large.jpg',{
+  className:'darken'
+})
+const drums = await players({
+  bd: 'bd/BT0A0D0.wav',
+  sn: 'sn/ST0T0S3.wav',
+  hh: 'hh/000_hh3closedhh.wav',
+  cp: 'cp/HANDCLP0.wav',
+}, 'https://loophole-letters.vercel.app/samples/tidal/')
+stack(
+"<<bd*2 bd> sn> hh".fast(4).slow(2).tone(drums.chain(vol(.5),out())),
+  stack(
+    "[c2 a1 bb1 ~] ~"
+    .stut(2, .6, 1/16)
+    .legato(.4)
+    .slow(2)
+    .tone(synth({...osc('sawtooth7'),...adsr(0,.3,0)}).chain(out())),
+    "[g2,[c3 eb3]]".iter(4)
+    .stutWith(4, 1/4, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
+    .legato(.1)
+  )
+  .transpose("<0@2 5 0 7 5 0 -5>/2")
+  .pianoroll({minMidi:21,maxMidi:180, background:'transparent',inactive:'#3F8F90',active:'#DE3123'})
+)`;
