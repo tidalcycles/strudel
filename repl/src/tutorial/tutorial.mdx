@@ -15,38 +15,34 @@ The best place to actually make music with Strudel is the [Strudel REPL](https:/
 
 To get a taste of what Strudel can do, check out this track:
 
-<MiniRepl
-  tune={`() => {
-  const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
-  const kick = new MembraneSynth().chain(vol(.8), out());
-  const snare = new NoiseSynth().chain(vol(.8), out());
-  const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
-  const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
-  const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
-  
-  const drums = stack(
-    "c1*2".tone(kick).bypass("<0@7 1>/8"),
-    "~ <x!7 [x@3 x]>".tone(snare).bypass("<0@7 1>/4"),
-    "[~ c4]*2".tone(hihat)
-  );
-  
-  const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
-  const synths = stack(
-    "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]*2")
-    .edit(
-      scaleTranspose(0).early(0),
-      scaleTranspose(2).early(1/8),
-      scaleTranspose(7).early(1/4),
-      scaleTranspose(8).early(3/8)
-    ).edit(thru).tone(keys).bypass("<1 0>/16"),
-    "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).edit(thru).tone(bass),
-    "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass("<0@7 1>/8".early(1/4))
-  )
-  return stack(
-    drums.fast(2), 
-    synths
-  ).slow(2);
-}`}
+<MiniRepl tune={`const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
+const kick = new MembraneSynth().chain(vol(.8), out());
+const snare = new NoiseSynth().chain(vol(.8), out());
+const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
+const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
+const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
+const drums = stack(
+"c1*2".tone(kick).bypass("<0@7 1>/8"),
+"~ <x!7 [x@3 x]>".tone(snare).bypass("<0@7 1>/4"),
+"[~ c4]*2".tone(hihat)
+);
+const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
+const synths = stack(
+"<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]\*2")
+.edit(
+scaleTranspose(0).early(0),
+scaleTranspose(2).early(1/8),
+scaleTranspose(7).early(1/4),
+scaleTranspose(8).early(3/8)
+).edit(thru).tone(keys).bypass("<1 0>/16"),
+"<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).edit(thru).tone(bass),
+"<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().edit(thru).every(2, early(1/8)).tone(keys).bypass("<0@7 1>/8".early(1/4))
+)
+stack(
+drums.fast(2),
+synths
+).slow(2);
+`}
 />
 
 [Open this track in the REPL](https://strudel.tidalcycles.org/#KCkgPT4gewogIGNvbnN0IGRlbGF5ID0gbmV3IEZlZWRiYWNrRGVsYXkoMS84LCAuNCkuY2hhaW4odm9sKDAuNSksIG91dCk7CiAgY29uc3Qga2ljayA9IG5ldyBNZW1icmFuZVN5bnRoKCkuY2hhaW4odm9sKC44KSwgb3V0KTsKICBjb25zdCBzbmFyZSA9IG5ldyBOb2lzZVN5bnRoKCkuY2hhaW4odm9sKC44KSwgb3V0KTsKICBjb25zdCBoaWhhdCA9IG5ldyBNZXRhbFN5bnRoKCkuc2V0KGFkc3IoMCwgLjA4LCAwLCAuMSkpLmNoYWluKHZvbCguMykuY29ubmVjdChkZWxheSksb3V0KTsKICBjb25zdCBiYXNzID0gbmV3IFN5bnRoKCkuc2V0KHsgLi4ub3NjKCdzYXd0b290aCcpLCAuLi5hZHNyKDAsIC4xLCAuNCkgfSkuY2hhaW4obG93cGFzcyg5MDApLCB2b2woLjUpLCBvdXQpOwogIGNvbnN0IGtleXMgPSBuZXcgUG9seVN5bnRoKCkuc2V0KHsgLi4ub3NjKCdzYXd0b290aCcpLCAuLi5hZHNyKDAsIC41LCAuMiwgLjcpIH0pLmNoYWluKGxvd3Bhc3MoMTIwMCksIHZvbCguNSksIG91dCk7CiAgCiAgY29uc3QgZHJ1bXMgPSBzdGFjaygKICAgICdjMSoyJy5tLnRvbmUoa2ljaykuYnlwYXNzKCc8MEA3IDE%2BLzgnLm0pLAogICAgJ34gPHghNyBbeEAzIHhdPicubS50b25lKHNuYXJlKS5ieXBhc3MoJzwwQDcgMT4vNCcubSksCiAgICAnW34gYzRdKjInLm0udG9uZShoaWhhdCkKICApOwogIAogIGNvbnN0IHRocnUgPSAoeCkgPT4geC50cmFuc3Bvc2UoJzwwIDE%2BLzgnLm0pLnRyYW5zcG9zZSgtMSk7CiAgY29uc3Qgc3ludGhzID0gc3RhY2soCiAgICAnPGViNCBkNCBjNCBiMz4vMicubS5zY2FsZSh0aW1lQ2F0KFszLCdDIG1pbm9yJ10sWzEsJ0MgbWVsb2RpYyBtaW5vciddKS5zbG93KDgpKS5ncm9vdmUoJ1t%2BIHhdKjInLm0pCiAgICAuZWRpdCgKICAgICAgc2NhbGVUcmFuc3Bvc2UoMCkuZWFybHkoMCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDIpLmVhcmx5KDEvOCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDcpLmVhcmx5KDEvNCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDgpLmVhcmx5KDMvOCkKICAgICkuZWRpdCh0aHJ1KS50b25lKGtleXMpLmJ5cGFzcygnPDEgMD4vMTYnLm0pLAogICAgJzxDMiBCYjEgQWIxIFtHMSBbRzIgRzFdXT4vMicubS5ncm9vdmUoJ1t4IFt%2BIHhdIDxbfiBbfiB4XV0hMyBbeCB4XT5AMl0vMicubS5mYXN0KDIpKS5lZGl0KHRocnUpLnRvbmUoYmFzcyksCiAgICAnPENtNyBCYjcgRm03IEc3YjEzPi8yJy5tLmdyb292ZSgnfiBbeEAwLjEgfl0nLm0uZmFzdCgyKSkudm9pY2luZ3MoKS5lZGl0KHRocnUpLmV2ZXJ5KDIsIGVhcmx5KDEvOCkpLnRvbmUoa2V5cykuYnlwYXNzKCc8MEA3IDE%2BLzgnLm0uZWFybHkoMS80KSkKICApCiAgcmV0dXJuIHN0YWNrKAogICAgZHJ1bXMuZmFzdCgyKSwgCiAgICBzeW50aHMKICApLnNsb3coMik7Cn0%3D)
