@@ -733,12 +733,12 @@ class Pattern {
     }
 
     // these might change with: https://github.com/tidalcycles/Tidal/issues/902
-    echoWith(times, time, func) {
+    _echoWith(times, time, func) {
       return stack(...range(0, times - 1).map((i) => func(this.late(i * time), i)));
     }
 
-    echo(times, time, feedback) {
-      return this.echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+    _echo(times, time, feedback) {
+      return this._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
     }
 
     iter(times) {
@@ -999,6 +999,19 @@ export function makeComposable(func) {
   });
   return func;
 }
+
+const patternify2 = (f) => (pata, patb, pat) => pata.fmap(a => b => f.call(pat, a, b)).appLeft(patb).outerJoin()
+const patternify3 = (f) => (pata, patb, patc, pat) => pata.fmap(a => b => c => f.call(pat, a, b, c)).appLeft(patb).appLeft(patc).outerJoin()
+const patternify4 = (f) => (pata, patb, patc, patd, pat) => pata.fmap(a => b => c => d => f.call(pat, a, b, c, d)).appLeft(patb).appLeft(patc).appLeft(patd).outerJoin()
+
+Pattern.prototype.echo = function (...args) {
+  args = args.map(reify);
+  return patternify3(Pattern.prototype._echo)(...args, this);
+};
+Pattern.prototype.echoWith = function (...args) {
+  args = args.map(reify);
+  return patternify3(Pattern.prototype._echoWith)(...args, this);
+};
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = function() {
