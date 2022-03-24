@@ -18,6 +18,7 @@ Pattern.prototype.pianoroll = function({
     events.forEach((event) => {
       const isActive = event.whole.begin <= t && event.whole.end >= t;
       ctx.fillStyle = isActive ? active : inactive;
+      ctx.globalAlpha = event.context.velocity ?? 1;
       const x = Math.round(event.whole.begin / timeframe * w);
       const width = Math.round((event.whole.end - event.whole.begin) / timeframe * w);
       const y = Math.round(h - (Number(event.value) - minMidi) / midiRange * h);
