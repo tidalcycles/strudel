@@ -30,14 +30,16 @@ export const markEvent = (editor) => (time, event) => {
   if (!locs || !editor) {
     return;
   }
+  const col = event.context?.color || '#FFCA28';
   // mark active event
   const marks = locs.map(({ start, end }) =>
     editor.getDoc().markText(
       { line: start.line - 1, ch: start.column },
       { line: end.line - 1, ch: end.column },
       //{ css: 'background-color: #FFCA28; color: black' } // background-color is now used by parent marking
-      { css: 'outline: 1px solid #FFCA28; box-sizing:border-box' }
-    )
+      { css: 'outline: 1px solid ' + col + '; box-sizing:border-box' },
+      //{ css: `background-color: ${col};border-radius:5px` },
+    ),
   );
   //Tone.Transport.schedule(() => { // problem: this can be cleared by scheduler...
   setTimeout(() => {
@@ -94,7 +96,7 @@ export function getCurrentParenArea(code, caretPosition) {
     } else if (code[i - 1] === ')') {
       open++;
     }
-    if(open === -1) {
+    if (open === -1) {
       break;
     }
     i--;
@@ -109,7 +111,7 @@ export function getCurrentParenArea(code, caretPosition) {
     } else if (code[i] === ')') {
       open++;
     }
-    if(open === 1) {
+    if (open === 1) {
       break;
     }
     i++;

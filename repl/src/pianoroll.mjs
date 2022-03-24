@@ -19,18 +19,20 @@ Pattern.prototype.pianoroll = function ({
       ctx.fillRect(0, 0, w, h);
       events.forEach((event) => {
         const isActive = event.whole.begin <= t && event.whole.end >= t;
-        ctx.fillStyle = isActive ? active : inactive;
+        ctx.fillStyle = event.context?.color || inactive;
+        ctx.strokeStyle = event.context?.color || active;
         ctx.globalAlpha = event.context.velocity ?? 1;
         const x = Math.round((event.whole.begin / timeframe) * w);
         const width = Math.round(((event.whole.end - event.whole.begin) / timeframe) * w);
         const y = Math.round(h - ((Number(event.value) - minMidi) / midiRange) * h);
         const offset = (t / timeframe) * w;
         const margin = 0;
-        ctx.fillRect(x - offset + margin + 1, y + 1, width - 2, height - 2);
+        const coords = [x - offset + margin + 1, y + 1, width - 2, height - 2];
+        isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
       });
     },
     timeframe,
-    2 // lookaheadCycles
+    2, // lookaheadCycles
   );
   return this;
 };

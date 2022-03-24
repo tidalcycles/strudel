@@ -636,6 +636,10 @@ class Pattern {
         return binary_pat.fmap(b => val => b ? val : undefined).appRight(this)._removeUndefineds()        
     }
 
+    _color(color) {
+      return this._withContext((context) => ({ ...context, color }));
+    }
+
     _segment(rate) {
       return this.struct(pure(true).fast(rate));
     }
@@ -728,6 +732,15 @@ class Pattern {
       return this.stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
     }
 
+    // these might change with: https://github.com/tidalcycles/Tidal/issues/902
+    echoWith(times, time, func) {
+      return stack(...range(0, times - 1).map((i) => func(this.late(i * time), i)));
+    }
+
+    echo(times, time, feedback) {
+      return this.echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+    }
+
     iter(times) {
       return slowcat(...range(0, times - 1).map((i) => this.early(i/times)));
     }
@@ -764,7 +777,7 @@ class Pattern {
 }
 
 // methods of Pattern that get callable factories
-Pattern.prototype.patternified = ['apply', 'fast', 'slow', 'cpm', 'early', 'late', 'duration', 'legato', 'velocity', 'segment'];
+Pattern.prototype.patternified = ['apply', 'fast', 'slow', 'cpm', 'early', 'late', 'duration', 'legato', 'velocity', 'segment', 'color'];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
