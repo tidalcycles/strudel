@@ -560,9 +560,8 @@ stack(
  .legato(cosine.struct("x*8").add(4/5).mul(4/5).fast(8))
  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
  .tone((await piano()).chain(out())).fast(3/4)`;
-export const undergroundPlumber = `backgroundImage('https://images.nintendolife.com/news/2016/08/video_exploring_the_funky_inspiration_for_the_super_mario_bros_underground_theme/large.jpg',{
-  className:'darken'
-})
+export const undergroundPlumber = `backgroundImage('https://images.nintendolife.com/news/2016/08/video_exploring_the_funky_inspiration_for_the_super_mario_bros_underground_theme/large.jpg',{ className:'darken' })
+
 const drums = await players({
   bd: 'bd/BT0A0D0.wav',
   sn: 'sn/ST0T0S3.wav',
@@ -578,9 +577,27 @@ stack(
     .slow(2)
     .tone(synth({...osc('sawtooth7'),...adsr(0,.3,0)}).chain(out())),
     "[g2,[c3 eb3]]".iter(4)
-    .stutWith(4, 1/4, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
+    .stutWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
     .legato(.1)
   )
   .transpose("<0@2 5 0 7 5 0 -5>/2")
-  .pianoroll({minMidi:21,maxMidi:180, background:'transparent',inactive:'#3F8F90',active:'#DE3123'})
-)`;
+  
+)
+  .fast(2/3)
+  .pianoroll({minMidi:21,maxMidi:180, background:'transparent',inactive:'#3F8F90',active:'#DE3123'})`;
+export const bridgeIsOver = `const breaks = (await players({mad:'https://freesound.org/data/previews/22/22274_109943-lq.mp3'})).chain(out())
+stack(
+  stack(
+  "c3*2 [[c3@1.4 bb2] ab2] gb2*2 <[[gb2@1.4 ab2] bb2] gb2>".legato(".5 1".fast(2)).velocity(.8),
+  "0 ~".scale('c4 whole tone')
+    .euclidLegato(3,8).slow(2).mask("x ~")
+    .stutWith(8, 1/16, (x,n)=>x.scaleTranspose(n).velocity(Math.pow(.7,n)))
+    .scaleTranspose("<0 1 2 3 4 3 2 1>")
+    .fast(2)
+    .velocity(.7)
+    .legato(.5)
+    .stut(3, .5, 1/8)
+  ).transpose(-1).tone((await piano()).chain(out())),
+  "mad".slow(2).tone(breaks)
+).cpm(78).slow(4).pianoroll()
+`;

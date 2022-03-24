@@ -25,7 +25,8 @@ export const markEvent = (editor) => (time, event) => {
   if (!locs || !editor) {
     return;
   }
-  const marks = locs.map(({start, end}) => editor.getDoc().markText({line: start.line - 1, ch: start.column}, {line: end.line - 1, ch: end.column}, {css: "outline: 1px solid #FFCA28; box-sizing:border-box"}));
+  const col = event.context?.color || "#FFCA28";
+  const marks = locs.map(({start, end}) => editor.getDoc().markText({line: start.line - 1, ch: start.column}, {line: end.line - 1, ch: end.column}, {css: "outline: 1px solid " + col + "; box-sizing:border-box"}));
   setTimeout(() => {
     marks.forEach((mark) => mark.clear());
   }, event.duration * 1e3);

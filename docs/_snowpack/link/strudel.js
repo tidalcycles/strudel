@@ -463,6 +463,9 @@ class Pattern {
     const binary_pat = sequence(binary_pats);
     return binary_pat.fmap((b) => (val) => b ? val : void 0).appRight(this)._removeUndefineds();
   }
+  _color(color) {
+    return this._withContext((context) => ({...context, color}));
+  }
   _segment(rate) {
     return this.struct(pure(true).fast(rate));
   }
@@ -536,6 +539,12 @@ class Pattern {
   stut(times, feedback, time) {
     return this.stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
   }
+  echoWith(times, time, func) {
+    return stack(...range(0, times - 1).map((i) => func(this.late(i * time), i)));
+  }
+  echo(times, time, feedback) {
+    return this.echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+  }
   iter(times) {
     return slowcat(...range(0, times - 1).map((i) => this.early(i / times)));
   }
@@ -562,7 +571,7 @@ class Pattern {
     return this._withContext((context) => ({...context, velocity: (context.velocity || 1) * velocity}));
   }
 }
-Pattern.prototype.patternified = ["apply", "fast", "slow", "cpm", "early", "late", "duration", "legato", "velocity", "segment"];
+Pattern.prototype.patternified = ["apply", "fast", "slow", "cpm", "early", "late", "duration", "legato", "velocity", "segment", "color"];
 Pattern.prototype.factories = {pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr};
 const silence = new Pattern((_) => []);
 function pure(value) {
