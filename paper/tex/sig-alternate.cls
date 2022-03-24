@@ -1502,7 +1502,7 @@
 
 
 % Copyright
-\RequirePackage{waccopyright}
+\RequirePackage{tex/waccopyright}
 \setcopyright{none}
 
 %
