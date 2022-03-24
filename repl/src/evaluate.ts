@@ -37,7 +37,7 @@ hackLiteral(String, ['mini', 'm'], bootstrapped.mini); // comment out this line 
 hackLiteral(String, ['pure', 'p'], bootstrapped.pure); // comment out this line if you panic
 
 // this will add everything to global scope, which is accessed by eval
-Object.assign(globalThis, bootstrapped, Tone, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
+Object.assign(globalThis, Tone, bootstrapped, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
   gist,
   euclid,
   mini,
