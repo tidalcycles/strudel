@@ -45,8 +45,8 @@ function App() {
         }
       }
     };
-    document.addEventListener("keypress", handleKeyPress);
-    return () => document.removeEventListener("keypress", handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, [pattern, code]);
   useWebMidi({
     ready: useCallback(({outputs}) => {

@@ -29,7 +29,7 @@ function hackLiteral(literal, names, func) {
 }
 hackLiteral(String, ["mini", "m"], bootstrapped.mini);
 hackLiteral(String, ["pure", "p"], bootstrapped.pure);
-Object.assign(globalThis, bootstrapped, Tone, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
+Object.assign(globalThis, Tone, bootstrapped, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
   gist,
   euclid,
   mini

@@ -601,3 +601,32 @@ stack(
   "mad".slow(2).tone(breaks)
 ).cpm(78).slow(4).pianoroll()
 `;
+export const goodTimes = `const scale = slowcat('C3 dorian','Bb2 major').slow(4);
+stack(
+  "2*4".add(12).scale(scale)
+  .off(1/8,x=>x.scaleTranspose("2")).fast(2)
+  .scaleTranspose("<0 1 2 1>").hush(),
+  "<0 1 2 3>(3,8,2)"
+  .scale(scale)
+  .off(1/4,x=>x.scaleTranspose("2,4")),
+  "<0 4>(5,8)".scale(scale).transpose(-12)
+)
+  .velocity(".6 .7".fast(4))
+  .legato("2")
+  .scale(scale)
+.scaleTranspose("<0>".slow(4))
+.tone((await piano()).chain(out()))
+//.midi()
+.velocity(.8)
+.transpose(5)
+.slow(2)
+.pianoroll({maxMidi:100,minMidi:20})`;
+export const echoPiano = `"<0 2 [4 6](3,4,1) 3*2>"
+.scale('D minor')
+.color('salmon')
+.off(1/4, x=>x.scaleTranspose(2).color('green'))
+.off(1/2, x=>x.scaleTranspose(6).color('steelblue'))
+.legato(.5)
+.echo(4, 1/8, .5)
+.tone((await piano()).chain(out()))
+.pianoroll()`;
