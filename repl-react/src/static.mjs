@@ -1,7 +1,8 @@
 import * as Tone from 'tone';
-import { State, TimeSpan } from '../core/strudel.mjs';
-import { getPlayableNoteValue } from '../../packages/core/util.mjs';
-import { evaluate } from '../eval/evaluate.mjs';
+import { State, TimeSpan } from '@strudel/core';
+import { getPlayableNoteValue } from '@strudel/core/util.mjs';
+import { evaluate } from '@strudel/eval';
+import { defaultSynth } from '@strudel/tone';
 
 // this is a test to play back events with as less runtime code as possible..
 // the code asks for the number of seconds to prequery

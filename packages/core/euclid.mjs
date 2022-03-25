@@ -1,6 +1,6 @@
 import { Pattern, timeCat } from './strudel.mjs';
 import bjork from 'bjork';
-import { rotate } from '../../packages/core/util.mjs';
+import { rotate } from './util.mjs';
 import Fraction from './fraction.mjs';
 
 const euclid = (pulses, steps, rotation = 0) => {

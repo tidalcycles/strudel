@@ -1,4 +1,4 @@
-import { Pattern } from '../core/strudel.mjs';
+import { Pattern } from '@strudel/core';
 
 Pattern.prototype.pianoroll = function ({
   timeframe = 10,

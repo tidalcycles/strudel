@@ -1,11 +1,11 @@
 {
-  "name": "tidal-strudel",
-  "version": "1.0.2",
-  "description": "Experimental port of tidalcycles to javascript",
+  "name": "@strudel/monorepo",
+  "version": "0.0.1",
+  "description": "Port of tidalcycles to javascript",
   "main": "strudel.mjs",
-  "scripts": {
-    "test": "mocha --colors"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -24,18 +24,7 @@
   },
   "homepage": "https://strudel.tidalcycles.org",
   "devDependencies": {
-    "@tonaljs/tonal": "^4.6.5",
     "lerna": "^4.0.0",
-    "mocha": "^9.1.4",
-    "ramda": "^0.28.0",
-    "snowpack": "^3.8.8"
-  },
-  "dependencies": {
-    "automation-events": "^4.0.12",
-    "fraction.js": "^4.1.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "standardized-audio-context": "^25.3.20",
-    "tone": "^14.7.77"
+    "mocha": "^9.1.4"
   }
 }

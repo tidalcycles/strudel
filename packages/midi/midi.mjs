@@ -6,7 +6,7 @@ import * as Tone from 'tone';
 const WebMidi = _WebMidi;
 const Pattern = _Pattern;
 
-export default function enableWebMidi() {
+export function enableWebMidi() {
   return new Promise((resolve, reject) => {
     if (WebMidi.enabled) {
       // if already enabled, just resolve WebMidi
@@ -30,7 +30,7 @@ Pattern.prototype.midi = function (output, channel = 1) {
     throw new Error(
       `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
         WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
-      }')`
+      }')`,
     );
   }
   return this._withEvent((event) => {
@@ -59,7 +59,7 @@ Pattern.prototype.midi = function (output, channel = 1) {
         throw new Error(
           `🔌 MIDI device '${output ? output : ''}' not found. Use one of ${WebMidi.outputs
             .map((o) => `'${o.name}'`)
-            .join(' | ')}`
+            .join(' | ')}`,
         );
       }
       // console.log('midi', value, output);

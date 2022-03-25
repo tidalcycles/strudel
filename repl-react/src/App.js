@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import CodeMirror, { markEvent, markParens } from './CodeMirror';
 import cx from './cx';
-import { evaluate } from '../eval/evaluate.mjs';
-// import logo from './logo.svg';
+import { evaluate } from '@strudel/eval';
+import logo from './logo.svg';
 import playStatic from './static.mjs';
-import { defaultSynth } from '../tone/tone.mjs';
-import * as tunes from '../tunes/tunes';
-import useRepl from '../../repl/src/useRepl';
+import { defaultSynth } from '@strudel/tone';
+import * as tunes from './tunes.mjs';
+import useRepl from '@strudel/hooks/useRepl.mjs';
 import { useWebMidi } from './useWebMidi';
 
 // TODO: use https://www.npmjs.com/package/@monaco-editor/react
@@ -82,7 +82,7 @@ function App() {
         )}
       >
         <div className="flex items-center space-x-2">
-          {/* <img src={logo} className="Tidal-logo w-12 h-12" alt="logo" /> */}
+          <img src={logo} className="Tidal-logo w-12 h-12" alt="logo" />
           <h1 className="text-2xl">Strudel REPL</h1>
         </div>
         <div className="flex space-x-4">

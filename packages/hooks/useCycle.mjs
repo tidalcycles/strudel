@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
-import type { ToneEventCallback } from 'tone';
 import * as Tone from 'tone';
-import { Hap, State, TimeSpan } from '../core/strudel.mjs';
+import { State, TimeSpan } from '@strudel/core';
 
-export declare interface UseCycleProps {
+/* export declare interface UseCycleProps {
   onEvent: ToneEventCallback<any>;
   onQuery?: (state: State) => Hap[];
   onSchedule?: (events: Hap[], cycle: number) => void;
   onDraw?: ToneEventCallback<any>;
   ready?: boolean; // if false, query will not be called on change props
-}
+} */
 
-function useCycle(props: UseCycleProps) {
+// function useCycle(props: UseCycleProps) {
+function useCycle(props) {
   // onX must use useCallback!
   const { onEvent, onQuery, onSchedule, ready = true, onDraw } = props;
   const [started, setStarted] = useState(false);

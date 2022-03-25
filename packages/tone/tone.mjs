@@ -1,5 +1,6 @@
-import { Pattern as _Pattern } from '../core/strudel.mjs';
-import Tone from 'tone';
+import { Pattern as _Pattern } from '@strudel/core';
+import * as Tone from 'tone';
+
 const {
   AutoFilter,
   Destination,
@@ -20,8 +21,8 @@ const {
   getDestination,
   Players,
 } = Tone;
-/* import tonePiano from '@tonejs/piano';
-const { Piano } = tonePiano; */
+import * as tonePiano from '@tonejs/piano';
+const { Piano } = tonePiano;
 import { getPlayableNoteValue } from '../../packages/core/util.mjs';
 
 // "balanced" | "interactive" | "playback";
@@ -106,11 +107,11 @@ export const players = (options, baseUrl = '') => {
   });
 };
 export const synth = (options) => new Synth(options);
-/* export const piano = async (options = { velocities: 1 }) => {
+export const piano = async (options = { velocities: 1 }) => {
   const p = new Piano(options);
   await p.load();
   return p;
-}; */
+};
 
 // effect helpers
 export const vol = (v) => new Gain(v);

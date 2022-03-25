@@ -1,5 +1,5 @@
 import * as Tone from 'tone';
-import { Pattern } from '../core/strudel.mjs';
+import { Pattern } from '@strudel/core';
 
 export const getDrawContext = (id = 'test-canvas') => {
   let canvas = document.querySelector('#' + id);

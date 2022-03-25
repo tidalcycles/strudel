@@ -1,8 +1,8 @@
 import { useCallback, useState, useMemo } from 'react';
-import { evaluate } from '../../packages/eval/evaluate.mjs';
-import { getPlayableNoteValue } from '../core/util.mjs';
-import useCycle from './useCycle';
-import usePostMessage from './usePostMessage';
+import { evaluate } from '@strudel/eval';
+import { getPlayableNoteValue } from '@strudel/core/util.mjs';
+import useCycle from './useCycle.mjs';
+import usePostMessage from './usePostMessage.mjs';
 
 let s4 = () => {
   return Math.floor((1 + Math.random()) * 0x10000)
@@ -10,7 +10,7 @@ let s4 = () => {
     .substring(1);
 };
 
-function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) {
+function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
   const id = useMemo(() => s4(), []);
   const [code, setCode] = useState(tune);
   const [activeCode, setActiveCode] = useState();
@@ -40,15 +40,15 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
       setError(undefined);
       setActiveCode(_code);
       setPending(false);
-    } catch (err: any) {
+    } catch (err) {
       err.message = 'evaluation error: ' + err.message;
       console.warn(err);
       setError(err);
     }
   };
-  const pushLog = (message: string) => setLog((log) => log + `${log ? '\n\n' : ''}${message}`);
+  const pushLog = (message) => setLog((log) => log + `${log ? '\n\n' : ''}${message}`);
   // logs events of cycle
-  const logCycle = (_events: any, cycle: any) => {
+  const logCycle = (_events, cycle) => {
     if (_events.length) {
       // pushLog(`# cycle ${cycle}\n` + _events.map((e: any) => e.show()).join('\n'));
     }
@@ -81,7 +81,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
           } else {
             onTrigger(time, event);
           }
-        } catch (err: any) {
+        } catch (err) {
           console.warn(err);
           err.message = 'unplayable event: ' + err?.message;
           pushLog(err.message); // not with setError, because then we would have to setError(undefined) on next playable event
@@ -93,7 +93,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }: any) 
       (state) => {
         try {
           return pattern?.query(state) || [];
-        } catch (err: any) {
+        } catch (err) {
           console.warn(err);
           err.message = 'query error: ' + err.message;
           setError(err);
