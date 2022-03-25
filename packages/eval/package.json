@@ -1,0 +1,36 @@
+{
+  "name": "@strudel/eval",
+  "version": "0.0.1",
+  "description": "Code evaluator for strudel",
+  "main": "evaluate.mjs",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --colors"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "type": "module",
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "devDependencies": {
+    "shift-ast": "^6.1.0",
+    "shift-codegen": "^7.0.3",
+    "shift-parser": "^7.0.3",
+    "shift-traverser": "^1.0.0"
+  }
+}

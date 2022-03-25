@@ -1,0 +1,32 @@
+{
+  "name": "@strudel/tone",
+  "version": "0.0.1",
+  "description": "Tone.js API for strudel",
+  "main": "tone.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "mocha --colors"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "@tonejs/piano": "^0.2.1",
+    "chord-voicings": "^0.0.1",
+    "tone": "^14.7.77"
+  }
+}
