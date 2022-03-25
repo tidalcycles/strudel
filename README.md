@@ -14,6 +14,6 @@ Run the REPL locally:
 
 ```bash
 cd repl
-npm install --legacy-peer-deps
+npm install
 npm run start
 ```
