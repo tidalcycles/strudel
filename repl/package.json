@@ -13,13 +13,15 @@
     "react-scripts": "5.0.0",
     "tone": "^14.7.77",
     "web-vitals": "^2.1.4",
-    "webmidi": "^3.0.15"
+		"webmidi": "^2.5.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "tutorial": "parcel src/tutorial/index.html --no-cache",
+    "build-tutorial": "parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-optimize --no-scope-hoist --no-cache"
   },
   "eslintConfig": {
     "extends": [
@@ -42,6 +44,8 @@
   "devDependencies": {
     "autoprefixer": "^10.4.4",
     "postcss": "^8.4.12",
-    "tailwindcss": "^3.0.23"
+    "tailwindcss": "^3.0.23",
+    "parcel": "^2.3.1",
+    "@parcel/transformer-mdx": "^2.3.1"
   }
 }

@@ -1,9 +1,10 @@
 {
   "name": "@strudel/monorepo",
   "version": "0.0.1",
+  "private": true,
   "description": "Port of tidalcycles to javascript",
   "main": "strudel.mjs",
-  "scripts":{
+  "scripts": {
     "test": "npm run test --workspaces --if-present"
   },
   "workspaces": [

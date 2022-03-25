@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import * as Tone from 'tone';
-import useRepl from '../useRepl';
-import CodeMirror, { markEvent } from '../repl-react/CodeMirror';
-import cx from '../repl-react/cx';
+import useRepl from '@strudel/hooks/useRepl.mjs';
+import CodeMirror, { markEvent } from '../CodeMirror';
+import cx from '../cx';
 
 const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination).set({
   oscillator: { type: 'triangle' },
@@ -14,7 +14,7 @@ const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destina
 // "balanced" | "interactive" | "playback";
 // Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));
 function MiniRepl({ tune, maxHeight = 500 }) {
-  const [editor, setEditor] = useState<any>();
+  const [editor, setEditor] = useState();
   const { code, setCode, activateCode, activeCode, setPattern, error, cycle, dirty, log, togglePlay, hash } = useRepl({
     tune,
     defaultSynth,
@@ -30,7 +30,7 @@ function MiniRepl({ tune, maxHeight = 500 }) {
           <button
             className={cx(
               'w-16 flex items-center justify-center p-1 bg-slate-700 border-r border-slate-500  text-white hover:bg-slate-600',
-              cycle.started ? 'animate-pulse' : ''
+              cycle.started ? 'animate-pulse' : '',
             )}
             onClick={() => togglePlay()}
           >
@@ -57,7 +57,7 @@ function MiniRepl({ tune, maxHeight = 500 }) {
               'w-16 flex items-center justify-center p-1 border-slate-500  hover:bg-slate-600',
               dirty
                 ? 'bg-slate-700 border-r border-slate-500 text-white'
-                : 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                : 'bg-slate-600 text-slate-400 cursor-not-allowed',
             )}
             onClick={() => activateCode()}
           >
@@ -82,7 +82,7 @@ function MiniRepl({ tune, maxHeight = 500 }) {
             theme: 'material',
             lineNumbers: true,
           }}
-          onChange={(_: any, __: any, value: any) => setCode(value)}
+          onChange={(_, __, value) => setCode(value)}
         />
       </div>
       {/* <div className="bg-slate-700 border-t border-slate-500 content-right pr-2 text-right">

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { WebMidi } from 'webmidi';
-import { enableWebMidi } from '@strudel/midi'
+import { enableWebMidi, WebMidi } from '@strudel/midi'
 
 export function useWebMidi(props) {
   const { ready, connected, disconnected } = props;
@@ -24,6 +23,7 @@ export function useWebMidi(props) {
       })
       .catch((err) => {
         if (err) {
+          console.error(err);
           //throw new Error("Web Midi could not be enabled...");
           console.warn('Web Midi could not be enabled..');
           return;

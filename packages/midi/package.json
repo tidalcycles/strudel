@@ -19,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
-  "homepage": "https://github.com/tidalcycles/strudel#readme"
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "tone": "^14.7.77",
+    "webmidi": "^2.5.2"
+  }
 }
