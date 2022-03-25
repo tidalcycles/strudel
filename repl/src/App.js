@@ -1,16 +1,41 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import CodeMirror, { markEvent, markParens } from './CodeMirror';
 import cx from './cx';
-import { evaluate } from '@strudel/eval';
+import { evaluate, extend } from '@strudel/eval';
 import logo from './logo.svg';
 import playStatic from './static.mjs';
 import { defaultSynth } from '@strudel/tone';
 import * as tunes from './tunes.mjs';
 import useRepl from './useRepl.mjs';
 import { useWebMidi } from './useWebMidi';
-import './App.css'
+import './App.css';
+// eval stuff start
+import * as strudel from '@strudel/core/strudel.mjs';
+import gist from '@strudel/core/gist.js';
+import { mini } from '@strudel/mini/mini.mjs';
+import { Tone } from '@strudel/tone';
+import * as toneHelpers from '@strudel/tone/tone.mjs';
+import * as voicingHelpers from '@strudel/tonal/voicings.mjs';
+import * as uiHelpers from '@strudel/tone/ui.mjs';
+import * as drawHelpers from '@strudel/tone/draw.mjs';
+import euclid from '@strudel/core/euclid.mjs';
+import '@strudel/tone/tone.mjs';
+import '@strudel/midi/midi.mjs';
+import '@strudel/tonal/voicings.mjs';
+import '@strudel/tonal/tonal.mjs';
+import '@strudel/xen/xen.mjs';
+import '@strudel/xen/tune.mjs';
+import '@strudel/core/euclid.mjs';
+import '@strudel/tone/pianoroll.mjs';
+import '@strudel/tone/draw.mjs';
 
-// TODO: use https://www.npmjs.com/package/@monaco-editor/react
+extend(Tone, strudel, strudel.Pattern.prototype.bootstrap(), toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
+  gist,
+  euclid,
+  mini,
+  Tone,
+});
+// eval stuff end
 
 const [_, codeParam] = window.location.href.split('#');
 let decoded;
@@ -118,6 +143,8 @@ function App() {
               const _code = getRandomTune();
               console.log('tune', _code); // uncomment this to debug when random code fails
               setCode(_code);
+              drawHelpers.cleanup();
+              uiHelpers.cleanup();
               const parsed = await evaluate(_code);
               setPattern(parsed.pattern);
             }}
