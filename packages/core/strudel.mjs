@@ -563,7 +563,7 @@ class Pattern {
           // to avoid object checking for every pattern method, we can remove it here...
           // in the future, patternified args should be marked as well + some better object handling
            args = args.map((arg) =>
-            arg.constructor?.name === 'Pattern' ? arg.fmap((value) => value.value || value) : arg
+            isPattern(arg) ? arg.fmap((value) => value.value || value) : arg
            );
            const pat_arg = sequence(...args)
            // arg.locations has to go somewhere..
@@ -830,14 +830,18 @@ export const tri     = fastcat(isaw, saw)
 export const square  = signal(t => Math.floor((t*2) % 2))
 export const square2 = _toBipolar(square)
 
+export function isPattern(thing) {
+  // thing?.constructor?.name !== 'Pattern' // <- this will fail when code is mangled
+  return thing instanceof Pattern;
+}
+
 function reify(thing) {
-    // Tunrs something into a pattern, unless it's already a pattern
-    if (thing?.constructor?.name == "Pattern") {
-        return thing
+    // Turns something into a pattern, unless it's already a pattern
+    if (isPattern(thing)) {
+        return thing;
     }
     return pure(thing)
 }
-
 // Basic functions for combining patterns
 
 function stack(...pats) {

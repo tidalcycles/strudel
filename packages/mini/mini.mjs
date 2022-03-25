@@ -2,7 +2,7 @@ import * as krill from './krill-parser.js';
 import * as strudel from '@strudel/core/strudel.mjs';
 import { addMiniLocations } from '../eval/shapeshifter.mjs';
 
-const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence } = strudel;
+const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
 
 const applyOptions = (parent) => (pat, i) => {
   const ast = parent.source_[i];
@@ -158,14 +158,6 @@ export const h = (string) => {
 Pattern.prototype.define('mini', mini, { composable: true });
 Pattern.prototype.define('m', mini, { composable: true });
 Pattern.prototype.define('h', h, { composable: true });
-
-// TODO: move this to strudel?
-export function reify(thing) {
-  if (thing?.constructor?.name === 'Pattern') {
-    return thing;
-  }
-  return pure(thing);
-}
 
 export function minify(thing) {
   if (typeof thing === 'string') {

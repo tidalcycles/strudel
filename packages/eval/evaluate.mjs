@@ -49,7 +49,8 @@ export const evaluate = async (code) => {
   drawHelpers.cleanup();
   uiHelpers.cleanup();
   let evaluated = await eval(shapeshifted);
-  if (evaluated?.constructor?.name !== 'Pattern') {
+  if (!isPattern(evaluated)) {
+    console.log('evaluated', evaluated);
     const message = `got "${typeof evaluated}" instead of pattern`;
     throw new Error(message + (typeof evaluated === 'function' ? ', did you forget to call a function?' : '.'));
   }

@@ -1,12 +1,10 @@
 import { isNote } from 'tone';
 import _WebMidi from 'webmidi';
-import { Pattern as _Pattern } from '@strudel/core/strudel.mjs';
+import { Pattern, isPattern } from '@strudel/core/strudel.mjs';
 import { Tone } from '@strudel/tone';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const WebMidi = _WebMidi;
-
-const Pattern = _Pattern;
 
 export function enableWebMidi() {
   return new Promise((resolve, reject) => {
@@ -28,7 +26,7 @@ const outputByName = (name) => WebMidi.getOutputByName(name);
 
 // Pattern.prototype.midi = function (output: string | number, channel = 1) {
 Pattern.prototype.midi = function (output, channel = 1) {
-  if (output?.constructor?.name === 'Pattern') {
+  if (isPattern(output?.constructor?.name)) {
     throw new Error(
       `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
         WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'

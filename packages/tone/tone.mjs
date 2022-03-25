@@ -50,7 +50,31 @@ Pattern.prototype.tone = function (instrument) {
     const onTrigger = (time, event) => {
       let note;
       let velocity = event.context?.velocity ?? 0.75;
-      switch (instrument.constructor.name) {
+      if (instrument instanceof PluckSynth) {
+        note = getPlayableNoteValue(event);
+        instrument.triggerAttack(note, time);
+      } else if (instrument instanceof NoiseSynth) {
+        instrument.triggerAttackRelease(event.duration, time); // noise has no value
+      } else if (instrument instanceof Piano) {
+        note = getPlayableNoteValue(event);
+        instrument.keyDown({ note, time, velocity });
+        instrument.keyUp({ note, time: time + event.duration, velocity });
+      } else if (instrument instanceof Sampler) {
+        note = getPlayableNoteValue(event);
+        instrument.triggerAttackRelease(note, event.duration, time, velocity);
+      } else if (instrument instanceof Players) {
+        if (!instrument.has(event.value)) {
+          throw new Error(`name "${event.value}" not defined for players`);
+        }
+        const player = instrument.player(event.value);
+        // velocity ?
+        player.start(time);
+        player.stop(time + event.duration);
+      } else {
+        note = getPlayableNoteValue(event);
+        instrument.triggerAttackRelease(note, event.duration, time, velocity);
+      }
+      /* switch (instrument.constructor.name) {
         case 'PluckSynth':
           note = getPlayableNoteValue(event);
           instrument.triggerAttack(note, time);
@@ -79,7 +103,7 @@ Pattern.prototype.tone = function (instrument) {
         default:
           note = getPlayableNoteValue(event);
           instrument.triggerAttackRelease(note, event.duration, time, velocity);
-      }
+      } */
     };
     return event.setContext({ ...event.context, instrument, onTrigger });
   });
