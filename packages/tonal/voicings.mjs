@@ -1,4 +1,4 @@
-import { Pattern as _Pattern, stack, Hap, reify } from '../core/strudel.mjs';
+import { Pattern as _Pattern, stack, Hap, reify } from '@strudel/core/strudel.mjs';
 import _voicings from 'chord-voicings';
 const { dictionaryVoicing, minTopNoteDiff, lefthand } = _voicings;
 

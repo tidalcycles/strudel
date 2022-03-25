@@ -1,4 +1,4 @@
-import { Pattern } from '../core/strudel.mjs';
+import { Pattern } from '@strudel/core/strudel.mjs';
 import { mod } from '../../packages/core/util.mjs';
 
 function edo(name) {

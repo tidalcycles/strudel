@@ -1,5 +1,5 @@
 import { Note, Interval, Scale } from '@tonaljs/tonal';
-import { Pattern as _Pattern } from '../core/strudel.mjs';
+import { Pattern as _Pattern } from '@strudel/core/strudel.mjs';
 import { mod, tokenizeNote } from '../../packages/core/util.mjs';
 
 const Pattern = _Pattern; // as any;

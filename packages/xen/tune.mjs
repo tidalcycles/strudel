@@ -1,5 +1,5 @@
 import Tune from './tunejs.js';
-import { Pattern } from '../core/strudel.mjs';
+import { Pattern } from '@strudel/core/strudel.mjs';
 
 Pattern.prototype._tune = function (scale, tonic = 220) {
   const tune = new Tune();

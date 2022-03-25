@@ -15,7 +15,7 @@ import {
 import shiftCodegen from 'shift-codegen';
 const codegen = shiftCodegen.default;
 console.log('codegen', codegen);
-import * as strudel from '../core/strudel.mjs';
+import * as strudel from '@strudel/core/strudel.mjs';
 
 const { Pattern } = strudel;
 

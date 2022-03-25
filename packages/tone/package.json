@@ -4,9 +4,6 @@
   "description": "Tone.js API for strudel",
   "main": "tone.mjs",
   "type": "module",
-  "scripts": {
-    "test": "mocha --colors"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
