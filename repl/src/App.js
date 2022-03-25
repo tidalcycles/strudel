@@ -8,6 +8,7 @@ import { defaultSynth } from '@strudel/tone';
 import * as tunes from './tunes.mjs';
 import useRepl from '@strudel/hooks/useRepl.mjs';
 import { useWebMidi } from './useWebMidi';
+import './App.css'
 
 // TODO: use https://www.npmjs.com/package/@monaco-editor/react
 

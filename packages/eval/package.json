@@ -27,10 +27,12 @@
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
-  "devDependencies": {
+  "dependencies": {
+    "estraverse": "^5.3.0",
     "shift-ast": "^6.1.0",
     "shift-codegen": "^7.0.3",
     "shift-parser": "^7.0.3",
+    "shift-spec": "^2018.0.2",
     "shift-traverser": "^1.0.0"
   }
 }

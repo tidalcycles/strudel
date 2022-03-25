@@ -1,7 +1,7 @@
 /* import { parseScriptWithLocation } from './shift-parser/index.js'; // npm module does not work in the browser
 import traverser from './shift-traverser/index.js'; // npm module does not work in the browser */
 import { parseScriptWithLocation } from 'shift-parser';
-import traverser from 'shift-traverser';
+import traverser from './shift-traverser/index.js';
 const { replace } = traverser;
 import {
   LiteralStringExpression,
@@ -14,7 +14,7 @@ import {
 } from 'shift-ast';
 import shiftCodegen from 'shift-codegen';
 const codegen = shiftCodegen.default;
-console.log('codegen', codegen);
+
 import * as strudel from '@strudel/core/strudel.mjs';
 
 const { Pattern } = strudel;

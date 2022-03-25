@@ -1,7 +1,7 @@
 import React from 'react';
 import { Controlled as CodeMirror2 } from 'react-codemirror2';
-import 'codemirror/mode/javascript/javascript.js';
-import 'codemirror/mode/pegjs/pegjs.js';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/pegjs/pegjs';
 // import 'codemirror/theme/material.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';

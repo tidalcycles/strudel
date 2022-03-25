@@ -41,6 +41,7 @@ Object.assign(globalThis, Tone, bootstrapped, toneHelpers, voicingHelpers, drawH
   gist,
   euclid,
   mini,
+  Tone,
 });
 
 export const evaluate = async (code) => {
