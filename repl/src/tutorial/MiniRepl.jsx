@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Tone } from '@strudel/tone';
-import useRepl from '@strudel/hooks/useRepl.mjs';
+import useRepl from '../useRepl.mjs';
 import CodeMirror, { markEvent } from '../CodeMirror';
 import cx from '../cx';
 

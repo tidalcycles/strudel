@@ -6,7 +6,7 @@ import logo from './logo.svg';
 import playStatic from './static.mjs';
 import { defaultSynth } from '@strudel/tone';
 import * as tunes from './tunes.mjs';
-import useRepl from '@strudel/hooks/useRepl.mjs';
+import useRepl from './useRepl.mjs';
 import { useWebMidi } from './useWebMidi';
 import './App.css'
 

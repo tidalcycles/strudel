@@ -28,6 +28,7 @@
   },
   "homepage": "https://strudel.tidalcycles.org",
   "devDependencies": {
+    "events": "^3.3.0",
     "lerna": "^4.0.0",
     "mocha": "^9.1.4"
   }

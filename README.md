@@ -1,4 +1,4 @@
-# strudel 
+# strudel
 
 [![Strudel test status](https://github.com/tidalcycles/strudel/actions/workflows/test.yml/badge.svg)](https://github.com/tidalcycles/strudel/actions)
 
@@ -14,6 +14,6 @@ Run the REPL locally:
 
 ```bash
 cd repl
-npm install
+npm install --legacy-peer-deps
 npm run start
 ```

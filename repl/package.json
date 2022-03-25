@@ -2,18 +2,19 @@
   "name": "@strudel/repl",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://strudel.tidalcycles.org",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
     "codemirror": "^5.65.2",
+    "events": "^3.3.0",
     "react": "^17.0.2",
     "react-codemirror2": "^7.2.1",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
     "tone": "^14.7.77",
-    "web-vitals": "^2.1.4",
-		"webmidi": "^2.5.1"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -42,10 +43,11 @@
     ]
   },
   "devDependencies": {
+    "@mdx-js/react": "^1.6.22",
+    "@parcel/transformer-mdx": "^2.3.1",
     "autoprefixer": "^10.4.4",
-    "postcss": "^8.4.12",
-    "tailwindcss": "^3.0.23",
     "parcel": "^2.3.1",
-    "@parcel/transformer-mdx": "^2.3.1"
+    "postcss": "^8.4.12",
+    "tailwindcss": "^3.0.23"
   }
 }
