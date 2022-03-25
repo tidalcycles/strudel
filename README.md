@@ -13,7 +13,16 @@ Tutorial: https://strudel.tidalcycles.org/tutorial/
 Run the REPL locally:
 
 ```bash
+npm install
 cd repl
 npm install
 npm run start
+```
+
+## Build
+
+```bash
+cd repl
+npm run build
+npm run static # <- test static build
 ```
