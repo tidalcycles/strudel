@@ -1,6 +1,6 @@
 # @strudel/tone
 
-TBD
+This package adds Tone.js functions to strudel Patterns.
 
 ## Dev Notes
 
