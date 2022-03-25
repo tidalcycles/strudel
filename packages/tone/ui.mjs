@@ -1,4 +1,4 @@
-import { Tone } from '@strudel/tone';
+import { Tone } from './tone.mjs';
 
 export const hideHeader = () => {
   document.getElementById('header').style = 'display:none';

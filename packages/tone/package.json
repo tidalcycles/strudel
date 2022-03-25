@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
+    "@strudel/core": "*",
     "@tonejs/piano": "^0.2.1",
     "chord-voicings": "^0.0.1",
     "tone": "^14.7.77"

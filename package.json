@@ -5,7 +5,8 @@
   "description": "Port of tidalcycles to javascript",
   "main": "strudel.mjs",
   "scripts": {
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "bootstrap": "lerna bootstrap"
   },
   "workspaces": [
     "packages/*"
