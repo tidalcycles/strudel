@@ -1,5 +1,8 @@
 import { Pattern as _Pattern } from '@strudel/core';
-import * as Tone from 'tone';
+import * as _Tone from 'tone';
+
+// import Tone from here, to make sure to get the same AudioContext
+export const Tone = _Tone;
 
 const {
   AutoFilter,

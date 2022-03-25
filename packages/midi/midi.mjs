@@ -1,7 +1,7 @@
 import { isNote } from 'tone';
 import _WebMidi from 'webmidi';
 import { Pattern as _Pattern } from '@strudel/core/strudel.mjs';
-import * as Tone from 'tone';
+import { Tone } from '@strudel/tone';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const WebMidi = _WebMidi;
@@ -67,7 +67,7 @@ Pattern.prototype.midi = function (output, channel = 1) {
       // console.log('midi', value, output);
       const timingOffset = WebMidi.time - Tone.getContext().currentTime * 1000;
       time = time * 1000 + timingOffset;
-      // const inMs = '+' + (time - Tone.context.currentTime) * 1000;
+      // const inMs = '+' + (time - Tone.getContext().currentTime) * 1000;
       // await enableWebMidi()
       device.playNote(note, channel, {
         time,

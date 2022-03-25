@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import * as Tone from 'tone';
+import { Tone } from '@strudel/tone';
 import { State, TimeSpan } from '@strudel/core';
 
 /* export declare interface UseCycleProps {

@@ -1,4 +1,4 @@
-import * as Tone from 'tone';
+import { Tone } from '@strudel/tone';
 
 export const hideHeader = () => {
   document.getElementById('header').style = 'display:none';

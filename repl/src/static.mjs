@@ -1,4 +1,4 @@
-import * as Tone from 'tone';
+import { Tone } from '@strudel/tone';
 import { State, TimeSpan } from '@strudel/core';
 import { getPlayableNoteValue } from '@strudel/core/util.mjs';
 import { evaluate } from '@strudel/eval';

@@ -14,7 +14,7 @@ import * as drawHelpers from '@strudel/tone/draw.mjs';
 import gist from '@strudel/core/gist.js';
 import shapeshifter from './shapeshifter.mjs';
 import { mini } from '../mini/mini.mjs';
-import * as Tone from 'tone';
+import { Tone } from '@strudel/tone';
 import * as toneHelpers from '../tone/tone.mjs';
 import * as voicingHelpers from '../tonal/voicings.mjs';
 
