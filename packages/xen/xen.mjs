@@ -1,7 +1,7 @@
 import { Pattern } from '@strudel/core/strudel.mjs';
 import { mod } from '../../packages/core/util.mjs';
 
-function edo(name) {
+export function edo(name) {
   if (!/^[1-9]+[0-9]*edo$/.test(name)) {
     throw new Error('not an edo scale: "' + name + '"');
   }
