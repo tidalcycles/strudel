@@ -26,7 +26,7 @@ const {
 } = Tone;
 import * as tonePiano from '@tonejs/piano';
 const { Piano } = tonePiano;
-import { getPlayableNoteValue } from '../../packages/core/util.mjs';
+import { getPlayableNoteValue } from '@strudel/core/util.mjs';
 
 // "balanced" | "interactive" | "playback";
 // Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));

@@ -1,10 +1,11 @@
+import shapeshifter from './shapeshifter.mjs';
 import * as strudel from '@strudel/core/strudel.mjs';
-import '../tone/tone.mjs';
-import '../midi/midi.mjs';
-import '../tonal/voicings.mjs';
-import '../../packages/tonal/tonal.mjs';
-import '../../packages/xen/xen.mjs';
-import '../../packages/xen/tune.mjs';
+import '@strudel/tone/tone.mjs';
+import '@strudel/midi/midi.mjs';
+import '@strudel/tonal/voicings.mjs';
+import '@strudel/tonal/tonal.mjs';
+import '@strudel/xen/xen.mjs';
+import '@strudel/xen/tune.mjs';
 import '@strudel/core/euclid.mjs';
 import euclid from '@strudel/core/euclid.mjs';
 import '@strudel/tone/pianoroll.mjs';
@@ -12,11 +13,10 @@ import '@strudel/tone/draw.mjs';
 import * as uiHelpers from '@strudel/tone/ui.mjs';
 import * as drawHelpers from '@strudel/tone/draw.mjs';
 import gist from '@strudel/core/gist.js';
-import shapeshifter from './shapeshifter.mjs';
-import { mini } from '../mini/mini.mjs';
+import { mini } from '@strudel/mini/mini.mjs';
 import { Tone } from '@strudel/tone';
-import * as toneHelpers from '../tone/tone.mjs';
-import * as voicingHelpers from '../tonal/voicings.mjs';
+import * as toneHelpers from '@strudel/tone/tone.mjs';
+import * as voicingHelpers from '@strudel/tonal/voicings.mjs';
 
 // this will add all methods from definedMethod to strudel + connect all the partial application stuff
 const bootstrapped = { ...strudel, ...strudel.Pattern.prototype.bootstrap() };
