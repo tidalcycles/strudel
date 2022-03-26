@@ -19,11 +19,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial",
+    "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial && cp ../.nojekyll ../docs",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "tutorial": "parcel src/tutorial/index.html --no-cache",
-    "build-tutorial": "parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-optimize --no-scope-hoist --no-cache",
+    "build-tutorial": "rm -rf ../docs/tutorial && parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-scope-hoist --no-cache",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d ../docs",
     "static": "npx serve ../docs"
