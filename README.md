@@ -14,6 +14,7 @@ Run the REPL locally:
 
 ```bash
 npm install
+npx lerna bootstrap
 cd repl
 npm install
 npm run start
