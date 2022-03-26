@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial && cp ../.nojekyll ../docs",
+    "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "tutorial": "parcel src/tutorial/index.html --no-cache",
