@@ -19,14 +19,14 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "tutorial": "parcel src/tutorial/index.html --no-cache",
     "build-tutorial": "parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-optimize --no-scope-hoist --no-cache",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "static": "npx serve ./build"
+    "deploy": "gh-pages -d ../docs",
+    "static": "npx serve ../docs"
   },
   "eslintConfig": {
     "extends": [
