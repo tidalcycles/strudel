@@ -13,7 +13,7 @@ import {
   LiteralNumericExpression,
 } from 'shift-ast';
 import shiftCodegen from 'shift-codegen';
-const codegen = shiftCodegen.default;
+const codegen = shiftCodegen.default || shiftCodegen; // parcel module resolution fuckup
 
 import * as strudel from '@strudel/core/strudel.mjs';
 

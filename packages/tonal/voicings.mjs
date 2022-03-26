@@ -1,6 +1,6 @@
 import { Pattern as _Pattern, stack, Hap, reify } from '@strudel/core/strudel.mjs';
 import _voicings from 'chord-voicings';
-const { dictionaryVoicing, minTopNoteDiff, lefthand } = _voicings.default;
+const { dictionaryVoicing, minTopNoteDiff, lefthand } = _voicings.default || _voicings; // parcel module resolution fuckup
 
 const getVoicing = (chord, lastVoicing, range = ['F3', 'A4']) =>
   dictionaryVoicing({

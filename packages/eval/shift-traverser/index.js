@@ -23,7 +23,7 @@
 */
 
 import _Spec from 'shift-spec';
-const Spec = _Spec.default;
+const Spec = _Spec.default || _Spec; // parcel module resolution fuckup
 // import { version } from '../package.json'
 
 // Loading uncached estraverse for changing estraverse.Syntax.

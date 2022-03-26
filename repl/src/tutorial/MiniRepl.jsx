@@ -4,6 +4,35 @@ import useRepl from '../useRepl.mjs';
 import CodeMirror, { markEvent } from '../CodeMirror';
 import cx from '../cx';
 
+// eval stuff start
+import { extend } from '@strudel/eval';
+import * as strudel from '@strudel/core/strudel.mjs';
+import gist from '@strudel/core/gist.js';
+import { mini } from '@strudel/mini/mini.mjs';
+import { Tone } from '@strudel/tone';
+import * as toneHelpers from '@strudel/tone/tone.mjs';
+import * as voicingHelpers from '@strudel/tonal/voicings.mjs';
+import * as uiHelpers from '@strudel/tone/ui.mjs';
+import * as drawHelpers from '@strudel/tone/draw.mjs';
+import euclid from '@strudel/core/euclid.mjs';
+import '@strudel/tone/tone.mjs';
+import '@strudel/midi/midi.mjs';
+import '@strudel/tonal/voicings.mjs';
+import '@strudel/tonal/tonal.mjs';
+import '@strudel/xen/xen.mjs';
+import '@strudel/xen/tune.mjs';
+import '@strudel/core/euclid.mjs';
+import '@strudel/tone/pianoroll.mjs';
+import '@strudel/tone/draw.mjs';
+
+extend(Tone, strudel, strudel.Pattern.prototype.bootstrap(), toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
+  gist,
+  euclid,
+  mini,
+  Tone,
+});
+// eval stuff end
+
 const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination).set({
   oscillator: { type: 'triangle' },
   envelope: {
