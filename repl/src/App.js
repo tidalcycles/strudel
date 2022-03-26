@@ -1,7 +1,6 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import CodeMirror, { markEvent, markParens } from './CodeMirror';
 import cx from './cx';
-import { evaluate, extend } from '@strudel/eval';
 import logo from './logo.svg';
 import playStatic from './static.mjs';
 import { defaultSynth } from '@strudel/tone';
@@ -10,6 +9,7 @@ import useRepl from './useRepl.mjs';
 import { useWebMidi } from './useWebMidi';
 import './App.css';
 // eval stuff start
+import { evaluate, extend } from '@strudel/eval';
 import * as strudel from '@strudel/core/strudel.mjs';
 import gist from '@strudel/core/gist.js';
 import { mini } from '@strudel/mini/mini.mjs';
@@ -37,7 +37,7 @@ extend(Tone, strudel, strudel.Pattern.prototype.bootstrap(), toneHelpers, voicin
 });
 // eval stuff end
 
-const [_, codeParam] = window.location.href.split('#');
+const codeParam = window.location.href.split('#')[1];
 let decoded;
 try {
   decoded = atob(decodeURIComponent(codeParam || ''));
@@ -59,7 +59,7 @@ function App() {
     useRepl({
       tune: decoded || randomTune,
       defaultSynth,
-      onDraw: useCallback(markEvent(editor), [editor]),
+      onDraw: useCallback((time, event) => markEvent(editor)(time, event), [editor]),
     });
   const [uiHidden, setUiHidden] = useState(false);
   const logBox = useRef();
@@ -73,29 +73,36 @@ function App() {
     // TODO: make sure this is only fired when editor has focus
     const handleKeyPress = async (e) => {
       if (e.ctrlKey || e.altKey) {
-        switch (e.code) {
-          case 'Enter':
-            await activateCode();
-            break;
-          case 'Period':
-            cycle.stop();
+        if (e.code === 'Enter') {
+          await activateCode();
+        } else if (e.code === 'Period') {
+          cycle.stop();
         }
       }
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [pattern, code]);
+  }, [pattern, code, activateCode, cycle]);
 
   useWebMidi({
-    ready: useCallback(({ outputs }) => {
-      pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `'${o.name}'`).join(' | ')}) to the pattern. `);
-    }, []),
-    connected: useCallback(({ outputs }) => {
-      pushLog(`Midi device connected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`);
-    }, []),
-    disconnected: useCallback(({ outputs }) => {
-      pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`);
-    }, []),
+    ready: useCallback(
+      ({ outputs }) => {
+        pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `'${o.name}'`).join(' | ')}) to the pattern. `);
+      },
+      [pushLog],
+    ),
+    connected: useCallback(
+      ({ outputs }) => {
+        pushLog(`Midi device connected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`);
+      },
+      [pushLog],
+    ),
+    disconnected: useCallback(
+      ({ outputs }) => {
+        pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`);
+      },
+      [pushLog],
+    ),
   });
 
   return (

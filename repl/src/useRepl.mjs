@@ -9,6 +9,7 @@ let s4 = () => {
     .toString(16)
     .substring(1);
 };
+const generateHash = (code) => encodeURIComponent(btoa(code));
 
 function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
   const id = useMemo(() => s4(), []);
@@ -19,47 +20,8 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
   const [pending, setPending] = useState(false);
   const [hash, setHash] = useState('');
   const [pattern, setPattern] = useState();
-  const dirty = code !== activeCode || error;
-  const generateHash = () => encodeURIComponent(btoa(code));
-  const activateCode = async (_code = code) => {
-    if (activeCode && !dirty) {
-      setError(undefined);
-      cycle.start();
-      return;
-    }
-    try {
-      setPending(true);
-      const parsed = await evaluate(_code);
-      cycle.start();
-      broadcast({ type: 'start', from: id });
-      setPattern(() => parsed.pattern);
-      if (autolink) {
-        window.location.hash = '#' + encodeURIComponent(btoa(code));
-      }
-      setHash(generateHash());
-      setError(undefined);
-      setActiveCode(_code);
-      setPending(false);
-    } catch (err) {
-      err.message = 'evaluation error: ' + err.message;
-      console.warn(err);
-      setError(err);
-    }
-  };
-  const pushLog = (message) => setLog((log) => log + `${log ? '\n\n' : ''}${message}`);
-  // logs events of cycle
-  const logCycle = (_events, cycle) => {
-    if (_events.length) {
-      // pushLog(`# cycle ${cycle}\n` + _events.map((e: any) => e.show()).join('\n'));
-    }
-  };
-
-  // below block allows disabling the highlighting by including "strudel disable-highlighting" in the code (as comment)
-  onDraw = useMemo(() => {
-    if (activeCode && !activeCode.includes('strudel disable-highlighting')) {
-      return onDraw;
-    }
-  }, [activeCode]);
+  const dirty = useMemo(() => code !== activeCode || error, [code, activeCode, error]);
+  const pushLog = useCallback((message) => setLog((log) => log + `${log ? '\n\n' : ''}${message}`), []);
 
   // cycle hook to control scheduling
   const cycle = useCycle({
@@ -87,7 +49,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
           pushLog(err.message); // not with setError, because then we would have to setError(undefined) on next playable event
         }
       },
-      [onEvent]
+      [onEvent, pushLog, defaultSynth],
     ),
     onQuery: useCallback(
       (state) => {
@@ -100,9 +62,9 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
           return [];
         }
       },
-      [pattern]
+      [pattern],
     ),
-    onSchedule: useCallback((_events, cycle) => logCycle(_events, cycle), [pattern]),
+    onSchedule: useCallback((_events, cycle) => logCycle(_events, cycle), []),
     ready: !!pattern && !!activeCode,
   });
 
@@ -114,36 +76,47 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
     }
   });
 
-  // set active pattern on ctrl+enter
-  /* useLayoutEffect(() => {
-    // TODO: make sure this is only fired when editor has focus
-    const handleKeyPress = (e: any) => {
-      if (e.ctrlKey || e.altKey) {
-        switch (e.code) {
-          case 'Enter':
-            activateCode();
-            !cycle.started && cycle.start();
-            break;
-          case 'Period':
-            cycle.stop();
-        }
+  const activateCode = useCallback(
+    async (_code = code) => {
+      if (activeCode && !dirty) {
+        setError(undefined);
+        cycle.start();
+        return;
       }
-    };
-    document.addEventListener('keypress', handleKeyPress);
-    return () => document.removeEventListener('keypress', handleKeyPress);
-  }, [pattern, code]); */
+      try {
+        setPending(true);
+        const parsed = await evaluate(_code);
+        cycle.start();
+        broadcast({ type: 'start', from: id });
+        setPattern(() => parsed.pattern);
+        if (autolink) {
+          window.location.hash = '#' + encodeURIComponent(btoa(code));
+        }
+        setHash(generateHash(code));
+        setError(undefined);
+        setActiveCode(_code);
+        setPending(false);
+      } catch (err) {
+        err.message = 'evaluation error: ' + err.message;
+        console.warn(err);
+        setError(err);
+      }
+    },
+    [activeCode, dirty, code, cycle, autolink, id, broadcast],
+  );
+  // logs events of cycle
+  const logCycle = (_events, cycle) => {
+    if (_events.length) {
+      // pushLog(`# cycle ${cycle}\n` + _events.map((e: any) => e.show()).join('\n'));
+    }
+  };
 
-  /* useWebMidi({
-    ready: useCallback(({ outputs }) => {
-      pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `'${o.name}'`).join(' | ')}) to the pattern. `);
-    }, []),
-    connected: useCallback(({ outputs }) => {
-      pushLog(`Midi device connected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`);
-    }, []),
-    disconnected: useCallback(({ outputs }) => {
-      pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`);
-    }, []),
-  }); */
+  // below block allows disabling the highlighting by including "strudel disable-highlighting" in the code (as comment)
+  onDraw = useMemo(() => {
+    if (activeCode && !activeCode.includes('strudel disable-highlighting')) {
+      return onDraw;
+    }
+  }, [activeCode, onDraw]);
 
   const togglePlay = () => {
     if (!cycle.started) {
