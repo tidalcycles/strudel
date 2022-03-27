@@ -42,16 +42,10 @@ function useCycle(props) {
       ?.filter((event) => event.part.begin.equals(event.whole.begin))
       .forEach((event) => {
         Tone.getTransport().schedule((time) => {
-          const toneEvent = {
-            time: event.whole.begin.valueOf(),
-            duration: event.whole.end.sub(event.whole.begin).valueOf(),
-            value: event.value,
-            context: event.context,
-          };
-          onEvent(time, toneEvent);
+          onEvent(time, event);
           Tone.Draw.schedule(() => {
             // do drawing or DOM manipulation here
-            onDraw?.(time, toneEvent);
+            onDraw?.(time, event);
           }, time);
         }, event.part.begin.valueOf());
       });
