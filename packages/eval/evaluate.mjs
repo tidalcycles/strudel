@@ -1,9 +1,12 @@
 import shapeshifter from './shapeshifter.mjs';
+import * as strudel from '@strudel/core';
+
+const { isPattern } = strudel;
 
 export const extend = (...args) => {
   // TODO: find a way to make args available to eval without adding it to global scope...
   // sadly, "with" does not work in strict mode
-  Object.assign(window, ...args);
+  Object.assign(globalThis, ...args);
 };
 
 export const evaluate = async (code) => {
