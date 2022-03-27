@@ -1,4 +1,4 @@
-import { Pattern as _Pattern } from '@strudel.cycles/core';
+import { Pattern } from '@strudel.cycles/core';
 import * as _Tone from 'tone';
 
 // import Tone from here, to make sure to get the same AudioContext
@@ -41,11 +41,8 @@ defaultSynth.set({
 // what about
 // https://www.charlie-roberts.com/gibberish/playground/
 
-const Pattern = _Pattern;
-
 // with this function, you can play the pattern with any tone synth
 Pattern.prototype.tone = function (instrument) {
-  // instrument.toDestination();
   return this._withEvent((event) => {
     const onTrigger = (time, event) => {
       let note;
@@ -74,36 +71,6 @@ Pattern.prototype.tone = function (instrument) {
         note = getPlayableNoteValue(event);
         instrument.triggerAttackRelease(note, event.duration, time, velocity);
       }
-      /* switch (instrument.constructor.name) {
-        case 'PluckSynth':
-          note = getPlayableNoteValue(event);
-          instrument.triggerAttack(note, time);
-          break;
-        case 'NoiseSynth':
-          instrument.triggerAttackRelease(event.duration, time); // noise has no value
-          break;
-        case 'Piano':
-          note = getPlayableNoteValue(event);
-          instrument.keyDown({ note, time, velocity });
-          instrument.keyUp({ note, time: time + event.duration, velocity });
-          break;
-        case 'Sampler':
-          note = getPlayableNoteValue(event);
-          instrument.triggerAttackRelease(note, event.duration, time, velocity);
-          break;
-        case 'Players':
-          if (!instrument.has(event.value)) {
-            throw new Error(`name "${event.value}" not defined for players`);
-          }
-          const player = instrument.player(event.value);
-          // velocity ?
-          player.start(time);
-          player.stop(time + event.duration);
-          break;
-        default:
-          note = getPlayableNoteValue(event);
-          instrument.triggerAttackRelease(note, event.duration, time, velocity);
-      } */
     };
     return event.setContext({ ...event.context, instrument, onTrigger });
   });
