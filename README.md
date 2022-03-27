@@ -19,11 +19,3 @@ cd repl
 npm install
 npm run start
 ```
-
-## Build
-
-```bash
-cd repl
-npm run build
-npm run static # <- test static build
-```
