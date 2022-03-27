@@ -1,7 +1,7 @@
 import { isNote } from 'tone';
 import _WebMidi from 'webmidi';
-import { Pattern, isPattern } from '@strudel/core/strudel.mjs';
-import { Tone } from '@strudel/tone';
+import { Pattern, isPattern } from '@strudel.cycles/core/strudel.mjs';
+import { Tone } from '@strudel.cycles/tone';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const WebMidi = _WebMidi;

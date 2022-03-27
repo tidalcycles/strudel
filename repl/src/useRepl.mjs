@@ -1,6 +1,6 @@
 import { useCallback, useState, useMemo } from 'react';
-import { evaluate } from '@strudel/eval';
-import { getPlayableNoteValue } from '@strudel/core/util.mjs';
+import { evaluate } from '@strudel.cycles/eval';
+import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
 import useCycle from './useCycle.mjs';
 import usePostMessage from './usePostMessage.mjs';
 

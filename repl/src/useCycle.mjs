@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Tone } from '@strudel/tone';
-import { State, TimeSpan } from '@strudel/core';
+import { Tone } from '@strudel.cycles/tone';
+import { State, TimeSpan } from '@strudel.cycles/core';
 
 /* export declare interface UseCycleProps {
   onEvent: ToneEventCallback<any>;

@@ -1,5 +1,5 @@
 {
-  "name": "@strudel/tonal",
+  "name": "@strudel.cycles/tonal",
   "version": "0.0.1",
   "description": "Tonal functions for strudel",
   "main": "tonal.mjs",
@@ -25,6 +25,6 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel/core": "*"
+    "@strudel.cycles/core": "*"
   }
 }

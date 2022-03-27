@@ -1,5 +1,5 @@
 import shapeshifter from './shapeshifter.mjs';
-import * as strudel from '@strudel/core';
+import * as strudel from '@strudel.cycles/core';
 
 const { isPattern } = strudel;
 

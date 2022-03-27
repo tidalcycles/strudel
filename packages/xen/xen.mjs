@@ -1,5 +1,5 @@
-import { Pattern } from '@strudel/core/strudel.mjs';
-import { mod } from '@strudel/core/util.mjs';
+import { Pattern } from '@strudel.cycles/core/strudel.mjs';
+import { mod } from '@strudel.cycles/core/util.mjs';
 
 export function edo(name) {
   if (!/^[1-9]+[0-9]*edo$/.test(name)) {

@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 import { mini } from '../mini.mjs';
-import '@strudel/core/euclid.mjs';
+import '@strudel.cycles/core/euclid.mjs';
 
 describe('mini', () => {
   const minV = (v) => mini(v)._firstCycleValues;

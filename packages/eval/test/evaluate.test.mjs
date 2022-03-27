@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 import { evaluate, extend } from '../evaluate.mjs';
-import { mini } from '@strudel/mini';
-import * as strudel from '@strudel/core';
+import { mini } from '@strudel.cycles/mini';
+import * as strudel from '@strudel.cycles/core';
 
 const { cat } = strudel;
 

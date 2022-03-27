@@ -1,4 +1,4 @@
-import { Pattern as _Pattern } from '@strudel/core';
+import { Pattern as _Pattern } from '@strudel.cycles/core';
 import * as _Tone from 'tone';
 
 // import Tone from here, to make sure to get the same AudioContext
@@ -26,7 +26,7 @@ const {
 } = Tone;
 import * as tonePiano from '@tonejs/piano';
 const { Piano } = tonePiano;
-import { getPlayableNoteValue } from '@strudel/core/util.mjs';
+import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
 
 // "balanced" | "interactive" | "playback";
 // Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { enableWebMidi, WebMidi } from '@strudel/midi'
+import { enableWebMidi, WebMidi } from '@strudel.cycles/midi'
 
 export function useWebMidi(props) {
   const { ready, connected, disconnected } = props;

@@ -1,5 +1,5 @@
 {
-  "name": "@strudel/eval",
+  "name": "@strudel.cycles/eval",
   "version": "0.0.1",
   "description": "Code evaluator for strudel",
   "main": "evaluate.mjs",
@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel/core": "*",
+    "@strudel.cycles/core": "*",
     "estraverse": "^5.3.0",
     "shift-ast": "^6.1.0",
     "shift-codegen": "^7.0.3",
