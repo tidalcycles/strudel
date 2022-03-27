@@ -17,8 +17,6 @@ const pattern = mini('a [b c*2]');
 
 const events = pattern.firstCycle().map((e) => e.show());
 console.log(events);
-
-document.getElementById('app').innerHTML = events.join('<br/>');
 ```
 
 yields:
