@@ -426,6 +426,9 @@ class Pattern {
     get _firstCycleValues() {
         return this.firstCycle().map(hap => hap.value)
     }
+    get _showFirstCycle() {
+        return this.firstCycle().map(hap => `${hap.value}: ${hap.whole.begin.toFraction()} - ${hap.whole.end.toFraction()}`)
+    }
 
     _sortEventsByPart() {
         return this._withEvents(events => events.sort((a,b) => a.part.begin.sub(b.part.begin).or(a.part.end.sub(b.part.end)).or(a.whole.begin.sub(b.whole.begin).or(a.whole.end.sub(b.whole.end)))))
