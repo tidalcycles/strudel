@@ -19,3 +19,13 @@ cd repl
 npm install
 npm run start
 ```
+
+## Publish Packages
+
+To publish, just run:
+
+```sh
+npx lerna version
+```
+
+This will publish all packages that changed since the last version.
