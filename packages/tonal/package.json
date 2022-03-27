@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.0.1"
+    "@strudel.cycles/core": "^0.0.1",
+    "@tonaljs/tonal": "^4.6.5"
   }
 }
