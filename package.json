@@ -1,5 +1,5 @@
 {
-  "name": "@strudel/monorepo",
+  "name": "@strudel.cycles/monorepo",
   "version": "0.0.1",
   "private": true,
   "description": "Port of tidalcycles to javascript",
