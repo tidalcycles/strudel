@@ -138,6 +138,10 @@ class Hap {
         }
     }
 
+    get duration() {
+        return this.whole.end.sub(this.whole.begin).valueOf();
+    }
+
     withSpan(func) {
         // Returns a new event with the function f applies to the event timespan.
         const whole = this.whole ? func(this.whole) : undefined
@@ -1034,7 +1038,6 @@ Pattern.prototype.bootstrap = function() {
     }
     return [functionName, curry(composable, makeComposable)];
   }));
-  
   // note: this === Pattern.prototypetgh6z
   this.patternified.forEach((prop) => {
     // the following will patternify all functions in Pattern.prototype.patternified
