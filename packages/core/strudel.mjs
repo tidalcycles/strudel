@@ -774,8 +774,24 @@ class Pattern {
     return this._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
   }
 
-  iter(times) {
-    return slowcat(...range(0, times - 1).map((i) => this.early(i / times)));
+  iter(times, back = false) {
+    return slowcat(...range(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
+  }
+
+  // known as iter' in tidalcycles
+  iterBack(times) {
+    return this.iter(times,true)
+  }
+
+  _chunk(n, func, back = false) {
+    const binary = Array(n - 1).fill(false);
+    binary.unshift(true);
+    const binary_pat = sequence(...binary).iter(n, back);
+    return this.when(binary_pat, func);
+  }
+
+  _chunkBack(n, func) {
+    return this._chunk(n, func, true)
   }
 
   edit(...funcs) {
@@ -1026,6 +1042,10 @@ const mask = curry((a, pat) => pat.mask(a));
 const echo = curry((a, b, c, pat) => pat.echo(a, b, c));
 const invert = (pat) => pat.invert();
 const inv = (pat) => pat.inv();
+const iter = curry((a, pat) => pat.iter(a));
+const iterBack = curry((a, pat) => pat.iter(a));
+const chunk = curry((a, pat) => pat.chunk(a));
+const chunkBack = curry((a, pat) => pat.chunkBack(a));
 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
@@ -1075,6 +1095,14 @@ Pattern.prototype.echo = function (...args) {
 Pattern.prototype.echoWith = function (...args) {
   args = args.map(reify);
   return patternify3(Pattern.prototype._echoWith)(...args, this);
+};
+Pattern.prototype.chunk = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._chunk)(...args, this);
+};
+Pattern.prototype.chunkBack = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._chunkBack)(...args, this);
 };
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)
@@ -1170,4 +1198,8 @@ export {
   id,
   range,
   echo,
+  iter,
+  iterBack,
+  chunk,
+  chunkBack,
 };
