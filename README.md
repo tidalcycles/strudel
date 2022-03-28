@@ -29,3 +29,15 @@ npx lerna version
 ```
 
 This will publish all packages that changed since the last version.
+
+## Style
+
+For now, please try to copy the style of surrounding code. VS Code users can install the 'prettier' add-on which will use the .prettierrc configuration file for automatic formatting.
+
+## Community
+
+There is a #strudel channel on the TidalCycles discord: https://discord.com/invite/HGEdXmRkzT
+
+You can also ask questions and find related discussions on the tidal club forum: https://club.tidalcycles.org/
+
+The discord and forum is shared with the haskell (tidal) and python (vortex) siblings of this project.
