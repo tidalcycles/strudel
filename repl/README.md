@@ -1,22 +1,33 @@
 # Strudel REPL
 
-## Default Snowpack Readme
+This is the REPL for Strudel. REPL stands for
 
-> ✨ Bootstrapped with Create Snowpack App (CSA).
+- Read
+- Evaluate
+- Play!
+- Loop
 
-## Available Scripts
+The REPL is deployed at [strudel.tidalcycles.org](https://strudel.tidalcycles.org/).
 
-### npm start
+## Run REPL locally
 
-Runs the app in the development mode.
-Open http://localhost:8080 to view it in the browser.
+```bash
+# from project root
+npm install
+npx lerna bootstrap
+cd repl
+npm install
+npm run start
+```
 
-The page will reload if you make edits.
-You will also see any lint errors in the console.
+## Build REPL
 
-### npm run build
+```bash
+cd repl
+npm run build # <- builds repl + tutorial to ../docs
+npm run static # <- test static build
+```
 
-Builds a static copy of your site to the `docs/` folder.
-Your app is ready to be deployed!
+## Dev Notes
 
-**For the best production performance:** Add a build bundler plugin like "@snowpack/plugin-webpack" to your `snowpack.config.mjs` config file.
+~~Always run `npm i --legacy-peer-deps`, otherwise `@tonejs/piano` will break.~~

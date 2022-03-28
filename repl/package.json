@@ -1,61 +1,59 @@
 {
-  "scripts": {
-    "start": "snowpack dev --polyfill-node",
-    "build": "snowpack build --polyfill-node && cp ./public/.nojekyll ../docs && npm run build-tutorial",
-    "static": "npx serve ../docs",
-    "test": "web-test-runner \"src/**/*.test.tsx\"",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
-    "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
-    "peggy": "peggy -o krill-parser.js --format es ./krill.pegjs",
-    "tutorial": "parcel src/tutorial/index.html --no-cache",
-    "build-tutorial": "parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-optimize --no-scope-hoist --no-cache"
-  },
+  "name": "@strudel.cycles/repl",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "https://strudel.tidalcycles.org",
   "dependencies": {
-    "@tonaljs/tonal": "^4.6.5",
-    "@tonejs/piano": "^0.2.1",
-    "bjork": "^0.0.1",
-    "chord-voicings": "^0.0.1",
-    "codemirror": "^5.65.1",
-    "estraverse": "^5.3.0",
+    "@testing-library/jest-dom": "^5.16.3",
+    "@testing-library/react": "^12.1.4",
+    "@testing-library/user-event": "^13.5.0",
+    "codemirror": "^5.65.2",
     "events": "^3.3.0",
-    "multimap": "^1.1.0",
-    "ramda": "^0.28.0",
+    "gh-pages": "^3.2.3",
     "react": "^17.0.2",
     "react-codemirror2": "^7.2.1",
     "react-dom": "^17.0.2",
-    "shift-ast": "^6.1.0",
-    "shift-codegen": "^7.0.3",
-    "shift-regexp-acceptor": "^2.0.3",
-    "shift-spec": "^2018.0.2",
+    "react-scripts": "5.0.0",
     "tone": "^14.7.77",
-    "tune.js": "^1.0.1",
-    "webmidi": "^2.5.2"
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "tutorial": "parcel src/tutorial/index.html --no-cache",
+    "build-tutorial": "rm -rf ../docs/tutorial && parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-scope-hoist --no-cache",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d ../docs",
+    "static": "npx serve ../docs"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
     "@mdx-js/react": "^1.6.22",
     "@parcel/transformer-mdx": "^2.3.1",
-    "@snowpack/plugin-dotenv": "^2.1.0",
-    "@snowpack/plugin-postcss": "^1.4.3",
-    "@snowpack/plugin-react-refresh": "^2.5.0",
-    "@snowpack/plugin-typescript": "^1.2.1",
-    "@snowpack/web-test-runner-plugin": "^0.2.2",
-    "@tailwindcss/forms": "^0.4.0",
     "@tailwindcss/typography": "^0.5.2",
-    "@testing-library/react": "^11.2.6",
-    "@types/chai": "^4.2.17",
-    "@types/mocha": "^8.2.2",
-    "@types/react": "^17.0.4",
-    "@types/react-dom": "^17.0.3",
-    "@types/snowpack-env": "^2.3.3",
-    "@web/test-runner": "^0.13.3",
-    "autoprefixer": "^10.4.2",
-    "chai": "^4.3.4",
+    "autoprefixer": "^10.4.4",
     "parcel": "^2.3.1",
-    "peggy": "^1.2.0",
-    "postcss": "^8.4.6",
-    "prettier": "^2.2.1",
-    "snowpack": "^3.3.7",
-    "tailwindcss": "^3.0.18",
-    "typescript": "^4.2.4"
+    "postcss": "^8.4.12",
+    "serve": "^13.0.2",
+    "tailwindcss": "^3.0.23"
   }
 }

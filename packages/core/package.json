@@ -1,0 +1,35 @@
+{
+  "name": "@strudel.cycles/core",
+  "version": "0.0.2",
+  "description": "Port of Tidal Cycles to JavaScript",
+  "main": "strudel.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "mocha --colors"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Alex McLean <alex@slab.org> (https://slab.org)",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://strudel.tidalcycles.org",
+  "dependencies": {
+    "bjork": "^0.0.1",
+    "fraction.js": "^4.2.0",
+    "ramda": "^0.28.0"
+  },
+  "devDependencies": {
+    "mocha": "^9.2.2"
+  }
+}
