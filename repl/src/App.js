@@ -28,6 +28,7 @@ import '@strudel.cycles/xen/tune.mjs';
 import '@strudel.cycles/core/euclid.mjs';
 import '@strudel.cycles/tone/pianoroll.mjs';
 import '@strudel.cycles/tone/draw.mjs';
+import '@strudel.cycles/osc/osc.mjs';
 
 extend(Tone, strudel, strudel.Pattern.prototype.bootstrap(), toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
   gist,
