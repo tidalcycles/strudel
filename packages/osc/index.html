@@ -1,4 +1,4 @@
-<button id="send">Thank you @ojack</button>
+<button id="send" style="font-size: 2em">Thank you @ojack</button>
 <script type="text/javascript" src="./node_modules/osc-js/lib/osc.min.js"></script>
 <script type="text/javascript">
   const comm = new OSC();
@@ -15,7 +15,7 @@
     comm.send(message);
     console.log('sent:', message.address, message.args);
   });
-/* 
+  /* 
   comm.on('*', (m) => {
     console.log('received:', m.address, m.args);
   }); */
