@@ -780,7 +780,7 @@ class Pattern {
 
   // known as iter' in tidalcycles
   iterBack(times) {
-    return this.iter(times,true)
+    return this.iter(times, true);
   }
 
   _chunk(n, func, back = false) {
@@ -791,7 +791,7 @@ class Pattern {
   }
 
   _chunkBack(n, func) {
-    return this._chunk(n, func, true)
+    return this._chunk(n, func, true);
   }
 
   edit(...funcs) {
