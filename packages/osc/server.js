@@ -1,3 +1,4 @@
+const dgram = require('dgram')
 const OSC = require('osc-js');
 
 const config = {
@@ -18,6 +19,9 @@ const config = {
     port: 8080, // @param {number} Port of WebSocket server
   },
 };
+
+
+
 const osc = new OSC({ plugin: new OSC.BridgePlugin(config) });
 
 osc.open(); // start a WebSocket server on port 8080
@@ -27,12 +31,15 @@ console.log('osc server running on port', config.udpServer.port);
 console.log('websocket server running on port', config.wsServer.port);
 
 // listen for messages from the client
-osc.on('*', (m) => {
-  // forward message to supercollider??
-  const message = new OSC.Message(m.address, ...m.args);
-  osc.send(message); // will it even be received??
-  console.log('forward:', m.address, m.args);
-});
+// osc.on('*', (m) => {
+//   console.log("hmm!");
+//   const ts = m.args.shift();
+//   const message = new OSC.Message(m.address, ...m.args);
+//   console.log(m.args);
+//   const bundle = new OSC.Bundle([message], new Date(ts))
+//   osc.send(bundle);
+//   console.log('forward:', bundle);
+// });
 
 /*
 example tidal messages:
