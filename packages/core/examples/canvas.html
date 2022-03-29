@@ -1,0 +1,34 @@
+<body style="margin: 0">
+  <input
+    type="text"
+    id="text"
+    value="cat('orange', 'indigo')"
+    style="width: 100%; font-size: 2em; background: black; color: white; outline: none; position: absolute; top: 0"
+    spellcheck="false"
+  />
+  <canvas id="canvas"></canvas>
+  <script type="module">
+    const strudel = await import('https://cdn.skypack.dev/@strudel.cycles/core@0.0.2');
+    // this adds all strudel functions to the global scope, to be used by eval
+    Object.assign(window, strudel);
+    // setup elements
+    const input = document.getElementById('text');
+    const canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const ctx = canvas.getContext('2d');
+    input.focus(); // autofocus
+    input.setSelectionRange(input.value.length, input.value.length); // move cursor to end
+    paint(input.value); // initial paint
+    input.addEventListener('input', (e) => paint(e.target.value)); // repaint on input
+
+    function paint(code) {
+      const pattern = eval(code); // run code
+      const events = pattern.firstCycle(); // query first cycle
+      events.forEach((event) => {
+        ctx.fillStyle = event.value;
+        ctx.fillRect(event.whole.begin * canvas.width, 0, event.duration * canvas.width, canvas.height);
+      });
+    }
+  </script>
+</body>
