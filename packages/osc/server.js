@@ -28,10 +28,13 @@ console.log('websocket server running on port', config.wsServer.port);
 
 // listen for messages from the client
 osc.on('*', (m) => {
-  // forward message to supercollider??
+  console.log("hmm!");
+  const ts = m.args.shift();
   const message = new OSC.Message(m.address, ...m.args);
-  osc.send(message); // will it even be received??
-  console.log('forward:', m.address, m.args);
+  console.log(m.args);
+  const bundle = new OSC.Bundle([message], new Date(ts))
+  osc.send(bundle);
+  console.log('forward:', bundle);
 });
 
 /*
