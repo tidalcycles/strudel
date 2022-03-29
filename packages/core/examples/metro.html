@@ -1,0 +1,92 @@
+<input
+  type="text"
+  id="text"
+  value="cat(880, 440, 220, 440).div(2).slow(2)"
+  style="width: 100%; font-size: 2em; outline: none; margin-bottom: 10px"
+  spellcheck="false"
+/>
+<button id="start">start</button>
+<button id="stop">stop</button>
+<script type="module">
+  // helpers to create a worker dynamically without needing a server / extra file
+  const stringifyFunction = (func) => '(' + func + ')();';
+  const urlifyFunction = (func) =>
+    URL.createObjectURL(new Blob([stringifyFunction(func)], { type: 'text/javascript' }));
+  const createWorker = (func) => new Worker(urlifyFunction(func));
+
+  // this class is basically the tale of two clocks
+  class Metro {
+    worker;
+    audioContext;
+    constructor(audioContext, callback) {
+      this.audioContext = audioContext;
+      this.worker = createWorker(() => {
+        // we cannot use closures here!
+        let interval = 100;
+        let timerID = null; // this is clock #1 (the sloppy js clock)
+        const clear = () => {
+          if (timerID) {
+            clearInterval(timerID);
+            timerID = null;
+          }
+        };
+        const start = () => {
+          clear();
+          timerID = setInterval(() => postMessage('tick'), interval);
+        };
+        self.onmessage = function (e) {
+          if (e.data == 'start') {
+            start();
+          } else if (e.data.interval) {
+            interval = e.data.interval;
+            if (timerID) {
+              start();
+            }
+          } else if (e.data == 'stop') {
+            clear();
+          }
+        };
+      });
+      this.worker.onmessage = (e) => {
+        if (e.data === 'tick') {
+          // callback with query span, using clock #2 (the audio clock)
+          callback(this.audioContext.currentTime, this.audioContext.currentTime + 0.1);
+        }
+      };
+    }
+    start() {
+      this.audioContext.resume();
+      this.worker.postMessage('start');
+    }
+    stop() {
+      this.worker.postMessage('stop');
+    }
+  }
+
+  const strudel = await import('https://cdn.skypack.dev/@strudel.cycles/core@0.0.2');
+  const { cat, State, TimeSpan } = strudel;
+  let pattern;
+  const input = document.getElementById('text');
+  const evaluate = () => {
+    pattern = eval(input.value);
+  };
+  input.addEventListener('input', () => evaluate());
+  evaluate();
+
+  const audioContext = new AudioContext();
+  const metro = new Metro(audioContext, (begin, end) => {
+    pattern
+      .query(new State(new TimeSpan(begin, end)))
+      .filter((e) => e.part.begin.equals(e.whole.begin))
+      .forEach((e) => {
+        const osc = audioContext.createOscillator();
+        osc.connect(audioContext.destination);
+        osc.frequency.value = e.value;
+        osc.start(e.whole.begin);
+        osc.stop(e.whole.end);
+      });
+  });
+
+  document.getElementById('start').addEventListener('click', () => metro.start());
+  document.getElementById('stop').addEventListener('click', () => metro.stop());
+</script>
