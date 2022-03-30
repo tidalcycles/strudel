@@ -2,8 +2,8 @@
   <input
     type="text"
     id="text"
-    value="cat('orange', 'indigo')"
-    style="width: 100%; font-size: 2em; background: black; color: white; outline: none; position: absolute; top: 0"
+    value="cat('lime', slowcat('steelblue','darkblue'),'yellow','salmon','black').every(2,rev).fast(16)"
+    style="width: 100%; font-size: 1.5em; background: black; color: white; outline: none; position: absolute; top: 0"
     spellcheck="false"
   />
   <canvas id="canvas"></canvas>
@@ -25,6 +25,7 @@
     function paint(code) {
       const pattern = eval(code); // run code
       const events = pattern.firstCycle(); // query first cycle
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
       events.forEach((event) => {
         ctx.fillStyle = event.value;
         ctx.fillRect(event.whole.begin * canvas.width, 0, event.duration * canvas.width, canvas.height);
