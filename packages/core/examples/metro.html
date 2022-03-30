@@ -1,13 +1,46 @@
-<input
-  type="text"
+<div style="position: absolute; top: 0; right: 0; padding: 4px">
+  <button id="start" style="margin-bottom: 4px; font-size: 2em">start</button><br />
+  <button id="stop" style="font-size: 2em">stop</button>
+</div>
+<textarea
+  style="font-size: 2em; background: #e8d565; color: #323230; height: 100%; width: 100%; outline: none; border: 0"
   id="text"
-  value="sequence(888, [432, 666], 444, 666).div(slowcat(3,2).slow(2)).off(1/8,mul(2)).off(1/4,mul(3))"
-  style="width: 100%; outline: none; margin-bottom: 10px"
   spellcheck="false"
-/>
-<button id="start">start</button>
-<button id="stop">stop</button>
+>
+Loading...</textarea
+>
 <script type="module">
+  const strudel = await import('https://cdn.skypack.dev/@strudel.cycles/core@0.0.2');
+  document.body.style = 'margin: 0';
+  const { cat, State, TimeSpan } = strudel;
+  let pattern;
+  Object.assign(window, strudel); // add strudel to eval scope
+  const input = document.getElementById('text');
+
+  let initialCode = `sequence(880, [440, 660], 440, 660)
+.div(slowcat(3,2).slow(2))
+.off(1/8,mul(2))
+.off(1/4,mul(3))
+.legato(2)
+.slow(2)`;
+  try {
+    initialCode = atob(decodeURIComponent(window.location.href.split('#')[1]));
+  } catch (err) {
+    console.warn('failed to decode', err);
+  }
+  input.value = initialCode;
+
+  const evaluate = () => {
+    try {
+      pattern = eval(input.value);
+      window.location.hash = '#' + encodeURIComponent(btoa(input.value)); // update url hash
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+  input.addEventListener('input', () => evaluate());
+  evaluate(); // evaluate initial code
+
   // helpers to create a worker dynamically without needing a server / extra file
   const stringifyFunction = (func) => '(' + func + ')();';
   const urlifyFunction = (func) =>
@@ -22,7 +55,7 @@
       this.audioContext = audioContext;
       this.worker = createWorker(() => {
         // we cannot use closures here!
-        let interval = 100;
+        let interval = 200;
         let timerID = null; // this is clock #1 (the sloppy js clock)
         const clear = () => {
           if (timerID) {
@@ -50,7 +83,7 @@
       this.worker.onmessage = (e) => {
         if (e.data === 'tick') {
           // callback with query span, using clock #2 (the audio clock)
-          callback(this.audioContext.currentTime, this.audioContext.currentTime + 0.1);
+          callback(this.audioContext.currentTime, this.audioContext.currentTime + 0.2);
         }
       };
     }
@@ -63,29 +96,36 @@
     }
   }
 
-  const strudel = await import('https://cdn.skypack.dev/@strudel.cycles/core@0.0.2');
-  const { cat, State, TimeSpan } = strudel;
-  let pattern;
-  Object.assign(window, strudel); // add strudel to eval scope
-  const input = document.getElementById('text');
-  const evaluate = () => {
-    pattern = eval(input.value);
+  const adsr = (attack, decay, sustain, release, velocity, begin, end) => {
+    const gainNode = audioContext.createGain();
+    gainNode.gain.setValueAtTime(0, begin);
+    gainNode.gain.linearRampToValueAtTime(velocity, begin + attack); // attack
+    gainNode.gain.linearRampToValueAtTime(sustain * velocity, begin + attack + decay); // sustain
+    gainNode.gain.linearRampToValueAtTime(0, end + release); // release
+    // for some reason, using exponential ramping creates little cracklings
+    return gainNode;
   };
-  input.addEventListener('input', () => evaluate());
-  evaluate();
 
   const audioContext = new AudioContext();
   const metro = new Metro(audioContext, (begin, end) => {
-    pattern
-      .query(new State(new TimeSpan(begin, end)))
-      .filter((e) => e.part.begin.equals(e.whole.begin))
-      .forEach((e) => {
-        const osc = audioContext.createOscillator();
-        osc.connect(audioContext.destination);
-        osc.frequency.value = e.value;
-        osc.start(e.whole.begin);
-        osc.stop(e.whole.end);
-      });
+    pattern.query(new State(new TimeSpan(begin, end))).forEach((e) => {
+      if (!e.part.begin.equals(e.whole.begin)) {
+        return;
+      }
+      const attack = 0.01;
+      const decay = 0.05;
+      const sustain = 0.5;
+      const release = 0.01;
+      const velocity = (e.context?.velocity || 1) * 0.1;
+      const osc = audioContext.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = e.value;
+      osc.start(e.whole.begin);
+      const envelope = adsr(attack, decay, sustain, release, velocity, e.whole.begin, e.whole.end);
+      osc.stop(e.whole.end + release);
+      osc.connect(envelope);
+      envelope.connect(audioContext.destination);
+    });
   });
 
   document.getElementById('start').addEventListener('click', () => metro.start());
