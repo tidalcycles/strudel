@@ -53,8 +53,8 @@ Loading...</textarea
     audioContext;
     startedAt = 0;
     lastEnd;
-    lookahead = 0.1; // query offset
-    interval = 0.05; // query span
+    lookahead = 0.2; // query offset
+    interval = 0.2; // query span
     constructor(audioContext, callback, interval = this.interval, lookahead = this.lookahead) {
       this.audioContext = audioContext;
       this.interval = interval;
