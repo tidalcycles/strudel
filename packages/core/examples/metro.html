@@ -53,6 +53,7 @@ Loading...</textarea
     audioContext;
     startedAt = 0;
     interval = 0.2; // query span
+    tick = 0;
     constructor(audioContext, callback, interval = this.interval) {
       this.audioContext = audioContext;
       this.interval = interval;
@@ -91,22 +92,23 @@ Loading...</textarea
       const precision = 100;
       this.worker.onmessage = (e) => {
         if (e.data === 'tick') {
-          const sinceStart = this.audioContext.currentTime - this.startedAt; // seconds since pressing start
-          const tick = Math.floor(sinceStart / this.interval); // tick number
-          
-          const begin = round(tick * this.interval + this.startedAt, precision); // begin of tick
+          const begin = round(this.tick * this.interval, precision) + this.startedAt; // begin of tick
           const end = round(begin + this.interval, precision); // end of tick
+          this.tick++;
           // callback with query span, using clock #2 (the audio clock)
           callback(begin, end);
         }
       };
     }
     start() {
+      console.log('start...');
       this.audioContext.resume();
+      this.tick = 0;
       this.startedAt = this.audioContext.currentTime;
       this.worker.postMessage('start');
     }
     stop() {
+      console.log('stop...');
       this.worker.postMessage('stop');
     }
   }
