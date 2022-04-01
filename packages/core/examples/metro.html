@@ -13,7 +13,7 @@ Loading...</textarea
   document.body.style = 'margin: 0';
   import * as strudel from 'https://cdn.skypack.dev/@strudel.cycles/core@0.0.2';
   import 'https://cdn.skypack.dev/@strudel.cycles/core@0.0.2/euclid.mjs';
-  const { cat, State, TimeSpan } = strudel;
+  const { cat, State, TimeSpan, Fraction } = strudel;
   let pattern;
   Object.assign(window, strudel); // add strudel to eval scope
   const input = document.getElementById('text');
@@ -53,12 +53,10 @@ Loading...</textarea
     audioContext;
     startedAt = 0;
     lastEnd;
-    lookahead = 0.2; // query offset
     interval = 0.2; // query span
-    constructor(audioContext, callback, interval = this.interval, lookahead = this.lookahead) {
+    constructor(audioContext, callback, interval = this.interval) {
       this.audioContext = audioContext;
       this.interval = interval;
-      this.lookahead = lookahead;
       this.worker = createWorker(() => {
         // we cannot use closures here!
         let interval;
@@ -90,13 +88,17 @@ Loading...</textarea
         };
       });
       this.worker.postMessage({ interval });
+      const round = (n, d) => Math.round(n * d) / d;
+      const precision = 100;
       this.worker.onmessage = (e) => {
         if (e.data === 'tick') {
-          const begin = this.lastEnd || this.startedAt + this.lookahead;
-          const end = begin + this.interval;
+          const sinceStart = this.audioContext.currentTime - this.startedAt; // seconds since pressing start
+          const tick = Math.floor(sinceStart / this.interval); // tick number
+          const begin = round(tick * this.interval + this.startedAt, precision); // begin of tick
+          const end = round(begin + this.interval, precision); // end of tick
           this.lastEnd = end;
           // callback with query span, using clock #2 (the audio clock)
-          callback(begin, end, this.lookahead);
+          callback(begin, end);
         }
       };
     }
@@ -112,12 +114,12 @@ Loading...</textarea
   }
 
   const audioContext = new AudioContext();
-  const interval = 0.2;
-  const lookahead = 0.2;
+  const interval = 0.1;
+  const lookahead = 0.1;
   const metro = new Metro(
     audioContext,
-    (begin, end, lookahead) => {
-      pattern.query(new State(new TimeSpan(begin - lookahead, end - lookahead))).forEach((e) => {
+    (begin, end) => {
+      pattern.query(new State(new TimeSpan(begin, end))).forEach((e) => {
         if (!e.part.begin.equals(e.whole.begin)) {
           return;
         }
