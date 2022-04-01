@@ -44,10 +44,6 @@ Loading...</textarea
   const evaluate = () => {
     try {
       const pattern = eval(input.value);
-      console.log('value', input.value);
-
-      console.log('pattern', pattern);
-
       scheduler.setPattern(pattern);
       window.location.hash = '#' + encodeURIComponent(btoa(input.value)); // update url hash
     } catch (err) {
