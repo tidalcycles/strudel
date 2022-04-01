@@ -11,7 +11,7 @@ Loading...</textarea
 >
 <script type="module">
   document.body.style = 'margin: 0';
-  const strudel = await import('https://cdn.skypack.dev/@strudel.cycles/core@0.0.2');
+  import * as strudel from 'https://cdn.skypack.dev/@strudel.cycles/core@0.0.2';
   import 'https://cdn.skypack.dev/@strudel.cycles/core@0.0.2/euclid.mjs';
   const { cat, State, TimeSpan } = strudel;
   let pattern;
@@ -51,11 +51,17 @@ Loading...</textarea
   class Metro {
     worker;
     audioContext;
-    constructor(audioContext, callback) {
+    startedAt = 0;
+    lastEnd;
+    lookahead = 0.1; // query offset
+    interval = 0.05; // query span
+    constructor(audioContext, callback, interval = this.interval, lookahead = this.lookahead) {
       this.audioContext = audioContext;
+      this.interval = interval;
+      this.lookahead = lookahead;
       this.worker = createWorker(() => {
         // we cannot use closures here!
-        let interval = 200;
+        let interval;
         let timerID = null; // this is clock #1 (the sloppy js clock)
         const clear = () => {
           if (timerID) {
@@ -65,7 +71,10 @@ Loading...</textarea
         };
         const start = () => {
           clear();
-          timerID = setInterval(() => postMessage('tick'), interval);
+          if (!interval) {
+            throw new Error('no interval set! call worker.postMessage({interval}) before starting.');
+          }
+          timerID = setInterval(() => postMessage('tick'), interval * 1000);
         };
         self.onmessage = function (e) {
           if (e.data == 'start') {
@@ -80,21 +89,61 @@ Loading...</textarea
           }
         };
       });
+      this.worker.postMessage({ interval });
       this.worker.onmessage = (e) => {
         if (e.data === 'tick') {
+          const begin = this.lastEnd || this.startedAt + this.lookahead;
+          const end = begin + this.interval;
+          this.lastEnd = end;
           // callback with query span, using clock #2 (the audio clock)
-          callback(this.audioContext.currentTime, this.audioContext.currentTime + 0.2);
+          callback(begin, end, this.lookahead);
         }
       };
     }
     start() {
       this.audioContext.resume();
+      delete this.lastEnd;
+      this.startedAt = this.audioContext.currentTime;
       this.worker.postMessage('start');
     }
     stop() {
       this.worker.postMessage('stop');
     }
   }
+
+  const audioContext = new AudioContext();
+  const interval = 0.05;
+  const lookahead = 0.05;
+  const metro = new Metro(
+    audioContext,
+    (begin, end, lookahead) => {
+      pattern.query(new State(new TimeSpan(begin - lookahead, end - lookahead))).forEach((e) => {
+        if (!e.part.begin.equals(e.whole.begin)) {
+          return;
+        }
+        if (e.context.createAudioNode) {
+          e.context.createAudioNode(e);
+        } else {
+          // fallback sine wave
+          const attack = 0.01;
+          const decay = 0.05;
+          const sustain = 0.5;
+          const release = 0.01;
+          const velocity = (e.context?.velocity || 1) * 0.1;
+          const osc = audioContext.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.value = e.value;
+          osc.start(e.whole.begin);
+          const envelope = adsr(attack, decay, sustain, release, velocity, e.whole.begin, e.whole.end);
+          osc.stop(e.whole.end + release);
+          osc.connect(envelope);
+          envelope.connect(audioContext.destination);
+        }
+      });
+    },
+    interval,
+    lookahead,
+  );
 
   const adsr = (attack, decay, sustain, release, velocity, begin, end) => {
     const gainNode = audioContext.createGain();
@@ -121,8 +170,8 @@ Loading...</textarea
       const osc = audioContext.createOscillator();
       osc.type = type;
       osc.frequency.value = e.value; // expects frequency..
-      osc.start(e.whole.begin.valueOf());
-      osc.stop(e.whole.end.valueOf()); // release?
+      osc.start(e.whole.begin.valueOf() + lookahead);
+      osc.stop(e.whole.end.valueOf() + lookahead); // release?
       // osc.connect(audioContext.destination);
       return osc;
     });
@@ -131,7 +180,15 @@ Loading...</textarea
   strudel.Pattern.prototype.adsr = function (a = 0.01, d = 0.05, s = 1, r = 0.01) {
     return this.withAudioNode((e, node) => {
       const velocity = e.context?.velocity || 1;
-      const envelope = adsr(a, d, s, r, velocity, e.whole.begin.valueOf(), e.whole.end.valueOf());
+      const envelope = adsr(
+        a,
+        d,
+        s,
+        r,
+        velocity,
+        e.whole.begin.valueOf() + lookahead,
+        e.whole.end.valueOf() + lookahead,
+      );
       node?.connect(envelope);
       return envelope;
     });
@@ -158,33 +215,6 @@ Loading...</textarea
       node?.connect(master);
     });
   };
-
-  const audioContext = new AudioContext();
-  const metro = new Metro(audioContext, (begin, end) => {
-    pattern.query(new State(new TimeSpan(begin, end))).forEach((e) => {
-      if (!e.part.begin.equals(e.whole.begin)) {
-        return;
-      }
-      if (e.context.createAudioNode) {
-        e.context.createAudioNode(e);
-      } else {
-        // fallback sine wave
-        const attack = 0.01;
-        const decay = 0.05;
-        const sustain = 0.5;
-        const release = 0.01;
-        const velocity = (e.context?.velocity || 1) * 0.1;
-        const osc = audioContext.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.value = e.value;
-        osc.start(e.whole.begin);
-        const envelope = adsr(attack, decay, sustain, release, velocity, e.whole.begin, e.whole.end);
-        osc.stop(e.whole.end + release);
-        osc.connect(envelope);
-        envelope.connect(audioContext.destination);
-      }
-    });
-  });
 
   document.getElementById('start').addEventListener('click', () => metro.start());
   document.getElementById('stop').addEventListener('click', () => metro.stop());
