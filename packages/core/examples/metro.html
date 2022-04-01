@@ -13,7 +13,7 @@ Loading...</textarea
   document.body.style = 'margin: 0';
   import * as strudel from 'https://cdn.skypack.dev/@strudel.cycles/core@0.0.2';
   import 'https://cdn.skypack.dev/@strudel.cycles/core@0.0.2/euclid.mjs';
-  const { cat, State, TimeSpan, Fraction } = strudel;
+  const { cat, State, TimeSpan } = strudel;
   let pattern;
   Object.assign(window, strudel); // add strudel to eval scope
   const input = document.getElementById('text');
@@ -93,6 +93,7 @@ Loading...</textarea
         if (e.data === 'tick') {
           const sinceStart = this.audioContext.currentTime - this.startedAt; // seconds since pressing start
           const tick = Math.floor(sinceStart / this.interval); // tick number
+          
           const begin = round(tick * this.interval + this.startedAt, precision); // begin of tick
           const end = round(begin + this.interval, precision); // end of tick
           // callback with query span, using clock #2 (the audio clock)
@@ -111,8 +112,8 @@ Loading...</textarea
   }
 
   const audioContext = new AudioContext();
-  const interval = 0.1;
-  const lookahead = 0.1;
+  const interval = 0.2;
+  const lookahead = 0.2;
   const metro = new Metro(
     audioContext,
     (begin, end) => {
