@@ -1,10 +1,13 @@
+import ClockWorker from './clockworker.mjs';
+
 class Scheduler {
-  metro;
-  constructor(interval = 0.2, lookahead = 0.2) {
-    this.metro = new Metro(
+  worker;
+  pattern;
+  constructor(audioContext, interval = 0.2) {
+    this.worker = new ClockWorker(
       audioContext,
-      (begin, end, lookahead) => {
-        pattern.query(new State(new TimeSpan(begin - lookahead, end - lookahead))).forEach((e) => {
+      (begin, end) => {
+        this.pattern.query(new State(new TimeSpan(begin, end))).forEach((e) => {
           if (!e.part.begin.equals(e.whole.begin)) {
             return;
           }
@@ -16,13 +19,20 @@ class Scheduler {
         });
       },
       interval,
-      lookahead,
     );
   }
   start() {
-    this.metro.start();
+    if (!this.pattern) {
+      throw new Error('Scheduler: no pattern set! call .setPattern first.');
+    }
+    this.worker.start();
   }
   stop() {
-    this.metro.stop();
+    this.worker.stop();
+  }
+  setPattern(pat) {
+    this.pattern = pat;
   }
 }
+
+export default Scheduler;

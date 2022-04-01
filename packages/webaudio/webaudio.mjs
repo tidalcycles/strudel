@@ -1,7 +1,12 @@
 import { Pattern } from '@strudel.cycles/core';
 
 let audioContext;
-export const getAudioContext = () => audioContext || new AudioContext();
+export const getAudioContext = () => {
+  if (!audioContext) {
+    audioContext = new AudioContext();
+  }
+  return audioContext;
+};
 
 const lookahead = 0.2;
 
