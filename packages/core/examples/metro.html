@@ -47,13 +47,15 @@ Loading...</textarea
     URL.createObjectURL(new Blob([stringifyFunction(func)], { type: 'text/javascript' }));
   const createWorker = (func) => new Worker(urlifyFunction(func));
 
+  const interval = 0.1;
+  const lookahead = 0.5;
+
   // this class is basically the tale of two clocks
   class Metro {
     worker;
     audioContext;
-    startedAt = 0;
     interval = 0.2; // query span
-    tick = 0;
+    lastEnd = 0;
     constructor(audioContext, callback, interval = this.interval) {
       this.audioContext = audioContext;
       this.interval = interval;
@@ -92,9 +94,9 @@ Loading...</textarea
       const precision = 100;
       this.worker.onmessage = (e) => {
         if (e.data === 'tick') {
-          const begin = round(this.tick * this.interval, precision) + this.startedAt; // begin of tick
-          const end = round(begin + this.interval, precision); // end of tick
-          this.tick++;
+          const begin = this.lastEnd || this.audioContext.currentTime;
+          const end = this.audioContext.currentTime + this.interval; // DONT reference begin here!
+          this.lastEnd = end;
           // callback with query span, using clock #2 (the audio clock)
           callback(begin, end);
         }
@@ -103,8 +105,6 @@ Loading...</textarea
     start() {
       console.log('start...');
       this.audioContext.resume();
-      this.tick = 0;
-      this.startedAt = this.audioContext.currentTime;
       this.worker.postMessage('start');
     }
     stop() {
@@ -114,8 +114,6 @@ Loading...</textarea
   }
 
   const audioContext = new AudioContext();
-  const interval = 0.2;
-  const lookahead = 0.5;
   const metro = new Metro(
     audioContext,
     (begin, end) => {
