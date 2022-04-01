@@ -52,7 +52,6 @@ Loading...</textarea
     worker;
     audioContext;
     startedAt = 0;
-    lastEnd;
     interval = 0.2; // query span
     constructor(audioContext, callback, interval = this.interval) {
       this.audioContext = audioContext;
@@ -96,7 +95,6 @@ Loading...</textarea
           const tick = Math.floor(sinceStart / this.interval); // tick number
           const begin = round(tick * this.interval + this.startedAt, precision); // begin of tick
           const end = round(begin + this.interval, precision); // end of tick
-          this.lastEnd = end;
           // callback with query span, using clock #2 (the audio clock)
           callback(begin, end);
         }
@@ -104,7 +102,6 @@ Loading...</textarea
     }
     start() {
       this.audioContext.resume();
-      delete this.lastEnd;
       this.startedAt = this.audioContext.currentTime;
       this.worker.postMessage('start');
     }
