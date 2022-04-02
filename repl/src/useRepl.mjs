@@ -27,7 +27,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
   const cycle = useCycle({
     onDraw,
     onEvent: useCallback(
-      (time, event, startedAt) => {
+      (time, event, currentTime) => {
         try {
           onEvent?.(event);
           const { onTrigger, velocity } = event.context;
@@ -41,7 +41,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
             /* console.warn('no instrument chosen', event);
           throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
           } else {
-            onTrigger(time, event, startedAt);
+            onTrigger(time, event, currentTime);
           }
         } catch (err) {
           console.warn(err);
