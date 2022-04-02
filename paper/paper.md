@@ -206,6 +206,84 @@ adding source locations
 * microtonal features?
 webserial
 
+## User Code Transpilation
+
+(compare user input vs shifted output)
+
+### double quotes -> mini calls
+
+```javascript
+"c3 e3" // or `c3 e3`
+```
+
+```javascript
+mini("c3 e3")
+```
+
+### operator overloading
+
+```javascript
+cat(c3, e3) * 4
+```
+
+```javascript
+reify(cat("c3","e3")).fast(4)
+```
+
+(reify is redundant here, the shapeshifter could have an additional check...)
+
+(TBD: ability to multiply mini notation strings)
+
+### pseudo variables
+
+```javascript
+cat(c3, r, e3)
+```
+
+```javascript
+cat("c3",silence,"e3")
+```
+
+### locations
+
+```javascript
+cat(c3, e3)
+```
+
+```javascript
+cat(
+  reify("c3").withLocation([1,4,4],[1,6,6]),
+  reify("e3").withLocation([1,8,8],[1,10,10])
+)
+```
+
+```javascript
+mini("c3 e3")
+```
+
+with locations:
+
+```javascript
+// "c3 e3"
+mini("c3 e3").withMiniLocation([1,0,0],[1,7,7])
+```
+
+(talk about mini adding locations of mini notation parser)
+
+### top level await
+
+```javascript
+const p = (await piano()).toDestination()
+cat(c3).tone(p)
+```
+
+```javascript
+(async()=>{
+  const p = (await piano()).toDestination();
+  return cat("c3").tone(p);
+})()
+```
+
 # Musical examples
 
 ...
