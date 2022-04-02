@@ -1,0 +1,26 @@
+<input
+  type="text"
+  id="text"
+  value="cat('a', 'b')"
+  style="width: 100%; font-size: 2em; outline: none; margin-bottom: 10px"
+  spellcheck="false"
+/>
+<div id="output"></div>
+<script type="module">
+  const strudel = await import('https://cdn.skypack.dev/@strudel.cycles/core@0.0.2');
+  Object.assign(window, strudel); // assign all strudel functions to global scope to use with eval
+  const input = document.getElementById('text');
+  const getEvents = () => {
+    const code = document.getElementById('text').value;
+    const pattern = eval(code);
+    const events = pattern.firstCycle();
+    console.log(code, '->', events);
+    document.getElementById('output').innerHTML = events.map((e) => e.show()).join('<br/>');
+  };
+  getEvents();
+  input.addEventListener('input', () => getEvents());
+</script>
+<p>
+  This page shows how skypack can be used to import strudel core directly into a simple html page. <br />
+  No server, no bundler and no build setup is needed to run this!
+</p>

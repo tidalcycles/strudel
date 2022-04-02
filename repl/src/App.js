@@ -28,8 +28,10 @@ import '@strudel.cycles/xen/tune.mjs';
 import '@strudel.cycles/core/euclid.mjs';
 import '@strudel.cycles/tone/pianoroll.mjs';
 import '@strudel.cycles/tone/draw.mjs';
+import '@strudel.cycles/osc/osc.mjs';
+import controls from '@strudel.cycles/core/controls.mjs';
 
-extend(Tone, strudel, strudel.Pattern.prototype.bootstrap(), toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
+extend(Tone, strudel, strudel.Pattern.prototype.bootstrap(), controls, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
   gist,
   euclid,
   mini,
@@ -75,8 +77,10 @@ function App() {
       if (e.ctrlKey || e.altKey) {
         if (e.code === 'Enter') {
           await activateCode();
+          e.preventDefault();
         } else if (e.code === 'Period') {
           cycle.stop();
+          e.preventDefault();
         }
       }
     };
