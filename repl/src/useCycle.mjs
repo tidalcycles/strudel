@@ -10,6 +10,8 @@ import { State, TimeSpan } from '@strudel.cycles/core';
   ready?: boolean; // if false, query will not be called on change props
 } */
 
+export let startedAt;
+
 // function useCycle(props: UseCycleProps) {
 function useCycle(props) {
   // onX must use useCallback!
@@ -42,7 +44,7 @@ function useCycle(props) {
       ?.filter((event) => event.part.begin.equals(event.whole.begin))
       .forEach((event) => {
         Tone.getTransport().schedule((time) => {
-          onEvent(time, event);
+          onEvent(time, event, startedAt);
           Tone.Draw.schedule(() => {
             // do drawing or DOM manipulation here
             onDraw?.(time, event);
@@ -57,7 +59,10 @@ function useCycle(props) {
 
   const start = async () => {
     setStarted(true);
-    await Tone.start();
+    if (!startedAt) {
+      await Tone.start();
+      startedAt = Date.now() - Tone.getContext().currentTime * 1000;
+    }
     Tone.getTransport().start('+0.1');
   };
   const stop = () => {
