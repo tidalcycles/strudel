@@ -26,6 +26,166 @@ Reference vortex paper and summarise its background.
 # Tidal patterns
 
 * Some comparisons of -Strudel with -Vortex and -Cycles code?
+
+(the following examples are from vortex paper, with added js versions)
+
+## 1
+
+```haskell
+sound "bd ~ [sd cp]"
+```
+
+```python
+sound("bd", silence, ["sd", "cp"])
+```
+
+```javascript
+sound("bd ~ [sd cp]")
+```
+
+without mini notation:
+
+```haskell
+sound $ cat
+   [pure "bd", silence,
+    cat(pure "sd", pure "cp")]
+```
+
+```javascript
+sound('bd', silence, cat('sd', 'cp'))
+```
+
+## 2
+
+```haskell
+sound "bd ~ <sd cp>"
+```
+
+```python
+sound("bd", silence, slowcat("sd", "cp"))
+```
+
+```javascript
+sound("bd ~ <sd cp>")
+// sound('bd', silence, slowcat('sd', 'cp'))
+```
+
+## 3
+
+```haskell
+sound "bd {cp sd, lt mt ht}"
+```
+
+```python
+sound("bd", pm(["cp", "sd"], ["lt", "mt", "ht"]))
+```
+
+```js
+?
+```
+
+## 4
+
+```haskell
+sound "bd {cp sd, [lt mt,bd bd bd] ht}"
+```
+
+```python
+ sound("bd", pm(["cp", "sd"],
+ [pr(["lt", "mt"],
+ ["bd", "bd", "bd"]
+ ),
+ "ht" ]))
+```
+
+```js
+??
+```
+
+## 5
+
+```haskell
+sound "bd sd cp" # speed "1 2"
+```
+
+```python
+sound("bd", "sd", "cp") >> speed (1, 2)
+```
+
+```javascript
+sound("bd sd cp").speed("1 2")
+```
+
+(operator overloading like in vortex?)
+
+## 6
+
+```haskell
+rev $ sound "bd sd"
+```
+
+```python
+rev(sound("bd", "sd"))
+sound("bd", "sd").rev()
+```
+
+```javascript
+rev(sound("bd sd"))
+sound("bd sd").rev()
+```
+
+## 7
+
+```haskell
+jux rev $ every 3 (fast 2) $ sound "bd sd"
+```
+
+```python
+jux(rev, every(3, fast(2), sound("bd", "sd")))
+sound("bd","sd").every(3, fast(2)).jux(rev)
+```
+
+```js
+jux(rev, every(3, fast(2), sound("bd sd")))
+sound("bd sd").every(3, fast(2)).jux(rev)
+```
+
+(partial application)
+
+## 8
+
+```haskell
+n ("1 2 3" + "4 5") # sound "drum"
+```
+
+```python
+n (sequence(1,2,3) + sequence(4,5)) >> sound "drum"
+```
+
+```js
+n("1 2 3".add("4 5")).sound("drum")
+n("5 [6 7] 8").sound("drum")
+```
+
+(operator overloading?)
+
+## 9
+
+```haskell
+speed("1 2 3" + sine)
+```
+
+```python
+speed(sequence(1,2,3) + sine)
+```
+
+```js
+speed("1 2 3".add(sine))
+"c3*4".add(sine.mul(12).slow(8)).pianoroll()
+```
+
+## 10
+
 * Mininotation
 
 # Strudel/web specifics
@@ -46,7 +206,7 @@ adding source locations
 * microtonal features?
 webserial
 
-# Musical examples 
+# Musical examples
 
 ...
 
