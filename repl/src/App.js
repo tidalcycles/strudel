@@ -77,8 +77,10 @@ function App() {
       if (e.ctrlKey || e.altKey) {
         if (e.code === 'Enter') {
           await activateCode();
+          e.preventDefault();
         } else if (e.code === 'Period') {
           cycle.stop();
+          e.preventDefault();
         }
       }
     };
