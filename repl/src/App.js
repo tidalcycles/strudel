@@ -29,9 +29,9 @@ import '@strudel.cycles/core/euclid.mjs';
 import '@strudel.cycles/tone/pianoroll.mjs';
 import '@strudel.cycles/tone/draw.mjs';
 import '@strudel.cycles/osc/osc.mjs';
-import * as superdirt from '@strudel.cycles/osc/superdirt.mjs';
+import * as controls from '@strudel.cycles/core/controls.mjs';
 
-extend(Tone, strudel, superdirt, strudel.Pattern.prototype.bootstrap(), toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
+extend(Tone, strudel, strudel.Pattern.prototype.bootstrap(), controls, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
   gist,
   euclid,
   mini,
