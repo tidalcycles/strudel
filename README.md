@@ -25,7 +25,7 @@ npm run start
 To publish, just run:
 
 ```sh
-npx lerna version
+npx lerna publish
 ```
 
 This will publish all packages that changed since the last version.
