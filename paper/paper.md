@@ -6,24 +6,60 @@ url2cite: all-links
 
 # Introduction
 
-That @roberts2016 are excellent, I reference their work at least twice per sentence [@roberts2016, p. 3]. Another reference [@mclean21].
-
-```javascript
-"1 2 3"
-```
+This paper introduces Strudel, an alternative implementation of the TidalCycles live coding system, using the JavaScript programming language.
 
 # Background
 
 General motivations / related work.
 Reference vortex paper and summarise its background.
 
+The reimplementation of TidalCycles in Python (cite TidalVortex) showed that it is possible to translate pure functional reactive programming
+ideas to a multi paradigm language. It proved to be a stepping stone to move to other multi-paradigm languages, like JavaScript.
+A significant part of of the Python codebase could be ported to JavaScript by syntactical adjustments.
+
 # Introducing TidalStrudel
 
-(do we want to call it TidalStrudel once, and Strudel for short from then on as with vortex? Or just stick with Strudel? Should we start calling TidalCycles just Cycles??)
+(do we want to call it TidalStrudel once, and Strudel for short from then on as with vortex? Or just stick with Strudel? Should we start calling TidalCycles just Cycles??
+froos: I think TidalStrudel sounds a bit weird, but we can stick to the TidalX naming scheme if that's important.
+For me, StrudelCycles sounds better, because it has 3/4 phonems in common with TidalCycles)
 
 * Motivating musical example
 
 # Tidal patterns
+
+(should we explain shortly what tidal patterns do in general here?)
+
+The essence of TidalCycles are Patterns. Patterns are abstract entities that represent flows of time.
+Taking a time span as its input, a Pattern can output a set of events that happen within that time span.
+It depends on the structure of the Pattern where the events are placed.
+From now on, this process of generating events from a time span will be called **querying**.
+Example:
+
+```js
+const pattern = sequence(c3, [e3, g3]);
+const events = pattern.query(0, 1);
+console.log(events.map(e => e.show()))
+```
+
+In this example, we create a pattern using the `sequence` function and **query** it for the timespan from `0` to `1`.
+Those numbers represent units of time called **cycles**. The length of one cycle defaults to one second, but could be any number of seconds.
+The console output looks like this:
+
+```js
+(0   -> 1/2 c3)
+(1/2 -> 3/4 e3)
+(3/2 -> 1   g3)
+```
+
+In this output, each line represents one event. The two fractions represent the begin and end time of the event, followed by its value.
+In this case, the events are placed in sequential order, where c3 takes the first half, and e3 and g3 together take the second half.
+This temporal placement is the result of the `sequence` function, which divides its arguments equally over one cycle.
+If an argument is an array, the same rule applies to that part of the sequence. In our example e3 and g3 are divided equally over the second half of the whole sequence.
+
+# Mini Notation
+
+In this example, the Pattern is created using the `mini` function, which parses Tidal's Mini Notation.
+The Mini Notation is a Domain Specific Language (DSL) that allows expressing rhythms in a short mannger.
 
 * Some comparisons of -Strudel with -Vortex and -Cycles code?
 
@@ -293,6 +329,12 @@ cat(c3).tone(p)
 * WASM Sound Backend
 * OSC -> Supercollider
 * mininotation as the 'regex' of metre
+
+That @roberts2016 are excellent, I reference their work at least twice per sentence [@roberts2016, p. 3]. Another reference [@mclean21].
+
+```javascript
+"1 2 3"
+```
 
 # References
 
