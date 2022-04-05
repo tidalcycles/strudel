@@ -3,7 +3,7 @@ import CodeMirror, { markEvent, markParens } from './CodeMirror';
 import cx from './cx';
 import logo from './logo.svg';
 import playStatic from './static.mjs';
-import { defaultSynth } from '@strudel.cycles/tone';
+import { getDefaultSynth } from '@strudel.cycles/tone';
 import * as tunes from './tunes.mjs';
 import useRepl from './useRepl.mjs';
 import { useWebMidi } from './useWebMidi';
@@ -31,12 +31,22 @@ import '@strudel.cycles/tone/draw.mjs';
 import '@strudel.cycles/osc/osc.mjs';
 import controls from '@strudel.cycles/core/controls.mjs';
 
-extend(Tone, strudel, strudel.Pattern.prototype.bootstrap(), controls, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
-  gist,
-  euclid,
-  mini,
+extend(
   Tone,
-});
+  strudel,
+  strudel.Pattern.prototype.bootstrap(),
+  controls,
+  toneHelpers,
+  voicingHelpers,
+  drawHelpers,
+  uiHelpers,
+  {
+    gist,
+    euclid,
+    mini,
+    Tone,
+  },
+);
 // eval stuff end
 
 const codeParam = window.location.href.split('#')[1];
@@ -54,6 +64,7 @@ function getRandomTune() {
 }
 
 const randomTune = getRandomTune();
+const defaultSynth = getDefaultSynth();
 
 function App() {
   const [editor, setEditor] = useState();
