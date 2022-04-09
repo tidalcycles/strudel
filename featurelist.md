@@ -6,7 +6,7 @@
 - [ ] setcps
 - [ ] naming patterns? block based evaluation?
 - [ ] once
-- [ ] silence
+- [x] silence
 - [x] hush
 - [ ] panic
 
@@ -30,22 +30,23 @@ https://tidalcycles.org/docs/patternlib/tour/concatenation
 - [ ] overlay => like stack? "The overlay function is similar to cat" => wrong?
 - [ ] `<>` operator (=== overlay)
 - [x] stack
-- [x] superimpose => strudel supports multiple args => is this layer?
-- [ ] layer => is this like superimpose but with multiple args?
+- [x] superimpose
+- [x] layer
 - [ ] steps ?
-- [ ] iter, iter'
+- [x] iter
+- [x] iter' = iterBack
 
 ## Alteration
 
 - [ ] range, rangex
 - [ ] quantise
 - [ ] ply
-- [ ] stutter
+- [x] stutter = echo
 - [ ] stripe, slowstripe
 - [ ] palindrome = every(2, rev)
 - [ ] trunc
 - [ ] linger
-- [ ] chunk, chunk'
+- [x] chunk, chunk'
 - [ ] shuffle
 - [ ] scramble
 - [ ] rot
@@ -68,7 +69,8 @@ https://tidalcycles.org/docs/patternlib/tour/concatenation
 - [ ] select, selectF
 - [ ] pickF
 - [ ] squeeze
-- [ ] euclid, euclidInv, euclidFull
+- [x] euclid, euclidLegato
+- [ ] euclidInv, euclidFull
 - [ ] ifp
 
 ## Time
@@ -83,7 +85,8 @@ https://tidalcycles.org/docs/patternlib/tour/concatenation
 - [x] off
 - [ ] rotL / rotR
 - [x] rev
-- [ ] jux / juxBy
+- [x] jux
+- [ ] juxBy
 - [ ] swingBy / swing
 - [ ] ghost
 - [ ] inside / outside
@@ -114,7 +117,7 @@ https://tidalcycles.org/docs/patternlib/tour/concatenation
 - [ ] chop
 - [ ] striate / striateBy
 - [ ] loopAt
-- [ ] segment
+- [x] segment
 - [ ] discretise
 
 ## Randomness
