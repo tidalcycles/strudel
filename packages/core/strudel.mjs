@@ -980,7 +980,7 @@ function sequence(...xs) {
   return _sequenceCount(xs)[0];
 }
 
-function polymeter(steps = 0, ...args) {
+function polymeterSteps(steps, ...args) {
   const seqs = args.map((a) => _sequenceCount(a));
   if (seqs.length == 0) {
     return silence;
@@ -996,15 +996,20 @@ function polymeter(steps = 0, ...args) {
     if (steps == seq[1]) {
       pats.push(seq[0]);
     } else {
+      console.log("aha");
       pats.push(seq[0]._fast(Fraction(steps).div(Fraction(seq[1]))));
     }
   }
-  return stack(pats);
+  return stack(...pats);
+}
+
+function polymeter(...args) {
+  return polymeterSteps(0, ...args);
 }
 
 // alias
-function pm(args) {
-  polymeter(args);
+function pm(...args) {
+  polymeter(...args);
 }
 
 function polyrhythm(...xs) {
@@ -1169,6 +1174,7 @@ export {
   cat,
   timeCat,
   sequence,
+  polymeterSteps,
   polymeter,
   pm,
   polyrhythm,
