@@ -1,6 +1,5 @@
 import Fraction from './fraction.mjs';
-import { compose } from 'ramda'; // will remove this as soon as compose is implemented here
-import { isNote, toMidi } from './util.mjs';
+import { isNote, toMidi, compose } from './util.mjs';
 
 // Removes 'None' values from given list
 const removeUndefineds = (xs) => xs.filter((x) => x != undefined);

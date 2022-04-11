@@ -42,3 +42,14 @@ export const getPlayableNoteValue = (event) => {
 
 // rotate array by n steps (to the left)
 export const rotate = (arr, n) => arr.slice(n).concat(arr.slice(0, n));
+
+export const pipe = (...funcs) => {
+  return funcs.reduce(
+    (f, g) =>
+      (...args) =>
+        f(g(...args)),
+    (x) => x,
+  );
+};
+
+export const compose = (...funcs) => pipe(...funcs.reverse());
