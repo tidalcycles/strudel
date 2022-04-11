@@ -340,3 +340,11 @@ That @roberts2016 are excellent, I reference their work at least twice per sente
 
 [@roberts2016]: https://www.tandfonline.com/doi/abs/10.1080/14794713.2016.1227602?journalCode=rpdm20
 [@mclean21]: https://zenodo.org/record/5788732
+[@tidal.pegjs](https://www.ntnu.edu/documents/1282113268/1290797448/WAC2019-CameraReadySubmission-49.pdf/eadc2fee-7584-373e-31e6-79828b0b196a?t=1575329719278)
+
+- C. Roberts, M. Pachon-Puentes. "Bringing the tidalcycles mini-notation to the browser" in Proceedings of the Web Audio Conference, 2019.
+- D. Ogborn, J. Beverley, L. Navarro del Angel, E. Tsabary, et A. McLean, "Estuary: Browser-based Collaborative Projectional Live Coding of Musical Patterns", in Proceedings of the International Conference on Live Coding (ICLC), 2017.
+
+- gibber
+- krill
+- glicol
