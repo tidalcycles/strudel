@@ -13,6 +13,8 @@ import {
   slowcat,
   cat,
   sequence,
+  polymeter,
+  polymeterSteps,
   polyrhythm,
   silence,
   fast,
@@ -280,6 +282,21 @@ describe('Pattern', function() {
       )
     })
   })
+  describe('polymeter()', () => {
+    it('Can layer up cycles, stepwise', () => {
+      assert.deepStrictEqual(
+        polymeterSteps(3, ["d","e"]).firstCycle(),
+        fastcat(pure("d"),pure("e"),pure("d")).firstCycle()
+      )
+      assert.deepStrictEqual(
+        polymeter(["a","b","c"],["d","e"]).fast(2).firstCycle(),
+        stack(sequence("a","b","c","a","b","c"),
+              sequence("d","e","d","e","d","e")
+        ).firstCycle()
+      )
+    })
+  })
+
   describe('every()', () => {
     it('Can apply a function every 3rd time', () => {
       assert.deepStrictEqual(
