@@ -616,18 +616,6 @@ class Pattern {
     return new Pattern(query);
   }
 
-  // squeezeJoin :: Pattern (Pattern a) -> Pattern a
-  // squeezeJoin pp = pp {query = q}
-  //   where q st = concatMap
-  //           (\e@(Event c w p v) ->
-  //              mapMaybe (munge c w p) $ query (compressArc (cycleArc $ wholeOrPart e) v) st {arc = p}
-  //           )
-  //           (query pp st)
-  //         munge oContext oWhole oPart (Event iContext iWhole iPart v) =
-  //           do w' <- subMaybeArc oWhole iWhole
-  //              p' <- subArc oPart iPart
-  //              return (Event (combineContexts [iContext, oContext]) w' p' v)
-
   _apply(func) {
     return func(this);
   }
@@ -687,6 +675,10 @@ class Pattern {
 
   _slow(factor) {
     return this._fast(Fraction(1).div(factor));
+  }
+
+  _ply(factor) {
+    return this.fmap(x => pure(x)._fast(factor)).squeezeJoin()
   }
 
   // cpm = cycles per minute
@@ -885,6 +877,7 @@ Pattern.prototype.patternified = [
   'apply',
   'fast',
   'slow',
+  'ply',
   'cpm',
   'early',
   'late',
@@ -892,7 +885,7 @@ Pattern.prototype.patternified = [
   'legato',
   'velocity',
   'segment',
-  'color',
+  'color'
 ];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr };
@@ -1105,6 +1098,7 @@ const iter = curry((a, pat) => pat.iter(a));
 const iterBack = curry((a, pat) => pat.iter(a));
 const chunk = curry((a, pat) => pat.chunk(a));
 const chunkBack = curry((a, pat) => pat.chunkBack(a));
+const ply = curry((a, pat) => pat.ply(a));
 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
@@ -1262,4 +1256,5 @@ export {
   iterBack,
   chunk,
   chunkBack,
+  ply,
 };

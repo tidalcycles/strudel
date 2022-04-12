@@ -34,6 +34,7 @@ import {
   tri,
   tri2,
   id,
+  ply,
 } from '../strudel.mjs';
 //import { Time } from 'tone';
 import pkg from 'tone';
@@ -495,6 +496,14 @@ describe('Pattern', function() {
       assert.deepStrictEqual(
         sequence("a", ["a","a"]).fmap(a => fastcat("b", "c")).squeezeJoin().firstCycle(),
         sequence(["b", "c"],[["b", "c"],["b", "c"]]).firstCycle()
+      )
+    })
+  })
+  describe("ply", () => {
+    it("Can ply(3)", () => {
+      assert.deepStrictEqual(
+        sequence("a", ["b","c"]).ply(3).firstCycle(),
+        sequence(pure("a").fast(3), [pure("b").fast(3), pure("c").fast(3)]).firstCycle()
       )
     })
   })
