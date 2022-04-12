@@ -1,4 +1,4 @@
-const OSC = require('./osc-js/osc.js');
+const OSC = require('osc-js');
 
 const config = {
   receiver: 'ws', // @param {string} Where messages sent via 'send' method will be delivered to, 'ws' for Websocket clients, 'udp' for udp client
