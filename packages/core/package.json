@@ -26,8 +26,7 @@
   "homepage": "https://strudel.tidalcycles.org",
   "dependencies": {
     "bjork": "^0.0.1",
-    "fraction.js": "^4.2.0",
-    "ramda": "^0.28.0"
+    "fraction.js": "^4.2.0"
   },
   "devDependencies": {
     "mocha": "^9.2.2"

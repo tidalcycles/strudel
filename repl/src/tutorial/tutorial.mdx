@@ -331,13 +331,13 @@ Will reverse the pattern:
 
 Will apply the given function every n cycles:
 
-<MiniRepl tune={`cat(e5, pure(b4).every(4, late(0.5)))`} />
+<MiniRepl tune={`cat(e5, "b4".every(4, late(0.5)))`} />
 
 <!-- TODO: should be able to do b4.every => like already possible with fast slow etc.. -->
 
 Note that late is called directly. This is a shortcut for:
 
-<MiniRepl tune={`cat(e5, pure(b4).every(4, x => x.late(0.5)))`} />
+<MiniRepl tune={`cat(e5, "b4".every(4, x => x.late(0.5)))`} />
 
 <!-- TODO: should the function really run the first cycle? -->
 
@@ -640,7 +640,7 @@ Patternified autofilter:
 
 <MiniRepl
   tune={`"c2 c3"
-  .synth('sawtooth16').autofilter("<1 4 8>"")`}
+  .synth('sawtooth16').autofilter("<1 4 8>")`}
 />
 
 ## Tonal API
