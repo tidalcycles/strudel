@@ -104,6 +104,53 @@
 				"title": "Alternate Timelines for TidalCycles",
 				"type": ""
 			}
+		},
+		"https://www.semanticscholar.org/paper/Bringing-the-TidalCycles-Mini-Notation-to-the-Roberts/74965efadd572ae3f40d14c633a5c8581c1b9f42": {
+			"fetched": "2022-04-12T22:47:17.063Z",
+			"bibtex": [
+				"",
+				"@misc{roberts_bringing_2019,",
+				"   title = {Bringing the {TidalCycles} {Mini}-{Notation} to the {Browser}},",
+				"   url = {https://www.semanticscholar.org/paper/Bringing-the-TidalCycles-Mini-Notation-to-the-Roberts/74965efadd572ae3f40d14c633a5c8581c1b9f42},",
+				"   abstract = {A JavaScript dialect of its mini-notation for pattern is created, enabling easy integration with creative coding tools and an accompanying technique for visually annotating the playback of TidalCycles patterns over time. TidalCycles has rapidly become the most popular system for many styles of live coding performance, in particular Algoraves. We created a JavaScript dialect of its mini-notation for pattern, enabling easy integration with creative coding tools. Our research pairs a formalism describing the mini-notation with a small JavaScript library for generating events over time; this library is suitable for generating events inside of an AudioWorkletProcessor thread and for assisting with scheduling in JavaScript environments more generally. We describe integrating the library into the two live coding systems, Gibber and Hydra, and discuss an accompanying technique for visually annotating the playback of TidalCycles patterns over time.},",
+				"   language = {en},",
+				"   urldate = {2022-04-12},",
+				"   journal = {www.semanticscholar.org},",
+				"   author = {Roberts, Charles},",
+				"   year = {2019},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://www.semanticscholar.org/paper/Bringing-the-TidalCycles-Mini-Notation-to-the-Roberts/74965efadd572ae3f40d14c633a5c8581c1b9f42",
+				"abstract": "A JavaScript dialect of its mini-notation for pattern is created, enabling easy integration with creative coding tools and an accompanying technique for visually annotating the playback of TidalCycles patterns over time. TidalCycles has rapidly become the most popular system for many styles of live coding performance, in particular Algoraves. We created a JavaScript dialect of its mini-notation for pattern, enabling easy integration with creative coding tools. Our research pairs a formalism describing the mini-notation with a small JavaScript library for generating events over time; this library is suitable for generating events inside of an AudioWorkletProcessor thread and for assisting with scheduling in JavaScript environments more generally. We describe integrating the library into the two live coding systems, Gibber and Hydra, and discuss an accompanying technique for visually annotating the playback of TidalCycles patterns over time.",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							12
+						]
+					]
+				},
+				"author": [
+					{
+						"family": "Roberts",
+						"given": "Charles"
+					}
+				],
+				"container-title": "www.semanticscholar.org",
+				"id": "https://www.semanticscholar.org/paper/Bringing-the-TidalCycles-Mini-Notation-to-the-Roberts/74965efadd572ae3f40d14c633a5c8581c1b9f42",
+				"issued": {
+					"date-parts": [
+						[
+							2019
+						]
+					]
+				},
+				"title": "Bringing the TidalCycles Mini-Notation to the Browser",
+				"type": ""
+			}
 		}
 	}
 }
