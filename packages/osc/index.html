@@ -1,0 +1,22 @@
+<button id="send" style="font-size: 2em">Thank you @ojack</button>
+<script type="text/javascript" src="./node_modules/osc-js/lib/osc.min.js"></script>
+<script type="text/javascript">
+  const comm = new OSC();
+  comm.open(); // connect by default to ws://localhost:8080
+  document.getElementById('send').addEventListener('click', function () {
+    // this will send a message via websocket to the node server
+
+    // the great question: how do i know which time super collider is at????????
+    const message = new OSC.Message(
+      '/dirt/play',
+      ...['_id_', '1', 'cps', 0.5625, 'cycle', 412.3333435058594, 'delta', 0.592592716217041, 'orbit', 0, 's', 'hh'],
+    );
+
+    comm.send(message);
+    console.log('sent:', message.address, message.args);
+  });
+  /* 
+  comm.on('*', (m) => {
+    console.log('received:', m.address, m.args);
+  }); */
+</script>
