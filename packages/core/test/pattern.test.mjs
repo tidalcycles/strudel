@@ -507,4 +507,16 @@ describe('Pattern', function() {
       )
     })
   })
+  describe("chop", () => {
+    it("Can chop(2)", () => {
+      assert.deepStrictEqual(
+        sequence({sound: "a"}, {sound: "b"})._chop(2).firstCycle(),
+        sequence({sound: "a", begin: 0, end: 0.5},
+                 {sound: "a", begin: 0.5, end: 1},
+                 {sound: "b", begin: 0, end: 0.5},
+                 {sound: "b", begin: 0.5, end: 1}
+        ).firstCycle()
+      );
+    });
+  })
 })

@@ -617,7 +617,7 @@ class Pattern {
   }
 
   _squeezeBind(func) {
-    return this.fmap(func).squeezeBind();
+    return this.fmap(func)._squeezeJoin();
   }
 
   _apply(func) {
@@ -683,6 +683,15 @@ class Pattern {
 
   _ply(factor) {
     return this.fmap((x) => pure(x)._fast(factor))._squeezeJoin();
+  }
+
+  _chop(n) {
+    const slices = Array.from({length: n}, (x, i) => i);
+    const slice_objects = slices.map(i => ({begin: i/n, end: (i+1)/n}));
+    const func = function(o) {
+      return(sequence(slice_objects.map(slice_o => Object.assign({}, o, slice_o))))
+    }
+    return(this._squeezeBind(func));
   }
 
   // cpm = cycles per minute
