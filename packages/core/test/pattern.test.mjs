@@ -33,6 +33,7 @@ import {
   square2,
   tri,
   tri2,
+  id,
 } from '../strudel.mjs';
 //import { Time } from 'tone';
 import pkg from 'tone';
@@ -486,6 +487,14 @@ describe('Pattern', function() {
       assert.deepStrictEqual(
         pure({a: 1}).jux(fast(2))._sortEventsByPart().firstCycle(),
         stack(pure({a:1, pan: 0}), pure({a:1, pan: 1}).fast(2))._sortEventsByPart().firstCycle()
+      )
+    })
+  })
+  describe("squeezeJoin", () => {
+    it("Can squeeze", () => {
+      assert.deepStrictEqual(
+        sequence("a", ["a","a"]).fmap(a => fastcat("b", "c")).squeezeJoin().firstCycle(),
+        sequence(["b", "c"],[["b", "c"],["b", "c"]]).firstCycle()
       )
     })
   })

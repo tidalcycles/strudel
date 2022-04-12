@@ -588,7 +588,7 @@ class Pattern {
     function query(state) {
       const haps = pat_of_pats.query(state);
       function flatHap(outerHap) {
-        const pat = outerHap.value.compressArc(outerHap.wholeOrPart().cycleArc());
+        const pat = outerHap.value._compressSpan(outerHap.wholeOrPart().cycleArc());
         const innerHaps = pat.query(state.setSpan(outerHap.part));
         function munge(outer, inner) {
           let whole = undefined;
@@ -599,19 +599,21 @@ class Pattern {
               return undefined;
             }
           }
-          const part = inner.part.intersection(outer_part);
+          const part = inner.part.intersection(outer.part);
           if (!part) {
             // The parts don't intersect
             return undefined;
           }
-          const context = inner.combineContext(outer.context);
+          const context = inner.combineContext(outer);
           return new Hap(whole, part, inner.value, context);
         }
-        innerHaps.map(innerHap => munge(outerHap,innerHap))
+        return innerHaps.map(innerHap => munge(outerHap, innerHap))
       }
-      const flattened = haps.map((x) => x.withEvent(flatHap));
-      return flattened.filter(x => x);
+      const result = flatten(haps.map(flatHap));
+      // remove undefineds
+      return result.filter(x => x);
     }
+    return new Pattern(query);
   }
 
   // squeezeJoin :: Pattern (Pattern a) -> Pattern a
