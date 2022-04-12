@@ -236,6 +236,10 @@ class Pattern {
     this.query = query;
   }
 
+  queryArc(begin, end) {
+    return this.query(new State(new TimeSpan(begin, end)));
+  }
+
   _splitQueries() {
     // Splits queries at cycle boundaries. This makes some calculations
     // easier to express, as all events are then constrained to happen within
@@ -686,12 +690,12 @@ class Pattern {
   }
 
   _chop(n) {
-    const slices = Array.from({length: n}, (x, i) => i);
-    const slice_objects = slices.map(i => ({begin: i/n, end: (i+1)/n}));
-    const func = function(o) {
-      return(sequence(slice_objects.map(slice_o => Object.assign({}, o, slice_o))))
-    }
-    return(this._squeezeBind(func));
+    const slices = Array.from({ length: n }, (x, i) => i);
+    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+    const func = function (o) {
+      return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
+    };
+    return this._squeezeBind(func);
   }
 
   // cpm = cycles per minute
