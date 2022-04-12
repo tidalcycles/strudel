@@ -563,24 +563,24 @@ class Pattern {
     return this.bind(id);
   }
 
-  innerBind(func) {
-    return this._bindWhole((a, _) => a, func);
-  }
-
-  innerJoin() {
-    // Flattens a pattern of patterns into a pattern, where wholes are
-    // taken from inner events.
-    return this.innerBind(id);
-  }
-
   outerBind(func) {
-    return this._bindWhole((_, b) => b, func);
+    return this._bindWhole((a, _) => a, func);
   }
 
   outerJoin() {
     // Flattens a pattern of patterns into a pattern, where wholes are
     // taken from inner events.
     return this.outerBind(id);
+  }
+
+  innerBind(func) {
+    return this._bindWhole((_, b) => b, func);
+  }
+
+  innerJoin() {
+    // Flattens a pattern of patterns into a pattern, where wholes are
+    // taken from inner events.
+    return this.innerBind(id);
   }
 
   squeezeJoin() {
@@ -633,7 +633,7 @@ class Pattern {
       args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
       const pat_arg = sequence(...args);
       // arg.locations has to go somewhere..
-      return pat_arg.fmap((arg) => func.call(pat, arg)).outerJoin();
+      return pat_arg.fmap((arg) => func.call(pat, arg)).innerJoin();
     };
     return patterned;
   }
@@ -1126,20 +1126,20 @@ const patternify2 = (f) => (pata, patb, pat) =>
   pata
     .fmap((a) => (b) => f.call(pat, a, b))
     .appLeft(patb)
-    .outerJoin();
+    .innerJoin();
 const patternify3 = (f) => (pata, patb, patc, pat) =>
   pata
     .fmap((a) => (b) => (c) => f.call(pat, a, b, c))
     .appLeft(patb)
     .appLeft(patc)
-    .outerJoin();
+    .innerJoin();
 const patternify4 = (f) => (pata, patb, patc, patd, pat) =>
   pata
     .fmap((a) => (b) => (c) => (d) => f.call(pat, a, b, c, d))
     .appLeft(patb)
     .appLeft(patc)
     .appLeft(patd)
-    .outerJoin();
+    .innerJoin();
 
 Pattern.prototype.echo = function (...args) {
   args = args.map(reify);
