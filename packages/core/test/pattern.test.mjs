@@ -508,7 +508,7 @@ describe('Pattern', function() {
     })
   })
   describe("chop", () => {
-    it("Can chop(2)", () => {
+    it("Can _chop(2)", () => {
       assert.deepStrictEqual(
         sequence({sound: "a"}, {sound: "b"})._chop(2).firstCycle(),
         sequence({sound: "a", begin: 0, end: 0.5},
@@ -518,5 +518,16 @@ describe('Pattern', function() {
         ).firstCycle()
       );
     });
+    it("Can chop(2,3)", () => {
+      assert.deepStrictEqual(
+        pure({sound: "a"}).fast(2).chop(2,3)._sortEventsByPart().firstCycle(),
+        sequence([{sound: "a", begin: 0, end: 0.5},
+                  {sound: "a", begin: 0.5, end: 1}],
+                 [{sound: "a", begin: 0, end: 1/3},
+                  {sound: "a", begin: 1/3, end: 2/3},
+                  {sound: "a", begin: 2/3, end: 1}
+                 ])._sortEventsByPart().firstCycle()
+      )
+    })
   })
 })

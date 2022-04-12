@@ -891,6 +891,7 @@ Pattern.prototype.patternified = [
   'fast',
   'slow',
   'ply',
+  'chop',
   'cpm',
   'early',
   'late',
