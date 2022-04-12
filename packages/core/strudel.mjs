@@ -59,6 +59,15 @@ class TimeSpan {
     return spans;
   }
 
+  cycleArc() {
+    // Shifts a timespan to one of equal duration that starts within cycle zero.
+    // (Note that the output timespan probably does not start *at* Time 0 --
+    // that only happens when the input Arc starts at an integral Time.)
+    const b = this.begin.cyclePos();
+    const e = b + (this.end - this.begin);
+    return new TimeSpan(b, e);
+  }
+
   withTime(func_time) {
     // Applies given function to both the begin and end time value of the timespan"""
     return new TimeSpan(func_time(this.begin), func_time(this.end));
@@ -140,6 +149,10 @@ class Hap {
     return this.whole.end.sub(this.whole.begin).valueOf();
   }
 
+  wholeOrPart() {
+    return this.whole ? this.whole : this.part;
+  }
+
   withSpan(func) {
     // Returns a new event with the function f applies to the event timespan.
     const whole = this.whole ? func(this.whole) : undefined;
@@ -184,6 +197,11 @@ class Hap {
     return (
       '(' + (this.whole == undefined ? '~' : this.whole.show()) + ', ' + this.part.show() + ', ' + this.value + ')'
     );
+  }
+
+  combineContext(b) {
+    const a = this;
+    return { ...a.context, ...b.context, locations: (a.context.locations || []).concat(b.context.locations || []) };
   }
 
   setContext(context) {
@@ -351,12 +369,11 @@ class Pattern {
         if (s == undefined) {
           return undefined;
         }
-        // TODO: is it right to add event_val.context here?
         return new Hap(
           whole_func(event_func.whole, event_val.whole),
           s,
           event_func.value(event_val.value),
-          event_val.context,
+          event_val.combineContext(event_func),
         );
       };
       return flatten(
@@ -388,11 +405,8 @@ class Pattern {
           const new_whole = hap_func.whole;
           const new_part = hap_func.part.intersection_e(hap_val.part);
           const new_value = hap_func.value(hap_val.value);
-          const hap = new Hap(new_whole, new_part, new_value, {
-            ...hap_val.context,
-            ...hap_func.context,
-            locations: (hap_val.context.locations || []).concat(hap_func.context.locations || []),
-          });
+          const new_context = hap_val.combineContext(hap_func);
+          const hap = new Hap(new_whole, new_part, new_value, new_context);
           haps.push(hap);
         }
       }
@@ -412,11 +426,8 @@ class Pattern {
           const new_whole = hap_val.whole;
           const new_part = hap_func.part.intersection_e(hap_val.part);
           const new_value = hap_func.value(hap_val.value);
-          const hap = new Hap(new_whole, new_part, new_value, {
-            ...hap_func.context,
-            ...hap_val.context,
-            locations: (hap_val.context.locations || []).concat(hap_func.context.locations || []),
-          });
+          const new_context = hap_val.combineContext(hap_func);
+          const hap = new Hap(new_whole, new_part, new_value, new_context);
           haps.push(hap);
         }
       }
@@ -571,6 +582,49 @@ class Pattern {
     // taken from inner events.
     return this.outerBind(id);
   }
+
+  squeezeJoin() {
+    const pat_of_pats = this;
+    function query(state) {
+      const haps = pat_of_pats.query(state);
+      function flatHap(outerHap) {
+        const pat = outerHap.value.compressArc(outerHap.wholeOrPart().cycleArc());
+        const innerHaps = pat.query(state.setSpan(outerHap.part));
+        function munge(outer, inner) {
+          let whole = undefined;
+          if (inner.whole && outer.whole) {
+            whole = inner.whole.intersection(outer.whole);
+            if (!whole) {
+              // The wholes are present, but don't intersect
+              return undefined;
+            }
+          }
+          const part = inner.part.intersection(outer_part);
+          if (!part) {
+            // The parts don't intersect
+            return undefined;
+          }
+          const context = inner.combineContext(outer.context);
+          return new Hap(whole, part, inner.value, context);
+        }
+        innerHaps.map(innerHap => munge(outerHap,innerHap))
+      }
+      const flattened = haps.map((x) => x.withEvent(flatHap));
+      return flattened.filter(x => x);
+    }
+  }
+
+  // squeezeJoin :: Pattern (Pattern a) -> Pattern a
+  // squeezeJoin pp = pp {query = q}
+  //   where q st = concatMap
+  //           (\e@(Event c w p v) ->
+  //              mapMaybe (munge c w p) $ query (compressArc (cycleArc $ wholeOrPart e) v) st {arc = p}
+  //           )
+  //           (query pp st)
+  //         munge oContext oWhole oPart (Event iContext iWhole iPart v) =
+  //           do w' <- subMaybeArc oWhole iWhole
+  //              p' <- subArc oPart iPart
+  //              return (Event (combineContexts [iContext, oContext]) w' p' v)
 
   _apply(func) {
     return func(this);
@@ -995,7 +1049,6 @@ function polymeterSteps(steps, ...args) {
     if (steps == seq[1]) {
       pats.push(seq[0]);
     } else {
-      console.log("aha");
       pats.push(seq[0]._fast(Fraction(steps).div(Fraction(seq[1]))));
     }
   }
