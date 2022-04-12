@@ -8,7 +8,7 @@ const flatten = (arr) => [].concat(...arr);
 
 const id = (a) => a;
 
-const range = (min, max) => Array.from({ length: max - min + 1 }, (_, i) => i + min);
+const listRange = (min, max) => Array.from({ length: max - min + 1 }, (_, i) => i + min);
 
 export function curry(func, overload) {
   const fn = function curried(...args) {
@@ -822,7 +822,7 @@ class Pattern {
   }
 
   stutWith(times, time, func) {
-    return stack(...range(0, times - 1).map((i) => func(this.late(i * time), i)));
+    return stack(...listRange(0, times - 1).map((i) => func(this.late(i * time), i)));
   }
 
   stut(times, feedback, time) {
@@ -831,7 +831,7 @@ class Pattern {
 
   // these might change with: https://github.com/tidalcycles/Tidal/issues/902
   _echoWith(times, time, func) {
-    return stack(...range(0, times - 1).map((i) => func(this.late(i * time), i)));
+    return stack(...listRange(0, times - 1).map((i) => func(this.late(i * time), i)));
   }
 
   _echo(times, time, feedback) {
@@ -839,7 +839,7 @@ class Pattern {
   }
 
   iter(times, back = false) {
-    return slowcat(...range(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
+    return slowcat(...listRange(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
   }
 
   // known as iter' in tidalcycles
@@ -1271,7 +1271,6 @@ export {
   invert,
   inv,
   id,
-  range,
   echo,
   iter,
   iterBack,
