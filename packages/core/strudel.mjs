@@ -520,6 +520,11 @@ class Pattern {
     return this._asNumber().fmap((v) => Math.ceil(v));
   }
 
+  // Assumes source pattern of numbers in range 0..1
+  range(min, max) {
+    return this.mul(max-min).add(min);
+  }
+
   union(other) {
     return this._opleft(other, (a) => (b) => Object.assign({}, a, b));
   }
@@ -1102,6 +1107,7 @@ const sub = curry((a, pat) => pat.sub(a));
 const mul = curry((a, pat) => pat.mul(a));
 const div = curry((a, pat) => pat.div(a));
 const union = curry((a, pat) => pat.union(a));
+const range = curry((a, b, pat) => pat.range(a,b));
 const every = curry((i, f, pat) => pat.every(i, f));
 const when = curry((binary, f, pat) => pat.when(binary, f));
 const off = curry((t, f, pat) => pat.off(t, f));
@@ -1259,6 +1265,7 @@ export {
   mul,
   div,
   union,
+  range,
   every,
   when,
   off,
