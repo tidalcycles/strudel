@@ -525,6 +525,11 @@ class Pattern {
     return this.mul(max-min).add(min);
   }
 
+  // Assumes source pattern of numbers in range -1..1
+  range2(min, max) {
+    return _fromBipolar(this).range(min,max);
+  }
+  
   union(other) {
     return this._opleft(other, (a) => (b) => Object.assign({}, a, b));
   }
@@ -1108,6 +1113,7 @@ const mul = curry((a, pat) => pat.mul(a));
 const div = curry((a, pat) => pat.div(a));
 const union = curry((a, pat) => pat.union(a));
 const range = curry((a, b, pat) => pat.range(a,b));
+const range2 = curry((a, b, pat) => pat.range2(a,b));
 const every = curry((i, f, pat) => pat.every(i, f));
 const when = curry((binary, f, pat) => pat.when(binary, f));
 const off = curry((t, f, pat) => pat.off(t, f));
@@ -1266,6 +1272,7 @@ export {
   div,
   union,
   range,
+  range2,
   every,
   when,
   off,

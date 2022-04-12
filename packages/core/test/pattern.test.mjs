@@ -538,10 +538,10 @@ describe('Pattern', function() {
       )
     })
   })
-  describe("range", () => {
-    it("Can change the range of a unipolar pattern", () => {
+  describe("range2", () => {
+    it("Can change the range of a bipolar pattern", () => {
       assert.deepStrictEqual(
-        sequence(0,0.25,0.5,0.75).range(1000,1100).firstCycle(),
+        sequence(-1,-0.5,0,0.5).range2(1000,1100).firstCycle(),
         sequence(1000,1025,1050,1075).firstCycle()
       )
     })
