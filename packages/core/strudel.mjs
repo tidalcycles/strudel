@@ -583,7 +583,7 @@ class Pattern {
     return this.innerBind(id);
   }
 
-  squeezeJoin() {
+  _squeezeJoin() {
     const pat_of_pats = this;
     function query(state) {
       const haps = pat_of_pats.query(state);
@@ -614,6 +614,10 @@ class Pattern {
       return result.filter(x => x);
     }
     return new Pattern(query);
+  }
+
+  _squeezeBind(func) {
+    return this.fmap(func).squeezeBind();
   }
 
   _apply(func) {
@@ -678,7 +682,7 @@ class Pattern {
   }
 
   _ply(factor) {
-    return this.fmap(x => pure(x)._fast(factor)).squeezeJoin()
+    return this.fmap(x => pure(x)._fast(factor))._squeezeJoin()
   }
 
   // cpm = cycles per minute

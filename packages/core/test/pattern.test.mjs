@@ -491,10 +491,10 @@ describe('Pattern', function() {
       )
     })
   })
-  describe("squeezeJoin", () => {
+  describe("_squeezeJoin", () => {
     it("Can squeeze", () => {
       assert.deepStrictEqual(
-        sequence("a", ["a","a"]).fmap(a => fastcat("b", "c")).squeezeJoin().firstCycle(),
+        sequence("a", ["a","a"]).fmap(a => fastcat("b", "c"))._squeezeJoin().firstCycle(),
         sequence(["b", "c"],[["b", "c"],["b", "c"]]).firstCycle()
       )
     })
