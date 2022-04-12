@@ -6,7 +6,9 @@
   "main": "strudel.mjs",
   "scripts": {
     "test": "npm run test --workspaces --if-present",
-    "bootstrap": "lerna bootstrap"
+    "bootstrap": "lerna bootstrap",
+    "repl": "cd repl && npm run start",
+    "osc": "cd packages/osc && npm run server"
   },
   "workspaces": [
     "packages/*"
