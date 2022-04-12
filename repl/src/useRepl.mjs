@@ -23,6 +23,13 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
   const dirty = useMemo(() => code !== activeCode || error, [code, activeCode, error]);
   const pushLog = useCallback((message) => setLog((log) => log + `${log ? '\n\n' : ''}${message}`), []);
 
+  // below block allows disabling the highlighting by including "strudel disable-highlighting" in the code (as comment)
+  onDraw = useMemo(() => {
+    if (activeCode && !activeCode.includes('strudel disable-highlighting')) {
+      return onDraw;
+    }
+  }, [activeCode, onDraw]);
+  
   // cycle hook to control scheduling
   const cycle = useCycle({
     onDraw,
@@ -110,13 +117,6 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
       // pushLog(`# cycle ${cycle}\n` + _events.map((e: any) => e.show()).join('\n'));
     }
   };
-
-  // below block allows disabling the highlighting by including "strudel disable-highlighting" in the code (as comment)
-  onDraw = useMemo(() => {
-    if (activeCode && !activeCode.includes('strudel disable-highlighting')) {
-      return onDraw;
-    }
-  }, [activeCode, onDraw]);
 
   const togglePlay = () => {
     if (!cycle.started) {
