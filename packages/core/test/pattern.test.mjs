@@ -491,6 +491,14 @@ describe('Pattern', function() {
       )
     })
   })
+  describe("juxBy", () => {
+    it("Can juxtapose by half", () => {
+      assert.deepStrictEqual(
+        pure({a: 1}).juxBy(0.5, fast(2))._sortEventsByPart().firstCycle(),
+        stack(pure({a:1, pan: 0.25}), pure({a:1, pan: 0.75}).fast(2))._sortEventsByPart().firstCycle()
+      )
+    })
+  })
   describe("_squeezeJoin", () => {
     it("Can squeeze", () => {
       assert.deepStrictEqual(

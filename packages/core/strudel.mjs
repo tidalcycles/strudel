@@ -791,7 +791,7 @@ class Pattern {
     return new Pattern(query)._splitQueries();
   }
 
-  jux(func, by = 1) {
+  juxBy(by, func) {
     by /= 2;
     const elem_or = function (dict, key, dflt) {
       if (key in dict) {
@@ -803,6 +803,10 @@ class Pattern {
     const right = this.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by }));
 
     return stack(left, func(right));
+  }
+
+  _jux(func) {
+    return this.juxBy(1, func);
   }
 
   // is there a different name for those in tidal?
@@ -900,6 +904,7 @@ Pattern.prototype.patternified = [
   'velocity',
   'segment',
   'color',
+  'jux'
 ];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr };
@@ -1101,6 +1106,7 @@ const every = curry((i, f, pat) => pat.every(i, f));
 const when = curry((binary, f, pat) => pat.when(binary, f));
 const off = curry((t, f, pat) => pat.off(t, f));
 const jux = curry((f, pat) => pat.jux(f));
+const juxBy = curry((by, f, pat) => pat.juxBy(by, f));
 const append = curry((a, pat) => pat.append(a));
 const superimpose = curry((array, pat) => pat.superimpose(...array));
 const struct = curry((a, pat) => pat.struct(a));
@@ -1257,6 +1263,7 @@ export {
   when,
   off,
   jux,
+  juxBy,
   append,
   superimpose,
   struct,
