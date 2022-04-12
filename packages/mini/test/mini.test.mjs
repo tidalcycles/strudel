@@ -33,9 +33,11 @@ describe('mini', () => {
     assert.deepStrictEqual(minV('[c3 d3]*2'), ['c3', 'd3', 'c3', 'd3']);
   });
 
-  it('supports brackets', () => {
+  it('supports sub-cycle', () => {
     assert.deepStrictEqual(minS('c3 [d3 e3]'), ['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 1']);
+    assert.deepStrictEqual(minS('c3 . d3 e3'), ['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 1']);
     assert.deepStrictEqual(minS('c3 [d3 [e3 f3]]'), ['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 7/8', 'f3: 7/8 - 1']);
+    assert.deepStrictEqual(minS('c3 . d3 . e3 f3'), ['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 7/8', 'f3: 7/8 - 1']);
   });
 
   it('supports commas', () => {
