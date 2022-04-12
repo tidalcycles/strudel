@@ -583,7 +583,7 @@ class Pattern {
     return this.innerBind(id);
   }
 
-  squeezeJoin() {
+  _squeezeJoin() {
     const pat_of_pats = this;
     function query(state) {
       const haps = pat_of_pats.query(state);
@@ -607,13 +607,17 @@ class Pattern {
           const context = inner.combineContext(outer);
           return new Hap(whole, part, inner.value, context);
         }
-        return innerHaps.map(innerHap => munge(outerHap, innerHap))
+        return innerHaps.map((innerHap) => munge(outerHap, innerHap));
       }
       const result = flatten(haps.map(flatHap));
       // remove undefineds
-      return result.filter(x => x);
+      return result.filter((x) => x);
     }
     return new Pattern(query);
+  }
+
+  _squeezeBind(func) {
+    return this.fmap(func)._squeezeJoin();
   }
 
   _apply(func) {
@@ -678,7 +682,16 @@ class Pattern {
   }
 
   _ply(factor) {
-    return this.fmap(x => pure(x)._fast(factor)).squeezeJoin()
+    return this.fmap((x) => pure(x)._fast(factor))._squeezeJoin();
+  }
+
+  _chop(n) {
+    const slices = Array.from({length: n}, (x, i) => i);
+    const slice_objects = slices.map(i => ({begin: i/n, end: (i+1)/n}));
+    const func = function(o) {
+      return(sequence(slice_objects.map(slice_o => Object.assign({}, o, slice_o))))
+    }
+    return(this._squeezeBind(func));
   }
 
   // cpm = cycles per minute
@@ -878,6 +891,7 @@ Pattern.prototype.patternified = [
   'fast',
   'slow',
   'ply',
+  'chop',
   'cpm',
   'early',
   'late',
@@ -885,7 +899,7 @@ Pattern.prototype.patternified = [
   'legato',
   'velocity',
   'segment',
-  'color'
+  'color',
 ];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr };

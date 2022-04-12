@@ -491,10 +491,10 @@ describe('Pattern', function() {
       )
     })
   })
-  describe("squeezeJoin", () => {
+  describe("_squeezeJoin", () => {
     it("Can squeeze", () => {
       assert.deepStrictEqual(
-        sequence("a", ["a","a"]).fmap(a => fastcat("b", "c")).squeezeJoin().firstCycle(),
+        sequence("a", ["a","a"]).fmap(a => fastcat("b", "c"))._squeezeJoin().firstCycle(),
         sequence(["b", "c"],[["b", "c"],["b", "c"]]).firstCycle()
       )
     })
@@ -504,6 +504,29 @@ describe('Pattern', function() {
       assert.deepStrictEqual(
         sequence("a", ["b","c"]).ply(3).firstCycle(),
         sequence(pure("a").fast(3), [pure("b").fast(3), pure("c").fast(3)]).firstCycle()
+      )
+    })
+  })
+  describe("chop", () => {
+    it("Can _chop(2)", () => {
+      assert.deepStrictEqual(
+        sequence({sound: "a"}, {sound: "b"})._chop(2).firstCycle(),
+        sequence({sound: "a", begin: 0, end: 0.5},
+                 {sound: "a", begin: 0.5, end: 1},
+                 {sound: "b", begin: 0, end: 0.5},
+                 {sound: "b", begin: 0.5, end: 1}
+        ).firstCycle()
+      );
+    });
+    it("Can chop(2,3)", () => {
+      assert.deepStrictEqual(
+        pure({sound: "a"}).fast(2).chop(2,3)._sortEventsByPart().firstCycle(),
+        sequence([{sound: "a", begin: 0, end: 0.5},
+                  {sound: "a", begin: 0.5, end: 1}],
+                 [{sound: "a", begin: 0, end: 1/3},
+                  {sound: "a", begin: 1/3, end: 2/3},
+                  {sound: "a", begin: 2/3, end: 1}
+                 ])._sortEventsByPart().firstCycle()
       )
     })
   })
