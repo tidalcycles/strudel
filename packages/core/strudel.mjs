@@ -59,6 +59,15 @@ class TimeSpan {
     return spans;
   }
 
+  cycleArc() {
+    // Shifts a timespan to one of equal duration that starts within cycle zero.
+    // (Note that the output timespan probably does not start *at* Time 0 --
+    // that only happens when the input Arc starts at an integral Time.)
+    const b = this.begin.cyclePos();
+    const e = b + (this.end - this.begin);
+    return new TimeSpan(b, e);
+  }
+
   withTime(func_time) {
     // Applies given function to both the begin and end time value of the timespan"""
     return new TimeSpan(func_time(this.begin), func_time(this.end));
@@ -140,6 +149,10 @@ class Hap {
     return this.whole.end.sub(this.whole.begin).valueOf();
   }
 
+  wholeOrPart() {
+    return this.whole ? this.whole : this.part;
+  }
+
   withSpan(func) {
     // Returns a new event with the function f applies to the event timespan.
     const whole = this.whole ? func(this.whole) : undefined;
@@ -184,6 +197,11 @@ class Hap {
     return (
       '(' + (this.whole == undefined ? '~' : this.whole.show()) + ', ' + this.part.show() + ', ' + this.value + ')'
     );
+  }
+
+  combineContext(b) {
+    const a = this;
+    return { ...a.context, ...b.context, locations: (a.context.locations || []).concat(b.context.locations || []) };
   }
 
   setContext(context) {
@@ -351,12 +369,11 @@ class Pattern {
         if (s == undefined) {
           return undefined;
         }
-        // TODO: is it right to add event_val.context here?
         return new Hap(
           whole_func(event_func.whole, event_val.whole),
           s,
           event_func.value(event_val.value),
-          event_val.context,
+          event_val.combineContext(event_func),
         );
       };
       return flatten(
@@ -388,11 +405,8 @@ class Pattern {
           const new_whole = hap_func.whole;
           const new_part = hap_func.part.intersection_e(hap_val.part);
           const new_value = hap_func.value(hap_val.value);
-          const hap = new Hap(new_whole, new_part, new_value, {
-            ...hap_val.context,
-            ...hap_func.context,
-            locations: (hap_val.context.locations || []).concat(hap_func.context.locations || []),
-          });
+          const new_context = hap_val.combineContext(hap_func);
+          const hap = new Hap(new_whole, new_part, new_value, new_context);
           haps.push(hap);
         }
       }
@@ -412,11 +426,8 @@ class Pattern {
           const new_whole = hap_val.whole;
           const new_part = hap_func.part.intersection_e(hap_val.part);
           const new_value = hap_func.value(hap_val.value);
-          const hap = new Hap(new_whole, new_part, new_value, {
-            ...hap_func.context,
-            ...hap_val.context,
-            locations: (hap_val.context.locations || []).concat(hap_func.context.locations || []),
-          });
+          const new_context = hap_val.combineContext(hap_func);
+          const hap = new Hap(new_whole, new_part, new_value, new_context);
           haps.push(hap);
         }
       }
@@ -572,6 +583,39 @@ class Pattern {
     return this.outerBind(id);
   }
 
+  squeezeJoin() {
+    const pat_of_pats = this;
+    function query(state) {
+      const haps = pat_of_pats.query(state);
+      function flatHap(outerHap) {
+        const pat = outerHap.value._compressSpan(outerHap.wholeOrPart().cycleArc());
+        const innerHaps = pat.query(state.setSpan(outerHap.part));
+        function munge(outer, inner) {
+          let whole = undefined;
+          if (inner.whole && outer.whole) {
+            whole = inner.whole.intersection(outer.whole);
+            if (!whole) {
+              // The wholes are present, but don't intersect
+              return undefined;
+            }
+          }
+          const part = inner.part.intersection(outer.part);
+          if (!part) {
+            // The parts don't intersect
+            return undefined;
+          }
+          const context = inner.combineContext(outer);
+          return new Hap(whole, part, inner.value, context);
+        }
+        return innerHaps.map(innerHap => munge(outerHap, innerHap))
+      }
+      const result = flatten(haps.map(flatHap));
+      // remove undefineds
+      return result.filter(x => x);
+    }
+    return new Pattern(query);
+  }
+
   _apply(func) {
     return func(this);
   }
@@ -631,6 +675,10 @@ class Pattern {
 
   _slow(factor) {
     return this._fast(Fraction(1).div(factor));
+  }
+
+  _ply(factor) {
+    return this.fmap(x => pure(x)._fast(factor)).squeezeJoin()
   }
 
   // cpm = cycles per minute
@@ -829,6 +877,7 @@ Pattern.prototype.patternified = [
   'apply',
   'fast',
   'slow',
+  'ply',
   'cpm',
   'early',
   'late',
@@ -836,7 +885,7 @@ Pattern.prototype.patternified = [
   'legato',
   'velocity',
   'segment',
-  'color',
+  'color'
 ];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr };
@@ -995,7 +1044,6 @@ function polymeterSteps(steps, ...args) {
     if (steps == seq[1]) {
       pats.push(seq[0]);
     } else {
-      console.log("aha");
       pats.push(seq[0]._fast(Fraction(steps).div(Fraction(seq[1]))));
     }
   }
@@ -1050,6 +1098,7 @@ const iter = curry((a, pat) => pat.iter(a));
 const iterBack = curry((a, pat) => pat.iter(a));
 const chunk = curry((a, pat) => pat.chunk(a));
 const chunkBack = curry((a, pat) => pat.chunkBack(a));
+const ply = curry((a, pat) => pat.ply(a));
 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
@@ -1207,4 +1256,5 @@ export {
   iterBack,
   chunk,
   chunkBack,
+  ply,
 };

@@ -16,6 +16,11 @@ Fraction.prototype.wholeCycle = function () {
   return new TimeSpan(this.sam(), this.nextSam());
 };
 
+// The position of a time value relative to the start of its cycle.
+Fraction.prototype.cyclePos = function () {
+  return this.sub(this.sam());
+};
+
 Fraction.prototype.lt = function (other) {
   return this.compare(other) < 0;
 };
