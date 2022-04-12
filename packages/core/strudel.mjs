@@ -607,11 +607,11 @@ class Pattern {
           const context = inner.combineContext(outer);
           return new Hap(whole, part, inner.value, context);
         }
-        return innerHaps.map(innerHap => munge(outerHap, innerHap))
+        return innerHaps.map((innerHap) => munge(outerHap, innerHap));
       }
       const result = flatten(haps.map(flatHap));
       // remove undefineds
-      return result.filter(x => x);
+      return result.filter((x) => x);
     }
     return new Pattern(query);
   }
@@ -682,7 +682,7 @@ class Pattern {
   }
 
   _ply(factor) {
-    return this.fmap(x => pure(x)._fast(factor))._squeezeJoin()
+    return this.fmap((x) => pure(x)._fast(factor))._squeezeJoin();
   }
 
   // cpm = cycles per minute
@@ -889,7 +889,7 @@ Pattern.prototype.patternified = [
   'legato',
   'velocity',
   'segment',
-  'color'
+  'color',
 ];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr };
