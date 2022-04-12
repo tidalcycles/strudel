@@ -47,6 +47,7 @@ describe('mini', () => {
     assert.deepStrictEqual(minS('a@3 b'), ['a: 0 - 3/4', 'b: 3/4 - 1']);
     assert.deepStrictEqual(minS('a@2 b@3'), ['a: 0 - 2/5', 'b: 2/5 - 1']);
     assert.deepStrictEqual(minS('a _ b _ _'), ['a: 0 - 2/5', 'b: 2/5 - 1']);
+    assert.deepStrictEqual(minS('[a b] _'), ['a: 0 - 1/2', 'b: 1/2 - 1']);
   });
 
   it('supports replication', () => {
