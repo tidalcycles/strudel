@@ -1,4 +1,4 @@
-import OSC from './node_modules/osc-js/lib/osc.js';
+import OSC from './osc-js/osc.js';
 import { Pattern } from '@strudel.cycles/core/strudel.mjs';
 
 const comm = new OSC();
