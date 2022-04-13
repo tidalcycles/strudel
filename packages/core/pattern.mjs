@@ -299,6 +299,13 @@ export class Pattern {
     return this._asNumber().fmap((v) => Math.ceil(v));
   }
 
+  _toBipolar() {
+    return this.fmap((x) => x * 2 - 1);
+  }
+  _fromBipolar() {
+    return this.fmap((x) => (x + 1) / 2);
+  }
+
   // Assumes source pattern of numbers in range 0..1
   range(min, max) {
     return this.mul(max - min).add(min);
@@ -306,7 +313,7 @@ export class Pattern {
 
   // Assumes source pattern of numbers in range -1..1
   range2(min, max) {
-    return _fromBipolar(this).range(min, max);
+    return this._fromBipolar().range(min, max);
   }
 
   union(other) {
@@ -737,37 +744,6 @@ export function pure(value) {
   return new Pattern(query);
 }
 
-export function steady(value) {
-  // A continuous value
-  return new Pattern((span) => Hap(undefined, span, value));
-}
-
-export const signal = (func) => {
-  const query = (state) => [new Hap(undefined, state.span, func(state.span.midpoint()))];
-  return new Pattern(query);
-};
-
-const _toBipolar = (pat) => pat.fmap((x) => x * 2 - 1);
-const _fromBipolar = (pat) => pat.fmap((x) => (x + 1) / 2);
-
-export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
-export const sine = _fromBipolar(sine2);
-
-export const cosine2 = sine2._early(Fraction(1).div(4));
-export const cosine = sine._early(Fraction(1).div(4));
-
-export const saw = signal((t) => t % 1);
-export const saw2 = _toBipolar(saw);
-
-export const isaw = signal((t) => 1 - (t % 1));
-export const isaw2 = _toBipolar(isaw);
-
-export const tri2 = fastcat(isaw2, saw2);
-export const tri = fastcat(isaw, saw);
-
-export const square = signal((t) => Math.floor((t * 2) % 2));
-export const square2 = _toBipolar(square);
-
 export function isPattern(thing) {
   // thing?.constructor?.name !== 'Pattern' // <- this will fail when code is mangled
   return thing instanceof Pattern;
@@ -1054,4 +1030,3 @@ Pattern.prototype.define = (name, func, options = {}) => {
 // Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
 Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
 Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
-
