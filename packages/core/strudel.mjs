@@ -706,6 +706,8 @@ class Pattern {
   }
 
   _zoom(s, e) {
+    e = Fraction(e)
+    s = Fraction(s)
     const d = e.sub(s);
     return this.withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
       .withEventSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
