@@ -1,5 +1,5 @@
 import * as krill from './krill-parser.js';
-import * as strudel from '@strudel.cycles/core/strudel.mjs';
+import * as strudel from '@strudel.cycles/core';
 import { addMiniLocations } from '@strudel.cycles/eval/shapeshifter.mjs';
 
 const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;

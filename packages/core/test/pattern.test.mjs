@@ -35,7 +35,7 @@ import {
   tri2,
   id,
   ply,
-} from '../strudel.mjs';
+} from '../index.mjs';
 //import { Time } from 'tone';
 import pkg from 'tone';
 const { Time } = pkg;
