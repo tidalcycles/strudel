@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 import '../tone.mjs';
-import { pure } from '@strudel.cycles/core/strudel.mjs';
+import { pure } from '@strudel.cycles/core';
 import Tone from 'tone';
 
 describe('tone', () => {

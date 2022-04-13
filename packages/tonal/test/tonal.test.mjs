@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 import '../tonal.mjs'; // need to import this to add prototypes
-import { pure } from '@strudel.cycles/core/strudel.mjs';
+import { pure } from '@strudel.cycles/core';
 
 describe('tonal', () => {
   it('Should run tonal functions ', () => {

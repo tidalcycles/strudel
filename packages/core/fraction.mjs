@@ -1,5 +1,5 @@
 import Fraction from 'fraction.js';
-import { TimeSpan } from './strudel.mjs';
+import { TimeSpan } from './timespan.mjs';
 
 // Returns the start of the cycle.
 Fraction.prototype.sam = function () {
