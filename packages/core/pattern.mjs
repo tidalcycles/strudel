@@ -1,216 +1,11 @@
+import TimeSpan from './timespan.mjs';
 import Fraction from './fraction.mjs';
+import Hap from './hap.mjs';
+import State from './state.mjs';
+
 import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry } from './util.mjs';
 
-class TimeSpan {
-  constructor(begin, end) {
-    this.begin = Fraction(begin);
-    this.end = Fraction(end);
-  }
-
-  get spanCycles() {
-    const spans = [];
-    var begin = this.begin;
-    const end = this.end;
-    const end_sam = end.sam();
-
-    while (end.gt(begin)) {
-      // If begin and end are in the same cycle, we're done.
-      if (begin.sam().equals(end_sam)) {
-        spans.push(new TimeSpan(begin, this.end));
-        break;
-      }
-      // add a timespan up to the next sam
-      const next_begin = begin.nextSam();
-      spans.push(new TimeSpan(begin, next_begin));
-
-      // continue with the next cycle
-      begin = next_begin;
-    }
-    return spans;
-  }
-
-  cycleArc() {
-    // Shifts a timespan to one of equal duration that starts within cycle zero.
-    // (Note that the output timespan probably does not start *at* Time 0 --
-    // that only happens when the input Arc starts at an integral Time.)
-    const b = this.begin.cyclePos();
-    const e = b + (this.end - this.begin);
-    return new TimeSpan(b, e);
-  }
-
-  withTime(func_time) {
-    // Applies given function to both the begin and end time of the timespan"""
-    return new TimeSpan(func_time(this.begin), func_time(this.end));
-  }
-
-  withEnd(func_time) {
-    // Applies given function to the end time of the timespan"""
-    return new TimeSpan(this.begin, func_time(this.end));
-  }
-
-  withCycle(func_time) {
-    // Like withTime, but time is relative to relative to the cycle (i.e. the
-    // sam of the start of the timespan)
-    const sam = this.begin.sam();
-    const b = sam.add(func_time(this.begin.sub(sam)));
-    const e = sam.add(func_time(this.end.sub(sam)));
-    return new TimeSpan(b, e);
-  }
-
-  intersection(other) {
-    // Intersection of two timespans, returns None if they don't intersect.
-    const intersect_begin = this.begin.max(other.begin);
-    const intersect_end = this.end.min(other.end);
-
-    if (intersect_begin.gt(intersect_end)) {
-      return undefined;
-    }
-    if (intersect_begin.equals(intersect_end)) {
-      // Zero-width (point) intersection - doesn't intersect if it's at the end of a
-      // non-zero-width timespan.
-      if (intersect_begin.equals(this.end) && this.begin.lt(this.end)) {
-        return undefined;
-      }
-      if (intersect_begin.equals(other.end) && other.begin.lt(other.end)) {
-        return undefined;
-      }
-    }
-    return new TimeSpan(intersect_begin, intersect_end);
-  }
-
-  intersection_e(other) {
-    // Like 'sect', but raises an exception if the timespans don't intersect.
-    const result = this.intersection(other);
-    if (result == undefined) {
-      // TODO - raise exception
-      // raise ValueError(f'TimeSpan {self} and TimeSpan {other} do not intersect')
-    }
-    return result;
-  }
-
-  midpoint() {
-    return this.begin.add(this.end.sub(this.begin).div(Fraction(2)));
-  }
-
-  equals(other) {
-    return this.begin.equals(other.begin) && this.end.equals(other.end);
-  }
-
-  show() {
-    return this.begin.show() + ' -> ' + this.end.show();
-  }
-}
-
-class Hap {
-  /*
-    Event class, representing a value active during the timespan
-    'part'. This might be a fragment of an event, in which case the
-    timespan will be smaller than the 'whole' timespan, otherwise the
-    two timespans will be the same. The 'part' must never extend outside of the
-    'whole'. If the event represents a continuously changing value
-    then the whole will be returned as None, in which case the given
-    value will have been sampled from the point halfway between the
-    start and end of the 'part' timespan.
-    The context is to store a list of source code locations causing the event
-    */
-
-  constructor(whole, part, value, context = {}, stateful = false) {
-    this.whole = whole;
-    this.part = part;
-    this.value = value;
-    this.context = context;
-    this.stateful = stateful;
-    if (stateful) {
-      console.assert(typeof this.value === 'function', 'Stateful values must be functions');
-    }
-  }
-
-  get duration() {
-    return this.whole.end.sub(this.whole.begin).valueOf();
-  }
-
-  wholeOrPart() {
-    return this.whole ? this.whole : this.part;
-  }
-
-  withSpan(func) {
-    // Returns a new event with the function f applies to the event timespan.
-    const whole = this.whole ? func(this.whole) : undefined;
-    return new Hap(whole, func(this.part), this.value, this.context);
-  }
-
-  withValue(func) {
-    // Returns a new event with the function f applies to the event value.
-    return new Hap(this.whole, this.part, func(this.value), this.context);
-  }
-
-  hasOnset() {
-    // Test whether the event contains the onset, i.e that
-    // the beginning of the part is the same as that of the whole timespan."""
-    return this.whole != undefined && this.whole.begin.equals(this.part.begin);
-  }
-
-  resolveState(state) {
-    if (this.stateful && this.hasOnset()) {
-      console.log('stateful');
-      const func = this.value;
-      const [newState, newValue] = func(state);
-      return [newState, new Hap(this.whole, this.part, newValue, this.context, false)];
-    }
-    return [state, this];
-  }
-
-  spanEquals(other) {
-    return (this.whole == undefined && other.whole == undefined) || this.whole.equals(other.whole);
-  }
-
-  equals(other) {
-    return (
-      this.spanEquals(other) &&
-      this.part.equals(other.part) &&
-      // TODO would == be better ??
-      this.value === other.value
-    );
-  }
-
-  show() {
-    return (
-      '(' + (this.whole == undefined ? '~' : this.whole.show()) + ', ' + this.part.show() + ', ' + this.value + ')'
-    );
-  }
-
-  combineContext(b) {
-    const a = this;
-    return { ...a.context, ...b.context, locations: (a.context.locations || []).concat(b.context.locations || []) };
-  }
-
-  setContext(context) {
-    return new Hap(this.whole, this.part, this.value, context);
-  }
-}
-
-export class State {
-  constructor(span, controls = {}) {
-    this.span = span;
-    this.controls = controls;
-  }
-
-  // Returns new State with different span
-  setSpan(span) {
-    return new State(span, this.controls);
-  }
-
-  withSpan(func) {
-    return this.setSpan(func(this.span));
-  }
-
-  // Returns new State with different controls
-  setControls(controls) {
-    return new State(this.span, controls);
-  }
-}
-
-class Pattern {
+export class Pattern {
   // the following functions will get patternFactories as nested functions:
   constructor(query) {
     this.query = query;
@@ -504,6 +299,13 @@ class Pattern {
     return this._asNumber().fmap((v) => Math.ceil(v));
   }
 
+  _toBipolar() {
+    return this.fmap((x) => x * 2 - 1);
+  }
+  _fromBipolar() {
+    return this.fmap((x) => (x + 1) / 2);
+  }
+
   // Assumes source pattern of numbers in range 0..1
   range(min, max) {
     return this.mul(max - min).add(min);
@@ -511,7 +313,7 @@ class Pattern {
 
   // Assumes source pattern of numbers in range -1..1
   range2(min, max) {
-    return _fromBipolar(this).range(min, max);
+    return this._fromBipolar().range(min, max);
   }
 
   union(other) {
@@ -932,9 +734,9 @@ Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, seq
 // Elemental patterns
 
 // Nothing
-const silence = new Pattern((_) => []);
+export const silence = new Pattern((_) => []);
 
-function pure(value) {
+export function pure(value) {
   // A discrete value that repeats once per cycle
   function query(state) {
     return state.span.spanCycles.map((subspan) => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value));
@@ -942,43 +744,12 @@ function pure(value) {
   return new Pattern(query);
 }
 
-function steady(value) {
-  // A continuous value
-  return new Pattern((span) => Hap(undefined, span, value));
-}
-
-export const signal = (func) => {
-  const query = (state) => [new Hap(undefined, state.span, func(state.span.midpoint()))];
-  return new Pattern(query);
-};
-
-const _toBipolar = (pat) => pat.fmap((x) => x * 2 - 1);
-const _fromBipolar = (pat) => pat.fmap((x) => (x + 1) / 2);
-
-export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
-export const sine = _fromBipolar(sine2);
-
-export const cosine2 = sine2._early(Fraction(1).div(4));
-export const cosine = sine._early(Fraction(1).div(4));
-
-export const saw = signal((t) => t % 1);
-export const saw2 = _toBipolar(saw);
-
-export const isaw = signal((t) => 1 - (t % 1));
-export const isaw2 = _toBipolar(isaw);
-
-export const tri2 = fastcat(isaw2, saw2);
-export const tri = fastcat(isaw, saw);
-
-export const square = signal((t) => Math.floor((t * 2) % 2));
-export const square2 = _toBipolar(square);
-
 export function isPattern(thing) {
   // thing?.constructor?.name !== 'Pattern' // <- this will fail when code is mangled
   return thing instanceof Pattern;
 }
 
-function reify(thing) {
+export function reify(thing) {
   // Turns something into a pattern, unless it's already a pattern
   if (isPattern(thing)) {
     return thing;
@@ -987,13 +758,13 @@ function reify(thing) {
 }
 // Basic functions for combining patterns
 
-function stack(...pats) {
+export function stack(...pats) {
   const reified = pats.map((pat) => reify(pat));
   const query = (state) => flatten(reified.map((pat) => pat.query(state)));
   return new Pattern(query);
 }
 
-function slowcat(...pats) {
+export function slowcat(...pats) {
   // Concatenation: combines a list of patterns, switching between them
   // successively, one per cycle.
   pats = pats.map(reify);
@@ -1014,7 +785,7 @@ function slowcat(...pats) {
   return new Pattern(query)._splitQueries();
 }
 
-function slowcatPrime(...pats) {
+export function slowcatPrime(...pats) {
   // Concatenation: combines a list of patterns, switching between them
   // successively, one per cycle. Unlike slowcat, this version will skip cycles.
   pats = pats.map(reify);
@@ -1026,17 +797,17 @@ function slowcatPrime(...pats) {
   return new Pattern(query)._splitQueries();
 }
 
-function fastcat(...pats) {
+export function fastcat(...pats) {
   // Concatenation: as with slowcat, but squashes a cycle from each
   // pattern into one cycle
   return slowcat(...pats)._fast(pats.length);
 }
 
-function cat(...pats) {
+export function cat(...pats) {
   return fastcat(...pats);
 }
 
-function timeCat(...timepats) {
+export function timeCat(...timepats) {
   // Like cat, but where each step has a temporal 'weight'
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
   let begin = Fraction(0);
@@ -1062,11 +833,11 @@ function _sequenceCount(x) {
   return [reify(x), 1];
 }
 
-function sequence(...xs) {
+export function sequence(...xs) {
   return _sequenceCount(xs)[0];
 }
 
-function polymeterSteps(steps, ...args) {
+export function polymeterSteps(steps, ...args) {
   const seqs = args.map((a) => _sequenceCount(a));
   if (seqs.length == 0) {
     return silence;
@@ -1088,16 +859,16 @@ function polymeterSteps(steps, ...args) {
   return stack(...pats);
 }
 
-function polymeter(...args) {
+export function polymeter(...args) {
   return polymeterSteps(0, ...args);
 }
 
 // alias
-function pm(...args) {
+export function pm(...args) {
   polymeter(...args);
 }
 
-function polyrhythm(...xs) {
+export function polyrhythm(...xs) {
   const seqs = xs.map((a) => sequence(a));
 
   if (seqs.length == 0) {
@@ -1107,40 +878,40 @@ function polyrhythm(...xs) {
 }
 
 // alias
-function pr(args) {
+export function pr(args) {
   polyrhythm(args);
 }
 
-const add = curry((a, pat) => pat.add(a));
-const append = curry((a, pat) => pat.append(a));
-const chunk = curry((a, pat) => pat.chunk(a));
-const chunkBack = curry((a, pat) => pat.chunkBack(a));
-const div = curry((a, pat) => pat.div(a));
-const early = curry((a, pat) => pat.early(a));
-const echo = curry((a, b, c, pat) => pat.echo(a, b, c));
-const every = curry((i, f, pat) => pat.every(i, f));
-const fast = curry((a, pat) => pat.fast(a));
-const inv = (pat) => pat.inv();
-const invert = (pat) => pat.invert();
-const iter = curry((a, pat) => pat.iter(a));
-const iterBack = curry((a, pat) => pat.iter(a));
-const jux = curry((f, pat) => pat.jux(f));
-const juxBy = curry((by, f, pat) => pat.juxBy(by, f));
-const late = curry((a, pat) => pat.late(a));
-const linger = curry((a, pat) => pat.linger(a));
-const mask = curry((a, pat) => pat.mask(a));
-const mul = curry((a, pat) => pat.mul(a));
-const off = curry((t, f, pat) => pat.off(t, f));
-const ply = curry((a, pat) => pat.ply(a));
-const range = curry((a, b, pat) => pat.range(a, b));
-const range2 = curry((a, b, pat) => pat.range2(a, b));
-const rev = (pat) => pat.rev();
-const slow = curry((a, pat) => pat.slow(a));
-const struct = curry((a, pat) => pat.struct(a));
-const sub = curry((a, pat) => pat.sub(a));
-const superimpose = curry((array, pat) => pat.superimpose(...array));
-const union = curry((a, pat) => pat.union(a));
-const when = curry((binary, f, pat) => pat.when(binary, f));
+export const add = curry((a, pat) => pat.add(a));
+export const append = curry((a, pat) => pat.append(a));
+export const chunk = curry((a, pat) => pat.chunk(a));
+export const chunkBack = curry((a, pat) => pat.chunkBack(a));
+export const div = curry((a, pat) => pat.div(a));
+export const early = curry((a, pat) => pat.early(a));
+export const echo = curry((a, b, c, pat) => pat.echo(a, b, c));
+export const every = curry((i, f, pat) => pat.every(i, f));
+export const fast = curry((a, pat) => pat.fast(a));
+export const inv = (pat) => pat.inv();
+export const invert = (pat) => pat.invert();
+export const iter = curry((a, pat) => pat.iter(a));
+export const iterBack = curry((a, pat) => pat.iter(a));
+export const jux = curry((f, pat) => pat.jux(f));
+export const juxBy = curry((by, f, pat) => pat.juxBy(by, f));
+export const late = curry((a, pat) => pat.late(a));
+export const linger = curry((a, pat) => pat.linger(a));
+export const mask = curry((a, pat) => pat.mask(a));
+export const mul = curry((a, pat) => pat.mul(a));
+export const off = curry((t, f, pat) => pat.off(t, f));
+export const ply = curry((a, pat) => pat.ply(a));
+export const range = curry((a, b, pat) => pat.range(a, b));
+export const range2 = curry((a, b, pat) => pat.range2(a, b));
+export const rev = (pat) => pat.rev();
+export const slow = curry((a, pat) => pat.slow(a));
+export const struct = curry((a, pat) => pat.struct(a));
+export const sub = curry((a, pat) => pat.sub(a));
+export const superimpose = curry((array, pat) => pat.superimpose(...array));
+export const union = curry((a, pat) => pat.union(a));
+export const when = curry((binary, f, pat) => pat.when(binary, f));
 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
@@ -1259,6 +1030,7 @@ Pattern.prototype.define = (name, func, options = {}) => {
 // Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
 Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
 Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
+<<<<<<< HEAD:packages/core/strudel.mjs
 
 export {
   Fraction,
@@ -1314,3 +1086,5 @@ export {
   patternify3,
   patternify4,
 };
+=======
+>>>>>>> origin/main:packages/core/pattern.mjs
