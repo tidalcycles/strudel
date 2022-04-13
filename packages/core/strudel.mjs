@@ -708,8 +708,8 @@ class Pattern {
   }
 
   _zoom(s, e) {
-    e = Fraction(e)
-    s = Fraction(s)
+    e = Fraction(e);
+    s = Fraction(s);
     const d = e.sub(s);
     return this.withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
       .withEventSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
@@ -1202,11 +1202,11 @@ Pattern.prototype.chunkBack = function (...args) {
 Pattern.prototype.zoom = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._zoom)(...args, this);
-}
+};
 Pattern.prototype.compress = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._compress)(...args, this);
-}
+};
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = function () {
@@ -1310,4 +1310,7 @@ export {
   timeCat,
   union,
   when,
+  patternify2,
+  patternify3,
+  patternify4,
 };
