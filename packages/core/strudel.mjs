@@ -1197,6 +1197,10 @@ Pattern.prototype.chunkBack = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._chunkBack)(...args, this);
 };
+Pattern.prototype.zoom = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._zoom)(...args, this);
+}
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = function () {
