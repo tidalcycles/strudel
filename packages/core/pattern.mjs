@@ -3,7 +3,7 @@ import Fraction from './fraction.mjs';
 import Hap from './hap.mjs';
 import State from './state.mjs';
 
-import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry } from './util.mjs';
+import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, objectify } from './util.mjs';
 
 export class Pattern {
   // the following functions will get patternFactories as nested functions:
