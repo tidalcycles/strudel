@@ -83,3 +83,42 @@ export function curry(func, overload) {
   }
   return fn;
 }
+
+// this functions just makes sure non objects values are wrapped in { value }
+export function objectify(value) {
+  if (typeof value === 'object' && !Array.isArray(value)) {
+    return value; // do nothing if its already an object
+  }
+  return { value };
+}
+
+// maybe move this to osc?
+// turns value into object that is the right format superdirt osc
+export function dirtify(val) {
+  const obj = objectify(val);
+  if (obj.n && typeof obj.n === 'string') {
+    return { ...obj, ...objectify(obj.n) };
+  }
+  const { value, ...rest } = obj;
+  if (typeof value === 'undefined') {
+    return rest;
+  }
+  const isNumber = typeof value === 'number';
+  const isMidi = typeof value === 'string' && isNote(value);
+  if (isNumber || isMidi) {
+    const numberOffset = -60; // tidal 0 = midi 60
+    const n = (isNumber ? value : toMidi(value)) + numberOffset;
+    if (rest.n) {
+      console.warn(`dirtify: n is already defined as "${rest.n}", overwriting with value "${n}"`);
+    }
+    return { ...rest, n };
+  }
+  if (typeof value === 'string') {
+    // not a note => should be a sound
+    return { ...rest, s: value };
+  }
+  console.warn(`dirtify: ignored value "${value}"`);
+  // what lands here?
+  // throw new Error('cannot objectify: ' + value);
+  return {};
+}

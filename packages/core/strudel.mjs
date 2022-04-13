@@ -1,5 +1,5 @@
 import Fraction from './fraction.mjs';
-import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry } from './util.mjs';
+import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, objectify } from './util.mjs';
 
 class TimeSpan {
   constructor(begin, end) {
@@ -515,7 +515,7 @@ class Pattern {
   }
 
   union(other) {
-    return this._opleft(other, (a) => (b) => Object.assign({}, a, b));
+    return this._opleft(other, (a) => (b) => Object.assign({}, objectify(a), objectify(b)));
   }
 
   _bindWhole(choose_whole, func) {
