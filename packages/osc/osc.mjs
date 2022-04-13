@@ -1,6 +1,6 @@
 import OSC from './osc.js';
 import { Pattern } from '@strudel.cycles/core/strudel.mjs';
-import { dirtify } from '@strudel.cycles/core/util.mjs';
+import { dirtify, objectify } from '@strudel.cycles/core/util.mjs';
 
 const comm = new OSC();
 comm.open();
@@ -11,7 +11,7 @@ Pattern.prototype.osc = function () {
     const onTrigger = (time, event, currentTime) => {
       // time should be audio time of onset
       // currentTime should be current time of audio context (slightly before time)
-      const keyvals = Object.entries(event.value).flat();
+      const keyvals = Object.entries(objectify(event.value)).flat();
       const offset = (time - currentTime + latency) * 1000;
       const ts = Math.floor(Date.now() + offset);
       const message = new OSC.Message('/dirt/play', ...keyvals);
