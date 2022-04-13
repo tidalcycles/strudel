@@ -216,6 +216,10 @@ class Pattern {
     this.query = query;
   }
 
+  queryArc(begin, end) {
+    return this.query(new State(new TimeSpan(begin, end)));
+  }
+
   _splitQueries() {
     // Splits queries at cycle boundaries. This makes some calculations
     // easier to express, as all events are then constrained to happen within

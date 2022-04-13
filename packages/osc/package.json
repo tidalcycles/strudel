@@ -1,0 +1,32 @@
+{
+  "name": "@strudel.cycles/osc",
+  "version": "0.0.1",
+  "description": "OSC messaging for strudel",
+  "main": "osc.mjs",
+  "scripts": {
+    "test": "echo \"No tests present.\" && exit 0",
+    "server": "node server.js",
+    "tidal-sniffer": "node tidal-sniffer.js",
+    "client": "npx serve -p 4321"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "osc-js": "^2.3.0"
+  }
+}
