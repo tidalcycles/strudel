@@ -1,5 +1,6 @@
 import OSC from './osc.js';
 import { Pattern } from '@strudel.cycles/core/strudel.mjs';
+import { dirtify } from '@strudel.cycles/core/util.mjs';
 
 const comm = new OSC();
 comm.open();
@@ -20,4 +21,8 @@ Pattern.prototype.osc = function () {
     };
     return event.setContext({ ...event.context, onTrigger });
   });
+};
+
+Pattern.prototype.superdirt = function () {
+  return this.withValue(dirtify).osc();
 };
