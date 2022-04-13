@@ -1,5 +1,5 @@
 import { strict as assert } from 'assert';
-import { isNote, tokenizeNote, toMidi, mod } from '../util.mjs';
+import { isNote, tokenizeNote, toMidi, mod, compose } from '../util.mjs';
 
 describe('isNote', () => {
   it('should recognize notes without accidentals', () => {
@@ -81,5 +81,18 @@ describe('mod', () => {
     assert.equal(mod(-4, 3), 2);
     assert.equal(mod(-5, 3), 1);
     assert.equal(mod(-3, 2), 1);
+  });
+});
+
+describe('compose', () => {
+  const add1 = (a) => a + 1;
+  it('should compose', () => {
+    assert.equal(compose(add1, add1)(0), 2);
+    assert.equal(compose(add1)(0), 1);
+  });
+  const addS = (s) => (a) => a + s;
+  it('should compose left to right', () => {
+    assert.equal(compose(addS('a'), addS('b'))(''), 'ab');
+    assert.equal(compose(addS('a'), addS('b'))('x'), 'xab');
   });
 });

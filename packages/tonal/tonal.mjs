@@ -1,6 +1,5 @@
 import { Note, Interval, Scale } from '@tonaljs/tonal';
-import { Pattern } from '@strudel.cycles/core';
-import { mod } from '@strudel.cycles/core/util.mjs';
+import { Pattern, mod } from '@strudel.cycles/core';
 
 // transpose note inside scale by offset steps
 // function scaleTranspose(scale: string, offset: number, note: string) {

@@ -15,7 +15,7 @@ import {
 import shiftCodegen from 'shift-codegen';
 const codegen = shiftCodegen.default || shiftCodegen; // parcel module resolution fuckup
 
-import * as strudel from '@strudel.cycles/core/strudel.mjs';
+import * as strudel from '@strudel.cycles/core';
 
 const { Pattern } = strudel;
 

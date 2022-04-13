@@ -2,7 +2,7 @@
   "name": "@strudel.cycles/core",
   "version": "0.0.3",
   "description": "Port of Tidal Cycles to JavaScript",
-  "main": "strudel.mjs",
+  "main": "index.mjs",
   "type": "module",
   "scripts": {
     "test": "mocha --colors"
@@ -26,8 +26,7 @@
   "homepage": "https://strudel.tidalcycles.org",
   "dependencies": {
     "bjork": "^0.0.1",
-    "fraction.js": "^4.2.0",
-    "ramda": "^0.28.0"
+    "fraction.js": "^4.2.0"
   },
   "devDependencies": {
     "mocha": "^9.2.2"

@@ -1,4 +1,4 @@
-import { Pattern, timeCat } from './strudel.mjs';
+import { Pattern, timeCat } from './pattern.mjs';
 import bjork from 'bjork';
 import { rotate } from './util.mjs';
 import Fraction from './fraction.mjs';

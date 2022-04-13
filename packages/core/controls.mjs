@@ -1,4 +1,4 @@
-import { Pattern, sequence } from '@strudel.cycles/core/strudel.mjs';
+import { Pattern, sequence } from './pattern.mjs';
 
 const controls = {};
 const generic_params = [

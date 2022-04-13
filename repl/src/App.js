@@ -10,7 +10,7 @@ import { useWebMidi } from './useWebMidi';
 import './App.css';
 // eval stuff start
 import { evaluate, extend } from '@strudel.cycles/eval';
-import * as strudel from '@strudel.cycles/core/strudel.mjs';
+import * as strudel from '@strudel.cycles/core';
 import gist from '@strudel.cycles/core/gist.js';
 import { mini } from '@strudel.cycles/mini/mini.mjs';
 import { Tone } from '@strudel.cycles/tone';
@@ -26,6 +26,7 @@ import '@strudel.cycles/tonal/tonal.mjs';
 import '@strudel.cycles/xen/xen.mjs';
 import '@strudel.cycles/xen/tune.mjs';
 import '@strudel.cycles/core/euclid.mjs';
+import '@strudel.cycles/core/speak.mjs';
 import '@strudel.cycles/tone/pianoroll.mjs';
 import '@strudel.cycles/tone/draw.mjs';
 import '@strudel.cycles/osc/osc.mjs';

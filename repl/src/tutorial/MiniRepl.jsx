@@ -6,7 +6,7 @@ import cx from '../cx';
 
 // eval stuff start
 import { extend } from '@strudel.cycles/eval';
-import * as strudel from '@strudel.cycles/core/strudel.mjs';
+import * as strudel from '@strudel.cycles/core';
 import gist from '@strudel.cycles/core/gist.js';
 import { mini } from '@strudel.cycles/mini/mini.mjs';
 import { Tone } from '@strudel.cycles/tone';

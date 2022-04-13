@@ -1,33 +1,37 @@
 # @strudel.cycles/osc
 
-OSC messaging between strudel and super collider?
+OSC output for strudel patterns! Currently only tested with super collider / super dirt.
 
-## Sniffing Tidal Messages
+## Usage
 
-```sh
-npm run tidal-sniffer
+OSC will only work if you run the REPL locally + the OSC server besides it:
+
+From the project root:
+
+```js
+npm run repl
 ```
 
-Now open a .tidal file and play something. There should be logs like:
+and in a seperate shell:
+
+```js
+npm run osc
+```
+
+This should give you
 
 ```log
-received: /dirt/play [
-  '_id_',   '1',
-  'cps',    0.5625,
-  'cutoff', 100,
-  'cycle',  724.1875,
-  'delta',  0.11111068725585938,
-  'orbit',  0,
-  's',      'arpy'
-]
+osc client running on port 57120
+osc server running on port 57121
+websocket server running on port 8080
 ```
 
-## Web Client + Server (WIP)
+Now open Supercollider (with the super dirt startup file)
 
-```sh
-npm run client
-npm run server # another terminal
+Now open the REPL and type:
+
+```js
+s("<bd sd> hh").osc()
 ```
 
-Then go to [http://localhost:4321](localhost:4321) and push the button.
-In your server terminal, there should be a log.
+or just [click here](http://localhost:3000/#cygiPGJkIHNkPiBoaCIpLm9zYygp)...
