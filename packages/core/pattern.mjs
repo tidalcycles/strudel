@@ -935,18 +935,18 @@ export function makeComposable(func) {
   return func;
 }
 
-const patternify2 = (f) => (pata, patb, pat) =>
+export const patternify2 = (f) => (pata, patb, pat) =>
   pata
     .fmap((a) => (b) => f.call(pat, a, b))
     .appLeft(patb)
     .innerJoin();
-const patternify3 = (f) => (pata, patb, patc, pat) =>
+export const patternify3 = (f) => (pata, patb, patc, pat) =>
   pata
     .fmap((a) => (b) => (c) => f.call(pat, a, b, c))
     .appLeft(patb)
     .appLeft(patc)
     .innerJoin();
-const patternify4 = (f) => (pata, patb, patc, patd, pat) =>
+export const patternify4 = (f) => (pata, patb, patc, patd, pat) =>
   pata
     .fmap((a) => (b) => (c) => (d) => f.call(pat, a, b, c, d))
     .appLeft(patb)
@@ -1030,61 +1030,3 @@ Pattern.prototype.define = (name, func, options = {}) => {
 // Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
 Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
 Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
-<<<<<<< HEAD:packages/core/strudel.mjs
-
-export {
-  Fraction,
-  Hap,
-  Pattern,
-  TimeSpan,
-  add,
-  append,
-  cat,
-  chunk,
-  chunkBack,
-  div,
-  early,
-  echo,
-  every,
-  fast,
-  fastcat,
-  id,
-  inv,
-  invert,
-  iter,
-  iterBack,
-  jux,
-  juxBy,
-  late,
-  linger,
-  mask,
-  mul,
-  off,
-  ply,
-  pm,
-  polymeter,
-  polymeterSteps,
-  polyrhythm,
-  pr,
-  pure,
-  range,
-  range2,
-  reify,
-  rev,
-  sequence,
-  silence,
-  slow,
-  slowcat,
-  stack,
-  struct,
-  sub,
-  superimpose,
-  timeCat,
-  union,
-  when,
-  patternify2,
-  patternify3,
-  patternify4,
-};
-=======
->>>>>>> origin/main:packages/core/pattern.mjs
