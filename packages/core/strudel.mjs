@@ -1243,6 +1243,10 @@ Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, com
 Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
 
 export {
+  Fraction,
+  Hap,
+  Pattern,
+  TimeSpan,
   add,
   append,
   cat,
@@ -1254,8 +1258,6 @@ export {
   every,
   fast,
   fastcat,
-  Fraction,
-  Hap,
   id,
   inv,
   invert,
@@ -1267,7 +1269,6 @@ export {
   mask,
   mul,
   off,
-  Pattern,
   ply,
   pm,
   polymeter,
@@ -1288,7 +1289,6 @@ export {
   sub,
   superimpose,
   timeCat,
-  TimeSpan,
   union,
   when,
 };
