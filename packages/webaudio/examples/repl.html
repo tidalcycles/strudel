@@ -18,10 +18,13 @@ Loading...</textarea
   const { cat, State, TimeSpan } = strudel;
   Object.assign(window, strudel); // add strudel to eval scope
 
-  const audioContext = getAudioContext();
-  const interval = 0.1;
-  const lookahead = 0.5;
-  const scheduler = new Scheduler(audioContext, interval, lookahead);
+  const scheduler = new Scheduler({
+    audioContext: getAudioContext(),
+    interval: 0.1,
+    onEvent: (e) => {
+      e.context?.createAudioNode?.(e);
+    },
+  });
 
   let initialCode = `sequence(1,2).mul(55/2) // frequencies
 .mul(slowcat(1,2))

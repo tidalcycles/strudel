@@ -3,7 +3,7 @@ import ClockWorker from './clockworker.mjs';
 class Scheduler {
   worker;
   pattern;
-  constructor(audioContext, interval = 0.2) {
+  constructor({ audioContext, interval = 0.2, onEvent }) {
     this.worker = new ClockWorker(
       audioContext,
       (begin, end) => {
@@ -11,10 +11,10 @@ class Scheduler {
           if (!e.part.begin.equals(e.whole.begin)) {
             return;
           }
-          if (e.context.createAudioNode) {
-            e.context.createAudioNode(e);
+          if (onEvent) {
+            onEvent?.(e);
           } else {
-            console.warn('unplayable event: no audio node');
+            console.warn('unplayable event: no audio node nor onEvent callback', e);
           }
         });
       },
