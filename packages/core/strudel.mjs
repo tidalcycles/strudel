@@ -1,35 +1,5 @@
 import Fraction from './fraction.mjs';
-import { isNote, toMidi, compose } from './util.mjs';
-
-// Removes 'None' values from given list
-const removeUndefineds = (xs) => xs.filter((x) => x != undefined);
-
-const flatten = (arr) => [].concat(...arr);
-
-const id = (a) => a;
-
-const range = (min, max) => Array.from({ length: max - min + 1 }, (_, i) => i + min);
-
-export function curry(func, overload) {
-  const fn = function curried(...args) {
-    if (args.length >= func.length) {
-      return func.apply(this, args);
-    } else {
-      const partial = function (...args2) {
-        return curried.apply(this, args.concat(args2));
-      };
-      if (overload) {
-        overload(partial, args);
-      }
-      return partial;
-    }
-  };
-  if (overload) {
-    // overload function without args... needed for chordBass.transpose(2)
-    overload(fn, []);
-  }
-  return fn;
-}
+import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry } from './util.mjs';
 
 class TimeSpan {
   constructor(begin, end) {
@@ -524,6 +494,16 @@ class Pattern {
     return this._asNumber().fmap((v) => Math.ceil(v));
   }
 
+  // Assumes source pattern of numbers in range 0..1
+  range(min, max) {
+    return this.mul(max-min).add(min);
+  }
+
+  // Assumes source pattern of numbers in range -1..1
+  range2(min, max) {
+    return _fromBipolar(this).range(min,max);
+  }
+  
   union(other) {
     return this._opleft(other, (a) => (b) => Object.assign({}, a, b));
   }
@@ -795,7 +775,7 @@ class Pattern {
     return new Pattern(query)._splitQueries();
   }
 
-  jux(func, by = 1) {
+  juxBy(by, func) {
     by /= 2;
     const elem_or = function (dict, key, dflt) {
       if (key in dict) {
@@ -807,6 +787,10 @@ class Pattern {
     const right = this.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by }));
 
     return stack(left, func(right));
+  }
+
+  _jux(func) {
+    return this.juxBy(1, func);
   }
 
   // is there a different name for those in tidal?
@@ -822,7 +806,7 @@ class Pattern {
   }
 
   stutWith(times, time, func) {
-    return stack(...range(0, times - 1).map((i) => func(this.late(i * time), i)));
+    return stack(...listRange(0, times - 1).map((i) => func(this.late(i * time), i)));
   }
 
   stut(times, feedback, time) {
@@ -831,7 +815,7 @@ class Pattern {
 
   // these might change with: https://github.com/tidalcycles/Tidal/issues/902
   _echoWith(times, time, func) {
-    return stack(...range(0, times - 1).map((i) => func(this.late(i * time), i)));
+    return stack(...listRange(0, times - 1).map((i) => func(this.late(i * time), i)));
   }
 
   _echo(times, time, feedback) {
@@ -839,7 +823,7 @@ class Pattern {
   }
 
   iter(times, back = false) {
-    return slowcat(...range(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
+    return slowcat(...listRange(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
   }
 
   // known as iter' in tidalcycles
@@ -904,6 +888,7 @@ Pattern.prototype.patternified = [
   'velocity',
   'segment',
   'color',
+  'jux'
 ];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr };
@@ -1101,10 +1086,13 @@ const sub = curry((a, pat) => pat.sub(a));
 const mul = curry((a, pat) => pat.mul(a));
 const div = curry((a, pat) => pat.div(a));
 const union = curry((a, pat) => pat.union(a));
+const range = curry((a, b, pat) => pat.range(a,b));
+const range2 = curry((a, b, pat) => pat.range2(a,b));
 const every = curry((i, f, pat) => pat.every(i, f));
 const when = curry((binary, f, pat) => pat.when(binary, f));
 const off = curry((t, f, pat) => pat.off(t, f));
 const jux = curry((f, pat) => pat.jux(f));
+const juxBy = curry((by, f, pat) => pat.juxBy(by, f));
 const append = curry((a, pat) => pat.append(a));
 const superimpose = curry((array, pat) => pat.superimpose(...array));
 const struct = curry((a, pat) => pat.struct(a));
@@ -1230,49 +1218,51 @@ Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true
 
 export {
   Fraction,
-  TimeSpan,
   Hap,
   Pattern,
-  pure,
-  stack,
-  slowcat,
-  fastcat,
-  cat,
-  timeCat,
-  sequence,
-  polymeterSteps,
-  polymeter,
-  pm,
-  polyrhythm,
-  pr,
-  reify,
-  silence,
-  fast,
-  slow,
-  early,
-  late,
-  rev,
+  TimeSpan,
   add,
-  sub,
-  mul,
-  div,
-  union,
-  every,
-  when,
-  off,
-  jux,
   append,
-  superimpose,
-  struct,
-  mask,
-  invert,
-  inv,
-  id,
-  range,
-  echo,
-  iter,
-  iterBack,
+  cat,
   chunk,
   chunkBack,
+  div,
+  early,
+  echo,
+  every,
+  fast,
+  fastcat,
+  id,
+  inv,
+  invert,
+  iter,
+  iterBack,
+  jux,
+  juxBy,
+  late,
+  mask,
+  mul,
+  off,
   ply,
+  pm,
+  polymeter,
+  polymeterSteps,
+  polyrhythm,
+  pr,
+  pure,
+  range,
+  range2,
+  reify,
+  rev,
+  sequence,
+  silence,
+  slow,
+  slowcat,
+  stack,
+  struct,
+  sub,
+  superimpose,
+  timeCat,
+  union,
+  when,
 };
