@@ -39,12 +39,22 @@ class TimeSpan {
   }
 
   withTime(func_time) {
-    // Applies given function to both the begin and end time value of the timespan"""
+    // Applies given function to both the begin and end time of the timespan"""
     return new TimeSpan(func_time(this.begin), func_time(this.end));
   }
+
   withEnd(func_time) {
-    // Applies given function to both the begin and end time value of the timespan"""
+    // Applies given function to the end time of the timespan"""
     return new TimeSpan(this.begin, func_time(this.end));
+  }
+
+  withCycle(func_time) {
+    // Like withTime, but time is relative to relative to the cycle (i.e. the
+    // sam of the start of the timespan)
+    const sam = this.begin.sam();
+    const b = sam.add(func_time(this.begin.sub(sam)));
+    const e = sam.add(func_time(this.end.sub(sam)));
+    return new TimeSpan(b, e);
   }
 
   intersection(other) {
@@ -492,14 +502,14 @@ class Pattern {
 
   // Assumes source pattern of numbers in range 0..1
   range(min, max) {
-    return this.mul(max-min).add(min);
+    return this.mul(max - min).add(min);
   }
 
   // Assumes source pattern of numbers in range -1..1
   range2(min, max) {
-    return _fromBipolar(this).range(min,max);
+    return _fromBipolar(this).range(min, max);
   }
-  
+
   union(other) {
     return this._opleft(other, (a) => (b) => Object.assign({}, a, b));
   }
@@ -666,12 +676,12 @@ class Pattern {
   }
 
   _chop(n) {
-    const slices = Array.from({length: n}, (x, i) => i);
-    const slice_objects = slices.map(i => ({begin: i/n, end: (i+1)/n}));
-    const func = function(o) {
-      return(sequence(slice_objects.map(slice_o => Object.assign({}, o, slice_o))))
-    }
-    return(this._squeezeBind(func));
+    const slices = Array.from({ length: n }, (x, i) => i);
+    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+    const func = function (o) {
+      return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
+    };
+    return this._squeezeBind(func);
   }
 
   // cpm = cycles per minute
@@ -689,6 +699,26 @@ class Pattern {
     // Equivalent of Tidal's ~> operator
     offset = Fraction(offset);
     return this._early(Fraction(0).sub(offset));
+  }
+
+  _zoom(s, e) {
+    const d = e.sub(s);
+    return this.withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
+      .withEventSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
+      ._splitQueries();
+  }
+
+  _zoomArc(a) {
+    return this.zoom(a.begin, a.end);
+  }
+
+  _linger(t) {
+    if (t == 0) {
+      return silence;
+    } else if (t < 0) {
+      return this._zoom(t.add(1), 1)._slow(t);
+    }
+    return this._zoom(0, t)._slow(t);
   }
 
   struct(...binary_pats) {
@@ -872,19 +902,20 @@ class Pattern {
 // methods of Pattern that get callable factories
 Pattern.prototype.patternified = [
   'apply',
-  'fast',
-  'slow',
-  'ply',
   'chop',
-  'cpm',
-  'early',
-  'late',
-  'duration',
-  'legato',
-  'velocity',
-  'segment',
   'color',
-  'jux'
+  'cpm',
+  'duration',
+  'early',
+  'fast',
+  'jux',
+  'late',
+  'legato',
+  'linger',
+  'ply',
+  'segment',
+  'slow',
+  'velocity',
 ];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr };
@@ -1072,35 +1103,36 @@ function pr(args) {
   polyrhythm(args);
 }
 
-const fast = curry((a, pat) => pat.fast(a));
-const slow = curry((a, pat) => pat.slow(a));
-const early = curry((a, pat) => pat.early(a));
-const late = curry((a, pat) => pat.late(a));
-const rev = (pat) => pat.rev();
 const add = curry((a, pat) => pat.add(a));
-const sub = curry((a, pat) => pat.sub(a));
-const mul = curry((a, pat) => pat.mul(a));
-const div = curry((a, pat) => pat.div(a));
-const union = curry((a, pat) => pat.union(a));
-const range = curry((a, b, pat) => pat.range(a,b));
-const range2 = curry((a, b, pat) => pat.range2(a,b));
-const every = curry((i, f, pat) => pat.every(i, f));
-const when = curry((binary, f, pat) => pat.when(binary, f));
-const off = curry((t, f, pat) => pat.off(t, f));
-const jux = curry((f, pat) => pat.jux(f));
-const juxBy = curry((by, f, pat) => pat.juxBy(by, f));
 const append = curry((a, pat) => pat.append(a));
-const superimpose = curry((array, pat) => pat.superimpose(...array));
-const struct = curry((a, pat) => pat.struct(a));
-const mask = curry((a, pat) => pat.mask(a));
-const echo = curry((a, b, c, pat) => pat.echo(a, b, c));
-const invert = (pat) => pat.invert();
-const inv = (pat) => pat.inv();
-const iter = curry((a, pat) => pat.iter(a));
-const iterBack = curry((a, pat) => pat.iter(a));
 const chunk = curry((a, pat) => pat.chunk(a));
 const chunkBack = curry((a, pat) => pat.chunkBack(a));
+const div = curry((a, pat) => pat.div(a));
+const early = curry((a, pat) => pat.early(a));
+const echo = curry((a, b, c, pat) => pat.echo(a, b, c));
+const every = curry((i, f, pat) => pat.every(i, f));
+const fast = curry((a, pat) => pat.fast(a));
+const inv = (pat) => pat.inv();
+const invert = (pat) => pat.invert();
+const iter = curry((a, pat) => pat.iter(a));
+const iterBack = curry((a, pat) => pat.iter(a));
+const jux = curry((f, pat) => pat.jux(f));
+const juxBy = curry((by, f, pat) => pat.juxBy(by, f));
+const late = curry((a, pat) => pat.late(a));
+const linger = curry((a, pat) => pat.linger(a));
+const mask = curry((a, pat) => pat.mask(a));
+const mul = curry((a, pat) => pat.mul(a));
+const off = curry((t, f, pat) => pat.off(t, f));
 const ply = curry((a, pat) => pat.ply(a));
+const range = curry((a, b, pat) => pat.range(a, b));
+const range2 = curry((a, b, pat) => pat.range2(a, b));
+const rev = (pat) => pat.rev();
+const slow = curry((a, pat) => pat.slow(a));
+const struct = curry((a, pat) => pat.struct(a));
+const sub = curry((a, pat) => pat.sub(a));
+const superimpose = curry((array, pat) => pat.superimpose(...array));
+const union = curry((a, pat) => pat.union(a));
+const when = curry((binary, f, pat) => pat.when(binary, f));
 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
@@ -1236,6 +1268,7 @@ export {
   jux,
   juxBy,
   late,
+  linger,
   mask,
   mul,
   off,
