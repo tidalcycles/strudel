@@ -2,7 +2,7 @@
   "name": "@strudel.cycles/core",
   "version": "0.0.3",
   "description": "Port of Tidal Cycles to JavaScript",
-  "main": "strudel.mjs",
+  "main": "index.mjs",
   "type": "module",
   "scripts": {
     "test": "mocha --colors"

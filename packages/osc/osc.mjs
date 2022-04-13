@@ -1,5 +1,5 @@
 import OSC from './osc.js';
-import { Pattern } from '@strudel.cycles/core/strudel.mjs';
+import { Pattern } from '@strudel.cycles/core';
 
 const comm = new OSC();
 comm.open();
