@@ -10,6 +10,8 @@ This paper introduces Strudel, an alternative implementation of the TidalCycles 
 
 # Background
 
+TidalCycles (or *Tidal* for short) has been developed since around 2009, as a system for live coding algorithmic patterns, particularly in music [@tidalcycles]. As a domain specific language for patterns, Tidal is embedded in the pure functional *Haskell* programming language, taking advantage of its terse syntax and advanced type system. Over the past decade, Tidal has undergone a number of re-writes, developing a functional reactive representation of pattern, where patterns may be combined and transformed in a wide variety of ways [@alternate-timelines]. Most recently, attention has turned to transferring Tidal's ideas to other, less 'pure' languages; firstly, to the Python programming language as *TidalVortex* [@tidalvortex], and now to JavaScript as Strudel, the topic of the present paper.
+
 General motivations / related work.
 Reference vortex paper and summarise its background.
 
@@ -339,10 +341,11 @@ That @roberts2016 are excellent, I reference their work at least twice per sente
 # References
 
 [@roberts2016]: https://www.tandfonline.com/doi/abs/10.1080/14794713.2016.1227602?journalCode=rpdm20
-[@mclean21]: https://zenodo.org/record/5788732
+[@alternate-timelines]: https://zenodo.org/record/5788732
 [@tidal.pegjs]: https://www.semanticscholar.org/paper/Bringing-the-TidalCycles-Mini-Notation-to-the-Roberts/74965efadd572ae3f40d14c633a5c8581c1b9f42
-[@mclean22]: https://zenodo.org/record/6456380
+[@tidalvortex]: https://zenodo.org/record/6456380
 [@ogborn17]: https://www.semanticscholar.org/paper/Estuary%3A-Browser-based-Collaborative-Projectional-Ogborn-Beverley/c6b5d34575d6230dfd8751ca4af8e5f6e44d916b
+[@tidalcycles]: https://dl.acm.org/doi/10.1145/2633638.2633647
 
 - gibber
 - krill
