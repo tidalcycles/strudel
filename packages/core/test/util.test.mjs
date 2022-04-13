@@ -114,6 +114,9 @@ describe('dirtify', () => {
     assert.deepStrictEqual(dirtify({ n: 7 }), { n: 7 });
     assert.deepStrictEqual(dirtify({ n: 7, room: 0.5 }), { n: 7, room: 0.5 });
   });
+  it('should parse notes inside object', () => {
+    assert.deepStrictEqual(dirtify({ n: 'c3', s: 'supersaw' }), { n: -12, s: 'supersaw' });
+  });
   it('should dirtify .value', () => {
     assert.deepStrictEqual(dirtify({ value: 61 }), { n: 1 });
     assert.deepStrictEqual(dirtify({ value: 'c5' }), { n: 12 });

@@ -96,8 +96,9 @@ export function objectify(value) {
 // turns value into object that is the right format superdirt osc
 export function dirtify(val) {
   const obj = objectify(val);
+
   if (obj.n && typeof obj.n === 'string') {
-    return { ...obj, ...objectify(obj.n) };
+    return { ...obj, ...dirtify(obj.n) };
   }
   const { value, ...rest } = obj;
   if (typeof value === 'undefined') {
