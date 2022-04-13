@@ -1,4 +1,4 @@
-import { Pattern, patternify2 } from './strudel.mjs';
+import { Pattern, patternify2 } from './index.mjs';
 
 const synth = window?.speechSynthesis;
 let allVoices = synth?.getVoices();
