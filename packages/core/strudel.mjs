@@ -1,35 +1,5 @@
 import Fraction from './fraction.mjs';
-import { isNote, toMidi, compose } from './util.mjs';
-
-// Removes 'None' values from given list
-const removeUndefineds = (xs) => xs.filter((x) => x != undefined);
-
-const flatten = (arr) => [].concat(...arr);
-
-const id = (a) => a;
-
-const listRange = (min, max) => Array.from({ length: max - min + 1 }, (_, i) => i + min);
-
-export function curry(func, overload) {
-  const fn = function curried(...args) {
-    if (args.length >= func.length) {
-      return func.apply(this, args);
-    } else {
-      const partial = function (...args2) {
-        return curried.apply(this, args.concat(args2));
-      };
-      if (overload) {
-        overload(partial, args);
-      }
-      return partial;
-    }
-  };
-  if (overload) {
-    // overload function without args... needed for chordBass.transpose(2)
-    overload(fn, []);
-  }
-  return fn;
-}
+import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry } from './util.mjs';
 
 class TimeSpan {
   constructor(begin, end) {
