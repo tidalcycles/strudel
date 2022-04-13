@@ -1,6 +1,6 @@
 import Fraction from 'fraction.js';
 
-import { strict as assert } from 'assert';
+import { deepStrictEqual, strict as assert } from 'assert';
 
 import {
   TimeSpan,
@@ -653,6 +653,14 @@ describe('Pattern', function () {
       assert.deepStrictEqual(
         sequence(-1, -0.5, 0, 0.5).range2(1000, 1100).firstCycle(),
         sequence(1000, 1025, 1050, 1075).firstCycle(),
+      );
+    });
+  });
+  describe('linger', () => {
+    it('Can linger on the first quarter of a cycle', () => {
+      assert.deepStrictEqual(
+        sequence(0, 1, 2, 3, 4, 5, 6, 7).linger(0.25).firstCycle(),
+        sequence(0, 1, 0, 1, 0, 1, 0, 1).firstCycle(),
       );
     });
   });
