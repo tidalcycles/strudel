@@ -657,13 +657,15 @@ class Pattern {
     return this.withQuerySpan(qf).withEventSpan(ef)._splitQueries();
   }
 
-  _compressSpan(span) {
-    const b = span.begin;
-    const e = span.end;
+  _compress(b, e) {
     if (b > e || b > 1 || e > 1 || b < 0 || e < 0) {
       return silence;
     }
     return this._fastGap(Fraction(1).div(e.sub(b)))._late(b);
+  }
+
+  _compressSpan(span) {
+    return this._compress(span.begin, span.end);
   }
 
   _fast(factor) {
@@ -1041,7 +1043,7 @@ function timeCat(...timepats) {
   const pats = [];
   for (const [time, pat] of timepats) {
     const end = begin.add(time);
-    pats.push(reify(pat)._compressSpan(new TimeSpan(begin.div(total), end.div(total))));
+    pats.push(reify(pat)._compress(begin.div(total), end.div(total)));
     begin = end;
   }
   return stack(...pats);
@@ -1200,6 +1202,10 @@ Pattern.prototype.chunkBack = function (...args) {
 Pattern.prototype.zoom = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._zoom)(...args, this);
+}
+Pattern.prototype.compress = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._compress)(...args, this);
 }
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)
