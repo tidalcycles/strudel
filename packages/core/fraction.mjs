@@ -1,5 +1,5 @@
 import Fraction from 'fraction.js';
-import { TimeSpan } from './strudel.mjs';
+import { TimeSpan } from './timespan.mjs';
 
 // Returns the start of the cycle.
 Fraction.prototype.sam = function () {
@@ -14,6 +14,11 @@ Fraction.prototype.nextSam = function () {
 // Returns a TimeSpan representing the begin and end of the Time value's cycle
 Fraction.prototype.wholeCycle = function () {
   return new TimeSpan(this.sam(), this.nextSam());
+};
+
+// The position of a time value relative to the start of its cycle.
+Fraction.prototype.cyclePos = function () {
+  return this.sub(this.sam());
 };
 
 Fraction.prototype.lt = function (other) {

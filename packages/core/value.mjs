@@ -1,4 +1,4 @@
-import { curry } from 'ramda';
+import { curry } from './util.mjs';
 
 function unionWithObj(a, b, func) {
   const common = Object.keys(a).filter((k) => Object.keys(b).includes(k));
