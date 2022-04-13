@@ -1,6 +1,7 @@
-# @strudel.cycles/xen
+# @strudel.cycles/webaudio
 
-This package adds xenharmonic / microtonal functions to strudel Patterns.
+This package contains a scheduler + a clockworker and synths based on the Web Audio API.
+It's an alternative to `@strudel.cycles/tone`, with better performance, but less features.
 
 ## Install
 
