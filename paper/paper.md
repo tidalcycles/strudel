@@ -1,5 +1,5 @@
 ---
-title: 'Strudel'
+title: 'StrudelCycles: algorithmic patterns for the web'
 date: '2022-03-22'
 url2cite: all-links
 ---
@@ -12,6 +12,8 @@ This paper introduces Strudel, an alternative implementation of the TidalCycles 
 
 TidalCycles (or *Tidal* for short) has been developed since around 2009, as a system for live coding algorithmic patterns, particularly in music [@tidalcycles]. As a domain specific language for patterns, Tidal is embedded in the pure functional *Haskell* programming language, taking advantage of its terse syntax and advanced type system. Over the past decade, Tidal has undergone a number of re-writes, developing a functional reactive representation of pattern, where patterns may be combined and transformed in a wide variety of ways [@alternate-timelines]. Most recently, attention has turned to transferring Tidal's ideas to other, less 'pure' languages; firstly, to the Python programming language as *TidalVortex* [@tidalvortex], and now to JavaScript as Strudel, the topic of the present paper.
 
+For general background on the motivations for porting Tidal to a multi-paradigm programming language, please see the TidalVortex paper [@tidalvortex]. The motivations for porting it to JavaScript are similar, with a particular slanting on accessibility - of course, a web browser based application does not require any installation. As with Vortex though, it is important to point out that this is a creative, free/open source project, and as such, an primary motivation will always be developer's curiosity, and market-driven perspectives on development choices may even be demotivational.
+
 General motivations / related work.
 Reference vortex paper and summarise its background.
 
@@ -19,7 +21,7 @@ The reimplementation of TidalCycles in Python (cite TidalVortex) showed that it 
 ideas to a multi paradigm language. It proved to be a stepping stone to move to other multi-paradigm languages, like JavaScript.
 A significant part of of the Python codebase could be ported to JavaScript by syntactical adjustments.
 
-# Introducing TidalStrudel
+# Introducing StrudelCycles
 
 (do we want to call it TidalStrudel once, and Strudel for short from then on as with vortex? Or just stick with Strudel? Should we start calling TidalCycles just Cycles??
 froos: I think TidalStrudel sounds a bit weird, but we can stick to the TidalX naming scheme if that's important.
