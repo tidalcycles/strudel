@@ -1,5 +1,5 @@
 ---
-title: 'StrudelCycles: algorithmic patterns for the web'
+title: 'StrudelCycles: live coding algorithmic patterns on the web'
 date: '2022-03-22'
 url2cite: all-links
 ---
@@ -10,22 +10,16 @@ This paper introduces Strudel, an alternative implementation of the TidalCycles 
 
 # Background
 
-TidalCycles (or *Tidal* for short) has been developed since around 2009, as a system for live coding algorithmic patterns, particularly in music [@tidalcycles]. As a domain specific language for patterns, Tidal is embedded in the pure functional *Haskell* programming language, taking advantage of its terse syntax and advanced type system. Over the past decade, Tidal has undergone a number of re-writes, developing a functional reactive representation of pattern, where patterns may be combined and transformed in a wide variety of ways [@alternate-timelines]. Most recently, attention has turned to transferring Tidal's ideas to other, less 'pure' languages; firstly, to the Python programming language as *TidalVortex* [@tidalvortex], and now to JavaScript as Strudel, the topic of the present paper.
+TidalCycles (or *Tidal* for short) has been developed since around 2009, as a system for live coding algorithmic patterns, particularly in music [@tidalcycles]. Tidal is embedded in the pure functional *Haskell* programming language, taking advantage of its terse syntax and advanced type system. Over the past decade, Tidal has undergone a number of re-writes, developing a functional reactive representation of pattern, where patterns may be combined and transformed in a wide variety of ways [@alternate-timelines]. Over this time is has gained diverse ideas from other patterned forms, including from computer music [@spiegel], Indian classical music [@bel], textiles [@fabricating], improvised percussion [@hession], and Ancient Greek lyric [@cyclic-patterns]. 
 
-For general background on the motivations for porting Tidal to a multi-paradigm programming language, please see the TidalVortex paper [@tidalvortex]. The motivations for porting it to JavaScript are similar, with a particular slanting on accessibility - of course, a web browser based application does not require any installation. As with Vortex though, it is important to point out that this is a creative, free/open source project, and as such, an primary motivation will always be developer's curiosity, and market-driven perspectives on development choices may even be demotivational.
+Most recently, attention has turned to transferring Tidal's ideas to other, less 'pure' languages; firstly, to the Python programming language as *TidalVortex* [@tidalvortex] (*Vortex* for short), and now to JavaScript as StrudelCycles (*Strudel* for short), the topic of the present paper. For general background on the motivations for porting Tidal to a multi-paradigm programming language, please see the TidalVortex paper [@tidalvortex]. The motivations for porting it to JavaScript are similar, with a particular slanting on accessibility - of course, a web browser based application does not require any installation. As with Vortex though, it is important to point out that this is a creative, free/open source project, and as such, an primary motivation will always be developer's curiosity, and market-driven perspectives on development choices may even be demotivational.
 
 General motivations / related work.
 Reference vortex paper and summarise its background.
 
-The reimplementation of TidalCycles in Python (cite TidalVortex) showed that it is possible to translate pure functional reactive programming
-ideas to a multi paradigm language. It proved to be a stepping stone to move to other multi-paradigm languages, like JavaScript.
-A significant part of of the Python codebase could be ported to JavaScript by syntactical adjustments.
+The reimplementation of TidalCycles in Python (cite TidalVortex) showed that it is possible to translate pure functional reactive programming ideas to a multi paradigm language. It proved to be a stepping stone to move to other multi-paradigm languages, like JavaScript. A significant part of of the Python codebase could be quickly ported to JavaScript by syntactical adjustments.
 
-# Introducing StrudelCycles
-
-(do we want to call it TidalStrudel once, and Strudel for short from then on as with vortex? Or just stick with Strudel? Should we start calling TidalCycles just Cycles??
-froos: I think TidalStrudel sounds a bit weird, but we can stick to the TidalX naming scheme if that's important.
-For me, StrudelCycles sounds better, because it has 3/4 phonems in common with TidalCycles)
+# Introducing Strudel
 
 * Motivating musical example
 
@@ -33,7 +27,7 @@ For me, StrudelCycles sounds better, because it has 3/4 phonems in common with T
 
 (should we explain shortly what tidal patterns do in general here?)
 
-The essence of TidalCycles are Patterns. Patterns are abstract entities that represent flows of time.
+The essence of TidalCycles are Patterns. Patterns are abstract entities that represent flows of time, supporting both continuous changes (like signals) and discrete events (like notes).
 Taking a time span as its input, a Pattern can output a set of events that happen within that time span.
 It depends on the structure of the Pattern where the events are placed.
 From now on, this process of generating events from a time span will be called **querying**.
@@ -334,7 +328,7 @@ cat(c3).tone(p)
 * OSC -> Supercollider
 * mininotation as the 'regex' of metre
 
-That @roberts2016 are excellent, I reference their work at least twice per sentence [@roberts2016, p. 3]. Another reference [@mclean21].
+That @roberts2016 are excellent, I reference their work at least twice per sentence [@roberts2016, p. 3]. 
 
 ```javascript
 "1 2 3"
@@ -348,6 +342,12 @@ That @roberts2016 are excellent, I reference their work at least twice per sente
 [@tidalvortex]: https://zenodo.org/record/6456380
 [@ogborn17]: https://www.semanticscholar.org/paper/Estuary%3A-Browser-based-Collaborative-Projectional-Ogborn-Beverley/c6b5d34575d6230dfd8751ca4af8e5f6e44d916b
 [@tidalcycles]: https://dl.acm.org/doi/10.1145/2633638.2633647
+[@hession]: https://www.scopus.com/record/display.uri?eid=2-s2.0-84907386880&origin=inward&txGid=03307e26fba02a27bdc68bda462016f6266316467_Extending_Instruments_with_Live_Algorithms_in_a_Percussion_Code_Duo
+[@spiegel]: https://www.academia.edu/664807/Manipulations_of_musical_patterns
+[@bel]: https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.517.7129
+[@algorithmicpattern]: https://zenodo.org/record/4299661
+[@fabricating]: https://zenodo.org/record/2155745
+[@cyclic-patterns]: https://zenodo.org/record/1548969
 
 - gibber
 - krill
