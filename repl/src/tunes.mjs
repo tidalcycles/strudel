@@ -703,3 +703,23 @@ stack(
   >\`
   .legato(.5)
 ).fast(2) //.tone((await piano()).chain(out()))`;
+
+export const speakerman = `backgroundImage('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FXR0rKqW3VwY%2Fmaxresdefault.jpg&f=1&nofb=1', 
+{ className:'darken', style:'background-size:cover'})
+stack(
+  "[g3,bb3,d4] [f3,a3,c4] [c3,e3,g3]@2".slow(2).late(.1),
+  slowcat(
+  'Baker man',
+  'is baking bread',
+  'Baker man',
+  'is baking bread',
+  'Sagabona',
+  'kunjani wena',
+  'Sagabona',
+  'kunjani wena',
+  'The night train, is coming',
+  'got to keep on running',
+  'The night train, is coming',
+  'got to keep on running',
+  ).speak("en zu en".slow(12), "<0 2 3 4 5 6>".slow(2)),
+).slow(4)`;
