@@ -28,3 +28,34 @@ export const square2 = square._toBipolar();
 
 export const tri = fastcat(isaw, saw);
 export const tri2 = fastcat(isaw2, saw2);
+
+
+// random signals
+
+const xorwise = x => {
+  const a = (x << 13) ^ x
+  const b = (a >> 17) ^ a
+  return (b << 5) ^ b
+}
+
+// stretch 300 cycles over the range of [0,2**29 == 536870912) then apply the xorshift algorithm
+const _frac = x => x - Math.trunc(x);
+
+const timeToIntSeed = x => xorwise(Math.trunc(_frac(x / 300) * 536870912));
+
+const intSeedToRand = x => (x % 536870912) / 536870912;
+
+const timeToRand = x => intSeedToRand(timeToIntSeed(x));
+
+const timeToRandsPrime = (seed, n) => {
+  const result = [];
+  for (let i = 0; i < n; ++n) {
+    result.push(intSeedToRand(seed));
+    seed = xorwise(seed);
+  }
+  return(result);
+}
+
+const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n)
+
+export const rand = signal(timeToRand)
