@@ -27,6 +27,6 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "osc-js": "^2.3.0"
+    "osc-js": "^2.3.2"
   }
 }
