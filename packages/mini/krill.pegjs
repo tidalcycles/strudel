@@ -76,30 +76,37 @@ DIGIT  = [0-9]
 
 ws "whitespace" = [ \n\r\t]*
 comma = ws "," ws;
+dot = ws "." ws;
 quote = '"' / "'"
 
 // ------------------ steps and cycles ---------------------------
 
 // single step definition (e.g bd)
-step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" / "_"
-step = ws chars:step_char+ ws { return chars.join("") }
+step_char =  [0-9a-zA-Z~] / "-" / "#" / "^" 
+step = ws chars:step_char+ ws { return chars.join("") } 
 
-// define a sub cycle e.g. [1 2, 3 [4]]
-sub_cycle = ws  "[" ws s:stack ws "]" ws { return s}
+// define a sub cycle
+sub_cycle_dot_first = dot s:stack  { return s }
+sub_cycle_dot_next = dot s:stack dot? { return s }
+sub_cycle_squareBrackets = ws  "[" ws s:stack ws "]" ws { return s }
+sub_cycle =  sub_cycle_squareBrackets / sub_cycle_dot_next / sub_cycle_dot_first
 
 // define a timeline e.g <1 3 [3 5]>. We simply defer to a stack and change the alignement
 timeline = ws "<" ws sc:single_cycle ws ">" ws
-  { sc.arguments_.alignment = "t"; return sc;}
+  { sc.arguments_.alignment = "t"; return sc; }
 
 // a slice is either a single step or a sub cycle
 slice = step / sub_cycle  / timeline
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
-slice_modifier = slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_fixed_step / slice_replicate
+slice_modifier = slice_weight_underscore / slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_fixed_step / slice_replicate
+
+slice_weight_underscore = underscores:(ws "_" ws?)+
+  { return { weight: underscores.length + 1 } }
 
 slice_weight =  "@" a:number
-  { return { weight: a} }
+  { return { weight: a } }
   
 slice_replicate = "!"a:number
   { return { replicate: a  } }
@@ -143,25 +150,25 @@ struct = "struct" ws s:sequence_or_operator
   { return { name: "struct", args: { sequence:s }}}
 
 target = "target" ws quote s:step quote
-  { return { name: "target", args : { name:s}}}
+  { return { name: "target", args : { name:s }}}
 
 bjorklund = "euclid" ws p:int ws s:int ws r:int?
   { return { name: "bjorklund", args :{ pulse: parseInt(p), step:parseInt(s) }}}
 
 slow = "slow" ws a:number
-  { return { name: "stretch", args :{ amount: a}}}
+  { return { name: "stretch", args :{ amount: a }}}
 
 rotL = "rotL" ws a:number
-  { return { name: "shift", args :{ amount: "-"+a}}}
+  { return { name: "shift", args :{ amount: "-"+a }}}
 
 rotR = "rotR" ws a:number
-  { return { name: "shift", args :{ amount: a}}}
+  { return { name: "shift", args :{ amount: a }}}
 
 fast = "fast" ws a:number
-  { return { name: "stretch", args :{ amount: "1/"+a}}}
+  { return { name: "stretch", args :{ amount: "1/"+a }}}
 
 scale = "scale" ws quote s:(step_char)+ quote
-{ return { name: "scale", args :{ scale: s.join("")}}}
+{ return { name: "scale", args :{ scale: s.join("") }}}
 
 comment = '//' p:([^\n]*)
 
