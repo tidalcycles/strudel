@@ -1,5 +1,5 @@
 import { Hap } from './hap.mjs';
-import { Pattern, fastcat } from './pattern.mjs';
+import { Pattern, fastcat, reify, silence } from './pattern.mjs';
 import Fraction from './fraction.mjs';
 
 export function steady(value) {
@@ -57,8 +57,21 @@ const timeToRandsPrime = (seed, n) => {
 
 const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
 
-export const rand = signal(timeToRand);
+export const rand2 = signal(timeToRand);
+export const rand = rand2.fmap(Math.abs);
 
 export const _brandBy = (p) => rand.fmap((x) => x < p);
 export const brandBy = (pPat) => reify(pPat).fmap(_brandBy).innerJoin();
 export const brand = _brandBy(0.5);
+
+export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
+export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
+
+export const chooseWith = (pat, xs) => {
+  if (xs.length == 0) {
+    return silence;
+  }
+  return pat.range(0, xs.length).fmap((i) => xs[Math.floor(i)]);
+};
+
+export const choose = (...xs) => chooseWith(rand, xs);
