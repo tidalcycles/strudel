@@ -311,6 +311,11 @@ export class Pattern {
     return this.mul(max - min).add(min);
   }
 
+  rangex(min, max) {
+    return this.range(Math.log(min), Math.log(max)).fmap(Math.exp);
+  } 
+
+
   // Assumes source pattern of numbers in range -1..1
   range2(min, max) {
     return this._fromBipolar().range(min, max);
