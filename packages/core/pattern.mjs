@@ -313,8 +313,7 @@ export class Pattern {
 
   rangex(min, max) {
     return this.range(Math.log(min), Math.log(max)).fmap(Math.exp);
-  } 
-
+  }
 
   // Assumes source pattern of numbers in range -1..1
   range2(min, max) {
@@ -614,6 +613,10 @@ export class Pattern {
       return haps.map((hap) => hap.withSpan(reflect));
     };
     return new Pattern(query)._splitQueries();
+  }
+
+  palindrome() {
+    this.every(2, rev);
   }
 
   juxBy(by, func) {
