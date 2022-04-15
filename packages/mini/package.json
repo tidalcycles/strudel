@@ -5,7 +5,8 @@
   "main": "mini.mjs",
   "type": "module",
   "scripts": {
-    "test": "mocha --colors"
+    "test": "mocha --colors",
+    "build-parser": "peggy -o krill-parser.js --format es ./krill.pegjs"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@strudel.cycles/eval": "^0.0.3",
-    "@strudel.cycles/tone": "^0.0.4"
+    "@strudel.cycles/tone": "^0.0.4",
+    "peggy": "^1.2.0"
   }
 }

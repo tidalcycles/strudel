@@ -81,11 +81,11 @@ quote = '"' / "'"
 // ------------------ steps and cycles ---------------------------
 
 // single step definition (e.g bd)
-step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" / "_"
-step = ws chars:step_char+ ws { return chars.join("") }
+step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" 
+step = ws chars:step_char+ ws { return chars.join("") } 
 
 // define a sub cycle e.g. [1 2, 3 [4]]
-sub_cycle = ws  "[" ws s:stack ws "]" ws { return s}
+sub_cycle = ws  "[" ws s:stack ws "]" ws { return s }
 
 // define a timeline e.g <1 3 [3 5]>. We simply defer to a stack and change the alignement
 timeline = ws "<" ws sc:single_cycle ws ">" ws
@@ -96,10 +96,13 @@ slice = step / sub_cycle  / timeline
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
-slice_modifier = slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_fixed_step / slice_replicate
+slice_modifier = slice_weight_underscore / slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_fixed_step / slice_replicate
+
+slice_weight_underscore = underscores:(ws "_" ws?)+
+  { return { weight: underscores.length + 1 } }
 
 slice_weight =  "@" a:number
-  { return { weight: a} }
+  { return { weight: a } }
   
 slice_replicate = "!"a:number
   { return { replicate: a  } }
