@@ -151,6 +151,241 @@
 				"title": "Bringing the TidalCycles Mini-Notation to the Browser",
 				"type": ""
 			}
+		},
+		"https://zenodo.org/record/6456380": {
+			"fetched": "2022-04-14T21:26:21.302Z",
+			"bibtex": [
+				"",
+				"@misc{mclean_tidalvortex_2022,",
+				"   address = {Limerick, Ireland},",
+				"   title = {{TidalVortex} {Zero}},",
+				"   url = {https://zenodo.org/record/6456380},",
+				"   abstract = {In this paper we introduce ‘version zero’ of TidalVortex, an alternative implementation of the TidalCycles live coding system, using the Python programming language.  This is open-ended work, exploring what happens when we try to extract the 'essence' of a system like TidalCycles and translate it into another programming language, while taking advantage of the affordance of its new host. First, we review the substantial prior art in porting TidalCycles, and in representing musical patterns in Python. We then compare equivalent patterns written in Haskell (TidalCycles) and Python (TidalVortex), and relate implementation details of how functional reactive paradigms have translated from the pure functional, strongly typed Haskell to the more multi-paradigm, dynamically typed Python. Finally, we conclude with reflections and generalisable outcomes.},",
+				"   urldate = {2022-04-14},",
+				"   collaborator = {McLean, Alex and Forment, Raphaël and Le Beux, Sylvain and Silvani, Damián},",
+				"   month = apr,",
+				"   year = {2022},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://zenodo.org/record/6456380",
+				"abstract": "In this paper we introduce “version zero” of TidalVortex, an alternative implementation of the TidalCycles live coding system, using the Python programming language.  This is open-ended work, exploring what happens when we try to extract the ’essence’ of a system like TidalCycles and translate it into another programming language, while taking advantage of the affordance of its new host. First, we review the substantial prior art in porting TidalCycles, and in representing musical patterns in Python. We then compare equivalent patterns written in Haskell (TidalCycles) and Python (TidalVortex), and relate implementation details of how functional reactive paradigms have translated from the pure functional, strongly typed Haskell to the more multi-paradigm, dynamically typed Python. Finally, we conclude with reflections and generalisable outcomes.",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							14
+						]
+					]
+				},
+				"id": "https://zenodo.org/record/6456380",
+				"issued": {
+					"date-parts": [
+						[
+							2022,
+							4
+						]
+					]
+				},
+				"publisher-place": "Limerick, Ireland",
+				"title": "TidalVortex Zero",
+				"type": ""
+			}
+		},
+		"https://zenodo.org/record/4299661": {
+			"fetched": "2022-04-15T07:40:08.702Z",
+			"bibtex": [
+				"",
+				"@misc{mclean_algorithmic_2020,",
+				"   address = {Birmingham UK},",
+				"   title = {Algorithmic {Pattern}},",
+				"   url = {https://zenodo.org/record/4299661},",
+				"   abstract = {This paper brings together two main perspectives on algorithmic pattern. First, the writing of musical patterns in live coding performance, and second, the weaving of patterns in textiles. In both cases, algorithmic pattern is an interface between the human and the outcome, where small changes have far-reaching impact on the results. By bringing contemporary live coding and ancient textile approaches together, we reach a common view of pattern as algorithmic movement (e.g. looping, shifting, reflecting, interfering) in the making of things. This works beyond the usual definition of pattern used in musical interfaces, of mere repeating sequences. We conclude by considering the place of algorithmic pattern in a wider activity of making.},",
+				"   urldate = {2022-04-15},",
+				"   collaborator = {McLean, Alex},",
+				"   month = jul,",
+				"   year = {2020},",
+				"   keywords = {pattern, tidalcycles, algorithmic music, textiles, live coding, algorave},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://zenodo.org/record/4299661",
+				"abstract": "This paper brings together two main perspectives on algorithmic pattern. First, the writing of musical patterns in live coding performance, and second, the weaving of patterns in textiles. In both cases, algorithmic pattern is an interface between the human and the outcome, where small changes have far-reaching impact on the results. By bringing contemporary live coding and ancient textile approaches together, we reach a common view of pattern as algorithmic movement (e.g. looping, shifting, reflecting, interfering) in the making of things. This works beyond the usual definition of pattern used in musical interfaces, of mere repeating sequences. We conclude by considering the place of algorithmic pattern in a wider activity of making.",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							15
+						]
+					]
+				},
+				"id": "https://zenodo.org/record/4299661",
+				"issued": {
+					"date-parts": [
+						[
+							2020,
+							7
+						]
+					]
+				},
+				"keyword": "pattern, tidalcycles, algorithmic music, textiles, live coding, algorave",
+				"publisher-place": "Birmingham UK",
+				"title": "Algorithmic Pattern",
+				"type": ""
+			}
+		},
+		"https://quod.lib.umich.edu/i/icmc/bbp2372.2012.011/2/–gibber-live-coding-audio-in-the-browser?page=root;size=150;view=text": {
+			"fetched": "2022-04-15T07:40:15.037Z",
+			"bibtex": [
+				"",
+				"@article{charlie_gibber:_2012,",
+				"   title = {{GIBBER}: {LIVE} {CODING} {AUDIO} {IN} {THE} {BROWSER}},",
+				"   volume = {2012},",
+				"   issn = {2223-3881},",
+				"   url = {https://quod.lib.umich.edu/i/icmc/bbp2372.2012.011/2/%E2%80%93gibber-live-coding-audio-in-the-browser?page=root;size=150;view=text},",
+				"   language = {en},",
+				"   urldate = {2022-04-15},",
+				"   journal = {International Computer Music Conference Proceedings},",
+				"   author = {Charlie, , Roberts and Joann, , Kuchera-Morin},",
+				"   year = {2012},",
+				"}",
+				""
+			],
+			"csl": {
+				"ISSN": "2223-3881",
+				"URL": "https://quod.lib.umich.edu/i/icmc/bbp2372.2012.011/2/%E2%80%93gibber-live-coding-audio-in-the-browser?page=root;size=150;view=text",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							15
+						]
+					]
+				},
+				"author": [
+					{
+						"family": "Charlie",
+						"given": "Roberts"
+					},
+					{
+						"family": "Joann",
+						"given": "Kuchera-Morin"
+					}
+				],
+				"container-title": "International Computer Music Conference Proceedings",
+				"id": "https://quod.lib.umich.edu/i/icmc/bbp2372.2012.011/2/–gibber-live-coding-audio-in-the-browser?page_x61_root;size_x61_150;view_x61_text",
+				"issued": {
+					"date-parts": [
+						[
+							2012
+						]
+					]
+				},
+				"title": "GIBBER: LIVE CODING AUDIO IN THE BROWSER",
+				"title-short": "GIBBER",
+				"type": "article-journal",
+				"volume": "2012"
+			}
+		},
+		"https://www.semanticscholar.org/paper/Estuary%3A-Browser-based-Collaborative-Projectional-Ogborn-Beverley/c6b5d34575d6230dfd8751ca4af8e5f6e44d916b": {
+			"fetched": "2022-04-15T07:40:17.179Z",
+			"bibtex": [
+				"",
+				"@misc{ogborn_estuary:_2017,",
+				"   title = {Estuary: {Browser}-based {Collaborative} {Projectional} {Live} {Coding} of {Musical} {Patterns}},",
+				"   shorttitle = {Estuary},",
+				"   url = {https://www.semanticscholar.org/paper/Estuary%3A-Browser-based-Collaborative-Projectional-Ogborn-Beverley/c6b5d34575d6230dfd8751ca4af8e5f6e44d916b},",
+				"   abstract = {Estuary is a browser-based collaborative projectional editing environment built on top of the popular TidalCycles language for the live coding of musical pattern that includes a strict form of structure editing, a click-only border-free approach to interface design, and explicit notations to modulate the liveness of different parts of the code. This paper describes the initial design and development of Estuary, a browser-based collaborative projectional editing environment built on top of the popular TidalCycles language for the live coding of musical pattern. Key features of Estuary include a strict form of structure editing (making syntactical errors impossible), a click-only border-free approach to interface design, explicit notations to modulate the liveness of different parts of the code, and a server-based network collaboration system that can be used for many simultaneous collaborative live coding performances, as well as to present different views of the same live coding activity. Estuary has been developed using Reflex-DOM, a Haskell-based framework for web development whose strictness promises robustness and security advantages.},",
+				"   language = {en},",
+				"   urldate = {2022-04-15},",
+				"   journal = {www.semanticscholar.org},",
+				"   author = {Ogborn, David and Beverley, J.},",
+				"   year = {2017},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://www.semanticscholar.org/paper/Estuary%3A-Browser-based-Collaborative-Projectional-Ogborn-Beverley/c6b5d34575d6230dfd8751ca4af8e5f6e44d916b",
+				"abstract": "Estuary is a browser-based collaborative projectional editing environment built on top of the popular TidalCycles language for the live coding of musical pattern that includes a strict form of structure editing, a click-only border-free approach to interface design, and explicit notations to modulate the liveness of different parts of the code. This paper describes the initial design and development of Estuary, a browser-based collaborative projectional editing environment built on top of the popular TidalCycles language for the live coding of musical pattern. Key features of Estuary include a strict form of structure editing (making syntactical errors impossible), a click-only border-free approach to interface design, explicit notations to modulate the liveness of different parts of the code, and a server-based network collaboration system that can be used for many simultaneous collaborative live coding performances, as well as to present different views of the same live coding activity. Estuary has been developed using Reflex-DOM, a Haskell-based framework for web development whose strictness promises robustness and security advantages.",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							15
+						]
+					]
+				},
+				"author": [
+					{
+						"family": "Ogborn",
+						"given": "David"
+					},
+					{
+						"family": "Beverley",
+						"given": "J."
+					}
+				],
+				"container-title": "www.semanticscholar.org",
+				"id": "https://www.semanticscholar.org/paper/Estuary_x37_3A-Browser-based-Collaborative-Projectional-Ogborn-Beverley/c6b5d34575d6230dfd8751ca4af8e5f6e44d916b",
+				"issued": {
+					"date-parts": [
+						[
+							2017
+						]
+					]
+				},
+				"title": "Estuary: Browser-based Collaborative Projectional Live Coding of Musical Patterns",
+				"title-short": "Estuary",
+				"type": ""
+			}
+		},
+		"https://zenodo.org/record/6353969": {
+			"fetched": "2022-04-15T07:40:20.966Z",
+			"bibtex": [
+				"",
+				"@misc{mclean_feedforward_2020,",
+				"   address = {Birmingham},",
+				"   title = {Feedforward},",
+				"   url = {https://zenodo.org/record/6353969},",
+				"   abstract = {This is an improvised, from-scratch live coding performance. The NIME interface which this performance showcases is the new Feedfoward editor for the TidalCycles live coding environment. Feedforward is written in Haskell using the ncurses library for terminal-based user interfaces. It runs on low-powered hardware including the Raspberry Pi Zero, with formative testing of prototypes conducted with several groups of children between the ages of 8 and 14. Feedforward has a number of features designed to support improvised, multi-pattern live coding. Individual Tidal patterns are addressable with hotkeys for fast mute and unmuting. Each pattern has a stereo VU meter, to aid the quick matching of sound to pattern within a mix. In addition, TidalCycles has been extended to store context with each event, so that source code positions in its polyrhythmic sequence mini-notation are tracked. This allows steps to be highlighted in the source code when- ever they are active. This works even when Tidal combinators have been applied to manipulate the timeline. Formal evaluation has yet to take place, but this feature appears to support learning of how pattern manipulations work in Tidal. Feedforward and TidalCycles is free/open source software under a GPL licence version 3.0.},",
+				"   urldate = {2022-04-15},",
+				"   collaborator = {McLean, Alex},",
+				"   month = jul,",
+				"   year = {2020},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://zenodo.org/record/6353969",
+				"abstract": "This is an improvised, from-scratch live coding performance. The NIME interface which this performance showcases is the new Feedfoward editor for the TidalCycles live coding environment. Feedforward is written in Haskell using the ncurses library for terminal-based user interfaces. It runs on low-powered hardware including the Raspberry Pi Zero, with formative testing of prototypes conducted with several groups of children between the ages of 8 and 14. Feedforward has a number of features designed to support improvised, multi-pattern live coding. Individual Tidal patterns are addressable with hotkeys for fast mute and unmuting. Each pattern has a stereo VU meter, to aid the quick matching of sound to pattern within a mix. In addition, TidalCycles has been extended to store context with each event, so that source code positions in its polyrhythmic sequence mini-notation are tracked. This allows steps to be highlighted in the source code when- ever they are active. This works even when Tidal combinators have been applied to manipulate the timeline. Formal evaluation has yet to take place, but this feature appears to support learning of how pattern manipulations work in Tidal. Feedforward and TidalCycles is free/open source software under a GPL licence version 3.0.",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							15
+						]
+					]
+				},
+				"id": "https://zenodo.org/record/6353969",
+				"issued": {
+					"date-parts": [
+						[
+							2020,
+							7
+						]
+					]
+				},
+				"publisher-place": "Birmingham",
+				"title": "Feedforward",
+				"type": ""
+			}
 		}
 	}
 }
