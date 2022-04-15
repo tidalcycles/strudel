@@ -11,7 +11,7 @@ npm i @strudel.cycles/core --save
 ## Example
 
 ```js
-import { sequence, State, TimeSpan } from '@strudel.cycles/core';
+import { sequence } from '@strudel.cycles/core';
 
 const pattern = sequence('a', ['b', 'c']);
 
