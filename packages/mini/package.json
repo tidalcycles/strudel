@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/mini",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Mini notation for strudel",
   "main": "mini.mjs",
   "type": "module",
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/eval": "^0.0.3",
-    "@strudel.cycles/tone": "^0.0.4"
+    "@strudel.cycles/eval": "^0.0.4",
+    "@strudel.cycles/tone": "^0.0.5"
   }
 }
