@@ -1,4 +1,4 @@
-import { Pattern } from '@strudel.cycles/core';
+import { Pattern, getFrequency } from '@strudel.cycles/core';
 
 let audioContext;
 export const getAudioContext = () => {
@@ -30,11 +30,12 @@ Pattern.prototype.withAudioNode = function (createAudioNode) {
   });
 };
 
-Pattern.prototype._osc = function (type) {
+Pattern.prototype._wave = function (type) {
   return this.withAudioNode((e) => {
     const osc = getAudioContext().createOscillator();
     osc.type = type;
-    osc.frequency.value = e.value; // expects frequency..
+    const f = getFrequency(e);
+    osc.frequency.value = f; // expects frequency..
     osc.start(e.whole.begin.valueOf() + lookahead);
     osc.stop(e.whole.end.valueOf() + lookahead); // release?
     return osc;
@@ -68,7 +69,10 @@ Pattern.prototype.out = function () {
       console.warn('out: no source! call .osc() first');
     }
     node?.connect(master);
+  })._withEvent((event) => {
+    const onTrigger = (_, e) => e.context?.createAudioNode?.(e);
+    return event.setContext({ ...event.context, onTrigger });
   });
 };
 
-Pattern.prototype.define('osc', (type, pat) => pat.osc(type), { patternified: true });
+Pattern.prototype.define('wave', (type, pat) => pat.wave(type), { patternified: true });

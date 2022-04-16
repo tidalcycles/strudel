@@ -6,6 +6,9 @@
   "directories": {
     "example": "examples"
   },
+  "scripts": {
+    "example": "npx parcel examples/repl.html"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
