@@ -723,3 +723,22 @@ stack(
   'got to keep on running',
   ).speak("en zu en".slow(12), "<0 2 3 4 5 6>".slow(2)),
 ).slow(4)`;
+
+export const randomBells = `const delay = new FeedbackDelay(1/3, .8).chain(vol(.2), out());
+let bell = await sampler({
+  C6: 'https://freesound.org/data/previews/411/411089_5121236-lq.mp3'
+})
+const bass = await sampler({
+  d2: 'https://freesound.org/data/previews/608/608286_13074022-lq.mp3'
+});
+bell = bell.chain(vol(0.6).connect(delay),out());
+
+"0".euclidLegato(3,8)
+  .add(rand.range(0,12))
+  .echo(3, 1/16, (x,n)=>x.add((n+1)*2).velocity(1/(n+1)))
+  .velocity(rand.range(.5,1))
+  .legato(rand.range(.4,3))
+  .scale(slowcat('D minor pentatonic')).tone(bell)
+  .stack("<D2 A2 G2 F2>".euclidLegato(6,8,1).tone(bass.toDestination()))
+  .slow(6)
+  .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})`;
