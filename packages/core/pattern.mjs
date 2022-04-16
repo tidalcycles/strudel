@@ -496,6 +496,10 @@ export class Pattern {
     return this._squeezeBind(func);
   }
 
+  _striate(n) {
+    
+  }
+
   // cpm = cycles per minute
   _cpm(cpm) {
     return this._fast(cpm / 60);
@@ -616,7 +620,7 @@ export class Pattern {
   }
 
   palindrome() {
-    this.every(2, rev);
+    return this.every(2, rev);
   }
 
   juxBy(by, func) {
