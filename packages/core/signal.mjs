@@ -1,5 +1,5 @@
 import { Hap } from './hap.mjs';
-import { Pattern, fastcat, reify, silence } from './pattern.mjs';
+import { Pattern, fastcat, reify, silence, stack } from './pattern.mjs';
 import Fraction from './fraction.mjs';
 import { id } from './util.mjs';
 
@@ -88,3 +88,82 @@ export const perlinWith = (pat) => {
 };
 
 export const perlin = perlinWith(time);
+
+Pattern.prototype._degradeByWith = function (withPat, x) {
+  return this.fmap((a) => (_) => a).appLeft(withPat._filterValues((v) => v > x));
+};
+
+Pattern.prototype._degradeBy = function (x) {
+  return this._degradeByWith(rand, x);
+};
+
+Pattern.prototype._degrade = function () {
+  return this._degradeBy(0.5);
+};
+
+Pattern.prototype._undegradeBy = function (x) {
+  return this._degradeByWith(
+    rand.fmap((r) => 1 - r),
+    x,
+  );
+};
+
+Pattern.prototype._undegrade = function () {
+  return this._undegradeBy(0.5);
+};
+
+Pattern.prototype._sometimesBy = function (x, func) {
+  return stack(this._degradeBy(x), func(this._undegradeBy(1 - x)));
+};
+
+Pattern.prototype.sometimesBy = function (patx, func) {
+  const pat = this;
+  return reify(patx)
+    .fmap((x) => pat._sometimesBy(x, func))
+    .innerJoin();
+};
+
+Pattern.prototype._sometimesByPre = function (x, func) {
+  return stack(this._degradeBy(x), func(this).undegradeBy(1 - x));
+};
+
+Pattern.prototype.sometimesByPre = function (patx, func) {
+  const pat = this;
+  return reify(patx)
+    .fmap((x) => pat._sometimesByPre(x, func))
+    .innerJoin();
+};
+
+Pattern.prototype.sometimes = function (func) {
+  return this._sometimesBy(0.5, func);
+};
+
+Pattern.prototype.sometimesPre = function (func) {
+  return this._sometimesByPre(0.5, func);
+};
+
+Pattern.prototype.often = function (func) {
+  return this.sometimesBy(0.75, func);
+};
+
+Pattern.prototype.rarely = function (func) {
+  return this.sometimesBy(0.25, func);
+};
+
+Pattern.prototype.almostNever = function (func) {
+  return this.sometimesBy(0.1, func);
+};
+
+Pattern.prototype.almostAlways = function (func) {
+  return this.sometimesBy(0.9, func);
+};
+
+Pattern.prototype.never = function (func) {
+  return this;
+};
+
+Pattern.prototype.always = function (func) {
+  return func(this);
+};
+
+Pattern.prototype.patternified.push('degradeBy', 'undegradeBy');
