@@ -26,4 +26,4 @@ scheduler.start()
 ```
 
 A more sophisticated example can be found in [examples/repl.html](./examples/repl.html).
-You can run it inside this directory with `npm run example`.
+You can run it by opening the html file with your browser, or by clicking [this link](https://raw.githack.com/tidalcycles/strudel/main/packages/webaudio/examples/repl.html)

@@ -1,13 +1,10 @@
 {
   "name": "@strudel.cycles/webaudio",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "Web Audio helpers for Strudel",
   "main": "index.mjs",
   "directories": {
     "example": "examples"
-  },
-  "scripts": {
-    "example": "parcel examples/repl.html"
   },
   "repository": {
     "type": "git",
@@ -26,7 +23,7 @@
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
-  "devDependencies": {
-    "parcel": "^2.4.1"
+  "dependencies": {
+    "@strudel.cycles/core": "^0.0.5"
   }
 }
