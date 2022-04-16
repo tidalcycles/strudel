@@ -496,10 +496,6 @@ export class Pattern {
     return this._squeezeBind(func);
   }
 
-  _striate(n) {
-    
-  }
-
   // cpm = cycles per minute
   _cpm(cpm) {
     return this._fast(cpm / 60);
