@@ -26,17 +26,28 @@ import '@strudel.cycles/tonal/tonal.mjs';
 import '@strudel.cycles/xen/xen.mjs';
 import '@strudel.cycles/xen/tune.mjs';
 import '@strudel.cycles/core/euclid.mjs';
+import '@strudel.cycles/core/speak.mjs';
 import '@strudel.cycles/tone/pianoroll.mjs';
 import '@strudel.cycles/tone/draw.mjs';
 import '@strudel.cycles/osc/osc.mjs';
 import controls from '@strudel.cycles/core/controls.mjs';
 
-extend(Tone, strudel, strudel.Pattern.prototype.bootstrap(), controls, toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
-  gist,
-  euclid,
-  mini,
+extend(
   Tone,
-});
+  strudel,
+  strudel.Pattern.prototype.bootstrap(),
+  controls,
+  toneHelpers,
+  voicingHelpers,
+  drawHelpers,
+  uiHelpers,
+  {
+    gist,
+    euclid,
+    mini,
+    Tone,
+  },
+);
 // eval stuff end
 
 const codeParam = window.location.href.split('#')[1];

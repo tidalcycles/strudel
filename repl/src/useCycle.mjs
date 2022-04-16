@@ -39,7 +39,7 @@ function useCycle(props) {
 
     // schedule events for next cycle
     events
-      ?.filter((event) => event.part.begin.equals(event.whole.begin))
+      ?.filter((event) => event.part.begin.equals(event.whole?.begin))
       .forEach((event) => {
         Tone.getTransport().schedule((time) => {
           onEvent(time, event, Tone.getContext().currentTime);

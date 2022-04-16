@@ -935,18 +935,18 @@ export function makeComposable(func) {
   return func;
 }
 
-const patternify2 = (f) => (pata, patb, pat) =>
+export const patternify2 = (f) => (pata, patb, pat) =>
   pata
     .fmap((a) => (b) => f.call(pat, a, b))
     .appLeft(patb)
     .innerJoin();
-const patternify3 = (f) => (pata, patb, patc, pat) =>
+export const patternify3 = (f) => (pata, patb, patc, pat) =>
   pata
     .fmap((a) => (b) => (c) => f.call(pat, a, b, c))
     .appLeft(patb)
     .appLeft(patc)
     .innerJoin();
-const patternify4 = (f) => (pata, patb, patc, patd, pat) =>
+export const patternify4 = (f) => (pata, patb, patc, patd, pat) =>
   pata
     .fmap((a) => (b) => (c) => (d) => f.call(pat, a, b, c, d))
     .appLeft(patb)

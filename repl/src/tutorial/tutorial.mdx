@@ -195,14 +195,14 @@ Internally, the mini notation will expand to use the actual functional JavaScrip
 
 Notes are automatically available as variables:
 
-<MiniRepl tune={`e4`} />
+<MiniRepl tune={`sequence(d4, fs4, a4)`} />
 
 An important difference to the mini notation:
 For sharp notes, the letter "s" is used instead of "#", because JavaScript does not support "#" in a variable name.
 
 The above is the same as:
 
-<MiniRepl tune={`"e4"`} />
+<MiniRepl tune={`sequence('d4', 'f#4', 'a4')`} />
 
 Using strings, you can also use "#".
 

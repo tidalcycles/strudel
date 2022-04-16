@@ -703,3 +703,42 @@ stack(
   >\`
   .legato(.5)
 ).fast(2) //.tone((await piano()).chain(out()))`;
+
+export const speakerman = `backgroundImage('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FXR0rKqW3VwY%2Fmaxresdefault.jpg&f=1&nofb=1', 
+{ className:'darken', style:'background-size:cover'})
+stack(
+  "[g3,bb3,d4] [f3,a3,c4] [c3,e3,g3]@2".slow(2).late(.1),
+  slowcat(
+  'Baker man',
+  'is baking bread',
+  'Baker man',
+  'is baking bread',
+  'Sagabona',
+  'kunjani wena',
+  'Sagabona',
+  'kunjani wena',
+  'The night train, is coming',
+  'got to keep on running',
+  'The night train, is coming',
+  'got to keep on running',
+  ).speak("en zu en".slow(12), "<0 2 3 4 5 6>".slow(2)),
+).slow(4)`;
+
+export const randomBells = `const delay = new FeedbackDelay(1/3, .8).chain(vol(.2), out());
+let bell = await sampler({
+  C6: 'https://freesound.org/data/previews/411/411089_5121236-lq.mp3'
+})
+const bass = await sampler({
+  d2: 'https://freesound.org/data/previews/608/608286_13074022-lq.mp3'
+});
+bell = bell.chain(vol(0.6).connect(delay),out());
+
+"0".euclidLegato(3,8)
+  .add(rand.range(0,12))
+  .echo(3, 1/16, (x,n)=>x.add((n+1)*2).velocity(1/(n+1)))
+  .velocity(rand.range(.5,1))
+  .legato(rand.range(.4,3))
+  .scale(slowcat('D minor pentatonic')).tone(bell)
+  .stack("<D2 A2 G2 F2>".euclidLegato(6,8,1).tone(bass.toDestination()))
+  .slow(6)
+  .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})`;
