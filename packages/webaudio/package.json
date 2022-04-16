@@ -1,0 +1,32 @@
+{
+  "name": "@strudel.cycles/webaudio",
+  "version": "0.0.1",
+  "description": "Web Audio helpers for Strudel",
+  "main": "index.mjs",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "example": "parcel examples/repl.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "devDependencies": {
+    "parcel": "^2.4.1"
+  }
+}
