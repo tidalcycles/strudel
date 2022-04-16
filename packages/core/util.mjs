@@ -40,6 +40,23 @@ export const getPlayableNoteValue = (event) => {
   return note;
 };
 
+// TODO: make this compatible with midi numbers object values
+export const getFrequency = (event) => {
+  let { value, context } = event;
+  // if value is number => interpret as midi number as long as its not marked as frequency
+  if (typeof value === 'object' && value.freq) {
+    return value.freq;
+  }
+  /* if (typeof value === 'number' && context.type !== 'frequency') {
+    value = fromMidi(event.value);
+  } else  */ if (typeof value === 'string' && isNote(value)) {
+    value = fromMidi(toMidi(event.value));
+  } else if (typeof value !== 'number') {
+    throw new Error('not a note or frequency:' + value);
+  }
+  return value;
+};
+
 // rotate array by n steps (to the left)
 export const rotate = (arr, n) => arr.slice(n).concat(arr.slice(0, n));
 
