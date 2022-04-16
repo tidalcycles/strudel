@@ -24,3 +24,6 @@ scheduler.setPattern(pattern);
 scheduler.start()
 //scheduler.stop()
 ```
+
+A more sophisticated example can be found in [examples/repl.html](./examples/repl.html).
+You can run it inside this directory with `npm run example`.
