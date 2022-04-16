@@ -179,7 +179,7 @@ export class Pattern {
     const query = function (state) {
       const haps = [];
       for (const hap_func of pat_func.query(state)) {
-        const event_vals = pat_val.query(state.setSpan(hap_func.part));
+        const event_vals = pat_val.query(state.setSpan(hap_func.wholeOrPart()));
         for (const hap_val of event_vals) {
           const new_whole = hap_func.whole;
           const new_part = hap_func.part.intersection_e(hap_val.part);
@@ -200,7 +200,7 @@ export class Pattern {
     const query = function (state) {
       const haps = [];
       for (const hap_val of pat_val.query(state)) {
-        const hap_funcs = pat_func.query(state.setSpan(hap_val.part));
+        const hap_funcs = pat_func.query(state.setSpan(hap_val.wholeOrPart()));
         for (const hap_func of hap_funcs) {
           const new_whole = hap_val.whole;
           const new_part = hap_func.part.intersection_e(hap_val.part);
@@ -558,7 +558,7 @@ export class Pattern {
   }
 
   _segment(rate) {
-    return this.struct(pure(true).fast(rate));
+    return this.struct(pure(true)._fast(rate));
   }
 
   invert() {
