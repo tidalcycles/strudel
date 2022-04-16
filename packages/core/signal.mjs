@@ -142,6 +142,24 @@ Pattern.prototype.sometimesPre = function (func) {
   return this._sometimesByPre(0.5, func);
 };
 
+Pattern.prototype._someCyclesBy = function (x, func) {
+  return stack(
+    this._degradeByWith(rand._segment(1), x),
+    func(this._degradeByWith(rand.fmap((r) => 1 - r)._segment(1), 1 - x)),
+  );
+};
+
+Pattern.prototype.someCyclesBy = function (patx, func) {
+  const pat = this;
+  return reify(patx)
+    .fmap((x) => pat._someCyclesBy(x, func))
+    .innerJoin();
+};
+
+Pattern.prototype.someCycles = function (func) {
+  return this._someCyclesBy(0.5, func);
+};
+
 Pattern.prototype.often = function (func) {
   return this.sometimesBy(0.75, func);
 };
