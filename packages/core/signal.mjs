@@ -47,7 +47,7 @@ const timeToIntSeed = (x) => xorwise(Math.trunc(_frac(x / 300) * 536870912));
 
 const intSeedToRand = (x) => (x % 536870912) / 536870912;
 
-const timeToRand = (x) => intSeedToRand(timeToIntSeed(x));
+const timeToRand = (x) => Math.abs(intSeedToRand(timeToIntSeed(x)));
 
 const timeToRandsPrime = (seed, n) => {
   const result = [];
@@ -60,8 +60,7 @@ const timeToRandsPrime = (seed, n) => {
 
 const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
 
-export const rand2 = signal(timeToRand);
-export const rand = rand2.fmap(Math.abs);
+export const rand = signal(timeToRand);
 
 export const _brandBy = (p) => rand.fmap((x) => x < p);
 export const brandBy = (pPat) => reify(pPat).fmap(_brandBy).innerJoin();
