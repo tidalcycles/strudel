@@ -88,3 +88,17 @@ export const perlinWith = (pat) => {
 };
 
 export const perlin = perlinWith(time);
+
+Pattern.prototype._degradeByWith = function (withPat, x) {
+  return this.fmap((a) => (_) => a).appLeft(withPat._filterValues((v) => v > x));
+};
+
+Pattern.prototype._degradeBy = function (x) {
+  return this._degradeByWith(rand, x);
+};
+
+Pattern.prototype._degrade = function () {
+  return this._degradeBy(0.5);
+};
+
+Pattern.prototype.patternified.push('degradeBy', 'degrade');
