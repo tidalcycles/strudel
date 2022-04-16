@@ -1,6 +1,7 @@
 import { Hap } from './hap.mjs';
 import { Pattern, fastcat, reify, silence } from './pattern.mjs';
 import Fraction from './fraction.mjs';
+import { id } from './util.mjs';
 
 export function steady(value) {
   // A continuous value
@@ -28,6 +29,8 @@ export const square2 = square._toBipolar();
 
 export const tri = fastcat(isaw, saw);
 export const tri2 = fastcat(isaw2, saw2);
+
+export const time = signal(id);
 
 // random signals
 
@@ -75,3 +78,13 @@ export const chooseWith = (pat, xs) => {
 };
 
 export const choose = (...xs) => chooseWith(rand, xs);
+
+export const perlinWith = (pat) => {
+  const pata = pat.fmap(Math.floor);
+  const patb = pat.fmap((t) => Math.floor(t) + 1);
+  const smootherStep = (x) => 6.0 * x ** 5 - 15.0 * x ** 4 + 10.0 * x ** 3;
+  const interp = (x) => (a) => (b) => a + smootherStep(x) * (b - a);
+  return pat.sub(pata).fmap(interp).appBoth(pata.fmap(timeToRand)).appBoth(patb.fmap(timeToRand));
+};
+
+export const perlin = perlinWith(time);
