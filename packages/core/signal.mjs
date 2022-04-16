@@ -97,7 +97,7 @@ Pattern.prototype._degradeBy = function (x) {
   return this._degradeByWith(rand, x);
 };
 
-Pattern.prototype._degrade = function () {
+Pattern.prototype.degrade = function () {
   return this._degradeBy(0.5);
 };
 
@@ -108,7 +108,7 @@ Pattern.prototype._undegradeBy = function (x) {
   );
 };
 
-Pattern.prototype._undegrade = function () {
+Pattern.prototype.undegrade = function () {
   return this._undegradeBy(0.5);
 };
 
