@@ -26,6 +26,9 @@
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "@strudel.cycles/core": "^0.0.5"
+  },
   "devDependencies": {
     "parcel": "^2.4.1"
   }
