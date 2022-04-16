@@ -6,9 +6,6 @@
   "directories": {
     "example": "examples"
   },
-  "scripts": {
-    "example": "parcel examples/repl.html"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -28,8 +25,5 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@strudel.cycles/core": "^0.0.5"
-  },
-  "devDependencies": {
-    "parcel": "^2.4.1"
   }
 }

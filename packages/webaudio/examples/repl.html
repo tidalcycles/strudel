@@ -3,7 +3,7 @@
   <button id="stop" style="font-size: 2em">stop</button>
 </div>
 <textarea
-  style="font-size: 2em; background: #e8d565; color: #323230; height: 100%; width: 100%; outline: none; border: 0"
+  style="font-size: 2em; background: #bce865; color: #323230; height: 100%; width: 100%; outline: none; border: 0"
   id="text"
   spellcheck="false"
 >
@@ -11,9 +11,10 @@ Loading...</textarea
 >
 <script type="module">
   document.body.style = 'margin: 0';
-  import * as strudel from '@strudel.cycles/core';
-  import '@strudel.cycles/core/euclid.mjs';
-  import { Scheduler, getAudioContext } from '@strudel.cycles/webaudio';
+  import * as strudel from 'https://cdn.skypack.dev/@strudel.cycles/core';
+  import 'https://cdn.skypack.dev/@strudel.cycles/core/euclid.mjs';
+  import 'https://cdn.skypack.dev/@strudel.cycles/mini';
+  import { Scheduler, getAudioContext } from 'https://cdn.skypack.dev/@strudel.cycles/webaudio@0.0.4';
 
   const { cat, State, TimeSpan } = strudel;
   Object.assign(window, strudel); // add strudel to eval scope
