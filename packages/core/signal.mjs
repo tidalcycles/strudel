@@ -70,13 +70,36 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
 export const chooseWith = (pat, xs) => {
+  xs = xs.map(reify);
   if (xs.length == 0) {
     return silence;
   }
-  return pat.range(0, xs.length).fmap((i) => xs[Math.floor(i)]);
+  return pat.range(0, xs.length).fmap((i) => xs[Math.floor(i)]).outerJoin();
 };
 
 export const choose = (...xs) => chooseWith(rand, xs);
+
+const _wchooseWith = function (pat, ...pairs) {
+  const values = pairs.map((pair) => reify(pair[0]));
+  const weights = [];
+  let accum = 0;
+  for (const pair of pairs) {
+    accum += pair[1];
+    weights.push(accum);
+  }
+  const total = accum;
+  const match = function(r) {
+    const find = r * total;
+    return values[weights.findIndex((x) => x > find, weights)];
+  };
+  return pat.fmap(match);
+};
+
+const wchooseWith = (...args) => _wchooseWith(...args).outerJoin()
+
+export const wchoose = (...pairs) => wchooseWith(rand, ...pairs);
+
+export const wchooseCycles = (...pairs) => _wchooseWith(rand, ...pairs).innerJoin();
 
 export const perlinWith = (pat) => {
   const pata = pat.fmap(Math.floor);
