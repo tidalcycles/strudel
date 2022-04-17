@@ -5,7 +5,7 @@ import { id } from './util.mjs';
 
 export function steady(value) {
   // A continuous value
-  return new Pattern((span) => Hap(undefined, span, value));
+  return new Pattern((state) => [new Hap(undefined, state.span, value)]);
 }
 
 export const signal = (func) => {
