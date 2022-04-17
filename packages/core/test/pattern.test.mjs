@@ -36,6 +36,9 @@ import {
   id,
   ply,
 } from '../index.mjs';
+
+import { steady } from '../signal.mjs';
+
 //import { Time } from 'tone';
 import pkg from 'tone';
 const { Time } = pkg;
@@ -106,6 +109,18 @@ describe('Hap', function () {
       const [state3, ev3] = ev1.resolveState(state2);
       assert.deepStrictEqual(ev3, new Hap(ts(0, 1), ts(0, 1), 11, {}, false));
       assert.deepStrictEqual(state3, { incrementme: 12 });
+    });
+  });
+  describe('wholeOrPart()', () => {
+    const ts1 = new TimeSpan(Fraction(0), Fraction(1));
+    const ts0_5 = new TimeSpan(Fraction(0), Fraction(0.5));
+    const continuousHap = new Hap(undefined, ts1, 'hello');
+    const discreteHap = new Hap(ts1, ts0_5, 'hello');
+    it('Can pick a whole', () => {
+      assert.deepStrictEqual(discreteHap.wholeOrPart(), ts1);
+    });
+    it('Can pick a part', () => {
+      assert.deepStrictEqual(continuousHap.wholeOrPart(), ts1);
     });
   });
 });
@@ -399,7 +414,7 @@ describe('Pattern', function () {
     });
   });
   describe('struct()', function () {
-    it('Can restructure a pattern', function () {
+    it('Can restructure a discrete pattern', function () {
       assert.deepStrictEqual(sequence('a', 'b').struct(sequence(true, true, true)).firstCycle(), [
         hap(ts(0, third), ts(0, third), 'a'),
         hap(ts(third, twothirds), ts(third, 0.5), 'a'),
@@ -424,6 +439,9 @@ describe('Pattern', function () {
           .firstCycle(),
         sequence('a', ['a', silence], 'a').firstCycle(),
       );
+    });
+    it('Can structure a continuous pattern', () => {
+      assert.deepStrictEqual(steady('a').struct(true, [true, true]).firstCycle(), sequence('a', ['a', 'a']).firstCycle());
     });
   });
   describe('mask()', function () {
