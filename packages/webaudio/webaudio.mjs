@@ -1,11 +1,13 @@
 import { Pattern, getFrequency } from '@strudel.cycles/core';
+import { Tone } from '@strudel.cycles/tone';
 
-let audioContext;
+// let audioContext;
 export const getAudioContext = () => {
-  if (!audioContext) {
+  return Tone.getContext().rawContext;
+  /* if (!audioContext) {
     audioContext = new AudioContext();
   }
-  return audioContext;
+  return audioContext; */
 };
 
 const lookahead = 0.2;
@@ -25,24 +27,27 @@ Pattern.prototype.withAudioNode = function (createAudioNode) {
   return this._withEvent((event) => {
     return event.setContext({
       ...event.context,
-      createAudioNode: (e) => createAudioNode(e, event.context.createAudioNode?.(event)),
+      createAudioNode: (t, e) => createAudioNode(t, e, event.context.createAudioNode?.(t, event)),
     });
   });
 };
 
 Pattern.prototype._wave = function (type) {
-  return this.withAudioNode((e) => {
+  return this.withAudioNode((t, e) => {
     const osc = getAudioContext().createOscillator();
     osc.type = type;
     const f = getFrequency(e);
     osc.frequency.value = f; // expects frequency..
-    osc.start(e.whole.begin.valueOf() + lookahead);
-    osc.stop(e.whole.end.valueOf() + lookahead); // release?
+    console.log('wave', t, getAudioContext().currentTime);
+    const begin = t ?? (e.whole.begin.valueOf() + lookahead);
+    const end = begin + e.duration;
+    osc.start(begin);
+    osc.stop(end); // release?
     return osc;
   });
 };
 Pattern.prototype.adsr = function (a = 0.01, d = 0.05, s = 1, r = 0.01) {
-  return this.withAudioNode((e, node) => {
+  return this.withAudioNode((t, e, node) => {
     const velocity = e.context?.velocity || 1;
     const envelope = adsr(a, d, s, r, velocity, e.whole.begin.valueOf() + lookahead, e.whole.end.valueOf() + lookahead);
     node?.connect(envelope);
@@ -50,7 +55,7 @@ Pattern.prototype.adsr = function (a = 0.01, d = 0.05, s = 1, r = 0.01) {
   });
 };
 Pattern.prototype.filter = function (type = 'lowshelf', frequency = 1000, gain = 25) {
-  return this.withAudioNode((e, node) => {
+  return this.withAudioNode((t, e, node) => {
     const filter = getAudioContext().createBiquadFilter();
     filter.type = type;
     filter.frequency.value = frequency;
@@ -64,13 +69,13 @@ Pattern.prototype.out = function () {
   const master = getAudioContext().createGain();
   master.gain.value = 0.1;
   master.connect(getAudioContext().destination);
-  return this.withAudioNode((e, node) => {
+  return this.withAudioNode((t, e, node) => {
     if (!node) {
       console.warn('out: no source! call .osc() first');
     }
     node?.connect(master);
   })._withEvent((event) => {
-    const onTrigger = (_, e) => e.context?.createAudioNode?.(e);
+    const onTrigger = (time, e) => e.context?.createAudioNode?.(time, e);
     return event.setContext({ ...event.context, onTrigger });
   });
 };
