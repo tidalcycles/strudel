@@ -38,7 +38,6 @@ Pattern.prototype._wave = function (type) {
     osc.type = type;
     const f = getFrequency(e);
     osc.frequency.value = f; // expects frequency..
-    console.log('wave', t, getAudioContext().currentTime);
     const begin = t ?? (e.whole.begin.valueOf() + lookahead);
     const end = begin + e.duration;
     osc.start(begin);
