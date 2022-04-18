@@ -81,8 +81,7 @@ export class TimeSpan {
     // Like 'sect', but raises an exception if the timespans don't intersect.
     const result = this.intersection(other);
     if (result == undefined) {
-      // TODO - raise exception
-      // raise ValueError(f'TimeSpan {self} and TimeSpan {other} do not intersect')
+      throw 'TimeSpans do not intersect';
     }
     return result;
   }

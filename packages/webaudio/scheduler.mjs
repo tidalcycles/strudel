@@ -1,4 +1,5 @@
 import ClockWorker from './clockworker.mjs';
+import { State, TimeSpan } from '@strudel.cycles/core';
 
 class Scheduler {
   worker;

@@ -5,7 +5,7 @@ import { id } from './util.mjs';
 
 export function steady(value) {
   // A continuous value
-  return new Pattern((span) => Hap(undefined, span, value));
+  return new Pattern((state) => [new Hap(undefined, state.span, value)]);
 }
 
 export const signal = (func) => {
@@ -47,7 +47,7 @@ const timeToIntSeed = (x) => xorwise(Math.trunc(_frac(x / 300) * 536870912));
 
 const intSeedToRand = (x) => (x % 536870912) / 536870912;
 
-const timeToRand = (x) => intSeedToRand(timeToIntSeed(x));
+const timeToRand = (x) => Math.abs(intSeedToRand(timeToIntSeed(x)));
 
 const timeToRandsPrime = (seed, n) => {
   const result = [];
@@ -60,8 +60,7 @@ const timeToRandsPrime = (seed, n) => {
 
 const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
 
-export const rand2 = signal(timeToRand);
-export const rand = rand2.fmap(Math.abs);
+export const rand = signal(timeToRand);
 
 export const _brandBy = (p) => rand.fmap((x) => x < p);
 export const brandBy = (pPat) => reify(pPat).fmap(_brandBy).innerJoin();
@@ -71,13 +70,36 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
 export const chooseWith = (pat, xs) => {
+  xs = xs.map(reify);
   if (xs.length == 0) {
     return silence;
   }
-  return pat.range(0, xs.length).fmap((i) => xs[Math.floor(i)]);
+  return pat.range(0, xs.length).fmap((i) => xs[Math.floor(i)]).outerJoin();
 };
 
 export const choose = (...xs) => chooseWith(rand, xs);
+
+const _wchooseWith = function (pat, ...pairs) {
+  const values = pairs.map((pair) => reify(pair[0]));
+  const weights = [];
+  let accum = 0;
+  for (const pair of pairs) {
+    accum += pair[1];
+    weights.push(accum);
+  }
+  const total = accum;
+  const match = function(r) {
+    const find = r * total;
+    return values[weights.findIndex((x) => x > find, weights)];
+  };
+  return pat.fmap(match);
+};
+
+const wchooseWith = (...args) => _wchooseWith(...args).outerJoin()
+
+export const wchoose = (...pairs) => wchooseWith(rand, ...pairs);
+
+export const wchooseCycles = (...pairs) => _wchooseWith(rand, ...pairs).innerJoin();
 
 export const perlinWith = (pat) => {
   const pata = pat.fmap(Math.floor);
@@ -140,6 +162,24 @@ Pattern.prototype.sometimes = function (func) {
 
 Pattern.prototype.sometimesPre = function (func) {
   return this._sometimesByPre(0.5, func);
+};
+
+Pattern.prototype._someCyclesBy = function (x, func) {
+  return stack(
+    this._degradeByWith(rand._segment(1), x),
+    func(this._degradeByWith(rand.fmap((r) => 1 - r)._segment(1), 1 - x)),
+  );
+};
+
+Pattern.prototype.someCyclesBy = function (patx, func) {
+  const pat = this;
+  return reify(patx)
+    .fmap((x) => pat._someCyclesBy(x, func))
+    .innerJoin();
+};
+
+Pattern.prototype.someCycles = function (func) {
+  return this._someCyclesBy(0.5, func);
 };
 
 Pattern.prototype.often = function (func) {
