@@ -1,4 +1,4 @@
-import { Pattern, getFrequency } from '@strudel.cycles/core';
+import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import { Tone } from '@strudel.cycles/tone';
 
 // let audioContext;
@@ -53,15 +53,18 @@ Pattern.prototype.adsr = function (a = 0.01, d = 0.05, s = 1, r = 0.01) {
     return envelope;
   });
 };
-Pattern.prototype.filter = function (type = 'lowshelf', frequency = 1000, gain = 25) {
+Pattern.prototype._filter = function (type = 'lowpass', frequency = 1000) {
   return this.withAudioNode((t, e, node) => {
     const filter = getAudioContext().createBiquadFilter();
     filter.type = type;
     filter.frequency.value = frequency;
-    filter.gain.value = gain;
     node?.connect(filter);
     return filter;
   });
+};
+
+Pattern.prototype.filter = function (type, frequency) {
+  return patternify2(Pattern.prototype._filter)(reify(type), reify(frequency), this);
 };
 
 Pattern.prototype.out = function () {
