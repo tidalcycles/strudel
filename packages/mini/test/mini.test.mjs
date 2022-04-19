@@ -37,7 +37,9 @@ describe('mini', () => {
     assert.deepStrictEqual(minS('c3 [d3 e3]'), ['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 1']);
     assert.deepStrictEqual(minS('c3 . d3 e3'), ['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 1']);
     assert.deepStrictEqual(minS('c3 [d3 [e3 f3]]'), ['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 7/8', 'f3: 7/8 - 1']);
-    assert.deepStrictEqual(minS('c3 . d3 . e3 f3'), ['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 7/8', 'f3: 7/8 - 1']);
+    assert.deepStrictEqual(minS('c3 . d3 e3'), ['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 1']);
+    assert.deepStrictEqual(minS('c3 d3 [e3 f3]'), ['c3: 0 - 1/3', 'd3: 1/3 - 2/3', 'e3: 2/3 - 5/6', 'f3: 5/6 - 1']);
+    assert.deepStrictEqual(minS('c3 . d3 . e3 f3'), ['c3: 0 - 1/3', 'd3: 1/3 - 2/3', 'e3: 2/3 - 5/6', 'f3: 5/6 - 1']);
   });
 
   it('supports commas', () => {
