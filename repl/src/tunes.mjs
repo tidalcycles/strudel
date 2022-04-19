@@ -742,3 +742,13 @@ bell = bell.chain(vol(0.6).connect(delay),out());
   .stack("<D2 A2 G2 F2>".euclidLegato(6,8,1).tone(bass.toDestination()))
   .slow(6)
   .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})`;
+
+export const waa = `"a4 [a3 c3] a3 c3"
+  .sub(slowcat(7,12).slow(2))
+  .off(1/8,add(12))
+  .off(1/4,add(7))
+  .legato(.5)
+  .slow(2)
+  .wave("sawtooth square")
+  .filter('lowpass', "<2000 1000 500>")
+  .out()`;
