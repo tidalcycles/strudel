@@ -3,7 +3,7 @@ import { Pattern, isPattern } from '@strudel.cycles/core';
 var serialWriter;
 var choosing = false;
 
-export async function getWriter() {
+export async function getWriter(br=115200) {
   if (choosing) {
     return;
   }
@@ -13,7 +13,7 @@ export async function getWriter() {
   }
   if ('serial' in navigator) {
     const port = await navigator.serial.requestPort();
-    await port.open({ baudRate: 115200 });
+    await port.open({ baudRate: br });
     const textEncoder = new TextEncoderStream();
     const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
     const writer = textEncoder.writable.getWriter();
@@ -29,11 +29,10 @@ export async function getWriter() {
 const latency = 0.1;
 
 // Pattern.prototype.midi = function (output: string | number, channel = 1) {
-Pattern.prototype.serial = function () {
+Pattern.prototype.serial = async function (...args) {
   return this._withEvent((event) => {
-    getWriter();
     if (!serialWriter) {
-      return event;
+      getWriter(...args);
     }
     const onTrigger = (time, event, currentTime) => {
       var message = "";
@@ -46,9 +45,7 @@ Pattern.prototype.serial = function () {
         message = event.value;
       }
       const offset = (time - currentTime + latency) * 1000;
-      //const ts = Math.floor(Date.now() + offset);
-      console.log(`sending ${message}`)
-      window.setTimeout(serialWriter, offset, message)
+      window.setTimeout(serialWriter, offset, message);
     };
     return event.setContext({ ...event.context, onTrigger });
   });
