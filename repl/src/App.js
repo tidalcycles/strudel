@@ -30,6 +30,7 @@ import '@strudel.cycles/core/speak.mjs';
 import '@strudel.cycles/tone/pianoroll.mjs';
 import '@strudel.cycles/tone/draw.mjs';
 import '@strudel.cycles/osc/osc.mjs';
+import '@strudel.cycles/webaudio/webaudio.mjs';
 import '@strudel.cycles/serial/serial.mjs';
 import controls from '@strudel.cycles/core/controls.mjs';
 

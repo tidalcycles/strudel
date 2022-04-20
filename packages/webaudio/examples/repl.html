@@ -11,9 +11,12 @@ Loading...</textarea
 >
 <script type="module">
   document.body.style = 'margin: 0';
-  import * as strudel from 'https://cdn.skypack.dev/@strudel.cycles/core';
-  import 'https://cdn.skypack.dev/@strudel.cycles/core/euclid.mjs';
-  import { Scheduler, getAudioContext } from 'https://cdn.skypack.dev/@strudel.cycles/webaudio@0.0.4';
+  // import * as strudel from '@strudel.cycles/core';
+  import * as strudel from '../../core/index.mjs';
+  import * as util from '../../core/util.mjs';
+  import '@strudel.cycles/core/euclid.mjs';
+  // import { Scheduler, getAudioContext } from 'https://cdn.skypack.dev/@strudel.cycles/webaudio@0.0.4';
+  import { Scheduler, getAudioContext } from '../index.mjs';
 
   const { cat, State, TimeSpan } = strudel;
   Object.assign(window, strudel); // add strudel to eval scope
@@ -31,7 +34,7 @@ Loading...</textarea
 .mul(slowcat(1,3/2,4/3,5/3).slow(8))
 .fast(3)
 .velocity(.5)
-.osc(cat('sawtooth','square').fast(2))
+.wave(cat('sawtooth','square').fast(2))
 .adsr(0.01,.02,.5,0.1)
 .filter('lowshelf',800,25)
 .out()`;
