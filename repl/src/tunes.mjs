@@ -744,11 +744,67 @@ bell = bell.chain(vol(0.6).connect(delay),out());
   .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})`;
 
 export const waa = `"a4 [a3 c3] a3 c3"
-  .sub(slowcat(7,12).slow(2))
-  .off(1/8,add(12))
-  .off(1/4,add(7))
-  .legato(.5)
-  .slow(2)
-  .wave("sawtooth square")
-  .filter('lowpass', "<2000 1000 500>")
-  .out()`;
+.sub("<7 12>/2")
+.off(1/8, add("12"))
+.off(1/4, add("7"))
+.legato(.5)
+.slow(2)
+.wave("sawtooth square")
+.filter('lowpass', "<2000 1000 500>")
+.out()`;
+
+export const waar = `"a4 [a3 c3] a3 c3".color('#F9D649')
+.sub("<7 12 5 12>".slow(2))
+.off(1/4,x=>x.add(7).color("#FFFFFF #0C3AA1 #C63928"))
+.off(1/8,x=>x.add(12).color('#215CB6'))
+.slow(2)
+.legato(sine.range(0.3, 2).slow(28))
+.wave("sawtooth square".fast(2))
+.filter('lowpass', cosine.range(500,4000).slow(16))
+.out()
+.pianoroll({minMidi:20,maxMidi:120,background:'#202124'})`;
+
+export const hyperpop = `const lfo = cosine.slow(15);
+const lfo2 = sine.slow(16);
+const filter1 = x=>x.filter('lowpass', lfo2.range(300,3000));
+const filter2 = x=>x.filter('highpass', lfo.range(1000,6000)).filter('lowpass',4000)
+const scales = slowcat('D3 major', 'G3 major').slow(8)
+
+const drums = await players({
+  bd: '344/344757_1676145-lq.mp3',
+  sn: '387/387186_7255534-lq.mp3',
+  hh: '561/561241_12517458-lq.mp3',
+  hh2:'44/44944_236326-lq.mp3',
+  hh3: '44/44944_236326-lq.mp3',
+}, 'https://freesound.org/data/previews/')
+
+stack(
+  "-7 0 -7 7".struct("x(5,8,2)").fast(2).sub(7)
+  .scale(scales).wave("sawtooth,square").velocity(.3).adsr(0.01,0.1,.5,0)
+  .apply(filter1),
+  "~@3 [<2 3>,<4 5>]"
+  .echo(8,1/16,.7)
+  .scale(scales)
+  .wave('square').velocity(.7).adsr(0.01,0.1,0).apply(filter1),
+  "6 5 4".add(14)
+  .superimpose(sub("5"))
+  .fast(1).euclidLegato(3,8)
+  .mask("<1 0@7>")
+  .fast(2)
+  .echo(32, 1/8, .9)
+  .scale(scales)
+  .wave("sawtooth")
+  .velocity(.2)
+  .adsr(.01,.5,0)
+  .apply(filter2)
+  //.echo(4,1/16,.5)
+).out().stack(
+  stack(
+    "bd <~@7 [~ bd]>".fast(2),
+    "~ sn",
+    "[~ hh3]*2"
+  ).tone(drums.chain(vol(.18),out())).fast(2)
+).slow(2)
+
+//.pianoroll({minMidi:20, maxMidi:160})
+// strudel disable-highlighting`;

@@ -38,7 +38,7 @@ Pattern.prototype._wave = function (type) {
     osc.type = type;
     const f = getFrequency(e);
     osc.frequency.value = f; // expects frequency..
-    const begin = t ?? (e.whole.begin.valueOf() + lookahead);
+    const begin = t ?? e.whole.begin.valueOf() + lookahead;
     const end = begin + e.duration;
     osc.start(begin);
     osc.stop(end); // release?
@@ -48,7 +48,9 @@ Pattern.prototype._wave = function (type) {
 Pattern.prototype.adsr = function (a = 0.01, d = 0.05, s = 1, r = 0.01) {
   return this.withAudioNode((t, e, node) => {
     const velocity = e.context?.velocity || 1;
-    const envelope = adsr(a, d, s, r, velocity, e.whole.begin.valueOf() + lookahead, e.whole.end.valueOf() + lookahead);
+    const begin = t ?? e.whole.begin.valueOf() + lookahead;
+    const end = begin + e.duration + lookahead;
+    const envelope = adsr(a, d, s, r, velocity, begin, end);
     node?.connect(envelope);
     return envelope;
   });
