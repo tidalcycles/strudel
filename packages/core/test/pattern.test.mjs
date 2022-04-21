@@ -161,11 +161,11 @@ describe('Pattern', function () {
       assert.equal(pure(3).div(pure(2)).firstCycle()[0].value, 1.5);
     });
   });
-  describe('union()', function () {
-    it('Can union things', function () {
+  describe('set()', function () {
+    it('Can set things', function () {
       assert.deepStrictEqual(
         pure({ a: 4, b: 6 })
-          .union(pure({ c: 7 }))
+          .set(pure({ c: 7 }))
           .firstCycle()[0].value,
         { a: 4, b: 6, c: 7 },
       );

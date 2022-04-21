@@ -714,21 +714,6 @@ export class Pattern {
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
-
-  add(other) {
-    return this._asNumber()._opLeft(other, (a) => (b) => a + b);
-  }
-
-  sub(other) {
-    return this._asNumber()._opLeft(other, (a) => (b) => a - b);
-  }
-  mul(other) {
-    return this._asNumber()._opLeft(other, (a) => (b) => a * b);
-  }
-
-  div(other) {
-    return this._asNumber()._opLeft(other, (a) => (b) => a / b);
-  }
 }
 
 // pattern composers
@@ -741,7 +726,6 @@ const composers = {
 };
 
 for (const [name, op] of Object.entries(composers)) {
-  console.log(`Adding ${name}`);
   Pattern.prototype[name] = function (other) {
     return op[1](this)._opLeft(other, op[0]);
   };
