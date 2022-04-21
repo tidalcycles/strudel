@@ -247,8 +247,23 @@ export class Pattern {
     );
   }
 
-  _opleft(other, func) {
+  _opLeft(other, func) {
     return this.fmap(func).appLeft(reify(other));
+  }
+  _opRight(other, func) {
+    return this.fmap(func).appRight(reify(other));
+  }
+  _opBoth(other, func) {
+    return this.fmap(func).appBoth(reify(other));
+  }
+  _opSqueeze(other, func) {
+    const otherPat = reify(other);
+    return this.fmap((a) => otherPat.fmap((b) => func(a)(b)))._squeezeJoin();
+  }
+  _opSqueezeFlip(other, func) {
+    const thisPat = this;
+    const otherPat = reify(other);
+    return otherPat.fmap((a) => thisPat.fmap((b) => func(a)(b)))._squeezeJoin();
   }
 
   _asNumber(silent = false) {
@@ -273,22 +288,6 @@ export class Pattern {
       }
       return event.withValue(() => undefined); // silent error
     })._removeUndefineds();
-  }
-
-  add(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a + b);
-  }
-
-  sub(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a - b);
-  }
-
-  mul(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a * b);
-  }
-
-  div(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a / b);
   }
 
   round() {
@@ -322,10 +321,6 @@ export class Pattern {
   // Assumes source pattern of numbers in range -1..1
   range2(min, max) {
     return this._fromBipolar().range(min, max);
-  }
-
-  union(other) {
-    return this._opleft(other, (a) => (b) => Object.assign({}, a, b));
   }
 
   _bindWhole(choose_whole, func) {
@@ -719,6 +714,46 @@ export class Pattern {
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
+
+  add(other) {
+    return this._asNumber()._opLeft(other, (a) => (b) => a + b);
+  }
+
+  sub(other) {
+    return this._asNumber()._opLeft(other, (a) => (b) => a - b);
+  }
+  mul(other) {
+    return this._asNumber()._opLeft(other, (a) => (b) => a * b);
+  }
+
+  div(other) {
+    return this._asNumber()._opLeft(other, (a) => (b) => a / b);
+  }
+}
+
+// pattern composers
+const composers = {
+  set: [(a) => (b) => Object.assign({}, a, b), id],
+  add: [(a) => (b) => a + b, (x) => x._asNumber()],
+  sub: [(a) => (b) => a - b, (x) => x._asNumber()],
+  mul: [(a) => (b) => a * b, (x) => x._asNumber()],
+  div: [(a) => (b) => a / b, (x) => x._asNumber()],
+};
+
+for (const [name, op] of Object.entries(composers)) {
+  console.log(`Adding ${name}`);
+  Pattern.prototype[name] = function (other) {
+    return op[1](this)._opLeft(other, op[0]);
+  };
+  Pattern.prototype[name + 'Flip'] = function (other) {
+    return op[1](this)._opRight(other, op[0]);
+  };
+  Pattern.prototype[name + 'Sect'] = function (other) {
+    return op[1](this)._opBoth(other, op[0]);
+  };
+  Pattern.prototype[name + 'Squeeze'] = function (other) {
+    return op[1](this)._opSqueeze(other, op[0]);
+  };
 }
 
 // methods of Pattern that get callable factories
@@ -922,7 +957,7 @@ export const slow = curry((a, pat) => pat.slow(a));
 export const struct = curry((a, pat) => pat.struct(a));
 export const sub = curry((a, pat) => pat.sub(a));
 export const superimpose = curry((array, pat) => pat.superimpose(...array));
-export const union = curry((a, pat) => pat.union(a));
+export const set = curry((a, pat) => pat.set(a));
 export const when = curry((binary, f, pat) => pat.when(binary, f));
 
 // problem: curried functions with spread arguments must have pat at the beginning
