@@ -50,6 +50,10 @@ const hap = (whole, part, value, context = {}) => new Hap(whole, part, value, co
 const third = Fraction(1, 3);
 const twothirds = Fraction(2, 3);
 
+const sameFirst = (a, b) => {
+  return assert.deepStrictEqual(a.firstCycle(), b.firstCycle());
+};
+
 describe('TimeSpan', function () {
   describe('equals()', function () {
     it('Should be equal to the same value', function () {
@@ -162,13 +166,49 @@ describe('Pattern', function () {
     });
   });
   describe('set()', function () {
-    it('Can set things', function () {
+    it('Can set things in objects', function () {
       assert.deepStrictEqual(
         pure({ a: 4, b: 6 })
           .set(pure({ c: 7 }))
           .firstCycle()[0].value,
         { a: 4, b: 6, c: 7 },
       );
+      sameFirst(
+        sequence({ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 3, b: 2 }).set({ a: 4, c: 5 }),
+        sequence({ a: 4, b: 2, c: 5 }).fast(3),
+      );
+    });
+    it('Can set things with plain values', function () {
+      sameFirst(sequence(1, 2, 3).set(4), sequence(4).fast(3));
+    });
+    describe('setFlip()', () => {
+      it('Can set things with structure from second pattern', () => {
+        sameFirst(sequence(1, 2).setFlip(4), pure(4).mask(true, true));
+      });
+    });
+    describe('setSqueeze()', () => {
+      it('Can squeeze one pattern inside the events of another', () => {
+        sameFirst(
+          sequence(1, [2, 3]).setSqueeze(sequence('a', 'b', 'c')),
+          sequence(
+            ['a', 'b', 'c'],
+            [
+              ['a', 'b', 'c'],
+              ['a', 'b', 'c'],
+            ],
+          ),
+        );
+        sameFirst(
+          sequence(1, [2, 3]).setSqueeze('a', 'b', 'c'),
+          sequence(
+            ['a', 'b', 'c'],
+            [
+              ['a', 'b', 'c'],
+              ['a', 'b', 'c'],
+            ],
+          ),
+        );
+      });
     });
   });
   describe('stack()', function () {
@@ -441,7 +481,10 @@ describe('Pattern', function () {
       );
     });
     it('Can structure a continuous pattern', () => {
-      assert.deepStrictEqual(steady('a').struct(true, [true, true]).firstCycle(), sequence('a', ['a', 'a']).firstCycle());
+      assert.deepStrictEqual(
+        steady('a').struct(true, [true, true]).firstCycle(),
+        sequence('a', ['a', 'a']).firstCycle(),
+      );
     });
   });
   describe('mask()', function () {
