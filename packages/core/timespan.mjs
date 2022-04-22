@@ -33,7 +33,7 @@ export class TimeSpan {
     // (Note that the output timespan probably does not start *at* Time 0 --
     // that only happens when the input Arc starts at an integral Time.)
     const b = this.begin.cyclePos();
-    const e = b + (this.end - this.begin);
+    const e = b.add(this.end.sub(this.begin));
     return new TimeSpan(b, e);
   }
 

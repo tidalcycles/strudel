@@ -463,7 +463,7 @@ export class Pattern {
   }
 
   _compress(b, e) {
-    if (b > e || b > 1 || e > 1 || b < 0 || e < 0) {
+    if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
       return silence;
     }
     return this._fastGap(Fraction(1).div(e.sub(b)))._late(b);
@@ -493,6 +493,13 @@ export class Pattern {
       return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
     };
     return this._squeezeBind(func);
+  }
+
+  _striate(n) {
+    const slices = Array.from({ length: n }, (x, i) => i);
+    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+    const slicePat = slowcat(...slice_objects);
+    return this.union(slicePat)._fast(n);
   }
 
   // cpm = cycles per minute
@@ -774,6 +781,7 @@ Pattern.prototype.patternified = [
   'linger',
   'ply',
   'segment',
+  'striate',
   'slow',
   'velocity',
 ];
