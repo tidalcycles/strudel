@@ -656,7 +656,7 @@ export class Pattern {
   }
 
   stutWith(times, time, func) {
-    return stack(...listRange(0, times - 1).map((i) => func(this.late(i * time), i)));
+    return stack(...listRange(0, times - 1).map((i) => func(this.late(i.mul(time)), i)));
   }
 
   stut(times, feedback, time) {
@@ -665,7 +665,7 @@ export class Pattern {
 
   // these might change with: https://github.com/tidalcycles/Tidal/issues/902
   _echoWith(times, time, func) {
-    return stack(...listRange(0, times - 1).map((i) => func(this.late(i * time), i)));
+    return stack(...listRange(0, times - 1).map((i) => func(this.late(i.mul(time)), i)));
   }
 
   _echo(times, time, feedback) {
