@@ -593,7 +593,7 @@ export class Pattern {
   every(n, func) {
     if (func instanceof Pattern) {
       const p = func;
-      func = (x) => x.union(p);
+      func = (x) => x.set(p);
     }
     const pat = this;
     const pats = Array(n - 1).fill(pat);
