@@ -499,7 +499,7 @@ export class Pattern {
     const slices = Array.from({ length: n }, (x, i) => i);
     const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
     const slicePat = slowcat(...slice_objects);
-    return this.union(slicePat)._fast(n);
+    return this.set(slicePat)._fast(n);
   }
 
   // cpm = cycles per minute

@@ -709,6 +709,14 @@ describe('Pattern', function () {
       assert.equal(sequence(1, 2, 3).ply(2).early(8).firstCycle().length, 6);
     });
   });
+  describe('striate', () => {
+    it('Can striate(2)', () => {
+      sameFirst(
+        sequence({ sound: 'a' }).striate(2),
+        sequence({ sound: 'a', begin: 0, end: 0.5 }, { sound: 'a', begin: 0.5, end: 1 }),
+      );
+    });
+  });
   describe('chop', () => {
     it('Can _chop(2)', () => {
       assert.deepStrictEqual(
