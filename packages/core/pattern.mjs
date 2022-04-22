@@ -724,27 +724,17 @@ export class Pattern {
 
   reset(pat) {
     pat = reify(pat);
-    return new Pattern((state) => {
-      const hps = pat
+    return new Pattern((state) =>
+      pat
         .query(state)
         .map((event) => {
-          const haps = this.query(new State(new TimeSpan(event.part.begin.sub(event.whole.begin), event.duration))).map(
-            (hap) =>
-              hap
-                .withSpan((s) => {
-                  s = s.withTime((t) => t.add(event.whole.begin));
-                  // s = s.intersection(state.span) || s;
-                  return s;
-                })
-                .setContext(hap.combineContext(event)),
+          const resetSpan = new TimeSpan(event.part.begin.sub(event.whole.begin), event.duration);
+          return this.query(new State(resetSpan)).map((hap) =>
+            hap.withSpan((s) => s.withTime((t) => t.add(event.whole.begin))).setContext(hap.combineContext(event)),
           );
-          //console.log('haps',haps.map(h=>h.show()))
-          return haps;
         })
-        .flat();
-      //console.log('hps',hps.map(h=>h.show()))
-      return hps;
-    });
+        .flat(),
+    );
   }
 }
 
