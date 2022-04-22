@@ -374,6 +374,15 @@ describe('Pattern', function () {
       );
     });
   });
+  describe('fastcat()', function () {
+    it('Can go into negative time', function () {
+      sameFirst(
+        fastcat('a','b','c')
+          .late(1000000),
+        fastcat('a','b','c'),
+      );
+    });
+  });
   describe('slowcat()', function () {
     it('Can concatenate things slowly', function () {
       assert.deepStrictEqual(
