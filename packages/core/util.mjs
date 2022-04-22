@@ -30,14 +30,17 @@ export const fromMidi = (n) => {
 export const mod = (n, m) => (n < 0 ? mod(n + m, m) : n % m);
 
 export const getPlayableNoteValue = (event) => {
-  let { value: note, context } = event;
-  // if value is number => interpret as midi number as long as its not marked as frequency
-  if (typeof note === 'number' && context.type !== 'frequency') {
-    note = fromMidi(event.value);
-  } else if (typeof note === 'string' && !isNote(note)) {
-    throw new Error('not a note: ' + note);
+  let { value, context } = event;
+  if (typeof value === 'object') {
+    value = value.n || value.note;
   }
-  return note;
+  // if value is number => interpret as midi number as long as its not marked as frequency
+  if (typeof value === 'number' && context.type !== 'frequency') {
+    value = fromMidi(event.value);
+  } else if (typeof value === 'string' && !isNote(value)) {
+    throw new Error('not a note: ' + value);
+  }
+  return value;
 };
 
 export const getFrequency = (event) => {
