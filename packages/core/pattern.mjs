@@ -591,6 +591,10 @@ export class Pattern {
   }
 
   every(n, func) {
+    if (func instanceof Pattern) {
+      const p = func;
+      func = (x) => x.union(p);
+    }
     const pat = this;
     const pats = Array(n - 1).fill(pat);
     pats.unshift(func(pat));
