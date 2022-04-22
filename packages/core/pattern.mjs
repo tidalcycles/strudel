@@ -722,7 +722,7 @@ export class Pattern {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
 
-  reset(pat) {
+  restart(pat) {
     pat = reify(pat);
     return new Pattern((state) =>
       pat
