@@ -468,7 +468,7 @@ export class Pattern {
   }
 
   _compress(b, e) {
-    if (b > e || b > 1 || e > 1 || b < 0 || e < 0) {
+    if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
       return silence;
     }
     return this._fastGap(Fraction(1).div(e.sub(b)))._late(b);
