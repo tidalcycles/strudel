@@ -441,7 +441,10 @@ describe('Pattern', function () {
       );
     });
     it('Can structure a continuous pattern', () => {
-      assert.deepStrictEqual(steady('a').struct(true, [true, true]).firstCycle(), sequence('a', ['a', 'a']).firstCycle());
+      assert.deepStrictEqual(
+        steady('a').struct(true, [true, true]).firstCycle(),
+        sequence('a', ['a', 'a']).firstCycle(),
+      );
     });
   });
   describe('mask()', function () {
@@ -633,6 +636,10 @@ describe('Pattern', function () {
         sequence('a', ['b', 'c']).ply(3).firstCycle(),
         sequence(pure('a').fast(3), [pure('b').fast(3), pure('c').fast(3)]).firstCycle(),
       );
+    });
+    it('Doesnt drop events in the 9th cycle', () => {
+      // fixed with https://github.com/tidalcycles/strudel/commit/72eeaf446e3d5e186d63cc0d2276f0723cde017a
+      assert.equal(sequence(1, 2, 3).ply(2).early(8).firstCycle().length, 6);
     });
   });
   describe('chop', () => {
