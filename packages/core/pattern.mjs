@@ -718,7 +718,23 @@ export class Pattern {
 
 // pattern composers
 const composers = {
-  set: [(a) => (b) => Object.assign({}, a, b), id],
+  set: [
+    (a) => (b) => {
+      // If an object is involved, do a union, discarding matching keys from a.
+      // Otherwise, just return b.
+      if (a instanceof Object || b instanceof Object) {
+        if (!a instanceof Object) {
+          a = { value: a };
+        }
+        if (!b instanceof Object) {
+          b = { value: b };
+        }
+        return Object.assign({}, a, b);
+      }
+      return b;
+    },
+    id,
+  ],
   add: [(a) => (b) => a + b, (x) => x._asNumber()],
   sub: [(a) => (b) => a - b, (x) => x._asNumber()],
   mul: [(a) => (b) => a * b, (x) => x._asNumber()],
@@ -726,17 +742,17 @@ const composers = {
 };
 
 for (const [name, op] of Object.entries(composers)) {
-  Pattern.prototype[name] = function (other) {
-    return op[1](this)._opLeft(other, op[0]);
+  Pattern.prototype[name] = function (...other) {
+    return op[1](this)._opLeft(sequence(other), op[0]);
   };
-  Pattern.prototype[name + 'Flip'] = function (other) {
-    return op[1](this)._opRight(other, op[0]);
+  Pattern.prototype[name + 'Flip'] = function (...other) {
+    return op[1](this)._opRight(sequence(other), op[0]);
   };
-  Pattern.prototype[name + 'Sect'] = function (other) {
-    return op[1](this)._opBoth(other, op[0]);
+  Pattern.prototype[name + 'Sect'] = function (...other) {
+    return op[1](this)._opBoth(sequence(other), op[0]);
   };
-  Pattern.prototype[name + 'Squeeze'] = function (other) {
-    return op[1](this)._opSqueeze(other, op[0]);
+  Pattern.prototype[name + 'Squeeze'] = function (...other) {
+    return op[1](this)._opSqueeze(sequence(other), op[0]);
   };
 }
 
