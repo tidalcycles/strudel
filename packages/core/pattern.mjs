@@ -721,6 +721,31 @@ export class Pattern {
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
+
+  reset(pat) {
+    pat = reify(pat);
+    return new Pattern((state) => {
+      const hps = pat
+        .query(state)
+        .map((event) => {
+          const haps = this.query(new State(new TimeSpan(event.part.begin.sub(event.whole.begin), event.duration))).map(
+            (hap) =>
+              hap
+                .withSpan((s) => {
+                  s = s.withTime((t) => t.add(event.whole.begin));
+                  // s = s.intersection(state.span) || s;
+                  return s;
+                })
+                .setContext(hap.combineContext(event)),
+          );
+          //console.log('haps',haps.map(h=>h.show()))
+          return haps;
+        })
+        .flat();
+      //console.log('hps',hps.map(h=>h.show()))
+      return hps;
+    });
+  }
 }
 
 // pattern composers
