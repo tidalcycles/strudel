@@ -28,6 +28,10 @@ export class TimeSpan {
     return spans;
   }
 
+  get duration() {
+    return this.end.sub(this.begin);
+  }
+
   cycleArc() {
     // Shifts a timespan to one of equal duration that starts within cycle zero.
     // (Note that the output timespan probably does not start *at* Time 0 --

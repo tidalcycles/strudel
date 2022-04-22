@@ -1,4 +1,3 @@
-
 export class Hap {
   /*
       Event class, representing a value active during the timespan
@@ -75,6 +74,10 @@ export class Hap {
     return (
       '(' + (this.whole == undefined ? '~' : this.whole.show()) + ', ' + this.part.show() + ', ' + this.value + ')'
     );
+  }
+
+  showWhole() {
+    return `${this.whole == undefined ? '~' : this.whole.show()}: ${this.value}`;
   }
 
   combineContext(b) {
