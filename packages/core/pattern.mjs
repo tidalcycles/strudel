@@ -263,7 +263,7 @@ export class Pattern {
   _opSqueezeFlip(other, func) {
     const thisPat = this;
     const otherPat = reify(other);
-    return otherPat.fmap((a) => thisPat.fmap((b) => func(a)(b)))._squeezeJoin();
+    return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a)))._squeezeJoin();
   }
 
   _asNumber(silent = false) {
@@ -753,6 +753,9 @@ for (const [name, op] of Object.entries(composers)) {
   };
   Pattern.prototype[name + 'Squeeze'] = function (...other) {
     return op[1](this)._opSqueeze(sequence(other), op[0]);
+  };
+  Pattern.prototype[name + 'SqueezeFlip'] = function (...other) {
+    return op[1](this)._opSqueezeFlip(sequence(other), op[0]);
   };
 }
 

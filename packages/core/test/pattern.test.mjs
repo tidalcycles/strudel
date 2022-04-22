@@ -51,7 +51,7 @@ const third = Fraction(1, 3);
 const twothirds = Fraction(2, 3);
 
 const sameFirst = (a, b) => {
-  return assert.deepStrictEqual(a.firstCycle(), b.firstCycle());
+  return assert.deepStrictEqual(a._sortEventsByPart().firstCycle(), b._sortEventsByPart().firstCycle());
 };
 
 describe('TimeSpan', function () {
@@ -148,6 +148,33 @@ describe('Pattern', function () {
   describe('add()', function () {
     it('Can add things', function () {
       assert.equal(pure(3).add(pure(4)).query(st(0, 1))[0].value, 7);
+    });
+  });
+  describe('addFlip()', () => {
+    it('Can add things with structure from second pattern', () => {
+      sameFirst(sequence(1, 2).addFlip(4), sequence(5, 6).struct(true));
+    });
+  });
+  describe('addSqueeze()', () => {
+    it('Can add while squeezing the second pattern inside the events of the first', () => {
+      sameFirst(
+        sequence(1, [2, 3]).addSqueeze(sequence(10, 20, 30)),
+        sequence(
+          [11, 21, 31],
+          [
+            [12, 22, 32],
+            [13, 23, 33],
+          ],
+        ),
+      );
+    });
+  });
+  describe('addSqueezeFlip()', () => {
+    it('Can add while squeezing the first pattern inside the events of the second', () => {
+      sameFirst(
+        sequence(1, [2, 3]).addSqueezeFlip(10, 20, 30),
+        sequence([11, [12, 13]], [21, [22, 23]], [31, [32, 33]]),
+      );
     });
   });
   describe('sub()', function () {
