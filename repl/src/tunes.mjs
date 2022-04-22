@@ -824,3 +824,10 @@ export const festivalOfFingers3 = `"[-7*3],0,2,6,[8 7]"
 .slow(2)
 .tone((await piano()).toDestination())
 //.pianoroll({maxMidi:160})`;
+
+export const bossa = `
+const scales = sequence('C minor', ['D locrian', 'G phrygian'], 'Bb2 minor', ['C locrian','F phrygian']).slow(4)
+stack(
+  "<Cm7 [Dm7b5 G7b9] Bbm7 [Cm7b5 F7b9]>".fast(2).struct("x ~ x@3 x ~ x ~ ~ ~ x ~ x@3".late(1/8)).early(1/8).slow(2).voicings(),
+  "[~ [0 ~]] 0 [~ [4 ~]] 4".sub(7).restart(scales).scale(scales).early(.25)
+).tone((await piano()).toDestination()).slow(2)`;
