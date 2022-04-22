@@ -734,8 +734,8 @@ const bass = await sampler({
 bell = bell.chain(vol(0.6).connect(delay),out());
 
 "0".euclidLegato(3,8)
+  .echo(3, 1/16, .5)
   .add(rand.range(0,12))
-  .echo(3, 1/16, (x,n)=>x.add((n+1)*2).velocity(1/(n+1)))
   .velocity(rand.range(.5,1))
   .legato(rand.range(.4,3))
   .scale(slowcat('D minor pentatonic')).tone(bell)
@@ -808,3 +808,19 @@ stack(
 
 //.pianoroll({minMidi:20, maxMidi:160})
 // strudel disable-highlighting`;
+
+export const festivalOfFingers3 = `"[-7*3],0,2,6,[8 7]"
+.echoWith(4,1/4, (x,n)=>x
+          .add(n*7)
+          .velocity(1/(n+1))
+          .legato(1/(n+1)))
+.velocity(perlin.range(.5,.9).slow(8))
+.stack("[22 25]*3"
+       .legato(sine.range(.5,2).slow(8))
+       .velocity(sine.range(.4,.8).slow(5))
+       .echo(4,1/12,.5))
+.scale(slowcat('D dorian','G mixolydian','C dorian','F mixolydian'))
+.legato(1)
+.slow(2)
+.tone((await piano()).toDestination())
+//.pianoroll({maxMidi:160})`;
