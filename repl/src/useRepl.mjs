@@ -44,7 +44,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
           if (!onTrigger) {
             if (defaultSynth) {
               const note = getPlayableNoteValue(event);
-              defaultSynth.triggerAttackRelease(note, event.duration, time, velocity);
+              defaultSynth.triggerAttackRelease(note, event.duration.valueOf(), time, velocity);
             } else {
               throw new Error('no defaultSynth passed to useRepl.');
             }
