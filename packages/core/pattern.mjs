@@ -598,10 +598,6 @@ export class Pattern {
     return slowcatPrime(...pats);
   }
 
-  append(other) {
-    return fastcat(...[this, other]);
-  }
-
   rev() {
     const pat = this;
     const query = function (state) {
@@ -644,12 +640,28 @@ export class Pattern {
     return this.juxBy(1, func);
   }
 
-  // is there a different name for those in tidal?
   stack(...pats) {
     return stack(this, ...pats);
   }
+
   sequence(...pats) {
     return sequence(this, ...pats);
+  }
+
+  cat(...pats) {
+    return cat(this, ...pats);
+  }
+
+  append(...pats) {
+    return cat(this, ...pats);
+  }
+
+  fastcat(...pats) {
+    return fastcat(this, ...pats);
+  }
+
+  slowcat(...pats) {
+    return slowcat(this, ...pats);
   }
 
   superimpose(...funcs) {
