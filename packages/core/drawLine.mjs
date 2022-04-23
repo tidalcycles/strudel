@@ -5,17 +5,15 @@ function drawLine(pat, chars = 60) {
   let pos = Fraction(0);
   let lines = [''];
   let emptyLine = ''; // this will be the "reference" empty line, which will be copied into extra lines
-  const slots = [];
   while (lines[0].length < chars) {
     const haps = pat.queryArc(cycle, cycle + 1);
     const durations = haps.filter((hap) => hap.hasOnset()).map((hap) => hap.duration);
-    const totalSlots = gcd(...durations).inverse(); // number of character slots for the current cycle
-    slots.push(totalSlots); // remember slots for possible empty lines needed in a later cycle
-    const minDuration = durations.reduce((a, b) => a.min(b), durations[0]); // min duration = step length
+    const charFraction = gcd(...durations);
+    const totalSlots = charFraction.inverse(); // number of character slots for the current cycle
     lines = lines.map((line) => line + '|'); // add pipe character before each cycle
     emptyLine += '|';
     for (let i = 0; i < totalSlots; i++) {
-      const [begin, end] = [pos, pos.add(minDuration)];
+      const [begin, end] = [pos, pos.add(charFraction)];
       const matches = haps.filter((hap) => hap.whole.begin.lte(begin) && hap.whole.end.gte(end));
       const missingLines = matches.length - lines.length;
       if (missingLines > 0) {
@@ -31,7 +29,7 @@ function drawLine(pat, chars = 60) {
         return line + '.';
       });
       emptyLine += '.';
-      pos = pos.add(minDuration);
+      pos = pos.add(charFraction);
     }
     cycle++;
   }
