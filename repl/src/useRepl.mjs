@@ -29,7 +29,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
       return onDraw;
     }
   }, [activeCode, onDraw]);
-  
+
   // cycle hook to control scheduling
   const cycle = useCycle({
     onDraw,
@@ -37,6 +37,9 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
       (time, event, currentTime) => {
         try {
           onEvent?.(event);
+          if (event.context.logs?.length) {
+            event.context.logs.forEach(pushLog);
+          }
           const { onTrigger, velocity } = event.context;
           if (!onTrigger) {
             if (defaultSynth) {
