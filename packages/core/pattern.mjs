@@ -803,7 +803,7 @@ Pattern.prototype.patternified = [
   'velocity',
 ];
 // methods that create patterns, which are added to patternified Pattern methods
-Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr };
+Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, seq, polymeter, pm, polyrhythm, pr };
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
 
 // Elemental patterns
