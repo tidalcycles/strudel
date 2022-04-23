@@ -727,14 +727,18 @@ export class Pattern {
     return new Pattern((state) =>
       pat
         .query(state)
-        .map((event) => {
-          const resetSpan = new TimeSpan(event.part.begin.sub(event.whole.begin), event.duration);
-          return this.query(new State(resetSpan)).map((hap) =>
-            hap
-              .withSpan(
-                (s) => s.withTime((t) => t.add(event.whole.begin)), // TODO: somehow make sure span end does not overlap next event of pat
-              )
-              .setContext(hap.combineContext(event)),
+        .map((outer_hap) => {
+          const resetSpan = new TimeSpan(
+            outer_hap.part.begin.sub(outer_hap.whole.begin),
+            outer_hap.part.end.sub(outer_hap.whole.begin),
+          );
+          return this.query(new State(resetSpan)).map((inner_hap) =>
+            new Hap(
+              inner_hap.whole?.withTime((t) => t.add(outer_hap.whole.begin)).intersection?.(outer_hap.whole) ||
+                undefined,
+              inner_hap.part.withTime((t) => t.add(outer_hap.whole.begin)).intersection(outer_hap.part),
+              inner_hap.value,
+            ).setContext(outer_hap.combineContext(inner_hap)),
           );
         })
         .flat(),
