@@ -1,10 +1,13 @@
 {
   "name": "@strudel.cycles/webaudio",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Web Audio helpers for Strudel",
   "main": "index.mjs",
   "directories": {
     "example": "examples"
+  },
+  "scripts": {
+    "example": "npx parcel examples/repl.html"
   },
   "repository": {
     "type": "git",

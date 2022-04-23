@@ -27,7 +27,7 @@ export const fromMidi = (n) => {
 
 // modulo that works with negative numbers e.g. mod(-1, 3) = 2
 // const mod = (n: number, m: number): number => (n < 0 ? mod(n + m, m) : n % m);
-export const mod = (n, m) => (n < 0 ? mod(n + m, m) : n % m);
+export const mod = (n, m) => (n % m + m) % m;
 
 export const getPlayableNoteValue = (event) => {
   let { value: note, context } = event;
@@ -38,6 +38,22 @@ export const getPlayableNoteValue = (event) => {
     throw new Error('not a note: ' + note);
   }
   return note;
+};
+
+export const getFrequency = (event) => {
+  let { value, context } = event;
+  // if value is number => interpret as midi number as long as its not marked as frequency
+  if (typeof value === 'object' && value.freq) {
+    return value.freq;
+  }
+  if (typeof value === 'number' && context.type !== 'frequency') {
+    value = fromMidi(event.value);
+  } else if (typeof value === 'string' && isNote(value)) {
+    value = fromMidi(toMidi(event.value));
+  } else if (typeof value !== 'number') {
+    throw new Error('not a note or frequency:' + value);
+  }
+  return value;
 };
 
 // rotate array by n steps (to the left)

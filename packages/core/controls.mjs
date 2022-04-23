@@ -275,14 +275,14 @@ const generic_params = [
 
 const _name = (name, ...pats) => sequence(...pats).withValue((x) => ({ [name]: x }));
 
-const _unionise = (func) =>
+const _setter = (func) =>
   function (...pats) {
-    return this.union(func(...pats));
+    return this.set(func(...pats));
   };
 
 generic_params.forEach(([type, name, description]) => {
   controls[name] = (...pats) => _name(name, ...pats);
-  Pattern.prototype[name] = _unionise(controls[name]);
+  Pattern.prototype[name] = _setter(controls[name]);
 });
 
 export default controls;

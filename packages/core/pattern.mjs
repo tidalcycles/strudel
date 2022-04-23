@@ -3,7 +3,7 @@ import Fraction from './fraction.mjs';
 import Hap from './hap.mjs';
 import State from './state.mjs';
 
-import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry } from './util.mjs';
+import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod } from './util.mjs';
 
 export class Pattern {
   // the following functions will get patternFactories as nested functions:
@@ -182,11 +182,13 @@ export class Pattern {
         const event_vals = pat_val.query(state.setSpan(hap_func.wholeOrPart()));
         for (const hap_val of event_vals) {
           const new_whole = hap_func.whole;
-          const new_part = hap_func.part.intersection_e(hap_val.part);
-          const new_value = hap_func.value(hap_val.value);
-          const new_context = hap_val.combineContext(hap_func);
-          const hap = new Hap(new_whole, new_part, new_value, new_context);
-          haps.push(hap);
+          const new_part = hap_func.part.intersection(hap_val.part);
+          if (new_part) {
+            const new_value = hap_func.value(hap_val.value);
+            const new_context = hap_val.combineContext(hap_func);
+            const hap = new Hap(new_whole, new_part, new_value, new_context);
+            haps.push(hap);
+          }
         }
       }
       return haps;
@@ -203,11 +205,13 @@ export class Pattern {
         const hap_funcs = pat_func.query(state.setSpan(hap_val.wholeOrPart()));
         for (const hap_func of hap_funcs) {
           const new_whole = hap_val.whole;
-          const new_part = hap_func.part.intersection_e(hap_val.part);
-          const new_value = hap_func.value(hap_val.value);
-          const new_context = hap_val.combineContext(hap_func);
-          const hap = new Hap(new_whole, new_part, new_value, new_context);
-          haps.push(hap);
+          const new_part = hap_func.part.intersection(hap_val.part);
+          if (new_part) {
+            const new_value = hap_func.value(hap_val.value);
+            const new_context = hap_val.combineContext(hap_func);
+            const hap = new Hap(new_whole, new_part, new_value, new_context);
+            haps.push(hap);
+          }
         }
       }
       return haps;
@@ -243,8 +247,23 @@ export class Pattern {
     );
   }
 
-  _opleft(other, func) {
+  _opLeft(other, func) {
     return this.fmap(func).appLeft(reify(other));
+  }
+  _opRight(other, func) {
+    return this.fmap(func).appRight(reify(other));
+  }
+  _opBoth(other, func) {
+    return this.fmap(func).appBoth(reify(other));
+  }
+  _opSqueeze(other, func) {
+    const otherPat = reify(other);
+    return this.fmap((a) => otherPat.fmap((b) => func(a)(b)))._squeezeJoin();
+  }
+  _opSqueezeFlip(other, func) {
+    const thisPat = this;
+    const otherPat = reify(other);
+    return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a)))._squeezeJoin();
   }
 
   _asNumber(silent = false) {
@@ -269,22 +288,6 @@ export class Pattern {
       }
       return event.withValue(() => undefined); // silent error
     })._removeUndefineds();
-  }
-
-  add(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a + b);
-  }
-
-  sub(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a - b);
-  }
-
-  mul(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a * b);
-  }
-
-  div(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a / b);
   }
 
   round() {
@@ -318,10 +321,6 @@ export class Pattern {
   // Assumes source pattern of numbers in range -1..1
   range2(min, max) {
     return this._fromBipolar().range(min, max);
-  }
-
-  union(other) {
-    return this._opleft(other, (a) => (b) => Object.assign({}, a, b));
   }
 
   _bindWhole(choose_whole, func) {
@@ -464,7 +463,7 @@ export class Pattern {
   }
 
   _compress(b, e) {
-    if (b > e || b > 1 || e > 1 || b < 0 || e < 0) {
+    if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
       return silence;
     }
     return this._fastGap(Fraction(1).div(e.sub(b)))._late(b);
@@ -500,7 +499,7 @@ export class Pattern {
     const slices = Array.from({ length: n }, (x, i) => i);
     const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
     const slicePat = slowcat(...slice_objects);
-    return this.union(slicePat)._fast(n);
+    return this.set(slicePat)._fast(n);
   }
 
   // cpm = cycles per minute
@@ -669,7 +668,7 @@ export class Pattern {
   }
 
   stutWith(times, time, func) {
-    return stack(...listRange(0, times - 1).map((i) => func(this.late(i * time), i)));
+    return stack(...listRange(0, times - 1).map((i) => func(this.late(Fraction(time).mul(i)), i)));
   }
 
   stut(times, feedback, time) {
@@ -678,7 +677,7 @@ export class Pattern {
 
   // these might change with: https://github.com/tidalcycles/Tidal/issues/902
   _echoWith(times, time, func) {
-    return stack(...listRange(0, times - 1).map((i) => func(this.late(i * time), i)));
+    return stack(...listRange(0, times - 1).map((i) => func(this.late(Fraction(time).mul(i)), i)));
   }
 
   _echo(times, time, feedback) {
@@ -734,6 +733,49 @@ export class Pattern {
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
+}
+
+// pattern composers
+const composers = {
+  set: [
+    (a) => (b) => {
+      // If an object is involved, do a union, discarding matching keys from a.
+      // Otherwise, just return b.
+      if (a instanceof Object || b instanceof Object) {
+        if (!a instanceof Object) {
+          a = { value: a };
+        }
+        if (!b instanceof Object) {
+          b = { value: b };
+        }
+        return Object.assign({}, a, b);
+      }
+      return b;
+    },
+    id,
+  ],
+  add: [(a) => (b) => a + b, (x) => x._asNumber()],
+  sub: [(a) => (b) => a - b, (x) => x._asNumber()],
+  mul: [(a) => (b) => a * b, (x) => x._asNumber()],
+  div: [(a) => (b) => a / b, (x) => x._asNumber()],
+};
+
+for (const [name, op] of Object.entries(composers)) {
+  Pattern.prototype[name] = function (...other) {
+    return op[1](this)._opLeft(sequence(other), op[0]);
+  };
+  Pattern.prototype[name + 'Flip'] = function (...other) {
+    return op[1](this)._opRight(sequence(other), op[0]);
+  };
+  Pattern.prototype[name + 'Sect'] = function (...other) {
+    return op[1](this)._opBoth(sequence(other), op[0]);
+  };
+  Pattern.prototype[name + 'Squeeze'] = function (...other) {
+    return op[1](this)._opSqueeze(sequence(other), op[0]);
+  };
+  Pattern.prototype[name + 'SqueezeFlip'] = function (...other) {
+    return op[1](this)._opSqueezeFlip(sequence(other), op[0]);
+  };
 }
 
 // methods of Pattern that get callable factories
@@ -798,7 +840,7 @@ export function slowcat(...pats) {
   pats = pats.map(reify);
   const query = function (state) {
     const span = state.span;
-    const pat_n = Math.floor(span.begin) % pats.length;
+    const pat_n = mod(span.begin.sam(), pats.length);
     const pat = pats[pat_n];
     if (!pat) {
       // pat_n can be negative, if the span is in the past..
@@ -938,7 +980,7 @@ export const slow = curry((a, pat) => pat.slow(a));
 export const struct = curry((a, pat) => pat.struct(a));
 export const sub = curry((a, pat) => pat.sub(a));
 export const superimpose = curry((array, pat) => pat.superimpose(...array));
-export const union = curry((a, pat) => pat.union(a));
+export const set = curry((a, pat) => pat.set(a));
 export const when = curry((binary, f, pat) => pat.when(binary, f));
 
 // problem: curried functions with spread arguments must have pat at the beginning

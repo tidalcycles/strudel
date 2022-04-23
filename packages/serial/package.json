@@ -1,0 +1,24 @@
+{
+  "name": "@strudel.cycles/serial",
+  "version": "0.0.6",
+  "description": "Webserial API for strudel",
+  "main": "serial.mjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "titdalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Alex McLean <alex@slab.org>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {}
+}

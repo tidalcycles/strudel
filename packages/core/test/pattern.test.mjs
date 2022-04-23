@@ -36,6 +36,9 @@ import {
   id,
   ply,
 } from '../index.mjs';
+
+import { steady } from '../signal.mjs';
+
 //import { Time } from 'tone';
 import pkg from 'tone';
 const { Time } = pkg;
@@ -46,6 +49,10 @@ const hap = (whole, part, value, context = {}) => new Hap(whole, part, value, co
 
 const third = Fraction(1, 3);
 const twothirds = Fraction(2, 3);
+
+const sameFirst = (a, b) => {
+  return assert.deepStrictEqual(a._sortEventsByPart().firstCycle(), b._sortEventsByPart().firstCycle());
+};
 
 describe('TimeSpan', function () {
   describe('equals()', function () {
@@ -108,6 +115,18 @@ describe('Hap', function () {
       assert.deepStrictEqual(state3, { incrementme: 12 });
     });
   });
+  describe('wholeOrPart()', () => {
+    const ts1 = new TimeSpan(Fraction(0), Fraction(1));
+    const ts0_5 = new TimeSpan(Fraction(0), Fraction(0.5));
+    const continuousHap = new Hap(undefined, ts1, 'hello');
+    const discreteHap = new Hap(ts1, ts0_5, 'hello');
+    it('Can pick a whole', () => {
+      assert.deepStrictEqual(discreteHap.wholeOrPart(), ts1);
+    });
+    it('Can pick a part', () => {
+      assert.deepStrictEqual(continuousHap.wholeOrPart(), ts1);
+    });
+  });
 });
 
 describe('Pattern', function () {
@@ -131,6 +150,33 @@ describe('Pattern', function () {
       assert.equal(pure(3).add(pure(4)).query(st(0, 1))[0].value, 7);
     });
   });
+  describe('addFlip()', () => {
+    it('Can add things with structure from second pattern', () => {
+      sameFirst(sequence(1, 2).addFlip(4), sequence(5, 6).struct(true));
+    });
+  });
+  describe('addSqueeze()', () => {
+    it('Can add while squeezing the second pattern inside the events of the first', () => {
+      sameFirst(
+        sequence(1, [2, 3]).addSqueeze(sequence(10, 20, 30)),
+        sequence(
+          [11, 21, 31],
+          [
+            [12, 22, 32],
+            [13, 23, 33],
+          ],
+        ),
+      );
+    });
+  });
+  describe('addSqueezeFlip()', () => {
+    it('Can add while squeezing the first pattern inside the events of the second', () => {
+      sameFirst(
+        sequence(1, [2, 3]).addSqueezeFlip(10, 20, 30),
+        sequence([11, [12, 13]], [21, [22, 23]], [31, [32, 33]]),
+      );
+    });
+  });
   describe('sub()', function () {
     it('Can subtract things', function () {
       assert.equal(pure(3).sub(pure(4)).query(st(0, 1))[0].value, -1);
@@ -146,14 +192,50 @@ describe('Pattern', function () {
       assert.equal(pure(3).div(pure(2)).firstCycle()[0].value, 1.5);
     });
   });
-  describe('union()', function () {
-    it('Can union things', function () {
+  describe('set()', function () {
+    it('Can set things in objects', function () {
       assert.deepStrictEqual(
         pure({ a: 4, b: 6 })
-          .union(pure({ c: 7 }))
+          .set(pure({ c: 7 }))
           .firstCycle()[0].value,
         { a: 4, b: 6, c: 7 },
       );
+      sameFirst(
+        sequence({ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 3, b: 2 }).set({ a: 4, c: 5 }),
+        sequence({ a: 4, b: 2, c: 5 }).fast(3),
+      );
+    });
+    it('Can set things with plain values', function () {
+      sameFirst(sequence(1, 2, 3).set(4), sequence(4).fast(3));
+    });
+    describe('setFlip()', () => {
+      it('Can set things with structure from second pattern', () => {
+        sameFirst(sequence(1, 2).setFlip(4), pure(4).mask(true, true));
+      });
+    });
+    describe('setSqueeze()', () => {
+      it('Can squeeze one pattern inside the events of another', () => {
+        sameFirst(
+          sequence(1, [2, 3]).setSqueeze(sequence('a', 'b', 'c')),
+          sequence(
+            ['a', 'b', 'c'],
+            [
+              ['a', 'b', 'c'],
+              ['a', 'b', 'c'],
+            ],
+          ),
+        );
+        sameFirst(
+          sequence(1, [2, 3]).setSqueeze('a', 'b', 'c'),
+          sequence(
+            ['a', 'b', 'c'],
+            [
+              ['a', 'b', 'c'],
+              ['a', 'b', 'c'],
+            ],
+          ),
+        );
+      });
     });
   });
   describe('stack()', function () {
@@ -292,6 +374,15 @@ describe('Pattern', function () {
       );
     });
   });
+  describe('fastcat()', function () {
+    it('Can go into negative time', function () {
+      sameFirst(
+        fastcat('a','b','c')
+          .late(1000000),
+        fastcat('a','b','c'),
+      );
+    });
+  });
   describe('slowcat()', function () {
     it('Can concatenate things slowly', function () {
       assert.deepStrictEqual(
@@ -399,7 +490,7 @@ describe('Pattern', function () {
     });
   });
   describe('struct()', function () {
-    it('Can restructure a pattern', function () {
+    it('Can restructure a discrete pattern', function () {
       assert.deepStrictEqual(sequence('a', 'b').struct(sequence(true, true, true)).firstCycle(), [
         hap(ts(0, third), ts(0, third), 'a'),
         hap(ts(third, twothirds), ts(third, 0.5), 'a'),
@@ -423,6 +514,12 @@ describe('Pattern', function () {
           .struct(sequence(true, [true, silence], true))
           .firstCycle(),
         sequence('a', ['a', silence], 'a').firstCycle(),
+      );
+    });
+    it('Can structure a continuous pattern', () => {
+      assert.deepStrictEqual(
+        steady('a').struct(true, [true, true]).firstCycle(),
+        sequence('a', ['a', 'a']).firstCycle(),
       );
     });
   });
@@ -614,6 +711,18 @@ describe('Pattern', function () {
       assert.deepStrictEqual(
         sequence('a', ['b', 'c']).ply(3).firstCycle(),
         sequence(pure('a').fast(3), [pure('b').fast(3), pure('c').fast(3)]).firstCycle(),
+      );
+    });
+    it('Doesnt drop events in the 9th cycle', () => {
+      // fixed with https://github.com/tidalcycles/strudel/commit/72eeaf446e3d5e186d63cc0d2276f0723cde017a
+      assert.equal(sequence(1, 2, 3).ply(2).early(8).firstCycle().length, 6);
+    });
+  });
+  describe('striate', () => {
+    it('Can striate(2)', () => {
+      sameFirst(
+        sequence({ sound: 'a' }).striate(2),
+        sequence({ sound: 'a', begin: 0, end: 0.5 }, { sound: 'a', begin: 0.5, end: 1 }),
       );
     });
   });

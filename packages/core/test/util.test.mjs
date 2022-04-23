@@ -1,5 +1,6 @@
 import { strict as assert } from 'assert';
-import { isNote, tokenizeNote, toMidi, mod, compose } from '../util.mjs';
+import { pure } from '../pattern.mjs';
+import { isNote, tokenizeNote, toMidi, fromMidi, mod, compose, getFrequency } from '../util.mjs';
 
 describe('isNote', () => {
   it('should recognize notes without accidentals', () => {
@@ -62,6 +63,21 @@ describe('toMidi', () => {
     assert.equal(toMidi('C#3'), 49);
     assert.equal(toMidi('C#3'), 49);
     assert.equal(toMidi('C##3'), 50);
+  });
+});
+describe('fromMidi', () => {
+  it('should turn midi into frequency', () => {
+    assert.equal(fromMidi(69), 440);
+    assert.equal(fromMidi(57), 220);
+  });
+});
+describe('getFrequency', () => {
+  it('should turn midi into frequency', () => {
+    const happify = (val, context = {}) => pure(val).firstCycle()[0].setContext(context);
+    assert.equal(getFrequency(happify('a4')), 440);
+    assert.equal(getFrequency(happify('a3')), 220);
+    assert.equal(getFrequency(happify(440, { type: 'frequency' })), 440); // TODO: migrate when values are objects..
+    assert.equal(getFrequency(happify(432, { type: 'frequency' })), 432);
   });
 });
 
