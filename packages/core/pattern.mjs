@@ -837,7 +837,10 @@ export function stack(...pats) {
 export function slowcat(...pats) {
   // Concatenation: combines a list of patterns, switching between them
   // successively, one per cycle.
-  pats = pats.map(reify);
+
+  // Array test here is to avoid infinite recursions..
+  pats = pats.map(pat => Array.isArray(pat) ? sequence(...pat) : reify(pat));
+
   const query = function (state) {
     const span = state.span;
     const pat_n = mod(span.begin.sam(), pats.length);

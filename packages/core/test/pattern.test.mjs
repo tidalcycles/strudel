@@ -413,6 +413,12 @@ describe('Pattern', function () {
         ['c'],
       );
     });
+    it ('Can cat subpatterns', () => {
+      sameFirst(
+        slowcat('a', ['b','c']).fast(4),
+        sequence('a', ['b', 'c']).fast(2)
+      )
+    })
   });
   describe('rev()', function () {
     it('Can reverse things', function () {
