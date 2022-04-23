@@ -826,11 +826,13 @@ export function reify(thing) {
   }
   return pure(thing);
 }
+
 // Basic functions for combining patterns
 
 export function stack(...pats) {
-  const reified = pats.map((pat) => reify(pat));
-  const query = (state) => flatten(reified.map((pat) => pat.query(state)));
+  // Array test here is to avoid infinite recursions..
+  pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
+  const query = (state) => flatten(pats.map((pat) => pat.query(state)));
   return new Pattern(query);
 }
 
@@ -839,7 +841,7 @@ export function slowcat(...pats) {
   // successively, one per cycle.
 
   // Array test here is to avoid infinite recursions..
-  pats = pats.map(pat => Array.isArray(pat) ? sequence(...pat) : reify(pat));
+  pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
 
   const query = function (state) {
     const span = state.span;

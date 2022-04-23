@@ -247,6 +247,12 @@ describe('Pattern', function () {
         ['a', 'b', 'c'],
       );
     });
+    it('Can stack subpatterns', function () {
+      sameFirst(
+        stack('a', ['b','c']),
+        stack('a', sequence('b', 'c')),
+      );
+    });
   });
   describe('_fast()', function () {
     it('Makes things faster', function () {
