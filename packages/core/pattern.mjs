@@ -730,7 +730,11 @@ export class Pattern {
         .map((event) => {
           const resetSpan = new TimeSpan(event.part.begin.sub(event.whole.begin), event.duration);
           return this.query(new State(resetSpan)).map((hap) =>
-            hap.withSpan((s) => s.withTime((t) => t.add(event.whole.begin))).setContext(hap.combineContext(event)),
+            hap
+              .withSpan(
+                (s) => s.withTime((t) => t.add(event.whole.begin)), // TODO: somehow make sure span end does not overlap next event of pat
+              )
+              .setContext(hap.combineContext(event)),
           );
         })
         .flat(),
