@@ -1,12 +1,19 @@
-import { fastcat, stack } from '../pattern.mjs';
+import { fastcat, stack, slowcat } from '../pattern.mjs';
 import { strict as assert } from 'assert';
 import drawLine from '../drawLine.mjs';
 
 describe('drawLine', () => {
-  it('should work', () => {
+  it('supports equal lengths', () => {
+    assert.equal(drawLine(fastcat(0), 4), '|0|0');
+    assert.equal(drawLine(fastcat(0, 1), 4), '|01|01');
+    assert.equal(drawLine(fastcat(0, 1, 2), 6), '|012|012');
+  });
+  it('supports unequal lengths', () => {
     assert.equal(drawLine(fastcat(0, [1, 2]), 10), '|0-12|0-12');
     assert.equal(drawLine(fastcat(0, [1, 2, 3]), 10), '|0--123|0--123');
     assert.equal(drawLine(fastcat(0, 1, [2, 3]), 10), '|0-1-23|0-1-23');
+  });
+  it('supports multiple lines', () => {
     assert.equal(
       drawLine(fastcat(0, stack(1, 2)), 10),
       `|01|01|01|01
@@ -29,5 +36,8 @@ describe('drawLine', () => {
 |..3|..3|..3
 |..4|..4|..4`,
     );
+  });
+  it('supports unequal cycle lengths', () => {
+    assert.equal(drawLine(slowcat(0, [1, 2]), 10), `|0|12|0|12`);
   });
 });

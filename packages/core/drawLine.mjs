@@ -1,32 +1,25 @@
-import { gcd } from './fraction.mjs';
+import Fraction, { gcd } from './fraction.mjs';
 
 function drawLine(pat, chars = 60) {
-  let c = 0;
+  let cycle = 0;
+  let pos = Fraction(0);
   let lines = [''];
+  let emptyLine = ''; // this will be the "reference" empty line, which will be copied into extra lines
   const slots = [];
   while (lines[0].length < chars) {
-    const haps = pat.queryArc(c, c + 1);
+    const haps = pat.queryArc(cycle, cycle + 1);
     const durations = haps.filter((hap) => hap.hasOnset()).map((hap) => hap.duration);
-    const totalSlots = gcd(...durations).inverse();
-    slots.push(totalSlots);
-    const minDuration = durations.reduce((a, b) => a.min(b), durations[0]);
-    lines = lines.map((line) => line + '|');
-
+    const totalSlots = gcd(...durations).inverse(); // number of character slots for the current cycle
+    slots.push(totalSlots); // remember slots for possible empty lines needed in a later cycle
+    const minDuration = durations.reduce((a, b) => a.min(b), durations[0]); // min duration = step length
+    lines = lines.map((line) => line + '|'); // add pipe character before each cycle
+    emptyLine += '|';
     for (let i = 0; i < totalSlots; i++) {
-      const step = c * totalSlots + i;
-      const [begin, end] = [minDuration.mul(step), minDuration.mul(step + 1)];
+      const [begin, end] = [pos, pos.add(minDuration)];
       const matches = haps.filter((hap) => hap.whole.begin.lte(begin) && hap.whole.end.gte(end));
       const missingLines = matches.length - lines.length;
       if (missingLines > 0) {
-        console.log(c, 'missingLines', missingLines);
-        const emptyCycles =
-          '|' +
-          new Array(c)
-            .fill()
-            .map((_, l) => Array(slots[l]).fill('.').join(''))
-            .join('|') +
-          Array(i).fill('.').join('');
-        lines = lines.concat(Array(missingLines).fill(emptyCycles));
+        lines = lines.concat(Array(missingLines).fill(emptyLine));
       }
       lines = lines.map((line, i) => {
         const hap = matches[i];
@@ -37,8 +30,10 @@ function drawLine(pat, chars = 60) {
         }
         return line + '.';
       });
+      emptyLine += '.';
+      pos = pos.add(minDuration);
     }
-    c++;
+    cycle++;
   }
   return lines.join('\n');
 }
