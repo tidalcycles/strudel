@@ -879,7 +879,7 @@ export function fastcat(...pats) {
 }
 
 export function cat(...pats) {
-  return fastcat(...pats);
+  return slowcat(...pats);
 }
 
 export function timeCat(...timepats) {
@@ -895,6 +895,10 @@ export function timeCat(...timepats) {
   return stack(...pats);
 }
 
+export function sequence(...pats) {
+  return fastcat(...pats);
+}
+
 function _sequenceCount(x) {
   if (Array.isArray(x)) {
     if (x.length == 0) {
@@ -906,10 +910,6 @@ function _sequenceCount(x) {
     return [fastcat(...x.map((a) => _sequenceCount(a)[0])), x.length];
   }
   return [reify(x), 1];
-}
-
-export function sequence(...xs) {
-  return _sequenceCount(xs)[0];
 }
 
 export function polymeterSteps(steps, ...args) {
