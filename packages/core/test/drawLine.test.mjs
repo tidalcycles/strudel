@@ -1,4 +1,4 @@
-import { fastcat, stack, slowcat } from '../pattern.mjs';
+import { fastcat, stack, slowcat, silence } from '../pattern.mjs';
 import { strict as assert } from 'assert';
 import drawLine from '../drawLine.mjs';
 
@@ -12,6 +12,9 @@ describe('drawLine', () => {
     assert.equal(drawLine(fastcat(0, [1, 2]), 10), '|0-12|0-12');
     assert.equal(drawLine(fastcat(0, [1, 2, 3]), 10), '|0--123|0--123');
     assert.equal(drawLine(fastcat(0, 1, [2, 3]), 10), '|0-1-23|0-1-23');
+  });
+  it('supports unequal silence', () => {
+    assert.equal(drawLine(fastcat(0, silence, [1, 2]), 10), '|0-..12|0-..12');
   });
   it('supports multiple lines', () => {
     assert.equal(
