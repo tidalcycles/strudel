@@ -647,6 +647,11 @@ export class Pattern {
     return sequence(this, ...pats);
   }
 
+  // shorthand for sequence
+  seq(...pats) {
+    return sequence(this, ...pats);
+  }
+
   cat(...pats) {
     return cat(this, ...pats);
   }
@@ -896,6 +901,11 @@ export function timeCat(...timepats) {
 }
 
 export function sequence(...pats) {
+  return fastcat(...pats);
+}
+
+// shorthand for sequence
+export function seq(...pats) {
   return fastcat(...pats);
 }
 
