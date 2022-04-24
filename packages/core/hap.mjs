@@ -24,7 +24,7 @@ export class Hap {
   }
 
   get duration() {
-    return this.whole.end.sub(this.whole.begin).valueOf();
+    return this.whole.end.sub(this.whole.begin);
   }
 
   wholeOrPart() {

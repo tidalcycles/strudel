@@ -27,7 +27,7 @@
       const events = pattern.firstCycle(); // query first cycle
       events.forEach((event) => {
         ctx.fillStyle = event.value;
-        ctx.fillRect(event.whole.begin * canvas.width, 0, event.duration * canvas.width, canvas.height);
+        ctx.fillRect(event.whole.begin * canvas.width, 0, event.duration.valueOf() * canvas.width, canvas.height);
       });
     }
   </script>

@@ -44,8 +44,8 @@ export const markEvent = (editor) => (time, event) => {
   //Tone.Transport.schedule(() => { // problem: this can be cleared by scheduler...
   setTimeout(() => {
     marks.forEach((mark) => mark.clear());
-    // }, '+' + event.duration * 0.5);
-  }, event.duration /* * 0.9 */ * 1000);
+    // }, '+' + event.duration.valueOf() * 0.5);
+  }, event.duration.valueOf() /* * 0.9 */ * 1000);
 };
 
 let parenMark;

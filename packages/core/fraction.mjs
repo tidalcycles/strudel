@@ -72,6 +72,12 @@ const fraction = (n) => {
   return Fraction(n);
 };
 
+export const gcd = (...fractions) => {
+  return fractions.reduce((gcd, fraction) => gcd.gcd(fraction), fraction(1));
+};
+
+fraction._original = Fraction;
+
 export default fraction;
 
 // "If you concern performance, cache Fraction.js objects and pass arrays/objects.“

@@ -4,6 +4,7 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 
 import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod } from './util.mjs';
+import drawLine from './drawLine.mjs';
 
 export class Pattern {
   // the following functions will get patternFactories as nested functions:
@@ -563,6 +564,17 @@ export class Pattern {
     return this._withContext((context) => ({ ...context, color }));
   }
 
+  log() {
+    return this._withEvent((e) => {
+      return e.setContext({ ...e.context, logs: (e.context?.logs || []).concat([e.show()]) });
+    });
+  }
+
+  drawLine() {
+    console.log(drawLine(this));
+    return this;
+  }
+
   _segment(rate) {
     return this.struct(pure(true)._fast(rate));
   }
@@ -799,7 +811,20 @@ Pattern.prototype.patternified = [
   'velocity',
 ];
 // methods that create patterns, which are added to patternified Pattern methods
-Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr };
+Pattern.prototype.factories = {
+  pure,
+  stack,
+  slowcat,
+  fastcat,
+  cat,
+  timeCat,
+  sequence,
+  seq,
+  polymeter,
+  pm,
+  polyrhythm,
+  pr,
+};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
 
 // Elemental patterns
