@@ -6,7 +6,7 @@ url2cite: all-links
 
 # Introduction
 
-This paper introduces StrudelCycles (generally known as just 'Strudel', including in the following), an alternative implementation of the TidalCycles live coding system, using the JavaScript programming language. It is an attempt to make live coding more accessible through creating a system that runs entirely in the browser, while opening Tidal's approach to algorithmic patterns [@algorithmicpattern] up to modern audio/visual web technologies. The Strudel REPL is a live code editor dedicated to manipulating strudel patterns while they play, with builtin visual feedback. While Strudel is written in JavaScript, the API is optimized for simplicity and readability by applying code transformations on the syntax tree level, allowing language operations that would otherwise be impossible. The application supports multiple ways to output sound, including Tone.js, Web Audio nodes, OSC messages and WebMIDI. The project is split into multiple packages, allowing granular reuse in other applications. Apart from TidalCycles, it draws inspiration from prior projects like TidalVortex [@tidalvortex], Gibber [@gibber], Estuary [@estuary] and Feedforward [@feedforward]. 
+This paper introduces StrudelCycles (generally known as just 'Strudel', including in the following), an alternative implementation of the TidalCycles live coding system, using the JavaScript programming language. It is an attempt to make live coding more accessible through creating a system that runs entirely in the browser, while opening Tidal's approach to algorithmic patterns [@algorithmicpattern] up to modern audio/visual web technologies. The Strudel REPL is a live code editor dedicated to manipulating strudel patterns while they play, with builtin visual feedback. While Strudel is written in JavaScript, the API is optimized for simplicity and readability by applying code transformations on the syntax tree level, allowing language operations that would otherwise be impossible. The application supports multiple ways to output sound, including Tone.js, Web Audio nodes, OSC messages and WebMIDI. The project is split into multiple packages, allowing granular reuse in other applications. Apart from TidalCycles, it draws inspiration from prior projects like TidalVortex [@tidalvortex], Gibber [@gibber], Estuary [@estuary] and Feedforward [@feedforward].
 
 # Porting from Haskell
 
@@ -75,27 +75,43 @@ This line could also be expressed without mini notation:
 
 ```js
 slowcat(d3, f3, [a3, c3].euclid(3, 4, 1), g3.fast(2))
-``` 
+```
+
+Here is a short description of all the functions used:
 
 - slowcat: play elements sequentially, where each lasts one cycle
 - brackets: elements inside brackets are divided equally over the time of their parent
-- euclid(p, s, o): place p pulses evenly over s steps, with offset o, see https://taogaede.com/wp-content/uploads/2020/01/Research-Paper-on-Euclidean-Rhythms-Aug.-2018-Edit.pdf (cite)
+- euclid(p, s, o): place p pulses evenly over s steps, with offset o [@godfried]
 - fast(n): speed up by n. `g3.fast(2)` will play g3 two times.
 - off(n, f): copy each event, offset it by n cycles and apply function f
 - legato(n): multiply duration of event with n
 - echo(t, n, v): copy each event t times, with n cycles in between each copy, decreasing velocity by v
 - tone(instrument): play back each event with the given Tone.js instrument
-- pianoroll(): visualize events as midi notes in a pianoroll 
+- pianoroll(): visualize events as midi notes in a pianoroll
 
-* Description of structure of demo
-* Links to examples/existing tutorial etc
+# Future Outlook
+
+The project is still young, with many features on the horizon. As general guiding principles, Strudel aims to be
+
+1. accessible
+2. as compatible as possible with Tidal
+3. modular and extensible
+
+The main accessibility advantage over Tidal is the zero install browser environment.
+While OSC output to SuperCollider is possible with Strudel, it requires the user to install SuperCollider with a custom setup script, which is not trivial. Without OSC output, Strudel is able to output sound inside the browser via Tone.js, which is a major limiting factor, both in terms
+of available features and runtime performance. For the future, it is planned to integrate alternative sound engines, with possible candidates being like glicol [@glicol] or faust [@faust]. To improve compatibility with Tidal, more Tidal functions are planned to be ported, as well as full compatibility with Tidal's SuperDirt synth. Besides sound output, other ways to render events will be explored, such as graphical, serial or kinetic output.
+
+# Links
+
+The Strudel REPL is available at <https://strudel.tidalcycles.org>, including an interactive tutorial.
+The repository is at <github.com/tidalcycles/strudel>, all the code is open source under the GPL-3.0 License.
 
 # Technical requirements
-    
-Space for one laptop + small audio interface (~20 cm x 20cm), with mains power.
-Stereo sound system, either placed behind presenter (for direct monitoring) or with additional stereo monitors.
-Audio from audio interface: stereo pair 6,3mm jack outputs (balanced?) good question :)
-    * Projector / screen (HDMI.)
+
+- Space for one laptop + small audio interface (20 cm x 20cm), with mains power.
+- Stereo sound system, either placed behind presenter (for direct monitoring) or with additional stereo monitors.
+- Audio from audio interface: stereo pair 6,3mm jack outputs (balanced)
+- Projector / screen (HDMI.)
 
 # Acknowledgments
 
@@ -117,3 +133,6 @@ Thanks to the Strudel and wider Tidal, live coding, webaudio and free/open sourc
 [@fabricating]: https://zenodo.org/record/2155745
 [@cyclic-patterns]: https://zenodo.org/record/1548969
 [@feedforward]: https://zenodo.org/record/6353969
+[@godfried]: http://cgm.cs.mcgill.ca/~godfried/publications/banff-extended.pdf
+[@glicol]: https://webaudioconf2021.com/wp-content/uploads/2021/06/Glicol_WAC_paper.pdf
+[@faust]: https://ccrma.stanford.edu/~rmichon/publications/doc/WAC-19-ide.pdf
