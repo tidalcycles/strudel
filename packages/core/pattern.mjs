@@ -656,10 +656,6 @@ export class Pattern {
     return cat(this, ...pats);
   }
 
-  append(...pats) {
-    return cat(this, ...pats);
-  }
-
   fastcat(...pats) {
     return fastcat(this, ...pats);
   }
@@ -968,7 +964,6 @@ export function pr(args) {
 }
 
 export const add = curry((a, pat) => pat.add(a));
-export const append = curry((a, pat) => pat.append(a));
 export const chunk = curry((a, pat) => pat.chunk(a));
 export const chunkBack = curry((a, pat) => pat.chunkBack(a));
 export const div = curry((a, pat) => pat.div(a));
