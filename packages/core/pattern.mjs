@@ -794,7 +794,7 @@ function _composeOp(a, b, func) {
 // pattern composers
 const composers = {
   set: (a, b) => b,
-  const: id,
+  keep: (a, b) => a,
   add: (a, b) => a + b,
   sub: (a, b) => a - b,
   mul: (a, b) => a * b,
