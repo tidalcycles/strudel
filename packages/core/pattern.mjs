@@ -777,7 +777,7 @@ export class Pattern {
 // TODO - adopt value.mjs fully..
 function _composeOp(a, b, func) {
   function _nonFunctionObject(x) {
-    return x instanceof Object && (!(x instanceof Function))
+    return x instanceof Object && !(x instanceof Function);
   }
   if (_nonFunctionObject(a) || _nonFunctionObject(b)) {
     if (!_nonFunctionObject(a)) {
@@ -800,7 +800,7 @@ const composers = {
   mul: (a, b) => a * b,
   div: (a, b) => a / b,
   mod: mod,
-  func: (a, b) => b(a)
+  func: (a, b) => b(a),
 };
 
 for (const [name, op] of Object.entries(composers)) {
