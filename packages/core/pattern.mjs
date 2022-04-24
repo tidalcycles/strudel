@@ -2,6 +2,7 @@ import TimeSpan from './timespan.mjs';
 import Fraction from './fraction.mjs';
 import Hap from './hap.mjs';
 import State from './state.mjs';
+import { unionWithObj } from './value.mjs';
 
 import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod } from './util.mjs';
 
@@ -395,26 +396,36 @@ export class Pattern {
     return this.innerBind(id);
   }
 
-  _resetJoin(restart=false) {
+  // Flatterns patterns of patterns, by resetting inner patterns at onsets of outer pattern events
+  _resetJoin(restart = false) {
     const pat_of_pats = this;
     return new Pattern((state) => {
-      return pat_of_pats
-        .discreteOnly()
-        .query(state)
-        .map((outer_hap) => {
-          return outer_hap.value
-            .late(restart ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
-            .query(state)
-            .map((inner_hap) =>
-              new Hap(
-                inner_hap.whole ? inner_hap.whole.intersection(outer_hap.whole) : undefined,
-                inner_hap.part.intersection(outer_hap.part),
-                inner_hap.value,
-              ).setContext(outer_hap.combineContext(inner_hap)),
-            )
-            .filter((hap) => hap.part);
-        })
-        .flat();
+      return (
+        pat_of_pats
+          // drop continuous events from the outer pattern.
+          .discreteOnly()
+          .query(state)
+          .map((outer_hap) => {
+            return (
+              outer_hap.value
+                // reset = align the inner pattern cycle start to outer pattern events
+                // restart = align the inner pattern cycle zero to outer pattern events
+                .late(restart ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
+                .query(state)
+                .map((inner_hap) =>
+                  new Hap(
+                    // Supports continuous events in the inner pattern
+                    inner_hap.whole ? inner_hap.whole.intersection(outer_hap.whole) : undefined,
+                    inner_hap.part.intersection(outer_hap.part),
+                    inner_hap.value,
+                  ).setContext(outer_hap.combineContext(inner_hap)),
+                )
+                // Drop events that didn't intersect
+                .filter((hap) => hap.part)
+            );
+          })
+          .flat()
+      );
     });
   }
 
@@ -425,7 +436,7 @@ export class Pattern {
   _squeezeJoin() {
     const pat_of_pats = this;
     function query(state) {
-      const haps = pat_of_pats.query(state);
+      const haps = pat_of_pats.discreteOnly().query(state);
       function flatHap(outerHap) {
         const pat = outerHap.value._compressSpan(outerHap.wholeOrPart().cycleArc());
         const innerHaps = pat.query(state.setSpan(outerHap.part));
@@ -763,54 +774,41 @@ export class Pattern {
   }
 }
 
+// TODO - adopt value.mjs fully..
+function _composeOp(a, b, func) {
+  function _nonFunctionObject(x) {
+    return x instanceof Object && (!(x instanceof Function))
+  }
+  if (_nonFunctionObject(a) || _nonFunctionObject(b)) {
+    if (!_nonFunctionObject(a)) {
+      a = { value: a };
+    }
+    if (!_nonFunctionObject(b)) {
+      b = { value: b };
+    }
+    return unionWithObj(a, b, func);
+  }
+  return func(a, b);
+}
+
 // pattern composers
 const composers = {
-  set: [
-    (a) => (b) => {
-      // If an object is involved, do a union, discarding matching keys from a.
-      // Otherwise, just return b.
-      if (a instanceof Object || b instanceof Object) {
-        if (!a instanceof Object) {
-          a = { value: a };
-        }
-        if (!b instanceof Object) {
-          b = { value: b };
-        }
-        return Object.assign({}, a, b);
-      }
-      return b;
-    },
-    id,
-  ],
-  const: [
-    (a) => (b) => {
-      // If an object is involved, do a union, discarding matching keys from a.
-      // Otherwise, just return b.
-      if (a instanceof Object || b instanceof Object) {
-        if (!a instanceof Object) {
-          a = { value: a };
-        }
-        if (!b instanceof Object) {
-          b = { value: b };
-        }
-        return Object.assign({}, b, a);
-      }
-      return a;
-    },
-    id,
-  ],
-  add: [(a) => (b) => a + b, (x) => x._asNumber()],
-  sub: [(a) => (b) => a - b, (x) => x._asNumber()],
-  mul: [(a) => (b) => a * b, (x) => x._asNumber()],
-  div: [(a) => (b) => a / b, (x) => x._asNumber()],
+  set: (a, b) => b,
+  const: id,
+  add: (a, b) => a + b,
+  sub: (a, b) => a - b,
+  mul: (a, b) => a * b,
+  div: (a, b) => a / b,
+  mod: mod,
+  func: (a, b) => b(a)
 };
 
 for (const [name, op] of Object.entries(composers)) {
   for (const opType of ['', 'Flip', 'Sect', 'Squeeze', 'SqueezeFlip', 'Reset', 'Restart']) {
     Pattern.prototype[name + opType] = function (...other) {
-      return op[1](this)['_op' + opType](sequence(other), op[0]);
+      return this['_op' + opType](sequence(other), (a) => (b) => _composeOp(a, b, op));
     };
-    if (name === "set" && opType !== '') {
+    if (name === 'set' && opType !== '') {
       Pattern.prototype[opType.toLowerCase()] = Pattern.prototype[name + opType];
     }
   }
