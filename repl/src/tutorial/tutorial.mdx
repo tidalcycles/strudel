@@ -195,14 +195,14 @@ Internally, the mini notation will expand to use the actual functional JavaScrip
 
 Notes are automatically available as variables:
 
-<MiniRepl tune={`e4`} />
+<MiniRepl tune={`sequence(d4, fs4, a4)`} />
 
 An important difference to the mini notation:
 For sharp notes, the letter "s" is used instead of "#", because JavaScript does not support "#" in a variable name.
 
 The above is the same as:
 
-<MiniRepl tune={`"e4"`} />
+<MiniRepl tune={`sequence('d4', 'f#4', 'a4')`} />
 
 Using strings, you can also use "#".
 
@@ -588,59 +588,6 @@ Helper to set the envelope of a Tone.js instrument. Intended to be used with Ton
 <MiniRepl
   tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
 .tone(synth(adsr(0,.1,0,0)).chain(out()))`}
-/>
-
-### Experimental: Patternification
-
-While the above methods work for static sounds, there is also the option to patternify tone methods.
-This is currently experimental, because the performance is not stable, and audio glitches will appear after some time.
-It would be great to get this to work without glitches though, because it is fun!
-
-#### synth(type)
-
-With .synth, you can create a synth with a variable wave type:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~"
-.synth("<sawtooth8 square8>").slow(4)`}
-/>
-
-#### adsr(attack, decay?, sustain?, release?)
-
-Chainable Envelope helper:
-
-<MiniRepl
-  tune={`"[c5 c5 bb4 c5] [~ g4 ~ g4] [c5 f5 e5 c5] ~".slow(4)
-  .synth('sawtooth16').adsr(0,.1,0,0)`}
-/>
-
-Due to having more than one argument, this method is not patternified.
-
-#### filter(cuttoff)
-
-Patternified filter:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~"
-  .synth('sawtooth16').filter("[500 2000]*8").slow(4)`}
-/>
-
-#### gain(value)
-
-Patternified gain:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~"
-  .synth('sawtooth16').gain("[.2 .8]*8").slow(4)`}
-/>
-
-#### autofilter(value)
-
-Patternified autofilter:
-
-<MiniRepl
-  tune={`"c2 c3"
-  .synth('sawtooth16').autofilter("<1 4 8>")`}
 />
 
 ## Tonal API

@@ -703,3 +703,124 @@ stack(
   >\`
   .legato(.5)
 ).fast(2) //.tone((await piano()).chain(out()))`;
+
+export const speakerman = `backgroundImage('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FXR0rKqW3VwY%2Fmaxresdefault.jpg&f=1&nofb=1', 
+{ className:'darken', style:'background-size:cover'})
+stack(
+  "[g3,bb3,d4] [f3,a3,c4] [c3,e3,g3]@2".slow(2).late(.1),
+  slowcat(
+  'Baker man',
+  'is baking bread',
+  'Baker man',
+  'is baking bread',
+  'Sagabona',
+  'kunjani wena',
+  'Sagabona',
+  'kunjani wena',
+  'The night train, is coming',
+  'got to keep on running',
+  'The night train, is coming',
+  'got to keep on running',
+  ).speak("en zu en".slow(12), "<0 2 3 4 5 6>".slow(2)),
+).slow(4)`;
+
+export const randomBells = `const delay = new FeedbackDelay(1/3, .8).chain(vol(.2), out());
+let bell = await sampler({
+  C6: 'https://freesound.org/data/previews/411/411089_5121236-lq.mp3'
+})
+const bass = await sampler({
+  d2: 'https://freesound.org/data/previews/608/608286_13074022-lq.mp3'
+});
+bell = bell.chain(vol(0.6).connect(delay),out());
+
+"0".euclidLegato(3,8)
+  .echo(3, 1/16, .5)
+  .add(rand.range(0,12))
+  .velocity(rand.range(.5,1))
+  .legato(rand.range(.4,3))
+  .scale(slowcat('D minor pentatonic')).tone(bell)
+  .stack("<D2 A2 G2 F2>".euclidLegato(6,8,1).tone(bass.toDestination()))
+  .slow(6)
+  .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})`;
+
+export const waa = `"a4 [a3 c3] a3 c3"
+.sub("<7 12>/2")
+.off(1/8, add("12"))
+.off(1/4, add("7"))
+.legato(.5)
+.slow(2)
+.wave("sawtooth square")
+.filter('lowpass', "<2000 1000 500>")
+.out()`;
+
+export const waar = `"a4 [a3 c3] a3 c3".color('#F9D649')
+.sub("<7 12 5 12>".slow(2))
+.off(1/4,x=>x.add(7).color("#FFFFFF #0C3AA1 #C63928"))
+.off(1/8,x=>x.add(12).color('#215CB6'))
+.slow(2)
+.legato(sine.range(0.3, 2).slow(28))
+.wave("sawtooth square".fast(2))
+.filter('lowpass', cosine.range(500,4000).slow(16))
+.out()
+.pianoroll({minMidi:20,maxMidi:120,background:'#202124'})`;
+
+export const hyperpop = `const lfo = cosine.slow(15);
+const lfo2 = sine.slow(16);
+const filter1 = x=>x.filter('lowpass', lfo2.range(300,3000));
+const filter2 = x=>x.filter('highpass', lfo.range(1000,6000)).filter('lowpass',4000)
+const scales = slowcat('D3 major', 'G3 major').slow(8)
+
+const drums = await players({
+  bd: '344/344757_1676145-lq.mp3',
+  sn: '387/387186_7255534-lq.mp3',
+  hh: '561/561241_12517458-lq.mp3',
+  hh2:'44/44944_236326-lq.mp3',
+  hh3: '44/44944_236326-lq.mp3',
+}, 'https://freesound.org/data/previews/')
+
+stack(
+  "-7 0 -7 7".struct("x(5,8,2)").fast(2).sub(7)
+  .scale(scales).wave("sawtooth,square").velocity(.3).adsr(0.01,0.1,.5,0)
+  .apply(filter1),
+  "~@3 [<2 3>,<4 5>]"
+  .echo(8,1/16,.7)
+  .scale(scales)
+  .wave('square').velocity(.7).adsr(0.01,0.1,0).apply(filter1),
+  "6 5 4".add(14)
+  .superimpose(sub("5"))
+  .fast(1).euclidLegato(3,8)
+  .mask("<1 0@7>")
+  .fast(2)
+  .echo(32, 1/8, .9)
+  .scale(scales)
+  .wave("sawtooth")
+  .velocity(.2)
+  .adsr(.01,.5,0)
+  .apply(filter2)
+  //.echo(4,1/16,.5)
+).out().stack(
+  stack(
+    "bd <~@7 [~ bd]>".fast(2),
+    "~ sn",
+    "[~ hh3]*2"
+  ).tone(drums.chain(vol(.18),out())).fast(2)
+).slow(2)
+
+//.pianoroll({minMidi:20, maxMidi:160})
+// strudel disable-highlighting`;
+
+export const festivalOfFingers3 = `"[-7*3],0,2,6,[8 7]"
+.echoWith(4,1/4, (x,n)=>x
+          .add(n*7)
+          .velocity(1/(n+1))
+          .legato(1/(n+1)))
+.velocity(perlin.range(.5,.9).slow(8))
+.stack("[22 25]*3"
+       .legato(sine.range(.5,2).slow(8))
+       .velocity(sine.range(.4,.8).slow(5))
+       .echo(4,1/12,.5))
+.scale(slowcat('D dorian','G mixolydian','C dorian','F mixolydian'))
+.legato(1)
+.slow(2)
+.tone((await piano()).toDestination())
+//.pianoroll({maxMidi:160})`;

@@ -13,11 +13,8 @@ The REPL is deployed at [strudel.tidalcycles.org](https://strudel.tidalcycles.or
 
 ```bash
 # from project root
-npm install
-npx lerna bootstrap
-cd repl
-npm install
-npm run start
+npm run setup
+npm run repl
 ```
 
 ## Build REPL
@@ -27,7 +24,3 @@ cd repl
 npm run build # <- builds repl + tutorial to ../docs
 npm run static # <- test static build
 ```
-
-## Dev Notes
-
-~~Always run `npm i --legacy-peer-deps`, otherwise `@tonejs/piano` will break.~~
