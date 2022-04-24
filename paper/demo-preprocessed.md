@@ -406,11 +406,11 @@ The live coder may use the `sequence` function as already seen above, or
 more often the mini-notation for even terser notation of rhythmic
 sequences. Such sequences are often treated only a starting point for
 manipulation, where they then are undergo pattern transformations such
-as repetition, symmetry, interference or randomisation, potentially at
-multiple timescales. Because Strudel patterns are represented as pure
-functions of time rather than as data structures, very long and complex
-generative results can be represented and manipulated without having to
-store the resulting sequences in memory.
+as repetition, symmetry, interference/combination or randomisation,
+potentially at multiple timescales. Because Strudel patterns are
+represented as pure functions of time rather than as data structures,
+very long and complex generative results can be represented and
+manipulated without having to store the resulting sequences in memory.
 
 # Pattern Example
 
@@ -462,19 +462,21 @@ general guiding principles, Strudel aims to be
 3.  modular and extensible
 
 The main accessibility advantage over Tidal is the zero install browser
-environment. While OSC output to SuperCollider is possible with Strudel,
-it requires the user to install SuperCollider with a custom setup
-script, which is not trivial. Without OSC output, Strudel is able to
-output sound inside the browser via Tone.js, which is a major limiting
-factor, both in terms of available features and runtime performance. For
-the future, it is planned to integrate alternative sound engines, with
-possible candidates being like glicol
-[@{https://webaudioconf.com/posts/2021_8/}] or faust
+environment. While Strudel can control Tidal's SuperDirt audio system
+via OSC, it requires the user to install SuperCollider and its
+sc3plugins library, which can be difficult. Without SuperDirt, Strudel
+is able to output sound itself via Tone.js, however this is limited both
+in terms of available features and runtime performance. For the future,
+it is planned to integrate alternative sound engines such as glicol
+[@{https://webaudioconf.com/posts/2021_8/}] and faust
 [@{https://webaudioconf.com/posts/2019_38/}]. To improve compatibility
 with Tidal, more Tidal functions are planned to be ported, as well as
-full compatibility with Tidal's SuperDirt synth. Besides sound output,
-other ways to render events will be explored, such as graphical, serial
-or kinetic output.
+full compatibility with SuperDirt. Besides sound, other ways to render
+events are being explored, such as graphical, and choreographic output.
+We are also looking into alternative ways of editing patterns, including
+multi-user editing for network music, parsing a novel syntax to escape
+the constraints of javascript, and developing hardware/e-textile
+interfaces.
 
 # Links
 
