@@ -386,6 +386,145 @@
 				"title": "Feedforward",
 				"type": ""
 			}
+		},
+		"https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.72.1340": {
+			"fetched": "2022-04-24T21:09:16.724Z",
+			"bibtex": [
+				"",
+				"@inproceedings{toussaint_euclidean_2005,",
+				"   title = {The {Euclidean} algorithm generates traditional musical rhythms},",
+				"   url = {https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.72.1340},",
+				"   abstract = {The Euclidean algorithm (which comes down to us from Euclid’s Elements) computes the greatest common divisor of two given integers. It is shown here that the structure of the Euclidean algorithm may be used to automatically generate, very efficiently, a large family of rhythms used as timelines (rhythmic ostinatos), in traditional world music. These rhythms, here dubbed Euclidean rhythms, have the property that their onset patterns are distributed as evenly as possible in a mathematically precise sense, and optimal manner. Euclidean rhythms are closely related to the family of Aksak rhythms studied by ethnomusicologists, and occur in a wide variety of other disciplines as well. For example they characterize algorithms for drawing digital straight lines in computer graphics, as well as algorithms for calculating leap years in calendar design. Euclidean rhythms also find application in nuclear physics accelerators and in computer science, and are closely related to several families of words and sequences of interest in the study of the combinatorics of words, such as mechanical words, Sturmian words, two-distance sequences, and Euclidean strings, to which the Euclidean rhythms are compared. 1.},",
+				"   urldate = {2022-04-24},",
+				"   booktitle = {In {Proceedings} of {BRIDGES}: {Mathematical} {Connections} in {Art}, {Music} and {Science}},",
+				"   author = {Toussaint, Godfried},",
+				"   year = {2005},",
+				"   pages = {47--56},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.72.1340",
+				"abstract": "The Euclidean algorithm (which comes down to us from Euclid’s Elements) computes the greatest common divisor of two given integers. It is shown here that the structure of the Euclidean algorithm may be used to automatically generate, very efficiently, a large family of rhythms used as timelines (rhythmic ostinatos), in traditional world music. These rhythms, here dubbed Euclidean rhythms, have the property that their onset patterns are distributed as evenly as possible in a mathematically precise sense, and optimal manner. Euclidean rhythms are closely related to the family of Aksak rhythms studied by ethnomusicologists, and occur in a wide variety of other disciplines as well. For example they characterize algorithms for drawing digital straight lines in computer graphics, as well as algorithms for calculating leap years in calendar design. Euclidean rhythms also find application in nuclear physics accelerators and in computer science, and are closely related to several families of words and sequences of interest in the study of the combinatorics of words, such as mechanical words, Sturmian words, two-distance sequences, and Euclidean strings, to which the Euclidean rhythms are compared. 1.",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							24
+						]
+					]
+				},
+				"author": [
+					{
+						"family": "Toussaint",
+						"given": "Godfried"
+					}
+				],
+				"container-title": "In Proceedings of BRIDGES: Mathematical Connections in Art, Music and Science",
+				"id": "https://citeseerx.ist.psu.edu/viewdoc/summary?doi_x61_10.1.1.72.1340",
+				"issued": {
+					"date-parts": [
+						[
+							2005
+						]
+					]
+				},
+				"page": "47-56",
+				"title": "The Euclidean algorithm generates traditional musical rhythms",
+				"type": "paper-conference"
+			}
+		},
+		"https://webaudioconf.com/posts/2021_8/": {
+			"fetched": "2022-04-24T21:14:10.409Z",
+			"bibtex": [
+				"",
+				"@misc{noauthor_wac_nodate,",
+				"   title = {{WAC} {\\textbar} {Glicol}: {A} {Graph}-oriented {Live} {Coding} {Language} {Developed} with {Rust}, {WebAssembly} and {AudioWorklet}},",
+				"   url = {https://webaudioconf.com/posts/2021_8/},",
+				"   urldate = {2022-04-24},",
+				"   journal = {webaudioconf.com},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://webaudioconf.com/posts/2021_8/",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							24
+						]
+					]
+				},
+				"container-title": "webaudioconf.com",
+				"id": "https://webaudioconf.com/posts/2021_8/",
+				"title": "WAC  Glicol: A Graph-oriented Live Coding Language Developed with Rust, WebAssembly and AudioWorklet",
+				"title-short": "WAC  Glicol",
+				"type": ""
+			}
+		},
+		"https://webaudioconf.com/posts/2019_38/": {
+			"fetched": "2022-04-24T21:14:46.954Z",
+			"bibtex": [
+				"",
+				"@misc{noauthor_wac_nodate,",
+				"   title = {{WAC} {\\textbar} {FAUST} online {IDE}: dynamically compile and publish {FAUST} code as {WebAudio} {Plugins}},",
+				"   url = {https://webaudioconf.com/posts/2019_38/},",
+				"   urldate = {2022-04-24},",
+				"   journal = {webaudioconf.com},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://webaudioconf.com/posts/2019_38/",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							24
+						]
+					]
+				},
+				"container-title": "webaudioconf.com",
+				"id": "https://webaudioconf.com/posts/2019_38/",
+				"title": "WAC  FAUST online IDE: Dynamically compile and publish FAUST code as WebAudio Plugins",
+				"title-short": "WAC  FAUST online IDE",
+				"type": ""
+			}
+		},
+		"https://strudel.tidalcycles.org": {
+			"fetched": "2022-04-24T21:14:47.822Z",
+			"bibtex": [
+				"",
+				"@misc{noauthor_strudel_nodate,",
+				"   title = {Strudel {REPL}},",
+				"   url = {https://strudel.tidalcycles.org/},",
+				"   abstract = {Strudel REPL},",
+				"   urldate = {2022-04-24},",
+				"   journal = {strudel.tidalcycles.org},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://strudel.tidalcycles.org/",
+				"abstract": "Strudel REPL",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							24
+						]
+					]
+				},
+				"container-title": "strudel.tidalcycles.org",
+				"id": "https://strudel.tidalcycles.org",
+				"title": "Strudel REPL",
+				"type": ""
+			}
 		}
 	}
 }

@@ -6,15 +6,15 @@ url2cite: all-links
 
 # Introduction
 
-This paper introduces StrudelCycles (generally known as just 'Strudel', including in the following), an alternative implementation of the TidalCycles live coding system, using the JavaScript programming language. It is an attempt to make live coding more accessible through creating a system that runs entirely in the browser, while opening Tidal's approach to algorithmic patterns [@algorithmicpattern] up to modern audio/visual web technologies. The Strudel REPL is a live code editor dedicated to manipulating strudel patterns while they play, with builtin visual feedback. While Strudel is written in JavaScript, the API is optimized for simplicity and readability by applying code transformations on the syntax tree level, allowing language operations that would otherwise be impossible. The application supports multiple ways to output sound, including Tone.js, Web Audio nodes, OSC messages and WebMIDI. The project is split into multiple packages, allowing granular reuse in other applications. Apart from TidalCycles, it draws inspiration from prior projects like TidalVortex [@tidalvortex], Gibber [@gibber], Estuary [@estuary] and Feedforward [@feedforward].
+This paper introduces Strudel (or sometimes 'StrudelCycles'), an alternative implementation of the Tidal (or 'TidalCycles') live coding system, using the JavaScript programming language. Strudel is an attempt to make live coding more accessible, by creating a system that runs entirely in the browser, while opening Tidal's approach to algorithmic patterns [@algorithmicpattern] up to modern audio/visual web technologies. The Strudel REPL is a live code editor dedicated to manipulating strudel patterns while they play, with builtin visual feedback. While Strudel is written in JavaScript, the API is optimized for simplicity and readability by applying code transformations on the syntax tree level, allowing language operations that would otherwise be impossible. The application supports multiple ways to output sound, including Tone.js, Web Audio nodes, OSC (Open Sound Control) messages, Web Serial and Web MIDI. The project is split into multiple packages, allowing granular reuse in other applications. Apart from TidalCycles, Strudel draws inspiration from prior projects like TidalVortex [@tidalvortex], Gibber [@gibber], Estuary [@estuary] and Feedforward [@feedforward].
 
 # Porting from Haskell
 
-The original TidalCycles (generally known as just 'Tidal') is implemented as a domain specific language (DSL), embedded in the Haskell pure functional programming language, taking advantage of Haskell's terse syntax and advanced, 'strong' type system. Javascript on the other hand, is a multi-paradigm programming language, with a dynamic type system. Because Tidal leans heavily on many of Haskell's more unique features, it was not clear whether it could meaningfully be ported to a multi-paradigm scripting language. However, this already proved to be the case with an earlier port to Python [TidalVortex; @tidalvortex], and we successfully implemented Tidal's pure functional representation of patterns in Strudel, including partial application, and functor, applicative and monad structures. Over the past few months since the project started in January 2022, a large part of Tidal's functionality has already been ported, including it's mini-notation for polymetric sequences, and a large part of its library of pattern manipulations. The result is a terse and highly composable system, where just about everything is a pattern, that may be transformed and combined with other patterns in a myriad of ways.
+The original Tidal is implemented as a domain specific language (DSL), embedded in the Haskell pure functional programming language, taking advantage of Haskell's terse syntax and advanced, 'strong' type system. Javascript on the other hand, is a multi-paradigm programming language, with a dynamic type system. Because Tidal leans heavily on many of Haskell's more unique features, it was not always clear that it could meaningfully be ported to a multi-paradigm scripting language. However, this already proved to be the case with an earlier port to Python [TidalVortex; @tidalvortex], and we have now successfully implemented Tidal's pure functional representation of patterns in Strudel, including partial application, and functor, applicative and monad structures. Over the past few months since the project started in January 2022, a large part of Tidal's functionality has already been ported, including it's mini-notation for polymetric sequences, and a large part of its library of pattern manipulations. The result is a terse and highly composable system, where just about everything is a pattern, that may be transformed and combined with other patterns in a myriad of ways.
 
 # Representing Patterns
 
-The essence of Tidal are Patterns. Patterns are abstract entities that represent flows of time as functions, by adapting a technique called pure functional reactive programming.
+Patterns are the essence of Tidal. Its patterns are abstract entities that represent flows of time as functions, adapting a technique called pure functional reactive programming.
 Taking a time span as its input, a Pattern can output a set of events that happen within that time span.
 It depends on the structure of the Pattern how the events are located in time.
 From now on, this process of generating events from a time span will be called **querying**.
@@ -26,7 +26,7 @@ const events = pattern.query(0, 1);
 console.log(events.map(e => e.show()))
 ```
 
-In this example, we create a pattern using the `sequence` function and **query** it for the timespan from `0` to `1`.
+In this example, we create a pattern using the `sequence` function and **query** it for the time span from `0` to `1`.
 Those numbers represent units of time called **cycles**. The length of one cycle  depends on the tempo, which defaults to one cycle per second.
 The resulting events are:
 
@@ -133,6 +133,6 @@ Thanks to the Strudel and wider Tidal, live coding, webaudio and free/open sourc
 [@fabricating]: https://zenodo.org/record/2155745
 [@cyclic-patterns]: https://zenodo.org/record/1548969
 [@feedforward]: https://zenodo.org/record/6353969
-[@godfried]: http://cgm.cs.mcgill.ca/~godfried/publications/banff-extended.pdf
-[@glicol]: https://webaudioconf2021.com/wp-content/uploads/2021/06/Glicol_WAC_paper.pdf
-[@faust]: https://ccrma.stanford.edu/~rmichon/publications/doc/WAC-19-ide.pdf
+[@godfried]: https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.72.1340
+[@glicol]: https://webaudioconf.com/posts/2021_8/
+[@faust]: https://webaudioconf.com/posts/2019_38/
