@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/xen",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Xenharmonic API for strudel",
   "main": "xen.mjs",
   "scripts": {
@@ -24,6 +24,6 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.0.3"
+    "@strudel.cycles/core": "^0.0.5"
   }
 }

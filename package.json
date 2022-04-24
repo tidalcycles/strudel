@@ -9,7 +9,8 @@
     "bootstrap": "lerna bootstrap",
     "setup": "npm i && npm run bootstrap && cd repl && npm i",
     "repl": "cd repl && npm run start",
-    "osc": "cd packages/osc && npm run server"
+    "osc": "cd packages/osc && npm run server",
+    "build": "cd repl && npm run build"
   },
   "workspaces": [
     "packages/*"
