@@ -135,6 +135,11 @@ export class Pattern {
     return this._filterEvents((hap) => hap.hasOnset());
   }
 
+  discreteOnly() {
+    // removes continuous events that don't have a 'whole' timespan
+    return this._filterEvents((hap) => hap.whole);
+  }
+
   _appWhole(whole_func, pat_val) {
     // Assumes 'this' is a pattern of functions, and given a function to
     // resolve wholes, applies a given pattern of values to that
@@ -247,13 +252,13 @@ export class Pattern {
     );
   }
 
-  _opLeft(other, func) {
+  _op(other, func) {
     return this.fmap(func).appLeft(reify(other));
   }
-  _opRight(other, func) {
+  _opFlip(other, func) {
     return this.fmap(func).appRight(reify(other));
   }
-  _opBoth(other, func) {
+  _opSect(other, func) {
     return this.fmap(func).appBoth(reify(other));
   }
   _opSqueeze(other, func) {
@@ -264,6 +269,14 @@ export class Pattern {
     const thisPat = this;
     const otherPat = reify(other);
     return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a)))._squeezeJoin();
+  }
+  _opReset(other, func) {
+    const otherPat = reify(other);
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._resetJoin();
+  }
+  _opRestart(other, func) {
+    const otherPat = reify(other);
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._restartJoin();
   }
 
   _asNumber(silent = false) {
@@ -380,6 +393,33 @@ export class Pattern {
     // Flattens a pattern of patterns into a pattern, where wholes are
     // taken from inner events.
     return this.innerBind(id);
+  }
+
+  _resetJoin(restart=false) {
+    const pat_of_pats = this;
+    return new Pattern((state) => {
+      return pat_of_pats
+        .discreteOnly()
+        .query(state)
+        .map((outer_hap) => {
+          return outer_hap.value
+            .late(restart ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
+            .query(state)
+            .map((inner_hap) =>
+              new Hap(
+                inner_hap.whole ? inner_hap.whole.intersection(outer_hap.whole) : undefined,
+                inner_hap.part.intersection(outer_hap.part),
+                inner_hap.value,
+              ).setContext(outer_hap.combineContext(inner_hap)),
+            )
+            .filter((hap) => hap.part);
+        })
+        .flat();
+    });
+  }
+
+  _restartJoin() {
+    return this._resetJoin(true);
   }
 
   _squeezeJoin() {
@@ -721,21 +761,6 @@ export class Pattern {
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
-
-  restart(pat) {
-    pat = reify(pat);
-    return new Pattern((state) =>
-      pat
-        .query(state)
-        .map((event) => {
-          const resetSpan = new TimeSpan(event.part.begin.sub(event.whole.begin), event.duration);
-          return this.query(new State(resetSpan)).map((hap) =>
-            hap.withSpan((s) => s.withTime((t) => t.add(event.whole.begin))).setContext(hap.combineContext(event)),
-          );
-        })
-        .flat(),
-    );
-  }
 }
 
 // pattern composers
@@ -757,6 +782,23 @@ const composers = {
     },
     id,
   ],
+  const: [
+    (a) => (b) => {
+      // If an object is involved, do a union, discarding matching keys from a.
+      // Otherwise, just return b.
+      if (a instanceof Object || b instanceof Object) {
+        if (!a instanceof Object) {
+          a = { value: a };
+        }
+        if (!b instanceof Object) {
+          b = { value: b };
+        }
+        return Object.assign({}, b, a);
+      }
+      return a;
+    },
+    id,
+  ],
   add: [(a) => (b) => a + b, (x) => x._asNumber()],
   sub: [(a) => (b) => a - b, (x) => x._asNumber()],
   mul: [(a) => (b) => a * b, (x) => x._asNumber()],
@@ -764,21 +806,14 @@ const composers = {
 };
 
 for (const [name, op] of Object.entries(composers)) {
-  Pattern.prototype[name] = function (...other) {
-    return op[1](this)._opLeft(sequence(other), op[0]);
-  };
-  Pattern.prototype[name + 'Flip'] = function (...other) {
-    return op[1](this)._opRight(sequence(other), op[0]);
-  };
-  Pattern.prototype[name + 'Sect'] = function (...other) {
-    return op[1](this)._opBoth(sequence(other), op[0]);
-  };
-  Pattern.prototype[name + 'Squeeze'] = function (...other) {
-    return op[1](this)._opSqueeze(sequence(other), op[0]);
-  };
-  Pattern.prototype[name + 'SqueezeFlip'] = function (...other) {
-    return op[1](this)._opSqueezeFlip(sequence(other), op[0]);
-  };
+  for (const opType of ['', 'Flip', 'Sect', 'Squeeze', 'SqueezeFlip', 'Reset', 'Restart']) {
+    Pattern.prototype[name + opType] = function (...other) {
+      return op[1](this)['_op' + opType](sequence(other), op[0]);
+    };
+    if (name === "set" && opType !== '') {
+      Pattern.prototype[opType.toLowerCase()] = Pattern.prototype[name + opType];
+    }
+  }
 }
 
 // methods of Pattern that get callable factories
