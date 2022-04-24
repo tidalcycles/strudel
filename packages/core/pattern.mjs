@@ -814,6 +814,9 @@ for (const [name, op] of Object.entries(composers)) {
   }
 }
 
+Pattern.prototype.reset = Pattern.prototype.keepReset;
+Pattern.prototype.restart = Pattern.prototype.keepRestart;
+
 // methods of Pattern that get callable factories
 Pattern.prototype.patternified = [
   'apply',
