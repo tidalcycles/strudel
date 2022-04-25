@@ -3,9 +3,8 @@ import { CodeMirror as _CodeMirror } from 'react-codemirror6';
 import { EditorView, Decoration } from '@codemirror/view';
 import { StateField, StateEffect } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
-import { materialPalenight } from 'codemirror6-themes';
-
-// EditorView.theme(materialPalenight);
+// import { materialPalenight } from 'codemirror6-themes';
+import { materialPalenight } from './themes/material-palenight';
 
 const highlightMark = Decoration.mark({ class: 'cm-highlight' });
 const addHighlight = StateEffect.define();
@@ -83,7 +82,7 @@ export default function CodeMirror({ value, onChange, onViewChanged, onCursor, o
         onChange={onChange}
         extensions={[
           javascript(),
-          materialPalenight
+          materialPalenight,
           // theme, language, ...
         ]}
       />
