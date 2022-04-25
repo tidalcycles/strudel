@@ -247,6 +247,12 @@ describe('Pattern', function () {
         ['a', 'b', 'c'],
       );
     });
+    it('Can stack subpatterns', function () {
+      sameFirst(
+        stack('a', ['b','c']),
+        stack('a', sequence('b', 'c')),
+      );
+    });
   });
   describe('_fast()', function () {
     it('Makes things faster', function () {
@@ -413,6 +419,12 @@ describe('Pattern', function () {
         ['c'],
       );
     });
+    it ('Can cat subpatterns', () => {
+      sameFirst(
+        slowcat('a', ['b','c']).fast(4),
+        sequence('a', ['b', 'c']).fast(2)
+      )
+    })
   });
   describe('rev()', function () {
     it('Can reverse things', function () {

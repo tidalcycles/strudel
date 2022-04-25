@@ -69,7 +69,7 @@ Pattern.prototype.midi = function (output, channel = 1) {
       // await enableWebMidi()
       device.playNote(note, channel, {
         time,
-        duration: event.duration * 1000 - 5,
+        duration: event.duration.valueOf() * 1000 - 5,
         velocity,
       });
     };
