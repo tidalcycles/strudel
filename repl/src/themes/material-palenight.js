@@ -26,13 +26,16 @@ export const materialPalenightTheme = EditorView.theme(
     '&': {
       color: '#ffffff',
       backgroundColor: background,
+      'z-index': 11,
     },
 
     // done
     '.cm-content': {
       caretColor: cursor,
     },
-
+    '.cm-line > *': {
+      background: '#00000070',
+    },
     // done
     '&.cm-focused .cm-cursor': {
       borderLeftColor: cursor,
