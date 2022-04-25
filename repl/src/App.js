@@ -1,5 +1,6 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import CodeMirror, { markEvent, markParens } from './CodeMirror';
+import React, { useCallback, useLayoutEffect, useRef, useState, useEffect } from 'react';
+// import CodeMirror, { markEvent, markParens } from './CodeMirror';
+import CodeMirror6, { highlightEvent } from './CodeMirror6';
 import cx from './cx';
 import logo from './logo.svg';
 import playStatic from './static.mjs';
@@ -70,13 +71,32 @@ const randomTune = getRandomTune();
 const defaultSynth = getDefaultSynth();
 
 function App() {
-  const [editor, setEditor] = useState();
-  const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog, pending } =
-    useRepl({
-      tune: decoded || randomTune,
-      defaultSynth,
-      onDraw: useCallback((time, event) => markEvent(editor)(time, event), [editor]),
-    });
+  // const [editor, setEditor] = useState();
+  const [view, setView] = useState();
+  const [codeToHighlight, setCodeToHighlight] = useState();
+  const {
+    setCode,
+    setPattern,
+    error,
+    code,
+    cycle,
+    dirty,
+    log,
+    togglePlay,
+    activeCode,
+    activateCode,
+    pattern,
+    pushLog,
+    pending,
+  } = useRepl({
+    tune: decoded || randomTune,
+    defaultSynth,
+    // onDraw: useCallback((time, event) => markEvent(editor)(time, event), [editor]),
+    onDraw: useCallback((_, e) => highlightEvent(e, view, codeToHighlight), [view, codeToHighlight]),
+  });
+  useEffect(() => {
+    setCodeToHighlight(activeCode);
+  }, [activeCode]);
   const [uiHidden, setUiHidden] = useState(false);
   const logBox = useRef();
   // scroll log box to bottom when log changes
@@ -179,19 +199,13 @@ function App() {
           <button>
             <a href="./tutorial">📚 tutorial</a>
           </button>
-          <button onClick={() => setUiHidden((c) => !c)}>👀 {uiHidden ? 'show ui' : 'hide ui'}</button>
+          {/* <button onClick={() => setUiHidden((c) => !c)}>👀 {uiHidden ? 'show ui' : 'hide ui'}</button> */}
         </div>
       </header>
       <section className="grow flex flex-col text-gray-100">
-        <div className="grow relative" id="code">
-          <div
-            className={cx(
-              'h-full transition-opacity',
-              error ? 'focus:ring-red-500' : 'focus:ring-slate-800',
-              uiHidden ? 'opacity-0' : 'opacity-100',
-            )}
-          >
-            <CodeMirror
+        <div className="grow relative flex" id="code">
+          <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />
+          {/* <CodeMirror
               value={code}
               editorDidMount={setEditor}
               options={{
@@ -203,11 +217,10 @@ function App() {
               }}
               onCursor={markParens}
               onChange={(_, __, value) => setCode(value)}
-            />
-            <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none">
-              {!cycle.started ? `press ctrl+enter to play\n` : dirty ? `ctrl+enter to update\n` : 'no changes\n'}
-            </span>
-          </div>
+            /> */}
+          <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none">
+            {!cycle.started ? `press ctrl+enter to play\n` : dirty ? `ctrl+enter to update\n` : 'no changes\n'}
+          </span>
           {error && (
             <div className={cx('absolute right-2 bottom-2 px-2', 'text-red-500')}>
               {error?.message || 'unknown error'}
