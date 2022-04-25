@@ -82,6 +82,7 @@ function App() {
     log,
     togglePlay,
     activeCode,
+    setActiveCode,
     activateCode,
     pattern,
     pushLog,
@@ -90,11 +91,8 @@ function App() {
     tune: decoded || randomTune,
     defaultSynth,
     // onDraw: useCallback((time, event) => markEvent(editor)(time, event), [editor]),
-    onDraw: useCallback((_, e) => highlightEvent(e, view, codeToHighlight), [view, codeToHighlight]),
+    onDraw: useCallback((_, e, code) => code && highlightEvent(e, view, code), [view]),
   });
-  useEffect(() => {
-    setCodeToHighlight(activeCode);
-  }, [activeCode]);
   const [uiHidden, setUiHidden] = useState(false);
   const logBox = useRef();
   // scroll log box to bottom when log changes
@@ -191,6 +189,7 @@ function App() {
               uiHelpers.cleanup();
               const parsed = await evaluate(_code);
               setPattern(parsed.pattern);
+              setActiveCode(_code);
             }}
           >
             🎲 random
@@ -201,7 +200,7 @@ function App() {
         </div>
       </header>
       <section className="grow flex flex-col text-gray-100">
-        <div className="grow relative flex" id="code">
+        <div className="grow relative flex overflow-auto" id="code">
           {/* onCursor={markParens} */}
           <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />
           <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none">

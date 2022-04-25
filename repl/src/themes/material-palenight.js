@@ -26,6 +26,7 @@ export const materialPalenightTheme = EditorView.theme(
     '&': {
       color: '#ffffff',
       backgroundColor: background,
+      fontSize: '16px',
       'z-index': 11,
     },
 
@@ -33,8 +34,8 @@ export const materialPalenightTheme = EditorView.theme(
     '.cm-content': {
       caretColor: cursor,
     },
-    '.cm-line > *': {
-      background: '#00000070',
+    '.cm-line': {
+      background: '#2C323699',
     },
     // done
     '&.cm-focused .cm-cursor': {
@@ -68,7 +69,7 @@ export const materialPalenightTheme = EditorView.theme(
 
     // done
     '.cm-gutters': {
-      background,
+      background: '#2C323699',
       color: '#676e95',
       border: 'none',
     },

@@ -18,26 +18,31 @@ const highlightField = StateField.define({
     return Decoration.none;
   },
   update(highlights, tr) {
-    highlights = highlights.map(tr.changes);
-    for (let e of tr.effects) {
-      if (e.is(addHighlight)) {
-        highlights = highlights.update({
-          add: [highlightMark.range(e.value.from, e.value.to)],
-        });
+    try {
+      highlights = highlights.map(tr.changes);
+      for (let e of tr.effects) {
+        if (e.is(addHighlight)) {
+          highlights = highlights.update({
+            add: [highlightMark.range(e.value.from, e.value.to)],
+          });
+        }
+        if (e.is(removeHighlight)) {
+          highlights = highlights.update({
+            filter: (f, t, value) => {
+              if (f === e.value.from && t === e.value.to) {
+                return false;
+              }
+              return true;
+              // console.log('filter', f,t,value, e.value.from, e.value.to);
+            },
+          });
+        }
       }
-      if (e.is(removeHighlight)) {
-        highlights = highlights.update({
-          filter: (f, t, value) => {
-            if (f === e.value.from && t === e.value.to) {
-              return false;
-            }
-            return true;
-            // console.log('filter', f,t,value, e.value.from, e.value.to);
-          },
-        });
-      }
+      return highlights;
+    } catch (err) {
+      // console.warn('highlighting error', err);
+      return highlights;
     }
-    return highlights;
   },
   provide: (f) => EditorView.decorations.from(f),
 });
@@ -117,6 +122,10 @@ export function offsetToPosition(offset, code) {
 // returns absolute character offset from { line, ch }
 export function positionToOffset(position, code) {
   const lines = code.split('\n');
+  if (position.line > lines.length) {
+    // throw new Error('positionToOffset: position.line > lines.length');
+    return 0;
+  }
   let offset = 0;
   for (let i = 0; i < position.line; i++) {
     offset += lines[i].length + 1;
