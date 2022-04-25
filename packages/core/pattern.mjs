@@ -4,6 +4,7 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 
 import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod } from './util.mjs';
+import drawLine from './drawLine.mjs';
 
 export class Pattern {
   // the following functions will get patternFactories as nested functions:
@@ -563,6 +564,17 @@ export class Pattern {
     return this._withContext((context) => ({ ...context, color }));
   }
 
+  log() {
+    return this._withEvent((e) => {
+      return e.setContext({ ...e.context, logs: (e.context?.logs || []).concat([e.show()]) });
+    });
+  }
+
+  drawLine() {
+    console.log(drawLine(this));
+    return this;
+  }
+
   _segment(rate) {
     return this.struct(pure(true)._fast(rate));
   }
@@ -595,10 +607,6 @@ export class Pattern {
     const pats = Array(n - 1).fill(pat);
     pats.unshift(func(pat));
     return slowcatPrime(...pats);
-  }
-
-  append(other) {
-    return fastcat(...[this, other]);
   }
 
   rev() {
@@ -643,12 +651,29 @@ export class Pattern {
     return this.juxBy(1, func);
   }
 
-  // is there a different name for those in tidal?
   stack(...pats) {
     return stack(this, ...pats);
   }
+
   sequence(...pats) {
     return sequence(this, ...pats);
+  }
+
+  // shorthand for sequence
+  seq(...pats) {
+    return sequence(this, ...pats);
+  }
+
+  cat(...pats) {
+    return cat(this, ...pats);
+  }
+
+  fastcat(...pats) {
+    return fastcat(this, ...pats);
+  }
+
+  slowcat(...pats) {
+    return slowcat(this, ...pats);
   }
 
   superimpose(...funcs) {
@@ -790,7 +815,20 @@ Pattern.prototype.patternified = [
   'velocity',
 ];
 // methods that create patterns, which are added to patternified Pattern methods
-Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr };
+Pattern.prototype.factories = {
+  pure,
+  stack,
+  slowcat,
+  fastcat,
+  cat,
+  timeCat,
+  sequence,
+  seq,
+  polymeter,
+  pm,
+  polyrhythm,
+  pr,
+};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
 
 // Elemental patterns
@@ -818,18 +856,23 @@ export function reify(thing) {
   }
   return pure(thing);
 }
+
 // Basic functions for combining patterns
 
 export function stack(...pats) {
-  const reified = pats.map((pat) => reify(pat));
-  const query = (state) => flatten(reified.map((pat) => pat.query(state)));
+  // Array test here is to avoid infinite recursions..
+  pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
+  const query = (state) => flatten(pats.map((pat) => pat.query(state)));
   return new Pattern(query);
 }
 
 export function slowcat(...pats) {
   // Concatenation: combines a list of patterns, switching between them
   // successively, one per cycle.
-  pats = pats.map(reify);
+
+  // Array test here is to avoid infinite recursions..
+  pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
+
   const query = function (state) {
     const span = state.span;
     const pat_n = mod(span.begin.sam(), pats.length);
@@ -866,7 +909,7 @@ export function fastcat(...pats) {
 }
 
 export function cat(...pats) {
-  return fastcat(...pats);
+  return slowcat(...pats);
 }
 
 export function timeCat(...timepats) {
@@ -882,6 +925,15 @@ export function timeCat(...timepats) {
   return stack(...pats);
 }
 
+export function sequence(...pats) {
+  return fastcat(...pats);
+}
+
+// shorthand for sequence
+export function seq(...pats) {
+  return fastcat(...pats);
+}
+
 function _sequenceCount(x) {
   if (Array.isArray(x)) {
     if (x.length == 0) {
@@ -893,10 +945,6 @@ function _sequenceCount(x) {
     return [fastcat(...x.map((a) => _sequenceCount(a)[0])), x.length];
   }
   return [reify(x), 1];
-}
-
-export function sequence(...xs) {
-  return _sequenceCount(xs)[0];
 }
 
 export function polymeterSteps(steps, ...args) {
@@ -945,7 +993,6 @@ export function pr(args) {
 }
 
 export const add = curry((a, pat) => pat.add(a));
-export const append = curry((a, pat) => pat.append(a));
 export const chunk = curry((a, pat) => pat.chunk(a));
 export const chunkBack = curry((a, pat) => pat.chunkBack(a));
 export const div = curry((a, pat) => pat.div(a));
