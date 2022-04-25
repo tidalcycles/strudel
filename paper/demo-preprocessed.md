@@ -311,6 +311,42 @@ references:
   id: "https://strudel.tidalcycles.org"
   title: Strudel REPL
   URL: "https://strudel.tidalcycles.org/"
+- abstract: Description
+  accessed:
+    date-parts:
+    - - 2022
+      - 4
+      - 25
+  container-title: hydra.ojack.xyz
+  id: "https://hydra.ojack.xyz/docs/\\_x35\\_/"
+  title: Hydra
+  URL: "https://hydra.ojack.xyz/docs/#/"
+- accessed:
+    date-parts:
+    - - 2022
+      - 4
+      - 25
+  container-title: mikesol.github.io
+  id: "https://mikesol.github.io/purescript-wags/"
+  title: Wags documentation
+  URL: "https://mikesol.github.io/purescript-wags/"
+- abstract: Experimental port of tidalcycles to Javascript
+  accessed:
+    date-parts:
+    - - 2022
+      - 4
+      - 25
+  id: "https://github.com/tidalcycles/strudel"
+  issued:
+    date-parts:
+    - - 2022
+      - 4
+  keyword: javascript, livecoding, tidal, tidalcycles, algorave,
+    algorithmic-patterns
+  note: "original-date: 2022-01-22T20:24:35Z"
+  publisher: TidalCycles
+  title: Strudel
+  URL: "https://github.com/tidalcycles/strudel"
 title: "Strudel: Algorithmic Patterns for the Web"
 url2cite: all-links
 ---
@@ -332,12 +368,14 @@ impossible. The application supports multiple ways to output sound,
 including Tone.js, Web Audio nodes, OSC (Open Sound Control) messages,
 Web Serial and Web MIDI. The project is split into multiple packages,
 allowing granular reuse in other applications. Apart from TidalCycles,
-Strudel draws inspiration from prior projects like TidalVortex
-[@https://zenodo.org/record/6456380], Gibber
+Strudel draws inspiration from many prior existing projects like
+TidalVortex [@https://zenodo.org/record/6456380], Gibber
 [@{https://quod.lib.umich.edu/i/icmc/bbp2372.2012.011/2/–gibber-live-coding-audio-in-the-browser?page_x61_root;size_x61_150;view_x61_text}],
 Estuary
-[@https://www.semanticscholar.org/paper/Estuary_x37_3A-Browser-based-Collaborative-Projectional-Ogborn-Beverley/c6b5d34575d6230dfd8751ca4af8e5f6e44d916b]
-and Feedforward [@https://zenodo.org/record/6353969].
+[@https://www.semanticscholar.org/paper/Estuary_x37_3A-Browser-based-Collaborative-Projectional-Ogborn-Beverley/c6b5d34575d6230dfd8751ca4af8e5f6e44d916b],
+Hydra [@{https://hydra.ojack.xyz/docs/_x35_/}], Wags
+[@{https://mikesol.github.io/purescript-wags/}] and Feedforward
+[@https://zenodo.org/record/6353969].
 
 # Porting from Haskell
 
@@ -395,6 +433,9 @@ half of the whole cycle.
 In the REPL, the user only has to type in the pattern itself, the
 querying will be handled by the scheduler. The scheduler will repeatedly
 query the pattern for events, which then will be used for playback.
+
+![Screenshot of the Strudel editor, including piano-roll
+visualisation.](images/strudel-screenshot.png){width="43%"}
 
 # Making Patterns
 
@@ -458,16 +499,18 @@ The project is still young, with many features on the horizon. As
 general guiding principles, Strudel aims to be
 
 1.  accessible
-2.  as compatible as possible with Tidal
+2.  consistent with Tidal's approach to pattern
 3.  modular and extensible
 
 The main accessibility advantage over Tidal is the zero install browser
-environment. While Strudel can control Tidal's SuperDirt audio system
-via OSC, it requires the user to install SuperCollider and its
-sc3plugins library, which can be difficult. Without SuperDirt, Strudel
-is able to output sound itself via Tone.js, however this is limited both
-in terms of available features and runtime performance. For the future,
-it is planned to integrate alternative sound engines such as glicol
+environment. It is not yet accessible to screen reader users, but will
+be soon with the integration of the CodeMirror 6 editor. While Strudel
+can control Tidal's SuperDirt audio system via OSC, it requires the user
+to install SuperCollider and its sc3plugins library, which can be
+difficult. Without SuperDirt, Strudel is able to output sound itself via
+Tone.js, however this is limited both in terms of available features and
+runtime performance. For the future, it is planned to integrate
+alternative sound engines such as glicol
 [@{https://webaudioconf.com/posts/2021_8/}] and faust
 [@{https://webaudioconf.com/posts/2019_38/}]. To improve compatibility
 with Tidal, more Tidal functions are planned to be ported, as well as
@@ -484,8 +527,10 @@ The Strudel REPL is available at [https://strudel.tidalcycles.org
 [@https://strudel.tidalcycles.org]](https://strudel.tidalcycles.org){.uri
 cite-meta="{\"URL\":\"https://strudel.tidalcycles.org/\",\"abstract\":\"Strudel REPL\",\"accessed\":{\"date-parts\":[[2022,4,24]]},\"container-title\":\"strudel.tidalcycles.org\",\"id\":\"https://strudel.tidalcycles.org\",\"title\":\"Strudel REPL\",\"type\":\"\"}"},
 including an interactive tutorial. The repository is at
-\<github.com/tidalcycles/strudel\>, all the code is open source under
-the GPL-3.0 License.
+[https://github.com/tidalcycles/strudel
+[@https://github.com/tidalcycles/strudel]](https://github.com/tidalcycles/strudel){.uri
+cite-meta="{\"URL\":\"https://github.com/tidalcycles/strudel\",\"abstract\":\"Experimental port of tidalcycles to Javascript\",\"accessed\":{\"date-parts\":[[2022,4,25]]},\"id\":\"https://github.com/tidalcycles/strudel\",\"issued\":{\"date-parts\":[[2022,4]]},\"keyword\":\"javascript, livecoding, tidal, tidalcycles, algorave, algorithmic-patterns\",\"note\":\"original-date: 2022-01-22T20:24:35Z\",\"publisher\":\"TidalCycles\",\"title\":\"Strudel\",\"type\":\"\"}"},
+all the code is open source under the GPL-3.0 License.
 
 # Technical requirements
 

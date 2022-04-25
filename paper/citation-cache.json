@@ -525,6 +525,112 @@
 				"title": "Strudel REPL",
 				"type": ""
 			}
+		},
+		"https://hydra.ojack.xyz/docs/#/": {
+			"fetched": "2022-04-25T09:03:25.132Z",
+			"bibtex": [
+				"",
+				"@misc{noauthor_hydra_nodate,",
+				"   title = {Hydra},",
+				"   url = {https://hydra.ojack.xyz/docs/#/},",
+				"   abstract = {Description},",
+				"   urldate = {2022-04-25},",
+				"   journal = {hydra.ojack.xyz},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://hydra.ojack.xyz/docs/#/",
+				"abstract": "Description",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							25
+						]
+					]
+				},
+				"container-title": "hydra.ojack.xyz",
+				"id": "https://hydra.ojack.xyz/docs/_x35_/",
+				"title": "Hydra",
+				"type": ""
+			}
+		},
+		"https://mikesol.github.io/purescript-wags/": {
+			"fetched": "2022-04-25T09:03:26.456Z",
+			"bibtex": [
+				"",
+				"@misc{noauthor_wags_nodate,",
+				"   title = {Wags documentation},",
+				"   url = {https://mikesol.github.io/purescript-wags/},",
+				"   urldate = {2022-04-25},",
+				"   journal = {mikesol.github.io},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://mikesol.github.io/purescript-wags/",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							25
+						]
+					]
+				},
+				"container-title": "mikesol.github.io",
+				"id": "https://mikesol.github.io/purescript-wags/",
+				"title": "Wags documentation",
+				"type": ""
+			}
+		},
+		"https://github.com/tidalcycles/strudel": {
+			"fetched": "2022-04-25T09:15:32.518Z",
+			"bibtex": [
+				"",
+				"@misc{noauthor_strudel_2022,",
+				"   title = {strudel},",
+				"   copyright = {GPL-3.0},",
+				"   url = {https://github.com/tidalcycles/strudel},",
+				"   abstract = {Experimental port of tidalcycles to Javascript},",
+				"   urldate = {2022-04-25},",
+				"   publisher = {TidalCycles},",
+				"   month = apr,",
+				"   year = {2022},",
+				"   note = {original-date: 2022-01-22T20:24:35Z},",
+				"   keywords = {javascript, livecoding, tidal, tidalcycles, algorave, algorithmic-patterns},",
+				"}",
+				""
+			],
+			"csl": {
+				"URL": "https://github.com/tidalcycles/strudel",
+				"abstract": "Experimental port of tidalcycles to Javascript",
+				"accessed": {
+					"date-parts": [
+						[
+							2022,
+							4,
+							25
+						]
+					]
+				},
+				"id": "https://github.com/tidalcycles/strudel",
+				"issued": {
+					"date-parts": [
+						[
+							2022,
+							4
+						]
+					]
+				},
+				"keyword": "javascript, livecoding, tidal, tidalcycles, algorave, algorithmic-patterns",
+				"note": "original-date: 2022-01-22T20:24:35Z",
+				"publisher": "TidalCycles",
+				"title": "Strudel",
+				"type": ""
+			}
 		}
 	}
 }

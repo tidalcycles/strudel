@@ -6,7 +6,7 @@ url2cite: all-links
 
 # Introduction
 
-This paper introduces Strudel (or sometimes 'StrudelCycles'), an alternative implementation of the Tidal (or 'TidalCycles') live coding system, using the JavaScript programming language. Strudel is an attempt to make live coding more accessible, by creating a system that runs entirely in the browser, while opening Tidal's approach to algorithmic patterns [@algorithmicpattern] up to modern audio/visual web technologies. The Strudel REPL is a live code editor dedicated to manipulating strudel patterns while they play, with builtin visual feedback. While Strudel is written in JavaScript, the API is optimized for simplicity and readability by applying code transformations on the syntax tree level, allowing language operations that would otherwise be impossible. The application supports multiple ways to output sound, including Tone.js, Web Audio nodes, OSC (Open Sound Control) messages, Web Serial and Web MIDI. The project is split into multiple packages, allowing granular reuse in other applications. Apart from TidalCycles, Strudel draws inspiration from prior projects like TidalVortex [@tidalvortex], Gibber [@gibber], Estuary [@estuary] and Feedforward [@feedforward].
+This paper introduces Strudel (or sometimes 'StrudelCycles'), an alternative implementation of the Tidal (or 'TidalCycles') live coding system, using the JavaScript programming language. Strudel is an attempt to make live coding more accessible, by creating a system that runs entirely in the browser, while opening Tidal's approach to algorithmic patterns [@algorithmicpattern] up to modern audio/visual web technologies. The Strudel REPL is a live code editor dedicated to manipulating strudel patterns while they play, with builtin visual feedback. While Strudel is written in JavaScript, the API is optimized for simplicity and readability by applying code transformations on the syntax tree level, allowing language operations that would otherwise be impossible. The application supports multiple ways to output sound, including Tone.js, Web Audio nodes, OSC (Open Sound Control) messages, Web Serial and Web MIDI. The project is split into multiple packages, allowing granular reuse in other applications. Apart from TidalCycles, Strudel draws inspiration from many prior existing projects like TidalVortex [@tidalvortex], Gibber [@gibber], Estuary [@estuary], Hydra [@hydra], Wags [@wags] and Feedforward [@feedforward].
 
 # Porting from Haskell
 
@@ -43,6 +43,8 @@ If an argument is an array, the same rule applies to that part of the cycle. In 
 
 In the REPL, the user only has to type in the pattern itself, the querying will be handled by the scheduler.
 The scheduler will repeatedly query the pattern for events, which then will be used for playback.
+
+![Screenshot of the Strudel editor, including piano-roll visualisation.](images/strudel-screenshot.png){ width=43% }
 
 # Making Patterns
 
@@ -94,16 +96,15 @@ Here is a short description of all the functions used:
 The project is still young, with many features on the horizon. As general guiding principles, Strudel aims to be
 
 1. accessible
-2. as compatible as possible with Tidal
+2. consistent with Tidal's approach to pattern
 3. modular and extensible
 
-The main accessibility advantage over Tidal is the zero install browser environment.
-While Strudel can control Tidal's SuperDirt audio system via OSC, it requires the user to install SuperCollider and its sc3plugins library, which can be difficult. Without SuperDirt, Strudel is able to output sound itself via Tone.js, however this is limited both in terms of available features and runtime performance. For the future, it is planned to integrate alternative sound engines such as glicol [@glicol] and faust [@faust]. To improve compatibility with Tidal, more Tidal functions are planned to be ported, as well as full compatibility with SuperDirt. Besides sound, other ways to render events are being explored, such as graphical, and choreographic output. We are also looking into alternative ways of editing patterns, including multi-user editing for network music, parsing a novel syntax to escape the constraints of javascript, and developing hardware/e-textile interfaces.
+The main accessibility advantage over Tidal is the zero install browser environment. It is not yet accessible to screen reader users, but will be soon with the integration of the CodeMirror 6 editor. While Strudel can control Tidal's SuperDirt audio system via OSC, it requires the user to install SuperCollider and its sc3plugins library, which can be difficult. Without SuperDirt, Strudel is able to output sound itself via Tone.js, however this is limited both in terms of available features and runtime performance. For the future, it is planned to integrate alternative sound engines such as glicol [@glicol] and faust [@faust]. To improve compatibility with Tidal, more Tidal functions are planned to be ported, as well as full compatibility with SuperDirt. Besides sound, other ways to render events are being explored, such as graphical, and choreographic output. We are also looking into alternative ways of editing patterns, including multi-user editing for network music, parsing a novel syntax to escape the constraints of javascript, and developing hardware/e-textile interfaces.
 
 # Links
 
 The Strudel REPL is available at <https://strudel.tidalcycles.org>, including an interactive tutorial.
-The repository is at <github.com/tidalcycles/strudel>, all the code is open source under the GPL-3.0 License.
+The repository is at <https://github.com/tidalcycles/strudel>, all the code is open source under the GPL-3.0 License.
 
 # Technical requirements
 
@@ -135,3 +136,5 @@ Thanks to the Strudel and wider Tidal, live coding, webaudio and free/open sourc
 [@godfried]: https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.72.1340
 [@glicol]: https://webaudioconf.com/posts/2021_8/
 [@faust]: https://webaudioconf.com/posts/2019_38/
+[@wags]: https://mikesol.github.io/purescript-wags/
+[@hydra]: https://hydra.ojack.xyz/docs/#/
