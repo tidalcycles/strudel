@@ -1,5 +1,4 @@
 import React, { useCallback, useLayoutEffect, useRef, useState, useEffect } from 'react';
-// import CodeMirror, { markEvent, markParens } from './CodeMirror';
 import CodeMirror6, { highlightEvent } from './CodeMirror6';
 import cx from './cx';
 import logo from './logo.svg';
@@ -51,7 +50,6 @@ extend(
     Tone,
   },
 );
-// eval stuff end
 
 const codeParam = window.location.href.split('#')[1];
 let decoded;
@@ -149,15 +147,15 @@ function App() {
         id="header"
         className={cx(
           'flex-none w-full h-14 px-2 flex border-b border-gray-200  justify-between z-[10]',
-          uiHidden ? 'bg-transparent text-white' : 'bg-white',
+          uiHidden ? 'bg-transparent text-white' : 'bg-gray-100',
         )}
       >
         <div className="flex items-center space-x-2">
-          <img src={logo} className="Tidal-logo w-12 h-12" alt="logo" />
-          <h1 className="text-2xl">Strudel REPL</h1>
+          <img src={logo} className="Tidal-logo w-10 h-10" alt="logo" />
+          <h1 className="text-xl">Strudel REPL</h1>
         </div>
-        <div className="flex space-x-4">
-          <button onClick={() => togglePlay()}>
+        <div className="flex">
+          <button onClick={() => togglePlay()} className="hover:bg-gray-300 p-2">
             {!pending ? (
               <span className="flex items-center w-16">
                 {cycle.started ? (
@@ -184,6 +182,7 @@ function App() {
             )}
           </button>
           <button
+            className="hover:bg-gray-300 p-2"
             onClick={async () => {
               const _code = getRandomTune();
               console.log('tune', _code); // uncomment this to debug when random code fails
@@ -196,28 +195,15 @@ function App() {
           >
             🎲 random
           </button>
-          <button>
+          <button className="hover:bg-gray-300 p-2">
             <a href="./tutorial">📚 tutorial</a>
           </button>
-          {/* <button onClick={() => setUiHidden((c) => !c)}>👀 {uiHidden ? 'show ui' : 'hide ui'}</button> */}
         </div>
       </header>
       <section className="grow flex flex-col text-gray-100">
         <div className="grow relative flex" id="code">
+          {/* onCursor={markParens} */}
           <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />
-          {/* <CodeMirror
-              value={code}
-              editorDidMount={setEditor}
-              options={{
-                mode: 'javascript',
-                theme: 'material',
-                lineNumbers: false,
-                styleSelectedText: true,
-                cursorBlinkRate: 0,
-              }}
-              onCursor={markParens}
-              onChange={(_, __, value) => setCode(value)}
-            /> */}
           <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none">
             {!cycle.started ? `press ctrl+enter to play\n` : dirty ? `ctrl+enter to update\n` : 'no changes\n'}
           </span>
