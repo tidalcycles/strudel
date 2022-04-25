@@ -746,10 +746,6 @@ export class Pattern {
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
-
-  range(min, max) {
-    return this.mul(max - min).add(min)
-  }
 }
 
 // pattern composers
