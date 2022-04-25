@@ -3,7 +3,6 @@ import { Pattern, sequence } from './pattern.mjs';
 const controls = {};
 const generic_params = [
   ['s', 's', 'sound'],
-  ['s', 'sound', 'sound'],
   //['s', 'toArg', 'for internal sound routing'],
   // ["f", "from", "for internal sound routing"),
   //['f', 'to', 'for internal sound routing'],
