@@ -7,8 +7,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import { materialPalenight } from './themes/material-palenight';
 
 const highlightMark = Decoration.mark({ class: 'cm-highlight' });
-const addHighlight = StateEffect.define();
-const removeHighlight = StateEffect.define();
+export const setHighlights = StateEffect.define();
 const highlightTheme = EditorView.baseTheme({
   '.cm-highlight': { outline: '1px solid #FFCA28' },
   // '.cm-highlight': { background: '#FFCA28' },
@@ -19,59 +18,28 @@ const highlightField = StateField.define({
   },
   update(highlights, tr) {
     try {
-      highlights = highlights.map(tr.changes);
       for (let e of tr.effects) {
-        if (e.is(addHighlight)) {
-          highlights = highlights.update({
-            add: [highlightMark.range(e.value.from, e.value.to)],
-          });
-        }
-        if (e.is(removeHighlight)) {
-          highlights = highlights.update({
-            filter: (f, t, value) => {
-              if (f === e.value.from && t === e.value.to) {
-                return false;
-              }
-              return true;
-              // console.log('filter', f,t,value, e.value.from, e.value.to);
-            },
-          });
+        if (e.is(setHighlights)) {
+          highlights = Decoration.set(
+            e.value
+              .flatMap((event) => event.context.locations || [])
+              .map(({ start, end }) => {
+                let from = tr.newDoc.line(start.line).from + start.column;
+                let to = tr.newDoc.line(end.line).from + end.column;
+                return highlightMark.range(from, to);
+              }),
+            true,
+          );
         }
       }
       return highlights;
     } catch (err) {
-      // console.warn('highlighting error', err);
+      console.warn('highlighting error', err);
       return highlights;
     }
   },
   provide: (f) => EditorView.decorations.from(f),
 });
-
-// let timeouts = [];
-
-export const highlightEvent = (event, view, code) => {
-  if (!view) {
-    return;
-  }
-  const ranges = event.context?.locations?.map(({ start, end }) => {
-    return [start, end].map(({ line, column }) => positionToOffset({ line: line - 1, ch: column }, code));
-  });
-  const effects = ranges.map(([from, to]) => addHighlight.of({ from, to }));
-
-  if (!effects.length) return false;
-  if (!view.state.field(highlightField, false)) {
-    effects.push(StateEffect.appendConfig.of([highlightField, highlightTheme]));
-  }
-  view.dispatch({ effects });
-  // const index = timeouts.length;
-  // timeouts = timeouts.filter(time)
-  /* const timeout =  */ setTimeout(() => {
-    const effects = ranges.map(([from, to]) => removeHighlight.of({ from, to }));
-    view.dispatch({ effects });
-    // timeouts.splice(index, 1);
-  }, event.duration * 1000);
-  // timeouts.pusn({timeout,);
-};
 
 export default function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount }) {
   return (
@@ -88,6 +56,8 @@ export default function CodeMirror({ value, onChange, onViewChanged, onCursor, o
         extensions={[
           javascript(),
           materialPalenight,
+          highlightField,
+          highlightTheme,
           // theme, language, ...
         ]}
       />

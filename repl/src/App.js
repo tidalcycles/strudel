@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect, useRef, useState, useEffect } from 'react';
-import CodeMirror6, { highlightEvent } from './CodeMirror6';
+import CodeMirror6, { setHighlights } from './CodeMirror6';
 import cx from './cx';
 import logo from './logo.svg';
 import playStatic from './static.mjs';
@@ -91,7 +91,8 @@ function App() {
     tune: decoded || randomTune,
     defaultSynth,
     // onDraw: useCallback((time, event) => markEvent(editor)(time, event), [editor]),
-    onDraw: useCallback((_, e, code) => code && highlightEvent(e, view, code), [view]),
+    // onDraw: useCallback((_, e, code) => code && highlightEvent(e, view, code), [view]),
+    onDraw: () => {},
   });
   const [uiHidden, setUiHidden] = useState(false);
   const logBox = useRef();
@@ -117,6 +118,29 @@ function App() {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [pattern, code, activateCode, cycle]);
+
+  useEffect(() => {
+    if (view) {
+      if (pattern && cycle.started) {
+        let frame = requestAnimationFrame(updateHighlights);
+
+        function updateHighlights() {
+          let audioTime = Tone.Transport.seconds;
+          let timespan = new strudel.TimeSpan(audioTime, audioTime + 1 / 60);
+          let events = pattern.query(new strudel.State(timespan));
+          view.dispatch({ effects: setHighlights.of(events) });
+
+          frame = requestAnimationFrame(updateHighlights);
+        }
+
+        return () => {
+          cancelAnimationFrame(frame);
+        };
+      } else {
+        view.dispatch({ effects: setHighlights.of([]) });
+      }
+    }
+  }, [pattern, cycle.started]);
 
   useWebMidi({
     ready: useCallback(
