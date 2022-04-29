@@ -16,6 +16,7 @@
     "react-codemirror2": "^7.2.1",
     "react-codemirror6": "^1.1.0",
     "react-dom": "^17.0.2",
+    "react-hook-inview": "^4.4.1",
     "react-scripts": "5.0.0",
     "tone": "^14.7.77",
     "web-vitals": "^2.1.4"
@@ -56,6 +57,7 @@
     "autoprefixer": "^10.4.4",
     "parcel": "^2.3.1",
     "postcss": "^8.4.12",
+    "process": "^0.11.10",
     "serve": "^13.0.2",
     "tailwindcss": "^3.0.23"
   }

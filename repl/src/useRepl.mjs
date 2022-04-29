@@ -26,7 +26,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
   // below block allows disabling the highlighting by including "strudel disable-highlighting" in the code (as comment)
   const onDraw = useMemo(() => {
     if (activeCode && !activeCode.includes('strudel disable-highlighting')) {
-      return (time, event) => onDrawProp(time, event, activeCode);
+      return (time, event) => onDrawProp?.(time, event, activeCode);
     }
   }, [activeCode, onDrawProp]);
 

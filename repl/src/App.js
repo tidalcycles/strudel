@@ -33,6 +33,7 @@ import '@strudel.cycles/osc/osc.mjs';
 import '@strudel.cycles/webaudio/webaudio.mjs';
 import '@strudel.cycles/serial/serial.mjs';
 import controls from '@strudel.cycles/core/controls.mjs';
+import useHighlighting from './useHighlighting';
 
 extend(
   Tone,
@@ -71,7 +72,6 @@ const defaultSynth = getDefaultSynth();
 function App() {
   // const [editor, setEditor] = useState();
   const [view, setView] = useState();
-  const [codeToHighlight, setCodeToHighlight] = useState();
   const {
     setCode,
     setPattern,
@@ -90,11 +90,7 @@ function App() {
   } = useRepl({
     tune: decoded || randomTune,
     defaultSynth,
-    // onDraw: useCallback((time, event) => markEvent(editor)(time, event), [editor]),
-    // onDraw: useCallback((_, e, code) => code && highlightEvent(e, view, code), [view]),
-    onDraw: () => {},
   });
-  const [uiHidden, setUiHidden] = useState(false);
   const logBox = useRef();
   // scroll log box to bottom when log changes
   useLayoutEffect(() => {
@@ -119,28 +115,7 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [pattern, code, activateCode, cycle]);
 
-  useEffect(() => {
-    if (view) {
-      if (pattern && cycle.started) {
-        let frame = requestAnimationFrame(updateHighlights);
-
-        function updateHighlights() {
-          let audioTime = Tone.Transport.seconds;
-          let timespan = new strudel.TimeSpan(audioTime, audioTime + 1 / 60);
-          let events = pattern.query(new strudel.State(timespan));
-          view.dispatch({ effects: setHighlights.of(events) });
-
-          frame = requestAnimationFrame(updateHighlights);
-        }
-
-        return () => {
-          cancelAnimationFrame(frame);
-        };
-      } else {
-        view.dispatch({ effects: setHighlights.of([]) });
-      }
-    }
-  }, [pattern, cycle.started]);
+  useHighlighting({ view, pattern, started: cycle.started });
 
   useWebMidi({
     ready: useCallback(
@@ -167,10 +142,7 @@ function App() {
     <div className="min-h-screen flex flex-col">
       <header
         id="header"
-        className={cx(
-          'flex-none w-full h-14 px-2 flex border-b border-gray-200  justify-between z-[10]',
-          uiHidden ? 'bg-transparent text-white' : 'bg-gray-100',
-        )}
+        className="flex-none w-full h-14 px-2 flex border-b border-gray-200  justify-between z-[10] bg-gray-100"
       >
         <div className="flex items-center space-x-2">
           <img src={logo} className="Tidal-logo w-10 h-10" alt="logo" />
