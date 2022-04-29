@@ -26,8 +26,13 @@ const highlightField = StateField.define({
               .map(({ start, end }) => {
                 let from = tr.newDoc.line(start.line).from + start.column;
                 let to = tr.newDoc.line(end.line).from + end.column;
+                const l = tr.newDoc.length;
+                if (from > l || to > l) {
+                  return;
+                }
                 return highlightMark.range(from, to);
-              }),
+              })
+              .filter(Boolean),
             true,
           );
         }
