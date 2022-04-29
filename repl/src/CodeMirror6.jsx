@@ -6,12 +6,7 @@ import { javascript } from '@codemirror/lang-javascript';
 // import { materialPalenight } from 'codemirror6-themes';
 import { materialPalenight } from './themes/material-palenight';
 
-const highlightMark = Decoration.mark({ class: 'cm-highlight' });
 export const setHighlights = StateEffect.define();
-const highlightTheme = EditorView.baseTheme({
-  '.cm-highlight': { outline: '1px solid #FFCA28' },
-  // '.cm-highlight': { background: '#FFCA28' },
-});
 const highlightField = StateField.define({
   create() {
     return Decoration.none;
@@ -22,16 +17,19 @@ const highlightField = StateField.define({
         if (e.is(setHighlights)) {
           highlights = Decoration.set(
             e.value
-              .flatMap((event) => event.context.locations || [])
-              .map(({ start, end }) => {
-                let from = tr.newDoc.line(start.line).from + start.column;
-                let to = tr.newDoc.line(end.line).from + end.column;
-                const l = tr.newDoc.length;
-                if (from > l || to > l) {
-                  return;
-                }
-                return highlightMark.range(from, to);
-              })
+              .flatMap((hap) =>
+                (hap.context.locations || []).map(({ start, end }) => {
+                  const color = hap.context.color || '#FFCA28';
+                  let from = tr.newDoc.line(start.line).from + start.column;
+                  let to = tr.newDoc.line(end.line).from + end.column;
+                  const l = tr.newDoc.length;
+                  if (from > l || to > l) {
+                    return; // dont mark outside of range, as it will throw an error
+                  }
+                  const mark = Decoration.mark({ attributes: { style: `outline: 1px solid ${color}` } });
+                  return mark.range(from, to);
+                }),
+              )
               .filter(Boolean),
             true,
           );
@@ -62,7 +60,6 @@ export default function CodeMirror({ value, onChange, onViewChanged, onCursor, o
           javascript(),
           materialPalenight,
           highlightField,
-          highlightTheme,
           // theme, language, ...
         ]}
       />
