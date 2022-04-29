@@ -826,6 +826,7 @@ function _composeOp(a, b, func) {
 const composers = {
   set: (a, b) => b,
   keep: (a, b) => a,
+  keepif: (a, b) => b ? a : undefined,
   add: (a, b) => a + b,
   sub: (a, b) => a - b,
   mul: (a, b) => a * b,
@@ -842,6 +843,7 @@ const composers = {
   net: (a, b) => a !== b,
   and: (a, b) => a && b,
   or: (a, b) => a || b,
+  //  bitwise ops
   _and: (a, b) => a & b,
   _or: (a, b) => a | b,
   _xor: (a, b) => a ^ b,
@@ -850,23 +852,29 @@ const composers = {
   func: (a, b) => b(a),
 };
 
-for (const [name, op] of Object.entries(composers)) {
-  for (const opType of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Reset', 'Restart']) {
-    Pattern.prototype[name + opType] = function (...other) {
-      return this['_op' + opType](sequence(other), (a) => (b) => _composeOp(a, b, op));
+// generate methods to do what and how
+for (const [what, op] of Object.entries(composers)) {
+  for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Reset', 'Restart']) {
+    Pattern.prototype[what + how] = function (...other) {
+      const result = this['_op' + how](sequence(other), (a) => (b) => _composeOp(a, b, op));
+      // hack to remove undefs when doing 'keepif'
+      if (what === 'keepif') {
+        result = result._removeUndefineds();
+      }
+      return result;
     };
-    if (opType === 'Squeeze') {
+    if (how === 'Squeeze') {
       // support 'squeezeIn' longhand
-      Pattern.prototype[name + "SqueezeIn"] = Pattern.prototype[name + opType];
+      Pattern.prototype[what + "SqueezeIn"] = Pattern.prototype[what + how];
     }
-    if (opType === 'In') {
+    if (how === 'In') {
       // default how to 'in', e.g. add == addIn
-      Pattern.prototype[name] = Pattern.prototype[name + opType];
+      Pattern.prototype[what] = Pattern.prototype[what + how];
     }
     else {
       // default what to 'set', e.g. squeeze = setSqueeze
-      if (name === 'set') {
-        Pattern.prototype[opType.toLowerCase()] = Pattern.prototype[name + opType];
+      if (what === 'set') {
+        Pattern.prototype[how.toLowerCase()] = Pattern.prototype[what + how];
       }  
     }
   }
