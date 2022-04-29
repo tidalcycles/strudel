@@ -10,7 +10,10 @@ function useHighlighting({ view, pattern, started }) {
 
         function updateHighlights() {
           const audioTime = Tone.getTransport().seconds;
-          const events = pattern.queryArc(audioTime, audioTime + 1 / 60);
+          const span = { begin: audioTime, end: audioTime + 1 / 60 };
+          // TODO: remove isActive workaround when query is fixed
+          const isActive = (event) => event.whole.end >= span.begin && event.whole.begin <= span.end;
+          const events = pattern.queryArc(span.begin, span.end).filter(isActive);
           view.dispatch({ effects: setHighlights.of(events) });
           frame = requestAnimationFrame(updateHighlights);
         }
