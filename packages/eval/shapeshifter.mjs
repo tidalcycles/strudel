@@ -1,3 +1,9 @@
+/*
+shapeshifter.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/eval/shapeshifter.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 /* import { parseScriptWithLocation } from './shift-parser/index.js'; // npm module does not work in the browser
 import traverser from './shift-traverser/index.js'; // npm module does not work in the browser */
 import { parseScriptWithLocation } from 'shift-parser';
@@ -23,6 +29,8 @@ const isNote = (name) => /^[a-gC-G][bs]?[0-9]$/.test(name);
 
 const addLocations = true;
 export const addMiniLocations = true;
+export const minifyStrings = true;
+export const wrappedAsync = true;
 
 export default (_code) => {
   const { code, addReturn } = wrapAsync(_code);
@@ -38,18 +46,18 @@ export default (_code) => {
       }
 
       // replace template string `xxx` with mini(`xxx`)
-      if (isBackTickString(node)) {
+      if (minifyStrings && isBackTickString(node)) {
         return minifyWithLocation(node, node, ast.locations, artificialNodes);
       }
       // allows to use top level strings, which are normally directives... but we don't need directives
-      if (node.directives?.length === 1 && !node.statements?.length) {
+      if (minifyStrings && node.directives?.length === 1 && !node.statements?.length) {
         const str = new LiteralStringExpression({ value: node.directives[0].rawValue });
         const wrapped = minifyWithLocation(str, node.directives[0], ast.locations, artificialNodes);
         return { ...node, directives: [], statements: [wrapped] };
       }
 
       // replace double quote string "xxx" with mini('xxx')
-      if (isStringWithDoubleQuotes(node, ast.locations, code)) {
+      if (minifyStrings && isStringWithDoubleQuotes(node, ast.locations, code)) {
         return minifyWithLocation(node, node, ast.locations, artificialNodes);
       }
 
@@ -117,7 +125,9 @@ export default (_code) => {
     },
   });
   // add return to last statement (because it's wrapped in an async function artificially)
-  addReturn(shifted);
+  if (wrappedAsync) {
+    addReturn(shifted);
+  }
   const generated = codegen(shifted);
   return generated;
 };
@@ -125,9 +135,11 @@ export default (_code) => {
 function wrapAsync(code) {
   // wrap code in async to make await work on top level => this will create 1 line offset to locations
   // this is why line offset is -1 in getLocationObject calls below
-  code = `(async () => {
+  if (wrappedAsync) {
+    code = `(async () => {
 ${code}
 })()`;
+  }
   const addReturn = (ast) => {
     const body = ast.statements[0].expression.callee.body; // actual code ast inside async function body
     body.statements = body.statements
@@ -204,9 +216,10 @@ function hasModifierCall(parent) {
     parent?.type === 'StaticMemberExpression' && Object.keys(Pattern.prototype.composable).includes(parent.property)
   );
 }
+const factories = Object.keys(Pattern.prototype.factories).concat(['mini']);
 
 function isPatternFactory(node) {
-  return node?.type === 'CallExpression' && Object.keys(Pattern.prototype.factories).includes(node.callee.name);
+  return node?.type === 'CallExpression' && factories.includes(node.callee.name);
 }
 
 function canBeOverloaded(node) {
@@ -233,9 +246,14 @@ function reifyWithLocation(literalNode, node, locations, artificialNodes) {
 // with this, the reified pattern can pass its location to the event, to know where to highlight when it's active
 function minifyWithLocation(literalNode, node, locations, artificialNodes) {
   const args = getLocationArguments(node, locations);
+  const wrapped = wrapFunction('mini', literalNode);
+  if (!addMiniLocations) {
+    artificialNodes.push(wrapped);
+    return wrapped;
+  }
   const withLocation = new CallExpression({
     callee: new StaticMemberExpression({
-      object: wrapFunction('mini', literalNode),
+      object: wrapped,
       property: 'withMiniLocation',
     }),
     arguments: args,
@@ -246,17 +264,18 @@ function minifyWithLocation(literalNode, node, locations, artificialNodes) {
 
 function getLocationArguments(node, locations) {
   const loc = locations.get(node);
+  const lineOffset = wrappedAsync ? -1 : 0;
   return [
     new ArrayExpression({
       elements: [
-        new LiteralNumericExpression({ value: loc.start.line - 1 }), // the minus 1 assumes the code has been wrapped in async iife
+        new LiteralNumericExpression({ value: loc.start.line + lineOffset }), // the minus 1 assumes the code has been wrapped in async iife
         new LiteralNumericExpression({ value: loc.start.column }),
         new LiteralNumericExpression({ value: loc.start.offset }),
       ],
     }),
     new ArrayExpression({
       elements: [
-        new LiteralNumericExpression({ value: loc.end.line - 1 }), // the minus 1 assumes the code has been wrapped in async iife
+        new LiteralNumericExpression({ value: loc.end.line + lineOffset }), // the minus 1 assumes the code has been wrapped in async iife
         new LiteralNumericExpression({ value: loc.end.column }),
         new LiteralNumericExpression({ value: loc.end.offset }),
       ],
