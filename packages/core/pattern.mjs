@@ -253,20 +253,20 @@ export class Pattern {
     );
   }
 
-  _op(other, func) {
+  _opIn(other, func) {
     return this.fmap(func).appLeft(reify(other));
   }
-  _opFlip(other, func) {
+  _opOut(other, func) {
     return this.fmap(func).appRight(reify(other));
   }
-  _opSect(other, func) {
+  _opMix(other, func) {
     return this.fmap(func).appBoth(reify(other));
   }
   _opSqueeze(other, func) {
     const otherPat = reify(other);
     return this.fmap((a) => otherPat.fmap((b) => func(a)(b)))._squeezeJoin();
   }
-  _opSqueezeFlip(other, func) {
+  _opSqueezeOut(other, func) {
     const thisPat = this;
     const otherPat = reify(other);
     return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a)))._squeezeJoin();
@@ -800,16 +800,43 @@ const composers = {
   mul: (a, b) => a * b,
   div: (a, b) => a / b,
   mod: mod,
+  pow: Math.pow,
+  lt: (a, b) => a < b,
+  gt: (a, b) => a > b,
+  lte: (a, b) => a <= b,
+  gte: (a, b) => a >= b,
+  eq: (a, b) => a == b,
+  eqt: (a, b) => a === b,
+  ne: (a, b) => a != b,
+  net: (a, b) => a !== b,
+  and: (a, b) => a && b,
+  or: (a, b) => a || b,
+  _and: (a, b) => a & b,
+  _or: (a, b) => a | b,
+  _xor: (a, b) => a ^ b,
+  _lshift: (a, b) => a << b,
+  _rshift: (a, b) => a >> b,
   func: (a, b) => b(a),
 };
 
 for (const [name, op] of Object.entries(composers)) {
-  for (const opType of ['', 'Flip', 'Sect', 'Squeeze', 'SqueezeFlip', 'Reset', 'Restart']) {
+  for (const opType of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Reset', 'Restart']) {
     Pattern.prototype[name + opType] = function (...other) {
       return this['_op' + opType](sequence(other), (a) => (b) => _composeOp(a, b, op));
     };
-    if (name === 'set' && opType !== '') {
-      Pattern.prototype[opType.toLowerCase()] = Pattern.prototype[name + opType];
+    if (opType === 'Squeeze') {
+      // support 'squeezeIn' longhand
+      Pattern.prototype[name + "SqueezeIn"] = Pattern.prototype[name + opType];
+    }
+    if (opType === 'In') {
+      // default how to 'in', e.g. add == addIn
+      Pattern.prototype[name] = Pattern.prototype[name + opType];
+    }
+    else {
+      // default what to 'set', e.g. squeeze = setSqueeze
+      if (name === 'set') {
+        Pattern.prototype[opType.toLowerCase()] = Pattern.prototype[name + opType];
+      }  
     }
   }
 }

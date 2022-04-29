@@ -148,11 +148,12 @@ describe('Pattern', function () {
   describe('add()', function () {
     it('Can add things', function () {
       assert.equal(pure(3).add(pure(4)).query(st(0, 1))[0].value, 7);
+      assert.equal(pure(3).addIn(pure(4)).query(st(0, 1))[0].value, 7);
     });
   });
-  describe('addFlip()', () => {
+  describe('addOut()', () => {
     it('Can add things with structure from second pattern', () => {
-      sameFirst(sequence(1, 2).addFlip(4), sequence(5, 6).struct(true));
+      sameFirst(sequence(1, 2).addOut(4), sequence(5, 6).struct(true));
     });
   });
   describe('addSqueeze()', () => {
@@ -169,10 +170,10 @@ describe('Pattern', function () {
       );
     });
   });
-  describe('addSqueezeFlip()', () => {
+  describe('addSqueezeOut()', () => {
     it('Can add while squeezing the first pattern inside the events of the second', () => {
       sameFirst(
-        sequence(1, [2, 3]).addSqueezeFlip(10, 20, 30),
+        sequence(1, [2, 3]).addSqueezeOut(10, 20, 30),
         sequence([11, [12, 13]], [21, [22, 23]], [31, [32, 33]]),
       );
     });
@@ -208,9 +209,9 @@ describe('Pattern', function () {
     it('Can set things with plain values', function () {
       sameFirst(sequence(1, 2, 3).set(4), sequence(4).fast(3));
     });
-    describe('setFlip()', () => {
+    describe('setOut()', () => {
       it('Can set things with structure from second pattern', () => {
-        sameFirst(sequence(1, 2).setFlip(4), pure(4).mask(true, true));
+        sameFirst(sequence(1, 2).setOut(4), pure(4).mask(true, true));
       });
     });
     describe('setSqueeze()', () => {
