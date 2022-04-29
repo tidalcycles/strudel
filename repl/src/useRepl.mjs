@@ -1,3 +1,9 @@
+/*
+useRepl.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/repl/src/useRepl.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import { useCallback, useState, useMemo } from 'react';
 import { evaluate } from '@strudel.cycles/eval';
 import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
@@ -29,7 +35,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
       return onDraw;
     }
   }, [activeCode, onDraw]);
-  
+
   // cycle hook to control scheduling
   const cycle = useCycle({
     onDraw,
@@ -37,11 +43,14 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
       (time, event, currentTime) => {
         try {
           onEvent?.(event);
+          if (event.context.logs?.length) {
+            event.context.logs.forEach(pushLog);
+          }
           const { onTrigger, velocity } = event.context;
           if (!onTrigger) {
             if (defaultSynth) {
               const note = getPlayableNoteValue(event);
-              defaultSynth.triggerAttackRelease(note, event.duration, time, velocity);
+              defaultSynth.triggerAttackRelease(note, event.duration.valueOf(), time, velocity);
             } else {
               throw new Error('no defaultSynth passed to useRepl.');
             }

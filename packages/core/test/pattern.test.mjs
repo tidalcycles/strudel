@@ -1,3 +1,9 @@
+/*
+pattern.test.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/test/pattern.test.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import Fraction from 'fraction.js';
 
 import { deepStrictEqual, strict as assert } from 'assert';
@@ -248,6 +254,12 @@ describe('Pattern', function () {
         ['a', 'b', 'c'],
       );
     });
+    it('Can stack subpatterns', function () {
+      sameFirst(
+        stack('a', ['b','c']),
+        stack('a', sequence('b', 'c')),
+      );
+    });
   });
   describe('_fast()', function () {
     it('Makes things faster', function () {
@@ -414,6 +426,12 @@ describe('Pattern', function () {
         ['c'],
       );
     });
+    it ('Can cat subpatterns', () => {
+      sameFirst(
+        slowcat('a', ['b','c']).fast(4),
+        sequence('a', ['b', 'c']).fast(2)
+      )
+    })
   });
   describe('rev()', function () {
     it('Can reverse things', function () {

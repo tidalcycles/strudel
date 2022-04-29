@@ -1,3 +1,9 @@
+/*
+static.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/repl/src/static.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import { Tone } from '@strudel.cycles/tone';
 import { State, TimeSpan } from '@strudel.cycles/core';
 import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
@@ -45,7 +51,7 @@ async function playStatic(code) {
         if (!onTrigger) {
           if (defaultSynth) {
             const note = getPlayableNoteValue(event);
-            defaultSynth.triggerAttackRelease(note, event.duration, time, velocity);
+            defaultSynth.triggerAttackRelease(note, event.duration.valueOf(), time, velocity);
           } else {
             throw new Error('no defaultSynth passed to useRepl.');
           }

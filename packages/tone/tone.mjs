@@ -1,3 +1,9 @@
+/*
+tone.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/tone/tone.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import { Pattern } from '@strudel.cycles/core';
 import * as _Tone from 'tone';
 
@@ -54,14 +60,14 @@ Pattern.prototype.tone = function (instrument) {
         note = getPlayableNoteValue(event);
         instrument.triggerAttack(note, time);
       } else if (instrument instanceof NoiseSynth) {
-        instrument.triggerAttackRelease(event.duration, time); // noise has no value
+        instrument.triggerAttackRelease(event.duration.valueOf(), time); // noise has no value
       } else if (instrument instanceof Piano) {
         note = getPlayableNoteValue(event);
         instrument.keyDown({ note, time, velocity });
-        instrument.keyUp({ note, time: time + event.duration, velocity });
+        instrument.keyUp({ note, time: time + event.duration.valueOf(), velocity });
       } else if (instrument instanceof Sampler) {
         note = getPlayableNoteValue(event);
-        instrument.triggerAttackRelease(note, event.duration, time, velocity);
+        instrument.triggerAttackRelease(note, event.duration.valueOf(), time, velocity);
       } else if (instrument instanceof Players) {
         if (!instrument.has(event.value)) {
           throw new Error(`name "${event.value}" not defined for players`);
@@ -69,10 +75,10 @@ Pattern.prototype.tone = function (instrument) {
         const player = instrument.player(event.value);
         // velocity ?
         player.start(time);
-        player.stop(time + event.duration);
+        player.stop(time + event.duration.valueOf());
       } else {
         note = getPlayableNoteValue(event);
-        instrument.triggerAttackRelease(note, event.duration, time, velocity);
+        instrument.triggerAttackRelease(note, event.duration.valueOf(), time, velocity);
       }
     };
     return event.setContext({ ...event.context, instrument, onTrigger });
