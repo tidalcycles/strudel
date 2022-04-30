@@ -1,8 +1,9 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Tone } from '@strudel.cycles/tone';
 import useRepl from '../useRepl.mjs';
-import CodeMirror, { markEvent } from '../CodeMirror';
 import cx from '../cx';
+import useHighlighting from '../useHighlighting';
+import { useInView } from 'react-hook-inview';
 
 // eval stuff start
 import { extend } from '@strudel.cycles/eval';
@@ -24,6 +25,7 @@ import '@strudel.cycles/xen/tune.mjs';
 import '@strudel.cycles/core/euclid.mjs';
 import '@strudel.cycles/tone/pianoroll.mjs';
 import '@strudel.cycles/tone/draw.mjs';
+import CodeMirror6 from '../CodeMirror6';
 
 extend(Tone, strudel, strudel.Pattern.prototype.bootstrap(), toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
   gist,
@@ -43,17 +45,19 @@ const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destina
 // "balanced" | "interactive" | "playback";
 // Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));
 function MiniRepl({ tune, maxHeight = 500 }) {
-  const [editor, setEditor] = useState();
-  const { code, setCode, activateCode, activeCode, setPattern, error, cycle, dirty, log, togglePlay, hash } = useRepl({
+  const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,
     autolink: false,
-    onDraw: useCallback(markEvent(editor), [editor]),
   });
   const lines = code.split('\n').length;
-  const height = Math.min(lines * 30 + 30, maxHeight);
+  const [view, setView] = useState();
+  const [ref, isVisible] = useInView({
+    threshold: 0.01,
+  });
+  useHighlighting({ view, pattern, started: cycle.started });
   return (
-    <div className="rounded-md overflow-hidden">
+    <div className="rounded-md overflow-hidden bg-[#444C57]" ref={ref}>
       <div className="flex justify-between bg-slate-700 border-t border-slate-500">
         <div className="flex">
           <button
@@ -101,18 +105,8 @@ function MiniRepl({ tune, maxHeight = 500 }) {
         </div>
         <div className="text-right p-1 text-sm">{error && <span className="text-red-200">{error.message}</span>}</div>{' '}
       </div>
-      <div className="flex space-y-0 overflow-auto" style={{ height }}>
-        <CodeMirror
-          className="w-full"
-          value={code}
-          editorDidMount={setEditor}
-          options={{
-            mode: 'javascript',
-            theme: 'material',
-            lineNumbers: true,
-          }}
-          onChange={(_, __, value) => setCode(value)}
-        />
+      <div className="flex space-y-0 overflow-auto relative">
+        {isVisible && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />}
       </div>
       {/* <div className="bg-slate-700 border-t border-slate-500 content-right pr-2 text-right">
         <a href={`https://strudel.tidalcycles.org/#${hash}`} className="text-white items-center inline-flex">

@@ -2,10 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-.react-codemirror2,
-.CodeMirror {
-  width: 100% !important;
-  height: inherit !important;
+.cm-editor {
+  background-color: transparent !important;
 }
 
 main {

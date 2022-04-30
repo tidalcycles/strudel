@@ -4,15 +4,17 @@
   "private": true,
   "homepage": "https://strudel.tidalcycles.org",
   "dependencies": {
+    "@codemirror/lang-javascript": "^0.19.0",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
-    "codemirror": "^5.65.2",
+    "codemirror6-themes": "^0.1.2",
     "events": "^3.3.0",
     "gh-pages": "^3.2.3",
     "react": "^17.0.2",
-    "react-codemirror2": "^7.2.1",
+    "react-codemirror6": "^1.1.0",
     "react-dom": "^17.0.2",
+    "react-hook-inview": "^4.4.1",
     "react-scripts": "5.0.0",
     "tone": "^14.7.77",
     "web-vitals": "^2.1.4"
@@ -53,6 +55,7 @@
     "autoprefixer": "^10.4.4",
     "parcel": "^2.3.1",
     "postcss": "^8.4.12",
+    "process": "^0.11.10",
     "serve": "^13.0.2",
     "tailwindcss": "^3.0.23"
   }
