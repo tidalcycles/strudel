@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { setHighlights } from './CodeMirror6';
 import { Tone } from '@strudel.cycles/tone';
 
+let highlights = []; // actively highlighted events
+
 function useHighlighting({ view, pattern, started }) {
   useEffect(() => {
     if (view) {
@@ -10,11 +12,10 @@ function useHighlighting({ view, pattern, started }) {
 
         function updateHighlights() {
           const audioTime = Tone.getTransport().seconds;
-          const span = { begin: audioTime, end: audioTime + 1 / 60 };
-          // TODO: remove isActive workaround when query is fixed
-          const isActive = (event) => event.whole.end >= span.begin && event.whole.begin <= span.end;
-          const events = pattern.queryArc(span.begin, span.end).filter(isActive);
-          view.dispatch({ effects: setHighlights.of(events) });
+          highlights = highlights.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
+          const haps = pattern.queryArc(audioTime, audioTime + 1 / 60).filter((hap) => hap.hasOnset());
+          highlights = highlights.concat(haps); // add potential new onsets
+          view.dispatch({ effects: setHighlights.of(highlights) }); // highlight all still active + new active haps
           frame = requestAnimationFrame(updateHighlights);
         }
 
@@ -22,6 +23,7 @@ function useHighlighting({ view, pattern, started }) {
           cancelAnimationFrame(frame);
         };
       } else {
+        highlights = [];
         view.dispatch({ effects: setHighlights.of([]) });
       }
     }
