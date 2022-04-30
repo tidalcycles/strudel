@@ -599,23 +599,23 @@ export class Pattern {
     return this._zoom(0, t)._slow(t);
   }
 
-  struct(...binary_pats) {
-    // Re structure the pattern according to a binary pattern (false values are dropped)
-    const binary_pat = sequence(binary_pats);
-    return binary_pat
-      .fmap((b) => (val) => b ? val : undefined)
-      .appLeft(this)
-      ._removeUndefineds();
-  }
+  // struct(...binary_pats) {
+  //   // Re structure the pattern according to a binary pattern (false values are dropped)
+  //   const binary_pat = sequence(binary_pats);
+  //   return binary_pat
+  //     .fmap((b) => (val) => b ? val : undefined)
+  //     .appLeft(this)
+  //     ._removeUndefineds();
+  // }
 
-  mask(...binary_pats) {
-    // Only let through parts of pattern corresponding to true values in the given binary pattern
-    const binary_pat = sequence(binary_pats);
-    return binary_pat
-      .fmap((b) => (val) => b ? val : undefined)
-      .appRight(this)
-      ._removeUndefineds();
-  }
+  // mask(...binary_pats) {
+  //   // Only let through parts of pattern corresponding to true values in the given binary pattern
+  //   const binary_pat = sequence(binary_pats);
+  //   return binary_pat
+  //     .fmap((b) => (val) => b ? val : undefined)
+  //     .appRight(this)
+  //     ._removeUndefineds();
+  // }
 
   _color(color) {
     return this._withContext((context) => ({ ...context, color }));
@@ -826,7 +826,7 @@ function _composeOp(a, b, func) {
 const composers = {
   set: (a, b) => b,
   keep: (a, b) => a,
-  keepif: (a, b) => b ? a : undefined,
+  keepif: (a, b) => (b ? a : undefined),
   add: (a, b) => a + b,
   sub: (a, b) => a - b,
   mul: (a, b) => a * b,
@@ -865,23 +865,29 @@ for (const [what, op] of Object.entries(composers)) {
     };
     if (how === 'Squeeze') {
       // support 'squeezeIn' longhand
-      Pattern.prototype[what + "SqueezeIn"] = Pattern.prototype[what + how];
+      Pattern.prototype[what + 'SqueezeIn'] = Pattern.prototype[what + how];
     }
     if (how === 'In') {
       // default how to 'in', e.g. add == addIn
       Pattern.prototype[what] = Pattern.prototype[what + how];
-    }
-    else {
+    } else {
       // default what to 'set', e.g. squeeze = setSqueeze
       if (what === 'set') {
         Pattern.prototype[how.toLowerCase()] = Pattern.prototype[what + how];
-      }  
+      }
     }
   }
 }
 
-Pattern.prototype.reset = Pattern.prototype.keepTrig;
-Pattern.prototype.restart = Pattern.prototype.keepTrigZero;
+// binary composers
+Pattern.prototype.struct = Pattern.keepifOut;
+Pattern.prototype.structAll = Pattern.keepOut;
+Pattern.prototype.mask = Pattern.keepifIn;
+Pattern.prototype.maskAll = Pattern.keepIn;
+Pattern.prototype.reset = Pattern.prototype.keepifTrig;
+Pattern.prototype.resetAll = Pattern.prototype.keepTrig;
+Pattern.prototype.restart = Pattern.prototype.keepifTrigZero;
+Pattern.prototype.restartAll = Pattern.prototype.keepTrigZero;
 
 // methods of Pattern that get callable factories
 Pattern.prototype.patternified = [
