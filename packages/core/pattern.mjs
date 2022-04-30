@@ -856,7 +856,7 @@ const composers = {
 for (const [what, op] of Object.entries(composers)) {
   for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'TrigZero']) {
     Pattern.prototype[what + how] = function (...other) {
-      const result = this['_op' + how](sequence(other), (a) => (b) => _composeOp(a, b, op));
+      var result = this['_op' + how](sequence(other), (a) => (b) => _composeOp(a, b, op));
       // hack to remove undefs when doing 'keepif'
       if (what === 'keepif') {
         result = result._removeUndefineds();
@@ -880,10 +880,10 @@ for (const [what, op] of Object.entries(composers)) {
 }
 
 // binary composers
-Pattern.prototype.struct = Pattern.keepifOut;
-Pattern.prototype.structAll = Pattern.keepOut;
-Pattern.prototype.mask = Pattern.keepifIn;
-Pattern.prototype.maskAll = Pattern.keepIn;
+Pattern.prototype.struct = Pattern.prototype.keepifOut;
+Pattern.prototype.structAll = Pattern.prototype.keepOut;
+Pattern.prototype.mask = Pattern.prototype.keepifIn;
+Pattern.prototype.maskAll = Pattern.prototype.keepIn;
 Pattern.prototype.reset = Pattern.prototype.keepifTrig;
 Pattern.prototype.resetAll = Pattern.prototype.keepTrig;
 Pattern.prototype.restart = Pattern.prototype.keepifTrigZero;
