@@ -45,7 +45,7 @@ Pattern.prototype._wave = function (type) {
     const f = getFrequency(e);
     osc.frequency.value = f; // expects frequency..
     const begin = t ?? e.whole.begin.valueOf() + lookahead;
-    const end = begin + e.valueOf();
+    const end = begin + e.duration.valueOf();
     osc.start(begin);
     osc.stop(end); // release?
     return osc;
