@@ -278,13 +278,13 @@ export class Pattern {
     const otherPat = reify(other);
     return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a)))._squeezeJoin();
   }
-  _opReset(other, func) {
+  _opTrig(other, func) {
     const otherPat = reify(other);
-    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._resetJoin();
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._trigJoin();
   }
-  _opRestart(other, func) {
+  _opTrigZero(other, func) {
     const otherPat = reify(other);
-    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._restartJoin();
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._trigZeroJoin();
   }
 
   _asNumber(silent = false) {
@@ -403,8 +403,8 @@ export class Pattern {
     return this.innerBind(id);
   }
 
-  // Flatterns patterns of patterns, by resetting inner patterns at onsets of outer pattern events
-  _resetJoin(restart = false) {
+  // Flatterns patterns of patterns, by retriggering/resetting inner patterns at onsets of outer pattern events
+  _trigJoin(cycleZero = false) {
     const pat_of_pats = this;
     return new Pattern((state) => {
       return (
@@ -415,9 +415,9 @@ export class Pattern {
           .map((outer_hap) => {
             return (
               outer_hap.value
-                // reset = align the inner pattern cycle start to outer pattern events
-                // restart = align the inner pattern cycle zero to outer pattern events
-                .late(restart ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
+                // trig = align the inner pattern cycle start to outer pattern events
+                // trigZero = align the inner pattern cycle zero to outer pattern events
+                .late(cycleZero ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
                 .query(state)
                 .map((inner_hap) =>
                   new Hap(
@@ -436,8 +436,8 @@ export class Pattern {
     });
   }
 
-  _restartJoin() {
-    return this._resetJoin(true);
+  _trigZeroJoin() {
+    return this._trigJoin(true);
   }
 
   _squeezeJoin() {
@@ -854,7 +854,7 @@ const composers = {
 
 // generate methods to do what and how
 for (const [what, op] of Object.entries(composers)) {
-  for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Reset', 'Restart']) {
+  for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'TrigZero']) {
     Pattern.prototype[what + how] = function (...other) {
       const result = this['_op' + how](sequence(other), (a) => (b) => _composeOp(a, b, op));
       // hack to remove undefs when doing 'keepif'
@@ -880,8 +880,8 @@ for (const [what, op] of Object.entries(composers)) {
   }
 }
 
-// Pattern.prototype.reset = Pattern.prototype.keepReset;
-// Pattern.prototype.restart = Pattern.prototype.keepRestart;
+Pattern.prototype.reset = Pattern.prototype.keepTrig;
+Pattern.prototype.restart = Pattern.prototype.keepTrigZero;
 
 // methods of Pattern that get callable factories
 Pattern.prototype.patternified = [
