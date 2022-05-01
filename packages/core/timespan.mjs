@@ -43,7 +43,7 @@ export class TimeSpan {
     // (Note that the output timespan probably does not start *at* Time 0 --
     // that only happens when the input Arc starts at an integral Time.)
     const b = this.begin.cyclePos();
-    const e = b.add(this.end.sub(this.begin));
+    const e = b.add(this.duration);
     return new TimeSpan(b, e);
   }
 
@@ -97,7 +97,7 @@ export class TimeSpan {
   }
 
   midpoint() {
-    return this.begin.add(this.end.sub(this.begin).div(Fraction(2)));
+    return this.begin.add(this.duration.div(Fraction(2)));
   }
 
   equals(other) {
