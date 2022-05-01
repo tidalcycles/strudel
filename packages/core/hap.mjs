@@ -81,6 +81,10 @@ export class Hap {
       '(' + (this.whole == undefined ? '~' : this.whole.show()) + ', ' + this.part.show() + ', ' + this.value + ')'
     );
   }
+  
+  showWhole() {
+    return `${this.whole == undefined ? '~' : this.whole.show()}: ${this.value}`;
+  }
 
   showWhole() {
     return `${this.whole == undefined ? '~' : this.whole.show()}: ${this.value}`;
