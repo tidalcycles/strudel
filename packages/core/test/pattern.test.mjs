@@ -152,18 +152,31 @@ describe('Pattern', function () {
     });
   });
   describe('add()', function () {
-    it('Can add things', function () {
+    it('can can structure In()', function () {
       assert.equal(pure(3).add(pure(4)).query(st(0, 1))[0].value, 7);
       assert.equal(pure(3).addIn(pure(4)).query(st(0, 1))[0].value, 7);
     });
-  });
-  describe('addOut()', () => {
-    it('Can add things with structure from second pattern', () => {
+    it('can structure Out()', () => {
       sameFirst(sequence(1, 2).addOut(4), sequence(5, 6).struct(true));
     });
-  });
-  describe('addSqueeze()', () => {
-    it('Can add while squeezing the second pattern inside the events of the first', () => {
+    it('can Mix() structure', () => {
+      assert.deepStrictEqual(sequence(1, 2).addMix(silence,5,silence).firstCycle(),
+        [hap(ts(1/3,1/2),ts(1/3,1/2),6), hap(ts(1/2,2/3),ts(1/2,2/3),7)]
+      );
+    });
+    it('can Trig() structure', () => {
+      sameFirst(
+        slowcat(sequence(1,2,3,4),5,sequence(6,7,8,9),10).addTrig(20,30).early(2),
+        sequence(26,27,36,37)
+      );
+    });
+    it('can TrigZero() structure', () => {
+      sameFirst(
+        slowcat(sequence(1,2,3,4),5,sequence(6,7,8,9),10).addTrigZero(20,30).early(2),
+        sequence(21,22,31,32)
+      );
+    });
+    it('can Squeeze() structure', () => {
       sameFirst(
         sequence(1, [2, 3]).addSqueeze(sequence(10, 20, 30)),
         sequence(
@@ -175,9 +188,7 @@ describe('Pattern', function () {
         ),
       );
     });
-  });
-  describe('addSqueezeOut()', () => {
-    it('Can add while squeezing the first pattern inside the events of the second', () => {
+    it('can SqueezeOut() structure', () => {
       sameFirst(
         sequence(1, [2, 3]).addSqueezeOut(10, 20, 30),
         sequence([11, [12, 13]], [21, [22, 23]], [31, [32, 33]]),
@@ -255,10 +266,7 @@ describe('Pattern', function () {
       );
     });
     it('Can stack subpatterns', function () {
-      sameFirst(
-        stack('a', ['b','c']),
-        stack('a', sequence('b', 'c')),
-      );
+      sameFirst(stack('a', ['b', 'c']), stack('a', sequence('b', 'c')));
     });
   });
   describe('_fast()', function () {
@@ -389,11 +397,7 @@ describe('Pattern', function () {
   });
   describe('fastcat()', function () {
     it('Can go into negative time', function () {
-      sameFirst(
-        fastcat('a','b','c')
-          .late(1000000),
-        fastcat('a','b','c'),
-      );
+      sameFirst(fastcat('a', 'b', 'c').late(1000000), fastcat('a', 'b', 'c'));
     });
   });
   describe('slowcat()', function () {
@@ -426,12 +430,9 @@ describe('Pattern', function () {
         ['c'],
       );
     });
-    it ('Can cat subpatterns', () => {
-      sameFirst(
-        slowcat('a', ['b','c']).fast(4),
-        sequence('a', ['b', 'c']).fast(2)
-      )
-    })
+    it('Can cat subpatterns', () => {
+      sameFirst(slowcat('a', ['b', 'c']).fast(4), sequence('a', ['b', 'c']).fast(2));
+    });
   });
   describe('rev()', function () {
     it('Can reverse things', function () {
