@@ -27,4 +27,5 @@ node_modules/
 repl-parcel
 mytunes.ts
 doc
+out
 .parcel-cache

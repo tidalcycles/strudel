@@ -10,7 +10,9 @@
     "setup": "npm i && npm run bootstrap && cd repl && npm i",
     "repl": "cd repl && npm run start",
     "osc": "cd packages/osc && npm run server",
-    "build": "cd repl && npm run build"
+    "build": "cd repl && npm run build",
+    "jsdoc": "jsdoc packages/core/pattern.mjs -c jsdoc.config.json",
+    "jsdoc2md": "jsdoc2md packages/core/pattern.mjs -c jsdoc.config.json > api.md"
   },
   "workspaces": [
     "packages/*"
@@ -34,6 +36,8 @@
   "homepage": "https://strudel.tidalcycles.org",
   "devDependencies": {
     "events": "^3.3.0",
+    "jsdoc": "^3.6.10",
+    "jsdoc-to-markdown": "^7.1.1",
     "lerna": "^4.0.0",
     "mocha": "^9.1.4"
   }

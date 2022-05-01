@@ -12,12 +12,26 @@ import State from './state.mjs';
 import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod } from './util.mjs';
 import drawLine from './drawLine.mjs';
 
+/** @class Class representing a pattern. */
 export class Pattern {
-  // the following functions will get patternFactories as nested functions:
+  /**
+   * Create a pattern.
+   * @param {function} query - The function that maps a State to Haps .
+   */
   constructor(query) {
     this.query = query;
   }
 
+  /**
+   * query events insude the tiven time span
+   *
+   * @param {Fraction | number} begin from time
+   * @param {Fraction | number} end to time
+   * @returns Hap[]
+   * @example
+   * const pattern = sequence('a', ['b', 'c']);
+   * const events = pattern.queryArc(0, 1);
+   */
   queryArc(begin, end) {
     return this.query(new State(new TimeSpan(begin, end)));
   }
@@ -838,8 +852,14 @@ Pattern.prototype.factories = {
 // Nothing
 export const silence = new Pattern((_) => []);
 
+/** A discrete value that repeats once per cycle:
+ *
+ * @param {any} value - The value to repeat
+ * @returns {Pattern}
+ * @example
+ * pure('e4')
+ */
 export function pure(value) {
-  // A discrete value that repeats once per cycle
   function query(state) {
     return state.span.spanCycles.map((subspan) => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value));
   }
@@ -859,8 +879,13 @@ export function reify(thing) {
   return pure(thing);
 }
 
-// Basic functions for combining patterns
-
+/** The given items are played at the same time at the same length:
+ *
+ * @param {...any} items - The items to stack
+ * @return {Pattern}
+ * @example
+ * stack(g3, b3, [e4, d4])
+ */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
   pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
@@ -868,10 +893,17 @@ export function stack(...pats) {
   return new Pattern(query);
 }
 
+/** Concatenation: combines a list of patterns, switching between them successively, one per cycle:
+ *
+ * synonyms: {@link cat}
+ *
+ * @param {...any} items - The items to concatenate
+ * @return {Pattern}
+ * @example
+ * slowcat(e5, b4, [d5, c5])
+ *
+ */
 export function slowcat(...pats) {
-  // Concatenation: combines a list of patterns, switching between them
-  // successively, one per cycle.
-
   // Array test here is to avoid infinite recursions..
   pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
 
@@ -892,9 +924,11 @@ export function slowcat(...pats) {
   return new Pattern(query)._splitQueries();
 }
 
+/** Concatenation: combines a list of patterns, switching between them successively, one per cycle. Unlike slowcat, this version will skip cycles.
+ * @param {...any} items - The items to concatenate
+ * @return {Pattern}
+ */
 export function slowcatPrime(...pats) {
-  // Concatenation: combines a list of patterns, switching between them
-  // successively, one per cycle. Unlike slowcat, this version will skip cycles.
   pats = pats.map(reify);
   const query = function (state) {
     const pat_n = Math.floor(state.span.begin) % pats.length;
@@ -904,18 +938,33 @@ export function slowcatPrime(...pats) {
   return new Pattern(query)._splitQueries();
 }
 
+/** Concatenation: as with {@link slowcat}, but squashes a cycle from each pattern into one cycle
+ *
+ * Synonyms: {@link seq}, {@link sequence}
+ *
+ * @param {...any} items - The items to concatenate
+ * @return {Pattern}
+ * @example
+ * fastcat(e5, b4, [d5, c5])
+ * sequence(e5, b4, [d5, c5])
+ * seq(e5, b4, [d5, c5])
+ */
 export function fastcat(...pats) {
-  // Concatenation: as with slowcat, but squashes a cycle from each
-  // pattern into one cycle
   return slowcat(...pats)._fast(pats.length);
 }
 
+/** See {@link slowcat} */
 export function cat(...pats) {
   return slowcat(...pats);
 }
 
+/** Like {@link fastcat}, but where each step has a temporal weight:
+ * @param {...Array} items - The items to concatenate
+ * @return {Pattern}
+ * @example
+ * timeCat([3,e3],[1, g3])
+ */
 export function timeCat(...timepats) {
-  // Like cat, but where each step has a temporal 'weight'
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
   let begin = Fraction(0);
   const pats = [];
@@ -927,11 +976,12 @@ export function timeCat(...timepats) {
   return stack(...pats);
 }
 
+/** See {@link fastcat} */
 export function sequence(...pats) {
   return fastcat(...pats);
 }
 
-// shorthand for sequence
+/** See {@link fastcat} */
 export function seq(...pats) {
   return fastcat(...pats);
 }
