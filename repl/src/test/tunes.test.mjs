@@ -6,7 +6,7 @@ import { strict as assert } from 'assert';
 describe('tunes', () => {
   it('renders tunes correctly', async () => {
     async function testTune(key) {
-      const haps = await queryCode(tunes[key], 1);
+      const haps = await queryCode(tunes[key]);
       assert.deepStrictEqual(haps, snaps[key]);
     }
     await Promise.all(Object.keys(tunes).map(testTune));

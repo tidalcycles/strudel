@@ -136,7 +136,7 @@ extend(
   },
 );
 
-export const queryCode = async (code, cycles) => {
+export const queryCode = async (code, cycles = 1) => {
   const { pattern } = await evaluate(code);
   const haps = pattern.queryArc(0, cycles);
   return haps.map((h) => h.showWhole());
