@@ -287,7 +287,7 @@ export class Pattern {
     return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._TrigzeroJoin();
   }
 
-  _asNumber(silent = false) {
+  _asNumber(softfail = false) {
     return this._withEvent((event) => {
       const asNumber = Number(event.value);
       if (!isNaN(asNumber)) {
@@ -304,10 +304,11 @@ export class Pattern {
         // set context type to midi to let the player know its meant as midi number and not as frequency
         return new Hap(event.whole, event.part, toMidi(event.value), { ...event.context, type: 'midi' });
       }
-      if (!silent) {
+      if (!softfail) {
         throw new Error('cannot parse as number: "' + event.value + '"');
       }
-      return event.withValue(() => undefined); // silent error
+      // Not a number, just return original hap
+      return event;
     })._removeUndefineds();
   }
 
@@ -824,39 +825,49 @@ function _composeOp(a, b, func) {
 
 // pattern composers
 const composers = {
-  set: (a, b) => b,
-  keep: (a, b) => a,
-  keepif: (a, b) => (b ? a : undefined),
-  add: (a, b) => a + b,
-  sub: (a, b) => a - b,
-  mul: (a, b) => a * b,
-  div: (a, b) => a / b,
-  mod: mod,
-  pow: Math.pow,
-  lt: (a, b) => a < b,
-  gt: (a, b) => a > b,
-  lte: (a, b) => a <= b,
-  gte: (a, b) => a >= b,
-  eq: (a, b) => a == b,
-  eqt: (a, b) => a === b,
-  ne: (a, b) => a != b,
-  net: (a, b) => a !== b,
-  and: (a, b) => a && b,
-  or: (a, b) => a || b,
+  set: [(a, b) => b],
+  keep: [(a, b) => a],
+  keepif: [(a, b) => (b ? a : undefined)],
+
+  // numerical functions
+  add: [(a, b) => a + b, true],
+  sub: [(a, b) => a - b, true],
+  mul: [(a, b) => a * b, true],
+  div: [(a, b) => a / b, true],
+  mod: [mod, true],
+  pow: [Math.pow, true],
+  _and: [(a, b) => a & b, true],
+  _or: [(a, b) => a | b, true],
+  _xor: [(a, b) => a ^ b, true],
+  _lshift: [(a, b) => a << b, true],
+  _rshift: [(a, b) => a >> b, true],
+
+  lt: [(a, b) => a < b],
+  gt: [(a, b) => a > b],
+  lte: [(a, b) => a <= b],
+  gte: [(a, b) => a >= b],
+  eq: [(a, b) => a == b],
+  eqt: [(a, b) => a === b],
+  ne: [(a, b) => a != b],
+  net: [(a, b) => a !== b],
+  and: [(a, b) => a && b],
+  or: [(a, b) => a || b],
+
   //  bitwise ops
-  _and: (a, b) => a & b,
-  _or: (a, b) => a | b,
-  _xor: (a, b) => a ^ b,
-  _lshift: (a, b) => a << b,
-  _rshift: (a, b) => a >> b,
-  func: (a, b) => b(a),
+  func: [(a, b) => b(a)],
 };
 
 // generate methods to do what and how
-for (const [what, op] of Object.entries(composers)) {
+for (const [what, [op,numerical]] of Object.entries(composers)) {
   for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero']) {
     Pattern.prototype[what + how] = function (...other) {
-      var result = this['_op' + how](sequence(other), (a) => (b) => _composeOp(a, b, op));
+      var pat = this;
+      other = sequence(other);
+      if (numerical) {
+        pat = pat._asNumber();
+        other = other._asNumber();
+      }
+      var result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
       // hack to remove undefs when doing 'keepif'
       if (what === 'keepif') {
         result = result._removeUndefineds();
