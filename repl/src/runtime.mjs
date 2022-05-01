@@ -1,0 +1,143 @@
+// this file contains a runtime scope for testing all the tunes
+// it mocks all the functions that won't work in node (who are not important for testing values / structure)
+// it might require mocking more stuff when tunes added that use other functions
+
+// import * as tunes from './tunes.mjs';
+import { evaluate } from '@strudel.cycles/eval';
+import { extend } from '@strudel.cycles/eval';
+import * as strudel from '@strudel.cycles/core';
+// import gist from '@strudel.cycles/core/gist.js';
+import { mini } from '@strudel.cycles/mini/mini.mjs';
+// import { Tone } from '@strudel.cycles/tone';
+// import * as toneHelpers from '@strudel.cycles/tone/tone.mjs';
+// import * as voicingHelpers from '@strudel.cycles/tonal/voicings.mjs';
+// import * as uiHelpers from '@strudel.cycles/tone/ui.mjs';
+// import * as drawHelpers from '@strudel.cycles/tone/draw.mjs';
+// import euclid from '@strudel.cycles/core/euclid.mjs';
+// import '@strudel.cycles/tone/tone.mjs';
+// import '@strudel.cycles/midi/midi.mjs';
+import '@strudel.cycles/tonal/voicings.mjs';
+import '@strudel.cycles/tonal/tonal.mjs';
+import '@strudel.cycles/xen/xen.mjs';
+// import '@strudel.cycles/xen/tune.mjs';
+// import '@strudel.cycles/core/euclid.mjs';
+// import '@strudel.cycles/core/speak.mjs'; // window is not defined
+// import '@strudel.cycles/tone/pianoroll.mjs';
+// import '@strudel.cycles/tone/draw.mjs';
+// import '@strudel.cycles/osc/osc.mjs';
+// import '@strudel.cycles/webaudio/webaudio.mjs';
+// import '@strudel.cycles/serial/serial.mjs';
+// import controls from '@strudel.cycles/core/controls.mjs';
+
+class MockedNode {
+  chain() {
+    return this;
+  }
+  connect() {
+    return this;
+  }
+  toDestination() {
+    return this;
+  }
+  set() {
+    return this;
+  }
+  start() {
+    return this;
+  }
+}
+
+const mockNode = () => new MockedNode();
+
+const id = (x) => x;
+
+const toneHelpersMocked = {
+  FeedbackDelay: MockedNode,
+  MembraneSynth: MockedNode,
+  NoiseSynth: MockedNode,
+  MetalSynth: MockedNode,
+  Synth: MockedNode,
+  PolySynth: MockedNode,
+  Chorus: MockedNode,
+  Freeverb: MockedNode,
+  Gain: MockedNode,
+  vol: mockNode,
+  out: id,
+  osc: id,
+  adsr: id,
+  getDestination: id,
+  players: mockNode,
+  sampler: mockNode,
+  synth: mockNode,
+  piano: mockNode,
+  polysynth: mockNode,
+  fmsynth: mockNode,
+  membrane: mockNode,
+  noise: mockNode,
+  metal: mockNode,
+  lowpass: mockNode,
+  highpass: mockNode,
+};
+
+// tone mock
+strudel.Pattern.prototype.tone = function () {
+  return this;
+};
+
+// draw mock
+strudel.Pattern.prototype.pianoroll = function () {
+  return this;
+};
+
+// speak mock
+strudel.Pattern.prototype.speak = function () {
+  return this;
+};
+
+// webaudio mock
+strudel.Pattern.prototype.wave = function () {
+  return this;
+};
+strudel.Pattern.prototype.filter = function () {
+  return this;
+};
+strudel.Pattern.prototype.adsr = function () {
+  return this;
+};
+strudel.Pattern.prototype.out = function () {
+  return this;
+};
+// tune mock
+strudel.Pattern.prototype.tune = function () {
+  return this;
+};
+
+const uiHelpersMocked = {
+  backgroundImage: id,
+};
+
+extend(
+  // Tone,
+  strudel,
+  strudel.Pattern.prototype.bootstrap(),
+  toneHelpersMocked,
+  uiHelpersMocked,
+  /* controls,
+  toneHelpers,
+  voicingHelpers,
+  drawHelpers,
+  uiHelpers,
+  */
+  {
+    // gist,
+    // euclid,
+    mini,
+    // Tone,
+  },
+);
+
+export const queryCode = async (code, cycles) => {
+  const { pattern } = await evaluate(code);
+  const haps = pattern.queryArc(0, cycles);
+  return haps.map((h) => h.showWhole());
+};

@@ -285,9 +285,9 @@ export const zeldasRescue = `stack(
 )`;
 
 export const technoDrums = `stack(
-  "c1*2".tone(new Tone.MembraneSynth().toDestination()),
-  "~ x".tone(new Tone.NoiseSynth().toDestination()),
-  "[~ c4]*2".tone(new Tone.MetalSynth().set({envelope:{decay:0.06,sustain:0}}).chain(new Gain(0.5),getDestination()))
+  "c1*2".tone(new MembraneSynth().toDestination()),
+  "~ x".tone(new NoiseSynth().toDestination()),
+  "[~ c4]*2".tone(new MetalSynth().set({envelope:{decay:0.06,sustain:0}}).chain(new Gain(0.5),getDestination()))
 )`;
 
 export const loungerave = `const delay = new FeedbackDelay(1/8, .2).chain(vol(0.5), out());
