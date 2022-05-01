@@ -55,7 +55,7 @@ function MiniRepl({ tune, maxHeight = 500 }) {
   const [ref, isVisible] = useInView({
     threshold: 0.01,
   });
-  useHighlighting({ view, pattern, started: cycle.started });
+  useHighlighting({ view, pattern, active: cycle.started });
   return (
     <div className="rounded-md overflow-hidden bg-[#444C57]" ref={ref}>
       <div className="flex justify-between bg-slate-700 border-t border-slate-500">

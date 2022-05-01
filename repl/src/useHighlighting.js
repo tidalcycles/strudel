@@ -3,17 +3,20 @@ import { setHighlights } from './CodeMirror6';
 import { Tone } from '@strudel.cycles/tone';
 
 let highlights = []; // actively highlighted events
+let lastEnd;
 
-function useHighlighting({ view, pattern, started }) {
+function useHighlighting({ view, pattern, active }) {
   useEffect(() => {
     if (view) {
-      if (pattern && started) {
+      if (pattern && active) {
         let frame = requestAnimationFrame(updateHighlights);
 
         function updateHighlights() {
           const audioTime = Tone.getTransport().seconds;
+          const span = [lastEnd || audioTime, audioTime + 1 / 60];
+          lastEnd = audioTime + 1 / 60;
           highlights = highlights.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
-          const haps = pattern.queryArc(audioTime, audioTime + 1 / 60).filter((hap) => hap.hasOnset());
+          const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
           highlights = highlights.concat(haps); // add potential new onsets
           view.dispatch({ effects: setHighlights.of(highlights) }); // highlight all still active + new active haps
           frame = requestAnimationFrame(updateHighlights);
@@ -27,7 +30,7 @@ function useHighlighting({ view, pattern, started }) {
         view.dispatch({ effects: setHighlights.of([]) });
       }
     }
-  }, [pattern, started, view]);
+  }, [pattern, active, view]);
 }
 
 export default useHighlighting;

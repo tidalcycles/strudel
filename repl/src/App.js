@@ -121,7 +121,7 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [pattern, code, activateCode, cycle]);
 
-  useHighlighting({ view, pattern, started: cycle.started });
+  useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes('strudel disable-highlighting') });
 
   useWebMidi({
     ready: useCallback(
