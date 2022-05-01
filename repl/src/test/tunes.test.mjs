@@ -1,14 +1,18 @@
-import { queryCode } from '../runtime.mjs';
+import { queryCode, testCycles } from '../runtime.mjs';
 import * as snaps from '../tunes.snapshot.mjs';
 import * as tunes from '../tunes.mjs';
 import { strict as assert } from 'assert';
 
-describe('tunes', () => {
-  it('renders tunes correctly', async () => {
-    async function testTune(key) {
-      const haps = await queryCode(tunes[key]);
-      assert.deepStrictEqual(haps, snaps[key]);
-    }
-    await Promise.all(Object.keys(tunes).map(testTune));
+async function testTune(key) {
+  // console.log('test tune', key);
+  const haps = await queryCode(tunes[key], testCycles[key] || 1);
+  assert.deepStrictEqual(haps, snaps[key]);
+}
+
+describe('renders tunes', () => {
+  Object.keys(tunes).forEach((key) => {
+    it(`tune: ${key}`, async () => {
+      await testTune(key);
+    });
   });
 });

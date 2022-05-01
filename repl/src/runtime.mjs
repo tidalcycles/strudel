@@ -141,3 +141,33 @@ export const queryCode = async (code, cycles = 1) => {
   const haps = pattern.queryArc(0, cycles);
   return haps.map((h) => h.showWhole());
 };
+
+export const testCycles = {
+  timeCatMini: 16,
+  timeCat: 8,
+  shapeShifted: 16,
+  tetrisMini: 16,
+  whirlyStrudel: 16,
+  swimming: 51,
+  giantSteps: 20,
+  giantStepsReggae: 25,
+  transposedChordsHacked: 8,
+  scaleTranspose: 16,
+  struct: 4,
+  magicSofa: 8,
+  confusedPhone: 8,
+  zeldasRescue: 48,
+  technoDrums: 4,
+  caverave: 60,
+  callcenterhero: 22,
+  primalEnemy: 4,
+  synthDrums: 4,
+  sampleDrums: 4,
+  xylophoneCalling: 60,
+  sowhatelse: 60,
+  barryHarris: 64,
+  wavyKalimba: 64,
+  jemblung: 12,
+  risingEnemy: 12,
+  festivalOfFingers: 16,
+};
