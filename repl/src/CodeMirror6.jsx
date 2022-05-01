@@ -37,7 +37,7 @@ const highlightField = StateField.define({
       }
       return highlights;
     } catch (err) {
-      console.warn('highlighting error', err);
+      // console.warn('highlighting error', err);
       return highlights;
     }
   },
