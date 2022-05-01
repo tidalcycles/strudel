@@ -4,8 +4,8 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import CodeMirror6, { setHighlights } from './CodeMirror6';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import CodeMirror, { markEvent, markParens } from './CodeMirror';
 import cx from './cx';
 import logo from './logo.svg';
 import playStatic from './static.mjs';
@@ -39,6 +39,7 @@ import '@strudel.cycles/osc/osc.mjs';
 import '@strudel.cycles/webaudio/webaudio.mjs';
 import '@strudel.cycles/serial/serial.mjs';
 import controls from '@strudel.cycles/core/controls.mjs';
+import useHighlighting from './useHighlighting';
 
 extend(
   Tone,
@@ -56,7 +57,6 @@ extend(
     Tone,
   },
 );
-// eval stuff end
 
 const codeParam = window.location.href.split('#')[1];
 let decoded;
@@ -76,14 +76,27 @@ const randomTune = getRandomTune();
 const defaultSynth = getDefaultSynth();
 
 function App() {
-  const [editor, setEditor] = useState();
-  const { setCode, setPattern, error, code, cycle, dirty, log, togglePlay, activateCode, pattern, pushLog, pending } =
-    useRepl({
-      tune: decoded || randomTune,
-      defaultSynth,
-      onDraw: useCallback((time, event) => markEvent(editor)(time, event), [editor]),
-    });
-  const [uiHidden, setUiHidden] = useState(false);
+  // const [editor, setEditor] = useState();
+  const [view, setView] = useState();
+  const {
+    setCode,
+    setPattern,
+    error,
+    code,
+    cycle,
+    dirty,
+    log,
+    togglePlay,
+    activeCode,
+    setActiveCode,
+    activateCode,
+    pattern,
+    pushLog,
+    pending,
+  } = useRepl({
+    tune: decoded || randomTune,
+    defaultSynth,
+  });
   const logBox = useRef();
   // scroll log box to bottom when log changes
   useLayoutEffect(() => {
@@ -107,6 +120,8 @@ function App() {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [pattern, code, activateCode, cycle]);
+
+  useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes('strudel disable-highlighting') });
 
   useWebMidi({
     ready: useCallback(
@@ -133,17 +148,14 @@ function App() {
     <div className="min-h-screen flex flex-col">
       <header
         id="header"
-        className={cx(
-          'flex-none w-full h-14 px-2 flex border-b border-gray-200  justify-between z-[10]',
-          uiHidden ? 'bg-transparent text-white' : 'bg-white',
-        )}
+        className="flex-none w-full h-14 px-2 flex border-b border-gray-200  justify-between z-[10] bg-gray-100"
       >
         <div className="flex items-center space-x-2">
-          <img src={logo} className="Tidal-logo w-12 h-12" alt="logo" />
-          <h1 className="text-2xl">Strudel REPL</h1>
+          <img src={logo} className="Tidal-logo w-10 h-10" alt="logo" />
+          <h1 className="text-xl">Strudel REPL</h1>
         </div>
-        <div className="flex space-x-4">
-          <button onClick={() => togglePlay()}>
+        <div className="flex">
+          <button onClick={() => togglePlay()} className="hover:bg-gray-300 p-2">
             {!pending ? (
               <span className="flex items-center w-16">
                 {cycle.started ? (
@@ -170,6 +182,7 @@ function App() {
             )}
           </button>
           <button
+            className="hover:bg-gray-300 p-2"
             onClick={async () => {
               const _code = getRandomTune();
               console.log('tune', _code); // uncomment this to debug when random code fails
@@ -178,42 +191,23 @@ function App() {
               uiHelpers.cleanup();
               const parsed = await evaluate(_code);
               setPattern(parsed.pattern);
+              setActiveCode(_code);
             }}
           >
             🎲 random
           </button>
-          <button>
+          <button className="hover:bg-gray-300 p-2">
             <a href="./tutorial">📚 tutorial</a>
           </button>
-          <button onClick={() => setUiHidden((c) => !c)}>👀 {uiHidden ? 'show ui' : 'hide ui'}</button>
         </div>
       </header>
       <section className="grow flex flex-col text-gray-100">
-        <div className="grow relative" id="code">
-          <div
-            className={cx(
-              'h-full transition-opacity',
-              error ? 'focus:ring-red-500' : 'focus:ring-slate-800',
-              uiHidden ? 'opacity-0' : 'opacity-100',
-            )}
-          >
-            <CodeMirror
-              value={code}
-              editorDidMount={setEditor}
-              options={{
-                mode: 'javascript',
-                theme: 'material',
-                lineNumbers: false,
-                styleSelectedText: true,
-                cursorBlinkRate: 0,
-              }}
-              onCursor={markParens}
-              onChange={(_, __, value) => setCode(value)}
-            />
-            <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none">
-              {!cycle.started ? `press ctrl+enter to play\n` : dirty ? `ctrl+enter to update\n` : 'no changes\n'}
-            </span>
-          </div>
+        <div className="grow relative flex overflow-auto" id="code">
+          {/* onCursor={markParens} */}
+          <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />
+          <span className="p-4 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none">
+            {!cycle.started ? `press ctrl+enter to play\n` : dirty ? `ctrl+enter to update\n` : 'no changes\n'}
+          </span>
           {error && (
             <div className={cx('absolute right-2 bottom-2 px-2', 'text-red-500')}>
               {error?.message || 'unknown error'}

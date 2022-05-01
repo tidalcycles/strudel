@@ -17,7 +17,7 @@ let s4 = () => {
 };
 const generateHash = (code) => encodeURIComponent(btoa(code));
 
-function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
+function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawProp }) {
   const id = useMemo(() => s4(), []);
   const [code, setCode] = useState(tune);
   const [activeCode, setActiveCode] = useState();
@@ -30,11 +30,11 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
   const pushLog = useCallback((message) => setLog((log) => log + `${log ? '\n\n' : ''}${message}`), []);
 
   // below block allows disabling the highlighting by including "strudel disable-highlighting" in the code (as comment)
-  onDraw = useMemo(() => {
+  const onDraw = useMemo(() => {
     if (activeCode && !activeCode.includes('strudel disable-highlighting')) {
-      return onDraw;
+      return (time, event) => onDrawProp?.(time, event, activeCode);
     }
-  }, [activeCode, onDraw]);
+  }, [activeCode, onDrawProp]);
 
   // cycle hook to control scheduling
   const cycle = useCycle({
@@ -146,6 +146,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw }) {
     dirty,
     log,
     togglePlay,
+    setActiveCode,
     activateCode,
     activeCode,
     pushLog,
