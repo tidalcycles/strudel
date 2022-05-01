@@ -282,9 +282,9 @@ export class Pattern {
     const otherPat = reify(other);
     return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._trigJoin();
   }
-  _opTrigZero(other, func) {
+  _opTrigzero(other, func) {
     const otherPat = reify(other);
-    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._trigZeroJoin();
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._TrigzeroJoin();
   }
 
   _asNumber(silent = false) {
@@ -416,7 +416,7 @@ export class Pattern {
             return (
               outer_hap.value
                 // trig = align the inner pattern cycle start to outer pattern events
-                // trigZero = align the inner pattern cycle zero to outer pattern events
+                // Trigzero = align the inner pattern cycle zero to outer pattern events
                 .late(cycleZero ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
                 .query(state)
                 .map((inner_hap) =>
@@ -436,7 +436,7 @@ export class Pattern {
     });
   }
 
-  _trigZeroJoin() {
+  _TrigzeroJoin() {
     return this._trigJoin(true);
   }
 
@@ -854,7 +854,7 @@ const composers = {
 
 // generate methods to do what and how
 for (const [what, op] of Object.entries(composers)) {
-  for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'TrigZero']) {
+  for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero']) {
     Pattern.prototype[what + how] = function (...other) {
       var result = this['_op' + how](sequence(other), (a) => (b) => _composeOp(a, b, op));
       // hack to remove undefs when doing 'keepif'
@@ -886,8 +886,8 @@ Pattern.prototype.mask = Pattern.prototype.keepifIn;
 Pattern.prototype.maskAll = Pattern.prototype.keepIn;
 Pattern.prototype.reset = Pattern.prototype.keepifTrig;
 Pattern.prototype.resetAll = Pattern.prototype.keepTrig;
-Pattern.prototype.restart = Pattern.prototype.keepifTrigZero;
-Pattern.prototype.restartAll = Pattern.prototype.keepTrigZero;
+Pattern.prototype.restart = Pattern.prototype.keepifTrigzero;
+Pattern.prototype.restartAll = Pattern.prototype.keepTrigzero;
 
 // methods of Pattern that get callable factories
 Pattern.prototype.patternified = [

@@ -152,7 +152,7 @@ describe('Pattern', function () {
     });
   });
   describe('add()', function () {
-    it('can can structure In()', function () {
+    it('can structure In()', function () {
       assert.equal(pure(3).add(pure(4)).query(st(0, 1))[0].value, 7);
       assert.equal(pure(3).addIn(pure(4)).query(st(0, 1))[0].value, 7);
     });
@@ -160,20 +160,21 @@ describe('Pattern', function () {
       sameFirst(sequence(1, 2).addOut(4), sequence(5, 6).struct(true));
     });
     it('can Mix() structure', () => {
-      assert.deepStrictEqual(sequence(1, 2).addMix(silence,5,silence).firstCycle(),
-        [hap(ts(1/3,1/2),ts(1/3,1/2),6), hap(ts(1/2,2/3),ts(1/2,2/3),7)]
-      );
+      assert.deepStrictEqual(sequence(1, 2).addMix(silence, 5, silence).firstCycle(), [
+        hap(ts(1 / 3, 1 / 2), ts(1 / 3, 1 / 2), 6),
+        hap(ts(1 / 2, 2 / 3), ts(1 / 2, 2 / 3), 7),
+      ]);
     });
     it('can Trig() structure', () => {
       sameFirst(
-        slowcat(sequence(1,2,3,4),5,sequence(6,7,8,9),10).addTrig(20,30).early(2),
-        sequence(26,27,36,37)
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).addTrig(20, 30).early(2),
+        sequence(26, 27, 36, 37),
       );
     });
-    it('can TrigZero() structure', () => {
+    it('can Trigzero() structure', () => {
       sameFirst(
-        slowcat(sequence(1,2,3,4),5,sequence(6,7,8,9),10).addTrigZero(20,30).early(2),
-        sequence(21,22,31,32)
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).addTrigzero(20, 30).early(2),
+        sequence(21, 22, 31, 32),
       );
     });
     it('can Squeeze() structure', () => {
@@ -192,6 +193,93 @@ describe('Pattern', function () {
       sameFirst(
         sequence(1, [2, 3]).addSqueezeOut(10, 20, 30),
         sequence([11, [12, 13]], [21, [22, 23]], [31, [32, 33]]),
+      );
+    });
+  });
+  describe('keep()', function () {
+    it('can structure In()', function () {
+      assert.equal(pure(3).keep(pure(4)).query(st(0, 1))[0].value, 3);
+      assert.equal(pure(3).keepIn(pure(4)).query(st(0, 1))[0].value, 3);
+    });
+    it('can structure Out()', () => {
+      sameFirst(sequence(1, 2).keepOut(4), sequence(1, 2).struct(true));
+    });
+    it('can Mix() structure', () => {
+      assert.deepStrictEqual(sequence(1, 2).keepMix(silence, 5, silence).firstCycle(), [
+        hap(ts(1 / 3, 1 / 2), ts(1 / 3, 1 / 2), 1),
+        hap(ts(1 / 2, 2 / 3), ts(1 / 2, 2 / 3), 2),
+      ]);
+    });
+    it('can Trig() structure', () => {
+      sameFirst(
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepTrig(20, 30).early(2),
+        sequence(6, 7, 6, 7),
+      );
+    });
+    it('can Trigzero() structure', () => {
+      sameFirst(
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepTrigzero(20, 30).early(2),
+        sequence(1, 2, 1, 2),
+      );
+    });
+    it('can Squeeze() structure', () => {
+      sameFirst(
+        sequence(1, [2, 3]).keepSqueeze(sequence(10, 20, 30)),
+        sequence(
+          [1, 1, 1],
+          [
+            [2, 2, 2],
+            [3, 3, 3],
+          ],
+        ),
+      );
+    });
+    it('can SqueezeOut() structure', () => {
+      sameFirst(sequence(1, [2, 3]).keepSqueezeOut(10, 20, 30), sequence([1, [2, 3]], [1, [2, 3]], [1, [2, 3]]));
+    });
+  });
+  describe('keepif()', function () {
+    it('can structure In()', function () {
+      sameFirst(sequence(3, 4).keepif(true, false), sequence(3, silence));
+      sameFirst(sequence(3, 4).keepifIn(true, false), sequence(3, silence));
+    });
+    it('can structure Out()', () => {
+      sameFirst(pure(1).keepifOut(true, false), sequence(1, silence));
+    });
+    it('can Mix() structure', () => {
+      assert.deepStrictEqual(sequence(1, 2).keepifMix(false, true, false).firstCycle(), [
+        hap(ts(1 / 3, 1 / 2), ts(1 / 3, 1 / 2), 1),
+        hap(ts(1 / 2, 2 / 3), ts(1 / 2, 2 / 3), 2),
+      ]);
+    });
+    it('can Trig() structure', () => {
+      sameFirst(
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepifTrig(false, true).early(2),
+        sequence(silence, silence, 6, 7),
+      );
+    });
+    it('can Trigzero() structure', () => {
+      sameFirst(
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepifTrigzero(false, true).early(2),
+        sequence(silence, silence, 1, 2),
+      );
+    });
+    it('can Squeeze() structure', () => {
+      sameFirst(
+        sequence(1, [2, 3]).keepifSqueeze(sequence(true, true, false)),
+        sequence(
+          [1, 1, silence],
+          [
+            [2, 2, silence],
+            [3, 3, silence],
+          ],
+        ),
+      );
+    });
+    it('can SqueezeOut() structure', () => {
+      sameFirst(
+        sequence(1, [2, 3]).keepifSqueezeOut(true, true, false),
+        sequence([1, [2, 3]], [1, [2, 3]], silence),
       );
     });
   });
