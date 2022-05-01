@@ -36,10 +36,13 @@ export class Pattern {
     return this.query(new State(new TimeSpan(begin, end)));
   }
 
+  /**
+   * Returns a new pattern, with queries split at cycle boundaries. This makes
+   * some calculations easier to express, as all events are then constrained to
+   * happen within a cycle.
+   * @returns Pattern
+   */
   _splitQueries() {
-    // Splits queries at cycle boundaries. This makes some calculations
-    // easier to express, as all events are then constrained to happen within
-    // a cycle.
     const pat = this;
     const q = (state) => {
       return flatten(state.span.spanCycles.map((subspan) => pat.query(state.setSpan(subspan))));
@@ -47,23 +50,44 @@ export class Pattern {
     return new Pattern(q);
   }
 
+  /**
+   * Returns a new pattern, where the given function is applied to the query
+   * timespan before passing it to the original pattern.
+   * @param {Function} func the function to apply
+   * @returns Pattern
+   */
   withQuerySpan(func) {
     return new Pattern((state) => this.query(state.withSpan(func)));
   }
 
-  withQueryTime(func) {
-    // Returns a new pattern, with the function applied to both the begin
-    // and end of the the query timespan
+  /**
+   * As with {@link Pattern#withQuerySpan|withQuerySpan}, but the function is applied to both the
+   * begin and end time of the query timespan.
+   * @param {Function} func the function to apply
+   * @returns Pattern
+   */
+   withQueryTime(func) {
     return new Pattern((state) => this.query(state.withSpan((span) => span.withTime(func))));
   }
 
+  /**
+   * Similar to {@link Pattern#withQuerySpan|withQuerySpan}, but the function is applied to the timespans
+   * of all haps returned by pattern queries (both `part` timespans, and where
+   * present, `whole` timespans).
+   * @param {Function} func 
+   * @returns Pattern
+   */
   withEventSpan(func) {
-    // Returns a new pattern, with the function applied to each event
-    // timespan.
     return new Pattern((state) => this.query(state).map((hap) => hap.withSpan(func)));
   }
 
-  withEventTime(func) {
+  /**
+   * As with {@link Pattern#withEventSpan|withEventSpan}, but the function is applied to both the
+   * begin and end time of the hap timespans.
+   * @param {Function} func the function to apply
+   * @returns Pattern
+   */
+   withEventTime(func) {
     // Returns a new pattern, with the function applied to both the begin
     // and end of each event timespan.
     return this.withEventSpan((span) => span.withTime(func));
@@ -126,14 +150,20 @@ export class Pattern {
     });
   }
 
+  /**
+   * Returns a new pattern, with the function applied to the value of
+   * each event. It has the alias {@link Pattern#fmap|fmap}.
+   * @param {Function} func 
+   * @returns Pattern
+   */
   withValue(func) {
-    // Returns a new pattern, with the function applied to the value of
-    // each event. It has the alias 'fmap'.
     return new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
   }
 
-  // alias
-  fmap(func) {
+  /**
+   * see {@link Pattern#withValue|withValue}
+   */
+   fmap(func) {
     return this.withValue(func);
   }
 
@@ -149,7 +179,13 @@ export class Pattern {
     return this._filterValues((val) => val != undefined);
   }
 
-  onsetsOnly() {
+  /**
+   * Returns a new pattern, with all haps without onsets filtered out. A hap
+   * with an onset is one with a `whole` timespan that begins at the same time
+   * as its `part` timespan.
+   * @returns Pattern
+   */
+   onsetsOnly() {
     // Returns a new pattern that will only return events where the start
     // of the 'whole' timespan matches the start of the 'part'
     // timespan, i.e. the events that include their 'onset'.
@@ -183,6 +219,17 @@ export class Pattern {
     return new Pattern(query);
   }
 
+  /**
+   * When this method is called on a pattern of functions, it matches its haps
+   * with those in the given pattern of values.  A new pattern is returned, with
+   * each matching value applied to the corresponding function. 
+   *
+   * In this `appBoth` variant, where timespans of the function and value haps
+   * are not the same but do intersect, the resulting hap has a timespan of the
+   * intersection. This applies to both the part and the whole timespan.
+   * @param {Pattern} pat_val 
+   * @returns Pattern
+   */
   appBoth(pat_val) {
     // Tidal's <*>
     const whole_func = function (span_a, span_b) {
@@ -194,6 +241,15 @@ export class Pattern {
     return this._appWhole(whole_func, pat_val);
   }
 
+  /**
+   * As with {@link Pattern#appBoth|appBoth}, but the `whole` timespan is not the intersection,
+   * but the timespan from the function of patterns that this method is called
+   * on. In practice, this means that the pattern structure, including onsets,
+   * are preserved from the pattern of functions (often referred to as the left
+   * hand or inner pattern).
+   * @param {Pattern} pat_val 
+   * @returns Pattern
+   */
   appLeft(pat_val) {
     const pat_func = this;
 
@@ -217,6 +273,13 @@ export class Pattern {
     return new Pattern(query);
   }
 
+  /**
+   * As with {@link Pattern#appLeft|appLeft}, but `whole` timespans are instead taken from the
+   * pattern of values, i.e. structure is preserved from the right hand/outer
+   * pattern.
+   * @param {Pattern} pat_val 
+   * @returns Pattern
+   */
   appRight(pat_val) {
     const pat_func = this;
 
