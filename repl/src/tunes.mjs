@@ -63,7 +63,7 @@ export const shapeShifted = `stack(
   )
 ).slow(16)`; */
 
-export const tetris = `stack(
+/* export const tetris = `stack(
   seq(
     "e5 [b4 c5] d5 [c5 b4]",
     "a4 [a4 c5] e5 [d5 c5]",
@@ -85,7 +85,7 @@ export const tetris = `stack(
     "a1 a2 a1 a2 a1 a2 a1 a2",
   )
 ).slow(16)`;
-
+ */
 export const tetrisMini = `\`[[e5 [b4 c5] d5 [c5 b4]]
 [a4 [a4 c5] e5 [d5 c5]]
 [b4 [~ c5] d5 e5]
@@ -226,13 +226,13 @@ export const transposedChordsHacked = `stack(
   "c2 eb2 g2",
   "Cm7".voicings(['g2','c4']).slow(2)
 ).transpose(
-  cat(1, 2, 3, 2).slow(2)
+  "<1 2 3 2>".slow(2)
 ).transpose(5)`;
 
-export const scaleTranspose = `stack(f2, f3, c4, ab4)
+export const scaleTranspose = `"f2,f3,c4,ab4"
 .scale(seq('F minor', 'F harmonic minor').slow(4))
-.scaleTranspose(seq(0, -1, -2, -3).slow(4))
-.transpose(seq(0, 1).slow(16))`;
+.scaleTranspose("<0 -1 -2 -3>")
+.transpose("0 1".slow(16))`;
 
 export const struct = `stack(
   "c2 g2 a2 [e2@2 eb2] d2 a2 g2 [d2 ~ db2]",
@@ -245,7 +245,7 @@ export const magicSofa = `stack(
    .every(2, fast(2))
    .voicings(),
   "<c2 f2 g2> <d2 g2 a2 e2>"
-).slow(1).transpose(cat(0, 2, 3, 4))`;
+).transpose("<0 2 3 4>")`;
 // below doesn't work anymore due to constructor cleanup
 // ).slow(1).transpose.cat(0, 2, 3, 4)`;
 
@@ -258,7 +258,7 @@ export const confusedPhone = `"[g2 ~@1.3] [c3 ~@1.3]"
   transpose(24).late(0.4)
 )
 .scale(cat('C dorian', 'C mixolydian'))
-.scaleTranspose(cat(0,1,2,1))
+.scaleTranspose("<0 1 2 1>")
 .slow(2)`;
 
 export const zeldasRescue = `stack(
@@ -285,32 +285,9 @@ export const zeldasRescue = `stack(
 )`;
 
 export const technoDrums = `stack(
-  "c1*2".tone(new Tone.MembraneSynth().toDestination()),
-  "~ x".tone(new Tone.NoiseSynth().toDestination()),
-  "[~ c4]*2".tone(new Tone.MetalSynth().set({envelope:{decay:0.06,sustain:0}}).chain(new Gain(0.5),getDestination()))
-)`;
-
-export const loungerave = `const delay = new FeedbackDelay(1/8, .2).chain(vol(0.5), out());
-const kick = new MembraneSynth().chain(vol(.8), out());
-const snare = new NoiseSynth().chain(vol(.8), out());
-const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
-const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
-const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
-
-const drums = stack(
-  "c1*2".tone(kick).mask("<x@7 ~>/8"),
-  "~ <x!7 [x@3 x]>".tone(snare).mask("<x@7 ~>/4"),
-  "[~ c4]*2".tone(hihat)
-);
-
-const thru = (x) => x.transpose("<0 1>/8").transpose(1);
-const synths = stack(
-  "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2").edit(thru).tone(bass),
-  "<Cm7 Bb7 Fm7 G7b9>/2".struct("~ [x@0.1 ~]").voicings().edit(thru).every(2, early(1/4)).tone(keys).mask("<x@7 ~>/8".early(1/4))
-)
-stack(
-  drums, 
-  synths
+  "c1*2".tone(new MembraneSynth().toDestination()),
+  "~ x".tone(new NoiseSynth().toDestination()),
+  "[~ c4]*2".tone(new MetalSynth().set({envelope:{decay:0.06,sustain:0}}).chain(new Gain(0.5),getDestination()))
 )`;
 
 export const caverave = `const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
