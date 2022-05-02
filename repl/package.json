@@ -22,7 +22,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial",
-    "test": "react-scripts test",
+    "test": "mocha ./src/test --colors",
+    "snapshot": "cd ./src/ && rm -f ./tunes.snapshot.mjs && node ./shoot.mjs > ./tunes.snapshot.mjs",
     "eject": "react-scripts eject",
     "tutorial": "parcel src/tutorial/index.html --no-cache",
     "build-tutorial": "rm -rf ../docs/tutorial && parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-scope-hoist --no-cache",
