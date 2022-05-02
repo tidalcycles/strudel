@@ -1,0 +1,990 @@
+{
+  "docs": [
+    {
+      "comment": "/** @class Class representing a pattern. */",
+      "meta": {
+        "range": [
+          1134,
+          24952
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 16,
+        "columnno": 0,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000042",
+          "name": "exports.Pattern",
+          "type": "ClassDeclaration"
+        }
+      },
+      "name": "Pattern",
+      "longname": "Pattern",
+      "kind": "class",
+      "classdesc": "<p>Class representing a pattern.</p>",
+      "scope": "global",
+      "description": "<p>Create a pattern.</p>",
+      "memberof": "Pattern",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "function"
+            ]
+          },
+          "description": "<p>The function that maps a State to Haps .</p>",
+          "name": "query"
+        }
+      ],
+      "___id": "T000002R000005",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * query events insude the tiven time span\n   *\n   * @param {Fraction | number} begin from time\n   * @param {Fraction | number} end to time\n   * @returns Hap[]\n   * @example\n   * const pattern = sequence('a', ['b', 'c']);\n   * const events = pattern.queryArc(0, 1);\n   */",
+      "meta": {
+        "range": [
+          1598,
+          1684
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 35,
+        "columnno": 2,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000057",
+          "name": "Pattern#queryArc",
+          "type": "MethodDefinition",
+          "paramnames": [
+            "begin",
+            "end"
+          ]
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>query events insude the tiven time span</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "Fraction",
+              "number"
+            ]
+          },
+          "description": "<p>from time</p>",
+          "name": "begin"
+        },
+        {
+          "type": {
+            "names": [
+              "Fraction",
+              "number"
+            ]
+          },
+          "description": "<p>to time</p>",
+          "name": "end"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Hap[]</p>"
+        }
+      ],
+      "examples": [
+        "const pattern = sequence('a', ['b', 'c']);\nconst events = pattern.queryArc(0, 1);"
+      ],
+      "name": "queryArc",
+      "longname": "Pattern#queryArc",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "___id": "T000002R000007",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Returns a new pattern, with queries split at cycle boundaries. This makes\n   * some calculations easier to express, as all events are then constrained to\n   * happen within a cycle.\n   * @returns Pattern\n   */",
+      "meta": {
+        "range": [
+          1909,
+          2110
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 45,
+        "columnno": 2,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000074",
+          "name": "Pattern#_splitQueries",
+          "type": "MethodDefinition",
+          "paramnames": []
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>Returns a new pattern, with queries split at cycle boundaries. This makes\nsome calculations easier to express, as all events are then constrained to\nhappen within a cycle.</p>",
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "name": "_splitQueries",
+      "longname": "Pattern#_splitQueries",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "params": [],
+      "___id": "T000002R000008",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Returns a new pattern, where the given function is applied to the query\n   * timespan before passing it to the original pattern.\n   * @param {Function} func the function to apply\n   * @returns Pattern\n   */",
+      "meta": {
+        "range": [
+          2332,
+          2426
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 59,
+        "columnno": 2,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000114",
+          "name": "Pattern#withQuerySpan",
+          "type": "MethodDefinition",
+          "paramnames": [
+            "func"
+          ]
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>Returns a new pattern, where the given function is applied to the query\ntimespan before passing it to the original pattern.</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "function"
+            ]
+          },
+          "description": "<p>the function to apply</p>",
+          "name": "func"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "name": "withQuerySpan",
+      "longname": "Pattern#withQuerySpan",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "___id": "T000002R000011",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * As with {@link Pattern#withQuerySpan|withQuerySpan}, but the function is applied to both the\n   * begin and end time of the query timespan.\n   * @param {Function} func the function to apply\n   * @returns Pattern\n   */",
+      "meta": {
+        "range": [
+          2660,
+          2779
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 69,
+        "columnno": 3,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000133",
+          "name": "Pattern#withQueryTime",
+          "type": "MethodDefinition",
+          "paramnames": [
+            "func"
+          ]
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>As with {@link Pattern#withQuerySpan|withQuerySpan}, but the function is applied to both the\nbegin and end time of the query timespan.</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "function"
+            ]
+          },
+          "description": "<p>the function to apply</p>",
+          "name": "func"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "name": "withQueryTime",
+      "longname": "Pattern#withQueryTime",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "___id": "T000002R000012",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Similar to {@link Pattern#withQuerySpan|withQuerySpan}, but the function is applied to the timespans\n   * of all haps returned by pattern queries (both `part` timespans, and where\n   * present, `whole` timespans).\n   * @param {Function} func \n   * @returns Pattern\n   */",
+      "meta": {
+        "range": [
+          3065,
+          3177
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 80,
+        "columnno": 2,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000158",
+          "name": "Pattern#withEventSpan",
+          "type": "MethodDefinition",
+          "paramnames": [
+            "func"
+          ]
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>Similar to {@link Pattern#withQuerySpan|withQuerySpan}, but the function is applied to the timespans\nof all haps returned by pattern queries (both <code>part</code> timespans, and where\npresent, <code>whole</code> timespans).</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "function"
+            ]
+          },
+          "name": "func"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "name": "withEventSpan",
+      "longname": "Pattern#withEventSpan",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "___id": "T000002R000013",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * As with {@link Pattern#withEventSpan|withEventSpan}, but the function is applied to both the\n   * begin and end time of the hap timespans.\n   * @param {Function} func the function to apply\n   * @returns Pattern\n   */",
+      "meta": {
+        "range": [
+          3410,
+          3610
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 90,
+        "columnno": 3,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000183",
+          "name": "Pattern#withEventTime",
+          "type": "MethodDefinition",
+          "paramnames": [
+            "func"
+          ]
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>As with {@link Pattern#withEventSpan|withEventSpan}, but the function is applied to both the\nbegin and end time of the hap timespans.</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "function"
+            ]
+          },
+          "description": "<p>the function to apply</p>",
+          "name": "func"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "name": "withEventTime",
+      "longname": "Pattern#withEventTime",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "___id": "T000002R000014",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Returns a new pattern, with the function applied to the value of\n   * each event. It has the alias {@link Pattern#fmap|fmap}.\n   * @param {Function} func \n   * @returns Pattern\n   */",
+      "meta": {
+        "range": [
+          5449,
+          5558
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 159,
+        "columnno": 2,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000500",
+          "name": "Pattern#withValue",
+          "type": "MethodDefinition",
+          "paramnames": [
+            "func"
+          ]
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>Returns a new pattern, with the function applied to the value of\neach event. It has the alias {@link Pattern#fmap|fmap}.</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "function"
+            ]
+          },
+          "name": "func"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "name": "withValue",
+      "longname": "Pattern#withValue",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "___id": "T000002R000054",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * see {@link Pattern#withValue|withValue}\n   */",
+      "meta": {
+        "range": [
+          5620,
+          5669
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 166,
+        "columnno": 3,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000525",
+          "name": "Pattern#fmap",
+          "type": "MethodDefinition",
+          "paramnames": [
+            "func"
+          ]
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>see {@link Pattern#withValue|withValue}</p>",
+      "name": "fmap",
+      "longname": "Pattern#fmap",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "params": [],
+      "___id": "T000002R000055",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Returns a new pattern, with all haps without onsets filtered out. A hap\n   * with an onset is one with a `whole` timespan that begins at the same time\n   * as its `part` timespan.\n   * @returns Pattern\n   */",
+      "meta": {
+        "range": [
+          6216,
+          6488
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 188,
+        "columnno": 3,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000594",
+          "name": "Pattern#onsetsOnly",
+          "type": "MethodDefinition",
+          "paramnames": []
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>Returns a new pattern, with all haps without onsets filtered out. A hap\nwith an onset is one with a <code>whole</code> timespan that begins at the same time\nas its <code>part</code> timespan.</p>",
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "name": "onsetsOnly",
+      "longname": "Pattern#onsetsOnly",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "params": [],
+      "___id": "T000002R000059",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * When this method is called on a pattern of functions, it matches its haps\n   * with those in the given pattern of values.  A new pattern is returned, with\n   * each matching value applied to the corresponding function. \n   *\n   * In this `appBoth` variant, where timespans of the function and value haps\n   * are not the same but do intersect, the resulting hap has a timespan of the\n   * intersection. This applies to both the part and the whole timespan.\n   * @param {Pattern} pat_val \n   * @returns Pattern\n   */",
+      "meta": {
+        "range": [
+          7969,
+          8250
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 233,
+        "columnno": 2,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000716",
+          "name": "Pattern#appBoth",
+          "type": "MethodDefinition",
+          "paramnames": [
+            "pat_val"
+          ]
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>When this method is called on a pattern of functions, it matches its haps\nwith those in the given pattern of values.  A new pattern is returned, with\neach matching value applied to the corresponding function.</p>\n<p>In this <code>appBoth</code> variant, where timespans of the function and value haps\nare not the same but do intersect, the resulting hap has a timespan of the\nintersection. This applies to both the part and the whole timespan.</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "Pattern"
+            ]
+          },
+          "name": "pat_val"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "name": "appBoth",
+      "longname": "Pattern#appBoth",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "___id": "T000002R000067",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * As with {@link Pattern#appBoth|appBoth}, but the `whole` timespan is not the intersection,\n   * but the timespan from the function of patterns that this method is called\n   * on. In practice, this means that the pattern structure, including onsets,\n   * are preserved from the pattern of functions (often referred to as the left\n   * hand or inner pattern).\n   * @param {Pattern} pat_val \n   * @returns Pattern\n   */",
+      "meta": {
+        "range": [
+          8682,
+          9430
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 253,
+        "columnno": 2,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000752",
+          "name": "Pattern#appLeft",
+          "type": "MethodDefinition",
+          "paramnames": [
+            "pat_val"
+          ]
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>As with {@link Pattern#appBoth|appBoth}, but the <code>whole</code> timespan is not the intersection,\nbut the timespan from the function of patterns that this method is called\non. In practice, this means that the pattern structure, including onsets,\nare preserved from the pattern of functions (often referred to as the left\nhand or inner pattern).</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "Pattern"
+            ]
+          },
+          "name": "pat_val"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "name": "appLeft",
+      "longname": "Pattern#appLeft",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "___id": "T000002R000069",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * As with {@link Pattern#appLeft|appLeft}, but `whole` timespans are instead taken from the\n   * pattern of values, i.e. structure is preserved from the right hand/outer\n   * pattern.\n   * @param {Pattern} pat_val \n   * @returns Pattern\n   */",
+      "meta": {
+        "range": [
+          9686,
+          10431
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 283,
+        "columnno": 2,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100000862",
+          "name": "Pattern#appRight",
+          "type": "MethodDefinition",
+          "paramnames": [
+            "pat_val"
+          ]
+        },
+        "vars": {
+          "": null
+        }
+      },
+      "description": "<p>As with {@link Pattern#appLeft|appLeft}, but <code>whole</code> timespans are instead taken from the\npattern of values, i.e. structure is preserved from the right hand/outer\npattern.</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "Pattern"
+            ]
+          },
+          "name": "pat_val"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "name": "appRight",
+      "longname": "Pattern#appRight",
+      "kind": "function",
+      "memberof": "Pattern",
+      "scope": "instance",
+      "___id": "T000002R000081",
+      "___s": true
+    },
+    {
+      "comment": "/** A discrete value that repeats once per cycle:\n *\n * @param {any} value - The value to repeat\n * @returns {Pattern}\n * @example\n * pure('e4')\n */",
+      "meta": {
+        "range": [
+          27168,
+          27372
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 925,
+        "columnno": 0,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100003931",
+          "name": "exports.pure",
+          "type": "FunctionDeclaration",
+          "paramnames": [
+            "value"
+          ]
+        }
+      },
+      "description": "<p>A discrete value that repeats once per cycle:</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "any"
+            ]
+          },
+          "description": "<p>The value to repeat</p>",
+          "name": "value"
+        }
+      ],
+      "returns": [
+        {
+          "type": {
+            "names": [
+              "Pattern"
+            ]
+          }
+        }
+      ],
+      "examples": [
+        "pure('e4')"
+      ],
+      "name": "pure",
+      "longname": "pure",
+      "kind": "function",
+      "scope": "global",
+      "___id": "T000002R000294",
+      "___s": true
+    },
+    {
+      "comment": "/** The given items are played at the same time at the same length:\n *\n * @param {...any} items - The items to stack\n * @return {Pattern}\n * @example\n * stack(g3, b3, [e4, d4])\n */",
+      "meta": {
+        "range": [
+          27885,
+          28158
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 952,
+        "columnno": 0,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100003992",
+          "name": "exports.stack",
+          "type": "FunctionDeclaration",
+          "paramnames": [
+            "pats"
+          ]
+        }
+      },
+      "description": "<p>The given items are played at the same time at the same length:</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "any"
+            ]
+          },
+          "variable": true,
+          "description": "<p>The items to stack</p>",
+          "name": "items"
+        }
+      ],
+      "returns": [
+        {
+          "type": {
+            "names": [
+              "Pattern"
+            ]
+          }
+        }
+      ],
+      "examples": [
+        "stack(g3, b3, [e4, d4])"
+      ],
+      "name": "stack",
+      "longname": "stack",
+      "kind": "function",
+      "scope": "global",
+      "___id": "T000002R000301",
+      "___s": true
+    },
+    {
+      "comment": "/** Concatenation: combines a list of patterns, switching between them successively, one per cycle:\n *\n * synonyms: {@link cat}\n *\n * @param {...any} items - The items to concatenate\n * @return {Pattern}\n * @example\n * slowcat(e5, b4, [d5, c5])\n *\n */",
+      "meta": {
+        "range": [
+          28412,
+          29325
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 969,
+        "columnno": 0,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100004042",
+          "name": "exports.slowcat",
+          "type": "FunctionDeclaration",
+          "paramnames": [
+            "pats"
+          ]
+        }
+      },
+      "description": "<p>Concatenation: combines a list of patterns, switching between them successively, one per cycle:</p>\n<p>synonyms: {@link cat}</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "any"
+            ]
+          },
+          "variable": true,
+          "description": "<p>The items to concatenate</p>",
+          "name": "items"
+        }
+      ],
+      "returns": [
+        {
+          "type": {
+            "names": [
+              "Pattern"
+            ]
+          }
+        }
+      ],
+      "examples": [
+        "slowcat(e5, b4, [d5, c5])"
+      ],
+      "name": "slowcat",
+      "longname": "slowcat",
+      "kind": "function",
+      "scope": "global",
+      "___id": "T000002R000305",
+      "___s": true
+    },
+    {
+      "comment": "/** Concatenation: combines a list of patterns, switching between them successively, one per cycle. Unlike slowcat, this version will skip cycles.\n * @param {...any} items - The items to concatenate\n * @return {Pattern}\n */",
+      "meta": {
+        "range": [
+          29551,
+          29823
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 994,
+        "columnno": 0,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100004169",
+          "name": "exports.slowcatPrime",
+          "type": "FunctionDeclaration",
+          "paramnames": [
+            "pats"
+          ]
+        }
+      },
+      "description": "<p>Concatenation: combines a list of patterns, switching between them successively, one per cycle. Unlike slowcat, this version will skip cycles.</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "any"
+            ]
+          },
+          "variable": true,
+          "description": "<p>The items to concatenate</p>",
+          "name": "items"
+        }
+      ],
+      "returns": [
+        {
+          "type": {
+            "names": [
+              "Pattern"
+            ]
+          }
+        }
+      ],
+      "name": "slowcatPrime",
+      "longname": "slowcatPrime",
+      "kind": "function",
+      "scope": "global",
+      "___id": "T000002R000313",
+      "___s": true
+    },
+    {
+      "comment": "/** Concatenation: as with {@link slowcat}, but squashes a cycle from each pattern into one cycle\n *\n * Synonyms: {@link seq}, {@link sequence}\n *\n * @param {...any} items - The items to concatenate\n * @return {Pattern}\n * @example\n * fastcat(e5, b4, [d5, c5])\n * sequence(e5, b4, [d5, c5])\n * seq(e5, b4, [d5, c5])\n */",
+      "meta": {
+        "range": [
+          30145,
+          30227
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 1015,
+        "columnno": 0,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100004224",
+          "name": "exports.fastcat",
+          "type": "FunctionDeclaration",
+          "paramnames": [
+            "pats"
+          ]
+        }
+      },
+      "description": "<p>Concatenation: as with {@link slowcat}, but squashes a cycle from each pattern into one cycle</p>\n<p>Synonyms: {@link seq}, {@link sequence}</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "any"
+            ]
+          },
+          "variable": true,
+          "description": "<p>The items to concatenate</p>",
+          "name": "items"
+        }
+      ],
+      "returns": [
+        {
+          "type": {
+            "names": [
+              "Pattern"
+            ]
+          }
+        }
+      ],
+      "examples": [
+        "fastcat(e5, b4, [d5, c5])\nsequence(e5, b4, [d5, c5])\nseq(e5, b4, [d5, c5])"
+      ],
+      "name": "fastcat",
+      "longname": "fastcat",
+      "kind": "function",
+      "scope": "global",
+      "___id": "T000002R000319",
+      "___s": true
+    },
+    {
+      "comment": "/** See {@link slowcat} */",
+      "meta": {
+        "range": [
+          30256,
+          30315
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 1020,
+        "columnno": 0,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100004241",
+          "name": "exports.cat",
+          "type": "FunctionDeclaration",
+          "paramnames": [
+            "pats"
+          ]
+        }
+      },
+      "description": "<p>See {@link slowcat}</p>",
+      "name": "cat",
+      "longname": "cat",
+      "kind": "function",
+      "scope": "global",
+      "___id": "T000002R000321",
+      "___s": true
+    },
+    {
+      "comment": "/** Like {@link fastcat}, but where each step has a temporal weight:\n * @param {...Array} items - The items to concatenate\n * @return {Pattern}\n * @example\n * timeCat([3,e3],[1, g3])\n */",
+      "meta": {
+        "range": [
+          30504,
+          30863
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 1030,
+        "columnno": 0,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100004252",
+          "name": "exports.timeCat",
+          "type": "FunctionDeclaration",
+          "paramnames": [
+            "timepats"
+          ]
+        }
+      },
+      "description": "<p>Like {@link fastcat}, but where each step has a temporal weight:</p>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "Array"
+            ]
+          },
+          "variable": true,
+          "description": "<p>The items to concatenate</p>",
+          "name": "items"
+        }
+      ],
+      "returns": [
+        {
+          "type": {
+            "names": [
+              "Pattern"
+            ]
+          }
+        }
+      ],
+      "examples": [
+        "timeCat([3,e3],[1, g3])"
+      ],
+      "name": "timeCat",
+      "longname": "timeCat",
+      "kind": "function",
+      "scope": "global",
+      "___id": "T000002R000323",
+      "___s": true
+    },
+    {
+      "comment": "/** See {@link fastcat} */",
+      "meta": {
+        "range": [
+          30892,
+          30956
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 1043,
+        "columnno": 0,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100004338",
+          "name": "exports.sequence",
+          "type": "FunctionDeclaration",
+          "paramnames": [
+            "pats"
+          ]
+        }
+      },
+      "description": "<p>See {@link fastcat}</p>",
+      "name": "sequence",
+      "longname": "sequence",
+      "kind": "function",
+      "scope": "global",
+      "___id": "T000002R000330",
+      "___s": true
+    },
+    {
+      "comment": "/** See {@link fastcat} */",
+      "meta": {
+        "range": [
+          30985,
+          31044
+        ],
+        "filename": "pattern.mjs",
+        "lineno": 1048,
+        "columnno": 0,
+        "path": "/Users/felix/projects/strudel/packages/core",
+        "code": {
+          "id": "astnode100004349",
+          "name": "exports.seq",
+          "type": "FunctionDeclaration",
+          "paramnames": [
+            "pats"
+          ]
+        }
+      },
+      "description": "<p>See {@link fastcat}</p>",
+      "name": "seq",
+      "longname": "seq",
+      "kind": "function",
+      "scope": "global",
+      "___id": "T000002R000332",
+      "___s": true
+    },
+    {
+      "kind": "package",
+      "longname": "package:undefined",
+      "files": [
+        "/Users/felix/projects/strudel/packages/core/pattern.mjs"
+      ],
+      "___id": "T000002R000447",
+      "___s": true
+    }
+  ]
+}

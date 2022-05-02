@@ -11,6 +11,7 @@
     "osc": "cd packages/osc && npm run server",
     "build": "cd repl && npm run build",
     "jsdoc": "jsdoc packages/core/pattern.mjs -c jsdoc.config.json",
+    "jsdoc-json": "jsdoc packages/core/pattern.mjs --template ./node_modules/jsdoc-json --destination doc.json -c jsdoc.config.json",
     "jsdoc2md": "jsdoc2md packages/core/pattern.mjs -c jsdoc.config.json > api.md"
   },
   "workspaces": [
@@ -36,6 +37,7 @@
   "devDependencies": {
     "events": "^3.3.0",
     "jsdoc": "^3.6.10",
+    "jsdoc-json": "^2.0.2",
     "jsdoc-to-markdown": "^7.1.1",
     "lerna": "^4.0.0",
     "mocha": "^9.1.4"
