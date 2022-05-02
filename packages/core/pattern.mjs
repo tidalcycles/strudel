@@ -287,7 +287,7 @@ export class Pattern {
     return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._TrigzeroJoin();
   }
 
-  _asNumber(softfail = false) {
+  _asNumber(dropfails = false, softfail = false) {
     return this._withEvent((event) => {
       const asNumber = Number(event.value);
       if (!isNaN(asNumber)) {
@@ -304,12 +304,21 @@ export class Pattern {
         // set context type to midi to let the player know its meant as midi number and not as frequency
         return new Hap(event.whole, event.part, toMidi(event.value), { ...event.context, type: 'midi' });
       }
-      if (!softfail) {
-        throw new Error('cannot parse as number: "' + event.value + '"');
+      if (dropfail) {
+        // return 'nothing'
+        return undefined;
       }
-      // Not a number, just return original hap
+      if (softfail) {
+        // return original hap
+        return event;
+      }
+      throw new Error('cannot parse as number: "' + event.value + '"');
       return event;
-    })._removeUndefineds();
+    });
+    if (dropfail) {
+      return result._removeUndefineds();
+    }
+    return result;
   }
 
   round() {
@@ -858,7 +867,7 @@ const composers = {
 };
 
 // generate methods to do what and how
-for (const [what, [op,numerical]] of Object.entries(composers)) {
+for (const [what, [op, numerical]] of Object.entries(composers)) {
   for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero']) {
     Pattern.prototype[what + how] = function (...other) {
       var pat = this;
