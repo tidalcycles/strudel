@@ -832,82 +832,89 @@ function _composeOp(a, b, func) {
   return func(a, b);
 }
 
-// pattern composers
-const composers = {
-  set: [(a, b) => b],
-  keep: [(a, b) => a],
-  keepif: [(a, b) => (b ? a : undefined)],
+// Make composers
+(function() {
+  const num = (pat) => pat._asNumber();
+  const numOrString = (pat) => pat._asNumber(false, true);
 
-  // numerical functions
-  add: [(a, b) => a + b, true],
-  sub: [(a, b) => a - b, true],
-  mul: [(a, b) => a * b, true],
-  div: [(a, b) => a / b, true],
-  mod: [mod, true],
-  pow: [Math.pow, true],
-  _and: [(a, b) => a & b, true],
-  _or: [(a, b) => a | b, true],
-  _xor: [(a, b) => a ^ b, true],
-  _lshift: [(a, b) => a << b, true],
-  _rshift: [(a, b) => a >> b, true],
+  // pattern composers
+  const composers = {
+    set: [(a, b) => b],
+    keep: [(a, b) => a],
+    keepif: [(a, b) => (b ? a : undefined)],
 
-  lt: [(a, b) => a < b],
-  gt: [(a, b) => a > b],
-  lte: [(a, b) => a <= b],
-  gte: [(a, b) => a >= b],
-  eq: [(a, b) => a == b],
-  eqt: [(a, b) => a === b],
-  ne: [(a, b) => a != b],
-  net: [(a, b) => a !== b],
-  and: [(a, b) => a && b],
-  or: [(a, b) => a || b],
+    // numerical functions
+    add: [(a, b) => a + b, numOrString], // support string concatenation
+    sub: [(a, b) => a - b, num],
+    mul: [(a, b) => a * b, num],
+    div: [(a, b) => a / b, num],
+    mod: [mod, num],
+    pow: [Math.pow, num],
+    _and: [(a, b) => a & b, num],
+    _or: [(a, b) => a | b, num],
+    _xor: [(a, b) => a ^ b, num],
+    _lshift: [(a, b) => a << b, num],
+    _rshift: [(a, b) => a >> b, num],
 
-  //  bitwise ops
-  func: [(a, b) => b(a)],
-};
+    // TODO - force numerical comparison if both look like numbers?
+    lt: [(a, b) => a < b],
+    gt: [(a, b) => a > b],
+    lte: [(a, b) => a <= b],
+    gte: [(a, b) => a >= b],
+    eq: [(a, b) => a == b],
+    eqt: [(a, b) => a === b],
+    ne: [(a, b) => a != b],
+    net: [(a, b) => a !== b],
+    and: [(a, b) => a && b],
+    or: [(a, b) => a || b],
 
-// generate methods to do what and how
-for (const [what, [op, numerical]] of Object.entries(composers)) {
-  for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero']) {
-    Pattern.prototype[what + how] = function (...other) {
-      var pat = this;
-      other = sequence(other);
-      if (numerical) {
-        pat = pat._asNumber();
-        other = other._asNumber();
+    //  bitwise ops
+    func: [(a, b) => b(a)],
+  };
+
+  // generate methods to do what and how
+  for (const [what, [op, preprocess]] of Object.entries(composers)) {
+    for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero']) {
+      Pattern.prototype[what + how] = function (...other) {
+        var pat = this;
+        other = sequence(other);
+        if (preprocess) {
+          pat = preprocess(pat);
+          other = preprocess(other);
+        }
+        var result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
+        // hack to remove undefs when doing 'keepif'
+        if (what === 'keepif') {
+          result = result._removeUndefineds();
+        }
+        return result;
+      };
+      if (how === 'Squeeze') {
+        // support 'squeezeIn' longhand
+        Pattern.prototype[what + 'SqueezeIn'] = Pattern.prototype[what + how];
       }
-      var result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
-      // hack to remove undefs when doing 'keepif'
-      if (what === 'keepif') {
-        result = result._removeUndefineds();
-      }
-      return result;
-    };
-    if (how === 'Squeeze') {
-      // support 'squeezeIn' longhand
-      Pattern.prototype[what + 'SqueezeIn'] = Pattern.prototype[what + how];
-    }
-    if (how === 'In') {
-      // default how to 'in', e.g. add == addIn
-      Pattern.prototype[what] = Pattern.prototype[what + how];
-    } else {
-      // default what to 'set', e.g. squeeze = setSqueeze
-      if (what === 'set') {
-        Pattern.prototype[how.toLowerCase()] = Pattern.prototype[what + how];
+      if (how === 'In') {
+        // default how to 'in', e.g. add == addIn
+        Pattern.prototype[what] = Pattern.prototype[what + how];
+      } else {
+        // default what to 'set', e.g. squeeze = setSqueeze
+        if (what === 'set') {
+          Pattern.prototype[how.toLowerCase()] = Pattern.prototype[what + how];
+        }
       }
     }
   }
-}
 
-// binary composers
-Pattern.prototype.struct = Pattern.prototype.keepifOut;
-Pattern.prototype.structAll = Pattern.prototype.keepOut;
-Pattern.prototype.mask = Pattern.prototype.keepifIn;
-Pattern.prototype.maskAll = Pattern.prototype.keepIn;
-Pattern.prototype.reset = Pattern.prototype.keepifTrig;
-Pattern.prototype.resetAll = Pattern.prototype.keepTrig;
-Pattern.prototype.restart = Pattern.prototype.keepifTrigzero;
-Pattern.prototype.restartAll = Pattern.prototype.keepTrigzero;
+  // binary composers
+  Pattern.prototype.struct = Pattern.prototype.keepifOut;
+  Pattern.prototype.structAll = Pattern.prototype.keepOut;
+  Pattern.prototype.mask = Pattern.prototype.keepifIn;
+  Pattern.prototype.maskAll = Pattern.prototype.keepIn;
+  Pattern.prototype.reset = Pattern.prototype.keepifTrig;
+  Pattern.prototype.resetAll = Pattern.prototype.keepTrig;
+  Pattern.prototype.restart = Pattern.prototype.keepifTrigzero;
+  Pattern.prototype.restartAll = Pattern.prototype.keepTrigzero;
+})();
 
 // methods of Pattern that get callable factories
 Pattern.prototype.patternified = [
