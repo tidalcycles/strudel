@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 export * from './controls.mjs';
 export * from './euclid.mjs';
 import Fraction from './fraction.mjs';
-export {Fraction};
+export { Fraction };
 export * from './hap.mjs';
 export * from './pattern.mjs';
 export * from './signal.mjs';

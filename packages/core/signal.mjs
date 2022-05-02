@@ -80,7 +80,10 @@ export const chooseWith = (pat, xs) => {
   if (xs.length == 0) {
     return silence;
   }
-  return pat.range(0, xs.length).fmap((i) => xs[Math.floor(i)]).outerJoin();
+  return pat
+    .range(0, xs.length)
+    .fmap((i) => xs[Math.floor(i)])
+    .outerJoin();
 };
 
 export const choose = (...xs) => chooseWith(rand, xs);
@@ -94,14 +97,14 @@ const _wchooseWith = function (pat, ...pairs) {
     weights.push(accum);
   }
   const total = accum;
-  const match = function(r) {
+  const match = function (r) {
     const find = r * total;
     return values[weights.findIndex((x) => x > find, weights)];
   };
   return pat.fmap(match);
 };
 
-const wchooseWith = (...args) => _wchooseWith(...args).outerJoin()
+const wchooseWith = (...args) => _wchooseWith(...args).outerJoin();
 
 export const wchoose = (...pairs) => wchooseWith(rand, ...pairs);
 

@@ -22,7 +22,7 @@
   ],
   "author": "Felix Roos <flix91@gmail.com>",
   "contributors": ["Alex McLean <alex@slab.org>"],
-  "license": "GPL-3.0-or-later",
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },

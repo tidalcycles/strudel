@@ -1,12 +1,9 @@
 {
-  "name": "@strudel.cycles/mini",
-  "version": "0.0.7",
-  "description": "Mini notation for strudel",
-  "main": "mini.mjs",
+  "name": "@strudel.cycles/embed",
+  "version": "0.0.2",
+  "description": "Embeddable Web Component to load a Strudel REPL into an iframe",
+  "main": "embed.js",
   "type": "module",
-  "scripts": {
-    "test": "mocha --colors"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -24,9 +21,5 @@
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
-  "dependencies": {
-    "@strudel.cycles/core": "^0.0.5",
-    "@strudel.cycles/eval": "^0.0.5",
-    "@strudel.cycles/tone": "^0.0.6"
-  }
+  "dependencies": {}
 }
