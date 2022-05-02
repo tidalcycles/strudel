@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { curry } from './util.mjs';
 
-function unionWithObj(a, b, func) {
+export function unionWithObj(a, b, func) {
   const common = Object.keys(a).filter((k) => Object.keys(b).includes(k));
   return Object.assign({}, a, b, Object.fromEntries(common.map((k) => [k, func(a[k], b[k])])));
 }

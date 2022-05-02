@@ -8,6 +8,7 @@ import TimeSpan from './timespan.mjs';
 import Fraction from './fraction.mjs';
 import Hap from './hap.mjs';
 import State from './state.mjs';
+import { unionWithObj } from './value.mjs';
 
 import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod } from './util.mjs';
 import drawLine from './drawLine.mjs';
@@ -142,6 +143,11 @@ export class Pattern {
     return this._filterEvents((hap) => hap.hasOnset());
   }
 
+  discreteOnly() {
+    // removes continuous events that don't have a 'whole' timespan
+    return this._filterEvents((hap) => hap.whole);
+  }
+
   _appWhole(whole_func, pat_val) {
     // Assumes 'this' is a pattern of functions, and given a function to
     // resolve wholes, applies a given pattern of values to that
@@ -254,26 +260,34 @@ export class Pattern {
     );
   }
 
-  _opLeft(other, func) {
+  _opIn(other, func) {
     return this.fmap(func).appLeft(reify(other));
   }
-  _opRight(other, func) {
+  _opOut(other, func) {
     return this.fmap(func).appRight(reify(other));
   }
-  _opBoth(other, func) {
+  _opMix(other, func) {
     return this.fmap(func).appBoth(reify(other));
   }
   _opSqueeze(other, func) {
     const otherPat = reify(other);
     return this.fmap((a) => otherPat.fmap((b) => func(a)(b)))._squeezeJoin();
   }
-  _opSqueezeFlip(other, func) {
+  _opSqueezeOut(other, func) {
     const thisPat = this;
     const otherPat = reify(other);
     return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a)))._squeezeJoin();
   }
+  _opTrig(other, func) {
+    const otherPat = reify(other);
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._trigJoin();
+  }
+  _opTrigzero(other, func) {
+    const otherPat = reify(other);
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._TrigzeroJoin();
+  }
 
-  _asNumber(silent = false) {
+  _asNumber(dropfails = false, softfail = false) {
     return this._withEvent((event) => {
       const asNumber = Number(event.value);
       if (!isNaN(asNumber)) {
@@ -290,11 +304,21 @@ export class Pattern {
         // set context type to midi to let the player know its meant as midi number and not as frequency
         return new Hap(event.whole, event.part, toMidi(event.value), { ...event.context, type: 'midi' });
       }
-      if (!silent) {
-        throw new Error('cannot parse as number: "' + event.value + '"');
+      if (dropfail) {
+        // return 'nothing'
+        return undefined;
       }
-      return event.withValue(() => undefined); // silent error
-    })._removeUndefineds();
+      if (softfail) {
+        // return original hap
+        return event;
+      }
+      throw new Error('cannot parse as number: "' + event.value + '"');
+      return event;
+    });
+    if (dropfail) {
+      return result._removeUndefineds();
+    }
+    return result;
   }
 
   round() {
@@ -389,10 +413,47 @@ export class Pattern {
     return this.innerBind(id);
   }
 
+  // Flatterns patterns of patterns, by retriggering/resetting inner patterns at onsets of outer pattern events
+  _trigJoin(cycleZero = false) {
+    const pat_of_pats = this;
+    return new Pattern((state) => {
+      return (
+        pat_of_pats
+          // drop continuous events from the outer pattern.
+          .discreteOnly()
+          .query(state)
+          .map((outer_hap) => {
+            return (
+              outer_hap.value
+                // trig = align the inner pattern cycle start to outer pattern events
+                // Trigzero = align the inner pattern cycle zero to outer pattern events
+                .late(cycleZero ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
+                .query(state)
+                .map((inner_hap) =>
+                  new Hap(
+                    // Supports continuous events in the inner pattern
+                    inner_hap.whole ? inner_hap.whole.intersection(outer_hap.whole) : undefined,
+                    inner_hap.part.intersection(outer_hap.part),
+                    inner_hap.value,
+                  ).setContext(outer_hap.combineContext(inner_hap)),
+                )
+                // Drop events that didn't intersect
+                .filter((hap) => hap.part)
+            );
+          })
+          .flat()
+      );
+    });
+  }
+
+  _TrigzeroJoin() {
+    return this._trigJoin(true);
+  }
+
   _squeezeJoin() {
     const pat_of_pats = this;
     function query(state) {
-      const haps = pat_of_pats.query(state);
+      const haps = pat_of_pats.discreteOnly().query(state);
       function flatHap(outerHap) {
         const pat = outerHap.value._compressSpan(outerHap.wholeOrPart().cycleArc());
         const innerHaps = pat.query(state.setSpan(outerHap.part));
@@ -548,23 +609,23 @@ export class Pattern {
     return this._zoom(0, t)._slow(t);
   }
 
-  struct(...binary_pats) {
-    // Re structure the pattern according to a binary pattern (false values are dropped)
-    const binary_pat = sequence(binary_pats);
-    return binary_pat
-      .fmap((b) => (val) => b ? val : undefined)
-      .appLeft(this)
-      ._removeUndefineds();
-  }
+  // struct(...binary_pats) {
+  //   // Re structure the pattern according to a binary pattern (false values are dropped)
+  //   const binary_pat = sequence(binary_pats);
+  //   return binary_pat
+  //     .fmap((b) => (val) => b ? val : undefined)
+  //     .appLeft(this)
+  //     ._removeUndefineds();
+  // }
 
-  mask(...binary_pats) {
-    // Only let through parts of pattern corresponding to true values in the given binary pattern
-    const binary_pat = sequence(binary_pats);
-    return binary_pat
-      .fmap((b) => (val) => b ? val : undefined)
-      .appRight(this)
-      ._removeUndefineds();
-  }
+  // mask(...binary_pats) {
+  //   // Only let through parts of pattern corresponding to true values in the given binary pattern
+  //   const binary_pat = sequence(binary_pats);
+  //   return binary_pat
+  //     .fmap((b) => (val) => b ? val : undefined)
+  //     .appRight(this)
+  //     ._removeUndefineds();
+  // }
 
   _color(color) {
     return this._withContext((context) => ({ ...context, color }));
@@ -754,48 +815,106 @@ export class Pattern {
   }
 }
 
-// pattern composers
-const composers = {
-  set: [
-    (a) => (b) => {
-      // If an object is involved, do a union, discarding matching keys from a.
-      // Otherwise, just return b.
-      if (a instanceof Object || b instanceof Object) {
-        if (!a instanceof Object) {
-          a = { value: a };
-        }
-        if (!b instanceof Object) {
-          b = { value: b };
-        }
-        return Object.assign({}, a, b);
-      }
-      return b;
-    },
-    id,
-  ],
-  add: [(a) => (b) => a + b, (x) => x._asNumber()],
-  sub: [(a) => (b) => a - b, (x) => x._asNumber()],
-  mul: [(a) => (b) => a * b, (x) => x._asNumber()],
-  div: [(a) => (b) => a / b, (x) => x._asNumber()],
-};
-
-for (const [name, op] of Object.entries(composers)) {
-  Pattern.prototype[name] = function (...other) {
-    return op[1](this)._opLeft(sequence(other), op[0]);
-  };
-  Pattern.prototype[name + 'Flip'] = function (...other) {
-    return op[1](this)._opRight(sequence(other), op[0]);
-  };
-  Pattern.prototype[name + 'Sect'] = function (...other) {
-    return op[1](this)._opBoth(sequence(other), op[0]);
-  };
-  Pattern.prototype[name + 'Squeeze'] = function (...other) {
-    return op[1](this)._opSqueeze(sequence(other), op[0]);
-  };
-  Pattern.prototype[name + 'SqueezeFlip'] = function (...other) {
-    return op[1](this)._opSqueezeFlip(sequence(other), op[0]);
-  };
+// TODO - adopt value.mjs fully..
+function _composeOp(a, b, func) {
+  function _nonFunctionObject(x) {
+    return x instanceof Object && !(x instanceof Function);
+  }
+  if (_nonFunctionObject(a) || _nonFunctionObject(b)) {
+    if (!_nonFunctionObject(a)) {
+      a = { value: a };
+    }
+    if (!_nonFunctionObject(b)) {
+      b = { value: b };
+    }
+    return unionWithObj(a, b, func);
+  }
+  return func(a, b);
 }
+
+// Make composers
+(function() {
+  const num = (pat) => pat._asNumber();
+  const numOrString = (pat) => pat._asNumber(false, true);
+
+  // pattern composers
+  const composers = {
+    set: [(a, b) => b],
+    keep: [(a, b) => a],
+    keepif: [(a, b) => (b ? a : undefined)],
+
+    // numerical functions
+    add: [(a, b) => a + b, numOrString], // support string concatenation
+    sub: [(a, b) => a - b, num],
+    mul: [(a, b) => a * b, num],
+    div: [(a, b) => a / b, num],
+    mod: [mod, num],
+    pow: [Math.pow, num],
+    _and: [(a, b) => a & b, num],
+    _or: [(a, b) => a | b, num],
+    _xor: [(a, b) => a ^ b, num],
+    _lshift: [(a, b) => a << b, num],
+    _rshift: [(a, b) => a >> b, num],
+
+    // TODO - force numerical comparison if both look like numbers?
+    lt: [(a, b) => a < b],
+    gt: [(a, b) => a > b],
+    lte: [(a, b) => a <= b],
+    gte: [(a, b) => a >= b],
+    eq: [(a, b) => a == b],
+    eqt: [(a, b) => a === b],
+    ne: [(a, b) => a != b],
+    net: [(a, b) => a !== b],
+    and: [(a, b) => a && b],
+    or: [(a, b) => a || b],
+
+    //  bitwise ops
+    func: [(a, b) => b(a)],
+  };
+
+  // generate methods to do what and how
+  for (const [what, [op, preprocess]] of Object.entries(composers)) {
+    for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero']) {
+      Pattern.prototype[what + how] = function (...other) {
+        var pat = this;
+        other = sequence(other);
+        if (preprocess) {
+          pat = preprocess(pat);
+          other = preprocess(other);
+        }
+        var result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
+        // hack to remove undefs when doing 'keepif'
+        if (what === 'keepif') {
+          result = result._removeUndefineds();
+        }
+        return result;
+      };
+      if (how === 'Squeeze') {
+        // support 'squeezeIn' longhand
+        Pattern.prototype[what + 'SqueezeIn'] = Pattern.prototype[what + how];
+      }
+      if (how === 'In') {
+        // default how to 'in', e.g. add == addIn
+        Pattern.prototype[what] = Pattern.prototype[what + how];
+      } else {
+        // default what to 'set', e.g. squeeze = setSqueeze
+        if (what === 'set') {
+          Pattern.prototype[how.toLowerCase()] = Pattern.prototype[what + how];
+        }
+      }
+    }
+  }
+
+  // binary composers
+  Pattern.prototype.struct = Pattern.prototype.keepifOut;
+  Pattern.prototype.structAll = Pattern.prototype.keepOut;
+  Pattern.prototype.mask = Pattern.prototype.keepifIn;
+  Pattern.prototype.maskAll = Pattern.prototype.keepIn;
+  Pattern.prototype.reset = Pattern.prototype.keepifTrig;
+  Pattern.prototype.resetAll = Pattern.prototype.keepTrig;
+  Pattern.prototype.restart = Pattern.prototype.keepifTrigzero;
+  Pattern.prototype.restartAll = Pattern.prototype.keepTrigzero;
+})();
 
 // methods of Pattern that get callable factories
 Pattern.prototype.patternified = [
