@@ -86,6 +86,10 @@ export class Hap {
     return `${this.whole == undefined ? '~' : this.whole.show()}: ${this.value}`;
   }
 
+  showWhole() {
+    return `${this.whole == undefined ? '~' : this.whole.show()}: ${this.value}`;
+  }
+
   combineContext(b) {
     const a = this;
     return { ...a.context, ...b.context, locations: (a.context.locations || []).concat(b.context.locations || []) };
