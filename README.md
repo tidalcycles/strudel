@@ -27,8 +27,10 @@ There are multiple npm packages you can use to use strudel, or only parts of it,
 - [`tone`](./packages/tone): bindings for Tone.js instruments and effects
 - [`osc`](./packages/osc): bindings to communicate via OSC
 - [`midi`](./packages/midi): webmidi bindings
+- [`serial`](./packages/serial): webserial bindings
 - [`tonal`](./packages/tonal): tonal functions
 - [`xen`](./packages/xen): microtonal / xenharmonic functions
+- ... [and there are more](./packages/)
 
 Click on the package names to find out more about each one.
 

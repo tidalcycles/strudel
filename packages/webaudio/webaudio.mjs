@@ -1,11 +1,19 @@
-import { Pattern } from '@strudel.cycles/core';
+/*
+webaudio.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/webaudio/webaudio.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 
-let audioContext;
+import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
+import { Tone } from '@strudel.cycles/tone';
+
+// let audioContext;
 export const getAudioContext = () => {
-  if (!audioContext) {
+  return Tone.getContext().rawContext;
+  /* if (!audioContext) {
     audioContext = new AudioContext();
   }
-  return audioContext;
+  return audioContext; */
 };
 
 const lookahead = 0.2;
@@ -25,50 +33,61 @@ Pattern.prototype.withAudioNode = function (createAudioNode) {
   return this._withEvent((event) => {
     return event.setContext({
       ...event.context,
-      createAudioNode: (e) => createAudioNode(e, event.context.createAudioNode?.(event)),
+      createAudioNode: (t, e) => createAudioNode(t, e, event.context.createAudioNode?.(t, event)),
     });
   });
 };
 
-Pattern.prototype._osc = function (type) {
-  return this.withAudioNode((e) => {
+Pattern.prototype._wave = function (type) {
+  return this.withAudioNode((t, e) => {
     const osc = getAudioContext().createOscillator();
     osc.type = type;
-    osc.frequency.value = e.value; // expects frequency..
-    osc.start(e.whole.begin.valueOf() + lookahead);
-    osc.stop(e.whole.end.valueOf() + lookahead); // release?
+    const f = getFrequency(e);
+    osc.frequency.value = f; // expects frequency..
+    const begin = t ?? e.whole.begin.valueOf() + lookahead;
+    const end = begin + e.duration.valueOf();
+    osc.start(begin);
+    osc.stop(end); // release?
     return osc;
   });
 };
 Pattern.prototype.adsr = function (a = 0.01, d = 0.05, s = 1, r = 0.01) {
-  return this.withAudioNode((e, node) => {
+  return this.withAudioNode((t, e, node) => {
     const velocity = e.context?.velocity || 1;
-    const envelope = adsr(a, d, s, r, velocity, e.whole.begin.valueOf() + lookahead, e.whole.end.valueOf() + lookahead);
+    const begin = t ?? e.whole.begin.valueOf() + lookahead;
+    const end = begin + e.duration.valueOf() + lookahead;
+    const envelope = adsr(a, d, s, r, velocity, begin, end);
     node?.connect(envelope);
     return envelope;
   });
 };
-Pattern.prototype.filter = function (type = 'lowshelf', frequency = 1000, gain = 25) {
-  return this.withAudioNode((e, node) => {
+Pattern.prototype._filter = function (type = 'lowpass', frequency = 1000) {
+  return this.withAudioNode((t, e, node) => {
     const filter = getAudioContext().createBiquadFilter();
     filter.type = type;
     filter.frequency.value = frequency;
-    filter.gain.value = gain;
     node?.connect(filter);
     return filter;
   });
+};
+
+Pattern.prototype.filter = function (type, frequency) {
+  return patternify2(Pattern.prototype._filter)(reify(type), reify(frequency), this);
 };
 
 Pattern.prototype.out = function () {
   const master = getAudioContext().createGain();
   master.gain.value = 0.1;
   master.connect(getAudioContext().destination);
-  return this.withAudioNode((e, node) => {
+  return this.withAudioNode((t, e, node) => {
     if (!node) {
       console.warn('out: no source! call .osc() first');
     }
     node?.connect(master);
+  })._withEvent((event) => {
+    const onTrigger = (time, e) => e.context?.createAudioNode?.(time, e);
+    return event.setContext({ ...event.context, onTrigger });
   });
 };
 
-Pattern.prototype.define('osc', (type, pat) => pat.osc(type), { patternified: true });
+Pattern.prototype.define('wave', (type, pat) => pat.wave(type), { patternified: true });

@@ -3,16 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "https://strudel.tidalcycles.org",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
+    "@codemirror/lang-javascript": "^0.19.0",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
-    "codemirror": "^5.65.2",
+    "codemirror6-themes": "^0.1.2",
     "events": "^3.3.0",
     "gh-pages": "^3.2.3",
     "react": "^17.0.2",
-    "react-codemirror2": "^7.2.1",
+    "react-codemirror6": "^1.1.0",
     "react-dom": "^17.0.2",
+    "react-hook-inview": "^4.4.1",
     "react-scripts": "5.0.0",
     "tone": "^14.7.77",
     "web-vitals": "^2.1.4"
@@ -20,7 +23,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial",
-    "test": "react-scripts test",
+    "test": "mocha ./src/test --colors",
+    "snapshot": "cd ./src/ && rm -f ./tunes.snapshot.mjs && node ./shoot.mjs > ./tunes.snapshot.mjs",
     "eject": "react-scripts eject",
     "tutorial": "parcel src/tutorial/index.html --no-cache",
     "build-tutorial": "rm -rf ../docs/tutorial && parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-scope-hoist --no-cache",
@@ -53,6 +57,7 @@
     "autoprefixer": "^10.4.4",
     "parcel": "^2.3.1",
     "postcss": "^8.4.12",
+    "process": "^0.11.10",
     "serve": "^13.0.2",
     "tailwindcss": "^3.0.23"
   }

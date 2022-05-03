@@ -1,3 +1,9 @@
+/*
+util.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/util.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 // returns true if the given string is a note
 export const isNote = (name) => /^[a-gA-G][#b]*[0-9]$/.test(name);
 export const tokenizeNote = (note) => {
@@ -27,7 +33,7 @@ export const fromMidi = (n) => {
 
 // modulo that works with negative numbers e.g. mod(-1, 3) = 2
 // const mod = (n: number, m: number): number => (n < 0 ? mod(n + m, m) : n % m);
-export const mod = (n, m) => (n < 0 ? mod(n + m, m) : n % m);
+export const mod = (n, m) => ((n % m) + m) % m;
 
 export const getPlayableNoteValue = (event) => {
   let { value: note, context } = event;
@@ -38,6 +44,22 @@ export const getPlayableNoteValue = (event) => {
     throw new Error('not a note: ' + note);
   }
   return note;
+};
+
+export const getFrequency = (event) => {
+  let { value, context } = event;
+  // if value is number => interpret as midi number as long as its not marked as frequency
+  if (typeof value === 'object' && value.freq) {
+    return value.freq;
+  }
+  if (typeof value === 'number' && context.type !== 'frequency') {
+    value = fromMidi(event.value);
+  } else if (typeof value === 'string' && isNote(value)) {
+    value = fromMidi(toMidi(event.value));
+  } else if (typeof value !== 'number') {
+    throw new Error('not a note or frequency:' + value);
+  }
+  return value;
 };
 
 // rotate array by n steps (to the left)
@@ -60,6 +82,7 @@ export const removeUndefineds = (xs) => xs.filter((x) => x != undefined);
 export const flatten = (arr) => [].concat(...arr);
 
 export const id = (a) => a;
+export const constant = (a, b) => a;
 
 export const listRange = (min, max) => Array.from({ length: max - min + 1 }, (_, i) => i + min);
 

@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/eval",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Code evaluator for strudel",
   "main": "evaluate.mjs",
   "directories": {
@@ -22,13 +22,13 @@
     "algorave"
   ],
   "author": "Felix Roos <flix91@gmail.com>",
-  "license": "GPL-3.0-or-later",
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.0.3",
+    "@strudel.cycles/core": "^0.0.5",
     "estraverse": "^5.3.0",
     "shift-ast": "^6.1.0",
     "shift-codegen": "^7.0.3",

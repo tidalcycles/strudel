@@ -3,9 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "description": "Port of tidalcycles to javascript",
-  "main": "strudel.mjs",
   "scripts": {
-    "test": "npm run test --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present && cd repl && npm run test",
     "bootstrap": "lerna bootstrap",
     "setup": "npm i && npm run bootstrap && cd repl && npm i",
     "repl": "cd repl && npm run start",
@@ -27,7 +26,7 @@
     "algorave"
   ],
   "author": "Alex McLean <alex@slab.org> (https://slab.org)",
-  "license": "GPL-3.0-or-later",
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },

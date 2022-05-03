@@ -1,5 +1,12 @@
+/*
+util.test.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/test/util.test.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import { strict as assert } from 'assert';
-import { isNote, tokenizeNote, toMidi, mod, compose, dirtify } from '../util.mjs';
+import { pure } from '../pattern.mjs';
+import { isNote, tokenizeNote, toMidi, fromMidi, mod, compose, getFrequency, dirtify } from '../util.mjs';
 
 describe('isNote', () => {
   it('should recognize notes without accidentals', () => {
@@ -62,6 +69,21 @@ describe('toMidi', () => {
     assert.equal(toMidi('C#3'), 49);
     assert.equal(toMidi('C#3'), 49);
     assert.equal(toMidi('C##3'), 50);
+  });
+});
+describe('fromMidi', () => {
+  it('should turn midi into frequency', () => {
+    assert.equal(fromMidi(69), 440);
+    assert.equal(fromMidi(57), 220);
+  });
+});
+describe('getFrequency', () => {
+  it('should turn midi into frequency', () => {
+    const happify = (val, context = {}) => pure(val).firstCycle()[0].setContext(context);
+    assert.equal(getFrequency(happify('a4')), 440);
+    assert.equal(getFrequency(happify('a3')), 220);
+    assert.equal(getFrequency(happify(440, { type: 'frequency' })), 440); // TODO: migrate when values are objects..
+    assert.equal(getFrequency(happify(432, { type: 'frequency' })), 432);
   });
 });
 

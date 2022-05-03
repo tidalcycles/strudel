@@ -1,9 +1,17 @@
+/*
+pattern.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/pattern.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import TimeSpan from './timespan.mjs';
 import Fraction from './fraction.mjs';
 import Hap from './hap.mjs';
 import State from './state.mjs';
+import { unionWithObj } from './value.mjs';
 
-import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, objectify } from './util.mjs';
+import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod, objectify } from './util.mjs';
+import drawLine from './drawLine.mjs';
 
 export class Pattern {
   // the following functions will get patternFactories as nested functions:
@@ -135,6 +143,11 @@ export class Pattern {
     return this._filterEvents((hap) => hap.hasOnset());
   }
 
+  discreteOnly() {
+    // removes continuous events that don't have a 'whole' timespan
+    return this._filterEvents((hap) => hap.whole);
+  }
+
   _appWhole(whole_func, pat_val) {
     // Assumes 'this' is a pattern of functions, and given a function to
     // resolve wholes, applies a given pattern of values to that
@@ -179,14 +192,16 @@ export class Pattern {
     const query = function (state) {
       const haps = [];
       for (const hap_func of pat_func.query(state)) {
-        const event_vals = pat_val.query(state.setSpan(hap_func.part));
+        const event_vals = pat_val.query(state.setSpan(hap_func.wholeOrPart()));
         for (const hap_val of event_vals) {
           const new_whole = hap_func.whole;
-          const new_part = hap_func.part.intersection_e(hap_val.part);
-          const new_value = hap_func.value(hap_val.value);
-          const new_context = hap_val.combineContext(hap_func);
-          const hap = new Hap(new_whole, new_part, new_value, new_context);
-          haps.push(hap);
+          const new_part = hap_func.part.intersection(hap_val.part);
+          if (new_part) {
+            const new_value = hap_func.value(hap_val.value);
+            const new_context = hap_val.combineContext(hap_func);
+            const hap = new Hap(new_whole, new_part, new_value, new_context);
+            haps.push(hap);
+          }
         }
       }
       return haps;
@@ -200,14 +215,16 @@ export class Pattern {
     const query = function (state) {
       const haps = [];
       for (const hap_val of pat_val.query(state)) {
-        const hap_funcs = pat_func.query(state.setSpan(hap_val.part));
+        const hap_funcs = pat_func.query(state.setSpan(hap_val.wholeOrPart()));
         for (const hap_func of hap_funcs) {
           const new_whole = hap_val.whole;
-          const new_part = hap_func.part.intersection_e(hap_val.part);
-          const new_value = hap_func.value(hap_val.value);
-          const new_context = hap_val.combineContext(hap_func);
-          const hap = new Hap(new_whole, new_part, new_value, new_context);
-          haps.push(hap);
+          const new_part = hap_func.part.intersection(hap_val.part);
+          if (new_part) {
+            const new_value = hap_func.value(hap_val.value);
+            const new_context = hap_val.combineContext(hap_func);
+            const hap = new Hap(new_whole, new_part, new_value, new_context);
+            haps.push(hap);
+          }
         }
       }
       return haps;
@@ -243,11 +260,34 @@ export class Pattern {
     );
   }
 
-  _opleft(other, func) {
+  _opIn(other, func) {
     return this.fmap(func).appLeft(reify(other));
   }
+  _opOut(other, func) {
+    return this.fmap(func).appRight(reify(other));
+  }
+  _opMix(other, func) {
+    return this.fmap(func).appBoth(reify(other));
+  }
+  _opSqueeze(other, func) {
+    const otherPat = reify(other);
+    return this.fmap((a) => otherPat.fmap((b) => func(a)(b)))._squeezeJoin();
+  }
+  _opSqueezeOut(other, func) {
+    const thisPat = this;
+    const otherPat = reify(other);
+    return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a)))._squeezeJoin();
+  }
+  _opTrig(other, func) {
+    const otherPat = reify(other);
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._trigJoin();
+  }
+  _opTrigzero(other, func) {
+    const otherPat = reify(other);
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._TrigzeroJoin();
+  }
 
-  _asNumber(silent = false) {
+  _asNumber(dropfails = false, softfail = false) {
     return this._withEvent((event) => {
       const asNumber = Number(event.value);
       if (!isNaN(asNumber)) {
@@ -264,27 +304,21 @@ export class Pattern {
         // set context type to midi to let the player know its meant as midi number and not as frequency
         return new Hap(event.whole, event.part, toMidi(event.value), { ...event.context, type: 'midi' });
       }
-      if (!silent) {
-        throw new Error('cannot parse as number: "' + event.value + '"');
+      if (dropfail) {
+        // return 'nothing'
+        return undefined;
       }
-      return event.withValue(() => undefined); // silent error
-    })._removeUndefineds();
-  }
-
-  add(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a + b);
-  }
-
-  sub(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a - b);
-  }
-
-  mul(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a * b);
-  }
-
-  div(other) {
-    return this._asNumber()._opleft(other, (a) => (b) => a / b);
+      if (softfail) {
+        // return original hap
+        return event;
+      }
+      throw new Error('cannot parse as number: "' + event.value + '"');
+      return event;
+    });
+    if (dropfail) {
+      return result._removeUndefineds();
+    }
+    return result;
   }
 
   round() {
@@ -309,6 +343,10 @@ export class Pattern {
   // Assumes source pattern of numbers in range 0..1
   range(min, max) {
     return this.mul(max - min).add(min);
+  }
+
+  rangex(min, max) {
+    return this.range(Math.log(min), Math.log(max)).fmap(Math.exp);
   }
 
   // Assumes source pattern of numbers in range -1..1
@@ -379,10 +417,47 @@ export class Pattern {
     return this.innerBind(id);
   }
 
+  // Flatterns patterns of patterns, by retriggering/resetting inner patterns at onsets of outer pattern events
+  _trigJoin(cycleZero = false) {
+    const pat_of_pats = this;
+    return new Pattern((state) => {
+      return (
+        pat_of_pats
+          // drop continuous events from the outer pattern.
+          .discreteOnly()
+          .query(state)
+          .map((outer_hap) => {
+            return (
+              outer_hap.value
+                // trig = align the inner pattern cycle start to outer pattern events
+                // Trigzero = align the inner pattern cycle zero to outer pattern events
+                .late(cycleZero ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
+                .query(state)
+                .map((inner_hap) =>
+                  new Hap(
+                    // Supports continuous events in the inner pattern
+                    inner_hap.whole ? inner_hap.whole.intersection(outer_hap.whole) : undefined,
+                    inner_hap.part.intersection(outer_hap.part),
+                    inner_hap.value,
+                  ).setContext(outer_hap.combineContext(inner_hap)),
+                )
+                // Drop events that didn't intersect
+                .filter((hap) => hap.part)
+            );
+          })
+          .flat()
+      );
+    });
+  }
+
+  _TrigzeroJoin() {
+    return this._trigJoin(true);
+  }
+
   _squeezeJoin() {
     const pat_of_pats = this;
     function query(state) {
-      const haps = pat_of_pats.query(state);
+      const haps = pat_of_pats.discreteOnly().query(state);
       function flatHap(outerHap) {
         const pat = outerHap.value._compressSpan(outerHap.wholeOrPart().cycleArc());
         const innerHaps = pat.query(state.setSpan(outerHap.part));
@@ -460,7 +535,7 @@ export class Pattern {
   }
 
   _compress(b, e) {
-    if (b > e || b > 1 || e > 1 || b < 0 || e < 0) {
+    if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
       return silence;
     }
     return this._fastGap(Fraction(1).div(e.sub(b)))._late(b);
@@ -490,6 +565,13 @@ export class Pattern {
       return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
     };
     return this._squeezeBind(func);
+  }
+
+  _striate(n) {
+    const slices = Array.from({ length: n }, (x, i) => i);
+    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+    const slicePat = slowcat(...slice_objects);
+    return this.set(slicePat)._fast(n);
   }
 
   // cpm = cycles per minute
@@ -531,30 +613,41 @@ export class Pattern {
     return this._zoom(0, t)._slow(t);
   }
 
-  struct(...binary_pats) {
-    // Re structure the pattern according to a binary pattern (false values are dropped)
-    const binary_pat = sequence(binary_pats);
-    return binary_pat
-      .fmap((b) => (val) => b ? val : undefined)
-      .appLeft(this)
-      ._removeUndefineds();
-  }
+  // struct(...binary_pats) {
+  //   // Re structure the pattern according to a binary pattern (false values are dropped)
+  //   const binary_pat = sequence(binary_pats);
+  //   return binary_pat
+  //     .fmap((b) => (val) => b ? val : undefined)
+  //     .appLeft(this)
+  //     ._removeUndefineds();
+  // }
 
-  mask(...binary_pats) {
-    // Only let through parts of pattern corresponding to true values in the given binary pattern
-    const binary_pat = sequence(binary_pats);
-    return binary_pat
-      .fmap((b) => (val) => b ? val : undefined)
-      .appRight(this)
-      ._removeUndefineds();
-  }
+  // mask(...binary_pats) {
+  //   // Only let through parts of pattern corresponding to true values in the given binary pattern
+  //   const binary_pat = sequence(binary_pats);
+  //   return binary_pat
+  //     .fmap((b) => (val) => b ? val : undefined)
+  //     .appRight(this)
+  //     ._removeUndefineds();
+  // }
 
   _color(color) {
     return this._withContext((context) => ({ ...context, color }));
   }
 
+  log() {
+    return this._withEvent((e) => {
+      return e.setContext({ ...e.context, logs: (e.context?.logs || []).concat([e.show()]) });
+    });
+  }
+
+  drawLine() {
+    console.log(drawLine(this));
+    return this;
+  }
+
   _segment(rate) {
-    return this.struct(pure(true).fast(rate));
+    return this.struct(pure(true)._fast(rate));
   }
 
   invert() {
@@ -587,10 +680,6 @@ export class Pattern {
     return slowcatPrime(...pats);
   }
 
-  append(other) {
-    return fastcat(...[this, other]);
-  }
-
   rev() {
     const pat = this;
     const query = function (state) {
@@ -611,6 +700,10 @@ export class Pattern {
     return new Pattern(query)._splitQueries();
   }
 
+  palindrome() {
+    return this.every(2, rev);
+  }
+
   juxBy(by, func) {
     by /= 2;
     const elem_or = function (dict, key, dflt) {
@@ -629,12 +722,29 @@ export class Pattern {
     return this.juxBy(1, func);
   }
 
-  // is there a different name for those in tidal?
   stack(...pats) {
     return stack(this, ...pats);
   }
+
   sequence(...pats) {
     return sequence(this, ...pats);
+  }
+
+  // shorthand for sequence
+  seq(...pats) {
+    return sequence(this, ...pats);
+  }
+
+  cat(...pats) {
+    return cat(this, ...pats);
+  }
+
+  fastcat(...pats) {
+    return fastcat(this, ...pats);
+  }
+
+  slowcat(...pats) {
+    return slowcat(this, ...pats);
   }
 
   superimpose(...funcs) {
@@ -642,7 +752,7 @@ export class Pattern {
   }
 
   stutWith(times, time, func) {
-    return stack(...listRange(0, times - 1).map((i) => func(this.late(i * time), i)));
+    return stack(...listRange(0, times - 1).map((i) => func(this.late(Fraction(time).mul(i)), i)));
   }
 
   stut(times, feedback, time) {
@@ -651,7 +761,7 @@ export class Pattern {
 
   // these might change with: https://github.com/tidalcycles/Tidal/issues/902
   _echoWith(times, time, func) {
-    return stack(...listRange(0, times - 1).map((i) => func(this.late(i * time), i)));
+    return stack(...listRange(0, times - 1).map((i) => func(this.late(Fraction(time).mul(i)), i)));
   }
 
   _echo(times, time, feedback) {
@@ -709,6 +819,107 @@ export class Pattern {
   }
 }
 
+// TODO - adopt value.mjs fully..
+function _composeOp(a, b, func) {
+  function _nonFunctionObject(x) {
+    return x instanceof Object && !(x instanceof Function);
+  }
+  if (_nonFunctionObject(a) || _nonFunctionObject(b)) {
+    if (!_nonFunctionObject(a)) {
+      a = { value: a };
+    }
+    if (!_nonFunctionObject(b)) {
+      b = { value: b };
+    }
+    return unionWithObj(a, b, func);
+  }
+  return func(a, b);
+}
+
+// Make composers
+(function() {
+  const num = (pat) => pat._asNumber();
+  const numOrString = (pat) => pat._asNumber(false, true);
+
+  // pattern composers
+  const composers = {
+    set: [(a, b) => b],
+    keep: [(a, b) => a],
+    keepif: [(a, b) => (b ? a : undefined)],
+
+    // numerical functions
+    add: [(a, b) => a + b, numOrString], // support string concatenation
+    sub: [(a, b) => a - b, num],
+    mul: [(a, b) => a * b, num],
+    div: [(a, b) => a / b, num],
+    mod: [mod, num],
+    pow: [Math.pow, num],
+    _and: [(a, b) => a & b, num],
+    _or: [(a, b) => a | b, num],
+    _xor: [(a, b) => a ^ b, num],
+    _lshift: [(a, b) => a << b, num],
+    _rshift: [(a, b) => a >> b, num],
+
+    // TODO - force numerical comparison if both look like numbers?
+    lt: [(a, b) => a < b],
+    gt: [(a, b) => a > b],
+    lte: [(a, b) => a <= b],
+    gte: [(a, b) => a >= b],
+    eq: [(a, b) => a == b],
+    eqt: [(a, b) => a === b],
+    ne: [(a, b) => a != b],
+    net: [(a, b) => a !== b],
+    and: [(a, b) => a && b],
+    or: [(a, b) => a || b],
+
+    //  bitwise ops
+    func: [(a, b) => b(a)],
+  };
+
+  // generate methods to do what and how
+  for (const [what, [op, preprocess]] of Object.entries(composers)) {
+    for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero']) {
+      Pattern.prototype[what + how] = function (...other) {
+        var pat = this;
+        other = sequence(other);
+        if (preprocess) {
+          pat = preprocess(pat);
+          other = preprocess(other);
+        }
+        var result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
+        // hack to remove undefs when doing 'keepif'
+        if (what === 'keepif') {
+          result = result._removeUndefineds();
+        }
+        return result;
+      };
+      if (how === 'Squeeze') {
+        // support 'squeezeIn' longhand
+        Pattern.prototype[what + 'SqueezeIn'] = Pattern.prototype[what + how];
+      }
+      if (how === 'In') {
+        // default how to 'in', e.g. add == addIn
+        Pattern.prototype[what] = Pattern.prototype[what + how];
+      } else {
+        // default what to 'set', e.g. squeeze = setSqueeze
+        if (what === 'set') {
+          Pattern.prototype[how.toLowerCase()] = Pattern.prototype[what + how];
+        }
+      }
+    }
+  }
+
+  // binary composers
+  Pattern.prototype.struct = Pattern.prototype.keepifOut;
+  Pattern.prototype.structAll = Pattern.prototype.keepOut;
+  Pattern.prototype.mask = Pattern.prototype.keepifIn;
+  Pattern.prototype.maskAll = Pattern.prototype.keepIn;
+  Pattern.prototype.reset = Pattern.prototype.keepifTrig;
+  Pattern.prototype.resetAll = Pattern.prototype.keepTrig;
+  Pattern.prototype.restart = Pattern.prototype.keepifTrigzero;
+  Pattern.prototype.restartAll = Pattern.prototype.keepTrigzero;
+})();
+
 // methods of Pattern that get callable factories
 Pattern.prototype.patternified = [
   'apply',
@@ -724,11 +935,25 @@ Pattern.prototype.patternified = [
   'linger',
   'ply',
   'segment',
+  'striate',
   'slow',
   'velocity',
 ];
 // methods that create patterns, which are added to patternified Pattern methods
-Pattern.prototype.factories = { pure, stack, slowcat, fastcat, cat, timeCat, sequence, polymeter, pm, polyrhythm, pr };
+Pattern.prototype.factories = {
+  pure,
+  stack,
+  slowcat,
+  fastcat,
+  cat,
+  timeCat,
+  sequence,
+  seq,
+  polymeter,
+  pm,
+  polyrhythm,
+  pr,
+};
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
 
 // Elemental patterns
@@ -756,21 +981,26 @@ export function reify(thing) {
   }
   return pure(thing);
 }
+
 // Basic functions for combining patterns
 
 export function stack(...pats) {
-  const reified = pats.map((pat) => reify(pat));
-  const query = (state) => flatten(reified.map((pat) => pat.query(state)));
+  // Array test here is to avoid infinite recursions..
+  pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
+  const query = (state) => flatten(pats.map((pat) => pat.query(state)));
   return new Pattern(query);
 }
 
 export function slowcat(...pats) {
   // Concatenation: combines a list of patterns, switching between them
   // successively, one per cycle.
-  pats = pats.map(reify);
+
+  // Array test here is to avoid infinite recursions..
+  pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
+
   const query = function (state) {
     const span = state.span;
-    const pat_n = Math.floor(span.begin) % pats.length;
+    const pat_n = mod(span.begin.sam(), pats.length);
     const pat = pats[pat_n];
     if (!pat) {
       // pat_n can be negative, if the span is in the past..
@@ -804,7 +1034,7 @@ export function fastcat(...pats) {
 }
 
 export function cat(...pats) {
-  return fastcat(...pats);
+  return slowcat(...pats);
 }
 
 export function timeCat(...timepats) {
@@ -820,6 +1050,15 @@ export function timeCat(...timepats) {
   return stack(...pats);
 }
 
+export function sequence(...pats) {
+  return fastcat(...pats);
+}
+
+// shorthand for sequence
+export function seq(...pats) {
+  return fastcat(...pats);
+}
+
 function _sequenceCount(x) {
   if (Array.isArray(x)) {
     if (x.length == 0) {
@@ -831,10 +1070,6 @@ function _sequenceCount(x) {
     return [fastcat(...x.map((a) => _sequenceCount(a)[0])), x.length];
   }
   return [reify(x), 1];
-}
-
-export function sequence(...xs) {
-  return _sequenceCount(xs)[0];
 }
 
 export function polymeterSteps(steps, ...args) {
@@ -883,7 +1118,6 @@ export function pr(args) {
 }
 
 export const add = curry((a, pat) => pat.add(a));
-export const append = curry((a, pat) => pat.append(a));
 export const chunk = curry((a, pat) => pat.chunk(a));
 export const chunkBack = curry((a, pat) => pat.chunkBack(a));
 export const div = curry((a, pat) => pat.div(a));
@@ -910,7 +1144,7 @@ export const slow = curry((a, pat) => pat.slow(a));
 export const struct = curry((a, pat) => pat.struct(a));
 export const sub = curry((a, pat) => pat.sub(a));
 export const superimpose = curry((array, pat) => pat.superimpose(...array));
-export const union = curry((a, pat) => pat.union(a));
+export const set = curry((a, pat) => pat.set(a));
 export const when = curry((binary, f, pat) => pat.when(binary, f));
 
 // problem: curried functions with spread arguments must have pat at the beginning

@@ -15,7 +15,8 @@ The best place to actually make music with Strudel is the [Strudel REPL](https:/
 
 To get a taste of what Strudel can do, check out this track:
 
-<MiniRepl tune={`const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
+<MiniRepl
+  tune={`const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
 const kick = new MembraneSynth().chain(vol(.8), out());
 const snare = new NoiseSynth().chain(vol(.8), out());
 const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
@@ -195,14 +196,14 @@ Internally, the mini notation will expand to use the actual functional JavaScrip
 
 Notes are automatically available as variables:
 
-<MiniRepl tune={`sequence(d4, fs4, a4)`} />
+<MiniRepl tune={`seq(d4, fs4, a4)`} />
 
 An important difference to the mini notation:
 For sharp notes, the letter "s" is used instead of "#", because JavaScript does not support "#" in a variable name.
 
 The above is the same as:
 
-<MiniRepl tune={`sequence('d4', 'f#4', 'a4')`} />
+<MiniRepl tune={`seq('d4', 'f#4', 'a4')`} />
 
 Using strings, you can also use "#".
 
@@ -220,38 +221,35 @@ Most of the time, you won't need that function as input values of pattern creati
 
 ### cat(...values)
 
-The given items are con**cat**enated spread evenly over one cycle:
+The given items are con**cat**enated, where each one takes one cycle:
 
-<MiniRepl tune={`cat(e5, b4, d5, c5)`} />
+<MiniRepl tune={`cat(e5, b4, [d5, c5])`} />
 
-The function **fastcat** does the same as **cat**.
+- Square brackets will create a subsequence
+- The function **slowcat** does the same as **cat**.
 
-### sequence(...values)
+### seq(...values)
 
-Like **cat**, but allows nesting with arrays:
+Like **cat**, but the items are crammed into one cycle:
 
-<MiniRepl tune={`sequence(e5, [b4, c5], d5, [c5, b4])`} />
+<MiniRepl tune={`seq(e5, b4, [d5, c5])`} />
+
+- Synonyms: **fastcat**, **sequence**
 
 ### stack(...values)
 
 The given items are played at the same time at the same length:
 
-<MiniRepl tune={`stack(g3,b3,e4)`} />
+<MiniRepl tune={`stack(g3, b3, [e4, d4])`} />
 
-### slowcat(...values)
-
-Like cat, but each item has the length of one cycle:
-
-<MiniRepl tune={`slowcat(e5, b4, d5, c5)`} />
-
-<!-- ## slowcatPrime ? -->
+- Square Brackets will create a subsequence
 
 ### Nesting functions
 
 You can nest functions inside one another:
 
 <MiniRepl
-  tune={`slowcat(
+  tune={`cat(
   stack(g3,b3,e4),
   stack(a3,c3,e4),
   stack(b3,d3,fs4),
@@ -283,7 +281,7 @@ Plays the given items at the same time, within the same length:
 
 We can write the same with **stack** and **cat**:
 
-<MiniRepl tune={`stack(cat(e3, g3), cat(e4, g4, b4))`} />
+<MiniRepl tune={`stack(seq(e3, g3), seq(e4, g4, b4))`} />
 
 You can also use the shorthand **pr** instead of **polyrhythm**.
 
@@ -295,7 +293,7 @@ The following functions modify a pattern.
 
 Like "/" in mini notation, **slow** will slow down a pattern over the given number of cycles:
 
-<MiniRepl tune={`cat(e5, b4, d5, c5).slow(2)`} />
+<MiniRepl tune={`seq(e5, b4, d5, c5).slow(2)`} />
 
 The same in mini notation:
 
@@ -305,19 +303,19 @@ The same in mini notation:
 
 Like "\*" in mini notation, **fast** will play a pattern times the given number in one cycle:
 
-<MiniRepl tune={`cat(e5, b4, d5, c5).fast(2)`} />
+<MiniRepl tune={`seq(e5, b4, d5, c5).fast(2)`} />
 
 ### early(cycles)
 
 With early, you can nudge a pattern to start earlier in time:
 
-<MiniRepl tune={`cat(e5, b4.early(0.5))`} />
+<MiniRepl tune={`seq(e5, b4.early(0.5))`} />
 
 ### late(cycles)
 
 Like early, but in the other direction:
 
-<MiniRepl tune={`cat(e5, b4.late(0.5))`} />
+<MiniRepl tune={`seq(e5, b4.late(0.5))`} />
 
 <!-- TODO: shouldn't it sound different? -->
 
@@ -325,19 +323,19 @@ Like early, but in the other direction:
 
 Will reverse the pattern:
 
-<MiniRepl tune={`cat(c3,d3,e3,f3).rev()`} />
+<MiniRepl tune={`seq(c3,d3,e3,f3).rev()`} />
 
 ### every(n, func)
 
 Will apply the given function every n cycles:
 
-<MiniRepl tune={`cat(e5, "b4".every(4, late(0.5)))`} />
+<MiniRepl tune={`seq(e5, "b4".every(4, late(0.5)))`} />
 
 <!-- TODO: should be able to do b4.every => like already possible with fast slow etc.. -->
 
 Note that late is called directly. This is a shortcut for:
 
-<MiniRepl tune={`cat(e5, "b4".every(4, x => x.late(0.5)))`} />
+<MiniRepl tune={`seq(e5, "b4".every(4, x => x.late(0.5)))`} />
 
 <!-- TODO: should the function really run the first cycle? -->
 
@@ -590,59 +588,6 @@ Helper to set the envelope of a Tone.js instrument. Intended to be used with Ton
 .tone(synth(adsr(0,.1,0,0)).chain(out()))`}
 />
 
-### Experimental: Patternification
-
-While the above methods work for static sounds, there is also the option to patternify tone methods.
-This is currently experimental, because the performance is not stable, and audio glitches will appear after some time.
-It would be great to get this to work without glitches though, because it is fun!
-
-#### synth(type)
-
-With .synth, you can create a synth with a variable wave type:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~"
-.synth("<sawtooth8 square8>").slow(4)`}
-/>
-
-#### adsr(attack, decay?, sustain?, release?)
-
-Chainable Envelope helper:
-
-<MiniRepl
-  tune={`"[c5 c5 bb4 c5] [~ g4 ~ g4] [c5 f5 e5 c5] ~".slow(4)
-  .synth('sawtooth16').adsr(0,.1,0,0)`}
-/>
-
-Due to having more than one argument, this method is not patternified.
-
-#### filter(cuttoff)
-
-Patternified filter:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~"
-  .synth('sawtooth16').filter("[500 2000]*8").slow(4)`}
-/>
-
-#### gain(value)
-
-Patternified gain:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~"
-  .synth('sawtooth16').gain("[.2 .8]*8").slow(4)`}
-/>
-
-#### autofilter(value)
-
-Patternified autofilter:
-
-<MiniRepl
-  tune={`"c2 c3"
-  .synth('sawtooth16').autofilter("<1 4 8>")`}
-/>
-
 ## Tonal API
 
 The Tonal API, uses [tonaljs](https://github.com/tonaljs/tonal) to provide helpers for musical operations.
@@ -665,7 +610,7 @@ Turns numbers into notes in the scale (zero indexed). Also sets scale for other 
 
 <MiniRepl
   tune={`"0 2 4 6 4 2"
-.scale(slowcat('C2 major', 'C2 minor').slow(2))`}
+.scale(seq('C2 major', 'C2 minor').slow(2))`}
 />
 
 Note that the scale root is octaved here. You can also omit the octave, then index zero will default to octave 3.

@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/osc",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "OSC messaging for strudel",
   "main": "osc.mjs",
   "scripts": {
@@ -21,7 +21,8 @@
     "algorave"
   ],
   "author": "Felix Roos <flix91@gmail.com>",
-  "license": "GPL-3.0-or-later",
+  "contributors": ["Alex McLean <alex@slab.org>"],
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
