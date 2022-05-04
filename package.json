@@ -10,9 +10,8 @@
     "repl": "cd repl && npm run start",
     "osc": "cd packages/osc && npm run server",
     "build": "cd repl && npm run build",
-    "jsdoc": "jsdoc packages/core/pattern.mjs -c jsdoc.config.json",
-    "jsdoc-json": "jsdoc packages/core/pattern.mjs --template ./node_modules/jsdoc-json --destination doc.json -c jsdoc.config.json",
-    "jsdoc2md": "jsdoc2md packages/core/pattern.mjs -c jsdoc.config.json > api.md"
+    "jsdoc": "jsdoc packages/ -c jsdoc.config.json",
+    "jsdoc-json": "jsdoc packages/ --template ./node_modules/jsdoc-json --destination doc.json -c jsdoc.config.json"
   },
   "workspaces": [
     "packages/*"
