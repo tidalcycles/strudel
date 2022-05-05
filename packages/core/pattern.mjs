@@ -93,30 +93,56 @@ export class Pattern {
   }
 
   /**
-   * Returns a new pattern with the given function applied to all haps returned by queries.
+   * Returns a new pattern with the given function applied to the list of haps returned by every query.
    * @param {Function} func 
    * @returns Pattern
    */
-  _withHaps(func) {
+   _withHaps(func) {
     return new Pattern((state) => func(this.query(state)));
   }
 
-  _withHap(func) {
+  /**
+   * As with {@link Pattern#_withHaps}, but applies the function to every hap, rather than every list of haps.
+   * @param {Function} func 
+   * @returns Pattern
+   */
+   _withHap(func) {
     return this._withHaps((haps) => haps.map(func));
   }
 
+  /**
+   * Returns a new pattern with the context field set to every hap set to the given value.
+   * @param {*} context 
+   * @returns Pattern
+   */
   _setContext(context) {
     return this._withHap((hap) => hap.setContext(context));
   }
 
+  /**
+   * Returns a new pattern with the given function applied to the context field of every hap.
+   * @param {Function} func 
+   * @returns Pattern
+   */
   _withContext(func) {
     return this._withHap((hap) => hap.setContext(func(hap.context)));
   }
 
+  /**
+   * Returns a new pattern with the context field of every hap set to an empty object. 
+   * @returns Pattern
+   */
   _stripContext() {
     return this._withHap((hap) => hap.setContext({}));
   }
 
+  /**
+   * Returns a new pattern with the given location information added to the
+   * context of every hap.
+   * @param {Number} start 
+   * @param {Number} end 
+   * @returns Pattern
+   */
   withLocation(start, end) {
     const location = {
       start: { line: start[0], column: start[1], offset: start[2] },
@@ -171,14 +197,30 @@ export class Pattern {
     return this.withValue(func);
   }
 
+  /**
+   * Returns a new Pattern, which only returns haps that meet the given test.
+   * @param {Function} hap_test - a function which returns false for haps to be removed from the pattern
+   * @returns Pattern
+   */
   _filterHaps(hap_test) {
     return new Pattern((state) => this.query(state).filter(hap_test));
   }
 
+  /**
+   * As with {@link Pattern#_filterHaps}, but the function is applied to values
+   * inside haps.
+   * @param {Function} value_test 
+   * @returns Pattern
+   */
   _filterValues(value_test) {
     return new Pattern((state) => this.query(state).filter((hap) => value_test(hap.value)));
   }
 
+  /**
+   * Returns a new pattern, with haps containing undefined values removed from
+   * query results.
+   * @returns Pattern
+   */
   _removeUndefineds() {
     return this._filterValues((val) => val != undefined);
   }
@@ -196,6 +238,11 @@ export class Pattern {
     return this._filterHaps((hap) => hap.hasOnset());
   }
 
+  /**
+   * Returns a new pattern, with 'continuous' haps (those without 'whole'
+   * timespans) removed from query results.
+   * @returns Pattern
+   */
   discreteOnly() {
     // removes continuous haps that don't have a 'whole' timespan
     return this._filterHaps((hap) => hap.whole);
@@ -312,6 +359,13 @@ export class Pattern {
     return new Pattern(query);
   }
 
+  /**
+   * Queries the pattern for the first cycle, returning Haps. Mainly of use when
+   * debugging a pattern.
+   * @param {Boolean} with_context - set to true, otherwise the context field
+   * will be stripped from the resulting haps.
+   * @returns [Hap]
+   */
   firstCycle(with_context = false) {
     var self = this;
     if (!with_context) {
@@ -320,15 +374,27 @@ export class Pattern {
     return self.query(new State(new TimeSpan(Fraction(0), Fraction(1))));
   }
 
+  /**
+   * Accessor for a list of values returned by querying the first cycle.
+   */
   get _firstCycleValues() {
     return this.firstCycle().map((hap) => hap.value);
   }
+
+  /**
+   * More human-readable version of the {@link Pattern#_firstCycleValues} accessor.
+   */
   get _showFirstCycle() {
     return this.firstCycle().map(
       (hap) => `${hap.value}: ${hap.whole.begin.toFraction()} - ${hap.whole.end.toFraction()}`,
     );
   }
 
+  /**
+   * Returns a new pattern, which returns haps sorted in temporal order. Mainly
+   * of use when comparing two patterns for equality, in tests.
+   * @returns Pattern
+   */
   _sortHapsByPart() {
     return this._withHaps((haps) =>
       haps.sort((a, b) =>
