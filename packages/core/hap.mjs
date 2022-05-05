@@ -14,7 +14,10 @@ export class Hap {
       then the whole will be returned as None, in which case the given
       value will have been sampled from the point halfway between the
       start and end of the 'part' timespan.
-      The context is to store a list of source code locations causing the event
+      The context is to store a list of source code locations causing the event.
+
+      The word 'Event' is more or less a reserved word in javascript, hence this
+      class is named called 'Hap'.
       */
 
   constructor(whole, part, value, context = {}, stateful = false) {
@@ -37,18 +40,18 @@ export class Hap {
   }
 
   withSpan(func) {
-    // Returns a new event with the function f applies to the event timespan.
+    // Returns a new hap with the function f applies to the hap timespan.
     const whole = this.whole ? func(this.whole) : undefined;
     return new Hap(whole, func(this.part), this.value, this.context);
   }
 
   withValue(func) {
-    // Returns a new event with the function f applies to the event value.
+    // Returns a new hap with the function f applies to the hap value.
     return new Hap(this.whole, this.part, func(this.value), this.context);
   }
 
   hasOnset() {
-    // Test whether the event contains the onset, i.e that
+    // Test whether the hap contains the onset, i.e that
     // the beginning of the part is the same as that of the whole timespan."""
     return this.whole != undefined && this.whole.begin.equals(this.part.begin);
   }

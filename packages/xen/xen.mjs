@@ -49,18 +49,18 @@ function xenOffset(xenScale, offset, index = 0) {
 
 // scaleNameOrRatios: string || number[], steps?: number
 Pattern.prototype._xen = function (scaleNameOrRatios, steps) {
-  return this._asNumber()._withEvent((event) => {
+  return this._asNumber()._withHap((hap) => {
     const scale = getXenScale(scaleNameOrRatios);
     steps = steps || scale.length;
-    const frequency = xenOffset(scale, event.value);
-    return event.withValue(() => frequency).setContext({ ...event.context, type: 'frequency' });
+    const frequency = xenOffset(scale, hap.value);
+    return hap.withValue(() => frequency).setContext({ ...hap.context, type: 'frequency' });
   });
 };
 
 Pattern.prototype.tuning = function (steps) {
-  return this._asNumber()._withEvent((event) => {
-    const frequency = xenOffset(steps, event.value);
-    return event.withValue(() => frequency).setContext({ ...event.context, type: 'frequency' });
+  return this._asNumber()._withHap((hap) => {
+    const frequency = xenOffset(steps, hap.value);
+    return hap.withValue(() => frequency).setContext({ ...hap.context, type: 'frequency' });
   });
 };
 Pattern.prototype.define('xen', (scale, pat) => pat.xen(scale), { composable: true, patternified: true });

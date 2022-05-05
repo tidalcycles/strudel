@@ -12,11 +12,11 @@ comm.open();
 const latency = 0.1;
 
 Pattern.prototype.osc = function () {
-  return this._withEvent((event) => {
-    const onTrigger = (time, event, currentTime) => {
+  return this._withHap((hap) => {
+    const onTrigger = (time, hap, currentTime) => {
       // time should be audio time of onset
       // currentTime should be current time of audio context (slightly before time)
-      const keyvals = Object.entries(event.value).flat();
+      const keyvals = Object.entries(hap.value).flat();
       const offset = (time - currentTime + latency) * 1000;
       const ts = Math.floor(Date.now() + offset);
       const message = new OSC.Message('/dirt/play', ...keyvals);
@@ -24,6 +24,6 @@ Pattern.prototype.osc = function () {
       bundle.timestamp(ts); // workaround for https://github.com/adzialocha/osc-js/issues/60
       comm.send(bundle);
     };
-    return event.setContext({ ...event.context, onTrigger });
+    return hap.setContext({ ...hap.context, onTrigger });
   });
 };

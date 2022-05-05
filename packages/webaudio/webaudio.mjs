@@ -30,10 +30,10 @@ const adsr = (attack, decay, sustain, release, velocity, begin, end) => {
 };
 
 Pattern.prototype.withAudioNode = function (createAudioNode) {
-  return this._withEvent((event) => {
-    return event.setContext({
-      ...event.context,
-      createAudioNode: (t, e) => createAudioNode(t, e, event.context.createAudioNode?.(t, event)),
+  return this._withHap((hap) => {
+    return hap.setContext({
+      ...hap.context,
+      createAudioNode: (t, e) => createAudioNode(t, e, hap.context.createAudioNode?.(t, hap)),
     });
   });
 };
@@ -84,9 +84,9 @@ Pattern.prototype.out = function () {
       console.warn('out: no source! call .osc() first');
     }
     node?.connect(master);
-  })._withEvent((event) => {
+  })._withHap((hap) => {
     const onTrigger = (time, e) => e.context?.createAudioNode?.(time, e);
-    return event.setContext({ ...event.context, onTrigger });
+    return hap.setContext({ ...hap.context, onTrigger });
   });
 };
 

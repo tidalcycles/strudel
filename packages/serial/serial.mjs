@@ -36,23 +36,23 @@ const latency = 0.1;
 
 // Pattern.prototype.midi = function (output: string | number, channel = 1) {
 Pattern.prototype.serial = async function (...args) {
-  return this._withEvent((event) => {
+  return this._withHap((hap) => {
     if (!serialWriter) {
       getWriter(...args);
     }
-    const onTrigger = (time, event, currentTime) => {
+    const onTrigger = (time, hap, currentTime) => {
       var message = "";
-      if (typeof event.value === 'object') {
-        for (const [key, val] of Object.entries(event.value).flat()) {
+      if (typeof hap.value === 'object') {
+        for (const [key, val] of Object.entries(hap.value).flat()) {
           message += `${key}:${val};`
         }
       }
       else {
-        message = event.value;
+        message = hap.value;
       }
       const offset = (time - currentTime + latency) * 1000;
       window.setTimeout(serialWriter, offset, message);
     };
-    return event.setContext({ ...event.context, onTrigger });
+    return hap.setContext({ ...hap.context, onTrigger });
   });
 };

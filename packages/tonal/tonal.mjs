@@ -43,17 +43,17 @@ export function scaleTranspose(scale, offset, note) {
 
 // Pattern.prototype._transpose = function (intervalOrSemitones: string | number) {
 Pattern.prototype._transpose = function (intervalOrSemitones) {
-  return this._withEvent((event) => {
+  return this._withHap((hap) => {
     const interval = !isNaN(Number(intervalOrSemitones))
       ? Interval.fromSemitones(intervalOrSemitones /*  as number */)
       : String(intervalOrSemitones);
-    if (typeof event.value === 'number') {
+    if (typeof hap.value === 'number') {
       const semitones = typeof interval === 'string' ? Interval.semitones(interval) || 0 : interval;
-      return event.withValue(() => event.value + semitones);
+      return hap.withValue(() => hap.value + semitones);
     }
     // TODO: move simplify to player to preserve enharmonics
     // tone.js doesn't understand multiple sharps flats e.g. F##3 has to be turned into G3
-    return event.withValue(() => Note.simplify(Note.transpose(event.value, interval)));
+    return hap.withValue(() => Note.simplify(Note.transpose(hap.value, interval)));
   });
 };
 
@@ -64,26 +64,26 @@ Pattern.prototype._transpose = function (intervalOrSemitones) {
 // or even `stack(c3).superimpose(transpose.slowcat(7, 5))` or
 
 Pattern.prototype._scaleTranspose = function (offset /* : number | string */) {
-  return this._withEvent((event) => {
-    if (!event.context.scale) {
+  return this._withHap((hap) => {
+    if (!hap.context.scale) {
       throw new Error('can only use scaleTranspose after .scale');
     }
-    if (typeof event.value !== 'string') {
+    if (typeof hap.value !== 'string') {
       throw new Error('can only use scaleTranspose with notes');
     }
-    return event.withValue(() => scaleTranspose(event.context.scale, Number(offset), event.value));
+    return hap.withValue(() => scaleTranspose(hap.context.scale, Number(offset), hap.value));
   });
 };
 Pattern.prototype._scale = function (scale /* : string */) {
-  return this._withEvent((event) => {
-    let note = event.value;
+  return this._withHap((hap) => {
+    let note = hap.value;
     const asNumber = Number(note);
     if (!isNaN(asNumber)) {
       let [tonic, scaleName] = Scale.tokenize(scale);
       const { pc, oct = 3 } = Note.get(tonic);
       note = scaleTranspose(pc + ' ' + scaleName, asNumber, pc + oct);
     }
-    return event.withValue(() => note).setContext({ ...event.context, scale });
+    return hap.withValue(() => note).setContext({ ...hap.context, scale });
   });
 };
 
