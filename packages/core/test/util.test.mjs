@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { strict as assert } from 'assert';
 import { pure } from '../pattern.mjs';
-import { isNote, tokenizeNote, toMidi, fromMidi, mod, compose, getFrequency } from '../util.mjs';
+import { isNote, tokenizeNote, toMidi, fromMidi, mod, compose, getFrequency, dirtify } from '../util.mjs';
 
 describe('isNote', () => {
   it('should recognize notes without accidentals', () => {
@@ -116,5 +116,33 @@ describe('compose', () => {
   it('should compose left to right', () => {
     assert.equal(compose(addS('a'), addS('b'))(''), 'ab');
     assert.equal(compose(addS('a'), addS('b'))('x'), 'xab');
+  });
+});
+
+describe('dirtify', () => {
+  it('should offset plain number', () => {
+    assert.deepStrictEqual(dirtify(61), { n: 1 });
+    assert.deepStrictEqual(dirtify(60), { n: 0 });
+  });
+  it('should parse note string as midi number', () => {
+    assert.deepStrictEqual(dirtify('c4'), { n: 0 });
+    assert.deepStrictEqual(dirtify('c5'), { n: 12 });
+  });
+  it('should use non note string as sound', () => {
+    assert.deepStrictEqual(dirtify('bd'), { s: 'bd' });
+  });
+  it('should keep objects as is', () => {
+    assert.deepStrictEqual(dirtify({ s: 'bd' }), { s: 'bd' });
+    assert.deepStrictEqual(dirtify({ n: 7 }), { n: 7 });
+    assert.deepStrictEqual(dirtify({ n: 7, room: 0.5 }), { n: 7, room: 0.5 });
+  });
+  it('should parse notes inside object', () => {
+    assert.deepStrictEqual(dirtify({ n: 'c3', s: 'supersaw' }), { n: -12, s: 'supersaw' });
+  });
+  it('should dirtify .value', () => {
+    assert.deepStrictEqual(dirtify({ value: 61 }), { n: 1 });
+    assert.deepStrictEqual(dirtify({ value: 'c5' }), { n: 12 });
+    assert.deepStrictEqual(dirtify({ value: 'bd' }), { s: 'bd' });
+    assert.deepStrictEqual(dirtify({ value: 61, room: 0.5 }), { n: 1, room: 0.5 });
   });
 });

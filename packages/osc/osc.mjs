@@ -16,7 +16,7 @@ Pattern.prototype.osc = function () {
     const onTrigger = (time, event, currentTime) => {
       // time should be audio time of onset
       // currentTime should be current time of audio context (slightly before time)
-      const keyvals = Object.entries(event.value).flat();
+      const keyvals = Object.entries(objectify(event.value)).flat();
       const offset = (time - currentTime + latency) * 1000;
       const ts = Math.floor(Date.now() + offset);
       const message = new OSC.Message('/dirt/play', ...keyvals);
@@ -26,4 +26,8 @@ Pattern.prototype.osc = function () {
     };
     return event.setContext({ ...event.context, onTrigger });
   });
+};
+
+Pattern.prototype.superdirt = function () {
+  return this.withValue(dirtify).osc();
 };

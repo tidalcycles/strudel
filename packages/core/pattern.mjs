@@ -10,7 +10,7 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
 
-import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod } from './util.mjs';
+import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod, objectify } from './util.mjs';
 import drawLine from './drawLine.mjs';
 
 export class Pattern {
@@ -352,6 +352,10 @@ export class Pattern {
   // Assumes source pattern of numbers in range -1..1
   range2(min, max) {
     return this._fromBipolar().range(min, max);
+  }
+
+  union(other) {
+    return this._opleft(other, (a) => (b) => Object.assign({}, objectify(a), objectify(b)));
   }
 
   _bindWhole(choose_whole, func) {
