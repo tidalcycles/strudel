@@ -1,0 +1,11 @@
+{
+  "source": {
+    "includePattern": ".+\\.(js(doc|x)?|mjs)$",
+    "excludePattern": "node_modules|shift-parser|shift-reducer|shift-traverser"
+  },
+  "plugins": ["plugins/markdown"],
+  "opts": {
+    "destination": "./out/",
+    "recurse": true
+  }
+}

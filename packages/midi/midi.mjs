@@ -39,11 +39,11 @@ Pattern.prototype.midi = function (output, channel = 1) {
       }')`,
     );
   }
-  return this._withEvent((event) => {
-    // const onTrigger = (time: number, event: any) => {
-    const onTrigger = (time, event) => {
-      let note = event.value;
-      const velocity = event.context?.velocity ?? 0.9;
+  return this._withHap((hap) => {
+    // const onTrigger = (time: number, hap: any) => {
+    const onTrigger = (time, hap) => {
+      let note = hap.value;
+      const velocity = hap.context?.velocity ?? 0.9;
       if (!isNote(note)) {
         throw new Error('not a note: ' + note);
       }
@@ -75,10 +75,10 @@ Pattern.prototype.midi = function (output, channel = 1) {
       // await enableWebMidi()
       device.playNote(note, channel, {
         time,
-        duration: event.duration.valueOf() * 1000 - 5,
+        duration: hap.duration.valueOf() * 1000 - 5,
         velocity,
       });
     };
-    return event.setContext({ ...event.context, onTrigger });
+    return hap.setContext({ ...hap.context, onTrigger });
   });
 };
