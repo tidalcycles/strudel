@@ -22,7 +22,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial && npm add-license",
+    "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial && npm run add-license",
     "test": "mocha ./src/test --colors",
     "snapshot": "cd ./src/ && rm -f ./tunes.snapshot.mjs && node ./shoot.mjs > ./tunes.snapshot.mjs",
     "eject": "react-scripts eject",
