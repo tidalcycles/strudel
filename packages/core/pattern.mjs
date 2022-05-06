@@ -67,7 +67,7 @@ export class Pattern {
    * @param {Function} func the function to apply
    * @returns Pattern
    */
-   withQueryTime(func) {
+  withQueryTime(func) {
     return new Pattern((state) => this.query(state.withSpan((span) => span.withTime(func))));
   }
 
@@ -75,7 +75,7 @@ export class Pattern {
    * Similar to {@link Pattern#withQuerySpan|withQuerySpan}, but the function is applied to the timespans
    * of all haps returned by pattern queries (both `part` timespans, and where
    * present, `whole` timespans).
-   * @param {Function} func 
+   * @param {Function} func
    * @returns Pattern
    */
   withHapSpan(func) {
@@ -88,31 +88,31 @@ export class Pattern {
    * @param {Function} func the function to apply
    * @returns Pattern
    */
-   withHapTime(func) {
+  withHapTime(func) {
     return this.withHapSpan((span) => span.withTime(func));
   }
 
   /**
    * Returns a new pattern with the given function applied to the list of haps returned by every query.
-   * @param {Function} func 
+   * @param {Function} func
    * @returns Pattern
    */
-   _withHaps(func) {
+  _withHaps(func) {
     return new Pattern((state) => func(this.query(state)));
   }
 
   /**
    * As with {@link Pattern#_withHaps}, but applies the function to every hap, rather than every list of haps.
-   * @param {Function} func 
+   * @param {Function} func
    * @returns Pattern
    */
-   _withHap(func) {
+  _withHap(func) {
     return this._withHaps((haps) => haps.map(func));
   }
 
   /**
    * Returns a new pattern with the context field set to every hap set to the given value.
-   * @param {*} context 
+   * @param {*} context
    * @returns Pattern
    */
   _setContext(context) {
@@ -121,7 +121,7 @@ export class Pattern {
 
   /**
    * Returns a new pattern with the given function applied to the context field of every hap.
-   * @param {Function} func 
+   * @param {Function} func
    * @returns Pattern
    */
   _withContext(func) {
@@ -129,7 +129,7 @@ export class Pattern {
   }
 
   /**
-   * Returns a new pattern with the context field of every hap set to an empty object. 
+   * Returns a new pattern with the context field of every hap set to an empty object.
    * @returns Pattern
    */
   _stripContext() {
@@ -139,8 +139,8 @@ export class Pattern {
   /**
    * Returns a new pattern with the given location information added to the
    * context of every hap.
-   * @param {Number} start 
-   * @param {Number} end 
+   * @param {Number} start
+   * @param {Number} end
    * @returns Pattern
    */
   withLocation(start, end) {
@@ -183,7 +183,7 @@ export class Pattern {
   /**
    * Returns a new pattern, with the function applied to the value of
    * each hap. It has the alias {@link Pattern#fmap|fmap}.
-   * @param {Function} func 
+   * @param {Function} func
    * @returns Pattern
    */
   withValue(func) {
@@ -193,7 +193,7 @@ export class Pattern {
   /**
    * see {@link Pattern#withValue|withValue}
    */
-   fmap(func) {
+  fmap(func) {
     return this.withValue(func);
   }
 
@@ -209,7 +209,7 @@ export class Pattern {
   /**
    * As with {@link Pattern#_filterHaps}, but the function is applied to values
    * inside haps.
-   * @param {Function} value_test 
+   * @param {Function} value_test
    * @returns Pattern
    */
   _filterValues(value_test) {
@@ -231,7 +231,7 @@ export class Pattern {
    * as its `part` timespan.
    * @returns Pattern
    */
-   onsetsOnly() {
+  onsetsOnly() {
     // Returns a new pattern that will only return haps where the start
     // of the 'whole' timespan matches the start of the 'part'
     // timespan, i.e. the haps that include their 'onset'.
@@ -278,12 +278,12 @@ export class Pattern {
   /**
    * When this method is called on a pattern of functions, it matches its haps
    * with those in the given pattern of values.  A new pattern is returned, with
-   * each matching value applied to the corresponding function. 
+   * each matching value applied to the corresponding function.
    *
    * In this `appBoth` variant, where timespans of the function and value haps
    * are not the same but do intersect, the resulting hap has a timespan of the
    * intersection. This applies to both the part and the whole timespan.
-   * @param {Pattern} pat_val 
+   * @param {Pattern} pat_val
    * @returns Pattern
    */
   appBoth(pat_val) {
@@ -303,7 +303,7 @@ export class Pattern {
    * on. In practice, this means that the pattern structure, including onsets,
    * are preserved from the pattern of functions (often referred to as the left
    * hand or inner pattern).
-   * @param {Pattern} pat_val 
+   * @param {Pattern} pat_val
    * @returns Pattern
    */
   appLeft(pat_val) {
@@ -333,7 +333,7 @@ export class Pattern {
    * As with {@link Pattern#appLeft|appLeft}, but `whole` timespans are instead taken from the
    * pattern of values, i.e. structure is preserved from the right hand/outer
    * pattern.
-   * @param {Pattern} pat_val 
+   * @param {Pattern} pat_val
    * @returns Pattern
    */
   appRight(pat_val) {
@@ -467,35 +467,83 @@ export class Pattern {
     return result;
   }
 
+  /**
+   * Assumes a numerical pattern. Returns a new pattern with all values rounded
+   * to the nearest integer.
+   * @returns Pattern
+   */
   round() {
     return this._asNumber().fmap((v) => Math.round(v));
   }
 
+  /**
+   * Assumes a numerical pattern. Returns a new pattern with all values set to
+   * their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2`
+   * replaced with `-5`.
+   * @returns Pattern
+   */
   floor() {
     return this._asNumber().fmap((v) => Math.floor(v));
   }
 
+  /**
+   * Assumes a numerical pattern. Returns a new pattern with all values set to
+   * their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2`
+   * replaced with `-4`.
+   * @returns Pattern
+   */
   ceil() {
     return this._asNumber().fmap((v) => Math.ceil(v));
   }
 
+  /**
+   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
+   * 1. Returns a new pattern with values scaled to the bipolar range -1 .. 1
+   * @returns Pattern
+   */
   _toBipolar() {
     return this.fmap((x) => x * 2 - 1);
   }
+
+  /**
+   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
+   * 1. Returns a new pattern with values scaled to the unipolar range 0 .. 1
+   * @returns Pattern
+   */
   _fromBipolar() {
     return this.fmap((x) => (x + 1) / 2);
   }
 
-  // Assumes source pattern of numbers in range 0..1
+  /**
+   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
+   * 1. Returns a new pattern with values scaled to the given min/max range.
+   * @param {Number} min
+   * @param {Number} max
+   * @returns Pattern
+   */
   range(min, max) {
     return this.mul(max - min).add(min);
   }
 
+  /**
+   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
+   * 1. Returns a new pattern with values scaled to the given min/max range,
+   * following an exponential curve.
+   * @param {Number} min
+   * @param {Number} max
+   * @returns Pattern
+   */
   rangex(min, max) {
     return this.range(Math.log(min), Math.log(max)).fmap(Math.exp);
   }
 
-  // Assumes source pattern of numbers in range -1..1
+  /**
+   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
+   * 1. Returns a new pattern with values scaled to the given min/max range.
+   * @param {Number} min
+   * @param {Number} max
+   * @returns Pattern
+   */
   range2(min, max) {
     return this._fromBipolar().range(min, max);
   }
@@ -979,7 +1027,7 @@ function _composeOp(a, b, func) {
 }
 
 // Make composers
-(function() {
+(function () {
   const num = (pat) => pat._asNumber();
   const numOrString = (pat) => pat._asNumber(false, true);
 
