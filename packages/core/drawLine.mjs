@@ -6,6 +6,22 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import Fraction, { gcd } from './fraction.mjs';
 
+/**
+ * Intended for a debugging, drawLine renders the pattern as a string, where each character represents the same time span.
+ * Should only be used with single characters as values, otherwise the character slots will be messed up.
+ * Character legend: 
+ * 
+ * - "|" cycle separator
+ * - "-" hold previous value
+ * - "." silence
+ *
+ * @param {Pattern} pat pattern to use
+ * @param {number} chars max number of characters (approximately)
+ * @returns string
+ * @example
+ * const line = drawLine(pattern, 10); // |0--123|0--123
+ * console.log(line);
+ */
 function drawLine(pat, chars = 60) {
   let cycle = 0;
   let pos = Fraction(0);
