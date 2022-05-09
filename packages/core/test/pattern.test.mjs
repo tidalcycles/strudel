@@ -41,6 +41,7 @@ import {
   tri2,
   id,
   ply,
+  rev
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -436,6 +437,20 @@ describe('Pattern', function () {
       // mini('eb3 [c3 g3]/2 ') always plays [c3 g3]
     });
   });
+  describe('inside', () => {
+    it('can rev inside a cycle', () => {
+      sameFirst(sequence('a', 'b', 'c', 'd').inside(2, rev),
+        sequence('b', 'a', 'd', 'c')
+      );
+    });
+  });
+  describe('outside', () => {
+    it('can rev outside a cycle', () => {
+      sameFirst(sequence('a', 'b', 'c', 'd')._slow(2).outside(2, rev),
+        sequence('d', 'c')
+      );
+    });
+  });
   describe('_filterValues()', function () {
     it('Filters true', function () {
       assert.equal(
@@ -588,10 +603,7 @@ describe('Pattern', function () {
   });
   describe('brak()', () => {
     it('Can make something a bit breakbeaty', () => {
-      sameFirst(
-        sequence('a', 'b').brak()._fast(2),
-        sequence('a', 'b', fastcat(silence, 'a'), fastcat('b', silence))
-      )
+      sameFirst(sequence('a', 'b').brak()._fast(2), sequence('a', 'b', fastcat(silence, 'a'), fastcat('b', silence)));
     });
   });
   describe('timeCat()', function () {

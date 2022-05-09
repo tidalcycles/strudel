@@ -696,6 +696,14 @@ export class Pattern {
     return this._fast(Fraction(1).div(factor));
   }
 
+  _inside(factor, f) {
+    return f(this._slow(factor))._fast(factor);
+  }
+
+  _outside(factor, f) {
+    return f(this._fast(factor))._slow(factor);
+  }
+
   _ply(factor) {
     return this.fmap((x) => pure(x)._fast(factor))._squeezeJoin();
   }
@@ -1399,6 +1407,14 @@ Pattern.prototype.zoom = function (...args) {
 Pattern.prototype.compress = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._compress)(...args, this);
+};
+Pattern.prototype.outside = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._outside)(...args, this);
+};
+Pattern.prototype.inside = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._inside)(...args, this);
 };
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)
