@@ -277,10 +277,7 @@ describe('Pattern', function () {
       );
     });
     it('can SqueezeOut() structure', () => {
-      sameFirst(
-        sequence(1, [2, 3]).keepifSqueezeOut(true, true, false),
-        sequence([1, [2, 3]], [1, [2, 3]], silence),
-      );
+      sameFirst(sequence(1, [2, 3]).keepifSqueezeOut(true, true, false), sequence([1, [2, 3]], [1, [2, 3]], silence));
     });
   });
   describe('sub()', function () {
@@ -587,6 +584,14 @@ describe('Pattern', function () {
         sequence(3, 4, 5).every(3, add(3)).every(2, sub(1)).fast(2).firstCycle(),
         sequence(5, 6, 7, 3, 4, 5).firstCycle(),
       );
+    });
+  });
+  describe('brak()', () => {
+    it('Can make something a bit breakbeaty', () => {
+      sameFirst(
+        sequence('a', 'b').brak()._fast(2),
+        sequence('a', 'b', fastcat(silence, 'a'), fastcat('b', silence))
+      )
     });
   });
   describe('timeCat()', function () {

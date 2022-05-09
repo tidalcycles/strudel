@@ -822,6 +822,16 @@ export class Pattern {
     return slowcatPrime(...pats);
   }
 
+  /**
+   * Returns a new pattern where every other cycle is played once, twice as
+   * fast, and offset in time by one quarter of a cycle. Creates a kind of 
+   * breakbeat feel.
+   * @returns Pattern
+   */
+  brak() {
+    return this.every(2, x => fastcat(x, silence)._late(0.25))
+  }
+
   rev() {
     const pat = this;
     const query = function (state) {
