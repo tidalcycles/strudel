@@ -4,8 +4,18 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
+    "start": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "mocha ./src/test --colors",
+    "snapshot": "cd ./src/ && rm -f ./tunes.snapshot.mjs && node ./shoot.mjs > ./tunes.snapshot.mjs",
+    "eject": "react-scripts eject",
+    "tutorial": "parcel src/tutorial/index.html --no-cache",
+    "build-tutorial": "rm -rf ../docs/tutorial && parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-scope-hoist --no-cache",
+    "add-license": "cat etc/agpl-header.txt ../docs/static/js/*LICENSE.txt > /tmp/strudel-license.txt && cp /tmp/strudel-license.txt ../docs/static/js/*LICENSE.txt",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d ../docs",
+    "static": "npx serve ../docs"
   },
   "dependencies": {
     "react": "^17.0.2",
