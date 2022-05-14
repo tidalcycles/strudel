@@ -1,0 +1,2 @@
+- use react 17
+- make sure @codemirror/state is installed once (single version)
