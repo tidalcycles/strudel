@@ -4,15 +4,16 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import CodeMirror6, { setHighlights } from './CodeMirror6';
+import CodeMirror6, { setHighlights } from '@strudel.cycles/react/src/components/CodeMirror6';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import cx from './cx';
+import cx from '@strudel.cycles/react/src/cx';
 import logo from './logo.svg';
-import playStatic from './static.mjs';
+// import playStatic from './static.mjs';
 import { getDefaultSynth } from '@strudel.cycles/tone';
 import * as tunes from './tunes.mjs';
-import useRepl from './useRepl.mjs';
-import { useWebMidi } from './useWebMidi';
+import useRepl from '@strudel.cycles/react/src/hooks/useRepl.mjs';
+import { useWebMidi } from '@strudel.cycles/react/src/hooks/useWebMidi.mjs';
+import useHighlighting from '@strudel.cycles/react/src/hooks/useHighlighting';
 import './App.css';
 // eval stuff start
 import { evaluate, extend } from '@strudel.cycles/eval';
@@ -39,7 +40,6 @@ import '@strudel.cycles/osc/osc.mjs';
 import '@strudel.cycles/webaudio/webaudio.mjs';
 import '@strudel.cycles/serial/serial.mjs';
 import controls from '@strudel.cycles/core/controls.mjs';
-import useHighlighting from './useHighlighting';
 
 extend(
   Tone,
@@ -254,11 +254,11 @@ function App() {
           />
         )}
       </section>
-      {!isEmbedded && (
+      {/* !isEmbedded && (
         <button className="fixed right-4 bottom-2 z-[11]" onClick={() => playStatic(code)}>
           static
         </button>
-      )}
+      ) */}
     </div>
   );
 }

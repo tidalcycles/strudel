@@ -7,7 +7,7 @@
     "test": "npm run test --workspaces --if-present && cd repl && npm run test",
     "bootstrap": "lerna bootstrap",
     "setup": "npm i && npm run bootstrap && cd repl && npm i",
-    "repl": "cd repl && npm run start",
+    "repl": "cd repl && npm run dev",
     "osc": "cd packages/osc && npm run server",
     "build": "cd repl && npm run build",
     "jsdoc": "jsdoc packages/ -c jsdoc.config.json",
