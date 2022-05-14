@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.cm-editor {
+  background-color: transparent !important;
+}
+
+main {
+  margin: 0 auto;
+}
