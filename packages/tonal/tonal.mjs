@@ -8,8 +8,8 @@ import { Note, Interval, Scale } from '@tonaljs/tonal';
 import { Pattern, mod } from '@strudel.cycles/core';
 
 // transpose note inside scale by offset steps
-// function scaleTranspose(scale: string, offset: number, note: string) {
-export function scaleTranspose(scale, offset, note) {
+// function scaleOffset(scale: string, offset: number, note: string) {
+function scaleOffset(scale, offset, note) {
   let [tonic, scaleName] = Scale.tokenize(scale);
   let { notes } = Scale.get(`${tonic} ${scaleName}`);
   notes = notes.map((note) => Note.get(note).pc); // use only pc!
@@ -71,7 +71,7 @@ Pattern.prototype._scaleTranspose = function (offset /* : number | string */) {
     if (typeof hap.value !== 'string') {
       throw new Error('can only use scaleTranspose with notes');
     }
-    return hap.withValue(() => scaleTranspose(hap.context.scale, Number(offset), hap.value));
+    return hap.withValue(() => scaleOffset(hap.context.scale, Number(offset), hap.value));
   });
 };
 Pattern.prototype._scale = function (scale /* : string */) {
@@ -81,7 +81,7 @@ Pattern.prototype._scale = function (scale /* : string */) {
     if (!isNaN(asNumber)) {
       let [tonic, scaleName] = Scale.tokenize(scale);
       const { pc, oct = 3 } = Note.get(tonic);
-      note = scaleTranspose(pc + ' ' + scaleName, asNumber, pc + oct);
+      note = scaleOffset(pc + ' ' + scaleName, asNumber, pc + oct);
     }
     return hap.withValue(() => note).setContext({ ...hap.context, scale });
   });

@@ -15,3 +15,7 @@ const options = {
 export default defineConfig({
   plugins: [react(), mdx(options)],
 });
+
+// jsxRuntime:'classic' to prevent "jsxDevRuntime.exports.jsxDEV is not a function" for dev mode
+// mode: 'development',
+// react({ jsxRuntime: 'classic' }),
