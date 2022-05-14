@@ -15,9 +15,13 @@ export const extend = (...args) => {
   Object.assign(globalThis, ...args);
 };
 
+function safeEval(str) {
+  return Function('"use strict";return (' + str + ')')();
+}
+
 export const evaluate = async (code) => {
   const shapeshifted = shapeshifter(code); // transform syntactically correct js code to semantically usable code
-  let evaluated = await eval(shapeshifted);
+  let evaluated = await safeEval(shapeshifted);
   if (!isPattern(evaluated)) {
     console.log('evaluated', evaluated);
     const message = `got "${typeof evaluated}" instead of pattern`;
