@@ -1,5 +1,5 @@
 {
-  "name": "repl2",
+  "name": "@strudel.cycles/repl",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -9,9 +9,6 @@
     "preview": "vite preview",
     "test": "mocha ./src/test --colors",
     "snapshot": "cd ./src/ && rm -f ./tunes.snapshot.mjs && node ./shoot.mjs > ./tunes.snapshot.mjs",
-    "eject": "react-scripts eject",
-    "tutorial": "parcel src/tutorial/index.html --no-cache",
-    "build-tutorial": "rm -rf ../docs/tutorial && parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-scope-hoist --no-cache",
     "add-license": "cat etc/agpl-header.txt ../docs/static/js/*LICENSE.txt > /tmp/strudel-license.txt && cp /tmp/strudel-license.txt ../docs/static/js/*LICENSE.txt",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d ../docs",
@@ -22,16 +19,11 @@
     "react-dom": "^17.0.2"
   },
   "devDependencies": {
-    "@mdx-js/mdx": "^1.6.22",
-    "@mdx-js/react": "^1.6.22",
     "@tailwindcss/typography": "^0.5.2",
-    "@types/react": "^17.0.2",
-    "@types/react-dom": "^17.0.2",
     "@vitejs/plugin-react": "^1.3.0",
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.13",
     "tailwindcss": "^3.0.24",
-    "vite": "^2.9.9",
-    "vite-plugin-mdx": "^3.5.10"
+    "vite": "^2.9.9"
   }
 }
