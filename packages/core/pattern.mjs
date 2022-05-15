@@ -450,7 +450,7 @@ export class Pattern {
         // set context type to midi to let the player know its meant as midi number and not as frequency
         return new Hap(hap.whole, hap.part, toMidi(hap.value), { ...hap.context, type: 'midi' });
       }
-      if (dropfail) {
+      if (dropfails) {
         // return 'nothing'
         return undefined;
       }
@@ -461,10 +461,6 @@ export class Pattern {
       throw new Error('cannot parse as number: "' + hap.value + '"');
       return hap;
     });
-    if (dropfail) {
-      return result._removeUndefineds();
-    }
-    return result;
   }
 
   round() {
