@@ -57,7 +57,14 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
             /* console.warn('no instrument chosen', event);
           throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
           } else {
-            onTrigger(time, event, currentTime);
+            onTrigger(
+              time,
+              event,
+              currentTime,
+              1 /* cps */,
+              event.wholeOrPart().begin.valueOf(),
+              event.duration.valueOf(),
+            );
           }
         } catch (err) {
           console.warn(err);
