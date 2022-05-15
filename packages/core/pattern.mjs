@@ -977,6 +977,10 @@ export class Pattern {
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
+
+  _loopAt(factor,cps=1) {
+    return this.speed((1/factor)*cps).unit("c").slow(factor)
+  }
 }
 
 // TODO - adopt value.mjs fully..
@@ -1399,6 +1403,10 @@ Pattern.prototype.chunk = function (...args) {
 Pattern.prototype.chunkBack = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._chunkBack)(...args, this);
+};
+Pattern.prototype.loopAt = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._loopAt)(...args, this);
 };
 Pattern.prototype.zoom = function (...args) {
   args = args.map(reify);
