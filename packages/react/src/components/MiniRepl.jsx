@@ -1,38 +1,24 @@
 import React, { useState } from 'react';
+import { useInView } from 'react-hook-inview';
+import { Tone } from '@strudel.cycles/tone';
+import { evalScope } from '@strudel.cycles/eval';
+
 import useRepl from '../hooks/useRepl.mjs';
 import cx from '../cx';
 import useHighlighting from '../hooks/useHighlighting.mjs';
-import { useInView } from 'react-hook-inview';
-
-// eval stuff start
-import { extend } from '@strudel.cycles/eval';
-import * as strudel from '@strudel.cycles/core';
-import gist from '@strudel.cycles/core/gist.js';
-import { mini } from '@strudel.cycles/mini/mini.mjs';
-import { Tone } from '@strudel.cycles/tone';
-import * as toneHelpers from '@strudel.cycles/tone/tone.mjs';
-import * as voicingHelpers from '@strudel.cycles/tonal/voicings.mjs';
-import * as uiHelpers from '@strudel.cycles/tone/ui.mjs';
-import * as drawHelpers from '@strudel.cycles/tone/draw.mjs';
-import euclid from '@strudel.cycles/core/euclid.mjs';
-import '@strudel.cycles/tone/tone.mjs';
-import '@strudel.cycles/midi/midi.mjs';
-import '@strudel.cycles/tonal/voicings.mjs';
-import '@strudel.cycles/tonal/tonal.mjs';
-import '@strudel.cycles/xen/xen.mjs';
-import '@strudel.cycles/xen/tune.mjs';
-import '@strudel.cycles/core/euclid.mjs';
-import '@strudel.cycles/tone/pianoroll.mjs';
-import '@strudel.cycles/tone/draw.mjs';
 import CodeMirror6 from './CodeMirror6';
+import 'tailwindcss/tailwind.css';
 
-extend(Tone, strudel, strudel.Pattern.prototype.bootstrap(), toneHelpers, voicingHelpers, drawHelpers, uiHelpers, {
-  gist,
-  euclid,
-  mini,
+evalScope(
   Tone,
-});
-// eval stuff end
+  import('@strudel.cycles/core'),
+  import('@strudel.cycles/tone'),
+  import('@strudel.cycles/tonal'),
+  import('@strudel.cycles/mini'),
+  import('@strudel.cycles/midi'),
+  import('@strudel.cycles/xen'),
+  import('@strudel.cycles/webaudio'),
+);
 
 const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination).set({
   oscillator: { type: 'triangle' },
@@ -43,7 +29,7 @@ const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destina
 
 // "balanced" | "interactive" | "playback";
 // Tone.setContext(new Tone.Context({ latencyHint: 'playback', lookAhead: 1 }));
-function MiniRepl({ tune, maxHeight = 500 }){
+function MiniRepl({ tune, maxHeight = 500 }) {
   const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,
@@ -56,18 +42,18 @@ function MiniRepl({ tune, maxHeight = 500 }){
   });
   useHighlighting({ view, pattern, active: cycle.started });
   return (
-    <div className="rounded-md overflow-hidden bg-[#444C57]" ref={ref}>
-      <div className="flex justify-between bg-slate-700 border-t border-slate-500">
-        <div className="flex">
+    <div className="sc-rounded-md sc-overflow-hidden sc-bg-[#444C57]" ref={ref}>
+      <div className="sc-flex sc-justify-between sc-bg-slate-700 sc-border-t sc-border-slate-500">
+        <div className="sc-flex">
           <button
             className={cx(
-              'w-16 flex items-center justify-center p-1 bg-slate-700 border-r border-slate-500  text-white hover:bg-slate-600',
-              cycle.started ? 'animate-pulse' : '',
+              'sc-w-16 sc-flex sc-items-center sc-justify-center sc-p-1 sc-bg-slate-700 sc-border-r sc-border-slate-500  sc-text-white sc-hover:bg-slate-600',
+              cycle.started ? 'sc-animate-pulse' : '',
             )}
             onClick={() => togglePlay()}
           >
             {!cycle.started ? (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="sc-h-5 sc-w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
                   d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
@@ -75,7 +61,7 @@ function MiniRepl({ tune, maxHeight = 500 }){
                 />
               </svg>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="sc-h-5 sc-w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
                   d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
@@ -86,14 +72,14 @@ function MiniRepl({ tune, maxHeight = 500 }){
           </button>
           <button
             className={cx(
-              'w-16 flex items-center justify-center p-1 border-slate-500  hover:bg-slate-600',
+              'sc-w-16 sc-flex sc-items-center sc-justify-center sc-p-1 sc-border-slate-500 sc-hover:bg-slate-600',
               dirty
-                ? 'bg-slate-700 border-r border-slate-500 text-white'
-                : 'bg-slate-600 text-slate-400 cursor-not-allowed',
+                ? 'sc-bg-slate-700 sc-border-r sc-border-slate-500 sc-text-white'
+                : 'sc-bg-slate-600 sc-text-slate-400 sc-cursor-not-allowed',
             )}
             onClick={() => activateCode()}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="sc-h-5 sc-w-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
                 d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
@@ -102,9 +88,11 @@ function MiniRepl({ tune, maxHeight = 500 }){
             </svg>
           </button>
         </div>
-        <div className="text-right p-1 text-sm">{error && <span className="text-red-200">{error.message}</span>}</div>{' '}
+        <div className="sc-text-right sc-p-1 sc-text-sm">
+          {error && <span className="sc-text-red-200">{error.message}</span>}
+        </div>{' '}
       </div>
-      <div className="flex space-y-0 overflow-auto relative">
+      <div className="sc-flex sc-space-y-0 sc-overflow-auto sc-relative">
         {isVisible && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />}
       </div>
       {/* <div className="bg-slate-700 border-t border-slate-500 content-right pr-2 text-right">

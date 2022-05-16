@@ -116,6 +116,7 @@ const uiHelpersMocked = {
   backgroundImage: id,
 };
 
+// TODO: refactor to evalScope
 extend(
   // Tone,
   strudel,

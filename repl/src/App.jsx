@@ -41,6 +41,7 @@ import '@strudel.cycles/webaudio/webaudio.mjs';
 import '@strudel.cycles/serial/serial.mjs';
 import controls from '@strudel.cycles/core/controls.mjs';
 
+// TODO: refactor to evalScope
 extend(
   Tone,
   strudel,
