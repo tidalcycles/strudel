@@ -2,7 +2,7 @@
   "name": "@strudel.cycles/xen",
   "version": "0.0.5",
   "description": "Xenharmonic API for strudel",
-  "main": "xen.mjs",
+  "main": "index.mjs",
   "scripts": {
     "test": "mocha --colors"
   },

@@ -14,4 +14,5 @@ export * from './signal.mjs';
 export * from './state.mjs';
 export * from './timespan.mjs';
 export * from './util.mjs';
+export * as gist from './gist.js';
 // export * from './value.mjs';

@@ -2,7 +2,7 @@
   "name": "@strudel.cycles/tonal",
   "version": "0.0.5",
   "description": "Tonal functions for strudel",
-  "main": "tonal.mjs",
+  "main": "index.mjs",
   "type": "module",
   "scripts": {
     "test": "mocha --colors"

@@ -2,7 +2,7 @@
   "name": "@strudel.cycles/midi",
   "version": "0.0.6",
   "description": "Midi API for strudel",
-  "main": "midi.mjs",
+  "main": "index.mjs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
