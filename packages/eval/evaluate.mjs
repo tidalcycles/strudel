@@ -7,12 +7,21 @@ This program is free software: you can redistribute it and/or modify it under th
 import shapeshifter from './shapeshifter.mjs';
 import * as strudel from '@strudel.cycles/core';
 
-const { isPattern } = strudel;
+const { isPattern, Pattern } = strudel;
 
 export const extend = (...args) => {
-  // TODO: find a way to make args available to eval without adding it to global scope...
-  // sadly, "with" does not work in strict mode
+  console.warn('@strudel.cycles/eval extend is deprecated, please use evalScopep instead');
   Object.assign(globalThis, ...args);
+};
+
+let scoped = false;
+export const evalScope = async (...args) => {
+  if (scoped) {
+    console.warn('@strudel.cycles/eval evalScope was called more than once.');
+  }
+  scoped = true;
+  const modules = await Promise.all(args);
+  Object.assign(globalThis, ...modules, Pattern.prototype.bootstrap());
 };
 
 function safeEval(str) {
@@ -20,6 +29,9 @@ function safeEval(str) {
 }
 
 export const evaluate = async (code) => {
+  if (!scoped) {
+    await evalScope(); // at least scope Pattern.prototype.boostrap
+  }
   const shapeshifted = shapeshifter(code); // transform syntactically correct js code to semantically usable code
   let evaluated = await safeEval(shapeshifted);
   if (!isPattern(evaluated)) {
