@@ -1,4 +1,4 @@
-- use react 17
-- make sure @codemirror/state is installed once (single version)
+# @strudel.cycles/react
 
-    "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial && npm run add-license",
+This package contains react hooks and components for strudel.
+Example coming soon
