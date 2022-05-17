@@ -11,6 +11,7 @@
     "osc": "cd packages/osc && npm run server",
     "build": "cd repl && npm run build && cd ../tutorial && npm run build",
     "preview": "npx serve ./out",
+    "deploy": "gh-pages -d dist",
     "jsdoc": "jsdoc packages/ -c jsdoc.config.json",
     "jsdoc-json": "jsdoc packages/ --template ./node_modules/jsdoc-json --destination doc.json -c jsdoc.config.json"
   },
@@ -36,6 +37,7 @@
   "homepage": "https://strudel.tidalcycles.org",
   "devDependencies": {
     "events": "^3.3.0",
+    "gh-pages": "^4.0.0",
     "jsdoc": "^3.6.10",
     "jsdoc-json": "^2.0.2",
     "jsdoc-to-markdown": "^7.1.1",
