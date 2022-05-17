@@ -10,7 +10,7 @@ import * as strudel from '@strudel.cycles/core';
 const { isPattern, Pattern } = strudel;
 
 export const extend = (...args) => {
-  console.warn('@strudel.cycles/eval extend is deprecated, please use evalScopep instead');
+  console.warn('@strudel.cycles/eval extend is deprecated, please use evalScope instead');
   Object.assign(globalThis, ...args);
 };
 
