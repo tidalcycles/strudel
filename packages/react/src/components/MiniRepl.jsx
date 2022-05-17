@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { useInView } from 'react-hook-inview';
-
 import useRepl from '../hooks/useRepl.mjs';
 import cx from '../cx';
 import useHighlighting from '../hooks/useHighlighting.mjs';
@@ -9,27 +8,7 @@ import 'tailwindcss/tailwind.css';
 import styles from './MiniRepl.module.css';
 import { Icon } from './Icon';
 
-import { Tone } from '@strudel.cycles/tone';
-import { evalScope } from '@strudel.cycles/eval';
-evalScope(
-  Tone,
-  import('@strudel.cycles/core'),
-  import('@strudel.cycles/tone'),
-  import('@strudel.cycles/tonal'),
-  import('@strudel.cycles/mini'),
-  import('@strudel.cycles/midi'),
-  import('@strudel.cycles/xen'),
-  import('@strudel.cycles/webaudio'),
-);
-
-const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination).set({
-  oscillator: { type: 'triangle' },
-  envelope: {
-    release: 0.01,
-  },
-});
-
-export function MiniRepl({ tune }) {
+export function MiniRepl({ tune, defaultSynth }) {
   const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,

@@ -10,7 +10,6 @@ import Tutorial from './tutorial.mdx';
 import './style.css';
 import '@strudel.cycles/react/dist/style.css';
 
-
 ReactDOM.render(
   <React.StrictMode>
     <div className="min-h-screen">
@@ -32,5 +31,5 @@ ReactDOM.render(
       </main>
     </div>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );

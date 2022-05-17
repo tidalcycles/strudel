@@ -47,7 +47,7 @@ Pattern.prototype.draw = function (callback, cycleSpan, lookaheadCycles = 1) {
   return this;
 };
 
-export const cleanup = () => {
+export const cleanupDraw = () => {
   const ctx = getDrawContext();
   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
   if (window.strudelAnimation) {

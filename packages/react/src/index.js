@@ -1,4 +1,10 @@
 // import 'tailwindcss/tailwind.css';
 
-export * as CodeMirror from './components/CodeMirror6';
+export { default as CodeMirror } from './components/CodeMirror6';
 export * from './components/MiniRepl';
+export { default as useCycle } from './hooks/useCycle';
+export { default as useHighlighting } from './hooks/useHighlighting';
+export { default as usePostMessage } from './hooks/usePostMessage';
+export { default as useRepl } from './hooks/useRepl';
+export { default as cx } from './cx';
+export { useWebMidi } from './hooks/useWebMidi';

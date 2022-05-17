@@ -1,14 +1,15 @@
-import React$1, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { CodeMirror as CodeMirror$1 } from 'react-codemirror6';
 import { EditorView, Decoration } from '@codemirror/view';
 import { StateEffect, StateField } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
 import { HighlightStyle, tags } from '@codemirror/highlight';
 import { useInView } from 'react-hook-inview';
-import { evaluate, evalScope } from '@strudel.cycles/eval';
+import { evaluate } from '@strudel.cycles/eval';
 import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
 import { Tone } from '@strudel.cycles/tone';
 import { TimeSpan, State } from '@strudel.cycles/core';
+import { WebMidi, enableWebMidi } from '@strudel.cycles/midi';
 
 /*
   Credits for color palette:
@@ -173,7 +174,7 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f)
 });
 function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount }) {
-  return /* @__PURE__ */ React$1.createElement(React$1.Fragment, null, /* @__PURE__ */ React$1.createElement(CodeMirror$1, {
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(CodeMirror$1, {
     onViewChange: onViewChanged,
     style: {
       display: "flex",
@@ -189,82 +190,6 @@ function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorD
     ]
   }));
 }
-let parenMark;
-const markParens = (editor, data) => {
-  const v = editor.getDoc().getValue();
-  const marked = getCurrentParenArea(v, data);
-  parenMark?.clear();
-  parenMark = editor.getDoc().markText(...marked, { css: "background-color: #00007720" });
-};
-function offsetToPosition(offset, code) {
-  const lines = code.split("\n");
-  let line = 0;
-  let ch = 0;
-  for (let i = 0; i < offset; i++) {
-    if (ch === lines[line].length) {
-      line++;
-      ch = 0;
-    } else {
-      ch++;
-    }
-  }
-  return { line, ch };
-}
-function positionToOffset(position, code) {
-  const lines = code.split("\n");
-  if (position.line > lines.length) {
-    return 0;
-  }
-  let offset = 0;
-  for (let i = 0; i < position.line; i++) {
-    offset += lines[i].length + 1;
-  }
-  offset += position.ch;
-  return offset;
-}
-function getCurrentParenArea(code, caretPosition) {
-  const caret = positionToOffset(caretPosition, code);
-  let open, i, begin, end;
-  i = caret;
-  open = 0;
-  while (i > 0) {
-    if (code[i - 1] === "(") {
-      open--;
-    } else if (code[i - 1] === ")") {
-      open++;
-    }
-    if (open === -1) {
-      break;
-    }
-    i--;
-  }
-  begin = i;
-  i = caret;
-  open = 0;
-  while (i < code.length) {
-    if (code[i] === "(") {
-      open--;
-    } else if (code[i] === ")") {
-      open++;
-    }
-    if (open === 1) {
-      break;
-    }
-    i++;
-  }
-  end = i;
-  return [begin, end].map((o) => offsetToPosition(o, code));
-}
-
-var CodeMirror6 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
-  __proto__: null,
-  setHighlights: setHighlights,
-  'default': CodeMirror,
-  markParens: markParens,
-  offsetToPosition: offsetToPosition,
-  positionToOffset: positionToOffset,
-  getCurrentParenArea: getCurrentParenArea
-}, Symbol.toStringTag, { value: 'Module' }));
 
 /*
 useCycle.mjs - <short description TODO>
@@ -607,14 +532,7 @@ function Icon({ type }) {
   }[type]);
 }
 
-evalScope(Tone, import('@strudel.cycles/core'), import('@strudel.cycles/tone'), import('@strudel.cycles/tonal'), import('@strudel.cycles/mini'), import('@strudel.cycles/midi'), import('@strudel.cycles/xen'), import('@strudel.cycles/webaudio'));
-const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination).set({
-  oscillator: { type: "triangle" },
-  envelope: {
-    release: 0.01
-  }
-});
-function MiniRepl({ tune }) {
+function MiniRepl({ tune, defaultSynth }) {
   const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,
@@ -632,32 +550,71 @@ function MiniRepl({ tune }) {
     return isVisible || wasVisible.current;
   }, [isVisible]);
   useHighlighting({ view, pattern, active: cycle.started });
-  return /* @__PURE__ */ React$1.createElement("div", {
+  return /* @__PURE__ */ React.createElement("div", {
     className: styles.container,
     ref
-  }, /* @__PURE__ */ React$1.createElement("div", {
+  }, /* @__PURE__ */ React.createElement("div", {
     className: styles.header
-  }, /* @__PURE__ */ React$1.createElement("div", {
+  }, /* @__PURE__ */ React.createElement("div", {
     className: styles.buttons
-  }, /* @__PURE__ */ React$1.createElement("button", {
+  }, /* @__PURE__ */ React.createElement("button", {
     className: cx(styles.button, cycle.started ? "sc-animate-pulse" : ""),
     onClick: () => togglePlay()
-  }, /* @__PURE__ */ React$1.createElement(Icon, {
+  }, /* @__PURE__ */ React.createElement(Icon, {
     type: cycle.started ? "pause" : "play"
-  })), /* @__PURE__ */ React$1.createElement("button", {
+  })), /* @__PURE__ */ React.createElement("button", {
     className: cx(dirty ? styles.button : styles.buttonDisabled),
     onClick: () => activateCode()
-  }, /* @__PURE__ */ React$1.createElement(Icon, {
+  }, /* @__PURE__ */ React.createElement(Icon, {
     type: "refresh"
-  }))), error && /* @__PURE__ */ React$1.createElement("div", {
+  }))), error && /* @__PURE__ */ React.createElement("div", {
     className: styles.error
-  }, error.message)), /* @__PURE__ */ React$1.createElement("div", {
+  }, error.message)), /* @__PURE__ */ React.createElement("div", {
     className: styles.body
-  }, show && /* @__PURE__ */ React$1.createElement(CodeMirror, {
+  }, show && /* @__PURE__ */ React.createElement(CodeMirror, {
     value: code,
     onChange: setCode,
     onViewChanged: setView
   })));
 }
 
-export { CodeMirror6 as CodeMirror, MiniRepl };
+/*
+useWebMidi.js - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/repl/src/useWebMidi.js>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+function useWebMidi(props) {
+  const { ready, connected, disconnected } = props;
+  const [loading, setLoading] = useState(true);
+  const [outputs, setOutputs] = useState(WebMidi?.outputs || []);
+  useEffect(() => {
+    enableWebMidi()
+      .then(() => {
+        // Reacting when a new device becomes available
+        WebMidi.addListener('connected', (e) => {
+          setOutputs([...WebMidi.outputs]);
+          connected?.(WebMidi, e);
+        });
+        // Reacting when a device becomes unavailable
+        WebMidi.addListener('disconnected', (e) => {
+          setOutputs([...WebMidi.outputs]);
+          disconnected?.(WebMidi, e);
+        });
+        ready?.(WebMidi);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (err) {
+          console.error(err);
+          //throw new Error("Web Midi could not be enabled...");
+          console.warn('Web Midi could not be enabled..');
+          return;
+        }
+      });
+  }, [ready, connected, disconnected, outputs]);
+  const outputByName = (name) => WebMidi.getOutputByName(name);
+  return { loading, outputs, outputByName };
+}
+
+export { CodeMirror, MiniRepl, cx, useCycle, useHighlighting, usePostMessage, useRepl, useWebMidi };

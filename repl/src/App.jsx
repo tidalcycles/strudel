@@ -4,59 +4,24 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import CodeMirror6, { setHighlights } from '@strudel.cycles/react/src/components/CodeMirror6';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import cx from '@strudel.cycles/react/src/cx';
-import logo from './logo.svg';
-// import playStatic from './static.mjs';
-import { getDefaultSynth } from '@strudel.cycles/tone';
-import * as tunes from './tunes.mjs';
-import useRepl from '@strudel.cycles/react/src/hooks/useRepl.mjs';
-import { useWebMidi } from '@strudel.cycles/react/src/hooks/useWebMidi.mjs';
-import useHighlighting from '@strudel.cycles/react/src/hooks/useHighlighting';
-import './App.css';
-// eval stuff start
-import { evaluate, extend } from '@strudel.cycles/eval';
-import * as strudel from '@strudel.cycles/core';
-import gist from '@strudel.cycles/core/gist.js';
-import { mini } from '@strudel.cycles/mini/mini.mjs';
-import { Tone } from '@strudel.cycles/tone';
-import * as toneHelpers from '@strudel.cycles/tone/tone.mjs';
-import * as voicingHelpers from '@strudel.cycles/tonal/voicings.mjs';
-import * as uiHelpers from '@strudel.cycles/tone/ui.mjs';
-import * as drawHelpers from '@strudel.cycles/tone/draw.mjs';
-import euclid from '@strudel.cycles/core/euclid.mjs';
-import '@strudel.cycles/tone/tone.mjs';
-import '@strudel.cycles/midi/midi.mjs';
-import '@strudel.cycles/tonal/voicings.mjs';
-import '@strudel.cycles/tonal/tonal.mjs';
-import '@strudel.cycles/xen/xen.mjs';
-import '@strudel.cycles/xen/tune.mjs';
-import '@strudel.cycles/core/euclid.mjs';
-import '@strudel.cycles/core/speak.mjs';
-import '@strudel.cycles/tone/pianoroll.mjs';
-import '@strudel.cycles/tone/draw.mjs';
-import '@strudel.cycles/osc/osc.mjs';
-import '@strudel.cycles/webaudio/webaudio.mjs';
-import '@strudel.cycles/serial/serial.mjs';
 import controls from '@strudel.cycles/core/controls.mjs';
-
-// TODO: refactor to evalScope
-extend(
+import { evalScope, evaluate } from '@strudel.cycles/eval';
+import { CodeMirror, cx, useHighlighting, useRepl, useWebMidi } from '@strudel.cycles/react';
+import { getDefaultSynth, cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import './App.css';
+import logo from './logo.svg';
+import * as tunes from './tunes.mjs';
+evalScope(
   Tone,
-  strudel,
-  strudel.Pattern.prototype.bootstrap(),
   controls,
-  toneHelpers,
-  voicingHelpers,
-  drawHelpers,
-  uiHelpers,
-  {
-    gist,
-    euclid,
-    mini,
-    Tone,
-  },
+  import('@strudel.cycles/core'),
+  import('@strudel.cycles/tone'),
+  import('@strudel.cycles/tonal'),
+  import('@strudel.cycles/mini'),
+  import('@strudel.cycles/midi'),
+  import('@strudel.cycles/xen'),
+  import('@strudel.cycles/webaudio'),
 );
 
 const initialUrl = window.location.href;
@@ -195,8 +160,8 @@ function App() {
                 const _code = getRandomTune();
                 console.log('tune', _code); // uncomment this to debug when random code fails
                 setCode(_code);
-                drawHelpers.cleanup();
-                uiHelpers.cleanup();
+                cleanupDraw();
+                cleanupUi();
                 const parsed = await evaluate(_code);
                 setPattern(parsed.pattern);
                 setActiveCode(_code);
@@ -235,7 +200,7 @@ function App() {
       <section className="grow flex flex-col text-gray-100">
         <div className="grow relative flex overflow-auto" id="code">
           {/* onCursor={markParens} */}
-          <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />
+          <CodeMirror value={code} onChange={setCode} onViewChanged={setView} />
           <span className="z-[20] py-1 px-2 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none">
             {!cycle.started ? `press ctrl+enter to play\n` : dirty ? `ctrl+enter to update\n` : 'no changes\n'}
           </span>
