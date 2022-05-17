@@ -9,11 +9,13 @@ import * as strudel from '@strudel.cycles/core';
 import { Tone } from '@strudel.cycles/tone';
 const { Pattern, getFrequency, patternify2 } = strudel;
 
-// let audioContext;
-  /* if (!audioContext) {
+let audioContext;
+export const getAudioContext = () => {
+  if (!audioContext) {
     audioContext = new AudioContext();
   }
-  return audioContext; */
+  return audioContext;
+};
 
 const lookahead = 0.2;
 
