@@ -1,7 +1,6 @@
 {
   "name": "@strudel.cycles/react",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "exports": {
@@ -19,6 +18,23 @@
     "build": "vite build",
     "preview": "vite preview"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@codemirror/lang-javascript": "^0.19.0",
     "react-codemirror6": "^1.1.0",
