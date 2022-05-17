@@ -1,6 +1,7 @@
 {
   "name": "@strudel.cycles/react",
   "version": "0.0.1",
+  "description": "React components for strudel",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "exports": {
