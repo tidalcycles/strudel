@@ -24,7 +24,3 @@ cd repl
 npm run build # <- builds repl + tutorial to ../docs
 npm run static # <- test static build
 ```
-
-## TODO vite
-
-- "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial && npm run add-license",
