@@ -30,6 +30,7 @@ export default defineConfig({
         '@strudel.cycles/midi',
         '@strudel.cycles/xen',
         '@strudel.cycles/serial',
+        '@strudel.cycles/webaudio',
         '@codemirror/view',
         '@codemirror/highlight',
         '@codemirror/state'

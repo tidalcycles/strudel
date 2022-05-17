@@ -8,6 +8,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Tutorial from './tutorial.mdx';
 import './style.css';
+import '@strudel.cycles/react/dist/style.css';
 
 
 ReactDOM.render(
@@ -33,21 +34,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-
-/*
-// for pragmatic reasons, I just added the tailwind classes from MiniRepl here to make them work
-// TODO: find a way to "export" tailwind classes from package
-rounded-md overflow-hidden bg-[#444C57]
-flex justify-between bg-slate-700 border-t border-slate-500
-flex
-w-16 flex items-center justify-center p-1 bg-slate-700 border-r border-slate-500  text-white hover:bg-slate-600
-animate-pulse
-h-5 w-5
-w-16 flex items-center justify-center p-1 border-slate-500  hover:bg-slate-600
-bg-slate-700 border-r border-slate-500 text-white
-bg-slate-600 text-slate-400 cursor-not-allowed
-text-right p-1 text-sm
-text-red-200
-flex space-y-0 overflow-auto relative
-*/

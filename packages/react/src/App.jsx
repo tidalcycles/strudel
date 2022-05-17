@@ -1,5 +1,5 @@
 import React from 'react';
-import MiniRepl from './components/MiniRepl';
+import { MiniRepl } from './components/MiniRepl';
 import 'tailwindcss/tailwind.css';
 
 function App() {
