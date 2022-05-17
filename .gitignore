@@ -1,4 +1,5 @@
 dist
+out
 !docs/dist
 dist-*
 cabal-dev

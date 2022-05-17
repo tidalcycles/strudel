@@ -37,6 +37,7 @@ Pattern.prototype.draw = function (callback, cycleSpan, lookaheadCycles = 1) {
         const end = (currentCycle + lookaheadCycles) * cycleSpan;
         events = this._asNumber(true) // true = silent error
           .query(new State(new TimeSpan(begin, end)))
+          .filter(Boolean)
           .filter((event) => event.part.begin.equals(event.whole.begin));
       }
     }

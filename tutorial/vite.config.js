@@ -14,6 +14,10 @@ const options = {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), mdx(options)],
+  build: {
+    outDir: '../out/tutorial',
+  },
+  base: '/tutorial/',
 });
 
 // jsxRuntime:'classic' to prevent "jsxDevRuntime.exports.jsxDEV is not a function" for dev mode
