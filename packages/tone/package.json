@@ -2,7 +2,7 @@
   "name": "@strudel.cycles/tone",
   "version": "0.0.6",
   "description": "Tone.js API for strudel",
-  "main": "tone.mjs",
+  "main": "index.mjs",
   "type": "module",
   "repository": {
     "type": "git",

@@ -2,7 +2,8 @@
   "name": "@strudel.cycles/eval",
   "version": "0.0.5",
   "description": "Code evaluator for strudel",
-  "main": "evaluate.mjs",
+  "main": "index.mjs",
+  "type": "module",
   "directories": {
     "test": "test"
   },
@@ -13,7 +14,6 @@
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
   },
-  "type": "module",
   "keywords": [
     "tidalcycles",
     "strudel",

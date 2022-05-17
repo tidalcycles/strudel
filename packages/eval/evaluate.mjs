@@ -20,7 +20,13 @@ export const evalScope = async (...args) => {
     console.warn('@strudel.cycles/eval evalScope was called more than once.');
   }
   scoped = true;
-  const modules = await Promise.all(args);
+  const results = await Promise.allSettled(args);
+  const modules = results.filter((result) => result.status === 'fulfilled').map((r) => r.value);
+  results.forEach((result, i) => {
+    if (result.status === 'rejected') {
+      console.warn(`evalScope: module with index ${i} could not be loaded:`, result.reason);
+    }
+  });
   Object.assign(globalThis, ...modules, Pattern.prototype.bootstrap());
 };
 
