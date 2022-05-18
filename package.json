@@ -9,7 +9,7 @@
     "setup": "npm i && npm run bootstrap && cd repl && npm i",
     "repl": "cd repl && npm run dev",
     "osc": "cd packages/osc && npm run server",
-    "build": "cd repl && npm run build && cd ../tutorial && npm run build",
+    "build": "rm -rf out && cd repl && npm run build && cd ../tutorial && npm run build",
     "preview": "npx serve ./out",
     "deploy": "gh-pages -d out",
     "jsdoc": "jsdoc packages/ -c jsdoc.config.json",
