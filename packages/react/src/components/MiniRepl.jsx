@@ -8,7 +8,7 @@ import 'tailwindcss/tailwind.css';
 import styles from './MiniRepl.module.css';
 import { Icon } from './Icon';
 
-export function MiniRepl({ tune, defaultSynth }) {
+export function MiniRepl({ tune, defaultSynth, hideOutsideView = false }) {
   const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,
@@ -20,11 +20,11 @@ export function MiniRepl({ tune, defaultSynth }) {
   });
   const wasVisible = useRef();
   const show = useMemo(() => {
-    if (isVisible) {
+    if (isVisible || !hideOutsideView) {
       wasVisible.current = true;
     }
     return isVisible || wasVisible.current;
-  }, [isVisible]);
+  }, [isVisible, hideOutsideView]);
   useHighlighting({ view, pattern, active: cycle.started });
   return (
     <div className={styles.container} ref={ref}>
@@ -39,7 +39,7 @@ export function MiniRepl({ tune, defaultSynth }) {
         </div>
         {error && <div className={styles.error}>{error.message}</div>}
       </div>
-      <div className={styles.body}>
+      <div className={styles.body} >
         {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />}
       </div>
     </div>

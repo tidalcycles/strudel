@@ -532,7 +532,7 @@ function Icon({ type }) {
   }[type]);
 }
 
-function MiniRepl({ tune, defaultSynth }) {
+function MiniRepl({ tune, defaultSynth, hideOutsideView = false }) {
   const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,
@@ -544,11 +544,11 @@ function MiniRepl({ tune, defaultSynth }) {
   });
   const wasVisible = useRef();
   const show = useMemo(() => {
-    if (isVisible) {
+    if (isVisible || !hideOutsideView) {
       wasVisible.current = true;
     }
     return isVisible || wasVisible.current;
-  }, [isVisible]);
+  }, [isVisible, hideOutsideView]);
   useHighlighting({ view, pattern, active: cycle.started });
   return /* @__PURE__ */ React.createElement("div", {
     className: styles.container,

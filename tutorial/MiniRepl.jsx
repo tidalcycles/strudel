@@ -21,5 +21,5 @@ evalScope(
 );
 
 export function MiniRepl({ tune }) {
-  return <_MiniRepl tune={tune} defaultSynth={defaultSynth} />;
+  return <_MiniRepl tune={tune} defaultSynth={defaultSynth} hideOutsideView={true} />;
 }
