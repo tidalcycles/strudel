@@ -1,5 +1,7 @@
 import { MiniRepl } from './MiniRepl';
 
+# Table of Contents
+
 # What is Strudel?
 
 With Strudel, you can expressively write dynamic music pieces.
@@ -579,7 +581,7 @@ Helper that returns a Filter Node of type highpass with the given cutoff. Intend
 .tone(synth(osc('sawtooth')).chain(highpass(2000), out()))`}
 />
 
-### adsr(attack, decay?, sustain?, release?)
+### adsr
 
 Helper to set the envelope of a Tone.js instrument. Intended to be used with Tone's .set:
 

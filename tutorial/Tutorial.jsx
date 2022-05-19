@@ -7,17 +7,19 @@ This program is free software: you can redistribute it and/or modify it under th
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Tutorial from './tutorial.mdx';
-import './style.css';
+import './style.scss';
 import '@strudel.cycles/react/dist/style.css';
 
 ReactDOM.render(
   <React.StrictMode>
     <div className="min-h-screen">
-      <header className="flex-none flex justify-center w-full h-16 px-2 items-center border-b border-gray-200 bg-white">
-        <div className="p-4 w-full max-w-3xl flex justify-between">
+      <header className="flex-none flex justify-start sticky top-0 z-[2] w-full h-16 px-2 items-center border-b border-gray-200 bg-white">
+        <div className="p-4 w-full flex justify-between">
           <div className="flex items-center space-x-2">
             <img src={'https://tidalcycles.org/img/logo.svg'} className="Tidal-logo w-10 h-10" alt="logo" />
-            <h1 className="text-xl">Strudel Tutorial</h1>
+            <h1 className="text-xl cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
+              Strudel Tutorial
+            </h1>
           </div>
           {!window.location.href.includes('localhost') && (
             <div className="flex space-x-4">
@@ -26,7 +28,7 @@ ReactDOM.render(
           )}
         </div>
       </header>
-      <main className="p-4 max-w-3xl prose">
+      <main className="p-4 pl-6 max-w-3xl prose">
         <Tutorial />
       </main>
     </div>
