@@ -5,6 +5,7 @@ import cx from '../cx';
 import useHighlighting from '../hooks/useHighlighting.mjs';
 import CodeMirror6 from './CodeMirror6';
 import 'tailwindcss/tailwind.css';
+import './style.css';
 import styles from './MiniRepl.module.css';
 import { Icon } from './Icon';
 
