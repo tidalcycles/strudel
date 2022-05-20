@@ -3,7 +3,7 @@ import { docs } from '../doc.json';
 import { MiniRepl } from './MiniRepl';
 
 function ApiDoc() {
-  console.log('docJson', docs);
+  // console.log('docJson', docs);
   return (
     <div>
       {docs
@@ -23,6 +23,7 @@ function ApiDoc() {
                 }),
               }}
             />
+            <h3>Parameters</h3>
             <ul>
               {item.params?.map((param, i) => (
                 <li key={i}>

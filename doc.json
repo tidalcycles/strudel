@@ -1,11 +1,11 @@
 {
   "docs": [
     {
-      "comment": "/**\n * Intended for a debugging, drawLine renders the pattern as a string, where each character represents the same time span.\n * Should only be used with single characters as values, otherwise the character slots will be messed up.\n * Character legend: \n * \n * - \"|\" cycle separator\n * - \"-\" hold previous value\n * - \".\" silence\n *\n * @param {Pattern} pat pattern to use\n * @param {number} chars max number of characters (approximately)\n * @returns string\n * @example\n * const line = drawLine(\"0 [1 2 3]\", 10); // |0--123|0--123\n * console.log(line);\n */",
+      "comment": "/**\n * Intended for a debugging, drawLine renders the pattern as a string, where each character represents the same time span.\n * Should only be used with single characters as values, otherwise the character slots will be messed up.\n * Character legend:\n *\n * - \"|\" cycle separator\n * - \"-\" hold previous value\n * - \".\" silence\n *\n * @param {Pattern} pattern the pattern to use\n * @param {number} chars max number of characters (approximately)\n * @returns string\n * @example\n * const line = drawLine(\"0 [1 2 3]\", 10); // |0--123|0--123\n * console.log(line);\n */",
       "meta": {
         "range": [
-          1408,
-          2778
+          1414,
+          2784
         ],
         "filename": "drawLine.mjs",
         "lineno": 25,
@@ -44,8 +44,8 @@
               "Pattern"
             ]
           },
-          "description": "<p>pattern to use</p>",
-          "name": "pat"
+          "description": "<p>the pattern to use</p>",
+          "name": "pattern"
         },
         {
           "type": {
@@ -54,8 +54,7 @@
             ]
           },
           "description": "<p>max number of characters (approximately)</p>",
-          "name": "chars",
-          "defaultvalue": 60
+          "name": "chars"
         }
       ],
       "returns": [

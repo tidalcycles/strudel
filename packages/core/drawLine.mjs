@@ -15,7 +15,7 @@ import Fraction, { gcd } from './fraction.mjs';
  * - "-" hold previous value
  * - "." silence
  *
- * @param {Pattern} pat pattern to use
+ * @param {Pattern} pattern the pattern to use
  * @param {number} chars max number of characters (approximately)
  * @returns string
  * @example
