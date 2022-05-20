@@ -9,8 +9,8 @@ import Fraction, { gcd } from './fraction.mjs';
 /**
  * Intended for a debugging, drawLine renders the pattern as a string, where each character represents the same time span.
  * Should only be used with single characters as values, otherwise the character slots will be messed up.
- * Character legend: 
- * 
+ * Character legend:
+ *
  * - "|" cycle separator
  * - "-" hold previous value
  * - "." silence
@@ -19,7 +19,7 @@ import Fraction, { gcd } from './fraction.mjs';
  * @param {number} chars max number of characters (approximately)
  * @returns string
  * @example
- * const line = drawLine(pattern, 10); // |0--123|0--123
+ * const line = drawLine("0 [1 2 3]", 10); // |0--123|0--123
  * console.log(line);
  */
 function drawLine(pat, chars = 60) {

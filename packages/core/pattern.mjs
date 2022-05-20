@@ -62,7 +62,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#withQuerySpan|withQuerySpan}, but the function is applied to both the
+   * As with {@link Pattern#withQuerySpan}, but the function is applied to both the
    * begin and end time of the query timespan.
    * @param {Function} func the function to apply
    * @returns Pattern
@@ -72,7 +72,7 @@ export class Pattern {
   }
 
   /**
-   * Similar to {@link Pattern#withQuerySpan|withQuerySpan}, but the function is applied to the timespans
+   * Similar to {@link Pattern#withQuerySpan}, but the function is applied to the timespans
    * of all haps returned by pattern queries (both `part` timespans, and where
    * present, `whole` timespans).
    * @param {Function} func
@@ -83,7 +83,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#withHapSpan|withHapSpan}, but the function is applied to both the
+   * As with {@link Pattern#withHapSpan}, but the function is applied to both the
    * begin and end time of the hap timespans.
    * @param {Function} func the function to apply
    * @returns Pattern
@@ -182,7 +182,7 @@ export class Pattern {
 
   /**
    * Returns a new pattern, with the function applied to the value of
-   * each hap. It has the alias {@link Pattern#fmap|fmap}.
+   * each hap. It has the alias {@link Pattern#fmap}.
    * @param {Function} func
    * @returns Pattern
    */
@@ -191,7 +191,7 @@ export class Pattern {
   }
 
   /**
-   * see {@link Pattern#withValue|withValue}
+   * see {@link Pattern#withValue}
    */
   fmap(func) {
     return this.withValue(func);
@@ -298,7 +298,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#appBoth|appBoth}, but the `whole` timespan is not the intersection,
+   * As with {@link Pattern#appBoth}, but the `whole` timespan is not the intersection,
    * but the timespan from the function of patterns that this method is called
    * on. In practice, this means that the pattern structure, including onsets,
    * are preserved from the pattern of functions (often referred to as the left
@@ -330,7 +330,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#appLeft|appLeft}, but `whole` timespans are instead taken from the
+   * As with {@link Pattern#appLeft}, but `whole` timespans are instead taken from the
    * pattern of values, i.e. structure is preserved from the right hand/outer
    * pattern.
    * @param {Pattern} pat_val
@@ -1022,8 +1022,10 @@ export class Pattern {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
 
-  _loopAt(factor,cps=1) {
-    return this.speed((1/factor)*cps).unit("c").slow(factor)
+  _loopAt(factor, cps = 1) {
+    return this.speed((1 / factor) * cps)
+      .unit('c')
+      .slow(factor);
   }
 }
 

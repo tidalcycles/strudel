@@ -24,6 +24,7 @@ const euclid = (pulses, steps, rotation = 0) => {
  * Euclidian rhythms are really useful for computer/algorithmic music because they can accurately
  * describe a large number of rhythms used in the most important music world traditions.
  *
+ * @memberof Pattern
  * @param {number} pulses the number of onsets / beats
  * @param {number} steps the number of steps to fill
  * @param {number} rotation (optional) offset in steps
