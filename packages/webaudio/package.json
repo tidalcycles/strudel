@@ -28,6 +28,6 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.0.5"
+    "@strudel.cycles/core": "^0.1.0"
   }
 }

@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.0.5",
+    "@strudel.cycles/core": "^0.1.0",
     "@strudel.cycles/eval": "^0.1.0",
     "@strudel.cycles/tone": "^0.1.0"
   }
