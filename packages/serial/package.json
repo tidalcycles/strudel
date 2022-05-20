@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/serial",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Webserial API for strudel",
   "main": "serial.mjs",
   "repository": {
@@ -19,6 +19,5 @@
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
-  "homepage": "https://github.com/tidalcycles/strudel#readme",
-  "dependencies": {}
+  "homepage": "https://github.com/tidalcycles/strudel#readme"
 }

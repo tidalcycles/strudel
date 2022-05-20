@@ -7,17 +7,39 @@ This program is free software: you can redistribute it and/or modify it under th
 import shapeshifter from './shapeshifter.mjs';
 import * as strudel from '@strudel.cycles/core';
 
-const { isPattern } = strudel;
+const { isPattern, Pattern } = strudel;
 
 export const extend = (...args) => {
-  // TODO: find a way to make args available to eval without adding it to global scope...
-  // sadly, "with" does not work in strict mode
+  console.warn('@strudel.cycles/eval extend is deprecated, please use evalScope instead');
   Object.assign(globalThis, ...args);
 };
 
+let scoped = false;
+export const evalScope = async (...args) => {
+  if (scoped) {
+    console.warn('@strudel.cycles/eval evalScope was called more than once.');
+  }
+  scoped = true;
+  const results = await Promise.allSettled(args);
+  const modules = results.filter((result) => result.status === 'fulfilled').map((r) => r.value);
+  results.forEach((result, i) => {
+    if (result.status === 'rejected') {
+      console.warn(`evalScope: module with index ${i} could not be loaded:`, result.reason);
+    }
+  });
+  Object.assign(globalThis, ...modules, Pattern.prototype.bootstrap());
+};
+
+function safeEval(str) {
+  return Function('"use strict";return (' + str + ')')();
+}
+
 export const evaluate = async (code) => {
+  if (!scoped) {
+    await evalScope(); // at least scope Pattern.prototype.boostrap
+  }
   const shapeshifted = shapeshifter(code); // transform syntactically correct js code to semantically usable code
-  let evaluated = await eval(shapeshifted);
+  let evaluated = await safeEval(shapeshifted);
   if (!isPattern(evaluated)) {
     console.log('evaluated', evaluated);
     const message = `got "${typeof evaluated}" instead of pattern`;

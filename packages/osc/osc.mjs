@@ -10,15 +10,19 @@ import { Pattern } from '@strudel.cycles/core';
 const comm = new OSC();
 comm.open();
 const latency = 0.1;
+let startedAt = -1;
 
 Pattern.prototype.osc = function () {
   return this._withHap((hap) => {
-    const onTrigger = (time, hap, currentTime) => {
+    const onTrigger = (time, hap, currentTime, cps, cycle, delta) => {
       // time should be audio time of onset
       // currentTime should be current time of audio context (slightly before time)
-      const keyvals = Object.entries(hap.value).flat();
-      const offset = (time - currentTime + latency) * 1000;
-      const ts = Math.floor(Date.now() + offset);
+      if (startedAt < 0) {
+        startedAt = Date.now() - (currentTime * 1000);
+      }
+      const controls = Object.assign({}, { cps: cps, cycle: cycle, delta: delta }, hap.value);
+      const keyvals = Object.entries(controls).flat();
+      const ts = Math.floor(startedAt + ((time + latency) * 1000));
       const message = new OSC.Message('/dirt/play', ...keyvals);
       const bundle = new OSC.Bundle([message], ts);
       bundle.timestamp(ts); // workaround for https://github.com/adzialocha/osc-js/issues/60

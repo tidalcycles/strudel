@@ -450,7 +450,7 @@ export class Pattern {
         // set context type to midi to let the player know its meant as midi number and not as frequency
         return new Hap(hap.whole, hap.part, toMidi(hap.value), { ...hap.context, type: 'midi' });
       }
-      if (dropfail) {
+      if (dropfails) {
         // return 'nothing'
         return undefined;
       }
@@ -461,10 +461,6 @@ export class Pattern {
       throw new Error('cannot parse as number: "' + hap.value + '"');
       return hap;
     });
-    if (dropfail) {
-      return result._removeUndefineds();
-    }
-    return result;
   }
 
   /**
@@ -744,6 +740,14 @@ export class Pattern {
     return this._fast(Fraction(1).div(factor));
   }
 
+  _inside(factor, f) {
+    return f(this._slow(factor))._fast(factor);
+  }
+
+  _outside(factor, f) {
+    return f(this._fast(factor))._slow(factor);
+  }
+
   _ply(factor) {
     return this.fmap((x) => pure(x)._fast(factor))._squeezeJoin();
   }
@@ -868,6 +872,16 @@ export class Pattern {
     const pats = Array(n - 1).fill(pat);
     pats.unshift(func(pat));
     return slowcatPrime(...pats);
+  }
+
+  /**
+   * Returns a new pattern where every other cycle is played once, twice as
+   * fast, and offset in time by one quarter of a cycle. Creates a kind of
+   * breakbeat feel.
+   * @returns Pattern
+   */
+  brak() {
+    return this.when(slowcat(false, true), (x) => fastcat(x, silence)._late(0.25));
   }
 
   rev() {
@@ -1006,6 +1020,10 @@ export class Pattern {
 
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
+  }
+
+  _loopAt(factor,cps=1) {
+    return this.speed((1/factor)*cps).unit("c").slow(factor)
   }
 }
 
@@ -1430,6 +1448,10 @@ Pattern.prototype.chunkBack = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._chunkBack)(...args, this);
 };
+Pattern.prototype.loopAt = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._loopAt)(...args, this);
+};
 Pattern.prototype.zoom = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._zoom)(...args, this);
@@ -1437,6 +1459,14 @@ Pattern.prototype.zoom = function (...args) {
 Pattern.prototype.compress = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._compress)(...args, this);
+};
+Pattern.prototype.outside = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._outside)(...args, this);
+};
+Pattern.prototype.inside = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._inside)(...args, this);
 };
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)
