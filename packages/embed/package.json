@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/embed",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Embeddable Web Component to load a Strudel REPL into an iframe",
   "main": "embed.js",
   "type": "module",
@@ -20,6 +20,5 @@
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
-  "homepage": "https://github.com/tidalcycles/strudel#readme",
-  "dependencies": {}
+  "homepage": "https://github.com/tidalcycles/strudel#readme"
 }

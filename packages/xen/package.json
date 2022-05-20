@@ -1,8 +1,8 @@
 {
   "name": "@strudel.cycles/xen",
-  "version": "0.0.5",
+  "version": "0.1.1",
   "description": "Xenharmonic API for strudel",
-  "main": "xen.mjs",
+  "main": "index.mjs",
   "scripts": {
     "test": "mocha --colors"
   },
@@ -24,6 +24,6 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.0.5"
+    "@strudel.cycles/core": "^0.1.0"
   }
 }

@@ -12,6 +12,7 @@ import * as strudel from '@strudel.cycles/core';
 const { fastcat } = strudel;
 
 extend({ mini }, strudel);
+// TODO: test evalScope
 
 describe('evaluate', () => {
   const ev = async (code) => (await evaluate(code)).pattern._firstCycleValues;

@@ -6,7 +6,13 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { Pattern, patternify2 } from './index.mjs';
 
-const synth = window?.speechSynthesis;
+let synth;
+try {
+  synth = window?.speechSynthesis;
+} catch (err) {
+  console.warn('cannot use window: not in browser?');
+}
+
 let allVoices = synth?.getVoices();
 // console.log('voices', allVoices);
 

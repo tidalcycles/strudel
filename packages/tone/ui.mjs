@@ -47,7 +47,7 @@ export const backgroundImage = function (src, animateOptions = {}) {
   );
 };
 
-export const cleanup = () => {
+export const cleanupUi = () => {
   const container = document.getElementById('code');
   if (container) {
     container.style = '';

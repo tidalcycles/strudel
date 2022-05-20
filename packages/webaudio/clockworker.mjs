@@ -10,7 +10,7 @@ const urlifyFunction = (func) => URL.createObjectURL(new Blob([stringifyFunction
 const createWorker = (func) => new Worker(urlifyFunction(func));
 
 // this class is basically the tale of two clocks
-class ClockWorker {
+export class ClockWorker {
   worker;
   audioContext;
   interval = 0.2; // query span
@@ -72,4 +72,3 @@ class ClockWorker {
   }
 }
 
-export default ClockWorker;
