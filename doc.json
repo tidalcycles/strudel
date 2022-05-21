@@ -2154,6 +2154,119 @@
       "___s": true
     },
     {
+      "comment": "/**\n * Change the pitch of each value by the given amount. Expects numbers or note strings as values.\n * The amount can be given as a number of semitones or as a string in interval short notation.\n * If you don't care about enharmonic correctness, just use numbers. Otherwise, pass the interval of\n * the form: ST where S is the degree number and T the type of interval with\n *\n * - M = major\n * - m = minor\n * - P = perfect\n * - A = augmented\n * - d = diminished\n *\n * Examples intervals:\n *\n * - 1P = unison = 0\n * - 3M = major third\n * - 3m = minor third\n * - 4P = perfect fourth\n * - 4A = augmented fourth\n * - 5P = perfect fifth\n * - 5d = diminished fifth\n *\n * @param {string | number} amount Either number of semitones or interval string.\n * @returns Pattern\n * @memberof Pattern\n * @name transpose\n * @example\n * \"c2 c3\".fast(2).transpose(\"<0 -2 5 3>\".slow(2)).transpose(0)\n * @example\n * \"c2 c3\".fast(2).transpose(\"<1P -2M 4P 3m>\".slow(2)).transpose(0)\n */",
+      "meta": {
+        "filename": "tonal.mjs",
+        "lineno": 45,
+        "columnno": 0,
+        "path": "/home/felix/projects/strudel/packages/tonal",
+        "code": {}
+      },
+      "description": "<p>Change the pitch of each value by the given amount. Expects numbers or note strings as values.\nThe amount can be given as a number of semitones or as a string in interval short notation.\nIf you don't care about enharmonic correctness, just use numbers. Otherwise, pass the interval of\nthe form: ST where S is the degree number and T the type of interval with</p>\n<ul>\n<li>M = major</li>\n<li>m = minor</li>\n<li>P = perfect</li>\n<li>A = augmented</li>\n<li>d = diminished</li>\n</ul>\n<p>Examples intervals:</p>\n<ul>\n<li>1P = unison = 0</li>\n<li>3M = major third</li>\n<li>3m = minor third</li>\n<li>4P = perfect fourth</li>\n<li>4A = augmented fourth</li>\n<li>5P = perfect fifth</li>\n<li>5d = diminished fifth</li>\n</ul>",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "string",
+              "number"
+            ]
+          },
+          "description": "<p>Either number of semitones or interval string.</p>",
+          "name": "amount"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "memberof": "Pattern",
+      "name": "transpose",
+      "examples": [
+        "\"c2 c3\".fast(2).transpose(\"<0 -2 5 3>\".slow(2)).transpose(0)",
+        "\"c2 c3\".fast(2).transpose(\"<1P -2M 4P 3m>\".slow(2)).transpose(0)"
+      ],
+      "scope": "static",
+      "longname": "Pattern.transpose",
+      "kind": "member",
+      "___id": "T000002R003677",
+      "___s": true
+    },
+    {
+      "comment": "/**\n * Transposes notes inside the scale by the number of steps.\n * Expected to be called on a Pattern which already has a {@link Pattern#scale}\n *\n * @memberof Pattern\n * @name scaleTranspose\n * @param {offset} offset number of steps inside the scale\n * @returns Pattern\n * @example\n * \"-8 [2,4,6]\"\n * .scale('C4 bebop major')\n * .scaleTranspose(\"<0 -1 -2 -3 -4 -5 -6 -4>\")\n */",
+      "meta": {
+        "filename": "tonal.mjs",
+        "lineno": 98,
+        "columnno": 0,
+        "path": "/home/felix/projects/strudel/packages/tonal",
+        "code": {}
+      },
+      "description": "<p>Transposes notes inside the scale by the number of steps.\nExpected to be called on a Pattern which already has a {@link Pattern#scale}</p>",
+      "memberof": "Pattern",
+      "name": "scaleTranspose",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "offset"
+            ]
+          },
+          "description": "<p>number of steps inside the scale</p>",
+          "name": "offset"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "examples": [
+        "\"-8 [2,4,6]\"\n.scale('C4 bebop major')\n.scaleTranspose(\"<0 -1 -2 -3 -4 -5 -6 -4>\")"
+      ],
+      "scope": "static",
+      "longname": "Pattern.scaleTranspose",
+      "kind": "member",
+      "___id": "T000002R003681",
+      "___s": true
+    },
+    {
+      "comment": "/**\n * Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like {@link Pattern#scaleTranspose}.\n *\n * The scale name has the form \"TO? N\" wher\n *\n * - T = Tonic\n * - O = Octave (optional, defaults to 3)\n * - N = Name of scale, available names can be found [here](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).\n *\n * @memberof Pattern\n * @name scale\n * @param {string} scale Name of scale\n * @returns Pattern\n * @example \n * \"0 2 4 6 4 2\"\n * .scale(seq('C2 major', 'C2 minor').slow(2))\n */",
+      "meta": {
+        "filename": "tonal.mjs",
+        "lineno": 124,
+        "columnno": 0,
+        "path": "/home/felix/projects/strudel/packages/tonal",
+        "code": {}
+      },
+      "description": "<p>Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like {@link Pattern#scaleTranspose}.</p>\n<p>The scale name has the form &quot;TO? N&quot; wher</p>\n<ul>\n<li>T = Tonic</li>\n<li>O = Octave (optional, defaults to 3)</li>\n<li>N = Name of scale, available names can be found <a href=\"https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts\">here</a>.</li>\n</ul>",
+      "memberof": "Pattern",
+      "name": "scale",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "string"
+            ]
+          },
+          "description": "<p>Name of scale</p>",
+          "name": "scale"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "examples": [
+        "\"0 2 4 6 4 2\"\n.scale(seq('C2 major', 'C2 minor').slow(2))"
+      ],
+      "scope": "static",
+      "longname": "Pattern.scale",
+      "kind": "member",
+      "___id": "T000002R003683",
+      "___s": true
+    },
+    {
       "kind": "package",
       "longname": "package:undefined",
       "files": [
@@ -2232,7 +2345,7 @@
         "/home/felix/projects/strudel/packages/xen/tunejs.js",
         "/home/felix/projects/strudel/packages/xen/xen.mjs"
       ],
-      "___id": "T000002R013973",
+      "___id": "T000002R013976",
       "___s": true
     }
   ]
