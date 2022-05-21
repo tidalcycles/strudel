@@ -2154,7 +2154,7 @@
       "___s": true
     },
     {
-      "comment": "/**\n * Change the pitch of each value by the given amount. Expects numbers or note strings as values.\n * The amount can be given as a number of semitones or as a string in interval short notation.\n * If you don't care about enharmonic correctness, just use numbers. Otherwise, pass the interval of\n * the form: ST where S is the degree number and T the type of interval with\n *\n * - M = major\n * - m = minor\n * - P = perfect\n * - A = augmented\n * - d = diminished\n *\n * Examples intervals:\n *\n * - 1P = unison = 0\n * - 3M = major third\n * - 3m = minor third\n * - 4P = perfect fourth\n * - 4A = augmented fourth\n * - 5P = perfect fifth\n * - 5d = diminished fifth\n *\n * @param {string | number} amount Either number of semitones or interval string.\n * @returns Pattern\n * @memberof Pattern\n * @name transpose\n * @example\n * \"c2 c3\".fast(2).transpose(\"<0 -2 5 3>\".slow(2)).transpose(0)\n * @example\n * \"c2 c3\".fast(2).transpose(\"<1P -2M 4P 3m>\".slow(2)).transpose(0)\n */",
+      "comment": "/**\n * Change the pitch of each value by the given amount. Expects numbers or note strings as values.\n * The amount can be given as a number of semitones or as a string in interval short notation.\n * If you don't care about enharmonic correctness, just use numbers. Otherwise, pass the interval of\n * the form: ST where S is the degree number and T the type of interval with\n *\n * - M = major\n * - m = minor\n * - P = perfect\n * - A = augmented\n * - d = diminished\n *\n * Examples intervals:\n *\n * - 1P = unison\n * - 3M = major third\n * - 3m = minor third\n * - 4P = perfect fourth\n * - 4A = augmented fourth\n * - 5P = perfect fifth\n * - 5d = diminished fifth\n *\n * @param {string | number} amount Either number of semitones or interval string.\n * @returns Pattern\n * @memberof Pattern\n * @name transpose\n * @example\n * \"c2 c3\".fast(2).transpose(\"<0 -2 5 3>\".slow(2)).transpose(0)\n * @example\n * \"c2 c3\".fast(2).transpose(\"<1P -2M 4P 3m>\".slow(2)).transpose(0)\n */",
       "meta": {
         "filename": "tonal.mjs",
         "lineno": 45,
@@ -2162,7 +2162,7 @@
         "path": "/home/felix/projects/strudel/packages/tonal",
         "code": {}
       },
-      "description": "<p>Change the pitch of each value by the given amount. Expects numbers or note strings as values.\nThe amount can be given as a number of semitones or as a string in interval short notation.\nIf you don't care about enharmonic correctness, just use numbers. Otherwise, pass the interval of\nthe form: ST where S is the degree number and T the type of interval with</p>\n<ul>\n<li>M = major</li>\n<li>m = minor</li>\n<li>P = perfect</li>\n<li>A = augmented</li>\n<li>d = diminished</li>\n</ul>\n<p>Examples intervals:</p>\n<ul>\n<li>1P = unison = 0</li>\n<li>3M = major third</li>\n<li>3m = minor third</li>\n<li>4P = perfect fourth</li>\n<li>4A = augmented fourth</li>\n<li>5P = perfect fifth</li>\n<li>5d = diminished fifth</li>\n</ul>",
+      "description": "<p>Change the pitch of each value by the given amount. Expects numbers or note strings as values.\nThe amount can be given as a number of semitones or as a string in interval short notation.\nIf you don't care about enharmonic correctness, just use numbers. Otherwise, pass the interval of\nthe form: ST where S is the degree number and T the type of interval with</p>\n<ul>\n<li>M = major</li>\n<li>m = minor</li>\n<li>P = perfect</li>\n<li>A = augmented</li>\n<li>d = diminished</li>\n</ul>\n<p>Examples intervals:</p>\n<ul>\n<li>1P = unison</li>\n<li>3M = major third</li>\n<li>3m = minor third</li>\n<li>4P = perfect fourth</li>\n<li>4A = augmented fourth</li>\n<li>5P = perfect fifth</li>\n<li>5d = diminished fifth</li>\n</ul>",
       "params": [
         {
           "type": {
@@ -2267,6 +2267,43 @@
       "___s": true
     },
     {
+      "comment": "/**\n * Turns chord symbols into voicings, using the smoothest voice leading possible.\n * Uses [chord-voicings package](https://github.com/felixroos/chord-voicings#chord-voicings).\n *\n * @name voicings\n * @memberof Pattern\n * @param {range} range note range for possible voicings (optional, defaults to `['F3', 'A4']`)\n * @returns Pattern\n * @example\n * stack(\"<C^7 A7 Dm7 G7>\".voicings(), \"<C3 A2 D3 G2>\")\n */",
+      "meta": {
+        "filename": "voicings.mjs",
+        "lineno": 34,
+        "columnno": 0,
+        "path": "/home/felix/projects/strudel/packages/tonal",
+        "code": {}
+      },
+      "description": "<p>Turns chord symbols into voicings, using the smoothest voice leading possible.\nUses <a href=\"https://github.com/felixroos/chord-voicings#chord-voicings\">chord-voicings package</a>.</p>",
+      "name": "voicings",
+      "memberof": "Pattern",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "range"
+            ]
+          },
+          "description": "<p>note range for possible voicings (optional, defaults to <code>['F3', 'A4']</code>)</p>",
+          "name": "range"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "examples": [
+        "stack(\"<C^7 A7 Dm7 G7>\".voicings(), \"<C3 A2 D3 G2>\")"
+      ],
+      "scope": "static",
+      "longname": "Pattern.voicings",
+      "kind": "member",
+      "___id": "T000002R003708",
+      "___s": true
+    },
+    {
       "kind": "package",
       "longname": "package:undefined",
       "files": [
@@ -2345,7 +2382,7 @@
         "/home/felix/projects/strudel/packages/xen/tunejs.js",
         "/home/felix/projects/strudel/packages/xen/xen.mjs"
       ],
-      "___id": "T000002R013976",
+      "___id": "T000002R013977",
       "___s": true
     }
   ]

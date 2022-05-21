@@ -56,7 +56,7 @@ function scaleOffset(scale, offset, note) {
  *
  * Examples intervals:
  *
- * - 1P = unison = 0
+ * - 1P = unison
  * - 3M = major third
  * - 3m = minor third
  * - 4P = perfect fourth
