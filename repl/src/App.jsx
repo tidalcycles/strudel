@@ -22,6 +22,7 @@ evalScope(
   import('@strudel.cycles/midi'),
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
+  import('@strudel.cycles/osc'),
 );
 
 const initialUrl = window.location.href;
