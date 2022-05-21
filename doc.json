@@ -1,6 +1,38 @@
 {
   "docs": [
     {
+      "comment": "/**\n   * Short for sound. Currently only supported with osc / superdirt.\n   *\n   * @name s\n   * @param {string | Pattern} sound The sound / pattern of sounds to pick\n   * @example\n   * s(\"bd hh\").osc()\n   *\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 11,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Short for sound. Currently only supported with osc / superdirt.</p>",
+      "name": "s",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "string",
+              "Pattern"
+            ]
+          },
+          "description": "<p>The sound / pattern of sounds to pick</p>",
+          "name": "sound"
+        }
+      ],
+      "examples": [
+        "s(\"bd hh\").osc()"
+      ],
+      "longname": "s",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000004",
+      "___s": true
+    },
+    {
       "comment": "/**\n * Intended for a debugging, drawLine renders the pattern as a string, where each character represents the same time span.\n * Should only be used with single characters as values, otherwise the character slots will be messed up.\n * Character legend:\n *\n * - \"|\" cycle separator\n * - \"-\" hold previous value\n * - \".\" silence\n *\n * @param {Pattern} pattern the pattern to use\n * @param {number} chars max number of characters (approximately)\n * @returns string\n * @example\n * const line = drawLine(\"0 [1 2 3]\", 10); // |0--123|0--123\n * console.log(line);\n */",
       "meta": {
         "range": [
@@ -69,7 +101,7 @@
       "longname": "drawLine",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000010",
+      "___id": "T000002R000011",
       "___s": true
     },
     {
@@ -158,7 +190,7 @@
       "longname": "Pattern#euclid",
       "kind": "function",
       "scope": "instance",
-      "___id": "T000002R000034",
+      "___id": "T000002R000035",
       "___s": true
     },
     {
@@ -195,7 +227,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000035",
+      "___id": "T000002R000036",
       "___s": true
     },
     {
@@ -233,7 +265,7 @@
           "name": "query"
         }
       ],
-      "___id": "T000002R000495",
+      "___id": "T000002R000496",
       "___s": true
     },
     {
@@ -296,7 +328,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000497",
+      "___id": "T000002R000498",
       "___s": true
     },
     {
@@ -332,7 +364,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000498",
+      "___id": "T000002R000499",
       "___s": true
     },
     {
@@ -380,7 +412,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000501",
+      "___id": "T000002R000502",
       "___s": true
     },
     {
@@ -428,7 +460,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000502",
+      "___id": "T000002R000503",
       "___s": true
     },
     {
@@ -475,7 +507,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000503",
+      "___id": "T000002R000504",
       "___s": true
     },
     {
@@ -523,7 +555,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000504",
+      "___id": "T000002R000505",
       "___s": true
     },
     {
@@ -570,7 +602,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000505",
+      "___id": "T000002R000506",
       "___s": true
     },
     {
@@ -617,7 +649,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000506",
+      "___id": "T000002R000507",
       "___s": true
     },
     {
@@ -664,7 +696,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000507",
+      "___id": "T000002R000508",
       "___s": true
     },
     {
@@ -711,7 +743,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000508",
+      "___id": "T000002R000509",
       "___s": true
     },
     {
@@ -747,7 +779,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000509",
+      "___id": "T000002R000510",
       "___s": true
     },
     {
@@ -803,7 +835,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000510",
+      "___id": "T000002R000511",
       "___s": true
     },
     {
@@ -850,7 +882,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000544",
+      "___id": "T000002R000545",
       "___s": true
     },
     {
@@ -883,7 +915,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000545",
+      "___id": "T000002R000546",
       "___s": true
     },
     {
@@ -931,7 +963,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000546",
+      "___id": "T000002R000547",
       "___s": true
     },
     {
@@ -978,7 +1010,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000547",
+      "___id": "T000002R000548",
       "___s": true
     },
     {
@@ -1014,7 +1046,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000548",
+      "___id": "T000002R000549",
       "___s": true
     },
     {
@@ -1050,7 +1082,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000549",
+      "___id": "T000002R000550",
       "___s": true
     },
     {
@@ -1086,7 +1118,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000550",
+      "___id": "T000002R000551",
       "___s": true
     },
     {
@@ -1133,7 +1165,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000558",
+      "___id": "T000002R000559",
       "___s": true
     },
     {
@@ -1180,7 +1212,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000560",
+      "___id": "T000002R000561",
       "___s": true
     },
     {
@@ -1227,7 +1259,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000572",
+      "___id": "T000002R000573",
       "___s": true
     },
     {
@@ -1276,7 +1308,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000584",
+      "___id": "T000002R000585",
       "___s": true
     },
     {
@@ -1307,7 +1339,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000587",
+      "___id": "T000002R000588",
       "___s": true
     },
     {
@@ -1338,7 +1370,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000588",
+      "___id": "T000002R000589",
       "___s": true
     },
     {
@@ -1374,7 +1406,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000589",
+      "___id": "T000002R000590",
       "___s": true
     },
     {
@@ -1410,7 +1442,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000608",
+      "___id": "T000002R000609",
       "___s": true
     },
     {
@@ -1446,7 +1478,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000609",
+      "___id": "T000002R000610",
       "___s": true
     },
     {
@@ -1482,7 +1514,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000610",
+      "___id": "T000002R000611",
       "___s": true
     },
     {
@@ -1518,7 +1550,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000611",
+      "___id": "T000002R000612",
       "___s": true
     },
     {
@@ -1554,7 +1586,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000612",
+      "___id": "T000002R000613",
       "___s": true
     },
     {
@@ -1610,7 +1642,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000613",
+      "___id": "T000002R000614",
       "___s": true
     },
     {
@@ -1666,7 +1698,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000614",
+      "___id": "T000002R000615",
       "___s": true
     },
     {
@@ -1722,7 +1754,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000615",
+      "___id": "T000002R000616",
       "___s": true
     },
     {
@@ -1758,7 +1790,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000712",
+      "___id": "T000002R000713",
       "___s": true
     },
     {
@@ -1809,7 +1841,7 @@
       "longname": "pure",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000830",
+      "___id": "T000002R000831",
       "___s": true
     },
     {
@@ -1861,7 +1893,7 @@
       "longname": "stack",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000837",
+      "___id": "T000002R000838",
       "___s": true
     },
     {
@@ -1913,7 +1945,7 @@
       "longname": "slowcat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000841",
+      "___id": "T000002R000842",
       "___s": true
     },
     {
@@ -1962,7 +1994,7 @@
       "longname": "slowcatPrime",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000849",
+      "___id": "T000002R000850",
       "___s": true
     },
     {
@@ -2014,7 +2046,7 @@
       "longname": "fastcat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000855",
+      "___id": "T000002R000856",
       "___s": true
     },
     {
@@ -2042,7 +2074,7 @@
       "longname": "cat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000857",
+      "___id": "T000002R000858",
       "___s": true
     },
     {
@@ -2094,7 +2126,7 @@
       "longname": "timeCat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000859",
+      "___id": "T000002R000860",
       "___s": true
     },
     {
@@ -2122,7 +2154,7 @@
       "longname": "sequence",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000866",
+      "___id": "T000002R000867",
       "___s": true
     },
     {
@@ -2150,7 +2182,7 @@
       "longname": "seq",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000868",
+      "___id": "T000002R000869",
       "___s": true
     },
     {
@@ -2189,7 +2221,7 @@
       "scope": "static",
       "longname": "Pattern.transpose",
       "kind": "member",
-      "___id": "T000002R003677",
+      "___id": "T000002R003678",
       "___s": true
     },
     {
@@ -2226,7 +2258,7 @@
       "scope": "static",
       "longname": "Pattern.scaleTranspose",
       "kind": "member",
-      "___id": "T000002R003681",
+      "___id": "T000002R003682",
       "___s": true
     },
     {
@@ -2263,7 +2295,7 @@
       "scope": "static",
       "longname": "Pattern.scale",
       "kind": "member",
-      "___id": "T000002R003683",
+      "___id": "T000002R003684",
       "___s": true
     },
     {
@@ -2300,7 +2332,7 @@
       "scope": "static",
       "longname": "Pattern.voicings",
       "kind": "member",
-      "___id": "T000002R003708",
+      "___id": "T000002R003709",
       "___s": true
     },
     {
@@ -2382,7 +2414,7 @@
         "/home/felix/projects/strudel/packages/xen/tunejs.js",
         "/home/felix/projects/strudel/packages/xen/xen.mjs"
       ],
-      "___id": "T000002R013977",
+      "___id": "T000002R013978",
       "___s": true
     }
   ]

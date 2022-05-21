@@ -8,6 +8,15 @@ import { Pattern, sequence } from './pattern.mjs';
 
 const controls = {};
 const generic_params = [
+  /**
+   * Short for sound. Currently only supported with osc / superdirt.
+   *
+   * @name s
+   * @param {string | Pattern} sound The sound / pattern of sounds to pick
+   * @example
+   * s("bd hh").osc()
+   *
+   */
   ['s', 's', 'sound'],
   //['s', 'toArg', 'for internal sound routing'],
   // ["f", "from", "for internal sound routing"),

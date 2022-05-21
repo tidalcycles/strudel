@@ -23,7 +23,7 @@ function ApiDoc() {
                 }),
               }}
             />
-            <h3>Parameters</h3>
+            {!!item.params?.length && <h3>Parameters</h3>}
             <ul>
               {item.params?.map((param, i) => (
                 <li key={i}>
