@@ -57,7 +57,7 @@ const generic_params = [
    */
   ['f', 'amp', 'like @gain@, but linear.'],
   // TODO: find out why 0 does not work, and it generally seems not right
-  /**
+  /*
    * A pattern of numbers to specify the attack time of an envelope applied to each sample.
    *
    * @name attack
