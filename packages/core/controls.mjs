@@ -10,6 +10,7 @@ const controls = {};
 const generic_params = [
   /**
    * Select a sound / sample by name. Currently only supported by osc / superdirt.
+   * See default sounds here: https://tidalcycles.org/docs/configuration/Audio%20Samples/default_library
    *
    * @name s
    * @param {string | Pattern} sound The sound / pattern of sounds to pick
@@ -27,7 +28,7 @@ const generic_params = [
    * @name accelerate
    * @param {number | Pattern} amount acceleration.
    * @example
-   * s("bd").accelerate("<1 2 1 4>").osc()
+   * s("sax").accelerate("<0 1 2 4 8 16>").slow(2).osc()
    *
    */
   ['f', 'accelerate', 'a pattern of numbers that speed up (or slow down) samples while they play.'],
@@ -67,37 +68,148 @@ const generic_params = [
    *
    */
   ['f', 'bandf', 'A pattern of numbers from 0 to 1. Sets the center frequency of the band-pass filter.'],
+  // TODO: in tidal, it seems to be normalized
+  /**
+   * Sets the q-factor of the band-pass filter
+   *
+   * @name bandq
+   * @param {number | Pattern} q q factor
+   * @example
+   * s("bd sd").bandf("<1000 2000 4000 8000>").bandq("<.2 .9>").osc()
+   *
+   */
   ['f', 'bandq', 'a pattern of anumbers from 0 to 1. Sets the q-factor of the band-pass filter.'],
+  /**
+   * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.
+   *
+   * @name begin
+   * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
+   * @example
+   * s("rave").begin("<0 .25 .5 .75>").osc()
+   *
+   */
   [
     'f',
     'begin',
     'a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.',
   ],
+  // TODO: currently duplicated with "native" legato
+  /**
+   * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.
+   *
+   * @name legato
+   * @param {number | Pattern} duration between 0 and 1, where 1 is the length of the whole hap time
+   * @example
+   * "c4 eb4 g4 bb4".legato("<0.125 .25 .5 .75 1 2 4>")
+   *
+   */
   ['f', 'legato', 'controls the amount of overlap between two adjacent sounds'],
   // ['f', 'clhatdecay', ''],
+  /**
+   * bit crusher effect.
+   *
+   * @name crush
+   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
+   * @example
+   * s("<bd sd>,hh*3,jvbass*2").fast(2).crush("<16 8 7 6 5 4 3 2>").osc()
+   *
+   */
   [
     'f',
     'crush',
     'bit crushing, a pattern of numbers from 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).',
   ],
+  /**
+   * fake-resampling for lowering the sample rate
+   *
+   * @name coarse
+   * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.
+   * @example
+   * s("xmas").coarse("<1 4 8 16 32>").osc()
+   *
+   */
   [
     'f',
     'coarse',
     'fake-resampling, a pattern of numbers for lowering the sample rate, i.e. 1 for original 2 for half, 3 for a third and so on.',
   ],
+
+  /**
+   * choose the channel the pattern is sent to in superdirt
+   *
+   * @name channel
+   * @param {number | Pattern} channel channel number
+   *
+   */
   ['i', 'channel', 'choose the channel the pattern is sent to in superdirt'],
+  /**
+   * In the style of classic drum-machines, `cut` will stop a playing sample as soon as another samples with in same cutgroup is to be played. An example would be an open hi-hat followed by a closed one, essentially muting the open.
+   *
+   * @name cut
+   * @param {number | Pattern} group cut group number
+   * @example
+   * s("bd sax").cut(1).osc()
+   *
+   */
   [
     'i',
     'cut',
     'In the style of classic drum-machines, `cut` will stop a playing sample as soon as another samples with in same cutgroup is to be played. An example would be an open hi-hat followed by a closed one, essentially muting the open.',
   ],
+  /**
+   * Applies the cutoff frequency of the low-pass filter.
+   *
+   * @name cutoff
+   * @param {number | Pattern} frequency audible between 0 and 20000
+   * @example
+   * s("bd,hh*2,<~ sd>").fast(2).cutoff("<4000 2000 1000 500 200 100>").osc()
+   *
+   */
   ['f', 'cutoff', 'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the low-pass filter.'],
   // ['f', 'cutoffegint', ''],
+  // TODO: find out how this works?
+  /*
+   * Envelope decay time = the time it takes after the attack time to reach the sustain level.
+   *
+   * @name decay
+   * @param {number | Pattern} time decay time in seconds
+   * @example
+   * s("sax").cut(1).decay("<.1 .2 .3 .4>").sustain(0).osc()
+   *
+   */
   ['f', 'decay', ''],
+  // TODO: does not seem to work
+  /*
+   * Sets the level of the delay signal.
+   *
+   * @name delay
+   * @param {number | Pattern} level between 0 and 1
+   * @example
+   * s("bd").delay("<0 .5 .75 1>").osc()
+   *
+   */
   ['f', 'delay', 'a pattern of numbers from 0 to 1. Sets the level of the delay signal.'],
   ['f', 'delayfeedback', 'a pattern of numbers from 0 to 1. Sets the amount of delay feedback.'],
   ['f', 'delaytime', 'a pattern of numbers from 0 to 1. Sets the length of the delay.'],
+  /** 
+   * Set detune of oscillators. Works only with some synths, see <a target="_blank" href="https://tidalcycles.org/docs/patternlib/tutorials/synthesizers">tidal doc</a>
+   *
+   * @name detune
+   * @param {number | Pattern} amount between 0 and 1
+   * @example
+   * n("0 3 7").s('superzow').octave(3).detune("<0 .25 .5 1 2>").osc()
+   *
+   */
   ['f', 'detune', ''],
+  /** 
+   * Set detune of oscillators. Works only with some synths, see <a target="_blank" href="https://tidalcycles.org/docs/patternlib/tutorials/synthesizers">tidal doc</a>
+   *
+   * @name djf
+   * @param {number | Pattern} cutoff below 0.5 is low pass filter, above is high pass filter
+   * @example
+   * n("0 3 7 [10,24]").s('superzow').octave(3).djf("<.5 .25 .5 .75>").osc()
+   *
+   */
   ['f', 'djf', 'DJ filter, below 0.5 is low pass filter, above is high pass filter.'],
   [
     'f',
