@@ -9,7 +9,7 @@ import { Pattern, sequence } from './pattern.mjs';
 const controls = {};
 const generic_params = [
   /**
-   * Select a sound / sample by name. Currently only supported by osc / superdirt.
+   * Select a sound / sample by name.
    * See default sounds here: https://tidalcycles.org/docs/configuration/Audio%20Samples/default_library
    *
    * @name s
@@ -19,6 +19,27 @@ const generic_params = [
    *
    */
   ['s', 's', 'sound'],
+  /**
+   * The note or sample number to choose for a synth or sampleset
+   * Note names currently not working yet, but will hopefully soon. Just stick to numbers for now
+   * 
+   * @name n 
+   * @param {string | number | Pattern} value note name, note number or sample number
+   * @example
+   * s('superpiano').n("<0 1 2 3>").osc()
+   * @example
+   * s('superpiano').n("<c4 d4 e4 g4>").osc()
+   * @example
+   * n("0 1 2 3").s('east').osc()
+   */
+  // TODO: nOut does not work
+  // TODO: notes don't work as expected
+  // current "workaround" for notes:
+  // s('superpiano').n("<c0 d0 e0 g0>"._asNumber()).osc()
+  // -> .n or .osc (or .superdirt) would need to convert note strings to numbers
+  // also see https://github.com/tidalcycles/strudel/pull/63
+  ['f', 'n', 'The note or sample number to choose for a synth or sampleset'],
+  ['f', 'note', 'The note or pitch to play a sound or synth with'],
   //['s', 'toArg', 'for internal sound routing'],
   // ["f", "from", "for internal sound routing"),
   //['f', 'to', 'for internal sound routing'],
@@ -399,8 +420,6 @@ const generic_params = [
   ['f', 'loop', 'loops the sample (from `begin` to `end`) the specified number of times.'],
   // ['f', 'lophat', ''],
   // ['f', 'lsnare', ''],
-  ['f', 'n', 'The note or sample number to choose for a synth or sampleset'],
-  ['f', 'note', 'The note or pitch to play a sound or synth with'],
   ['f', 'degree', ''],
   ['f', 'mtranspose', ''],
   ['f', 'ctranspose', ''],

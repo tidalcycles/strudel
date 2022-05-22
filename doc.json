@@ -33,10 +33,45 @@
       "___s": true
     },
     {
+      "comment": "/**\n   * The note or sample number to choose for a synth or sampleset\n   * @name n \n   * @param {string | number | Pattern} value note name, note number or sample number\n   * @example\n   * s('superpiano').n(\"<0 1 2 3>\").osc()\n   * @example\n   * s('superpiano').n(\"<c4 d4 e4 g4>\").osc()\n   * @example\n   * n(\"0 1 2 3\").s('east').osc()\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 22,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>The note or sample number to choose for a synth or sampleset</p>",
+      "name": "n",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "string",
+              "number",
+              "Pattern"
+            ]
+          },
+          "description": "<p>note name, note number or sample number</p>",
+          "name": "value"
+        }
+      ],
+      "examples": [
+        "s('superpiano').n(\"<0 1 2 3>\").osc()",
+        "s('superpiano').n(\"<c4 d4 e4 g4>\").osc()",
+        "n(\"0 1 2 3\").s('east').osc()"
+      ],
+      "longname": "n",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000005",
+      "___s": true
+    },
+    {
       "comment": "/**\n   * A pattern of numbers that speed up (or slow down) samples while they play. Currently only supported by osc / superdirt.\n   *\n   * @name accelerate\n   * @param {number | Pattern} amount acceleration.\n   * @example\n   * s(\"sax\").accelerate(\"<0 1 2 4 8 16>\").slow(2).osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 25,
+        "lineno": 40,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -61,14 +96,14 @@
       "longname": "accelerate",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000005",
+      "___id": "T000002R000006",
       "___s": true
     },
     {
       "comment": "/**\n   * Like {@link amp}, but exponential.\n   *\n   * @name gain\n   * @param {number | Pattern} amount gain.\n   * @example\n   * s(\"bd*8\").gain(\".7*2 1 .7*2 1 .7 1\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 35,
+        "lineno": 50,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -93,14 +128,14 @@
       "longname": "gain",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000006",
+      "___id": "T000002R000007",
       "___s": true
     },
     {
       "comment": "/**\n   * Like {@link gain}, but linear.\n   *\n   * @name amp\n   * @param {number | Pattern} amount gain.\n   * @example\n   * s(\"bd*8\").amp(\".1*2 .5 .1*2 .5 .1 .5\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 49,
+        "lineno": 64,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -125,38 +160,6 @@
       "longname": "amp",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000007",
-      "___s": true
-    },
-    {
-      "comment": "/**\n   * A pattern of numbers to specify the attack time of an envelope applied to each sample.\n   *\n   * @name attack\n   * @param {number | Pattern} attack time in seconds.\n   * @example\n   * n(\"c5 e5\").s('superpiano').attack(\"<0 .1>\").osc()\n   *\n   */",
-      "meta": {
-        "filename": "controls.mjs",
-        "lineno": 60,
-        "columnno": 2,
-        "path": "/home/felix/projects/strudel/packages/core",
-        "code": {}
-      },
-      "description": "<p>A pattern of numbers to specify the attack time of an envelope applied to each sample.</p>",
-      "name": "attack",
-      "params": [
-        {
-          "type": {
-            "names": [
-              "number",
-              "Pattern"
-            ]
-          },
-          "description": "<p>time in seconds.</p>",
-          "name": "attack"
-        }
-      ],
-      "examples": [
-        "n(\"c5 e5\").s('superpiano').attack(\"<0 .1>\").osc()"
-      ],
-      "longname": "attack",
-      "kind": "member",
-      "scope": "global",
       "___id": "T000002R000008",
       "___s": true
     },
@@ -164,7 +167,7 @@
       "comment": "/**\n   * Sets the center frequency of the band-pass filter.\n   *\n   * @name bandf\n   * @param {number | Pattern} frequency center frequency\n   * @example\n   * s(\"bd sd\").bandf(\"<1000 2000 4000 8000>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 97,
+        "lineno": 112,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -196,7 +199,7 @@
       "comment": "/**\n   * Sets the q-factor of the band-pass filter\n   *\n   * @name bandq\n   * @param {number | Pattern} q q factor\n   * @example\n   * s(\"bd sd\").bandf(\"<1000 2000 4000 8000>\").bandq(\"<.2 .9>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 108,
+        "lineno": 123,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -228,7 +231,7 @@
       "comment": "/**\n   * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.\n   *\n   * @name begin\n   * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample\n   * @example\n   * s(\"rave\").begin(\"<0 .25 .5 .75>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 118,
+        "lineno": 133,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -260,7 +263,7 @@
       "comment": "/**\n   * The same as {@link begin}, but cuts off the end off each sample.\n   *\n   * @name end\n   * @param {number | Pattern} length 1 = whole sample, .5 = half sample, .25 = quarter sample etc..\n   * @example\n   * s(\"bd*2,ho*4\").end(\"<.1 .2 .5 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 132,
+        "lineno": 147,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -292,7 +295,7 @@
       "comment": "/**\n   * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.\n   *\n   * @name legato\n   * @param {number | Pattern} duration between 0 and 1, where 1 is the length of the whole hap time\n   * @example\n   * \"c4 eb4 g4 bb4\".legato(\"<0.125 .25 .5 .75 1 2 4>\")\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 147,
+        "lineno": 162,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -324,7 +327,7 @@
       "comment": "/**\n   * bit crusher effect.\n   *\n   * @name crush\n   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).\n   * @example\n   * s(\"<bd sd>,hh*3,jvbass*2\").fast(2).crush(\"<16 8 7 6 5 4 3 2>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 158,
+        "lineno": 173,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -356,7 +359,7 @@
       "comment": "/**\n   * fake-resampling for lowering the sample rate\n   *\n   * @name coarse\n   * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.\n   * @example\n   * s(\"xmas\").coarse(\"<1 4 8 16 32>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 172,
+        "lineno": 187,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -388,7 +391,7 @@
       "comment": "/**\n   * choose the channel the pattern is sent to in superdirt\n   *\n   * @name channel\n   * @param {number | Pattern} channel channel number\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 187,
+        "lineno": 202,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -417,7 +420,7 @@
       "comment": "/**\n   * In the style of classic drum-machines, `cut` will stop a playing sample as soon as another samples with in same cutgroup is to be played. An example would be an open hi-hat followed by a closed one, essentially muting the open.\n   *\n   * @name cut\n   * @param {number | Pattern} group cut group number\n   * @example\n   * s(\"bd sax\").cut(1).osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 195,
+        "lineno": 210,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -449,7 +452,7 @@
       "comment": "/**\n   * Applies the cutoff frequency of the low-pass filter.\n   *\n   * @name cutoff\n   * @param {number | Pattern} frequency audible between 0 and 20000\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).cutoff(\"<4000 2000 1000 500 200 100>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 209,
+        "lineno": 224,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -481,7 +484,7 @@
       "comment": "/**\n   * Applies the cutoff frequency of the high-pass filter.\n   *\n   * @name hcutoff\n   * @param {number | Pattern} frequency audible between 0 and 20000\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).hcutoff(\"<4000 2000 1000 500 200 100>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 220,
+        "lineno": 235,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -513,7 +516,7 @@
       "comment": "/**\n   * Applies the cutoff frequency of the high-pass filter.\n   *\n   * @name hresonance\n   * @param {number | Pattern} q resonance factor between 0 and 1\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).hcutoff(2000).hresonance(\"<0 .2 .4 .6>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 235,
+        "lineno": 250,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -545,7 +548,7 @@
       "comment": "/**\n   * Applies the cutoff frequency of the low-pass filter.\n   *\n   * @name resonance\n   * @param {number | Pattern} q resonance factor between 0 and 1\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).cutoff(2000).resonance(\"<0 .2 .4 .6>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 250,
+        "lineno": 265,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -577,7 +580,7 @@
       "comment": "/**\n   * Set detune of oscillators. Works only with some synths, see <a target=\"_blank\" href=\"https://tidalcycles.org/docs/patternlib/tutorials/synthesizers\">tidal doc</a>\n   *\n   * @name djf\n   * @param {number | Pattern} cutoff below 0.5 is low pass filter, above is high pass filter\n   * @example\n   * n(\"0 3 7 [10,24]\").s('superzow').octave(3).djf(\"<.5 .25 .5 .75>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 261,
+        "lineno": 276,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -609,7 +612,7 @@
       "comment": "/**\n   * Set detune of oscillators. Works only with some synths, see <a target=\"_blank\" href=\"https://tidalcycles.org/docs/patternlib/tutorials/synthesizers\">tidal doc</a>\n   *\n   * @name detune\n   * @param {number | Pattern} amount between 0 and 1\n   * @example\n   * n(\"0 3 7\").s('superzow').octave(3).detune(\"<0 .25 .5 1 2>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 285,
+        "lineno": 300,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -641,7 +644,7 @@
       "comment": "/**\n   * Set dryness of reverb. See {@link room} and {@link size} for more information about reverb.\n   *\n   * @name dry\n   * @param {number | Pattern} dry 0 = wet, 1 = dry\n   * @example\n   * n(\"[0,3,7](3,8)\").s(\"superpiano\").room(.7).dry(\"<0 .5 .75 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 295,
+        "lineno": 310,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -673,7 +676,7 @@
       "comment": "/**\n   * Set frequency of sound.\n   *\n   * @name freq\n   * @param {number | Pattern} frequency in Hz. the audible range is between 20 and 20000 Hz\n   * @example\n   * freq(\"220 110 440 110\").s(\"superzow\").osc()\n   * @example\n   * freq(\"110\".mulOut(\".5 1.5 .6 [2 3]\")).s(\"superzow\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 330,
+        "lineno": 345,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -706,7 +709,7 @@
       "comment": "/**\n   * Emulation of a Leslie speaker: speakers rotating in a wooden amplified cabinet.\n   *\n   * @name leslie\n   * @param {number | Pattern} dry between 0 and 1\n   * @example\n   * n(\"0,4,7\").s(\"supersquare\").leslie(\"<0 .4 .6 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 353,
+        "lineno": 368,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -738,7 +741,7 @@
       "comment": "/**\n   * Rate of modulation / rotation for leslie effect\n   *\n   * @name lrate\n   * @param {number | Pattern} rate 6.7 for fast, 0.7 for slow\n   * @example\n   * n(\"0,4,7\").s(\"supersquare\").leslie(1).lrate(\"<1 2 4 8>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 363,
+        "lineno": 378,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -767,10 +770,10 @@
       "___s": true
     },
     {
-      "comment": "/**\n   * Physical size of the cabinet in meters. Be careful, it might be slightly larger than your computer. Affects the Doppler amount (pitch warble)\n   *\n   * @name lsize\n   * @param {number | Pattern} meters \n   * @example\n   * n(\"0,4,7\").s(\"supersquare\").leslie(1).lrate(2).lsize(\"<.1 .5 1>\").osc()\n   *\n   */",
+      "comment": "/**\n   * Physical size of the cabinet in meters. Be careful, it might be slightly larger than your computer. Affects the Doppler amount (pitch warble)\n   *\n   * @name lsize\n   * @param {number | Pattern} meters somewhere between 0 and 1\n   * @example\n   * n(\"0,4,7\").s(\"supersquare\").leslie(1).lrate(2).lsize(\"<.1 .5 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 374,
+        "lineno": 389,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -785,6 +788,7 @@
               "Pattern"
             ]
           },
+          "description": "<p>somewhere between 0 and 1</p>",
           "name": "meters"
         }
       ],
