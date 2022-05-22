@@ -33,6 +33,20 @@ const generic_params = [
    */
   ['f', 'accelerate', 'a pattern of numbers that speed up (or slow down) samples while they play.'],
   /**
+   * Like {@link amp}, but exponential.
+   *
+   * @name gain
+   * @param {number | Pattern} amount gain.
+   * @example
+   * s("bd*8").gain(".7*2 1 .7*2 1 .7 1").osc()
+   *
+   */
+  [
+    'f',
+    'gain',
+    'a pattern of numbers that specify volume. Values less than 1 make the sound quieter. Values greater than 1 make the sound louder. For the linear equivalent, see @amp@.',
+  ],
+  /**
    * Like {@link gain}, but linear.
    *
    * @name amp
@@ -56,6 +70,23 @@ const generic_params = [
     'f',
     'attack',
     'a pattern of numbers to specify the attack time (in seconds) of an envelope applied to each sample.',
+  ],
+  // TODO: find out how this works?
+  /*
+   * Envelope decay time = the time it takes after the attack time to reach the sustain level.
+   *
+   * @name decay
+   * @param {number | Pattern} time decay time in seconds
+   * @example
+   * s("sax").cut(1).decay("<.1 .2 .3 .4>").sustain(0).osc()
+   *
+   */
+  ['f', 'decay', ''],
+  ['f', 'sustain', ''],
+  [
+    'f',
+    'release',
+    'a pattern of numbers to specify the release time (in seconds) of an envelope applied to each sample.',
   ],
   // TODO: in tidal, it seems to be normalized
   /**
@@ -92,6 +123,20 @@ const generic_params = [
     'f',
     'begin',
     'a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.',
+  ],
+  /**
+   * The same as {@link begin}, but cuts off the end off each sample.
+   *
+   * @name end
+   * @param {number | Pattern} length 1 = whole sample, .5 = half sample, .25 = quarter sample etc..
+   * @example
+   * s("bd*2,ho*4").end("<.1 .2 .5 1>").osc()
+   *
+   */
+  [
+    'f',
+    'end',
+    'the same as `begin`, but cuts the end off samples, shortening them; e.g. `0.75` to cut off the last quarter of each sample.',
   ],
   // TODO: currently duplicated with "native" legato
   /**
@@ -166,18 +211,17 @@ const generic_params = [
    *
    */
   ['f', 'cutoff', 'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the low-pass filter.'],
-  // ['f', 'cutoffegint', ''],
-  // TODO: find out how this works?
-  /*
-   * Envelope decay time = the time it takes after the attack time to reach the sustain level.
+  /**
+   * Set detune of oscillators. Works only with some synths, see <a target="_blank" href="https://tidalcycles.org/docs/patternlib/tutorials/synthesizers">tidal doc</a>
    *
-   * @name decay
-   * @param {number | Pattern} time decay time in seconds
+   * @name djf
+   * @param {number | Pattern} cutoff below 0.5 is low pass filter, above is high pass filter
    * @example
-   * s("sax").cut(1).decay("<.1 .2 .3 .4>").sustain(0).osc()
+   * n("0 3 7 [10,24]").s('superzow').octave(3).djf("<.5 .25 .5 .75>").osc()
    *
    */
-  ['f', 'decay', ''],
+  ['f', 'djf', 'DJ filter, below 0.5 is low pass filter, above is high pass filter.'],
+  // ['f', 'cutoffegint', ''],
   // TODO: does not seem to work
   /*
    * Sets the level of the delay signal.
@@ -191,7 +235,7 @@ const generic_params = [
   ['f', 'delay', 'a pattern of numbers from 0 to 1. Sets the level of the delay signal.'],
   ['f', 'delayfeedback', 'a pattern of numbers from 0 to 1. Sets the amount of delay feedback.'],
   ['f', 'delaytime', 'a pattern of numbers from 0 to 1. Sets the length of the delay.'],
-  /** 
+  /**
    * Set detune of oscillators. Works only with some synths, see <a target="_blank" href="https://tidalcycles.org/docs/patternlib/tutorials/synthesizers">tidal doc</a>
    *
    * @name detune
@@ -201,42 +245,42 @@ const generic_params = [
    *
    */
   ['f', 'detune', ''],
-  /** 
-   * Set detune of oscillators. Works only with some synths, see <a target="_blank" href="https://tidalcycles.org/docs/patternlib/tutorials/synthesizers">tidal doc</a>
+  /**
+   * Set dryness of reverb. See {@link room} and {@link size} for more information about reverb.
    *
-   * @name djf
-   * @param {number | Pattern} cutoff below 0.5 is low pass filter, above is high pass filter
+   * @name dry
+   * @param {number | Pattern} dry 0 = wet, 1 = dry
    * @example
-   * n("0 3 7 [10,24]").s('superzow').octave(3).djf("<.5 .25 .5 .75>").osc()
+   * n("[0,3,7](3,8)").s("superpiano").room(.7).dry("<0 .5 .75 1>").osc()
    *
    */
-  ['f', 'djf', 'DJ filter, below 0.5 is low pass filter, above is high pass filter.'],
   [
     'f',
     'dry',
     'when set to `1` will disable all reverb for this pattern. See `room` and `size` for more information about reverb.',
   ],
-  [
-    'f',
-    'end',
-    'the same as `begin`, but cuts the end off samples, shortening them; e.g. `0.75` to cut off the last quarter of each sample.',
-  ],
+  // TODO: does not seem to do anything
+  /*
+   * Used when using {@link begin}/{@link end} or {@link chop}/{@link striate} and friends, to change the fade out time of the 'grain' envelope.
+   *
+   * @name fadeTime
+   * @param {number | Pattern} time between 0 and 1
+   * @example
+   * s("ho*4").end(.1).fadeTime("<0 .2 .4 .8>").osc()
+   *
+   */
   [
     'f',
     'fadeTime',
     "Used when using begin/end or chop/striate and friends, to change the fade out time of the 'grain' envelope.",
   ],
+  // TODO: see above
   [
     'f',
     'fadeInTime',
     'As with fadeTime, but controls the fade in time of the grain envelope. Not used if the grain begins at position 0 in the sample.',
   ],
   ['f', 'freq', ''],
-  [
-    'f',
-    'gain',
-    'a pattern of numbers that specify volume. Values less than 1 make the sound quieter. Values greater than 1 make the sound louder. For the linear equivalent, see @amp@.',
-  ],
   ['f', 'gate', ''],
   // ['f', 'hatgrain', ''],
   [
@@ -333,11 +377,6 @@ const generic_params = [
   // ['f', 'pitch3', ''],
   // ['f', 'portamento', ''],
   ['f', 'rate', "used in SuperDirt softsynths as a control rate or 'speed'"],
-  [
-    'f',
-    'release',
-    'a pattern of numbers to specify the release time (in seconds) of an envelope applied to each sample.',
-  ],
   ['f', 'resonance', 'a pattern of numbers from 0 to 1. Specifies the resonance of the low-pass filter.'],
   ['f', 'room', 'a pattern of numbers from 0 to 1. Sets the level of reverb.'],
   // ['f', 'sagogo', ''],
@@ -364,7 +403,6 @@ const generic_params = [
   ['f', 'squiz', ''],
   ['f', 'stutterdepth', ''],
   ['f', 'stuttertime', ''],
-  ['f', 'sustain', ''],
   ['f', 'timescale', ''],
   ['f', 'timescalewin', ''],
   // ['f', 'tomdecay', ''],
