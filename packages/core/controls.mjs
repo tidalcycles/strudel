@@ -9,7 +9,7 @@ import { Pattern, sequence } from './pattern.mjs';
 const controls = {};
 const generic_params = [
   /**
-   * Short for sound. Currently only supported with osc / superdirt.
+   * Select a sound / sample by name. Currently only supported by osc / superdirt.
    *
    * @name s
    * @param {string | Pattern} sound The sound / pattern of sounds to pick
@@ -21,14 +21,52 @@ const generic_params = [
   //['s', 'toArg', 'for internal sound routing'],
   // ["f", "from", "for internal sound routing"),
   //['f', 'to', 'for internal sound routing'],
+  /**
+   * A pattern of numbers that speed up (or slow down) samples while they play. Currently only supported by osc / superdirt.
+   *
+   * @name accelerate
+   * @param {number | Pattern} amount acceleration.
+   * @example
+   * s("bd").accelerate("<1 2 1 4>").osc()
+   *
+   */
   ['f', 'accelerate', 'a pattern of numbers that speed up (or slow down) samples while they play.'],
+  /**
+   * Like {@link gain}, but linear.
+   *
+   * @name amp
+   * @param {number | Pattern} amount gain.
+   * @example
+   * s("bd*8").amp(".1*2 .5 .1*2 .5 .1 .5").osc()
+   *
+   */
   ['f', 'amp', 'like @gain@, but linear.'],
+  // TODO: find out why 0 does not work, and it generally seems not right
+  /**
+   * A pattern of numbers to specify the attack time of an envelope applied to each sample.
+   *
+   * @name attack
+   * @param {number | Pattern} attack time in seconds.
+   * @example
+   * n("c5 e5").s('superpiano').attack("<0 .1>").osc()
+   *
+   */
   [
     'f',
     'attack',
     'a pattern of numbers to specify the attack time (in seconds) of an envelope applied to each sample.',
   ],
-  ['f', 'bandf', 'a pattern of numbers from 0 to 1. Sets the center frequency of the band-pass filter.'],
+  // TODO: in tidal, it seems to be normalized
+  /**
+   * Sets the center frequency of the band-pass filter.
+   *
+   * @name bandf
+   * @param {number | Pattern} frequency center frequency
+   * @example
+   * s("bd sd").bandf("<1000 2000 4000 8000>").osc()
+   *
+   */
+  ['f', 'bandf', 'A pattern of numbers from 0 to 1. Sets the center frequency of the band-pass filter.'],
   ['f', 'bandq', 'a pattern of anumbers from 0 to 1. Sets the q-factor of the band-pass filter.'],
   [
     'f',
