@@ -88,6 +88,11 @@ const generic_params = [
     'release',
     'a pattern of numbers to specify the release time (in seconds) of an envelope applied to each sample.',
   ],
+  [
+    'f',
+    'hold',
+    'a pattern of numbers to specify the hold time (in seconds) of an envelope applied to each sample. Only takes effect if `attack` and `release` are also specified.',
+  ],
   // TODO: in tidal, it seems to be normalized
   /**
    * Sets the center frequency of the band-pass filter.
@@ -210,7 +215,49 @@ const generic_params = [
    * s("bd,hh*2,<~ sd>").fast(2).cutoff("<4000 2000 1000 500 200 100>").osc()
    *
    */
+  // TODO: add lpf synonym
   ['f', 'cutoff', 'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the low-pass filter.'],
+  /**
+   * Applies the cutoff frequency of the high-pass filter.
+   *
+   * @name hcutoff
+   * @param {number | Pattern} frequency audible between 0 and 20000
+   * @example
+   * s("bd,hh*2,<~ sd>").fast(2).hcutoff("<4000 2000 1000 500 200 100>").osc()
+   *
+   */
+  // TODO: add hpf synonym
+  [
+    'f',
+    'hcutoff',
+    'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the high-pass filter. Also has alias @hpf@',
+  ],
+  /**
+   * Applies the cutoff frequency of the high-pass filter.
+   *
+   * @name hresonance
+   * @param {number | Pattern} q resonance factor between 0 and 1
+   * @example
+   * s("bd,hh*2,<~ sd>").fast(2).hcutoff(2000).hresonance("<0 .2 .4 .6>").osc()
+   *
+   */
+  [
+    'f',
+    'hresonance',
+    'a pattern of numbers from 0 to 1. Applies the resonance of the high-pass filter. Has alias @hpq@',
+  ],
+  // TODO: add hpq synonym
+  /**
+   * Applies the cutoff frequency of the low-pass filter.
+   *
+   * @name resonance
+   * @param {number | Pattern} q resonance factor between 0 and 1
+   * @example
+   * s("bd,hh*2,<~ sd>").fast(2).cutoff(2000).resonance("<0 .2 .4 .6>").osc()
+   *
+   */
+  ['f', 'resonance', 'a pattern of numbers from 0 to 1. Specifies the resonance of the low-pass filter.'],
+  // TODO: add lpq synonym?
   /**
    * Set detune of oscillators. Works only with some synths, see <a target="_blank" href="https://tidalcycles.org/docs/patternlib/tutorials/synthesizers">tidal doc</a>
    *
@@ -280,31 +327,59 @@ const generic_params = [
     'fadeInTime',
     'As with fadeTime, but controls the fade in time of the grain envelope. Not used if the grain begins at position 0 in the sample.',
   ],
+  /**
+   * Set frequency of sound.
+   *
+   * @name freq
+   * @param {number | Pattern} frequency in Hz. the audible range is between 20 and 20000 Hz
+   * @example
+   * freq("220 110 440 110").s("superzow").osc()
+   * @example
+   * freq("110".mulOut(".5 1.5 .6 [2 3]")).s("superzow").osc()
+   *
+   */
   ['f', 'freq', ''],
+  // TODO: https://tidalcycles.org/docs/configuration/MIDIOSC/control-voltage/#gate
   ['f', 'gate', ''],
   // ['f', 'hatgrain', ''],
-  [
-    'f',
-    'hcutoff',
-    'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the high-pass filter. Also has alias @hpf@',
-  ],
-  [
-    'f',
-    'hold',
-    'a pattern of numbers to specify the hold time (in seconds) of an envelope applied to each sample. Only takes effect if `attack` and `release` are also specified.',
-  ],
-  [
-    'f',
-    'hresonance',
-    'a pattern of numbers from 0 to 1. Applies the resonance of the high-pass filter. Has alias @hpq@',
-  ],
   // ['f', 'lagogo', ''],
   // ['f', 'lclap', ''],
   // ['f', 'lclaves', ''],
   // ['f', 'lclhat', ''],
   // ['f', 'lcrash', ''],
+  // TODO:
+  // https://tidalcycles.org/docs/reference/audio_effects/#leslie-1
+  // https://tidalcycles.org/docs/reference/audio_effects/#leslie
+  /**
+   * Emulation of a Leslie speaker: speakers rotating in a wooden amplified cabinet.
+   *
+   * @name leslie
+   * @param {number | Pattern} dry between 0 and 1
+   * @example
+   * n("0,4,7").s("supersquare").leslie("<0 .4 .6 1>").osc()
+   *
+   */
   ['f', 'leslie', ''],
+  /**
+   * Rate of modulation / rotation for leslie effect
+   *
+   * @name lrate
+   * @param {number | Pattern} rate 6.7 for fast, 0.7 for slow
+   * @example
+   * n("0,4,7").s("supersquare").leslie(1).lrate("<1 2 4 8>").osc()
+   *
+   */
+  // TODO: the rate seems to "lag" (in the example, 1 will be fast)
   ['f', 'lrate', ''],
+  /**
+   * Physical size of the cabinet in meters. Be careful, it might be slightly larger than your computer. Affects the Doppler amount (pitch warble)
+   *
+   * @name lsize
+   * @param {number | Pattern} meters somewhere between 0 and 1
+   * @example
+   * n("0,4,7").s("supersquare").leslie(1).lrate(2).lsize("<.1 .5 1>").osc()
+   *
+   */
   ['f', 'lsize', ''],
   // ['f', 'lfo', ''],
   // ['f', 'lfocutoffint', ''],
@@ -377,7 +452,6 @@ const generic_params = [
   // ['f', 'pitch3', ''],
   // ['f', 'portamento', ''],
   ['f', 'rate', "used in SuperDirt softsynths as a control rate or 'speed'"],
-  ['f', 'resonance', 'a pattern of numbers from 0 to 1. Specifies the resonance of the low-pass filter.'],
   ['f', 'room', 'a pattern of numbers from 0 to 1. Sets the level of reverb.'],
   // ['f', 'sagogo', ''],
   // ['f', 'sclap', ''],
