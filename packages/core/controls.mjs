@@ -637,9 +637,9 @@ const generic_params = [
   // ['f', 'vcfegint', ''],
   // ['f', 'vcoegint', ''],
   /**
-   * 
+   *
    * Formant filter to make things sound like vowels.
-   * 
+   *
    * @name vowel
    * @param {string | Pattern} vowel You can use a e i o u. Use a rest (~) to override the effect
    * @example
@@ -653,18 +653,43 @@ const generic_params = [
     'vowel',
     'formant filter to make things sound like vowels, a pattern of either `a`, `e`, `i`, `o` or `u`. Use a rest (`~`) for no effect.',
   ],
+  /* // TODO: find out how it works
+   * Made by Calum Gunn. Divides an audio stream into tiny segments, using the signal's zero-crossings as segment boundaries, and discards a fraction of them. Takes a number between 1 and 100, denoted the percentage of segments to drop. The SuperCollider manual describes the Waveloss effect this way:
+   *
+   * Divide an audio stream into tiny segments, using the signal's zero-crossings as segment boundaries, and discard a fraction of them (i.e. replace them with silence of the same length). The technique was described by Trevor Wishart in a lecture. Parameters: the filter drops drop out of out of chunks. mode can be 1 to drop chunks in a simple deterministic fashion (e.g. always dropping the first 30 out of a set of 40 segments), or 2 to drop chunks randomly but in an appropriate proportion.)
+   *
+   * mode: ?
+   * waveloss: ?
+   *
+   * @name waveloss
+   */
   ['f', 'waveloss', ''],
+  // TODO: midi effects?
   ['f', 'dur', ''],
   // ['f', 'modwheel', ''],
   ['f', 'expression', ''],
   ['f', 'sustainpedal', ''],
+  /* // TODO: doesn't seem to do anything
+   *
+   * Tremolo Audio DSP effect
+   *
+   * @name tremolodepth
+   * @param {number | Pattern} depth between 0 and 1
+   * @example
+   * n("0,4,7").tremolodepth("<0 .3 .6 .9>").osc()
+   *
+   */
+  // TODO: tremdp alias
   ['f', 'tremolodepth', "Tremolo Audio DSP effect | params are 'tremolorate' and 'tremolodepth'"],
   ['f', 'tremolorate', "Tremolo Audio DSP effect | params are 'tremolorate' and 'tremolodepth'"],
+  // TODO: doesn't seem to do anything
   ['f', 'phaserdepth', "Phaser Audio DSP effect | params are 'phaserrate' and 'phaserdepth'"],
   ['f', 'phaserrate', "Phaser Audio DSP effect | params are 'phaserrate' and 'phaserdepth'"],
+  
   ['f', 'fshift', 'frequency shifter'],
   ['f', 'fshiftnote', 'frequency shifter'],
   ['f', 'fshiftphase', 'frequency shifter'],
+
   ['f', 'triode', 'tube distortion'],
   ['f', 'krush', 'shape/bass enhancer'],
   ['f', 'kcutoff', ''],
