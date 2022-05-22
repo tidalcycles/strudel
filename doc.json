@@ -1,7 +1,7 @@
 {
   "docs": [
     {
-      "comment": "/**\n   * Select a sound / sample by name. Currently only supported by osc / superdirt.\n   * See default sounds here: https://tidalcycles.org/docs/configuration/Audio%20Samples/default_library\n   *\n   * @name s\n   * @param {string | Pattern} sound The sound / pattern of sounds to pick\n   * @example\n   * s(\"bd hh\").osc()\n   *\n   */",
+      "comment": "/**\n   * Select a sound / sample by name.\n   * See default sounds here: https://tidalcycles.org/docs/configuration/Audio%20Samples/default_library\n   *\n   * @name s\n   * @param {string | Pattern} sound The sound / pattern of sounds to pick\n   * @example\n   * s(\"bd hh\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
         "lineno": 11,
@@ -9,7 +9,7 @@
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
       },
-      "description": "<p>Select a sound / sample by name. Currently only supported by osc / superdirt.\nSee default sounds here: https://tidalcycles.org/docs/configuration/Audio%20Samples/default_library</p>",
+      "description": "<p>Select a sound / sample by name.\nSee default sounds here: https://tidalcycles.org/docs/configuration/Audio%20Samples/default_library</p>",
       "name": "s",
       "params": [
         {
@@ -33,7 +33,7 @@
       "___s": true
     },
     {
-      "comment": "/**\n   * The note or sample number to choose for a synth or sampleset\n   * @name n \n   * @param {string | number | Pattern} value note name, note number or sample number\n   * @example\n   * s('superpiano').n(\"<0 1 2 3>\").osc()\n   * @example\n   * s('superpiano').n(\"<c4 d4 e4 g4>\").osc()\n   * @example\n   * n(\"0 1 2 3\").s('east').osc()\n   */",
+      "comment": "/**\n   * The note or sample number to choose for a synth or sampleset\n   * Note names currently not working yet, but will hopefully soon. Just stick to numbers for now\n   *\n   * @name n\n   * @param {string | number | Pattern} value note name, note number or sample number\n   * @example\n   * s('superpiano').n(\"<0 1 2 3>\").osc()\n   * @example\n   * s('superpiano').n(\"<c4 d4 e4 g4>\").osc()\n   * @example\n   * n(\"0 1 2 3\").s('east').osc()\n   */",
       "meta": {
         "filename": "controls.mjs",
         "lineno": 22,
@@ -41,7 +41,7 @@
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
       },
-      "description": "<p>The note or sample number to choose for a synth or sampleset</p>",
+      "description": "<p>The note or sample number to choose for a synth or sampleset\nNote names currently not working yet, but will hopefully soon. Just stick to numbers for now</p>",
       "name": "n",
       "params": [
         {
@@ -71,7 +71,7 @@
       "comment": "/**\n   * A pattern of numbers that speed up (or slow down) samples while they play. Currently only supported by osc / superdirt.\n   *\n   * @name accelerate\n   * @param {number | Pattern} amount acceleration.\n   * @example\n   * s(\"sax\").accelerate(\"<0 1 2 4 8 16>\").slow(2).osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 40,
+        "lineno": 46,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -103,7 +103,7 @@
       "comment": "/**\n   * Like {@link amp}, but exponential.\n   *\n   * @name gain\n   * @param {number | Pattern} amount gain.\n   * @example\n   * s(\"bd*8\").gain(\".7*2 1 .7*2 1 .7 1\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 50,
+        "lineno": 56,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -135,7 +135,7 @@
       "comment": "/**\n   * Like {@link gain}, but linear.\n   *\n   * @name amp\n   * @param {number | Pattern} amount gain.\n   * @example\n   * s(\"bd*8\").amp(\".1*2 .5 .1*2 .5 .1 .5\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 64,
+        "lineno": 70,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -167,7 +167,7 @@
       "comment": "/**\n   * Sets the center frequency of the band-pass filter.\n   *\n   * @name bandf\n   * @param {number | Pattern} frequency center frequency\n   * @example\n   * s(\"bd sd\").bandf(\"<1000 2000 4000 8000>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 112,
+        "lineno": 118,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -199,7 +199,7 @@
       "comment": "/**\n   * Sets the q-factor of the band-pass filter\n   *\n   * @name bandq\n   * @param {number | Pattern} q q factor\n   * @example\n   * s(\"bd sd\").bandf(\"<1000 2000 4000 8000>\").bandq(\"<.2 .9>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 123,
+        "lineno": 129,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -231,7 +231,7 @@
       "comment": "/**\n   * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.\n   *\n   * @name begin\n   * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample\n   * @example\n   * s(\"rave\").begin(\"<0 .25 .5 .75>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 133,
+        "lineno": 139,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -263,7 +263,7 @@
       "comment": "/**\n   * The same as {@link begin}, but cuts off the end off each sample.\n   *\n   * @name end\n   * @param {number | Pattern} length 1 = whole sample, .5 = half sample, .25 = quarter sample etc..\n   * @example\n   * s(\"bd*2,ho*4\").end(\"<.1 .2 .5 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 147,
+        "lineno": 153,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -292,10 +292,42 @@
       "___s": true
     },
     {
+      "comment": "/**\n   * Loops the sample (from `begin` to `end`) the specified number of times.\n   * Note that the tempo of the loop is not synced with the cycle tempo.\n   *\n   * @name loop\n   * @param {number | Pattern} times How often the sample is looped\n   * @example\n   * s(\"bd\").loop(\"<1 2 3 4>\").osc()\n   *\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 167,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Loops the sample (from <code>begin</code> to <code>end</code>) the specified number of times.\nNote that the tempo of the loop is not synced with the cycle tempo.</p>",
+      "name": "loop",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "Pattern"
+            ]
+          },
+          "description": "<p>How often the sample is looped</p>",
+          "name": "times"
+        }
+      ],
+      "examples": [
+        "s(\"bd\").loop(\"<1 2 3 4>\").osc()"
+      ],
+      "longname": "loop",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000013",
+      "___s": true
+    },
+    {
       "comment": "/**\n   * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.\n   *\n   * @name legato\n   * @param {number | Pattern} duration between 0 and 1, where 1 is the length of the whole hap time\n   * @example\n   * \"c4 eb4 g4 bb4\".legato(\"<0.125 .25 .5 .75 1 2 4>\")\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 162,
+        "lineno": 179,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -320,14 +352,14 @@
       "longname": "legato",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000013",
+      "___id": "T000002R000014",
       "___s": true
     },
     {
       "comment": "/**\n   * bit crusher effect.\n   *\n   * @name crush\n   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).\n   * @example\n   * s(\"<bd sd>,hh*3,jvbass*2\").fast(2).crush(\"<16 8 7 6 5 4 3 2>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 173,
+        "lineno": 190,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -352,14 +384,14 @@
       "longname": "crush",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000014",
+      "___id": "T000002R000015",
       "___s": true
     },
     {
       "comment": "/**\n   * fake-resampling for lowering the sample rate\n   *\n   * @name coarse\n   * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.\n   * @example\n   * s(\"xmas\").coarse(\"<1 4 8 16 32>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 187,
+        "lineno": 204,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -384,14 +416,14 @@
       "longname": "coarse",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000015",
+      "___id": "T000002R000016",
       "___s": true
     },
     {
       "comment": "/**\n   * choose the channel the pattern is sent to in superdirt\n   *\n   * @name channel\n   * @param {number | Pattern} channel channel number\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 202,
+        "lineno": 219,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -413,14 +445,14 @@
       "longname": "channel",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000016",
+      "___id": "T000002R000017",
       "___s": true
     },
     {
       "comment": "/**\n   * In the style of classic drum-machines, `cut` will stop a playing sample as soon as another samples with in same cutgroup is to be played. An example would be an open hi-hat followed by a closed one, essentially muting the open.\n   *\n   * @name cut\n   * @param {number | Pattern} group cut group number\n   * @example\n   * s(\"bd sax\").cut(1).osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 210,
+        "lineno": 227,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -445,14 +477,14 @@
       "longname": "cut",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000017",
+      "___id": "T000002R000018",
       "___s": true
     },
     {
       "comment": "/**\n   * Applies the cutoff frequency of the low-pass filter.\n   *\n   * @name cutoff\n   * @param {number | Pattern} frequency audible between 0 and 20000\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).cutoff(\"<4000 2000 1000 500 200 100>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 224,
+        "lineno": 241,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -477,14 +509,14 @@
       "longname": "cutoff",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000018",
+      "___id": "T000002R000019",
       "___s": true
     },
     {
       "comment": "/**\n   * Applies the cutoff frequency of the high-pass filter.\n   *\n   * @name hcutoff\n   * @param {number | Pattern} frequency audible between 0 and 20000\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).hcutoff(\"<4000 2000 1000 500 200 100>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 235,
+        "lineno": 252,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -509,14 +541,14 @@
       "longname": "hcutoff",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000019",
+      "___id": "T000002R000020",
       "___s": true
     },
     {
       "comment": "/**\n   * Applies the cutoff frequency of the high-pass filter.\n   *\n   * @name hresonance\n   * @param {number | Pattern} q resonance factor between 0 and 1\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).hcutoff(2000).hresonance(\"<0 .2 .4 .6>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 250,
+        "lineno": 267,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -541,14 +573,14 @@
       "longname": "hresonance",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000020",
+      "___id": "T000002R000021",
       "___s": true
     },
     {
       "comment": "/**\n   * Applies the cutoff frequency of the low-pass filter.\n   *\n   * @name resonance\n   * @param {number | Pattern} q resonance factor between 0 and 1\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).cutoff(2000).resonance(\"<0 .2 .4 .6>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 265,
+        "lineno": 282,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -573,14 +605,14 @@
       "longname": "resonance",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000021",
+      "___id": "T000002R000022",
       "___s": true
     },
     {
       "comment": "/**\n   * Set detune of oscillators. Works only with some synths, see <a target=\"_blank\" href=\"https://tidalcycles.org/docs/patternlib/tutorials/synthesizers\">tidal doc</a>\n   *\n   * @name djf\n   * @param {number | Pattern} cutoff below 0.5 is low pass filter, above is high pass filter\n   * @example\n   * n(\"0 3 7 [10,24]\").s('superzow').octave(3).djf(\"<.5 .25 .5 .75>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 276,
+        "lineno": 293,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -605,14 +637,14 @@
       "longname": "djf",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000022",
+      "___id": "T000002R000023",
       "___s": true
     },
     {
       "comment": "/**\n   * Set detune of oscillators. Works only with some synths, see <a target=\"_blank\" href=\"https://tidalcycles.org/docs/patternlib/tutorials/synthesizers\">tidal doc</a>\n   *\n   * @name detune\n   * @param {number | Pattern} amount between 0 and 1\n   * @example\n   * n(\"0 3 7\").s('superzow').octave(3).detune(\"<0 .25 .5 1 2>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 300,
+        "lineno": 331,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -637,14 +669,14 @@
       "longname": "detune",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000023",
+      "___id": "T000002R000024",
       "___s": true
     },
     {
       "comment": "/**\n   * Set dryness of reverb. See {@link room} and {@link size} for more information about reverb.\n   *\n   * @name dry\n   * @param {number | Pattern} dry 0 = wet, 1 = dry\n   * @example\n   * n(\"[0,3,7](3,8)\").s(\"superpiano\").room(.7).dry(\"<0 .5 .75 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 310,
+        "lineno": 341,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -669,14 +701,14 @@
       "longname": "dry",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000024",
+      "___id": "T000002R000025",
       "___s": true
     },
     {
       "comment": "/**\n   * Set frequency of sound.\n   *\n   * @name freq\n   * @param {number | Pattern} frequency in Hz. the audible range is between 20 and 20000 Hz\n   * @example\n   * freq(\"220 110 440 110\").s(\"superzow\").osc()\n   * @example\n   * freq(\"110\".mulOut(\".5 1.5 .6 [2 3]\")).s(\"superzow\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 345,
+        "lineno": 376,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -702,14 +734,14 @@
       "longname": "freq",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000025",
+      "___id": "T000002R000026",
       "___s": true
     },
     {
       "comment": "/**\n   * Emulation of a Leslie speaker: speakers rotating in a wooden amplified cabinet.\n   *\n   * @name leslie\n   * @param {number | Pattern} dry between 0 and 1\n   * @example\n   * n(\"0,4,7\").s(\"supersquare\").leslie(\"<0 .4 .6 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 368,
+        "lineno": 399,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -734,14 +766,14 @@
       "longname": "leslie",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000026",
+      "___id": "T000002R000027",
       "___s": true
     },
     {
       "comment": "/**\n   * Rate of modulation / rotation for leslie effect\n   *\n   * @name lrate\n   * @param {number | Pattern} rate 6.7 for fast, 0.7 for slow\n   * @example\n   * n(\"0,4,7\").s(\"supersquare\").leslie(1).lrate(\"<1 2 4 8>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 378,
+        "lineno": 409,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -766,14 +798,14 @@
       "longname": "lrate",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000027",
+      "___id": "T000002R000028",
       "___s": true
     },
     {
       "comment": "/**\n   * Physical size of the cabinet in meters. Be careful, it might be slightly larger than your computer. Affects the Doppler amount (pitch warble)\n   *\n   * @name lsize\n   * @param {number | Pattern} meters somewhere between 0 and 1\n   * @example\n   * n(\"0,4,7\").s(\"supersquare\").leslie(1).lrate(2).lsize(\"<.1 .5 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 389,
+        "lineno": 420,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -798,7 +830,325 @@
       "longname": "lsize",
       "kind": "member",
       "scope": "global",
-      "___id": "T000002R000028",
+      "___id": "T000002R000029",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Sets the default octave of a synth.\n   *\n   * @name octave\n   * @param {number | Pattern} octave octave number\n   * @example\n   * n(\"0,4,7\").s('supersquare').octave(\"<3 4 5 6>\").osc()\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 455,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Sets the default octave of a synth.</p>",
+      "name": "octave",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "Pattern"
+            ]
+          },
+          "description": "<p>octave number</p>",
+          "name": "octave"
+        }
+      ],
+      "examples": [
+        "n(\"0,4,7\").s('supersquare').octave(\"<3 4 5 6>\").osc()"
+      ],
+      "longname": "octave",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000030",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * a pattern of numbers. An `orbit` is a global parameter context for patterns. Patterns with the same orbit will share hardware output bus offset and global effects, e.g. reverb and delay. The maximum number of orbits is specified in the superdirt startup, numbers higher than maximum will wrap around.\n   *\n   * @name orbit\n   * @param {number | Pattern} number\n   *\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 467,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>a pattern of numbers. An <code>orbit</code> is a global parameter context for patterns. Patterns with the same orbit will share hardware output bus offset and global effects, e.g. reverb and delay. The maximum number of orbits is specified in the superdirt startup, numbers higher than maximum will wrap around.</p>",
+      "name": "orbit",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "Pattern"
+            ]
+          },
+          "name": "number"
+        }
+      ],
+      "longname": "orbit",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000031",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Sets position in stereo.\n   *\n   * @name pan\n   * @param {number | Pattern} pan between 0 and 1, from left to right (assuming stereo), once round a circle (assuming multichannel)\n   * @example\n   * s(\"[bd hh]*2\").pan(\"<.5 1 .5 0>\").osc()\n   *\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 481,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Sets position in stereo.</p>",
+      "name": "pan",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "Pattern"
+            ]
+          },
+          "description": "<p>between 0 and 1, from left to right (assuming stereo), once round a circle (assuming multichannel)</p>",
+          "name": "pan"
+        }
+      ],
+      "examples": [
+        "s(\"[bd hh]*2\").pan(\"<.5 1 .5 0>\").osc()"
+      ],
+      "longname": "pan",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000032",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Sets the level of reverb.\n   *\n   * @name room\n   * @param {number | Pattern} level between 0 and 1\n   * @example\n   * s(\"bd sd\").room(\"<0 .2 .4 .6 .8 1>\").osc()\n   *\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 548,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Sets the level of reverb.</p>",
+      "name": "room",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "Pattern"
+            ]
+          },
+          "description": "<p>between 0 and 1</p>",
+          "name": "level"
+        }
+      ],
+      "examples": [
+        "s(\"bd sd\").room(\"<0 .2 .4 .6 .8 1>\").osc()"
+      ],
+      "longname": "room",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000033",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Sets the room size of the reverb, see {@link room}.\n   *\n   * @name size\n   * @param {number | Pattern} size between 0 and 1\n   * @example\n   * s(\"bd sd\").room(.8).size(\"<0 .2 .4 .6 .8 1>\").osc()\n   *\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 558,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Sets the room size of the reverb, see {@link room}.</p>",
+      "name": "size",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "Pattern"
+            ]
+          },
+          "description": "<p>between 0 and 1</p>",
+          "name": "size"
+        }
+      ],
+      "examples": [
+        "s(\"bd sd\").room(.8).size(\"<0 .2 .4 .6 .8 1>\").osc()"
+      ],
+      "longname": "size",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000034",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Wave shaping distortion. CAUTION: it might get loud\n   *\n   * @name shape\n   * @param {number | Pattern} distortion between 0 and 1\n   * @example\n   * s(\"bd sd\").shape(\"<0 .2 .4 .6 .8 1>\").osc()\n   *\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 576,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Wave shaping distortion. CAUTION: it might get loud</p>",
+      "name": "shape",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "Pattern"
+            ]
+          },
+          "description": "<p>between 0 and 1</p>",
+          "name": "distortion"
+        }
+      ],
+      "examples": [
+        "s(\"bd sd\").shape(\"<0 .2 .4 .6 .8 1>\").osc()"
+      ],
+      "longname": "shape",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000035",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Changes the speed of sample playback, i.e. a cheap way of changing pitch.\n   *\n   * @name speed\n   * @param {number | Pattern} speed -inf to inf, negative numbers play the sample backwards.\n   * @example\n   * s(\"bd\").speed(\"<1 2 4 1 -2 -4>\").osc()\n   * @example\n   * speed(\"1 1.5*2 [2 1.1]\").s(\"sax\").cut(1).osc()\n   *\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 590,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Changes the speed of sample playback, i.e. a cheap way of changing pitch.</p>",
+      "name": "speed",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "Pattern"
+            ]
+          },
+          "description": "<p>inf to inf, negative numbers play the sample backwards.</p>",
+          "name": "speed"
+        }
+      ],
+      "examples": [
+        "s(\"bd\").speed(\"<1 2 4 1 -2 -4>\").osc()",
+        "speed(\"1 1.5*2 [2 1.1]\").s(\"sax\").cut(1).osc()"
+      ],
+      "longname": "speed",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000036",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Used in conjunction with {@link speed}, accepts values of \"r\" (rate, default behavior), \"c\" (cycles), or \"s\" (seconds). Using `unit \"c\"` means `speed` will be interpreted in units of cycles, e.g. `speed \"1\"` means samples will be stretched to fill a cycle. Using `unit \"s\"` means the playback speed will be adjusted so that the duration is the number of seconds specified by `speed`.\n   *\n   * @name unit\n   * @param {number | string | Pattern} unit see description above\n   * @example\n   * speed(\"1 2 .5 3\").s(\"bd\").unit(\"c\").osc()\n   *\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 606,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Used in conjunction with {@link speed}, accepts values of &quot;r&quot; (rate, default behavior), &quot;c&quot; (cycles), or &quot;s&quot; (seconds). Using <code>unit &quot;c&quot;</code> means <code>speed</code> will be interpreted in units of cycles, e.g. <code>speed &quot;1&quot;</code> means samples will be stretched to fill a cycle. Using <code>unit &quot;s&quot;</code> means the playback speed will be adjusted so that the duration is the number of seconds specified by <code>speed</code>.</p>",
+      "name": "unit",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "string",
+              "Pattern"
+            ]
+          },
+          "description": "<p>see description above</p>",
+          "name": "unit"
+        }
+      ],
+      "examples": [
+        "speed(\"1 2 .5 3\").s(\"bd\").unit(\"c\").osc()"
+      ],
+      "longname": "unit",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000037",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Made by Calum Gunn. Reminiscent of some weird mixture of filter, ring-modulator and pitch-shifter. The SuperCollider manual defines Squiz as:\n   *\n   * \"A simplistic pitch-raising algorithm. It's not meant to sound natural; its sound is reminiscent of some weird mixture of filter, ring-modulator and pitch-shifter, depending on the input. The algorithm works by cutting the signal into fragments (delimited by upwards-going zero-crossings) and squeezing those fragments in the time domain (i.e. simply playing them back faster than they came in), leaving silences inbetween. All the parameters apart from memlen can be modulated.\"\n   *\n   * @name squiz\n   * @param {number | Pattern} squiz Try passing multiples of 2 to it - 2, 4, 8 etc.\n   * @example\n   * squiz(\"2 4/2 6 [8 16]\").s(\"bd\").osc()\n   *\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 620,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Made by Calum Gunn. Reminiscent of some weird mixture of filter, ring-modulator and pitch-shifter. The SuperCollider manual defines Squiz as:</p>\n<p>&quot;A simplistic pitch-raising algorithm. It's not meant to sound natural; its sound is reminiscent of some weird mixture of filter, ring-modulator and pitch-shifter, depending on the input. The algorithm works by cutting the signal into fragments (delimited by upwards-going zero-crossings) and squeezing those fragments in the time domain (i.e. simply playing them back faster than they came in), leaving silences inbetween. All the parameters apart from memlen can be modulated.&quot;</p>",
+      "name": "squiz",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "Pattern"
+            ]
+          },
+          "description": "<p>Try passing multiples of 2 to it - 2, 4, 8 etc.</p>",
+          "name": "squiz"
+        }
+      ],
+      "examples": [
+        "squiz(\"2 4/2 6 [8 16]\").s(\"bd\").osc()"
+      ],
+      "longname": "squiz",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000038",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * \n   * Formant filter to make things sound like vowels.\n   * \n   * @name vowel\n   * @param {string | Pattern} vowel You can use a e i o u. Use a rest (~) to override the effect\n   * @example\n   * vowel(\"a e i [o u]\").slow(2)\n   * .n(\"<[0,7]!4 [2,7]!4>\")\n   * .s('supersquare').osc()\n   *\n   */",
+      "meta": {
+        "filename": "controls.mjs",
+        "lineno": 639,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Formant filter to make things sound like vowels.</p>",
+      "name": "vowel",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "string",
+              "Pattern"
+            ]
+          },
+          "description": "<p>You can use a e i o u. Use a rest (~) to override the effect</p>",
+          "name": "vowel"
+        }
+      ],
+      "examples": [
+        "vowel(\"a e i [o u]\").slow(2)\n.n(\"<[0,7]!4 [2,7]!4>\")\n.s('supersquare').osc()"
+      ],
+      "longname": "vowel",
+      "kind": "member",
+      "scope": "global",
+      "___id": "T000002R000039",
       "___s": true
     },
     {
@@ -870,7 +1220,7 @@
       "longname": "drawLine",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000035",
+      "___id": "T000002R000046",
       "___s": true
     },
     {
@@ -959,7 +1309,7 @@
       "longname": "Pattern#euclid",
       "kind": "function",
       "scope": "instance",
-      "___id": "T000002R000059",
+      "___id": "T000002R000070",
       "___s": true
     },
     {
@@ -996,7 +1346,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000060",
+      "___id": "T000002R000071",
       "___s": true
     },
     {
@@ -1034,7 +1384,7 @@
           "name": "query"
         }
       ],
-      "___id": "T000002R000520",
+      "___id": "T000002R000531",
       "___s": true
     },
     {
@@ -1097,7 +1447,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000522",
+      "___id": "T000002R000533",
       "___s": true
     },
     {
@@ -1133,7 +1483,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000523",
+      "___id": "T000002R000534",
       "___s": true
     },
     {
@@ -1181,7 +1531,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000526",
+      "___id": "T000002R000537",
       "___s": true
     },
     {
@@ -1229,7 +1579,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000527",
+      "___id": "T000002R000538",
       "___s": true
     },
     {
@@ -1276,7 +1626,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000528",
+      "___id": "T000002R000539",
       "___s": true
     },
     {
@@ -1324,7 +1674,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000529",
+      "___id": "T000002R000540",
       "___s": true
     },
     {
@@ -1371,7 +1721,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000530",
+      "___id": "T000002R000541",
       "___s": true
     },
     {
@@ -1418,7 +1768,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000531",
+      "___id": "T000002R000542",
       "___s": true
     },
     {
@@ -1465,7 +1815,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000532",
+      "___id": "T000002R000543",
       "___s": true
     },
     {
@@ -1512,7 +1862,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000533",
+      "___id": "T000002R000544",
       "___s": true
     },
     {
@@ -1548,7 +1898,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000534",
+      "___id": "T000002R000545",
       "___s": true
     },
     {
@@ -1604,7 +1954,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000535",
+      "___id": "T000002R000546",
       "___s": true
     },
     {
@@ -1651,7 +2001,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000569",
+      "___id": "T000002R000580",
       "___s": true
     },
     {
@@ -1684,7 +2034,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000570",
+      "___id": "T000002R000581",
       "___s": true
     },
     {
@@ -1732,7 +2082,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000571",
+      "___id": "T000002R000582",
       "___s": true
     },
     {
@@ -1779,7 +2129,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000572",
+      "___id": "T000002R000583",
       "___s": true
     },
     {
@@ -1815,7 +2165,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000573",
+      "___id": "T000002R000584",
       "___s": true
     },
     {
@@ -1851,7 +2201,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000574",
+      "___id": "T000002R000585",
       "___s": true
     },
     {
@@ -1887,7 +2237,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000575",
+      "___id": "T000002R000586",
       "___s": true
     },
     {
@@ -1934,7 +2284,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000583",
+      "___id": "T000002R000594",
       "___s": true
     },
     {
@@ -1981,7 +2331,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000585",
+      "___id": "T000002R000596",
       "___s": true
     },
     {
@@ -2028,7 +2378,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000597",
+      "___id": "T000002R000608",
       "___s": true
     },
     {
@@ -2077,7 +2427,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000609",
+      "___id": "T000002R000620",
       "___s": true
     },
     {
@@ -2108,7 +2458,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000612",
+      "___id": "T000002R000623",
       "___s": true
     },
     {
@@ -2139,7 +2489,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000613",
+      "___id": "T000002R000624",
       "___s": true
     },
     {
@@ -2175,7 +2525,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000614",
+      "___id": "T000002R000625",
       "___s": true
     },
     {
@@ -2211,7 +2561,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000633",
+      "___id": "T000002R000644",
       "___s": true
     },
     {
@@ -2247,7 +2597,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000634",
+      "___id": "T000002R000645",
       "___s": true
     },
     {
@@ -2283,7 +2633,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000635",
+      "___id": "T000002R000646",
       "___s": true
     },
     {
@@ -2319,7 +2669,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000636",
+      "___id": "T000002R000647",
       "___s": true
     },
     {
@@ -2355,7 +2705,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000637",
+      "___id": "T000002R000648",
       "___s": true
     },
     {
@@ -2411,7 +2761,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000638",
+      "___id": "T000002R000649",
       "___s": true
     },
     {
@@ -2467,7 +2817,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000639",
+      "___id": "T000002R000650",
       "___s": true
     },
     {
@@ -2523,7 +2873,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000640",
+      "___id": "T000002R000651",
       "___s": true
     },
     {
@@ -2559,7 +2909,7 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000737",
+      "___id": "T000002R000748",
       "___s": true
     },
     {
@@ -2610,7 +2960,7 @@
       "longname": "pure",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000855",
+      "___id": "T000002R000866",
       "___s": true
     },
     {
@@ -2662,7 +3012,7 @@
       "longname": "stack",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000862",
+      "___id": "T000002R000873",
       "___s": true
     },
     {
@@ -2714,7 +3064,7 @@
       "longname": "slowcat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000866",
+      "___id": "T000002R000877",
       "___s": true
     },
     {
@@ -2763,7 +3113,7 @@
       "longname": "slowcatPrime",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000874",
+      "___id": "T000002R000885",
       "___s": true
     },
     {
@@ -2815,7 +3165,7 @@
       "longname": "fastcat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000880",
+      "___id": "T000002R000891",
       "___s": true
     },
     {
@@ -2843,7 +3193,7 @@
       "longname": "cat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000882",
+      "___id": "T000002R000893",
       "___s": true
     },
     {
@@ -2895,7 +3245,7 @@
       "longname": "timeCat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000884",
+      "___id": "T000002R000895",
       "___s": true
     },
     {
@@ -2923,7 +3273,7 @@
       "longname": "sequence",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000891",
+      "___id": "T000002R000902",
       "___s": true
     },
     {
@@ -2951,7 +3301,7 @@
       "longname": "seq",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000893",
+      "___id": "T000002R000904",
       "___s": true
     },
     {
@@ -2990,7 +3340,7 @@
       "scope": "static",
       "longname": "Pattern.transpose",
       "kind": "member",
-      "___id": "T000002R003702",
+      "___id": "T000002R003713",
       "___s": true
     },
     {
@@ -3027,7 +3377,7 @@
       "scope": "static",
       "longname": "Pattern.scaleTranspose",
       "kind": "member",
-      "___id": "T000002R003706",
+      "___id": "T000002R003717",
       "___s": true
     },
     {
@@ -3064,7 +3414,7 @@
       "scope": "static",
       "longname": "Pattern.scale",
       "kind": "member",
-      "___id": "T000002R003708",
+      "___id": "T000002R003719",
       "___s": true
     },
     {
@@ -3101,7 +3451,7 @@
       "scope": "static",
       "longname": "Pattern.voicings",
       "kind": "member",
-      "___id": "T000002R003733",
+      "___id": "T000002R003744",
       "___s": true
     },
     {
@@ -3183,7 +3533,7 @@
         "/home/felix/projects/strudel/packages/xen/tunejs.js",
         "/home/felix/projects/strudel/packages/xen/xen.mjs"
       ],
-      "___id": "T000002R014002",
+      "___id": "T000002R014013",
       "___s": true
     }
   ]

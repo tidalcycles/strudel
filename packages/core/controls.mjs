@@ -22,8 +22,8 @@ const generic_params = [
   /**
    * The note or sample number to choose for a synth or sampleset
    * Note names currently not working yet, but will hopefully soon. Just stick to numbers for now
-   * 
-   * @name n 
+   *
+   * @name n
    * @param {string | number | Pattern} value note name, note number or sample number
    * @example
    * s('superpiano').n("<0 1 2 3>").osc()
@@ -164,6 +164,17 @@ const generic_params = [
     'end',
     'the same as `begin`, but cuts the end off samples, shortening them; e.g. `0.75` to cut off the last quarter of each sample.',
   ],
+  /**
+   * Loops the sample (from `begin` to `end`) the specified number of times.
+   * Note that the tempo of the loop is not synced with the cycle tempo.
+   *
+   * @name loop
+   * @param {number | Pattern} times How often the sample is looped
+   * @example
+   * s("bd").loop("<1 2 3 4>").osc()
+   *
+   */
+  ['f', 'loop', 'loops the sample (from `begin` to `end`) the specified number of times.'],
   // TODO: currently duplicated with "native" legato
   /**
    * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.
@@ -303,6 +314,20 @@ const generic_params = [
   ['f', 'delay', 'a pattern of numbers from 0 to 1. Sets the level of the delay signal.'],
   ['f', 'delayfeedback', 'a pattern of numbers from 0 to 1. Sets the amount of delay feedback.'],
   ['f', 'delaytime', 'a pattern of numbers from 0 to 1. Sets the length of the delay.'],
+  /* // TODO: test
+   * Specifies whether delaytime is calculated relative to cps.
+   *
+   * @name lock
+   * @param {number | Pattern} enable When set to 1, delaytime is a direct multiple of a cycle.
+   * @example
+   * s("sd").delay().lock(1).osc()
+   *
+   */
+  [
+    'f',
+    'lock',
+    'A pattern of numbers. Specifies whether delaytime is calculated relative to cps. When set to 1, delaytime is a direct multiple of a cycle.',
+  ],
   /**
    * Set detune of oscillators. Works only with some synths, see <a target="_blank" href="https://tidalcycles.org/docs/patternlib/tutorials/synthesizers">tidal doc</a>
    *
@@ -412,45 +437,86 @@ const generic_params = [
   // ['f', 'lhitom', ''],
   // ['f', 'lkick', ''],
   // ['f', 'llotom', ''],
-  [
-    'f',
-    'lock',
-    'A pattern of numbers. Specifies whether delaytime is calculated relative to cps. When set to 1, delaytime is a direct multiple of a cycle.',
-  ],
-  ['f', 'loop', 'loops the sample (from `begin` to `end`) the specified number of times.'],
   // ['f', 'lophat', ''],
   // ['f', 'lsnare', ''],
-  ['f', 'degree', ''],
-  ['f', 'mtranspose', ''],
-  ['f', 'ctranspose', ''],
-  ['f', 'harmonic', ''],
-  ['f', 'stepsPerOctave', ''],
-  ['f', 'octaveR', ''],
+  ['f', 'degree', ''], // TODO: what is this? not found in tidal doc
+  ['f', 'mtranspose', ''], // TODO: what is this? not found in tidal doc
+  ['f', 'ctranspose', ''], // TODO: what is this? not found in tidal doc
+  ['f', 'harmonic', ''], // TODO: what is this? not found in tidal doc
+  ['f', 'stepsPerOctave', ''], // TODO: what is this? not found in tidal doc
+  ['f', 'octaveR', ''], // TODO: what is this? not found in tidal doc
+  // TODO: why is this needed? what's the difference to late / early?
   [
     'f',
     'nudge',
     'Nudges events into the future by the specified number of seconds. Negative numbers work up to a point as well (due to internal latency)',
   ],
+  // TODO: the following doc is just a guess, it's not documented in tidal doc.
+  /**
+   * Sets the default octave of a synth.
+   *
+   * @name octave
+   * @param {number | Pattern} octave octave number
+   * @example
+   * n("0,4,7").s('supersquare').octave("<3 4 5 6>").osc()
+   */
   ['i', 'octave', ''],
-  ['f', 'offset', ''],
+  ['f', 'offset', ''], // TODO: what is this? not found in tidal doc
   // ['f', 'ophatdecay', ''],
+  // TODO: example
+  /**
+   * a pattern of numbers. An `orbit` is a global parameter context for patterns. Patterns with the same orbit will share hardware output bus offset and global effects, e.g. reverb and delay. The maximum number of orbits is specified in the superdirt startup, numbers higher than maximum will wrap around.
+   *
+   * @name orbit
+   * @param {number | Pattern} number
+   *
+   */
   [
     'i',
     'orbit',
     'a pattern of numbers. An `orbit` is a global parameter context for patterns. Patterns with the same orbit will share hardware output bus offset and global effects, e.g. reverb and delay. The maximum number of orbits is specified in the superdirt startup, numbers higher than maximum will wrap around.',
   ],
-  ['f', 'overgain', ''],
-  ['f', 'overshape', ''],
+  ['f', 'overgain', ''], // TODO: what is this? not found in tidal doc
+  ['f', 'overshape', ''], // TODO: what is this? not found in tidal doc
+  /**
+   * Sets position in stereo.
+   *
+   * @name pan
+   * @param {number | Pattern} pan between 0 and 1, from left to right (assuming stereo), once round a circle (assuming multichannel)
+   * @example
+   * s("[bd hh]*2").pan("<.5 1 .5 0>").osc()
+   *
+   */
   [
     'f',
     'pan',
     'a pattern of numbers between 0 and 1, from left to right (assuming stereo), once round a circle (assuming multichannel)',
   ],
+  // TODO: this has no effect (see example)
+  /*
+   * Controls how much multichannel output is fanned out
+   *
+   * @name panspan
+   * @param {number | Pattern} span between -inf and inf, negative is backwards ordering
+   * @example
+   * s("[bd hh]*2").pan("<.5 1 .5 0>").panspan("<0 .5 1>").osc()
+   *
+   */
   [
     'f',
     'panspan',
     'a pattern of numbers between -inf and inf, which controls how much multichannel output is fanned out (negative is backwards ordering)',
   ],
+  // TODO: this has no effect (see example)
+  /*
+   * Controls how much multichannel output is spread
+   *
+   * @name pansplay
+   * @param {number | Pattern} spread between 0 and 1
+   * @example
+   * s("[bd hh]*2").pan("<.5 1 .5 0>").pansplay("<0 .5 1>").osc()
+   *
+   */
   [
     'f',
     'pansplay',
@@ -470,44 +536,118 @@ const generic_params = [
   // ['f', 'pitch2', ''],
   // ['f', 'pitch3', ''],
   // ['f', 'portamento', ''],
+  // TODO: LFO rate see https://tidalcycles.org/docs/patternlib/tutorials/synthesizers/#supersquare
   ['f', 'rate', "used in SuperDirt softsynths as a control rate or 'speed'"],
-  ['f', 'room', 'a pattern of numbers from 0 to 1. Sets the level of reverb.'],
-  // ['f', 'sagogo', ''],
-  // ['f', 'sclap', ''],
-  // ['f', 'sclaves', ''],
-  // ['f', 'scrash', ''],
+  // TODO: slide param for certain synths
+  ['f', 'slide', ''],
+  // TODO: detune? https://tidalcycles.org/docs/patternlib/tutorials/synthesizers/#supersquare
   ['f', 'semitone', ''],
-  [
-    'f',
-    'shape',
-    'wave shaping distortion, a pattern of numbers from 0 for no distortion up to 1 for loads of distortion.',
-  ],
+  // TODO: dedup with synth param, see https://tidalcycles.org/docs/reference/synthesizers/#superpiano
+  ['f', 'velocity', ''],
+  ['f', 'voice', ''], // TODO: synth param
+  /**
+   * Sets the level of reverb.
+   *
+   * @name room
+   * @param {number | Pattern} level between 0 and 1
+   * @example
+   * s("bd sd").room("<0 .2 .4 .6 .8 1>").osc()
+   *
+   */
+  ['f', 'room', 'a pattern of numbers from 0 to 1. Sets the level of reverb.'],
+  /**
+   * Sets the room size of the reverb, see {@link room}.
+   *
+   * @name size
+   * @param {number | Pattern} size between 0 and 1
+   * @example
+   * s("bd sd").room(.8).size("<0 .2 .4 .6 .8 1>").osc()
+   *
+   */
   [
     'f',
     'size',
     'a pattern of numbers from 0 to 1. Sets the perceptual size (reverb time) of the `room` to be used in reverb.',
   ],
-  ['f', 'slide', ''],
+  // ['f', 'sagogo', ''],
+  // ['f', 'sclap', ''],
+  // ['f', 'sclaves', ''],
+  // ['f', 'scrash', ''],
+  /**
+   * Wave shaping distortion. CAUTION: it might get loud
+   *
+   * @name shape
+   * @param {number | Pattern} distortion between 0 and 1
+   * @example
+   * s("bd sd").shape("<0 .2 .4 .6 .8 1>").osc()
+   *
+   */
+  [
+    'f',
+    'shape',
+    'wave shaping distortion, a pattern of numbers from 0 for no distortion up to 1 for loads of distortion.',
+  ],
+  /**
+   * Changes the speed of sample playback, i.e. a cheap way of changing pitch.
+   *
+   * @name speed
+   * @param {number | Pattern} speed -inf to inf, negative numbers play the sample backwards.
+   * @example
+   * s("bd").speed("<1 2 4 1 -2 -4>").osc()
+   * @example
+   * speed("1 1.5*2 [2 1.1]").s("sax").cut(1).osc()
+   *
+   */
   [
     'f',
     'speed',
     'a pattern of numbers which changes the speed of sample playback, i.e. a cheap way of changing pitch. Negative values will play the sample backwards!',
   ],
-  ['f', 'squiz', ''],
-  ['f', 'stutterdepth', ''],
-  ['f', 'stuttertime', ''],
-  ['f', 'timescale', ''],
-  ['f', 'timescalewin', ''],
-  // ['f', 'tomdecay', ''],
+  /**
+   * Used in conjunction with {@link speed}, accepts values of "r" (rate, default behavior), "c" (cycles), or "s" (seconds). Using `unit "c"` means `speed` will be interpreted in units of cycles, e.g. `speed "1"` means samples will be stretched to fill a cycle. Using `unit "s"` means the playback speed will be adjusted so that the duration is the number of seconds specified by `speed`.
+   *
+   * @name unit
+   * @param {number | string | Pattern} unit see description above
+   * @example
+   * speed("1 2 .5 3").s("bd").unit("c").osc()
+   *
+   */
   [
     's',
     'unit',
     'used in conjunction with `speed`, accepts values of "r" (rate, default behavior), "c" (cycles), or "s" (seconds). Using `unit "c"` means `speed` will be interpreted in units of cycles, e.g. `speed "1"` means samples will be stretched to fill a cycle. Using `unit "s"` means the playback speed will be adjusted so that the duration is the number of seconds specified by `speed`.',
   ],
-  ['f', 'velocity', ''],
+  /**
+   * Made by Calum Gunn. Reminiscent of some weird mixture of filter, ring-modulator and pitch-shifter. The SuperCollider manual defines Squiz as:
+   *
+   * "A simplistic pitch-raising algorithm. It's not meant to sound natural; its sound is reminiscent of some weird mixture of filter, ring-modulator and pitch-shifter, depending on the input. The algorithm works by cutting the signal into fragments (delimited by upwards-going zero-crossings) and squeezing those fragments in the time domain (i.e. simply playing them back faster than they came in), leaving silences inbetween. All the parameters apart from memlen can be modulated."
+   *
+   * @name squiz
+   * @param {number | Pattern} squiz Try passing multiples of 2 to it - 2, 4, 8 etc.
+   * @example
+   * squiz("2 4/2 6 [8 16]").s("bd").osc()
+   *
+   */
+  ['f', 'squiz', ''],
+  ['f', 'stutterdepth', ''], // TODO: what is this? not found in tidal doc
+  ['f', 'stuttertime', ''], // TODO: what is this? not found in tidal doc
+  ['f', 'timescale', ''], // TODO: what is this? not found in tidal doc
+  ['f', 'timescalewin', ''], // TODO: what is this? not found in tidal doc
+  // ['f', 'tomdecay', ''],
   // ['f', 'vcfegint', ''],
   // ['f', 'vcoegint', ''],
-  ['f', 'voice', ''],
+  /**
+   * 
+   * Formant filter to make things sound like vowels.
+   * 
+   * @name vowel
+   * @param {string | Pattern} vowel You can use a e i o u. Use a rest (~) to override the effect
+   * @example
+   * vowel("a e i [o u]").slow(2)
+   * .n("<[0,7]!4 [2,7]!4>")
+   * .s('supersquare').osc()
+   *
+   */
   [
     's',
     'vowel',
