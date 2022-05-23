@@ -16,8 +16,9 @@ import drawLine from './drawLine.mjs';
 /** @class Class representing a pattern. */
 export class Pattern {
   /**
-   * Create a pattern.
-   * @param {function} query - The function that maps a State to Haps .
+   * Create a pattern. As an end user, you will most likely not create a Pattern directly.
+   *
+   * @param {function} query - The function that maps a {@link State} to an array of {@link Hap}.
    */
   constructor(query) {
     this.query = query;
@@ -731,11 +732,31 @@ export class Pattern {
     return this._compress(span.begin, span.end);
   }
 
+  /**
+   * Speed up a pattern by the given factor.
+   *
+   * @name fast
+   * @memberof Pattern
+   * @param {number | Pattern} factor speed up factor
+   * @returns Pattern
+   * @example
+   * seq(e5, b4, d5, c5).fast(2)
+   */
   _fast(factor) {
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
     return fastQuery.withHapTime((t) => t.div(factor));
   }
 
+  /**
+   * Slow down a pattern over the given number of cycles.
+   *
+   * @name slow
+   * @memberof Pattern
+   * @param {number | Pattern} factor slow down factor
+   * @returns Pattern
+   * @example
+   * seq(e5, b4, d5, c5).slow(2)
+   */
   _slow(factor) {
     return this._fast(Fraction(1).div(factor));
   }
@@ -1022,6 +1043,7 @@ export class Pattern {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
 
+  // move this to controls? (speed and unit are controls)
   _loopAt(factor, cps = 1) {
     return this.speed((1 / factor) * cps)
       .unit('c')
@@ -1265,8 +1287,8 @@ export function slowcatPrime(...pats) {
  * @return {Pattern}
  * @example
  * fastcat(e5, b4, [d5, c5])
- * sequence(e5, b4, [d5, c5])
- * seq(e5, b4, [d5, c5])
+ * // sequence(e5, b4, [d5, c5])
+ * // seq(e5, b4, [d5, c5])
  */
 export function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);

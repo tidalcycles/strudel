@@ -1,0 +1,123 @@
+import { MiniRepl } from './MiniRepl';
+
+The following is generated from the source documentation.
+
+## TOC
+
+## Pattern Factories
+
+The following functions will return a pattern. We will see later what that means.
+
+### pure
+
+<p>A discrete value that repeats once per cycle:</p>
+
+**Parameters**
+  
+- value (any): The value to repeat
+
+**Examples**
+
+<div className="space-y-2">
+  <MiniRepl tune={`pure('e4')`} />
+</div>
+
+### slowcat
+
+<p>Concatenation: combines a list of patterns, switching between them successively, one per cycle:</p>
+<p>synonyms: <a href="#cat">cat</a></p>
+
+**Parameters**
+  
+- items (any): The items to concatenate
+
+**Examples**
+
+<div className="space-y-2">
+  <MiniRepl tune={`slowcat(e5, b4, [d5, c5])`} />
+</div>
+
+### fastcat
+
+<p>Concatenation: as with <a href="#slowcat">slowcat</a>, but squashes a cycle from each pattern into one cycle</p>
+<p>Synonyms: <a href="#seq">seq</a>, <a href="#sequence">sequence</a></p>
+
+**Parameters**
+  
+- items (any): The items to concatenate
+
+**Examples**
+
+<div className="space-y-2">
+  <MiniRepl tune={`fastcat(e5, b4, [d5, c5])
+// sequence(e5, b4, [d5, c5])
+// seq(e5, b4, [d5, c5])`} />
+</div>
+
+### stack
+
+<p>The given items are played at the same time at the same length:</p>
+
+**Parameters**
+  
+- items (any): The items to stack
+
+**Examples**
+
+<div className="space-y-2">
+  <MiniRepl tune={`stack(g3, b3, [e4, d4])`} />
+</div>
+
+### timeCat
+
+<p>Like <a href="#fastcat">fastcat</a>, but where each step has a temporal weight:</p>
+
+**Parameters**
+  
+- items (Array): The items to concatenate
+
+**Examples**
+
+<div className="space-y-2">
+  <MiniRepl tune={`timeCat([3,e3],[1, g3])`} />
+</div>
+
+
+
+## Pattern Modifiers
+
+### Pattern.slow
+
+<p>Slow down a pattern over the given number of cycles.</p>
+
+**Parameters**
+  
+- factor (number|Pattern): slow down factor
+
+**Examples**
+
+<div className="space-y-2">
+  <MiniRepl tune={`seq(e5, b4, d5, c5).slow(2)`} />
+</div>
+
+### Pattern.fast
+
+<p>Speed up a pattern by the given factor.</p>
+
+**Parameters**
+  
+- factor (number|Pattern): speed up factor
+
+**Examples**
+
+<div className="space-y-2">
+  <MiniRepl tune={`seq(e5, b4, d5, c5).fast(2)`} />
+</div>
+
+
+
+
+
+
+
+## Everything Else

@@ -1,7 +1,7 @@
 {
   "docs": [
     {
-      "comment": "/**\n   * Select a sound / sample by name.\n   * See default sounds here: https://tidalcycles.org/docs/configuration/Audio%20Samples/default_library\n   *\n   * @name s\n   * @param {string | Pattern} sound The sound / pattern of sounds to pick\n   * @example\n   * s(\"bd hh\").osc()\n   *\n   */",
+      "comment": "/**\n   * Select a sound / sample by name.\n   * \n   * <details>\n   * <summary>show all sounds</summary>\n   * \n   * 808 (6) 808bd (25) 808cy (25) 808hc (5) 808ht (5) 808lc (5) 808lt (5) 808mc (5) 808mt (5) 808oh (5) 808sd (25) 909 (1) ab (12) ade (10) ades2 (9) ades3 (7) ades4 (6) alex (2) alphabet (26) amencutup (32) armora (7) arp (2) arpy (11) auto (11) baa (7) baa2 (7) bass (4) bass0 (3) bass1 (30) bass2 (5) bass3 (11) bassdm (24) bassfoo (3) battles (2) bd (24) bend (4) bev (2) bin (2) birds (10) birds3 (19) bleep (13) blip (2) blue (2) bottle (13) breaks125 (2) breaks152 (1) breaks157 (1) breaks165 (1) breath (1) bubble (8) can (14) casio (3) cb (1) cc (6) chin (4) circus (3) clak (2) click (4) clubkick (5) co (4) coins (1) control (2) cosmicg (15) cp (2) cr (6) crow (4) d (4) db (13) diphone (38) diphone2 (12) dist (16) dork2 (4) dorkbot (2) dr (42) dr2 (6) dr55 (4) dr_few (8) drum (6) drumtraks (13) e (8) east (9) electro1 (13) em2 (6) erk (1) f (1) feel (7) feelfx (8) fest (1) fire (1) flick (17) fm (17) foo (27) future (17) gab (10) gabba (4) gabbaloud (4) gabbalouder (4) glasstap (3) glitch (8) glitch2 (8) gretsch (24) gtr (3) h (7) hand (17) hardcore (12) hardkick (6) haw (6) hc (6) hh (13) hh27 (13) hit (6) hmm (1) ho (6) hoover (6) house (8) ht (16) if (5) ifdrums (3) incoming (8) industrial (32) insect (3) invaders (18) jazz (8) jungbass (20) jungle (13) juno (12) jvbass (13) kicklinn (1) koy (2) kurt (7) latibro (8) led (1) less (4) lighter (33) linnhats (6) lt (16) made (7) made2 (1) mash (2) mash2 (4) metal (10) miniyeah (4) monsterb (6) moog (7) mouth (15) mp3 (4) msg (9) mt (16) mute (28) newnotes (15) noise (1) noise2 (8) notes (15) numbers (9) oc (4) odx (15) off (1) outdoor (6) pad (3) padlong (1) pebbles (1) perc (6) peri (15) pluck (17) popkick (10) print (11) proc (2) procshort (8) psr (30) rave (8) rave2 (4) ravemono (2) realclaps (4) reverbkick (1) rm (2) rs (1) sax (22) sd (2) seawolf (3) sequential (8) sf (18) sheffield (1) short (5) sid (12) sine (6) sitar (8) sn (52) space (18) speakspell (12) speech (7) speechless (10) speedupdown (9) stab (23) stomp (10) subroc3d (11) sugar (2) sundance (6) tabla (26) tabla2 (46) tablex (3) tacscan (22) tech (13) techno (7) tink (5) tok (4) toys (13) trump (11) ul (10) ulgab (5) uxay (3) v (6) voodoo (5) wind (10) wobble (1) world (3) xmas (1) yeah (31)\n   * \n   * <a href=\"https://tidalcycles.org/docs/configuration/Audio%20Samples/default_library\" target=\"_blank\">more info</a>\n   * \n   * </details>\n   *\n   * @name s\n   * @param {string | Pattern} sound The sound / pattern of sounds to pick\n   * @example\n   * s(\"bd hh\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
         "lineno": 11,
@@ -9,7 +9,7 @@
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
       },
-      "description": "<p>Select a sound / sample by name.\nSee default sounds here: https://tidalcycles.org/docs/configuration/Audio%20Samples/default_library</p>",
+      "description": "<p>Select a sound / sample by name.</p>\n<details>\n<summary>show all sounds</summary>\n<p>808 (6) 808bd (25) 808cy (25) 808hc (5) 808ht (5) 808lc (5) 808lt (5) 808mc (5) 808mt (5) 808oh (5) 808sd (25) 909 (1) ab (12) ade (10) ades2 (9) ades3 (7) ades4 (6) alex (2) alphabet (26) amencutup (32) armora (7) arp (2) arpy (11) auto (11) baa (7) baa2 (7) bass (4) bass0 (3) bass1 (30) bass2 (5) bass3 (11) bassdm (24) bassfoo (3) battles (2) bd (24) bend (4) bev (2) bin (2) birds (10) birds3 (19) bleep (13) blip (2) blue (2) bottle (13) breaks125 (2) breaks152 (1) breaks157 (1) breaks165 (1) breath (1) bubble (8) can (14) casio (3) cb (1) cc (6) chin (4) circus (3) clak (2) click (4) clubkick (5) co (4) coins (1) control (2) cosmicg (15) cp (2) cr (6) crow (4) d (4) db (13) diphone (38) diphone2 (12) dist (16) dork2 (4) dorkbot (2) dr (42) dr2 (6) dr55 (4) dr_few (8) drum (6) drumtraks (13) e (8) east (9) electro1 (13) em2 (6) erk (1) f (1) feel (7) feelfx (8) fest (1) fire (1) flick (17) fm (17) foo (27) future (17) gab (10) gabba (4) gabbaloud (4) gabbalouder (4) glasstap (3) glitch (8) glitch2 (8) gretsch (24) gtr (3) h (7) hand (17) hardcore (12) hardkick (6) haw (6) hc (6) hh (13) hh27 (13) hit (6) hmm (1) ho (6) hoover (6) house (8) ht (16) if (5) ifdrums (3) incoming (8) industrial (32) insect (3) invaders (18) jazz (8) jungbass (20) jungle (13) juno (12) jvbass (13) kicklinn (1) koy (2) kurt (7) latibro (8) led (1) less (4) lighter (33) linnhats (6) lt (16) made (7) made2 (1) mash (2) mash2 (4) metal (10) miniyeah (4) monsterb (6) moog (7) mouth (15) mp3 (4) msg (9) mt (16) mute (28) newnotes (15) noise (1) noise2 (8) notes (15) numbers (9) oc (4) odx (15) off (1) outdoor (6) pad (3) padlong (1) pebbles (1) perc (6) peri (15) pluck (17) popkick (10) print (11) proc (2) procshort (8) psr (30) rave (8) rave2 (4) ravemono (2) realclaps (4) reverbkick (1) rm (2) rs (1) sax (22) sd (2) seawolf (3) sequential (8) sf (18) sheffield (1) short (5) sid (12) sine (6) sitar (8) sn (52) space (18) speakspell (12) speech (7) speechless (10) speedupdown (9) stab (23) stomp (10) subroc3d (11) sugar (2) sundance (6) tabla (26) tabla2 (46) tablex (3) tacscan (22) tech (13) techno (7) tink (5) tok (4) toys (13) trump (11) ul (10) ulgab (5) uxay (3) v (6) voodoo (5) wind (10) wobble (1) world (3) xmas (1) yeah (31)</p>\n<p><a href=\"https://tidalcycles.org/docs/configuration/Audio%20Samples/default_library\" target=\"_blank\">more info</a></p>\n</details>",
       "name": "s",
       "params": [
         {
@@ -36,7 +36,7 @@
       "comment": "/**\n   * The note or sample number to choose for a synth or sampleset\n   * Note names currently not working yet, but will hopefully soon. Just stick to numbers for now\n   *\n   * @name n\n   * @param {string | number | Pattern} value note name, note number or sample number\n   * @example\n   * s('superpiano').n(\"<0 1 2 3>\").osc()\n   * @example\n   * s('superpiano').n(\"<c4 d4 e4 g4>\").osc()\n   * @example\n   * n(\"0 1 2 3\").s('east').osc()\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 22,
+        "lineno": 30,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -71,7 +71,7 @@
       "comment": "/**\n   * A pattern of numbers that speed up (or slow down) samples while they play. Currently only supported by osc / superdirt.\n   *\n   * @name accelerate\n   * @param {number | Pattern} amount acceleration.\n   * @example\n   * s(\"sax\").accelerate(\"<0 1 2 4 8 16>\").slow(2).osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 46,
+        "lineno": 54,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -103,7 +103,7 @@
       "comment": "/**\n   * Like {@link amp}, but exponential.\n   *\n   * @name gain\n   * @param {number | Pattern} amount gain.\n   * @example\n   * s(\"bd*8\").gain(\".7*2 1 .7*2 1 .7 1\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 56,
+        "lineno": 64,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -135,7 +135,7 @@
       "comment": "/**\n   * Like {@link gain}, but linear.\n   *\n   * @name amp\n   * @param {number | Pattern} amount gain.\n   * @example\n   * s(\"bd*8\").amp(\".1*2 .5 .1*2 .5 .1 .5\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 70,
+        "lineno": 78,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -167,7 +167,7 @@
       "comment": "/**\n   * Sets the center frequency of the band-pass filter.\n   *\n   * @name bandf\n   * @param {number | Pattern} frequency center frequency\n   * @example\n   * s(\"bd sd\").bandf(\"<1000 2000 4000 8000>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 118,
+        "lineno": 126,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -196,10 +196,10 @@
       "___s": true
     },
     {
-      "comment": "/**\n   * Sets the q-factor of the band-pass filter\n   *\n   * @name bandq\n   * @param {number | Pattern} q q factor\n   * @example\n   * s(\"bd sd\").bandf(\"<1000 2000 4000 8000>\").bandq(\"<.2 .9>\").osc()\n   *\n   */",
+      "comment": "/**\n   * Sets the q-factor of the band-pass filter\n   *\n   * @name bandq\n   * @param {number | Pattern} q q factor\n   * @example\n   * s(\"bd sd\").bandf(2000).bandq(\"<.2 .9>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 129,
+        "lineno": 137,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -219,7 +219,7 @@
         }
       ],
       "examples": [
-        "s(\"bd sd\").bandf(\"<1000 2000 4000 8000>\").bandq(\"<.2 .9>\").osc()"
+        "s(\"bd sd\").bandf(2000).bandq(\"<.2 .9>\").osc()"
       ],
       "longname": "bandq",
       "kind": "member",
@@ -231,7 +231,7 @@
       "comment": "/**\n   * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.\n   *\n   * @name begin\n   * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample\n   * @example\n   * s(\"rave\").begin(\"<0 .25 .5 .75>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 139,
+        "lineno": 147,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -263,7 +263,7 @@
       "comment": "/**\n   * The same as {@link begin}, but cuts off the end off each sample.\n   *\n   * @name end\n   * @param {number | Pattern} length 1 = whole sample, .5 = half sample, .25 = quarter sample etc..\n   * @example\n   * s(\"bd*2,ho*4\").end(\"<.1 .2 .5 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 153,
+        "lineno": 161,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -295,7 +295,7 @@
       "comment": "/**\n   * Loops the sample (from `begin` to `end`) the specified number of times.\n   * Note that the tempo of the loop is not synced with the cycle tempo.\n   *\n   * @name loop\n   * @param {number | Pattern} times How often the sample is looped\n   * @example\n   * s(\"bd\").loop(\"<1 2 3 4>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 167,
+        "lineno": 175,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -327,7 +327,7 @@
       "comment": "/**\n   * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.\n   *\n   * @name legato\n   * @param {number | Pattern} duration between 0 and 1, where 1 is the length of the whole hap time\n   * @example\n   * \"c4 eb4 g4 bb4\".legato(\"<0.125 .25 .5 .75 1 2 4>\")\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 179,
+        "lineno": 188,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -359,7 +359,7 @@
       "comment": "/**\n   * bit crusher effect.\n   *\n   * @name crush\n   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).\n   * @example\n   * s(\"<bd sd>,hh*3,jvbass*2\").fast(2).crush(\"<16 8 7 6 5 4 3 2>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 190,
+        "lineno": 199,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -391,7 +391,7 @@
       "comment": "/**\n   * fake-resampling for lowering the sample rate\n   *\n   * @name coarse\n   * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.\n   * @example\n   * s(\"xmas\").coarse(\"<1 4 8 16 32>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 204,
+        "lineno": 213,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -423,7 +423,7 @@
       "comment": "/**\n   * choose the channel the pattern is sent to in superdirt\n   *\n   * @name channel\n   * @param {number | Pattern} channel channel number\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 219,
+        "lineno": 228,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -452,7 +452,7 @@
       "comment": "/**\n   * In the style of classic drum-machines, `cut` will stop a playing sample as soon as another samples with in same cutgroup is to be played. An example would be an open hi-hat followed by a closed one, essentially muting the open.\n   *\n   * @name cut\n   * @param {number | Pattern} group cut group number\n   * @example\n   * s(\"bd sax\").cut(1).osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 227,
+        "lineno": 236,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -484,7 +484,7 @@
       "comment": "/**\n   * Applies the cutoff frequency of the low-pass filter.\n   *\n   * @name cutoff\n   * @param {number | Pattern} frequency audible between 0 and 20000\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).cutoff(\"<4000 2000 1000 500 200 100>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 241,
+        "lineno": 250,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -516,7 +516,7 @@
       "comment": "/**\n   * Applies the cutoff frequency of the high-pass filter.\n   *\n   * @name hcutoff\n   * @param {number | Pattern} frequency audible between 0 and 20000\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).hcutoff(\"<4000 2000 1000 500 200 100>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 252,
+        "lineno": 261,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -548,7 +548,7 @@
       "comment": "/**\n   * Applies the cutoff frequency of the high-pass filter.\n   *\n   * @name hresonance\n   * @param {number | Pattern} q resonance factor between 0 and 1\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).hcutoff(2000).hresonance(\"<0 .2 .4 .6>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 267,
+        "lineno": 276,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -580,7 +580,7 @@
       "comment": "/**\n   * Applies the cutoff frequency of the low-pass filter.\n   *\n   * @name resonance\n   * @param {number | Pattern} q resonance factor between 0 and 1\n   * @example\n   * s(\"bd,hh*2,<~ sd>\").fast(2).cutoff(2000).resonance(\"<0 .2 .4 .6>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 282,
+        "lineno": 291,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -612,7 +612,7 @@
       "comment": "/**\n   * Set detune of oscillators. Works only with some synths, see <a target=\"_blank\" href=\"https://tidalcycles.org/docs/patternlib/tutorials/synthesizers\">tidal doc</a>\n   *\n   * @name djf\n   * @param {number | Pattern} cutoff below 0.5 is low pass filter, above is high pass filter\n   * @example\n   * n(\"0 3 7 [10,24]\").s('superzow').octave(3).djf(\"<.5 .25 .5 .75>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 293,
+        "lineno": 302,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -644,7 +644,7 @@
       "comment": "/**\n   * Set detune of oscillators. Works only with some synths, see <a target=\"_blank\" href=\"https://tidalcycles.org/docs/patternlib/tutorials/synthesizers\">tidal doc</a>\n   *\n   * @name detune\n   * @param {number | Pattern} amount between 0 and 1\n   * @example\n   * n(\"0 3 7\").s('superzow').octave(3).detune(\"<0 .25 .5 1 2>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 331,
+        "lineno": 340,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -676,7 +676,7 @@
       "comment": "/**\n   * Set dryness of reverb. See {@link room} and {@link size} for more information about reverb.\n   *\n   * @name dry\n   * @param {number | Pattern} dry 0 = wet, 1 = dry\n   * @example\n   * n(\"[0,3,7](3,8)\").s(\"superpiano\").room(.7).dry(\"<0 .5 .75 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 341,
+        "lineno": 350,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -708,7 +708,7 @@
       "comment": "/**\n   * Set frequency of sound.\n   *\n   * @name freq\n   * @param {number | Pattern} frequency in Hz. the audible range is between 20 and 20000 Hz\n   * @example\n   * freq(\"220 110 440 110\").s(\"superzow\").osc()\n   * @example\n   * freq(\"110\".mulOut(\".5 1.5 .6 [2 3]\")).s(\"superzow\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 376,
+        "lineno": 385,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -738,10 +738,10 @@
       "___s": true
     },
     {
-      "comment": "/**\n   * Emulation of a Leslie speaker: speakers rotating in a wooden amplified cabinet.\n   *\n   * @name leslie\n   * @param {number | Pattern} dry between 0 and 1\n   * @example\n   * n(\"0,4,7\").s(\"supersquare\").leslie(\"<0 .4 .6 1>\").osc()\n   *\n   */",
+      "comment": "/**\n   * Emulation of a Leslie speaker: speakers rotating in a wooden amplified cabinet.\n   *\n   * @name leslie\n   * @param {number | Pattern} wet between 0 and 1\n   * @example\n   * n(\"0,4,7\").s(\"supersquare\").leslie(\"<0 .4 .6 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 399,
+        "lineno": 408,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -757,7 +757,7 @@
             ]
           },
           "description": "<p>between 0 and 1</p>",
-          "name": "dry"
+          "name": "wet"
         }
       ],
       "examples": [
@@ -773,7 +773,7 @@
       "comment": "/**\n   * Rate of modulation / rotation for leslie effect\n   *\n   * @name lrate\n   * @param {number | Pattern} rate 6.7 for fast, 0.7 for slow\n   * @example\n   * n(\"0,4,7\").s(\"supersquare\").leslie(1).lrate(\"<1 2 4 8>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 409,
+        "lineno": 418,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -805,7 +805,7 @@
       "comment": "/**\n   * Physical size of the cabinet in meters. Be careful, it might be slightly larger than your computer. Affects the Doppler amount (pitch warble)\n   *\n   * @name lsize\n   * @param {number | Pattern} meters somewhere between 0 and 1\n   * @example\n   * n(\"0,4,7\").s(\"supersquare\").leslie(1).lrate(2).lsize(\"<.1 .5 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 420,
+        "lineno": 429,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -837,7 +837,7 @@
       "comment": "/**\n   * Sets the default octave of a synth.\n   *\n   * @name octave\n   * @param {number | Pattern} octave octave number\n   * @example\n   * n(\"0,4,7\").s('supersquare').octave(\"<3 4 5 6>\").osc()\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 455,
+        "lineno": 464,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -869,7 +869,7 @@
       "comment": "/**\n   * a pattern of numbers. An `orbit` is a global parameter context for patterns. Patterns with the same orbit will share hardware output bus offset and global effects, e.g. reverb and delay. The maximum number of orbits is specified in the superdirt startup, numbers higher than maximum will wrap around.\n   *\n   * @name orbit\n   * @param {number | Pattern} number\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 467,
+        "lineno": 476,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -897,7 +897,7 @@
       "comment": "/**\n   * Sets position in stereo.\n   *\n   * @name pan\n   * @param {number | Pattern} pan between 0 and 1, from left to right (assuming stereo), once round a circle (assuming multichannel)\n   * @example\n   * s(\"[bd hh]*2\").pan(\"<.5 1 .5 0>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 481,
+        "lineno": 490,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -929,7 +929,7 @@
       "comment": "/**\n   * Sets the level of reverb.\n   *\n   * @name room\n   * @param {number | Pattern} level between 0 and 1\n   * @example\n   * s(\"bd sd\").room(\"<0 .2 .4 .6 .8 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 548,
+        "lineno": 557,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -961,7 +961,7 @@
       "comment": "/**\n   * Sets the room size of the reverb, see {@link room}.\n   *\n   * @name size\n   * @param {number | Pattern} size between 0 and 1\n   * @example\n   * s(\"bd sd\").room(.8).size(\"<0 .2 .4 .6 .8 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 558,
+        "lineno": 567,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -993,7 +993,7 @@
       "comment": "/**\n   * Wave shaping distortion. CAUTION: it might get loud\n   *\n   * @name shape\n   * @param {number | Pattern} distortion between 0 and 1\n   * @example\n   * s(\"bd sd\").shape(\"<0 .2 .4 .6 .8 1>\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 576,
+        "lineno": 588,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -1025,7 +1025,7 @@
       "comment": "/**\n   * Changes the speed of sample playback, i.e. a cheap way of changing pitch.\n   *\n   * @name speed\n   * @param {number | Pattern} speed -inf to inf, negative numbers play the sample backwards.\n   * @example\n   * s(\"bd\").speed(\"<1 2 4 1 -2 -4>\").osc()\n   * @example\n   * speed(\"1 1.5*2 [2 1.1]\").s(\"sax\").cut(1).osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 590,
+        "lineno": 602,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -1058,7 +1058,7 @@
       "comment": "/**\n   * Used in conjunction with {@link speed}, accepts values of \"r\" (rate, default behavior), \"c\" (cycles), or \"s\" (seconds). Using `unit \"c\"` means `speed` will be interpreted in units of cycles, e.g. `speed \"1\"` means samples will be stretched to fill a cycle. Using `unit \"s\"` means the playback speed will be adjusted so that the duration is the number of seconds specified by `speed`.\n   *\n   * @name unit\n   * @param {number | string | Pattern} unit see description above\n   * @example\n   * speed(\"1 2 .5 3\").s(\"bd\").unit(\"c\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 606,
+        "lineno": 618,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -1091,7 +1091,7 @@
       "comment": "/**\n   * Made by Calum Gunn. Reminiscent of some weird mixture of filter, ring-modulator and pitch-shifter. The SuperCollider manual defines Squiz as:\n   *\n   * \"A simplistic pitch-raising algorithm. It's not meant to sound natural; its sound is reminiscent of some weird mixture of filter, ring-modulator and pitch-shifter, depending on the input. The algorithm works by cutting the signal into fragments (delimited by upwards-going zero-crossings) and squeezing those fragments in the time domain (i.e. simply playing them back faster than they came in), leaving silences inbetween. All the parameters apart from memlen can be modulated.\"\n   *\n   * @name squiz\n   * @param {number | Pattern} squiz Try passing multiples of 2 to it - 2, 4, 8 etc.\n   * @example\n   * squiz(\"2 4/2 6 [8 16]\").s(\"bd\").osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 620,
+        "lineno": 632,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -1123,7 +1123,7 @@
       "comment": "/**\n   *\n   * Formant filter to make things sound like vowels.\n   *\n   * @name vowel\n   * @param {string | Pattern} vowel You can use a e i o u. Use a rest (~) to override the effect\n   * @example\n   * vowel(\"a e i [o u]\").slow(2)\n   * .n(\"<[0,7]!4 [2,7]!4>\")\n   * .s('supersquare').osc()\n   *\n   */",
       "meta": {
         "filename": "controls.mjs",
-        "lineno": 639,
+        "lineno": 651,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -1149,38 +1149,6 @@
       "kind": "member",
       "scope": "global",
       "___id": "T000002R000039",
-      "___s": true
-    },
-    {
-      "comment": "/**\n   *\n   * Tremolo Audio DSP effect\n   *\n   * @name tremolodepth\n   * @param {number | Pattern} depth between 0 and 1\n   * @example\n   * n(\"[0,4,7]\").tremolodepth(\"<0 .3 .6 .9>\").osc()\n   *\n   */",
-      "meta": {
-        "filename": "controls.mjs",
-        "lineno": 672,
-        "columnno": 2,
-        "path": "/home/felix/projects/strudel/packages/core",
-        "code": {}
-      },
-      "description": "<p>Tremolo Audio DSP effect</p>",
-      "name": "tremolodepth",
-      "params": [
-        {
-          "type": {
-            "names": [
-              "number",
-              "Pattern"
-            ]
-          },
-          "description": "<p>between 0 and 1</p>",
-          "name": "depth"
-        }
-      ],
-      "examples": [
-        "n(\"[0,4,7]\").tremolodepth(\"<0 .3 .6 .9>\").osc()"
-      ],
-      "longname": "tremolodepth",
-      "kind": "member",
-      "scope": "global",
-      "___id": "T000002R000040",
       "___s": true
     },
     {
@@ -1252,7 +1220,7 @@
       "longname": "drawLine",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000047",
+      "___id": "T000002R000046",
       "___s": true
     },
     {
@@ -1341,7 +1309,7 @@
       "longname": "Pattern#euclid",
       "kind": "function",
       "scope": "instance",
-      "___id": "T000002R000071",
+      "___id": "T000002R000070",
       "___s": true
     },
     {
@@ -1378,7 +1346,7 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000072",
+      "___id": "T000002R000071",
       "___s": true
     },
     {
@@ -1386,7 +1354,7 @@
       "meta": {
         "range": [
           1178,
-          31003
+          31622
         ],
         "filename": "pattern.mjs",
         "lineno": 17,
@@ -1403,7 +1371,7 @@
       "kind": "class",
       "classdesc": "<p>Class representing a pattern.</p>",
       "scope": "global",
-      "description": "<p>Create a pattern.</p>",
+      "description": "<p>Create a pattern. As an end user, you will most likely not create a Pattern directly.</p>",
       "memberof": "Pattern",
       "params": [
         {
@@ -1412,22 +1380,22 @@
               "function"
             ]
           },
-          "description": "<p>The function that maps a State to Haps .</p>",
+          "description": "<p>The function that maps a {@link State} to an array of {@link Hap}.</p>",
           "name": "query"
         }
       ],
-      "___id": "T000002R000532",
+      "___id": "T000002R000531",
       "___s": true
     },
     {
       "comment": "/**\n   * query haps insude the tiven time span\n   *\n   * @param {Fraction | number} begin from time\n   * @param {Fraction | number} end to time\n   * @returns Hap[]\n   * @example\n   * const pattern = sequence('a', ['b', 'c']);\n   * const haps = pattern.queryArc(0, 1);\n   */",
       "meta": {
         "range": [
-          1638,
-          1724
+          1737,
+          1823
         ],
         "filename": "pattern.mjs",
-        "lineno": 36,
+        "lineno": 37,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1479,18 +1447,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000534",
+      "___id": "T000002R000533",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern, with queries split at cycle boundaries. This makes\n   * some calculations easier to express, as all haps are then constrained to\n   * happen within a cycle.\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          1947,
-          2148
+          2046,
+          2247
         ],
         "filename": "pattern.mjs",
-        "lineno": 46,
+        "lineno": 47,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1515,18 +1483,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000535",
+      "___id": "T000002R000534",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern, where the given function is applied to the query\n   * timespan before passing it to the original pattern.\n   * @param {Function} func the function to apply\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          2370,
-          2464
+          2469,
+          2563
         ],
         "filename": "pattern.mjs",
-        "lineno": 60,
+        "lineno": 61,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1563,18 +1531,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000538",
+      "___id": "T000002R000537",
       "___s": true
     },
     {
       "comment": "/**\n   * As with {@link Pattern#withQuerySpan}, but the function is applied to both the\n   * begin and end time of the query timespan.\n   * @param {Function} func the function to apply\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          2683,
-          2802
+          2782,
+          2901
         ],
         "filename": "pattern.mjs",
-        "lineno": 70,
+        "lineno": 71,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1611,18 +1579,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000539",
+      "___id": "T000002R000538",
       "___s": true
     },
     {
       "comment": "/**\n   * Similar to {@link Pattern#withQuerySpan}, but the function is applied to the timespans\n   * of all haps returned by pattern queries (both `part` timespans, and where\n   * present, `whole` timespans).\n   * @param {Function} func\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          3073,
-          3183
+          3172,
+          3282
         ],
         "filename": "pattern.mjs",
-        "lineno": 81,
+        "lineno": 82,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1658,18 +1626,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000540",
+      "___id": "T000002R000539",
       "___s": true
     },
     {
       "comment": "/**\n   * As with {@link Pattern#withHapSpan}, but the function is applied to both the\n   * begin and end time of the hap timespans.\n   * @param {Function} func the function to apply\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          3399,
-          3482
+          3498,
+          3581
         ],
         "filename": "pattern.mjs",
-        "lineno": 91,
+        "lineno": 92,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1706,18 +1674,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000541",
+      "___id": "T000002R000540",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern with the given function applied to the list of haps returned by every query.\n   * @param {Function} func\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          3652,
-          3733
+          3751,
+          3832
         ],
         "filename": "pattern.mjs",
-        "lineno": 100,
+        "lineno": 101,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1753,18 +1721,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000542",
+      "___id": "T000002R000541",
       "___s": true
     },
     {
       "comment": "/**\n   * As with {@link Pattern#_withHaps}, but applies the function to every hap, rather than every list of haps.\n   * @param {Function} func\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          3910,
-          3983
+          4009,
+          4082
         ],
         "filename": "pattern.mjs",
-        "lineno": 109,
+        "lineno": 110,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1800,18 +1768,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000543",
+      "___id": "T000002R000542",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern with the context field set to every hap set to the given value.\n   * @param {*} context\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          4136,
-          4222
+          4235,
+          4321
         ],
         "filename": "pattern.mjs",
-        "lineno": 118,
+        "lineno": 119,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1847,18 +1815,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000544",
+      "___id": "T000002R000543",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern with the given function applied to the context field of every hap.\n   * @param {Function} func\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          4382,
-          4476
+          4481,
+          4575
         ],
         "filename": "pattern.mjs",
-        "lineno": 127,
+        "lineno": 128,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1894,18 +1862,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000545",
+      "___id": "T000002R000544",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern with the context field of every hap set to an empty object.\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          4601,
-          4677
+          4700,
+          4776
         ],
         "filename": "pattern.mjs",
-        "lineno": 135,
+        "lineno": 136,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1930,18 +1898,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000546",
+      "___id": "T000002R000545",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern with the given location information added to the\n   * context of every hap.\n   * @param {Number} start\n   * @param {Number} end\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          4870,
-          5222
+          4969,
+          5321
         ],
         "filename": "pattern.mjs",
-        "lineno": 146,
+        "lineno": 147,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -1986,18 +1954,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000547",
+      "___id": "T000002R000546",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern, with the function applied to the value of\n   * each hap. It has the alias {@link Pattern#fmap}.\n   * @param {Function} func\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          6237,
-          6346
+          6336,
+          6445
         ],
         "filename": "pattern.mjs",
-        "lineno": 189,
+        "lineno": 190,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2033,18 +2001,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000581",
+      "___id": "T000002R000580",
       "___s": true
     },
     {
       "comment": "/**\n   * see {@link Pattern#withValue}\n   */",
       "meta": {
         "range": [
-          6397,
-          6446
+          6496,
+          6545
         ],
         "filename": "pattern.mjs",
-        "lineno": 196,
+        "lineno": 197,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2066,18 +2034,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000582",
+      "___id": "T000002R000581",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new Pattern, which only returns haps that meet the given test.\n   * @param {Function} hap_test - a function which returns false for haps to be removed from the pattern\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          6667,
-          6765
+          6766,
+          6864
         ],
         "filename": "pattern.mjs",
-        "lineno": 205,
+        "lineno": 206,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2114,18 +2082,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000583",
+      "___id": "T000002R000582",
       "___s": true
     },
     {
       "comment": "/**\n   * As with {@link Pattern#_filterHaps}, but the function is applied to values\n   * inside haps.\n   * @param {Function} value_test\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          6935,
-          7059
+          7034,
+          7158
         ],
         "filename": "pattern.mjs",
-        "lineno": 215,
+        "lineno": 216,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2161,18 +2129,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000584",
+      "___id": "T000002R000583",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern, with haps containing undefined values removed from\n   * query results.\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          7196,
-          7279
+          7295,
+          7378
         ],
         "filename": "pattern.mjs",
-        "lineno": 224,
+        "lineno": 225,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2197,18 +2165,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000585",
+      "___id": "T000002R000584",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern, with all haps without onsets filtered out. A hap\n   * with an onset is one with a `whole` timespan that begins at the same time\n   * as its `part` timespan.\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          7502,
-          7768
+          7601,
+          7867
         ],
         "filename": "pattern.mjs",
-        "lineno": 234,
+        "lineno": 235,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2233,18 +2201,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000586",
+      "___id": "T000002R000585",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern, with 'continuous' haps (those without 'whole'\n   * timespans) removed from query results.\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          7924,
-          8059
+          8023,
+          8158
         ],
         "filename": "pattern.mjs",
-        "lineno": 246,
+        "lineno": 247,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2269,18 +2237,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000587",
+      "___id": "T000002R000586",
       "___s": true
     },
     {
       "comment": "/**\n   * When this method is called on a pattern of functions, it matches its haps\n   * with those in the given pattern of values.  A new pattern is returned, with\n   * each matching value applied to the corresponding function.\n   *\n   * In this `appBoth` variant, where timespans of the function and value haps\n   * are not the same but do intersect, the resulting hap has a timespan of the\n   * intersection. This applies to both the part and the whole timespan.\n   * @param {Pattern} pat_val\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          9502,
-          9783
+          9601,
+          9882
         ],
         "filename": "pattern.mjs",
-        "lineno": 289,
+        "lineno": 290,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2316,18 +2284,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000595",
+      "___id": "T000002R000594",
       "___s": true
     },
     {
       "comment": "/**\n   * As with {@link Pattern#appBoth}, but the `whole` timespan is not the intersection,\n   * but the timespan from the function of patterns that this method is called\n   * on. In practice, this means that the pattern structure, including onsets,\n   * are preserved from the pattern of functions (often referred to as the left\n   * hand or inner pattern).\n   * @param {Pattern} pat_val\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          10206,
-          10950
+          10305,
+          11049
         ],
         "filename": "pattern.mjs",
-        "lineno": 309,
+        "lineno": 310,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2363,18 +2331,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000597",
+      "___id": "T000002R000596",
       "___s": true
     },
     {
       "comment": "/**\n   * As with {@link Pattern#appLeft}, but `whole` timespans are instead taken from the\n   * pattern of values, i.e. structure is preserved from the right hand/outer\n   * pattern.\n   * @param {Pattern} pat_val\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          11197,
-          11942
+          11296,
+          12041
         ],
         "filename": "pattern.mjs",
-        "lineno": 339,
+        "lineno": 340,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2410,18 +2378,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000609",
+      "___id": "T000002R000608",
       "___s": true
     },
     {
       "comment": "/**\n   * Queries the pattern for the first cycle, returning Haps. Mainly of use when\n   * debugging a pattern.\n   * @param {Boolean} with_context - set to true, otherwise the context field\n   * will be stripped from the resulting haps.\n   * @returns [Hap]\n   */",
       "meta": {
         "range": [
-          12210,
-          12409
+          12309,
+          12508
         ],
         "filename": "pattern.mjs",
-        "lineno": 369,
+        "lineno": 370,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2459,18 +2427,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000621",
+      "___id": "T000002R000620",
       "___s": true
     },
     {
       "comment": "/**\n   * Accessor for a list of values returned by querying the first cycle.\n   */",
       "meta": {
         "range": [
-          12498,
-          12581
+          12597,
+          12680
         ],
         "filename": "pattern.mjs",
-        "lineno": 380,
+        "lineno": 381,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2490,18 +2458,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000624",
+      "___id": "T000002R000623",
       "___s": true
     },
     {
       "comment": "/**\n   * More human-readable version of the {@link Pattern#_firstCycleValues} accessor.\n   */",
       "meta": {
         "range": [
-          12681,
-          12845
+          12780,
+          12944
         ],
         "filename": "pattern.mjs",
-        "lineno": 387,
+        "lineno": 388,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2521,18 +2489,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000625",
+      "___id": "T000002R000624",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern, which returns haps sorted in temporal order. Mainly\n   * of use when comparing two patterns for equality, in tests.\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          13027,
-          13302
+          13126,
+          13401
         ],
         "filename": "pattern.mjs",
-        "lineno": 398,
+        "lineno": 399,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2557,18 +2525,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000626",
+      "___id": "T000002R000625",
       "___s": true
     },
     {
       "comment": "/**\n   * Assumes a numerical pattern. Returns a new pattern with all values rounded\n   * to the nearest integer.\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          15210,
-          15279
+          15309,
+          15378
         ],
         "filename": "pattern.mjs",
-        "lineno": 471,
+        "lineno": 472,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2593,18 +2561,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000645",
+      "___id": "T000002R000644",
       "___s": true
     },
     {
       "comment": "/**\n   * Assumes a numerical pattern. Returns a new pattern with all values set to\n   * their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2`\n   * replaced with `-5`.\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          15496,
-          15565
+          15595,
+          15664
         ],
         "filename": "pattern.mjs",
-        "lineno": 481,
+        "lineno": 482,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2629,18 +2597,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000646",
+      "___id": "T000002R000645",
       "___s": true
     },
     {
       "comment": "/**\n   * Assumes a numerical pattern. Returns a new pattern with all values set to\n   * their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2`\n   * replaced with `-4`.\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          15781,
-          15848
+          15880,
+          15947
         ],
         "filename": "pattern.mjs",
-        "lineno": 491,
+        "lineno": 492,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2665,18 +2633,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000647",
+      "___id": "T000002R000646",
       "___s": true
     },
     {
       "comment": "/**\n   * Assumes a numerical pattern, containing unipolar values in the range 0 ..\n   * 1. Returns a new pattern with values scaled to the bipolar range -1 .. 1\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          16043,
-          16101
+          16142,
+          16200
         ],
         "filename": "pattern.mjs",
-        "lineno": 500,
+        "lineno": 501,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2701,18 +2669,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000648",
+      "___id": "T000002R000647",
       "___s": true
     },
     {
       "comment": "/**\n   * Assumes a numerical pattern, containing bipolar values in the range -1 ..\n   * 1. Returns a new pattern with values scaled to the unipolar range 0 .. 1\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          16296,
-          16358
+          16395,
+          16457
         ],
         "filename": "pattern.mjs",
-        "lineno": 509,
+        "lineno": 510,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2737,18 +2705,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000649",
+      "___id": "T000002R000648",
       "___s": true
     },
     {
       "comment": "/**\n   * Assumes a numerical pattern, containing unipolar values in the range 0 ..\n   * 1. Returns a new pattern with values scaled to the given min/max range.\n   * @param {Number} min\n   * @param {Number} max\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          16602,
-          16664
+          16701,
+          16763
         ],
         "filename": "pattern.mjs",
-        "lineno": 520,
+        "lineno": 521,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2793,18 +2761,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000650",
+      "___id": "T000002R000649",
       "___s": true
     },
     {
       "comment": "/**\n   * Assumes a numerical pattern, containing unipolar values in the range 0 ..\n   * 1. Returns a new pattern with values scaled to the given min/max range,\n   * following an exponential curve.\n   * @param {Number} min\n   * @param {Number} max\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          16945,
-          17035
+          17044,
+          17134
         ],
         "filename": "pattern.mjs",
-        "lineno": 532,
+        "lineno": 533,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2849,18 +2817,18 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000651",
+      "___id": "T000002R000650",
       "___s": true
     },
     {
       "comment": "/**\n   * Assumes a numerical pattern, containing bipolar values in the range -1 ..\n   * 1. Returns a new pattern with values scaled to the given min/max range.\n   * @param {Number} min\n   * @param {Number} max\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          17279,
-          17349
+          17378,
+          17448
         ],
         "filename": "pattern.mjs",
-        "lineno": 543,
+        "lineno": 544,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2905,18 +2873,94 @@
       "kind": "function",
       "memberof": "Pattern",
       "scope": "instance",
-      "___id": "T000002R000652",
+      "___id": "T000002R000651",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Speed up a pattern by the given factor.\n   *\n   * @name fast\n   * @memberof Pattern\n   * @param {number | Pattern} factor speed up factor\n   * @returns Pattern\n   * @example\n   * seq(e5, b4, d5, c5).fast(2)\n   */",
+      "meta": {
+        "filename": "pattern.mjs",
+        "lineno": 735,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Speed up a pattern by the given factor.</p>",
+      "name": "fast",
+      "memberof": "Pattern",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "Pattern"
+            ]
+          },
+          "description": "<p>speed up factor</p>",
+          "name": "factor"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "examples": [
+        "seq(e5, b4, d5, c5).fast(2)"
+      ],
+      "scope": "static",
+      "longname": "Pattern.fast",
+      "kind": "member",
+      "___id": "T000002R000700",
+      "___s": true
+    },
+    {
+      "comment": "/**\n   * Slow down a pattern over the given number of cycles.\n   *\n   * @name slow\n   * @memberof Pattern\n   * @param {number | Pattern} factor slow down factor\n   * @returns Pattern\n   * @example\n   * seq(e5, b4, d5, c5).slow(2)\n   */",
+      "meta": {
+        "filename": "pattern.mjs",
+        "lineno": 750,
+        "columnno": 2,
+        "path": "/home/felix/projects/strudel/packages/core",
+        "code": {}
+      },
+      "description": "<p>Slow down a pattern over the given number of cycles.</p>",
+      "name": "slow",
+      "memberof": "Pattern",
+      "params": [
+        {
+          "type": {
+            "names": [
+              "number",
+              "Pattern"
+            ]
+          },
+          "description": "<p>slow down factor</p>",
+          "name": "factor"
+        }
+      ],
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "examples": [
+        "seq(e5, b4, d5, c5).slow(2)"
+      ],
+      "scope": "static",
+      "longname": "Pattern.slow",
+      "kind": "member",
+      "___id": "T000002R000703",
       "___s": true
     },
     {
       "comment": "/**\n   * Returns a new pattern where every other cycle is played once, twice as\n   * fast, and offset in time by one quarter of a cycle. Creates a kind of\n   * breakbeat feel.\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          27227,
-          27323
+          27788,
+          27884
         ],
         "filename": "pattern.mjs",
-        "lineno": 883,
+        "lineno": 904,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2941,18 +2985,18 @@
       "memberof": "Pattern",
       "scope": "instance",
       "params": [],
-      "___id": "T000002R000749",
+      "___id": "T000002R000750",
       "___s": true
     },
     {
       "comment": "/** A discrete value that repeats once per cycle:\n *\n * @param {any} value - The value to repeat\n * @returns {Pattern}\n * @example\n * pure('e4')\n */",
       "meta": {
         "range": [
-          35084,
-          35288
+          35703,
+          35907
         ],
         "filename": "pattern.mjs",
-        "lineno": 1181,
+        "lineno": 1203,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -2992,18 +3036,18 @@
       "longname": "pure",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000867",
+      "___id": "T000002R000868",
       "___s": true
     },
     {
       "comment": "/** The given items are played at the same time at the same length:\n *\n * @param {...any} items - The items to stack\n * @return {Pattern}\n * @example\n * stack(g3, b3, [e4, d4])\n */",
       "meta": {
         "range": [
-          35801,
-          36074
+          36420,
+          36693
         ],
         "filename": "pattern.mjs",
-        "lineno": 1208,
+        "lineno": 1230,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3044,18 +3088,18 @@
       "longname": "stack",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000874",
+      "___id": "T000002R000875",
       "___s": true
     },
     {
       "comment": "/** Concatenation: combines a list of patterns, switching between them successively, one per cycle:\n *\n * synonyms: {@link cat}\n *\n * @param {...any} items - The items to concatenate\n * @return {Pattern}\n * @example\n * slowcat(e5, b4, [d5, c5])\n *\n */",
       "meta": {
         "range": [
-          36328,
-          37239
+          36947,
+          37858
         ],
         "filename": "pattern.mjs",
-        "lineno": 1225,
+        "lineno": 1247,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3096,18 +3140,18 @@
       "longname": "slowcat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000878",
+      "___id": "T000002R000879",
       "___s": true
     },
     {
       "comment": "/** Concatenation: combines a list of patterns, switching between them successively, one per cycle. Unlike slowcat, this version will skip cycles.\n * @param {...any} items - The items to concatenate\n * @return {Pattern}\n */",
       "meta": {
         "range": [
-          37465,
-          37737
+          38084,
+          38356
         ],
         "filename": "pattern.mjs",
-        "lineno": 1250,
+        "lineno": 1272,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3145,18 +3189,18 @@
       "longname": "slowcatPrime",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000886",
+      "___id": "T000002R000887",
       "___s": true
     },
     {
-      "comment": "/** Concatenation: as with {@link slowcat}, but squashes a cycle from each pattern into one cycle\n *\n * Synonyms: {@link seq}, {@link sequence}\n *\n * @param {...any} items - The items to concatenate\n * @return {Pattern}\n * @example\n * fastcat(e5, b4, [d5, c5])\n * sequence(e5, b4, [d5, c5])\n * seq(e5, b4, [d5, c5])\n */",
+      "comment": "/** Concatenation: as with {@link slowcat}, but squashes a cycle from each pattern into one cycle\n *\n * Synonyms: {@link seq}, {@link sequence}\n *\n * @param {...any} items - The items to concatenate\n * @return {Pattern}\n * @example\n * fastcat(e5, b4, [d5, c5])\n * // sequence(e5, b4, [d5, c5])\n * // seq(e5, b4, [d5, c5])\n */",
       "meta": {
         "range": [
-          38059,
-          38141
+          38684,
+          38766
         ],
         "filename": "pattern.mjs",
-        "lineno": 1271,
+        "lineno": 1293,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3191,24 +3235,24 @@
         }
       ],
       "examples": [
-        "fastcat(e5, b4, [d5, c5])\nsequence(e5, b4, [d5, c5])\nseq(e5, b4, [d5, c5])"
+        "fastcat(e5, b4, [d5, c5])\n// sequence(e5, b4, [d5, c5])\n// seq(e5, b4, [d5, c5])"
       ],
       "name": "fastcat",
       "longname": "fastcat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000892",
+      "___id": "T000002R000893",
       "___s": true
     },
     {
       "comment": "/** See {@link slowcat} */",
       "meta": {
         "range": [
-          38170,
-          38229
+          38795,
+          38854
         ],
         "filename": "pattern.mjs",
-        "lineno": 1276,
+        "lineno": 1298,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3225,18 +3269,18 @@
       "longname": "cat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000894",
+      "___id": "T000002R000895",
       "___s": true
     },
     {
       "comment": "/** Like {@link fastcat}, but where each step has a temporal weight:\n * @param {...Array} items - The items to concatenate\n * @return {Pattern}\n * @example\n * timeCat([3,e3],[1, g3])\n */",
       "meta": {
         "range": [
-          38418,
-          38777
+          39043,
+          39402
         ],
         "filename": "pattern.mjs",
-        "lineno": 1286,
+        "lineno": 1308,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3277,18 +3321,18 @@
       "longname": "timeCat",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000896",
+      "___id": "T000002R000897",
       "___s": true
     },
     {
       "comment": "/** See {@link fastcat} */",
       "meta": {
         "range": [
-          38806,
-          38870
+          39431,
+          39495
         ],
         "filename": "pattern.mjs",
-        "lineno": 1299,
+        "lineno": 1321,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3305,18 +3349,18 @@
       "longname": "sequence",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000903",
+      "___id": "T000002R000904",
       "___s": true
     },
     {
       "comment": "/** See {@link fastcat} */",
       "meta": {
         "range": [
-          38899,
-          38958
+          39524,
+          39583
         ],
         "filename": "pattern.mjs",
-        "lineno": 1304,
+        "lineno": 1326,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3333,7 +3377,7 @@
       "longname": "seq",
       "kind": "function",
       "scope": "global",
-      "___id": "T000002R000905",
+      "___id": "T000002R000906",
       "___s": true
     },
     {
@@ -3372,7 +3416,7 @@
       "scope": "static",
       "longname": "Pattern.transpose",
       "kind": "member",
-      "___id": "T000002R003714",
+      "___id": "T000002R003715",
       "___s": true
     },
     {
@@ -3409,7 +3453,7 @@
       "scope": "static",
       "longname": "Pattern.scaleTranspose",
       "kind": "member",
-      "___id": "T000002R003718",
+      "___id": "T000002R003719",
       "___s": true
     },
     {
@@ -3446,7 +3490,7 @@
       "scope": "static",
       "longname": "Pattern.scale",
       "kind": "member",
-      "___id": "T000002R003720",
+      "___id": "T000002R003721",
       "___s": true
     },
     {
@@ -3483,7 +3527,7 @@
       "scope": "static",
       "longname": "Pattern.voicings",
       "kind": "member",
-      "___id": "T000002R003745",
+      "___id": "T000002R003746",
       "___s": true
     },
     {
@@ -3565,7 +3609,7 @@
         "/home/felix/projects/strudel/packages/xen/tunejs.js",
         "/home/felix/projects/strudel/packages/xen/xen.mjs"
       ],
-      "___id": "T000002R014014",
+      "___id": "T000002R014015",
       "___s": true
     }
   ]
