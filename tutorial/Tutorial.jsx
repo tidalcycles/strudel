@@ -6,9 +6,8 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Tutorial from './tutorial.mdx';
-import ApiDoc from './ApiDoc'
-import Api from './api.mdx';
+import Tutorial from './tutorial.rendered.mdx';
+// import ApiDoc from './ApiDoc';
 import './style.scss';
 import '@strudel.cycles/react/dist/style.css';
 
@@ -32,8 +31,7 @@ ReactDOM.render(
       </header>
       <main className="p-4 pl-6 max-w-3xl prose">
         <Tutorial />
-        <Api />
-        <ApiDoc />
+        {/*         <ApiDoc /> */}
       </main>
     </div>
   </React.StrictMode>,

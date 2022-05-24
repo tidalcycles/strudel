@@ -4,7 +4,7 @@ import jsdoc from '../doc.json' assert { type: 'json' };
 // TODO: load tutorial.mdx and append rendered api.mdx to the bottom (to make sure TOC works)
 // TODO: split
 
-const env = nunjucks.configure('templates', { autoescape: false });
+const env = nunjucks.configure('.', { autoescape: false });
 
 const docs = jsdoc.docs.reduce((acc, obj) => Object.assign(acc, { [obj.longname]: obj }), {});
 
@@ -45,5 +45,5 @@ ${
 
 env.addFilter('jsdoc', renderAsMDX);
 
-const rendered = nunjucks.render('api.mdx', { docs });
+const rendered = nunjucks.render('tutorial.mdx', { docs });
 console.log(rendered);

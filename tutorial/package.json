@@ -3,12 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "npm run jsdoc-json && vite",
+    "dev": "npm run render && vite",
     "start": "vite",
-    "build": "npm run jsdoc-json && vite build",
+    "build": "npm run render && vite build",
     "preview": "vite preview",
     "jsdoc-json": "jsdoc ../packages/ --template ../node_modules/jsdoc-json --destination ../doc.json -c ../jsdoc.config.json",
-    "render": "npm run jsdoc-json && node ./render.js > api.mdx"
+    "render": "npm run jsdoc-json && node ./render.js > tutorial.rendered.mdx"
   },
   "type": "module",
   "dependencies": {
