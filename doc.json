@@ -3381,6 +3381,29 @@
       "___s": true
     },
     {
+      "comment": "/**\n *\n * Sends each hap as an OSC message, which can be picked up by SuperCollider or any other OSC-enabled software.\n *\n * @name osc\n * @memberof Pattern\n * @returns Pattern\n */",
+      "meta": {
+        "filename": "osc.mjs",
+        "lineno": 15,
+        "columnno": 0,
+        "path": "/home/felix/projects/strudel/packages/osc",
+        "code": {}
+      },
+      "description": "<p>Sends each hap as an OSC message, which can be picked up by SuperCollider or any other OSC-enabled software.</p>",
+      "name": "osc",
+      "memberof": "Pattern",
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "scope": "static",
+      "longname": "Pattern.osc",
+      "kind": "member",
+      "___id": "T000002R002650",
+      "___s": true
+    },
+    {
       "comment": "/**\n * Change the pitch of each value by the given amount. Expects numbers or note strings as values.\n * The amount can be given as a number of semitones or as a string in interval short notation.\n * If you don't care about enharmonic correctness, just use numbers. Otherwise, pass the interval of\n * the form: ST where S is the degree number and T the type of interval with\n *\n * - M = major\n * - m = minor\n * - P = perfect\n * - A = augmented\n * - d = diminished\n *\n * Examples intervals:\n *\n * - 1P = unison\n * - 3M = major third\n * - 3m = minor third\n * - 4P = perfect fourth\n * - 4A = augmented fourth\n * - 5P = perfect fifth\n * - 5d = diminished fifth\n *\n * @param {string | number} amount Either number of semitones or interval string.\n * @returns Pattern\n * @memberof Pattern\n * @name transpose\n * @example\n * \"c2 c3\".fast(2).transpose(\"<0 -2 5 3>\".slow(2)).transpose(0)\n * @example\n * \"c2 c3\".fast(2).transpose(\"<1P -2M 4P 3m>\".slow(2)).transpose(0)\n */",
       "meta": {
         "filename": "tonal.mjs",
@@ -3416,7 +3439,7 @@
       "scope": "static",
       "longname": "Pattern.transpose",
       "kind": "member",
-      "___id": "T000002R003715",
+      "___id": "T000002R003716",
       "___s": true
     },
     {
@@ -3453,7 +3476,7 @@
       "scope": "static",
       "longname": "Pattern.scaleTranspose",
       "kind": "member",
-      "___id": "T000002R003719",
+      "___id": "T000002R003720",
       "___s": true
     },
     {
@@ -3490,7 +3513,7 @@
       "scope": "static",
       "longname": "Pattern.scale",
       "kind": "member",
-      "___id": "T000002R003721",
+      "___id": "T000002R003722",
       "___s": true
     },
     {
@@ -3527,7 +3550,7 @@
       "scope": "static",
       "longname": "Pattern.voicings",
       "kind": "member",
-      "___id": "T000002R003746",
+      "___id": "T000002R003747",
       "___s": true
     },
     {
@@ -3609,7 +3632,7 @@
         "/home/felix/projects/strudel/packages/xen/tunejs.js",
         "/home/felix/projects/strudel/packages/xen/xen.mjs"
       ],
-      "___id": "T000002R014015",
+      "___id": "T000002R014016",
       "___s": true
     }
   ]
