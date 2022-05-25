@@ -25,11 +25,13 @@ const config = {
   },
 };
 
-
-
 const osc = new OSC({ plugin: new OSC.BridgePlugin(config) });
 
 osc.open(); // start a WebSocket server on port 8080
+
+osc.on('*', (message) => {
+  console.log(JSON.stringify(message.args));
+});
 
 console.log('osc client running on port', config.udpClient.port);
 console.log('osc server running on port', config.udpServer.port);
