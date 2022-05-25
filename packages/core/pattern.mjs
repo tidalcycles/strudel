@@ -16,8 +16,9 @@ import drawLine from './drawLine.mjs';
 /** @class Class representing a pattern. */
 export class Pattern {
   /**
-   * Create a pattern.
-   * @param {function} query - The function that maps a State to Haps .
+   * Create a pattern. As an end user, you will most likely not create a Pattern directly.
+   *
+   * @param {function} query - The function that maps a {@link State} to an array of {@link Hap}.
    */
   constructor(query) {
     this.query = query;
@@ -62,7 +63,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#withQuerySpan|withQuerySpan}, but the function is applied to both the
+   * As with {@link Pattern#withQuerySpan}, but the function is applied to both the
    * begin and end time of the query timespan.
    * @param {Function} func the function to apply
    * @returns Pattern
@@ -72,7 +73,7 @@ export class Pattern {
   }
 
   /**
-   * Similar to {@link Pattern#withQuerySpan|withQuerySpan}, but the function is applied to the timespans
+   * Similar to {@link Pattern#withQuerySpan}, but the function is applied to the timespans
    * of all haps returned by pattern queries (both `part` timespans, and where
    * present, `whole` timespans).
    * @param {Function} func
@@ -83,7 +84,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#withHapSpan|withHapSpan}, but the function is applied to both the
+   * As with {@link Pattern#withHapSpan}, but the function is applied to both the
    * begin and end time of the hap timespans.
    * @param {Function} func the function to apply
    * @returns Pattern
@@ -182,7 +183,7 @@ export class Pattern {
 
   /**
    * Returns a new pattern, with the function applied to the value of
-   * each hap. It has the alias {@link Pattern#fmap|fmap}.
+   * each hap. It has the alias {@link Pattern#fmap}.
    * @param {Function} func
    * @returns Pattern
    */
@@ -191,7 +192,7 @@ export class Pattern {
   }
 
   /**
-   * see {@link Pattern#withValue|withValue}
+   * see {@link Pattern#withValue}
    */
   fmap(func) {
     return this.withValue(func);
@@ -298,7 +299,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#appBoth|appBoth}, but the `whole` timespan is not the intersection,
+   * As with {@link Pattern#appBoth}, but the `whole` timespan is not the intersection,
    * but the timespan from the function of patterns that this method is called
    * on. In practice, this means that the pattern structure, including onsets,
    * are preserved from the pattern of functions (often referred to as the left
@@ -330,7 +331,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#appLeft|appLeft}, but `whole` timespans are instead taken from the
+   * As with {@link Pattern#appLeft}, but `whole` timespans are instead taken from the
    * pattern of values, i.e. structure is preserved from the right hand/outer
    * pattern.
    * @param {Pattern} pat_val
@@ -463,35 +464,83 @@ export class Pattern {
     });
   }
 
+  /**
+   * Assumes a numerical pattern. Returns a new pattern with all values rounded
+   * to the nearest integer.
+   * @returns Pattern
+   */
   round() {
     return this._asNumber().fmap((v) => Math.round(v));
   }
 
+  /**
+   * Assumes a numerical pattern. Returns a new pattern with all values set to
+   * their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2`
+   * replaced with `-5`.
+   * @returns Pattern
+   */
   floor() {
     return this._asNumber().fmap((v) => Math.floor(v));
   }
 
+  /**
+   * Assumes a numerical pattern. Returns a new pattern with all values set to
+   * their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2`
+   * replaced with `-4`.
+   * @returns Pattern
+   */
   ceil() {
     return this._asNumber().fmap((v) => Math.ceil(v));
   }
 
+  /**
+   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
+   * 1. Returns a new pattern with values scaled to the bipolar range -1 .. 1
+   * @returns Pattern
+   */
   _toBipolar() {
     return this.fmap((x) => x * 2 - 1);
   }
+
+  /**
+   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
+   * 1. Returns a new pattern with values scaled to the unipolar range 0 .. 1
+   * @returns Pattern
+   */
   _fromBipolar() {
     return this.fmap((x) => (x + 1) / 2);
   }
 
-  // Assumes source pattern of numbers in range 0..1
+  /**
+   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
+   * 1. Returns a new pattern with values scaled to the given min/max range.
+   * @param {Number} min
+   * @param {Number} max
+   * @returns Pattern
+   */
   range(min, max) {
     return this.mul(max - min).add(min);
   }
 
+  /**
+   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
+   * 1. Returns a new pattern with values scaled to the given min/max range,
+   * following an exponential curve.
+   * @param {Number} min
+   * @param {Number} max
+   * @returns Pattern
+   */
   rangex(min, max) {
     return this.range(Math.log(min), Math.log(max)).fmap(Math.exp);
   }
 
-  // Assumes source pattern of numbers in range -1..1
+  /**
+   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
+   * 1. Returns a new pattern with values scaled to the given min/max range.
+   * @param {Number} min
+   * @param {Number} max
+   * @returns Pattern
+   */
   range2(min, max) {
     return this._fromBipolar().range(min, max);
   }
@@ -683,11 +732,31 @@ export class Pattern {
     return this._compress(span.begin, span.end);
   }
 
+  /**
+   * Speed up a pattern by the given factor.
+   *
+   * @name fast
+   * @memberof Pattern
+   * @param {number | Pattern} factor speed up factor
+   * @returns Pattern
+   * @example
+   * seq(e5, b4, d5, c5).fast(2)
+   */
   _fast(factor) {
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
     return fastQuery.withHapTime((t) => t.div(factor));
   }
 
+  /**
+   * Slow down a pattern over the given number of cycles.
+   *
+   * @name slow
+   * @memberof Pattern
+   * @param {number | Pattern} factor slow down factor
+   * @returns Pattern
+   * @example
+   * seq(e5, b4, d5, c5).slow(2)
+   */
   _slow(factor) {
     return this._fast(Fraction(1).div(factor));
   }
@@ -974,8 +1043,11 @@ export class Pattern {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
 
-  _loopAt(factor,cps=1) {
-    return this.speed((1/factor)*cps).unit("c").slow(factor)
+  // move this to controls? (speed and unit are controls)
+  _loopAt(factor, cps = 1) {
+    return this.speed((1 / factor) * cps)
+      .unit('c')
+      .slow(factor);
   }
 }
 
@@ -1215,8 +1287,8 @@ export function slowcatPrime(...pats) {
  * @return {Pattern}
  * @example
  * fastcat(e5, b4, [d5, c5])
- * sequence(e5, b4, [d5, c5])
- * seq(e5, b4, [d5, c5])
+ * // sequence(e5, b4, [d5, c5])
+ * // seq(e5, b4, [d5, c5])
  */
 export function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);
