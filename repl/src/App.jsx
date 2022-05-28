@@ -12,9 +12,13 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
+import * as WebDirt from 'WebDirt';
+import { loadWebDirt } from '@strudel.cycles/webdirt';
+
 evalScope(
   Tone,
   controls,
+  { WebDirt },
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tone'),
   import('@strudel.cycles/tonal'),
@@ -23,7 +27,13 @@ evalScope(
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
   import('@strudel.cycles/osc'),
+  import('@strudel.cycles/webdirt'),
 );
+
+loadWebDirt({
+  sampleMapUrl: 'EmuSP12.json',
+  sampleFolder: 'EmuSP12',
+});
 
 const initialUrl = window.location.href;
 const codeParam = window.location.href.split('#')[1];
