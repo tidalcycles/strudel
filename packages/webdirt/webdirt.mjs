@@ -1,6 +1,7 @@
 import * as strudel from '@strudel.cycles/core';
 const { Pattern } = strudel;
 import * as WebDirt from 'WebDirt';
+import { getLoadedSamples, loadBuffer } from './sampler.mjs';
 
 let webDirt;
 
@@ -62,7 +63,7 @@ export function loadWebDirt(config) {
 Pattern.prototype.webdirt = function () {
   // create a WebDirt object and initialize Web Audio context
   return this._withHap((hap) => {
-    const onTrigger = (time, e, currentTime) => {
+    const onTrigger = async (time, e, currentTime) => {
       if (!webDirt) {
         throw new Error('WebDirt not initialized!');
       }
@@ -71,7 +72,21 @@ Pattern.prototype.webdirt = function () {
       if (!s) {
         console.warn('webdirt: no "s" was set!');
       }
-      webDirt.playSample({ s, n, ...rest }, deadline);
+      const samples = getLoadedSamples();
+      if (!samples?.[s]) {
+        // try default samples
+        webDirt.playSample({ s, n, ...rest }, deadline);
+        return;
+      }
+      if (!samples?.[s]) {
+        console.warn(`webdirt: sample "${s}" not found in loaded samples`, samples);
+      } else {
+        const bank = samples[s];
+        const sampleUrl = bank[n % bank.length];
+        const buffer = await loadBuffer(sampleUrl, webDirt.ac);
+        const msg = { buffer: { buffer }, ...rest };
+        webDirt.playSample(msg, deadline);
+      }
     };
     return hap.setContext({ ...hap.context, onTrigger });
   });

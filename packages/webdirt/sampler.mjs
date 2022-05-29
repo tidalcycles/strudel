@@ -1,0 +1,65 @@
+const bufferCache = {}; // string: Promise<ArrayBuffer>
+
+export const loadBuffer = (url, ac) => {
+  if (!bufferCache[url]) {
+    bufferCache[url] = fetch(url)
+      .then((res) => res.arrayBuffer())
+      .then((res) => ac.decodeAudioData(res));
+  }
+  return bufferCache[url];
+};
+
+/* export const playBuffer = (buffer, time = ac.currentTime, destination = ac.destination) => {
+  const src = ac.createBufferSource();
+  src.buffer = buffer;
+  src.connect(destination);
+  src.start(time);
+};
+
+export const playSample = async (url) => playBuffer(await loadBuffer(url)); */
+
+// https://estuary.mcmaster.ca/samples/resources.json
+// Array<{ "url":string, "bank": string, "n": number}>
+// ritchse/tidal-drum-machines/tree/main/machines/AkaiLinn
+const githubCache = {};
+let loaded;
+export const loadGithubSamples = async (path, nameFn) => {
+  if (githubCache[path]) {
+    return githubCache[path];
+  }
+  try {
+    console.log('load github path', path);
+    const [user, repo, ...folders] = path.split('/');
+    const baseUrl = `https://api.github.com/repos/${user}/${repo}/contents`;
+    const banks = await fetch(`${baseUrl}/${folders.join('/')}`).then((res) => res.json());
+    // fetch each subfolder
+    githubCache[path] = (
+      await Promise.all(
+        banks.map(async ({ name, path }) => ({
+          name,
+          content: await fetch(`${baseUrl}/${path}`)
+            .then((res) => res.json())
+            .catch((err) => {
+              console.error('could not load path', err);
+            }),
+        })),
+      )
+    )
+      .filter(({ content }) => !!content)
+      .reduce(
+        (acc, { name, content }) => ({
+          ...acc,
+          [nameFn?.(name) || name]: content.map(({ download_url }) => download_url),
+        }),
+        {},
+      );
+  } catch (err) {
+    console.error('failed to fetch github samples', err);
+    return;
+  }
+  loaded = githubCache[path];
+  console.log('loaded github path ', path);
+  return githubCache[path];
+};
+
+export const getLoadedSamples = () => loaded;
