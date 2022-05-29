@@ -23,34 +23,33 @@ export function loadWebDirt(config) {
  * <details>
  * <summary>show supported Webdirt controls</summary>
  *
- * - s :: String, -- name of sample bank (ie. old-style with sampleMap)
- * - n :: Int, -- number of sample within a bank (ie. old-style with sampleMap)
- * - whenPosix :: Number, -- when to play the sample, in POSIX/epoch-1970 time
- * - when :: Number, -- when to play the sample, in audio context time
- * - gain :: Number, -- clamped from 0 to 2; 1 is default and full-scale
+ * - s :: String, -- name of sample bank
+ * - n :: Int, -- number of sample within a bank
+ * - {@link gain} :: Number, -- clamped from 0 to 2; 1 is default and full-scale
  * - overgain :: Number, -- additional gain added to gain to go past clamp at 2
- * - pan :: Number, -- range: 0 to 1
+ * - {@link pan} :: Number, -- range: 0 to 1
  * - nudge :: Number, -- nudge the time of the sample forwards/backwards in seconds
- * - speed :: Number,
- * - note :: Number,
- * - begin :: Number,
- * - end :: Number,
- * - cut :: Int,
- * - shape :: Number,
- * - cutoff :: Number,
- * - resonance :: Number,
- * - hcutoff :: Number,
- * - hresonance :: Number,
- * - bandf :: Number,
- * - bandq :: Number,
- * - vowel :: String,
- * - delay :: Number,
- * - delaytime :: Number,
- * - delayfeedback :: Number,
- * - loop :: Number,
- * - crush :: Number,
- * - coarse :: Number,
- * - unit :: String
+ * - {@link speed} :: Number, -- speed / pitch of the sample
+ * - {@link unit} :: String
+ * - note :: Number, -- pitch offset in semitones
+ * - {@link begin} :: Number, -- cut from sample start, normalized
+ * - {@link end} :: Number, -- cut from sample end, normalized
+ * - {@link cut} :: Int, -- samples with same cut number will interupt each other
+ * - {@link cutoff} :: Number, -- lowpass filter frequency
+ * - {@link resonance} :: Number, -- lowpass filter resonance
+ * - {@link hcutoff} :: Number, -- highpass filter frequency
+ * - {@link hresonance} :: Number, -- highpass filter resonance
+ * - {@link bandf} :: Number, -- bandpass filter frequency
+ * - {@link bandq} :: Number, -- bandpass filter resonance
+ * - {@link vowel} :: String, -- name of vowel ('a' | 'e' | 'i' | 'o' | 'u')
+ * - delay :: Number, -- delay wet/dry mix
+ * - delaytime :: Number, -- delay time in seconds
+ * - delayfeedback :: Number, -- delay feedback
+ * - {@link loop} :: Number, -- loop sample n times (relative to sample length)
+ * - {@link crush} :: Number, -- bitcrusher (currently not working)
+ * - {@link coarse} :: Number, -- coarse effect (currently not working)
+ * - {@link shape} :: Number, -- (currently not working)
+
  *
  * </details>
  *
