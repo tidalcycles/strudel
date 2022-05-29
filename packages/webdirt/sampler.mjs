@@ -22,14 +22,16 @@ export const playSample = async (url) => playBuffer(await loadBuffer(url)); */
 // Array<{ "url":string, "bank": string, "n": number}>
 // ritchse/tidal-drum-machines/tree/main/machines/AkaiLinn
 const githubCache = {};
-let loaded;
+let sampleCache = { current: undefined };
 export const loadGithubSamples = async (path, nameFn) => {
   const storageKey = 'loadGithubSamples ' + path;
   const stored = localStorage.getItem(storageKey);
   if (stored) {
-    return JSON.parse(stored);
+    console.log('[sampler]: loaded sample list from localstorage', path);
+    githubCache[path] = JSON.parse(stored);
   }
   if (githubCache[path]) {
+    sampleCache.current = githubCache[path];
     return githubCache[path];
   }
   console.log('[sampler]: fetching sample list from github', path);
@@ -62,10 +64,14 @@ export const loadGithubSamples = async (path, nameFn) => {
     console.error('[sampler]: failed to fetch sample list from github', err);
     return;
   }
-  loaded = githubCache[path];
-  localStorage.setItem(storageKey, JSON.stringify(loaded));
-  console.log('[sampler]: loaded samples:', loaded);
+  sampleCache.current = githubCache[path];
+  localStorage.setItem(storageKey, JSON.stringify(sampleCache.current));
+  console.log('[sampler]: loaded samples:', sampleCache.current);
   return githubCache[path];
 };
 
-export const getLoadedSamples = () => loaded;
+export const resetLoadedSamples = () => {
+  sampleCache.current = undefined;
+};
+
+export const getLoadedSamples = () => sampleCache.current;

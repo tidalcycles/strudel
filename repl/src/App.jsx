@@ -13,7 +13,7 @@ import './App.css';
 import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
 import * as WebDirt from 'WebDirt';
-import { loadWebDirt } from '@strudel.cycles/webdirt';
+import { loadWebDirt, resetLoadedSamples } from '@strudel.cycles/webdirt';
 
 evalScope(
   Tone,
@@ -173,6 +173,7 @@ function App() {
                 setCode(_code);
                 cleanupDraw();
                 cleanupUi();
+                resetLoadedSamples();
                 const parsed = await evaluate(_code);
                 setPattern(parsed.pattern);
                 setActiveCode(_code);
