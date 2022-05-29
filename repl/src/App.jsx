@@ -13,7 +13,7 @@ import './App.css';
 import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
 import * as WebDirt from 'WebDirt';
-import { loadWebDirt } from '@strudel.cycles/webdirt';  
+import { loadWebDirt } from '@strudel.cycles/webdirt';
 
 evalScope(
   Tone,

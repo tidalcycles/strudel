@@ -28,7 +28,7 @@ evalScope(
 
 loadWebDirt({
   sampleMapUrl: '../EmuSP12.json',
-  sampleFolder: 'EmuSP12',
+  sampleFolder: '../EmuSP12',
 });
 
 export function MiniRepl({ tune }) {
