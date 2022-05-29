@@ -12,17 +12,25 @@ comm.open();
 const latency = 0.1;
 let startedAt = -1;
 
+/**
+ *
+ * Sends each hap as an OSC message, which can be picked up by SuperCollider or any other OSC-enabled software.
+ *
+ * @name osc
+ * @memberof Pattern
+ * @returns Pattern
+ */
 Pattern.prototype.osc = function () {
   return this._withHap((hap) => {
     const onTrigger = (time, hap, currentTime, cps, cycle, delta) => {
       // time should be audio time of onset
       // currentTime should be current time of audio context (slightly before time)
       if (startedAt < 0) {
-        startedAt = Date.now() - (currentTime * 1000);
+        startedAt = Date.now() - currentTime * 1000;
       }
       const controls = Object.assign({}, { cps: cps, cycle: cycle, delta: delta }, hap.value);
       const keyvals = Object.entries(controls).flat();
-      const ts = Math.floor(startedAt + ((time + latency) * 1000));
+      const ts = Math.floor(startedAt + (time + latency) * 1000);
       const message = new OSC.Message('/dirt/play', ...keyvals);
       const bundle = new OSC.Bundle([message], ts);
       bundle.timestamp(ts); // workaround for https://github.com/adzialocha/osc-js/issues/60

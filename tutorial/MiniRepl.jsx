@@ -1,6 +1,7 @@
 import { Tone } from '@strudel.cycles/tone';
 import { evalScope } from '@strudel.cycles/eval';
 import { MiniRepl as _MiniRepl } from '@strudel.cycles/react';
+import controls from '@strudel.cycles/core/controls.mjs';
 
 export const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination).set({
   oscillator: { type: 'triangle' },
@@ -11,6 +12,7 @@ export const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.
 
 evalScope(
   Tone,
+  controls,
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tone'),
   import('@strudel.cycles/tonal'),
@@ -18,6 +20,7 @@ evalScope(
   import('@strudel.cycles/midi'),
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
+  import('@strudel.cycles/osc'),
 );
 
 export function MiniRepl({ tune }) {

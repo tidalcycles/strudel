@@ -22,17 +22,63 @@ export const signal = (func) => {
 export const isaw = signal((t) => 1 - (t % 1));
 export const isaw2 = isaw._toBipolar();
 
+/**
+ *  A sawtooth signal between 0 and 1.
+ *
+ * @return {Pattern}
+ * @example
+ * "c3 [eb3,g3] g2 [g3,bb3]".legato(saw.slow(4))
+ * @example
+ * saw.range(0,8).segment(8).scale('C major').slow(4)
+ *
+ */
 export const saw = signal((t) => t % 1);
 export const saw2 = saw._toBipolar();
 
 export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
+
+/**
+ *  A sine signal between 0 and 1.
+ *
+ * @return {Pattern}
+ * @example
+ * sine.segment(16).range(0,15).slow(2).scale('C minor')
+ *
+ */
 export const sine = sine2._fromBipolar();
+
+
+/**
+ *  A cosine signal between 0 and 1.
+ *
+ * @return {Pattern}
+ * @example
+ * stack(sine,cosine).segment(16).range(0,15).slow(2).scale('C minor')
+ *
+ */
 export const cosine = sine._early(Fraction(1).div(4));
 export const cosine2 = sine2._early(Fraction(1).div(4));
 
+
+/**
+ *  A square signal between 0 and 1.
+ *
+ * @return {Pattern}
+ * @example
+ * square.segment(2).range(0,7).scale('C minor')
+ *
+ */
 export const square = signal((t) => Math.floor((t * 2) % 2));
 export const square2 = square._toBipolar();
 
+/**
+ *  A triangle signal between 0 and 1.
+ *
+ * @return {Pattern}
+ * @example
+ * triangle.segment(2).range(0,7).scale('C minor')
+ *
+ */
 export const tri = fastcat(isaw, saw);
 export const tri2 = fastcat(isaw2, saw2);
 

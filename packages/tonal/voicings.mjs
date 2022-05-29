@@ -31,6 +31,18 @@ Pattern.prototype.fmapNested = function (func) {
   );
 };
 
+/**
+ * Turns chord symbols into voicings, using the smoothest voice leading possible.
+ * Uses [chord-voicings package](https://github.com/felixroos/chord-voicings#chord-voicings).
+ *
+ * @name voicings
+ * @memberof Pattern
+ * @param {range} range note range for possible voicings (optional, defaults to `['F3', 'A4']`)
+ * @returns Pattern
+ * @example
+ * stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")
+ */
+
 Pattern.prototype.voicings = function (range) {
   let lastVoicing;
   if (!range?.length) {

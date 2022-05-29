@@ -693,3 +693,199 @@ If you want to contribute in another way, either
 - [fork strudel repo on GitHub](https://github.com/tidalcycles/strudel)
 - [Join the Discord Channel](https://discord.gg/remJ6gQA)
 - [play with the Strudel REPL](https://strudel.tidalcycles.org/)
+
+<br />
+<br />
+
+# API Docs
+
+The following is generated from the source documentation.
+
+## Pattern Factories
+
+The following functions will return a pattern. We will see later what that means.
+
+{{ 'pure' | jsdoc }}
+
+{{ 'slowcat' | jsdoc }}
+
+{{ 'fastcat' | jsdoc }}
+
+{{ 'stack' | jsdoc }}
+
+{{ 'timeCat' | jsdoc }}
+
+{{ 'polyrhythm' | jsdoc }}
+
+## Pattern Modifiers
+
+{{ 'Pattern.slow' | jsdoc }}
+
+{{ 'Pattern.fast' | jsdoc }}
+
+{{ 'Pattern.early' | jsdoc }}
+
+{{ 'Pattern.late' | jsdoc }}
+
+{{ 'Pattern.rev' | jsdoc }}
+
+{{ 'Pattern.legato' | jsdoc }}
+
+## Continuous Signals
+
+Signals are patterns with continuous values, meaning they have theoretically infinite steps.
+They can provide streams of numbers that can be sampled at discrete points in time.
+
+{{ 'Pattern.range' | jsdoc }}
+
+{{ 'saw' | jsdoc }}
+
+{{ 'saw2' | jsdoc }}
+
+{{ 'sine' | jsdoc }}
+
+{{ 'sine2' | jsdoc }}
+
+{{ 'cosine' | jsdoc }}
+
+{{ 'cosine2' | jsdoc }}
+
+{{ 'tri' | jsdoc }}
+
+{{ 'tri2' | jsdoc }}
+
+{{ 'square' | jsdoc }}
+
+{{ 'square2' | jsdoc }}
+
+## Using Superdirt via OSC
+
+In mainline tidal, the actual sound is generated via Superdirt, which runs inside Supercollider.
+Strudel also supports using Superdirt as a backend, although it requires some developer tooling to run.
+
+### Getting Started
+
+Getting Superdirt to work with Strudel, you need to
+
+1. install SuperCollider + sc3 plugins, see [Tidal Docs](https://tidalcycles.org/docs/) (Install Tidal) for more info.
+2. install [node.js](https://nodejs.org/en/)
+3. download [Strudel Repo](https://github.com/tidalcycles/strudel/) (or git clone, if you have git installed)
+4. run `npm i` in the strudel directory
+5. run `npm run osc` to start the osc server, which forwards OSC messages from Strudel REPL to SuperCollider
+
+Now you're all set!
+
+### Usage
+
+1. Start SuperCollider, either using SuperCollider IDE or by running `sclang` in a terminal
+2. Open the [Strudel REPL](https://strudel.tidalcycles.org/#cygiYmQgc2QiKS5vc2MoKQ%3D%3D)
+
+...or test it here:
+
+<MiniRepl tune={`s("bd sd").osc()`} />
+
+If you now hear sound, congratulations! If not, you can get help on the [#strudel channel in the TidalCycles discord](https://discord.com/invite/HGEdXmRkzT).
+
+{{ 'Pattern.osc' | jsdoc }}
+
+# Superdirt Params
+
+The following functions are specific to SuperDirt and won't work with other Strudel outputs.
+
+## Basic Types
+
+{{ 's' | jsdoc }}
+
+{{ 'n' | jsdoc }}
+
+{{ 'freq' | jsdoc }}
+
+{{ 'channel' | jsdoc }}
+
+{{ 'orbit' | jsdoc }}
+
+## Filters
+
+{{ 'cutoff' | jsdoc }}
+
+{{ 'resonance' | jsdoc }}
+
+{{ 'hcutoff' | jsdoc }}
+
+{{ 'hresonance' | jsdoc }}
+
+{{ 'bandf' | jsdoc }}
+
+{{ 'bandq' | jsdoc }}
+
+{{ 'djf' | jsdoc }}
+
+{{ 'vowel' | jsdoc }}
+
+## Sample Editing
+
+{{ 'cut' | jsdoc }}
+
+{{ 'begin' | jsdoc }}
+
+{{ 'end' | jsdoc }}
+
+{{ 'loop' | jsdoc }}
+
+{{ 'fadeTime' | jsdoc }}
+
+{{ 'speed' | jsdoc }}
+
+{{ 'unit' | jsdoc }}
+
+## Audio Effects
+
+{{ 'gain' | jsdoc }}
+
+{{ 'amp' | jsdoc }}
+
+{{ 'accelerate' | jsdoc }}
+
+{{ 'crush' | jsdoc }}
+
+{{ 'coarse' | jsdoc }}
+
+{{ 'delay' | jsdoc }}
+
+{{ 'lock' | jsdoc }}
+
+{{ 'leslie' | jsdoc }}
+
+{{ 'lrate' | jsdoc }}
+
+{{ 'lsize' | jsdoc }}
+
+{{ 'pan' | jsdoc }}
+
+{{ 'panspan' | jsdoc }}
+
+{{ 'pansplay' | jsdoc }}
+
+{{ 'room' | jsdoc }}
+
+{{ 'size' | jsdoc }}
+
+{{ 'dry' | jsdoc }}
+
+{{ 'shape' | jsdoc }}
+
+{{ 'squiz' | jsdoc }}
+
+{{ 'waveloss' | jsdoc }}
+
+{{ 'attack' | jsdoc }}
+
+{{ 'decay' | jsdoc }}
+
+## Synth Effects
+
+{{ 'octave' | jsdoc }}
+
+{{ 'detune' | jsdoc }}
+
+{{ 'tremolodepth' | jsdoc }}
