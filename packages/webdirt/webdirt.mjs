@@ -17,9 +17,11 @@ export function loadWebDirt(config) {
 }
 
 /**
+ *
  * Uses [webdirt](https://github.com/dktr0/WebDirt) as output.
  *
- * Supported Webdirt controls:
+ * <details>
+ * <summary>show supported Webdirt controls</summary>
  *
  * - s :: String, -- name of sample bank (ie. old-style with sampleMap)
  * - n :: Int, -- number of sample within a bank (ie. old-style with sampleMap)
@@ -50,7 +52,13 @@ export function loadWebDirt(config) {
  * - coarse :: Number,
  * - unit :: String
  *
+ * </details>
+ *
+ * @name webdirt
+ * @memberof Pattern
  * @returns Pattern
+ * @example
+ * s("bd*2 hh sd hh").n("<0 1>").webdirt()
  */
 Pattern.prototype.webdirt = function () {
   // create a WebDirt object and initialize Web Audio context
