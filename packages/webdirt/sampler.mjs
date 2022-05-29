@@ -24,11 +24,16 @@ export const playSample = async (url) => playBuffer(await loadBuffer(url)); */
 const githubCache = {};
 let loaded;
 export const loadGithubSamples = async (path, nameFn) => {
+  const storageKey = 'loadGithubSamples ' + path;
+  const stored = localStorage.getItem(storageKey);
+  if (stored) {
+    return JSON.parse(stored);
+  }
   if (githubCache[path]) {
     return githubCache[path];
   }
+  console.log('[sampler]: fetching sample list from github', path);
   try {
-    console.log('load github path', path);
     const [user, repo, ...folders] = path.split('/');
     const baseUrl = `https://api.github.com/repos/${user}/${repo}/contents`;
     const banks = await fetch(`${baseUrl}/${folders.join('/')}`).then((res) => res.json());
@@ -54,11 +59,12 @@ export const loadGithubSamples = async (path, nameFn) => {
         {},
       );
   } catch (err) {
-    console.error('failed to fetch github samples', err);
+    console.error('[sampler]: failed to fetch sample list from github', err);
     return;
   }
   loaded = githubCache[path];
-  console.log('loaded github path ', path);
+  localStorage.setItem(storageKey, JSON.stringify(loaded));
+  console.log('[sampler]: loaded samples:', loaded);
   return githubCache[path];
 };
 
