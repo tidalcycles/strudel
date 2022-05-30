@@ -1,7 +1,7 @@
 import * as strudel from '@strudel.cycles/core';
 const { Pattern } = strudel;
 import * as WebDirt from 'WebDirt';
-import { getLoadedSamples, loadBuffer } from './sampler.mjs';
+import { getLoadedSamples, loadBuffer, getLoadedBuffer } from './sampler.mjs';
 
 let webDirt;
 
@@ -70,7 +70,7 @@ Pattern.prototype.webdirt = function () {
       const deadline = time - currentTime;
       const { s, n = 0, ...rest } = e.value || {};
       if (!s) {
-        console.warn('webdirt: no "s" was set!');
+        console.warn('Pattern.webdirt: no "s" was set!');
       }
       const samples = getLoadedSamples();
       if (!samples?.[s]) {
@@ -79,13 +79,18 @@ Pattern.prototype.webdirt = function () {
         return;
       }
       if (!samples?.[s]) {
-        console.warn(`webdirt: sample "${s}" not found in loaded samples`, samples);
+        console.warn(`Pattern.webdirt: sample "${s}" not found in loaded samples`, samples);
       } else {
         const bank = samples[s];
         const sampleUrl = bank[n % bank.length];
-        const buffer = await loadBuffer(sampleUrl, webDirt.ac);
-        const msg = { buffer: { buffer }, ...rest };
-        webDirt.playSample(msg, deadline);
+        const buffer = getLoadedBuffer(sampleUrl);
+        if (!buffer) {
+          console.log(`Pattern.webdirt: load ${s}:${n} from ${sampleUrl}`);
+          loadBuffer(sampleUrl, webDirt.ac);
+        } else {
+          const msg = { buffer: { buffer }, ...rest };
+          webDirt.playSample(msg, deadline);
+        }
       }
     };
     return hap.setContext({ ...hap.context, onTrigger });

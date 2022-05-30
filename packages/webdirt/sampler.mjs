@@ -1,11 +1,20 @@
 const bufferCache = {}; // string: Promise<ArrayBuffer>
+const loadCache = {}; // string: Promise<ArrayBuffer>
 
 export const loadBuffer = (url, ac) => {
-  if (!bufferCache[url]) {
-    bufferCache[url] = fetch(url)
+  if (!loadCache[url]) {
+    loadCache[url] = fetch(url)
       .then((res) => res.arrayBuffer())
-      .then((res) => ac.decodeAudioData(res));
+      .then(async (res) => {
+        const decoded = await ac.decodeAudioData(res);
+        bufferCache[url] = decoded;
+        return decoded;
+      });
   }
+  return loadCache[url];
+};
+
+export const getLoadedBuffer = (url) => {
   return bufferCache[url];
 };
 
@@ -68,6 +77,32 @@ export const loadGithubSamples = async (path, nameFn) => {
   localStorage.setItem(storageKey, JSON.stringify(sampleCache.current));
   console.log('[sampler]: loaded samples:', sampleCache.current);
   return githubCache[path];
+};
+
+/**
+ * load the given sample map for webdirt
+ *
+ * @example
+ * loadSamples({
+ *   bd: '808bd/BD0000.WAV',
+ *   sd: ['808sd/SD0000.WAV','808sd/SD0010.WAV','808sd/SD0050.WAV']
+ *  }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
+ *  s("bd <sd!7 sd(3,4,2)>").n(2).webdirt()
+ *
+ */
+
+export const samples = (sampleMap, baseUrl = '') => {
+  sampleCache.current = {
+    ...sampleCache.current,
+    ...Object.fromEntries(
+      Object.entries(sampleMap).map(([key, value]) => [
+        key,
+        (typeof value === 'string' ? [value] : value).map((v) =>
+          (baseUrl + v).replace('github:', 'https://raw.githubusercontent.com/'),
+        ),
+      ]),
+    ),
+  };
 };
 
 export const resetLoadedSamples = () => {
