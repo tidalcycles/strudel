@@ -32,3 +32,4 @@ out
 .parcel-cache
 repl_old
 tutorial.rendered.mdx
+doc.json
