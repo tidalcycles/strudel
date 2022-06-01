@@ -14,7 +14,10 @@ function useHighlighting({ view, pattern, active }) {
         function updateHighlights() {
           try {
             const audioTime = Tone.getTransport().seconds;
-            const span = [lastEnd || audioTime, audioTime + 1 / 60];
+            // force min framerate of 10 fps => fixes crash on tab refocus, where lastEnd could be far away
+            // see https://github.com/tidalcycles/strudel/issues/108
+            const begin = Math.max(lastEnd || audioTime, audioTime - 1 / 10);
+            const span = [begin, audioTime + 1 / 60];
             lastEnd = audioTime + 1 / 60;
             highlights = highlights.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
