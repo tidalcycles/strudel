@@ -26,7 +26,7 @@ const ivory = '#abb2bf',
   // background = '#292d3e',
   background = 'transparent',
   tooltipBackground = '#353a42',
-  selection = 'rgba(128, 203, 196, 0.2)',
+  selection = 'rgba(128, 203, 196, 0.5)',
   cursor = '#ffcc00';
 
 /// The editor theme styles for Material Palenight.
@@ -50,7 +50,8 @@ const materialPalenightTheme = EditorView.theme(
     },
     // done
     '&.cm-focused .cm-cursor': {
-      borderLeftColor: cursor,
+      backgroundColor: cursor,
+      width: '3px',
     },
 
     '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {
@@ -80,7 +81,7 @@ const materialPalenightTheme = EditorView.theme(
 
     // done
     '.cm-gutters': {
-      background: '#2C323699',
+      background: 'transparent',
       color: '#676e95',
       border: 'none',
     },

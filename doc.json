@@ -1354,7 +1354,7 @@
       "meta": {
         "range": [
           1178,
-          31915
+          31622
         ],
         "filename": "pattern.mjs",
         "lineno": 17,
@@ -2877,60 +2877,10 @@
       "___s": true
     },
     {
-      "comment": "/**\n   *\n   * @param  {...any} funcs\n   * @returns Pattern\n   * @example\n   * \"<[0 1 2 0]!2 [2 3 4 ~]!2 [[4 5] [4 3] 2 [0 ~]]!2 [0 -3 0 ~]!2>\"\n   * .layer(\n   *   x=>x,\n   *   x=>x.add(7).late(2),\n   *   x=>x.add(14).late(4),\n   *   x=>x.add(21).late(6),\n   * )\n   * .slow(3)\n   * .scale('C2 major')\n   * .tone((await piano()).toDestination())\n   */",
-      "meta": {
-        "range": [
-          21980,
-          22055
-        ],
-        "filename": "pattern.mjs",
-        "lineno": 700,
-        "columnno": 2,
-        "path": "/home/felix/projects/strudel/packages/core",
-        "code": {
-          "id": "astnode100007825",
-          "name": "Pattern#layer",
-          "type": "MethodDefinition",
-          "paramnames": [
-            "funcs"
-          ]
-        },
-        "vars": {
-          "": null
-        }
-      },
-      "params": [
-        {
-          "type": {
-            "names": [
-              "any"
-            ]
-          },
-          "variable": true,
-          "name": "funcs"
-        }
-      ],
-      "returns": [
-        {
-          "description": "<p>Pattern</p>"
-        }
-      ],
-      "examples": [
-        "\"<[0 1 2 0]!2 [2 3 4 ~]!2 [[4 5] [4 3] 2 [0 ~]]!2 [0 -3 0 ~]!2>\"\n.layer(\n  x=>x,\n  x=>x.add(7).late(2),\n  x=>x.add(14).late(4),\n  x=>x.add(21).late(6),\n)\n.slow(3)\n.scale('C2 major')\n.tone((await piano()).toDestination())"
-      ],
-      "name": "layer",
-      "longname": "Pattern#layer",
-      "kind": "function",
-      "memberof": "Pattern",
-      "scope": "instance",
-      "___id": "T000002R000683",
-      "___s": true
-    },
-    {
       "comment": "/**\n   * Speed up a pattern by the given factor.\n   *\n   * @name fast\n   * @memberof Pattern\n   * @param {number | Pattern} factor speed up factor\n   * @returns Pattern\n   * @example\n   * seq(e5, b4, d5, c5).fast(2)\n   */",
       "meta": {
         "filename": "pattern.mjs",
-        "lineno": 750,
+        "lineno": 735,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -2968,7 +2918,7 @@
       "comment": "/**\n   * Slow down a pattern over the given number of cycles.\n   *\n   * @name slow\n   * @memberof Pattern\n   * @param {number | Pattern} factor slow down factor\n   * @returns Pattern\n   * @example\n   * seq(e5, b4, d5, c5).slow(2)\n   */",
       "meta": {
         "filename": "pattern.mjs",
-        "lineno": 765,
+        "lineno": 750,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {}
@@ -3006,11 +2956,11 @@
       "comment": "/**\n   * Returns a new pattern where every other cycle is played once, twice as\n   * fast, and offset in time by one quarter of a cycle. Creates a kind of\n   * breakbeat feel.\n   * @returns Pattern\n   */",
       "meta": {
         "range": [
-          28139,
-          28235
+          27788,
+          27884
         ],
         "filename": "pattern.mjs",
-        "lineno": 919,
+        "lineno": 904,
         "columnno": 2,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3042,11 +2992,11 @@
       "comment": "/** A discrete value that repeats once per cycle:\n *\n * @param {any} value - The value to repeat\n * @returns {Pattern}\n * @example\n * pure('e4')\n */",
       "meta": {
         "range": [
-          35996,
-          36200
+          35703,
+          35907
         ],
         "filename": "pattern.mjs",
-        "lineno": 1217,
+        "lineno": 1203,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3093,11 +3043,11 @@
       "comment": "/** The given items are played at the same time at the same length:\n *\n * @param {...any} items - The items to stack\n * @return {Pattern}\n * @example\n * stack(g3, b3, [e4, d4])\n */",
       "meta": {
         "range": [
-          36713,
-          36986
+          36420,
+          36693
         ],
         "filename": "pattern.mjs",
-        "lineno": 1244,
+        "lineno": 1230,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3145,11 +3095,11 @@
       "comment": "/** Concatenation: combines a list of patterns, switching between them successively, one per cycle:\n *\n * synonyms: {@link cat}\n *\n * @param {...any} items - The items to concatenate\n * @return {Pattern}\n * @example\n * slowcat(e5, b4, [d5, c5])\n *\n */",
       "meta": {
         "range": [
-          37240,
-          38151
+          36947,
+          37858
         ],
         "filename": "pattern.mjs",
-        "lineno": 1261,
+        "lineno": 1247,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3197,11 +3147,11 @@
       "comment": "/** Concatenation: combines a list of patterns, switching between them successively, one per cycle. Unlike slowcat, this version will skip cycles.\n * @param {...any} items - The items to concatenate\n * @return {Pattern}\n */",
       "meta": {
         "range": [
-          38377,
-          38649
+          38084,
+          38356
         ],
         "filename": "pattern.mjs",
-        "lineno": 1286,
+        "lineno": 1272,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3246,11 +3196,11 @@
       "comment": "/** Concatenation: as with {@link slowcat}, but squashes a cycle from each pattern into one cycle\n *\n * Synonyms: {@link seq}, {@link sequence}\n *\n * @param {...any} items - The items to concatenate\n * @return {Pattern}\n * @example\n * fastcat(e5, b4, [d5, c5])\n * // sequence(e5, b4, [d5, c5])\n * // seq(e5, b4, [d5, c5])\n */",
       "meta": {
         "range": [
-          38977,
-          39059
+          38684,
+          38766
         ],
         "filename": "pattern.mjs",
-        "lineno": 1307,
+        "lineno": 1293,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3298,11 +3248,11 @@
       "comment": "/** See {@link slowcat} */",
       "meta": {
         "range": [
-          39088,
-          39147
+          38795,
+          38854
         ],
         "filename": "pattern.mjs",
-        "lineno": 1312,
+        "lineno": 1298,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3326,11 +3276,11 @@
       "comment": "/** Like {@link fastcat}, but where each step has a temporal weight:\n * @param {...Array} items - The items to concatenate\n * @return {Pattern}\n * @example\n * timeCat([3,e3],[1, g3])\n */",
       "meta": {
         "range": [
-          39336,
-          39695
+          39043,
+          39402
         ],
         "filename": "pattern.mjs",
-        "lineno": 1322,
+        "lineno": 1308,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3378,11 +3328,11 @@
       "comment": "/** See {@link fastcat} */",
       "meta": {
         "range": [
-          39724,
-          39788
+          39431,
+          39495
         ],
         "filename": "pattern.mjs",
-        "lineno": 1335,
+        "lineno": 1321,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3406,11 +3356,11 @@
       "comment": "/** See {@link fastcat} */",
       "meta": {
         "range": [
-          39817,
-          39876
+          39524,
+          39583
         ],
         "filename": "pattern.mjs",
-        "lineno": 1340,
+        "lineno": 1326,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/core",
         "code": {
@@ -3643,7 +3593,7 @@
       "comment": "/**\n * Change the pitch of each value by the given amount. Expects numbers or note strings as values.\n * The amount can be given as a number of semitones or as a string in interval short notation.\n * If you don't care about enharmonic correctness, just use numbers. Otherwise, pass the interval of\n * the form: ST where S is the degree number and T the type of interval with\n *\n * - M = major\n * - m = minor\n * - P = perfect\n * - A = augmented\n * - d = diminished\n *\n * Examples intervals:\n *\n * - 1P = unison\n * - 3M = major third\n * - 3m = minor third\n * - 4P = perfect fourth\n * - 4A = augmented fourth\n * - 5P = perfect fifth\n * - 5d = diminished fifth\n *\n * @param {string | number} amount Either number of semitones or interval string.\n * @returns Pattern\n * @memberof Pattern\n * @name transpose\n * @example\n * \"c2 c3\".fast(2).transpose(\"<0 -2 5 3>\".slow(2)).transpose(0)\n * @example\n * \"c2 c3\".fast(2).transpose(\"<1P -2M 4P 3m>\".slow(2)).transpose(0)\n */",
       "meta": {
         "filename": "tonal.mjs",
-        "lineno": 46,
+        "lineno": 45,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/tonal",
         "code": {}
@@ -3675,14 +3625,14 @@
       "scope": "static",
       "longname": "Pattern.transpose",
       "kind": "member",
-      "___id": "T000002R003717",
+      "___id": "T000002R003716",
       "___s": true
     },
     {
       "comment": "/**\n * Transposes notes inside the scale by the number of steps.\n * Expected to be called on a Pattern which already has a {@link Pattern#scale}\n *\n * @memberof Pattern\n * @name scaleTranspose\n * @param {offset} offset number of steps inside the scale\n * @returns Pattern\n * @example\n * \"-8 [2,4,6]\"\n * .scale('C4 bebop major')\n * .scaleTranspose(\"<0 -1 -2 -3 -4 -5 -6 -4>\")\n */",
       "meta": {
         "filename": "tonal.mjs",
-        "lineno": 99,
+        "lineno": 98,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/tonal",
         "code": {}
@@ -3712,14 +3662,14 @@
       "scope": "static",
       "longname": "Pattern.scaleTranspose",
       "kind": "member",
-      "___id": "T000002R003721",
+      "___id": "T000002R003720",
       "___s": true
     },
     {
       "comment": "/**\n * Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like {@link Pattern#scaleTranspose}.\n *\n * The scale name has the form \"TO? N\" wher\n *\n * - T = Tonic\n * - O = Octave (optional, defaults to 3)\n * - N = Name of scale, available names can be found [here](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).\n *\n * @memberof Pattern\n * @name scale\n * @param {string} scale Name of scale\n * @returns Pattern\n * @example \n * \"0 2 4 6 4 2\"\n * .scale(seq('C2 major', 'C2 minor').slow(2))\n */",
       "meta": {
         "filename": "tonal.mjs",
-        "lineno": 125,
+        "lineno": 124,
         "columnno": 0,
         "path": "/home/felix/projects/strudel/packages/tonal",
         "code": {}
@@ -3749,7 +3699,7 @@
       "scope": "static",
       "longname": "Pattern.scale",
       "kind": "member",
-      "___id": "T000002R003723",
+      "___id": "T000002R003722",
       "___s": true
     },
     {
@@ -3786,7 +3736,33 @@
       "scope": "static",
       "longname": "Pattern.voicings",
       "kind": "member",
-      "___id": "T000002R003748",
+      "___id": "T000002R003747",
+      "___s": true
+    },
+    {
+      "comment": "/**\n *\n * Uses [webdirt](https://github.com/dktr0/WebDirt) as output.\n *\n * <details>\n * <summary>show supported Webdirt controls</summary>\n *\n * - s :: String, -- name of sample bank\n * - n :: Int, -- number of sample within a bank\n * - {@link gain} :: Number, -- clamped from 0 to 2; 1 is default and full-scale\n * - overgain :: Number, -- additional gain added to gain to go past clamp at 2\n * - {@link pan} :: Number, -- range: 0 to 1\n * - nudge :: Number, -- nudge the time of the sample forwards/backwards in seconds\n * - {@link speed} :: Number, -- speed / pitch of the sample\n * - {@link unit} :: String\n * - note :: Number, -- pitch offset in semitones\n * - {@link begin} :: Number, -- cut from sample start, normalized\n * - {@link end} :: Number, -- cut from sample end, normalized\n * - {@link cut} :: Int, -- samples with same cut number will interupt each other\n * - {@link cutoff} :: Number, -- lowpass filter frequency\n * - {@link resonance} :: Number, -- lowpass filter resonance\n * - {@link hcutoff} :: Number, -- highpass filter frequency\n * - {@link hresonance} :: Number, -- highpass filter resonance\n * - {@link bandf} :: Number, -- bandpass filter frequency\n * - {@link bandq} :: Number, -- bandpass filter resonance\n * - {@link vowel} :: String, -- name of vowel ('a' | 'e' | 'i' | 'o' | 'u')\n * - delay :: Number, -- delay wet/dry mix\n * - delaytime :: Number, -- delay time in seconds\n * - delayfeedback :: Number, -- delay feedback\n * - {@link loop} :: Number, -- loop sample n times (relative to sample length)\n * - {@link crush} :: Number, -- bitcrusher (currently not working)\n * - {@link coarse} :: Number, -- coarse effect (currently not working)\n * - {@link shape} :: Number, -- (currently not working)\n\n *\n * </details>\n *\n * @name webdirt\n * @memberof Pattern\n * @returns Pattern\n * @example\n * s(\"bd*2 hh sd hh\").n(\"<0 1>\").webdirt()\n */",
+      "meta": {
+        "filename": "webdirt.mjs",
+        "lineno": 20,
+        "columnno": 0,
+        "path": "/home/felix/projects/strudel/packages/webdirt",
+        "code": {}
+      },
+      "description": "<p>Uses <a href=\"https://github.com/dktr0/WebDirt\">webdirt</a> as output.</p>\n<details>\n<summary>show supported Webdirt controls</summary>\n<ul>\n<li>s :: String, -- name of sample bank</li>\n<li>n :: Int, -- number of sample within a bank</li>\n<li>{@link gain} :: Number, -- clamped from 0 to 2; 1 is default and full-scale</li>\n<li>overgain :: Number, -- additional gain added to gain to go past clamp at 2</li>\n<li>{@link pan} :: Number, -- range: 0 to 1</li>\n<li>nudge :: Number, -- nudge the time of the sample forwards/backwards in seconds</li>\n<li>{@link speed} :: Number, -- speed / pitch of the sample</li>\n<li>{@link unit} :: String</li>\n<li>note :: Number, -- pitch offset in semitones</li>\n<li>{@link begin} :: Number, -- cut from sample start, normalized</li>\n<li>{@link end} :: Number, -- cut from sample end, normalized</li>\n<li>{@link cut} :: Int, -- samples with same cut number will interupt each other</li>\n<li>{@link cutoff} :: Number, -- lowpass filter frequency</li>\n<li>{@link resonance} :: Number, -- lowpass filter resonance</li>\n<li>{@link hcutoff} :: Number, -- highpass filter frequency</li>\n<li>{@link hresonance} :: Number, -- highpass filter resonance</li>\n<li>{@link bandf} :: Number, -- bandpass filter frequency</li>\n<li>{@link bandq} :: Number, -- bandpass filter resonance</li>\n<li>{@link vowel} :: String, -- name of vowel ('a' | 'e' | 'i' | 'o' | 'u')</li>\n<li>delay :: Number, -- delay wet/dry mix</li>\n<li>delaytime :: Number, -- delay time in seconds</li>\n<li>delayfeedback :: Number, -- delay feedback</li>\n<li>{@link loop} :: Number, -- loop sample n times (relative to sample length)</li>\n<li>{@link crush} :: Number, -- bitcrusher (currently not working)</li>\n<li>{@link coarse} :: Number, -- coarse effect (currently not working)</li>\n<li>{@link shape} :: Number, -- (currently not working)</li>\n</ul>\n</details>",
+      "name": "webdirt",
+      "memberof": "Pattern",
+      "returns": [
+        {
+          "description": "<p>Pattern</p>"
+        }
+      ],
+      "examples": [
+        "s(\"bd*2 hh sd hh\").n(\"<0 1>\").webdirt()"
+      ],
+      "scope": "static",
+      "longname": "Pattern.webdirt",
+      "kind": "member",
+      "___id": "T000002R004040",
       "___s": true
     },
     {
@@ -3862,13 +3838,16 @@
         "/home/felix/projects/strudel/packages/webaudio/index.mjs",
         "/home/felix/projects/strudel/packages/webaudio/scheduler.mjs",
         "/home/felix/projects/strudel/packages/webaudio/webaudio.mjs",
+        "/home/felix/projects/strudel/packages/webdirt/index.mjs",
+        "/home/felix/projects/strudel/packages/webdirt/sampler.mjs",
+        "/home/felix/projects/strudel/packages/webdirt/webdirt.mjs",
         "/home/felix/projects/strudel/packages/xen/index.mjs",
         "/home/felix/projects/strudel/packages/xen/test/xen.test.mjs",
         "/home/felix/projects/strudel/packages/xen/tune.mjs",
         "/home/felix/projects/strudel/packages/xen/tunejs.js",
         "/home/felix/projects/strudel/packages/xen/xen.mjs"
       ],
-      "___id": "T000002R014017",
+      "___id": "T000002R014063",
       "___s": true
     }
   ]
