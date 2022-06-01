@@ -89,8 +89,8 @@ function App() {
     const handleKeyPress = async (e) => {
       if (e.ctrlKey || e.altKey) {
         if (e.code === 'Enter') {
-          await activateCode();
           e.preventDefault();
+          await activateCode();
         } else if (e.code === 'Period') {
           cycle.stop();
           e.preventDefault();
