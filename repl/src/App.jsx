@@ -87,8 +87,8 @@ function App() {
         }
       }
     };
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+    window.addEventListener('keydown', handleKeyPress, true);
+    return () => window.removeEventListener('keydown', handleKeyPress, true);
   }, [pattern, code, activateCode, cycle]);
 
   useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes('strudel disable-highlighting') });
