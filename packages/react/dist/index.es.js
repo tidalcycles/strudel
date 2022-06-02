@@ -174,7 +174,7 @@ const highlightField = StateField.define({
   },
   provide: (f) => EditorView.decorations.from(f)
 });
-function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount }) {
+function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount, theme }) {
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(CodeMirror$1, {
     onViewChange: onViewChanged,
     style: {
@@ -186,7 +186,7 @@ function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorD
     onChange,
     extensions: [
       javascript(),
-      materialPalenight,
+      theme || materialPalenight,
       highlightField
     ]
   }));
@@ -423,6 +423,10 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     }
   };
 
+  useEffect(() => {
+    return () => cycle.stop();
+  }, []);
+
   return {
     pending,
     code,
@@ -538,7 +542,7 @@ function Icon({ type }) {
   }[type]);
 }
 
-function MiniRepl({ tune, defaultSynth, hideOutsideView = false }) {
+function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme }) {
   const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,
@@ -578,6 +582,7 @@ function MiniRepl({ tune, defaultSynth, hideOutsideView = false }) {
   }, error.message)), /* @__PURE__ */ React.createElement("div", {
     className: styles.body
   }, show && /* @__PURE__ */ React.createElement(CodeMirror, {
+    theme,
     value: code,
     onChange: setCode,
     onViewChanged: setView

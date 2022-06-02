@@ -9,7 +9,7 @@ import './style.css';
 import styles from './MiniRepl.module.css';
 import { Icon } from './Icon';
 
-export function MiniRepl({ tune, defaultSynth, hideOutsideView = false }) {
+export function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme }) {
   const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,
@@ -40,8 +40,8 @@ export function MiniRepl({ tune, defaultSynth, hideOutsideView = false }) {
         </div>
         {error && <div className={styles.error}>{error.message}</div>}
       </div>
-      <div className={styles.body} >
-        {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />}
+      <div className={styles.body}>
+        {show && <CodeMirror6 theme={theme} value={code} onChange={setCode} onViewChanged={setView} />}
       </div>
     </div>
   );

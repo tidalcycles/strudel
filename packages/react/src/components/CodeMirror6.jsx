@@ -45,7 +45,7 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-export default function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount }) {
+export default function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount, theme }) {
   return (
     <>
       <_CodeMirror
@@ -59,7 +59,7 @@ export default function CodeMirror({ value, onChange, onViewChanged, onCursor, o
         onChange={onChange}
         extensions={[
           javascript(),
-          materialPalenight,
+          theme || materialPalenight,
           highlightField,
           // theme, language, ...
         ]}
