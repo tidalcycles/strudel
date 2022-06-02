@@ -11,7 +11,16 @@ import { MaxiRepl } from './MaxiRepl';
 
 asdfasdf
 
-<MaxiRepl tune={'"c3"'} />
+<MaxiRepl tune={`"0 4 <5 7> 2"
+  .off(1/16,add(5))
+  .echo(4,.125,.7)
+  .scale(cat(
+    'C hirajoshi',
+    slowcat('F hirajoshi','E pentatonic')
+    ))
+  .slow(4)
+  .tone((await piano()).toDestination())
+`} />
 
  </Slide>
   <Slide>

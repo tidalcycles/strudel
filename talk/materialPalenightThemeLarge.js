@@ -33,7 +33,7 @@ export const materialPalenightThemeLarge = EditorView.theme(
     // done
     '.cm-content': {
       caretColor: cursor,
-      lineHeight: '36px',
+      lineHeight: '40px',
     },
     '.cm-line': {
       background: '#2C323699',
