@@ -74,6 +74,7 @@ export const materialPalenightThemeLarge = EditorView.theme(
       background: 'transparent',
       color: '#676e95',
       border: 'none',
+      display: 'none',
     },
 
     '.cm-activeLineGutter': {

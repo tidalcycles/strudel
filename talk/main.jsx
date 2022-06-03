@@ -6,7 +6,9 @@ import '@strudel.cycles/react/dist/style.css';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Deck />
+    <div className="w-screen h-screen overflow-hidden">
+      <Deck />
+    </div>
   </React.StrictMode>,
   document.getElementById('root'),
 );

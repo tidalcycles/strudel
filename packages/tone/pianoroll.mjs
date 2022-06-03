@@ -10,12 +10,15 @@ Pattern.prototype.pianoroll = function ({
   timeframe = 10,
   inactive = '#C9E597',
   active = '#FFCA28',
-  background = '#2A3236',
+  // background = '#2A3236',
+  background = 'transparent',
   maxMidi = 90,
   minMidi = 0,
 } = {}) {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
+  const ctx = getDrawContext();
+  console.dir(ctx.canvas);
+  const w = ctx.canvas.width;
+  const h = ctx.canvas.height;
   const midiRange = maxMidi - minMidi + 1;
   const height = h / midiRange;
   this.draw(

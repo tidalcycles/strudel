@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 export function Slides({ children }) {
   const [slide, setSlide] = useState(0);
   return (
-    <div className="w-screen h-screen overflow-hidden bg-slate-900">
+    <div className="bg-slate-900">
       <AnimatePresence exitBeforeEnter>
         <motion.div
           key={slide}
@@ -14,8 +14,8 @@ export function Slides({ children }) {
           className="w-screen h-screen"
         >
           <div className="flex justify-center items-center p-6">
-            <div className="prose grow max-w-full text-gray-200 font-serif prose-headings:text-gray-200 prose-headings:font-sans prose-2xl prose-slate">
-              {children[slide]}
+            <div className="px-8 prose grow max-w-[1280px] text-gray-200 font-serif prose-headings:text-gray-200 prose-blockquote:text-gray-200 prose-headings:font-sans prose-2xl prose-slate">
+              <center>{children[slide]}</center>
             </div>
           </div>
         </motion.div>
@@ -31,11 +31,14 @@ export function Slide({ children }) {
 
 function SlideNav({ slide, setSlide, slides }) {
   return (
-    <div className="flex absolute bottom-8 space-x-2 w-full justify-center items-center z-1">
-      <button onClick={() => setSlide((s) => (s + slides.length - 1) % slides.length)}>
+    <div className="flex absolute top-1/2 space-x-2 w-full justify-between items-center z-1">
+      <button
+        onClick={() => setSlide((s) => (s + slides.length - 1) % slides.length)}
+        className="absolute left-0 my-auto"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-gray-200"
+          className="h-12 w-12 text-gray-200"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -44,13 +47,10 @@ function SlideNav({ slide, setSlide, slides }) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
-      {slides.map((_, i) => (
-        <div key={i} className={`rounded-full ${slide === i ? 'bg-gray-200 w-3 h-3' : 'bg-gray-500 w-2 h-2'}`}></div>
-      ))}
-      <button onClick={() => setSlide((s) => (s + 1) % slides.length)}>
+      <button onClick={() => setSlide((s) => (s + 1) % slides.length)} className="absolute right-0 my-auto">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-gray-200"
+          className="h-12 w-12 text-gray-200"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -62,3 +62,34 @@ function SlideNav({ slide, setSlide, slides }) {
     </div>
   );
 }
+/* 
+
+<div className="flex absolute bottom-8 space-x-2 w-full justify-center items-center z-1">
+<button onClick={() => setSlide((s) => (s + slides.length - 1) % slides.length)}>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-6 w-6 text-gray-200"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+  </svg>
+</button>
+{slides.map((_, i) => (
+  <div key={i} className={`rounded-full ${slide === i ? 'bg-gray-200 w-3 h-3' : 'bg-gray-500 w-2 h-2'}`}></div>
+))}
+<button onClick={() => setSlide((s) => (s + 1) % slides.length)}>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-6 w-6 text-gray-200"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+  </svg>
+</button>
+</div> */

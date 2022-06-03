@@ -2,16 +2,79 @@ import { Slides, Slide } from './Slides.jsx';
 import { MaxiRepl } from './MaxiRepl';
 
 <Slides>
+
   <Slide>
 
 ## Strudel: Algorithmic Patterns for the Web
 
-- asfasf
-- asdasd
+<img src="./ada.jpg" className="h-[500px] rounded-md" />
 
-asdfasdf
+<div className="max-w-2xl">
+  <i>
+    "The Analytical Engine weaves algebraic patterns, just as the Jacquard loom weaves flowers and leaves."
+    <br />
+    “Supposing, for instance, that the fundamental relations of pitched sounds in the science of harmony and of musical
+    composition were susceptible of such expression and adaptations, the [Analytical] Engine might compose elaborate and
+    scientific pieces of music of any degree of complexity or extent." - Ada Lovelace
+  </i>
+</div>
 
-<MaxiRepl tune={`"0 4 <5 7> 2"
+</Slide>
+<Slide>
+
+## What is Live Coding?
+
+<i className="text-3xl">
+  "In live coding performance, performers create time-based works by programming them while these same works are being
+  executed." <br />
+  Roberts & Wakefield, 2016
+</i>
+<img src="./hydra-screenshot.png" className="h-[600px] rounded-md" />
+<p>Screenshot: "Olivia Jack - Hydra, Live Coding Visuals in the Browser"</p>
+
+</Slide>
+<Slide>
+
+## What is Tidal Cycles?
+
+<div className="text-left">
+
+- A very popular software for live coding music (and more)
+- a powerful pattern language for time-based art
+- find out more at <a href="https://tidalcycles.org" target="_blank" className="text-indigo-400">tidalcycles.org</a>
+
+</div>
+
+<img src="./tidal-screenshot2.png" className="h-[600px] rounded-md" />
+<p>Screenshot: "Yaxu & hellocatfood - LIVE code for Noise Quest"</p>
+
+</Slide>
+<Slide>
+
+## What is Strudel?
+
+<div className="text-left">
+
+- a port of Tidal Cycles to JavaScript
+- a browser based editor for zero-install live coding
+- many ways to make sound: Tone.js, Webdirt, OSC Superdirt, MIDI, speech
+- visuals: highlighting of active events + pianoroll visualization
+- find out more at <a href="https://strudel.tidalcycles.org/" target="_blank" className="text-indigo-400">strudel.tidalcycles.org</a>
+
+</div>
+
+<img src="./strudel-screenshot.png" className="h-[600px] rounded-md mb-0" />
+<p>Screenshot: "Algorave 10th Birthday March 2022 - froos"</p>
+
+</Slide>
+<Slide>
+
+## A Taste of Strudel
+
+<MaxiRepl
+  canvasHeight={600}
+  code={[
+    `"0 4 <5 7> 2"
   .off(1/16,add(5))
   .echo(4,.125,.7)
   .scale(cat(
@@ -20,41 +83,71 @@ asdfasdf
     ))
   .slow(4)
   .tone((await piano()).toDestination())
-`} />
-
- </Slide>
-  <Slide>
-
-## This is my deck
+  .pianoroll({background:'transparent'})
+`,
+    `samples({
+  clubkick: 'clubkick/2.wav',
+  sd: ['808sd/SD0010.WAV','808sd/SD0050.WAV'],
+  hh: 'hh/000_hh3closedhh.wav',
+  clak: 'clak/000_clak1.wav',
+  jvbass: ['jvbass/000_01.wav','jvbass/001_02.wav','jvbass/003_04.wav','jvbass/004_05.wav','jvbass/005_06.wav']
+}, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
+stack(
+  s("<clubkick*2>,[~ <sd!3 sd(3,4,2)>],hh(3,4,2)").n("<0 1 2>").speed(.8),
+  n("<0 1*2 4(3,8) 2>").speed(.6).off(1/8,x=>x.speed(1.2).degradeBy(.5)).s("jvbass")
+).reset("<x@7 <x(5,8,3) x(3,8) x(3,4,1)>>").cutoff(perlin.slow(7).range(100,20000)).webdirt().slow(3/2)`,
+    `stack(
+  "24*2 [~ 25]".chunk(4, x => x.sub("12").fast(2))
+    .tone(membrane().toDestination()),
+  "~ x ~ x".every(2, x => x.fast(2)).iter(4)
+    .tone(noise().toDestination()),
+  "c4*8".add(saw.mul(12).slow(1.5)).degrade(0.05)
+    .tone(metal().set(adsr(0,.06,0,0)).chain(vol(0.5),out()))
+)
+// by yaxu`,
+  ]}
+/>
 
 </Slide>
-  <Slide>
+<Slide>
 
-## The End
+## Contributors
 
- </Slide> 
-  <Slide>
+</Slide>
+<Slide>
 
-## The End
+## Mini Notation
 
- </Slide> 
-  <Slide>
+</Slide>
+<Slide>
 
-## The End
+## Continuous Signals
 
- </Slide> 
+<MaxiRepl
+  code={`sine.range(50,62).segment(32).slow(4)
+  .pianoroll({minMidi:48,maxMidi:62})`}
+/>
+
+<MaxiRepl
+  code={`s("hh*8").speed(sine.range(.5,2).slow(4))
+  .webdirt()`}
+/>
+
+</Slide>
+<Slide>
+
+## From Haskell to Python to JavaScript
+
+<div className="text-left">
+
+| Project        | Language   | Description                       |
+| -------------- | ---------- | --------------------------------- |
+| Tidal Cycles   | Haskell    | original haskell implementation   |
+| Remake         | Haskell    | Tidal Cycles rewrite from scratch |
+| Tidal Vortex   | Python     | Port of Remake to Python          |
+| Strudel Cycles | JavaScript | Port of Vortex to Javascript      |
+
+</div>
+
+</Slide>
 </Slides>
-
-# Strudel: Algorithmic Patterns for the Web
-
-asfasf
-
----
-
-## This is my deck
-
----
-
-## The End
-
----
