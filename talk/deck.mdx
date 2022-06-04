@@ -1,23 +1,25 @@
 import { Slides, Slide } from './Slides.jsx';
 import { MaxiRepl } from './MaxiRepl';
+import ImgTile from './ImgTile';
 
 <Slides>
 
   <Slide>
 
-## Strudel: Algorithmic Patterns for the Web
+<h1 className="mb-0">Strudel</h1>
 
-<img src="./ada.jpg" className="h-[500px] rounded-md" />
+<h2 className="mt-0">Algorithmic Patterns for the Web</h2>
 
-<div className="max-w-2xl">
-  <i>
+<div className="flex space-x-2 items-center">
+  <em>
     "The Analytical Engine weaves algebraic patterns, just as the Jacquard loom weaves flowers and leaves."
     <br />
     “Supposing, for instance, that the fundamental relations of pitched sounds in the science of harmony and of musical
     composition were susceptible of such expression and adaptations, the [Analytical] Engine might compose elaborate and
     scientific pieces of music of any degree of complexity or extent." - Ada Lovelace
-  </i>
+  </em>
 </div>
+<img src="./ada.jpg" className="h-[400px] rounded-md" />
 
 </Slide>
 <Slide>
@@ -39,13 +41,13 @@ import { MaxiRepl } from './MaxiRepl';
 
 <div className="text-left">
 
-- A very popular software for live coding music (and more)
+- A very popular software for live coding music
 - a powerful pattern language for time-based art
 - find out more at <a href="https://tidalcycles.org" target="_blank" className="text-indigo-400">tidalcycles.org</a>
 
 </div>
 
-<img src="./tidal-screenshot2.png" className="h-[600px] rounded-md" />
+<img src="./tidal-screenshot2.png" className="h-[500px] rounded-md" />
 <p>Screenshot: "Yaxu & hellocatfood - LIVE code for Noise Quest"</p>
 
 </Slide>
@@ -56,14 +58,19 @@ import { MaxiRepl } from './MaxiRepl';
 <div className="text-left">
 
 - a port of Tidal Cycles to JavaScript
-- a browser based editor for zero-install live coding
-- many ways to make sound: Tone.js, Webdirt, OSC Superdirt, MIDI, speech
-- visuals: highlighting of active events + pianoroll visualization
-- find out more at <a href="https://strudel.tidalcycles.org/" target="_blank" className="text-indigo-400">strudel.tidalcycles.org</a>
+- a browser based editor for zero-install live coding: <a href="https://strudel.tidalcycles.org/" target="_blank" className="text-indigo-400">strudel.tidalcycles.org</a>
+- many ways to make sound: Tone.js, Webdirt, OSC, MIDI ...
+
+<div className="hidden">
+
+- "Strudel" = internationally known as delicious pastry, but also "swirl" / "whirlpool" in german
+- (a tidal can cause a whirlpool!)
 
 </div>
 
-<img src="./strudel-screenshot.png" className="h-[600px] rounded-md mb-0" />
+</div>
+
+<img src="./strudel-screenshot.png" className="h-[500px] rounded-md mb-0" />
 <p>Screenshot: "Algorave 10th Birthday March 2022 - froos"</p>
 
 </Slide>
@@ -111,7 +118,45 @@ stack(
 </Slide>
 <Slide>
 
-## Contributors
+## About Me
+
+<div className="text-left">
+
+- 💻 Studied Computer Science and Media in Stuttgart, working as a software developer by day
+- 🎺 Trumpet Player, studied Jazz and Popular Music in Mannheim
+- 🎤 Dilettante Music Producer of all kinds of genres
+- 💿 ocassionally publishes music with Lui Mafuta & Puste
+- 🔌 Modular Synth & Electronics Lover, Dilettante DJ ..
+- 💌 Coding Blog: [Loophole Letters](https://loophole-letters.vercel.app/)
+- ✨ Started live coding music not too long ago
+
+<div className="grid grid-cols-5 gap-4 mt-12">
+  <ImgTile height={200} src="https://loophole-letters.vercel.app/_next/image?url=%2Fimg%2Flambdoma.png&w=2048&q=75" />
+  {/*   <ImgTile
+    height={300}
+    src="https://loophole-letters.vercel.app/_next/image?url=%2Fimg%2Fharmonic-spiral.png&w=2048&q=75"
+  /> */}
+  <ImgTile height={200} src="https://loophole-letters.vercel.app/_next/image?url=%2Fimg%2Fpiano-roll.png&w=2048&q=75" />
+  <ImgTile height={200} src="https://loophole-letters.vercel.app/_next/image?url=%2Fimg%2Fcof.png&w=2048&q=75" />
+  <ImgTile height={200} src="https://loophole-letters.vercel.app/_next/image?url=%2Fimg%2F251graph.png&w=2048&q=75" />
+  <ImgTile
+    height={200}
+    src="https://loophole-letters.vercel.app/_next/image?url=%2Fimg%2Fdiy-modular-synth%2Fmidi2cv-styleshot.png&w=2048&q=75"
+  />
+  {/*   <ImgTile height={200} src="https://loophole-letters.vercel.app/_next/image?url=%2Fimg%2Fcolorpiano.png&w=2048&q=75" /> */}
+  {/* 
+  <ImgTile
+    height={300}
+    src="https://loophole-letters.vercel.app/_next/image?url=%2Fimg%2Fvoicing-permutation.png&w=2048&q=75"
+  /> */}
+</div>
+
+</div>
+
+</Slide>
+<Slide>
+
+## How it started
 
 </Slide>
 <Slide>

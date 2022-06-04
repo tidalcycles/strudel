@@ -32,7 +32,7 @@ loadWebDirt({
   sampleFolder: './EmuSP12',
 });
 
-export function MaxiRepl({ code, canvasHeight = 400 }) {
+export function MaxiRepl({ code, canvasHeight = 500 }) {
   const [exampleIndex, setExampleIndex] = useState(0);
   const examples = Array.isArray(code) ? code : [code];
   return (
@@ -48,13 +48,15 @@ export function MaxiRepl({ code, canvasHeight = 400 }) {
           ))}
         </div>
       )}
-      <_MiniRepl
-        key={exampleIndex}
-        tune={examples[exampleIndex]}
-        defaultSynth={defaultSynth}
-        hideOutsideView={true}
-        theme={materialPalenightLarge}
-      />
+      <div className="max-w-screen">
+        <_MiniRepl
+          key={exampleIndex}
+          tune={examples[exampleIndex]}
+          defaultSynth={defaultSynth}
+          hideOutsideView={true}
+          theme={materialPalenightLarge}
+        />
+      </div>
       <canvas
         id="test-canvas"
         className="w-full pointer-events-none"
