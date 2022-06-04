@@ -383,16 +383,16 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
   });
 
   const activateCode = useCallback(
-    async (_code = code) => {
+    async (_code = code, evaluateOnly = false) => {
       if (activeCode && !dirty) {
         setError(undefined);
-        cycle.start();
+        !evaluateOnly && cycle.start();
         return;
       }
       try {
         setPending(true);
         const parsed = await evaluate(_code);
-        cycle.start();
+        !evaluateOnly && cycle.start();
         broadcast({ type: 'start', from: id });
         setPattern(() => parsed.pattern);
         if (autolink) {
@@ -423,6 +423,10 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     }
   };
 
+  const evaluateOnly = () => {
+    activateCode(code, true);
+  };
+
   useEffect(() => {
     return () => cycle.stop();
   }, []);
@@ -440,6 +444,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     togglePlay,
     setActiveCode,
     activateCode,
+    evaluateOnly,
     activeCode,
     pushLog,
     hash,
@@ -542,12 +547,15 @@ function Icon({ type }) {
   }[type]);
 }
 
-function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme }) {
-  const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
+function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init }) {
+  const { code, setCode, pattern, activateCode, evaluateOnly, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,
     autolink: false
   });
+  useEffect(() => {
+    init && evaluateOnly();
+  }, [tune, init]);
   const [view, setView] = useState();
   const [ref, isVisible] = useInView({
     threshold: 0.01

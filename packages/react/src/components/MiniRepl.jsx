@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useInView } from 'react-hook-inview';
 import useRepl from '../hooks/useRepl.mjs';
 import cx from '../cx';
@@ -9,12 +9,15 @@ import './style.css';
 import styles from './MiniRepl.module.css';
 import { Icon } from './Icon';
 
-export function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme }) {
-  const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
+export function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init }) {
+  const { code, setCode, pattern, activateCode, evaluateOnly, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,
     autolink: false,
   });
+  useEffect(() => {
+    init && evaluateOnly();
+  }, [tune, init]);
   const [view, setView] = useState();
   const [ref, isVisible] = useInView({
     threshold: 0.01,
