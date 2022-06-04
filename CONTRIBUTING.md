@@ -32,7 +32,9 @@ Use one of the Communication Channels listed above.
 ## Improve the Tutorial
 
 If you find some weak spots in the [tutorial](https://strudel.tidalcycles.org/), 
-you are welcome to improve them by editing [this file](https://github.com/tidalcycles/strudel/blob/main/src/tutorial/tutorial.mdx).
+you are welcome to improve them by editing [this file](https://github.com/tidalcycles/strudel/blob/main/tutorial/tutorial.mdx).
+
+
 This will even work without setting up a development environment, only a github account is required.
 
 ## Propose a Feature
