@@ -9,8 +9,8 @@ import { Pattern } from '@strudel.cycles/core';
 const scale = (normalized, min, max) => normalized * (max - min) + min;
 
 Pattern.prototype.pianoroll = function ({
-  from = -2,
-  to = 2,
+  cycles = 4,
+  playhead = .5,
   overscan = 1,
   inactive = '#C9E597',
   active = '#FFCA28',
@@ -26,6 +26,8 @@ Pattern.prototype.pianoroll = function ({
   const ctx = getDrawContext();
   const w = ctx.canvas.width;
   const h = ctx.canvas.height;
+  const from = -cycles * playhead;
+  const to = cycles * (1 - playhead);
 
   if (timeframeProp) {
     console.warn('timeframe is deprecated! use from/to instead');
@@ -46,7 +48,7 @@ Pattern.prototype.pianoroll = function ({
   let foldValues = [];
 
   // duration to px (on timeAxis)
-  const playhead = scale(-from / timeExtent, ...timeRange);
+  const playheadPosition = scale(-from / timeExtent, ...timeRange);
   this.draw(
     (ctx, events, t) => {
       ctx.fillStyle = background;
@@ -60,11 +62,11 @@ Pattern.prototype.pianoroll = function ({
         ctx.globalAlpha = event.context.velocity ?? 1;
         ctx.beginPath();
         if (vertical) {
-          ctx.moveTo(0, playhead);
-          ctx.lineTo(valueAxis, playhead);
+          ctx.moveTo(0, playheadPosition);
+          ctx.lineTo(valueAxis, playheadPosition);
         } else {
-          ctx.moveTo(playhead, 0);
-          ctx.lineTo(playhead, valueAxis);
+          ctx.moveTo(playheadPosition, 0);
+          ctx.lineTo(playheadPosition, valueAxis);
         }
         ctx.stroke();
         const timePx = scale((event.whole.begin - from) / timeExtent, ...timeRange);
