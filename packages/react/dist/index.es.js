@@ -548,7 +548,7 @@ function Icon({ type }) {
 }
 
 function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init }) {
-  const { code, setCode, pattern, activateCode, evaluateOnly, error, cycle, dirty, togglePlay } = useRepl({
+  const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,
     autolink: false
@@ -567,7 +567,7 @@ function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init }) 
     }
     return isVisible || wasVisible.current;
   }, [isVisible, hideOutsideView]);
-  useHighlighting({ view, pattern, active: cycle.started });
+  useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes("strudel disable-highlighting") });
   return /* @__PURE__ */ React.createElement("div", {
     className: styles.container,
     ref

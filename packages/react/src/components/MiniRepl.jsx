@@ -10,7 +10,7 @@ import styles from './MiniRepl.module.css';
 import { Icon } from './Icon';
 
 export function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init }) {
-  const { code, setCode, pattern, activateCode, evaluateOnly, error, cycle, dirty, togglePlay } = useRepl({
+  const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay } = useRepl({
     tune,
     defaultSynth,
     autolink: false,
@@ -29,7 +29,7 @@ export function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, i
     }
     return isVisible || wasVisible.current;
   }, [isVisible, hideOutsideView]);
-  useHighlighting({ view, pattern, active: cycle.started });
+  useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes('strudel disable-highlighting') });
   return (
     <div className={styles.container} ref={ref}>
       <div className={styles.header}>
