@@ -42,7 +42,6 @@ Pattern.prototype.pianoroll = function ({
   }
   const timeAxis = vertical ? h : w;
   const valueAxis = vertical ? w : h;
-  // scale normalized value n to max pixels, flippable
   let timeRange = vertical ? [timeAxis, 0] : [0, timeAxis]; // pixel range for time
   const timeExtent = to - from; // number of seconds that fit inside the canvas frame
   const valueRange = vertical ? [0, valueAxis] : [valueAxis, 0]; // pixel range for values
@@ -52,7 +51,6 @@ Pattern.prototype.pianoroll = function ({
   flipTime && timeRange.reverse();
   flipValues && valueRange.reverse();
 
-  // duration to px (on timeAxis)
   const playheadPosition = scale(-from / timeExtent, ...timeRange);
   this.draw(
     (ctx, events, t) => {
@@ -83,7 +81,6 @@ Pattern.prototype.pianoroll = function ({
           ...valueRange,
         );
         let margin = 0;
-        // apply some pixel adjustments
         const offset = scale(t / timeExtent, ...timeRange);
         let coords;
         if (vertical) {
@@ -93,7 +90,6 @@ Pattern.prototype.pianoroll = function ({
             barThickness - 2, // width
             durationPx - 2, // height
           ];
-          // console.log(event.value, 'coords', coords);
         } else {
           coords = [
             timePx - offset + margin + 1 - (flipTime ? durationPx : 0), // x
