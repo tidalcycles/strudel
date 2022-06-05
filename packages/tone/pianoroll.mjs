@@ -10,8 +10,10 @@ const scale = (normalized, min, max) => normalized * (max - min) + min;
 
 Pattern.prototype.pianoroll = function ({
   cycles = 4,
-  playhead = .5,
+  playhead = 0.5,
   overscan = 1,
+  flipTime = 0,
+  flipValues = 0,
   inactive = '#C9E597',
   active = '#FFCA28',
   // background = '#2A3236',
@@ -40,12 +42,14 @@ Pattern.prototype.pianoroll = function ({
   const timeAxis = vertical ? h : w;
   const valueAxis = vertical ? w : h;
   // scale normalized value n to max pixels, flippable
-  const timeRange = vertical ? [timeAxis, 0] : [0, timeAxis]; // pixel range for time
+  let timeRange = vertical ? [timeAxis, 0] : [0, timeAxis]; // pixel range for time
   const timeExtent = to - from; // number of seconds that fit inside the canvas frame
   const valueRange = vertical ? [0, valueAxis] : [valueAxis, 0]; // pixel range for values
   let valueExtent = maxMidi - minMidi + 1; // number of "slots" for values, overwritten if autorange true
   let barThickness = valueAxis / valueExtent; // pixels per value, overwritten if autorange true
   let foldValues = [];
+  flipTime && timeRange.reverse();
+  flipValues && valueRange.reverse();
 
   // duration to px (on timeAxis)
   const playheadPosition = scale(-from / timeExtent, ...timeRange);
@@ -69,7 +73,7 @@ Pattern.prototype.pianoroll = function ({
           ctx.lineTo(playheadPosition, valueAxis);
         }
         ctx.stroke();
-        const timePx = scale((event.whole.begin - from) / timeExtent, ...timeRange);
+        const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
         let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
 
         const valuePx = scale(
@@ -81,19 +85,17 @@ Pattern.prototype.pianoroll = function ({
         const offset = scale(t / timeExtent, ...timeRange);
         let coords;
         if (vertical) {
-          // console.log('durationPx', durationPx);
-          // swap x/y and width/height of rect
           coords = [
-            valuePx + 1, // x
-            timeAxis - durationPx - offset + timePx + margin + 1, // y
+            valuePx + 1 - (flipValues ? barThickness : 0), // x
+            timeAxis - offset + timePx + margin + 1 - (flipTime ? 0 : durationPx), // y
             barThickness - 2, // width
             durationPx - 2, // height
           ];
           // console.log(event.value, 'coords', coords);
         } else {
           coords = [
-            timePx - offset + margin + 1, // x
-            valuePx - barThickness + 1, // y
+            timePx - offset + margin + 1 - (flipTime ? durationPx : 0), // x
+            valuePx + 1 - (flipValues ? 0 : barThickness), // y
             durationPx - 2, // widith
             barThickness - 2, // height
           ];
