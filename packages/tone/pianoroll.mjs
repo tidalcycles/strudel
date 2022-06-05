@@ -21,7 +21,7 @@ Pattern.prototype.pianoroll = function ({
   background = 'transparent',
   minMidi = 10,
   maxMidi = 90,
-  autorange = 1,
+  autorange = 0,
   timeframe: timeframeProp,
   fold = 0,
   vertical = 0,
