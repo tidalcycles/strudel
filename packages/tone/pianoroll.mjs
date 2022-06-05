@@ -14,6 +14,7 @@ Pattern.prototype.pianoroll = function ({
   overscan = 1,
   flipTime = 0,
   flipValues = 0,
+  hideNegative = false,
   inactive = '#C9E597',
   active = '#FFCA28',
   // background = '#2A3236',
@@ -58,9 +59,10 @@ Pattern.prototype.pianoroll = function ({
       ctx.fillStyle = background;
       ctx.clearRect(0, 0, w, h);
       ctx.fillRect(0, 0, w, h);
-      const inFrame = (event) => event.whole.begin >= 0 && event.whole.begin <= t + to && event.whole.end >= t + from;
+      const inFrame = (event) =>
+        (!hideNegative || event.whole.begin >= 0) && event.whole.begin <= t + to && event.whole.end >= t + from;
       events.filter(inFrame).forEach((event) => {
-        const isActive = event.whole.begin <= t && event.whole.end >= t;
+        const isActive = event.whole.begin <= t && event.whole.end > t;
         ctx.fillStyle = event.context?.color || inactive;
         ctx.strokeStyle = event.context?.color || active;
         ctx.globalAlpha = event.context.velocity ?? 1;
