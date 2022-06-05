@@ -6,6 +6,8 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { Pattern } from '@strudel.cycles/core';
 
+const scale = (normalized, min, max) => normalized * (max - min) + min;
+
 Pattern.prototype.pianoroll = function ({
   from = -2,
   to = 2,
@@ -14,30 +16,37 @@ Pattern.prototype.pianoroll = function ({
   active = '#FFCA28',
   // background = '#2A3236',
   background = 'transparent',
-  maxMidi,
-  minMidi,
-  timeframe: timeFrameProp,
+  minMidi = 10,
+  maxMidi = 90,
+  autorange = 1,
+  timeframe: timeframeProp,
+  fold = 0,
+  vertical = 0,
 } = {}) {
-  if (timeFrameProp) {
-    console.warn('timeframe is deprecated! use from/to instead');
-    from = 0;
-    to = timeFrameProp;
-  }
   const ctx = getDrawContext();
   const w = ctx.canvas.width;
   const h = ctx.canvas.height;
-  let midiRange, height;
-  const autorange = minMidi === undefined || maxMidi === undefined;
-  if (autorange && (minMidi !== undefined || maxMidi !== undefined)) {
-    console.warn('pianoroll: minMidi and maxMidi must both be set to have an effect!');
+
+  if (timeframeProp) {
+    console.warn('timeframe is deprecated! use from/to instead');
+    from = 0;
+    to = timeframeProp;
   }
-  if (!autorange) {
-    midiRange = maxMidi - minMidi + 1;
-    height = h / midiRange;
+  if (!autorange && fold) {
+    console.warn('disabling autorange has no effect when fold is enabled');
   }
-  const timeframe = to - from;
-  const t2x = (t) => Math.round(((t - from) / timeframe) * w);
-  const playheadX = t2x(0);
+  const timeAxis = vertical ? h : w;
+  const valueAxis = vertical ? w : h;
+  // scale normalized value n to max pixels, flippable
+  const timeRange = vertical ? [timeAxis, 0] : [0, timeAxis]; // pixel range for time
+  const timeExtent = to - from; // number of seconds that fit inside the canvas frame
+  const valueRange = vertical ? [0, valueAxis] : [valueAxis, 0]; // pixel range for values
+  let valueExtent = maxMidi - minMidi + 1; // number of "slots" for values, overwritten if autorange true
+  let barThickness = valueAxis / valueExtent; // pixels per value, overwritten if autorange true
+  let foldValues = [];
+
+  // duration to px (on timeAxis)
+  const playhead = scale(-from / timeExtent, ...timeRange);
   this.draw(
     (ctx, events, t) => {
       ctx.fillStyle = background;
@@ -50,15 +59,43 @@ Pattern.prototype.pianoroll = function ({
         ctx.strokeStyle = event.context?.color || active;
         ctx.globalAlpha = event.context.velocity ?? 1;
         ctx.beginPath();
-        ctx.moveTo(playheadX, 0);
-        ctx.lineTo(playheadX, h);
+        if (vertical) {
+          ctx.moveTo(0, playhead);
+          ctx.lineTo(valueAxis, playhead);
+        } else {
+          ctx.moveTo(playhead, 0);
+          ctx.lineTo(playhead, valueAxis);
+        }
         ctx.stroke();
-        const x = t2x(event.whole.begin);
-        const width = Math.round(((event.whole.end - event.whole.begin) / timeframe) * w);
-        const y = Math.round(h - ((Number(event.value) - minMidi + 1) / midiRange) * h);
-        const offset = (t / timeframe) * w;
-        const margin = 0;
-        const coords = [x - offset + margin + 1, y + 1, width - 2, height - 2];
+        const timePx = scale((event.whole.begin - from) / timeExtent, ...timeRange);
+        let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
+
+        const valuePx = scale(
+          fold ? foldValues.indexOf(event.value) / foldValues.length : (Number(event.value) - minMidi) / valueExtent,
+          ...valueRange,
+        );
+        let margin = 0;
+        // apply some pixel adjustments
+        const offset = scale(t / timeExtent, ...timeRange);
+        let coords;
+        if (vertical) {
+          // console.log('durationPx', durationPx);
+          // swap x/y and width/height of rect
+          coords = [
+            valuePx + 1, // x
+            timeAxis - durationPx - offset + timePx + margin + 1, // y
+            barThickness - 2, // width
+            durationPx - 2, // height
+          ];
+          // console.log(event.value, 'coords', coords);
+        } else {
+          coords = [
+            timePx - offset + margin + 1, // x
+            valuePx - barThickness + 1, // y
+            durationPx - 2, // widith
+            barThickness - 2, // height
+          ];
+        }
         isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
       });
     },
@@ -66,23 +103,25 @@ Pattern.prototype.pianoroll = function ({
       from: from - overscan,
       to: to + overscan,
       onQuery: (events) => {
+        const getValue = (e) => Number(e.value);
+        const { min, max, values } = events.reduce(
+          ({ min, max, values }, e) => {
+            const v = getValue(e);
+            return {
+              min: v < min ? v : min,
+              max: v > max ? v : max,
+              values: values.includes(v) ? values : [...values, v],
+            };
+          },
+          { min: Infinity, max: -Infinity, values: [] },
+        );
         if (autorange) {
-          const getValue = (e) => Number(e.value);
-          const { min, max } = events.reduce(
-            ({ min, max }, e) => {
-              const v = getValue(e);
-              return {
-                min: v < min ? v : min,
-                max: v > max ? v : max,
-              };
-            },
-            { min: Infinity, max: -Infinity },
-          );
           minMidi = min;
           maxMidi = max;
-          midiRange = maxMidi - minMidi + 1;
-          height = h / midiRange;
+          valueExtent = maxMidi - minMidi + 1;
         }
+        foldValues = values.sort((a, b) => a - b);
+        barThickness = fold ? valueAxis / foldValues.length : valueAxis / valueExtent;
       },
     },
   );
