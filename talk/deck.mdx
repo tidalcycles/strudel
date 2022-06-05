@@ -81,7 +81,6 @@ import ImgTile from './ImgTile';
 <MaxiRepl
   canvasHeight={600}
   code={[
-    '"c3 d3".pianoroll()',
     `stack("<d2       g2      c2@2>",
       "<[f3,c4] [f3,b3] [e3,b3]@2>"
       .early(1/4).struct("x(3,8)".slow(2)))
@@ -89,7 +88,7 @@ import ImgTile from './ImgTile';
   .tone((await piano()).toDestination())
   .pianoroll({overscan:2})`,
     `"0 4 <5 7> 2"
-  .off(1/16,add(5))
+  .off(1/16,x=>x.add(5).color('salmon'))
   .echo(4,.125,.7)
   .scale(cat(
     'C hirajoshi',
@@ -97,8 +96,7 @@ import ImgTile from './ImgTile';
     ))
   .slow(4)
   .tone((await piano()).toDestination())
-  .pianoroll({ from: -3, to: 3 })
-`,
+  .pianoroll({ cycles:16, fold:1, vertical:0 })`,
     `samples({
   clubkick: 'clubkick/2.wav',
   sd: ['808sd/SD0010.WAV','808sd/SD0050.WAV'],
@@ -119,7 +117,7 @@ stack(
     .tone(metal().set(adsr(0,.06,0,0)).chain(vol(0.5),out()))
 )
 // by yaxu`,
-    `"c3 d3 eb3 g3".iter(4).every(3,x=>x.transpose(7))
+    `"c3 d3 eb3 g3".iter(4).every(3,x=>x.transpose(7)) // TODO: bug when using .every on initial load
   .superimpose(
     x=>x.late(1/8).transpose(7).color('white'),
     x=>x.late(1/4).transpose(12).color('yellow'),
