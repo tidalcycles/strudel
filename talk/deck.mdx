@@ -43,7 +43,7 @@ import ImgTile from './ImgTile';
 - 🎤 Dilettante Music Producer of all kinds of genres
 - 💿 ocassionally publishes music with Lui Mafuta & Puste
 - 🔌 Modular Synth & Electronics Lover, Dilettante DJ ..
-- 💌 Coding Blog: [Loophole Letters](https://loophole-letters.vercel.app/)
+- 💌 Coding Blog: [loophole-letters.vercel.app](https://loophole-letters.vercel.app/)
 - 👀 Loves visualizations
 
 <div className="grid grid-cols-5 gap-4 mt-12">
@@ -141,6 +141,16 @@ import ImgTile from './ImgTile';
 <MaxiRepl
   canvasHeight={600}
   code={[
+    `"<0 2 [4 6](3,4,1) 3*2>"
+.scale('D minor')
+.color('salmon')
+.off(1/4, x=>x.scaleTranspose(2).color('green'))
+.off(1/2, x=>x.scaleTranspose(6).color('steelblue'))
+.legato(.5)
+.echo(2, 1/8, .5)
+.tone((await piano()).chain(out()))
+.pianoroll()`,
+    //
     `// froos - xylophone on the floor
 const t = x => x.scaleTranspose("<0 2 4 3>/4").transpose(-2)
 const s = x => x.scale(
@@ -188,83 +198,6 @@ stack(
   "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.02))
   .chain(vol(0.5).connect(delay),out()))
 ).slow(1)`,
-    //
-    `// froos - giant steps, chiptune version
-stack(
-  // melody
-  seq(
-    "[F#5 D5] [B4 G4] Bb4 [B4 A4]",
-    "[D5 Bb4] [G4 Eb4] F#4 [G4 F4]",
-    "Bb4 [B4 A4] D5 [D#5 C#5]",
-    "F#5 [G5 F5] Bb5 [F#5 [F#5 ~@3]]",
-  ),
-  // chords
-  seq(
-    "[B^7 D7] [G^7 Bb7] Eb^7 [Am7 D7]",
-    "[G^7 Bb7] [Eb^7 F#7] B^7 [Fm7 Bb7]",
-    "Eb^7 [Am7 D7] G^7 [C#m7 F#7]",
-    "B^7 [Fm7 Bb7] Eb^7 [C#m7 F#7]"
-  )
-  .struct("~ [x ~]".fast(4*8))
-  .voicings(['E3', 'G4']),
-  // bass
-  seq(
-    "[B2 D2] [G2 D2] [Eb2 Bb2] [A2 D2]",
-    "[G2 Bb2] [Eb2 F#2] [B2 F#2] [F2 Bb2]",
-    "[Eb2 Bb2] [A2 D2] [G2 D2] [C#2 F#2]",
-    "[B2 F#2] [F2 Bb2] [Eb2 Bb2] [C#2 F#2]"
-  )
-  .struct("x ~".fast(4*8))
-).slow(25)`,
-    //
-    `// froos - piano tune #3829
-"0 4 <5 7> 2"
-  .off(1/16,x=>x.add(5).color('salmon'))
-  .echo(4,.125,.7)
-  .scale(cat(
-    'C hirajoshi',
-    slowcat('F hirajoshi','E pentatonic')
-    ))
-  .slow(4)
-  .tone((await piano()).toDestination())
-  .pianoroll({ cycles:16, fold:1, vertical:0 })`,
-    //
-    `// froos - if so what else
-const mix = (key) => vol({
-  chords: .2,
-  lead: 0.8,
-  bass:  .4,
-  snare: .95, 
-  kick:  .9,
-  hihat: .35,
-}[key]||0);
-const delay = new FeedbackDelay(1/6, .3).chain(vol(.7), out());
-const delay2 = new FeedbackDelay(1/6, .2).chain(vol(.15), out());
-const chorus = new Chorus(1,2.5,0.5).start();
-// instruments
-const instr = (instrument) => ({
-  organ: polysynth().set({...osc('sawtooth4'), ...adsr(.01,.2,0)}).chain(mix('chords').connect(delay),out()),
-  lead: polysynth().set({...osc('triangle4'),...adsr(0.01,.05,0)}).chain(mix('lead').connect(delay2), out()),
-  bass: polysynth().set({...osc('sawtooth8'),...adsr(.02,.05,.3,.2)}).chain(mix('bass'),lowpass(3000), out()),
-  pad: polysynth().set({...osc('square2'),...adsr(0.1,.4,0.8)}).chain(vol(0.15),chorus,out()),
-  hihat: metal(adsr(0, .02, 0)).chain(mix('hihat'), out()),
-  snare: noise(adsr(0, .15,  0.01)).chain(mix('snare'), lowpass(5000), out()),
-  kick: membrane().chain(mix('kick'), out())
-}[instrument]);
-// harmony
-const t = transpose("<0 0 1 0>/8");
-const sowhat = scaleTranspose("0,3,6,9,11");
-// track
-stack(
-  "[<0 4 [3 [2 1]]>]/4".struct("[x]*3").mask("[~ x ~]").scale('D5 dorian').off(1/6, scaleTranspose(-7)).off(1/3, scaleTranspose(-5)).apply(t).tone(instr('lead')).mask("<~ ~ x x>/8"),
-  "<<e3 [~@2 a3]> <[d3 ~] [c3 f3] g3>>".scale('D dorian').apply(sowhat).apply(t).tone(instr('organ')).mask("<x x x ~>/8"),
-  "<[d2 [d2 ~]*3]!3 <a1*2 c2*3 [a1 e2]>>".apply(t).tone(instr('bass')),
-  "c1*6".tone(instr('hihat')),
-  "~ c3".tone(instr('snare')),
-  "<[c1@5 c1] <c1 [[c1@2 c1] ~] [c1 ~ c1] [c1!2 ~ c1!3]>>".tone(instr('kick')),
-  "[2,4]/4".scale('D dorian').apply(t).tone(instr('pad')).mask("<x x x ~>/8")
-).fast(6/8)`,
-    //
     `// froos - strudel schneckno
 samples({
   clubkick: 'clubkick/2.wav',
@@ -274,9 +207,14 @@ samples({
   jvbass: ['jvbass/000_01.wav','jvbass/001_02.wav','jvbass/003_04.wav','jvbass/004_05.wav','jvbass/005_06.wav']
 }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
 stack(
-  s("<clubkick*2>,[~ <sd!3 sd(3,4,2)>],hh(3,4,2)").n("<0 1 2>").speed(.8),
-  n("<0 1*2 4(3,8) 2>").speed(.6).off(1/8,x=>x.speed(1.2).degradeBy(.5)).s("jvbass")
-).reset("<x@7 <x(5,8,3) x(3,8) x(3,4,1)>>").cutoff(perlin.slow(7).range(100,20000)).webdirt().slow(3/2)`,
+  s("<clubkick*2>,[~ <sd!3 sd(3,4,2)>],hh(3,4,2)")
+    .n("<0 1 2>").speed(.8),
+  n("<0 1*2 4(3,8) 2>").speed(.6)
+    .off(1/8, x => x.speed(1.2).degradeBy(.5))
+    .s("jvbass")
+).reset("<x@7 <x(5,8,3) x(3,8) x(3,4,1)>>")
+  .cutoff(perlin.slow(7).range(100,20000))
+  .webdirt().slow(3/2)`,
     `stack( // drum pattern by yaxu
   "24*2 [~ 25]".chunk(4, x => x.sub("12").fast(2))
     .tone(membrane().toDestination()),
@@ -317,15 +255,18 @@ stack(
 
 </div>
 
+<img src="./repl.png" className="m-0" />
+
 </Slide><Slide>
 
 ## Mini Notation
+
+\* \[\] ~ , / <\> ! @ \(\)
 
 <div className="text-left">
 
 - Embedded Domain Specific Language
 - PEG.js grammar based on krill by Marc Resibois
-- \* \[\] ~ , / <\> ! @ \(\)
 
 </div>
 
@@ -389,6 +330,185 @@ s("bd,[~ sd],hh*4").webdirt()`,
 
 </Slide><Slide>
 
+## Pattern Factories
+
+seq, cat, stack
+
+<MaxiRepl
+  code={[
+    `seq(c3,e3,g3) // "c3 e3 g3"
+    .tone((await piano()).toDestination())
+    .pianoroll()`,
+    `cat(c3,e3,g3) // "<c3 e3 g3>"
+    .tone((await piano()).toDestination())
+    .pianoroll()`,
+    `stack(c3,e3,g3) // "c3,e3,g3"
+    .tone((await piano()).toDestination())
+    .pianoroll()`,
+  ]}
+/>
+
+</Slide><Slide>
+
+## Time Control
+
+fast / slow, early / late, rev
+
+<MaxiRepl
+  code={[
+    `"[c3 e3 g3]".fast(2) // "[c3 e3 g3]*2"
+    .tone((await piano()).toDestination())
+    .pianoroll()`,
+    `"[c3 e3 g3]".slow(2) // "[c3 e3 g3]/2"
+    .tone((await piano()).toDestination())
+    .pianoroll()`,
+    `stack("c3 e3","<g3 a3 bb3 a3>".early(.16)).late(.16)
+    .tone((await piano()).toDestination())
+    .pianoroll()`,
+    `"c3 e3 g3 bb3".rev()
+    .tone((await piano()).toDestination())
+    .pianoroll()`,
+  ]}
+/>
+
+</Slide><Slide>
+
+## Arithmetic & Patternified Params
+
+add, sub, mul, div
+
+<MaxiRepl
+  code={[
+    `"30,42 45 49 54".add(0)
+    .tone((await piano()).toDestination())
+    .pianoroll({autorange:0,minMidi:30,maxMidi:56})`,
+    `"30,42 45 49 54".add("<0 1 2 1>/2")
+    .tone((await piano()).toDestination())
+    .pianoroll({fold:1,cycles:8})`,
+  ]}
+/>
+
+</Slide><Slide>
+
+## Scales
+
+<MaxiRepl
+  code={[
+    `"-7,0 2 4 7".add("<0 1 2 1>")
+    .scale('F#2 major')
+    .tone((await piano()).toDestination())
+    .pianoroll({autorange:1})`,
+    `"-7, 0 2 4 7".add("<0 1 2 1>")
+    .scale(cat('F#2 major','A2 major').slow(8))
+    .tone((await piano()).toDestination())
+    .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
+  ]}
+/>
+
+</Slide><Slide>
+
+## Articulation
+
+velocity, legato
+
+<MaxiRepl
+  code={[
+    `"-7, 0 2 4 7".add("<0 1 2 1>")
+    .scale(cat('F#2 major','A2 major').slow(8))
+    .legato(.25)
+    .velocity(.5) 
+    .tone((await piano()).toDestination())
+    .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
+    `"-7, 0 2 4 7".add("<0 1 2 1>")
+    .scale(cat('F#2 major','A2 major').slow(8))
+    .legato("<0.25 2>/8")
+    .velocity("<1 .8>/8")
+    .tone((await piano()).toDestination())
+    .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
+  ]}
+/>
+
+</Slide><Slide>
+
+## Continuous Signals / Randomness
+
+sine / saw / tri / square / rand / perlin, range, segment
+
+<MaxiRepl
+  code={[
+    `sine
+  .range(42,54).slow(4).segment(8)
+  .pianoroll({ minMidi:42, maxMidi: 54, autorange:0,
+              cycles:8,fold:0,inactive:'orange'})`,
+  ]}
+/>
+
+</Slide><Slide>
+
+## Humanization
+
+"articulate randomness"
+
+<MaxiRepl
+  code={[
+    `"-7, 0 2 4 7".add("<0 1 2 1>")
+    .scale(cat('F#2 major','A2 major').slow(8))
+    .legato(perlin.range(.5,2))
+    .velocity("<0.4 .3 .7>*3")
+    .late(perlin.range(0,.05))
+    .tone((await piano()).toDestination())
+    .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
+  ]}
+/>
+
+</Slide><Slide>
+
+## Shuffling
+
+iter
+
+<MaxiRepl
+  code={[
+    `"c3 e3 g3 c4".iter(4)
+    .tone((await piano()).toDestination())
+    .pianoroll({autorange:1,cycles:8,fold:1,inactive:'indigo'})`,
+    `stack("-7", "0 2 4 7".iter(4)).add("<0 1 2 1>")
+    .scale(cat('F#2 major','A2 major').slow(8))
+    .legato(perlin.range(.5,2))
+    .velocity(rand.range(.6,.9))
+    .tone((await piano()).toDestination())
+    .pianoroll({autorange:1,cycles:16,fold:1,inactive:'indigo'})`,
+  ]}
+/>
+
+</Slide><Slide>
+
+## Superposition
+
+superimpose, off, echo, echoWith
+
+<MaxiRepl
+  code={[
+    `"0 2 4 7"
+  .superimpose(x=>x.add(7).color('green'))
+  .scale('C major').slow(2)
+  .tone((await piano()).toDestination())
+  .pianoroll({autorange:1,cycles:8,fold:1,inactive:'indigo'})`,
+    `"0 2 4 7"
+  .off(.17, x=>x.add(12).color('green'))
+  .scale('C major').slow(2)
+  .tone((await piano()).toDestination())
+  .pianoroll({autorange:1,cycles:8,fold:1,inactive:'indigo'})`,
+    `"0 2 4 7"
+  .echo(6,.125,.8)
+  .scale('C major').slow(2)
+  .tone((await piano()).toDestination())
+  .pianoroll({autorange:1,cycles:8,fold:1,inactive:'indigo'})`,
+  ]}
+/>
+
+</Slide><Slide>
+
 ## Phasing
 
 Oscillator Detune in slow motion
@@ -402,10 +522,10 @@ Oscillator Detune in slow motion
   .tone((await piano()).toDestination())
   .pianoroll({fold:1,vertical:0,cycles:8})`,
     `// Steve Reich - Clapping Music
-s("hh").struct("x!3 ~ x!2 ~ x ~ x!2 ~").speed(.8)
+s("cp").struct("x!3 ~ x!2 ~ x ~ x!2 ~").speed(.8)
   .jux(x=>x.speed(1.2)
     .late("<0 1 2 3 4 5 6 7 8 9 10 11>/8".div(12))
-  ).slow(2).webdirt().pianoroll()`,
+  ).slow(2).webdirt()`,
   ]}
 />
 
@@ -431,5 +551,38 @@ s("hh").struct("x!3 ~ x!2 ~ x ~ x!2 ~").speed(.8)
   .webdirt()`}
 />
 
+</Slide><Slide>
+
+## Chords and Scales
+
+<MaxiRepl
+code={[`// froos - giant steps, chiptune version
+stack(
+  // melody
+  seq(
+    "[F#5 D5] [B4 G4] Bb4 [B4 A4]",
+    "[D5 Bb4] [G4 Eb4] F#4 [G4 F4]",
+    "Bb4 [B4 A4] D5 [D#5 C#5]",
+    "F#5 [G5 F5] Bb5 [F#5 [F#5 ~@3]]",
+  ),
+  // chords
+  seq(
+    "[B^7 D7] [G^7 Bb7] Eb^7 [Am7 D7]",
+    "[G^7 Bb7] [Eb^7 F#7] B^7 [Fm7 Bb7]",
+    "Eb^7 [Am7 D7] G^7 [C#m7 F#7]",
+    "B^7 [Fm7 Bb7] Eb^7 [C#m7 F#7]"
+  )
+  .struct("~ [x ~]".fast(4*8))
+  .voicings(['E3', 'G4']),
+  // bass
+  seq(
+    "[B2 D2] [G2 D2] [Eb2 Bb2] [A2 D2]",
+    "[G2 Bb2] [Eb2 F#2] [B2 F#2] [F2 Bb2]",
+    "[Eb2 Bb2] [A2 D2] [G2 D2] [C#2 F#2]",
+    "[B2 F#2] [F2 Bb2] [Eb2 Bb2] [C#2 F#2]"
+  )
+  .struct("x ~".fast(4*8))
+).slow(25)`]}/>
+  
 </Slide>
 </Slides>
