@@ -44,7 +44,7 @@ export function MaxiRepl({ code, canvasHeight = 500 }) {
     cleanupUi();
   }, [exampleIndex]);
   return (
-    <div className="text-left block relative">
+    <div className="text-left block max-w-screen relative">
       {examples.length > 1 && (
         <div className="space-x-2 absolute right-2">
           {examples.map((c, i) => (
@@ -56,16 +56,14 @@ export function MaxiRepl({ code, canvasHeight = 500 }) {
           ))}
         </div>
       )}
-      <div className="max-w-screen">
-        <_MiniRepl
-          key={exampleIndex}
-          tune={examples[exampleIndex]}
-          defaultSynth={defaultSynth}
-          hideOutsideView={true}
-          theme={materialPalenightLarge}
-          init={ready}
-        />
-      </div>
+      <_MiniRepl
+        key={exampleIndex}
+        tune={examples[exampleIndex]}
+        defaultSynth={defaultSynth}
+        hideOutsideView={true}
+        theme={materialPalenightLarge}
+        init={ready}
+      />
       <canvas
         id="test-canvas"
         className="w-full pointer-events-none"

@@ -44,6 +44,7 @@ export function Slides({ children }) {
             prose-a:text-indigo-300 
             prose-blockquote:text-gray-200 
             prose-em:text-[1.3em] 
+            prose-strong:text-gray-200
             prose-li:text-[1.4em] 
             prose-headings:font-sans 
             prose-headings:mt-12 
