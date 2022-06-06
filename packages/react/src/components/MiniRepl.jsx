@@ -10,11 +10,12 @@ import styles from './MiniRepl.module.css';
 import { Icon } from './Icon';
 
 export function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init }) {
-  const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay } = useRepl({
-    tune,
-    defaultSynth,
-    autolink: false,
-  });
+  const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } =
+    useRepl({
+      tune,
+      defaultSynth,
+      autolink: false,
+    });
   useEffect(() => {
     init && evaluateOnly();
   }, [tune, init]);
@@ -39,6 +40,9 @@ export function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, i
           </button>
           <button className={cx(dirty ? styles.button : styles.buttonDisabled)} onClick={() => activateCode()}>
             <Icon type="refresh" />
+          </button>
+          <button className={cx(styles.button)} onClick={() => stop(true)}>
+            <Icon type="stop" />
           </button>
         </div>
         {error && <div className={styles.error}>{error.message}</div>}

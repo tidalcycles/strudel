@@ -256,8 +256,13 @@ function useCycle(props) {
     await Tone.start();
     Tone.getTransport().start('+0.1');
   };
-  const stop = () => {
-    Tone.getTransport().pause();
+  const stop = (setZero = false) => {
+    if (setZero) {
+      Tone.getTransport().cancel();
+      Tone.getTransport().stop();
+    } else {
+      Tone.getTransport().pause();
+    }
     setStarted(false);
   };
   const toggle = () => (started ? stop() : start());
@@ -423,12 +428,17 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     }
   };
 
+  const stop = () => {
+    cycle.stop(true);
+    setActiveCode(undefined);
+  };
+
   const evaluateOnly = () => {
     activateCode(code, true);
   };
 
   useEffect(() => {
-    return () => cycle.stop();
+    return () => stop();
   }, []);
 
   return {
@@ -442,6 +452,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     dirty,
     log,
     togglePlay,
+    stop,
     setActiveCode,
     activateCode,
     evaluateOnly,
@@ -543,12 +554,17 @@ function Icon({ type }) {
       fillRule: "evenodd",
       d: "M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z",
       clipRule: "evenodd"
+    }),
+    stop: /* @__PURE__ */ React.createElement("path", {
+      fillRule: "evenodd",
+      d: "M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z",
+      clipRule: "evenodd"
     })
   }[type]);
 }
 
 function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init }) {
-  const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay } = useRepl({
+  const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } = useRepl({
     tune,
     defaultSynth,
     autolink: false
@@ -585,6 +601,11 @@ function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init }) 
     onClick: () => activateCode()
   }, /* @__PURE__ */ React.createElement(Icon, {
     type: "refresh"
+  })), /* @__PURE__ */ React.createElement("button", {
+    className: cx(styles.button),
+    onClick: () => stop(true)
+  }, /* @__PURE__ */ React.createElement(Icon, {
+    type: "stop"
   }))), error && /* @__PURE__ */ React.createElement("div", {
     className: styles.error
   }, error.message)), /* @__PURE__ */ React.createElement("div", {

@@ -142,12 +142,17 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     }
   };
 
+  const stop = () => {
+    cycle.stop(true);
+    setActiveCode(undefined);
+  };
+
   const evaluateOnly = () => {
     activateCode(code, true);
   };
 
   useEffect(() => {
-    return () => cycle.stop();
+    return () => stop();
   }, []);
 
   return {
@@ -161,6 +166,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     dirty,
     log,
     togglePlay,
+    stop,
     setActiveCode,
     activateCode,
     evaluateOnly,

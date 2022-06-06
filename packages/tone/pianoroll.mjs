@@ -51,9 +51,6 @@ Pattern.prototype.pianoroll = function ({
   let foldValues = [];
   flipTime && timeRange.reverse();
   flipValues && valueRange.reverse();
-
-  // duration to px (on timeAxis)
-  const playheadPosition = scale(-from / timeExtent, ...timeRange);
   this.draw(
     (ctx, events, t) => {
       ctx.fillStyle = background;
@@ -66,15 +63,6 @@ Pattern.prototype.pianoroll = function ({
         ctx.fillStyle = event.context?.color || inactive;
         ctx.strokeStyle = event.context?.color || active;
         ctx.globalAlpha = event.context.velocity ?? 1;
-        ctx.beginPath();
-        if (vertical) {
-          ctx.moveTo(0, playheadPosition);
-          ctx.lineTo(valueAxis, playheadPosition);
-        } else {
-          ctx.moveTo(playheadPosition, 0);
-          ctx.lineTo(playheadPosition, valueAxis);
-        }
-        ctx.stroke();
         const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
         let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
 
@@ -104,6 +92,17 @@ Pattern.prototype.pianoroll = function ({
         }
         isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
       });
+      const playheadPosition = scale(-from / timeExtent, ...timeRange);
+      // draw playhead
+      ctx.beginPath();
+      if (vertical) {
+        ctx.moveTo(0, playheadPosition);
+        ctx.lineTo(valueAxis, playheadPosition);
+      } else {
+        ctx.moveTo(playheadPosition, 0);
+        ctx.lineTo(playheadPosition, valueAxis);
+      }
+      ctx.stroke();
     },
     {
       from: from - overscan,

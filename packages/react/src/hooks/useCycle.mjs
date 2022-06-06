@@ -66,8 +66,13 @@ function useCycle(props) {
     await Tone.start();
     Tone.getTransport().start('+0.1');
   };
-  const stop = () => {
-    Tone.getTransport().pause();
+  const stop = (setZero = false) => {
+    if (setZero) {
+      Tone.getTransport().cancel();
+      Tone.getTransport().stop();
+    } else {
+      Tone.getTransport().pause();
+    }
     setStarted(false);
   };
   const toggle = () => (started ? stop() : start());
