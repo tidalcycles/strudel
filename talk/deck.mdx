@@ -3,8 +3,7 @@ import { MaxiRepl } from './MaxiRepl';
 import ImgTile from './ImgTile';
 
 <Slides>
-
-  <Slide>
+<Slide>
 
 <h1 className="mb-0">Strudel</h1>
 
@@ -21,8 +20,7 @@ import ImgTile from './ImgTile';
 </div>
 <img src="./ada.jpg" className="h-[400px] rounded-md" />
 
-</Slide>
-<Slide>
+</Slide><Slide>
 
 ## What is Live Coding?
 
@@ -34,8 +32,7 @@ import ImgTile from './ImgTile';
 <img src="./hydra-screenshot.png" className="h-[600px] rounded-md" />
 <p>Screenshot: "Olivia Jack - Hydra, Live Coding Visuals in the Browser"</p>
 
-</Slide>
-<Slide>
+</Slide><Slide>
 
 ## What is Tidal Cycles?
 
@@ -50,8 +47,7 @@ import ImgTile from './ImgTile';
 <img src="./tidal-screenshot2.png" className="h-[500px] rounded-md" />
 <p>Screenshot: "Yaxu & hellocatfood - LIVE code for Noise Quest"</p>
 
-</Slide>
-<Slide>
+</Slide><Slide>
 
 ## What is Strudel?
 
@@ -73,8 +69,7 @@ import ImgTile from './ImgTile';
 <img src="./strudel-screenshot.png" className="h-[500px] rounded-md mb-0" />
 <p>Screenshot: "Algorave 10th Birthday March 2022 - froos"</p>
 
-</Slide>
-<Slide>
+</Slide><Slide>
 
 ## A Taste of Strudel
 
@@ -131,8 +126,28 @@ stack(
   ]}
 />
 
-</Slide>
-<Slide>
+</Slide><Slide>
+
+## Phasing
+
+Oscillator Detune in slow motion
+
+<MaxiRepl
+  code={[
+    `// steve reich - piano phase
+"E4 F#4 B4 C#5 D5 F#4 E4 C#5 B4 F#4 D5 C#5".color('#00ff0050')
+  .superimpose(x=>x.fast(1.01).color('#ff00ff50'))
+  .slow(2)
+  .tone((await piano()).toDestination())
+  .pianoroll({fold:1,vertical:0,cycles:8})`,
+  ]}
+/>
+
+</Slide><Slide>
+
+## Polyrhythms vs Polyphony
+
+</Slide><Slide>
 
 ## About Me
 
