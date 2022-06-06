@@ -31,6 +31,12 @@ export const fromMidi = (n) => {
   return Math.pow(2, (n - 69) / 12) * 440;
 };
 
+export const midi2note = (n) => {
+  const oct = Math.floor(n / 12) - 1;
+  const pc = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'][n % 12];
+  return pc + oct;
+};
+
 // modulo that works with negative numbers e.g. mod(-1, 3) = 2
 // const mod = (n: number, m: number): number => (n < 0 ? mod(n + m, m) : n % m);
 export const mod = (n, m) => ((n % m) + m) % m;

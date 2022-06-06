@@ -62,7 +62,11 @@ Pattern.prototype.tone = function (instrument) {
       } else if (instrument instanceof NoiseSynth) {
         instrument.triggerAttackRelease(hap.duration.valueOf(), time); // noise has no value
       } else if (instrument instanceof Piano) {
-        note = getPlayableNoteValue(hap);
+        // note = getPlayableNoteValue(hap); // piano does not understand frequencies
+        note = hap.value;
+        if (typeof note === 'number') {
+          note = midi2note(note);
+        }
         instrument.keyDown({ note, time, velocity });
         instrument.keyUp({ note, time: time + hap.duration.valueOf(), velocity });
       } else if (instrument instanceof Sampler) {
