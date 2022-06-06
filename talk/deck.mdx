@@ -134,12 +134,17 @@ Oscillator Detune in slow motion
 
 <MaxiRepl
   code={[
-    `// steve reich - piano phase
+    `// Steve Reich - Piano Phase
 "E4 F#4 B4 C#5 D5 F#4 E4 C#5 B4 F#4 D5 C#5".color('#00ff0050')
   .superimpose(x=>x.fast(1.01).color('#ff00ff50'))
   .slow(2)
   .tone((await piano()).toDestination())
   .pianoroll({fold:1,vertical:0,cycles:8})`,
+    `// Steve Reich - Clapping Music
+s("hh").struct("x!3 ~ x!2 ~ x ~ x!2 ~").speed(.8)
+  .jux(x=>x.speed(1.2)
+    .late("<0 1 2 3 4 5 6 7 8 9 10 11>/8".div(12))
+  ).slow(2).webdirt().pianoroll()`,
   ]}
 />
 
@@ -200,8 +205,16 @@ Oscillator Detune in slow motion
 ## Continuous Signals
 
 <MaxiRepl
-  code={`sine.range(50,62).segment(32).slow(4)
-  .pianoroll({minMidi:48,maxMidi:62})`}
+  code={[
+    `sine.range(50,62).segment(32).slow(4)
+  .pianoroll({minMidi:48,maxMidi:62})`,
+    `sine.range(42,50).color('#00ff0050')
+  .superimpose(x=>x.fast(3/2).color('#ff00ff50'))
+  .fast(1)
+  .segment(64)
+  .pianoroll({fold:0,vertical:0,cycles:2})
+// strudel disable-highlighting`,
+  ]}
 />
 
 <MaxiRepl
