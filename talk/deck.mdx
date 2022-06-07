@@ -10,12 +10,24 @@ import ImgTile from './ImgTile';
 <h2 className="mt-0">Algorithmic Patterns for the Web</h2>
 
 <div className="flex space-x-2 items-center">
+  <em className="hidden">
+    "The Analytical Engine weaves algebraic patterns, just as the Jacquard loom weaves flowers and leaves." - Ada
+    Lovelace
+  </em>
   <em>
-    "The Analytical Engine weaves algebraic patterns, just as the Jacquard loom weaves flowers and leaves."
+    “[The Analytical Engine] might act upon other things besides <strong>number</strong>, were objects found whose
+    mutual fundamental relations could be expressed by those of the abstract science of <strong>operations</strong>{' '}
+    [...]
+    <span className="hidden">
+      , and which should be also susceptible of adaptations to the action of the operating notation and mechanism of the
+      engine.{' '}
+    </span>
     <br />
-    “Supposing, for instance, that the fundamental relations of pitched sounds in the science of harmony and of musical
-    composition were susceptible of such expression and adaptations, the [Analytical] Engine might compose elaborate and
-    scientific pieces of music of any degree of complexity or extent." - Ada Lovelace
+    Supposing, for instance, that the fundamental relations of pitched sounds in the science of harmony and of musical composition
+    were susceptible of such expression and adaptations, the [Analytical] Engine might compose elaborate and scientific pieces
+    of music of any degree of complexity or extent."
+    <br />
+    -- Ada Lovelace, (1815 - 1852)
   </em>
 </div>
 <img src="./ada.jpg" className="h-[400px] rounded-md" />
@@ -29,10 +41,11 @@ import ImgTile from './ImgTile';
 - How to represent and control music with code?
 - How to leverage unique features of computing?
 - How to break loose from old conventions?
+- Answer: Live Coding?
 
 </div>
 
-</Slide><Slide>
+</Slide><Slide hidden>
 
 ## About Me
 
@@ -94,7 +107,7 @@ import ImgTile from './ImgTile';
 <div className="text-left">
 
 - A very popular software for live coding music
-- a powerful pattern language for time-based art
+- a powerful pattern language, inspired by konnakol and weaving
 - find out more at <a href="https://tidalcycles.org" target="_blank" className="text-indigo-400">tidalcycles.org</a>
 
 </div>
@@ -266,13 +279,13 @@ stack(
 <div className="text-left">
 
 - Embedded Domain Specific Language
-- PEG.js grammar based on krill by Marc Resibois
+- PEG grammar based on [krill](https://github.com/Mdashdotdashn/krill/) by Marc Resibois
 
 </div>
 
 <MaxiRepl
   code={[
-    '"c3".pianoroll({ fold:1 })',
+    '"c3 d3 e3 f3".pianoroll({ fold:1 })',
     `// mini notation also works with samples
 s("bd,[~ sd],hh*4").webdirt()`,
     `\`[[e5 [b4 c5] d5 [c5 b4]]
@@ -325,8 +338,73 @@ s("bd,[~ sd],hh*4").webdirt()`,
   >\`
   .legato(.5)
 ).fast(2).pianoroll({fold:1,cycles:8,overscan:8})`,
+    `stack(
+"c2 <g2 g1>", 
+"<[e3,[g3 a3 bb3 a3]]!11 [e3,g3]>".slow(2)
+  .struct("<[[x@2 x]*4]!11 [[~@2 x] [[x@2 ~]*9]@3]>".slow(2))
+)
+  .velocity("[.9@2 .6]*2".add(rand.range(-.1,.1)))
+  .transpose("<1 6 1@2 6@2 1@2 8 6 1 8>/2")
+  .tone((await piano()).toDestination())`,
   ]}
 />
+
+</Slide><Slide>
+
+## Parsing Expression Grammars
+
+<div className="text-left">
+
+1. write [peg](https://github.com/tidalcycles/strudel/blob/main/packages/mini/krill.pegjs), generate [parser](https://github.com/tidalcycles/strudel/blob/main/packages/mini/krill-parser.js) with [parser generator](https://peggyjs.org/)
+2. pass string (e.g. `c3 [e3 g3]`) to generated parser
+3. obtain Abstract Syntax Tree (AST)
+4. [transform](https://github.com/tidalcycles/strudel/blob/main/packages/mini/mini.mjs#L76) AST into Pattern
+
+</div>
+
+<img src="./pegflow.png" className="m-0" />
+
+[OhmJS Editor](https://ohmjs.org/editor/)
+
+</Slide><Slide>
+
+## AST of `c3 [e3 g3]`
+
+<div className="text-left">
+
+```js
+{
+  "type_": "pattern",
+  "arguments_": { "alignment": "h" },
+  "source_": [
+    {
+      "type_": "element", "source_": "c3",
+      "location_": { "start": { "offset": 1, "line": 1, "column": 2 }, "end": { "offset": 4, "line": 1, "column": 5 } }
+    },
+    {
+      "type_": "element",
+      "location_": { "start": { "offset": 4, "line": 1, "column": 5 }, "end": { "offset": 11, "line": 1, "column": 12 } }
+      "source_": {
+        "type_": "pattern", "arguments_": { "alignment": "h" },
+        "source_": [
+          {
+            "type_": "element", "source_": "e3",
+            "location_": { "start": { "offset": 5, "line": 1, "column": 6 }, "end": { "offset": 8, "line": 1, "column": 9 } }
+          },
+          {
+            "type_": "element", "source_": "g3",
+            "location_": { "start": { "offset": 8, "line": 1, "column": 9 }, "end": { "offset": 10, "line": 1, "column": 11 } }
+          }
+        ]
+      },
+    }
+  ]
+}
+```
+
+</div>
+
+= `seq(c3, seq(e3, g3))`
 
 </Slide><Slide>
 
@@ -352,7 +430,7 @@ seq, cat, stack
 
 ## Time Control
 
-fast / slow, early / late, rev
+fast / slow, early / late, rev, palindrome
 
 <MaxiRepl
   code={[
@@ -362,14 +440,46 @@ fast / slow, early / late, rev
     `"[c3 e3 g3]".slow(2) // "[c3 e3 g3]/2"
     .tone((await piano()).toDestination())
     .pianoroll()`,
-    `stack("c3 e3","<g3 a3 bb3 a3>".early(.16)).late(.16)
-    .tone((await piano()).toDestination())
-    .pianoroll()`,
+    `stack(
+  "c3 e3".color('steelblue'),
+  "<g3 a3 bb3 a3>".early(.16)
+).late(.16)
+  .tone((await piano()).toDestination())
+  .pianoroll()`,
     `"c3 e3 g3 bb3".rev()
     .tone((await piano()).toDestination())
     .pianoroll()`,
   ]}
 />
+
+</Slide><Slide>
+
+## JavaScript Transpilation
+
+<div className="text-left">
+
+- [converting](https://github.com/tidalcycles/strudel/blob/main/packages/eval/shapeshifter.mjs#L40) valid JavaScript to valid JavaScript
+
+<img src="./shiftflow.png" className="m-0" />
+
+<br/>
+<div className="grid grid-cols-2 gap-4 mt-4">
+
+<span>Before (User Code)</span>
+<span>After (Ready to Eval)</span>
+
+<pre className="m-0">{`"c3 e3"
+  .fast(2)`}</pre>
+
+<pre className="m-0">{`mini('c3 e3')
+  .withMiniLocation([1,0,0],[1,7,7])
+  .fast(2)`}</pre>
+
+</div>
+
+</div>
+
+[Blog Post](https://loophole-letters.vercel.app/shift-ast), [AST Explorer](https://astexplorer.net/)
 
 </Slide><Slide>
 
@@ -381,7 +491,7 @@ add, sub, mul, div
   code={[
     `"30,42 45 49 54".add(0)
     .tone((await piano()).toDestination())
-    .pianoroll({autorange:0,minMidi:30,maxMidi:56})`,
+    .pianoroll({autorange:0,minMidi:28,maxMidi:56})`,
     `"30,42 45 49 54".add("<0 1 2 1>/2")
     .tone((await piano()).toDestination())
     .pianoroll({fold:1,cycles:8})`,
@@ -440,6 +550,14 @@ sine / saw / tri / square / rand / perlin, range, segment
   .range(42,54).slow(4).segment(8)
   .pianoroll({ minMidi:42, maxMidi: 54, autorange:0,
               cycles:8,fold:0,inactive:'orange'})`,
+    `s("hh*8").speed(sine.range(.5,2).slow(4))
+  .webdirt()`,
+    `sine.range(42,50).color('#00ff0050')
+  .superimpose(x=>x.fast(3/2).color('#ff00ff50'))
+  .fast(1)
+  .segment(64)
+  .pianoroll({fold:0,vertical:0,cycles:2})
+// strudel disable-highlighting`,
   ]}
 />
 
@@ -461,7 +579,7 @@ sine / saw / tri / square / rand / perlin, range, segment
   ]}
 />
 
-</Slide><Slide>
+</Slide><Slide hidden>
 
 ## Shuffling
 
@@ -531,32 +649,20 @@ s("cp").struct("x!3 ~ x!2 ~ x ~ x!2 ~").speed(.8)
 
 </Slide><Slide>
 
-## Continuous Signals
+## Chord Voicings
+
+chord dictionaries + smooth voice leading (<a href="https://loophole-letters.vercel.app/rhythmical-chords" target="_blank">blog post</a>)
 
 <MaxiRepl
-  code={[
-    `sine.range(50,62).segment(32).slow(4)
-  .pianoroll({minMidi:48,maxMidi:62})`,
-    `sine.range(42,50).color('#00ff0050')
-  .superimpose(x=>x.fast(3/2).color('#ff00ff50'))
-  .fast(1)
-  .segment(64)
-  .pianoroll({fold:0,vertical:0,cycles:2})
-// strudel disable-highlighting`,
-  ]}
-/>
-
-<MaxiRepl
-  code={`s("hh*8").speed(sine.range(.5,2).slow(4))
-  .webdirt()`}
-/>
-
-</Slide><Slide>
-
-## Chords and Scales
-
-<MaxiRepl
-code={[`// froos - giant steps, chiptune version
+code={[
+  `"Am7 [Bm7b5 E7b9]"
+  .struct("x(3,8)".fast(2))
+  .voicings(['E3', 'G4'])
+  .stack("A2 [E2 <Bb2 C2>] <B2 B1> E2")
+  .slow(4)
+  .tone((await piano()).toDestination())
+  .pianoroll({cycles:8,fold:1,inactive:'orange'})`,
+  `// froos - giant steps, stride version
 stack(
   // melody
   seq(
@@ -582,7 +688,60 @@ stack(
     "[B2 F#2] [F2 Bb2] [Eb2 Bb2] [C#2 F#2]"
   )
   .struct("x ~".fast(4*8))
-).slow(25)`]}/>
+).slow(25)
+  .tone((await piano()).toDestination())
+  .pianoroll({cycles:8,fold:1,inactive:'orange'})`]}/>
   
+</Slide><Slide>
+
+## Strudel Packages
+
+`npm i @strudel.cycles/*`, where \* is one of:
+
+<div className="text-left">
+
+- core: tidal pattern engine
+- mini: mini notation parser + core binding
+- eval: user code evaluator. syntax sugar + highlighting
+- tone: bindings for Tone.js instruments and effects
+- osc: bindings to communicate via OSC
+- midi: webmidi bindings
+- serial: webserial bindings
+- tonal: tonal functions
+- xen: microtonal / xenharmonic functions
+- ... there are [more](https://github.com/tidalcycles/strudel/tree/main/packages)
+
+</div>
+
+</Slide><Slide>
+
+## Workflow
+
+<div className="text-left">
+
+- Everything is in one [monorepo](https://github.com/tidalcycles/strudel)
+- Development via npm workspaces
+- Packages are published with lerna
+- REPL is Deployed to github pages
+- Features are added with Pull Requests
+- Automated tests run for every PR
+- Snapshot tests
+
+</div>
+
+</Slide><Slide>
+
+## Tech Stack
+
+<div className="text-left">
+
+- REPL: Codemirror 6 + react + tailwind
+- Everything is built with vite
+- In source documentation with jsdoc
+- Tutorial written with MDX
+- jsdoc is inserted into MDX with nunjucks
+
+</div>
+
 </Slide>
 </Slides>
