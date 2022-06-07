@@ -330,7 +330,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     onEvent: useCallback(
       (time, event, currentTime) => {
         try {
-          onEvent?.(event);
+          onEvent?.(time, event, currentTime);
           if (event.context.logs?.length) {
             event.context.logs.forEach(pushLog);
           }
@@ -339,8 +339,10 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
             if (defaultSynth) {
               const note = getPlayableNoteValue(event);
               defaultSynth.triggerAttackRelease(note, event.duration.valueOf(), time, velocity);
-            } else {
-              throw new Error('no defaultSynth passed to useRepl.');
+            } else if (!onEvent) {
+              throw new Error(
+                'no defaultSynth nor onEvent passed to useRepl + event has no onTrigger. nothing happens',
+              );
             }
             /* console.warn('no instrument chosen', event);
           throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
@@ -563,11 +565,12 @@ function Icon({ type }) {
   }[type]);
 }
 
-function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init }) {
+function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, onEvent }) {
   const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } = useRepl({
     tune,
     defaultSynth,
-    autolink: false
+    autolink: false,
+    onEvent
   });
   useEffect(() => {
     init && evaluateOnly();
