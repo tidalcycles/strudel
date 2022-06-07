@@ -45,7 +45,7 @@ export function MaxiRepl({ code, canvasHeight = 500 }) {
   return (
     <div className="text-left block max-w-screen relative">
       {examples.length > 1 && (
-        <div className="space-x-2 absolute right-2">
+        <div className="space-x-2 absolute left-[200px] top-[-3px]">
           {examples.map((c, i) => (
             <button
               key={i}
