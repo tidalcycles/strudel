@@ -1,16 +1,17 @@
-import { useState, useLayoutEffect, useEffect, useCallback } from 'react';
+import { useState, useLayoutEffect, useEffect, useCallback, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const getUrlIndex = () => parseInt(window.location.hash.split('#')[1] || 0, 10);
 
 export function Slides({ children }) {
-  const [slide, setSlide] = useState(getUrlIndex() % children.length);
+  const visible = useMemo(() => children.filter((child) => !child.props.hidden), [children]);
+  const [slide, setSlide] = useState(getUrlIndex() % visible.length);
   useEffect(() => {
     window.location.hash = '#' + slide;
   }, [slide]);
 
-  const next = useCallback(() => setSlide((s) => (s + 1) % children.length), [children]);
-  const prev = useCallback(() => setSlide((s) => (s + children.length - 1) % children.length), [children]);
+  const next = useCallback(() => setSlide((s) => (s + 1) % visible.length), [visible]);
+  const prev = useCallback(() => setSlide((s) => (s + visible.length - 1) % visible.length), [visible]);
 
   useLayoutEffect(() => {
     const handleKeyPress = async (e) => {
@@ -47,16 +48,17 @@ export function Slides({ children }) {
             prose-strong:text-gray-200
             prose-li:text-[1.4em] 
             prose-headings:font-sans 
+            prose-code:text-gray-300
             prose-headings:mt-12 
             prose-2xl 
             prose-slate`}
             >
-              <center>{children[slide]}</center>
+              <center>{visible[slide]}</center>
             </div>
           </div>
         </motion.div>
       </AnimatePresence>
-      <SlideNav onNext={next} onPrev={prev} slides={children} />
+      <SlideNav onNext={next} onPrev={prev} slides={visible} />
     </div>
   );
 }
