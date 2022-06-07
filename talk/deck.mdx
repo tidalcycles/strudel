@@ -294,7 +294,7 @@ stack(
 
 <MaxiRepl
   code={[
-    '"c3 d3 e3 f3".pianoroll({ fold:1 })',
+    '"c3 d3 e3 g3".pianoroll({ fold:0 })',
     `// mini notation also works with samples
 s("bd,[~ sd],hh*4").webdirt()`,
     `\`[[e5 [b4 c5] d5 [c5 b4]]
@@ -429,6 +429,8 @@ seq, cat, stack
     .pianoroll()`,
     `stack(c3,e3,g3) // "c3,e3,g3"
     .pianoroll()`,
+    `stack(c3, seq(e3, cat(g3, c4))) // "c3,[e3,<g3 c4>]"
+    .pianoroll()`,
   ]}
 />
 
@@ -440,9 +442,9 @@ fast / slow, early / late, rev, palindrome
 
 <MaxiRepl
   code={[
-    `"[c3 e3 g3]".fast(2) // "[c3 e3 g3]*2"
+    `"c3 e3 g3".fast(2) // "[c3 e3 g3]*2"
     .pianoroll()`,
-    `"[c3 e3 g3]".slow(2) // "[c3 e3 g3]/2"
+    `"c3 e3 g3".slow(2) // "[c3 e3 g3]/2"
     .pianoroll()`,
     `stack(
   "c3 e3".color('steelblue'),
@@ -491,9 +493,9 @@ add, sub, mul, div
 
 <MaxiRepl
   code={[
-    `"30,42 45 49 54".add(0)
+    `"30,42 45 49 54".add(0).slow(2)
     .pianoroll({autorange:0,minMidi:28,maxMidi:56})`,
-    `"30,42 45 49 54".add("<0 1 2 1>/2")
+    `"30,42 45 49 54".add("<0 1 2 1>").slow(2)
     .pianoroll({fold:1,cycles:8})`,
   ]}
 />
@@ -602,7 +604,7 @@ superimpose, off, echo, echoWith
 
 <MaxiRepl
   code={[
-    `"0 2 4 7"
+    `"0 [2 1] 4 7"
   .superimpose(x=>x.add(5).color('green'))
   .scale('C major').slow(2)
   .pianoroll({autorange:1,cycles:8,fold:0,inactive:'indigo'})`,
@@ -627,7 +629,7 @@ Oscillator Detune in slow motion
 
 <MaxiRepl
   code={[
-    `// Steve Reich - Piano Phase
+    `// Steve Reich - Piano Phase (1967)
 "E4 F#4 B4 C#5 D5 F#4 E4 C#5 B4 F#4 D5 C#5".color('#00ff0050')
   .superimpose(x=>x.fast(1.01).color('#ff00ff50'))
   .slow(2)
@@ -683,6 +685,12 @@ stack(
 ).slow(25)
   .pianoroll({cycles:8,fold:1,inactive:'orange'})`]}/>
   
+</Slide><Slide>
+
+## Speech
+
+<MaxiRepl code={['"<hello world>".speak()']} />
+
 </Slide><Slide>
 
 ## Strudel Packages
