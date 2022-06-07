@@ -4,13 +4,12 @@ import controls from '@strudel.cycles/core/controls.mjs';
 import { loadWebDirt } from '@strudel.cycles/webdirt';
 import { materialPalenightLarge } from './materialPalenightThemeLarge';
 import { useState, useEffect } from 'react';
-import { cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
+import { cleanupDraw, cleanupUi, Tone, piano } from '@strudel.cycles/tone';
+import { midi2note } from '@strudel.cycles/core';
 
-export const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination).set({
-  oscillator: { type: 'triangle' },
-  envelope: {
-    release: 0.01,
-  },
+let defaultPiano;
+piano().then((instrument) => {
+  defaultPiano = instrument.toDestination();
 });
 
 const init = evalScope(
@@ -59,10 +58,22 @@ export function MaxiRepl({ code, canvasHeight = 500 }) {
       <_MiniRepl
         key={exampleIndex}
         tune={examples[exampleIndex]}
-        defaultSynth={defaultSynth}
         hideOutsideView={true}
         theme={materialPalenightLarge}
         init={ready}
+        onEvent={(time, hap) => {
+          if (hap.context.onTrigger) {
+            // dont need default synth
+            return;
+          }
+          let velocity = hap.context?.velocity ?? 0.75;
+          note = hap.value;
+          if (typeof note === 'number') {
+            note = midi2note(note);
+          }
+          defaultPiano.keyDown({ note, time, velocity });
+          defaultPiano.keyUp({ note, time: time + hap.duration.valueOf(), velocity });
+        }}
       />
       <canvas
         id="test-canvas"

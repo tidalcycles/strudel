@@ -161,7 +161,6 @@ import ImgTile from './ImgTile';
 .off(1/2, x=>x.scaleTranspose(6).color('steelblue'))
 .legato(.5)
 .echo(2, 1/8, .5)
-.tone((await piano()).chain(out()))
 .pianoroll()`,
     //
     `// froos - xylophone on the floor
@@ -243,12 +242,22 @@ stack(
 
 ## How it started
 
+<div className="text-left mb-0">
+
+<blockquote>
+  "Any application that can be written in JavaScript, will eventually be written in JavaScript."
+  <br />
+  Jeff Atwood, 2009{' '}
+</blockquote>
+
+</div>
+
 ![strudel port quote](https://loophole-letters.vercel.app/img/strudel-port.png)
 
 <div className="text-left">
 
 - Started by Alex McLean, based on a port of a port of a rewrite of Tidal
-- I implemented the REPL
+- I implemented the REPL + additional strudel packages
 - Help from Tidal Community Members
 - Started with Tone.js, then added Web MIDI, OSC and Web Audio API outputs
 - Inspired by: Tidal Vortex, Gibber, Estuary, Hydra, WAGS and Feedforward.
@@ -343,9 +352,9 @@ s("bd,[~ sd],hh*4").webdirt()`,
 "<[e3,[g3 a3 bb3 a3]]!11 [e3,g3]>".slow(2)
   .struct("<[[x@2 x]*4]!11 [[~@2 x] [[x@2 ~]*9]@3]>".slow(2))
 )
-  .velocity("[.9@2 .6]*2".add(rand.range(-.1,.1)))
+  .velocity("[.7@2 .9]*2".add(rand.range(-.1,.1)))
   .transpose("<1 6 1@2 6@2 1@2 8 6 1 8>/2")
-  .tone((await piano()).toDestination())`,
+  .pianoroll({ fold:1, cycles:16 })`,
   ]}
 />
 
@@ -415,13 +424,10 @@ seq, cat, stack
 <MaxiRepl
   code={[
     `seq(c3,e3,g3) // "c3 e3 g3"
-    .tone((await piano()).toDestination())
     .pianoroll()`,
     `cat(c3,e3,g3) // "<c3 e3 g3>"
-    .tone((await piano()).toDestination())
     .pianoroll()`,
     `stack(c3,e3,g3) // "c3,e3,g3"
-    .tone((await piano()).toDestination())
     .pianoroll()`,
   ]}
 />
@@ -435,19 +441,15 @@ fast / slow, early / late, rev, palindrome
 <MaxiRepl
   code={[
     `"[c3 e3 g3]".fast(2) // "[c3 e3 g3]*2"
-    .tone((await piano()).toDestination())
     .pianoroll()`,
     `"[c3 e3 g3]".slow(2) // "[c3 e3 g3]/2"
-    .tone((await piano()).toDestination())
     .pianoroll()`,
     `stack(
   "c3 e3".color('steelblue'),
   "<g3 a3 bb3 a3>".early(.16)
 ).late(.16)
-  .tone((await piano()).toDestination())
   .pianoroll()`,
     `"c3 e3 g3 bb3".rev()
-    .tone((await piano()).toDestination())
     .pianoroll()`,
   ]}
 />
@@ -490,10 +492,8 @@ add, sub, mul, div
 <MaxiRepl
   code={[
     `"30,42 45 49 54".add(0)
-    .tone((await piano()).toDestination())
     .pianoroll({autorange:0,minMidi:28,maxMidi:56})`,
     `"30,42 45 49 54".add("<0 1 2 1>/2")
-    .tone((await piano()).toDestination())
     .pianoroll({fold:1,cycles:8})`,
   ]}
 />
@@ -506,11 +506,9 @@ add, sub, mul, div
   code={[
     `"-7,0 2 4 7".add("<0 1 2 1>")
     .scale('F#2 major')
-    .tone((await piano()).toDestination())
     .pianoroll({autorange:1})`,
     `"-7, 0 2 4 7".add("<0 1 2 1>")
     .scale(cat('F#2 major','A2 major').slow(8))
-    .tone((await piano()).toDestination())
     .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
   ]}
 />
@@ -527,13 +525,11 @@ velocity, legato
     .scale(cat('F#2 major','A2 major').slow(8))
     .legato(.25)
     .velocity(.5) 
-    .tone((await piano()).toDestination())
     .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
     `"-7, 0 2 4 7".add("<0 1 2 1>")
     .scale(cat('F#2 major','A2 major').slow(8))
     .legato("<0.25 2>/8")
     .velocity("<1 .8>/8")
-    .tone((await piano()).toDestination())
     .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
   ]}
 />
@@ -548,6 +544,7 @@ sine / saw / tri / square / rand / perlin, range, segment
   code={[
     `sine
   .range(42,54).slow(4).segment(8)
+  .tone(synth().toDestination())
   .pianoroll({ minMidi:42, maxMidi: 54, autorange:0,
               cycles:8,fold:0,inactive:'orange'})`,
     `s("hh*8").speed(sine.range(.5,2).slow(4))
@@ -555,6 +552,7 @@ sine / saw / tri / square / rand / perlin, range, segment
     `sine.range(42,50).color('#00ff0050')
   .superimpose(x=>x.fast(3/2).color('#ff00ff50'))
   .fast(1)
+  .tone(synth().toDestination())
   .segment(64)
   .pianoroll({fold:0,vertical:0,cycles:2})
 // strudel disable-highlighting`,
@@ -574,7 +572,6 @@ sine / saw / tri / square / rand / perlin, range, segment
     .legato(perlin.range(.5,2))
     .velocity("<0.4 .3 .7>*3")
     .late(perlin.range(0,.05))
-    .tone((await piano()).toDestination())
     .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
   ]}
 />
@@ -588,13 +585,11 @@ iter
 <MaxiRepl
   code={[
     `"c3 e3 g3 c4".iter(4)
-    .tone((await piano()).toDestination())
     .pianoroll({autorange:1,cycles:8,fold:1,inactive:'indigo'})`,
     `stack("-7", "0 2 4 7".iter(4)).add("<0 1 2 1>")
     .scale(cat('F#2 major','A2 major').slow(8))
     .legato(perlin.range(.5,2))
     .velocity(rand.range(.6,.9))
-    .tone((await piano()).toDestination())
     .pianoroll({autorange:1,cycles:16,fold:1,inactive:'indigo'})`,
   ]}
 />
@@ -608,20 +603,17 @@ superimpose, off, echo, echoWith
 <MaxiRepl
   code={[
     `"0 2 4 7"
-  .superimpose(x=>x.add(7).color('green'))
+  .superimpose(x=>x.add(5).color('green'))
   .scale('C major').slow(2)
-  .tone((await piano()).toDestination())
-  .pianoroll({autorange:1,cycles:8,fold:1,inactive:'indigo'})`,
+  .pianoroll({autorange:1,cycles:8,fold:0,inactive:'indigo'})`,
     `"0 2 4 7"
-  .off(.17, x=>x.add(12).color('green'))
+  .off(.17, x=>x.add(9).color('green'))
   .scale('C major').slow(2)
-  .tone((await piano()).toDestination())
-  .pianoroll({autorange:1,cycles:8,fold:1,inactive:'indigo'})`,
+  .pianoroll({autorange:1,cycles:8,fold:0,inactive:'indigo'})`,
     `"0 2 4 7"
   .echo(6,.125,.8)
   .scale('C major').slow(2)
-  .tone((await piano()).toDestination())
-  .pianoroll({autorange:1,cycles:8,fold:1,inactive:'indigo'})`,
+  .pianoroll({autorange:1,cycles:8,fold:0,inactive:'indigo'})`,
   ]}
 />
 
@@ -637,7 +629,6 @@ Oscillator Detune in slow motion
 "E4 F#4 B4 C#5 D5 F#4 E4 C#5 B4 F#4 D5 C#5".color('#00ff0050')
   .superimpose(x=>x.fast(1.01).color('#ff00ff50'))
   .slow(2)
-  .tone((await piano()).toDestination())
   .pianoroll({fold:1,vertical:0,cycles:8})`,
     `// Steve Reich - Clapping Music
 s("cp").struct("x!3 ~ x!2 ~ x ~ x!2 ~").speed(.8)
@@ -660,7 +651,6 @@ code={[
   .voicings(['E3', 'G4'])
   .stack("A2 [E2 <Bb2 C2>] <B2 B1> E2")
   .slow(4)
-  .tone((await piano()).toDestination())
   .pianoroll({cycles:8,fold:1,inactive:'orange'})`,
   `// froos - giant steps, stride version
 stack(
@@ -689,7 +679,6 @@ stack(
   )
   .struct("x ~".fast(4*8))
 ).slow(25)
-  .tone((await piano()).toDestination())
   .pianoroll({cycles:8,fold:1,inactive:'orange'})`]}/>
   
 </Slide><Slide>
