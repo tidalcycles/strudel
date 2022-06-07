@@ -90,7 +90,6 @@ Pattern.prototype.pianoroll = function ({
             barThickness - 2, // height
           ];
         }
-        coords = coords.map((c) => Math.round(c));
         isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
       });
       const playheadPosition = scale(-from / timeExtent, ...timeRange);
