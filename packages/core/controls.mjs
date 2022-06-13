@@ -760,4 +760,13 @@ generic_params.forEach(([type, name, description]) => {
   Pattern.prototype[name] = _setter(controls[name]);
 });
 
+// create custom param
+controls.createParam = (name) => {
+  Pattern.prototype[name] = _setter(controls[name]);
+  return (...pats) => _name(name, ...pats);
+};
+
+controls.createParams = (...names) =>
+  names.reduce((acc, name) => Object.assign(acc, { [name]: createParam(name) }), {});
+
 export default controls;
