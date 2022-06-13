@@ -4,11 +4,25 @@ import ImgTile from './ImgTile';
 
 <Slides>
 <Slide>
+<div className="w-full h-full flex justify-center items-center">
+<div>
 
-<h1 className="mb-0">Strudel</h1>
+# Strudel
 
-<h2 className="mt-0">Algorithmic Patterns for the Web</h2>
+## Algorithmic Patterns for the Web
 
+![strudel](https://www.hammermuehle-shop.de/media/image/8f/4e/c2/Hackfleisch-Strudel.jpg)
+
+</div>
+</div>
+
+</Slide><Slide hidden>
+
+<img src="./ada.jpg" className="h-[600px] rounded-md" />
+
+</Slide><Slide hidden>
+
+<img src="./ada.jpg" className="h-[400px] rounded-md" />
 <div className="flex space-x-2 items-center">
   <em className="hidden">
     "The Analytical Engine weaves algebraic patterns, just as the Jacquard loom weaves flowers and leaves." - Ada
@@ -30,17 +44,17 @@ import ImgTile from './ImgTile';
     -- Ada Lovelace, (1815 - 1852)
   </em>
 </div>
-<img src="./ada.jpg" className="h-[400px] rounded-md" />
 
 </Slide><Slide>
 
-<img src="./codeandmusic.png" className="h-[700px] rounded-md" />
+<img src="./codeandmusic.png" className="h-[700px] rounded-md -my-24" />
 
 <div className="text-left">
 
 - How to represent and control music with code?
 - How to leverage unique features of computing?
 - How to break loose from old conventions?
+- How to improvise electronic music?
 - Answer: Live Coding?
 
 </div>
@@ -277,7 +291,7 @@ stack(
 
 </div>
 
-<img src="./repl.png" className="m-0" />
+<img src="./repl.png" className="-my-16" />
 
 </Slide><Slide>
 
@@ -371,7 +385,7 @@ s("bd,[~ sd],hh*4").webdirt()`,
 
 </div>
 
-<img src="./pegflow.png" className="m-0" />
+<img src="./pegflow.png" className="-my-16" />
 
 [OhmJS Editor](https://ohmjs.org/editor/)
 
@@ -460,13 +474,11 @@ fast / slow, early / late, rev, palindrome
 
 ## JavaScript Transpilation
 
+[converting](https://github.com/tidalcycles/strudel/blob/main/packages/eval/shapeshifter.mjs#L40) valid JavaScript to valid JavaScript
+
+<img src="./shiftflow.png" className="-my-16" />
+
 <div className="text-left">
-
-- [converting](https://github.com/tidalcycles/strudel/blob/main/packages/eval/shapeshifter.mjs#L40) valid JavaScript to valid JavaScript
-
-<img src="./shiftflow.png" className="m-0" />
-
-<br/>
 <div className="grid grid-cols-2 gap-4 mt-4">
 
 <span>Before (User Code)</span>
@@ -503,6 +515,8 @@ add, sub, mul, div
 </Slide><Slide>
 
 ## Scales
+
+generating notes from numbers
 
 <MaxiRepl
   code={[

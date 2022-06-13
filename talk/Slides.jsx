@@ -37,7 +37,7 @@ export function Slides({ children }) {
           exit={{ opacity: 0 }}
           className="w-screen h-screen"
         >
-          <div className="flex justify-center items-center px-6">
+          <div className="flex justify-center px-6 min-h-full overflow-auto">
             <div
               className={`px-8 prose grow max-w-[1280px] 
             text-gray-200 font-serif 
