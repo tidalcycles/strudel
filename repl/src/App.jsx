@@ -28,6 +28,7 @@ evalScope(
   import('@strudel.cycles/webaudio'),
   import('@strudel.cycles/osc'),
   import('@strudel.cycles/webdirt'),
+  import('@strudel.cycles/serial'),
 );
 
 loadWebDirt({
