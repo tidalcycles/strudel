@@ -29,8 +29,8 @@ Pattern.prototype.pianoroll = function ({
   const ctx = getDrawContext();
   const w = ctx.canvas.width;
   const h = ctx.canvas.height;
-  const from = -cycles * playhead;
-  const to = cycles * (1 - playhead);
+  let from = -cycles * playhead;
+  let to = cycles * (1 - playhead);
 
   if (timeframeProp) {
     console.warn('timeframe is deprecated! use from/to instead');
