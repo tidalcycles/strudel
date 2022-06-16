@@ -816,3 +816,22 @@ stack(
   "<Cm7 [Dm7b5 G7b9] Bbm7 [Cm7b5 F7b9]>".fast(2).struct("x ~ x@3 x ~ x ~ ~ ~ x ~ x@3".late(1/8)).early(1/8).slow(2).voicings(),
   "[~ [0 ~]] 0 [~ [4 ~]] 4".sub(7).restart(scales).scale(scales).early(.25)
 ).tone((await piano()).toDestination()).slow(2)`;
+
+export const customTrigger = `stack(
+  freq("55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)").layer(x=>x.mul("1.006,.995"))),
+  freq("440(5,8)".legato(.18).mul("<1 3/4 2 2/3>")).gain(perlin.range(.2,.8))
+).s("<sawtooth square>/2")
+  .onTrigger((t,hap,ct)=>{
+  const ac = Tone.getContext().rawContext;
+  t = ac.currentTime + t - ct;
+  const { freq, s, gain = 1 } = hap.value;
+  const master = ac.createGain();
+  master.gain.value = 0.1 * gain;
+  master.connect(ac.destination);
+  const o = ac.createOscillator();
+  o.type = s || 'triangle';
+  o.frequency.value = Number(freq);
+  o.connect(master);
+  o.start(t);
+  o.stop(t + hap.duration);
+}).stack(s("bd(3,8),hh*4,~ sd").webdirt())`;

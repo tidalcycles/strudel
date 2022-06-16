@@ -92,3 +92,67 @@ Pattern.prototype.out = function () {
 };
 
 Pattern.prototype.define('wave', (type, pat) => pat.wave(type), { patternified: true });
+
+/*
+
+// TODO: throw all this away and use that:
+
+stack(
+  freq("55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)")
+       .layer(x=>x.mul("1.006,.995"))), // detune
+  freq("440(5,8)".legato(.18).mul("<1 3/4 2 2/3>")).gain(perlin.range(.2,.8))
+).s("<sawtooth square>/2")
+  .cutoff(perlin.range(100,4000).slow(4))//.resonance(saw.range(0,15).slow(7))
+  .jux(rev)
+  .onTrigger((t,hap,ct) => {
+  const ac = Tone.getContext().rawContext;
+  // calculate correct time (tone.js workaround)
+  t = ac.currentTime + t - ct;
+  // destructure value
+  const { freq, s, gain = 1, 
+         cutoff, resonance = 1, 
+         hcutoff, hresonance = 1,
+         bandf, bandq = 1,
+         pan
+        } = hap.value;
+  // TODO get frequency from n or note
+  // oscillator
+  const o = ac.createOscillator();
+  o.type = s || 'triangle';
+  o.frequency.value = Number(freq);
+  o.start(t);
+  o.stop(t + hap.duration);
+  // chaining logic
+  let last = o;
+  const addToChain = (node) => {
+    last.connect(node);
+    last = node;
+  }
+  // filters
+  const getFilter = (type, frequency, Q) => {
+    const filter = ac.createBiquadFilter();
+    filter.type = type;
+    filter.frequency.value = frequency;
+    filter.Q.value = Q;
+    return filter;
+  }
+  cutoff !== undefined && addToChain(getFilter('lowpass', cutoff, resonance));
+  hcutoff !== undefined && addToChain(getFilter('highpass', hcutoff, hresonance));
+  bandf !== undefined && addToChain(getFilter('bandpass', bandf, bandq));
+  // TODO: vowel
+  // TODO: delay / delaytime / delayfeedback
+  // panning
+  if(pan !== undefined) {
+    const panner = ac.createStereoPanner();
+    panner.pan.value = 2*pan-1;
+    addToChain(panner);
+  }
+  // gain out
+  const master = ac.createGain();
+  master.gain.value = 0.1 * gain;
+  master.connect(ac.destination);
+  last.connect(master);
+})
+.stack(s("bd(3,8),hh*4,~ sd").webdirt())
+
+*/
