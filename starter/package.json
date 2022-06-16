@@ -10,8 +10,5 @@
   "devDependencies": {
     "vite": "^2.9.9"
   },
-  "dependencies": {
-    "@strudel.cycles/eval": "^0.1.1",
-    "@strudel.cycles/webaudio": "^0.1.1"
-  }
+  "dependencies": {}
 }
