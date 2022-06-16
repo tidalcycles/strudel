@@ -14,12 +14,12 @@ await evalScope(
 ); // add strudel to eval scope
 
 const audioContext = getAudioContext();
-const latency = 0.5;
+const latency = 0.2;
 
 // load default samples + init webdirt
 loadWebDirt({
   audioContext,
-  // latency,
+  latency,
   sampleMapUrl: 'https://strudel.tidalcycles.org/EmuSP12.json',
   sampleFolder: 'https://strudel.tidalcycles.org/EmuSP12/',
 });
@@ -28,7 +28,10 @@ loadWebDirt({
 const scheduler = new Scheduler({
   audioContext,
   interval: 0.1,
+  latency,
   onEvent: (hap) => {
+    /*     const delta = hap.whole.begin - audioContext.currentTime;
+    console.log('delta', delta); */
     // when using .osc or .webdirt, each hap will have context.onTrigger set
     // if no onTrigger is set, try to play hap.value as frequency with a cheap oscillator
     if (!hap.context.onTrigger) {
@@ -54,9 +57,9 @@ document.getElementById('start').addEventListener('click', async () => {
       s("bd(3,8),hh*4,~ sd").webdirt(),
       stack(
         "55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)"),
-        "440(5,8)".legato(.2).mul("<1 3/4 2 2/3>")
-      ).velocity(.5)
-    )`,
+        //"440(5,8)".legato(.2).mul("<1 3/4 2 2/3>")
+      ).superimpose(x=>x.mul(2.005).late(1/4))
+    ).slow(1)`,
   );
   scheduler.setPattern(pattern);
   scheduler.start();
