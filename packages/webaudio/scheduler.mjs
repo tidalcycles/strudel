@@ -18,10 +18,12 @@ export class Scheduler {
           if (!e.part.begin.equals(e.whole.begin)) {
             return;
           }
+          if (e.context.onTrigger) {
+            // TODO: kill first param, as it's contained in e
+            e.context.onTrigger(e.whole.begin, e, audioContext.currentTime, 1 /* cps */);
+          }
           if (onEvent) {
             onEvent?.(e);
-          } else {
-            console.warn('unplayable event: no audio node nor onEvent callback', e);
           }
         });
       },
