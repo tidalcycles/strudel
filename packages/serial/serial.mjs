@@ -43,8 +43,27 @@ Pattern.prototype.serial = async function (...args) {
     const onTrigger = (time, hap, currentTime) => {
       var message = "";
       if (typeof hap.value === 'object') {
-        for (const [key, val] of Object.entries(hap.value).flat()) {
-          message += `${key}:${val};`
+        if ('what' in hap.value) {
+          message += hap.value['what'] + '(';
+          var first = true;
+          for (const [key, val] of Object.entries(hap.value)) {
+            if (key === 'what') {
+              continue;
+            }
+            if (first) {
+              first = false;
+            }
+            else {
+              message +=',';
+            }
+            message += `${key}:${val}`
+          }
+          message += ')';
+        }
+        else {
+          for (const [key, val] of Object.entries(hap.value)) {
+            message += `${key}:${val};`
+          }
         }
       }
       else {
