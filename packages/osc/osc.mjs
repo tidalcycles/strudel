@@ -22,13 +22,15 @@ let startedAt = -1;
  */
 Pattern.prototype.osc = function () {
   return this._withHap((hap) => {
-    const onTrigger = (time, hap, currentTime, cps, cycle, delta) => {
+    const onTrigger = (time, hap, currentTime, cps) => {
+      const cycle = hap.wholeOrPart().begin.valueOf();
+      const delta = hap.duration.valueOf();
       // time should be audio time of onset
       // currentTime should be current time of audio context (slightly before time)
       if (startedAt < 0) {
         startedAt = Date.now() - currentTime * 1000;
       }
-      const controls = Object.assign({}, { cps: cps, cycle: cycle, delta: delta }, hap.value);
+      const controls = Object.assign({}, { cps, cycle, delta }, hap.value);
       const keyvals = Object.entries(controls).flat();
       const ts = Math.floor(startedAt + (time + latency) * 1000);
       const message = new OSC.Message('/dirt/play', ...keyvals);
