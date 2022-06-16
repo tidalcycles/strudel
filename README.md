@@ -2,7 +2,7 @@
 
 [![Strudel test status](https://github.com/tidalcycles/strudel/actions/workflows/test.yml/badge.svg)](https://github.com/tidalcycles/strudel/actions)
 
-An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using web technologies. This is software is slowly stabilising, but please continue to tread carefully.
+An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using web technologies. This software is slowly stabilising, but please continue to tread carefully.
 
 - Try it here: <https://strudel.tidalcycles.org/>
 - Tutorial: <https://strudel.tidalcycles.org/tutorial/>
