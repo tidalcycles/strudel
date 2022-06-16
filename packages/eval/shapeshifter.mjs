@@ -89,7 +89,7 @@ export default (_code) => {
 
       const isMarkable = isPatternArg(parents) || hasModifierCall(parent);
       // add to location to pure(x) calls
-      if (node.type === 'CallExpression' && node.callee.name === 'pure') {
+      if (addLocations && node.type === 'CallExpression' && node.callee.name === 'pure') {
         const literal = node.arguments[0];
         // const value = literal[{ LiteralNumericExpression: 'value', LiteralStringExpression: 'name' }[literal.type]];
         return reifyWithLocation(literal, node.arguments[0], ast.locations, artificialNodes);
