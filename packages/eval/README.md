@@ -17,7 +17,10 @@ npm i @strudel.cycles/eval --save
 import { evaluate, extend } from '@strudel.cycles/eval';
 import * as strudel from '@strudel.cycles/core';
 
-extend(strudel); // add strudel to eval scope
+evalScope(
+  import('@strudel.cycles/core'),
+  // import other strudel packages here
+); // add strudel to eval scope
 
 async function run(code) {
   const { pattern } = await evaluate(code);
