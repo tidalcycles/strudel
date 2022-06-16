@@ -7,24 +7,42 @@ This program is free software: you can redistribute it and/or modify it under th
 // import Fraction from 'fraction.js';
 import { TimeSpan } from './timespan.mjs';
 
+let instances = 0;
+let strings = 0;
+let fractions = 0;
+let numbers = 0;
+setInterval(() => {
+  console.log(`${instances} calls = ${numbers} numbers + ${fractions} fractions + ${strings} strings`);
+  instances = 0;
+  strings = 0;
+  fractions = 0;
+  numbers = 0;
+}, 1000);
+
+// http://localhost:3000/#c3RhY2soCiAgImUzLGJiMyxkNCIuc3RydWN0KCJ4KDMsOCwtMSkiKS5vZmYoMS84LHg9PngudHJhbnNwb3NlKDEyKS52ZWxvY2l0eSguMikpLAogICJjMiIuc3RydWN0KCJ4KDQsOCwtMikiKSwKICAiYzMiLnN0cnVjdCgieCgzLDgsLTIpIi5mYXN0KDIpKQopLnNsb3coMikKIC5lY2hvKDQsLjEyNSwuOCkKIC52ZWxvY2l0eShzaW5lLnN0cnVjdCgieCo4IikuYWRkKDMvNSkubXVsKDIvNSkuZmFzdCg4KSkKIC8vIC5waWFub3JvbGwoKQovLyBzdHJ1ZGVsIGRpc2FibGUtaGlnaGxpZ2h0aW5n
+// ~400k/s
+
 // this is a "mock" for fraction.js, using just floats without any rational arithmetic
 // to test if the performance gets better without fraction.js
 // result: it seems to get better but not by much
 // the main jankyness remains for some cpmplicated patterns
-// i tried counting the calls of Fraction.add and noticed there can be ~250 million calls per second
-// so even if the add function is just a regular add, the sheer number of calls is a problem
+// i tried counting the calls to Fraction and noticed there can be ~400k calls per second for not so complicated patterns
 
 class Fraction {
   value; // number
   constructor(value) {
+    instances++;
     if (value instanceof Fraction) {
       this.value = value.value;
+      fractions++;
     } else if (typeof value === 'string') {
       const [n, d] = value.split('/');
       this.value = n / (d || 1);
+      strings++;
     } else if (typeof value !== 'number' || isNaN(value)) {
       console.warn('Fraction got NaN', value);
     } else {
+      numbers++;
       this.value = Number(value);
       if (isNaN(this.value)) {
         console.warn('Fraction parsed NaN from', value);
