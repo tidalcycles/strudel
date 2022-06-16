@@ -25,14 +25,14 @@ setInterval(() => {
 // this is a "mock" for fraction.js, using just floats without any rational arithmetic
 // to test if the performance gets better without fraction.js
 // result: it seems to get better but not by much
-// the main jankyness remains for some cpmplicated patterns
-// i tried counting the calls to Fraction and noticed there can be ~400k calls per second for not so complicated patterns
+// the main jankyness remains for some complicated patterns
 
 class Fraction {
   value; // number
   constructor(value) {
     instances++;
     if (value instanceof Fraction) {
+      // TODO: return this?
       this.value = value.value;
       fractions++;
     } else if (typeof value === 'string') {
@@ -82,6 +82,7 @@ class Fraction {
   equals(other) {
     return this.value.valueOf() === other.valueOf();
   }
+  // TODO: toFraction
 }
 
 // Returns the start of the cycle.
@@ -91,12 +92,16 @@ Fraction.prototype.sam = function () {
 
 // Returns the start of the next cycle.
 Fraction.prototype.nextSam = function () {
+  // return new Fraction(Math.floor(this.value) + 1);
   return this.sam().add(1);
 };
 
 // Returns a TimeSpan representing the begin and end of the Time value's cycle
 Fraction.prototype.wholeCycle = function () {
   return new TimeSpan(this.sam(), this.nextSam());
+  /*   const begin = Math.floor(this.value);
+  const end = begin + 1;
+  return new TimeSpan(begin, end); */
 };
 
 // The position of a time value relative to the start of its cycle.
