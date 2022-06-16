@@ -1049,6 +1049,9 @@ export class Pattern {
       .unit('c')
       .slow(factor);
   }
+  onTrigger(onTrigger) {
+    return this._withHap((hap) => hap.setContext({ ...hap.context, onTrigger }));
+  }
 }
 
 // TODO - adopt value.mjs fully..
