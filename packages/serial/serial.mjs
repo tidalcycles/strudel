@@ -34,7 +34,6 @@ export async function getWriter(br=115200) {
 
 const latency = 0.1;
 
-// Pattern.prototype.midi = function (output: string | number, channel = 1) {
 Pattern.prototype.serial = async function (...args) {
   return this._withHap((hap) => {
     if (!serialWriter) {
@@ -43,11 +42,11 @@ Pattern.prototype.serial = async function (...args) {
     const onTrigger = (time, hap, currentTime) => {
       var message = "";
       if (typeof hap.value === 'object') {
-        if ('what' in hap.value) {
-          message += hap.value['what'] + '(';
+        if ('action' in hap.value) {
+          message += hap.value['action'] + '(';
           var first = true;
           for (const [key, val] of Object.entries(hap.value)) {
-            if (key === 'what') {
+            if (key === 'action') {
               continue;
             }
             if (first) {
@@ -69,6 +68,7 @@ Pattern.prototype.serial = async function (...args) {
       else {
         message = hap.value;
       }
+      console.log("sending: " + message);
       const offset = (time - currentTime + latency) * 1000;
       window.setTimeout(serialWriter, offset, message);
     };

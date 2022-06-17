@@ -744,6 +744,11 @@ const generic_params = [
   ['f', 'uid', ''],
   ['f', 'val', ''],
   ['f', 'cps', ''],
+  ['s', 'action', ''],
+  ['f', 'by', ''],
+  ['s', 'part', ''],
+  ['f', 'to', ''],
+  ['f', 'duration', ''],
 ];
 
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
