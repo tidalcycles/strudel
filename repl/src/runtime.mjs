@@ -84,6 +84,9 @@ const toneHelpersMocked = {
 strudel.Pattern.prototype.tone = function () {
   return this;
 };
+strudel.Pattern.prototype.webdirt = function () {
+  return this;
+};
 
 // draw mock
 strudel.Pattern.prototype.pianoroll = function () {
@@ -184,6 +187,6 @@ export const testCycles = {
   randomBells: 24,
   waa: 16,
   waar: 16,
-  hyperpop: 60,
+  hyperpop: 10,
   festivalOfFingers3: 16,
 };
