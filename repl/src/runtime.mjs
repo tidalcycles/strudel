@@ -6,6 +6,7 @@
 import { evaluate } from '@strudel.cycles/eval';
 import { extend } from '@strudel.cycles/eval';
 import * as strudel from '@strudel.cycles/core';
+import controls from '@strudel.cycles/core/controls.mjs';
 // import gist from '@strudel.cycles/core/gist.js';
 import { mini } from '@strudel.cycles/mini/mini.mjs';
 // import { Tone } from '@strudel.cycles/tone';
@@ -116,6 +117,7 @@ const uiHelpersMocked = {
   backgroundImage: id,
 };
 
+
 // TODO: refactor to evalScope
 extend(
   // Tone,
@@ -123,6 +125,7 @@ extend(
   strudel.Pattern.prototype.bootstrap(),
   toneHelpersMocked,
   uiHelpersMocked,
+  controls,
   /* controls,
   toneHelpers,
   voicingHelpers,
