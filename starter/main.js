@@ -54,12 +54,14 @@ document.getElementById('start').addEventListener('click', async () => {
   const { pattern } = await evaluate(
     // 's("bd sd").osc()', // need to run sclang + osc server (npm run osc in strudel root)
     `stack(
-      s("bd(3,8),hh*4,~ sd").webdirt(),
-      stack(
-        "55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)"),
-        //"440(5,8)".legato(.2).mul("<1 3/4 2 2/3>")
-      ).superimpose(x=>x.mul(2.005).late(1/4))
-    ).slow(1)`,
+      freq("55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)")
+           .layer(x=>x.mul("1.006,.995"))), // detune
+      freq("440(5,8)".legato(.18).mul("<1 3/4 2 2/3>")).gain(perlin.range(.2,.8))
+    ).s("<sawtooth square>/2")
+      .cutoff(perlin.range(100,4000).slow(4))
+      .jux(rev)
+      .out()
+      .stack(s("bd(3,8),hh*4,~ sd").webdirt())`,
   );
   scheduler.setPattern(pattern);
   scheduler.start();
