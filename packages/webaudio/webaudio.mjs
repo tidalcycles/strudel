@@ -7,8 +7,17 @@ This program is free software: you can redistribute it and/or modify it under th
 // import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
 import { fromMidi } from '@strudel.cycles/core';
-import { Tone } from '@strudel.cycles/tone';
 const { Pattern } = strudel;
+
+// export const getAudioContext = () => Tone.getContext().rawContext;
+
+let audioContext;
+export const getAudioContext = () => {
+  if (!audioContext) {
+    audioContext = new AudioContext();
+  }
+  return audioContext;
+};
 
 const getFilter = (ac, type, frequency, Q) => {
   const filter = ac.createBiquadFilter();
@@ -31,7 +40,7 @@ const getADSR = (ac, attack, decay, sustain, release, velocity, begin, end) => {
 
 Pattern.prototype.out = function () {
   return this.onTrigger((t, hap, ct) => {
-    const ac = Tone.getContext().rawContext;
+    const ac = getAudioContext();
     // calculate correct time (tone.js workaround)
     t = ac.currentTime + t - ct;
     // destructure value
