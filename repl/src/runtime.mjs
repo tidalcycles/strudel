@@ -6,6 +6,7 @@
 import { evaluate } from '@strudel.cycles/eval';
 import { extend } from '@strudel.cycles/eval';
 import * as strudel from '@strudel.cycles/core';
+import controls from '@strudel.cycles/core/controls.mjs';
 // import gist from '@strudel.cycles/core/gist.js';
 import { mini } from '@strudel.cycles/mini/mini.mjs';
 // import { Tone } from '@strudel.cycles/tone';
@@ -83,6 +84,9 @@ const toneHelpersMocked = {
 strudel.Pattern.prototype.tone = function () {
   return this;
 };
+strudel.Pattern.prototype.webdirt = function () {
+  return this;
+};
 
 // draw mock
 strudel.Pattern.prototype.pianoroll = function () {
@@ -116,6 +120,7 @@ const uiHelpersMocked = {
   backgroundImage: id,
 };
 
+
 // TODO: refactor to evalScope
 extend(
   // Tone,
@@ -123,6 +128,7 @@ extend(
   strudel.Pattern.prototype.bootstrap(),
   toneHelpersMocked,
   uiHelpersMocked,
+  controls,
   /* controls,
   toneHelpers,
   voicingHelpers,
@@ -181,6 +187,6 @@ export const testCycles = {
   randomBells: 24,
   waa: 16,
   waar: 16,
-  hyperpop: 60,
+  hyperpop: 10,
   festivalOfFingers3: 16,
 };
