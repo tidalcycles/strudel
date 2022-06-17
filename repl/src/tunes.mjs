@@ -855,3 +855,13 @@ export const customTrigger = `stack(
   o.start(t);
   o.stop(t + hap.duration);
 }).stack(s("bd(3,8),hh*4,~ sd").webdirt())`;
+
+export const bornagain = `stack(
+  freq("55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)")
+       .layer(x=>x.mul("1.006,.995"))), // detune
+  freq("440(5,8)".legato(.18).mul("<1 3/4 2 2/3>")).gain(perlin.range(.2,.8))
+).s("<sawtooth square>/2")
+  .cutoff(perlin.range(100,4000).slow(4))
+  .jux(rev)
+  .out()
+  .stack(s("bd(3,8),hh*4,~ sd").webdirt())`;
