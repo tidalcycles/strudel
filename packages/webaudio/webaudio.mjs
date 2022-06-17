@@ -19,16 +19,16 @@ export const getAudioContext = () => {
   return audioContext;
 };
 
-const getFilter = (ac, type, frequency, Q) => {
-  const filter = ac.createBiquadFilter();
+const getFilter = (type, frequency, Q) => {
+  const filter = getAudioContext().createBiquadFilter();
   filter.type = type;
   filter.frequency.value = frequency;
   filter.Q.value = Q;
   return filter;
 };
 
-const getADSR = (ac, attack, decay, sustain, release, velocity, begin, end) => {
-  const gainNode = ac.createGain();
+const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {
+  const gainNode = getAudioContext().createGain();
   gainNode.gain.setValueAtTime(0, begin);
   gainNode.gain.linearRampToValueAtTime(velocity, begin + attack); // attack
   gainNode.gain.linearRampToValueAtTime(sustain * velocity, begin + attack + decay); // sustain start
@@ -82,12 +82,12 @@ Pattern.prototype.out = function () {
     o.stop(t + hap.duration + release);
     chain.push(o);
     // envelope
-    const adsr = getADSR(ac, attack, decay, sustain, release, 1, t, t + hap.duration);
+    const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hap.duration);
     chain.push(adsr);
     // filters
-    cutoff !== undefined && chain.push(getFilter(ac, 'lowpass', cutoff, resonance));
-    hcutoff !== undefined && chain.push(getFilter(ac, 'highpass', hcutoff, hresonance));
-    bandf !== undefined && chain.push(getFilter(ac, 'bandpass', bandf, bandq));
+    cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
+    hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
+    bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
     // TODO vowel
     // TODO delay / delaytime / delayfeedback
     // panning
