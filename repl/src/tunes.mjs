@@ -728,7 +728,7 @@ bell = bell.chain(vol(0.6).connect(delay),out());
   .slow(6)
   .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})`;
 
-export const waa = `"a4 [a3 c3] a3 c3"
+/* export const waa = `n("a4 [a3 c3] a3 c3")
 .sub("<7 12>/2")
 .off(1/8, add("12"))
 .off(1/4, add("7"))
@@ -736,23 +736,37 @@ export const waa = `"a4 [a3 c3] a3 c3"
 .slow(2)
 .wave("sawtooth square")
 .filter('lowpass', "<2000 1000 500>")
-.out()`;
+.out()`; */
 
-export const waar = `"a4 [a3 c3] a3 c3".color('#F9D649')
-.sub("<7 12 5 12>".slow(2))
-.off(1/4,x=>x.add(7).color("#FFFFFF #0C3AA1 #C63928"))
-.off(1/8,x=>x.add(12).color('#215CB6'))
-.slow(2)
-.legato(sine.range(0.3, 2).slow(28))
-.wave("sawtooth square".fast(2))
-.filter('lowpass', cosine.range(500,4000).slow(16))
-.out()
-.pianoroll({minMidi:20,maxMidi:120,background:'#202124'})`;
+export const waa = `n(
+  "a4 [a3 c3] a3 c3"
+  .sub("<7 12>/2")
+  .off(1/8, add("12"))
+  .off(1/4, add("7"))
+)
+  .legato(.5)
+  .slow(2)
+  .s("sawtooth square")
+  .cutoff("<2000 1000 500>")
+  .out()
+`;
+
+export const waa2 = `n(
+  "a4 [a3 c3] a3 c3"
+  .sub("<7 12 5 12>".slow(2))
+  .off(1/4,x=>x.add(7))
+  .off(1/8,x=>x.add(12))
+)
+  .slow(2)
+  .legato(sine.range(0.3, 2).slow(28))
+  .s("sawtooth square".fast(2))
+  .cutoff(cosine.range(500,4000).slow(16))
+  .out()`;
 
 export const hyperpop = `const lfo = cosine.slow(15);
 const lfo2 = sine.slow(16);
-const filter1 = x=>x.filter('lowpass', lfo2.range(300,3000));
-const filter2 = x=>x.filter('highpass', lfo.range(1000,6000)).filter('lowpass',4000)
+const filter1 = x=>x.cutoff(lfo2.range(300,3000));
+const filter2 = x=>x.hcutoff(lfo.range(1000,6000)).cutoff(4000)
 const scales = cat('D3 major', 'G3 major').slow(8)
 
 const drums = await players({
@@ -765,24 +779,30 @@ const drums = await players({
 
 stack(
   "-7 0 -7 7".struct("x(5,8,2)").fast(2).sub(7)
-  .scale(scales).wave("sawtooth,square").velocity(.3).adsr(0.01,0.1,.5,0)
+  .scale(scales)
+  .n()
+  .s("sawtooth,square")
+  .gain(.3).attack(0.01).decay(0.1).sustain(.5)
   .apply(filter1),
   "~@3 [<2 3>,<4 5>]"
-  .echo(8,1/16,.7)
+  .echo(4,1/16,.7)
   .scale(scales)
-  .wave('square').velocity(.7).adsr(0.01,0.1,0).apply(filter1),
-  "6 5 4".add(14)
+  .n()
+  .s('square').gain(.7)
+  .attack(0.01).decay(0.1).sustain(0)
+  .apply(filter1),
+  "6 4 2".add(14)
   .superimpose(sub("5"))
   .fast(1).euclidLegato(3,8)
   .mask("<1 0@7>")
   .fast(2)
-  .echo(32, 1/8, .9)
+  .echo(32, 1/8, .8)
   .scale(scales)
-  .wave("sawtooth")
-  .velocity(.2)
-  .adsr(.01,.5,0)
+  .n()
+  .s("sawtooth")
+  .gain(sine.range(.1,.4).slow(8))
+  .attack(.001).decay(.2).sustain(0)
   .apply(filter2)
-  //.echo(4,1/16,.5)
 ).out().stack(
   stack(
     "bd <~@7 [~ bd]>".fast(2),
@@ -790,7 +810,7 @@ stack(
     "[~ hh3]*2"
   ).tone(drums.chain(vol(.18),out())).fast(2)
 ).slow(2)
-
+  
 //.pianoroll({minMidi:20, maxMidi:160})
 // strudel disable-highlighting`;
 
