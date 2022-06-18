@@ -61,6 +61,9 @@ Pattern.prototype.out = function () {
       decay = 0,
       sustain = 1,
       release = 0.001,
+      speed = 1, // sample playback speed
+      begin = 0,
+      end = 1,
     } = hap.value;
     // the chain will hold all audio nodes that connect to each other
     const chain = [];
@@ -91,17 +94,30 @@ Pattern.prototype.out = function () {
         console.warn('sample not found:', s, 'try one of ' + Object.keys(samples));
         return;
       } else {
+        if (speed === 0) {
+          // no playback
+          return;
+        }
+        if (!s) {
+          console.warn('no sample specified');
+          return;
+        }
         const bank = samples[s];
         const sampleUrl = bank[n % bank.length];
         let buffer = await loadBuffer(sampleUrl, ac);
         if (ac.currentTime > t) {
-          console.warn('sample still loading:', s);
+          console.warn('sample still loading:', s, n);
           return;
         }
         const src = ac.createBufferSource();
         src.buffer = buffer;
-        src.start(t);
-        src.stop(t + hap.duration + release);
+        let duration = src.buffer.duration;
+        const offset = begin * duration;
+        const sus = ((end - begin) * duration) / Math.abs(speed);
+        src.playbackRate.value = Math.abs(speed);
+        // TODO: nudge, unit, cut, loop
+        src.start(t, offset, sus);
+        src.stop(t + duration);
         chain.push(src);
       }
     }
