@@ -867,12 +867,12 @@ export const bornagain = `stack(
   .stack(s("bd(3,8),hh*4,~ sd").webdirt())`;
 
 export const meltingsubmarine = `samples({
-  clubkick: 'clubkick/2.wav',
-  sd: '808sd/SD0010.WAV',
-  hh: 'hh/000_hh3closedhh.wav',
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
 }, 'github:tidalcycles/Dirt-Samples/master/');
 stack(
-  s("<clubkick*2>,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
+  s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
   .speed(perlin.range(.7,.9)) // random sample speed variation
   //.hush()
   ,"<a1 b1*2 a1(3,8) e2>" // bassline
