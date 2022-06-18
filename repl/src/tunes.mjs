@@ -870,7 +870,7 @@ export const meltingsubmarine = `samples({
   clubkick: 'clubkick/2.wav',
   sd: '808sd/SD0010.WAV',
   hh: 'hh/000_hh3closedhh.wav',
-}, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/Dirt-Samples/master/');
 stack(
   s("<clubkick*2>,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
   .speed(perlin.range(.7,.9)) // random sample speed variation
