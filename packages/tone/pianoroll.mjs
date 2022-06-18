@@ -6,39 +6,126 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { Pattern } from '@strudel.cycles/core';
 
+const scale = (normalized, min, max) => normalized * (max - min) + min;
+
 Pattern.prototype.pianoroll = function ({
-  timeframe = 10,
+  cycles = 4,
+  playhead = 0.5,
+  overscan = 1,
+  flipTime = 0,
+  flipValues = 0,
+  hideNegative = false,
   inactive = '#C9E597',
   active = '#FFCA28',
-  background = '#2A3236',
+  // background = '#2A3236',
+  background = 'transparent',
+  minMidi = 10,
   maxMidi = 90,
-  minMidi = 0,
+  autorange = 0,
+  timeframe: timeframeProp,
+  fold = 0,
+  vertical = 0,
 } = {}) {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  const midiRange = maxMidi - minMidi + 1;
-  const height = h / midiRange;
+  const ctx = getDrawContext();
+  const w = ctx.canvas.width;
+  const h = ctx.canvas.height;
+  let from = -cycles * playhead;
+  let to = cycles * (1 - playhead);
+
+  if (timeframeProp) {
+    console.warn('timeframe is deprecated! use from/to instead');
+    from = 0;
+    to = timeframeProp;
+  }
+  if (!autorange && fold) {
+    console.warn('disabling autorange has no effect when fold is enabled');
+  }
+  const timeAxis = vertical ? h : w;
+  const valueAxis = vertical ? w : h;
+  let timeRange = vertical ? [timeAxis, 0] : [0, timeAxis]; // pixel range for time
+  const timeExtent = to - from; // number of seconds that fit inside the canvas frame
+  const valueRange = vertical ? [0, valueAxis] : [valueAxis, 0]; // pixel range for values
+  let valueExtent = maxMidi - minMidi + 1; // number of "slots" for values, overwritten if autorange true
+  let barThickness = valueAxis / valueExtent; // pixels per value, overwritten if autorange true
+  let foldValues = [];
+  flipTime && timeRange.reverse();
+  flipValues && valueRange.reverse();
+
+  const playheadPosition = scale(-from / timeExtent, ...timeRange);
   this.draw(
     (ctx, events, t) => {
       ctx.fillStyle = background;
       ctx.clearRect(0, 0, w, h);
       ctx.fillRect(0, 0, w, h);
-      events.forEach((event) => {
-        const isActive = event.whole.begin <= t && event.whole.end >= t;
+      const inFrame = (event) =>
+        (!hideNegative || event.whole.begin >= 0) && event.whole.begin <= t + to && event.whole.end >= t + from;
+      events.filter(inFrame).forEach((event) => {
+        const isActive = event.whole.begin <= t && event.whole.end > t;
         ctx.fillStyle = event.context?.color || inactive;
         ctx.strokeStyle = event.context?.color || active;
         ctx.globalAlpha = event.context.velocity ?? 1;
-        const x = Math.round((event.whole.begin / timeframe) * w);
-        const width = Math.round(((event.whole.end - event.whole.begin) / timeframe) * w);
-        const y = Math.round(h - ((Number(event.value) - minMidi) / midiRange) * h);
-        const offset = (t / timeframe) * w;
-        const margin = 0;
-        const coords = [x - offset + margin + 1, y + 1, width - 2, height - 2];
+        ctx.beginPath();
+        if (vertical) {
+          ctx.moveTo(0, playheadPosition);
+          ctx.lineTo(valueAxis, playheadPosition);
+        } else {
+          ctx.moveTo(playheadPosition, 0);
+          ctx.lineTo(playheadPosition, valueAxis);
+        }
+        ctx.stroke();
+        const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
+        let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
+
+        const valuePx = scale(
+          fold ? foldValues.indexOf(event.value) / foldValues.length : (Number(event.value) - minMidi) / valueExtent,
+          ...valueRange,
+        );
+        let margin = 0;
+        const offset = scale(t / timeExtent, ...timeRange);
+        let coords;
+        if (vertical) {
+          coords = [
+            valuePx + 1 - (flipValues ? barThickness : 0), // x
+            timeAxis - offset + timePx + margin + 1 - (flipTime ? 0 : durationPx), // y
+            barThickness - 2, // width
+            durationPx - 2, // height
+          ];
+        } else {
+          coords = [
+            timePx - offset + margin + 1 - (flipTime ? durationPx : 0), // x
+            valuePx + 1 - (flipValues ? 0 : barThickness), // y
+            durationPx - 2, // widith
+            barThickness - 2, // height
+          ];
+        }
         isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
       });
     },
-    timeframe,
-    2, // lookaheadCycles
+    {
+      from: from - overscan,
+      to: to + overscan,
+      onQuery: (events) => {
+        const getValue = (e) => Number(e.value);
+        const { min, max, values } = events.reduce(
+          ({ min, max, values }, e) => {
+            const v = getValue(e);
+            return {
+              min: v < min ? v : min,
+              max: v > max ? v : max,
+              values: values.includes(v) ? values : [...values, v],
+            };
+          },
+          { min: Infinity, max: -Infinity, values: [] },
+        );
+        if (autorange) {
+          minMidi = min;
+          maxMidi = max;
+          valueExtent = maxMidi - minMidi + 1;
+        }
+        foldValues = values.sort((a, b) => a - b);
+        barThickness = fold ? valueAxis / foldValues.length : valueAxis / valueExtent;
+      },
+    },
   );
   return this;
 };

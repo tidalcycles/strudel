@@ -12,9 +12,13 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
+import * as WebDirt from 'WebDirt';
+import { loadWebDirt, resetLoadedSamples } from '@strudel.cycles/webdirt';
+
 evalScope(
   Tone,
   controls,
+  { WebDirt },
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tone'),
   import('@strudel.cycles/tonal'),
@@ -23,7 +27,14 @@ evalScope(
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
   import('@strudel.cycles/osc'),
+  import('@strudel.cycles/webdirt'),
+  import('@strudel.cycles/serial'),
 );
+
+loadWebDirt({
+  sampleMapUrl: 'EmuSP12.json',
+  sampleFolder: 'EmuSP12',
+});
 
 const initialUrl = window.location.href;
 const codeParam = window.location.href.split('#')[1];
@@ -79,16 +90,16 @@ function App() {
     const handleKeyPress = async (e) => {
       if (e.ctrlKey || e.altKey) {
         if (e.code === 'Enter') {
-          await activateCode();
           e.preventDefault();
+          await activateCode();
         } else if (e.code === 'Period') {
           cycle.stop();
           e.preventDefault();
         }
       }
     };
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+    window.addEventListener('keydown', handleKeyPress, true);
+    return () => window.removeEventListener('keydown', handleKeyPress, true);
   }, [pattern, code, activateCode, cycle]);
 
   useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes('strudel disable-highlighting') });
@@ -163,6 +174,7 @@ function App() {
                 setCode(_code);
                 cleanupDraw();
                 cleanupUi();
+                resetLoadedSamples();
                 const parsed = await evaluate(_code);
                 setPattern(parsed.pattern);
                 setActiveCode(_code);
