@@ -6,8 +6,11 @@ This program is free software: you can redistribute it and/or modify it under th
 
 // import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
-import { Tone } from '@strudel.cycles/tone';
-const { Pattern, getFrequency, patternify2 } = strudel;
+import { fromMidi } from '@strudel.cycles/core';
+import { loadBuffer } from './sampler.mjs';
+const { Pattern } = strudel;
+
+// export const getAudioContext = () => Tone.getContext().rawContext;
 
 let audioContext;
 export const getAudioContext = () => {
@@ -17,9 +20,15 @@ export const getAudioContext = () => {
   return audioContext;
 };
 
-const lookahead = 0.2;
+const getFilter = (type, frequency, Q) => {
+  const filter = getAudioContext().createBiquadFilter();
+  filter.type = type;
+  filter.frequency.value = frequency;
+  filter.Q.value = Q;
+  return filter;
+};
 
-const adsr = (attack, decay, sustain, release, velocity, begin, end) => {
+const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {
   const gainNode = getAudioContext().createGain();
   gainNode.gain.setValueAtTime(0, begin);
   gainNode.gain.linearRampToValueAtTime(velocity, begin + attack); // attack
@@ -30,65 +39,115 @@ const adsr = (attack, decay, sustain, release, velocity, begin, end) => {
   return gainNode;
 };
 
-Pattern.prototype.withAudioNode = function (createAudioNode) {
-  return this._withHap((hap) => {
-    return hap.setContext({
-      ...hap.context,
-      createAudioNode: (t, e) => createAudioNode(t, e, hap.context.createAudioNode?.(t, hap)),
-    });
-  });
-};
-
-Pattern.prototype._wave = function (type) {
-  return this.withAudioNode((t, e) => {
-    const osc = getAudioContext().createOscillator();
-    osc.type = type;
-    const f = getFrequency(e);
-    osc.frequency.value = f; // expects frequency..
-    const begin = t ?? e.whole.begin.valueOf() + lookahead;
-    const end = begin + e.duration.valueOf();
-    osc.start(begin);
-    osc.stop(end); // release?
-    return osc;
-  });
-};
-Pattern.prototype.adsr = function (a = 0.01, d = 0.05, s = 1, r = 0.01) {
-  return this.withAudioNode((t, e, node) => {
-    const velocity = e.context?.velocity || 1;
-    const begin = t ?? e.whole.begin.valueOf() + lookahead;
-    const end = begin + e.duration.valueOf() + lookahead;
-    const envelope = adsr(a, d, s, r, velocity, begin, end);
-    node?.connect(envelope);
-    return envelope;
-  });
-};
-Pattern.prototype._filter = function (type = 'lowpass', frequency = 1000) {
-  return this.withAudioNode((t, e, node) => {
-    const filter = getAudioContext().createBiquadFilter();
-    filter.type = type;
-    filter.frequency.value = frequency;
-    node?.connect(filter);
-    return filter;
-  });
-};
-
-Pattern.prototype.filter = function (type, frequency) {
-  return patternify2(Pattern.prototype._filter)(reify(type), reify(frequency), this);
-};
-
 Pattern.prototype.out = function () {
-  const master = getAudioContext().createGain();
-  master.gain.value = 0.1;
-  master.connect(getAudioContext().destination);
-  return this.withAudioNode((t, e, node) => {
-    if (!node) {
-      console.warn('out: no source! call .osc() first');
+  return this.onTrigger(async (t, hap, ct) => {
+    const ac = getAudioContext();
+    // calculate correct time (tone.js workaround)
+    t = ac.currentTime + t - ct;
+    // destructure value
+    let {
+      freq,
+      s,
+      n = 0,
+      gain = 1,
+      cutoff,
+      resonance = 1,
+      hcutoff,
+      hresonance = 1,
+      bandf,
+      bandq = 1,
+      pan,
+      attack = 0.001,
+      decay = 0,
+      sustain = 1,
+      release = 0.001,
+      speed = 1, // sample playback speed
+      begin = 0,
+      end = 1,
+    } = hap.value;
+    // the chain will hold all audio nodes that connect to each other
+    const chain = [];
+    if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
+      // get frequency
+      if (!freq && typeof n === 'number') {
+        freq = fromMidi(n); // + 48);
+      }
+      if (!freq && typeof n === 'string') {
+        freq = fromMidi(toMidi(n));
+      }
+      // make oscillator
+      const o = ac.createOscillator();
+      o.type = s || 'triangle';
+      o.frequency.value = Number(freq);
+      o.start(t);
+      o.stop(t + hap.duration + release);
+      chain.push(o);
+      // level down oscillators as they are really loud compared to samples i've tested
+      const g = ac.createGain();
+      g.gain.value = 0.5;
+      chain.push(g);
+      // TODO: make adsr work with samples without pops
+      // envelope
+      const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hap.duration);
+      chain.push(adsr);
+    } else {
+      // load sample
+      const samples = getLoadedSamples();
+      if (!samples) {
+        console.warn('no samples loaded');
+        return;
+      }
+      const bank = samples?.[s];
+      if (!bank) {
+        console.warn('sample not found:', s, 'try one of ' + Object.keys(samples));
+        return;
+      } else {
+        if (speed === 0) {
+          // no playback
+          return;
+        }
+        if (!s) {
+          console.warn('no sample specified');
+          return;
+        }
+        const bank = samples[s];
+        const sampleUrl = bank[n % bank.length];
+        let buffer = await loadBuffer(sampleUrl, ac);
+        if (ac.currentTime > t) {
+          console.warn('sample still loading:', s, n);
+          return;
+        }
+        const src = ac.createBufferSource();
+        src.buffer = buffer;
+        src.playbackRate.value = Math.abs(speed);
+        // TODO: nudge, unit, cut, loop
+
+        let duration = src.buffer.duration;
+        const offset = begin * duration;
+        duration = ((end - begin) * duration) / Math.abs(speed);
+        src.start(t, offset, duration);
+        src.stop(t + duration);
+        chain.push(src);
+      }
     }
-    node?.connect(master);
-  })._withHap((hap) => {
-    const onTrigger = (time, e) => e.context?.createAudioNode?.(time, e);
-    return hap.setContext({ ...hap.context, onTrigger });
+    // filters
+    cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
+    hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
+    bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
+    // TODO vowel
+    // TODO delay / delaytime / delayfeedback
+    // panning
+    if (pan !== undefined) {
+      const panner = ac.createStereoPanner();
+      panner.pan.value = 2 * pan - 1;
+      chain.push(panner);
+    }
+    // master out
+    const master = ac.createGain();
+    master.gain.value = 0.8 * gain;
+    chain.push(master);
+    chain.push(ac.destination);
+    // connect chain elements together
+    chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
   });
 };
-
-Pattern.prototype.define('wave', (type, pat) => pat.wave(type), { patternified: true });
