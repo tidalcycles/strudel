@@ -868,30 +868,41 @@ export const bornagain = `stack(
 
 export const meltingsubmarine = `samples({
   clubkick: 'clubkick/2.wav',
-  sd: ['808sd/SD0010.WAV','808sd/SD0050.WAV'],
+  sd: '808sd/SD0010.WAV',
   hh: 'hh/000_hh3closedhh.wav',
-  clak: 'clak/000_clak1.wav',
-  jvbass: ['jvbass/000_01.wav','jvbass/001_02.wav','jvbass/003_04.wav','jvbass/004_05.wav','jvbass/005_06.wav']
 }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
 stack(
-  "<clubkick*2>,[~ <sd!3 sd(3,4,2)>],hh(3,4)".s().n("<0 1 2>").speed(perlin.range(.7,.9)),
-  "<a1 b1*2 a1(3,8) e2>"
-  .off(1/8,x=>x.add(12).degradeBy(.5))
-  .add(perlin.range(0,.5))
-  .n().decay(.15).sustain(0).s("sawtooth")
-  .superimpose(x=>x.add(.08)).gain(.4)
-  .cutoff(sine.slow(7).range(300,5000)),
-  "<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings().superimpose(x=>x.add(.04))
-  .add(perlin.range(0,.5))
-  .n().s('sawtooth')
-  .gain(.16)
-  .cutoff(500)
-  .attack(1),
-  "a4 c5 <e6 a6>".struct("x(5,8)")
-  .superimpose(x=>x.add(.04))
-  .add(perlin.range(0,.5)).n()
-  .decay(.1).sustain(0).s('triangle')
-  .degradeBy(perlin.range(0,.5)).echoWith(4,.125,(x,n)=>x.gain(.15*1/(n+1)))
+  s("<clubkick*2>,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
+  .speed(perlin.range(.7,.9)) // random sample speed variation
+  //.hush()
+  ,"<a1 b1*2 a1(3,8) e2>" // bassline
+  .off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
+  .add(perlin.range(0,.5)) // random pitch variation
+  .superimpose(add(.05)) // add second, slightly detuned voice
+  .n() // wrap in "n"
+  .decay(.15).sustain(0) // make each note of equal length
+  .s('sawtooth') // waveform
+  .gain(.4) // turn down
+  .cutoff(sine.slow(7).range(300,5000)) // automate cutoff
+  //.hush()
+  ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings() // chords
+  .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+  .add(perlin.range(0,.5)) // random pitch variation
+  .n() // wrap in "n"
+  .s('sawtooth') // waveform
+  .gain(.16) // turn down
+  .cutoff(500) // fixed cutoff
+  .attack(1) // slowly fade in
+  //.hush()
+  ,"a4 c5 <e6 a6>".struct("x(5,8)")
+  .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+  .add(perlin.range(0,.5)) // random pitch variation
+  .n() // wrap in "n"
+  .decay(.1).sustain(0) // make notes short
+  .s('triangle') // waveform
+  .degradeBy(perlin.range(0,.5)) // randomly controlled random removal :)
+  .echoWith(4,.125,(x,n)=>x.gain(.15*1/(n+1))) // echo notes
+  //.hush()
 )
   .out()
   .slow(3/2)`;
