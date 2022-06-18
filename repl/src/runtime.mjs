@@ -6,6 +6,7 @@
 import { evaluate } from '@strudel.cycles/eval';
 import { extend } from '@strudel.cycles/eval';
 import * as strudel from '@strudel.cycles/core';
+import * as webaudio from '@strudel.cycles/webaudio';
 import controls from '@strudel.cycles/core/controls.mjs';
 // import gist from '@strudel.cycles/core/gist.js';
 import { mini } from '@strudel.cycles/mini/mini.mjs';
@@ -129,6 +130,7 @@ extend(
   toneHelpersMocked,
   uiHelpersMocked,
   controls,
+  webaudio,
   /* controls,
   toneHelpers,
   voicingHelpers,
