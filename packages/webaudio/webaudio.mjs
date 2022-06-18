@@ -82,6 +82,14 @@ Pattern.prototype.out = function () {
       o.start(t);
       o.stop(t + hap.duration + release);
       chain.push(o);
+      // level down oscillators as they are really loud compared to samples i've tested
+      const g = ac.createGain();
+      g.gain.value = 0.5;
+      chain.push(g);
+      // TODO: make adsr work with samples without pops
+      // envelope
+      const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hap.duration);
+      chain.push(adsr);
     } else {
       // load sample
       const samples = getLoadedSamples();
@@ -111,19 +119,17 @@ Pattern.prototype.out = function () {
         }
         const src = ac.createBufferSource();
         src.buffer = buffer;
-        let duration = src.buffer.duration;
-        const offset = begin * duration;
-        const sus = ((end - begin) * duration) / Math.abs(speed);
         src.playbackRate.value = Math.abs(speed);
         // TODO: nudge, unit, cut, loop
-        src.start(t, offset, sus);
+
+        let duration = src.buffer.duration;
+        const offset = begin * duration;
+        duration = ((end - begin) * duration) / Math.abs(speed);
+        src.start(t, offset, duration);
         src.stop(t + duration);
         chain.push(src);
       }
     }
-    // envelope
-    const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hap.duration);
-    chain.push(adsr);
     // filters
     cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
     hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
