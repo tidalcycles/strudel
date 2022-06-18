@@ -1,7 +1,7 @@
 import * as strudel from '@strudel.cycles/core';
 const { Pattern } = strudel;
 import * as WebDirt from 'WebDirt';
-import { getLoadedSamples, loadBuffer, getLoadedBuffer } from './sampler.mjs';
+import { getLoadedSamples, loadBuffer, getLoadedBuffer } from '@strudel.cycles/webaudio';
 
 let webDirt;
 

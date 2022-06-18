@@ -7,6 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 // import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
 import { fromMidi } from '@strudel.cycles/core';
+import { loadBuffer } from './sampler.mjs';
 const { Pattern } = strudel;
 
 // export const getAudioContext = () => Tone.getContext().rawContext;
@@ -39,7 +40,7 @@ const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {
 };
 
 Pattern.prototype.out = function () {
-  return this.onTrigger((t, hap, ct) => {
+  return this.onTrigger(async (t, hap, ct) => {
     const ac = getAudioContext();
     // calculate correct time (tone.js workaround)
     t = ac.currentTime + t - ct;
@@ -47,7 +48,7 @@ Pattern.prototype.out = function () {
     let {
       freq,
       s,
-      n,
+      n = 0,
       gain = 1,
       cutoff,
       resonance = 1,
@@ -61,26 +62,49 @@ Pattern.prototype.out = function () {
       sustain = 1,
       release = 0.001,
     } = hap.value;
-    if (!n && !freq) {
-      console.warn('unplayable value:', hap.value);
-      return;
-    }
-    // get frequency
-    if (!freq && typeof n === 'number') {
-      freq = fromMidi(n); // + 48);
-    }
-    if (!freq && typeof n === 'string') {
-      freq = fromMidi(toMidi(n));
-    }
     // the chain will hold all audio nodes that connect to each other
     const chain = [];
-    // make oscillator
-    const o = ac.createOscillator();
-    o.type = s || 'triangle';
-    o.frequency.value = Number(freq);
-    o.start(t);
-    o.stop(t + hap.duration + release);
-    chain.push(o);
+    if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
+      // get frequency
+      if (!freq && typeof n === 'number') {
+        freq = fromMidi(n); // + 48);
+      }
+      if (!freq && typeof n === 'string') {
+        freq = fromMidi(toMidi(n));
+      }
+      // make oscillator
+      const o = ac.createOscillator();
+      o.type = s || 'triangle';
+      o.frequency.value = Number(freq);
+      o.start(t);
+      o.stop(t + hap.duration + release);
+      chain.push(o);
+    } else {
+      // load sample
+      const samples = getLoadedSamples();
+      if (!samples) {
+        console.warn('no samples loaded');
+        return;
+      }
+      const bank = samples?.[s];
+      if (!bank) {
+        console.warn('sample not found:', s, 'try one of ' + Object.keys(samples));
+        return;
+      } else {
+        const bank = samples[s];
+        const sampleUrl = bank[n % bank.length];
+        let buffer = await loadBuffer(sampleUrl, ac);
+        if (ac.currentTime > t) {
+          console.warn('sample still loading:', s);
+          return;
+        }
+        const src = ac.createBufferSource();
+        src.buffer = buffer;
+        src.start(t);
+        src.stop(t + hap.duration + release);
+        chain.push(src);
+      }
+    }
     // envelope
     const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hap.duration);
     chain.push(adsr);
@@ -98,7 +122,7 @@ Pattern.prototype.out = function () {
     }
     // master out
     const master = ac.createGain();
-    master.gain.value = 0.1 * gain;
+    master.gain.value = 0.8 * gain;
     chain.push(master);
     chain.push(ac.destination);
     // connect chain elements together

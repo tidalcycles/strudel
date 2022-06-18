@@ -1,6 +1,8 @@
 const bufferCache = {}; // string: Promise<ArrayBuffer>
 const loadCache = {}; // string: Promise<ArrayBuffer>
 
+export const getCachedBuffer = (url) => bufferCache[url];
+
 export const loadBuffer = (url, ac) => {
   if (!loadCache[url]) {
     loadCache[url] = fetch(url)
