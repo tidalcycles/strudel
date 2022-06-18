@@ -7,6 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 // import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
 import { fromMidi } from '@strudel.cycles/core';
+import { loadBuffer } from './sampler.mjs';
 const { Pattern } = strudel;
 
 // export const getAudioContext = () => Tone.getContext().rawContext;
@@ -19,16 +20,16 @@ export const getAudioContext = () => {
   return audioContext;
 };
 
-const getFilter = (ac, type, frequency, Q) => {
-  const filter = ac.createBiquadFilter();
+const getFilter = (type, frequency, Q) => {
+  const filter = getAudioContext().createBiquadFilter();
   filter.type = type;
   filter.frequency.value = frequency;
   filter.Q.value = Q;
   return filter;
 };
 
-const getADSR = (ac, attack, decay, sustain, release, velocity, begin, end) => {
-  const gainNode = ac.createGain();
+const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {
+  const gainNode = getAudioContext().createGain();
   gainNode.gain.setValueAtTime(0, begin);
   gainNode.gain.linearRampToValueAtTime(velocity, begin + attack); // attack
   gainNode.gain.linearRampToValueAtTime(sustain * velocity, begin + attack + decay); // sustain start
@@ -39,7 +40,7 @@ const getADSR = (ac, attack, decay, sustain, release, velocity, begin, end) => {
 };
 
 Pattern.prototype.out = function () {
-  return this.onTrigger((t, hap, ct) => {
+  return this.onTrigger(async (t, hap, ct) => {
     const ac = getAudioContext();
     // calculate correct time (tone.js workaround)
     t = ac.currentTime + t - ct;
@@ -47,7 +48,7 @@ Pattern.prototype.out = function () {
     let {
       freq,
       s,
-      n,
+      n = 0,
       gain = 1,
       cutoff,
       resonance = 1,
@@ -60,34 +61,79 @@ Pattern.prototype.out = function () {
       decay = 0,
       sustain = 1,
       release = 0.001,
+      speed = 1, // sample playback speed
+      begin = 0,
+      end = 1,
     } = hap.value;
-    if (!n && !freq) {
-      console.warn('unplayable value:', hap.value);
-      return;
-    }
-    // get frequency
-    if (!freq && typeof n === 'number') {
-      freq = fromMidi(n); // + 48);
-    }
-    if (!freq && typeof n === 'string') {
-      freq = fromMidi(toMidi(n));
-    }
     // the chain will hold all audio nodes that connect to each other
     const chain = [];
-    // make oscillator
-    const o = ac.createOscillator();
-    o.type = s || 'triangle';
-    o.frequency.value = Number(freq);
-    o.start(t);
-    o.stop(t + hap.duration + release);
-    chain.push(o);
-    // envelope
-    const adsr = getADSR(ac, attack, decay, sustain, release, 1, t, t + hap.duration);
-    chain.push(adsr);
+    if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
+      // get frequency
+      if (!freq && typeof n === 'number') {
+        freq = fromMidi(n); // + 48);
+      }
+      if (!freq && typeof n === 'string') {
+        freq = fromMidi(toMidi(n));
+      }
+      // make oscillator
+      const o = ac.createOscillator();
+      o.type = s || 'triangle';
+      o.frequency.value = Number(freq);
+      o.start(t);
+      o.stop(t + hap.duration + release);
+      chain.push(o);
+      // level down oscillators as they are really loud compared to samples i've tested
+      const g = ac.createGain();
+      g.gain.value = 0.5;
+      chain.push(g);
+      // TODO: make adsr work with samples without pops
+      // envelope
+      const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hap.duration);
+      chain.push(adsr);
+    } else {
+      // load sample
+      const samples = getLoadedSamples();
+      if (!samples) {
+        console.warn('no samples loaded');
+        return;
+      }
+      const bank = samples?.[s];
+      if (!bank) {
+        console.warn('sample not found:', s, 'try one of ' + Object.keys(samples));
+        return;
+      } else {
+        if (speed === 0) {
+          // no playback
+          return;
+        }
+        if (!s) {
+          console.warn('no sample specified');
+          return;
+        }
+        const bank = samples[s];
+        const sampleUrl = bank[n % bank.length];
+        let buffer = await loadBuffer(sampleUrl, ac);
+        if (ac.currentTime > t) {
+          console.warn('sample still loading:', s, n);
+          return;
+        }
+        const src = ac.createBufferSource();
+        src.buffer = buffer;
+        src.playbackRate.value = Math.abs(speed);
+        // TODO: nudge, unit, cut, loop
+
+        let duration = src.buffer.duration;
+        const offset = begin * duration;
+        duration = ((end - begin) * duration) / Math.abs(speed);
+        src.start(t, offset, duration);
+        src.stop(t + duration);
+        chain.push(src);
+      }
+    }
     // filters
-    cutoff !== undefined && chain.push(getFilter(ac, 'lowpass', cutoff, resonance));
-    hcutoff !== undefined && chain.push(getFilter(ac, 'highpass', hcutoff, hresonance));
-    bandf !== undefined && chain.push(getFilter(ac, 'bandpass', bandf, bandq));
+    cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
+    hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
+    bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
     // TODO vowel
     // TODO delay / delaytime / delayfeedback
     // panning
@@ -98,7 +144,7 @@ Pattern.prototype.out = function () {
     }
     // master out
     const master = ac.createGain();
-    master.gain.value = 0.1 * gain;
+    master.gain.value = 0.8 * gain;
     chain.push(master);
     chain.push(ac.destination);
     // connect chain elements together
