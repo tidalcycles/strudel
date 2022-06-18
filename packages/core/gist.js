@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 // this is a shortcut to eval code from a gist
 // why? to be able to shorten strudel code + e.g. be able to change instruments after links have been generated
-export default (route) =>
-  fetch(`https://gist.githubusercontent.com/${route}?cachebust=${Date.now()}`)
+export default (route, cache = true) =>
+  fetch(`https://gist.githubusercontent.com/${route}?cachebust=${cache ? '' : Date.now()}`)
     .then((res) => res.text())
     .then((code) => eval(code));
