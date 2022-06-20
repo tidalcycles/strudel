@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 
 const name = '0000_JCLive';
 
-const js = await fetch(`https://surikov.github.io/webaudiofontdata/sound/${name}_sf2_file.js`).then((res) =>
+const js = await fetch(`https://felixroos.github.io/webaudiofontdata/sound/${name}_sf2_file.js`).then((res) =>
   res.text(),
 );
 // console.log(js);

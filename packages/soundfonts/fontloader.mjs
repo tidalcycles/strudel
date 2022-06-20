@@ -5,7 +5,7 @@ async function loadFont(name) {
   }
   const load = async () => {
     // TODO: make soundfont source configurable
-    const url = `https://surikov.github.io/webaudiofontdata/sound/${name}.js`;
+    const url = `https://felixroos.github.io/webaudiofontdata/sound/${name}.js`;
     console.log('load font', name, url);
     const preset = await fetch(url).then((res) => res.text());
     let [_, data] = preset.split('={');
