@@ -39,6 +39,54 @@ const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {
   return gainNode;
 };
 
+const getOscillator = ({ s, freq, t, duration, release }) => {
+  // make oscillator
+  const o = getAudioContext().createOscillator();
+  o.type = s || 'triangle';
+  o.frequency.value = Number(freq);
+  o.start(t);
+  o.stop(t + duration + release);
+  return o;
+};
+
+const getSoundfontKey = (s) => {
+  if (!globalThis.soundfontList) {
+    // soundfont package not loaded
+    return false;
+  }
+  if (globalThis.soundfontList?.instruments?.includes(s)) {
+    return s;
+  }
+  // check if s is one of the soundfonts, which are loaded into globalThis, to avoid coupling both packages
+  const nameIndex = globalThis.soundfontList?.instrumentNames?.indexOf(s);
+  // convert number nameIndex (0-128) to 3 digit string (001-128)
+  const name = nameIndex < 10 ? `00${nameIndex}` : nameIndex < 100 ? `0${nameIndex}` : nameIndex;
+  if (nameIndex !== -1) {
+    // TODO: indices of instrumentNames do not seem to match instruments
+    s = globalThis.soundfontList.instruments.find((instrument) => instrument.startsWith(name));
+    // console.log('match', nameIndex, s);
+  }
+  return globalThis.soundfontList?.instruments?.[nameIndex];
+};
+
+const getSampleBufferSource = async (s, n) => {
+  const ac = getAudioContext();
+  // is sample from loaded samples(..)
+  const samples = getLoadedSamples();
+  if (!samples) {
+    throw new Error('no samples loaded');
+  }
+  const bank = samples?.[s];
+  if (!bank) {
+    throw new Error('sample not found:', s, 'try one of ' + Object.keys(samples));
+  }
+  const sampleUrl = bank[n % bank.length];
+  const buffer = await loadBuffer(sampleUrl, ac);
+  const bufferSource = ac.createBufferSource();
+  bufferSource.buffer = buffer;
+  return bufferSource;
+};
+
 Pattern.prototype.out = function () {
   return this.onTrigger(async (t, hap, ct) => {
     const ac = getAudioContext();
@@ -48,6 +96,7 @@ Pattern.prototype.out = function () {
     let {
       freq,
       s,
+      sf,
       n = 0,
       gain = 1,
       cutoff,
@@ -67,20 +116,16 @@ Pattern.prototype.out = function () {
     } = hap.value;
     // the chain will hold all audio nodes that connect to each other
     const chain = [];
+    if (typeof n === 'string') {
+      n = toMidi(n); // e.g. c3 => 48
+    }
     if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
       // get frequency
       if (!freq && typeof n === 'number') {
         freq = fromMidi(n); // + 48);
       }
-      if (!freq && typeof n === 'string') {
-        freq = fromMidi(toMidi(n));
-      }
       // make oscillator
-      const o = ac.createOscillator();
-      o.type = s || 'triangle';
-      o.frequency.value = Number(freq);
-      o.start(t);
-      o.stop(t + hap.duration + release);
+      const o = getOscillator({ t, s, freq, duration: hap.duration, release });
       chain.push(o);
       // level down oscillators as they are really loud compared to samples i've tested
       const g = ac.createGain();
@@ -92,42 +137,57 @@ Pattern.prototype.out = function () {
       chain.push(adsr);
     } else {
       // load sample
-      const samples = getLoadedSamples();
-      if (!samples) {
-        console.warn('no samples loaded');
+      if (speed === 0) {
+        // no playback
         return;
       }
-      const bank = samples?.[s];
-      if (!bank) {
-        console.warn('sample not found:', s, 'try one of ' + Object.keys(samples));
+      if (!s) {
+        console.warn('no sample specified');
         return;
-      } else {
-        if (speed === 0) {
-          // no playback
-          return;
-        }
-        if (!s) {
-          console.warn('no sample specified');
-          return;
-        }
-        const bank = samples[s];
-        const sampleUrl = bank[n % bank.length];
-        let buffer = await loadBuffer(sampleUrl, ac);
-        if (ac.currentTime > t) {
-          console.warn('sample still loading:', s, n);
-          return;
-        }
-        const src = ac.createBufferSource();
-        src.buffer = buffer;
-        src.playbackRate.value = Math.abs(speed);
-        // TODO: nudge, unit, cut, loop
+      }
+      const soundfont = getSoundfontKey(s);
+      let bufferSource;
 
-        let duration = src.buffer.duration;
-        const offset = begin * duration;
-        duration = ((end - begin) * duration) / Math.abs(speed);
-        src.start(t, offset, duration);
-        src.stop(t + duration);
-        chain.push(src);
+      try {
+        if (soundfont) {
+          // is soundfont
+          bufferSource = await globalThis.getFontBufferSource(soundfont, n, ac);
+        } else {
+          // is sample from loaded samples(..)
+          bufferSource = await getSampleBufferSource(s, n);
+        }
+      } catch (err) {
+        console.warn(err);
+        return;
+      }
+      // asny stuff above took too long?
+      if (ac.currentTime > t) {
+        console.warn('sample still loading:', s, n);
+        return;
+      }
+      if (!bufferSource) {
+        console.warn('no buffer source');
+        return;
+      }
+      // bufferSource.playbackRate.value = Math.abs(speed) * playbackRate;
+      bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
+      // TODO: nudge, unit, cut, loop
+
+      let duration = soundfont ? hap.duration : bufferSource.buffer.duration;
+      // let duration = bufferSource.buffer.duration;
+      const offset = begin * duration;
+      duration = ((end - begin) * duration) / Math.abs(speed);
+      bufferSource.start(t, offset, duration);
+      bufferSource.stop(t + duration);
+      chain.push(bufferSource);
+      if (soundfont) {
+        const env = ac.createGain();
+        env.gain.value = 1;
+        const fadeLength = 0.1;
+        env.gain.value = 0.5;
+        env.gain.setValueAtTime(0.5, t + duration - fadeLength);
+        env.gain.linearRampToValueAtTime(0, t + duration);
+        chain.push(env);
       }
     }
     // filters

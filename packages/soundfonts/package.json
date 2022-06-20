@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -24,8 +25,10 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "webaudiofont": "^3.0.1",
     "@strudel.cycles/core": "*",
     "@strudel.cycles/webaudio": "*"
+  },
+  "devDependencies": {
+    "node-fetch": "^3.2.6"
   }
 }
