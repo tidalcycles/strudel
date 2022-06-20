@@ -63,10 +63,9 @@ const getSoundfontKey = (s) => {
   const name = nameIndex < 10 ? `00${nameIndex}` : nameIndex < 100 ? `0${nameIndex}` : nameIndex;
   if (nameIndex !== -1) {
     // TODO: indices of instrumentNames do not seem to match instruments
-    s = globalThis.soundfontList.instruments.find((instrument) => instrument.startsWith(name));
-    // console.log('match', nameIndex, s);
+    return globalThis.soundfontList.instruments.find((instrument) => instrument.startsWith(name));
   }
-  return globalThis.soundfontList?.instruments?.[nameIndex];
+  return;
 };
 
 const getSampleBufferSource = async (s, n) => {
@@ -169,15 +168,17 @@ Pattern.prototype.out = function () {
         console.warn('no buffer source');
         return;
       }
-      // bufferSource.playbackRate.value = Math.abs(speed) * playbackRate;
       bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
       // TODO: nudge, unit, cut, loop
-
       let duration = soundfont ? hap.duration : bufferSource.buffer.duration;
       // let duration = bufferSource.buffer.duration;
       const offset = begin * duration;
       duration = ((end - begin) * duration) / Math.abs(speed);
-      bufferSource.start(t, offset, duration);
+      if (soundfont) {
+        bufferSource.start(t, offset); // duration does not work here for some reason
+      } else {
+        bufferSource.start(t, offset, duration);
+      }
       bufferSource.stop(t + duration);
       chain.push(bufferSource);
       if (soundfont) {

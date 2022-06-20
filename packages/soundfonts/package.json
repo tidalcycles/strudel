@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "description": "Soundsfont support for strudel",
   "main": "index.mjs",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "type": "module",
   "repository": {
     "type": "git",

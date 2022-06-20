@@ -15,11 +15,35 @@ async function loadFont(name) {
   return loadCache[name];
 }
 
-let bufferCache = {};
 export async function getFontBufferSource(name, pitch, ac) {
+  const { buffer, zone } = await getFontPitch(name, pitch, ac);
+  const src = ac.createBufferSource();
+  src.buffer = buffer;
+  const baseDetune = zone.originalPitch - 100.0 * zone.coarseTune - zone.fineTune;
+  const playbackRate = 1.0 * Math.pow(2, (100.0 * pitch - baseDetune) / 1200.0);
+  // src detune?
+  src.playbackRate.value = playbackRate;
+  const loop = zone.loopStart > 1 && zone.loopStart < zone.loopEnd;
+  if (!loop) {
+    /* const waveDuration = duration + this.afterTime;
+          if (waveDuration > zone.buffer.duration / playbackRate) {
+            waveDuration = zone.buffer.duration / playbackRate;
+            // TODO: do sth with waveduration
+          } */
+  } else {
+    src.loop = true;
+    src.loopStart = zone.loopStart / zone.sampleRate;
+    src.loopEnd = zone.loopEnd / zone.sampleRate;
+    //+ (zone.delay ? zone.delay : 0);
+  }
+  return src;
+}
+
+let bufferCache = {};
+export async function getFontPitch(name, pitch, ac) {
   const key = `${name}:::${pitch}`;
   if (bufferCache[key]) {
-    return (await bufferCache[key])();
+    return bufferCache[key];
   }
   // console.log('load buffer', key);
   const load = async () => {
@@ -35,31 +59,10 @@ export async function getFontBufferSource(name, pitch, ac) {
     if (!buffer) {
       throw new Error(`no soundfont buffer found for preset ${name}, pitch: ${pitch}`);
     }
-    return () => {
-      const src = ac.createBufferSource();
-      src.buffer = buffer;
-      const baseDetune = zone.originalPitch - 100.0 * zone.coarseTune - zone.fineTune;
-      const playbackRate = 1.0 * Math.pow(2, (100.0 * pitch - baseDetune) / 1200.0);
-      // src detune?
-      src.playbackRate.value = playbackRate;
-      const loop = zone.loopStart > 1 && zone.loopStart < zone.loopEnd;
-      if (!loop) {
-        /* const waveDuration = duration + this.afterTime;
-          if (waveDuration > zone.buffer.duration / playbackRate) {
-            waveDuration = zone.buffer.duration / playbackRate;
-            // TODO: do sth with waveduration
-          } */
-      } else {
-        src.loop = true;
-        /*         src.loopStart = zone.loopStart / zone.sampleRate + (zone.delay ? zone.delay : 0);
-        src.loopEnd = zone.loopEnd / zone.sampleRate + (zone.delay ? zone.delay : 0); */
-      }
-
-      return src;
-    };
+    return { buffer, zone };
   };
   bufferCache[key] = load(); // dont await here to cache promise immediately!
-  return (await bufferCache[key])();
+  return bufferCache[key];
 }
 
 function findZone(preset, pitch) {
