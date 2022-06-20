@@ -27,7 +27,6 @@ const generic_params = [
    *
    */
   ['s', 's', 'sound'],
-  ['sf', 'sf', 'soundfont'],
   /**
    * The note or sample number to choose for a synth or sampleset
    * Note names currently not working yet, but will hopefully soon. Just stick to numbers for now
