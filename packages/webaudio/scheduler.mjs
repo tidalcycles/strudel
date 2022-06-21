@@ -10,18 +10,20 @@ import { State, TimeSpan } from '@strudel.cycles/core';
 export class Scheduler {
   worker;
   pattern;
-  constructor({ audioContext, interval = 0.2, onEvent }) {
+  constructor({ audioContext, interval = 0.2, onEvent, latency = 0.2 }) {
     this.worker = new ClockWorker(
       audioContext,
       (begin, end) => {
-        this.pattern.query(new State(new TimeSpan(begin, end))).forEach((e) => {
+        this.pattern.query(new State(new TimeSpan(begin + latency, end + latency))).forEach((e) => {
           if (!e.part.begin.equals(e.whole.begin)) {
             return;
           }
+          if (e.context.onTrigger) {
+            // TODO: kill first param, as it's contained in e
+            e.context.onTrigger(e.whole.begin, e, audioContext.currentTime, 1 /* cps */);
+          }
           if (onEvent) {
             onEvent?.(e);
-          } else {
-            console.warn('unplayable event: no audio node nor onEvent callback', e);
           }
         });
       },
