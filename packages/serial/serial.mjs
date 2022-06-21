@@ -9,7 +9,7 @@ import { Pattern, isPattern } from '@strudel.cycles/core';
 var serialWriter;
 var choosing = false;
 
-export async function getWriter(br=115200) {
+export async function getWriter(br=38400) {
   if (choosing) {
     return;
   }
@@ -34,8 +34,7 @@ export async function getWriter(br=115200) {
 
 const latency = 0.1;
 
-// Pattern.prototype.midi = function (output: string | number, channel = 1) {
-Pattern.prototype.serial = async function (...args) {
+Pattern.prototype.serial = function (...args) {
   return this._withHap((hap) => {
     if (!serialWriter) {
       getWriter(...args);
@@ -43,8 +42,27 @@ Pattern.prototype.serial = async function (...args) {
     const onTrigger = (time, hap, currentTime) => {
       var message = "";
       if (typeof hap.value === 'object') {
-        for (const [key, val] of Object.entries(hap.value).flat()) {
-          message += `${key}:${val};`
+        if ('action' in hap.value) {
+          message += hap.value['action'] + '(';
+          var first = true;
+          for (const [key, val] of Object.entries(hap.value)) {
+            if (key === 'action') {
+              continue;
+            }
+            if (first) {
+              first = false;
+            }
+            else {
+              message +=',';
+            }
+            message += `${key}:${val}`
+          }
+          message += ')';
+        }
+        else {
+          for (const [key, val] of Object.entries(hap.value)) {
+            message += `${key}:${val};`
+          }
         }
       }
       else {
