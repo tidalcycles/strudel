@@ -68,7 +68,6 @@ Pattern.prototype.serial = function (...args) {
       else {
         message = hap.value;
       }
-      console.log("sending: " + message);
       const offset = (time - currentTime + latency) * 1000;
       window.setTimeout(serialWriter, offset, message);
     };
