@@ -9,7 +9,7 @@ import { Pattern, isPattern } from '@strudel.cycles/core';
 var serialWriter;
 var choosing = false;
 
-export async function getWriter(br=115200) {
+export async function getWriter(br=38400) {
   if (choosing) {
     return;
   }
@@ -34,7 +34,7 @@ export async function getWriter(br=115200) {
 
 const latency = 0.1;
 
-Pattern.prototype.serial = async function (...args) {
+Pattern.prototype.serial = function (...args) {
   return this._withHap((hap) => {
     if (!serialWriter) {
       getWriter(...args);
