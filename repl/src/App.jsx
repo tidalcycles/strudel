@@ -15,7 +15,6 @@ import * as tunes from './tunes.mjs';
 import * as WebDirt from 'WebDirt';
 import { loadWebDirt } from '@strudel.cycles/webdirt';
 import { resetLoadedSamples, getAudioContext } from '@strudel.cycles/webaudio';
-
 evalScope(
   Tone,
   controls,
@@ -30,6 +29,7 @@ evalScope(
   import('@strudel.cycles/osc'),
   import('@strudel.cycles/webdirt'),
   import('@strudel.cycles/serial'),
+  import('@strudel.cycles/soundfonts'),
 );
 
 loadWebDirt({
