@@ -765,8 +765,8 @@ generic_params.forEach(([type, name, description]) => {
 
 // create custom param
 controls.createParam = (name) => {
-  controls[name] = (...pats) => _name(name, ...pats);
-  Pattern.prototype[name] = _setter(controls[name], name);
+  const func = (...pats) => _name(name, ...pats);
+  Pattern.prototype[name] = _setter(func, name);
   return (...pats) => _name(name, ...pats);
 };
 
