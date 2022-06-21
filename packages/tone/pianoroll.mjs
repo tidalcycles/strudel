@@ -7,6 +7,13 @@ This program is free software: you can redistribute it and/or modify it under th
 import { Pattern } from '@strudel.cycles/core';
 
 const scale = (normalized, min, max) => normalized * (max - min) + min;
+const getValue = (e) => {
+  let value = typeof e.value === 'object' ? e.value.n : e.value;
+  if (typeof value === 'string') {
+    value = toMidi(value);
+  }
+  return value;
+};
 
 Pattern.prototype.pianoroll = function ({
   cycles = 4,
@@ -75,9 +82,9 @@ Pattern.prototype.pianoroll = function ({
         ctx.stroke();
         const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
         let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
-
+        const value = getValue(event);
         const valuePx = scale(
-          fold ? foldValues.indexOf(event.value) / foldValues.length : (Number(event.value) - minMidi) / valueExtent,
+          fold ? foldValues.indexOf(value) / foldValues.length : (Number(value) - minMidi) / valueExtent,
           ...valueRange,
         );
         let margin = 0;
@@ -105,7 +112,6 @@ Pattern.prototype.pianoroll = function ({
       from: from - overscan,
       to: to + overscan,
       onQuery: (events) => {
-        const getValue = (e) => Number(e.value);
         const { min, max, values } = events.reduce(
           ({ min, max, values }, e) => {
             const v = getValue(e);
