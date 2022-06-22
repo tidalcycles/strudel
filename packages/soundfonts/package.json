@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/soundfonts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Soundsfont support for strudel",
   "main": "index.mjs",
   "type": "module",
@@ -23,7 +23,7 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@strudel.cycles/core": "*",
-    "@strudel.cycles/webaudio": "*"
+    "@strudel.cycles/webaudio": "^0.1.4"
   },
   "devDependencies": {
     "node-fetch": "^3.2.6"
