@@ -1049,6 +1049,9 @@ export class Pattern {
       .unit('c')
       .slow(factor);
   }
+  onTrigger(onTrigger) {
+    return this._withHap((hap) => hap.setContext({ ...hap.context, onTrigger }));
+  }
 }
 
 // TODO - adopt value.mjs fully..
@@ -1386,6 +1389,7 @@ export function pr(args) {
 }
 
 export const add = curry((a, pat) => pat.add(a));
+export const chop = curry((a, pat) => pat.chop(a))
 export const chunk = curry((a, pat) => pat.chunk(a));
 export const chunkBack = curry((a, pat) => pat.chunkBack(a));
 export const div = curry((a, pat) => pat.div(a));

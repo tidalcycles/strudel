@@ -750,14 +750,27 @@ const generic_params = [
 
 const _name = (name, ...pats) => sequence(...pats).withValue((x) => ({ [name]: x }));
 
-const _setter = (func) =>
+const _setter = (func, name) =>
   function (...pats) {
+    if (!pats.length) {
+      return this.fmap((value) => ({ [name]: value }));
+    }
     return this.set(func(...pats));
   };
 
 generic_params.forEach(([type, name, description]) => {
   controls[name] = (...pats) => _name(name, ...pats);
-  Pattern.prototype[name] = _setter(controls[name]);
+  Pattern.prototype[name] = _setter(controls[name], name);
 });
+
+// create custom param
+controls.createParam = (name) => {
+  const func = (...pats) => _name(name, ...pats);
+  Pattern.prototype[name] = _setter(func, name);
+  return (...pats) => _name(name, ...pats);
+};
+
+controls.createParams = (...names) =>
+  names.reduce((acc, name) => Object.assign(acc, { [name]: createParam(name) }), {});
 
 export default controls;

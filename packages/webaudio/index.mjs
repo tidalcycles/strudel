@@ -7,3 +7,4 @@ This program is free software: you can redistribute it and/or modify it under th
 export * from './clockworker.mjs';
 export * from './scheduler.mjs';
 export * from './webaudio.mjs';
+export * from './sampler.mjs';

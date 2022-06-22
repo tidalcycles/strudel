@@ -6,7 +6,8 @@
   "scripts": {
     "test": "npm run test --workspaces --if-present && cd repl && npm run test",
     "bootstrap": "lerna bootstrap",
-    "setup": "npm i && npm run bootstrap && cd repl && npm i",
+    "setup": "npm i && npm run bootstrap && cd repl && npm i && cd ../tutorial && npm i",
+    "snapshot": "cd repl && npm run snapshot",
     "repl": "cd repl && npm run dev",
     "osc": "cd packages/osc && npm run server",
     "build": "rm -rf out && cd repl && npm run build && cd ../tutorial && npm run build",

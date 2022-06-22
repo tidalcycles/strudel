@@ -1,8 +1,10 @@
 import nunjucks from 'nunjucks';
-import jsdoc from '../doc.json' assert { type: 'json' };
-
-// TODO: load tutorial.mdx and append rendered api.mdx to the bottom (to make sure TOC works)
-// TODO: split
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const jsdoc = JSON.parse(await readFile(`${__dirname}/../doc.json`, 'utf8'));
+// import jsdoc from '../doc.json' assert { type: 'json' }; // node 18
 
 const env = nunjucks.configure('.', { autoescape: false });
 

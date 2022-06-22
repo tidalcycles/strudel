@@ -13,8 +13,8 @@ import './App.css';
 import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
 import * as WebDirt from 'WebDirt';
-import { loadWebDirt, resetLoadedSamples } from '@strudel.cycles/webdirt';
-
+import { loadWebDirt } from '@strudel.cycles/webdirt';
+import { resetLoadedSamples, getAudioContext } from '@strudel.cycles/webaudio';
 evalScope(
   Tone,
   controls,
@@ -28,6 +28,8 @@ evalScope(
   import('@strudel.cycles/webaudio'),
   import('@strudel.cycles/osc'),
   import('@strudel.cycles/webdirt'),
+  import('@strudel.cycles/serial'),
+  import('@strudel.cycles/soundfonts'),
 );
 
 loadWebDirt({
@@ -138,7 +140,13 @@ function App() {
           <h1 className={isEmbedded ? 'text-l' : 'text-xl'}>Strudel {isEmbedded ? 'Mini ' : ''}REPL</h1>
         </div>
         <div className="flex">
-          <button onClick={() => togglePlay()} className={cx('hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}>
+          <button
+            onClick={() => {
+              getAudioContext().resume(); // fixes no sound in ios webkit
+              togglePlay();
+            }}
+            className={cx('hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}
+          >
             {!pending ? (
               <span className={cx('flex items-center', isEmbedded ? 'w-16' : 'w-16')}>
                 {cycle.started ? (

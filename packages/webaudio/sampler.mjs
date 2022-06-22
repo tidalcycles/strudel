@@ -1,6 +1,8 @@
 const bufferCache = {}; // string: Promise<ArrayBuffer>
 const loadCache = {}; // string: Promise<ArrayBuffer>
 
+export const getCachedBuffer = (url) => bufferCache[url];
+
 export const loadBuffer = (url, ac) => {
   if (!loadCache[url]) {
     loadCache[url] = fetch(url)
@@ -91,7 +93,7 @@ export const loadGithubSamples = async (path, nameFn) => {
  *
  */
 
-export const samples = (sampleMap, baseUrl = '') => {
+export const samples = (sampleMap, baseUrl = sampleMap._base) => {
   sampleCache.current = {
     ...sampleCache.current,
     ...Object.fromEntries(

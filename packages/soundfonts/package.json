@@ -1,12 +1,9 @@
 {
-  "name": "@strudel.cycles/tonal",
-  "version": "0.1.3",
-  "description": "Tonal functions for strudel",
+  "name": "@strudel.cycles/soundfonts",
+  "version": "0.1.1",
+  "description": "Soundsfont support for strudel",
   "main": "index.mjs",
   "type": "module",
-  "scripts": {
-    "test": "mocha --colors"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -25,8 +22,10 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.1.2",
-    "@tonaljs/tonal": "^4.6.5",
-    "webmidi": "^3.0.15"
+    "@strudel.cycles/core": "*",
+    "@strudel.cycles/webaudio": "^0.1.4"
+  },
+  "devDependencies": {
+    "node-fetch": "^3.2.6"
   }
 }
