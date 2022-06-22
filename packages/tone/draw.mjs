@@ -36,7 +36,7 @@ Pattern.prototype.draw = function (callback, { from, to, onQuery }) {
         const begin = currentCycle + from;
         const end = currentCycle + to;
         setTimeout(() => {
-          events = this.query(new State(new TimeSpan(begin, end))) //._asNumber(true) // true = silent error
+          events = this.query(new State(new TimeSpan(begin, end)))
             .filter(Boolean)
             .filter((event) => event.part.begin.equals(event.whole.begin));
           onQuery?.(events);
