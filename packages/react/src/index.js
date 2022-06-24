@@ -1,6 +1,6 @@
 // import 'tailwindcss/tailwind.css';
 
-export { default as CodeMirror } from './components/CodeMirror6';
+export { default as CodeMirror, flash } from './components/CodeMirror6';
 export * from './components/MiniRepl';
 export { default as useCycle } from './hooks/useCycle';
 export { default as useHighlighting } from './hooks/useHighlighting';
