@@ -91,6 +91,30 @@ Here is a short description of all the functions used:
 - `tone(instrument)`: play back each event with the given Tone.js instrument
 - `pianoroll()`: visualize events as midi notes in a pianoroll
 
+# Ways to make Sound
+
+To generate sound, Strudel supports different outputs:
+
+- Tone.js
+- Web Audio API
+- WebDirt, a js recreation of Tidal's *Dirt* sample engine
+- OSC via osc-js
+- MIDI via WebMIDI
+
+Tone.js proved to be limited for the use case of Strudel, where each individual event could potentially have a completely different audio graph.
+While the Web Audio API takes a *fire-and-forget* approach, creating a lot of Tone.js instruments and effects causes performance issues quickly. For that reason, we chose to search for alternatives.
+
+Strudel's Web Audio API output creates a new audio graph for each event. It currently supports basic oscillators, sample playback, envelopes, filters and
+an experimental support for soundfonts.
+
+WebDirt [@webdirt] was created as part of the Estuary Live Coding System [@estuary], and proved to be a solid choice for handling samples in Strudel as well.
+
+Using OSC, it is possible to send messages to SuperDirt [@superdirt], which is what Tidal does to generate sound.
+The downside of using OSC is that it requires the user to install SuperCollider and its sc3plugins library, which can be difficult.
+
+The MIDI output can be used to send MIDI messages to either external instruments or to other programs on the same device.
+Web MIDI is currently only supported on chromium based browsers. [@webmidicaniuse]
+
 # Future Outlook
 
 The project is still young, with many features on the horizon. As general guiding principles, Strudel aims to be
@@ -99,7 +123,7 @@ The project is still young, with many features on the horizon. As general guidin
 2. consistent with Tidal's approach to pattern
 3. modular and extensible
 
-The main accessibility advantage over Tidal is the zero install browser environment. It should also now be accessible to screen reader users, with the recent integration of the CodeMirror 6 editor. While Strudel can control Tidal's SuperDirt audio system via OSC, that requires the user to install SuperCollider and its sc3plugins library, which can be difficult. Without SuperDirt, Strudel is able to output sound itself via Tone.js, however this is limited both in terms of available features and runtime performance. For the future, it is planned to integrate alternative sound engines such as glicol [@glicol] and faust [@faust]. To improve compatibility with Tidal, more Tidal functions are planned to be ported, as well as full compatibility with SuperDirt. Besides sound, other ways to render events are being explored, such as graphical, and choreographic output. We are also looking into alternative ways of editing patterns, including multi-user editing for network music, parsing a novel syntax to escape the constraints of javascript, and developing hardware/e-textile interfaces.
+For the future, it is planned to integrate alternative sound engines such as glicol [@glicol] and faust [@faust]. To improve compatibility with Tidal, more Tidal functions are planned to be ported, as well as full compatibility with SuperDirt. Besides sound, other ways to render events are being explored, such as graphical, and choreographic output. We are also looking into alternative ways of editing patterns, including multi-user editing for network music, parsing a novel syntax to escape the constraints of javascript, and developing hardware/e-textile interfaces.
 
 # Links
 
@@ -131,3 +155,6 @@ Thanks to the Strudel and wider Tidal, live coding, webaudio and free/open sourc
 [@faust]: https://webaudioconf.com/posts/2019_38/
 [@wags]: https://mikesol.github.io/purescript-wags/
 [@hydra]: https://hydra.ojack.xyz/docs/#/
+[@webmidicaniuse]: https://caniuse.com/?search=Web%20MIDI%20API
+[@webdirt]: https://github.com/dktr0/WebDirt
+[@superdirt]: https://github.com/musikinformatik/SuperDirt
