@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import controls from '@strudel.cycles/core/controls.mjs';
 import { evalScope, evaluate } from '@strudel.cycles/eval';
-import { CodeMirror, cx, useHighlighting, useRepl, useWebMidi } from '@strudel.cycles/react';
+import { CodeMirror, cx, flash, useHighlighting, useRepl, useWebMidi } from '@strudel.cycles/react';
 import { getDefaultSynth, cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
@@ -92,6 +92,7 @@ function App() {
       if (e.ctrlKey || e.altKey) {
         if (e.code === 'Enter') {
           e.preventDefault();
+          flash(view);
           await activateCode();
         } else if (e.code === 'Period') {
           cycle.stop();
@@ -101,7 +102,7 @@ function App() {
     };
     window.addEventListener('keydown', handleKeyPress, true);
     return () => window.removeEventListener('keydown', handleKeyPress, true);
-  }, [pattern, code, activateCode, cycle]);
+  }, [pattern, code, activateCode, cycle, view]);
 
   useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes('strudel disable-highlighting') });
 
