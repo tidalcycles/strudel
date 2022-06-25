@@ -175,7 +175,7 @@ SuperCollider and its sc3plugins library, which can be difficult.
 
 The MIDI output can be used to send MIDI messages to either external
 instruments or to other programs on the same device. Web MIDI is
-currently only supported on chromium-based browsers.
+currently only supported on Chromium-based browsers.
 
 # Future Outlook
 
@@ -187,7 +187,7 @@ general guiding principles, Strudel aims to be
 3.  modular and extensible
 
 For the future, it is planned to integrate alternative sound engines
-such as glicol [@lanChaosprintGlicol2022] and faust
+such as Glicol [@lanChaosprintGlicol2022] and Faust
 [@FaustProgrammingLanguage2022]. To improve compatibility with Tidal,
 more Tidal functions are planned to be ported, as well as full
 compatibility with SuperDirt. Besides sound, other ways to render events

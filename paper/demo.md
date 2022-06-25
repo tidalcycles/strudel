@@ -113,7 +113,7 @@ Using OSC, it is possible to send messages to SuperDirt [@SuperDirt2022], which 
 The downside of using OSC is that it requires the user to install SuperCollider and its sc3plugins library, which can be difficult.
 
 The MIDI output can be used to send MIDI messages to either external instruments or to other programs on the same device.
-Web MIDI is currently only supported on chromium-based browsers.
+Web MIDI is currently only supported on Chromium-based browsers.
 
 # Future Outlook
 
@@ -123,7 +123,7 @@ The project is still young, with many features on the horizon. As general guidin
 2. consistent with Tidal's approach to pattern
 3. modular and extensible
 
-For the future, it is planned to integrate alternative sound engines such as glicol [@lanChaosprintGlicol2022] and faust [@FaustProgrammingLanguage2022]. To improve compatibility with Tidal, more Tidal functions are planned to be ported, as well as full compatibility with SuperDirt. Besides sound, other ways to render events are being explored, such as graphical, and choreographic output. We are also looking into alternative ways of editing patterns, including multi-user editing for network music, parsing a novel syntax to escape the constraints of javascript, and developing hardware/e-textile interfaces.
+For the future, it is planned to integrate alternative sound engines such as Glicol [@lanChaosprintGlicol2022] and Faust [@FaustProgrammingLanguage2022]. To improve compatibility with Tidal, more Tidal functions are planned to be ported, as well as full compatibility with SuperDirt. Besides sound, other ways to render events are being explored, such as graphical, and choreographic output. We are also looking into alternative ways of editing patterns, including multi-user editing for network music, parsing a novel syntax to escape the constraints of javascript, and developing hardware/e-textile interfaces.
 
 # Links
 
