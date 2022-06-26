@@ -113,6 +113,17 @@ const getSampleBufferSource = async (s, n, note) => {
   return bufferSource;
 };
 
+const splitSN = (s, n) => {
+  if (!s.includes(':')) {
+    return [s, n];
+  }
+  let [s2, n2] = s.split(':');
+  if (isNaN(Number(s2))) {
+    return [s, n];
+  }
+  return [s2, n2];
+};
+
 Pattern.prototype.out = function () {
   return this.onTrigger(async (t, hap, ct) => {
     const ac = getAudioContext();
@@ -146,11 +157,11 @@ Pattern.prototype.out = function () {
     gain *= velocity; // legacy fix for velocity
     // the chain will hold all audio nodes that connect to each other
     const chain = [];
-    if (typeof s === 'string' && s.includes(':')) {
-      [s, n] = s.split(':');
+    if (typeof s === 'string') {
+      [s, n] = splitSN(s, n);
     }
-    if (typeof note === 'string' && note.includes(':')) {
-      [note, n] = note.split(':');
+    if (typeof note === 'string') {
+      [note, n] = splitSN(note, n);
     }
     if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
       // with synths, n and note are the same thing
@@ -222,7 +233,7 @@ Pattern.prototype.out = function () {
       if (soundfont || choke) {
         const env = ac.createGain();
         const releaseLength = 0.1;
-        env.gain.value = 1;
+        env.gain.value = .6;
         env.gain.setValueAtTime(env.gain.value, t + duration);
         env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
         // env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);

@@ -93,7 +93,7 @@ export const loadGithubSamples = async (path, nameFn) => {
  *
  */
 
-export const samples = (sampleMap, baseUrl = sampleMap._base) => {
+export const samples = (sampleMap, baseUrl = sampleMap._base || '') => {
   sampleCache.current = {
     ...sampleCache.current,
     ...Object.fromEntries(
