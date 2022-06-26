@@ -16,6 +16,9 @@ async function loadFont(name) {
 }
 
 export async function getFontBufferSource(name, pitch, ac) {
+  if (typeof pitch === 'string') {
+    pitch = toMidi(pitch);
+  }
   const { buffer, zone } = await getFontPitch(name, pitch, ac);
   const src = ac.createBufferSource();
   src.buffer = buffer;

@@ -97,12 +97,28 @@ export const samples = (sampleMap, baseUrl = sampleMap._base) => {
   sampleCache.current = {
     ...sampleCache.current,
     ...Object.fromEntries(
-      Object.entries(sampleMap).map(([key, value]) => [
-        key,
-        (typeof value === 'string' ? [value] : value).map((v) =>
-          (baseUrl + v).replace('github:', 'https://raw.githubusercontent.com/'),
-        ),
-      ]),
+      Object.entries(sampleMap).map(([key, value]) => {
+        if (typeof value === 'string') {
+          return [key, [value]];
+        }
+        if (typeof value !== 'object') {
+          throw new Error('wrong sample map format for ' + key);
+        }
+        baseUrl = value._base || baseUrl;
+        const replaceUrl = (v) => (baseUrl + v).replace('github:', 'https://raw.githubusercontent.com/');
+        if (Array.isArray(value)) {
+          return [key, value.map(replaceUrl)];
+        }
+        // must be object
+        return [
+          key,
+          Object.fromEntries(
+            Object.entries(value).map(([note, samples]) => {
+              return [note, (typeof samples === 'string' ? [samples] : samples).map(replaceUrl)];
+            }),
+          ),
+        ];
+      }),
     ),
   };
 };

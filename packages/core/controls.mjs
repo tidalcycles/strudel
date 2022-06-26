@@ -744,6 +744,7 @@ const generic_params = [
   ['f', 'uid', ''],
   ['f', 'val', ''],
   ['f', 'cps', ''],
+  ['f', 'choke', ''],
 ];
 
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
