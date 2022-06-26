@@ -118,7 +118,7 @@ const splitSN = (s, n) => {
     return [s, n];
   }
   let [s2, n2] = s.split(':');
-  if (isNaN(Number(s2))) {
+  if (isNaN(Number(n2))) {
     return [s, n];
   }
   return [s2, n2];
@@ -233,7 +233,7 @@ Pattern.prototype.out = function () {
       if (soundfont || choke) {
         const env = ac.createGain();
         const releaseLength = 0.1;
-        env.gain.value = .6;
+        env.gain.value = 0.6;
         env.gain.setValueAtTime(env.gain.value, t + duration);
         env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
         // env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
