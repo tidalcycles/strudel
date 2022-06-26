@@ -167,7 +167,7 @@ Pattern.prototype.out = function () {
       chain.push(o);
       // level down oscillators as they are really loud compared to samples i've tested
       const g = ac.createGain();
-      g.gain.value = 0.5;
+      g.gain.value = 0.3;
       chain.push(g);
       // TODO: make adsr work with samples without pops
       // envelope
