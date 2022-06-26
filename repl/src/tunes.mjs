@@ -579,32 +579,31 @@ stack(
  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
  .tone((await piano()).chain(out())).fast(3/4)`;
 
-// iter, stut, stutWith
+// iter, echo, echoWith
 export const undergroundPlumber = `backgroundImage('https://images.nintendolife.com/news/2016/08/video_exploring_the_funky_inspiration_for_the_super_mario_bros_underground_theme/large.jpg',{ className:'darken' })
 
-const drums = await players({
-  bd: 'bd/BT0A0D0.wav',
-  sn: 'sn/ST0T0S3.wav',
-  hh: 'hh/000_hh3closedhh.wav',
-  cp: 'cp/HANDCLP0.wav',
+samples({ bd: 'bd/BT0A0D0.wav', sn: 'sn/ST0T0S3.wav', hh: 'hh/000_hh3closedhh.wav', cp: 'cp/HANDCLP0.wav',
 }, 'https://loophole-letters.vercel.app/samples/tidal/')
+
+const h = x=>x.transpose("<0@2 5 0 7 5 0 -5>/2")
+
 stack(
-"<<bd*2 bd> sn> hh".fast(4).slow(2).tone(drums.chain(vol(.5),out())),
-  stack(
-    "[c2 a1 bb1 ~] ~"
-    .stut(2, .6, 1/16)
-    .legato(.4)
-    .slow(2)
-    .tone(synth({...osc('sawtooth7'),...adsr(0,.3,0)}).chain(out())),
-    "[g2,[c3 eb3]]".iter(4)
-    .stutWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
-    .legato(.1)
-  )
-  .transpose("<0@2 5 0 7 5 0 -5>/2")
-  
-)
+  s("<<bd*2 bd> sn> hh").fast(2).gain(.7),
+  "[c2 a1 bb1 ~] ~"
+  .echo(2, 1/16, 1)
+  .legato(.4)
+  .slow(2)
+  .layer(h)
+  .note().s('square')
+  .cutoff(400).decay(.12).sustain(0)
+  ,
+  "[g2,[c3 eb3]]".iter(4)
+  .echoWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
+  .legato(.1)
+  .layer(h).note()
+).out()
   .fast(2/3)
-  .pianoroll({minMidi:21,maxMidi:180, background:'transparent',inactive:'#3F8F90',active:'#DE3123'})`;
+  .pianoroll({})`;
 
 export const bridgeIsOver = `const breaks = (await players({mad:'https://freesound.org/data/previews/22/22274_109943-lq.mp3'})).chain(out())
 stack(
