@@ -8,7 +8,7 @@ import controls from '@strudel.cycles/core/controls.mjs';
 import { evalScope, evaluate } from '@strudel.cycles/eval';
 import { CodeMirror, cx, flash, useHighlighting, useRepl, useWebMidi } from '@strudel.cycles/react';
 import { getDefaultSynth, cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
@@ -46,29 +46,35 @@ loadWebDirt({
   sampleFolder: 'EmuSP12',
 });
 
-// load code from url hash (either short hash from database or decode long hash)
-let decoded;
-try {
-  const initialUrl = window.location.href;
-  const hash = initialUrl.split('?')[1]?.split('#')?.[0];
-  const codeParam = window.location.href.split('#')[1];
-  // looking like https://strudel.tidalcycles.org/?J01s5i1J0200 (fixed hash length)
-  if (codeParam) {
-    // looking like https://strudel.tidalcycles.org/#ImMzIGUzIg%3D%3D (hash length depends on code length)
-    decoded = atob(decodeURIComponent(codeParam || ''));
-    console.log('decoded hash from url');
-  } else if (hash) {
-    const { data, error } = await supabase.from('code').select('code').eq('hash', hash);
-    if (error) {
-      throw error;
+async function initCode() {
+  // load code from url hash (either short hash from database or decode long hash)
+  try {
+    const initialUrl = window.location.href;
+    const hash = initialUrl.split('?')[1]?.split('#')?.[0];
+    const codeParam = window.location.href.split('#')[1];
+    // looking like https://strudel.tidalcycles.org/?J01s5i1J0200 (fixed hash length)
+    if (codeParam) {
+      console.log('decode hash from url');
+      // looking like https://strudel.tidalcycles.org/#ImMzIGUzIg%3D%3D (hash length depends on code length)
+      return atob(decodeURIComponent(codeParam || ''));
+    } else if (hash) {
+      return supabase
+        .from('code')
+        .select('code')
+        .eq('hash', hash)
+        .then(({ data, error }) => {
+          if (error) {
+            console.warn('failed to load hash', err);
+          }
+          if (data.length) {
+            console.log('load hash from database', hash);
+            return data[0].code;
+          }
+        });
     }
-    if (data.length) {
-      decoded = data[0].code;
-      console.log('loaded hash from database', hash);
-    }
+  } catch (err) {
+    console.warn('failed to decode', err);
   }
-} catch (err) {
-  console.warn('failed to decode', err);
 }
 
 function getRandomTune() {
@@ -100,9 +106,12 @@ function App() {
     pushLog,
     pending,
   } = useRepl({
-    tune: decoded || randomTune,
+    tune: '// LOADING...',
     defaultSynth,
   });
+  useEffect(() => {
+    initCode().then((decoded) => setCode(decoded || randomTune));
+  }, []);
   const logBox = useRef();
   // scroll log box to bottom when log changes
   useLayoutEffect(() => {
