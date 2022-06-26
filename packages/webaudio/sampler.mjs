@@ -99,7 +99,7 @@ export const samples = (sampleMap, baseUrl = sampleMap._base) => {
     ...Object.fromEntries(
       Object.entries(sampleMap).map(([key, value]) => {
         if (typeof value === 'string') {
-          return [key, [value]];
+          value = [value];
         }
         if (typeof value !== 'object') {
           throw new Error('wrong sample map format for ' + key);
