@@ -18,6 +18,15 @@ export * from './speak.mjs';
 export { default as gist } from './gist.js';
 import * as p from './package.json';
 export const version = p.version;
-console.log('🌀🌀🌀 @strudel.cycles/core@' + version);
-
-// export * from './value.mjs';
+console.log(
+  '%c 🌀 @strudel.cycles/core version ' + version + ' 🌀',
+  'background-color: black;color:white;padding:4px;border-radius:15px',
+);
+if (window._strudelLoaded) {
+  console.warn(
+    `@strudel.cycles/core was loaded more than once...
+This might happen when you have multiple versions of strudel installed. 
+Please check with "npm ls @strudel.cycles/core".`,
+  );
+}
+window._strudelLoaded = true;
