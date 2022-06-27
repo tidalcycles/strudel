@@ -37,7 +37,9 @@ export function prebake() {
         C8: 'C8v8.mp3',
       },
     },
-    'https://tambien.github.io/Piano/audio/',
+    // https://archive.org/details/SalamanderGrandPianoV3
+    // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
+    './piano/',
   );
 }
 
