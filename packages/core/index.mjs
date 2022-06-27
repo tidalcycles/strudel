@@ -16,17 +16,18 @@ export * from './timespan.mjs';
 export * from './util.mjs';
 export * from './speak.mjs';
 export { default as gist } from './gist.js';
-import * as p from './package.json';
-export const version = p.version;
+// below won't work with runtime.mjs (json import fails)
+/* import * as p from './package.json';
+export const version = p.version; */
 console.log(
-  '%c 🌀 @strudel.cycles/core version ' + version + ' 🌀',
+  '%c // 🌀 @strudel.cycles/core loaded 🌀', // keep "//" for runnable snapshot source..
   'background-color: black;color:white;padding:4px;border-radius:15px',
 );
-if (window._strudelLoaded) {
+if (globalThis._strudelLoaded) {
   console.warn(
     `@strudel.cycles/core was loaded more than once...
 This might happen when you have multiple versions of strudel installed. 
 Please check with "npm ls @strudel.cycles/core".`,
   );
 }
-window._strudelLoaded = true;
+globalThis._strudelLoaded = true;

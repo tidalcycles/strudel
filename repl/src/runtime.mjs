@@ -31,6 +31,8 @@ import '@strudel.cycles/xen/xen.mjs';
 // import '@strudel.cycles/serial/serial.mjs';
 // import controls from '@strudel.cycles/core/controls.mjs';
 
+import { prebake } from './prebake.mjs';
+
 class MockedNode {
   chain() {
     return this;
@@ -121,6 +123,7 @@ const uiHelpersMocked = {
   backgroundImage: id,
 };
 
+prebake();
 
 // TODO: refactor to evalScope
 extend(
