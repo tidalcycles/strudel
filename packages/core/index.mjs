@@ -16,4 +16,8 @@ export * from './timespan.mjs';
 export * from './util.mjs';
 export * from './speak.mjs';
 export { default as gist } from './gist.js';
+import * as p from './package.json';
+export const version = p.version;
+console.log('🌀🌀🌀 @strudel.cycles/core@' + version);
+
 // export * from './value.mjs';

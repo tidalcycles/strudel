@@ -15,6 +15,7 @@ import drawLine from './drawLine.mjs';
 
 /** @class Class representing a pattern. */
 export class Pattern {
+  _Pattern = true; // this property is used to detect if a pattern that fails instanceof Pattern is an instance of another Pattern
   /**
    * Create a pattern. As an end user, you will most likely not create a Pattern directly.
    *
@@ -1212,7 +1213,15 @@ export function pure(value) {
 
 export function isPattern(thing) {
   // thing?.constructor?.name !== 'Pattern' // <- this will fail when code is mangled
-  return thing instanceof Pattern;
+  const is = thing instanceof Pattern || thing._Pattern;
+  if (!thing instanceof Pattern) {
+    console.warn(
+      `Found Pattern that fails "instanceof Pattern" check.
+      This may happen if you are using multiple versions of @strudel.cycles/core. 
+      Please check by running "npm ls @strudel.cycles/core".`,
+    );
+  }
+  return is;
 }
 
 export function reify(thing) {
@@ -1389,7 +1398,7 @@ export function pr(args) {
 }
 
 export const add = curry((a, pat) => pat.add(a));
-export const chop = curry((a, pat) => pat.chop(a))
+export const chop = curry((a, pat) => pat.chop(a));
 export const chunk = curry((a, pat) => pat.chunk(a));
 export const chunkBack = curry((a, pat) => pat.chunkBack(a));
 export const div = curry((a, pat) => pat.div(a));
