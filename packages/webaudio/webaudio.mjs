@@ -134,7 +134,7 @@ Pattern.prototype.out = function () {
       freq,
       s,
       sf,
-      choke = 0, // if 1, samples will be cut off when the hap ends
+      clip = 0, // if 1, samples will be cut off when the hap ends
       n = 0,
       note,
       gain = 1,
@@ -220,17 +220,17 @@ Pattern.prototype.out = function () {
       }
       bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
       // TODO: nudge, unit, cut, loop
-      let duration = soundfont || choke ? hap.duration : bufferSource.buffer.duration;
+      let duration = soundfont || clip ? hap.duration : bufferSource.buffer.duration;
       // let duration = bufferSource.buffer.duration;
       const offset = begin * duration;
       duration = ((end - begin) * duration) / Math.abs(speed);
-      if (soundfont || choke) {
+      if (soundfont || clip) {
         bufferSource.start(t, offset); // duration does not work here for some reason
       } else {
         bufferSource.start(t, offset, duration);
       }
       chain.push(bufferSource);
-      if (soundfont || choke) {
+      if (soundfont || clip) {
         const env = ac.createGain();
         const releaseLength = 0.1;
         env.gain.value = 0.6;

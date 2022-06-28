@@ -1015,7 +1015,7 @@ x=>x.add(7).color('steelblue')
 .cutoff(sine.slow(7).range(200,4000))
 .resonance(10)
 //.hcutoff(400)
-.choke(1)
+.clip(1)
 .stack(s("bd:1*2,~ sd:0,[~ hh:0]*2"))
 .out()
 .pianoroll({vertical:1})`;

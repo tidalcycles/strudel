@@ -47,7 +47,7 @@ const maxPan = toMidi('C8');
 const panwidth = (pan, width) => pan * width + (1 - width) / 2;
 
 Pattern.prototype.piano = function () {
-  return this.choke(1)
+  return this.clip(1)
     .s('piano')
     .fmap((value) => {
       // pan by pitch
