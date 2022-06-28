@@ -444,7 +444,7 @@ export const barryHarris = `backgroundImage(
   .scale('C bebop major')
   .transpose("<0 1 2 1>/8")
   .slow(2)
-  .tone((await piano()).toDestination())
+  .note().piano().out()
 `;
 
 export const blippyRhodes = `const delay = new FeedbackDelay(1/12, .4).chain(vol(0.3), out());
@@ -551,7 +551,7 @@ export const risingEnemy = `stack(
   .transpose("<0 1 2 1>/2".early(0.5))
   .transpose(5)
   .fast(2 / 3)
-  .tone((await piano()).toDestination())`;
+  .note().piano().out()`;
 
 export const festivalOfFingers = `const chords = "<Cm7 Fm7 G7 F#7>";
 stack(
@@ -563,7 +563,7 @@ stack(
   .scaleTranspose("0 4 0 6".early(".125 .5")).layer(scaleTranspose("0,<2 [4,6] [5,7]>/4"))
 ).slow(2)
  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
- .tone((await piano()).chain(out()))`;
+ .note().piano().out()`;
 
 export const festivalOfFingers2 = `const chords =       "<Cm7       Fm7        G7         F#7            >";
 const scales = cat('C minor','F dorian','G dorian','F# mixolydian')
@@ -577,36 +577,35 @@ stack(
 ).slow(2).transpose(-1)            
  .legato(cosine.struct("x*8").add(4/5).mul(4/5).fast(8))
  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
- .tone((await piano()).chain(out())).fast(3/4)`;
+ .note().piano().out().fast(3/4)`;
 
-// iter, stut, stutWith
+// iter, echo, echoWith
 export const undergroundPlumber = `backgroundImage('https://images.nintendolife.com/news/2016/08/video_exploring_the_funky_inspiration_for_the_super_mario_bros_underground_theme/large.jpg',{ className:'darken' })
 
-const drums = await players({
-  bd: 'bd/BT0A0D0.wav',
-  sn: 'sn/ST0T0S3.wav',
-  hh: 'hh/000_hh3closedhh.wav',
-  cp: 'cp/HANDCLP0.wav',
+samples({ bd: 'bd/BT0A0D0.wav', sn: 'sn/ST0T0S3.wav', hh: 'hh/000_hh3closedhh.wav', cp: 'cp/HANDCLP0.wav',
 }, 'https://loophole-letters.vercel.app/samples/tidal/')
-stack(
-"<<bd*2 bd> sn> hh".fast(4).slow(2).tone(drums.chain(vol(.5),out())),
-  stack(
-    "[c2 a1 bb1 ~] ~"
-    .stut(2, .6, 1/16)
-    .legato(.4)
-    .slow(2)
-    .tone(synth({...osc('sawtooth7'),...adsr(0,.3,0)}).chain(out())),
-    "[g2,[c3 eb3]]".iter(4)
-    .stutWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
-    .legato(.1)
-  )
-  .transpose("<0@2 5 0 7 5 0 -5>/2")
-  
-)
-  .fast(2/3)
-  .pianoroll({minMidi:21,maxMidi:180, background:'transparent',inactive:'#3F8F90',active:'#DE3123'})`;
 
-export const bridgeIsOver = `const breaks = (await players({mad:'https://freesound.org/data/previews/22/22274_109943-lq.mp3'})).chain(out())
+const h = x=>x.transpose("<0@2 5 0 7 5 0 -5>/2")
+
+stack(
+  s("<<bd*2 bd> sn> hh").fast(2).gain(.7),
+  "[c2 a1 bb1 ~] ~"
+  .echo(2, 1/16, 1)
+  .legato(.4)
+  .slow(2)
+  .layer(h)
+  .note().s('square')
+  .cutoff(400).decay(.12).sustain(0)
+  ,
+  "[g2,[c3 eb3]]".iter(4)
+  .echoWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
+  .legato(.1)
+  .layer(h).note()
+).out()
+  .fast(2/3)
+  .pianoroll({})`;
+
+export const bridgeIsOver = `samples({mad:'https://freesound.org/data/previews/22/22274_109943-lq.mp3'})
 stack(
   stack(
   "c3*2 [[c3@1.4 bb2] ab2] gb2*2 <[[gb2@1.4 ab2] bb2] gb2>".legato(".5 1".fast(2)).velocity(.8),
@@ -618,9 +617,11 @@ stack(
     .velocity(.7)
     .legato(.5)
     .stut(3, .5, 1/8)
-  ).transpose(-1).tone((await piano()).chain(out())),
-  "mad".slow(2).tone(breaks)
-).cpm(78).slow(4).pianoroll()
+  ).transpose(-1).note().piano(),
+  s("mad").slow(2)
+).cpm(78).slow(4)
+  .out()
+  .pianoroll()
 `;
 
 export const goodTimes = `const scale = cat('C3 dorian','Bb2 major').slow(4);
@@ -637,10 +638,9 @@ stack(
   .legato("2")
   .scale(scale)
 .scaleTranspose("<0>".slow(4))
-.tone((await piano()).chain(out()))
-//.midi()
-.velocity(.8)
 .transpose(5)
+.note().piano().out()
+.velocity(.8)
 .slow(2)
 .pianoroll({maxMidi:100,minMidi:20})`;
 
@@ -651,7 +651,7 @@ export const echoPiano = `"<0 2 [4 6](3,4,1) 3*2>"
 .off(1/2, x=>x.scaleTranspose(6).color('steelblue'))
 .legato(.5)
 .echo(4, 1/8, .5)
-.tone((await piano()).chain(out()))
+.note().piano().out()
 .pianoroll()`;
 
 export const sml1 = `
@@ -687,7 +687,7 @@ stack(
   f3!2 e3!2 ab3!2 ~!2
   >\`
   .legato(.5)
-).fast(2) //.tone((await piano()).chain(out()))`;
+).fast(2) // .note().piano().out()`;
 
 export const speakerman = `backgroundImage('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FXR0rKqW3VwY%2Fmaxresdefault.jpg&f=1&nofb=1', 
 { className:'darken', style:'background-size:cover'})
@@ -827,7 +827,7 @@ export const festivalOfFingers3 = `"[-7*3],0,2,6,[8 7]"
 .scale(cat('D dorian','G mixolydian','C dorian','F mixolydian'))
 .legato(1)
 .slow(2)
-.tone((await piano()).toDestination())
+.note().piano().out()
 //.pianoroll({maxMidi:160})`;
 
 export const bossa = `
@@ -835,7 +835,7 @@ const scales = sequence('C minor', ['D locrian', 'G phrygian'], 'Bb2 minor', ['C
 stack(
   "<Cm7 [Dm7b5 G7b9] Bbm7 [Cm7b5 F7b9]>".fast(2).struct("x ~ x@3 x ~ x ~ ~ ~ x ~ x@3".late(1/8)).early(1/8).slow(2).voicings(),
   "[~ [0 ~]] 0 [~ [4 ~]] 4".sub(7).restart(scales).scale(scales).early(.25)
-).tone((await piano()).toDestination()).slow(2)`;
+).note().piano().out().slow(2)`;
 
 export const customTrigger = `stack(
   freq("55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)").layer(x=>x.mul("1.006,.995"))),
@@ -994,3 +994,28 @@ export const outroMusic = `samples({
   ).slow(3/2)
   //.pianoroll({autorange:1,vertical:1,fold:0})
   .out()`;
+
+export const bassFuge = `samples({ flbass: ['00_c2_finger_long_neck.wav','01_c2_finger_short_neck.wav','02_c2_finger_long_bridge.wav','03_c2_finger_short_bridge.wav','04_c2_pick_long.wav','05_c2_pick_short.wav','06_c2_palm_mute.wav'] }, 
+  'github:cleary/samples-flbass/main/')
+samples({
+bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+
+note("<8(3,8) <7 7*2> [4 5@3] 8>".sub(1) // sub 1 -> 1-indexed
+.layer(
+x=>x,
+x=>x.add(7).color('steelblue')
+.off(1/8,x=>x.add("2,4").off(1/8,x=>x.add(5).echo(4,.125,.5)))
+.slow(2),
+).scale('A1 minor'))
+.s("flbass").n(0)
+.gain(.3)
+.cutoff(sine.slow(7).range(200,4000))
+.resonance(10)
+//.hcutoff(400)
+.clip(1)
+.stack(s("bd:1*2,~ sd:0,[~ hh:0]*2"))
+.out()
+.pianoroll({vertical:1})`;

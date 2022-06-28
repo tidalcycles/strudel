@@ -8,7 +8,7 @@ import { Pattern } from '@strudel.cycles/core';
 
 const scale = (normalized, min, max) => normalized * (max - min) + min;
 const getValue = (e) => {
-  let value = typeof e.value === 'object' ? e.value.n : e.value;
+  let value = typeof e.value === 'object' ? e.value.note ?? e.value.n : e.value;
   if (typeof value === 'string') {
     value = toMidi(value);
   }

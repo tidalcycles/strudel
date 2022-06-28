@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 // import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
-import { fromMidi } from '@strudel.cycles/core';
+import { fromMidi, toMidi } from '@strudel.cycles/core';
 import { loadBuffer } from './sampler.mjs';
 const { Pattern } = strudel;
 
@@ -68,7 +68,11 @@ const getSoundfontKey = (s) => {
   return;
 };
 
-const getSampleBufferSource = async (s, n) => {
+const getSampleBufferSource = async (s, n, note) => {
+  let transpose = 0;
+  if (note) {
+    transpose = toMidi(note) - 36; // C3 is middle C
+  }
   const ac = getAudioContext();
   // is sample from loaded samples(..)
   const samples = getLoadedSamples();
@@ -79,11 +83,45 @@ const getSampleBufferSource = async (s, n) => {
   if (!bank) {
     throw new Error('sample not found:', s, 'try one of ' + Object.keys(samples));
   }
-  const sampleUrl = bank[n % bank.length];
+  if (typeof bank !== 'object') {
+    throw new Error('wrong format for sample bank:', s);
+  }
+  let sampleUrl;
+  if (Array.isArray(bank)) {
+    sampleUrl = bank[n % bank.length];
+  } else {
+    if (!note) {
+      throw new Error('no note(...) set for sound', s);
+    }
+    const midiDiff = (noteA) => toMidi(noteA) - toMidi(note);
+    // object format will expect keys as notes
+    const closest = Object.keys(bank)
+      .filter((k) => !k.startsWith('_'))
+      .reduce(
+        (closest, key, j) => (!closest || Math.abs(midiDiff(key)) < Math.abs(midiDiff(closest)) ? key : closest),
+        null,
+      );
+    transpose = -midiDiff(closest); // semitones to repitch
+    sampleUrl = bank[closest][n % bank[closest].length];
+  }
   const buffer = await loadBuffer(sampleUrl, ac);
   const bufferSource = ac.createBufferSource();
   bufferSource.buffer = buffer;
+  const playbackRate = 1.0 * Math.pow(2, transpose / 12);
+  // bufferSource.playbackRate.value = Math.pow(2, transpose / 12);
+  bufferSource.playbackRate.value = playbackRate;
   return bufferSource;
+};
+
+const splitSN = (s, n) => {
+  if (!s.includes(':')) {
+    return [s, n];
+  }
+  let [s2, n2] = s.split(':');
+  if (isNaN(Number(n2))) {
+    return [s, n];
+  }
+  return [s2, n2];
 };
 
 Pattern.prototype.out = function () {
@@ -96,7 +134,9 @@ Pattern.prototype.out = function () {
       freq,
       s,
       sf,
+      clip = 0, // if 1, samples will be cut off when the hap ends
       n = 0,
+      note,
       gain = 1,
       cutoff,
       resonance = 1,
@@ -106,19 +146,29 @@ Pattern.prototype.out = function () {
       bandq = 1,
       pan,
       attack = 0.001,
-      decay = 0,
-      sustain = 1,
+      decay = 0.05,
+      sustain = 0.5,
       release = 0.001,
       speed = 1, // sample playback speed
       begin = 0,
       end = 1,
     } = hap.value;
+    const { velocity = 1 } = hap.context;
+    gain *= velocity; // legacy fix for velocity
     // the chain will hold all audio nodes that connect to each other
     const chain = [];
-    if (typeof n === 'string') {
-      n = toMidi(n); // e.g. c3 => 48
+    if (typeof s === 'string') {
+      [s, n] = splitSN(s, n);
+    }
+    if (typeof note === 'string') {
+      [note, n] = splitSN(note, n);
     }
     if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
+      // with synths, n and note are the same thing
+      n = note || n;
+      if (typeof n === 'string') {
+        n = toMidi(n); // e.g. c3 => 48
+      }
       // get frequency
       if (!freq && typeof n === 'number') {
         freq = fromMidi(n); // + 48);
@@ -128,7 +178,7 @@ Pattern.prototype.out = function () {
       chain.push(o);
       // level down oscillators as they are really loud compared to samples i've tested
       const g = ac.createGain();
-      g.gain.value = 0.5;
+      g.gain.value = 0.3;
       chain.push(g);
       // TODO: make adsr work with samples without pops
       // envelope
@@ -150,10 +200,10 @@ Pattern.prototype.out = function () {
       try {
         if (soundfont) {
           // is soundfont
-          bufferSource = await globalThis.getFontBufferSource(soundfont, n, ac);
+          bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac);
         } else {
           // is sample from loaded samples(..)
-          bufferSource = await getSampleBufferSource(s, n);
+          bufferSource = await getSampleBufferSource(s, n, note);
         }
       } catch (err) {
         console.warn(err);
@@ -170,27 +220,34 @@ Pattern.prototype.out = function () {
       }
       bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
       // TODO: nudge, unit, cut, loop
-      let duration = soundfont ? hap.duration : bufferSource.buffer.duration;
+      let duration = soundfont || clip ? hap.duration : bufferSource.buffer.duration;
       // let duration = bufferSource.buffer.duration;
       const offset = begin * duration;
       duration = ((end - begin) * duration) / Math.abs(speed);
-      if (soundfont) {
+      if (soundfont || clip) {
         bufferSource.start(t, offset); // duration does not work here for some reason
       } else {
         bufferSource.start(t, offset, duration);
       }
-      bufferSource.stop(t + duration);
       chain.push(bufferSource);
-      if (soundfont) {
+      if (soundfont || clip) {
         const env = ac.createGain();
-        env.gain.value = 1;
-        const fadeLength = 0.1;
-        env.gain.value = 0.5;
-        env.gain.setValueAtTime(0.5, t + duration - fadeLength);
-        env.gain.linearRampToValueAtTime(0, t + duration);
+        const releaseLength = 0.1;
+        env.gain.value = 0.6;
+        env.gain.setValueAtTime(env.gain.value, t + duration);
+        env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
+        // env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
         chain.push(env);
+        bufferSource.stop(t + duration + releaseLength);
+      } else {
+        bufferSource.stop(t + duration);
       }
     }
+    // master out
+    const master = ac.createGain();
+    master.gain.value = gain;
+    chain.push(master);
+
     // filters
     cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
     hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
@@ -204,9 +261,9 @@ Pattern.prototype.out = function () {
       chain.push(panner);
     }
     // master out
-    const master = ac.createGain();
+    /* const master = ac.createGain();
     master.gain.value = 0.8 * gain;
-    chain.push(master);
+    chain.push(master); */
     chain.push(ac.destination);
     // connect chain elements together
     chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);

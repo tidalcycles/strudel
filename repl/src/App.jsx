@@ -12,6 +12,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import './App.css';
 import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
+import { prebake } from './prebake.mjs';
 import * as WebDirt from 'WebDirt';
 import { loadWebDirt } from '@strudel.cycles/webdirt';
 import { resetLoadedSamples, getAudioContext } from '@strudel.cycles/webaudio';
@@ -45,6 +46,8 @@ loadWebDirt({
   sampleMapUrl: 'EmuSP12.json',
   sampleFolder: 'EmuSP12',
 });
+
+prebake();
 
 async function initCode() {
   // load code from url hash (either short hash from database or decode long hash)
@@ -218,6 +221,7 @@ function App() {
                 cleanupDraw();
                 cleanupUi();
                 resetLoadedSamples();
+                prebake();
                 const parsed = await evaluate(_code);
                 setPattern(parsed.pattern);
                 setActiveCode(_code);
