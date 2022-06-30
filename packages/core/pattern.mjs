@@ -224,7 +224,7 @@ export class Pattern {
    * @returns Pattern
    */
   _removeUndefineds() {
-    return this._filterValues((val) => val != undefined);
+    return this._filterValues((val) => !!val);
   }
 
   /**
@@ -1213,8 +1213,9 @@ export function pure(value) {
 
 export function isPattern(thing) {
   // thing?.constructor?.name !== 'Pattern' // <- this will fail when code is mangled
-  const is = thing instanceof Pattern || thing._Pattern;
-  if (!thing instanceof Pattern) {
+  const is = thing instanceof Pattern || thing?._Pattern;
+
+  if (thing?._Pattern && !thing instanceof Pattern) {
     console.warn(
       `Found Pattern that fails "instanceof Pattern" check.
       This may happen if you are using multiple versions of @strudel.cycles/core. 
