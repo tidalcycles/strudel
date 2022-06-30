@@ -1024,7 +1024,7 @@ export const root73 = `const root = 'E'
 stack(
   stack(
     s("<bd(5,12) bd(3,12)>"),
-    s("hh!6").echo(2,1/12+.02,.3),
+    s("hh!6").echo(2,1/12+.02,.2), // .begin(0.04),
     s("~!5 oh"), // hush(),
     s("~ <sd!7 [sd@3 sd@2 sd]>")
   ).slow(1) //.hcutoff(2000)
@@ -1043,7 +1043,7 @@ stack(
   .legato(perlin.range(.1,.5))
   .velocity(perlin.range(.5,.8))
   .echo(4, 1/6, .5), //.hcutoff(1000).hresonance(10),
-  mini(root+'m7@5 <Ab7 Eb7>').slow(2).voicings().transpose(12)
+  mini(root+'m7@5 <Ab7 Eb7>').slow(2).voicings().transpose(0)
   //.euclid(5,12,1)
   .euclidLegato(5,12,1)
   .note()  
@@ -1053,7 +1053,9 @@ stack(
   .s('stage73')
   .legato(.1)
   .color('tomato')
-  //.cutoff("300@2 600".fast(2)).resonance("10 20 25 10").n(0)
+  .cutoff("300@2 600".fast(2))
+  //.resonance("10 20 25 10")
+  .n(1)
 ).slow(4/2).clip(1)
   .out()
   .pianoroll({autorange:0,vertical:1})
@@ -1087,3 +1089,42 @@ s("bd*3, [~@2 <hh!3 hh*3>]*2,~ snap".slow(2)).gain(.4)
 .out()
 .pianoroll({vertical:1,autorange:0})
 `;
+
+export const frequencyTest = `sequence(880, [440, 660], 440, 660)
+.div(slowcat(3,2).slow(2))
+.off(1/8,mul(2))
+.off(1/4,mul(3))
+.freq()
+.legato(2)
+.slow(2)
+.s('sawtooth').cutoff(1000)
+.out()
+`;
+
+export const gameboyParty = `
+stack(
+  freq(
+    sequence(1,2).mul(55/2) // frequencies
+    .mul(slowcat(1,2))
+    .mul(slowcat(1,3/2,4/3,5/3).slow(8))
+    .fast(3)
+    .velocity(.5)
+  )
+  .s(cat('sawtooth','square').fast(2))
+  .attack(.01).decay(.02).sustain(.5).release(.1)
+  .cutoff(2000) //.resonance(25)
+,
+  freq(
+    sequence(1,[3/2,4/3],5/3)
+    .off(1/6, x=>x.mul(2).velocity(.5))
+    .iter(3)
+    .fast(1)
+    .mul(220)
+    )
+  .gain(.5)
+  .s(cat('sawtooth','square').slow(8))
+  .legato(sine.slow(16).add(.5).div(2))
+  .echo(2,1/12,.6)
+  .attack(.01).decay(.02).sustain(.5).release(.1)
+)
+.out()`;
