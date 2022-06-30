@@ -51,7 +51,7 @@ Pattern.prototype.piano = function () {
     .s('piano')
     .fmap((value) => {
       // pan by pitch
-      const pan = panwidth(Math.min(toMidi(value.note) / maxPan, 1), 0.5);
+      const pan = panwidth(Math.min(toMidi(value.note || value.n) / maxPan, 1), 0.5);
       return { ...value, pan: (value.pan || 1) * pan };
     });
 };
