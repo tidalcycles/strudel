@@ -58,7 +58,6 @@ Pattern.prototype.pianoroll = function ({
   flipTime && timeRange.reverse();
   flipValues && valueRange.reverse();
 
-  const playheadPosition = scale(-from / timeExtent, ...timeRange);
   this.draw(
     (ctx, events, t) => {
       ctx.fillStyle = background;
@@ -71,15 +70,6 @@ Pattern.prototype.pianoroll = function ({
         ctx.fillStyle = event.context?.color || inactive;
         ctx.strokeStyle = event.context?.color || active;
         ctx.globalAlpha = event.context.velocity ?? 1;
-        ctx.beginPath();
-        if (vertical) {
-          ctx.moveTo(0, playheadPosition);
-          ctx.lineTo(valueAxis, playheadPosition);
-        } else {
-          ctx.moveTo(playheadPosition, 0);
-          ctx.lineTo(playheadPosition, valueAxis);
-        }
-        ctx.stroke();
         const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
         let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
         const value = getValue(event);
@@ -109,6 +99,7 @@ Pattern.prototype.pianoroll = function ({
       });
       const playheadPosition = scale(-from / timeExtent, ...timeRange);
       // draw playhead
+      ctx.strokeStyle = 'white';
       ctx.beginPath();
       if (vertical) {
         ctx.moveTo(0, playheadPosition);
@@ -118,31 +109,6 @@ Pattern.prototype.pianoroll = function ({
         ctx.lineTo(playheadPosition, valueAxis);
       }
       ctx.stroke();
-    },
-    {
-      from: from - overscan,
-      to: to + overscan,
-      onQuery: (events) => {
-        const getValue = (e) => Number(e.value);
-        const { min, max, values } = events.reduce(
-          ({ min, max, values }, e) => {
-            const v = getValue(e);
-            return {
-              min: v < min ? v : min,
-              max: v > max ? v : max,
-              values: values.includes(v) ? values : [...values, v],
-            };
-          },
-          { min: Infinity, max: -Infinity, values: [] },
-        );
-        if (autorange) {
-          minMidi = min;
-          maxMidi = max;
-          valueExtent = maxMidi - minMidi + 1;
-        }
-        foldValues = values.sort((a, b) => a - b);
-        barThickness = fold ? valueAxis / foldValues.length : valueAxis / valueExtent;
-      },
     },
     {
       from: from - overscan,
