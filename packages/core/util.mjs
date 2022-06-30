@@ -19,6 +19,9 @@ export const tokenizeNote = (note) => {
 
 // turns the given note into its midi number representation
 export const toMidi = (note) => {
+  if (typeof note === 'number') {
+    return note;
+  }
   const [pc, acc, oct] = tokenizeNote(note);
   if (!pc) {
     throw new Error('not a note: "' + note + '"');
