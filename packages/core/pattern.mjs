@@ -224,7 +224,7 @@ export class Pattern {
    * @returns Pattern
    */
   _removeUndefineds() {
-    return this._filterValues((val) => !!val);
+    return this._filterValues((val) => val != undefined);
   }
 
   /**
