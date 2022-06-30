@@ -1019,3 +1019,71 @@ x=>x.add(7).color('steelblue')
 .stack(s("bd:1*2,~ sd:0,[~ hh:0]*2"))
 .out()
 .pianoroll({vertical:1})`;
+
+export const root73 = `const root = 'E'
+stack(
+  stack(
+    s("<bd(5,12) bd(3,12)>"),
+    s("hh!6").echo(2,1/12+.02,.3),
+    s("~!5 oh"), // hush(),
+    s("~ <sd!7 [sd@3 sd@2 sd]>")
+  ).slow(1) //.hcutoff(2000)
+  ,
+  "<0(3,9) [2 <-3 3>]>"
+  .scale(root+'2 minor')
+  .legato(1).note().fast(2).s('jazzbass'),
+  "0 2 4 1".euclid(7,12)
+  .off(1/16, x=>x.add(2).color('steelblue'))
+  .off(1/12, x=>x.add(7).color('orange'))
+  .degradeBy(0.3)
+  .slow(4)
+  .scale(root+'4 minor').note()
+  .gain(.9)
+  .s('stage73').n(rand.range(0,.7).round())
+  .legato(perlin.range(.1,.5))
+  .velocity(perlin.range(.5,.8))
+  .echo(4, 1/6, .5), //.hcutoff(1000).hresonance(10),
+  mini(root+'m7@5 <Ab7 Eb7>').slow(2).voicings().transpose(12)
+  //.euclid(5,12,1)
+  .euclidLegato(5,12,1)
+  .note()  
+  .gain(0.5)
+  .echo(1, 1/12, .5)
+  .slow(1)
+  .s('stage73')
+  .legato(.1)
+  .color('tomato')
+  //.cutoff("300@2 600".fast(2)).resonance("10 20 25 10").n(0)
+).slow(4/2).clip(1)
+  .out()
+  .pianoroll({autorange:0,vertical:1})
+// strudel disable-highlighting`;
+
+export const flute73 = `
+const harmony = x=>x.scale(cat('E major','F# minor').slow(4)).note().clip(1)
+stack(
+// flute
+"<0 2 5 4>"
+.off(1/6, add(2))
+.off(1/12, add(5))
+.layer(harmony)
+.legato("<1 .1>/16")
+.echo("<1 3>/16",1/3,.5)
+.s('flute')
+.cutoff(perlin.range(500,2000))
+.color('darkseagreen')
+,
+// bass
+"<-7 -5 -9 -5>(3,9)"
+.legato("<2.5 1.5>/16")
+.layer(harmony)
+.gain("1 .8 1")
+.s('stage73')
+.color('brown'),
+// drums
+s("bd*3, [~@2 <hh!3 hh*3>]*2,~ snap".slow(2)).gain(.4)
+)
+//.hcutoff(800)
+.out()
+.pianoroll({vertical:1,autorange:0})
+`;
