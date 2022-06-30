@@ -55,3 +55,52 @@ Pattern.prototype.piano = function () {
       return { ...value, pan: (value.pan || 1) * pan };
     });
 };
+
+samples({
+  jazzbass: {
+    _base: './samples/jazzbass/moog_',
+    c2: 'c2.mp3',
+    e2: 'e2.mp3',
+    a2: 'a2.mp3',
+    c3: 'c3.mp3',
+    e3: 'e3.mp3',
+    a3: 'a3.mp3',
+    c4: 'c4.mp3',
+  },
+  stage73: {
+    _base: './samples/stage73/',
+    c2: ['quiet/c2.mp3', 'loud/c2.mp3'],
+    e2: ['quiet/e2.mp3', 'loud/e2.mp3'],
+    a2: ['quiet/a2.mp3', 'loud/a2.mp3'],
+    c3: ['quiet/c3.mp3', 'loud/c3.mp3'],
+    e3: ['quiet/e3.mp3', 'loud/e3.mp3'],
+    a3: ['quiet/a3.mp3', 'loud/a3.mp3'],
+    c4: ['quiet/c4.mp3', 'loud/c4.mp3'],
+    e4: ['quiet/e4.mp3', 'loud/e4.mp3'],
+    a4: ['quiet/a4.mp3', 'loud/a4.mp3'],
+    c5: ['quiet/c5.mp3', 'loud/c5.mp3'],
+    e5: ['quiet/e5.mp3', 'loud/e5.mp3'],
+    a5: ['quiet/a5.mp3', 'loud/a5.mp3'],
+    c6: ['quiet/c6.mp3', 'loud/c6.mp3'],
+  },
+  flute: {
+    _base: './samples/flute/',
+    g2: 'g2.mp3',
+    c3: 'c3.mp3',
+    f3: 'f3.mp3',
+    c4: 'c4.mp3',
+    f4: 'f4.mp3',
+    c5: 'c5.mp3',
+  },
+});
+
+samples(
+  {
+    bd: 'bd.mp3',
+    sd: ['sd.mp3', 'sd2.mp3'],
+    hh: ['hh.mp3'],
+    snap: ['snap.mp3'],
+    oh: ['oh.mp3'],
+  },
+  './samples/president/president_',
+);
