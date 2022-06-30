@@ -145,6 +145,37 @@ const materialPalenightHighlightStyle = HighlightStyle.define([
 // : Extension
 const materialPalenight = [materialPalenightTheme, materialPalenightHighlightStyle];
 
+const setFlash = StateEffect.define();
+const flashField = StateField.define({
+  create() {
+    return Decoration.none;
+  },
+  update(flash2, tr) {
+    try {
+      for (let e of tr.effects) {
+        if (e.is(setFlash)) {
+          if (e.value) {
+            const mark = Decoration.mark({ attributes: { style: `background-color: #FFCA2880` } });
+            flash2 = Decoration.set([mark.range(0, tr.newDoc.length)]);
+          } else {
+            flash2 = Decoration.set([]);
+          }
+        }
+      }
+      return flash2;
+    } catch (err) {
+      console.warn("flash error", err);
+      return flash2;
+    }
+  },
+  provide: (f) => EditorView.decorations.from(f)
+});
+const flash = (view) => {
+  view.dispatch({ effects: setFlash.of(true) });
+  setTimeout(() => {
+    view.dispatch({ effects: setFlash.of(false) });
+  }, 200);
+};
 const setHighlights = StateEffect.define();
 const highlightField = StateField.define({
   create() {
@@ -187,7 +218,8 @@ function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorD
     extensions: [
       javascript(),
       theme || materialPalenight,
-      highlightField
+      highlightField,
+      flashField
     ]
   }));
 }
@@ -347,14 +379,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
             /* console.warn('no instrument chosen', event);
           throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
           } else {
-            onTrigger(
-              time,
-              event,
-              currentTime,
-              1 /* cps */,
-              event.wholeOrPart().begin.valueOf(),
-              event.duration.valueOf(),
-            );
+            onTrigger(time, event, currentTime, 1 /* cps */);
           }
         } catch (err) {
           console.warn(err);
@@ -660,4 +685,4 @@ function useWebMidi(props) {
   return { loading, outputs, outputByName };
 }
 
-export { CodeMirror, MiniRepl, cx, useCycle, useHighlighting, usePostMessage, useRepl, useWebMidi };
+export { CodeMirror, MiniRepl, cx, flash, useCycle, useHighlighting, usePostMessage, useRepl, useWebMidi };

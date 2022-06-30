@@ -6,15 +6,25 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import controls from '@strudel.cycles/core/controls.mjs';
 import { evalScope, evaluate } from '@strudel.cycles/eval';
-import { CodeMirror, cx, useHighlighting, useRepl, useWebMidi } from '@strudel.cycles/react';
+import { CodeMirror, cx, flash, useHighlighting, useRepl, useWebMidi } from '@strudel.cycles/react';
 import { getDefaultSynth, cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
+import { prebake } from './prebake.mjs';
 import * as WebDirt from 'WebDirt';
 import { loadWebDirt } from '@strudel.cycles/webdirt';
 import { resetLoadedSamples, getAudioContext } from '@strudel.cycles/webaudio';
+import { createClient } from '@supabase/supabase-js';
+import { nanoid } from 'nanoid';
+
+// Create a single supabase client for interacting with your database
+const supabase = createClient(
+  'https://pidxdsxphlhzjnzmifth.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
+);
+
 evalScope(
   Tone,
   controls,
@@ -37,13 +47,37 @@ loadWebDirt({
   sampleFolder: 'EmuSP12',
 });
 
-const initialUrl = window.location.href;
-const codeParam = window.location.href.split('#')[1];
-let decoded;
-try {
-  decoded = atob(decodeURIComponent(codeParam || ''));
-} catch (err) {
-  console.warn('failed to decode', err);
+prebake();
+
+async function initCode() {
+  // load code from url hash (either short hash from database or decode long hash)
+  try {
+    const initialUrl = window.location.href;
+    const hash = initialUrl.split('?')[1]?.split('#')?.[0];
+    const codeParam = window.location.href.split('#')[1];
+    // looking like https://strudel.tidalcycles.org/?J01s5i1J0200 (fixed hash length)
+    if (codeParam) {
+      console.log('decode hash from url');
+      // looking like https://strudel.tidalcycles.org/#ImMzIGUzIg%3D%3D (hash length depends on code length)
+      return atob(decodeURIComponent(codeParam || ''));
+    } else if (hash) {
+      return supabase
+        .from('code')
+        .select('code')
+        .eq('hash', hash)
+        .then(({ data, error }) => {
+          if (error) {
+            console.warn('failed to load hash', err);
+          }
+          if (data.length) {
+            console.log('load hash from database', hash);
+            return data[0].code;
+          }
+        });
+    }
+  } catch (err) {
+    console.warn('failed to decode', err);
+  }
 }
 
 function getRandomTune() {
@@ -58,6 +92,7 @@ const isEmbedded = window.location !== window.parent.location;
 function App() {
   // const [editor, setEditor] = useState();
   const [view, setView] = useState();
+  const [lastShared, setLastShared] = useState();
   const {
     setCode,
     setPattern,
@@ -74,9 +109,12 @@ function App() {
     pushLog,
     pending,
   } = useRepl({
-    tune: decoded || randomTune,
+    tune: '// LOADING...',
     defaultSynth,
   });
+  useEffect(() => {
+    initCode().then((decoded) => setCode(decoded || randomTune));
+  }, []);
   const logBox = useRef();
   // scroll log box to bottom when log changes
   useLayoutEffect(() => {
@@ -92,6 +130,7 @@ function App() {
       if (e.ctrlKey || e.altKey) {
         if (e.code === 'Enter') {
           e.preventDefault();
+          flash(view);
           await activateCode();
         } else if (e.code === 'Period') {
           cycle.stop();
@@ -101,7 +140,7 @@ function App() {
     };
     window.addEventListener('keydown', handleKeyPress, true);
     return () => window.removeEventListener('keydown', handleKeyPress, true);
-  }, [pattern, code, activateCode, cycle]);
+  }, [pattern, code, activateCode, cycle, view]);
 
   useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes('strudel disable-highlighting') });
 
@@ -182,6 +221,7 @@ function App() {
                 cleanupDraw();
                 cleanupUi();
                 resetLoadedSamples();
+                prebake();
                 const parsed = await evaluate(_code);
                 setPattern(parsed.pattern);
                 setActiveCode(_code);
@@ -193,6 +233,38 @@ function App() {
           {!isEmbedded && (
             <button className={cx('hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}>
               <a href="./tutorial">📚 tutorial</a>
+            </button>
+          )}
+          {!isEmbedded && (
+            <button
+              className={cx('cursor-pointer hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}
+              onClick={async () => {
+                const codeToShare = activeCode || code;
+                if (lastShared === codeToShare) {
+                  // alert('Link already generated!');
+                  pushLog(`Link already generated!`);
+                  return;
+                }
+                // generate uuid in the browser
+                const hash = nanoid(12);
+                const { data, error } = await supabase.from('code').insert([{ code: codeToShare, hash }]);
+                if (!error) {
+                  setLastShared(activeCode || code);
+                  const shareUrl = window.location.origin + '?' + hash;
+                  // copy shareUrl to clipboard
+                  navigator.clipboard.writeText(shareUrl);
+                  const message = `Link copied to clipboard: ${shareUrl}`;
+                  // alert(message);
+                  pushLog(message);
+                } else {
+                  console.log('error', error);
+                  const message = `Error: ${error.message}`;
+                  // alert(message);
+                  pushLog(message);
+                }
+              }}
+            >
+              📣 share{lastShared && lastShared === (activeCode || code) ? 'd!' : ''}
             </button>
           )}
           {isEmbedded && (

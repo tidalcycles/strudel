@@ -87,7 +87,7 @@ quote = '"' / "'"
 // ------------------ steps and cycles ---------------------------
 
 // single step definition (e.g bd)
-step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" / "_"
+step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" / "_" / ":"
 step = ws chars:step_char+ ws { return chars.join("") }
 
 // define a sub cycle e.g. [1 2, 3 [4]]
