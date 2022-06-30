@@ -6,6 +6,7 @@ import { materialPalenightLarge } from './materialPalenightThemeLarge';
 import { useState, useEffect } from 'react';
 import { cleanupDraw, cleanupUi, Tone, piano } from '@strudel.cycles/tone';
 import { midi2note } from '@strudel.cycles/core';
+import { prebake } from '../repl/src/prebake.mjs';
 
 let defaultPiano;
 piano().then((instrument) => {
@@ -30,6 +31,7 @@ loadWebDirt({
   sampleMapUrl: './samples.json',
   sampleFolder: './EmuSP12',
 });
+prebake();
 
 export function MaxiRepl({ code, canvasHeight = 500 }) {
   const [exampleIndex, setExampleIndex] = useState(0);
@@ -41,6 +43,7 @@ export function MaxiRepl({ code, canvasHeight = 500 }) {
   useEffect(() => {
     cleanupDraw();
     cleanupUi();
+    prebake();
   }, [exampleIndex]);
   return (
     <div className="text-left block max-w-screen relative">
