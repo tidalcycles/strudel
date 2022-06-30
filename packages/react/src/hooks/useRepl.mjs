@@ -36,6 +36,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     }
   }, [activeCode, onDrawProp]);
 
+  const hideHeader = useMemo(() => activeCode && activeCode.includes('strudel hide-header'), [activeCode]);
   // cycle hook to control scheduling
   const cycle = useCycle({
     onDraw,
@@ -136,6 +137,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
   };
 
   return {
+    hideHeader,
     pending,
     code,
     setCode,
