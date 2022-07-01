@@ -137,12 +137,7 @@ Alex McLean, Felix Roos & Tidal Cycles Community
 .pianoroll()
 .note().piano().out()`,
     //
-    `samples({
-  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
-  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
-  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
-}, 'github:tidalcycles/Dirt-Samples/master/');
-stack(
+    `stack(
   s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
   .speed(perlin.range(.7,.9)) // random sample speed variation
   ,"<a1 b1*2 a1(3,8) e2>" // bassline
@@ -286,11 +281,12 @@ stack(
 
 </div>
 
-![strudel port quote](https://loophole-letters.vercel.app/img/strudel-port.png)
+![strudel port quote](./strudel-port.png)
 
 <div className="text-left">
 
-- Started by Alex McLean in Feb 22, based on a port of a rewrite of Tidal
+- Started by Alex McLean in January 2022
+- based on a port of a rewrite of Tidal
 - I implemented the REPL + additional strudel packages
 - Help from Tidal Community Members
 - Inspired by: Tidal Vortex, Gibber, Estuary, Hydra, WAGS and Feedforward.
@@ -370,7 +366,8 @@ mini('c3 [e3 g3]')
 
 <MaxiRepl
   code={[
-    '"c3 [e3 g3]".pianoroll({ fold:0 })',
+    `note("c3 [e3 g3]")
+    .piano().out().pianoroll()`,
     `// mini notation also works with samples
 s("bd,[~ sd],hh*4").out()`,
     `\`[[e5 [b4 c5] d5 [c5 b4]]
@@ -389,6 +386,7 @@ s("bd,[~ sd],hh*4").out()`,
 [[c2 c3]*4]
 [[b1 b2]*2 [e2 e3]*2]
 [[a1 a2]*4]\`.slow(16)
+.note().out()
 .pianoroll({ fold:1, cycles:16 })`,
     /* `stack(
   // melody
@@ -586,7 +584,7 @@ Patterns are wrapped with param functions to control different aspects of the so
 
 </Slide><Slide>
 
-## 🔭 Future Outlook 🌀
+## 🔭 Future Outlook
 
 <div className="text-left">
 
@@ -597,11 +595,11 @@ Patterns are wrapped with param functions to control different aspects of the so
 
 </div>
 
-## Try it out now
+## 🌀 Try it out now
 
 <div className="text-left">
 
-- REPL: [strudel.tidalcycles.org](https://strudel.tidalcycles.org/)
+- REPL: [strudel.tidalcycles.org](https://strudel.tidalcycles.org/?EeNsQ8hdNZwN) (-> [offline version](http://localhost:3000/#Y29uc3QgZGVsYXkgPSBuZXcgRmVlZGJhY2tEZWxheSgxLzMsIC41KS5jaGFpbih2b2woLjIpLCBvdXQoKSkKbGV0IGthbGltYmEgPSBhd2FpdCBzYW1wbGVyKHsKICBDNTogJy4vc2FtcGxlcy9rYWxpbWJhL2thbGltYmEtYzUubXAzJwp9KQprYWxpbWJhID0ga2FsaW1iYS5jaGFpbih2b2woMC42KS5jb25uZWN0KGRlbGF5KSxvdXQoKSk7CmNvbnN0IHNjYWxlcyA9IGNhdCgnQyBtYWpvcicsICdDIG1peG9seWRpYW4nLCAnRiBseWRpYW4nLCBbJ0YgbWlub3InLCAnRGIgbWFqb3InXSkKCnN0YWNrKAogICJbMCAyIDQgNiA5IDIgMCAtMl0qMyIKICAuYWRkKCI8MCAyPi80IikKICAuc2NhbGUoc2NhbGVzKQogIC5zdHJ1Y3QoIngqOCIpCiAgLnZlbG9jaXR5KCI8LjggLjMgLjY%2BKjgiKQogIC5zbG93KDIpCiAgLnRvbmUoa2FsaW1iYSksCiAgIjxjMiBjMiBmMiBbW0YyIEMyXSBkYjJdPiIKICAuc2NhbGUoc2NhbGVzKQogIC5zY2FsZVRyYW5zcG9zZSgiWzAgPDIgND5dKjIiKQogIC5zdHJ1Y3QoIngqNCIpCiAgLnZlbG9jaXR5KCI8LjggLjU%2BKjQiKQogIC52ZWxvY2l0eSgwLjgpCiAgLnNsb3coMikKICAudG9uZShrYWxpbWJhKQopCiAgLmxlZ2F0bygiPC40IC44IDEgMS4yIDEuNCAxLjYgMS44IDI%2BLzgiKQogIC5mYXN0KDEpCi5waWFub3JvbGwoe2F1dG9yYW5nZTowfSk%3D))
 - Interactive Tutorial: [strudel.tidalcycles.org/tutorial](https://strudel.tidalcycles.org/)
 - News: [@tidalcycles](https://twitter.com/tidalcycles)
 - Github: [https://github.com/tidalcycles/strudel](https://github.com/tidalcycles/strudel)
