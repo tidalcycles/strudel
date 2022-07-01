@@ -1053,6 +1053,22 @@ export class Pattern {
   onTrigger(onTrigger) {
     return this._withHap((hap) => hap.setContext({ ...hap.context, onTrigger }));
   }
+  log(func = id) {
+    return this._withHap((hap) =>
+      hap.setContext({
+        ...hap.context,
+        onTrigger: (...args) => {
+          if (hap.context.onTrigger) {
+            hap.context.onTrigger(...args);
+          }
+          console.log(func(...args));
+        },
+      }),
+    );
+  }
+  logValues(func = id) {
+    return this.log((_, hap) => func(hap.value));
+  }
 }
 
 // TODO - adopt value.mjs fully..
