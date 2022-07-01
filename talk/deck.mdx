@@ -167,13 +167,14 @@ import ImgTile from './ImgTile';
   canvasHeight={600}
   code={[
     `"<0 2 [4 6](3,4,1) 3*2>"
-.scale('D minor')
 .color('salmon')
-.off(1/4, x=>x.scaleTranspose(2).color('green'))
-.off(1/2, x=>x.scaleTranspose(6).color('steelblue'))
+.off(1/4, x=>x.add(2).color('green'))
+.off(1/2, x=>x.add(6).color('steelblue'))
+.scale('D minor')
 .legato(.5)
 .echo(2, 1/8, .5)
-.pianoroll()`,
+.pianoroll()
+.note().piano().out()`,
     //
     `// froos - xylophone on the floor
 const t = x => x.scaleTranspose("<0 2 4 3>/4").transpose(-2)
