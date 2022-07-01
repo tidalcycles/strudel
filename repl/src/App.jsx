@@ -43,8 +43,8 @@ evalScope(
 );
 
 loadWebDirt({
-  sampleMapUrl: 'EmuSP12.json',
-  sampleFolder: 'EmuSP12',
+  sampleMapUrl: './samples/EmuSP12.json',
+  sampleFolder: './samples/EmuSP12',
 });
 
 prebake();
