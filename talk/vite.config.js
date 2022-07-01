@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import _mdx from 'vite-plugin-mdx';
+import remarkPrism from 'remark-prism';
 /* import remarkToc from 'remark-toc';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'; */
@@ -10,6 +11,7 @@ const mdx = _mdx.default || _mdx;
 const options = {
   // See https://mdxjs.com/advanced/plugins
   remarkPlugins: [
+    remarkPrism,
     // remarkToc,
     // E.g. `remark-frontmatter`
   ],

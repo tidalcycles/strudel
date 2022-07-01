@@ -40,6 +40,7 @@ export function MaxiRepl({ code, canvasHeight = 500 }) {
   useEffect(() => {
     init.then(() => setReady(true));
   }, []);
+
   useEffect(() => {
     cleanupDraw();
     cleanupUi();
@@ -59,6 +60,7 @@ export function MaxiRepl({ code, canvasHeight = 500 }) {
         </div>
       )}
       <_MiniRepl
+        enableKeyboard={true}
         key={exampleIndex}
         tune={examples[exampleIndex]}
         hideOutsideView={true}

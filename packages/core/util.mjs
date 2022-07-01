@@ -34,6 +34,13 @@ export const fromMidi = (n) => {
   return Math.pow(2, (n - 69) / 12) * 440;
 };
 
+export const getFreq = (noteOrMidi) => {
+  if (typeof noteOrMidi === 'number') {
+    return fromMidi(noteOrMidi);
+  }
+  return fromMidi(toMidi(noteOrMidi));
+};
+
 export const midi2note = (n) => {
   const oct = Math.floor(n / 12) - 1;
   const pc = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'][n % 12];

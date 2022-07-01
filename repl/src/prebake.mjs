@@ -43,19 +43,6 @@ export function prebake() {
   );
 }
 
-const maxPan = toMidi('C8');
-const panwidth = (pan, width) => pan * width + (1 - width) / 2;
-
-Pattern.prototype.piano = function () {
-  return this.clip(1)
-    .s('piano')
-    .fmap((value) => {
-      // pan by pitch
-      const pan = panwidth(Math.min(toMidi(value.note || value.n) / maxPan, 1), 0.5);
-      return { ...value, pan: (value.pan || 1) * pan };
-    });
-};
-
 samples({
   jazzbass: {
     _base: './samples/jazzbass/moog_',
@@ -93,7 +80,7 @@ samples({
     c5: 'c5.mp3',
   },
 });
-
+console.log('bake...');
 samples(
   {
     bd: 'bd.mp3',
@@ -104,3 +91,99 @@ samples(
   },
   './samples/president/president_',
 );
+
+const maxPan = toMidi('C8');
+const panwidth = (pan, width) => pan * width + (1 - width) / 2;
+
+Pattern.prototype.panByPitch = function () {
+  return this.fmap((value) => {
+    // pan by pitch
+    const pan = panwidth(Math.min(toMidi(value.note || value.n) / maxPan, 1), 0.5);
+    return { ...value, pan: (value.pan || 1) * pan };
+  });
+};
+
+Pattern.prototype.piano = function () {
+  return this.clip(1).s('piano').panByPitch();
+};
+
+Pattern.prototype.rhodes = function () {
+  return this.clip(1).s('stage73').panByPitch().gain(1.5);
+};
+
+Pattern.prototype.jazzbass = function () {
+  return this.clip(1).s('jazzbass');
+};
+
+/*
+stack(
+  s("<bd [bd ~ bd]> ~, ~, hh*6")
+  .speed(.8)
+  //.cutoff(2000)
+  .slow(2)
+  //.cutoff(perlin.range(500,4000))
+  .sometimes(x=>x.echo("2", 1/6+0.05, .8))
+  ,
+  note(
+    "C^7 <Dm7 [F^7 [Fm7 Db^7]]>"
+    //.euclidLegato(6,12)
+    .voicings()
+  )
+  .rhodes()
+  //.s('sawtooth')
+  .slow(8).gain(2)
+  .cutoff(2000)
+  ,
+  note(
+    "[c2 <e2 g1>](5,12)".slow(4)
+    .transpose(12)
+    //.superimpose(add("<12 24>,0.05"))
+  )
+  .s("jazzbass").clip(1).gain(1)
+  //.cutoff(sine.range(300,500).slow(4))
+  //.resonance(10)
+  ,
+  note(
+    "0 2 4 0".iter(4).add("<0>")
+    //.off(1/12, add("7"))
+    .off(1/6, add("14"))
+    .degradeBy(.2)
+    .scale('C5 major')
+    .legato(4)
+    .slow(2)
+    .echo(2, 1/6, .5)
+  )
+  .piano()
+  //.s('sawtooth')
+  //.cutoff(1000)
+  //.resonance(25)
+  .gain(.5)
+)
+  //.hcutoff(1000)
+  //.resonance(20)
+  .reset("<x@3>")
+  
+.out()
+
+
+*/
+
+/*
+note("[c2(3,8) [<eb2 g1> bb1]]")
+  .s('sawtooth')
+  .gain(.5)
+  .cutoff(sine.range(200,1200).slow(4))
+  .slow(2)
+  .stack(
+    note("Cm7@3 <Dm7 B7>".voicings().slow(4)).rhodes(),
+    note("0 2 4 <9 8>".iter(4).scale('C5 minor'))
+    .degradeBy(.5).echo(4, 1/8, .8)
+    .legato(.05)
+    .rhodes()
+    .jux(rev),
+  )
+  .stack(s("bd,~ sd,hh*4").cutoff(2000))
+  .reset("<x@3 x(3,8)>")
+  .out()
+  .logValues()
+  */

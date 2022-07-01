@@ -11,6 +11,10 @@ import ImgTile from './ImgTile';
 
 ## Algorithmic Patterns for the Web
 
+![whirlpool](./strudel_icon.png)
+
+Alex McLean, Felix Roos & Tidal Cycles Community
+
 </div>
 </div>
 
@@ -44,6 +48,28 @@ import ImgTile from './ImgTile';
 </div>
 
 </Slide><Slide>
+
+## Strudel is..
+
+<div className="flex">
+
+<div className="text-left">
+
+- a zero-install live coding editor on the web
+- based on a port of Tidal Cycles
+- a terse language for algorithmic patterns
+- dynamic music sequencing
+- algorithmic composition
+- live improvisation
+- probably more exciting than your regular DAW
+
+</div>
+
+![whirlpool](./strudel_icon.png)
+
+</div>
+
+</Slide><Slide hidden>
 
 <img src="./codeandmusic.png" className="h-[700px] rounded-md -my-24" />
 
@@ -96,6 +122,93 @@ import ImgTile from './ImgTile';
 
 </Slide><Slide>
 
+## A Taste of Strudel
+
+<MaxiRepl
+  canvasHeight={600}
+  code={[
+    `"<0 2 [4 6](3,4,1) 3*2>"
+.color('salmon')
+.off(1/4, x=>x.add(2).color('green'))
+.off(1/2, x=>x.add(6).color('steelblue'))
+.scale('D minor')
+.legato(.5)
+.echo(2, 1/8, .5)
+.pianoroll()
+.note().piano().out()`,
+    //
+    `samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+stack(
+  s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
+  .speed(perlin.range(.7,.9)) // random sample speed variation
+  ,"<a1 b1*2 a1(3,8) e2>" // bassline
+  .off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
+  .add(perlin.range(0,.5)) // random pitch variation
+  .superimpose(add(.05)) // add second, slightly detuned voice
+  .n() // wrap in "n"
+  .decay(.15).sustain(0) // make each note of equal length
+  .s('sawtooth') // waveform
+  .gain(.4) // turn down
+  .cutoff(sine.slow(7).range(300,5000)) // automate cutoff
+  ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings() // chords
+  .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+  .add(perlin.range(0,.5)) // random pitch variation
+  .n() // wrap in "n"
+  .s('sawtooth') // waveform
+  .gain(.16) // turn down
+  .cutoff(500) // fixed cutoff
+  .attack(1) // slowly fade in
+  ,"a4 c5 <e6 a6>".struct("x(5,8)")
+  .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+  .add(perlin.range(0,.5)) // random pitch variation
+  .n() // wrap in "n"
+  .decay(.1).sustain(0) // make notes short
+  .s('triangle') // waveform
+  .degradeBy(perlin.range(0,.5)) // randomly controlled random removal :)
+  .echoWith(4,.125,(x,n)=>x.gain(.15*1/(n+1))) // echo notes
+)
+  .out()
+  .slow(3/2)`,
+    /* `// froos - strudel schneckno
+samples({
+  clubkick: 'clubkick/2.wav',
+  sd: ['808sd/SD0010.WAV','808sd/SD0050.WAV'],
+  hh: 'hh/000_hh3closedhh.wav',
+  clak: 'clak/000_clak1.wav',
+  jvbass: ['jvbass/000_01.wav','jvbass/001_02.wav','jvbass/003_04.wav','jvbass/004_05.wav','jvbass/005_06.wav']
+}, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
+stack(
+  s("<clubkick*2>,[~ <sd!3 sd(3,4,2)>],hh(3,4,2)")
+    .n("<0 1 2>").speed(.8),
+  n("<0 1*2 4(3,8) 2>").speed(.6)
+    .off(1/8, x => x.speed(1.2).degradeBy(.5))
+    .s("jvbass")
+).reset("<x@7 <x(5,8,3) x(3,8) x(3,4,1)>>")
+  .cutoff(perlin.slow(7).range(100,20000))
+  .webdirt().slow(3/2)`,*/
+    /*  `stack( // drum pattern by yaxu
+  "24*2 [~ 25]".chunk(4, x => x.sub("12").fast(2))
+    .tone(membrane().toDestination()),
+  "~ x ~ x".every(2, x => x.fast(2)).iter(4)
+    .tone(noise().toDestination()),
+  "c4*8".add(saw.mul(12).slow(1.5)).degrade(0.05)
+    .tone(metal().set(adsr(0,.06,0,0)).chain(vol(0.5),out()))
+)`,*/
+    /*     `stack(
+  note("<[0 2 4 2] [0 3 5 3]>".scale('D3 dorian'))
+  .s('jazzbass'),
+  note("0,2,4".add("<0 1 2 1>").scale('D3 dorian'))
+  .s('stage73')
+).clip(1).out()`, */
+  ]}
+/>
+
+</Slide><Slide>
+
 ## What is Live Coding?
 
 <i className="text-3xl">
@@ -118,7 +231,7 @@ import ImgTile from './ImgTile';
 
 <div className="text-left">
 
-- A very popular software for live coding music
+- A popular software for live coding music
 - a powerful pattern language, inspired by konnakol and weaving
 - find out more at <a href="https://tidalcycles.org" target="_blank" className="text-indigo-400">tidalcycles.org</a>
 
@@ -132,7 +245,7 @@ import ImgTile from './ImgTile';
   </a>
 </p>
 
-</Slide><Slide>
+</Slide><Slide hidden>
 
 ## What is Strudel?
 
@@ -161,98 +274,6 @@ import ImgTile from './ImgTile';
 
 </Slide><Slide>
 
-## A Taste of Strudel
-
-<MaxiRepl
-  canvasHeight={600}
-  code={[
-    `"<0 2 [4 6](3,4,1) 3*2>"
-.color('salmon')
-.off(1/4, x=>x.add(2).color('green'))
-.off(1/2, x=>x.add(6).color('steelblue'))
-.scale('D minor')
-.legato(.5)
-.echo(2, 1/8, .5)
-.pianoroll()
-.note().piano().out()`,
-    //
-    `// froos - xylophone on the floor
-const t = x => x.scaleTranspose("<0 2 4 3>/4").transpose(-2)
-const s = x => x.scale(
-  cat('C3 minor pentatonic','G3 minor pentatonic')
-  .slow(4))
-const delay = new FeedbackDelay(1/8, .6).chain(vol(0.1), out());
-const chorus = new Chorus(1,2.5,0.5).start();
-stack(
-  // melody
-  "<<10 7> <8 3>>/4".struct("x*3").apply(s)
-  .scaleTranspose("<0 3 2> <1 4 3>")
-  .superimpose(scaleTranspose(2).early(1/8))
-  .apply(t).tone(polysynth().set({
-    ...osc('triangle4'),
-    ...adsr(0,.08,0)
-  })
-  .chain(vol(0.2).connect(delay),chorus,out()))
-  .mask("<~@3 x>/16".early(1/8)),
-  // pad
-  "[1,3]/4".scale('G3 minor pentatonic').apply(t)
-  .tone(polysynth().set({
-    ...osc('square2'),
-    ...adsr(0.1,.4,0.8)
-  }).chain(vol(0.2),chorus,out())).mask("<~ x>/32"),
-  // xylophone
-  "c3,g3,c4".struct("<x*2 x>").fast("<1 <2!3 [4 8]>>")
-    .apply(s)
-    .scaleTranspose("<0 <1 [2 [3 <4 5>]]>>").apply(t)
-    .tone(polysynth().set({
-    ...osc('sawtooth4'),
-    ...adsr(0,.1,0)
-  }).chain(vol(0.4).connect(delay),out()))
-  .mask("<x@3 ~>/16".early(1/8)),
-  // bass
-  "c2 [c2 ~]*2".scale('C hirajoshi').apply(t)
-  .tone(synth({
-    ...osc('sawtooth6'),
-    ...adsr(0,.03,.4,.1)
-  }).chain(vol(0.4),out())),
-  // kick
-  "<c1!3 [c1 ~]*2>*2".tone(membrane().chain(vol(0.8),out())),
-  // snare
-  "~ <c3!7 [c3 c3*2]>".tone(noise().chain(vol(0.8),out())),
-  // hihat
-  "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.02))
-  .chain(vol(0.5).connect(delay),out()))
-).slow(1)`,
-    `// froos - strudel schneckno
-samples({
-  clubkick: 'clubkick/2.wav',
-  sd: ['808sd/SD0010.WAV','808sd/SD0050.WAV'],
-  hh: 'hh/000_hh3closedhh.wav',
-  clak: 'clak/000_clak1.wav',
-  jvbass: ['jvbass/000_01.wav','jvbass/001_02.wav','jvbass/003_04.wav','jvbass/004_05.wav','jvbass/005_06.wav']
-}, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
-stack(
-  s("<clubkick*2>,[~ <sd!3 sd(3,4,2)>],hh(3,4,2)")
-    .n("<0 1 2>").speed(.8),
-  n("<0 1*2 4(3,8) 2>").speed(.6)
-    .off(1/8, x => x.speed(1.2).degradeBy(.5))
-    .s("jvbass")
-).reset("<x@7 <x(5,8,3) x(3,8) x(3,4,1)>>")
-  .cutoff(perlin.slow(7).range(100,20000))
-  .webdirt().slow(3/2)`,
-    `stack( // drum pattern by yaxu
-  "24*2 [~ 25]".chunk(4, x => x.sub("12").fast(2))
-    .tone(membrane().toDestination()),
-  "~ x ~ x".every(2, x => x.fast(2)).iter(4)
-    .tone(noise().toDestination()),
-  "c4*8".add(saw.mul(12).slow(1.5)).degrade(0.05)
-    .tone(metal().set(adsr(0,.06,0,0)).chain(vol(0.5),out()))
-)`,
-  ]}
-/>
-
-</Slide><Slide>
-
 ## How it started
 
 <div className="text-left mb-0">
@@ -269,15 +290,22 @@ stack(
 
 <div className="text-left">
 
-- Started by Alex McLean, based on a port of a port of a rewrite of Tidal
+- Started by Alex McLean in Feb 22, based on a port of a rewrite of Tidal
 - I implemented the REPL + additional strudel packages
 - Help from Tidal Community Members
-- Started with Tone.js, then added Web MIDI, OSC and Web Audio API outputs
 - Inspired by: Tidal Vortex, Gibber, Estuary, Hydra, WAGS and Feedforward.
 
 </div>
 
 </Slide><Slide>
+
+## High Level Overview
+
+<div className="absolute top-[250px] text-8xl">➡️</div>
+
+<img src="./strudelflow.png" className="h-[800px] mt-24" />
+
+</Slide><Slide hidden>
 
 ## REPL = Read Eval Play Loop
 
@@ -292,6 +320,40 @@ stack(
 
 <img src="./repl.png" className="-my-16" />
 
+</Slide><Slide hidden>
+
+## 🍭 Syntax Sugar
+
+JavaScript Transpilation: converting valid JavaScript to valid JavaScript
+
+<div className="hidden">https://github.com/tidalcycles/strudel/blob/main/packages/eval/shapeshifter.mjs#L40</div>
+
+<img src="./shiftflow.png" className="-my-16" />
+
+<div className="text-left">
+<div className="grid grid-cols-2 gap-4 mt-4">
+
+<span>🍭 Before (User Code)</span>
+<span>🤖 After (Ready to Eval)</span>
+
+<pre>"c3 [e3 g3]".fast(2)</pre>
+
+```js
+mini('c3 [e3 g3]')
+  .withMiniLocation([1, 0, 0], [1, 11, 11]) // source location
+  .fast(2);
+```
+
+</div>
+
+</div>
+
+<div className="hidden">
+
+[Blog Post](https://loophole-letters.vercel.app/shift-ast), [AST Explorer](https://astexplorer.net/)
+
+</div>
+
 </Slide><Slide>
 
 ## Mini Notation
@@ -302,14 +364,15 @@ stack(
 
 - Embedded Domain Specific Language
 - PEG grammar based on [krill](https://github.com/Mdashdotdashn/krill/) by Marc Resibois
+- `"c3 [e3 g3]"` === `seq(c3, [e3, g3])`
 
 </div>
 
 <MaxiRepl
   code={[
-    '"c3 d3 e3 g3".pianoroll({ fold:0 })',
+    '"c3 [e3 g3]".pianoroll({ fold:0 })',
     `// mini notation also works with samples
-s("bd,[~ sd],hh*4").webdirt()`,
+s("bd,[~ sd],hh*4").out()`,
     `\`[[e5 [b4 c5] d5 [c5 b4]]
 [a4 [a4 c5] e5 [d5 c5]]
 [b4 [~ c5] d5 e5]
@@ -327,13 +390,13 @@ s("bd,[~ sd],hh*4").webdirt()`,
 [[b1 b2]*2 [e2 e3]*2]
 [[a1 a2]*4]\`.slow(16)
 .pianoroll({ fold:1, cycles:16 })`,
-    `stack(
+    /* `stack(
   // melody
   \`<
   [e5 ~] [[d5@2 c5] [~@2 e5]] ~ [~ [c5@2 d5]] [e5 e5] [d5 c5] [e5 f5] [g5 a5]
   [~ c5] [c5 d5] [e5 [c5@2 c5]] [~ c5] [f5 e5] [c5 d5] [~ g6] [g6 ~]
   [e5 ~] [[d5@2 c5] [~@2 e5]] ~ [~ [c5@2 d5]] [e5 e5] [d5 c5] [a5 g5] [c6 [e5@2 d5]]
-  [~ c5] [c5 d5] [e5 [c5@2 c5]] [~ c5] [f5 e5] [c5 d5] [~ [g6@2 ~] ~@2] [g5 ~] 
+  [~ c5] [c5 d5] [e5 [c5@2 c5]] [~ c5] [f5 e5] [c5 d5] [~ [g6@2 ~] ~@2] [g5 ~]
   [~ a5] [b5 c6] [b5@2 ~@2 g5] ~
   [f5 ~] [[g5@2 f5] ~] [[e5 ~] [f5 ~]] [[f#5 ~] [g5 ~]]
   [~ a5] [b5 c6] [b5@2 ~@2 g5] ~
@@ -342,9 +405,9 @@ s("bd,[~ sd],hh*4").webdirt()`,
   .legato(.95),
   // sub melody
   \`<
-  [~ g4]!2 [~ ab4]!2 [~ a4]!2 [~ bb4]!2 
+  [~ g4]!2 [~ ab4]!2 [~ a4]!2 [~ bb4]!2
   [~ a4]!2 [~ g4]!2 [d4 e4] [f4 gb4] ~!2
-  [~ g4]!2 [~ ab4]!2 [~ a4]!2 [~ bb4]!2 
+  [~ g4]!2 [~ ab4]!2 [~ a4]!2 [~ bb4]!2
   [~ a4]!2 [~ g4]!2 [d4 e4] [f4 gb4] ~!2
   [~ c5]!4 [~ a4]!2 [[c4 ~] [d4 ~]] [[eb4 ~] [e4 ~]]
   [~ c5]!4 [~ eb5]!2 [g4*2 [f4 ~]] [[e4 ~] [d4 ~]]
@@ -361,34 +424,17 @@ s("bd,[~ sd],hh*4").webdirt()`,
   .legato(.5)
 ).fast(2).pianoroll({fold:1,cycles:8,overscan:8})`,
     `stack(
-"c2 <g2 g1>", 
+"c2 <g2 g1>",
 "<[e3,[g3 a3 bb3 a3]]!11 [e3,g3]>".slow(2)
   .struct("<[[x@2 x]*4]!11 [[~@2 x] [[x@2 ~]*9]@3]>".slow(2))
 )
   .velocity("[.7@2 .9]*2".add(rand.range(-.1,.1)))
   .transpose("<1 6 1@2 6@2 1@2 8 6 1 8>/2")
-  .pianoroll({ fold:1, cycles:16 })`,
+  .pianoroll({ fold:1, cycles:16 })`, */
   ]}
 />
 
-</Slide><Slide>
-
-## Parsing Expression Grammars
-
-<div className="text-left">
-
-1. write [peg](https://github.com/tidalcycles/strudel/blob/main/packages/mini/krill.pegjs), generate [parser](https://github.com/tidalcycles/strudel/blob/main/packages/mini/krill-parser.js) with [parser generator](https://peggyjs.org/)
-2. pass string (e.g. `c3 [e3 g3]`) to generated parser
-3. obtain Abstract Syntax Tree (AST)
-4. [transform](https://github.com/tidalcycles/strudel/blob/main/packages/mini/mini.mjs#L76) AST into Pattern
-
-</div>
-
-<img src="./pegflow.png" className="-my-16" />
-
-[OhmJS Editor](https://ohmjs.org/editor/)
-
-</Slide><Slide>
+</Slide><Slide hidden>
 
 ## AST of `c3 [e3 g3]`
 
@@ -427,6 +473,185 @@ s("bd,[~ sd],hh*4").webdirt()`,
 </div>
 
 = `seq(c3, seq(e3, g3))`
+
+</Slide><Slide hidden>
+
+## 👁 Parsing Mini Notation
+
+<div className="text-left">
+
+1. write [peg](https://github.com/tidalcycles/strudel/blob/main/packages/mini/krill.pegjs), generate [parser](https://github.com/tidalcycles/strudel/blob/main/packages/mini/krill-parser.js) with [parser generator (peggyjs)](https://peggyjs.org/)
+2. pass string to generated parser: `mini('c3 [e3 g3]')`
+3. obtain Abstract Syntax Tree (AST)
+4. [transform](https://github.com/tidalcycles/strudel/blob/main/packages/mini/mini.mjs#L76) AST into Pattern: `seq('c3', ['e3', 'g3'])`
+
+</div>
+
+<img src="./pegflow.png" className="-my-16" />
+
+[OhmJS Editor](https://ohmjs.org/editor/)
+
+</Slide><Slide>
+
+## High Level Overview
+
+<div className="absolute top-[545px] text-8xl">➡️</div>
+
+<img src="./strudelflow.png" className="h-[800px] mt-24" />
+
+</Slide><Slide>
+
+## 🕵🏽 Querying Events
+
+Asking a Pattern for Events within a certain time span
+
+<div className="text-left">
+
+```js
+seq('c3', ['e3', 'g3']) // <--- Pattern
+  .queryArc(0, 2) // query events within 0 and 2 seconds
+  .map((event) => event.showWhole()); // make readable
+```
+
+```js
+[
+  '0/1 -> 1/2: c3',
+  '1/2 -> 3/4: e3',
+  '3/4 -> 1/1: g3',
+  '1/1 -> 3/2: c3', // second time
+  '3/2 -> 7/4: e3',
+  '7/4 -> 2/1: g3',
+];
+```
+
+</div>
+
+The scheduler will query the active pattern at regular intervals!
+
+</Slide><Slide hidden>
+
+## 🗓️ Scheduling
+
+Query events repeatedly
+
+```js
+let step = 0.5; // query interval in seconds
+let tick = 0; // how many intervals have passed
+let pattern = seq('c3', ['e3', 'g3']); // pattern from user
+setInterval(() => {
+  const events = pattern.queryArc(tick * step, ++tick * step);
+  events.forEach((event) => {
+    console.log(event.showWhole());
+    const o = getAudioContext().createOscillator();
+    o.frequency.value = getFreq(event.value);
+    o.start(event.whole.begin);
+    o.stop(event.whole.begin + event.duration);
+    o.connect(getAudioContext().destination);
+  });
+}, step * 1000); // query each "step" seconds
+```
+
+</Slide><Slide>
+
+## High Level Overview
+
+<div className="absolute top-[855px] text-8xl">➡️</div>
+
+<img src="./strudelflow.png" className="h-[800px] mt-24" />
+
+</Slide><Slide>
+
+## Sound Output
+
+Patterns are wrapped with param functions to control different aspects of the sound.
+
+<MaxiRepl
+  canvasHeight={0}
+  code={[
+    `note("[c2(3,8) [<eb2 g1> bb1]]") // sets frequency
+  .s("<sawtooth square>") // sound source
+  .gain(.5) // turn down volume
+  .cutoff(sine.range(200,1000).slow(4)) // modulated cutoff
+  .slow(2)
+  .out().logValues()`,
+  ]}
+/>
+
+<div className="text-left">
+
+- `.out()` will turn each event value into a Web Audio Graph!
+- Everything until the output are just objects in time, which can be used for any time-based output
+
+</div>
+
+</Slide><Slide>
+
+## 🔭 Future Outlook 🌀
+
+<div className="text-left">
+
+- Alternative Sound Backends (Faust, Glicol, .. ?)
+- Integrated Documentation
+- Feature Parity with Tidal
+- Collaborative Mode
+
+</div>
+
+## Try it out now
+
+<div className="text-left">
+
+- REPL: [strudel.tidalcycles.org](https://strudel.tidalcycles.org/)
+- Tutorial: [strudel.tidalcycles.org/tutorial](https://strudel.tidalcycles.org/)
+- News: [@tidalcycles](https://twitter.com/tidalcycles)
+- Github: [https://github.com/tidalcycles/strudel](https://github.com/tidalcycles/strudel)
+
+</div>
+
+### Happy Strudeling!
+
+</Slide><Slide>
+
+## More?
+
+<MaxiRepl
+  code={[
+    `stack(
+  s("<bd [bd ~ bd]> ~, ~ sd, hh*3")
+  //.cutoff(perlin.range(100,900))
+  //.sometimes(x=>x.speed("2"))
+  ,
+  note(
+    "Cm7 <Dm7 C#m7>".voicings()
+  ).rhodes().slow(4)
+  ,
+  note(
+    "[c2 <eb2 g1>](3,9)".slow(2)
+    //.superimpose(add(0.02))
+  )
+  .s("<sawtooth square>").gain(.5)
+  .cutoff(800),
+  note(
+    "0 2 4 1".iter(4)
+    .off(1/12, add("6"))
+    .degradeBy(.5)
+    .scale('C5 minor')
+    .legato(.05)
+    .echo(2, 1/6, .5)
+  )
+  .piano().hcutoff(2000)
+).out()
+//.cutoff(800)
+//.reset("<x@3 x*2>")
+`,
+  ]}
+/>
+
+</Slide><Slide>
+
+## Strudel Workshop
+
+![whirlpool](./strudel_icon.png)
 
 </Slide><Slide>
 
@@ -468,33 +693,6 @@ fast / slow, early / late, rev, palindrome
     .pianoroll()`,
   ]}
 />
-
-</Slide><Slide>
-
-## JavaScript Transpilation
-
-[converting](https://github.com/tidalcycles/strudel/blob/main/packages/eval/shapeshifter.mjs#L40) valid JavaScript to valid JavaScript
-
-<img src="./shiftflow.png" className="-my-16" />
-
-<div className="text-left">
-<div className="grid grid-cols-2 gap-4 mt-4">
-
-<span>Before (User Code)</span>
-<span>After (Ready to Eval)</span>
-
-<pre className="m-0">{`"c3 e3"
-  .fast(2)`}</pre>
-
-<pre className="m-0">{`mini('c3 e3')
-  .withMiniLocation([1,0,0],[1,7,7])
-  .fast(2)`}</pre>
-
-</div>
-
-</div>
-
-[Blog Post](https://loophole-letters.vercel.app/shift-ast), [AST Explorer](https://astexplorer.net/)
 
 </Slide><Slide>
 
@@ -704,7 +902,7 @@ stack(
 
 <MaxiRepl code={['"<hello world>".speak()']} />
 
-</Slide><Slide>
+</Slide><Slide hidden>
 
 ## Strudel Packages
 
@@ -725,7 +923,7 @@ stack(
 
 </div>
 
-</Slide><Slide>
+</Slide><Slide hidden>
 
 ## Workflow
 
@@ -741,7 +939,7 @@ stack(
 
 </div>
 
-</Slide><Slide>
+</Slide><Slide hidden>
 
 ## Tech Stack
 
