@@ -10,6 +10,7 @@
     "snapshot": "cd repl && npm run snapshot",
     "repl": "cd repl && npm run dev",
     "osc": "cd packages/osc && npm run server",
+    "sampler": "cd ./repl/public/samples && node ../../packages/webaudio/sample-server.js",
     "build": "rm -rf out && cd repl && npm run build && cd ../tutorial && npm run build",
     "preview": "npx serve ./out",
     "deploy": "gh-pages -d out",
