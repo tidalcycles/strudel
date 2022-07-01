@@ -8,3 +8,4 @@ export * from './clockworker.mjs';
 export * from './scheduler.mjs';
 export * from './webaudio.mjs';
 export * from './sampler.mjs';
+export * from './prebake.mjs';
