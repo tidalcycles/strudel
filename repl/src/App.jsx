@@ -109,6 +109,7 @@ function App() {
     pushLog,
     pending,
     hideHeader,
+    hideConsole,
   } = useRepl({
     tune: '// LOADING...',
     defaultSynth,
@@ -293,19 +294,24 @@ function App() {
         </header>
       )}
       <section className="grow flex flex-col text-gray-100">
-        <div className="grow relative flex overflow-auto" id="code">
+        <div className="grow relative flex overflow-auto pb-8 cursor-text" id="code">
           {/* onCursor={markParens} */}
           <CodeMirror value={code} onChange={setCode} onViewChanged={setView} />
-          <span className="z-[20] py-1 px-2 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none">
+          <span className="z-[20] bg-black rounded-t-md py-1 px-2 fixed bottom-0 right-1 text-xs whitespace-pre text-right pointer-events-none">
             {!cycle.started ? `press ctrl+enter to play\n` : dirty ? `ctrl+enter to update\n` : 'no changes\n'}
           </span>
           {error && (
-            <div className={cx('absolute right-2 bottom-2 px-2', 'text-red-500')}>
+            <div
+              className={cx(
+                'rounded-md fixed pointer-events-none left-2 bottom-1 text-xs bg-black px-2 z-[20]',
+                'text-red-500',
+              )}
+            >
               {error?.message || 'unknown error'}
             </div>
           )}
         </div>
-        {!isEmbedded && (
+        {!isEmbedded && !hideConsole && (
           <textarea
             className="z-[10] h-16 border-0 text-xs bg-[transparent] border-t border-slate-600 resize-none"
             value={log}
