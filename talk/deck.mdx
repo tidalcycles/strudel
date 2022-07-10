@@ -56,11 +56,12 @@ Alex McLean, Felix Roos & Tidal Cycles Community
 <div className="text-left">
 
 - zero-install live coding editor for the web
-- based on a port of Tidal Cycles
-- terse language for algorithmic patterns
-- dynamic music sequencing
+- Tidal Cycles port to JavaScript
+- a terse language for algorithmic patterns
+- for dynamic music sequencing
 - algorithmic composition
 - live improvisation
+- a set of reusable packages
 - probably more exciting than your regular DAW
 
 </div>
@@ -83,7 +84,7 @@ Alex McLean, Felix Roos & Tidal Cycles Community
 
 </div>
 
-</Slide><Slide hidden>
+</Slide><Slide>
 
 ## About Me
 
@@ -185,7 +186,7 @@ stack(
 ).reset("<x@7 <x(5,8,3) x(3,8) x(3,4,1)>>")
   .cutoff(perlin.slow(7).range(100,20000))
   .webdirt().slow(3/2)`,*/
-    /*  `stack( // drum pattern by yaxu
+    /* `stack( // drum pattern by yaxu
   "24*2 [~ 25]".chunk(4, x => x.sub("12").fast(2))
     .tone(membrane().toDestination()),
   "~ x ~ x".every(2, x => x.fast(2)).iter(4)
@@ -204,7 +205,7 @@ stack(
 
 </Slide><Slide>
 
-## What is Live Coding?
+## Live Coding
 
 <i className="text-3xl">
   "In live coding performance, performers create time-based works by programming them while these same works are being
@@ -222,13 +223,13 @@ stack(
 
 </Slide><Slide>
 
-## What is Tidal Cycles?
+## Tidal Cycles
 
 <div className="text-left">
 
-- A popular software for live coding music
-- a powerful pattern language, inspired by konnakol and weaving
-- find out more at <a href="https://tidalcycles.org" target="_blank" className="text-indigo-400">tidalcycles.org</a>
+- A popular software for live coding music, developed since 2009
+- a powerful pattern language, inspired by classical music
+- functional reactive programming (FRP)
 
 </div>
 
@@ -279,11 +280,13 @@ stack(
   Jeff Atwood, 2009{' '}
 </blockquote>
 
+![tidal-vortex-strudel](./tidal-vortex-strudel.png)
+
 </div>
 
-![strudel port quote](./strudel-port.png)
-
 <div className="text-left">
+
+![strudel port quote](./strudel-port.png)
 
 - Started by Alex McLean in January 2022
 - based on a port of a rewrite of Tidal
@@ -316,7 +319,93 @@ stack(
 
 <img src="./repl.png" className="-my-16" />
 
-</Slide><Slide hidden>
+</Slide><Slide>
+
+## User Code
+
+<div className="text-left">
+
+- JavaScript + syntax sugar (transpilation with shift-ast)
+- "Mini Notation" for terse rhythm notation
+- `seq(c3, [e3, g3])` === `"c3 [e3 g3]"`
+- All Parameters can be a Pattern
+
+</div>
+
+<MaxiRepl
+  code={[
+    `note("c3 [e3 g3]")
+    .piano().out().pianoroll()`,
+    `// mini notation also works with samples
+s("bd,[~ sd],hh*4").out()`,
+    `\`[[e5 [b4 c5] d5 [c5 b4]]
+[a4 [a4 c5] e5 [d5 c5]]
+[b4 [~ c5] d5 e5]
+[c5 a4 a4 ~]
+[[~ d5] [~ f5] a5 [g5 f5]]
+[e5 [~ c5] e5 [d5 c5]]
+[b4 [b4 c5] d5 e5]
+[c5 a4 a4 ~]],
+[[e2 e3]*4]
+[[a2 a3]*4]
+[[g#2 g#3]*2 [e2 e3]*2]
+[a2 a3 a2 a3 a2 a3 b1 c2]
+[[d2 d3]*4]
+[[c2 c3]*4]
+[[b1 b2]*2 [e2 e3]*2]
+[[a1 a2]*4]\`.slow(16)
+.note().out()
+.pianoroll({ fold:1, cycles:16 })`,
+    `"-7, 0 2 4 7".add("<0 1 2 1>")
+    .scale(cat('F#2 major','A2 major').slow(8))
+    .note().piano().out().pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
+    /* `stack(
+  // melody
+  \`<
+  [e5 ~] [[d5@2 c5] [~@2 e5]] ~ [~ [c5@2 d5]] [e5 e5] [d5 c5] [e5 f5] [g5 a5]
+  [~ c5] [c5 d5] [e5 [c5@2 c5]] [~ c5] [f5 e5] [c5 d5] [~ g6] [g6 ~]
+  [e5 ~] [[d5@2 c5] [~@2 e5]] ~ [~ [c5@2 d5]] [e5 e5] [d5 c5] [a5 g5] [c6 [e5@2 d5]]
+  [~ c5] [c5 d5] [e5 [c5@2 c5]] [~ c5] [f5 e5] [c5 d5] [~ [g6@2 ~] ~@2] [g5 ~]
+  [~ a5] [b5 c6] [b5@2 ~@2 g5] ~
+  [f5 ~] [[g5@2 f5] ~] [[e5 ~] [f5 ~]] [[f#5 ~] [g5 ~]]
+  [~ a5] [b5 c6] [b5@2 ~@2 g5] ~
+  [eb6 d6] [~ c6] ~!2
+  >\`
+  .legato(.95),
+  // sub melody
+  \`<
+  [~ g4]!2 [~ ab4]!2 [~ a4]!2 [~ bb4]!2
+  [~ a4]!2 [~ g4]!2 [d4 e4] [f4 gb4] ~!2
+  [~ g4]!2 [~ ab4]!2 [~ a4]!2 [~ bb4]!2
+  [~ a4]!2 [~ g4]!2 [d4 e4] [f4 gb4] ~!2
+  [~ c5]!4 [~ a4]!2 [[c4 ~] [d4 ~]] [[eb4 ~] [e4 ~]]
+  [~ c5]!4 [~ eb5]!2 [g4*2 [f4 ~]] [[e4 ~] [d4 ~]]
+  >\`,
+  // bass
+  \`<
+  c3!7 a3 f3!2
+  e3!2 ~!4
+  c3!7 a3 f3!2
+  e3!2 ~!4
+  f3!2 e3!2 d3!2 ~!2
+  f3!2 e3!2 ab3!2 ~!2
+  >\`
+  .legato(.5)
+).fast(2).pianoroll({fold:1,cycles:8,overscan:8})
+.note().piano().out()`,
+    `stack(
+"c2 <g2 g1>",
+"<[e3,[g3 a3 bb3 a3]]!11 [e3,g3]>".slow(2)
+  .struct("<[[x@2 x]*4]!11 [[~@2 x] [[x@2 ~]*9]@3]>".slow(2))
+)
+  .velocity("[.7@2 .9]*2".add(rand.range(-.1,.1)))
+  .transpose("<1 6 1@2 6@2 1@2 8 6 1 8>/2")
+  .pianoroll({ fold:1, cycles:16 })
+.note().piano().out()`, */
+  ]}
+/>
+
+</Slide><Slide>
 
 ## 🍭 Syntax Sugar
 
@@ -352,85 +441,28 @@ mini('c3 [e3 g3]')
 
 </Slide><Slide>
 
-## Mini Notation
-
-\* \[\] ~ , / <\> ! @ \(\)
+## 👁 Parsing Mini Notation
 
 <div className="text-left">
 
-- Embedded Domain Specific Language
-- PEG grammar based on [krill](https://github.com/Mdashdotdashn/krill/) by Marc Resibois
-- `"c3 [e3 g3]"` === `seq(c3, [e3, g3])`
+1. write [peg](https://github.com/tidalcycles/strudel/blob/main/packages/mini/krill.pegjs), generate [parser](https://github.com/tidalcycles/strudel/blob/main/packages/mini/krill-parser.js) with [parser generator (peggyjs)](https://peggyjs.org/)
+2. pass string to generated parser: `mini('c3 [e3 g3]')`
+3. obtain Abstract Syntax Tree (AST)
+4. [transform](https://github.com/tidalcycles/strudel/blob/main/packages/mini/mini.mjs#L76) AST into Pattern: `seq('c3', ['e3', 'g3'])`
 
 </div>
 
-<MaxiRepl
-  code={[
-    `note("c3 [e3 g3]")
-    .piano().out().pianoroll()`,
-    `// mini notation also works with samples
-s("bd,[~ sd],hh*4").out()`,
-    `\`[[e5 [b4 c5] d5 [c5 b4]]
-[a4 [a4 c5] e5 [d5 c5]]
-[b4 [~ c5] d5 e5]
-[c5 a4 a4 ~]
-[[~ d5] [~ f5] a5 [g5 f5]]
-[e5 [~ c5] e5 [d5 c5]]
-[b4 [b4 c5] d5 e5]
-[c5 a4 a4 ~]],
-[[e2 e3]*4]
-[[a2 a3]*4]
-[[g#2 g#3]*2 [e2 e3]*2]
-[a2 a3 a2 a3 a2 a3 b1 c2]
-[[d2 d3]*4]
-[[c2 c3]*4]
-[[b1 b2]*2 [e2 e3]*2]
-[[a1 a2]*4]\`.slow(16)
-.note().out()
-.pianoroll({ fold:1, cycles:16 })`,
-    /* `stack(
-  // melody
-  \`<
-  [e5 ~] [[d5@2 c5] [~@2 e5]] ~ [~ [c5@2 d5]] [e5 e5] [d5 c5] [e5 f5] [g5 a5]
-  [~ c5] [c5 d5] [e5 [c5@2 c5]] [~ c5] [f5 e5] [c5 d5] [~ g6] [g6 ~]
-  [e5 ~] [[d5@2 c5] [~@2 e5]] ~ [~ [c5@2 d5]] [e5 e5] [d5 c5] [a5 g5] [c6 [e5@2 d5]]
-  [~ c5] [c5 d5] [e5 [c5@2 c5]] [~ c5] [f5 e5] [c5 d5] [~ [g6@2 ~] ~@2] [g5 ~]
-  [~ a5] [b5 c6] [b5@2 ~@2 g5] ~
-  [f5 ~] [[g5@2 f5] ~] [[e5 ~] [f5 ~]] [[f#5 ~] [g5 ~]]
-  [~ a5] [b5 c6] [b5@2 ~@2 g5] ~
-  [eb6 d6] [~ c6] ~!2
-  >\`
-  .legato(.95),
-  // sub melody
-  \`<
-  [~ g4]!2 [~ ab4]!2 [~ a4]!2 [~ bb4]!2
-  [~ a4]!2 [~ g4]!2 [d4 e4] [f4 gb4] ~!2
-  [~ g4]!2 [~ ab4]!2 [~ a4]!2 [~ bb4]!2
-  [~ a4]!2 [~ g4]!2 [d4 e4] [f4 gb4] ~!2
-  [~ c5]!4 [~ a4]!2 [[c4 ~] [d4 ~]] [[eb4 ~] [e4 ~]]
-  [~ c5]!4 [~ eb5]!2 [g4*2 [f4 ~]] [[e4 ~] [d4 ~]]
-  >\`,
-  // bass
-  \`<
-  c3!7 a3 f3!2
-  e3!2 ~!4
-  c3!7 a3 f3!2
-  e3!2 ~!4
-  f3!2 e3!2 d3!2 ~!2
-  f3!2 e3!2 ab3!2 ~!2
-  >\`
-  .legato(.5)
-).fast(2).pianoroll({fold:1,cycles:8,overscan:8})`,
-    `stack(
-"c2 <g2 g1>",
-"<[e3,[g3 a3 bb3 a3]]!11 [e3,g3]>".slow(2)
-  .struct("<[[x@2 x]*4]!11 [[~@2 x] [[x@2 ~]*9]@3]>".slow(2))
-)
-  .velocity("[.7@2 .9]*2".add(rand.range(-.1,.1)))
-  .transpose("<1 6 1@2 6@2 1@2 8 6 1 8>/2")
-  .pianoroll({ fold:1, cycles:16 })`, */
-  ]}
-/>
+<img src="./pegflow.png" className="-my-16" />
+
+[OhmJS Editor](https://ohmjs.org/editor/)
+
+</Slide><Slide>
+
+## High Level Overview
+
+<div className="absolute top-[545px] text-8xl">➡️</div>
+
+<img src="./strudelflow.png" className="h-[800px] mt-24" />
 
 </Slide><Slide hidden>
 
@@ -472,31 +504,6 @@ s("bd,[~ sd],hh*4").out()`,
 
 = `seq(c3, seq(e3, g3))`
 
-</Slide><Slide hidden>
-
-## 👁 Parsing Mini Notation
-
-<div className="text-left">
-
-1. write [peg](https://github.com/tidalcycles/strudel/blob/main/packages/mini/krill.pegjs), generate [parser](https://github.com/tidalcycles/strudel/blob/main/packages/mini/krill-parser.js) with [parser generator (peggyjs)](https://peggyjs.org/)
-2. pass string to generated parser: `mini('c3 [e3 g3]')`
-3. obtain Abstract Syntax Tree (AST)
-4. [transform](https://github.com/tidalcycles/strudel/blob/main/packages/mini/mini.mjs#L76) AST into Pattern: `seq('c3', ['e3', 'g3'])`
-
-</div>
-
-<img src="./pegflow.png" className="-my-16" />
-
-[OhmJS Editor](https://ohmjs.org/editor/)
-
-</Slide><Slide>
-
-## High Level Overview
-
-<div className="absolute top-[545px] text-8xl">➡️</div>
-
-<img src="./strudelflow.png" className="h-[800px] mt-24" />
-
 </Slide><Slide>
 
 ## 🕵🏽 Querying Events
@@ -526,7 +533,7 @@ seq('c3', ['e3', 'g3']) // <--- Pattern
 
 The scheduler will query the active pattern at regular intervals!
 
-</Slide><Slide hidden>
+</Slide><Slide>
 
 ## 🗓️ Scheduling
 
@@ -561,7 +568,7 @@ setInterval(() => {
 
 ## Sound Output
 
-Patterns are wrapped with param functions to control different aspects of the sound.
+Patterns are wrapped with param functions to compose different properties of the sound.
 
 <MaxiRepl
   canvasHeight={0}
@@ -575,12 +582,13 @@ Patterns are wrapped with param functions to control different aspects of the so
   ]}
 />
 
-<div className="text-left">
+```js
+{ note: 'a4', s: 'sawtooth', gain: 0.5, cutoff: 267 }
+```
 
-- `.out()` will turn each event value into a Web Audio Graph!
-- Everything until the output are just objects in time, which can be used for any time-based output
+![waa nodes](./waa-nodes.png)
 
-</div>
+Supports Web Audio API, Web MIDI, OSC, Speech, Web Serial, ... ?
 
 </Slide><Slide>
 
@@ -590,7 +598,7 @@ Patterns are wrapped with param functions to control different aspects of the so
 
 - Alternative Sound Backends
 - Collaborative Mode
-- Context Aware Documentation
+- Context Aware Documentation / Completion / Visualization
 - Port more Tidal Features
 
 </div>
@@ -599,9 +607,9 @@ Patterns are wrapped with param functions to control different aspects of the so
 
 <div className="text-left">
 
-- REPL: [strudel.tidalcycles.org](https://strudel.tidalcycles.org/?EeNsQ8hdNZwN) (-> [offline version](http://localhost:3000/#Y29uc3QgZGVsYXkgPSBuZXcgRmVlZGJhY2tEZWxheSgxLzMsIC41KS5jaGFpbih2b2woLjIpLCBvdXQoKSkKbGV0IGthbGltYmEgPSBhd2FpdCBzYW1wbGVyKHsKICBDNTogJy4vc2FtcGxlcy9rYWxpbWJhL2thbGltYmEtYzUubXAzJwp9KQprYWxpbWJhID0ga2FsaW1iYS5jaGFpbih2b2woMC42KS5jb25uZWN0KGRlbGF5KSxvdXQoKSk7CmNvbnN0IHNjYWxlcyA9IGNhdCgnQyBtYWpvcicsICdDIG1peG9seWRpYW4nLCAnRiBseWRpYW4nLCBbJ0YgbWlub3InLCAnRGIgbWFqb3InXSkKCnN0YWNrKAogICJbMCAyIDQgNiA5IDIgMCAtMl0qMyIKICAuYWRkKCI8MCAyPi80IikKICAuc2NhbGUoc2NhbGVzKQogIC5zdHJ1Y3QoIngqOCIpCiAgLnZlbG9jaXR5KCI8LjggLjMgLjY%2BKjgiKQogIC5zbG93KDIpCiAgLnRvbmUoa2FsaW1iYSksCiAgIjxjMiBjMiBmMiBbW0YyIEMyXSBkYjJdPiIKICAuc2NhbGUoc2NhbGVzKQogIC5zY2FsZVRyYW5zcG9zZSgiWzAgPDIgND5dKjIiKQogIC5zdHJ1Y3QoIngqNCIpCiAgLnZlbG9jaXR5KCI8LjggLjU%2BKjQiKQogIC52ZWxvY2l0eSgwLjgpCiAgLnNsb3coMikKICAudG9uZShrYWxpbWJhKQopCiAgLmxlZ2F0bygiPC40IC44IDEgMS4yIDEuNCAxLjYgMS44IDI%2BLzgiKQogIC5mYXN0KDEpCi5waWFub3JvbGwoe2F1dG9yYW5nZTowfSk%3D))
+- Strudel REPL: [strudel.tidalcycles.org](https://strudel.tidalcycles.org/?EeNsQ8hdNZwN) (-> [offline version](http://localhost:3000/#Y29uc3QgZGVsYXkgPSBuZXcgRmVlZGJhY2tEZWxheSgxLzMsIC41KS5jaGFpbih2b2woLjIpLCBvdXQoKSkKbGV0IGthbGltYmEgPSBhd2FpdCBzYW1wbGVyKHsKICBDNTogJy4vc2FtcGxlcy9rYWxpbWJhL2thbGltYmEtYzUubXAzJwp9KQprYWxpbWJhID0ga2FsaW1iYS5jaGFpbih2b2woMC42KS5jb25uZWN0KGRlbGF5KSxvdXQoKSk7CmNvbnN0IHNjYWxlcyA9IGNhdCgnQyBtYWpvcicsICdDIG1peG9seWRpYW4nLCAnRiBseWRpYW4nLCBbJ0YgbWlub3InLCAnRGIgbWFqb3InXSkKCnN0YWNrKAogICJbMCAyIDQgNiA5IDIgMCAtMl0qMyIKICAuYWRkKCI8MCAyPi80IikKICAuc2NhbGUoc2NhbGVzKQogIC5zdHJ1Y3QoIngqOCIpCiAgLnZlbG9jaXR5KCI8LjggLjMgLjY%2BKjgiKQogIC5zbG93KDIpCiAgLnRvbmUoa2FsaW1iYSksCiAgIjxjMiBjMiBmMiBbW0YyIEMyXSBkYjJdPiIKICAuc2NhbGUoc2NhbGVzKQogIC5zY2FsZVRyYW5zcG9zZSgiWzAgPDIgND5dKjIiKQogIC5zdHJ1Y3QoIngqNCIpCiAgLnZlbG9jaXR5KCI8LjggLjU%2BKjQiKQogIC52ZWxvY2l0eSgwLjgpCiAgLnNsb3coMikKICAudG9uZShrYWxpbWJhKQopCiAgLmxlZ2F0bygiPC40IC44IDEgMS4yIDEuNCAxLjYgMS44IDI%2BLzgiKQogIC5mYXN0KDEpCi5waWFub3JvbGwoe2F1dG9yYW5nZTowfSk%3D))
 - Interactive Tutorial: [strudel.tidalcycles.org/tutorial](https://strudel.tidalcycles.org/)
-- News: [@tidalcycles](https://twitter.com/tidalcycles)
+- Stay Tuned: [@tidalcycles](https://twitter.com/tidalcycles)
 - Github: [https://github.com/tidalcycles/strudel](https://github.com/tidalcycles/strudel)
 
 </div>
@@ -645,7 +653,7 @@ Patterns are wrapped with param functions to control different aspects of the so
   ]}
 />
 
-</Slide><Slide>
+</Slide><Slide hidden>
 
 ## Strudel Workshop
 
@@ -660,13 +668,17 @@ seq, cat, stack
 <MaxiRepl
   code={[
     `seq(c3,e3,g3) // "c3 e3 g3"
-    .pianoroll()`,
+    .pianoroll()
+    .note().piano().out()`,
     `cat(c3,e3,g3) // "<c3 e3 g3>"
-    .pianoroll()`,
+    .pianoroll()
+    .note().piano().out()`,
     `stack(c3,e3,g3) // "c3,e3,g3"
-    .pianoroll()`,
+    .pianoroll()
+    .note().piano().out()`,
     `stack(c3, seq(e3, cat(g3, c4))) // "c3,[e3,<g3 c4>]"
-    .pianoroll()`,
+    .pianoroll()
+    .note().piano().out()`,
   ]}
 />
 
@@ -679,16 +691,20 @@ fast / slow, early / late, rev, palindrome
 <MaxiRepl
   code={[
     `"c3 e3 g3".fast(2) // "[c3 e3 g3]*2"
-    .pianoroll()`,
+    .pianoroll()
+    .note().piano().out()`,
     `"c3 e3 g3".slow(2) // "[c3 e3 g3]/2"
-    .pianoroll()`,
+    .pianoroll()
+    .note().piano().out()`,
     `stack(
   "c3 e3".color('steelblue'),
   "<g3 a3 bb3 a3>".early(.16)
 ).late(.16)
-  .pianoroll()`,
+  .pianoroll()
+  .note().piano().out()`,
     `"c3 e3 g3 bb3".rev()
-    .pianoroll()`,
+    .pianoroll()
+    .note().piano().out()`,
   ]}
 />
 
@@ -701,9 +717,11 @@ add, sub, mul, div
 <MaxiRepl
   code={[
     `"30,42 45 49 54".add(0).slow(2)
-    .pianoroll({autorange:0,minMidi:28,maxMidi:56})`,
+    .pianoroll({autorange:0,minMidi:28,maxMidi:56})
+    .note().piano().out()`,
     `"30,42 45 49 54".add("<0 1 2 1>").slow(2)
-    .pianoroll({fold:1,cycles:8})`,
+    .pianoroll({fold:1,cycles:8})
+    .note().piano().out()`,
   ]}
 />
 
@@ -717,10 +735,12 @@ generating notes from numbers
   code={[
     `"-7,0 2 4 7".add("<0 1 2 1>")
     .scale('F#2 major')
-    .pianoroll({autorange:1})`,
+    .pianoroll({autorange:1})
+    .note().piano().out()`,
     `"-7, 0 2 4 7".add("<0 1 2 1>")
     .scale(cat('F#2 major','A2 major').slow(8))
-    .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
+    .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})
+    .note().piano().out()`,
   ]}
 />
 
@@ -736,12 +756,14 @@ velocity, legato
     .scale(cat('F#2 major','A2 major').slow(8))
     .legato(.25)
     .velocity(.5) 
-    .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
+    .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})
+    .note().piano().out()`,
     `"-7, 0 2 4 7".add("<0 1 2 1>")
     .scale(cat('F#2 major','A2 major').slow(8))
     .legato("<0.25 2>/8")
     .velocity("<1 .8>/8")
-    .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})`,
+    .pianoroll({autorange:1,cycles:16,fold:1,inactive:'orange'})
+    .note().piano().out()`,
   ]}
 />
 
@@ -755,15 +777,15 @@ sine / saw / tri / square / rand / perlin, range, segment
   code={[
     `sine
   .range(42,54).slow(4).segment(8)
-  .tone(synth().toDestination())
   .pianoroll({ minMidi:42, maxMidi: 54, autorange:0,
-              cycles:8,fold:0,inactive:'orange'})`,
+              cycles:8,fold:0,inactive:'orange'})
+    .s('triangle').out()`,
     `s("hh*8").speed(sine.range(.5,2).slow(4))
-  .webdirt()`,
+  .out()`,
     `sine.range(42,50).color('#00ff0050')
   .superimpose(x=>x.fast(3/2).color('#ff00ff50'))
   .fast(1)
-  .tone(synth().toDestination())
+    .s('triangle').out()
   .segment(64)
   .pianoroll({fold:0,vertical:0,cycles:2})
 // strudel disable-highlighting`,
@@ -900,7 +922,7 @@ stack(
 
 <MaxiRepl code={['"<hello world>".speak()']} />
 
-</Slide><Slide hidden>
+</Slide><Slide>
 
 ## Strudel Packages
 
