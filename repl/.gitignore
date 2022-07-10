@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 oldtunes.mjs
+
+public/samples/EMU World

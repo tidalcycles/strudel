@@ -1,4 +1,4 @@
-import { Pattern, toMidi } from '@strudel.cycles/core';
+import { Pattern, silence, toMidi } from '@strudel.cycles/core';
 import { samples } from '@strudel.cycles/webaudio';
 
 export function prebake() {
@@ -46,13 +46,13 @@ export function prebake() {
 samples({
   jazzbass: {
     _base: './samples/jazzbass/moog_',
-    c2: 'c2.mp3',
-    e2: 'e2.mp3',
-    a2: 'a2.mp3',
-    c3: 'c3.mp3',
-    e3: 'e3.mp3',
-    a3: 'a3.mp3',
-    c4: 'c4.mp3',
+    c1: 'c2.mp3',
+    e1: 'e2.mp3',
+    a1: 'a2.mp3',
+    c2: 'c3.mp3',
+    e2: 'e3.mp3',
+    a2: 'a3.mp3',
+    c3: 'c4.mp3',
   },
   stage73: {
     _base: './samples/stage73/',
@@ -92,98 +92,102 @@ samples(
   './samples/president/president_',
 );
 
+const times = (length, func) => Array.from({ length }, (_, i) => func(i));
+
+samples({ earth: times((i) => `Earth Kit (${i + 1}).wav`) }, './samples/EMU World/Earth Kit/');
+samples({ bottle: times((i) => `Bottle (${i + 1}).wav`) }, './samples/EMU World/Bottle/');
+samples({ shekere: times(32, (i) => `Shekere (${i + 1}).wav`) }, './samples/EMU World/Shekere/');
+samples({ block: times(5, (i) => `Block (${i + 1}).wav`) }, './samples/EMU World/Block/');
+
+samples(
+  {
+    'Brazilian Kit': [
+      'BK Agogo 2.wav',
+      'BK Agogo 3.wav',
+      'BK Agogo.wav',
+      'BK Bass Drum.wav',
+      'BK Bass Tom.wav',
+      'BK Block 2.wav',
+      'BK Block 3.wav',
+      'BK Block.wav',
+      'BK ClapTamb 2.wav',
+      'BK ClapTamb.wav',
+      'BK Conga 2.wav',
+      'BK Conga.wav',
+      'BK Cowbell 2.wav',
+      'BK Cowbell 3.wav',
+      'BK Cowbell.wav',
+      'BK CrashTamb.wav',
+      'BK Cup 2.wav',
+      'BK Cup.wav',
+      'BK Cymb 2.wav',
+      'BK Cymb 3.wav',
+      'BK Cymbal.wav',
+      'BK High Tom 2.wav',
+      'BK High Tom.wav',
+      'BK Low Tom 2.wav',
+      'BK Low Tom.wav',
+      'BK Mid Tom 2.wav',
+      'BK Mid Tom.wav',
+      'BK Mute Cymb.wav',
+      'BK Rattle.wav',
+      'BK Ride 2.wav',
+      'BK Ride.wav',
+      'BK Rimshot.wav',
+      'BK Scraper 2.wav',
+      'BK Scraper.wav',
+      'BK Shaker 2.wav',
+      'BK Shaker 3.wav',
+      'BK Shaker.wav',
+      'BK Snare.wav',
+      'BK SnareTamb 2.wav',
+      'BK SnareTamb.wav',
+      'BK Triangle 2.wav',
+      'BK Triangle 3.wav',
+      'BK Triangle 4.wav',
+      'BK Triangle 5.wav',
+      'BK Triangle 6.wav',
+      'BK Triangle.wav',
+      'BK Whistle 2.wav',
+      'BK Whistle 3.wav',
+      'BK Whistle.wav',
+      'BK Woop 2.wav',
+      'BK Woop.wav',
+    ],
+  },
+  './samples/EMU World/Brazilian Kit/',
+);
+
 const maxPan = toMidi('C8');
 const panwidth = (pan, width) => pan * width + (1 - width) / 2;
 
 Pattern.prototype.panByPitch = function () {
   return this.fmap((value) => {
-    // pan by pitch
-    const pan = panwidth(Math.min(toMidi(value.note || value.n) / maxPan, 1), 0.5);
-    return { ...value, pan: (value.pan || 1) * pan };
+    try {
+      // pan by pitch
+      const pan = panwidth(Math.min(toMidi(value.note || value.n) / maxPan, 1), 0.5);
+      return { ...value, pan: (value.pan || 1) * pan };
+    } catch (e) {
+      console.log('.panByPitch error', e);
+      return silence;
+    }
   });
 };
 
 Pattern.prototype.piano = function () {
-  return this.clip(1).s('piano').panByPitch();
+  return this.clip(1).s('piano').panByPitch().gain(0.6);
 };
 
 Pattern.prototype.rhodes = function () {
-  return this.clip(1).s('stage73').panByPitch().gain(1.5);
+  return this.clip(1).s('stage73').panByPitch(); //.gain(1.5);
 };
 
 Pattern.prototype.jazzbass = function () {
-  return this.clip(1).s('jazzbass');
+  return this.clip(1).s('jazzbass').gain(0.6);
 };
-
-/*
-stack(
-  s("<bd [bd ~ bd]> ~, ~, hh*6")
-  .speed(.8)
-  //.cutoff(2000)
-  .slow(2)
-  //.cutoff(perlin.range(500,4000))
-  .sometimes(x=>x.echo("2", 1/6+0.05, .8))
-  ,
-  note(
-    "C^7 <Dm7 [F^7 [Fm7 Db^7]]>"
-    //.euclidLegato(6,12)
-    .voicings()
-  )
-  .rhodes()
-  //.s('sawtooth')
-  .slow(8).gain(2)
-  .cutoff(2000)
-  ,
-  note(
-    "[c2 <e2 g1>](5,12)".slow(4)
-    .transpose(12)
-    //.superimpose(add("<12 24>,0.05"))
-  )
-  .s("jazzbass").clip(1).gain(1)
-  //.cutoff(sine.range(300,500).slow(4))
-  //.resonance(10)
-  ,
-  note(
-    "0 2 4 0".iter(4).add("<0>")
-    //.off(1/12, add("7"))
-    .off(1/6, add("14"))
-    .degradeBy(.2)
-    .scale('C5 major')
-    .legato(4)
-    .slow(2)
-    .echo(2, 1/6, .5)
-  )
-  .piano()
-  //.s('sawtooth')
-  //.cutoff(1000)
-  //.resonance(25)
-  .gain(.5)
-)
-  //.hcutoff(1000)
-  //.resonance(20)
-  .reset("<x@3>")
-  
-.out()
-
-
-*/
-
-/*
-note("[c2(3,8) [<eb2 g1> bb1]]")
-  .s('sawtooth')
-  .gain(.5)
-  .cutoff(sine.range(200,1200).slow(4))
-  .slow(2)
-  .stack(
-    note("Cm7@3 <Dm7 B7>".voicings().slow(4)).rhodes(),
-    note("0 2 4 <9 8>".iter(4).scale('C5 minor'))
-    .degradeBy(.5).echo(4, 1/8, .8)
-    .legato(.05)
-    .rhodes()
-    .jux(rev),
-  )
-  .stack(s("bd,~ sd,hh*4").cutoff(2000))
-  .reset("<x@3 x(3,8)>")
-  .out()
-  .logValues()
-  */
+Pattern.prototype.flute = function () {
+  return this.clip(1).s('flute');
+};
+Pattern.prototype.block = function () {
+  return this.clip(1).s('block');
+};
