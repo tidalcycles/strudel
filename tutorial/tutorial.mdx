@@ -275,6 +275,15 @@ how to use?
 
 <MiniRepl tune={`polymeter(3, e3, g3, b3)`} /> -->
 
+### flatcat(...values)
+
+Like **cat**, but any arrays are fully flattened before concatenation. 
+This is particularly useful when concatenating nested patterns of mixed or unknown type. 
+
+<MiniRepl tune={
+`flatcat([[seq(g5, f5),seq(e5, d5)], seq(c5, g4)], c5)`
+} />
+
 ### polyrhythm(...[...values])
 
 Plays the given items at the same time, within the same length:
@@ -714,6 +723,8 @@ The following functions will return a pattern. We will see later what that means
 {{ 'stack' | jsdoc }}
 
 {{ 'timeCat' | jsdoc }}
+
+{{ 'flatcat' | jsdoc }}
 
 {{ 'polyrhythm' | jsdoc }}
 

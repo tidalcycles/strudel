@@ -81,6 +81,8 @@ export const removeUndefineds = (xs) => xs.filter((x) => x != undefined);
 
 export const flatten = (arr) => [].concat(...arr);
 
+export const flattenDeep = (arr) => Array.isArray(arr) ? arr.reduce( (a, b) => a.concat(flattenDeep(b)) , []) : [arr];
+
 export const id = (a) => a;
 export const constant = (a, b) => a;
 

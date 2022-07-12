@@ -18,6 +18,7 @@ import {
   fastcat,
   slowcat,
   cat,
+  flatcat,
   sequence,
   polymeter,
   polymeterSteps,
@@ -611,6 +612,14 @@ describe('Pattern', function () {
       assert.deepStrictEqual(
         sequence('a', ['a', 'a']).firstCycle(),
         timeCat([1, 'a'], [0.5, 'a'], [0.5, 'a']).firstCycle(),
+      );
+    });
+  });
+  describe('flatcat()', function () {
+    it('Can concatenate patterns of flattened arrays', function () {
+      assert.deepStrictEqual(
+        cat(...[...[sequence(1, 2), sequence(3, 4)], sequence(5, 6)], 7).firstCycle(),
+        flatcat([[sequence(1, 2),sequence(3, 4)], sequence(5, 6)], 7).firstCycle(),
       );
     });
   });

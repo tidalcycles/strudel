@@ -10,7 +10,7 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
 
-import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod } from './util.mjs';
+import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod, flattenDeep } from './util.mjs';
 import drawLine from './drawLine.mjs';
 
 /** @class Class representing a pattern. */
@@ -795,6 +795,11 @@ export class Pattern {
     return this._fast(cpm / 60);
   }
 
+  // bpm = beats per minute (assuming a 4/4 time signature)
+  _bpm(bpm) {
+    return this._slow(240 / bpm );
+  }
+
   _early(offset) {
     // Equivalent of Tidal's <~ operator
     offset = Fraction(offset);
@@ -971,6 +976,10 @@ export class Pattern {
 
   slowcat(...pats) {
     return slowcat(this, ...pats);
+  }
+
+  flatcat(...pats) {
+    return flatcat(this, ...pats);
   }
 
   superimpose(...funcs) {
@@ -1159,6 +1168,7 @@ function _composeOp(a, b, func) {
 // methods of Pattern that get callable factories
 Pattern.prototype.patternified = [
   'apply',
+  'bpm',
   'chop',
   'color',
   'cpm',
@@ -1182,6 +1192,7 @@ Pattern.prototype.factories = {
   slowcat,
   fastcat,
   cat,
+  flatcat,
   timeCat,
   sequence,
   seq,
@@ -1304,6 +1315,18 @@ export function slowcatPrime(...pats) {
  */
 export function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);
+}
+
+/** Concatenation: as with {@link slowcat}, but deep flattens any arrays before concatenation
+ *
+ * @param {...any} items - The items to concatenate
+ * @return {Pattern}
+ * @example
+ * flatcat(e5, b4, [d5, c5])
+ * // cat(e5, b4, d5, c5)
+ */
+ export function flatcat(...pats) {
+   return slowcat(...[].concat(flattenDeep(pats)))
 }
 
 /** See {@link slowcat} */
