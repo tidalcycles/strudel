@@ -1,6 +1,5 @@
 import { Pattern, toMidi } from '@strudel.cycles/core';
 import { samples } from '@strudel.cycles/webaudio';
-import EmuSP12 from '../public/EmuSP12.json' assert {type: "json"};
 
 export function prebake() {
   samples(
@@ -42,7 +41,9 @@ export function prebake() {
     // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
     './piano/',
   );
-  samples(EmuSP12, './EmuSP12/');
+  fetch('EmuSP12.json')
+    .then(res => res.json())
+    .then(json => samples(json, './EmuSP12/'));
 }
 
 const maxPan = toMidi('C8');
