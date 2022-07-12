@@ -1,6 +1,6 @@
 import { Pattern, toMidi } from '@strudel.cycles/core';
 import { samples } from '@strudel.cycles/webaudio';
-import EmuSP12 from '../public/EmuSP12.json';
+import EmuSP12 from '../public/EmuSP12.json' assert {type: "json"};
 
 export function prebake() {
   samples(
