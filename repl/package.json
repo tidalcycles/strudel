@@ -7,7 +7,7 @@
     "start": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "mocha ./src/test --colors",
+    "test": "NODE_OPTIONS='--experimental-fetch' mocha ./src/test --colors",
     "snapshot": "cd ./src/ && rm -f ./tunes.snapshot.mjs && node ./shoot.mjs > ./tunes.snapshot.mjs",
     "add-license": "cat etc/agpl-header.txt ../docs/static/js/*LICENSE.txt > /tmp/strudel-license.txt && cp /tmp/strudel-license.txt ../docs/static/js/*LICENSE.txt",
     "predeploy": "npm run build",
