@@ -1574,3 +1574,8 @@ Pattern.prototype.define = (name, func, options = {}) => {
 // Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
 Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
 Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
+
+export async function loadScript(url) {
+  const code = await fetch(url).then((res) => res.text());
+  return eval(code);
+}
