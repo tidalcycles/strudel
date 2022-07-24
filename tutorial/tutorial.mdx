@@ -175,11 +175,21 @@ Using "!" we can repeat without speeding up:
 
 In essence, the `x!n` is like a shortcut for `[x*n]@n`.
 
+## Euclidian
+
+Using round brackets, we can create rhythmical sub-divisions based on three parameters: beats, segments and offset. 
+The first parameter controls how may beats will be played. 
+The second parameter controls the total amount of segments the beats will be distributed over. 
+The third (optional) parameter controls the starting position for distributing the beats.
+One popular Euclidian rhythm (going by various names, such as "Pop Clave") is "(3,8,1)" or simply "(3,8)", 
+resulting in a rhythmical structure of "x ~ ~ x ~ ~ x ~" (3 beats over 8 segments, starting on position 1).
+
+<MiniRepl tune={`"e5(2,8) b4(3,8) d5(2,8) c5(3,8)".slow(4)`} />
+
 ## Mini Notation TODO
 
 Compared to [tidal mini notation](https://tidalcycles.org/docs/patternlib/tutorials/mini_notation/), the following mini notation features are missing from Strudel:
 
-- [x] Euclidean algorithm "c3(3,2,1)" TODO: document
 - [ ] Tie symbols "\_"
 - [ ] feet marking "."
 - [ ] random choice "|"
@@ -435,12 +445,6 @@ Like layer, but with a single function:
 Applies the given function by the given time offset:
 
 <MiniRepl tune={`"c3 eb3 g3".off(1/8, add(7))`} />
-
-### append(pat)
-
-Appends the given pattern after the current pattern:
-
-<MiniRepl tune={`"c4,eb4,g4".append("c4,f4,ab4")`} />
 
 ### stack(pat)
 
