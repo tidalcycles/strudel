@@ -46,7 +46,13 @@ const materialPalenightTheme = EditorView.theme(
       lineHeight: '22px',
     },
     '.cm-line': {
-      background: '#2C323699',
+      // background: '#2C323699',
+      background: 'transparent',
+    },
+    '.cm-line > *': {
+      // background: '#2C323699',
+      background: '#00000090',
+      // background: 'transparent',
     },
     // done
     '&.cm-focused .cm-cursor': {
@@ -71,7 +77,7 @@ const materialPalenightTheme = EditorView.theme(
       backgroundColor: '#6199ff2f',
     },
 
-    '.cm-activeLine': { backgroundColor: highlightBackground },
+    '.cm-activeLine': { backgroundColor: cursor + '50' },
     '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
 
     '&.cm-focused .cm-matchingBracket, &.cm-focused .cm-nonmatchingBracket': {
@@ -193,7 +199,7 @@ const highlightField = StateField.define({
             if (from > l || to > l) {
               return;
             }
-            const mark = Decoration.mark({ attributes: { style: `outline: 1px solid ${color}` } });
+            const mark = Decoration.mark({ attributes: { style: `outline: 1.5px solid ${color};` } });
             return mark.range(from, to);
           })).filter(Boolean), true);
         }
@@ -351,6 +357,8 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     }
   }, [activeCode, onDrawProp]);
 
+  const hideHeader = useMemo(() => activeCode && activeCode.includes('strudel hide-header'), [activeCode]);
+  const hideConsole = useMemo(() => activeCode && activeCode.includes('strudel hide-console'), [activeCode]);
   // cycle hook to control scheduling
   const cycle = useCycle({
     onDraw,
@@ -449,6 +457,8 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
   };
 
   return {
+    hideHeader,
+    hideConsole,
     pending,
     code,
     setCode,
