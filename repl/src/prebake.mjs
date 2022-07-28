@@ -39,7 +39,7 @@ export function prebake() {
     },
     // https://archive.org/details/SalamanderGrandPianoV3
     // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
-    './piano/',
+    './samples/piano/',
   );
   fetch('EmuSP12.json')
     .then(res => res.json())
