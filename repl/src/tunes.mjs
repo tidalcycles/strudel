@@ -306,7 +306,7 @@ const drums = stack(
 const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
 const synths = stack(
   "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]*2")
-  .edit(
+  .layer(
     scaleTranspose(0).early(0),
     scaleTranspose(2).early(1/8),
     scaleTranspose(7).early(1/4),
@@ -517,7 +517,7 @@ const snare = noise({type:'white',...adsr(0,0.2,0)}).chain(lowpass(5000),vol(1.8
 const s = polysynth().set({...osc('sawtooth4'),...adsr(0.01,.2,.6,0.2)}).chain(vol(.23).connect(delay),out());
 stack(
   stack(
-    "0 1 4 [3!2 5]".edit(
+    "0 1 4 [3!2 5]".layer(
       // chords
       x=>x.add("0,3").duration("0.05!3 0.02"),
       // bass
