@@ -66,7 +66,7 @@ export function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, i
         </div>
         {error && <div className={styles.error}>{error.message}</div>}
       </div>
-      <div className={styles.body} >
+      <div className={styles.body}>
         {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />}
       </div>
     </div>

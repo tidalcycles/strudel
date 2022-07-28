@@ -531,13 +531,13 @@ var tailwind = '';
 
 var style = '';
 
-const container = "_container_10e1g_1";
-const header = "_header_10e1g_5";
-const buttons = "_buttons_10e1g_9";
-const button = "_button_10e1g_9";
-const buttonDisabled = "_buttonDisabled_10e1g_17";
-const error = "_error_10e1g_21";
-const body = "_body_10e1g_25";
+const container = "_container_1eogc_1";
+const header = "_header_1eogc_5";
+const buttons = "_buttons_1eogc_9";
+const button = "_button_1eogc_9";
+const buttonDisabled = "_buttonDisabled_1eogc_17";
+const error = "_error_1eogc_21";
+const body = "_body_1eogc_25";
 var styles = {
 	container: container,
 	header: header,
