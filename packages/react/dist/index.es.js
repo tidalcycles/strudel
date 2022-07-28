@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from 'react';
 import { CodeMirror as CodeMirror$1 } from 'react-codemirror6';
 import { EditorView, Decoration } from '@codemirror/view';
 import { StateEffect, StateField } from '@codemirror/state';
@@ -563,12 +563,16 @@ function Icon({ type }) {
   }[type]);
 }
 
-function MiniRepl({ tune, defaultSynth, hideOutsideView = false }) {
-  const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
+function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, onEvent, enableKeyboard }) {
+  const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } = useRepl({
     tune,
     defaultSynth,
-    autolink: false
+    autolink: false,
+    onEvent
   });
+  useEffect(() => {
+    init && evaluateOnly();
+  }, [tune, init]);
   const [view, setView] = useState();
   const [ref, isVisible] = useInView({
     threshold: 0.01
@@ -580,7 +584,25 @@ function MiniRepl({ tune, defaultSynth, hideOutsideView = false }) {
     }
     return isVisible || wasVisible.current;
   }, [isVisible, hideOutsideView]);
-  useHighlighting({ view, pattern, active: cycle.started });
+  useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes("strudel disable-highlighting") });
+  useLayoutEffect(() => {
+    if (enableKeyboard) {
+      const handleKeyPress = async (e) => {
+        if (e.ctrlKey || e.altKey) {
+          if (e.code === "Enter") {
+            e.preventDefault();
+            flash(view);
+            await activateCode();
+          } else if (e.code === "Period") {
+            cycle.stop();
+            e.preventDefault();
+          }
+        }
+      };
+      window.addEventListener("keydown", handleKeyPress, true);
+      return () => window.removeEventListener("keydown", handleKeyPress, true);
+    }
+  }, [enableKeyboard, pattern, code, activateCode, cycle, view]);
   return /* @__PURE__ */ React.createElement("div", {
     className: styles.container,
     ref
