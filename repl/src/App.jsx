@@ -108,6 +108,8 @@ function App() {
     pattern,
     pushLog,
     pending,
+    hideHeader,
+    hideConsole,
   } = useRepl({
     tune: '// LOADING...',
     defaultSynth,
@@ -167,142 +169,149 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header
-        id="header"
-        className={cx(
-          'flex-none w-full px-2 flex border-b border-gray-200  justify-between z-[10] bg-gray-100',
-          isEmbedded ? 'h-8' : 'h-14',
-        )}
-      >
-        <div className="flex items-center space-x-2">
-          <img src={logo} className={cx('Tidal-logo', isEmbedded ? 'w-6 h-6' : 'w-10 h-10')} alt="logo" />
-          <h1 className={isEmbedded ? 'text-l' : 'text-xl'}>Strudel {isEmbedded ? 'Mini ' : ''}REPL</h1>
-        </div>
-        <div className="flex">
-          <button
-            onClick={() => {
-              getAudioContext().resume(); // fixes no sound in ios webkit
-              togglePlay();
-            }}
-            className={cx('hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}
-          >
-            {!pending ? (
-              <span className={cx('flex items-center', isEmbedded ? 'w-16' : 'w-16')}>
-                {cycle.started ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
-                {cycle.started ? 'pause' : 'play'}
-              </span>
-            ) : (
-              <>loading...</>
-            )}
-          </button>
-          {!isEmbedded && (
+      {!hideHeader && (
+        <header
+          id="header"
+          className={cx(
+            'flex-none w-full px-2 flex border-b border-gray-200  justify-between z-[10] bg-gray-100',
+            isEmbedded ? 'h-8' : 'h-14',
+          )}
+        >
+          <div className="flex items-center space-x-2">
+            <img src={logo} className={cx('Tidal-logo', isEmbedded ? 'w-6 h-6' : 'w-10 h-10')} alt="logo" />
+            <h1 className={isEmbedded ? 'text-l' : 'text-xl'}>Strudel {isEmbedded ? 'Mini ' : ''}REPL</h1>
+          </div>
+          <div className="flex">
             <button
-              className="hover:bg-gray-300 p-2"
-              onClick={async () => {
-                const _code = getRandomTune();
-                console.log('tune', _code); // uncomment this to debug when random code fails
-                setCode(_code);
-                cleanupDraw();
-                cleanupUi();
-                resetLoadedSamples();
-                prebake();
-                const parsed = await evaluate(_code);
-                setPattern(parsed.pattern);
-                setActiveCode(_code);
+              onClick={() => {
+                getAudioContext().resume(); // fixes no sound in ios webkit
+                togglePlay();
               }}
+              className={cx('hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}
             >
-              🎲 random
+              {!pending ? (
+                <span className={cx('flex items-center', isEmbedded ? 'w-16' : 'w-16')}>
+                  {cycle.started ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  )}
+                  {cycle.started ? 'pause' : 'play'}
+                </span>
+              ) : (
+                <>loading...</>
+              )}
             </button>
-          )}
-          {!isEmbedded && (
-            <button className={cx('hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}>
-              <a href="./tutorial">📚 tutorial</a>
-            </button>
-          )}
-          {!isEmbedded && (
-            <button
-              className={cx('cursor-pointer hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}
-              onClick={async () => {
-                const codeToShare = activeCode || code;
-                if (lastShared === codeToShare) {
-                  // alert('Link already generated!');
-                  pushLog(`Link already generated!`);
-                  return;
-                }
-                // generate uuid in the browser
-                const hash = nanoid(12);
-                const { data, error } = await supabase.from('code').insert([{ code: codeToShare, hash }]);
-                if (!error) {
-                  setLastShared(activeCode || code);
-                  const shareUrl = window.location.origin + '?' + hash;
-                  // copy shareUrl to clipboard
-                  navigator.clipboard.writeText(shareUrl);
-                  const message = `Link copied to clipboard: ${shareUrl}`;
-                  // alert(message);
-                  pushLog(message);
-                } else {
-                  console.log('error', error);
-                  const message = `Error: ${error.message}`;
-                  // alert(message);
-                  pushLog(message);
-                }
-              }}
-            >
-              📣 share{lastShared && lastShared === (activeCode || code) ? 'd!' : ''}
-            </button>
-          )}
-          {isEmbedded && (
-            <button className={cx('hover:bg-gray-300 px-2')}>
-              <a href={window.location.href} target="_blank" rel="noopener noreferrer" title="Open in REPL">
-                🚀 open
-              </a>
-            </button>
-          )}
-          {isEmbedded && (
-            <button className={cx('hover:bg-gray-300 px-2')}>
-              <a
-                onClick={() => {
-                  window.location.href = initialUrl;
-                  window.location.reload();
+            {!isEmbedded && (
+              <button
+                className="hover:bg-gray-300 p-2"
+                onClick={async () => {
+                  const _code = getRandomTune();
+                  console.log('tune', _code); // uncomment this to debug when random code fails
+                  setCode(_code);
+                  cleanupDraw();
+                  cleanupUi();
+                  resetLoadedSamples();
+                  prebake();
+                  const parsed = await evaluate(_code);
+                  setPattern(parsed.pattern);
+                  setActiveCode(_code);
                 }}
-                title="Reset"
               >
-                💔 reset
-              </a>
-            </button>
-          )}
-        </div>
-      </header>
+                🎲 random
+              </button>
+            )}
+            {!isEmbedded && (
+              <button className={cx('hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}>
+                <a href="./tutorial">📚 tutorial</a>
+              </button>
+            )}
+            {!isEmbedded && (
+              <button
+                className={cx('cursor-pointer hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}
+                onClick={async () => {
+                  const codeToShare = activeCode || code;
+                  if (lastShared === codeToShare) {
+                    // alert('Link already generated!');
+                    pushLog(`Link already generated!`);
+                    return;
+                  }
+                  // generate uuid in the browser
+                  const hash = nanoid(12);
+                  const { data, error } = await supabase.from('code').insert([{ code: codeToShare, hash }]);
+                  if (!error) {
+                    setLastShared(activeCode || code);
+                    const shareUrl = window.location.origin + '?' + hash;
+                    // copy shareUrl to clipboard
+                    navigator.clipboard.writeText(shareUrl);
+                    const message = `Link copied to clipboard: ${shareUrl}`;
+                    // alert(message);
+                    pushLog(message);
+                  } else {
+                    console.log('error', error);
+                    const message = `Error: ${error.message}`;
+                    // alert(message);
+                    pushLog(message);
+                  }
+                }}
+              >
+                📣 share{lastShared && lastShared === (activeCode || code) ? 'd!' : ''}
+              </button>
+            )}
+            {isEmbedded && (
+              <button className={cx('hover:bg-gray-300 px-2')}>
+                <a href={window.location.href} target="_blank" rel="noopener noreferrer" title="Open in REPL">
+                  🚀 open
+                </a>
+              </button>
+            )}
+            {isEmbedded && (
+              <button className={cx('hover:bg-gray-300 px-2')}>
+                <a
+                  onClick={() => {
+                    window.location.href = initialUrl;
+                    window.location.reload();
+                  }}
+                  title="Reset"
+                >
+                  💔 reset
+                </a>
+              </button>
+            )}
+          </div>
+        </header>
+      )}
       <section className="grow flex flex-col text-gray-100">
-        <div className="grow relative flex overflow-auto" id="code">
+        <div className="grow relative flex overflow-auto pb-8 cursor-text" id="code">
           {/* onCursor={markParens} */}
           <CodeMirror value={code} onChange={setCode} onViewChanged={setView} />
-          <span className="z-[20] py-1 px-2 absolute top-0 right-0 text-xs whitespace-pre text-right pointer-events-none">
+          <span className="z-[20] bg-black rounded-t-md py-1 px-2 fixed bottom-0 right-1 text-xs whitespace-pre text-right pointer-events-none">
             {!cycle.started ? `press ctrl+enter to play\n` : dirty ? `ctrl+enter to update\n` : 'no changes\n'}
           </span>
           {error && (
-            <div className={cx('absolute right-2 bottom-2 px-2', 'text-red-500')}>
+            <div
+              className={cx(
+                'rounded-md fixed pointer-events-none left-2 bottom-1 text-xs bg-black px-2 z-[20]',
+                'text-red-500',
+              )}
+            >
               {error?.message || 'unknown error'}
             </div>
           )}
         </div>
-        {!isEmbedded && (
+        {!isEmbedded && !hideConsole && (
           <textarea
             className="z-[10] h-16 border-0 text-xs bg-[transparent] border-t border-slate-600 resize-none"
             value={log}
