@@ -21,6 +21,8 @@ const applyOptions = (parent) => (pat, i) => {
         return reify(pat).fast(speed);
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
+      case 'degradeBy':
+        return reify(pat)._degradeByWith(strudel.rand.early(0.0001 * _nextSeed()).segment(1), operator.arguments_.amount);
       // TODO: case 'fixed-step': "%"
     }
     console.warn(`operator "${operator.type_}" not implemented`);
