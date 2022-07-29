@@ -1,0 +1,17 @@
+{
+  "name": "@strudel.cycles/server",
+  "version": "0.0.1",
+  "description": "Experimental Strudel node server",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "speaker": "^0.5.4",
+    "web-audio-api": "^0.2.2"
+  }
+}
