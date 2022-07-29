@@ -21,6 +21,8 @@ const applyOptions = (parent) => (pat, i) => {
         return reify(pat).fast(speed);
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
+      case 'degradeBy':
+        return reify(pat).degradeBy(operator.arguments_.amount);
       // TODO: case 'fixed-step': "%"
     }
     console.warn(`operator "${operator.type_}" not implemented`);
@@ -81,6 +83,11 @@ export function patternifyAST(ast) {
       const alignment = ast.arguments_.alignment;
       if (alignment === 'v') {
         return stack(...children);
+      }
+      if (alignment === 'r') {
+        console.log("randcat is not implemented, using slowcat instead");
+        //return choose(...children).segment(1); // FIXME- this only plays the 1st element of each child
+        return slowcat(...children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
       if (!weightedChildren && alignment === 't') {
