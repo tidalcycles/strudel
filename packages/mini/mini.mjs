@@ -84,6 +84,11 @@ export function patternifyAST(ast) {
       if (alignment === 'v') {
         return stack(...children);
       }
+      if (alignment === 'r') {
+        console.log("randcat is not implemented, using slowcat instead");
+        //return choose(...children).segment(1); // FIXME- this only plays the 1st element of each child
+        return slowcat(...children);
+      }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
       if (!weightedChildren && alignment === 't') {
         return slowcat(...children);
