@@ -134,6 +134,19 @@ export const chooseWith = (pat, xs) => {
 
 export const choose = (...xs) => chooseWith(rand, xs);
 
+export const chooseInWith = (pat, xs) => {
+  xs = xs.map(reify);
+  if (xs.length == 0) {
+    return silence;
+  }
+  return pat
+    .range(0, xs.length)
+    .fmap((i) => xs[Math.floor(i)])
+    .innerJoin();
+};
+
+export const chooseCycles = (...xs) => chooseInWith(rand.segment(1), xs);
+
 const _wchooseWith = function (pat, ...pairs) {
   const values = pairs.map((pair) => reify(pair[0]));
   const weights = [];
