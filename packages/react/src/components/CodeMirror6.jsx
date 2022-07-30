@@ -60,7 +60,8 @@ const highlightField = StateField.define({
                   if (from > l || to > l) {
                     return; // dont mark outside of range, as it will throw an error
                   }
-                  const mark = Decoration.mark({ attributes: { style: `outline: 1px solid ${color}` } });
+                  // const mark = Decoration.mark({ attributes: { style: `outline: 1px solid ${color}` } });
+                  const mark = Decoration.mark({ attributes: { style: `outline: 1.5px solid ${color};` } });
                   return mark.range(from, to);
                 }),
               )

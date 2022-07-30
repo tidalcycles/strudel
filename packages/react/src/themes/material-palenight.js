@@ -36,7 +36,13 @@ export const materialPalenightTheme = EditorView.theme(
       lineHeight: '22px',
     },
     '.cm-line': {
-      background: '#2C323699',
+      // background: '#2C323699',
+      background: 'transparent',
+    },
+    '.cm-line > *': {
+      // background: '#2C323699',
+      background: '#00000090',
+      // background: 'transparent',
     },
     // done
     '&.cm-focused .cm-cursor': {
@@ -61,7 +67,7 @@ export const materialPalenightTheme = EditorView.theme(
       backgroundColor: '#6199ff2f',
     },
 
-    '.cm-activeLine': { backgroundColor: highlightBackground },
+    '.cm-activeLine': { backgroundColor: cursor + '50' },
     '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
 
     '&.cm-focused .cm-matchingBracket, &.cm-focused .cm-nonmatchingBracket': {
