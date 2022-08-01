@@ -28,7 +28,7 @@ const applyOptions = (parent) => (pat, i) => {
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
       case 'degradeBy':
-        return reify(pat)._degradeByWith(strudel.rand.early(0.0001 * _nextSeed()).segment(1), operator.arguments_.amount);
+        return reify(pat)._degradeByWith(strudel.rand.early(Math.PI * _nextSeed()).segment(1), operator.arguments_.amount);
       // TODO: case 'fixed-step': "%"
     }
     console.warn(`operator "${operator.type_}" not implemented`);
@@ -91,7 +91,7 @@ export function patternifyAST(ast) {
         return stack(...children);
       }
       if (alignment === 'r') {
-        return strudel.chooseInWith(strudel.rand.early(0.0001 * _nextSeed()).segment(1), children);
+        return strudel.chooseInWith(strudel.rand.early(Math.PI * _nextSeed()).segment(1), children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
       if (!weightedChildren && alignment === 't') {
