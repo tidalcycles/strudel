@@ -67,7 +67,8 @@ export const materialPalenightTheme = EditorView.theme(
       backgroundColor: '#6199ff2f',
     },
 
-    '.cm-activeLine': { backgroundColor: cursor + '50' },
+    // commented out because it looks bad in mini repl one liners
+    //'.cm-activeLine': { backgroundColor: cursor + '50' },
     '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
 
     '&.cm-focused .cm-matchingBracket, &.cm-focused .cm-nonmatchingBracket': {

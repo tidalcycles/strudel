@@ -77,7 +77,8 @@ const materialPalenightTheme = EditorView.theme(
       backgroundColor: '#6199ff2f',
     },
 
-    '.cm-activeLine': { backgroundColor: cursor + '50' },
+    // commented out because it looks bad in mini repl one liners
+    //'.cm-activeLine': { backgroundColor: cursor + '50' },
     '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
 
     '&.cm-focused .cm-matchingBracket, &.cm-focused .cm-nonmatchingBracket': {
@@ -531,13 +532,13 @@ var tailwind = '';
 
 var style = '';
 
-const container = "_container_1eogc_1";
-const header = "_header_1eogc_5";
-const buttons = "_buttons_1eogc_9";
-const button = "_button_1eogc_9";
-const buttonDisabled = "_buttonDisabled_1eogc_17";
-const error = "_error_1eogc_21";
-const body = "_body_1eogc_25";
+const container = "_container_xpa19_1";
+const header = "_header_xpa19_5";
+const buttons = "_buttons_xpa19_9";
+const button = "_button_xpa19_9";
+const buttonDisabled = "_buttonDisabled_xpa19_17";
+const error = "_error_xpa19_21";
+const body = "_body_xpa19_25";
 var styles = {
 	container: container,
 	header: header,
