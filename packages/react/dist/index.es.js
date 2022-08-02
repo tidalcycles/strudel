@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from 'react';
 import { CodeMirror as CodeMirror$1 } from 'react-codemirror6';
 import { EditorView, Decoration } from '@codemirror/view';
 import { StateEffect, StateField } from '@codemirror/state';
@@ -46,7 +46,13 @@ const materialPalenightTheme = EditorView.theme(
       lineHeight: '22px',
     },
     '.cm-line': {
-      background: '#2C323699',
+      // background: '#2C323699',
+      background: 'transparent',
+    },
+    '.cm-line > *': {
+      // background: '#2C323699',
+      background: '#00000090',
+      // background: 'transparent',
     },
     // done
     '&.cm-focused .cm-cursor': {
@@ -71,7 +77,8 @@ const materialPalenightTheme = EditorView.theme(
       backgroundColor: '#6199ff2f',
     },
 
-    '.cm-activeLine': { backgroundColor: highlightBackground },
+    // commented out because it looks bad in mini repl one liners
+    //'.cm-activeLine': { backgroundColor: cursor + '50' },
     '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
 
     '&.cm-focused .cm-matchingBracket, &.cm-focused .cm-nonmatchingBracket': {
@@ -193,7 +200,7 @@ const highlightField = StateField.define({
             if (from > l || to > l) {
               return;
             }
-            const mark = Decoration.mark({ attributes: { style: `outline: 1px solid ${color}` } });
+            const mark = Decoration.mark({ attributes: { style: `outline: 1.5px solid ${color};` } });
             return mark.range(from, to);
           })).filter(Boolean), true);
         }
@@ -351,6 +358,8 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     }
   }, [activeCode, onDrawProp]);
 
+  const hideHeader = useMemo(() => activeCode && activeCode.includes('strudel hide-header'), [activeCode]);
+  const hideConsole = useMemo(() => activeCode && activeCode.includes('strudel hide-console'), [activeCode]);
   // cycle hook to control scheduling
   const cycle = useCycle({
     onDraw,
@@ -449,6 +458,8 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
   };
 
   return {
+    hideHeader,
+    hideConsole,
     pending,
     code,
     setCode,
@@ -521,13 +532,13 @@ var tailwind = '';
 
 var style = '';
 
-const container = "_container_10e1g_1";
-const header = "_header_10e1g_5";
-const buttons = "_buttons_10e1g_9";
-const button = "_button_10e1g_9";
-const buttonDisabled = "_buttonDisabled_10e1g_17";
-const error = "_error_10e1g_21";
-const body = "_body_10e1g_25";
+const container = "_container_xpa19_1";
+const header = "_header_xpa19_5";
+const buttons = "_buttons_xpa19_9";
+const button = "_button_xpa19_9";
+const buttonDisabled = "_buttonDisabled_xpa19_17";
+const error = "_error_xpa19_21";
+const body = "_body_xpa19_25";
 var styles = {
 	container: container,
 	header: header,
@@ -563,12 +574,16 @@ function Icon({ type }) {
   }[type]);
 }
 
-function MiniRepl({ tune, defaultSynth, hideOutsideView = false }) {
-  const { code, setCode, pattern, activateCode, error, cycle, dirty, togglePlay } = useRepl({
+function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, onEvent, enableKeyboard }) {
+  const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } = useRepl({
     tune,
     defaultSynth,
-    autolink: false
+    autolink: false,
+    onEvent
   });
+  useEffect(() => {
+    init && evaluateOnly();
+  }, [tune, init]);
   const [view, setView] = useState();
   const [ref, isVisible] = useInView({
     threshold: 0.01
@@ -580,7 +595,25 @@ function MiniRepl({ tune, defaultSynth, hideOutsideView = false }) {
     }
     return isVisible || wasVisible.current;
   }, [isVisible, hideOutsideView]);
-  useHighlighting({ view, pattern, active: cycle.started });
+  useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes("strudel disable-highlighting") });
+  useLayoutEffect(() => {
+    if (enableKeyboard) {
+      const handleKeyPress = async (e) => {
+        if (e.ctrlKey || e.altKey) {
+          if (e.code === "Enter") {
+            e.preventDefault();
+            flash(view);
+            await activateCode();
+          } else if (e.code === "Period") {
+            cycle.stop();
+            e.preventDefault();
+          }
+        }
+      };
+      window.addEventListener("keydown", handleKeyPress, true);
+      return () => window.removeEventListener("keydown", handleKeyPress, true);
+    }
+  }, [enableKeyboard, pattern, code, activateCode, cycle, view]);
   return /* @__PURE__ */ React.createElement("div", {
     className: styles.container,
     ref

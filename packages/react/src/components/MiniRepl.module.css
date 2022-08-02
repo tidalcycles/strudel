@@ -1,5 +1,5 @@
 .container {
-  @apply sc-rounded-md sc-overflow-hidden sc-bg-[#444C57];
+  @apply sc-rounded-md sc-overflow-hidden sc-bg-[#111111];
 }
 
 .header {
