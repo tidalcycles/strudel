@@ -22,10 +22,14 @@ Pattern.prototype.pianoroll = function ({
   flipTime = 0,
   flipValues = 0,
   hideNegative = false,
-  inactive = '#C9E597',
+  // inactive = '#C9E597',
+  // inactive = '#FFCA28',
+  inactive = '#7491D2',
   active = '#FFCA28',
   // background = '#2A3236',
   background = 'transparent',
+  smear = 0,
+  playheadColor = 'white',
   minMidi = 10,
   maxMidi = 90,
   autorange = 0,
@@ -58,12 +62,14 @@ Pattern.prototype.pianoroll = function ({
   flipTime && timeRange.reverse();
   flipValues && valueRange.reverse();
 
-  const playheadPosition = scale(-from / timeExtent, ...timeRange);
   this.draw(
     (ctx, events, t) => {
       ctx.fillStyle = background;
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillRect(0, 0, w, h);
+      ctx.globalAlpha = 1; // reset!
+      if (!smear) {
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillRect(0, 0, w, h);
+      }
       const inFrame = (event) =>
         (!hideNegative || event.whole.begin >= 0) && event.whole.begin <= t + to && event.whole.end >= t + from;
       events.filter(inFrame).forEach((event) => {
@@ -71,15 +77,6 @@ Pattern.prototype.pianoroll = function ({
         ctx.fillStyle = event.context?.color || inactive;
         ctx.strokeStyle = event.context?.color || active;
         ctx.globalAlpha = event.context.velocity ?? 1;
-        ctx.beginPath();
-        if (vertical) {
-          ctx.moveTo(0, playheadPosition);
-          ctx.lineTo(valueAxis, playheadPosition);
-        } else {
-          ctx.moveTo(playheadPosition, 0);
-          ctx.lineTo(playheadPosition, valueAxis);
-        }
-        ctx.stroke();
         const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
         let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
         const value = getValue(event);
@@ -107,6 +104,19 @@ Pattern.prototype.pianoroll = function ({
         }
         isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
       });
+      ctx.globalAlpha = 1; // reset!
+      const playheadPosition = scale(-from / timeExtent, ...timeRange);
+      // draw playhead
+      ctx.strokeStyle = playheadColor;
+      ctx.beginPath();
+      if (vertical) {
+        ctx.moveTo(0, playheadPosition);
+        ctx.lineTo(valueAxis, playheadPosition);
+      } else {
+        ctx.moveTo(playheadPosition, 0);
+        ctx.lineTo(playheadPosition, valueAxis);
+      }
+      ctx.stroke();
     },
     {
       from: from - overscan,
