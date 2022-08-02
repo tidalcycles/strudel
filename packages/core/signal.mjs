@@ -117,7 +117,7 @@ export const rand = signal(timeToRand);
 /**
  * A continuous pattern of random numbers, between -1 and 1
  */
- export const rand2 = rand._toBipolar();
+export const rand2 = rand._toBipolar();
 
 export const _brandBy = (p) => rand.fmap((x) => x < p);
 export const brandBy = (pPat) => reify(pPat).fmap(_brandBy).innerJoin();
@@ -136,9 +136,9 @@ export const __chooseWith = (pat, xs) => {
 /**
  * Choose from the list of values (or patterns of values) using the given
  * pattern of numbers, which should be in the range of 0..1
- * @param {Pattern} pat 
- * @param {*} xs 
- * @returns 
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
  */
 export const chooseWith = (pat, xs) => {
   return __chooseWith(pat, xs).outerJoin();
@@ -147,9 +147,9 @@ export const chooseWith = (pat, xs) => {
 /**
  * As with {chooseWith}, but the structure comes from the chosen values, rather
  * than the pattern you're using to choose with.
- * @param {Pattern} pat 
- * @param {*} xs 
- * @returns 
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
  */
 export const chooseInWith = (pat, xs) => {
   return __chooseWith(pat, xs).innerJoin();
@@ -179,7 +179,7 @@ Pattern.prototype.choose = function (...xs) {
  * @param  {...any} xs
  * @returns {Pattern}
  */
- Pattern.prototype.choose2 = function (...xs) {
+Pattern.prototype.choose2 = function (...xs) {
   return chooseWith(this._fromBipolar(), xs);
 };
 
