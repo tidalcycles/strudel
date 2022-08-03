@@ -5,7 +5,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  // TODO: find out if leaving out tutorial path works now
+  content: ['./src/**/*.{js,jsx,ts,tsx}','./tutorial/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {},
   },

@@ -5,26 +5,40 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import OSC from 'osc-js';
-import { Pattern } from '@strudel.cycles/core';
+import { Pattern, objectify } from '@strudel.cycles/core';
 
 const comm = new OSC();
 comm.open();
 const latency = 0.1;
+let startedAt = -1;
 
+/**
+ *
+ * Sends each hap as an OSC message, which can be picked up by SuperCollider or any other OSC-enabled software.
+ *
+ * @name osc
+ * @memberof Pattern
+ * @returns Pattern
+ */
 Pattern.prototype.osc = function () {
-  return this._withEvent((event) => {
-    const onTrigger = (time, event, currentTime) => {
+  return this._withHap((hap) => {
+    const onTrigger = (time, hap, currentTime, cps) => {
+      const cycle = hap.wholeOrPart().begin.valueOf();
+      const delta = hap.duration.valueOf();
       // time should be audio time of onset
       // currentTime should be current time of audio context (slightly before time)
-      const keyvals = Object.entries(objectify(event.value)).flat();
-      const offset = (time - currentTime + latency) * 1000;
-      const ts = Math.floor(Date.now() + offset);
+      if (startedAt < 0) {
+        startedAt = Date.now() - currentTime * 1000;
+      }
+      const controls = Object.assign({}, { cps, cycle, delta }, objectify(hap.value));
+      const keyvals = Object.entries(controls).flat();
+      const ts = Math.floor(startedAt + (time + latency) * 1000);
       const message = new OSC.Message('/dirt/play', ...keyvals);
       const bundle = new OSC.Bundle([message], ts);
       bundle.timestamp(ts); // workaround for https://github.com/adzialocha/osc-js/issues/60
       comm.send(bundle);
     };
-    return event.setContext({ ...event.context, onTrigger });
+    return hap.setContext({ ...hap.context, onTrigger });
   });
 };
 

@@ -306,7 +306,7 @@ const drums = stack(
 const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
 const synths = stack(
   "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]*2")
-  .edit(
+  .layer(
     scaleTranspose(0).early(0),
     scaleTranspose(2).early(1/8),
     scaleTranspose(7).early(1/4),
@@ -444,7 +444,7 @@ export const barryHarris = `backgroundImage(
   .scale('C bebop major')
   .transpose("<0 1 2 1>/8")
   .slow(2)
-  .tone((await piano()).toDestination())
+  .note().piano().out()
 `;
 
 export const blippyRhodes = `const delay = new FeedbackDelay(1/12, .4).chain(vol(0.3), out());
@@ -517,7 +517,7 @@ const snare = noise({type:'white',...adsr(0,0.2,0)}).chain(lowpass(5000),vol(1.8
 const s = polysynth().set({...osc('sawtooth4'),...adsr(0.01,.2,.6,0.2)}).chain(vol(.23).connect(delay),out());
 stack(
   stack(
-    "0 1 4 [3!2 5]".edit(
+    "0 1 4 [3!2 5]".layer(
       // chords
       x=>x.add("0,3").duration("0.05!3 0.02"),
       // bass
@@ -551,7 +551,7 @@ export const risingEnemy = `stack(
   .transpose("<0 1 2 1>/2".early(0.5))
   .transpose(5)
   .fast(2 / 3)
-  .tone((await piano()).toDestination())`;
+  .note().piano().out()`;
 
 export const festivalOfFingers = `const chords = "<Cm7 Fm7 G7 F#7>";
 stack(
@@ -563,7 +563,7 @@ stack(
   .scaleTranspose("0 4 0 6".early(".125 .5")).layer(scaleTranspose("0,<2 [4,6] [5,7]>/4"))
 ).slow(2)
  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
- .tone((await piano()).chain(out()))`;
+ .note().piano().out()`;
 
 export const festivalOfFingers2 = `const chords =       "<Cm7       Fm7        G7         F#7            >";
 const scales = cat('C minor','F dorian','G dorian','F# mixolydian')
@@ -577,36 +577,35 @@ stack(
 ).slow(2).transpose(-1)            
  .legato(cosine.struct("x*8").add(4/5).mul(4/5).fast(8))
  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
- .tone((await piano()).chain(out())).fast(3/4)`;
+ .note().piano().out().fast(3/4)`;
 
-// iter, stut, stutWith
+// iter, echo, echoWith
 export const undergroundPlumber = `backgroundImage('https://images.nintendolife.com/news/2016/08/video_exploring_the_funky_inspiration_for_the_super_mario_bros_underground_theme/large.jpg',{ className:'darken' })
 
-const drums = await players({
-  bd: 'bd/BT0A0D0.wav',
-  sn: 'sn/ST0T0S3.wav',
-  hh: 'hh/000_hh3closedhh.wav',
-  cp: 'cp/HANDCLP0.wav',
+samples({ bd: 'bd/BT0A0D0.wav', sn: 'sn/ST0T0S3.wav', hh: 'hh/000_hh3closedhh.wav', cp: 'cp/HANDCLP0.wav',
 }, 'https://loophole-letters.vercel.app/samples/tidal/')
-stack(
-"<<bd*2 bd> sn> hh".fast(4).slow(2).tone(drums.chain(vol(.5),out())),
-  stack(
-    "[c2 a1 bb1 ~] ~"
-    .stut(2, .6, 1/16)
-    .legato(.4)
-    .slow(2)
-    .tone(synth({...osc('sawtooth7'),...adsr(0,.3,0)}).chain(out())),
-    "[g2,[c3 eb3]]".iter(4)
-    .stutWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
-    .legato(.1)
-  )
-  .transpose("<0@2 5 0 7 5 0 -5>/2")
-  
-)
-  .fast(2/3)
-  .pianoroll({minMidi:21,maxMidi:180, background:'transparent',inactive:'#3F8F90',active:'#DE3123'})`;
 
-export const bridgeIsOver = `const breaks = (await players({mad:'https://freesound.org/data/previews/22/22274_109943-lq.mp3'})).chain(out())
+const h = x=>x.transpose("<0@2 5 0 7 5 0 -5>/2")
+
+stack(
+  s("<<bd*2 bd> sn> hh").fast(2).gain(.7),
+  "[c2 a1 bb1 ~] ~"
+  .echo(2, 1/16, 1)
+  .legato(.4)
+  .slow(2)
+  .layer(h)
+  .note().s('square')
+  .cutoff(400).decay(.12).sustain(0)
+  ,
+  "[g2,[c3 eb3]]".iter(4)
+  .echoWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
+  .legato(.1)
+  .layer(h).note()
+).out()
+  .fast(2/3)
+  .pianoroll({})`;
+
+export const bridgeIsOver = `samples({mad:'https://freesound.org/data/previews/22/22274_109943-lq.mp3'})
 stack(
   stack(
   "c3*2 [[c3@1.4 bb2] ab2] gb2*2 <[[gb2@1.4 ab2] bb2] gb2>".legato(".5 1".fast(2)).velocity(.8),
@@ -618,9 +617,11 @@ stack(
     .velocity(.7)
     .legato(.5)
     .stut(3, .5, 1/8)
-  ).transpose(-1).tone((await piano()).chain(out())),
-  "mad".slow(2).tone(breaks)
-).cpm(78).slow(4).pianoroll()
+  ).transpose(-1).note().piano(),
+  s("mad").slow(2)
+).cpm(78).slow(4)
+  .out()
+  .pianoroll()
 `;
 
 export const goodTimes = `const scale = cat('C3 dorian','Bb2 major').slow(4);
@@ -637,10 +638,9 @@ stack(
   .legato("2")
   .scale(scale)
 .scaleTranspose("<0>".slow(4))
-.tone((await piano()).chain(out()))
-//.midi()
-.velocity(.8)
 .transpose(5)
+.note().piano().out()
+.velocity(.8)
 .slow(2)
 .pianoroll({maxMidi:100,minMidi:20})`;
 
@@ -651,7 +651,7 @@ export const echoPiano = `"<0 2 [4 6](3,4,1) 3*2>"
 .off(1/2, x=>x.scaleTranspose(6).color('steelblue'))
 .legato(.5)
 .echo(4, 1/8, .5)
-.tone((await piano()).chain(out()))
+.note().piano().out()
 .pianoroll()`;
 
 export const sml1 = `
@@ -687,7 +687,7 @@ stack(
   f3!2 e3!2 ab3!2 ~!2
   >\`
   .legato(.5)
-).fast(2) //.tone((await piano()).chain(out()))`;
+).fast(2) // .note().piano().out()`;
 
 export const speakerman = `backgroundImage('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FXR0rKqW3VwY%2Fmaxresdefault.jpg&f=1&nofb=1', 
 { className:'darken', style:'background-size:cover'})
@@ -728,7 +728,7 @@ bell = bell.chain(vol(0.6).connect(delay),out());
   .slow(6)
   .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})`;
 
-export const waa = `"a4 [a3 c3] a3 c3"
+/* export const waa = `n("a4 [a3 c3] a3 c3")
 .sub("<7 12>/2")
 .off(1/8, add("12"))
 .off(1/4, add("7"))
@@ -736,23 +736,37 @@ export const waa = `"a4 [a3 c3] a3 c3"
 .slow(2)
 .wave("sawtooth square")
 .filter('lowpass', "<2000 1000 500>")
-.out()`;
+.out()`; */
 
-export const waar = `"a4 [a3 c3] a3 c3".color('#F9D649')
-.sub("<7 12 5 12>".slow(2))
-.off(1/4,x=>x.add(7).color("#FFFFFF #0C3AA1 #C63928"))
-.off(1/8,x=>x.add(12).color('#215CB6'))
-.slow(2)
-.legato(sine.range(0.3, 2).slow(28))
-.wave("sawtooth square".fast(2))
-.filter('lowpass', cosine.range(500,4000).slow(16))
-.out()
-.pianoroll({minMidi:20,maxMidi:120,background:'#202124'})`;
+export const waa = `n(
+  "a4 [a3 c3] a3 c3"
+  .sub("<7 12>/2")
+  .off(1/8, add("12"))
+  .off(1/4, add("7"))
+)
+  .legato(.5)
+  .slow(2)
+  .s("sawtooth square")
+  .cutoff("<2000 1000 500>")
+  .out()
+`;
+
+export const waa2 = `n(
+  "a4 [a3 c3] a3 c3"
+  .sub("<7 12 5 12>".slow(2))
+  .off(1/4,x=>x.add(7))
+  .off(1/8,x=>x.add(12))
+)
+  .slow(2)
+  .legato(sine.range(0.3, 2).slow(28))
+  .s("sawtooth square".fast(2))
+  .cutoff(cosine.range(500,4000).slow(16))
+  .out()`;
 
 export const hyperpop = `const lfo = cosine.slow(15);
 const lfo2 = sine.slow(16);
-const filter1 = x=>x.filter('lowpass', lfo2.range(300,3000));
-const filter2 = x=>x.filter('highpass', lfo.range(1000,6000)).filter('lowpass',4000)
+const filter1 = x=>x.cutoff(lfo2.range(300,3000));
+const filter2 = x=>x.hcutoff(lfo.range(1000,6000)).cutoff(4000)
 const scales = cat('D3 major', 'G3 major').slow(8)
 
 const drums = await players({
@@ -765,24 +779,30 @@ const drums = await players({
 
 stack(
   "-7 0 -7 7".struct("x(5,8,2)").fast(2).sub(7)
-  .scale(scales).wave("sawtooth,square").velocity(.3).adsr(0.01,0.1,.5,0)
+  .scale(scales)
+  .n()
+  .s("sawtooth,square")
+  .gain(.3).attack(0.01).decay(0.1).sustain(.5)
   .apply(filter1),
   "~@3 [<2 3>,<4 5>]"
-  .echo(8,1/16,.7)
+  .echo(4,1/16,.7)
   .scale(scales)
-  .wave('square').velocity(.7).adsr(0.01,0.1,0).apply(filter1),
-  "6 5 4".add(14)
+  .n()
+  .s('square').gain(.7)
+  .attack(0.01).decay(0.1).sustain(0)
+  .apply(filter1),
+  "6 4 2".add(14)
   .superimpose(sub("5"))
   .fast(1).euclidLegato(3,8)
   .mask("<1 0@7>")
   .fast(2)
-  .echo(32, 1/8, .9)
+  .echo(32, 1/8, .8)
   .scale(scales)
-  .wave("sawtooth")
-  .velocity(.2)
-  .adsr(.01,.5,0)
+  .n()
+  .s("sawtooth")
+  .gain(sine.range(.1,.4).slow(8))
+  .attack(.001).decay(.2).sustain(0)
   .apply(filter2)
-  //.echo(4,1/16,.5)
 ).out().stack(
   stack(
     "bd <~@7 [~ bd]>".fast(2),
@@ -790,7 +810,7 @@ stack(
     "[~ hh3]*2"
   ).tone(drums.chain(vol(.18),out())).fast(2)
 ).slow(2)
-
+  
 //.pianoroll({minMidi:20, maxMidi:160})
 // strudel disable-highlighting`;
 
@@ -807,7 +827,7 @@ export const festivalOfFingers3 = `"[-7*3],0,2,6,[8 7]"
 .scale(cat('D dorian','G mixolydian','C dorian','F mixolydian'))
 .legato(1)
 .slow(2)
-.tone((await piano()).toDestination())
+.note().piano().out()
 //.pianoroll({maxMidi:160})`;
 
 export const bossa = `
@@ -815,4 +835,187 @@ const scales = sequence('C minor', ['D locrian', 'G phrygian'], 'Bb2 minor', ['C
 stack(
   "<Cm7 [Dm7b5 G7b9] Bbm7 [Cm7b5 F7b9]>".fast(2).struct("x ~ x@3 x ~ x ~ ~ ~ x ~ x@3".late(1/8)).early(1/8).slow(2).voicings(),
   "[~ [0 ~]] 0 [~ [4 ~]] 4".sub(7).restart(scales).scale(scales).early(.25)
-).tone((await piano()).toDestination()).slow(2)`;
+).note().piano().out().slow(2)`;
+
+export const customTrigger = `stack(
+  freq("55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)").layer(x=>x.mul("1.006,.995"))),
+  freq("440(5,8)".legato(.18).mul("<1 3/4 2 2/3>")).gain(perlin.range(.2,.8))
+).s("<sawtooth square>/2")
+  .onTrigger((t,hap,ct)=>{
+  const ac = Tone.getContext().rawContext;
+  t = ac.currentTime + t - ct;
+  const { freq, s, gain = 1 } = hap.value;
+  const master = ac.createGain();
+  master.gain.value = 0.1 * gain;
+  master.connect(ac.destination);
+  const o = ac.createOscillator();
+  o.type = s || 'triangle';
+  o.frequency.value = Number(freq);
+  o.connect(master);
+  o.start(t);
+  o.stop(t + hap.duration);
+}).stack(s("bd(3,8),hh*4,~ sd").webdirt())`;
+
+export const bornagain = `stack(
+  freq("55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)")
+       .layer(x=>x.mul("1.006,.995"))), // detune
+  freq("440(5,8)".legato(.18).mul("<1 3/4 2 2/3>")).gain(perlin.range(.2,.8))
+).s("<sawtooth square>/2")
+  .cutoff(perlin.range(100,4000).slow(4))
+  .jux(rev)
+  .out()
+  .stack(s("bd(3,8),hh*4,~ sd").webdirt())`;
+
+export const meltingsubmarine = `samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+stack(
+  s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
+  .speed(perlin.range(.7,.9)) // random sample speed variation
+  //.hush()
+  ,"<a1 b1*2 a1(3,8) e2>" // bassline
+  .off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
+  .add(perlin.range(0,.5)) // random pitch variation
+  .superimpose(add(.05)) // add second, slightly detuned voice
+  .n() // wrap in "n"
+  .decay(.15).sustain(0) // make each note of equal length
+  .s('sawtooth') // waveform
+  .gain(.4) // turn down
+  .cutoff(sine.slow(7).range(300,5000)) // automate cutoff
+  //.hush()
+  ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings() // chords
+  .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+  .add(perlin.range(0,.5)) // random pitch variation
+  .n() // wrap in "n"
+  .s('sawtooth') // waveform
+  .gain(.16) // turn down
+  .cutoff(500) // fixed cutoff
+  .attack(1) // slowly fade in
+  //.hush()
+  ,"a4 c5 <e6 a6>".struct("x(5,8)")
+  .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+  .add(perlin.range(0,.5)) // random pitch variation
+  .n() // wrap in "n"
+  .decay(.1).sustain(0) // make notes short
+  .s('triangle') // waveform
+  .degradeBy(perlin.range(0,.5)) // randomly controlled random removal :)
+  .echoWith(4,.125,(x,n)=>x.gain(.15*1/(n+1))) // echo notes
+  //.hush()
+)
+  .out()
+  .slow(3/2)`;
+
+export const swimmingWithSoundfonts = `stack(
+    n(
+      "~",
+      "~",
+      "~",
+      "A5 [F5@2 C5] [D5@2 F5] F5",
+      "[C5@2 F5] [F5@2 C6] A5 G5",
+      "A5 [F5@2 C5] [D5@2 F5] F5",
+      "[C5@2 F5] [Bb5 A5 G5] F5@2",
+      "A5 [F5@2 C5] [D5@2 F5] F5",
+      "[C5@2 F5] [F5@2 C6] A5 G5",
+      "A5 [F5@2 C5] [D5@2 F5] F5",
+      "[C5@2 F5] [Bb5 A5 G5] F5@2",
+      "A5 [F5@2 C5] A5 F5",
+      "Ab5 [F5@2 Ab5] G5@2",
+      "A5 [F5@2 C5] A5 F5",
+      "Ab5 [F5@2 C5] C6@2",
+      "A5 [F5@2 C5] [D5@2 F5] F5",
+      "[C5@2 F5] [Bb5 A5 G5] F5@2"
+    ).s('Sitar: Ethnic'),
+    n(
+      "[F4,Bb4,D5] [[D4,G4,Bb4]@2 [Bb3,D4,F4]] [[G3,C4,E4]@2 [[Ab3,F4] [A3,Gb4]]] [Bb3,E4,G4]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, Bb3, Db3] [F3, Bb3, Db3]]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [A3, C4, E4] [A3, C4, E4]] [~ [Ab3, C4, Eb4] [Ab3, C4, Eb4]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [G3, C4, E4] [G3, C4, E4]]",
+      "[~ [F3, A3, C4] [F3, A3, C4]] [~ [F3, A3, C4] [F3, A3, C4]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [F3, Bb3, D4] [F3, Bb3, D4]] [~ [F3, Bb3, C4] [F3, Bb3, C4]] [~ [F3, A3, C4] [F3, A3, C4]] [~ [F3, A3, C4] [F3, A3, C4]]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [A3, C4, E4] [A3, C4, E4]] [~ [Ab3, C4, Eb4] [Ab3, C4, Eb4]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [G3, C4, E4] [G3, C4, E4]]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [F3, Bb3, D4] [F3, Bb3, D4]] [~ [F3, Bb3, C4] [F3, Bb3, C4]] [~ [F3, A3, C4] [F3, A3, C4]] [~ [F3, A3, C4] [F3, A3, C4]]",
+      "[~ [Bb3, D3, F4] [Bb3, D3, F4]] [~ [Bb3, D3, F4] [Bb3, D3, F4]] [~ [A3, C4, F4] [A3, C4, F4]] [~ [A3, C4, F4] [A3, C4, F4]]",
+      "[~ [Ab3, B3, F4] [Ab3, B3, F4]] [~ [Ab3, B3, F4] [Ab3, B3, F4]] [~ [G3, Bb3, F4] [G3, Bb3, F4]] [~ [G3, Bb3, E4] [G3, Bb3, E4]]",
+      "[~ [Bb3, D3, F4] [Bb3, D3, F4]] [~ [Bb3, D3, F4] [Bb3, D3, F4]] [~ [A3, C4, F4] [A3, C4, F4]] [~ [A3, C4, F4] [A3, C4, F4]]",
+      "[~ [Ab3, B3, F4] [Ab3, B3, F4]] [~ [Ab3, B3, F4] [Ab3, B3, F4]] [~ [G3, Bb3, F4] [G3, Bb3, F4]] [~ [G3, Bb3, E4] [G3, Bb3, E4]]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [F3, Bb3, D4] [F3, Bb3, D4]] [~ [F3, Bb3, C4] [F3, Bb3, C4]] [~ [F3, A3, C4] [F3, A3, C4]] [~ [F3, A3, C4] [F3, A3, C4]]"
+    ).s('Kalimba: Ethnic'),
+    n(
+      "[G3 G3 C3 E3]",
+      "[F2 D2 G2 C2]",
+      "[F2 D2 G2 C2]",
+      "[F2 A2 Bb2 B2]",
+      "[A2 Ab2 G2 C2]",
+      "[F2 A2 Bb2 B2]",
+      "[G2 C2 F2 F2]",
+      "[F2 A2 Bb2 B2]",
+      "[A2 Ab2 G2 C2]",
+      "[F2 A2 Bb2 B2]",
+      "[G2 C2 F2 F2]",
+      "[Bb2 Bb2 A2 A2]",
+      "[Ab2 Ab2 G2 [C2 D2 E2]]",
+      "[Bb2 Bb2 A2 A2]",
+      "[Ab2 Ab2 G2 [C2 D2 E2]]",
+      "[F2 A2 Bb2 B2]",
+      "[G2 C2 F2 F2]"
+    ).s('Acoustic Bass: Bass')
+  ).slow(51)
+    .out()`;
+
+export const outroMusic = `samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+  perc: ['perc/002_perc2.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+
+"C^7 Am7 Dm7 G7".slow(2).voicings()
+  .stack("0@6 [<1 2> <2 0> 1]@2".scale('C5 major'))
+  .n().slow(4)
+  .s('0040_FluidR3_GM_sf2_file')
+  .color('steelblue')
+  .stack(
+   "<-7 ~@2 [~@2 -7] -9 ~@2 [~@2 -9] -10!2 ~ [~@2 -10] -5 ~ [-3 -2 -10]@2>*2".scale('C3 major')
+    .n().s('sawtooth').color('brown')
+  )
+  .attack(0.05).decay(.1).sustain(.7)
+  .cutoff(perlin.range(800,2000))
+  .gain(.3)
+  .stack(
+    s("<bd!3 [bd ~ bd]> sd,hh*3,~@5 <perc perc*3>")
+    .speed(perlin.range(.9,1.1))
+    .n(3).color('gray')
+  ).slow(3/2)
+  //.pianoroll({autorange:1,vertical:1,fold:0})
+  .out()`;
+
+export const bassFuge = `samples({ flbass: ['00_c2_finger_long_neck.wav','01_c2_finger_short_neck.wav','02_c2_finger_long_bridge.wav','03_c2_finger_short_bridge.wav','04_c2_pick_long.wav','05_c2_pick_short.wav','06_c2_palm_mute.wav'] }, 
+  'github:cleary/samples-flbass/main/')
+samples({
+bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+
+note("<8(3,8) <7 7*2> [4 5@3] 8>".sub(1) // sub 1 -> 1-indexed
+.layer(
+x=>x,
+x=>x.add(7).color('steelblue')
+.off(1/8,x=>x.add("2,4").off(1/8,x=>x.add(5).echo(4,.125,.5)))
+.slow(2),
+).scale('A1 minor'))
+.s("flbass").n(0)
+.gain(.3)
+.cutoff(sine.slow(7).range(200,4000))
+.resonance(10)
+//.hcutoff(400)
+.clip(1)
+.stack(s("bd:1*2,~ sd:0,[~ hh:0]*2"))
+.out()
+.pianoroll({vertical:1})`;

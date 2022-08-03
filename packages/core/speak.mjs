@@ -6,7 +6,13 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { Pattern, patternify2 } from './index.mjs';
 
-const synth = window?.speechSynthesis;
+let synth;
+try {
+  synth = window?.speechSynthesis;
+} catch (err) {
+  console.warn('cannot use window: not in browser?');
+}
+
 let allVoices = synth?.getVoices();
 // console.log('voices', allVoices);
 
@@ -26,11 +32,11 @@ function speak(words, lang, voice) {
 }
 
 Pattern.prototype._speak = function (lang, voice) {
-  return this._withEvent((event) => {
-    const onTrigger = (time, event) => {
-      speak(event.value, lang, voice);
+  return this._withHap((hap) => {
+    const onTrigger = (time, hap) => {
+      speak(hap.value, lang, voice);
     };
-    return event.setContext({ ...event.context, onTrigger });
+    return hap.setContext({ ...hap.context, onTrigger });
   });
 };
 

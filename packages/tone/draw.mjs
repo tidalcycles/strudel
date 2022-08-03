@@ -20,7 +20,7 @@ export const getDrawContext = (id = 'test-canvas') => {
   return canvas.getContext('2d');
 };
 
-Pattern.prototype.draw = function (callback, cycleSpan, lookaheadCycles = 1) {
+Pattern.prototype.draw = function (callback, { from, to, onQuery }) {
   if (window.strudelAnimation) {
     cancelAnimationFrame(window.strudelAnimation);
   }
@@ -29,25 +29,28 @@ Pattern.prototype.draw = function (callback, cycleSpan, lookaheadCycles = 1) {
     events = [];
   const animate = (time) => {
     const t = Tone.getTransport().seconds;
-    if (cycleSpan) {
-      const currentCycle = Math.floor(t / cycleSpan);
+    if (from !== undefined && to !== undefined) {
+      const currentCycle = Math.floor(t);
       if (cycle !== currentCycle) {
         cycle = currentCycle;
-        const begin = currentCycle * cycleSpan;
-        const end = (currentCycle + lookaheadCycles) * cycleSpan;
-        events = this._asNumber(true) // true = silent error
-          .query(new State(new TimeSpan(begin, end)))
-          .filter((event) => event.part.begin.equals(event.whole.begin));
+        const begin = currentCycle + from;
+        const end = currentCycle + to;
+        setTimeout(() => {
+          events = this.query(new State(new TimeSpan(begin, end)))
+            .filter(Boolean)
+            .filter((event) => event.part.begin.equals(event.whole.begin));
+          onQuery?.(events);
+        }, 0);
       }
     }
-    callback(ctx, events, t, cycleSpan, time);
+    callback(ctx, events, t, time);
     window.strudelAnimation = requestAnimationFrame(animate);
   };
   requestAnimationFrame(animate);
   return this;
 };
 
-export const cleanup = () => {
+export const cleanupDraw = () => {
   const ctx = getDrawContext();
   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
   if (window.strudelAnimation) {

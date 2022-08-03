@@ -6,6 +6,8 @@
 import { evaluate } from '@strudel.cycles/eval';
 import { extend } from '@strudel.cycles/eval';
 import * as strudel from '@strudel.cycles/core';
+import * as webaudio from '@strudel.cycles/webaudio';
+import controls from '@strudel.cycles/core/controls.mjs';
 // import gist from '@strudel.cycles/core/gist.js';
 import { mini } from '@strudel.cycles/mini/mini.mjs';
 // import { Tone } from '@strudel.cycles/tone';
@@ -28,6 +30,8 @@ import '@strudel.cycles/xen/xen.mjs';
 // import '@strudel.cycles/webaudio/webaudio.mjs';
 // import '@strudel.cycles/serial/serial.mjs';
 // import controls from '@strudel.cycles/core/controls.mjs';
+
+import { prebake } from './prebake.mjs';
 
 class MockedNode {
   chain() {
@@ -83,6 +87,9 @@ const toneHelpersMocked = {
 strudel.Pattern.prototype.tone = function () {
   return this;
 };
+strudel.Pattern.prototype.webdirt = function () {
+  return this;
+};
 
 // draw mock
 strudel.Pattern.prototype.pianoroll = function () {
@@ -116,12 +123,17 @@ const uiHelpersMocked = {
   backgroundImage: id,
 };
 
+prebake();
+
+// TODO: refactor to evalScope
 extend(
   // Tone,
   strudel,
   strudel.Pattern.prototype.bootstrap(),
   toneHelpersMocked,
   uiHelpersMocked,
+  controls,
+  webaudio,
   /* controls,
   toneHelpers,
   voicingHelpers,
@@ -180,6 +192,6 @@ export const testCycles = {
   randomBells: 24,
   waa: 16,
   waar: 16,
-  hyperpop: 60,
+  hyperpop: 10,
   festivalOfFingers3: 16,
 };

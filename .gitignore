@@ -1,4 +1,5 @@
 dist
+out
 !docs/dist
 dist-*
 cabal-dev
@@ -27,4 +28,11 @@ node_modules/
 repl-parcel
 mytunes.ts
 doc
+out
 .parcel-cache
+repl_old
+tutorial.rendered.mdx
+doc.json
+talk/public/EmuSP12
+talk/public/samples
+server/samples/old

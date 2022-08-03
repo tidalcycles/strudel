@@ -22,17 +22,61 @@ export const signal = (func) => {
 export const isaw = signal((t) => 1 - (t % 1));
 export const isaw2 = isaw._toBipolar();
 
+/**
+ *  A sawtooth signal between 0 and 1.
+ *
+ * @return {Pattern}
+ * @example
+ * "c3 [eb3,g3] g2 [g3,bb3]".legato(saw.slow(4))
+ * @example
+ * saw.range(0,8).segment(8).scale('C major').slow(4)
+ *
+ */
 export const saw = signal((t) => t % 1);
 export const saw2 = saw._toBipolar();
 
 export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
+
+/**
+ *  A sine signal between 0 and 1.
+ *
+ * @return {Pattern}
+ * @example
+ * sine.segment(16).range(0,15).slow(2).scale('C minor')
+ *
+ */
 export const sine = sine2._fromBipolar();
+
+/**
+ *  A cosine signal between 0 and 1.
+ *
+ * @return {Pattern}
+ * @example
+ * stack(sine,cosine).segment(16).range(0,15).slow(2).scale('C minor')
+ *
+ */
 export const cosine = sine._early(Fraction(1).div(4));
 export const cosine2 = sine2._early(Fraction(1).div(4));
 
+/**
+ *  A square signal between 0 and 1.
+ *
+ * @return {Pattern}
+ * @example
+ * square.segment(2).range(0,7).scale('C minor')
+ *
+ */
 export const square = signal((t) => Math.floor((t * 2) % 2));
 export const square2 = square._toBipolar();
 
+/**
+ *  A triangle signal between 0 and 1.
+ *
+ * @return {Pattern}
+ * @example
+ * triangle.segment(2).range(0,7).scale('C minor')
+ *
+ */
 export const tri = fastcat(isaw, saw);
 export const tri2 = fastcat(isaw2, saw2);
 
@@ -66,7 +110,14 @@ const timeToRandsPrime = (seed, n) => {
 
 const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
 
+/**
+ * A continuous pattern of random numbers, between 0 and 1
+ */
 export const rand = signal(timeToRand);
+/**
+ * A continuous pattern of random numbers, between -1 and 1
+ */
+export const rand2 = rand._toBipolar();
 
 export const _brandBy = (p) => rand.fmap((x) => x < p);
 export const brandBy = (pPat) => reify(pPat).fmap(_brandBy).innerJoin();
@@ -75,18 +126,66 @@ export const brand = _brandBy(0.5);
 export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
-export const chooseWith = (pat, xs) => {
+export const __chooseWith = (pat, xs) => {
   xs = xs.map(reify);
   if (xs.length == 0) {
     return silence;
   }
-  return pat
-    .range(0, xs.length)
-    .fmap((i) => xs[Math.floor(i)])
-    .outerJoin();
+  return pat.range(0, xs.length).fmap((i) => xs[Math.floor(i)]);
+};
+/**
+ * Choose from the list of values (or patterns of values) using the given
+ * pattern of numbers, which should be in the range of 0..1
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const chooseWith = (pat, xs) => {
+  return __chooseWith(pat, xs).outerJoin();
 };
 
+/**
+ * As with {chooseWith}, but the structure comes from the chosen values, rather
+ * than the pattern you're using to choose with.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const chooseInWith = (pat, xs) => {
+  return __chooseWith(pat, xs).innerJoin();
+};
+
+/**
+ * Chooses randomly from the given list of values.
+ * @param  {...any} xs
+ * @returns {Pattern} - a continuous pattern.
+ */
 export const choose = (...xs) => chooseWith(rand, xs);
+
+/**
+ * Chooses from the given list of values (or patterns of values), according
+ * to the pattern that the method is called on. The pattern should be in
+ * the range 0 .. 1.
+ * @param  {...any} xs
+ * @returns {Pattern}
+ */
+Pattern.prototype.choose = function (...xs) {
+  return chooseWith(this, xs);
+};
+
+/**
+ * As with choose, but the pattern that this method is called on should be
+ * in the range -1 .. 1
+ * @param  {...any} xs
+ * @returns {Pattern}
+ */
+Pattern.prototype.choose2 = function (...xs) {
+  return chooseWith(this._fromBipolar(), xs);
+};
+
+export const chooseCycles = (...xs) => chooseInWith(rand.segment(1), xs);
+
+export const randcat = chooseCycles;
 
 const _wchooseWith = function (pat, ...pairs) {
   const values = pairs.map((pair) => reify(pair[0]));

@@ -14,8 +14,8 @@ Pattern.prototype._tune = function (scale, tonic = 220) {
   }
   tune.loadScale(scale);
   tune.tonicize(tonic);
-  return this._asNumber()._withEvent((event) => {
-    return event.withValue(() => tune.note(event.value)).setContext({ ...event.context, type: 'frequency' });
+  return this._asNumber()._withHap((hap) => {
+    return hap.withValue(() => tune.note(hap.value)).setContext({ ...hap.context, type: 'frequency' });
   });
 };
 

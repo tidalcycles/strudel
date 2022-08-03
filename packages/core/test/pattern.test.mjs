@@ -41,6 +41,7 @@ import {
   tri2,
   id,
   ply,
+  rev
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -57,7 +58,7 @@ const third = Fraction(1, 3);
 const twothirds = Fraction(2, 3);
 
 const sameFirst = (a, b) => {
-  return assert.deepStrictEqual(a._sortEventsByPart().firstCycle(), b._sortEventsByPart().firstCycle());
+  return assert.deepStrictEqual(a._sortHapsByPart().firstCycle(), b._sortHapsByPart().firstCycle());
 };
 
 describe('TimeSpan', function () {
@@ -277,10 +278,7 @@ describe('Pattern', function () {
       );
     });
     it('can SqueezeOut() structure', () => {
-      sameFirst(
-        sequence(1, [2, 3]).keepifSqueezeOut(true, true, false),
-        sequence([1, [2, 3]], [1, [2, 3]], silence),
-      );
+      sameFirst(sequence(1, [2, 3]).keepifSqueezeOut(true, true, false), sequence([1, [2, 3]], [1, [2, 3]], silence));
     });
   });
   describe('sub()', function () {
@@ -320,7 +318,7 @@ describe('Pattern', function () {
       });
     });
     describe('setSqueeze()', () => {
-      it('Can squeeze one pattern inside the events of another', () => {
+      it('Can squeeze one pattern inside the haps of another', () => {
         sameFirst(
           sequence(1, [2, 3]).setSqueeze(sequence('a', 'b', 'c')),
           sequence(
@@ -394,7 +392,7 @@ describe('Pattern', function () {
     });
     it('Makes things faster, with a pattern of factors', function () {
       assert.equal(pure('a').fast(sequence(1, 4)).firstCycle().length, 3);
-      // .fast(sequence(1,silence) is a quick hack to cut an event in two..
+      // .fast(sequence(1,silence) is a quick hack to cut a hap in two..
       assert.deepStrictEqual(
         pure('a').fast(sequence(1, 4)).firstCycle(),
         stack(pure('a').fast(sequence(1, silence)), sequence(silence, ['a', 'a'])).firstCycle(),
@@ -439,6 +437,20 @@ describe('Pattern', function () {
       // mini('eb3 [c3 g3]/2 ') always plays [c3 g3]
     });
   });
+  describe('inside', () => {
+    it('can rev inside a cycle', () => {
+      sameFirst(sequence('a', 'b', 'c', 'd').inside(2, rev),
+        sequence('b', 'a', 'd', 'c')
+      );
+    });
+  });
+  describe('outside', () => {
+    it('can rev outside a cycle', () => {
+      sameFirst(sequence('a', 'b', 'c', 'd')._slow(2).outside(2, rev),
+        sequence('d', 'c')
+      );
+    });
+  });
   describe('_filterValues()', function () {
     it('Filters true', function () {
       assert.equal(
@@ -468,7 +480,7 @@ describe('Pattern', function () {
     });
     it('Can alternate', function () {
       assert.deepStrictEqual(
-        pure(10).when(slowcat(true, false), add(3)).fast(4)._sortEventsByPart().firstCycle(),
+        pure(10).when(slowcat(true, false), add(3)).fast(4)._sortHapsByPart().firstCycle(),
         fastcat(13, 10, 13, 10).firstCycle(),
       );
     });
@@ -589,6 +601,11 @@ describe('Pattern', function () {
       );
     });
   });
+  describe('brak()', () => {
+    it('Can make something a bit breakbeaty', () => {
+      sameFirst(sequence('a', 'b').brak()._fast(2), sequence('a', 'b', fastcat(silence, 'a'), fastcat('b', silence)));
+    });
+  });
   describe('timeCat()', function () {
     it('Can concatenate patterns with different relative durations', function () {
       assert.deepStrictEqual(
@@ -679,7 +696,7 @@ describe('Pattern', function () {
     });
   });
   describe('_setContext()', () => {
-    it('Can set the event context', () => {
+    it('Can set the hap context', () => {
       assert.deepStrictEqual(
         pure('a')
           ._setContext([
@@ -701,7 +718,7 @@ describe('Pattern', function () {
     });
   });
   describe('_withContext()', () => {
-    it('Can update the event context', () => {
+    it('Can update the hap context', () => {
       assert.deepStrictEqual(
         pure('a')
           ._setContext([
@@ -756,13 +773,13 @@ describe('Pattern', function () {
     });
   });
   describe('early', () => {
-    it('Can shift an event earlier', () => {
+    it('Can shift a hap earlier', () => {
       assert.deepStrictEqual(pure(30)._late(0.25).query(st(1, 2)), [
         hap(ts(1 / 4, 5 / 4), ts(1, 5 / 4), 30),
         hap(ts(5 / 4, 9 / 4), ts(5 / 4, 2), 30),
       ]);
     });
-    it('Can shift an event earlier, into negative time', () => {
+    it('Can shift a hap earlier, into negative time', () => {
       assert.deepStrictEqual(pure(30)._late(0.25).query(st(0, 1)), [
         hap(ts(-3 / 4, 1 / 4), ts(0, 1 / 4), 30),
         hap(ts(1 / 4, 5 / 4), ts(1 / 4, 1), 30),
@@ -780,9 +797,9 @@ describe('Pattern', function () {
   describe('jux', () => {
     it('Can juxtapose', () => {
       assert.deepStrictEqual(
-        pure({ a: 1 }).jux(fast(2))._sortEventsByPart().firstCycle(),
+        pure({ a: 1 }).jux(fast(2))._sortHapsByPart().firstCycle(),
         stack(pure({ a: 1, pan: 0 }), pure({ a: 1, pan: 1 }).fast(2))
-          ._sortEventsByPart()
+          ._sortHapsByPart()
           .firstCycle(),
       );
     });
@@ -790,9 +807,9 @@ describe('Pattern', function () {
   describe('juxBy', () => {
     it('Can juxtapose by half', () => {
       assert.deepStrictEqual(
-        pure({ a: 1 }).juxBy(0.5, fast(2))._sortEventsByPart().firstCycle(),
+        pure({ a: 1 }).juxBy(0.5, fast(2))._sortHapsByPart().firstCycle(),
         stack(pure({ a: 1, pan: 0.25 }), pure({ a: 1, pan: 0.75 }).fast(2))
-          ._sortEventsByPart()
+          ._sortHapsByPart()
           .firstCycle(),
       );
     });
@@ -821,7 +838,7 @@ describe('Pattern', function () {
         sequence(pure('a').fast(3), [pure('b').fast(3), pure('c').fast(3)]).firstCycle(),
       );
     });
-    it('Doesnt drop events in the 9th cycle', () => {
+    it('Doesnt drop haps in the 9th cycle', () => {
       // fixed with https://github.com/tidalcycles/strudel/commit/72eeaf446e3d5e186d63cc0d2276f0723cde017a
       assert.equal(sequence(1, 2, 3).ply(2).early(8).firstCycle().length, 6);
     });
@@ -848,7 +865,7 @@ describe('Pattern', function () {
     });
     it('Can chop(2,3)', () => {
       assert.deepStrictEqual(
-        pure({ sound: 'a' }).fast(2).chop(2, 3)._sortEventsByPart().firstCycle(),
+        pure({ sound: 'a' }).fast(2).chop(2, 3)._sortHapsByPart().firstCycle(),
         sequence(
           [
             { sound: 'a', begin: 0, end: 0.5 },
@@ -860,7 +877,7 @@ describe('Pattern', function () {
             { sound: 'a', begin: 2 / 3, end: 1 },
           ],
         )
-          ._sortEventsByPart()
+          ._sortHapsByPart()
           .firstCycle(),
       );
     });
