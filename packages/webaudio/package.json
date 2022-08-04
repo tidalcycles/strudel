@@ -1,8 +1,9 @@
 {
   "name": "@strudel.cycles/webaudio",
-  "version": "0.0.6",
+  "version": "0.1.4",
   "description": "Web Audio helpers for Strudel",
   "main": "index.mjs",
+  "type": "module",
   "directories": {
     "example": "examples"
   },
@@ -21,12 +22,12 @@
     "algorave"
   ],
   "author": "Felix Roos <flix91@gmail.com>",
-  "license": "GPL-3.0-or-later",
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.0.5"
+    "@strudel.cycles/core": "^0.1.2"
   }
 }

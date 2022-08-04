@@ -1,59 +1,31 @@
 {
   "name": "@strudel.cycles/repl",
-  "version": "0.1.0",
   "private": true,
-  "homepage": "https://strudel.tidalcycles.org",
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.16.3",
-    "@testing-library/react": "^12.1.4",
-    "@testing-library/user-event": "^13.5.0",
-    "codemirror": "^5.65.2",
-    "events": "^3.3.0",
-    "gh-pages": "^3.2.3",
-    "react": "^17.0.2",
-    "react-codemirror2": "^7.2.1",
-    "react-dom": "^17.0.2",
-    "react-scripts": "5.0.0",
-    "tone": "^14.7.77",
-    "web-vitals": "^2.1.4"
-  },
+  "version": "0.0.0",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "BUILD_PATH='../docs' react-scripts build && npm run build-tutorial",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "tutorial": "parcel src/tutorial/index.html --no-cache",
-    "build-tutorial": "rm -rf ../docs/tutorial && parcel build src/tutorial/index.html --dist-dir ../docs/tutorial --public-url /tutorial --no-scope-hoist --no-cache",
+    "dev": "vite --host",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "NODE_OPTIONS='--experimental-fetch' mocha ./src/test --colors",
+    "snapshot": "cd ./src/ && rm -f ./tunes.snapshot.mjs && node ./shoot.mjs > ./tunes.snapshot.mjs",
+    "add-license": "cat etc/agpl-header.txt ../docs/static/js/*LICENSE.txt > /tmp/strudel-license.txt && cp /tmp/strudel-license.txt ../docs/static/js/*LICENSE.txt",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d ../docs",
     "static": "npx serve ../docs"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "@supabase/supabase-js": "^1.35.3",
+    "nanoid": "^4.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
-    "@mdx-js/react": "^1.6.22",
-    "@parcel/transformer-mdx": "^2.3.1",
     "@tailwindcss/typography": "^0.5.2",
-    "autoprefixer": "^10.4.4",
-    "parcel": "^2.3.1",
-    "postcss": "^8.4.12",
-    "serve": "^13.0.2",
-    "tailwindcss": "^3.0.23"
+    "@vitejs/plugin-react": "^1.3.0",
+    "autoprefixer": "^10.4.7",
+    "postcss": "^8.4.13",
+    "tailwindcss": "^3.0.24",
+    "vite": "^2.9.9"
   }
 }

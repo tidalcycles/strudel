@@ -2,7 +2,7 @@
 
 [![Strudel test status](https://github.com/tidalcycles/strudel/actions/workflows/test.yml/badge.svg)](https://github.com/tidalcycles/strudel/actions)
 
-An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using web technologies. This is unstable software, please tread carefully.
+An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using web technologies. This software is slowly stabilising, but please continue to tread carefully.
 
 - Try it here: <https://strudel.tidalcycles.org/>
 - Tutorial: <https://strudel.tidalcycles.org/tutorial/>
@@ -27,8 +27,10 @@ There are multiple npm packages you can use to use strudel, or only parts of it,
 - [`tone`](./packages/tone): bindings for Tone.js instruments and effects
 - [`osc`](./packages/osc): bindings to communicate via OSC
 - [`midi`](./packages/midi): webmidi bindings
+- [`serial`](./packages/serial): webserial bindings
 - [`tonal`](./packages/tonal): tonal functions
 - [`xen`](./packages/xen): microtonal / xenharmonic functions
+- ... [and there are more](./packages/)
 
 Click on the package names to find out more about each one.
 

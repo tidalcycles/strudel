@@ -1,3 +1,9 @@
+/*
+xen.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/xen/xen.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import { Pattern, mod } from '@strudel.cycles/core';
 
 export function edo(name) {
@@ -43,18 +49,18 @@ function xenOffset(xenScale, offset, index = 0) {
 
 // scaleNameOrRatios: string || number[], steps?: number
 Pattern.prototype._xen = function (scaleNameOrRatios, steps) {
-  return this._asNumber()._withEvent((event) => {
+  return this._asNumber()._withHap((hap) => {
     const scale = getXenScale(scaleNameOrRatios);
     steps = steps || scale.length;
-    const frequency = xenOffset(scale, event.value);
-    return event.withValue(() => frequency).setContext({ ...event.context, type: 'frequency' });
+    const frequency = xenOffset(scale, hap.value);
+    return hap.withValue(() => frequency).setContext({ ...hap.context, type: 'frequency' });
   });
 };
 
 Pattern.prototype.tuning = function (steps) {
-  return this._asNumber()._withEvent((event) => {
-    const frequency = xenOffset(steps, event.value);
-    return event.withValue(() => frequency).setContext({ ...event.context, type: 'frequency' });
+  return this._asNumber()._withHap((hap) => {
+    const frequency = xenOffset(steps, hap.value);
+    return hap.withValue(() => frequency).setContext({ ...hap.context, type: 'frequency' });
   });
 };
 Pattern.prototype.define('xen', (scale, pat) => pat.xen(scale), { composable: true, patternified: true });

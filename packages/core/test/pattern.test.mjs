@@ -1,3 +1,9 @@
+/*
+pattern.test.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/test/pattern.test.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import Fraction from 'fraction.js';
 
 import { deepStrictEqual, strict as assert } from 'assert';
@@ -35,6 +41,7 @@ import {
   tri2,
   id,
   ply,
+  rev
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -51,7 +58,7 @@ const third = Fraction(1, 3);
 const twothirds = Fraction(2, 3);
 
 const sameFirst = (a, b) => {
-  return assert.deepStrictEqual(a._sortEventsByPart().firstCycle(), b._sortEventsByPart().firstCycle());
+  return assert.deepStrictEqual(a._sortHapsByPart().firstCycle(), b._sortHapsByPart().firstCycle());
 };
 
 describe('TimeSpan', function () {
@@ -146,17 +153,32 @@ describe('Pattern', function () {
     });
   });
   describe('add()', function () {
-    it('Can add things', function () {
+    it('can structure In()', function () {
       assert.equal(pure(3).add(pure(4)).query(st(0, 1))[0].value, 7);
+      assert.equal(pure(3).addIn(pure(4)).query(st(0, 1))[0].value, 7);
     });
-  });
-  describe('addFlip()', () => {
-    it('Can add things with structure from second pattern', () => {
-      sameFirst(sequence(1, 2).addFlip(4), sequence(5, 6).struct(true));
+    it('can structure Out()', () => {
+      sameFirst(sequence(1, 2).addOut(4), sequence(5, 6).struct(true));
     });
-  });
-  describe('addSqueeze()', () => {
-    it('Can add while squeezing the second pattern inside the events of the first', () => {
+    it('can Mix() structure', () => {
+      assert.deepStrictEqual(sequence(1, 2).addMix(silence, 5, silence).firstCycle(), [
+        hap(ts(1 / 3, 1 / 2), ts(1 / 3, 1 / 2), 6),
+        hap(ts(1 / 2, 2 / 3), ts(1 / 2, 2 / 3), 7),
+      ]);
+    });
+    it('can Trig() structure', () => {
+      sameFirst(
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).addTrig(20, 30).early(2),
+        sequence(26, 27, 36, 37),
+      );
+    });
+    it('can Trigzero() structure', () => {
+      sameFirst(
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).addTrigzero(20, 30).early(2),
+        sequence(21, 22, 31, 32),
+      );
+    });
+    it('can Squeeze() structure', () => {
       sameFirst(
         sequence(1, [2, 3]).addSqueeze(sequence(10, 20, 30)),
         sequence(
@@ -168,13 +190,95 @@ describe('Pattern', function () {
         ),
       );
     });
-  });
-  describe('addSqueezeFlip()', () => {
-    it('Can add while squeezing the first pattern inside the events of the second', () => {
+    it('can SqueezeOut() structure', () => {
       sameFirst(
-        sequence(1, [2, 3]).addSqueezeFlip(10, 20, 30),
+        sequence(1, [2, 3]).addSqueezeOut(10, 20, 30),
         sequence([11, [12, 13]], [21, [22, 23]], [31, [32, 33]]),
       );
+    });
+  });
+  describe('keep()', function () {
+    it('can structure In()', function () {
+      assert.equal(pure(3).keep(pure(4)).query(st(0, 1))[0].value, 3);
+      assert.equal(pure(3).keepIn(pure(4)).query(st(0, 1))[0].value, 3);
+    });
+    it('can structure Out()', () => {
+      sameFirst(sequence(1, 2).keepOut(4), sequence(1, 2).struct(true));
+    });
+    it('can Mix() structure', () => {
+      assert.deepStrictEqual(sequence(1, 2).keepMix(silence, 5, silence).firstCycle(), [
+        hap(ts(1 / 3, 1 / 2), ts(1 / 3, 1 / 2), 1),
+        hap(ts(1 / 2, 2 / 3), ts(1 / 2, 2 / 3), 2),
+      ]);
+    });
+    it('can Trig() structure', () => {
+      sameFirst(
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepTrig(20, 30).early(2),
+        sequence(6, 7, 6, 7),
+      );
+    });
+    it('can Trigzero() structure', () => {
+      sameFirst(
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepTrigzero(20, 30).early(2),
+        sequence(1, 2, 1, 2),
+      );
+    });
+    it('can Squeeze() structure', () => {
+      sameFirst(
+        sequence(1, [2, 3]).keepSqueeze(sequence(10, 20, 30)),
+        sequence(
+          [1, 1, 1],
+          [
+            [2, 2, 2],
+            [3, 3, 3],
+          ],
+        ),
+      );
+    });
+    it('can SqueezeOut() structure', () => {
+      sameFirst(sequence(1, [2, 3]).keepSqueezeOut(10, 20, 30), sequence([1, [2, 3]], [1, [2, 3]], [1, [2, 3]]));
+    });
+  });
+  describe('keepif()', function () {
+    it('can structure In()', function () {
+      sameFirst(sequence(3, 4).keepif(true, false), sequence(3, silence));
+      sameFirst(sequence(3, 4).keepifIn(true, false), sequence(3, silence));
+    });
+    it('can structure Out()', () => {
+      sameFirst(pure(1).keepifOut(true, false), sequence(1, silence));
+    });
+    it('can Mix() structure', () => {
+      assert.deepStrictEqual(sequence(1, 2).keepifMix(false, true, false).firstCycle(), [
+        hap(ts(1 / 3, 1 / 2), ts(1 / 3, 1 / 2), 1),
+        hap(ts(1 / 2, 2 / 3), ts(1 / 2, 2 / 3), 2),
+      ]);
+    });
+    it('can Trig() structure', () => {
+      sameFirst(
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepifTrig(false, true).early(2),
+        sequence(silence, silence, 6, 7),
+      );
+    });
+    it('can Trigzero() structure', () => {
+      sameFirst(
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepifTrigzero(false, true).early(2),
+        sequence(silence, silence, 1, 2),
+      );
+    });
+    it('can Squeeze() structure', () => {
+      sameFirst(
+        sequence(1, [2, 3]).keepifSqueeze(sequence(true, true, false)),
+        sequence(
+          [1, 1, silence],
+          [
+            [2, 2, silence],
+            [3, 3, silence],
+          ],
+        ),
+      );
+    });
+    it('can SqueezeOut() structure', () => {
+      sameFirst(sequence(1, [2, 3]).keepifSqueezeOut(true, true, false), sequence([1, [2, 3]], [1, [2, 3]], silence));
     });
   });
   describe('sub()', function () {
@@ -208,13 +312,13 @@ describe('Pattern', function () {
     it('Can set things with plain values', function () {
       sameFirst(sequence(1, 2, 3).set(4), sequence(4).fast(3));
     });
-    describe('setFlip()', () => {
+    describe('setOut()', () => {
       it('Can set things with structure from second pattern', () => {
-        sameFirst(sequence(1, 2).setFlip(4), pure(4).mask(true, true));
+        sameFirst(sequence(1, 2).setOut(4), pure(4).mask(true, true));
       });
     });
     describe('setSqueeze()', () => {
-      it('Can squeeze one pattern inside the events of another', () => {
+      it('Can squeeze one pattern inside the haps of another', () => {
         sameFirst(
           sequence(1, [2, 3]).setSqueeze(sequence('a', 'b', 'c')),
           sequence(
@@ -248,10 +352,7 @@ describe('Pattern', function () {
       );
     });
     it('Can stack subpatterns', function () {
-      sameFirst(
-        stack('a', ['b','c']),
-        stack('a', sequence('b', 'c')),
-      );
+      sameFirst(stack('a', ['b', 'c']), stack('a', sequence('b', 'c')));
     });
   });
   describe('_fast()', function () {
@@ -291,7 +392,7 @@ describe('Pattern', function () {
     });
     it('Makes things faster, with a pattern of factors', function () {
       assert.equal(pure('a').fast(sequence(1, 4)).firstCycle().length, 3);
-      // .fast(sequence(1,silence) is a quick hack to cut an event in two..
+      // .fast(sequence(1,silence) is a quick hack to cut a hap in two..
       assert.deepStrictEqual(
         pure('a').fast(sequence(1, 4)).firstCycle(),
         stack(pure('a').fast(sequence(1, silence)), sequence(silence, ['a', 'a'])).firstCycle(),
@@ -336,6 +437,20 @@ describe('Pattern', function () {
       // mini('eb3 [c3 g3]/2 ') always plays [c3 g3]
     });
   });
+  describe('inside', () => {
+    it('can rev inside a cycle', () => {
+      sameFirst(sequence('a', 'b', 'c', 'd').inside(2, rev),
+        sequence('b', 'a', 'd', 'c')
+      );
+    });
+  });
+  describe('outside', () => {
+    it('can rev outside a cycle', () => {
+      sameFirst(sequence('a', 'b', 'c', 'd')._slow(2).outside(2, rev),
+        sequence('d', 'c')
+      );
+    });
+  });
   describe('_filterValues()', function () {
     it('Filters true', function () {
       assert.equal(
@@ -365,7 +480,7 @@ describe('Pattern', function () {
     });
     it('Can alternate', function () {
       assert.deepStrictEqual(
-        pure(10).when(slowcat(true, false), add(3)).fast(4)._sortEventsByPart().firstCycle(),
+        pure(10).when(slowcat(true, false), add(3)).fast(4)._sortHapsByPart().firstCycle(),
         fastcat(13, 10, 13, 10).firstCycle(),
       );
     });
@@ -382,11 +497,7 @@ describe('Pattern', function () {
   });
   describe('fastcat()', function () {
     it('Can go into negative time', function () {
-      sameFirst(
-        fastcat('a','b','c')
-          .late(1000000),
-        fastcat('a','b','c'),
-      );
+      sameFirst(fastcat('a', 'b', 'c').late(1000000), fastcat('a', 'b', 'c'));
     });
   });
   describe('slowcat()', function () {
@@ -419,12 +530,9 @@ describe('Pattern', function () {
         ['c'],
       );
     });
-    it ('Can cat subpatterns', () => {
-      sameFirst(
-        slowcat('a', ['b','c']).fast(4),
-        sequence('a', ['b', 'c']).fast(2)
-      )
-    })
+    it('Can cat subpatterns', () => {
+      sameFirst(slowcat('a', ['b', 'c']).fast(4), sequence('a', ['b', 'c']).fast(2));
+    });
   });
   describe('rev()', function () {
     it('Can reverse things', function () {
@@ -491,6 +599,11 @@ describe('Pattern', function () {
         sequence(3, 4, 5).every(3, add(3)).every(2, sub(1)).fast(2).firstCycle(),
         sequence(5, 6, 7, 3, 4, 5).firstCycle(),
       );
+    });
+  });
+  describe('brak()', () => {
+    it('Can make something a bit breakbeaty', () => {
+      sameFirst(sequence('a', 'b').brak()._fast(2), sequence('a', 'b', fastcat(silence, 'a'), fastcat('b', silence)));
     });
   });
   describe('timeCat()', function () {
@@ -583,7 +696,7 @@ describe('Pattern', function () {
     });
   });
   describe('_setContext()', () => {
-    it('Can set the event context', () => {
+    it('Can set the hap context', () => {
       assert.deepStrictEqual(
         pure('a')
           ._setContext([
@@ -605,7 +718,7 @@ describe('Pattern', function () {
     });
   });
   describe('_withContext()', () => {
-    it('Can update the event context', () => {
+    it('Can update the hap context', () => {
       assert.deepStrictEqual(
         pure('a')
           ._setContext([
@@ -660,13 +773,13 @@ describe('Pattern', function () {
     });
   });
   describe('early', () => {
-    it('Can shift an event earlier', () => {
+    it('Can shift a hap earlier', () => {
       assert.deepStrictEqual(pure(30)._late(0.25).query(st(1, 2)), [
         hap(ts(1 / 4, 5 / 4), ts(1, 5 / 4), 30),
         hap(ts(5 / 4, 9 / 4), ts(5 / 4, 2), 30),
       ]);
     });
-    it('Can shift an event earlier, into negative time', () => {
+    it('Can shift a hap earlier, into negative time', () => {
       assert.deepStrictEqual(pure(30)._late(0.25).query(st(0, 1)), [
         hap(ts(-3 / 4, 1 / 4), ts(0, 1 / 4), 30),
         hap(ts(1 / 4, 5 / 4), ts(1 / 4, 1), 30),
@@ -684,9 +797,9 @@ describe('Pattern', function () {
   describe('jux', () => {
     it('Can juxtapose', () => {
       assert.deepStrictEqual(
-        pure({ a: 1 }).jux(fast(2))._sortEventsByPart().firstCycle(),
+        pure({ a: 1 }).jux(fast(2))._sortHapsByPart().firstCycle(),
         stack(pure({ a: 1, pan: 0 }), pure({ a: 1, pan: 1 }).fast(2))
-          ._sortEventsByPart()
+          ._sortHapsByPart()
           .firstCycle(),
       );
     });
@@ -694,9 +807,9 @@ describe('Pattern', function () {
   describe('juxBy', () => {
     it('Can juxtapose by half', () => {
       assert.deepStrictEqual(
-        pure({ a: 1 }).juxBy(0.5, fast(2))._sortEventsByPart().firstCycle(),
+        pure({ a: 1 }).juxBy(0.5, fast(2))._sortHapsByPart().firstCycle(),
         stack(pure({ a: 1, pan: 0.25 }), pure({ a: 1, pan: 0.75 }).fast(2))
-          ._sortEventsByPart()
+          ._sortHapsByPart()
           .firstCycle(),
       );
     });
@@ -725,7 +838,7 @@ describe('Pattern', function () {
         sequence(pure('a').fast(3), [pure('b').fast(3), pure('c').fast(3)]).firstCycle(),
       );
     });
-    it('Doesnt drop events in the 9th cycle', () => {
+    it('Doesnt drop haps in the 9th cycle', () => {
       // fixed with https://github.com/tidalcycles/strudel/commit/72eeaf446e3d5e186d63cc0d2276f0723cde017a
       assert.equal(sequence(1, 2, 3).ply(2).early(8).firstCycle().length, 6);
     });
@@ -752,7 +865,7 @@ describe('Pattern', function () {
     });
     it('Can chop(2,3)', () => {
       assert.deepStrictEqual(
-        pure({ sound: 'a' }).fast(2).chop(2, 3)._sortEventsByPart().firstCycle(),
+        pure({ sound: 'a' }).fast(2).chop(2, 3)._sortHapsByPart().firstCycle(),
         sequence(
           [
             { sound: 'a', begin: 0, end: 0.5 },
@@ -764,7 +877,7 @@ describe('Pattern', function () {
             { sound: 'a', begin: 2 / 3, end: 1 },
           ],
         )
-          ._sortEventsByPart()
+          ._sortHapsByPart()
           .firstCycle(),
       );
     });

@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/serial",
-  "version": "0.0.6",
+  "version": "0.1.3",
   "description": "Webserial API for strudel",
   "main": "serial.mjs",
   "repository": {
@@ -15,10 +15,9 @@
     "algorave"
   ],
   "author": "Alex McLean <alex@slab.org>",
-  "license": "GPL-3.0-or-later",
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
-  "homepage": "https://github.com/tidalcycles/strudel#readme",
-  "dependencies": {}
+  "homepage": "https://github.com/tidalcycles/strudel#readme"
 }

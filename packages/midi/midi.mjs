@@ -1,3 +1,9 @@
+/*
+midi.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/midi/midi.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import { isNote } from 'tone';
 import _WebMidi from 'webmidi';
 import { Pattern, isPattern } from '@strudel.cycles/core';
@@ -33,11 +39,11 @@ Pattern.prototype.midi = function (output, channel = 1) {
       }')`,
     );
   }
-  return this._withEvent((event) => {
-    // const onTrigger = (time: number, event: any) => {
-    const onTrigger = (time, event) => {
-      let note = event.value;
-      const velocity = event.context?.velocity ?? 0.9;
+  return this._withHap((hap) => {
+    // const onTrigger = (time: number, hap: any) => {
+    const onTrigger = (time, hap) => {
+      let note = hap.value;
+      const velocity = hap.context?.velocity ?? 0.9;
       if (!isNote(note)) {
         throw new Error('not a note: ' + note);
       }
@@ -69,10 +75,10 @@ Pattern.prototype.midi = function (output, channel = 1) {
       // await enableWebMidi()
       device.playNote(note, channel, {
         time,
-        duration: event.duration.valueOf() * 1000 - 5,
+        duration: hap.duration.valueOf() * 1000 - 5,
         velocity,
       });
     };
-    return event.setContext({ ...event.context, onTrigger });
+    return hap.setContext({ ...hap.context, onTrigger });
   });
 };

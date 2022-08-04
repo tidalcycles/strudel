@@ -1,0 +1,27 @@
+.container {
+  @apply sc-rounded-md sc-overflow-hidden sc-bg-[#111111];
+}
+
+.header {
+  @apply sc-flex sc-justify-between sc-bg-slate-700 sc-border-t sc-border-slate-500;
+}
+
+.buttons {
+  @apply sc-flex;
+}
+
+.button {
+  @apply sc-cursor-pointer sc-w-16 sc-flex sc-items-center sc-justify-center sc-p-1 sc-bg-slate-700 sc-border-r sc-border-slate-500  sc-text-white hover:sc-bg-slate-600;
+}
+
+.buttonDisabled {
+  @apply sc-cursor-pointer sc-w-16 sc-flex sc-items-center sc-justify-center sc-p-1 sc-bg-slate-600 sc-text-slate-400 sc-cursor-not-allowed;
+}
+
+.error {
+  @apply sc-text-right sc-p-1 sc-text-sm sc-text-red-200;
+}
+
+.body {
+  @apply sc-overflow-auto sc-relative;
+}

@@ -1,5 +1,27 @@
+/*
+drawLine.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/drawLine.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import Fraction, { gcd } from './fraction.mjs';
 
+/**
+ * Intended for a debugging, drawLine renders the pattern as a string, where each character represents the same time span.
+ * Should only be used with single characters as values, otherwise the character slots will be messed up.
+ * Character legend:
+ *
+ * - "|" cycle separator
+ * - "-" hold previous value
+ * - "." silence
+ *
+ * @param {Pattern} pattern the pattern to use
+ * @param {number} chars max number of characters (approximately)
+ * @returns string
+ * @example
+ * const line = drawLine("0 [1 2 3]", 10); // |0--123|0--123
+ * console.log(line);
+ */
 function drawLine(pat, chars = 60) {
   let cycle = 0;
   let pos = Fraction(0);

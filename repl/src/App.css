@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  background-color: #2a3236;
+  background-color: #111;
 }
 
 .react-codemirror2,
@@ -15,12 +15,12 @@ body {
 }
 
 .CodeMirror-line > span {
-  background-color: #2a323699;
+  background-color: #11111190;
 }
 
 .darken::before {
   content: ' ';
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;

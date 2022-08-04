@@ -1,3 +1,9 @@
+/*
+shapeshifter.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/eval/shapeshifter.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 /* import { parseScriptWithLocation } from './shift-parser/index.js'; // npm module does not work in the browser
 import traverser from './shift-traverser/index.js'; // npm module does not work in the browser */
 import { parseScriptWithLocation } from 'shift-parser';
@@ -28,7 +34,7 @@ export const wrappedAsync = true;
 
 export default (_code) => {
   const { code, addReturn } = wrapAsync(_code);
-  const ast = parseScriptWithLocation(code);
+  const ast = parseScriptWithLocation(disguiseImports(code));
   const artificialNodes = [];
   const parents = [];
   const shifted = replace(ast.tree, {
@@ -122,9 +128,21 @@ export default (_code) => {
   if (wrappedAsync) {
     addReturn(shifted);
   }
-  const generated = codegen(shifted);
+  const generated = undisguiseImports(codegen(shifted));
   return generated;
 };
+
+// renames all import statements to "_mport" as Shift doesn't support dynamic import.
+// there shouldn't be any side-effects from this as this change does not affect
+// the syntax & will be undone by the equivalent replace in "undisguiseImports".
+function disguiseImports(code) {
+  return code.replaceAll('import', '_mport'); // Must be the same length!
+}
+
+// Rename the renamed import statements back to "import"
+function undisguiseImports(code) {
+  return code.replaceAll('_mport', 'import');
+}
 
 function wrapAsync(code) {
   // wrap code in async to make await work on top level => this will create 1 line offset to locations

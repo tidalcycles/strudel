@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/core",
-  "version": "0.0.5",
+  "version": "0.1.2",
   "description": "Port of Tidal Cycles to JavaScript",
   "main": "index.mjs",
   "type": "module",
@@ -19,7 +19,7 @@
     "algorave"
   ],
   "author": "Alex McLean <alex@slab.org> (https://slab.org)",
-  "license": "GPL-3.0-or-later",
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
