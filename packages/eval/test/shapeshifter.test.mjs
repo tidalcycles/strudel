@@ -11,4 +11,10 @@ describe('shapeshifter', () => {
   it('Should shift simple double quote string', () => {
     assert.equal(shapeshifter('"c3"'), '(async()=>{return mini("c3").withMiniLocation([1,0,15],[1,4,19])})()');
   });
+  it('Should handle dynamic imports', () => {
+    assert.equal(
+      shapeshifter('const { default: foo } = await import(\'https://bar.com/foo.js\');"c3"'),
+      '(async()=>{const{default:foo}=await import("https://bar.com/foo.js");return mini("c3").withMiniLocation([1,64,79],[1,68,83])})()',
+    );
+  });
 });

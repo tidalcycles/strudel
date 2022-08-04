@@ -34,7 +34,7 @@ export const wrappedAsync = true;
 
 export default (_code) => {
   const { code, addReturn } = wrapAsync(_code);
-  const ast = parseScriptWithLocation(code);
+  const ast = parseScriptWithLocation(disguiseImports(code));
   const artificialNodes = [];
   const parents = [];
   const shifted = replace(ast.tree, {
@@ -128,9 +128,21 @@ export default (_code) => {
   if (wrappedAsync) {
     addReturn(shifted);
   }
-  const generated = codegen(shifted);
+  const generated = undisguiseImports(codegen(shifted));
   return generated;
 };
+
+// renames all import statements to "_mport" as Shift doesn't support dynamic import.
+// there shouldn't be any side-effects from this as this change does not affect
+// the syntax & will be undone by the equivalent replace in "undisguiseImports".
+function disguiseImports(code) {
+  return code.replaceAll('import', '_mport'); // Must be the same length!
+}
+
+// Rename the renamed import statements back to "import"
+function undisguiseImports(code) {
+  return code.replaceAll('_mport', 'import');
+}
 
 function wrapAsync(code) {
   // wrap code in async to make await work on top level => this will create 1 line offset to locations
