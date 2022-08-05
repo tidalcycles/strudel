@@ -15,7 +15,7 @@ import { WebMidi, enableWebMidi } from '@strudel.cycles/midi';
 var strudelTheme = createTheme({
   theme: 'dark',
   settings: {
-    background: '#111',
+    background: '#222',
     foreground: '#75baff', // whats that?
     caret: '#ffcc00',
     selection: 'rgba(128, 203, 196, 0.5)',
@@ -110,10 +110,9 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f)
 });
 function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount }) {
-  console.log("coodemirrrorrr", strudelTheme);
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(_CodeMirror, {
     value,
-    onChange: (value2, viewUpdate) => {
+    onChange: (value2) => {
       onChange(value2);
     },
     onCreateEditor: (view) => {
@@ -422,13 +421,13 @@ function useHighlighting({ view, pattern, active }) {
 
 var tailwind = '';
 
-const container = "_container_xpa19_1";
-const header = "_header_xpa19_5";
-const buttons = "_buttons_xpa19_9";
-const button = "_button_xpa19_9";
-const buttonDisabled = "_buttonDisabled_xpa19_17";
-const error = "_error_xpa19_21";
-const body = "_body_xpa19_25";
+const container = "_container_3i85k_1";
+const header = "_header_3i85k_5";
+const buttons = "_buttons_3i85k_9";
+const button = "_button_3i85k_9";
+const buttonDisabled = "_buttonDisabled_3i85k_17";
+const error = "_error_3i85k_21";
+const body = "_body_3i85k_25";
 var styles = {
 	container: container,
 	header: header,

@@ -3,7 +3,7 @@ import { createTheme } from '@uiw/codemirror-themes';
 export default createTheme({
   theme: 'dark',
   settings: {
-    background: '#111',
+    background: '#222',
     foreground: '#75baff', // whats that?
     caret: '#ffcc00',
     selection: 'rgba(128, 203, 196, 0.5)',

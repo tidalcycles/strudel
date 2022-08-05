@@ -79,12 +79,11 @@ const highlightField = StateField.define({
 });
 
 export default function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount }) {
-  console.log('coodemirrrorrr', strudelTheme);
   return (
     <>
       <_CodeMirror
         value={value}
-        onChange={(value, viewUpdate) => {
+        onChange={(value) => {
           onChange(value);
         }}
         onCreateEditor={(view) => {
