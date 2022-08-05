@@ -109,7 +109,7 @@ const highlightField = StateField.define({
   },
   provide: (f) => EditorView.decorations.from(f)
 });
-function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount }) {
+function CodeMirror({ value, onChange, onViewChanged, onSelectionChange, options, editorDidMount }) {
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(_CodeMirror, {
     value,
     onChange: (value2) => {
@@ -117,6 +117,11 @@ function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorD
     },
     onCreateEditor: (view) => {
       onViewChanged(view);
+    },
+    onUpdate: (viewUpdate) => {
+      if (viewUpdate.selectionSet && onSelectionChange) {
+        onSelectionChange(viewUpdate.state.selection);
+      }
     },
     extensions: [javascript(), strudelTheme, highlightField, flashField]
   }));
