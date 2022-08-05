@@ -7,6 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import controls from '@strudel.cycles/core/controls.mjs';
 import { evalScope, evaluate } from '@strudel.cycles/eval';
 import { CodeMirror, cx, flash, useHighlighting, useRepl, useWebMidi } from '@strudel.cycles/react';
+import '@strudel.cycles/react/dist/style.css';
 import { getDefaultSynth, cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
