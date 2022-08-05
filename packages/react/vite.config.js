@@ -33,8 +33,12 @@ export default defineConfig({
         '@strudel.cycles/serial',
         '@strudel.cycles/webaudio',
         '@codemirror/view',
-        '@codemirror/highlight',
-        '@codemirror/state'
+        '@codemirror/lang-javascript',
+        '@codemirror/state',
+        '@codemirror/commands',
+        '@lezer/highlight',
+        '@codemirror/language',
+        '@uiw/codemirror-themes'
       ],
     },
     target: 'esnext',
