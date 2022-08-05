@@ -1,21 +1,10 @@
+@import '@strudel.cycles/react/dist/style.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
   background-color: #222;
-}
-
-.react-codemirror2,
-.CodeMirror {
-  height: 100% !important;
-  background-color: transparent !important;
-  font-size: 15px;
-  z-index: 20;
-}
-
-.CodeMirror-line > span {
-  background-color: #11111190;
 }
 
 .darken::before {
