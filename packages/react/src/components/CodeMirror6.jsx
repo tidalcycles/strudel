@@ -1,11 +1,10 @@
 import React from 'react';
-import { CodeMirror as _CodeMirror } from 'react-codemirror6';
-// import { CodeMirrorLite as _CodeMirror } from 'react-codemirror6/dist/lite';
+import _CodeMirror from '@uiw/react-codemirror';
 import { EditorView, Decoration } from '@codemirror/view';
 import { StateField, StateEffect } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
-// import { materialPalenight } from 'codemirror6-themes';
-import { materialPalenight } from '../themes/material-palenight';
+import strudelTheme from '../themes/strudel-theme';
+import './style.css';
 
 export const setFlash = StateEffect.define();
 const flashField = StateField.define({
@@ -79,25 +78,23 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-export default function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount }) {
+export default function CodeMirror({ value, onChange, onViewChanged, onSelectionChange, options, editorDidMount }) {
   return (
     <>
       <_CodeMirror
-        onViewChange={onViewChanged}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          flex: '1 0 auto',
-        }}
         value={value}
-        onChange={onChange}
-        extensions={[
-          javascript(),
-          materialPalenight,
-          highlightField,
-          flashField,
-          // theme, language, ...
-        ]}
+        onChange={(value) => {
+          onChange(value);
+        }}
+        onCreateEditor={(view) => {
+          onViewChanged(view);
+        }}
+        onUpdate={(viewUpdate) => {
+          if (viewUpdate.selectionSet && onSelectionChange) {
+            onSelectionChange(viewUpdate.state.selection);
+          }
+        }}
+        extensions={[javascript(), strudelTheme, highlightField, flashField]}
       />
     </>
   );

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from 'react';
-import { CodeMirror as CodeMirror$1 } from 'react-codemirror6';
-import { EditorView, Decoration } from '@codemirror/view';
+import _CodeMirror from '@uiw/react-codemirror';
+import { Decoration, EditorView } from '@codemirror/view';
 import { StateEffect, StateField } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
-import { HighlightStyle, tags } from '@codemirror/highlight';
+import { tags } from '@lezer/highlight';
+import { createTheme } from '@uiw/codemirror-themes';
 import { useInView } from 'react-hook-inview';
 import { evaluate } from '@strudel.cycles/eval';
 import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
@@ -11,146 +12,42 @@ import { Tone } from '@strudel.cycles/tone';
 import { TimeSpan, State } from '@strudel.cycles/core';
 import { WebMidi, enableWebMidi } from '@strudel.cycles/midi';
 
-/*
-  Credits for color palette:
-
-  Author:     Mattia Astorino (http://github.com/equinusocio)
-  Website:    https://material-theme.site/
-*/
-
-const ivory = '#abb2bf',
-  stone = '#7d8799', // Brightened compared to original to increase contrast
-  invalid = '#ffffff',
-  darkBackground = '#21252b',
-  highlightBackground = 'rgba(0, 0, 0, 0.5)',
-  // background = '#292d3e',
-  background = 'transparent',
-  tooltipBackground = '#353a42',
-  selection = 'rgba(128, 203, 196, 0.5)',
-  cursor = '#ffcc00';
-
-/// The editor theme styles for Material Palenight.
-const materialPalenightTheme = EditorView.theme(
-  {
-    // done
-    '&': {
-      color: '#ffffff',
-      backgroundColor: background,
-      fontSize: '15px',
-      'z-index': 11,
-    },
-
-    // done
-    '.cm-content': {
-      caretColor: cursor,
-      lineHeight: '22px',
-    },
-    '.cm-line': {
-      // background: '#2C323699',
-      background: 'transparent',
-    },
-    '.cm-line > *': {
-      // background: '#2C323699',
-      background: '#00000090',
-      // background: 'transparent',
-    },
-    // done
-    '&.cm-focused .cm-cursor': {
-      backgroundColor: cursor,
-      width: '3px',
-    },
-
-    '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {
-      backgroundColor: selection,
-    },
-
-    '.cm-panels': { backgroundColor: darkBackground, color: '#ffffff' },
-    '.cm-panels.cm-panels-top': { borderBottom: '2px solid black' },
-    '.cm-panels.cm-panels-bottom': { borderTop: '2px solid black' },
-
-    // done, use onedarktheme
-    '.cm-searchMatch': {
-      backgroundColor: '#72a1ff59',
-      outline: '1px solid #457dff',
-    },
-    '.cm-searchMatch.cm-searchMatch-selected': {
-      backgroundColor: '#6199ff2f',
-    },
-
-    // commented out because it looks bad in mini repl one liners
-    //'.cm-activeLine': { backgroundColor: cursor + '50' },
-    '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
-
-    '&.cm-focused .cm-matchingBracket, &.cm-focused .cm-nonmatchingBracket': {
-      backgroundColor: '#bad0f847',
-      outline: '1px solid #515a6b',
-    },
-
-    // done
-    '.cm-gutters': {
-      background: 'transparent',
-      color: '#676e95',
-      border: 'none',
-    },
-
-    '.cm-activeLineGutter': {
-      backgroundColor: highlightBackground,
-    },
-
-    '.cm-foldPlaceholder': {
-      backgroundColor: 'transparent',
-      border: 'none',
-      color: '#ddd',
-    },
-
-    '.cm-tooltip': {
-      border: 'none',
-      backgroundColor: tooltipBackground,
-    },
-    '.cm-tooltip .cm-tooltip-arrow:before': {
-      borderTopColor: 'transparent',
-      borderBottomColor: 'transparent',
-    },
-    '.cm-tooltip .cm-tooltip-arrow:after': {
-      borderTopColor: tooltipBackground,
-      borderBottomColor: tooltipBackground,
-    },
-    '.cm-tooltip-autocomplete': {
-      '& > ul > li[aria-selected]': {
-        backgroundColor: highlightBackground,
-        color: ivory,
-      },
-    },
+var strudelTheme = createTheme({
+  theme: 'dark',
+  settings: {
+    background: '#222',
+    foreground: '#75baff', // whats that?
+    caret: '#ffcc00',
+    selection: 'rgba(128, 203, 196, 0.5)',
+    selectionMatch: '#036dd626',
+    lineHighlight: '#8a91991a',
+    gutterBackground: 'transparent',
+    // gutterForeground: '#8a919966',
+    gutterForeground: '#676e95',
   },
-  { dark: true },
-);
+  styles: [
+    { tag: tags.keyword, color: '#c792ea' },
+    { tag: tags.operator, color: '#89ddff' },
+    { tag: tags.special(tags.variableName), color: '#eeffff' },
+    { tag: tags.typeName, color: '#f07178' },
+    { tag: tags.atom, color: '#f78c6c' },
+    { tag: tags.number, color: '#ff5370' },
+    { tag: tags.definition(tags.variableName), color: '#82aaff' },
+    { tag: tags.string, color: '#c3e88d' },
+    { tag: tags.special(tags.string), color: '#f07178' },
+    { tag: tags.comment, color: '#7d8799' },
+    { tag: tags.variableName, color: '#f07178' },
+    { tag: tags.tagName, color: '#ff5370' },
+    { tag: tags.bracket, color: '#a2a1a4' },
+    { tag: tags.meta, color: '#ffcb6b' },
+    { tag: tags.attributeName, color: '#c792ea' },
+    { tag: tags.propertyName, color: '#c792ea' },
+    { tag: tags.className, color: '#decb6b' },
+    { tag: tags.invalid, color: '#ffffff' },
+  ],
+});
 
-/// The highlighting style for code in the Material Palenight theme.
-const materialPalenightHighlightStyle = HighlightStyle.define([
-  { tag: tags.keyword, color: '#c792ea' },
-  { tag: tags.operator, color: '#89ddff' },
-  { tag: tags.special(tags.variableName), color: '#eeffff' },
-  { tag: tags.typeName, color: '#f07178' },
-  { tag: tags.atom, color: '#f78c6c' },
-  { tag: tags.number, color: '#ff5370' },
-  { tag: tags.definition(tags.variableName), color: '#82aaff' },
-  { tag: tags.string, color: '#c3e88d' },
-  { tag: tags.special(tags.string), color: '#f07178' },
-  { tag: tags.comment, color: stone },
-  { tag: tags.variableName, color: '#f07178' },
-  { tag: tags.tagName, color: '#ff5370' },
-  { tag: tags.bracket, color: '#a2a1a4' },
-  { tag: tags.meta, color: '#ffcb6b' },
-  { tag: tags.attributeName, color: '#c792ea' },
-  { tag: tags.propertyName, color: '#c792ea' },
-  { tag: tags.className, color: '#decb6b' },
-  { tag: tags.invalid, color: invalid },
-]);
-
-/// Extension to enable the Material Palenight theme (both the editor theme and
-/// the highlight style).
-// : Extension
-const materialPalenight = [materialPalenightTheme, materialPalenightHighlightStyle];
+var style = '';
 
 const setFlash = StateEffect.define();
 const flashField = StateField.define({
@@ -212,22 +109,21 @@ const highlightField = StateField.define({
   },
   provide: (f) => EditorView.decorations.from(f)
 });
-function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount }) {
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(CodeMirror$1, {
-    onViewChange: onViewChanged,
-    style: {
-      display: "flex",
-      flexDirection: "column",
-      flex: "1 0 auto"
-    },
+function CodeMirror({ value, onChange, onViewChanged, onSelectionChange, options, editorDidMount }) {
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(_CodeMirror, {
     value,
-    onChange,
-    extensions: [
-      javascript(),
-      materialPalenight,
-      highlightField,
-      flashField
-    ]
+    onChange: (value2) => {
+      onChange(value2);
+    },
+    onCreateEditor: (view) => {
+      onViewChanged(view);
+    },
+    onUpdate: (viewUpdate) => {
+      if (viewUpdate.selectionSet && onSelectionChange) {
+        onSelectionChange(viewUpdate.state.selection);
+      }
+    },
+    extensions: [javascript(), strudelTheme, highlightField, flashField]
   }));
 }
 
@@ -530,15 +426,13 @@ function useHighlighting({ view, pattern, active }) {
 
 var tailwind = '';
 
-var style = '';
-
-const container = "_container_xpa19_1";
-const header = "_header_xpa19_5";
-const buttons = "_buttons_xpa19_9";
-const button = "_button_xpa19_9";
-const buttonDisabled = "_buttonDisabled_xpa19_17";
-const error = "_error_xpa19_21";
-const body = "_body_xpa19_25";
+const container = "_container_3i85k_1";
+const header = "_header_3i85k_5";
+const buttons = "_buttons_3i85k_9";
+const button = "_button_3i85k_9";
+const buttonDisabled = "_buttonDisabled_3i85k_17";
+const error = "_error_3i85k_21";
+const body = "_body_3i85k_25";
 var styles = {
 	container: container,
 	header: header,

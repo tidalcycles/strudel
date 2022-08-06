@@ -1,3 +1,14 @@
 .cm-editor {
   background-color: transparent !important;
+  height: 100%;
+  z-index: 11;
+  font-size: 16px;
+}
+
+.cm-theme-light {
+  width: 100%;
+}
+
+.cm-line > * {
+  background: #00000095;
 }
