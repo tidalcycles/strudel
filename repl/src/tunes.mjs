@@ -1019,3 +1019,14 @@ x=>x.add(7).color('steelblue')
 .stack(s("bd:1*2,~ sd:0,[~ hh:0]*2"))
 .out()
 .pianoroll({vertical:1})`;
+
+export const bossaRandom = `const chords = "<Am7 Am7 Dm7 E7>"
+const roots = chords.rootNotes(2)
+
+stack(
+  chords.voicings(['F4', 'A5']).struct(
+  \` x@2   ~ x ~ ~ ~ x |
+    x?  ~ ~ x@3   ~ x |
+    x?  ~ ~ x ~ x@3\`),
+  roots.struct("x [~ x?0.2] x [~ x?] | x!4 | x@2 ~ ~ ~ x x x").transpose("0 7")
+).slow(2).pianoroll().note().piano().out();`;
