@@ -10,6 +10,12 @@ import { addMiniLocations } from '@strudel.cycles/eval/shapeshifter.mjs';
 
 const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
 
+var _seedState = 0;
+
+function _nextSeed() {
+  return _seedState++;
+}
+
 const applyOptions = (parent) => (pat, i) => {
   const ast = parent.source_[i];
   const options = ast.options_;
@@ -21,6 +27,8 @@ const applyOptions = (parent) => (pat, i) => {
         return reify(pat).fast(speed);
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
+      case 'degradeBy':
+        return reify(pat)._degradeByWith(strudel.rand.early(Math.PI * _nextSeed()).segment(1), operator.arguments_.amount);
       // TODO: case 'fixed-step': "%"
     }
     console.warn(`operator "${operator.type_}" not implemented`);
@@ -81,6 +89,9 @@ export function patternifyAST(ast) {
       const alignment = ast.arguments_.alignment;
       if (alignment === 'v') {
         return stack(...children);
+      }
+      if (alignment === 'r') {
+        return strudel.chooseInWith(strudel.rand.early(Math.PI * _nextSeed()).segment(1), children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
       if (!weightedChildren && alignment === 't') {
