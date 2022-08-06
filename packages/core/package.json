@@ -5,7 +5,7 @@
   "main": "index.mjs",
   "type": "module",
   "scripts": {
-    "test": "mocha --colors"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "fraction.js": "^4.2.0"
   },
   "devDependencies": {
-    "mocha": "^9.2.2"
+    "vitest": "^0.21.0"
   },
   "gitHead": "0e26d4e741500f5bae35b023608f062a794905c2"
 }
