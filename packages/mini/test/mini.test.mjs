@@ -50,4 +50,9 @@ describe('mini', () => {
   it('supports euclidean rhythms', () => {
     assert.deepStrictEqual(minS('a(3, 8)'), ['a: 0 - 1/8', 'a: 3/8 - 1/2', 'a: 3/4 - 7/8']);
   });
+  it('supports the ? operator', () => {
+    assert.deepStrictEqual(
+      mini('a?').queryArc(0, 20).map(hap => hap.whole.begin),
+      mini('a').degradeBy(0.5).queryArc(0, 20).map(hap => hap.whole.begin));
+  });
 });
