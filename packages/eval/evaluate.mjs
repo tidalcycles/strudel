@@ -11,7 +11,6 @@ const { isPattern, Pattern } = strudel;
 
 export const extend = (...args) => {
   console.warn('@strudel.cycles/eval extend is deprecated, please use evalScope instead');
-  console.log('extend', args);
   Object.assign(globalThis, ...args);
 };
 
