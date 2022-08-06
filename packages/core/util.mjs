@@ -53,8 +53,8 @@ export const getPlayableNoteValue = (hap) => {
   // if value is number => interpret as midi number as long as its not marked as frequency
   if (typeof note === 'number' && context.type !== 'frequency') {
     note = fromMidi(hap.value);
-  } else if (typeof note === 'string' && !isNote(note)) {
-    throw new Error('not a note: ' + note);
+  } else if (typeof note !== 'string' || !isNote(note)) {
+    throw new Error('not a note: ' + JSON.stringify(note));
   }
   return note;
 };
