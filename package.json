@@ -4,7 +4,7 @@
   "private": true,
   "description": "Port of tidalcycles to javascript",
   "scripts": {
-    "test": "npm run test --workspaces --if-present && cd repl && npm run test",
+    "test": "vitest run && cd repl && npm run test",
     "bootstrap": "lerna bootstrap",
     "setup": "npm i && npm run bootstrap && cd repl && npm i && cd ../tutorial && npm i",
     "snapshot": "cd repl && npm run snapshot",
