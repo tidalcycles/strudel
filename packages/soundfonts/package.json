@@ -23,7 +23,8 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@strudel.cycles/core": "*",
-    "@strudel.cycles/webaudio": "^0.1.4"
+    "@strudel.cycles/webaudio": "^0.1.4",
+    "sfumato": "^0.1.2"
   },
   "devDependencies": {
     "node-fetch": "^3.2.6"
