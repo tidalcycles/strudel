@@ -1,7 +1,5 @@
 import { Pattern } from '@strudel.cycles/core';
-import { /* loadSoundfont, */ startPresetNote } from 'sfumato';
-
-// TODO: find way to cache loadSoundfont
+import { loadSoundfont as _loadSoundfont, startPresetNote } from 'sfumato';
 
 Pattern.prototype.soundfont = function (sf, n = 0) {
   return this.onTrigger((t, h, ct) => {
@@ -14,3 +12,13 @@ Pattern.prototype.soundfont = function (sf, n = 0) {
     stop(deadline + h.duration);
   });
 };
+
+const soundfontCache = new Map();
+export function loadSoundfont(url) {
+  if (soundfontCache.get(url)) {
+    return soundfontCache.get(url);
+  }
+  const sf = _loadSoundfont(url);
+  soundfontCache.set(url, sf);
+  return sf;
+}
