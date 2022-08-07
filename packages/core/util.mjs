@@ -50,6 +50,9 @@ export const mod = (n, m) => ((n % m) + m) % m;
 
 export const getPlayableNoteValue = (hap) => {
   let { value: note, context } = hap;
+  if (typeof note === 'object' && !Array.isArray(note)) {
+    note = note.note || note.n || note.value;
+  }
   // if value is number => interpret as midi number as long as its not marked as frequency
   if (typeof note === 'number' && context.type !== 'frequency') {
     note = fromMidi(hap.value);
