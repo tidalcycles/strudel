@@ -4,8 +4,7 @@
   "private": true,
   "description": "Port of tidalcycles to javascript",
   "scripts": {
-    "test": "vitest run --reporter verbose --isolate=false --threads=true --silent --version",
-    "test-isolated": "vitest run --reporter verbose --isolate=true --threads=true --silent --version",
+    "test": "vitest run --version",
     "test-ui": "vitest --ui",
     "bootstrap": "lerna bootstrap",
     "setup": "npm i && npm run bootstrap && cd repl && npm i && cd ../tutorial && npm i",
