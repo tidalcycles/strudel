@@ -4,7 +4,8 @@
   "private": true,
   "description": "Port of tidalcycles to javascript",
   "scripts": {
-    "test": "vitest run --reporter verbose --isolate=false --silent --version",
+    "test": "vitest run --reporter verbose --isolate=true --threads=true --silent --version",
+    "test-ui": "vitest --ui",
     "bootstrap": "lerna bootstrap",
     "setup": "npm i && npm run bootstrap && cd repl && npm i && cd ../tutorial && npm i",
     "snapshot": "cd repl && npm run snapshot",
@@ -37,6 +38,7 @@
   },
   "homepage": "https://strudel.tidalcycles.org",
   "devDependencies": {
+    "@vitest/ui": "^0.21.1",
     "events": "^3.3.0",
     "gh-pages": "^4.0.0",
     "happy-dom": "^6.0.4",
