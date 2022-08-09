@@ -38,6 +38,12 @@ Click on the package names to find out more about each one.
 
 There are many ways to contribute to this project! See [contribution guide](./CONTRIBUTING.md).
 
+<a href="https://github.com/tidalcycles/strudel/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=tidalcycles/strudel" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
+
 ## Community
 
 There is a #strudel channel on the TidalCycles discord: <https://discord.com/invite/HGEdXmRkzT>

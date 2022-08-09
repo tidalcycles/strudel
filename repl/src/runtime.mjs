@@ -123,7 +123,7 @@ const uiHelpersMocked = {
   backgroundImage: id,
 };
 
-prebake();
+prebake(true);
 
 // TODO: refactor to evalScope
 extend(
