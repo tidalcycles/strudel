@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { mini } from '../mini.mjs';
 import '@strudel.cycles/core/euclid.mjs';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('mini', () => {
   const minV = (v) => mini(v)._firstCycleValues;
@@ -51,21 +51,31 @@ describe('mini', () => {
     expect(minS('a(3, 8)')).toEqual(['a: 0 - 1/8', 'a: 3/8 - 1/2', 'a: 3/4 - 7/8']);
   });
   it('supports the ? operator', () => {
-    assert.deepStrictEqual(
-      mini('a?').queryArc(0, 20).map(hap => hap.whole.begin),
-      mini('a').degradeBy(0.5).queryArc(0, 20).map(hap => hap.whole.begin));
+    expect(
+      mini('a?')
+        .queryArc(0, 20)
+        .map((hap) => hap.whole.begin),
+    ).toEqual(
+      mini('a')
+        .degradeBy(0.5)
+        .queryArc(0, 20)
+        .map((hap) => hap.whole.begin),
+    );
   });
   // testing things that involve pseudo-randomness, so there's a probability we could fail by chance.
   // these next few tests work with the current PRNG, and are intended to succeed with p > 0.99 even if the PRNG changes
   //   (as long as the PRNG has a relatively-uniform distribution of values)
   it('supports degradeBy with default of 50%', () => {
     const haps = mini('a?').queryArc(0, 1000);
-    assert(459 <= haps.length && haps.length <= 541, 'Number of elements did not fall in 99% confidence interval for binomial with p=0.5');
+    expect(459 <= haps.length && haps.length <= 541).toBe(true);
+    // 'Number of elements did not fall in 99% confidence interval for binomial with p=0.5',
   });
   it('supports degradeBy with an argument', () => {
     const haps = mini('a?0.8').queryArc(0, 1000);
-    assert(haps.length > 0, 'Should have had at least one element when degradeBy was set at 0.8');
-    assert(haps.length < 230, 'Had too many cycles remaining after degradeBy 0.8');
+    expect(haps.length > 0).toBe(true);
+    // 'Should have had at least one element when degradeBy was set at 0.8');
+    expect(haps.length < 230).toBe(true);
+    // 'Had too many cycles remaining after degradeBy 0.8');
   });
   it('supports the random choice operator ("|") with nesting', () => {
     const numCycles = 900;
@@ -78,16 +88,20 @@ describe('mini', () => {
       return acc;
     }, {});
     const expected = {
-      a: numCycles / 3, b: numCycles / 6, c: numCycles / 6,
-      d: numCycles / 9, e: numCycles / 9, f: numCycles / 9
+      a: numCycles / 3,
+      b: numCycles / 6,
+      c: numCycles / 6,
+      d: numCycles / 9,
+      e: numCycles / 9,
+      f: numCycles / 9,
     };
     let chisq = -numCycles;
     for (let k in expected) {
-      chisq += observed[k] * observed[k] / expected[k];
+      chisq += (observed[k] * observed[k]) / expected[k];
     }
     // 15.086 is the chisq for 5 degrees of freedom at 99%, so for 99% of uniformly-distributed
     //  PRNG, this test should succeed
-    assert(chisq <= 15.086,
-      chisq + ' was expected to be less than 15.086 under chi-squared test');
+    expect(chisq <= 15.086).toBe(true);
+    // assert(chisq <= 15.086, chisq + ' was expected to be less than 15.086 under chi-squared test');
   });
 });
