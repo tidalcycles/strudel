@@ -4,7 +4,7 @@
   "private": true,
   "description": "Port of tidalcycles to javascript",
   "scripts": {
-    "test": "vitest run && cd repl && npm run test",
+    "test": "vitest run --reporter verbose -v --no-isolate",
     "bootstrap": "lerna bootstrap",
     "setup": "npm i && npm run bootstrap && cd repl && npm i && cd ../tutorial && npm i",
     "snapshot": "cd repl && npm run snapshot",
@@ -44,7 +44,6 @@
     "jsdoc-json": "^2.0.2",
     "jsdoc-to-markdown": "^7.1.1",
     "lerna": "^4.0.0",
-    "vitest": "^0.21.0",
-    "mocha": "^9.2.2"
+    "vitest": "^0.21.1"
   }
 }
