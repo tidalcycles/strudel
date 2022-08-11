@@ -5,35 +5,40 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { ClockWorker } from './clockworker.mjs';
-import { State, TimeSpan } from '@strudel.cycles/core';
 
 export class Scheduler {
   worker;
   pattern;
-  constructor({ audioContext, interval = 0.2, onEvent, latency = 0.2 }) {
-    this.worker = new ClockWorker(
-      audioContext,
-      (begin, end) => {
-        this.pattern.query(new State(new TimeSpan(begin + latency, end + latency))).forEach((e) => {
-          if (!e.part.begin.equals(e.whole.begin)) {
-            return;
-          }
-          if (e.context.onTrigger) {
-            // TODO: kill first param, as it's contained in e
-            e.context.onTrigger(e.whole.begin, e, audioContext.currentTime, 1 /* cps */);
-          }
-          if (onEvent) {
-            onEvent?.(e);
-          }
-        });
-      },
-      interval,
-    );
+  startedAt;
+  audioContext;
+  cps = 1;
+  constructor({ audioContext, interval = 0.1, onEvent, latency = 0.1 }) {
+    this.audioContext = audioContext;
+    this.worker = new ClockWorker((tick, interval) => {
+      const begin = tick * interval * this.cps;
+      const end = (tick + 1) * interval * this.cps;
+      const haps = this.pattern.queryArc(begin, end);
+      haps.forEach((e) => {
+        if (!e.part.begin.equals(e.whole.begin)) {
+          return;
+        }
+        if (e.context.onTrigger) {
+          this.lastEnd = end;
+          const ctxTime = e.whole.begin / this.cps + this.startedAt + latency;
+          e.context.onTrigger(ctxTime, e, this.audioContext.currentTime, this.cps);
+        }
+        if (onEvent) {
+          onEvent?.(e);
+        }
+      });
+    }, interval);
   }
   start() {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
+    this.audioContext.resume();
+    this.startedAt = this.audioContext.currentTime;
     this.worker.start();
   }
   stop() {
@@ -41,5 +46,8 @@ export class Scheduler {
   }
   setPattern(pat) {
     this.pattern = pat;
+  }
+  setCps(cps = 1) {
+    this.cps = cps;
   }
 }
