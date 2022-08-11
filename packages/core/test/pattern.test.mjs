@@ -41,7 +41,7 @@ import {
   tri2,
   id,
   ply,
-  rev
+  rev,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -439,16 +439,12 @@ describe('Pattern', function () {
   });
   describe('inside', () => {
     it('can rev inside a cycle', () => {
-      sameFirst(sequence('a', 'b', 'c', 'd').inside(2, rev),
-        sequence('b', 'a', 'd', 'c')
-      );
+      sameFirst(sequence('a', 'b', 'c', 'd').inside(2, rev), sequence('b', 'a', 'd', 'c'));
     });
   });
   describe('outside', () => {
     it('can rev outside a cycle', () => {
-      sameFirst(sequence('a', 'b', 'c', 'd')._slow(2).outside(2, rev),
-        sequence('d', 'c')
-      );
+      sameFirst(sequence('a', 'b', 'c', 'd')._slow(2).outside(2, rev), sequence('d', 'c'));
     });
   });
   describe('_filterValues()', function () {
@@ -896,6 +892,11 @@ describe('Pattern', function () {
         sequence(0, 1, 2, 3, 4, 5, 6, 7).linger(0.25).firstCycle(),
         sequence(0, 1, 0, 1, 0, 1, 0, 1).firstCycle(),
       );
+    });
+  });
+  describe('duration', () => {
+    it("Doesn't miss expanded events", () => {
+      assert.deepStrictEqual(sequence('a', silence).duration(1).queryArc(0.5, 1), sequence('a').queryArc(0.5, 1));
     });
   });
 });
