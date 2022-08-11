@@ -23,7 +23,6 @@ export class Scheduler {
           return;
         }
         if (e.context.onTrigger) {
-          this.lastEnd = end;
           const ctxTime = e.whole.begin / this.cps + this.startedAt + latency;
           e.context.onTrigger(ctxTime, e, this.audioContext.currentTime, this.cps);
         }
