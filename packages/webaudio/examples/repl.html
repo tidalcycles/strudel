@@ -13,11 +13,9 @@ Loading...</textarea
 >
 <script type="module">
   document.body.style = 'margin: 0';
-  // import * as strudel from '@strudel.cycles/core';
-  import * as strudel from '../../core/index.mjs';
-  import * as util from '../../core/util.mjs';
-  import '../../core/euclid.mjs';
-  // import { Scheduler, getAudioContext } from 'https://cdn.skypack.dev/@strudel.cycles/webaudio@0.0.4';
+  import * as strudel from '@strudel.cycles/core';
+  import * as util from '@strudel.cycles/core/util.mjs';
+  import '@strudel.cycles/core/euclid.mjs';
   import { Scheduler, getAudioContext } from '../index.mjs';
 
   const { cat, State, TimeSpan } = strudel;
