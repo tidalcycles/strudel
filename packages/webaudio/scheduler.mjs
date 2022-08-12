@@ -9,21 +9,22 @@ import { ClockWorker } from './clockworker.mjs';
 export class Scheduler {
   worker;
   pattern;
-  startedAt;
+  phase;
   audioContext;
   cps = 1;
   constructor({ audioContext, interval = 0.1, onEvent, latency = 0.1 }) {
     this.audioContext = audioContext;
     this.worker = new ClockWorker((tick, interval) => {
-      const begin = tick * interval * this.cps;
-      const end = (tick + 1) * interval * this.cps;
+      const begin = this.phase;
+      const end = this.phase + interval * this.cps;
+      this.phase = end;
       const haps = this.pattern.queryArc(begin, end);
       haps.forEach((e) => {
         if (!e.part.begin.equals(e.whole.begin)) {
           return;
         }
         if (e.context.onTrigger) {
-          const ctxTime = e.whole.begin / this.cps + this.startedAt + latency;
+          const ctxTime = (e.whole.begin - begin) / this.cps + this.audioContext.currentTime + latency;
           e.context.onTrigger(ctxTime, e, this.audioContext.currentTime, this.cps);
         }
         if (onEvent) {
@@ -37,7 +38,7 @@ export class Scheduler {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
     this.audioContext.resume();
-    this.startedAt = this.audioContext.currentTime;
+    this.phase = 0;
     this.worker.start();
   }
   stop() {
