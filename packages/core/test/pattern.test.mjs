@@ -896,7 +896,7 @@ describe('Pattern', function () {
   });
   describe('duration', () => {
     it("Doesn't miss expanded events", () => {
-      assert.deepStrictEqual(sequence('a', silence).duration(1).queryArc(0.5, 1), sequence('a').queryArc(0.5, 1));
+      assert.deepStrictEqual(sequence('a', silence)._duration(1).queryArc(0.5, 1), sequence('a').queryArc(0.5, 1));
     });
   });
 });
