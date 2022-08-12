@@ -20,6 +20,9 @@ export class Scheduler {
       this.phase = end;
       const haps = this.pattern.queryArc(begin, end);
       haps.forEach((e) => {
+        if (typeof e.value?.cps === 'number') {
+          this.setCps(e.value?.cps);
+        }
         if (!e.part.begin.equals(e.whole.begin)) {
           return;
         }
