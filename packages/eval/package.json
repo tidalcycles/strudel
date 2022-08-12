@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha --colors"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
