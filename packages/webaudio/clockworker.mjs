@@ -9,14 +9,12 @@ const stringifyFunction = (func) => '(' + func + ')();';
 const urlifyFunction = (func) => URL.createObjectURL(new Blob([stringifyFunction(func)], { type: 'text/javascript' }));
 const createWorker = (func) => new Worker(urlifyFunction(func));
 
-// this class is basically the tale of two clocks
+// this is just a setInterval with a counter, running in a worker
 export class ClockWorker {
   worker;
-  audioContext;
-  interval = 0.2; // query span
-  lastEnd = 0;
-  constructor(audioContext, callback, interval = this.interval) {
-    this.audioContext = audioContext;
+  interval = 0.1; // query span
+  tick = 0;
+  constructor(callback, interval = this.interval) {
     this.interval = interval;
     this.worker = createWorker(() => {
       // we cannot use closures here!
@@ -33,6 +31,7 @@ export class ClockWorker {
         if (!interval) {
           throw new Error('no interval set! call worker.postMessage({interval}) before starting.');
         }
+        postMessage('tick');
         timerID = setInterval(() => postMessage('tick'), interval * 1000);
       };
       self.onmessage = function (e) {
@@ -50,25 +49,23 @@ export class ClockWorker {
     });
     this.worker.postMessage({ interval });
     // const round = (n, d) => Math.round(n * d) / d;
-    const precision = 100;
     this.worker.onmessage = (e) => {
       if (e.data === 'tick') {
-        const begin = this.lastEnd || this.audioContext.currentTime;
-        const end = this.audioContext.currentTime + this.interval; // DONT reference begin here!
-        this.lastEnd = end;
         // callback with query span, using clock #2 (the audio clock)
-        callback(begin, end);
+        callback(this.tick++, this.interval);
       }
     };
   }
   start() {
-    console.log('start...');
-    this.audioContext.resume();
+    // console.log('start...');
     this.worker.postMessage('start');
   }
   stop() {
-    console.log('stop...');
+    // console.log('stop...');
     this.worker.postMessage('stop');
+    this.tick = 0;
+  }
+  setInterval(interval) {
+    this.worker.postMessage({ interval });
   }
 }
-
