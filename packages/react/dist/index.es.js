@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from 'react';
+import React, { useCallback, useState, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
 import _CodeMirror from '@uiw/react-codemirror';
 import { Decoration, EditorView } from '@codemirror/view';
 import { StateEffect, StateField } from '@codemirror/state';
@@ -89,17 +89,22 @@ const highlightField = StateField.define({
     try {
       for (let e of tr.effects) {
         if (e.is(setHighlights)) {
-          highlights = Decoration.set(e.value.flatMap((hap) => (hap.context.locations || []).map(({ start, end }) => {
-            const color = hap.context.color || "#FFCA28";
-            let from = tr.newDoc.line(start.line).from + start.column;
-            let to = tr.newDoc.line(end.line).from + end.column;
-            const l = tr.newDoc.length;
-            if (from > l || to > l) {
-              return;
-            }
-            const mark = Decoration.mark({ attributes: { style: `outline: 1.5px solid ${color};` } });
-            return mark.range(from, to);
-          })).filter(Boolean), true);
+          highlights = Decoration.set(
+            e.value.flatMap(
+              (hap) => (hap.context.locations || []).map(({ start, end }) => {
+                const color = hap.context.color || "#FFCA28";
+                let from = tr.newDoc.line(start.line).from + start.column;
+                let to = tr.newDoc.line(end.line).from + end.column;
+                const l = tr.newDoc.length;
+                if (from > l || to > l) {
+                  return;
+                }
+                const mark = Decoration.mark({ attributes: { style: `outline: 1.5px solid ${color};` } });
+                return mark.range(from, to);
+              })
+            ).filter(Boolean),
+            true
+          );
         }
       }
       return highlights;
@@ -109,21 +114,34 @@ const highlightField = StateField.define({
   },
   provide: (f) => EditorView.decorations.from(f)
 });
+const extensions = [javascript(), strudelTheme, highlightField, flashField];
 function CodeMirror({ value, onChange, onViewChanged, onSelectionChange, options, editorDidMount }) {
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(_CodeMirror, {
-    value,
-    onChange: (value2) => {
-      onChange(value2);
+  const handleOnChange = useCallback(
+    (value2) => {
+      onChange?.(value2);
     },
-    onCreateEditor: (view) => {
-      onViewChanged(view);
+    [onChange]
+  );
+  const handleOnCreateEditor = useCallback(
+    (view) => {
+      onViewChanged?.(view);
     },
-    onUpdate: (viewUpdate) => {
+    [onViewChanged]
+  );
+  const handleOnUpdate = useCallback(
+    (viewUpdate) => {
       if (viewUpdate.selectionSet && onSelectionChange) {
-        onSelectionChange(viewUpdate.state.selection);
+        onSelectionChange?.(viewUpdate.state.selection);
       }
     },
-    extensions: [javascript(), strudelTheme, highlightField, flashField]
+    [onSelectionChange]
+  );
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(_CodeMirror, {
+    value,
+    onChange: handleOnChange,
+    onCreateEditor: handleOnCreateEditor,
+    onUpdate: handleOnUpdate,
+    extensions
   }));
 }
 
@@ -300,7 +318,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
       },
       [pattern],
     ),
-    onSchedule: useCallback((_events, cycle) => logCycle(_events, cycle), []),
+    onSchedule: useCallback((_events, cycle) => logCycle(_events), []),
     ready: !!pattern && !!activeCode,
   });
 
@@ -405,6 +423,7 @@ function useHighlighting({ view, pattern, active }) {
             highlights = highlights.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
             highlights = highlights.concat(haps); // add potential new onsets
+            console.log('update...', view.state.doc.length);
             view.dispatch({ effects: setHighlights.of(highlights) }); // highlight all still active + new active haps
           } catch (err) {
             // console.log('error in updateHighlights', err);

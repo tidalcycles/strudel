@@ -5,6 +5,7 @@ import { StateField, StateEffect } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
 import strudelTheme from '../themes/strudel-theme';
 import './style.css';
+import { useCallback } from 'react';
 
 export const setFlash = StateEffect.define();
 const flashField = StateField.define({
@@ -78,23 +79,37 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
+const extensions = [javascript(), strudelTheme, highlightField, flashField];
+
 export default function CodeMirror({ value, onChange, onViewChanged, onSelectionChange, options, editorDidMount }) {
+  const handleOnChange = useCallback(
+    (value) => {
+      onChange?.(value);
+    },
+    [onChange],
+  );
+  const handleOnCreateEditor = useCallback(
+    (view) => {
+      onViewChanged?.(view);
+    },
+    [onViewChanged],
+  );
+  const handleOnUpdate = useCallback(
+    (viewUpdate) => {
+      if (viewUpdate.selectionSet && onSelectionChange) {
+        onSelectionChange?.(viewUpdate.state.selection);
+      }
+    },
+    [onSelectionChange],
+  );
   return (
     <>
       <_CodeMirror
         value={value}
-        onChange={(value) => {
-          onChange(value);
-        }}
-        onCreateEditor={(view) => {
-          onViewChanged(view);
-        }}
-        onUpdate={(viewUpdate) => {
-          if (viewUpdate.selectionSet && onSelectionChange) {
-            onSelectionChange(viewUpdate.state.selection);
-          }
-        }}
-        extensions={[javascript(), strudelTheme, highlightField, flashField]}
+        onChange={handleOnChange}
+        onCreateEditor={handleOnCreateEditor}
+        onUpdate={handleOnUpdate}
+        extensions={extensions}
       />
     </>
   );
