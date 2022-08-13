@@ -4,7 +4,7 @@
   "description": "Xenharmonic API for strudel",
   "main": "index.mjs",
   "scripts": {
-    "test": "mocha --colors"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",

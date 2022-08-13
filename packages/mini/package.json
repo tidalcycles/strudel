@@ -5,7 +5,7 @@
   "main": "index.mjs",
   "type": "module",
   "scripts": {
-    "test": "mocha --colors",
+    "test": "vitest run",
     "build:parser": "peggy -o krill-parser.js --format es ./krill.pegjs"
   },
   "repository": {
