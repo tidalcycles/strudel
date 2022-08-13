@@ -5,11 +5,11 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import Fraction, { gcd } from '../fraction.mjs';
-import { strict as assert } from 'assert';
+import { describe, it, expect } from 'vitest';
 
 describe('gcd', () => {
   it('should work', () => {
     const F = Fraction._original;
-    assert.equal(gcd(F(1 / 6), F(1 / 4)).toFraction(), '1/12');
+    expect(gcd(F(1 / 6), F(1 / 4)).toFraction()).toEqual('1/12');
   });
 });

@@ -125,7 +125,8 @@ const splitSN = (s, n) => {
 };
 
 Pattern.prototype.out = function () {
-  return this.onTrigger(async (t, hap, ct) => {
+  return this.onTrigger(async (t, hap, ct, cps) => {
+    const hapDuration = hap.duration / cps;
     try {
       const ac = getAudioContext();
       // calculate correct time (tone.js workaround)
@@ -175,7 +176,7 @@ Pattern.prototype.out = function () {
           freq = fromMidi(n); // + 48);
         }
         // make oscillator
-        const o = getOscillator({ t, s, freq, duration: hap.duration, release });
+        const o = getOscillator({ t, s, freq, duration: hapDuration, release });
         chain.push(o);
         // level down oscillators as they are really loud compared to samples i've tested
         const g = ac.createGain();
@@ -183,7 +184,7 @@ Pattern.prototype.out = function () {
         chain.push(g);
         // TODO: make adsr work with samples without pops
         // envelope
-        const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hap.duration);
+        const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hapDuration);
         chain.push(adsr);
       } else {
         // load sample
@@ -221,7 +222,7 @@ Pattern.prototype.out = function () {
         }
         bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
         // TODO: nudge, unit, cut, loop
-        let duration = soundfont || clip ? hap.duration : bufferSource.buffer.duration;
+        let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration;
         // let duration = bufferSource.buffer.duration;
         const offset = begin * duration;
         duration = ((end - begin) * duration) / Math.abs(speed);
