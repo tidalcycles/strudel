@@ -5,6 +5,7 @@ import { StateField, StateEffect } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
 import strudelTheme from '../themes/strudel-theme';
 import './style.css';
+import { useCallback } from 'react';
 
 export const setFlash = StateEffect.define();
 const flashField = StateField.define({
@@ -48,9 +49,9 @@ const highlightField = StateField.define({
     try {
       for (let e of tr.effects) {
         if (e.is(setHighlights)) {
-          highlights = Decoration.set(
+          const marks =
             e.value
-              .flatMap((hap) =>
+              .map((hap) =>
                 (hap.context.locations || []).map(({ start, end }) => {
                   const color = hap.context.color || '#FFCA28';
                   let from = tr.newDoc.line(start.line).from + start.column;
@@ -64,37 +65,51 @@ const highlightField = StateField.define({
                   return mark.range(from, to);
                 }),
               )
-              .filter(Boolean),
-            true,
-          );
+              .flat()
+              .filter(Boolean) || [];
+          highlights = Decoration.set(marks, true);
         }
       }
       return highlights;
     } catch (err) {
       // console.warn('highlighting error', err);
-      return highlights;
+      return Decoration.set([]);
     }
   },
   provide: (f) => EditorView.decorations.from(f),
 });
 
+const extensions = [javascript(), strudelTheme, highlightField, flashField];
+
 export default function CodeMirror({ value, onChange, onViewChanged, onSelectionChange, options, editorDidMount }) {
+  const handleOnChange = useCallback(
+    (value) => {
+      onChange?.(value);
+    },
+    [onChange],
+  );
+  const handleOnCreateEditor = useCallback(
+    (view) => {
+      onViewChanged?.(view);
+    },
+    [onViewChanged],
+  );
+  const handleOnUpdate = useCallback(
+    (viewUpdate) => {
+      if (viewUpdate.selectionSet && onSelectionChange) {
+        onSelectionChange?.(viewUpdate.state.selection);
+      }
+    },
+    [onSelectionChange],
+  );
   return (
     <>
       <_CodeMirror
         value={value}
-        onChange={(value) => {
-          onChange(value);
-        }}
-        onCreateEditor={(view) => {
-          onViewChanged(view);
-        }}
-        onUpdate={(viewUpdate) => {
-          if (viewUpdate.selectionSet && onSelectionChange) {
-            onSelectionChange(viewUpdate.state.selection);
-          }
-        }}
-        extensions={[javascript(), strudelTheme, highlightField, flashField]}
+        onChange={handleOnChange}
+        onCreateEditor={handleOnCreateEditor}
+        onUpdate={handleOnUpdate}
+        extensions={extensions}
       />
     </>
   );
