@@ -219,12 +219,12 @@ function App() {
                 className="hover:bg-gray-300 p-2"
                 onClick={async () => {
                   const _code = getRandomTune();
-                  console.log('tune', _code); // uncomment this to debug when random code fails
+                  // console.log('tune', _code); // uncomment this to debug when random code fails
                   setCode(_code);
                   cleanupDraw();
                   cleanupUi();
                   resetLoadedSamples();
-                  prebake();
+                  await prebake(); // declare default samples
                   const parsed = await evaluate(_code);
                   setPattern(parsed.pattern);
                   setActiveCode(_code);

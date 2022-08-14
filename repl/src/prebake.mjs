@@ -1,7 +1,7 @@
 import { Pattern, toMidi } from '@strudel.cycles/core';
 import { samples } from '@strudel.cycles/webaudio';
 
-export function prebake(isMock = false) {
+export async function prebake(isMock = false) {
   samples(
     {
       piano: {
@@ -42,7 +42,7 @@ export function prebake(isMock = false) {
     './piano/',
   );
   if (!isMock) {
-    fetch('EmuSP12.json')
+    await fetch('EmuSP12.json')
       .then((res) => res.json())
       .then((json) => samples(json, './EmuSP12/'));
   }
