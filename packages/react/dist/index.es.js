@@ -89,27 +89,25 @@ const highlightField = StateField.define({
     try {
       for (let e of tr.effects) {
         if (e.is(setHighlights)) {
-          highlights = Decoration.set(
-            e.value.flatMap(
-              (hap) => (hap.context.locations || []).map(({ start, end }) => {
-                const color = hap.context.color || "#FFCA28";
-                let from = tr.newDoc.line(start.line).from + start.column;
-                let to = tr.newDoc.line(end.line).from + end.column;
-                const l = tr.newDoc.length;
-                if (from > l || to > l) {
-                  return;
-                }
-                const mark = Decoration.mark({ attributes: { style: `outline: 1.5px solid ${color};` } });
-                return mark.range(from, to);
-              })
-            ).filter(Boolean),
-            true
-          );
+          const marks = e.value.map(
+            (hap) => (hap.context.locations || []).map(({ start, end }) => {
+              const color = hap.context.color || "#FFCA28";
+              let from = tr.newDoc.line(start.line).from + start.column;
+              let to = tr.newDoc.line(end.line).from + end.column;
+              const l = tr.newDoc.length;
+              if (from > l || to > l) {
+                return;
+              }
+              const mark = Decoration.mark({ attributes: { style: `outline: 1.5px solid ${color};` } });
+              return mark.range(from, to);
+            })
+          ).flat().filter(Boolean) || [];
+          highlights = Decoration.set(marks, true);
         }
       }
       return highlights;
     } catch (err) {
-      return highlights;
+      return Decoration.set([]);
     }
   },
   provide: (f) => EditorView.decorations.from(f)
@@ -423,7 +421,6 @@ function useHighlighting({ view, pattern, active }) {
             highlights = highlights.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
             highlights = highlights.concat(haps); // add potential new onsets
-            console.log('update...', view.state.doc.length);
             view.dispatch({ effects: setHighlights.of(highlights) }); // highlight all still active + new active haps
           } catch (err) {
             // console.log('error in updateHighlights', err);
