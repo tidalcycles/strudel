@@ -52,6 +52,11 @@ export class TimeSpan {
     return new TimeSpan(func_time(this.begin), func_time(this.end));
   }
 
+  withBegin(func_time) {
+    // Applies given function to the end time of the timespan"""
+    return new TimeSpan(func_time(this.begin), this.end);
+  }
+
   withEnd(func_time) {
     // Applies given function to the end time of the timespan"""
     return new TimeSpan(this.begin, func_time(this.end));
