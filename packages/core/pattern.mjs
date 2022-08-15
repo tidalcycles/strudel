@@ -1033,19 +1033,17 @@ export class Pattern {
       const newHaps = [];
       for (const hap of haps) {
         // Return continuous haps as-is, as they don't have durations
-        console.log("hap:")
-        console.log(hap.part)
-        console.log(state.span)
         if (hap.whole == undefined) {
           newHaps.push(hap);
         }
-
-        const end = hap.wholeOrPart().begin.add(value).min(state.span.end);
-        // Drop events that aren't within the query (the second term is there to include
-        // zero-width events at the start of the query)
-        if (end.gt(state.span.begin) || hap.part.begin.eq(state.span.begin)) {          const whole = hap.whole ? new TimeSpan(hap.whole.begin, end) : undefined;
-          const part = new TimeSpan(hap.part.begin.max(state.span.begin), end);
-          newHaps.push(new Hap(whole, part, hap.value));
+        else {
+          const end = hap.wholeOrPart().begin.add(value).min(state.span.end);
+          // Drop events that aren't within the query (the second term is there to include
+          // zero-width events at the start of the query)
+          if (end.gt(state.span.begin) || hap.part.begin.eq(state.span.begin)) {          const whole = hap.whole ? new TimeSpan(hap.whole.begin, end) : undefined;
+            const part = new TimeSpan(hap.part.begin.max(state.span.begin), end);
+            newHaps.push(new Hap(whole, part, hap.value));
+          }
         }
       }
       return newHaps;
