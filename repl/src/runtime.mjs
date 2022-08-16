@@ -4,7 +4,7 @@
 
 // import * as tunes from './tunes.mjs';
 import { evaluate } from '@strudel.cycles/eval';
-import { extend } from '@strudel.cycles/eval';
+import { evalScope } from '@strudel.cycles/eval';
 import * as strudel from '@strudel.cycles/core';
 import * as webaudio from '@strudel.cycles/webaudio';
 import controls from '@strudel.cycles/core/controls.mjs';
@@ -126,7 +126,7 @@ const uiHelpersMocked = {
 prebake(true);
 
 // TODO: refactor to evalScope
-extend(
+evalScope(
   // Tone,
   strudel,
   strudel.Pattern.prototype.bootstrap(),

@@ -1,11 +1,11 @@
 {
   "name": "@strudel.cycles/mini",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Mini notation for strudel",
   "main": "index.mjs",
   "type": "module",
   "scripts": {
-    "test": "mocha --colors",
+    "test": "vitest run",
     "build:parser": "peggy -o krill-parser.js --format es ./krill.pegjs"
   },
   "repository": {
@@ -26,9 +26,9 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.1.2",
-    "@strudel.cycles/eval": "^0.1.3",
-    "@strudel.cycles/tone": "^0.1.3"
+    "@strudel.cycles/core": "^0.2.0",
+    "@strudel.cycles/eval": "^0.2.0",
+    "@strudel.cycles/tone": "^0.2.0"
   },
   "devDependencies": {
     "peggy": "^2.0.1"

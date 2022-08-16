@@ -12,7 +12,7 @@ To get in touch with the contributors, either
 
 ## Ask a Question
 
-If you have any questions about strudel, make sure you've read the 
+If you have any questions about strudel, make sure you've read the
 [tutorial](https://strudel.tidalcycles.org/tutorial/) to find out if it answers your question.
 If not, use one of the Communication Channels above!
 
@@ -31,9 +31,8 @@ Use one of the Communication Channels listed above.
 
 ## Improve the Tutorial
 
-If you find some weak spots in the [tutorial](https://strudel.tidalcycles.org/), 
+If you find some weak spots in the [tutorial](https://strudel.tidalcycles.org/),
 you are welcome to improve them by editing [this file](https://github.com/tidalcycles/strudel/blob/main/tutorial/tutorial.mdx).
-
 
 This will even work without setting up a development environment, only a github account is required.
 
@@ -52,11 +51,11 @@ Please check that it has not been reported before.
 To fix a bug that has been reported,
 
 1. check that nobody else is already fixing it and respond to the issue to let people know you're on it
-3. fork the repository
-4. make sure you've setup the project (see below)
-5. hopefully fix the bug
-6. make sure the tests pass
-7. send a pull request
+2. fork the repository
+3. make sure you've setup the project (see below)
+4. hopefully fix the bug
+5. make sure the tests pass
+6. send a pull request
 
 ## Write Tests
 
@@ -80,7 +79,7 @@ cd repl && npm i # install repl dependencies
 npm run start # start repl
 ```
 
-Those commands might look slightly different for your OS. 
+Those commands might look slightly different for your OS.
 Please report any problems you've had with the setup instructions!
 
 ## Code Style
@@ -97,7 +96,7 @@ If you use VSCode, you can
 
 The project is split into multiple [packages](https://github.com/tidalcycles/strudel/tree/main/packages) with independent versioning.
 When you run `npm i` on the root folder, [npm workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces) will symlink all packages
-in the `node_modules` folder. This will allow any js file to import `@strudel.cycles/<package-name>` to get the local version, 
+in the `node_modules` folder. This will allow any js file to import `@strudel.cycles/<package-name>` to get the local version,
 which allows developing multiple packages at the same time
 
 ## Package Publishing
@@ -105,7 +104,16 @@ which allows developing multiple packages at the same time
 To publish all packages that have been changed since the last release, run:
 
 ```sh
+npm login
 npx lerna publish
+```
+
+### New Packages
+
+To add a new package, you have to publish it manually the first time, using:
+
+```sh
+cd packages/<package-name> && npm publish --access public
 ```
 
 ## Have Fun

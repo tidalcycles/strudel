@@ -1,6 +1,6 @@
 import { getFontBufferSource } from './fontloader.mjs';
 import * as soundfontList from './list.mjs';
+import { startPresetNote } from 'sfumato';
+import { loadSoundfont } from './sfumato.mjs';
 
-globalThis.getFontBufferSource = getFontBufferSource;
-globalThis.soundfontList = soundfontList;
-globalThis.soundfontList = soundfontList;
+export { loadSoundfont, startPresetNote, getFontBufferSource, soundfontList };
