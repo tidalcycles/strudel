@@ -1024,18 +1024,19 @@ export class Pattern {
   }
 
   // sets absolute duration of haps
-  _duration(value) {
+  /*   _duration(value) {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
   }
 
   // sets hap relative duration of haps
   _legato(value) {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
-  }
+  } 
 
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
+  */
 
   // move this to controls? (speed and unit are controls)
   _loopAt(factor, cps = 1) {
@@ -1171,18 +1172,15 @@ Pattern.prototype.patternified = [
   'chop',
   'color',
   'cpm',
-  'duration',
   'early',
   'fast',
   'jux',
   'late',
-  'legato',
   'linger',
   'ply',
   'segment',
   'striate',
   'slow',
-  'velocity',
 ];
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = {

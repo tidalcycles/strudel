@@ -124,3 +124,10 @@ export function curry(func, overload) {
   }
   return fn;
 }
+
+export function objectify(value) {
+  if (typeof value === 'object' && !Array.isArray(value)) {
+    return value; // do nothing if its already an object
+  }
+  return { value };
+}

@@ -4,10 +4,8 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { isNote } from 'tone';
 import _WebMidi from 'webmidi';
-import { Pattern, isPattern } from '@strudel.cycles/core';
-import { Tone } from '@strudel.cycles/tone';
+import { Pattern, isPattern, isNote, getPlayableNoteValue, objectify } from '@strudel.cycles/core';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const WebMidi = _WebMidi;
@@ -39,46 +37,49 @@ Pattern.prototype.midi = function (output, channel = 1) {
       }')`,
     );
   }
-  return this._withHap((hap) => {
-    // const onTrigger = (time: number, hap: any) => {
-    const onTrigger = (time, hap) => {
-      let note = hap.value;
-      const velocity = hap.context?.velocity ?? 0.9;
-      if (!isNote(note)) {
-        throw new Error('not a note: ' + note);
-      }
-      if (!WebMidi.enabled) {
-        throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
-      }
-      if (!WebMidi.outputs.length) {
-        throw new Error(`🔌 No MIDI devices found. Connect a device or enable IAC Driver.`);
-      }
-      let device;
-      if (typeof output === 'number') {
-        device = WebMidi.outputs[output];
-      } else if (typeof output === 'string') {
-        device = outputByName(output);
-      } else {
-        device = WebMidi.outputs[0];
-      }
-      if (!device) {
-        throw new Error(
-          `🔌 MIDI device '${output ? output : ''}' not found. Use one of ${WebMidi.outputs
-            .map((o) => `'${o.name}'`)
-            .join(' | ')}`,
-        );
-      }
-      // console.log('midi', value, output);
-      const timingOffset = WebMidi.time - Tone.getContext().currentTime * 1000;
-      time = time * 1000 + timingOffset;
-      // const inMs = '+' + (time - Tone.getContext().currentTime) * 1000;
-      // await enableWebMidi()
+  return this.onTrigger((time, hap, currentTime) => {
+    let note = getPlayableNoteValue(hap);
+    const { velocity, nrpnn, nrpv, ccn, ccv, legato, duration: durationValue } = objectify(hap.value);
+    if (!isNote(note)) {
+      throw new Error('not a note: ' + note);
+    }
+    if (!WebMidi.enabled) {
+      throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
+    }
+    if (!WebMidi.outputs.length) {
+      throw new Error(`🔌 No MIDI devices found. Connect a device or enable IAC Driver.`);
+    }
+    let device;
+    if (typeof output === 'number') {
+      device = WebMidi.outputs[output];
+    } else if (typeof output === 'string') {
+      device = outputByName(output);
+    } else {
+      device = WebMidi.outputs[0];
+    }
+    if (!device) {
+      throw new Error(
+        `🔌 MIDI device '${output ? output : ''}' not found. Use one of ${WebMidi.outputs
+          .map((o) => `'${o.name}'`)
+          .join(' | ')}`,
+      );
+    }
+    // console.log('midi', value, output);
+    const deadline = (time - currentTime) * 1000;
+    time = WebMidi.time + deadline;
+    /* const timingOffset = WebMidi.time - currentTime * 1000;
+    time = time * 1000 + timingOffset; */
+    const duration = (durationValue ?? hap.duration.valueOf()) * (legato ?? 1) * 1000 - 5;
+
+    if (note) {
       device.playNote(note, channel, {
         time,
-        duration: hap.duration.valueOf() * 1000 - 5,
+        duration,
         velocity,
       });
-    };
-    return hap.setContext({ ...hap.context, onTrigger });
+    }
+    if (ccn && ccv) {
+      device.sendControlChange(ccn, ccv, channel, { time });
+    }
   });
 };
