@@ -30,7 +30,7 @@ const outputByName = (name) => WebMidi.getOutputByName(name);
 
 // Pattern.prototype.midi = function (output: string | number, channel = 1) {
 Pattern.prototype.midi = function (output, channel = 1) {
-  if (isPattern(output?.constructor?.name)) {
+  if (output?.constructor?.name && isPattern(output?.constructor?.name)) {
     throw new Error(
       `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
         WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
@@ -38,11 +38,13 @@ Pattern.prototype.midi = function (output, channel = 1) {
     );
   }
   return this.onTrigger((time, hap, currentTime) => {
-    let note = getPlayableNoteValue(hap);
-    const { velocity, nrpnn, nrpv, ccn, ccv, legato, duration: durationValue } = objectify(hap.value);
-    if (!isNote(note)) {
-      throw new Error('not a note: ' + note);
+    let note;
+    try {
+      note = getPlayableNoteValue(hap);
+    } catch (err) {
+      // dont care if no note is found as we can still send cvs
     }
+    const { velocity, nrpnn, nrpv, ccn, ccv, legato, duration: durationValue } = objectify(hap.value);
     if (!WebMidi.enabled) {
       throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
     }
