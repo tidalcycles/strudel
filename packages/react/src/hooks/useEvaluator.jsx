@@ -1,14 +1,20 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
+import { evaluate as _evaluate } from '@strudel.cycles/eval';
 
-function useEvaluator(code, evalOnMount = true) {
+function useEvaluator({ code, evalOnMount = true }) {
   const [error, setError] = useState();
   const [activeCode, setActiveCode] = useState(code);
   const [pattern, setPattern] = useState();
   const isDirty = code !== activeCode;
-  const evaluate = useCallback(() => {
+
+  const evaluate = useCallback(async () => {
+    if (!code) {
+      console.log('no code..');
+      return;
+    }
     try {
-      // TODO: use @strudel.cycles/eval or let user inject custom eval function
-      const _pattern = eval(code);
+      // TODO: let user inject custom eval function?
+      const { pattern: _pattern } = await _evaluate(code);
       setActiveCode(activeCode);
       setPattern(_pattern);
       setError();
@@ -20,9 +26,9 @@ function useEvaluator(code, evalOnMount = true) {
   const inited = useRef();
   useEffect(() => {
     if (!inited.current && evalOnMount) {
+      inited.current = true;
       evaluate();
     }
-    inited.current = true;
   }, [evaluate, evalOnMount]);
   return { error, evaluate, activeCode, pattern, isDirty };
 }
