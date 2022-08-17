@@ -11,24 +11,29 @@ export class Scheduler {
   pattern;
   phase;
   cps = 1;
-  constructor({ interval = 0.1, onTrigger, latency = 0.1 }) {
+  constructor({ interval = 0.1, onTrigger, onError, latency = 0.1 }) {
     this.worker = new ClockWorker((_, interval) => {
-      const begin = this.phase;
-      const end = this.phase + interval * this.cps;
-      this.phase = end;
-      const haps = this.pattern.queryArc(begin, end);
-      haps.forEach((hap) => {
-        if (typeof hap.value?.cps === 'number') {
-          this.setCps(hap.value?.cps);
-        }
-        if (!hap.part.begin.equals(hap.whole.begin)) {
-          return;
-        }
-        const deadline = (hap.whole.begin - begin) / this.cps + latency;
-        // TODO: use legato / duration of objectified value
-        const duration = hap.duration / this.cps;
-        onTrigger?.(hap, deadline, duration);
-      });
+      try {
+        const begin = this.phase;
+        const end = this.phase + interval * this.cps;
+        this.phase = end;
+        const haps = this.pattern.queryArc(begin, end);
+        haps.forEach((hap) => {
+          if (typeof hap.value?.cps === 'number') {
+            this.setCps(hap.value?.cps);
+          }
+          if (!hap.part.begin.equals(hap.whole.begin)) {
+            return;
+          }
+          const deadline = (hap.whole.begin - begin) / this.cps + latency;
+          // TODO: use legato / duration of objectified value
+          const duration = hap.duration / this.cps;
+          onTrigger?.(hap, deadline, duration);
+        });
+      } catch (err) {
+        console.warn('scheduler error', err);
+        onError?.(err);
+      }
     }, interval);
   }
   start() {
