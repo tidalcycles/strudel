@@ -45,16 +45,10 @@ Loading...</textarea
     },
   });
 
-  let initialCode = `sequence(1,2).mul(55/2) // frequencies
-  .mul(slowcat(1,2))
-  .mul(slowcat(1,3/2,4/3,5/3).slow(8))
-  .fast(3)
-  .freq()
-  .velocity(.5)
-  .s('sawtooth')
-  .cutoff(800)
-  .out()
-  `;
+  let initialCode = `stack('c4','e4',cat('g4','a4','b4','a4'))
+.add(cat(0,1,2,3,4,3,2,1).slow(8))
+.fast(2)
+.cps(tri.range(1,8).slow(32))`;
 
   try {
     const base64 = decodeURIComponent(window.location.href.split('#')[1]);
@@ -83,3 +77,14 @@ Loading...</textarea
   document.getElementById('slower').addEventListener('click', () => scheduler.setCps(scheduler.cps - 0.1));
   document.getElementById('faster').addEventListener('click', () => scheduler.setCps(scheduler.cps + 0.1));
 </script>
+<!--
+  sequence(1,2).mul(55/2) // frequencies
+  .mul(slowcat(1,2))
+  .mul(slowcat(1,3/2,4/3,5/3).slow(8))
+  .fast(3)
+  .freq()
+  .velocity(.5)
+  .s('sawtooth')
+  .cutoff(800)
+  .out()
+-->
