@@ -124,153 +124,156 @@ const splitSN = (s, n) => {
   return [s2, n2];
 };
 
-Pattern.prototype.out = function () {
-  return this.onTrigger(async (t, hap, ct, cps) => {
-    const hapDuration = hap.duration / cps;
-    try {
-      const ac = getAudioContext();
-      // calculate correct time (tone.js workaround)
-      t = ac.currentTime + t - ct;
-      // destructure value
-      let {
-        freq,
-        s,
-        sf,
-        clip = 0, // if 1, samples will be cut off when the hap ends
-        n = 0,
-        note,
-        gain = 1,
-        cutoff,
-        resonance = 1,
-        hcutoff,
-        hresonance = 1,
-        bandf,
-        bandq = 1,
-        pan,
-        attack = 0.001,
-        decay = 0.05,
-        sustain = 0.5,
-        release = 0.001,
-        speed = 1, // sample playback speed
-        begin = 0,
-        end = 1,
-      } = hap.value;
-      const { velocity = 1 } = hap.context;
-      gain *= velocity; // legacy fix for velocity
-      // the chain will hold all audio nodes that connect to each other
-      const chain = [];
-      if (typeof s === 'string') {
-        [s, n] = splitSN(s, n);
-      }
-      if (typeof note === 'string') {
-        [note, n] = splitSN(note, n);
-      }
-      if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
-        // with synths, n and note are the same thing
-        n = note || n;
-        if (typeof n === 'string') {
-          n = toMidi(n); // e.g. c3 => 48
-        }
-        // get frequency
-        if (!freq && typeof n === 'number') {
-          freq = fromMidi(n); // + 48);
-        }
-        // make oscillator
-        const o = getOscillator({ t, s, freq, duration: hapDuration, release });
-        chain.push(o);
-        // level down oscillators as they are really loud compared to samples i've tested
-        const g = ac.createGain();
-        g.gain.value = 0.3;
-        chain.push(g);
-        // TODO: make adsr work with samples without pops
-        // envelope
-        const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hapDuration);
-        chain.push(adsr);
-      } else {
-        // load sample
-        if (speed === 0) {
-          // no playback
-          return;
-        }
-        if (!s) {
-          console.warn('no sample specified');
-          return;
-        }
-        const soundfont = getSoundfontKey(s);
-        let bufferSource;
-
-        try {
-          if (soundfont) {
-            // is soundfont
-            bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac);
-          } else {
-            // is sample from loaded samples(..)
-            bufferSource = await getSampleBufferSource(s, n, note);
-          }
-        } catch (err) {
-          console.warn(err);
-          return;
-        }
-        // asny stuff above took too long?
-        if (ac.currentTime > t) {
-          console.warn('sample still loading:', s, n);
-          return;
-        }
-        if (!bufferSource) {
-          console.warn('no buffer source');
-          return;
-        }
-        bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
-        // TODO: nudge, unit, cut, loop
-        let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration;
-        // let duration = bufferSource.buffer.duration;
-        const offset = begin * duration;
-        duration = ((end - begin) * duration) / Math.abs(speed);
-        if (soundfont || clip) {
-          bufferSource.start(t, offset); // duration does not work here for some reason
-        } else {
-          bufferSource.start(t, offset, duration);
-        }
-        chain.push(bufferSource);
-        if (soundfont || clip) {
-          const env = ac.createGain();
-          const releaseLength = 0.1;
-          env.gain.value = 0.6;
-          env.gain.setValueAtTime(env.gain.value, t + duration);
-          env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
-          // env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
-          chain.push(env);
-          bufferSource.stop(t + duration + releaseLength);
-        } else {
-          bufferSource.stop(t + duration);
-        }
-      }
-      // master out
-      const master = ac.createGain();
-      master.gain.value = gain;
-      chain.push(master);
-
-      // filters
-      cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
-      hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
-      bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
-      // TODO vowel
-      // TODO delay / delaytime / delayfeedback
-      // panning
-      if (pan !== undefined) {
-        const panner = ac.createStereoPanner();
-        panner.pan.value = 2 * pan - 1;
-        chain.push(panner);
-      }
-      // master out
-      /* const master = ac.createGain();
-    master.gain.value = 0.8 * gain;
-    chain.push(master); */
-      chain.push(ac.destination);
-      // connect chain elements together
-      chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
-    } catch (e) {
-      console.warn('.out error:', e);
+// export const webaudioOutput = async (t, hap, ct, cps) => {
+export const webaudioOutput = async (hap, deadline, hapDuration) => {
+  try {
+    const ac = getAudioContext();
+    // calculate correct time (tone.js workaround)
+    const t = ac.currentTime + deadline;
+    // destructure value
+    let {
+      freq,
+      s,
+      sf,
+      clip = 0, // if 1, samples will be cut off when the hap ends
+      n = 0,
+      note,
+      gain = 1,
+      cutoff,
+      resonance = 1,
+      hcutoff,
+      hresonance = 1,
+      bandf,
+      bandq = 1,
+      pan,
+      attack = 0.001,
+      decay = 0.05,
+      sustain = 0.5,
+      release = 0.001,
+      speed = 1, // sample playback speed
+      begin = 0,
+      end = 1,
+    } = hap.value;
+    const { velocity = 1 } = hap.context;
+    gain *= velocity; // legacy fix for velocity
+    // the chain will hold all audio nodes that connect to each other
+    const chain = [];
+    if (typeof s === 'string') {
+      [s, n] = splitSN(s, n);
     }
-  });
+    if (typeof note === 'string') {
+      [note, n] = splitSN(note, n);
+    }
+    if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
+      // with synths, n and note are the same thing
+      n = note || n;
+      if (typeof n === 'string') {
+        n = toMidi(n); // e.g. c3 => 48
+      }
+      // get frequency
+      if (!freq && typeof n === 'number') {
+        freq = fromMidi(n); // + 48);
+      }
+      // make oscillator
+      const o = getOscillator({ t, s, freq, duration: hapDuration, release });
+      chain.push(o);
+      // level down oscillators as they are really loud compared to samples i've tested
+      const g = ac.createGain();
+      g.gain.value = 0.3;
+      chain.push(g);
+      // TODO: make adsr work with samples without pops
+      // envelope
+      const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hapDuration);
+      chain.push(adsr);
+    } else {
+      // load sample
+      if (speed === 0) {
+        // no playback
+        return;
+      }
+      if (!s) {
+        console.warn('no sample specified');
+        return;
+      }
+      const soundfont = getSoundfontKey(s);
+      let bufferSource;
+
+      try {
+        if (soundfont) {
+          // is soundfont
+          bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac);
+        } else {
+          // is sample from loaded samples(..)
+          bufferSource = await getSampleBufferSource(s, n, note);
+        }
+      } catch (err) {
+        console.warn(err);
+        return;
+      }
+      // asny stuff above took too long?
+      if (ac.currentTime > t) {
+        console.warn('sample still loading:', s, n);
+        return;
+      }
+      if (!bufferSource) {
+        console.warn('no buffer source');
+        return;
+      }
+      bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
+      // TODO: nudge, unit, cut, loop
+      let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration;
+      // let duration = bufferSource.buffer.duration;
+      const offset = begin * duration;
+      duration = ((end - begin) * duration) / Math.abs(speed);
+      if (soundfont || clip) {
+        bufferSource.start(t, offset); // duration does not work here for some reason
+      } else {
+        bufferSource.start(t, offset, duration);
+      }
+      chain.push(bufferSource);
+      if (soundfont || clip) {
+        const env = ac.createGain();
+        const releaseLength = 0.1;
+        env.gain.value = 0.6;
+        env.gain.setValueAtTime(env.gain.value, t + duration);
+        env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
+        // env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
+        chain.push(env);
+        bufferSource.stop(t + duration + releaseLength);
+      } else {
+        bufferSource.stop(t + duration);
+      }
+    }
+    // master out
+    const master = ac.createGain();
+    master.gain.value = gain;
+    chain.push(master);
+
+    // filters
+    cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
+    hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
+    bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
+    // TODO vowel
+    // TODO delay / delaytime / delayfeedback
+    // panning
+    if (pan !== undefined) {
+      const panner = ac.createStereoPanner();
+      panner.pan.value = 2 * pan - 1;
+      chain.push(panner);
+    }
+    // master out
+    /* const master = ac.createGain();
+  master.gain.value = 0.8 * gain;
+  chain.push(master); */
+    chain.push(ac.destination);
+    // connect chain elements together
+    chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
+  } catch (e) {
+    console.warn('.out error:', e);
+  }
+};
+
+Pattern.prototype.out = function () {
+  // TODO: refactor (t, hap, ct, cps) to (hap, deadline, duration) ?
+  return this.onTrigger((t, hap, ct, cps) => webaudioOutput(hap, t - ct, hap.duration / cps));
 };
