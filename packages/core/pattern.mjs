@@ -1222,7 +1222,7 @@ export function pure(value) {
 
 export function isPattern(thing) {
   // thing?.constructor?.name !== 'Pattern' // <- this will fail when code is mangled
-  const is = thing instanceof Pattern || thing._Pattern;
+  const is = thing instanceof Pattern || thing?._Pattern;
   if (!thing instanceof Pattern) {
     console.warn(
       `Found Pattern that fails "instanceof Pattern" check.
