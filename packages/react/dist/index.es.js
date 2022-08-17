@@ -9,7 +9,7 @@ import { useInView } from 'react-hook-inview';
 import { evaluate } from '@strudel.cycles/eval';
 import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
 import { Tone } from '@strudel.cycles/tone';
-import { TimeSpan, State } from '@strudel.cycles/core';
+import { TimeSpan, State, Scheduler } from '@strudel.cycles/core';
 import { WebMidi, enableWebMidi } from '@strudel.cycles/midi';
 
 var strudelTheme = createTheme({
@@ -552,6 +552,44 @@ function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, on
   })));
 }
 
+function useScheduler(pattern, defaultOutput, interval = 0.1) {
+  const [error, setError] = useState();
+  const scheduler = useMemo(
+    () => new Scheduler({ interval, onTrigger: defaultOutput, onError: setError }),
+    [defaultOutput, interval]
+  );
+  useEffect(() => {
+    pattern && scheduler?.setPattern(pattern);
+  }, [pattern, scheduler]);
+  return { error, scheduler };
+}
+
+function useEvaluator(code, evalOnMount = true) {
+  const [error, setError] = useState();
+  const [activeCode, setActiveCode] = useState(code);
+  const [pattern, setPattern] = useState();
+  const isDirty = code !== activeCode;
+  const evaluate = useCallback(() => {
+    try {
+      const _pattern = eval(code);
+      setActiveCode(activeCode);
+      setPattern(_pattern);
+      setError();
+    } catch (err) {
+      setError(err);
+      console.warn("eval error", err);
+    }
+  }, [code, scheduler]);
+  const inited = useRef();
+  useEffect(() => {
+    if (!inited.current && evalOnMount) {
+      evaluate();
+    }
+    inited.current = true;
+  }, [evaluate, evalOnMount]);
+  return { error, evaluate, activeCode, pattern, isDirty };
+}
+
 /*
 useWebMidi.js - <short description TODO>
 Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/repl/src/useWebMidi.js>
@@ -591,4 +629,4 @@ function useWebMidi(props) {
   return { loading, outputs, outputByName };
 }
 
-export { CodeMirror, MiniRepl, cx, flash, useCycle, useHighlighting, usePostMessage, useRepl, useWebMidi };
+export { CodeMirror, MiniRepl, cx, flash, useCycle, useEvaluator, useHighlighting, usePostMessage, useRepl, useScheduler, useWebMidi };
