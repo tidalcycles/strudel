@@ -15,6 +15,8 @@ export * from './state.mjs';
 export * from './timespan.mjs';
 export * from './util.mjs';
 export * from './speak.mjs';
+export * from './clockworker.mjs';
+export * from './scheduler.mjs';
 export { default as gist } from './gist.js';
 // below won't work with runtime.mjs (json import fails)
 /* import * as p from './package.json';

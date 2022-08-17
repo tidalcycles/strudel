@@ -1,6 +1,6 @@
 /*
 scheduler.mjs - <short description TODO>
-Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/webaudio/scheduler.mjs>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/scheduler.mjs>
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
@@ -10,29 +10,24 @@ export class Scheduler {
   worker;
   pattern;
   phase;
-  audioContext;
   cps = 1;
-  constructor({ audioContext, interval = 0.1, onEvent, latency = 0.1 }) {
-    this.audioContext = audioContext;
-    this.worker = new ClockWorker((tick, interval) => {
+  constructor({ interval = 0.1, onTrigger, latency = 0.1 }) {
+    this.worker = new ClockWorker((_, interval) => {
       const begin = this.phase;
       const end = this.phase + interval * this.cps;
       this.phase = end;
       const haps = this.pattern.queryArc(begin, end);
-      haps.forEach((e) => {
-        if (typeof e.value?.cps === 'number') {
-          this.setCps(e.value?.cps);
+      haps.forEach((hap) => {
+        if (typeof hap.value?.cps === 'number') {
+          this.setCps(hap.value?.cps);
         }
-        if (!e.part.begin.equals(e.whole.begin)) {
+        if (!hap.part.begin.equals(hap.whole.begin)) {
           return;
         }
-        if (e.context.onTrigger) {
-          const ctxTime = (e.whole.begin - begin) / this.cps + this.audioContext.currentTime + latency;
-          e.context.onTrigger(ctxTime, e, this.audioContext.currentTime, this.cps);
-        }
-        if (onEvent) {
-          onEvent?.(e);
-        }
+        const deadline = (hap.whole.begin - begin) / this.cps + latency;
+        // TODO: use legato / duration of objectified value
+        const duration = hap.duration / this.cps;
+        onTrigger?.(hap, deadline, duration);
       });
     }, interval);
   }
@@ -40,7 +35,6 @@ export class Scheduler {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
-    this.audioContext.resume();
     this.phase = 0;
     this.worker.start();
   }
