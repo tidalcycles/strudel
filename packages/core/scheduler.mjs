@@ -9,7 +9,8 @@ import { ClockWorker } from './clockworker.mjs';
 export class Scheduler {
   worker;
   pattern;
-  phase;
+  started = false;
+  phase = 0;
   cps = 1;
   constructor({ interval = 0.1, onTrigger, onError, latency = 0.1 }) {
     this.worker = new ClockWorker((_, interval) => {
@@ -40,11 +41,17 @@ export class Scheduler {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
-    this.phase = 0;
     this.worker.start();
+    this.started = true;
+  }
+  pause() {
+    this.worker.stop();
+    this.started = false;
   }
   stop() {
+    this.phase = 0;
     this.worker.stop();
+    this.started = false;
   }
   setPattern(pat) {
     this.pattern = pat;
