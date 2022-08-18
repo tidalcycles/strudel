@@ -15,7 +15,7 @@ function useEvaluator({ code, evalOnMount = true }) {
     try {
       // TODO: let user inject custom eval function?
       const { pattern: _pattern } = await _evaluate(code);
-      setActiveCode(activeCode);
+      setActiveCode(code);
       setPattern(_pattern);
       setError();
     } catch (err) {
