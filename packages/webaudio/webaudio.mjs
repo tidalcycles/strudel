@@ -95,7 +95,7 @@ const getSampleBufferSource = async (s, n, note) => {
   }
   const bank = samples?.[s];
   if (!bank) {
-    throw new Error('sample not found:', s, 'try one of ' + Object.keys(samples));
+    throw new Error(`sample not found: "${s}", try one of ${Object.keys(samples).join(', ')}`);
   }
   if (typeof bank !== 'object') {
     throw new Error('wrong format for sample bank:', s);
@@ -142,6 +142,11 @@ const splitSN = (s, n) => {
 export const webaudioOutput = async (hap, deadline, hapDuration) => {
   try {
     const ac = getAudioContext();
+    if (typeof hap.value !== 'object') {
+      throw new Error(
+        `hap.value ${hap.value} is not supported by webaudio output. Hint: append .note() or .s() to the end`,
+      );
+    }
     // calculate correct time (tone.js workaround)
     const t = ac.currentTime + deadline;
     // destructure value
