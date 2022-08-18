@@ -19,6 +19,20 @@ export const getAudioContext = () => {
   }
   return audioContext;
 };
+let destination;
+export const getDestination = () => {
+  const ctx = getAudioContext();
+  if (!destination) {
+    destination = ctx.createGain();
+    destination.connect(ctx.destination);
+  }
+  return destination;
+};
+
+export const panic = () => {
+  getDestination().gain.linearRampToValueAtTime(0, getAudioContext().currentTime + 0.01);
+  destination = null;
+};
 
 const getFilter = (type, frequency, Q) => {
   const filter = getAudioContext().createBiquadFilter();
@@ -265,7 +279,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     /* const master = ac.createGain();
   master.gain.value = 0.8 * gain;
   chain.push(master); */
-    chain.push(ac.destination);
+    chain.push(getDestination());
     // connect chain elements together
     chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
   } catch (e) {
