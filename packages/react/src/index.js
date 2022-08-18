@@ -8,5 +8,6 @@ export { default as usePostMessage } from './hooks/usePostMessage';
 export { default as useRepl } from './hooks/useRepl';
 export { default as useScheduler } from './hooks/useScheduler';
 export { default as useEvaluator } from './hooks/useEvaluator';
+export { default as useKeydown } from './hooks/useKeydown';
 export { default as cx } from './cx';
 export { useWebMidi } from './hooks/useWebMidi';

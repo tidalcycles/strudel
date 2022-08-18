@@ -564,15 +564,19 @@ function useScheduler(pattern, defaultOutput, interval = 0.1) {
   return { error, scheduler };
 }
 
-function useEvaluator(code, evalOnMount = true) {
+function useEvaluator({ code, evalOnMount = true }) {
   const [error, setError] = useState();
   const [activeCode, setActiveCode] = useState(code);
   const [pattern, setPattern] = useState();
   const isDirty = code !== activeCode;
-  const evaluate = useCallback(() => {
+  const evaluate$1 = useCallback(async () => {
+    if (!code) {
+      console.log("no code..");
+      return;
+    }
     try {
-      const _pattern = eval(code);
-      setActiveCode(activeCode);
+      const { pattern: _pattern } = await evaluate(code);
+      setActiveCode(code);
       setPattern(_pattern);
       setError();
     } catch (err) {
@@ -583,12 +587,19 @@ function useEvaluator(code, evalOnMount = true) {
   const inited = useRef();
   useEffect(() => {
     if (!inited.current && evalOnMount) {
-      evaluate();
+      inited.current = true;
+      evaluate$1();
     }
-    inited.current = true;
-  }, [evaluate, evalOnMount]);
-  return { error, evaluate, activeCode, pattern, isDirty };
+  }, [evaluate$1, evalOnMount]);
+  return { error, evaluate: evaluate$1, activeCode, pattern, isDirty };
 }
+
+// set active pattern on ctrl+enter
+const useKeydown = (callback) =>
+  useLayoutEffect(() => {
+    window.addEventListener('keydown', callback, true);
+    return () => window.removeEventListener('keydown', callback, true);
+  }, [callback]);
 
 /*
 useWebMidi.js - <short description TODO>
@@ -629,4 +640,4 @@ function useWebMidi(props) {
   return { loading, outputs, outputByName };
 }
 
-export { CodeMirror, MiniRepl, cx, flash, useCycle, useEvaluator, useHighlighting, usePostMessage, useRepl, useScheduler, useWebMidi };
+export { CodeMirror, MiniRepl, cx, flash, useCycle, useEvaluator, useHighlighting, useKeydown, usePostMessage, useRepl, useScheduler, useWebMidi };
