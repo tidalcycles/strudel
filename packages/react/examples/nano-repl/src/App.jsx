@@ -13,10 +13,10 @@ import './style.css';
 await evalScope(
   controls,
   import('@strudel.cycles/core'),
-  import('@strudel.cycles/tone'),
+  // import('@strudel.cycles/tone'),
+  // import('@strudel.cycles/midi'), // TODO: find out why midi loads tone.js
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
-  import('@strudel.cycles/midi'),
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
   import('@strudel.cycles/osc'),
