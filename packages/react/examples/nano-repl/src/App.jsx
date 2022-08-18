@@ -1,9 +1,12 @@
 import controls from '@strudel.cycles/core/controls.mjs';
 import { evalScope } from '@strudel.cycles/eval';
-import { webaudioOutput } from '@strudel.cycles/webaudio';
-import { useState } from 'react';
+import { getAudioContext, panic, webaudioOutput } from '@strudel.cycles/webaudio';
+import { useCallback, useState } from 'react';
 import useScheduler from '../../../src/hooks/useScheduler';
 import useEvaluator from '../../../src/hooks/useEvaluator';
+import useKeydown from '../../../src/hooks/useKeydown.mjs';
+import CodeMirror, { flash } from '../../../src/components/CodeMirror6';
+import './style.css';
 // import { prebake } from '../../../../../repl/src/prebake.mjs';
 
 // TODO: only import stuff when play is pressed?
@@ -68,15 +71,53 @@ function App() {
   const [code, setCode] = useState(defaultTune);
   const { evaluate, pattern, isDirty, error: evaluatorError } = useEvaluator({ code });
   const { scheduler, error: schedulerError } = useScheduler(pattern, webaudioOutput);
+  const [view, setView] = useState();
   const error = evaluatorError || schedulerError;
+  useKeydown(
+    useCallback(
+      (e) => {
+        if (e.ctrlKey || e.altKey) {
+          if (e.code === 'Enter') {
+            e.preventDefault();
+            flash(view);
+            evaluate();
+            if (e.shiftKey) {
+              panic();
+              scheduler.stop();
+              scheduler.start();
+            }
+            if (!scheduler.started) {
+              scheduler.start();
+            }
+          } else if (e.code === 'Period') {
+            scheduler.pause();
+            panic();
+            e.preventDefault();
+          }
+        }
+      },
+      [scheduler, evaluate, view],
+    ),
+  );
   return (
     <div>
-      <textarea value={code} onChange={(e) => setCode(e.target.value)} cols="64" rows="30" />
-      <br />
-      <button onClick={() => scheduler.start()}>start</button>
-      <button onClick={() => scheduler.stop()}>stop</button>
-      {isDirty && <button onClick={() => evaluate()}>eval</button>}
-      {error && <p>error {error.message}</p>}
+      {/* <textarea value={code} onChange={(e) => setCode(e.target.value)} cols="64" rows="30" /> */}
+      <nav className="z-[12] w-full flex justify-center absolute bottom-0">
+        <div className="bg-slate-500 space-x-2 px-2 rounded-t-md">
+          <button
+            onClick={() => {
+              getAudioContext().resume();
+              scheduler.start();
+            }}
+          >
+            start
+          </button>
+          <button onClick={() => scheduler.stop()}>stop</button>
+          {isDirty && <button onClick={() => evaluate()}>eval</button>}
+        </div>
+        {error && <p>error {error.message}</p>}
+      </nav>
+      <CodeMirror value={code} onChange={setCode} onViewChanged={setView} />
     </div>
   );
 }
