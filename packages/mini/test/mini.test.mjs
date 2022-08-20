@@ -104,4 +104,8 @@ describe('mini', () => {
     expect(chisq <= 15.086).toBe(true);
     // assert(chisq <= 15.086, chisq + ' was expected to be less than 15.086 under chi-squared test');
   });
+  it('supports the = operator for legato', () => {
+    expect(minS('a=0.8')).toEqual(mini('a').legato(0.8)._showFirstCycle);
+    expect(minS('a5=1.5 ~ b5=0.5 ~')).toEqual(['a5: 0 - 3/8', 'b5: 1/2 - 5/8']);
+  });
 });
