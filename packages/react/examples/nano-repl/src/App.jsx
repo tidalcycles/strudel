@@ -2,10 +2,9 @@ import controls from '@strudel.cycles/core/controls.mjs';
 import { evalScope } from '@strudel.cycles/eval';
 import { getAudioContext, panic, webaudioOutput } from '@strudel.cycles/webaudio';
 import { useCallback, useState } from 'react';
-import useScheduler from '../../../src/hooks/useScheduler';
-import useEvaluator from '../../../src/hooks/useEvaluator';
-import useKeydown from '../../../src/hooks/useKeydown.mjs';
 import CodeMirror, { flash } from '../../../src/components/CodeMirror6';
+import useKeydown from '../../../src/hooks/useKeydown.mjs';
+import useStrudel from '../../../src/hooks/useStrudel';
 import './style.css';
 // import { prebake } from '../../../../../repl/src/prebake.mjs';
 
@@ -63,16 +62,21 @@ stack(
   .echoWith(4,.125,(x,n)=>x.gain(.15*1/(n+1))) // echo notes
   //.hush()
 )
-.cps(2/3)`;
+.fast(2/3)`;
 
 // await prebake();
 
+const ctx = getAudioContext();
+
 function App() {
   const [code, setCode] = useState(defaultTune);
-  const { evaluate, pattern, isDirty, error: evaluatorError } = useEvaluator({ code });
-  const { scheduler, error: schedulerError } = useScheduler(pattern, webaudioOutput);
+  const { scheduler, evaluate, schedulerError, evalError, isDirty } = useStrudel({
+    code,
+    defaultOutput: webaudioOutput,
+    getTime: () => ctx.currentTime,
+  });
   const [view, setView] = useState();
-  const error = evaluatorError || schedulerError;
+  const error = evalError || schedulerError;
   useKeydown(
     useCallback(
       (e) => {
@@ -105,8 +109,8 @@ function App() {
       <nav className="z-[12] w-full flex justify-center absolute bottom-0">
         <div className="bg-slate-500 space-x-2 px-2 rounded-t-md">
           <button
-            onClick={() => {
-              getAudioContext().resume();
+            onClick={async () => {
+              await getAudioContext().resume();
               scheduler.start();
             }}
           >
