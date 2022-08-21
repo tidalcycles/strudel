@@ -552,38 +552,34 @@ function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, on
   })));
 }
 
-function useScheduler(pattern, defaultOutput, interval = 0.1) {
-  const [error, setError] = useState();
-  const scheduler = useMemo(
-    () => new Scheduler({ interval, onTrigger: defaultOutput, onError: setError }),
-    [defaultOutput, interval]
-  );
-  useEffect(() => {
-    pattern && scheduler?.setPattern(pattern);
-  }, [pattern, scheduler]);
-  return { error, scheduler };
-}
-
-function useEvaluator({ code, evalOnMount = true }) {
-  const [error, setError] = useState();
+function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = true }) {
+  // scheduler
+  const [schedulerError, setSchedulerError] = useState();
+  const [evalError, setEvalError] = useState();
   const [activeCode, setActiveCode] = useState(code);
-  const [pattern, setPattern] = useState();
   const isDirty = code !== activeCode;
+  // TODO: how / when to remove schedulerError?
+  const scheduler = useMemo(
+    () => new Scheduler({ interval, onTrigger: defaultOutput, onError: setSchedulerError, getTime }),
+    [defaultOutput, interval],
+  );
   const evaluate$1 = useCallback(async () => {
     if (!code) {
-      console.log("no code..");
+      console.log('no code..');
       return;
     }
     try {
-      const { pattern: _pattern } = await evaluate(code);
+      // TODO: let user inject custom eval function?
+      const { pattern } = await evaluate(code);
       setActiveCode(code);
-      setPattern(_pattern);
-      setError();
+      scheduler?.setPattern(pattern);
+      setEvalError();
     } catch (err) {
-      setError(err);
-      console.warn("eval error", err);
+      setEvalError(err);
+      console.warn('eval error', err);
     }
   }, [code, scheduler]);
+
   const inited = useRef();
   useEffect(() => {
     if (!inited.current && evalOnMount) {
@@ -591,7 +587,8 @@ function useEvaluator({ code, evalOnMount = true }) {
       evaluate$1();
     }
   }, [evaluate$1, evalOnMount]);
-  return { error, evaluate: evaluate$1, activeCode, pattern, isDirty };
+
+  return { schedulerError, scheduler, evalError, evaluate: evaluate$1, activeCode, isDirty };
 }
 
 // set active pattern on ctrl+enter
@@ -640,4 +637,4 @@ function useWebMidi(props) {
   return { loading, outputs, outputByName };
 }
 
-export { CodeMirror, MiniRepl, cx, flash, useCycle, useEvaluator, useHighlighting, useKeydown, usePostMessage, useRepl, useScheduler, useWebMidi };
+export { CodeMirror, MiniRepl, cx, flash, useCycle, useHighlighting, useKeydown, usePostMessage, useRepl, useStrudel, useWebMidi };
