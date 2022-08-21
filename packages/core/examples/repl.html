@@ -69,8 +69,8 @@ Loading...</textarea
   };
   evaluate();
   input.addEventListener('input', () => evaluate());
-  document.getElementById('start').addEventListener('click', () => {
-    ctx.resume();
+  document.getElementById('start').addEventListener('click', async () => {
+    await ctx.resume();
     scheduler.start();
   });
   document.getElementById('stop').addEventListener('click', () => scheduler.stop());

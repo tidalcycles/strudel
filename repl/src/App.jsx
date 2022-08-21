@@ -183,8 +183,8 @@ function App() {
           </div>
           <div className="flex">
             <button
-              onClick={() => {
-                getAudioContext().resume(); // fixes no sound in ios webkit
+              onClick={async () => {
+                await getAudioContext().resume(); // fixes no sound in ios webkit
                 togglePlay();
               }}
               className={cx('hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}
