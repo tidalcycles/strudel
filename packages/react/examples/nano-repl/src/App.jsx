@@ -47,7 +47,7 @@ stack(
   .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
   .add(perlin.range(0,.5)) // random pitch variation
   .n() // wrap in "n"
-  .s('sawtooth') // waveform
+  .s('square') // waveform
   .gain(.16) // turn down
   .cutoff(500) // fixed cutoff
   .attack(1) // slowly fade in
@@ -67,9 +67,9 @@ stack(
 // await prebake();
 
 const ctx = getAudioContext();
-
 function App() {
   const [code, setCode] = useState(defaultTune);
+  // const [code, setCode] = useState(`"c3".note().slow(2)`);
   const { scheduler, evaluate, schedulerError, evalError, isDirty } = useStrudel({
     code,
     defaultOutput: webaudioOutput,
