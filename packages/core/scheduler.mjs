@@ -6,7 +6,6 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { ClockWorker } from './clockworker.mjs';
 
-// TODO: make pause work with origin.
 // find out why setPattern takes so long
 // reimplement setCps
 
@@ -14,28 +13,30 @@ export class Scheduler {
   worker;
   pattern;
   started = false;
-  origin;
   phase = 0;
   cps = 1;
   getTime;
-  constructor({ interval, onTrigger, onError, latency = 0.1, getTime }) {
+  lastTime;
+  constructor({ interval, onTrigger, onError, latency = 0.2, getTime }) {
     this.worker = new ClockWorker((_, interval) => {
       try {
-        // first, calculate queryArc, where
+        // goals:
         // - first query should start from zero
         // - next query must start where the other left off
         // - queries must be synced to the interval clock => no drifting
-        const begin = this.phase; // begin where we left off last time || 0
         const time = getTime();
-        this.origin = this.origin ?? time; // capture timestamp of first tick
-        const runTime = time - this.origin; // how long the scheduler is running since start
-        const cps = this.cps; // remember cps used to calculate the current slice
-        // TODO: find a way to implement cps without jumps..
-        const end = (runTime + interval) * cps;
-        // console.log('runTime', runTime);
+        if (!this.lastTime) {
+          this.lastTime = time;
+          return;
+        }
+        const passed = time - this.lastTime; // how much time passed since the last callback?
+        this.lastTime = time;
+        const begin = this.phase; // begin where we left off last time || 0
+        const end = this.phase + passed * this.cps;
         this.phase = end; // remember where we left off fro next query
+
         const haps = this.pattern.queryArc(begin, end); // get haps
-        const t = getTime(); // need new timestamp after query (can take a few ms)
+        // const t = getTime(); // need new timestamp after query (can take a few ms)
         // schedule each hap
         haps.forEach((hap) => {
           if (typeof hap.value?.cps === 'number') {
@@ -45,16 +46,17 @@ export class Scheduler {
           if (!hap.part.begin.equals(hap.whole.begin)) {
             return;
           }
-          // calculate absolute time for this hap, .whole.begin is relative to 0, so we need to add the origin
-          const scheduledTime = hap.whole.begin / cps + latency + this.origin;
-          // deadline = time in s until the event should be scheduled
-          const deadline = scheduledTime - t;
-          if (deadline < 0) {
+          const scheduled = time + (hap.whole.begin - begin) / this.cps + latency - passed; // this took me ages...
+          const duration = hap.duration / this.cps;
+          const now = getTime();
+          const deadline = scheduled - now;
+          // TODO: could still use a deadline based approach by measuring the time it takes for the query
+
+          if (scheduled < now) {
             console.warn(`deadline ${deadline.toFixed(2)} is below zero! latency ${latency}s, interval ${interval}s`);
             return;
           }
           // TODO: use legato / duration of objectified value
-          const duration = hap.duration / this.cps;
           onTrigger?.(hap, deadline, duration);
         });
       } catch (err) {
@@ -75,13 +77,13 @@ export class Scheduler {
     console.log('pause');
     this.worker.stop();
     this.phase = 0;
-    delete this.origin;
+    delete this.lastTime;
     this.started = false;
   }
   stop() {
     console.log('stop');
     this.phase = 0;
-    delete this.origin;
+    delete this.lastTime;
     this.worker.stop();
     this.started = false;
   }

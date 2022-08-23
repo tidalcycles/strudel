@@ -62,7 +62,7 @@ stack(
   .echoWith(4,.125,(x,n)=>x.gain(.15*1/(n+1))) // echo notes
   //.hush()
 )
-.fast(2/3)`;
+.cps(2/3)`;
 
 // await prebake();
 
