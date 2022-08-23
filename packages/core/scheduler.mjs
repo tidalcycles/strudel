@@ -42,7 +42,8 @@ export class Scheduler {
           if (!hap.part.begin.equals(hap.whole.begin)) {
             return;
           }
-          const scheduled = time + (hap.whole.begin - begin) / this.cps + latency - passed; // this took me ages...
+          // the following line took me ages to come up with.. handle with care
+          const scheduled = time + (hap.whole.begin - begin) / this.cps - passed + interval + latency;
           const duration = hap.duration / this.cps; // TODO: use legato / duration of objectified value
           const now = getTime();
           const deadline = scheduled - now;
