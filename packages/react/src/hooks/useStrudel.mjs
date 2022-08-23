@@ -2,7 +2,7 @@ import { Scheduler } from '@strudel.cycles/core';
 import { useRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { evaluate as _evaluate } from '@strudel.cycles/eval';
 
-function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = true }) {
+function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = false }) {
   // scheduler
   const [schedulerError, setSchedulerError] = useState();
   const [evalError, setEvalError] = useState();

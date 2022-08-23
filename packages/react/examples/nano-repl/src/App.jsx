@@ -79,12 +79,12 @@ function App() {
   const error = evalError || schedulerError;
   useKeydown(
     useCallback(
-      (e) => {
+      async (e) => {
         if (e.ctrlKey || e.altKey) {
           if (e.code === 'Enter') {
             e.preventDefault();
             flash(view);
-            evaluate();
+            await evaluate();
             if (e.shiftKey) {
               panic();
               scheduler.stop();
@@ -110,6 +110,7 @@ function App() {
         <div className="bg-slate-500 space-x-2 px-2 rounded-t-md">
           <button
             onClick={async () => {
+              await evaluate();
               await getAudioContext().resume();
               scheduler.start();
             }}
