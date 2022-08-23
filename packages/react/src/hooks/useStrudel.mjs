@@ -7,6 +7,7 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = fals
   const [schedulerError, setSchedulerError] = useState();
   const [evalError, setEvalError] = useState();
   const [activeCode, setActiveCode] = useState(code);
+  const [pattern, setPattern] = useState();
   const isDirty = code !== activeCode;
   // TODO: how / when to remove schedulerError?
   const scheduler = useMemo(
@@ -20,9 +21,10 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = fals
     }
     try {
       // TODO: let user inject custom eval function?
-      const { pattern } = await _evaluate(code);
+      const { pattern: _pattern } = await _evaluate(code);
       setActiveCode(code);
-      scheduler?.setPattern(pattern);
+      scheduler?.setPattern(_pattern);
+      setPattern(_pattern);
       setEvalError();
     } catch (err) {
       setEvalError(err);
@@ -38,7 +40,7 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = fals
     }
   }, [evaluate, evalOnMount]);
 
-  return { schedulerError, scheduler, evalError, evaluate, activeCode, isDirty };
+  return { schedulerError, scheduler, evalError, evaluate, activeCode, isDirty, pattern };
 }
 
 export default useStrudel;
