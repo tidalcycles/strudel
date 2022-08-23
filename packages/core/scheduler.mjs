@@ -59,7 +59,6 @@ export class Scheduler {
     }, interval);
   }
   start() {
-    console.log('start');
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
@@ -67,21 +66,17 @@ export class Scheduler {
     this.started = true;
   }
   pause() {
-    console.log('pause');
     this.worker.stop();
-    this.phase = 0;
     delete this.lastTime;
     this.started = false;
   }
   stop() {
-    console.log('stop');
     this.phase = 0;
     delete this.lastTime;
     this.worker.stop();
     this.started = false;
   }
   setPattern(pat) {
-    console.log('set pattern!');
     this.pattern = pat;
   }
   setCps(cps = 1) {
