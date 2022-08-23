@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import CodeMirror, { flash } from '../../../src/components/CodeMirror6';
 import useKeydown from '../../../src/hooks/useKeydown.mjs';
 import useStrudel from '../../../src/hooks/useStrudel';
+import useHighlighting from '../../../src/hooks/useHighlighting';
 import './style.css';
 // import { prebake } from '../../../../../repl/src/prebake.mjs';
 
@@ -62,20 +63,29 @@ stack(
   .echoWith(4,.125,(x,n)=>x.gain(.15*1/(n+1))) // echo notes
   //.hush()
 )
-.cps(2/3)`;
+.fast(2/3)`;
 
 // await prebake();
 
 const ctx = getAudioContext();
+const getTime = () => ctx.currentTime;
 function App() {
   const [code, setCode] = useState(defaultTune);
+  const [view, setView] = useState();
   // const [code, setCode] = useState(`"c3".note().slow(2)`);
-  const { scheduler, evaluate, schedulerError, evalError, isDirty } = useStrudel({
+  const { scheduler, evaluate, schedulerError, evalError, isDirty, activeCode, pattern } = useStrudel({
     code,
     defaultOutput: webaudioOutput,
-    getTime: () => ctx.currentTime,
+    getTime,
   });
-  const [view, setView] = useState();
+
+  useHighlighting({
+    view,
+    pattern,
+    active: !activeCode?.includes('strudel disable-highlighting'),
+    getTime: () => scheduler.phase,
+  });
+
   const error = evalError || schedulerError;
   useKeydown(
     useCallback(
