@@ -401,10 +401,9 @@ function cx(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-let highlights = []; // actively highlighted events
-let lastEnd;
-
-function useHighlighting({ view, pattern, active }) {
+function useHighlighting({ view, pattern, active, getTime }) {
+  const highlights = useRef([]);
+  const lastEnd = useRef();
   useEffect(() => {
     if (view) {
       if (pattern && active) {
@@ -412,16 +411,16 @@ function useHighlighting({ view, pattern, active }) {
 
         function updateHighlights() {
           try {
-            const audioTime = Tone.getTransport().seconds;
+            const audioTime = getTime();
             // force min framerate of 10 fps => fixes crash on tab refocus, where lastEnd could be far away
             // see https://github.com/tidalcycles/strudel/issues/108
-            const begin = Math.max(lastEnd || audioTime, audioTime - 1 / 10);
+            const begin = Math.max(lastEnd.current || audioTime, audioTime - 1 / 10);
             const span = [begin, audioTime + 1 / 60];
-            lastEnd = audioTime + 1 / 60;
-            highlights = highlights.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
+            lastEnd.current = audioTime + 1 / 60;
+            highlights.current = highlights.current.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
-            highlights = highlights.concat(haps); // add potential new onsets
-            view.dispatch({ effects: setHighlights.of(highlights) }); // highlight all still active + new active haps
+            highlights.current = highlights.current.concat(haps); // add potential new onsets
+            view.dispatch({ effects: setHighlights.of(highlights.current) }); // highlight all still active + new active haps
           } catch (err) {
             // console.log('error in updateHighlights', err);
             view.dispatch({ effects: setHighlights.of([]) });
@@ -433,7 +432,7 @@ function useHighlighting({ view, pattern, active }) {
           cancelAnimationFrame(frame);
         };
       } else {
-        highlights = [];
+        highlights.current = [];
         view.dispatch({ effects: setHighlights.of([]) });
       }
     }
@@ -505,7 +504,12 @@ function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, on
     }
     return isVisible || wasVisible.current;
   }, [isVisible, hideOutsideView]);
-  useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes("strudel disable-highlighting") });
+  useHighlighting({
+    view,
+    pattern,
+    active: cycle.started && !activeCode?.includes("strudel disable-highlighting"),
+    getTime: () => Tone.getTransport().seconds
+  });
   useLayoutEffect(() => {
     if (enableKeyboard) {
       const handleKeyPress = async (e) => {
@@ -552,11 +556,12 @@ function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, on
   })));
 }
 
-function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = true }) {
+function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = false }) {
   // scheduler
   const [schedulerError, setSchedulerError] = useState();
   const [evalError, setEvalError] = useState();
   const [activeCode, setActiveCode] = useState(code);
+  const [pattern, setPattern] = useState();
   const isDirty = code !== activeCode;
   // TODO: how / when to remove schedulerError?
   const scheduler = useMemo(
@@ -570,9 +575,10 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = true
     }
     try {
       // TODO: let user inject custom eval function?
-      const { pattern } = await evaluate(code);
+      const { pattern: _pattern } = await evaluate(code);
       setActiveCode(code);
-      scheduler?.setPattern(pattern);
+      scheduler?.setPattern(_pattern);
+      setPattern(_pattern);
       setEvalError();
     } catch (err) {
       setEvalError(err);
@@ -588,7 +594,7 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = true
     }
   }, [evaluate$1, evalOnMount]);
 
-  return { schedulerError, scheduler, evalError, evaluate: evaluate$1, activeCode, isDirty };
+  return { schedulerError, scheduler, evalError, evaluate: evaluate$1, activeCode, isDirty, pattern };
 }
 
 // set active pattern on ctrl+enter
