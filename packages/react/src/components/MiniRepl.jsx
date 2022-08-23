@@ -8,6 +8,7 @@ import 'tailwindcss/tailwind.css';
 import './style.css';
 import styles from './MiniRepl.module.css';
 import { Icon } from './Icon';
+import { Tone } from '@strudel.cycles/tone';
 
 export function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, onEvent, enableKeyboard }) {
   const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } =
@@ -31,7 +32,12 @@ export function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, i
     }
     return isVisible || wasVisible.current;
   }, [isVisible, hideOutsideView]);
-  useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes('strudel disable-highlighting') });
+  useHighlighting({
+    view,
+    pattern,
+    active: cycle.started && !activeCode?.includes('strudel disable-highlighting'),
+    getTime: () => Tone.getTransport().seconds,
+  });
 
   // set active pattern on ctrl+enter
   useLayoutEffect(() => {
