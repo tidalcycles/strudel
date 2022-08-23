@@ -6,9 +6,6 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { ClockWorker } from './clockworker.mjs';
 
-// find out why setPattern takes so long
-// reimplement setCps
-
 export class Scheduler {
   worker;
   pattern;
@@ -36,7 +33,6 @@ export class Scheduler {
         this.phase = end; // remember where we left off fro next query
 
         const haps = this.pattern.queryArc(begin, end); // get haps
-        // const t = getTime(); // need new timestamp after query (can take a few ms)
         // schedule each hap
         haps.forEach((hap) => {
           if (typeof hap.value?.cps === 'number') {
@@ -47,16 +43,13 @@ export class Scheduler {
             return;
           }
           const scheduled = time + (hap.whole.begin - begin) / this.cps + latency - passed; // this took me ages...
-          const duration = hap.duration / this.cps;
+          const duration = hap.duration / this.cps; // TODO: use legato / duration of objectified value
           const now = getTime();
           const deadline = scheduled - now;
-          // TODO: could still use a deadline based approach by measuring the time it takes for the query
-
           if (scheduled < now) {
             console.warn(`deadline ${deadline.toFixed(2)} is below zero! latency ${latency}s, interval ${interval}s`);
             return;
           }
-          // TODO: use legato / duration of objectified value
           onTrigger?.(hap, deadline, duration);
         });
       } catch (err) {
