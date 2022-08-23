@@ -9,7 +9,7 @@ import './style.css';
 // import { prebake } from '../../../../../repl/src/prebake.mjs';
 
 // TODO: only import stuff when play is pressed?
-await evalScope(
+evalScope(
   controls,
   import('@strudel.cycles/core'),
   // import('@strudel.cycles/tone'),

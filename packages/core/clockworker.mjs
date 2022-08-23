@@ -12,10 +12,11 @@ const createWorker = (func) => new Worker(urlifyFunction(func));
 // this is just a setInterval with a counter, running in a worker
 export class ClockWorker {
   worker;
-  interval = 1 / 20; // query span, use powers of 2 to get better float accuracy
+  interval = 1 / 20; // query span, use divisors of 1000 to get better accuracy
   tick = 0;
-  constructor(callback, interval = this.interval) {
-    this.interval = interval;
+  constructor(callback, interval) {
+    // for some reason the constructor default value won't do in prod build
+    this.interval = interval || this.interval;
     this.worker = createWorker(() => {
       // we cannot use closures here!
       let interval;
@@ -47,7 +48,7 @@ export class ClockWorker {
         }
       };
     });
-    this.worker.postMessage({ interval });
+    this.setInterval(this.interval);
     // const round = (n, d) => Math.round(n * d) / d;
     this.worker.onmessage = (e) => {
       if (e.data === 'tick') {
