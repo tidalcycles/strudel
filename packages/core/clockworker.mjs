@@ -12,7 +12,7 @@ const createWorker = (func) => new Worker(urlifyFunction(func));
 // this is just a setInterval with a counter, running in a worker
 export class ClockWorker {
   worker;
-  interval = 1 / 10; // query span, use powers of 2 to get better float accuracy
+  interval = 1 / 20; // query span, use powers of 2 to get better float accuracy
   tick = 0;
   constructor(callback, interval = this.interval) {
     this.interval = interval;
