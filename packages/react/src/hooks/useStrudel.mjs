@@ -1,6 +1,7 @@
-import { Scheduler } from '@strudel.cycles/core';
+// import { Scheduler } from '@strudel.cycles/core';
 import { useRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { evaluate as _evaluate } from '@strudel.cycles/eval';
+import { Cyclist } from '@strudel.cycles/core/cyclist.mjs';
 
 function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = false }) {
   // scheduler
@@ -11,7 +12,8 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = fals
   const isDirty = code !== activeCode;
   // TODO: how / when to remove schedulerError?
   const scheduler = useMemo(
-    () => new Scheduler({ interval, onTrigger: defaultOutput, onError: setSchedulerError, getTime }),
+    // () => new Scheduler({ interval, onTrigger: defaultOutput, onError: setSchedulerError, getTime }),
+    () => new Cyclist({ interval, onTrigger: defaultOutput, onError: setSchedulerError, getTime }),
     [defaultOutput, interval],
   );
   const evaluate = useCallback(async () => {
