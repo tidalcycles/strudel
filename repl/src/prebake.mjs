@@ -41,6 +41,9 @@ export function prebake() {
     // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
     './samples/piano/',
   );
+  fetch('EmuSP12.json')
+    .then(res => res.json())
+    .then(json => samples(json, './EmuSP12/'));
 }
 
 samples({
