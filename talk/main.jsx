@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Deck from './deck.mdx';
+// import Deck from './deck.mdx';
+import Deck from './meetup.mdx';
 import './style.css';
 import '@strudel.cycles/react/dist/style.css';
 
