@@ -70,8 +70,6 @@ const getSoundfontKey = (s) => {
 
 const getSampleBufferSource = async (s, n, note) => {
   let transpose = 0;
-  const midi = typeof note === 'string' ? toMidi(note) : note;
-  transpose = midi - 36; // C3 is middle C
   const ac = getAudioContext();
   // is sample from loaded samples(..)
   const samples = getLoadedSamples();
@@ -92,6 +90,8 @@ const getSampleBufferSource = async (s, n, note) => {
     if (!note) {
       throw new Error('no note(...) set for sound', s);
     }
+    const midi = typeof note === 'string' ? toMidi(note) : note;
+    transpose = midi - 36; // C3 is middle C
     const midiDiff = (noteA) => toMidi(noteA) - midi;
     // object format will expect keys as notes
     const closest = Object.keys(bank)
