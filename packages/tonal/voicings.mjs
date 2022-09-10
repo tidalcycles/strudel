@@ -8,28 +8,29 @@ import { Pattern as _Pattern, stack, Hap, reify } from '@strudel.cycles/core';
 import _voicings from 'chord-voicings';
 const { dictionaryVoicing, minTopNoteDiff, lefthand } = _voicings.default || _voicings; // parcel module resolution fuckup
 
-const getVoicing = (chord, lastVoicing, range = ['F3', 'A4']) =>
-  dictionaryVoicing({
+let dictionaries = {
+  lefthand,
+};
+
+export const addVoicings = (name, dictionary) => {
+  dictionaries = { ...dictionaries, [name]: dictionary };
+};
+
+const getVoicing = (chord, lastVoicing, range = ['F3', 'A4'], dictionaryName) => {
+  const dictionary = dictionaries[dictionaryName];
+  if (!dictionary) {
+    throw new Error(`Dictionary ${dictionaryName} not found. Try adding it with addDictionary`);
+  }
+  return dictionaryVoicing({
     chord,
-    dictionary: lefthand,
+    dictionary,
     range,
     picker: minTopNoteDiff,
     lastVoicing,
   });
+};
 
 const Pattern = _Pattern;
-
-Pattern.prototype.fmapNested = function (func) {
-  return new Pattern((span) =>
-    this.query(span)
-      .map((event) =>
-        reify(func(event))
-          .query(span)
-          .map((hap) => new Hap(event.whole, event.part, hap.value, hap.context)),
-      )
-      .flat(),
-  );
-};
 
 /**
  * Turns chord symbols into voicings, using the smoothest voice leading possible.
@@ -43,18 +44,15 @@ Pattern.prototype.fmapNested = function (func) {
  * stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")
  */
 
-Pattern.prototype.voicings = function (range) {
+Pattern.prototype.voicings = function (dictionaryName = 'lefthand') {
   let lastVoicing;
-  if (!range?.length) {
-    // allows to pass empty array, if too lazy to specify range
-    range = ['F3', 'A4'];
-  }
-  return this.fmapNested((event) => {
-    lastVoicing = getVoicing(event.value, lastVoicing, range);
-    return stack(...lastVoicing)._withContext(() => ({
+  const range = ['F3', 'A4'];
+  return this.fmap((value) => {
+    lastVoicing = getVoicing(value, lastVoicing, range, dictionaryName);
+    return stack(...lastVoicing) /* ._withContext(() => ({
       locations: event.context.locations || [],
-    }));
-  });
+    })) */;
+  }).outerJoin();
 };
 
 Pattern.prototype._rootNotes = function (octave = 2) {
