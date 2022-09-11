@@ -49,20 +49,20 @@ Alex McLean, Felix Roos & Tidal Cycles Community
 
 </Slide><Slide>
 
-## Strudel is..
+## What is Strudel?
 
 <div className="flex">
 
 <div className="text-left">
 
-- zero-install live coding editor for the web
-- Tidal Cycles port to JavaScript
-- a terse language for algorithmic patterns
-- for dynamic music sequencing
-- algorithmic composition
-- live improvisation
-- a set of reusable packages
-- probably more exciting than your regular DAW
+- based on a Tidal Cycles port to JavaScript
+- zero-install <a href="https://strudel.tidalcycles.org?p_G-4ZB295BP" target="_blank">live coding editor</a> for the web
+- algorithmic composition, live improvisation, generative music, music & code education
+- a set of reusable <a href="https://github.com/tidalcycles/strudel#using-strudel-in-your-project" target="_blank">packages</a>
+- has been used for a hand ful of streamed performances
+- was featured on [CDM](https://cdm.link/2022/04/musical-powerful-live-coding-in-the-browser-is-near-with-strudel-usable-now/)
+- now supported by [flok](https://flok.clic.cf/)
+- presented at Web Audio Conf 2022
 
 </div>
 
@@ -86,6 +86,14 @@ Alex McLean, Felix Roos & Tidal Cycles Community
 
 </Slide><Slide>
 
+## Studel @ WAC2022
+
+![wac](https://i.imgur.com/yr7UshV.jpg)
+
+https://youtu.be/KWIotFWVOi4?t=241
+
+</Slide><Slide>
+
 ## A Taste of Strudel
 
 <MaxiRepl
@@ -98,8 +106,7 @@ Alex McLean, Felix Roos & Tidal Cycles Community
 .scale('D minor')
 .legato(.5)
 .echo(2, 1/8, .5)
-.pianoroll()
-.note().piano().out()`,
+.pianoroll()`,
     //
     `stack(
   s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
@@ -172,14 +179,16 @@ stack(
 
 <div className="text-left">
 
+- 🌍 based in germany, now living in france near the border
 - 💻 working as a frontend developer by day, studied Computer Science
-- 🎺 Trumpet Player, studied Trumpet for Jazz and Popular Music
+- 🎺 studied Trumpet for Jazz and Popular Music, now inactive
 - 💿 ocassionally publishes music with Lui Mafuta & Puste
-- 🔌 Modular Synth & Electronics Lover, Dilettante DJ
+- 🔌 Modular Synth & Electronics Lover
 - 💌 Coding Blog: [loophole-letters.vercel.app](https://loophole-letters.vercel.app/)
-- 👀 Loves visualizations
+- 🤖 I like to understand music through writing Code
+- 🎹 I like to write my own tools to make & practise music
 
-<div className="grid grid-cols-5 gap-4 mt-12">
+<div className="grid grid-cols-5 gap-4 mt-12 hidden">
   <ImgTile height={200} src="https://loophole-letters.vercel.app/_next/image?url=%2Fimg%2Flambdoma.png&w=2048&q=75" />
   {/*   <ImgTile
     height={300}
@@ -204,7 +213,7 @@ stack(
 
 </Slide><Slide>
 
-## Previous related work: [Color Tunes](https://felixroos.github.io/color-tunes/#/explorer)
+## Previous Work: [Color Tunes](https://felixroos.github.io/color-tunes/#/explorer) (2018)
 
 ![color tunes](https://loophole-letters.vercel.app/img/project-screenshots/color-tunes_explorer.png)
 
@@ -212,7 +221,7 @@ Western Music Theory Explorer / Visualizer
 
 </Slide><Slide hidden>
 
-## Previous related work: [Color Tunes](https://felixroos.github.io/color-tunes/#/tunes)
+## Previous Work: [Color Tunes](https://felixroos.github.io/color-tunes/#/tunes) (2018)
 
 ![color tunes](https://loophole-letters.vercel.app/img/project-screenshots/color-tunes_player.png)
 
@@ -220,19 +229,19 @@ inspired by ireal pro
 
 </Slide><Slide>
 
-## Previous related work: [Jazzband](https://felixroos.github.io/jazzband/)
+## Previous Work: [Jazzband](https://felixroos.github.io/jazzband/) (2019)
 
 ![jazzband](https://loophole-letters.vercel.app/img/project-screenshots/jazzband_demo.png)
 
 </Slide><Slide>
 
-## Previous related work: Pattern Experiments
+## Previous Work: Pattern Experiments (2019)
 
 ![pattern experiments](https://loophole-letters.vercel.app/img/project-screenshots/jazzband_demo-patterns.png)
 
-</Slide><Slide>
+</Slide><Slide hidden>
 
-## Previous related work: [Leetsheet](https://github.com/felixroos/leetsheet)
+## Previous Work: [Leetsheet](https://github.com/felixroos/leetsheet) (2019)
 
 ```
 |: E-7b5    | A7b9      | D-     | %          |
@@ -248,32 +257,50 @@ inspired by ireal pro
 
 </Slide><Slide>
 
-## Previous related work: [asdf piano](https://k25w8.csb.app/#voicing-0)
+## Previous Work: [asdf piano](https://k25w8.csb.app/#voicing-0) (2020)
 
 <img src="https://i.imgur.com/srEELa2.png" className="h-[600px]" />
+
+<div className="text-left">
 
 - piano voicings with smooth voice leading
 - playable through a regular computer keyboard
 - useful for music production
 
-</Slide><Slide>
+</div>
 
-## Previous related work: [Rhythmical](https://github.com/felixroos/rhythmical)
+</Slide><Slide hidden>
+
+## Previous Work: [Rhythmical](https://github.com/felixroos/rhythmical) (2020)
 
 ![rhythmical trees](https://i.imgur.com/ISpEu0P.png)
+
+<div className="text-left">
 
 - library to convert nested arrays / objects into timed events
 - Rhythms = Trees in Time
 - pretty close to strudel / tidal
 
+</div>
+
 </Slide><Slide>
 
-## Previous related work: [Rhythmical REPL](https://felixroos.github.io/rhythmical/)
+## Previous Work: [Rhythmical REPL](https://felixroos.github.io/rhythmical/) (2020)
 
 <img src="https://i.imgur.com/Z1lsY8V.png" className="h-[900px]" />
 
+<div className="text-left">
+
 - JSON based rhythm format + hacky DSL
 - group nesting similar to tidal
+
+</div>
+
+</Slide><Slide hidden>
+
+## Previous Work: [Loophole Letters](https://loophole-letters.vercel.app/) (2021)
+
+![loophole letters](https://i.imgur.com/px9PwcG.png)
 
 </Slide><Slide hidden>
 
@@ -344,6 +371,18 @@ inspired by ireal pro
 
 ## Strudel: How it started
 
+<div className="text-left">
+
+![strudel port quote](./strudel-port.png)
+
+- Started by Alex McLean in January 2022
+- based on Vortex
+- [REPL](https://strudel.tidalcycles.org/#Y29uc3QgY2hvcmRzID0gIjxBbTcgQW03IERtNyBFNz4iCmNvbnN0IHJvb3RzID0gY2hvcmRzLnJvb3ROb3RlcygyKQoKc3RhY2soCiAgY2hvcmRzLnZvaWNpbmdzKFsnRjQnLCAnQTUnXSkuc3RydWN0KAogIGAgeEAyICAgfiB4IH4gfiB%2BIHggfAogICAgeD8gIH4gfiB4QDMgICB%2BIHggfAogICAgeD8gIH4gfiB4IH4geEAzYCksCiAgcm9vdHMuc3RydWN0KCJ4IFt%2BIHg%2FMC4yXSB4IFt%2BIHg%2FXSB8IHghNCB8IHhAMiB%2BIH4gfiB4IHggeCIpLnRyYW5zcG9zZSgiMCA3IikKKS5zbG93KDIpLnBpYW5vcm9sbCgpLm5vdGUoKS5waWFubygpLm91dCgpOw%3D%3D) + additional strudel packages
+- Help from Tidal Community Members
+- Inspired by: Vortex, Gibber, Estuary, Hydra, WAGS, Feedforward, ...
+
+</div>
+
 <div className="text-left mb-0">
 
 <blockquote>
@@ -351,20 +390,6 @@ inspired by ireal pro
   <br />
   Jeff Atwood, 2009{' '}
 </blockquote>
-
-![tidal-vortex-strudel](./tidal-vortex-strudel.png)
-
-</div>
-
-<div className="text-left">
-
-![strudel port quote](./strudel-port.png)
-
-- Started by Alex McLean in January 2022
-- based on a port of a rewrite of Tidal
-- [REPL](https://strudel.tidalcycles.org/#Y29uc3QgY2hvcmRzID0gIjxBbTcgQW03IERtNyBFNz4iCmNvbnN0IHJvb3RzID0gY2hvcmRzLnJvb3ROb3RlcygyKQoKc3RhY2soCiAgY2hvcmRzLnZvaWNpbmdzKFsnRjQnLCAnQTUnXSkuc3RydWN0KAogIGAgeEAyICAgfiB4IH4gfiB%2BIHggfAogICAgeD8gIH4gfiB4QDMgICB%2BIHggfAogICAgeD8gIH4gfiB4IH4geEAzYCksCiAgcm9vdHMuc3RydWN0KCJ4IFt%2BIHg%2FMC4yXSB4IFt%2BIHg%2FXSB8IHghNCB8IHhAMiB%2BIH4gfiB4IHggeCIpLnRyYW5zcG9zZSgiMCA3IikKKS5zbG93KDIpLnBpYW5vcm9sbCgpLm5vdGUoKS5waWFubygpLm91dCgpOw%3D%3D) + additional strudel packages
-- Help from Tidal Community Members
-- Inspired by: Vortex, Gibber, Estuary, Hydra, WAGS, Feedforward, ...
 
 </div>
 
@@ -397,10 +422,11 @@ inspired by ireal pro
 
 <div className="text-left">
 
-- JavaScript + syntax sugar (transpilation with shift-ast)
+- JavaScript + syntax sugar
 - "Mini Notation" for terse rhythm notation
 - `seq(c3, [e3, g3])` === `"c3 [e3 g3]"`
 - All Parameters can be a Pattern
+- [Many](https://github.com/tidalcycles/strudel/issues/31) Tidal functions are already implemented + some more
 
 </div>
 
@@ -522,11 +548,13 @@ mini('c3 [e3 g3]')
 3. obtain Abstract Syntax Tree (AST)
 4. [transform](https://github.com/tidalcycles/strudel/blob/main/packages/mini/mini.mjs#L76) AST into Pattern: `seq('c3', ['e3', 'g3'])`
 
+- Grammar is based on the [krill](https://github.com/Mdashdotdashn/krill) project by Mdashdotdashn
+
 </div>
 
 <img src="./pegflow.png" className="-my-16" />
 
-[OhmJS Editor](https://ohmjs.org/editor/)
+[OhmJS Editor](https://ohmjs.org/editor/#30325d346a6e803cc35344ca218d8636)
 
 </Slide><Slide>
 
@@ -578,7 +606,7 @@ mini('c3 [e3 g3]')
 
 </Slide><Slide>
 
-## 🕵🏽 Querying Events
+## 🕵🏽 Querying Events / Haps
 
 Asking a Pattern for Events within a certain time span
 
@@ -586,16 +614,16 @@ Asking a Pattern for Events within a certain time span
 
 ```js
 seq('c3', ['e3', 'g3']) // <--- Pattern
-  .queryArc(0, 2) // query events within 0 and 2 seconds
+  .queryArc(0, 2) // query events within 0 and 2 cycles
   .map((event) => event.showWhole()); // make readable
 ```
 
 ```js
 [
-  '0/1 -> 1/2: c3',
+  '0/1 -> 1/2: c3', // cycle 0
   '1/2 -> 3/4: e3',
   '3/4 -> 1/1: g3',
-  '1/1 -> 3/2: c3', // second time
+  '1/1 -> 3/2: c3', // cycle 1
   '3/2 -> 7/4: e3',
   '7/4 -> 2/1: g3',
 ];
@@ -660,7 +688,44 @@ Patterns are wrapped with param functions to compose different properties of the
 
 ![waa nodes](./waa-nodes.png)
 
-Supports Web Audio API, Web MIDI, OSC, Speech, Web Serial, ... ?
+<div className="text-left">
+
+- Patterns represent just values in time!
+- Suitable for any time based output (music, visuals, movement, .. ?)
+
+</div>
+
+</Slide><Slide>
+
+## Current Outputs
+
+<div className="text-left">
+
+- Web Audio API `.out()`
+- MIDI `.midi()`
+- OSC `.osc()`
+- Serial `.serial()`
+- Pianoroll `.pianoroll()`
+- Tone.js `.tone()` (deprecated?)
+- WebDirt `.webdirt()` (deprecated?)
+- Speech `.speak()` (experimental)
+
+</div>
+
+</Slide><Slide>
+
+## Things I work on
+
+<div className="text-left">
+
+- refactor many things (build, tests, docs, examples, packages ..)
+- improve midi output
+- rework chord voicings
+- getting rid of tone.js scheduler [nano-repl](https://raw.githack.com/tidalcycles/strudel/9a2a26e9046b2d848a6c5d38925922a91dbca491/packages/react/examples/nano-repl/dist/index.html)
+- improve error handling
+- strudel cli / server [pr](https://github.com/tidalcycles/strudel/pull/161)
+
+</div>
 
 </Slide><Slide>
 
@@ -668,12 +733,22 @@ Supports Web Audio API, Web MIDI, OSC, Speech, Web Serial, ... ?
 
 <div className="text-left">
 
-- Alternative Sound Backends
+- Alternative Sound Backends (Elementary Audio, Faust, glicol ...)
 - Collaborative Mode
 - Context Aware Documentation / Completion / Visualization
 - Port more Tidal Features
+- Sound explorer
+- Maxi Notation?
+- typescript?
+- block based evaluation?
+- more visuals (hydra integration?)
+- Node / block based editor? [blockly](https://developers.google.com/blockly/), [React Flow](https://reactflow.dev/)
+- see github repo for discussions issues!
+- ableton link?
 
 </div>
+
+</Slide><Slide>
 
 ## 🌀 Try it out now
 
@@ -681,8 +756,8 @@ Supports Web Audio API, Web MIDI, OSC, Speech, Web Serial, ... ?
 
 - Strudel REPL: [strudel.tidalcycles.org](https://strudel.tidalcycles.org/?EeNsQ8hdNZwN)
 - Interactive Tutorial: [strudel.tidalcycles.org/tutorial](https://strudel.tidalcycles.org/tutorial)
-- Stay Tuned: [@tidalcycles](https://twitter.com/tidalcycles)
 - Github: [https://github.com/tidalcycles/strudel](https://github.com/tidalcycles/strudel)
+- Contributions are always welcome!
 
 </div>
 
