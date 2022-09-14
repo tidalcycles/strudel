@@ -223,6 +223,18 @@ Pattern.prototype._degradeByWith = function (withPat, x) {
   return this.fmap((a) => (_) => a).appLeft(withPat._filterValues((v) => v > x));
 };
 
+/**
+ * Randomly removes events from the pattern by a given amount.
+ * 0 = 0% chance of removal
+ * 1 = 100% chance of removal
+ *
+ * @name degradeBy
+ * @memberof Pattern
+ * @param {number} amount - a number between 0 and 1
+ * @returns Pattern
+ * @example
+ * s("hh*8").degradeBy(0.5).out()
+ */
 Pattern.prototype._degradeBy = function (x) {
   return this._degradeByWith(rand, x);
 };
