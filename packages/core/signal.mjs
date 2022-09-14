@@ -156,8 +156,8 @@ export const chooseInWith = (pat, xs) => {
 };
 
 /**
- * Chooses randomly from the given list of values.
- * @param  {...any} xs
+ * Chooses randomly from the given list of elements.
+ * @param  {...any} xs values / patterns to choose from.
  * @returns {Pattern} - a continuous pattern.
  */
 export const choose = (...xs) => chooseWith(rand, xs);
@@ -183,6 +183,14 @@ Pattern.prototype.choose2 = function (...xs) {
   return chooseWith(this._fromBipolar(), xs);
 };
 
+/**
+ * Picks one of the elements at random each cycle.
+ * @returns {Pattern}
+ * @example
+ * chooseCycles("bd", "hh", "sd").s().fast(4).out()
+ * @example
+ * "bd | hh | sd".s().fast(4).out()
+ */
 export const chooseCycles = (...xs) => chooseInWith(rand.segment(1), xs);
 
 export const randcat = chooseCycles;
@@ -234,6 +242,8 @@ Pattern.prototype._degradeByWith = function (withPat, x) {
  * @returns Pattern
  * @example
  * s("hh*8").degradeBy(0.2).out()
+ * @example
+ * s("[hh?0.2]*8").out()
  */
 Pattern.prototype._degradeBy = function (x) {
   return this._degradeByWith(rand, x);
@@ -248,6 +258,8 @@ Pattern.prototype._degradeBy = function (x) {
  * @returns Pattern
  * @example
  * s("hh*8").degrade().out()
+ * @example
+ * s("[hh?]*8").out()
  */
 Pattern.prototype.degrade = function () {
   return this._degradeBy(0.5);
@@ -265,11 +277,6 @@ Pattern.prototype.degrade = function () {
  * @returns Pattern
  * @example
  * s("hh*8").undegradeBy(0.2).out()
- * @example
- * stack(
- *  s("hh*8").undegradeBy(0.2),
- *  s("bd*8").degradeBy(0.8)
- * ).out()
  */
 Pattern.prototype._undegradeBy = function (x) {
   return this._degradeByWith(
