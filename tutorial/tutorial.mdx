@@ -177,11 +177,11 @@ In essence, the `x!n` is like a shortcut for `[x*n]@n`.
 
 ## Euclidian
 
-Using round brackets, we can create rhythmical sub-divisions based on three parameters: beats, segments and offset. 
-The first parameter controls how may beats will be played. 
-The second parameter controls the total amount of segments the beats will be distributed over. 
+Using round brackets, we can create rhythmical sub-divisions based on three parameters: beats, segments and offset.
+The first parameter controls how may beats will be played.
+The second parameter controls the total amount of segments the beats will be distributed over.
 The third (optional) parameter controls the starting position for distributing the beats.
-One popular Euclidian rhythm (going by various names, such as "Pop Clave") is "(3,8,1)" or simply "(3,8)", 
+One popular Euclidian rhythm (going by various names, such as "Pop Clave") is "(3,8,1)" or simply "(3,8)",
 resulting in a rhythmical structure of "x ~ ~ x ~ ~ x ~" (3 beats over 8 segments, starting on position 1).
 
 <MiniRepl tune={`"e5(2,8) b4(3,8) d5(2,8) c5(3,8)".slow(4)`} />
@@ -449,6 +449,38 @@ Applies the given function by the given time offset:
 Stacks the given pattern to the current pattern:
 
 <MiniRepl tune={`"c4,eb4,g4".stack("bb4,d5")`} />
+
+## Randomness
+
+These methods add random behavior to your Patterns.
+
+{{ 'chooseCycles' | jsdoc }}
+
+{{ 'Pattern.degradeBy' | jsdoc }}
+
+{{ 'Pattern.degrade' | jsdoc }}
+
+{{ 'Pattern.undegradeBy' | jsdoc }}
+
+{{ 'Pattern.sometimesBy' | jsdoc }}
+
+{{ 'Pattern.sometimes' | jsdoc }}
+
+{{ 'Pattern.someCyclesBy' | jsdoc }}
+
+{{ 'Pattern.someCycles' | jsdoc }}
+
+{{ 'Pattern.often' | jsdoc }}
+
+{{ 'Pattern.rarely' | jsdoc }}
+
+{{ 'Pattern.almostNever' | jsdoc }}
+
+{{ 'Pattern.almostAlways' | jsdoc }}
+
+{{ 'Pattern.never' | jsdoc }}
+
+{{ 'Pattern.always' | jsdoc }}
 
 ## Tone API
 
