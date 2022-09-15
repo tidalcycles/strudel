@@ -10,6 +10,7 @@ import { fromMidi, toMidi } from '@strudel.cycles/core';
 import { loadBuffer } from './sampler.mjs';
 const { Pattern } = strudel;
 import './vowel.mjs';
+import workletsUrl from './worklets.mjs?url';
 
 // export const getAudioContext = () => Tone.getContext().rawContext;
 
@@ -129,7 +130,29 @@ const splitSN = (s, n) => {
   return [s2, n2];
 };
 
-Pattern.prototype.out = function () {
+let workletsLoading;
+function loadWorklets() {
+  if (workletsLoading) {
+    return workletsLoading;
+  }
+  workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
+  return workletsLoading;
+}
+
+function getWorklet(ac, processor, params) {
+  const node = new AudioWorkletNode(ac, processor);
+  Object.entries(params).forEach(([key, value]) => {
+    node.parameters.get(key).value = value;
+  });
+  return node;
+}
+
+Pattern.prototype.out = async function () {
+  try {
+    await loadWorklets();
+  } catch (err) {
+    console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+  }
   return this.onTrigger(async (t, hap, ct, cps) => {
     const hapDuration = hap.duration / cps;
     try {
@@ -151,6 +174,9 @@ Pattern.prototype.out = function () {
         hresonance = 1,
         bandf,
         bandq = 1,
+        coarse,
+        crush,
+        shape,
         pan,
         attack = 0.001,
         decay = 0.05,
@@ -261,7 +287,9 @@ Pattern.prototype.out = function () {
       hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
       bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
       vowel !== undefined && chain.push(ac.createVowelFilter(vowel));
-      // TODO vowel
+      coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
+      crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
+      shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
       // TODO delay / delaytime / delayfeedback
       // panning
       if (pan !== undefined) {
