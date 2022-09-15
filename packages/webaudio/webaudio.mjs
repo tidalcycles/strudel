@@ -147,9 +147,9 @@ function getWorklet(ac, processor, params) {
   return node;
 }
 
-Pattern.prototype.out = async function () {
+Pattern.prototype.out = function () {
   try {
-    await loadWorklets();
+    loadWorklets();
   } catch (err) {
     console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
   }
