@@ -9,6 +9,7 @@ import * as strudel from '@strudel.cycles/core';
 import { fromMidi, toMidi } from '@strudel.cycles/core';
 import { loadBuffer } from './sampler.mjs';
 const { Pattern } = strudel;
+import './vowel.mjs';
 
 // export const getAudioContext = () => Tone.getContext().rawContext;
 
@@ -158,6 +159,7 @@ Pattern.prototype.out = function () {
         speed = 1, // sample playback speed
         begin = 0,
         end = 1,
+        vowel,
       } = hap.value;
       const { velocity = 1 } = hap.context;
       gain *= velocity; // legacy fix for velocity
@@ -258,6 +260,7 @@ Pattern.prototype.out = function () {
       cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
       hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
       bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
+      vowel !== undefined && chain.push(ac.createVowelFilter(vowel));
       // TODO vowel
       // TODO delay / delaytime / delayfeedback
       // panning
