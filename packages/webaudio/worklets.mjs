@@ -1,4 +1,6 @@
-// all the credit goes to webdirt: https://github.com/dktr0/WebDirt/blob/5ce3d698362c54d6e1b68acc47eb2955ac62c793/dist/AudioWorklets.js
+// LICENSE GNU General Public License v3.0 see https://github.com/dktr0/WebDirt/blob/main/LICENSE
+// all the credit goes to dktr0's webdirt: https://github.com/dktr0/WebDirt/blob/5ce3d698362c54d6e1b68acc47eb2955ac62c793/dist/AudioWorklets.js
+// <3
 
 class CoarseProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
