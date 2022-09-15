@@ -304,6 +304,10 @@ Pattern.prototype.out = function () {
       chain.push(ac.destination);
       // connect chain elements together
       chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
+      // disconnect all nodes when hap is over to make sure they are garbage collected
+      setTimeout(() => {
+        chain.forEach((n) => n.disconnect());
+      }, (hapDuration + release + 0.1) * 1000);
     } catch (e) {
       console.warn('.out error:', e);
     }
