@@ -485,11 +485,10 @@ stack(
   .tone(bass),
 ).fast(3/2)`;
 
-export const wavyKalimba = `const delay = new FeedbackDelay(1/3, .5).chain(vol(.2), out())
-let kalimba = await sampler({
-  C5: 'https://freesound.org/data/previews/536/536549_11935698-lq.mp3'
+// delay was there before...
+export const wavyKalimba = `samples({
+  'kalimba': { c5:'https://freesound.org/data/previews/536/536549_11935698-lq.mp3' }
 })
-kalimba = kalimba.chain(vol(0.6).connect(delay),out());
 const scales = cat('C major', 'C mixolydian', 'F lydian', ['F minor', 'Db major'])
 
 stack(
@@ -498,8 +497,7 @@ stack(
   .scale(scales)
   .struct("x*8")
   .velocity("<.8 .3 .6>*8")
-  .slow(2)
-  .tone(kalimba),
+  .slow(2),
   "<c2 c2 f2 [[F2 C2] db2]>"
   .scale(scales)
   .scaleTranspose("[0 <2 4>]*2")
@@ -507,10 +505,13 @@ stack(
   .velocity("<.8 .5>*4")
   .velocity(0.8)
   .slow(2)
-  .tone(kalimba)
 )
   .legato("<.4 .8 1 1.2 1.4 1.6 1.8 2>/8")
-  .fast(1)`;
+  .fast(1)
+  .note()
+  .clip(1)
+  .s('kalimba')
+  .out()`; 
 
 export const jemblung = `const delay = new FeedbackDelay(1/8, .6).chain(vol(0.15), out());
 const snare = noise({type:'white',...adsr(0,0.2,0)}).chain(lowpass(5000),vol(1.8),out());
