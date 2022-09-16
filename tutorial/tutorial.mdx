@@ -249,21 +249,9 @@ Besides Synths, `s` can also play back samples:
 
 To know which sounds are available, open the [default sample map](https://strudel.tidalcycles.org/EmuSP12.json)
 
-### Custom Samples
+### Custom Sample Maps
 
 You can load your own sample map like this:
-
-<MiniRepl
-  tune={`samples({
-  bd: 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/bd/BT0AADA.wav',
-  sd: 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/sd/rytm-01-classic.wav',
-  hh: 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/hh27/000_hh27closedhh.wav',
-});
-s("bd sd,hh*8").out()`}
-/>
-
-The `samples` function takes an object where the properties are the sound names and the values are urls to audio files.
-As most sample packs will be loaded from the same location, you can set the base url using the second argument:
 
 <MiniRepl
   tune={`samples({
@@ -273,6 +261,9 @@ As most sample packs will be loaded from the same location, you can set the base
 }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
 s("bd sd,hh*8").out()`}
 />
+
+The `samples` function takes an object that maps sound names to audio file paths.
+The second argument is the base URL that comes before each path. Make sure your base URL ends with a slash, while your sample paths do **not** begin with one.
 
 Because github is a popular choice to dump samples, there is a shortcut for that:
 
@@ -287,6 +278,8 @@ s("bd sd,hh*8").out()`}
 
 The format is `github:user/repo/branch/`.
 
+### Multiple Samples per Sound
+
 It is also possible, to declare multiple files for one sound, using the array notation:
 
 <MiniRepl
@@ -295,12 +288,24 @@ It is also possible, to declare multiple files for one sound, using the array no
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
 }, 'github:tidalcycles/Dirt-Samples/master/');
-s("<bd:0 bd:1 bd:2 bd:3>,~ <sd:0 sd:1>,[hh:0 hh:1]*2").out()`}
+s("<bd:0 bd:1>,~ <sd:0 sd:1>,[hh:0 hh:1]*2").out()`}
 />
 
 The `:0` `:1` etc. are the indices of the array.
+The sample number can also be set using `n`:
 
-For pitched samples, you can use `note`, just like with synths:
+<MiniRepl
+  tune={`samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+s("bd,~ sd,hh*4").n("<0 1>").out()`}
+/>
+
+### Pitched Sounds
+
+For pitched sounds, you can use `note`, just like with synths:
 
 <MiniRepl
   tune={`samples({
@@ -320,6 +325,8 @@ note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').clip(1)
   .gain(.5).out()`}
 />
 
+### Base Pitch
+
 If we have 2 samples with different base pitches, we can make them in tune by specifying the pitch like this:
 
 <MiniRepl
@@ -333,6 +340,21 @@ note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s("gtr,moog").clip(1)
 
 If a sample has no pitch set, `c3` is the default.
 
+We can also declare different samples for different regions of the keyboard:
+
+<MiniRepl
+  tune={`samples({
+  "moog": {
+    'g2': 'moog/004_Mighty%20Moog%20G2.wav',
+    'g3': 'moog/005_Mighty%20Moog%20G3.wav',
+    'g4': 'moog/006_Mighty%20Moog%20G4.wav',
+  }}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g2!2 <bb2 c3>!2, <c4@3 [<eb4 bb3> g4 f4]>")
+  .s('moog').clip(1)
+  .gain(.5).out()`}
+/>
+
+The sampler will always pick the closest matching sample for the current note!
 
 <br />
 
