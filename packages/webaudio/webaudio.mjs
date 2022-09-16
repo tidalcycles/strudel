@@ -199,7 +199,7 @@ Pattern.prototype.out = function () {
       }
       if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
         // with synths, n and note are the same thing
-        n = note || n;
+        n = note || n || 36;
         if (typeof n === 'string') {
           n = toMidi(n); // e.g. c3 => 48
         }
@@ -305,9 +305,9 @@ Pattern.prototype.out = function () {
       // connect chain elements together
       chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
       // disconnect all nodes when hap is over to make sure they are garbage collected
-      setTimeout(() => {
+/*       setTimeout(() => {
         chain.forEach((n) => n.disconnect());
-      }, (hapDuration + release + 0.1) * 1000);
+      }, (hapDuration + release + 0.1) * 1000); */
     } catch (e) {
       console.warn('.out error:', e);
     }
