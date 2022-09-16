@@ -82,14 +82,14 @@ export const loadGithubSamples = async (path, nameFn) => {
 };
 
 /**
- * load the given sample map for webdirt
+ * Loads a collection of samples to use with `s`
  *
  * @example
- * loadSamples({
- *   bd: '808bd/BD0000.WAV',
- *   sd: ['808sd/SD0000.WAV','808sd/SD0010.WAV','808sd/SD0050.WAV']
+ * samples({
+ *  bd: '808bd/BD0000.WAV',
+ *  sd: '808sd/SD0010.WAV'
  *  }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
- *  s("bd <sd!7 sd(3,4,2)>").n(2).webdirt()
+ * s("[bd ~]*2, [~ hh]*2, ~ sd").out()
  *
  */
 
