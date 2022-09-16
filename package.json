@@ -13,7 +13,7 @@
     "osc": "cd packages/osc && npm run server",
     "build": "rm -rf out && cd repl && npm run build && cd ../tutorial && npm run build",
     "preview": "npx serve ./out",
-    "deploy": "gh-pages -d out",
+    "deploy": "NODE_DEBUG=gh-pages gh-pages -d out",
     "jsdoc": "jsdoc packages/ -c jsdoc.config.json",
     "jsdoc-json": "jsdoc packages/ --template ./node_modules/jsdoc-json --destination doc.json -c jsdoc.config.json"
   },
