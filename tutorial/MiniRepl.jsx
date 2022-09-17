@@ -12,7 +12,7 @@ export const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.
   },
 });
 
-await fetch('https://strudel.tidalcycles.org/EmuSP12.json')
+fetch('https://strudel.tidalcycles.org/EmuSP12.json')
   .then((res) => res.json())
   .then((json) => samples(json, 'https://strudel.tidalcycles.org/EmuSP12/'));
 
