@@ -1335,6 +1335,11 @@ Pattern.prototype.patternified = [
   'slow',
   'velocity',
 ];
+
+// aliases
+export const polyrhythm = stack;
+export const pr = stack;
+
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = {
   pure,
@@ -1403,10 +1408,6 @@ export function stack(...pats) {
   const query = (state) => flatten(pats.map((pat) => pat.query(state)));
   return new Pattern(query);
 }
-
-// aliases
-const polyrhythm = stack;
-const pr = stack;
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle:
  *
