@@ -413,71 +413,31 @@ The above is the same as:
 
 Using strings, you can also use "#".
 
-## Functions that create Patterns
+## Pattern Factories
 
-The following functions will return a pattern. We will see later what that means.
+The following functions will return a pattern.
 
-## pure(value)
-
-To create a pattern from a value, you can wrap the value in pure:
-
-<MiniRepl tune={`pure('e4')`} />
+{{ 'pure' | jsdoc }}
 
 Most of the time, you won't need that function as input values of pattern creating functions are purified by default.
 
-### cat(...values)
+{{ 'cat' | jsdoc }}
 
-The given items are con**cat**enated, where each one takes one cycle:
+{{ 'seq' | jsdoc }}
 
-<MiniRepl tune={`cat(e5, b4, [d5, c5])`} />
+{{ 'stack' | jsdoc }}
 
-- Square brackets will create a subsequence
-- The function **slowcat** does the same as **cat**.
-
-### seq(...values)
-
-Like **cat**, but the items are crammed into one cycle:
-
-<MiniRepl tune={`seq(e5, b4, [d5, c5])`} />
-
-- Synonyms: **fastcat**, **sequence**
-
-### stack(...values)
-
-The given items are played at the same time at the same length:
-
-<MiniRepl tune={`stack(g3, b3, [e4, d4])`} />
-
-- Square Brackets will create a subsequence
-
-### Nesting functions
-
-You can nest functions inside one another:
-
-<MiniRepl
-  tune={`cat(
-  stack(g3,b3,e4),
-  stack(a3,c3,e4),
-  stack(b3,d3,fs4),
-  stack(b3,e4,g4)
-)`}
-/>
-
-The above is equivalent to
-
-<MiniRepl tune={`"<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>"`} />
-
-### timeCat(...[weight,value])
-
-Like with "@" in mini notation, we can specify weights to the items in a sequence:
-
-<MiniRepl tune={`timeCat([3,e3],[1, g3])`} />
+{{ 'timeCat' | jsdoc }}
 
 <!-- ## polymeter
 
 how to use?
 
 <MiniRepl tune={`polymeter(3, e3, g3, b3)`} /> -->
+
+<!--
+
+see https://github.com/tidalcycles/strudel/discussions/211
 
 ### polyrhythm(...[...values])
 
@@ -490,6 +450,39 @@ We can write the same with **stack** and **cat**:
 <MiniRepl tune={`stack(seq(e3, g3), seq(e4, g4, b4))`} />
 
 You can also use the shorthand **pr** instead of **polyrhythm**.
+
+-->
+
+## Combining Patterns
+
+You can freely mix JS patterns, mini patterns and values! For example, this pattern:
+
+<MiniRepl
+  tune={`cat(
+  stack(g3,b3,e4),
+  stack(a3,c3,e4),
+  stack(b3,d3,fs4),
+  stack(b3,e4,g4)
+)`}
+/>
+
+...is equivalent to:
+
+<MiniRepl
+  tune={`cat(
+  "g3,b3,e4",
+  "a3,c3,e4",
+  "b3,d3,f#4",
+  "b3,e4,g4"
+)`}
+/>
+
+... as well as:
+
+<MiniRepl tune={`"<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>"`} />
+
+While mini notation is almost always shorter, it only has a handful of modifiers: \* / ! @.
+When using JS patterns, there is a lot more you can do.
 
 ## Time Modifiers
 
@@ -505,18 +498,9 @@ The following functions modify a pattern temporal structure in some way.
 
 {{ 'Pattern.rev' | jsdoc }}
 
-### struct(binary_pat)
+{{ 'Pattern.struct' | jsdoc }}
 
-Applies the given structure to the pattern:
-
-<MiniRepl tune={`"c3,eb3,g3".struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~").slow(4)`} />
-
-This is also useful to sample signals:
-
-<MiniRepl
-  tune={`sine.struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~").mul(7).round()
-.scale('C minor').slow(4)`}
-/>
+{{ 'Pattern.legato' | jsdoc }}
 
 ## Conditional Modifiers
 
@@ -616,7 +600,36 @@ Like layer, but with a single function:
 
 <MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4"))`} />
 
-## Randomness
+{{ 'Pattern.range' | jsdoc }}
+
+## Continuous Signals
+
+Signals are patterns with continuous values, meaning they have theoretically infinite steps.
+They can provide streams of numbers that can be sampled at discrete points in time.
+
+##
+
+{{ 'saw' | jsdoc }}
+
+{{ 'sine' | jsdoc }}
+
+{{ 'cosine' | jsdoc }}
+
+{{ 'tri' | jsdoc }}
+
+{{ 'square' | jsdoc }}
+
+### Ranges from -1 to 1
+
+There is also `saw2`, `sine2`, `cosine2`, `tri2` and `square2` which have a range from -1 to 1!
+
+{{ 'rand' | jsdoc }}
+
+{{ 'perlin' | jsdoc }}
+
+{{ 'irand' | jsdoc }}
+
+## Random Modifiers
 
 These methods add random behavior to your Patterns.
 
@@ -647,12 +660,6 @@ These methods add random behavior to your Patterns.
 {{ 'Pattern.never' | jsdoc }}
 
 {{ 'Pattern.always' | jsdoc }}
-
-{{ 'rand' | jsdoc }}
-
-{{ 'perlin' | jsdoc }}
-
-{{ 'irand' | jsdoc }}
 
 ## Tone API
 
@@ -902,67 +909,6 @@ If you want to contribute in another way, either
 
 <br />
 <br />
-
-# API Docs
-
-The following is generated from the source documentation.
-
-## Pattern Factories
-
-The following functions will return a pattern. We will see later what that means.
-
-{{ 'pure' | jsdoc }}
-
-{{ 'slowcat' | jsdoc }}
-
-{{ 'fastcat' | jsdoc }}
-
-{{ 'stack' | jsdoc }}
-
-{{ 'timeCat' | jsdoc }}
-
-{{ 'polyrhythm' | jsdoc }}
-
-## Pattern Modifiers
-
-{{ 'Pattern.slow' | jsdoc }}
-
-{{ 'Pattern.fast' | jsdoc }}
-
-{{ 'Pattern.early' | jsdoc }}
-
-{{ 'Pattern.late' | jsdoc }}
-
-{{ 'Pattern.rev' | jsdoc }}
-
-{{ 'Pattern.legato' | jsdoc }}
-
-## Continuous Signals
-
-Signals are patterns with continuous values, meaning they have theoretically infinite steps.
-They can provide streams of numbers that can be sampled at discrete points in time.
-
-{{ 'Pattern.range' | jsdoc }}
-
-{{ 'saw' | jsdoc }}
-
-{{ 'saw2' | jsdoc }}
-
-{{ 'sine' | jsdoc }}
-
-{{ 'sine2' | jsdoc }}
-
-{{ 'cosine' | jsdoc }}
-
-{{ 'cosine2' | jsdoc }}
-
-{{ 'tri' | jsdoc }}
-
-{{ 'tri2' | jsdoc }}
-
-{{ 'square' | jsdoc }}
-
-{{ 'square2' | jsdoc }}
 
 ## Using Samples with Webdirt
 

@@ -74,7 +74,7 @@ export const square2 = square._toBipolar();
  *
  * @return {Pattern}
  * @example
- * triangle.segment(2).range(0,7).scale('C minor')
+ * tri.segment(8).range(0,7).scale('C minor')
  *
  */
 export const tri = fastcat(isaw, saw);

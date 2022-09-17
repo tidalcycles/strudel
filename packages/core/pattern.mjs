@@ -513,11 +513,14 @@ export class Pattern {
   }
 
   /**
-   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
-   * 1. Returns a new pattern with values scaled to the given min/max range.
-   * @param {Number} min
-   * @param {Number} max
+   * Assumes a numerical pattern, containing unipolar values in the range 0 .. 1.
+   * Returns a new pattern with values scaled to the given min/max range.
+   * Most useful in combination with continuous patterns.
+   * @name range
+   * @memberof Pattern
    * @returns Pattern
+   * @example
+   * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4)).out()
    */
   range(min, max) {
     return this.mul(max - min).add(min);
@@ -741,7 +744,7 @@ export class Pattern {
    * @param {number | Pattern} factor speed up factor
    * @returns Pattern
    * @example
-   * seq(e5, b4, d5, c5).fast(2) // "[e5 b4 d5 c5]*2"
+   * s("<bd sd> hh").fast(2).out() // s("[<bd sd> hh]*2").out()
    */
   _fast(factor) {
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
@@ -756,7 +759,7 @@ export class Pattern {
    * @param {number | Pattern} factor slow down factor
    * @returns Pattern
    * @example
-   * seq(e5, b4, d5, c5).slow(2) // "[e5 b4 d5 c5]/2"
+   * s("<bd sd> hh").slow(2).out() // s("[<bd sd> hh]/2").out()
    */
   _slow(factor) {
     return this._fast(Fraction(1).div(factor));
@@ -847,6 +850,17 @@ export class Pattern {
     return this._zoom(0, t)._slow(t);
   }
 
+  /**
+   * Applies the given structure to the pattern:
+   *
+   * @name struct
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "c3,eb3,g3"
+   *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
+   *   .slow(4).note().out()
+   */
   // struct(...binary_pats) {
   //   // Re structure the pattern according to a binary pattern (false values are dropped)
   //   const binary_pat = sequence(binary_pats);
@@ -917,7 +931,7 @@ export class Pattern {
    * @example
    * note("c3 d3 e3 g3").every(4, x=>x.rev()).out()
    */
-   every(n, func) {
+  every(n, func) {
     const pat = this;
     const pats = Array(n - 1).fill(pat);
     // pats.unshift(func(pat));
@@ -940,7 +954,7 @@ export class Pattern {
     pats.unshift(func(pat));
     return slowcatPrime(...pats);
   }
-  
+
   /**
    * Applies the given function every n cycles, starting from the last cycle.
    * @name each
@@ -951,7 +965,7 @@ export class Pattern {
    * @example
    * note("c3 d3 e3 g3").every(4, x=>x.rev()).out()
    */
-   each(n, func) {
+  each(n, func) {
     const pat = this;
     const pats = Array(n - 1).fill(pat);
     pats.push(func(pat));
@@ -1277,12 +1291,11 @@ Pattern.prototype.factories = {
 // Nothing
 export const silence = new Pattern((_) => []);
 
-/** A discrete value that repeats once per cycle:
+/** A discrete value that repeats once per cycle.
  *
- * @param {any} value - The value to repeat
  * @returns {Pattern}
  * @example
- * pure('e4')
+ * pure('e4') // "e4"
  */
 export function pure(value) {
   function query(state) {
@@ -1312,12 +1325,11 @@ export function reify(thing) {
   return pure(thing);
 }
 
-/** The given items are played at the same time at the same length:
+/** The given items are played at the same time at the same length.
  *
- * @param {...any} items - The items to stack
  * @return {Pattern}
  * @example
- * stack(g3, b3, [e4, d4])
+ * stack(g3, b3, [e4, d4]) // "g3,b3,[e4,d4]"
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
@@ -1330,7 +1342,6 @@ export function stack(...pats) {
  *
  * synonyms: {@link cat}
  *
- * @param {...any} items - The items to concatenate
  * @return {Pattern}
  * @example
  * slowcat(e5, b4, [d5, c5])
@@ -1386,16 +1397,22 @@ export function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);
 }
 
-/** See {@link slowcat} */
+/** The given items are con**cat**enated, where each one takes one cycle. Synonym: slowcat
+ *
+ * @param {...any} items - The items to concatenate
+ * @return {Pattern}
+ * @example
+ * cat(e5, b4, [d5, c5]) // "<e5 b4 [d5 c5]>"
+ *
+ */
 export function cat(...pats) {
   return slowcat(...pats);
 }
 
-/** Like {@link fastcat}, but where each step has a temporal weight:
- * @param {...Array} items - The items to concatenate
+/** Like {@link seq}, but each step has a length, relative to the whole.
  * @return {Pattern}
  * @example
- * timeCat([3,e3],[1, g3])
+ * timeCat([3,e3],[1, g3]) // "e3@3 g3"
  */
 export function timeCat(...timepats) {
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -1414,7 +1431,11 @@ export function sequence(...pats) {
   return fastcat(...pats);
 }
 
-/** See {@link fastcat} */
+/** Like **cat**, but the items are crammed into one cycle. Synonyms: fastcat, sequence
+ * @example
+ * seq(e5, b4, [d5, c5]) // "e5 b4 [d5 c5]"
+ *
+ */
 export function seq(...pats) {
   return fastcat(...pats);
 }
@@ -1463,6 +1484,14 @@ export function pm(...args) {
   polymeter(...args);
 }
 
+/*
+ * Plays the given items at the same time, within the same length:
+ * @param {...any} items - The items to play
+ * @return {Pattern}
+ * @example
+ *
+ *
+ */
 export function polyrhythm(...xs) {
   const seqs = xs.map((a) => sequence(a));
 
