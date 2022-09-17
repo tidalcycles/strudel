@@ -147,12 +147,13 @@ function getWorklet(ac, processor, params) {
   return node;
 }
 
+try {
+  loadWorklets();
+} catch (err) {
+  console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+}
+
 Pattern.prototype.out = function () {
-  try {
-    loadWorklets();
-  } catch (err) {
-    console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
-  }
   return this.onTrigger(async (t, hap, ct, cps) => {
     const hapDuration = hap.duration / cps;
     try {
@@ -305,7 +306,7 @@ Pattern.prototype.out = function () {
       // connect chain elements together
       chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
       // disconnect all nodes when hap is over to make sure they are garbage collected
-/*       setTimeout(() => {
+      /*       setTimeout(() => {
         chain.forEach((n) => n.disconnect());
       }, (hapDuration + release + 0.1) * 1000); */
     } catch (e) {
