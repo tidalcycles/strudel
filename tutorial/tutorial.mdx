@@ -241,6 +241,15 @@ The power of patterns allows us to sequence any _param_ independently:
 Now we not only pattern the notes, but the sound as well!
 `sawtooth` `square` and `triangle` are the basic waveforms available in `s`.
 
+### Envelope
+
+You can control the envelope of a synth using the `attack`, `decay`, `sustain` and `release` functions:
+
+<MiniRepl
+  tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth')
+  .attack(.1).decay(.1).sustain(.2).release(.1).out()`}
+/>
+
 ## Samples
 
 Besides Synths, `s` can also play back samples:
@@ -355,6 +364,32 @@ note("g2!2 <bb2 c3>!2, <c4@3 [<eb4 bb3> g4 f4]>")
 />
 
 The sampler will always pick the closest matching sample for the current note!
+
+## Effects
+
+Wether you're using a synth or a sample, you can apply these effects:
+
+{{ 'cutoff' | jsdoc }}
+
+{{ 'resonance' | jsdoc }}
+
+{{ 'hcutoff' | jsdoc }}
+
+{{ 'hresonance' | jsdoc }}
+
+{{ 'bandf' | jsdoc }}
+
+{{ 'bandq' | jsdoc }}
+
+{{ 'vowel' | jsdoc }}
+
+{{ 'pan' | jsdoc }}
+
+{{ 'coarse' | jsdoc }}
+
+{{ 'shape' | jsdoc }}
+
+{{ 'crush' | jsdoc }}
 
 <br />
 

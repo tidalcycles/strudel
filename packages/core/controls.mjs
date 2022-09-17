@@ -129,7 +129,7 @@ const generic_params = [
    * @name bandf
    * @param {number | Pattern} frequency center frequency
    * @example
-   * s("bd sd").bandf("<1000 2000 4000 8000>").osc()
+   * s("bd sd,hh*3").bandf("<1000 2000 4000 8000>").out()
    *
    */
   ['f', 'bandf', 'A pattern of numbers from 0 to 1. Sets the center frequency of the band-pass filter.'],
@@ -140,7 +140,7 @@ const generic_params = [
    * @name bandq
    * @param {number | Pattern} q q factor
    * @example
-   * s("bd sd").bandf(2000).bandq("<.2 .9>").osc()
+   * s("bd sd").bandf(500).bandq("<0 1 2 3>").out()
    *
    */
   ['f', 'bandq', 'a pattern of anumbers from 0 to 1. Sets the q-factor of the band-pass filter.'],
@@ -202,7 +202,7 @@ const generic_params = [
    * @name crush
    * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
    * @example
-   * s("<bd sd>,hh*3,jvbass*2").fast(2).crush("<16 8 7 6 5 4 3 2>").osc()
+   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>").out()
    *
    */
   [
@@ -216,7 +216,7 @@ const generic_params = [
    * @name coarse
    * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.
    * @example
-   * s("xmas").coarse("<1 4 8 16 32>").osc()
+   * s("bd sd,hh*4").coarse("<1 4 8 16 32>").out()
    *
    */
   [
@@ -253,7 +253,7 @@ const generic_params = [
    * @name cutoff
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @example
-   * s("bd,hh*2,<~ sd>").fast(2).cutoff("<4000 2000 1000 500 200 100>").osc()
+   * s("bd sd,hh*3").cutoff("<4000 2000 1000 500 200 100>").out()
    *
    */
   // TODO: add lpf synonym
@@ -264,7 +264,7 @@ const generic_params = [
    * @name hcutoff
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @example
-   * s("bd,hh*2,<~ sd>").fast(2).hcutoff("<4000 2000 1000 500 200 100>").osc()
+   * s("bd sd,hh*4").hcutoff("<4000 2000 1000 500 200 100>").out()
    *
    */
   // TODO: add hpf synonym
@@ -274,12 +274,12 @@ const generic_params = [
     'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the high-pass filter. Also has alias @hpf@',
   ],
   /**
-   * Applies the cutoff frequency of the high-pass filter.
+   * Applies the resonance of the high-pass filter.
    *
    * @name hresonance
    * @param {number | Pattern} q resonance factor between 0 and 1
    * @example
-   * s("bd,hh*2,<~ sd>").fast(2).hcutoff(2000).hresonance("<0 .2 .4 .6>").osc()
+   * s("bd sd,hh*4").hcutoff(2000).hresonance("<0 10 20 30>").out()
    *
    */
   [
@@ -294,13 +294,13 @@ const generic_params = [
    * @name resonance
    * @param {number | Pattern} q resonance factor between 0 and 1
    * @example
-   * s("bd,hh*2,<~ sd>").fast(2).cutoff(2000).resonance("<0 .2 .4 .6>").osc()
+   * s("bd sd,hh*4").cutoff(2000).resonance("<0 10 20 30>").out()
    *
    */
   ['f', 'resonance', 'a pattern of numbers from 0 to 1. Specifies the resonance of the low-pass filter.'],
   // TODO: add lpq synonym?
   /**
-   * Set detune of oscillators. Works only with some synths, see <a target="_blank" href="https://tidalcycles.org/docs/patternlib/tutorials/synthesizers">tidal doc</a>
+   * DJ filter, below 0.5 is low pass filter, above is high pass filter.
    *
    * @name djf
    * @param {number | Pattern} cutoff below 0.5 is low pass filter, above is high pass filter
@@ -493,7 +493,7 @@ const generic_params = [
    * @name pan
    * @param {number | Pattern} pan between 0 and 1, from left to right (assuming stereo), once round a circle (assuming multichannel)
    * @example
-   * s("[bd hh]*2").pan("<.5 1 .5 0>").osc()
+   * s("[bd hh]*2").pan("<.5 1 .5 0>").out()
    *
    */
   [
@@ -591,7 +591,7 @@ const generic_params = [
    * @name shape
    * @param {number | Pattern} distortion between 0 and 1
    * @example
-   * s("bd sd").shape("<0 .2 .4 .6 .8 1>").osc()
+   * s("bd sd,hh*4").shape("<0 .2 .4 .6 .8>").out()
    *
    */
   [
@@ -648,16 +648,16 @@ const generic_params = [
   // ['f', 'tomdecay', ''],
   // ['f', 'vcfegint', ''],
   // ['f', 'vcoegint', ''],
+  // TODO: Use a rest (~) to override the effect <- vowel
   /**
    *
    * Formant filter to make things sound like vowels.
    *
    * @name vowel
-   * @param {string | Pattern} vowel You can use a e i o u. Use a rest (~) to override the effect
+   * @param {string | Pattern} vowel You can use a e i o u.
    * @example
-   * vowel("a e i [o u]").slow(2)
-   * .n("<[0,7]!4 [2,7]!4>")
-   * .s('supersquare').osc()
+   * note("c2 <eb2 <g2 g1>>").s('sawtooth')
+   * .vowel("<a e i <o u>>").out()
    *
    */
   [
