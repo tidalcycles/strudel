@@ -491,59 +491,72 @@ We can write the same with **stack** and **cat**:
 
 You can also use the shorthand **pr** instead of **polyrhythm**.
 
-## Pattern modifier functions
+## Time Modifiers
 
-The following functions modify a pattern.
+The following functions modify a pattern temporal structure in some way.
 
-### slow(factor)
+{{ 'Pattern.slow' | jsdoc }}
 
-Like "/" in mini notation, **slow** will slow down a pattern over the given number of cycles:
+{{ 'Pattern.fast' | jsdoc }}
 
-<MiniRepl tune={`seq(e5, b4, d5, c5).slow(2)`} />
+{{ 'Pattern.early' | jsdoc }}
 
-The same in mini notation:
+{{ 'Pattern.late' | jsdoc }}
 
-<MiniRepl tune={`"[e5 b4 d5 c5]/2"`} />
+{{ 'Pattern.rev' | jsdoc }}
 
-### fast(factor)
+### struct(binary_pat)
 
-Like "\*" in mini notation, **fast** will play a pattern times the given number in one cycle:
+Applies the given structure to the pattern:
 
-<MiniRepl tune={`seq(e5, b4, d5, c5).fast(2)`} />
+<MiniRepl tune={`"c3,eb3,g3".struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~").slow(4)`} />
 
-### early(cycles)
+This is also useful to sample signals:
 
-With early, you can nudge a pattern to start earlier in time:
+<MiniRepl
+  tune={`sine.struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~").mul(7).round()
+.scale('C minor').slow(4)`}
+/>
 
-<MiniRepl tune={`seq(e5, b4.early(0.5))`} />
+## Conditional Modifiers
 
-### late(cycles)
+{{ 'Pattern.every' | jsdoc }}
 
-Like early, but in the other direction:
+{{ 'Pattern.each' | jsdoc }}
 
-<MiniRepl tune={`seq(e5, b4.late(0.5))`} />
+### when(binary_pat, func)
 
-<!-- TODO: shouldn't it sound different? -->
+Applies the given function whenever the given pattern is in a true state.
 
-### rev()
+<MiniRepl tune={`"c3 eb3 g3".when("<0 1>/2", sub(5))`} />
 
-Will reverse the pattern:
+## Accumulation Modifiers
 
-<MiniRepl tune={`seq(c3,d3,e3,f3).rev()`} />
+### stack(pat)
 
-### every(n, func)
+Stacks the given pattern to the current pattern:
 
-Will apply the given function every n cycles:
+<MiniRepl tune={`"c4,eb4,g4".stack("bb4,d5")`} />
 
-<MiniRepl tune={`seq(e5, "b4".every(4, late(0.5)))`} />
+### superimpose(...func)
 
-<!-- TODO: should be able to do b4.every => like already possible with fast slow etc.. -->
+Superimposes the result of the given function(s) on top of the original pattern:
 
-Note that late is called directly. This is a shortcut for:
+<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').superimpose(scaleTranspose("2,4"))`} />
 
-<MiniRepl tune={`seq(e5, "b4".every(4, x => x.late(0.5)))`} />
+### layer(...func)
 
-<!-- TODO: should the function really run the first cycle? -->
+Layers the result of the given function(s) on top of each other. Like superimpose, but the original pattern is not part of the result.
+
+<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').layer(scaleTranspose("0,2,4"))`} />
+
+### off(time, func)
+
+Applies the given function by the given time offset:
+
+<MiniRepl tune={`"c3 eb3 g3".off(1/8, add(7))`} />
+
+## Value Modifiers
 
 ### add(n)
 
@@ -597,54 +610,11 @@ Rounds all values to the nearest integer:
 
 <MiniRepl tune={`"0.5 1.5 2.5".round().scale('C major')`} />
 
-### struct(binary_pat)
-
-Applies the given structure to the pattern:
-
-<MiniRepl tune={`"c3,eb3,g3".struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~").slow(4)`} />
-
-This is also useful to sample signals:
-
-<MiniRepl
-  tune={`sine.struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~").mul(7).round()
-.scale('C minor').slow(4)`}
-/>
-
-### when(binary_pat, func)
-
-Applies the given function whenever the given pattern is in a true state.
-
-<MiniRepl tune={`"c3 eb3 g3".when("<0 1>/2", sub(5))`} />
-
-### superimpose(...func)
-
-Superimposes the result of the given function(s) on top of the original pattern:
-
-<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').superimpose(scaleTranspose("2,4"))`} />
-
-### layer(...func)
-
-Layers the result of the given function(s) on top of each other. Like superimpose, but the original pattern is not part of the result.
-
-<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').layer(scaleTranspose("0,2,4"))`} />
-
 ### apply(func)
 
 Like layer, but with a single function:
 
 <MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4"))`} />
-
-### off(time, func)
-
-Applies the given function by the given time offset:
-
-<MiniRepl tune={`"c3 eb3 g3".off(1/8, add(7))`} />
-
-### stack(pat)
-
-Stacks the given pattern to the current pattern:
-
-<MiniRepl tune={`"c4,eb4,g4".stack("bb4,d5")`} />
 
 ## Randomness
 

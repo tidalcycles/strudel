@@ -734,14 +734,14 @@ export class Pattern {
   }
 
   /**
-   * Speed up a pattern by the given factor.
+   * Speed up a pattern by the given factor. Used by "*" in mini notation.
    *
    * @name fast
    * @memberof Pattern
    * @param {number | Pattern} factor speed up factor
    * @returns Pattern
    * @example
-   * seq(e5, b4, d5, c5).fast(2)
+   * seq(e5, b4, d5, c5).fast(2) // "[e5 b4 d5 c5]*2"
    */
   _fast(factor) {
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
@@ -749,14 +749,14 @@ export class Pattern {
   }
 
   /**
-   * Slow down a pattern over the given number of cycles.
+   * Slow down a pattern over the given number of cycles. Like the "/" operator in mini notation.
    *
    * @name slow
    * @memberof Pattern
    * @param {number | Pattern} factor slow down factor
    * @returns Pattern
    * @example
-   * seq(e5, b4, d5, c5).slow(2)
+   * seq(e5, b4, d5, c5).slow(2) // "[e5 b4 d5 c5]/2"
    */
   _slow(factor) {
     return this._fast(Fraction(1).div(factor));
@@ -795,14 +795,32 @@ export class Pattern {
     return this._fast(cpm / 60);
   }
 
+  /**
+   * Nudge a pattern to start earlier in time. Equivalent of Tidal's <~ operator
+   *
+   * @name early
+   * @memberof Pattern
+   * @param {number | Pattern} cycles number of cycles to nudge left
+   * @returns Pattern
+   * @example
+   * "bd ~".stack("hh ~".early(.1)).s().out()
+   */
   _early(offset) {
-    // Equivalent of Tidal's <~ operator
     offset = Fraction(offset);
     return this.withQueryTime((t) => t.add(offset)).withHapTime((t) => t.sub(offset));
   }
 
+  /**
+   * Nudge a pattern to start later in time. Equivalent of Tidal's ~> operator
+   *
+   * @name late
+   * @memberof Pattern
+   * @param {number | Pattern} cycles number of cycles to nudge right
+   * @returns Pattern
+   * @example
+   * "bd ~".stack("hh ~".late(.1)).s().out()
+   */
   _late(offset) {
-    // Equivalent of Tidal's ~> operator
     offset = Fraction(offset);
     return this._early(Fraction(0).sub(offset));
   }
@@ -889,10 +907,54 @@ export class Pattern {
     return stack(this, func(this.late(time_pat)));
   }
 
+  /**
+   * Applies the given function every n cycles.
+   * @name every
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").every(4, x=>x.rev()).out()
+   */
+   every(n, func) {
+    const pat = this;
+    const pats = Array(n - 1).fill(pat);
+    // pats.unshift(func(pat));
+    pats.push(func(pat));
+    return slowcatPrime(...pats);
+  }
+  /**
+   * Applies the given function every n cycles, starting from the first cycle.
+   * @name every
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").every(4, x=>x.rev()).out()
+   */
   every(n, func) {
     const pat = this;
     const pats = Array(n - 1).fill(pat);
     pats.unshift(func(pat));
+    return slowcatPrime(...pats);
+  }
+  
+  /**
+   * Applies the given function every n cycles, starting from the last cycle.
+   * @name each
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").every(4, x=>x.rev()).out()
+   */
+   each(n, func) {
+    const pat = this;
+    const pats = Array(n - 1).fill(pat);
+    pats.push(func(pat));
     return slowcatPrime(...pats);
   }
 
@@ -906,6 +968,15 @@ export class Pattern {
     return this.when(slowcat(false, true), (x) => fastcat(x, silence)._late(0.25));
   }
 
+  /**
+   * Reverse all haps in a pattern
+   *
+   * @name rev
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "c3 d3 e3 g3".rev()
+   */
   rev() {
     const pat = this;
     const query = function (state) {
