@@ -508,37 +508,23 @@ The following functions modify a pattern temporal structure in some way.
 
 {{ 'Pattern.each' | jsdoc }}
 
-### when(binary_pat, func)
-
-Applies the given function whenever the given pattern is in a true state.
-
-<MiniRepl tune={`"c3 eb3 g3".when("<0 1>/2", sub(5))`} />
+{{ 'Pattern.when' | jsdoc }}
 
 ## Accumulation Modifiers
 
-### stack(pat)
+{{ 'Pattern.stack' | jsdoc }}
 
-Stacks the given pattern to the current pattern:
+{{ 'Pattern.superimpose' | jsdoc }}
 
-<MiniRepl tune={`"c4,eb4,g4".stack("bb4,d5")`} />
+{{ 'Pattern.layer' | jsdoc }}
 
-### superimpose(...func)
+{{ 'Pattern.off' | jsdoc }}
 
-Superimposes the result of the given function(s) on top of the original pattern:
+## Concat Modifiers
 
-<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').superimpose(scaleTranspose("2,4"))`} />
+{{ 'Pattern.seq' | jsdoc }}
 
-### layer(...func)
-
-Layers the result of the given function(s) on top of each other. Like superimpose, but the original pattern is not part of the result.
-
-<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').layer(scaleTranspose("0,2,4"))`} />
-
-### off(time, func)
-
-Applies the given function by the given time offset:
-
-<MiniRepl tune={`"c3 eb3 g3".off(1/8, add(7))`} />
+{{ 'Pattern.cat' | jsdoc }}
 
 ## Value Modifiers
 

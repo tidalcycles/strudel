@@ -686,6 +686,16 @@ export class Pattern {
     return func(this);
   }
 
+  /**
+   * Layers the result of the given function(s). Like {@link superimpose}, but without the original pattern:
+   * @name layer
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
+   *   .layer(x=>x.add("0,2"))
+   *   .scale('C minor').note().out()
+   */
   layer(...funcs) {
     return stack(...funcs.map((func) => func(this)));
   }
@@ -908,6 +918,16 @@ export class Pattern {
     return this.invert();
   }
 
+  /**
+   * Applies the given function whenever the given pattern is in a true state.
+   * @name when
+   * @memberof Pattern
+   * @param {Pattern} binary_pat
+   * @param {function} func
+   * @returns Pattern
+   * @example
+   * "c3 eb3 g3".when("<0 1>/2", x=>x.sub(5))
+   */
   when(binary_pat, func) {
     //binary_pat = sequence(binary_pat)
     const true_pat = binary_pat._filterValues(id);
@@ -917,6 +937,16 @@ export class Pattern {
     return stack(with_pat, without_pat);
   }
 
+  /**
+   * Superimposes the function result on top of the original pattern, delayed by the given time.
+   * @name off
+   * @memberof Pattern
+   * @param {Pattern | number} time offset time
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * "c3 eb3 g3".off(1/8, x=>x.add(7))
+   */
   off(time_pat, func) {
     return stack(this, func(this.late(time_pat)));
   }
@@ -1033,6 +1063,15 @@ export class Pattern {
     return this.juxBy(1, func);
   }
 
+  /**
+   * Stacks the given pattern(s) to the current pattern.
+   * @name stack
+   * @memberof Pattern
+   * @example
+   * s("hh*2").stack(
+   *   n("c2(3,8)")
+   * ).out()
+   */
   stack(...pats) {
     return stack(this, ...pats);
   }
@@ -1041,11 +1080,28 @@ export class Pattern {
     return sequence(this, ...pats);
   }
 
-  // shorthand for sequence
+  /**
+   * Appends the given pattern(s) to the current pattern. Synonyms: .sequence .fastcat
+   * @name seq
+   * @memberof Pattern
+   * @example
+   * s("hh*2").seq(
+   *   n("c2(3,8)")
+   * ).out()
+   */
   seq(...pats) {
     return sequence(this, ...pats);
   }
 
+  /**
+   * Appends the given pattern(s) to the next cycle. Synonym: .slowcat
+   * @name cat
+   * @memberof Pattern
+   * @example
+   * s("hh*2").cat(
+   *   n("c2(3,8)")
+   * ).out()
+   */
   cat(...pats) {
     return cat(this, ...pats);
   }
@@ -1058,6 +1114,16 @@ export class Pattern {
     return slowcat(this, ...pats);
   }
 
+  /**
+   * Superimposes the result of the given function(s) on top of the original pattern:
+   * @name superimpose
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
+   *   .superimpose(x=>x.add(2))
+   *   .scale('C minor').note().out()
+   */
   superimpose(...funcs) {
     return this.stack(...funcs.map((func) => func(this)));
   }
