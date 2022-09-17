@@ -111,7 +111,17 @@ const timeToRandsPrime = (seed, n) => {
 const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
 
 /**
- * A continuous pattern of random numbers, between 0 and 1
+ *
+ */
+
+/**
+ * A continuous pattern of random numbers, between 0 and 1.
+ *
+ * @name rand
+ * @example
+ * // randomly change the cutoff
+ * s("bd sd,hh*4").cutoff(rand.range(500,2000)).out()
+ *
  */
 export const rand = signal(timeToRand);
 /**
@@ -124,6 +134,17 @@ export const brandBy = (pPat) => reify(pPat).fmap(_brandBy).innerJoin();
 export const brand = _brandBy(0.5);
 
 export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
+
+/**
+ * A continuous pattern of random integers, between 0 and n-1.
+ *
+ * @name irand
+ * @param {number} n max value (exclusive)
+ * @example
+ * // randomly select scale notes from 0 - 7 (= C to C)
+ * irand(8).struct("x(3,8)").scale('C minor').note().out()
+ *
+ */
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
 export const __chooseWith = (pat, xs) => {
@@ -225,6 +246,15 @@ export const perlinWith = (pat) => {
   return pat.sub(pata).fmap(interp).appBoth(pata.fmap(timeToRand)).appBoth(patb.fmap(timeToRand));
 };
 
+/**
+ * Generates a continuous pattern of [perlin noise](https://en.wikipedia.org/wiki/Perlin_noise), in the range 0..1.
+ *
+ * @name perlin
+ * @example
+ * // randomly change the cutoff
+ * s("bd sd,hh*4").cutoff(perlin.range(500,2000)).out()
+ *
+ */
 export const perlin = perlinWith(time);
 
 Pattern.prototype._degradeByWith = function (withPat, x) {
