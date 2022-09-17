@@ -1404,6 +1404,10 @@ export function stack(...pats) {
   return new Pattern(query);
 }
 
+// aliases
+const polyrhythm = stack;
+const pr = stack;
+
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle:
  *
  * synonyms: {@link cat}
@@ -1548,28 +1552,6 @@ export function polymeter(...args) {
 // alias
 export function pm(...args) {
   polymeter(...args);
-}
-
-/*
- * Plays the given items at the same time, within the same length:
- * @param {...any} items - The items to play
- * @return {Pattern}
- * @example
- *
- *
- */
-export function polyrhythm(...xs) {
-  const seqs = xs.map((a) => sequence(a));
-
-  if (seqs.length == 0) {
-    return silence;
-  }
-  return stack(...seqs);
-}
-
-// alias
-export function pr(args) {
-  polyrhythm(args);
 }
 
 export const add = curry((a, pat) => pat.add(a));
