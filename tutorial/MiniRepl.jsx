@@ -12,14 +12,10 @@ export const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.
   },
 });
 
-samples(
-  {
-    bd: '808bd/BD0000.WAV',
-    sd: ['808sd/SD0010.WAV', '808sd/SD0050.WAV', '808sd/SD0000.WAV'],
-    hh: ['hh27/000_hh27closedhh.wav', 'hh/000_hh3closedhh.wav'],
-  },
-  'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/',
-);
+await fetch('https://strudel.tidalcycles.org/EmuSP12.json')
+  .then((res) => res.json())
+  .then((json) => samples(json, 'https://strudel.tidalcycles.org/EmuSP12/'));
+
 
 evalScope(
   Tone,

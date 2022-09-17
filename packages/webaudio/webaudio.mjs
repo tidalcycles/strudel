@@ -147,12 +147,13 @@ function getWorklet(ac, processor, params) {
   return node;
 }
 
+try {
+  loadWorklets();
+} catch (err) {
+  console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+}
+
 Pattern.prototype.out = function () {
-  try {
-    loadWorklets();
-  } catch (err) {
-    console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
-  }
   return this.onTrigger(async (t, hap, ct, cps) => {
     const hapDuration = hap.duration / cps;
     try {
@@ -199,7 +200,7 @@ Pattern.prototype.out = function () {
       }
       if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
         // with synths, n and note are the same thing
-        n = note || n;
+        n = note || n || 36;
         if (typeof n === 'string') {
           n = toMidi(n); // e.g. c3 => 48
         }
@@ -304,10 +305,8 @@ Pattern.prototype.out = function () {
       chain.push(ac.destination);
       // connect chain elements together
       chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
-      // disconnect all nodes when hap is over to make sure they are garbage collected
-      setTimeout(() => {
-        chain.forEach((n) => n.disconnect());
-      }, (hapDuration + release + 0.1) * 1000);
+      // disconnect all nodes when source node has ended:
+      chain[0].onended = () => chain.forEach((n) => n.disconnect());
     } catch (e) {
       console.warn('.out error:', e);
     }

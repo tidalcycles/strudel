@@ -11,7 +11,7 @@ const generic_params = [
   /**
    * Select a sound / sample by name.
    *
-   * <details>
+   * <details style={{display:'none'}}>
    * <summary>show all sounds</summary>
    *
    * 808 (6) 808bd (25) 808cy (25) 808hc (5) 808ht (5) 808lc (5) 808lt (5) 808mc (5) 808mt (5) 808oh (5) 808sd (25) 909 (1) ab (12) ade (10) ades2 (9) ades3 (7) ades4 (6) alex (2) alphabet (26) amencutup (32) armora (7) arp (2) arpy (11) auto (11) baa (7) baa2 (7) bass (4) bass0 (3) bass1 (30) bass2 (5) bass3 (11) bassdm (24) bassfoo (3) battles (2) bd (24) bend (4) bev (2) bin (2) birds (10) birds3 (19) bleep (13) blip (2) blue (2) bottle (13) breaks125 (2) breaks152 (1) breaks157 (1) breaks165 (1) breath (1) bubble (8) can (14) casio (3) cb (1) cc (6) chin (4) circus (3) clak (2) click (4) clubkick (5) co (4) coins (1) control (2) cosmicg (15) cp (2) cr (6) crow (4) d (4) db (13) diphone (38) diphone2 (12) dist (16) dork2 (4) dorkbot (2) dr (42) dr2 (6) dr55 (4) dr_few (8) drum (6) drumtraks (13) e (8) east (9) electro1 (13) em2 (6) erk (1) f (1) feel (7) feelfx (8) fest (1) fire (1) flick (17) fm (17) foo (27) future (17) gab (10) gabba (4) gabbaloud (4) gabbalouder (4) glasstap (3) glitch (8) glitch2 (8) gretsch (24) gtr (3) h (7) hand (17) hardcore (12) hardkick (6) haw (6) hc (6) hh (13) hh27 (13) hit (6) hmm (1) ho (6) hoover (6) house (8) ht (16) if (5) ifdrums (3) incoming (8) industrial (32) insect (3) invaders (18) jazz (8) jungbass (20) jungle (13) juno (12) jvbass (13) kicklinn (1) koy (2) kurt (7) latibro (8) led (1) less (4) lighter (33) linnhats (6) lt (16) made (7) made2 (1) mash (2) mash2 (4) metal (10) miniyeah (4) monsterb (6) moog (7) mouth (15) mp3 (4) msg (9) mt (16) mute (28) newnotes (15) noise (1) noise2 (8) notes (15) numbers (9) oc (4) odx (15) off (1) outdoor (6) pad (3) padlong (1) pebbles (1) perc (6) peri (15) pluck (17) popkick (10) print (11) proc (2) procshort (8) psr (30) rave (8) rave2 (4) ravemono (2) realclaps (4) reverbkick (1) rm (2) rs (1) sax (22) sd (2) seawolf (3) sequential (8) sf (18) sheffield (1) short (5) sid (12) sine (6) sitar (8) sn (52) space (18) speakspell (12) speech (7) speechless (10) speedupdown (9) stab (23) stomp (10) subroc3d (11) sugar (2) sundance (6) tabla (26) tabla2 (46) tablex (3) tacscan (22) tech (13) techno (7) tink (5) tok (4) toys (13) trump (11) ul (10) ulgab (5) uxay (3) v (6) voodoo (5) wind (10) wobble (1) world (3) xmas (1) yeah (31)
@@ -23,7 +23,7 @@ const generic_params = [
    * @name s
    * @param {string | Pattern} sound The sound / pattern of sounds to pick
    * @example
-   * s("bd hh").osc()
+   * s("bd hh").out()
    *
    */
   ['s', 's', 'sound'],
@@ -129,7 +129,7 @@ const generic_params = [
    * @name bandf
    * @param {number | Pattern} frequency center frequency
    * @example
-   * s("bd sd").bandf("<1000 2000 4000 8000>").osc()
+   * s("bd sd,hh*3").bandf("<1000 2000 4000 8000>").out()
    *
    */
   ['f', 'bandf', 'A pattern of numbers from 0 to 1. Sets the center frequency of the band-pass filter.'],
@@ -140,7 +140,7 @@ const generic_params = [
    * @name bandq
    * @param {number | Pattern} q q factor
    * @example
-   * s("bd sd").bandf(2000).bandq("<.2 .9>").osc()
+   * s("bd sd").bandf(500).bandq("<0 1 2 3>").out()
    *
    */
   ['f', 'bandq', 'a pattern of anumbers from 0 to 1. Sets the q-factor of the band-pass filter.'],
@@ -202,7 +202,7 @@ const generic_params = [
    * @name crush
    * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
    * @example
-   * s("<bd sd>,hh*3,jvbass*2").fast(2).crush("<16 8 7 6 5 4 3 2>").osc()
+   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>").out()
    *
    */
   [
@@ -216,7 +216,7 @@ const generic_params = [
    * @name coarse
    * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.
    * @example
-   * s("xmas").coarse("<1 4 8 16 32>").osc()
+   * s("bd sd,hh*4").coarse("<1 4 8 16 32>").out()
    *
    */
   [
@@ -253,7 +253,7 @@ const generic_params = [
    * @name cutoff
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @example
-   * s("bd,hh*2,<~ sd>").fast(2).cutoff("<4000 2000 1000 500 200 100>").osc()
+   * s("bd sd,hh*3").cutoff("<4000 2000 1000 500 200 100>").out()
    *
    */
   // TODO: add lpf synonym
@@ -264,7 +264,7 @@ const generic_params = [
    * @name hcutoff
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @example
-   * s("bd,hh*2,<~ sd>").fast(2).hcutoff("<4000 2000 1000 500 200 100>").osc()
+   * s("bd sd,hh*4").hcutoff("<4000 2000 1000 500 200 100>").out()
    *
    */
   // TODO: add hpf synonym
@@ -274,12 +274,12 @@ const generic_params = [
     'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the high-pass filter. Also has alias @hpf@',
   ],
   /**
-   * Applies the cutoff frequency of the high-pass filter.
+   * Applies the resonance of the high-pass filter.
    *
    * @name hresonance
    * @param {number | Pattern} q resonance factor between 0 and 1
    * @example
-   * s("bd,hh*2,<~ sd>").fast(2).hcutoff(2000).hresonance("<0 .2 .4 .6>").osc()
+   * s("bd sd,hh*4").hcutoff(2000).hresonance("<0 10 20 30>").out()
    *
    */
   [
@@ -294,13 +294,13 @@ const generic_params = [
    * @name resonance
    * @param {number | Pattern} q resonance factor between 0 and 1
    * @example
-   * s("bd,hh*2,<~ sd>").fast(2).cutoff(2000).resonance("<0 .2 .4 .6>").osc()
+   * s("bd sd,hh*4").cutoff(2000).resonance("<0 10 20 30>").out()
    *
    */
   ['f', 'resonance', 'a pattern of numbers from 0 to 1. Specifies the resonance of the low-pass filter.'],
   // TODO: add lpq synonym?
   /**
-   * Set detune of oscillators. Works only with some synths, see <a target="_blank" href="https://tidalcycles.org/docs/patternlib/tutorials/synthesizers">tidal doc</a>
+   * DJ filter, below 0.5 is low pass filter, above is high pass filter.
    *
    * @name djf
    * @param {number | Pattern} cutoff below 0.5 is low pass filter, above is high pass filter
@@ -493,7 +493,7 @@ const generic_params = [
    * @name pan
    * @param {number | Pattern} pan between 0 and 1, from left to right (assuming stereo), once round a circle (assuming multichannel)
    * @example
-   * s("[bd hh]*2").pan("<.5 1 .5 0>").osc()
+   * s("[bd hh]*2").pan("<.5 1 .5 0>").out()
    *
    */
   [
@@ -591,7 +591,7 @@ const generic_params = [
    * @name shape
    * @param {number | Pattern} distortion between 0 and 1
    * @example
-   * s("bd sd").shape("<0 .2 .4 .6 .8 1>").osc()
+   * s("bd sd,hh*4").shape("<0 .2 .4 .6 .8>").out()
    *
    */
   [
@@ -648,16 +648,16 @@ const generic_params = [
   // ['f', 'tomdecay', ''],
   // ['f', 'vcfegint', ''],
   // ['f', 'vcoegint', ''],
+  // TODO: Use a rest (~) to override the effect <- vowel
   /**
    *
    * Formant filter to make things sound like vowels.
    *
    * @name vowel
-   * @param {string | Pattern} vowel You can use a e i o u. Use a rest (~) to override the effect
+   * @param {string | Pattern} vowel You can use a e i o u.
    * @example
-   * vowel("a e i [o u]").slow(2)
-   * .n("<[0,7]!4 [2,7]!4>")
-   * .s('supersquare').osc()
+   * note("c2 <eb2 <g2 g1>>").s('sawtooth')
+   * .vowel("<a e i <o u>>").out()
    *
    */
   [

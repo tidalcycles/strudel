@@ -186,14 +186,210 @@ resulting in a rhythmical structure of "x ~ ~ x ~ ~ x ~" (3 beats over 8 segment
 
 <MiniRepl tune={`"e5(2,8) b4(3,8) d5(2,8) c5(3,8)".slow(4)`} />
 
-## Mini Notation TODO
+<br />
 
-Compared to [tidal mini notation](https://tidalcycles.org/docs/patternlib/tutorials/mini_notation/), the following mini notation features are missing from Strudel:
+# Web Audio Output
 
-- [ ] Tie symbols "\_"
-- [ ] feet marking "."
-- [ ] Polymetric sequences "{ ... }"
-- [ ] Fixed steps using "%"
+The default way to output sound is by using the Web Audio Output.
+Here is a little beat to show some of the possibilities:
+
+<MiniRepl
+  tune={`samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+stack(
+s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
+.speed(perlin.range(.7,.9)) // random sample speed variation
+,"<a1 b1\*2 a1(3,8) e2>" // bassline
+.off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
+.add(perlin.range(0,.5)) // random pitch variation
+.superimpose(add(.05)) // add second, slightly detuned voice
+.n() // wrap in "n"
+.decay(.15).sustain(0) // make each note of equal length
+.s('sawtooth') // waveform
+.gain(.4) // turn down
+.cutoff(sine.slow(7).range(300,5000)) // automate cutoff
+,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings() // chords
+.superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+.add(perlin.range(0,.5)) // random pitch variation
+.n() // wrap in "n"
+.s('sawtooth') // waveform
+.gain(.16) // turn down
+.cutoff(500) // fixed cutoff
+.attack(1) // slowly fade in
+)
+.slow(3/2)
+.out()`}
+/>
+
+## Synths
+
+So far, all the mini notation examples all used the same sound, which is kind of boring.
+We can change the sound, using the `s` function:
+
+<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth').out()`} />
+
+Here, we are wrapping our notes inside `note` and set the sound using `s`, connected by a dot.
+
+Those functions are only 2 of many ways to alter the properties, or _params_ of a sound.
+The power of patterns allows us to sequence any _param_ independently:
+
+<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s("<sawtooth square triangle>").out()`} />
+
+Now we not only pattern the notes, but the sound as well!
+`sawtooth` `square` and `triangle` are the basic waveforms available in `s`.
+
+### Envelope
+
+You can control the envelope of a synth using the `attack`, `decay`, `sustain` and `release` functions:
+
+<MiniRepl
+  tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth')
+  .attack(.1).decay(.1).sustain(.2).release(.1).out()`}
+/>
+
+## Samples
+
+Besides Synths, `s` can also play back samples:
+
+<MiniRepl tune={`s("bd sd,hh*8,misc/2").out()`} />
+
+To know which sounds are available, open the [default sample map](https://strudel.tidalcycles.org/EmuSP12.json)
+
+### Custom Sample Maps
+
+You can load your own sample map like this:
+
+<MiniRepl
+  tune={`samples({
+  bd: 'bd/BT0AADA.wav',
+  sd: 'sd/rytm-01-classic.wav',
+  hh: 'hh27/000_hh27closedhh.wav',
+}, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
+s("bd sd,hh*8").out()`}
+/>
+
+The `samples` function takes an object that maps sound names to audio file paths.
+The second argument is the base URL that comes before each path. Make sure your base URL ends with a slash, while your sample paths do **not** begin with one.
+
+Because github is a popular choice to dump samples, there is a shortcut for that:
+
+<MiniRepl
+  tune={`samples({
+  bd: 'bd/BT0AADA.wav',
+  sd: 'sd/rytm-01-classic.wav',
+  hh: 'hh27/000_hh27closedhh.wav',
+}, 'github:tidalcycles/Dirt-Samples/master/');
+s("bd sd,hh*8").out()`}
+/>
+
+The format is `github:user/repo/branch/`.
+
+### Multiple Samples per Sound
+
+It is also possible, to declare multiple files for one sound, using the array notation:
+
+<MiniRepl
+  tune={`samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+s("<bd:0 bd:1>,~ <sd:0 sd:1>,[hh:0 hh:1]*2").out()`}
+/>
+
+The `:0` `:1` etc. are the indices of the array.
+The sample number can also be set using `n`:
+
+<MiniRepl
+  tune={`samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+s("bd,~ sd,hh*4").n("<0 1>").out()`}
+/>
+
+### Pitched Sounds
+
+For pitched sounds, you can use `note`, just like with synths:
+
+<MiniRepl
+  tune={`samples({
+  "gtr": 'gtr/0001_cleanC.wav',
+}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').gain(.5).out()`}
+/>
+
+Here, the guitar samples will overlap, because they always play till the end.
+If we want them to behave more like a synth, we can add `clip(1)`:
+
+<MiniRepl
+  tune={`samples({
+  "gtr": 'gtr/0001_cleanC.wav',
+}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').clip(1)
+  .gain(.5).out()`}
+/>
+
+### Base Pitch
+
+If we have 2 samples with different base pitches, we can make them in tune by specifying the pitch like this:
+
+<MiniRepl
+  tune={`samples({
+  "gtr": 'gtr/0001_cleanC.wav',
+  "moog": { 'g3': 'moog/005_Mighty%20Moog%20G3.wav' },
+}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s("gtr,moog").clip(1)
+  .gain(.5).out()`}
+/>
+
+If a sample has no pitch set, `c3` is the default.
+
+We can also declare different samples for different regions of the keyboard:
+
+<MiniRepl
+  tune={`samples({
+  "moog": {
+    'g2': 'moog/004_Mighty%20Moog%20G2.wav',
+    'g3': 'moog/005_Mighty%20Moog%20G3.wav',
+    'g4': 'moog/006_Mighty%20Moog%20G4.wav',
+  }}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g2!2 <bb2 c3>!2, <c4@3 [<eb4 bb3> g4 f4]>")
+  .s('moog').clip(1)
+  .gain(.5).out()`}
+/>
+
+The sampler will always pick the closest matching sample for the current note!
+
+## Effects
+
+Wether you're using a synth or a sample, you can apply these effects:
+
+{{ 'cutoff' | jsdoc }}
+
+{{ 'resonance' | jsdoc }}
+
+{{ 'hcutoff' | jsdoc }}
+
+{{ 'hresonance' | jsdoc }}
+
+{{ 'bandf' | jsdoc }}
+
+{{ 'bandq' | jsdoc }}
+
+{{ 'vowel' | jsdoc }}
+
+{{ 'pan' | jsdoc }}
+
+{{ 'coarse' | jsdoc }}
+
+{{ 'shape' | jsdoc }}
+
+{{ 'crush' | jsdoc }}
 
 <br />
 
