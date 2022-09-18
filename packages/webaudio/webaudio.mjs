@@ -7,6 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 // import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
 import { fromMidi, toMidi } from '@strudel.cycles/core';
+import './feedbackdelay.mjs';
 import { loadBuffer } from './sampler.mjs';
 const { Pattern } = strudel;
 import './vowel.mjs';
@@ -153,6 +154,12 @@ try {
   console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
 }
 
+function gainNode(value) {
+  const node = getAudioContext().createGain();
+  node.gain.value = value;
+  return node;
+}
+
 Pattern.prototype.out = function () {
   return this.onTrigger(async (t, hap, ct, cps) => {
     const hapDuration = hap.duration / cps;
@@ -187,6 +194,9 @@ Pattern.prototype.out = function () {
         begin = 0,
         end = 1,
         vowel,
+        delay = 0,
+        delayfeedback = 0,
+        delaytime = 0,
       } = hap.value;
       const { velocity = 1 } = hap.context;
       gain *= velocity; // legacy fix for velocity
@@ -212,9 +222,7 @@ Pattern.prototype.out = function () {
         const o = getOscillator({ t, s, freq, duration: hapDuration, release });
         chain.push(o);
         // level down oscillators as they are really loud compared to samples i've tested
-        const g = ac.createGain();
-        g.gain.value = 0.3;
-        chain.push(g);
+        chain.push(gainNode(0.3));
         // TODO: make adsr work with samples without pops
         // envelope
         const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hapDuration);
@@ -266,9 +274,8 @@ Pattern.prototype.out = function () {
         }
         chain.push(bufferSource);
         if (soundfont || clip) {
-          const env = ac.createGain();
           const releaseLength = 0.1;
-          env.gain.value = 0.6;
+          const env = gainNode(0.6);
           env.gain.setValueAtTime(env.gain.value, t + duration);
           env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
           // env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
@@ -278,10 +285,8 @@ Pattern.prototype.out = function () {
           bufferSource.stop(t + duration);
         }
       }
-      // master out
-      const master = ac.createGain();
-      master.gain.value = gain;
-      chain.push(master);
+      // level down before effects
+      chain.push(gainNode(gain));
 
       // filters
       cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
@@ -298,11 +303,18 @@ Pattern.prototype.out = function () {
         panner.pan.value = 2 * pan - 1;
         chain.push(panner);
       }
-      // master out
-      /* const master = ac.createGain();
-    master.gain.value = 0.8 * gain;
-    chain.push(master); */
-      chain.push(ac.destination);
+
+      // last gain
+      const post = gainNode(1);
+      chain.push(post);
+      post.connect(ac.destination);
+
+      if (delay > 0 && delaytime > 0 && delayfeedback > 0) {
+        const dly = ac.createFeedbackDelay(delay, delaytime, delayfeedback);
+        dly.start(t);
+        post.connect(dly);
+        dly.connect(ac.destination);
+      }
       // connect chain elements together
       chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
       // disconnect all nodes when source node has ended:
