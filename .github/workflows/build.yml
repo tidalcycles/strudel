@@ -11,5 +11,5 @@ jobs:
         with:
           node-version: 16
           cache: "npm"
-      - run: npm install
+      - run: npm install && cd repl && npm install
       - run: npm run build
