@@ -23,10 +23,10 @@ jobs:
           node-version: 16
           cache: "npm"
       - name: Install Dependencies
-      - run: npm ci && cd repl && npm ci && cd ../tutorial && npm ci
+        run: npm ci && cd repl && npm ci && cd ../tutorial && npm ci
 
       - name: Build
-      - run: npm run build
+        run: npm run build
   deploy:
     environment:
       name: github-pages
