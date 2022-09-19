@@ -1136,11 +1136,31 @@ export class Pattern {
     return this.stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
   }
 
-  // these might change with: https://github.com/tidalcycles/Tidal/issues/902
+  /**
+   * Superimpose and offset multiple times, applying the given function each time.
+   * @name echoWith
+   * @memberof Pattern
+   * @returns Pattern
+   * @param {number} times how many times to repeat
+   * @param {number} time cycle offset between iterations
+   * @param {function} func function to apply, given the pattern and the iteration index
+   * @example
+   * "<0 [2 4]>"
+   * .echoWith(4, 1/8, (p,n) => p.add(n*2))
+   * .scale('C minor').note().legato(.2).out()
+   */
   _echoWith(times, time, func) {
     return stack(...listRange(0, times - 1).map((i) => func(this.late(Fraction(time).mul(i)), i)));
   }
 
+  /**
+   * Superimpose and offset multiple times, gradually decreasing the velocity
+   * @name echo
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * s("bd sd").echo(3, 1/6, .8).out()
+   */
   _echo(times, time, feedback) {
     return this._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
   }
