@@ -1,4 +1,4 @@
-name: Strudel Build
+name: Build & Deploy
 
 on: [workflow_dispatch]
 
@@ -13,3 +13,4 @@ jobs:
           cache: "npm"
       - run: npm ci && cd repl && npm ci && cd ../tutorial && npm ci
       - run: npm run build
+      - run: npm run deploy
