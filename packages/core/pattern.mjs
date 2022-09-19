@@ -1158,6 +1158,9 @@ export class Pattern {
    * @name echo
    * @memberof Pattern
    * @returns Pattern
+   * @param {number} times how many times to repeat
+   * @param {number} time cycle offset between iterations
+   * @param {number} feedback velocity multiplicator for each iteration
    * @example
    * s("bd sd").echo(3, 1/6, .8).out()
    */
