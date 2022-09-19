@@ -1165,6 +1165,16 @@ export class Pattern {
     return this._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
   }
 
+  /**
+   * Divides a pattern into a given number of subdivisions, plays the subdivisions in order, but increments the starting subdivision each cycle. The pattern wraps to the first subdivision after the last subdivision is played.
+   * @name iter
+   * @memberof Pattern
+   * @returns Pattern
+   * @param {number} divide number of subdivisions
+   * @param {boolean} back if true, iterate backwards
+   * @example
+   * note("0 1 2 3".scale('A minor')).iter(4).out()
+   */
   iter(times, back = false) {
     return slowcat(...listRange(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
   }
