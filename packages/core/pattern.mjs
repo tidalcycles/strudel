@@ -1189,6 +1189,14 @@ export class Pattern {
     return this.iter(times, true);
   }
 
+  /**
+   * Divides a pattern into a given number of parts, then cycles through those parts in turn, applying the given function to each part in turn (one part per cycle).
+   * @name chunk
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note().out()
+   */
   _chunk(n, func, back = false) {
     const binary = Array(n - 1).fill(false);
     binary.unshift(true);
@@ -1196,6 +1204,14 @@ export class Pattern {
     return this.when(binary_pat, func);
   }
 
+  /**
+   * Like `chunk`, but cycles through the parts in reverse order. Known as chunk' in tidalcycles
+   * @name chunkBack
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note().out()
+   */
   _chunkBack(n, func) {
     return this._chunk(n, func, true);
   }
