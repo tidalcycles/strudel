@@ -1170,8 +1170,6 @@ export class Pattern {
    * @name iter
    * @memberof Pattern
    * @returns Pattern
-   * @param {number} divide number of subdivisions
-   * @param {boolean} back if true, iterate backwards
    * @example
    * note("0 1 2 3".scale('A minor')).iter(4).out()
    */
@@ -1179,7 +1177,14 @@ export class Pattern {
     return slowcat(...listRange(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
   }
 
-  // known as iter' in tidalcycles
+  /**
+   * Like `iter`, but plays the subdivisions in reverse order. Known as iter' in tidalcycles
+   * @name iterBack
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * note("0 1 2 3".scale('A minor')).iterBack(4).out()
+   */
   iterBack(times) {
     return this.iter(times, true);
   }
