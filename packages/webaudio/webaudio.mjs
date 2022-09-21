@@ -280,7 +280,7 @@ Pattern.prototype.out = function () {
 
         bufferSource.start(t, offset);
         if (cut !== undefined) {
-          cutGroups[cut]?.stop(); // fade out?
+          cutGroups[cut]?.stop(t); // fade out?
           cutGroups[cut] = bufferSource;
         }
         chain.push(bufferSource);
