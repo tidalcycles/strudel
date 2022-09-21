@@ -153,6 +153,8 @@ try {
   console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
 }
 
+const cutGroups = [];
+
 Pattern.prototype.out = function () {
   return this.onTrigger(async (t, hap, ct, cps) => {
     const hapDuration = hap.duration / cps;
@@ -189,6 +191,8 @@ Pattern.prototype.out = function () {
         vowel,
         unit,
         nudge = 0, // TODO: is this in seconds?
+        cut,
+        loop,
       } = hap.value;
       const { velocity = 1 } = hap.context;
       gain *= velocity; // legacy fix for velocity
@@ -255,7 +259,6 @@ Pattern.prototype.out = function () {
           console.warn('no buffer source');
           return;
         }
-        // TODO: cut, loop
         bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
         if (unit === 'c') {
           // are there other units?
@@ -267,10 +270,19 @@ Pattern.prototype.out = function () {
         // the midway point through a 10-second audio buffer is still 5."
         const offset = begin * duration * bufferSource.playbackRate.value;
         duration = (end - begin) * duration;
+        if (loop) {
+          bufferSource.loop = true;
+          bufferSource.loopStart = offset;
+          bufferSource.loopEnd = offset + duration;
+          duration = loop * duration;
+        }
         t += nudge;
 
         bufferSource.start(t, offset);
-
+        if (cut !== undefined) {
+          cutGroups[cut]?.stop(); // fade out?
+          cutGroups[cut] = bufferSource;
+        }
         chain.push(bufferSource);
         if (soundfont || clip) {
           const env = ac.createGain();
