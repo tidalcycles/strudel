@@ -24,7 +24,7 @@ export const getAudioContext = () => {
 };
 
 let destination;
-export const getDestination = () => {
+const getDestination = () => {
   const ctx = getAudioContext();
   if (!destination) {
     destination = ctx.createGain();
@@ -174,10 +174,12 @@ function getWorklet(ac, processor, params) {
   return node;
 }
 
-try {
-  loadWorklets();
-} catch (err) {
-  console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+if (typeof window !== 'undefined') {
+  try {
+    loadWorklets();
+  } catch (err) {
+    console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+  }
 }
 
 function gainNode(value) {
