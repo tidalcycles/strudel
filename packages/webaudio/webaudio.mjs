@@ -181,10 +181,10 @@ Pattern.prototype.out = function () {
         crush,
         shape,
         pan,
-        attack = 0.0001,
-        decay = 0.0001,
+        attack = 0.001,
+        decay = 0.001,
         sustain = 1,
-        release = 0.0001,
+        release = 0.001,
         speed = 1, // sample playback speed
         begin = 0,
         end = 1,
