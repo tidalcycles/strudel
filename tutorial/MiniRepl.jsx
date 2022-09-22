@@ -2,8 +2,8 @@ import { Tone } from '@strudel.cycles/tone';
 import { evalScope } from '@strudel.cycles/eval';
 import { MiniRepl as _MiniRepl } from '@strudel.cycles/react';
 import controls from '@strudel.cycles/core/controls.mjs';
-import * as WebDirt from 'WebDirt';
 import { loadWebDirt } from '@strudel.cycles/webdirt';
+import { samples } from '@strudel.cycles/webaudio';
 
 export const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination).set({
   oscillator: { type: 'triangle' },
@@ -11,6 +11,11 @@ export const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.
     release: 0.01,
   },
 });
+
+fetch('https://strudel.tidalcycles.org/EmuSP12.json')
+  .then((res) => res.json())
+  .then((json) => samples(json, 'https://strudel.tidalcycles.org/EmuSP12/'));
+
 
 evalScope(
   Tone,

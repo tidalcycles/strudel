@@ -9,6 +9,8 @@ import * as strudel from '@strudel.cycles/core';
 import { fromMidi, toMidi } from '@strudel.cycles/core';
 import { loadBuffer } from './sampler.mjs';
 const { Pattern } = strudel;
+import './vowel.mjs';
+import workletsUrl from './worklets.mjs?url';
 
 // export const getAudioContext = () => Tone.getContext().rawContext;
 
@@ -70,6 +72,13 @@ const getSoundfontKey = (s) => {
 
 const getSampleBufferSource = async (s, n, note) => {
   let transpose = 0;
+  let midi;
+
+  if (note !== undefined) {
+    midi = typeof note === 'string' ? toMidi(note) : note;
+    transpose = midi - 36; // C3 is middle C
+  }
+
   const ac = getAudioContext();
   // is sample from loaded samples(..)
   const samples = getLoadedSamples();
@@ -90,8 +99,6 @@ const getSampleBufferSource = async (s, n, note) => {
     if (!note) {
       throw new Error('no note(...) set for sound', s);
     }
-    const midi = typeof note === 'string' ? toMidi(note) : note;
-    transpose = midi - 36; // C3 is middle C
     const midiDiff = (noteA) => toMidi(noteA) - midi;
     // object format will expect keys as notes
     const closest = Object.keys(bank)
@@ -123,6 +130,31 @@ const splitSN = (s, n) => {
   return [s2, n2];
 };
 
+let workletsLoading;
+function loadWorklets() {
+  if (workletsLoading) {
+    return workletsLoading;
+  }
+  workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
+  return workletsLoading;
+}
+
+function getWorklet(ac, processor, params) {
+  const node = new AudioWorkletNode(ac, processor);
+  Object.entries(params).forEach(([key, value]) => {
+    node.parameters.get(key).value = value;
+  });
+  return node;
+}
+
+try {
+  loadWorklets();
+} catch (err) {
+  console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+}
+
+const cutGroups = [];
+
 Pattern.prototype.out = function () {
   return this.onTrigger(async (t, hap, ct, cps) => {
     const hapDuration = hap.duration / cps;
@@ -145,14 +177,22 @@ Pattern.prototype.out = function () {
         hresonance = 1,
         bandf,
         bandq = 1,
+        coarse,
+        crush,
+        shape,
         pan,
         attack = 0.001,
-        decay = 0.05,
-        sustain = 0.5,
+        decay = 0.001,
+        sustain = 1,
         release = 0.001,
         speed = 1, // sample playback speed
         begin = 0,
         end = 1,
+        vowel,
+        unit,
+        nudge = 0, // TODO: is this in seconds?
+        cut,
+        loop,
       } = hap.value;
       const { velocity = 1 } = hap.context;
       gain *= velocity; // legacy fix for velocity
@@ -166,7 +206,7 @@ Pattern.prototype.out = function () {
       }
       if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
         // with synths, n and note are the same thing
-        n = note || n;
+        n = note || n || 36;
         if (typeof n === 'string') {
           n = toMidi(n); // e.g. c3 => 48
         }
@@ -220,29 +260,33 @@ Pattern.prototype.out = function () {
           return;
         }
         bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
-        // TODO: nudge, unit, cut, loop
-        let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration;
-        // let duration = bufferSource.buffer.duration;
-        const offset = begin * duration;
-        duration = ((end - begin) * duration) / Math.abs(speed);
-        if (soundfont || clip) {
-          bufferSource.start(t, offset); // duration does not work here for some reason
-        } else {
-          bufferSource.start(t, offset, duration);
+        if (unit === 'c') {
+          // are there other units?
+          bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration;
+        }
+        let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration / bufferSource.playbackRate.value;
+        // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
+        // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
+        // the midway point through a 10-second audio buffer is still 5."
+        const offset = begin * duration * bufferSource.playbackRate.value;
+        duration = (end - begin) * duration;
+        if (loop) {
+          bufferSource.loop = true;
+          bufferSource.loopStart = offset;
+          bufferSource.loopEnd = offset + duration;
+          duration = loop * duration;
+        }
+        t += nudge;
+
+        bufferSource.start(t, offset);
+        if (cut !== undefined) {
+          cutGroups[cut]?.stop(t); // fade out?
+          cutGroups[cut] = bufferSource;
         }
         chain.push(bufferSource);
-        if (soundfont || clip) {
-          const env = ac.createGain();
-          const releaseLength = 0.1;
-          env.gain.value = 0.6;
-          env.gain.setValueAtTime(env.gain.value, t + duration);
-          env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
-          // env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
-          chain.push(env);
-          bufferSource.stop(t + duration + releaseLength);
-        } else {
-          bufferSource.stop(t + duration);
-        }
+        bufferSource.stop(t + duration + release);
+        const adsr = getADSR(attack, decay, sustain, release, 1, t, t + duration);
+        chain.push(adsr);
       }
       // master out
       const master = ac.createGain();
@@ -253,7 +297,10 @@ Pattern.prototype.out = function () {
       cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
       hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
       bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
-      // TODO vowel
+      vowel !== undefined && chain.push(ac.createVowelFilter(vowel));
+      coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
+      crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
+      shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
       // TODO delay / delaytime / delayfeedback
       // panning
       if (pan !== undefined) {
@@ -268,6 +315,8 @@ Pattern.prototype.out = function () {
       chain.push(ac.destination);
       // connect chain elements together
       chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
+      // disconnect all nodes when source node has ended:
+      chain[0].onended = () => chain.forEach((n) => n.disconnect());
     } catch (e) {
       console.warn('.out error:', e);
     }
