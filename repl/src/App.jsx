@@ -219,6 +219,19 @@ function App() {
                 <>loading...</>
               )}
             </button>
+            <button
+              onClick={() => {
+                dirty && activateCode();
+                pushLog('Code updated! Tip: You can also update the code by pressing ctrl+enter.');
+              }}
+              className={cx(
+                'hover:bg-gray-300',
+                !isEmbedded ? 'p-2' : 'px-2',
+                !dirty || !activeCode ? 'opacity-50' : '',
+              )}
+            >
+              🔄 update
+            </button>
             {!isEmbedded && (
               <button
                 className="hover:bg-gray-300 p-2"

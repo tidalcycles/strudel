@@ -38,7 +38,9 @@ export default defineConfig({
         '@codemirror/commands',
         '@lezer/highlight',
         '@codemirror/language',
-        '@uiw/codemirror-themes'
+        '@uiw/codemirror-themes',
+        '@uiw/react-codemirror',
+        '@lezer/highlight',
       ],
     },
     target: 'esnext',
