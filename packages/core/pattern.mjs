@@ -513,11 +513,14 @@ export class Pattern {
   }
 
   /**
-   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
-   * 1. Returns a new pattern with values scaled to the given min/max range.
-   * @param {Number} min
-   * @param {Number} max
+   * Assumes a numerical pattern, containing unipolar values in the range 0 .. 1.
+   * Returns a new pattern with values scaled to the given min/max range.
+   * Most useful in combination with continuous patterns.
+   * @name range
+   * @memberof Pattern
    * @returns Pattern
+   * @example
+   * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4)).out()
    */
   range(min, max) {
     return this.mul(max - min).add(min);
@@ -683,6 +686,16 @@ export class Pattern {
     return func(this);
   }
 
+  /**
+   * Layers the result of the given function(s). Like {@link superimpose}, but without the original pattern:
+   * @name layer
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
+   *   .layer(x=>x.add("0,2"))
+   *   .scale('C minor').note().out()
+   */
   layer(...funcs) {
     return stack(...funcs.map((func) => func(this)));
   }
@@ -734,14 +747,14 @@ export class Pattern {
   }
 
   /**
-   * Speed up a pattern by the given factor.
+   * Speed up a pattern by the given factor. Used by "*" in mini notation.
    *
    * @name fast
    * @memberof Pattern
    * @param {number | Pattern} factor speed up factor
    * @returns Pattern
    * @example
-   * seq(e5, b4, d5, c5).fast(2)
+   * s("<bd sd> hh").fast(2).out() // s("[<bd sd> hh]*2").out()
    */
   _fast(factor) {
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
@@ -749,14 +762,14 @@ export class Pattern {
   }
 
   /**
-   * Slow down a pattern over the given number of cycles.
+   * Slow down a pattern over the given number of cycles. Like the "/" operator in mini notation.
    *
    * @name slow
    * @memberof Pattern
    * @param {number | Pattern} factor slow down factor
    * @returns Pattern
    * @example
-   * seq(e5, b4, d5, c5).slow(2)
+   * s("<bd sd> hh").slow(2).out() // s("[<bd sd> hh]/2").out()
    */
   _slow(factor) {
     return this._fast(Fraction(1).div(factor));
@@ -795,14 +808,32 @@ export class Pattern {
     return this._fast(cpm / 60);
   }
 
+  /**
+   * Nudge a pattern to start earlier in time. Equivalent of Tidal's <~ operator
+   *
+   * @name early
+   * @memberof Pattern
+   * @param {number | Pattern} cycles number of cycles to nudge left
+   * @returns Pattern
+   * @example
+   * "bd ~".stack("hh ~".early(.1)).s().out()
+   */
   _early(offset) {
-    // Equivalent of Tidal's <~ operator
     offset = Fraction(offset);
     return this.withQueryTime((t) => t.add(offset)).withHapTime((t) => t.sub(offset));
   }
 
+  /**
+   * Nudge a pattern to start later in time. Equivalent of Tidal's ~> operator
+   *
+   * @name late
+   * @memberof Pattern
+   * @param {number | Pattern} cycles number of cycles to nudge right
+   * @returns Pattern
+   * @example
+   * "bd ~".stack("hh ~".late(.1)).s().out()
+   */
   _late(offset) {
-    // Equivalent of Tidal's ~> operator
     offset = Fraction(offset);
     return this._early(Fraction(0).sub(offset));
   }
@@ -829,6 +860,17 @@ export class Pattern {
     return this._zoom(0, t)._slow(t);
   }
 
+  /**
+   * Applies the given structure to the pattern:
+   *
+   * @name struct
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "c3,eb3,g3"
+   *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
+   *   .slow(4).note().out()
+   */
   // struct(...binary_pats) {
   //   // Re structure the pattern according to a binary pattern (false values are dropped)
   //   const binary_pat = sequence(binary_pats);
@@ -876,6 +918,16 @@ export class Pattern {
     return this.invert();
   }
 
+  /**
+   * Applies the given function whenever the given pattern is in a true state.
+   * @name when
+   * @memberof Pattern
+   * @param {Pattern} binary_pat
+   * @param {function} func
+   * @returns Pattern
+   * @example
+   * "c3 eb3 g3".when("<0 1>/2", x=>x.sub(5))
+   */
   when(binary_pat, func) {
     //binary_pat = sequence(binary_pat)
     const true_pat = binary_pat._filterValues(id);
@@ -885,14 +937,68 @@ export class Pattern {
     return stack(with_pat, without_pat);
   }
 
+  /**
+   * Superimposes the function result on top of the original pattern, delayed by the given time.
+   * @name off
+   * @memberof Pattern
+   * @param {Pattern | number} time offset time
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * "c3 eb3 g3".off(1/8, x=>x.add(7))
+   */
   off(time_pat, func) {
     return stack(this, func(this.late(time_pat)));
   }
 
+  /**
+   * Applies the given function every n cycles.
+   * @name every
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").every(4, x=>x.rev()).out()
+   */
+  every(n, func) {
+    const pat = this;
+    const pats = Array(n - 1).fill(pat);
+    // pats.unshift(func(pat));
+    pats.push(func(pat));
+    return slowcatPrime(...pats);
+  }
+  /**
+   * Applies the given function every n cycles, starting from the first cycle.
+   * @name every
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").every(4, x=>x.rev()).out()
+   */
   every(n, func) {
     const pat = this;
     const pats = Array(n - 1).fill(pat);
     pats.unshift(func(pat));
+    return slowcatPrime(...pats);
+  }
+
+  /**
+   * Applies the given function every n cycles, starting from the last cycle.
+   * @name each
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").every(4, x=>x.rev()).out()
+   */
+  each(n, func) {
+    const pat = this;
+    const pats = Array(n - 1).fill(pat);
+    pats.push(func(pat));
     return slowcatPrime(...pats);
   }
 
@@ -906,6 +1012,15 @@ export class Pattern {
     return this.when(slowcat(false, true), (x) => fastcat(x, silence)._late(0.25));
   }
 
+  /**
+   * Reverse all haps in a pattern
+   *
+   * @name rev
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "c3 d3 e3 g3".rev()
+   */
   rev() {
     const pat = this;
     const query = function (state) {
@@ -948,6 +1063,15 @@ export class Pattern {
     return this.juxBy(1, func);
   }
 
+  /**
+   * Stacks the given pattern(s) to the current pattern.
+   * @name stack
+   * @memberof Pattern
+   * @example
+   * s("hh*2").stack(
+   *   n("c2(3,8)")
+   * ).out()
+   */
   stack(...pats) {
     return stack(this, ...pats);
   }
@@ -956,11 +1080,28 @@ export class Pattern {
     return sequence(this, ...pats);
   }
 
-  // shorthand for sequence
+  /**
+   * Appends the given pattern(s) to the current pattern. Synonyms: .sequence .fastcat
+   * @name seq
+   * @memberof Pattern
+   * @example
+   * s("hh*2").seq(
+   *   n("c2(3,8)")
+   * ).out()
+   */
   seq(...pats) {
     return sequence(this, ...pats);
   }
 
+  /**
+   * Appends the given pattern(s) to the next cycle. Synonym: .slowcat
+   * @name cat
+   * @memberof Pattern
+   * @example
+   * s("hh*2").cat(
+   *   n("c2(3,8)")
+   * ).out()
+   */
   cat(...pats) {
     return cat(this, ...pats);
   }
@@ -973,6 +1114,16 @@ export class Pattern {
     return slowcat(this, ...pats);
   }
 
+  /**
+   * Superimposes the result of the given function(s) on top of the original pattern:
+   * @name superimpose
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
+   *   .superimpose(x=>x.add(2))
+   *   .scale('C minor').note().out()
+   */
   superimpose(...funcs) {
     return this.stack(...funcs.map((func) => func(this)));
   }
@@ -985,24 +1136,67 @@ export class Pattern {
     return this.stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
   }
 
-  // these might change with: https://github.com/tidalcycles/Tidal/issues/902
+  /**
+   * Superimpose and offset multiple times, applying the given function each time.
+   * @name echoWith
+   * @memberof Pattern
+   * @returns Pattern
+   * @param {number} times how many times to repeat
+   * @param {number} time cycle offset between iterations
+   * @param {function} func function to apply, given the pattern and the iteration index
+   * @example
+   * "<0 [2 4]>"
+   * .echoWith(4, 1/8, (p,n) => p.add(n*2))
+   * .scale('C minor').note().legato(.2).out()
+   */
   _echoWith(times, time, func) {
     return stack(...listRange(0, times - 1).map((i) => func(this.late(Fraction(time).mul(i)), i)));
   }
 
+  /**
+   * Superimpose and offset multiple times, gradually decreasing the velocity
+   * @name echo
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * s("bd sd").echo(3, 1/6, .8).out()
+   */
   _echo(times, time, feedback) {
     return this._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
   }
 
+  /**
+   * Divides a pattern into a given number of subdivisions, plays the subdivisions in order, but increments the starting subdivision each cycle. The pattern wraps to the first subdivision after the last subdivision is played.
+   * @name iter
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * note("0 1 2 3".scale('A minor')).iter(4).out()
+   */
   iter(times, back = false) {
     return slowcat(...listRange(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
   }
 
-  // known as iter' in tidalcycles
+  /**
+   * Like `iter`, but plays the subdivisions in reverse order. Known as iter' in tidalcycles
+   * @name iterBack
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * note("0 1 2 3".scale('A minor')).iterBack(4).out()
+   */
   iterBack(times) {
     return this.iter(times, true);
   }
 
+  /**
+   * Divides a pattern into a given number of parts, then cycles through those parts in turn, applying the given function to each part in turn (one part per cycle).
+   * @name chunk
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note().out()
+   */
   _chunk(n, func, back = false) {
     const binary = Array(n - 1).fill(false);
     binary.unshift(true);
@@ -1010,6 +1204,14 @@ export class Pattern {
     return this.when(binary_pat, func);
   }
 
+  /**
+   * Like `chunk`, but cycles through the parts in reverse order. Known as chunk' in tidalcycles
+   * @name chunkBack
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note().out()
+   */
   _chunkBack(n, func) {
     return this._chunk(n, func, true);
   }
@@ -1182,6 +1384,11 @@ Pattern.prototype.patternified = [
   'striate',
   'slow',
 ];
+
+// aliases
+export const polyrhythm = stack;
+export const pr = stack;
+
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = {
   pure,
@@ -1204,12 +1411,11 @@ Pattern.prototype.factories = {
 // Nothing
 export const silence = new Pattern((_) => []);
 
-/** A discrete value that repeats once per cycle:
+/** A discrete value that repeats once per cycle.
  *
- * @param {any} value - The value to repeat
  * @returns {Pattern}
  * @example
- * pure('e4')
+ * pure('e4') // "e4"
  */
 export function pure(value) {
   function query(state) {
@@ -1239,12 +1445,11 @@ export function reify(thing) {
   return pure(thing);
 }
 
-/** The given items are played at the same time at the same length:
+/** The given items are played at the same time at the same length.
  *
- * @param {...any} items - The items to stack
  * @return {Pattern}
  * @example
- * stack(g3, b3, [e4, d4])
+ * stack(g3, b3, [e4, d4]) // "g3,b3,[e4,d4]"
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
@@ -1257,7 +1462,6 @@ export function stack(...pats) {
  *
  * synonyms: {@link cat}
  *
- * @param {...any} items - The items to concatenate
  * @return {Pattern}
  * @example
  * slowcat(e5, b4, [d5, c5])
@@ -1313,16 +1517,22 @@ export function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);
 }
 
-/** See {@link slowcat} */
+/** The given items are con**cat**enated, where each one takes one cycle. Synonym: slowcat
+ *
+ * @param {...any} items - The items to concatenate
+ * @return {Pattern}
+ * @example
+ * cat(e5, b4, [d5, c5]) // "<e5 b4 [d5 c5]>"
+ *
+ */
 export function cat(...pats) {
   return slowcat(...pats);
 }
 
-/** Like {@link fastcat}, but where each step has a temporal weight:
- * @param {...Array} items - The items to concatenate
+/** Like {@link seq}, but each step has a length, relative to the whole.
  * @return {Pattern}
  * @example
- * timeCat([3,e3],[1, g3])
+ * timeCat([3,e3],[1, g3]) // "e3@3 g3"
  */
 export function timeCat(...timepats) {
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -1341,7 +1551,11 @@ export function sequence(...pats) {
   return fastcat(...pats);
 }
 
-/** See {@link fastcat} */
+/** Like **cat**, but the items are crammed into one cycle. Synonyms: fastcat, sequence
+ * @example
+ * seq(e5, b4, [d5, c5]) // "e5 b4 [d5 c5]"
+ *
+ */
 export function seq(...pats) {
   return fastcat(...pats);
 }
@@ -1388,20 +1602,6 @@ export function polymeter(...args) {
 // alias
 export function pm(...args) {
   polymeter(...args);
-}
-
-export function polyrhythm(...xs) {
-  const seqs = xs.map((a) => sequence(a));
-
-  if (seqs.length == 0) {
-    return silence;
-  }
-  return stack(...seqs);
-}
-
-// alias
-export function pr(args) {
-  polyrhythm(args);
 }
 
 export const add = curry((a, pat) => pat.add(a));

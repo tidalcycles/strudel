@@ -177,23 +177,219 @@ In essence, the `x!n` is like a shortcut for `[x*n]@n`.
 
 ## Euclidian
 
-Using round brackets, we can create rhythmical sub-divisions based on three parameters: beats, segments and offset. 
-The first parameter controls how may beats will be played. 
-The second parameter controls the total amount of segments the beats will be distributed over. 
+Using round brackets, we can create rhythmical sub-divisions based on three parameters: beats, segments and offset.
+The first parameter controls how may beats will be played.
+The second parameter controls the total amount of segments the beats will be distributed over.
 The third (optional) parameter controls the starting position for distributing the beats.
-One popular Euclidian rhythm (going by various names, such as "Pop Clave") is "(3,8,1)" or simply "(3,8)", 
+One popular Euclidian rhythm (going by various names, such as "Pop Clave") is "(3,8,1)" or simply "(3,8)",
 resulting in a rhythmical structure of "x ~ ~ x ~ ~ x ~" (3 beats over 8 segments, starting on position 1).
 
 <MiniRepl tune={`"e5(2,8) b4(3,8) d5(2,8) c5(3,8)".slow(4)`} />
 
-## Mini Notation TODO
+<br />
 
-Compared to [tidal mini notation](https://tidalcycles.org/docs/patternlib/tutorials/mini_notation/), the following mini notation features are missing from Strudel:
+# Web Audio Output
 
-- [ ] Tie symbols "\_"
-- [ ] feet marking "."
-- [ ] Polymetric sequences "{ ... }"
-- [ ] Fixed steps using "%"
+The default way to output sound is by using the Web Audio Output.
+Here is a little beat to show some of the possibilities:
+
+<MiniRepl
+  tune={`samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+stack(
+s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
+.speed(perlin.range(.7,.9)) // random sample speed variation
+,"<a1 b1\*2 a1(3,8) e2>" // bassline
+.off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
+.add(perlin.range(0,.5)) // random pitch variation
+.superimpose(add(.05)) // add second, slightly detuned voice
+.n() // wrap in "n"
+.decay(.15).sustain(0) // make each note of equal length
+.s('sawtooth') // waveform
+.gain(.4) // turn down
+.cutoff(sine.slow(7).range(300,5000)) // automate cutoff
+,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings() // chords
+.superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+.add(perlin.range(0,.5)) // random pitch variation
+.n() // wrap in "n"
+.s('sawtooth') // waveform
+.gain(.16) // turn down
+.cutoff(500) // fixed cutoff
+.attack(1) // slowly fade in
+)
+.slow(3/2)
+.out()`}
+/>
+
+## Synths
+
+So far, all the mini notation examples all used the same sound, which is kind of boring.
+We can change the sound, using the `s` function:
+
+<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth').out()`} />
+
+Here, we are wrapping our notes inside `note` and set the sound using `s`, connected by a dot.
+
+Those functions are only 2 of many ways to alter the properties, or _params_ of a sound.
+The power of patterns allows us to sequence any _param_ independently:
+
+<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s("<sawtooth square triangle>").out()`} />
+
+Now we not only pattern the notes, but the sound as well!
+`sawtooth` `square` and `triangle` are the basic waveforms available in `s`.
+
+### Envelope
+
+You can control the envelope of a synth using the `attack`, `decay`, `sustain` and `release` functions:
+
+<MiniRepl
+  tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth')
+  .attack(.1).decay(.1).sustain(.2).release(.1).out()`}
+/>
+
+## Samples
+
+Besides Synths, `s` can also play back samples:
+
+<MiniRepl tune={`s("bd sd,hh*8,misc/2").out()`} />
+
+To know which sounds are available, open the [default sample map](https://strudel.tidalcycles.org/EmuSP12.json)
+
+### Custom Sample Maps
+
+You can load your own sample map like this:
+
+<MiniRepl
+  tune={`samples({
+  bd: 'bd/BT0AADA.wav',
+  sd: 'sd/rytm-01-classic.wav',
+  hh: 'hh27/000_hh27closedhh.wav',
+}, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
+s("bd sd,hh*8").out()`}
+/>
+
+The `samples` function takes an object that maps sound names to audio file paths.
+The second argument is the base URL that comes before each path. Make sure your base URL ends with a slash, while your sample paths do **not** begin with one.
+
+Because github is a popular choice to dump samples, there is a shortcut for that:
+
+<MiniRepl
+  tune={`samples({
+  bd: 'bd/BT0AADA.wav',
+  sd: 'sd/rytm-01-classic.wav',
+  hh: 'hh27/000_hh27closedhh.wav',
+}, 'github:tidalcycles/Dirt-Samples/master/');
+s("bd sd,hh*8").out()`}
+/>
+
+The format is `github:user/repo/branch/`.
+
+### Multiple Samples per Sound
+
+It is also possible, to declare multiple files for one sound, using the array notation:
+
+<MiniRepl
+  tune={`samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+s("<bd:0 bd:1>,~ <sd:0 sd:1>,[hh:0 hh:1]*2").out()`}
+/>
+
+The `:0` `:1` etc. are the indices of the array.
+The sample number can also be set using `n`:
+
+<MiniRepl
+  tune={`samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+s("bd,~ sd,hh*4").n("<0 1>").out()`}
+/>
+
+### Pitched Sounds
+
+For pitched sounds, you can use `note`, just like with synths:
+
+<MiniRepl
+  tune={`samples({
+  "gtr": 'gtr/0001_cleanC.wav',
+}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').gain(.5).out()`}
+/>
+
+Here, the guitar samples will overlap, because they always play till the end.
+If we want them to behave more like a synth, we can add `clip(1)`:
+
+<MiniRepl
+  tune={`samples({
+  "gtr": 'gtr/0001_cleanC.wav',
+}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').clip(1)
+  .gain(.5).out()`}
+/>
+
+### Base Pitch
+
+If we have 2 samples with different base pitches, we can make them in tune by specifying the pitch like this:
+
+<MiniRepl
+  tune={`samples({
+  "gtr": 'gtr/0001_cleanC.wav',
+  "moog": { 'g3': 'moog/005_Mighty%20Moog%20G3.wav' },
+}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s("gtr,moog").clip(1)
+  .gain(.5).out()`}
+/>
+
+If a sample has no pitch set, `c3` is the default.
+
+We can also declare different samples for different regions of the keyboard:
+
+<MiniRepl
+  tune={`samples({
+  "moog": {
+    'g2': 'moog/004_Mighty%20Moog%20G2.wav',
+    'g3': 'moog/005_Mighty%20Moog%20G3.wav',
+    'g4': 'moog/006_Mighty%20Moog%20G4.wav',
+  }}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g2!2 <bb2 c3>!2, <c4@3 [<eb4 bb3> g4 f4]>")
+  .s('moog').clip(1)
+  .gain(.5).out()`}
+/>
+
+The sampler will always pick the closest matching sample for the current note!
+
+## Effects
+
+Wether you're using a synth or a sample, you can apply these effects:
+
+{{ 'cutoff' | jsdoc }}
+
+{{ 'resonance' | jsdoc }}
+
+{{ 'hcutoff' | jsdoc }}
+
+{{ 'hresonance' | jsdoc }}
+
+{{ 'bandf' | jsdoc }}
+
+{{ 'bandq' | jsdoc }}
+
+{{ 'vowel' | jsdoc }}
+
+{{ 'pan' | jsdoc }}
+
+{{ 'coarse' | jsdoc }}
+
+{{ 'shape' | jsdoc }}
+
+{{ 'crush' | jsdoc }}
 
 <br />
 
@@ -217,71 +413,31 @@ The above is the same as:
 
 Using strings, you can also use "#".
 
-## Functions that create Patterns
+## Pattern Factories
 
-The following functions will return a pattern. We will see later what that means.
+The following functions will return a pattern.
 
-## pure(value)
-
-To create a pattern from a value, you can wrap the value in pure:
-
-<MiniRepl tune={`pure('e4')`} />
+{{ 'pure' | jsdoc }}
 
 Most of the time, you won't need that function as input values of pattern creating functions are purified by default.
 
-### cat(...values)
+{{ 'cat' | jsdoc }}
 
-The given items are con**cat**enated, where each one takes one cycle:
+{{ 'seq' | jsdoc }}
 
-<MiniRepl tune={`cat(e5, b4, [d5, c5])`} />
+{{ 'stack' | jsdoc }}
 
-- Square brackets will create a subsequence
-- The function **slowcat** does the same as **cat**.
-
-### seq(...values)
-
-Like **cat**, but the items are crammed into one cycle:
-
-<MiniRepl tune={`seq(e5, b4, [d5, c5])`} />
-
-- Synonyms: **fastcat**, **sequence**
-
-### stack(...values)
-
-The given items are played at the same time at the same length:
-
-<MiniRepl tune={`stack(g3, b3, [e4, d4])`} />
-
-- Square Brackets will create a subsequence
-
-### Nesting functions
-
-You can nest functions inside one another:
-
-<MiniRepl
-  tune={`cat(
-  stack(g3,b3,e4),
-  stack(a3,c3,e4),
-  stack(b3,d3,fs4),
-  stack(b3,e4,g4)
-)`}
-/>
-
-The above is equivalent to
-
-<MiniRepl tune={`"<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>"`} />
-
-### timeCat(...[weight,value])
-
-Like with "@" in mini notation, we can specify weights to the items in a sequence:
-
-<MiniRepl tune={`timeCat([3,e3],[1, g3])`} />
+{{ 'timeCat' | jsdoc }}
 
 <!-- ## polymeter
 
 how to use?
 
 <MiniRepl tune={`polymeter(3, e3, g3, b3)`} /> -->
+
+<!--
+
+see https://github.com/tidalcycles/strudel/discussions/211
 
 ### polyrhythm(...[...values])
 
@@ -295,59 +451,90 @@ We can write the same with **stack** and **cat**:
 
 You can also use the shorthand **pr** instead of **polyrhythm**.
 
-## Pattern modifier functions
+-->
 
-The following functions modify a pattern.
+## Combining Patterns
 
-### slow(factor)
+You can freely mix JS patterns, mini patterns and values! For example, this pattern:
 
-Like "/" in mini notation, **slow** will slow down a pattern over the given number of cycles:
+<MiniRepl
+  tune={`cat(
+  stack(g3,b3,e4),
+  stack(a3,c3,e4),
+  stack(b3,d3,fs4),
+  stack(b3,e4,g4)
+)`}
+/>
 
-<MiniRepl tune={`seq(e5, b4, d5, c5).slow(2)`} />
+...is equivalent to:
 
-The same in mini notation:
+<MiniRepl
+  tune={`cat(
+  "g3,b3,e4",
+  "a3,c3,e4",
+  "b3,d3,f#4",
+  "b3,e4,g4"
+)`}
+/>
 
-<MiniRepl tune={`"[e5 b4 d5 c5]/2"`} />
+... as well as:
 
-### fast(factor)
+<MiniRepl tune={`"<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>"`} />
 
-Like "\*" in mini notation, **fast** will play a pattern times the given number in one cycle:
+While mini notation is almost always shorter, it only has a handful of modifiers: \* / ! @.
+When using JS patterns, there is a lot more you can do.
 
-<MiniRepl tune={`seq(e5, b4, d5, c5).fast(2)`} />
+## Time Modifiers
 
-### early(cycles)
+The following functions modify a pattern temporal structure in some way.
 
-With early, you can nudge a pattern to start earlier in time:
+{{ 'Pattern.slow' | jsdoc }}
 
-<MiniRepl tune={`seq(e5, b4.early(0.5))`} />
+{{ 'Pattern.fast' | jsdoc }}
 
-### late(cycles)
+{{ 'Pattern.early' | jsdoc }}
 
-Like early, but in the other direction:
+{{ 'Pattern.late' | jsdoc }}
 
-<MiniRepl tune={`seq(e5, b4.late(0.5))`} />
+{{ 'Pattern.rev' | jsdoc }}
 
-<!-- TODO: shouldn't it sound different? -->
+{{ 'Pattern.struct' | jsdoc }}
 
-### rev()
+{{ 'Pattern.legato' | jsdoc }}
 
-Will reverse the pattern:
+{{ 'Pattern.iter' | jsdoc }}
 
-<MiniRepl tune={`seq(c3,d3,e3,f3).rev()`} />
+{{ 'Pattern.iterBack' | jsdoc }}
 
-### every(n, func)
+## Conditional Modifiers
 
-Will apply the given function every n cycles:
+{{ 'Pattern.every' | jsdoc }}
 
-<MiniRepl tune={`seq(e5, "b4".every(4, late(0.5)))`} />
+{{ 'Pattern.each' | jsdoc }}
 
-<!-- TODO: should be able to do b4.every => like already possible with fast slow etc.. -->
+{{ 'Pattern.when' | jsdoc }}
 
-Note that late is called directly. This is a shortcut for:
+## Accumulation Modifiers
 
-<MiniRepl tune={`seq(e5, "b4".every(4, x => x.late(0.5)))`} />
+{{ 'Pattern.stack' | jsdoc }}
 
-<!-- TODO: should the function really run the first cycle? -->
+{{ 'Pattern.superimpose' | jsdoc }}
+
+{{ 'Pattern.layer' | jsdoc }}
+
+{{ 'Pattern.off' | jsdoc }}
+
+{{ 'Pattern.echo' | jsdoc }}
+
+{{ 'Pattern.echoWith' | jsdoc }}
+
+## Concat Modifiers
+
+{{ 'Pattern.seq' | jsdoc }}
+
+{{ 'Pattern.cat' | jsdoc }}
+
+## Value Modifiers
 
 ### add(n)
 
@@ -401,60 +588,214 @@ Rounds all values to the nearest integer:
 
 <MiniRepl tune={`"0.5 1.5 2.5".round().scale('C major')`} />
 
-### struct(binary_pat)
-
-Applies the given structure to the pattern:
-
-<MiniRepl tune={`"c3,eb3,g3".struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~").slow(4)`} />
-
-This is also useful to sample signals:
-
-<MiniRepl
-  tune={`sine.struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~").mul(7).round()
-.scale('C minor').slow(4)`}
-/>
-
-### when(binary_pat, func)
-
-Applies the given function whenever the given pattern is in a true state.
-
-<MiniRepl tune={`"c3 eb3 g3".when("<0 1>/2", sub(5))`} />
-
-### superimpose(...func)
-
-Superimposes the result of the given function(s) on top of the original pattern:
-
-<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').superimpose(scaleTranspose("2,4"))`} />
-
-### layer(...func)
-
-Layers the result of the given function(s) on top of each other. Like superimpose, but the original pattern is not part of the result.
-
-<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').layer(scaleTranspose("0,2,4"))`} />
-
 ### apply(func)
 
 Like layer, but with a single function:
 
 <MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4"))`} />
 
-### off(time, func)
+{{ 'Pattern.range' | jsdoc }}
 
-Applies the given function by the given time offset:
+{{ 'Pattern.chunk' | jsdoc }}
 
-<MiniRepl tune={`"c3 eb3 g3".off(1/8, add(7))`} />
+{{ 'Pattern.chunkBack' | jsdoc }}
 
-### stack(pat)
+## Continuous Signals
 
-Stacks the given pattern to the current pattern:
+Signals are patterns with continuous values, meaning they have theoretically infinite steps.
+They can provide streams of numbers that can be sampled at discrete points in time.
 
-<MiniRepl tune={`"c4,eb4,g4".stack("bb4,d5")`} />
+{{ 'saw' | jsdoc }}
 
-## Tone API
+{{ 'sine' | jsdoc }}
 
-To make the sounds more interesting, we can use Tone.js instruments ands effects.
+{{ 'cosine' | jsdoc }}
 
-[Show Source on Github](https://github.com/tidalcycles/strudel/blob/main/repl/src/tone.ts)
+{{ 'tri' | jsdoc }}
+
+{{ 'square' | jsdoc }}
+
+### Ranges from -1 to 1
+
+There is also `saw2`, `sine2`, `cosine2`, `tri2` and `square2` which have a range from -1 to 1!
+
+{{ 'rand' | jsdoc }}
+
+{{ 'perlin' | jsdoc }}
+
+{{ 'irand' | jsdoc }}
+
+## Random Modifiers
+
+These methods add random behavior to your Patterns.
+
+{{ 'chooseCycles' | jsdoc }}
+
+{{ 'Pattern.degradeBy' | jsdoc }}
+
+{{ 'Pattern.degrade' | jsdoc }}
+
+{{ 'Pattern.undegradeBy' | jsdoc }}
+
+{{ 'Pattern.sometimesBy' | jsdoc }}
+
+{{ 'Pattern.sometimes' | jsdoc }}
+
+{{ 'Pattern.someCyclesBy' | jsdoc }}
+
+{{ 'Pattern.someCycles' | jsdoc }}
+
+{{ 'Pattern.often' | jsdoc }}
+
+{{ 'Pattern.rarely' | jsdoc }}
+
+{{ 'Pattern.almostNever' | jsdoc }}
+
+{{ 'Pattern.almostAlways' | jsdoc }}
+
+{{ 'Pattern.never' | jsdoc }}
+
+{{ 'Pattern.always' | jsdoc }}
+
+<br />
+<br />
+
+# Tonal API
+
+The Tonal API, uses [tonaljs](https://github.com/tonaljs/tonal) to provide helpers for musical operations.
+
+### transpose(semitones)
+
+Transposes all notes to the given number of semitones:
+
+<MiniRepl tune={`"c2 c3".fast(2).transpose("<0 -2 5 3>".slow(2)).transpose(0)`} />
+
+This method gets really exciting when we use it with a pattern as above.
+
+Instead of numbers, scientific interval notation can be used as well:
+
+<MiniRepl tune={`"c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).transpose(1)`} />
+
+### scale(name)
+
+Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like scaleTranpose.
+
+<MiniRepl
+  tune={`"0 2 4 6 4 2"
+.scale(seq('C2 major', 'C2 minor').slow(2))`}
+/>
+
+Note that the scale root is octaved here. You can also omit the octave, then index zero will default to octave 3.
+
+All the available scale names can be found [here](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).
+
+### scaleTranspose(steps)
+
+Transposes notes inside the scale by the number of steps:
+
+<MiniRepl
+  tune={`"-8 [2,4,6]"
+.scale('C4 bebop major')
+.scaleTranspose("<0 -1 -2 -3 -4 -5 -6 -4>")`}
+/>
+
+### voicings(range?)
+
+Turns chord symbols into voicings, using the smoothest voice leading possible:
+
+<MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")`} />
+
+<!-- TODO: use voicing collection as first param + patternify. -->
+
+### rootNotes(octave = 2)
+
+Turns chord symbols into root notes of chords in given octave.
+
+<MiniRepl tune={`"<C^7 A7b13 Dm7 G7>".rootNotes(3)`} />
+
+Together with layer, struct and voicings, this can be used to create a basic backing track:
+
+<MiniRepl
+  tune={`"<C^7 A7b13 Dm7 G7>".layer(
+  x => x.voicings(['d3','g4']).struct("~ x"),
+  x => x.rootNotes(2).tone(synth(osc('sawtooth4')).chain(out()))
+)`}
+/>
+
+<!-- TODO: use range instead of octave. -->
+<!-- TODO: find out why composition does not work -->
+
+<br />
+<br />
+
+# MIDI API
+
+Strudel also supports midi via [webmidi](https://npmjs.com/package/webmidi).
+
+### midi(outputName?)
+
+Make sure to have a midi device connected or to use an IAC Driver.
+If no outputName is given, it uses the first midi output it finds.
+
+Midi is currently not supported by the mini repl used here, but you can [open the midi example in the repl](https://strudel.tidalcycles.org/#c3RhY2soIjxDXjcgQTcgRG03IEc3PiIubS52b2ljaW5ncygpLCAnPEMzIEEyIEQzIEcyPicubSkKICAubWlkaSgp).
+
+In the REPL, you will se a log of the available MIDI devices.
+
+<!--<MiniRepl
+  tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")
+  .midi()`}
+/>-->
+
+# Superdirt API
+
+In mainline tidal, the actual sound is generated via Superdirt, which runs inside Supercollider.
+Strudel also supports using Superdirt as a backend, although it requires some developer tooling to run.
+
+## Prequisites
+
+Getting Superdirt to work with Strudel, you need to
+
+1. install SuperCollider + sc3 plugins, see [Tidal Docs](https://tidalcycles.org/docs/) (Install Tidal) for more info.
+2. install [node.js](https://nodejs.org/en/)
+3. download [Strudel Repo](https://github.com/tidalcycles/strudel/) (or git clone, if you have git installed)
+4. run `npm i` in the strudel directory
+5. run `npm run osc` to start the osc server, which forwards OSC messages from Strudel REPL to SuperCollider
+
+Now you're all set!
+
+## Usage
+
+1. Start SuperCollider, either using SuperCollider IDE or by running `sclang` in a terminal
+2. Open the [Strudel REPL](https://strudel.tidalcycles.org/#cygiYmQgc2QiKS5vc2MoKQ%3D%3D)
+
+...or test it here:
+
+<MiniRepl tune={`s("bd sd").osc()`} />
+
+If you now hear sound, congratulations! If not, you can get help on the [#strudel channel in the TidalCycles discord](https://discord.com/invite/HGEdXmRkzT).
+
+{{ 'Pattern.osc' | jsdoc }}
+
+## Superdirt Params
+
+The following functions can be used with superdirt:
+
+`s n note freq channel orbit cutoff resonance hcutoff hresonance bandf bandq djf vowel cut begin end loop fadeTime speed unitA gain amp accelerate crush coarse delay lock leslie lrate lsize pan panspan pansplay room size dry shape squiz waveloss attack decay octave detune tremolodepth`
+
+Please refer to [Tidal Docs](https://tidalcycles.org/) for more info.
+
+# Webdirt API (deprecated)
+
+You can use the powerful sampling engine [Webdirt](https://github.com/dktr0/WebDirt) with Strudel.
+
+{{ 'Pattern.webdirt' | jsdoc }}
+
+<br />
+<br />
+
+# Tone API (deprecated)
+
+The Tone API uses Tone.js instruments ands effects to create sounds.
 
 <MiniRepl
   tune={`stack(
@@ -591,309 +932,3 @@ Helper to set the envelope of a Tone.js instrument. Intended to be used with Ton
   tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
 .tone(synth(adsr(0,.1,0,0)).chain(out()))`}
 />
-
-## Tonal API
-
-The Tonal API, uses [tonaljs](https://github.com/tonaljs/tonal) to provide helpers for musical operations.
-
-### transpose(semitones)
-
-Transposes all notes to the given number of semitones:
-
-<MiniRepl tune={`"c2 c3".fast(2).transpose("<0 -2 5 3>".slow(2)).transpose(0)`} />
-
-This method gets really exciting when we use it with a pattern as above.
-
-Instead of numbers, scientific interval notation can be used as well:
-
-<MiniRepl tune={`"c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).transpose(1)`} />
-
-### scale(name)
-
-Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like scaleTranpose.
-
-<MiniRepl
-  tune={`"0 2 4 6 4 2"
-.scale(seq('C2 major', 'C2 minor').slow(2))`}
-/>
-
-Note that the scale root is octaved here. You can also omit the octave, then index zero will default to octave 3.
-
-All the available scale names can be found [here](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).
-
-### scaleTranspose(steps)
-
-Transposes notes inside the scale by the number of steps:
-
-<MiniRepl
-  tune={`"-8 [2,4,6]"
-.scale('C4 bebop major')
-.scaleTranspose("<0 -1 -2 -3 -4 -5 -6 -4>")`}
-/>
-
-### voicings(range?)
-
-Turns chord symbols into voicings, using the smoothest voice leading possible:
-
-<MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")`} />
-
-<!-- TODO: use voicing collection as first param + patternify. -->
-
-### rootNotes(octave = 2)
-
-Turns chord symbols into root notes of chords in given octave.
-
-<MiniRepl tune={`"<C^7 A7b13 Dm7 G7>".rootNotes(3)`} />
-
-Together with layer, struct and voicings, this can be used to create a basic backing track:
-
-<MiniRepl
-  tune={`"<C^7 A7b13 Dm7 G7>".layer(
-  x => x.voicings(['d3','g4']).struct("~ x"),
-  x => x.rootNotes(2).tone(synth(osc('sawtooth4')).chain(out()))
-)`}
-/>
-
-<!-- TODO: use range instead of octave. -->
-<!-- TODO: find out why composition does not work -->
-
-## Microtonal API
-
-TODO
-
-## MIDI API
-
-Strudel also supports midi via [webmidi](https://npmjs.com/package/webmidi).
-
-### midi(outputName?)
-
-Make sure to have a midi device connected or to use an IAC Driver.
-If no outputName is given, it uses the first midi output it finds.
-
-Midi is currently not supported by the mini repl used here, but you can [open the midi example in the repl](https://strudel.tidalcycles.org/#c3RhY2soIjxDXjcgQTcgRG03IEc3PiIubS52b2ljaW5ncygpLCAnPEMzIEEyIEQzIEcyPicubSkKICAubWlkaSgp).
-
-In the REPL, you will se a log of the available MIDI devices.
-
-<!--<MiniRepl
-  tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")
-  .midi()`}
-/>-->
-
-# Contributing
-
-Contributions of any sort are very welcome! You can contribute by editing [this file](https://github.com/tidalcycles/strudel/blob/main/repl/src/tutorial/tutorial.mdx).
-All you need is a github account.
-
-If you want to run the tutorial locally, you can clone the and run:
-
-```sh
-cd repl && npm i && npm run tutorial
-```
-
-If you want to contribute in another way, either
-
-- [fork strudel repo on GitHub](https://github.com/tidalcycles/strudel)
-- [Join the Discord Channel](https://discord.gg/remJ6gQA)
-- [play with the Strudel REPL](https://strudel.tidalcycles.org/)
-
-<br />
-<br />
-
-# API Docs
-
-The following is generated from the source documentation.
-
-## Pattern Factories
-
-The following functions will return a pattern. We will see later what that means.
-
-{{ 'pure' | jsdoc }}
-
-{{ 'slowcat' | jsdoc }}
-
-{{ 'fastcat' | jsdoc }}
-
-{{ 'stack' | jsdoc }}
-
-{{ 'timeCat' | jsdoc }}
-
-{{ 'polyrhythm' | jsdoc }}
-
-## Pattern Modifiers
-
-{{ 'Pattern.slow' | jsdoc }}
-
-{{ 'Pattern.fast' | jsdoc }}
-
-{{ 'Pattern.early' | jsdoc }}
-
-{{ 'Pattern.late' | jsdoc }}
-
-{{ 'Pattern.rev' | jsdoc }}
-
-{{ 'Pattern.legato' | jsdoc }}
-
-## Continuous Signals
-
-Signals are patterns with continuous values, meaning they have theoretically infinite steps.
-They can provide streams of numbers that can be sampled at discrete points in time.
-
-{{ 'Pattern.range' | jsdoc }}
-
-{{ 'saw' | jsdoc }}
-
-{{ 'saw2' | jsdoc }}
-
-{{ 'sine' | jsdoc }}
-
-{{ 'sine2' | jsdoc }}
-
-{{ 'cosine' | jsdoc }}
-
-{{ 'cosine2' | jsdoc }}
-
-{{ 'tri' | jsdoc }}
-
-{{ 'tri2' | jsdoc }}
-
-{{ 'square' | jsdoc }}
-
-{{ 'square2' | jsdoc }}
-
-## Using Samples with Webdirt
-
-You can use the powerful sampling engine [Webdirt](https://github.com/dktr0/WebDirt) with Strudel.
-
-{{ 'Pattern.webdirt' | jsdoc }}
-
-## Using Superdirt via OSC
-
-In mainline tidal, the actual sound is generated via Superdirt, which runs inside Supercollider.
-Strudel also supports using Superdirt as a backend, although it requires some developer tooling to run.
-
-### Getting Started
-
-Getting Superdirt to work with Strudel, you need to
-
-1. install SuperCollider + sc3 plugins, see [Tidal Docs](https://tidalcycles.org/docs/) (Install Tidal) for more info.
-2. install [node.js](https://nodejs.org/en/)
-3. download [Strudel Repo](https://github.com/tidalcycles/strudel/) (or git clone, if you have git installed)
-4. run `npm i` in the strudel directory
-5. run `npm run osc` to start the osc server, which forwards OSC messages from Strudel REPL to SuperCollider
-
-Now you're all set!
-
-### Usage
-
-1. Start SuperCollider, either using SuperCollider IDE or by running `sclang` in a terminal
-2. Open the [Strudel REPL](https://strudel.tidalcycles.org/#cygiYmQgc2QiKS5vc2MoKQ%3D%3D)
-
-...or test it here:
-
-<MiniRepl tune={`s("bd sd").osc()`} />
-
-If you now hear sound, congratulations! If not, you can get help on the [#strudel channel in the TidalCycles discord](https://discord.com/invite/HGEdXmRkzT).
-
-{{ 'Pattern.osc' | jsdoc }}
-
-# Superdirt Params
-
-The following functions are specific to SuperDirt and won't work with other Strudel outputs.
-
-## Basic Types
-
-{{ 's' | jsdoc }}
-
-{{ 'n' | jsdoc }}
-
-{{ 'freq' | jsdoc }}
-
-{{ 'channel' | jsdoc }}
-
-{{ 'orbit' | jsdoc }}
-
-## Filters
-
-{{ 'cutoff' | jsdoc }}
-
-{{ 'resonance' | jsdoc }}
-
-{{ 'hcutoff' | jsdoc }}
-
-{{ 'hresonance' | jsdoc }}
-
-{{ 'bandf' | jsdoc }}
-
-{{ 'bandq' | jsdoc }}
-
-{{ 'djf' | jsdoc }}
-
-{{ 'vowel' | jsdoc }}
-
-## Sample Editing
-
-{{ 'cut' | jsdoc }}
-
-{{ 'begin' | jsdoc }}
-
-{{ 'end' | jsdoc }}
-
-{{ 'loop' | jsdoc }}
-
-{{ 'fadeTime' | jsdoc }}
-
-{{ 'speed' | jsdoc }}
-
-{{ 'unit' | jsdoc }}
-
-## Audio Effects
-
-{{ 'gain' | jsdoc }}
-
-{{ 'amp' | jsdoc }}
-
-{{ 'accelerate' | jsdoc }}
-
-{{ 'crush' | jsdoc }}
-
-{{ 'coarse' | jsdoc }}
-
-{{ 'delay' | jsdoc }}
-
-{{ 'lock' | jsdoc }}
-
-{{ 'leslie' | jsdoc }}
-
-{{ 'lrate' | jsdoc }}
-
-{{ 'lsize' | jsdoc }}
-
-{{ 'pan' | jsdoc }}
-
-{{ 'panspan' | jsdoc }}
-
-{{ 'pansplay' | jsdoc }}
-
-{{ 'room' | jsdoc }}
-
-{{ 'size' | jsdoc }}
-
-{{ 'dry' | jsdoc }}
-
-{{ 'shape' | jsdoc }}
-
-{{ 'squiz' | jsdoc }}
-
-{{ 'waveloss' | jsdoc }}
-
-{{ 'attack' | jsdoc }}
-
-{{ 'decay' | jsdoc }}
-
-## Synth Effects
-
-{{ 'octave' | jsdoc }}
-
-{{ 'detune' | jsdoc }}
-
-{{ 'tremolodepth' | jsdoc }}
