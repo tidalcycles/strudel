@@ -1136,24 +1136,67 @@ export class Pattern {
     return this.stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
   }
 
-  // these might change with: https://github.com/tidalcycles/Tidal/issues/902
+  /**
+   * Superimpose and offset multiple times, applying the given function each time.
+   * @name echoWith
+   * @memberof Pattern
+   * @returns Pattern
+   * @param {number} times how many times to repeat
+   * @param {number} time cycle offset between iterations
+   * @param {function} func function to apply, given the pattern and the iteration index
+   * @example
+   * "<0 [2 4]>"
+   * .echoWith(4, 1/8, (p,n) => p.add(n*2))
+   * .scale('C minor').note().legato(.2).out()
+   */
   _echoWith(times, time, func) {
     return stack(...listRange(0, times - 1).map((i) => func(this.late(Fraction(time).mul(i)), i)));
   }
 
+  /**
+   * Superimpose and offset multiple times, gradually decreasing the velocity
+   * @name echo
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * s("bd sd").echo(3, 1/6, .8).out()
+   */
   _echo(times, time, feedback) {
     return this._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
   }
 
+  /**
+   * Divides a pattern into a given number of subdivisions, plays the subdivisions in order, but increments the starting subdivision each cycle. The pattern wraps to the first subdivision after the last subdivision is played.
+   * @name iter
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * note("0 1 2 3".scale('A minor')).iter(4).out()
+   */
   iter(times, back = false) {
     return slowcat(...listRange(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
   }
 
-  // known as iter' in tidalcycles
+  /**
+   * Like `iter`, but plays the subdivisions in reverse order. Known as iter' in tidalcycles
+   * @name iterBack
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * note("0 1 2 3".scale('A minor')).iterBack(4).out()
+   */
   iterBack(times) {
     return this.iter(times, true);
   }
 
+  /**
+   * Divides a pattern into a given number of parts, then cycles through those parts in turn, applying the given function to each part in turn (one part per cycle).
+   * @name chunk
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note().out()
+   */
   _chunk(n, func, back = false) {
     const binary = Array(n - 1).fill(false);
     binary.unshift(true);
@@ -1161,6 +1204,14 @@ export class Pattern {
     return this.when(binary_pat, func);
   }
 
+  /**
+   * Like `chunk`, but cycles through the parts in reverse order. Known as chunk' in tidalcycles
+   * @name chunkBack
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note().out()
+   */
   _chunkBack(n, func) {
     return this._chunk(n, func, true);
   }
