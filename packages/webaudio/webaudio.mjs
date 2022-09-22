@@ -153,6 +153,8 @@ try {
   console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
 }
 
+const cutGroups = [];
+
 Pattern.prototype.out = function () {
   return this.onTrigger(async (t, hap, ct, cps) => {
     const hapDuration = hap.duration / cps;
@@ -180,13 +182,17 @@ Pattern.prototype.out = function () {
         shape,
         pan,
         attack = 0.001,
-        decay = 0.05,
-        sustain = 0.5,
+        decay = 0.001,
+        sustain = 1,
         release = 0.001,
         speed = 1, // sample playback speed
         begin = 0,
         end = 1,
         vowel,
+        unit,
+        nudge = 0, // TODO: is this in seconds?
+        cut,
+        loop,
       } = hap.value;
       const { velocity = 1 } = hap.context;
       gain *= velocity; // legacy fix for velocity
@@ -254,29 +260,33 @@ Pattern.prototype.out = function () {
           return;
         }
         bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
-        // TODO: nudge, unit, cut, loop
-        let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration;
-        // let duration = bufferSource.buffer.duration;
-        const offset = begin * duration;
-        duration = ((end - begin) * duration) / Math.abs(speed);
-        if (soundfont || clip) {
-          bufferSource.start(t, offset); // duration does not work here for some reason
-        } else {
-          bufferSource.start(t, offset, duration);
+        if (unit === 'c') {
+          // are there other units?
+          bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration;
+        }
+        let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration / bufferSource.playbackRate.value;
+        // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
+        // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
+        // the midway point through a 10-second audio buffer is still 5."
+        const offset = begin * duration * bufferSource.playbackRate.value;
+        duration = (end - begin) * duration;
+        if (loop) {
+          bufferSource.loop = true;
+          bufferSource.loopStart = offset;
+          bufferSource.loopEnd = offset + duration;
+          duration = loop * duration;
+        }
+        t += nudge;
+
+        bufferSource.start(t, offset);
+        if (cut !== undefined) {
+          cutGroups[cut]?.stop(t); // fade out?
+          cutGroups[cut] = bufferSource;
         }
         chain.push(bufferSource);
-        if (soundfont || clip) {
-          const env = ac.createGain();
-          const releaseLength = 0.1;
-          env.gain.value = 0.6;
-          env.gain.setValueAtTime(env.gain.value, t + duration);
-          env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
-          // env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
-          chain.push(env);
-          bufferSource.stop(t + duration + releaseLength);
-        } else {
-          bufferSource.stop(t + duration);
-        }
+        bufferSource.stop(t + duration + release);
+        const adsr = getADSR(attack, decay, sustain, release, 1, t, t + duration);
+        chain.push(adsr);
       }
       // master out
       const master = ac.createGain();
