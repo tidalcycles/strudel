@@ -787,6 +787,20 @@ export class Pattern {
     return this.fmap((x) => pure(x)._fast(factor))._squeezeJoin();
   }
 
+  /**
+   * Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
+   * It turns a pattern of samples into a pattern of parts of samples.
+   * @name chop
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * samples({ p: 'https://cdn.freesound.org/previews/648/648433_11943129-lq.mp3' })
+   * s("p")
+   * .chop(128)
+   * .loopAt(32,1)
+   * .jux(rev)
+   * .out()
+   */
   _chop(n) {
     const slices = Array.from({ length: n }, (x, i) => i);
     const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
@@ -1242,7 +1256,17 @@ export class Pattern {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
 
-  // move this to controls? (speed and unit are controls)
+  /**
+   * Makes the sample fit the given number of cycles by changing the speed.
+   * @name loopAt
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * samples({ p: 'https://cdn.freesound.org/previews/648/648433_11943129-lq.mp3' })
+   * s("p")
+   * .loopAt(8,1)
+   * .out()
+   */
   _loopAt(factor, cps = 1) {
     return this.speed((1 / factor) * cps)
       .unit('c')
