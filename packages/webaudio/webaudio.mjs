@@ -181,10 +181,10 @@ Pattern.prototype.out = function () {
         crush,
         shape,
         pan,
-        attack = 0.001,
-        decay = 0.05,
-        sustain = 0.5,
-        release = 0.001,
+        attack = 0.0001,
+        decay = 0.0001,
+        sustain = 1,
+        release = 0.0001,
         speed = 1, // sample playback speed
         begin = 0,
         end = 1,
@@ -284,18 +284,9 @@ Pattern.prototype.out = function () {
           cutGroups[cut] = bufferSource;
         }
         chain.push(bufferSource);
-        if (soundfont || clip) {
-          const env = ac.createGain();
-          const releaseLength = 0.1;
-          env.gain.value = 0.6;
-          env.gain.setValueAtTime(env.gain.value, t + duration);
-          env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
-          // env.gain.linearRampToValueAtTime(0, t + duration + releaseLength);
-          chain.push(env);
-          bufferSource.stop(t + duration + releaseLength);
-        } else {
-          bufferSource.stop(t + duration);
-        }
+        bufferSource.stop(t + duration + release);
+        const adsr = getADSR(attack, decay, sustain, release, 1, t, t + duration);
+        chain.push(adsr);
       }
       // master out
       const master = ac.createGain();
