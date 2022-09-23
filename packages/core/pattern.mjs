@@ -653,7 +653,7 @@ export class Pattern {
     function query(state) {
       const haps = pat_of_pats.discreteOnly().query(state);
       function flatHap(outerHap) {
-        const pat = outerHap.value._focusSpan(outerHap.wholeOrPart().cycleArc());
+        const pat = outerHap.value._focusSpan(outerHap.wholeOrPart());
         const innerHaps = pat.query(state.setSpan(outerHap.part));
         function munge(outer, inner) {
           let whole = undefined;
@@ -753,8 +753,7 @@ export class Pattern {
   // Similar to compress, but doesn't leave gaps, and the 'focus' can be
   // bigger than a cycle
   _focus(b, e) {
-    const factor = Fraction(1).div(e.sub(b));
-    return this._fast(factor).late(b)
+    return this._fast(Fraction(1).div(e.sub(b))).late(b);
   }
     
   _focusSpan(span) {
