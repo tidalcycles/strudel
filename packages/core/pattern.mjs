@@ -645,12 +645,15 @@ export class Pattern {
     return this._trigJoin(true);
   }
 
+  // Like the other joins above, joins a pattern of patterns of values, into a flatter
+  // pattern of values. In this case it takes whole cycles of the inner pattern to fit each event
+  // in the outer pattern.
   _squeezeJoin() {
     const pat_of_pats = this;
     function query(state) {
       const haps = pat_of_pats.discreteOnly().query(state);
       function flatHap(outerHap) {
-        const pat = outerHap.value._compressSpan(outerHap.wholeOrPart().cycleArc());
+        const pat = outerHap.value._focusSpan(outerHap.wholeOrPart());
         const innerHaps = pat.query(state.setSpan(outerHap.part));
         function munge(outer, inner) {
           let whole = undefined;
@@ -735,6 +738,7 @@ export class Pattern {
     return this.withQuerySpan(qf).withHapSpan(ef)._splitQueries();
   }
 
+  // Compress each cycle into the given timespan, leaving a gap
   _compress(b, e) {
     if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
       return silence;
@@ -744,6 +748,16 @@ export class Pattern {
 
   _compressSpan(span) {
     return this._compress(span.begin, span.end);
+  }
+
+  // Similar to compress, but doesn't leave gaps, and the 'focus' can be
+  // bigger than a cycle
+  _focus(b, e) {
+    return this._fast(Fraction(1).div(e.sub(b))).late(b);
+  }
+    
+  _focusSpan(span) {
+    return this._focus(span.begin, span.end);
   }
 
   /**
