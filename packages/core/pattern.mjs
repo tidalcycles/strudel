@@ -1357,10 +1357,14 @@ function _composeOp(a, b, func) {
           pat = preprocess(pat);
           other = preprocess(other);
         }
-        var result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
+        var result;
         // hack to remove undefs when doing 'keepif'
         if (what === 'keepif') {
+          result = pat['_op' + how](other, (a) => (b) => op(a, b));
           result = result._removeUndefineds();
+        }
+        else {
+          result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
         }
         return result;
       };
