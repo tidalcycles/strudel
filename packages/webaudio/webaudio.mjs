@@ -7,6 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 // import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
 import { fromMidi, toMidi } from '@strudel.cycles/core';
+import './feedbackdelay.mjs';
 import { loadBuffer } from './sampler.mjs';
 const { Pattern } = strudel;
 import './vowel.mjs';
@@ -53,6 +54,17 @@ const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {
   gainNode.gain.setValueAtTime(sustain * velocity, end); // sustain end
   gainNode.gain.linearRampToValueAtTime(0, end + release); // release
   // for some reason, using exponential ramping creates little cracklings
+  /* let t = begin;
+  gainNode.gain.setValueAtTime(0, t);
+  gainNode.gain.exponentialRampToValueAtTime(velocity, (t += attack));
+  const sustainGain = Math.max(sustain * velocity, 0.001);
+  gainNode.gain.exponentialRampToValueAtTime(sustainGain, (t += decay));
+  if (end - begin < attack + decay) {
+    gainNode.gain.cancelAndHoldAtTime(end);
+  } else {
+    gainNode.gain.setValueAtTime(sustainGain, end);
+  }
+  gainNode.gain.exponentialRampToValueAtTime(0.001, end + release); // release */
   return gainNode;
 };
 
@@ -170,7 +182,33 @@ if (typeof window !== 'undefined') {
   }
 }
 
+function gainNode(value) {
+  const node = getAudioContext().createGain();
+  node.gain.value = value;
+  return node;
+}
 const cutGroups = [];
+
+let delays = {};
+function getDelay(orbit, delaytime, delayfeedback, t) {
+  if (!delays[orbit]) {
+    const ac = getAudioContext();
+    const dly = ac.createFeedbackDelay(1, delaytime, delayfeedback);
+    dly.start(t);
+    dly.connect(getDestination());
+    delays[orbit] = dly;
+  }
+  delays[orbit].delayTime.value !== delaytime && delays[orbit].delayTime.setValueAtTime(delaytime, t);
+  delays[orbit].feedback.value !== delayfeedback && delays[orbit].feedback.setValueAtTime(delayfeedback, t);
+  return delays[orbit];
+}
+
+function effectSend(input, effect, wet) {
+  const send = gainNode(wet);
+  input.connect(send);
+  send.connect(effect);
+  return send;
+}
 
 // export const webaudioOutput = async (t, hap, ct, cps) => {
 export const webaudioOutput = async (hap, deadline, hapDuration) => {
@@ -210,10 +248,14 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       begin = 0,
       end = 1,
       vowel,
+      delay = 0,
+      delayfeedback = 0.5,
+      delaytime = 0.25,
       unit,
       nudge = 0, // TODO: is this in seconds?
       cut,
       loop,
+      orbit = 1,
     } = hap.value;
     const { velocity = 1 } = hap.context;
     gain *= velocity; // legacy fix for velocity
@@ -239,9 +281,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       const o = getOscillator({ t, s, freq, duration: hapDuration, release });
       chain.push(o);
       // level down oscillators as they are really loud compared to samples i've tested
-      const g = ac.createGain();
-      g.gain.value = 0.3;
-      chain.push(g);
+      chain.push(gainNode(0.3));
       // TODO: make adsr work with samples without pops
       // envelope
       const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hapDuration);
@@ -309,31 +349,45 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       const adsr = getADSR(attack, decay, sustain, release, 1, t, t + duration);
       chain.push(adsr);
     }
-    // master out
-    const master = ac.createGain();
-    master.gain.value = gain;
-    chain.push(master);
+
+    // gain stage
+    chain.push(gainNode(gain));
 
     // filters
     cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
     hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
     bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
     vowel !== undefined && chain.push(ac.createVowelFilter(vowel));
+
+    // effects
     coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
     crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
     shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
-    // TODO delay / delaytime / delayfeedback
+
     // panning
     if (pan !== undefined) {
       const panner = ac.createStereoPanner();
       panner.pan.value = 2 * pan - 1;
       chain.push(panner);
     }
+
+    // last gain
+    const post = gainNode(1);
+    chain.push(post);
+    post.connect(getDestination());
+
+    // delay
+    let delaySend;
+    if (delay > 0 && delaytime > 0 && delayfeedback > 0) {
+      const delyNode = getDelay(orbit, delaytime, delayfeedback, t);
+      delaySend = effectSend(post, delyNode, delay);
+    }
+
     // connect chain elements together
     chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
-    chain[chain.length - 1].connect(getDestination());
+
     // disconnect all nodes when source node has ended:
-    chain[0].onended = () => chain.forEach((n) => n.disconnect());
+    chain[0].onended = () => chain.concat([delaySend]).forEach((n) => n?.disconnect());
   } catch (e) {
     console.warn('.out error:', e);
   }
