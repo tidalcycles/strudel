@@ -190,10 +190,10 @@ function gainNode(value) {
 const cutGroups = [];
 
 let delays = {};
-function getDelay(orbit, delay, delaytime, delayfeedback, t) {
+function getDelay(orbit, delaytime, delayfeedback, t) {
   if (!delays[orbit]) {
     const ac = getAudioContext();
-    const dly = ac.createFeedbackDelay(delay, delaytime, delayfeedback);
+    const dly = ac.createFeedbackDelay(1, delaytime, delayfeedback);
     dly.start(t);
     dly.connect(getDestination());
     delays[orbit] = dly;
@@ -379,7 +379,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     // delay
     let delaySend;
     if (delay > 0 && delaytime > 0 && delayfeedback > 0) {
-      const delyNode = getDelay(orbit, 1, delaytime, delayfeedback, t);
+      const delyNode = getDelay(orbit, delaytime, delayfeedback, t);
       delaySend = effectSend(post, delyNode, delay);
     }
 
