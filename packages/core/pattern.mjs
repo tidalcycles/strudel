@@ -649,12 +649,22 @@ export class Pattern {
   // pattern of values. In this case it takes whole cycles of the inner pattern to fit each event
   // in the outer pattern.
   _squeezeJoin() {
+    // A pattern of patterns, which we call the 'outer' pattern, with patterns
+    // as values which we call the 'inner' patterns.
     const pat_of_pats = this;
     function query(state) {
+      // Get the events with the inner patterns. Ignore continuous events (without 'wholes')
       const haps = pat_of_pats.discreteOnly().query(state);
+      // A function to map over the events from the outer pattern.
       function flatHap(outerHap) {
-        const pat = outerHap.value._focusSpan(outerHap.wholeOrPart());
-        const innerHaps = pat.query(state.setSpan(outerHap.part));
+        // Get the inner pattern, slowed and shifted so that the 'whole'
+        // timespan of the outer event corresponds to the first cycle of the
+        // inner event
+        const inner_pat = outerHap.value._focusSpan(outerHap.wholeOrPart());
+        // Get the inner events, from the timespan of the outer event's part
+        const innerHaps = inner_pat.query(state.setSpan(outerHap.part));
+        // A function to map over the inner events, to combine them with the
+        // outer event
         function munge(outer, inner) {
           let whole = undefined;
           if (inner.whole && outer.whole) {
@@ -753,7 +763,7 @@ export class Pattern {
   // Similar to compress, but doesn't leave gaps, and the 'focus' can be
   // bigger than a cycle
   _focus(b, e) {
-    return this._fast(Fraction(1).div(e.sub(b))).late(b);
+    return this._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
   }
     
   _focusSpan(span) {
