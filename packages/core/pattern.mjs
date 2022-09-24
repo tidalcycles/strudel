@@ -1360,6 +1360,7 @@ function _composeOp(a, b, func) {
         var result;
         // hack to remove undefs when doing 'keepif'
         if (what === 'keepif') {
+          // avoid union, as we want to throw away the value of 'b' completely
           result = pat['_op' + how](other, (a) => (b) => op(a, b));
           result = result._removeUndefineds();
         }
