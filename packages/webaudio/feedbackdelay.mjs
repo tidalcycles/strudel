@@ -7,6 +7,7 @@ if (typeof DelayNode !== 'undefined') {
 
       const feedbackGain = ac.createGain();
       feedbackGain.gain.value = Math.min(Math.abs(feedback), 0.995);
+      this.feedback = feedbackGain.gain;
 
       const delayGain = ac.createGain();
       delayGain.gain.value = wet;
