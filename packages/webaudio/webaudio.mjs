@@ -8,7 +8,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import * as strudel from '@strudel.cycles/core';
 import { fromMidi, toMidi } from '@strudel.cycles/core';
 import './feedbackdelay.mjs';
-import { loadBuffer } from './sampler.mjs';
+import { loadBuffer, reverseBuffer } from './sampler.mjs';
 const { Pattern } = strudel;
 import './vowel.mjs';
 import workletsUrl from './worklets.mjs?url';
@@ -97,7 +97,7 @@ const getSoundfontKey = (s) => {
   return;
 };
 
-const getSampleBufferSource = async (s, n, note) => {
+const getSampleBufferSource = async (s, n, note, speed) => {
   let transpose = 0;
   let midi;
 
@@ -137,7 +137,11 @@ const getSampleBufferSource = async (s, n, note) => {
     transpose = -midiDiff(closest); // semitones to repitch
     sampleUrl = bank[closest][n % bank[closest].length];
   }
-  const buffer = await loadBuffer(sampleUrl, ac);
+  let buffer = await loadBuffer(sampleUrl, ac);
+  if (speed < 0) {
+    // should this be cached?
+    buffer = reverseBuffer(buffer);
+  }
   const bufferSource = ac.createBufferSource();
   bufferSource.buffer = buffer;
   const playbackRate = 1.0 * Math.pow(2, transpose / 12);
@@ -305,7 +309,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
           bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac);
         } else {
           // is sample from loaded samples(..)
-          bufferSource = await getSampleBufferSource(s, n, note);
+          bufferSource = await getSampleBufferSource(s, n, note, speed);
         }
       } catch (err) {
         console.warn(err);
