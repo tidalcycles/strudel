@@ -217,7 +217,8 @@ function getReverb(orbit, duration = 2) {
     reverbs[orbit] = reverb;
   }
   if (reverbs[orbit].duration !== duration) {
-    reverbs[orbit].setDuration(duration);
+    reverbs[orbit] = reverbs[orbit].setDuration(duration);
+    reverbs[orbit].duration = duration;
   }
   return reverbs[orbit];
 }
@@ -277,6 +278,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       orbit = 1,
       room,
       size = 2,
+      roomsize = size,
     } = hap.value;
     const { velocity = 1 } = hap.context;
     gain *= velocity; // legacy fix for velocity
@@ -405,8 +407,8 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     }
     // reverb
     let reverbSend;
-    if (room > 0 && size > 0) {
-      const reverbNode = getReverb(orbit, size);
+    if (room > 0 && roomsize > 0) {
+      const reverbNode = getReverb(orbit, roomsize);
       reverbSend = effectSend(post, reverbNode, room);
     }
 

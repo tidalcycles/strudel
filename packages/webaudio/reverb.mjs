@@ -11,8 +11,9 @@ if (typeof AudioContext !== 'undefined') {
     const convolver = this.createConvolver();
     convolver.setDuration = (d) => {
       convolver.buffer = this.impulseResponse(d);
+      convolver.duration = duration;
+      return convolver;
     };
-    this.duration = duration;
     convolver.setDuration(duration);
     return convolver;
   };
