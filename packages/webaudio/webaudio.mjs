@@ -8,6 +8,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import * as strudel from '@strudel.cycles/core';
 import { fromMidi, toMidi } from '@strudel.cycles/core';
 import './feedbackdelay.mjs';
+import './reverb.mjs';
 import { loadBuffer, reverseBuffer } from './sampler.mjs';
 const { Pattern } = strudel;
 import './vowel.mjs';
@@ -207,6 +208,20 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
   return delays[orbit];
 }
 
+let reverbs = {};
+function getReverb(orbit, duration = 2) {
+  if (!reverbs[orbit]) {
+    const ac = getAudioContext();
+    const reverb = ac.createReverb(duration);
+    reverb.connect(getDestination());
+    reverbs[orbit] = reverb;
+  }
+  if (reverbs[orbit].duration !== duration) {
+    reverbs[orbit].setDuration(duration);
+  }
+  return reverbs[orbit];
+}
+
 function effectSend(input, effect, wet) {
   const send = gainNode(wet);
   input.connect(send);
@@ -260,6 +275,8 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       cut,
       loop,
       orbit = 1,
+      room,
+      size = 2,
     } = hap.value;
     const { velocity = 1 } = hap.context;
     gain *= velocity; // legacy fix for velocity
@@ -386,12 +403,18 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       const delyNode = getDelay(orbit, delaytime, delayfeedback, t);
       delaySend = effectSend(post, delyNode, delay);
     }
+    // reverb
+    let reverbSend;
+    if (room > 0 && size > 0) {
+      const reverbNode = getReverb(orbit, size);
+      reverbSend = effectSend(post, reverbNode, room);
+    }
 
     // connect chain elements together
     chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
 
     // disconnect all nodes when source node has ended:
-    chain[0].onended = () => chain.concat([delaySend]).forEach((n) => n?.disconnect());
+    chain[0].onended = () => chain.concat([delaySend, reverbSend]).forEach((n) => n?.disconnect());
   } catch (e) {
     console.warn('.out error:', e);
   }
