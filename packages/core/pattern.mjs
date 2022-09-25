@@ -1271,11 +1271,27 @@ export class Pattern {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
   }
 
-  // sets hap relative duration of haps
+  /**
+   *
+   * Multiplies the hap duration with the given factor.
+   * @name legato
+   * @memberof Pattern
+   * @example
+   * n("c3 eb3 g3 c4").legato("<.25 .5 1 2>").out()
+   */
   _legato(value) {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
   }
 
+  /**
+   *
+   * Sets the velocity from 0 to 1. Is multiplied together with gain.
+   * @name velocity
+   * @example
+   * s("hh*8")
+   * .gain(".4!2 1 .4!2 1 .4 1")
+   * .velocity(".4 1").out()
+   */
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }

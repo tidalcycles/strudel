@@ -62,12 +62,12 @@ const generic_params = [
    */
   ['f', 'accelerate', 'a pattern of numbers that speed up (or slow down) samples while they play.'],
   /**
-   * Like {@link amp}, but exponential.
+   * Controls the gain by an exponential amount.
    *
    * @name gain
    * @param {number | Pattern} amount gain.
    * @example
-   * s("bd*8").gain(".7*2 1 .7*2 1 .7 1").osc()
+   * s("hh*8").gain(".4!2 1 .4!2 1 .4 1").out()
    *
    */
   [
