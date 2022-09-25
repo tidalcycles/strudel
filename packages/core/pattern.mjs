@@ -645,13 +645,26 @@ export class Pattern {
     return this._trigJoin(true);
   }
 
+  // Like the other joins above, joins a pattern of patterns of values, into a flatter
+  // pattern of values. In this case it takes whole cycles of the inner pattern to fit each event
+  // in the outer pattern.
   _squeezeJoin() {
+    // A pattern of patterns, which we call the 'outer' pattern, with patterns
+    // as values which we call the 'inner' patterns.
     const pat_of_pats = this;
     function query(state) {
+      // Get the events with the inner patterns. Ignore continuous events (without 'wholes')
       const haps = pat_of_pats.discreteOnly().query(state);
+      // A function to map over the events from the outer pattern.
       function flatHap(outerHap) {
-        const pat = outerHap.value._compressSpan(outerHap.wholeOrPart().cycleArc());
-        const innerHaps = pat.query(state.setSpan(outerHap.part));
+        // Get the inner pattern, slowed and shifted so that the 'whole'
+        // timespan of the outer event corresponds to the first cycle of the
+        // inner event
+        const inner_pat = outerHap.value._focusSpan(outerHap.wholeOrPart());
+        // Get the inner events, from the timespan of the outer event's part
+        const innerHaps = inner_pat.query(state.setSpan(outerHap.part));
+        // A function to map over the inner events, to combine them with the
+        // outer event
         function munge(outer, inner) {
           let whole = undefined;
           if (inner.whole && outer.whole) {
@@ -735,6 +748,7 @@ export class Pattern {
     return this.withQuerySpan(qf).withHapSpan(ef)._splitQueries();
   }
 
+  // Compress each cycle into the given timespan, leaving a gap
   _compress(b, e) {
     if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
       return silence;
@@ -744,6 +758,16 @@ export class Pattern {
 
   _compressSpan(span) {
     return this._compress(span.begin, span.end);
+  }
+
+  // Similar to compress, but doesn't leave gaps, and the 'focus' can be
+  // bigger than a cycle
+  _focus(b, e) {
+    return this._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
+  }
+    
+  _focusSpan(span) {
+    return this._focus(span.begin, span.end);
   }
 
   /**
@@ -1334,10 +1358,15 @@ function _composeOp(a, b, func) {
           pat = preprocess(pat);
           other = preprocess(other);
         }
-        var result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
+        var result;
         // hack to remove undefs when doing 'keepif'
         if (what === 'keepif') {
+          // avoid union, as we want to throw away the value of 'b' completely
+          result = pat['_op' + how](other, (a) => (b) => op(a, b));
           result = result._removeUndefineds();
+        }
+        else {
+          result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
         }
         return result;
       };
