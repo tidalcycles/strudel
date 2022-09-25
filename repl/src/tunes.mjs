@@ -897,3 +897,33 @@ stack(
     x?  ~ ~ x ~ x@3\`),
   roots.struct("x [~ x?0.2] x [~ x?] | x!4 | x@2 ~ ~ ~ x x x").transpose("0 7")
 ).slow(2).pianoroll().note().piano().out();`;
+
+export const chop = `samples({ p: 'https://cdn.freesound.org/previews/648/648433_11943129-lq.mp3' })
+
+s("p")
+  .loopAt(32,1)
+  .chop(128)
+  .jux(rev)
+  .shape(.4)
+  .decay(.1)
+  .sustain(.6)
+  .out()`;
+
+export const delay = `stack(
+    s("bd <sd cp>")
+    .delay("<0 .5>")
+    .delaytime(".16 | .33")
+    .delayfeedback(".6 | .8")
+  ).sometimes(x=>x.speed("-1")).out()`;
+
+export const orbit = `stack(
+    s("bd <sd cp>")
+    .delay(.5)
+    .delaytime(.33)
+    .delayfeedback(.6),
+    s("hh*2")
+    .delay(.8)
+    .delaytime(.08)
+    .delayfeedback(.7)
+    .orbit(2)
+  ).sometimes(x=>x.speed("-1")).out()`;
