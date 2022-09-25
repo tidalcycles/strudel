@@ -147,10 +147,12 @@ const generic_params = [
   /**
    * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.
    *
+   * @memberof Pattern
    * @name begin
    * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
    * @example
-   * s("rave").begin("<0 .25 .5 .75>").osc()
+   * samples({ rave: 'rave/AREUREADY.wav' }, 'github:tidalcycles/Dirt-Samples/master/')
+   * s("rave").begin("<0 .25 .5 .75>").out()
    *
    */
   [
@@ -159,12 +161,13 @@ const generic_params = [
     'a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.',
   ],
   /**
-   * The same as {@link begin}, but cuts off the end off each sample.
+   * The same as .begin, but cuts off the end off each sample.
    *
+   * @memberof Pattern
    * @name end
    * @param {number | Pattern} length 1 = whole sample, .5 = half sample, .25 = quarter sample etc..
    * @example
-   * s("bd*2,ho*4").end("<.1 .2 .5 1>").osc()
+   * s("bd*2,ho*4").end("<.1 .2 .5 1>").out()
    *
    */
   [
