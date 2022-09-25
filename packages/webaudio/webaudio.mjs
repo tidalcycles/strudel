@@ -7,7 +7,9 @@ This program is free software: you can redistribute it and/or modify it under th
 // import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
 import { fromMidi, toMidi } from '@strudel.cycles/core';
-import { loadBuffer } from './sampler.mjs';
+import './feedbackdelay.mjs';
+import './reverb.mjs';
+import { loadBuffer, reverseBuffer } from './sampler.mjs';
 const { Pattern } = strudel;
 import './vowel.mjs';
 import workletsUrl from './worklets.mjs?url';
@@ -20,6 +22,21 @@ export const getAudioContext = () => {
     audioContext = new AudioContext();
   }
   return audioContext;
+};
+
+let destination;
+const getDestination = () => {
+  const ctx = getAudioContext();
+  if (!destination) {
+    destination = ctx.createGain();
+    destination.connect(ctx.destination);
+  }
+  return destination;
+};
+
+export const panic = () => {
+  getDestination().gain.linearRampToValueAtTime(0, getAudioContext().currentTime + 0.01);
+  destination = null;
 };
 
 const getFilter = (type, frequency, Q) => {
@@ -38,6 +55,17 @@ const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {
   gainNode.gain.setValueAtTime(sustain * velocity, end); // sustain end
   gainNode.gain.linearRampToValueAtTime(0, end + release); // release
   // for some reason, using exponential ramping creates little cracklings
+  /* let t = begin;
+  gainNode.gain.setValueAtTime(0, t);
+  gainNode.gain.exponentialRampToValueAtTime(velocity, (t += attack));
+  const sustainGain = Math.max(sustain * velocity, 0.001);
+  gainNode.gain.exponentialRampToValueAtTime(sustainGain, (t += decay));
+  if (end - begin < attack + decay) {
+    gainNode.gain.cancelAndHoldAtTime(end);
+  } else {
+    gainNode.gain.setValueAtTime(sustainGain, end);
+  }
+  gainNode.gain.exponentialRampToValueAtTime(0.001, end + release); // release */
   return gainNode;
 };
 
@@ -70,7 +98,7 @@ const getSoundfontKey = (s) => {
   return;
 };
 
-const getSampleBufferSource = async (s, n, note) => {
+const getSampleBufferSource = async (s, n, note, speed) => {
   let transpose = 0;
   let midi;
 
@@ -87,7 +115,7 @@ const getSampleBufferSource = async (s, n, note) => {
   }
   const bank = samples?.[s];
   if (!bank) {
-    throw new Error('sample not found:', s, 'try one of ' + Object.keys(samples));
+    throw new Error(`sample not found: "${s}", try one of ${Object.keys(samples).join(', ')}`);
   }
   if (typeof bank !== 'object') {
     throw new Error('wrong format for sample bank:', s);
@@ -110,7 +138,11 @@ const getSampleBufferSource = async (s, n, note) => {
     transpose = -midiDiff(closest); // semitones to repitch
     sampleUrl = bank[closest][n % bank[closest].length];
   }
-  const buffer = await loadBuffer(sampleUrl, ac);
+  let buffer = await loadBuffer(sampleUrl, ac);
+  if (speed < 0) {
+    // should this be cached?
+    buffer = reverseBuffer(buffer);
+  }
   const bufferSource = ac.createBufferSource();
   bufferSource.buffer = buffer;
   const playbackRate = 1.0 * Math.pow(2, transpose / 12);
@@ -147,178 +179,250 @@ function getWorklet(ac, processor, params) {
   return node;
 }
 
-try {
-  loadWorklets();
-} catch (err) {
-  console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+if (typeof window !== 'undefined') {
+  try {
+    loadWorklets();
+  } catch (err) {
+    console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+  }
 }
 
+function gainNode(value) {
+  const node = getAudioContext().createGain();
+  node.gain.value = value;
+  return node;
+}
 const cutGroups = [];
 
-Pattern.prototype.out = function () {
-  return this.onTrigger(async (t, hap, ct, cps) => {
-    const hapDuration = hap.duration / cps;
-    try {
-      const ac = getAudioContext();
-      // calculate correct time (tone.js workaround)
-      t = ac.currentTime + t - ct;
-      // destructure value
-      let {
-        freq,
-        s,
-        sf,
-        clip = 0, // if 1, samples will be cut off when the hap ends
-        n = 0,
-        note,
-        gain = 1,
-        cutoff,
-        resonance = 1,
-        hcutoff,
-        hresonance = 1,
-        bandf,
-        bandq = 1,
-        coarse,
-        crush,
-        shape,
-        pan,
-        attack = 0.001,
-        decay = 0.001,
-        sustain = 1,
-        release = 0.001,
-        speed = 1, // sample playback speed
-        begin = 0,
-        end = 1,
-        vowel,
-        unit,
-        nudge = 0, // TODO: is this in seconds?
-        cut,
-        loop,
-      } = hap.value;
-      const { velocity = 1 } = hap.context;
-      gain *= velocity; // legacy fix for velocity
-      // the chain will hold all audio nodes that connect to each other
-      const chain = [];
-      if (typeof s === 'string') {
-        [s, n] = splitSN(s, n);
-      }
-      if (typeof note === 'string') {
-        [note, n] = splitSN(note, n);
-      }
-      if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
-        // with synths, n and note are the same thing
-        n = note || n || 36;
-        if (typeof n === 'string') {
-          n = toMidi(n); // e.g. c3 => 48
-        }
-        // get frequency
-        if (!freq && typeof n === 'number') {
-          freq = fromMidi(n); // + 48);
-        }
-        // make oscillator
-        const o = getOscillator({ t, s, freq, duration: hapDuration, release });
-        chain.push(o);
-        // level down oscillators as they are really loud compared to samples i've tested
-        const g = ac.createGain();
-        g.gain.value = 0.3;
-        chain.push(g);
-        // TODO: make adsr work with samples without pops
-        // envelope
-        const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hapDuration);
-        chain.push(adsr);
-      } else {
-        // load sample
-        if (speed === 0) {
-          // no playback
-          return;
-        }
-        if (!s) {
-          console.warn('no sample specified');
-          return;
-        }
-        const soundfont = getSoundfontKey(s);
-        let bufferSource;
+let delays = {};
+function getDelay(orbit, delaytime, delayfeedback, t) {
+  if (!delays[orbit]) {
+    const ac = getAudioContext();
+    const dly = ac.createFeedbackDelay(1, delaytime, delayfeedback);
+    dly.start(t);
+    dly.connect(getDestination());
+    delays[orbit] = dly;
+  }
+  delays[orbit].delayTime.value !== delaytime && delays[orbit].delayTime.setValueAtTime(delaytime, t);
+  delays[orbit].feedback.value !== delayfeedback && delays[orbit].feedback.setValueAtTime(delayfeedback, t);
+  return delays[orbit];
+}
 
-        try {
-          if (soundfont) {
-            // is soundfont
-            bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac);
-          } else {
-            // is sample from loaded samples(..)
-            bufferSource = await getSampleBufferSource(s, n, note);
-          }
-        } catch (err) {
-          console.warn(err);
-          return;
-        }
-        // asny stuff above took too long?
-        if (ac.currentTime > t) {
-          console.warn('sample still loading:', s, n);
-          return;
-        }
-        if (!bufferSource) {
-          console.warn('no buffer source');
-          return;
-        }
-        bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
-        if (unit === 'c') {
-          // are there other units?
-          bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration;
-        }
-        let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration / bufferSource.playbackRate.value;
-        // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
-        // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
-        // the midway point through a 10-second audio buffer is still 5."
-        const offset = begin * duration * bufferSource.playbackRate.value;
-        duration = (end - begin) * duration;
-        if (loop) {
-          bufferSource.loop = true;
-          bufferSource.loopStart = offset;
-          bufferSource.loopEnd = offset + duration;
-          duration = loop * duration;
-        }
-        t += nudge;
+let reverbs = {};
+function getReverb(orbit, duration = 2) {
+  if (!reverbs[orbit]) {
+    const ac = getAudioContext();
+    const reverb = ac.createReverb(duration);
+    reverb.connect(getDestination());
+    reverbs[orbit] = reverb;
+  }
+  if (reverbs[orbit].duration !== duration) {
+    reverbs[orbit] = reverbs[orbit].setDuration(duration);
+    reverbs[orbit].duration = duration;
+  }
+  return reverbs[orbit];
+}
 
-        bufferSource.start(t, offset);
-        if (cut !== undefined) {
-          cutGroups[cut]?.stop(t); // fade out?
-          cutGroups[cut] = bufferSource;
-        }
-        chain.push(bufferSource);
-        bufferSource.stop(t + duration + release);
-        const adsr = getADSR(attack, decay, sustain, release, 1, t, t + duration);
-        chain.push(adsr);
-      }
-      // master out
-      const master = ac.createGain();
-      master.gain.value = gain;
-      chain.push(master);
+function effectSend(input, effect, wet) {
+  const send = gainNode(wet);
+  input.connect(send);
+  send.connect(effect);
+  return send;
+}
 
-      // filters
-      cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
-      hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
-      bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
-      vowel !== undefined && chain.push(ac.createVowelFilter(vowel));
-      coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
-      crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
-      shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
-      // TODO delay / delaytime / delayfeedback
-      // panning
-      if (pan !== undefined) {
-        const panner = ac.createStereoPanner();
-        panner.pan.value = 2 * pan - 1;
-        chain.push(panner);
-      }
-      // master out
-      /* const master = ac.createGain();
-    master.gain.value = 0.8 * gain;
-    chain.push(master); */
-      chain.push(ac.destination);
-      // connect chain elements together
-      chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
-      // disconnect all nodes when source node has ended:
-      chain[0].onended = () => chain.forEach((n) => n.disconnect());
-    } catch (e) {
-      console.warn('.out error:', e);
+// export const webaudioOutput = async (t, hap, ct, cps) => {
+export const webaudioOutput = async (hap, deadline, hapDuration) => {
+  try {
+    const ac = getAudioContext();
+    if (typeof hap.value !== 'object') {
+      throw new Error(
+        `hap.value ${hap.value} is not supported by webaudio output. Hint: append .note() or .s() to the end`,
+      );
     }
-  });
+    // calculate correct time (tone.js workaround)
+    let t = ac.currentTime + deadline;
+    // destructure value
+    let {
+      freq,
+      s,
+      sf,
+      clip = 0, // if 1, samples will be cut off when the hap ends
+      n = 0,
+      note,
+      gain = 1,
+      cutoff,
+      resonance = 1,
+      hcutoff,
+      hresonance = 1,
+      bandf,
+      bandq = 1,
+      coarse,
+      crush,
+      shape,
+      pan,
+      attack = 0.001,
+      decay = 0.001,
+      sustain = 1,
+      release = 0.001,
+      speed = 1, // sample playback speed
+      begin = 0,
+      end = 1,
+      vowel,
+      delay = 0,
+      delayfeedback = 0.5,
+      delaytime = 0.25,
+      unit,
+      nudge = 0, // TODO: is this in seconds?
+      cut,
+      loop,
+      orbit = 1,
+      room,
+      size = 2,
+      roomsize = size,
+    } = hap.value;
+    const { velocity = 1 } = hap.context;
+    gain *= velocity; // legacy fix for velocity
+    // the chain will hold all audio nodes that connect to each other
+    const chain = [];
+    if (typeof s === 'string') {
+      [s, n] = splitSN(s, n);
+    }
+    if (typeof note === 'string') {
+      [note, n] = splitSN(note, n);
+    }
+    if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
+      // with synths, n and note are the same thing
+      n = note || n || 36;
+      if (typeof n === 'string') {
+        n = toMidi(n); // e.g. c3 => 48
+      }
+      // get frequency
+      if (!freq && typeof n === 'number') {
+        freq = fromMidi(n); // + 48);
+      }
+      // make oscillator
+      const o = getOscillator({ t, s, freq, duration: hapDuration, release });
+      chain.push(o);
+      // level down oscillators as they are really loud compared to samples i've tested
+      chain.push(gainNode(0.3));
+      // TODO: make adsr work with samples without pops
+      // envelope
+      const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hapDuration);
+      chain.push(adsr);
+    } else {
+      // load sample
+      if (speed === 0) {
+        // no playback
+        return;
+      }
+      if (!s) {
+        console.warn('no sample specified');
+        return;
+      }
+      const soundfont = getSoundfontKey(s);
+      let bufferSource;
+
+      try {
+        if (soundfont) {
+          // is soundfont
+          bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac);
+        } else {
+          // is sample from loaded samples(..)
+          bufferSource = await getSampleBufferSource(s, n, note, speed);
+        }
+      } catch (err) {
+        console.warn(err);
+        return;
+      }
+      // asny stuff above took too long?
+      if (ac.currentTime > t) {
+        console.warn('sample still loading:', s, n);
+        return;
+      }
+      if (!bufferSource) {
+        console.warn('no buffer source');
+        return;
+      }
+      bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
+      if (unit === 'c') {
+        // are there other units?
+        bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration;
+      }
+      let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration / bufferSource.playbackRate.value;
+      // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
+      // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
+      // the midway point through a 10-second audio buffer is still 5."
+      const offset = begin * duration * bufferSource.playbackRate.value;
+      duration = (end - begin) * duration;
+      if (loop) {
+        bufferSource.loop = true;
+        bufferSource.loopStart = offset;
+        bufferSource.loopEnd = offset + duration;
+        duration = loop * duration;
+      }
+      t += nudge;
+
+      bufferSource.start(t, offset);
+      if (cut !== undefined) {
+        cutGroups[cut]?.stop(t); // fade out?
+        cutGroups[cut] = bufferSource;
+      }
+      chain.push(bufferSource);
+      bufferSource.stop(t + duration + release);
+      const adsr = getADSR(attack, decay, sustain, release, 1, t, t + duration);
+      chain.push(adsr);
+    }
+
+    // gain stage
+    chain.push(gainNode(gain));
+
+    // filters
+    cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
+    hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
+    bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
+    vowel !== undefined && chain.push(ac.createVowelFilter(vowel));
+
+    // effects
+    coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
+    crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
+    shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
+
+    // panning
+    if (pan !== undefined) {
+      const panner = ac.createStereoPanner();
+      panner.pan.value = 2 * pan - 1;
+      chain.push(panner);
+    }
+
+    // last gain
+    const post = gainNode(1);
+    chain.push(post);
+    post.connect(getDestination());
+
+    // delay
+    let delaySend;
+    if (delay > 0 && delaytime > 0 && delayfeedback > 0) {
+      const delyNode = getDelay(orbit, delaytime, delayfeedback, t);
+      delaySend = effectSend(post, delyNode, delay);
+    }
+    // reverb
+    let reverbSend;
+    if (room > 0 && roomsize > 0) {
+      const reverbNode = getReverb(orbit, roomsize);
+      reverbSend = effectSend(post, reverbNode, room);
+    }
+
+    // connect chain elements together
+    chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
+
+    // disconnect all nodes when source node has ended:
+    chain[0].onended = () => chain.concat([delaySend, reverbSend]).forEach((n) => n?.disconnect());
+  } catch (e) {
+    console.warn('.out error:', e);
+  }
+};
+
+Pattern.prototype.out = function () {
+  // TODO: refactor (t, hap, ct, cps) to (hap, deadline, duration) ?
+  return this.onTrigger((t, hap, ct, cps) => webaudioOutput(hap, t - ct, hap.duration / cps));
 };

@@ -16,6 +16,15 @@ export const loadBuffer = (url, ac) => {
   return loadCache[url];
 };
 
+export function reverseBuffer(buffer) {
+  const ac = getAudioContext();
+  const reversed = ac.createBuffer(buffer.numberOfChannels, buffer.length, ac.sampleRate);
+  for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+    reversed.copyToChannel(buffer.getChannelData(channel).slice().reverse(), channel, channel);
+  }
+  return reversed;
+}
+
 export const getLoadedBuffer = (url) => {
   return bufferCache[url];
 };
