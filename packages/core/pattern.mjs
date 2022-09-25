@@ -765,7 +765,7 @@ export class Pattern {
   _focus(b, e) {
     return this._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
   }
-    
+
   _focusSpan(span) {
     return this._focus(span.begin, span.end);
   }
@@ -818,12 +818,12 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * samples({ p: 'https://cdn.freesound.org/previews/648/648433_11943129-lq.mp3' })
-   * s("p")
-   * .chop(128)
-   * .loopAt(32,1)
-   * .jux(rev)
-   * .out()
+   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+   * s("rhodes")
+   *  .chop(4)
+   *  .rev() // reverse order of chops
+   *  .loopAt(4,1) // fit sample into 4 cycles
+   *  .out()
    */
   _chop(n) {
     const slices = Array.from({ length: n }, (x, i) => i);
@@ -1286,10 +1286,8 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * samples({ p: 'https://cdn.freesound.org/previews/648/648433_11943129-lq.mp3' })
-   * s("p")
-   * .loopAt(8,1)
-   * .out()
+   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+   * s("rhodes").loopAt(4,1).out()
    */
   _loopAt(factor, cps = 1) {
     return this.speed((1 / factor) * cps)
@@ -1390,8 +1388,7 @@ function _composeOp(a, b, func) {
           // avoid union, as we want to throw away the value of 'b' completely
           result = pat['_op' + how](other, (a) => (b) => op(a, b));
           result = result._removeUndefineds();
-        }
-        else {
+        } else {
           result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
         }
         return result;
