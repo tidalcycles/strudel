@@ -25,14 +25,19 @@ const euclid = (pulses, steps, rotation = 0) => {
  * describe a large number of rhythms used in the most important music world traditions.
  *
  * @memberof Pattern
+ * @name euclid
  * @param {number} pulses the number of onsets / beats
  * @param {number} steps the number of steps to fill
  * @param {number} rotation (optional) offset in steps
  * @returns Pattern
- * @example // The Cuban tresillo pattern.
- * "c3".euclid(3,8)
+ * @example
+ * // The Cuban tresillo pattern.
+ * n("c3").euclid(3,8).out()
+ */
+
+/**
  * @example // A thirteenth century Persian rhythm called Khafif-e-ramal.
- * "c3".euclid(2,5)
+ * n("c3").euclid(2,5)
  * @example // The archetypal pattern of the Cumbia from Colombia, as well as a Calypso rhythm from Trinidad.
  * "c3".euclid(3,4)
  * @example // Another thirteenth century Persian rhythm by the name of Khafif-e-ramal, as well as a Rumanian folk-dance rhythm.
@@ -79,7 +84,11 @@ Pattern.prototype.euclid = function (pulses, steps, rotation = 0) {
 };
 
 /**
- * Similar to {@link Pattern#euclid}, but each pulse is held until the next pulse, so there will be no gaps.
+ * Similar to `.euclid`, but each pulse is held until the next pulse, so there will be no gaps.
+ * @name euclidLegato
+ * @memberof Pattern
+ * @example
+ * n("g2").decay(.1).sustain(.3).euclidLegato(3,8).out()
  */
 Pattern.prototype.euclidLegato = function (pulses, steps, rotation = 0) {
   const bin_pat = euclid(pulses, steps, rotation);
