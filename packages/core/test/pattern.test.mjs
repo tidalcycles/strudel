@@ -42,6 +42,7 @@ import {
   id,
   ply,
   rev,
+  time,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -790,6 +791,13 @@ describe('Pattern', () => {
           ],
         ).firstCycle(),
       );
+    });
+    it('Squeezes to the correct cycle', () => {
+      expect(
+        pure(time.struct(true))._squeezeJoin().queryArc(3,4).map(x => x.value)
+      ).toStrictEqual(
+        [Fraction(3.5)]
+      )
     });
   });
   describe('ply', () => {
