@@ -581,6 +581,11 @@ const generic_params = [
     'size',
     'a pattern of numbers from 0 to 1. Sets the perceptual size (reverb time) of the `room` to be used in reverb.',
   ],
+  [
+    'f',
+    'roomsize',
+    'a pattern of numbers from 0 to 1. Sets the perceptual size (reverb time) of the `room` to be used in reverb.',
+  ],
   // ['f', 'sagogo', ''],
   // ['f', 'sclap', ''],
   // ['f', 'sclaves', ''],
