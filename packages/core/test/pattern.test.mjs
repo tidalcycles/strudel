@@ -372,6 +372,11 @@ describe('Pattern', () => {
         sequence(['a', 'b', 'c'], silence, ['a', 'b', 'c'], silence).firstCycle(),
       );
     });
+    it('copes with breaking up events across cycles', () => {
+      expect(pure('a').slow(2)._fastGap(2)._setContext({}).query(st(0, 2))).toStrictEqual(
+        [hap(ts(0, 1), ts(0, 0.5), 'a'), hap(ts(0.5, 1.5), ts(1, 1.5), 'a')]
+      );
+    });
   });
   describe('_compressSpan()', () => {
     it('Can squash cycles of a pattern into a given timespan', () => {
