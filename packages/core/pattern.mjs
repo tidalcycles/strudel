@@ -739,13 +739,20 @@ export class Pattern {
       const end = cycle.add(span.end.sub(cycle).mul(factor).min(1));
       return new TimeSpan(begin, end);
     };
-    const ef = function (span) {
-      const cycle = span.begin.sam();
-      const begin = cycle.add(span.begin.sub(cycle).div(factor).min(1));
-      const end = cycle.add(span.end.sub(cycle).div(factor).min(1));
-      return new TimeSpan(begin, end);
+    const ef = function (hap) {
+      const begin = hap.part.begin;
+      const end = hap.part.end;
+      const cycle = begin.sam();
+      const beginPos = begin.sub(cycle).div(factor).min(1);
+      const endPos = end.sub(cycle).div(factor).min(1);
+      const newPart = new TimeSpan(cycle.add(beginPos), cycle.add(endPos))
+      const newWhole = !hap.whole ? undefined : new TimeSpan(
+        newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
+        newPart.end.add(hap.whole.end.sub(end).div(factor))
+      );
+      return new Hap(newWhole, newPart, hap.value, hap.context);
     };
-    return this.withQuerySpan(qf).withHapSpan(ef)._splitQueries();
+    return this.withQuerySpan(qf)._withHap(ef)._splitQueries();
   }
 
   // Compress each cycle into the given timespan, leaving a gap
