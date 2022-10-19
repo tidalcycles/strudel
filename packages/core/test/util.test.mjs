@@ -70,6 +70,10 @@ describe('toMidi', () => {
     expect(toMidi('C#3')).toEqual(49);
     expect(toMidi('C##3')).toEqual(50);
   });
+  it('should throw an error when given a non-note', () => {
+    expect(() => toMidi('Q')).toThrowError(`not a note: "Q"`);
+    expect(() => toMidi('Z')).toThrowError(`not a note: "Z"`);
+  });
 });
 describe('fromMidi', () => {
   it('should turn midi into frequency', () => {
@@ -78,12 +82,26 @@ describe('fromMidi', () => {
   });
 });
 describe('getFrequency', () => {
-  it('should turn midi into frequency', () => {
-    const happify = (val, context = {}) => pure(val).firstCycle()[0].setContext(context);
+  const happify = (val, context = {}) => pure(val).firstCycle()[0].setContext(context);
+  it('should turn note into frequency', () => {
     expect(getFrequency(happify('a4'))).toEqual(440);
     expect(getFrequency(happify('a3'))).toEqual(220);
-    expect(getFrequency(happify(440, { type: 'frequency' }))).toEqual(440); // TODO: migrate when values are objects..
+  });
+  it('should turn midi into frequency', () => {
+    expect(getFrequency(happify(69, { type: 'midi' }))).toEqual(440);
+    expect(getFrequency(happify(57, { type: 'midi' }))).toEqual(220);
+  });
+  it('should return frequencies unchanged', () => {
+    expect(getFrequency(happify(440, { type: 'frequency' }))).toEqual(440); 
     expect(getFrequency(happify(432, { type: 'frequency' }))).toEqual(432);
+  });
+  it('should turn object with a "freq" property into frequency', () => {
+    expect(getFrequency(happify({freq: 220}))).toEqual(220)
+    expect(getFrequency(happify({freq: 440}))).toEqual(440)
+  });
+  it('should throw an error when given a non-note', () => {
+    expect(() => getFrequency(happify('Q'))).toThrowError(`not a note or frequency: Q`)
+    expect(() => getFrequency(happify('Z'))).toThrowError(`not a note or frequency: Z`)
   });
 });
 
