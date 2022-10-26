@@ -468,7 +468,11 @@ export class Pattern {
   /**
    * Assumes a numerical pattern. Returns a new pattern with all values rounded
    * to the nearest integer.
+   * @name round
+   * @memberof Pattern
    * @returns Pattern
+   * @example
+   * "0.5 1.5 2.5".round().scale('C major')
    */
   round() {
     return this._asNumber().fmap((v) => Math.round(v));
@@ -695,6 +699,13 @@ export class Pattern {
     return this.fmap(func)._squeezeJoin();
   }
 
+  /**
+   * Like layer, but with a single function:
+   * @name apply
+   * @memberof Pattern
+   * @example
+   * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4"))
+   */
   _apply(func) {
     return func(this);
   }
@@ -1360,9 +1371,48 @@ function _composeOp(a, b, func) {
     keepif: [(a, b) => (b ? a : undefined)],
 
     // numerical functions
+    /**
+     *
+     * Assumes a pattern of numbers. Adds the given number to each item in the pattern.
+     * @name add
+     * @memberof Pattern
+     * @example
+     * // Here, the triad 0, 2, 4 is shifted by different amounts
+     * "0 2 4".add("<0 3 4 0>").scale('C major')
+     * // Without add, the equivalent would be:
+     * // "<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>".scale('C major')
+     * @example
+     * // You can also use add with notes:
+     * "c3 e3 g3".add("<0 5 7 0>")
+     * // Behind the scenes, the notes are converted to midi numbers:
+     * // "48 52 55".add("<0 5 7 0>")
+     */
     add: [(a, b) => a + b, numOrString], // support string concatenation
+    /**
+     *
+     * Like add, but the given numbers are subtracted.
+     * @name sub
+     * @memberof Pattern
+     * @example
+     * "0 2 4".sub("<0 1 2 3>").scale('C4 minor')
+     * // See add for more information.
+     */
     sub: [(a, b) => a - b, num],
+    /**
+     *
+     * Multiplies each number by the given factor.
+     * @name mul
+     * @memberof Pattern
+     * @example
+     * "1 1.5 [1.66, <2 2.33>]".mul(150).freq().out()
+     */
     mul: [(a, b) => a * b, num],
+    /**
+     *
+     * Divides each number by the given factor.
+     * @name div
+     * @memberof Pattern
+     */
     div: [(a, b) => a / b, num],
     mod: [mod, num],
     pow: [Math.pow, num],
