@@ -855,8 +855,8 @@ describe('Pattern', () => {
   });
   describe('range', () => {
     it('Can be patterned', () => {
-      expect(mini('0 0').range(mini('0 0.5'), 1).firstCycle()).toStrictEqual(
-        mini('0 0.5').firstCycle(),
+      expect(sequence(0, 0).range(sequence(0, 0.5), 1).firstCycle()).toStrictEqual(
+        sequence(0, 0.5).firstCycle(),
       );
     });
   });
