@@ -468,7 +468,11 @@ export class Pattern {
   /**
    * Assumes a numerical pattern. Returns a new pattern with all values rounded
    * to the nearest integer.
+   * @name round
+   * @memberof Pattern
    * @returns Pattern
+   * @example
+   * "0.5 1.5 2.5".round().scale('C major')
    */
   round() {
     return this._asNumber().fmap((v) => Math.round(v));
@@ -695,6 +699,13 @@ export class Pattern {
     return this.fmap(func)._squeezeJoin();
   }
 
+  /**
+   * Like layer, but with a single function:
+   * @name apply
+   * @memberof Pattern
+   * @example
+   * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4"))
+   */
   _apply(func) {
     return func(this);
   }
@@ -772,7 +783,7 @@ export class Pattern {
   _focus(b, e) {
     return this._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
   }
-    
+
   _focusSpan(span) {
     return this._focus(span.begin, span.end);
   }
@@ -818,6 +829,20 @@ export class Pattern {
     return this.fmap((x) => pure(x)._fast(factor))._squeezeJoin();
   }
 
+  /**
+   * Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
+   * It turns a pattern of samples into a pattern of parts of samples.
+   * @name chop
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+   * s("rhodes")
+   *  .chop(4)
+   *  .rev() // reverse order of chops
+   *  .loopAt(4,1) // fit sample into 4 cycles
+   *  .out()
+   */
   _chop(n) {
     const slices = Array.from({ length: n }, (x, i) => i);
     const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
@@ -1189,6 +1214,9 @@ export class Pattern {
    * @name echo
    * @memberof Pattern
    * @returns Pattern
+   * @param {number} times how many times to repeat
+   * @param {number} time cycle offset between iterations
+   * @param {number} feedback velocity multiplicator for each iteration
    * @example
    * s("bd sd").echo(3, 1/6, .8).out()
    */
@@ -1261,16 +1289,40 @@ export class Pattern {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
   }
 
-  // sets hap relative duration of haps
+  /**
+   *
+   * Multiplies the hap duration with the given factor.
+   * @name legato
+   * @memberof Pattern
+   * @example
+   * n("c3 eb3 g3 c4").legato("<.25 .5 1 2>").out()
+   */
   _legato(value) {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
   }
 
+  /**
+   *
+   * Sets the velocity from 0 to 1. Is multiplied together with gain.
+   * @name velocity
+   * @example
+   * s("hh*8")
+   * .gain(".4!2 1 .4!2 1 .4 1")
+   * .velocity(".4 1").out()
+   */
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
 
-  // move this to controls? (speed and unit are controls)
+  /**
+   * Makes the sample fit the given number of cycles by changing the speed.
+   * @name loopAt
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+   * s("rhodes").loopAt(4,1).out()
+   */
   _loopAt(factor, cps = 1) {
     return this.speed((1 / factor) * cps)
       .unit('c')
@@ -1326,9 +1378,48 @@ function _composeOp(a, b, func) {
     keepif: [(a, b) => (b ? a : undefined)],
 
     // numerical functions
+    /**
+     *
+     * Assumes a pattern of numbers. Adds the given number to each item in the pattern.
+     * @name add
+     * @memberof Pattern
+     * @example
+     * // Here, the triad 0, 2, 4 is shifted by different amounts
+     * "0 2 4".add("<0 3 4 0>").scale('C major')
+     * // Without add, the equivalent would be:
+     * // "<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>".scale('C major')
+     * @example
+     * // You can also use add with notes:
+     * "c3 e3 g3".add("<0 5 7 0>")
+     * // Behind the scenes, the notes are converted to midi numbers:
+     * // "48 52 55".add("<0 5 7 0>")
+     */
     add: [(a, b) => a + b, numOrString], // support string concatenation
+    /**
+     *
+     * Like add, but the given numbers are subtracted.
+     * @name sub
+     * @memberof Pattern
+     * @example
+     * "0 2 4".sub("<0 1 2 3>").scale('C4 minor')
+     * // See add for more information.
+     */
     sub: [(a, b) => a - b, num],
+    /**
+     *
+     * Multiplies each number by the given factor.
+     * @name mul
+     * @memberof Pattern
+     * @example
+     * "1 1.5 [1.66, <2 2.33>]".mul(150).freq().out()
+     */
     mul: [(a, b) => a * b, num],
+    /**
+     *
+     * Divides each number by the given factor.
+     * @name div
+     * @memberof Pattern
+     */
     div: [(a, b) => a / b, num],
     mod: [mod, num],
     pow: [Math.pow, num],
@@ -1370,8 +1461,7 @@ function _composeOp(a, b, func) {
           // avoid union, as we want to throw away the value of 'b' completely
           result = pat['_op' + how](other, (a) => (b) => op(a, b));
           result = result._removeUndefineds();
-        }
-        else {
+        } else {
           result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
         }
         return result;

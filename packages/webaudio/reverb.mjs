@@ -18,3 +18,6 @@ if (typeof AudioContext !== 'undefined') {
     return convolver;
   };
 }
+
+// TODO: make the reverb more exciting
+// check out https://blog.gskinner.com/archives/2019/02/reverb-web-audio-api.html
