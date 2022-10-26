@@ -137,6 +137,9 @@ describe('Pattern', () => {
     it('Can make a pattern', () => {
       expect(pure('hello').query(st(0.5, 2.5)).length).toBe(3);
     });
+    it('Supports zero-width queries', () => {
+      expect(pure('hello').queryArc(0,0).length).toBe(1);
+    });
   });
   describe('fmap()', () => {
     it('Can add things', () => {
@@ -429,6 +432,16 @@ describe('Pattern', () => {
       // notable examples:
       // mini('[c3 g3]/2 eb3') always plays [c3 eb3]
       // mini('eb3 [c3 g3]/2 ') always plays [c3 g3]
+    });
+    it('Supports zero-length queries', () => {
+      expect(steady('a')._slow(1).queryArc(0,0)
+	    ).toStrictEqual(steady('a').queryArc(0,0))
+    });
+  });
+  describe('slow()', () => {
+    it('Supports zero-length queries', () => {
+      expect(steady('a').slow(1).queryArc(0,0)
+	    ).toStrictEqual(steady('a').queryArc(0,0))
     });
   });
   describe('inside', () => {
