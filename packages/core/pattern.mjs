@@ -522,7 +522,7 @@ export class Pattern {
    * @example
    * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4)).out()
    */
-  range(min, max) {
+  _range(min, max) {
     return this.mul(max - min).add(min);
   }
 
@@ -534,8 +534,8 @@ export class Pattern {
    * @param {Number} max
    * @returns Pattern
    */
-  rangex(min, max) {
-    return this.range(Math.log(min), Math.log(max)).fmap(Math.exp);
+  _rangex(min, max) {
+    return this._range(Math.log(min), Math.log(max)).fmap(Math.exp);
   }
 
   /**
@@ -545,8 +545,8 @@ export class Pattern {
    * @param {Number} max
    * @returns Pattern
    */
-  range2(min, max) {
-    return this._fromBipolar().range(min, max);
+  _range2(min, max) {
+    return this._fromBipolar()._range(min, max);
   }
 
   _bindWhole(choose_whole, func) {
@@ -1664,6 +1664,7 @@ export const mul = curry((a, pat) => pat.mul(a));
 export const off = curry((t, f, pat) => pat.off(t, f));
 export const ply = curry((a, pat) => pat.ply(a));
 export const range = curry((a, b, pat) => pat.range(a, b));
+export const rangex = curry((a, b, pat) => pat.rangex(a, b));
 export const range2 = curry((a, b, pat) => pat.range2(a, b));
 export const rev = (pat) => pat.rev();
 export const slow = curry((a, pat) => pat.slow(a));
@@ -1749,6 +1750,18 @@ Pattern.prototype.outside = function (...args) {
 Pattern.prototype.inside = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._inside)(...args, this);
+};
+Pattern.prototype.range = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._range)(...args, this);
+};
+Pattern.prototype.rangex = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._rangex)(...args, this);
+};
+Pattern.prototype.range2 = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._range2)(...args, this);
 };
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)
