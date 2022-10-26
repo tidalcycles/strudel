@@ -853,6 +853,13 @@ describe('Pattern', () => {
       );
     });
   });
+  describe('range', () => {
+    it('Can be patterned', () => {
+      expect(mini('0 0').range(mini('0 0.5'), 1).firstCycle()).toStrictEqual(
+        mini('0 0.5').firstCycle(),
+      );
+    });
+  });
   describe('range2', () => {
     it('Can change the range of a bipolar pattern', () => {
       expect(sequence(-1, -0.5, 0, 0.5).range2(1000, 1100).firstCycle()).toStrictEqual(
