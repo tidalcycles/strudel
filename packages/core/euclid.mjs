@@ -32,7 +32,7 @@ const euclid = (pulses, steps, rotation = 0) => {
  * @returns Pattern
  * @example
  * // The Cuban tresillo pattern.
- * n("c3").euclid(3,8).out()
+ * n("c3").euclid(3,8)
  */
 
 /**
@@ -88,7 +88,7 @@ Pattern.prototype.euclid = function (pulses, steps, rotation = 0) {
  * @name euclidLegato
  * @memberof Pattern
  * @example
- * n("g2").decay(.1).sustain(.3).euclidLegato(3,8).out()
+ * n("g2").decay(.1).sustain(.3).euclidLegato(3,8)
  */
 Pattern.prototype.euclidLegato = function (pulses, steps, rotation = 0) {
   const bin_pat = euclid(pulses, steps, rotation);

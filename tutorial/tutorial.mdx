@@ -18,34 +18,33 @@ The best place to actually make music with Strudel is the [Strudel REPL](https:/
 To get a taste of what Strudel can do, check out this track:
 
 <MiniRepl
-  tune={`const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
-const kick = new MembraneSynth().chain(vol(.8), out());
-const snare = new NoiseSynth().chain(vol(.8), out());
-const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
-const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
-const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
-const drums = stack(
-"c1*2".tone(kick).bypass("<0@7 1>/8"),
-"~ <x!7 [x@3 x]>".tone(snare).bypass("<0@7 1>/4"),
-"[~ c4]*2".tone(hihat)
-);
-const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
-const synths = stack(
-"<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]\*2")
-.layer(
-scaleTranspose(0).early(0),
-scaleTranspose(2).early(1/8),
-scaleTranspose(7).early(1/4),
-scaleTranspose(8).early(3/8)
-).layer(thru).tone(keys).bypass("<1 0>/16"),
-"<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).layer(thru).tone(bass),
-"<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().layer(thru).every(2, early(1/8)).tone(keys).bypass("<0@7 1>/8".early(1/4))
-)
+  tune={`samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
 stack(
-drums.fast(2),
-synths
-).slow(2);
-`}
+s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
+.speed(perlin.range(.7,.9)) // random sample speed variation
+,"<a1 b1\*2 a1(3,8) e2>" // bassline
+.off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
+.add(perlin.range(0,.5)) // random pitch variation
+.superimpose(add(.05)) // add second, slightly detuned voice
+.n() // wrap in "n"
+.decay(.15).sustain(0) // make each note of equal length
+.s('sawtooth') // waveform
+.gain(.4) // turn down
+.cutoff(sine.slow(7).range(300,5000)) // automate cutoff
+,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings() // chords
+.superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+.add(perlin.range(0,.5)) // random pitch variation
+.n() // wrap in "n"
+.s('sawtooth') // waveform
+.gain(.16) // turn down
+.cutoff(500) // fixed cutoff
+.attack(1) // slowly fade in
+)
+.slow(3/2)`}
 />
 
 [Open this track in the REPL](https://strudel.tidalcycles.org/#KCkgPT4gewogIGNvbnN0IGRlbGF5ID0gbmV3IEZlZWRiYWNrRGVsYXkoMS84LCAuNCkuY2hhaW4odm9sKDAuNSksIG91dCk7CiAgY29uc3Qga2ljayA9IG5ldyBNZW1icmFuZVN5bnRoKCkuY2hhaW4odm9sKC44KSwgb3V0KTsKICBjb25zdCBzbmFyZSA9IG5ldyBOb2lzZVN5bnRoKCkuY2hhaW4odm9sKC44KSwgb3V0KTsKICBjb25zdCBoaWhhdCA9IG5ldyBNZXRhbFN5bnRoKCkuc2V0KGFkc3IoMCwgLjA4LCAwLCAuMSkpLmNoYWluKHZvbCguMykuY29ubmVjdChkZWxheSksb3V0KTsKICBjb25zdCBiYXNzID0gbmV3IFN5bnRoKCkuc2V0KHsgLi4ub3NjKCdzYXd0b290aCcpLCAuLi5hZHNyKDAsIC4xLCAuNCkgfSkuY2hhaW4obG93cGFzcyg5MDApLCB2b2woLjUpLCBvdXQpOwogIGNvbnN0IGtleXMgPSBuZXcgUG9seVN5bnRoKCkuc2V0KHsgLi4ub3NjKCdzYXd0b290aCcpLCAuLi5hZHNyKDAsIC41LCAuMiwgLjcpIH0pLmNoYWluKGxvd3Bhc3MoMTIwMCksIHZvbCguNSksIG91dCk7CiAgCiAgY29uc3QgZHJ1bXMgPSBzdGFjaygKICAgICdjMSoyJy5tLnRvbmUoa2ljaykuYnlwYXNzKCc8MEA3IDE%2BLzgnLm0pLAogICAgJ34gPHghNyBbeEAzIHhdPicubS50b25lKHNuYXJlKS5ieXBhc3MoJzwwQDcgMT4vNCcubSksCiAgICAnW34gYzRdKjInLm0udG9uZShoaWhhdCkKICApOwogIAogIGNvbnN0IHRocnUgPSAoeCkgPT4geC50cmFuc3Bvc2UoJzwwIDE%2BLzgnLm0pLnRyYW5zcG9zZSgtMSk7CiAgY29uc3Qgc3ludGhzID0gc3RhY2soCiAgICAnPGViNCBkNCBjNCBiMz4vMicubS5zY2FsZSh0aW1lQ2F0KFszLCdDIG1pbm9yJ10sWzEsJ0MgbWVsb2RpYyBtaW5vciddKS5zbG93KDgpKS5ncm9vdmUoJ1t%2BIHhdKjInLm0pCiAgICAuZWRpdCgKICAgICAgc2NhbGVUcmFuc3Bvc2UoMCkuZWFybHkoMCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDIpLmVhcmx5KDEvOCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDcpLmVhcmx5KDEvNCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDgpLmVhcmx5KDMvOCkKICAgICkuZWRpdCh0aHJ1KS50b25lKGtleXMpLmJ5cGFzcygnPDEgMD4vMTYnLm0pLAogICAgJzxDMiBCYjEgQWIxIFtHMSBbRzIgRzFdXT4vMicubS5ncm9vdmUoJ1t4IFt%2BIHhdIDxbfiBbfiB4XV0hMyBbeCB4XT5AMl0vMicubS5mYXN0KDIpKS5lZGl0KHRocnUpLnRvbmUoYmFzcyksCiAgICAnPENtNyBCYjcgRm03IEc3YjEzPi8yJy5tLmdyb292ZSgnfiBbeEAwLjEgfl0nLm0uZmFzdCgyKSkudm9pY2luZ3MoKS5lZGl0KHRocnUpLmV2ZXJ5KDIsIGVhcmx5KDEvOCkpLnRvbmUoa2V5cykuYnlwYXNzKCc8MEA3IDE%2BLzgnLm0uZWFybHkoMS80KSkKICApCiAgcmV0dXJuIHN0YWNrKAogICAgZHJ1bXMuZmFzdCgyKSwgCiAgICBzeW50aHMKICApLnNsb3coMik7Cn0%3D)
@@ -191,52 +190,20 @@ resulting in a rhythmical structure of "x ~ ~ x ~ ~ x ~" (3 beats over 8 segment
 # Web Audio Output
 
 The default way to output sound is by using the Web Audio Output.
-Here is a little beat to show some of the possibilities:
-
-<MiniRepl
-  tune={`samples({
-  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
-  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
-  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
-}, 'github:tidalcycles/Dirt-Samples/master/');
-stack(
-s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
-.speed(perlin.range(.7,.9)) // random sample speed variation
-,"<a1 b1\*2 a1(3,8) e2>" // bassline
-.off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
-.add(perlin.range(0,.5)) // random pitch variation
-.superimpose(add(.05)) // add second, slightly detuned voice
-.n() // wrap in "n"
-.decay(.15).sustain(0) // make each note of equal length
-.s('sawtooth') // waveform
-.gain(.4) // turn down
-.cutoff(sine.slow(7).range(300,5000)) // automate cutoff
-,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings() // chords
-.superimpose(x=>x.add(.04)) // add second, slightly detuned voice
-.add(perlin.range(0,.5)) // random pitch variation
-.n() // wrap in "n"
-.s('sawtooth') // waveform
-.gain(.16) // turn down
-.cutoff(500) // fixed cutoff
-.attack(1) // slowly fade in
-)
-.slow(3/2)
-.out()`}
-/>
 
 ## Synths
 
 So far, all the mini notation examples all used the same sound, which is kind of boring.
 We can change the sound, using the `s` function:
 
-<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth').out()`} />
+<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth')`} />
 
 Here, we are wrapping our notes inside `note` and set the sound using `s`, connected by a dot.
 
 Those functions are only 2 of many ways to alter the properties, or _params_ of a sound.
 The power of patterns allows us to sequence any _param_ independently:
 
-<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s("<sawtooth square triangle>").out()`} />
+<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s("<sawtooth square triangle>")`} />
 
 Now we not only pattern the notes, but the sound as well!
 `sawtooth` `square` and `triangle` are the basic waveforms available in `s`.
@@ -247,14 +214,14 @@ You can control the envelope of a synth using the `attack`, `decay`, `sustain` a
 
 <MiniRepl
   tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth')
-  .attack(.1).decay(.1).sustain(.2).release(.1).out()`}
+  .attack(.1).decay(.1).sustain(.2).release(.1)`}
 />
 
 ## Samples
 
 Besides Synths, `s` can also play back samples:
 
-<MiniRepl tune={`s("bd sd,hh*8,misc/2").out()`} />
+<MiniRepl tune={`s("bd sd,hh*8,misc/2")`} />
 
 To know which sounds are available, open the [default sample map](https://strudel.tidalcycles.org/EmuSP12.json)
 
@@ -268,7 +235,7 @@ You can load your own sample map like this:
   sd: 'sd/rytm-01-classic.wav',
   hh: 'hh27/000_hh27closedhh.wav',
 }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
-s("bd sd,hh*8").out()`}
+s("bd sd,hh*8")`}
 />
 
 The `samples` function takes an object that maps sound names to audio file paths.
@@ -282,7 +249,7 @@ Because github is a popular choice to dump samples, there is a shortcut for that
   sd: 'sd/rytm-01-classic.wav',
   hh: 'hh27/000_hh27closedhh.wav',
 }, 'github:tidalcycles/Dirt-Samples/master/');
-s("bd sd,hh*8").out()`}
+s("bd sd,hh*8")`}
 />
 
 The format is `github:user/repo/branch/`.
@@ -297,7 +264,7 @@ It is also possible, to declare multiple files for one sound, using the array no
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
 }, 'github:tidalcycles/Dirt-Samples/master/');
-s("<bd:0 bd:1>,~ <sd:0 sd:1>,[hh:0 hh:1]*2").out()`}
+s("<bd:0 bd:1>,~ <sd:0 sd:1>,[hh:0 hh:1]*2")`}
 />
 
 The `:0` `:1` etc. are the indices of the array.
@@ -309,7 +276,7 @@ The sample number can also be set using `n`:
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
 }, 'github:tidalcycles/Dirt-Samples/master/');
-s("bd,~ sd,hh*4").n("<0 1>").out()`}
+s("bd,~ sd,hh*4").n("<0 1>")`}
 />
 
 ### Pitched Sounds
@@ -320,7 +287,7 @@ For pitched sounds, you can use `note`, just like with synths:
   tune={`samples({
   "gtr": 'gtr/0001_cleanC.wav',
 }, 'github:tidalcycles/Dirt-Samples/master/');
-note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').gain(.5).out()`}
+note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').gain(.5)`}
 />
 
 Here, the guitar samples will overlap, because they always play till the end.
@@ -331,7 +298,7 @@ If we want them to behave more like a synth, we can add `clip(1)`:
   "gtr": 'gtr/0001_cleanC.wav',
 }, 'github:tidalcycles/Dirt-Samples/master/');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').clip(1)
-  .gain(.5).out()`}
+  .gain(.5)`}
 />
 
 ### Base Pitch
@@ -344,7 +311,7 @@ If we have 2 samples with different base pitches, we can make them in tune by sp
   "moog": { 'g3': 'moog/005_Mighty%20Moog%20G3.wav' },
 }, 'github:tidalcycles/Dirt-Samples/master/');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s("gtr,moog").clip(1)
-  .gain(.5).out()`}
+  .gain(.5)`}
 />
 
 If a sample has no pitch set, `c3` is the default.
@@ -360,7 +327,7 @@ We can also declare different samples for different regions of the keyboard:
   }}, 'github:tidalcycles/Dirt-Samples/master/');
 note("g2!2 <bb2 c3>!2, <c4@3 [<eb4 bb3> g4 f4]>")
   .s('moog').clip(1)
-  .gain(.5).out()`}
+  .gain(.5)`}
 />
 
 The sampler will always pick the closest matching sample for the current note!

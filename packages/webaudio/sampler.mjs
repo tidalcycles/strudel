@@ -98,7 +98,7 @@ export const loadGithubSamples = async (path, nameFn) => {
  *  bd: '808bd/BD0000.WAV',
  *  sd: '808sd/SD0010.WAV'
  *  }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
- * s("[bd ~]*2, [~ hh]*2, ~ sd").out()
+ * s("[bd ~]*2, [~ hh]*2, ~ sd")
  *
  */
 
