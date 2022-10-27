@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 // import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
-import { fromMidi, toMidi } from '@strudel.cycles/core';
+import { fromMidi, isNote, toMidi } from '@strudel.cycles/core';
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import { loadBuffer, reverseBuffer } from './sampler.mjs';
@@ -234,6 +234,10 @@ function effectSend(input, effect, wet) {
 export const webaudioOutput = async (hap, deadline, hapDuration) => {
   try {
     const ac = getAudioContext();
+    if (isNote(hap.value)) {
+      // supports primitive hap values that look like notes
+      hap.value = { note: hap.value };
+    }
     if (typeof hap.value !== 'object') {
       throw new Error(
         `hap.value ${hap.value} is not supported by webaudio output. Hint: append .note() or .s() to the end`,
@@ -249,7 +253,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       clip = 0, // if 1, samples will be cut off when the hap ends
       n = 0,
       note,
-      gain = 1,
+      gain = 0.8,
       cutoff,
       resonance = 1,
       hcutoff,
@@ -422,7 +426,9 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
   }
 };
 
+export const webaudioOutputTrigger = (t, hap, ct, cps) => webaudioOutput(hap, t - ct, hap.duration / cps);
+
 Pattern.prototype.out = function () {
   // TODO: refactor (t, hap, ct, cps) to (hap, deadline, duration) ?
-  return this.onTrigger((t, hap, ct, cps) => webaudioOutput(hap, t - ct, hap.duration / cps));
+  return this.onTrigger(webaudioOutputTrigger);
 };
