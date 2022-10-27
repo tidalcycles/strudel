@@ -14,7 +14,6 @@ import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
 import { prebake } from './prebake.mjs';
 import * as WebDirt from 'WebDirt';
-import { loadWebDirt } from '@strudel.cycles/webdirt';
 import { resetLoadedSamples, getAudioContext } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
@@ -37,15 +36,9 @@ evalScope(
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
   import('@strudel.cycles/osc'),
-  import('@strudel.cycles/webdirt'),
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
 );
-
-loadWebDirt({
-  sampleMapUrl: 'EmuSP12.json',
-  sampleFolder: 'EmuSP12',
-});
 
 prebake();
 
