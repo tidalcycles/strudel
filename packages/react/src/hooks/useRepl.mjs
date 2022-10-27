@@ -17,7 +17,7 @@ let s4 = () => {
 };
 const generateHash = (code) => encodeURIComponent(btoa(code));
 
-function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawProp }) {
+function useRepl({ tune, autolink = true, onEvent, onDraw: onDrawProp }) {
   const id = useMemo(() => s4(), []);
   const [code, setCode] = useState(tune);
   const [activeCode, setActiveCode] = useState();
@@ -56,7 +56,7 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
           pushLog(err.message); // not with setError, because then we would have to setError(undefined) on next playable event
         }
       },
-      [onEvent, pushLog, defaultSynth],
+      [onEvent, pushLog],
     ),
     onQuery: useCallback(
       (state) => {

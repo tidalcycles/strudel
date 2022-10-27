@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import controls from '@strudel.cycles/core/controls.mjs';
 import { evalScope, evaluate } from '@strudel.cycles/eval';
 import { CodeMirror, cx, flash, useHighlighting, useRepl, useWebMidi } from '@strudel.cycles/react';
-import { getDefaultSynth, cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
+import { cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 import logo from './logo.svg';
@@ -80,7 +80,6 @@ function getRandomTune() {
 }
 
 const randomTune = getRandomTune();
-const defaultSynth = getDefaultSynth();
 const isEmbedded = window.location !== window.parent.location;
 function App() {
   // const [editor, setEditor] = useState();
@@ -105,7 +104,6 @@ function App() {
     hideConsole,
   } = useRepl({
     tune: '// LOADING...',
-    defaultSynth,
   });
   useEffect(() => {
     initCode().then((decoded) => setCode(decoded || randomTune));
