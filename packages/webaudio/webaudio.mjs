@@ -115,7 +115,11 @@ const getSampleBufferSource = async (s, n, note, speed) => {
   }
   const bank = samples?.[s];
   if (!bank) {
-    throw new Error(`sample not found: "${s}", try one of ${Object.keys(samples).join(', ')}`);
+    throw new Error(
+      `sample not found: "${s}", try one of ${Object.keys(samples)
+        .map((s) => `"${s}"`)
+        .join(', ')}.`,
+    );
   }
   if (typeof bank !== 'object') {
     throw new Error('wrong format for sample bank:', s);
