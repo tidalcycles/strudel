@@ -167,7 +167,7 @@ const generic_params = [
    * @name end
    * @param {number | Pattern} length 1 = whole sample, .5 = half sample, .25 = quarter sample etc..
    * @example
-   * s("bd*2,ho*4").end("<.1 .2 .5 1>")
+   * s("bd*2,oh*4").end("<.1 .2 .5 1>")
    *
    */
   [
@@ -371,7 +371,7 @@ const generic_params = [
    * @name fadeTime
    * @param {number | Pattern} time between 0 and 1
    * @example
-   * s("ho*4").end(.1).fadeTime("<0 .2 .4 .8>").osc()
+   * s("oh*4").end(.1).fadeTime("<0 .2 .4 .8>").osc()
    *
    */
   [
