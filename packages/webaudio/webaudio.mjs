@@ -264,10 +264,6 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       crush,
       shape,
       pan,
-      attack = 0.001,
-      decay = 0.001,
-      sustain = 1,
-      release = 0.001,
       speed = 1, // sample playback speed
       begin = 0,
       end = 1,
@@ -295,6 +291,8 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       [note, n] = splitSN(note, n);
     }
     if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
+      // destructure adsr here, because the default should be different for synths and samples
+      const { attack = 0.001, decay = 0.05, sustain = 0.6, release = 0.01 } = hap.value;
       // with synths, n and note are the same thing
       n = note || n || 36;
       if (typeof n === 'string') {
@@ -314,6 +312,8 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       const adsr = getADSR(attack, decay, sustain, release, 1, t, t + hapDuration);
       chain.push(adsr);
     } else {
+      // destructure adsr here, because the default should be different for synths and samples
+      const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = hap.value;
       // load sample
       if (speed === 0) {
         // no playback
