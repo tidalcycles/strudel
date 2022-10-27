@@ -365,9 +365,23 @@ note("g2!2 <bb2 c3>!2, <c4@3 [<eb4 bb3> g4 f4]>")
 
 The sampler will always pick the closest matching sample for the current note!
 
-## Effects
+## Sampler Effects
+
+{{ 'Pattern.begin' | jsdoc }}
+
+{{ 'Pattern.end' | jsdoc }}
+
+{{ 'Pattern.loopAt' | jsdoc }}
+
+{{ 'Pattern.chop' | jsdoc }}
+
+## Audio Effects
 
 Wether you're using a synth or a sample, you can apply these effects:
+
+{{ 'gain' | jsdoc }}
+
+{{ 'velocity' | jsdoc }}
 
 {{ 'cutoff' | jsdoc }}
 
@@ -496,11 +510,15 @@ The following functions modify a pattern temporal structure in some way.
 
 {{ 'Pattern.late' | jsdoc }}
 
-{{ 'Pattern.rev' | jsdoc }}
+{{ 'Pattern.legato' | jsdoc }}
 
 {{ 'Pattern.struct' | jsdoc }}
 
-{{ 'Pattern.legato' | jsdoc }}
+{{ 'Pattern.euclid' | jsdoc }}
+
+{{ 'Pattern.euclidLegato' | jsdoc }}
+
+{{ 'Pattern.rev' | jsdoc }}
 
 {{ 'Pattern.iter' | jsdoc }}
 
@@ -536,63 +554,17 @@ The following functions modify a pattern temporal structure in some way.
 
 ## Value Modifiers
 
-### add(n)
+{{ 'Pattern.add' | jsdoc }}
 
-Adds the given number to each item in the pattern:
+{{ 'Pattern.sub' | jsdoc }}
 
-<MiniRepl tune={`"0 2 4".add("<0 3 4 0>").scale('C major')`} />
+{{ 'Pattern.mul' | jsdoc }}
 
-Here, the triad `0, 2, 4` is shifted by different amounts. Without add, the equivalent would be:
+{{ 'Pattern.div' | jsdoc }}
 
-<MiniRepl tune={`"<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>".scale('C major')`} />
+{{ 'Pattern.round' | jsdoc }}
 
-You can also use add with notes:
-
-<MiniRepl tune={`"c3 e3 g3".add("<0 5 7 0>")`} />
-
-Behind the scenes, the notes are converted to midi numbers as soon before add is applied, which is equivalent to:
-
-<MiniRepl tune={`"48 52 55".add("<0 5 7 0>")`} />
-
-### sub(n)
-
-Like add, but the given numbers are subtracted:
-
-<MiniRepl tune={`"0 2 4".sub("<0 1 2 3>").scale('C4 minor')`} />
-
-See add for more information.
-
-### mul(n)
-
-Multiplies each number by the given factor:
-
-<MiniRepl tune={`"0,1,2".mul("<2 3 4 3>").scale('C4 minor')`} />
-
-... is equivalent to:
-
-<MiniRepl tune={`"<[0,2,4] [0,3,6] [0,4,8] [0,3,6]>".scale('C4 minor')`} />
-
-This function is really useful in combination with signals:
-
-<MiniRepl tune={`sine.struct("x*16").mul(7).round().scale('C major')`} />
-
-Here, we sample a sine wave 16 times, and multiply each sample by 7. This way, we let values oscillate between 0 and 7.
-
-### div(n)
-
-Like mul, but dividing by the given number.
-
-### round()
-
-Rounds all values to the nearest integer:
-
-<MiniRepl tune={`"0.5 1.5 2.5".round().scale('C major')`} />
-
-### apply(func)
-
-Like layer, but with a single function:
-
-<MiniRepl tune={`"<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4"))`} />
+{{ 'Pattern.apply' | jsdoc }}
 
 {{ 'Pattern.range' | jsdoc }}
 

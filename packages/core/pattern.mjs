@@ -468,7 +468,11 @@ export class Pattern {
   /**
    * Assumes a numerical pattern. Returns a new pattern with all values rounded
    * to the nearest integer.
+   * @name round
+   * @memberof Pattern
    * @returns Pattern
+   * @example
+   * "0.5 1.5 2.5".round().scale('C major')
    */
   round() {
     return this._asNumber().fmap((v) => Math.round(v));
@@ -522,7 +526,7 @@ export class Pattern {
    * @example
    * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4)).out()
    */
-  range(min, max) {
+  _range(min, max) {
     return this.mul(max - min).add(min);
   }
 
@@ -534,8 +538,8 @@ export class Pattern {
    * @param {Number} max
    * @returns Pattern
    */
-  rangex(min, max) {
-    return this.range(Math.log(min), Math.log(max)).fmap(Math.exp);
+  _rangex(min, max) {
+    return this._range(Math.log(min), Math.log(max)).fmap(Math.exp);
   }
 
   /**
@@ -545,8 +549,8 @@ export class Pattern {
    * @param {Number} max
    * @returns Pattern
    */
-  range2(min, max) {
-    return this._fromBipolar().range(min, max);
+  _range2(min, max) {
+    return this._fromBipolar()._range(min, max);
   }
 
   _bindWhole(choose_whole, func) {
@@ -695,6 +699,13 @@ export class Pattern {
     return this.fmap(func)._squeezeJoin();
   }
 
+  /**
+   * Like layer, but with a single function:
+   * @name apply
+   * @memberof Pattern
+   * @example
+   * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4"))
+   */
   _apply(func) {
     return func(this);
   }
@@ -739,13 +750,20 @@ export class Pattern {
       const end = cycle.add(span.end.sub(cycle).mul(factor).min(1));
       return new TimeSpan(begin, end);
     };
-    const ef = function (span) {
-      const cycle = span.begin.sam();
-      const begin = cycle.add(span.begin.sub(cycle).div(factor).min(1));
-      const end = cycle.add(span.end.sub(cycle).div(factor).min(1));
-      return new TimeSpan(begin, end);
+    const ef = function (hap) {
+      const begin = hap.part.begin;
+      const end = hap.part.end;
+      const cycle = begin.sam();
+      const beginPos = begin.sub(cycle).div(factor).min(1);
+      const endPos = end.sub(cycle).div(factor).min(1);
+      const newPart = new TimeSpan(cycle.add(beginPos), cycle.add(endPos))
+      const newWhole = !hap.whole ? undefined : new TimeSpan(
+        newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
+        newPart.end.add(hap.whole.end.sub(end).div(factor))
+      );
+      return new Hap(newWhole, newPart, hap.value, hap.context);
     };
-    return this.withQuerySpan(qf).withHapSpan(ef)._splitQueries();
+    return this.withQuerySpan(qf)._withHap(ef)._splitQueries();
   }
 
   // Compress each cycle into the given timespan, leaving a gap
@@ -765,7 +783,7 @@ export class Pattern {
   _focus(b, e) {
     return this._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
   }
-    
+
   _focusSpan(span) {
     return this._focus(span.begin, span.end);
   }
@@ -811,6 +829,20 @@ export class Pattern {
     return this.fmap((x) => pure(x)._fast(factor))._squeezeJoin();
   }
 
+  /**
+   * Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
+   * It turns a pattern of samples into a pattern of parts of samples.
+   * @name chop
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+   * s("rhodes")
+   *  .chop(4)
+   *  .rev() // reverse order of chops
+   *  .loopAt(4,1) // fit sample into 4 cycles
+   *  .out()
+   */
   _chop(n) {
     const slices = Array.from({ length: n }, (x, i) => i);
     const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
@@ -1182,6 +1214,9 @@ export class Pattern {
    * @name echo
    * @memberof Pattern
    * @returns Pattern
+   * @param {number} times how many times to repeat
+   * @param {number} time cycle offset between iterations
+   * @param {number} feedback velocity multiplicator for each iteration
    * @example
    * s("bd sd").echo(3, 1/6, .8).out()
    */
@@ -1254,16 +1289,40 @@ export class Pattern {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
   }
 
-  // sets hap relative duration of haps
+  /**
+   *
+   * Multiplies the hap duration with the given factor.
+   * @name legato
+   * @memberof Pattern
+   * @example
+   * n("c3 eb3 g3 c4").legato("<.25 .5 1 2>").out()
+   */
   _legato(value) {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
   }
 
+  /**
+   *
+   * Sets the velocity from 0 to 1. Is multiplied together with gain.
+   * @name velocity
+   * @example
+   * s("hh*8")
+   * .gain(".4!2 1 .4!2 1 .4 1")
+   * .velocity(".4 1").out()
+   */
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
 
-  // move this to controls? (speed and unit are controls)
+  /**
+   * Makes the sample fit the given number of cycles by changing the speed.
+   * @name loopAt
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+   * s("rhodes").loopAt(4,1).out()
+   */
   _loopAt(factor, cps = 1) {
     return this.speed((1 / factor) * cps)
       .unit('c')
@@ -1319,9 +1378,48 @@ function _composeOp(a, b, func) {
     keepif: [(a, b) => (b ? a : undefined)],
 
     // numerical functions
+    /**
+     *
+     * Assumes a pattern of numbers. Adds the given number to each item in the pattern.
+     * @name add
+     * @memberof Pattern
+     * @example
+     * // Here, the triad 0, 2, 4 is shifted by different amounts
+     * "0 2 4".add("<0 3 4 0>").scale('C major')
+     * // Without add, the equivalent would be:
+     * // "<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>".scale('C major')
+     * @example
+     * // You can also use add with notes:
+     * "c3 e3 g3".add("<0 5 7 0>")
+     * // Behind the scenes, the notes are converted to midi numbers:
+     * // "48 52 55".add("<0 5 7 0>")
+     */
     add: [(a, b) => a + b, numOrString], // support string concatenation
+    /**
+     *
+     * Like add, but the given numbers are subtracted.
+     * @name sub
+     * @memberof Pattern
+     * @example
+     * "0 2 4".sub("<0 1 2 3>").scale('C4 minor')
+     * // See add for more information.
+     */
     sub: [(a, b) => a - b, num],
+    /**
+     *
+     * Multiplies each number by the given factor.
+     * @name mul
+     * @memberof Pattern
+     * @example
+     * "1 1.5 [1.66, <2 2.33>]".mul(150).freq().out()
+     */
     mul: [(a, b) => a * b, num],
+    /**
+     *
+     * Divides each number by the given factor.
+     * @name div
+     * @memberof Pattern
+     */
     div: [(a, b) => a / b, num],
     mod: [mod, num],
     pow: [Math.pow, num],
@@ -1363,8 +1461,7 @@ function _composeOp(a, b, func) {
           // avoid union, as we want to throw away the value of 'b' completely
           result = pat['_op' + how](other, (a) => (b) => op(a, b));
           result = result._removeUndefineds();
-        }
-        else {
+        } else {
           result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
         }
         return result;
@@ -1657,6 +1754,7 @@ export const mul = curry((a, pat) => pat.mul(a));
 export const off = curry((t, f, pat) => pat.off(t, f));
 export const ply = curry((a, pat) => pat.ply(a));
 export const range = curry((a, b, pat) => pat.range(a, b));
+export const rangex = curry((a, b, pat) => pat.rangex(a, b));
 export const range2 = curry((a, b, pat) => pat.range2(a, b));
 export const rev = (pat) => pat.rev();
 export const slow = curry((a, pat) => pat.slow(a));
@@ -1742,6 +1840,18 @@ Pattern.prototype.outside = function (...args) {
 Pattern.prototype.inside = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._inside)(...args, this);
+};
+Pattern.prototype.range = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._range)(...args, this);
+};
+Pattern.prototype.rangex = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._rangex)(...args, this);
+};
+Pattern.prototype.range2 = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._range2)(...args, this);
 };
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)

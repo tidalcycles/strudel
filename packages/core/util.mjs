@@ -31,6 +31,9 @@ export const fromMidi = (n) => {
   return Math.pow(2, (n - 69) / 12) * 440;
 };
 
+/**
+ * @deprecated does not appear to be referenced or invoked anywhere in the codebase
+ */
 export const getFreq = (noteOrMidi) => {
   if (typeof noteOrMidi === 'number') {
     return fromMidi(noteOrMidi);
@@ -38,6 +41,9 @@ export const getFreq = (noteOrMidi) => {
   return fromMidi(toMidi(noteOrMidi));
 };
 
+/**
+ * @deprecated does not appear to be referenced or invoked anywhere in the codebase
+ */
 export const midi2note = (n) => {
   const oct = Math.floor(n / 12) - 1;
   const pc = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'][n % 12];
@@ -75,7 +81,7 @@ export const getFrequency = (hap) => {
   } else if (typeof value === 'string' && isNote(value)) {
     value = fromMidi(toMidi(hap.value));
   } else if (typeof value !== 'number') {
-    throw new Error('not a note or frequency:' + value);
+    throw new Error('not a note or frequency: ' + value);
   }
   return value;
 };
