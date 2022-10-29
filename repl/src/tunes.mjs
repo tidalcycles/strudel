@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-export const tetrisMini = `\`[[e5 [b4 c5] d5 [c5 b4]]
+export const tetrisMini = `note(\`[[e5 [b4 c5] d5 [c5 b4]]
 [a4 [a4 c5] e5 [d5 c5]]
 [b4 [~ c5] d5 e5]
 [c5 a4 a4 ~]
@@ -19,7 +19,7 @@ export const tetrisMini = `\`[[e5 [b4 c5] d5 [c5 b4]]
 [[d2 d3]*4]
 [[c2 c3]*4]
 [[b1 b2]*2 [e2 e3]*2]
-[[a1 a2]*4]\`.slow(16)
+[[a1 a2]*4]\`).slow(16)
 `;
 
 export const swimming = `stack(
@@ -80,7 +80,7 @@ export const swimming = `stack(
     "[F2 A2 Bb2 B2]",
     "[G2 C2 F2 F2]"
   )
-).slow(51);
+).note().slow(51);
 `;
 
 export const giantSteps = `stack(
@@ -105,7 +105,7 @@ export const giantSteps = `stack(
     "[Eb2 Bb2] [A2 D2] [G2 D2] [C#2 F#2]",
     "[B2 F#2] [F2 Bb2] [Eb2 Bb3] [C#2 F#2]"
   )
-).slow(20)`;
+).slow(20).note()`;
 
 export const giantStepsReggae = `stack(
   // melody
@@ -132,7 +132,7 @@ export const giantStepsReggae = `stack(
     "[B2 F#2] [F2 Bb2] [Eb2 Bb2] [C#2 F#2]"
   )
   .struct("x ~".fast(4*8))
-).slow(25)`;
+).slow(25).note()`;
 
 export const zeldasRescue = `stack(
   // melody
@@ -511,7 +511,7 @@ stack(
   f3!2 e3!2 ab3!2 ~!2
   >\`
   .legato(.5)
-).fast(2) // .note().piano()`;
+).fast(2).note()`;
 
 /*
 // TODO: does not work on linux (at least for me..)
@@ -554,7 +554,6 @@ stack(
   "<D2 A2 G2 F2>".euclidLegato(6,8,1).note().s('bass').clip(1).gain(.8)
 )
   .slow(6)
-  
   .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})
   `;
 
@@ -701,7 +700,6 @@ stack(
   .echoWith(4,.125,(x,n)=>x.gain(.15*1/(n+1))) // echo notes
   //.hush()
 )
-  
   .slow(3/2)`;
 
 export const swimmingWithSoundfonts = `stack(
@@ -814,7 +812,6 @@ x=>x.add(7).color('steelblue')
 //.hcutoff(400)
 .clip(1)
 .stack(s("bd:1*2,~ sd:0,[~ hh:0]*2"))
-
 .pianoroll({vertical:1})`;
 
 export const bossaRandom = `const chords = "<Am7 Am7 Dm7 E7>"
