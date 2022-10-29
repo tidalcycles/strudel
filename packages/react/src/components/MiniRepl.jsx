@@ -9,11 +9,10 @@ import './style.css';
 import styles from './MiniRepl.module.css';
 import { Icon } from './Icon';
 
-export function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, onEvent, enableKeyboard }) {
+export function MiniRepl({ tune, hideOutsideView = false, init, onEvent, enableKeyboard }) {
   const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } =
     useRepl({
       tune,
-      defaultSynth,
       autolink: false,
       onEvent,
     });

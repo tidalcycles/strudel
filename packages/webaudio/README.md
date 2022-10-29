@@ -15,13 +15,13 @@ npm i @strudel.cycles/webaudio --save
 import { Scheduler, getAudioContext } from '@strudel.cycles/webaudio';
 
 const scheduler = new Scheduler({
-    audioContext: getAudioContext(),
-    interval: 0.1,
-    onEvent: (e) => e.context?.createAudioNode?.(e),
-  });
-const pattern = sequence([55, 99], 110).osc('sawtooth').out()
+  audioContext: getAudioContext(),
+  interval: 0.1,
+  onEvent: (e) => e.context?.createAudioNode?.(e),
+});
+const pattern = sequence([55, 99], 110).osc('sawtooth');
 scheduler.setPattern(pattern);
-scheduler.start()
+scheduler.start();
 //scheduler.stop()
 ```
 

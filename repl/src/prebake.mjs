@@ -1,7 +1,7 @@
 import { Pattern, toMidi } from '@strudel.cycles/core';
 import { samples } from '@strudel.cycles/webaudio';
 
-export async function prebake(isMock = false) {
+export async function prebake({ isMock = false, baseDir = '.' } = {}) {
   samples(
     {
       piano: {
@@ -39,12 +39,12 @@ export async function prebake(isMock = false) {
     },
     // https://archive.org/details/SalamanderGrandPianoV3
     // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
-    './piano/',
+    `${baseDir}/piano/`,
   );
   if (!isMock) {
     await fetch('EmuSP12.json')
       .then((res) => res.json())
-      .then((json) => samples(json, './EmuSP12/'));
+      .then((json) => samples(json, `${baseDir}/EmuSP12/`));
   }
 }
 
@@ -54,7 +54,7 @@ const panwidth = (pan, width) => pan * width + (1 - width) / 2;
 Pattern.prototype.piano = function () {
   return this.clip(1)
     .s('piano')
-    .release(.1)
+    .release(0.1)
     .fmap((value) => {
       const midi = typeof value.note === 'string' ? toMidi(value.note) : value.note;
       // pan by pitch

@@ -23,7 +23,7 @@ const generic_params = [
    * @name s
    * @param {string | Pattern} sound The sound / pattern of sounds to pick
    * @example
-   * s("bd hh").out()
+   * s("bd hh")
    *
    */
   ['s', 's', 'sound'],
@@ -62,12 +62,12 @@ const generic_params = [
    */
   ['f', 'accelerate', 'a pattern of numbers that speed up (or slow down) samples while they play.'],
   /**
-   * Like {@link amp}, but exponential.
+   * Controls the gain by an exponential amount.
    *
    * @name gain
    * @param {number | Pattern} amount gain.
    * @example
-   * s("bd*8").gain(".7*2 1 .7*2 1 .7 1").osc()
+   * s("hh*8").gain(".4!2 1 .4!2 1 .4 1")
    *
    */
   [
@@ -129,7 +129,7 @@ const generic_params = [
    * @name bandf
    * @param {number | Pattern} frequency center frequency
    * @example
-   * s("bd sd,hh*3").bandf("<1000 2000 4000 8000>").out()
+   * s("bd sd,hh*3").bandf("<1000 2000 4000 8000>")
    *
    */
   ['f', 'bandf', 'A pattern of numbers from 0 to 1. Sets the center frequency of the band-pass filter.'],
@@ -140,17 +140,19 @@ const generic_params = [
    * @name bandq
    * @param {number | Pattern} q q factor
    * @example
-   * s("bd sd").bandf(500).bandq("<0 1 2 3>").out()
+   * s("bd sd").bandf(500).bandq("<0 1 2 3>")
    *
    */
   ['f', 'bandq', 'a pattern of anumbers from 0 to 1. Sets the q-factor of the band-pass filter.'],
   /**
    * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.
    *
+   * @memberof Pattern
    * @name begin
    * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
    * @example
-   * s("rave").begin("<0 .25 .5 .75>").osc()
+   * samples({ rave: 'rave/AREUREADY.wav' }, 'github:tidalcycles/Dirt-Samples/master/')
+   * s("rave").begin("<0 .25 .5 .75>")
    *
    */
   [
@@ -159,12 +161,13 @@ const generic_params = [
     'a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.',
   ],
   /**
-   * The same as {@link begin}, but cuts off the end off each sample.
+   * The same as .begin, but cuts off the end off each sample.
    *
+   * @memberof Pattern
    * @name end
    * @param {number | Pattern} length 1 = whole sample, .5 = half sample, .25 = quarter sample etc..
    * @example
-   * s("bd*2,ho*4").end("<.1 .2 .5 1>").osc()
+   * s("bd*2,oh*4").end("<.1 .2 .5 1>")
    *
    */
   [
@@ -202,7 +205,7 @@ const generic_params = [
    * @name crush
    * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
    * @example
-   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>").out()
+   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
    *
    */
   [
@@ -211,12 +214,12 @@ const generic_params = [
     'bit crushing, a pattern of numbers from 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).',
   ],
   /**
-   * fake-resampling for lowering the sample rate
+   * fake-resampling for lowering the sample rate. Caution: This effect seems to only work in chromium based browsers
    *
    * @name coarse
    * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.
    * @example
-   * s("bd sd,hh*4").coarse("<1 4 8 16 32>").out()
+   * s("bd sd,hh*4").coarse("<1 4 8 16 32>")
    *
    */
   [
@@ -253,7 +256,7 @@ const generic_params = [
    * @name cutoff
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @example
-   * s("bd sd,hh*3").cutoff("<4000 2000 1000 500 200 100>").out()
+   * s("bd sd,hh*3").cutoff("<4000 2000 1000 500 200 100>")
    *
    */
   // TODO: add lpf synonym
@@ -264,7 +267,7 @@ const generic_params = [
    * @name hcutoff
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @example
-   * s("bd sd,hh*4").hcutoff("<4000 2000 1000 500 200 100>").out()
+   * s("bd sd,hh*4").hcutoff("<4000 2000 1000 500 200 100>")
    *
    */
   // TODO: add hpf synonym
@@ -277,9 +280,9 @@ const generic_params = [
    * Applies the resonance of the high-pass filter.
    *
    * @name hresonance
-   * @param {number | Pattern} q resonance factor between 0 and 1
+   * @param {number | Pattern} q resonance factor between 0 and 50
    * @example
-   * s("bd sd,hh*4").hcutoff(2000).hresonance("<0 10 20 30>").out()
+   * s("bd sd,hh*4").hcutoff(2000).hresonance("<0 10 20 30>")
    *
    */
   [
@@ -292,9 +295,9 @@ const generic_params = [
    * Applies the cutoff frequency of the low-pass filter.
    *
    * @name resonance
-   * @param {number | Pattern} q resonance factor between 0 and 1
+   * @param {number | Pattern} q resonance factor between 0 and 50
    * @example
-   * s("bd sd,hh*4").cutoff(2000).resonance("<0 10 20 30>").out()
+   * s("bd sd,hh*4").cutoff(2000).resonance("<0 10 20 30>")
    *
    */
   ['f', 'resonance', 'a pattern of numbers from 0 to 1. Specifies the resonance of the low-pass filter.'],
@@ -368,7 +371,7 @@ const generic_params = [
    * @name fadeTime
    * @param {number | Pattern} time between 0 and 1
    * @example
-   * s("ho*4").end(.1).fadeTime("<0 .2 .4 .8>").osc()
+   * s("oh*4").end(.1).fadeTime("<0 .2 .4 .8>").osc()
    *
    */
   [
@@ -493,7 +496,7 @@ const generic_params = [
    * @name pan
    * @param {number | Pattern} pan between 0 and 1, from left to right (assuming stereo), once round a circle (assuming multichannel)
    * @example
-   * s("[bd hh]*2").pan("<.5 1 .5 0>").out()
+   * s("[bd hh]*2").pan("<.5 1 .5 0>")
    *
    */
   [
@@ -596,7 +599,7 @@ const generic_params = [
    * @name shape
    * @param {number | Pattern} distortion between 0 and 1
    * @example
-   * s("bd sd,hh*4").shape("<0 .2 .4 .6 .8>").out()
+   * s("bd sd,hh*4").shape("<0 .2 .4 .6 .8>")
    *
    */
   [
@@ -662,7 +665,7 @@ const generic_params = [
    * @param {string | Pattern} vowel You can use a e i o u.
    * @example
    * note("c2 <eb2 <g2 g1>>").s('sawtooth')
-   * .vowel("<a e i <o u>>").out()
+   * .vowel("<a e i <o u>>")
    *
    */
   [

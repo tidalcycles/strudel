@@ -7,9 +7,9 @@ import { tags } from '@lezer/highlight';
 import { createTheme } from '@uiw/codemirror-themes';
 import { useInView } from 'react-hook-inview';
 import { evaluate } from '@strudel.cycles/eval';
-import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
 import { Tone } from '@strudel.cycles/tone';
 import { TimeSpan, State } from '@strudel.cycles/core';
+import { webaudioOutputTrigger } from '@strudel.cycles/webaudio';
 import { WebMidi, enableWebMidi } from '@strudel.cycles/midi';
 
 var strudelTheme = createTheme({
@@ -251,7 +251,7 @@ let s4 = () => {
 };
 const generateHash = (code) => encodeURIComponent(btoa(code));
 
-function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawProp }) {
+function useRepl({ tune, autolink = true, onEvent, onDraw: onDrawProp }) {
   const id = useMemo(() => s4(), []);
   const [code, setCode] = useState(tune);
   const [activeCode, setActiveCode] = useState();
@@ -282,26 +282,15 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
           if (event.context.logs?.length) {
             event.context.logs.forEach(pushLog);
           }
-          const { onTrigger, velocity } = event.context;
-          if (!onTrigger) {
-            if (defaultSynth) {
-              const note = getPlayableNoteValue(event);
-              defaultSynth.triggerAttackRelease(note, event.duration.valueOf(), time, velocity);
-            } else {
-              throw new Error('no defaultSynth passed to useRepl.');
-            }
-            /* console.warn('no instrument chosen', event);
-          throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
-          } else {
-            onTrigger(time, event, currentTime, 1 /* cps */);
-          }
+          const { onTrigger = webaudioOutputTrigger } = event.context;
+          onTrigger(time, event, currentTime, 1 /* cps */);
         } catch (err) {
           console.warn(err);
           err.message = 'unplayable event: ' + err?.message;
           pushLog(err.message); // not with setError, because then we would have to setError(undefined) on next playable event
         }
       },
-      [onEvent, pushLog, defaultSynth],
+      [onEvent, pushLog],
     ),
     onQuery: useCallback(
       (state) => {
@@ -484,10 +473,9 @@ function Icon({ type }) {
   }[type]);
 }
 
-function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, onEvent, enableKeyboard }) {
+function MiniRepl({ tune, hideOutsideView = false, init, onEvent, enableKeyboard }) {
   const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } = useRepl({
     tune,
-    defaultSynth,
     autolink: false,
     onEvent
   });

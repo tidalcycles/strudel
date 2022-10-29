@@ -13,9 +13,9 @@ import '@strudel.cycles/react/dist/style.css';
 
 ReactDOM.render(
   <React.StrictMode>
-    <div className="min-h-screen">
-      <header className="flex-none flex justify-start sticky top-0 z-[2] w-full h-16 px-2 items-center border-b border-gray-200 bg-white">
-        <div className="p-4 w-full flex justify-between">
+    <div className="min-h-screen bg-slate-900">
+      <header className="flex-none flex justify-start sticky top-0 z-[2] w-full h-16 px-2 items-center border-b border-slate-500 text-white bg-slate-900 z-[100]">
+        <div className="p-4 w-full flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <img src={'https://tidalcycles.org/img/logo.svg'} className="Tidal-logo w-10 h-10" alt="logo" />
             <h1 className="text-xl cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
@@ -23,15 +23,14 @@ ReactDOM.render(
             </h1>
           </div>
           {!window.location.href.includes('localhost') && (
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 text-slate-200">
               <a href="../">go to REPL</a>
             </div>
           )}
         </div>
       </header>
-      <main className="p-4 pl-6 max-w-3xl prose">
+      <main className="p-4 pl-6 max-w-3xl prose prose-invert">
         <Tutorial />
-        {/*         <ApiDoc /> */}
       </main>
     </div>
   </React.StrictMode>,
