@@ -18,182 +18,6 @@ The best place to actually make music with Strudel is the [Strudel REPL](https:/
 To get a taste of what Strudel can do, check out this track:
 
 <MiniRepl
-  tune={`const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
-const kick = new MembraneSynth().chain(vol(.8), out());
-const snare = new NoiseSynth().chain(vol(.8), out());
-const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
-const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
-const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
-const drums = stack(
-"c1*2".tone(kick).bypass("<0@7 1>/8"),
-"~ <x!7 [x@3 x]>".tone(snare).bypass("<0@7 1>/4"),
-"[~ c4]*2".tone(hihat)
-);
-const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
-const synths = stack(
-"<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]\*2")
-.layer(
-scaleTranspose(0).early(0),
-scaleTranspose(2).early(1/8),
-scaleTranspose(7).early(1/4),
-scaleTranspose(8).early(3/8)
-).layer(thru).tone(keys).bypass("<1 0>/16"),
-"<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).layer(thru).tone(bass),
-"<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().layer(thru).every(2, early(1/8)).tone(keys).bypass("<0@7 1>/8".early(1/4))
-)
-stack(
-drums.fast(2),
-synths
-).slow(2);
-`}
-/>
-
-[Open this track in the REPL](https://strudel.tidalcycles.org/#KCkgPT4gewogIGNvbnN0IGRlbGF5ID0gbmV3IEZlZWRiYWNrRGVsYXkoMS84LCAuNCkuY2hhaW4odm9sKDAuNSksIG91dCk7CiAgY29uc3Qga2ljayA9IG5ldyBNZW1icmFuZVN5bnRoKCkuY2hhaW4odm9sKC44KSwgb3V0KTsKICBjb25zdCBzbmFyZSA9IG5ldyBOb2lzZVN5bnRoKCkuY2hhaW4odm9sKC44KSwgb3V0KTsKICBjb25zdCBoaWhhdCA9IG5ldyBNZXRhbFN5bnRoKCkuc2V0KGFkc3IoMCwgLjA4LCAwLCAuMSkpLmNoYWluKHZvbCguMykuY29ubmVjdChkZWxheSksb3V0KTsKICBjb25zdCBiYXNzID0gbmV3IFN5bnRoKCkuc2V0KHsgLi4ub3NjKCdzYXd0b290aCcpLCAuLi5hZHNyKDAsIC4xLCAuNCkgfSkuY2hhaW4obG93cGFzcyg5MDApLCB2b2woLjUpLCBvdXQpOwogIGNvbnN0IGtleXMgPSBuZXcgUG9seVN5bnRoKCkuc2V0KHsgLi4ub3NjKCdzYXd0b290aCcpLCAuLi5hZHNyKDAsIC41LCAuMiwgLjcpIH0pLmNoYWluKGxvd3Bhc3MoMTIwMCksIHZvbCguNSksIG91dCk7CiAgCiAgY29uc3QgZHJ1bXMgPSBzdGFjaygKICAgICdjMSoyJy5tLnRvbmUoa2ljaykuYnlwYXNzKCc8MEA3IDE%2BLzgnLm0pLAogICAgJ34gPHghNyBbeEAzIHhdPicubS50b25lKHNuYXJlKS5ieXBhc3MoJzwwQDcgMT4vNCcubSksCiAgICAnW34gYzRdKjInLm0udG9uZShoaWhhdCkKICApOwogIAogIGNvbnN0IHRocnUgPSAoeCkgPT4geC50cmFuc3Bvc2UoJzwwIDE%2BLzgnLm0pLnRyYW5zcG9zZSgtMSk7CiAgY29uc3Qgc3ludGhzID0gc3RhY2soCiAgICAnPGViNCBkNCBjNCBiMz4vMicubS5zY2FsZSh0aW1lQ2F0KFszLCdDIG1pbm9yJ10sWzEsJ0MgbWVsb2RpYyBtaW5vciddKS5zbG93KDgpKS5ncm9vdmUoJ1t%2BIHhdKjInLm0pCiAgICAuZWRpdCgKICAgICAgc2NhbGVUcmFuc3Bvc2UoMCkuZWFybHkoMCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDIpLmVhcmx5KDEvOCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDcpLmVhcmx5KDEvNCksCiAgICAgIHNjYWxlVHJhbnNwb3NlKDgpLmVhcmx5KDMvOCkKICAgICkuZWRpdCh0aHJ1KS50b25lKGtleXMpLmJ5cGFzcygnPDEgMD4vMTYnLm0pLAogICAgJzxDMiBCYjEgQWIxIFtHMSBbRzIgRzFdXT4vMicubS5ncm9vdmUoJ1t4IFt%2BIHhdIDxbfiBbfiB4XV0hMyBbeCB4XT5AMl0vMicubS5mYXN0KDIpKS5lZGl0KHRocnUpLnRvbmUoYmFzcyksCiAgICAnPENtNyBCYjcgRm03IEc3YjEzPi8yJy5tLmdyb292ZSgnfiBbeEAwLjEgfl0nLm0uZmFzdCgyKSkudm9pY2luZ3MoKS5lZGl0KHRocnUpLmV2ZXJ5KDIsIGVhcmx5KDEvOCkpLnRvbmUoa2V5cykuYnlwYXNzKCc8MEA3IDE%2BLzgnLm0uZWFybHkoMS80KSkKICApCiAgcmV0dXJuIHN0YWNrKAogICAgZHJ1bXMuZmFzdCgyKSwgCiAgICBzeW50aHMKICApLnNsb3coMik7Cn0%3D)
-
-## Disclaimer
-
-- This project is still in its experimental state. In the future, parts of it might change significantly.
-- This tutorial is far from complete.
-
-<br />
-
-# Mini Notation
-
-Similar to Tidal Cycles, Strudel has an embedded mini language that is designed to write rhythmic patterns in a short manner.
-Before diving deeper into the details, here is a flavor of how the mini language looks like:
-
-<MiniRepl
-  tune={`\`[
-  [
-    [e5 [b4 c5] d5 [c5 b4]]
-    [a4 [a4 c5] e5 [d5 c5]]
-    [b4 [~ c5] d5 e5]
-    [c5 a4 a4 ~]
-    [[~ d5] [~ f5] a5 [g5 f5]]
-    [e5 [~ c5] e5 [d5 c5]]
-    [b4 [b4 c5] d5 e5]
-    [c5 a4 a4 ~]
-  ],[
-    [[e2 e3]*4]
-    [[a2 a3]*4]
-    [[g#2 g#3]*2 [e2 e3]*2]
-    [a2 a3 a2 a3 a2 a3 b1 c2]
-    [[d2 d3]*4]
-    [[c2 c3]*4]
-    [[b1 b2]*2 [e2 e3]*2]
-    [[a1 a2]*4]
-  ]
-]/16\``}
-/>
-
-The snippet above is enclosed in backticks (`), which allows you to write multi-line strings.
-You can also use double quotes (") for single line mini notation.
-
-## Notes
-
-Notes are notated with the note letter, followed by the octave number. You can notate flats with `b` and sharps with `#`.
-
-<MiniRepl tune={`"e5"`} />
-
-Here, the same note is played over and over again, once a second. This one second is the default length of one so called "cycle".
-
-By the way, you can edit the contents of the player, and press "update" to hear your change!
-You can also press "play" on the next player without needing to stop the last one.
-
-## Sequences
-
-We can play more notes by separating them with spaces:
-
-<MiniRepl tune={`"e5 b4 d5 c5"`} />
-
-Here, those four notes are squashed into one cycle, so each note is a quarter second long.
-
-## Division
-
-We can slow the sequence down by enclosing it in brackets and dividing it by a number:
-
-<MiniRepl tune={`"[e5 b4 d5 c5]/2"`} />
-
-The division by two means that the sequence will be played over the course of two cycles.
-You can also use decimal numbers for any tempo you like.
-
-## Angle Brackets
-
-Using angle brackets, we can define the sequence length based on the number of children:
-
-<MiniRepl tune={`"<e5 b4 d5 c5>"`} />
-
-The above snippet is the same as:
-
-<MiniRepl tune={`"[e5 b4 d5 c5]/4"`} />
-
-The advantage of the angle brackets, is that we can add more children without needing to change the number at the end.
-
-## Multiplication
-
-Contrary to division, a sequence can be sped up by multiplying it by a number:
-
-<MiniRepl tune={`"[e5 b4 d5 c5]*2"`} />
-
-The multiplication by 2 here means that the sequence will play twice a cycle.
-
-## Bracket Nesting
-
-To create more interesting rhythms, you can nest sequences with brackets, like this:
-
-<MiniRepl tune={`"e5 [b4 c5] d5 [c5 b4]"`} />
-
-## Rests
-
-The "~" represents a rest:
-
-<MiniRepl tune={`"[b4 [~ c5] d5 e5]"`} />
-
-## Parallel
-
-Using commas, we can play chords:
-
-<MiniRepl tune={`"g3,b3,e4"`} />
-
-To play multiple chords in a sequence, we have to wrap them in brackets:
-
-<MiniRepl tune={`"<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>"`} />
-
-## Elongation
-
-With the "@" symbol, we can specify temporal "weight" of a sequence child:
-
-<MiniRepl tune={`"<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>"`} />
-
-Here, the first chord has a weight of 2, making it twice the length of the other chords. The default weight is 1.
-
-## Replication
-
-Using "!" we can repeat without speeding up:
-
-<MiniRepl tune={`"<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>"`} />
-
-In essence, the `x!n` is like a shortcut for `[x*n]@n`.
-
-## Euclidian
-
-Using round brackets, we can create rhythmical sub-divisions based on three parameters: beats, segments and offset.
-The first parameter controls how may beats will be played.
-The second parameter controls the total amount of segments the beats will be distributed over.
-The third (optional) parameter controls the starting position for distributing the beats.
-One popular Euclidian rhythm (going by various names, such as "Pop Clave") is "(3,8,1)" or simply "(3,8)",
-resulting in a rhythmical structure of "x ~ ~ x ~ ~ x ~" (3 beats over 8 segments, starting on position 1).
-
-<MiniRepl tune={`"e5(2,8) b4(3,8) d5(2,8) c5(3,8)".slow(4)`} />
-
-<br />
-
-# Web Audio Output
-
-The default way to output sound is by using the Web Audio Output.
-Here is a little beat to show some of the possibilities:
-
-<MiniRepl
   tune={`samples({
   bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
@@ -220,23 +44,239 @@ s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
 .cutoff(500) // fixed cutoff
 .attack(1) // slowly fade in
 )
-.slow(3/2)
-.out()`}
+.slow(3/2)`}
 />
+
+## Disclaimer
+
+- This project is still in its experimental state. In the future, parts of it might change significantly.
+- This tutorial is far from complete.
+
+<br />
+
+# Playing Pitches
+
+Pitches are an essential building block for music. In Strudel, there are 3 different options to express a pitch:
+
+- `note`: letter notation
+- `n`: number notation
+- `freq`: frequency notation
+
+## note
+
+Notes are notated with the note letter, followed by the octave number. You can notate flats with `b` and sharps with `#`.
+
+<MiniRepl tune={`note("a3 c#4 e4 a4")`} />
+
+By the way, you can edit the contents of the player, and press "update" to hear your change!
+You can also press "play" on the next player without needing to stop the last one.
+
+## n
+
+If you don't like notes, you can also use numbers with `n` instead:
+
+<MiniRepl tune={`n("57 61 64 69")`} />
+
+These numbers are interpreted as so called midi numbers, where adjacent whole numbers are 1 semitone apart.
+You could also write decimal numbers to get microtonal pitches:
+
+<MiniRepl tune={`n("74.5 75 75.5 76")`} />
+
+## freq
+
+To get maximum freedom, you can also use `freq` to directly control the frequency:
+
+<MiniRepl tune={`freq("220 275 330 440")`} />
+
+In this example, we play A3 (220Hz), C#4 natural (275Hz), E4 (330Hz) and A4 (440Hz).
+
+<br />
+
+# Playing Sounds
+
+Instead of pitches, we can also play sounds with `s`:
+
+<MiniRepl tune={`s("bd hh sd hh")`} />
+
+Similarly, we can also use `s` to change the sound of our pitches:
+
+<MiniRepl tune={`note("a3 c#4 e4 a4").s("sawtooth")`} />
+
+Try changing the sound to `square`, `triangle` or `sine`!
+
+We will go into the defails of sounds and synths [later](http://localhost:3000/tutorial/#web-audio-output).
+
+<br />
+
+# Syntax
+
+So far, we've seen the following syntax:
+
+```
+xxx("foo").yyy("bar")
+```
+
+Generally, `xxx` and `yyy` are called functions, while `foo` and `bar` are called function arguments.
+So far, we've used the functions to declare which aspect of the sound we want to control, and their arguments for the actual data.
+The `yyy` function is called a chained function, because it is appended with a dot.
+
+Strudel makes heavy use of chained functions. Here is a more extreme example:
+
+<MiniRepl
+  tune={`note("a3 c#4 e4 a4")
+.s("sawtooth")
+.cutoff(500)
+//.delay(0.5)
+.room(0.5)`}
+/>
+
+The `//` is a line comment, resulting in the `delay` function being ignored.
+It is a handy way to quickly turn stuff on and off. Try uncommenting this line by deleting `//`!
+
+The good news is, that this covers 99% of the JavaScript syntax needed for Strudel!
+
+Let's now look at the way we can express rhythms..
+
+<br />
+
+# Mini Notation
+
+Similar to Tidal Cycles, Strudel has an embedded mini language that is designed to write rhythmic patterns in a short manner.
+Before diving deeper into the details, here is a flavor of how the mini language looks like:
+
+<MiniRepl
+  tune={`note(\`[
+  [
+    [e5 [b4 c5] d5 [c5 b4]]
+    [a4 [a4 c5] e5 [d5 c5]]
+    [b4 [~ c5] d5 e5]
+    [c5 a4 a4 ~]
+    [[~ d5] [~ f5] a5 [g5 f5]]
+    [e5 [~ c5] e5 [d5 c5]]
+    [b4 [b4 c5] d5 e5]
+    [c5 a4 a4 ~]
+  ],[
+    [[e2 e3]*4]
+    [[a2 a3]*4]
+    [[g#2 g#3]*2 [e2 e3]*2]
+    [a2 a3 a2 a3 a2 a3 b1 c2]
+    [[d2 d3]*4]
+    [[c2 c3]*4]
+    [[b1 b2]*2 [e2 e3]*2]
+    [[a1 a2]*4]
+  ]
+]/16\`)`}
+/>
+
+The snippet above is enclosed in backticks (`), which allows you to write multi-line strings.
+You can also use double quotes (") for single line mini notation.
+
+## Sequences
+
+We can play more notes by separating them with spaces:
+
+<MiniRepl tune={`note("e5 b4 d5 c5")`} />
+
+Here, those four notes are squashed into one cycle, so each note is a quarter second long.
+Try adding or removing notes and notice how the tempo changes!
+
+## Division
+
+We can slow the sequence down by enclosing it in brackets and dividing it by a number:
+
+<MiniRepl tune={`note("[e5 b4 d5 c5]/2")`} />
+
+The division by two means that the sequence will be played over the course of two cycles.
+You can also use decimal numbers for any tempo you like.
+
+## Angle Brackets
+
+Using angle brackets, we can define the sequence length based on the number of children:
+
+<MiniRepl tune={`note("<e5 b4 d5 c5>")`} />
+
+The above snippet is the same as:
+
+<MiniRepl tune={`note("[e5 b4 d5 c5]/4")`} />
+
+The advantage of the angle brackets, is that we can add more children without needing to change the number at the end.
+
+## Multiplication
+
+Contrary to division, a sequence can be sped up by multiplying it by a number:
+
+<MiniRepl tune={`note("[e5 b4 d5 c5]*2")`} />
+
+The multiplication by 2 here means that the sequence will play twice a cycle.
+
+## Bracket Nesting
+
+To create more interesting rhythms, you can nest sequences with brackets, like this:
+
+<MiniRepl tune={`note("e5 [b4 c5] d5 [c5 b4]")`} />
+
+## Rests
+
+The "~" represents a rest:
+
+<MiniRepl tune={`note("[b4 [~ c5] d5 e5]")`} />
+
+## Parallel
+
+Using commas, we can play chords:
+
+<MiniRepl tune={`note("g3,b3,e4")`} />
+
+To play multiple chords in a sequence, we have to wrap them in brackets:
+
+<MiniRepl tune={`note("<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>")`} />
+
+## Elongation
+
+With the "@" symbol, we can specify temporal "weight" of a sequence child:
+
+<MiniRepl tune={`note("<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>")`} />
+
+Here, the first chord has a weight of 2, making it twice the length of the other chords. The default weight is 1.
+
+## Replication
+
+Using "!" we can repeat without speeding up:
+
+<MiniRepl tune={`note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>")`} />
+
+In essence, the `x!n` is like a shortcut for `[x*n]@n`.
+
+## Euclidian
+
+Using round brackets, we can create rhythmical sub-divisions based on three parameters: beats, segments and offset.
+The first parameter controls how may beats will be played.
+The second parameter controls the total amount of segments the beats will be distributed over.
+The third (optional) parameter controls the starting position for distributing the beats.
+One popular Euclidian rhythm (going by various names, such as "Pop Clave") is "(3,8,1)" or simply "(3,8)",
+resulting in a rhythmical structure of "x ~ ~ x ~ ~ x ~" (3 beats over 8 segments, starting on position 1).
+
+<MiniRepl tune={`note("e5(2,8) b4(3,8) d5(2,8) c5(3,8)").slow(4)`} />
+
+<br />
+
+# Synths, Samples & Effects
+
+Let's take a closer look at how we can control synths, sounds and effects.
 
 ## Synths
 
 So far, all the mini notation examples all used the same sound, which is kind of boring.
 We can change the sound, using the `s` function:
 
-<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth').out()`} />
+<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth')`} />
 
 Here, we are wrapping our notes inside `note` and set the sound using `s`, connected by a dot.
 
 Those functions are only 2 of many ways to alter the properties, or _params_ of a sound.
 The power of patterns allows us to sequence any _param_ independently:
 
-<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s("<sawtooth square triangle>").out()`} />
+<MiniRepl tune={`note("c2 <eb2 <g2 g1>>").s("<sawtooth square triangle>")`} />
 
 Now we not only pattern the notes, but the sound as well!
 `sawtooth` `square` and `triangle` are the basic waveforms available in `s`.
@@ -247,14 +287,14 @@ You can control the envelope of a synth using the `attack`, `decay`, `sustain` a
 
 <MiniRepl
   tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth')
-  .attack(.1).decay(.1).sustain(.2).release(.1).out()`}
+  .attack(.1).decay(.1).sustain(.2).release(.1)`}
 />
 
 ## Samples
 
 Besides Synths, `s` can also play back samples:
 
-<MiniRepl tune={`s("bd sd,hh*8,misc/2").out()`} />
+<MiniRepl tune={`s("bd sd,hh*8,misc/2")`} />
 
 To know which sounds are available, open the [default sample map](https://strudel.tidalcycles.org/EmuSP12.json)
 
@@ -268,7 +308,7 @@ You can load your own sample map like this:
   sd: 'sd/rytm-01-classic.wav',
   hh: 'hh27/000_hh27closedhh.wav',
 }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
-s("bd sd,hh*8").out()`}
+s("bd sd,hh*8")`}
 />
 
 The `samples` function takes an object that maps sound names to audio file paths.
@@ -282,7 +322,7 @@ Because github is a popular choice to dump samples, there is a shortcut for that
   sd: 'sd/rytm-01-classic.wav',
   hh: 'hh27/000_hh27closedhh.wav',
 }, 'github:tidalcycles/Dirt-Samples/master/');
-s("bd sd,hh*8").out()`}
+s("bd sd,hh*8")`}
 />
 
 The format is `github:user/repo/branch/`.
@@ -297,7 +337,7 @@ It is also possible, to declare multiple files for one sound, using the array no
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
 }, 'github:tidalcycles/Dirt-Samples/master/');
-s("<bd:0 bd:1>,~ <sd:0 sd:1>,[hh:0 hh:1]*2").out()`}
+s("<bd:0 bd:1>,~ <sd:0 sd:1>,[hh:0 hh:1]*2")`}
 />
 
 The `:0` `:1` etc. are the indices of the array.
@@ -309,7 +349,7 @@ The sample number can also be set using `n`:
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
 }, 'github:tidalcycles/Dirt-Samples/master/');
-s("bd,~ sd,hh*4").n("<0 1>").out()`}
+s("bd,~ sd,hh*4").n("<0 1>")`}
 />
 
 ### Pitched Sounds
@@ -320,7 +360,7 @@ For pitched sounds, you can use `note`, just like with synths:
   tune={`samples({
   "gtr": 'gtr/0001_cleanC.wav',
 }, 'github:tidalcycles/Dirt-Samples/master/');
-note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').gain(.5).out()`}
+note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').gain(.5)`}
 />
 
 Here, the guitar samples will overlap, because they always play till the end.
@@ -331,7 +371,7 @@ If we want them to behave more like a synth, we can add `clip(1)`:
   "gtr": 'gtr/0001_cleanC.wav',
 }, 'github:tidalcycles/Dirt-Samples/master/');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').clip(1)
-  .gain(.5).out()`}
+  .gain(.5)`}
 />
 
 ### Base Pitch
@@ -344,7 +384,7 @@ If we have 2 samples with different base pitches, we can make them in tune by sp
   "moog": { 'g3': 'moog/005_Mighty%20Moog%20G3.wav' },
 }, 'github:tidalcycles/Dirt-Samples/master/');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s("gtr,moog").clip(1)
-  .gain(.5).out()`}
+  .gain(.5)`}
 />
 
 If a sample has no pitch set, `c3` is the default.
@@ -360,7 +400,7 @@ We can also declare different samples for different regions of the keyboard:
   }}, 'github:tidalcycles/Dirt-Samples/master/');
 note("g2!2 <bb2 c3>!2, <c4@3 [<eb4 bb3> g4 f4]>")
   .s('moog').clip(1)
-  .gain(.5).out()`}
+  .gain(.5)`}
 />
 
 The sampler will always pick the closest matching sample for the current note!
@@ -407,33 +447,71 @@ Wether you're using a synth or a sample, you can apply these effects:
 
 <br />
 
-# Core API
+# JavaScript API
 
 While the mini notation is powerful on its own, there is much more to discover.
 Internally, the mini notation will expand to use the actual functional JavaScript API.
+
+For example, this Pattern in Mini Notation:
+
+<MiniRepl tune={`note("c3 eb3 g3")`} />
+
+is equivalent to this Pattern without Mini Notation:
+
+<MiniRepl tune={`note(seq(c3, eb3, g3))`} />
+
+Similarly, there is an equivalent function for every aspect of the mini notation.
+
+Which representation to use is a matter of context. As a rule of thumb, you can think of the JavaScript API
+to fit better for the larger context, while mini notation is more practical for individiual rhythms.
+
+## Limits of Mini Notation
+
+While the Mini Notation is a powerful way to write rhythms shortly, it also has its limits. Take this example:
+
+<MiniRepl
+  tune={`stack(
+  note("c2 eb2(3,8)").s('sawtooth').cutoff(800),
+  s("bd,~ sd,hh*4")
+)`}
+/>
+
+Here, we are using mini notation for the individual rhythms, while using the function `stack` to mix them.
+While stack is also available as `,` in mini notation, we cannot use it here, because we have different types of sounds.
 
 ## Notes
 
 Notes are automatically available as variables:
 
-<MiniRepl tune={`seq(d4, fs4, a4)`} />
+<MiniRepl tune={`note(seq(d4, fs4, a4)) // note("d4 f#4 a4")`} />
 
 An important difference to the mini notation:
 For sharp notes, the letter "s" is used instead of "#", because JavaScript does not support "#" in a variable name.
 
 The above is the same as:
 
-<MiniRepl tune={`seq('d4', 'f#4', 'a4')`} />
+<MiniRepl tune={`note(seq('d4', 'f#4', 'a4'))`} />
 
 Using strings, you can also use "#".
+
+## Alternative Syntax
+
+In the above example, we are nesting a function inside a function, which makes reading the parens a little more difficult.
+To avoid getting to many nested parens, there is an alternative syntax to add a type to a pattern:
+
+<MiniRepl tune={`seq(d4, fs4, a4).note()`} />
+
+You can use this with any function that declares a type (like `n`, `s`, `note`, `freq` etc), just make sure to leave the parens empty!
 
 ## Pattern Factories
 
 The following functions will return a pattern.
 
+<!--
 {{ 'pure' | jsdoc }}
 
 Most of the time, you won't need that function as input values of pattern creating functions are purified by default.
+-->
 
 {{ 'cat' | jsdoc }}
 
@@ -477,7 +555,7 @@ You can freely mix JS patterns, mini patterns and values! For example, this patt
   stack(a3,c3,e4),
   stack(b3,d3,fs4),
   stack(b3,e4,g4)
-)`}
+).note()`}
 />
 
 ...is equivalent to:
@@ -488,12 +566,12 @@ You can freely mix JS patterns, mini patterns and values! For example, this patt
   "a3,c3,e4",
   "b3,d3,f#4",
   "b3,e4,g4"
-)`}
+).note()`}
 />
 
 ... as well as:
 
-<MiniRepl tune={`"<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>"`} />
+<MiniRepl tune={`note("<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>")`} />
 
 While mini notation is almost always shorter, it only has a handful of modifiers: \* / ! @.
 When using JS patterns, there is a lot more you can do.
@@ -640,13 +718,13 @@ The Tonal API, uses [tonaljs](https://github.com/tonaljs/tonal) to provide helpe
 
 Transposes all notes to the given number of semitones:
 
-<MiniRepl tune={`"c2 c3".fast(2).transpose("<0 -2 5 3>".slow(2)).transpose(0)`} />
+<MiniRepl tune={`"c2 c3".fast(2).transpose("<0 -2 5 3>".slow(2)).note()`} />
 
 This method gets really exciting when we use it with a pattern as above.
 
 Instead of numbers, scientific interval notation can be used as well:
 
-<MiniRepl tune={`"c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).transpose(1)`} />
+<MiniRepl tune={`"c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).note()`} />
 
 ### scale(name)
 
@@ -654,7 +732,8 @@ Turns numbers into notes in the scale (zero indexed). Also sets scale for other 
 
 <MiniRepl
   tune={`"0 2 4 6 4 2"
-.scale(seq('C2 major', 'C2 minor').slow(2))`}
+.scale(seq('C2 major', 'C2 minor').slow(2))
+.note()`}
 />
 
 Note that the scale root is octaved here. You can also omit the octave, then index zero will default to octave 3.
@@ -668,14 +747,15 @@ Transposes notes inside the scale by the number of steps:
 <MiniRepl
   tune={`"-8 [2,4,6]"
 .scale('C4 bebop major')
-.scaleTranspose("<0 -1 -2 -3 -4 -5 -6 -4>")`}
+.scaleTranspose("<0 -1 -2 -3 -4 -5 -6 -4>")
+.note()`}
 />
 
 ### voicings(range?)
 
 Turns chord symbols into voicings, using the smoothest voice leading possible:
 
-<MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")`} />
+<MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>").note()`} />
 
 <!-- TODO: use voicing collection as first param + patternify. -->
 
@@ -683,7 +763,7 @@ Turns chord symbols into voicings, using the smoothest voice leading possible:
 
 Turns chord symbols into root notes of chords in given octave.
 
-<MiniRepl tune={`"<C^7 A7b13 Dm7 G7>".rootNotes(3)`} />
+<MiniRepl tune={`"<C^7 A7b13 Dm7 G7>".rootNotes(3).note()`} />
 
 Together with layer, struct and voicings, this can be used to create a basic backing track:
 
@@ -691,7 +771,7 @@ Together with layer, struct and voicings, this can be used to create a basic bac
   tune={`"<C^7 A7b13 Dm7 G7>".layer(
   x => x.voicings(['d3','g4']).struct("~ x"),
   x => x.rootNotes(2).tone(synth(osc('sawtooth4')).chain(out()))
-)`}
+).note()`}
 />
 
 <!-- TODO: use range instead of octave. -->
@@ -755,152 +835,3 @@ The following functions can be used with superdirt:
 `s n note freq channel orbit cutoff resonance hcutoff hresonance bandf bandq djf vowel cut begin end loop fadeTime speed unitA gain amp accelerate crush coarse delay lock leslie lrate lsize pan panspan pansplay room size dry shape squiz waveloss attack decay octave detune tremolodepth`
 
 Please refer to [Tidal Docs](https://tidalcycles.org/) for more info.
-
-# Webdirt API (deprecated)
-
-You can use the powerful sampling engine [Webdirt](https://github.com/dktr0/WebDirt) with Strudel.
-
-{{ 'Pattern.webdirt' | jsdoc }}
-
-<br />
-<br />
-
-# Tone API (deprecated)
-
-The Tone API uses Tone.js instruments ands effects to create sounds.
-
-<MiniRepl
-  tune={`stack(
-    "[c5 c5 bb4 c5] [~ g4 ~ g4] [c5 f5 e5 c5] ~"
-      .tone(synth(adsr(0,.1,0,0)).chain(out())),
-    "[c2 c3]*8"
-      .tone(synth({
-        ...osc('sawtooth'),
-        ...adsr(0,.1,0.4,0)
-      }).chain(lowpass(300), out()))
-  ).slow(4)`}
-/>
-
-### tone(instrument)
-
-To change the instrument of a pattern, you can pass any [Tone.js Source](https://tonejs.github.io/docs/14.7.77/index.html) to .tone:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(new FMSynth().toDestination())`}
-/>
-
-While this works, it is a little bit verbose. To simplify things, all Tone Synths have a shortcut:
-
-```js
-const amsynth = (options) => new AMSynth(options);
-const duosynth = (options) => new DuoSynth(options);
-const fmsynth = (options) => new FMSynth(options);
-const membrane = (options) => new MembraneSynth(options);
-const metal = (options) => new MetalSynth(options);
-const monosynth = (options) => new MonoSynth(options);
-const noise = (options) => new NoiseSynth(options);
-const pluck = (options) => new PluckSynth(options);
-const polysynth = (options) => new PolySynth(options);
-const synth = (options) => new Synth(options);
-const sampler = (options, baseUrl?) => new Sampler(options); // promisified, see below
-const players = (options, baseUrl?) => new Sampler(options); // promisified, see below
-```
-
-### sampler
-
-With sampler, you can create tonal instruments from samples:
-
-<MiniRepl
-  tune={`sampler({
-  C5: 'https://freesound.org/data/previews/536/536549_11935698-lq.mp3'
-}).then(kalimba => 
-  saw.struct("x*8").mul(16).round()
-  .legato(4).scale('D dorian').slow(2)
-  .tone(kalimba.toDestination())
-)`}
-/>
-
-The sampler function promisifies [Tone.js Sampler](https://tonejs.github.io/docs/14.7.77/Sampler).
-
-Note that this function currently only works with this promise notation, but in the future,
-it will be possible to use async instruments in a synchronous fashion.
-
-### players
-
-With players, you can create sound banks:
-
-<MiniRepl
-  tune={`players({
-    bd: 'samples/tidal/bd/BT0A0D0.wav',
-    sn: 'samples/tidal/sn/ST0T0S3.wav',
-    hh: 'samples/tidal/hh/000_hh3closedhh.wav'
-  }, 'https://loophole-letters.vercel.app/')
-  .then(drums=>
-  "bd hh sn hh".tone(drums.toDestination())
-)
-  `}
-/>
-
-The sampler function promisifies [Tone.js Players](https://tonejs.github.io/docs/14.7.77/Players).
-
-Note that this function currently only works with this promise notation, but in the future,
-it will be possible to use async instruments in a synchronous fashion.
-
-### out
-
-Shortcut for Tone.Destination. Intended to be used with Tone's .chain:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(membrane().chain(out()))`}
-/>
-
-This alone is not really useful, so read on..
-
-### vol(volume)
-
-Helper that returns a Gain Node with the given volume. Intended to be used with Tone's .chain:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(noise().chain(vol(0.5), out()))`}
-/>
-
-### osc(type)
-
-Helper to set the waveform of a synth, monosynth or polysynth:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(synth(osc('sawtooth4')).chain(out()))`}
-/>
-
-The base types are `sine`, `square`, `sawtooth`, `triangle`. You can also append a number between 1 and 32 to reduce the harmonic partials.
-
-### lowpass(cutoff)
-
-Helper that returns a Filter Node of type lowpass with the given cutoff. Intended to be used with Tone's .chain:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(synth(osc('sawtooth')).chain(lowpass(800), out()))`}
-/>
-
-### highpass(cutoff)
-
-Helper that returns a Filter Node of type highpass with the given cutoff. Intended to be used with Tone's .chain:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(synth(osc('sawtooth')).chain(highpass(2000), out()))`}
-/>
-
-### adsr
-
-Helper to set the envelope of a Tone.js instrument. Intended to be used with Tone's .set:
-
-<MiniRepl
-  tune={`"[c4 c4 bb3 c4] [~ g3 ~ g3] [c4 f4 e4 c4] ~".slow(4)
-.tone(synth(adsr(0,.1,0,0)).chain(out()))`}
-/>

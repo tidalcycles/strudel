@@ -472,7 +472,7 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * "0.5 1.5 2.5".round().scale('C major')
+   * "0.5 1.5 2.5".round().scale('C major').note()
    */
   round() {
     return this._asNumber().fmap((v) => Math.round(v));
@@ -524,7 +524,7 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4)).out()
+   * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4))
    */
   _range(min, max) {
     return this.mul(max - min).add(min);
@@ -704,7 +704,7 @@ export class Pattern {
    * @name apply
    * @memberof Pattern
    * @example
-   * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4"))
+   * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4")).note()
    */
   _apply(func) {
     return func(this);
@@ -718,7 +718,7 @@ export class Pattern {
    * @example
    * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
    *   .layer(x=>x.add("0,2"))
-   *   .scale('C minor').note().out()
+   *   .scale('C minor').note()
    */
   layer(...funcs) {
     return stack(...funcs.map((func) => func(this)));
@@ -756,11 +756,13 @@ export class Pattern {
       const cycle = begin.sam();
       const beginPos = begin.sub(cycle).div(factor).min(1);
       const endPos = end.sub(cycle).div(factor).min(1);
-      const newPart = new TimeSpan(cycle.add(beginPos), cycle.add(endPos))
-      const newWhole = !hap.whole ? undefined : new TimeSpan(
-        newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
-        newPart.end.add(hap.whole.end.sub(end).div(factor))
-      );
+      const newPart = new TimeSpan(cycle.add(beginPos), cycle.add(endPos));
+      const newWhole = !hap.whole
+        ? undefined
+        : new TimeSpan(
+            newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
+            newPart.end.add(hap.whole.end.sub(end).div(factor)),
+          );
       return new Hap(newWhole, newPart, hap.value, hap.context);
     };
     return this.withQuerySpan(qf)._withHap(ef)._splitQueries();
@@ -796,7 +798,7 @@ export class Pattern {
    * @param {number | Pattern} factor speed up factor
    * @returns Pattern
    * @example
-   * s("<bd sd> hh").fast(2).out() // s("[<bd sd> hh]*2").out()
+   * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
    */
   _fast(factor) {
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
@@ -811,7 +813,7 @@ export class Pattern {
    * @param {number | Pattern} factor slow down factor
    * @returns Pattern
    * @example
-   * s("<bd sd> hh").slow(2).out() // s("[<bd sd> hh]/2").out()
+   * s("<bd sd> hh").slow(2) // s("[<bd sd> hh]/2")
    */
   _slow(factor) {
     return this._fast(Fraction(1).div(factor));
@@ -841,7 +843,7 @@ export class Pattern {
    *  .chop(4)
    *  .rev() // reverse order of chops
    *  .loopAt(4,1) // fit sample into 4 cycles
-   *  .out()
+   *
    */
   _chop(n) {
     const slices = Array.from({ length: n }, (x, i) => i);
@@ -872,7 +874,7 @@ export class Pattern {
    * @param {number | Pattern} cycles number of cycles to nudge left
    * @returns Pattern
    * @example
-   * "bd ~".stack("hh ~".early(.1)).s().out()
+   * "bd ~".stack("hh ~".early(.1)).s()
    */
   _early(offset) {
     offset = Fraction(offset);
@@ -887,7 +889,7 @@ export class Pattern {
    * @param {number | Pattern} cycles number of cycles to nudge right
    * @returns Pattern
    * @example
-   * "bd ~".stack("hh ~".late(.1)).s().out()
+   * "bd ~".stack("hh ~".late(.1)).s()
    */
   _late(offset) {
     offset = Fraction(offset);
@@ -923,9 +925,9 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * "c3,eb3,g3"
+   * note("c3,eb3,g3")
    *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
-   *   .slow(4).note().out()
+   *   .slow(4)
    */
   // struct(...binary_pats) {
   //   // Re structure the pattern according to a binary pattern (false values are dropped)
@@ -982,7 +984,7 @@ export class Pattern {
    * @param {function} func
    * @returns Pattern
    * @example
-   * "c3 eb3 g3".when("<0 1>/2", x=>x.sub(5))
+   * "c3 eb3 g3".when("<0 1>/2", x=>x.sub(5)).note()
    */
   when(binary_pat, func) {
     //binary_pat = sequence(binary_pat)
@@ -1001,7 +1003,7 @@ export class Pattern {
    * @param {function} func function to apply
    * @returns Pattern
    * @example
-   * "c3 eb3 g3".off(1/8, x=>x.add(7))
+   * "c3 eb3 g3".off(1/8, x=>x.add(7)).note()
    */
   off(time_pat, func) {
     return stack(this, func(this.late(time_pat)));
@@ -1015,7 +1017,7 @@ export class Pattern {
    * @param {function} func function to apply
    * @returns Pattern
    * @example
-   * note("c3 d3 e3 g3").every(4, x=>x.rev()).out()
+   * note("c3 d3 e3 g3").every(4, x=>x.rev())
    */
   every(n, func) {
     const pat = this;
@@ -1032,7 +1034,7 @@ export class Pattern {
    * @param {function} func function to apply
    * @returns Pattern
    * @example
-   * note("c3 d3 e3 g3").every(4, x=>x.rev()).out()
+   * note("c3 d3 e3 g3").every(4, x=>x.rev())
    */
   every(n, func) {
     const pat = this;
@@ -1049,7 +1051,7 @@ export class Pattern {
    * @param {function} func function to apply
    * @returns Pattern
    * @example
-   * note("c3 d3 e3 g3").every(4, x=>x.rev()).out()
+   * note("c3 d3 e3 g3").every(4, x=>x.rev())
    */
   each(n, func) {
     const pat = this;
@@ -1075,7 +1077,7 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * "c3 d3 e3 g3".rev()
+   * note("c3 d3 e3 g3").rev()
    */
   rev() {
     const pat = this;
@@ -1126,7 +1128,7 @@ export class Pattern {
    * @example
    * s("hh*2").stack(
    *   n("c2(3,8)")
-   * ).out()
+   * )
    */
   stack(...pats) {
     return stack(this, ...pats);
@@ -1143,7 +1145,7 @@ export class Pattern {
    * @example
    * s("hh*2").seq(
    *   n("c2(3,8)")
-   * ).out()
+   * )
    */
   seq(...pats) {
     return sequence(this, ...pats);
@@ -1156,7 +1158,7 @@ export class Pattern {
    * @example
    * s("hh*2").cat(
    *   n("c2(3,8)")
-   * ).out()
+   * )
    */
   cat(...pats) {
     return cat(this, ...pats);
@@ -1178,7 +1180,7 @@ export class Pattern {
    * @example
    * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
    *   .superimpose(x=>x.add(2))
-   *   .scale('C minor').note().out()
+   *   .scale('C minor').note()
    */
   superimpose(...funcs) {
     return this.stack(...funcs.map((func) => func(this)));
@@ -1203,7 +1205,7 @@ export class Pattern {
    * @example
    * "<0 [2 4]>"
    * .echoWith(4, 1/8, (p,n) => p.add(n*2))
-   * .scale('C minor').note().legato(.2).out()
+   * .scale('C minor').note().legato(.2)
    */
   _echoWith(times, time, func) {
     return stack(...listRange(0, times - 1).map((i) => func(this.late(Fraction(time).mul(i)), i)));
@@ -1218,7 +1220,7 @@ export class Pattern {
    * @param {number} time cycle offset between iterations
    * @param {number} feedback velocity multiplicator for each iteration
    * @example
-   * s("bd sd").echo(3, 1/6, .8).out()
+   * s("bd sd").echo(3, 1/6, .8)
    */
   _echo(times, time, feedback) {
     return this._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
@@ -1230,7 +1232,7 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * note("0 1 2 3".scale('A minor')).iter(4).out()
+   * note("0 1 2 3".scale('A minor')).iter(4)
    */
   iter(times, back = false) {
     return slowcat(...listRange(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
@@ -1242,7 +1244,7 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * note("0 1 2 3".scale('A minor')).iterBack(4).out()
+   * note("0 1 2 3".scale('A minor')).iterBack(4)
    */
   iterBack(times) {
     return this.iter(times, true);
@@ -1254,7 +1256,7 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note().out()
+   * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note()
    */
   _chunk(n, func, back = false) {
     const binary = Array(n - 1).fill(false);
@@ -1269,7 +1271,7 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note().out()
+   * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note()
    */
   _chunkBack(n, func) {
     return this._chunk(n, func, true);
@@ -1295,7 +1297,7 @@ export class Pattern {
    * @name legato
    * @memberof Pattern
    * @example
-   * n("c3 eb3 g3 c4").legato("<.25 .5 1 2>").out()
+   * note("c3 eb3 g3 c4").legato("<.25 .5 1 2>")
    */
   _legato(value) {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
@@ -1308,7 +1310,7 @@ export class Pattern {
    * @example
    * s("hh*8")
    * .gain(".4!2 1 .4!2 1 .4 1")
-   * .velocity(".4 1").out()
+   * .velocity(".4 1")
    */
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
@@ -1321,7 +1323,7 @@ export class Pattern {
    * @returns Pattern
    * @example
    * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
-   * s("rhodes").loopAt(4,1).out()
+   * s("rhodes").loopAt(4,1)
    */
   _loopAt(factor, cps = 1) {
     return this.speed((1 / factor) * cps)
@@ -1385,14 +1387,14 @@ function _composeOp(a, b, func) {
      * @memberof Pattern
      * @example
      * // Here, the triad 0, 2, 4 is shifted by different amounts
-     * "0 2 4".add("<0 3 4 0>").scale('C major')
+     * "0 2 4".add("<0 3 4 0>").scale('C major').note()
      * // Without add, the equivalent would be:
-     * // "<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>".scale('C major')
+     * // "<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>".scale('C major').note()
      * @example
      * // You can also use add with notes:
-     * "c3 e3 g3".add("<0 5 7 0>")
+     * "c3 e3 g3".add("<0 5 7 0>").note()
      * // Behind the scenes, the notes are converted to midi numbers:
-     * // "48 52 55".add("<0 5 7 0>")
+     * // "48 52 55".add("<0 5 7 0>").note()
      */
     add: [(a, b) => a + b, numOrString], // support string concatenation
     /**
@@ -1401,7 +1403,7 @@ function _composeOp(a, b, func) {
      * @name sub
      * @memberof Pattern
      * @example
-     * "0 2 4".sub("<0 1 2 3>").scale('C4 minor')
+     * "0 2 4".sub("<0 1 2 3>").scale('C4 minor').note()
      * // See add for more information.
      */
     sub: [(a, b) => a - b, num],
@@ -1411,7 +1413,7 @@ function _composeOp(a, b, func) {
      * @name mul
      * @memberof Pattern
      * @example
-     * "1 1.5 [1.66, <2 2.33>]".mul(150).freq().out()
+     * "1 1.5 [1.66, <2 2.33>]".mul(150).freq()
      */
     mul: [(a, b) => a * b, num],
     /**
@@ -1577,7 +1579,7 @@ export function reify(thing) {
  *
  * @return {Pattern}
  * @example
- * stack(g3, b3, [e4, d4]) // "g3,b3,[e4,d4]"
+ * stack(g3, b3, [e4, d4]).note() // "g3,b3,[e4,d4]".note()
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
@@ -1650,7 +1652,7 @@ export function fastcat(...pats) {
  * @param {...any} items - The items to concatenate
  * @return {Pattern}
  * @example
- * cat(e5, b4, [d5, c5]) // "<e5 b4 [d5 c5]>"
+ * cat(e5, b4, [d5, c5]).note() // "<e5 b4 [d5 c5]>".note()
  *
  */
 export function cat(...pats) {
@@ -1660,7 +1662,7 @@ export function cat(...pats) {
 /** Like {@link seq}, but each step has a length, relative to the whole.
  * @return {Pattern}
  * @example
- * timeCat([3,e3],[1, g3]) // "e3@3 g3"
+ * timeCat([3,e3],[1, g3]).note() // "e3@3 g3".note()
  */
 export function timeCat(...timepats) {
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -1681,7 +1683,7 @@ export function sequence(...pats) {
 
 /** Like **cat**, but the items are crammed into one cycle. Synonyms: fastcat, sequence
  * @example
- * seq(e5, b4, [d5, c5]) // "e5 b4 [d5 c5]"
+ * seq(e5, b4, [d5, c5]).note() // "e5 b4 [d5 c5]".note()
  *
  */
 export function seq(...pats) {
