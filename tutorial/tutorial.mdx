@@ -54,13 +54,98 @@ s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
 
 <br />
 
+# Playing Pitches
+
+Pitches are an essential building block for music. In Strudel, there are 3 different options to express a pitch:
+
+- `note`: letter notation
+- `n`: number notation
+- `freq`: frequency notation
+
+## note
+
+Notes are notated with the note letter, followed by the octave number. You can notate flats with `b` and sharps with `#`.
+
+<MiniRepl tune={`note("a3 c#4 e4 a4")`} />
+
+By the way, you can edit the contents of the player, and press "update" to hear your change!
+You can also press "play" on the next player without needing to stop the last one.
+
+## n
+
+If you don't like notes, you can also use numbers with `n` instead:
+
+<MiniRepl tune={`n("57 61 64 69")`} />
+
+These numbers are interpreted as so called midi numbers, where adjacent whole numbers are 1 semitone apart.
+You could also write decimal numbers to get microtonal pitches:
+
+<MiniRepl tune={`n("74.5 75 75.5 76")`} />
+
+## freq
+
+To get maximum freedom, you can also use `freq` to directly control the frequency:
+
+<MiniRepl tune={`freq("220 275 330 440")`} />
+
+In this example, we play A3 (220Hz), C#4 natural (275Hz), E4 (330Hz) and A4 (440Hz).
+
+<br />
+
+# Playing Sounds
+
+Instead of pitches, we can also play sounds with `s`:
+
+<MiniRepl tune={`s("bd hh sd hh")`} />
+
+Similarly, we can also use `s` to change the sound of our pitches:
+
+<MiniRepl tune={`note("a3 c#4 e4 a4").s("sawtooth")`} />
+
+Try changing the sound to `square`, `triangle` or `sine`!
+
+We will go into the defails of sounds and synths [later](http://localhost:3000/tutorial/#web-audio-output).
+
+<br />
+
+# Syntax
+
+So far, we've seen the following syntax:
+
+```
+xxx("foo").yyy("bar")
+```
+
+Generally, `xxx` and `yyy` are called functions, while `foo` and `bar` are called function arguments.
+So far, we've used the functions to declare which aspect of the sound we want to control, and their arguments for the actual data.
+The `yyy` function is called a chained function, because it is appended with a dot.
+
+Strudel makes heavy use of chained functions. Here is a more extreme example:
+
+<MiniRepl
+  tune={`note("a3 c#4 e4 a4")
+.s("sawtooth")
+.cutoff(500)
+//.delay(0.5)
+.room(0.5)`}
+/>
+
+The `//` is a line comment, resulting in the `delay` function being ignored.
+It is a handy way to quickly turn stuff on and off. Try uncommenting this line by deleting `//`!
+
+The good news is, that this covers 99% of the JavaScript syntax needed for Strudel!
+
+Let's now look at the way we can express rhythms..
+
+<br />
+
 # Mini Notation
 
 Similar to Tidal Cycles, Strudel has an embedded mini language that is designed to write rhythmic patterns in a short manner.
 Before diving deeper into the details, here is a flavor of how the mini language looks like:
 
 <MiniRepl
-  tune={`\`[
+  tune={`note(\`[
   [
     [e5 [b4 c5] d5 [c5 b4]]
     [a4 [a4 c5] e5 [d5 c5]]
@@ -80,36 +165,26 @@ Before diving deeper into the details, here is a flavor of how the mini language
     [[b1 b2]*2 [e2 e3]*2]
     [[a1 a2]*4]
   ]
-]/16\``}
+]/16\`)`}
 />
 
 The snippet above is enclosed in backticks (`), which allows you to write multi-line strings.
 You can also use double quotes (") for single line mini notation.
 
-## Notes
-
-Notes are notated with the note letter, followed by the octave number. You can notate flats with `b` and sharps with `#`.
-
-<MiniRepl tune={`"e5"`} />
-
-Here, the same note is played over and over again, once a second. This one second is the default length of one so called "cycle".
-
-By the way, you can edit the contents of the player, and press "update" to hear your change!
-You can also press "play" on the next player without needing to stop the last one.
-
 ## Sequences
 
 We can play more notes by separating them with spaces:
 
-<MiniRepl tune={`"e5 b4 d5 c5"`} />
+<MiniRepl tune={`note("e5 b4 d5 c5")`} />
 
 Here, those four notes are squashed into one cycle, so each note is a quarter second long.
+Try adding or removing notes and notice how the tempo changes!
 
 ## Division
 
 We can slow the sequence down by enclosing it in brackets and dividing it by a number:
 
-<MiniRepl tune={`"[e5 b4 d5 c5]/2"`} />
+<MiniRepl tune={`note("[e5 b4 d5 c5]/2")`} />
 
 The division by two means that the sequence will be played over the course of two cycles.
 You can also use decimal numbers for any tempo you like.
@@ -118,11 +193,11 @@ You can also use decimal numbers for any tempo you like.
 
 Using angle brackets, we can define the sequence length based on the number of children:
 
-<MiniRepl tune={`"<e5 b4 d5 c5>"`} />
+<MiniRepl tune={`note("<e5 b4 d5 c5>")`} />
 
 The above snippet is the same as:
 
-<MiniRepl tune={`"[e5 b4 d5 c5]/4"`} />
+<MiniRepl tune={`note("[e5 b4 d5 c5]/4")`} />
 
 The advantage of the angle brackets, is that we can add more children without needing to change the number at the end.
 
@@ -130,7 +205,7 @@ The advantage of the angle brackets, is that we can add more children without ne
 
 Contrary to division, a sequence can be sped up by multiplying it by a number:
 
-<MiniRepl tune={`"[e5 b4 d5 c5]*2"`} />
+<MiniRepl tune={`note("[e5 b4 d5 c5]*2")`} />
 
 The multiplication by 2 here means that the sequence will play twice a cycle.
 
@@ -138,29 +213,29 @@ The multiplication by 2 here means that the sequence will play twice a cycle.
 
 To create more interesting rhythms, you can nest sequences with brackets, like this:
 
-<MiniRepl tune={`"e5 [b4 c5] d5 [c5 b4]"`} />
+<MiniRepl tune={`note("e5 [b4 c5] d5 [c5 b4]")`} />
 
 ## Rests
 
 The "~" represents a rest:
 
-<MiniRepl tune={`"[b4 [~ c5] d5 e5]"`} />
+<MiniRepl tune={`note("[b4 [~ c5] d5 e5]")`} />
 
 ## Parallel
 
 Using commas, we can play chords:
 
-<MiniRepl tune={`"g3,b3,e4"`} />
+<MiniRepl tune={`note("g3,b3,e4")`} />
 
 To play multiple chords in a sequence, we have to wrap them in brackets:
 
-<MiniRepl tune={`"<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>"`} />
+<MiniRepl tune={`note("<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>")`} />
 
 ## Elongation
 
 With the "@" symbol, we can specify temporal "weight" of a sequence child:
 
-<MiniRepl tune={`"<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>"`} />
+<MiniRepl tune={`note("<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>")`} />
 
 Here, the first chord has a weight of 2, making it twice the length of the other chords. The default weight is 1.
 
@@ -168,7 +243,7 @@ Here, the first chord has a weight of 2, making it twice the length of the other
 
 Using "!" we can repeat without speeding up:
 
-<MiniRepl tune={`"<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>"`} />
+<MiniRepl tune={`note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>")`} />
 
 In essence, the `x!n` is like a shortcut for `[x*n]@n`.
 
@@ -181,7 +256,7 @@ The third (optional) parameter controls the starting position for distributing t
 One popular Euclidian rhythm (going by various names, such as "Pop Clave") is "(3,8,1)" or simply "(3,8)",
 resulting in a rhythmical structure of "x ~ ~ x ~ ~ x ~" (3 beats over 8 segments, starting on position 1).
 
-<MiniRepl tune={`"e5(2,8) b4(3,8) d5(2,8) c5(3,8)".slow(4)`} />
+<MiniRepl tune={`note("e5(2,8) b4(3,8) d5(2,8) c5(3,8)").slow(4)`} />
 
 <br />
 
@@ -381,16 +456,25 @@ Internally, the mini notation will expand to use the actual functional JavaScrip
 
 Notes are automatically available as variables:
 
-<MiniRepl tune={`seq(d4, fs4, a4)`} />
+<MiniRepl tune={`note(seq(d4, fs4, a4)) // note("d4 f#4 a4")`} />
 
 An important difference to the mini notation:
 For sharp notes, the letter "s" is used instead of "#", because JavaScript does not support "#" in a variable name.
 
 The above is the same as:
 
-<MiniRepl tune={`seq('d4', 'f#4', 'a4')`} />
+<MiniRepl tune={`note(seq('d4', 'f#4', 'a4'))`} />
 
 Using strings, you can also use "#".
+
+## Alternative Syntax
+
+In the above example, we are nesting a function inside a function, which makes reading the parens a little more difficult.
+To avoid getting to many nested parens, there is an alternative syntax to add a type to a pattern:
+
+<MiniRepl tune={`seq(d4, fs4, a4).note()`} />
+
+You can use this with any function that declares a type, just make sure to leave the parens empty!
 
 ## Pattern Factories
 

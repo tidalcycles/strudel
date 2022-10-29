@@ -238,10 +238,10 @@ function effectSend(input, effect, wet) {
 export const webaudioOutput = async (hap, deadline, hapDuration) => {
   try {
     const ac = getAudioContext();
-    if (isNote(hap.value)) {
+    /* if (isNote(hap.value)) {
       // supports primitive hap values that look like notes
       hap.value = { note: hap.value };
-    }
+    } */
     if (typeof hap.value !== 'object') {
       throw new Error(
         `hap.value ${hap.value} is not supported by webaudio output. Hint: append .note() or .s() to the end`,
