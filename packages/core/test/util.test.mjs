@@ -1,11 +1,11 @@
 /*
-util.test.mjs - <short description TODO>
+util.test.mjs - Tests for the core 'util' module
 Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/test/util.test.mjs>
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { pure } from '../pattern.mjs';
-import { isNote, tokenizeNote, toMidi, fromMidi, mod, compose, getFrequency } from '../util.mjs';
+import { isNote, tokenizeNote, toMidi, fromMidi, mod, compose, getFrequency, getPlayableNoteValue } from '../util.mjs';
 import { describe, it, expect } from 'vitest';
 
 describe('isNote', () => {
@@ -70,6 +70,10 @@ describe('toMidi', () => {
     expect(toMidi('C#3')).toEqual(49);
     expect(toMidi('C##3')).toEqual(50);
   });
+  it('should throw an error when given a non-note', () => {
+    expect(() => toMidi('Q')).toThrowError(`not a note: "Q"`);
+    expect(() => toMidi('Z')).toThrowError(`not a note: "Z"`);
+  });
 });
 describe('fromMidi', () => {
   it('should turn midi into frequency', () => {
@@ -78,12 +82,26 @@ describe('fromMidi', () => {
   });
 });
 describe('getFrequency', () => {
-  it('should turn midi into frequency', () => {
-    const happify = (val, context = {}) => pure(val).firstCycle()[0].setContext(context);
+  const happify = (val, context = {}) => pure(val).firstCycle()[0].setContext(context);
+  it('should turn note into frequency', () => {
     expect(getFrequency(happify('a4'))).toEqual(440);
     expect(getFrequency(happify('a3'))).toEqual(220);
-    expect(getFrequency(happify(440, { type: 'frequency' }))).toEqual(440); // TODO: migrate when values are objects..
+  });
+  it('should turn midi into frequency', () => {
+    expect(getFrequency(happify(69, { type: 'midi' }))).toEqual(440);
+    expect(getFrequency(happify(57, { type: 'midi' }))).toEqual(220);
+  });
+  it('should return frequencies unchanged', () => {
+    expect(getFrequency(happify(440, { type: 'frequency' }))).toEqual(440); 
     expect(getFrequency(happify(432, { type: 'frequency' }))).toEqual(432);
+  });
+  it('should turn object with a "freq" property into frequency', () => {
+    expect(getFrequency(happify({freq: 220}))).toEqual(220)
+    expect(getFrequency(happify({freq: 440}))).toEqual(440)
+  });
+  it('should throw an error when given a non-note', () => {
+    expect(() => getFrequency(happify('Q'))).toThrowError(`not a note or frequency: Q`)
+    expect(() => getFrequency(happify('Z'))).toThrowError(`not a note or frequency: Z`)
   });
 });
 
@@ -117,4 +135,27 @@ describe('compose', () => {
     expect(compose(addS('a'), addS('b'))('')).toEqual('ab');
     expect(compose(addS('a'), addS('b'))('x')).toEqual('xab');
   });
+});
+
+describe('getPlayableNoteValue', () => {
+  const happify = (val, context = {}) => pure(val).firstCycle()[0].setContext(context);
+  it('should return object "note" property', () => {
+    expect(getPlayableNoteValue(happify({note: "a4"}))).toEqual('a4')
+  });
+  it('should return object "n" property', () => {
+    expect(getPlayableNoteValue(happify({n: "a4"}))).toEqual('a4')
+  });
+  it('should return object "value" property', () => {
+    expect(getPlayableNoteValue(happify({value: "a4"}))).toEqual('a4')
+  });
+  it('should turn midi into frequency', () => {
+    expect(getPlayableNoteValue(happify(57, {type: 'midi'}))).toEqual(220)
+  })
+  it('should return frequency value', () => {
+    expect(getPlayableNoteValue(happify(220, {type: 'frequency'}))).toEqual(220)
+  })
+  it('should throw an error if value is not an object, number, or string', () => {
+    expect(() => getPlayableNoteValue(happify(false))).toThrowError(`not a note: false`)
+    expect(() => getPlayableNoteValue(happify(undefined))).toThrowError(`not a note: undefined`)
+  })
 });

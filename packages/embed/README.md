@@ -18,7 +18,6 @@ Either install with `npm i @strudel.cycles/embed` or just use a cdn to import th
     .legato(sine.range(0.3, 2).slow(28))
     .wave("sawtooth square".fast(2))
     .filter('lowpass', cosine.range(500,4000).slow(16))
-    .out()
     .pianoroll({minMidi:20,maxMidi:120,background:'#202124'})
       -->
 </strudel-repl>

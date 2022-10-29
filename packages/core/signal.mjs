@@ -27,9 +27,9 @@ export const isaw2 = isaw._toBipolar();
  *
  * @return {Pattern}
  * @example
- * "c3 [eb3,g3] g2 [g3,bb3]".legato(saw.slow(4))
+ * "c3 [eb3,g3] g2 [g3,bb3]".legato(saw.slow(4)).note()
  * @example
- * saw.range(0,8).segment(8).scale('C major').slow(4)
+ * saw.range(0,8).segment(8).scale('C major').slow(4).note()
  *
  */
 export const saw = signal((t) => t % 1);
@@ -42,7 +42,7 @@ export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
  *
  * @return {Pattern}
  * @example
- * sine.segment(16).range(0,15).slow(2).scale('C minor')
+ * sine.segment(16).range(0,15).slow(2).scale('C minor').note()
  *
  */
 export const sine = sine2._fromBipolar();
@@ -52,7 +52,7 @@ export const sine = sine2._fromBipolar();
  *
  * @return {Pattern}
  * @example
- * stack(sine,cosine).segment(16).range(0,15).slow(2).scale('C minor')
+ * stack(sine,cosine).segment(16).range(0,15).slow(2).scale('C minor').note()
  *
  */
 export const cosine = sine._early(Fraction(1).div(4));
@@ -63,7 +63,7 @@ export const cosine2 = sine2._early(Fraction(1).div(4));
  *
  * @return {Pattern}
  * @example
- * square.segment(2).range(0,7).scale('C minor')
+ * square.segment(2).range(0,7).scale('C minor').note()
  *
  */
 export const square = signal((t) => Math.floor((t * 2) % 2));
@@ -74,7 +74,7 @@ export const square2 = square._toBipolar();
  *
  * @return {Pattern}
  * @example
- * tri.segment(8).range(0,7).scale('C minor')
+ * tri.segment(8).range(0,7).scale('C minor').note()
  *
  */
 export const tri = fastcat(isaw, saw);
@@ -120,7 +120,7 @@ const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
  * @name rand
  * @example
  * // randomly change the cutoff
- * s("bd sd,hh*4").cutoff(rand.range(500,2000)).out()
+ * s("bd sd,hh*4").cutoff(rand.range(500,2000))
  *
  */
 export const rand = signal(timeToRand);
@@ -142,7 +142,7 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
  * @param {number} n max value (exclusive)
  * @example
  * // randomly select scale notes from 0 - 7 (= C to C)
- * irand(8).struct("x(3,8)").scale('C minor').note().out()
+ * irand(8).struct("x(3,8)").scale('C minor').note()
  *
  */
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
@@ -208,9 +208,9 @@ Pattern.prototype.choose2 = function (...xs) {
  * Picks one of the elements at random each cycle.
  * @returns {Pattern}
  * @example
- * chooseCycles("bd", "hh", "sd").s().fast(4).out()
+ * chooseCycles("bd", "hh", "sd").s().fast(4)
  * @example
- * "bd | hh | sd".s().fast(4).out()
+ * "bd | hh | sd".s().fast(4)
  */
 export const chooseCycles = (...xs) => chooseInWith(rand.segment(1), xs);
 
@@ -252,7 +252,7 @@ export const perlinWith = (pat) => {
  * @name perlin
  * @example
  * // randomly change the cutoff
- * s("bd sd,hh*4").cutoff(perlin.range(500,2000)).out()
+ * s("bd sd,hh*4").cutoff(perlin.range(500,2000))
  *
  */
 export const perlin = perlinWith(time);
@@ -271,9 +271,9 @@ Pattern.prototype._degradeByWith = function (withPat, x) {
  * @param {number} amount - a number between 0 and 1
  * @returns Pattern
  * @example
- * s("hh*8").degradeBy(0.2).out()
+ * s("hh*8").degradeBy(0.2)
  * @example
- * s("[hh?0.2]*8").out()
+ * s("[hh?0.2]*8")
  */
 Pattern.prototype._degradeBy = function (x) {
   return this._degradeByWith(rand, x);
@@ -287,9 +287,9 @@ Pattern.prototype._degradeBy = function (x) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("hh*8").degrade().out()
+ * s("hh*8").degrade()
  * @example
- * s("[hh?]*8").out()
+ * s("[hh?]*8")
  */
 Pattern.prototype.degrade = function () {
   return this._degradeBy(0.5);
@@ -306,7 +306,7 @@ Pattern.prototype.degrade = function () {
  * @param {number} amount - a number between 0 and 1
  * @returns Pattern
  * @example
- * s("hh*8").undegradeBy(0.2).out()
+ * s("hh*8").undegradeBy(0.2)
  */
 Pattern.prototype._undegradeBy = function (x) {
   return this._degradeByWith(
@@ -340,7 +340,7 @@ Pattern.prototype._sometimesBy = function (x, func) {
  * @param {function} function - the transformation to apply
  * @returns Pattern
  * @example
- * s("hh(3,8)").sometimesBy(.4, x=>x.speed("0.5")).out()
+ * s("hh(3,8)").sometimesBy(.4, x=>x.speed("0.5"))
  */
 Pattern.prototype.sometimesBy = function (patx, func) {
   const pat = this;
@@ -370,7 +370,7 @@ Pattern.prototype.sometimesByPre = function (patx, func) {
  * @param {function} function - the transformation to apply
  * @returns Pattern
  * @example
- * s("hh*4").sometimes(x=>x.speed("0.5")).out()
+ * s("hh*4").sometimes(x=>x.speed("0.5"))
  */
 Pattern.prototype.sometimes = function (func) {
   return this._sometimesBy(0.5, func);
@@ -398,7 +398,7 @@ Pattern.prototype._someCyclesBy = function (x, func) {
  * @param {function} function - the transformation to apply
  * @returns Pattern
  * @example
- * s("hh(3,8)").someCyclesBy(.3, x=>x.speed("0.5")).out()
+ * s("hh(3,8)").someCyclesBy(.3, x=>x.speed("0.5"))
  */
 Pattern.prototype.someCyclesBy = function (patx, func) {
   const pat = this;
@@ -415,7 +415,7 @@ Pattern.prototype.someCyclesBy = function (patx, func) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("hh(3,8)").someCycles(x=>x.speed("0.5")).out()
+ * s("hh(3,8)").someCycles(x=>x.speed("0.5"))
  */
 Pattern.prototype.someCycles = function (func) {
   return this._someCyclesBy(0.5, func);
@@ -429,7 +429,7 @@ Pattern.prototype.someCycles = function (func) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("hh*8").often(x=>x.speed("0.5")).out()
+ * s("hh*8").often(x=>x.speed("0.5"))
  */
 Pattern.prototype.often = function (func) {
   return this.sometimesBy(0.75, func);
@@ -443,7 +443,7 @@ Pattern.prototype.often = function (func) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("hh*8").rarely(x=>x.speed("0.5")).out()
+ * s("hh*8").rarely(x=>x.speed("0.5"))
  */
 Pattern.prototype.rarely = function (func) {
   return this.sometimesBy(0.25, func);
@@ -457,7 +457,7 @@ Pattern.prototype.rarely = function (func) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("hh*8").almostNever(x=>x.speed("0.5")).out()
+ * s("hh*8").almostNever(x=>x.speed("0.5"))
  */
 Pattern.prototype.almostNever = function (func) {
   return this.sometimesBy(0.1, func);
@@ -471,7 +471,7 @@ Pattern.prototype.almostNever = function (func) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("hh*8").almostAlways(x=>x.speed("0.5")).out()
+ * s("hh*8").almostAlways(x=>x.speed("0.5"))
  */
 Pattern.prototype.almostAlways = function (func) {
   return this.sometimesBy(0.9, func);
@@ -485,7 +485,7 @@ Pattern.prototype.almostAlways = function (func) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("hh*8").never(x=>x.speed("0.5")).out()
+ * s("hh*8").never(x=>x.speed("0.5"))
  */
 Pattern.prototype.never = function (func) {
   return this;
@@ -499,7 +499,7 @@ Pattern.prototype.never = function (func) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("hh*8").always(x=>x.speed("0.5")).out()
+ * s("hh*8").always(x=>x.speed("0.5"))
  */
 Pattern.prototype.always = function (func) {
   return func(this);

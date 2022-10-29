@@ -7,14 +7,13 @@ This program is free software: you can redistribute it and/or modify it under th
 import controls from '@strudel.cycles/core/controls.mjs';
 import { evalScope, evaluate } from '@strudel.cycles/eval';
 import { CodeMirror, cx, flash, useHighlighting, useRepl, useWebMidi } from '@strudel.cycles/react';
-import { getDefaultSynth, cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
+import { cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
 import { prebake } from './prebake.mjs';
 import * as WebDirt from 'WebDirt';
-import { loadWebDirt } from '@strudel.cycles/webdirt';
 import { resetLoadedSamples, getAudioContext } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
@@ -37,15 +36,9 @@ evalScope(
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
   import('@strudel.cycles/osc'),
-  import('@strudel.cycles/webdirt'),
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
 );
-
-loadWebDirt({
-  sampleMapUrl: 'EmuSP12.json',
-  sampleFolder: 'EmuSP12',
-});
 
 prebake();
 
@@ -87,7 +80,6 @@ function getRandomTune() {
 }
 
 const randomTune = getRandomTune();
-const defaultSynth = getDefaultSynth();
 const isEmbedded = window.location !== window.parent.location;
 function App() {
   // const [editor, setEditor] = useState();
@@ -112,7 +104,6 @@ function App() {
     hideConsole,
   } = useRepl({
     tune: '// LOADING...',
-    defaultSynth,
   });
   useEffect(() => {
     initCode().then((decoded) => setCode(decoded || randomTune));

@@ -7,9 +7,9 @@ import { tags } from '@lezer/highlight';
 import { createTheme } from '@uiw/codemirror-themes';
 import { useInView } from 'react-hook-inview';
 import { evaluate } from '@strudel.cycles/eval';
-import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
 import { Tone } from '@strudel.cycles/tone';
-import { TimeSpan, State, Scheduler } from '@strudel.cycles/core';
+import { TimeSpan, State } from '@strudel.cycles/core';
+import { webaudioOutputTrigger } from '@strudel.cycles/webaudio';
 import { WebMidi, enableWebMidi } from '@strudel.cycles/midi';
 
 var strudelTheme = createTheme({
@@ -251,7 +251,7 @@ let s4 = () => {
 };
 const generateHash = (code) => encodeURIComponent(btoa(code));
 
-function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawProp }) {
+function useRepl({ tune, autolink = true, onEvent, onDraw: onDrawProp }) {
   const id = useMemo(() => s4(), []);
   const [code, setCode] = useState(tune);
   const [activeCode, setActiveCode] = useState();
@@ -282,26 +282,15 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
           if (event.context.logs?.length) {
             event.context.logs.forEach(pushLog);
           }
-          const { onTrigger, velocity } = event.context;
-          if (!onTrigger) {
-            if (defaultSynth) {
-              const note = getPlayableNoteValue(event);
-              defaultSynth.triggerAttackRelease(note, event.duration.valueOf(), time, velocity);
-            } else {
-              throw new Error('no defaultSynth passed to useRepl.');
-            }
-            /* console.warn('no instrument chosen', event);
-          throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
-          } else {
-            onTrigger(time, event, currentTime, 1 /* cps */);
-          }
+          const { onTrigger = webaudioOutputTrigger } = event.context;
+          onTrigger(time, event, currentTime, 1 /* cps */);
         } catch (err) {
           console.warn(err);
           err.message = 'unplayable event: ' + err?.message;
           pushLog(err.message); // not with setError, because then we would have to setError(undefined) on next playable event
         }
       },
-      [onEvent, pushLog, defaultSynth],
+      [onEvent, pushLog],
     ),
     onQuery: useCallback(
       (state) => {
@@ -483,10 +472,9 @@ function Icon({ type }) {
   }[type]);
 }
 
-function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, onEvent, enableKeyboard }) {
+function MiniRepl({ tune, hideOutsideView = false, init, onEvent, enableKeyboard }) {
   const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } = useRepl({
     tune,
-    defaultSynth,
     autolink: false,
     onEvent
   });
@@ -556,6 +544,133 @@ function MiniRepl({ tune, defaultSynth, hideOutsideView = false, theme, init, on
   })));
 }
 
+// will move to https://github.com/felixroos/zyklus
+// TODO: started flag
+
+function createClock(
+  getTime,
+  callback, // called slightly before each cycle
+  duration = 0.05, // duration of each cycle
+  interval = 0.1, // interval between callbacks
+  overlap = 0.1, // overlap between callbacks
+) {
+  let tick = 0; // counts callbacks
+  let phase = 0; // next callback time
+  let precision = 10 ** 4; // used to round phase
+  let minLatency = 0.01;
+  const setDuration = (setter) => (duration = setter(duration));
+  overlap = overlap || interval / 2;
+  const onTick = () => {
+    const t = getTime();
+    const lookahead = t + interval + overlap; // the time window for this tick
+    if (phase === 0) {
+      phase = t + minLatency;
+    }
+    // callback as long as we're inside the lookahead
+    while (phase < lookahead) {
+      phase = Math.round(phase * precision) / precision;
+      phase >= t && callback(phase, duration, tick);
+      phase < t && console.log('TOO LATE', phase); // what if latency is added from outside?
+      phase += duration; // increment phase by duration
+      tick++;
+    }
+  };
+  let intervalID;
+  const start = () => {
+    onTick();
+    intervalID = setInterval(onTick, interval * 1000);
+  };
+  const clear = () => clearInterval(intervalID);
+  const pause = () => clear();
+  const stop = () => {
+    tick = 0;
+    phase = 0;
+    clear();
+  };
+  const getPhase = () => phase;
+  // setCallback
+  return { setDuration, start, stop, pause, duration, getPhase };
+}
+
+/*
+cyclist.mjs - <short description TODO>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/scheduler.mjs>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+class Cyclist {
+  worker;
+  pattern;
+  started = false;
+  cps = 1; // TODO
+  getTime;
+  phase = 0;
+  constructor({ interval, onTrigger, onError, getTime, latency = 0.1 }) {
+    this.getTime = getTime;
+    const round = (x) => Math.round(x * 1000) / 1000;
+    this.clock = createClock(
+      getTime,
+      (phase, duration, tick) => {
+        if (tick === 0) {
+          this.origin = phase;
+        }
+        const begin = round(phase - this.origin);
+        this.phase = begin - latency;
+        const end = round(begin + duration);
+        const time = getTime();
+        try {
+          const haps = this.pattern.queryArc(begin, end); // get Haps
+          // console.log('haps', haps.map((hap) => hap.value.n).join(' '));
+          haps.forEach((hap) => {
+            // console.log('hap', hap.value.n, hap.part.begin);
+            if (hap.part.begin.equals(hap.whole.begin)) {
+              const deadline = hap.whole.begin + this.origin - time + latency;
+              const duration = hap.duration * 1;
+              onTrigger?.(hap, deadline, duration);
+            }
+          });
+        } catch (e) {
+          console.warn('scheduler error', e);
+          onError?.(e);
+        }
+      }, // called slightly before each cycle
+      interval, // duration of each cycle
+    );
+  }
+  getPhase() {
+    return this.phase;
+  }
+  start() {
+    if (!this.pattern) {
+      throw new Error('Scheduler: no pattern set! call .setPattern first.');
+    }
+    this.clock.start();
+    this.started = true;
+  }
+  pause() {
+    this.clock.stop();
+    delete this.origin;
+    this.started = false;
+  }
+  stop() {
+    delete this.origin;
+    this.clock.stop();
+    this.started = false;
+  }
+  setPattern(pat) {
+    this.pattern = pat;
+  }
+  setCps(cps = 1) {
+    this.cps = cps;
+  }
+  log(begin, end, haps) {
+    const onsets = haps.filter((h) => h.hasOnset());
+    console.log(`${begin.toFixed(4)} - ${end.toFixed(4)} ${Array(onsets.length).fill('I').join('')}`);
+  }
+}
+
+// import { Scheduler } from '@strudel.cycles/core';
+
 function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = false }) {
   // scheduler
   const [schedulerError, setSchedulerError] = useState();
@@ -565,7 +680,8 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = fals
   const isDirty = code !== activeCode;
   // TODO: how / when to remove schedulerError?
   const scheduler = useMemo(
-    () => new Scheduler({ interval, onTrigger: defaultOutput, onError: setSchedulerError, getTime }),
+    // () => new Scheduler({ interval, onTrigger: defaultOutput, onError: setSchedulerError, getTime }),
+    () => new Cyclist({ interval, onTrigger: defaultOutput, onError: setSchedulerError, getTime }),
     [defaultOutput, interval],
   );
   const evaluate$1 = useCallback(async () => {
