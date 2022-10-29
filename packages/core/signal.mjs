@@ -27,9 +27,9 @@ export const isaw2 = isaw._toBipolar();
  *
  * @return {Pattern}
  * @example
- * "c3 [eb3,g3] g2 [g3,bb3]".legato(saw.slow(4))
+ * "c3 [eb3,g3] g2 [g3,bb3]".legato(saw.slow(4)).note()
  * @example
- * saw.range(0,8).segment(8).scale('C major').slow(4)
+ * saw.range(0,8).segment(8).scale('C major').slow(4).note()
  *
  */
 export const saw = signal((t) => t % 1);
@@ -42,7 +42,7 @@ export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
  *
  * @return {Pattern}
  * @example
- * sine.segment(16).range(0,15).slow(2).scale('C minor')
+ * sine.segment(16).range(0,15).slow(2).scale('C minor').note()
  *
  */
 export const sine = sine2._fromBipolar();
@@ -52,7 +52,7 @@ export const sine = sine2._fromBipolar();
  *
  * @return {Pattern}
  * @example
- * stack(sine,cosine).segment(16).range(0,15).slow(2).scale('C minor')
+ * stack(sine,cosine).segment(16).range(0,15).slow(2).scale('C minor').note()
  *
  */
 export const cosine = sine._early(Fraction(1).div(4));
@@ -63,7 +63,7 @@ export const cosine2 = sine2._early(Fraction(1).div(4));
  *
  * @return {Pattern}
  * @example
- * square.segment(2).range(0,7).scale('C minor')
+ * square.segment(2).range(0,7).scale('C minor').note()
  *
  */
 export const square = signal((t) => Math.floor((t * 2) % 2));

@@ -260,9 +260,9 @@ resulting in a rhythmical structure of "x ~ ~ x ~ ~ x ~" (3 beats over 8 segment
 
 <br />
 
-# Web Audio Output
+# Synths, Samples & Effects
 
-The default way to output sound is by using the Web Audio Output.
+Let's take a closer look at how we can control synths, sounds and effects.
 
 ## Synths
 
@@ -447,10 +447,37 @@ Wether you're using a synth or a sample, you can apply these effects:
 
 <br />
 
-# Core API
+# JavaScript API
 
 While the mini notation is powerful on its own, there is much more to discover.
 Internally, the mini notation will expand to use the actual functional JavaScript API.
+
+For example, this Pattern in Mini Notation:
+
+<MiniRepl tune={`note("c3 eb3 g3")`} />
+
+is equivalent to this Pattern without Mini Notation:
+
+<MiniRepl tune={`note(seq(c3, eb3, g3))`} />
+
+Similarly, there is an equivalent function for every aspect of the mini notation.
+
+Which representation to use is a matter of context. As a rule of thumb, you can think of the JavaScript API
+to fit better for the larger context, while mini notation is more practical for individiual rhythms.
+
+## Limits of Mini Notation
+
+While the Mini Notation is a powerful way to write rhythms shortly, it also has its limits. Take this example:
+
+<MiniRepl
+  tune={`stack(
+  note("c2 eb2(3,8)").s('sawtooth').cutoff(800),
+  s("bd,~ sd,hh*4")
+)`}
+/>
+
+Here, we are using mini notation for the individual rhythms, while using the function `stack` to mix them.
+While stack is also available as `,` in mini notation, we cannot use it here, because we have different types of sounds.
 
 ## Notes
 
@@ -474,15 +501,17 @@ To avoid getting to many nested parens, there is an alternative syntax to add a 
 
 <MiniRepl tune={`seq(d4, fs4, a4).note()`} />
 
-You can use this with any function that declares a type, just make sure to leave the parens empty!
+You can use this with any function that declares a type (like `n`, `s`, `note`, `freq` etc), just make sure to leave the parens empty!
 
 ## Pattern Factories
 
 The following functions will return a pattern.
 
+<!--
 {{ 'pure' | jsdoc }}
 
 Most of the time, you won't need that function as input values of pattern creating functions are purified by default.
+-->
 
 {{ 'cat' | jsdoc }}
 
@@ -526,7 +555,7 @@ You can freely mix JS patterns, mini patterns and values! For example, this patt
   stack(a3,c3,e4),
   stack(b3,d3,fs4),
   stack(b3,e4,g4)
-)`}
+).note()`}
 />
 
 ...is equivalent to:
@@ -537,12 +566,12 @@ You can freely mix JS patterns, mini patterns and values! For example, this patt
   "a3,c3,e4",
   "b3,d3,f#4",
   "b3,e4,g4"
-)`}
+).note()`}
 />
 
 ... as well as:
 
-<MiniRepl tune={`"<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>"`} />
+<MiniRepl tune={`note("<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>")`} />
 
 While mini notation is almost always shorter, it only has a handful of modifiers: \* / ! @.
 When using JS patterns, there is a lot more you can do.
@@ -689,13 +718,13 @@ The Tonal API, uses [tonaljs](https://github.com/tonaljs/tonal) to provide helpe
 
 Transposes all notes to the given number of semitones:
 
-<MiniRepl tune={`"c2 c3".fast(2).transpose("<0 -2 5 3>".slow(2)).transpose(0)`} />
+<MiniRepl tune={`"c2 c3".fast(2).transpose("<0 -2 5 3>".slow(2)).note()`} />
 
 This method gets really exciting when we use it with a pattern as above.
 
 Instead of numbers, scientific interval notation can be used as well:
 
-<MiniRepl tune={`"c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).transpose(1)`} />
+<MiniRepl tune={`"c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).note()`} />
 
 ### scale(name)
 
@@ -703,7 +732,8 @@ Turns numbers into notes in the scale (zero indexed). Also sets scale for other 
 
 <MiniRepl
   tune={`"0 2 4 6 4 2"
-.scale(seq('C2 major', 'C2 minor').slow(2))`}
+.scale(seq('C2 major', 'C2 minor').slow(2))
+.note()`}
 />
 
 Note that the scale root is octaved here. You can also omit the octave, then index zero will default to octave 3.
@@ -717,14 +747,15 @@ Transposes notes inside the scale by the number of steps:
 <MiniRepl
   tune={`"-8 [2,4,6]"
 .scale('C4 bebop major')
-.scaleTranspose("<0 -1 -2 -3 -4 -5 -6 -4>")`}
+.scaleTranspose("<0 -1 -2 -3 -4 -5 -6 -4>")
+.note()`}
 />
 
 ### voicings(range?)
 
 Turns chord symbols into voicings, using the smoothest voice leading possible:
 
-<MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")`} />
+<MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>").note()`} />
 
 <!-- TODO: use voicing collection as first param + patternify. -->
 
@@ -732,7 +763,7 @@ Turns chord symbols into voicings, using the smoothest voice leading possible:
 
 Turns chord symbols into root notes of chords in given octave.
 
-<MiniRepl tune={`"<C^7 A7b13 Dm7 G7>".rootNotes(3)`} />
+<MiniRepl tune={`"<C^7 A7b13 Dm7 G7>".rootNotes(3).note()`} />
 
 Together with layer, struct and voicings, this can be used to create a basic backing track:
 
@@ -740,7 +771,7 @@ Together with layer, struct and voicings, this can be used to create a basic bac
   tune={`"<C^7 A7b13 Dm7 G7>".layer(
   x => x.voicings(['d3','g4']).struct("~ x"),
   x => x.rootNotes(2).tone(synth(osc('sawtooth4')).chain(out()))
-)`}
+).note()`}
 />
 
 <!-- TODO: use range instead of octave. -->

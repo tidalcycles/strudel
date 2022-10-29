@@ -40,7 +40,7 @@ Pattern.prototype.fmapNested = function (func) {
  * @param {range} range note range for possible voicings (optional, defaults to `['F3', 'A4']`)
  * @returns Pattern
  * @example
- * stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")
+ * stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>").note()
  */
 
 Pattern.prototype.voicings = function (range) {

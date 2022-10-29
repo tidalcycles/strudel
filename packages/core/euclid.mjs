@@ -32,52 +32,52 @@ const euclid = (pulses, steps, rotation = 0) => {
  * @returns Pattern
  * @example
  * // The Cuban tresillo pattern.
- * n("c3").euclid(3,8)
+ * note("c3").euclid(3,8)
  */
 
 /**
  * @example // A thirteenth century Persian rhythm called Khafif-e-ramal.
- * n("c3").euclid(2,5)
+ * note("c3").euclid(2,5)
  * @example // The archetypal pattern of the Cumbia from Colombia, as well as a Calypso rhythm from Trinidad.
- * "c3".euclid(3,4)
+ * note("c3").euclid(3,4)
  * @example // Another thirteenth century Persian rhythm by the name of Khafif-e-ramal, as well as a Rumanian folk-dance rhythm.
- * "c3".euclid(3,5,2)
+ * note("c3").euclid(3,5,2)
  * @example // A Ruchenitza rhythm used in a Bulgarian folk-dance.
- * "c3".euclid(3,7)
+ * note("c3").euclid(3,7)
  * @example // The Cuban tresillo pattern.
- * "c3".euclid(3,8)
+ * note("c3").euclid(3,8)
  * @example // Another Ruchenitza Bulgarian folk-dance rhythm.
- * "c3".euclid(4,7)
+ * note("c3").euclid(4,7)
  * @example // The Aksak rhythm of Turkey.
- * "c3".euclid(4,9)
+ * note("c3").euclid(4,9)
  * @example // The metric pattern used by Frank Zappa in his piece titled Outside Now.
- * "c3".euclid(4,11)
+ * note("c3").euclid(4,11)
  * @example // Yields the York-Samai pattern, a popular Arab rhythm.
- * "c3".euclid(5,6)
+ * note("c3").euclid(5,6)
  * @example // The Nawakhat pattern, another popular Arab rhythm.
- * "c3".euclid(5,7)
+ * note("c3").euclid(5,7)
  * @example // The Cuban cinquillo pattern.
- * "c3".euclid(5,8)
+ * note("c3").euclid(5,8)
  * @example // A popular Arab rhythm called Agsag-Samai.
- * "c3".euclid(5,9)
+ * note("c3").euclid(5,9)
  * @example // The metric pattern used by Moussorgsky in Pictures at an Exhibition.
- * "c3".euclid(5,11)
+ * note("c3").euclid(5,11)
  * @example // The Venda clapping pattern of a South African children’s song.
- * "c3".euclid(5,12)
+ * note("c3").euclid(5,12)
  * @example // The Bossa-Nova rhythm necklace of Brazil.
- * "c3".euclid(5,16)
+ * note("c3").euclid(5,16)
  * @example // A typical rhythm played on the Bendir (frame drum).
- * "c3".euclid(7,8)
+ * note("c3").euclid(7,8)
  * @example // A common West African bell pattern.
- * "c3".euclid(7,12)
+ * note("c3").euclid(7,12)
  * @example // A Samba rhythm necklace from Brazil.
- * "c3".euclid(7,16,14)
+ * note("c3").euclid(7,16,14)
  * @example // A rhythm necklace used in the Central African Republic.
- * "c3".euclid(9,16)
+ * note("c3").euclid(9,16)
  * @example // A rhythm necklace of the Aka Pygmies of Central Africa.
- * "c3".euclid(11,24,14)
+ * note("c3").euclid(11,24,14)
  * @example // Another rhythm necklace of the Aka Pygmies of the upper Sangha.
- * "c3".euclid(13,24,5)
+ * note("c3").euclid(13,24,5)
  */
 Pattern.prototype.euclid = function (pulses, steps, rotation = 0) {
   return this.struct(euclid(pulses, steps, rotation));
