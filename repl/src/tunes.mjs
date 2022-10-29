@@ -155,7 +155,7 @@ export const zeldasRescue = `stack(
   .gain(.1)
   .s('triangle')
   .room(1)
-  .out()`;
+  `;
 
 export const caverave = `const keys = x => x.s('sawtooth').cutoff(1200).gain(.5).attack(0).decay(.16).sustain(.3).release(.1);
 
@@ -186,7 +186,7 @@ const synths = stack(
 stack(
   drums.fast(2), 
   synths
-).slow(2).out()`;
+).slow(2)`;
 
 export const sampleDrums = `samples({
   bd: 'bd/BT0A0D0.wav',
@@ -198,7 +198,7 @@ stack(
   "<bd!3 bd(3,4,2)>",
   "hh*4",
   "~ <sn!3 sn(3,4,1)>"
-).s().out()
+).s()
 `;
 
 // TODO:
@@ -290,7 +290,7 @@ export const barryHarris = `backgroundImage(
   .scale('C bebop major')
   .transpose("<0 1 2 1>/8")
   .slow(2)
-  .note().piano().out()
+  .note().piano()
 `;
 
 export const blippyRhodes = `samples({
@@ -331,7 +331,7 @@ stack(
   .slow(2).superimpose(x=>x.add(.02))
   .note().gain(.3)
   .s('sawtooth').cutoff(600),
-).fast(3/2).out()`;
+).fast(3/2)`;
 
 export const wavyKalimba = `samples({
   'kalimba': { c5:'https://freesound.org/data/previews/536/536549_11935698-lq.mp3' }
@@ -359,7 +359,7 @@ stack(
   .clip(1)
   .s('kalimba')
   .delay(.2)
-  .out()`;
+  `;
 
 // TODO: rework tune to use freq
 /*
@@ -401,7 +401,7 @@ stack(
   .scaleTranspose("0 4 0 6".early(".125 .5")).layer(scaleTranspose("0,<2 [4,6] [5,7]>/4"))
 ).slow(2)
  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
- .note().piano().out()`;
+ .note().piano()`;
 
 // iter, echo, echoWith
 export const undergroundPlumber = `backgroundImage('https://images.nintendolife.com/news/2016/08/video_exploring_the_funky_inspiration_for_the_super_mario_bros_underground_theme/large.jpg',{ className:'darken' })
@@ -425,7 +425,7 @@ stack(
   .echoWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
   .legato(.1)
   .layer(h).note()
-).out()
+)
   .fast(2/3)
   .pianoroll({})`;
 
@@ -444,7 +444,7 @@ stack(
   ).transpose(-1).note().piano(),
   s("mad").slow(2)
 ).cpm(78).slow(4)
-  .out()
+  
   .pianoroll()
 `;
 
@@ -463,7 +463,7 @@ stack(
   .scale(scale)
 .scaleTranspose("<0>".slow(4))
 .transpose(5)
-.note().piano().out()
+.note().piano()
 .velocity(.8)
 .slow(2)
 .pianoroll({maxMidi:100,minMidi:20})`;
@@ -475,7 +475,7 @@ export const echoPiano = `"<0 2 [4 6](3,4,1) 3*2>"
 .off(1/2, x=>x.scaleTranspose(6).color('steelblue'))
 .legato(.5)
 .echo(4, 1/8, .5)
-.note().piano().out()
+.note().piano()
 .pianoroll()`;
 
 export const sml1 = `
@@ -511,7 +511,7 @@ stack(
   f3!2 e3!2 ab3!2 ~!2
   >\`
   .legato(.5)
-).fast(2) // .note().piano().out()`;
+).fast(2) // .note().piano()`;
 
 /*
 // TODO: does not work on linux (at least for me..)
@@ -554,7 +554,7 @@ stack(
   "<D2 A2 G2 F2>".euclidLegato(6,8,1).note().s('bass').clip(1).gain(.8)
 )
   .slow(6)
-  .out()
+  
   .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})
   `;
 
@@ -570,7 +570,7 @@ export const waa2 = `n(
   .cutoff(cosine.range(500,4000).slow(16))
   .gain(.5)
   .room(.5)
-  .out()`;
+  `;
 
 export const hyperpop = `const lfo = cosine.slow(15);
 const lfo2 = sine.slow(16);
@@ -618,7 +618,7 @@ stack(
     "~ sn",
     "[~ hh3]*2"
   ).s().fast(2).gain(.7)
-).slow(2).out()
+).slow(2)
 // strudel disable-highlighting`;
 
 export const festivalOfFingers3 = `"[-7*3],0,2,6,[8 7]"
@@ -634,7 +634,7 @@ export const festivalOfFingers3 = `"[-7*3],0,2,6,[8 7]"
 .scale(cat('D dorian','G mixolydian','C dorian','F mixolydian'))
 .legato(1)
 .slow(2)
-.note().piano().out()
+.note().piano()
 //.pianoroll({maxMidi:160})`;
 
 export const bossa = `
@@ -642,7 +642,7 @@ const scales = sequence('C minor', ['D locrian', 'G phrygian'], 'Bb2 minor', ['C
 stack(
   "<Cm7 [Dm7b5 G7b9] Bbm7 [Cm7b5 F7b9]>".fast(2).struct("x ~ x@3 x ~ x ~ ~ ~ x ~ x@3".late(1/8)).early(1/8).slow(2).voicings(),
   "[~ [0 ~]] 0 [~ [4 ~]] 4".sub(7).restart(scales).scale(scales).early(.25)
-).note().piano().out().slow(2)`;
+).note().piano().slow(2)`;
 /* 
 export const customTrigger = `stack(
   freq("55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)").layer(x=>x.mul("1.006,.995"))),
@@ -701,7 +701,7 @@ stack(
   .echoWith(4,.125,(x,n)=>x.gain(.15*1/(n+1))) // echo notes
   //.hush()
 )
-  .out()
+  
   .slow(3/2)`;
 
 export const swimmingWithSoundfonts = `stack(
@@ -763,7 +763,7 @@ export const swimmingWithSoundfonts = `stack(
       "[G2 C2 F2 F2]"
     ).s('Acoustic Bass: Bass')
   ).slow(51)
-    .out()`;
+    `;
 
 export const outroMusic = `samples({
   bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
@@ -790,7 +790,7 @@ export const outroMusic = `samples({
     .n(3).color('gray')
   ).slow(3/2)
   //.pianoroll({autorange:1,vertical:1,fold:0})
-  .out()`;
+  `;
 
 export const bassFuge = `samples({ flbass: ['00_c2_finger_long_neck.wav','01_c2_finger_short_neck.wav','02_c2_finger_long_bridge.wav','03_c2_finger_short_bridge.wav','04_c2_pick_long.wav','05_c2_pick_short.wav','06_c2_palm_mute.wav'] }, 
   'github:cleary/samples-flbass/main/')
@@ -814,7 +814,7 @@ x=>x.add(7).color('steelblue')
 //.hcutoff(400)
 .clip(1)
 .stack(s("bd:1*2,~ sd:0,[~ hh:0]*2"))
-.out()
+
 .pianoroll({vertical:1})`;
 
 export const bossaRandom = `const chords = "<Am7 Am7 Dm7 E7>"
@@ -826,7 +826,7 @@ stack(
     x?  ~ ~ x@3   ~ x |
     x?  ~ ~ x ~ x@3\`),
   roots.struct("x [~ x?0.2] x [~ x?] | x!4 | x@2 ~ ~ ~ x x x").transpose("0 7")
-).slow(2).pianoroll().note().piano().out()`;
+).slow(2).pianoroll().note().piano()`;
 
 export const chop = `samples({ p: 'https://cdn.freesound.org/previews/648/648433_11943129-lq.mp3' })
 
@@ -837,14 +837,14 @@ s("p")
   .shape(.4)
   .decay(.1)
   .sustain(.6)
-  .out()`;
+  `;
 
 export const delay = `stack(
     s("bd <sd cp>")
     .delay("<0 .5>")
     .delaytime(".16 | .33")
     .delayfeedback(".6 | .8")
-  ).sometimes(x=>x.speed("-1")).out()`;
+  ).sometimes(x=>x.speed("-1"))`;
 
 export const orbit = `stack(
     s("bd <sd cp>")
@@ -856,4 +856,4 @@ export const orbit = `stack(
     .delaytime(.08)
     .delayfeedback(.7)
     .orbit(2)
-  ).sometimes(x=>x.speed("-1")).out()`;
+  ).sometimes(x=>x.speed("-1"))`;
