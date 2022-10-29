@@ -214,7 +214,7 @@ const generic_params = [
     'bit crushing, a pattern of numbers from 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).',
   ],
   /**
-   * fake-resampling for lowering the sample rate
+   * fake-resampling for lowering the sample rate. Caution: This effect seems to only work in chromium based browsers
    *
    * @name coarse
    * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.
@@ -280,7 +280,7 @@ const generic_params = [
    * Applies the resonance of the high-pass filter.
    *
    * @name hresonance
-   * @param {number | Pattern} q resonance factor between 0 and 1
+   * @param {number | Pattern} q resonance factor between 0 and 50
    * @example
    * s("bd sd,hh*4").hcutoff(2000).hresonance("<0 10 20 30>")
    *
@@ -295,7 +295,7 @@ const generic_params = [
    * Applies the cutoff frequency of the low-pass filter.
    *
    * @name resonance
-   * @param {number | Pattern} q resonance factor between 0 and 1
+   * @param {number | Pattern} q resonance factor between 0 and 50
    * @example
    * s("bd sd,hh*4").cutoff(2000).resonance("<0 10 20 30>")
    *
