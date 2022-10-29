@@ -440,8 +440,8 @@ describe('Pattern', () => {
   });
   describe('slow()', () => {
     it('Supports zero-length queries', () => {
-      expect(steady('a').slow(1).queryArc(0,0)
-	    ).toStrictEqual(steady('a').queryArc(0,0))
+      expect(steady('a').slow(1)._setContext({}).queryArc(0,0)
+	    ).toStrictEqual(steady('a')._setContext({}).queryArc(0,0))
     });
   });
   describe('inside', () => {

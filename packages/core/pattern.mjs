@@ -63,6 +63,17 @@ export class Pattern {
     return new Pattern((state) => this.query(state.withSpan(func)));
   }
 
+  withQuerySpanMaybe(func) {
+    const pat = this;
+    return new Pattern((state) => {
+      const newState = state.withSpan(func);
+      if (!newState.span) {
+	return [];
+      }
+      return pat.query(newState);
+    });
+  }
+
   /**
    * As with {@link Pattern#withQuerySpan}, but the function is applied to both the
    * begin and end time of the query timespan.
@@ -744,12 +755,17 @@ export class Pattern {
     //     // there is no gap.. so maybe revert to _fast?
     //     return this._fast(factor)
     // }
+    // A bit fiddly, to drop zero-width queries at the start of the next cycle
     const qf = function (span) {
       const cycle = span.begin.sam();
-      const begin = cycle.add(span.begin.sub(cycle).mul(factor).min(1));
-      const end = cycle.add(span.end.sub(cycle).mul(factor).min(1));
-      return new TimeSpan(begin, end);
+      const bpos = span.begin.sub(cycle).mul(factor).min(1);
+      const epos = span.end.sub(cycle).mul(factor).min(1);
+      if (bpos >= 1) {
+	return undefined;
+      }
+      return new TimeSpan(cycle.add(bpos), cycle.add(epos));
     };
+    // Also fiddly, to maintain the right 'whole' relative to the part
     const ef = function (hap) {
       const begin = hap.part.begin;
       const end = hap.part.end;
@@ -763,9 +779,9 @@ export class Pattern {
       );
       return new Hap(newWhole, newPart, hap.value, hap.context);
     };
-    return this.withQuerySpan(qf)._withHap(ef)._splitQueries();
+    return this.withQuerySpanMaybe(qf)._withHap(ef)._splitQueries();
   }
-
+  
   // Compress each cycle into the given timespan, leaving a gap
   _compress(b, e) {
     if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
