@@ -903,3 +903,17 @@ note("Abm7".voicings(['c3','a4']).struct("x(3,8,1)".slow(2))),
 .degradeBy(.4).room(1),
 note("<b4 eb4>").s('dino').delay(.8).slow(8).room(.5)
 )`;
+
+export const sampleDemo = `stack(
+  // percussion
+  s("[woodblock:1 woodblock:2*2] snare_rim:0,gong/8,brakedrum:1(3,8),~@3 cowbell:3")
+  .sometimes(x=>x.speed(2)),
+  // melody
+  note("<0 4 1 3 2>".off(".25 | .125",add(2)).scale('D3 hirajoshi'))
+  .s("clavisynth").gain(.2).delay(.25).jux(rev)
+  .degradeBy(sine.range(0,.5).slow(32)),
+  // bass
+  note("<0@3 <2(3,8) 3(3,8)>>".scale('D1 hirajoshi'))
+  .s('psaltery_pluck').gain(.6).clip(1)
+  .release(.1).room(.5)
+)`;
