@@ -22,8 +22,9 @@ class CoarseProcessor extends AudioWorkletProcessor {
       this.notStarted = false;
       output[0][0] = input[0][0];
       for (let n = 1; n < blockSize; n++) {
-        if (n % coarse == 0) output[0][n] = input[0][n];
-        else output[0][n] = output[0][n - 1];
+        for (let o = 0; o < output.length; o++) {
+          output[o][n] = n % coarse == 0 ? input[0][n] : output[o][n - 1];
+        }
       }
     }
     return this.notStarted || hasInput;
@@ -52,11 +53,19 @@ class CrushProcessor extends AudioWorkletProcessor {
       this.notStarted = false;
       if (crush.length === 1) {
         const x = Math.pow(2, crush[0] - 1);
-        for (let n = 0; n < blockSize; n++) output[0][n] = Math.round(input[0][n] * x) / x;
+        for (let n = 0; n < blockSize; n++) {
+          const value = Math.round(input[0][n] * x) / x;
+          for (let o = 0; o < output.length; o++) {
+            output[o][n] = value;
+          }
+        }
       } else {
         for (let n = 0; n < blockSize; n++) {
           let x = Math.pow(2, crush[n] - 1);
-          output[0][n] = Math.round(input[0][n] * x) / x;
+          const value = Math.round(input[0][n] * x) / x;
+          for (let o = 0; o < output.length; o++) {
+            output[o][n] = value;
+          }
         }
       }
     }
@@ -86,7 +95,10 @@ class ShapeProcessor extends AudioWorkletProcessor {
     if (hasInput) {
       this.notStarted = false;
       for (let n = 0; n < blockSize; n++) {
-        output[0][n] = ((1 + shape) * input[0][n]) / (1 + shape * Math.abs(input[0][n]));
+        const value = ((1 + shape) * input[0][n]) / (1 + shape * Math.abs(input[0][n]));
+        for (let o = 0; o < output.length; o++) {
+          output[o][n] = value;
+        }
       }
     }
     return this.notStarted || hasInput;
