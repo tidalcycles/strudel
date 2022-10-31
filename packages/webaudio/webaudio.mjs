@@ -246,6 +246,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     let {
       freq,
       s,
+      bank,
       sf,
       clip = 0, // if 1, samples will be cut off when the hap ends
       n = 0,
@@ -281,6 +282,9 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     gain *= velocity; // legacy fix for velocity
     // the chain will hold all audio nodes that connect to each other
     const chain = [];
+    if (bank && s) {
+      s = `${bank}_${s}`;
+    }
     if (typeof s === 'string') {
       [s, n] = splitSN(s, n);
     }

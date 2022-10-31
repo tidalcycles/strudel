@@ -100,6 +100,22 @@ const generic_params = [
     'attack',
     'a pattern of numbers to specify the attack time (in seconds) of an envelope applied to each sample.',
   ],
+
+  /**
+   * Select the sound bank to use. To be used together with `s`. The bank name (+ "_") will be prepended to the value of `s`. 
+   *
+   * @name bank
+   * @param {string | Pattern} bank the name of the bank
+   * @example
+   * s("bd sd").bank('RolandTR909') // = s("RolandTR909_bd RolandTR909_sd")
+   *
+   */
+  [
+    'f',
+    'bank',
+    'selects sound bank to use',
+  ],
+
   // TODO: find out how this works?
   /*
    * Envelope decay time = the time it takes after the attack time to reach the sustain level.
