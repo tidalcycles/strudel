@@ -1,7 +1,7 @@
 if (typeof AudioContext !== 'undefined') {
-  AudioContext.prototype.impulseResponse = function (duration) {
+  AudioContext.prototype.impulseResponse = function (duration, channels = 1) {
     const length = this.sampleRate * duration;
-    const impulse = this.createBuffer(2, length, this.sampleRate);
+    const impulse = this.createBuffer(channels, length, this.sampleRate);
     const IR = impulse.getChannelData(0);
     for (let i = 0; i < length; i++) IR[i] = (2 * Math.random() - 1) * Math.pow(1 - i / length, duration);
     return impulse;
