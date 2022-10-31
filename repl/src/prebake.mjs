@@ -4980,7 +4980,3 @@ Pattern.prototype.piano = function () {
       return { ...value, pan: (value.pan || 1) * pan };
     });
 };
-
-Pattern.prototype.soundbank = function (name) {
-  return this.fmap((v) => ({ ...v, s: `${name}_${v.s}` }));
-};
