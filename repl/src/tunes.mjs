@@ -928,3 +928,10 @@ export const holyflute = `"c3 eb3(3,8) c4/2 g3*2"
 .color("salmon | orange | darkseagreen")
 .pianoroll({fold:0,autorange:0,vertical:0,cycles:12,smear:0,minMidi:40})
 `;
+
+export const drums909 = `stack(
+  s("bd909:2*2").end(.2),
+  s("~@7 <~@3 bd909:2>").end(.2),
+  s("hh909:4*4").sometimes(fast("2")).speed(1.3).room(.5),
+  s("~ cp909:2").room("<0 1>").delay("<0 .5>").delaytime(.125)
+).gain(.5)`;
