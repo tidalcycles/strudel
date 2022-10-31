@@ -930,8 +930,8 @@ export const holyflute = `"c3 eb3(3,8) c4/2 g3*2"
 `;
 
 export const drums909 = `stack(
-  s("bd909:2*2").end(.2),
-  s("~@7 <~@3 bd909:2>").end(.2),
-  s("hh909:4*4").sometimes(fast("2")).speed(1.3).room(.5),
-  s("~ cp909:2").room("<0 1>").delay("<0 .5>").delaytime(.125)
-).gain(.5)`;
+  s("bd:2*2").end(.2),
+  s("~@7 <~@3 bd:2>").end(.2),
+  s("hh:4*4").sometimes(fast("2")).speed(1.3).room(.5),
+  s("~ cp:2").room("<0 1>").delay("<0 .5>").delaytime(.125)
+).gain(.5).bank('RolandTR909')`;
