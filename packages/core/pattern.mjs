@@ -10,7 +10,7 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
 
-import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod } from './util.mjs';
+import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod, numeralArgs } from './util.mjs';
 import drawLine from './drawLine.mjs';
 
 /** @class Class representing a pattern. */
@@ -68,7 +68,7 @@ export class Pattern {
     return new Pattern((state) => {
       const newState = state.withSpan(func);
       if (!newState.span) {
-	return [];
+        return [];
       }
       return pat.query(newState);
     });
@@ -446,8 +446,13 @@ export class Pattern {
     return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._TrigzeroJoin();
   }
 
+  // TODO: refactor to parseNumber / withNumberArgs (see util)
   _asNumber(dropfails = false, softfail = false) {
     return this._withHap((hap) => {
+      // leave objects alone... this is needed to be able to do pat.add(n(2))
+      if (!['number', 'string'].includes(typeof hap.value)) {
+        return hap;
+      }
       const asNumber = Number(hap.value);
       if (!isNaN(asNumber)) {
         return hap.withValue(() => asNumber);
@@ -761,7 +766,7 @@ export class Pattern {
       const bpos = span.begin.sub(cycle).mul(factor).min(1);
       const epos = span.end.sub(cycle).mul(factor).min(1);
       if (bpos >= 1) {
-	return undefined;
+        return undefined;
       }
       return new TimeSpan(cycle.add(bpos), cycle.add(epos));
     };
@@ -783,7 +788,7 @@ export class Pattern {
     };
     return this.withQuerySpanMaybe(qf)._withHap(ef)._splitQueries();
   }
-  
+
   // Compress each cycle into the given timespan, leaving a gap
   _compress(b, e) {
     if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
@@ -1387,7 +1392,7 @@ function _composeOp(a, b, func) {
 // Make composers
 (function () {
   const num = (pat) => pat._asNumber();
-  const numOrString = (pat) => pat._asNumber(false, true);
+  // const numOrString = (pat) => pat._asNumber(false, true); // was used for add
 
   // pattern composers
   const composers = {
@@ -1412,7 +1417,7 @@ function _composeOp(a, b, func) {
      * // Behind the scenes, the notes are converted to midi numbers:
      * // "48 52 55".add("<0 5 7 0>").note()
      */
-    add: [(a, b) => a + b, numOrString], // support string concatenation
+    add: [numeralArgs((a, b) => a + b), num], // support string concatenation
     /**
      *
      * Like add, but the given numbers are subtracted.
@@ -1422,7 +1427,7 @@ function _composeOp(a, b, func) {
      * "0 2 4".sub("<0 1 2 3>").scale('C4 minor').note()
      * // See add for more information.
      */
-    sub: [(a, b) => a - b, num],
+    sub: [numeralArgs((a, b) => a - b), num],
     /**
      *
      * Multiplies each number by the given factor.
@@ -1431,14 +1436,14 @@ function _composeOp(a, b, func) {
      * @example
      * "1 1.5 [1.66, <2 2.33>]".mul(150).freq()
      */
-    mul: [(a, b) => a * b, num],
+    mul: [numeralArgs((a, b) => a * b), num],
     /**
      *
      * Divides each number by the given factor.
      * @name div
      * @memberof Pattern
      */
-    div: [(a, b) => a / b, num],
+    div: [numeralArgs((a, b) => a / b), num],
     mod: [mod, num],
     pow: [Math.pow, num],
     _and: [(a, b) => a & b, num],

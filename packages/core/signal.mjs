@@ -238,6 +238,7 @@ export const wchoose = (...pairs) => wchooseWith(rand, ...pairs);
 
 export const wchooseCycles = (...pairs) => _wchooseWith(rand, ...pairs).innerJoin();
 
+// this function expects pat to be a pattern of floats...
 export const perlinWith = (pat) => {
   const pata = pat.fmap(Math.floor);
   const patb = pat.fmap((t) => Math.floor(t) + 1);
@@ -255,7 +256,7 @@ export const perlinWith = (pat) => {
  * s("bd sd,hh*4").cutoff(perlin.range(500,2000))
  *
  */
-export const perlin = perlinWith(time);
+export const perlin = perlinWith(time.fmap((v) => Number(v)));
 
 Pattern.prototype._degradeByWith = function (withPat, x) {
   return this.fmap((a) => (_) => a).appLeft(withPat._filterValues((v) => v > x));

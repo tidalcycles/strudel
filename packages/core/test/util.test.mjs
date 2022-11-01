@@ -5,7 +5,19 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { pure } from '../pattern.mjs';
-import { isNote, tokenizeNote, toMidi, fromMidi, mod, compose, getFrequency, getPlayableNoteValue } from '../util.mjs';
+import {
+  isNote,
+  tokenizeNote,
+  toMidi,
+  fromMidi,
+  mod,
+  compose,
+  getFrequency,
+  getPlayableNoteValue,
+  parseNumeral,
+  numeralArgs,
+  fractionalArgs,
+} from '../util.mjs';
 import { describe, it, expect } from 'vitest';
 
 describe('isNote', () => {
@@ -92,16 +104,16 @@ describe('getFrequency', () => {
     expect(getFrequency(happify(57, { type: 'midi' }))).toEqual(220);
   });
   it('should return frequencies unchanged', () => {
-    expect(getFrequency(happify(440, { type: 'frequency' }))).toEqual(440); 
+    expect(getFrequency(happify(440, { type: 'frequency' }))).toEqual(440);
     expect(getFrequency(happify(432, { type: 'frequency' }))).toEqual(432);
   });
   it('should turn object with a "freq" property into frequency', () => {
-    expect(getFrequency(happify({freq: 220}))).toEqual(220)
-    expect(getFrequency(happify({freq: 440}))).toEqual(440)
+    expect(getFrequency(happify({ freq: 220 }))).toEqual(220);
+    expect(getFrequency(happify({ freq: 440 }))).toEqual(440);
   });
   it('should throw an error when given a non-note', () => {
-    expect(() => getFrequency(happify('Q'))).toThrowError(`not a note or frequency: Q`)
-    expect(() => getFrequency(happify('Z'))).toThrowError(`not a note or frequency: Z`)
+    expect(() => getFrequency(happify('Q'))).toThrowError(`not a note or frequency: Q`);
+    expect(() => getFrequency(happify('Z'))).toThrowError(`not a note or frequency: Z`);
   });
 });
 
@@ -140,22 +152,72 @@ describe('compose', () => {
 describe('getPlayableNoteValue', () => {
   const happify = (val, context = {}) => pure(val).firstCycle()[0].setContext(context);
   it('should return object "note" property', () => {
-    expect(getPlayableNoteValue(happify({note: "a4"}))).toEqual('a4')
+    expect(getPlayableNoteValue(happify({ note: 'a4' }))).toEqual('a4');
   });
   it('should return object "n" property', () => {
-    expect(getPlayableNoteValue(happify({n: "a4"}))).toEqual('a4')
+    expect(getPlayableNoteValue(happify({ n: 'a4' }))).toEqual('a4');
   });
   it('should return object "value" property', () => {
-    expect(getPlayableNoteValue(happify({value: "a4"}))).toEqual('a4')
+    expect(getPlayableNoteValue(happify({ value: 'a4' }))).toEqual('a4');
   });
   it('should turn midi into frequency', () => {
-    expect(getPlayableNoteValue(happify(57, {type: 'midi'}))).toEqual(220)
-  })
+    expect(getPlayableNoteValue(happify(57, { type: 'midi' }))).toEqual(220);
+  });
   it('should return frequency value', () => {
-    expect(getPlayableNoteValue(happify(220, {type: 'frequency'}))).toEqual(220)
-  })
+    expect(getPlayableNoteValue(happify(220, { type: 'frequency' }))).toEqual(220);
+  });
   it('should throw an error if value is not an object, number, or string', () => {
-    expect(() => getPlayableNoteValue(happify(false))).toThrowError(`not a note: false`)
-    expect(() => getPlayableNoteValue(happify(undefined))).toThrowError(`not a note: undefined`)
-  })
+    expect(() => getPlayableNoteValue(happify(false))).toThrowError(`not a note: false`);
+    expect(() => getPlayableNoteValue(happify(undefined))).toThrowError(`not a note: undefined`);
+  });
+});
+
+describe('parseNumeral', () => {
+  it('should parse numbers as is', () => {
+    expect(parseNumeral(4)).toBe(4);
+    expect(parseNumeral(0)).toBe(0);
+    expect(parseNumeral(20)).toBe(20);
+    expect(parseNumeral('20')).toBe(20);
+    expect(parseNumeral(1.5)).toBe(1.5);
+  });
+  it('should parse notes', () => {
+    expect(parseNumeral('c4')).toBe(60);
+    expect(parseNumeral('c#4')).toBe(61);
+    expect(parseNumeral('db4')).toBe(61);
+  });
+  it('should throw an error for unknown strings', () => {
+    expect(() => parseNumeral('xyz')).toThrowError('cannot parse as numeral: "xyz"');
+  });
+});
+
+describe('parseFractional', () => {
+  it('should parse numbers as is', () => {
+    expect(parseFractional(4)).toBe(4);
+    expect(parseFractional(0)).toBe(0);
+    expect(parseFractional(20)).toBe(20);
+    expect(parseFractional('20')).toBe(20);
+    expect(parseFractional(1.5)).toBe(1.5);
+  });
+  it('should parse fractional shorthands values', () => {
+    expect(parseFractional('w')).toBe(1);
+    expect(parseFractional('h')).toBe(0.5);
+    expect(parseFractional('q')).toBe(0.25);
+    expect(parseFractional('e')).toBe(0.125);
+  });
+  it('should throw an error for unknown strings', () => {
+    expect(() => parseFractional('xyz')).toThrowError('cannot parse as fractional: "xyz"');
+  });
+});
+
+describe('numeralArgs', () => {
+  it('should convert function arguments to numbers', () => {
+    const add = numeralArgs((a, b) => a + b);
+    expect(add('c4', 2)).toBe(62);
+  });
+});
+describe('fractionalArgs', () => {
+  it('should convert function arguments to numbers', () => {
+    const add = fractionalArgs((a, b) => a + b);
+    expect(add('q', 2)).toBe(2.25);
+  });
 });
