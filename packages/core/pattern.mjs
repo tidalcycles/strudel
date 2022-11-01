@@ -1391,9 +1391,6 @@ function _composeOp(a, b, func) {
 
 // Make composers
 (function () {
-  const num = (pat) => pat._asNumber();
-  // const numOrString = (pat) => pat._asNumber(false, true); // was used for add
-
   // pattern composers
   const composers = {
     set: [(a, b) => b],
@@ -1417,7 +1414,7 @@ function _composeOp(a, b, func) {
      * // Behind the scenes, the notes are converted to midi numbers:
      * // "48 52 55".add("<0 5 7 0>").note()
      */
-    add: [numeralArgs((a, b) => a + b), num], // support string concatenation
+    add: [numeralArgs((a, b) => a + b)], // support string concatenation
     /**
      *
      * Like add, but the given numbers are subtracted.
@@ -1427,7 +1424,7 @@ function _composeOp(a, b, func) {
      * "0 2 4".sub("<0 1 2 3>").scale('C4 minor').note()
      * // See add for more information.
      */
-    sub: [numeralArgs((a, b) => a - b), num],
+    sub: [numeralArgs((a, b) => a - b)],
     /**
      *
      * Multiplies each number by the given factor.
@@ -1436,21 +1433,21 @@ function _composeOp(a, b, func) {
      * @example
      * "1 1.5 [1.66, <2 2.33>]".mul(150).freq()
      */
-    mul: [numeralArgs((a, b) => a * b), num],
+    mul: [numeralArgs((a, b) => a * b)],
     /**
      *
      * Divides each number by the given factor.
      * @name div
      * @memberof Pattern
      */
-    div: [numeralArgs((a, b) => a / b), num],
-    mod: [mod, num],
-    pow: [Math.pow, num],
-    _and: [(a, b) => a & b, num],
-    _or: [(a, b) => a | b, num],
-    _xor: [(a, b) => a ^ b, num],
-    _lshift: [(a, b) => a << b, num],
-    _rshift: [(a, b) => a >> b, num],
+    div: [numeralArgs((a, b) => a / b)],
+    mod: [numeralArgs(mod)],
+    pow: [numeralArgs(Math.pow)],
+    _and: [numeralArgs((a, b) => a & b)],
+    _or: [numeralArgs((a, b) => a | b)],
+    _xor: [numeralArgs((a, b) => a ^ b)],
+    _lshift: [numeralArgs((a, b) => a << b)],
+    _rshift: [numeralArgs((a, b) => a >> b)],
 
     // TODO - force numerical comparison if both look like numbers?
     lt: [(a, b) => a < b],
