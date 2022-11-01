@@ -15,6 +15,7 @@ import {
   getFrequency,
   getPlayableNoteValue,
   parseNumeral,
+  parseFractional,
   numeralArgs,
   fractionalArgs,
 } from '../util.mjs';
