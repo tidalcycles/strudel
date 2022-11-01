@@ -446,39 +446,8 @@ export class Pattern {
     return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._TrigzeroJoin();
   }
 
-  // TODO: refactor to parseNumber / withNumberArgs (see util)
-  _asNumber(dropfails = false, softfail = false) {
-    return this._withHap((hap) => {
-      // leave objects alone... this is needed to be able to do pat.add(n(2))
-      if (!['number', 'string'].includes(typeof hap.value)) {
-        return hap;
-      }
-      const asNumber = Number(hap.value);
-      if (!isNaN(asNumber)) {
-        return hap.withValue(() => asNumber);
-      }
-      const specialValue = {
-        e: Math.E,
-        pi: Math.PI,
-      }[hap.value];
-      if (typeof specialValue !== 'undefined') {
-        return hap.withValue(() => specialValue);
-      }
-      if (isNote(hap.value)) {
-        // set context type to midi to let the player know its meant as midi number and not as frequency
-        return new Hap(hap.whole, hap.part, toMidi(hap.value), { ...hap.context, type: 'midi' });
-      }
-      if (dropfails) {
-        // return 'nothing'
-        return undefined;
-      }
-      if (softfail) {
-        // return original hap
-        return hap;
-      }
-      throw new Error('cannot parse as number: "' + hap.value + '"');
-      return hap;
-    });
+  _asNumber() {
+    return this.fmap(numeralArgs);
   }
 
   /**
