@@ -104,10 +104,18 @@ export const loadGithubSamples = async (path, nameFn) => {
 
 export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
   if (typeof sampleMap === 'string') {
+    if (sampleMap.startsWith('github:')) {
+      const [_, path] = sampleMap.split('github:');
+      sampleMap = `https://raw.githubusercontent.com/${path}/strudel.json`;
+    }
     const base = sampleMap.split('/').slice(0, -1).join('/');
     return fetch(sampleMap)
       .then((res) => res.json())
-      .then((json) => samples(json, baseUrl || json._base || base));
+      .then((json) => samples(json, baseUrl || json._base || base))
+      .catch((error) => {
+        console.error(error);
+        throw new Error(`error loading "${sampleMap}"`);
+      });
   }
   sampleCache.current = {
     ...sampleCache.current,
