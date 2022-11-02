@@ -10,7 +10,7 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
 
-import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod } from './util.mjs';
+import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod, numeralArgs } from './util.mjs';
 import drawLine from './drawLine.mjs';
 
 /** @class Class representing a pattern. */
@@ -68,7 +68,7 @@ export class Pattern {
     return new Pattern((state) => {
       const newState = state.withSpan(func);
       if (!newState.span) {
-	return [];
+        return [];
       }
       return pat.query(newState);
     });
@@ -446,34 +446,8 @@ export class Pattern {
     return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._TrigzeroJoin();
   }
 
-  _asNumber(dropfails = false, softfail = false) {
-    return this._withHap((hap) => {
-      const asNumber = Number(hap.value);
-      if (!isNaN(asNumber)) {
-        return hap.withValue(() => asNumber);
-      }
-      const specialValue = {
-        e: Math.E,
-        pi: Math.PI,
-      }[hap.value];
-      if (typeof specialValue !== 'undefined') {
-        return hap.withValue(() => specialValue);
-      }
-      if (isNote(hap.value)) {
-        // set context type to midi to let the player know its meant as midi number and not as frequency
-        return new Hap(hap.whole, hap.part, toMidi(hap.value), { ...hap.context, type: 'midi' });
-      }
-      if (dropfails) {
-        // return 'nothing'
-        return undefined;
-      }
-      if (softfail) {
-        // return original hap
-        return hap;
-      }
-      throw new Error('cannot parse as number: "' + hap.value + '"');
-      return hap;
-    });
+  _asNumber() {
+    return this.fmap(numeralArgs);
   }
 
   /**
@@ -761,7 +735,7 @@ export class Pattern {
       const bpos = span.begin.sub(cycle).mul(factor).min(1);
       const epos = span.end.sub(cycle).mul(factor).min(1);
       if (bpos >= 1) {
-	return undefined;
+        return undefined;
       }
       return new TimeSpan(cycle.add(bpos), cycle.add(epos));
     };
@@ -783,7 +757,7 @@ export class Pattern {
     };
     return this.withQuerySpanMaybe(qf)._withHap(ef)._splitQueries();
   }
-  
+
   // Compress each cycle into the given timespan, leaving a gap
   _compress(b, e) {
     if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
@@ -1386,9 +1360,6 @@ function _composeOp(a, b, func) {
 
 // Make composers
 (function () {
-  const num = (pat) => pat._asNumber();
-  const numOrString = (pat) => pat._asNumber(false, true);
-
   // pattern composers
   const composers = {
     set: [(a, b) => b],
@@ -1412,7 +1383,7 @@ function _composeOp(a, b, func) {
      * // Behind the scenes, the notes are converted to midi numbers:
      * // "48 52 55".add("<0 5 7 0>").note()
      */
-    add: [(a, b) => a + b, numOrString], // support string concatenation
+    add: [numeralArgs((a, b) => a + b)], // support string concatenation
     /**
      *
      * Like add, but the given numbers are subtracted.
@@ -1422,7 +1393,7 @@ function _composeOp(a, b, func) {
      * "0 2 4".sub("<0 1 2 3>").scale('C4 minor').note()
      * // See add for more information.
      */
-    sub: [(a, b) => a - b, num],
+    sub: [numeralArgs((a, b) => a - b)],
     /**
      *
      * Multiplies each number by the given factor.
@@ -1431,21 +1402,21 @@ function _composeOp(a, b, func) {
      * @example
      * "1 1.5 [1.66, <2 2.33>]".mul(150).freq()
      */
-    mul: [(a, b) => a * b, num],
+    mul: [numeralArgs((a, b) => a * b)],
     /**
      *
      * Divides each number by the given factor.
      * @name div
      * @memberof Pattern
      */
-    div: [(a, b) => a / b, num],
-    mod: [mod, num],
-    pow: [Math.pow, num],
-    _and: [(a, b) => a & b, num],
-    _or: [(a, b) => a | b, num],
-    _xor: [(a, b) => a ^ b, num],
-    _lshift: [(a, b) => a << b, num],
-    _rshift: [(a, b) => a >> b, num],
+    div: [numeralArgs((a, b) => a / b)],
+    mod: [numeralArgs(mod)],
+    pow: [numeralArgs(Math.pow)],
+    _and: [numeralArgs((a, b) => a & b)],
+    _or: [numeralArgs((a, b) => a | b)],
+    _xor: [numeralArgs((a, b) => a ^ b)],
+    _lshift: [numeralArgs((a, b) => a << b)],
+    _rshift: [numeralArgs((a, b) => a >> b)],
 
     // TODO - force numerical comparison if both look like numbers?
     lt: [(a, b) => a < b],

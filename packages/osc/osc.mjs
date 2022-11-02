@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import OSC from 'osc-js';
-import { Pattern } from '@strudel.cycles/core';
+import { parseNumeral, Pattern } from '@strudel.cycles/core';
 
 const comm = new OSC();
 comm.open();
@@ -31,6 +31,10 @@ Pattern.prototype.osc = function () {
         startedAt = Date.now() - currentTime * 1000;
       }
       const controls = Object.assign({}, { cps, cycle, delta }, hap.value);
+      // make sure n and note are numbers
+      controls.n && (controls.n = parseNumeral(controls.n));
+      controls.note && (controls.note = parseNumeral(controls.note));
+
       const keyvals = Object.entries(controls).flat();
       const ts = Math.floor(startedAt + (time + latency) * 1000);
       const message = new OSC.Message('/dirt/play', ...keyvals);

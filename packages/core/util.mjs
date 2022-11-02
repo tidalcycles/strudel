@@ -130,3 +130,46 @@ export function curry(func, overload) {
   }
   return fn;
 }
+
+export function parseNumeral(numOrString) {
+  const asNumber = Number(numOrString);
+  if (!isNaN(asNumber)) {
+    return asNumber;
+  }
+  if (isNote(numOrString)) {
+    return toMidi(numOrString);
+  }
+  throw new Error(`cannot parse as numeral: "${numOrString}"`);
+}
+
+export function mapArgs(fn, mapFn) {
+  return (...args) => fn(...args.map(mapFn));
+}
+
+export function numeralArgs(fn) {
+  return mapArgs(fn, parseNumeral);
+}
+
+export function parseFractional(numOrString) {
+  const asNumber = Number(numOrString);
+  if (!isNaN(asNumber)) {
+    return asNumber;
+  }
+  const specialValue = {
+    pi: Math.PI,
+    w: 1,
+    h: 0.5,
+    q: 0.25,
+    e: 0.125,
+    s: 0.0625,
+    t: 1 / 3,
+    f: 0.2,
+    x: 1 / 6,
+  }[numOrString];
+  if (typeof specialValue !== 'undefined') {
+    return specialValue;
+  }
+  throw new Error(`cannot parse as fractional: "${numOrString}"`);
+}
+
+export const fractionalArgs = (fn) => mapArgs(fn, parseFractional);
