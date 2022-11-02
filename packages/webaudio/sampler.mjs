@@ -107,7 +107,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
     const base = sampleMap.split('/').slice(0, -1).join('/');
     return fetch(sampleMap)
       .then((res) => res.json())
-      .then((json) => samples(json, json._base || base));
+      .then((json) => samples(json, baseUrl || json._base || base));
   }
   sampleCache.current = {
     ...sampleCache.current,
