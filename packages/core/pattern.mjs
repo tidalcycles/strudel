@@ -10,7 +10,7 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
 
-import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod, numeralArgs } from './util.mjs';
+import { compose, removeUndefineds, flatten, id, listRange, curry, mod, numeralArgs, parseNumeral } from './util.mjs';
 import drawLine from './drawLine.mjs';
 
 /** @class Class representing a pattern. */
@@ -447,7 +447,7 @@ export class Pattern {
   }
 
   _asNumber() {
-    return this.fmap(numeralArgs);
+    return this.fmap(parseNumeral);
   }
 
   /**
