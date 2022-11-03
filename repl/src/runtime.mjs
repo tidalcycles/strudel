@@ -65,6 +65,7 @@ const toneHelpersMocked = {
   Chorus: MockedNode,
   Freeverb: MockedNode,
   Gain: MockedNode,
+  Reverb: MockedNode,
   vol: mockNode,
   out: id,
   osc: id,
@@ -116,8 +117,15 @@ strudel.Pattern.prototype.adsr = function () {
 strudel.Pattern.prototype.out = function () {
   return this;
 };
+strudel.Pattern.prototype.soundfont = function () {
+  return this;
+};
 // tune mock
 strudel.Pattern.prototype.tune = function () {
+  return this;
+};
+
+strudel.Pattern.prototype.midi = function () {
   return this;
 };
 
@@ -126,6 +134,22 @@ const uiHelpersMocked = {
 };
 
 prebake({ isMock: true });
+
+const canvasCtx = {
+  clearRect: () => {},
+  fillText: () => {},
+  fillRect: () => {},
+  canvas: {
+    width: 100,
+    height: 100,
+  },
+};
+const audioCtx = {
+  currentTime: 1,
+};
+const getDrawContext = () => canvasCtx;
+const getAudioContext = () => audioCtx;
+const loadSoundfont = () => {};
 
 // TODO: refactor to evalScope
 evalScope(
@@ -146,6 +170,9 @@ evalScope(
     // gist,
     // euclid,
     mini,
+    getDrawContext,
+    getAudioContext,
+    loadSoundfont,
     // Tone,
   },
 );
@@ -197,3 +224,7 @@ export const testCycles = {
   hyperpop: 10,
   festivalOfFingers3: 16,
 };
+
+
+// fixed: https://strudel.tidalcycles.org/?DBp75NUfSxIn (missing .note())
+// bug: https://strudel.tidalcycles.org/?xHaKTd1kTpCn + https://strudel.tidalcycles.org/?o5LLePbx8kiQ
