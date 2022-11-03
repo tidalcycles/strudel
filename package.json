@@ -4,6 +4,7 @@
   "private": true,
   "description": "Port of tidalcycles to javascript",
   "scripts": {
+    "pretest": "cd tutorial && npm run jsdoc-json",
     "test": "vitest run --version",
     "test-ui": "vitest --ui",
     "test-coverage": "vitest --coverage",
