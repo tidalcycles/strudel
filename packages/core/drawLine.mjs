@@ -21,6 +21,7 @@ import Fraction, { gcd } from './fraction.mjs';
  * @example
  * const line = drawLine("0 [1 2 3]", 10); // |0--123|0--123
  * console.log(line);
+ * silence;
  */
 function drawLine(pat, chars = 60) {
   let cycle = 0;

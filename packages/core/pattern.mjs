@@ -32,8 +32,10 @@ export class Pattern {
    * @param {Fraction | number} end to time
    * @returns Hap[]
    * @example
-   * const pattern = sequence('a', ['b', 'c']);
-   * const haps = pattern.queryArc(0, 1);
+   * const pattern = sequence('a', ['b', 'c'])
+   * const haps = pattern.queryArc(0, 1)
+   * console.log(haps)
+   * silence
    */
   queryArc(begin, end) {
     return this.query(new State(new TimeSpan(begin, end)));
@@ -1543,6 +1545,9 @@ export function pure(value) {
 
 export function isPattern(thing) {
   // thing?.constructor?.name !== 'Pattern' // <- this will fail when code is mangled
+  if (!thing) {
+    console.log('no thing', thing);
+  }
   const is = thing instanceof Pattern || thing._Pattern;
   if (!thing instanceof Pattern) {
     console.warn(
