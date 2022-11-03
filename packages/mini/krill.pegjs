@@ -104,7 +104,7 @@ slice = step / sub_cycle  / timeline
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
-slice_modifier = slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_fixed_step / slice_replicate / slice_degrade
+slice_modifier = slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_fixed_step / slice_replicate / slice_degrade / slice_legato
 
 slice_weight =  "@" a:number
   { return { weight: a} }
@@ -126,6 +126,9 @@ slice_fixed_step = "%"a:number
 
 slice_degrade = "?"a:number?
   { return { operator : { type_: "degradeBy", arguments_ :{ amount:(a? a : 0.5) } } } }
+
+slice_legato = "="a:number
+  { return { operator : { type_: "legato", arguments_: { amount:a } } } }
 
 // a slice with an modifier applied i.e [bd@4 sd@3]@2 hh]
 slice_with_modifier = s:slice o:slice_modifier?
@@ -156,7 +159,7 @@ sequence = ws quote sc:stack_or_choose quote
 
 // ------------------ operators ---------------------------
 
-operator = scale / slow / fast / target / bjorklund / struct / rotR / rotL
+operator = scale / slow / fast / target / bjorklund / struct / rotR / rotL / legato
 
 struct = "struct" ws s:sequence_or_operator
   { return { name: "struct", args: { sequence:s }}}
@@ -181,6 +184,9 @@ fast = "fast" ws a:number
 
 scale = "scale" ws quote s:(step_char)+ quote
 { return { name: "scale", args :{ scale: s.join("")}}}
+
+legato = "legato" ws a:number
+  { return { name: "legato", args :{ amount: a}}}
 
 comment = '//' p:([^\n]*)
 
