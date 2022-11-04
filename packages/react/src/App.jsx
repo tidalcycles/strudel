@@ -16,7 +16,7 @@ evalScope(
 function App() {
   return (
     <div>
-      <MiniRepl tune={`"c3"`} />
+      <MiniRepl tune={`note("c3")`} />
     </div>
   );
 }

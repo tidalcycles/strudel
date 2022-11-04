@@ -97,7 +97,7 @@ const generic_params = [
   ],
 
   /**
-   * Select the sound bank to use. To be used together with `s`. The bank name (+ "_") will be prepended to the value of `s`. 
+   * Select the sound bank to use. To be used together with `s`. The bank name (+ "_") will be prepended to the value of `s`.
    *
    * @name bank
    * @param {string | Pattern} bank the name of the bank
@@ -105,11 +105,7 @@ const generic_params = [
    * s("bd sd").bank('RolandTR909') // = s("RolandTR909_bd RolandTR909_sd")
    *
    */
-  [
-    'f',
-    'bank',
-    'selects sound bank to use',
-  ],
+  ['f', 'bank', 'selects sound bank to use'],
 
   // TODO: find out how this works?
   /*
