@@ -33,3 +33,12 @@ yields:
 ## Mini Notation API
 
 See "Mini Notation" in the [Strudel Tutorial](https://strudel.tidalcycles.org/tutorial/)
+
+## Building the Parser
+
+The parser [krill-parser.js] is generated from [krill.pegjs](./krill.pegjs) using [peggy](https://peggyjs.org/).
+To generate the parser, run
+
+```js
+npm run build:parser
+```
