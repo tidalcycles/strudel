@@ -31,7 +31,7 @@ Now open Supercollider (with the super dirt startup file)
 Now open the REPL and type:
 
 ```js
-s('<bd sd> hh').osc();
+s("<bd sd> hh").osc()
 ```
 
 or just [click here](http://localhost:3000/#cygiPGJkIHNkPiBoaCIpLm9zYygp)...
