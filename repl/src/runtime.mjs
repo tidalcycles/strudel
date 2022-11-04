@@ -173,6 +173,7 @@ evalScope(
     getDrawContext,
     getAudioContext,
     loadSoundfont,
+    Clock: {}, // whatever
     // Tone,
   },
 );
@@ -224,7 +225,6 @@ export const testCycles = {
   hyperpop: 10,
   festivalOfFingers3: 16,
 };
-
 
 // fixed: https://strudel.tidalcycles.org/?DBp75NUfSxIn (missing .note())
 // bug: https://strudel.tidalcycles.org/?xHaKTd1kTpCn + https://strudel.tidalcycles.org/?o5LLePbx8kiQ
