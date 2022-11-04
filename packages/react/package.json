@@ -37,12 +37,12 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@codemirror/lang-javascript": "^6.0.2",
+    "@codemirror/lang-javascript": "^6.1.1",
     "@strudel.cycles/core": "^0.2.0",
     "@strudel.cycles/eval": "^0.2.0",
     "@strudel.cycles/tone": "^0.2.0",
-    "@uiw/codemirror-themes": "^4.11.4",
-    "@uiw/react-codemirror": "^4.11.4",
+    "@uiw/codemirror-themes": "^4.12.4",
+    "@uiw/react-codemirror": "^4.12.4",
     "react-hook-inview": "^4.5.0"
   },
   "peerDependencies": {
