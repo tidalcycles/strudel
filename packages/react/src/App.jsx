@@ -2,8 +2,10 @@ import React from 'react';
 import { MiniRepl } from './components/MiniRepl';
 import 'tailwindcss/tailwind.css';
 import { evalScope } from '@strudel.cycles/eval';
+import { controls } from '@strudel.cycles/core';
 
 evalScope(
+  controls,
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tone'),
   import('@strudel.cycles/tonal'),
