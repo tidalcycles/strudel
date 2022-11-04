@@ -44,7 +44,6 @@
     "c8": "^7.12.0",
     "events": "^3.3.0",
     "gh-pages": "^4.0.0",
-    "happy-dom": "^6.0.4",
     "jsdoc": "^3.6.10",
     "jsdoc-json": "^2.0.2",
     "jsdoc-to-markdown": "^7.1.1",
