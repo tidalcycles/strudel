@@ -189,7 +189,8 @@ function gainNode(value) {
   node.gain.value = value;
   return node;
 }
-const cutGroups = [];
+const cutGroupSources = [];
+const cutGroupEnvelopes = [];
 
 let delays = {};
 function getDelay(orbit, delaytime, delayfeedback, t) {
@@ -368,14 +369,26 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       t += nudge;
 
       bufferSource.start(t, offset);
-      if (cut !== undefined) {
-        cutGroups[cut]?.stop(t); // fade out?
-        cutGroups[cut] = bufferSource;
-      }
       chain.push(bufferSource);
       bufferSource.stop(t + duration + release);
       const adsr = getADSR(attack, decay, sustain, release, 1, t, t + duration);
       chain.push(adsr);
+      if (cut !== undefined) {
+        const cutSource = cutGroupSources[cut];
+        const cutEnvelope = cutGroupEnvelopes[cut];
+        const fadeTime = 0.001;
+        if (cutEnvelope) {
+          // cutEnvelope.gain.cancelAndHoldAtTime(t);
+          cutEnvelope.gain.cancelScheduledValues(t);
+          cutEnvelope.gain.linearRampToValueAtTime(0, t + fadeTime);
+          // cutEnvelope.gain.exponentialRampToValueAtTime(0.0001, t + fadeTime);
+        }
+        if (cutSource) {
+          cutSource.stop(t + fadeTime);
+        }
+        cutGroupSources[cut] = bufferSource;
+        cutGroupEnvelopes[cut] = adsr;
+      }
     }
 
     // gain stage
