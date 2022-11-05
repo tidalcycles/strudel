@@ -83,7 +83,9 @@ const toneHelpersMocked = {
   highpass: mockNode,
 };
 
-// tone mock
+strudel.Pattern.prototype.osc = function () {
+  return this;
+};
 strudel.Pattern.prototype.tone = function () {
   return this;
 };

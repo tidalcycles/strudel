@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import * as krill from './krill-parser.js';
 import * as strudel from '@strudel.cycles/core';
-import { addMiniLocations } from '@strudel.cycles/eval/shapeshifter.mjs';
+// import { addMiniLocations } from '@strudel.cycles/eval/shapeshifter.mjs';
 
 const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
 
@@ -29,7 +29,10 @@ const applyOptions = (parent) => (pat, i) => {
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
       case 'degradeBy':
-        return reify(pat)._degradeByWith(strudel.rand.early(randOffset * _nextSeed()).segment(1), operator.arguments_.amount);
+        return reify(pat)._degradeByWith(
+          strudel.rand.early(randOffset * _nextSeed()).segment(1),
+          operator.arguments_.amount,
+        );
       // TODO: case 'fixed-step': "%"
     }
     console.warn(`operator "${operator.type_}" not implemented`);
@@ -112,9 +115,9 @@ export function patternifyAST(ast) {
         return silence;
       }
       if (typeof ast.source_ !== 'object') {
-        if (!addMiniLocations) {
+        /* if (!addMiniLocations) {
           return ast.source_;
-        }
+        } */
         if (!ast.location_) {
           console.warn('no location for', ast);
           return ast.source_;

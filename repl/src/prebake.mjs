@@ -1,23 +1,17 @@
 import { Pattern, toMidi } from '@strudel.cycles/core';
 import { samples } from '@strudel.cycles/webaudio';
 
-const loadSamples = async (url, baseDir = '') => {
-  await fetch(url)
-    .then((res) => res.json())
-    .then((json) => samples(json, baseDir));
-};
-
 export async function prebake({ isMock = false, baseDir = '.' } = {}) {
   if (!isMock) {
     // https://archive.org/details/SalamanderGrandPianoV3
     // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
-    loadSamples('piano.json', `${baseDir}/piano/`);
+    samples('piano.json', `${baseDir}/piano/`);
     // https://github.com/sgossner/VCSL/
     // https://api.github.com/repositories/126427031/contents/
     // LICENSE: CC0 general-purpose
-    loadSamples('vcsl.json', 'github:sgossner/VCSL/master/');
-    loadSamples('tidal-drum-machines.json', 'github:ritchse/tidal-drum-machines/main/machines/');
-    loadSamples('EmuSP12.json', `${baseDir}/EmuSP12/`);
+    samples('vcsl.json', 'github:sgossner/VCSL/master/');
+    samples('tidal-drum-machines.json', 'github:ritchse/tidal-drum-machines/main/machines/');
+    samples('EmuSP12.json', `${baseDir}/EmuSP12/`);
   }
 }
 
