@@ -66,8 +66,11 @@ export class Cyclist {
     this.clock.stop();
     this.started = false;
   }
-  setPattern(pat) {
+  setPattern(pat, autostart = false) {
     this.pattern = pat;
+    if (autostart && !this.started) {
+      this.start();
+    }
   }
   setCps(cps = 1) {
     this.cps = cps;

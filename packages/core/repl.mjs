@@ -9,14 +9,14 @@ export function repl({ interval, defaultOutput, onSchedulerError, onEvalError, o
     }
     try {
       const { pattern } = await _evaluate(code, transpiler);
-      scheduler.setPattern(pattern);
-      onEval({
+      scheduler.setPattern(pattern, true);
+      onEval?.({
         pattern,
         code,
       });
     } catch (err) {
+      console.warn(`eval error: ${err.message}`);
       onEvalError?.(err);
-      console.warn('eval error', err);
     }
   };
   return { scheduler, evaluate };
