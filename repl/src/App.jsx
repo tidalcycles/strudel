@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { evalScope, evaluate } from '@strudel.cycles/eval';
+import { evaluate } from '@strudel.cycles/eval';
 import { CodeMirror, cx, flash, useHighlighting, useRepl, useWebMidi } from '@strudel.cycles/react';
 import { cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -14,7 +14,7 @@ import * as tunes from './tunes.mjs';
 import { prebake } from './prebake.mjs';
 import * as WebDirt from 'WebDirt';
 import { resetLoadedSamples, getAudioContext } from '@strudel.cycles/webaudio';
-import { controls } from '@strudel.cycles/core';
+import { controls, evalScope } from '@strudel.cycles/core';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 
@@ -135,7 +135,12 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyPress, true);
   }, [pattern, code, activateCode, cycle, view]);
 
-  useHighlighting({ view, pattern, active: cycle.started && !activeCode?.includes('strudel disable-highlighting') });
+  useHighlighting({
+    view,
+    pattern,
+    active: cycle.started && !activeCode?.includes('strudel disable-highlighting'),
+    getTime: () => Tone.getTransport().seconds,
+  });
 
   useWebMidi({
     ready: useCallback(
@@ -174,8 +179,8 @@ function App() {
           </div>
           <div className="flex">
             <button
-              onClick={() => {
-                getAudioContext().resume(); // fixes no sound in ios webkit
+              onClick={async () => {
+                await getAudioContext().resume(); // fixes no sound in ios webkit
                 togglePlay();
               }}
               className={cx('hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}

@@ -1,6 +1,5 @@
-import { evalScope } from '@strudel.cycles/eval';
+import { evalScope, controls } from '@strudel.cycles/core';
 import { MiniRepl as _MiniRepl } from '@strudel.cycles/react';
-import controls from '@strudel.cycles/core/controls.mjs';
 import { samples } from '@strudel.cycles/webaudio';
 import { prebake } from '../repl/src/prebake.mjs';
 

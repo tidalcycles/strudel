@@ -6,10 +6,10 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { expect, describe, it } from 'vitest';
 
-import { evaluate, evalScope } from '../evaluate.mjs';
+import { evaluate } from '../evaluate.mjs';
 import { mini } from '@strudel.cycles/mini';
 import * as strudel from '@strudel.cycles/core';
-const { fastcat } = strudel;
+const { fastcat, evalScope } = strudel;
 
 describe('evaluate', async () => {
   await evalScope({ mini }, strudel);

@@ -73,8 +73,11 @@ export const getPlayableNoteValue = (hap) => {
 export const getFrequency = (hap) => {
   let { value, context } = hap;
   // if value is number => interpret as midi number as long as its not marked as frequency
-  if (typeof value === 'object' && value.freq) {
-    return value.freq;
+  if (typeof value === 'object') {
+    if (value.freq) {
+      return value.freq;
+    }
+    return getFreq(value.note || value.n || value.value);
   }
   if (typeof value === 'number' && context.type !== 'frequency') {
     value = fromMidi(hap.value);
