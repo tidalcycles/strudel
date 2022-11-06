@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.2.0",
+    "@strudel.cycles/core": "^0.3.1",
     "@strudel.cycles/webaudio": "^0.3.0",
     "sfumato": "^0.1.2",
     "soundfont2": "^0.4.0"
