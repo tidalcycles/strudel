@@ -854,3 +854,130 @@ export const orbit = `stack(
     .delayfeedback(.7)
     .orbit(2)
   ).sometimes(x=>x.speed("-1"))`;
+
+export const belldub = `samples({ bell: {b4:'https://cdn.freesound.org/previews/339/339809_5121236-lq.mp3'}})
+// "Hand Bells, B, Single.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org
+stack(
+  // bass
+  note("[0 ~] [2 [0 2]] [4 4*2] [[4 ~] [2 ~] 0@2]".scale('g1 dorian').superimpose(x=>x.add(.02)))
+  .s('sawtooth').cutoff(200).resonance(20).gain(.15).shape(.6).release(.05),
+  // perc
+  s("[~ hh]*4").room("0 0.5".fast(2)).end(perlin.range(0.02,1)),
+  s("mt lt ht").struct("x(3,8)").fast(2).gain(.5).room(.5).sometimes(x=>x.speed(".5")),
+  s("misc:2").speed(1).delay(.5).delaytime(1/3).gain(.4),
+  // chords
+  note("[~ Gm7] ~ [~ Dm7] ~".voicings().superimpose(x=>x.add(.1)))
+  .s('sawtooth').gain(.5)
+  .cutoff(perlin.range(400,3000).slow(8))
+  .decay(perlin.range(0.05,.2)).sustain(0)
+  .delay(.9).room(1),
+  // blips
+  note(
+    "0 5 4 2".iter(4)
+    .off(1/3, add(7))
+    .scale('g4 dorian')
+  ).s('square').cutoff(2000).decay(.03).sustain(0)
+  .degradeBy(.2)
+  .orbit(2).delay(.2).delaytime(".33 | .6 | .166 | .25")
+  .room(1).gain(.5).mask("<0 1>/8"),
+  // bell
+  note(rand.range(0,12).struct("x(5,8)").scale('g2 minor pentatonic')).s('bell').begin(.05)
+  .delay(.2).degradeBy(.4).gain(.4)
+  .mask("<1 0>/8")
+).slow(5)`;
+
+export const dinofunk = `samples({bass:'https://cdn.freesound.org/previews/614/614637_2434927-hq.mp3',
+dino:{b4:'https://cdn.freesound.org/previews/316/316403_5123851-hq.mp3'}})
+
+stack(
+s('bass').loopAt(8,1).clip(1),
+s("bd*2, ~ sd,hh*4"),
+note("Abm7".voicings(['c3','a4']).struct("x(3,8,1)".slow(2))),
+"0 1 2 3".scale('ab4 minor pentatonic')
+.superimpose(x=>x.add(.1))
+.sometimes(x=>x.add(12))
+.note().s('sawtooth')
+.cutoff(sine.range(400,2000).slow(16)).gain(.8)
+.decay(perlin.range(.05,.2)).sustain(0)
+.delay(sine.range(0,.5).slow(32))
+.degradeBy(.4).room(1),
+note("<b4 eb4>").s('dino').delay(.8).slow(8).room(.5)
+)`;
+
+export const sampleDemo = `stack(
+  // percussion
+  s("[woodblock:1 woodblock:2*2] snare_rim:0,gong/8,brakedrum:1(3,8),~@3 cowbell:3")
+  .sometimes(x=>x.speed(2)),
+  // melody
+  note("<0 4 1 3 2>".off(".25 | .125",add(2)).scale('D3 hirajoshi'))
+  .s("clavisynth").gain(.2).delay(.25).jux(rev)
+  .degradeBy(sine.range(0,.5).slow(32)),
+  // bass
+  note("<0@3 <2(3,8) 3(3,8)>>".scale('D1 hirajoshi'))
+  .s('psaltery_pluck').gain(.6).clip(1)
+  .release(.1).room(.5)
+)`;
+
+export const holyflute = `"c3 eb3(3,8) c4/2 g3*2"
+.superimpose(
+  x=>x.slow(2).add(12),
+  x=>x.slow(4).sub(5)
+).add("<0 1>/16")
+.note().s('ocarina_vib').clip(1)
+.release(.1).room(1).gain(.2)
+.color("salmon | orange | darkseagreen")
+.pianoroll({fold:0,autorange:0,vertical:0,cycles:12,smear:0,minMidi:40})
+`;
+
+export const flatrave = `stack(
+  s("bd*2,~ [cp,sd]").bank('RolandTR909'),
+  
+  s("hh:1*4").sometimes(fast("2"))
+  .rarely(x=>x.speed(".5").delay(.5))
+  .end(perlin.range(0.02,.05).slow(8))
+  .bank('RolandTR909').room(.5)
+  .gain("0.4,0.4(5,8)"),
+  
+  note("<0 2 5 3>".scale('G1 minor')).struct("x(5,8)")
+  .s('sawtooth').decay(.1).sustain(0),
+  
+  note("<G4 A4 Bb4 A4>,Bb3,D3").struct("~ x*2").s('square').clip(1)
+  .cutoff(sine.range(500,4000).slow(16)).resonance(10)
+  .decay(sine.slow(15).range(.05,.2)).sustain(0)
+  .room(.5).gain(.3).delay(.2).mask("<0 1@3>/8"),
+  
+  "0 5 3 2".sometimes(slow(2)).off(1/8,add(5)).scale('G4 minor').note()
+  .decay(.05).sustain(0).delay(.2).degradeBy(.5).mask("<0 1>/16")
+)`;
+
+export const amensister = `samples('github:tidalcycles/Dirt-Samples/master')
+
+stack(
+  // amen
+  n("0 1 2 3 4 5 6 7")
+  .sometimes(x=>x.ply(2))
+  .rarely(x=>x.speed("2 | -2"))
+  .sometimesBy(.4, x=>x.delay(".5"))
+  .s("amencutup")
+  .slow(2)
+  .room(.5)
+  ,
+  // bass
+  sine.add(saw.slow(4)).range(0,7).segment(8)
+  .superimpose(x=>x.add(.1))
+  .scale('G0 minor').note()
+  .s("sawtooth").decay(.1).sustain(0)
+  .gain(.4).cutoff(perlin.range(300,3000).slow(8)).resonance(10)
+  .degradeBy("0 0.1 .5 .1")
+  .rarely(add(note("12")))
+  ,
+  // chord
+  note("Bb3,D4".superimpose(x=>x.add(.2)))
+  .s('sawtooth').cutoff(1000).struct("<~@3 [~ x]>")
+  .decay(.05).sustain(.0).delay(.8).delaytime(.125).room(.8)
+  ,
+  // alien
+  s("breath").room(1).shape(.6).chop(16).rev().mask("<x ~@7>")
+  ,
+  n("0 1").s("east").delay(.5).degradeBy(.8).speed(rand.range(.5,1.5))
+).reset("<x@7 x(5,8)>")`;

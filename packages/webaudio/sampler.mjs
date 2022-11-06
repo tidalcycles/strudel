@@ -108,6 +108,10 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
       const [_, path] = sampleMap.split('github:');
       sampleMap = `https://raw.githubusercontent.com/${path}/strudel.json`;
     }
+    if (typeof fetch !== 'function') {
+      // not a browser
+      return;
+    }
     const base = sampleMap.split('/').slice(0, -1).join('/');
     return fetch(sampleMap)
       .then((res) => res.json())
