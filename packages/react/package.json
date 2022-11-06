@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/react",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "React components for strudel",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -39,8 +39,8 @@
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.1",
     "@strudel.cycles/core": "^0.2.0",
-    "@strudel.cycles/eval": "^0.2.0",
-    "@strudel.cycles/tone": "^0.2.0",
+    "@strudel.cycles/eval": "^0.3.0",
+    "@strudel.cycles/tone": "^0.3.0",
     "@uiw/codemirror-themes": "^4.12.4",
     "@uiw/react-codemirror": "^4.12.4",
     "react-hook-inview": "^4.5.0"
