@@ -17,6 +17,7 @@ export * from './util.mjs';
 export * from './speak.mjs';
 export * from './clockworker.mjs';
 export * from './scheduler.mjs';
+export * from './evaluate.mjs';
 export { default as drawLine } from './drawLine.mjs';
 export { default as gist } from './gist.js';
 // below won't work with runtime.mjs (json import fails)

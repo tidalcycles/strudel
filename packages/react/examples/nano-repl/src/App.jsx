@@ -1,5 +1,4 @@
-import controls from '@strudel.cycles/core/controls.mjs';
-import { evalScope } from '@strudel.cycles/eval';
+import { evalScope, controls } from '@strudel.cycles/core';
 import { getAudioContext, panic, webaudioOutput } from '@strudel.cycles/webaudio';
 import { useCallback, useState } from 'react';
 import CodeMirror, { flash } from '../../../src/components/CodeMirror6';
@@ -94,7 +93,7 @@ function App() {
           if (e.code === 'Enter') {
             e.preventDefault();
             flash(view);
-            await evaluate();
+            await evaluate(code);
             if (e.shiftKey) {
               panic();
               scheduler.stop();
@@ -120,7 +119,7 @@ function App() {
         <div className="bg-slate-500 space-x-2 px-2 rounded-t-md">
           <button
             onClick={async () => {
-              await evaluate();
+              await evaluate(code);
               await getAudioContext().resume();
               scheduler.start();
             }}
@@ -128,7 +127,7 @@ function App() {
             start
           </button>
           <button onClick={() => scheduler.stop()}>stop</button>
-          {isDirty && <button onClick={() => evaluate()}>eval</button>}
+          {isDirty && <button onClick={() => evaluate(code)}>eval</button>}
         </div>
         {error && <p>error {error.message}</p>}
       </nav>

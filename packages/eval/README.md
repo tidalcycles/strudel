@@ -11,10 +11,9 @@ npm i @strudel.cycles/eval --save
 
 ## Example
 
-<!-- TODO: -extend +evalScope -->
-
 ```js
-import { evaluate, extend } from '@strudel.cycles/eval';
+import { evalScope } from '@strudel.cycles/core';
+import { evaluate } from '@strudel.cycles/eval';
 
 evalScope(
   import('@strudel.cycles/core'),
