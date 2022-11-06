@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --base /tidalcycles/strudel/general-purpose-scheduler/packages/core/examples/vite-vanilla-repl/dist/",
     "preview": "vite preview"
   },
   "devDependencies": {
