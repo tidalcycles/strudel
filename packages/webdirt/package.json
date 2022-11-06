@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/webdirt",
-  "version": "0.3.0",
+  "version": "0.2.0",
   "description": "WebDirt integration for Strudel",
   "main": "index.mjs",
   "type": "module",
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.3.0",
+    "@strudel.cycles/core": "^0.2.0",
     "WebDirt": "github:dktr0/WebDirt"
   }
 }
