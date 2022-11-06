@@ -20,4 +20,7 @@ const { evaluate } = repl({
   getTime: () => ctx.currentTime,
   transpiler: shapeshifter,
 });
-document.getElementById('start').addEventListener('click', () => evaluate(input.value));
+document.getElementById('start').addEventListener('click', () => {
+  ctx.resume();
+  evaluate(input.value);
+});
