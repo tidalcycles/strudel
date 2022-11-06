@@ -15,8 +15,6 @@ export * from './state.mjs';
 export * from './timespan.mjs';
 export * from './util.mjs';
 export * from './speak.mjs';
-export * from './clockworker.mjs';
-export * from './scheduler.mjs';
 export * from './evaluate.mjs';
 export * from './repl.mjs';
 export { default as drawLine } from './drawLine.mjs';
