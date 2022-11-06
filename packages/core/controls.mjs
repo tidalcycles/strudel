@@ -40,11 +40,6 @@ const generic_params = [
    * @example
    * n("0 1 2 3").s('east').osc()
    */
-  // TODO: nOut does not work
-  // TODO: notes don't work as expected
-  // current "workaround" for notes:
-  // s('superpiano').n("<c0 d0 e0 g0>"._asNumber()).osc()
-  // -> .n or .osc (or .superdirt) would need to convert note strings to numbers
   // also see https://github.com/tidalcycles/strudel/pull/63
   ['f', 'n', 'The note or sample number to choose for a synth or sampleset'],
   ['f', 'note', 'The note or pitch to play a sound or synth with'],
@@ -100,6 +95,18 @@ const generic_params = [
     'attack',
     'a pattern of numbers to specify the attack time (in seconds) of an envelope applied to each sample.',
   ],
+
+  /**
+   * Select the sound bank to use. To be used together with `s`. The bank name (+ "_") will be prepended to the value of `s`.
+   *
+   * @name bank
+   * @param {string | Pattern} bank the name of the bank
+   * @example
+   * s("bd sd").bank('RolandTR909') // = s("RolandTR909_bd RolandTR909_sd")
+   *
+   */
+  ['f', 'bank', 'selects sound bank to use'],
+
   // TODO: find out how this works?
   /*
    * Envelope decay time = the time it takes after the attack time to reach the sustain level.

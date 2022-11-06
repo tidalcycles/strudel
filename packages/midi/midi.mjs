@@ -5,12 +5,11 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { isNote } from 'tone';
-import _WebMidi from 'webmidi';
+import * as _WebMidi from 'webmidi';
 import { Pattern, isPattern } from '@strudel.cycles/core';
 import { Tone } from '@strudel.cycles/tone';
-
 // if you use WebMidi from outside of this package, make sure to import that instance:
-export const WebMidi = _WebMidi;
+export const { WebMidi } = _WebMidi;
 
 export function enableWebMidi() {
   return new Promise((resolve, reject) => {

@@ -4,10 +4,10 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-export * from './controls.mjs';
+import controls from './controls.mjs';
 export * from './euclid.mjs';
 import Fraction from './fraction.mjs';
-export { Fraction };
+export { Fraction, controls };
 export * from './hap.mjs';
 export * from './pattern.mjs';
 export * from './signal.mjs';
@@ -17,6 +17,7 @@ export * from './util.mjs';
 export * from './speak.mjs';
 export * from './clockworker.mjs';
 export * from './scheduler.mjs';
+export { default as drawLine } from './drawLine.mjs';
 export { default as gist } from './gist.js';
 // below won't work with runtime.mjs (json import fails)
 /* import * as p from './package.json';

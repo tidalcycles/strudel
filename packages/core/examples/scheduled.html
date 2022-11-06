@@ -1,0 +1,44 @@
+<input
+  type="text"
+  id="text"
+  value="seq('c3','eb3','g3').note().s('sawtooth').out()"
+  style="width: 100%; font-size: 2em; outline: none; margin-bottom: 10px"
+  spellcheck="false"
+/>
+<button id="start">play</button>
+<div id="output"></div>
+<script type="module">
+  const strudel = await import('https://cdn.skypack.dev/@strudel.cycles/core@latest');
+
+  const controls = await import('https://cdn.skypack.dev/@strudel.cycles/core@latest/controls.mjs');
+  const { getAudioContext, Scheduler } = await import('https://cdn.skypack.dev/@strudel.cycles/webaudio@latest');
+  let scheduler;
+
+  const audioContext = getAudioContext();
+  const latency = 0.2;
+
+  Object.assign(window, strudel);
+  Object.assign(window, controls.default);
+  scheduler = new Scheduler({
+    audioContext,
+    interval: 0.1,
+    latency,
+    onEvent: (hap) => {
+      if (!hap.context.onTrigger) {
+        console.warn('no output chosen. use one of .out() .webdirt() .osc()');
+      }
+    },
+  });
+  let started;
+  document.getElementById('start').addEventListener('click', async () => {
+    const code = document.getElementById('text').value;
+    const pattern = eval(code);
+    const events = pattern._firstCycleValues;
+    console.log(code, '->', events);
+    scheduler.setPattern(pattern);
+    if (!started) {
+      scheduler.start();
+      started = true;
+    }
+  });
+</script>

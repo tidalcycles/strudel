@@ -100,12 +100,8 @@ const getSoundfontKey = (s) => {
 
 const getSampleBufferSource = async (s, n, note, speed) => {
   let transpose = 0;
-  let midi;
-
-  if (note !== undefined) {
-    midi = typeof note === 'string' ? toMidi(note) : note;
-    transpose = midi - 36; // C3 is middle C
-  }
+  let midi = typeof note === 'string' ? toMidi(note) : note || 36;
+  transpose = midi - 36; // C3 is middle C
 
   const ac = getAudioContext();
   // is sample from loaded samples(..)
@@ -128,9 +124,6 @@ const getSampleBufferSource = async (s, n, note, speed) => {
   if (Array.isArray(bank)) {
     sampleUrl = bank[n % bank.length];
   } else {
-    if (!note) {
-      throw new Error('no note(...) set for sound', s);
-    }
     const midiDiff = (noteA) => toMidi(noteA) - midi;
     // object format will expect keys as notes
     const closest = Object.keys(bank)
@@ -253,6 +246,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     let {
       freq,
       s,
+      bank,
       sf,
       clip = 0, // if 1, samples will be cut off when the hap ends
       n = 0,
@@ -288,6 +282,9 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     gain *= velocity; // legacy fix for velocity
     // the chain will hold all audio nodes that connect to each other
     const chain = [];
+    if (bank && s) {
+      s = `${bank}_${s}`;
+    }
     if (typeof s === 'string') {
       [s, n] = splitSN(s, n);
     }

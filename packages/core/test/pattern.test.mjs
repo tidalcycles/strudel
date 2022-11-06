@@ -47,6 +47,9 @@ import {
 
 import { steady } from '../signal.mjs';
 
+import controls from '../controls.mjs';
+
+const { n } = controls;
 const st = (begin, end) => new State(ts(begin, end));
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
 const hap = (whole, part, value, context = {}) => new Hap(whole, part, value, context);
@@ -137,6 +140,9 @@ describe('Pattern', () => {
     it('Can make a pattern', () => {
       expect(pure('hello').query(st(0.5, 2.5)).length).toBe(3);
     });
+    it('Supports zero-width queries', () => {
+      expect(pure('hello').queryArc(0, 0).length).toBe(1);
+    });
   });
   describe('fmap()', () => {
     it('Can add things', () => {
@@ -190,6 +196,9 @@ describe('Pattern', () => {
         sequence(1, [2, 3]).addSqueezeOut(10, 20, 30),
         sequence([11, [12, 13]], [21, [22, 23]], [31, [32, 33]]),
       );
+    });
+    it('can add object patterns', () => {
+      sameFirst(n(sequence(1, [2, 3])).add(n(10)), n(sequence(11, [12, 13])));
     });
   });
   describe('keep()', () => {
@@ -373,9 +382,10 @@ describe('Pattern', () => {
       );
     });
     it('copes with breaking up events across cycles', () => {
-      expect(pure('a').slow(2)._fastGap(2)._setContext({}).query(st(0, 2))).toStrictEqual(
-        [hap(ts(0, 1), ts(0, 0.5), 'a'), hap(ts(0.5, 1.5), ts(1, 1.5), 'a')]
-      );
+      expect(pure('a').slow(2)._fastGap(2)._setContext({}).query(st(0, 2))).toStrictEqual([
+        hap(ts(0, 1), ts(0, 0.5), 'a'),
+        hap(ts(0.5, 1.5), ts(1, 1.5), 'a'),
+      ]);
     });
   });
   describe('_compressSpan()', () => {
@@ -429,6 +439,16 @@ describe('Pattern', () => {
       // notable examples:
       // mini('[c3 g3]/2 eb3') always plays [c3 eb3]
       // mini('eb3 [c3 g3]/2 ') always plays [c3 g3]
+    });
+    it('Supports zero-length queries', () => {
+      expect(steady('a')._slow(1).queryArc(0, 0)).toStrictEqual(steady('a').queryArc(0, 0));
+    });
+  });
+  describe('slow()', () => {
+    it('Supports zero-length queries', () => {
+      expect(steady('a').slow(1)._setContext({}).queryArc(0, 0)).toStrictEqual(
+        steady('a')._setContext({}).queryArc(0, 0),
+      );
     });
   });
   describe('inside', () => {
@@ -799,10 +819,11 @@ describe('Pattern', () => {
     });
     it('Squeezes to the correct cycle', () => {
       expect(
-        pure(time.struct(true))._squeezeJoin().queryArc(3,4).map(x => x.value)
-      ).toStrictEqual(
-        [Fraction(3.5)]
-      )
+        pure(time.struct(true))
+          ._squeezeJoin()
+          .queryArc(3, 4)
+          .map((x) => x.value),
+      ).toStrictEqual([Fraction(3.5)]);
     });
   });
   describe('ply', () => {
@@ -855,9 +876,7 @@ describe('Pattern', () => {
   });
   describe('range', () => {
     it('Can be patterned', () => {
-      expect(sequence(0, 0).range(sequence(0, 0.5), 1).firstCycle()).toStrictEqual(
-        sequence(0, 0.5).firstCycle(),
-      );
+      expect(sequence(0, 0).range(sequence(0, 0.5), 1).firstCycle()).toStrictEqual(sequence(0, 0.5).firstCycle());
     });
   });
   describe('range2', () => {

@@ -23,6 +23,6 @@
   "dependencies": {
     "@strudel.cycles/tone": "^0.2.0",
     "tone": "^14.7.77",
-    "webmidi": "^2.5.2"
+    "webmidi": "^3.0.21"
   }
 }

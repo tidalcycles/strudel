@@ -27,6 +27,6 @@
   "dependencies": {
     "@strudel.cycles/core": "^0.2.0",
     "@tonaljs/tonal": "^4.6.5",
-    "webmidi": "^3.0.15"
+    "webmidi": "^3.0.21"
   }
 }
