@@ -113,6 +113,10 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
       return;
     }
     const base = sampleMap.split('/').slice(0, -1).join('/');
+    if (typeof fetch === 'undefined') {
+      // skip fetch when in node / testing
+      return;
+    }
     return fetch(sampleMap)
       .then((res) => res.json())
       .then((json) => samples(json, baseUrl || json._base || base))

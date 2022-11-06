@@ -2,6 +2,7 @@
   "name": "@strudel.cycles/repl",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite --host",
     "start": "vite",
@@ -12,7 +13,8 @@
     "add-license": "cat etc/agpl-header.txt ../docs/static/js/*LICENSE.txt > /tmp/strudel-license.txt && cp /tmp/strudel-license.txt ../docs/static/js/*LICENSE.txt",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d ../docs",
-    "static": "npx serve ../docs"
+    "static": "npx serve ../docs",
+    "dbdump": "node src/test/dbdump.js > src/test/dbdump.json"
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.35.3",
