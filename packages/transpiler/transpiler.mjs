@@ -4,7 +4,7 @@ import { walk } from 'estree-walker';
 import { isNote } from '@strudel.cycles/core';
 
 export function transpiler(input, options = {}) {
-  const { wrapAsync = false, addReturn = true } = options;
+  const { wrapAsync = false, addReturn = true, simpleLocs = false } = options;
 
   let ast = parse(input, {
     ecmaVersion: 2022,
@@ -18,12 +18,12 @@ export function transpiler(input, options = {}) {
         const { quasis, start, end } = node;
         const { raw } = quasis[0].value;
         this.skip();
-        return this.replace(miniWithLocation(raw, node));
+        return this.replace(miniWithLocation(raw, node, simpleLocs));
       }
       if (isStringWithDoubleQuotes(node)) {
         const { value, start, end } = node;
         this.skip();
-        return this.replace(miniWithLocation(value, node));
+        return this.replace(miniWithLocation(value, node, simpleLocs));
       }
       if (node.type === 'Identifier' && isNote(node.name)) {
         this.skip();
@@ -66,8 +66,7 @@ function isBackTickString(node, parent) {
   return node.type === 'TemplateLiteral' && parent.type !== 'TaggedTemplateExpression';
 }
 
-function miniWithLocation(value, node) {
-  const simpleLocs = false; // TODO: use simple locs and refactor Pattern.withMiniLocation
+function miniWithLocation(value, node, simpleLocs) {
   let locs;
   const { start: fromOffset, end: toOffset } = node;
   if (simpleLocs) {

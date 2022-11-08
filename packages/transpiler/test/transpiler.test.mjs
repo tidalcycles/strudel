@@ -7,26 +7,26 @@ This program is free software: you can redistribute it and/or modify it under th
 import { describe, it, expect } from 'vitest';
 import { transpiler } from '../transpiler.mjs';
 
+const simple = { wrapAsync: false, addReturn: false, simpleLocs: true };
+
 describe('transpiler', () => {
   it('wraps double quote string with mini and adds location', () => {
-    expect(transpiler('"c3"', { wrapAsync: false, addReturn: false })).toEqual("mini('c3').withMiniLocation(0, 4);");
-    expect(transpiler('stack("c3","bd sd")', { wrapAsync: false, addReturn: false })).toEqual(
+    expect(transpiler('"c3"', simple)).toEqual("mini('c3').withMiniLocation(0, 4);");
+    expect(transpiler('stack("c3","bd sd")', simple)).toEqual(
       "stack(mini('c3').withMiniLocation(6, 10), mini('bd sd').withMiniLocation(11, 18));",
     );
   });
   it('wraps backtick string with mini and adds location', () => {
-    expect(transpiler('`c3`', { wrapAsync: false, addReturn: false })).toEqual("mini('c3').withMiniLocation(0, 4);");
+    expect(transpiler('`c3`', simple)).toEqual("mini('c3').withMiniLocation(0, 4);");
   });
   it('replaces note variables with note strings', () => {
-    expect(transpiler('seq(c3, d3)', { wrapAsync: false, addReturn: false })).toEqual("seq('c3', 'd3');");
+    expect(transpiler('seq(c3, d3)', simple)).toEqual("seq('c3', 'd3');");
   });
   it('keeps tagged template literal as is', () => {
-    expect(transpiler('xxx`c3`', { wrapAsync: false, addReturn: false })).toEqual('xxx`c3`;');
+    expect(transpiler('xxx`c3`', simple)).toEqual('xxx`c3`;');
   });
   it('supports top level await', () => {
-    expect(transpiler("await samples('xxx');", { wrapAsync: false, addReturn: false })).toEqual(
-      "await samples('xxx');",
-    );
+    expect(transpiler("await samples('xxx');", simple)).toEqual("await samples('xxx');");
   });
   /*   it('parses dynamic imports', () => {
     expect(
