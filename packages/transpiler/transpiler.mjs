@@ -9,7 +9,7 @@ export function transpiler(input, options = {}) {
   let ast = parse(input, {
     ecmaVersion: 2022,
     allowAwaitOutsideFunction: true,
-    // locations: true,
+    locations: true,
   });
 
   walk(ast, {
@@ -18,12 +18,12 @@ export function transpiler(input, options = {}) {
         const { quasis, start, end } = node;
         const { raw } = quasis[0].value;
         this.skip();
-        return this.replace(miniWithLocation(raw, start, end));
+        return this.replace(miniWithLocation(raw, node));
       }
       if (isStringWithDoubleQuotes(node)) {
         const { value, start, end } = node;
         this.skip();
-        return this.replace(miniWithLocation(value, start, end));
+        return this.replace(miniWithLocation(value, node));
       }
       if (node.type === 'Identifier' && isNote(node.name)) {
         this.skip();
@@ -66,7 +66,45 @@ function isBackTickString(node, parent) {
   return node.type === 'TemplateLiteral' && parent.type !== 'TaggedTemplateExpression';
 }
 
-function miniWithLocation(value, start, end) {
+function miniWithLocation(value, node) {
+  const simpleLocs = false; // TODO: use simple locs and refactor Pattern.withMiniLocation
+  let locs;
+  const { start: fromOffset, end: toOffset } = node;
+  if (simpleLocs) {
+    locs = [
+      {
+        type: 'Literal',
+        value: fromOffset,
+      },
+      {
+        type: 'Literal',
+        value: toOffset,
+      },
+    ];
+  } else {
+    const {
+      loc: {
+        start: { line: fromLine, column: fromColumn },
+        end: { line: toLine, column: toColumn },
+      },
+    } = node;
+    locs = [
+      {
+        type: 'ArrayExpression',
+        elements: [fromLine, fromColumn, fromOffset].map((value) => ({
+          type: 'Literal',
+          value,
+        })),
+      },
+      {
+        type: 'ArrayExpression',
+        elements: [toLine, toColumn, toOffset].map((value) => ({
+          type: 'Literal',
+          value,
+        })),
+      },
+    ];
+  }
   // with location
   return {
     type: 'CallExpression',
@@ -86,16 +124,7 @@ function miniWithLocation(value, start, end) {
         name: 'withMiniLocation',
       },
     },
-    arguments: [
-      {
-        type: 'Literal',
-        value: start,
-      },
-      {
-        type: 'Literal',
-        value: end,
-      },
-    ],
+    arguments: locs,
     optional: false,
   };
 }
