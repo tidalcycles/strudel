@@ -1,7 +1,6 @@
-// import { Scheduler } from '@strudel.cycles/core';
 import { useRef, useCallback, useEffect, useMemo, useState } from 'react';
-import shapeshifter from '@strudel.cycles/eval/shapeshifter.mjs';
 import { repl } from '@strudel.cycles/core/repl.mjs';
+import { transpiler } from '@strudel.cycles/transpiler';
 
 function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = false }) {
   // scheduler
@@ -18,7 +17,7 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = fals
         onSchedulerError: setSchedulerError,
         onEvalError: setEvalError,
         getTime,
-        transpiler: shapeshifter,
+        transpiler,
         onEval: ({ pattern: _pattern, code }) => {
           setActiveCode(code);
           setPattern(_pattern);

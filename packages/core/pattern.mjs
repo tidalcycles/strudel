@@ -13,6 +13,12 @@ import { unionWithObj } from './value.mjs';
 import { compose, removeUndefineds, flatten, id, listRange, curry, mod, numeralArgs, parseNumeral } from './util.mjs';
 import drawLine from './drawLine.mjs';
 
+let stringParser;
+// parser is expected to turn a string into a pattern
+// if set, the reify function will parse all strings with it
+// intended to use with mini to automatically interpret all strings as mini notation
+export const setStringParser = (parser) => (stringParser = parser);
+
 /** @class Class representing a pattern. */
 export class Pattern {
   _Pattern = true; // this property is used to detect if a pattern that fails instanceof Pattern is an instance of another Pattern
@@ -1560,6 +1566,9 @@ export function reify(thing) {
   // Turns something into a pattern, unless it's already a pattern
   if (isPattern(thing)) {
     return thing;
+  }
+  if (stringParser && typeof thing === 'string') {
+    return stringParser(thing);
   }
   return pure(thing);
 }

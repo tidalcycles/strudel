@@ -24,8 +24,16 @@ export const evalScope = async (...args) => {
   Object.assign(globalThis, ...modules, Pattern.prototype.bootstrap());
 };
 
-function safeEval(str) {
-  return Function('"use strict";return (' + str + ')')();
+function safeEval(str, options = {}) {
+  const { wrapExpression = true, wrapAsync = true } = options;
+  if (wrapExpression) {
+    str = `{${str}}`;
+  }
+  if (wrapAsync) {
+    str = `(async ()=>${str})()`;
+  }
+  const body = `"use strict";return (${str})`;
+  return Function(body)();
 }
 
 export const evaluate = async (code, transpiler) => {
@@ -35,7 +43,9 @@ export const evaluate = async (code, transpiler) => {
   if (transpiler) {
     code = transpiler(code); // transform syntactically correct js code to semantically usable code
   }
-  let evaluated = await safeEval(code);
+  // if no transpiler is given, we expect a single instruction (!wrapExpression)
+  const options = { wrapExpression: !!transpiler };
+  let evaluated = await safeEval(code, options);
   if (!isPattern(evaluated)) {
     console.log('evaluated', evaluated);
     const message = `got "${typeof evaluated}" instead of pattern`;
