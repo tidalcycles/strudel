@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/webaudio",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Web Audio helpers for Strudel",
   "main": "dist/index.cjs.mjs",
   "module": "dist/index.es.js",
