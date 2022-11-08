@@ -1,6 +1,7 @@
 import { controls, repl, evalScope } from '@strudel.cycles/core';
 import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
 import { transpiler } from '@strudel.cycles/transpiler';
+// import shapeshifter from '@strudel.cycles/eval/shapeshifter.mjs';
 import tune from './tune.mjs';
 
 const ctx = getAudioContext();
@@ -19,6 +20,7 @@ const { evaluate } = repl({
   defaultOutput: webaudioOutput,
   getTime: () => ctx.currentTime,
   transpiler,
+  // transpiler: shapeshifter,
 });
 document.getElementById('start').addEventListener('click', () => {
   ctx.resume();

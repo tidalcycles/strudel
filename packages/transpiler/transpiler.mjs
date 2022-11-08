@@ -9,6 +9,7 @@ export function transpiler(input, options = {}) {
   let ast = parse(input, {
     ecmaVersion: 2022,
     allowAwaitOutsideFunction: true,
+    // locations: true,
   });
 
   walk(ast, {
