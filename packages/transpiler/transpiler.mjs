@@ -4,7 +4,7 @@ import { walk } from 'estree-walker';
 import { isNote } from '@strudel.cycles/core';
 
 export function transpiler(input, options = {}) {
-  const { wrapAsync = true, addReturn = true } = options;
+  const { wrapAsync = false, addReturn = true } = options;
 
   let ast = parse(input, {
     ecmaVersion: 2022,

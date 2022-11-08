@@ -30,7 +30,8 @@ const isNote = (name) => /^[a-gC-G][bs]?[0-9]$/.test(name);
 const addLocations = true;
 export const addMiniLocations = true;
 export const minifyStrings = true;
-export const wrappedAsync = true;
+export const wrappedAsync = false; // this is now handled by core evaluate by default
+export const shouldAddReturn = true;
 
 export default (_code) => {
   const { code, addReturn } = wrapAsync(_code);
@@ -125,7 +126,7 @@ export default (_code) => {
     },
   });
   // add return to last statement (because it's wrapped in an async function artificially)
-  if (wrappedAsync) {
+  if (shouldAddReturn) {
     addReturn(shifted);
   }
   const generated = undisguiseImports(codegen(shifted));
@@ -153,7 +154,7 @@ ${code}
 })()`;
   }
   const addReturn = (ast) => {
-    const body = ast.statements[0].expression.callee.body; // actual code ast inside async function body
+    const body = wrappedAsync ? ast.statements[0].expression.callee.body : ast;
     body.statements = body.statements
       .slice(0, -1)
       .concat([new ReturnStatement({ expression: body.statements.slice(-1)[0] })]);

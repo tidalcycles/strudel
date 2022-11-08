@@ -5,15 +5,21 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { describe, it, expect } from 'vitest';
-import shapeshifter from '../shapeshifter.mjs';
+import shapeshifter, { wrappedAsync } from '../shapeshifter.mjs';
 
 describe('shapeshifter', () => {
   it('Should shift simple double quote string', () => {
-    expect(shapeshifter('"c3"')).toEqual('(async()=>{return mini("c3").withMiniLocation([1,0,15],[1,4,19])})()');
+    if (wrappedAsync) {
+      expect(shapeshifter('"c3"')).toEqual('(async()=>{return mini("c3").withMiniLocation([1,0,15],[1,4,19])})()');
+    } else {
+      expect(shapeshifter('"c3"')).toEqual('return mini("c3").withMiniLocation([1,0,0],[1,4,4])');
+    }
   });
-  it('Should handle dynamic imports', () => {
-    expect(shapeshifter('const { default: foo } = await import(\'https://bar.com/foo.js\');"c3"')).toEqual(
-      '(async()=>{const{default:foo}=await import("https://bar.com/foo.js");return mini("c3").withMiniLocation([1,64,79],[1,68,83])})()',
-    );
-  });
+  if (wrappedAsync) {
+    it('Should handle dynamic imports', () => {
+      expect(shapeshifter('const { default: foo } = await import(\'https://bar.com/foo.js\');"c3"')).toEqual(
+        'const{default:foo}=await import("https://bar.com/foo.js");return mini("c3").withMiniLocation([1,64,79],[1,68,83])',
+      );
+    });
+  }
 });
