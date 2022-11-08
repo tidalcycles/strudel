@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/tonal",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Tonal functions for strudel",
   "main": "index.mjs",
   "type": "module",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@strudel.cycles/core": "^0.3.2",
     "@tonaljs/tonal": "^4.6.5",
-    "webmidi": "^3.0.21",
-    "chord-voicings": "^0.0.1"
+    "chord-voicings": "^0.0.1",
+    "webmidi": "^3.0.21"
   }
 }

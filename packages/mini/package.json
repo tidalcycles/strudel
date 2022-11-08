@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/mini",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Mini notation for strudel",
   "main": "index.mjs",
   "type": "module",
@@ -28,7 +28,7 @@
   "dependencies": {
     "@strudel.cycles/core": "^0.3.2",
     "@strudel.cycles/eval": "^0.3.2",
-    "@strudel.cycles/tone": "^0.3.2"
+    "@strudel.cycles/tone": "^0.3.3"
   },
   "devDependencies": {
     "peggy": "^2.0.1"
