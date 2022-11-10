@@ -24,10 +24,7 @@ export { default as gist } from './gist.js';
 // below won't work with runtime.mjs (json import fails)
 /* import * as p from './package.json';
 export const version = p.version; */
-logger(
-  '%c 🌀 @strudel.cycles/core loaded 🌀', // keep "//" for runnable snapshot source..
-  'background-color: black;color:white;padding:4px;border-radius:15px',
-);
+logger('🌀 @strudel.cycles/core loaded 🌀');
 if (globalThis._strudelLoaded) {
   console.warn(
     `@strudel.cycles/core was loaded more than once...
