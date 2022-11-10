@@ -51,7 +51,7 @@ Pattern.prototype.voicings = function (range) {
   }
   return this.fmapNested((event) => {
     lastVoicing = getVoicing(event.value, lastVoicing, range);
-    return stack(...lastVoicing)._withContext(() => ({
+    return stack(...lastVoicing).withContext(() => ({
       locations: event.context.locations || [],
     }));
   });

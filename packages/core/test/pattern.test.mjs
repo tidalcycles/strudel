@@ -58,7 +58,7 @@ const third = Fraction(1, 3);
 const twothirds = Fraction(2, 3);
 
 const sameFirst = (a, b) => {
-  return expect(a._sortHapsByPart().firstCycle()).toStrictEqual(b._sortHapsByPart().firstCycle());
+  return expect(a.sortHapsByPart().firstCycle()).toStrictEqual(b.sortHapsByPart().firstCycle());
 };
 
 describe('TimeSpan', () => {
@@ -382,7 +382,7 @@ describe('Pattern', () => {
       );
     });
     it('copes with breaking up events across cycles', () => {
-      expect(pure('a').slow(2)._fastGap(2)._setContext({}).query(st(0, 2))).toStrictEqual([
+      expect(pure('a').slow(2)._fastGap(2).setContext({}).query(st(0, 2))).toStrictEqual([
         hap(ts(0, 1), ts(0, 0.5), 'a'),
         hap(ts(0.5, 1.5), ts(1, 1.5), 'a'),
       ]);
@@ -446,8 +446,8 @@ describe('Pattern', () => {
   });
   describe('slow()', () => {
     it('Supports zero-length queries', () => {
-      expect(steady('a').slow(1)._setContext({}).queryArc(0, 0)).toStrictEqual(
-        steady('a')._setContext({}).queryArc(0, 0),
+      expect(steady('a').slow(1).setContext({}).queryArc(0, 0)).toStrictEqual(
+        steady('a').setContext({}).queryArc(0, 0),
       );
     });
   });
@@ -465,7 +465,7 @@ describe('Pattern', () => {
     it('Filters true', () => {
       expect(
         pure(true)
-          ._filterValues((x) => x)
+          .filterValues((x) => x)
           .firstCycle().length,
       ).toBe(1);
     });
@@ -490,7 +490,7 @@ describe('Pattern', () => {
         pure(10)
           .when(slowcat(true, false), (x) => x.add(3))
           .fast(4)
-          ._sortHapsByPart()
+          .sortHapsByPart()
           .firstCycle(),
       ).toStrictEqual(fastcat(13, 10, 13, 10).firstCycle());
     });
@@ -692,7 +692,7 @@ describe('Pattern', () => {
     it('Can set the hap context', () => {
       expect(
         pure('a')
-          ._setContext([
+          .setContext([
             [
               [0, 1],
               [1, 2],
@@ -713,13 +713,13 @@ describe('Pattern', () => {
     it('Can update the hap context', () => {
       expect(
         pure('a')
-          ._setContext([
+          .setContext([
             [
               [0, 1],
               [1, 2],
             ],
           ])
-          ._withContext((c) => [
+          .withContext((c) => [
             ...c,
             [
               [3, 4],
@@ -743,7 +743,7 @@ describe('Pattern', () => {
   });
   describe('apply', () => {
     it('Can apply a function', () => {
-      expect(sequence('a', 'b')._apply(fast(2)).firstCycle()).toStrictEqual(sequence('a', 'b').fast(2).firstCycle());
+      expect(sequence('a', 'b').apply(fast(2)).firstCycle()).toStrictEqual(sequence('a', 'b').fast(2).firstCycle());
     }),
       it('Can apply a pattern of functions', () => {
         expect(sequence('a', 'b').apply(fast(2)).firstCycle()).toStrictEqual(sequence('a', 'b').fast(2).firstCycle());
@@ -784,18 +784,18 @@ describe('Pattern', () => {
   });
   describe('jux', () => {
     it('Can juxtapose', () => {
-      expect(pure({ a: 1 }).jux(fast(2))._sortHapsByPart().firstCycle()).toStrictEqual(
+      expect(pure({ a: 1 }).jux(fast(2)).sortHapsByPart().firstCycle()).toStrictEqual(
         stack(pure({ a: 1, pan: 0 }), pure({ a: 1, pan: 1 }).fast(2))
-          ._sortHapsByPart()
+          .sortHapsByPart()
           .firstCycle(),
       );
     });
   });
   describe('juxBy', () => {
     it('Can juxtapose by half', () => {
-      expect(pure({ a: 1 }).juxBy(0.5, fast(2))._sortHapsByPart().firstCycle()).toStrictEqual(
+      expect(pure({ a: 1 }).juxBy(0.5, fast(2)).sortHapsByPart().firstCycle()).toStrictEqual(
         stack(pure({ a: 1, pan: 0.25 }), pure({ a: 1, pan: 0.75 }).fast(2))
-          ._sortHapsByPart()
+          .sortHapsByPart()
           .firstCycle(),
       );
     });
@@ -805,7 +805,7 @@ describe('Pattern', () => {
       expect(
         sequence('a', ['a', 'a'])
           .fmap((a) => fastcat('b', 'c'))
-          ._squeezeJoin()
+          .squeezeJoin()
           .firstCycle(),
       ).toStrictEqual(
         sequence(
@@ -820,7 +820,7 @@ describe('Pattern', () => {
     it('Squeezes to the correct cycle', () => {
       expect(
         pure(time.struct(true))
-          ._squeezeJoin()
+          .squeezeJoin()
           .queryArc(3, 4)
           .map((x) => x.value),
       ).toStrictEqual([Fraction(3.5)]);
@@ -857,7 +857,7 @@ describe('Pattern', () => {
       );
     });
     it('Can chop(2,3)', () => {
-      expect(pure({ sound: 'a' }).fast(2).chop(2, 3)._sortHapsByPart().firstCycle()).toStrictEqual(
+      expect(pure({ sound: 'a' }).fast(2).chop(2, 3).sortHapsByPart().firstCycle()).toStrictEqual(
         sequence(
           [
             { sound: 'a', begin: 0, end: 0.5 },
@@ -869,7 +869,7 @@ describe('Pattern', () => {
             { sound: 'a', begin: 2 / 3, end: 1 },
           ],
         )
-          ._sortHapsByPart()
+          .sortHapsByPart()
           .firstCycle(),
       );
     });

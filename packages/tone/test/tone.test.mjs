@@ -13,6 +13,6 @@ describe('tone', () => {
     // const s = synth().chain(out()); // TODO: mock audio context?
     // assert.deepStrictEqual(s, new Tone.Synth().chain(out()));
     const s = {};
-    expect(pure('c3').tone(s)._firstCycleValues).toEqual(['c3']);
+    expect(pure('c3').tone(s).firstCycleValues).toEqual(['c3']);
   });
 });

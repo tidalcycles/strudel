@@ -50,7 +50,7 @@ export const getDefaultSynth = () => {
 
 // with this function, you can play the pattern with any tone synth
 Pattern.prototype.tone = function (instrument) {
-  return this._withHap((hap) => {
+  return this.withHap((hap) => {
     const onTrigger = (time, hap) => {
       let note;
       let velocity = hap.context?.velocity ?? 0.75;

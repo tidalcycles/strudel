@@ -12,6 +12,6 @@ import { describe, it, expect } from 'vitest';
 
 describe('tonal', () => {
   it('Should run tonal functions ', () => {
-    expect(pure('c3').scale('C major').scaleTranspose(1)._firstCycleValues).toEqual(['D3']);
+    expect(pure('c3').scale('C major').scaleTranspose(1).firstCycleValues).toEqual(['D3']);
   });
 });

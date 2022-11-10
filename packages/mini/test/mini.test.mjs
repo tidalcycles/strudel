@@ -9,8 +9,8 @@ import '@strudel.cycles/core/euclid.mjs';
 import { describe, expect, it } from 'vitest';
 
 describe('mini', () => {
-  const minV = (v) => mini(v)._firstCycleValues;
-  const minS = (v) => mini(v)._showFirstCycle;
+  const minV = (v) => mini(v).firstCycleValues;
+  const minS = (v) => mini(v).showFirstCycle;
   it('supports single elements', () => {
     expect(minV('a')).toEqual(['a']);
   });

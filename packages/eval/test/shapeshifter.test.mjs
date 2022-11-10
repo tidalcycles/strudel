@@ -10,9 +10,9 @@ import shapeshifter, { wrappedAsync } from '../shapeshifter.mjs';
 describe('shapeshifter', () => {
   it('Should shift simple double quote string', () => {
     if (wrappedAsync) {
-      expect(shapeshifter('"c3"')).toEqual('(async()=>{return mini("c3")._withMiniLocation([1,0,15],[1,4,19])})()');
+      expect(shapeshifter('"c3"')).toEqual('(async()=>{return mini("c3").withMiniLocation([1,0,15],[1,4,19])})()');
     } else {
-      expect(shapeshifter('"c3"')).toEqual('return mini("c3")._withMiniLocation([1,0,0],[1,4,4])');
+      expect(shapeshifter('"c3"')).toEqual('return mini("c3").withMiniLocation([1,0,0],[1,4,4])');
     }
   });
   if (wrappedAsync) {

@@ -53,7 +53,7 @@ export class Pattern {
    * happen within a cycle.
    * @returns Pattern
    */
-  _splitQueries() {
+  splitQueries() {
     const pat = this;
     const q = (state) => {
       return flatten(state.span.spanCycles.map((subspan) => pat.query(state.setSpan(subspan))));
@@ -67,11 +67,11 @@ export class Pattern {
    * @param {Function} func the function to apply
    * @returns Pattern
    */
-  _withQuerySpan(func) {
+  withQuerySpan(func) {
     return new Pattern((state) => this.query(state.withSpan(func)));
   }
 
-  _withQuerySpanMaybe(func) {
+  withQuerySpanMaybe(func) {
     const pat = this;
     return new Pattern((state) => {
       const newState = state.withSpan(func);
@@ -83,34 +83,34 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#_withQuerySpan}, but the function is applied to both the
+   * As with {@link Pattern#withQuerySpan}, but the function is applied to both the
    * begin and end time of the query timespan.
    * @param {Function} func the function to apply
    * @returns Pattern
    */
-  _withQueryTime(func) {
+  withQueryTime(func) {
     return new Pattern((state) => this.query(state.withSpan((span) => span.withTime(func))));
   }
 
   /**
-   * Similar to {@link Pattern#_withQuerySpan}, but the function is applied to the timespans
+   * Similar to {@link Pattern#withQuerySpan}, but the function is applied to the timespans
    * of all haps returned by pattern queries (both `part` timespans, and where
    * present, `whole` timespans).
    * @param {Function} func
    * @returns Pattern
    */
-  _withHapSpan(func) {
+  withHapSpan(func) {
     return new Pattern((state) => this.query(state).map((hap) => hap.withSpan(func)));
   }
 
   /**
-   * As with {@link Pattern#_withHapSpan}, but the function is applied to both the
+   * As with {@link Pattern#withHapSpan}, but the function is applied to both the
    * begin and end time of the hap timespans.
    * @param {Function} func the function to apply
    * @returns Pattern
    */
-  _withHapTime(func) {
-    return this._withHapSpan((span) => span.withTime(func));
+  withHapTime(func) {
+    return this.withHapSpan((span) => span.withTime(func));
   }
 
   /**
@@ -118,17 +118,17 @@ export class Pattern {
    * @param {Function} func
    * @returns Pattern
    */
-  _withHaps(func) {
+  withHaps(func) {
     return new Pattern((state) => func(this.query(state)));
   }
 
   /**
-   * As with {@link Pattern#_withHaps}, but applies the function to every hap, rather than every list of haps.
+   * As with {@link Pattern#withHaps}, but applies the function to every hap, rather than every list of haps.
    * @param {Function} func
    * @returns Pattern
    */
-  _withHap(func) {
-    return this._withHaps((haps) => haps.map(func));
+  withHap(func) {
+    return this.withHaps((haps) => haps.map(func));
   }
 
   /**
@@ -136,8 +136,8 @@ export class Pattern {
    * @param {*} context
    * @returns Pattern
    */
-  _setContext(context) {
-    return this._withHap((hap) => hap.setContext(context));
+  setContext(context) {
+    return this.withHap((hap) => hap.setContext(context));
   }
 
   /**
@@ -145,16 +145,16 @@ export class Pattern {
    * @param {Function} func
    * @returns Pattern
    */
-  _withContext(func) {
-    return this._withHap((hap) => hap.setContext(func(hap.context)));
+  withContext(func) {
+    return this.withHap((hap) => hap.setContext(func(hap.context)));
   }
 
   /**
    * Returns a new pattern with the context field of every hap set to an empty object.
    * @returns Pattern
    */
-  _stripContext() {
-    return this._withHap((hap) => hap.setContext({}));
+  stripContext() {
+    return this.withHap((hap) => hap.setContext({}));
   }
 
   /**
@@ -164,23 +164,23 @@ export class Pattern {
    * @param {Number} end
    * @returns Pattern
    */
-  _withLocation(start, end) {
+  withLocation(start, end) {
     const location = {
       start: { line: start[0], column: start[1], offset: start[2] },
       end: { line: end[0], column: end[1], offset: end[2] },
     };
-    return this._withContext((context) => {
+    return this.withContext((context) => {
       const locations = (context.locations || []).concat([location]);
       return { ...context, locations };
     });
   }
 
-  _withMiniLocation(start, end) {
+  withMiniLocation(start, end) {
     const offset = {
       start: { line: start[0], column: start[1], offset: start[2] },
       end: { line: end[0], column: end[1], offset: end[2] },
     };
-    return this._withContext((context) => {
+    return this.withContext((context) => {
       let locations = context.locations || [];
       locations = locations.map(({ start, end }) => {
         const colOffset = start.line === 1 ? offset.start.column : 0;
@@ -207,15 +207,15 @@ export class Pattern {
    * @param {Function} func
    * @returns Pattern
    */
-  _withValue(func) {
+  withValue(func) {
     return new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
   }
 
   /**
-   * see {@link Pattern#_withValue}
+   * see {@link Pattern#withValue}
    */
   fmap(func) {
-    return this._withValue(func);
+    return this.withValue(func);
   }
 
   /**
@@ -223,17 +223,17 @@ export class Pattern {
    * @param {Function} hap_test - a function which returns false for haps to be removed from the pattern
    * @returns Pattern
    */
-  _filterHaps(hap_test) {
+  filterHaps(hap_test) {
     return new Pattern((state) => this.query(state).filter(hap_test));
   }
 
   /**
-   * As with {@link Pattern#_filterHaps}, but the function is applied to values
+   * As with {@link Pattern#filterHaps}, but the function is applied to values
    * inside haps.
    * @param {Function} value_test
    * @returns Pattern
    */
-  _filterValues(value_test) {
+  filterValues(value_test) {
     return new Pattern((state) => this.query(state).filter((hap) => value_test(hap.value)));
   }
 
@@ -242,8 +242,8 @@ export class Pattern {
    * query results.
    * @returns Pattern
    */
-  _removeUndefineds() {
-    return this._filterValues((val) => val != undefined);
+  removeUndefineds() {
+    return this.filterValues((val) => val != undefined);
   }
 
   /**
@@ -252,11 +252,11 @@ export class Pattern {
    * as its `part` timespan.
    * @returns Pattern
    */
-  _onsetsOnly() {
+  onsetsOnly() {
     // Returns a new pattern that will only return haps where the start
     // of the 'whole' timespan matches the start of the 'part'
     // timespan, i.e. the haps that include their 'onset'.
-    return this._filterHaps((hap) => hap.hasOnset());
+    return this.filterHaps((hap) => hap.hasOnset());
   }
 
   /**
@@ -264,12 +264,12 @@ export class Pattern {
    * timespans) removed from query results.
    * @returns Pattern
    */
-  _discreteOnly() {
+  discreteOnly() {
     // removes continuous haps that don't have a 'whole' timespan
-    return this._filterHaps((hap) => hap.whole);
+    return this.filterHaps((hap) => hap.whole);
   }
 
-  _appWhole(whole_func, pat_val) {
+  appWhole(whole_func, pat_val) {
     // Assumes 'this' is a pattern of functions, and given a function to
     // resolve wholes, applies a given pattern of values to that
     // pattern of functions.
@@ -307,7 +307,7 @@ export class Pattern {
    * @param {Pattern} pat_val
    * @returns Pattern
    */
-  _appBoth(pat_val) {
+  appBoth(pat_val) {
     // Tidal's <*>
     const whole_func = function (span_a, span_b) {
       if (span_a == undefined || span_b == undefined) {
@@ -315,11 +315,11 @@ export class Pattern {
       }
       return span_a.intersection_e(span_b);
     };
-    return this._appWhole(whole_func, pat_val);
+    return this.appWhole(whole_func, pat_val);
   }
 
   /**
-   * As with {@link Pattern#_appBoth}, but the `whole` timespan is not the intersection,
+   * As with {@link Pattern#appBoth}, but the `whole` timespan is not the intersection,
    * but the timespan from the function of patterns that this method is called
    * on. In practice, this means that the pattern structure, including onsets,
    * are preserved from the pattern of functions (often referred to as the left
@@ -327,7 +327,7 @@ export class Pattern {
    * @param {Pattern} pat_val
    * @returns Pattern
    */
-  _appLeft(pat_val) {
+  appLeft(pat_val) {
     const pat_func = this;
 
     const query = function (state) {
@@ -351,13 +351,13 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#_appLeft}, but `whole` timespans are instead taken from the
+   * As with {@link Pattern#appLeft}, but `whole` timespans are instead taken from the
    * pattern of values, i.e. structure is preserved from the right hand/outer
    * pattern.
    * @param {Pattern} pat_val
    * @returns Pattern
    */
-  _appRight(pat_val) {
+  appRight(pat_val) {
     const pat_func = this;
 
     const query = function (state) {
@@ -390,7 +390,7 @@ export class Pattern {
   firstCycle(with_context = false) {
     var self = this;
     if (!with_context) {
-      self = self._stripContext();
+      self = self.stripContext();
     }
     return self.query(new State(new TimeSpan(Fraction(0), Fraction(1))));
   }
@@ -398,14 +398,14 @@ export class Pattern {
   /**
    * Accessor for a list of values returned by querying the first cycle.
    */
-  get _firstCycleValues() {
+  get firstCycleValues() {
     return this.firstCycle().map((hap) => hap.value);
   }
 
   /**
-   * More human-readable version of the {@link Pattern#_firstCycleValues} accessor.
+   * More human-readable version of the {@link Pattern#firstCycleValues} accessor.
    */
-  get _showFirstCycle() {
+  get showFirstCycle() {
     return this.firstCycle().map(
       (hap) => `${hap.value}: ${hap.whole.begin.toFraction()} - ${hap.whole.end.toFraction()}`,
     );
@@ -416,8 +416,8 @@ export class Pattern {
    * of use when comparing two patterns for equality, in tests.
    * @returns Pattern
    */
-  _sortHapsByPart() {
-    return this._withHaps((haps) =>
+  sortHapsByPart() {
+    return this.withHaps((haps) =>
       haps.sort((a, b) =>
         a.part.begin
           .sub(b.part.begin)
@@ -428,33 +428,33 @@ export class Pattern {
   }
 
   _opIn(other, func) {
-    return this.fmap(func)._appLeft(reify(other));
+    return this.fmap(func).appLeft(reify(other));
   }
   _opOut(other, func) {
-    return this.fmap(func)._appRight(reify(other));
+    return this.fmap(func).appRight(reify(other));
   }
   _opMix(other, func) {
-    return this.fmap(func)._appBoth(reify(other));
+    return this.fmap(func).appBoth(reify(other));
   }
   _opSqueeze(other, func) {
     const otherPat = reify(other);
-    return this.fmap((a) => otherPat.fmap((b) => func(a)(b)))._squeezeJoin();
+    return this.fmap((a) => otherPat.fmap((b) => func(a)(b))).squeezeJoin();
   }
   _opSqueezeOut(other, func) {
     const thisPat = this;
     const otherPat = reify(other);
-    return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a)))._squeezeJoin();
+    return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a))).squeezeJoin();
   }
   _opTrig(other, func) {
     const otherPat = reify(other);
-    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._trigJoin();
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).trigJoin();
   }
   _opTrigzero(other, func) {
     const otherPat = reify(other);
-    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._TrigzeroJoin();
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).trigzeroJoin();
   }
 
-  _asNumber() {
+  asNumber() {
     return this.fmap(parseNumeral);
   }
 
@@ -468,7 +468,7 @@ export class Pattern {
    * "0.5 1.5 2.5".round().scale('C major').note()
    */
   round() {
-    return this._asNumber().fmap((v) => Math.round(v));
+    return this.asNumber().fmap((v) => Math.round(v));
   }
 
   /**
@@ -478,7 +478,7 @@ export class Pattern {
    * @returns Pattern
    */
   floor() {
-    return this._asNumber().fmap((v) => Math.floor(v));
+    return this.asNumber().fmap((v) => Math.floor(v));
   }
 
   /**
@@ -488,7 +488,7 @@ export class Pattern {
    * @returns Pattern
    */
   ceil() {
-    return this._asNumber().fmap((v) => Math.ceil(v));
+    return this.asNumber().fmap((v) => Math.ceil(v));
   }
 
   /**
@@ -496,7 +496,7 @@ export class Pattern {
    * 1. Returns a new pattern with values scaled to the bipolar range -1 .. 1
    * @returns Pattern
    */
-  _toBipolar() {
+  toBipolar() {
     return this.fmap((x) => x * 2 - 1);
   }
 
@@ -505,7 +505,7 @@ export class Pattern {
    * 1. Returns a new pattern with values scaled to the unipolar range 0 .. 1
    * @returns Pattern
    */
-  _fromBipolar() {
+  fromBipolar() {
     return this.fmap((x) => (x + 1) / 2);
   }
 
@@ -543,10 +543,10 @@ export class Pattern {
    * @returns Pattern
    */
   _range2(min, max) {
-    return this._fromBipolar()._range(min, max);
+    return this.fromBipolar()._range(min, max);
   }
 
-  _bindWhole(choose_whole, func) {
+  bindWhole(choose_whole, func) {
     const pat_val = this;
     const query = function (state) {
       const withWhole = function (a, b) {
@@ -569,24 +569,24 @@ export class Pattern {
     return new Pattern(query);
   }
 
-  _bind(func) {
+  bind(func) {
     const whole_func = function (a, b) {
       if (a == undefined || b == undefined) {
         return undefined;
       }
       return a.intersection_e(b);
     };
-    return this._bindWhole(whole_func, func);
+    return this.bindWhole(whole_func, func);
   }
 
-  _join() {
+  join() {
     // Flattens a pattern of patterns into a pattern, where wholes are
     // the intersection of matched inner and outer haps.
-    return this._bind(id);
+    return this.bind(id);
   }
 
   outerBind(func) {
-    return this._bindWhole((a, _) => a, func);
+    return this.bindWhole((a, _) => a, func);
   }
 
   outerJoin() {
@@ -596,23 +596,23 @@ export class Pattern {
   }
 
   innerBind(func) {
-    return this._bindWhole((_, b) => b, func);
+    return this.bindWhole((_, b) => b, func);
   }
 
-  _innerJoin() {
+  innerJoin() {
     // Flattens a pattern of patterns into a pattern, where wholes are
     // taken from inner haps.
     return this.innerBind(id);
   }
 
   // Flatterns patterns of patterns, by retriggering/resetting inner patterns at onsets of outer pattern haps
-  _trigJoin(cycleZero = false) {
+  trigJoin(cycleZero = false) {
     const pat_of_pats = this;
     return new Pattern((state) => {
       return (
         pat_of_pats
           // drop continuous haps from the outer pattern.
-          ._discreteOnly()
+          .discreteOnly()
           .query(state)
           .map((outer_hap) => {
             return (
@@ -638,20 +638,20 @@ export class Pattern {
     });
   }
 
-  _TrigzeroJoin() {
-    return this._trigJoin(true);
+  trigzeroJoin() {
+    return this.trigJoin(true);
   }
 
   // Like the other joins above, joins a pattern of patterns of values, into a flatter
   // pattern of values. In this case it takes whole cycles of the inner pattern to fit each event
   // in the outer pattern.
-  _squeezeJoin() {
+  squeezeJoin() {
     // A pattern of patterns, which we call the 'outer' pattern, with patterns
     // as values which we call the 'inner' patterns.
     const pat_of_pats = this;
     function query(state) {
       // Get the events with the inner patterns. Ignore continuous events (without 'wholes')
-      const haps = pat_of_pats._discreteOnly().query(state);
+      const haps = pat_of_pats.discreteOnly().query(state);
       // A function to map over the events from the outer pattern.
       function flatHap(outerHap) {
         // Get the inner pattern, slowed and shifted so that the 'whole'
@@ -688,13 +688,13 @@ export class Pattern {
     return new Pattern(query);
   }
 
-  _squeezeBind(func) {
-    return this.fmap(func)._squeezeJoin();
+  squeezeBind(func) {
+    return this.fmap(func).squeezeJoin();
   }
 
   /**
    * Like layer, but with a single function:
-   * @name apply
+   * @name _apply
    * @memberof Pattern
    * @example
    * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4")).note()
@@ -717,7 +717,7 @@ export class Pattern {
     return stack(...funcs.map((func) => func(this)));
   }
 
-  _patternify(func) {
+  patternify(func) {
     const pat = this;
     const patterned = function (...args) {
       // the problem here: args could a pattern that has been turned into an object to add location
@@ -726,7 +726,7 @@ export class Pattern {
       args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
       const pat_arg = sequence(...args);
       // arg.locations has to go somewhere..
-      return pat_arg.fmap((arg) => func.call(pat, arg))._innerJoin();
+      return pat_arg.fmap((arg) => func.call(pat, arg)).innerJoin();
     };
     return patterned;
   }
@@ -763,7 +763,7 @@ export class Pattern {
           );
       return new Hap(newWhole, newPart, hap.value, hap.context);
     };
-    return this._withQuerySpanMaybe(qf)._withHap(ef)._splitQueries();
+    return this.withQuerySpanMaybe(qf).withHap(ef).splitQueries();
   }
 
   // Compress each cycle into the given timespan, leaving a gap
@@ -799,8 +799,8 @@ export class Pattern {
    * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
    */
   _fast(factor) {
-    const fastQuery = this._withQueryTime((t) => t.mul(factor));
-    return fastQuery._withHapTime((t) => t.div(factor));
+    const fastQuery = this.withQueryTime((t) => t.mul(factor));
+    return fastQuery.withHapTime((t) => t.div(factor));
   }
 
   /**
@@ -826,7 +826,7 @@ export class Pattern {
   }
 
   _ply(factor) {
-    return this.fmap((x) => pure(x)._fast(factor))._squeezeJoin();
+    return this.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
   }
 
   /**
@@ -849,7 +849,7 @@ export class Pattern {
     const func = function (o) {
       return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
     };
-    return this._squeezeBind(func);
+    return this.squeezeBind(func);
   }
 
   _striate(n) {
@@ -876,7 +876,7 @@ export class Pattern {
    */
   _early(offset) {
     offset = Fraction(offset);
-    return this._withQueryTime((t) => t.add(offset))._withHapTime((t) => t.sub(offset));
+    return this.withQueryTime((t) => t.add(offset)).withHapTime((t) => t.sub(offset));
   }
 
   /**
@@ -898,9 +898,9 @@ export class Pattern {
     e = Fraction(e);
     s = Fraction(s);
     const d = e.sub(s);
-    return this._withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
-      ._withHapSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
-      ._splitQueries();
+    return this.withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
+      .withHapSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
+      .splitQueries();
   }
 
   _zoomArc(a) {
@@ -932,8 +932,8 @@ export class Pattern {
   //   const binary_pat = sequence(binary_pats);
   //   return binary_pat
   //     .fmap((b) => (val) => b ? val : undefined)
-  //     ._appLeft(this)
-  //     ._removeUndefineds();
+  //     .appLeft(this)
+  //     .removeUndefineds();
   // }
 
   // mask(...binary_pats) {
@@ -941,16 +941,16 @@ export class Pattern {
   //   const binary_pat = sequence(binary_pats);
   //   return binary_pat
   //     .fmap((b) => (val) => b ? val : undefined)
-  //     ._appRight(this)
-  //     ._removeUndefineds();
+  //     .appRight(this)
+  //     .removeUndefineds();
   // }
 
   _color(color) {
-    return this._withContext((context) => ({ ...context, color }));
+    return this.withContext((context) => ({ ...context, color }));
   }
 
   log() {
-    return this._withHap((e) => {
+    return this.withHap((e) => {
       return e.setContext({ ...e.context, logs: (e.context?.logs || []).concat([e.show()]) });
     });
   }
@@ -986,10 +986,10 @@ export class Pattern {
    */
   when(binary_pat, func) {
     //binary_pat = sequence(binary_pat)
-    const true_pat = binary_pat._filterValues(id);
-    const false_pat = binary_pat._filterValues((val) => !val);
-    const with_pat = true_pat.fmap((_) => (y) => y)._appRight(func(this));
-    const without_pat = false_pat.fmap((_) => (y) => y)._appRight(this);
+    const true_pat = binary_pat.filterValues(id);
+    const false_pat = binary_pat.filterValues((val) => !val);
+    const with_pat = true_pat.fmap((_) => (y) => y).appRight(func(this));
+    const without_pat = false_pat.fmap((_) => (y) => y).appRight(this);
     return stack(with_pat, without_pat);
   }
 
@@ -1094,7 +1094,7 @@ export class Pattern {
       const haps = pat.query(state.setSpan(reflect(span)));
       return haps.map((hap) => hap.withSpan(reflect));
     };
-    return new Pattern(query)._splitQueries();
+    return new Pattern(query).splitQueries();
   }
 
   palindrome() {
@@ -1109,8 +1109,8 @@ export class Pattern {
       }
       return dflt;
     };
-    const left = this._withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) - by }));
-    const right = this._withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by }));
+    const left = this.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) - by }));
+    const right = this.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by }));
 
     return stack(left, func(right));
   }
@@ -1286,7 +1286,7 @@ export class Pattern {
 
   // sets absolute duration of haps
   _duration(value) {
-    return this._withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
+    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
   }
 
   /**
@@ -1298,7 +1298,7 @@ export class Pattern {
    * note("c3 eb3 g3 c4").legato("<.25 .5 1 2>")
    */
   _legato(value) {
-    return this._withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
+    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
   }
 
   /**
@@ -1311,7 +1311,7 @@ export class Pattern {
    * .velocity(".4 1")
    */
   _velocity(velocity) {
-    return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
+    return this.withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
 
   /**
@@ -1329,10 +1329,10 @@ export class Pattern {
       .slow(factor);
   }
   onTrigger(onTrigger) {
-    return this._withHap((hap) => hap.setContext({ ...hap.context, onTrigger }));
+    return this.withHap((hap) => hap.setContext({ ...hap.context, onTrigger }));
   }
   log(func = id) {
-    return this._withHap((hap) =>
+    return this.withHap((hap) =>
       hap.setContext({
         ...hap.context,
         onTrigger: (...args) => {
@@ -1457,7 +1457,7 @@ function _composeOp(a, b, func) {
         if (what === 'keepif') {
           // avoid union, as we want to throw away the value of 'b' completely
           result = pat['_op' + how](other, (a) => (b) => op(a, b));
-          result = result._removeUndefineds();
+          result = result.removeUndefineds();
         } else {
           result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
         }
@@ -1611,9 +1611,9 @@ export function slowcat(...pats) {
     // For example if three patterns are slowcat-ed, the fourth cycle of the result should
     // be the second (rather than fourth) cycle from the first pattern.
     const offset = span.begin.floor().sub(span.begin.div(pats.length).floor());
-    return pat._withHapTime((t) => t.add(offset)).query(state.setSpan(span.withTime((t) => t.sub(offset))));
+    return pat.withHapTime((t) => t.add(offset)).query(state.setSpan(span.withTime((t) => t.sub(offset))));
   };
-  return new Pattern(query)._splitQueries();
+  return new Pattern(query).splitQueries();
 }
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle. Unlike slowcat, this version will skip cycles.
@@ -1627,7 +1627,7 @@ export function slowcatPrime(...pats) {
     const pat = pats[pat_n]; // can be undefined for same cases e.g. /#cHVyZSg0MikKICAuZXZlcnkoMyxhZGQoNykpCiAgLmxhdGUoLjUp
     return pat?.query(state) || [];
   };
-  return new Pattern(query)._splitQueries();
+  return new Pattern(query).splitQueries();
 }
 
 /** Concatenation: as with {@link slowcat}, but squashes a cycle from each pattern into one cycle
@@ -1744,7 +1744,7 @@ export const fast = curry((a, pat) => pat.fast(a));
 export const inv = (pat) => pat.inv();
 export const invert = (pat) => pat.invert();
 export const iter = curry((a, pat) => pat.iter(a));
-export const iterBack = curry((a, pat) => pat.iter(a));
+export const iterBack = curry((a, pat) => pat.iterBack(a));
 export const jux = curry((f, pat) => pat.jux(f));
 export const juxBy = curry((by, f, pat) => pat.juxBy(by, f));
 export const late = curry((a, pat) => pat.late(a));
@@ -1789,21 +1789,21 @@ export function makeComposable(func) {
 export const patternify2 = (f) => (pata, patb, pat) =>
   pata
     .fmap((a) => (b) => f.call(pat, a, b))
-    ._appLeft(patb)
-    ._innerJoin();
+    .appLeft(patb)
+    .innerJoin();
 export const patternify3 = (f) => (pata, patb, patc, pat) =>
   pata
     .fmap((a) => (b) => (c) => f.call(pat, a, b, c))
-    ._appLeft(patb)
-    ._appLeft(patc)
-    ._innerJoin();
+    .appLeft(patb)
+    .appLeft(patc)
+    .innerJoin();
 export const patternify4 = (f) => (pata, patb, patc, patd, pat) =>
   pata
     .fmap((a) => (b) => (c) => (d) => f.call(pat, a, b, c, d))
-    ._appLeft(patb)
-    ._appLeft(patc)
-    ._appLeft(patd)
-    ._innerJoin();
+    .appLeft(patb)
+    .appLeft(patc)
+    .appLeft(patd)
+    .innerJoin();
 
 Pattern.prototype.echo = function (...args) {
   args = args.map(reify);
@@ -1870,7 +1870,7 @@ Pattern.prototype.bootstrap = function () {
   this.patternified.forEach((prop) => {
     // the following will patternify all functions in Pattern.prototype.patternified
     Pattern.prototype[prop] = function (...args) {
-      return this._patternify(Pattern.prototype['_' + prop])(...args);
+      return this.patternify(Pattern.prototype['_' + prop])(...args);
     };
     // with the following, you can do, e.g. `stack(c3).fast.slowcat(1, 2, 4, 8)` instead of `stack(c3).fast(slowcat(1, 2, 4, 8))`
     // TODO: find a way to implement below outside of constructor (code only worked there)

@@ -13,7 +13,7 @@ const { fastcat, evalScope } = strudel;
 
 describe('evaluate', async () => {
   await evalScope({ mini }, strudel);
-  const ev = async (code) => (await evaluate(code)).pattern._firstCycleValues;
+  const ev = async (code) => (await evaluate(code)).pattern.firstCycleValues;
   it('Should evaluate strudel functions', async () => {
     expect(await ev('pure("c3")')).toEqual(['c3']);
     expect(await ev('cat("c3")')).toEqual(['c3']);

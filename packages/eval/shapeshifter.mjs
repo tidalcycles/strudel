@@ -247,7 +247,7 @@ function reifyWithLocation(literalNode, node, locations, artificialNodes) {
   const withLocation = new CallExpression({
     callee: new StaticMemberExpression({
       object: wrapFunction('reify', literalNode),
-      property: '_withLocation',
+      property: 'withLocation',
     }),
     arguments: args,
   });
@@ -267,7 +267,7 @@ function minifyWithLocation(literalNode, node, locations, artificialNodes) {
   const withLocation = new CallExpression({
     callee: new StaticMemberExpression({
       object: wrapped,
-      property: '_withMiniLocation',
+      property: 'withMiniLocation',
     }),
     arguments: args,
   });
