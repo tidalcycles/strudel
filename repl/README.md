@@ -30,16 +30,16 @@ npm run static # <- test static build
 currently broken / buggy:
 
 - [x] MiniREPL
-- [ ] repl log section => remove?
+- [x] repl log section => now using browser console
 - [ ] hideHeader flag
 - [ ] pending flag
 - [x] web midi, TODO: test
 - [ ] draw / pianoroll
-- [ ] repl url hash does not work
+- [x] repl url hash does not work
 - [x] pause does stop
 - [ ] pause then play logs "TOO LATE" and drops some events
 - [x] random button triggers start
-- [ ] unexpected ast format without body expression (kalimba)
+- [x] unexpected ast format without body expression (kalimba)
 - [x] highlighting seems too late (off by latency ?)
 - [x] highlighting sometimes drops highlights (zeldasRescue first note)
 - [ ] highlighting still sometimes drops highlights (zeldasRescue somtimes)
