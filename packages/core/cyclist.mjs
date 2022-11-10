@@ -16,6 +16,7 @@ export class Cyclist {
   constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
     this.getTime = getTime;
     this.onToggle = onToggle;
+    this.latency = latency;
     const round = (x) => Math.round(x * 1000) / 1000;
     this.clock = createClock(
       getTime,
@@ -44,8 +45,8 @@ export class Cyclist {
       interval, // duration of each cycle
     );
   }
-  getPhase() {
-    return this.phase;
+  getPhase(latencyCompensation = true) {
+    return this.phase - (latencyCompensation ? this.latency : 0);
   }
   setStarted(v) {
     this.started = v;
@@ -59,12 +60,10 @@ export class Cyclist {
     this.setStarted(true);
   }
   pause() {
-    this.clock.stop();
-    // delete this.origin;
+    this.clock.pause();
     this.setStarted(false);
   }
   stop() {
-    delete this.origin;
     this.clock.stop();
     this.setStarted(false);
   }

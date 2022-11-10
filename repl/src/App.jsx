@@ -146,7 +146,7 @@ function App() {
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
-    getTime: () => scheduler.phase,
+    getTime: () => scheduler.getPhase(),
     // getTime: () => Tone.getTransport().seconds,
   });
 
@@ -312,7 +312,11 @@ function App() {
           {/* onCursor={markParens} */}
           <CodeMirror value={code} onChange={setCode} onViewChanged={setView} />
           <span className="z-[20] bg-black rounded-t-md py-1 px-2 fixed bottom-0 right-1 text-xs whitespace-pre text-right pointer-events-none">
-            {!started ? `press ctrl+enter to play\n` : isDirty ? `press ctrl+enter to update\n` : 'press ctrl+dot do stop\n'}
+            {!started
+              ? `press ctrl+enter to play\n`
+              : isDirty
+              ? `press ctrl+enter to update\n`
+              : 'press ctrl+dot do stop\n'}
           </span>
           {error && (
             <div

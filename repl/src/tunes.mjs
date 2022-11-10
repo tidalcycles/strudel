@@ -308,7 +308,6 @@ export const blippyRhodes = `samples({
   }
 }, 'https://loophole-letters.vercel.app/')
 
-const bass = synth(osc('sawtooth8')).chain(vol(.5),out())
 const scales = cat('C major', 'C mixolydian', 'F lydian', ['F minor', cat('Db major','Db mixolydian')])
 
 stack(

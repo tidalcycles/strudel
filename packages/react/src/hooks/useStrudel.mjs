@@ -48,7 +48,6 @@ function useStrudel({ defaultOutput, interval, getTime, evalOnMount = false, ini
   const togglePlay = async () => {
     if (started) {
       scheduler.pause();
-      // scheduler.stop();
     } else {
       await activateCode();
     }

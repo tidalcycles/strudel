@@ -49,7 +49,7 @@ export function MiniRepl({ tune, hideOutsideView = false, init, enableKeyboard }
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
-    getTime: () => scheduler.phase,
+    getTime: () => scheduler.getPhase(),
   });
 
   // set active pattern on ctrl+enter

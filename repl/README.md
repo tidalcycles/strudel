@@ -35,8 +35,10 @@ currently broken / buggy:
 - [ ] pending flag
 - [ ] web midi
 - [ ] draw / pianoroll
-- [ ] pause does stop
+- [x] pause does stop
+- [ ] pause then play logs "TOO LATE" and drops some events
 - [x] random button triggers start
-- [?] highlighting seems too late (off by latency ?)
 - [ ] unexpected ast format without body expression (kalimba)
-- [ ] highlighting sometimes drops highlights (zeldasRescue first note)
+- [x] highlighting seems too late (off by latency ?)
+- [x] highlighting sometimes drops highlights (zeldasRescue first note)
+- [ ] highlighting still sometimes drops highlights (zeldasRescue somtimes)
