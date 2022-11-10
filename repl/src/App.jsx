@@ -14,7 +14,7 @@ import * as tunes from './tunes.mjs';
 import { prebake } from './prebake.mjs';
 import * as WebDirt from 'WebDirt';
 import { resetLoadedSamples, getAudioContext } from '@strudel.cycles/webaudio';
-import { controls, evalScope } from '@strudel.cycles/core';
+import { controls, evalScope, logger } from '@strudel.cycles/core';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { useStrudel } from '@strudel.cycles/react';
@@ -44,7 +44,8 @@ evalScope(
 
 prebake();
 
-const pushLog = console.log;
+const pushLog = (message) =>
+  logger(`%c${message}`, 'background-color: black;color:white;padding:4px;border-radius:15px');
 const hideHeader = false;
 const pending = false;
 const getTime = () => getAudioContext().currentTime;
@@ -57,7 +58,6 @@ async function initCode() {
     const codeParam = window.location.href.split('#')[1];
     // looking like https://strudel.tidalcycles.org/?J01s5i1J0200 (fixed hash length)
     if (codeParam) {
-      console.log('decode hash from url');
       // looking like https://strudel.tidalcycles.org/#ImMzIGUzIg%3D%3D (hash length depends on code length)
       return atob(decodeURIComponent(codeParam || ''));
     } else if (hash) {
@@ -110,6 +110,7 @@ function App() {
     initialCode: '// LOADING',
     defaultOutput: webaudioOutput,
     getTime,
+    autolink: true,
   });
   useEffect(() => {
     initCode().then((decoded) => setCode(decoded || randomTune));
