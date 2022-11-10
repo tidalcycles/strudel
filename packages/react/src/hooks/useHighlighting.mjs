@@ -1,11 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { setHighlights } from '../components/CodeMirror6';
-import { Tone } from '@strudel.cycles/tone';
 
-let highlights = []; // actively highlighted events
-let lastEnd;
-
-function useHighlighting({ view, pattern, active }) {
+function useHighlighting({ view, pattern, active, getTime }) {
+  const highlights = useRef([]);
+  const lastEnd = useRef();
   useEffect(() => {
     if (view) {
       if (pattern && active) {
@@ -13,13 +11,16 @@ function useHighlighting({ view, pattern, active }) {
 
         function updateHighlights() {
           try {
-            const audioTime = Tone.getTransport().seconds;
-            const span = [lastEnd || audioTime, audioTime + 1 / 60];
-            lastEnd = audioTime + 1 / 60;
-            highlights = highlights.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
+            const audioTime = getTime();
+            // force min framerate of 10 fps => fixes crash on tab refocus, where lastEnd could be far away
+            // see https://github.com/tidalcycles/strudel/issues/108
+            const begin = Math.max(lastEnd.current || audioTime, audioTime - 1 / 10);
+            const span = [begin, audioTime + 1 / 60];
+            lastEnd.current = audioTime + 1 / 60;
+            highlights.current = highlights.current.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
-            highlights = highlights.concat(haps); // add potential new onsets
-            view.dispatch({ effects: setHighlights.of(highlights) }); // highlight all still active + new active haps
+            highlights.current = highlights.current.concat(haps); // add potential new onsets
+            view.dispatch({ effects: setHighlights.of(highlights.current) }); // highlight all still active + new active haps
           } catch (err) {
             // console.log('error in updateHighlights', err);
             view.dispatch({ effects: setHighlights.of([]) });
@@ -31,7 +32,7 @@ function useHighlighting({ view, pattern, active }) {
           cancelAnimationFrame(frame);
         };
       } else {
-        highlights = [];
+        highlights.current = [];
         view.dispatch({ effects: setHighlights.of([]) });
       }
     }

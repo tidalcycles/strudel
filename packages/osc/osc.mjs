@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import OSC from 'osc-js';
-import { Pattern } from '@strudel.cycles/core';
+import { parseNumeral, Pattern } from '@strudel.cycles/core';
 
 const comm = new OSC();
 comm.open();
@@ -22,13 +22,19 @@ let startedAt = -1;
  */
 Pattern.prototype.osc = function () {
   return this._withHap((hap) => {
-    const onTrigger = (time, hap, currentTime, cps, cycle, delta) => {
+    const onTrigger = (time, hap, currentTime, cps) => {
+      const cycle = hap.wholeOrPart().begin.valueOf();
+      const delta = hap.duration.valueOf();
       // time should be audio time of onset
       // currentTime should be current time of audio context (slightly before time)
       if (startedAt < 0) {
         startedAt = Date.now() - currentTime * 1000;
       }
-      const controls = Object.assign({}, { cps: cps, cycle: cycle, delta: delta }, hap.value);
+      const controls = Object.assign({}, { cps, cycle, delta }, hap.value);
+      // make sure n and note are numbers
+      controls.n && (controls.n = parseNumeral(controls.n));
+      controls.note && (controls.note = parseNumeral(controls.note));
+
       const keyvals = Object.entries(controls).flat();
       const ts = Math.floor(startedAt + (time + latency) * 1000);
       const message = new OSC.Message('/dirt/play', ...keyvals);

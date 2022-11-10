@@ -1,13 +1,10 @@
 import React from 'react';
 import { MiniRepl } from './components/MiniRepl';
 import 'tailwindcss/tailwind.css';
-import { Tone, getDefaultSynth } from '@strudel.cycles/tone';
-import { evalScope } from '@strudel.cycles/eval';
-
-const defaultSynth = getDefaultSynth();
+import { controls, evalScope } from '@strudel.cycles/core';
 
 evalScope(
-  Tone,
+  controls,
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tone'),
   import('@strudel.cycles/tonal'),
@@ -20,7 +17,7 @@ evalScope(
 function App() {
   return (
     <div>
-      <MiniRepl tune={`"c3"`} defaultSynth={defaultSynth} />
+      <MiniRepl tune={`note("c3")`} />
     </div>
   );
 }

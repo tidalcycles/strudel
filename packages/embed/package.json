@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/embed",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Embeddable Web Component to load a Strudel REPL into an iframe",
   "main": "embed.js",
   "type": "module",

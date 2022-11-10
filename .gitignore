@@ -32,3 +32,9 @@ out
 .parcel-cache
 repl_old
 tutorial.rendered.mdx
+doc.json
+talk/public/EmuSP12
+talk/public/samples
+server/samples/old
+repl/stats.html
+coverage

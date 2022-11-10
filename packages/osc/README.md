@@ -35,3 +35,5 @@ s("<bd sd> hh").osc()
 ```
 
 or just [click here](http://localhost:3000/#cygiPGJkIHNkPiBoaCIpLm9zYygp)...
+
+You can read more about [how to use Superdirt with Strudel the Tutorial](https://strudel.tidalcycles.org/tutorial/#superdirt-api)

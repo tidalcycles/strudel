@@ -4,8 +4,11 @@
 
 // import * as tunes from './tunes.mjs';
 import { evaluate } from '@strudel.cycles/eval';
-import { extend } from '@strudel.cycles/eval';
+// import { evaluate } from '@strudel.cycles/transpiler';
+import { evalScope } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
+import * as webaudio from '@strudel.cycles/webaudio';
+import controls from '@strudel.cycles/core/controls.mjs';
 // import gist from '@strudel.cycles/core/gist.js';
 import { mini } from '@strudel.cycles/mini/mini.mjs';
 // import { Tone } from '@strudel.cycles/tone';
@@ -28,6 +31,8 @@ import '@strudel.cycles/xen/xen.mjs';
 // import '@strudel.cycles/webaudio/webaudio.mjs';
 // import '@strudel.cycles/serial/serial.mjs';
 // import controls from '@strudel.cycles/core/controls.mjs';
+
+import { prebake } from './prebake.mjs';
 
 class MockedNode {
   chain() {
@@ -61,6 +66,7 @@ const toneHelpersMocked = {
   Chorus: MockedNode,
   Freeverb: MockedNode,
   Gain: MockedNode,
+  Reverb: MockedNode,
   vol: mockNode,
   out: id,
   osc: id,
@@ -79,8 +85,13 @@ const toneHelpersMocked = {
   highpass: mockNode,
 };
 
-// tone mock
+strudel.Pattern.prototype.osc = function () {
+  return this;
+};
 strudel.Pattern.prototype.tone = function () {
+  return this;
+};
+strudel.Pattern.prototype.webdirt = function () {
   return this;
 };
 
@@ -107,8 +118,15 @@ strudel.Pattern.prototype.adsr = function () {
 strudel.Pattern.prototype.out = function () {
   return this;
 };
+strudel.Pattern.prototype.soundfont = function () {
+  return this;
+};
 // tune mock
 strudel.Pattern.prototype.tune = function () {
+  return this;
+};
+
+strudel.Pattern.prototype.midi = function () {
   return this;
 };
 
@@ -116,13 +134,33 @@ const uiHelpersMocked = {
   backgroundImage: id,
 };
 
+prebake({ isMock: true });
+
+const canvasCtx = {
+  clearRect: () => {},
+  fillText: () => {},
+  fillRect: () => {},
+  canvas: {
+    width: 100,
+    height: 100,
+  },
+};
+const audioCtx = {
+  currentTime: 1,
+};
+const getDrawContext = () => canvasCtx;
+const getAudioContext = () => audioCtx;
+const loadSoundfont = () => {};
+
 // TODO: refactor to evalScope
-extend(
+evalScope(
   // Tone,
   strudel,
   strudel.Pattern.prototype.bootstrap(),
   toneHelpersMocked,
   uiHelpersMocked,
+  controls,
+  webaudio,
   /* controls,
   toneHelpers,
   voicingHelpers,
@@ -133,6 +171,10 @@ extend(
     // gist,
     // euclid,
     mini,
+    getDrawContext,
+    getAudioContext,
+    loadSoundfont,
+    Clock: {}, // whatever
     // Tone,
   },
 );
@@ -181,6 +223,9 @@ export const testCycles = {
   randomBells: 24,
   waa: 16,
   waar: 16,
-  hyperpop: 60,
+  hyperpop: 10,
   festivalOfFingers3: 16,
 };
+
+// fixed: https://strudel.tidalcycles.org/?DBp75NUfSxIn (missing .note())
+// bug: https://strudel.tidalcycles.org/?xHaKTd1kTpCn + https://strudel.tidalcycles.org/?o5LLePbx8kiQ

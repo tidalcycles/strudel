@@ -10,7 +10,7 @@ export const tokenizeNote = (note) => {
   if (typeof note !== 'string') {
     return [];
   }
-  const [pc, acc = '', oct] = note.match(/^([a-gA-G])([#b]*)([0-9])?$/)?.slice(1) || [];
+  const [pc, acc = '', oct] = note.match(/^([a-gA-G])([#bs]*)([0-9])?$/)?.slice(1) || [];
   if (!pc) {
     return [];
   }
@@ -24,11 +24,30 @@ export const toMidi = (note) => {
     throw new Error('not a note: "' + note + '"');
   }
   const chroma = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 }[pc.toLowerCase()];
-  const offset = acc?.split('').reduce((o, char) => o + { '#': 1, b: -1 }[char], 0) || 0;
+  const offset = acc?.split('').reduce((o, char) => o + { '#': 1, b: -1, s: 1 }[char], 0) || 0;
   return (Number(oct) + 1) * 12 + chroma + offset;
 };
 export const fromMidi = (n) => {
   return Math.pow(2, (n - 69) / 12) * 440;
+};
+
+/**
+ * @deprecated does not appear to be referenced or invoked anywhere in the codebase
+ */
+export const getFreq = (noteOrMidi) => {
+  if (typeof noteOrMidi === 'number') {
+    return fromMidi(noteOrMidi);
+  }
+  return fromMidi(toMidi(noteOrMidi));
+};
+
+/**
+ * @deprecated does not appear to be referenced or invoked anywhere in the codebase
+ */
+export const midi2note = (n) => {
+  const oct = Math.floor(n / 12) - 1;
+  const pc = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'][n % 12];
+  return pc + oct;
 };
 
 // modulo that works with negative numbers e.g. mod(-1, 3) = 2
@@ -37,11 +56,16 @@ export const mod = (n, m) => ((n % m) + m) % m;
 
 export const getPlayableNoteValue = (hap) => {
   let { value: note, context } = hap;
+  if (typeof note === 'object' && !Array.isArray(note)) {
+    note = note.note || note.n || note.value;
+  }
   // if value is number => interpret as midi number as long as its not marked as frequency
   if (typeof note === 'number' && context.type !== 'frequency') {
     note = fromMidi(hap.value);
-  } else if (typeof note === 'string' && !isNote(note)) {
-    throw new Error('not a note: ' + note);
+  } else if (typeof note === 'number' && context.type === 'frequency') {
+    note = hap.value; // legacy workaround.. will be removed in the future
+  } else if (typeof note !== 'string' || !isNote(note)) {
+    throw new Error('not a note: ' + JSON.stringify(note));
   }
   return note;
 };
@@ -49,15 +73,18 @@ export const getPlayableNoteValue = (hap) => {
 export const getFrequency = (hap) => {
   let { value, context } = hap;
   // if value is number => interpret as midi number as long as its not marked as frequency
-  if (typeof value === 'object' && value.freq) {
-    return value.freq;
+  if (typeof value === 'object') {
+    if (value.freq) {
+      return value.freq;
+    }
+    return getFreq(value.note || value.n || value.value);
   }
   if (typeof value === 'number' && context.type !== 'frequency') {
     value = fromMidi(hap.value);
   } else if (typeof value === 'string' && isNote(value)) {
     value = fromMidi(toMidi(hap.value));
   } else if (typeof value !== 'number') {
-    throw new Error('not a note or frequency:' + value);
+    throw new Error('not a note or frequency: ' + value);
   }
   return value;
 };
@@ -106,3 +133,46 @@ export function curry(func, overload) {
   }
   return fn;
 }
+
+export function parseNumeral(numOrString) {
+  const asNumber = Number(numOrString);
+  if (!isNaN(asNumber)) {
+    return asNumber;
+  }
+  if (isNote(numOrString)) {
+    return toMidi(numOrString);
+  }
+  throw new Error(`cannot parse as numeral: "${numOrString}"`);
+}
+
+export function mapArgs(fn, mapFn) {
+  return (...args) => fn(...args.map(mapFn));
+}
+
+export function numeralArgs(fn) {
+  return mapArgs(fn, parseNumeral);
+}
+
+export function parseFractional(numOrString) {
+  const asNumber = Number(numOrString);
+  if (!isNaN(asNumber)) {
+    return asNumber;
+  }
+  const specialValue = {
+    pi: Math.PI,
+    w: 1,
+    h: 0.5,
+    q: 0.25,
+    e: 0.125,
+    s: 0.0625,
+    t: 1 / 3,
+    f: 0.2,
+    x: 1 / 6,
+  }[numOrString];
+  if (typeof specialValue !== 'undefined') {
+    return specialValue;
+  }
+  throw new Error(`cannot parse as fractional: "${numOrString}"`);
+}
+
+export const fractionalArgs = (fn) => mapArgs(fn, parseFractional);

@@ -1,0 +1,32 @@
+{
+  "name": "@strudel.cycles/transpiler",
+  "version": "0.3.2",
+  "description": "Transpiler for strudel user code. Converts syntactically correct but semantically meaningless JS into evaluatable strudel code.",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "@strudel.cycles/core": "^0.3.2",
+    "acorn": "^8.8.1",
+    "escodegen": "^2.0.0",
+    "estree-walker": "^3.0.1"
+  }
+}

@@ -69,9 +69,9 @@ function scaleOffset(scale, offset, note) {
  * @memberof Pattern
  * @name transpose
  * @example
- * "c2 c3".fast(2).transpose("<0 -2 5 3>".slow(2)).transpose(0)
+ * "c2 c3".fast(2).transpose("<0 -2 5 3>".slow(2)).note()
  * @example
- * "c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).transpose(0)
+ * "c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).note()
  */
 
 Pattern.prototype._transpose = function (intervalOrSemitones) {
@@ -107,6 +107,7 @@ Pattern.prototype._transpose = function (intervalOrSemitones) {
  * "-8 [2,4,6]"
  * .scale('C4 bebop major')
  * .scaleTranspose("<0 -1 -2 -3 -4 -5 -6 -4>")
+ * .note()
  */
 
 Pattern.prototype._scaleTranspose = function (offset /* : number | string */) {
@@ -134,9 +135,10 @@ Pattern.prototype._scaleTranspose = function (offset /* : number | string */) {
  * @name scale
  * @param {string} scale Name of scale
  * @returns Pattern
- * @example 
+ * @example
  * "0 2 4 6 4 2"
  * .scale(seq('C2 major', 'C2 minor').slow(2))
+ * .note()
  */
 
 Pattern.prototype._scale = function (scale /* : string */) {

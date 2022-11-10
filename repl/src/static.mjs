@@ -6,11 +6,8 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { Tone } from '@strudel.cycles/tone';
 import { State, TimeSpan } from '@strudel.cycles/core';
-import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
 import { evaluate } from '@strudel.cycles/eval';
-import { getDefaultSynth } from '@strudel.cycles/tone';
-
-const defaultSynth = getDefaultSynth();
+import { webaudioOutputTrigger } from '@strudel.cycles/webaudio';
 
 // this is a test to play back events with as less runtime code as possible..
 // the code asks for the number of seconds to prequery
@@ -47,17 +44,8 @@ async function playStatic(code) {
   events.forEach((event) => {
     Tone.getTransport().schedule((time) => {
       try {
-        const { onTrigger, velocity } = event.context;
-        if (!onTrigger) {
-          if (defaultSynth) {
-            const note = getPlayableNoteValue(event);
-            defaultSynth.triggerAttackRelease(note, event.duration.valueOf(), time, velocity);
-          } else {
-            throw new Error('no defaultSynth passed to useRepl.');
-          }
-        } else {
-          onTrigger(time, event);
-        }
+        const { onTrigger = webaudioOutputTrigger } = event.context;
+        onTrigger(time, event);
       } catch (err) {
         console.warn(err);
         err.message = 'unplayable event: ' + err?.message;

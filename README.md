@@ -2,7 +2,7 @@
 
 [![Strudel test status](https://github.com/tidalcycles/strudel/actions/workflows/test.yml/badge.svg)](https://github.com/tidalcycles/strudel/actions)
 
-An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using web technologies. This is unstable software, please tread carefully.
+An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using web technologies. This software is slowly stabilising, but please continue to tread carefully.
 
 - Try it here: <https://strudel.tidalcycles.org/>
 - Tutorial: <https://strudel.tidalcycles.org/tutorial/>
@@ -37,6 +37,12 @@ Click on the package names to find out more about each one.
 ## Contributing
 
 There are many ways to contribute to this project! See [contribution guide](./CONTRIBUTING.md).
+
+<a href="https://github.com/tidalcycles/strudel/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=tidalcycles/strudel" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
 
 ## Community
 

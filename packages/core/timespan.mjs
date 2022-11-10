@@ -18,6 +18,11 @@ export class TimeSpan {
     const end = this.end;
     const end_sam = end.sam();
 
+    // Support zero-width timespans
+    if (begin.equals(end)) {
+      return([new TimeSpan(begin, end)]);
+    }
+    
     while (end.gt(begin)) {
       // If begin and end are in the same cycle, we're done.
       if (begin.sam().equals(end_sam)) {

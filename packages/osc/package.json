@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/osc",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "OSC messaging for strudel",
   "main": "osc.mjs",
   "scripts": {
@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "osc-js": "^2.3.2"
+    "osc-js": "^2.4.0"
   },
   "devDependencies": {
     "pkg": "^5.7.0"

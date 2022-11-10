@@ -2,15 +2,21 @@
 <!-- <script src="./embed.js"></script> -->
 <strudel-repl>
   <!--
-      "a4 [a3 c3] a3 c3".color('#F9D649')
-    .sub("<7 12 5 12>".slow(2))
-    .off(1/4,x=>x.add(7).color("#FFFFFF #0C3AA1 #C63928"))
-    .off(1/8,x=>x.add(12).color('#215CB6'))
-    .slow(2)
-    .legato(sine.range(0.3, 2).slow(28))
-    .wave("sawtooth square".fast(2))
-    .filter('lowpass', cosine.range(500,4000).slow(16))
-    .out()
-    .pianoroll({minMidi:20,maxMidi:120,background:'#202124'})
+note(`[[e5 [b4 c5] d5 [c5 b4]]
+[a4 [a4 c5] e5 [d5 c5]]
+[b4 [~ c5] d5 e5]
+[c5 a4 a4 ~]
+[[~ d5] [~ f5] a5 [g5 f5]]
+[e5 [~ c5] e5 [d5 c5]]
+[b4 [b4 c5] d5 e5]
+[c5 a4 a4 ~]],
+[[e2 e3]*4]
+[[a2 a3]*4]
+[[g#2 g#3]*2 [e2 e3]*2]
+[a2 a3 a2 a3 a2 a3 b1 c2]
+[[d2 d3]*4]
+[[c2 c3]*4]
+[[b1 b2]*2 [e2 e3]*2]
+[[a1 a2]*4]`).slow(16)
       -->
 </strudel-repl>

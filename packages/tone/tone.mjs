@@ -30,8 +30,6 @@ const {
   getDestination,
   Players,
 } = Tone;
-import * as tonePiano from '@tonejs/piano';
-const { Piano } = tonePiano;
 import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
 
 // "balanced" | "interactive" | "playback";
@@ -61,10 +59,6 @@ Pattern.prototype.tone = function (instrument) {
         instrument.triggerAttack(note, time);
       } else if (instrument instanceof NoiseSynth) {
         instrument.triggerAttackRelease(hap.duration.valueOf(), time); // noise has no value
-      } else if (instrument instanceof Piano) {
-        note = getPlayableNoteValue(hap);
-        instrument.keyDown({ note, time, velocity });
-        instrument.keyUp({ note, time: time + hap.duration.valueOf(), velocity });
       } else if (instrument instanceof Sampler) {
         note = getPlayableNoteValue(hap);
         instrument.triggerAttackRelease(note, hap.duration.valueOf(), time, velocity);
@@ -110,11 +104,6 @@ export const players = (options, baseUrl = '') => {
   });
 };
 export const synth = (options) => new Synth(options);
-export const piano = async (options = { velocities: 1 }) => {
-  const p = new Piano(options);
-  await p.load();
-  return p;
-};
 
 // effect helpers
 export const vol = (v) => new Gain(v);

@@ -6,9 +6,9 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { useCallback, useState, useMemo } from 'react';
 import { evaluate } from '@strudel.cycles/eval';
-import { getPlayableNoteValue } from '@strudel.cycles/core/util.mjs';
 import useCycle from './useCycle.mjs';
 import usePostMessage from './usePostMessage.mjs';
+import { webaudioOutputTrigger } from '@strudel.cycles/webaudio';
 
 let s4 = () => {
   return Math.floor((1 + Math.random()) * 0x10000)
@@ -17,7 +17,7 @@ let s4 = () => {
 };
 const generateHash = (code) => encodeURIComponent(btoa(code));
 
-function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawProp }) {
+function useRepl({ tune, autolink = true, onEvent, onDraw: onDrawProp }) {
   const id = useMemo(() => s4(), []);
   const [code, setCode] = useState(tune);
   const [activeCode, setActiveCode] = useState();
@@ -36,6 +36,8 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
     }
   }, [activeCode, onDrawProp]);
 
+  const hideHeader = useMemo(() => activeCode && activeCode.includes('strudel hide-header'), [activeCode]);
+  const hideConsole = useMemo(() => activeCode && activeCode.includes('strudel hide-console'), [activeCode]);
   // cycle hook to control scheduling
   const cycle = useCycle({
     onDraw,
@@ -46,33 +48,15 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
           if (event.context.logs?.length) {
             event.context.logs.forEach(pushLog);
           }
-          const { onTrigger, velocity } = event.context;
-          if (!onTrigger) {
-            if (defaultSynth) {
-              const note = getPlayableNoteValue(event);
-              defaultSynth.triggerAttackRelease(note, event.duration.valueOf(), time, velocity);
-            } else {
-              throw new Error('no defaultSynth passed to useRepl.');
-            }
-            /* console.warn('no instrument chosen', event);
-          throw new Error(`no instrument chosen for ${JSON.stringify(event)}`); */
-          } else {
-            onTrigger(
-              time,
-              event,
-              currentTime,
-              1 /* cps */,
-              event.wholeOrPart().begin.valueOf(),
-              event.duration.valueOf(),
-            );
-          }
+          const { onTrigger = webaudioOutputTrigger } = event.context;
+          onTrigger(time, event, currentTime, 1 /* cps */);
         } catch (err) {
           console.warn(err);
           err.message = 'unplayable event: ' + err?.message;
           pushLog(err.message); // not with setError, because then we would have to setError(undefined) on next playable event
         }
       },
-      [onEvent, pushLog, defaultSynth],
+      [onEvent, pushLog],
     ),
     onQuery: useCallback(
       (state) => {
@@ -143,6 +127,8 @@ function useRepl({ tune, defaultSynth, autolink = true, onEvent, onDraw: onDrawP
   };
 
   return {
+    hideHeader,
+    hideConsole,
     pending,
     code,
     setCode,

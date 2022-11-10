@@ -1,8 +1,10 @@
 import nunjucks from 'nunjucks';
-import jsdoc from '../doc.json' assert { type: 'json' };
-
-// TODO: load tutorial.mdx and append rendered api.mdx to the bottom (to make sure TOC works)
-// TODO: split
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const jsdoc = JSON.parse(await readFile(`${__dirname}/../doc.json`, 'utf8'));
+// import jsdoc from '../doc.json' assert { type: 'json' }; // node 18
 
 const env = nunjucks.configure('.', { autoescape: false });
 
@@ -21,8 +23,6 @@ ${item.description.replaceAll(/\{\@link ([a-zA-Z]+)?\#?([a-zA-Z]*)\}/g, (_, a, b
   return `<a href="#${a}${b ? `-${b}` : ''}">${a}${b ? `#${b}` : ''}</a>`;
 })}
 
-${!!item.params?.length ? '**Parameters**' : ''}
-  
 ${
   item.params
     ?.map(
@@ -34,8 +34,7 @@ ${
 
 ${
   item.examples?.length
-    ? `**Examples**
-
+    ? `
 <div className="space-y-2">
   ${item.examples?.map((example, k) => `<MiniRepl tune={\`${example}\`} />`).join('\n\n')}
 </div>`

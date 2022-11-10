@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/react",
-  "version": "0.1.2",
+  "version": "0.3.3",
   "description": "React components for strudel",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -37,11 +37,12 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@codemirror/lang-javascript": "^0.19.0",
-    "@strudel.cycles/core": "*",
-    "@strudel.cycles/eval": "^0.1.1",
-    "@strudel.cycles/tone": "^0.1.1",
-    "react-codemirror6": "^1.1.0",
+    "@codemirror/lang-javascript": "^6.1.1",
+    "@strudel.cycles/core": "^0.3.2",
+    "@strudel.cycles/eval": "^0.3.2",
+    "@strudel.cycles/tone": "^0.3.3",
+    "@uiw/codemirror-themes": "^4.12.4",
+    "@uiw/react-codemirror": "^4.12.4",
     "react-hook-inview": "^4.5.0"
   },
   "peerDependencies": {
@@ -51,12 +52,12 @@
   "devDependencies": {
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.2",
-    "@vitejs/plugin-react": "^1.3.0",
+    "@vitejs/plugin-react": "^2.2.0",
     "autoprefixer": "^10.4.7",
-    "postcss": "^8.4.13",
+    "postcss": "^8.4.18",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "tailwindcss": "^3.0.24",
-    "vite": "^2.9.9"
+    "vite": "^3.2.2"
   }
 }

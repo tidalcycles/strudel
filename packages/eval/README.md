@@ -11,13 +11,14 @@ npm i @strudel.cycles/eval --save
 
 ## Example
 
-<!-- TODO: -extend +evalScope -->
-
 ```js
-import { evaluate, extend } from '@strudel.cycles/eval';
-import * as strudel from '@strudel.cycles/core';
+import { evalScope } from '@strudel.cycles/core';
+import { evaluate } from '@strudel.cycles/eval';
 
-extend(strudel); // add strudel to eval scope
+evalScope(
+  import('@strudel.cycles/core'),
+  // import other strudel packages here
+); // add strudel to eval scope
 
 async function run(code) {
   const { pattern } = await evaluate(code);

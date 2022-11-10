@@ -1,11 +1,44 @@
 import React from 'react';
-import { CodeMirror as _CodeMirror } from 'react-codemirror6';
-// import { CodeMirrorLite as _CodeMirror } from 'react-codemirror6/dist/lite';
+import _CodeMirror from '@uiw/react-codemirror';
 import { EditorView, Decoration } from '@codemirror/view';
 import { StateField, StateEffect } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
-// import { materialPalenight } from 'codemirror6-themes';
-import { materialPalenight } from '../themes/material-palenight';
+import strudelTheme from '../themes/strudel-theme';
+import './style.css';
+import { useCallback } from 'react';
+
+export const setFlash = StateEffect.define();
+const flashField = StateField.define({
+  create() {
+    return Decoration.none;
+  },
+  update(flash, tr) {
+    try {
+      for (let e of tr.effects) {
+        if (e.is(setFlash)) {
+          if (e.value) {
+            const mark = Decoration.mark({ attributes: { style: `background-color: #FFCA2880` } });
+            flash = Decoration.set([mark.range(0, tr.newDoc.length)]);
+          } else {
+            flash = Decoration.set([]);
+          }
+        }
+      }
+      return flash;
+    } catch (err) {
+      console.warn('flash error', err);
+      return flash;
+    }
+  },
+  provide: (f) => EditorView.decorations.from(f),
+});
+
+export const flash = (view) => {
+  view.dispatch({ effects: setFlash.of(true) });
+  setTimeout(() => {
+    view.dispatch({ effects: setFlash.of(false) });
+  }, 200);
+};
 
 export const setHighlights = StateEffect.define();
 const highlightField = StateField.define({
@@ -16,9 +49,9 @@ const highlightField = StateField.define({
     try {
       for (let e of tr.effects) {
         if (e.is(setHighlights)) {
-          highlights = Decoration.set(
+          const marks =
             e.value
-              .flatMap((hap) =>
+              .map((hap) =>
                 (hap.context.locations || []).map(({ start, end }) => {
                   const color = hap.context.color || '#FFCA28';
                   let from = tr.newDoc.line(start.line).from + start.column;
@@ -27,42 +60,56 @@ const highlightField = StateField.define({
                   if (from > l || to > l) {
                     return; // dont mark outside of range, as it will throw an error
                   }
-                  const mark = Decoration.mark({ attributes: { style: `outline: 1px solid ${color}` } });
+                  // const mark = Decoration.mark({ attributes: { style: `outline: 1px solid ${color}` } });
+                  const mark = Decoration.mark({ attributes: { style: `outline: 1.5px solid ${color};` } });
                   return mark.range(from, to);
                 }),
               )
-              .filter(Boolean),
-            true,
-          );
+              .flat()
+              .filter(Boolean) || [];
+          highlights = Decoration.set(marks, true);
         }
       }
       return highlights;
     } catch (err) {
       // console.warn('highlighting error', err);
-      return highlights;
+      return Decoration.set([]);
     }
   },
   provide: (f) => EditorView.decorations.from(f),
 });
 
-export default function CodeMirror({ value, onChange, onViewChanged, onCursor, options, editorDidMount }) {
+const extensions = [javascript(), strudelTheme, highlightField, flashField];
+
+export default function CodeMirror({ value, onChange, onViewChanged, onSelectionChange, options, editorDidMount }) {
+  const handleOnChange = useCallback(
+    (value) => {
+      onChange?.(value);
+    },
+    [onChange],
+  );
+  const handleOnCreateEditor = useCallback(
+    (view) => {
+      onViewChanged?.(view);
+    },
+    [onViewChanged],
+  );
+  const handleOnUpdate = useCallback(
+    (viewUpdate) => {
+      if (viewUpdate.selectionSet && onSelectionChange) {
+        onSelectionChange?.(viewUpdate.state.selection);
+      }
+    },
+    [onSelectionChange],
+  );
   return (
     <>
       <_CodeMirror
-        onViewChange={onViewChanged}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          flex: '1 0 auto',
-        }}
         value={value}
-        onChange={onChange}
-        extensions={[
-          javascript(),
-          materialPalenight,
-          highlightField,
-          // theme, language, ...
-        ]}
+        onChange={handleOnChange}
+        onCreateEditor={handleOnCreateEditor}
+        onUpdate={handleOnUpdate}
+        extensions={extensions}
       />
     </>
   );

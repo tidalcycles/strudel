@@ -10,11 +10,18 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
 
-import { isNote, toMidi, compose, removeUndefineds, flatten, id, listRange, curry, mod } from './util.mjs';
+import { compose, removeUndefineds, flatten, id, listRange, curry, mod, numeralArgs, parseNumeral } from './util.mjs';
 import drawLine from './drawLine.mjs';
+
+let stringParser;
+// parser is expected to turn a string into a pattern
+// if set, the reify function will parse all strings with it
+// intended to use with mini to automatically interpret all strings as mini notation
+export const setStringParser = (parser) => (stringParser = parser);
 
 /** @class Class representing a pattern. */
 export class Pattern {
+  _Pattern = true; // this property is used to detect if a pattern that fails instanceof Pattern is an instance of another Pattern
   /**
    * Create a pattern. As an end user, you will most likely not create a Pattern directly.
    *
@@ -31,8 +38,10 @@ export class Pattern {
    * @param {Fraction | number} end to time
    * @returns Hap[]
    * @example
-   * const pattern = sequence('a', ['b', 'c']);
-   * const haps = pattern.queryArc(0, 1);
+   * const pattern = sequence('a', ['b', 'c'])
+   * const haps = pattern.queryArc(0, 1)
+   * console.log(haps)
+   * silence
    */
   queryArc(begin, end) {
     return this.query(new State(new TimeSpan(begin, end)));
@@ -60,6 +69,17 @@ export class Pattern {
    */
   withQuerySpan(func) {
     return new Pattern((state) => this.query(state.withSpan(func)));
+  }
+
+  withQuerySpanMaybe(func) {
+    const pat = this;
+    return new Pattern((state) => {
+      const newState = state.withSpan(func);
+      if (!newState.span) {
+        return [];
+      }
+      return pat.query(newState);
+    });
   }
 
   /**
@@ -434,40 +454,18 @@ export class Pattern {
     return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._TrigzeroJoin();
   }
 
-  _asNumber(dropfails = false, softfail = false) {
-    return this._withHap((hap) => {
-      const asNumber = Number(hap.value);
-      if (!isNaN(asNumber)) {
-        return hap.withValue(() => asNumber);
-      }
-      const specialValue = {
-        e: Math.E,
-        pi: Math.PI,
-      }[hap.value];
-      if (typeof specialValue !== 'undefined') {
-        return hap.withValue(() => specialValue);
-      }
-      if (isNote(hap.value)) {
-        // set context type to midi to let the player know its meant as midi number and not as frequency
-        return new Hap(hap.whole, hap.part, toMidi(hap.value), { ...hap.context, type: 'midi' });
-      }
-      if (dropfails) {
-        // return 'nothing'
-        return undefined;
-      }
-      if (softfail) {
-        // return original hap
-        return hap;
-      }
-      throw new Error('cannot parse as number: "' + hap.value + '"');
-      return hap;
-    });
+  _asNumber() {
+    return this.fmap(parseNumeral);
   }
 
   /**
    * Assumes a numerical pattern. Returns a new pattern with all values rounded
    * to the nearest integer.
+   * @name round
+   * @memberof Pattern
    * @returns Pattern
+   * @example
+   * "0.5 1.5 2.5".round().scale('C major').note()
    */
   round() {
     return this._asNumber().fmap((v) => Math.round(v));
@@ -512,13 +510,16 @@ export class Pattern {
   }
 
   /**
-   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
-   * 1. Returns a new pattern with values scaled to the given min/max range.
-   * @param {Number} min
-   * @param {Number} max
+   * Assumes a numerical pattern, containing unipolar values in the range 0 .. 1.
+   * Returns a new pattern with values scaled to the given min/max range.
+   * Most useful in combination with continuous patterns.
+   * @name range
+   * @memberof Pattern
    * @returns Pattern
+   * @example
+   * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4))
    */
-  range(min, max) {
+  _range(min, max) {
     return this.mul(max - min).add(min);
   }
 
@@ -530,8 +531,8 @@ export class Pattern {
    * @param {Number} max
    * @returns Pattern
    */
-  rangex(min, max) {
-    return this.range(Math.log(min), Math.log(max)).fmap(Math.exp);
+  _rangex(min, max) {
+    return this._range(Math.log(min), Math.log(max)).fmap(Math.exp);
   }
 
   /**
@@ -541,8 +542,8 @@ export class Pattern {
    * @param {Number} max
    * @returns Pattern
    */
-  range2(min, max) {
-    return this._fromBipolar().range(min, max);
+  _range2(min, max) {
+    return this._fromBipolar()._range(min, max);
   }
 
   _bindWhole(choose_whole, func) {
@@ -641,13 +642,26 @@ export class Pattern {
     return this._trigJoin(true);
   }
 
+  // Like the other joins above, joins a pattern of patterns of values, into a flatter
+  // pattern of values. In this case it takes whole cycles of the inner pattern to fit each event
+  // in the outer pattern.
   _squeezeJoin() {
+    // A pattern of patterns, which we call the 'outer' pattern, with patterns
+    // as values which we call the 'inner' patterns.
     const pat_of_pats = this;
     function query(state) {
+      // Get the events with the inner patterns. Ignore continuous events (without 'wholes')
       const haps = pat_of_pats.discreteOnly().query(state);
+      // A function to map over the events from the outer pattern.
       function flatHap(outerHap) {
-        const pat = outerHap.value._compressSpan(outerHap.wholeOrPart().cycleArc());
-        const innerHaps = pat.query(state.setSpan(outerHap.part));
+        // Get the inner pattern, slowed and shifted so that the 'whole'
+        // timespan of the outer event corresponds to the first cycle of the
+        // inner event
+        const inner_pat = outerHap.value._focusSpan(outerHap.wholeOrPart());
+        // Get the inner events, from the timespan of the outer event's part
+        const innerHaps = inner_pat.query(state.setSpan(outerHap.part));
+        // A function to map over the inner events, to combine them with the
+        // outer event
         function munge(outer, inner) {
           let whole = undefined;
           if (inner.whole && outer.whole) {
@@ -678,10 +692,27 @@ export class Pattern {
     return this.fmap(func)._squeezeJoin();
   }
 
+  /**
+   * Like layer, but with a single function:
+   * @name apply
+   * @memberof Pattern
+   * @example
+   * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4")).note()
+   */
   _apply(func) {
     return func(this);
   }
 
+  /**
+   * Layers the result of the given function(s). Like {@link superimpose}, but without the original pattern:
+   * @name layer
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
+   *   .layer(x=>x.add("0,2"))
+   *   .scale('C minor').note()
+   */
   layer(...funcs) {
     return stack(...funcs.map((func) => func(this)));
   }
@@ -706,21 +737,36 @@ export class Pattern {
     //     // there is no gap.. so maybe revert to _fast?
     //     return this._fast(factor)
     // }
+    // A bit fiddly, to drop zero-width queries at the start of the next cycle
     const qf = function (span) {
       const cycle = span.begin.sam();
-      const begin = cycle.add(span.begin.sub(cycle).mul(factor).min(1));
-      const end = cycle.add(span.end.sub(cycle).mul(factor).min(1));
-      return new TimeSpan(begin, end);
+      const bpos = span.begin.sub(cycle).mul(factor).min(1);
+      const epos = span.end.sub(cycle).mul(factor).min(1);
+      if (bpos >= 1) {
+        return undefined;
+      }
+      return new TimeSpan(cycle.add(bpos), cycle.add(epos));
     };
-    const ef = function (span) {
-      const cycle = span.begin.sam();
-      const begin = cycle.add(span.begin.sub(cycle).div(factor).min(1));
-      const end = cycle.add(span.end.sub(cycle).div(factor).min(1));
-      return new TimeSpan(begin, end);
+    // Also fiddly, to maintain the right 'whole' relative to the part
+    const ef = function (hap) {
+      const begin = hap.part.begin;
+      const end = hap.part.end;
+      const cycle = begin.sam();
+      const beginPos = begin.sub(cycle).div(factor).min(1);
+      const endPos = end.sub(cycle).div(factor).min(1);
+      const newPart = new TimeSpan(cycle.add(beginPos), cycle.add(endPos));
+      const newWhole = !hap.whole
+        ? undefined
+        : new TimeSpan(
+            newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
+            newPart.end.add(hap.whole.end.sub(end).div(factor)),
+          );
+      return new Hap(newWhole, newPart, hap.value, hap.context);
     };
-    return this.withQuerySpan(qf).withHapSpan(ef)._splitQueries();
+    return this.withQuerySpanMaybe(qf)._withHap(ef)._splitQueries();
   }
 
+  // Compress each cycle into the given timespan, leaving a gap
   _compress(b, e) {
     if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
       return silence;
@@ -732,15 +778,25 @@ export class Pattern {
     return this._compress(span.begin, span.end);
   }
 
+  // Similar to compress, but doesn't leave gaps, and the 'focus' can be
+  // bigger than a cycle
+  _focus(b, e) {
+    return this._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
+  }
+
+  _focusSpan(span) {
+    return this._focus(span.begin, span.end);
+  }
+
   /**
-   * Speed up a pattern by the given factor.
+   * Speed up a pattern by the given factor. Used by "*" in mini notation.
    *
    * @name fast
    * @memberof Pattern
    * @param {number | Pattern} factor speed up factor
    * @returns Pattern
    * @example
-   * seq(e5, b4, d5, c5).fast(2)
+   * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
    */
   _fast(factor) {
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
@@ -748,14 +804,14 @@ export class Pattern {
   }
 
   /**
-   * Slow down a pattern over the given number of cycles.
+   * Slow down a pattern over the given number of cycles. Like the "/" operator in mini notation.
    *
    * @name slow
    * @memberof Pattern
    * @param {number | Pattern} factor slow down factor
    * @returns Pattern
    * @example
-   * seq(e5, b4, d5, c5).slow(2)
+   * s("<bd sd> hh").slow(2) // s("[<bd sd> hh]/2")
    */
   _slow(factor) {
     return this._fast(Fraction(1).div(factor));
@@ -773,6 +829,20 @@ export class Pattern {
     return this.fmap((x) => pure(x)._fast(factor))._squeezeJoin();
   }
 
+  /**
+   * Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
+   * It turns a pattern of samples into a pattern of parts of samples.
+   * @name chop
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+   * s("rhodes")
+   *  .chop(4)
+   *  .rev() // reverse order of chops
+   *  .loopAt(4,1) // fit sample into 4 cycles
+   *
+   */
   _chop(n) {
     const slices = Array.from({ length: n }, (x, i) => i);
     const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
@@ -794,14 +864,32 @@ export class Pattern {
     return this._fast(cpm / 60);
   }
 
+  /**
+   * Nudge a pattern to start earlier in time. Equivalent of Tidal's <~ operator
+   *
+   * @name early
+   * @memberof Pattern
+   * @param {number | Pattern} cycles number of cycles to nudge left
+   * @returns Pattern
+   * @example
+   * "bd ~".stack("hh ~".early(.1)).s()
+   */
   _early(offset) {
-    // Equivalent of Tidal's <~ operator
     offset = Fraction(offset);
     return this.withQueryTime((t) => t.add(offset)).withHapTime((t) => t.sub(offset));
   }
 
+  /**
+   * Nudge a pattern to start later in time. Equivalent of Tidal's ~> operator
+   *
+   * @name late
+   * @memberof Pattern
+   * @param {number | Pattern} cycles number of cycles to nudge right
+   * @returns Pattern
+   * @example
+   * "bd ~".stack("hh ~".late(.1)).s()
+   */
   _late(offset) {
-    // Equivalent of Tidal's ~> operator
     offset = Fraction(offset);
     return this._early(Fraction(0).sub(offset));
   }
@@ -828,6 +916,17 @@ export class Pattern {
     return this._zoom(0, t)._slow(t);
   }
 
+  /**
+   * Applies the given structure to the pattern:
+   *
+   * @name struct
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * note("c3,eb3,g3")
+   *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
+   *   .slow(4)
+   */
   // struct(...binary_pats) {
   //   // Re structure the pattern according to a binary pattern (false values are dropped)
   //   const binary_pat = sequence(binary_pats);
@@ -875,6 +974,16 @@ export class Pattern {
     return this.invert();
   }
 
+  /**
+   * Applies the given function whenever the given pattern is in a true state.
+   * @name when
+   * @memberof Pattern
+   * @param {Pattern} binary_pat
+   * @param {function} func
+   * @returns Pattern
+   * @example
+   * "c3 eb3 g3".when("<0 1>/2", x=>x.sub(5)).note()
+   */
   when(binary_pat, func) {
     //binary_pat = sequence(binary_pat)
     const true_pat = binary_pat._filterValues(id);
@@ -884,14 +993,68 @@ export class Pattern {
     return stack(with_pat, without_pat);
   }
 
+  /**
+   * Superimposes the function result on top of the original pattern, delayed by the given time.
+   * @name off
+   * @memberof Pattern
+   * @param {Pattern | number} time offset time
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * "c3 eb3 g3".off(1/8, x=>x.add(7)).note()
+   */
   off(time_pat, func) {
     return stack(this, func(this.late(time_pat)));
   }
 
+  /**
+   * Applies the given function every n cycles.
+   * @name every
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").every(4, x=>x.rev())
+   */
+  every(n, func) {
+    const pat = this;
+    const pats = Array(n - 1).fill(pat);
+    // pats.unshift(func(pat));
+    pats.push(func(pat));
+    return slowcatPrime(...pats);
+  }
+  /**
+   * Applies the given function every n cycles, starting from the first cycle.
+   * @name every
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").every(4, x=>x.rev())
+   */
   every(n, func) {
     const pat = this;
     const pats = Array(n - 1).fill(pat);
     pats.unshift(func(pat));
+    return slowcatPrime(...pats);
+  }
+
+  /**
+   * Applies the given function every n cycles, starting from the last cycle.
+   * @name each
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").every(4, x=>x.rev())
+   */
+  each(n, func) {
+    const pat = this;
+    const pats = Array(n - 1).fill(pat);
+    pats.push(func(pat));
     return slowcatPrime(...pats);
   }
 
@@ -905,6 +1068,15 @@ export class Pattern {
     return this.when(slowcat(false, true), (x) => fastcat(x, silence)._late(0.25));
   }
 
+  /**
+   * Reverse all haps in a pattern
+   *
+   * @name rev
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").rev()
+   */
   rev() {
     const pat = this;
     const query = function (state) {
@@ -947,6 +1119,15 @@ export class Pattern {
     return this.juxBy(1, func);
   }
 
+  /**
+   * Stacks the given pattern(s) to the current pattern.
+   * @name stack
+   * @memberof Pattern
+   * @example
+   * s("hh*2").stack(
+   *   n("c2(3,8)")
+   * )
+   */
   stack(...pats) {
     return stack(this, ...pats);
   }
@@ -955,11 +1136,28 @@ export class Pattern {
     return sequence(this, ...pats);
   }
 
-  // shorthand for sequence
+  /**
+   * Appends the given pattern(s) to the current pattern. Synonyms: .sequence .fastcat
+   * @name seq
+   * @memberof Pattern
+   * @example
+   * s("hh*2").seq(
+   *   n("c2(3,8)")
+   * )
+   */
   seq(...pats) {
     return sequence(this, ...pats);
   }
 
+  /**
+   * Appends the given pattern(s) to the next cycle. Synonym: .slowcat
+   * @name cat
+   * @memberof Pattern
+   * @example
+   * s("hh*2").cat(
+   *   n("c2(3,8)")
+   * )
+   */
   cat(...pats) {
     return cat(this, ...pats);
   }
@@ -972,6 +1170,16 @@ export class Pattern {
     return slowcat(this, ...pats);
   }
 
+  /**
+   * Superimposes the result of the given function(s) on top of the original pattern:
+   * @name superimpose
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
+   *   .superimpose(x=>x.add(2))
+   *   .scale('C minor').note()
+   */
   superimpose(...funcs) {
     return this.stack(...funcs.map((func) => func(this)));
   }
@@ -984,24 +1192,70 @@ export class Pattern {
     return this.stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
   }
 
-  // these might change with: https://github.com/tidalcycles/Tidal/issues/902
+  /**
+   * Superimpose and offset multiple times, applying the given function each time.
+   * @name echoWith
+   * @memberof Pattern
+   * @returns Pattern
+   * @param {number} times how many times to repeat
+   * @param {number} time cycle offset between iterations
+   * @param {function} func function to apply, given the pattern and the iteration index
+   * @example
+   * "<0 [2 4]>"
+   * .echoWith(4, 1/8, (p,n) => p.add(n*2))
+   * .scale('C minor').note().legato(.2)
+   */
   _echoWith(times, time, func) {
     return stack(...listRange(0, times - 1).map((i) => func(this.late(Fraction(time).mul(i)), i)));
   }
 
+  /**
+   * Superimpose and offset multiple times, gradually decreasing the velocity
+   * @name echo
+   * @memberof Pattern
+   * @returns Pattern
+   * @param {number} times how many times to repeat
+   * @param {number} time cycle offset between iterations
+   * @param {number} feedback velocity multiplicator for each iteration
+   * @example
+   * s("bd sd").echo(3, 1/6, .8)
+   */
   _echo(times, time, feedback) {
     return this._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
   }
 
+  /**
+   * Divides a pattern into a given number of subdivisions, plays the subdivisions in order, but increments the starting subdivision each cycle. The pattern wraps to the first subdivision after the last subdivision is played.
+   * @name iter
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * note("0 1 2 3".scale('A minor')).iter(4)
+   */
   iter(times, back = false) {
     return slowcat(...listRange(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
   }
 
-  // known as iter' in tidalcycles
+  /**
+   * Like `iter`, but plays the subdivisions in reverse order. Known as iter' in tidalcycles
+   * @name iterBack
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * note("0 1 2 3".scale('A minor')).iterBack(4)
+   */
   iterBack(times) {
     return this.iter(times, true);
   }
 
+  /**
+   * Divides a pattern into a given number of parts, then cycles through those parts in turn, applying the given function to each part in turn (one part per cycle).
+   * @name chunk
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note()
+   */
   _chunk(n, func, back = false) {
     const binary = Array(n - 1).fill(false);
     binary.unshift(true);
@@ -1009,15 +1263,16 @@ export class Pattern {
     return this.when(binary_pat, func);
   }
 
+  /**
+   * Like `chunk`, but cycles through the parts in reverse order. Known as chunk' in tidalcycles
+   * @name chunkBack
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note()
+   */
   _chunkBack(n, func) {
     return this._chunk(n, func, true);
-  }
-
-  edit(...funcs) {
-    return stack(...funcs.map((func) => func(this)));
-  }
-  pipe(func) {
-    return func(this);
   }
 
   _bypass(on) {
@@ -1034,20 +1289,63 @@ export class Pattern {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
   }
 
-  // sets hap relative duration of haps
+  /**
+   *
+   * Multiplies the hap duration with the given factor.
+   * @name legato
+   * @memberof Pattern
+   * @example
+   * note("c3 eb3 g3 c4").legato("<.25 .5 1 2>")
+   */
   _legato(value) {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
   }
 
+  /**
+   *
+   * Sets the velocity from 0 to 1. Is multiplied together with gain.
+   * @name velocity
+   * @example
+   * s("hh*8")
+   * .gain(".4!2 1 .4!2 1 .4 1")
+   * .velocity(".4 1")
+   */
   _velocity(velocity) {
     return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
 
-  // move this to controls? (speed and unit are controls)
+  /**
+   * Makes the sample fit the given number of cycles by changing the speed.
+   * @name loopAt
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+   * s("rhodes").loopAt(4,1)
+   */
   _loopAt(factor, cps = 1) {
     return this.speed((1 / factor) * cps)
       .unit('c')
       .slow(factor);
+  }
+  onTrigger(onTrigger) {
+    return this._withHap((hap) => hap.setContext({ ...hap.context, onTrigger }));
+  }
+  log(func = id) {
+    return this._withHap((hap) =>
+      hap.setContext({
+        ...hap.context,
+        onTrigger: (...args) => {
+          if (hap.context.onTrigger) {
+            hap.context.onTrigger(...args);
+          }
+          console.log(func(...args));
+        },
+      }),
+    );
+  }
+  logValues(func = id) {
+    return this.log((_, hap) => func(hap.value));
   }
 }
 
@@ -1070,9 +1368,6 @@ function _composeOp(a, b, func) {
 
 // Make composers
 (function () {
-  const num = (pat) => pat._asNumber();
-  const numOrString = (pat) => pat._asNumber(false, true);
-
   // pattern composers
   const composers = {
     set: [(a, b) => b],
@@ -1080,17 +1375,56 @@ function _composeOp(a, b, func) {
     keepif: [(a, b) => (b ? a : undefined)],
 
     // numerical functions
-    add: [(a, b) => a + b, numOrString], // support string concatenation
-    sub: [(a, b) => a - b, num],
-    mul: [(a, b) => a * b, num],
-    div: [(a, b) => a / b, num],
-    mod: [mod, num],
-    pow: [Math.pow, num],
-    _and: [(a, b) => a & b, num],
-    _or: [(a, b) => a | b, num],
-    _xor: [(a, b) => a ^ b, num],
-    _lshift: [(a, b) => a << b, num],
-    _rshift: [(a, b) => a >> b, num],
+    /**
+     *
+     * Assumes a pattern of numbers. Adds the given number to each item in the pattern.
+     * @name add
+     * @memberof Pattern
+     * @example
+     * // Here, the triad 0, 2, 4 is shifted by different amounts
+     * "0 2 4".add("<0 3 4 0>").scale('C major').note()
+     * // Without add, the equivalent would be:
+     * // "<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>".scale('C major').note()
+     * @example
+     * // You can also use add with notes:
+     * "c3 e3 g3".add("<0 5 7 0>").note()
+     * // Behind the scenes, the notes are converted to midi numbers:
+     * // "48 52 55".add("<0 5 7 0>").note()
+     */
+    add: [numeralArgs((a, b) => a + b)], // support string concatenation
+    /**
+     *
+     * Like add, but the given numbers are subtracted.
+     * @name sub
+     * @memberof Pattern
+     * @example
+     * "0 2 4".sub("<0 1 2 3>").scale('C4 minor').note()
+     * // See add for more information.
+     */
+    sub: [numeralArgs((a, b) => a - b)],
+    /**
+     *
+     * Multiplies each number by the given factor.
+     * @name mul
+     * @memberof Pattern
+     * @example
+     * "1 1.5 [1.66, <2 2.33>]".mul(150).freq()
+     */
+    mul: [numeralArgs((a, b) => a * b)],
+    /**
+     *
+     * Divides each number by the given factor.
+     * @name div
+     * @memberof Pattern
+     */
+    div: [numeralArgs((a, b) => a / b)],
+    mod: [numeralArgs(mod)],
+    pow: [numeralArgs(Math.pow)],
+    _and: [numeralArgs((a, b) => a & b)],
+    _or: [numeralArgs((a, b) => a | b)],
+    _xor: [numeralArgs((a, b) => a ^ b)],
+    _lshift: [numeralArgs((a, b) => a << b)],
+    _rshift: [numeralArgs((a, b) => a >> b)],
 
     // TODO - force numerical comparison if both look like numbers?
     lt: [(a, b) => a < b],
@@ -1118,10 +1452,14 @@ function _composeOp(a, b, func) {
           pat = preprocess(pat);
           other = preprocess(other);
         }
-        var result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
+        var result;
         // hack to remove undefs when doing 'keepif'
         if (what === 'keepif') {
+          // avoid union, as we want to throw away the value of 'b' completely
+          result = pat['_op' + how](other, (a) => (b) => op(a, b));
           result = result._removeUndefineds();
+        } else {
+          result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
         }
         return result;
       };
@@ -1171,6 +1509,11 @@ Pattern.prototype.patternified = [
   'slow',
   'velocity',
 ];
+
+// aliases
+export const polyrhythm = stack;
+export const pr = stack;
+
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = {
   pure,
@@ -1193,12 +1536,11 @@ Pattern.prototype.factories = {
 // Nothing
 export const silence = new Pattern((_) => []);
 
-/** A discrete value that repeats once per cycle:
+/** A discrete value that repeats once per cycle.
  *
- * @param {any} value - The value to repeat
  * @returns {Pattern}
  * @example
- * pure('e4')
+ * pure('e4') // "e4"
  */
 export function pure(value) {
   function query(state) {
@@ -1209,7 +1551,15 @@ export function pure(value) {
 
 export function isPattern(thing) {
   // thing?.constructor?.name !== 'Pattern' // <- this will fail when code is mangled
-  return thing instanceof Pattern;
+  const is = thing instanceof Pattern || thing?._Pattern;
+  if (!thing instanceof Pattern) {
+    console.warn(
+      `Found Pattern that fails "instanceof Pattern" check.
+      This may happen if you are using multiple versions of @strudel.cycles/core. 
+      Please check by running "npm ls @strudel.cycles/core".`,
+    );
+  }
+  return is;
 }
 
 export function reify(thing) {
@@ -1217,15 +1567,17 @@ export function reify(thing) {
   if (isPattern(thing)) {
     return thing;
   }
+  if (stringParser && typeof thing === 'string') {
+    return stringParser(thing);
+  }
   return pure(thing);
 }
 
-/** The given items are played at the same time at the same length:
+/** The given items are played at the same time at the same length.
  *
- * @param {...any} items - The items to stack
  * @return {Pattern}
  * @example
- * stack(g3, b3, [e4, d4])
+ * stack(g3, b3, [e4, d4]).note() // "g3,b3,[e4,d4]".note()
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
@@ -1238,7 +1590,6 @@ export function stack(...pats) {
  *
  * synonyms: {@link cat}
  *
- * @param {...any} items - The items to concatenate
  * @return {Pattern}
  * @example
  * slowcat(e5, b4, [d5, c5])
@@ -1273,8 +1624,8 @@ export function slowcatPrime(...pats) {
   pats = pats.map(reify);
   const query = function (state) {
     const pat_n = Math.floor(state.span.begin) % pats.length;
-    const pat = pats[pat_n];
-    return pat.query(state);
+    const pat = pats[pat_n]; // can be undefined for same cases e.g. /#cHVyZSg0MikKICAuZXZlcnkoMyxhZGQoNykpCiAgLmxhdGUoLjUp
+    return pat?.query(state) || [];
   };
   return new Pattern(query)._splitQueries();
 }
@@ -1294,16 +1645,22 @@ export function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);
 }
 
-/** See {@link slowcat} */
+/** The given items are con**cat**enated, where each one takes one cycle. Synonym: slowcat
+ *
+ * @param {...any} items - The items to concatenate
+ * @return {Pattern}
+ * @example
+ * cat(e5, b4, [d5, c5]).note() // "<e5 b4 [d5 c5]>".note()
+ *
+ */
 export function cat(...pats) {
   return slowcat(...pats);
 }
 
-/** Like {@link fastcat}, but where each step has a temporal weight:
- * @param {...Array} items - The items to concatenate
+/** Like {@link seq}, but each step has a length, relative to the whole.
  * @return {Pattern}
  * @example
- * timeCat([3,e3],[1, g3])
+ * timeCat([3,e3],[1, g3]).note() // "e3@3 g3".note()
  */
 export function timeCat(...timepats) {
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -1322,7 +1679,11 @@ export function sequence(...pats) {
   return fastcat(...pats);
 }
 
-/** See {@link fastcat} */
+/** Like **cat**, but the items are crammed into one cycle. Synonyms: fastcat, sequence
+ * @example
+ * seq(e5, b4, [d5, c5]).note() // "e5 b4 [d5 c5]".note()
+ *
+ */
 export function seq(...pats) {
   return fastcat(...pats);
 }
@@ -1371,21 +1732,8 @@ export function pm(...args) {
   polymeter(...args);
 }
 
-export function polyrhythm(...xs) {
-  const seqs = xs.map((a) => sequence(a));
-
-  if (seqs.length == 0) {
-    return silence;
-  }
-  return stack(...seqs);
-}
-
-// alias
-export function pr(args) {
-  polyrhythm(args);
-}
-
 export const add = curry((a, pat) => pat.add(a));
+export const chop = curry((a, pat) => pat.chop(a));
 export const chunk = curry((a, pat) => pat.chunk(a));
 export const chunkBack = curry((a, pat) => pat.chunkBack(a));
 export const div = curry((a, pat) => pat.div(a));
@@ -1406,6 +1754,7 @@ export const mul = curry((a, pat) => pat.mul(a));
 export const off = curry((t, f, pat) => pat.off(t, f));
 export const ply = curry((a, pat) => pat.ply(a));
 export const range = curry((a, b, pat) => pat.range(a, b));
+export const rangex = curry((a, b, pat) => pat.rangex(a, b));
 export const range2 = curry((a, b, pat) => pat.range2(a, b));
 export const rev = (pat) => pat.rev();
 export const slow = curry((a, pat) => pat.slow(a));
@@ -1491,6 +1840,18 @@ Pattern.prototype.outside = function (...args) {
 Pattern.prototype.inside = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._inside)(...args, this);
+};
+Pattern.prototype.range = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._range)(...args, this);
+};
+Pattern.prototype.rangex = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._rangex)(...args, this);
+};
+Pattern.prototype.range2 = function (...args) {
+  args = args.map(reify);
+  return patternify2(Pattern.prototype._range2)(...args, this);
 };
 
 // call this after all Patter.prototype.define calls have been executed! (right before evaluate)

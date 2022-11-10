@@ -1,17 +1,13 @@
-import { Tone } from '@strudel.cycles/tone';
-import { evalScope } from '@strudel.cycles/eval';
+import { evalScope, controls } from '@strudel.cycles/core';
 import { MiniRepl as _MiniRepl } from '@strudel.cycles/react';
-import controls from '@strudel.cycles/core/controls.mjs';
+import { samples } from '@strudel.cycles/webaudio';
+import { prebake } from '../repl/src/prebake.mjs';
 
-export const defaultSynth = new Tone.PolySynth().chain(new Tone.Gain(0.5), Tone.Destination).set({
-  oscillator: { type: 'triangle' },
-  envelope: {
-    release: 0.01,
-  },
-});
+fetch('https://strudel.tidalcycles.org/EmuSP12.json')
+  .then((res) => res.json())
+  .then((json) => samples(json, 'https://strudel.tidalcycles.org/EmuSP12/'));
 
 evalScope(
-  Tone,
   controls,
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tone'),
@@ -23,6 +19,8 @@ evalScope(
   import('@strudel.cycles/osc'),
 );
 
+prebake();
+
 export function MiniRepl({ tune }) {
-  return <_MiniRepl tune={tune} defaultSynth={defaultSynth} hideOutsideView={true} />;
+  return <_MiniRepl tune={tune} hideOutsideView={true} />;
 }

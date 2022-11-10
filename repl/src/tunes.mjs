@@ -4,89 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-export const timeCatMini = `stack(
-  "c3@3 [eb3, g3, [c4 d4]/2]",
-  "c2 g2",
-  "[eb4@5 [f4 eb4 d4]@3] [eb4 c4]/2".slow(8)
-)`;
-
-export const timeCat = `stack(
-  timeCat([3, c3], [1, stack(eb3, g3, seq(c4, d4).slow(2))]),
-  seq(c2, g2),
-  seq(
-    timeCat([5, eb4], [3, seq(f4, eb4, d4)]), 
-    seq(eb4, c4).slow(2)
-  ).slow(4)
-)`;
-
-export const shapeShifted = `stack(
-  seq(
-    e5, [b4, c5], d5, [c5, b4],
-    a4, [a4, c5], e5, [d5, c5],
-    b4, [r, c5], d5, e5,
-    c5, a4, a4, r,
-    [r, d5], [r, f5], a5, [g5, f5],
-    e5, [r, c5], e5, [d5, c5],
-    b4, [b4, c5], d5, e5,
-    c5, a4, a4, r,
-  ).rev(),
-  seq(
-    e2, e3, e2, e3, e2, e3, e2, e3,
-    a2, a3, a2, a3, a2, a3, a2, a3,
-    gs2, gs3, gs2, gs3, e2, e3, e2, e3,
-    a2, a3, a2, a3, a2, a3, b1, c2,
-    d2, d3, d2, d3, d2, d3, d2, d3,
-    c2, c3, c2, c3, c2, c3, c2, c3,
-    b1, b2, b1, b2, e2, e3, e2, e3,
-    a1, a2, a1, a2, a1, a2, a1, a2,
-  ).rev()
-).slow(16)`;
-
-/* export const tetrisWithFunctions = `stack(seq(
-  'e5', seq('b4', 'c5'), 'd5', seq('c5', 'b4'),
-  'a4', seq('a4', 'c5'), 'e5', seq('d5', 'c5'),
-  'b4', seq(r, 'c5'), 'd5', 'e5',
-  'c5', 'a4', 'a4', r,
-  seq(r, 'd5'), seq(r, 'f5'), 'a5', seq('g5', 'f5'),
-  'e5', seq(r, 'c5'), 'e5', seq('d5', 'c5'),
-  'b4', seq('b4', 'c5'), 'd5', 'e5',
-  'c5', 'a4', 'a4', r),
-  seq(
-    'e2', 'e3', 'e2', 'e3', 'e2', 'e3', 'e2', 'e3',
-    'a2', 'a3', 'a2', 'a3', 'a2', 'a3', 'a2', 'a3',
-    'g#2', 'g#3', 'g#2', 'g#3', 'e2', 'e3', 'e2', 'e3',
-    'a2', 'a3', 'a2', 'a3', 'a2', 'a3', 'b1', 'c2',
-    'd2', 'd3', 'd2', 'd3', 'd2', 'd3', 'd2', 'd3',
-    'c2', 'c3', 'c2', 'c3', 'c2', 'c3', 'c2', 'c3',
-    'b1', 'b2', 'b1', 'b2', 'e2', 'e3', 'e2', 'e3',
-    'a1', 'a2', 'a1', 'a2', 'a1', 'a2', 'a1', 'a2',
-  )
-).slow(16)`; */
-
-/* export const tetris = `stack(
-  seq(
-    "e5 [b4 c5] d5 [c5 b4]",
-    "a4 [a4 c5] e5 [d5 c5]",
-    "b4 [~ c5] d5 e5",
-    "c5 a4 a4 ~",
-    "[~ d5] [~ f5] a5 [g5 f5]",
-    "e5 [~ c5] e5 [d5 c5]",
-    "b4 [b4 c5] d5 e5",
-    "c5 a4 a4 ~"
-  ),
-  seq(
-    "e2 e3 e2 e3 e2 e3 e2 e3",
-    "a2 a3 a2 a3 a2 a3 a2 a3",
-    "g#2 g#3 g#2 g#3 e2 e3 e2 e3",
-    "a2 a3 a2 a3 a2 a3 b1 c2",
-    "d2 d3 d2 d3 d2 d3 d2 d3",
-    "c2 c3 c2 c3 c2 c3 c2 c3",
-    "b1 b2 b1 b2 e2 e3 e2 e3",
-    "a1 a2 a1 a2 a1 a2 a1 a2",
-  )
-).slow(16)`;
- */
-export const tetrisMini = `\`[[e5 [b4 c5] d5 [c5 b4]]
+export const tetrisMini = `note(\`[[e5 [b4 c5] d5 [c5 b4]]
 [a4 [a4 c5] e5 [d5 c5]]
 [b4 [~ c5] d5 e5]
 [c5 a4 a4 ~]
@@ -101,14 +19,8 @@ export const tetrisMini = `\`[[e5 [b4 c5] d5 [c5 b4]]
 [[d2 d3]*4]
 [[c2 c3]*4]
 [[b1 b2]*2 [e2 e3]*2]
-[[a1 a2]*4]\`.slow(16)
+[[a1 a2]*4]\`).slow(16)
 `;
-
-export const whirlyStrudel = `seq(e4, [b2,  b3], c4)
-.every(4, fast(2))
-.every(3, slow(1.5))
-.fast(cat(1.25, 1, 1.5))
-.every(2, _ => seq(e4, r, e3, d4, r))`;
 
 export const swimming = `stack(
   seq(
@@ -168,7 +80,7 @@ export const swimming = `stack(
     "[F2 A2 Bb2 B2]",
     "[G2 C2 F2 F2]"
   )
-).slow(51);
+).note().slow(51);
 `;
 
 export const giantSteps = `stack(
@@ -193,7 +105,7 @@ export const giantSteps = `stack(
     "[Eb2 Bb2] [A2 D2] [G2 D2] [C#2 F#2]",
     "[B2 F#2] [F2 Bb2] [Eb2 Bb3] [C#2 F#2]"
   )
-).slow(20)`;
+).slow(20).note()`;
 
 export const giantStepsReggae = `stack(
   // melody
@@ -220,46 +132,7 @@ export const giantStepsReggae = `stack(
     "[B2 F#2] [F2 Bb2] [Eb2 Bb2] [C#2 F#2]"
   )
   .struct("x ~".fast(4*8))
-).slow(25)`;
-
-export const transposedChordsHacked = `stack(
-  "c2 eb2 g2",
-  "Cm7".voicings(['g2','c4']).slow(2)
-).transpose(
-  "<1 2 3 2>".slow(2)
-).transpose(5)`;
-
-export const scaleTranspose = `"f2,f3,c4,ab4"
-.scale(seq('F minor', 'F harmonic minor').slow(4))
-.scaleTranspose("<0 -1 -2 -3>")
-.transpose("0 1".slow(16))`;
-
-export const struct = `stack(
-  "c2 g2 a2 [e2@2 eb2] d2 a2 g2 [d2 ~ db2]",
-  "[C^7 A7] [Dm7 G7]".struct("[x@2 x] [~@2 x] [~ x@2]@2 [x ~@2] ~ [~@2 x@4]@2")
-  .voicings(['G3','A4'])
-).slow(4)`;
-
-export const magicSofa = `stack(
-  "<C^7 F^7 ~> <Dm7 G7 A7 ~>"
-   .every(2, fast(2))
-   .voicings(),
-  "<c2 f2 g2> <d2 g2 a2 e2>"
-).transpose("<0 2 3 4>")`;
-// below doesn't work anymore due to constructor cleanup
-// ).slow(1).transpose.cat(0, 2, 3, 4)`;
-
-export const confusedPhone = `"[g2 ~@1.3] [c3 ~@1.3]"
-.superimpose(
-  transpose(-12).late(0),
-  transpose(7).late(0.1),
-  transpose(10).late(0.2),
-  transpose(12).late(0.3),
-  transpose(24).late(0.4)
-)
-.scale(cat('C dorian', 'C mixolydian'))
-.scaleTranspose("<0 1 2 1>")
-.slow(2)`;
+).slow(25).note()`;
 
 export const zeldasRescue = `stack(
   // melody
@@ -276,79 +149,46 @@ export const zeldasRescue = `stack(
   [[B1 D3] G3@2] [[Bb1 Db3] G3@2] [[A1 C3] G3@2] [[D2 C3] F#3@2]
   [[F2 C3] E3@2] [[E2 B2] D3@2] [[D2 A2] C3@2] [[C2 G2] B2@2]
   [[F2 C3] E3@2] [[E2 B2] D3@2] [[Eb2 Bb2] Db3@2] [[D2 A2] C3 [F3,G2]]\`
-).transpose(12).slow(48).tone(
-  new PolySynth().chain(
-    new Gain(0.3), 
-    new Chorus(2, 2.5, 0.5).start(), 
-    new Freeverb(), 
-    getDestination())
-)`;
+).transpose(12).slow(48)
+  .superimpose(x=>x.add(0.06)) // add slightly detuned voice
+  .note()
+  .gain(.1)
+  .s('triangle')
+  .room(1)
+  `;
 
-export const technoDrums = `stack(
-  "c1*2".tone(new MembraneSynth().toDestination()),
-  "~ x".tone(new NoiseSynth().toDestination()),
-  "[~ c4]*2".tone(new MetalSynth().set({envelope:{decay:0.06,sustain:0}}).chain(new Gain(0.5),getDestination()))
-)`;
-
-export const caverave = `const delay = new FeedbackDelay(1/8, .4).chain(vol(0.5), out());
-const kick = new MembraneSynth().chain(vol(.8), out());
-const snare = new NoiseSynth().chain(vol(.8), out());
-const hihat = new MetalSynth().set(adsr(0, .08, 0, .1)).chain(vol(.3).connect(delay),out());
-const bass = new Synth().set({ ...osc('sawtooth'), ...adsr(0, .1, .4) }).chain(lowpass(900), vol(.5), out());
-const keys = new PolySynth().set({ ...osc('sawtooth'), ...adsr(0, .5, .2, .7) }).chain(lowpass(1200), vol(.5), out());
+export const caverave = `const keys = x => x.s('sawtooth').cutoff(1200).gain(.5).attack(0).decay(.16).sustain(.3).release(.1);
 
 const drums = stack(
-  "c1*2".tone(kick).mask("<x@7 ~>/8"),
-  "~ <x!7 [x@3 x]>".tone(snare).mask("<x@7 ~>/4"),
-  "[~ c4]*2".tone(hihat)
+  s("bd*2").mask("<x@7 ~>/8").gain(.8),
+  s("~ <sd!7 [sd@3 ~]>").mask("<x@7 ~>/4").gain(.5),
+  s("[~ hh]*2").delay(.3).delayfeedback(.5).delaytime(.125).gain(.4)
 );
 
 const thru = (x) => x.transpose("<0 1>/8").transpose(-1);
 const synths = stack(
-  "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor']).slow(8)).struct("[~ x]*2")
-  .edit(
+  "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor'])
+  .slow(8)).struct("[~ x]*2")
+  .layer(
     scaleTranspose(0).early(0),
     scaleTranspose(2).early(1/8),
     scaleTranspose(7).early(1/4),
     scaleTranspose(8).early(3/8)
-  ).apply(thru).tone(keys).mask("<~ x>/16"),
-  "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).apply(thru).tone(bass),
-  "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().apply(thru).every(2, early(1/8)).tone(keys).mask("<x@7 ~>/8".early(1/4))
+  ).apply(thru).note().apply(keys).mask("<~ x>/16"),
+  note("<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".apply(thru))
+  .struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2))
+  .s('sawtooth').attack(0.001).decay(0.2).sustain(1).cutoff(500),
+  "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.2 ~]".fast(2)).voicings()
+  .apply(thru).every(2, early(1/8)).note().apply(keys).sustain(0)
+  .delay(.4).delaytime(.12)
+  .mask("<x@7 ~>/8".early(1/4))
 )
 stack(
   drums.fast(2), 
   synths
 ).slow(2)`;
 
-export const callcenterhero = `const bpm = 90;
-const lead = polysynth().set({...osc('sine4'),...adsr(.004)}).chain(vol(0.15),out())
-const bass = fmsynth({...osc('sawtooth6'),...adsr(0.05,.6,0.8,0.1)}).chain(vol(0.6), out());
-const s = scale(cat('F3 minor', 'Ab3 major', 'Bb3 dorian', 'C4 phrygian dominant').slow(4));
-stack(
-  "0 2".struct("<x ~> [x ~]").apply(s).scaleTranspose(stack(0,2)).tone(lead),
-  "<6 7 9 7>".struct("[~ [x ~]*2]*2").apply(s).scaleTranspose("[0,2] [2,4]".fast(2).every(4,rev)).tone(lead),
-	"-14".struct("[~ x@0.8]*2".early(0.01)).apply(s).tone(bass),
-  "c2*2".tone(membrane().chain(vol(0.6), out())),
-  "~ c2".tone(noise().chain(vol(0.2), out())),
-  "c4*4".tone(metal(adsr(0,.05,0)).chain(vol(0.03), out()))
-)
-.slow(120 / bpm)`;
-
-export const primalEnemy = `const f = fast("<1 <2 [4 8]>>");
-stack(
-  "c3,g3,c4".struct("[x ~]*2").apply(f).transpose("<0 <3 [5 [7 [9 [11 13]]]]>>"),
-  "c2 [c2 ~]*2".tone(synth(osc('sawtooth8')).chain(vol(0.8),out())),
-  "c1*2".tone(membrane().chain(vol(0.8),out()))
-).slow(1)`;
-
-export const synthDrums = `stack(
-  "c1*2".tone(membrane().chain(vol(0.8),out())),
-  "~ c3".tone(noise().chain(vol(0.8),out())),
-  "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.015)).chain(vol(0.8),out()))
-)
-`;
-
-export const sampleDrums = `const drums = await players({
+export const sampleDrums = `samples({
   bd: 'bd/BT0A0D0.wav',
   sn: 'sn/ST0T0S3.wav',
   hh: 'hh/000_hh3closedhh.wav'
@@ -358,9 +198,11 @@ stack(
   "<bd!3 bd(3,4,2)>",
   "hh*4",
   "~ <sn!3 sn(3,4,1)>"
-).tone(drums.chain(out()))
+).s()
 `;
 
+// TODO:
+/*
 export const xylophoneCalling = `const t = x => x.scaleTranspose("<0 2 4 3>/4").transpose(-2)
 const s = x => x.scale(cat('C3 minor pentatonic','G3 minor pentatonic').slow(4))
 const delay = new FeedbackDelay(1/8, .6).chain(vol(0.1), out());
@@ -397,7 +239,10 @@ stack(
   "c3*4".transpose("[-24 0]*2").tone(metal(adsr(0,.02)).chain(vol(0.5).connect(delay),out()))
 ).slow(1)
 // strudel disable-highlighting`;
+*/
 
+// TODO:
+/*
 export const sowhatelse = `// mixer
 const mix = (key) => vol({
   chords: .2,
@@ -434,6 +279,7 @@ stack(
   "[2,4]/4".scale('D dorian').apply(t).tone(instr('pad')).mask("<x x x ~>/8")
 ).fast(6/8)
 // strudel disable-highlighting`;
+*/
 
 export const barryHarris = `backgroundImage(
   'https://media.npr.org/assets/img/2017/02/03/barryharris_600dpi_wide-7eb49998aa1af377d62bb098041624c0a0d1a454.jpg',
@@ -444,18 +290,14 @@ export const barryHarris = `backgroundImage(
   .scale('C bebop major')
   .transpose("<0 1 2 1>/8")
   .slow(2)
-  .tone((await piano()).toDestination())
+  .note().piano()
 `;
 
-export const blippyRhodes = `const delay = new FeedbackDelay(1/12, .4).chain(vol(0.3), out());
-
-const drums = await players({
+export const blippyRhodes = `samples({
   bd: 'samples/tidal/bd/BT0A0D0.wav',
   sn: 'samples/tidal/sn/ST0T0S3.wav',
-  hh: 'samples/tidal/hh/000_hh3closedhh.wav'
-}, 'https://loophole-letters.vercel.app/')
-
-const rhodes = await sampler({
+  hh: 'samples/tidal/hh/000_hh3closedhh.wav',
+  rhodes: {
   E1: 'samples/rhodes/MK2Md2000.mp3',
   E2: 'samples/rhodes/MK2Md2012.mp3',
   E3: 'samples/rhodes/MK2Md2024.mp3',
@@ -463,33 +305,37 @@ const rhodes = await sampler({
   E5: 'samples/rhodes/MK2Md2048.mp3',
   E6: 'samples/rhodes/MK2Md2060.mp3',
   E7: 'samples/rhodes/MK2Md2072.mp3'
+  }
 }, 'https://loophole-letters.vercel.app/')
 
 const bass = synth(osc('sawtooth8')).chain(vol(.5),out())
 const scales = cat('C major', 'C mixolydian', 'F lydian', ['F minor', cat('Db major','Db mixolydian')])
 
 stack(
-  "<bd sn> <hh hh*2 hh*3>"
-  .tone(drums.chain(out())),
+  s("<bd sn> <hh hh*2 hh*3>"),
   "<g4 c5 a4 [ab4 <eb5 f5>]>"
   .scale(scales)
   .struct("x*8")
   .scaleTranspose("0 [-5,-2] -7 [-9,-2]")
   .legato(.3)
   .slow(2)
-  .tone(rhodes.chain(vol(0.5).connect(delay), out())),
-  //"<C^7 C7 F^7 [Fm7 <Db^7 Db7>]>".slow(2).voicings().struct("~ x").legato(.25).tone(rhodes),
+  .note()
+  .s('rhodes')
+  .clip(1)
+  .room(.5)
+  .delay(.3)
+  .delayfeedback(.4)
+  .delaytime(1/12).gain(.5),
   "<c2 c3 f2 [[F2 C2] db2]>"
   .legato("<1@3 [.3 1]>")
-  .slow(2)
-  .tone(bass),
+  .slow(2).superimpose(x=>x.add(.02))
+  .note().gain(.3)
+  .s('sawtooth').cutoff(600),
 ).fast(3/2)`;
 
-export const wavyKalimba = `const delay = new FeedbackDelay(1/3, .5).chain(vol(.2), out())
-let kalimba = await sampler({
-  C5: 'https://freesound.org/data/previews/536/536549_11935698-lq.mp3'
+export const wavyKalimba = `samples({
+  'kalimba': { c5:'https://freesound.org/data/previews/536/536549_11935698-lq.mp3' }
 })
-kalimba = kalimba.chain(vol(0.6).connect(delay),out());
 const scales = cat('C major', 'C mixolydian', 'F lydian', ['F minor', 'Db major'])
 
 stack(
@@ -498,8 +344,7 @@ stack(
   .scale(scales)
   .struct("x*8")
   .velocity("<.8 .3 .6>*8")
-  .slow(2)
-  .tone(kalimba),
+  .slow(2),
   "<c2 c2 f2 [[F2 C2] db2]>"
   .scale(scales)
   .scaleTranspose("[0 <2 4>]*2")
@@ -507,17 +352,23 @@ stack(
   .velocity("<.8 .5>*4")
   .velocity(0.8)
   .slow(2)
-  .tone(kalimba)
 )
   .legato("<.4 .8 1 1.2 1.4 1.6 1.8 2>/8")
-  .fast(1)`;
+  .fast(1)
+  .note()
+  .clip(1)
+  .s('kalimba')
+  .delay(.2)
+  `;
 
+// TODO: rework tune to use freq
+/*
 export const jemblung = `const delay = new FeedbackDelay(1/8, .6).chain(vol(0.15), out());
 const snare = noise({type:'white',...adsr(0,0.2,0)}).chain(lowpass(5000),vol(1.8),out());
 const s = polysynth().set({...osc('sawtooth4'),...adsr(0.01,.2,.6,0.2)}).chain(vol(.23).connect(delay),out());
 stack(
   stack(
-    "0 1 4 [3!2 5]".edit(
+    "0 1 4 [3!2 5]".layer(
       // chords
       x=>x.add("0,3").duration("0.05!3 0.02"),
       // bass
@@ -538,20 +389,7 @@ stack(
   // hihat
   "c2*8".tone(noise().chain(highpass(6000),vol(0.5).connect(delay),out())),
 ).slow(3)`;
-
-export const risingEnemy = `stack(
-  "2,6"
-    .scale('F3 dorian')
-    .transpose(sine2.struct("x*64").slow(4).mul(2).round())
-    .fast(2)
-    .struct("x x*3")
-    .legato(".9 .3"),
-  "0@3 -3*3".legato(".95@3 .4").scale('F2 dorian')
-)
-  .transpose("<0 1 2 1>/2".early(0.5))
-  .transpose(5)
-  .fast(2 / 3)
-  .tone((await piano()).toDestination())`;
+*/
 
 export const festivalOfFingers = `const chords = "<Cm7 Fm7 G7 F#7>";
 stack(
@@ -563,50 +401,35 @@ stack(
   .scaleTranspose("0 4 0 6".early(".125 .5")).layer(scaleTranspose("0,<2 [4,6] [5,7]>/4"))
 ).slow(2)
  .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
- .tone((await piano()).chain(out()))`;
+ .note().piano()`;
 
-export const festivalOfFingers2 = `const chords =       "<Cm7       Fm7        G7         F#7            >";
-const scales = cat('C minor','F dorian','G dorian','F# mixolydian')
-stack(
-  chords.voicings().struct("x(3,8,-1)").velocity(.5).off(1/7,x=>x.transpose(12).velocity(.2)),
-  chords.rootNotes(2).struct("x(4,8)"),
-  chords.rootNotes(4)
-  .scale(scales)
-  .struct("x(3,8,-2)".fast(2))
-  .scaleTranspose("0 4 0 6".early(".125 .5")).layer(scaleTranspose("0,<2 [4,6] [5,7]>/3"))
-).slow(2).transpose(-1)            
- .legato(cosine.struct("x*8").add(4/5).mul(4/5).fast(8))
- .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
- .tone((await piano()).chain(out())).fast(3/4)`;
-
-// iter, stut, stutWith
+// iter, echo, echoWith
 export const undergroundPlumber = `backgroundImage('https://images.nintendolife.com/news/2016/08/video_exploring_the_funky_inspiration_for_the_super_mario_bros_underground_theme/large.jpg',{ className:'darken' })
 
-const drums = await players({
-  bd: 'bd/BT0A0D0.wav',
-  sn: 'sn/ST0T0S3.wav',
-  hh: 'hh/000_hh3closedhh.wav',
-  cp: 'cp/HANDCLP0.wav',
+samples({ bd: 'bd/BT0A0D0.wav', sn: 'sn/ST0T0S3.wav', hh: 'hh/000_hh3closedhh.wav', cp: 'cp/HANDCLP0.wav',
 }, 'https://loophole-letters.vercel.app/samples/tidal/')
+
+const h = x=>x.transpose("<0@2 5 0 7 5 0 -5>/2")
+
 stack(
-"<<bd*2 bd> sn> hh".fast(4).slow(2).tone(drums.chain(vol(.5),out())),
-  stack(
-    "[c2 a1 bb1 ~] ~"
-    .stut(2, .6, 1/16)
-    .legato(.4)
-    .slow(2)
-    .tone(synth({...osc('sawtooth7'),...adsr(0,.3,0)}).chain(out())),
-    "[g2,[c3 eb3]]".iter(4)
-    .stutWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
-    .legato(.1)
-  )
-  .transpose("<0@2 5 0 7 5 0 -5>/2")
-  
+  s("<<bd*2 bd> sn> hh").fast(2).gain(.7),
+  "[c2 a1 bb1 ~] ~"
+  .echo(2, 1/16, 1)
+  .legato(.4)
+  .slow(2)
+  .layer(h)
+  .note().s('square')
+  .cutoff(400).decay(.12).sustain(0)
+  ,
+  "[g2,[c3 eb3]]".iter(4)
+  .echoWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
+  .legato(.1)
+  .layer(h).note()
 )
   .fast(2/3)
-  .pianoroll({minMidi:21,maxMidi:180, background:'transparent',inactive:'#3F8F90',active:'#DE3123'})`;
+  .pianoroll({})`;
 
-export const bridgeIsOver = `const breaks = (await players({mad:'https://freesound.org/data/previews/22/22274_109943-lq.mp3'})).chain(out())
+export const bridgeIsOver = `samples({mad:'https://freesound.org/data/previews/22/22274_109943-lq.mp3'})
 stack(
   stack(
   "c3*2 [[c3@1.4 bb2] ab2] gb2*2 <[[gb2@1.4 ab2] bb2] gb2>".legato(".5 1".fast(2)).velocity(.8),
@@ -618,9 +441,11 @@ stack(
     .velocity(.7)
     .legato(.5)
     .stut(3, .5, 1/8)
-  ).transpose(-1).tone((await piano()).chain(out())),
-  "mad".slow(2).tone(breaks)
-).cpm(78).slow(4).pianoroll()
+  ).transpose(-1).note().piano(),
+  s("mad").slow(2)
+).cpm(78).slow(4)
+  
+  .pianoroll()
 `;
 
 export const goodTimes = `const scale = cat('C3 dorian','Bb2 major').slow(4);
@@ -637,10 +462,9 @@ stack(
   .legato("2")
   .scale(scale)
 .scaleTranspose("<0>".slow(4))
-.tone((await piano()).chain(out()))
-//.midi()
-.velocity(.8)
 .transpose(5)
+.note().piano()
+.velocity(.8)
 .slow(2)
 .pianoroll({maxMidi:100,minMidi:20})`;
 
@@ -651,7 +475,7 @@ export const echoPiano = `"<0 2 [4 6](3,4,1) 3*2>"
 .off(1/2, x=>x.scaleTranspose(6).color('steelblue'))
 .legato(.5)
 .echo(4, 1/8, .5)
-.tone((await piano()).chain(out()))
+.note().piano()
 .pianoroll()`;
 
 export const sml1 = `
@@ -687,8 +511,10 @@ stack(
   f3!2 e3!2 ab3!2 ~!2
   >\`
   .legato(.5)
-).fast(2) //.tone((await piano()).chain(out()))`;
+).fast(2).note()`;
 
+/*
+// TODO: does not work on linux (at least for me..)
 export const speakerman = `backgroundImage('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FXR0rKqW3VwY%2Fmaxresdefault.jpg&f=1&nofb=1', 
 { className:'darken', style:'background-size:cover'})
 stack(
@@ -708,54 +534,50 @@ stack(
   'got to keep on running',
   ).speak("en zu en".slow(12), "<0 2 3 4 5 6>".slow(2)),
 ).slow(4)`;
+*/
 
-export const randomBells = `const delay = new FeedbackDelay(1/3, .8).chain(vol(.2), out());
-let bell = await sampler({
-  C6: 'https://freesound.org/data/previews/411/411089_5121236-lq.mp3'
+export const randomBells = `samples({
+  bell: { c6: 'https://freesound.org/data/previews/411/411089_5121236-lq.mp3' },
+  bass: { d2: 'https://freesound.org/data/previews/608/608286_13074022-lq.mp3' }
 })
-const bass = await sampler({
-  d2: 'https://freesound.org/data/previews/608/608286_13074022-lq.mp3'
-});
-bell = bell.chain(vol(0.6).connect(delay),out());
 
-"0".euclidLegato(3,8)
+stack(
+  // bells
+  "0".euclidLegato(3,8)
   .echo(3, 1/16, .5)
   .add(rand.range(0,12))
   .velocity(rand.range(.5,1))
   .legato(rand.range(.4,3))
-  .scale(cat('D minor pentatonic')).tone(bell)
-  .stack("<D2 A2 G2 F2>".euclidLegato(6,8,1).tone(bass.toDestination()))
+  .scale(cat('D minor pentatonic')).note()
+  .s('bell').gain(.6).delay(.2).delaytime(1/3).delayfeedback(.8),
+  // bass
+  "<D2 A2 G2 F2>".euclidLegato(6,8,1).note().s('bass').clip(1).gain(.8)
+)
   .slow(6)
-  .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})`;
+  .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})
+  `;
 
-export const waa = `"a4 [a3 c3] a3 c3"
-.sub("<7 12>/2")
-.off(1/8, add("12"))
-.off(1/4, add("7"))
-.legato(.5)
-.slow(2)
-.wave("sawtooth square")
-.filter('lowpass', "<2000 1000 500>")
-.out()`;
-
-export const waar = `"a4 [a3 c3] a3 c3".color('#F9D649')
-.sub("<7 12 5 12>".slow(2))
-.off(1/4,x=>x.add(7).color("#FFFFFF #0C3AA1 #C63928"))
-.off(1/8,x=>x.add(12).color('#215CB6'))
-.slow(2)
-.legato(sine.range(0.3, 2).slow(28))
-.wave("sawtooth square".fast(2))
-.filter('lowpass', cosine.range(500,4000).slow(16))
-.out()
-.pianoroll({minMidi:20,maxMidi:120,background:'#202124'})`;
+export const waa2 = `n(
+  "a4 [a3 c3] a3 c3"
+  .sub("<7 12 5 12>".slow(2))
+  .off(1/4,x=>x.add(7))
+  .off(1/8,x=>x.add(12))
+)
+  .slow(2)
+  .legato(sine.range(0.3, 2).slow(28))
+  .s("sawtooth square".fast(2))
+  .cutoff(cosine.range(500,4000).slow(16))
+  .gain(.5)
+  .room(.5)
+  `;
 
 export const hyperpop = `const lfo = cosine.slow(15);
 const lfo2 = sine.slow(16);
-const filter1 = x=>x.filter('lowpass', lfo2.range(300,3000));
-const filter2 = x=>x.filter('highpass', lfo.range(1000,6000)).filter('lowpass',4000)
+const filter1 = x=>x.cutoff(lfo2.range(300,3000));
+const filter2 = x=>x.hcutoff(lfo.range(1000,6000)).cutoff(4000)
 const scales = cat('D3 major', 'G3 major').slow(8)
 
-const drums = await players({
+samples({
   bd: '344/344757_1676145-lq.mp3',
   sn: '387/387186_7255534-lq.mp3',
   hh: '561/561241_12517458-lq.mp3',
@@ -765,33 +587,37 @@ const drums = await players({
 
 stack(
   "-7 0 -7 7".struct("x(5,8,2)").fast(2).sub(7)
-  .scale(scales).wave("sawtooth,square").velocity(.3).adsr(0.01,0.1,.5,0)
+  .scale(scales)
+  .n()
+  .s("sawtooth,square")
+  .gain(.3).attack(0.01).decay(0.1).sustain(.5)
   .apply(filter1),
   "~@3 [<2 3>,<4 5>]"
-  .echo(8,1/16,.7)
+  .echo(4,1/16,.7)
   .scale(scales)
-  .wave('square').velocity(.7).adsr(0.01,0.1,0).apply(filter1),
-  "6 5 4".add(14)
+  .n()
+  .s('square').gain(.7)
+  .attack(0.01).decay(0.1).sustain(0)
+  .apply(filter1),
+  "6 4 2".add(14)
   .superimpose(sub("5"))
   .fast(1).euclidLegato(3,8)
   .mask("<1 0@7>")
   .fast(2)
-  .echo(32, 1/8, .9)
+  .echo(32, 1/8, .8)
   .scale(scales)
-  .wave("sawtooth")
-  .velocity(.2)
-  .adsr(.01,.5,0)
+  .n()
+  .s("sawtooth")
+  .gain(sine.range(.1,.4).slow(8))
+  .attack(.001).decay(.2).sustain(0)
   .apply(filter2)
-  //.echo(4,1/16,.5)
-).out().stack(
+).stack(
   stack(
     "bd <~@7 [~ bd]>".fast(2),
     "~ sn",
     "[~ hh3]*2"
-  ).tone(drums.chain(vol(.18),out())).fast(2)
+  ).s().fast(2).gain(.7)
 ).slow(2)
-
-//.pianoroll({minMidi:20, maxMidi:160})
 // strudel disable-highlighting`;
 
 export const festivalOfFingers3 = `"[-7*3],0,2,6,[8 7]"
@@ -807,7 +633,7 @@ export const festivalOfFingers3 = `"[-7*3],0,2,6,[8 7]"
 .scale(cat('D dorian','G mixolydian','C dorian','F mixolydian'))
 .legato(1)
 .slow(2)
-.tone((await piano()).toDestination())
+.note().piano()
 //.pianoroll({maxMidi:160})`;
 
 export const bossa = `
@@ -815,4 +641,343 @@ const scales = sequence('C minor', ['D locrian', 'G phrygian'], 'Bb2 minor', ['C
 stack(
   "<Cm7 [Dm7b5 G7b9] Bbm7 [Cm7b5 F7b9]>".fast(2).struct("x ~ x@3 x ~ x ~ ~ ~ x ~ x@3".late(1/8)).early(1/8).slow(2).voicings(),
   "[~ [0 ~]] 0 [~ [4 ~]] 4".sub(7).restart(scales).scale(scales).early(.25)
-).tone((await piano()).toDestination()).slow(2)`;
+).note().piano().slow(2)`;
+/* 
+export const customTrigger = `stack(
+  freq("55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)").layer(x=>x.mul("1.006,.995"))),
+  freq("440(5,8)".legato(.18).mul("<1 3/4 2 2/3>")).gain(perlin.range(.2,.8))
+).s("<sawtooth square>/2")
+  .onTrigger((t,hap,ct)=>{
+  const ac = Tone.getContext().rawContext;
+  t = ac.currentTime + t - ct;
+  const { freq, s, gain = 1 } = hap.value;
+  const master = ac.createGain();
+  master.gain.value = 0.1 * gain;
+  master.connect(ac.destination);
+  const o = ac.createOscillator();
+  o.type = s || 'triangle';
+  o.frequency.value = Number(freq);
+  o.connect(master);
+  o.start(t);
+  o.stop(t + hap.duration);
+}).stack(s("bd(3,8),hh*4,~ sd").webdirt())`; */
+
+export const meltingsubmarine = `samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+stack(
+  s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
+  .speed(perlin.range(.7,.9)) // random sample speed variation
+  //.hush()
+  ,"<a1 b1*2 a1(3,8) e2>" // bassline
+  .off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
+  .add(perlin.range(0,.5)) // random pitch variation
+  .superimpose(add(.05)) // add second, slightly detuned voice
+  .n() // wrap in "n"
+  .decay(.15).sustain(0) // make each note of equal length
+  .s('sawtooth') // waveform
+  .gain(.4) // turn down
+  .cutoff(sine.slow(7).range(300,5000)) // automate cutoff
+  //.hush()
+  ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings() // chords
+  .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+  .add(perlin.range(0,.5)) // random pitch variation
+  .n() // wrap in "n"
+  .s('sawtooth') // waveform
+  .gain(.16) // turn down
+  .cutoff(500) // fixed cutoff
+  .attack(1) // slowly fade in
+  //.hush()
+  ,"a4 c5 <e6 a6>".struct("x(5,8)")
+  .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+  .add(perlin.range(0,.5)) // random pitch variation
+  .n() // wrap in "n"
+  .decay(.1).sustain(0) // make notes short
+  .s('triangle') // waveform
+  .degradeBy(perlin.range(0,.5)) // randomly controlled random removal :)
+  .echoWith(4,.125,(x,n)=>x.gain(.15*1/(n+1))) // echo notes
+  //.hush()
+)
+  .slow(3/2)`;
+
+export const swimmingWithSoundfonts = `stack(
+    n(
+      "~",
+      "~",
+      "~",
+      "A5 [F5@2 C5] [D5@2 F5] F5",
+      "[C5@2 F5] [F5@2 C6] A5 G5",
+      "A5 [F5@2 C5] [D5@2 F5] F5",
+      "[C5@2 F5] [Bb5 A5 G5] F5@2",
+      "A5 [F5@2 C5] [D5@2 F5] F5",
+      "[C5@2 F5] [F5@2 C6] A5 G5",
+      "A5 [F5@2 C5] [D5@2 F5] F5",
+      "[C5@2 F5] [Bb5 A5 G5] F5@2",
+      "A5 [F5@2 C5] A5 F5",
+      "Ab5 [F5@2 Ab5] G5@2",
+      "A5 [F5@2 C5] A5 F5",
+      "Ab5 [F5@2 C5] C6@2",
+      "A5 [F5@2 C5] [D5@2 F5] F5",
+      "[C5@2 F5] [Bb5 A5 G5] F5@2"
+    ).s('Sitar: Ethnic'),
+    n(
+      "[F4,Bb4,D5] [[D4,G4,Bb4]@2 [Bb3,D4,F4]] [[G3,C4,E4]@2 [[Ab3,F4] [A3,Gb4]]] [Bb3,E4,G4]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, Bb3, Db3] [F3, Bb3, Db3]]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [A3, C4, E4] [A3, C4, E4]] [~ [Ab3, C4, Eb4] [Ab3, C4, Eb4]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [G3, C4, E4] [G3, C4, E4]]",
+      "[~ [F3, A3, C4] [F3, A3, C4]] [~ [F3, A3, C4] [F3, A3, C4]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [F3, Bb3, D4] [F3, Bb3, D4]] [~ [F3, Bb3, C4] [F3, Bb3, C4]] [~ [F3, A3, C4] [F3, A3, C4]] [~ [F3, A3, C4] [F3, A3, C4]]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [A3, C4, E4] [A3, C4, E4]] [~ [Ab3, C4, Eb4] [Ab3, C4, Eb4]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [G3, C4, E4] [G3, C4, E4]]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [F3, Bb3, D4] [F3, Bb3, D4]] [~ [F3, Bb3, C4] [F3, Bb3, C4]] [~ [F3, A3, C4] [F3, A3, C4]] [~ [F3, A3, C4] [F3, A3, C4]]",
+      "[~ [Bb3, D3, F4] [Bb3, D3, F4]] [~ [Bb3, D3, F4] [Bb3, D3, F4]] [~ [A3, C4, F4] [A3, C4, F4]] [~ [A3, C4, F4] [A3, C4, F4]]",
+      "[~ [Ab3, B3, F4] [Ab3, B3, F4]] [~ [Ab3, B3, F4] [Ab3, B3, F4]] [~ [G3, Bb3, F4] [G3, Bb3, F4]] [~ [G3, Bb3, E4] [G3, Bb3, E4]]",
+      "[~ [Bb3, D3, F4] [Bb3, D3, F4]] [~ [Bb3, D3, F4] [Bb3, D3, F4]] [~ [A3, C4, F4] [A3, C4, F4]] [~ [A3, C4, F4] [A3, C4, F4]]",
+      "[~ [Ab3, B3, F4] [Ab3, B3, F4]] [~ [Ab3, B3, F4] [Ab3, B3, F4]] [~ [G3, Bb3, F4] [G3, Bb3, F4]] [~ [G3, Bb3, E4] [G3, Bb3, E4]]",
+      "[~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, A3, C3] [F3, A3, C3]] [~ [F3, Bb3, D3] [F3, Bb3, D3]] [~ [F3, B3, D3] [F3, B3, D3]]",
+      "[~ [F3, Bb3, D4] [F3, Bb3, D4]] [~ [F3, Bb3, C4] [F3, Bb3, C4]] [~ [F3, A3, C4] [F3, A3, C4]] [~ [F3, A3, C4] [F3, A3, C4]]"
+    ).s('Kalimba: Ethnic'),
+    n(
+      "[G3 G3 C3 E3]",
+      "[F2 D2 G2 C2]",
+      "[F2 D2 G2 C2]",
+      "[F2 A2 Bb2 B2]",
+      "[A2 Ab2 G2 C2]",
+      "[F2 A2 Bb2 B2]",
+      "[G2 C2 F2 F2]",
+      "[F2 A2 Bb2 B2]",
+      "[A2 Ab2 G2 C2]",
+      "[F2 A2 Bb2 B2]",
+      "[G2 C2 F2 F2]",
+      "[Bb2 Bb2 A2 A2]",
+      "[Ab2 Ab2 G2 [C2 D2 E2]]",
+      "[Bb2 Bb2 A2 A2]",
+      "[Ab2 Ab2 G2 [C2 D2 E2]]",
+      "[F2 A2 Bb2 B2]",
+      "[G2 C2 F2 F2]"
+    ).s('Acoustic Bass: Bass')
+  ).slow(51)
+    `;
+
+export const outroMusic = `samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+  perc: ['perc/002_perc2.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+
+"C^7 Am7 Dm7 G7".slow(2).voicings()
+  .stack("0@6 [<1 2> <2 0> 1]@2".scale('C5 major'))
+  .n().slow(4)
+  .s('0040_FluidR3_GM_sf2_file')
+  .color('steelblue')
+  .stack(
+   "<-7 ~@2 [~@2 -7] -9 ~@2 [~@2 -9] -10!2 ~ [~@2 -10] -5 ~ [-3 -2 -10]@2>*2".scale('C3 major')
+    .n().s('sawtooth').color('brown')
+  )
+  .attack(0.05).decay(.1).sustain(.7)
+  .cutoff(perlin.range(800,2000))
+  .gain(.3)
+  .stack(
+    s("<bd!3 [bd ~ bd]> sd,hh*3,~@5 <perc perc*3>")
+    .speed(perlin.range(.9,1.1))
+    .n(3).color('gray')
+  ).slow(3/2)
+  //.pianoroll({autorange:1,vertical:1,fold:0})
+  `;
+
+export const bassFuge = `samples({ flbass: ['00_c2_finger_long_neck.wav','01_c2_finger_short_neck.wav','02_c2_finger_long_bridge.wav','03_c2_finger_short_bridge.wav','04_c2_pick_long.wav','05_c2_pick_short.wav','06_c2_palm_mute.wav'] }, 
+  'github:cleary/samples-flbass/main/')
+samples({
+bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+
+note("<8(3,8) <7 7*2> [4 5@3] 8>".sub(1) // sub 1 -> 1-indexed
+.layer(
+x=>x,
+x=>x.add(7).color('steelblue')
+.off(1/8,x=>x.add("2,4").off(1/8,x=>x.add(5).echo(4,.125,.5)))
+.slow(2),
+).scale('A1 minor'))
+.s("flbass").n(0)
+.gain(.3)
+.cutoff(sine.slow(7).range(200,4000))
+.resonance(10)
+//.hcutoff(400)
+.clip(1)
+.stack(s("bd:1*2,~ sd:0,[~ hh:0]*2"))
+.pianoroll({vertical:1})`;
+
+export const bossaRandom = `const chords = "<Am7 Am7 Dm7 E7>"
+const roots = chords.rootNotes(2)
+
+stack(
+  chords.voicings(['F4', 'A5']).struct(
+  \` x@2   ~ x ~ ~ ~ x |
+    x?  ~ ~ x@3   ~ x |
+    x?  ~ ~ x ~ x@3\`),
+  roots.struct("x [~ x?0.2] x [~ x?] | x!4 | x@2 ~ ~ ~ x x x").transpose("0 7")
+).slow(2).pianoroll().note().piano()`;
+
+export const chop = `samples({ p: 'https://cdn.freesound.org/previews/648/648433_11943129-lq.mp3' })
+
+s("p")
+  .loopAt(32,1)
+  .chop(128)
+  .jux(rev)
+  .shape(.4)
+  .decay(.1)
+  .sustain(.6)
+  `;
+
+export const delay = `stack(
+    s("bd <sd cp>")
+    .delay("<0 .5>")
+    .delaytime(".16 | .33")
+    .delayfeedback(".6 | .8")
+  ).sometimes(x=>x.speed("-1"))`;
+
+export const orbit = `stack(
+    s("bd <sd cp>")
+    .delay(.5)
+    .delaytime(.33)
+    .delayfeedback(.6),
+    s("hh*2")
+    .delay(.8)
+    .delaytime(.08)
+    .delayfeedback(.7)
+    .orbit(2)
+  ).sometimes(x=>x.speed("-1"))`;
+
+export const belldub = `samples({ bell: {b4:'https://cdn.freesound.org/previews/339/339809_5121236-lq.mp3'}})
+// "Hand Bells, B, Single.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org
+stack(
+  // bass
+  note("[0 ~] [2 [0 2]] [4 4*2] [[4 ~] [2 ~] 0@2]".scale('g1 dorian').superimpose(x=>x.add(.02)))
+  .s('sawtooth').cutoff(200).resonance(20).gain(.15).shape(.6).release(.05),
+  // perc
+  s("[~ hh]*4").room("0 0.5".fast(2)).end(perlin.range(0.02,1)),
+  s("mt lt ht").struct("x(3,8)").fast(2).gain(.5).room(.5).sometimes(x=>x.speed(".5")),
+  s("misc:2").speed(1).delay(.5).delaytime(1/3).gain(.4),
+  // chords
+  note("[~ Gm7] ~ [~ Dm7] ~".voicings().superimpose(x=>x.add(.1)))
+  .s('sawtooth').gain(.5)
+  .cutoff(perlin.range(400,3000).slow(8))
+  .decay(perlin.range(0.05,.2)).sustain(0)
+  .delay(.9).room(1),
+  // blips
+  note(
+    "0 5 4 2".iter(4)
+    .off(1/3, add(7))
+    .scale('g4 dorian')
+  ).s('square').cutoff(2000).decay(.03).sustain(0)
+  .degradeBy(.2)
+  .orbit(2).delay(.2).delaytime(".33 | .6 | .166 | .25")
+  .room(1).gain(.5).mask("<0 1>/8"),
+  // bell
+  note(rand.range(0,12).struct("x(5,8)").scale('g2 minor pentatonic')).s('bell').begin(.05)
+  .delay(.2).degradeBy(.4).gain(.4)
+  .mask("<1 0>/8")
+).slow(5)`;
+
+export const dinofunk = `samples({bass:'https://cdn.freesound.org/previews/614/614637_2434927-hq.mp3',
+dino:{b4:'https://cdn.freesound.org/previews/316/316403_5123851-hq.mp3'}})
+
+stack(
+s('bass').loopAt(8,1).clip(1),
+s("bd*2, ~ sd,hh*4"),
+note("Abm7".voicings(['c3','a4']).struct("x(3,8,1)".slow(2))),
+"0 1 2 3".scale('ab4 minor pentatonic')
+.superimpose(x=>x.add(.1))
+.sometimes(x=>x.add(12))
+.note().s('sawtooth')
+.cutoff(sine.range(400,2000).slow(16)).gain(.8)
+.decay(perlin.range(.05,.2)).sustain(0)
+.delay(sine.range(0,.5).slow(32))
+.degradeBy(.4).room(1),
+note("<b4 eb4>").s('dino').delay(.8).slow(8).room(.5)
+)`;
+
+export const sampleDemo = `stack(
+  // percussion
+  s("[woodblock:1 woodblock:2*2] snare_rim:0,gong/8,brakedrum:1(3,8),~@3 cowbell:3")
+  .sometimes(x=>x.speed(2)),
+  // melody
+  note("<0 4 1 3 2>".off(".25 | .125",add(2)).scale('D3 hirajoshi'))
+  .s("clavisynth").gain(.2).delay(.25).jux(rev)
+  .degradeBy(sine.range(0,.5).slow(32)),
+  // bass
+  note("<0@3 <2(3,8) 3(3,8)>>".scale('D1 hirajoshi'))
+  .s('psaltery_pluck').gain(.6).clip(1)
+  .release(.1).room(.5)
+)`;
+
+export const holyflute = `"c3 eb3(3,8) c4/2 g3*2"
+.superimpose(
+  x=>x.slow(2).add(12),
+  x=>x.slow(4).sub(5)
+).add("<0 1>/16")
+.note().s('ocarina_vib').clip(1)
+.release(.1).room(1).gain(.2)
+.color("salmon | orange | darkseagreen")
+.pianoroll({fold:0,autorange:0,vertical:0,cycles:12,smear:0,minMidi:40})
+`;
+
+export const flatrave = `stack(
+  s("bd*2,~ [cp,sd]").bank('RolandTR909'),
+  
+  s("hh:1*4").sometimes(fast("2"))
+  .rarely(x=>x.speed(".5").delay(.5))
+  .end(perlin.range(0.02,.05).slow(8))
+  .bank('RolandTR909').room(.5)
+  .gain("0.4,0.4(5,8)"),
+  
+  note("<0 2 5 3>".scale('G1 minor')).struct("x(5,8)")
+  .s('sawtooth').decay(.1).sustain(0),
+  
+  note("<G4 A4 Bb4 A4>,Bb3,D3").struct("~ x*2").s('square').clip(1)
+  .cutoff(sine.range(500,4000).slow(16)).resonance(10)
+  .decay(sine.slow(15).range(.05,.2)).sustain(0)
+  .room(.5).gain(.3).delay(.2).mask("<0 1@3>/8"),
+  
+  "0 5 3 2".sometimes(slow(2)).off(1/8,add(5)).scale('G4 minor').note()
+  .decay(.05).sustain(0).delay(.2).degradeBy(.5).mask("<0 1>/16")
+)`;
+
+export const amensister = `samples('github:tidalcycles/Dirt-Samples/master')
+
+stack(
+  // amen
+  n("0 1 2 3 4 5 6 7")
+  .sometimes(x=>x.ply(2))
+  .rarely(x=>x.speed("2 | -2"))
+  .sometimesBy(.4, x=>x.delay(".5"))
+  .s("amencutup")
+  .slow(2)
+  .room(.5)
+  ,
+  // bass
+  sine.add(saw.slow(4)).range(0,7).segment(8)
+  .superimpose(x=>x.add(.1))
+  .scale('G0 minor').note()
+  .s("sawtooth").decay(.1).sustain(0)
+  .gain(.4).cutoff(perlin.range(300,3000).slow(8)).resonance(10)
+  .degradeBy("0 0.1 .5 .1")
+  .rarely(add(note("12")))
+  ,
+  // chord
+  note("Bb3,D4".superimpose(x=>x.add(.2)))
+  .s('sawtooth').cutoff(1000).struct("<~@3 [~ x]>")
+  .decay(.05).sustain(.0).delay(.8).delaytime(.125).room(.8)
+  ,
+  // alien
+  s("breath").room(1).shape(.6).chop(16).rev().mask("<x ~@7>")
+  ,
+  n("0 1").s("east").delay(.5).degradeBy(.8).speed(rand.range(.5,1.5))
+).reset("<x@7 x(5,8)>")`;

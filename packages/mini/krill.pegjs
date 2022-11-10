@@ -8,6 +8,7 @@ This program is free software: you can redistribute it and/or modify it under th
 // a sequence = a serie of elements placed between quotes
 // a stack = a serie of vertically aligned slices sharing the same overall length
 // a slice = a serie of horizontally aligned elements
+// a choose = a serie of elements, one of which is chosen at random
 
 
 {
@@ -81,17 +82,18 @@ DIGIT  = [0-9]
 // ------------------ delimiters ---------------------------
 
 ws "whitespace" = [ \n\r\t]*
-comma = ws "," ws;
+comma = ws "," ws
+pipe = ws "|" ws
 quote = '"' / "'"
 
 // ------------------ steps and cycles ---------------------------
 
 // single step definition (e.g bd)
-step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" / "_"
+step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" / "_" / ":"
 step = ws chars:step_char+ ws { return chars.join("") }
 
 // define a sub cycle e.g. [1 2, 3 [4]]
-sub_cycle = ws  "[" ws s:stack ws "]" ws { return s}
+sub_cycle = ws  "[" ws s:stack_or_choose ws "]" ws { return s}
 
 // define a timeline e.g <1 3 [3 5]>. We simply defer to a stack and change the alignement
 timeline = ws "<" ws sc:single_cycle ws ">" ws
@@ -102,7 +104,7 @@ slice = step / sub_cycle  / timeline
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
-slice_modifier = slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_fixed_step / slice_replicate
+slice_modifier = slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_fixed_step / slice_replicate / slice_degrade
 
 slice_weight =  "@" a:number
   { return { weight: a} }
@@ -122,6 +124,9 @@ slice_fast = "*"a:number
 slice_fixed_step = "%"a:number
   { return { operator : { type_: "fixed-step", arguments_ :{ amount:a } } } }
 
+slice_degrade = "?"a:number?
+  { return { operator : { type_: "degradeBy", arguments_ :{ amount:(a? a : 0.5) } } } }
+
 // a slice with an modifier applied i.e [bd@4 sd@3]@2 hh]
 slice_with_modifier = s:slice o:slice_modifier?
   { return new ElementStub(s, o);}
@@ -132,14 +137,22 @@ single_cycle = s:(slice_with_modifier)+
   { return new PatternStub(s,"h"); }
 
 // a stack is a serie of vertically aligned single cycles, separated by a comma
+stack_tail = tail:(comma @single_cycle)+
+  { return { alignment: 'v', list: tail }; }
+
+// a choose is a serie of pipe-separated single cycles, one of which is chosen
+// at random each time through the pattern
+choose_tail = tail:(pipe @single_cycle)+
+  { return { alignment: 'r', list: tail }; }
+
 // if the stack contains only one element, we don't create a stack but return the
 // underlying element
-stack = c:single_cycle cs:(comma v:single_cycle { return v})*
-  { if (cs.length == 0 && c instanceof Object) { return c;} else { cs.unshift(c); return new PatternStub(cs,"v");}  }
+stack_or_choose = head:single_cycle tail:(stack_tail / choose_tail)?
+  { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment); } else { return head; } }
 
 // a sequence is a quoted stack
-sequence = ws quote s:stack quote
-  { return s; }
+sequence = ws quote sc:stack_or_choose quote
+  { return sc; }
 
 // ------------------ operators ---------------------------
 
