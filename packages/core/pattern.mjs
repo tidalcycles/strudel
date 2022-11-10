@@ -31,8 +31,290 @@ export class Pattern {
     this.query = query;
   }
 
+
+  //////////////////////////////////////////////////////////////////////
+  // Haskell-style functor, applicative and monadic operations
+  
   /**
-   * query haps insude the tiven time span
+   * Returns a new pattern, with the function applied to the value of
+   * each hap. It has the alias {@link Pattern#fmap}.
+   * @param {Function} func
+   * @returns Pattern
+   */
+  withValue(func) {
+    return new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
+  }
+
+  /**
+   * see {@link Pattern#withValue}
+   */
+  fmap(func) {
+    return this.withValue(func);
+  }
+
+  appWhole(whole_func, pat_val) {
+    // Assumes 'this' is a pattern of functions, and given a function to
+    // resolve wholes, applies a given pattern of values to that
+    // pattern of functions.
+    const pat_func = this;
+    const query = function (state) {
+      const hap_funcs = pat_func.query(state);
+      const hap_vals = pat_val.query(state);
+      const apply = function (hap_func, hap_val) {
+        const s = hap_func.part.intersection(hap_val.part);
+        if (s == undefined) {
+          return undefined;
+        }
+        return new Hap(
+          whole_func(hap_func.whole, hap_val.whole),
+          s,
+          hap_func.value(hap_val.value),
+          hap_val.combineContext(hap_func),
+        );
+      };
+      return flatten(
+        hap_funcs.map((hap_func) => removeUndefineds(hap_vals.map((hap_val) => apply(hap_func, hap_val)))),
+      );
+    };
+    return new Pattern(query);
+  }
+
+  /**
+   * When this method is called on a pattern of functions, it matches its haps
+   * with those in the given pattern of values.  A new pattern is returned, with
+   * each matching value applied to the corresponding function.
+   *
+   * In this `_appBoth` variant, where timespans of the function and value haps
+   * are not the same but do intersect, the resulting hap has a timespan of the
+   * intersection. This applies to both the part and the whole timespan.
+   * @param {Pattern} pat_val
+   * @returns Pattern
+   */
+  appBoth(pat_val) {
+    // Tidal's <*>
+    const whole_func = function (span_a, span_b) {
+      if (span_a == undefined || span_b == undefined) {
+        return undefined;
+      }
+      return span_a.intersection_e(span_b);
+    };
+    return this.appWhole(whole_func, pat_val);
+  }
+
+  /**
+   * As with {@link Pattern#appBoth}, but the `whole` timespan is not the intersection,
+   * but the timespan from the function of patterns that this method is called
+   * on. In practice, this means that the pattern structure, including onsets,
+   * are preserved from the pattern of functions (often referred to as the left
+   * hand or inner pattern).
+   * @param {Pattern} pat_val
+   * @returns Pattern
+   */
+  appLeft(pat_val) {
+    const pat_func = this;
+
+    const query = function (state) {
+      const haps = [];
+      for (const hap_func of pat_func.query(state)) {
+        const hap_vals = pat_val.query(state.setSpan(hap_func.wholeOrPart()));
+        for (const hap_val of hap_vals) {
+          const new_whole = hap_func.whole;
+          const new_part = hap_func.part.intersection(hap_val.part);
+          if (new_part) {
+            const new_value = hap_func.value(hap_val.value);
+            const new_context = hap_val.combineContext(hap_func);
+            const hap = new Hap(new_whole, new_part, new_value, new_context);
+            haps.push(hap);
+          }
+        }
+      }
+      return haps;
+    };
+    return new Pattern(query);
+  }
+
+  /**
+   * As with {@link Pattern#appLeft}, but `whole` timespans are instead taken from the
+   * pattern of values, i.e. structure is preserved from the right hand/outer
+   * pattern.
+   * @param {Pattern} pat_val
+   * @returns Pattern
+   */
+  appRight(pat_val) {
+    const pat_func = this;
+
+    const query = function (state) {
+      const haps = [];
+      for (const hap_val of pat_val.query(state)) {
+        const hap_funcs = pat_func.query(state.setSpan(hap_val.wholeOrPart()));
+        for (const hap_func of hap_funcs) {
+          const new_whole = hap_val.whole;
+          const new_part = hap_func.part.intersection(hap_val.part);
+          if (new_part) {
+            const new_value = hap_func.value(hap_val.value);
+            const new_context = hap_val.combineContext(hap_func);
+            const hap = new Hap(new_whole, new_part, new_value, new_context);
+            haps.push(hap);
+          }
+        }
+      }
+      return haps;
+    };
+    return new Pattern(query);
+  }
+
+
+  bindWhole(choose_whole, func) {
+    const pat_val = this;
+    const query = function (state) {
+      const withWhole = function (a, b) {
+        return new Hap(
+          choose_whole(a.whole, b.whole),
+          b.part,
+          b.value,
+          Object.assign({}, a.context, b.context, {
+            locations: (a.context.locations || []).concat(b.context.locations || []),
+          }),
+        );
+      };
+      const match = function (a) {
+        return func(a.value)
+          .query(state.setSpan(a.part))
+          .map((b) => withWhole(a, b));
+      };
+      return flatten(pat_val.query(state).map((a) => match(a)));
+    };
+    return new Pattern(query);
+  }
+
+  bind(func) {
+    const whole_func = function (a, b) {
+      if (a == undefined || b == undefined) {
+        return undefined;
+      }
+      return a.intersection_e(b);
+    };
+    return this.bindWhole(whole_func, func);
+  }
+
+  join() {
+    // Flattens a pattern of patterns into a pattern, where wholes are
+    // the intersection of matched inner and outer haps.
+    return this.bind(id);
+  }
+
+  outerBind(func) {
+    return this.bindWhole((a, _) => a, func);
+  }
+
+  outerJoin() {
+    // Flattens a pattern of patterns into a pattern, where wholes are
+    // taken from inner haps.
+    return this.outerBind(id);
+  }
+
+  innerBind(func) {
+    return this.bindWhole((_, b) => b, func);
+  }
+
+  innerJoin() {
+    // Flattens a pattern of patterns into a pattern, where wholes are
+    // taken from inner haps.
+    return this.innerBind(id);
+  }
+
+  // Flatterns patterns of patterns, by retriggering/resetting inner patterns at onsets of outer pattern haps
+  trigJoin(cycleZero = false) {
+    const pat_of_pats = this;
+    return new Pattern((state) => {
+      return (
+        pat_of_pats
+          // drop continuous haps from the outer pattern.
+          .discreteOnly()
+          .query(state)
+          .map((outer_hap) => {
+            return (
+              outer_hap.value
+                // trig = align the inner pattern cycle start to outer pattern haps
+                // Trigzero = align the inner pattern cycle zero to outer pattern haps
+                .late(cycleZero ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
+                .query(state)
+                .map((inner_hap) =>
+                  new Hap(
+                    // Supports continuous haps in the inner pattern
+                    inner_hap.whole ? inner_hap.whole.intersection(outer_hap.whole) : undefined,
+                    inner_hap.part.intersection(outer_hap.part),
+                    inner_hap.value,
+                  ).setContext(outer_hap.combineContext(inner_hap)),
+                )
+                // Drop haps that didn't intersect
+                .filter((hap) => hap.part)
+            );
+          })
+          .flat()
+      );
+    });
+  }
+
+  trigzeroJoin() {
+    return this.trigJoin(true);
+  }
+
+  // Like the other joins above, joins a pattern of patterns of values, into a flatter
+  // pattern of values. In this case it takes whole cycles of the inner pattern to fit each event
+  // in the outer pattern.
+  squeezeJoin() {
+    // A pattern of patterns, which we call the 'outer' pattern, with patterns
+    // as values which we call the 'inner' patterns.
+    const pat_of_pats = this;
+    function query(state) {
+      // Get the events with the inner patterns. Ignore continuous events (without 'wholes')
+      const haps = pat_of_pats.discreteOnly().query(state);
+      // A function to map over the events from the outer pattern.
+      function flatHap(outerHap) {
+        // Get the inner pattern, slowed and shifted so that the 'whole'
+        // timespan of the outer event corresponds to the first cycle of the
+        // inner event
+        const inner_pat = outerHap.value._focusSpan(outerHap.wholeOrPart());
+        // Get the inner events, from the timespan of the outer event's part
+        const innerHaps = inner_pat.query(state.setSpan(outerHap.part));
+        // A function to map over the inner events, to combine them with the
+        // outer event
+        function munge(outer, inner) {
+          let whole = undefined;
+          if (inner.whole && outer.whole) {
+            whole = inner.whole.intersection(outer.whole);
+            if (!whole) {
+              // The wholes are present, but don't intersect
+              return undefined;
+            }
+          }
+          const part = inner.part.intersection(outer.part);
+          if (!part) {
+            // The parts don't intersect
+            return undefined;
+          }
+          const context = inner.combineContext(outer);
+          return new Hap(whole, part, inner.value, context);
+        }
+        return innerHaps.map((innerHap) => munge(outerHap, innerHap));
+      }
+      const result = flatten(haps.map(flatHap));
+      // remove undefineds
+      return result.filter((x) => x);
+    }
+    return new Pattern(query);
+  }
+
+  squeezeBind(func) {
+    return this.fmap(func).squeezeJoin();
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // Utility methods mainly for internal use
+  
+  /**
+   * Query haps inside the given time span.
    *
    * @param {Fraction | number} begin from time
    * @param {Fraction | number} end to time
@@ -202,23 +484,6 @@ export class Pattern {
   }
 
   /**
-   * Returns a new pattern, with the function applied to the value of
-   * each hap. It has the alias {@link Pattern#fmap}.
-   * @param {Function} func
-   * @returns Pattern
-   */
-  withValue(func) {
-    return new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
-  }
-
-  /**
-   * see {@link Pattern#withValue}
-   */
-  fmap(func) {
-    return this.withValue(func);
-  }
-
-  /**
    * Returns a new Pattern, which only returns haps that meet the given test.
    * @param {Function} hap_test - a function which returns false for haps to be removed from the pattern
    * @returns Pattern
@@ -268,118 +533,7 @@ export class Pattern {
     // removes continuous haps that don't have a 'whole' timespan
     return this.filterHaps((hap) => hap.whole);
   }
-
-  appWhole(whole_func, pat_val) {
-    // Assumes 'this' is a pattern of functions, and given a function to
-    // resolve wholes, applies a given pattern of values to that
-    // pattern of functions.
-    const pat_func = this;
-    const query = function (state) {
-      const hap_funcs = pat_func.query(state);
-      const hap_vals = pat_val.query(state);
-      const apply = function (hap_func, hap_val) {
-        const s = hap_func.part.intersection(hap_val.part);
-        if (s == undefined) {
-          return undefined;
-        }
-        return new Hap(
-          whole_func(hap_func.whole, hap_val.whole),
-          s,
-          hap_func.value(hap_val.value),
-          hap_val.combineContext(hap_func),
-        );
-      };
-      return flatten(
-        hap_funcs.map((hap_func) => removeUndefineds(hap_vals.map((hap_val) => apply(hap_func, hap_val)))),
-      );
-    };
-    return new Pattern(query);
-  }
-
-  /**
-   * When this method is called on a pattern of functions, it matches its haps
-   * with those in the given pattern of values.  A new pattern is returned, with
-   * each matching value applied to the corresponding function.
-   *
-   * In this `_appBoth` variant, where timespans of the function and value haps
-   * are not the same but do intersect, the resulting hap has a timespan of the
-   * intersection. This applies to both the part and the whole timespan.
-   * @param {Pattern} pat_val
-   * @returns Pattern
-   */
-  appBoth(pat_val) {
-    // Tidal's <*>
-    const whole_func = function (span_a, span_b) {
-      if (span_a == undefined || span_b == undefined) {
-        return undefined;
-      }
-      return span_a.intersection_e(span_b);
-    };
-    return this.appWhole(whole_func, pat_val);
-  }
-
-  /**
-   * As with {@link Pattern#appBoth}, but the `whole` timespan is not the intersection,
-   * but the timespan from the function of patterns that this method is called
-   * on. In practice, this means that the pattern structure, including onsets,
-   * are preserved from the pattern of functions (often referred to as the left
-   * hand or inner pattern).
-   * @param {Pattern} pat_val
-   * @returns Pattern
-   */
-  appLeft(pat_val) {
-    const pat_func = this;
-
-    const query = function (state) {
-      const haps = [];
-      for (const hap_func of pat_func.query(state)) {
-        const hap_vals = pat_val.query(state.setSpan(hap_func.wholeOrPart()));
-        for (const hap_val of hap_vals) {
-          const new_whole = hap_func.whole;
-          const new_part = hap_func.part.intersection(hap_val.part);
-          if (new_part) {
-            const new_value = hap_func.value(hap_val.value);
-            const new_context = hap_val.combineContext(hap_func);
-            const hap = new Hap(new_whole, new_part, new_value, new_context);
-            haps.push(hap);
-          }
-        }
-      }
-      return haps;
-    };
-    return new Pattern(query);
-  }
-
-  /**
-   * As with {@link Pattern#appLeft}, but `whole` timespans are instead taken from the
-   * pattern of values, i.e. structure is preserved from the right hand/outer
-   * pattern.
-   * @param {Pattern} pat_val
-   * @returns Pattern
-   */
-  appRight(pat_val) {
-    const pat_func = this;
-
-    const query = function (state) {
-      const haps = [];
-      for (const hap_val of pat_val.query(state)) {
-        const hap_funcs = pat_func.query(state.setSpan(hap_val.wholeOrPart()));
-        for (const hap_func of hap_funcs) {
-          const new_whole = hap_val.whole;
-          const new_part = hap_func.part.intersection(hap_val.part);
-          if (new_part) {
-            const new_value = hap_func.value(hap_val.value);
-            const new_context = hap_val.combineContext(hap_func);
-            const hap = new Hap(new_whole, new_part, new_value, new_context);
-            haps.push(hap);
-          }
-        }
-      }
-      return haps;
-    };
-    return new Pattern(query);
-  }
-
+  
   /**
    * Queries the pattern for the first cycle, returning Haps. Mainly of use when
    * debugging a pattern.
@@ -427,6 +581,27 @@ export class Pattern {
     );
   }
 
+  patternify(func) {
+    const pat = this;
+    const patterned = function (...args) {
+      // the problem here: args could a pattern that has been turned into an object to add location
+      // to avoid object checking for every pattern method, we can remove it here...
+      // in the future, patternified args should be marked as well + some better object handling
+      args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
+      const pat_arg = sequence(...args);
+      // arg.locations has to go somewhere..
+      return pat_arg.fmap((arg) => func.call(pat, arg)).innerJoin();
+    };
+    return patterned;
+  }
+
+  asNumber() {
+    return this.fmap(parseNumeral);
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // Operators - see 'make composers' later..
+
   _opIn(other, func) {
     return this.fmap(func).appLeft(reify(other));
   }
@@ -454,9 +629,14 @@ export class Pattern {
     return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).trigzeroJoin();
   }
 
-  asNumber() {
-    return this.fmap(parseNumeral);
-  }
+  //////////////////////////////////////////////////////////////////////
+  // End-user methods.
+  // Those beginning with an underscore (_) are 'patternified',
+  // i.e. versions are created without the underscore, that are
+  // magically transformed to accept patterns for all their arguments.
+
+  //////////////////////////////////////////////////////////////////////
+  // Numerical transformations
 
   /**
    * Assumes a numerical pattern. Returns a new pattern with all values rounded
@@ -546,151 +726,8 @@ export class Pattern {
     return this.fromBipolar()._range(min, max);
   }
 
-  bindWhole(choose_whole, func) {
-    const pat_val = this;
-    const query = function (state) {
-      const withWhole = function (a, b) {
-        return new Hap(
-          choose_whole(a.whole, b.whole),
-          b.part,
-          b.value,
-          Object.assign({}, a.context, b.context, {
-            locations: (a.context.locations || []).concat(b.context.locations || []),
-          }),
-        );
-      };
-      const match = function (a) {
-        return func(a.value)
-          .query(state.setSpan(a.part))
-          .map((b) => withWhole(a, b));
-      };
-      return flatten(pat_val.query(state).map((a) => match(a)));
-    };
-    return new Pattern(query);
-  }
-
-  bind(func) {
-    const whole_func = function (a, b) {
-      if (a == undefined || b == undefined) {
-        return undefined;
-      }
-      return a.intersection_e(b);
-    };
-    return this.bindWhole(whole_func, func);
-  }
-
-  join() {
-    // Flattens a pattern of patterns into a pattern, where wholes are
-    // the intersection of matched inner and outer haps.
-    return this.bind(id);
-  }
-
-  outerBind(func) {
-    return this.bindWhole((a, _) => a, func);
-  }
-
-  outerJoin() {
-    // Flattens a pattern of patterns into a pattern, where wholes are
-    // taken from inner haps.
-    return this.outerBind(id);
-  }
-
-  innerBind(func) {
-    return this.bindWhole((_, b) => b, func);
-  }
-
-  innerJoin() {
-    // Flattens a pattern of patterns into a pattern, where wholes are
-    // taken from inner haps.
-    return this.innerBind(id);
-  }
-
-  // Flatterns patterns of patterns, by retriggering/resetting inner patterns at onsets of outer pattern haps
-  trigJoin(cycleZero = false) {
-    const pat_of_pats = this;
-    return new Pattern((state) => {
-      return (
-        pat_of_pats
-          // drop continuous haps from the outer pattern.
-          .discreteOnly()
-          .query(state)
-          .map((outer_hap) => {
-            return (
-              outer_hap.value
-                // trig = align the inner pattern cycle start to outer pattern haps
-                // Trigzero = align the inner pattern cycle zero to outer pattern haps
-                .late(cycleZero ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
-                .query(state)
-                .map((inner_hap) =>
-                  new Hap(
-                    // Supports continuous haps in the inner pattern
-                    inner_hap.whole ? inner_hap.whole.intersection(outer_hap.whole) : undefined,
-                    inner_hap.part.intersection(outer_hap.part),
-                    inner_hap.value,
-                  ).setContext(outer_hap.combineContext(inner_hap)),
-                )
-                // Drop haps that didn't intersect
-                .filter((hap) => hap.part)
-            );
-          })
-          .flat()
-      );
-    });
-  }
-
-  trigzeroJoin() {
-    return this.trigJoin(true);
-  }
-
-  // Like the other joins above, joins a pattern of patterns of values, into a flatter
-  // pattern of values. In this case it takes whole cycles of the inner pattern to fit each event
-  // in the outer pattern.
-  squeezeJoin() {
-    // A pattern of patterns, which we call the 'outer' pattern, with patterns
-    // as values which we call the 'inner' patterns.
-    const pat_of_pats = this;
-    function query(state) {
-      // Get the events with the inner patterns. Ignore continuous events (without 'wholes')
-      const haps = pat_of_pats.discreteOnly().query(state);
-      // A function to map over the events from the outer pattern.
-      function flatHap(outerHap) {
-        // Get the inner pattern, slowed and shifted so that the 'whole'
-        // timespan of the outer event corresponds to the first cycle of the
-        // inner event
-        const inner_pat = outerHap.value._focusSpan(outerHap.wholeOrPart());
-        // Get the inner events, from the timespan of the outer event's part
-        const innerHaps = inner_pat.query(state.setSpan(outerHap.part));
-        // A function to map over the inner events, to combine them with the
-        // outer event
-        function munge(outer, inner) {
-          let whole = undefined;
-          if (inner.whole && outer.whole) {
-            whole = inner.whole.intersection(outer.whole);
-            if (!whole) {
-              // The wholes are present, but don't intersect
-              return undefined;
-            }
-          }
-          const part = inner.part.intersection(outer.part);
-          if (!part) {
-            // The parts don't intersect
-            return undefined;
-          }
-          const context = inner.combineContext(outer);
-          return new Hap(whole, part, inner.value, context);
-        }
-        return innerHaps.map((innerHap) => munge(outerHap, innerHap));
-      }
-      const result = flatten(haps.map(flatHap));
-      // remove undefineds
-      return result.filter((x) => x);
-    }
-    return new Pattern(query);
-  }
-
-  squeezeBind(func) {
-    return this.fmap(func).squeezeJoin();
-  }
+  //////////////////////////////////////////////////////////////////////
+  // Structural and temporal transformations
 
   /**
    * Like layer, but with a single function:
@@ -717,18 +754,8 @@ export class Pattern {
     return stack(...funcs.map((func) => func(this)));
   }
 
-  patternify(func) {
-    const pat = this;
-    const patterned = function (...args) {
-      // the problem here: args could a pattern that has been turned into an object to add location
-      // to avoid object checking for every pattern method, we can remove it here...
-      // in the future, patternified args should be marked as well + some better object handling
-      args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
-      const pat_arg = sequence(...args);
-      // arg.locations has to go somewhere..
-      return pat_arg.fmap((arg) => func.call(pat, arg)).innerJoin();
-    };
-    return patterned;
+  _ply(factor) {
+    return this.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
   }
 
   _fastGap(factor) {
@@ -825,40 +852,6 @@ export class Pattern {
     return f(this._fast(factor))._slow(factor);
   }
 
-  _ply(factor) {
-    return this.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
-  }
-
-  /**
-   * Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
-   * It turns a pattern of samples into a pattern of parts of samples.
-   * @name chop
-   * @memberof Pattern
-   * @returns Pattern
-   * @example
-   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
-   * s("rhodes")
-   *  .chop(4)
-   *  .rev() // reverse order of chops
-   *  .loopAt(4,1) // fit sample into 4 cycles
-   *
-   */
-  _chop(n) {
-    const slices = Array.from({ length: n }, (x, i) => i);
-    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
-    const func = function (o) {
-      return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
-    };
-    return this.squeezeBind(func);
-  }
-
-  _striate(n) {
-    const slices = Array.from({ length: n }, (x, i) => i);
-    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
-    const slicePat = slowcat(...slice_objects);
-    return this.set(slicePat)._fast(n);
-  }
-
   // cpm = cycles per minute
   _cpm(cpm) {
     return this._fast(cpm / 60);
@@ -916,50 +909,6 @@ export class Pattern {
     return this._zoom(0, t)._slow(t);
   }
 
-  /**
-   * Applies the given structure to the pattern:
-   *
-   * @name struct
-   * @memberof Pattern
-   * @returns Pattern
-   * @example
-   * note("c3,eb3,g3")
-   *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
-   *   .slow(4)
-   */
-  // struct(...binary_pats) {
-  //   // Re structure the pattern according to a binary pattern (false values are dropped)
-  //   const binary_pat = sequence(binary_pats);
-  //   return binary_pat
-  //     .fmap((b) => (val) => b ? val : undefined)
-  //     .appLeft(this)
-  //     .removeUndefineds();
-  // }
-
-  // mask(...binary_pats) {
-  //   // Only let through parts of pattern corresponding to true values in the given binary pattern
-  //   const binary_pat = sequence(binary_pats);
-  //   return binary_pat
-  //     .fmap((b) => (val) => b ? val : undefined)
-  //     .appRight(this)
-  //     .removeUndefineds();
-  // }
-
-  _color(color) {
-    return this.withContext((context) => ({ ...context, color }));
-  }
-
-  log() {
-    return this.withHap((e) => {
-      return e.setContext({ ...e.context, logs: (e.context?.logs || []).concat([e.show()]) });
-    });
-  }
-
-  drawLine() {
-    console.log(drawLine(this));
-    return this;
-  }
-
   _segment(rate) {
     return this.struct(pure(true)._fast(rate));
   }
@@ -1007,23 +956,6 @@ export class Pattern {
     return stack(this, func(this.late(time_pat)));
   }
 
-  /**
-   * Applies the given function every n cycles.
-   * @name every
-   * @memberof Pattern
-   * @param {number} n how many cycles
-   * @param {function} func function to apply
-   * @returns Pattern
-   * @example
-   * note("c3 d3 e3 g3").every(4, x=>x.rev())
-   */
-  every(n, func) {
-    const pat = this;
-    const pats = Array(n - 1).fill(pat);
-    // pats.unshift(func(pat));
-    pats.push(func(pat));
-    return slowcatPrime(...pats);
-  }
   /**
    * Applies the given function every n cycles, starting from the first cycle.
    * @name every
@@ -1100,6 +1032,7 @@ export class Pattern {
   palindrome() {
     return this.every(2, rev);
   }
+
 
   juxBy(by, func) {
     by /= 2;
@@ -1232,6 +1165,7 @@ export class Pattern {
    * @example
    * note("0 1 2 3".scale('A minor')).iter(4)
    */
+  // TODO - curry
   iter(times, back = false) {
     return slowcat(...listRange(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
   }
@@ -1244,6 +1178,7 @@ export class Pattern {
    * @example
    * note("0 1 2 3".scale('A minor')).iterBack(4)
    */
+  // TODO - curry
   iterBack(times) {
     return this.iter(times, true);
   }
@@ -1279,39 +1214,38 @@ export class Pattern {
     on = Boolean(parseInt(on));
     return on ? silence : this;
   }
-
-  hush() {
-    return silence;
-  }
-
-  // sets absolute duration of haps
-  _duration(value) {
-    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
-  }
-
+  
+  //////////////////////////////////////////////////////////////////////
+  // Control-related methods, which manipulate patterns of objects
+  
   /**
-   *
-   * Multiplies the hap duration with the given factor.
-   * @name legato
+   * Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
+   * It turns a pattern of samples into a pattern of parts of samples.
+   * @name chop
    * @memberof Pattern
+   * @returns Pattern
    * @example
-   * note("c3 eb3 g3 c4").legato("<.25 .5 1 2>")
+   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+   * s("rhodes")
+   *  .chop(4)
+   *  .rev() // reverse order of chops
+   *  .loopAt(4,1) // fit sample into 4 cycles
+   *
    */
-  _legato(value) {
-    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
+  _chop(n) {
+    const slices = Array.from({ length: n }, (x, i) => i);
+    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+    const func = function (o) {
+      return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
+    };
+    return this.squeezeBind(func);
   }
 
-  /**
-   *
-   * Sets the velocity from 0 to 1. Is multiplied together with gain.
-   * @name velocity
-   * @example
-   * s("hh*8")
-   * .gain(".4!2 1 .4!2 1 .4 1")
-   * .velocity(".4 1")
-   */
-  _velocity(velocity) {
-    return this.withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
+  _striate(n) {
+    const slices = Array.from({ length: n }, (x, i) => i);
+    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+    const slicePat = slowcat(...slice_objects);
+    return this.set(slicePat)._fast(n);
   }
 
   /**
@@ -1328,6 +1262,33 @@ export class Pattern {
       .unit('c')
       .slow(factor);
   }
+
+  //////////////////////////////////////////////////////////////////////
+  // Context methods - ones that deal with metadata
+  
+  _color(color) {
+    return this.withContext((context) => ({ ...context, color }));
+  }
+
+  log() {
+    return this.withHap((e) => {
+      return e.setContext({ ...e.context, logs: (e.context?.logs || []).concat([e.show()]) });
+    });
+  }
+
+  /**
+   *
+   * Sets the velocity from 0 to 1. Is multiplied together with gain.
+   * @name velocity
+   * @example
+   * s("hh*8")
+   * .gain(".4!2 1 .4!2 1 .4 1")
+   * .velocity(".4 1")
+   */
+  _velocity(velocity) {
+    return this.withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
+  }
+
   onTrigger(onTrigger) {
     return this.withHap((hap) => hap.setContext({ ...hap.context, onTrigger }));
   }
@@ -1347,6 +1308,41 @@ export class Pattern {
   logValues(func = id) {
     return this.log((_, hap) => func(hap.value));
   }
+
+  //////////////////////////////////////////////////////////////////////
+  // Visualisation
+
+  drawLine() {
+    console.log(drawLine(this));
+    return this;
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // Misc.
+
+  hush() {
+    return silence;
+  }
+
+  // sets absolute duration of haps
+  // TODO - fix
+  _duration(value) {
+    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
+  }
+
+  /**
+   *
+   * Multiplies the hap duration with the given factor.
+   * @name legato
+   * @memberof Pattern
+   * @example
+   * note("c3 eb3 g3 c4").legato("<.25 .5 1 2>")
+   */
+  // TODO - fix
+  _legato(value) {
+    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
+  }
+
 }
 
 // TODO - adopt value.mjs fully..
@@ -1480,6 +1476,17 @@ function _composeOp(a, b, func) {
   }
 
   // binary composers
+  /**
+   * Applies the given structure to the pattern:
+   *
+   * @name struct
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * note("c3,eb3,g3")
+   *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
+   *   .slow(4)
+   */
   Pattern.prototype.struct = Pattern.prototype.keepifOut;
   Pattern.prototype.structAll = Pattern.prototype.keepOut;
   Pattern.prototype.mask = Pattern.prototype.keepifIn;
