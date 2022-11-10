@@ -176,12 +176,23 @@ function getWorklet(ac, processor, params) {
   return node;
 }
 
-if (typeof window !== 'undefined') {
-  try {
-    loadWorklets();
-  } catch (err) {
-    console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+// this function should be called on first user interaction (to avoid console warning)
+export function initAudio() {
+  if (typeof window !== 'undefined') {
+    try {
+      getAudioContext().resume();
+      loadWorklets();
+    } catch (err) {
+      console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+    }
   }
+}
+
+export function initAudioOnFirstClick() {
+  document.addEventListener('click', function listener() {
+    initAudio();
+    document.removeEventListener('click', listener);
+  });
 }
 
 function gainNode(value) {

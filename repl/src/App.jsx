@@ -18,7 +18,9 @@ import { controls, evalScope, logger } from '@strudel.cycles/core';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { useStrudel } from '@strudel.cycles/react';
-import { webaudioOutput } from '@strudel.cycles/webaudio';
+import { webaudioOutput, initAudioOnFirstClick } from '@strudel.cycles/webaudio';
+
+initAudioOnFirstClick();
 
 // Create a single supabase client for interacting with your database
 const supabase = createClient(
