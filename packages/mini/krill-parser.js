@@ -32,7 +32,7 @@ function peg$padEnd(str, targetLength, padString) {
 }
 
 peg$SyntaxError.prototype.format = function(sources) {
-  var str = "Error: " + this.message;
+  var str = "peg error: " + this.message;
   if (this.location) {
     var src = null;
     var k;

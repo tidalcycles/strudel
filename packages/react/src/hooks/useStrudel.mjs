@@ -2,16 +2,18 @@ import { useRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { repl } from '@strudel.cycles/core/repl.mjs';
 import { transpiler } from '@strudel.cycles/transpiler';
 
-function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = false }) {
+function useStrudel({ defaultOutput, interval, getTime, evalOnMount = false, initialCode = '' }) {
   // scheduler
   const [schedulerError, setSchedulerError] = useState();
   const [evalError, setEvalError] = useState();
+  const [code, setCode] = useState(initialCode);
   const [activeCode, setActiveCode] = useState(code);
   const [pattern, setPattern] = useState();
   const [started, setStarted] = useState(false);
   const isDirty = code !== activeCode;
+
   // TODO: make sure this hook reruns when scheduler.started changes
-  const { scheduler, evaluate: _evaluate } = useMemo(
+  const { scheduler, evaluate, start, stop, pause } = useMemo(
     () =>
       repl({
         interval,
@@ -20,37 +22,56 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = fals
         onEvalError: setEvalError,
         getTime,
         transpiler,
-        onEval: ({ pattern: _pattern, code }) => {
+        beforeEval: ({ code }) => {
+          setCode(code);
+        },
+        onEvalError: setEvalError,
+        afterEval: ({ pattern: _pattern, code }) => {
           setActiveCode(code);
           setPattern(_pattern);
           setEvalError();
         },
         onToggle: (v) => setStarted(v),
-        onEvalError: setEvalError,
       }),
     [defaultOutput, interval, getTime],
   );
-  const evaluate = useCallback(() => _evaluate(code), [_evaluate, code]);
+  const activateCode = useCallback(async (autostart = true) => evaluate(code, autostart), [evaluate, code]);
 
   const inited = useRef();
   useEffect(() => {
     if (!inited.current && evalOnMount && code) {
-      console.log('eval on mount');
       inited.current = true;
-      evaluate();
+      activateCode();
     }
-  }, [evaluate, evalOnMount, code]);
+  }, [activateCode, evalOnMount, code]);
 
   const togglePlay = async () => {
     if (started) {
       scheduler.pause();
       // scheduler.stop();
     } else {
-      await evaluate();
+      await activateCode();
     }
   };
-
-  return { schedulerError, scheduler, evalError, evaluate, activeCode, isDirty, pattern, started, togglePlay };
+  const error = schedulerError || evalError;
+  return {
+    code,
+    setCode,
+    error,
+    schedulerError,
+    scheduler,
+    evalError,
+    evaluate,
+    activateCode,
+    activeCode,
+    isDirty,
+    pattern,
+    started,
+    start,
+    stop,
+    pause,
+    togglePlay,
+  };
 }
 
 export default useStrudel;

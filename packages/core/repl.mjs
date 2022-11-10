@@ -6,27 +6,30 @@ export function repl({
   defaultOutput,
   onSchedulerError,
   onEvalError,
-  onEval,
+  beforeEval,
+  afterEval,
   getTime,
   transpiler,
   onToggle,
 }) {
   const scheduler = new Cyclist({ interval, onTrigger: defaultOutput, onError: onSchedulerError, getTime, onToggle });
-  const evaluate = async (code) => {
+  const evaluate = async (code, autostart = true) => {
     if (!code) {
       throw new Error('no code to evaluate');
     }
     try {
+      beforeEval({ code });
       const { pattern } = await _evaluate(code, transpiler);
-      scheduler.setPattern(pattern, true);
-      onEval?.({
-        pattern,
-        code,
-      });
+      scheduler.setPattern(pattern, autostart);
+      afterEval({ code, pattern });
+      return pattern;
     } catch (err) {
       console.warn(`eval error: ${err.message}`);
       onEvalError?.(err);
     }
   };
-  return { scheduler, evaluate };
+  const stop = () => scheduler.stop();
+  const start = () => scheduler.start();
+  const pause = () => scheduler.pause();
+  return { scheduler, evaluate, start, stop, pause };
 }

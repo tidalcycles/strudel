@@ -7,20 +7,33 @@ import 'tailwindcss/tailwind.css';
 import './style.css';
 import styles from './MiniRepl.module.css';
 import { Icon } from './Icon';
-import { getAudioContext } from '@strudel.cycles/webaudio';
-// import { Tone } from '@strudel.cycles/tone';
+import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
+import useStrudel from '../hooks/useStrudel.mjs';
 
-export function MiniRepl({ tune, hideOutsideView = false, init, onEvent, enableKeyboard }) {
-  return <p>TODO</p>;
-  /*   const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } =
-    useRepl({
-      tune,
-      autolink: false,
-      onEvent,
-    });
-  useEffect(() => {
-    init && evaluateOnly();
-  }, [tune, init]);
+const getTime = () => getAudioContext().currentTime;
+
+export function MiniRepl({ tune, hideOutsideView = false, init, enableKeyboard }) {
+  const {
+    code,
+    setCode,
+    evaluate,
+    activateCode,
+    error,
+    isDirty,
+    activeCode,
+    pattern,
+    started,
+    scheduler,
+    togglePlay,
+    stop,
+  } = useStrudel({
+    initialCode: tune,
+    defaultOutput: webaudioOutput,
+    getTime,
+  });
+  /*   useEffect(() => {
+    init && activateCode();
+  }, [init, activateCode]); */
   const [view, setView] = useState();
   const [ref, isVisible] = useInView({
     threshold: 0.01,
@@ -35,8 +48,8 @@ export function MiniRepl({ tune, hideOutsideView = false, init, onEvent, enableK
   useHighlighting({
     view,
     pattern,
-    active: cycle.started && !activeCode?.includes('strudel disable-highlighting'),
-    getTime: () => getAudioContext().seconds,
+    active: started && !activeCode?.includes('strudel disable-highlighting'),
+    getTime: () => scheduler.phase,
   });
 
   // set active pattern on ctrl+enter
@@ -49,7 +62,7 @@ export function MiniRepl({ tune, hideOutsideView = false, init, onEvent, enableK
             flash(view);
             await activateCode();
           } else if (e.code === 'Period') {
-            cycle.stop();
+            stop();
             e.preventDefault();
           }
         }
@@ -57,16 +70,16 @@ export function MiniRepl({ tune, hideOutsideView = false, init, onEvent, enableK
       window.addEventListener('keydown', handleKeyPress, true);
       return () => window.removeEventListener('keydown', handleKeyPress, true);
     }
-  }, [enableKeyboard, pattern, code, activateCode, cycle, view]);
+  }, [enableKeyboard, pattern, code, evaluate, stop, view]);
 
   return (
     <div className={styles.container} ref={ref}>
       <div className={styles.header}>
         <div className={styles.buttons}>
-          <button className={cx(styles.button, cycle.started ? 'sc-animate-pulse' : '')} onClick={() => togglePlay()}>
-            <Icon type={cycle.started ? 'pause' : 'play'} />
+          <button className={cx(styles.button, started ? 'sc-animate-pulse' : '')} onClick={() => togglePlay()}>
+            <Icon type={started ? 'pause' : 'play'} />
           </button>
-          <button className={cx(dirty ? styles.button : styles.buttonDisabled)} onClick={() => activateCode()}>
+          <button className={cx(isDirty ? styles.button : styles.buttonDisabled)} onClick={() => activateCode()}>
             <Icon type="refresh" />
           </button>
         </div>
@@ -76,5 +89,5 @@ export function MiniRepl({ tune, hideOutsideView = false, init, onEvent, enableK
         {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />}
       </div>
     </div>
-  ); */
+  );
 }

@@ -29,12 +29,14 @@ npm run static # <- test static build
 
 currently broken / buggy:
 
-- MiniREPL
-- repl log section
-- hideHeader flag
-- pending flag
-- web midi
-- draw / pianoroll
-- pause does stop
-- random button triggers start
-- highlighting seems too late (off by latency ?)
+- [x] MiniREPL
+- [ ] repl log section => remove?
+- [ ] hideHeader flag
+- [ ] pending flag
+- [ ] web midi
+- [ ] draw / pianoroll
+- [ ] pause does stop
+- [x] random button triggers start
+- [?] highlighting seems too late (off by latency ?)
+- [ ] unexpected ast format without body expression (kalimba)
+- [ ] highlighting sometimes drops highlights (zeldasRescue first note)

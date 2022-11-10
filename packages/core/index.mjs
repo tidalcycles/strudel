@@ -23,7 +23,7 @@ export { default as gist } from './gist.js';
 /* import * as p from './package.json';
 export const version = p.version; */
 console.log(
-  '%c // 🌀 @strudel.cycles/core loaded 🌀', // keep "//" for runnable snapshot source..
+  '%c 🌀 @strudel.cycles/core loaded 🌀', // keep "//" for runnable snapshot source..
   'background-color: black;color:white;padding:4px;border-radius:15px',
 );
 if (globalThis._strudelLoaded) {

@@ -90,17 +90,27 @@ const randomTune = getRandomTune();
 const isEmbedded = window.location !== window.parent.location;
 function App() {
   // const [editor, setEditor] = useState();
-  const [code, setCode] = useState('// LOADING');
   const [view, setView] = useState();
   const [lastShared, setLastShared] = useState();
 
-  const { scheduler, evaluate, schedulerError, evalError, isDirty, activeCode, pattern, started, togglePlay } =
-    useStrudel({
-      code,
-      defaultOutput: webaudioOutput,
-      getTime,
-    });
-  const error = schedulerError || evalError;
+  const {
+    code,
+    setCode,
+    scheduler,
+    evaluate,
+    activateCode,
+    error,
+    isDirty,
+    activeCode,
+    pattern,
+    started,
+    togglePlay,
+    stop,
+  } = useStrudel({
+    initialCode: '// LOADING',
+    defaultOutput: webaudioOutput,
+    getTime,
+  });
   useEffect(() => {
     initCode().then((decoded) => setCode(decoded || randomTune));
   }, []);
@@ -121,17 +131,16 @@ function App() {
         if (e.code === 'Enter') {
           e.preventDefault();
           flash(view);
-          // await activateCode();
-          await evaluate();
+          await activateCode();
         } else if (e.code === 'Period') {
-          scheduler.stop();
+          stop();
           e.preventDefault();
         }
       }
     };
     window.addEventListener('keydown', handleKeyPress, true);
     return () => window.removeEventListener('keydown', handleKeyPress, true);
-  }, [pattern /* , code */, /* activateCode, */ scheduler, view]);
+  }, [activateCode, stop, view]);
 
   useHighlighting({
     view,
@@ -227,15 +236,12 @@ function App() {
                 className="hover:bg-gray-300 p-2"
                 onClick={async () => {
                   const _code = getRandomTune();
-                  // console.log('tune', _code); // uncomment this to debug when random code fails
-                  setCode(_code);
-                  /*                   cleanupDraw();
+                  /*
+                  cleanupDraw();
                   cleanupUi(); */
                   resetLoadedSamples();
                   await prebake(); // declare default samples
-                  const parsed = await evaluate(_code);
-                  setPattern(parsed.pattern);
-                  setActiveCode(_code);
+                  await evaluate(_code, false);
                 }}
               >
                 🎲 random
@@ -306,7 +312,7 @@ function App() {
           {/* onCursor={markParens} */}
           <CodeMirror value={code} onChange={setCode} onViewChanged={setView} />
           <span className="z-[20] bg-black rounded-t-md py-1 px-2 fixed bottom-0 right-1 text-xs whitespace-pre text-right pointer-events-none">
-            {!started ? `press ctrl+enter to play\n` : isDirty ? `ctrl+enter to update\n` : 'no changes\n'}
+            {!started ? `press ctrl+enter to play\n` : isDirty ? `press ctrl+enter to update\n` : 'press ctrl+dot do stop\n'}
           </span>
           {error && (
             <div
