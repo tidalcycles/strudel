@@ -5,9 +5,9 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 // import { evaluate } from '@strudel.cycles/eval';
-import { CodeMirror, cx, flash, useHighlighting, useWebMidi } from '@strudel.cycles/react';
+import { CodeMirror, cx, flash, useHighlighting } from '@strudel.cycles/react';
 // import { cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
@@ -151,27 +151,6 @@ function App() {
     active: started && !activeCode?.includes('strudel disable-highlighting'),
     getTime: () => scheduler.getPhase(),
     // getTime: () => Tone.getTransport().seconds,
-  });
-
-  useWebMidi({
-    ready: useCallback(
-      ({ outputs }) => {
-        pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `'${o.name}'`).join(' | ')}) to the pattern. `);
-      },
-      [pushLog],
-    ),
-    connected: useCallback(
-      ({ outputs }) => {
-        pushLog(`Midi device connected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`);
-      },
-      [pushLog],
-    ),
-    disconnected: useCallback(
-      ({ outputs }) => {
-        pushLog(`Midi device disconnected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`);
-      },
-      [pushLog],
-    ),
   });
 
   return (

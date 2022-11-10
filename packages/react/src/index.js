@@ -7,4 +7,3 @@ export { default as usePostMessage } from './hooks/usePostMessage';
 export { default as useStrudel } from './hooks/useStrudel';
 export { default as useKeydown } from './hooks/useKeydown';
 export { default as cx } from './cx';
-export { useWebMidi } from './hooks/useWebMidi';

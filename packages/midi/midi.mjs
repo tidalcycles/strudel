@@ -5,13 +5,18 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as _WebMidi from 'webmidi';
-import { Pattern, isPattern, isNote, getPlayableNoteValue } from '@strudel.cycles/core';
+import { Pattern, isPattern, isNote, getPlayableNoteValue, logger } from '@strudel.cycles/core';
 import { getAudioContext } from '@strudel.cycles/webaudio';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
 
-export function enableWebMidi() {
+export function enableWebMidi(options = {}) {
+  const { onReady, onConnected, onDisconnected } = options;
+
+  if (typeof navigator.requestMIDIAccess !== 'function') {
+    throw new Error('Your Browser does not support WebMIDI.');
+  }
   return new Promise((resolve, reject) => {
     if (WebMidi.enabled) {
       // if already enabled, just resolve WebMidi
@@ -22,6 +27,14 @@ export function enableWebMidi() {
       if (err) {
         reject(err);
       }
+      WebMidi.addListener('connected', (e) => {
+        onConnected?.(WebMidi);
+      });
+      // Reacting when a device becomes unavailable
+      WebMidi.addListener('disconnected', (e) => {
+        onDisconnected?.(WebMidi, e);
+      });
+      onReady?.(WebMidi);
       resolve(WebMidi);
     });
   });
@@ -30,7 +43,21 @@ export function enableWebMidi() {
 const outputByName = (name) => WebMidi.getOutputByName(name);
 
 // Pattern.prototype.midi = function (output: string | number, channel = 1) {
-Pattern.prototype.midi = function (output, channel = 1) {
+Pattern.prototype.midi = async function (output, channel = 1) {
+  await enableWebMidi({
+    onConnected: ({ outputs }) =>
+      logger(`Midi device connected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`),
+    onDisconnected: ({ outputs }) =>
+      logger(`Midi device disconnected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`),
+    onReady: ({ outputs }) => {
+      const chosenOutput = output ?? outputs[0];
+      const otherOutputs = outputs
+        .filter((o) => o.name !== chosenOutput.name)
+        .map((o) => `'${o.name}'`)
+        .join(' | ');
+      logger(`Midi connected! Using "${chosenOutput.name}". ${otherOutputs ? `Also available: ${otherOutputs}` : ''}`);
+    },
+  });
   if (isPattern(output?.constructor?.name)) {
     throw new Error(
       `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
@@ -75,7 +102,7 @@ Pattern.prototype.midi = function (output, channel = 1) {
       device.playNote(note, channel, {
         time,
         duration: hap.duration.valueOf() * 1000 - 5,
-        velocity, // TODO: "OutputChannel.js:942 The 'velocity' option is deprecated. Use 'attack' instead."?
+        attack: velocity,
       });
     };
     return hap.setContext({ ...hap.context, onTrigger });
