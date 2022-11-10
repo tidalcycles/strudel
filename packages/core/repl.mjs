@@ -18,8 +18,9 @@ export function repl({
       if (!hap.context.onTrigger) {
         return defaultOutput(hap, deadline, duration);
       }
+      const cps = 1; // TODO: fix
       // call signature of output / onTrigger is different...
-      return hap.context.onTrigger(getTime() + deadline, hap);
+      return hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps);
     },
     onError: onSchedulerError,
     getTime,
