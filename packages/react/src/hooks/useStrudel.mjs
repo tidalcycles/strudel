@@ -30,6 +30,7 @@ function useStrudel({ defaultOutput, interval, getTime, evalOnMount = false, ini
           setActiveCode(code);
           setPattern(_pattern);
           setEvalError();
+          setSchedulerError();
           if (autolink) {
             window.location.hash = '#' + encodeURIComponent(btoa(code));
           }
