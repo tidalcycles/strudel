@@ -17,6 +17,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "watch": "vite build --watch",
     "preview": "vite preview"
   },
   "repository": {

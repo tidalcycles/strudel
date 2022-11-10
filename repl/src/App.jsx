@@ -4,9 +4,9 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { evaluate } from '@strudel.cycles/eval';
-import { CodeMirror, cx, flash, useHighlighting, useRepl, useWebMidi } from '@strudel.cycles/react';
-import { cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
+// import { evaluate } from '@strudel.cycles/eval';
+import { CodeMirror, cx, flash, useHighlighting, useWebMidi } from '@strudel.cycles/react';
+// import { cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 import logo from './logo.svg';
@@ -17,6 +17,8 @@ import { resetLoadedSamples, getAudioContext } from '@strudel.cycles/webaudio';
 import { controls, evalScope } from '@strudel.cycles/core';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
+import { useStrudel } from '@strudel.cycles/react';
+import { webaudioOutput } from '@strudel.cycles/webaudio';
 
 // Create a single supabase client for interacting with your database
 const supabase = createClient(
@@ -25,11 +27,11 @@ const supabase = createClient(
 );
 
 evalScope(
-  Tone,
+  // Tone,
   controls, // sadly, this cannot be exported from core direclty
   { WebDirt },
   import('@strudel.cycles/core'),
-  import('@strudel.cycles/tone'),
+  // import('@strudel.cycles/tone'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
   import('@strudel.cycles/midi'),
@@ -41,6 +43,11 @@ evalScope(
 );
 
 prebake();
+
+const pushLog = console.log;
+const hideHeader = false;
+const pending = false;
+const getTime = () => getAudioContext().currentTime;
 
 async function initCode() {
   // load code from url hash (either short hash from database or decode long hash)
@@ -83,38 +90,28 @@ const randomTune = getRandomTune();
 const isEmbedded = window.location !== window.parent.location;
 function App() {
   // const [editor, setEditor] = useState();
+  const [code, setCode] = useState('// LOADING');
   const [view, setView] = useState();
   const [lastShared, setLastShared] = useState();
-  const {
-    setCode,
-    setPattern,
-    error,
-    code,
-    cycle,
-    dirty,
-    log,
-    togglePlay,
-    activeCode,
-    setActiveCode,
-    activateCode,
-    pattern,
-    pushLog,
-    pending,
-    hideHeader,
-    hideConsole,
-  } = useRepl({
-    tune: '// LOADING...',
-  });
+
+  const { scheduler, evaluate, schedulerError, evalError, isDirty, activeCode, pattern, started, togglePlay } =
+    useStrudel({
+      code,
+      defaultOutput: webaudioOutput,
+      getTime,
+    });
+  const error = schedulerError || evalError;
   useEffect(() => {
     initCode().then((decoded) => setCode(decoded || randomTune));
   }, []);
   const logBox = useRef();
   // scroll log box to bottom when log changes
-  useLayoutEffect(() => {
+
+  /*   useLayoutEffect(() => {
     if (logBox.current) {
       logBox.current.scrollTop = logBox.current?.scrollHeight;
     }
-  }, [log]);
+  }, [log]); */
 
   // set active pattern on ctrl+enter
   useLayoutEffect(() => {
@@ -124,25 +121,27 @@ function App() {
         if (e.code === 'Enter') {
           e.preventDefault();
           flash(view);
-          await activateCode();
+          // await activateCode();
+          await evaluate();
         } else if (e.code === 'Period') {
-          cycle.stop();
+          scheduler.stop();
           e.preventDefault();
         }
       }
     };
     window.addEventListener('keydown', handleKeyPress, true);
     return () => window.removeEventListener('keydown', handleKeyPress, true);
-  }, [pattern, code, activateCode, cycle, view]);
+  }, [pattern /* , code */, /* activateCode, */ scheduler, view]);
 
   useHighlighting({
     view,
     pattern,
-    active: cycle.started && !activeCode?.includes('strudel disable-highlighting'),
-    getTime: () => Tone.getTransport().seconds,
+    active: started && !activeCode?.includes('strudel disable-highlighting'),
+    getTime: () => scheduler.phase,
+    // getTime: () => Tone.getTransport().seconds,
   });
 
-  useWebMidi({
+  /*   useWebMidi({
     ready: useCallback(
       ({ outputs }) => {
         pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `'${o.name}'`).join(' | ')}) to the pattern. `);
@@ -161,7 +160,7 @@ function App() {
       },
       [pushLog],
     ),
-  });
+  }); */
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -187,7 +186,7 @@ function App() {
             >
               {!pending ? (
                 <span className={cx('flex items-center', isEmbedded ? 'w-16' : 'w-16')}>
-                  {cycle.started ? (
+                  {started ? (
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path
                         fillRule="evenodd"
@@ -204,7 +203,7 @@ function App() {
                       />
                     </svg>
                   )}
-                  {cycle.started ? 'pause' : 'play'}
+                  {started ? 'pause' : 'play'}
                 </span>
               ) : (
                 <>loading...</>
@@ -212,13 +211,13 @@ function App() {
             </button>
             <button
               onClick={() => {
-                dirty && activateCode();
+                isDirty && activateCode();
                 pushLog('Code updated! Tip: You can also update the code by pressing ctrl+enter.');
               }}
               className={cx(
                 'hover:bg-gray-300',
                 !isEmbedded ? 'p-2' : 'px-2',
-                !dirty || !activeCode ? 'opacity-50' : '',
+                !isDirty || !activeCode ? 'opacity-50' : '',
               )}
             >
               🔄 update
@@ -230,8 +229,8 @@ function App() {
                   const _code = getRandomTune();
                   // console.log('tune', _code); // uncomment this to debug when random code fails
                   setCode(_code);
-                  cleanupDraw();
-                  cleanupUi();
+                  /*                   cleanupDraw();
+                  cleanupUi(); */
                   resetLoadedSamples();
                   await prebake(); // declare default samples
                   const parsed = await evaluate(_code);
@@ -307,7 +306,7 @@ function App() {
           {/* onCursor={markParens} */}
           <CodeMirror value={code} onChange={setCode} onViewChanged={setView} />
           <span className="z-[20] bg-black rounded-t-md py-1 px-2 fixed bottom-0 right-1 text-xs whitespace-pre text-right pointer-events-none">
-            {!cycle.started ? `press ctrl+enter to play\n` : dirty ? `ctrl+enter to update\n` : 'no changes\n'}
+            {!started ? `press ctrl+enter to play\n` : isDirty ? `ctrl+enter to update\n` : 'no changes\n'}
           </span>
           {error && (
             <div
@@ -320,7 +319,7 @@ function App() {
             </div>
           )}
         </div>
-        {!isEmbedded && !hideConsole && (
+        {/* !isEmbedded && !hideConsole && (
           <textarea
             className="z-[10] h-16 border-0 text-xs bg-[transparent] border-t border-slate-600 resize-none"
             value={log}
@@ -328,7 +327,7 @@ function App() {
             ref={logBox}
             style={{ fontFamily: 'monospace' }}
           />
-        )}
+        ) */}
       </section>
       {/* !isEmbedded && (
         <button className="fixed right-4 bottom-2 z-[11]" onClick={() => playStatic(code)}>

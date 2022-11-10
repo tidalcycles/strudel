@@ -8,7 +8,9 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = fals
   const [evalError, setEvalError] = useState();
   const [activeCode, setActiveCode] = useState(code);
   const [pattern, setPattern] = useState();
+  const [started, setStarted] = useState(false);
   const isDirty = code !== activeCode;
+  // TODO: make sure this hook reruns when scheduler.started changes
   const { scheduler, evaluate: _evaluate } = useMemo(
     () =>
       repl({
@@ -23,6 +25,7 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = fals
           setPattern(_pattern);
           setEvalError();
         },
+        onToggle: (v) => setStarted(v),
         onEvalError: setEvalError,
       }),
     [defaultOutput, interval, getTime],
@@ -32,12 +35,22 @@ function useStrudel({ defaultOutput, interval, getTime, code, evalOnMount = fals
   const inited = useRef();
   useEffect(() => {
     if (!inited.current && evalOnMount && code) {
+      console.log('eval on mount');
       inited.current = true;
       evaluate();
     }
   }, [evaluate, evalOnMount, code]);
 
-  return { schedulerError, scheduler, evalError, evaluate, activeCode, isDirty, pattern };
+  const togglePlay = async () => {
+    if (started) {
+      scheduler.pause();
+      // scheduler.stop();
+    } else {
+      await evaluate();
+    }
+  };
+
+  return { schedulerError, scheduler, evalError, evaluate, activeCode, isDirty, pattern, started, togglePlay };
 }
 
 export default useStrudel;

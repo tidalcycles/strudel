@@ -13,8 +13,9 @@ export class Cyclist {
   cps = 1; // TODO
   getTime;
   phase = 0;
-  constructor({ interval, onTrigger, onError, getTime, latency = 0.1 }) {
+  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
     this.getTime = getTime;
+    this.onToggle = onToggle;
     const round = (x) => Math.round(x * 1000) / 1000;
     this.clock = createClock(
       getTime,
@@ -28,9 +29,7 @@ export class Cyclist {
         const time = getTime();
         try {
           const haps = this.pattern.queryArc(begin, end); // get Haps
-          // console.log('haps', haps.map((hap) => hap.value.n).join(' '));
           haps.forEach((hap) => {
-            // console.log('hap', hap.value.n, hap.part.begin);
             if (hap.part.begin.equals(hap.whole.begin)) {
               const deadline = hap.whole.begin + this.origin - time + latency;
               const duration = hap.duration * 1;
@@ -48,22 +47,26 @@ export class Cyclist {
   getPhase() {
     return this.phase;
   }
+  setStarted(v) {
+    this.started = v;
+    this.onToggle?.(v);
+  }
   start() {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
     this.clock.start();
-    this.started = true;
+    this.setStarted(true);
   }
   pause() {
     this.clock.stop();
-    delete this.origin;
-    this.started = false;
+    // delete this.origin;
+    this.setStarted(false);
   }
   stop() {
     delete this.origin;
     this.clock.stop();
-    this.started = false;
+    this.setStarted(false);
   }
   setPattern(pat, autostart = false) {
     this.pattern = pat;

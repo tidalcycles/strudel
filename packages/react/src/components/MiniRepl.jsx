@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
 import { useInView } from 'react-hook-inview';
-import useRepl from '../hooks/useRepl.mjs';
 import cx from '../cx';
 import useHighlighting from '../hooks/useHighlighting.mjs';
 import CodeMirror6, { flash } from './CodeMirror6';
@@ -8,10 +7,12 @@ import 'tailwindcss/tailwind.css';
 import './style.css';
 import styles from './MiniRepl.module.css';
 import { Icon } from './Icon';
-import { Tone } from '@strudel.cycles/tone';
+import { getAudioContext } from '@strudel.cycles/webaudio';
+// import { Tone } from '@strudel.cycles/tone';
 
 export function MiniRepl({ tune, hideOutsideView = false, init, onEvent, enableKeyboard }) {
-  const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } =
+  return <p>TODO</p>;
+  /*   const { code, setCode, pattern, activeCode, activateCode, evaluateOnly, error, cycle, dirty, togglePlay, stop } =
     useRepl({
       tune,
       autolink: false,
@@ -35,7 +36,7 @@ export function MiniRepl({ tune, hideOutsideView = false, init, onEvent, enableK
     view,
     pattern,
     active: cycle.started && !activeCode?.includes('strudel disable-highlighting'),
-    getTime: () => Tone.getTransport().seconds,
+    getTime: () => getAudioContext().seconds,
   });
 
   // set active pattern on ctrl+enter
@@ -75,5 +76,5 @@ export function MiniRepl({ tune, hideOutsideView = false, init, onEvent, enableK
         {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />}
       </div>
     </div>
-  );
+  ); */
 }

@@ -4,10 +4,10 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { isNote } from 'tone';
 import * as _WebMidi from 'webmidi';
-import { Pattern, isPattern } from '@strudel.cycles/core';
-import { Tone } from '@strudel.cycles/tone';
+import { Pattern, isPattern, isNote } from '@strudel.cycles/core';
+import { getAudioContext } from '@strudel.cycles/webaudio';
+
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
 
@@ -68,7 +68,7 @@ Pattern.prototype.midi = function (output, channel = 1) {
         );
       }
       // console.log('midi', value, output);
-      const timingOffset = WebMidi.time - Tone.getContext().currentTime * 1000;
+      const timingOffset = WebMidi.time - getAudioContext().currentTime * 1000;
       time = time * 1000 + timingOffset;
       // const inMs = '+' + (time - Tone.getContext().currentTime) * 1000;
       // await enableWebMidi()

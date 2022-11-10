@@ -24,3 +24,17 @@ cd repl
 npm run build # <- builds repl + tutorial to ../docs
 npm run static # <- test static build
 ```
+
+## Refactoring Notes
+
+currently broken / buggy:
+
+- MiniREPL
+- repl log section
+- hideHeader flag
+- pending flag
+- web midi
+- draw / pianoroll
+- pause does stop
+- random button triggers start
+- highlighting seems too late (off by latency ?)
