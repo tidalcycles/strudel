@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as _WebMidi from 'webmidi';
-import { Pattern, isPattern, isNote } from '@strudel.cycles/core';
+import { Pattern, isPattern, isNote, getPlayableNoteValue } from '@strudel.cycles/core';
 import { getAudioContext } from '@strudel.cycles/webaudio';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
@@ -41,7 +41,7 @@ Pattern.prototype.midi = function (output, channel = 1) {
   return this._withHap((hap) => {
     // const onTrigger = (time: number, hap: any) => {
     const onTrigger = (time, hap) => {
-      let note = hap.value;
+      let note = getPlayableNoteValue(hap);
       const velocity = hap.context?.velocity ?? 0.9;
       if (!isNote(note)) {
         throw new Error('not a note: ' + note);
@@ -75,7 +75,7 @@ Pattern.prototype.midi = function (output, channel = 1) {
       device.playNote(note, channel, {
         time,
         duration: hap.duration.valueOf() * 1000 - 5,
-        velocity,
+        velocity, // TODO: "OutputChannel.js:942 The 'velocity' option is deprecated. Use 'attack' instead."?
       });
     };
     return hap.setContext({ ...hap.context, onTrigger });

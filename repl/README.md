@@ -33,8 +33,9 @@ currently broken / buggy:
 - [ ] repl log section => remove?
 - [ ] hideHeader flag
 - [ ] pending flag
-- [ ] web midi
+- [x] web midi, TODO: test
 - [ ] draw / pianoroll
+- [ ] repl url hash does not work
 - [x] pause does stop
 - [ ] pause then play logs "TOO LATE" and drops some events
 - [x] random button triggers start

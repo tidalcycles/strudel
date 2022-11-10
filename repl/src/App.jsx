@@ -150,7 +150,7 @@ function App() {
     // getTime: () => Tone.getTransport().seconds,
   });
 
-  /*   useWebMidi({
+  useWebMidi({
     ready: useCallback(
       ({ outputs }) => {
         pushLog(`WebMidi ready! Just add .midi(${outputs.map((o) => `'${o.name}'`).join(' | ')}) to the pattern. `);
@@ -169,7 +169,7 @@ function App() {
       },
       [pushLog],
     ),
-  }); */
+  });
 
   return (
     <div className="min-h-screen flex flex-col">

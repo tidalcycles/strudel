@@ -12,7 +12,19 @@ export function repl({
   transpiler,
   onToggle,
 }) {
-  const scheduler = new Cyclist({ interval, onTrigger: defaultOutput, onError: onSchedulerError, getTime, onToggle });
+  const scheduler = new Cyclist({
+    interval,
+    onTrigger: (hap, deadline, duration) => {
+      if (!hap.context.onTrigger) {
+        return defaultOutput(hap, deadline, duration);
+      }
+      // call signature of output / onTrigger is different...
+      return hap.context.onTrigger(getTime() + deadline, hap);
+    },
+    onError: onSchedulerError,
+    getTime,
+    onToggle,
+  });
   const evaluate = async (code, autostart = true) => {
     if (!code) {
       throw new Error('no code to evaluate');

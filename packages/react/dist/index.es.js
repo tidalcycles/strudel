@@ -216,8 +216,8 @@ class Kr {
               i?.(C, x, I);
             }
           });
-        } catch (F) {
-          console.warn("scheduler error", F), n?.(F);
+        } catch (E) {
+          console.warn("scheduler error", E), n?.(E);
         }
       },
       t
@@ -287,14 +287,20 @@ function eu({
   transpiler: f,
   onToggle: p
 }) {
-  const D = new Kr({ interval: e, onTrigger: t, onError: i, getTime: a, onToggle: p });
-  return { scheduler: D, evaluate: async (F, C = !0) => {
-    if (!F)
+  const D = new Kr({
+    interval: e,
+    onTrigger: (E, C, x) => E.context.onTrigger ? E.context.onTrigger(a() + C, E) : t(E, C, x),
+    onError: i,
+    getTime: a,
+    onToggle: p
+  });
+  return { scheduler: D, evaluate: async (E, C = !0) => {
+    if (!E)
       throw new Error("no code to evaluate");
     try {
-      n({ code: F });
-      const { pattern: x } = await Jr(F, f);
-      return D.setPattern(x, C), c({ code: F, pattern: x }), x;
+      n({ code: E });
+      const { pattern: x } = await Jr(E, f);
+      return D.setPattern(x, C), c({ code: E, pattern: x }), x;
     } catch (x) {
       console.warn(`eval error: ${x.message}`), u?.(x);
     }
@@ -304,16 +310,16 @@ var tu = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : t
 (function(e) {
   (function t(i) {
     var u, n, c, a, f, p;
-    function D(E) {
+    function D(F) {
       var B = {}, S, w;
-      for (S in E)
-        E.hasOwnProperty(S) && (w = E[S], typeof w == "object" && w !== null ? B[S] = D(w) : B[S] = w);
+      for (S in F)
+        F.hasOwnProperty(S) && (w = F[S], typeof w == "object" && w !== null ? B[S] = D(w) : B[S] = w);
       return B;
     }
-    function m(E, B) {
+    function m(F, B) {
       var S, w, W, T;
-      for (w = E.length, W = 0; w; )
-        S = w >>> 1, T = W + S, B(E[T]) ? w = S : (W = T + 1, w -= S + 1);
+      for (w = F.length, W = 0; w; )
+        S = w >>> 1, T = W + S, B(F[T]) ? w = S : (W = T + 1, w -= S + 1);
       return W;
     }
     u = {
@@ -473,16 +479,16 @@ var tu = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : t
       Skip: f,
       Remove: p
     };
-    function v(E, B) {
-      this.parent = E, this.key = B;
+    function v(F, B) {
+      this.parent = F, this.key = B;
     }
     v.prototype.replace = function(B) {
       this.parent[this.key] = B;
     }, v.prototype.remove = function() {
       return Array.isArray(this.parent) ? (this.parent.splice(this.key, 1), !0) : (this.replace(null), !1);
     };
-    function g(E, B, S, w) {
-      this.node = E, this.path = B, this.wrap = S, this.ref = w;
+    function g(F, B, S, w) {
+      this.node = F, this.path = B, this.wrap = S, this.ref = w;
     }
     function A() {
     }
@@ -501,8 +507,8 @@ var tu = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : t
         j = this.__leavelist[B], V(T, j.path);
       return V(T, this.__current.path), T;
     }, A.prototype.type = function() {
-      var E = this.current();
-      return E.type || this.__current.wrap;
+      var F = this.current();
+      return F.type || this.__current.wrap;
     }, A.prototype.parents = function() {
       var B, S, w;
       for (w = [], B = 1, S = this.__leavelist.length; B < S; ++B)
@@ -521,18 +527,18 @@ var tu = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : t
       this.notify(a);
     }, A.prototype.remove = function() {
       this.notify(p);
-    }, A.prototype.__initialize = function(E, B) {
-      this.visitor = B, this.root = E, this.__worklist = [], this.__leavelist = [], this.__current = null, this.__state = null, this.__fallback = null, B.fallback === "iteration" ? this.__fallback = Object.keys : typeof B.fallback == "function" && (this.__fallback = B.fallback), this.__keys = c, B.keys && (this.__keys = Object.assign(Object.create(this.__keys), B.keys));
+    }, A.prototype.__initialize = function(F, B) {
+      this.visitor = B, this.root = F, this.__worklist = [], this.__leavelist = [], this.__current = null, this.__state = null, this.__fallback = null, B.fallback === "iteration" ? this.__fallback = Object.keys : typeof B.fallback == "function" && (this.__fallback = B.fallback), this.__keys = c, B.keys && (this.__keys = Object.assign(Object.create(this.__keys), B.keys));
     };
-    function F(E) {
-      return E == null ? !1 : typeof E == "object" && typeof E.type == "string";
+    function E(F) {
+      return F == null ? !1 : typeof F == "object" && typeof F.type == "string";
     }
-    function C(E, B) {
-      return (E === u.ObjectExpression || E === u.ObjectPattern) && B === "properties";
+    function C(F, B) {
+      return (F === u.ObjectExpression || F === u.ObjectPattern) && B === "properties";
     }
-    function x(E, B) {
-      for (var S = E.length - 1; S >= 0; --S)
-        if (E[S].node === B)
+    function x(F, B) {
+      for (var S = F.length - 1; S >= 0; --S)
+        if (F[S].node === B)
           return !0;
       return !1;
     }
@@ -561,13 +567,13 @@ var tu = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : t
                   if (!!Y[ne] && !x(W, Y[ne])) {
                     if (C(V, ee[te]))
                       T = new g(Y[ne], [K, ne], "Property", null);
-                    else if (F(Y[ne]))
+                    else if (E(Y[ne]))
                       T = new g(Y[ne], [K, ne], null, null);
                     else
                       continue;
                     w.push(T);
                   }
-              } else if (F(Y)) {
+              } else if (E(Y)) {
                 if (x(W, Y))
                   continue;
                 w.push(new g(Y, K, null, null));
@@ -611,47 +617,47 @@ var tu = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : t
                   if (!!ee[te]) {
                     if (C(j, ne[K]))
                       R = new g(ee[te], [ye, te], "Property", new v(ee, te));
-                    else if (F(ee[te]))
+                    else if (E(ee[te]))
                       R = new g(ee[te], [ye, te], null, new v(ee, te));
                     else
                       continue;
                     w.push(R);
                   }
               } else
-                F(ee) && w.push(new g(ee, ye, null, new v(T, ye)));
+                E(ee) && w.push(new g(ee, ye, null, new v(T, ye)));
         }
       }
       return ge.root;
     };
-    function I(E, B) {
+    function I(F, B) {
       var S = new A();
-      return S.traverse(E, B);
+      return S.traverse(F, B);
     }
-    function P(E, B) {
+    function P(F, B) {
       var S = new A();
-      return S.replace(E, B);
+      return S.replace(F, B);
     }
-    function M(E, B) {
+    function M(F, B) {
       var S;
       return S = m(B, function(W) {
-        return W.range[0] > E.range[0];
-      }), E.extendedRange = [E.range[0], E.range[1]], S !== B.length && (E.extendedRange[1] = B[S].range[0]), S -= 1, S >= 0 && (E.extendedRange[0] = B[S].range[1]), E;
+        return W.range[0] > F.range[0];
+      }), F.extendedRange = [F.range[0], F.range[1]], S !== B.length && (F.extendedRange[1] = B[S].range[0]), S -= 1, S >= 0 && (F.extendedRange[0] = B[S].range[1]), F;
     }
-    function y(E, B, S) {
+    function y(F, B, S) {
       var w = [], W, T, j, V;
-      if (!E.range)
+      if (!F.range)
         throw new Error("attachComments needs range information");
       if (!S.length) {
         if (B.length) {
           for (j = 0, T = B.length; j < T; j += 1)
-            W = D(B[j]), W.extendedRange = [0, E.range[0]], w.push(W);
-          E.leadingComments = w;
+            W = D(B[j]), W.extendedRange = [0, F.range[0]], w.push(W);
+          F.leadingComments = w;
         }
-        return E;
+        return F;
       }
       for (j = 0, T = B.length; j < T; j += 1)
         w.push(M(D(B[j]), S));
-      return V = 0, I(E, {
+      return V = 0, I(F, {
         enter: function(R) {
           for (var K; V < w.length && (K = w[V], !(K.extendedRange[1] > R.range[0])); )
             K.extendedRange[1] === R.range[0] ? (R.leadingComments || (R.leadingComments = []), R.leadingComments.push(K), w.splice(V, 1)) : V += 1;
@@ -660,7 +666,7 @@ var tu = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : t
           if (w[V].extendedRange[0] > R.range[1])
             return n.Skip;
         }
-      }), V = 0, I(E, {
+      }), V = 0, I(F, {
         leave: function(R) {
           for (var K; V < w.length && (K = w[V], !(R.range[1] < K.extendedRange[0])); )
             R.range[1] === K.extendedRange[0] ? (R.trailingComments || (R.trailingComments = []), R.trailingComments.push(K), w.splice(V, 1)) : V += 1;
@@ -669,7 +675,7 @@ var tu = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : t
           if (w[V].extendedRange[0] > R.range[1])
             return n.Skip;
         }
-      }), E;
+      }), F;
     }
     return i.Syntax = u, i.traverse = I, i.replace = P, i.attachComments = y, i.VisitorKeys = c, i.VisitorOption = n, i.Controller = A, i.cloneEnvironment = function() {
       return t({});
@@ -836,7 +842,7 @@ var Mt = { exports: {} };
   function A(x) {
     return x < 128 ? n[x] : t.NonAsciiIdentifierPart.test(v(x));
   }
-  function F(x) {
+  function E(x) {
     return x < 128 ? u[x] : e.NonAsciiIdentifierStart.test(v(x));
   }
   function C(x) {
@@ -850,7 +856,7 @@ var Mt = { exports: {} };
     isLineTerminator: m,
     isIdentifierStartES5: g,
     isIdentifierPartES5: A,
-    isIdentifierStartES6: F,
+    isIdentifierStartES6: E,
     isIdentifierPartES6: C
   };
 })();
@@ -909,10 +915,10 @@ var Bi = { exports: {} };
     return g === "eval" || g === "arguments";
   }
   function f(g) {
-    var A, F, C;
+    var A, E, C;
     if (g.length === 0 || (C = g.charCodeAt(0), !e.isIdentifierStartES5(C)))
       return !1;
-    for (A = 1, F = g.length; A < F; ++A)
+    for (A = 1, E = g.length; A < E; ++A)
       if (C = g.charCodeAt(A), !e.isIdentifierPartES5(C))
         return !1;
     return !0;
@@ -921,12 +927,12 @@ var Bi = { exports: {} };
     return (g - 55296) * 1024 + (A - 56320) + 65536;
   }
   function D(g) {
-    var A, F, C, x, I;
+    var A, E, C, x, I;
     if (g.length === 0)
       return !1;
-    for (I = e.isIdentifierStartES6, A = 0, F = g.length; A < F; ++A) {
+    for (I = e.isIdentifierStartES6, A = 0, E = g.length; A < E; ++A) {
       if (C = g.charCodeAt(A), 55296 <= C && C <= 56319) {
-        if (++A, A >= F || (x = g.charCodeAt(A), !(56320 <= x && x <= 57343)))
+        if (++A, A >= E || (x = g.charCodeAt(A), !(56320 <= x && x <= 57343)))
           return !1;
         C = p(C, x);
       }
@@ -992,81 +998,81 @@ function _i() {
     while (v > 0);
     return D;
   }, lt.decode = function(p, D, m) {
-    var v = p.length, g = 0, A = 0, F, C;
+    var v = p.length, g = 0, A = 0, E, C;
     do {
       if (D >= v)
         throw new Error("Expected more digits in base 64 VLQ value.");
       if (C = e.decode(p.charCodeAt(D++)), C === -1)
         throw new Error("Invalid base64 digit: " + p.charAt(D - 1));
-      F = !!(C & n), C &= u, g = g + (C << A), A += t;
-    } while (F);
+      E = !!(C & n), C &= u, g = g + (C << A), A += t;
+    } while (E);
     m.value = a(g), m.rest = D;
   }, lt;
 }
 var xt = {}, ni;
 function it() {
   return ni || (ni = 1, function(e) {
-    function t(y, E, B) {
-      if (E in y)
-        return y[E];
+    function t(y, F, B) {
+      if (F in y)
+        return y[F];
       if (arguments.length === 3)
         return B;
-      throw new Error('"' + E + '" is a required argument.');
+      throw new Error('"' + F + '" is a required argument.');
     }
     e.getArg = t;
     var i = /^(?:([\w+\-.]+):)?\/\/(?:(\w+:\w+)@)?([\w.-]*)(?::(\d+))?(.*)$/, u = /^data:.+\,.+$/;
     function n(y) {
-      var E = y.match(i);
-      return E ? {
-        scheme: E[1],
-        auth: E[2],
-        host: E[3],
-        port: E[4],
-        path: E[5]
+      var F = y.match(i);
+      return F ? {
+        scheme: F[1],
+        auth: F[2],
+        host: F[3],
+        port: F[4],
+        path: F[5]
       } : null;
     }
     e.urlParse = n;
     function c(y) {
-      var E = "";
-      return y.scheme && (E += y.scheme + ":"), E += "//", y.auth && (E += y.auth + "@"), y.host && (E += y.host), y.port && (E += ":" + y.port), y.path && (E += y.path), E;
+      var F = "";
+      return y.scheme && (F += y.scheme + ":"), F += "//", y.auth && (F += y.auth + "@"), y.host && (F += y.host), y.port && (F += ":" + y.port), y.path && (F += y.path), F;
     }
     e.urlGenerate = c;
     function a(y) {
-      var E = y, B = n(y);
+      var F = y, B = n(y);
       if (B) {
         if (!B.path)
           return y;
-        E = B.path;
+        F = B.path;
       }
-      for (var S = e.isAbsolute(E), w = E.split(/\/+/), W, T = 0, j = w.length - 1; j >= 0; j--)
+      for (var S = e.isAbsolute(F), w = F.split(/\/+/), W, T = 0, j = w.length - 1; j >= 0; j--)
         W = w[j], W === "." ? w.splice(j, 1) : W === ".." ? T++ : T > 0 && (W === "" ? (w.splice(j + 1, T), T = 0) : (w.splice(j, 2), T--));
-      return E = w.join("/"), E === "" && (E = S ? "/" : "."), B ? (B.path = E, c(B)) : E;
+      return F = w.join("/"), F === "" && (F = S ? "/" : "."), B ? (B.path = F, c(B)) : F;
     }
     e.normalize = a;
-    function f(y, E) {
-      y === "" && (y = "."), E === "" && (E = ".");
-      var B = n(E), S = n(y);
+    function f(y, F) {
+      y === "" && (y = "."), F === "" && (F = ".");
+      var B = n(F), S = n(y);
       if (S && (y = S.path || "/"), B && !B.scheme)
         return S && (B.scheme = S.scheme), c(B);
-      if (B || E.match(u))
-        return E;
+      if (B || F.match(u))
+        return F;
       if (S && !S.host && !S.path)
-        return S.host = E, c(S);
-      var w = E.charAt(0) === "/" ? E : a(y.replace(/\/+$/, "") + "/" + E);
+        return S.host = F, c(S);
+      var w = F.charAt(0) === "/" ? F : a(y.replace(/\/+$/, "") + "/" + F);
       return S ? (S.path = w, c(S)) : w;
     }
     e.join = f, e.isAbsolute = function(y) {
       return y.charAt(0) === "/" || i.test(y);
     };
-    function p(y, E) {
+    function p(y, F) {
       y === "" && (y = "."), y = y.replace(/\/$/, "");
-      for (var B = 0; E.indexOf(y + "/") !== 0; ) {
+      for (var B = 0; F.indexOf(y + "/") !== 0; ) {
         var S = y.lastIndexOf("/");
         if (S < 0 || (y = y.slice(0, S), y.match(/^([^\/]+:\/)?\/*$/)))
-          return E;
+          return F;
         ++B;
       }
-      return Array(B + 1).join("../") + E.substr(y.length + 1);
+      return Array(B + 1).join("../") + F.substr(y.length + 1);
     }
     e.relative = p;
     var D = function() {
@@ -1087,38 +1093,38 @@ function it() {
     function A(y) {
       if (!y)
         return !1;
-      var E = y.length;
-      if (E < 9 || y.charCodeAt(E - 1) !== 95 || y.charCodeAt(E - 2) !== 95 || y.charCodeAt(E - 3) !== 111 || y.charCodeAt(E - 4) !== 116 || y.charCodeAt(E - 5) !== 111 || y.charCodeAt(E - 6) !== 114 || y.charCodeAt(E - 7) !== 112 || y.charCodeAt(E - 8) !== 95 || y.charCodeAt(E - 9) !== 95)
+      var F = y.length;
+      if (F < 9 || y.charCodeAt(F - 1) !== 95 || y.charCodeAt(F - 2) !== 95 || y.charCodeAt(F - 3) !== 111 || y.charCodeAt(F - 4) !== 116 || y.charCodeAt(F - 5) !== 111 || y.charCodeAt(F - 6) !== 114 || y.charCodeAt(F - 7) !== 112 || y.charCodeAt(F - 8) !== 95 || y.charCodeAt(F - 9) !== 95)
         return !1;
-      for (var B = E - 10; B >= 0; B--)
+      for (var B = F - 10; B >= 0; B--)
         if (y.charCodeAt(B) !== 36)
           return !1;
       return !0;
     }
-    function F(y, E, B) {
-      var S = x(y.source, E.source);
-      return S !== 0 || (S = y.originalLine - E.originalLine, S !== 0) || (S = y.originalColumn - E.originalColumn, S !== 0 || B) || (S = y.generatedColumn - E.generatedColumn, S !== 0) || (S = y.generatedLine - E.generatedLine, S !== 0) ? S : x(y.name, E.name);
+    function E(y, F, B) {
+      var S = x(y.source, F.source);
+      return S !== 0 || (S = y.originalLine - F.originalLine, S !== 0) || (S = y.originalColumn - F.originalColumn, S !== 0 || B) || (S = y.generatedColumn - F.generatedColumn, S !== 0) || (S = y.generatedLine - F.generatedLine, S !== 0) ? S : x(y.name, F.name);
     }
-    e.compareByOriginalPositions = F;
-    function C(y, E, B) {
-      var S = y.generatedLine - E.generatedLine;
-      return S !== 0 || (S = y.generatedColumn - E.generatedColumn, S !== 0 || B) || (S = x(y.source, E.source), S !== 0) || (S = y.originalLine - E.originalLine, S !== 0) || (S = y.originalColumn - E.originalColumn, S !== 0) ? S : x(y.name, E.name);
+    e.compareByOriginalPositions = E;
+    function C(y, F, B) {
+      var S = y.generatedLine - F.generatedLine;
+      return S !== 0 || (S = y.generatedColumn - F.generatedColumn, S !== 0 || B) || (S = x(y.source, F.source), S !== 0) || (S = y.originalLine - F.originalLine, S !== 0) || (S = y.originalColumn - F.originalColumn, S !== 0) ? S : x(y.name, F.name);
     }
     e.compareByGeneratedPositionsDeflated = C;
-    function x(y, E) {
-      return y === E ? 0 : y === null ? 1 : E === null ? -1 : y > E ? 1 : -1;
+    function x(y, F) {
+      return y === F ? 0 : y === null ? 1 : F === null ? -1 : y > F ? 1 : -1;
     }
-    function I(y, E) {
-      var B = y.generatedLine - E.generatedLine;
-      return B !== 0 || (B = y.generatedColumn - E.generatedColumn, B !== 0) || (B = x(y.source, E.source), B !== 0) || (B = y.originalLine - E.originalLine, B !== 0) || (B = y.originalColumn - E.originalColumn, B !== 0) ? B : x(y.name, E.name);
+    function I(y, F) {
+      var B = y.generatedLine - F.generatedLine;
+      return B !== 0 || (B = y.generatedColumn - F.generatedColumn, B !== 0) || (B = x(y.source, F.source), B !== 0) || (B = y.originalLine - F.originalLine, B !== 0) || (B = y.originalColumn - F.originalColumn, B !== 0) ? B : x(y.name, F.name);
     }
     e.compareByGeneratedPositionsInflated = I;
     function P(y) {
       return JSON.parse(y.replace(/^\)]}'[^\n]*\n/, ""));
     }
     e.parseSourceMapInput = P;
-    function M(y, E, B) {
-      if (E = E || "", y && (y[y.length - 1] !== "/" && E[0] !== "/" && (y += "/"), E = y + E), B) {
+    function M(y, F, B) {
+      if (F = F || "", y && (y[y.length - 1] !== "/" && F[0] !== "/" && (y += "/"), F = y + F), B) {
         var S = n(B);
         if (!S)
           throw new Error("sourceMapURL could not be parsed");
@@ -1126,9 +1132,9 @@ function it() {
           var w = S.path.lastIndexOf("/");
           w >= 0 && (S.path = S.path.substring(0, w + 1));
         }
-        E = f(c(S), E);
+        F = f(c(S), F);
       }
-      return a(E);
+      return a(F);
     }
     e.computeSourceURL = M;
   }(xt)), xt;
@@ -1254,19 +1260,19 @@ function ki() {
     var v = new i(), g = new i();
     this._mappings.unsortedForEach(function(A) {
       if (A.source === D && A.originalLine != null) {
-        var F = a.originalPositionFor({
+        var E = a.originalPositionFor({
           line: A.originalLine,
           column: A.originalColumn
         });
-        F.source != null && (A.source = F.source, p != null && (A.source = t.join(p, A.source)), m != null && (A.source = t.relative(m, A.source)), A.originalLine = F.line, A.originalColumn = F.column, F.name != null && (A.name = F.name));
+        E.source != null && (A.source = E.source, p != null && (A.source = t.join(p, A.source)), m != null && (A.source = t.relative(m, A.source)), A.originalLine = E.line, A.originalColumn = E.column, E.name != null && (A.name = E.name));
       }
       var C = A.source;
       C != null && !v.has(C) && v.add(C);
       var x = A.name;
       x != null && !g.has(x) && g.add(x);
     }, this), this._sources = v, this._names = g, a.sources.forEach(function(A) {
-      var F = a.sourceContentFor(A);
-      F != null && (p != null && (A = t.join(p, A)), m != null && (A = t.relative(m, A)), this.setSourceContent(A, F));
+      var E = a.sourceContentFor(A);
+      E != null && (p != null && (A = t.join(p, A)), m != null && (A = t.relative(m, A)), this.setSourceContent(A, E));
     }, this);
   }, n.prototype._validateMapping = function(a, f, p, D) {
     if (f && typeof f.line != "number" && typeof f.column != "number")
@@ -1284,16 +1290,16 @@ function ki() {
       }));
     }
   }, n.prototype._serializeMappings = function() {
-    for (var a = 0, f = 1, p = 0, D = 0, m = 0, v = 0, g = "", A, F, C, x, I = this._mappings.toArray(), P = 0, M = I.length; P < M; P++) {
-      if (F = I[P], A = "", F.generatedLine !== f)
-        for (a = 0; F.generatedLine !== f; )
+    for (var a = 0, f = 1, p = 0, D = 0, m = 0, v = 0, g = "", A, E, C, x, I = this._mappings.toArray(), P = 0, M = I.length; P < M; P++) {
+      if (E = I[P], A = "", E.generatedLine !== f)
+        for (a = 0; E.generatedLine !== f; )
           A += ";", f++;
       else if (P > 0) {
-        if (!t.compareByGeneratedPositionsInflated(F, I[P - 1]))
+        if (!t.compareByGeneratedPositionsInflated(E, I[P - 1]))
           continue;
         A += ",";
       }
-      A += e.encode(F.generatedColumn - a), a = F.generatedColumn, F.source != null && (x = this._sources.indexOf(F.source), A += e.encode(x - v), v = x, A += e.encode(F.originalLine - 1 - D), D = F.originalLine - 1, A += e.encode(F.originalColumn - p), p = F.originalColumn, F.name != null && (C = this._names.indexOf(F.name), A += e.encode(C - m), m = C)), g += A;
+      A += e.encode(E.generatedColumn - a), a = E.generatedColumn, E.source != null && (x = this._sources.indexOf(E.source), A += e.encode(x - v), v = x, A += e.encode(E.originalLine - 1 - D), D = E.originalLine - 1, A += e.encode(E.originalColumn - p), p = E.originalColumn, E.name != null && (C = this._names.indexOf(E.name), A += e.encode(C - m), m = C)), g += A;
     }
     return g;
   }, n.prototype._generateSourcesContent = function(a, f) {
@@ -1400,8 +1406,8 @@ function su() {
   }, c.prototype._parseMappings = function(m, v) {
     throw new Error("Subclasses must implement _parseMappings");
   }, c.GENERATED_ORDER = 1, c.ORIGINAL_ORDER = 2, c.GREATEST_LOWER_BOUND = 1, c.LEAST_UPPER_BOUND = 2, c.prototype.eachMapping = function(m, v, g) {
-    var A = v || null, F = g || c.GENERATED_ORDER, C;
-    switch (F) {
+    var A = v || null, E = g || c.GENERATED_ORDER, C;
+    switch (E) {
       case c.GENERATED_ORDER:
         C = this._generatedMappings;
         break;
@@ -1431,7 +1437,7 @@ function su() {
     };
     if (g.source = this._findSourceIndex(g.source), g.source < 0)
       return [];
-    var A = [], F = this._findMapping(
+    var A = [], E = this._findMapping(
       g,
       this._originalMappings,
       "originalLine",
@@ -1439,34 +1445,34 @@ function su() {
       e.compareByOriginalPositions,
       t.LEAST_UPPER_BOUND
     );
-    if (F >= 0) {
-      var C = this._originalMappings[F];
+    if (E >= 0) {
+      var C = this._originalMappings[E];
       if (m.column === void 0)
         for (var x = C.originalLine; C && C.originalLine === x; )
           A.push({
             line: e.getArg(C, "generatedLine", null),
             column: e.getArg(C, "generatedColumn", null),
             lastColumn: e.getArg(C, "lastGeneratedColumn", null)
-          }), C = this._originalMappings[++F];
+          }), C = this._originalMappings[++E];
       else
         for (var I = C.originalColumn; C && C.originalLine === v && C.originalColumn == I; )
           A.push({
             line: e.getArg(C, "generatedLine", null),
             column: e.getArg(C, "generatedColumn", null),
             lastColumn: e.getArg(C, "lastGeneratedColumn", null)
-          }), C = this._originalMappings[++F];
+          }), C = this._originalMappings[++E];
     }
     return A;
   }, Ze.SourceMapConsumer = c;
   function a(D, m) {
     var v = D;
     typeof D == "string" && (v = e.parseSourceMapInput(D));
-    var g = e.getArg(v, "version"), A = e.getArg(v, "sources"), F = e.getArg(v, "names", []), C = e.getArg(v, "sourceRoot", null), x = e.getArg(v, "sourcesContent", null), I = e.getArg(v, "mappings"), P = e.getArg(v, "file", null);
+    var g = e.getArg(v, "version"), A = e.getArg(v, "sources"), E = e.getArg(v, "names", []), C = e.getArg(v, "sourceRoot", null), x = e.getArg(v, "sourcesContent", null), I = e.getArg(v, "mappings"), P = e.getArg(v, "file", null);
     if (g != this._version)
       throw new Error("Unsupported version: " + g);
     C && (C = e.normalize(C)), A = A.map(String).map(e.normalize).map(function(M) {
       return C && e.isAbsolute(C) && e.isAbsolute(M) ? e.relative(C, M) : M;
-    }), this._names = i.fromArray(F.map(String), !0), this._sources = i.fromArray(A, !0), this._absoluteSources = this._sources.toArray().map(function(M) {
+    }), this._names = i.fromArray(E.map(String), !0), this._sources = i.fromArray(A, !0), this._absoluteSources = this._sources.toArray().map(function(M) {
       return e.computeSourceURL(C, M, m);
     }), this.sourceRoot = C, this.sourcesContent = x, this._mappings = I, this._sourceMapURL = m, this.file = P;
   }
@@ -1480,7 +1486,7 @@ function su() {
         return v;
     return -1;
   }, a.fromSourceMap = function(m, v) {
-    var g = Object.create(a.prototype), A = g._names = i.fromArray(m._names.toArray(), !0), F = g._sources = i.fromArray(m._sources.toArray(), !0);
+    var g = Object.create(a.prototype), A = g._names = i.fromArray(m._names.toArray(), !0), E = g._sources = i.fromArray(m._sources.toArray(), !0);
     g.sourceRoot = m._sourceRoot, g.sourcesContent = m._generateSourcesContent(
       g._sources.toArray(),
       g.sourceRoot
@@ -1488,8 +1494,8 @@ function su() {
       return e.computeSourceURL(g.sourceRoot, B, v);
     });
     for (var C = m._mappings.toArray().slice(), x = g.__generatedMappings = [], I = g.__originalMappings = [], P = 0, M = C.length; P < M; P++) {
-      var y = C[P], E = new f();
-      E.generatedLine = y.generatedLine, E.generatedColumn = y.generatedColumn, y.source && (E.source = F.indexOf(y.source), E.originalLine = y.originalLine, E.originalColumn = y.originalColumn, y.name && (E.name = A.indexOf(y.name)), I.push(E)), x.push(E);
+      var y = C[P], F = new f();
+      F.generatedLine = y.generatedLine, F.generatedColumn = y.generatedColumn, y.source && (F.source = E.indexOf(y.source), F.originalLine = y.originalLine, F.originalColumn = y.originalColumn, y.name && (F.name = A.indexOf(y.name)), I.push(F)), x.push(F);
     }
     return n(g.__originalMappings, e.compareByOriginalPositions), g;
   }, a.prototype._version = 3, Object.defineProperty(a.prototype, "sources", {
@@ -1501,7 +1507,7 @@ function su() {
     this.generatedLine = 0, this.generatedColumn = 0, this.source = null, this.originalLine = null, this.originalColumn = null, this.name = null;
   }
   a.prototype._parseMappings = function(m, v) {
-    for (var g = 1, A = 0, F = 0, C = 0, x = 0, I = 0, P = m.length, M = 0, y = {}, E = {}, B = [], S = [], w, W, T, j, V; M < P; )
+    for (var g = 1, A = 0, E = 0, C = 0, x = 0, I = 0, P = m.length, M = 0, y = {}, F = {}, B = [], S = [], w, W, T, j, V; M < P; )
       if (m.charAt(M) === ";")
         g++, M++, A = 0;
       else if (m.charAt(M) === ",")
@@ -1513,22 +1519,22 @@ function su() {
           M += W.length;
         else {
           for (T = []; M < j; )
-            u.decode(m, M, E), V = E.value, M = E.rest, T.push(V);
+            u.decode(m, M, F), V = F.value, M = F.rest, T.push(V);
           if (T.length === 2)
             throw new Error("Found a source, but no line and column");
           if (T.length === 3)
             throw new Error("Found a source and line, but no column");
           y[W] = T;
         }
-        w.generatedColumn = A + T[0], A = w.generatedColumn, T.length > 1 && (w.source = x + T[1], x += T[1], w.originalLine = F + T[2], F = w.originalLine, w.originalLine += 1, w.originalColumn = C + T[3], C = w.originalColumn, T.length > 4 && (w.name = I + T[4], I += T[4])), S.push(w), typeof w.originalLine == "number" && B.push(w);
+        w.generatedColumn = A + T[0], A = w.generatedColumn, T.length > 1 && (w.source = x + T[1], x += T[1], w.originalLine = E + T[2], E = w.originalLine, w.originalLine += 1, w.originalColumn = C + T[3], C = w.originalColumn, T.length > 4 && (w.name = I + T[4], I += T[4])), S.push(w), typeof w.originalLine == "number" && B.push(w);
       }
     n(S, e.compareByGeneratedPositionsDeflated), this.__generatedMappings = S, n(B, e.compareByOriginalPositions), this.__originalMappings = B;
-  }, a.prototype._findMapping = function(m, v, g, A, F, C) {
+  }, a.prototype._findMapping = function(m, v, g, A, E, C) {
     if (m[g] <= 0)
       throw new TypeError("Line must be greater than or equal to 1, got " + m[g]);
     if (m[A] < 0)
       throw new TypeError("Column must be greater than or equal to 0, got " + m[A]);
-    return t.search(m, v, F, C);
+    return t.search(m, v, E, C);
   }, a.prototype.computeColumnSpans = function() {
     for (var m = 0; m < this._generatedMappings.length; ++m) {
       var v = this._generatedMappings[m];
@@ -1556,11 +1562,11 @@ function su() {
     if (g >= 0) {
       var A = this._generatedMappings[g];
       if (A.generatedLine === v.generatedLine) {
-        var F = e.getArg(A, "source", null);
-        F !== null && (F = this._sources.at(F), F = e.computeSourceURL(this.sourceRoot, F, this._sourceMapURL));
+        var E = e.getArg(A, "source", null);
+        E !== null && (E = this._sources.at(E), E = e.computeSourceURL(this.sourceRoot, E, this._sourceMapURL));
         var C = e.getArg(A, "name", null);
         return C !== null && (C = this._names.at(C)), {
-          source: F,
+          source: E,
           line: e.getArg(A, "originalLine", null),
           column: e.getArg(A, "originalColumn", null),
           name: C
@@ -1585,12 +1591,12 @@ function su() {
       return this.sourcesContent[g];
     var A = m;
     this.sourceRoot != null && (A = e.relative(this.sourceRoot, A));
-    var F;
-    if (this.sourceRoot != null && (F = e.urlParse(this.sourceRoot))) {
+    var E;
+    if (this.sourceRoot != null && (E = e.urlParse(this.sourceRoot))) {
       var C = A.replace(/^file:\/\//, "");
-      if (F.scheme == "file" && this._sources.has(C))
+      if (E.scheme == "file" && this._sources.has(C))
         return this.sourcesContent[this._sources.indexOf(C)];
-      if ((!F.path || F.path == "/") && this._sources.has("/" + A))
+      if ((!E.path || E.path == "/") && this._sources.has("/" + A))
         return this.sourcesContent[this._sources.indexOf("/" + A)];
     }
     if (v)
@@ -1617,12 +1623,12 @@ function su() {
       e.getArg(m, "bias", c.GREATEST_LOWER_BOUND)
     );
     if (A >= 0) {
-      var F = this._originalMappings[A];
-      if (F.source === g.source)
+      var E = this._originalMappings[A];
+      if (E.source === g.source)
         return {
-          line: e.getArg(F, "generatedLine", null),
-          column: e.getArg(F, "generatedColumn", null),
-          lastColumn: e.getArg(F, "lastGeneratedColumn", null)
+          line: e.getArg(E, "generatedLine", null),
+          column: e.getArg(E, "generatedColumn", null),
+          lastColumn: e.getArg(E, "lastGeneratedColumn", null)
         };
     }
     return {
@@ -1638,7 +1644,7 @@ function su() {
     if (g != this._version)
       throw new Error("Unsupported version: " + g);
     this._sources = new i(), this._names = new i();
-    var F = {
+    var E = {
       line: -1,
       column: 0
     };
@@ -1646,9 +1652,9 @@ function su() {
       if (C.url)
         throw new Error("Support for url field in sections not implemented.");
       var x = e.getArg(C, "offset"), I = e.getArg(x, "line"), P = e.getArg(x, "column");
-      if (I < F.line || I === F.line && P < F.column)
+      if (I < E.line || I === E.line && P < E.column)
         throw new Error("Section offsets must be ordered and non-overlapping.");
-      return F = x, {
+      return E = x, {
         generatedOffset: {
           generatedLine: I + 1,
           generatedColumn: P + 1
@@ -1671,9 +1677,9 @@ function su() {
     }, g = t.search(
       v,
       this._sections,
-      function(F, C) {
-        var x = F.generatedLine - C.generatedOffset.generatedLine;
-        return x || F.generatedColumn - C.generatedOffset.generatedColumn;
+      function(E, C) {
+        var x = E.generatedLine - C.generatedOffset.generatedLine;
+        return x || E.generatedColumn - C.generatedOffset.generatedColumn;
       }
     ), A = this._sections[g];
     return A ? A.consumer.originalPositionFor({
@@ -1692,9 +1698,9 @@ function su() {
     });
   }, p.prototype.sourceContentFor = function(m, v) {
     for (var g = 0; g < this._sections.length; g++) {
-      var A = this._sections[g], F = A.consumer.sourceContentFor(m, !0);
-      if (F)
-        return F;
+      var A = this._sections[g], E = A.consumer.sourceContentFor(m, !0);
+      if (E)
+        return E;
     }
     if (v)
       return null;
@@ -1705,11 +1711,11 @@ function su() {
       if (g.consumer._findSourceIndex(e.getArg(m, "source")) !== -1) {
         var A = g.consumer.generatedPositionFor(m);
         if (A) {
-          var F = {
+          var E = {
             line: A.line + (g.generatedOffset.generatedLine - 1),
             column: A.column + (g.generatedOffset.generatedLine === A.line ? g.generatedOffset.generatedColumn - 1 : 0)
           };
-          return F;
+          return E;
         }
       }
     }
@@ -1720,8 +1726,8 @@ function su() {
   }, p.prototype._parseMappings = function(m, v) {
     this.__generatedMappings = [], this.__originalMappings = [];
     for (var g = 0; g < this._sections.length; g++)
-      for (var A = this._sections[g], F = A.consumer._generatedMappings, C = 0; C < F.length; C++) {
-        var x = F[C], I = A.consumer._sources.at(x.source);
+      for (var A = this._sections[g], E = A.consumer._generatedMappings, C = 0; C < E.length; C++) {
+        var x = E[C], I = A.consumer._sources.at(x.source);
         I = e.computeSourceURL(A.consumer.sourceRoot, I, this._sourceMapURL), this._sources.add(I), I = this._sources.indexOf(I);
         var P = null;
         x.name && (P = A.consumer._names.at(x.name), this._names.add(P), P = this._names.indexOf(P));
@@ -1754,18 +1760,18 @@ function au() {
       function y() {
         return g < v.length ? v[g++] : void 0;
       }
-    }, F = 1, C = 0, x = null;
+    }, E = 1, C = 0, x = null;
     return p.eachMapping(function(P) {
       if (x !== null)
-        if (F < P.generatedLine)
-          I(x, A()), F++, C = 0;
+        if (E < P.generatedLine)
+          I(x, A()), E++, C = 0;
         else {
           var M = v[g] || "", y = M.substr(0, P.generatedColumn - C);
           v[g] = M.substr(P.generatedColumn - C), C = P.generatedColumn, I(x, y), x = P;
           return;
         }
-      for (; F < P.generatedLine; )
-        m.add(A()), F++;
+      for (; E < P.generatedLine; )
+        m.add(A()), E++;
       if (C < P.generatedColumn) {
         var M = v[g] || "";
         m.add(M.substr(0, P.generatedColumn)), v[g] = M.substr(P.generatedColumn), C = P.generatedColumn;
@@ -1848,9 +1854,9 @@ function au() {
       code: "",
       line: 1,
       column: 0
-    }, D = new e(f), m = !1, v = null, g = null, A = null, F = null;
+    }, D = new e(f), m = !1, v = null, g = null, A = null, E = null;
     return this.walk(function(C, x) {
-      p.code += C, x.source !== null && x.line !== null && x.column !== null ? ((v !== x.source || g !== x.line || A !== x.column || F !== x.name) && D.addMapping({
+      p.code += C, x.source !== null && x.line !== null && x.column !== null ? ((v !== x.source || g !== x.line || A !== x.column || E !== x.name) && D.addMapping({
         source: x.source,
         original: {
           line: x.line,
@@ -1861,7 +1867,7 @@ function au() {
           column: p.column
         },
         name: x.name
-      }), v = x.source, g = x.line, A = x.column, F = x.name, m = !0) : m && (D.addMapping({
+      }), v = x.source, g = x.line, A = x.column, E = x.name, m = !0) : m && (D.addMapping({
         generated: {
           line: p.line,
           column: p.column
@@ -1953,7 +1959,7 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
 };
 (function(e) {
   (function() {
-    var t, i, u, n, c, a, f, p, D, m, v, g, A, F, C, x, I, P, M, y, E, B, S, w, W, T;
+    var t, i, u, n, c, a, f, p, D, m, v, g, A, E, C, x, I, P, M, y, F, B, S, w, W, T;
     c = bi, a = ft, t = c.Syntax;
     function j(r) {
       return ue.Expression.hasOwnProperty(r.type);
@@ -2257,7 +2263,7 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
         S[l] === `
 ` && d++;
       for (l = 1; l < d; l++)
-        s.push(F);
+        s.push(E);
     }
     function se(r, o, s) {
       return o < s ? ["(", r, ")"] : r;
@@ -2265,7 +2271,7 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
     function Zt(r) {
       var o, s, l;
       for (l = r.split(/\r\n|\n/), o = 1, s = l.length; o < s; o++)
-        l[o] = F + f + l[o];
+        l[o] = E + f + l[o];
       return l;
     }
     function Fr(r, o) {
@@ -2278,13 +2284,13 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
       var s, l, d = this;
       return l = !y.comment || !r.leadingComments, r.type === t.BlockStatement && l ? [C, this.generateStatement(r, o)] : r.type === t.EmptyStatement && l ? ";" : (re(function() {
         s = [
-          F,
+          E,
           fe(d.generateStatement(r, o))
         ];
       }), s);
     }, ue.prototype.maybeBlockSuffix = function(r, o) {
       var s = le($(o).toString());
-      return r.type === t.BlockStatement && (!y.comment || !r.leadingComments) && !s ? [o, C] : s ? [o, f] : [o, F, f];
+      return r.type === t.BlockStatement && (!y.comment || !r.leadingComments) && !s ? [o, C] : s ? [o, f] : [o, E, f];
     };
     function me(r) {
       return $(r.name, r);
@@ -2342,14 +2348,14 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
       return !I && r & Y ? "" : ";";
     }, ue.Statement = {
       BlockStatement: function(r, o) {
-        var s, l, d = ["{", F], b = this;
+        var s, l, d = ["{", E], b = this;
         return re(function() {
           r.body.length === 0 && w && (s = r.range, s[1] - s[0] > 2 && (l = S.substring(s[0] + 1, s[1] - 1), l[0] === `
 ` && (d = ["{"]), d.push(l)));
           var _, k, L, H;
           for (H = Z, o & ne && (H |= ee), _ = 0, k = r.body.length; _ < k; ++_)
             w && (_ === 0 && (r.body[0].leadingComments && (s = r.body[0].leadingComments[0].extendedRange, l = S.substring(s[0], s[1]), l[0] === `
-` && (d = ["{"])), r.body[0].leadingComments || Ue(r.range[0], r.body[0].range[0], d)), _ > 0 && !r.body[_ - 1].trailingComments && !r.body[_].leadingComments && Ue(r.body[_ - 1].range[1], r.body[_].range[0], d)), _ === k - 1 && (H |= Y), r.body[_].leadingComments && w ? L = b.generateStatement(r.body[_], H) : L = fe(b.generateStatement(r.body[_], H)), d.push(L), le($(L).toString()) || w && _ < k - 1 && r.body[_ + 1].leadingComments || d.push(F), w && _ === k - 1 && (r.body[_].trailingComments || Ue(r.body[_].range[1], r.range[1], d));
+` && (d = ["{"])), r.body[0].leadingComments || Ue(r.range[0], r.body[0].range[0], d)), _ > 0 && !r.body[_ - 1].trailingComments && !r.body[_].leadingComments && Ue(r.body[_ - 1].range[1], r.body[_].range[0], d)), _ === k - 1 && (H |= Y), r.body[_].leadingComments && w ? L = b.generateStatement(r.body[_], H) : L = fe(b.generateStatement(r.body[_], H)), d.push(L), le($(L).toString()) || w && _ < k - 1 && r.body[_ + 1].leadingComments || d.push(E), w && _ === k - 1 && (r.body[_].trailingComments || Ue(r.body[_].range[1], r.range[1], d));
         }), d.push(fe("}")), d;
       },
       BreakStatement: function(r, o) {
@@ -2359,12 +2365,12 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
         return r.label ? "continue " + r.label.name + this.semicolon(o) : "continue" + this.semicolon(o);
       },
       ClassBody: function(r, o) {
-        var s = ["{", F], l = this;
+        var s = ["{", E], l = this;
         return re(function(d) {
           var b, _;
           for (b = 0, _ = r.body.length; b < _; ++b)
-            s.push(d), s.push(l.generateExpression(r.body[b], i.Sequence, N)), b + 1 < _ && s.push(F);
-        }), le($(s).toString()) || s.push(F), s.push(f), s.push("}"), s;
+            s.push(d), s.push(l.generateExpression(r.body[b], i.Sequence, N)), b + 1 < _ && s.push(E);
+        }), le($(s).toString()) || s.push(E), s.push(f), s.push("}"), s;
       },
       ClassDeclaration: function(r, o) {
         var s, l;
@@ -2406,9 +2412,9 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
         var s = ["export"], l, d = this;
         return l = o & Y ? De : Z, r.declaration ? U(s, this.generateStatement(r.declaration, l)) : (r.specifiers && (r.specifiers.length === 0 ? s = U(s, "{" + C + "}") : r.specifiers[0].type === t.ExportBatchSpecifier ? s = U(s, this.generateExpression(r.specifiers[0], i.Sequence, N)) : (s = U(s, "{"), re(function(b) {
           var _, k;
-          for (s.push(F), _ = 0, k = r.specifiers.length; _ < k; ++_)
-            s.push(b), s.push(d.generateExpression(r.specifiers[_], i.Sequence, N)), _ + 1 < k && s.push("," + F);
-        }), le($(s).toString()) || s.push(F), s.push(f + "}")), r.source ? s = U(s, [
+          for (s.push(E), _ = 0, k = r.specifiers.length; _ < k; ++_)
+            s.push(b), s.push(d.generateExpression(r.specifiers[_], i.Sequence, N)), _ + 1 < k && s.push("," + E);
+        }), le($(s).toString()) || s.push(E), s.push(f + "}")), r.source ? s = U(s, [
           "from" + C,
           this.generateExpression(r.source, i.Sequence, N),
           this.semicolon(o)
@@ -2459,9 +2465,9 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
           this.generateExpression(r.specifiers[l], i.Sequence, N)
         ]) : (s.push(C + "{"), r.specifiers.length - l === 1 ? (s.push(C), s.push(this.generateExpression(r.specifiers[l], i.Sequence, N)), s.push(C + "}" + C)) : (re(function(b) {
           var _, k;
-          for (s.push(F), _ = l, k = r.specifiers.length; _ < k; ++_)
-            s.push(b), s.push(d.generateExpression(r.specifiers[_], i.Sequence, N)), _ + 1 < k && s.push("," + F);
-        }), le($(s).toString()) || s.push(F), s.push(f + "}" + C)))), s = U(s, [
+          for (s.push(E), _ = l, k = r.specifiers.length; _ < k; ++_)
+            s.push(b), s.push(d.generateExpression(r.specifiers[_], i.Sequence, N)), _ + 1 < k && s.push("," + E);
+        }), le($(s).toString()) || s.push(E), s.push(f + "}" + C)))), s = U(s, [
           "from" + C,
           this.generateExpression(r.source, i.Sequence, N),
           this.semicolon(o)
@@ -2483,7 +2489,7 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
         function L() {
           for (b = r.declarations[0], y.comment && b.leadingComments ? (s.push(`
 `), s.push(fe(k.generateStatement(b, _)))) : (s.push(ce()), s.push(k.generateStatement(b, _))), l = 1, d = r.declarations.length; l < d; ++l)
-            b = r.declarations[l], y.comment && b.leadingComments ? (s.push("," + F), s.push(fe(k.generateStatement(b, _)))) : (s.push("," + C), s.push(k.generateStatement(b, _)));
+            b = r.declarations[l], y.comment && b.leadingComments ? (s.push("," + E), s.push(fe(k.generateStatement(b, _)))) : (s.push("," + C), s.push(k.generateStatement(b, _)));
         }
         return r.declarations.length > 1 ? re(L) : L(), s.push(this.semicolon(o)), s;
       },
@@ -2516,11 +2522,11 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
           s = [
             "switch" + C + "(",
             k.generateExpression(r.discriminant, i.Sequence, N),
-            ")" + C + "{" + F
+            ")" + C + "{" + E
           ];
         }), r.cases)
           for (_ = Z, d = 0, b = r.cases.length; d < b; ++d)
-            d === b - 1 && (_ |= Y), l = fe(this.generateStatement(r.cases[d], _)), s.push(l), le($(l).toString()) || s.push(F);
+            d === b - 1 && (_ |= Y), l = fe(this.generateStatement(r.cases[d], _)), s.push(l), le($(l).toString()) || s.push(E);
         return s.push(fe("}")), s;
       },
       SwitchCase: function(r, o) {
@@ -2529,8 +2535,8 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
           for (r.test ? s = [
             U("case", k.generateExpression(r.test, i.Sequence, N)),
             ":"
-          ] : s = ["default:"], d = 0, b = r.consequent.length, b && r.consequent[0].type === t.BlockStatement && (l = k.maybeBlock(r.consequent[0], Z), s.push(l), d = 1), d !== b && !le($(s).toString()) && s.push(F), _ = Z; d < b; ++d)
-            d === b - 1 && o & Y && (_ |= Y), l = fe(k.generateStatement(r.consequent[d], _)), s.push(l), d + 1 !== b && !le($(l).toString()) && s.push(F);
+          ] : s = ["default:"], d = 0, b = r.consequent.length, b && r.consequent[0].type === t.BlockStatement && (l = k.maybeBlock(r.consequent[0], Z), s.push(l), d = 1), d !== b && !le($(s).toString()) && s.push(E), _ = Z; d < b; ++d)
+            d === b - 1 && o & Y && (_ |= Y), l = fe(k.generateStatement(r.consequent[d], _)), s.push(l), d + 1 !== b && !le($(l).toString()) && s.push(E);
         }), s;
       },
       IfStatement: function(r, o) {
@@ -2562,7 +2568,7 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
         var s, l, d, b, _;
         for (b = r.body.length, s = [P && b > 0 ? `
 ` : ""], _ = cr, d = 0; d < b; ++d)
-          !P && d === b - 1 && (_ |= Y), w && (d === 0 && (r.body[0].leadingComments || Ue(r.range[0], r.body[d].range[0], s)), d > 0 && !r.body[d - 1].trailingComments && !r.body[d].leadingComments && Ue(r.body[d - 1].range[1], r.body[d].range[0], s)), l = fe(this.generateStatement(r.body[d], _)), s.push(l), d + 1 < b && !le($(l).toString()) && (w && r.body[d + 1].leadingComments || s.push(F)), w && d === b - 1 && (r.body[d].trailingComments || Ue(r.body[d].range[1], r.range[1], s));
+          !P && d === b - 1 && (_ |= Y), w && (d === 0 && (r.body[0].leadingComments || Ue(r.range[0], r.body[d].range[0], s)), d > 0 && !r.body[d - 1].trailingComments && !r.body[d].leadingComments && Ue(r.body[d - 1].range[1], r.body[d].range[0], s)), l = fe(this.generateStatement(r.body[d], _)), s.push(l), d + 1 < b && !le($(l).toString()) && (w && r.body[d + 1].leadingComments || s.push(E)), w && d === b - 1 && (r.body[d].trailingComments || Ue(r.body[d].range[1], r.range[1], s));
         return s;
       },
       FunctionDeclaration: function(r, o) {
@@ -2711,11 +2717,11 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
       },
       ArrayExpression: function(r, o, s, l) {
         var d, b, _ = this;
-        return r.elements.length ? (b = l ? !1 : r.elements.length > 1, d = ["[", b ? F : ""], re(function(k) {
+        return r.elements.length ? (b = l ? !1 : r.elements.length > 1, d = ["[", b ? E : ""], re(function(k) {
           var L, H;
           for (L = 0, H = r.elements.length; L < H; ++L)
-            r.elements[L] ? (d.push(b ? k : ""), d.push(_.generateExpression(r.elements[L], i.Assignment, N))) : (b && d.push(k), L + 1 === H && d.push(",")), L + 1 < H && d.push("," + (b ? F : C));
-        }), b && !le($(d).toString()) && d.push(F), d.push(b ? f : ""), d.push("]"), d) : "[]";
+            r.elements[L] ? (d.push(b ? k : ""), d.push(_.generateExpression(r.elements[L], i.Assignment, N))) : (b && d.push(k), L + 1 === H && d.push(",")), L + 1 < H && d.push("," + (b ? E : C));
+        }), b && !le($(d).toString()) && d.push(E), d.push(b ? f : ""), d.push("]"), d) : "[]";
       },
       RestElement: function(r, o, s) {
         return "..." + this.generatePattern(r.argument);
@@ -2757,10 +2763,10 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
           b = _.generateExpression(r.properties[0], i.Sequence, N);
         }), !l && !fr($(b).toString()) ? ["{", C, b, C, "}"] : (re(function(k) {
           var L, H;
-          if (d = ["{", F, k, b], l)
-            for (d.push("," + F), L = 1, H = r.properties.length; L < H; ++L)
-              d.push(k), d.push(_.generateExpression(r.properties[L], i.Sequence, N)), L + 1 < H && d.push("," + F);
-        }), le($(d).toString()) || d.push(F), d.push(f), d.push("}"), d)) : "{}";
+          if (d = ["{", E, k, b], l)
+            for (d.push("," + E), L = 1, H = r.properties.length; L < H; ++L)
+              d.push(k), d.push(_.generateExpression(r.properties[L], i.Sequence, N)), L + 1 < H && d.push("," + E);
+        }), le($(d).toString()) || d.push(E), d.push(f), d.push("}"), d)) : "{}";
       },
       AssignmentPattern: function(r, o, s) {
         return this.generateAssignment(r.left, r.right, "=", o, s);
@@ -2777,11 +2783,11 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
               _ = !0;
               break;
             }
-        return l = ["{", _ ? F : ""], re(function(H) {
+        return l = ["{", _ ? E : ""], re(function(H) {
           var ae, Ve;
           for (ae = 0, Ve = r.properties.length; ae < Ve; ++ae)
-            l.push(_ ? H : ""), l.push(L.generateExpression(r.properties[ae], i.Sequence, N)), ae + 1 < Ve && l.push("," + (_ ? F : C));
-        }), _ && !le($(l).toString()) && l.push(F), l.push(_ ? f : ""), l.push("}"), l;
+            l.push(_ ? H : ""), l.push(L.generateExpression(r.properties[ae], i.Sequence, N)), ae + 1 < Ve && l.push("," + (_ ? E : C));
+        }), _ && !le($(l).toString()) && l.push(E), l.push(_ ? f : ""), l.push("}"), l;
       },
       ThisExpression: function(r, o, s) {
         return "this";
@@ -2809,9 +2815,9 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
       },
       Literal: function(r, o, s) {
         var l;
-        if (r.hasOwnProperty("raw") && E && y.raw)
+        if (r.hasOwnProperty("raw") && F && y.raw)
           try {
-            if (l = E(r.raw).body[0].expression, l.type === t.Literal && l.value === r.value)
+            if (l = F(r.raw).body[0].expression, l.type === t.Literal && l.value === r.value)
               return r.raw;
           } catch {
           }
@@ -2874,7 +2880,7 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
       return d = r.type || t.Property, y.verbatim && r.hasOwnProperty(y.verbatim) ? Fr(r, o) : (l = this[d](r, o, s), y.comment && (l = Xt(r, l)), $(l, r));
     }, ue.prototype.generateStatement = function(r, o) {
       var s, l;
-      return s = this[r.type](r, o), y.comment && (s = Xt(r, s)), l = $(s).toString(), r.type === t.Program && !P && F === "" && l.charAt(l.length - 1) === `
+      return s = this[r.type](r, o), y.comment && (s = Xt(r, s)), l = $(s).toString(), r.type === t.Program && !P && E === "" && l.charAt(l.length - 1) === `
 ` && (s = B ? $(s).replaceRight(/\s+$/, "") : l.replace(/\s+$/, "")), $(s, r);
     };
     function vr(r) {
@@ -2887,7 +2893,7 @@ const lu = "escodegen", cu = "ECMAScript code generator", hu = "http://github.co
     }
     function xr(r, o) {
       var s = Ht(), l, d;
-      return o != null ? (typeof o.indent == "string" && (s.format.indent.style = o.indent), typeof o.base == "number" && (s.format.indent.base = o.base), o = at(s, o), p = o.format.indent.style, typeof o.base == "string" ? f = o.base : f = Oe(p, o.format.indent.base)) : (o = s, p = o.format.indent.style, f = Oe(p, o.format.indent.base)), D = o.format.json, m = o.format.renumber, v = D ? !1 : o.format.hexadecimal, g = D ? "double" : o.format.quotes, A = o.format.escapeless, F = o.format.newline, C = o.format.space, o.format.compact && (F = C = p = f = ""), x = o.format.parentheses, I = o.format.semicolons, P = o.format.safeConcatenation, M = o.directive, E = D ? null : o.parse, B = o.sourceMap, S = o.sourceCode, w = o.format.preserveBlankLines && S !== null, y = o, B && (e.browser ? n = tu.sourceMap.SourceNode : n = ou().SourceNode), l = vr(r), B ? (d = l.toStringWithSourceMap({
+      return o != null ? (typeof o.indent == "string" && (s.format.indent.style = o.indent), typeof o.base == "number" && (s.format.indent.base = o.base), o = at(s, o), p = o.format.indent.style, typeof o.base == "string" ? f = o.base : f = Oe(p, o.format.indent.base)) : (o = s, p = o.format.indent.style, f = Oe(p, o.format.indent.base)), D = o.format.json, m = o.format.renumber, v = D ? !1 : o.format.hexadecimal, g = D ? "double" : o.format.quotes, A = o.format.escapeless, E = o.format.newline, C = o.format.space, o.format.compact && (E = C = p = f = ""), x = o.format.parentheses, I = o.format.semicolons, P = o.format.safeConcatenation, M = o.directive, F = D ? null : o.parse, B = o.sourceMap, S = o.sourceCode, w = o.format.preserveBlankLines && S !== null, y = o, B && (e.browser ? n = tu.sourceMap.SourceNode : n = ou().SourceNode), l = vr(r), B ? (d = l.toStringWithSourceMap({
         file: o.file,
         sourceRoot: o.sourceMapRoot
       }), o.sourceContent && d.map.setSourceContent(
@@ -4061,12 +4067,12 @@ G.parseSubscript = function(e, t, i, u, n, c, a) {
     var m = this.startNodeAt(t, i);
     m.object = e, D ? (m.property = this.parseExpression(), this.expect(h.bracketR)) : this.type === h.privateId && e.type !== "Super" ? m.property = this.parsePrivateIdent() : m.property = this.parseIdent(this.options.allowReserved !== "never"), m.computed = !!D, f && (m.optional = p), e = this.finishNode(m, "MemberExpression");
   } else if (!u && this.eat(h.parenL)) {
-    var v = new At(), g = this.yieldPos, A = this.awaitPos, F = this.awaitIdentPos;
+    var v = new At(), g = this.yieldPos, A = this.awaitPos, E = this.awaitIdentPos;
     this.yieldPos = 0, this.awaitPos = 0, this.awaitIdentPos = 0;
     var C = this.parseExprList(h.parenR, this.options.ecmaVersion >= 8, !1, v);
     if (n && !p && !this.canInsertSemicolon() && this.eat(h.arrow))
-      return this.checkPatternErrors(v, !1), this.checkYieldAwaitInDefaultParams(), this.awaitIdentPos > 0 && this.raise(this.awaitIdentPos, "Cannot use 'await' as identifier inside an async function"), this.yieldPos = g, this.awaitPos = A, this.awaitIdentPos = F, this.parseArrowExpression(this.startNodeAt(t, i), C, !0, a);
-    this.checkExpressionErrors(v, !0), this.yieldPos = g || this.yieldPos, this.awaitPos = A || this.awaitPos, this.awaitIdentPos = F || this.awaitIdentPos;
+      return this.checkPatternErrors(v, !1), this.checkYieldAwaitInDefaultParams(), this.awaitIdentPos > 0 && this.raise(this.awaitIdentPos, "Cannot use 'await' as identifier inside an async function"), this.yieldPos = g, this.awaitPos = A, this.awaitIdentPos = E, this.parseArrowExpression(this.startNodeAt(t, i), C, !0, a);
+    this.checkExpressionErrors(v, !0), this.yieldPos = g || this.yieldPos, this.awaitPos = A || this.awaitPos, this.awaitIdentPos = E || this.awaitIdentPos;
     var x = this.startNodeAt(t, i);
     x.callee = e, x.arguments = C, f && (x.optional = p), e = this.finishNode(x, "CallExpression");
   } else if (this.type === h.backQuote) {
@@ -4164,20 +4170,20 @@ G.parseParenAndDistinguishExpression = function(e, t) {
   var i = this.start, u = this.startLoc, n, c = this.options.ecmaVersion >= 8;
   if (this.options.ecmaVersion >= 6) {
     this.next();
-    var a = this.start, f = this.startLoc, p = [], D = !0, m = !1, v = new At(), g = this.yieldPos, A = this.awaitPos, F;
+    var a = this.start, f = this.startLoc, p = [], D = !0, m = !1, v = new At(), g = this.yieldPos, A = this.awaitPos, E;
     for (this.yieldPos = 0, this.awaitPos = 0; this.type !== h.parenR; )
       if (D ? D = !1 : this.expect(h.comma), c && this.afterTrailingComma(h.parenR, !0)) {
         m = !0;
         break;
       } else if (this.type === h.ellipsis) {
-        F = this.start, p.push(this.parseParenItem(this.parseRestBinding())), this.type === h.comma && this.raise(this.start, "Comma is not permitted after the rest element");
+        E = this.start, p.push(this.parseParenItem(this.parseRestBinding())), this.type === h.comma && this.raise(this.start, "Comma is not permitted after the rest element");
         break;
       } else
         p.push(this.parseMaybeAssign(!1, v, this.parseParenItem));
     var C = this.lastTokEnd, x = this.lastTokEndLoc;
     if (this.expect(h.parenR), e && !this.canInsertSemicolon() && this.eat(h.arrow))
       return this.checkPatternErrors(v, !1), this.checkYieldAwaitInDefaultParams(), this.yieldPos = g, this.awaitPos = A, this.parseParenArrowList(i, u, p, t);
-    (!p.length || m) && this.unexpected(this.lastTokStart), F && this.unexpected(F), this.checkExpressionErrors(v, !0), this.yieldPos = g || this.yieldPos, this.awaitPos = A || this.awaitPos, p.length > 1 ? (n = this.startNodeAt(a, f), n.expressions = p, this.finishNodeAt(n, "SequenceExpression", C, x)) : n = p[0];
+    (!p.length || m) && this.unexpected(this.lastTokStart), E && this.unexpected(E), this.checkExpressionErrors(v, !0), this.yieldPos = g || this.yieldPos, this.awaitPos = A || this.awaitPos, p.length > 1 ? (n = this.startNodeAt(a, f), n.expressions = p, this.finishNodeAt(n, "SequenceExpression", C, x)) : n = p[0];
   } else
     n = this.parseParenExpression();
   if (this.options.preserveParens) {
@@ -5477,11 +5483,11 @@ function an(e, t = {}) {
   sn(c, {
     enter(p, D, m, v) {
       if (ln(p, D)) {
-        const { quasis: g, start: A, end: F } = p, { raw: C } = g[0].value;
+        const { quasis: g, start: A, end: E } = p, { raw: C } = g[0].value;
         return this.skip(), this.replace(Ci(C, p, n));
       }
       if (on(p)) {
-        const { value: g, start: A, end: F } = p;
+        const { value: g, start: A, end: E } = p;
         return this.skip(), this.replace(Ci(g, p, n));
       }
       if (p.type === "Identifier" && Ir(p.name))
@@ -5571,7 +5577,7 @@ function Ci(e, t, i) {
   };
 }
 function cn({ defaultOutput: e, interval: t, getTime: i, evalOnMount: u = !1, initialCode: n = "" }) {
-  const [c, a] = we(), [f, p] = we(), [D, m] = we(n), [v, g] = we(D), [A, F] = we(), [C, x] = we(!1), I = D !== v, { scheduler: P, evaluate: M, start: y, stop: E, pause: B } = Ai(
+  const [c, a] = we(), [f, p] = we(), [D, m] = we(n), [v, g] = we(D), [A, E] = we(), [C, x] = we(!1), I = D !== v, { scheduler: P, evaluate: M, start: y, stop: F, pause: B } = Ai(
     () => eu({
       interval: t,
       defaultOutput: e,
@@ -5584,7 +5590,7 @@ function cn({ defaultOutput: e, interval: t, getTime: i, evalOnMount: u = !1, in
       },
       onEvalError: p,
       afterEval: ({ pattern: j, code: V }) => {
-        g(V), F(j), p();
+        g(V), E(j), p();
       },
       onToggle: (j) => x(j)
     }),
@@ -5606,7 +5612,7 @@ function cn({ defaultOutput: e, interval: t, getTime: i, evalOnMount: u = !1, in
     pattern: A,
     started: C,
     start: y,
-    stop: E,
+    stop: F,
     pause: B,
     togglePlay: async () => {
       C ? P.pause() : await S();
@@ -5626,7 +5632,7 @@ function xn({ tune: e, hideOutsideView: t = !1, init: i, enableKeyboard: u }) {
     pattern: v,
     started: g,
     scheduler: A,
-    togglePlay: F,
+    togglePlay: E,
     stop: C
   } = cn({
     initialCode: e,
@@ -5634,7 +5640,7 @@ function xn({ tune: e, hideOutsideView: t = !1, init: i, enableKeyboard: u }) {
     getTime: hn
   }), [x, I] = we(), [P, M] = Br({
     threshold: 0.01
-  }), y = pt(), E = Ai(() => ((M || !t) && (y.current = !0), M || y.current), [M, t]);
+  }), y = pt(), F = Ai(() => ((M || !t) && (y.current = !0), M || y.current), [M, t]);
   return Vr({
     view: x,
     pattern: v,
@@ -5656,7 +5662,7 @@ function xn({ tune: e, hideOutsideView: t = !1, init: i, enableKeyboard: u }) {
     className: Le.buttons
   }, /* @__PURE__ */ he.createElement("button", {
     className: ti(Le.button, g ? "sc-animate-pulse" : ""),
-    onClick: () => F()
+    onClick: () => E()
   }, /* @__PURE__ */ he.createElement(ii, {
     type: g ? "pause" : "play"
   })), /* @__PURE__ */ he.createElement("button", {
@@ -5668,7 +5674,7 @@ function xn({ tune: e, hideOutsideView: t = !1, init: i, enableKeyboard: u }) {
     className: Le.error
   }, p.message)), /* @__PURE__ */ he.createElement("div", {
     className: Le.body
-  }, E && /* @__PURE__ */ he.createElement(Or, {
+  }, F && /* @__PURE__ */ he.createElement(Or, {
     value: n,
     onChange: c,
     onViewChanged: I
