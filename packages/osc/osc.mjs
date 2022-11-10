@@ -28,8 +28,6 @@ function connect() {
       connection = undefined;
       throw new Error('Could not connect to OSC server. Is it running?');
     });
-  } else {
-    console.log('already has connection');
   }
   return connection;
 }
