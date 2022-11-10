@@ -130,7 +130,7 @@ export const rand = signal(timeToRand);
 export const rand2 = rand._toBipolar();
 
 export const _brandBy = (p) => rand.fmap((x) => x < p);
-export const brandBy = (pPat) => reify(pPat).fmap(_brandBy).innerJoin();
+export const brandBy = (pPat) => reify(pPat).fmap(_brandBy)._innerJoin();
 export const brand = _brandBy(0.5);
 
 export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
@@ -145,7 +145,7 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
  * irand(8).struct("x(3,8)").scale('C minor').note()
  *
  */
-export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
+export const irand = (ipat) => reify(ipat).fmap(_irand)._innerJoin();
 
 export const __chooseWith = (pat, xs) => {
   xs = xs.map(reify);
@@ -162,7 +162,7 @@ export const __chooseWith = (pat, xs) => {
  * @returns {Pattern}
  */
 export const chooseWith = (pat, xs) => {
-  return __chooseWith(pat, xs).outerJoin();
+  return __chooseWith(pat, xs)._outerJoin();
 };
 
 /**
@@ -173,7 +173,7 @@ export const chooseWith = (pat, xs) => {
  * @returns {Pattern}
  */
 export const chooseInWith = (pat, xs) => {
-  return __chooseWith(pat, xs).innerJoin();
+  return __chooseWith(pat, xs)._innerJoin();
 };
 
 /**
@@ -232,11 +232,11 @@ const _wchooseWith = function (pat, ...pairs) {
   return pat.fmap(match);
 };
 
-const wchooseWith = (...args) => _wchooseWith(...args).outerJoin();
+const wchooseWith = (...args) => _wchooseWith(...args)._outerJoin();
 
 export const wchoose = (...pairs) => wchooseWith(rand, ...pairs);
 
-export const wchooseCycles = (...pairs) => _wchooseWith(rand, ...pairs).innerJoin();
+export const wchooseCycles = (...pairs) => _wchooseWith(rand, ...pairs)._innerJoin();
 
 // this function expects pat to be a pattern of floats...
 export const perlinWith = (pat) => {
@@ -244,7 +244,7 @@ export const perlinWith = (pat) => {
   const patb = pat.fmap((t) => Math.floor(t) + 1);
   const smootherStep = (x) => 6.0 * x ** 5 - 15.0 * x ** 4 + 10.0 * x ** 3;
   const interp = (x) => (a) => (b) => a + smootherStep(x) * (b - a);
-  return pat.sub(pata).fmap(interp).appBoth(pata.fmap(timeToRand)).appBoth(patb.fmap(timeToRand));
+  return pat.sub(pata).fmap(interp)._appBoth(pata.fmap(timeToRand))._appBoth(patb.fmap(timeToRand));
 };
 
 /**
@@ -259,7 +259,7 @@ export const perlinWith = (pat) => {
 export const perlin = perlinWith(time.fmap((v) => Number(v)));
 
 Pattern.prototype._degradeByWith = function (withPat, x) {
-  return this.fmap((a) => (_) => a).appLeft(withPat._filterValues((v) => v > x));
+  return this.fmap((a) => (_) => a)._appLeft(withPat._filterValues((v) => v > x));
 };
 
 /**
@@ -347,7 +347,7 @@ Pattern.prototype.sometimesBy = function (patx, func) {
   const pat = this;
   return reify(patx)
     .fmap((x) => pat._sometimesBy(x, func))
-    .innerJoin();
+    ._innerJoin();
 };
 
 // why does this exist? it is identical to sometimesBy
@@ -359,7 +359,7 @@ Pattern.prototype.sometimesByPre = function (patx, func) {
   const pat = this;
   return reify(patx)
     .fmap((x) => pat._sometimesByPre(x, func))
-    .innerJoin();
+    ._innerJoin();
 };
 
 /**
@@ -405,7 +405,7 @@ Pattern.prototype.someCyclesBy = function (patx, func) {
   const pat = this;
   return reify(patx)
     .fmap((x) => pat._someCyclesBy(x, func))
-    .innerJoin();
+    ._innerJoin();
 };
 
 /**
