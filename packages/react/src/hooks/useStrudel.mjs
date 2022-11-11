@@ -2,7 +2,17 @@ import { useRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { repl } from '@strudel.cycles/core/repl.mjs';
 import { transpiler } from '@strudel.cycles/transpiler';
 
-function useStrudel({ defaultOutput, interval, getTime, evalOnMount = false, initialCode = '', autolink = false }) {
+function useStrudel({
+  defaultOutput,
+  interval,
+  getTime,
+  evalOnMount = false,
+  initialCode = '',
+  autolink = false,
+  afterEval,
+  onEvalError,
+  onLog,
+}) {
   // scheduler
   const [schedulerError, setSchedulerError] = useState();
   const [evalError, setEvalError] = useState();
@@ -17,15 +27,18 @@ function useStrudel({ defaultOutput, interval, getTime, evalOnMount = false, ini
     () =>
       repl({
         interval,
+        onLog,
         defaultOutput,
         onSchedulerError: setSchedulerError,
-        onEvalError: setEvalError,
+        onEvalError: (err) => {
+          setEvalError(err);
+          onEvalError?.(err);
+        },
         getTime,
         transpiler,
         beforeEval: ({ code }) => {
           setCode(code);
         },
-        onEvalError: setEvalError,
         afterEval: ({ pattern: _pattern, code }) => {
           setActiveCode(code);
           setPattern(_pattern);
@@ -34,6 +47,7 @@ function useStrudel({ defaultOutput, interval, getTime, evalOnMount = false, ini
           if (autolink) {
             window.location.hash = '#' + encodeURIComponent(btoa(code));
           }
+          afterEval?.();
         },
         onToggle: (v) => setStarted(v),
       }),

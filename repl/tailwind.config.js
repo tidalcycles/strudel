@@ -6,9 +6,18 @@ This program is free software: you can redistribute it and/or modify it under th
 
 module.exports = {
   // TODO: find out if leaving out tutorial path works now
-  content: ['./src/**/*.{js,jsx,ts,tsx}','./tutorial/**/*.{js,jsx,ts,tsx}'],
+  content: ['./src/**/*.{js,jsx,ts,tsx}', './tutorial/**/*.{js,jsx,ts,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#c792ea',
+        secondary: '#c3e88d',
+        tertiary: '#82aaff',
+        highlight: '#ffcc00',
+        linegray: '#8a91991a',
+        lineblack: '#00000095',
+      },
+    },
   },
   plugins: [require('@tailwindcss/typography')],
 };

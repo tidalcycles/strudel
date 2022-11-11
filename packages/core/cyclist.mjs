@@ -13,9 +13,10 @@ export class Cyclist {
   cps = 1; // TODO
   getTime;
   phase = 0;
-  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
+  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1, onLog }) {
     this.getTime = getTime;
     this.onToggle = onToggle;
+    this.onLog = onLog;
     this.latency = latency;
     const round = (x) => Math.round(x * 1000) / 1000;
     this.clock = createClock(
@@ -56,14 +57,17 @@ export class Cyclist {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
+    this.onLog?.('start');
     this.clock.start();
     this.setStarted(true);
   }
   pause() {
+    this.onLog?.('pause');
     this.clock.pause();
     this.setStarted(false);
   }
   stop() {
+    this.onLog?.('stop');
     this.clock.stop();
     this.setStarted(false);
   }

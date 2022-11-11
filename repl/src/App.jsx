@@ -19,6 +19,12 @@ import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { useStrudel } from '@strudel.cycles/react';
 import { webaudioOutput, initAudioOnFirstClick } from '@strudel.cycles/webaudio';
+import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
+import StopCircleIcon from '@heroicons/react/20/solid/StopCircleIcon';
+import CommandLineIcon from '@heroicons/react/20/solid/CommandLineIcon';
+import SparklesIcon from '@heroicons/react/20/solid/SparklesIcon';
+import LinkIcon from '@heroicons/react/20/solid/LinkIcon';
+import AcademicCapIcon from '@heroicons/react/20/solid/AcademicCapIcon';
 
 initAudioOnFirstClick();
 
@@ -46,8 +52,6 @@ evalScope(
 
 prebake();
 
-const pushLog = (message) =>
-  logger(`%c${message}`, 'background-color: black;color:white;padding:4px;border-radius:15px');
 const hideHeader = false;
 const pending = false;
 const getTime = () => getAudioContext().currentTime;
@@ -83,48 +87,64 @@ async function initCode() {
 }
 
 function getRandomTune() {
-  const allTunes = Object.values(tunes);
+  const allTunes = Object.entries(tunes);
   const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
-  return randomItem(allTunes);
+  const [name, code] = randomItem(allTunes);
+  return { name, code };
 }
 
-const randomTune = getRandomTune();
+const { code: randomTune, name } = getRandomTune();
 const isEmbedded = window.location !== window.parent.location;
 function App() {
   // const [editor, setEditor] = useState();
   const [view, setView] = useState();
   const [lastShared, setLastShared] = useState();
 
-  const {
-    code,
-    setCode,
-    scheduler,
-    evaluate,
-    activateCode,
-    error,
-    isDirty,
-    activeCode,
-    pattern,
-    started,
-    togglePlay,
-    stop,
-  } = useStrudel({
-    initialCode: '// LOADING',
-    defaultOutput: webaudioOutput,
-    getTime,
-    autolink: true,
-  });
-  useEffect(() => {
-    initCode().then((decoded) => setCode(decoded || randomTune));
-  }, []);
+  // logger
+  const [log, setLog] = useState([]);
+  const pushLog = (message, type) => {
+    setLog((l) => {
+      logger(message);
+      const lastLog = l.length ? l[l.length - 1] : undefined;
+      const index = (lastLog?.index ?? -1) + 1;
+      if (lastLog && lastLog.message === message) {
+        l = l.slice(0, -1).concat([{ message, type, count: (lastLog.count ?? 1) + 1, index }]);
+      } else {
+        l = l.concat([{ message, type, index }]);
+      }
+      return l.slice(-20);
+    });
+  };
   const logBox = useRef();
-  // scroll log box to bottom when log changes
-
-  /*   useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (logBox.current) {
+      // scroll log box to bottom when log changes
       logBox.current.scrollTop = logBox.current?.scrollHeight;
     }
-  }, [log]); */
+  }, [log]);
+
+  // repl
+  const { code, setCode, scheduler, evaluate, activateCode, error, isDirty, activeCode, pattern, started, stop } =
+    useStrudel({
+      initialCode: '// LOADING',
+      defaultOutput: webaudioOutput,
+      getTime,
+      autolink: true,
+      onLog: pushLog,
+    });
+
+  // init code
+  useEffect(() => {
+    initCode().then((decoded) => {
+      pushLog(
+        `🌀 Welcome to Strudel! ${
+          decoded ? `Code was decoded from the URL` : `A random code snippet named "${name}" has been loaded!`
+        } Press play or hit ctrl+enter to listen!`,
+        'info',
+      );
+      setCode(decoded || randomTune);
+    });
+  }, []);
 
   // set active pattern on ctrl+enter
   useLayoutEffect(() => {
@@ -154,47 +174,47 @@ function App() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen flex flex-col">
       {!hideHeader && (
         <header
           id="header"
           className={cx(
-            'flex-none w-full px-2 flex border-b border-gray-200  justify-between z-[10] bg-gray-100',
-            isEmbedded ? 'h-8' : 'h-14',
+            'flex-none w-full md:flex text-black shadow-lg justify-between z-[100] text-lg bg-linegray select-none sticky top-0',
+            isEmbedded ? 'h-12 md:h-8' : 'h-25 md:h-14',
           )}
         >
-          <div className="flex items-center space-x-2">
-            <img src={logo} className={cx('Tidal-logo', isEmbedded ? 'w-6 h-6' : 'w-10 h-10')} alt="logo" />
-            <h1 className={isEmbedded ? 'text-l' : 'text-xl'}>Strudel {isEmbedded ? 'Mini ' : ''}REPL</h1>
+          <div className="px-2 flex items-center space-x-2 pt-2 md:pt-0 pointer-events-none">
+            <img
+              src={logo}
+              className={cx('Tidal-logo', isEmbedded ? 'w-8 h-8' : 'w-10 h-10')} // 'bg-[#ffffff80] rounded-full'
+              alt="logo"
+            />
+            <h1
+              className={cx(
+                isEmbedded ? 'text-l' : 'text-xl',
+                // 'bg-clip-text bg-gradient-to-r from-primary to-secondary  text-transparent font-bold',
+                'text-white font-bold',
+              )}
+            >
+              strudel <span className="text-sm">REPL</span>
+            </h1>
           </div>
-          <div className="flex">
+          <div className="flex max-w-full overflow-auto text-white ">
             <button
               onClick={async () => {
                 await getAudioContext().resume(); // fixes no sound in ios webkit
-                togglePlay();
+                if (!started) {
+                  activateCode();
+                } else {
+                  stop();
+                }
               }}
-              className={cx('hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}
+              className={cx(!isEmbedded ? 'p-2' : 'px-2')}
             >
               {!pending ? (
-                <span className={cx('flex items-center', isEmbedded ? 'w-16' : 'w-16')}>
-                  {started ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                  {started ? 'pause' : 'play'}
+                <span className={cx('flex items-center space-x-1 hover:text-primary', isEmbedded ? 'w-16' : 'w-16')}>
+                  {started ? <StopCircleIcon className="w-5 h-5" /> : <PlayCircleIcon className="w-5 h-5" />}
+                  <span>{started ? 'stop' : 'play'}</span>
                 </span>
               ) : (
                 <>loading...</>
@@ -206,37 +226,48 @@ function App() {
                 pushLog('Code updated! Tip: You can also update the code by pressing ctrl+enter.');
               }}
               className={cx(
-                'hover:bg-gray-300',
+                'flex items-center space-x-1',
                 !isEmbedded ? 'p-2' : 'px-2',
-                !isDirty || !activeCode ? 'opacity-50' : '',
+                !isDirty || !activeCode ? 'opacity-50' : 'hover:text-primary',
               )}
             >
-              🔄 update
+              <CommandLineIcon className="w-5 h-5" />
+              <span>update</span>
             </button>
             {!isEmbedded && (
               <button
-                className="hover:bg-gray-300 p-2"
+                className="hover:text-primary p-2 flex items-center space-x-1"
                 onClick={async () => {
-                  const _code = getRandomTune();
+                  const { code, name } = getRandomTune();
+                  pushLog(`✨ loading random tune "${name}"`);
                   /*
                   cleanupDraw();
                   cleanupUi(); */
                   resetLoadedSamples();
                   await prebake(); // declare default samples
-                  await evaluate(_code, false);
+                  await evaluate(code, false);
                 }}
               >
-                🎲 random
+                <SparklesIcon className="w-5 h-5" />
+                <span> shuffle</span>
+                {/*  <MusicalNoteIcon /> <RadioIcon/>  */}
               </button>
             )}
             {!isEmbedded && (
-              <button className={cx('hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}>
-                <a href="./tutorial">📚 tutorial</a>
-              </button>
+              <a
+                href="./tutorial"
+                className={cx('hover:text-primary flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
+              >
+                <AcademicCapIcon className="w-5 h-5" />
+                <span>learn</span>
+              </a>
             )}
             {!isEmbedded && (
               <button
-                className={cx('cursor-pointer hover:bg-gray-300', !isEmbedded ? 'p-2' : 'px-2')}
+                className={cx(
+                  'cursor-pointer hover:text-primary flex items-center space-x-1',
+                  !isEmbedded ? 'p-2' : 'px-2',
+                )}
                 onClick={async () => {
                   const codeToShare = activeCode || code;
                   if (lastShared === codeToShare) {
@@ -263,18 +294,20 @@ function App() {
                   }
                 }}
               >
-                📣 share{lastShared && lastShared === (activeCode || code) ? 'd!' : ''}
+                <LinkIcon className="w-5 h-5" />
+                <span>share{lastShared && lastShared === (activeCode || code) ? 'd!' : ''}</span>
+                {/* GlobaAlt Megaphone PaperAirplane Share */}
               </button>
             )}
             {isEmbedded && (
-              <button className={cx('hover:bg-gray-300 px-2')}>
+              <button className={cx('hover:text-primary px-2')}>
                 <a href={window.location.href} target="_blank" rel="noopener noreferrer" title="Open in REPL">
                   🚀 open
                 </a>
               </button>
             )}
             {isEmbedded && (
-              <button className={cx('hover:bg-gray-300 px-2')}>
+              <button className={cx('hover:text-primary px-2')}>
                 <a
                   onClick={() => {
                     window.location.href = initialUrl;
@@ -289,45 +322,94 @@ function App() {
           </div>
         </header>
       )}
-      <section className="grow flex flex-col text-gray-100">
-        <div className="grow relative flex overflow-auto pb-8 cursor-text" id="code">
-          {/* onCursor={markParens} */}
-          <CodeMirror value={code} onChange={setCode} onViewChanged={setView} />
-          <span className="z-[20] bg-black rounded-t-md py-1 px-2 fixed bottom-0 right-1 text-xs whitespace-pre text-right pointer-events-none">
-            {!started
-              ? `press ctrl+enter to play\n`
-              : isDirty
-              ? `press ctrl+enter to update\n`
-              : 'press ctrl+dot do stop\n'}
-          </span>
-          {error && (
-            <div
-              className={cx(
-                'rounded-md fixed pointer-events-none left-2 bottom-1 text-xs bg-black px-2 z-[20]',
-                'text-red-500',
-              )}
-            >
-              {error?.message || 'unknown error'}
-            </div>
-          )}
-        </div>
-        {/* !isEmbedded && !hideConsole && (
-          <textarea
-            className="z-[10] h-16 border-0 text-xs bg-[transparent] border-t border-slate-600 resize-none"
-            value={log}
-            readOnly
-            ref={logBox}
-            style={{ fontFamily: 'monospace' }}
-          />
-        ) */}
+      <section className="grow flex text-gray-100 relative overflow-auto cursor-text" id="code">
+        <CodeMirror value={code} onChange={setCode} onViewChanged={setView} />
       </section>
-      {/* !isEmbedded && (
-        <button className="fixed right-4 bottom-2 z-[11]" onClick={() => playStatic(code)}>
-          static
-        </button>
-      ) */}
+      <footer className="bg-linegray">
+        {/*         {error && (
+          <div
+            className={cx(
+              'rounded-md pointer-events-none left-0 p-1 text-sm bg-black px-2 z-[20] max-w-screen break-all',
+              'text-red-500',
+            )}
+          >
+            {error?.message || 'unknown error'}
+          </div>
+        )} */}
+        <div
+          ref={logBox}
+          className="text-white font-mono text-sm h-32 flex-none overflow-auto max-w-full break-all p-2"
+        >
+          {log.map((l, i) => (
+            <div
+              key={l.index}
+              className={cx(l.type === 'error' && 'text-red-500', l.type === 'info' && 'text-secondary')}
+            >
+              {l.index}: {l.message}
+              {l.count ? ` (${l.count})` : ''}
+            </div>
+          ))}
+        </div>
+      </footer>
     </div>
   );
 }
 
 export default App;
+
+function ActionButton({ children, onClick, className }) {
+  return (
+    <button
+      className={cx(
+        'bg-lineblack py-1 px-2 bottom-0 text-md whitespace-pre text-right pb-2 cursor-pointer flex items-center space-x-1 hover:text-primary',
+        className,
+      )}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+function FloatingBottomMenu() {
+  {
+    /*         <span className="hidden md:block z-[20] bg-black py-1 px-2 text-sm absolute bottom-1 right-0 text-md whitespace-pre text-right pointer-events-none pb-2">
+          {!started
+            ? `press ctrl+enter to play\n`
+            : isDirty
+            ? `press ctrl+enter to update\n`
+            : 'press ctrl+dot do stop\n'}
+          </span>*/
+  }
+  return (
+    <div className="flex justify-center w-full absolute bottom-0 z-[20]">
+      <ActionButton
+        onClick={async () => {
+          await getAudioContext().resume(); // fixes no sound in ios webkit
+          if (!started) {
+            activateCode();
+          } else {
+            stop();
+          }
+        }}
+      >
+        {!pending ? (
+          <span className={cx('flex items-center space-x-1 hover:text-primary', isEmbedded ? 'w-16' : 'w-16')}>
+            {started ? <StopCircleIcon className="w-5 h-5" /> : <PlayCircleIcon className="w-5 h-5" />}
+            <span>{started ? 'stop' : 'play'}</span>
+          </span>
+        ) : (
+          <>loading...</>
+        )}
+      </ActionButton>
+      <ActionButton
+        onClick={() => {
+          isDirty && activateCode();
+        }}
+        className={cx(!isDirty || !activeCode ? 'opacity-50 hover:text-inherit' : 'hover:text-primary')}
+      >
+        <CommandLineIcon className="w-5 h-5" />
+        <span>update</span>
+      </ActionButton>
+    </div>
+  );
+}

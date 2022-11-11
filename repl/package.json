@@ -16,6 +16,7 @@
     "dbdump": "node src/test/dbdump.js > src/test/dbdump.json"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.13",
     "@supabase/supabase-js": "^1.35.3",
     "nanoid": "^4.0.0",
     "react": "^17.0.2",

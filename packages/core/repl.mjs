@@ -11,6 +11,7 @@ export function repl({
   getTime,
   transpiler,
   onToggle,
+  onLog,
 }) {
   const scheduler = new Cyclist({
     interval,
@@ -25,6 +26,7 @@ export function repl({
     onError: onSchedulerError,
     getTime,
     onToggle,
+    onLog: (message) => onLog?.(`[clock] ${message}`),
   });
   const evaluate = async (code, autostart = true) => {
     if (!code) {
@@ -33,11 +35,13 @@ export function repl({
     try {
       beforeEval({ code });
       const { pattern } = await _evaluate(code, transpiler);
+      onLog?.(`[eval] code updated`);
       scheduler.setPattern(pattern, autostart);
       afterEval({ code, pattern });
       return pattern;
     } catch (err) {
-      console.warn(`eval error: ${err.message}`);
+      // console.warn(`[repl] eval error: ${err.message}`);
+      onLog?.(`[eval] error: ${err.message}`, 'error');
       onEvalError?.(err);
     }
   };
