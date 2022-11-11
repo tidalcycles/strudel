@@ -893,4 +893,11 @@ describe('Pattern', () => {
       );
     });
   });
+  describe('alignments', () => {
+    it('Can squeeze arguments', () => {
+      expect(fast(sequence(2, 3)).squeeze.s('a','b')).toStrictEqual(
+	sequence(s('a', 'b').fast(2), s('a', 'b').fast(3))
+      );
+    });
+  });
 });
