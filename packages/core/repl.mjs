@@ -15,18 +15,22 @@ export function repl({
 }) {
   const scheduler = new Cyclist({
     interval,
-    onTrigger: (hap, deadline, duration) => {
-      if (!hap.context.onTrigger) {
-        return defaultOutput(hap, deadline, duration);
+    onTrigger: async (hap, deadline, duration) => {
+      try {
+        if (!hap.context.onTrigger) {
+          return await defaultOutput(hap, deadline, duration);
+        }
+        const cps = 1; // TODO: fix
+        // call signature of output / onTrigger is different...
+        return await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps);
+      } catch (err) {
+        onLog?.(`[cyclist] error: ${err.message}`, 'error');
       }
-      const cps = 1; // TODO: fix
-      // call signature of output / onTrigger is different...
-      return hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps);
     },
     onError: onSchedulerError,
     getTime,
     onToggle,
-    onLog: (message) => onLog?.(`[clock] ${message}`),
+    onLog: (message, type) => onLog?.(`[cyclist] ${message}`, type),
   });
   const evaluate = async (code, autostart = true) => {
     if (!code) {

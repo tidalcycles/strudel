@@ -138,9 +138,9 @@ function App() {
     initCode().then((decoded) => {
       pushLog(
         `🌀 Welcome to Strudel! ${
-          decoded ? `Code was decoded from the URL` : `A random code snippet named "${name}" has been loaded!`
-        } Press play or hit ctrl+enter to listen!`,
-        'info',
+          decoded ? `I have loaded the code from the URL.` : `A random code snippet named "${name}" has been loaded!`
+        } Press play or hit ctrl+enter to run it!`,
+        'highlight',
       );
       setCode(decoded || randomTune);
     });
@@ -174,12 +174,13 @@ function App() {
   });
 
   return (
+    // bg-gradient-to-t from-blue-900 to-slate-900
     <div className="h-screen flex flex-col">
       {!hideHeader && (
         <header
           id="header"
           className={cx(
-            'flex-none w-full md:flex text-black shadow-lg justify-between z-[100] text-lg bg-linegray select-none sticky top-0',
+            'flex-none w-full md:flex text-black justify-between z-[100] text-lg bg-header select-none sticky top-0',
             isEmbedded ? 'h-12 md:h-8' : 'h-25 md:h-14',
           )}
         >
@@ -322,10 +323,17 @@ function App() {
           </div>
         </header>
       )}
-      <section className="grow flex text-gray-100 relative overflow-auto cursor-text" id="code">
-        <CodeMirror value={code} onChange={setCode} onViewChanged={setView} />
+      <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-4" id="code">
+        <CodeMirror
+          value={code}
+          onChange={(c) => {
+            setCode(c);
+            started && pushLog('[edit] code changed. hit ctrl+enter to update');
+          }}
+          onViewChanged={setView}
+        />
       </section>
-      <footer className="bg-linegray">
+      <footer className="bg-footer">
         {/*         {error && (
           <div
             className={cx(
@@ -338,14 +346,14 @@ function App() {
         )} */}
         <div
           ref={logBox}
-          className="text-white font-mono text-sm h-32 flex-none overflow-auto max-w-full break-all p-2"
+          className="text-white font-mono text-sm h-32 flex-none overflow-auto max-w-full break-all p-4"
         >
           {log.map((l, i) => (
             <div
               key={l.index}
-              className={cx(l.type === 'error' && 'text-red-500', l.type === 'info' && 'text-secondary')}
+              className={cx(l.type === 'error' && 'text-red-500', l.type === 'highlight' && 'text-highlight')}
             >
-              {l.index}: {l.message}
+              &gt; {l.message}
               {l.count ? ` (${l.count})` : ''}
             </div>
           ))}

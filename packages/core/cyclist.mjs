@@ -39,7 +39,7 @@ export class Cyclist {
             }
           });
         } catch (e) {
-          console.warn('scheduler error: ', e.message);
+          onLog(`error: ${e.message}`);
           onError?.(e);
         }
       }, // called slightly before each cycle
