@@ -109,7 +109,7 @@ const isEmbedded = window.location !== window.parent.location;
 function App() {
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
-  const [activeFooter, setActiveFooter] = useState('console');
+  const [activeFooter, setActiveFooter] = useState('intro');
 
   // logger
   const [log, setLog] = useState([]);
@@ -139,7 +139,7 @@ function App() {
       // scroll log box to bottom when log changes
       footerContent.current.scrollTop = footerContent.current?.scrollHeight;
     }
-  }, [log]);
+  }, [log, activeFooter]);
 
   const { code, setCode, scheduler, evaluate, activateCode, error, isDirty, activeCode, pattern, started, stop } =
     useStrudel({
@@ -252,8 +252,8 @@ function App() {
       <div
         onClick={() => setActiveFooter(name)}
         className={cx(
-          'h-8 px-2 text-white cursor-pointer hover:text-highlight flex items-center space-x-1 border-b',
-          activeFooter === name ? 'border-white hover:border-highlight' : 'border-transparent',
+          'h-8 px-2 text-white cursor-pointer hover:text-tertiary flex items-center space-x-1 border-b',
+          activeFooter === name ? 'border-white hover:border-tertiary' : 'border-transparent',
         )}
       >
         {name}
@@ -279,26 +279,32 @@ function App() {
             isEmbedded ? 'h-12 md:h-8' : 'h-25 md:h-14',
           )}
         >
-          <div className="px-2 flex items-center space-x-2 pt-2 md:pt-0 pointer-events-none">
-            <img
+          <div className="px-4 flex items-center space-x-2 pt-2 md:pt-0 pointer-events-none">
+            {/*             <img
               src={logo}
               className={cx('Tidal-logo', isEmbedded ? 'w-8 h-8' : 'w-10 h-10', started && 'animate-pulse')} // 'bg-[#ffffff80] rounded-full'
               alt="logo"
-            />
+            /> */}
             <h1
               className={cx(
                 isEmbedded ? 'text-l' : 'text-xl',
                 // 'bg-clip-text bg-gradient-to-r from-primary to-secondary  text-transparent font-bold',
-                'text-white font-bold',
+                'text-white font-bold flex space-x-2',
               )}
             >
-              <span className="">strudel</span> <span className="text-sm">REPL</span>
+              <div className={cx('mt-[1px]', started && 'animate-spin')}>🌀</div>
+              <div className={cx(started && 'animate-pulse')}>
+                <span className="">strudel</span> <span className="text-sm">REPL</span>
+              </div>
             </h1>
           </div>
           <div className="flex max-w-full overflow-auto text-white ">
-            <button onClick={handleTogglePlay} className={cx(!isEmbedded ? 'p-2' : 'px-2')}>
+            <button
+              onClick={handleTogglePlay}
+              className={cx(!isEmbedded ? 'p-2' : 'px-2', 'hover:text-tertiary', !started && 'animate-pulse')}
+            >
               {!pending ? (
-                <span className={cx('flex items-center space-x-1 hover:text-highlight', isEmbedded ? 'w-16' : 'w-16')}>
+                <span className={cx('flex items-center space-x-1', isEmbedded ? 'w-16' : 'w-16')}>
                   {started ? <StopCircleIcon className="w-5 h-5" /> : <PlayCircleIcon className="w-5 h-5" />}
                   <span>{started ? 'stop' : 'play'}</span>
                 </span>
@@ -311,14 +317,14 @@ function App() {
               className={cx(
                 'flex items-center space-x-1',
                 !isEmbedded ? 'p-2' : 'px-2',
-                !isDirty || !activeCode ? 'opacity-50' : 'hover:text-highlight',
+                !isDirty || !activeCode ? 'opacity-50' : 'hover:text-tertiary',
               )}
             >
               <CommandLineIcon className="w-5 h-5" />
               <span>update</span>
             </button>
             {!isEmbedded && (
-              <button className="hover:text-highlight p-2 flex items-center space-x-1" onClick={handleShuffle}>
+              <button className="hover:text-tertiary p-2 flex items-center space-x-1" onClick={handleShuffle}>
                 <SparklesIcon className="w-5 h-5" />
                 <span> shuffle</span>
               </button>
@@ -326,7 +332,7 @@ function App() {
             {!isEmbedded && (
               <a
                 href="./tutorial"
-                className={cx('hover:text-highlight flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
+                className={cx('hover:text-tertiary flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
               >
                 <AcademicCapIcon className="w-5 h-5" />
                 <span>learn</span>
@@ -335,7 +341,7 @@ function App() {
             {!isEmbedded && (
               <button
                 className={cx(
-                  'cursor-pointer hover:text-highlight flex items-center space-x-1',
+                  'cursor-pointer hover:text-tertiary flex items-center space-x-1',
                   !isEmbedded ? 'p-2' : 'px-2',
                 )}
                 onClick={handleShare}
@@ -345,14 +351,14 @@ function App() {
               </button>
             )}
             {isEmbedded && (
-              <button className={cx('hover:text-highlight px-2')}>
+              <button className={cx('hover:text-tertiary px-2')}>
                 <a href={window.location.href} target="_blank" rel="noopener noreferrer" title="Open in REPL">
                   🚀 open
                 </a>
               </button>
             )}
             {isEmbedded && (
-              <button className={cx('hover:text-highlight px-2')}>
+              <button className={cx('hover:text-tertiary px-2')}>
                 <a
                   onClick={() => {
                     window.location.href = initialUrl;
@@ -372,8 +378,8 @@ function App() {
       </section>
       <footer className="bg-footer">
         <div className="flex justify-between px-2">
-          <div className="flex pb-2">
-            <FooterTab name="help" />
+          <div className="flex pb-2 select-none">
+            <FooterTab name="intro" />
             <FooterTab name="samples" />
             <FooterTab name="console" />
           </div>
@@ -385,11 +391,58 @@ function App() {
         </div>
         {activeFooter !== '' && (
           <div
-            className="text-white font-mono text-sm h-64 flex-none overflow-auto max-w-full break-all px-4"
+            className="text-white font-mono text-sm h-72 max-h-[33vh] flex-none overflow-auto max-w-full px-4"
             ref={footerContent}
           >
+            {activeFooter === 'intro' && (
+              <div className="prose prose-invert pt-2 font-sans pb-8">
+                <h3>
+                  <span className={cx('animate-spin inline-block')}>😻</span> Hello Friend
+                </h3>
+                <p>
+                  You have found <span className="underline">strudel</span>, a new live coding platform to write dynamic
+                  music pieces in the browser! It is free and open-source and made for beginners and experts alike.
+                  <br />
+                  To get started:
+                  <br />
+                  <span className="underline">1. hit play</span> -{' '}
+                  <span className="underline">2. change something</span> -{' '}
+                  <span className="underline">3. hit update</span>
+                  <br />
+                  If you don't like what you hear, try <span className="underline">shuffle</span>!
+                </p>
+                <p>
+                  To learn more about what this all means, check out the{' '}
+                  <a href="https://strudel.tidalcycles.org/tutorial" target="_blank">
+                    interactive tutorial
+                  </a>
+                  . Also feel free to join the{' '}
+                  <a href="https://discord.com/invite/HGEdXmRkzT" target="_blank">
+                    tidalcycles discord channel
+                  </a>{' '}
+                  to ask any questions, give feedback or just say hello.
+                </p>
+                <h3>about</h3>
+                <p>
+                  strudel is a JavaScript version of{' '}
+                  <a href="tidalcycles.org/" target="_blank">
+                    tidalcycles
+                  </a>
+                  , which is a popular live coding language for music, written in Haskell. You can find the source code
+                  at{' '}
+                  <a href="https://github.com/tidalcycles/strudel" target="_blank">
+                    github
+                  </a>
+                  . Please consider to{' '}
+                  <a href="https://opencollective.com/tidalcycles" target="_blank">
+                    support this project
+                  </a>{' '}
+                  to ensure ongoing development 💖
+                </p>
+              </div>
+            )}
             {activeFooter === 'console' && (
-              <div>
+              <div className="break-all">
                 {log.map((l, i) => {
                   const message = linkify(l.message);
                   return (
@@ -408,7 +461,7 @@ function App() {
               <div className="break-normal w-full">
                 <span className="text-white">{loadedSamples.length} banks loaded:</span>
                 {loadedSamples.map(([name, samples]) => (
-                  <span key={name} className="cursor-pointer hover:text-highlight" onClick={() => {}}>
+                  <span key={name} className="cursor-pointer hover:text-tertiary" onClick={() => {}}>
                     {' '}
                     {name}(
                     {Array.isArray(samples)
