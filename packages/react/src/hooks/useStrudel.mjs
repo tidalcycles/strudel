@@ -63,6 +63,13 @@ function useStrudel({
     }
   }, [activateCode, evalOnMount, code]);
 
+  // this will stop the scheduler when hot reloading in development
+  useEffect(() => {
+    return () => {
+      scheduler.stop();
+    };
+  }, [scheduler]);
+
   const togglePlay = async () => {
     if (started) {
       scheduler.pause();

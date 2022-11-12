@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 // import { evaluate } from '@strudel.cycles/eval';
 import { CodeMirror, cx, flash, useHighlighting } from '@strudel.cycles/react';
 // import { cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import './App.css';
 import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
@@ -96,25 +96,29 @@ function getRandomTune() {
 const { code: randomTune, name } = getRandomTune();
 const isEmbedded = window.location !== window.parent.location;
 function App() {
-  // const [editor, setEditor] = useState();
-  const [view, setView] = useState();
+  const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
 
   // logger
   const [log, setLog] = useState([]);
-  const pushLog = (message, type) => {
-    setLog((l) => {
-      logger(message);
-      const lastLog = l.length ? l[l.length - 1] : undefined;
-      const index = (lastLog?.index ?? -1) + 1;
-      if (lastLog && lastLog.message === message) {
-        l = l.slice(0, -1).concat([{ message, type, count: (lastLog.count ?? 1) + 1, index }]);
-      } else {
-        l = l.concat([{ message, type, index }]);
-      }
-      return l.slice(-20);
-    });
-  };
+  useLogger(
+    useCallback((e) => {
+      const { message, type, data } = e.detail;
+      setLog((l) => {
+        const lastLog = l.length ? l[l.length - 1] : undefined;
+        const id = nanoid(12);
+        if (type === 'loaded-sample') {
+          const loadIndex = l.findIndex(({ data: { url }, type }) => type === 'load-sample' && url === data.url);
+          l[loadIndex] = { message, type, id, data };
+        } else if (lastLog && lastLog.message === message) {
+          l = l.slice(0, -1).concat([{ message, type, count: (lastLog.count ?? 1) + 1, id, data }]);
+        } else {
+          l = l.concat([{ message, type, id, data }]);
+        }
+        return l.slice(-20);
+      });
+    }, []),
+  );
   const logBox = useRef();
   useLayoutEffect(() => {
     if (logBox.current) {
@@ -123,20 +127,19 @@ function App() {
     }
   }, [log]);
 
-  // repl
   const { code, setCode, scheduler, evaluate, activateCode, error, isDirty, activeCode, pattern, started, stop } =
     useStrudel({
       initialCode: '// LOADING',
       defaultOutput: webaudioOutput,
       getTime,
       autolink: true,
-      onLog: pushLog,
+      onLog: logger,
     });
 
   // init code
   useEffect(() => {
     initCode().then((decoded) => {
-      pushLog(
+      logger(
         `🌀 Welcome to Strudel! ${
           decoded ? `I have loaded the code from the URL.` : `A random code snippet named "${name}" has been loaded!`
         } Press play or hit ctrl+enter to run it!`,
@@ -146,32 +149,88 @@ function App() {
     });
   }, []);
 
-  // set active pattern on ctrl+enter
-  useLayoutEffect(() => {
-    // TODO: make sure this is only fired when editor has focus
-    const handleKeyPress = async (e) => {
-      if (e.ctrlKey || e.altKey) {
-        if (e.code === 'Enter') {
-          e.preventDefault();
-          flash(view);
-          await activateCode();
-        } else if (e.code === 'Period') {
-          stop();
-          e.preventDefault();
+  useKeydown(
+    useCallback(
+      async (e) => {
+        if (e.ctrlKey || e.altKey) {
+          if (e.code === 'Enter') {
+            e.preventDefault();
+            flash(view);
+            await activateCode();
+          } else if (e.code === 'Period') {
+            stop();
+            e.preventDefault();
+          }
         }
-      }
-    };
-    window.addEventListener('keydown', handleKeyPress, true);
-    return () => window.removeEventListener('keydown', handleKeyPress, true);
-  }, [activateCode, stop, view]);
+      },
+      [activateCode, stop, view],
+    ),
+  );
 
   useHighlighting({
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
     getTime: () => scheduler.getPhase(),
-    // getTime: () => Tone.getTransport().seconds,
   });
+
+  //
+  // UI Actions
+  //
+
+  const handleTogglePlay = async () => {
+    await getAudioContext().resume(); // fixes no sound in ios webkit
+    if (!started) {
+      activateCode();
+    } else {
+      stop();
+    }
+  };
+  const handleUpdate = () => {
+    isDirty && activateCode();
+    logger('Code updated! Tip: You can also update the code by pressing ctrl+enter.');
+  };
+
+  const handleShuffle = async () => {
+    const { code, name } = getRandomTune();
+    logger(`✨ loading random tune "${name}"`);
+    /*
+    cleanupDraw();
+    cleanupUi(); */
+    resetLoadedSamples();
+    await prebake(); // declare default samples
+    await evaluate(code, false);
+  };
+
+  const handleShare = async () => {
+    const codeToShare = activeCode || code;
+    if (lastShared === codeToShare) {
+      logger(`Link already generated!`, 'error');
+      return;
+    }
+    // generate uuid in the browser
+    const hash = nanoid(12);
+    const { data, error } = await supabase.from('code').insert([{ code: codeToShare, hash }]);
+    if (!error) {
+      setLastShared(activeCode || code);
+      const shareUrl = window.location.origin + '?' + hash;
+      // copy shareUrl to clipboard
+      navigator.clipboard.writeText(shareUrl);
+      const message = `Link copied to clipboard: ${shareUrl}`;
+      // alert(message);
+      logger(message, 'highlight');
+    } else {
+      console.log('error', error);
+      const message = `Error: ${error.message}`;
+      // alert(message);
+      logger(message);
+    }
+  };
+
+  const handleChangeCode = (c) => {
+    setCode(c);
+    started && logger('[edit] code changed. hit ctrl+enter to update');
+  };
 
   return (
     // bg-gradient-to-t from-blue-900 to-slate-900
@@ -201,17 +260,7 @@ function App() {
             </h1>
           </div>
           <div className="flex max-w-full overflow-auto text-white ">
-            <button
-              onClick={async () => {
-                await getAudioContext().resume(); // fixes no sound in ios webkit
-                if (!started) {
-                  activateCode();
-                } else {
-                  stop();
-                }
-              }}
-              className={cx(!isEmbedded ? 'p-2' : 'px-2')}
-            >
+            <button onClick={handleTogglePlay} className={cx(!isEmbedded ? 'p-2' : 'px-2')}>
               {!pending ? (
                 <span className={cx('flex items-center space-x-1 hover:text-primary', isEmbedded ? 'w-16' : 'w-16')}>
                   {started ? <StopCircleIcon className="w-5 h-5" /> : <PlayCircleIcon className="w-5 h-5" />}
@@ -222,10 +271,7 @@ function App() {
               )}
             </button>
             <button
-              onClick={() => {
-                isDirty && activateCode();
-                pushLog('Code updated! Tip: You can also update the code by pressing ctrl+enter.');
-              }}
+              onClick={handleUpdate}
               className={cx(
                 'flex items-center space-x-1',
                 !isEmbedded ? 'p-2' : 'px-2',
@@ -236,22 +282,9 @@ function App() {
               <span>update</span>
             </button>
             {!isEmbedded && (
-              <button
-                className="hover:text-primary p-2 flex items-center space-x-1"
-                onClick={async () => {
-                  const { code, name } = getRandomTune();
-                  pushLog(`✨ loading random tune "${name}"`);
-                  /*
-                  cleanupDraw();
-                  cleanupUi(); */
-                  resetLoadedSamples();
-                  await prebake(); // declare default samples
-                  await evaluate(code, false);
-                }}
-              >
+              <button className="hover:text-primary p-2 flex items-center space-x-1" onClick={handleShuffle}>
                 <SparklesIcon className="w-5 h-5" />
                 <span> shuffle</span>
-                {/*  <MusicalNoteIcon /> <RadioIcon/>  */}
               </button>
             )}
             {!isEmbedded && (
@@ -269,35 +302,10 @@ function App() {
                   'cursor-pointer hover:text-primary flex items-center space-x-1',
                   !isEmbedded ? 'p-2' : 'px-2',
                 )}
-                onClick={async () => {
-                  const codeToShare = activeCode || code;
-                  if (lastShared === codeToShare) {
-                    // alert('Link already generated!');
-                    pushLog(`Link already generated!`);
-                    return;
-                  }
-                  // generate uuid in the browser
-                  const hash = nanoid(12);
-                  const { data, error } = await supabase.from('code').insert([{ code: codeToShare, hash }]);
-                  if (!error) {
-                    setLastShared(activeCode || code);
-                    const shareUrl = window.location.origin + '?' + hash;
-                    // copy shareUrl to clipboard
-                    navigator.clipboard.writeText(shareUrl);
-                    const message = `Link copied to clipboard: ${shareUrl}`;
-                    // alert(message);
-                    pushLog(message);
-                  } else {
-                    console.log('error', error);
-                    const message = `Error: ${error.message}`;
-                    // alert(message);
-                    pushLog(message);
-                  }
-                }}
+                onClick={handleShare}
               >
                 <LinkIcon className="w-5 h-5" />
                 <span>share{lastShared && lastShared === (activeCode || code) ? 'd!' : ''}</span>
-                {/* GlobaAlt Megaphone PaperAirplane Share */}
               </button>
             )}
             {isEmbedded && (
@@ -324,39 +332,25 @@ function App() {
         </header>
       )}
       <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-4" id="code">
-        <CodeMirror
-          value={code}
-          onChange={(c) => {
-            setCode(c);
-            started && pushLog('[edit] code changed. hit ctrl+enter to update');
-          }}
-          onViewChanged={setView}
-        />
+        <CodeMirror value={code} onChange={handleChangeCode} onViewChanged={setView} />
       </section>
       <footer className="bg-footer">
-        {/*         {error && (
-          <div
-            className={cx(
-              'rounded-md pointer-events-none left-0 p-1 text-sm bg-black px-2 z-[20] max-w-screen break-all',
-              'text-red-500',
-            )}
-          >
-            {error?.message || 'unknown error'}
-          </div>
-        )} */}
         <div
           ref={logBox}
-          className="text-white font-mono text-sm h-32 flex-none overflow-auto max-w-full break-all p-4"
+          className="text-white font-mono text-sm h-64 flex-none overflow-auto max-w-full break-all p-4"
         >
-          {log.map((l, i) => (
-            <div
-              key={l.index}
-              className={cx(l.type === 'error' && 'text-red-500', l.type === 'highlight' && 'text-highlight')}
-            >
-              &gt; {l.message}
-              {l.count ? ` (${l.count})` : ''}
-            </div>
-          ))}
+          {log.map((l, i) => {
+            const message = linkify(l.message);
+            return (
+              <div
+                key={l.id}
+                className={cx(l.type === 'error' && 'text-red-500', l.type === 'highlight' && 'text-highlight')}
+              >
+                &gt; <span dangerouslySetInnerHTML={{ __html: message }} />
+                {l.count ? ` (${l.count})` : ''}
+              </div>
+            );
+          })}
         </div>
       </footer>
     </div>
@@ -365,59 +359,40 @@ function App() {
 
 export default App;
 
-function ActionButton({ children, onClick, className }) {
-  return (
-    <button
-      className={cx(
-        'bg-lineblack py-1 px-2 bottom-0 text-md whitespace-pre text-right pb-2 cursor-pointer flex items-center space-x-1 hover:text-primary',
-        className,
-      )}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
+function useEvent(name, onTrigger, useCapture = false) {
+  useEffect(() => {
+    document.addEventListener(name, onTrigger, useCapture);
+    return () => {
+      document.removeEventListener(name, onTrigger, useCapture);
+    };
+  }, [onTrigger]);
 }
-function FloatingBottomMenu() {
-  {
-    /*         <span className="hidden md:block z-[20] bg-black py-1 px-2 text-sm absolute bottom-1 right-0 text-md whitespace-pre text-right pointer-events-none pb-2">
-          {!started
-            ? `press ctrl+enter to play\n`
-            : isDirty
-            ? `press ctrl+enter to update\n`
-            : 'press ctrl+dot do stop\n'}
-          </span>*/
-  }
-  return (
-    <div className="flex justify-center w-full absolute bottom-0 z-[20]">
-      <ActionButton
-        onClick={async () => {
-          await getAudioContext().resume(); // fixes no sound in ios webkit
-          if (!started) {
-            activateCode();
-          } else {
-            stop();
-          }
-        }}
-      >
-        {!pending ? (
-          <span className={cx('flex items-center space-x-1 hover:text-primary', isEmbedded ? 'w-16' : 'w-16')}>
-            {started ? <StopCircleIcon className="w-5 h-5" /> : <PlayCircleIcon className="w-5 h-5" />}
-            <span>{started ? 'stop' : 'play'}</span>
-          </span>
-        ) : (
-          <>loading...</>
-        )}
-      </ActionButton>
-      <ActionButton
-        onClick={() => {
-          isDirty && activateCode();
-        }}
-        className={cx(!isDirty || !activeCode ? 'opacity-50 hover:text-inherit' : 'hover:text-primary')}
-      >
-        <CommandLineIcon className="w-5 h-5" />
-        <span>update</span>
-      </ActionButton>
-    </div>
+
+function useLogger(onTrigger) {
+  useEvent(logger.key, onTrigger);
+}
+
+function useKeydown(onTrigger) {
+  useEvent('keydown', onTrigger, true);
+}
+
+function linkify(inputText) {
+  var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+  //URLs starting with http://, https://, or ftp://
+  replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+  replacedText = inputText.replace(replacePattern1, '<a class="underline" href="$1" target="_blank">$1</a>');
+
+  //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+  replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+  replacedText = replacedText.replace(
+    replacePattern2,
+    '$1<a class="underline" href="http://$2" target="_blank">$2</a>',
   );
+
+  //Change email addresses to mailto:: links.
+  replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+  replacedText = replacedText.replace(replacePattern3, '<a class="underline" href="mailto:$1">$1</a>');
+
+  return replacedText;
 }

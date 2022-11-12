@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 // import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
-import { fromMidi, isNote, toMidi } from '@strudel.cycles/core';
+import { fromMidi, logger, toMidi } from '@strudel.cycles/core';
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import { loadBuffer, reverseBuffer } from './sampler.mjs';
@@ -112,9 +112,10 @@ const getSampleBufferSource = async (s, n, note, speed) => {
   const bank = samples?.[s];
   if (!bank) {
     throw new Error(
-      `sample not found: "${s}", try one of ${Object.keys(samples)
-        .map((s) => `"${s}"`)
-        .join(', ')}.`,
+      `sample not found: "${s}"`,
+      // , try one of ${Object.keys(samples)
+      // .map((s) => `"${s}"`)
+      // .join(', ')}.
     );
   }
   if (typeof bank !== 'object') {
@@ -135,7 +136,7 @@ const getSampleBufferSource = async (s, n, note, speed) => {
     transpose = -midiDiff(closest); // semitones to repitch
     sampleUrl = bank[closest][n % bank[closest].length];
   }
-  let buffer = await loadBuffer(sampleUrl, ac);
+  let buffer = await loadBuffer(sampleUrl, ac, s, n);
   if (speed < 0) {
     // should this be cached?
     buffer = reverseBuffer(buffer);
@@ -337,21 +338,17 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     const soundfont = getSoundfontKey(s);
     let bufferSource;
 
-    try {
-      if (soundfont) {
-        // is soundfont
-        bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac);
-      } else {
-        // is sample from loaded samples(..)
-        bufferSource = await getSampleBufferSource(s, n, note, speed);
-      }
-    } catch (err) {
-      console.warn(err);
-      return;
+    if (soundfont) {
+      // is soundfont
+      bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac);
+    } else {
+      // is sample from loaded samples(..)
+      bufferSource = await getSampleBufferSource(s, n, note, speed);
     }
     // asny stuff above took too long?
     if (ac.currentTime > t) {
-      console.warn('sample still loading:', s, n);
+      logger(`[sampler] still loading sound "${s}:${n}"`, 'highlight');
+      // console.warn('sample still loading:', s, n);
       return;
     }
     if (!bufferSource) {
