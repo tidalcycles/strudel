@@ -577,26 +577,26 @@ describe('Pattern', () => {
     });
   });
 
-  describe('every()', () => {
+  describe('firstOf()', () => {
     it('Can apply a function every 3rd time', () => {
       expect(
         pure('a')
-          .every(3, (x) => x._fast(2))
+          .firstOf(3, (x) => x._fast(2))
           ._fast(3)
           .firstCycle(),
       ).toStrictEqual(sequence(sequence('a', 'a'), 'a', 'a').firstCycle());
     });
     it('works with currying', () => {
-      expect(pure('a').every(3, fast(2))._fast(3).firstCycle()).toStrictEqual(
+      expect(pure('a').firstOf(3, fast(2))._fast(3).firstCycle()).toStrictEqual(
         sequence(sequence('a', 'a'), 'a', 'a').firstCycle(),
       );
-      expect(sequence(3, 4, 5).every(3, add(3)).fast(5).firstCycle()).toStrictEqual(
+      expect(sequence(3, 4, 5).firstOf(3, add(3)).fast(5).firstCycle()).toStrictEqual(
         sequence(6, 7, 8, 3, 4, 5, 3, 4, 5, 6, 7, 8, 3, 4, 5).firstCycle(),
       );
-      expect(sequence(3, 4, 5).every(2, sub(1)).fast(5).firstCycle()).toStrictEqual(
+      expect(sequence(3, 4, 5).firstOf(2, sub(1)).fast(5).firstCycle()).toStrictEqual(
         sequence(2, 3, 4, 3, 4, 5, 2, 3, 4, 3, 4, 5, 2, 3, 4).firstCycle(),
       );
-      expect(sequence(3, 4, 5).every(3, add(3)).every(2, sub(1)).fast(2).firstCycle()).toStrictEqual(
+      expect(sequence(3, 4, 5).firstOf(3, add(3)).firstOf(2, sub(1)).fast(2).firstCycle()).toStrictEqual(
         sequence(5, 6, 7, 3, 4, 5).firstCycle(),
       );
     });

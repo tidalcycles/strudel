@@ -958,6 +958,41 @@ export class Pattern {
 
   /**
    * Applies the given function every n cycles, starting from the first cycle.
+   * @name firstOf
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").firstOf(4, x=>x.rev())
+   */
+  // TODO - patternify
+  firstOf(n, func) {
+    const pat = this;
+    const pats = Array(n - 1).fill(pat);
+    pats.unshift(func(pat));
+    return slowcatPrime(...pats);
+  }
+
+  /**
+   * Applies the given function every n cycles, starting from the last cycle.
+   * @name lastOf
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").lastOf(4, x=>x.rev())
+   */
+  lastOf(n, func) {
+    const pat = this;
+    const pats = Array(n - 1).fill(pat);
+    pats.push(func(pat));
+    return slowcatPrime(...pats);
+  }
+
+  /**
+   * An alias for {@link firstOf}
    * @name every
    * @memberof Pattern
    * @param {number} n how many cycles
@@ -967,29 +1002,9 @@ export class Pattern {
    * note("c3 d3 e3 g3").every(4, x=>x.rev())
    */
   every(n, func) {
-    const pat = this;
-    const pats = Array(n - 1).fill(pat);
-    pats.unshift(func(pat));
-    return slowcatPrime(...pats);
+    return this.firstOf(n, func);
   }
-
-  /**
-   * Applies the given function every n cycles, starting from the last cycle.
-   * @name each
-   * @memberof Pattern
-   * @param {number} n how many cycles
-   * @param {function} func function to apply
-   * @returns Pattern
-   * @example
-   * note("c3 d3 e3 g3").every(4, x=>x.rev())
-   */
-  each(n, func) {
-    const pat = this;
-    const pats = Array(n - 1).fill(pat);
-    pats.push(func(pat));
-    return slowcatPrime(...pats);
-  }
-
+  
   /**
    * Returns a new pattern where every other cycle is played once, twice as
    * fast, and offset in time by one quarter of a cycle. Creates a kind of
@@ -1165,9 +1180,9 @@ export class Pattern {
    * @example
    * note("0 1 2 3".scale('A minor')).iter(4)
    */
-  // TODO - curry
-  iter(times, back = false) {
-    return slowcat(...listRange(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
+  _iter(times, back = false) {
+    times = Fraction(times)
+    return slowcat(...listRange(0, times.sub(1)).map((i) => (back ? this.late(Fraction(i).div(times)) : this.early(Fraction(i).div(times)))));
   }
 
   /**
@@ -1178,9 +1193,8 @@ export class Pattern {
    * @example
    * note("0 1 2 3".scale('A minor')).iterBack(4)
    */
-  // TODO - curry
-  iterBack(times) {
-    return this.iter(times, true);
+  _iterBack(times) {
+    return this._iter(times, true);
   }
 
   /**
@@ -1194,7 +1208,7 @@ export class Pattern {
   _chunk(n, func, back = false) {
     const binary = Array(n - 1).fill(false);
     binary.unshift(true);
-    const binary_pat = sequence(...binary).iter(n, back);
+    const binary_pat = sequence(...binary)._iter(n, back);
     return this.when(binary_pat, func);
   }
 
@@ -1506,6 +1520,8 @@ Pattern.prototype.patternified = [
   'duration',
   'early',
   'fast',
+  'iter',
+  'iterBack',
   'jux',
   'late',
   'legato',
@@ -1861,7 +1877,7 @@ Pattern.prototype.range2 = function (...args) {
   return patternify2(Pattern.prototype._range2)(...args, this);
 };
 
-// call this after all Patter.prototype.define calls have been executed! (right before evaluate)
+// call this after all Pattern.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = function () {
   // makeComposable(Pattern.prototype);
   const bootstrapped = Object.fromEntries(
