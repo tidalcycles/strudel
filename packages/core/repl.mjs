@@ -17,12 +17,14 @@ export function repl({
     interval,
     onTrigger: async (hap, deadline, duration) => {
       try {
-        if (!hap.context.onTrigger) {
-          return await defaultOutput(hap, deadline, duration);
+        if (!hap.context.onTrigger || !hap.context.dominantTrigger) {
+          await defaultOutput(hap, deadline, duration);
         }
-        const cps = 1; // TODO: fix
-        // call signature of output / onTrigger is different...
-        return await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps);
+        if (hap.context.onTrigger) {
+          const cps = 1;
+          // call signature of output / onTrigger is different...
+          await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps);
+        }
       } catch (err) {
         logger(`[cyclist] error: ${err.message}`, 'error');
       }

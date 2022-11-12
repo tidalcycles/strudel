@@ -43,3 +43,4 @@ currently broken / buggy:
 - [x] highlighting seems too late (off by latency ?)
 - [x] highlighting sometimes drops highlights (zeldasRescue first note)
 - [ ] highlighting still sometimes drops highlights (zeldasRescue somtimes)
+- [ ] highlighting out of range error is back (delete large chunk at the top while highlighting below is triggered)

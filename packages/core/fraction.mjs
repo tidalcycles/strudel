@@ -55,7 +55,8 @@ Fraction.prototype.min = function (other) {
   return this.lt(other) ? this : other;
 };
 
-Fraction.prototype.show = function () {
+Fraction.prototype.show = function (/* excludeWhole = false */) {
+  // return this.toFraction(excludeWhole);
   return this.s * this.n + '/' + this.d;
 };
 

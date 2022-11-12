@@ -22,7 +22,6 @@ function useHighlighting({ view, pattern, active, getTime }) {
             highlights.current = highlights.current.concat(haps); // add potential new onsets
             view.dispatch({ effects: setHighlights.of(highlights.current) }); // highlight all still active + new active haps
           } catch (err) {
-            // console.log('error in updateHighlights', err);
             view.dispatch({ effects: setHighlights.of([]) });
           }
           frame = requestAnimationFrame(updateHighlights);

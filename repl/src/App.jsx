@@ -134,7 +134,7 @@ function App() {
       initialCode: '// LOADING',
       defaultOutput: webaudioOutput,
       getTime,
-      autolink: true
+      autolink: true,
     });
 
   // init code
@@ -182,14 +182,16 @@ function App() {
   const handleTogglePlay = async () => {
     await getAudioContext().resume(); // fixes no sound in ios webkit
     if (!started) {
+      logger('[repl] started. tip: you can also start by pressing ctrl+enter', 'highlight');
       activateCode();
     } else {
+      logger('[repl] stopped. tip: you can also stop by pressing ctrl+dot', 'highlight');
       stop();
     }
   };
   const handleUpdate = () => {
     isDirty && activateCode();
-    logger('Code updated! Tip: You can also update the code by pressing ctrl+enter.');
+    logger('[repl] code updated! tip: you can also update the code by pressing ctrl+enter', 'highlight');
   };
 
   const handleShuffle = async () => {

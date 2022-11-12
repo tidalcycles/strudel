@@ -303,10 +303,7 @@ function eu({
     interval: e,
     onTrigger: async (E, C, x) => {
       try {
-        if (!E.context.onTrigger)
-          return await t(E, C, x);
-        const I = 1;
-        return await E.context.onTrigger(a() + C, E, a(), I);
+        (!E.context.onTrigger || !E.context.dominantTrigger) && await t(E, C, x), E.context.onTrigger && await E.context.onTrigger(a() + C, E, a(), 1);
       } catch (I) {
         Le(`[cyclist] error: ${I.message}`, "error");
       }
