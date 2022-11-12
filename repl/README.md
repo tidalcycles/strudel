@@ -44,3 +44,4 @@ currently broken / buggy:
 - [x] highlighting sometimes drops highlights (zeldasRescue first note)
 - [ ] highlighting still sometimes drops highlights (zeldasRescue somtimes)
 - [ ] highlighting out of range error is back (delete large chunk at the top while highlighting below is triggered)
+- [ ] find a way to display errors when console is closed / another tab selected

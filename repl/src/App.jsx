@@ -24,6 +24,7 @@ import StopCircleIcon from '@heroicons/react/20/solid/StopCircleIcon';
 import CommandLineIcon from '@heroicons/react/20/solid/CommandLineIcon';
 import SparklesIcon from '@heroicons/react/20/solid/SparklesIcon';
 import LinkIcon from '@heroicons/react/20/solid/LinkIcon';
+import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon';
 import AcademicCapIcon from '@heroicons/react/20/solid/AcademicCapIcon';
 
 initAudioOnFirstClick();
@@ -98,6 +99,7 @@ const isEmbedded = window.location !== window.parent.location;
 function App() {
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
+  const [activeFooter, setActiveFooter] = useState('console');
 
   // logger
   const [log, setLog] = useState([]);
@@ -121,11 +123,11 @@ function App() {
       });
     }, []),
   );
-  const logBox = useRef();
+  const footerContent = useRef();
   useLayoutEffect(() => {
-    if (logBox.current) {
+    if (footerContent.current) {
       // scroll log box to bottom when log changes
-      logBox.current.scrollTop = logBox.current?.scrollHeight;
+      footerContent.current.scrollTop = footerContent.current?.scrollHeight;
     }
   }, [log]);
 
@@ -235,9 +237,30 @@ function App() {
     started && logger('[edit] code changed. hit ctrl+enter to update');
   };
 
+  const FooterTab = ({ label, children, type }) => (
+    <>
+      <div
+        onClick={() => setActiveFooter(type)}
+        className={cx(
+          'h-8 px-2 text-white cursor-pointer hover:text-highlight flex items-center space-x-1',
+          activeFooter === type ? 'border-b' : '',
+        )}
+      >
+        {label}
+      </div>
+      {activeFooter === type && <>{children}</>}
+    </>
+  );
+
   return (
     // bg-gradient-to-t from-blue-900 to-slate-900
-    <div className="h-screen flex flex-col">
+    // bg-gradient-to-t from-green-900 to-slate-900
+    <div
+      className={cx(
+        'h-screen flex flex-col',
+        //        'bg-gradient-to-t from-green-900 to-slate-900', //
+      )}
+    >
       {!hideHeader && (
         <header
           id="header"
@@ -249,7 +272,7 @@ function App() {
           <div className="px-2 flex items-center space-x-2 pt-2 md:pt-0 pointer-events-none">
             <img
               src={logo}
-              className={cx('Tidal-logo', isEmbedded ? 'w-8 h-8' : 'w-10 h-10')} // 'bg-[#ffffff80] rounded-full'
+              className={cx('Tidal-logo', isEmbedded ? 'w-8 h-8' : 'w-10 h-10', started && 'animate-pulse')} // 'bg-[#ffffff80] rounded-full'
               alt="logo"
             />
             <h1
@@ -259,13 +282,13 @@ function App() {
                 'text-white font-bold',
               )}
             >
-              strudel <span className="text-sm">REPL</span>
+              <span className="">strudel</span> <span className="text-sm">REPL</span>
             </h1>
           </div>
           <div className="flex max-w-full overflow-auto text-white ">
             <button onClick={handleTogglePlay} className={cx(!isEmbedded ? 'p-2' : 'px-2')}>
               {!pending ? (
-                <span className={cx('flex items-center space-x-1 hover:text-primary', isEmbedded ? 'w-16' : 'w-16')}>
+                <span className={cx('flex items-center space-x-1 hover:text-highlight', isEmbedded ? 'w-16' : 'w-16')}>
                   {started ? <StopCircleIcon className="w-5 h-5" /> : <PlayCircleIcon className="w-5 h-5" />}
                   <span>{started ? 'stop' : 'play'}</span>
                 </span>
@@ -278,14 +301,14 @@ function App() {
               className={cx(
                 'flex items-center space-x-1',
                 !isEmbedded ? 'p-2' : 'px-2',
-                !isDirty || !activeCode ? 'opacity-50' : 'hover:text-primary',
+                !isDirty || !activeCode ? 'opacity-50' : 'hover:text-highlight',
               )}
             >
               <CommandLineIcon className="w-5 h-5" />
               <span>update</span>
             </button>
             {!isEmbedded && (
-              <button className="hover:text-primary p-2 flex items-center space-x-1" onClick={handleShuffle}>
+              <button className="hover:text-highlight p-2 flex items-center space-x-1" onClick={handleShuffle}>
                 <SparklesIcon className="w-5 h-5" />
                 <span> shuffle</span>
               </button>
@@ -293,7 +316,7 @@ function App() {
             {!isEmbedded && (
               <a
                 href="./tutorial"
-                className={cx('hover:text-primary flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
+                className={cx('hover:text-highlight flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
               >
                 <AcademicCapIcon className="w-5 h-5" />
                 <span>learn</span>
@@ -302,7 +325,7 @@ function App() {
             {!isEmbedded && (
               <button
                 className={cx(
-                  'cursor-pointer hover:text-primary flex items-center space-x-1',
+                  'cursor-pointer hover:text-highlight flex items-center space-x-1',
                   !isEmbedded ? 'p-2' : 'px-2',
                 )}
                 onClick={handleShare}
@@ -312,14 +335,14 @@ function App() {
               </button>
             )}
             {isEmbedded && (
-              <button className={cx('hover:text-primary px-2')}>
+              <button className={cx('hover:text-highlight px-2')}>
                 <a href={window.location.href} target="_blank" rel="noopener noreferrer" title="Open in REPL">
                   🚀 open
                 </a>
               </button>
             )}
             {isEmbedded && (
-              <button className={cx('hover:text-primary px-2')}>
+              <button className={cx('hover:text-highlight px-2')}>
                 <a
                   onClick={() => {
                     window.location.href = initialUrl;
@@ -334,27 +357,46 @@ function App() {
           </div>
         </header>
       )}
-      <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-4" id="code">
+      <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-0" id="code">
         <CodeMirror value={code} onChange={handleChangeCode} onViewChanged={setView} />
       </section>
       <footer className="bg-footer">
-        <div
-          ref={logBox}
-          className="text-white font-mono text-sm h-64 flex-none overflow-auto max-w-full break-all p-4"
-        >
-          {log.map((l, i) => {
-            const message = linkify(l.message);
-            return (
-              <div
-                key={l.id}
-                className={cx(l.type === 'error' && 'text-red-500', l.type === 'highlight' && 'text-highlight')}
-              >
-                &gt; <span dangerouslySetInnerHTML={{ __html: message }} />
-                {l.count ? ` (${l.count})` : ''}
-              </div>
-            );
-          })}
+        <div className="flex justify-between px-2">
+          <div className="flex">
+            <FooterTab type="help" label="Help" />
+            <FooterTab type="samples" label="Samples" />
+            <FooterTab type="console" label="Console" />
+          </div>
+          {activeFooter !== '' && (
+            <button onClick={() => setActiveFooter('')} className="text-white">
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+          )}
         </div>
+        {activeFooter !== '' && (
+          <div
+            className="text-white font-mono text-sm h-64 flex-none overflow-auto max-w-full break-all p-4"
+            ref={footerContent}
+          >
+            {activeFooter === 'console' && (
+              <div>
+                {log.map((l, i) => {
+                  const message = linkify(l.message);
+                  return (
+                    <div
+                      key={l.id}
+                      className={cx(l.type === 'error' && 'text-red-500', l.type === 'highlight' && 'text-highlight')}
+                    >
+                      <span dangerouslySetInnerHTML={{ __html: message }} />
+                      {l.count ? ` (${l.count})` : ''}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {activeFooter === 'samples' && <div>samples...</div>}
+          </div>
+        )}
       </footer>
     </div>
   );
