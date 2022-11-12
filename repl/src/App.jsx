@@ -13,7 +13,7 @@ import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
 import { prebake } from './prebake.mjs';
 import * as WebDirt from 'WebDirt';
-import { resetLoadedSamples, getAudioContext } from '@strudel.cycles/webaudio';
+import { resetLoadedSamples, getAudioContext, getLoadedSamples } from '@strudel.cycles/webaudio';
 import { controls, evalScope, logger } from '@strudel.cycles/core';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
@@ -35,10 +35,7 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
 );
 
-evalScope(
-  // Tone,
-  controls, // sadly, this cannot be exported from core direclty
-  { WebDirt },
+const modules = [
   import('@strudel.cycles/core'),
   // import('@strudel.cycles/tone'),
   import('@strudel.cycles/tonal'),
@@ -49,9 +46,22 @@ evalScope(
   import('@strudel.cycles/osc'),
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
+];
+
+evalScope(
+  // Tone,
+  controls, // sadly, this cannot be exported from core direclty
+  { WebDirt },
+  ...modules,
 );
 
-prebake();
+let loadedSamples = [];
+const presets = prebake();
+
+Promise.all([...modules, presets]).then((data) => {
+  // console.log('modules and sample registry loade', data);
+  loadedSamples = Object.entries(getLoadedSamples() || {});
+});
 
 const hideHeader = false;
 const pending = false;
@@ -125,7 +135,7 @@ function App() {
   );
   const footerContent = useRef();
   useLayoutEffect(() => {
-    if (footerContent.current) {
+    if (footerContent.current && activeFooter === 'console') {
       // scroll log box to bottom when log changes
       footerContent.current.scrollTop = footerContent.current?.scrollHeight;
     }
@@ -237,18 +247,18 @@ function App() {
     started && logger('[edit] code changed. hit ctrl+enter to update');
   };
 
-  const FooterTab = ({ label, children, type }) => (
+  const FooterTab = ({ children, name }) => (
     <>
       <div
-        onClick={() => setActiveFooter(type)}
+        onClick={() => setActiveFooter(name)}
         className={cx(
-          'h-8 px-2 text-white cursor-pointer hover:text-highlight flex items-center space-x-1',
-          activeFooter === type ? 'border-b' : '',
+          'h-8 px-2 text-white cursor-pointer hover:text-highlight flex items-center space-x-1 border-b',
+          activeFooter === name ? 'border-white hover:border-highlight' : 'border-transparent',
         )}
       >
-        {label}
+        {name}
       </div>
-      {activeFooter === type && <>{children}</>}
+      {activeFooter === name && <>{children}</>}
     </>
   );
 
@@ -362,10 +372,10 @@ function App() {
       </section>
       <footer className="bg-footer">
         <div className="flex justify-between px-2">
-          <div className="flex">
-            <FooterTab type="help" label="Help" />
-            <FooterTab type="samples" label="Samples" />
-            <FooterTab type="console" label="Console" />
+          <div className="flex pb-2">
+            <FooterTab name="help" />
+            <FooterTab name="samples" />
+            <FooterTab name="console" />
           </div>
           {activeFooter !== '' && (
             <button onClick={() => setActiveFooter('')} className="text-white">
@@ -375,7 +385,7 @@ function App() {
         </div>
         {activeFooter !== '' && (
           <div
-            className="text-white font-mono text-sm h-64 flex-none overflow-auto max-w-full break-all p-4"
+            className="text-white font-mono text-sm h-64 flex-none overflow-auto max-w-full break-all px-4"
             ref={footerContent}
           >
             {activeFooter === 'console' && (
@@ -394,7 +404,23 @@ function App() {
                 })}
               </div>
             )}
-            {activeFooter === 'samples' && <div>samples...</div>}
+            {activeFooter === 'samples' && (
+              <div className="break-normal w-full">
+                <span className="text-white">{loadedSamples.length} banks loaded:</span>
+                {loadedSamples.map(([name, samples]) => (
+                  <span key={name} className="cursor-pointer hover:text-highlight" onClick={() => {}}>
+                    {' '}
+                    {name}(
+                    {Array.isArray(samples)
+                      ? samples.length
+                      : typeof samples === 'object'
+                      ? Object.values(samples).length
+                      : 1}
+                    ){' '}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </footer>

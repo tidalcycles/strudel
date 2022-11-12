@@ -9,7 +9,7 @@ import * as strudel from '@strudel.cycles/core';
 import { fromMidi, logger, toMidi } from '@strudel.cycles/core';
 import './feedbackdelay.mjs';
 import './reverb.mjs';
-import { loadBuffer, reverseBuffer } from './sampler.mjs';
+import { getSampleBufferSource } from './sampler.mjs';
 const { Pattern } = strudel;
 import './vowel.mjs';
 import workletsUrl from './worklets.mjs?url';
@@ -96,57 +96,6 @@ const getSoundfontKey = (s) => {
     return globalThis.soundfontList.instruments.find((instrument) => instrument.startsWith(name));
   }
   return;
-};
-
-const getSampleBufferSource = async (s, n, note, speed) => {
-  let transpose = 0;
-  let midi = typeof note === 'string' ? toMidi(note) : note || 36;
-  transpose = midi - 36; // C3 is middle C
-
-  const ac = getAudioContext();
-  // is sample from loaded samples(..)
-  const samples = getLoadedSamples();
-  if (!samples) {
-    throw new Error('no samples loaded');
-  }
-  const bank = samples?.[s];
-  if (!bank) {
-    throw new Error(
-      `sample not found: "${s}"`,
-      // , try one of ${Object.keys(samples)
-      // .map((s) => `"${s}"`)
-      // .join(', ')}.
-    );
-  }
-  if (typeof bank !== 'object') {
-    throw new Error('wrong format for sample bank:', s);
-  }
-  let sampleUrl;
-  if (Array.isArray(bank)) {
-    sampleUrl = bank[n % bank.length];
-  } else {
-    const midiDiff = (noteA) => toMidi(noteA) - midi;
-    // object format will expect keys as notes
-    const closest = Object.keys(bank)
-      .filter((k) => !k.startsWith('_'))
-      .reduce(
-        (closest, key, j) => (!closest || Math.abs(midiDiff(key)) < Math.abs(midiDiff(closest)) ? key : closest),
-        null,
-      );
-    transpose = -midiDiff(closest); // semitones to repitch
-    sampleUrl = bank[closest][n % bank[closest].length];
-  }
-  let buffer = await loadBuffer(sampleUrl, ac, s, n);
-  if (speed < 0) {
-    // should this be cached?
-    buffer = reverseBuffer(buffer);
-  }
-  const bufferSource = ac.createBufferSource();
-  bufferSource.buffer = buffer;
-  const playbackRate = 1.0 * Math.pow(2, transpose / 12);
-  // bufferSource.playbackRate.value = Math.pow(2, transpose / 12);
-  bufferSource.playbackRate.value = playbackRate;
-  return bufferSource;
 };
 
 const splitSN = (s, n) => {
