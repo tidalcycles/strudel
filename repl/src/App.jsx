@@ -140,6 +140,13 @@ function App() {
       footerContent.current.scrollTop = footerContent.current?.scrollHeight;
     }
   }, [log, activeFooter]);
+  useLayoutEffect(() => {
+    if (activeFooter === 'console') {
+      footerContent.current.scrollTop = footerContent.current?.scrollHeight;
+    } else {
+      footerContent.current.scrollTop = 0;
+    }
+  }, [activeFooter]);
 
   const { code, setCode, scheduler, evaluate, activateCode, error, isDirty, activeCode, pattern, started, stop } =
     useStrudel({
@@ -147,13 +154,16 @@ function App() {
       defaultOutput: webaudioOutput,
       getTime,
       autolink: true,
+      onEvalError: () => {
+        setActiveFooter('console');
+      },
     });
 
   // init code
   useEffect(() => {
     initCode().then((decoded) => {
       logger(
-        `🌀 Welcome to Strudel! ${
+        `Welcome to Strudel! ${
           decoded ? `I have loaded the code from the URL.` : `A random code snippet named "${name}" has been loaded!`
         } Press play or hit ctrl+enter to run it!`,
         'highlight',
@@ -232,6 +242,7 @@ function App() {
       // copy shareUrl to clipboard
       navigator.clipboard.writeText(shareUrl);
       const message = `Link copied to clipboard: ${shareUrl}`;
+      alert(message);
       // alert(message);
       logger(message, 'highlight');
     } else {
@@ -247,7 +258,7 @@ function App() {
     started && logger('[edit] code changed. hit ctrl+enter to update');
   };
 
-  const FooterTab = ({ children, name }) => (
+  const FooterTab = ({ children, name, label }) => (
     <>
       <div
         onClick={() => setActiveFooter(name)}
@@ -256,7 +267,7 @@ function App() {
           activeFooter === name ? 'border-white hover:border-tertiary' : 'border-transparent',
         )}
       >
-        {name}
+        {label || name}
       </div>
       {activeFooter === name && <>{children}</>}
     </>
@@ -381,7 +392,7 @@ function App() {
           <div className="flex pb-2 select-none">
             <FooterTab name="intro" />
             <FooterTab name="samples" />
-            <FooterTab name="console" />
+            <FooterTab name="console" label={`console (${log.length})`} />
           </div>
           {activeFooter !== '' && (
             <button onClick={() => setActiveFooter('')} className="text-white">
@@ -395,15 +406,15 @@ function App() {
             ref={footerContent}
           >
             {activeFooter === 'intro' && (
-              <div className="prose prose-invert pt-2 font-sans pb-8">
+              <div className="prose prose-invert max-w-[600px] pt-2 font-sans pb-8">
                 <h3>
-                  <span className={cx('animate-spin inline-block')}>😻</span> Hello Friend
+                  <span className={cx('animate-spin inline-block select-none')}>🌀</span> welcome
                 </h3>
                 <p>
                   You have found <span className="underline">strudel</span>, a new live coding platform to write dynamic
-                  music pieces in the browser! It is free and open-source and made for beginners and experts alike.
+                  music pieces in the browser! It is free and open-source and made for beginners and experts alike. To
+                  get started:
                   <br />
-                  To get started:
                   <br />
                   <span className="underline">1. hit play</span> -{' '}
                   <span className="underline">2. change something</span> -{' '}

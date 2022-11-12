@@ -949,7 +949,7 @@ export const flatrave = `stack(
   .decay(.05).sustain(0).delay(.2).degradeBy(.5).mask("<0 1>/16")
 )`;
 
-export const amensister = `samples('github:tidalcycles/Dirt-Samples/master')
+export const amensister = `await samples('github:tidalcycles/Dirt-Samples/master')
 
 stack(
   // amen
