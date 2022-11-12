@@ -583,16 +583,28 @@ export class Pattern {
 
   patternify(func) {
     const pat = this;
-    const patterned = function (...args) {
-      // the problem here: args could a pattern that has been turned into an object to add location
-      // to avoid object checking for every pattern method, we can remove it here...
-      // in the future, patternified args should be marked as well + some better object handling
-      args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
-      const pat_arg = sequence(...args);
-      // arg.locations has to go somewhere..
-      return pat_arg.fmap((arg) => func.call(pat, arg)).innerJoin();
+    const patterned = function (join) {
+      return function (...args) {
+	// the problem here: args could a pattern that has been turned
+	// into an object to add location to avoid object checking for
+	// every pattern method, we can remove it here...  in the
+	// future, patternified args should be marked as well + some
+	// better object handling
+	args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
+	const pat_arg = sequence(...args);
+	// arg.locations has to go somewhere..
+	return join(pat_arg.fmap((arg) => func.call(pat, arg)));
+      };
     };
-    return patterned;
+    const result = patterned(x => x.innerJoin());
+    
+    // add variants..
+    result.squeeze = patterned(x => x.squeezeJoin());
+    result.in      = patterned(x => x.innerJoin());
+    result.out     = patterned(x => x.outerJoin());
+    result.mix     = patterned(x => x.join());
+
+    return result;
   }
 
   asNumber() {
