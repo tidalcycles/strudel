@@ -11,7 +11,6 @@ function useStrudel({
   autolink = false,
   afterEval,
   onEvalError,
-  onLog,
 }) {
   // scheduler
   const [schedulerError, setSchedulerError] = useState();
@@ -27,7 +26,6 @@ function useStrudel({
     () =>
       repl({
         interval,
-        onLog,
         defaultOutput,
         onSchedulerError: setSchedulerError,
         onEvalError: (err) => {

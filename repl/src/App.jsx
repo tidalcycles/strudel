@@ -107,7 +107,9 @@ function App() {
       setLog((l) => {
         const lastLog = l.length ? l[l.length - 1] : undefined;
         const id = nanoid(12);
+        // if (type === 'loaded-sample' && lastLog.type === 'load-sample' && lastLog.url === data.url) {
         if (type === 'loaded-sample') {
+          // const loadIndex = l.length - 1;
           const loadIndex = l.findIndex(({ data: { url }, type }) => type === 'load-sample' && url === data.url);
           l[loadIndex] = { message, type, id, data };
         } else if (lastLog && lastLog.message === message) {
@@ -132,8 +134,7 @@ function App() {
       initialCode: '// LOADING',
       defaultOutput: webaudioOutput,
       getTime,
-      autolink: true,
-      onLog: logger,
+      autolink: true
     });
 
   // init code
@@ -193,7 +194,7 @@ function App() {
 
   const handleShuffle = async () => {
     const { code, name } = getRandomTune();
-    logger(`✨ loading random tune "${name}"`);
+    logger(`[repl] ✨ loading random tune "${name}"`);
     /*
     cleanupDraw();
     cleanupUi(); */

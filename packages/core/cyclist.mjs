@@ -5,6 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import createClock from './zyklus.mjs';
+import { logger } from './logger.mjs';
 
 export class Cyclist {
   worker;
@@ -13,10 +14,9 @@ export class Cyclist {
   cps = 1; // TODO
   getTime;
   phase = 0;
-  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1, onLog }) {
+  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
     this.getTime = getTime;
     this.onToggle = onToggle;
-    this.onLog = onLog;
     this.latency = latency;
     const round = (x) => Math.round(x * 1000) / 1000;
     this.clock = createClock(
@@ -39,7 +39,7 @@ export class Cyclist {
             }
           });
         } catch (e) {
-          onLog(`error: ${e.message}`);
+          logger(`[cyclist] error: ${e.message}`);
           onError?.(e);
         }
       }, // called slightly before each cycle
@@ -57,17 +57,17 @@ export class Cyclist {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
-    this.onLog?.('start');
+    logger('[cyclist] start');
     this.clock.start();
     this.setStarted(true);
   }
   pause() {
-    this.onLog?.('pause');
+    logger('[cyclist] pause');
     this.clock.pause();
     this.setStarted(false);
   }
   stop() {
-    this.onLog?.('stop');
+    logger('[cyclist] stop');
     this.clock.stop();
     this.setStarted(false);
   }

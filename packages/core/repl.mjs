@@ -1,5 +1,6 @@
 import { Cyclist } from './cyclist.mjs';
 import { evaluate as _evaluate } from './evaluate.mjs';
+import { logger } from './logger.mjs';
 
 export function repl({
   interval,
@@ -11,7 +12,6 @@ export function repl({
   getTime,
   transpiler,
   onToggle,
-  onLog,
 }) {
   const scheduler = new Cyclist({
     interval,
@@ -24,13 +24,12 @@ export function repl({
         // call signature of output / onTrigger is different...
         return await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps);
       } catch (err) {
-        onLog?.(`[cyclist] error: ${err.message}`, 'error');
+        logger(`[cyclist] error: ${err.message}`, 'error');
       }
     },
     onError: onSchedulerError,
     getTime,
     onToggle,
-    onLog: (message, type) => onLog?.(`[cyclist] ${message}`, type),
   });
   const evaluate = async (code, autostart = true) => {
     if (!code) {
@@ -39,13 +38,13 @@ export function repl({
     try {
       beforeEval({ code });
       const { pattern } = await _evaluate(code, transpiler);
-      onLog?.(`[eval] code updated`);
+      logger(`[eval] code updated`);
       scheduler.setPattern(pattern, autostart);
       afterEval({ code, pattern });
       return pattern;
     } catch (err) {
       // console.warn(`[repl] eval error: ${err.message}`);
-      onLog?.(`[eval] error: ${err.message}`, 'error');
+      logger(`[eval] error: ${err.message}`, 'error');
       onEvalError?.(err);
     }
   };
