@@ -15,12 +15,13 @@ function connect() {
       const osc = new OSC();
       osc.open();
       osc.on('open', () => {
-        logger('OSC connected!');
+        const url = osc.options?.plugin?.socket?.url;
+        logger(`[osc] connected${url ? ` to ${url}` : ''}`);
         resolve(osc);
       });
       osc.on('close', () => {
         connection = undefined; // allows new connection afterwards
-        console.log('osc connection closed');
+        console.log('[osc] disconnected');
         reject('OSC connection closed');
       });
       osc.on('error', (err) => reject(err));
@@ -45,26 +46,23 @@ let startedAt = -1;
  */
 Pattern.prototype.osc = async function () {
   const osc = await connect();
-  return this._withHap((hap) => {
-    const onTrigger = (time, hap, currentTime, cps = 1) => {
-      const cycle = hap.wholeOrPart().begin.valueOf();
-      const delta = hap.duration.valueOf();
-      // time should be audio time of onset
-      // currentTime should be current time of audio context (slightly before time)
-      if (startedAt < 0) {
-        startedAt = Date.now() - currentTime * 1000;
-      }
-      const controls = Object.assign({}, { cps, cycle, delta }, hap.value);
-      // make sure n and note are numbers
-      controls.n && (controls.n = parseNumeral(controls.n));
-      controls.note && (controls.note = parseNumeral(controls.note));
-      const keyvals = Object.entries(controls).flat();
-      const ts = Math.floor(startedAt + (time + latency) * 1000);
-      const message = new OSC.Message('/dirt/play', ...keyvals);
-      const bundle = new OSC.Bundle([message], ts);
-      bundle.timestamp(ts); // workaround for https://github.com/adzialocha/osc-js/issues/60
-      osc.send(bundle);
-    };
-    return hap.setContext({ ...hap.context, onTrigger });
+  return this.onTrigger((time, hap, currentTime, cps = 1) => {
+    const cycle = hap.wholeOrPart().begin.valueOf();
+    const delta = hap.duration.valueOf();
+    // time should be audio time of onset
+    // currentTime should be current time of audio context (slightly before time)
+    if (startedAt < 0) {
+      startedAt = Date.now() - currentTime * 1000;
+    }
+    const controls = Object.assign({}, { cps, cycle, delta }, hap.value);
+    // make sure n and note are numbers
+    controls.n && (controls.n = parseNumeral(controls.n));
+    controls.note && (controls.note = parseNumeral(controls.note));
+    const keyvals = Object.entries(controls).flat();
+    const ts = Math.floor(startedAt + (time + latency) * 1000);
+    const message = new OSC.Message('/dirt/play', ...keyvals);
+    const bundle = new OSC.Bundle([message], ts);
+    bundle.timestamp(ts); // workaround for https://github.com/adzialocha/osc-js/issues/60
+    osc.send(bundle);
   });
 };

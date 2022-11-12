@@ -62,37 +62,34 @@ export function loadWebDirt(config) {
  */
 Pattern.prototype.webdirt = function () {
   // create a WebDirt object and initialize Web Audio context
-  return this._withHap((hap) => {
-    const onTrigger = async (time, e, currentTime) => {
-      if (!webDirt) {
-        throw new Error('WebDirt not initialized!');
-      }
-      const deadline = time - currentTime;
-      const { s, n = 0, ...rest } = e.value || {};
-      if (!s) {
-        console.warn('Pattern.webdirt: no "s" was set!');
-      }
-      const samples = getLoadedSamples();
-      if (!samples?.[s]) {
-        // try default samples
-        webDirt.playSample({ s, n, ...rest }, deadline);
-        return;
-      }
-      if (!samples?.[s]) {
-        console.warn(`Pattern.webdirt: sample "${s}" not found in loaded samples`, samples);
+  return this.onTrigger(async (time, e, currentTime) => {
+    if (!webDirt) {
+      throw new Error('WebDirt not initialized!');
+    }
+    const deadline = time - currentTime;
+    const { s, n = 0, ...rest } = e.value || {};
+    if (!s) {
+      console.warn('Pattern.webdirt: no "s" was set!');
+    }
+    const samples = getLoadedSamples();
+    if (!samples?.[s]) {
+      // try default samples
+      webDirt.playSample({ s, n, ...rest }, deadline);
+      return;
+    }
+    if (!samples?.[s]) {
+      console.warn(`Pattern.webdirt: sample "${s}" not found in loaded samples`, samples);
+    } else {
+      const bank = samples[s];
+      const sampleUrl = bank[n % bank.length];
+      const buffer = getLoadedBuffer(sampleUrl);
+      if (!buffer) {
+        console.log(`Pattern.webdirt: load ${s}:${n} from ${sampleUrl}`);
+        loadBuffer(sampleUrl, webDirt.ac);
       } else {
-        const bank = samples[s];
-        const sampleUrl = bank[n % bank.length];
-        const buffer = getLoadedBuffer(sampleUrl);
-        if (!buffer) {
-          console.log(`Pattern.webdirt: load ${s}:${n} from ${sampleUrl}`);
-          loadBuffer(sampleUrl, webDirt.ac);
-        } else {
-          const msg = { buffer: { buffer }, ...rest };
-          webDirt.playSample(msg, deadline);
-        }
+        const msg = { buffer: { buffer }, ...rest };
+        webDirt.playSample(msg, deadline);
       }
-    };
-    return hap.setContext({ ...hap.context, onTrigger });
+    }
   });
 };

@@ -65,46 +65,42 @@ Pattern.prototype.midi = async function (output, channel = 1) {
       }')`,
     );
   }
-  return this._withHap((hap) => {
-    // const onTrigger = (time: number, hap: any) => {
-    const onTrigger = (time, hap) => {
-      let note = getPlayableNoteValue(hap);
-      const velocity = hap.context?.velocity ?? 0.9;
-      if (!isNote(note)) {
-        throw new Error('not a note: ' + note);
-      }
-      if (!WebMidi.enabled) {
-        throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
-      }
-      if (!WebMidi.outputs.length) {
-        throw new Error(`🔌 No MIDI devices found. Connect a device or enable IAC Driver.`);
-      }
-      let device;
-      if (typeof output === 'number') {
-        device = WebMidi.outputs[output];
-      } else if (typeof output === 'string') {
-        device = outputByName(output);
-      } else {
-        device = WebMidi.outputs[0];
-      }
-      if (!device) {
-        throw new Error(
-          `🔌 MIDI device '${output ? output : ''}' not found. Use one of ${WebMidi.outputs
-            .map((o) => `'${o.name}'`)
-            .join(' | ')}`,
-        );
-      }
-      // console.log('midi', value, output);
-      const timingOffset = WebMidi.time - getAudioContext().currentTime * 1000;
-      time = time * 1000 + timingOffset;
-      // const inMs = '+' + (time - Tone.getContext().currentTime) * 1000;
-      // await enableWebMidi()
-      device.playNote(note, channel, {
-        time,
-        duration: hap.duration.valueOf() * 1000 - 5,
-        attack: velocity,
-      });
-    };
-    return hap.setContext({ ...hap.context, onTrigger });
+  return this.onTrigger((time, hap) => {
+    let note = getPlayableNoteValue(hap);
+    const velocity = hap.context?.velocity ?? 0.9;
+    if (!isNote(note)) {
+      throw new Error('not a note: ' + note);
+    }
+    if (!WebMidi.enabled) {
+      throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
+    }
+    if (!WebMidi.outputs.length) {
+      throw new Error(`🔌 No MIDI devices found. Connect a device or enable IAC Driver.`);
+    }
+    let device;
+    if (typeof output === 'number') {
+      device = WebMidi.outputs[output];
+    } else if (typeof output === 'string') {
+      device = outputByName(output);
+    } else {
+      device = WebMidi.outputs[0];
+    }
+    if (!device) {
+      throw new Error(
+        `🔌 MIDI device '${output ? output : ''}' not found. Use one of ${WebMidi.outputs
+          .map((o) => `'${o.name}'`)
+          .join(' | ')}`,
+      );
+    }
+    // console.log('midi', value, output);
+    const timingOffset = WebMidi.time - getAudioContext().currentTime * 1000;
+    time = time * 1000 + timingOffset;
+    // const inMs = '+' + (time - Tone.getContext().currentTime) * 1000;
+    // await enableWebMidi()
+    device.playNote(note, channel, {
+      time,
+      duration: hap.duration.valueOf() * 1000 - 5,
+      attack: velocity,
+    });
   });
 };
