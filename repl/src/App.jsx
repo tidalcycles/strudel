@@ -109,7 +109,7 @@ const isEmbedded = window.location !== window.parent.location;
 function App() {
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
-  const [activeFooter, setActiveFooter] = useState('intro');
+  const [activeFooter, setActiveFooter] = useState('console');
 
   // logger
   const [log, setLog] = useState([]);
@@ -162,8 +162,8 @@ function App() {
   // init code
   useEffect(() => {
     initCode().then((decoded) => {
-      if (decoded) {
-        setActiveFooter('console');
+      if (!decoded) {
+        setActiveFooter('intro');
       }
       logger(
         `Welcome to Strudel! ${
