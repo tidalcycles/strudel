@@ -162,6 +162,9 @@ function App() {
   // init code
   useEffect(() => {
     initCode().then((decoded) => {
+      if (decoded) {
+        setActiveFooter('console');
+      }
       logger(
         `Welcome to Strudel! ${
           decoded ? `I have loaded the code from the URL.` : `A random code snippet named "${name}" has been loaded!`
