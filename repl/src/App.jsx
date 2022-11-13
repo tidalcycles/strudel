@@ -109,21 +109,22 @@ function App() {
   const [isZen, setIsZen] = useState(false);
   const [pending, setPending] = useState(false);
 
-  const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop } = useStrudel({
-    initialCode: '// LOADING',
-    defaultOutput: webaudioOutput,
-    getTime,
-    autolink: true,
-    beforeEval: () => {
-      cleanupUi();
-      cleanupDraw();
-      setPending(true);
-    },
-    afterEval: () => {
-      setPending(false);
-    },
-    onToggle: (play) => !play && cleanupDraw(false),
-  });
+  const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
+    useStrudel({
+      initialCode: '// LOADING',
+      defaultOutput: webaudioOutput,
+      getTime,
+      autolink: true,
+      beforeEval: () => {
+        cleanupUi();
+        cleanupDraw();
+        setPending(true);
+      },
+      afterEval: () => {
+        setPending(false);
+      },
+      onToggle: (play) => !play && cleanupDraw(false),
+    });
 
   // init code
   useEffect(() => {
@@ -264,6 +265,9 @@ function App() {
             }}
           />
         </section>
+        {error && (
+          <div className="text-red-500 p-4 bg-lineblack animate-pulse">{error.message || 'Unknown Error :-/'}</div>
+        )}
         <Footer />
       </div>
     </AppContext.Provider>

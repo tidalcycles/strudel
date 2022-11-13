@@ -30,9 +30,6 @@ export function Footer() {
   useLogger(
     useCallback((e) => {
       const { message, type, data } = e.detail;
-      if (type === 'error') {
-        setActiveFooter('console');
-      }
       setLog((l) => {
         const lastLog = l.length ? l[l.length - 1] : undefined;
         const id = nanoid(12);

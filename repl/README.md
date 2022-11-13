@@ -46,6 +46,6 @@ currently broken / buggy:
 - [x] scheduler.getPhase is quantized to clock interval
   - => draw was choppy + that also caused useHighlighting bugs
 - [x] pianoroll keeps rolling when pressing stop
-- [ ] find a way to display errors when console is closed / another tab selected
+- [x] find a way to display errors when console is closed / another tab selected
 - [ ] highlighting out of range error is back (delete large chunk at the top while highlighting below is triggered)
 - [ ] idea: interpolate between running and evaluated code!
