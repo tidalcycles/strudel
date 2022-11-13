@@ -127,8 +127,8 @@ function le({ view: e, pattern: t, active: o, getTime: a }) {
           try {
             const c = a(), g = [Math.max(m.current || c, c - 1 / 10, 0), c + 1 / 60];
             m.current = g[1], s.current = s.current.filter((p) => p.whole.end > c);
-            const v = t.queryArc(...g).filter((p) => p.hasOnset());
-            s.current = s.current.concat(v), e.dispatch({ effects: A.of(s.current) });
+            const h = t.queryArc(...g).filter((p) => p.hasOnset());
+            s.current = s.current.concat(h), e.dispatch({ effects: A.of(s.current) });
           } catch {
             e.dispatch({ effects: A.of([]) });
           }
@@ -186,11 +186,11 @@ function ve({
   onEvalError: c,
   onToggle: i
 }) {
-  const [g, v] = w(), [p, D] = w(), [h, k] = w(s), [y, P] = w(h), [z, _] = w(), [C, H] = w(!1), F = h !== y, { scheduler: u, evaluate: L, start: $, stop: G, pause: J } = I(
+  const [g, h] = w(), [p, D] = w(), [v, k] = w(s), [y, P] = w(), [z, _] = w(), [C, H] = w(!1), F = v !== y, { scheduler: u, evaluate: L, start: $, stop: G, pause: J } = I(
     () => te({
       interval: t,
       defaultOutput: e,
-      onSchedulerError: v,
+      onSchedulerError: h,
       onEvalError: (f) => {
         D(f), c?.(f);
       },
@@ -200,20 +200,20 @@ function ve({
         k(f), l?.();
       },
       afterEval: ({ pattern: f, code: S }) => {
-        P(S), _(f), D(), v(), m && (window.location.hash = "#" + encodeURIComponent(btoa(S))), d?.();
+        P(S), _(f), D(), h(), m && (window.location.hash = "#" + encodeURIComponent(btoa(S))), d?.();
       },
       onToggle: (f) => {
         H(f), i?.(f);
       }
     }),
     [e, t, o]
-  ), M = N(async (f = !0) => L(h, f), [L, h]), V = x();
+  ), M = N(async (f = !0) => L(v, f), [L, v]), V = x();
   return R(() => {
-    !V.current && a && h && (V.current = !0, M());
-  }, [M, a, h]), R(() => () => {
+    !V.current && a && v && (V.current = !0, M());
+  }, [M, a, v]), R(() => () => {
     u.stop();
   }, [u]), {
-    code: h,
+    code: v,
     setCode: k,
     error: g || p,
     schedulerError: g,
@@ -243,10 +243,10 @@ function Pe({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
     error: c,
     isDirty: i,
     activeCode: g,
-    pattern: v,
+    pattern: h,
     started: p,
     scheduler: D,
-    togglePlay: h,
+    togglePlay: v,
     stop: k
   } = ve({
     initialCode: e,
@@ -257,7 +257,7 @@ function Pe({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
   }), C = x(), H = I(() => ((_ || !t) && (C.current = !0), _ || C.current), [_, t]);
   return le({
     view: y,
-    pattern: v,
+    pattern: h,
     active: p && !g?.includes("strudel disable-highlighting"),
     getTime: () => D.getPhase()
   }), K(() => {
@@ -267,7 +267,7 @@ function Pe({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
       };
       return window.addEventListener("keydown", F, !0), () => window.removeEventListener("keydown", F, !0);
     }
-  }, [a, v, s, l, k, y]), /* @__PURE__ */ n.createElement("div", {
+  }, [a, h, s, l, k, y]), /* @__PURE__ */ n.createElement("div", {
     className: b.container,
     ref: z
   }, /* @__PURE__ */ n.createElement("div", {
@@ -276,7 +276,7 @@ function Pe({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
     className: b.buttons
   }, /* @__PURE__ */ n.createElement("button", {
     className: B(b.button, p ? "sc-animate-pulse" : ""),
-    onClick: () => h()
+    onClick: () => v()
   }, /* @__PURE__ */ n.createElement(q, {
     type: p ? "pause" : "play"
   })), /* @__PURE__ */ n.createElement("button", {

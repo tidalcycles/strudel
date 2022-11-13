@@ -18,7 +18,7 @@ function useStrudel({
   const [schedulerError, setSchedulerError] = useState();
   const [evalError, setEvalError] = useState();
   const [code, setCode] = useState(initialCode);
-  const [activeCode, setActiveCode] = useState(code);
+  const [activeCode, setActiveCode] = useState();
   const [pattern, setPattern] = useState();
   const [started, setStarted] = useState(false);
   const isDirty = code !== activeCode;
