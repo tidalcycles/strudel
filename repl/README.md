@@ -47,5 +47,5 @@ currently broken / buggy:
   - => draw was choppy + that also caused useHighlighting bugs
 - [x] pianoroll keeps rolling when pressing stop
 - [x] find a way to display errors when console is closed / another tab selected
-- [ ] highlighting out of range error is back (delete large chunk at the top while highlighting below is triggered)
+- [x] highlighting out of range error is back (delete large chunk at the top while highlighting below is triggered)
 - [ ] idea: interpolate between running and evaluated code!

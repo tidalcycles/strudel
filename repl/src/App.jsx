@@ -173,10 +173,17 @@ function App() {
   // UI Actions
   //
 
-  const handleChangeCode = (c) => {
-    setCode(c);
-    started && logger('[edit] code changed. hit ctrl+enter to update');
-  };
+  const handleChangeCode = useCallback(
+    (c) => {
+      setCode(c);
+      started && logger('[edit] code changed. hit ctrl+enter to update');
+    },
+    [started],
+  );
+  const handleSelectionChange = useCallback((selection) => {
+    // TODO: scroll to selected function in reference
+    // console.log('selectino change', selection.ranges[0].from);
+  }, []);
   const handleTogglePlay = async () => {
     await getAudioContext().resume(); // fixes no sound in ios webkit
     if (!started) {
@@ -259,10 +266,7 @@ function App() {
             value={code}
             onChange={handleChangeCode}
             onViewChanged={setView}
-            onSelectionChange={(selection) => {
-              // TODO: scroll to selected function in reference
-              // console.log('selectino change', selection.ranges[0].from);
-            }}
+            onSelectionChange={handleSelectionChange}
           />
         </section>
         {error && (
