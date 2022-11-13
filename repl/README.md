@@ -47,3 +47,4 @@ currently broken / buggy:
 - [ ] find a way to display errors when console is closed / another tab selected
 - [x] scheduler.getPhase is quantized to clock interval
   - => draw was choppy + that also caused useHighlighting bugs
+- [ ] pianoroll keeps rolling when pressing stop
