@@ -108,6 +108,7 @@ function App() {
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
   const [activeFooter, setActiveFooter] = useState('');
+  const [isZen, setIsZen] = useState(false);
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop } = useStrudel({
     initialCode: '// LOADING',
@@ -238,6 +239,8 @@ function App() {
         handleUpdate,
         handleShuffle,
         handleShare,
+        isZen,
+        setIsZen,
       }}
     >
       <div
@@ -248,7 +251,15 @@ function App() {
       >
         {!hideHeader && <Header />}
         <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-0" id="code">
-          <CodeMirror value={code} onChange={handleChangeCode} onViewChanged={setView} />
+          <CodeMirror
+            value={code}
+            onChange={handleChangeCode}
+            onViewChanged={setView}
+            onSelectionChange={(selection) => {
+              // TODO: scroll to selected function in reference
+              // console.log('selectino change', selection.ranges[0].from);
+            }}
+          />
         </section>
         <Footer />
       </div>

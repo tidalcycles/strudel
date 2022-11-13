@@ -8,7 +8,7 @@ import { Reference } from './Reference';
 
 export function Footer() {
   // const [activeFooter, setActiveFooter] = useState('console');
-  const { activeFooter, setActiveFooter } = useContext(AppContext);
+  const { activeFooter, setActiveFooter, isZen } = useContext(AppContext);
   const footerContent = useRef();
   const [log, setLog] = useState([]);
 
@@ -65,6 +65,9 @@ export function Footer() {
       {activeFooter === name && <>{children}</>}
     </>
   );
+  if (isZen) {
+    return null;
+  }
   return (
     <footer className="bg-footer z-[20]">
       <div className="flex justify-between px-2">

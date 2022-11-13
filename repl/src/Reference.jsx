@@ -1,5 +1,4 @@
 import jsdocJson from '../../doc.json';
-console.log('jsdocJson', jsdocJson);
 const visibleFunctions = jsdocJson.docs
   .filter(({ name, description }) => name && !name.startsWith('_') && !!description)
   .sort((a, b) => a.meta.filename.localeCompare(b.meta.filename) + a.name.localeCompare(b.name));
@@ -24,7 +23,7 @@ export function Reference() {
           {visibleFunctions.map((entry, i) => (
             <section key={i}>
               <h3 id={`doc-${i}`}>{entry.name}</h3>
-              <small>{entry.meta.filename}</small>
+              {/* <small>{entry.meta.filename}</small> */}
 
               <p dangerouslySetInnerHTML={{ __html: entry.description }}></p>
               {entry.examples?.map((example, j) => (
