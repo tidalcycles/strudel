@@ -12,6 +12,7 @@ function useStrudel({
   beforeEval,
   afterEval,
   onEvalError,
+  onToggle,
 }) {
   // scheduler
   const [schedulerError, setSchedulerError] = useState();
@@ -49,7 +50,10 @@ function useStrudel({
           }
           afterEval?.();
         },
-        onToggle: (v) => setStarted(v),
+        onToggle: (v) => {
+          setStarted(v);
+          onToggle?.(v);
+        },
       }),
     [defaultOutput, interval, getTime],
   );

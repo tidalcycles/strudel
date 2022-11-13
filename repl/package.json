@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "predev": "cd ${PWD}/../tutorial/ && npm run render",
     "dev": "vite --host",
     "start": "vite",
     "build": "vite build",

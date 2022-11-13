@@ -49,9 +49,9 @@ Pattern.prototype.draw = function (callback, { from, to, onQuery }) {
   return this;
 };
 
-export const cleanupDraw = () => {
+export const cleanupDraw = (clearScreen = true) => {
   const ctx = getDrawContext();
-  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  clearScreen && ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
   if (window.strudelAnimation) {
     cancelAnimationFrame(window.strudelAnimation);
   }

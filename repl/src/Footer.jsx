@@ -4,6 +4,7 @@ import { cx } from '@strudel.cycles/react';
 import { nanoid } from 'nanoid';
 import React, { useContext, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useEvent, loadedSamples, AppContext } from './App';
+import { Reference } from './Reference';
 
 export function Footer() {
   // const [activeFooter, setActiveFooter] = useState('console');
@@ -67,10 +68,11 @@ export function Footer() {
   return (
     <footer className="bg-footer z-[20]">
       <div className="flex justify-between px-2">
-        <div className="flex pb-2 select-none">
-          <FooterTab name="intro" />
+        <div className={cx('flex select-none', activeFooter && 'pb-2')}>
+          <FooterTab name="intro" label="welcome" />
           <FooterTab name="samples" />
-          <FooterTab name="console" label={`console (${log.length})`} />
+          <FooterTab name="console" />
+          <FooterTab name="reference" />
         </div>
         {activeFooter !== '' && (
           <button onClick={() => setActiveFooter('')} className="text-white">
@@ -80,11 +82,11 @@ export function Footer() {
       </div>
       {activeFooter !== '' && (
         <div
-          className="text-white font-mono text-sm h-72 max-h-[33vh] flex-none overflow-auto max-w-full px-4"
+          className="text-white font-mono text-sm h-[360px] flex-none overflow-auto max-w-full relative"
           ref={footerContent}
         >
           {activeFooter === 'intro' && (
-            <div className="prose prose-invert max-w-[600px] pt-2 font-sans pb-8">
+            <div className="prose prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
               <h3>
                 <span className={cx('animate-spin inline-block select-none')}>🌀</span> welcome
               </h3>
@@ -129,7 +131,7 @@ export function Footer() {
             </div>
           )}
           {activeFooter === 'console' && (
-            <div className="break-all">
+            <div className="break-all px-4">
               {log.map((l, i) => {
                 const message = linkify(l.message);
                 return (
@@ -145,7 +147,7 @@ export function Footer() {
             </div>
           )}
           {activeFooter === 'samples' && (
-            <div className="break-normal w-full">
+            <div className="break-normal w-full px-4">
               <span className="text-white">{loadedSamples.length} banks loaded:</span>
               {loadedSamples.map(([name, samples]) => (
                 <span key={name} className="cursor-pointer hover:text-tertiary" onClick={() => {}}>
@@ -161,6 +163,7 @@ export function Footer() {
               ))}
             </div>
           )}
+          {activeFooter === 'reference' && <Reference />}
         </div>
       )}
     </footer>
