@@ -31,8 +31,8 @@ currently broken / buggy:
 
 - [x] MiniREPL
 - [x] repl log section
-- [ ] hideHeader flag
-- [ ] pending flag
+- [-] hideHeader flag => can now use zen mode
+- [x] pending flag
 - [x] web midi, TODO: test
 - [x] draw / pianoroll
 - [x] repl url hash does not work
@@ -43,8 +43,9 @@ currently broken / buggy:
 - [x] highlighting seems too late (off by latency ?)
 - [x] highlighting sometimes drops highlights (zeldasRescue first note)
 - [x] highlighting still sometimes drops highlights (zeldasRescue somtimes)
-- [ ] highlighting out of range error is back (delete large chunk at the top while highlighting below is triggered)
-- [ ] find a way to display errors when console is closed / another tab selected
 - [x] scheduler.getPhase is quantized to clock interval
   - => draw was choppy + that also caused useHighlighting bugs
-- [ ] pianoroll keeps rolling when pressing stop
+- [x] pianoroll keeps rolling when pressing stop
+- [ ] find a way to display errors when console is closed / another tab selected
+- [ ] highlighting out of range error is back (delete large chunk at the top while highlighting below is triggered)
+- [ ] idea: interpolate between running and evaluated code!

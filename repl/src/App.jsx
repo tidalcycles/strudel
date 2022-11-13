@@ -59,8 +59,6 @@ Promise.all([...modules, presets]).then((data) => {
   loadedSamples = Object.entries(getLoadedSamples() || {});
 });
 
-const hideHeader = false;
-const pending = false;
 const getTime = () => getAudioContext().currentTime;
 
 async function initCode() {
@@ -109,6 +107,7 @@ function App() {
   const [lastShared, setLastShared] = useState();
   const [activeFooter, setActiveFooter] = useState('');
   const [isZen, setIsZen] = useState(false);
+  const [pending, setPending] = useState(false);
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop } = useStrudel({
     initialCode: '// LOADING',
@@ -118,6 +117,10 @@ function App() {
     beforeEval: () => {
       cleanupUi();
       cleanupDraw();
+      setPending(true);
+    },
+    afterEval: () => {
+      setPending(false);
     },
     onToggle: (play) => !play && cleanupDraw(false),
   });
@@ -249,7 +252,7 @@ function App() {
           //        'bg-gradient-to-t from-green-900 to-slate-900', //
         )}
       >
-        {!hideHeader && <Header />}
+        <Header />
         <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-0" id="code">
           <CodeMirror
             value={code}

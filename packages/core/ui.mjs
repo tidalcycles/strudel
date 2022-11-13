@@ -6,10 +6,6 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { getTime } from './time.mjs';
 
-export const hideHeader = () => {
-  document.getElementById('header').style = 'display:none';
-};
-
 function frame(callback) {
   if (window.strudelAnimation) {
     cancelAnimationFrame(window.strudelAnimation);
