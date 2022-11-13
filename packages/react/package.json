@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/react",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "React components for strudel",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -42,7 +42,7 @@
     "@strudel.cycles/core": "^0.4.0",
     "@strudel.cycles/tone": "^0.4.0",
     "@strudel.cycles/transpiler": "^0.4.0",
-    "@strudel.cycles/webaudio": "^0.4.0",
+    "@strudel.cycles/webaudio": "^0.4.1",
     "@uiw/codemirror-themes": "^4.12.4",
     "@uiw/react-codemirror": "^4.12.4",
     "react-hook-inview": "^4.5.0"
