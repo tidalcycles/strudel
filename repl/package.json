@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "predev": "cd ${PWD}/../tutorial/ && npm run render",
+    "render-jsdoc": "cd ${PWD}/../tutorial/ && npm run render",
+    "predev": "npm run render-jsdoc",
+    "prebuild": "npm run render-jsdoc",
     "dev": "vite --host",
     "start": "vite",
     "build": "vite build",
