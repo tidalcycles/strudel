@@ -85,9 +85,13 @@ export class Hap {
     );
   }
 
-  showWhole() {
+  showWhole(compact = false) {
     return `${this.whole == undefined ? '~' : this.whole.show()}: ${
-      typeof this.value === 'object' ? JSON.stringify(this.value) : this.value
+      typeof this.value === 'object'
+        ? compact
+          ? JSON.stringify(this.value).slice(1, -1).replaceAll('"', '').replaceAll(',', ' ')
+          : JSON.stringify(this.value)
+        : this.value
     }`;
   }
 

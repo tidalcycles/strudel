@@ -308,7 +308,6 @@ export const blippyRhodes = `samples({
   }
 }, 'https://loophole-letters.vercel.app/')
 
-const bass = synth(osc('sawtooth8')).chain(vol(.5),out())
 const scales = cat('C major', 'C mixolydian', 'F lydian', ['F minor', cat('Db major','Db mixolydian')])
 
 stack(
@@ -950,7 +949,7 @@ export const flatrave = `stack(
   .decay(.05).sustain(0).delay(.2).degradeBy(.5).mask("<0 1>/16")
 )`;
 
-export const amensister = `samples('github:tidalcycles/Dirt-Samples/master')
+export const amensister = `await samples('github:tidalcycles/Dirt-Samples/master')
 
 stack(
   // amen
@@ -981,3 +980,14 @@ stack(
   ,
   n("0 1").s("east").delay(.5).degradeBy(.8).speed(rand.range(.5,1.5))
 ).reset("<x@7 x(5,8)>")`;
+
+export const juxUndTollerei = `note("c3 eb3 g3 bb3").palindrome()
+.s('sawtooth')
+.jux(x=>x.rev().color('green').s('sawtooth'))
+.off(1/4, x=>x.add(note("<7 12>/2")).slow(2).late(.005).s('triangle'))
+//.delay(.5)
+.fast(1).cutoff(sine.range(200,2000).slow(8))
+.decay(.05).sustain(0)
+.room(.6)
+.delay(.5).delaytime(.1).delayfeedback(.4)
+.pianoroll()`;

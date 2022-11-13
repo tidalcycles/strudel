@@ -50,32 +50,29 @@ export const getDefaultSynth = () => {
 
 // with this function, you can play the pattern with any tone synth
 Pattern.prototype.tone = function (instrument) {
-  return this._withHap((hap) => {
-    const onTrigger = (time, hap) => {
-      let note;
-      let velocity = hap.context?.velocity ?? 0.75;
-      if (instrument instanceof PluckSynth) {
-        note = getPlayableNoteValue(hap);
-        instrument.triggerAttack(note, time);
-      } else if (instrument instanceof NoiseSynth) {
-        instrument.triggerAttackRelease(hap.duration.valueOf(), time); // noise has no value
-      } else if (instrument instanceof Sampler) {
-        note = getPlayableNoteValue(hap);
-        instrument.triggerAttackRelease(note, hap.duration.valueOf(), time, velocity);
-      } else if (instrument instanceof Players) {
-        if (!instrument.has(hap.value)) {
-          throw new Error(`name "${hap.value}" not defined for players`);
-        }
-        const player = instrument.player(hap.value);
-        // velocity ?
-        player.start(time);
-        player.stop(time + hap.duration.valueOf());
-      } else {
-        note = getPlayableNoteValue(hap);
-        instrument.triggerAttackRelease(note, hap.duration.valueOf(), time, velocity);
+  return this.onTrigger((time, hap) => {
+    let note;
+    let velocity = hap.context?.velocity ?? 0.75;
+    if (instrument instanceof PluckSynth) {
+      note = getPlayableNoteValue(hap);
+      instrument.triggerAttack(note, time);
+    } else if (instrument instanceof NoiseSynth) {
+      instrument.triggerAttackRelease(hap.duration.valueOf(), time); // noise has no value
+    } else if (instrument instanceof Sampler) {
+      note = getPlayableNoteValue(hap);
+      instrument.triggerAttackRelease(note, hap.duration.valueOf(), time, velocity);
+    } else if (instrument instanceof Players) {
+      if (!instrument.has(hap.value)) {
+        throw new Error(`name "${hap.value}" not defined for players`);
       }
-    };
-    return hap.setContext({ ...hap.context, instrument, onTrigger });
+      const player = instrument.player(hap.value);
+      // velocity ?
+      player.start(time);
+      player.stop(time + hap.duration.valueOf());
+    } else {
+      note = getPlayableNoteValue(hap);
+      instrument.triggerAttackRelease(note, hap.duration.valueOf(), time, velocity);
+    }
   });
 };
 

@@ -4,8 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Tone } from './tone.mjs';
-import { Pattern } from '@strudel.cycles/core';
+import { Pattern, getTime } from './index.mjs';
 
 export const getDrawContext = (id = 'test-canvas') => {
   let canvas = document.querySelector('#' + id);
@@ -28,7 +27,7 @@ Pattern.prototype.draw = function (callback, { from, to, onQuery }) {
   let cycle,
     events = [];
   const animate = (time) => {
-    const t = Tone.getTransport().seconds;
+    const t = getTime();
     if (from !== undefined && to !== undefined) {
       const currentCycle = Math.floor(t);
       if (cycle !== currentCycle) {
@@ -50,9 +49,9 @@ Pattern.prototype.draw = function (callback, { from, to, onQuery }) {
   return this;
 };
 
-export const cleanupDraw = () => {
+export const cleanupDraw = (clearScreen = true) => {
   const ctx = getDrawContext();
-  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  clearScreen && ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
   if (window.strudelAnimation) {
     cancelAnimationFrame(window.strudelAnimation);
   }

@@ -82,7 +82,7 @@ function App() {
     view,
     pattern,
     active: !activeCode?.includes('strudel disable-highlighting'),
-    getTime: () => scheduler.phase,
+    getTime: () => scheduler.getPhase(),
   });
 
   const error = evalError || schedulerError;

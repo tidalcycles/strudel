@@ -55,9 +55,13 @@ export const midi2note = (n) => {
 export const mod = (n, m) => ((n % m) + m) % m;
 
 export const getPlayableNoteValue = (hap) => {
-  let { value: note, context } = hap;
+  let { value, context } = hap;
+  let note = value;
   if (typeof note === 'object' && !Array.isArray(note)) {
     note = note.note || note.n || note.value;
+    if (note === undefined) {
+      throw new Error(`cannot find a playable note for ${JSON.stringify(value)}`);
+    }
   }
   // if value is number => interpret as midi number as long as its not marked as frequency
   if (typeof note === 'number' && context.type !== 'frequency') {

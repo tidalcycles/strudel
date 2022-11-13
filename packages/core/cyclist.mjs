@@ -5,6 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import createClock from './zyklus.mjs';
+import { logger } from './logger.mjs';
 
 export class Cyclist {
   worker;
@@ -13,8 +14,10 @@ export class Cyclist {
   cps = 1; // TODO
   getTime;
   phase = 0;
-  constructor({ interval, onTrigger, onError, getTime, latency = 0.1 }) {
+  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
     this.getTime = getTime;
+    this.onToggle = onToggle;
+    this.latency = latency;
     const round = (x) => Math.round(x * 1000) / 1000;
     this.clock = createClock(
       getTime,
@@ -28,9 +31,7 @@ export class Cyclist {
         const time = getTime();
         try {
           const haps = this.pattern.queryArc(begin, end); // get Haps
-          // console.log('haps', haps.map((hap) => hap.value.n).join(' '));
           haps.forEach((hap) => {
-            // console.log('hap', hap.value.n, hap.part.begin);
             if (hap.part.begin.equals(hap.whole.begin)) {
               const deadline = hap.whole.begin + this.origin - time + latency;
               const duration = hap.duration * 1;
@@ -38,7 +39,7 @@ export class Cyclist {
             }
           });
         } catch (e) {
-          console.warn('scheduler error', e);
+          logger(`[cyclist] error: ${e.message}`);
           onError?.(e);
         }
       }, // called slightly before each cycle
@@ -46,24 +47,29 @@ export class Cyclist {
     );
   }
   getPhase() {
-    return this.phase;
+    return this.getTime() - this.origin - this.latency;
+  }
+  setStarted(v) {
+    this.started = v;
+    this.onToggle?.(v);
   }
   start() {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
+    logger('[cyclist] start');
     this.clock.start();
-    this.started = true;
+    this.setStarted(true);
   }
   pause() {
-    this.clock.stop();
-    delete this.origin;
-    this.started = false;
+    logger('[cyclist] pause');
+    this.clock.pause();
+    this.setStarted(false);
   }
   stop() {
-    delete this.origin;
+    logger('[cyclist] stop');
     this.clock.stop();
-    this.started = false;
+    this.setStarted(false);
   }
   setPattern(pat, autostart = false) {
     this.pattern = pat;

@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: '../out',
-    sourcemap: false,
+    sourcemap: true,
     rollupOptions: {
       plugins: [visualizer({ template: 'treemap' })],
     },
