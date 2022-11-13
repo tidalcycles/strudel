@@ -2,11 +2,12 @@ import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon';
 import { logger } from '@strudel.cycles/core';
 import { cx } from '@strudel.cycles/react';
 import { nanoid } from 'nanoid';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { useEvent, loadedSamples } from './App';
+import React, { useContext, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useEvent, loadedSamples, AppContext } from './App';
 
 export function Footer() {
-  const [activeFooter, setActiveFooter] = useState('console');
+  // const [activeFooter, setActiveFooter] = useState('console');
+  const { activeFooter, setActiveFooter } = useContext(AppContext);
   const footerContent = useRef();
   const [log, setLog] = useState([]);
 

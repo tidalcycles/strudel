@@ -107,6 +107,7 @@ export const AppContext = createContext();
 function App() {
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
+  const [activeFooter, setActiveFooter] = useState('console');
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop } = useStrudel({
     initialCode: '// LOADING',
@@ -229,6 +230,8 @@ function App() {
         isDirty,
         lastShared,
         activeCode,
+        activeFooter,
+        setActiveFooter,
         handleChangeCode,
         handleTogglePlay,
         handleUpdate,
