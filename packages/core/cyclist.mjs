@@ -46,8 +46,8 @@ export class Cyclist {
       interval, // duration of each cycle
     );
   }
-  getPhase(latencyCompensation = true) {
-    return this.phase - (latencyCompensation ? this.latency : 0);
+  getPhase() {
+    return this.getTime() - this.origin;
   }
   setStarted(v) {
     this.started = v;

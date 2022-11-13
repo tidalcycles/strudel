@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Tone } from './tone.mjs';
+import { getTime } from './time.mjs';
 
 export const hideHeader = () => {
   document.getElementById('header').style = 'display:none';
@@ -15,8 +15,7 @@ function frame(callback) {
     cancelAnimationFrame(window.strudelAnimation);
   }
   const animate = (animationTime) => {
-    const toneTime = Tone.getTransport().seconds;
-    callback(animationTime, toneTime);
+    callback(animationTime, getTime());
     window.strudelAnimation = requestAnimationFrame(animate);
   };
   requestAnimationFrame(animate);
@@ -51,6 +50,7 @@ export const cleanupUi = () => {
   const container = document.getElementById('code');
   if (container) {
     container.style = '';
-    container.className = 'grow relative'; // has to match App.tsx
+    // TODO: find a way to remove that duplication..
+    container.className = 'grow flex text-gray-100 relative overflow-auto cursor-text pb-0'; // has to match App.tsx
   }
 };

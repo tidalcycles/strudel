@@ -1,6 +1,7 @@
 import { Cyclist } from './cyclist.mjs';
 import { evaluate as _evaluate } from './evaluate.mjs';
 import { logger } from './logger.mjs';
+import { setTime } from './time.mjs';
 
 export function repl({
   interval,
@@ -33,6 +34,7 @@ export function repl({
     getTime,
     onToggle,
   });
+  setTime(() => scheduler.getPhase()); // TODO: refactor?
   const evaluate = async (code, autostart = true) => {
     if (!code) {
       throw new Error('no code to evaluate');

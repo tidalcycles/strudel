@@ -34,7 +34,7 @@ currently broken / buggy:
 - [ ] hideHeader flag
 - [ ] pending flag
 - [x] web midi, TODO: test
-- [ ] draw / pianoroll
+- [x] draw / pianoroll
 - [x] repl url hash does not work
 - [x] pause does stop
 - [-] pause then play logs "TOO LATE" and drops some events => now doing full stop
@@ -42,6 +42,8 @@ currently broken / buggy:
 - [x] unexpected ast format without body expression (kalimba)
 - [x] highlighting seems too late (off by latency ?)
 - [x] highlighting sometimes drops highlights (zeldasRescue first note)
-- [ ] highlighting still sometimes drops highlights (zeldasRescue somtimes)
+- [x] highlighting still sometimes drops highlights (zeldasRescue somtimes)
 - [ ] highlighting out of range error is back (delete large chunk at the top while highlighting below is triggered)
 - [ ] find a way to display errors when console is closed / another tab selected
+- [x] scheduler.getPhase is quantized to clock interval
+  - => draw was choppy + that also caused useHighlighting bugs

@@ -1,5 +1,5 @@
 import { useRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { repl } from '@strudel.cycles/core/repl.mjs';
+import { repl } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
 
 function useStrudel({

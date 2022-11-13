@@ -4,17 +4,14 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// import { evaluate } from '@strudel.cycles/eval';
 import { CodeMirror, cx, flash, useHighlighting } from '@strudel.cycles/react';
-// import { cleanupDraw, cleanupUi, Tone } from '@strudel.cycles/tone';
 import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import './App.css';
-import logo from './logo.svg';
 import * as tunes from './tunes.mjs';
 import { prebake } from './prebake.mjs';
 import * as WebDirt from 'WebDirt';
 import { resetLoadedSamples, getAudioContext, getLoadedSamples } from '@strudel.cycles/webaudio';
-import { controls, evalScope, logger } from '@strudel.cycles/core';
+import { controls, evalScope, logger, cleanupDraw, cleanupUi } from '@strudel.cycles/core';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { useStrudel } from '@strudel.cycles/react';
@@ -141,7 +138,8 @@ function App() {
     }
   }, [log, activeFooter]);
   useLayoutEffect(() => {
-    if (activeFooter === 'console') {
+    if (!footerContent.current) {
+    } else if (activeFooter === 'console') {
       footerContent.current.scrollTop = footerContent.current?.scrollHeight;
     } else {
       footerContent.current.scrollTop = 0;
@@ -197,7 +195,7 @@ function App() {
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
-    getTime: () => scheduler.getPhase(),
+    getTime: () => scheduler.getPhase(), // TODO: problem: phase is quantized to clock interval...
   });
 
   //
@@ -222,9 +220,9 @@ function App() {
   const handleShuffle = async () => {
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
-    /*
+
     cleanupDraw();
-    cleanupUi(); */
+    cleanupUi();
     resetLoadedSamples();
     await prebake(); // declare default samples
     await evaluate(code, false);
@@ -390,7 +388,7 @@ function App() {
       <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-0" id="code">
         <CodeMirror value={code} onChange={handleChangeCode} onViewChanged={setView} />
       </section>
-      <footer className="bg-footer">
+      <footer className="bg-footer z-[20]">
         <div className="flex justify-between px-2">
           <div className="flex pb-2 select-none">
             <FooterTab name="intro" />

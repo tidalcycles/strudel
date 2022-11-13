@@ -40,7 +40,8 @@
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.1",
     "@strudel.cycles/core": "^0.3.2",
-    "@strudel.cycles/eval": "^0.3.2",
+    "@strudel.cycles/transpiler": "^0.3.2",
+    "@strudel.cycles/webaudio": "^0.3.3",
     "@strudel.cycles/tone": "^0.3.3",
     "@uiw/codemirror-themes": "^4.12.4",
     "@uiw/react-codemirror": "^4.12.4",
