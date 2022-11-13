@@ -114,6 +114,10 @@ function App() {
     defaultOutput: webaudioOutput,
     getTime,
     autolink: true,
+    beforeEval: () => {
+      cleanupUi();
+      cleanupDraw();
+    },
   });
 
   // init code
@@ -175,7 +179,6 @@ function App() {
     } else {
       logger('[repl] stopped. tip: you can also stop by pressing ctrl+dot', 'highlight');
       stop();
-      // cleanupDraw();
     }
   };
   const handleUpdate = () => {
@@ -186,9 +189,6 @@ function App() {
   const handleShuffle = async () => {
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
-
-    cleanupDraw();
-    cleanupUi();
     resetLoadedSamples();
     await prebake(); // declare default samples
     await evaluate(code, false);

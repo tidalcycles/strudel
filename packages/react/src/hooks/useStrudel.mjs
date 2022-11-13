@@ -9,6 +9,7 @@ function useStrudel({
   evalOnMount = false,
   initialCode = '',
   autolink = false,
+  beforeEval,
   afterEval,
   onEvalError,
 }) {
@@ -36,6 +37,7 @@ function useStrudel({
         transpiler,
         beforeEval: ({ code }) => {
           setCode(code);
+          beforeEval?.();
         },
         afterEval: ({ pattern: _pattern, code }) => {
           setActiveCode(code);
