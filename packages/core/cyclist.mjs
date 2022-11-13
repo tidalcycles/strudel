@@ -47,7 +47,7 @@ export class Cyclist {
     );
   }
   getPhase() {
-    return this.getTime() - this.origin;
+    return this.getTime() - this.origin - this.latency;
   }
   setStarted(v) {
     this.started = v;

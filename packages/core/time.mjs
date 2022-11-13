@@ -1,4 +1,3 @@
-console.log('load time.mjs');
 let time;
 export function getTime() {
   if (!time) {
@@ -8,6 +7,5 @@ export function getTime() {
 }
 
 export function setTime(func) {
-  console.log('setTime!');
   time = func;
 }
