@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/midi",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "Midi API for strudel",
   "main": "index.mjs",
   "repository": {
@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/tone": "^0.3.3",
+    "@strudel.cycles/tone": "^0.4.0",
     "tone": "^14.7.77",
     "webmidi": "^3.0.21"
   }
