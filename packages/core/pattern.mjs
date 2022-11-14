@@ -1492,12 +1492,15 @@ function _composeOp(a, b, func) {
         Pattern.prototype[what + 'SqueezeIn'] = Pattern.prototype[what + how];
       }
       if (how === 'In') {
-        // default how to 'in', e.g. add == addIn
+        // set 'in' to default, but with magic properties to pick a different 'how'
 	Object.defineProperty(Pattern.prototype, what, {
+	  // a getter that returns a function, so 'pat' can be
+	  // accessed by closures that are methods of that function..
 	  get: function() {
 	    const pat = this;
+	    // wrap the 'in' function as default behaviour
             const wrapper = (...other) => pat[what + "In"](...other);
-	    
+	    // add methods to that function to pick alternative behaviours
 	    for (const wraphow of hows) {
               wrapper[wraphow.toLowerCase()] = (...other) => pat[what + wraphow](...other);
 	    }
