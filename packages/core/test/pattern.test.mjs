@@ -895,8 +895,8 @@ describe('Pattern', () => {
   });
   describe('alignments', () => {
     it('Can squeeze arguments', () => {
-      expect(sequence(1, 2).add.squeeze(4, 5)).toStrictEqual(
-	sequence(5, 6, 6, 7)
+      expect(sequence(1, 2).add.squeeze(4, 5).firstCycle()).toStrictEqual(
+	sequence(5, 6, 6, 7).firstCycle()
       );
     });
   });
