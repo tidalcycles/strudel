@@ -49,7 +49,7 @@ import { steady } from '../signal.mjs';
 
 import controls from '../controls.mjs';
 
-const { n } = controls;
+const { n, s } = controls;
 const st = (begin, end) => new State(ts(begin, end));
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
 const hap = (whole, part, value, context = {}) => new Hap(whole, part, value, context);
@@ -895,8 +895,8 @@ describe('Pattern', () => {
   });
   describe('alignments', () => {
     it('Can squeeze arguments', () => {
-      expect(fast(sequence(2, 3)).squeeze.s('a','b')).toStrictEqual(
-	sequence(s('a', 'b').fast(2), s('a', 'b').fast(3))
+      expect(sequence(1, 2).add.squeeze(4, 5)).toStrictEqual(
+	sequence(5, 6, 6, 7)
       );
     });
   });

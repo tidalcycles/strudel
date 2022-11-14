@@ -585,11 +585,11 @@ export class Pattern {
     const pat = this;
     const patterned = function (join) {
       return function (...args) {
-	// the problem here: args could a pattern that has been turned
-	// into an object to add location to avoid object checking for
-	// every pattern method, we can remove it here...  in the
-	// future, patternified args should be marked as well + some
-	// better object handling
+	// the problem here: args could be a pattern that has been
+	// turned into an object to add location to avoid object
+	// checking for every pattern method, we can remove it here...
+	// in the future, patternified args should be marked as well +
+	// some better object handling
 	args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
 	const pat_arg = sequence(...args);
 	// arg.locations has to go somewhere..
@@ -1464,9 +1464,11 @@ function _composeOp(a, b, func) {
     func: [(a, b) => b(a)],
   };
 
+  const hows = ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero'];
+
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
-    for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero']) {
+    for (const how of hows) {
       Pattern.prototype[what + how] = function (...other) {
         var pat = this;
         other = sequence(other);
@@ -1491,7 +1493,18 @@ function _composeOp(a, b, func) {
       }
       if (how === 'In') {
         // default how to 'in', e.g. add == addIn
-        Pattern.prototype[what] = Pattern.prototype[what + how];
+	Object.defineProperty(Pattern.prototype, what, {
+	  get: function() {
+	    const pat = this;
+            const wrapper = (...other) => pat[what + "In"](...other);
+	    
+	    for (const wraphow of hows) {
+              wrapper[wraphow.toLowerCase()] = (...other) => pat[what + wraphow](...other);
+	    }
+	    
+	    return wrapper;
+          }
+	});
       } else {
         // default what to 'set', e.g. squeeze = setSqueeze
         if (what === 'set') {
