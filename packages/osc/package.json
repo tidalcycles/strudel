@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/osc",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "OSC messaging for strudel",
   "main": "osc.mjs",
   "scripts": {

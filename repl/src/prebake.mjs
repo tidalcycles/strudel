@@ -5,13 +5,15 @@ export async function prebake({ isMock = false, baseDir = '.' } = {}) {
   if (!isMock) {
     // https://archive.org/details/SalamanderGrandPianoV3
     // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
-    samples('piano.json', `${baseDir}/piano/`);
-    // https://github.com/sgossner/VCSL/
-    // https://api.github.com/repositories/126427031/contents/
-    // LICENSE: CC0 general-purpose
-    samples('vcsl.json', 'github:sgossner/VCSL/master/');
-    samples('tidal-drum-machines.json', 'github:ritchse/tidal-drum-machines/main/machines/');
-    samples('EmuSP12.json', `${baseDir}/EmuSP12/`);
+    return await Promise.all([
+      samples('piano.json', `${baseDir}/piano/`),
+      // https://github.com/sgossner/VCSL/
+      // https://api.github.com/repositories/126427031/contents/
+      // LICENSE: CC0 general-purpose
+      samples('vcsl.json', 'github:sgossner/VCSL/master/'),
+      samples('tidal-drum-machines.json', 'github:ritchse/tidal-drum-machines/main/machines/'),
+      samples('EmuSP12.json', `${baseDir}/EmuSP12/`),
+    ]);
   }
 }
 

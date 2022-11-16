@@ -8335,6 +8335,21 @@ exports[`renders tunes > tune: hyperpop 1`] = `
 ]
 `;
 
+exports[`renders tunes > tune: juxUndTollerei 1`] = `
+[
+  "3/4 -> 1/1: {\\"note\\":\\"c3\\",\\"s\\":\\"sawtooth\\",\\"pan\\":0,\\"cutoff\\":1670.953955747281,\\"decay\\":0.05,\\"sustain\\":0,\\"room\\":0.6,\\"delay\\":0.5,\\"delaytime\\":0.1,\\"delayfeedback\\":0.4}",
+  "1/2 -> 3/4: {\\"note\\":\\"eb3\\",\\"s\\":\\"sawtooth\\",\\"pan\\":0,\\"cutoff\\":1524.257063143398,\\"decay\\":0.05,\\"sustain\\":0,\\"room\\":0.6,\\"delay\\":0.5,\\"delaytime\\":0.1,\\"delayfeedback\\":0.4}",
+  "1/4 -> 1/2: {\\"note\\":\\"g3\\",\\"s\\":\\"sawtooth\\",\\"pan\\":0,\\"cutoff\\":1361.2562095290161,\\"decay\\":0.05,\\"sustain\\":0,\\"room\\":0.6,\\"delay\\":0.5,\\"delaytime\\":0.1,\\"delayfeedback\\":0.4}",
+  "0/1 -> 1/4: {\\"note\\":\\"bb3\\",\\"s\\":\\"sawtooth\\",\\"pan\\":0,\\"cutoff\\":1188.2154262966046,\\"decay\\":0.05,\\"sustain\\":0,\\"room\\":0.6,\\"delay\\":0.5,\\"delaytime\\":0.1,\\"delayfeedback\\":0.4}",
+  "0/1 -> 1/4: {\\"note\\":\\"c3\\",\\"s\\":\\"sawtooth\\",\\"pan\\":1,\\"cutoff\\":1188.2154262966046,\\"decay\\":0.05,\\"sustain\\":0,\\"room\\":0.6,\\"delay\\":0.5,\\"delaytime\\":0.1,\\"delayfeedback\\":0.4}",
+  "1/4 -> 1/2: {\\"note\\":\\"eb3\\",\\"s\\":\\"sawtooth\\",\\"pan\\":1,\\"cutoff\\":1361.2562095290161,\\"decay\\":0.05,\\"sustain\\":0,\\"room\\":0.6,\\"delay\\":0.5,\\"delaytime\\":0.1,\\"delayfeedback\\":0.4}",
+  "1/2 -> 3/4: {\\"note\\":\\"g3\\",\\"s\\":\\"sawtooth\\",\\"pan\\":1,\\"cutoff\\":1524.257063143398,\\"decay\\":0.05,\\"sustain\\":0,\\"room\\":0.6,\\"delay\\":0.5,\\"delaytime\\":0.1,\\"delayfeedback\\":0.4}",
+  "3/4 -> 1/1: {\\"note\\":\\"bb3\\",\\"s\\":\\"sawtooth\\",\\"pan\\":1,\\"cutoff\\":1670.953955747281,\\"decay\\":0.05,\\"sustain\\":0,\\"room\\":0.6,\\"delay\\":0.5,\\"delaytime\\":0.1,\\"delayfeedback\\":0.4}",
+  "101/200 -> 201/200: {\\"note\\":65,\\"s\\":\\"triangle\\",\\"pan\\":0,\\"cutoff\\":1601.4815730092653,\\"decay\\":0.05,\\"sustain\\":0,\\"room\\":0.6,\\"delay\\":0.5,\\"delaytime\\":0.1,\\"delayfeedback\\":0.4}",
+  "101/200 -> 201/200: {\\"note\\":55,\\"s\\":\\"triangle\\",\\"pan\\":1,\\"cutoff\\":1601.4815730092653,\\"decay\\":0.05,\\"sustain\\":0,\\"room\\":0.6,\\"delay\\":0.5,\\"delaytime\\":0.1,\\"delayfeedback\\":0.4}",
+]
+`;
+
 exports[`renders tunes > tune: meltingsubmarine 1`] = `
 [
   "0/1 -> 3/2: {\\"s\\":\\"bd\\",\\"speed\\":0.7519542165100574}",

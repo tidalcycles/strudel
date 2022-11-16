@@ -32,11 +32,8 @@ function speak(words, lang, voice) {
 }
 
 Pattern.prototype._speak = function (lang, voice) {
-  return this._withHap((hap) => {
-    const onTrigger = (time, hap) => {
-      speak(hap.value, lang, voice);
-    };
-    return hap.setContext({ ...hap.context, onTrigger });
+  return this.onTrigger((_, hap) => {
+    speak(hap.value, lang, voice);
   });
 };
 

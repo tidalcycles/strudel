@@ -10,7 +10,7 @@ fetch('https://strudel.tidalcycles.org/EmuSP12.json')
 evalScope(
   controls,
   import('@strudel.cycles/core'),
-  import('@strudel.cycles/tone'),
+  // import('@strudel.cycles/tone'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
   import('@strudel.cycles/midi'),

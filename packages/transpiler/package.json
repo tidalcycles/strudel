@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/transpiler",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Transpiler for strudel user code. Converts syntactically correct but semantically meaningless JS into evaluatable strudel code.",
   "main": "index.mjs",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.3.2",
+    "@strudel.cycles/core": "^0.4.0",
     "acorn": "^8.8.1",
     "escodegen": "^2.0.0",
     "estree-walker": "^3.0.1"

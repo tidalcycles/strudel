@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "render-jsdoc": "cd ${PWD}/../tutorial/ && npm run render",
+    "predev": "npm run render-jsdoc",
+    "prebuild": "npm run render-jsdoc",
     "dev": "vite --host",
     "start": "vite",
     "build": "vite build",
@@ -16,6 +19,7 @@
     "dbdump": "node src/test/dbdump.js > src/test/dbdump.json"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.13",
     "@supabase/supabase-js": "^1.35.3",
     "nanoid": "^4.0.0",
     "react": "^17.0.2",
