@@ -253,7 +253,7 @@ Using round brackets, we can create rhythmical sub-divisions based on three para
 The first parameter controls how may beats will be played.
 The second parameter controls the total amount of segments the beats will be distributed over.
 The third (optional) parameter controls the starting position for distributing the beats.
-One popular Euclidian rhythm (going by various names, such as "Pop Clave") is "(3,8,1)" or simply "(3,8)",
+One popular Euclidian rhythm (going by various names, such as "Pop Clave") is "(3,8,0)" or simply "(3,8)",
 resulting in a rhythmical structure of "x ~ ~ x ~ ~ x ~" (3 beats over 8 segments, starting on position 1).
 
 <MiniRepl tune={`note("e5(2,8) b4(3,8) d5(2,8) c5(3,8)").slow(4)`} />
@@ -358,7 +358,7 @@ For pitched sounds, you can use `note`, just like with synths:
 
 <MiniRepl
   tune={`samples({
-  "gtr": 'gtr/0001_cleanC.wav',
+  'gtr': 'gtr/0001_cleanC.wav',
 }, 'github:tidalcycles/Dirt-Samples/master/');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').gain(.5)`}
 />
@@ -368,7 +368,7 @@ If we want them to behave more like a synth, we can add `clip(1)`:
 
 <MiniRepl
   tune={`samples({
-  "gtr": 'gtr/0001_cleanC.wav',
+  'gtr': 'gtr/0001_cleanC.wav',
 }, 'github:tidalcycles/Dirt-Samples/master/');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').clip(1)
   .gain(.5)`}
@@ -380,8 +380,8 @@ If we have 2 samples with different base pitches, we can make them in tune by sp
 
 <MiniRepl
   tune={`samples({
-  "gtr": 'gtr/0001_cleanC.wav',
-  "moog": { 'g3': 'moog/005_Mighty%20Moog%20G3.wav' },
+  'gtr': 'gtr/0001_cleanC.wav',
+  'moog': { 'g3': 'moog/005_Mighty%20Moog%20G3.wav' },
 }, 'github:tidalcycles/Dirt-Samples/master/');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s("gtr,moog").clip(1)
   .gain(.5)`}
@@ -393,7 +393,7 @@ We can also declare different samples for different regions of the keyboard:
 
 <MiniRepl
   tune={`samples({
-  "moog": {
+  'moog': {
     'g2': 'moog/004_Mighty%20Moog%20G2.wav',
     'g3': 'moog/005_Mighty%20Moog%20G3.wav',
     'g4': 'moog/006_Mighty%20Moog%20G4.wav',
