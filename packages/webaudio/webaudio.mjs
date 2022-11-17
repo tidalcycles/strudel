@@ -157,7 +157,7 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
   if (!delays[orbit]) {
     const ac = getAudioContext();
     const dly = ac.createFeedbackDelay(1, delaytime, delayfeedback);
-    dly.start(t);
+    dly.start?.(t); // for some reason, this throws when audion extension is installed..
     dly.connect(getDestination());
     delays[orbit] = dly;
   }
