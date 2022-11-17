@@ -581,30 +581,19 @@ export class Pattern {
     );
   }
 
-  patternify(func) {
+  patternify(join, func) {
     const pat = this;
-    const patterned = function (join) {
-      return function (...args) {
-	// the problem here: args could be a pattern that has been
-	// turned into an object to add location to avoid object
-	// checking for every pattern method, we can remove it here...
-	// in the future, patternified args should be marked as well +
-	// some better object handling
-	args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
-	const pat_arg = sequence(...args);
-	// arg.locations has to go somewhere..
-	return join(pat_arg.fmap((arg) => func.call(pat, arg)));
-      };
+    return function (...args) {
+      // the problem here: args could be a pattern that has been
+      // turned into an object to add location to avoid object
+      // checking for every pattern method, we can remove it here...
+      // in the future, patternified args should be marked as well +
+      // some better object handling
+      args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
+      const pat_arg = sequence(...args);
+      // arg.locations has to go somewhere..
+      return join(pat_arg.fmap((arg) => func.call(pat, arg)));
     };
-    const result = patterned(x => x.innerJoin());
-    
-    // add variants..
-    result.squeeze = patterned(x => x.squeezeJoin());
-    result.in      = patterned(x => x.innerJoin());
-    result.out     = patterned(x => x.outerJoin());
-    result.mix     = patterned(x => x.join());
-
-    return result;
   }
 
   asNumber() {
@@ -1912,17 +1901,45 @@ Pattern.prototype.bootstrap = function () {
     Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
       if (Pattern.prototype[functionName]) {
         // without this, 'C^7'.m.chordBass.transpose(2) will throw "C^7".m.chordBass.transpose is not a function
-        Pattern.prototype[functionName] = makeComposable(Pattern.prototype[functionName]); // is this needed?
+        // Pattern.prototype[functionName] = makeComposable(Pattern.prototype[functionName]); // is this needed?
       }
       return [functionName, curry(composable, makeComposable)];
     }),
   );
-  // note: this === Pattern.prototypetgh6z
+  // note: this === Pattern.prototype
   this.patternified.forEach((prop) => {
     // the following will patternify all functions in Pattern.prototype.patternified
     Pattern.prototype[prop] = function (...args) {
-      return this.patternify(Pattern.prototype['_' + prop])(...args);
+      return this.patternify(x => x.innerJoin(), Pattern.prototype['_' + prop])(...args);
     };
+   
+    
+    /*
+    const func = Pattern.prototype['_' + prop];
+    Pattern.prototype[prop] = function (...args) {
+      return this.patternify(x => x.innerJoin(), func);
+    };
+
+     Object.defineProperty(Pattern.prototype, prop, {
+      // a getter that returns a function, so 'pat' can be
+      // accessed by closures that are methods of that function..
+      get: function() {
+	const pat = this;
+	// wrap the default behaviour
+        const wrapper = pat.patternify(x => x.innerJoin(), func);
+
+	// add the variants
+        wrapper['in'] = pat.patternify(x => x.innerJoin(), func);
+        wrapper['out'] = pat.patternify(x => x.outerJoin(), func);
+        wrapper['trig'] = pat.patternify(x => x.trigJoin(), func);
+        wrapper['trigzero'] = pat.patternify(x => x.trigzeroJoin(), func);
+        wrapper['squeeze'] = pat.patternify(x => x.squeezeJoin(), func);
+	    
+	return wrapper;
+      }
+    });
+    */
+    
     // with the following, you can do, e.g. `stack(c3).fast.slowcat(1, 2, 4, 8)` instead of `stack(c3).fast(slowcat(1, 2, 4, 8))`
     // TODO: find a way to implement below outside of constructor (code only worked there)
     /* Object.assign(
