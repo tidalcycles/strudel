@@ -769,9 +769,9 @@ Together with layer, struct and voicings, this can be used to create a basic bac
 
 <MiniRepl
   tune={`"<C^7 A7b13 Dm7 G7>".layer(
-  x => x.voicings(['d3','g4']).struct("~ x"),
-  x => x.rootNotes(2).tone(synth(osc('sawtooth4')).chain(out()))
-).note()`}
+  x => x.voicings(['d3','g4']).struct("~ x").note(),
+  x => x.rootNotes(2).note().s('sawtooth').cutoff(800)
+)`}
 />
 
 <!-- TODO: use range instead of octave. -->
