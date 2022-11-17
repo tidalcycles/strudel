@@ -19,7 +19,7 @@ evalScope(
   import('@strudel.cycles/osc'),
 );
 
-prebake();
+// prebake();
 
 export function MiniRepl({ tune }) {
   return <_MiniRepl tune={tune} hideOutsideView={true} />;
