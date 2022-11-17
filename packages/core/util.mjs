@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 // returns true if the given string is a note
-export const isNote = (name) => /^[a-gA-G][#b]*[0-9]$/.test(name);
+export const isNote = (name) => /^[a-gA-G][#bs]*[0-9]$/.test(name);
 export const tokenizeNote = (note) => {
   if (typeof note !== 'string') {
     return [];
