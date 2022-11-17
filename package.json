@@ -10,7 +10,7 @@
     "test-coverage": "vitest --coverage",
     "bootstrap": "lerna bootstrap",
     "setup": "npm i && npm run bootstrap && cd repl && npm i && cd ../tutorial && npm i",
-    "snapshot": "cd repl && npm run snapshot",
+    "snapshot": "vitest run -u --silent",
     "repl": "cd repl && npm run dev",
     "osc": "cd packages/osc && npm run server",
     "build": "rm -rf out && cd repl && npm run build && cd ../tutorial && npm run build",

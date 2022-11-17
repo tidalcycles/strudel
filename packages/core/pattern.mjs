@@ -1050,7 +1050,7 @@ export class Pattern {
    * @param {function} func function to apply
    * @returns Pattern
    * @example
-   * note("c3 d3 e3 g3").every(4, x=>x.rev())
+   * note("c3 d3 e3 g3").each(4, x=>x.rev())
    */
   each(n, func) {
     const pat = this;

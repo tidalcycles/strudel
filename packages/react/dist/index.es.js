@@ -1,15 +1,15 @@
-import n, { useCallback as N, useRef as x, useEffect as R, useState as w, useMemo as I, useLayoutEffect as K } from "react";
-import Q from "@uiw/react-codemirror";
-import { Decoration as E, EditorView as O } from "@codemirror/view";
-import { StateEffect as j, StateField as U } from "@codemirror/state";
-import { javascript as W } from "@codemirror/lang-javascript";
+import n, { useCallback as _, useRef as H, useEffect as L, useMemo as V, useState as w, useLayoutEffect as j } from "react";
+import X from "@uiw/react-codemirror";
+import { Decoration as E, EditorView as U } from "@codemirror/view";
+import { StateEffect as $, StateField as G } from "@codemirror/state";
+import { javascript as Y } from "@codemirror/lang-javascript";
 import { tags as r } from "@lezer/highlight";
-import { createTheme as X } from "@uiw/codemirror-themes";
-import { useInView as Y } from "react-hook-inview";
-import { webaudioOutput as Z, getAudioContext as ee } from "@strudel.cycles/webaudio";
-import { repl as te } from "@strudel.cycles/core";
-import { transpiler as re } from "@strudel.cycles/transpiler";
-const oe = X({
+import { createTheme as Z } from "@uiw/codemirror-themes";
+import { useInView as ee } from "react-hook-inview";
+import { webaudioOutput as te, getAudioContext as re } from "@strudel.cycles/webaudio";
+import { repl as oe } from "@strudel.cycles/core";
+import { transpiler as ne } from "@strudel.cycles/transpiler";
+const ae = Z({
   theme: "dark",
   settings: {
     background: "#222",
@@ -42,14 +42,14 @@ const oe = X({
     { tag: r.invalid, color: "#ffffff" }
   ]
 });
-const T = j.define(), ne = U.define({
+const B = $.define(), se = G.define({
   create() {
     return E.none;
   },
   update(e, t) {
     try {
       for (let o of t.effects)
-        if (o.is(T))
+        if (o.is(B))
           if (o.value) {
             const a = E.mark({ attributes: { style: "background-color: #FFCA2880" } });
             e = E.set([a.range(0, t.newDoc.length)]);
@@ -60,25 +60,25 @@ const T = j.define(), ne = U.define({
       return console.warn("flash error", o), e;
     }
   },
-  provide: (e) => O.decorations.from(e)
-}), ae = (e) => {
-  e.dispatch({ effects: T.of(!0) }), setTimeout(() => {
-    e.dispatch({ effects: T.of(!1) });
+  provide: (e) => U.decorations.from(e)
+}), ce = (e) => {
+  e.dispatch({ effects: B.of(!0) }), setTimeout(() => {
+    e.dispatch({ effects: B.of(!1) });
   }, 200);
-}, A = j.define(), se = U.define({
+}, z = $.define(), ie = G.define({
   create() {
     return E.none;
   },
   update(e, t) {
     try {
       for (let o of t.effects)
-        if (o.is(A)) {
+        if (o.is(z)) {
           const a = o.value.map(
-            (s) => (s.context.locations || []).map(({ start: m, end: l }) => {
-              const d = s.context.color || "#FFCA28";
-              let c = t.newDoc.line(m.line).from + m.column, i = t.newDoc.line(l.line).from + l.column;
-              const g = t.newDoc.length;
-              return c > g || i > g ? void 0 : E.mark({ attributes: { style: `outline: 1.5px solid ${d};` } }).range(c, i);
+            (s) => (s.context.locations || []).map(({ start: f, end: d }) => {
+              const u = s.context.color || "#FFCA28";
+              let c = t.newDoc.line(f.line).from + f.column, i = t.newDoc.line(d.line).from + d.column;
+              const m = t.newDoc.length;
+              return c > m || i > m ? void 0 : E.mark({ attributes: { style: `outline: 1.5px solid ${u};` } }).range(c, i);
             })
           ).flat().filter(Boolean) || [];
           e = E.set(a, !0);
@@ -88,69 +88,69 @@ const T = j.define(), ne = U.define({
       return E.set([]);
     }
   },
-  provide: (e) => O.decorations.from(e)
-}), ce = [W(), oe, se, ne];
-function ie({ value: e, onChange: t, onViewChanged: o, onSelectionChange: a, options: s, editorDidMount: m }) {
-  const l = N(
+  provide: (e) => U.decorations.from(e)
+}), le = [Y(), ae, ie, se];
+function de({ value: e, onChange: t, onViewChanged: o, onSelectionChange: a, options: s, editorDidMount: f }) {
+  const d = _(
     (i) => {
       t?.(i);
     },
     [t]
-  ), d = N(
+  ), u = _(
     (i) => {
       o?.(i);
     },
     [o]
-  ), c = N(
+  ), c = _(
     (i) => {
       i.selectionSet && a && a?.(i.state.selection);
     },
     [a]
   );
-  return /* @__PURE__ */ n.createElement(n.Fragment, null, /* @__PURE__ */ n.createElement(Q, {
+  return /* @__PURE__ */ n.createElement(n.Fragment, null, /* @__PURE__ */ n.createElement(X, {
     value: e,
-    onChange: l,
-    onCreateEditor: d,
+    onChange: d,
+    onCreateEditor: u,
     onUpdate: c,
-    extensions: ce
+    extensions: le
   }));
 }
-function B(...e) {
+function K(...e) {
   return e.filter(Boolean).join(" ");
 }
-function le({ view: e, pattern: t, active: o, getTime: a }) {
-  const s = x([]), m = x();
-  R(() => {
+function ue({ view: e, pattern: t, active: o, getTime: a }) {
+  const s = H([]), f = H();
+  L(() => {
     if (e)
       if (t && o) {
-        let d = function() {
+        let u = function() {
           try {
-            const c = a(), g = [Math.max(m.current || c, c - 1 / 10, 0), c + 1 / 60];
-            m.current = g[1], s.current = s.current.filter((p) => p.whole.end > c);
-            const h = t.queryArc(...g).filter((p) => p.hasOnset());
-            s.current = s.current.concat(h), e.dispatch({ effects: A.of(s.current) });
+            const c = a(), m = [Math.max(f.current || c, c - 1 / 10, 0), c + 1 / 60];
+            f.current = m[1], s.current = s.current.filter((g) => g.whole.end > c);
+            const h = t.queryArc(...m).filter((g) => g.hasOnset());
+            s.current = s.current.concat(h), e.dispatch({ effects: z.of(s.current) });
           } catch {
-            e.dispatch({ effects: A.of([]) });
+            e.dispatch({ effects: z.of([]) });
           }
-          l = requestAnimationFrame(d);
-        }, l = requestAnimationFrame(d);
+          d = requestAnimationFrame(u);
+        }, d = requestAnimationFrame(u);
         return () => {
-          cancelAnimationFrame(l);
+          cancelAnimationFrame(d);
         };
       } else
-        s.current = [], e.dispatch({ effects: A.of([]) });
+        s.current = [], e.dispatch({ effects: z.of([]) });
   }, [t, o, e]);
 }
-const de = "_container_3i85k_1", ue = "_header_3i85k_5", fe = "_buttons_3i85k_9", me = "_button_3i85k_9", ge = "_buttonDisabled_3i85k_17", pe = "_error_3i85k_21", he = "_body_3i85k_25", b = {
-  container: de,
-  header: ue,
-  buttons: fe,
-  button: me,
-  buttonDisabled: ge,
-  error: pe,
-  body: he
+const fe = "_container_3i85k_1", me = "_header_3i85k_5", ge = "_buttons_3i85k_9", pe = "_button_3i85k_9", he = "_buttonDisabled_3i85k_17", be = "_error_3i85k_21", ve = "_body_3i85k_25", v = {
+  container: fe,
+  header: me,
+  buttons: ge,
+  button: pe,
+  buttonDisabled: he,
+  error: be,
+  body: ve
 };
-function q({ type: e }) {
+function O({ type: e }) {
   return /* @__PURE__ */ n.createElement("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     className: "sc-h-5 sc-w-5",
@@ -174,137 +174,147 @@ function q({ type: e }) {
     })
   }[e]);
 }
-function ve({
+function Ee(e) {
+  return L(() => (window.addEventListener("message", e), () => window.removeEventListener("message", e)), [e]), _((t) => window.postMessage(t, "*"), []);
+}
+function we({
   defaultOutput: e,
   interval: t,
   getTime: o,
   evalOnMount: a = !1,
   initialCode: s = "",
-  autolink: m = !1,
-  beforeEval: l,
-  afterEval: d,
+  autolink: f = !1,
+  beforeEval: d,
+  afterEval: u,
   onEvalError: c,
   onToggle: i
 }) {
-  const [g, h] = w(), [p, D] = w(), [v, k] = w(s), [y, P] = w(), [z, _] = w(), [C, H] = w(!1), F = v !== y, { scheduler: u, evaluate: L, start: $, stop: G, pause: J } = I(
-    () => te({
+  const m = V(() => ye(), []), [h, g] = w(), [C, N] = w(), [p, y] = w(s), [M, S] = w(), [k, D] = w(), [F, x] = w(!1), b = p !== M, { scheduler: A, evaluate: T, start: J, stop: q, pause: Q } = V(
+    () => oe({
       interval: t,
       defaultOutput: e,
-      onSchedulerError: h,
-      onEvalError: (f) => {
-        D(f), c?.(f);
+      onSchedulerError: g,
+      onEvalError: (l) => {
+        N(l), c?.(l);
       },
       getTime: o,
-      transpiler: re,
-      beforeEval: ({ code: f }) => {
-        k(f), l?.();
+      transpiler: ne,
+      beforeEval: ({ code: l }) => {
+        y(l), d?.();
       },
-      afterEval: ({ pattern: f, code: S }) => {
-        P(S), _(f), D(), h(), m && (window.location.hash = "#" + encodeURIComponent(btoa(S))), d?.();
+      afterEval: ({ pattern: l, code: P }) => {
+        S(P), D(l), N(), g(), f && (window.location.hash = "#" + encodeURIComponent(btoa(P))), u?.();
       },
-      onToggle: (f) => {
-        H(f), i?.(f);
+      onToggle: (l) => {
+        x(l), i?.(l);
       }
     }),
     [e, t, o]
-  ), M = N(async (f = !0) => L(v, f), [L, v]), V = x();
-  return R(() => {
-    !V.current && a && v && (V.current = !0, M());
-  }, [M, a, v]), R(() => () => {
-    u.stop();
-  }, [u]), {
-    code: v,
-    setCode: k,
-    error: g || p,
-    schedulerError: g,
-    scheduler: u,
-    evalError: p,
-    evaluate: L,
-    activateCode: M,
-    activeCode: y,
-    isDirty: F,
-    pattern: z,
-    started: C,
-    start: $,
-    stop: G,
-    pause: J,
+  ), W = Ee(({ data: { from: l, type: P } }) => {
+    P === "start" && l !== m && q();
+  }), R = _(
+    async (l = !0) => {
+      await T(p, l), W({ type: "start", from: m });
+    },
+    [T, p]
+  ), I = H();
+  return L(() => {
+    !I.current && a && p && (I.current = !0, R());
+  }, [R, a, p]), L(() => () => {
+    A.stop();
+  }, [A]), {
+    code: p,
+    setCode: y,
+    error: h || C,
+    schedulerError: h,
+    scheduler: A,
+    evalError: C,
+    evaluate: T,
+    activateCode: R,
+    activeCode: M,
+    isDirty: b,
+    pattern: k,
+    started: F,
+    start: J,
+    stop: q,
+    pause: Q,
     togglePlay: async () => {
-      C ? u.pause() : await M();
+      F ? A.pause() : await R();
     }
   };
 }
-const be = () => ee().currentTime;
-function Pe({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
+function ye() {
+  return Math.floor((1 + Math.random()) * 65536).toString(16).substring(1);
+}
+const ke = () => re().currentTime;
+function Se({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
   const {
     code: s,
-    setCode: m,
-    evaluate: l,
-    activateCode: d,
+    setCode: f,
+    evaluate: d,
+    activateCode: u,
     error: c,
     isDirty: i,
-    activeCode: g,
+    activeCode: m,
     pattern: h,
-    started: p,
-    scheduler: D,
-    togglePlay: v,
-    stop: k
-  } = ve({
+    started: g,
+    scheduler: C,
+    togglePlay: N,
+    stop: p
+  } = we({
     initialCode: e,
-    defaultOutput: Z,
-    getTime: be
-  }), [y, P] = w(), [z, _] = Y({
+    defaultOutput: te,
+    getTime: ke
+  }), [y, M] = w(), [S, k] = ee({
     threshold: 0.01
-  }), C = x(), H = I(() => ((_ || !t) && (C.current = !0), _ || C.current), [_, t]);
-  return le({
+  }), D = H(), F = V(() => ((k || !t) && (D.current = !0), k || D.current), [k, t]);
+  return ue({
     view: y,
     pattern: h,
-    active: p && !g?.includes("strudel disable-highlighting"),
-    getTime: () => D.getPhase()
-  }), K(() => {
+    active: g && !m?.includes("strudel disable-highlighting"),
+    getTime: () => C.getPhase()
+  }), j(() => {
     if (a) {
-      const F = async (u) => {
-        (u.ctrlKey || u.altKey) && (u.code === "Enter" ? (u.preventDefault(), ae(y), await d()) : u.code === "Period" && (k(), u.preventDefault()));
+      const x = async (b) => {
+        (b.ctrlKey || b.altKey) && (b.code === "Enter" ? (b.preventDefault(), ce(y), await u()) : b.code === "Period" && (p(), b.preventDefault()));
       };
-      return window.addEventListener("keydown", F, !0), () => window.removeEventListener("keydown", F, !0);
+      return window.addEventListener("keydown", x, !0), () => window.removeEventListener("keydown", x, !0);
     }
-  }, [a, h, s, l, k, y]), /* @__PURE__ */ n.createElement("div", {
-    className: b.container,
-    ref: z
+  }, [a, h, s, d, p, y]), /* @__PURE__ */ n.createElement("div", {
+    className: v.container,
+    ref: S
   }, /* @__PURE__ */ n.createElement("div", {
-    className: b.header
+    className: v.header
   }, /* @__PURE__ */ n.createElement("div", {
-    className: b.buttons
+    className: v.buttons
   }, /* @__PURE__ */ n.createElement("button", {
-    className: B(b.button, p ? "sc-animate-pulse" : ""),
-    onClick: () => v()
-  }, /* @__PURE__ */ n.createElement(q, {
-    type: p ? "pause" : "play"
+    className: K(v.button, g ? "sc-animate-pulse" : ""),
+    onClick: () => N()
+  }, /* @__PURE__ */ n.createElement(O, {
+    type: g ? "pause" : "play"
   })), /* @__PURE__ */ n.createElement("button", {
-    className: B(i ? b.button : b.buttonDisabled),
-    onClick: () => d()
-  }, /* @__PURE__ */ n.createElement(q, {
+    className: K(i ? v.button : v.buttonDisabled),
+    onClick: () => u()
+  }, /* @__PURE__ */ n.createElement(O, {
     type: "refresh"
   }))), c && /* @__PURE__ */ n.createElement("div", {
-    className: b.error
+    className: v.error
   }, c.message)), /* @__PURE__ */ n.createElement("div", {
-    className: b.body
-  }, H && /* @__PURE__ */ n.createElement(ie, {
+    className: v.body
+  }, F && /* @__PURE__ */ n.createElement(de, {
     value: s,
-    onChange: m,
-    onViewChanged: P
+    onChange: f,
+    onViewChanged: M
   })));
 }
-function ze(e) {
-  return R(() => (window.addEventListener("message", e), () => window.removeEventListener("message", e)), [e]), N((t) => window.postMessage(t, "*"), []);
-}
-const He = (e) => K(() => (window.addEventListener("keydown", e, !0), () => window.removeEventListener("keydown", e, !0)), [e]);
+const Te = (e) => j(() => (window.addEventListener("keydown", e, !0), () => window.removeEventListener("keydown", e, !0)), [e]);
 export {
-  ie as CodeMirror,
-  Pe as MiniRepl,
-  B as cx,
-  ae as flash,
-  le as useHighlighting,
-  He as useKeydown,
-  ze as usePostMessage,
-  ve as useStrudel
+  de as CodeMirror,
+  Se as MiniRepl,
+  K as cx,
+  ce as flash,
+  ue as useHighlighting,
+  Te as useKeydown,
+  Ee as usePostMessage,
+  we as useStrudel
 };

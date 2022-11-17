@@ -1,6 +1,7 @@
 import { useRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { repl } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
+import usePostMessage from './usePostMessage.mjs';
 
 function useStrudel({
   defaultOutput,
@@ -14,6 +15,7 @@ function useStrudel({
   onEvalError,
   onToggle,
 }) {
+  const id = useMemo(() => s4(), []);
   // scheduler
   const [schedulerError, setSchedulerError] = useState();
   const [evalError, setEvalError] = useState();
@@ -57,7 +59,19 @@ function useStrudel({
       }),
     [defaultOutput, interval, getTime],
   );
-  const activateCode = useCallback(async (autostart = true) => evaluate(code, autostart), [evaluate, code]);
+  const broadcast = usePostMessage(({ data: { from, type } }) => {
+    if (type === 'start' && from !== id) {
+      // console.log('message', from, type);
+      stop();
+    }
+  });
+  const activateCode = useCallback(
+    async (autostart = true) => {
+      await evaluate(code, autostart);
+      broadcast({ type: 'start', from: id });
+    },
+    [evaluate, code],
+  );
 
   const inited = useRef();
   useEffect(() => {
@@ -103,3 +117,9 @@ function useStrudel({
 }
 
 export default useStrudel;
+
+function s4() {
+  return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
+}
