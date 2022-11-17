@@ -49,7 +49,7 @@ import { steady } from '../signal.mjs';
 
 import controls from '../controls.mjs';
 
-const { n } = controls;
+const { n, s, speed } = controls;
 const st = (begin, end) => new State(ts(begin, end));
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
 const hap = (whole, part, value, context = {}) => new Hap(whole, part, value, context);
@@ -598,6 +598,11 @@ describe('Pattern', () => {
       );
       expect(sequence(3, 4, 5).every(3, add(3)).every(2, sub(1)).fast(2).firstCycle()).toStrictEqual(
         sequence(5, 6, 7, 3, 4, 5).firstCycle(),
+      );
+    });
+    it('works with controls', () => {
+      expect(s('bd').every(2,speed(2)).fast(2).firstCycle()).toStrictEqual(
+	fastcat(s('bd').speed(2), s('bd')).firstCycle()
       );
     });
   });

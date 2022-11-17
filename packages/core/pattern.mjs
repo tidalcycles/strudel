@@ -701,6 +701,7 @@ export class Pattern {
    * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4")).note()
    */
   _apply(func) {
+    func = reifyFunction(func);
     return func(this);
   }
 
@@ -989,6 +990,7 @@ export class Pattern {
     //binary_pat = sequence(binary_pat)
     const true_pat = binary_pat._filterValues(id);
     const false_pat = binary_pat._filterValues((val) => !val);
+    func = reifyFunction(func);
     const with_pat = true_pat.fmap((_) => (y) => y).appRight(func(this));
     const without_pat = false_pat.fmap((_) => (y) => y).appRight(this);
     return stack(with_pat, without_pat);
@@ -1005,26 +1007,10 @@ export class Pattern {
    * "c3 eb3 g3".off(1/8, x=>x.add(7)).note()
    */
   off(time_pat, func) {
+    func = reifyFunction(func);
     return stack(this, func(this.late(time_pat)));
   }
 
-  /**
-   * Applies the given function every n cycles.
-   * @name every
-   * @memberof Pattern
-   * @param {number} n how many cycles
-   * @param {function} func function to apply
-   * @returns Pattern
-   * @example
-   * note("c3 d3 e3 g3").every(4, x=>x.rev())
-   */
-  every(n, func) {
-    const pat = this;
-    const pats = Array(n - 1).fill(pat);
-    // pats.unshift(func(pat));
-    pats.push(func(pat));
-    return slowcatPrime(...pats);
-  }
   /**
    * Applies the given function every n cycles, starting from the first cycle.
    * @name every
@@ -1038,6 +1024,7 @@ export class Pattern {
   every(n, func) {
     const pat = this;
     const pats = Array(n - 1).fill(pat);
+    func = reifyFunction(func);
     pats.unshift(func(pat));
     return slowcatPrime(...pats);
   }
@@ -1055,6 +1042,7 @@ export class Pattern {
   each(n, func) {
     const pat = this;
     const pats = Array(n - 1).fill(pat);
+    func = reifyFunction(func);
     pats.push(func(pat));
     return slowcatPrime(...pats);
   }
@@ -1104,6 +1092,7 @@ export class Pattern {
 
   juxBy(by, func) {
     by /= 2;
+    func = reifyFunction(func);
     const elem_or = function (dict, key, dflt) {
       if (key in dict) {
         return dict[key];
@@ -1182,10 +1171,11 @@ export class Pattern {
    *   .scale('C minor').note()
    */
   superimpose(...funcs) {
-    return this.stack(...funcs.map((func) => func(this)));
+    return this.stack(...funcs.map((func) => reifyFunction(func)(this)));
   }
 
   stutWith(times, time, func) {
+    func = reifyFunction(func);
     return stack(...listRange(0, times - 1).map((i) => func(this.late(Fraction(time).mul(i)), i)));
   }
 
@@ -1207,6 +1197,7 @@ export class Pattern {
    * .scale('C minor').note().legato(.2)
    */
   _echoWith(times, time, func) {
+    func = reifyFunction(func);
     return stack(...listRange(0, times - 1).map((i) => func(this.late(Fraction(time).mul(i)), i)));
   }
 
@@ -1258,6 +1249,7 @@ export class Pattern {
    * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note()
    */
   _chunk(n, func, back = false) {
+    func = reifyFunction(func);
     const binary = Array(n - 1).fill(false);
     binary.unshift(true);
     const binary_pat = sequence(...binary).iter(n, back);
@@ -1273,6 +1265,7 @@ export class Pattern {
    * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note()
    */
   _chunkBack(n, func) {
+    func = reifyFunction(func);
     return this._chunk(n, func, true);
   }
 
@@ -1575,6 +1568,14 @@ export function reify(thing) {
     return stringParser(thing);
   }
   return pure(thing);
+}
+
+export function reifyFunction(thing) {
+  // Turns a pattern into a function, unless it's already a function
+  if (isPattern(thing)) {
+    return x => x.set(thing);
+  }
+  return thing;
 }
 
 /** The given items are played at the same time at the same length.

@@ -5,6 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Pattern, sequence } from './pattern.mjs';
+import { curry } from './util.mjs';
 
 const controls = {};
 const generic_params = [
