@@ -800,6 +800,7 @@ export class Pattern {
    * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
    */
   _fast(factor) {
+    factor = Fraction(factor);
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
     return fastQuery.withHapTime((t) => t.div(factor));
   }

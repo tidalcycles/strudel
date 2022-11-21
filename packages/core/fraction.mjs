@@ -74,7 +74,7 @@ const fraction = (n) => {
     -> those farey sequences turn out to make pattern querying ~20 times slower! always use strings!
     -> still, some optimizations could be done: .mul .div .add .sub calls still use numbers
     */
-    n = String(n);
+    // n = String(n); // this is actually faster but imprecise...
   }
   return Fraction(n);
 };
