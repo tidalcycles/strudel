@@ -75,7 +75,7 @@ function scaleOffset(scale, offset, note) {
  */
 
 Pattern.prototype._transpose = function (intervalOrSemitones) {
-  return this._withHap((hap) => {
+  return this.withHap((hap) => {
     const interval = !isNaN(Number(intervalOrSemitones))
       ? Interval.fromSemitones(intervalOrSemitones /*  as number */)
       : String(intervalOrSemitones);
@@ -111,7 +111,7 @@ Pattern.prototype._transpose = function (intervalOrSemitones) {
  */
 
 Pattern.prototype._scaleTranspose = function (offset /* : number | string */) {
-  return this._withHap((hap) => {
+  return this.withHap((hap) => {
     if (!hap.context.scale) {
       throw new Error('can only use scaleTranspose after .scale');
     }
@@ -142,7 +142,7 @@ Pattern.prototype._scaleTranspose = function (offset /* : number | string */) {
  */
 
 Pattern.prototype._scale = function (scale /* : string */) {
-  return this._withHap((hap) => {
+  return this.withHap((hap) => {
     let note = hap.value;
     const asNumber = Number(note);
     if (!isNaN(asNumber)) {
