@@ -7,6 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import controls from './controls.mjs';
 export * from './euclid.mjs';
 import Fraction from './fraction.mjs';
+import { logger } from './logger.mjs';
 export { Fraction, controls };
 export * from './hap.mjs';
 export * from './pattern.mjs';
@@ -17,15 +18,17 @@ export * from './util.mjs';
 export * from './speak.mjs';
 export * from './evaluate.mjs';
 export * from './repl.mjs';
+export * from './logger.mjs';
+export * from './time.mjs';
+export * from './draw.mjs';
+export * from './pianoroll.mjs';
+export * from './ui.mjs';
 export { default as drawLine } from './drawLine.mjs';
 export { default as gist } from './gist.js';
 // below won't work with runtime.mjs (json import fails)
 /* import * as p from './package.json';
 export const version = p.version; */
-console.log(
-  '%c // 🌀 @strudel.cycles/core loaded 🌀', // keep "//" for runnable snapshot source..
-  'background-color: black;color:white;padding:4px;border-radius:15px',
-);
+logger('🌀 @strudel.cycles/core loaded 🌀');
 if (globalThis._strudelLoaded) {
   console.warn(
     `@strudel.cycles/core was loaded more than once...

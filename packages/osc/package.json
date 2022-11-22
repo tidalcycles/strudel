@@ -1,13 +1,14 @@
 {
   "name": "@strudel.cycles/osc",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "OSC messaging for strudel",
   "main": "osc.mjs",
   "scripts": {
     "test": "echo \"No tests present.\" && exit 0",
     "server": "node server.js",
     "tidal-sniffer": "node tidal-sniffer.js",
-    "client": "npx serve -p 4321"
+    "client": "npx serve -p 4321",
+    "build": "npx pkg server.js --targets node16-macos-x64,node16-win-x64,node16-linux-x64 --out-path bin"
   },
   "repository": {
     "type": "git",
@@ -31,5 +32,8 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "osc-js": "^2.4.0"
+  },
+  "devDependencies": {
+    "pkg": "^5.7.0"
   }
 }

@@ -55,7 +55,8 @@ Fraction.prototype.min = function (other) {
   return this.lt(other) ? this : other;
 };
 
-Fraction.prototype.show = function () {
+Fraction.prototype.show = function (/* excludeWhole = false */) {
+  // return this.toFraction(excludeWhole);
   return this.s * this.n + '/' + this.d;
 };
 
@@ -73,7 +74,7 @@ const fraction = (n) => {
     -> those farey sequences turn out to make pattern querying ~20 times slower! always use strings!
     -> still, some optimizations could be done: .mul .div .add .sub calls still use numbers
     */
-    n = String(n);
+    // n = String(n); // this is actually faster but imprecise...
   }
   return Fraction(n);
 };

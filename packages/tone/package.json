@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/tone",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "Tone.js API for strudel",
   "main": "index.mjs",
   "type": "module",
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.3.2",
+    "@strudel.cycles/core": "^0.4.0",
     "tone": "^14.7.77"
   }
 }

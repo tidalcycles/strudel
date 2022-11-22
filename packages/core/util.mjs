@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 // returns true if the given string is a note
-export const isNote = (name) => /^[a-gA-G][#b]*[0-9]$/.test(name);
+export const isNote = (name) => /^[a-gA-G][#bs]*[0-9]$/.test(name);
 export const tokenizeNote = (note) => {
   if (typeof note !== 'string') {
     return [];
@@ -55,9 +55,13 @@ export const midi2note = (n) => {
 export const mod = (n, m) => ((n % m) + m) % m;
 
 export const getPlayableNoteValue = (hap) => {
-  let { value: note, context } = hap;
+  let { value, context } = hap;
+  let note = value;
   if (typeof note === 'object' && !Array.isArray(note)) {
     note = note.note || note.n || note.value;
+    if (note === undefined) {
+      throw new Error(`cannot find a playable note for ${JSON.stringify(value)}`);
+    }
   }
   // if value is number => interpret as midi number as long as its not marked as frequency
   if (typeof note === 'number' && context.type !== 'frequency') {

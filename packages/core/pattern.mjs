@@ -12,6 +12,7 @@ import { unionWithObj } from './value.mjs';
 
 import { compose, removeUndefineds, flatten, id, listRange, curry, mod, numeralArgs, parseNumeral } from './util.mjs';
 import drawLine from './drawLine.mjs';
+import { logger } from './logger.mjs';
 
 let stringParser;
 // parser is expected to turn a string into a pattern
@@ -827,6 +828,7 @@ export class Pattern {
    * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
    */
   _fast(factor) {
+    factor = Fraction(factor);
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
     return fastQuery.withHapTime((t) => t.div(factor));
   }
@@ -1000,7 +1002,7 @@ export class Pattern {
    * @param {function} func function to apply
    * @returns Pattern
    * @example
-   * note("c3 d3 e3 g3").every(4, x=>x.rev())
+   * note("c3 d3 e3 g3").each(4, x=>x.rev())
    */
   every(n, func) {
     return this.firstOf(n, func);
@@ -1304,22 +1306,26 @@ export class Pattern {
     return this.withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
   }
 
-  onTrigger(onTrigger) {
-    return this.withHap((hap) => hap.setContext({ ...hap.context, onTrigger }));
-  }
-  log(func = id) {
-    return this.withHap((hap) =>
+  onTrigger(onTrigger, dominant = true) {
+    return this._withHap((hap) =>
       hap.setContext({
         ...hap.context,
         onTrigger: (...args) => {
-          if (hap.context.onTrigger) {
+          if (!dominant && hap.context.onTrigger) {
             hap.context.onTrigger(...args);
           }
-          console.log(func(...args));
+          onTrigger(...args);
         },
+        // we need this to know later if the default trigger should still fire
+        dominantTrigger: dominant,
       }),
     );
   }
+
+  log(func = (_, hap) => `[hap] ${hap.showWhole(true)}`) {
+    return this.onTrigger((...args) => logger(func(...args)), false);
+  }
+  
   logValues(func = id) {
     return this.log((_, hap) => func(hap.value));
   }

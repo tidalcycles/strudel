@@ -10,7 +10,7 @@ fetch('https://strudel.tidalcycles.org/EmuSP12.json')
 evalScope(
   controls,
   import('@strudel.cycles/core'),
-  import('@strudel.cycles/tone'),
+  // import('@strudel.cycles/tone'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
   import('@strudel.cycles/midi'),
@@ -19,7 +19,7 @@ evalScope(
   import('@strudel.cycles/osc'),
 );
 
-prebake();
+// prebake();
 
 export function MiniRepl({ tune }) {
   return <_MiniRepl tune={tune} hideOutsideView={true} />;

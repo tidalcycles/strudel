@@ -9,7 +9,7 @@ import { Pattern, isPattern } from '@strudel.cycles/core';
 var serialWriter;
 var choosing = false;
 
-export async function getWriter(br=38400) {
+export async function getWriter(br = 38400) {
   if (choosing) {
     return;
   }
@@ -24,11 +24,10 @@ export async function getWriter(br=38400) {
     const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
     const writer = textEncoder.writable.getWriter();
     serialWriter = function (message) {
-      writer.write(message)
-    }
-  }
-  else {
-    throw('Webserial is not available in this browser.')
+      writer.write(message);
+    };
+  } else {
+    throw 'Webserial is not available in this browser.';
   }
 }
 
@@ -40,7 +39,7 @@ Pattern.prototype.serial = function (...args) {
       getWriter(...args);
     }
     const onTrigger = (time, hap, currentTime) => {
-      var message = "";
+      var message = '';
       if (typeof hap.value === 'object') {
         if ('action' in hap.value) {
           message += hap.value['action'] + '(';
@@ -51,26 +50,23 @@ Pattern.prototype.serial = function (...args) {
             }
             if (first) {
               first = false;
+            } else {
+              message += ',';
             }
-            else {
-              message +=',';
-            }
-            message += `${key}:${val}`
+            message += `${key}:${val}`;
           }
           message += ')';
-        }
-        else {
+        } else {
           for (const [key, val] of Object.entries(hap.value)) {
-            message += `${key}:${val};`
+            message += `${key}:${val};`;
           }
         }
-      }
-      else {
+      } else {
         message = hap.value;
       }
       const offset = (time - currentTime + latency) * 1000;
       window.setTimeout(serialWriter, offset, message);
     };
-    return hap.setContext({ ...hap.context, onTrigger });
+    return hap.setContext({ ...hap.context, onTrigger, dominantTrigger: true });
   });
 };

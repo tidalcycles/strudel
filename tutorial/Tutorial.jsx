@@ -10,6 +10,9 @@ import Tutorial from './tutorial.rendered.mdx';
 // import ApiDoc from './ApiDoc';
 import './style.scss';
 import '@strudel.cycles/react/dist/style.css';
+import { initAudioOnFirstClick } from '@strudel.cycles/webaudio';
+
+initAudioOnFirstClick();
 
 ReactDOM.render(
   <React.StrictMode>

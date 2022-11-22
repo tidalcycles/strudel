@@ -31,10 +31,11 @@ function createClock(
   };
   let intervalID;
   const start = () => {
+    clear(); // just in case start was called more than once
     onTick();
     intervalID = setInterval(onTick, interval * 1000);
   };
-  const clear = () => clearInterval(intervalID);
+  const clear = () => intervalID !== undefined && clearInterval(intervalID);
   const pause = () => clear();
   const stop = () => {
     tick = 0;

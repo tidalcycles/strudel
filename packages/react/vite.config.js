@@ -24,8 +24,9 @@ export default defineConfig({
         // TODO: find out which of below names are obsolete now
         '@strudel.cycles/tone',
         '@strudel.cycles/eval',
+        '@strudel.cycles/transpiler',
+        'acorn',
         '@strudel.cycles/core',
-        '@strudel.cycles/core/util.mjs',
         '@strudel.cycles/mini',
         '@strudel.cycles/tonal',
         '@strudel.cycles/midi',
