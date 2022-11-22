@@ -1002,7 +1002,7 @@ export class Pattern {
    * @param {function} func function to apply
    * @returns Pattern
    * @example
-   * note("c3 d3 e3 g3").each(4, x=>x.rev())
+   * note("c3 d3 e3 g3").every(4, x=>x.rev())
    */
   every(n, func) {
     return this.firstOf(n, func);
@@ -1307,7 +1307,7 @@ export class Pattern {
   }
 
   onTrigger(onTrigger, dominant = true) {
-    return this._withHap((hap) =>
+    return this.withHap((hap) =>
       hap.setContext({
         ...hap.context,
         onTrigger: (...args) => {
@@ -1325,7 +1325,7 @@ export class Pattern {
   log(func = (_, hap) => `[hap] ${hap.showWhole(true)}`) {
     return this.onTrigger((...args) => logger(func(...args)), false);
   }
-  
+
   logValues(func = id) {
     return this.log((_, hap) => func(hap.value));
   }
