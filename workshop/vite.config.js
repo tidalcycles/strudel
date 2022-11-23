@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import _mdx from 'vite-plugin-mdx';
+import { viteSingleFile } from 'vite-plugin-singlefile';
 // import remarkToc from 'remark-toc';
 // import rehypeSlug from 'rehype-slug';
 // import rehypeAutolinkHeadings from 'rehype-autolink-headings';
@@ -20,5 +21,5 @@ const options = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), mdx(options)],
+  plugins: [react(), mdx(options), viteSingleFile()],
 });

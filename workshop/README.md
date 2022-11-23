@@ -21,3 +21,13 @@ When the file is saved, the browser will hot reload the file and reveal the chan
 
 You can use normal markdown + JSX, which enables using the MiniRepl component.
 You could also add any react component and import it to the mdx file.
+
+## Build
+
+Running
+
+```sh
+npm run build
+```
+
+..will output a single `index.html` file to `dist`. This file can either be opened directly in the browser (locally) or uploaded to some server.
