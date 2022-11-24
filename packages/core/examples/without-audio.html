@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buildless Vanilla Strudel REPL</title>
+  </head>
+  <body style="margin: 0; background: #222">
+    <div style="display: grid; height: 100vh">
+      <textarea
+        id="text"
+        style="font-size: 2em; border: 0; color: white; background: transparent; outline: none; padding: 20px"
+        spellcheck="false"
+      >
+// LOADING</textarea
+      >
+    </div>
+    <button
+      id="start"
+      style="
+        position: absolute;
+        border-radius: 10px;
+        top: 20px;
+        right: 20px;
+        padding: 20px;
+        border: 2px solid white;
+        background: transparent;
+        color: white;
+        cursor: pointer;
+      "
+    >
+      evaluate
+    </button>
+    <div id="output"></div>
+    <script type="module">
+      import { controls, repl, evalScope } from 'https://cdn.skypack.dev/@strudel.cycles/core@0.4.1';
+      import { transpiler } from 'https://cdn.skypack.dev/@strudel.cycles/transpiler@0.4.1';
+
+      const modules = [
+        import('https://cdn.skypack.dev/@strudel.cycles/core@0.4.1'),
+        import('https://cdn.skypack.dev/@strudel.cycles/mini@0.4.1'),
+      ];
+
+      const input = document.getElementById('text');
+
+      Promise.all(modules).then(() => {
+        input.innerHTML = getTune();
+      });
+      evalScope(controls, ...modules);
+
+      const { evaluate } = repl({
+        defaultOutput: (...args) => {
+          console.log(args);
+        },
+        getTime: () => Date.now() / 1000,
+        transpiler,
+        beforeEval: (code) => console.log('evaluate', code),
+        afterEval: (code) => {},
+      });
+      document.getElementById('start').addEventListener('click', () => {
+        evaluate(input.value);
+      });
+
+      function getTune() {
+        return `const output = (deadline, hap, now) => {
+  const { whole: { begin, end }, value } = hap; 
+  console.log(deadline, begin+0, end+0, value);
+}
+note("<c3 [d3 e3]>").cutoff(1000).onTrigger(output)`;
+      }
+    </script>
+  </body>
+</html>
