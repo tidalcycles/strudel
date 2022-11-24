@@ -44,30 +44,22 @@
       const input = document.getElementById('text');
 
       Promise.all(modules).then(() => {
-        input.innerHTML = getTune();
+        input.innerHTML = `note("<c3 [d3 e3]>").cutoff(1000)`;
+        document.getElementById('start').addEventListener('click', () => {
+          evaluate(input.value);
+        });
       });
       evalScope(controls, ...modules);
 
       const { evaluate } = repl({
-        defaultOutput: (...args) => {
-          console.log(args);
+        defaultOutput: (hap, deadline, duration) => {
+          console.log(deadline, duration, hap.value);
         },
         getTime: () => Date.now() / 1000,
         transpiler,
         beforeEval: (code) => console.log('evaluate', code),
         afterEval: (code) => {},
       });
-      document.getElementById('start').addEventListener('click', () => {
-        evaluate(input.value);
-      });
-
-      function getTune() {
-        return `const output = (deadline, hap, now) => {
-  const { whole: { begin, end }, value } = hap; 
-  console.log(deadline, begin+0, end+0, value);
-}
-note("<c3 [d3 e3]>").cutoff(1000).onTrigger(output)`;
-      }
     </script>
   </body>
 </html>
