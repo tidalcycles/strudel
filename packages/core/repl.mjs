@@ -40,11 +40,11 @@ export function repl({
       throw new Error('no code to evaluate');
     }
     try {
-      beforeEval({ code });
+      beforeEval?.({ code });
       const { pattern } = await _evaluate(code, transpiler);
       logger(`[eval] code updated`);
       scheduler.setPattern(pattern, autostart);
-      afterEval({ code, pattern });
+      afterEval?.({ code, pattern });
       return pattern;
     } catch (err) {
       // console.warn(`[repl] eval error: ${err.message}`);
