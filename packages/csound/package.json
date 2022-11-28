@@ -2,7 +2,7 @@
   "name": "@strudel.cycles/csound",
   "version": "0.3.0",
   "description": "csound bindings for strudel",
-  "main": "index.mjs",
+  "main": "csound.mjs",
   "scripts": {
     "test": "echo \"No tests present.\" && exit 0"
   },
