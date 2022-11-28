@@ -4,7 +4,7 @@
 -o dac --port=10000
 </CsOptions>
 <CsInstruments>
-sr=48000x
+sr=48000
 ksmps=64
 nchnls=2
 0dbfs=1

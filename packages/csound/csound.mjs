@@ -22,11 +22,12 @@ Pattern.prototype.csound = async function () {
     const deadline = time - currentTime;
     const midi = toMidi(getPlayableNoteValue(hap));
     // TODO: find out how to send a precise ctx based time
-    const ctime = `next_time(.000001)+${deadline.toFixed(6)}`;
-    // const ctime = `${deadline.toFixed(6)}`;
+    // const ctime = `next_time(0.0001)+${deadline.toFixed(4)}`;
+    const ctime = `${deadline.toFixed(8)}`;
     const cmidi = `cpsmidinn(${midi})`;
     const cgain = gain ? `ampdbfs(-32 + 32*${gain})` : `0`;
     const code = `schedule(1, ${ctime}, .125, ${cmidi}, ${cgain})`;
+    // console.log('code', code);
     csound.evalCode(code);
   });
 };
