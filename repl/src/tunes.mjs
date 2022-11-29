@@ -991,3 +991,115 @@ export const juxUndTollerei = `note("c3 eb3 g3 bb3").palindrome()
 .room(.6)
 .delay(.5).delaytime(.1).delayfeedback(.4)
 .pianoroll()`;
+
+export const csoundTest = `await csound\`
+instr sawtooth
+    iduration = p3
+    ifreq = p4
+    igain = p5
+    ioct = octcps(ifreq)
+
+    asig = vco2(igain, ifreq, 0)
+
+    ; amp envelope
+    iattack = .5
+    irelease = .1
+    asig *= linsegr:a(0, iattack, 1, iduration, 1, irelease, 0)
+    
+    idepth = 2
+    acut = transegr:a(0, .005, 0, idepth, .06, -4.2, 0.001, .01, -4.2, 0)
+    asig = zdf_2pole(asig, 1000, 2)
+
+    out(asig, asig)
+endin\`
+
+stack(
+  note("<C^7 A7b13 Dm7 G7b9>/2".voicings()).s('sawtooth'),
+  note("<c2 a2 d2 g2>/2").s('sawtooth')
+) 
+.csound('sawtooth')`;
+
+export const csoundTest2 = `await csound\`
+instr organ
+    iduration = p3
+    ifreq = p4
+    igain = p5
+    ioct = octcps(ifreq)
+
+    kpwm = oscili(.5, 2)
+    asig = vco2(igain, ifreq, 4, .5 + kpwm)
+    asig += vco2(igain/4, ifreq * 2)
+
+    iattack = .01
+    irelease = .005
+    asig *= linsegr:a(0, iattack, 1, iduration, 0, irelease, 0)
+    
+    out(asig, asig)
+endin\`
+
+"<0 2 [4 6](3,4,1) 3*2>"
+.off(1/4, add(2))
+.off(1/2, add(6))
+.scale('D minor')
+.legato(perlin.range(.2,2).slow(8))
+// .echo(4, 1/8, .5)
+.note()
+.pianoroll()
+.csound('organ');`;
+
+export const csoundTest3 = `await csound\`
+instr CoolSynth
+    iduration = p3
+    ifreq = p4
+    igain = p5
+    ioct = octcps(ifreq)
+
+    kpwm = oscili(.05, 8)
+    asig = vco2(igain, ifreq, 4, .5 + kpwm)
+    asig += vco2(igain, ifreq * 2)
+
+    idepth = 2
+    acut = transegr:a(0, .005, 0, idepth, .06, -4.2, 0.001, .01, -4.2, 0) ; filter envelope
+    asig = zdf_2pole(asig, cpsoct(ioct + acut + 2), 0.5)
+
+    iattack = .01
+    isustain = .5
+    idecay = .1
+    irelease = .1
+    asig *= linsegr:a(0, iattack, 1, idecay, isustain, iduration, isustain, irelease, 0)
+    
+    out(asig, asig)
+endin\`
+
+"<0 2 [4 6](3,4,1) 3*2>"
+.off(1/4, add(2))
+.off(1/2, add(6))
+.scale('D minor')
+.note()
+//.pianoroll()
+.csound("<CoolSynth triangle>/4")`;
+
+export const csoundTest4 = `await csound()
+
+stack(
+  note("<C^7 A7b13 Dm7 G7b9>/2".voicings()).csound('organ').gain(.5),
+  note("<c2 a2 d2 g2>/2".superimpose(add(.1))).s('sawtooth').cutoff(800).resonance(10).shape(.3)
+)`;
+
+export const csoundMixed = `await csound()
+
+stack(
+  "<C^7 A7b13 Dm7 G7b9>/2".voicings()
+  .add(rand.range(-.1,.1)).note()
+  .csound('organ').gain(1).struct("[~@2 x]*2").legato(.25)
+  ,
+  "<c2 a2 d2 g2>/2"
+  .superimpose(add(rand.range(-.1,.1))).note()
+  .s('sawtooth').cutoff(perlin.range(200,500)).resonance(10)
+  .struct("x(4,6,1) x(5,6,2)")
+  .decay(.1).sustain(0)
+  ,
+  s("bd*2,hh:1(4,6),[~ sd]/2")
+  .room(.5)
+  .speed(perlin.range(.9,1.1).slow(4))
+).slow(2)`;
