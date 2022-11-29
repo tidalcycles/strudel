@@ -74,11 +74,11 @@ const B = $.define(), se = G.define({
       for (let o of t.effects)
         if (o.is(z)) {
           const a = o.value.map(
-            (s) => (s.context.locations || []).map(({ start: f, end: d }) => {
-              const u = s.context.color || "#FFCA28";
-              let c = t.newDoc.line(f.line).from + f.column, i = t.newDoc.line(d.line).from + d.column;
+            (s) => (s.context.locations || []).map(({ start: u, end: d }) => {
+              const f = s.context.color || "#FFCA28";
+              let c = t.newDoc.line(u.line).from + u.column, i = t.newDoc.line(d.line).from + d.column;
               const m = t.newDoc.length;
-              return c > m || i > m ? void 0 : E.mark({ attributes: { style: `outline: 1.5px solid ${u};` } }).range(c, i);
+              return c > m || i > m ? void 0 : E.mark({ attributes: { style: `outline: 1.5px solid ${f};` } }).range(c, i);
             })
           ).flat().filter(Boolean) || [];
           e = E.set(a, !0);
@@ -90,13 +90,13 @@ const B = $.define(), se = G.define({
   },
   provide: (e) => U.decorations.from(e)
 }), le = [Y(), ae, ie, se];
-function de({ value: e, onChange: t, onViewChanged: o, onSelectionChange: a, options: s, editorDidMount: f }) {
+function de({ value: e, onChange: t, onViewChanged: o, onSelectionChange: a, options: s, editorDidMount: u }) {
   const d = _(
     (i) => {
       t?.(i);
     },
     [t]
-  ), u = _(
+  ), f = _(
     (i) => {
       o?.(i);
     },
@@ -110,7 +110,7 @@ function de({ value: e, onChange: t, onViewChanged: o, onSelectionChange: a, opt
   return /* @__PURE__ */ n.createElement(n.Fragment, null, /* @__PURE__ */ n.createElement(X, {
     value: e,
     onChange: d,
-    onCreateEditor: u,
+    onCreateEditor: f,
     onUpdate: c,
     extensions: le
   }));
@@ -119,21 +119,21 @@ function K(...e) {
   return e.filter(Boolean).join(" ");
 }
 function ue({ view: e, pattern: t, active: o, getTime: a }) {
-  const s = H([]), f = H();
+  const s = H([]), u = H();
   L(() => {
     if (e)
       if (t && o) {
-        let u = function() {
+        let d = requestAnimationFrame(function f() {
           try {
-            const c = a(), m = [Math.max(f.current || c, c - 1 / 10, 0), c + 1 / 60];
-            f.current = m[1], s.current = s.current.filter((g) => g.whole.end > c);
+            const c = a(), m = [Math.max(u.current || c, c - 1 / 10, 0), c + 1 / 60];
+            u.current = m[1], s.current = s.current.filter((g) => g.whole.end > c);
             const h = t.queryArc(...m).filter((g) => g.hasOnset());
             s.current = s.current.concat(h), e.dispatch({ effects: z.of(s.current) });
           } catch {
             e.dispatch({ effects: z.of([]) });
           }
-          d = requestAnimationFrame(u);
-        }, d = requestAnimationFrame(u);
+          d = requestAnimationFrame(f);
+        });
         return () => {
           cancelAnimationFrame(d);
         };
@@ -183,9 +183,9 @@ function we({
   getTime: o,
   evalOnMount: a = !1,
   initialCode: s = "",
-  autolink: f = !1,
+  autolink: u = !1,
   beforeEval: d,
-  afterEval: u,
+  afterEval: f,
   onEvalError: c,
   onToggle: i
 }) {
@@ -203,7 +203,7 @@ function we({
         y(l), d?.();
       },
       afterEval: ({ pattern: l, code: P }) => {
-        S(P), D(l), N(), g(), f && (window.location.hash = "#" + encodeURIComponent(btoa(P))), u?.();
+        S(P), D(l), N(), g(), u && (window.location.hash = "#" + encodeURIComponent(btoa(P))), f?.();
       },
       onToggle: (l) => {
         x(l), i?.(l);
@@ -250,9 +250,9 @@ const ke = () => re().currentTime;
 function Se({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
   const {
     code: s,
-    setCode: f,
+    setCode: u,
     evaluate: d,
-    activateCode: u,
+    activateCode: f,
     error: c,
     isDirty: i,
     activeCode: m,
@@ -276,7 +276,7 @@ function Se({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
   }), j(() => {
     if (a) {
       const x = async (b) => {
-        (b.ctrlKey || b.altKey) && (b.code === "Enter" ? (b.preventDefault(), ce(y), await u()) : b.code === "Period" && (p(), b.preventDefault()));
+        (b.ctrlKey || b.altKey) && (b.code === "Enter" ? (b.preventDefault(), ce(y), await f()) : b.code === "Period" && (p(), b.preventDefault()));
       };
       return window.addEventListener("keydown", x, !0), () => window.removeEventListener("keydown", x, !0);
     }
@@ -294,7 +294,7 @@ function Se({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
     type: g ? "pause" : "play"
   })), /* @__PURE__ */ n.createElement("button", {
     className: K(i ? v.button : v.buttonDisabled),
-    onClick: () => u()
+    onClick: () => f()
   }, /* @__PURE__ */ n.createElement(O, {
     type: "refresh"
   }))), c && /* @__PURE__ */ n.createElement("div", {
@@ -303,7 +303,7 @@ function Se({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
     className: v.body
   }, F && /* @__PURE__ */ n.createElement(de, {
     value: s,
-    onChange: f,
+    onChange: u,
     onViewChanged: M
   })));
 }

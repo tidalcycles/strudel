@@ -1,3 +1,5 @@
+import { toMidi } from '@strudel.cycles/core';
+
 let loadCache = {};
 async function loadFont(name) {
   if (loadCache[name]) {
