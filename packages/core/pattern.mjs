@@ -1,5 +1,5 @@
 /*
-pattern.mjs - <short description TODO>
+pattern.mjs - Core pattern representation for strudel
 Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/pattern.mjs>
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
@@ -15,6 +15,7 @@ import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
 
 let stringParser;
+
 // parser is expected to turn a string into a pattern
 // if set, the reify function will parse all strings with it
 // intended to use with mini to automatically interpret all strings as mini notation
@@ -32,175 +33,8 @@ export class Pattern {
     this.query = query;
   }
 
-  /**
-   * query haps insude the tiven time span
-   *
-   * @param {Fraction | number} begin from time
-   * @param {Fraction | number} end to time
-   * @returns Hap[]
-   * @example
-   * const pattern = sequence('a', ['b', 'c'])
-   * const haps = pattern.queryArc(0, 1)
-   * console.log(haps)
-   * silence
-   */
-  queryArc(begin, end) {
-    return this.query(new State(new TimeSpan(begin, end)));
-  }
-
-  /**
-   * Returns a new pattern, with queries split at cycle boundaries. This makes
-   * some calculations easier to express, as all haps are then constrained to
-   * happen within a cycle.
-   * @returns Pattern
-   */
-  _splitQueries() {
-    const pat = this;
-    const q = (state) => {
-      return flatten(state.span.spanCycles.map((subspan) => pat.query(state.setSpan(subspan))));
-    };
-    return new Pattern(q);
-  }
-
-  /**
-   * Returns a new pattern, where the given function is applied to the query
-   * timespan before passing it to the original pattern.
-   * @param {Function} func the function to apply
-   * @returns Pattern
-   */
-  withQuerySpan(func) {
-    return new Pattern((state) => this.query(state.withSpan(func)));
-  }
-
-  withQuerySpanMaybe(func) {
-    const pat = this;
-    return new Pattern((state) => {
-      const newState = state.withSpan(func);
-      if (!newState.span) {
-        return [];
-      }
-      return pat.query(newState);
-    });
-  }
-
-  /**
-   * As with {@link Pattern#withQuerySpan}, but the function is applied to both the
-   * begin and end time of the query timespan.
-   * @param {Function} func the function to apply
-   * @returns Pattern
-   */
-  withQueryTime(func) {
-    return new Pattern((state) => this.query(state.withSpan((span) => span.withTime(func))));
-  }
-
-  /**
-   * Similar to {@link Pattern#withQuerySpan}, but the function is applied to the timespans
-   * of all haps returned by pattern queries (both `part` timespans, and where
-   * present, `whole` timespans).
-   * @param {Function} func
-   * @returns Pattern
-   */
-  withHapSpan(func) {
-    return new Pattern((state) => this.query(state).map((hap) => hap.withSpan(func)));
-  }
-
-  /**
-   * As with {@link Pattern#withHapSpan}, but the function is applied to both the
-   * begin and end time of the hap timespans.
-   * @param {Function} func the function to apply
-   * @returns Pattern
-   */
-  withHapTime(func) {
-    return this.withHapSpan((span) => span.withTime(func));
-  }
-
-  /**
-   * Returns a new pattern with the given function applied to the list of haps returned by every query.
-   * @param {Function} func
-   * @returns Pattern
-   */
-  _withHaps(func) {
-    return new Pattern((state) => func(this.query(state)));
-  }
-
-  /**
-   * As with {@link Pattern#_withHaps}, but applies the function to every hap, rather than every list of haps.
-   * @param {Function} func
-   * @returns Pattern
-   */
-  _withHap(func) {
-    return this._withHaps((haps) => haps.map(func));
-  }
-
-  /**
-   * Returns a new pattern with the context field set to every hap set to the given value.
-   * @param {*} context
-   * @returns Pattern
-   */
-  _setContext(context) {
-    return this._withHap((hap) => hap.setContext(context));
-  }
-
-  /**
-   * Returns a new pattern with the given function applied to the context field of every hap.
-   * @param {Function} func
-   * @returns Pattern
-   */
-  _withContext(func) {
-    return this._withHap((hap) => hap.setContext(func(hap.context)));
-  }
-
-  /**
-   * Returns a new pattern with the context field of every hap set to an empty object.
-   * @returns Pattern
-   */
-  _stripContext() {
-    return this._withHap((hap) => hap.setContext({}));
-  }
-
-  /**
-   * Returns a new pattern with the given location information added to the
-   * context of every hap.
-   * @param {Number} start
-   * @param {Number} end
-   * @returns Pattern
-   */
-  withLocation(start, end) {
-    const location = {
-      start: { line: start[0], column: start[1], offset: start[2] },
-      end: { line: end[0], column: end[1], offset: end[2] },
-    };
-    return this._withContext((context) => {
-      const locations = (context.locations || []).concat([location]);
-      return { ...context, locations };
-    });
-  }
-
-  withMiniLocation(start, end) {
-    const offset = {
-      start: { line: start[0], column: start[1], offset: start[2] },
-      end: { line: end[0], column: end[1], offset: end[2] },
-    };
-    return this._withContext((context) => {
-      let locations = context.locations || [];
-      locations = locations.map(({ start, end }) => {
-        const colOffset = start.line === 1 ? offset.start.column : 0;
-        return {
-          start: {
-            ...start,
-            line: start.line - 1 + (offset.start.line - 1) + 1,
-            column: start.column - 1 + colOffset,
-          },
-          end: {
-            ...end,
-            line: end.line - 1 + (offset.start.line - 1) + 1,
-            column: end.column - 1 + colOffset,
-          },
-        };
-      });
-      return { ...context, locations };
-    });
-  }
+  //////////////////////////////////////////////////////////////////////
+  // Haskell-style functor, applicative and monadic operations
 
   /**
    * Returns a new pattern, with the function applied to the value of
@@ -219,58 +53,7 @@ export class Pattern {
     return this.withValue(func);
   }
 
-  /**
-   * Returns a new Pattern, which only returns haps that meet the given test.
-   * @param {Function} hap_test - a function which returns false for haps to be removed from the pattern
-   * @returns Pattern
-   */
-  _filterHaps(hap_test) {
-    return new Pattern((state) => this.query(state).filter(hap_test));
-  }
-
-  /**
-   * As with {@link Pattern#_filterHaps}, but the function is applied to values
-   * inside haps.
-   * @param {Function} value_test
-   * @returns Pattern
-   */
-  _filterValues(value_test) {
-    return new Pattern((state) => this.query(state).filter((hap) => value_test(hap.value)));
-  }
-
-  /**
-   * Returns a new pattern, with haps containing undefined values removed from
-   * query results.
-   * @returns Pattern
-   */
-  _removeUndefineds() {
-    return this._filterValues((val) => val != undefined);
-  }
-
-  /**
-   * Returns a new pattern, with all haps without onsets filtered out. A hap
-   * with an onset is one with a `whole` timespan that begins at the same time
-   * as its `part` timespan.
-   * @returns Pattern
-   */
-  onsetsOnly() {
-    // Returns a new pattern that will only return haps where the start
-    // of the 'whole' timespan matches the start of the 'part'
-    // timespan, i.e. the haps that include their 'onset'.
-    return this._filterHaps((hap) => hap.hasOnset());
-  }
-
-  /**
-   * Returns a new pattern, with 'continuous' haps (those without 'whole'
-   * timespans) removed from query results.
-   * @returns Pattern
-   */
-  discreteOnly() {
-    // removes continuous haps that don't have a 'whole' timespan
-    return this._filterHaps((hap) => hap.whole);
-  }
-
-  _appWhole(whole_func, pat_val) {
+  appWhole(whole_func, pat_val) {
     // Assumes 'this' is a pattern of functions, and given a function to
     // resolve wholes, applies a given pattern of values to that
     // pattern of functions.
@@ -302,7 +85,7 @@ export class Pattern {
    * with those in the given pattern of values.  A new pattern is returned, with
    * each matching value applied to the corresponding function.
    *
-   * In this `appBoth` variant, where timespans of the function and value haps
+   * In this `_appBoth` variant, where timespans of the function and value haps
    * are not the same but do intersect, the resulting hap has a timespan of the
    * intersection. This applies to both the part and the whole timespan.
    * @param {Pattern} pat_val
@@ -316,7 +99,7 @@ export class Pattern {
       }
       return span_a.intersection_e(span_b);
     };
-    return this._appWhole(whole_func, pat_val);
+    return this.appWhole(whole_func, pat_val);
   }
 
   /**
@@ -381,173 +164,7 @@ export class Pattern {
     return new Pattern(query);
   }
 
-  /**
-   * Queries the pattern for the first cycle, returning Haps. Mainly of use when
-   * debugging a pattern.
-   * @param {Boolean} with_context - set to true, otherwise the context field
-   * will be stripped from the resulting haps.
-   * @returns [Hap]
-   */
-  firstCycle(with_context = false) {
-    var self = this;
-    if (!with_context) {
-      self = self._stripContext();
-    }
-    return self.query(new State(new TimeSpan(Fraction(0), Fraction(1))));
-  }
-
-  /**
-   * Accessor for a list of values returned by querying the first cycle.
-   */
-  get _firstCycleValues() {
-    return this.firstCycle().map((hap) => hap.value);
-  }
-
-  /**
-   * More human-readable version of the {@link Pattern#_firstCycleValues} accessor.
-   */
-  get _showFirstCycle() {
-    return this.firstCycle().map(
-      (hap) => `${hap.value}: ${hap.whole.begin.toFraction()} - ${hap.whole.end.toFraction()}`,
-    );
-  }
-
-  /**
-   * Returns a new pattern, which returns haps sorted in temporal order. Mainly
-   * of use when comparing two patterns for equality, in tests.
-   * @returns Pattern
-   */
-  _sortHapsByPart() {
-    return this._withHaps((haps) =>
-      haps.sort((a, b) =>
-        a.part.begin
-          .sub(b.part.begin)
-          .or(a.part.end.sub(b.part.end))
-          .or(a.whole.begin.sub(b.whole.begin).or(a.whole.end.sub(b.whole.end))),
-      ),
-    );
-  }
-
-  _opIn(other, func) {
-    return this.fmap(func).appLeft(reify(other));
-  }
-  _opOut(other, func) {
-    return this.fmap(func).appRight(reify(other));
-  }
-  _opMix(other, func) {
-    return this.fmap(func).appBoth(reify(other));
-  }
-  _opSqueeze(other, func) {
-    const otherPat = reify(other);
-    return this.fmap((a) => otherPat.fmap((b) => func(a)(b)))._squeezeJoin();
-  }
-  _opSqueezeOut(other, func) {
-    const thisPat = this;
-    const otherPat = reify(other);
-    return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a)))._squeezeJoin();
-  }
-  _opTrig(other, func) {
-    const otherPat = reify(other);
-    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._trigJoin();
-  }
-  _opTrigzero(other, func) {
-    const otherPat = reify(other);
-    return otherPat.fmap((b) => this.fmap((a) => func(a)(b)))._TrigzeroJoin();
-  }
-
-  _asNumber() {
-    return this.fmap(parseNumeral);
-  }
-
-  /**
-   * Assumes a numerical pattern. Returns a new pattern with all values rounded
-   * to the nearest integer.
-   * @name round
-   * @memberof Pattern
-   * @returns Pattern
-   * @example
-   * "0.5 1.5 2.5".round().scale('C major').note()
-   */
-  round() {
-    return this._asNumber().fmap((v) => Math.round(v));
-  }
-
-  /**
-   * Assumes a numerical pattern. Returns a new pattern with all values set to
-   * their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2`
-   * replaced with `-5`.
-   * @returns Pattern
-   */
-  floor() {
-    return this._asNumber().fmap((v) => Math.floor(v));
-  }
-
-  /**
-   * Assumes a numerical pattern. Returns a new pattern with all values set to
-   * their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2`
-   * replaced with `-4`.
-   * @returns Pattern
-   */
-  ceil() {
-    return this._asNumber().fmap((v) => Math.ceil(v));
-  }
-
-  /**
-   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
-   * 1. Returns a new pattern with values scaled to the bipolar range -1 .. 1
-   * @returns Pattern
-   */
-  _toBipolar() {
-    return this.fmap((x) => x * 2 - 1);
-  }
-
-  /**
-   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
-   * 1. Returns a new pattern with values scaled to the unipolar range 0 .. 1
-   * @returns Pattern
-   */
-  _fromBipolar() {
-    return this.fmap((x) => (x + 1) / 2);
-  }
-
-  /**
-   * Assumes a numerical pattern, containing unipolar values in the range 0 .. 1.
-   * Returns a new pattern with values scaled to the given min/max range.
-   * Most useful in combination with continuous patterns.
-   * @name range
-   * @memberof Pattern
-   * @returns Pattern
-   * @example
-   * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4))
-   */
-  _range(min, max) {
-    return this.mul(max - min).add(min);
-  }
-
-  /**
-   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
-   * 1. Returns a new pattern with values scaled to the given min/max range,
-   * following an exponential curve.
-   * @param {Number} min
-   * @param {Number} max
-   * @returns Pattern
-   */
-  _rangex(min, max) {
-    return this._range(Math.log(min), Math.log(max)).fmap(Math.exp);
-  }
-
-  /**
-   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
-   * 1. Returns a new pattern with values scaled to the given min/max range.
-   * @param {Number} min
-   * @param {Number} max
-   * @returns Pattern
-   */
-  _range2(min, max) {
-    return this._fromBipolar()._range(min, max);
-  }
-
-  _bindWhole(choose_whole, func) {
+  bindWhole(choose_whole, func) {
     const pat_val = this;
     const query = function (state) {
       const withWhole = function (a, b) {
@@ -577,7 +194,7 @@ export class Pattern {
       }
       return a.intersection_e(b);
     };
-    return this._bindWhole(whole_func, func);
+    return this.bindWhole(whole_func, func);
   }
 
   join() {
@@ -587,7 +204,7 @@ export class Pattern {
   }
 
   outerBind(func) {
-    return this._bindWhole((a, _) => a, func);
+    return this.bindWhole((a) => a, func);
   }
 
   outerJoin() {
@@ -597,7 +214,7 @@ export class Pattern {
   }
 
   innerBind(func) {
-    return this._bindWhole((_, b) => b, func);
+    return this.bindWhole((_, b) => b, func);
   }
 
   innerJoin() {
@@ -607,7 +224,7 @@ export class Pattern {
   }
 
   // Flatterns patterns of patterns, by retriggering/resetting inner patterns at onsets of outer pattern haps
-  _trigJoin(cycleZero = false) {
+  trigJoin(cycleZero = false) {
     const pat_of_pats = this;
     return new Pattern((state) => {
       return (
@@ -639,14 +256,14 @@ export class Pattern {
     });
   }
 
-  _TrigzeroJoin() {
-    return this._trigJoin(true);
+  trigzeroJoin() {
+    return this.trigJoin(true);
   }
 
   // Like the other joins above, joins a pattern of patterns of values, into a flatter
   // pattern of values. In this case it takes whole cycles of the inner pattern to fit each event
   // in the outer pattern.
-  _squeezeJoin() {
+  squeezeJoin() {
     // A pattern of patterns, which we call the 'outer' pattern, with patterns
     // as values which we call the 'inner' patterns.
     const pat_of_pats = this;
@@ -689,13 +306,433 @@ export class Pattern {
     return new Pattern(query);
   }
 
-  _squeezeBind(func) {
-    return this.fmap(func)._squeezeJoin();
+  squeezeBind(func) {
+    return this.fmap(func).squeezeJoin();
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // Utility methods mainly for internal use
+
+  /**
+   * Query haps inside the given time span.
+   *
+   * @param {Fraction | number} begin from time
+   * @param {Fraction | number} end to time
+   * @returns Hap[]
+   * @example
+   * const pattern = sequence('a', ['b', 'c'])
+   * const haps = pattern.queryArc(0, 1)
+   * console.log(haps)
+   * silence
+   */
+  queryArc(begin, end) {
+    return this.query(new State(new TimeSpan(begin, end)));
   }
 
   /**
+   * Returns a new pattern, with queries split at cycle boundaries. This makes
+   * some calculations easier to express, as all haps are then constrained to
+   * happen within a cycle.
+   * @returns Pattern
+   */
+  splitQueries() {
+    const pat = this;
+    const q = (state) => {
+      return flatten(state.span.spanCycles.map((subspan) => pat.query(state.setSpan(subspan))));
+    };
+    return new Pattern(q);
+  }
+
+  /**
+   * Returns a new pattern, where the given function is applied to the query
+   * timespan before passing it to the original pattern.
+   * @param {Function} func the function to apply
+   * @returns Pattern
+   */
+  withQuerySpan(func) {
+    return new Pattern((state) => this.query(state.withSpan(func)));
+  }
+
+  withQuerySpanMaybe(func) {
+    const pat = this;
+    return new Pattern((state) => {
+      const newState = state.withSpan(func);
+      if (!newState.span) {
+        return [];
+      }
+      return pat.query(newState);
+    });
+  }
+
+  /**
+   * As with {@link Pattern#withQuerySpan}, but the function is applied to both the
+   * begin and end time of the query timespan.
+   * @param {Function} func the function to apply
+   * @returns Pattern
+   */
+  withQueryTime(func) {
+    return new Pattern((state) => this.query(state.withSpan((span) => span.withTime(func))));
+  }
+
+  /**
+   * Similar to {@link Pattern#withQuerySpan}, but the function is applied to the timespans
+   * of all haps returned by pattern queries (both `part` timespans, and where
+   * present, `whole` timespans).
+   * @param {Function} func
+   * @returns Pattern
+   */
+  withHapSpan(func) {
+    return new Pattern((state) => this.query(state).map((hap) => hap.withSpan(func)));
+  }
+
+  /**
+   * As with {@link Pattern#withHapSpan}, but the function is applied to both the
+   * begin and end time of the hap timespans.
+   * @param {Function} func the function to apply
+   * @returns Pattern
+   */
+  withHapTime(func) {
+    return this.withHapSpan((span) => span.withTime(func));
+  }
+
+  /**
+   * Returns a new pattern with the given function applied to the list of haps returned by every query.
+   * @param {Function} func
+   * @returns Pattern
+   */
+  withHaps(func) {
+    return new Pattern((state) => func(this.query(state)));
+  }
+
+  /**
+   * As with {@link Pattern#withHaps}, but applies the function to every hap, rather than every list of haps.
+   * @param {Function} func
+   * @returns Pattern
+   */
+  withHap(func) {
+    return this.withHaps((haps) => haps.map(func));
+  }
+
+  /**
+   * Returns a new pattern with the context field set to every hap set to the given value.
+   * @param {*} context
+   * @returns Pattern
+   */
+  setContext(context) {
+    return this.withHap((hap) => hap.setContext(context));
+  }
+
+  /**
+   * Returns a new pattern with the given function applied to the context field of every hap.
+   * @param {Function} func
+   * @returns Pattern
+   */
+  withContext(func) {
+    return this.withHap((hap) => hap.setContext(func(hap.context)));
+  }
+
+  /**
+   * Returns a new pattern with the context field of every hap set to an empty object.
+   * @returns Pattern
+   */
+  stripContext() {
+    return this.withHap((hap) => hap.setContext({}));
+  }
+
+  /**
+   * Returns a new pattern with the given location information added to the
+   * context of every hap.
+   * @param {Number} start
+   * @param {Number} end
+   * @returns Pattern
+   */
+  withLocation(start, end) {
+    const location = {
+      start: { line: start[0], column: start[1], offset: start[2] },
+      end: { line: end[0], column: end[1], offset: end[2] },
+    };
+    return this.withContext((context) => {
+      const locations = (context.locations || []).concat([location]);
+      return { ...context, locations };
+    });
+  }
+
+  withMiniLocation(start, end) {
+    const offset = {
+      start: { line: start[0], column: start[1], offset: start[2] },
+      end: { line: end[0], column: end[1], offset: end[2] },
+    };
+    return this.withContext((context) => {
+      let locations = context.locations || [];
+      locations = locations.map(({ start, end }) => {
+        const colOffset = start.line === 1 ? offset.start.column : 0;
+        return {
+          start: {
+            ...start,
+            line: start.line - 1 + (offset.start.line - 1) + 1,
+            column: start.column - 1 + colOffset,
+          },
+          end: {
+            ...end,
+            line: end.line - 1 + (offset.start.line - 1) + 1,
+            column: end.column - 1 + colOffset,
+          },
+        };
+      });
+      return { ...context, locations };
+    });
+  }
+
+  /**
+   * Returns a new Pattern, which only returns haps that meet the given test.
+   * @param {Function} hap_test - a function which returns false for haps to be removed from the pattern
+   * @returns Pattern
+   */
+  filterHaps(hap_test) {
+    return new Pattern((state) => this.query(state).filter(hap_test));
+  }
+
+  /**
+   * As with {@link Pattern#filterHaps}, but the function is applied to values
+   * inside haps.
+   * @param {Function} value_test
+   * @returns Pattern
+   */
+  filterValues(value_test) {
+    return new Pattern((state) => this.query(state).filter((hap) => value_test(hap.value)));
+  }
+
+  /**
+   * Returns a new pattern, with haps containing undefined values removed from
+   * query results.
+   * @returns Pattern
+   */
+  removeUndefineds() {
+    return this.filterValues((val) => val != undefined);
+  }
+
+  /**
+   * Returns a new pattern, with all haps without onsets filtered out. A hap
+   * with an onset is one with a `whole` timespan that begins at the same time
+   * as its `part` timespan.
+   * @returns Pattern
+   */
+  onsetsOnly() {
+    // Returns a new pattern that will only return haps where the start
+    // of the 'whole' timespan matches the start of the 'part'
+    // timespan, i.e. the haps that include their 'onset'.
+    return this.filterHaps((hap) => hap.hasOnset());
+  }
+
+  /**
+   * Returns a new pattern, with 'continuous' haps (those without 'whole'
+   * timespans) removed from query results.
+   * @returns Pattern
+   */
+  discreteOnly() {
+    // removes continuous haps that don't have a 'whole' timespan
+    return this.filterHaps((hap) => hap.whole);
+  }
+
+  /**
+   * Queries the pattern for the first cycle, returning Haps. Mainly of use when
+   * debugging a pattern.
+   * @param {Boolean} with_context - set to true, otherwise the context field
+   * will be stripped from the resulting haps.
+   * @returns [Hap]
+   */
+  firstCycle(with_context = false) {
+    var self = this;
+    if (!with_context) {
+      self = self.stripContext();
+    }
+    return self.query(new State(new TimeSpan(Fraction(0), Fraction(1))));
+  }
+
+  /**
+   * Accessor for a list of values returned by querying the first cycle.
+   */
+  get firstCycleValues() {
+    return this.firstCycle().map((hap) => hap.value);
+  }
+
+  /**
+   * More human-readable version of the {@link Pattern#firstCycleValues} accessor.
+   */
+  get showFirstCycle() {
+    return this.firstCycle().map(
+      (hap) => `${hap.value}: ${hap.whole.begin.toFraction()} - ${hap.whole.end.toFraction()}`,
+    );
+  }
+
+  /**
+   * Returns a new pattern, which returns haps sorted in temporal order. Mainly
+   * of use when comparing two patterns for equality, in tests.
+   * @returns Pattern
+   */
+  sortHapsByPart() {
+    return this.withHaps((haps) =>
+      haps.sort((a, b) =>
+        a.part.begin
+          .sub(b.part.begin)
+          .or(a.part.end.sub(b.part.end))
+          .or(a.whole.begin.sub(b.whole.begin).or(a.whole.end.sub(b.whole.end))),
+      ),
+    );
+  }
+
+  patternify(join, func) {
+    const pat = this;
+    return function (...args) {
+      // the problem here: args could be a pattern that has been
+      // turned into an object to add location to avoid object
+      // checking for every pattern method, we can remove it here...
+      // in the future, patternified args should be marked as well +
+      // some better object handling
+      args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
+      const pat_arg = sequence(...args);
+      // arg.locations has to go somewhere..
+      return join(pat_arg.fmap((arg) => func.call(pat, arg)));
+    };
+  }
+
+  asNumber() {
+    return this.fmap(parseNumeral);
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // Operators - see 'make composers' later..
+
+  _opIn(other, func) {
+    return this.fmap(func).appLeft(reify(other));
+  }
+  _opOut(other, func) {
+    return this.fmap(func).appRight(reify(other));
+  }
+  _opMix(other, func) {
+    return this.fmap(func).appBoth(reify(other));
+  }
+  _opSqueeze(other, func) {
+    const otherPat = reify(other);
+    return this.fmap((a) => otherPat.fmap((b) => func(a)(b))).squeezeJoin();
+  }
+  _opSqueezeOut(other, func) {
+    const thisPat = this;
+    const otherPat = reify(other);
+    return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a))).squeezeJoin();
+  }
+  _opTrig(other, func) {
+    const otherPat = reify(other);
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).trigJoin();
+  }
+  _opTrigzero(other, func) {
+    const otherPat = reify(other);
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).trigzeroJoin();
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // End-user methods.
+  // Those beginning with an underscore (_) are 'patternified',
+  // i.e. versions are created without the underscore, that are
+  // magically transformed to accept patterns for all their arguments.
+
+  //////////////////////////////////////////////////////////////////////
+  // Numerical transformations
+
+  /**
+   * Assumes a numerical pattern. Returns a new pattern with all values rounded
+   * to the nearest integer.
+   * @name round
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * "0.5 1.5 2.5".round().scale('C major').note()
+   */
+  round() {
+    return this.asNumber().fmap((v) => Math.round(v));
+  }
+
+  /**
+   * Assumes a numerical pattern. Returns a new pattern with all values set to
+   * their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2`
+   * replaced with `-5`.
+   * @returns Pattern
+   */
+  floor() {
+    return this.asNumber().fmap((v) => Math.floor(v));
+  }
+
+  /**
+   * Assumes a numerical pattern. Returns a new pattern with all values set to
+   * their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2`
+   * replaced with `-4`.
+   * @returns Pattern
+   */
+  ceil() {
+    return this.asNumber().fmap((v) => Math.ceil(v));
+  }
+
+  /**
+   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
+   * 1. Returns a new pattern with values scaled to the bipolar range -1 .. 1
+   * @returns Pattern
+   */
+  toBipolar() {
+    return this.fmap((x) => x * 2 - 1);
+  }
+
+  /**
+   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
+   * 1. Returns a new pattern with values scaled to the unipolar range 0 .. 1
+   * @returns Pattern
+   */
+  fromBipolar() {
+    return this.fmap((x) => (x + 1) / 2);
+  }
+
+  /**
+   * Assumes a numerical pattern, containing unipolar values in the range 0 .. 1.
+   * Returns a new pattern with values scaled to the given min/max range.
+   * Most useful in combination with continuous patterns.
+   * @name range
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4))
+   */
+  _range(min, max) {
+    return this.mul(max - min).add(min);
+  }
+
+  /**
+   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
+   * 1. Returns a new pattern with values scaled to the given min/max range,
+   * following an exponential curve.
+   * @param {Number} min
+   * @param {Number} max
+   * @returns Pattern
+   */
+  _rangex(min, max) {
+    return this._range(Math.log(min), Math.log(max)).fmap(Math.exp);
+  }
+
+  /**
+   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
+   * 1. Returns a new pattern with values scaled to the given min/max range.
+   * @param {Number} min
+   * @param {Number} max
+   * @returns Pattern
+   */
+  _range2(min, max) {
+    return this.fromBipolar()._range(min, max);
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // Structural and temporal transformations
+
+  /**
    * Like layer, but with a single function:
-   * @name apply
+   * @name _apply
    * @memberof Pattern
    * @example
    * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4")).note()
@@ -718,18 +755,8 @@ export class Pattern {
     return stack(...funcs.map((func) => func(this)));
   }
 
-  _patternify(func) {
-    const pat = this;
-    const patterned = function (...args) {
-      // the problem here: args could a pattern that has been turned into an object to add location
-      // to avoid object checking for every pattern method, we can remove it here...
-      // in the future, patternified args should be marked as well + some better object handling
-      args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
-      const pat_arg = sequence(...args);
-      // arg.locations has to go somewhere..
-      return pat_arg.fmap((arg) => func.call(pat, arg)).innerJoin();
-    };
-    return patterned;
+  _ply(factor) {
+    return this.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
   }
 
   _fastGap(factor) {
@@ -764,7 +791,7 @@ export class Pattern {
           );
       return new Hap(newWhole, newPart, hap.value, hap.context);
     };
-    return this.withQuerySpanMaybe(qf)._withHap(ef)._splitQueries();
+    return this.withQuerySpanMaybe(qf).withHap(ef).splitQueries();
   }
 
   // Compress each cycle into the given timespan, leaving a gap
@@ -800,6 +827,7 @@ export class Pattern {
    * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
    */
   _fast(factor) {
+    factor = Fraction(factor);
     const fastQuery = this.withQueryTime((t) => t.mul(factor));
     return fastQuery.withHapTime((t) => t.div(factor));
   }
@@ -824,40 +852,6 @@ export class Pattern {
 
   _outside(factor, f) {
     return f(this._fast(factor))._slow(factor);
-  }
-
-  _ply(factor) {
-    return this.fmap((x) => pure(x)._fast(factor))._squeezeJoin();
-  }
-
-  /**
-   * Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
-   * It turns a pattern of samples into a pattern of parts of samples.
-   * @name chop
-   * @memberof Pattern
-   * @returns Pattern
-   * @example
-   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
-   * s("rhodes")
-   *  .chop(4)
-   *  .rev() // reverse order of chops
-   *  .loopAt(4,1) // fit sample into 4 cycles
-   *
-   */
-  _chop(n) {
-    const slices = Array.from({ length: n }, (x, i) => i);
-    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
-    const func = function (o) {
-      return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
-    };
-    return this._squeezeBind(func);
-  }
-
-  _striate(n) {
-    const slices = Array.from({ length: n }, (x, i) => i);
-    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
-    const slicePat = slowcat(...slice_objects);
-    return this.set(slicePat)._fast(n);
   }
 
   // cpm = cycles per minute
@@ -901,7 +895,7 @@ export class Pattern {
     const d = e.sub(s);
     return this.withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
       .withHapSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
-      ._splitQueries();
+      .splitQueries();
   }
 
   _zoomArc(a) {
@@ -915,50 +909,6 @@ export class Pattern {
       return this._zoom(t.add(1), 1)._slow(t);
     }
     return this._zoom(0, t)._slow(t);
-  }
-
-  /**
-   * Applies the given structure to the pattern:
-   *
-   * @name struct
-   * @memberof Pattern
-   * @returns Pattern
-   * @example
-   * note("c3,eb3,g3")
-   *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
-   *   .slow(4)
-   */
-  // struct(...binary_pats) {
-  //   // Re structure the pattern according to a binary pattern (false values are dropped)
-  //   const binary_pat = sequence(binary_pats);
-  //   return binary_pat
-  //     .fmap((b) => (val) => b ? val : undefined)
-  //     .appLeft(this)
-  //     ._removeUndefineds();
-  // }
-
-  // mask(...binary_pats) {
-  //   // Only let through parts of pattern corresponding to true values in the given binary pattern
-  //   const binary_pat = sequence(binary_pats);
-  //   return binary_pat
-  //     .fmap((b) => (val) => b ? val : undefined)
-  //     .appRight(this)
-  //     ._removeUndefineds();
-  // }
-
-  _color(color) {
-    return this._withContext((context) => ({ ...context, color }));
-  }
-
-  log() {
-    return this._withHap((e) => {
-      return e.setContext({ ...e.context, logs: (e.context?.logs || []).concat([e.show()]) });
-    });
-  }
-
-  drawLine() {
-    console.log(drawLine(this));
-    return this;
   }
 
   _segment(rate) {
@@ -987,10 +937,10 @@ export class Pattern {
    */
   when(binary_pat, func) {
     //binary_pat = sequence(binary_pat)
-    const true_pat = binary_pat._filterValues(id);
-    const false_pat = binary_pat._filterValues((val) => !val);
-    const with_pat = true_pat.fmap((_) => (y) => y).appRight(func(this));
-    const without_pat = false_pat.fmap((_) => (y) => y).appRight(this);
+    const true_pat = binary_pat.filterValues(id);
+    const false_pat = binary_pat.filterValues((val) => !val);
+    const with_pat = true_pat.fmap(() => (y) => y).appRight(func(this));
+    const without_pat = false_pat.fmap(() => (y) => y).appRight(this);
     return stack(with_pat, without_pat);
   }
 
@@ -1009,33 +959,17 @@ export class Pattern {
   }
 
   /**
-   * Applies the given function every n cycles.
-   * @name every
-   * @memberof Pattern
-   * @param {number} n how many cycles
-   * @param {function} func function to apply
-   * @returns Pattern
-   * @example
-   * note("c3 d3 e3 g3").every(4, x=>x.rev())
-   */
-  every(n, func) {
-    const pat = this;
-    const pats = Array(n - 1).fill(pat);
-    // pats.unshift(func(pat));
-    pats.push(func(pat));
-    return slowcatPrime(...pats);
-  }
-  /**
    * Applies the given function every n cycles, starting from the first cycle.
-   * @name every
+   * @name firstOf
    * @memberof Pattern
    * @param {number} n how many cycles
    * @param {function} func function to apply
    * @returns Pattern
    * @example
-   * note("c3 d3 e3 g3").every(4, x=>x.rev())
+   * note("c3 d3 e3 g3").firstOf(4, x=>x.rev())
    */
-  every(n, func) {
+  // TODO - patternify
+  firstOf(n, func) {
     const pat = this;
     const pats = Array(n - 1).fill(pat);
     pats.unshift(func(pat));
@@ -1044,19 +978,33 @@ export class Pattern {
 
   /**
    * Applies the given function every n cycles, starting from the last cycle.
-   * @name each
+   * @name lastOf
    * @memberof Pattern
    * @param {number} n how many cycles
    * @param {function} func function to apply
    * @returns Pattern
    * @example
-   * note("c3 d3 e3 g3").each(4, x=>x.rev())
+   * note("c3 d3 e3 g3").lastOf(4, x=>x.rev())
    */
-  each(n, func) {
+  lastOf(n, func) {
     const pat = this;
     const pats = Array(n - 1).fill(pat);
     pats.push(func(pat));
     return slowcatPrime(...pats);
+  }
+
+  /**
+   * An alias for {@link firstOf}
+   * @name every
+   * @memberof Pattern
+   * @param {number} n how many cycles
+   * @param {function} func function to apply
+   * @returns Pattern
+   * @example
+   * note("c3 d3 e3 g3").every(4, x=>x.rev())
+   */
+  every(n, func) {
+    return this.firstOf(n, func);
   }
 
   /**
@@ -1095,7 +1043,7 @@ export class Pattern {
       const haps = pat.query(state.setSpan(reflect(span)));
       return haps.map((hap) => hap.withSpan(reflect));
     };
-    return new Pattern(query)._splitQueries();
+    return new Pattern(query).splitQueries();
   }
 
   palindrome() {
@@ -1233,8 +1181,13 @@ export class Pattern {
    * @example
    * note("0 1 2 3".scale('A minor')).iter(4)
    */
-  iter(times, back = false) {
-    return slowcat(...listRange(0, times - 1).map((i) => (back ? this.late(i / times) : this.early(i / times))));
+  _iter(times, back = false) {
+    times = Fraction(times);
+    return slowcat(
+      ...listRange(0, times.sub(1)).map((i) =>
+        back ? this.late(Fraction(i).div(times)) : this.early(Fraction(i).div(times)),
+      ),
+    );
   }
 
   /**
@@ -1245,8 +1198,8 @@ export class Pattern {
    * @example
    * note("0 1 2 3".scale('A minor')).iterBack(4)
    */
-  iterBack(times) {
-    return this.iter(times, true);
+  _iterBack(times) {
+    return this._iter(times, true);
   }
 
   /**
@@ -1260,7 +1213,7 @@ export class Pattern {
   _chunk(n, func, back = false) {
     const binary = Array(n - 1).fill(false);
     binary.unshift(true);
-    const binary_pat = sequence(...binary).iter(n, back);
+    const binary_pat = sequence(...binary)._iter(n, back);
     return this.when(binary_pat, func);
   }
 
@@ -1281,38 +1234,37 @@ export class Pattern {
     return on ? silence : this;
   }
 
-  hush() {
-    return silence;
-  }
-
-  // sets absolute duration of haps
-  _duration(value) {
-    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
-  }
+  //////////////////////////////////////////////////////////////////////
+  // Control-related methods, which manipulate patterns of objects
 
   /**
-   *
-   * Multiplies the hap duration with the given factor.
-   * @name legato
+   * Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
+   * It turns a pattern of samples into a pattern of parts of samples.
+   * @name chop
    * @memberof Pattern
+   * @returns Pattern
    * @example
-   * note("c3 eb3 g3 c4").legato("<.25 .5 1 2>")
+   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+   * s("rhodes")
+   *  .chop(4)
+   *  .rev() // reverse order of chops
+   *  .loopAt(4,1) // fit sample into 4 cycles
+   *
    */
-  _legato(value) {
-    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
+  _chop(n) {
+    const slices = Array.from({ length: n }, (x, i) => i);
+    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+    const func = function (o) {
+      return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
+    };
+    return this.squeezeBind(func);
   }
 
-  /**
-   *
-   * Sets the velocity from 0 to 1. Is multiplied together with gain.
-   * @name velocity
-   * @example
-   * s("hh*8")
-   * .gain(".4!2 1 .4!2 1 .4 1")
-   * .velocity(".4 1")
-   */
-  _velocity(velocity) {
-    return this._withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
+  _striate(n) {
+    const slices = Array.from({ length: n }, (x, i) => i);
+    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+    const slicePat = slowcat(...slice_objects);
+    return this.set(slicePat)._fast(n);
   }
 
   /**
@@ -1329,8 +1281,29 @@ export class Pattern {
       .unit('c')
       .slow(factor);
   }
+
+  //////////////////////////////////////////////////////////////////////
+  // Context methods - ones that deal with metadata
+
+  _color(color) {
+    return this.withContext((context) => ({ ...context, color }));
+  }
+
+  /**
+   *
+   * Sets the velocity from 0 to 1. Is multiplied together with gain.
+   * @name velocity
+   * @example
+   * s("hh*8")
+   * .gain(".4!2 1 .4!2 1 .4 1")
+   * .velocity(".4 1")
+   */
+  _velocity(velocity) {
+    return this.withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
+  }
+
   onTrigger(onTrigger, dominant = true) {
-    return this._withHap((hap) =>
+    return this.withHap((hap) =>
       hap.setContext({
         ...hap.context,
         onTrigger: (...args) => {
@@ -1348,8 +1321,43 @@ export class Pattern {
   log(func = (_, hap) => `[hap] ${hap.showWhole(true)}`) {
     return this.onTrigger((...args) => logger(func(...args)), false);
   }
+
   logValues(func = id) {
     return this.log((_, hap) => func(hap.value));
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // Visualisation
+
+  drawLine() {
+    console.log(drawLine(this));
+    return this;
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // Misc.
+
+  hush() {
+    return silence;
+  }
+
+  // sets absolute duration of haps
+  // TODO - fix
+  _duration(value) {
+    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
+  }
+
+  /**
+   *
+   * Multiplies the hap duration with the given factor.
+   * @name legato
+   * @memberof Pattern
+   * @example
+   * note("c3 eb3 g3 c4").legato("<.25 .5 1 2>")
+   */
+  // TODO - fix
+  _legato(value) {
+    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
   }
 }
 
@@ -1375,7 +1383,7 @@ function _composeOp(a, b, func) {
   // pattern composers
   const composers = {
     set: [(a, b) => b],
-    keep: [(a, b) => a],
+    keep: [(a) => a],
     keepif: [(a, b) => (b ? a : undefined)],
 
     // numerical functions
@@ -1446,9 +1454,11 @@ function _composeOp(a, b, func) {
     func: [(a, b) => b(a)],
   };
 
+  const hows = ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero'];
+
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
-    for (const how of ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero']) {
+    for (const how of hows) {
       Pattern.prototype[what + how] = function (...other) {
         var pat = this;
         other = sequence(other);
@@ -1461,7 +1471,7 @@ function _composeOp(a, b, func) {
         if (what === 'keepif') {
           // avoid union, as we want to throw away the value of 'b' completely
           result = pat['_op' + how](other, (a) => (b) => op(a, b));
-          result = result._removeUndefineds();
+          result = result.removeUndefineds();
         } else {
           result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
         }
@@ -1472,8 +1482,22 @@ function _composeOp(a, b, func) {
         Pattern.prototype[what + 'SqueezeIn'] = Pattern.prototype[what + how];
       }
       if (how === 'In') {
-        // default how to 'in', e.g. add == addIn
-        Pattern.prototype[what] = Pattern.prototype[what + how];
+        // set 'in' to default, but with magic properties to pick a different 'how'
+        Object.defineProperty(Pattern.prototype, what, {
+          // a getter that returns a function, so 'pat' can be
+          // accessed by closures that are methods of that function..
+          get: function () {
+            const pat = this;
+            // wrap the 'in' function as default behaviour
+            const wrapper = (...other) => pat[what + 'In'](...other);
+            // add methods to that function to pick alternative behaviours
+            for (const wraphow of hows) {
+              wrapper[wraphow.toLowerCase()] = (...other) => pat[what + wraphow](...other);
+            }
+
+            return wrapper;
+          },
+        });
       } else {
         // default what to 'set', e.g. squeeze = setSqueeze
         if (what === 'set') {
@@ -1484,6 +1508,17 @@ function _composeOp(a, b, func) {
   }
 
   // binary composers
+  /**
+   * Applies the given structure to the pattern:
+   *
+   * @name struct
+   * @memberof Pattern
+   * @returns Pattern
+   * @example
+   * note("c3,eb3,g3")
+   *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
+   *   .slow(4)
+   */
   Pattern.prototype.struct = Pattern.prototype.keepifOut;
   Pattern.prototype.structAll = Pattern.prototype.keepOut;
   Pattern.prototype.mask = Pattern.prototype.keepifIn;
@@ -1503,6 +1538,8 @@ Pattern.prototype.patternified = [
   'duration',
   'early',
   'fast',
+  'iter',
+  'iterBack',
   'jux',
   'late',
   'legato',
@@ -1538,7 +1575,7 @@ Pattern.prototype.factories = {
 // Elemental patterns
 
 // Nothing
-export const silence = new Pattern((_) => []);
+export const silence = new Pattern(() => []);
 
 /** A discrete value that repeats once per cycle.
  *
@@ -1556,13 +1593,16 @@ export function pure(value) {
 export function isPattern(thing) {
   // thing?.constructor?.name !== 'Pattern' // <- this will fail when code is mangled
   const is = thing instanceof Pattern || thing?._Pattern;
-  if (!thing instanceof Pattern) {
+  // TODO: find out how to check wrong core dependency. below will never work !thing === 'undefined'
+  // wrapping it in (..) will result other checks to log that warning (e.g. isPattern('kalimba'))
+  /* if (!thing instanceof Pattern) {
     console.warn(
       `Found Pattern that fails "instanceof Pattern" check.
       This may happen if you are using multiple versions of @strudel.cycles/core. 
       Please check by running "npm ls @strudel.cycles/core".`,
     );
-  }
+    console.log(thing);
+  } */
   return is;
 }
 
@@ -1617,7 +1657,7 @@ export function slowcat(...pats) {
     const offset = span.begin.floor().sub(span.begin.div(pats.length).floor());
     return pat.withHapTime((t) => t.add(offset)).query(state.setSpan(span.withTime((t) => t.sub(offset))));
   };
-  return new Pattern(query)._splitQueries();
+  return new Pattern(query).splitQueries();
 }
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle. Unlike slowcat, this version will skip cycles.
@@ -1631,7 +1671,7 @@ export function slowcatPrime(...pats) {
     const pat = pats[pat_n]; // can be undefined for same cases e.g. /#cHVyZSg0MikKICAuZXZlcnkoMyxhZGQoNykpCiAgLmxhdGUoLjUp
     return pat?.query(state) || [];
   };
-  return new Pattern(query)._splitQueries();
+  return new Pattern(query).splitQueries();
 }
 
 /** Concatenation: as with {@link slowcat}, but squashes a cycle from each pattern into one cycle
@@ -1716,7 +1756,7 @@ export function polymeterSteps(steps, ...args) {
   const pats = [];
   for (const seq of seqs) {
     if (seq[1] == 0) {
-      next;
+      continue;
     }
     if (steps == seq[1]) {
       pats.push(seq[0]);
@@ -1748,7 +1788,7 @@ export const fast = curry((a, pat) => pat.fast(a));
 export const inv = (pat) => pat.inv();
 export const invert = (pat) => pat.invert();
 export const iter = curry((a, pat) => pat.iter(a));
-export const iterBack = curry((a, pat) => pat.iter(a));
+export const iterBack = curry((a, pat) => pat.iterBack(a));
 export const jux = curry((f, pat) => pat.jux(f));
 export const juxBy = curry((by, f, pat) => pat.juxBy(by, f));
 export const late = curry((a, pat) => pat.late(a));
@@ -1858,24 +1898,51 @@ Pattern.prototype.range2 = function (...args) {
   return patternify2(Pattern.prototype._range2)(...args, this);
 };
 
-// call this after all Patter.prototype.define calls have been executed! (right before evaluate)
+// call this after all Pattern.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = function () {
   // makeComposable(Pattern.prototype);
   const bootstrapped = Object.fromEntries(
     Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
       if (Pattern.prototype[functionName]) {
         // without this, 'C^7'.m.chordBass.transpose(2) will throw "C^7".m.chordBass.transpose is not a function
-        Pattern.prototype[functionName] = makeComposable(Pattern.prototype[functionName]); // is this needed?
+        // Pattern.prototype[functionName] = makeComposable(Pattern.prototype[functionName]); // is this needed?
       }
       return [functionName, curry(composable, makeComposable)];
     }),
   );
-  // note: this === Pattern.prototypetgh6z
+  // note: this === Pattern.prototype
   this.patternified.forEach((prop) => {
     // the following will patternify all functions in Pattern.prototype.patternified
     Pattern.prototype[prop] = function (...args) {
-      return this._patternify(Pattern.prototype['_' + prop])(...args);
+      return this.patternify((x) => x.innerJoin(), Pattern.prototype['_' + prop])(...args);
     };
+
+    /*
+    const func = Pattern.prototype['_' + prop];
+    Pattern.prototype[prop] = function (...args) {
+      return this.patternify(x => x.innerJoin(), func);
+    };
+
+     Object.defineProperty(Pattern.prototype, prop, {
+      // a getter that returns a function, so 'pat' can be
+      // accessed by closures that are methods of that function..
+      get: function() {
+	const pat = this;
+	// wrap the default behaviour
+        const wrapper = pat.patternify(x => x.innerJoin(), func);
+
+	// add the variants
+        wrapper['in'] = pat.patternify(x => x.innerJoin(), func);
+        wrapper['out'] = pat.patternify(x => x.outerJoin(), func);
+        wrapper['trig'] = pat.patternify(x => x.trigJoin(), func);
+        wrapper['trigzero'] = pat.patternify(x => x.trigzeroJoin(), func);
+        wrapper['squeeze'] = pat.patternify(x => x.squeezeJoin(), func);
+	    
+	return wrapper;
+      }
+    });
+    */
+
     // with the following, you can do, e.g. `stack(c3).fast.slowcat(1, 2, 4, 8)` instead of `stack(c3).fast(slowcat(1, 2, 4, 8))`
     // TODO: find a way to implement below outside of constructor (code only worked there)
     /* Object.assign(
@@ -1908,4 +1975,4 @@ Pattern.prototype.define = (name, func, options = {}) => {
 
 // Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
 Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
-Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
+Pattern.prototype.define('bypass', (pat) => pat.bypass(1), { patternified: true, composable: true });
