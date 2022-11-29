@@ -106,7 +106,3 @@ Pattern.prototype.serial = function (br=38400,sendcrc=false) {
     return hap.setContext({ ...hap.context, onTrigger, dominantTrigger: true });
   });
 };
-
-// move(to:0.06,part:head)|zV|
-// move(to:0.01,part:back)||
-// move(to:0.06,part:back)|W|
