@@ -22,7 +22,7 @@ Pattern.prototype._csound = function (instrument) {
     // http://www.csounds.com/manual/html/i.html
     const params = [
       `"${instrument}"`, // p1: instrument name
-      time - currentTime, //.toFixed(precision), // p2: starting time in arbitrary unit called beats
+      time - getAudioContext().currentTime, //.toFixed(precision), // p2: starting time in arbitrary unit called beats
       hap.duration + 0, // p3: duration in beats
       // instrument specific params:
       freq, //.toFixed(precision), // p4: frequency
