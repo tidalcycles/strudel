@@ -1463,53 +1463,43 @@ function _composeOp(a, b, func) {
 
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
-    for (const how of hows) {
-      Pattern.prototype[what + how] = function (...other) {
-        var pat = this;
-        other = sequence(other);
-        if (preprocess) {
-          pat = preprocess(pat);
-          other = preprocess(other);
-        }
-        var result;
-        // hack to remove undefs when doing 'keepif'
-        if (what === 'keepif') {
-          // avoid union, as we want to throw away the value of 'b' completely
-          result = pat['_op' + how](other, (a) => (b) => op(a, b));
-          result = result.removeUndefineds();
-        } else {
-          result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
-        }
-        return result;
-      };
-      if (how === 'Squeeze') {
-        // support 'squeezeIn' longhand
-        Pattern.prototype[what + 'SqueezeIn'] = Pattern.prototype[what + how];
+
+    Object.defineProperty(Pattern.prototype, what, {
+      // a getter that returns a function, so 'pat' can be
+      // accessed by closures that are methods of that function..
+      get: function() {
+	const pat = this;
+	
+	// wrap the 'in' function as default behaviour
+        const wrapper = (...other) => pat[what]['in'](...other);
+	
+	// add methods to that function for each behaviour
+	for (const how of hows) {
+          wrapper[how.toLowerCase()] = function (...other) {
+	    var howpat = pat;
+            other = sequence(other);
+            if (preprocess) {
+              howpat = preprocess(howpat);
+              other = preprocess(other);
+            }
+            var result;
+            // hack to remove undefs when doing 'keepif'
+            if (what === 'keepif') {
+              // avoid union, as we want to throw away the value of 'b' completely
+              result = howpat['_op' + how](other, (a) => (b) => op(a, b));
+              result = result.removeUndefineds();
+            } else {
+              result = howpat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
+            }
+            return result;
+	  }
+	}
+	wrapper.squeezeIn = wrapper.squeeze
+	
+	return wrapper;
       }
-      if (how === 'In') {
-        // set 'in' to default, but with magic properties to pick a different 'how'
-	Object.defineProperty(Pattern.prototype, what, {
-	  // a getter that returns a function, so 'pat' can be
-	  // accessed by closures that are methods of that function..
-	  get: function() {
-	    const pat = this;
-	    // wrap the 'in' function as default behaviour
-            const wrapper = (...other) => pat[what + "In"](...other);
-	    // add methods to that function to pick alternative behaviours
-	    for (const wraphow of hows) {
-              wrapper[wraphow.toLowerCase()] = (...other) => pat[what + wraphow](...other);
-	    }
-	    
-	    return wrapper;
-          }
-	});
-      } else {
-        // default what to 'set', e.g. squeeze = setSqueeze
-        if (what === 'set') {
-          Pattern.prototype[how.toLowerCase()] = Pattern.prototype[what + how];
-        }
-      }
-    }
+    });
+
   }
 
   // binary composers
@@ -1524,14 +1514,14 @@ function _composeOp(a, b, func) {
    *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
    *   .slow(4)
    */
-  Pattern.prototype.struct = Pattern.prototype.keepifOut;
-  Pattern.prototype.structAll = Pattern.prototype.keepOut;
-  Pattern.prototype.mask = Pattern.prototype.keepifIn;
-  Pattern.prototype.maskAll = Pattern.prototype.keepIn;
-  Pattern.prototype.reset = Pattern.prototype.keepifTrig;
-  Pattern.prototype.resetAll = Pattern.prototype.keepTrig;
-  Pattern.prototype.restart = Pattern.prototype.keepifTrigzero;
-  Pattern.prototype.restartAll = Pattern.prototype.keepTrigzero;
+  Pattern.prototype.struct     = function(...args) { return this.keepif.out(...args)      } 
+  Pattern.prototype.structAll  = function(...args) { return this.keep.out(...args)        }
+  Pattern.prototype.mask       = function(...args) { return this.keepif.in(...args)       }
+  Pattern.prototype.maskAll    = function(...args) { return this.keep.in(...args)         }
+  Pattern.prototype.reset      = function(...args) { return this.keepif.trig(...args)     }
+  Pattern.prototype.resetAll   = function(...args) { return this.keep.trig(...args)       }
+  Pattern.prototype.restart    = function(...args) { return this.keepif.trigzero(...args) }
+  Pattern.prototype.restartAll = function(...args) { return this.keep.trigzero(...args)   }
 })();
 
 // methods of Pattern that get callable factories
@@ -1901,6 +1891,7 @@ Pattern.prototype.range2 = function (...args) {
 };
 
 // call this after all Pattern.prototype.define calls have been executed! (right before evaluate)
+// (but isn't this called for every define call anyway?)
 Pattern.prototype.bootstrap = function () {
   // makeComposable(Pattern.prototype);
   const bootstrapped = Object.fromEntries(
