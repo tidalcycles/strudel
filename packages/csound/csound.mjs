@@ -1,8 +1,8 @@
 import { getFrequency, logger, Pattern } from '@strudel.cycles/core';
 import { getAudioContext } from '@strudel.cycles/webaudio';
 import csd from './project.csd?raw';
-import orc from './livecode.orc?raw';
-// import orc from './sounds.orc?raw';
+import livecodeOrc from './livecode.orc?raw';
+import presetsOrc from './presets.orc?raw';
 
 let csoundLoader, _csound;
 
@@ -76,7 +76,8 @@ async function load() {
   await _csound.setOption('-m0'); // see -m flag https://csound.com/docs/manual/CommandFlags.html
   await _csound.setOption('--sample-accurate');
   await _csound.compileCsdText(csd);
-  await _csound.compileOrc(orc);
+  await _csound.compileOrc(livecodeOrc);
+  await _csound.compileOrc(presetsOrc);
   await _csound.start();
   return _csound;
 }
