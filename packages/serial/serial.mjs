@@ -20,6 +20,7 @@ export async function getWriter(br = 38400) {
   if ('serial' in navigator) {
     const port = await navigator.serial.requestPort();
     await port.open({ baudRate: br });
+    // eslint-disable-next-line no-undef
     const textEncoder = new TextEncoderStream();
     const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
     const writer = textEncoder.writable.getWriter();

@@ -7,9 +7,7 @@ function useHighlighting({ view, pattern, active, getTime }) {
   useEffect(() => {
     if (view) {
       if (pattern && active) {
-        let frame = requestAnimationFrame(updateHighlights);
-
-        function updateHighlights() {
+        let frame = requestAnimationFrame(function updateHighlights() {
           try {
             const audioTime = getTime();
             // force min framerate of 10 fps => fixes crash on tab refocus, where lastEnd could be far away
@@ -25,8 +23,7 @@ function useHighlighting({ view, pattern, active, getTime }) {
             view.dispatch({ effects: setHighlights.of([]) });
           }
           frame = requestAnimationFrame(updateHighlights);
-        }
-
+        });
         return () => {
           cancelAnimationFrame(frame);
         };

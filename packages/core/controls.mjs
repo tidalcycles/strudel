@@ -787,6 +787,6 @@ controls.createParam = (name) => {
 };
 
 controls.createParams = (...names) =>
-  names.reduce((acc, name) => Object.assign(acc, { [name]: createParam(name) }), {});
+  names.reduce((acc, name) => Object.assign(acc, { [name]: controls.createParam(name) }), {});
 
 export default controls;
