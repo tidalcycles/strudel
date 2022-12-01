@@ -6,12 +6,12 @@ import orc from './livecode.orc?raw';
 
 let csoundLoader, _csound;
 
-// triggers given instrument name using csound. expects csound function to be called in advance `await csound()`
+// triggers given instrument name using csound.
 Pattern.prototype._csound = function (instrument) {
   instrument = instrument || 'triangle';
   init(); // not async to support csound inside other patterns + to be able to call pattern methods after it
   // TODO: find a alternative way to wait for csound to load (to wait with first time playback)
-  return this.onTrigger((time, hap, currentTime) => {
+  return this.onTrigger((time, hap) => {
     if (!_csound) {
       logger('[csound] not loaded yet', 'warning');
       return;
@@ -19,7 +19,6 @@ Pattern.prototype._csound = function (instrument) {
     let { gain = 0.8 } = hap.value;
     gain *= 0.2;
 
-    // const midi = toMidi(getPlayableNoteValue(hap));
     const freq = getFrequency(hap);
     // TODO: find out how to send a precise ctx based time
     // http://www.csounds.com/manual/html/i.html
@@ -29,7 +28,6 @@ Pattern.prototype._csound = function (instrument) {
       hap.duration + 0, // p3: duration in beats
       // instrument specific params:
       freq, //.toFixed(precision), // p4: frequency
-      // -48 + gain * 24, // p5: gain
       gain, // p5: gain
     ];
     const msg = `i ${params.join(' ')}`;
@@ -86,17 +84,4 @@ async function load() {
 async function init() {
   csoundLoader = csoundLoader || load();
   return csoundLoader;
-}
-
-// experimental: allows using jsx to eval csound
-window.jsxPragma = function (fn, args, text) {
-  return fn(text);
-};
-
-// experimental: for use via JSX as <CsInstruments>...</CsInstruments>
-export function CsInstruments(text) {
-  if (Array.isArray(text)) {
-    text = text[0];
-  }
-  return csound(text);
 }
