@@ -1,10 +1,3 @@
-<CsoundSynthesizer>
-<CsInstruments>
-sr=48000
-ksmps=64
-nchnls=2
-0dbfs=1
-
 instr organ
     iduration = p3
     ifreq = p4
@@ -45,5 +38,3 @@ instr triangle
   
   out(asig, asig)
 endin
-</CsInstruments>
-</CsoundSynthesizer>

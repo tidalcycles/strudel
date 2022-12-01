@@ -1,13 +1,16 @@
 import { getFrequency, logger, Pattern } from '@strudel.cycles/core';
-import { Csound } from '@csound/browser'; // TODO: use dynamic import for code splitting..
 import { getAudioContext } from '@strudel.cycles/webaudio';
-import csd from './sounds.csd?raw';
+import csd from './project.csd?raw';
+import orc from './livecode.orc?raw';
+// import orc from './sounds.orc?raw';
 
 let csoundLoader, _csound;
 
 // triggers given instrument name using csound. expects csound function to be called in advance `await csound()`
 Pattern.prototype._csound = function (instrument) {
   instrument = instrument || 'triangle';
+  init(); // not async to support csound inside other patterns + to be able to call pattern methods after it
+  // TODO: find a alternative way to wait for csound to load (to wait with first time playback)
   return this.onTrigger((time, hap, currentTime) => {
     if (!_csound) {
       logger('[csound] not loaded yet', 'warning');
@@ -36,8 +39,7 @@ Pattern.prototype._csound = function (instrument) {
 
 // initializes csound + can be used to reevaluate given instrument code
 export async function csound(code = '') {
-  csoundLoader = csoundLoader || init();
-  await csoundLoader;
+  await init();
   code && (await _csound?.evalCode(`${code}`));
   //                               ^       ^
   // wrapping in backticks makes sure it works when calling as templated function
@@ -68,15 +70,22 @@ function eventLogger(type, args) {
   logger(`[csound] ${msg || ''}`, logType);
 }
 
-async function init() {
+async function load() {
+  const { Csound } = await import('@csound/browser');
   _csound = await Csound({ audioContext: getAudioContext() });
   _csound.removeAllListeners('message');
   ['message'].forEach((k) => _csound.on(k, (...args) => eventLogger(k, args)));
   await _csound.setOption('-m0'); // see -m flag https://csound.com/docs/manual/CommandFlags.html
   await _csound.setOption('--sample-accurate');
   await _csound.compileCsdText(csd);
+  await _csound.compileOrc(orc);
   await _csound.start();
   return _csound;
+}
+
+async function init() {
+  csoundLoader = csoundLoader || load();
+  return csoundLoader;
 }
 
 // experimental: allows using jsx to eval csound
