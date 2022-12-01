@@ -1,7 +1,7 @@
 import { getFrequency, logger, Pattern } from '@strudel.cycles/core';
 import { Csound } from '@csound/browser'; // TODO: use dynamic import for code splitting..
-import { csd } from './csd.mjs';
 import { getAudioContext } from '@strudel.cycles/webaudio';
+import csd from './sounds.csd?raw';
 
 let csoundLoader, _csound;
 
@@ -30,30 +30,53 @@ Pattern.prototype._csound = function (instrument) {
       gain, // p5: gain
     ];
     const msg = `i ${params.join(' ')}`;
-    // console.log('msg', msg);
     _csound.inputMessage(msg);
-    // _csound.readScore(msg); // slower alternative
-    // even slower alternative:
-    /* const code = `schedule(${params.join(', ')})`;
-    _csound.evalCode(code); */
   });
 };
 
 // initializes csound + can be used to reevaluate given instrument code
 export async function csound(code = '') {
-  code = csd(code);
-  let isInit = false;
-  if (!csoundLoader) {
-    isInit = true;
-    csoundLoader = (async () => {
-      _csound = await Csound({ audioContext: getAudioContext() });
-      await _csound.setOption('-m0');
-      await _csound.compileCsdText(code);
-      await _csound.start();
-    })();
-  }
+  csoundLoader = csoundLoader || init();
   await csoundLoader;
-  !isInit && (await _csound?.compileCsdText(code));
+  code && (await _csound?.evalCode(`${code}`));
+  //                               ^       ^
+  // wrapping in backticks makes sure it works when calling as templated function
+}
+
+Pattern.prototype.define('csound', (a, pat) => pat.csound(a), { composable: false, patternified: true });
+
+function eventLogger(type, args) {
+  const [msg] = args;
+  if (
+    type === 'message' &&
+    (['[commit: HEAD]'].includes(msg) ||
+      msg.startsWith('--Csound version') ||
+      msg.startsWith('libsndfile') ||
+      msg.startsWith('sr =') ||
+      msg.startsWith('0dBFS') ||
+      msg.startsWith('audio buffered') ||
+      msg.startsWith('writing') ||
+      msg.startsWith('SECTION 1:'))
+  ) {
+    // ignore
+    return;
+  }
+  let logType = 'info';
+  if (msg.startsWith('error:')) {
+    logType = 'error';
+  }
+  logger(`[csound] ${msg || ''}`, logType);
+}
+
+async function init() {
+  _csound = await Csound({ audioContext: getAudioContext() });
+  _csound.removeAllListeners('message');
+  ['message'].forEach((k) => _csound.on(k, (...args) => eventLogger(k, args)));
+  await _csound.setOption('-m0'); // see -m flag https://csound.com/docs/manual/CommandFlags.html
+  await _csound.setOption('--sample-accurate');
+  await _csound.compileCsdText(csd);
+  await _csound.start();
+  return _csound;
 }
 
 // experimental: allows using jsx to eval csound
@@ -68,5 +91,3 @@ export function CsInstruments(text) {
   }
   return csound(text);
 }
-
-Pattern.prototype.define('csound', (a, pat) => pat.csound(a), { composable: false, patternified: true });

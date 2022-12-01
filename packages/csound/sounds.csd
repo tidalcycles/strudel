@@ -1,9 +1,4 @@
-export function csd(code = '') {
-  return `
 <CsoundSynthesizer>
-<CsOptions>
--o dac --port=10000 --sample-accurate
-</CsOptions>
 <CsInstruments>
 sr=48000
 ksmps=64
@@ -36,25 +31,19 @@ instr organ
 endin
 
 instr triangle
-    iduration = p3
-    ifreq = p4
-    igain = p5
-    ioct = octcps(ifreq)
-
-    asig = vco2(igain, ifreq, 12, .5)
-
-    ; amp envelope
-    iattack = .001
-    irelease = .05
-    asig *= linsegr:a(0, iattack, 1, iduration, 1, irelease, 0)
-
-    out(asig, asig)
-
+  iduration = p3
+  ifreq = p4
+  igain = p5
+  ioct = octcps(ifreq)
+  
+  asig = vco2(igain, ifreq, 12, .5)
+  
+  ; amp envelope
+  iattack = .001
+  irelease = .05
+  asig *= linsegr:a(0, iattack, 1, iduration, 1, irelease, 0)
+  
+  out(asig, asig)
 endin
-
-${code}
-
 </CsInstruments>
 </CsoundSynthesizer>
-`;
-}
