@@ -69,8 +69,13 @@ function eventLogger(type, args) {
 }
 
 async function load() {
-  const { Csound } = await import('@csound/browser');
-  _csound = await Csound({ audioContext: getAudioContext() });
+  if (window.__csound__) {
+    // allows using some other csound instance
+    _csound = window.__csound__;
+  } else {
+    const { Csound } = await import('@csound/browser');
+    _csound = await Csound({ audioContext: getAudioContext() });
+  }
   _csound.removeAllListeners('message');
   ['message'].forEach((k) => _csound.on(k, (...args) => eventLogger(k, args)));
   await _csound.setOption('-m0'); // see -m flag https://csound.com/docs/manual/CommandFlags.html
