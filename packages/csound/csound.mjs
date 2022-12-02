@@ -1,7 +1,7 @@
 import { getFrequency, logger, Pattern } from '@strudel.cycles/core';
 import { getAudioContext } from '@strudel.cycles/webaudio';
 import csd from './project.csd?raw';
-import livecodeOrc from './livecode.orc?raw';
+// import livecodeOrc from './livecode.orc?raw';
 import presetsOrc from './presets.orc?raw';
 
 let csoundLoader, _csound;
@@ -91,7 +91,7 @@ async function load() {
   await _csound.setOption('-m0d'); // see -m flag https://csound.com/docs/manual/CommandFlags.html
   await _csound.setOption('--sample-accurate');
   await _csound.compileCsdText(csd);
-  await _csound.compileOrc(livecodeOrc);
+  // await _csound.compileOrc(livecodeOrc);
   await _csound.compileOrc(presetsOrc);
   await _csound.start();
   return _csound;
@@ -100,4 +100,20 @@ async function load() {
 async function init() {
   csoundLoader = csoundLoader || load();
   return csoundLoader;
+}
+
+let orcCache = {};
+export async function loadOrc(url) {
+  await init();
+  if (typeof url !== 'string') {
+    throw new Error('loadOrc: expected url string');
+  }
+  if (url.startsWith('github:')) {
+    const [_, path] = url.split('github:');
+    url = `https://raw.githubusercontent.com/${path}`;
+  }
+  if (!orcCache[url]) {
+    orcCache[url] = await fetch(url).then((res) => res.text());
+  }
+  await _csound.compileOrc(orcCache[url]);
 }
