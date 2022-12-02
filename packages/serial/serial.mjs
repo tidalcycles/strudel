@@ -25,18 +25,18 @@ export async function getWriter(br = 38400) {
     writeMessage = function (message, chk) {
       const encoded = encoder.encode(message)
       if (!chk) {
-	writer.write(encoded);
+        writer.write(encoded);
       }
       else {
-	const bytes = new Uint8Array(4);
-	bytes[0] = 124; // | symbol
-	bytes[1] = (chk >> 8) & 0xFF;
-	bytes[2] = chk & 0xFF;
-	bytes[3] = 59; // semicolon
-	const withchk = new Uint8Array(encoded.length+4)
-	withchk.set(encoded);
-	withchk.set(bytes, encoded.length);
-	writer.write(withchk);
+        const bytes = new Uint8Array(4);
+        bytes[0] = 124; // | symbol
+        bytes[1] = (chk >> 8) & 0xFF;
+        bytes[2] = chk & 0xFF;
+        bytes[3] = 59; // semicolon
+        const withchk = new Uint8Array(encoded.length+4)
+        withchk.set(encoded);
+        withchk.set(bytes, encoded.length);
+        writer.write(withchk);
       }
     };
   } else {
