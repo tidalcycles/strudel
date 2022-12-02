@@ -174,6 +174,7 @@ evalScope(
     // gist,
     // euclid,
     csound: id,
+    loadOrc: id,
     mini,
     getDrawContext,
     getAudioContext,
