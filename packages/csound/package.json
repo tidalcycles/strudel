@@ -1,0 +1,32 @@
+{
+  "name": "@strudel.cycles/csound",
+  "version": "0.3.0",
+  "description": "csound bindings for strudel",
+  "main": "csound.mjs",
+  "scripts": {
+    "test": "echo \"No tests present.\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "contributors": [
+    "Alex McLean <alex@slab.org>"
+  ],
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "@csound/browser": "^6.18.3"
+  }
+}
