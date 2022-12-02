@@ -16,10 +16,16 @@ Pattern.prototype._csound = function (instrument) {
       logger('[csound] not loaded yet', 'warning');
       return;
     }
+    if (typeof hap.value !== 'object') {
+      throw new Error('csound only support objects as hap values');
+    }
     let { gain = 0.8 } = hap.value;
     gain *= 0.2;
 
-    const freq = getFrequency(hap);
+    const freq = Math.round(getFrequency(hap));
+    const controls = Object.entries({ ...hap.value, freq })
+      .flat()
+      .join('/');
     // TODO: find out how to send a precise ctx based time
     // http://www.csounds.com/manual/html/i.html
     const params = [
@@ -29,6 +35,7 @@ Pattern.prototype._csound = function (instrument) {
       // instrument specific params:
       freq, //.toFixed(precision), // p4: frequency
       gain, // p5: gain
+      `"${controls}"`, // p6 controls as string (like superdirt osc message)
     ];
     const msg = `i ${params.join(' ')}`;
     _csound.inputMessage(msg);
@@ -38,9 +45,12 @@ Pattern.prototype._csound = function (instrument) {
 // initializes csound + can be used to reevaluate given instrument code
 export async function csound(code = '') {
   await init();
-  code && (await _csound?.evalCode(`${code}`));
-  //                               ^       ^
-  // wrapping in backticks makes sure it works when calling as templated function
+  if (code) {
+    code = `${code}`;
+    //     ^       ^
+    // wrapping in backticks makes sure it works when calling as templated function
+    await _csound?.evalCode(code);
+  }
 }
 
 Pattern.prototype.define('csound', (a, pat) => pat.csound(a), { composable: false, patternified: true });
@@ -78,7 +88,7 @@ async function load() {
   }
   _csound.removeAllListeners('message');
   ['message'].forEach((k) => _csound.on(k, (...args) => eventLogger(k, args)));
-  await _csound.setOption('-m0'); // see -m flag https://csound.com/docs/manual/CommandFlags.html
+  await _csound.setOption('-m0d'); // see -m flag https://csound.com/docs/manual/CommandFlags.html
   await _csound.setOption('--sample-accurate');
   await _csound.compileCsdText(csd);
   await _csound.compileOrc(livecodeOrc);

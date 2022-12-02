@@ -1,3 +1,15 @@
+; returns value of given key in given "string map"
+; keymap("freq", "note/c3/freq/220/gain/0.5")
+; yields "220"
+opcode keymap, S, SS
+  Skey, Smap xin
+  idelimiter = strindex(Smap, strcat(Skey, "/"))
+  ifrom = idelimiter + strlen(Skey) + 1
+  Svalue = strsub(Smap, ifrom, strlen(Smap))
+  Svalue = strsub(Svalue, 0, strindex(Svalue, "/"))
+  xout Svalue
+endop
+
 ; TODO add incredibly dope synths
 instr organ
     iduration = p3
@@ -58,4 +70,27 @@ instr pad
     asig = zdf_2pole(asig, 1000, 2)
 
     out(asig, asig)
+endin
+
+
+gisine	ftgen	0, 0, 4096, 10, 1
+
+instr bow
+    kpres = 2
+    krat = 0.16
+    kvibf = 6.12723
+    
+    kvib  linseg 0, 0.5, 0, 1, 1, p3-0.5, 1	
+    kvamp = kvib * 0.01
+    asig  wgbow .7, p4, kpres, krat, kvibf, kvamp, gisine
+    asig = asig*p5
+    outs asig, asig
+endin
+
+
+instr Meta
+    Smap = strget(p6)
+    Sinstrument = keymap("s", Smap)
+    schedule(Sinstrument, 0, p3, p4, p5)
+    ; TODO find a way to pipe Sinstrument through effects
 endin
