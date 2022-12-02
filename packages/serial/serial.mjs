@@ -74,10 +74,10 @@ Pattern.prototype.serial = function (br=38400,sendcrc=false,singlecharids=false)
       var chk = 0;
       if (typeof hap.value === 'object') {
         if ('action' in hap.value) {
-	  var action = hap.value['action'];
-	  if (singlecharids) {
-	    action = action.charAt(0);
-	  }
+          var action = hap.value['action'];
+          if (singlecharids) {
+            action = action.charAt(0);
+          }
           message += action + '(';
           var first = true;
           for (var [key, val] of Object.entries(hap.value)) {
@@ -89,15 +89,15 @@ Pattern.prototype.serial = function (br=38400,sendcrc=false,singlecharids=false)
             } else {
               message += ',';
             }
-	    if (singlecharids) {
-	      key = key.charAt(0);
-	    }
+            if (singlecharids) {
+              key = key.charAt(0);
+            }
             message += key + ':' + val;
           }
           message += ')';
-	  if (sendcrc) {
-	    chk = crc16(message)
-	  }
+          if (sendcrc) {
+            chk = crc16(message)
+          }
         } else {
           for (const [key, val] of Object.entries(hap.value)) {
             message += `${key}:${val}`;
