@@ -69,7 +69,7 @@ Pattern.prototype.serial = function (br=38400,sendcrc=false,singlecharids=false)
     if (!writeMessage) {
       getWriter(br);
     }
-    const onTrigger = (time, hap,stat currentTime) => {
+    const onTrigger = (time, hap, currentTime) => {
       var message = '';
       var chk = 0;
       if (typeof hap.value === 'object') {
