@@ -113,7 +113,9 @@ export async function loadOrc(url) {
     url = `https://raw.githubusercontent.com/${path}`;
   }
   if (!orcCache[url]) {
-    orcCache[url] = await fetch(url).then((res) => res.text());
+    orcCache[url] = fetch(url)
+      .then((res) => res.text())
+      .then((code) => _csound.compileOrc(code));
   }
-  await _csound.compileOrc(orcCache[url]);
+  await orcCache[url];
 }
