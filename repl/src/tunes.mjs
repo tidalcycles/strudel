@@ -992,7 +992,9 @@ export const juxUndTollerei = `note("c3 eb3 g3 bb3").palindrome()
 .delay(.5).delaytime(.1).delayfeedback(.4)
 .pianoroll()`;
 
-export const csoundDemo = `await csound\`
+export const csoundDemo = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
+// by Felix Roos
+await csound\`
 instr CoolSynth
     iduration = p3
     ifreq = p4
@@ -1022,9 +1024,13 @@ endin\`
 .scale('D minor')
 .note()
 //.pianoroll()
-.csound("<CoolSynth Organ1>/4")`;
+.csound('CoolSynth')`;
 
-export const loungeSponge = `await csound()
+export const loungeSponge = `
+// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
+// by Felix Roos
+// livecode.orc by Steven Yi
+await loadOrc('github:kunstmusik/csound-live-code/master/livecode.orc')
 
 stack(
   note("<C^7 A7 Dm7 Fm7>/2".voicings())
@@ -1038,4 +1044,4 @@ stack(
   .legato(.25).csound('SynHarp')
   ,
   s("bd*2,[~ hh]*2,~ cp").bank('RolandTR909')
-  )`;
+)`;
