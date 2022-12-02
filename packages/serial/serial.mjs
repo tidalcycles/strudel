@@ -64,19 +64,23 @@ function crc16(data) {
   return crc & 0xffff;
 }
 
-Pattern.prototype.serial = function (br=38400,sendcrc=false) {
+Pattern.prototype.serial = function (br=38400,sendcrc=false,singlecharids=false) {
   return this.withHap((hap) => {
     if (!writeMessage) {
       getWriter(br);
     }
-    const onTrigger = (time, hap, currentTime) => {
+    const onTrigger = (time, hap,stat currentTime) => {
       var message = '';
       var chk = 0;
       if (typeof hap.value === 'object') {
         if ('action' in hap.value) {
-          message += hap.value['action'] + '(';
+	  var action = hap.value['action'];
+	  if (singlecharids) {
+	    action = action.charAt(0);
+	  }
+          message += action + '(';
           var first = true;
-          for (const [key, val] of Object.entries(hap.value)) {
+          for (var [key, val] of Object.entries(hap.value)) {
             if (key === 'action') {
               continue;
             }
@@ -85,7 +89,10 @@ Pattern.prototype.serial = function (br=38400,sendcrc=false) {
             } else {
               message += ',';
             }
-            message += `${key}:${val}`;
+	    if (singlecharids) {
+	      key = key.charAt(0);
+	    }
+            message += key + ':' + val;
           }
           message += ')';
 	  if (sendcrc) {
