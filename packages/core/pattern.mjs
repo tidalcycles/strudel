@@ -1361,6 +1361,49 @@ export class Pattern {
   }
 }
 
+//////////////////////////////////////////////////////////////////////
+// functions relating to chords/patterns of lists
+
+// returns Array<Hap[]> where each list of haps satisfies eq
+function groupHapsBy(eq, haps) {
+  let groups = [];
+  haps.forEach((hap) => {
+    const match = groups.findIndex(([other]) => eq(hap, other));
+    if (match === -1) {
+      groups.push([hap]);
+    } else {
+      groups[match].push(hap);
+    }
+  });
+  return groups;
+}
+
+// congruent haps = haps with equal spans
+const congruent = (a, b) => a.spanEquals(b);
+// Pattern<Hap<T>> -> Pattern<Hap<T[]>>
+// returned pattern contains arrays of congruent haps
+Pattern.prototype.collect = function () {
+  return this.withHaps((haps) =>
+    groupHapsBy(congruent, haps).map((_haps) => new Hap(_haps[0].whole, _haps[0].part, _haps, {})),
+  );
+};
+
+// applies func to each array of congruent haps
+Pattern.prototype.arpWith = function (func) {
+  return this.collect()
+    .fmap((v) => reify(func(v)))
+    .squeezeJoin()
+    .withHap((h) => new Hap(h.whole, h.part, h.value.value, h.combineContext(h.value)));
+};
+
+// applies pattern of indices to each array of congruent haps
+Pattern.prototype.arp = function (pat) {
+  return this.arpWith((haps) => pat.fmap((i) => haps[i % haps.length]));
+};
+
+//////////////////////////////////////////////////////////////////////
+// compose matrix functions
+
 // TODO - adopt value.mjs fully..
 function _composeOp(a, b, func) {
   function _nonFunctionObject(x) {
