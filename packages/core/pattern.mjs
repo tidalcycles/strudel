@@ -1546,7 +1546,7 @@ function _composeOp(a, b, func) {
     // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
     for (const how of hows) {
       Pattern.prototype[how.toLowerCase()] = function (...args) { return this.set[how.toLowerCase()](args) };
-      curry_toplevel(how, 2);
+      curry_toplevel(how.toLowerCase(), 2);
     }
     curry_toplevel(what, 2);
   }
@@ -1563,14 +1563,22 @@ function _composeOp(a, b, func) {
    *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
    *   .slow(4)
    */
-  Pattern.prototype.struct     = function(...args) { return this.keepif.out(...args)      } 
+  Pattern.prototype.struct     = function(...args) { return this.keepif.out(...args)      }
+  curry_toplevel('struct', 2);
   Pattern.prototype.structAll  = function(...args) { return this.keep.out(...args)        }
+  curry_toplevel('structAll', 2);
   Pattern.prototype.mask       = function(...args) { return this.keepif.in(...args)       }
+  curry_toplevel('mask', 2);
   Pattern.prototype.maskAll    = function(...args) { return this.keep.in(...args)         }
+  curry_toplevel('maskAll', 2);
   Pattern.prototype.reset      = function(...args) { return this.keepif.trig(...args)     }
+  curry_toplevel('reset', 2);
   Pattern.prototype.resetAll   = function(...args) { return this.keep.trig(...args)       }
+  curry_toplevel('resetAll', 2);
   Pattern.prototype.restart    = function(...args) { return this.keepif.trigzero(...args) }
+  curry_toplevel('restart', 2);
   Pattern.prototype.restartAll = function(...args) { return this.keep.trigzero(...args)   }
+  curry_toplevel('restartAll', 2);
 })();
 
 // methods of Pattern that get callable factories
@@ -1613,6 +1621,9 @@ Pattern.prototype.factories = {
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
 
 function curry_toplevel(name, arity=1) {
+  //if (name in pattern) {
+  //  throw(`${name} already exists`);
+  //}
   if (arity == 1) {
     pattern[name] = (pat) => pat[name]();
   }
@@ -1631,10 +1642,9 @@ for (const x of [[1, ['inv', 'invert', 'rev']],
                  [2, ['chop','chunk','chunkBack', 'mask','struct','superimpose'].concat(Pattern.prototype.patternified)],
                  [3, ['every','juxBy','off','range','rangex','range2','when']],
                  [4, ['echo']]
-                ]
-    ) {
-  for (const func of x[1]) {
-    curry_toplevel(func, x[0]);
+                ]) {
+  for (const name of x[1]) {
+    curry_toplevel(name, x[0]);
   }
 }
 
