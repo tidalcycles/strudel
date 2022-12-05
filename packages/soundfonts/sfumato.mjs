@@ -1,5 +1,5 @@
-import { pattern } from '@strudel.cycles/core';
-const { Pattern } = pattern;
+import strudel from '@strudel.cycles/core';
+const { Pattern } = strudel;
 
 import { loadSoundfont as _loadSoundfont, startPresetNote } from 'sfumato';
 

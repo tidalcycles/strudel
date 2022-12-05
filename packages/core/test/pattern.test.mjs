@@ -8,22 +8,7 @@ import Fraction from 'fraction.js';
 
 import { describe, it, expect } from 'vitest';
 
-import { pattern,
-	 TimeSpan,
-	 Hap,
-	 State,
-	 saw,
-	 saw2,
-	 isaw,
-	 isaw2,
-	 sine,
-	 sine2,
-	 square,
-	 square2,
-	 tri,
-	 tri2,
-	 time,
-       } from '../index.mjs';
+import core from '../index.mjs';
 
 const {
   Pattern,
@@ -46,7 +31,20 @@ const {
   id,
   ply,
   rev,
-} = pattern;
+  TimeSpan,
+  Hap,
+  State,
+  saw,
+  saw2,
+  isaw,
+  isaw2,
+  sine,
+  sine2,
+  square,
+  square2,
+  tri,
+  tri2,
+  time} = core;
 
 import { steady } from '../signal.mjs';
 

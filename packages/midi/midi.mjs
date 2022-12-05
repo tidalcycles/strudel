@@ -5,8 +5,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as _WebMidi from 'webmidi';
-import { pattern, logger } from '@strudel.cycles/core';
-const { Pattern, isPattern, isNote, getPlayableNoteValue } = pattern;
+import core from '@strudel.cycles/core';
+const { Pattern, isPattern, isNote, getPlayableNoteValue, logger } = core;
 import { getAudioContext } from '@strudel.cycles/webaudio';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:

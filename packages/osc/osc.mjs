@@ -5,8 +5,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import OSC from 'osc-js';
-import { logger, parseNumeral, pattern } from '@strudel.cycles/core';
-const { Pattern } = pattern;
+import core from '@strudel.cycles/core';
+const { Pattern, logger, parseNumeral } = core;
 
 let connection; // Promise<OSC>
 function connect() {
