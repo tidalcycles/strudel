@@ -1,4 +1,5 @@
-import { toMidi } from '@strudel.cycles/core';
+import core from '@strudel.cycles/core';
+const toMidi = core.toMidi;
 
 let loadCache = {};
 async function loadFont(name) {

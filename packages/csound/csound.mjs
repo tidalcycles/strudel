@@ -1,4 +1,5 @@
-import { getFrequency, logger, Pattern } from '@strudel.cycles/core';
+import strudel from '@strudel.cycles/core';
+const { getFrequency, logger, Pattern } = strudel;
 import { getAudioContext } from '@strudel.cycles/webaudio';
 import csd from './project.csd?raw';
 // import livecodeOrc from './livecode.orc?raw';

@@ -1050,7 +1050,7 @@ class Pattern {
   }
 
   palindrome() {
-    return this.every(2, rev);
+    return this.every(2, pattern.rev);
   }
 
   juxBy(by, func) {

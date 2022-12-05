@@ -29,9 +29,9 @@ import * as ui from './ui.mjs';
 import * as util from './util.mjs';
 
 const core = { drawLine, gist, logger, Fraction, ...controls, ...pattern, ...draw, ...euclid,
-	       ...evaluate, ...hap, ...repl, ...pianoroll, ...signal, ...speak,
-	       ...state, ...time, ...timespan, ...ui, ...util
-	     };
+               ...evaluate, ...hap, ...repl, ...pianoroll, ...signal, ...speak,
+               ...state, ...time, ...timespan, ...ui, ...util
+             };
 export default core;
 
 // below won't work with runtime.mjs (json import fails)
