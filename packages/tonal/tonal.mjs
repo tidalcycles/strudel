@@ -5,7 +5,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Note, Interval, Scale } from '@tonaljs/tonal';
-import { Pattern, mod } from '@strudel.cycles/core';
+import { pattern, mod } from '@strudel.cycles/core';
+const { Pattern } = pattern;
 
 // transpose note inside scale by offset steps
 // function scaleOffset(scale: string, offset: number, note: string) {

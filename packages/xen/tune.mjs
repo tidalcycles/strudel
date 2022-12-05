@@ -5,7 +5,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import Tune from './tunejs.js';
-import { Pattern } from '@strudel.cycles/core';
+import { pattern } from '@strudel.cycles/core';
+const { Pattern } = pattern;
 
 Pattern.prototype._tune = function (scale, tonic = 220) {
   const tune = new Tune();

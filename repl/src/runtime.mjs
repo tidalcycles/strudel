@@ -7,6 +7,7 @@
 import { evaluate } from '@strudel.cycles/transpiler';
 import { evalScope } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
+const { Pattern } = strudel.pattern;
 import * as webaudio from '@strudel.cycles/webaudio';
 import controls from '@strudel.cycles/core/controls.mjs';
 // import gist from '@strudel.cycles/core/gist.js';
@@ -85,48 +86,48 @@ const toneHelpersMocked = {
   highpass: mockNode,
 };
 
-strudel.Pattern.prototype.osc = function () {
+Pattern.prototype.osc = function () {
   return this;
 };
-strudel.Pattern.prototype.tone = function () {
+Pattern.prototype.tone = function () {
   return this;
 };
-strudel.Pattern.prototype.webdirt = function () {
+Pattern.prototype.webdirt = function () {
   return this;
 };
 
 // draw mock
-strudel.Pattern.prototype.pianoroll = function () {
+Pattern.prototype.pianoroll = function () {
   return this;
 };
 
 // speak mock
-strudel.Pattern.prototype.speak = function () {
+Pattern.prototype.speak = function () {
   return this;
 };
 
 // webaudio mock
-strudel.Pattern.prototype.wave = function () {
+Pattern.prototype.wave = function () {
   return this;
 };
-strudel.Pattern.prototype.filter = function () {
+Pattern.prototype.filter = function () {
   return this;
 };
-strudel.Pattern.prototype.adsr = function () {
+Pattern.prototype.adsr = function () {
   return this;
 };
-strudel.Pattern.prototype.out = function () {
+Pattern.prototype.out = function () {
   return this;
 };
-strudel.Pattern.prototype.soundfont = function () {
+Pattern.prototype.soundfont = function () {
   return this;
 };
 // tune mock
-strudel.Pattern.prototype.tune = function () {
+Pattern.prototype.tune = function () {
   return this;
 };
 
-strudel.Pattern.prototype.midi = function () {
+Pattern.prototype.midi = function () {
   return this;
 };
 
@@ -156,7 +157,8 @@ const loadSoundfont = () => {};
 evalScope(
   // Tone,
   strudel,
-  strudel.Pattern.prototype.bootstrap(),
+  strudel.pattern,
+  Pattern.prototype.bootstrap(),
   toneHelpersMocked,
   uiHelpersMocked,
   controls,

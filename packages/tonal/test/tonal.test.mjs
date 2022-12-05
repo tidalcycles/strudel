@@ -7,7 +7,8 @@ This program is free software: you can redistribute it and/or modify it under th
 // import { strict as assert } from 'assert';
 
 import '../tonal.mjs'; // need to import this to add prototypes
-import { pure } from '@strudel.cycles/core';
+import { pattern } from '@strudel.cycles/core';
+const { pure } = pattern;
 import { describe, it, expect } from 'vitest';
 
 describe('tonal', () => {

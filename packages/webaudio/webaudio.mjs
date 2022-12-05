@@ -10,7 +10,7 @@ import { fromMidi, logger, toMidi } from '@strudel.cycles/core';
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import { getSampleBufferSource } from './sampler.mjs';
-const { Pattern } = strudel;
+const { Pattern } = strudel.pattern;
 import './vowel.mjs';
 import workletsUrl from './worklets.mjs?url';
 

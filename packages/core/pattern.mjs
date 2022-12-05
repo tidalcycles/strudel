@@ -14,14 +14,18 @@ import { compose, removeUndefineds, flatten, id, listRange, curry, mod, numeralA
 import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
 
+// monster object collecting everything to be exported
+const pattern = {};
+
 let stringParser;
+
 // parser is expected to turn a string into a pattern
 // if set, the reify function will parse all strings with it
 // intended to use with mini to automatically interpret all strings as mini notation
-export const setStringParser = (parser) => (stringParser = parser);
+pattern['setStringParser'] = (parser) => (stringParser = parser);
 
 /** @class Class representing a pattern. */
-export class Pattern {
+class Pattern {
   _Pattern = true; // this property is used to detect if a pattern that fails instanceof Pattern is an instance of another Pattern
   /**
    * Create a pattern. As an end user, you will most likely not create a Pattern directly.
@@ -1366,6 +1370,8 @@ export class Pattern {
 
 }
 
+pattern['Pattern'] = Pattern;
+
 // TODO - adopt value.mjs fully..
 function _composeOp(a, b, func) {
   function _nonFunctionObject(x) {
@@ -1550,10 +1556,6 @@ Pattern.prototype.patternified = [
   'velocity',
 ];
 
-// aliases
-export const polyrhythm = stack;
-export const pr = stack;
-
 // methods that create patterns, which are added to patternified Pattern methods
 Pattern.prototype.factories = {
   pure,
@@ -1574,7 +1576,8 @@ Pattern.prototype.factories = {
 // Elemental patterns
 
 // Nothing
-export const silence = new Pattern((_) => []);
+const silence = new Pattern((_) => []);
+pattern['silence'] = silence;
 
 /** A discrete value that repeats once per cycle.
  *
@@ -1582,14 +1585,15 @@ export const silence = new Pattern((_) => []);
  * @example
  * pure('e4') // "e4"
  */
-export function pure(value) {
+function pure(value) {
   function query(state) {
     return state.span.spanCycles.map((subspan) => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value));
   }
   return new Pattern(query);
 }
+pattern['pure'] = pure;
 
-export function isPattern(thing) {
+function isPattern(thing) {
   // thing?.constructor?.name !== 'Pattern' // <- this will fail when code is mangled
   const is = thing instanceof Pattern || thing?._Pattern;
   if (!thing instanceof Pattern) {
@@ -1601,8 +1605,9 @@ export function isPattern(thing) {
   }
   return is;
 }
+pattern['isPattern'] = isPattern;
 
-export function reify(thing) {
+function reify(thing) {
   // Turns something into a pattern, unless it's already a pattern
   if (isPattern(thing)) {
     return thing;
@@ -1612,6 +1617,7 @@ export function reify(thing) {
   }
   return pure(thing);
 }
+pattern['reify'] = reify;
 
 /** The given items are played at the same time at the same length.
  *
@@ -1619,12 +1625,20 @@ export function reify(thing) {
  * @example
  * stack(g3, b3, [e4, d4]).note() // "g3,b3,[e4,d4]".note()
  */
-export function stack(...pats) {
+function stack(...pats) {
   // Array test here is to avoid infinite recursions..
   pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
   const query = (state) => flatten(pats.map((pat) => pat.query(state)));
   return new Pattern(query);
 }
+pattern['stack'] = stack;
+function polyrhythm(...pats) {
+  return stack(...pats);
+}
+function pr(...pats) {
+  return stack(...pats);
+}
+pattern['pr'] = pattern['polyrhythm'] = pattern['stack'];
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle:
  *
@@ -1635,7 +1649,7 @@ export function stack(...pats) {
  * slowcat(e5, b4, [d5, c5])
  *
  */
-export function slowcat(...pats) {
+function slowcat(...pats) {
   // Array test here is to avoid infinite recursions..
   pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
 
@@ -1655,12 +1669,13 @@ export function slowcat(...pats) {
   };
   return new Pattern(query).splitQueries();
 }
+pattern['slowcat'] = slowcat;
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle. Unlike slowcat, this version will skip cycles.
  * @param {...any} items - The items to concatenate
  * @return {Pattern}
  */
-export function slowcatPrime(...pats) {
+function slowcatPrime(...pats) {
   pats = pats.map(reify);
   const query = function (state) {
     const pat_n = Math.floor(state.span.begin) % pats.length;
@@ -1669,6 +1684,7 @@ export function slowcatPrime(...pats) {
   };
   return new Pattern(query).splitQueries();
 }
+pattern['slowcatPrime'] = slowcatPrime;
 
 /** Concatenation: as with {@link slowcat}, but squashes a cycle from each pattern into one cycle
  *
@@ -1681,9 +1697,10 @@ export function slowcatPrime(...pats) {
  * // sequence(e5, b4, [d5, c5])
  * // seq(e5, b4, [d5, c5])
  */
-export function fastcat(...pats) {
+function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);
 }
+pattern['fastcat'] = fastcat;
 
 /** The given items are con**cat**enated, where each one takes one cycle. Synonym: slowcat
  *
@@ -1693,16 +1710,17 @@ export function fastcat(...pats) {
  * cat(e5, b4, [d5, c5]).note() // "<e5 b4 [d5 c5]>".note()
  *
  */
-export function cat(...pats) {
+function cat(...pats) {
   return slowcat(...pats);
 }
+pattern['cat'] = cat;
 
 /** Like {@link seq}, but each step has a length, relative to the whole.
  * @return {Pattern}
  * @example
  * timeCat([3,e3],[1, g3]).note() // "e3@3 g3".note()
  */
-export function timeCat(...timepats) {
+function timeCat(...timepats) {
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
   let begin = Fraction(0);
   const pats = [];
@@ -1713,20 +1731,23 @@ export function timeCat(...timepats) {
   }
   return stack(...pats);
 }
+pattern['timeCat'] = timeCat;
 
 /** See {@link fastcat} */
-export function sequence(...pats) {
+function sequence(...pats) {
   return fastcat(...pats);
 }
+pattern['sequence'] = sequence;
 
 /** Like **cat**, but the items are crammed into one cycle. Synonyms: fastcat, sequence
  * @example
  * seq(e5, b4, [d5, c5]).note() // "e5 b4 [d5 c5]".note()
  *
  */
-export function seq(...pats) {
+function seq(...pats) {
   return fastcat(...pats);
 }
+pattern['seq'] = seq;
 
 function _sequenceCount(x) {
   if (Array.isArray(x)) {
@@ -1741,7 +1762,7 @@ function _sequenceCount(x) {
   return [reify(x), 1];
 }
 
-export function polymeterSteps(steps, ...args) {
+function polymeterSteps(steps, ...args) {
   const seqs = args.map((a) => _sequenceCount(a));
   if (seqs.length == 0) {
     return silence;
@@ -1762,57 +1783,49 @@ export function polymeterSteps(steps, ...args) {
   }
   return stack(...pats);
 }
+pattern['polymeterSteps'] = polymeterSteps;
 
-export function polymeter(...args) {
+function polymeter(...args) {
   return polymeterSteps(0, ...args);
 }
+pattern['polymeter'] = polymeter;
 
-// alias
-export function pm(...args) {
-  polymeter(...args);
+function pm(...args) {
+  return polymeter(...args);
+}
+pattern['pm'] = polymeter;
+
+// arity 1
+for (const func of ['inv', 'invert', 'rev']) {
+  pattern[func] = (pat) => pat[func]();
 }
 
-export const add = curry((a, pat) => pat.add(a));
-export const chop = curry((a, pat) => pat.chop(a));
-export const chunk = curry((a, pat) => pat.chunk(a));
-export const chunkBack = curry((a, pat) => pat.chunkBack(a));
-export const div = curry((a, pat) => pat.div(a));
-export const early = curry((a, pat) => pat.early(a));
-export const echo = curry((a, b, c, pat) => pat.echo(a, b, c));
-export const every = curry((i, f, pat) => pat.every(i, f));
-export const fast = curry((a, pat) => pat.fast(a));
-export const inv = (pat) => pat.inv();
-export const invert = (pat) => pat.invert();
-export const iter = curry((a, pat) => pat.iter(a));
-export const iterBack = curry((a, pat) => pat.iterBack(a));
-export const jux = curry((f, pat) => pat.jux(f));
-export const juxBy = curry((by, f, pat) => pat.juxBy(by, f));
-export const late = curry((a, pat) => pat.late(a));
-export const linger = curry((a, pat) => pat.linger(a));
-export const mask = curry((a, pat) => pat.mask(a));
-export const mul = curry((a, pat) => pat.mul(a));
-export const off = curry((t, f, pat) => pat.off(t, f));
-export const ply = curry((a, pat) => pat.ply(a));
-export const range = curry((a, b, pat) => pat.range(a, b));
-export const rangex = curry((a, b, pat) => pat.rangex(a, b));
-export const range2 = curry((a, b, pat) => pat.range2(a, b));
-export const rev = (pat) => pat.rev();
-export const slow = curry((a, pat) => pat.slow(a));
-export const struct = curry((a, pat) => pat.struct(a));
-export const sub = curry((a, pat) => pat.sub(a));
-export const superimpose = curry((array, pat) => pat.superimpose(...array));
-export const set = curry((a, pat) => pat.set(a));
-export const when = curry((binary, f, pat) => pat.when(binary, f));
+// arity 2
+for (const func of ['add','chop','chunk','chunkBack','div','early','fast','iter','iterBack','jux','late','linger',
+		    'mask','mul','ply','slow','struct','sub','superimpose','set']
+    ) {
+  pattern[func] = curry((a, pat) => pat[func](a));
+}
 
+// arity 3
+for (const func of ['every','juxBy','off','range','rangex','range2','when']) {
+  pattern[func] = curry((a, b, pat) => pat[func](a,b));
+}
+
+// arity 4
+for (const func of ['echo']) {
+  pattern[func] = curry((a, b, c, pat) => pat[func](a,b,c));
+}
+ 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
 
 // these are the core composable functions. they are extended with Pattern.prototype.define below
-Pattern.prototype.composable = { fast, slow, early, late, superimpose };
+Pattern.prototype.composable = {fast: pattern.fast, slow: pattern.slow, early: pattern.early, late: pattern.late, superimpose: pattern.superimpose };
 
 // adds Pattern.prototype.composable to given function as child functions
 // then you can do transpose(2).late(0.2) instead of x => x.transpose(2).late(0.2)
-export function makeComposable(func) {
+function makeComposable(func) {
   Object.entries(Pattern.prototype.composable).forEach(([functionName, composable]) => {
     // compose with dot
     func[functionName] = (...args) => {
@@ -1825,25 +1838,31 @@ export function makeComposable(func) {
   });
   return func;
 }
+pattern['makeComposable'] = makeComposable;
 
-export const patternify2 = (f) => (pata, patb, pat) =>
+const patternify2 = (f) => (pata, patb, pat) =>
   pata
     .fmap((a) => (b) => f.call(pat, a, b))
     .appLeft(patb)
     .innerJoin();
-export const patternify3 = (f) => (pata, patb, patc, pat) =>
+pattern['patternify2'] = patternify2;
+
+const patternify3 = (f) => (pata, patb, patc, pat) =>
   pata
     .fmap((a) => (b) => (c) => f.call(pat, a, b, c))
     .appLeft(patb)
     .appLeft(patc)
     .innerJoin();
-export const patternify4 = (f) => (pata, patb, patc, patd, pat) =>
+pattern['patternify3'] = patternify3;
+
+const patternify4 = (f) => (pata, patb, patc, patd, pat) =>
   pata
     .fmap((a) => (b) => (c) => (d) => f.call(pat, a, b, c, d))
     .appLeft(patb)
     .appLeft(patc)
     .appLeft(patd)
     .innerJoin();
+pattern['patternify4'] = patternify4;
 
 Pattern.prototype.echo = function (...args) {
   args = args.map(reify);
@@ -1974,3 +1993,7 @@ Pattern.prototype.define = (name, func, options = {}) => {
 // Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
 Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
 Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
+
+
+export default pattern;
+

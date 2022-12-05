@@ -5,7 +5,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import '../tone.mjs';
-import { pure } from '@strudel.cycles/core';
+import { pattern } from '@strudel.cycles/core';
+const { pure } = pattern;
 import { describe, it, expect } from 'vitest';
 
 describe('tone', () => {

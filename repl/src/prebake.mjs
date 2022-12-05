@@ -1,4 +1,5 @@
-import { Pattern, toMidi } from '@strudel.cycles/core';
+import { pattern, toMidi } from '@strudel.cycles/core';
+const { Pattern } = pattern;
 import { samples } from '@strudel.cycles/webaudio';
 
 export async function prebake({ isMock = false, baseDir = '.' } = {}) {

@@ -5,10 +5,10 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as krill from './krill-parser.js';
-import * as strudel from '@strudel.cycles/core';
+import {pattern, rand, chooseInWith, Fraction} from '@strudel.cycles/core';
 // import { addMiniLocations } from '@strudel.cycles/eval/shapeshifter.mjs';
 
-const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
+const { pure, Pattern, stack, slowcat, sequence, timeCat, silence, reify } = pattern;
 
 var _seedState = 0;
 const randOffset = 0.0002;
@@ -30,7 +30,7 @@ const applyOptions = (parent) => (pat, i) => {
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
       case 'degradeBy':
         return reify(pat)._degradeByWith(
-          strudel.rand.early(randOffset * _nextSeed()).segment(1),
+          rand.early(randOffset * _nextSeed()).segment(1),
           operator.arguments_.amount,
         );
       // TODO: case 'fixed-step': "%"
@@ -95,7 +95,7 @@ export function patternifyAST(ast) {
         return stack(...children);
       }
       if (alignment === 'r') {
-        return strudel.chooseInWith(strudel.rand.early(randOffset * _nextSeed()).segment(1), children);
+        return chooseInWith(rand.early(randOffset * _nextSeed()).segment(1), children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
       if (!weightedChildren && alignment === 't') {

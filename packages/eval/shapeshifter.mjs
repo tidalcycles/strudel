@@ -23,7 +23,7 @@ const codegen = shiftCodegen.default || shiftCodegen; // parcel module resolutio
 
 import * as strudel from '@strudel.cycles/core';
 
-const { Pattern } = strudel;
+const { Pattern } = strudel.pattern;
 
 const isNote = (name) => /^[a-gC-G][bs]?[0-9]$/.test(name);
 

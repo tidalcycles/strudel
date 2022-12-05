@@ -5,7 +5,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Hap } from './hap.mjs';
-import { Pattern, fastcat, reify, silence, stack, isPattern } from './pattern.mjs';
+import pattern from './pattern.mjs';
+const { Pattern, fastcat, reify, silence, stack, isPattern } = pattern;
 import Fraction from './fraction.mjs';
 import { id } from './util.mjs';
 

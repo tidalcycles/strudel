@@ -9,10 +9,11 @@ import { expect, describe, it } from 'vitest';
 import { evaluate } from '../evaluate.mjs';
 import { mini } from '@strudel.cycles/mini';
 import * as strudel from '@strudel.cycles/core';
-const { fastcat, evalScope } = strudel;
+const { pattern, evalScope } = strudel;
+const { fastcat } = pattern;
 
 describe('evaluate', async () => {
-  await evalScope({ mini }, strudel);
+  await evalScope({ mini }, strudel, pattern);
   const ev = async (code) => (await evaluate(code)).pattern.firstCycleValues;
   it('Should evaluate strudel functions', async () => {
     expect(await ev('pure("c3")')).toEqual(['c3']);
