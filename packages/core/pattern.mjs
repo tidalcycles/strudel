@@ -1494,12 +1494,16 @@ function _composeOp(a, b, func) {
             return result;
 	  }
 	}
-	wrapper.squeezeIn = wrapper.squeeze
+	wrapper.squeezein = wrapper.squeeze
 	
 	return wrapper;
       }
     });
 
+    // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
+    for (const how of hows) {
+      Pattern.prototype[how.toLowerCase()] = function (...args) { return this.set[how.toLowerCase()](args) };
+    }
   }
 
   // binary composers
