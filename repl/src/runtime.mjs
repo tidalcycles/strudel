@@ -88,6 +88,9 @@ const toneHelpersMocked = {
 Pattern.prototype.osc = function () {
   return this;
 };
+Pattern.prototype.csound = function () {
+  return this;
+};
 Pattern.prototype.tone = function () {
   return this;
 };
@@ -170,6 +173,8 @@ evalScope(
   {
     // gist,
     // euclid,
+    csound: id,
+    loadOrc: id,
     mini,
     getDrawContext,
     getAudioContext,

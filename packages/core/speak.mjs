@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import pattern from './pattern.mjs';
-const {Pattern, patternify2} = pattern;
+const {Pattern, patternify2, reify} = pattern;
 
 let synth;
 try {

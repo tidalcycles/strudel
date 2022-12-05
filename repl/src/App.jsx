@@ -43,6 +43,7 @@ const modules = [
   import('@strudel.cycles/osc'),
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
+  import('@strudel.cycles/csound'),
 ];
 
 evalScope(

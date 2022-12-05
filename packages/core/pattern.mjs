@@ -36,10 +36,9 @@ class Pattern {
     this.query = query;
   }
 
-
   //////////////////////////////////////////////////////////////////////
   // Haskell-style functor, applicative and monadic operations
-  
+
   /**
    * Returns a new pattern, with the function applied to the value of
    * each hap. It has the alias {@link Pattern#fmap}.
@@ -168,7 +167,6 @@ class Pattern {
     return new Pattern(query);
   }
 
-
   bindWhole(choose_whole, func) {
     const pat_val = this;
     const query = function (state) {
@@ -209,7 +207,7 @@ class Pattern {
   }
 
   outerBind(func) {
-    return this.bindWhole((a, _) => a, func);
+    return this.bindWhole((a) => a, func);
   }
 
   outerJoin() {
@@ -317,7 +315,7 @@ class Pattern {
 
   //////////////////////////////////////////////////////////////////////
   // Utility methods mainly for internal use
-  
+
   /**
    * Query haps inside the given time span.
    *
@@ -538,7 +536,7 @@ class Pattern {
     // removes continuous haps that don't have a 'whole' timespan
     return this.filterHaps((hap) => hap.whole);
   }
-  
+
   /**
    * Queries the pattern for the first cycle, returning Haps. Mainly of use when
    * debugging a pattern.
@@ -944,8 +942,8 @@ class Pattern {
     //binary_pat = sequence(binary_pat)
     const true_pat = binary_pat.filterValues(id);
     const false_pat = binary_pat.filterValues((val) => !val);
-    const with_pat = true_pat.fmap((_) => (y) => y).appRight(func(this));
-    const without_pat = false_pat.fmap((_) => (y) => y).appRight(this);
+    const with_pat = true_pat.fmap(() => (y) => y).appRight(func(this));
+    const without_pat = false_pat.fmap(() => (y) => y).appRight(this);
     return stack(with_pat, without_pat);
   }
 
@@ -1011,7 +1009,7 @@ class Pattern {
   every(n, func) {
     return this.firstOf(n, func);
   }
-  
+
   /**
    * Returns a new pattern where every other cycle is played once, twice as
    * fast, and offset in time by one quarter of a cycle. Creates a kind of
@@ -1054,7 +1052,6 @@ class Pattern {
   palindrome() {
     return this.every(2, rev);
   }
-
 
   juxBy(by, func) {
     by /= 2;
@@ -1188,8 +1185,12 @@ class Pattern {
    * note("0 1 2 3".scale('A minor')).iter(4)
    */
   _iter(times, back = false) {
-    times = Fraction(times)
-    return slowcat(...listRange(0, times.sub(1)).map((i) => (back ? this.late(Fraction(i).div(times)) : this.early(Fraction(i).div(times)))));
+    times = Fraction(times);
+    return slowcat(
+      ...listRange(0, times.sub(1)).map((i) =>
+        back ? this.late(Fraction(i).div(times)) : this.early(Fraction(i).div(times)),
+      ),
+    );
   }
 
   /**
@@ -1235,10 +1236,10 @@ class Pattern {
     on = Boolean(parseInt(on));
     return on ? silence : this;
   }
-  
+
   //////////////////////////////////////////////////////////////////////
   // Control-related methods, which manipulate patterns of objects
-  
+
   /**
    * Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
    * It turns a pattern of samples into a pattern of parts of samples.
@@ -1286,15 +1287,9 @@ class Pattern {
 
   //////////////////////////////////////////////////////////////////////
   // Context methods - ones that deal with metadata
-  
+
   _color(color) {
     return this.withContext((context) => ({ ...context, color }));
-  }
-
-  log() {
-    return this.withHap((e) => {
-      return e.setContext({ ...e.context, logs: (e.context?.logs || []).concat([e.show()]) });
-    });
   }
 
   /**
@@ -1367,10 +1362,52 @@ class Pattern {
   _legato(value) {
     return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
   }
+}
 
+//////////////////////////////////////////////////////////////////////
+// functions relating to chords/patterns of lists
+
+// returns Array<Hap[]> where each list of haps satisfies eq
+function groupHapsBy(eq, haps) {
+  let groups = [];
+  haps.forEach((hap) => {
+    const match = groups.findIndex(([other]) => eq(hap, other));
+    if (match === -1) {
+      groups.push([hap]);
+    } else {
+      groups[match].push(hap);
+    }
+  });
+  return groups;
 }
 
 pattern['Pattern'] = Pattern;
+
+// congruent haps = haps with equal spans
+const congruent = (a, b) => a.spanEquals(b);
+// Pattern<Hap<T>> -> Pattern<Hap<T[]>>
+// returned pattern contains arrays of congruent haps
+Pattern.prototype.collect = function () {
+  return this.withHaps((haps) =>
+    groupHapsBy(congruent, haps).map((_haps) => new Hap(_haps[0].whole, _haps[0].part, _haps, {})),
+  );
+};
+
+// applies func to each array of congruent haps
+Pattern.prototype.arpWith = function (func) {
+  return this.collect()
+    .fmap((v) => reify(func(v)))
+    .squeezeJoin()
+    .withHap((h) => new Hap(h.whole, h.part, h.value.value, h.combineContext(h.value)));
+};
+
+// applies pattern of indices to each array of congruent haps
+Pattern.prototype.arp = function (pat) {
+  return this.arpWith((haps) => pat.fmap((i) => haps[i % haps.length]));
+};
+
+//////////////////////////////////////////////////////////////////////
+// compose matrix functions
 
 // TODO - adopt value.mjs fully..
 function _composeOp(a, b, func) {
@@ -1394,7 +1431,7 @@ function _composeOp(a, b, func) {
   // pattern composers
   const composers = {
     set: [(a, b) => b],
-    keep: [(a, b) => a],
+    keep: [(a) => a],
     keepif: [(a, b) => (b ? a : undefined)],
 
     // numerical functions
@@ -1469,7 +1506,6 @@ function _composeOp(a, b, func) {
 
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
-
     Object.defineProperty(Pattern.prototype, what, {
       // a getter that returns a function, so 'pat' can be
       // accessed by closures that are methods of that function..
@@ -1576,7 +1612,7 @@ Pattern.prototype.factories = {
 // Elemental patterns
 
 // Nothing
-const silence = new Pattern((_) => []);
+const silence = new Pattern(() => []);
 pattern['silence'] = silence;
 
 /** A discrete value that repeats once per cycle.
@@ -1596,13 +1632,16 @@ pattern['pure'] = pure;
 function isPattern(thing) {
   // thing?.constructor?.name !== 'Pattern' // <- this will fail when code is mangled
   const is = thing instanceof Pattern || thing?._Pattern;
-  if (!thing instanceof Pattern) {
+  // TODO: find out how to check wrong core dependency. below will never work !thing === 'undefined'
+  // wrapping it in (..) will result other checks to log that warning (e.g. isPattern('kalimba'))
+  /* if (!thing instanceof Pattern) {
     console.warn(
       `Found Pattern that fails "instanceof Pattern" check.
       This may happen if you are using multiple versions of @strudel.cycles/core. 
       Please check by running "npm ls @strudel.cycles/core".`,
     );
-  }
+    console.log(thing);
+  } */
   return is;
 }
 pattern['isPattern'] = isPattern;
@@ -1773,7 +1812,7 @@ function polymeterSteps(steps, ...args) {
   const pats = [];
   for (const seq of seqs) {
     if (seq[1] == 0) {
-      next;
+      continue;
     }
     if (steps == seq[1]) {
       pats.push(seq[0]);
@@ -1930,10 +1969,9 @@ Pattern.prototype.bootstrap = function () {
   this.patternified.forEach((prop) => {
     // the following will patternify all functions in Pattern.prototype.patternified
     Pattern.prototype[prop] = function (...args) {
-      return this.patternify(x => x.innerJoin(), Pattern.prototype['_' + prop])(...args);
+      return this.patternify((x) => x.innerJoin(), Pattern.prototype['_' + prop])(...args);
     };
-   
-    
+
     /*
     const func = Pattern.prototype['_' + prop];
     Pattern.prototype[prop] = function (...args) {
@@ -1959,7 +1997,7 @@ Pattern.prototype.bootstrap = function () {
       }
     });
     */
-    
+
     // with the following, you can do, e.g. `stack(c3).fast.slowcat(1, 2, 4, 8)` instead of `stack(c3).fast(slowcat(1, 2, 4, 8))`
     // TODO: find a way to implement below outside of constructor (code only worked there)
     /* Object.assign(
@@ -1992,8 +2030,5 @@ Pattern.prototype.define = (name, func, options = {}) => {
 
 // Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
 Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
-Pattern.prototype.define('bypass', (pat) => pat.bypass(on), { patternified: true, composable: true });
-
 
 export default pattern;
-

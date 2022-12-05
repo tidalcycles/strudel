@@ -7,6 +7,9 @@ This program is free software: you can redistribute it and/or modify it under th
 import pattern from './pattern.mjs';
 const { Pattern } = pattern;
 
+import { toMidi } from './util.mjs';
+import { getDrawContext } from './draw.mjs';
+
 const scale = (normalized, min, max) => normalized * (max - min) + min;
 const getValue = (e) => {
   let value = typeof e.value === 'object' ? e.value.note ?? e.value.n : e.value;

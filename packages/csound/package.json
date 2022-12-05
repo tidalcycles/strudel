@@ -1,9 +1,11 @@
 {
-  "name": "@strudel.cycles/webdirt",
-  "version": "0.4.1",
-  "description": "WebDirt integration for Strudel",
-  "main": "index.mjs",
-  "type": "module",
+  "name": "@strudel.cycles/csound",
+  "version": "0.3.0",
+  "description": "csound bindings for strudel",
+  "main": "csound.mjs",
+  "scripts": {
+    "test": "echo \"No tests present.\" && exit 0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -16,13 +18,15 @@
     "algorave"
   ],
   "author": "Felix Roos <flix91@gmail.com>",
+  "contributors": [
+    "Alex McLean <alex@slab.org>"
+  ],
   "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.4.1",
-    "WebDirt": "github:dktr0/WebDirt"
+    "@csound/browser": "^6.18.3"
   }
 }

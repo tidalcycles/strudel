@@ -1,5 +1,6 @@
 import core from '@strudel.cycles/core';
-const logger = core.logger;
+const { logger, toMidi } = core;
+import { getAudioContext } from './index.mjs';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
 const loadCache = {}; // string: Promise<ArrayBuffer>

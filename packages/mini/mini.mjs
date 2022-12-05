@@ -23,9 +23,10 @@ const applyOptions = (parent) => (pat, i) => {
   const operator = options?.operator;
   if (operator) {
     switch (operator.type_) {
-      case 'stretch':
+      case 'stretch': {
         const speed = Fraction(operator.arguments_.amount).inverse();
         return reify(pat).fast(speed);
+      }
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
       case 'degradeBy':
@@ -87,7 +88,7 @@ function resolveReplications(ast) {
 
 export function patternifyAST(ast) {
   switch (ast.type_) {
-    case 'pattern':
+    case 'pattern': {
       resolveReplications(ast);
       const children = ast.source_.map(patternifyAST).map(applyOptions(ast));
       const alignment = ast.arguments_.alignment;
@@ -110,7 +111,8 @@ export function patternifyAST(ast) {
         return pat;
       }
       return sequence(...children);
-    case 'element':
+    }
+    case 'element': {
       if (ast.source_ === '~') {
         return silence;
       }
@@ -129,6 +131,7 @@ export function patternifyAST(ast) {
         return pure(value).withLocation([start.line, start.column, start.offset], [end.line, end.column, end.offset]);
       }
       return patternifyAST(ast.source_);
+    }
     case 'stretch':
       return patternifyAST(ast.source_).slow(ast.arguments_.amount);
     /* case 'scale':

@@ -6,6 +6,9 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import pattern from './pattern.mjs';
 const Pattern = pattern.Pattern;
+import { getTime } from './time.mjs';
+import { State } from './state.mjs';
+import { TimeSpan } from './timespan.mjs';
 
 export const getDrawContext = (id = 'test-canvas') => {
   let canvas = document.querySelector('#' + id);
