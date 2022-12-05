@@ -1474,15 +1474,15 @@ function _composeOp(a, b, func) {
       // a getter that returns a function, so 'pat' can be
       // accessed by closures that are methods of that function..
       get: function() {
-	const pat = this;
-	
-	// wrap the 'in' function as default behaviour
+        const pat = this;
+        
+        // wrap the 'in' function as default behaviour
         const wrapper = (...other) => pat[what]['in'](...other);
-	
-	// add methods to that function for each behaviour
-	for (const how of hows) {
+        
+        // add methods to that function for each behaviour
+        for (const how of hows) {
           wrapper[how.toLowerCase()] = function (...other) {
-	    var howpat = pat;
+            var howpat = pat;
             other = sequence(other);
             if (preprocess) {
               howpat = preprocess(howpat);
@@ -1498,11 +1498,11 @@ function _composeOp(a, b, func) {
               result = howpat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
             }
             return result;
-	  }
-	}
-	wrapper.squeezein = wrapper.squeeze
-	
-	return wrapper;
+          }
+        }
+        wrapper.squeezein = wrapper.squeeze
+        
+        return wrapper;
       }
     });
 
@@ -1802,7 +1802,7 @@ for (const func of ['inv', 'invert', 'rev']) {
 
 // arity 2
 for (const func of ['add','chop','chunk','chunkBack','div','early','fast','iter','iterBack','jux','late','linger',
-		    'mask','mul','ply','slow','struct','sub','superimpose','set']
+                    'mask','mul','ply','slow','struct','sub','superimpose','set']
     ) {
   pattern[func] = curry((a, pat) => pat[func](a));
 }
@@ -1944,18 +1944,18 @@ Pattern.prototype.bootstrap = function () {
       // a getter that returns a function, so 'pat' can be
       // accessed by closures that are methods of that function..
       get: function() {
-	const pat = this;
-	// wrap the default behaviour
+        const pat = this;
+        // wrap the default behaviour
         const wrapper = pat.patternify(x => x.innerJoin(), func);
 
-	// add the variants
+        // add the variants
         wrapper['in'] = pat.patternify(x => x.innerJoin(), func);
         wrapper['out'] = pat.patternify(x => x.outerJoin(), func);
         wrapper['trig'] = pat.patternify(x => x.trigJoin(), func);
         wrapper['trigzero'] = pat.patternify(x => x.trigzeroJoin(), func);
         wrapper['squeeze'] = pat.patternify(x => x.squeezeJoin(), func);
-	    
-	return wrapper;
+            
+        return wrapper;
       }
     });
     */
