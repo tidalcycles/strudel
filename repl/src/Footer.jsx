@@ -1,5 +1,6 @@
 import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon';
-import { logger } from '@strudel.cycles/core';
+import core from '@strudel.cycles/core';
+const { logger } = core;
 import { cx } from '@strudel.cycles/react';
 import { nanoid } from 'nanoid';
 import React, { useContext, useCallback, useLayoutEffect, useRef, useState } from 'react';

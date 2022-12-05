@@ -8,12 +8,11 @@ import { expect, describe, it } from 'vitest';
 
 import { evaluate } from '../evaluate.mjs';
 import { mini } from '@strudel.cycles/mini';
-import * as strudel from '@strudel.cycles/core';
-const { pattern, evalScope } = strudel;
-const { fastcat } = pattern;
+import strudel from '@strudel.cycles/core';
+const { fastcat, evalScope } = strudel;
 
 describe('evaluate', async () => {
-  await evalScope({ mini }, strudel, pattern);
+  await evalScope({ mini }, strudel);
   const ev = async (code) => (await evaluate(code)).pattern.firstCycleValues;
   it('Should evaluate strudel functions', async () => {
     expect(await ev('pure("c3")')).toEqual(['c3']);

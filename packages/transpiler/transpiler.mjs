@@ -1,7 +1,8 @@
 import escodegen from 'escodegen';
 import { parse } from 'acorn';
 import { walk } from 'estree-walker';
-import { isNote } from '@strudel.cycles/core';
+import core from '@strudel.cycles/core';
+const { isNote } = core;
 
 export function transpiler(input, options = {}) {
   const { wrapAsync = false, addReturn = true, simpleLocs = false } = options;

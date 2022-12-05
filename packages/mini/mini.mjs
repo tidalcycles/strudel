@@ -5,10 +5,10 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as krill from './krill-parser.js';
-import {pattern, rand, chooseInWith, Fraction} from '@strudel.cycles/core';
+import core from '@strudel.cycles/core';
 // import { addMiniLocations } from '@strudel.cycles/eval/shapeshifter.mjs';
 
-const { pure, Pattern, stack, slowcat, sequence, timeCat, silence, reify } = pattern;
+const { pure, Pattern, stack, slowcat, sequence, timeCat, silence, reify, rand, chooseInWith, Fraction } = core;
 
 var _seedState = 0;
 const randOffset = 0.0002;

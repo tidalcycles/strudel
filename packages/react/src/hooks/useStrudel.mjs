@@ -1,5 +1,6 @@
 import { useRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { repl } from '@strudel.cycles/core';
+import core from '@strudel.cycles/core';
+const repl  = core.repl
 import { transpiler } from '@strudel.cycles/transpiler';
 import usePostMessage from './usePostMessage.mjs';
 

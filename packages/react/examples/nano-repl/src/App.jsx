@@ -1,4 +1,5 @@
-import { evalScope, controls } from '@strudel.cycles/core';
+import core from '@strudel.cycles/core';
+const { evalScope } = core;
 import { getAudioContext, panic, webaudioOutput } from '@strudel.cycles/webaudio';
 import { useCallback, useState } from 'react';
 import CodeMirror, { flash } from '../../../src/components/CodeMirror6';
@@ -10,8 +11,8 @@ import './style.css';
 
 // TODO: only import stuff when play is pressed?
 evalScope(
-  controls,
-  import('@strudel.cycles/core'),
+  core,
+  // import('@strudel.cycles/core'),
   // import('@strudel.cycles/tone'),
   // import('@strudel.cycles/midi'), // TODO: find out why midi loads tone.js
   import('@strudel.cycles/tonal'),

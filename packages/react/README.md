@@ -13,12 +13,13 @@ npm i @strudel.cycles/react
 Here is a minimal example of how to set up a MiniRepl:
 
 ```jsx
-import { evalScope, controls } from '@strudel.cycles/core';
+import core from '@strudel.cycles/core';
+const {evalScope} = core;
 import { MiniRepl } from '@strudel.cycles/react';
 import { prebake } from '../repl/src/prebake.mjs';
 
 evalScope(
-  controls,
+  core,
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),

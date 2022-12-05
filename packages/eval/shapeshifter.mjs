@@ -21,9 +21,9 @@ import {
 import shiftCodegen from 'shift-codegen';
 const codegen = shiftCodegen.default || shiftCodegen; // parcel module resolution fuckup
 
-import * as strudel from '@strudel.cycles/core';
+import strudel from '@strudel.cycles/core';
 
-const { Pattern } = strudel.pattern;
+const { Pattern } = strudel;
 
 const isNote = (name) => /^[a-gC-G][bs]?[0-9]$/.test(name);
 

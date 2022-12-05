@@ -28,8 +28,8 @@ import * as timespan from './timespan.mjs';
 import * as ui from './ui.mjs';
 import * as util from './util.mjs';
 
-const core = { ...controls, ...pattern, ...draw, ...euclid,
-	       ...evaluate, ...hap, ...logger, ...repl, ...pianoroll, ...signal, ...speak,
+const core = { drawLine, gist, logger, Fraction, ...controls, ...pattern, ...draw, ...euclid,
+	       ...evaluate, ...hap, ...repl, ...pianoroll, ...signal, ...speak,
 	       ...state, ...time, ...timespan, ...ui, ...util
 	     };
 export default core;

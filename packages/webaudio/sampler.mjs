@@ -1,4 +1,5 @@
-import { logger } from '@strudel.cycles/core';
+import core from '@strudel.cycles/core';
+const logger = core.logger;
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
 const loadCache = {}; // string: Promise<ArrayBuffer>

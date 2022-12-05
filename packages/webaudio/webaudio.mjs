@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import strudel from '@strudel.cycles/core';
-import { fromMidi, logger, toMidi } from '@strudel.cycles/core';
+const { fromMidi, logger, toMidi } = strudel;
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import { getSampleBufferSource } from './sampler.mjs';

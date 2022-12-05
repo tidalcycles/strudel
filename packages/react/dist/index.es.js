@@ -7,7 +7,7 @@ import { tags as r } from "@lezer/highlight";
 import { createTheme as Z } from "@uiw/codemirror-themes";
 import { useInView as ee } from "react-hook-inview";
 import { webaudioOutput as te, getAudioContext as re } from "@strudel.cycles/webaudio";
-import { repl as oe } from "@strudel.cycles/core";
+import oe from "@strudel.cycles/core";
 import { transpiler as ne } from "@strudel.cycles/transpiler";
 const ae = Z({
   theme: "dark",
@@ -177,7 +177,8 @@ function O({ type: e }) {
 function Ee(e) {
   return L(() => (window.addEventListener("message", e), () => window.removeEventListener("message", e)), [e]), _((t) => window.postMessage(t, "*"), []);
 }
-function we({
+const we = oe.repl;
+function ye({
   defaultOutput: e,
   interval: t,
   getTime: o,
@@ -189,8 +190,8 @@ function we({
   onEvalError: c,
   onToggle: i
 }) {
-  const m = V(() => ye(), []), [h, g] = w(), [C, N] = w(), [p, y] = w(s), [M, S] = w(), [k, D] = w(), [F, x] = w(!1), b = p !== M, { scheduler: A, evaluate: T, start: J, stop: q, pause: Q } = V(
-    () => oe({
+  const m = V(() => ke(), []), [h, g] = w(), [C, N] = w(), [p, y] = w(s), [M, S] = w(), [k, D] = w(), [F, x] = w(!1), b = p !== M, { scheduler: A, evaluate: T, start: J, stop: q, pause: Q } = V(
+    () => we({
       interval: t,
       defaultOutput: e,
       onSchedulerError: g,
@@ -243,11 +244,11 @@ function we({
     }
   };
 }
-function ye() {
+function ke() {
   return Math.floor((1 + Math.random()) * 65536).toString(16).substring(1);
 }
-const ke = () => re().currentTime;
-function Se({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
+const _e = () => re().currentTime;
+function Te({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
   const {
     code: s,
     setCode: f,
@@ -261,10 +262,10 @@ function Se({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
     scheduler: C,
     togglePlay: N,
     stop: p
-  } = we({
+  } = ye({
     initialCode: e,
     defaultOutput: te,
-    getTime: ke
+    getTime: _e
   }), [y, M] = w(), [S, k] = ee({
     threshold: 0.01
   }), D = H(), F = V(() => ((k || !t) && (D.current = !0), k || D.current), [k, t]);
@@ -307,14 +308,14 @@ function Se({ tune: e, hideOutsideView: t = !1, init: o, enableKeyboard: a }) {
     onViewChanged: M
   })));
 }
-const Te = (e) => j(() => (window.addEventListener("keydown", e, !0), () => window.removeEventListener("keydown", e, !0)), [e]);
+const Ve = (e) => j(() => (window.addEventListener("keydown", e, !0), () => window.removeEventListener("keydown", e, !0)), [e]);
 export {
   de as CodeMirror,
-  Se as MiniRepl,
+  Te as MiniRepl,
   K as cx,
   ce as flash,
   ue as useHighlighting,
-  Te as useKeydown,
+  Ve as useKeydown,
   Ee as usePostMessage,
-  we as useStrudel
+  ye as useStrudel
 };

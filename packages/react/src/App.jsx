@@ -1,7 +1,8 @@
 import React from 'react';
 import { MiniRepl } from './components/MiniRepl';
 import 'tailwindcss/tailwind.css';
-import { controls, evalScope } from '@strudel.cycles/core';
+import core from '@strudel.cycles/core';
+const {controls, evalScope} = core;
 
 evalScope(
   controls,

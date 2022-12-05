@@ -5,9 +5,8 @@
 // import * as tunes from './tunes.mjs';
 // import { evaluate } from '@strudel.cycles/eval';
 import { evaluate } from '@strudel.cycles/transpiler';
-import { evalScope } from '@strudel.cycles/core';
-import * as strudel from '@strudel.cycles/core';
-const { Pattern } = strudel.pattern;
+import strudel from '@strudel.cycles/core';
+const { Pattern, evalScope } = strudel;
 import * as webaudio from '@strudel.cycles/webaudio';
 import controls from '@strudel.cycles/core/controls.mjs';
 // import gist from '@strudel.cycles/core/gist.js';
@@ -157,7 +156,6 @@ const loadSoundfont = () => {};
 evalScope(
   // Tone,
   strudel,
-  strudel.pattern,
   Pattern.prototype.bootstrap(),
   toneHelpersMocked,
   uiHelpersMocked,
