@@ -1029,6 +1029,7 @@ class Pattern {
    * @example
    * note("c3 d3 e3 g3").rev()
    */
+  
   rev() {
     const pat = this;
     const query = function (state) {
@@ -1545,7 +1546,9 @@ function _composeOp(a, b, func) {
     // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
     for (const how of hows) {
       Pattern.prototype[how.toLowerCase()] = function (...args) { return this.set[how.toLowerCase()](args) };
+      curry_toplevel(how, 2);
     }
+    curry_toplevel(what, 2);
   }
 
   // binary composers
@@ -1608,6 +1611,32 @@ Pattern.prototype.factories = {
   pr,
 };
 // the magic happens in Pattern constructor. Keeping this in prototype enables adding methods from the outside (e.g. see tonal.ts)
+
+function curry_toplevel(name, arity=1) {
+  if (arity == 1) {
+    pattern[name] = (pat) => pat[name]();
+  }
+  else if (arity == 2) {
+    pattern[name] = curry((a, pat) => pat[name](a));
+  }
+  else if (arity == 3) {
+    pattern[name] = curry((a, b, pat) => pat[name](a, b));
+  }
+  else if (arity == 4) {
+    pattern[name] = curry((a, b, c, pat) => pat[name](a, b, c));
+  }
+}
+
+for (const x of [[1, ['inv', 'invert', 'rev']],
+                 [2, ['chop','chunk','chunkBack', 'mask','struct','superimpose'].concat(Pattern.prototype.patternified)],
+                 [3, ['every','juxBy','off','range','rangex','range2','when']],
+                 [4, ['echo']]
+                ]
+    ) {
+  for (const func of x[1]) {
+    curry_toplevel(func, x[0]);
+  }
+}
 
 // Elemental patterns
 
@@ -1834,28 +1863,6 @@ function pm(...args) {
 }
 pattern['pm'] = polymeter;
 
-// arity 1
-for (const func of ['inv', 'invert', 'rev']) {
-  pattern[func] = (pat) => pat[func]();
-}
-
-// arity 2
-for (const func of ['add','chop','chunk','chunkBack','div','early','fast','iter','iterBack','jux','late','linger',
-                    'mask','mul','ply','slow','struct','sub','superimpose','set']
-    ) {
-  pattern[func] = curry((a, pat) => pat[func](a));
-}
-
-// arity 3
-for (const func of ['every','juxBy','off','range','rangex','range2','when']) {
-  pattern[func] = curry((a, b, pat) => pat[func](a,b));
-}
-
-// arity 4
-for (const func of ['echo']) {
-  pattern[func] = curry((a, b, c, pat) => pat[func](a,b,c));
-}
- 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
 
