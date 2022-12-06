@@ -8,7 +8,7 @@ import * as krill from './krill-parser.js';
 import * as strudel from '@strudel.cycles/core';
 // import { addMiniLocations } from '@strudel.cycles/eval/shapeshifter.mjs';
 
-const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
+const { pure, Pattern, Fraction, stack, polymeter, slowcat, sequence, timeCat, silence, reify } = strudel;
 
 var _seedState = 0;
 const randOffset = 0.0002;
@@ -94,6 +94,9 @@ export function patternifyAST(ast) {
       const alignment = ast.arguments_.alignment;
       if (alignment === 'v') {
         return stack(...children);
+      }
+      if (alignment === 'p') {
+        return polymeter(...children);
       }
       if (alignment === 'r') {
         return strudel.chooseInWith(strudel.rand.early(randOffset * _nextSeed()).segment(1), children);

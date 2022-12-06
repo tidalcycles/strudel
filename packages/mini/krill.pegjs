@@ -95,12 +95,15 @@ step = ws chars:step_char+ ws { return chars.join("") }
 // define a sub cycle e.g. [1 2, 3 [4]]
 sub_cycle = ws  "[" ws s:stack_or_choose ws "]" ws { return s}
 
+// define a polymeter e.g. {1 2, 3 [4]}
+sub_polymeter = ws  "{" ws s:polymeter_or_choose ws "}" ws { return s}
+
 // define a timeline e.g <1 3 [3 5]>. We simply defer to a stack and change the alignement
 timeline = ws "<" ws sc:single_cycle ws ">" ws
   { sc.arguments_.alignment = "t"; return sc;}
 
-// a slice is either a single step or a sub cycle
-slice = step / sub_cycle  / timeline
+// a slice is either a single step or a sub cycle or sub polymeter
+slice = step / sub_cycle  / sub_polymeter / timeline
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
@@ -136,11 +139,15 @@ slice_with_modifier = s:slice o:slice_modifier?
 single_cycle = s:(slice_with_modifier)+
   { return new PatternStub(s,"h"); }
 
-// a stack is a serie of vertically aligned single cycles, separated by a comma
+// a stack is a series of vertically aligned single cycles, separated by a comma
 stack_tail = tail:(comma @single_cycle)+
   { return { alignment: 'v', list: tail }; }
 
-// a choose is a serie of pipe-separated single cycles, one of which is chosen
+// a polymeter is a made of sequences of beats that are vertically aligned, separated by a comma
+polymeter_tail = tail:(comma @single_cycle)+
+  { return { alignment: 'p', list: tail }; }
+
+// a choose is a series of pipe-separated single cycles, one of which is chosen
 // at random each time through the pattern
 choose_tail = tail:(pipe @single_cycle)+
   { return { alignment: 'r', list: tail }; }
@@ -148,6 +155,11 @@ choose_tail = tail:(pipe @single_cycle)+
 // if the stack contains only one element, we don't create a stack but return the
 // underlying element
 stack_or_choose = head:single_cycle tail:(stack_tail / choose_tail)?
+  { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment); } else { return head; } }
+
+// if the polymeter contains only one element, we don't create a polymeter but return the
+// underlying element
+polymeter_or_choose = head:single_cycle tail:(polymeter_tail / choose_tail)?
   { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment); } else { return head; } }
 
 // a sequence is a quoted stack
