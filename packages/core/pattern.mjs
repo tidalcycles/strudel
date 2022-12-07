@@ -959,55 +959,6 @@ export class Pattern {
   }
 
   /**
-   * Applies the given function every n cycles, starting from the first cycle.
-   * @name firstOf
-   * @memberof Pattern
-   * @param {number} n how many cycles
-   * @param {function} func function to apply
-   * @returns Pattern
-   * @example
-   * note("c3 d3 e3 g3").firstOf(4, x=>x.rev())
-   */
-  // TODO - patternify
-  firstOf(n, func) {
-    const pat = this;
-    const pats = Array(n - 1).fill(pat);
-    pats.unshift(func(pat));
-    return slowcatPrime(...pats);
-  }
-
-  /**
-   * Applies the given function every n cycles, starting from the last cycle.
-   * @name lastOf
-   * @memberof Pattern
-   * @param {number} n how many cycles
-   * @param {function} func function to apply
-   * @returns Pattern
-   * @example
-   * note("c3 d3 e3 g3").lastOf(4, x=>x.rev())
-   */
-  lastOf(n, func) {
-    const pat = this;
-    const pats = Array(n - 1).fill(pat);
-    pats.push(func(pat));
-    return slowcatPrime(...pats);
-  }
-
-  /**
-   * An alias for {@link firstOf}
-   * @name every
-   * @memberof Pattern
-   * @param {number} n how many cycles
-   * @param {function} func function to apply
-   * @returns Pattern
-   * @example
-   * note("c3 d3 e3 g3").every(4, x=>x.rev())
-   */
-  every(n, func) {
-    return this.firstOf(n, func);
-  }
-
-  /**
    * Returns a new pattern where every other cycle is played once, twice as
    * fast, and offset in time by one quarter of a cycle. Creates a kind of
    * breakbeat feel.
@@ -1817,7 +1768,7 @@ export const chunk = curry((a, pat) => pat.chunk(a));
 export const chunkBack = curry((a, pat) => pat.chunkBack(a));
 export const early = curry((a, pat) => pat.early(a));
 export const echo = curry((a, b, c, pat) => pat.echo(a, b, c));
-export const every = curry((i, f, pat) => pat.every(i, f));
+// export const every = curry((i, f, pat) => pat.every(i, f));
 export const fast = curry((a, pat) => pat.fast(a));
 export const inv = (pat) => pat.inv();
 export const invert = (pat) => pat.invert();
@@ -2034,3 +1985,66 @@ Pattern.prototype.define = (name, func, options = {}) => {
 // Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
 Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
 Pattern.prototype.define('bypass', (pat) => pat.bypass(1), { patternified: true, composable: true });
+
+
+function register(name, func) {
+  if (Array.isArray(name)) {
+    const result = {};
+    for (const name_item of name) {
+      result[name_item] = register(name_item, func);
+    }
+    return result;
+  }
+  const arity = func.length;
+  Pattern.prototype[name] = function (...args) {return func(...args, this)}
+  return curry(func);
+}
+
+/**
+ * Applies the given function every n cycles, starting from the last cycle.
+ * @name lastOf
+ * @memberof Pattern
+ * @param {number} n how many cycles
+ * @param {function} func function to apply
+ * @returns Pattern
+ * @example
+ * note("c3 d3 e3 g3").lastOf(4, x=>x.rev())
+ */
+export const {lastOf} =
+  register('lastOf',
+           function(n, func, pat) {
+             const pats = Array(n - 1).fill(pat);
+             pats.push(func(pat));
+             return slowcatPrime(...pats);
+           }
+          );
+
+/**
+ * Applies the given function every n cycles, starting from the first cycle.
+ * @name firstOf
+ * @memberof Pattern
+ * @param {number} n how many cycles
+ * @param {function} func function to apply
+ * @returns Pattern
+ * @example
+ * note("c3 d3 e3 g3").firstOf(4, x=>x.rev())
+ */
+
+/**
+ * An alias for {@link firstOf}
+ * @name every
+ * @memberof Pattern
+ * @param {number} n how many cycles
+ * @param {function} func function to apply
+ * @returns Pattern
+ * @example
+ * note("c3 d3 e3 g3").every(4, x=>x.rev())
+ */
+export const {firstOf, every} =
+  register(['firstOf', 'every'],
+           function(n, func, pat) {
+             const pats = Array(n - 1).fill(pat);
+             pats.unshift(func(pat));
+             return slowcatPrime(...pats);
+           }
+          );
