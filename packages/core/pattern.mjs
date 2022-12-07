@@ -10,7 +10,7 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
 
-import { compose, removeUndefineds, flatten, id, listRange, curry, mod, numeralArgs, parseNumeral } from './util.mjs';
+import { compose, removeUndefineds, flatten, id, listRange, curry, _mod, numeralArgs, parseNumeral } from './util.mjs';
 import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
 
@@ -1473,7 +1473,7 @@ function _composeOp(a, b, func) {
      * @memberof Pattern
      */
     div: [numeralArgs((a, b) => a / b)],
-    mod: [numeralArgs(mod)],
+    mod: [numeralArgs(_mod)],
     pow: [numeralArgs(Math.pow)],
     _and: [numeralArgs((a, b) => a & b)],
     _or: [numeralArgs((a, b) => a | b)],
@@ -1501,52 +1501,45 @@ function _composeOp(a, b, func) {
 
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
-    for (const how of hows) {
-      Pattern.prototype[what + how] = function (...other) {
-        var pat = this;
-        other = sequence(other);
-        if (preprocess) {
-          pat = preprocess(pat);
-          other = preprocess(other);
-        }
-        var result;
-        // hack to remove undefs when doing 'keepif'
-        if (what === 'keepif') {
-          // avoid union, as we want to throw away the value of 'b' completely
-          result = pat['_op' + how](other, (a) => (b) => op(a, b));
-          result = result.removeUndefineds();
-        } else {
-          result = pat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
-        }
-        return result;
-      };
-      if (how === 'Squeeze') {
-        // support 'squeezeIn' longhand
-        Pattern.prototype[what + 'SqueezeIn'] = Pattern.prototype[what + how];
-      }
-      if (how === 'In') {
-        // set 'in' to default, but with magic properties to pick a different 'how'
-        Object.defineProperty(Pattern.prototype, what, {
-          // a getter that returns a function, so 'pat' can be
-          // accessed by closures that are methods of that function..
-          get: function () {
-            const pat = this;
-            // wrap the 'in' function as default behaviour
-            const wrapper = (...other) => pat[what + 'In'](...other);
-            // add methods to that function to pick alternative behaviours
-            for (const wraphow of hows) {
-              wrapper[wraphow.toLowerCase()] = (...other) => pat[what + wraphow](...other);
-            }
+    Object.defineProperty(Pattern.prototype, what, {
+      // a getter that returns a function, so 'pat' can be
+      // accessed by closures that are methods of that function..
+      get: function() {
+        const pat = this;
 
-            return wrapper;
-          },
-        });
-      } else {
-        // default what to 'set', e.g. squeeze = setSqueeze
-        if (what === 'set') {
-          Pattern.prototype[how.toLowerCase()] = Pattern.prototype[what + how];
+        // wrap the 'in' function as default behaviour
+        const wrapper = (...other) => pat[what]['in'](...other);
+
+        // add methods to that function for each behaviour
+        for (const how of hows) {
+          wrapper[how.toLowerCase()] = function (...other) {
+            var howpat = pat;
+            other = sequence(other);
+            if (preprocess) {
+              howpat = preprocess(howpat);
+              other = preprocess(other);
+            }
+            var result;
+            // hack to remove undefs when doing 'keepif'
+            if (what === 'keepif') {
+              // avoid union, as we want to throw away the value of 'b' completely
+              result = howpat['_op' + how](other, (a) => (b) => op(a, b));
+              result = result.removeUndefineds();
+            } else {
+              result = howpat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
+            }
+            return result;
+          }
         }
+        wrapper.squeezein = wrapper.squeeze
+
+        return wrapper;
       }
+    });
+
+    // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
+    for (const how of hows) {
+      Pattern.prototype[how.toLowerCase()] = function (...args) { return this.set[how.toLowerCase()](args) };
     }
   }
 
@@ -1562,14 +1555,14 @@ function _composeOp(a, b, func) {
    *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
    *   .slow(4)
    */
-  Pattern.prototype.struct = Pattern.prototype.keepifOut;
-  Pattern.prototype.structAll = Pattern.prototype.keepOut;
-  Pattern.prototype.mask = Pattern.prototype.keepifIn;
-  Pattern.prototype.maskAll = Pattern.prototype.keepIn;
-  Pattern.prototype.reset = Pattern.prototype.keepifTrig;
-  Pattern.prototype.resetAll = Pattern.prototype.keepTrig;
-  Pattern.prototype.restart = Pattern.prototype.keepifTrigzero;
-  Pattern.prototype.restartAll = Pattern.prototype.keepTrigzero;
+  Pattern.prototype.struct     = function(...args) { return this.keepif.out(...args)      }
+  Pattern.prototype.structAll  = function(...args) { return this.keep.out(...args)        }
+  Pattern.prototype.mask       = function(...args) { return this.keepif.in(...args)       }
+  Pattern.prototype.maskAll    = function(...args) { return this.keep.in(...args)         }
+  Pattern.prototype.reset      = function(...args) { return this.keepif.trig(...args)     }
+  Pattern.prototype.resetAll   = function(...args) { return this.keep.trig(...args)       }
+  Pattern.prototype.restart    = function(...args) { return this.keepif.trigzero(...args) }
+  Pattern.prototype.restartAll = function(...args) { return this.keep.trigzero(...args)   }
 })();
 
 // methods of Pattern that get callable factories
@@ -1688,7 +1681,7 @@ export function slowcat(...pats) {
 
   const query = function (state) {
     const span = state.span;
-    const pat_n = mod(span.begin.sam(), pats.length);
+    const pat_n = _mod(span.begin.sam(), pats.length);
     const pat = pats[pat_n];
     if (!pat) {
       // pat_n can be negative, if the span is in the past..
@@ -1819,11 +1812,9 @@ export function pm(...args) {
   polymeter(...args);
 }
 
-export const add = curry((a, pat) => pat.add(a));
 export const chop = curry((a, pat) => pat.chop(a));
 export const chunk = curry((a, pat) => pat.chunk(a));
 export const chunkBack = curry((a, pat) => pat.chunkBack(a));
-export const div = curry((a, pat) => pat.div(a));
 export const early = curry((a, pat) => pat.early(a));
 export const echo = curry((a, b, c, pat) => pat.echo(a, b, c));
 export const every = curry((i, f, pat) => pat.every(i, f));
@@ -1837,7 +1828,6 @@ export const juxBy = curry((by, f, pat) => pat.juxBy(by, f));
 export const late = curry((a, pat) => pat.late(a));
 export const linger = curry((a, pat) => pat.linger(a));
 export const mask = curry((a, pat) => pat.mask(a));
-export const mul = curry((a, pat) => pat.mul(a));
 export const off = curry((t, f, pat) => pat.off(t, f));
 export const ply = curry((a, pat) => pat.ply(a));
 export const range = curry((a, b, pat) => pat.range(a, b));
@@ -1846,10 +1836,35 @@ export const range2 = curry((a, b, pat) => pat.range2(a, b));
 export const rev = (pat) => pat.rev();
 export const slow = curry((a, pat) => pat.slow(a));
 export const struct = curry((a, pat) => pat.struct(a));
-export const sub = curry((a, pat) => pat.sub(a));
 export const superimpose = curry((array, pat) => pat.superimpose(...array));
-export const set = curry((a, pat) => pat.set(a));
 export const when = curry((binary, f, pat) => pat.when(binary, f));
+
+// operators 
+export const set = curry((a, pat) => pat.set(a));
+export const keep = curry((a, pat) => pat.keep(a));
+export const keepif = curry((a, pat) => pat.keepif(a));
+export const add = curry((a, pat) => pat.add(a));
+export const sub = curry((a, pat) => pat.sub(a));
+export const mul = curry((a, pat) => pat.mul(a));
+export const div = curry((a, pat) => pat.div(a));
+//export const mod = curry((a, pat) => pat.mod(a));
+export const pow = curry((a, pat) => pat.pow(a));
+export const _and = curry((a, pat) => pat._and(a));
+export const _or = curry((a, pat) => pat._or(a));
+export const _xor = curry((a, pat) => pat._xor(a));
+export const _lshift = curry((a, pat) => pat._lshift(a));
+export const _rshift = curry((a, pat) => pat._rshift(a));
+export const lt = curry((a, pat) => pat.lt(a));
+export const gt = curry((a, pat) => pat.gt(a));
+export const lte = curry((a, pat) => pat.lte(a));
+export const gte = curry((a, pat) => pat.gte(a));
+export const eq = curry((a, pat) => pat.eq(a));
+export const eqt = curry((a, pat) => pat.eqt(a));
+export const ne = curry((a, pat) => pat.ne(a));
+export const net = curry((a, pat) => pat.net(a));
+export const and = curry((a, pat) => pat.and(a));
+export const or = curry((a, pat) => pat.or(a));
+export const func = curry((a, pat) => pat.func(a));
 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
