@@ -10,7 +10,7 @@ import {
   tokenizeNote,
   toMidi,
   fromMidi,
-  mod,
+  _mod,
   compose,
   getFrequency,
   getPlayableNoteValue,
@@ -118,22 +118,22 @@ describe('getFrequency', () => {
   });
 });
 
-describe('mod', () => {
+describe('_mod', () => {
   it('should work like regular modulo with positive numbers', () => {
-    expect(mod(0, 3)).toEqual(0);
-    expect(mod(1, 3)).toEqual(1);
-    expect(mod(2, 3)).toEqual(2);
-    expect(mod(3, 3)).toEqual(0);
-    expect(mod(4, 3)).toEqual(1);
-    expect(mod(4, 2)).toEqual(0);
+    expect(_mod(0, 3)).toEqual(0);
+    expect(_mod(1, 3)).toEqual(1);
+    expect(_mod(2, 3)).toEqual(2);
+    expect(_mod(3, 3)).toEqual(0);
+    expect(_mod(4, 3)).toEqual(1);
+    expect(_mod(4, 2)).toEqual(0);
   });
   it('should work with negative numbers', () => {
-    expect(mod(-1, 3)).toEqual(2);
-    expect(mod(-2, 3)).toEqual(1);
-    expect(mod(-3, 3)).toEqual(0);
-    expect(mod(-4, 3)).toEqual(2);
-    expect(mod(-5, 3)).toEqual(1);
-    expect(mod(-3, 2)).toEqual(1);
+    expect(_mod(-1, 3)).toEqual(2);
+    expect(_mod(-2, 3)).toEqual(1);
+    expect(_mod(-3, 3)).toEqual(0);
+    expect(_mod(-4, 3)).toEqual(2);
+    expect(_mod(-5, 3)).toEqual(1);
+    expect(_mod(-3, 2)).toEqual(1);
   });
 });
 

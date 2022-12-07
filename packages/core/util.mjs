@@ -50,9 +50,8 @@ export const midi2note = (n) => {
   return pc + oct;
 };
 
-// modulo that works with negative numbers e.g. mod(-1, 3) = 2
-// const mod = (n: number, m: number): number => (n < 0 ? mod(n + m, m) : n % m);
-export const mod = (n, m) => ((n % m) + m) % m;
+// modulo that works with negative numbers e.g. _mod(-1, 3) = 2. Works on numbers (rather than patterns of numbers, as @mod@ from pattern.mjs does)
+export const _mod = (n, m) => ((n % m) + m) % m;
 
 export const getPlayableNoteValue = (hap) => {
   let { value, context } = hap;
