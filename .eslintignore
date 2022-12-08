@@ -1,0 +1,14 @@
+krill-parser.js
+krill.pegjs
+.eslintrc.json
+server.js
+tidal-sniffer.js
+*.jsx
+tunejs.js
+out/**
+postcss.config.js
+postcss.config.cjs
+tailwind.config.js
+vite.config.js
+/**/dist/**/*
+!**/*.mjs

@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/webaudio",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Web Audio helpers for Strudel",
   "main": "index.mjs",
   "type": "module",
@@ -30,6 +30,6 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.4.0"
+    "@strudel.cycles/core": "^0.4.1"
   }
 }

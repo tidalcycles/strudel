@@ -18,7 +18,7 @@ function renderAsMDX(name) {
   }
   return `### ${item.longname}
 
-${item.description.replaceAll(/\{\@link ([a-zA-Z]+)?\#?([a-zA-Z]*)\}/g, (_, a, b) => {
+${item.description.replaceAll(/\{@link ([a-zA-Z]+)?#?([a-zA-Z]*)\}/g, (_, a, b) => {
   // console.log(_, 'a', a, 'b', b);
   return `<a href="#${a}${b ? `-${b}` : ''}">${a}${b ? `#${b}` : ''}</a>`;
 })}

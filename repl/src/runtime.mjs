@@ -88,6 +88,9 @@ const toneHelpersMocked = {
 strudel.Pattern.prototype.osc = function () {
   return this;
 };
+strudel.Pattern.prototype.csound = function () {
+  return this;
+};
 strudel.Pattern.prototype.tone = function () {
   return this;
 };
@@ -170,6 +173,8 @@ evalScope(
   {
     // gist,
     // euclid,
+    csound: id,
+    loadOrc: id,
     mini,
     getDrawContext,
     getAudioContext,

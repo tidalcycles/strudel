@@ -400,7 +400,7 @@ const generic_params = [
    * @example
    * freq("220 110 440 110").s("superzow").osc()
    * @example
-   * freq("110".mulOut(".5 1.5 .6 [2 3]")).s("superzow").osc()
+   * freq("110".mul.out(".5 1.5 .6 [2 3]")).s("superzow").osc()
    *
    */
   ['f', 'freq', ''],
@@ -787,6 +787,6 @@ controls.createParam = (name) => {
 };
 
 controls.createParams = (...names) =>
-  names.reduce((acc, name) => Object.assign(acc, { [name]: createParam(name) }), {});
+  names.reduce((acc, name) => Object.assign(acc, { [name]: controls.createParam(name) }), {});
 
 export default controls;

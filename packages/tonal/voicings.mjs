@@ -51,7 +51,7 @@ Pattern.prototype.voicings = function (range) {
   }
   return this.fmapNested((event) => {
     lastVoicing = getVoicing(event.value, lastVoicing, range);
-    return stack(...lastVoicing)._withContext(() => ({
+    return stack(...lastVoicing).withContext(() => ({
       locations: event.context.locations || [],
     }));
   });
@@ -59,7 +59,7 @@ Pattern.prototype.voicings = function (range) {
 
 Pattern.prototype._rootNotes = function (octave = 2) {
   return this.fmap((value) => {
-    const [_, root] = value.match(/^([a-gA-G][b#]?).*$/);
+    const root = value.match(/^([a-gA-G][b#]?).*$/)[1];
     return root + octave;
   });
 };
