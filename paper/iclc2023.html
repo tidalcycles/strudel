@@ -4,12 +4,14 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <title>iclc2023</title>
+  <meta name="date" content="2022-06-24" />
+  <title>Strudel: Algorithmic Patterns for the Web</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -44,7 +46,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -57,7 +59,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -73,214 +75,707 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <link rel="stylesheet" href="css/iclc.css" />
 </head>
 <body>
+<div id="header">
+<h1 class="title">Strudel: Algorithmic Patterns for the Web</h1>
+<ul id="authorlist">
+<li>true</li>
+<li>true</li>
+</ul>
+<h3 class="date">2022-06-24</h3>
+</div>
 
 <h2 class="abstract">Abstract</h2>
 <div id="abstract">
-Please provide an abstract in the metadata block at the top of your
-markdown document. Refer to template.txt for details.
+<p>Replace this text with a maximum 300 word abstract. You’ll find it in
+the ‘metadata block’ at the top of your markdown document), be sure that
+each line of the abstract is indented.</p>
 </div>
 
-<h1 data-number="1" id="introduction"><span class="header-section-number">1</span> Introduction</h1>
-<p>This paper introduces Strudel, which began as an alternative implementation of the TidalCycles (or ‘Tidal’ for short) live coding system, using the JavaScript programming language.</p>
-<p>The first tentative commit to the Strudel project was on 22nd January 2022 by Alex mcLean, with the core representation implemented over the following few days. Although this was his first attempt at a JavaScript-based application, by 27th January, Alex had managed to uploaded the initial version to the ‘npm’ javascript package database, sharing with the wider community for comment. By 4th February, Felix Roos had discovered Strudel and contributed a ‘REPL’ user interface to it, and then contributed a scheduler the next day, so that Strudel could already make sound. At this point, Alex shared ownership to the repository with Felix, and the project has since proved to be a productive confluence of Felix’s own work into music representation and visualisation, with Alex’s experience with making Tidal. Felix has since become the primary contributor to Strudel, with Alex continuing to jump between developing both Strudel and Tidal. Aspects of Strudel’s development has therefore fed back into TidalCycles, and both systems have maintained a shared conceptual underpinning. We plan to continue working towards feature parity between these systems, although within the syntactical trade-offs and library ecosystems of JavaScript and Haskell, some divergence is inevitable and healthy.</p>
-<p>Over the first year of its life, Strudel is now a fully-fledged live coding environment, porting Tidal’s core represention of patterns, pattern transformations, and mininotation for polymetric sequences, combined with a wealth of features for synthesising and visualising those patterns. Strudel can run entirely in the browser, opening Tidal’s algorithmic patterns <span class="citation" data-cites="mcleanAlgorithmicPattern2020a">[@mcleanAlgorithmicPattern2020a]</span> up to modern audio/visual web technologies.</p>
-<p>The main interface for strudel is its REPL[^REPL stands for read, evaluate, print, loop. It is friendly jargon for a live coding editor from computing heritage.], a live code editor dedicated to manipulating Strudel patterns while they play, with built-in visual feedback, which highlights which elements in the patterned (mini-notation) sequences are influencing the event that is currently being played. While Strudel is written in JavaScript, as an end-user code interface the REPL is optimised for simplicity and readability by applying code transformations on the syntax tree level, allowing language operations that would otherwise be impossible.</p>
-<p>Strudel supports several diferent options to directly output sound through the browser, including Tone.js, Web Audio nodes, and CSound. It also supports methods for triggering external software and hardware, including via OSC (Open Sound Control) messages (e.g. for use with Tidal’s traditional SuperDirt synthesiser), Web Serial (so far used to work with dancing robot) and Web MIDI (for e.g. controlling synthesiser hardware or a digital audio workstation).</p>
-<p>Strudel split into multiple packages, allowing granular reuse in other applications. This allows Strudel to be embedded in other web-based live coding environments such as Gibber and Hydra, opening up these systems to use with the mini-notation for sequences. Apart from TidalCycles, Strudel draws inspiration from many prior existing projects like TidalVortex <span class="citation" data-cites="mcleanTidalVortexZero2022">[@mcleanTidalVortexZero2022]</span>, Gibber <span class="citation" data-cites="robertsGibberLiveCoding2012">[@robertsGibberLiveCoding2012]</span>, Estuary <span class="citation" data-cites="ogbornEstuaryBrowserbasedCollaborative2017">[@ogbornEstuaryBrowserbasedCollaborative2017]</span>, Hydra <span class="citation" data-cites="jackHydra2022">[@jackHydra2022]</span>, Ocarina <span class="citation" data-cites="solomonPurescriptocarina2022">[@solomonPurescriptocarina2022]</span> and Feedforward <span class="citation" data-cites="mcleanFeedforward2020">[@mcleanFeedforward2020]</span>.</p>
-<h1 data-number="2" id="from-tidal-to-strudel-and-back"><span class="header-section-number">2</span> From Tidal to Strudel and back</h1>
-<p>As mentioned above, the original Tidal is implemented as a domain specific language (DSL) embedded in the Haskell pure functional programming language, and takes advantage of Haskell’s terse syntax and advanced, ‘strong’ type system. Javascript on the other hand, is a multi-paradigm programming language, with a dynamic type system. Because Tidal leans heavily on many of Haskell’s more unique features, it was not always clear that it could meaningfully be ported to a multi-paradigm scripting language. However, this possibility was already demonstrated with an earlier port to Python <span class="citation" data-cites="mcleanTidalVortexZero2022">[TidalVortex; @mcleanTidalVortexZero2022]</span>, and we have now successfully implemented Tidal’s pure functional representation of patterns in Strudel, including partial application, currying, and the functor, applicative and monadic structures that underlie Tidal’s expressive pattern transformations. The result is a terse and highly composable system, where everything is either a pattern, or a function for combining and manipulating patterns, offering a rich creative ground for exploration.</p>
-<p>This development process has been far from a one-way port, however. The process of porting Tidal’s concepts has also opened up new possibilities, some just from revisiting every design decision, and some from the particular affordances and constraints offered by Javascript. This has lead to new features (and indeed bugfixes) that have found their way back to Tidal where appropriate, and ongoing work that we will return to in the conclusion of this paper.</p>
-<h1 data-number="3" id="representing-patterns"><span class="header-section-number">3</span> Representing Patterns</h1>
-<p>Patterns are the essence of Tidal. Its patterns are abstract entities that represent flows of time as functions, adapting a technique called pure functional reactive programming. Taking a time span as its input, a Pattern can output a set of events that happen within that time span. It depends on the structure of the Pattern how the events are located in time. From now on, this process of generating events from a time span will be called <strong>querying</strong>. Example:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">const</span> pattern <span class="op">=</span> <span class="fu">sequence</span>(c3<span class="op">,</span> [e3<span class="op">,</span> g3])<span class="op">;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">const</span> events <span class="op">=</span> pattern<span class="op">.</span><span class="fu">query</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span>)<span class="op">;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(events<span class="op">.</span><span class="fu">map</span>(e <span class="kw">=&gt;</span> e<span class="op">.</span><span class="fu">show</span>()))</span></code></pre></div>
-<p>In this example, we create a pattern using the <code>sequence</code> function and <strong>query</strong> it for the time span from <code>0</code> to <code>1</code>. Those numbers represent units of time called <strong>cycles</strong>. The length of one cycle depends on the tempo, which defaults to one cycle per second. The resulting events are:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>[{ <span class="dt">value</span><span class="op">:</span> <span class="st">&#39;c3&#39;</span><span class="op">,</span> <span class="dt">begin</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">end</span><span class="op">:</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span> }<span class="op">,</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>{ <span class="dt">value</span><span class="op">:</span> <span class="st">&#39;e3&#39;</span><span class="op">,</span> <span class="dt">begin</span><span class="op">:</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span><span class="op">,</span> <span class="dt">end</span><span class="op">:</span> <span class="dv">3</span><span class="op">/</span><span class="dv">4</span> }<span class="op">,</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>{ <span class="dt">value</span><span class="op">:</span> <span class="st">&#39;g3&#39;</span><span class="op">,</span> <span class="dt">begin</span><span class="op">:</span> <span class="dv">3</span><span class="op">/</span><span class="dv">4</span><span class="op">,</span> <span class="dt">end</span><span class="op">:</span> <span class="dv">1</span> }]</span></code></pre></div>
-<p>Each event has a value, a begin time and an end time, where time is represented as a fraction. In the above case, the events are placed in sequential order, where c3 takes the first half, and e3 and g3 together take the second half. This temporal placement is the result of the <code>sequence</code> function, which divides its arguments equally over one cycle. If an argument is an array, the same rule applies to that part of the cycle. In the example, e3 and g3 are divided equally over the second half of the whole cycle.</p>
-<p>The above examples do not represent how Strudel is used in practice. In the REPL, the user only has to type in the pattern itself, the querying will be handled by the scheduler. The scheduler will repeatedly query the pattern for events, which then are then scheduled as sound synthesis or other event triggers.</p>
+<h1 data-number="1" id="introduction"><span
+class="header-section-number">1</span> Introduction</h1>
+<p>This paper introduces Strudel, which began as an alternative
+implementation of the TidalCycles (or ‘Tidal’ for short) live coding
+system, using the JavaScript programming language.</p>
+<p>The first tentative commit to the Strudel project was on 22nd January
+2022 by Alex mcLean, with the core representation implemented over the
+following few days. Although this was his first attempt at a
+JavaScript-based application, by 27th January, Alex had managed to
+uploaded the initial version to the ‘npm’ javascript package database,
+sharing with the wider community for comment. By 4th February, Felix
+Roos had discovered Strudel and contributed a ‘REPL’ user interface to
+it, and then contributed a scheduler the next day, so that Strudel could
+already make sound. At this point, Alex shared ownership to the
+repository with Felix, and the project has since proved to be a
+productive confluence of Felix’s own work into music representation and
+visualisation, with Alex’s experience with making Tidal. Felix has since
+become the primary contributor to Strudel, with Alex continuing to jump
+between developing both Strudel and Tidal. Aspects of Strudel’s
+development has therefore fed back into TidalCycles, and both systems
+have maintained a shared conceptual underpinning. We plan to continue
+working towards feature parity between these systems, although within
+the syntactical trade-offs and library ecosystems of JavaScript and
+Haskell, some divergence is inevitable and healthy.</p>
+<p>Over the first year of its life, Strudel is now a fully-fledged live
+coding environment, porting Tidal’s core represention of patterns,
+pattern transformations, and mininotation for polymetric sequences,
+combined with a wealth of features for synthesising and visualising
+those patterns. Strudel can run entirely in the browser, opening Tidal’s
+algorithmic patterns <span class="citation"
+data-cites="mcleanAlgorithmicPattern2020a">(Mclean 2020)</span> up to
+modern audio/visual web technologies.</p>
+<p>The main interface for strudel is its REPL[^REPL stands for read,
+evaluate, print, loop. It is friendly jargon for a live coding editor
+from computing heritage.], a live code editor dedicated to manipulating
+Strudel patterns while they play, with built-in visual feedback, which
+highlights which elements in the patterned (mini-notation) sequences are
+influencing the event that is currently being played. While Strudel is
+written in JavaScript, as an end-user code interface the REPL is
+optimised for simplicity and readability by applying code
+transformations on the syntax tree level, allowing language operations
+that would otherwise be impossible.</p>
+<p>Strudel supports several diferent options to directly output sound
+through the browser, including Tone.js, Web Audio nodes, and CSound. It
+also supports methods for triggering external software and hardware,
+including via OSC (Open Sound Control) messages (e.g. for use with
+Tidal’s traditional SuperDirt synthesiser), Web Serial (so far used to
+work with dancing robot) and Web MIDI (for e.g. controlling synthesiser
+hardware or a digital audio workstation).</p>
+<p>Strudel split into multiple packages, allowing granular reuse in
+other applications. This allows Strudel to be embedded in other
+web-based live coding environments such as Gibber and Hydra, opening up
+these systems to use with the mini-notation for sequences. Apart from
+TidalCycles, Strudel draws inspiration from many prior existing projects
+like TidalVortex <span class="citation"
+data-cites="mcleanTidalVortexZero2022">(McLean et al. 2022)</span>,
+Gibber <span class="citation"
+data-cites="robertsGibberLiveCoding2012">(Roberts and Kuchera-morin
+2012)</span>, Estuary <span class="citation"
+data-cites="ogbornEstuaryBrowserbasedCollaborative2017">(Ogborn et al.
+2017)</span>, Hydra <span class="citation"
+data-cites="jackHydra2022">(Jack [2022] 2022)</span>, Ocarina <span
+class="citation" data-cites="solomonPurescriptocarina2022">(Solomon
+[2021] 2022)</span> and Feedforward <span class="citation"
+data-cites="mcleanFeedforward2020">(McLean 2020)</span>.</p>
+<h1 data-number="2" id="from-tidal-to-strudel-and-back"><span
+class="header-section-number">2</span> From Tidal to Strudel and
+back</h1>
+<p>As mentioned above, the original Tidal is implemented as a domain
+specific language (DSL) embedded in the Haskell pure functional
+programming language, and takes advantage of Haskell’s terse syntax and
+advanced, ‘strong’ type system. Javascript on the other hand, is a
+multi-paradigm programming language, with a dynamic type system. Because
+Tidal leans heavily on many of Haskell’s more unique features, it was
+not always clear that it could meaningfully be ported to a
+multi-paradigm scripting language. However, this possibility was already
+demonstrated with an earlier port to Python [TidalVortex; <span
+class="citation" data-cites="mcleanTidalVortexZero2022">McLean et al.
+(2022)</span>], and we have now successfully implemented Tidal’s pure
+functional representation of patterns in Strudel, including partial
+application, currying, and the functor, applicative and monadic
+structures that underlie Tidal’s expressive pattern transformations. The
+result is a terse and highly composable system, where everything is
+either a pattern, or a function for combining and manipulating patterns,
+offering a rich creative ground for exploration.</p>
+<p>This development process has been far from a one-way port, however.
+The process of porting Tidal’s concepts has also opened up new
+possibilities, some just from revisiting every design decision, and some
+from the particular affordances and constraints offered by Javascript.
+This has lead to new features (and indeed bugfixes) that have found
+their way back to Tidal where appropriate, and ongoing work that we will
+return to in the conclusion of this paper.</p>
+<h1 data-number="3" id="representing-patterns"><span
+class="header-section-number">3</span> Representing Patterns</h1>
+<p>Patterns are the essence of Tidal. Its patterns are abstract entities
+that represent flows of time as functions, adapting a technique called
+pure functional reactive programming. Taking a time span as its input, a
+Pattern can output a set of events that happen within that time span. It
+depends on the structure of the Pattern how the events are located in
+time. From now on, this process of generating events from a time span
+will be called <strong>querying</strong>. Example:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> pattern <span class="op">=</span> <span class="fu">sequence</span>(c3<span class="op">,</span> [e3<span class="op">,</span> g3])<span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> events <span class="op">=</span> pattern<span class="op">.</span><span class="fu">query</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span>)<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(events<span class="op">.</span><span class="fu">map</span>(e <span class="kw">=&gt;</span> e<span class="op">.</span><span class="fu">show</span>()))</span></code></pre></div>
+<p>In this example, we create a pattern using the <code>sequence</code>
+function and <strong>query</strong> it for the time span from
+<code>0</code> to <code>1</code>. Those numbers represent units of time
+called <strong>cycles</strong>. The length of one cycle depends on the
+tempo, which defaults to one cycle per second. The resulting events
+are:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>[{ <span class="dt">value</span><span class="op">:</span> <span class="st">&#39;c3&#39;</span><span class="op">,</span> <span class="dt">begin</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">end</span><span class="op">:</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span> }<span class="op">,</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>{ <span class="dt">value</span><span class="op">:</span> <span class="st">&#39;e3&#39;</span><span class="op">,</span> <span class="dt">begin</span><span class="op">:</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span><span class="op">,</span> <span class="dt">end</span><span class="op">:</span> <span class="dv">3</span><span class="op">/</span><span class="dv">4</span> }<span class="op">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>{ <span class="dt">value</span><span class="op">:</span> <span class="st">&#39;g3&#39;</span><span class="op">,</span> <span class="dt">begin</span><span class="op">:</span> <span class="dv">3</span><span class="op">/</span><span class="dv">4</span><span class="op">,</span> <span class="dt">end</span><span class="op">:</span> <span class="dv">1</span> }]</span></code></pre></div>
+<p>Each event has a value, a begin time and an end time, where time is
+represented as a fraction. In the above case, the events are placed in
+sequential order, where c3 takes the first half, and e3 and g3 together
+take the second half. This temporal placement is the result of the
+<code>sequence</code> function, which divides its arguments equally over
+one cycle. If an argument is an array, the same rule applies to that
+part of the cycle. In the example, e3 and g3 are divided equally over
+the second half of the whole cycle.</p>
+<p>The above examples do not represent how Strudel is used in practice.
+In the REPL, the user only has to type in the pattern itself, the
+querying will be handled by the scheduler. The scheduler will repeatedly
+query the pattern for events, which then are then scheduled as sound
+synthesis or other event triggers.</p>
 <figure>
-<img src="images/strudel-screenshot.png" style="width:43.0%" alt="" /><figcaption>Screenshot of the Strudel editor, including piano-roll visualisation.</figcaption>
+<img src="images/strudel-screenshot.png" style="width:43.0%"
+alt="Screenshot of the Strudel editor, including piano-roll visualisation." />
+<figcaption aria-hidden="true">Screenshot of the Strudel editor,
+including piano-roll visualisation.</figcaption>
 </figure>
-<h1 data-number="4" id="making-patterns"><span class="header-section-number">4</span> Making Patterns</h1>
-<p>In practice then, the end-user live coder will not deal with constructing patterns directly, but will rather build patterns using Strudel’s extensive combinator library to create, combine and transform patterns.</p>
-<p>The live coder will rarely use the <code>sequence</code> function as seen above, as sequencing is implicit in many functions. For example in the following, the <code>note</code> function constructs a pattern of notes, sequencing its arguments in the same manner as the previous example.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="fu">note</span>(c3<span class="op">,</span> [e3<span class="op">,</span> g3])<span class="op">;</span></span></code></pre></div>
-<p>Perhaps more often, they will use the mini-notation for even terser notation of rhythmic sequences: [^Without the semi-colon, this last example is also valid Tidal code, albeit the parenthesis is not required in its Haskell syntax in this case. Tidal does not support passing sequences as lists directly to the <code>note</code> function, however.].</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="fu">note</span>(<span class="st">&quot;c3 [e3 g3]&quot;</span>)<span class="op">;</span></span></code></pre></div>
-<p>Such sequences are often treated only a starting point for manipulation, where they then undergo pattern transformations such as repetition, symmetry, interference/combination or randomisation, potentially at multiple timescales. Because Strudel patterns are represented as pure functions of time rather than as data structures, very long and complex generative results can be represented and manipulated without having to store the resulting sequences in memory.</p>
-<h1 data-number="5" id="pattern-example"><span class="header-section-number">5</span> Pattern Example</h1>
-<p>The following example showcases how patterns can be utilized to create musical complexity from simple parts, using repetition and interference:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="fu">note</span>(<span class="st">&quot;&lt;0 2 [4 6](3,4,1) 3*2&gt;&quot;</span>)<span class="op">.</span><span class="fu">scale</span>(<span class="st">&#39;D minor&#39;</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="op">.</span><span class="fu">off</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span><span class="op">,</span> <span class="fu">scaleTranspose</span>(<span class="dv">2</span>))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="op">.</span><span class="fu">off</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">2</span><span class="op">,</span> <span class="fu">scaleTranspose</span>(<span class="dv">6</span>))</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="op">.</span><span class="fu">legato</span>(<span class="op">.</span><span class="dv">5</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a><span class="op">.</span><span class="fu">echo</span>(<span class="dv">4</span><span class="op">,</span> <span class="dv">1</span><span class="op">/</span><span class="dv">8</span><span class="op">,</span> <span class="fl">.5</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a><span class="op">.</span><span class="fu">tone</span>((<span class="cf">await</span> <span class="fu">piano</span>())<span class="op">.</span><span class="fu">chain</span>(<span class="fu">out</span>()))</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a><span class="op">.</span><span class="fu">pianoroll</span>()</span></code></pre></div>
-<p>The pattern starts with a rhythm of numbers in mini notation, which are interpreted inside the scale of D minor. Without the scale function, the first line can be expressed as:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="st">&quot;&lt;d3 f3 [a3 c3](3, 4, 1) g3*2&gt;&quot;</span></span></code></pre></div>
+<h1 data-number="4" id="making-patterns"><span
+class="header-section-number">4</span> Making Patterns</h1>
+<p>In practice then, the end-user live coder will not deal with
+constructing patterns directly, but will rather build patterns using
+Strudel’s extensive combinator library to create, combine and transform
+patterns.</p>
+<p>The live coder will rarely use the <code>sequence</code> function as
+seen above, as sequencing is implicit in many functions. For example in
+the following, the <code>note</code> function constructs a pattern of
+notes, sequencing its arguments in the same manner as the previous
+example.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">note</span>(c3<span class="op">,</span> [e3<span class="op">,</span> g3])<span class="op">;</span></span></code></pre></div>
+<p>Perhaps more often, they will use the mini-notation for even terser
+notation of rhythmic sequences: [^Without the semi-colon, this last
+example is also valid Tidal code, albeit the parenthesis is not required
+in its Haskell syntax in this case. Tidal does not support passing
+sequences as lists directly to the <code>note</code> function,
+however.].</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">note</span>(<span class="st">&quot;c3 [e3 g3]&quot;</span>)<span class="op">;</span></span></code></pre></div>
+<p>Such sequences are often treated only a starting point for
+manipulation, where they then undergo pattern transformations such as
+repetition, symmetry, interference/combination or randomisation,
+potentially at multiple timescales. Because Strudel patterns are
+represented as pure functions of time rather than as data structures,
+very long and complex generative results can be represented and
+manipulated without having to store the resulting sequences in
+memory.</p>
+<h1 data-number="5" id="pattern-example"><span
+class="header-section-number">5</span> Pattern Example</h1>
+<p>The following example showcases how patterns can be utilized to
+create musical complexity from simple parts, using repetition and
+interference:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">note</span>(<span class="st">&quot;&lt;0 2 [4 6](3,4,1) 3*2&gt;&quot;</span>)<span class="op">.</span><span class="fu">scale</span>(<span class="st">&#39;D minor&#39;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">off</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span><span class="op">,</span> <span class="fu">scaleTranspose</span>(<span class="dv">2</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">off</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">2</span><span class="op">,</span> <span class="fu">scaleTranspose</span>(<span class="dv">6</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">legato</span>(<span class="op">.</span><span class="dv">5</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">echo</span>(<span class="dv">4</span><span class="op">,</span> <span class="dv">1</span><span class="op">/</span><span class="dv">8</span><span class="op">,</span> <span class="op">.</span><span class="dv">5</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">tone</span>((<span class="cf">await</span> <span class="fu">piano</span>())<span class="op">.</span><span class="fu">chain</span>(<span class="fu">out</span>()))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">pianoroll</span>()</span></code></pre></div>
+<p>The pattern starts with a rhythm of numbers in mini notation, which
+are interpreted inside the scale of D minor. Without the scale function,
+the first line can be expressed as:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;&lt;d3 f3 [a3 c3](3, 4, 1) g3*2&gt;&quot;</span></span></code></pre></div>
 <p>This line could also be expressed without mini notation:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="fu">slowcat</span>(d3<span class="op">,</span> f3<span class="op">,</span> [a3<span class="op">,</span> c3]<span class="op">.</span><span class="fu">euclid</span>(<span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">1</span>)<span class="op">,</span> g3<span class="op">.</span><span class="fu">fast</span>(<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">slowcat</span>(d3<span class="op">,</span> f3<span class="op">,</span> [a3<span class="op">,</span> c3]<span class="op">.</span><span class="fu">euclid</span>(<span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">1</span>)<span class="op">,</span> g3<span class="op">.</span><span class="fu">fast</span>(<span class="dv">2</span>))</span></code></pre></div>
 <p>Here is a short description of all the functions used:</p>
 <ul>
-<li><code>slowcat</code>: play elements sequentially, where each lasts one cycle</li>
-<li><code>brackets</code>: elements inside brackets are divided equally over the time of their parent</li>
-<li><code>euclid(p, s, o)</code>: place p pulses evenly over s steps, with offset o <span class="citation" data-cites="toussaintEuclideanAlgorithmGenerates2005">[@toussaintEuclideanAlgorithmGenerates2005]</span></li>
-<li><code>fast(n)</code>: speed up by n. <code>g3.fast(2)</code> will play g3 two times.</li>
-<li><code>off(n, f)</code>: copy each event, offset it by n cycles and apply function f</li>
+<li><code>slowcat</code>: play elements sequentially, where each lasts
+one cycle</li>
+<li><code>brackets</code>: elements inside brackets are divided equally
+over the time of their parent</li>
+<li><code>euclid(p, s, o)</code>: place p pulses evenly over s steps,
+with offset o <span class="citation"
+data-cites="toussaintEuclideanAlgorithmGenerates2005">(Toussaint
+2005)</span></li>
+<li><code>fast(n)</code>: speed up by n. <code>g3.fast(2)</code> will
+play g3 two times.</li>
+<li><code>off(n, f)</code>: copy each event, offset it by n cycles and
+apply function f</li>
 <li><code>legato(n)</code>: multiply duration of event with n</li>
-<li><code>echo(t, n, v)</code>: copy each event t times, with n cycles in between each copy, decreasing velocity by v</li>
-<li><code>tone(instrument)</code>: play back each event with the given Tone.js instrument</li>
-<li><code>pianoroll()</code>: visualize events as midi notes in a pianoroll</li>
+<li><code>echo(t, n, v)</code>: copy each event t times, with n cycles
+in between each copy, decreasing velocity by v</li>
+<li><code>tone(instrument)</code>: play back each event with the given
+Tone.js instrument</li>
+<li><code>pianoroll()</code>: visualize events as midi notes in a
+pianoroll</li>
 </ul>
-<p>Much of the above will be familiar to Tidal users. This example shows some of Strudel’s unique support for chords and transposition familiar to students of Western music theory. This differs a little from Tidal’s approach and thanks to the integration of the javascript library XXX (? or is this all your work Felix?), Strudel’s support for tonal transformations such as voice leading is perhaps respects more advanced than Tidal.</p>
-<h1 data-number="6" id="ways-to-make-sound"><span class="header-section-number">6</span> Ways to make Sound</h1>
-<p>To generate sound, Strudel supports bindings for different outputs:</p>
+<p>Much of the above will be familiar to Tidal users. This example shows
+some of Strudel’s unique support for chords and transposition familiar
+to students of Western music theory. This differs a little from Tidal’s
+approach and thanks to the integration of the javascript library XXX (?
+or is this all your work Felix?), Strudel’s support for tonal
+transformations such as voice leading is perhaps respects more advanced
+than Tidal.</p>
+<h1 data-number="6" id="ways-to-make-sound"><span
+class="header-section-number">6</span> Ways to make Sound</h1>
+<p>To generate sound, Strudel supports bindings for different
+outputs:</p>
 <ul>
 <li>Tone.js (deprecated)</li>
 <li>Web Audio API</li>
-<li>WebDirt, a js recreation of Tidal’s <em>Dirt</em> sample engine (deprecated)</li>
+<li>WebDirt, a js recreation of Tidal’s <em>Dirt</em> sample engine
+(deprecated)</li>
 <li>OSC via osc-js, compatible with superdirt</li>
 <li>MIDI via WebMIDI</li>
-<li>Csound via <span class="citation" data-cites="csound/browser">@csound/browser</span> wasm build</li>
+<li>Csound via <span class="citation"
+data-cites="csound/browser">(<strong>csound/browser?</strong>)</span>
+wasm build</li>
 </ul>
-<p>At first, we used Tone.js as sound output, but it proved to be limited for the use case of Strudel, where each individual event could potentially have a completely different audio graph. While the Web Audio API takes a <em>fire-and-forget</em> approach, creating a lot of Tone.js instruments and effects causes performance issues quickly. For that reason, we chose to search for alternatives.</p>
-<p>Strudel’s Web Audio API output creates a new audio graph for each event. It currently supports basic oscillators, sample playback, envelopes, filters and an experimental support for soundfonts.</p>
-<p>WebDirt <span class="citation" data-cites="ogbornDktr0WebDirt2022">[@ogbornDktr0WebDirt2022]</span> was created as part of the Estuary Live Coding System <span class="citation" data-cites="ogbornEstuaryBrowserbasedCollaborative2017">[@ogbornEstuaryBrowserbasedCollaborative2017]</span>, and proved to be a solid choice for handling samples in Strudel as well.</p>
-<p>Using the OSC protocol via Strudel’s provided nodejs-based OSC proxy server, it is possible to send network messages to trigger events. This is mainly used to render sound using SuperDirt <span class="citation" data-cites="SuperDirt2022">[@SuperDirt2022]</span>, which is the Supercollider-based synthesis framework that Tidal live coders generally use as standard.</p>
-<p>MIDI output can also be used to send MIDI messages to either external instruments or to other programs on the same device. Unlike OSC, Strudel is able to send MIDI directly without requiring additional proxy software, but only from web browsers that support it (at the time of writing, this means Chromium-based browsers).</p>
-<p>Recently, the experimental integration of Csound proved to bring a new dimension of sound design capabilities to Strudel.</p>
-<h1 data-number="7" id="the-strudel-repl"><span class="header-section-number">7</span> The Strudel REPL</h1>
-<p>While Strudel can be used as a library in any JavaScript codebase, its reference implementation is the Strudel REPL, which is a browser based live coding environment. Besides a basic UI for playback control and meta information, the main part of the interface is the code editor powered by CodeMirror. In it, the user can edit and evaluate pattern code live, using one of the outputs to create music and or sound art. The control flow of the REPL follows 3 basic steps:</p>
+<p>At first, we used Tone.js as sound output, but it proved to be
+limited for the use case of Strudel, where each individual event could
+potentially have a completely different audio graph. While the Web Audio
+API takes a <em>fire-and-forget</em> approach, creating a lot of Tone.js
+instruments and effects causes performance issues quickly. For that
+reason, we chose to search for alternatives.</p>
+<p>Strudel’s Web Audio API output creates a new audio graph for each
+event. It currently supports basic oscillators, sample playback,
+envelopes, filters and an experimental support for soundfonts.</p>
+<p>WebDirt <span class="citation"
+data-cites="ogbornDktr0WebDirt2022">(Ogborn [2016] 2022)</span> was
+created as part of the Estuary Live Coding System <span class="citation"
+data-cites="ogbornEstuaryBrowserbasedCollaborative2017">(Ogborn et al.
+2017)</span>, and proved to be a solid choice for handling samples in
+Strudel as well.</p>
+<p>Using the OSC protocol via Strudel’s provided nodejs-based OSC proxy
+server, it is possible to send network messages to trigger events. This
+is mainly used to render sound using SuperDirt <span class="citation"
+data-cites="SuperDirt2022">(<em>SuperDirt</em> [2015] 2022)</span>,
+which is the Supercollider-based synthesis framework that Tidal live
+coders generally use as standard.</p>
+<p>MIDI output can also be used to send MIDI messages to either external
+instruments or to other programs on the same device. Unlike OSC, Strudel
+is able to send MIDI directly without requiring additional proxy
+software, but only from web browsers that support it (at the time of
+writing, this means Chromium-based browsers).</p>
+<p>Recently, the experimental integration of Csound proved to bring a
+new dimension of sound design capabilities to Strudel.</p>
+<h1 data-number="7" id="the-strudel-repl"><span
+class="header-section-number">7</span> The Strudel REPL</h1>
+<p>While Strudel can be used as a library in any JavaScript codebase,
+its reference implementation is the Strudel REPL, which is a browser
+based live coding environment. Besides a basic UI for playback control
+and meta information, the main part of the interface is the code editor
+powered by CodeMirror. In it, the user can edit and evaluate pattern
+code live, using one of the outputs to create music and or sound art.
+The control flow of the REPL follows 3 basic steps:</p>
 <ol type="1">
-<li>The user writes and updates <code>Code</code>. Each update transpiles and evaluates the code to create a <code>Pattern</code> instance</li>
-<li>While the REPL is running, the <code>Scheduler</code> queries the active <code>Pattern</code> by a regular interval, generating <code>Events</code> (also called <code>Haps</code> in Strudel) for the next time span.</li>
-<li>For each scheduling tick, all generated <code>Events</code> are triggered by calling their <code>onTrigger</code> method, which is set by the output.</li>
+<li>The user writes and updates <code>Code</code>. Each update
+transpiles and evaluates the code to create a <code>Pattern</code>
+instance</li>
+<li>While the REPL is running, the <code>Scheduler</code> queries the
+active <code>Pattern</code> by a regular interval, generating
+<code>Events</code> (also called <code>Haps</code> in Strudel) for the
+next time span.</li>
+<li>For each scheduling tick, all generated <code>Events</code> are
+triggered by calling their <code>onTrigger</code> method, which is set
+by the output.</li>
 </ol>
 <figure>
-<img src="https://github.com/tidalcycles/strudel/raw/talk/talk/public/strudelflow.png?raw=true" style="width:43.0%" alt="" /><figcaption>repl control flow</figcaption>
+<img
+src="https://github.com/tidalcycles/strudel/raw/talk/talk/public/strudelflow.png?raw=true"
+style="width:43.0%" alt="repl control flow" />
+<figcaption aria-hidden="true">repl control flow</figcaption>
 </figure>
-<h2 data-number="7.1" id="user-code"><span class="header-section-number">7.1</span> 1. User Code</h2>
-<p>To create a <code>Pattern</code> from the user code, two steps are needed:</p>
+<h2 data-number="7.1" id="user-code"><span
+class="header-section-number">7.1</span> 1. User Code</h2>
+<p>To create a <code>Pattern</code> from the user code, two steps are
+needed:</p>
 <ol type="1">
 <li>Transpile the JS input code to make it functional</li>
 <li>Evaluate the transpiled code</li>
 </ol>
-<h3 data-number="7.1.1" id="transpilation-evaluation"><span class="header-section-number">7.1.1</span> Transpilation &amp; Evaluation</h3>
-<p>In the JavaScript world, using transpilation is a common practise to be able to use language features that are not supported by the base language. Tools like <code>babel</code> will transpile code that contains unsupported language features into a version of the code without those features.</p>
-<p>In the same tradition, Strudel can add a transpilation step to simplify the user code in the context of live coding. For example, the Strudel REPL lets the user create mini notation patterns using just double quoted strings, while single quoted strings remain what they are:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="st">&quot;c3 [e3 g3]*2&quot;</span></span></code></pre></div>
+<h3 data-number="7.1.1" id="transpilation-evaluation"><span
+class="header-section-number">7.1.1</span> Transpilation &amp;
+Evaluation</h3>
+<p>In the JavaScript world, using transpilation is a common practise to
+be able to use language features that are not supported by the base
+language. Tools like <code>babel</code> will transpile code that
+contains unsupported language features into a version of the code
+without those features.</p>
+<p>In the same tradition, Strudel can add a transpilation step to
+simplify the user code in the context of live coding. For example, the
+Strudel REPL lets the user create mini notation patterns using just
+double quoted strings, while single quoted strings remain what they
+are:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;c3 [e3 g3]*2&quot;</span></span></code></pre></div>
 <p>is transpiled to:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="fu">mini</span>(<span class="st">&quot;c3 [e3 g3]*2&quot;</span>)<span class="op">.</span><span class="fu">withMiniLocation</span>([<span class="dv">1</span><span class="op">,</span><span class="dv">0</span><span class="op">,</span><span class="dv">0</span>]<span class="op">,</span>[<span class="dv">1</span><span class="op">,</span><span class="dv">14</span><span class="op">,</span><span class="dv">14</span>])</span></code></pre></div>
-<p>Here, the string is wrapped in <code>mini</code>, which will create a pattern from a mini notation string. Additionally, the <code>withMiniLocation</code> method passes the original source code location of the string to the pattern, which enables highlighting active events.</p>
-<p>Other convenient features like pseudo variables, operator overloading and top level await are possible with transpilation.</p>
-<p>After the transpilation, the code is ready to be evaluated into a <code>Pattern</code>.</p>
-<p>Behind the scenes, the user code string is parsed with <code>acorn</code>, turning it into an Abstract Syntax Tree (AST). The AST allows changing the structure of the code before generating the transpiled version using <code>escodegen</code>.</p>
-<h3 data-number="7.1.2" id="mini-notation"><span class="header-section-number">7.1.2</span> Mini Notation</h3>
-<p>While the transpilation allows JavaScript to express Patterns in a less verbose way, it is still preferable to use the Mini Notation as a more compact way to express rhythm. Strudel aims to provide the same Mini Notation features and syntax as used in Tidal.</p>
-<p>The Mini Notation parser is implemented using <code>peggy</code>, which allows generating performant parsers for Domain Specific Languages (DSLs) using a concise grammar notation. The generated parser turns the Mini Notation string into an AST which is used to call the respective Strudel functions with the given structure. For example, <code>"c3 [e3 g3]*2"</code> will result in the following calls:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="fu">seq</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a>  <span class="fu">reify</span>(<span class="st">&#39;c3&#39;</span>)<span class="op">.</span><span class="fu">withLocation</span>([<span class="dv">1</span><span class="op">,</span><span class="dv">1</span><span class="op">,</span><span class="dv">1</span>]<span class="op">,</span> [<span class="dv">1</span><span class="op">,</span><span class="dv">4</span><span class="op">,</span><span class="dv">4</span>])<span class="op">,</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a>  <span class="fu">seq</span>(</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true"></a>    <span class="fu">reify</span>(<span class="st">&#39;e3&#39;</span>)<span class="op">.</span><span class="fu">withLocation</span>([<span class="dv">1</span><span class="op">,</span><span class="dv">5</span><span class="op">,</span><span class="dv">5</span>]<span class="op">,</span> [<span class="dv">1</span><span class="op">,</span><span class="dv">8</span><span class="op">,</span><span class="dv">8</span>])<span class="op">,</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true"></a>    <span class="fu">reify</span>(<span class="st">&#39;g3&#39;</span>)<span class="op">.</span><span class="fu">withLocation</span>([<span class="dv">1</span><span class="op">,</span><span class="dv">8</span><span class="op">,</span><span class="dv">8</span>]<span class="op">,</span> [<span class="dv">1</span><span class="op">,</span><span class="dv">10</span><span class="op">,</span><span class="dv">10</span>])<span class="op">,</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true"></a>  )<span class="op">.</span><span class="fu">fast</span>(<span class="dv">2</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true"></a>)</span></code></pre></div>
-<h3 data-number="7.1.3" id="highlighting-locations"><span class="header-section-number">7.1.3</span> Highlighting Locations</h3>
-<p>As seen in the examples above, both the JS and the Mini Notation parser add source code locations using <code>withMiniLocation</code> and <code>withLocation</code> methods. While the JS parser adds locations relative to the user code as a whole, the Mini Notation adds locations relative to the position of the mini notation string. The absolute location of elements within Mini Notation can be calculated by simply adding both locations together. This absolute location can be used to highlight active events in real time.</p>
-<h2 data-number="7.2" id="scheduling-events"><span class="header-section-number">7.2</span> 2. Scheduling Events</h2>
-<p>After an instance of <code>Pattern</code> is obtained from the user code, it is used by the scheduler to get queried for events. Once started, the scheduler runs at a fixed interval to query active pattern for events withing the current interval’s time span. A simplified implementation looks like this:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="kw">let</span> pattern <span class="op">=</span> <span class="fu">seq</span>(<span class="st">&#39;c3&#39;</span><span class="op">,</span> [<span class="st">&#39;e3&#39;</span><span class="op">,</span> <span class="st">&#39;g3&#39;</span>])<span class="op">;</span> <span class="co">// pattern from user</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a><span class="kw">let</span> interval <span class="op">=</span> <span class="fl">0.5</span><span class="op">;</span> <span class="co">// query interval in seconds</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true"></a><span class="kw">let</span> time <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// beginning of current time span</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true"></a><span class="kw">let</span> minLatency <span class="op">=</span> <span class="fl">.1</span><span class="op">;</span> <span class="co">// min time before a hap should trigger</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true"></a><span class="pp">setInterval</span>(() <span class="kw">=&gt;</span> {</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true"></a>  <span class="kw">const</span> haps <span class="op">=</span> pattern<span class="op">.</span><span class="fu">queryArc</span>(time<span class="op">,</span> time <span class="op">+</span> interval)<span class="op">;</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true"></a>  time <span class="op">+=</span> interval<span class="op">;</span> <span class="co">// increment time</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true"></a>  haps<span class="op">.</span><span class="fu">forEach</span>((hap) <span class="kw">=&gt;</span> {</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true"></a>    <span class="kw">const</span> deadline <span class="op">=</span> hap<span class="op">.</span><span class="at">whole</span><span class="op">.</span><span class="at">begin</span> <span class="op">-</span> time <span class="op">+</span> minLatency<span class="op">;</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true"></a>    <span class="fu">onTrigger</span>(hap<span class="op">,</span> deadline<span class="op">,</span> duration)<span class="op">;</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true"></a>  })<span class="op">;</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true"></a>}<span class="op">,</span> interval <span class="op">*</span> <span class="dv">1000</span>)<span class="op">;</span> <span class="co">// query each &quot;interval&quot; seconds</span></span></code></pre></div>
-<p>Note that the above code is simplified for illustrative purposes. The actual implementation has to work around imprecise callbacks of <code>setInterval</code>. More about the implementation details can be read in <a href="https://loophole-letters.vercel.app/web-audio-scheduling">this blog post</a>.</p>
-<p>The fact that <code>Pattern.queryArc</code> is a pure function that maps a time span to a set of events allows us to choose any interval we like without changing the resulting output. It also means that when the pattern is changed from outside, the next scheduling callback will work with the new pattern, keeping its clock running.</p>
-<p>The latency between the time the pattern is evaluated and the change is heard is between <code>minLatency</code> and <code>interval + minLatency</code>, in our example between 100ms and 600ms. In Strudel, the current query interval is 50ms with a minLatency of 100ms, meaning the latency is between 50ms and 150ms.</p>
-<h2 data-number="7.3" id="output"><span class="header-section-number">7.3</span> 3. Output</h2>
-<p>The last step is to trigger each event in the chosen output. This is where the given time and value of each event is used to generate audio or any other form of time based output. The default output of the Strudel REPL is the WebAudio output. To understand what an output does, we first have to understand what control params are.</p>
-<h3 data-number="7.3.1" id="control-params"><span class="header-section-number">7.3.1</span> Control Params</h3>
-<p>To be able to manipulate multiple aspects of sound in parallel, so called control params are used to shape the value of each event. Example:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="fu">note</span>(<span class="st">&quot;c3 e3&quot;</span>)<span class="op">.</span><span class="fu">cutoff</span>(<span class="dv">1000</span>)<span class="op">.</span><span class="fu">s</span>(<span class="st">&#39;sawtooth&#39;</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a>  <span class="op">.</span><span class="fu">queryArc</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span>)<span class="op">.</span><span class="fu">map</span>(hap <span class="kw">=&gt;</span> hap<span class="op">.</span><span class="at">value</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a><span class="co">/* [</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true"></a><span class="co">  { note: &#39;c3&#39;, cutoff: 1000, s: &#39;sawtooth&#39; }</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true"></a><span class="co">  { note: &#39;e3&#39;, cutoff: 1000, s: &#39;sawtooth&#39; }</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true"></a><span class="co">] */</span></span></code></pre></div>
-<p>Here, the control params <code>note</code>, <code>cutoff</code> and <code>s</code> are used, where each controls a different property in the value object. Each control param either accepts a primitive value or a <code>Pattern</code>. In the example, <code>note</code> gets a <code>Pattern</code> in Mini Notation (double quoted), while <code>cutoff</code> and <code>s</code> are given a <code>Number</code> and a <code>String</code> (single quoted).</p>
-<p>Strudel comes with a default set of control params that are based on the ones used by Tidal, focusing on music and audio terminology, but it is possible to create custom control params for any purpose:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="kw">const</span> { x<span class="op">,</span> y } <span class="op">=</span> <span class="fu">createParams</span>(<span class="st">&#39;x&#39;</span><span class="op">,</span> <span class="st">&#39;y&#39;</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a><span class="fu">x</span>(sine<span class="op">.</span><span class="fu">range</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">200</span>))<span class="op">.</span><span class="fu">y</span>(cosine<span class="op">.</span><span class="fu">range</span>(<span class="dv">0</span><span class="op">,</span><span class="dv">200</span>))</span></code></pre></div>
-<p>This example creates the custom control params <code>x</code> and <code>y</code> which are then used to form a pattern that descibes the coordinates of a circle.</p>
-<h3 data-number="7.3.2" id="outputs"><span class="header-section-number">7.3.2</span> Outputs</h3>
-<p>Now that we know how the value of an event is manipulated using control params, we can look at how outputs can use that value to generate anything. The scheduler above was calling the <code>onTrigger</code> function which is used to implement the output. A very simple version of the web audio output could look like this:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="kw">function</span> <span class="fu">onTrigger</span>(hap<span class="op">,</span> deadline<span class="op">,</span> duration) {</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a>  <span class="kw">const</span> { note } <span class="op">=</span> hap<span class="op">.</span><span class="at">value</span><span class="op">;</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a>  <span class="kw">const</span> time <span class="op">=</span> <span class="fu">getAudioContext</span>()<span class="op">.</span><span class="at">currentTime</span> <span class="op">+</span> deadline<span class="op">;</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a>  <span class="kw">const</span> o <span class="op">=</span> <span class="fu">getAudioContext</span>()<span class="op">.</span><span class="fu">createOscillator</span>()<span class="op">;</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a>  o<span class="op">.</span><span class="at">frequency</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="fu">getFreq</span>(note)<span class="op">;</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true"></a>  o<span class="op">.</span><span class="fu">start</span>(time)<span class="op">;</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true"></a>  o<span class="op">.</span><span class="fu">stop</span>(time <span class="op">+</span> <span class="bu">event</span><span class="op">.</span><span class="at">duration</span>)<span class="op">;</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true"></a>  o<span class="op">.</span><span class="fu">connect</span>(<span class="fu">getAudioContext</span>()<span class="op">.</span><span class="at">destination</span>)<span class="op">;</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true"></a>}</span></code></pre></div>
-<p>The above example will create an <code>OscillatorNode</code> for each event, where the frequency is controlled by the <code>note</code> param. In essence, this is how the WebAudio API output of Strudel works, only with many more params like <code>cutoff</code>, <code>resonance</code>, <code>attack</code>, <code>decay</code>, <code>sustain</code>, <code>release</code> and <a href="https://github.com/tidalcycles/strudel/blob/main/packages/core/controls.mjs">many more</a>.</p>
-<h1 data-number="8" id="pattern-alignment-and-combination"><span class="header-section-number">8</span> Pattern alignment and combination</h1>
-<p>One core aspect of Strudel, inherited from Tidal, is the flexible way that patterns can be combined, irrespective of their structure. Its declarative approach means a live coder does not have to think about the details of how this is done, only what is to be done.</p>
-<p>As a simple example, consider two number patterns <code>"0 [1 2] 3"</code>, and <code>"10 20"</code>. The first has three contiguous steps of equal lengths, with the second step broken down into two substeps, giving four events in total. There are a very large number of ways in which the structure of these two patterns could be combined, but the default method in both Strudel and Tidal is to line up the cycles of the two patterns, and then take events from the first pattern and match them with those in the second pattern. Therefore, the following two lines are equivalent:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="st">&quot;0 [1 2] 3&quot;</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&quot;10 20&quot;</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a><span class="st">&quot;10 [11 22] 23&quot;</span></span></code></pre></div>
-<p>Where the events only partially overlap, they are treated as fragments of the event in the first pattern. This is a little difficult to conceptualise, but lets start by comparing the following two patterns:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="st">&quot;0 1 2&quot;</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&quot;10 20&quot;</span>)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="st">&quot;10 [11 21] 20&quot;</span></span></code></pre></div>
-<p>They are similar in that the number <code>1</code> is split in two, with its two halves added to <code>10</code> and <code>20</code> respectively. However, the <code>11</code> remembers that it is a fragment of that original <code>1</code> event, and so is treated as having a duration of a third of a cycle, despite only being active for a sixth of a cycle. Likewise, the <code>21</code> is also a fragment of that original <code>1</code> event, but a fragment of its second half. Because the start of its event is missing, it wouldn’t actually trigger a sound (unless it underwent further pattern transformations/combinations).</p>
-<p>In practice, the effect of this default, implicit method for combining two patterns is that the second pattern is added <em>in</em> to the first one, and indeed this can be made explicit:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="st">&quot;0 1 2&quot;</span><span class="op">.</span><span class="at">add</span><span class="op">.</span><span class="fu">in</span>(<span class="st">&quot;10 20&quot;</span>)</span></code></pre></div>
-<p>This makes way for other ways to align the pattern, and several are alraedy defined, in particular:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mini</span>(<span class="st">&quot;c3 [e3 g3]*2&quot;</span>)<span class="op">.</span><span class="fu">withMiniLocation</span>([<span class="dv">1</span><span class="op">,</span><span class="dv">0</span><span class="op">,</span><span class="dv">0</span>]<span class="op">,</span>[<span class="dv">1</span><span class="op">,</span><span class="dv">14</span><span class="op">,</span><span class="dv">14</span>])</span></code></pre></div>
+<p>Here, the string is wrapped in <code>mini</code>, which will create a
+pattern from a mini notation string. Additionally, the
+<code>withMiniLocation</code> method passes the original source code
+location of the string to the pattern, which enables highlighting active
+events.</p>
+<p>Other convenient features like pseudo variables, operator overloading
+and top level await are possible with transpilation.</p>
+<p>After the transpilation, the code is ready to be evaluated into a
+<code>Pattern</code>.</p>
+<p>Behind the scenes, the user code string is parsed with
+<code>acorn</code>, turning it into an Abstract Syntax Tree (AST). The
+AST allows changing the structure of the code before generating the
+transpiled version using <code>escodegen</code>.</p>
+<h3 data-number="7.1.2" id="mini-notation"><span
+class="header-section-number">7.1.2</span> Mini Notation</h3>
+<p>While the transpilation allows JavaScript to express Patterns in a
+less verbose way, it is still preferable to use the Mini Notation as a
+more compact way to express rhythm. Strudel aims to provide the same
+Mini Notation features and syntax as used in Tidal.</p>
+<p>The Mini Notation parser is implemented using <code>peggy</code>,
+which allows generating performant parsers for Domain Specific Languages
+(DSLs) using a concise grammar notation. The generated parser turns the
+Mini Notation string into an AST which is used to call the respective
+Strudel functions with the given structure. For example,
+<code>"c3 [e3 g3]*2"</code> will result in the following calls:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode js"><code class="sourceCode javascript"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">seq</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reify</span>(<span class="st">&#39;c3&#39;</span>)<span class="op">.</span><span class="fu">withLocation</span>([<span class="dv">1</span><span class="op">,</span><span class="dv">1</span><span class="op">,</span><span class="dv">1</span>]<span class="op">,</span> [<span class="dv">1</span><span class="op">,</span><span class="dv">4</span><span class="op">,</span><span class="dv">4</span>])<span class="op">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seq</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">reify</span>(<span class="st">&#39;e3&#39;</span>)<span class="op">.</span><span class="fu">withLocation</span>([<span class="dv">1</span><span class="op">,</span><span class="dv">5</span><span class="op">,</span><span class="dv">5</span>]<span class="op">,</span> [<span class="dv">1</span><span class="op">,</span><span class="dv">8</span><span class="op">,</span><span class="dv">8</span>])<span class="op">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">reify</span>(<span class="st">&#39;g3&#39;</span>)<span class="op">.</span><span class="fu">withLocation</span>([<span class="dv">1</span><span class="op">,</span><span class="dv">8</span><span class="op">,</span><span class="dv">8</span>]<span class="op">,</span> [<span class="dv">1</span><span class="op">,</span><span class="dv">10</span><span class="op">,</span><span class="dv">10</span>])<span class="op">,</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  )<span class="op">.</span><span class="fu">fast</span>(<span class="dv">2</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<h3 data-number="7.1.3" id="highlighting-locations"><span
+class="header-section-number">7.1.3</span> Highlighting Locations</h3>
+<p>As seen in the examples above, both the JS and the Mini Notation
+parser add source code locations using <code>withMiniLocation</code> and
+<code>withLocation</code> methods. While the JS parser adds locations
+relative to the user code as a whole, the Mini Notation adds locations
+relative to the position of the mini notation string. The absolute
+location of elements within Mini Notation can be calculated by simply
+adding both locations together. This absolute location can be used to
+highlight active events in real time.</p>
+<h2 data-number="7.2" id="scheduling-events"><span
+class="header-section-number">7.2</span> 2. Scheduling Events</h2>
+<p>After an instance of <code>Pattern</code> is obtained from the user
+code, it is used by the scheduler to get queried for events. Once
+started, the scheduler runs at a fixed interval to query active pattern
+for events withing the current interval’s time span. A simplified
+implementation looks like this:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode js"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> pattern <span class="op">=</span> <span class="fu">seq</span>(<span class="st">&#39;c3&#39;</span><span class="op">,</span> [<span class="st">&#39;e3&#39;</span><span class="op">,</span> <span class="st">&#39;g3&#39;</span>])<span class="op">;</span> <span class="co">// pattern from user</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> interval <span class="op">=</span> <span class="fl">0.5</span><span class="op">;</span> <span class="co">// query interval in seconds</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> time <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// beginning of current time span</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> minLatency <span class="op">=</span> <span class="op">.</span><span class="dv">1</span><span class="op">;</span> <span class="co">// min time before a hap should trigger</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="pp">setInterval</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> haps <span class="op">=</span> pattern<span class="op">.</span><span class="fu">queryArc</span>(time<span class="op">,</span> time <span class="op">+</span> interval)<span class="op">;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  time <span class="op">+=</span> interval<span class="op">;</span> <span class="co">// increment time</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  haps<span class="op">.</span><span class="fu">forEach</span>((hap) <span class="kw">=&gt;</span> {</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> deadline <span class="op">=</span> hap<span class="op">.</span><span class="at">whole</span><span class="op">.</span><span class="at">begin</span> <span class="op">-</span> time <span class="op">+</span> minLatency<span class="op">;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">onTrigger</span>(hap<span class="op">,</span> deadline<span class="op">,</span> duration)<span class="op">;</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>}<span class="op">,</span> interval <span class="op">*</span> <span class="dv">1000</span>)<span class="op">;</span> <span class="co">// query each &quot;interval&quot; seconds</span></span></code></pre></div>
+<p>Note that the above code is simplified for illustrative purposes. The
+actual implementation has to work around imprecise callbacks of
+<code>setInterval</code>. More about the implementation details can be
+read in <a
+href="https://loophole-letters.vercel.app/web-audio-scheduling">this
+blog post</a>.</p>
+<p>The fact that <code>Pattern.queryArc</code> is a pure function that
+maps a time span to a set of events allows us to choose any interval we
+like without changing the resulting output. It also means that when the
+pattern is changed from outside, the next scheduling callback will work
+with the new pattern, keeping its clock running.</p>
+<p>The latency between the time the pattern is evaluated and the change
+is heard is between <code>minLatency</code> and
+<code>interval + minLatency</code>, in our example between 100ms and
+600ms. In Strudel, the current query interval is 50ms with a minLatency
+of 100ms, meaning the latency is between 50ms and 150ms.</p>
+<h2 data-number="7.3" id="output"><span
+class="header-section-number">7.3</span> 3. Output</h2>
+<p>The last step is to trigger each event in the chosen output. This is
+where the given time and value of each event is used to generate audio
+or any other form of time based output. The default output of the
+Strudel REPL is the WebAudio output. To understand what an output does,
+we first have to understand what control params are.</p>
+<h3 data-number="7.3.1" id="control-params"><span
+class="header-section-number">7.3.1</span> Control Params</h3>
+<p>To be able to manipulate multiple aspects of sound in parallel, so
+called control params are used to shape the value of each event.
+Example:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode js"><code class="sourceCode javascript"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">note</span>(<span class="st">&quot;c3 e3&quot;</span>)<span class="op">.</span><span class="fu">cutoff</span>(<span class="dv">1000</span>)<span class="op">.</span><span class="fu">s</span>(<span class="st">&#39;sawtooth&#39;</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">queryArc</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span>)<span class="op">.</span><span class="fu">map</span>(hap <span class="kw">=&gt;</span> hap<span class="op">.</span><span class="at">value</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">/* [</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">  { note: &#39;c3&#39;, cutoff: 1000, s: &#39;sawtooth&#39; }</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">  { note: &#39;e3&#39;, cutoff: 1000, s: &#39;sawtooth&#39; }</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">] */</span></span></code></pre></div>
+<p>Here, the control params <code>note</code>, <code>cutoff</code> and
+<code>s</code> are used, where each controls a different property in the
+value object. Each control param either accepts a primitive value or a
+<code>Pattern</code>. In the example, <code>note</code> gets a
+<code>Pattern</code> in Mini Notation (double quoted), while
+<code>cutoff</code> and <code>s</code> are given a <code>Number</code>
+and a <code>String</code> (single quoted).</p>
+<p>Strudel comes with a default set of control params that are based on
+the ones used by Tidal, focusing on music and audio terminology, but it
+is possible to create custom control params for any purpose:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode js"><code class="sourceCode javascript"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { x<span class="op">,</span> y } <span class="op">=</span> <span class="fu">createParams</span>(<span class="st">&#39;x&#39;</span><span class="op">,</span> <span class="st">&#39;y&#39;</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">x</span>(sine<span class="op">.</span><span class="fu">range</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">200</span>))<span class="op">.</span><span class="fu">y</span>(cosine<span class="op">.</span><span class="fu">range</span>(<span class="dv">0</span><span class="op">,</span><span class="dv">200</span>))</span></code></pre></div>
+<p>This example creates the custom control params <code>x</code> and
+<code>y</code> which are then used to form a pattern that descibes the
+coordinates of a circle.</p>
+<h3 data-number="7.3.2" id="outputs"><span
+class="header-section-number">7.3.2</span> Outputs</h3>
+<p>Now that we know how the value of an event is manipulated using
+control params, we can look at how outputs can use that value to
+generate anything. The scheduler above was calling the
+<code>onTrigger</code> function which is used to implement the output. A
+very simple version of the web audio output could look like this:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode js"><code class="sourceCode javascript"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">onTrigger</span>(hap<span class="op">,</span> deadline<span class="op">,</span> duration) {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> { note } <span class="op">=</span> hap<span class="op">.</span><span class="at">value</span><span class="op">;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> time <span class="op">=</span> <span class="fu">getAudioContext</span>()<span class="op">.</span><span class="at">currentTime</span> <span class="op">+</span> deadline<span class="op">;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> o <span class="op">=</span> <span class="fu">getAudioContext</span>()<span class="op">.</span><span class="fu">createOscillator</span>()<span class="op">;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  o<span class="op">.</span><span class="at">frequency</span><span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="fu">getFreq</span>(note)<span class="op">;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  o<span class="op">.</span><span class="fu">start</span>(time)<span class="op">;</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  o<span class="op">.</span><span class="fu">stop</span>(time <span class="op">+</span> <span class="bu">event</span><span class="op">.</span><span class="at">duration</span>)<span class="op">;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  o<span class="op">.</span><span class="fu">connect</span>(<span class="fu">getAudioContext</span>()<span class="op">.</span><span class="at">destination</span>)<span class="op">;</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The above example will create an <code>OscillatorNode</code> for each
+event, where the frequency is controlled by the <code>note</code> param.
+In essence, this is how the WebAudio API output of Strudel works, only
+with many more params like <code>cutoff</code>, <code>resonance</code>,
+<code>attack</code>, <code>decay</code>, <code>sustain</code>,
+<code>release</code> and <a
+href="https://github.com/tidalcycles/strudel/blob/main/packages/core/controls.mjs">many
+more</a>.</p>
+<h1 data-number="8" id="pattern-alignment-and-combination"><span
+class="header-section-number">8</span> Pattern alignment and
+combination</h1>
+<p>One core aspect of Strudel, inherited from Tidal, is the flexible way
+that patterns can be combined, irrespective of their structure. Its
+declarative approach means a live coder does not have to think about the
+details of how this is done, only what is to be done.</p>
+<p>As a simple example, consider two number patterns
+<code>"0 [1 2] 3"</code>, and <code>"10 20"</code>. The first has three
+contiguous steps of equal lengths, with the second step broken down into
+two substeps, giving four events in total. There are a very large number
+of ways in which the structure of these two patterns could be combined,
+but the default method in both Strudel and Tidal is to line up the
+cycles of the two patterns, and then take events from the first pattern
+and match them with those in the second pattern. Therefore, the
+following two lines are equivalent:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode js"><code class="sourceCode javascript"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;0 [1 2] 3&quot;</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&quot;10 20&quot;</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;10 [11 22] 23&quot;</span></span></code></pre></div>
+<p>Where the events only partially overlap, they are treated as
+fragments of the event in the first pattern. This is a little difficult
+to conceptualise, but lets start by comparing the following two
+patterns:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode js"><code class="sourceCode javascript"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;0 1 2&quot;</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&quot;10 20&quot;</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;10 [11 21] 20&quot;</span></span></code></pre></div>
+<p>They are similar in that the number <code>1</code> is split in two,
+with its two halves added to <code>10</code> and <code>20</code>
+respectively. However, the <code>11</code> remembers that it is a
+fragment of that original <code>1</code> event, and so is treated as
+having a duration of a third of a cycle, despite only being active for a
+sixth of a cycle. Likewise, the <code>21</code> is also a fragment of
+that original <code>1</code> event, but a fragment of its second half.
+Because the start of its event is missing, it wouldn’t actually trigger
+a sound (unless it underwent further pattern
+transformations/combinations).</p>
+<p>In practice, the effect of this default, implicit method for
+combining two patterns is that the second pattern is added <em>in</em>
+to the first one, and indeed this can be made explicit:</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode js"><code class="sourceCode javascript"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;0 1 2&quot;</span><span class="op">.</span><span class="at">add</span><span class="op">.</span><span class="fu">in</span>(<span class="st">&quot;10 20&quot;</span>)</span></code></pre></div>
+<p>This makes way for other ways to align the pattern, and several are
+alraedy defined, in particular:</p>
 <ul>
-<li><code>in</code> - as explained above, aligns cycles, and applies values from the pattern on the right <em>in</em> to the pattern on the left.</li>
-<li><code>out</code> - as with <code>in</code>, but values are applied <em>out</em> of the pattern on the left (i.e. in to the one on the right).</li>
-<li><code>mix</code> - structures from both patterns are combined, so that the new events are not fragments but are created at intersections of events from both sides.</li>
-<li><code>squeeze</code> - cycles from the pattern on the right are squeezed into events on the right. So that e.g. <code>"0 1 2".add.squeeze("10 20")</code> is equivalent to <code>"[10 20] [11 21] [12 22]"</code>.</li>
-<li><code>squeezeout</code> - as with <code>squeeze</code>, but cycles from the left are squeezed into events on the right. So, <code>"0 1 2".add.squeezeout("10 20")</code> is equivalent to <code>[10 11 12] [20 21 22]</code>.</li>
-<li><code>trig</code> is similar to <code>squeezeout</code> in that cycles from the right are aligned with events on the left. However those cycles are not ‘squeezed’, rather they are truncated to fit the event. So <code>"0 1 2 3 4 5 6 7".add.trig("10 [20 30]")</code> would be equivalent to <code>10 11 12 13 20 21 30 31</code>.</li>
-<li><code>trigzero</code> is similar to <code>trig</code>, but the cycle is taken from the start of the pattern, rather than from the current cycle. They would give different results where the rightmost pattern differs from one cycle to the next.</li>
+<li><code>in</code> - as explained above, aligns cycles, and applies
+values from the pattern on the right <em>in</em> to the pattern on the
+left.</li>
+<li><code>out</code> - as with <code>in</code>, but values are applied
+<em>out</em> of the pattern on the left (i.e. in to the one on the
+right).</li>
+<li><code>mix</code> - structures from both patterns are combined, so
+that the new events are not fragments but are created at intersections
+of events from both sides.</li>
+<li><code>squeeze</code> - cycles from the pattern on the right are
+squeezed into events on the right. So that
+e.g. <code>"0 1 2".add.squeeze("10 20")</code> is equivalent to
+<code>"[10 20] [11 21] [12 22]"</code>.</li>
+<li><code>squeezeout</code> - as with <code>squeeze</code>, but cycles
+from the left are squeezed into events on the right. So,
+<code>"0 1 2".add.squeezeout("10 20")</code> is equivalent to
+<code>[10 11 12] [20 21 22]</code>.</li>
+<li><code>trig</code> is similar to <code>squeezeout</code> in that
+cycles from the right are aligned with events on the left. However those
+cycles are not ‘squeezed’, rather they are truncated to fit the event.
+So <code>"0 1 2 3 4 5 6 7".add.trig("10 [20 30]")</code> would be
+equivalent to <code>10 11 12 13 20 21 30 31</code>.</li>
+<li><code>trigzero</code> is similar to <code>trig</code>, but the cycle
+is taken from the start of the pattern, rather than from the current
+cycle. They would give different results where the rightmost pattern
+differs from one cycle to the next.</li>
 </ul>
-<p>We will save going deeper into the background, design and practicalities of these alignment functions for future publications. For now, they offer a good case study about the different design affordances offered by Haskell to Tidal, and JavaScript to Strudel.</p>
-<h1 data-number="9" id="comparing-strudel-and-haskell-in-use"><span class="header-section-number">9</span> Comparing Strudel and Haskell in use</h1>
-<p>Unlike Haskell, JavaScript lacks the ability to define custom infix operators, or change the meaning of existing ones. So the above Strudel example of <code>"0 1 2".add.out("10 20")</code> is equivalent to the Tidal expression <code>"0 1 2" +| "10 20"</code>, where the vertical bar in the operator <code>+|</code> stands for <code>out</code> (where <code>a |+ b</code> would be equivalent of <code>a.add.in(b)</code>).</p>
-<p>From this we can already see that Tidal tends towards brevity through mixing infix operators with functions, and Strudel tends towards spelling out operations which are joined together with the <code>.</code> operator. This then is the design trade-off of Tidal’s tersity, versus Strudel’s simplicity.</p>
-<p>To demonstrate this, consider the following equivalent Strudel and Tidal patterns:</p>
+<p>We will save going deeper into the background, design and
+practicalities of these alignment functions for future publications. For
+now, they offer a good case study about the different design affordances
+offered by Haskell to Tidal, and JavaScript to Strudel.</p>
+<h1 data-number="9" id="comparing-strudel-and-haskell-in-use"><span
+class="header-section-number">9</span> Comparing Strudel and Haskell in
+use</h1>
+<p>Unlike Haskell, JavaScript lacks the ability to define custom infix
+operators, or change the meaning of existing ones. So the above Strudel
+example of <code>"0 1 2".add.out("10 20")</code> is equivalent to the
+Tidal expression <code>"0 1 2" +| "10 20"</code>, where the vertical bar
+in the operator <code>+|</code> stands for <code>out</code> (where
+<code>a |+ b</code> would be equivalent of
+<code>a.add.in(b)</code>).</p>
+<p>From this we can already see that Tidal tends towards brevity through
+mixing infix operators with functions, and Strudel tends towards
+spelling out operations which are joined together with the
+<code>.</code> operator. This then is the design trade-off of Tidal’s
+tersity, versus Strudel’s simplicity.</p>
+<p>To demonstrate this, consider the following equivalent Strudel and
+Tidal patterns:</p>
 <pre><code>note(&quot;0 5 7&quot;.every(3, add.squeeze(&quot;12 -12))).s(&quot;ocarina&quot;).crush(4).iter(4)
 
 iter 4 $ every 3 (||+ &quot;10 20&quot;) &quot;0 1 3&quot; # s &quot;ocarina&quot; # crush 4</code></pre>
-<p>The Strudel example uses the <code>.</code> method call operator for all operations and combinations, whereas the Tidal example has <code>#</code> for the default method for combining patterns and uses infix operators for other methods. The lack of parenthesis in the Tidal example is partly due to the way that arguments are applied to Haskell’s functions, and partly due to the use of the <code>$</code> operator as an alternative way to establish precedence and control the order of evaluation.</p>
-<p>Considering the above, we argue that the Haskell syntax is cleaner, but that the Strudel syntax is easier to learn. Our informal observation is that while the dollar <code>$</code> operator is very useful in making code easier to work with, it is one of the most difficult aspects of Tidal use for beginners to learn. On the other hand, the deeper levels of parenthesis in Strudel code can be difficult to keep track of, especially while coding under pressure of live musical performance. However this difficulty can be partly mitigated through supporting editor features.</p>
-<p>With Strudel, we have little choice but to embrace the affordances and constraints offered by JavaScript, and while designing a domain-specific language entirely based on method calls is a challenge, through creative adoption of functional programming techniques like partial application, we are so far very happy with the results. Tidal’s functional reactive approach to pattern-making has in general translated well to JavaScript, and opportunities and contraints have overall traded off well to create a very approachable and useable live coding environment.</p>
-<h1 data-number="10" id="the-trade-off-of-flexible-typing"><span class="header-section-number">10</span> The trade-off of flexible typing</h1>
-<p>We have identified one problem with porting Tidal to JavaScript however, where we have missed Haskell’s strict typing and type inference. In both Tidal and Strudel, time is rational, where any point in time is represented as the ratio of two integers. This allows representation of musical ratios such that are impossible to represent accurately using the more common floating point numbers. However while libraries are available that support rational numbers in JavaScript, the lack of strict typing means that it is easy to create a pattern where computationally expensive conversion from floating point to rational numbers are performed late and therefore often enough to overload the CPUs, due to the large number of iterative calculations required to estimate a ratio for a given floating point number.</p>
-<h1 data-number="11" id="future-outlook"><span class="header-section-number">11</span> Future Outlook</h1>
-<p>The project is still young, with many features on the horizon. As general guiding principles, Strudel aims to be</p>
+<p>The Strudel example uses the <code>.</code> method call operator for
+all operations and combinations, whereas the Tidal example has
+<code>#</code> for the default method for combining patterns and uses
+infix operators for other methods. The lack of parenthesis in the Tidal
+example is partly due to the way that arguments are applied to Haskell’s
+functions, and partly due to the use of the <code>$</code> operator as
+an alternative way to establish precedence and control the order of
+evaluation.</p>
+<p>Considering the above, we argue that the Haskell syntax is cleaner,
+but that the Strudel syntax is easier to learn. Our informal observation
+is that while the dollar <code>$</code> operator is very useful in
+making code easier to work with, it is one of the most difficult aspects
+of Tidal use for beginners to learn. On the other hand, the deeper
+levels of parenthesis in Strudel code can be difficult to keep track of,
+especially while coding under pressure of live musical performance.
+However this difficulty can be partly mitigated through supporting
+editor features.</p>
+<p>With Strudel, we have little choice but to embrace the affordances
+and constraints offered by JavaScript, and while designing a
+domain-specific language entirely based on method calls is a challenge,
+through creative adoption of functional programming techniques like
+partial application, we are so far very happy with the results. Tidal’s
+functional reactive approach to pattern-making has in general translated
+well to JavaScript, and opportunities and contraints have overall traded
+off well to create a very approachable and useable live coding
+environment.</p>
+<h1 data-number="10" id="the-trade-off-of-flexible-typing"><span
+class="header-section-number">10</span> The trade-off of flexible
+typing</h1>
+<p>We have identified one problem with porting Tidal to JavaScript
+however, where we have missed Haskell’s strict typing and type
+inference. In both Tidal and Strudel, time is rational, where any point
+in time is represented as the ratio of two integers. This allows
+representation of musical ratios such that are impossible to represent
+accurately using the more common floating point numbers. However while
+libraries are available that support rational numbers in JavaScript, the
+lack of strict typing means that it is easy to create a pattern where
+computationally expensive conversion from floating point to rational
+numbers are performed late and therefore often enough to overload the
+CPUs, due to the large number of iterative calculations required to
+estimate a ratio for a given floating point number.</p>
+<h1 data-number="11" id="future-outlook"><span
+class="header-section-number">11</span> Future Outlook</h1>
+<p>The project is still young, with many features on the horizon. As
+general guiding principles, Strudel aims to be</p>
 <ol type="1">
 <li>accessible</li>
 <li>consistent with Tidal’s approach to pattern</li>
 <li>modular and extensible</li>
 </ol>
-<p>For the future, it is planned to integrate alternative sound engines such as Glicol <span class="citation" data-cites="lanChaosprintGlicol2022">[@lanChaosprintGlicol2022]</span> and Faust <span class="citation" data-cites="FaustProgrammingLanguage2022">[@FaustProgrammingLanguage2022]</span>. To improve compatibility with Tidal, more Tidal functions are planned to be ported, as well as full compatibility with SuperDirt. Besides sound, other ways to render events are being explored, such as graphical, and choreographic output. We are also looking into alternative ways of editing patterns, including multi-user editing for network music, parsing a novel syntax to escape the constraints of javascript, and developing hardware/e-textile interfaces.</p>
-<h1 data-number="12" id="links"><span class="header-section-number">12</span> Links</h1>
-<p>The Strudel REPL is available at <a href="https://strudel.tidalcycles.org" class="uri">https://strudel.tidalcycles.org</a>, including an interactive tutorial. The repository is at <a href="https://github.com/tidalcycles/strudel" class="uri">https://github.com/tidalcycles/strudel</a>, all the code is open source under the GPL-3.0 License.</p>
-<h1 data-number="13" id="acknowledgments"><span class="header-section-number">13</span> Acknowledgments</h1>
-<p>Thanks to the Strudel and wider Tidal, live coding, WebAudio and free/open source software communities for inspiration and support. Alex McLean’s work on this project is supported by a UKRI Future Leaders Fellowship [grant number MR/V025260/1].</p>
-<h1 data-number="14" id="references"><span class="header-section-number">14</span> References</h1>
+<p>For the future, it is planned to integrate alternative sound engines
+such as Glicol <span class="citation"
+data-cites="lanChaosprintGlicol2022">(Lan [2020] 2022)</span> and Faust
+<span class="citation"
+data-cites="FaustProgrammingLanguage2022">(<em>Faust - Programming
+Language for Audio Applications and Plugins</em> [2016] 2022)</span>. To
+improve compatibility with Tidal, more Tidal functions are planned to be
+ported, as well as full compatibility with SuperDirt. Besides sound,
+other ways to render events are being explored, such as graphical, and
+choreographic output. We are also looking into alternative ways of
+editing patterns, including multi-user editing for network music,
+parsing a novel syntax to escape the constraints of javascript, and
+developing hardware/e-textile interfaces.</p>
+<h1 data-number="12" id="links"><span
+class="header-section-number">12</span> Links</h1>
+<p>The Strudel REPL is available at <a
+href="https://strudel.tidalcycles.org"
+class="uri">https://strudel.tidalcycles.org</a>, including an
+interactive tutorial. The repository is at <a
+href="https://github.com/tidalcycles/strudel"
+class="uri">https://github.com/tidalcycles/strudel</a>, all the code is
+open source under the GPL-3.0 License.</p>
+<h1 data-number="13" id="acknowledgments"><span
+class="header-section-number">13</span> Acknowledgments</h1>
+<p>Thanks to the Strudel and wider Tidal, live coding, WebAudio and
+free/open source software communities for inspiration and support. Alex
+McLean’s work on this project is supported by a UKRI Future Leaders
+Fellowship [grant number MR/V025260/1].</p>
+<h1 class="unnumbered" id="references">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent"
+role="doc-bibliography">
+<div id="ref-FaustProgrammingLanguage2022" class="csl-entry"
+role="doc-biblioentry">
+<em>Faust - Programming Language for Audio Applications and
+Plugins</em>. (2016) 2022. C++. GRAME. <a
+href="https://github.com/grame-cncm/faust">https://github.com/grame-cncm/faust</a>.
+</div>
+<div id="ref-jackHydra2022" class="csl-entry" role="doc-biblioentry">
+Jack, Olivia. (2022) 2022. <em>Hydra</em>. <a
+href="https://github.com/ojack/hydra">https://github.com/ojack/hydra</a>.
+</div>
+<div id="ref-lanChaosprintGlicol2022" class="csl-entry"
+role="doc-biblioentry">
+Lan, Qichao. (2020) 2022. <em>Chaosprint/Glicol</em>. Rust. <a
+href="https://github.com/chaosprint/glicol">https://github.com/chaosprint/glicol</a>.
+</div>
+<div id="ref-mcleanAlgorithmicPattern2020a" class="csl-entry"
+role="doc-biblioentry">
+Mclean, Alex. 2020. <span>“Algorithmic Pattern.”</span> In
+<em>Proceedings of the International Conference on New Interfaces for
+Musical Expression</em>, 265--270. Birmingham, UK. <a
+href="https://zenodo.org/record/4813352">https://zenodo.org/record/4813352</a>.
+</div>
+<div id="ref-mcleanFeedforward2020" class="csl-entry"
+role="doc-biblioentry">
+McLean, Alex. 2020. <span>“Feedforward.”</span> In <em>Proceedings of
+New Interfaces for Musical Expression</em>. Birmingham. <a
+href="https://zenodo.org/record/6353969">https://zenodo.org/record/6353969</a>.
+</div>
+<div id="ref-mcleanTidalVortexZero2022" class="csl-entry"
+role="doc-biblioentry">
+McLean, Alex, Raphaël Forment, Sylvain Le Beux, and Damián Silvani.
+2022. <span>“TidalVortex Zero.”</span> In <em>Proceedings of the 7th
+International Conference on Live Coding</em>. Limerick, Ireland: Zenodo.
+<a
+href="https://doi.org/10.5281/zenodo.6456380">https://doi.org/10.5281/zenodo.6456380</a>.
+</div>
+<div id="ref-ogbornDktr0WebDirt2022" class="csl-entry"
+role="doc-biblioentry">
+Ogborn, David. (2016) 2022. <em>Dktr0/WebDirt</em>. JavaScript. <a
+href="https://github.com/dktr0/WebDirt">https://github.com/dktr0/WebDirt</a>.
+</div>
+<div id="ref-ogbornEstuaryBrowserbasedCollaborative2017"
+class="csl-entry" role="doc-biblioentry">
+Ogborn, David, Jamie Beverley, Luis Navarro del Angel, Eldad Tsabary,
+and Alex McLean. 2017. <span>“Estuary: Browser-Based Collaborative
+Projectional Live Coding of Musical Patterns.”</span> In <em>Proceedings
+of the International Conference on Live Coding</em>, 11. Morelia.
+</div>
+<div id="ref-robertsGibberLiveCoding2012" class="csl-entry"
+role="doc-biblioentry">
+Roberts, Charles, and Joann Kuchera-morin. 2012. <span>“Gibber: Live
+Coding Audio in the Browser.”</span> In <em>In Proceedings of the 2012
+International Computer Music Conference</em>.
+</div>
+<div id="ref-solomonPurescriptocarina2022" class="csl-entry"
+role="doc-biblioentry">
+Solomon, Mike. (2021) 2022. <em>Purescript-Ocarina</em>. PureScript. <a
+href="https://github.com/mikesol/purescript-ocarina">https://github.com/mikesol/purescript-ocarina</a>.
+</div>
+<div id="ref-SuperDirt2022" class="csl-entry" role="doc-biblioentry">
+<em>SuperDirt</em>. (2015) 2022. SuperCollider. musikinformatik. <a
+href="https://github.com/musikinformatik/SuperDirt">https://github.com/musikinformatik/SuperDirt</a>.
+</div>
+<div id="ref-toussaintEuclideanAlgorithmGenerates2005" class="csl-entry"
+role="doc-biblioentry">
+Toussaint, Godfried. 2005. <span>“The Euclidean Algorithm Generates
+Traditional Musical Rhythms.”</span> In <em>In Proceedings of BRIDGES:
+Mathematical Connections in Art, Music and Science</em>, 47–56. <a
+href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.62.231">http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.62.231</a>.
+</div>
+</div>
 </body>
 </html>
