@@ -1690,9 +1690,6 @@ export const linger = curry((a, pat) => pat.linger(a));
 export const mask = curry((a, pat) => pat.mask(a));
 export const off = curry((t, f, pat) => pat.off(t, f));
 export const ply = curry((a, pat) => pat.ply(a));
-//export const range = curry((a, b, pat) => pat.range(a, b));
-//export const rangex = curry((a, b, pat) => pat.rangex(a, b));
-//export const range2 = curry((a, b, pat) => pat.range2(a, b));
 export const rev = (pat) => pat.rev();
 export const slow = curry((a, pat) => pat.slow(a));
 export const struct = curry((a, pat) => pat.struct(a));
@@ -1808,18 +1805,6 @@ Pattern.prototype.inside = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._inside)(...args, this);
 };
-//Pattern.prototype.range = function (...args) {
-//  args = args.map(reify);
-//  return patternify2(Pattern.prototype._range)(...args, this);
-//};
-//Pattern.prototype.rangex = function (...args) {
-//  args = args.map(reify);
-//  return patternify2(Pattern.prototype._rangex)(...args, this);
-//};
-//Pattern.prototype.range2 = function (...args) {
-//  args = args.map(reify);
-//  return patternify2(Pattern.prototype._range2)(...args, this);
-//};
 
 // call this after all Pattern.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = function () {
@@ -2020,8 +2005,6 @@ export const fromBipolar =
  */
 export const range =
   register('range', function(min, max, pat) {
-    console.log('range');
-    console.log(pat);
     return pat.mul(max - min).add(min);
   });
 
