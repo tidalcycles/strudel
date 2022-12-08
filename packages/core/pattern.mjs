@@ -664,105 +664,6 @@ export class Pattern {
     return stack(...funcs.map((func) => func(this)));
   }
 
-  _ply(factor) {
-    return this.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
-  }
-
-  _fastGap(factor) {
-    // Maybe it's better without this fallback..
-    // if (factor < 1) {
-    //     // there is no gap.. so maybe revert to _fast?
-    //     return this._fast(factor)
-    // }
-    // A bit fiddly, to drop zero-width queries at the start of the next cycle
-    const qf = function (span) {
-      const cycle = span.begin.sam();
-      const bpos = span.begin.sub(cycle).mul(factor).min(1);
-      const epos = span.end.sub(cycle).mul(factor).min(1);
-      if (bpos >= 1) {
-        return undefined;
-      }
-      return new TimeSpan(cycle.add(bpos), cycle.add(epos));
-    };
-    // Also fiddly, to maintain the right 'whole' relative to the part
-    const ef = function (hap) {
-      const begin = hap.part.begin;
-      const end = hap.part.end;
-      const cycle = begin.sam();
-      const beginPos = begin.sub(cycle).div(factor).min(1);
-      const endPos = end.sub(cycle).div(factor).min(1);
-      const newPart = new TimeSpan(cycle.add(beginPos), cycle.add(endPos));
-      const newWhole = !hap.whole
-        ? undefined
-        : new TimeSpan(
-            newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
-            newPart.end.add(hap.whole.end.sub(end).div(factor)),
-          );
-      return new Hap(newWhole, newPart, hap.value, hap.context);
-    };
-    return this.withQuerySpanMaybe(qf).withHap(ef).splitQueries();
-  }
-
-  // Compress each cycle into the given timespan, leaving a gap
-  _compress(b, e) {
-    if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
-      return silence;
-    }
-    return this._fastGap(Fraction(1).div(e.sub(b)))._late(b);
-  }
-
-  _compressSpan(span) {
-    return this._compress(span.begin, span.end);
-  }
-
-  // Similar to compress, but doesn't leave gaps, and the 'focus' can be
-  // bigger than a cycle
-  _focus(b, e) {
-    return this._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
-  }
-
-  _focusSpan(span) {
-    return this._focus(span.begin, span.end);
-  }
-
-  /**
-   * Speed up a pattern by the given factor. Used by "*" in mini notation.
-   *
-   * @name fast
-   * @memberof Pattern
-   * @param {number | Pattern} factor speed up factor
-   * @returns Pattern
-   * @example
-   * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
-   */
-  _fast(factor) {
-    factor = Fraction(factor);
-    const fastQuery = this.withQueryTime((t) => t.mul(factor));
-    return fastQuery.withHapTime((t) => t.div(factor));
-  }
-
-  /**
-   * Slow down a pattern over the given number of cycles. Like the "/" operator in mini notation.
-   *
-   * @name slow
-   * @memberof Pattern
-   * @param {number | Pattern} factor slow down factor
-   * @returns Pattern
-   * @example
-   * s("<bd sd> hh").slow(2) // s("[<bd sd> hh]/2")
-   */
-  _slow(factor) {
-    return this._fast(Fraction(1).div(factor));
-  }
-
-  _inside(factor, f) {
-    return f(this._slow(factor))._fast(factor);
-  }
-
-  _outside(factor, f) {
-    return f(this._fast(factor))._slow(factor);
-  }
-
   // cpm = cycles per minute
   _cpm(cpm) {
     return this._fast(cpm / 60);
@@ -1672,62 +1573,58 @@ export function pm(...args) {
   polymeter(...args);
 }
 
-export const chop = curry((a, pat) => pat.chop(a));
-export const chunk = curry((a, pat) => pat.chunk(a));
-export const chunkBack = curry((a, pat) => pat.chunkBack(a));
-export const early = curry((a, pat) => pat.early(a));
-export const echo = curry((a, b, c, pat) => pat.echo(a, b, c));
-// export const every = curry((i, f, pat) => pat.every(i, f));
-export const fast = curry((a, pat) => pat.fast(a));
-export const inv = (pat) => pat.inv();
-export const invert = (pat) => pat.invert();
-export const iter = curry((a, pat) => pat.iter(a));
-export const iterBack = curry((a, pat) => pat.iterBack(a));
-export const jux = curry((f, pat) => pat.jux(f));
-export const juxBy = curry((by, f, pat) => pat.juxBy(by, f));
-export const late = curry((a, pat) => pat.late(a));
-export const linger = curry((a, pat) => pat.linger(a));
-export const mask = curry((a, pat) => pat.mask(a));
-export const off = curry((t, f, pat) => pat.off(t, f));
-export const ply = curry((a, pat) => pat.ply(a));
-export const rev = (pat) => pat.rev();
-export const slow = curry((a, pat) => pat.slow(a));
-export const struct = curry((a, pat) => pat.struct(a));
-export const superimpose = curry((array, pat) => pat.superimpose(...array));
-export const when = curry((binary, f, pat) => pat.when(binary, f));
+export const chop = curry((a, b) => reify(b).chop(a));
+export const chunk = curry((a, b) => reify(b).chunk(a));
+export const chunkBack = curry((a, b) => reify(b).chunkBack(a));
+export const early = curry((a, b) => reify(b).early(a));
+export const echo = curry((a, b, c, d) => reify(d).echo(a, b, c));
+export const inv = (a) => reify(a).inv();
+export const invert = (a) => reify(a).invert();
+export const iter = curry((a, b) => reify(b).iter(a));
+export const iterBack = curry((a, b) => reify(b).iterBack(a));
+export const jux = curry((a, b) => reify(b).jux(a));
+export const juxBy = curry((a, b, c) => reify(b).juxBy(a, b));
+export const late = curry((a, b) => reify(b).late(a));
+export const linger = curry((a, b) => reify(b).linger(a));
+export const mask = curry((a, b) => reify(b).mask(a));
+export const off = curry((a, b, c) => reify(c).off(a, b));
+export const rev = (a) => reify(a).rev();
+export const struct = curry((a, b) => reify(b).struct(a));
+export const superimpose = curry((a, b) => reify(b).superimpose(...a));
+export const when = curry((a, b, c) => reify(c).when(a, b));
 
 // operators 
-export const set = curry((a, pat) => pat.set(a));
-export const keep = curry((a, pat) => pat.keep(a));
-export const keepif = curry((a, pat) => pat.keepif(a));
-export const add = curry((a, pat) => pat.add(a));
-export const sub = curry((a, pat) => pat.sub(a));
-export const mul = curry((a, pat) => pat.mul(a));
-export const div = curry((a, pat) => pat.div(a));
-export const mod = curry((a, pat) => pat.mod(a));
-export const pow = curry((a, pat) => pat.pow(a));
-export const _and = curry((a, pat) => pat._and(a));
-export const _or = curry((a, pat) => pat._or(a));
-export const _xor = curry((a, pat) => pat._xor(a));
-export const _lshift = curry((a, pat) => pat._lshift(a));
-export const _rshift = curry((a, pat) => pat._rshift(a));
-export const lt = curry((a, pat) => pat.lt(a));
-export const gt = curry((a, pat) => pat.gt(a));
-export const lte = curry((a, pat) => pat.lte(a));
-export const gte = curry((a, pat) => pat.gte(a));
-export const eq = curry((a, pat) => pat.eq(a));
-export const eqt = curry((a, pat) => pat.eqt(a));
-export const ne = curry((a, pat) => pat.ne(a));
-export const net = curry((a, pat) => pat.net(a));
-export const and = curry((a, pat) => pat.and(a));
-export const or = curry((a, pat) => pat.or(a));
-export const func = curry((a, pat) => pat.func(a));
+export const set = curry((a, b) => reify(b).set(a));
+export const keep = curry((a, b) => reify(b).keep(a));
+export const keepif = curry((a, b) => reify(b).keepif(a));
+export const add = curry((a, b) => reify(b).add(a));
+export const sub = curry((a, b) => reify(b).sub(a));
+export const mul = curry((a, b) => reify(b).mul(a));
+export const div = curry((a, b) => reify(b).div(a));
+export const mod = curry((a, b) => reify(b).mod(a));
+export const pow = curry((a, b) => reify(b).pow(a));
+export const _and = curry((a, b) => reify(b)._and(a));
+export const _or = curry((a, b) => reify(b)._or(a));
+export const _xor = curry((a, b) => reify(b)._xor(a));
+export const _lshift = curry((a, b) => reify(b)._lshift(a));
+export const _rshift = curry((a, b) => reify(b)._rshift(a));
+export const lt = curry((a, b) => reify(b).lt(a));
+export const gt = curry((a, b) => reify(b).gt(a));
+export const lte = curry((a, b) => reify(b).lte(a));
+export const gte = curry((a, b) => reify(b).gte(a));
+export const eq = curry((a, b) => reify(b).eq(a));
+export const eqt = curry((a, b) => reify(b).eqt(a));
+export const ne = curry((a, b) => reify(b).ne(a));
+export const net = curry((a, b) => reify(b).net(a));
+export const and = curry((a, b) => reify(b).and(a));
+export const or = curry((a, b) => reify(b).or(a));
+export const func = curry((a, b) => reify(b).func(a));
 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
 
 // these are the core composable functions. they are extended with Pattern.prototype.define below
-Pattern.prototype.composable = { fast, slow, early, late, superimpose };
+Pattern.prototype.composable = { early, late, superimpose };
 
 // adds Pattern.prototype.composable to given function as child functions
 // then you can do transpose(2).late(0.2) instead of x => x.transpose(2).late(0.2)
@@ -1793,18 +1690,7 @@ Pattern.prototype.zoom = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._zoom)(...args, this);
 };
-Pattern.prototype.compress = function (...args) {
-  args = args.map(reify);
-  return patternify2(Pattern.prototype._compress)(...args, this);
-};
-Pattern.prototype.outside = function (...args) {
-  args = args.map(reify);
-  return patternify2(Pattern.prototype._outside)(...args, this);
-};
-Pattern.prototype.inside = function (...args) {
-  args = args.map(reify);
-  return patternify2(Pattern.prototype._inside)(...args, this);
-};
+
 
 // call this after all Pattern.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = function () {
@@ -1895,44 +1781,83 @@ function register(name, func) {
     return result;
   }
   const arity = func.length;
-  if (arity == 1) {
-    // No patternifying needed
-    Pattern.prototype[name] = function (...args) {return func(...args, this)}
+  console.log("arity: " + arity);
+  var pfunc; // the patternified function
+  
+  // TODO this should really be done with a clever recursion or loop
+  // Free surprise gift to whoever manages to remove this redundancy
+  switch (arity) {
+  case 1:
+    // Nothing to patternify, just make sure pat is a pattern
+    pfunc = function(pat) {
+      return func(reify(pat))
+    };
+    break;
+  case 2:
+    pfunc = function(pata, pat) {
+      pat = reify(pat);
+      pata = reify(pata);
+      return pata.fmap((a) => func(a, pat)).innerJoin();
+    };
+    break;
+  case 3:
+    pfunc = function(pata, patb, pat) {
+      pat = reify(pat);
+      pata = reify(pata);
+      patb = reify(patb);
+      return pata
+        .fmap((a) => (b) => func(a, b, pat))
+        .appLeft(patb)
+        .innerJoin();
+    };
+    break;
+  case 4:
+    pfunc = function(pata, patb, patc, pat) {
+      pat = reify(pat);
+      pata = reify(pata);
+      patb = reify(patb);
+      patc = reify(patc);
+      return pata
+        .fmap((a) => (b) => (c) => func(a, b, c, pat))
+        .appLeft(patb)
+        .appLeft(patc)
+        .innerJoin();
+    };
+    break;
+  case 5:
+    pfunc = function(pata, patb, patc, patd, pat) {
+      pat = reify(pat);
+      pata = reify(pata);
+      patb = reify(patb);
+      patc = reify(patc);
+      patd = reify(patd);
+      return pata
+        .fmap((a) => (b) => (c) => (d) => func(a, b, c, d, pat))
+        .appLeft(patb)
+        .appLeft(patc)
+        .appLeft(patd)
+        .innerJoin();
+    };
+    break;
+  default:
+    throw("Unhandled arity in patternification: " + arity)
   }
-  else {
-    // Add unpatternified method to class
-    // should we return a toplevel version of the unpatterned function as well?
-    const unpatternified = function (...args) {return func(...args, this)};
-    Pattern.prototype['_' + name] = unpatternified;
 
-    // TODO this should really be done with a clever recursion or loop
-    // but I can't be bothered at the moment
-    var pfunc;
-    switch (arity) {
-    case 2:
-      pfunc = patternify;
-      break;
-    case 3:
-      // off-by-one from arity because the last arg is already a pattern..
-      pfunc = patternify2;
-      break;
-    case 4:
-      pfunc = patternify3;
-      break;
-    case 5:
-      pfunc = patternify4;
-      break;
-    default:
-      throw("Unhandled arity in patternification: " + arity)
-    }
-    Pattern.prototype[name] = function (...args) {
-      args = args.map(reify);
-      return pfunc(unpatternified)(...args, this);
+  Pattern.prototype[name] = function (...args) {
+    args = args.map(reify);    
+    return pfunc(...args, this)
+  }
+  
+  if (arity > 1) {
+    // There are patternified args, so lets make an unpatternified
+    // version, prefixed by '_'
+    Pattern.prototype['_' + name] = function (...args) {
+      return func(...args, this)
     }
   }
-
-  // toplevel functions get curried - but should also get patternified
-  return curry(func);
+  
+  // toplevel functions get curried as well as patternified
+  return curry(pfunc);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2033,6 +1958,116 @@ export const range2 =
     return pat.fromBipolar()._range(min, max);
   });
 
+//////////////////////////////////////////////////////////////////////
+// Structural and temporal transformations
+
+
+// Compress each cycle into the given timespan, leaving a gap
+export const compress =
+  register('compress', function(b, e, pat) {
+    if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
+      return silence;
+    }
+    return pat._fastGap(Fraction(1).div(e.sub(b)))._late(b);
+  });
+
+export const {compressSpan, compressspan} =
+  register(['compressSpan', 'compressspan'], function(span, pat) {
+    return pat._compress(span.begin, span.end);
+  });
+
+export const {fastGap, fastgap} =
+  register(['fastGap', 'fastgap'], function(factor, pat) {
+    // A bit fiddly, to drop zero-width queries at the start of the next cycle
+    const qf = function (span) {
+      const cycle = span.begin.sam();
+      const bpos = span.begin.sub(cycle).mul(factor).min(1);
+      const epos = span.end.sub(cycle).mul(factor).min(1);
+      if (bpos >= 1) {
+        return undefined;
+      }
+      return new TimeSpan(cycle.add(bpos), cycle.add(epos));
+    };
+    // Also fiddly, to maintain the right 'whole' relative to the part
+    const ef = function (hap) {
+      const begin = hap.part.begin;
+      const end = hap.part.end;
+      const cycle = begin.sam();
+      const beginPos = begin.sub(cycle).div(factor).min(1);
+      const endPos = end.sub(cycle).div(factor).min(1);
+      const newPart = new TimeSpan(cycle.add(beginPos), cycle.add(endPos));
+      const newWhole = !hap.whole
+        ? undefined
+        : new TimeSpan(
+            newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
+            newPart.end.add(hap.whole.end.sub(end).div(factor)),
+          );
+      return new Hap(newWhole, newPart, hap.value, hap.context);
+    };
+    return pat.withQuerySpanMaybe(qf).withHap(ef).splitQueries();
+  });
+
+// Similar to compress, but doesn't leave gaps, and the 'focus' can be
+// bigger than a cycle
+
+export const focus = 
+  register('focus', function(b, e, pat) {
+    return pat._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
+  });
+
+export const {focusSpan, focusspan} =
+  register(['focusSpan', 'focusspan'], function(span, pat) {
+    return pat._focus(span.begin, span.end);
+  });
+
+export const ply = 
+  register('ply', function(factor, pat) {
+    return pat.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
+  });
+
+/**
+ * Speed up a pattern by the given factor. Used by "*" in mini notation.
+ *
+ * @name fast
+ * @memberof Pattern
+ * @param {number | Pattern} factor speed up factor
+ * @returns Pattern
+ * @example
+ * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
+ */
+export const {fast, density} =
+  register(['fast', 'density'], function(factor, pat) {
+    factor = Fraction(factor);
+    const fastQuery = pat.withQueryTime((t) => t.mul(factor));
+    return fastQuery.withHapTime((t) => t.div(factor));
+  });
+
+/**
+ * Slow down a pattern over the given number of cycles. Like the "/" operator in mini notation.
+ *
+ * @name slow
+ * @memberof Pattern
+ * @param {number | Pattern} factor slow down factor
+ * @returns Pattern
+ * @example
+ * s("<bd sd> hh").slow(2) // s("[<bd sd> hh]/2")
+ */
+export const {slow, sparsity} =
+  register(['slow', 'sparsity'], function(factor, pat) {
+    return pat._fast(Fraction(1).div(factor));
+  });
+
+// Should these really be in alphabetical order? a shame to split
+// fast/slow, inside/outside..
+export const inside =
+  register('inside', function (factor, f, pat) {
+    return f(pat._slow(factor))._fast(factor);
+  });
+
+export const outside =
+  register('outside', function (factor, f, pat) {
+    return f(pat._fast(factor))._slow(factor);
+  });
 
 /**
  * Applies the given function every n cycles, starting from the last cycle.
