@@ -100,7 +100,7 @@ system, using the JavaScript programming language.</p>
 2022 by Alex mcLean, with the core representation implemented over the
 following few days. Although this was his first attempt at a
 JavaScript-based application, by 27th January, Alex had managed to
-uploaded the initial version to the ‘npm’ javascript package database,
+upload the initial version to the ‘npm’ javascript package database,
 sharing with the wider community for comment. By 4th February, Felix
 Roos had discovered Strudel and contributed a ‘REPL’ user interface to
 it, and then contributed a scheduler the next day, so that Strudel could
@@ -124,15 +124,15 @@ algorithmic patterns <span class="citation"
 data-cites="mcleanAlgorithmicPattern2020a">(Mclean 2020)</span> up to
 modern audio/visual web technologies.</p>
 <p>The main interface for strudel is its REPL[^REPL stands for read,
-evaluate, print, loop. It is friendly jargon for a live coding editor
-from computing heritage.], a live code editor dedicated to manipulating
-Strudel patterns while they play, with built-in visual feedback, which
-highlights which elements in the patterned (mini-notation) sequences are
-influencing the event that is currently being played. While Strudel is
-written in JavaScript, as an end-user code interface the REPL is
-optimised for simplicity and readability by applying code
-transformations on the syntax tree level, allowing language operations
-that would otherwise be impossible.</p>
+evaluate, print/play, loop. It is friendly jargon for a live coding
+editor from computing heritage.], a live code editor dedicated to
+manipulating Strudel patterns while they play, with built-in visual
+feedback, which highlights which elements in the patterned
+(mini-notation) sequences are influencing the event that is currently
+being played. While Strudel is written in JavaScript, as an end-user
+code interface the REPL is optimised for simplicity and readability by
+applying code transformations on the syntax tree level, allowing
+language operations that would otherwise be impossible.</p>
 <p>Strudel supports several diferent options to directly output sound
 through the browser, including Tone.js, Web Audio nodes, and CSound. It
 also supports methods for triggering external software and hardware,
@@ -140,7 +140,7 @@ including via OSC (Open Sound Control) messages (e.g. for use with
 Tidal’s traditional SuperDirt synthesiser), Web Serial (so far used to
 work with dancing robot) and Web MIDI (for e.g. controlling synthesiser
 hardware or a digital audio workstation).</p>
-<p>Strudel split into multiple packages, allowing granular reuse in
+<p>Strudel is split into multiple packages, allowing granular reuse in
 other applications. This allows Strudel to be embedded in other
 web-based live coding environments such as Gibber and Hydra, opening up
 these systems to use with the mini-notation for sequences. Apart from
@@ -193,7 +193,7 @@ depends on the structure of the Pattern how the events are located in
 time. From now on, this process of generating events from a time span
 will be called <strong>querying</strong>. Example:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> pattern <span class="op">=</span> <span class="fu">sequence</span>(c3<span class="op">,</span> [e3<span class="op">,</span> g3])<span class="op">;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> events <span class="op">=</span> pattern<span class="op">.</span><span class="fu">query</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span>)<span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> events <span class="op">=</span> pattern<span class="op">.</span><span class="fu">queryArc</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span>)<span class="op">;</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(events<span class="op">.</span><span class="fu">map</span>(e <span class="kw">=&gt;</span> e<span class="op">.</span><span class="fu">show</span>()))</span></code></pre></div>
 <p>In this example, we create a pattern using the <code>sequence</code>
 function and <strong>query</strong> it for the time span from
