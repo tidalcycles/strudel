@@ -16,6 +16,7 @@ import {
   pure,
   stack,
   fastcat,
+  firstOf,
   slowcat,
   cat,
   sequence,
@@ -154,6 +155,12 @@ describe('Pattern', () => {
     });
   });
   describe('add()', () => {
+    it('works as toplevel function', () => {
+      expect(add(pure(4), pure(5)).query(st(0, 1))[0].value).toBe(9);
+    });
+    it('works as toplevel function, with bare values for arguments', () => {
+      expect(add(4, 5).query(st(0, 1))[0].value).toBe(9);
+    });
     it('can structure In()', () => {
       expect(pure(3).add(pure(4)).query(st(0, 1))[0].value).toBe(7);
       expect(pure(3).add.in(pure(4)).query(st(0, 1))[0].value).toBe(7);
@@ -582,6 +589,20 @@ describe('Pattern', () => {
       expect(
         pure('a')
           .firstOf(3, (x) => x._fast(2))
+          ._fast(3)
+          .firstCycle(),
+      ).toStrictEqual(sequence(sequence('a', 'a'), 'a', 'a').firstCycle());
+    });
+    it('Works as a toplevel function', () => {
+      expect(
+        firstOf(3, fast(2), pure('a'))
+          ._fast(3)
+          .firstCycle(),
+      ).toStrictEqual(sequence(sequence('a', 'a'), 'a', 'a').firstCycle());
+    });
+    it('Works as a toplevel function, with a patterned first argument', () => {
+      expect(
+        firstOf(pure(3), fast(2), pure('a'))
           ._fast(3)
           .firstCycle(),
       ).toStrictEqual(sequence(sequence('a', 'a'), 'a', 'a').firstCycle());

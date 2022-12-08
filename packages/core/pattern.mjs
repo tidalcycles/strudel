@@ -637,97 +637,6 @@ export class Pattern {
   // magically transformed to accept patterns for all their arguments.
 
   //////////////////////////////////////////////////////////////////////
-  // Numerical transformations
-
-  /**
-   * Assumes a numerical pattern. Returns a new pattern with all values rounded
-   * to the nearest integer.
-   * @name round
-   * @memberof Pattern
-   * @returns Pattern
-   * @example
-   * "0.5 1.5 2.5".round().scale('C major').note()
-   */
-  round() {
-    return this.asNumber().fmap((v) => Math.round(v));
-  }
-
-  /**
-   * Assumes a numerical pattern. Returns a new pattern with all values set to
-   * their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2`
-   * replaced with `-5`.
-   * @returns Pattern
-   */
-  floor() {
-    return this.asNumber().fmap((v) => Math.floor(v));
-  }
-
-  /**
-   * Assumes a numerical pattern. Returns a new pattern with all values set to
-   * their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2`
-   * replaced with `-4`.
-   * @returns Pattern
-   */
-  ceil() {
-    return this.asNumber().fmap((v) => Math.ceil(v));
-  }
-
-  /**
-   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
-   * 1. Returns a new pattern with values scaled to the bipolar range -1 .. 1
-   * @returns Pattern
-   */
-  toBipolar() {
-    return this.fmap((x) => x * 2 - 1);
-  }
-
-  /**
-   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
-   * 1. Returns a new pattern with values scaled to the unipolar range 0 .. 1
-   * @returns Pattern
-   */
-  fromBipolar() {
-    return this.fmap((x) => (x + 1) / 2);
-  }
-
-  /**
-   * Assumes a numerical pattern, containing unipolar values in the range 0 .. 1.
-   * Returns a new pattern with values scaled to the given min/max range.
-   * Most useful in combination with continuous patterns.
-   * @name range
-   * @memberof Pattern
-   * @returns Pattern
-   * @example
-   * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4))
-   */
-  _range(min, max) {
-    return this.mul(max - min).add(min);
-  }
-
-  /**
-   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
-   * 1. Returns a new pattern with values scaled to the given min/max range,
-   * following an exponential curve.
-   * @param {Number} min
-   * @param {Number} max
-   * @returns Pattern
-   */
-  _rangex(min, max) {
-    return this._range(Math.log(min), Math.log(max)).fmap(Math.exp);
-  }
-
-  /**
-   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
-   * 1. Returns a new pattern with values scaled to the given min/max range.
-   * @param {Number} min
-   * @param {Number} max
-   * @returns Pattern
-   */
-  _range2(min, max) {
-    return this.fromBipolar()._range(min, max);
-  }
-
-  //////////////////////////////////////////////////////////////////////
   // Structural and temporal transformations
 
   /**
@@ -1781,9 +1690,9 @@ export const linger = curry((a, pat) => pat.linger(a));
 export const mask = curry((a, pat) => pat.mask(a));
 export const off = curry((t, f, pat) => pat.off(t, f));
 export const ply = curry((a, pat) => pat.ply(a));
-export const range = curry((a, b, pat) => pat.range(a, b));
-export const rangex = curry((a, b, pat) => pat.rangex(a, b));
-export const range2 = curry((a, b, pat) => pat.range2(a, b));
+//export const range = curry((a, b, pat) => pat.range(a, b));
+//export const rangex = curry((a, b, pat) => pat.rangex(a, b));
+//export const range2 = curry((a, b, pat) => pat.range2(a, b));
 export const rev = (pat) => pat.rev();
 export const slow = curry((a, pat) => pat.slow(a));
 export const struct = curry((a, pat) => pat.struct(a));
@@ -1798,7 +1707,7 @@ export const add = curry((a, pat) => pat.add(a));
 export const sub = curry((a, pat) => pat.sub(a));
 export const mul = curry((a, pat) => pat.mul(a));
 export const div = curry((a, pat) => pat.div(a));
-//export const mod = curry((a, pat) => pat.mod(a));
+export const mod = curry((a, pat) => pat.mod(a));
 export const pow = curry((a, pat) => pat.pow(a));
 export const _and = curry((a, pat) => pat._and(a));
 export const _or = curry((a, pat) => pat._or(a));
@@ -1839,11 +1748,16 @@ export function makeComposable(func) {
   return func;
 }
 
-export const patternify2 = (f) => (pata, patb, pat) =>
+export const patternify = (f) => (pata, pat) =>
   pata
+    .fmap((a) => f.call(pat, a))
+    .innerJoin();
+export const patternify2 = (f) => function(pata, patb, pat)  {
+  return pata
     .fmap((a) => (b) => f.call(pat, a, b))
     .appLeft(patb)
     .innerJoin();
+}
 export const patternify3 = (f) => (pata, patb, patc, pat) =>
   pata
     .fmap((a) => (b) => (c) => f.call(pat, a, b, c))
@@ -1894,18 +1808,18 @@ Pattern.prototype.inside = function (...args) {
   args = args.map(reify);
   return patternify2(Pattern.prototype._inside)(...args, this);
 };
-Pattern.prototype.range = function (...args) {
-  args = args.map(reify);
-  return patternify2(Pattern.prototype._range)(...args, this);
-};
-Pattern.prototype.rangex = function (...args) {
-  args = args.map(reify);
-  return patternify2(Pattern.prototype._rangex)(...args, this);
-};
-Pattern.prototype.range2 = function (...args) {
-  args = args.map(reify);
-  return patternify2(Pattern.prototype._range2)(...args, this);
-};
+//Pattern.prototype.range = function (...args) {
+//  args = args.map(reify);
+//  return patternify2(Pattern.prototype._range)(...args, this);
+//};
+//Pattern.prototype.rangex = function (...args) {
+//  args = args.map(reify);
+//  return patternify2(Pattern.prototype._rangex)(...args, this);
+//};
+//Pattern.prototype.range2 = function (...args) {
+//  args = args.map(reify);
+//  return patternify2(Pattern.prototype._range2)(...args, this);
+//};
 
 // call this after all Pattern.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = function () {
@@ -1996,9 +1910,146 @@ function register(name, func) {
     return result;
   }
   const arity = func.length;
-  Pattern.prototype[name] = function (...args) {return func(...args, this)}
+  if (arity == 1) {
+    // No patternifying needed
+    Pattern.prototype[name] = function (...args) {return func(...args, this)}
+  }
+  else {
+    // Add unpatternified method to class
+    // should we return a toplevel version of the unpatterned function as well?
+    const unpatternified = function (...args) {return func(...args, this)};
+    Pattern.prototype['_' + name] = unpatternified;
+
+    // TODO this should really be done with a clever recursion or loop
+    // but I can't be bothered at the moment
+    var pfunc;
+    switch (arity) {
+    case 2:
+      pfunc = patternify;
+      break;
+    case 3:
+      // off-by-one from arity because the last arg is already a pattern..
+      pfunc = patternify2;
+      break;
+    case 4:
+      pfunc = patternify3;
+      break;
+    case 5:
+      pfunc = patternify4;
+      break;
+    default:
+      throw("Unhandled arity in patternification: " + arity)
+    }
+    Pattern.prototype[name] = function (...args) {
+      args = args.map(reify);
+      return pfunc(unpatternified)(...args, this);
+    }
+  }
+
+  // toplevel functions get curried - but should also get patternified
   return curry(func);
 }
+
+//////////////////////////////////////////////////////////////////////
+// Numerical transformations
+
+/**
+ * Assumes a numerical pattern. Returns a new pattern with all values rounded
+ * to the nearest integer.
+ * @name round
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * "0.5 1.5 2.5".round().scale('C major').note()
+ */
+export const round =
+  register('round', function(pat) {
+    return pat.asNumber().fmap((v) => Math.round(v));
+  });
+
+  /**
+   * Assumes a numerical pattern. Returns a new pattern with all values set to
+   * their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2`
+   * replaced with `-5`.
+   * @returns Pattern
+   */
+export const floor =
+  register('floor', function(pat) {
+    return pat.asNumber().fmap((v) => Math.floor(v));
+  });
+
+  /**
+   * Assumes a numerical pattern. Returns a new pattern with all values set to
+   * their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2`
+   * replaced with `-4`.
+   * @returns Pattern
+   */
+export const ceil =
+  register('ceil', function(pat) {
+    return pat.asNumber().fmap((v) => Math.ceil(v));
+  });
+  /**
+   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
+   * 1. Returns a new pattern with values scaled to the bipolar range -1 .. 1
+   * @returns Pattern
+   */
+export const toBipolar =
+  register('toBipolar', function(pat) {
+    return pat.fmap((x) => x * 2 - 1);
+  });
+
+/**
+ * Assumes a numerical pattern, containing bipolar values in the range -1 ..
+ * 1. Returns a new pattern with values scaled to the unipolar range 0 .. 1
+ * @returns Pattern
+ */
+export const fromBipolar =
+  register('fromBipolar', function(pat) {
+    return pat.fmap((x) => (x + 1) / 2);
+  });
+
+/**
+ * Assumes a numerical pattern, containing unipolar values in the range 0 .. 1.
+ * Returns a new pattern with values scaled to the given min/max range.
+ * Most useful in combination with continuous patterns.
+ * @name range
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4))
+ */
+export const range =
+  register('range', function(min, max, pat) {
+    console.log('range');
+    console.log(pat);
+    return pat.mul(max - min).add(min);
+  });
+
+/**
+ * Assumes a numerical pattern, containing unipolar values in the range 0 ..
+ * 1. Returns a new pattern with values scaled to the given min/max range,
+ * following an exponential curve.
+ * @param {Number} min
+ * @param {Number} max
+ * @returns Pattern
+ */
+export const rangex =
+  register('rangex', function(min, max, pat) {
+    return pat._range(Math.log(min), Math.log(max)).fmap(Math.exp);
+  });
+
+  /**
+   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
+   * 1. Returns a new pattern with values scaled to the given min/max range.
+   * @param {Number} min
+   * @param {Number} max
+   * @returns Pattern
+   */
+export const range2 =
+  register('range2', function(min, max, pat) {
+    return pat.fromBipolar()._range(min, max);
+  });
+
 
 /**
  * Applies the given function every n cycles, starting from the last cycle.
