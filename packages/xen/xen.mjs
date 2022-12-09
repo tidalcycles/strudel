@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern, mod } from '@strudel.cycles/core';
+import { Pattern, _mod } from '@strudel.cycles/core';
 
 export function edo(name) {
   if (!/^[1-9]+[0-9]*edo$/.test(name)) {
@@ -42,7 +42,7 @@ function getXenScale(scale, indices) {
 }
 
 function xenOffset(xenScale, offset, index = 0) {
-  const i = mod(index + offset, xenScale.length);
+  const i = _mod(index + offset, xenScale.length);
   const oct = Math.floor(offset / xenScale.length);
   return xenScale[i] * Math.pow(2, oct);
 }
