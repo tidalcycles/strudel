@@ -725,23 +725,6 @@ export class Pattern {
   //////////////////////////////////////////////////////////////////////
   // Context methods - ones that deal with metadata
 
-  _color(color) {
-    return this.withContext((context) => ({ ...context, color }));
-  }
-
-  /**
-   *
-   * Sets the velocity from 0 to 1. Is multiplied together with gain.
-   * @name velocity
-   * @example
-   * s("hh*8")
-   * .gain(".4!2 1 .4!2 1 .4 1")
-   * .velocity(".4 1")
-   */
-  _velocity(velocity) {
-    return this.withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
-  }
-
   onTrigger(onTrigger, dominant = true) {
     return this.withHap((hap) =>
       hap.setContext({
@@ -772,32 +755,6 @@ export class Pattern {
   drawLine() {
     console.log(drawLine(this));
     return this;
-  }
-
-  //////////////////////////////////////////////////////////////////////
-  // Misc.
-
-  hush() {
-    return silence;
-  }
-
-  // sets absolute duration of haps
-  // TODO - fix
-  _duration(value) {
-    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
-  }
-
-  /**
-   *
-   * Multiplies the hap duration with the given factor.
-   * @name legato
-   * @memberof Pattern
-   * @example
-   * note("c3 eb3 g3 c4").legato("<.25 .5 1 2>")
-   */
-  // TODO - fix
-  _legato(value) {
-    return this.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
   }
 }
 
@@ -915,11 +872,11 @@ function _composeOp(a, b, func) {
     div: [numeralArgs((a, b) => a / b)],
     mod: [numeralArgs(_mod)],
     pow: [numeralArgs(Math.pow)],
-    _and: [numeralArgs((a, b) => a & b)],
-    _or: [numeralArgs((a, b) => a | b)],
-    _xor: [numeralArgs((a, b) => a ^ b)],
-    _lshift: [numeralArgs((a, b) => a << b)],
-    _rshift: [numeralArgs((a, b) => a >> b)],
+    band: [numeralArgs((a, b) => a & b)],
+    bor: [numeralArgs((a, b) => a | b)],
+    bxor: [numeralArgs((a, b) => a ^ b)],
+    blshift: [numeralArgs((a, b) => a << b)],
+    brshift: [numeralArgs((a, b) => a >> b)],
 
     // TODO - force numerical comparison if both look like numbers?
     lt: [(a, b) => a < b],
@@ -941,6 +898,14 @@ function _composeOp(a, b, func) {
 
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
+
+    // make plain version, e.g. pat._add(value) adds that plain value
+    // to all the values in pat
+    Pattern.prototype['_' + what] = function(value) {
+      return this.fmap((x) => op(x,value));
+    };
+    
+    // make patternified monster version
     Object.defineProperty(Pattern.prototype, what, {
       // a getter that returns a function, so 'pat' can be
       // accessed by closures that are methods of that function..
@@ -1004,14 +969,6 @@ function _composeOp(a, b, func) {
   Pattern.prototype.restart    = function(...args) { return this.keepif.trigzero(...args) }
   Pattern.prototype.restartAll = function(...args) { return this.keep.trigzero(...args)   }
 })();
-
-// methods of Pattern that get callable factories
-Pattern.prototype.patternified = [
-  'color',
-  'duration',
-  'legato',
-  'velocity',
-];
 
 // aliases
 export const polyrhythm = stack;
@@ -1252,11 +1209,11 @@ export const mul = curry((a, b) => reify(b).mul(a));
 export const div = curry((a, b) => reify(b).div(a));
 export const mod = curry((a, b) => reify(b).mod(a));
 export const pow = curry((a, b) => reify(b).pow(a));
-export const _and = curry((a, b) => reify(b)._and(a));
-export const _or = curry((a, b) => reify(b)._or(a));
-export const _xor = curry((a, b) => reify(b)._xor(a));
-export const _lshift = curry((a, b) => reify(b)._lshift(a));
-export const _rshift = curry((a, b) => reify(b)._rshift(a));
+export const band = curry((a, b) => reify(b).band(a));
+export const bor = curry((a, b) => reify(b).bor(a));
+export const bxor = curry((a, b) => reify(b).bxor(a));
+export const blshift = curry((a, b) => reify(b).blshift(a));
+export const brshift = curry((a, b) => reify(b).brshift(a));
 export const lt = curry((a, b) => reify(b).lt(a));
 export const gt = curry((a, b) => reify(b).gt(a));
 export const lte = curry((a, b) => reify(b).lte(a));
@@ -1269,7 +1226,7 @@ export const and = curry((a, b) => reify(b).and(a));
 export const or = curry((a, b) => reify(b).or(a));
 export const func = curry((a, b) => reify(b).func(a));
 
-function register(name, func) {
+export function register(name, func) {
   if (Array.isArray(name)) {
     const result = {};
     for (const name_item of name) {
@@ -1278,7 +1235,6 @@ function register(name, func) {
     return result;
   }
   const arity = func.length;
-  console.log("arity: " + arity);
   var pfunc; // the patternified function
   
   // TODO this should really be done with a clever recursion or loop
@@ -1788,6 +1744,12 @@ export const rev =
     return new Pattern(query).splitQueries();
   });
 
+export const hush =
+  register('hush', function(pat) {
+    return silence;
+  });
+
+
 export const palindrome =
   register('palindrome', function(pat) {
     return pat.every(2, rev);
@@ -1936,6 +1898,49 @@ export const bypass =
              return on ? silence : this;
            });
 
+// sets absolute duration of haps
+// TODO - fix
+export const duration =
+  register('duration', function(value, pat) {
+    return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
+  });
+
+// TODO - make control?
+export const {color, colour} =
+  register(['color', 'colour'], function(color, pat) {
+    return pat.withContext((context) => ({ ...context, color }));
+  });
+
+/**
+ *
+ * Sets the velocity from 0 to 1. Is multiplied together with gain.
+ * @name velocity
+ * @example
+ * s("hh*8")
+ * .gain(".4!2 1 .4!2 1 .4 1")
+ * .velocity(".4 1")
+ */
+export const velocity =
+  register('velocity', function(velocity, pat) {
+    return pat.withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
+  });
+
+/**
+ *
+ * Multiplies the hap duration with the given factor.
+ * @name legato
+ * @memberof Pattern
+ * @example
+ * note("c3 eb3 g3 c4").legato("<.25 .5 1 2>")
+ */
+// TODO - fix
+export const legato =
+  register('legato', function(value, pat) {
+    console.log(value);
+    return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
+  });
+
+
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of
 // objects
@@ -2062,9 +2067,10 @@ export const patternify4 = (f) => (pata, patb, patc, patd, pat) =>
     .appLeft(patd)
     .innerJoin();
 
+Pattern.prototype.patternified = [];
+
 // call this after all Pattern.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = function () {
-  // makeComposable(Pattern.prototype);
   const bootstrapped = Object.fromEntries(
     Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
       if (Pattern.prototype[functionName]) {
@@ -2074,56 +2080,16 @@ Pattern.prototype.bootstrap = function () {
       return [functionName, curry(composable, makeComposable)];
     }),
   );
-  // note: this === Pattern.prototype
+
   this.patternified.forEach((prop) => {
     // the following will patternify all functions in Pattern.prototype.patternified
     Pattern.prototype[prop] = function (...args) {
       return this.patternify((x) => x.innerJoin(), Pattern.prototype['_' + prop])(...args);
     };
-
-    /*
-    const func = Pattern.prototype['_' + prop];
-    Pattern.prototype[prop] = function (...args) {
-      return this.patternify(x => x.innerJoin(), func);
-    };
-
-     Object.defineProperty(Pattern.prototype, prop, {
-      // a getter that returns a function, so 'pat' can be
-      // accessed by closures that are methods of that function..
-      get: function() {
-	const pat = this;
-	// wrap the default behaviour
-        const wrapper = pat.patternify(x => x.innerJoin(), func);
-
-	// add the variants
-        wrapper['in'] = pat.patternify(x => x.innerJoin(), func);
-        wrapper['out'] = pat.patternify(x => x.outerJoin(), func);
-        wrapper['trig'] = pat.patternify(x => x.trigJoin(), func);
-        wrapper['trigzero'] = pat.patternify(x => x.trigzeroJoin(), func);
-        wrapper['squeeze'] = pat.patternify(x => x.squeezeJoin(), func);
-	    
-	return wrapper;
-      }
-    });
-    */
-
-    // with the following, you can do, e.g. `stack(c3).fast.slowcat(1, 2, 4, 8)` instead of `stack(c3).fast(slowcat(1, 2, 4, 8))`
-    // TODO: find a way to implement below outside of constructor (code only worked there)
-    /* Object.assign(
-      Pattern.prototype[prop],
-      Object.fromEntries(
-        Object.entries(Pattern.prototype.factories).map(([type, func]) => [
-          type,
-          function(...args) {
-            console.log('this', this);
-            return this[prop](func(...args)) 
-          }
-        ])
-      )
-    ); */
   });
   return bootstrapped;
 };
+
 
 // this will add func as name to list of composable / patternified functions.
 // those lists will be used in bootstrap to curry and compose everything, to support various call patterns
@@ -2134,9 +2100,7 @@ Pattern.prototype.define = (name, func, options = {}) => {
   if (options.patternified) {
     Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
   }
+
   Pattern.prototype.bootstrap(); // automatically bootstrap after new definition
 };
 
-// Pattern.prototype.define('early', (a, pat) => pat.early(a), { patternified: true, composable: true });
-Pattern.prototype.define('hush', (pat) => pat.hush(), { patternified: false, composable: true });
-Pattern.prototype.define('bypass', (pat) => pat.bypass(1), { patternified: true, composable: true });
