@@ -7,6 +7,12 @@ This program is free software: you can redistribute it and/or modify it under th
 import { curry } from './util.mjs';
 
 export function unionWithObj(a, b, func) {
+  if (typeof b?.value === 'number') {
+    // https://github.com/tidalcycles/strudel/issues/262
+    const numKeys = Object.keys(a).filter((k) => typeof a[k] === 'number');
+    const numerals = Object.fromEntries(numKeys.map((k) => [k, b.value]));
+    b = Object.assign(b, numerals);
+  }
   const common = Object.keys(a).filter((k) => Object.keys(b).includes(k));
   return Object.assign({}, a, b, Object.fromEntries(common.map((k) => [k, func(a[k], b[k])])));
 }
