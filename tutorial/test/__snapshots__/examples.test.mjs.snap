@@ -1906,6 +1906,15 @@ exports[`runs examples > example "loopAt" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "loopAtCps" example index 0 1`] = `
+[
+  "0/1 -> 4/1: {\\"s\\":\\"rhodes\\",\\"speed\\":0.375,\\"unit\\":\\"c\\",\\"cps\\":1.5}",
+  "0/1 -> 4/1: {\\"s\\":\\"rhodes\\",\\"speed\\":0.375,\\"unit\\":\\"c\\",\\"cps\\":1.5}",
+  "0/1 -> 4/1: {\\"s\\":\\"rhodes\\",\\"speed\\":0.375,\\"unit\\":\\"c\\",\\"cps\\":1.5}",
+  "0/1 -> 4/1: {\\"s\\":\\"rhodes\\",\\"speed\\":0.375,\\"unit\\":\\"c\\",\\"cps\\":1.5}",
+]
+`;
+
 exports[`runs examples > example "lrate" example index 0 1`] = `
 [
   "0/1 -> 1/1: {\\"n\\":0,\\"s\\":\\"supersquare\\",\\"leslie\\":1,\\"lrate\\":1}",

@@ -582,7 +582,7 @@ export const chop = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.or
 samples({ p: 'https://cdn.freesound.org/previews/648/648433_11943129-lq.mp3' })
 
 s("p")
-  .loopAt(32,1)
+  .loopAt(32)
   .chop(128)
   .jux(rev)
   .shape(.4)
@@ -652,7 +652,7 @@ samples({bass:'https://cdn.freesound.org/previews/614/614637_2434927-hq.mp3',
 dino:{b4:'https://cdn.freesound.org/previews/316/316403_5123851-hq.mp3'}})
 
 stack(
-s('bass').loopAt(8,1).clip(1),
+s('bass').loopAt(8).clip(1),
 s("bd*2, ~ sd,hh*4"),
 note("Abm7".voicings(['c3','a4']).struct("x(3,8,1)".slow(2))),
 "0 1 2 3".scale('ab4 minor pentatonic')

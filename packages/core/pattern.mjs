@@ -723,54 +723,6 @@ export class Pattern {
   }
 
   //////////////////////////////////////////////////////////////////////
-  // Control-related methods, which manipulate patterns of objects
-
-  /**
-   * Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
-   * It turns a pattern of samples into a pattern of parts of samples.
-   * @name chop
-   * @memberof Pattern
-   * @returns Pattern
-   * @example
-   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
-   * s("rhodes")
-   *  .chop(4)
-   *  .rev() // reverse order of chops
-   *  .loopAt(4,1) // fit sample into 4 cycles
-   *
-   */
-  _chop(n) {
-    const slices = Array.from({ length: n }, (x, i) => i);
-    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
-    const func = function (o) {
-      return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
-    };
-    return this.squeezeBind(func);
-  }
-
-  _striate(n) {
-    const slices = Array.from({ length: n }, (x, i) => i);
-    const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
-    const slicePat = slowcat(...slice_objects);
-    return this.set(slicePat)._fast(n);
-  }
-
-  /**
-   * Makes the sample fit the given number of cycles by changing the speed.
-   * @name loopAt
-   * @memberof Pattern
-   * @returns Pattern
-   * @example
-   * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
-   * s("rhodes").loopAt(4,1)
-   */
-  _loopAt(factor, cps = 1) {
-    return this.speed((1 / factor) * cps)
-      .unit('c')
-      .slow(factor);
-  }
-
-  //////////////////////////////////////////////////////////////////////
   // Context methods - ones that deal with metadata
 
   _color(color) {
@@ -1055,11 +1007,9 @@ function _composeOp(a, b, func) {
 
 // methods of Pattern that get callable factories
 Pattern.prototype.patternified = [
-  'chop',
   'color',
   'duration',
   'legato',
-  'striate',
   'velocity',
 ];
 
@@ -1288,7 +1238,6 @@ export function pm(...args) {
   polymeter(...args);
 }
 
-export const chop = curry((a, b) => reify(b).chop(a));
 export const mask = curry((a, b) => reify(b).mask(a));
 export const struct = curry((a, b) => reify(b).struct(a));
 export const superimpose = curry((a, b) => reify(b).superimpose(...a));
@@ -1987,6 +1936,86 @@ export const bypass =
              return on ? silence : this;
            });
 
+//////////////////////////////////////////////////////////////////////
+// Control-related functions, i.e. ones that manipulate patterns of
+// objects
+
+/**
+ * Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
+ * It turns a pattern of samples into a pattern of parts of samples.
+ * @name chop
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+ * s("rhodes")
+ *  .chop(4)
+ *  .rev() // reverse order of chops
+ *  .loopAt(4) // fit sample into 4 cycles
+ *
+ */
+export const chop =
+      register('chop',
+               function(n, pat) {
+                 const slices = Array.from({ length: n }, (x, i) => i);
+                 const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+                 const func = function (o) {
+                   return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
+                 };
+                 return pat.squeezeBind(func);
+               });
+
+export const striate =
+      register('striate',
+               function(n, pat) {
+                 const slices = Array.from({ length: n }, (x, i) => i);
+                 const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+                 const slicePat = slowcat(...slice_objects);
+                 return pat.set(slicePat)._fast(n);
+               });
+
+/**
+ * Makes the sample fit the given number of cycles by changing the speed.
+ * @name loopAt
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+ * s("rhodes").loopAt(4)
+ */
+// TODO - global cps clock
+const _loopAt = function(factor, pat, cps = 1) {
+  return pat.speed((1 / factor) * cps)
+    .unit('c')
+    .slow(factor);
+}
+
+const {loopAt, loopat} =
+      register(['loopAt', 'loopat'],
+               function(factor, pat) {
+                 return _loopAt(factor, pat, 1);
+               });
+
+/**
+ * Makes the sample fit the given number of cycles and cps value, by
+ * changing the speed. Please note that at some point cps will be
+ * given by a global clock and this function will be
+ * deprecated/removed.
+ * @name loopAtCps
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+ * s("rhodes").loopAtCps(4,1.5).cps(1.5)
+ */
+// TODO - global cps clock
+const {loopAtCps, loopatcps} =
+      register(['loopAtCps', 'loopatcps'],
+               function(factor, cps, pat) {
+                 return _loopAt(factor, pat, cps);
+               });
+
+
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
 
@@ -2032,11 +2061,6 @@ export const patternify4 = (f) => (pata, patb, patc, patd, pat) =>
     .appLeft(patc)
     .appLeft(patd)
     .innerJoin();
-
-Pattern.prototype.loopAt = function (...args) {
-  args = args.map(reify);
-  return patternify2(Pattern.prototype._loopAt)(...args, this);
-};
 
 // call this after all Pattern.prototype.define calls have been executed! (right before evaluate)
 Pattern.prototype.bootstrap = function () {
