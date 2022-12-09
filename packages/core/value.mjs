@@ -12,6 +12,7 @@ export function unionWithObj(a, b, func) {
     const numKeys = Object.keys(a).filter((k) => typeof a[k] === 'number');
     const numerals = Object.fromEntries(numKeys.map((k) => [k, b.value]));
     b = Object.assign(b, numerals);
+    delete b.value;
   }
   const common = Object.keys(a).filter((k) => Object.keys(b).includes(k));
   return Object.assign({}, a, b, Object.fromEntries(common.map((k) => [k, func(a[k], b[k])])));
