@@ -413,7 +413,7 @@ describe('Pattern', () => {
       );
     });
     it('defaults to accepting sequences', () => {
-      expect(sequence('a', 'b', 'c').fast(sequence(1, 2)).sortHapsByPart().firstCycle()).toStrictEqual(
+      expect(sequence('a', 'b', 'c').fast(sequence(1.5, 2)).sortHapsByPart().firstCycle()).toStrictEqual(
         sequence('a', 'b', 'c').fast(1.5, 2).sortHapsByPart().firstCycle(),
       );
     });
