@@ -204,7 +204,7 @@ const generic_params = [
    * "c4 eb4 g4 bb4".legato("<0.125 .25 .5 .75 1 2 4>")
    *
    */
-  ['f', 'legato', 'controls the amount of overlap between two adjacent sounds'],
+  // ['f', 'legato', 'controls the amount of overlap between two adjacent sounds'],
   // ['f', 'clhatdecay', ''],
   /**
    * bit crusher effect.
@@ -562,7 +562,7 @@ const generic_params = [
   // TODO: detune? https://tidalcycles.org/docs/patternlib/tutorials/synthesizers/#supersquare
   ['f', 'semitone', ''],
   // TODO: dedup with synth param, see https://tidalcycles.org/docs/reference/synthesizers/#superpiano
-  ['f', 'velocity', ''],
+  // ['f', 'velocity', ''],
   ['f', 'voice', ''], // TODO: synth param
   /**
    * Sets the level of reverb.
