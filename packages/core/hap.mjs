@@ -79,9 +79,34 @@ export class Hap {
     );
   }
 
-  show() {
+  show(compact = false) {
+    const value = typeof this.value === 'object'
+          ? compact
+          ? JSON.stringify(this.value).slice(1, -1).replaceAll('"', '').replaceAll(',', ' ')
+          : JSON.stringify(this.value)
+          : this.value
+    var spans = '';
+    if (this.whole == undefined) {
+      spans = '~' + this.part.show;
+    }
+    else {
+      var is_whole = this.whole.begin.equals(this.part.begin) && this.whole.end.equals(this.part.end);
+      if (!this.whole.begin.equals(this.part.begin)) {
+        spans = this.whole.begin.show() + ' ⇜ ';
+      }
+      if (!is_whole) {
+        spans += '(';
+      }
+      spans += this.part.show();
+      if (!is_whole) {
+        spans += ')';
+      }
+      if (!this.whole.end.equals(this.part.end)) {
+        spans += ' ⇝ ' + this.whole.end.show()
+      }
+    }
     return (
-      '(' + (this.whole == undefined ? '~' : this.whole.show()) + ', ' + this.part.show() + ', ' + this.value + ')'
+      '[ ' + spans + ' | ' + value + ' ]'
     );
   }
 
