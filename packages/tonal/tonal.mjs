@@ -90,8 +90,6 @@ export const transpose = register('transpose', function (intervalOrSemitones, pa
 });
 
 // example: transpose(3).late(0.2) will be equivalent to compose(transpose(3), late(0.2))
-// TODO: add Pattern.define(name, function, options) that handles all the meta programming stuff
-// TODO: find out how to patternify this function when it's standalone
 // e.g. `stack(c3).superimpose(transpose(slowcat(7, 5)))` or
 // or even `stack(c3).superimpose(transpose.slowcat(7, 5))` or
 

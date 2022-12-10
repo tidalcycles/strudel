@@ -158,7 +158,6 @@ const loadSoundfont = () => {};
 evalScope(
   // Tone,
   strudel,
-  strudel.Pattern.prototype.bootstrap(),
   toneHelpersMocked,
   uiHelpersMocked,
   controls,
