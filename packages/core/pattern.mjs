@@ -1253,68 +1253,6 @@ export function register(name, func) {
   const arity = func.length;
   var pfunc; // the patternified function
 
-  // TODO this should really be done with a clever recursion or loop
-  // Free surprise gift to whoever manages to remove this redundancy
-
-  /*   switch (arity) {
-    case 1:
-      // Nothing to patternify, just make sure pat is a pattern
-      pfunc = function (pat) {
-        return func(reify(pat));
-      };
-      break;
-    case 2:
-      pfunc = function (pata, pat) {
-        pat = reify(pat);
-        pata = reify(pata);
-        return pata.fmap((a) => func(a, pat)).innerJoin();
-      };
-      break;
-    case 3:
-      pfunc = function (pata, patb, pat) {
-        pat = reify(pat);
-        pata = reify(pata);
-        patb = reify(patb);
-        return pata
-          .fmap((a) => (b) => func(a, b, pat))
-          .appLeft(patb)
-          .innerJoin();
-      };
-      break;
-    case 4:
-      pfunc = function (pata, patb, patc, pat) {
-        pat = reify(pat);
-        pata = reify(pata);
-        patb = reify(patb);
-        patc = reify(patc);
-        return pata
-          .fmap((a) => (b) => (c) => func(a, b, c, pat))
-          .appLeft(patb)
-          .appLeft(patc)
-          .innerJoin();
-      };
-      break;
-    case 5:
-      pfunc = function (pata, patb, patc, patd, pat) {
-        pat = reify(pat);
-        pata = reify(pata);
-        patb = reify(patb);
-        patc = reify(patc);
-        patd = reify(patd);
-        return pata
-          .fmap((a) => (b) => (c) => (d) => func(a, b, c, d, pat))
-          .appLeft(patb)
-          .appLeft(patc)
-          .appLeft(patd)
-          .innerJoin();
-      };
-      break;
-    default:
-      throw 'Unhandled arity in patternification: ' + arity;
-  } */
-
-  // wip:
-
   pfunc = function (...args) {
     args = args.map(reify);
     const pat = args[args.length - 1];
@@ -1322,34 +1260,20 @@ export function register(name, func) {
       return func(reify(pat));
     }
     const [left, ...right] = args.slice(0, -1);
-    if (left === undefined) {
-      console.log('left undefined in', name, args);
-    }
     if (arity === 1) {
       return func(reify(pat));
     }
-    const strap = (mapped) => {
-      right.forEach((p) => {
-        mapped = mapped.appLeft(p);
-      });
-      return mapped.innerJoin();
+    let mapFn = (...args) => {
+      // make sure to call func with the correct argument count
+      // args.length is expected to be <= arity-1
+      // so we set undefined args explicitly undefined
+      Array(arity - 1)
+        .fill()
+        .map((_, i) => args[i] ?? undefined);
+      return func(...args, pat);
     };
-    // TODO: automate below logic
-    switch (arity) {
-      case 1:
-        // Nothing to patternify, just make sure pat is a pattern
-        return func(reify(pat));
-      case 2:
-        return strap(left.fmap((a) => func(a, pat)));
-      case 3:
-        return strap(left.fmap((a) => (b) => func(a, b, pat)));
-      case 4:
-        return strap(left.fmap((a) => (b) => (c) => func(a, b, c, pat)));
-      case 5:
-        return strap(left.fmap((a) => (b) => (c) => (d) => func(a, b, c, d, pat)));
-      default:
-        throw 'Unhandled arity in patternification: ' + arity;
-    }
+    mapFn = curry(mapFn, null, arity - 1);
+    return right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
   };
 
   Pattern.prototype[name] = function (...args) {
