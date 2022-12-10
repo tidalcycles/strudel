@@ -1255,7 +1255,8 @@ export function register(name, func) {
 
   // TODO this should really be done with a clever recursion or loop
   // Free surprise gift to whoever manages to remove this redundancy
-  switch (arity) {
+
+  /*   switch (arity) {
     case 1:
       // Nothing to patternify, just make sure pat is a pattern
       pfunc = function (pat) {
@@ -1310,7 +1311,46 @@ export function register(name, func) {
       break;
     default:
       throw 'Unhandled arity in patternification: ' + arity;
-  }
+  } */
+
+  // wip:
+
+  pfunc = function (...args) {
+    args = args.map(reify);
+    const pat = args[args.length - 1];
+    if (arity === 1) {
+      return func(reify(pat));
+    }
+    const [left, ...right] = args.slice(0, -1);
+    if (left === undefined) {
+      console.log('left undefined in', name, args);
+    }
+    if (arity === 1) {
+      return func(reify(pat));
+    }
+    const strap = (mapped) => {
+      right.forEach((p) => {
+        mapped = mapped.appLeft(p);
+      });
+      return mapped.innerJoin();
+    };
+    // TODO: automate below logic
+    switch (arity) {
+      case 1:
+        // Nothing to patternify, just make sure pat is a pattern
+        return func(reify(pat));
+      case 2:
+        return strap(left.fmap((a) => func(a, pat)));
+      case 3:
+        return strap(left.fmap((a) => (b) => func(a, b, pat)));
+      case 4:
+        return strap(left.fmap((a) => (b) => (c) => func(a, b, c, pat)));
+      case 5:
+        return strap(left.fmap((a) => (b) => (c) => (d) => func(a, b, c, d, pat)));
+      default:
+        throw 'Unhandled arity in patternification: ' + arity;
+    }
+  };
 
   Pattern.prototype[name] = function (...args) {
     args = args.map(reify);
@@ -1333,7 +1373,8 @@ export function register(name, func) {
   }
 
   // toplevel functions get curried as well as patternified
-  return curry(pfunc);
+  // because pfunc uses spread args, we need to state the arity explicitly!
+  return curry(pfunc, null, arity);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1885,7 +1926,6 @@ export const velocity = register('velocity', function (velocity, pat) {
  */
 // TODO - fix
 export const legato = register('legato', function (value, pat) {
-  console.log(value);
   return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
 });
 
