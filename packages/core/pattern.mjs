@@ -636,7 +636,6 @@ export class Pattern {
   // i.e. versions are created without the underscore, that are
   // magically transformed to accept patterns for all their arguments.
 
-
   //////////////////////////////////////////////////////////////////////
   // Methods without corresponding toplevel functions
 
@@ -667,7 +666,7 @@ export class Pattern {
   superimpose(...funcs) {
     return this.stack(...funcs.map((func) => func(this)));
   }
-  
+
   //////////////////////////////////////////////////////////////////////
   // Multi-pattern functions
 
@@ -700,7 +699,7 @@ export class Pattern {
   seq(...pats) {
     return sequence(this, ...pats);
   }
-  
+
   /**
    * Appends the given pattern(s) to the next cycle. Synonym: .slowcat
    * @name cat
@@ -898,18 +897,17 @@ function _composeOp(a, b, func) {
 
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
-
     // make plain version, e.g. pat._add(value) adds that plain value
     // to all the values in pat
-    Pattern.prototype['_' + what] = function(value) {
-      return this.fmap((x) => op(x,value));
+    Pattern.prototype['_' + what] = function (value) {
+      return this.fmap((x) => op(x, value));
     };
-    
+
     // make patternified monster version
     Object.defineProperty(Pattern.prototype, what, {
       // a getter that returns a function, so 'pat' can be
       // accessed by closures that are methods of that function..
-      get: function() {
+      get: function () {
         const pat = this;
 
         // wrap the 'in' function as default behaviour
@@ -934,17 +932,19 @@ function _composeOp(a, b, func) {
               result = howpat['_op' + how](other, (a) => (b) => _composeOp(a, b, op));
             }
             return result;
-          }
+          };
         }
-        wrapper.squeezein = wrapper.squeeze
+        wrapper.squeezein = wrapper.squeeze;
 
         return wrapper;
-      }
+      },
     });
 
     // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
     for (const how of hows) {
-      Pattern.prototype[how.toLowerCase()] = function (...args) { return this.set[how.toLowerCase()](args) };
+      Pattern.prototype[how.toLowerCase()] = function (...args) {
+        return this.set[how.toLowerCase()](args);
+      };
     }
   }
 
@@ -960,14 +960,30 @@ function _composeOp(a, b, func) {
    *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
    *   .slow(4)
    */
-  Pattern.prototype.struct     = function(...args) { return this.keepif.out(...args)      }
-  Pattern.prototype.structAll  = function(...args) { return this.keep.out(...args)        }
-  Pattern.prototype.mask       = function(...args) { return this.keepif.in(...args)       }
-  Pattern.prototype.maskAll    = function(...args) { return this.keep.in(...args)         }
-  Pattern.prototype.reset      = function(...args) { return this.keepif.trig(...args)     }
-  Pattern.prototype.resetAll   = function(...args) { return this.keep.trig(...args)       }
-  Pattern.prototype.restart    = function(...args) { return this.keepif.trigzero(...args) }
-  Pattern.prototype.restartAll = function(...args) { return this.keep.trigzero(...args)   }
+  Pattern.prototype.struct = function (...args) {
+    return this.keepif.out(...args);
+  };
+  Pattern.prototype.structAll = function (...args) {
+    return this.keep.out(...args);
+  };
+  Pattern.prototype.mask = function (...args) {
+    return this.keepif.in(...args);
+  };
+  Pattern.prototype.maskAll = function (...args) {
+    return this.keep.in(...args);
+  };
+  Pattern.prototype.reset = function (...args) {
+    return this.keepif.trig(...args);
+  };
+  Pattern.prototype.resetAll = function (...args) {
+    return this.keep.trig(...args);
+  };
+  Pattern.prototype.restart = function (...args) {
+    return this.keepif.trigzero(...args);
+  };
+  Pattern.prototype.restartAll = function (...args) {
+    return this.keep.trigzero(...args);
+  };
 })();
 
 // aliases
@@ -1199,7 +1215,7 @@ export const mask = curry((a, b) => reify(b).mask(a));
 export const struct = curry((a, b) => reify(b).struct(a));
 export const superimpose = curry((a, b) => reify(b).superimpose(...a));
 
-// operators 
+// operators
 export const set = curry((a, b) => reify(b).set(a));
 export const keep = curry((a, b) => reify(b).keep(a));
 export const keepif = curry((a, b) => reify(b).keepif(a));
@@ -1236,64 +1252,64 @@ export function register(name, func) {
   }
   const arity = func.length;
   var pfunc; // the patternified function
-  
+
   // TODO this should really be done with a clever recursion or loop
   // Free surprise gift to whoever manages to remove this redundancy
   switch (arity) {
-  case 1:
-    // Nothing to patternify, just make sure pat is a pattern
-    pfunc = function(pat) {
-      return func(reify(pat))
-    };
-    break;
-  case 2:
-    pfunc = function(pata, pat) {
-      pat = reify(pat);
-      pata = reify(pata);
-      return pata.fmap((a) => func(a, pat)).innerJoin();
-    };
-    break;
-  case 3:
-    pfunc = function(pata, patb, pat) {
-      pat = reify(pat);
-      pata = reify(pata);
-      patb = reify(patb);
-      return pata
-        .fmap((a) => (b) => func(a, b, pat))
-        .appLeft(patb)
-        .innerJoin();
-    };
-    break;
-  case 4:
-    pfunc = function(pata, patb, patc, pat) {
-      pat = reify(pat);
-      pata = reify(pata);
-      patb = reify(patb);
-      patc = reify(patc);
-      return pata
-        .fmap((a) => (b) => (c) => func(a, b, c, pat))
-        .appLeft(patb)
-        .appLeft(patc)
-        .innerJoin();
-    };
-    break;
-  case 5:
-    pfunc = function(pata, patb, patc, patd, pat) {
-      pat = reify(pat);
-      pata = reify(pata);
-      patb = reify(patb);
-      patc = reify(patc);
-      patd = reify(patd);
-      return pata
-        .fmap((a) => (b) => (c) => (d) => func(a, b, c, d, pat))
-        .appLeft(patb)
-        .appLeft(patc)
-        .appLeft(patd)
-        .innerJoin();
-    };
-    break;
-  default:
-    throw("Unhandled arity in patternification: " + arity)
+    case 1:
+      // Nothing to patternify, just make sure pat is a pattern
+      pfunc = function (pat) {
+        return func(reify(pat));
+      };
+      break;
+    case 2:
+      pfunc = function (pata, pat) {
+        pat = reify(pat);
+        pata = reify(pata);
+        return pata.fmap((a) => func(a, pat)).innerJoin();
+      };
+      break;
+    case 3:
+      pfunc = function (pata, patb, pat) {
+        pat = reify(pat);
+        pata = reify(pata);
+        patb = reify(patb);
+        return pata
+          .fmap((a) => (b) => func(a, b, pat))
+          .appLeft(patb)
+          .innerJoin();
+      };
+      break;
+    case 4:
+      pfunc = function (pata, patb, patc, pat) {
+        pat = reify(pat);
+        pata = reify(pata);
+        patb = reify(patb);
+        patc = reify(patc);
+        return pata
+          .fmap((a) => (b) => (c) => func(a, b, c, pat))
+          .appLeft(patb)
+          .appLeft(patc)
+          .innerJoin();
+      };
+      break;
+    case 5:
+      pfunc = function (pata, patb, patc, patd, pat) {
+        pat = reify(pat);
+        pata = reify(pata);
+        patb = reify(patb);
+        patc = reify(patc);
+        patd = reify(patd);
+        return pata
+          .fmap((a) => (b) => (c) => (d) => func(a, b, c, d, pat))
+          .appLeft(patb)
+          .appLeft(patc)
+          .appLeft(patd)
+          .innerJoin();
+      };
+      break;
+    default:
+      throw 'Unhandled arity in patternification: ' + arity;
   }
 
   Pattern.prototype[name] = function (...args) {
@@ -1302,21 +1318,20 @@ export function register(name, func) {
     // multiple arguments but sequence them
     if (arity == 2 && args.length != 1) {
       args = [sequence(...args)];
+    } else if (arity != args.length + 1) {
+      throw new Error(`.${name}() expects ${arity - 1} inputs but got ${args.length}.`);
     }
-    else if (arity != (args.length + 1)) {
-      throw new Error(`.${name}() expects ${arity-1} inputs but got ${args.length}.`)
-    }
-    return pfunc(...args, this)
-  }
-  
+    return pfunc(...args, this);
+  };
+
   if (arity > 1) {
     // There are patternified args, so lets make an unpatternified
     // version, prefixed by '_'
     Pattern.prototype['_' + name] = function (...args) {
-      return func(...args, this)
-    }
+      return func(...args, this);
+    };
   }
-  
+
   // toplevel functions get curried as well as patternified
   return curry(pfunc);
 }
@@ -1333,51 +1348,46 @@ export function register(name, func) {
  * @example
  * "0.5 1.5 2.5".round().scale('C major').note()
  */
-export const round =
-  register('round', function(pat) {
-    return pat.asNumber().fmap((v) => Math.round(v));
-  });
+export const round = register('round', function (pat) {
+  return pat.asNumber().fmap((v) => Math.round(v));
+});
 
-  /**
-   * Assumes a numerical pattern. Returns a new pattern with all values set to
-   * their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2`
-   * replaced with `-5`.
-   * @returns Pattern
-   */
-export const floor =
-  register('floor', function(pat) {
-    return pat.asNumber().fmap((v) => Math.floor(v));
-  });
+/**
+ * Assumes a numerical pattern. Returns a new pattern with all values set to
+ * their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2`
+ * replaced with `-5`.
+ * @returns Pattern
+ */
+export const floor = register('floor', function (pat) {
+  return pat.asNumber().fmap((v) => Math.floor(v));
+});
 
-  /**
-   * Assumes a numerical pattern. Returns a new pattern with all values set to
-   * their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2`
-   * replaced with `-4`.
-   * @returns Pattern
-   */
-export const ceil =
-  register('ceil', function(pat) {
-    return pat.asNumber().fmap((v) => Math.ceil(v));
-  });
-  /**
-   * Assumes a numerical pattern, containing unipolar values in the range 0 ..
-   * 1. Returns a new pattern with values scaled to the bipolar range -1 .. 1
-   * @returns Pattern
-   */
-export const toBipolar =
-  register('toBipolar', function(pat) {
-    return pat.fmap((x) => x * 2 - 1);
-  });
+/**
+ * Assumes a numerical pattern. Returns a new pattern with all values set to
+ * their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2`
+ * replaced with `-4`.
+ * @returns Pattern
+ */
+export const ceil = register('ceil', function (pat) {
+  return pat.asNumber().fmap((v) => Math.ceil(v));
+});
+/**
+ * Assumes a numerical pattern, containing unipolar values in the range 0 ..
+ * 1. Returns a new pattern with values scaled to the bipolar range -1 .. 1
+ * @returns Pattern
+ */
+export const toBipolar = register('toBipolar', function (pat) {
+  return pat.fmap((x) => x * 2 - 1);
+});
 
 /**
  * Assumes a numerical pattern, containing bipolar values in the range -1 ..
  * 1. Returns a new pattern with values scaled to the unipolar range 0 .. 1
  * @returns Pattern
  */
-export const fromBipolar =
-  register('fromBipolar', function(pat) {
-    return pat.fmap((x) => (x + 1) / 2);
-  });
+export const fromBipolar = register('fromBipolar', function (pat) {
+  return pat.fmap((x) => (x + 1) / 2);
+});
 
 /**
  * Assumes a numerical pattern, containing unipolar values in the range 0 .. 1.
@@ -1389,10 +1399,9 @@ export const fromBipolar =
  * @example
  * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4))
  */
-export const range =
-  register('range', function(min, max, pat) {
-    return pat.mul(max - min).add(min);
-  });
+export const range = register('range', function (min, max, pat) {
+  return pat.mul(max - min).add(min);
+});
 
 /**
  * Assumes a numerical pattern, containing unipolar values in the range 0 ..
@@ -1402,88 +1411,80 @@ export const range =
  * @param {Number} max
  * @returns Pattern
  */
-export const rangex =
-  register('rangex', function(min, max, pat) {
-    return pat._range(Math.log(min), Math.log(max)).fmap(Math.exp);
-  });
+export const rangex = register('rangex', function (min, max, pat) {
+  return pat._range(Math.log(min), Math.log(max)).fmap(Math.exp);
+});
 
-  /**
-   * Assumes a numerical pattern, containing bipolar values in the range -1 ..
-   * 1. Returns a new pattern with values scaled to the given min/max range.
-   * @param {Number} min
-   * @param {Number} max
-   * @returns Pattern
-   */
-export const range2 =
-  register('range2', function(min, max, pat) {
-    return pat.fromBipolar()._range(min, max);
-  });
+/**
+ * Assumes a numerical pattern, containing bipolar values in the range -1 ..
+ * 1. Returns a new pattern with values scaled to the given min/max range.
+ * @param {Number} min
+ * @param {Number} max
+ * @returns Pattern
+ */
+export const range2 = register('range2', function (min, max, pat) {
+  return pat.fromBipolar()._range(min, max);
+});
 
 //////////////////////////////////////////////////////////////////////
 // Structural and temporal transformations
 
 // Compress each cycle into the given timespan, leaving a gap
-export const compress =
-  register('compress', function(b, e, pat) {
-    if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
-      return silence;
+export const compress = register('compress', function (b, e, pat) {
+  if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
+    return silence;
+  }
+  return pat._fastGap(Fraction(1).div(e.sub(b)))._late(b);
+});
+
+export const { compressSpan, compressspan } = register(['compressSpan', 'compressspan'], function (span, pat) {
+  return pat._compress(span.begin, span.end);
+});
+
+export const { fastGap, fastgap } = register(['fastGap', 'fastgap'], function (factor, pat) {
+  // A bit fiddly, to drop zero-width queries at the start of the next cycle
+  const qf = function (span) {
+    const cycle = span.begin.sam();
+    const bpos = span.begin.sub(cycle).mul(factor).min(1);
+    const epos = span.end.sub(cycle).mul(factor).min(1);
+    if (bpos >= 1) {
+      return undefined;
     }
-    return pat._fastGap(Fraction(1).div(e.sub(b)))._late(b);
-  });
-
-export const {compressSpan, compressspan} =
-  register(['compressSpan', 'compressspan'], function(span, pat) {
-    return pat._compress(span.begin, span.end);
-  });
-
-export const {fastGap, fastgap} =
-  register(['fastGap', 'fastgap'], function(factor, pat) {
-    // A bit fiddly, to drop zero-width queries at the start of the next cycle
-    const qf = function (span) {
-      const cycle = span.begin.sam();
-      const bpos = span.begin.sub(cycle).mul(factor).min(1);
-      const epos = span.end.sub(cycle).mul(factor).min(1);
-      if (bpos >= 1) {
-        return undefined;
-      }
-      return new TimeSpan(cycle.add(bpos), cycle.add(epos));
-    };
-    // Also fiddly, to maintain the right 'whole' relative to the part
-    const ef = function (hap) {
-      const begin = hap.part.begin;
-      const end = hap.part.end;
-      const cycle = begin.sam();
-      const beginPos = begin.sub(cycle).div(factor).min(1);
-      const endPos = end.sub(cycle).div(factor).min(1);
-      const newPart = new TimeSpan(cycle.add(beginPos), cycle.add(endPos));
-      const newWhole = !hap.whole
-        ? undefined
-        : new TimeSpan(
-            newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
-            newPart.end.add(hap.whole.end.sub(end).div(factor)),
-          );
-      return new Hap(newWhole, newPart, hap.value, hap.context);
-    };
-    return pat.withQuerySpanMaybe(qf).withHap(ef).splitQueries();
-  });
+    return new TimeSpan(cycle.add(bpos), cycle.add(epos));
+  };
+  // Also fiddly, to maintain the right 'whole' relative to the part
+  const ef = function (hap) {
+    const begin = hap.part.begin;
+    const end = hap.part.end;
+    const cycle = begin.sam();
+    const beginPos = begin.sub(cycle).div(factor).min(1);
+    const endPos = end.sub(cycle).div(factor).min(1);
+    const newPart = new TimeSpan(cycle.add(beginPos), cycle.add(endPos));
+    const newWhole = !hap.whole
+      ? undefined
+      : new TimeSpan(
+          newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
+          newPart.end.add(hap.whole.end.sub(end).div(factor)),
+        );
+    return new Hap(newWhole, newPart, hap.value, hap.context);
+  };
+  return pat.withQuerySpanMaybe(qf).withHap(ef).splitQueries();
+});
 
 // Similar to compress, but doesn't leave gaps, and the 'focus' can be
 // bigger than a cycle
 
-export const focus = 
-  register('focus', function(b, e, pat) {
-    return pat._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
-  });
+export const focus = register('focus', function (b, e, pat) {
+  return pat._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
+});
 
-export const {focusSpan, focusspan} =
-  register(['focusSpan', 'focusspan'], function(span, pat) {
-    return pat._focus(span.begin, span.end);
-  });
+export const { focusSpan, focusspan } = register(['focusSpan', 'focusspan'], function (span, pat) {
+  return pat._focus(span.begin, span.end);
+});
 
-export const ply = 
-  register('ply', function(factor, pat) {
-    return pat.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
-  });
+export const ply = register('ply', function (factor, pat) {
+  return pat.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
+});
 
 /**
  * Speed up a pattern by the given factor. Used by "*" in mini notation.
@@ -1495,12 +1496,11 @@ export const ply =
  * @example
  * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
  */
-export const {fast, density} =
-  register(['fast', 'density'], function(factor, pat) {
-    factor = Fraction(factor);
-    const fastQuery = pat.withQueryTime((t) => t.mul(factor));
-    return fastQuery.withHapTime((t) => t.div(factor));
-  });
+export const { fast, density } = register(['fast', 'density'], function (factor, pat) {
+  factor = Fraction(factor);
+  const fastQuery = pat.withQueryTime((t) => t.mul(factor));
+  return fastQuery.withHapTime((t) => t.div(factor));
+});
 
 /**
  * Slow down a pattern over the given number of cycles. Like the "/" operator in mini notation.
@@ -1512,22 +1512,19 @@ export const {fast, density} =
  * @example
  * s("<bd sd> hh").slow(2) // s("[<bd sd> hh]/2")
  */
-export const {slow, sparsity} =
-  register(['slow', 'sparsity'], function(factor, pat) {
-    return pat._fast(Fraction(1).div(factor));
-  });
+export const { slow, sparsity } = register(['slow', 'sparsity'], function (factor, pat) {
+  return pat._fast(Fraction(1).div(factor));
+});
 
 // Should these really be in alphabetical order? a shame to split
 // fast/slow, inside/outside..
-export const inside =
-  register('inside', function (factor, f, pat) {
-    return f(pat._slow(factor))._fast(factor);
-  });
+export const inside = register('inside', function (factor, f, pat) {
+  return f(pat._slow(factor))._fast(factor);
+});
 
-export const outside =
-  register('outside', function (factor, f, pat) {
-    return f(pat._fast(factor))._slow(factor);
-  });
+export const outside = register('outside', function (factor, f, pat) {
+  return f(pat._fast(factor))._slow(factor);
+});
 
 /**
  * Applies the given function every n cycles, starting from the last cycle.
@@ -1539,14 +1536,11 @@ export const outside =
  * @example
  * note("c3 d3 e3 g3").lastOf(4, x=>x.rev())
  */
-export const {lastOf} =
-  register('lastOf',
-           function(n, func, pat) {
-             const pats = Array(n - 1).fill(pat);
-             pats.push(func(pat));
-             return slowcatPrime(...pats);
-           }
-          );
+export const { lastOf } = register('lastOf', function (n, func, pat) {
+  const pats = Array(n - 1).fill(pat);
+  pats.push(func(pat));
+  return slowcatPrime(...pats);
+});
 
 /**
  * Applies the given function every n cycles, starting from the first cycle.
@@ -1569,14 +1563,11 @@ export const {lastOf} =
  * @example
  * note("c3 d3 e3 g3").every(4, x=>x.rev())
  */
-export const {firstOf, every} =
-  register(['firstOf', 'every'],
-           function(n, func, pat) {
-             const pats = Array(n - 1).fill(pat);
-             pats.unshift(func(pat));
-             return slowcatPrime(...pats);
-           }
-          );
+export const { firstOf, every } = register(['firstOf', 'every'], function (n, func, pat) {
+  const pats = Array(n - 1).fill(pat);
+  pats.unshift(func(pat));
+  return slowcatPrime(...pats);
+});
 
 /**
  * Like layer, but with a single function:
@@ -1585,19 +1576,15 @@ export const {firstOf, every} =
  * @example
  * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4")).note()
  */
-export const apply =
-  register('apply',
-           function(func, pat) {
-             return func(pat);
-           });
+export const apply = register('apply', function (func, pat) {
+  return func(pat);
+});
 
 // cpm = cycles per minute
 // TODO - global clock
-export const cpm =
-  register('cpm',
-           function(cpm, pat) {
-             return pat._fast(cpm / 60);
-           });
+export const cpm = register('cpm', function (cpm, pat) {
+  return pat._fast(cpm / 60);
+});
 
 /**
  * Nudge a pattern to start earlier in time. Equivalent of Tidal's <~ operator
@@ -1609,12 +1596,10 @@ export const cpm =
  * @example
  * "bd ~".stack("hh ~".early(.1)).s()
  */
-export const early =
-  register('early',
-           function(offset, pat) {
-             offset = Fraction(offset);
-             return pat.withQueryTime((t) => t.add(offset)).withHapTime((t) => t.sub(offset));
-           });
+export const early = register('early', function (offset, pat) {
+  offset = Fraction(offset);
+  return pat.withQueryTime((t) => t.add(offset)).withHapTime((t) => t.sub(offset));
+});
 
 /**
  * Nudge a pattern to start later in time. Equivalent of Tidal's ~> operator
@@ -1626,53 +1611,42 @@ export const early =
  * @example
  * "bd ~".stack("hh ~".late(.1)).s()
  */
-export const late =
-  register('late',
-           function(offset, pat) {
-             offset = Fraction(offset);
-             return pat._early(Fraction(0).sub(offset));
-           });
+export const late = register('late', function (offset, pat) {
+  offset = Fraction(offset);
+  return pat._early(Fraction(0).sub(offset));
+});
 
-export const zoom =
-  register('zoom',
-           function(s, e, pat) {
-             e = Fraction(e);
-             s = Fraction(s);
-             const d = e.sub(s);
-             return pat.withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
-               .withHapSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
-               .splitQueries();
-           });
+export const zoom = register('zoom', function (s, e, pat) {
+  e = Fraction(e);
+  s = Fraction(s);
+  const d = e.sub(s);
+  return pat
+    .withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
+    .withHapSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
+    .splitQueries();
+});
 
-export const {zoomArc, zoomarc} =
-  register(['zoomArc', 'zoomarc'],
-           function(a, pat) {
-             return pat.zoom(a.begin, a.end);
-           });
+export const { zoomArc, zoomarc } = register(['zoomArc', 'zoomarc'], function (a, pat) {
+  return pat.zoom(a.begin, a.end);
+});
 
-export const linger =
-  register('linger',
-           function(t, pat) {
-             if (t == 0) {
-               return silence;
-             } else if (t < 0) {
-               return pat._zoom(t.add(1), 1)._slow(t);
-             }
-             return pat._zoom(0, t)._slow(t);
-           });
+export const linger = register('linger', function (t, pat) {
+  if (t == 0) {
+    return silence;
+  } else if (t < 0) {
+    return pat._zoom(t.add(1), 1)._slow(t);
+  }
+  return pat._zoom(0, t)._slow(t);
+});
 
-export const segment =
-  register('segment',
-           function(rate, pat) {
-             return pat.struct(pure(true)._fast(rate));
-           }
-          );
+export const segment = register('segment', function (rate, pat) {
+  return pat.struct(pure(true)._fast(rate));
+});
 
-export const {invert, inv} =
-  register(['invert', 'inv'], function(pat) {
-    // Swap true/false in a binary pattern
-    return pat.fmap((x) => !x);
-  });
+export const { invert, inv } = register(['invert', 'inv'], function (pat) {
+  // Swap true/false in a binary pattern
+  return pat.fmap((x) => !x);
+});
 
 /**
  * Applies the given function whenever the given pattern is in a true state.
@@ -1684,10 +1658,9 @@ export const {invert, inv} =
  * @example
  * "c3 eb3 g3".when("<0 1>/2", x=>x.sub(5)).note()
  */
-export const when =
-  register('when', function(on, func, pat) {
-    return on ? func(pat) : pat;
-  });
+export const when = register('when', function (on, func, pat) {
+  return on ? func(pat) : pat;
+});
 
 /**
  * Superimposes the function result on top of the original pattern, delayed by the given time.
@@ -1699,10 +1672,9 @@ export const when =
  * @example
  * "c3 eb3 g3".off(1/8, x=>x.add(7)).note()
  */
-export const off =
-  register('off', function(time_pat, func, pat) {
-    return stack(pat, func(pat.late(time_pat)));
-  });
+export const off = register('off', function (time_pat, func, pat) {
+  return stack(pat, func(pat.late(time_pat)));
+});
 
 /**
  * Returns a new pattern where every other cycle is played once, twice as
@@ -1710,10 +1682,9 @@ export const off =
  * breakbeat feel.
  * @returns Pattern
  */
-export const brak =
-  register('brak', function(pat) {
-    return pat.when(slowcat(false, true), (x) => fastcat(x, silence)._late(0.25));
-  });
+export const brak = register('brak', function (pat) {
+  return pat.when(slowcat(false, true), (x) => fastcat(x, silence)._late(0.25));
+});
 
 /**
  * Reverse all haps in a pattern
@@ -1724,66 +1695,58 @@ export const brak =
  * @example
  * note("c3 d3 e3 g3").rev()
  */
-export const rev =
-  register('rev', function(pat) {
-    const query = function (state) {
-      const span = state.span;
-      const cycle = span.begin.sam();
-      const next_cycle = span.begin.nextSam();
-      const reflect = function (to_reflect) {
-        const reflected = to_reflect.withTime((time) => cycle.add(next_cycle.sub(time)));
-        // [reflected.begin, reflected.end] = [reflected.end, reflected.begin] -- didn't work
-        const tmp = reflected.begin;
-        reflected.begin = reflected.end;
-        reflected.end = tmp;
-        return reflected;
-      };
-      const haps = pat.query(state.setSpan(reflect(span)));
-      return haps.map((hap) => hap.withSpan(reflect));
+export const rev = register('rev', function (pat) {
+  const query = function (state) {
+    const span = state.span;
+    const cycle = span.begin.sam();
+    const next_cycle = span.begin.nextSam();
+    const reflect = function (to_reflect) {
+      const reflected = to_reflect.withTime((time) => cycle.add(next_cycle.sub(time)));
+      // [reflected.begin, reflected.end] = [reflected.end, reflected.begin] -- didn't work
+      const tmp = reflected.begin;
+      reflected.begin = reflected.end;
+      reflected.end = tmp;
+      return reflected;
     };
-    return new Pattern(query).splitQueries();
-  });
+    const haps = pat.query(state.setSpan(reflect(span)));
+    return haps.map((hap) => hap.withSpan(reflect));
+  };
+  return new Pattern(query).splitQueries();
+});
 
-export const hush =
-  register('hush', function(pat) {
-    return silence;
-  });
+export const hush = register('hush', function (pat) {
+  return silence;
+});
 
+export const palindrome = register('palindrome', function (pat) {
+  return pat.every(2, rev);
+});
 
-export const palindrome =
-  register('palindrome', function(pat) {
-    return pat.every(2, rev);
-  });
+export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func, pat) {
+  by /= 2;
+  const elem_or = function (dict, key, dflt) {
+    if (key in dict) {
+      return dict[key];
+    }
+    return dflt;
+  };
+  const left = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) - by }));
+  const right = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by }));
 
-export const {juxBy, juxby} =
-  register(['juxBy', 'juxby'], function(by, func, pat) {
-    by /= 2;
-    const elem_or = function (dict, key, dflt) {
-      if (key in dict) {
-        return dict[key];
-      }
-      return dflt;
-    };
-    const left = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) - by }));
-    const right = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by }));
-    
-    return stack(left, func(right));
-  });
+  return stack(left, func(right));
+});
 
-export const jux =
-  register('jux', function(func, pat) {
-    return pat._juxBy(1, func, pat);
-  });
+export const jux = register('jux', function (func, pat) {
+  return pat._juxBy(1, func, pat);
+});
 
-export const {stutWith, stutwith} =
-  register(['stutWith', 'stutwith'], function(times, time, func, pat) {
-    return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
-  });
+export const { stutWith, stutwith } = register(['stutWith', 'stutwith'], function (times, time, func, pat) {
+  return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
+});
 
-export const stut =
-  register('stut', function(times, feedback, time, pat) {
-    return pat._stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
-  });
+export const stut = register('stut', function (times, feedback, time, pat) {
+  return pat._stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+});
 
 /**
  * Superimpose and offset multiple times, applying the given function each time.
@@ -1798,10 +1761,9 @@ export const stut =
  * .echoWith(4, 1/8, (p,n) => p.add(n*2))
  * .scale('C minor').note().legato(.2)
  */
-export const {echoWith, echowith} =
-  register(['echoWith','echowith'], function(times, time, func, pat) {
-    return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
-  });
+export const { echoWith, echowith } = register(['echoWith', 'echowith'], function (times, time, func, pat) {
+  return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
+});
 
 /**
  * Superimpose and offset multiple times, gradually decreasing the velocity
@@ -1814,10 +1776,9 @@ export const {echoWith, echowith} =
  * @example
  * s("bd sd").echo(3, 1/6, .8)
  */
-export const echo =
-  register('echo', function(times, time, feedback, pat) {
-    return pat._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
-  });
+export const echo = register('echo', function (times, time, feedback, pat) {
+  return pat._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+});
 
 /**
  * Divides a pattern into a given number of subdivisions, plays the subdivisions in order, but increments the starting subdivision each cycle. The pattern wraps to the first subdivision after the last subdivision is played.
@@ -1828,19 +1789,18 @@ export const echo =
  * note("0 1 2 3".scale('A minor')).iter(4)
  */
 
-const _iter = function(times, pat, back = false) {
+const _iter = function (times, pat, back = false) {
   times = Fraction(times);
   return slowcat(
     ...listRange(0, times.sub(1)).map((i) =>
       back ? pat.late(Fraction(i).div(times)) : pat.early(Fraction(i).div(times)),
     ),
-  )
+  );
 };
 
-export const iter =
-  register('iter', function(times, pat) {
-    return _iter(times, pat, false);
-  });
+export const iter = register('iter', function (times, pat) {
+  return _iter(times, pat, false);
+});
 
 /**
  * Like `iter`, but plays the subdivisions in reverse order. Known as iter' in tidalcycles
@@ -1850,10 +1810,9 @@ export const iter =
  * @example
  * note("0 1 2 3".scale('A minor')).iterBack(4)
  */
-export const {iterBack, iterback} =
-  register(['iterBack', 'iterback'], function(times, pat) {
-    return _iter(times, pat, true);
-  });
+export const { iterBack, iterback } = register(['iterBack', 'iterback'], function (times, pat) {
+  return _iter(times, pat, true);
+});
 
 /**
  * Divides a pattern into a given number of parts, then cycles through those parts in turn, applying the given function to each part in turn (one part per cycle).
@@ -1863,53 +1822,45 @@ export const {iterBack, iterback} =
  * @example
  * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note()
  */
-const _chunk = function(n, func, pat, back = false) {
+const _chunk = function (n, func, pat, back = false) {
   const binary = Array(n - 1).fill(false);
   binary.unshift(true);
   const binary_pat = _iter(n, sequence(...binary), back);
   return pat.when(binary_pat, func);
 };
 
-export const chunk =
-  register('chunk',
-           function(n, func, pat) {
-             return _chunk(n, func, pat, false);
-           });
+export const chunk = register('chunk', function (n, func, pat) {
+  return _chunk(n, func, pat, false);
+});
 
-  /**
-   * Like `chunk`, but cycles through the parts in reverse order. Known as chunk' in tidalcycles
-   * @name chunkBack
-   * @memberof Pattern
-   * @returns Pattern
-   * @example
-   * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note()
-   */
-export const {chunkBack, chunkback} =
-  register(['chunkBack', 'chunkback'],
-           function(n, func, pat) {
-             return _chunk(n, func, pat, true);
-           });
+/**
+ * Like `chunk`, but cycles through the parts in reverse order. Known as chunk' in tidalcycles
+ * @name chunkBack
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note()
+ */
+export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], function (n, func, pat) {
+  return _chunk(n, func, pat, true);
+});
 
 // TODO - redefine elsewhere in terms of mask
-export const bypass =
-  register('bypass',
-           function(on, pat) {
-             on = Boolean(parseInt(on));
-             return on ? silence : this;
-           });
+export const bypass = register('bypass', function (on, pat) {
+  on = Boolean(parseInt(on));
+  return on ? silence : this;
+});
 
 // sets absolute duration of haps
 // TODO - fix
-export const duration =
-  register('duration', function(value, pat) {
-    return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
-  });
+export const duration = register('duration', function (value, pat) {
+  return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
+});
 
 // TODO - make control?
-export const {color, colour} =
-  register(['color', 'colour'], function(color, pat) {
-    return pat.withContext((context) => ({ ...context, color }));
-  });
+export const { color, colour } = register(['color', 'colour'], function (color, pat) {
+  return pat.withContext((context) => ({ ...context, color }));
+});
 
 /**
  *
@@ -1920,10 +1871,9 @@ export const {color, colour} =
  * .gain(".4!2 1 .4!2 1 .4 1")
  * .velocity(".4 1")
  */
-export const velocity =
-  register('velocity', function(velocity, pat) {
-    return pat.withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
-  });
+export const velocity = register('velocity', function (velocity, pat) {
+  return pat.withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
+});
 
 /**
  *
@@ -1934,12 +1884,10 @@ export const velocity =
  * note("c3 eb3 g3 c4").legato("<.25 .5 1 2>")
  */
 // TODO - fix
-export const legato =
-  register('legato', function(value, pat) {
-    console.log(value);
-    return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
-  });
-
+export const legato = register('legato', function (value, pat) {
+  console.log(value);
+  return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
+});
 
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of
@@ -1959,25 +1907,21 @@ export const legato =
  *  .loopAt(4) // fit sample into 4 cycles
  *
  */
-export const chop =
-      register('chop',
-               function(n, pat) {
-                 const slices = Array.from({ length: n }, (x, i) => i);
-                 const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
-                 const func = function (o) {
-                   return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
-                 };
-                 return pat.squeezeBind(func);
-               });
+export const chop = register('chop', function (n, pat) {
+  const slices = Array.from({ length: n }, (x, i) => i);
+  const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+  const func = function (o) {
+    return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
+  };
+  return pat.squeezeBind(func);
+});
 
-export const striate =
-      register('striate',
-               function(n, pat) {
-                 const slices = Array.from({ length: n }, (x, i) => i);
-                 const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
-                 const slicePat = slowcat(...slice_objects);
-                 return pat.set(slicePat)._fast(n);
-               });
+export const striate = register('striate', function (n, pat) {
+  const slices = Array.from({ length: n }, (x, i) => i);
+  const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+  const slicePat = slowcat(...slice_objects);
+  return pat.set(slicePat)._fast(n);
+});
 
 /**
  * Makes the sample fit the given number of cycles by changing the speed.
@@ -1989,17 +1933,16 @@ export const striate =
  * s("rhodes").loopAt(4)
  */
 // TODO - global cps clock
-const _loopAt = function(factor, pat, cps = 1) {
-  return pat.speed((1 / factor) * cps)
+const _loopAt = function (factor, pat, cps = 1) {
+  return pat
+    .speed((1 / factor) * cps)
     .unit('c')
     .slow(factor);
-}
+};
 
-const {loopAt, loopat} =
-      register(['loopAt', 'loopat'],
-               function(factor, pat) {
-                 return _loopAt(factor, pat, 1);
-               });
+const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
+  return _loopAt(factor, pat, 1);
+});
 
 /**
  * Makes the sample fit the given number of cycles and cps value, by
@@ -2014,12 +1957,9 @@ const {loopAt, loopat} =
  * s("rhodes").loopAtCps(4,1.5).cps(1.5)
  */
 // TODO - global cps clock
-const {loopAtCps, loopatcps} =
-      register(['loopAtCps', 'loopatcps'],
-               function(factor, cps, pat) {
-                 return _loopAt(factor, pat, cps);
-               });
-
+const { loopAtCps, loopatcps } = register(['loopAtCps', 'loopatcps'], function (factor, cps, pat) {
+  return _loopAt(factor, pat, cps);
+});
 
 // problem: curried functions with spread arguments must have pat at the beginning
 // with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
@@ -2043,16 +1983,14 @@ export function makeComposable(func) {
   return func;
 }
 
-export const patternify = (f) => (pata, pat) =>
-  pata
-    .fmap((a) => f.call(pat, a))
-    .innerJoin();
-export const patternify2 = (f) => function(pata, patb, pat)  {
-  return pata
-    .fmap((a) => (b) => f.call(pat, a, b))
-    .appLeft(patb)
-    .innerJoin();
-}
+export const patternify = (f) => (pata, pat) => pata.fmap((a) => f.call(pat, a)).innerJoin();
+export const patternify2 = (f) =>
+  function (pata, patb, pat) {
+    return pata
+      .fmap((a) => (b) => f.call(pat, a, b))
+      .appLeft(patb)
+      .innerJoin();
+  };
 export const patternify3 = (f) => (pata, patb, patc, pat) =>
   pata
     .fmap((a) => (b) => (c) => f.call(pat, a, b, c))
@@ -2090,7 +2028,6 @@ Pattern.prototype.bootstrap = function () {
   return bootstrapped;
 };
 
-
 // this will add func as name to list of composable / patternified functions.
 // those lists will be used in bootstrap to curry and compose everything, to support various call patterns
 Pattern.prototype.define = (name, func, options = {}) => {
@@ -2103,4 +2040,3 @@ Pattern.prototype.define = (name, func, options = {}) => {
 
   Pattern.prototype.bootstrap(); // automatically bootstrap after new definition
 };
-

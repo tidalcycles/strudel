@@ -594,18 +594,14 @@ describe('Pattern', () => {
       ).toStrictEqual(sequence(sequence('a', 'a'), 'a', 'a').firstCycle());
     });
     it('Works as a toplevel function', () => {
-      expect(
-        firstOf(3, fast(2), pure('a'))
-          ._fast(3)
-          .firstCycle(),
-      ).toStrictEqual(sequence(sequence('a', 'a'), 'a', 'a').firstCycle());
+      expect(firstOf(3, fast(2), pure('a'))._fast(3).firstCycle()).toStrictEqual(
+        sequence(sequence('a', 'a'), 'a', 'a').firstCycle(),
+      );
     });
     it('Works as a toplevel function, with a patterned first argument', () => {
-      expect(
-        firstOf(pure(3), fast(2), pure('a'))
-          ._fast(3)
-          .firstCycle(),
-      ).toStrictEqual(sequence(sequence('a', 'a'), 'a', 'a').firstCycle());
+      expect(firstOf(pure(3), fast(2), pure('a'))._fast(3).firstCycle()).toStrictEqual(
+        sequence(sequence('a', 'a'), 'a', 'a').firstCycle(),
+      );
     });
     it('works with currying', () => {
       expect(pure('a').firstOf(3, fast(2))._fast(3).firstCycle()).toStrictEqual(
@@ -916,9 +912,7 @@ describe('Pattern', () => {
   });
   describe('alignments', () => {
     it('Can squeeze arguments', () => {
-      expect(sequence(1, 2).add.squeeze(4, 5).firstCycle()).toStrictEqual(
-	sequence(5, 6, 6, 7).firstCycle()
-      );
+      expect(sequence(1, 2).add.squeeze(4, 5).firstCycle()).toStrictEqual(sequence(5, 6, 6, 7).firstCycle());
     });
   });
 });
