@@ -314,7 +314,7 @@ export const undegradeBy = register('undegradeBy', function (x, pat) {
   );
 });
 
-export const undegrade = register('degrade', (pat) => pat._undegradeBy(0.5));
+export const undegrade = register('undegrade', (pat) => pat._undegradeBy(0.5));
 
 /**
  *
