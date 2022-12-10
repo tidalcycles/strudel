@@ -258,9 +258,9 @@ export const perlinWith = (pat) => {
  */
 export const perlin = perlinWith(time.fmap((v) => Number(v)));
 
-Pattern.prototype._degradeByWith = function (withPat, x) {
-  return this.fmap((a) => (_) => a).appLeft(withPat.filterValues((v) => v > x));
-};
+export const degradeByWith = register('degradeByWith', (withPat, x, pat) =>
+  pat.fmap((a) => (_) => a).appLeft(withPat.filterValues((v) => v > x)),
+);
 
 /**
  * Randomly removes events from the pattern by a given amount.
@@ -316,16 +316,6 @@ export const undegradeBy = register('undegradeBy', function (x, pat) {
 
 export const undegrade = register('degrade', (pat) => pat._undegradeBy(0.5));
 
-Pattern.prototype._sometimesBy = function (x, func) {
-  return stack(this._degradeBy(x), func(this._undegradeBy(1 - x)));
-};
-
-// https://github.com/tidalcycles/strudel/discussions/198
-/* Pattern.prototype._sometimesBy = function (x, other) {
-  other = typeof other === 'function' ? other(this._undegradeBy(1 - x)) : reify(other)._undegradeBy(1 - x);
-  return stack(this._degradeBy(x), other);
-}; */
-
 /**
  *
  * Randomly applies the given function by the given probability.
@@ -339,24 +329,12 @@ Pattern.prototype._sometimesBy = function (x, func) {
  * @example
  * s("hh(3,8)").sometimesBy(.4, x=>x.speed("0.5"))
  */
-Pattern.prototype.sometimesBy = function (patx, func) {
-  const pat = this;
-  return reify(patx)
-    .fmap((x) => pat._sometimesBy(x, func))
-    .innerJoin();
-};
 
-// why does this exist? it is identical to sometimesBy
-Pattern.prototype._sometimesByPre = function (x, func) {
-  return stack(this._degradeBy(x), func(this).undegradeBy(1 - x));
-};
-
-Pattern.prototype.sometimesByPre = function (patx, func) {
-  const pat = this;
+export const sometimesBy = register('sometimesBy', function (patx, func, pat) {
   return reify(patx)
-    .fmap((x) => pat._sometimesByPre(x, func))
+    .fmap((x) => stack(pat._degradeBy(x), func(pat._undegradeBy(1 - x))))
     .innerJoin();
-};
+});
 
 /**
  *
@@ -369,20 +347,9 @@ Pattern.prototype.sometimesByPre = function (patx, func) {
  * @example
  * s("hh*4").sometimes(x=>x.speed("0.5"))
  */
-Pattern.prototype.sometimes = function (func) {
-  return this._sometimesBy(0.5, func);
-};
-
-Pattern.prototype.sometimesPre = function (func) {
-  return this._sometimesByPre(0.5, func);
-};
-
-Pattern.prototype._someCyclesBy = function (x, func) {
-  return stack(
-    this._degradeByWith(rand._segment(1), x),
-    func(this._degradeByWith(rand.fmap((r) => 1 - r)._segment(1), 1 - x)),
-  );
-};
+export const sometimes = register('sometimes', function (func, pat) {
+  return pat._sometimesBy(0.5, func);
+});
 
 /**
  *
@@ -397,12 +364,17 @@ Pattern.prototype._someCyclesBy = function (x, func) {
  * @example
  * s("hh(3,8)").someCyclesBy(.3, x=>x.speed("0.5"))
  */
-Pattern.prototype.someCyclesBy = function (patx, func) {
-  const pat = this;
+
+export const someCyclesBy = register('someCyclesBy', function (patx, func, pat) {
   return reify(patx)
-    .fmap((x) => pat._someCyclesBy(x, func))
+    .fmap((x) =>
+      stack(
+        pat._degradeByWith(rand._segment(1), x),
+        func(pat._degradeByWith(rand.fmap((r) => 1 - r)._segment(1), 1 - x)),
+      ),
+    )
     .innerJoin();
-};
+});
 
 /**
  *
@@ -414,9 +386,9 @@ Pattern.prototype.someCyclesBy = function (patx, func) {
  * @example
  * s("hh(3,8)").someCycles(x=>x.speed("0.5"))
  */
-Pattern.prototype.someCycles = function (func) {
-  return this._someCyclesBy(0.5, func);
-};
+export const someCycles = register('someCycles', function (func, pat) {
+  return pat._someCyclesBy(0.5, func);
+});
 
 /**
  *
@@ -428,9 +400,9 @@ Pattern.prototype.someCycles = function (func) {
  * @example
  * s("hh*8").often(x=>x.speed("0.5"))
  */
-Pattern.prototype.often = function (func) {
-  return this.sometimesBy(0.75, func);
-};
+export const often = register('often', function (func, pat) {
+  return pat.sometimesBy(0.75, func);
+});
 
 /**
  *
@@ -442,9 +414,9 @@ Pattern.prototype.often = function (func) {
  * @example
  * s("hh*8").rarely(x=>x.speed("0.5"))
  */
-Pattern.prototype.rarely = function (func) {
-  return this.sometimesBy(0.25, func);
-};
+export const rarely = register('rarely', function (func, pat) {
+  return pat.sometimesBy(0.25, func);
+});
 
 /**
  *
@@ -456,9 +428,9 @@ Pattern.prototype.rarely = function (func) {
  * @example
  * s("hh*8").almostNever(x=>x.speed("0.5"))
  */
-Pattern.prototype.almostNever = function (func) {
-  return this.sometimesBy(0.1, func);
-};
+export const almostNever = register('almostNever', function (func, pat) {
+  return pat.sometimesBy(0.1, func);
+});
 
 /**
  *
@@ -470,9 +442,9 @@ Pattern.prototype.almostNever = function (func) {
  * @example
  * s("hh*8").almostAlways(x=>x.speed("0.5"))
  */
-Pattern.prototype.almostAlways = function (func) {
-  return this.sometimesBy(0.9, func);
-};
+export const almostAlways = register('almostAlways', function (func, pat) {
+  return pat.sometimesBy(0.9, func);
+});
 
 /**
  *
@@ -484,9 +456,9 @@ Pattern.prototype.almostAlways = function (func) {
  * @example
  * s("hh*8").never(x=>x.speed("0.5"))
  */
-Pattern.prototype.never = function (func) {
-  return this;
-};
+export const never = register('never', function (_, pat) {
+  return pat;
+});
 
 /**
  *
@@ -498,6 +470,6 @@ Pattern.prototype.never = function (func) {
  * @example
  * s("hh*8").always(x=>x.speed("0.5"))
  */
-Pattern.prototype.always = function (func) {
-  return func(this);
-};
+export const always = register('always', function (func, pat) {
+  return func(pat);
+});
