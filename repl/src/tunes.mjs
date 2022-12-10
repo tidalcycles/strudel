@@ -769,7 +769,7 @@ note("c3 eb3 g3 bb3").palindrome()
 
 export const csoundDemo = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // by Felix Roos
-await csound\`
+await loadCsound\`
 instr CoolSynth
     iduration = p3
     ifreq = p4
