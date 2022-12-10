@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Hap } from './hap.mjs';
-import { Pattern, fastcat, reify, silence, stack, isPattern } from './pattern.mjs';
+import { Pattern, fastcat, reify, silence, stack, register } from './pattern.mjs';
 import Fraction from './fraction.mjs';
 import { id } from './util.mjs';
 
@@ -276,9 +276,9 @@ Pattern.prototype._degradeByWith = function (withPat, x) {
  * @example
  * s("[hh?0.2]*8")
  */
-Pattern.prototype._degradeBy = function (x) {
-  return this._degradeByWith(rand, x);
-};
+export const degradeBy = register('degradeBy', function (x, pat) {
+  return pat._degradeByWith(rand, x);
+});
 
 /**
  *
@@ -292,9 +292,7 @@ Pattern.prototype._degradeBy = function (x) {
  * @example
  * s("[hh?]*8")
  */
-Pattern.prototype.degrade = function () {
-  return this._degradeBy(0.5);
-};
+export const degrade = register('degrade', (pat) => pat._degradeBy(0.5));
 
 /**
  * Inverse of {@link Pattern#degradeBy}: Randomly removes events from the pattern by a given amount.
@@ -309,16 +307,14 @@ Pattern.prototype.degrade = function () {
  * @example
  * s("hh*8").undegradeBy(0.2)
  */
-Pattern.prototype._undegradeBy = function (x) {
-  return this._degradeByWith(
+export const undegradeBy = register('undegradeBy', function (x, pat) {
+  return pat._degradeByWith(
     rand.fmap((r) => 1 - r),
     x,
   );
-};
+});
 
-Pattern.prototype.undegrade = function () {
-  return this._undegradeBy(0.5);
-};
+export const undegrade = register('degrade', (pat) => pat._undegradeBy(0.5));
 
 Pattern.prototype._sometimesBy = function (x, func) {
   return stack(this._degradeBy(x), func(this._undegradeBy(1 - x)));
@@ -505,5 +501,3 @@ Pattern.prototype.never = function (func) {
 Pattern.prototype.always = function (func) {
   return func(this);
 };
-
-Pattern.prototype.patternified.push('degradeBy', 'undegradeBy');

@@ -178,11 +178,6 @@ export const h = (string) => {
   return patternifyAST(ast);
 };
 
-// shorthand for mini
-Pattern.prototype.define('mini', mini, { composable: true });
-Pattern.prototype.define('m', mini, { composable: true });
-Pattern.prototype.define('h', h, { composable: true });
-
 export function minify(thing) {
   if (typeof thing === 'string') {
     return mini(thing);
