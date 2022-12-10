@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern, patternify2, reify } from './index.mjs';
+import { register } from './index.mjs';
 
 let synth;
 try {
@@ -16,7 +16,7 @@ try {
 let allVoices = synth?.getVoices();
 // console.log('voices', allVoices);
 
-function speak(words, lang, voice) {
+function triggerSpeech(words, lang, voice) {
   synth.cancel();
   const utterance = new SpeechSynthesisUtterance(words);
   utterance.lang = lang;
@@ -31,12 +31,8 @@ function speak(words, lang, voice) {
   speechSynthesis.speak(utterance);
 }
 
-Pattern.prototype._speak = function (lang, voice) {
-  return this.onTrigger((_, hap) => {
-    speak(hap.value, lang, voice);
+export const speak = register('speak', function (lang, voice, pat) {
+  return pat.onTrigger((_, hap) => {
+    triggerSpeech(hap.value, lang, voice);
   });
-};
-
-Pattern.prototype.speak = function (lang, voice) {
-  return patternify2(Pattern.prototype._speak)(reify(lang), reify(voice), this);
-};
+});
