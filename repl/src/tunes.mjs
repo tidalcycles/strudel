@@ -81,7 +81,7 @@ stack(
     "[G^7 Bb7] [Eb^7 F#7] B^7 [Fm7 Bb7]",
     "Eb^7 [Am7 D7] G^7 [C#m7 F#7]",
     "B^7 [Fm7 Bb7] Eb^7 [C#m7 F#7]"
-  ).voicings(['E3', 'G4']),
+  ).voicings('lefthand'),
   // bass
   seq(
     "[B2 D2] [G2 Bb2] [Eb2 Bb3] [A2 D2]",
@@ -90,6 +90,7 @@ stack(
     "[B2 F#2] [F2 Bb2] [Eb2 Bb3] [C#2 F#2]"
   )
 ).slow(20).note()`;
+// range: ['E3', 'G4']
 
 export const zeldasRescue = `// Koji Kondo - Princess Zelda's Rescue
 stack(
@@ -130,10 +131,10 @@ const synths = stack(
   "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor'])
   .slow(8)).struct("[~ x]*2")
   .layer(
-    scaleTranspose(0).early(0),
-    scaleTranspose(2).early(1/8),
-    scaleTranspose(7).early(1/4),
-    scaleTranspose(8).early(3/8)
+    x=>x.scaleTranspose(0).early(0),
+    x=>x.scaleTranspose(2).early(1/8),
+    x=>x.scaleTranspose(7).early(1/4),
+    x=>x.scaleTranspose(8).early(3/8)
   ).apply(thru).note().apply(keys).mask("<~ x>/16"),
   note("<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".apply(thru))
   .struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2))
@@ -654,7 +655,7 @@ dino:{b4:'https://cdn.freesound.org/previews/316/316403_5123851-hq.mp3'}})
 stack(
 s('bass').loopAt(8).clip(1),
 s("bd*2, ~ sd,hh*4"),
-note("Abm7".voicings(['c3','a4']).struct("x(3,8,1)".slow(2))),
+note("Abm7".voicings('lefthand').struct("x(3,8,1)".slow(2))),
 "0 1 2 3".scale('ab4 minor pentatonic')
 .superimpose(x=>x.add(.1))
 .sometimes(x=>x.add(12))
@@ -665,6 +666,7 @@ note("Abm7".voicings(['c3','a4']).struct("x(3,8,1)".slow(2))),
 .degradeBy(.4).room(1),
 note("<b4 eb4>").s('dino').delay(.8).slow(8).room(.5)
 )`;
+// ['c3','a4']
 
 export const sampleDemo = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // by Felix Roos

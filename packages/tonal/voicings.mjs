@@ -31,6 +31,7 @@ export const voicingDictionaries = {
  *   '7alt': ['3M 7m 10m 13m 15P'],
  *   '7#11': ['7m 10m 13m 15P 17m'],
  * }, ['C3', 'C6'])
+ * "<C^7 A7 Dm7 G7>".voicings('cookie').note()
  */
 export const addVoicings = (name, dictionary, range = ['F3', 'A4']) => {
   Object.assign(voicingDictionaries, { [name]: { dictionary, range } });

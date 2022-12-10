@@ -1533,7 +1533,7 @@ export const { firstOf, every } = register(['firstOf', 'every'], function (n, fu
 
 /**
  * Like layer, but with a single function:
- * @name _apply
+ * @name apply
  * @memberof Pattern
  * @example
  * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4")).note()
