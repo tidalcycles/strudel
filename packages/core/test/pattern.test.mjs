@@ -16,6 +16,7 @@ import {
   pure,
   stack,
   fastcat,
+  firstOf,
   slowcat,
   cat,
   sequence,
@@ -154,6 +155,12 @@ describe('Pattern', () => {
     });
   });
   describe('add()', () => {
+    it('works as toplevel function', () => {
+      expect(add(pure(4), pure(5)).query(st(0, 1))[0].value).toBe(9);
+    });
+    it('works as toplevel function, with bare values for arguments', () => {
+      expect(add(4, 5).query(st(0, 1))[0].value).toBe(9);
+    });
     it('can structure In()', () => {
       expect(pure(3).add(pure(4)).query(st(0, 1))[0].value).toBe(7);
       expect(pure(3).add.in(pure(4)).query(st(0, 1))[0].value).toBe(7);
@@ -406,8 +413,8 @@ describe('Pattern', () => {
       );
     });
     it('defaults to accepting sequences', () => {
-      expect(sequence(1, 2, 3).fast(sequence(1.5, 2)).firstCycle()).toStrictEqual(
-        sequence(1, 2, 3).fast(1.5, 2).firstCycle(),
+      expect(sequence('a', 'b', 'c').fast(sequence(1.5, 2)).sortHapsByPart().firstCycle()).toStrictEqual(
+        sequence('a', 'b', 'c').fast(1.5, 2).sortHapsByPart().firstCycle(),
       );
     });
     it('works as a static function', () => {
@@ -585,6 +592,16 @@ describe('Pattern', () => {
           ._fast(3)
           .firstCycle(),
       ).toStrictEqual(sequence(sequence('a', 'a'), 'a', 'a').firstCycle());
+    });
+    it('Works as a toplevel function', () => {
+      expect(firstOf(3, fast(2), pure('a'))._fast(3).firstCycle()).toStrictEqual(
+        sequence(sequence('a', 'a'), 'a', 'a').firstCycle(),
+      );
+    });
+    it('Works as a toplevel function, with a patterned first argument', () => {
+      expect(firstOf(pure(3), fast(2), pure('a'))._fast(3).firstCycle()).toStrictEqual(
+        sequence(sequence('a', 'a'), 'a', 'a').firstCycle(),
+      );
     });
     it('works with currying', () => {
       expect(pure('a').firstOf(3, fast(2))._fast(3).firstCycle()).toStrictEqual(
@@ -895,9 +912,7 @@ describe('Pattern', () => {
   });
   describe('alignments', () => {
     it('Can squeeze arguments', () => {
-      expect(sequence(1, 2).add.squeeze(4, 5).firstCycle()).toStrictEqual(
-	sequence(5, 6, 6, 7).firstCycle()
-      );
+      expect(sequence(1, 2).add.squeeze(4, 5).firstCycle()).toStrictEqual(sequence(5, 6, 6, 7).firstCycle());
     });
   });
 });

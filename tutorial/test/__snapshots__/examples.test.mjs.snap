@@ -374,16 +374,16 @@ exports[`runs examples > example "chunk" example index 0 1`] = `
   "[ 1/4 → 1/2 | note:B3 ]",
   "[ 1/2 → 3/4 | note:C4 ]",
   "[ 3/4 → 1/1 | note:D4 ]",
-  "[ 7/4 → 2/1 | note:D5 ]",
   "[ 1/1 → 5/4 | note:A3 ]",
   "[ 5/4 → 3/2 | note:B3 ]",
   "[ 3/2 → 7/4 | note:C4 ]",
-  "[ 5/2 → 11/4 | note:C5 ]",
+  "[ 7/4 → 2/1 | note:D5 ]",
   "[ 2/1 → 9/4 | note:A3 ]",
   "[ 9/4 → 5/2 | note:B3 ]",
+  "[ 5/2 → 11/4 | note:C5 ]",
   "[ 11/4 → 3/1 | note:D4 ]",
-  "[ 13/4 → 7/2 | note:B4 ]",
   "[ 3/1 → 13/4 | note:A3 ]",
+  "[ 13/4 → 7/2 | note:B4 ]",
   "[ 7/2 → 15/4 | note:C4 ]",
   "[ 15/4 → 4/1 | note:D4 ]",
 ]
@@ -395,18 +395,18 @@ exports[`runs examples > example "chunkBack" example index 0 1`] = `
   "[ 1/4 → 1/2 | note:B3 ]",
   "[ 1/2 → 3/4 | note:C4 ]",
   "[ 3/4 → 1/1 | note:D4 ]",
-  "[ 5/4 → 3/2 | note:B4 ]",
   "[ 1/1 → 5/4 | note:A3 ]",
+  "[ 5/4 → 3/2 | note:B4 ]",
   "[ 3/2 → 7/4 | note:C4 ]",
   "[ 7/4 → 2/1 | note:D4 ]",
-  "[ 5/2 → 11/4 | note:C5 ]",
   "[ 2/1 → 9/4 | note:A3 ]",
   "[ 9/4 → 5/2 | note:B3 ]",
+  "[ 5/2 → 11/4 | note:C5 ]",
   "[ 11/4 → 3/1 | note:D4 ]",
-  "[ 15/4 → 4/1 | note:D5 ]",
   "[ 3/1 → 13/4 | note:A3 ]",
   "[ 13/4 → 7/2 | note:B3 ]",
   "[ 7/2 → 15/4 | note:C4 ]",
+  "[ 15/4 → 4/1 | note:D5 ]",
 ]
 `;
 
@@ -1906,6 +1906,15 @@ exports[`runs examples > example "loopAt" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "loopAtCps" example index 0 1`] = `
+[
+  "[ (0/1 → 1/1) ⇝ 4/1 | s:rhodes speed:0.375 unit:c cps:1.5 ]",
+  "[ 0/1 ⇜ (1/1 → 2/1) ⇝ 4/1 | s:rhodes speed:0.375 unit:c cps:1.5 ]",
+  "[ 0/1 ⇜ (2/1 → 3/1) ⇝ 4/1 | s:rhodes speed:0.375 unit:c cps:1.5 ]",
+  "[ 0/1 ⇜ (3/1 → 4/1) | s:rhodes speed:0.375 unit:c cps:1.5 ]",
+]
+`;
+
 exports[`runs examples > example "lrate" example index 0 1`] = `
 [
   "[ 0/1 → 1/1 | n:0 s:supersquare leslie:1 lrate:1 ]",
@@ -2059,27 +2068,27 @@ exports[`runs examples > example "off" example index 0 1`] = `
   "[ 0/1 → 1/3 | note:c3 ]",
   "[ 1/3 → 2/3 | note:eb3 ]",
   "[ 2/3 → 1/1 | note:g3 ]",
-  "[ 1/1 → 4/3 | note:c3 ]",
-  "[ 4/3 → 5/3 | note:eb3 ]",
-  "[ 5/3 → 2/1 | note:g3 ]",
-  "[ 2/1 → 7/3 | note:c3 ]",
-  "[ 7/3 → 8/3 | note:eb3 ]",
-  "[ 8/3 → 3/1 | note:g3 ]",
-  "[ 3/1 → 10/3 | note:c3 ]",
-  "[ 10/3 → 11/3 | note:eb3 ]",
-  "[ 11/3 → 4/1 | note:g3 ]",
   "[ -5/24 ⇜ (0/1 → 1/8) | note:62 ]",
   "[ 1/8 → 11/24 | note:55 ]",
   "[ 11/24 → 19/24 | note:58 ]",
   "[ (19/24 → 1/1) ⇝ 9/8 | note:62 ]",
+  "[ 1/1 → 4/3 | note:c3 ]",
+  "[ 4/3 → 5/3 | note:eb3 ]",
+  "[ 5/3 → 2/1 | note:g3 ]",
   "[ 19/24 ⇜ (1/1 → 9/8) | note:62 ]",
   "[ 9/8 → 35/24 | note:55 ]",
   "[ 35/24 → 43/24 | note:58 ]",
   "[ (43/24 → 2/1) ⇝ 17/8 | note:62 ]",
+  "[ 2/1 → 7/3 | note:c3 ]",
+  "[ 7/3 → 8/3 | note:eb3 ]",
+  "[ 8/3 → 3/1 | note:g3 ]",
   "[ 43/24 ⇜ (2/1 → 17/8) | note:62 ]",
   "[ 17/8 → 59/24 | note:55 ]",
   "[ 59/24 → 67/24 | note:58 ]",
   "[ (67/24 → 3/1) ⇝ 25/8 | note:62 ]",
+  "[ 3/1 → 10/3 | note:c3 ]",
+  "[ 10/3 → 11/3 | note:eb3 ]",
+  "[ 11/3 → 4/1 | note:g3 ]",
   "[ 67/24 ⇜ (3/1 → 25/8) | note:62 ]",
   "[ 25/8 → 83/24 | note:55 ]",
   "[ 83/24 → 91/24 | note:58 ]",
@@ -3181,17 +3190,17 @@ exports[`runs examples > example "webdirt" example index 0 1`] = `
 
 exports[`runs examples > example "when" example index 0 1`] = `
 [
-  "[ 2/1 → 7/3 | note:43 ]",
-  "[ 7/3 → 8/3 | note:46 ]",
-  "[ 8/3 → 3/1 | note:50 ]",
-  "[ 3/1 → 10/3 | note:43 ]",
-  "[ 10/3 → 11/3 | note:46 ]",
-  "[ 11/3 → 4/1 | note:50 ]",
   "[ 0/1 → 1/3 | note:c3 ]",
   "[ 1/3 → 2/3 | note:eb3 ]",
   "[ 2/3 → 1/1 | note:g3 ]",
   "[ 1/1 → 4/3 | note:c3 ]",
   "[ 4/3 → 5/3 | note:eb3 ]",
   "[ 5/3 → 2/1 | note:g3 ]",
+  "[ 2/1 → 7/3 | note:43 ]",
+  "[ 7/3 → 8/3 | note:46 ]",
+  "[ 8/3 → 3/1 | note:50 ]",
+  "[ 3/1 → 10/3 | note:43 ]",
+  "[ 10/3 → 11/3 | note:46 ]",
+  "[ 11/3 → 4/1 | note:50 ]",
 ]
 `;
