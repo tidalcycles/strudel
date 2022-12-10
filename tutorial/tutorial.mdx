@@ -35,7 +35,7 @@ s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
 .s('sawtooth') // waveform
 .gain(.4) // turn down
 .cutoff(sine.slow(7).range(300,5000)) // automate cutoff
-,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings() // chords
+,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings('lefthand') // chords
 .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
 .add(perlin.range(0,.5)) // random pitch variation
 .n() // wrap in "n"
@@ -755,7 +755,7 @@ Transposes notes inside the scale by the number of steps:
 
 Turns chord symbols into voicings, using the smoothest voice leading possible:
 
-<MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>").note()`} />
+<MiniRepl tune={`stack("<C^7 A7 Dm7 G7>".voicings('lefthand'), "<C3 A2 D3 G2>").note()`} />
 
 <!-- TODO: use voicing collection as first param + patternify. -->
 
@@ -790,7 +790,7 @@ Either connect a midi device or use the IAC Driver (Mac) or Midi Through Port (L
 If no outputName is given, it uses the first midi output it finds.
 
 <MiniRepl
-  tune={`stack("<C^7 A7 Dm7 G7>".voicings(), "<C3 A2 D3 G2>")
+  tune={`stack("<C^7 A7 Dm7 G7>".voicings('lefthand'), "<C3 A2 D3 G2>")
   .midi()`}
 />
 

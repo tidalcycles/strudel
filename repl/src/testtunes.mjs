@@ -108,7 +108,7 @@ export const struct = `stack(
 export const magicSofa = `stack(
   "<C^7 F^7 ~> <Dm7 G7 A7 ~>"
    .every(2, fast(2))
-   .voicings(),
+   .voicings('lefthand'),
   "<c2 f2 g2> <d2 g2 a2 e2>"
 ).transpose("<0 2 3 4>")`;
 // below doesn't work anymore due to constructor cleanup
@@ -156,7 +156,7 @@ const synths = stack(
     scaleTranspose(8).early(3/8)
   ).apply(thru).tone(keys).mask("<~ x>/16"),
   "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).apply(thru).tone(bass),
-  "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().apply(thru).every(2, early(1/8)).tone(keys).mask("<x@7 ~>/8".early(1/4))
+  "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings('lefthand').apply(thru).every(2, early(1/8)).tone(keys).mask("<x@7 ~>/8".early(1/4))
 )
 stack(
   drums.fast(2), 
@@ -351,7 +351,7 @@ stack(
 
 export const bossa = `const scales = sequence('C minor', ['D locrian', 'G phrygian'], 'Bb2 minor', ['C locrian','F phrygian']).slow(4)
 stack(
-  "<Cm7 [Dm7b5 G7b9] Bbm7 [Cm7b5 F7b9]>".fast(2).struct("x ~ x@3 x ~ x ~ ~ ~ x ~ x@3".late(1/8)).early(1/8).slow(2).voicings(),
+  "<Cm7 [Dm7b5 G7b9] Bbm7 [Cm7b5 F7b9]>".fast(2).struct("x ~ x@3 x ~ x ~ ~ ~ x ~ x@3".late(1/8)).early(1/8).slow(2).voicings('lefthand'),
   "[~ [0 ~]] 0 [~ [4 ~]] 4".sub(7).restart(scales).scale(scales).early(.25)
 ).note().piano().slow(2)`;
 

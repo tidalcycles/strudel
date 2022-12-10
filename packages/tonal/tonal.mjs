@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Note, Interval, Scale } from '@tonaljs/tonal';
-import { Pattern, _mod } from '@strudel.cycles/core';
+import { register, _mod } from '@strudel.cycles/core';
 
 // transpose note inside scale by offset steps
 // function scaleOffset(scale: string, offset: number, note: string) {
@@ -74,8 +74,8 @@ function scaleOffset(scale, offset, note) {
  * "c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).note()
  */
 
-Pattern.prototype._transpose = function (intervalOrSemitones) {
-  return this.withHap((hap) => {
+export const transpose = register('transpose', function (intervalOrSemitones, pat) {
+  return pat.withHap((hap) => {
     const interval = !isNaN(Number(intervalOrSemitones))
       ? Interval.fromSemitones(intervalOrSemitones /*  as number */)
       : String(intervalOrSemitones);
@@ -87,7 +87,7 @@ Pattern.prototype._transpose = function (intervalOrSemitones) {
     // tone.js doesn't understand multiple sharps flats e.g. F##3 has to be turned into G3
     return hap.withValue(() => Note.simplify(Note.transpose(hap.value, interval)));
   });
-};
+});
 
 // example: transpose(3).late(0.2) will be equivalent to compose(transpose(3), late(0.2))
 // TODO: add Pattern.define(name, function, options) that handles all the meta programming stuff
@@ -110,8 +110,8 @@ Pattern.prototype._transpose = function (intervalOrSemitones) {
  * .note()
  */
 
-Pattern.prototype._scaleTranspose = function (offset /* : number | string */) {
-  return this.withHap((hap) => {
+export const scaleTranspose = register('scaleTranspose', function (offset /* : number | string */, pat) {
+  return pat.withHap((hap) => {
     if (!hap.context.scale) {
       throw new Error('can only use scaleTranspose after .scale');
     }
@@ -120,7 +120,7 @@ Pattern.prototype._scaleTranspose = function (offset /* : number | string */) {
     }
     return hap.withValue(() => scaleOffset(hap.context.scale, Number(offset), hap.value));
   });
-};
+});
 
 /**
  * Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like {@link Pattern#scaleTranspose}.
@@ -141,8 +141,8 @@ Pattern.prototype._scaleTranspose = function (offset /* : number | string */) {
  * .note()
  */
 
-Pattern.prototype._scale = function (scale /* : string */) {
-  return this.withHap((hap) => {
+export const scale = register('scale', function (scale /* : string */, pat) {
+  return pat.withHap((hap) => {
     let note = hap.value;
     const asNumber = Number(note);
     if (!isNaN(asNumber)) {
@@ -152,8 +152,4 @@ Pattern.prototype._scale = function (scale /* : string */) {
     }
     return hap.withValue(() => note).setContext({ ...hap.context, scale });
   });
-};
-
-Pattern.prototype.define('transpose', (a, pat) => pat.transpose(a), { composable: true, patternified: true });
-Pattern.prototype.define('scale', (a, pat) => pat.scale(a), { composable: true, patternified: true });
-Pattern.prototype.define('scaleTranspose', (a, pat) => pat.scaleTranspose(a), { composable: true, patternified: true });
+});
