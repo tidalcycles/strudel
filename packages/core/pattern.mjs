@@ -1257,12 +1257,9 @@ export function register(name, func) {
     args = args.map(reify);
     const pat = args[args.length - 1];
     if (arity === 1) {
-      return func(reify(pat));
+      return func(pat);
     }
     const [left, ...right] = args.slice(0, -1);
-    if (arity === 1) {
-      return func(reify(pat));
-    }
     let mapFn = (...args) => {
       // make sure to call func with the correct argument count
       // args.length is expected to be <= arity-1
