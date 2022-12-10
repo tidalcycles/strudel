@@ -110,7 +110,7 @@ export class TimeSpan {
   }
 
   show() {
-    return this.begin.show() + ' -> ' + this.end.show();
+    return this.begin.show() + ' → ' + this.end.show();
   }
 }
 
