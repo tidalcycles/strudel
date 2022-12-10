@@ -30,10 +30,28 @@ const applyOptions = (parent) => (pat, i) => {
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
       case 'degradeBy':
+        // TODO: find out what is right here
+        // example:
+        /*
+           stack(
+             s("hh*8").degrade(),
+             s("[ht*8]?")
+           )
+        */
+        // above example will only be in sync when _degradeBy is used...
+        // it also seems that the nextSeed will create undeterministic behaviour
+        // as it uses a global _seedState. This is probably the reason for
+        // https://github.com/tidalcycles/strudel/issues/245
+
+        // this is how it was:
+        /* 
         return reify(pat)._degradeByWith(
           strudel.rand.early(randOffset * _nextSeed()).segment(1),
-          operator.arguments_.amount,
-        );
+          operator.arguments_.amount ?? 0.5,
+        ); 
+        */
+        return reify(pat)._degradeBy(operator.arguments_.amount ?? 0.5);
+
       // TODO: case 'fixed-step': "%"
     }
     console.warn(`operator "${operator.type_}" not implemented`);
