@@ -103,11 +103,11 @@ function resolveReplications(ast) {
   });
 }
 
-export function patternifyAST(ast) {
+export function patternifyAST(ast, code) {
   switch (ast.type_) {
     case 'pattern': {
       resolveReplications(ast);
-      const children = ast.source_.map(patternifyAST).map(applyOptions(ast));
+      const children = ast.source_.map((child) => patternifyAST(child, code)).map(applyOptions(ast));
       const alignment = ast.arguments_.alignment;
       if (alignment === 'v') {
         return stack(...children);
@@ -142,19 +142,22 @@ export function patternifyAST(ast) {
         }
         const { start, end } = ast.location_;
         const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
-        // make sure whitespaces are not part of the highlight
-        const len = ast.source_.length;
-        end.column = start.column + len;
-        end.offset = start.offset + len;
-        end.line = start.line; // codemirror does not understand multiline highlights
         // the following line expects the shapeshifter append .withMiniLocation
         // because location_ is only relative to the mini string, but we need it relative to whole code
-        return pure(value).withLocation([start.line, start.column, start.offset], [end.line, end.column, end.offset]);
+        // make sure whitespaces are not part of the highlight:
+        const actual = code?.split('').slice(start.offset, end.offset).join('');
+        const [offsetStart = 0, offsetEnd = 0] = actual
+          ? actual.split(ast.source_).map((p) => p.split('').filter((c) => c === ' ').length)
+          : [];
+        return pure(value).withLocation(
+          [start.line, start.column + offsetStart, start.offset + offsetStart],
+          [start.line, end.column - offsetEnd, end.offset - offsetEnd],
+        );
       }
-      return patternifyAST(ast.source_);
+      return patternifyAST(ast.source_, code);
     }
     case 'stretch':
-      return patternifyAST(ast.source_).slow(ast.arguments_.amount);
+      return patternifyAST(ast.source_, code).slow(ast.arguments_.amount);
     /* case 'scale':
       let [tonic, scale] = Scale.tokenize(ast.arguments_.scale);
       const intervals = Scale.get(scale).intervals;
@@ -186,8 +189,9 @@ export function patternifyAST(ast) {
 // mini notation only (wraps in "")
 export const mini = (...strings) => {
   const pats = strings.map((str) => {
-    const ast = krill.parse(`"${str}"`);
-    return patternifyAST(ast);
+    const code = `"${str}"`;
+    const ast = krill.parse(code);
+    return patternifyAST(ast, code);
   });
   return sequence(...pats);
 };
@@ -196,7 +200,7 @@ export const mini = (...strings) => {
 export const h = (string) => {
   const ast = krill.parse(string);
   // console.log('ast', ast);
-  return patternifyAST(ast);
+  return patternifyAST(ast, string);
 };
 
 export function minify(thing) {
