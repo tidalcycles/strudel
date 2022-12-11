@@ -144,7 +144,7 @@ export function patternifyAST(ast) {
         const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
         // make sure whitespaces are not part of the highlight
         const len = ast.source_.length;
-        // end.column = start.column + len;
+        end.column = start.column + len;
         end.offset = start.offset + len;
         end.line = start.line; // codemirror does not understand multiline highlights
         // the following line expects the shapeshifter append .withMiniLocation
