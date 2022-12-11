@@ -1483,7 +1483,7 @@ export const outside = register('outside', function (factor, f, pat) {
  * @example
  * note("c3 d3 e3 g3").lastOf(4, x=>x.rev())
  */
-export const { lastOf } = register('lastOf', function (n, func, pat) {
+export const lastOf = register('lastOf', function (n, func, pat) {
   const pats = Array(n - 1).fill(pat);
   pats.push(func(pat));
   return slowcatPrime(...pats);
