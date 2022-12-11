@@ -67,6 +67,8 @@ stack(
 `;
 
 export const giantSteps = `// John Coltrane - Giant Steps
+setVoicingRange('lefthand', ['E3', 'G4']);
+
 stack(
   // melody
   seq(
@@ -90,7 +92,6 @@ stack(
     "[B2 F#2] [F2 Bb2] [Eb2 Bb3] [C#2 F#2]"
   )
 ).slow(20).note()`;
-// range: ['E3', 'G4']
 
 export const zeldasRescue = `// Koji Kondo - Princess Zelda's Rescue
 stack(
@@ -651,6 +652,7 @@ export const dinofunk = `// licensed with CC BY-NC-SA 4.0 https://creativecommon
 // by Felix Roos
 samples({bass:'https://cdn.freesound.org/previews/614/614637_2434927-hq.mp3',
 dino:{b4:'https://cdn.freesound.org/previews/316/316403_5123851-hq.mp3'}})
+setVoicingRange('lefthand', ['c3','a4'])
 
 stack(
 s('bass').loopAt(8).clip(1),
@@ -666,7 +668,6 @@ note("Abm7".voicings('lefthand').struct("x(3,8,1)".slow(2))),
 .degradeBy(.4).room(1),
 note("<b4 eb4>").s('dino').delay(.8).slow(8).room(.5)
 )`;
-// ['c3','a4']
 
 export const sampleDemo = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // by Felix Roos

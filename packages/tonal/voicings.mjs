@@ -8,9 +8,10 @@ import { stack, register } from '@strudel.cycles/core';
 import _voicings from 'chord-voicings';
 const { dictionaryVoicing, minTopNoteDiff, lefthand } = _voicings.default || _voicings; // parcel module resolution fuckup
 
-export const voicingDictionaries = {
+export const voicingRegistry = {
   lefthand: { dictionary: lefthand, range: ['F3', 'A4'] },
 };
+export const setVoicingRange = (name, range) => addVoicings(name, voicingRegistry[name].dictionary, range);
 
 /**
  * Adds a new custom voicing dictionary.
@@ -34,11 +35,11 @@ export const voicingDictionaries = {
  * "<C^7 A7 Dm7 G7>".voicings('cookie').note()
  */
 export const addVoicings = (name, dictionary, range = ['F3', 'A4']) => {
-  Object.assign(voicingDictionaries, { [name]: { dictionary, range } });
+  Object.assign(voicingRegistry, { [name]: { dictionary, range } });
 };
 
 const getVoicing = (chord, dictionaryName, lastVoicing) => {
-  const { dictionary, range } = voicingDictionaries[dictionaryName];
+  const { dictionary, range } = voicingRegistry[dictionaryName];
   return dictionaryVoicing({
     chord,
     dictionary,

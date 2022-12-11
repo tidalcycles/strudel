@@ -153,6 +153,9 @@ const audioCtx = {
 const getDrawContext = () => canvasCtx;
 const getAudioContext = () => audioCtx;
 const loadSoundfont = () => {};
+const loadCsound = () => {};
+const loadCSound = () => {};
+const loadcsound = () => {};
 
 // TODO: refactor to evalScope
 evalScope(
@@ -178,6 +181,9 @@ evalScope(
     getDrawContext,
     getAudioContext,
     loadSoundfont,
+    loadCSound,
+    loadCsound,
+    loadcsound,
     Clock: {}, // whatever
     // Tone,
   },
