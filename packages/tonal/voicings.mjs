@@ -61,17 +61,17 @@ const getVoicing = (chord, dictionaryName, lastVoicing) => {
  * stack("<C^7 A7 Dm7 G7>".voicings('lefthand'), "<C3 A2 D3 G2>").note()
  */
 
+let lastVoicing; // this now has to be global until another solution is found :-/
+// it used to be local to the voicings function at evaluation time
+// but since register will patternify by default, means that
+// the function is called over and over again, resetting the lastVoicing variables
 export const voicings = register('voicings', function (dictionary, pat) {
-  let lastVoicing;
   return pat
     .fmap((value) => {
       lastVoicing = getVoicing(value, dictionary, lastVoicing);
       return stack(...lastVoicing);
     })
     .outerJoin();
-  /* .withContext(() => ({
-      locations: event.context.locations || [],
-    })); */
 });
 
 /**
