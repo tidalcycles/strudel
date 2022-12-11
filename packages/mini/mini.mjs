@@ -8,14 +8,14 @@ import * as krill from './krill-parser.js';
 import * as strudel from '@strudel.cycles/core';
 // import { addMiniLocations } from '@strudel.cycles/eval/shapeshifter.mjs';
 
-const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
+const { pure, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
 
-var _seedState = 0;
+/* var _seedState = 0;
 const randOffset = 0.0002;
 
 function _nextSeed() {
   return _seedState++;
-}
+} */
 
 const applyOptions = (parent) => (pat, i) => {
   const ast = parent.source_[i];
@@ -114,7 +114,9 @@ export function patternifyAST(ast) {
         return stack(...children);
       }
       if (alignment === 'r') {
-        return strudel.chooseInWith(strudel.rand.early(randOffset * _nextSeed()).segment(1), children);
+        // https://github.com/tidalcycles/strudel/issues/245#issuecomment-1345406422
+        // return strudel.chooseInWith(strudel.rand.early(randOffset * _nextSeed()).segment(1), children);
+        return strudel.chooseCycles(...children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
       if (!weightedChildren && alignment === 't') {
