@@ -19,8 +19,7 @@ import { mini } from '@strudel.cycles/mini/mini.mjs';
 // import euclid from '@strudel.cycles/core/euclid.mjs';
 // import '@strudel.cycles/tone/tone.mjs';
 // import '@strudel.cycles/midi/midi.mjs';
-import '@strudel.cycles/tonal/voicings.mjs';
-import '@strudel.cycles/tonal/tonal.mjs';
+import * as tonalHelpers from '@strudel.cycles/tonal';
 import '@strudel.cycles/xen/xen.mjs';
 // import '@strudel.cycles/xen/tune.mjs';
 // import '@strudel.cycles/core/euclid.mjs';
@@ -154,16 +153,19 @@ const audioCtx = {
 const getDrawContext = () => canvasCtx;
 const getAudioContext = () => audioCtx;
 const loadSoundfont = () => {};
+const loadCsound = () => {};
+const loadCSound = () => {};
+const loadcsound = () => {};
 
 // TODO: refactor to evalScope
 evalScope(
   // Tone,
   strudel,
-  strudel.Pattern.prototype.bootstrap(),
   toneHelpersMocked,
   uiHelpersMocked,
   controls,
   webaudio,
+  tonalHelpers,
   /* controls,
   toneHelpers,
   voicingHelpers,
@@ -179,6 +181,9 @@ evalScope(
     getDrawContext,
     getAudioContext,
     loadSoundfont,
+    loadCSound,
+    loadCsound,
+    loadcsound,
     Clock: {}, // whatever
     // Tone,
   },
@@ -187,7 +192,7 @@ evalScope(
 export const queryCode = async (code, cycles = 1) => {
   const { pattern } = await evaluate(code);
   const haps = pattern.queryArc(0, cycles);
-  return haps.map((h) => h.showWhole());
+  return haps.map((h) => h.show(true));
 };
 
 export const testCycles = {

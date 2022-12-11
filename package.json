@@ -19,7 +19,8 @@
     "jsdoc": "jsdoc packages/ -c jsdoc.config.json",
     "jsdoc-json": "jsdoc packages/ --template ./node_modules/jsdoc-json --destination doc.json -c jsdoc.config.json",
     "lint": "npx eslint . --ext mjs,js --quiet",
-    "iclc": "cd paper && pandoc --template=pandoc/iclc.html --citeproc  --number-sections iclc2023.md -o iclc2023.html && pandoc --template=pandoc/iclc.latex --citeproc --number-sections iclc2023.md -o iclc2023.pdf"
+    "iclc": "cd paper && pandoc --template=pandoc/iclc.html --citeproc  --number-sections iclc2023.md -o iclc2023.html && pandoc --template=pandoc/iclc.latex --citeproc --number-sections iclc2023.md -o iclc2023.pdf",
+    "codeformat": "prettier --write ."
   },
   "workspaces": [
     "packages/*"
@@ -51,6 +52,7 @@
     "jsdoc-json": "^2.0.2",
     "jsdoc-to-markdown": "^7.1.1",
     "lerna": "^4.0.0",
+    "prettier": "^2.8.1",
     "rollup-plugin-visualizer": "^5.8.1",
     "vitest": "^0.21.1"
   }

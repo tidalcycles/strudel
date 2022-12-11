@@ -77,7 +77,7 @@ describe('mini', () => {
     expect(haps.length < 230).toBe(true);
     // 'Had too many cycles remaining after degradeBy 0.8');
   });
-  it('supports the random choice operator ("|") with nesting', () => {
+  /*it('supports the random choice operator ("|") with nesting', () => {
     const numCycles = 900;
     const haps = mini('a | [b | c] | [d | e | f]').queryArc(0, numCycles);
     // Should have about 1/3 a, 1/6 each of b | c, and 1/9 each of d | e | f.
@@ -103,5 +103,5 @@ describe('mini', () => {
     //  PRNG, this test should succeed
     expect(chisq <= 15.086).toBe(true);
     // assert(chisq <= 15.086, chisq + ' was expected to be less than 15.086 under chi-squared test');
-  });
+  });*/
 });

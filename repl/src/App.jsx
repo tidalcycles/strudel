@@ -33,7 +33,6 @@ const supabase = createClient(
 
 const modules = [
   import('@strudel.cycles/core'),
-  // import('@strudel.cycles/tone'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
   import('@strudel.cycles/midi'),
@@ -46,7 +45,6 @@ const modules = [
 ];
 
 evalScope(
-  // Tone,
   controls, // sadly, this cannot be exported from core direclty
   { WebDirt },
   ...modules,

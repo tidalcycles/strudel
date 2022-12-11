@@ -5,18 +5,16 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import Tune from './tunejs.js';
-import { Pattern } from '@strudel.cycles/core';
+import { register } from '@strudel.cycles/core';
 
-Pattern.prototype._tune = function (scale, tonic = 220) {
+export const tune = register('tune', (scale, pat) => {
   const tune = new Tune();
   if (!tune.isValidScale(scale)) {
     throw new Error('not a valid tune.js scale name: "' + scale + '". See http://abbernie.github.io/tune/scales.html');
   }
   tune.loadScale(scale);
-  tune.tonicize(tonic);
-  return this._asNumber()._withHap((hap) => {
-    return hap.withValue(() => tune.note(hap.value)).setContext({ ...hap.context, type: 'frequency' });
+  tune.tonicize(1);
+  return pat.withHap((hap) => {
+    return hap.withValue(() => tune.note(hap.value));
   });
-};
-
-Pattern.prototype.define('tune', (scale, pat) => pat.tune(scale), { composable: true, patternified: true });
+});

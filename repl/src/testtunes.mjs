@@ -89,10 +89,11 @@ export const whirlyStrudel = `seq(e4, [b2,  b3], c4)
 
 export const transposedChordsHacked = `stack(
   "c2 eb2 g2",
-  "Cm7".voicings(['g2','c4']).slow(2)
+  "Cm7".voicings('lefthand').slow(2)
 ).transpose(
   "<1 2 3 2>".slow(2)
 ).transpose(5)`;
+// range ['g2','c4']
 
 export const scaleTranspose = `"f2,f3,c4,ab4"
 .scale(seq('F minor', 'F harmonic minor').slow(4))
@@ -102,13 +103,14 @@ export const scaleTranspose = `"f2,f3,c4,ab4"
 export const struct = `stack(
   "c2 g2 a2 [e2@2 eb2] d2 a2 g2 [d2 ~ db2]",
   "[C^7 A7] [Dm7 G7]".struct("[x@2 x] [~@2 x] [~ x@2]@2 [x ~@2] ~ [~@2 x@4]@2")
-  .voicings(['G3','A4'])
+  .voicings('lefthand')
 ).slow(4)`;
+// range ['G3','A4']
 
 export const magicSofa = `stack(
   "<C^7 F^7 ~> <Dm7 G7 A7 ~>"
    .every(2, fast(2))
-   .voicings(),
+   .voicings('lefthand'),
   "<c2 f2 g2> <d2 g2 a2 e2>"
 ).transpose("<0 2 3 4>")`;
 // below doesn't work anymore due to constructor cleanup
@@ -156,7 +158,7 @@ const synths = stack(
     scaleTranspose(8).early(3/8)
   ).apply(thru).tone(keys).mask("<~ x>/16"),
   "<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2)).apply(thru).tone(bass),
-  "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings().apply(thru).every(2, early(1/8)).tone(keys).mask("<x@7 ~>/8".early(1/4))
+  "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.1 ~]".fast(2)).voicings('lefthand').apply(thru).every(2, early(1/8)).tone(keys).mask("<x@7 ~>/8".early(1/4))
 )
 stack(
   drums.fast(2), 
@@ -197,7 +199,7 @@ export const giantStepsReggae = `stack(
     "B^7 [Fm7 Bb7] Eb^7 [C#m7 F#7]"
   )
   .struct("~ [x ~]".fast(4*8))
-  .voicings(['E3', 'G4']),
+  .voicings('lefthand'),
   // bass
   seq(
     "[B2 D2] [G2 D2] [Eb2 Bb2] [A2 D2]",
@@ -207,6 +209,8 @@ export const giantStepsReggae = `stack(
   )
   .struct("x ~".fast(4*8))
 ).slow(25).note()`;
+
+// range ['E3', 'G4']
 
 // TODO:
 /*
@@ -351,7 +355,7 @@ stack(
 
 export const bossa = `const scales = sequence('C minor', ['D locrian', 'G phrygian'], 'Bb2 minor', ['C locrian','F phrygian']).slow(4)
 stack(
-  "<Cm7 [Dm7b5 G7b9] Bbm7 [Cm7b5 F7b9]>".fast(2).struct("x ~ x@3 x ~ x ~ ~ ~ x ~ x@3".late(1/8)).early(1/8).slow(2).voicings(),
+  "<Cm7 [Dm7b5 G7b9] Bbm7 [Cm7b5 F7b9]>".fast(2).struct("x ~ x@3 x ~ x ~ ~ ~ x ~ x@3".late(1/8)).early(1/8).slow(2).voicings('lefthand'),
   "[~ [0 ~]] 0 [~ [4 ~]] 4".sub(7).restart(scales).scale(scales).early(.25)
 ).note().piano().slow(2)`;
 
@@ -443,9 +447,11 @@ export const bossaRandom = `const chords = "<Am7 Am7 Dm7 E7>"
 const roots = chords.rootNotes(2)
 
 stack(
-  chords.voicings(['F4', 'A5']).struct(
+  chords.voicings('lefthand').struct(
   \` x@2   ~ x ~ ~ ~ x |
     x?  ~ ~ x@3   ~ x |
     x?  ~ ~ x ~ x@3\`),
   roots.struct("x [~ x?0.2] x [~ x?] | x!4 | x@2 ~ ~ ~ x x x").transpose("0 7")
 ).slow(2).pianoroll().note().piano()`;
+
+// range ['F4', 'A5']

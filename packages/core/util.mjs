@@ -116,9 +116,9 @@ export const constant = (a, b) => a;
 
 export const listRange = (min, max) => Array.from({ length: max - min + 1 }, (_, i) => i + min);
 
-export function curry(func, overload) {
+export function curry(func, overload, arity = func.length) {
   const fn = function curried(...args) {
-    if (args.length >= func.length) {
+    if (args.length >= arity) {
       return func.apply(this, args);
     } else {
       const partial = function (...args2) {

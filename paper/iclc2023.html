@@ -622,9 +622,12 @@ spelling out operations which are joined together with the
 tersity, versus Strudel’s simplicity.</p>
 <p>To demonstrate this, consider the following equivalent Strudel and
 Tidal patterns:</p>
-<pre><code>note(&quot;0 5 7&quot;.every(3, add.squeeze(&quot;12 -12))).s(&quot;ocarina&quot;).crush(4).iter(4)
-
-iter 4 $ every 3 (||+ &quot;10 20&quot;) &quot;0 1 3&quot; # s &quot;ocarina&quot; # crush 4</code></pre>
+<pre class="tidal"><code>iter 4 $ every 3 (||+ &quot;10 20&quot;) (n &quot;0 1 3&quot;) # s &quot;triangle&quot; # crush 4</code></pre>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode js"><code class="sourceCode javascript"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">iter</span>(<span class="dv">4</span><span class="op">,</span> <span class="fu">every</span>(<span class="dv">3</span><span class="op">,</span> <span class="fu">add</span>(<span class="st">&quot;10 20&quot;</span>)<span class="op">,</span> <span class="fu">n</span>(<span class="st">&quot;60 61 63&quot;</span>)<span class="op">.</span><span class="fu">s</span>(<span class="st">&quot;triangle&quot;</span>)<span class="op">.</span><span class="fu">crush</span>(<span class="dv">4</span>)))</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">// simplified:</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">n</span>(<span class="st">&quot;60 61 63&quot;</span>)<span class="op">.</span><span class="fu">every</span>(<span class="dv">3</span><span class="op">,</span><span class="fu">add</span>(<span class="st">&quot;10 20&quot;</span>))<span class="op">.</span><span class="fu">iter</span>(<span class="dv">4</span>)<span class="op">.</span><span class="fu">s</span>(<span class="st">&quot;sawtooth&quot;</span>)<span class="op">.</span><span class="fu">crush</span>(<span class="dv">4</span>)</span></code></pre></div>
 <p>The Strudel example uses the <code>.</code> method call operator for
 all operations and combinations, whereas the Tidal example has
 <code>#</code> for the default method for combining patterns and uses

@@ -67,6 +67,8 @@ stack(
 `;
 
 export const giantSteps = `// John Coltrane - Giant Steps
+setVoicingRange('lefthand', ['E3', 'G4']);
+
 stack(
   // melody
   seq(
@@ -81,7 +83,7 @@ stack(
     "[G^7 Bb7] [Eb^7 F#7] B^7 [Fm7 Bb7]",
     "Eb^7 [Am7 D7] G^7 [C#m7 F#7]",
     "B^7 [Fm7 Bb7] Eb^7 [C#m7 F#7]"
-  ).voicings(['E3', 'G4']),
+  ).voicings('lefthand'),
   // bass
   seq(
     "[B2 D2] [G2 Bb2] [Eb2 Bb3] [A2 D2]",
@@ -130,15 +132,15 @@ const synths = stack(
   "<eb4 d4 c4 b3>/2".scale(timeCat([3,'C minor'],[1,'C melodic minor'])
   .slow(8)).struct("[~ x]*2")
   .layer(
-    scaleTranspose(0).early(0),
-    scaleTranspose(2).early(1/8),
-    scaleTranspose(7).early(1/4),
-    scaleTranspose(8).early(3/8)
+    x=>x.scaleTranspose(0).early(0),
+    x=>x.scaleTranspose(2).early(1/8),
+    x=>x.scaleTranspose(7).early(1/4),
+    x=>x.scaleTranspose(8).early(3/8)
   ).apply(thru).note().apply(keys).mask("<~ x>/16"),
   note("<C2 Bb1 Ab1 [G1 [G2 G1]]>/2".apply(thru))
   .struct("[x [~ x] <[~ [~ x]]!3 [x x]>@2]/2".fast(2))
   .s('sawtooth').attack(0.001).decay(0.2).sustain(1).cutoff(500),
-  "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.2 ~]".fast(2)).voicings()
+  "<Cm7 Bb7 Fm7 G7b13>/2".struct("~ [x@0.2 ~]".fast(2)).voicings('lefthand')
   .apply(thru).every(2, early(1/8)).note().apply(keys).sustain(0)
   .delay(.4).delaytime(.12)
   .mask("<x@7 ~>/8".early(1/4))
@@ -245,7 +247,7 @@ export const festivalOfFingers = `// licensed with CC BY-NC-SA 4.0 https://creat
 // by Felix Roos
 const chords = "<Cm7 Fm7 G7 F#7>";
 stack(
-  chords.voicings().struct("x(3,8,-1)").velocity(.5).off(1/7,x=>x.transpose(12).velocity(.2)),
+  chords.voicings('lefthand').struct("x(3,8,-1)").velocity(.5).off(1/7,x=>x.transpose(12).velocity(.2)),
   chords.rootNotes(2).struct("x(4,8,-2)"),
   chords.rootNotes(4)
   .scale(cat('C minor','F dorian','G dorian','F# mixolydian'))
@@ -501,7 +503,7 @@ stack(
   .gain(.4) // turn down
   .cutoff(sine.slow(7).range(300,5000)) // automate cutoff
   //.hush()
-  ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings() // chords
+  ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings('lefthand') // chords
   .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
   .add(perlin.range(0,.5)) // random pitch variation
   .n() // wrap in "n"
@@ -531,7 +533,7 @@ samples({
   perc: ['perc/002_perc2.wav'],
 }, 'github:tidalcycles/Dirt-Samples/master/');
 
-"C^7 Am7 Dm7 G7".slow(2).voicings()
+"C^7 Am7 Dm7 G7".slow(2).voicings('lefthand')
   .stack("0@6 [<1 2> <2 0> 1]@2".scale('C5 major'))
   .n().slow(4)
   .s('0040_FluidR3_GM_sf2_file')
@@ -582,7 +584,7 @@ export const chop = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.or
 samples({ p: 'https://cdn.freesound.org/previews/648/648433_11943129-lq.mp3' })
 
 s("p")
-  .loopAt(32,1)
+  .loopAt(32)
   .chop(128)
   .jux(rev)
   .shape(.4)
@@ -626,7 +628,7 @@ stack(
   s("mt lt ht").struct("x(3,8)").fast(2).gain(.5).room(.5).sometimes(x=>x.speed(".5")),
   s("misc:2").speed(1).delay(.5).delaytime(1/3).gain(.4),
   // chords
-  note("[~ Gm7] ~ [~ Dm7] ~".voicings().superimpose(x=>x.add(.1)))
+  note("[~ Gm7] ~ [~ Dm7] ~".voicings('lefthand').superimpose(x=>x.add(.1)))
   .s('sawtooth').gain(.5)
   .cutoff(perlin.range(400,3000).slow(8))
   .decay(perlin.range(0.05,.2)).sustain(0)
@@ -650,11 +652,12 @@ export const dinofunk = `// licensed with CC BY-NC-SA 4.0 https://creativecommon
 // by Felix Roos
 samples({bass:'https://cdn.freesound.org/previews/614/614637_2434927-hq.mp3',
 dino:{b4:'https://cdn.freesound.org/previews/316/316403_5123851-hq.mp3'}})
+setVoicingRange('lefthand', ['c3','a4'])
 
 stack(
-s('bass').loopAt(8,1).clip(1),
+s('bass').loopAt(8).clip(1),
 s("bd*2, ~ sd,hh*4"),
-note("Abm7".voicings(['c3','a4']).struct("x(3,8,1)".slow(2))),
+note("Abm7".voicings('lefthand').struct("x(3,8,1)".slow(2))),
 "0 1 2 3".scale('ab4 minor pentatonic')
 .superimpose(x=>x.add(.1))
 .sometimes(x=>x.add(12))
@@ -767,7 +770,7 @@ note("c3 eb3 g3 bb3").palindrome()
 
 export const csoundDemo = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // by Felix Roos
-await csound\`
+await loadCsound\`
 instr CoolSynth
     iduration = p3
     ifreq = p4
@@ -806,7 +809,7 @@ export const loungeSponge = `
 await loadOrc('github:kunstmusik/csound-live-code/master/livecode.orc')
 
 stack(
-  note("<C^7 A7 Dm7 Fm7>/2".voicings())
+  note("<C^7 A7 Dm7 Fm7>/2".voicings('lefthand'))
   .cutoff(sine.range(500,2000).round().slow(16))
   .euclidLegato(3,8).csound('FM1')
   ,
@@ -823,7 +826,7 @@ export const arpoon = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.
 // "Arpoon" by Felix Roos
 await samples('github:tidalcycles/Dirt-Samples/master')
 
-"<<Am7 C^7> C7 F^7 [Fm7 E7b9]>".voicings()
+"<<Am7 C^7> C7 F^7 [Fm7 E7b9]>".voicings('lefthand')
   .arp("[0,3] 2 [1,3] 2".fast(3)).legato(2)
   .add(perlin.range(0,0.2)).sub("<0 -12>/8")
   .note().cutoff(perlin.range(500,4000)).resonance(12)
