@@ -6,7 +6,6 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import * as krill from './krill-parser.js';
 import * as strudel from '@strudel.cycles/core';
-// import { addMiniLocations } from '@strudel.cycles/eval/shapeshifter.mjs';
 
 const { pure, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
 
@@ -137,15 +136,17 @@ export function patternifyAST(ast) {
         return silence;
       }
       if (typeof ast.source_ !== 'object') {
-        /* if (!addMiniLocations) {
-          return ast.source_;
-        } */
         if (!ast.location_) {
           console.warn('no location for', ast);
           return ast.source_;
         }
         const { start, end } = ast.location_;
         const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
+        // make sure whitespaces are not part of the highlight
+        const len = ast.source_.length;
+        // end.column = start.column + len;
+        end.offset = start.offset + len;
+        end.line = start.line; // codemirror does not understand multiline highlights
         // the following line expects the shapeshifter append .withMiniLocation
         // because location_ is only relative to the mini string, but we need it relative to whole code
         return pure(value).withLocation([start.line, start.column, start.offset], [end.line, end.column, end.offset]);
