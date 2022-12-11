@@ -1,4 +1,4 @@
-import { getFrequency, logger, Pattern } from '@strudel.cycles/core';
+import { getFrequency, logger, register } from '@strudel.cycles/core';
 import { getAudioContext } from '@strudel.cycles/webaudio';
 import csd from './project.csd?raw';
 // import livecodeOrc from './livecode.orc?raw';
@@ -6,12 +6,24 @@ import presetsOrc from './presets.orc?raw';
 
 let csoundLoader, _csound;
 
-// triggers given instrument name using csound.
-Pattern.prototype._csound = function (instrument) {
+// initializes csound + can be used to reevaluate given instrument code
+export async function loadCSound(code = '') {
+  await init();
+  if (code) {
+    code = `${code}`;
+    //     ^       ^
+    // wrapping in backticks makes sure it works when calling as templated function
+    await _csound?.evalCode(code);
+  }
+}
+export const loadcsound = loadCSound;
+export const loadCsound = loadCSound;
+
+export const csound = register('csound', (instrument, pat) => {
   instrument = instrument || 'triangle';
   init(); // not async to support csound inside other patterns + to be able to call pattern methods after it
   // TODO: find a alternative way to wait for csound to load (to wait with first time playback)
-  return this.onTrigger((time, hap) => {
+  return pat.onTrigger((time, hap) => {
     if (!_csound) {
       logger('[csound] not loaded yet', 'warning');
       return;
@@ -40,20 +52,7 @@ Pattern.prototype._csound = function (instrument) {
     const msg = `i ${params.join(' ')}`;
     _csound.inputMessage(msg);
   });
-};
-
-// initializes csound + can be used to reevaluate given instrument code
-export async function csound(code = '') {
-  await init();
-  if (code) {
-    code = `${code}`;
-    //     ^       ^
-    // wrapping in backticks makes sure it works when calling as templated function
-    await _csound?.evalCode(code);
-  }
-}
-
-Pattern.prototype.define('csound', (a, pat) => pat.csound(a), { composable: false, patternified: true });
+});
 
 function eventLogger(type, args) {
   const [msg] = args;

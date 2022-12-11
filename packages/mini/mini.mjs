@@ -8,14 +8,14 @@ import * as krill from './krill-parser.js';
 import * as strudel from '@strudel.cycles/core';
 // import { addMiniLocations } from '@strudel.cycles/eval/shapeshifter.mjs';
 
-const { pure, Pattern, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
+const { pure, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
 
-var _seedState = 0;
+/* var _seedState = 0;
 const randOffset = 0.0002;
 
 function _nextSeed() {
   return _seedState++;
-}
+} */
 
 const applyOptions = (parent) => (pat, i) => {
   const ast = parent.source_[i];
@@ -30,10 +30,28 @@ const applyOptions = (parent) => (pat, i) => {
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
       case 'degradeBy':
+        // TODO: find out what is right here
+        // example:
+        /*
+           stack(
+             s("hh*8").degrade(),
+             s("[ht*8]?")
+           )
+        */
+        // above example will only be in sync when _degradeBy is used...
+        // it also seems that the nextSeed will create undeterministic behaviour
+        // as it uses a global _seedState. This is probably the reason for
+        // https://github.com/tidalcycles/strudel/issues/245
+
+        // this is how it was:
+        /* 
         return reify(pat)._degradeByWith(
           strudel.rand.early(randOffset * _nextSeed()).segment(1),
-          operator.arguments_.amount,
-        );
+          operator.arguments_.amount ?? 0.5,
+        ); 
+        */
+        return reify(pat)._degradeBy(operator.arguments_.amount ?? 0.5);
+
       // TODO: case 'fixed-step': "%"
     }
     console.warn(`operator "${operator.type_}" not implemented`);
@@ -96,7 +114,9 @@ export function patternifyAST(ast) {
         return stack(...children);
       }
       if (alignment === 'r') {
-        return strudel.chooseInWith(strudel.rand.early(randOffset * _nextSeed()).segment(1), children);
+        // https://github.com/tidalcycles/strudel/issues/245#issuecomment-1345406422
+        // return strudel.chooseInWith(strudel.rand.early(randOffset * _nextSeed()).segment(1), children);
+        return strudel.chooseCycles(...children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
       if (!weightedChildren && alignment === 't') {
@@ -177,11 +197,6 @@ export const h = (string) => {
   // console.log('ast', ast);
   return patternifyAST(ast);
 };
-
-// shorthand for mini
-Pattern.prototype.define('mini', mini, { composable: true });
-Pattern.prototype.define('m', mini, { composable: true });
-Pattern.prototype.define('h', h, { composable: true });
 
 export function minify(thing) {
   if (typeof thing === 'string') {

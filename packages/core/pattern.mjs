@@ -581,21 +581,6 @@ export class Pattern {
     );
   }
 
-  patternify(join, func) {
-    const pat = this;
-    return function (...args) {
-      // the problem here: args could be a pattern that has been
-      // turned into an object to add location to avoid object
-      // checking for every pattern method, we can remove it here...
-      // in the future, patternified args should be marked as well +
-      // some better object handling
-      args = args.map((arg) => (isPattern(arg) ? arg.fmap((value) => value.value || value) : arg));
-      const pat_arg = sequence(...args);
-      // arg.locations has to go somewhere..
-      return join(pat_arg.fmap((arg) => func.call(pat, arg)));
-    };
-  }
-
   asNumber() {
     return this.fmap(parseNumeral);
   }
@@ -1277,9 +1262,9 @@ export function register(name, func) {
     args = args.map(reify);
     // For methods that take a single argument (plus 'this'), allow
     // multiple arguments but sequence them
-    if (arity == 2 && args.length != 1) {
+    if (arity === 2 && args.length !== 1) {
       args = [sequence(...args)];
-    } else if (arity != args.length + 1) {
+    } else if (arity !== args.length + 1) {
       throw new Error(`.${name}() expects ${arity - 1} inputs but got ${args.length}.`);
     }
     return pfunc(...args, this);
@@ -1533,7 +1518,7 @@ export const { firstOf, every } = register(['firstOf', 'every'], function (n, fu
 
 /**
  * Like layer, but with a single function:
- * @name _apply
+ * @name apply
  * @memberof Pattern
  * @example
  * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4")).note()
@@ -1921,83 +1906,3 @@ const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat)
 const { loopAtCps, loopatcps } = register(['loopAtCps', 'loopatcps'], function (factor, cps, pat) {
   return _loopAt(factor, pat, cps);
 });
-
-// problem: curried functions with spread arguments must have pat at the beginning
-// with this, we cannot keep the pattern open at the end.. solution for now: use array to keep using pat as last arg
-
-// these are the core composable functions. they are extended with Pattern.prototype.define below
-Pattern.prototype.composable = { early, late, superimpose };
-
-// adds Pattern.prototype.composable to given function as child functions
-// then you can do transpose(2).late(0.2) instead of x => x.transpose(2).late(0.2)
-export function makeComposable(func) {
-  Object.entries(Pattern.prototype.composable).forEach(([functionName, composable]) => {
-    // compose with dot
-    func[functionName] = (...args) => {
-      // console.log(`called ${functionName}(${args.join(',')})`);
-      const composition = compose(func, composable(...args));
-      // the composition itself must be composable too :)
-      // then you can do endless chaining transpose(2).late(0.2).fast(2) ...
-      return makeComposable(composition);
-    };
-  });
-  return func;
-}
-
-export const patternify = (f) => (pata, pat) => pata.fmap((a) => f.call(pat, a)).innerJoin();
-export const patternify2 = (f) =>
-  function (pata, patb, pat) {
-    return pata
-      .fmap((a) => (b) => f.call(pat, a, b))
-      .appLeft(patb)
-      .innerJoin();
-  };
-export const patternify3 = (f) => (pata, patb, patc, pat) =>
-  pata
-    .fmap((a) => (b) => (c) => f.call(pat, a, b, c))
-    .appLeft(patb)
-    .appLeft(patc)
-    .innerJoin();
-export const patternify4 = (f) => (pata, patb, patc, patd, pat) =>
-  pata
-    .fmap((a) => (b) => (c) => (d) => f.call(pat, a, b, c, d))
-    .appLeft(patb)
-    .appLeft(patc)
-    .appLeft(patd)
-    .innerJoin();
-
-Pattern.prototype.patternified = [];
-
-// call this after all Pattern.prototype.define calls have been executed! (right before evaluate)
-Pattern.prototype.bootstrap = function () {
-  const bootstrapped = Object.fromEntries(
-    Object.entries(Pattern.prototype.composable).map(([functionName, composable]) => {
-      if (Pattern.prototype[functionName]) {
-        // without this, 'C^7'.m.chordBass.transpose(2) will throw "C^7".m.chordBass.transpose is not a function
-        // Pattern.prototype[functionName] = makeComposable(Pattern.prototype[functionName]); // is this needed?
-      }
-      return [functionName, curry(composable, makeComposable)];
-    }),
-  );
-
-  this.patternified.forEach((prop) => {
-    // the following will patternify all functions in Pattern.prototype.patternified
-    Pattern.prototype[prop] = function (...args) {
-      return this.patternify((x) => x.innerJoin(), Pattern.prototype['_' + prop])(...args);
-    };
-  });
-  return bootstrapped;
-};
-
-// this will add func as name to list of composable / patternified functions.
-// those lists will be used in bootstrap to curry and compose everything, to support various call patterns
-Pattern.prototype.define = (name, func, options = {}) => {
-  if (options.composable) {
-    Pattern.prototype.composable[name] = func;
-  }
-  if (options.patternified) {
-    Pattern.prototype.patternified = Pattern.prototype.patternified.concat([name]);
-  }
-
-  Pattern.prototype.bootstrap(); // automatically bootstrap after new definition
-};

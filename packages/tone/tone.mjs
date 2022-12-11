@@ -4,18 +4,15 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern } from '@strudel.cycles/core';
+import { register } from '@strudel.cycles/core';
 import * as _Tone from 'tone';
 
 // import Tone from here, to make sure to get the same AudioContext
 export const Tone = _Tone;
 
 const {
-  AutoFilter,
-  Destination,
   Filter,
   Gain,
-  isNote,
   Synth,
   PolySynth,
   MembraneSynth,
@@ -49,8 +46,8 @@ export const getDefaultSynth = () => {
 // https://www.charlie-roberts.com/gibberish/playground/
 
 // with this function, you can play the pattern with any tone synth
-Pattern.prototype.tone = function (instrument) {
-  return this.onTrigger((time, hap) => {
+export const tone = register('tone', function (instrument, pat) {
+  return pat.onTrigger((time, hap) => {
     let note;
     let velocity = hap.context?.velocity ?? 0.75;
     if (instrument instanceof PluckSynth) {
@@ -74,9 +71,7 @@ Pattern.prototype.tone = function (instrument) {
       instrument.triggerAttackRelease(note, hap.duration.valueOf(), time, velocity);
     }
   });
-};
-
-Pattern.prototype.define('tone', (type, pat) => pat.tone(type), { composable: true, patternified: false });
+});
 
 // synth helpers
 export const amsynth = (options) => new AMSynth(options);
