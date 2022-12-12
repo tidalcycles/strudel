@@ -37,7 +37,7 @@ export const freqToMidi = (freq) => {
 
 export const valueToMidi = (value, fallbackValue) => {
   if (typeof value !== 'object') {
-    throw new Error('Hap.getMidi: expected object value');
+    throw new Error('valueToMidi: expected object value');
   }
   let { freq, note, n } = value;
   note = note ?? n;
