@@ -39,8 +39,7 @@ export const valueToMidi = (value, fallbackValue) => {
   if (typeof value !== 'object') {
     throw new Error('valueToMidi: expected object value');
   }
-  let { freq, note, n } = value;
-  note = note ?? n;
+  let { freq, note } = value;
   if (typeof freq === 'number') {
     return freqToMidi(freq);
   }
@@ -51,7 +50,7 @@ export const valueToMidi = (value, fallbackValue) => {
     return note;
   }
   if (!fallbackValue) {
-    throw new Error('Hap.getMidi: expected freq or n / note to be set');
+    throw new Error('valueToMidi: expected freq or note to be set');
   }
   return fallbackValue;
 };

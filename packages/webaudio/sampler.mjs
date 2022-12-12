@@ -25,7 +25,7 @@ export const getSampleBufferSource = async (s, n, note, speed, freq) => {
   if (freq !== undefined && note !== undefined) {
     logger('[sampler] hap has note and freq. ignoring note', 'warning');
   }
-  let midi = valueToMidi({ freq, n, note }, 36);
+  let midi = valueToMidi({ freq, note }, 36);
   transpose = midi - 36; // C3 is middle C
 
   const ac = getAudioContext();
