@@ -31,6 +31,31 @@ export const fromMidi = (n) => {
   return Math.pow(2, (n - 69) / 12) * 440;
 };
 
+export const freqToMidi = (freq) => {
+  return (12 * Math.log(freq / 440)) / Math.LN2 + 69;
+};
+
+export const valueToMidi = (value, fallbackValue) => {
+  if (typeof value !== 'object') {
+    throw new Error('Hap.getMidi: expected object value');
+  }
+  let { freq, note, n } = value;
+  note = note ?? n;
+  if (typeof freq === 'number') {
+    return freqToMidi(freq);
+  }
+  if (typeof note === 'string') {
+    return toMidi(note);
+  }
+  if (typeof note === 'number') {
+    return note;
+  }
+  if (!fallbackValue) {
+    throw new Error('Hap.getMidi: expected freq or n / note to be set');
+  }
+  return fallbackValue;
+};
+
 /**
  * @deprecated does not appear to be referenced or invoked anywhere in the codebase
  */

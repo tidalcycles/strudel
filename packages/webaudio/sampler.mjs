@@ -1,4 +1,4 @@
-import { logger, toMidi } from '@strudel.cycles/core';
+import { logger, toMidi, valueToMidi } from '@strudel.cycles/core';
 import { getAudioContext } from './index.mjs';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
@@ -20,9 +20,12 @@ function humanFileSize(bytes, si) {
   return bytes.toFixed(1) + ' ' + units[u];
 }
 
-export const getSampleBufferSource = async (s, n, note, speed) => {
+export const getSampleBufferSource = async (s, n, note, speed, freq) => {
   let transpose = 0;
-  let midi = typeof note === 'string' ? toMidi(note) : note || 36;
+  if (freq !== undefined && note !== undefined) {
+    logger('[sampler] hap has note and freq. ignoring note', 'warning');
+  }
+  let midi = valueToMidi({ freq, n, note }, 36);
   transpose = midi - 36; // C3 is middle C
 
   const ac = getAudioContext();

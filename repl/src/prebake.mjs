@@ -1,4 +1,4 @@
-import { Pattern, toMidi } from '@strudel.cycles/core';
+import { Pattern, toMidi, valueToMidi } from '@strudel.cycles/core';
 import { samples } from '@strudel.cycles/webaudio';
 
 export async function prebake({ isMock = false, baseDir = '.' } = {}) {
@@ -25,9 +25,9 @@ Pattern.prototype.piano = function () {
     .s('piano')
     .release(0.1)
     .fmap((value) => {
-      const midi = typeof value.note === 'string' ? toMidi(value.note) : value.note;
+      const midi = valueToMidi(value);
       // pan by pitch
-      const pan = panwidth(Math.min(midi / maxPan, 1), 0.5);
+      const pan = panwidth(Math.min(Math.round(midi) / maxPan, 1), 0.5);
       return { ...value, pan: (value.pan || 1) * pan };
     });
 };

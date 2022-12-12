@@ -288,10 +288,10 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
 
     if (soundfont) {
       // is soundfont
-      bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac);
+      bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac, freq);
     } else {
       // is sample from loaded samples(..)
-      bufferSource = await getSampleBufferSource(s, n, note, speed);
+      bufferSource = await getSampleBufferSource(s, n, note, speed, freq);
     }
     // asny stuff above took too long?
     if (ac.currentTime > t) {
