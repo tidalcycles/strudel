@@ -158,13 +158,13 @@ export const csoundm = register('csoundm', (instrument, pat) => {
     let octave = Math.log(frequency / C4) / Math.log(2.0) + 8.0;
     const p4 = octave * 12.0 - 36.0;
     // We prefer floating point precision, but over the MIDI range [0, 127].
-    const p5 = 127. * (hap.context?.velocity ?? 0.9);
+    const p5 = 127 * (hap.context?.velocity ?? 0.9);
     // The Strudel controls as a string.
     const p6 = Object.entries({ ...hap.value, frequency })
       .flat()
       .join('/');
     const i_statement = `i ${p1} ${p2} ${p3} ${p4} ${p5} "${p6}"`;
-    console.log("[csoundm]:", i_statement)
+    console.log('[csoundm]:', i_statement);
     _csound.inputMessage(i_statement);
   });
 });
