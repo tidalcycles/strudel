@@ -42,7 +42,7 @@ export const instruments = [
   '0031_FluidR3_GM_sf2_file',
   '0031_GeneralUserGS_sf2_file',
   '0031_SoundBlasterOld_sf2', // pianos until here
-  '0040_Aspirin_sf2_file', 
+  '0040_Aspirin_sf2_file',
   '0040_Chaos_sf2_file',
   '0040_FluidR3_GM_sf2_file', // rhodes
   '0040_GeneralUserGS_sf2_file', // staccato rhodes
@@ -59,7 +59,7 @@ export const instruments = [
   '0046_GeneralUserGS_sf2_file', // ?
   '0050_Aspirin_sf2_file', // glass organ
   '0050_Chaos_sf2_file', // short glass organ
-  '0050_FluidR3_GM_sf2_file',// long glass organ !
+  '0050_FluidR3_GM_sf2_file', // long glass organ !
   '0050_GeneralUserGS_sf2_file', // short glass organ
   '0050_JCLive_sf2_file', // glass organ
   '0050_SBLive_sf2', // ?
@@ -1635,7 +1635,7 @@ export const drums = [
   '81_4_Chaos_sf2_file',
 ];
 
-// see https://www.midi.org/specifications-old/item/gm-level-1-sound-set 
+// see https://www.midi.org/specifications-old/item/gm-level-1-sound-set
 export const instrumentNames = [];
 instrumentNames[0] = 'Acoustic Grand Piano: Piano';
 instrumentNames[1] = 'Bright Acoustic Piano: Piano';
