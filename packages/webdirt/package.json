@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.4.1",
+    "@strudel.cycles/core": "^0.5.0",
     "WebDirt": "github:dktr0/WebDirt"
   }
 }
