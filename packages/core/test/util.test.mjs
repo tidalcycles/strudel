@@ -10,6 +10,7 @@ import {
   tokenizeNote,
   toMidi,
   fromMidi,
+  freqToMidi,
   _mod,
   compose,
   getFrequency,
@@ -92,6 +93,12 @@ describe('fromMidi', () => {
   it('should turn midi into frequency', () => {
     expect(fromMidi(69)).toEqual(440);
     expect(fromMidi(57)).toEqual(220);
+  });
+});
+describe('freqToMidi', () => {
+  it('should turn frequency into midi', () => {
+    expect(freqToMidi(440)).toEqual(69);
+    expect(freqToMidi(220)).toEqual(57);
   });
 });
 describe('getFrequency', () => {

@@ -1,11 +1,11 @@
 {
   "name": "@strudel.cycles/monorepo",
-  "version": "0.0.4",
+  "version": "0.5.0",
   "private": true,
   "description": "Port of tidalcycles to javascript",
   "scripts": {
     "pretest": "cd tutorial && npm run jsdoc-json",
-    "test": "npm run lint && vitest run --version",
+    "test": "vitest run --version",
     "test-ui": "vitest --ui",
     "test-coverage": "vitest --coverage",
     "bootstrap": "lerna bootstrap",
@@ -18,9 +18,11 @@
     "deploy": "NODE_DEBUG=gh-pages gh-pages -d out",
     "jsdoc": "jsdoc packages/ -c jsdoc.config.json",
     "jsdoc-json": "jsdoc packages/ --template ./node_modules/jsdoc-json --destination doc.json -c jsdoc.config.json",
-    "lint": "npx eslint . --ext mjs,js --quiet",
-    "iclc": "cd paper && pandoc --template=pandoc/iclc.html --citeproc  --number-sections iclc2023.md -o iclc2023.html && pandoc --template=pandoc/iclc.latex --citeproc --number-sections iclc2023.md -o iclc2023.pdf",
-    "codeformat": "prettier --write ."
+    "lint": "eslint . --ext mjs,js --quiet",
+    "codeformat": "prettier --write .",
+    "format-check": "prettier --check .",
+    "check": "npm run format-check && npm run lint && npm run test",
+    "iclc": "cd paper && pandoc --template=pandoc/iclc.html --citeproc  --number-sections iclc2023.md -o iclc2023.html && pandoc --template=pandoc/iclc.latex --citeproc --number-sections iclc2023.md -o iclc2023.pdf"
   },
   "workspaces": [
     "packages/*"
@@ -43,7 +45,7 @@
   },
   "homepage": "https://strudel.tidalcycles.org",
   "devDependencies": {
-    "@vitest/ui": "^0.21.1",
+    "@vitest/ui": "^0.25.7",
     "c8": "^7.12.0",
     "eslint": "^8.28.0",
     "events": "^3.3.0",
@@ -54,6 +56,6 @@
     "lerna": "^4.0.0",
     "prettier": "^2.8.1",
     "rollup-plugin-visualizer": "^5.8.1",
-    "vitest": "^0.21.1"
+    "vitest": "^0.25.7"
   }
 }

@@ -80,16 +80,16 @@ export class Hap {
   }
 
   show(compact = false) {
-    const value = typeof this.value === 'object'
-          ? compact
+    const value =
+      typeof this.value === 'object'
+        ? compact
           ? JSON.stringify(this.value).slice(1, -1).replaceAll('"', '').replaceAll(',', ' ')
           : JSON.stringify(this.value)
-          : this.value
+        : this.value;
     var spans = '';
     if (this.whole == undefined) {
       spans = '~' + this.part.show;
-    }
-    else {
+    } else {
       var is_whole = this.whole.begin.equals(this.part.begin) && this.whole.end.equals(this.part.end);
       if (!this.whole.begin.equals(this.part.begin)) {
         spans = this.whole.begin.show() + ' ⇜ ';
@@ -102,12 +102,10 @@ export class Hap {
         spans += ')';
       }
       if (!this.whole.end.equals(this.part.end)) {
-        spans += ' ⇝ ' + this.whole.end.show()
+        spans += ' ⇝ ' + this.whole.end.show();
       }
     }
-    return (
-      '[ ' + spans + ' | ' + value + ' ]'
-    );
+    return '[ ' + spans + ' | ' + value + ' ]';
   }
 
   showWhole(compact = false) {
