@@ -90,18 +90,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 TidalCycles (or ‘Tidal’ for short) live coding system, using the
 JavaScript programming language. Strudel is an attempt to make live
 coding more accessible, by creating a system that runs entirely in the
-browser, while opening Tidals approach to algorithmic patterns (Mclean
-2020) up to modern audio/visual web technologies. The Strudel REPL is a
-live code editor dedicated to manipulating Strudel patterns while they
+browser, while opening Tidals approach to algorithmic patterns <span
+class="citation" data-cites="mcleanAlgorithmicPattern2020a">(Mclean
+2020)</span> up to modern audio/visual web technologies. The Strudel
+REPL is a live code editor dedicated to manipulating patterns while they
 play, with builtin visual feedback. While Strudel is written in
 JavaScript, the API is optimized for simplicity and readability by
 applying code transformations on the syntax tree level, allowing
 language operations that would otherwise be impossible. The application
 supports multiple ways to output sound, including Tone.js, Web Audio
-Nodes, OSC (Open Sound Control) messages, Web Serial and Web MIDI. The
-project is split into multiple packages, allowing granular reuse in
-other applications. Apart fromTidalCycles, Strudel draws inspiration
-from many prior existing projects like TidalVortex <span
+Nodes, OSC (Open Sound Control) messages, Web Serial, Web MIDI and
+Csound. The project is split into multiple packages, allowing granular
+reuse in other applications. Apart from TidalCycles, Strudel draws
+inspiration from many prior existing projects like TidalVortex <span
 class="citation" data-cites="mcleanTidalVortexZero2022">(McLean et al.
 2022)</span>, Gibber <span class="citation"
 data-cites="robertsGibberLiveCoding2012">(Roberts and Kuchera-morin
@@ -111,7 +112,10 @@ data-cites="ogbornEstuaryBrowserbasedCollaborative2017">(Ogborn et al.
 data-cites="jackHydra2022">(Jack [2022] 2022)</span>, Ocarina <span
 class="citation" data-cites="solomonPurescriptocarina2022">(Solomon
 [2021] 2022)</span> and Feedforward <span class="citation"
-data-cites="mcleanFeedforward2020">(McLean 2020)</span>.</p>
+data-cites="mcleanFeedforward2020">(McLean 2020)</span>. This paper
+expands the Strudel Demo paper for the Web Audio Conference 2022 <span
+class="citation" data-cites="StrudelWAC2022">(Felix Roos and Alex McLean
+2022)</span>.</p>
 </div>
 
 <h1 data-number="1" id="introduction"><span
@@ -139,10 +143,7 @@ Haskell, some divergence is inevitable and healthy.</p>
 coding environment, porting Tidal’s core represention of patterns,
 pattern transformations, and mininotation for polymetric sequences,
 combined with a wealth of features for synthesising and visualising
-those patterns. Strudel can run entirely in the browser, opening Tidal’s
-algorithmic patterns <span class="citation"
-data-cites="mcleanAlgorithmicPattern2020a">(Mclean 2020)</span> up to
-modern audio/visual web technologies.</p>
+those patterns.</p>
 <p>The main interface for Strudel is its REPL[^REPL stands for read,
 evaluate, print/play, loop. It is friendly jargon for an interactive
 programming interface from computing heritage, usually for a commandline
@@ -215,9 +216,9 @@ synthesis or other event triggers. Also, the above event data structure
 has been simplified for readability.</p>
 <figure>
 <img src="images/strudel-screenshot2.png" style="width:60.0%"
-alt="Screenshot of the Strudel editor, including piano-roll visualisation." />
-<figcaption aria-hidden="true">Screenshot of the Strudel editor,
-including piano-roll visualisation.</figcaption>
+alt="Screenshot of the Strudel REPL, including piano-roll visualisation." />
+<figcaption aria-hidden="true">Screenshot of the Strudel REPL, including
+piano-roll visualisation.</figcaption>
 </figure>
 <h1 data-number="4" id="making-patterns"><span
 class="header-section-number">4</span> Making Patterns</h1>
@@ -722,6 +723,11 @@ role="doc-biblioentry">
 <em>Faust - Programming Language for Audio Applications and
 Plugins</em>. (2016) 2022. C++. GRAME. <a
 href="https://github.com/grame-cncm/faust">https://github.com/grame-cncm/faust</a>.
+</div>
+<div id="ref-StrudelWAC2022" class="csl-entry" role="doc-biblioentry">
+Felix Roos, and Alex McLean. 2022. <span>“Strudel: Algorithmic Patterns
+for the Web.”</span> In. Zenodo. <a
+href="https://doi.org/10.5281/zenodo.6768844">https://doi.org/10.5281/zenodo.6768844</a>.
 </div>
 <div id="ref-jackHydra2022" class="csl-entry" role="doc-biblioentry">
 Jack, Olivia. (2022) 2022. <em>Hydra</em>. <a
