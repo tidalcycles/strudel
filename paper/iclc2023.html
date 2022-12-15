@@ -134,7 +134,7 @@ productive confluence of Felix’s own work into music representation and
 visualisation, with Alex’s experience with making Tidal. Felix has since
 become the primary contributor to Strudel, with Alex continuing to jump
 between developing both Strudel and Tidal. Aspects of Strudel’s
-development has therefore fed back into TidalCycles, and both systems
+development have therefore fed back into TidalCycles, and both systems
 have maintained a shared conceptual underpinning. We plan to continue
 working towards feature parity between these systems, although within
 the syntactical trade-offs and library ecosystems of JavaScript and
@@ -158,7 +158,7 @@ back</h1>
 <p>As mentioned above, the original Tidal is implemented as a domain
 specific language (DSL) embedded in the Haskell pure functional
 programming language, and takes advantage of Haskell’s terse syntax and
-advanced, ‘strong’ type system. Javascript on the other hand, is a
+advanced, ‘strong’ type system. JavaScript on the other hand, is a
 multi-paradigm programming language, with a dynamic type system. Because
 Tidal leans heavily on many of Haskell’s more unique features, it was
 not always clear that it could meaningfully be ported to a
@@ -175,7 +175,7 @@ offering a rich creative ground for exploration.</p>
 <p>This development process has been far from a one-way port, however.
 The process of porting Tidal’s concepts has also opened up new
 possibilities, some just from revisiting every design decision, and some
-from the particular affordances and constraints offered by Javascript.
+from the particular affordances and constraints offered by JavaScript.
 This has lead to new features (and indeed bugfixes) that have found
 their way back to Tidal where appropriate, and ongoing work that we will
 return to in the conclusion of this paper.</p>
@@ -211,7 +211,7 @@ the second half of the whole cycle.</p>
 <p>The above examples do not represent how Strudel is used in practice.
 In the REPL, the user only has to type in the pattern itself, the
 querying will be handled by the scheduler. The scheduler will repeatedly
-query the pattern for events, which then are then scheduled as sound
+query the pattern for events, which are then scheduled as sound
 synthesis or other event triggers. Also, the above event data structure
 has been simplified for readability.</p>
 <figure>
@@ -222,9 +222,9 @@ piano-roll visualisation.</figcaption>
 </figure>
 <h1 data-number="4" id="making-patterns"><span
 class="header-section-number">4</span> Making Patterns</h1>
-<p>In practice then, the end-user live coder will not deal with
-constructing patterns directly, but will rather build patterns using
-Strudel’s extensive combinator library to create, combine and transform
+<p>In practice, the end-user live coder will not deal with constructing
+patterns directly, but will rather build patterns using Strudel’s
+extensive combinator library to create, combine and transform
 patterns.</p>
 <p>The live coder will rarely use the <code>sequence</code> function as
 seen above, as sequencing is implicit in many functions. For example in
@@ -259,8 +259,8 @@ interference:</p>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">note</span>()<span class="op">.</span><span class="fu">s</span>(<span class="st">&quot;sawtooth square&quot;</span>)</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">delay</span>(<span class="op">.</span><span class="dv">8</span>)<span class="op">.</span><span class="fu">delaytime</span>(<span class="op">.</span><span class="dv">125</span>)</span></code></pre></div>
 <p>The pattern starts with a rhythm of numbers in mini notation, which
-are later interpreted inside the scale of D minor. This line could also
-be expressed without mini notation:</p>
+are later interpreted inside the scale of D minor. The first line could
+also be expressed without mini notation:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> [<span class="dv">4</span><span class="op">,</span> <span class="dv">6</span>]<span class="op">.</span><span class="fu">euclid</span>(<span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">1</span>)<span class="op">,</span> <span class="dv">3</span>)</span></code></pre></div>
 <p>These numbers then undergo various pattern transformations. Here is a
 short description of all the functions used:</p>
@@ -274,12 +274,12 @@ with offset o <span class="citation"
 data-cites="toussaintEuclideanAlgorithmGenerates2005">(Toussaint
 2005)</span></li>
 <li><code>.off(n, f)</code>: layers a pattern on top of itself, with the
-new layer offset by n cycles, and with function f aplpied</li>
+new layer offset by n cycles, and with function f applied</li>
 <li><code>.legato(n)</code>: multiply the duration of all events in a
 pattern by a factor of n</li>
 <li><code>.echo(t, n, v)</code>: copy each event t times, with n cycles
 in between each copy, decreasing velocity by v</li>
-<li><code>.note()</code>) interpretes values as notes</li>
+<li><code>.note()</code>: interpretes values as notes</li>
 <li><code>.s(name)</code>: play back each event with the given
 sound</li>
 <li><code>.delay(wet)</code>: add delay</li>
@@ -350,9 +350,8 @@ editor powered by CodeMirror. In it, the user can edit and evaluate
 pattern code live, using one of the outputs to create music and or sound
 art. The control flow of the REPL follows 3 basic steps:</p>
 <ol type="1">
-<li>The user writes and updates <code>Code</code>. Each update
-transpiles and evaluates the code to create a <code>Pattern</code>
-instance</li>
+<li>The user writes and updates code. Each update transpiles and
+evaluates it to create a <code>Pattern</code> instance</li>
 <li>While the REPL is running, the <code>Scheduler</code> queries the
 active <code>Pattern</code> by a regular interval, generating
 <code>Events</code> (also called <code>Haps</code> in Strudel) for the
@@ -368,7 +367,7 @@ style="width:43.0%" alt="REPL control flow" />
 <figcaption aria-hidden="true">REPL control flow</figcaption>
 </figure>
 <h2 data-number="7.1" id="user-code"><span
-class="header-section-number">7.1</span> 1. User Code</h2>
+class="header-section-number">7.1</span> User Code</h2>
 <p>To create a <code>Pattern</code> from the user code, two steps are
 needed:</p>
 <ol type="1">
@@ -434,7 +433,7 @@ location of elements within Mini Notation can be calculated by simply
 adding both locations together. This absolute location can be used to
 highlight active events in real time.</p>
 <h2 data-number="7.2" id="scheduling-events"><span
-class="header-section-number">7.2</span> 2. Scheduling Events</h2>
+class="header-section-number">7.2</span> Scheduling Events</h2>
 <p>After an instance of <code>Pattern</code> is obtained from the user
 code, it is used by the scheduler to get queried for events. Once
 started, the scheduler runs at a fixed interval to query active pattern
@@ -470,16 +469,16 @@ is heard is between <code>minLatency</code> and
 600ms. In Strudel, the current query interval is 50ms with a minLatency
 of 100ms, meaning the latency is between 50ms and 150ms.</p>
 <h2 data-number="7.3" id="output"><span
-class="header-section-number">7.3</span> 3. Output</h2>
+class="header-section-number">7.3</span> Output</h2>
 <p>The last step is to trigger each event in the chosen output. This is
 where the given time and value of each event is used to generate audio
 or any other form of time based output. The default output of the
 Strudel REPL is the WebAudio output. To understand what an output does,
-we first have to understand what control params are.</p>
-<h3 data-number="7.3.1" id="control-patterns"><span
-class="header-section-number">7.3.1</span> Control Patterns</h3>
+we first have to understand what control parameters are.</p>
+<h3 data-number="7.3.1" id="control-parameters"><span
+class="header-section-number">7.3.1</span> Control Parameters</h3>
 <p>To be able to manipulate multiple aspects of sound in parallel, so
-called control patterns are used to shape the value of each event.
+called control parameters are used to shape the value of each event.
 Example:</p>
 <div class="sourceCode" id="cb11"><pre
 class="sourceCode js"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">note</span>(<span class="st">&quot;c3 e3&quot;</span>)<span class="op">.</span><span class="fu">cutoff</span>(<span class="dv">1000</span>)<span class="op">.</span><span class="fu">s</span>(<span class="st">&#39;sawtooth&#39;</span>)</span>
@@ -488,29 +487,29 @@ class="sourceCode js"><code class="sourceCode javascript"><span id="cb11-1"><a h
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">  { note: &#39;c3&#39;, cutoff: 1000, s: &#39;sawtooth&#39; }</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">  { note: &#39;e3&#39;, cutoff: 1000, s: &#39;sawtooth&#39; }</span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">] */</span></span></code></pre></div>
-<p>Here, the control pattern functions <code>note</code>,
+<p>Here, the control parameter functions <code>note</code>,
 <code>cutoff</code> and <code>s</code> are used, where each controls a
-different property in the value object. Each control param pattern
+different property in the value object. Each control parameter function
 accepts a primitive value, a list of values to be sequenced into a
 <code>Pattern</code>, or a <code>Pattern</code>. In the example,
 <code>note</code> gets a <code>Pattern</code> from a Mini Notation
 expression (double quoted), while <code>cutoff</code> and <code>s</code>
 are given a <code>Number</code> and a (single quoted)
 <code>String</code> respectively.</p>
-<p>Strudel comes with a large default set of control pattern functions
+<p>Strudel comes with a large default set of control parameter functions
 that are based on the ones used by Tidal and SuperDirt, focusing on
 music and audio terminology. It is however possible to create custom
-control params for any purpose:</p>
+control paramters for any purpose:</p>
 <div class="sourceCode" id="cb12"><pre
 class="sourceCode js"><code class="sourceCode javascript"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { x<span class="op">,</span> y } <span class="op">=</span> <span class="fu">createParams</span>(<span class="st">&#39;x&#39;</span><span class="op">,</span> <span class="st">&#39;y&#39;</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">x</span>(sine<span class="op">.</span><span class="fu">range</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">200</span>))<span class="op">.</span><span class="fu">y</span>(cosine<span class="op">.</span><span class="fu">range</span>(<span class="dv">0</span><span class="op">,</span><span class="dv">200</span>))</span></code></pre></div>
-<p>This example creates the custom control params <code>x</code> and
+<p>This example creates the custom control parameters <code>x</code> and
 <code>y</code> which are then used to form a pattern that descibes the
 coordinates of a circle.</p>
 <h3 data-number="7.3.2" id="outputs"><span
 class="header-section-number">7.3.2</span> Outputs</h3>
 <p>Now that we know how the value of an event is manipulated using
-control params, we can look at how outputs can use that value to
+control parameters, we can look at how outputs can use that value to
 generate anything. The scheduler above was calling the
 <code>onTrigger</code> function which is used to implement the output. A
 very simple version of the web audio output could look like this:</p>
@@ -527,11 +526,7 @@ class="sourceCode js"><code class="sourceCode javascript"><span id="cb13-1"><a h
 <p>The above example will create an <code>OscillatorNode</code> for each
 event, where the frequency is controlled by the <code>note</code> param.
 In essence, this is how the WebAudio API output of Strudel works, only
-with many more params like <code>cutoff</code>, <code>resonance</code>,
-<code>attack</code>, <code>decay</code>, <code>sustain</code>,
-<code>release</code> and <a
-href="https://github.com/tidalcycles/strudel/blob/main/packages/core/controls.mjs">many
-more</a>.</p>
+with many more parameters to control synths, samples and effects.</p>
 <h1 data-number="8" id="pattern-alignment-and-combination"><span
 class="header-section-number">8</span> Pattern alignment and
 combination</h1>
