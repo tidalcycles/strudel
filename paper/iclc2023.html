@@ -303,9 +303,7 @@ outputs:</p>
 <li>WebDirt, a js recreation of Tidal’s <em>Dirt</em> sample engine
 (deprecated)</li>
 <li>OSC via osc-js, compatible with superdirt</li>
-<li>Csound via <span class="citation"
-data-cites="csound/browser">(<strong>csound/browser?</strong>)</span>
-wasm build</li>
+<li>Csound via the Csound WebAssembly build</li>
 <li>MIDI via WebMIDI</li>
 <li>Serial via WebSerial</li>
 </ul>
@@ -317,17 +315,16 @@ instruments and effects causes performance issues quickly. For that
 reason, we chose to search for alternatives.</p>
 <p>Strudel’s new default output uses the Web Audio API to create a new
 audio graph for each event. It currently supports basic oscillators,
-sample playback, envelopes, filters and an experimental support for
+sample playback, various effects and an experimental support for
 soundfonts.</p>
 <p>WebDirt <span class="citation"
 data-cites="ogbornDktr0WebDirt2022">(Ogborn [2016] 2022)</span> was
 created as part of the Estuary Live Coding System <span class="citation"
 data-cites="ogbornEstuaryBrowserbasedCollaborative2017">(Ogborn et al.
 2017)</span>, and proved to be a solid choice for handling samples in
-Strudel as well. <em>TODO</em> so why is it deprecated? Something like
-“We are however focused on working more directly with the web audio API
-described above.” ?</p>
-<p>Using the OSC protocol via Strudel’s provided nodejs-based OSC proxy
+Strudel as well. We are however focused on working more directly with
+the Web Audio API to be able to integrate new features more tightly.</p>
+<p>Using the OSC protocol via Strudel’s provided Node.js-based OSC proxy
 server, it is possible to send network messages to trigger events. This
 is mainly used to render sound using SuperDirt <span class="citation"
 data-cites="SuperDirt2022">(<em>SuperDirt</em> [2015] 2022)</span>,
@@ -335,9 +332,10 @@ which is the well-developed Supercollider-based synthesis framework that
 Tidal live coders generally use as standard.</p>
 <p>Recently, the experimental integration of Csound proved to bring a
 new dimension of sound design capabilities to Strudel. Thanks to the
-webassembly distribution of this classic system, csound ‘orchestra’
-synthesisers can be embedded in and then patterned with Strudel
-code.</p>
+WebAssembly distribution of this classic system <span class="citation"
+data-cites="CsoundWebAssembly">(<strong>CsoundWebAssembly?</strong>)</span>,
+csound ‘orchestra’ synthesisers can be embedded in and then patterned
+with Strudel code.</p>
 <p>MIDI output can also be used to send MIDI messages to either external
 instruments or to other programs on the same device. Unlike OSC, Strudel
 is able to send MIDI directly without requiring additional proxy
@@ -679,11 +677,12 @@ the ratio of two integers. This allows representation of musical ratios
 such that are impossible to represent accurately using the more common
 floating point numbers. However while libraries are available that
 support rational numbers in JavaScript, the lack of strict typing means
-that it is easy to create a pattern where computationally expensive
-conversion from floating point to rational numbers are performed late,
-and therefore often enough to overload the CPUs, due to the large number
-of iterative calculations required to estimate a ratio for a given
-floating point number.</p>
+that it is easy to implement pattern methods where computationally
+expensive conversion from floating point to rational numbers are
+performed late, and therefore often enough to overload the CPUs, due to
+the large number of iterative calculations required to estimate a ratio
+for a given floating point number. To mitigate this problem, we might
+consider moving to TypeScript in the future.</p>
 <h1 data-number="11" id="future-outlook"><span
 class="header-section-number">11</span> Future Outlook</h1>
 <p>The project is still young, with many features on the horizon. As
@@ -714,7 +713,7 @@ class="uri">https://strudel.tidalcycles.org</a>, including an
 interactive tutorial. The repository is at <a
 href="https://github.com/tidalcycles/strudel"
 class="uri">https://github.com/tidalcycles/strudel</a>, all the code is
-open source under the GPL-3.0 License.</p>
+open source under the AGPL-3.0 License.</p>
 <h1 data-number="13" id="acknowledgments"><span
 class="header-section-number">13</span> Acknowledgments</h1>
 <p>Thanks to the Strudel and wider Tidal, live coding, WebAudio and
