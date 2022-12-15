@@ -86,16 +86,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h2 class="abstract">Abstract</h2>
 <div id="abstract">
-<p>Replace this text with a maximum 300 word abstract. You’ll find it in
-the ‘metadata block’ at the top of your markdown document), be sure that
-each line of the abstract is indented.</p>
+<p>This paper introduces Strudel, an alternative implementation of the
+TidalCycles (or ‘Tidal’ for short) live coding system, using the
+JavaScript programming language. Strudel is an attempt to make live
+coding more accessible, by creating a system that runs entirely in the
+browser, while opening Tidals approach to algorithmic patterns (Mclean
+2020) up to modern audio/visual web technologies. The Strudel REPL is a
+live code editor dedicated to manipulating Strudel patterns while they
+play, with builtin visual feedback. While Strudel is written in
+JavaScript, the API is optimized for simplicity and readability by
+applying code transformations on the syntax tree level, allowing
+language operations that would otherwise be impossible. The application
+supports multiple ways to output sound, including Tone.js, Web Audio
+Nodes, OSC (Open Sound Control) messages, Web Serial and Web MIDI. The
+project is split into multiple packages, allowing granular reuse in
+other applications. Apart fromTidalCycles, Strudel draws inspiration
+from many prior existing projects like TidalVortex <span
+class="citation" data-cites="mcleanTidalVortexZero2022">(McLean et al.
+2022)</span>, Gibber <span class="citation"
+data-cites="robertsGibberLiveCoding2012">(Roberts and Kuchera-morin
+2012)</span>, Estuary <span class="citation"
+data-cites="ogbornEstuaryBrowserbasedCollaborative2017">(Ogborn et al.
+2017)</span>, Hydra <span class="citation"
+data-cites="jackHydra2022">(Jack [2022] 2022)</span>, Ocarina <span
+class="citation" data-cites="solomonPurescriptocarina2022">(Solomon
+[2021] 2022)</span> and Feedforward <span class="citation"
+data-cites="mcleanFeedforward2020">(McLean 2020)</span>.</p>
 </div>
 
 <h1 data-number="1" id="introduction"><span
 class="header-section-number">1</span> Introduction</h1>
-<p>This paper introduces Strudel, which began as an alternative
-implementation of the TidalCycles (or ‘Tidal’ for short) live coding
-system, using the JavaScript programming language.</p>
 <p>The first tentative commit to the Strudel project was on 22nd January
 2022 by Alex McLean, with the core representation implemented over the
 following few days. Although this was his first attempt at a
@@ -130,33 +150,7 @@ interface but also applied to live coding editors.], a live code editor
 dedicated to manipulating Strudel patterns while they play. The REPL
 features built-in visual feedback, which highlights which elements in
 the patterned (mini-notation) sequences are influencing the event that
-is currently being played. While Strudel is written in JavaScript, as an
-end-user code interface the REPL is optimised for simplicity and
-readability by applying code transformations on the syntax tree level,
-allowing language operations that would otherwise be impossible.</p>
-<p>Strudel supports several diferent options to directly output sound
-through the browser including a custom Web Audio Output, CSound and
-Tone.js, It also supports methods for triggering external software and
-hardware, including via OSC (Open Sound Control) messages (e.g. for use
-with Tidal’s traditional SuperDirt synthesiser), Web Serial (so far used
-to work with dancing robot) and Web MIDI (for e.g. controlling
-synthesiser hardware or a digital audio workstation).</p>
-<p>Strudel is split into multiple packages, allowing granular reuse in
-other applications. This allows Strudel to be embedded in other
-web-based live coding environments such as Gibber and Hydra, opening up
-these systems to use with the mini-notation for sequences. Apart from
-TidalCycles, Strudel draws inspiration from many prior existing projects
-like TidalVortex <span class="citation"
-data-cites="mcleanTidalVortexZero2022">(McLean et al. 2022)</span>,
-Gibber <span class="citation"
-data-cites="robertsGibberLiveCoding2012">(Roberts and Kuchera-morin
-2012)</span>, Estuary <span class="citation"
-data-cites="ogbornEstuaryBrowserbasedCollaborative2017">(Ogborn et al.
-2017)</span>, Hydra <span class="citation"
-data-cites="jackHydra2022">(Jack [2022] 2022)</span>, Ocarina <span
-class="citation" data-cites="solomonPurescriptocarina2022">(Solomon
-[2021] 2022)</span> and Feedforward <span class="citation"
-data-cites="mcleanFeedforward2020">(McLean 2020)</span>.</p>
+is currently being played.</p>
 <h1 data-number="2" id="from-tidal-to-strudel-and-back"><span
 class="header-section-number">2</span> From Tidal to Strudel and
 back</h1>
@@ -334,7 +328,7 @@ Tidal live coders generally use as standard.</p>
 new dimension of sound design capabilities to Strudel. Thanks to the
 WebAssembly distribution of this classic system <span class="citation"
 data-cites="CsoundWebAssembly">(Yi, Lazzarini, and Costello
-2018)</span>, csound ‘orchestra’ synthesisers can be embedded in and
+2018)</span>, Csound ‘orchestra’ synthesisers can be embedded in and
 then patterned with Strudel code.</p>
 <p>MIDI output can also be used to send MIDI messages to either external
 instruments or to other programs on the same device. Unlike OSC, Strudel
