@@ -90,7 +90,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 TidalCycles (or ‘Tidal’ for short) live coding system, using the
 JavaScript programming language. Strudel is an attempt to make live
 coding more accessible, by creating a system that runs entirely in the
-browser, while opening Tidals approach to algorithmic patterns <span
+browser, while opening Tidal’s approach to algorithmic patterns <span
 class="citation" data-cites="mcleanAlgorithmicPattern2020a">(Mclean
 2020)</span> up to modern audio/visual web technologies. The Strudel
 REPL is a live code editor dedicated to manipulating patterns while they
@@ -114,7 +114,7 @@ class="citation" data-cites="solomonPurescriptocarina2022">(Solomon
 [2021] 2022)</span> and Feedforward <span class="citation"
 data-cites="mcleanFeedforward2020">(McLean 2020)</span>. This paper
 expands the Strudel Demo paper for the Web Audio Conference 2022 <span
-class="citation" data-cites="StrudelWAC2022">(Felix Roos and Alex McLean
+class="citation" data-cites="StrudelWAC2022">(Roos and McLean
 2022)</span>.</p>
 </div>
 
@@ -128,9 +128,9 @@ upload the initial version to the ‘npm’ javascript package database,
 sharing with the wider community for comment. By 4th February, Felix
 Roos had discovered Strudel and contributed a ‘REPL’ user interface to
 it, and then contributed a scheduler the next day, so that Strudel could
-already make sound. At this point, Alex shared ownership to the
-repository with Felix, and the project has since proved to be a
-productive confluence of Felix’s own work into music representation and
+already make sound. At this point, Alex and Felix shared ownership to
+the repository, and the project has since proved to be a productive
+confluence of Felix’s own work into music representation and
 visualisation, with Alex’s experience with making Tidal. Felix has since
 become the primary contributor to Strudel, with Alex continuing to jump
 between developing both Strudel and Tidal. Aspects of Strudel’s
@@ -144,14 +144,6 @@ coding environment, porting Tidal’s core represention of patterns,
 pattern transformations, and mininotation for polymetric sequences,
 combined with a wealth of features for synthesising and visualising
 those patterns.</p>
-<p>The main interface for Strudel is its REPL[^REPL stands for read,
-evaluate, print/play, loop. It is friendly jargon for an interactive
-programming interface from computing heritage, usually for a commandline
-interface but also applied to live coding editors.], a live code editor
-dedicated to manipulating Strudel patterns while they play. The REPL
-features built-in visual feedback, which highlights which elements in
-the patterned (mini-notation) sequences are influencing the event that
-is currently being played.</p>
 <h1 data-number="2" id="from-tidal-to-strudel-and-back"><span
 class="header-section-number">2</span> From Tidal to Strudel and
 back</h1>
@@ -209,16 +201,16 @@ one cycle. If an argument is an array, the same rule applies to that
 part of the cycle. In the example, e3 and g3 are divided equally over
 the second half of the whole cycle.</p>
 <p>The above examples do not represent how Strudel is used in practice.
-In the REPL, the user only has to type in the pattern itself, the
-querying will be handled by the scheduler. The scheduler will repeatedly
-query the pattern for events, which are then scheduled as sound
-synthesis or other event triggers. Also, the above event data structure
-has been simplified for readability.</p>
+In the live coding editor, the user only has to type in the pattern
+itself, the querying will be handled by the scheduler. The scheduler
+will repeatedly query the pattern for events, which are then scheduled
+as sound synthesis or other event triggers. Also, the above event data
+structure has been simplified for readability.</p>
 <figure>
 <img src="images/strudel-screenshot2.png" style="width:60.0%"
-alt="Screenshot of the Strudel REPL, including piano-roll visualisation." />
-<figcaption aria-hidden="true">Screenshot of the Strudel REPL, including
-piano-roll visualisation.</figcaption>
+alt="Screenshot of the Strudel ‘REPL’ live coding editor, including piano-roll visualisation." />
+<figcaption aria-hidden="true">Screenshot of the Strudel ‘REPL’ live
+coding editor, including piano-roll visualisation.</figcaption>
 </figure>
 <h1 data-number="4" id="making-patterns"><span
 class="header-section-number">4</span> Making Patterns</h1>
@@ -343,18 +335,27 @@ presented at the International Conference on Live Interfaces 2022.</p>
 <h1 data-number="7" id="the-strudel-repl"><span
 class="header-section-number">7</span> The Strudel REPL</h1>
 <p>While Strudel can be used as a library in any JavaScript codebase,
-its reference implementation is the Strudel REPL, which is a
-browser-based live coding environment. Besides a basic UI for playback
-control and meta information, the main part of the interface is the code
-editor powered by CodeMirror. In it, the user can edit and evaluate
-pattern code live, using one of the outputs to create music and or sound
-art. The control flow of the REPL follows 3 basic steps:</p>
+its main, reference user interface is the Strudel REPL[^REPL stands for
+read, evaluate, print/play, loop. It is friendly jargon for an
+interactive programming interface from computing heritage, usually for a
+commandline interface but also applied to live coding editors.], which
+is a browser-based live coding environment. This live code editor is
+dedicated to manipulating Strudel patterns while they play. The REPL
+features built-in visual feedback, which highlights which elements in
+the patterned (mini-notation) sequences are influencing the event that
+is currently being played. This feedback is designed to support both
+learning and live use of Strudel.</p>
+<p>Besides a UI for playback control and meta information, the main part
+of the REPL interface is the code editor powered by CodeMirror. In it,
+the user can edit and evaluate pattern code live, using one of the
+available synthesis outputs to create music and/or sound art. The
+control flow of the REPL follows 3 basic steps:</p>
 <ol type="1">
 <li>The user writes and updates code. Each update transpiles and
 evaluates it to create a <code>Pattern</code> instance</li>
 <li>While the REPL is running, the <code>Scheduler</code> queries the
 active <code>Pattern</code> by a regular interval, generating
-<code>Events</code> (also called <code>Haps</code> in Strudel) for the
+<code>Events</code> (also known as <code>Haps</code> in Strudel) for the
 next time span.</li>
 <li>For each scheduling tick, all generated <code>Events</code> are
 triggered by calling their <code>onTrigger</code> method, which is set
@@ -719,11 +720,6 @@ role="doc-biblioentry">
 Plugins</em>. (2016) 2022. C++. GRAME. <a
 href="https://github.com/grame-cncm/faust">https://github.com/grame-cncm/faust</a>.
 </div>
-<div id="ref-StrudelWAC2022" class="csl-entry" role="doc-biblioentry">
-Felix Roos, and Alex McLean. 2022. <span>“Strudel: Algorithmic Patterns
-for the Web.”</span> In. Zenodo. <a
-href="https://doi.org/10.5281/zenodo.6768844">https://doi.org/10.5281/zenodo.6768844</a>.
-</div>
 <div id="ref-jackHydra2022" class="csl-entry" role="doc-biblioentry">
 Jack, Olivia. (2022) 2022. <em>Hydra</em>. <a
 href="https://github.com/ojack/hydra">https://github.com/ojack/hydra</a>.
@@ -771,6 +767,11 @@ role="doc-biblioentry">
 Roberts, Charles, and Joann Kuchera-morin. 2012. <span>“Gibber: Live
 Coding Audio in the Browser.”</span> In <em>In Proceedings of the 2012
 International Computer Music Conference</em>.
+</div>
+<div id="ref-StrudelWAC2022" class="csl-entry" role="doc-biblioentry">
+Roos, Felix, and Alex McLean. 2022. <span>“Strudel: Algorithmic Patterns
+for the Web.”</span> In. Zenodo. <a
+href="https://doi.org/10.5281/zenodo.6768844">https://doi.org/10.5281/zenodo.6768844</a>.
 </div>
 <div id="ref-solomonPurescriptocarina2022" class="csl-entry"
 role="doc-biblioentry">
