@@ -535,6 +535,57 @@ export class Pattern {
   }
 
   /**
+   * Combines adjacent haps with the same value and whole.  Only
+   * intended for use in tests.
+   */
+  defragmentHaps() {
+    // remove continuous haps
+    const pat = this.discreteOnly();
+
+    return pat.withHaps((haps) => {
+      const result = [];
+      for (var i = 0; i < haps.length; ++i) {
+        var searching = true;
+        var a = haps[i];
+        while (searching) {
+          const a_value = JSON.stringify(haps[i].value);
+          var found = false;
+
+          for (var j = i + 1; j < haps.length; j++) {
+            const b = haps[j];
+
+            if (a.whole.equals(b.whole)) {
+              if (a.part.begin.eq(b.part.end)) {
+                if (a_value === JSON.stringify(b.value)) {
+                  // eat the matching hap into 'a'
+                  a = new Hap(a.whole, new TimeSpan(b.part.begin, a.part.end), a.value);
+                  haps.splice(j, 1);
+                  // restart the search
+                  found = true;
+                  break;
+                }
+              } else if (b.part.begin.eq(a.part.end)) {
+                if (a_value == JSON.stringify(b.value)) {
+                  // eat the matching hap into 'a'
+                  a = new Hap(a.whole, new TimeSpan(a.part.begin, b.part.end), a.value);
+                  haps.splice(j, 1);
+                  // restart the search
+                  found = true;
+                  break;
+                }
+              }
+            }
+          }
+
+          searching = found;
+        }
+        result.push(a);
+      }
+      return result;
+    });
+  }
+
+  /**
    * Queries the pattern for the first cycle, returning Haps. Mainly of use when
    * debugging a pattern.
    * @param {Boolean} with_context - set to true, otherwise the context field

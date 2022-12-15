@@ -16,7 +16,7 @@ evalScope(
   import('@strudel.cycles/tonal'),
 );
 
-setStringParser(mini)
+setStringParser(mini);
 
 const { evaluate } = repl({
   defaultOutput: webaudioOutput,

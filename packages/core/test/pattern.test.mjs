@@ -915,4 +915,20 @@ describe('Pattern', () => {
       expect(sequence(1, 2).add.squeeze(4, 5).firstCycle()).toStrictEqual(sequence(5, 6, 6, 7).firstCycle());
     });
   });
+  describe('defragmentHaps', () => {
+    it('Can merge two touching haps with same whole and value', () => {
+      expect(stack(pure('a').mask(1, 0), pure('a').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(1);
+    });
+    it('Doesnt merge two overlapping haps', () => {
+      expect(stack(pure('a').mask(1, 1, 0), pure('a').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(
+        2,
+      );
+    });
+    it('Doesnt merge two touching haps with different values', () => {
+      expect(stack(pure('a').mask(1, 0), pure('b').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(2);
+    });
+    it('Doesnt merge two touching haps with different wholes', () => {
+      expect(stack(sequence('a', silence), pure('a').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(2);
+    });
+  });
 });
