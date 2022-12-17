@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="date" content="2022-12-14" />
-  <title>Strudel: Algorithmic Patterns for the Web</title>
+  <title>Strudel: live coding patterns on the Web</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -76,7 +76,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </head>
 <body>
 <div id="header">
-<h1 class="title">Strudel: Algorithmic Patterns for the Web</h1>
+<h1 class="title">Strudel: live coding patterns on the Web</h1>
 <ul id="authorlist">
 <li>true</li>
 <li>true</li>
@@ -86,25 +86,40 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h2 class="abstract">Abstract</h2>
 <div id="abstract">
-<p>This paper introduces Strudel, an alternative implementation of the
-TidalCycles (or ‘Tidal’ for short) live coding system, using the
-JavaScript programming language. Strudel is an attempt to make live
-coding more accessible, by creating a system that runs entirely in the
-browser, while opening Tidal’s approach to algorithmic patterns <span
-class="citation" data-cites="mcleanAlgorithmicPattern2020a">(Mclean
-2020)</span> up to modern audio/visual web technologies. The Strudel
-REPL is a live code editor dedicated to manipulating patterns while they
-play, with builtin visual feedback. While Strudel is written in
-JavaScript, the API is optimized for simplicity and readability by
-applying code transformations on the syntax tree level, allowing
-language operations that would otherwise be impossible. The application
-supports multiple ways to output sound, including Tone.js, Web Audio
-Nodes, OSC (Open Sound Control) messages, Web Serial, Web MIDI and
-Csound. The project is split into multiple packages, allowing granular
-reuse in other applications. Apart from TidalCycles, Strudel draws
-inspiration from many prior existing projects like TidalVortex <span
-class="citation" data-cites="mcleanTidalVortexZero2022">(McLean et al.
-2022)</span>, Gibber <span class="citation"
+<p>This paper introduces Strudel, which brings the TidalCycles approach
+to live coding algorithmic patterns to native JavaScript and the web. We
+begin by giving a little background of the first year of development,
+before sharing some detail about its implementation and examples of use.
+We go on to outline the wide range of synthesis and other outputs
+available in Strudel, including WebAudio, MIDI, OSC (for SuperDirt),
+WebSerial and CSound, and introduce Strudel’s REPL live editor,
+including its built-in visualisations. We then compare Strudel with
+Tidal, the trade-offs involved between JavaScript and Haskell, and the
+unique capabilities offered by Strudel for aligning patterns.</p>
+</div>
+
+<h1 data-number="1" id="introduction"><span
+class="header-section-number">1</span> Introduction</h1>
+<p>In the following paper, we introduce <em>Strudel</em>, an alternative
+implementation of the TidalCycles (or ‘Tidal’ for short) live coding
+system, using the JavaScript programming language. Strudel is an attempt
+to make live coding more accessible, by creating a system that runs
+entirely in the browser, while opening Tidal’s approach to algorithmic
+patterns <span class="citation"
+data-cites="mcleanAlgorithmicPattern2020a">(Mclean 2020)</span> up to
+modern audio/visual web technologies. The Strudel REPL is a live code
+editor dedicated to manipulating patterns while they play, with builtin
+visual feedback. While Strudel is written in JavaScript, the API is
+optimized for simplicity and readability by applying code
+transformations on the syntax tree level, allowing language operations
+that would otherwise be impossible. The application supports multiple
+ways to output sound, including Tone.js, Web Audio Nodes, OSC (Open
+Sound Control) messages, Web Serial, Web MIDI and Csound. The project is
+split into multiple packages, allowing granular reuse in other
+applications. Apart from TidalCycles, Strudel draws inspiration from
+many prior existing projects like TidalVortex <span class="citation"
+data-cites="mcleanTidalVortexZero2022">(McLean et al. 2022)</span>,
+Gibber <span class="citation"
 data-cites="robertsGibberLiveCoding2012">(Roberts and Kuchera-morin
 2012)</span>, Estuary <span class="citation"
 data-cites="ogbornEstuaryBrowserbasedCollaborative2017">(Ogborn et al.
@@ -116,10 +131,6 @@ data-cites="mcleanFeedforward2020">(McLean 2020)</span>. This paper
 expands the Strudel Demo paper for the Web Audio Conference 2022 <span
 class="citation" data-cites="StrudelWAC2022">(Roos and McLean
 2022)</span>.</p>
-</div>
-
-<h1 data-number="1" id="introduction"><span
-class="header-section-number">1</span> Introduction</h1>
 <p>The first tentative commit to the Strudel project was on 22nd January
 2022 by Alex McLean, with the core representation implemented over the
 following few days. Although this was his first attempt at a
@@ -658,9 +669,9 @@ functional reactive approach to pattern-making has in general translated
 well to JavaScript, and opportunities and constraints have overall
 traded off to create a very approachable and useable live coding
 environment.</p>
-<h1 data-number="10" id="the-trade-off-of-flexible-typing"><span
-class="header-section-number">10</span> The trade-off of flexible
-typing</h1>
+<h2 data-number="9.1" id="the-trade-off-of-flexible-typing"><span
+class="header-section-number">9.1</span> The trade-off of flexible
+typing</h2>
 <p>We have identified one problem with porting Tidal to JavaScript where
 we have missed Haskell’s strict typing and type inference. In both Tidal
 and Strudel, time is rational, where any point in time is represented as
@@ -674,8 +685,8 @@ performed late, and therefore often enough to overload the CPUs, due to
 the large number of iterative calculations required to estimate a ratio
 for a given floating point number. To mitigate this problem, we might
 consider moving to TypeScript in the future.</p>
-<h1 data-number="11" id="future-outlook"><span
-class="header-section-number">11</span> Future Outlook</h1>
+<h1 data-number="10" id="future-outlook"><span
+class="header-section-number">10</span> Future Outlook</h1>
 <p>The project is still young, with many features on the horizon. As
 general guiding principles, Strudel aims to be</p>
 <ol type="1">
@@ -683,21 +694,28 @@ general guiding principles, Strudel aims to be</p>
 <li>consistent with Tidal’s approach to pattern</li>
 <li>modular and extensible</li>
 </ol>
-<p>For the future, it is planned to integrate additional alternative
-sound engines such as Glicol <span class="citation"
-data-cites="lanChaosprintGlicol2022">(Lan [2020] 2022)</span> and Faust
-<span class="citation"
+<p>While Haskell’s type system makes it a great language for the ongoing
+development of Tidal’s inner representation of pattern, JavaScript’s
+vibrant ecosystem, flexibility and accessibility makes it a great host
+for more ad-hoc experiments, including interface design. For the future,
+it is planned to integrate additional alternative sound engines such as
+Glicol <span class="citation" data-cites="lanChaosprintGlicol2022">(Lan
+[2020] 2022)</span> and Faust <span class="citation"
 data-cites="FaustProgrammingLanguage2022">(<em>Faust - Programming
-Language for Audio Applications and Plugins</em> [2016] 2022)</span>. To
-improve compatibility with Tidal, more Tidal functions are planned to be
-ported, as well as full compatibility with SuperDirt. Besides sound,
-other ways to render events are being explored, such as graphical, and
+Language for Audio Applications and Plugins</em> [2016] 2022)</span>.
+Strudel is already approaching feature parity with Tidal, but there are
+more Tidal functions to be ported, and work to be done to improve
+compatibility with Tidal’s mininotation. Tidal version 2.0 is under
+development, which brings a new representation for sequences to its
+patterns, which will then be brought to Strudel. Besides sound, other
+ways to render events are being explored, such as graphical, and
 choreographic output. We are also looking into alternative ways of
 editing patterns, including multi-user editing for network music,
 parsing a novel syntax to escape the constraints of javascript, and
-developing hardware/e-textile interfaces.</p>
-<h1 data-number="12" id="links"><span
-class="header-section-number">12</span> Links</h1>
+developing hardware/e-textile interfaces. In summary, there is a lot of
+fun ahead.</p>
+<h1 data-number="11" id="links"><span
+class="header-section-number">11</span> Links</h1>
 <p>The Strudel REPL is available at <a
 href="https://strudel.tidalcycles.org"
 class="uri">https://strudel.tidalcycles.org</a>, including an
@@ -705,8 +723,8 @@ interactive tutorial. The repository is at <a
 href="https://github.com/tidalcycles/strudel"
 class="uri">https://github.com/tidalcycles/strudel</a>, all the code is
 open source under the AGPL-3.0 License.</p>
-<h1 data-number="13" id="acknowledgments"><span
-class="header-section-number">13</span> Acknowledgments</h1>
+<h1 data-number="12" id="acknowledgments"><span
+class="header-section-number">12</span> Acknowledgments</h1>
 <p>Thanks to the Strudel and wider Tidal, live coding, WebAudio and
 free/open source software communities for inspiration and support. Alex
 McLean’s work on this project is supported by a UKRI Future Leaders
