@@ -676,7 +676,7 @@ export class Pattern {
   // Methods without corresponding toplevel functions
 
   /**
-   * Layers the result of the given function(s). Like {@link superimpose}, but without the original pattern:
+   * Layers the result of the given function(s). Like {@link Pattern.superimpose}, but without the original pattern:
    * @name layer
    * @memberof Pattern
    * @returns Pattern
@@ -1147,7 +1147,7 @@ export function slowcatPrime(...pats) {
 
 /** Concatenation: as with {@link slowcat}, but squashes a cycle from each pattern into one cycle
  *
- * Synonyms: {@link seq}, {@link sequence}
+ * Synonyms: {@link Pattern.seq}, {@link Pattern.sequence}
  *
  * @param {...any} items - The items to concatenate
  * @return {Pattern}
@@ -1172,7 +1172,7 @@ export function cat(...pats) {
   return slowcat(...pats);
 }
 
-/** Like {@link seq}, but each step has a length, relative to the whole.
+/** Like {@link Pattern.seq}, but each step has a length, relative to the whole.
  * @return {Pattern}
  * @example
  * timeCat([3,e3],[1, g3]).note() // "e3@3 g3".note()
