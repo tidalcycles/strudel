@@ -219,7 +219,7 @@ function App() {
       setLastShared(activeCode || code);
       const shareUrl = window.location.origin + '?' + hash;
       // copy shareUrl to clipboard
-      navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(shareUrl);
       const message = `Link copied to clipboard: ${shareUrl}`;
       alert(message);
       // alert(message);
