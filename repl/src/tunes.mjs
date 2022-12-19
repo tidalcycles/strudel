@@ -310,22 +310,43 @@ export const goodTimes = `// licensed with CC BY-NC-SA 4.0 https://creativecommo
 const scale = cat('C3 dorian','Bb2 major').slow(4);
 stack(
   "2*4".add(12).scale(scale)
-  .off(1/8,x=>x.scaleTranspose("2")).fast(2)
+  .off(1/8, scaleTranspose("2")).fast(2)
   .scaleTranspose("<0 1 2 1>").hush(),
   "<0 1 2 3>(3,8,2)"
   .scale(scale)
-  .off(1/4,x=>x.scaleTranspose("2,4")),
+  .off(1/4, scaleTranspose("2,4")),
   "<0 4>(5,8)".scale(scale).transpose(-12)
 )
   .velocity(".6 .7".fast(4))
   .legato("2")
+  .scaleTranspose("<0>".slow(4))
+  .transpose(5)
+  .note().piano()
+  .velocity(.8)
+  .slow(2)
+  .pianoroll({maxMidi:100,minMidi:20})`;
+
+/* // new style notation:
+export const goodTimes = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
+// by Felix Roos
+const scale = cat('C3 dorian','Bb2 major').slow(4);
+stack(
+  n("2*4").add(12)
+  .off(1/8, add("2")).fast(2)
+  .add("<0 1 2 1>").hush(),
+  n("<0 1 2 3>(3,8,2)")
+  .off(1/4, add("2,4")),
+  n("<0 4>(5,8)").sub(7)
+)
   .scale(scale)
-.scaleTranspose("<0>".slow(4))
-.transpose(5)
-.note().piano()
-.velocity(.8)
-.slow(2)
-.pianoroll({maxMidi:100,minMidi:20})`;
+  .gain(".6 .7".fast(4))
+  .legato(2)
+  .add(note(5))
+  .piano()
+  .mul(gain(.8))
+  .slow(2)
+  .pianoroll({maxMidi:100,minMidi:20})`;
+*/
 
 export const echoPiano = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // by Felix Roos

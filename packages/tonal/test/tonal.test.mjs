@@ -7,11 +7,27 @@ This program is free software: you can redistribute it and/or modify it under th
 // import { strict as assert } from 'assert';
 
 import '../tonal.mjs'; // need to import this to add prototypes
-import { pure } from '@strudel.cycles/core';
+import { pure, controls, seq } from '@strudel.cycles/core';
 import { describe, it, expect } from 'vitest';
+const { n } = controls;
 
 describe('tonal', () => {
   it('Should run tonal functions ', () => {
     expect(pure('c3').scale('C major').scaleTranspose(1).firstCycleValues).toEqual(['D3']);
+  });
+  it('scale with plain values', () => {
+    expect(
+      seq(0, 1, 2)
+        .scale('C major')
+        .note()
+        .firstCycleValues.map((h) => h.note),
+    ).toEqual(['C3', 'D3', 'E3']);
+  });
+  it('scale with n values', () => {
+    expect(
+      n(0, 1, 2)
+        .scale('C major')
+        .firstCycleValues.map((h) => h.note),
+    ).toEqual(['C3', 'D3', 'E3']);
   });
 });

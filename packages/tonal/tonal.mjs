@@ -141,13 +141,14 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
 
 export const scale = register('scale', function (scale /* : string */, pat) {
   return pat.withHap((hap) => {
-    let note = hap.value;
+    const isObject = typeof hap.value === 'object';
+    let note = isObject ? hap.value.n : hap.value;
     const asNumber = Number(note);
     if (!isNaN(asNumber)) {
       let [tonic, scaleName] = Scale.tokenize(scale);
       const { pc, oct = 3 } = Note.get(tonic);
       note = scaleOffset(pc + ' ' + scaleName, asNumber, pc + oct);
     }
-    return hap.withValue(() => note).setContext({ ...hap.context, scale });
+    return hap.withValue(() => (isObject ? { ...hap.value, note } : note)).setContext({ ...hap.context, scale });
   });
 });
