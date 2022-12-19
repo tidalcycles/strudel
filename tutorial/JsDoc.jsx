@@ -9,9 +9,9 @@ export function JsDoc({ name, h = 3 }) {
     return <div />;
   }
   const CustomHeading = `h${h}`;
-  const description = item.description.replaceAll(/\{@link ([a-zA-Z]+)?#?([a-zA-Z]*)\}/g, (_, a, b) => {
+  const description = item.description.replaceAll(/\{@link ([a-zA-Z\.]+)?#?([a-zA-Z]*)\}/g, (_, a, b) => {
     // console.log(_, 'a', a, 'b', b);
-    return `<a href="#${a}${b ? `-${b}` : ''}">${a}${b ? `#${b}` : ''}</a>`;
+    return `<a href="#${a.replaceAll('.', '').toLowerCase()}${b ? `-${b}` : ''}">${a}${b ? `#${b}` : ''}</a>`;
   });
   return (
     <>

@@ -676,7 +676,7 @@ export class Pattern {
   // Methods without corresponding toplevel functions
 
   /**
-   * Layers the result of the given function(s). Like {@link superimpose}, but without the original pattern:
+   * Layers the result of the given function(s). Like {@link Pattern.superimpose}, but without the original pattern:
    * @name layer
    * @memberof Pattern
    * @returns Pattern
