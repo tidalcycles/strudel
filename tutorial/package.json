@@ -8,7 +8,7 @@
     "build": "npm run render && vite build",
     "preview": "vite preview",
     "jsdoc-json": "jsdoc ../packages/ --template ../node_modules/jsdoc-json --destination ../doc.json -c ../jsdoc.config.json",
-    "render": "npm run jsdoc-json && node ./render.js > tutorial.rendered.mdx"
+    "render": "npm run jsdoc-json"
   },
   "type": "module",
   "dependencies": {
@@ -25,7 +25,6 @@
     "autoprefixer": "^10.4.7",
     "install": "^0.13.0",
     "npm": "^8.10.0",
-    "nunjucks": "^3.2.3",
     "postcss": "^8.4.13",
     "rehype-autolink-headings": "^6.1.1",
     "rehype-slug": "^5.0.1",

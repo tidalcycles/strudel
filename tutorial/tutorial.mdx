@@ -1,4 +1,5 @@
 import { MiniRepl } from './MiniRepl';
+import { JsDoc } from './JsDoc';
 
 # Table of Contents
 
@@ -407,43 +408,77 @@ The sampler will always pick the closest matching sample for the current note!
 
 ## Sampler Effects
 
-{{ 'Pattern.begin' | jsdoc }}
+### Pattern.begin
 
-{{ 'Pattern.end' | jsdoc }}
+<JsDoc name="Pattern.begin" h={0} />
 
-{{ 'Pattern.loopAt' | jsdoc }}
+### Pattern.end
 
-{{ 'Pattern.chop' | jsdoc }}
+<JsDoc name="Pattern.end" h={0} />
+
+### Pattern.loopAt
+
+<JsDoc name="Pattern.loopAt" h={0} />
+
+### Pattern.chop
+
+<JsDoc name="Pattern.chop" h={0} />
 
 ## Audio Effects
 
 Wether you're using a synth or a sample, you can apply these effects:
 
-{{ 'gain' | jsdoc }}
+### gain
 
-{{ 'velocity' | jsdoc }}
+<JsDoc name="gain" h={0} />
 
-{{ 'cutoff' | jsdoc }}
+### velocity
 
-{{ 'resonance' | jsdoc }}
+<JsDoc name="velocity" h={0} />
 
-{{ 'hcutoff' | jsdoc }}
+### cutoff
 
-{{ 'hresonance' | jsdoc }}
+<JsDoc name="cutoff" h={0} />
 
-{{ 'bandf' | jsdoc }}
+### resonance
 
-{{ 'bandq' | jsdoc }}
+<JsDoc name="resonance" h={0} />
 
-{{ 'vowel' | jsdoc }}
+### hcutoff
 
-{{ 'pan' | jsdoc }}
+<JsDoc name="hcutoff" h={0} />
 
-{{ 'coarse' | jsdoc }}
+### hresonance
 
-{{ 'shape' | jsdoc }}
+<JsDoc name="hresonance" h={0} />
 
-{{ 'crush' | jsdoc }}
+### bandf
+
+<JsDoc name="bandf" h={0} />
+
+### bandq
+
+<JsDoc name="bandq" h={0} />
+
+### vowel
+
+<JsDoc name="vowel" h={0} />
+
+### pan
+
+<JsDoc name="pan" h={0} />
+
+### coarse
+
+<JsDoc name="coarse" h={0} />
+
+### shape
+
+<JsDoc name="shape" h={0} />
+
+### crush
+
+<JsDoc name="crush" h={0} />
 
 <br />
 
@@ -508,18 +543,28 @@ You can use this with any function that declares a type (like `n`, `s`, `note`, 
 The following functions will return a pattern.
 
 <!--
-{{ 'pure' | jsdoc }}
+### pure
+
+<JsDoc name="pure" h={0} />
 
 Most of the time, you won't need that function as input values of pattern creating functions are purified by default.
 -->
 
-{{ 'cat' | jsdoc }}
+### cat
 
-{{ 'seq' | jsdoc }}
+<JsDoc name="cat" h={0} />
 
-{{ 'stack' | jsdoc }}
+### seq
 
-{{ 'timeCat' | jsdoc }}
+<JsDoc name="seq" h={0} />
+
+### stack
+
+<JsDoc name="stack" h={0} />
+
+### timeCat
+
+<JsDoc name="timeCat" h={0} />
 
 <!-- ## polymeter
 
@@ -580,132 +625,234 @@ When using JS patterns, there is a lot more you can do.
 
 The following functions modify a pattern temporal structure in some way.
 
-{{ 'Pattern.slow' | jsdoc }}
+### Pattern.slow
 
-{{ 'Pattern.fast' | jsdoc }}
+<JsDoc name="Pattern.slow" h={0} />
 
-{{ 'Pattern.early' | jsdoc }}
+### Pattern.fast
 
-{{ 'Pattern.late' | jsdoc }}
+<JsDoc name="Pattern.fast" h={0} />
 
-{{ 'Pattern.legato' | jsdoc }}
+### Pattern.early
 
-{{ 'Pattern.struct' | jsdoc }}
+<JsDoc name="Pattern.early" h={0} />
 
-{{ 'Pattern.euclid' | jsdoc }}
+### Pattern.late
 
-{{ 'Pattern.euclidLegato' | jsdoc }}
+<JsDoc name="Pattern.late" h={0} />
 
-{{ 'Pattern.rev' | jsdoc }}
+### Pattern.legato
 
-{{ 'Pattern.iter' | jsdoc }}
+<JsDoc name="Pattern.legato" h={0} />
 
-{{ 'Pattern.iterBack' | jsdoc }}
+### Pattern.struct
+
+<JsDoc name="Pattern.struct" h={0} />
+
+### Pattern.euclid
+
+<JsDoc name="Pattern.euclid" h={0} />
+
+### Pattern.euclidLegato
+
+<JsDoc name="Pattern.euclidLegato" h={0} />
+
+### Pattern.rev
+
+<JsDoc name="Pattern.rev" h={0} />
+
+### Pattern.iter
+
+<JsDoc name="Pattern.iter" h={0} />
+
+### Pattern.iterBack
+
+<JsDoc name="Pattern.iterBack" h={0} />
 
 ## Conditional Modifiers
 
-{{ 'Pattern.every' | jsdoc }}
+### Pattern.every
 
-{{ 'Pattern.each' | jsdoc }}
+<JsDoc name="Pattern.every" h={0} />
 
-{{ 'Pattern.when' | jsdoc }}
+### Pattern.when
+
+<JsDoc name="Pattern.when" h={0} />
 
 ## Accumulation Modifiers
 
-{{ 'Pattern.stack' | jsdoc }}
+### Pattern.stack
 
-{{ 'Pattern.superimpose' | jsdoc }}
+<JsDoc name="Pattern.stack" h={0} />
 
-{{ 'Pattern.layer' | jsdoc }}
+### Pattern.superimpose
 
-{{ 'Pattern.off' | jsdoc }}
+<JsDoc name="Pattern.superimpose" h={0} />
 
-{{ 'Pattern.echo' | jsdoc }}
+### Pattern.layer
 
-{{ 'Pattern.echoWith' | jsdoc }}
+<JsDoc name="Pattern.layer" h={0} />
+
+### Pattern.off
+
+<JsDoc name="Pattern.off" h={0} />
+
+### Pattern.echo
+
+<JsDoc name="Pattern.echo" h={0} />
+
+### Pattern.echoWith
+
+<JsDoc name="Pattern.echoWith" h={0} />
 
 ## Concat Modifiers
 
-{{ 'Pattern.seq' | jsdoc }}
+### Pattern.seq
 
-{{ 'Pattern.cat' | jsdoc }}
+<JsDoc name="Pattern.seq" h={0} />
+
+### Pattern.cat
+
+<JsDoc name="Pattern.cat" h={0} />
 
 ## Value Modifiers
 
-{{ 'Pattern.add' | jsdoc }}
+### Pattern.add
 
-{{ 'Pattern.sub' | jsdoc }}
+<JsDoc name="Pattern.add" h={0} />
 
-{{ 'Pattern.mul' | jsdoc }}
+### Pattern.sub
 
-{{ 'Pattern.div' | jsdoc }}
+<JsDoc name="Pattern.sub" h={0} />
 
-{{ 'Pattern.round' | jsdoc }}
+### Pattern.mul
 
-{{ 'Pattern.apply' | jsdoc }}
+<JsDoc name="Pattern.mul" h={0} />
 
-{{ 'Pattern.range' | jsdoc }}
+### Pattern.div
 
-{{ 'Pattern.chunk' | jsdoc }}
+<JsDoc name="Pattern.div" h={0} />
 
-{{ 'Pattern.chunkBack' | jsdoc }}
+### Pattern.round
+
+<JsDoc name="Pattern.round" h={0} />
+
+### Pattern.apply
+
+<JsDoc name="Pattern.apply" h={0} />
+
+### Pattern.range
+
+<JsDoc name="Pattern.range" h={0} />
+
+### Pattern.chunk
+
+<JsDoc name="Pattern.chunk" h={0} />
+
+### Pattern.chunkBack
+
+<JsDoc name="Pattern.chunkBack" h={0} />
 
 ## Continuous Signals
 
 Signals are patterns with continuous values, meaning they have theoretically infinite steps.
 They can provide streams of numbers that can be sampled at discrete points in time.
 
-{{ 'saw' | jsdoc }}
+### saw
 
-{{ 'sine' | jsdoc }}
+<JsDoc name="saw" h={0} />
 
-{{ 'cosine' | jsdoc }}
+### sine
 
-{{ 'tri' | jsdoc }}
+<JsDoc name="sine" h={0} />
 
-{{ 'square' | jsdoc }}
+### cosine
+
+<JsDoc name="cosine" h={0} />
+
+### tri
+
+<JsDoc name="tri" h={0} />
+
+### square
+
+<JsDoc name="square" h={0} />
 
 ### Ranges from -1 to 1
 
 There is also `saw2`, `sine2`, `cosine2`, `tri2` and `square2` which have a range from -1 to 1!
 
-{{ 'rand' | jsdoc }}
+### rand
 
-{{ 'perlin' | jsdoc }}
+<JsDoc name="rand" h={0} />
 
-{{ 'irand' | jsdoc }}
+### perlin
+
+<JsDoc name="perlin" h={0} />
+
+### irand
+
+<JsDoc name="irand" h={0} />
 
 ## Random Modifiers
 
 These methods add random behavior to your Patterns.
 
-{{ 'chooseCycles' | jsdoc }}
+### chooseCycles
 
-{{ 'Pattern.degradeBy' | jsdoc }}
+<JsDoc name="chooseCycles" h={0} />
 
-{{ 'Pattern.degrade' | jsdoc }}
+### Pattern.degradeBy
 
-{{ 'Pattern.undegradeBy' | jsdoc }}
+<JsDoc name="Pattern.degradeBy" h={0} />
 
-{{ 'Pattern.sometimesBy' | jsdoc }}
+### Pattern.degrade
 
-{{ 'Pattern.sometimes' | jsdoc }}
+<JsDoc name="Pattern.degrade" h={0} />
 
-{{ 'Pattern.someCyclesBy' | jsdoc }}
+### Pattern.undegradeBy
 
-{{ 'Pattern.someCycles' | jsdoc }}
+<JsDoc name="Pattern.undegradeBy" h={0} />
 
-{{ 'Pattern.often' | jsdoc }}
+### Pattern.sometimesBy
 
-{{ 'Pattern.rarely' | jsdoc }}
+<JsDoc name="Pattern.sometimesBy" h={0} />
 
-{{ 'Pattern.almostNever' | jsdoc }}
+### Pattern.sometimes
 
-{{ 'Pattern.almostAlways' | jsdoc }}
+<JsDoc name="Pattern.sometimes" h={0} />
 
-{{ 'Pattern.never' | jsdoc }}
+### Pattern.someCyclesBy
 
-{{ 'Pattern.always' | jsdoc }}
+<JsDoc name="Pattern.someCyclesBy" h={0} />
+
+### Pattern.someCycles
+
+<JsDoc name="Pattern.someCycles" h={0} />
+
+### Pattern.often
+
+<JsDoc name="Pattern.often" h={0} />
+
+### Pattern.rarely
+
+<JsDoc name="Pattern.rarely" h={0} />
+
+### Pattern.almostNever
+
+<JsDoc name="Pattern.almostNever" h={0} />
+
+### Pattern.almostAlways
+
+<JsDoc name="Pattern.almostAlways" h={0} />
+
+### Pattern.never
+
+<JsDoc name="Pattern.never" h={0} />
+
+### Pattern.always
+
+<JsDoc name="Pattern.always" h={0} />
 
 <br />
 <br />
@@ -822,7 +969,9 @@ Now you're all set!
 
 If you now hear sound, congratulations! If not, you can get help on the [#strudel channel in the TidalCycles discord](https://discord.com/invite/HGEdXmRkzT).
 
-{{ 'Pattern.osc' | jsdoc }}
+### Pattern.osc
+
+<JsDoc name="Pattern.osc" h={0} />
 
 ## Superdirt Params
 
