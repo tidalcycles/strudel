@@ -63,19 +63,22 @@ const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[] }> = ({
   const onLinkClick = (e: any) => {
     setCurrentID(e.target.getAttribute('href').replace('#', ''));
   };
+  const minDepth = 1;
 
   return (
     <>
       <ul ref={toc}>
         {headings
-          .filter(({ depth }) => depth > 0 && depth < 4)
+          .filter(({ depth }) => depth >= minDepth && depth < 4)
           .map((heading) => (
-            <li
-              className={`border-l-4 border-slate-900 ${['pl-4', 'pl-8', 'pl-12'][heading.depth - 1]} ${
-                currentID === heading.slug ? 'bg-slate-900' : ''
-              }`.trim()}
-            >
-              <a href={`#${heading.slug}`} onClick={onLinkClick}>
+            <li className={`w-full`}>
+              <a
+                href={`#${heading.slug}`}
+                onClick={onLinkClick}
+                className={`py-0.5 block cursor-pointer w-full border-l-4 border-gray-900 hover:bg-gray-900 ${
+                  ['pl-4', 'pl-9', 'pl-12'][heading.depth - minDepth]
+                } ${currentID === heading.slug ? 'bg-gray-900' : ''}`.trim()}
+              >
                 {unescape(heading.text)}
               </a>
             </li>

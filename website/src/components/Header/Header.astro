@@ -14,11 +14,11 @@ const { currentPage } = Astro.props as Props;
 // const lang = getLanguageFromURL(currentPage);
 ---
 
-<nav class="flex justify-between py-2" title="Top Navigation">
+<nav class="flex justify-between py-2 items-center h-full" title="Top Navigation">
   <!--     <div class="menu-toggle">
       <SidebarToggle client:idle />
     </div> -->
-  <div class="flex overflow-visible" style="overflow:visible">
+  <div class="flex overflow-visible items-center" style="overflow:visible">
     <a href="/" class="flex items-center text-2xl space-x-2">
       <div>🌀</div>
       <h1>{CONFIG.SITE.title ?? 'Documentation'}</h1>

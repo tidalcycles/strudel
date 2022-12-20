@@ -30,23 +30,23 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
     </title>
   </head>
 
-  <body class="h-screen text-gray-50 bg-gradient-to-t from-stone-800 to-gray-800">
+  <body class="h-screen text-gray-50 bg-gray-800">
     <div class="max-w-full m-auto h-full space-y-4 flex flex-col">
-      <header class="max-w-full px-4">
+      <header class="max-w-full px-4 fixed h-16 top-0 w-full z-[100]">
         <Header currentPage={currentPage} />
       </header>
-      <main class="flex space-x-4 overflow-hidden relative">
-        <aside title="Site Navigation" class="min-w-[300px] px-4">
+      <main class="relative pt-16">
+        <aside title="Site Navigation" class="fixed w-[300px] px-4">
           <LeftSidebar currentPage={currentPage} />
         </aside>
-        <div class="h-full grow overflow-auto px-2">
+        <aside class="w-2xl fixed right-0 h-full overflow-auto pr-8 pl-0 pb-16" title="Table of Contents">
+          <RightSidebar headings={headings} githubEditUrl={githubEditUrl} />
+        </aside>
+        <div class="h-full w-full top-0 pl-[300px] grow overflow-auto px-2">
           <PageContent frontmatter={frontmatter} headings={headings} githubEditUrl={githubEditUrl}>
             <slot />
           </PageContent>
         </div>
-        <aside class="w-2xl flex-none h-full overflow-auto pr-8 pl-0" title="Table of Contents">
-          <RightSidebar headings={headings} githubEditUrl={githubEditUrl} />
-        </aside>
       </main>
       <!--     <Footer path={currentFile} /> -->
     </div>
