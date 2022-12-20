@@ -26,7 +26,7 @@ export default function Search() {
   }, [setIsOpen]);
 
   const onInput = useCallback(
-    (e) => {
+    (e: any) => {
       setIsOpen(true);
       setInitialQuery(e.key);
     },

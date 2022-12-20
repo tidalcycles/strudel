@@ -2,7 +2,6 @@
 // import { getLanguageFromURL, KNOWN_LANGUAGE_CODES } from '../../languages';
 import * as CONFIG from '../../config';
 // import AstroLogo from './AstroLogo.astro';
-import SkipToContent from './SkipToContent.astro';
 import SidebarToggle from './SidebarToggle';
 // import LanguageSelect from './LanguageSelect';
 import Search from './Search';
@@ -15,7 +14,6 @@ const { currentPage } = Astro.props as Props;
 // const lang = getLanguageFromURL(currentPage);
 ---
 
-<SkipToContent />
 <nav class="flex justify-between py-2" title="Top Navigation">
   <!--     <div class="menu-toggle">
       <SidebarToggle client:idle />
@@ -29,7 +27,7 @@ const { currentPage } = Astro.props as Props;
   <div style="flex-grow: 1;"></div>
   {/* KNOWN_LANGUAGE_CODES.length > 1 && <LanguageSelect lang={lang} client:idle /> */}
   <div class="search-item h-10">
-    <Search client:idle />
+    <!--     <Search client:idle /> -->
   </div>
 </nav>
 

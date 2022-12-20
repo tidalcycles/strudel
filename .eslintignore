@@ -12,3 +12,5 @@ tailwind.config.js
 vite.config.js
 /**/dist/**/*
 !**/*.mjs
+**/*.tsx
+**/*.ts
