@@ -42,7 +42,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
         <aside class="w-2xl fixed right-0 h-full overflow-auto pr-8 pl-0 pb-16" title="Table of Contents">
           <RightSidebar headings={headings} githubEditUrl={githubEditUrl} />
         </aside>
-        <div class="h-full w-full top-0 pl-[300px] grow overflow-auto px-2">
+        <div class="h-full w-full top-0 pl-[320px] grow overflow-auto px-2">
           <PageContent frontmatter={frontmatter} headings={headings} githubEditUrl={githubEditUrl}>
             <slot />
           </PageContent>
