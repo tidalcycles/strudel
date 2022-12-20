@@ -36,11 +36,14 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
         <Header currentPage={currentPage} />
       </header>
       <main class="flex space-x-4 overflow-hidden relative">
-        <main class="h-full grow overflow-auto px-2">
+        <aside title="Site Navigation">
+          <LeftSidebar currentPage={currentPage} />
+        </aside>
+        <div class="h-full grow overflow-auto px-2">
           <PageContent frontmatter={frontmatter} headings={headings} githubEditUrl={githubEditUrl}>
             <slot />
           </PageContent>
-        </main>
+        </div>
         <aside class="w-2xl flex-none h-full overflow-auto px-4" title="Table of Contents">
           <RightSidebar headings={headings} githubEditUrl={githubEditUrl} />
         </aside>
