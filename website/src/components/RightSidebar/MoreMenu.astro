@@ -14,7 +14,7 @@ const showMoreSection = CONFIG.COMMUNITY_INVITE_URL;
   {
     editHref && (
       <li>
-        <a class="edit-on-github flex items-center space-x-2" href={editHref} target="_blank">
+        <a class="flex items-center space-x-2" href={editHref} target="_blank">
           <svg
             aria-hidden="true"
             focusable="false"
@@ -65,14 +65,5 @@ const showMoreSection = CONFIG.COMMUNITY_INVITE_URL;
   }
 </ul>
 <div style="margin: 2rem 0; text-align: center;">
-  <ThemeToggleButton client:visible />
+  <!--   <ThemeToggleButton client:visible /> -->
 </div>
-
-<style>
-  .edit-on-github {
-    text-decoration: none;
-    font: inherit;
-    color: inherit;
-    font-size: 1rem;
-  }
-</style>
