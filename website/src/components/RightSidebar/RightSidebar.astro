@@ -11,7 +11,7 @@ type Props = {
 const { headings, githubEditUrl } = Astro.props as Props;
 ---
 
-<nav aria-labelledby="grid-right" class="min-w-[300px]">
+<nav aria-labelledby="grid-right">
   <TableOfContents client:media="(min-width: 50em)" headings={headings} />
   <MoreMenu editHref={githubEditUrl} />
 </nav>
