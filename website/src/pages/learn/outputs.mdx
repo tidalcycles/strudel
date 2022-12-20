@@ -1,0 +1,70 @@
+---
+title: Other Outptuts
+description: Strudel Tutorial
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../components/strudel/MiniRepl';
+import { JsDoc } from '../../components/strudel/JsDoc';
+
+# Alternative Outputs
+
+The default audio output of Strudel uses the Web Audio API.
+It is also possible to use strudel with MIDI and OSC / Superdirt instead.
+
+# MIDI API
+
+Strudel also supports midi via [webmidi](https://npmjs.com/package/webmidi).
+
+### midi(outputName?)
+
+Either connect a midi device or use the IAC Driver (Mac) or Midi Through Port (Linux) for internal midi messages.
+If no outputName is given, it uses the first midi output it finds.
+
+<MiniRepl
+  client:idle
+  tune={`stack("<C^7 A7 Dm7 G7>".voicings('lefthand'), "<C3 A2 D3 G2>")
+  .midi()`}
+/>
+
+In the console, you will see a log of the available MIDI devices as soon as you run the code, e.g. `Midi connected! Using "Midi Through Port-0".`
+
+# Superdirt API
+
+In mainline tidal, the actual sound is generated via Superdirt, which runs inside Supercollider.
+Strudel also supports using Superdirt as a backend, although it requires some developer tooling to run.
+
+## Prequisites
+
+Getting Superdirt to work with Strudel, you need to
+
+1. install SuperCollider + sc3 plugins, see [Tidal Docs](https://tidalcycles.org/docs/) (Install Tidal) for more info.
+2. install [node.js](https://nodejs.org/en/)
+3. download [Strudel Repo](https://github.com/tidalcycles/strudel/) (or git clone, if you have git installed)
+4. run `npm i` in the strudel directory
+5. run `npm run osc` to start the osc server, which forwards OSC messages from Strudel REPL to SuperCollider
+
+Now you're all set!
+
+## Usage
+
+1. Start SuperCollider, either using SuperCollider IDE or by running `sclang` in a terminal
+2. Open the [Strudel REPL](https://strudel.tidalcycles.org/#cygiYmQgc2QiKS5vc2MoKQ%3D%3D)
+
+...or test it here:
+
+<MiniRepl client:only="react" tune={`s("bd sd").osc()`} />
+
+If you now hear sound, congratulations! If not, you can get help on the [#strudel channel in the TidalCycles discord](https://discord.com/invite/HGEdXmRkzT).
+
+### Pattern.osc
+
+<JsDoc client:idle name="Pattern.osc" h={0} />
+
+## Superdirt Params
+
+The following functions can be used with superdirt:
+
+`s n note freq channel orbit cutoff resonance hcutoff hresonance bandf bandq djf vowel cut begin end loop fadeTime speed unitA gain amp accelerate crush coarse delay lock leslie lrate lsize pan panspan pansplay room size dry shape squiz waveloss attack decay octave detune tremolodepth`
+
+Please refer to [Tidal Docs](https://tidalcycles.org/) for more info.
