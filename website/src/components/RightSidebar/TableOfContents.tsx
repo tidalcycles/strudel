@@ -75,9 +75,9 @@ const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[] }> = ({
               <a
                 href={`#${heading.slug}`}
                 onClick={onLinkClick}
-                className={`py-0.5 block cursor-pointer w-full border-l-4 border-gray-900 hover:bg-gray-900 ${
+                className={`py-0.5 block cursor-pointer w-full border-l-4 border-header hover:bg-header ${
                   ['pl-4', 'pl-9', 'pl-12'][heading.depth - minDepth]
-                } ${currentID === heading.slug ? 'bg-gray-900' : ''}`.trim()}
+                } ${currentID === heading.slug ? 'bg-header' : ''}`.trim()}
               >
                 {unescape(heading.text)}
               </a>

@@ -25,8 +25,8 @@ const sidebar = SIDEBAR[langCode];
                 return (
                   <li class="">
                     <a
-                      class={`pl-4 py-0.5 w-full hover:bg-gray-900 block${
-                        currentPageMatch === child.link ? ' bg-gray-900' : ''
+                      class={`pl-4 py-0.5 w-full hover:bg-header block${
+                        currentPageMatch === child.link ? ' bg-header' : ''
                       }`}
                       href={url}
                       aria-current={currentPageMatch === child.link ? 'page' : false}

@@ -1,9 +1,5 @@
 @import '@strudel.cycles/react/dist/style.css';
 
-body {
-  background-color: #222;
-}
-
 .darken::before {
   content: ' ';
   position: fixed;

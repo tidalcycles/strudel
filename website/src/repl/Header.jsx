@@ -36,7 +36,7 @@ export function Header({ context }) {
         !isZen && 'bg-header',
       )}
     >
-      <div className="px-4 flex items-center space-x-2 pt-2 md:pt-0 select-none">
+      <div className="px-4 flex space-x-2 pt-2 md:pt-0 select-none">
         {/*             <img
     src={logo}
     className={cx('Tidal-logo', isEmbedded ? 'w-8 h-8' : 'w-10 h-10', started && 'animate-pulse')} // 'bg-[#ffffff80] rounded-full'
@@ -46,7 +46,7 @@ export function Header({ context }) {
           className={cx(
             isEmbedded ? 'text-l' : 'text-xl',
             // 'bg-clip-text bg-gradient-to-r from-primary to-secondary  text-transparent font-bold',
-            'text-white font-bold flex space-x-2',
+            'text-white font-bold flex space-x-2 items-center',
           )}
         >
           <div

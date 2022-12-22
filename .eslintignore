@@ -9,6 +9,7 @@ out/**
 postcss.config.js
 postcss.config.cjs
 tailwind.config.js
+tailwind.config.cjs
 vite.config.js
 /**/dist/**/*
 !**/*.mjs
