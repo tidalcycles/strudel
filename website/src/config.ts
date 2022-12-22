@@ -43,7 +43,7 @@ export const ALGOLIA = {
 export type Sidebar = Record<typeof KNOWN_LANGUAGE_CODES[number], Record<string, { text: string; link: string }[]>>;
 export const SIDEBAR: Sidebar = {
   en: {
-    Learn: [
+    Tutorial: [
       { text: 'Getting Started', link: 'learn/getting-started' },
       { text: 'Mini Notation', link: 'learn/mini-notation' },
       { text: 'Synths, Samples & FX', link: 'learn/synths-samples-effects' },
