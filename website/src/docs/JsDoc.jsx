@@ -1,4 +1,4 @@
-import jsdoc from '../../../../doc.json'; // doc.json is built with `npm run jsdoc-json`
+import jsdoc from '../../../doc.json'; // doc.json is built with `npm run jsdoc-json`
 const docs = jsdoc.docs.reduce((acc, obj) => Object.assign(acc, { [obj.longname]: obj }), {});
 import { MiniRepl } from './MiniRepl';
 

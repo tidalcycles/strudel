@@ -1,8 +1,14 @@
-<script is:inline>
-	// Redirect your homepage to the first page of documentation.
-	// If you have a landing page, remove this script and add it here!
-	// window.location.pathname = `/en/introduction`;
-</script>
+---
+import HeadCommon from '../components/HeadCommon.astro';
+import { Repl } from '../repl/Repl.jsx';
+---
 
-<h1>Hello</h1>
-<a href="/tutorial">Tutorial</a>
+<html>
+  <head>
+    <HeadCommon />
+    <title>Strudel REPL</title>
+  </head>
+  <body>
+    <Repl client:only="react" />
+  </body>
+</html>

@@ -20,8 +20,6 @@ if (typeof window !== 'undefined') {
   );
 }
 
-// prebake();
-
 export function MiniRepl({ tune }) {
   const [Repl, setRepl] = useState();
   useEffect(() => {

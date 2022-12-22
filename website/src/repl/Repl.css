@@ -1,0 +1,26 @@
+@import '@strudel.cycles/react/dist/style.css';
+
+body {
+  background-color: #222;
+}
+
+.darken::before {
+  content: ' ';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  background: black;
+  opacity: 0.5;
+}
+
+.cm-gutters {
+  display: none !important;
+}
+
+.cm-content {
+  padding-top: 12px !important;
+  padding-left: 8px !important;
+}
