@@ -1,6 +1,6 @@
-import { queryCode } from '../../repl/src/runtime.mjs';
+import { queryCode } from './runtime.mjs';
 import { describe, it } from 'vitest';
-import doc from '../../doc.json';
+import doc from '../doc.json';
 
 describe('runs examples', () => {
   const { docs } = doc;

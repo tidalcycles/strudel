@@ -1,4 +1,25 @@
-# Astro Starter Kit: Docs Site
+# Strudel Website
+
+This is the website for Strudel, deployed at [strudel.tidalcycles.org](https://strudel.tidalcycles.org/).
+It includes the REPL live coding editor and the documentation site.
+
+## Run locally
+
+```bash
+# from project root
+npm run setup
+npm run repl
+```
+
+## Build
+
+```bash
+cd website
+npm run build # <- builds repl + tutorial to ../docs
+npm run preview # <- test static build
+```
+
+# Standard Readme of Astro Starter Kit: Docs Site
 
 ```bash
 npm create astro@latest -- --template docs
@@ -41,6 +62,8 @@ To deploy your site to production, check out our [Deploy an Astro Website](https
 Welcome! Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
 
 ## Customize This Theme
+
+edit: removed, as css styles have been replaced with tailwind styles
 
 ### Site metadata
 

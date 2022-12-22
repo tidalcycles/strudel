@@ -2,17 +2,14 @@ import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
 import react from '@astrojs/react';
 
-// https://astro.build/config
 import mdx from '@astrojs/mdx';
 
 import remarkToc from 'remark-toc';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
-// https://astro.build/config
-
-// https://astro.build/config
 import tailwind from '@astrojs/tailwind';
+// import { visualizer } from 'rollup-plugin-visualizer';
 
 const options = {
   // See https://mdxjs.com/advanced/plugins
@@ -35,3 +32,13 @@ export default defineConfig({
   ],
   site: `https://strudel.tidalcycles.org`,
 });
+
+/*
+  build: {
+    outDir: '../out',
+    sourcemap: true,
+    rollupOptions: {
+      plugins: [visualizer({ template: 'treemap' })],
+    },
+  },
+  */
