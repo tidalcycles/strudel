@@ -95,15 +95,6 @@ export function Header({ context }) {
             </button>
           )}
           {!isEmbedded && (
-            <a
-              href="./tutorial"
-              className={cx('hover:text-tertiary flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
-            >
-              <AcademicCapIcon className="w-5 h-5" />
-              <span>learn</span>
-            </a>
-          )}
-          {!isEmbedded && (
             <button
               className={cx(
                 'cursor-pointer hover:text-tertiary flex items-center space-x-1',
@@ -114,6 +105,15 @@ export function Header({ context }) {
               <LinkIcon className="w-5 h-5" />
               <span>share{lastShared && lastShared === (activeCode || code) ? 'd!' : ''}</span>
             </button>
+          )}
+          {!isEmbedded && (
+            <a
+              href="./learn/getting-started"
+              className={cx('hover:text-tertiary flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
+            >
+              <AcademicCapIcon className="w-5 h-5" />
+              <span>learn</span>
+            </a>
           )}
           {isEmbedded && (
             <button className={cx('hover:text-tertiary px-2')}>

@@ -104,7 +104,7 @@ export function Footer({ context }) {
               </p>
               <p>
                 To learn more about what this all means, check out the{' '}
-                <a href="./tutorial" target="_blank">
+                <a href="./learn/getting-started" target="_blank">
                   interactive tutorial
                 </a>
                 . Also feel free to join the{' '}
