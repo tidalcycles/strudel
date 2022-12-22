@@ -1,0 +1,54 @@
+---
+// import { getLanguageFromURL } from '../../languages';
+import { SIDEBAR } from '../../config';
+
+type Props = {
+  currentPage: string;
+};
+
+const { currentPage } = Astro.props as Props;
+const currentPageMatch = currentPage.endsWith('/') ? currentPage.slice(1, -1) : currentPage.slice(1);
+const langCode = 'en'; // getLanguageFromURL(currentPage);
+const sidebar = SIDEBAR[langCode];
+---
+
+<nav aria-labelledby="grid-left">
+  <ul>
+    {
+      Object.entries(sidebar).map(([header, children]) => (
+        <li>
+          <div class="nav-group">
+            <h2>{header}</h2>
+            <ul>
+              {children.map((child) => {
+                const url = Astro.site?.pathname + child.link;
+                return (
+                  <li class="">
+                    <a
+                      class={`pl-4 py-0.5 w-full hover:bg-header block${
+                        currentPageMatch === child.link ? ' bg-header' : ''
+                      }`}
+                      href={url}
+                      aria-current={currentPageMatch === child.link ? 'page' : false}
+                    >
+                      {child.text}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script is:inline>
+  window.addEventListener('DOMContentLoaded', () => {
+    var target = document.querySelector('[aria-current="page"]');
+    if (target && target.offsetTop > window.innerHeight - 100) {
+      document.querySelector('.nav-groups').scrollTop = target.offsetTop;
+    }
+  });
+</script>

@@ -1,0 +1,77 @@
+---
+// import { getLanguageFromURL, KNOWN_LANGUAGE_CODES } from '../../languages';
+import * as CONFIG from '../../config';
+// import AstroLogo from './AstroLogo.astro';
+import SidebarToggle from './SidebarToggle';
+// import LanguageSelect from './LanguageSelect';
+import Search from './Search';
+import CommandLineIcon from '@heroicons/react/20/solid/CommandLineIcon';
+import MobileNav from '../../docs/MobileNav';
+import { SIDEBAR } from '../../config';
+
+type Props = {
+  currentPage: string;
+};
+
+const { currentPage } = Astro.props as Props;
+// const lang = getLanguageFromURL(currentPage);
+const langCode = 'en'; // getLanguageFromURL(currentPage);
+const sidebar = SIDEBAR[langCode];
+---
+
+<nav class="flex justify-between py-2 px-4 items-center h-14 max-h-14 bg-[#161616]" title="Top Navigation">
+  <!--     <div class="menu-toggle">
+      <SidebarToggle client:idle />
+    </div> -->
+  <div class="flex overflow-visible items-center grow" style="overflow:visible">
+    <a href="/" class="flex items-center text-2xl space-x-2">
+      <h1 class="text-white font-bold flex space-x-2 items-baseline text-xl">
+        <span>🌀</span>
+        <div class="flex space-x-1 items-baseline">
+          <span class="">strudel</span>
+          <span class="text-sm">DOCS</span>
+        </div>
+      </h1>
+    </a>
+  </div>
+  {/* KNOWN_LANGUAGE_CODES.length > 1 && <LanguageSelect lang={lang} client:idle /> */}
+  <div class="search-item h-10">
+    <!--     <Search client:idle /> -->
+  </div>
+  <a href=".." class="hidden md:flex cursor-pointer items-center space-x-1"
+    ><CommandLineIcon className="w-5 h-5" /><span>go to REPL</span>
+  </a>
+  <div class="md:hidden">
+    <MobileNav sidebar={sidebar} client:idle />
+  </div>
+</nav>
+
+<style>
+  /** Style Algolia */
+  :root {
+    --docsearch-primary-color: var(--theme-accent);
+    --docsearch-logo-color: var(--theme-text);
+  }
+
+  .search-item {
+    display: none;
+    position: relative;
+    z-index: 10;
+    flex-grow: 1;
+    padding-right: 0.7rem;
+    display: flex;
+    max-width: 200px;
+  }
+
+  @media (min-width: 50em) {
+    .search-item {
+      max-width: 400px;
+    }
+  }
+</style>
+
+<style is:global>
+  .search-item > * {
+    flex-grow: 1;
+  }
+</style>

@@ -1,0 +1,145 @@
+---
+title: Getting Started
+description: Strudel Tutorial
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# What is Strudel?
+
+With Strudel, you can expressively write dynamic music pieces.
+It aims to be [Tidal Cycles](https://tidalcycles.org/) for JavaScript (started by the same author).
+
+You don't need to know JavaScript or Tidal Cycles to make music with Strudel.
+
+This interactive tutorial will guide you through the basics of Strudel.
+
+The best place to actually make music with Strudel is the [Strudel REPL](https://strudel.tidalcycles.org/).
+
+## Show me a Demo
+
+To get a taste of what Strudel can do, check out this track:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+stack(
+s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
+.speed(perlin.range(.7,.9)) // random sample speed variation
+,"<a1 b1\*2 a1(3,8) e2>" // bassline
+.off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
+.add(perlin.range(0,.5)) // random pitch variation
+.superimpose(add(.05)) // add second, slightly detuned voice
+.n() // wrap in "n"
+.decay(.15).sustain(0) // make each note of equal length
+.s('sawtooth') // waveform
+.gain(.4) // turn down
+.cutoff(sine.slow(7).range(300,5000)) // automate cutoff
+,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings('lefthand') // chords
+.superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+.add(perlin.range(0,.5)) // random pitch variation
+.n() // wrap in "n"
+.s('sawtooth') // waveform
+.gain(.16) // turn down
+.cutoff(500) // fixed cutoff
+.attack(1) // slowly fade in
+)
+.slow(3/2)`}
+/>
+
+## Disclaimer
+
+- This project is still in its experimental state. In the future, parts of it might change significantly.
+- This tutorial is far from complete.
+
+# Playing Pitches
+
+Pitches are an essential building block for music. In Strudel, there are 3 different options to express a pitch:
+
+- `note`: letter notation
+- `n`: number notation
+- `freq`: frequency notation
+
+## note
+
+Notes are notated with the note letter, followed by the octave number. You can notate flats with `b` and sharps with `#`.
+
+<MiniRepl client:only="react" tune={`note("a3 c#4 e4 a4")`} />
+
+By the way, you can edit the contents of the player, and press "update" to hear your change!
+You can also press "play" on the next player without needing to stop the last one.
+
+## n
+
+If you don't like notes, you can also use numbers with `n` instead:
+
+<MiniRepl client:only="react" tune={`n("57 61 64 69")`} />
+
+These numbers are interpreted as so called midi numbers, where adjacent whole numbers are 1 semitone apart.
+You could also write decimal numbers to get microtonal pitches:
+
+<MiniRepl client:only="react" tune={`n("74.5 75 75.5 76")`} />
+
+## freq
+
+To get maximum freedom, you can also use `freq` to directly control the frequency:
+
+<MiniRepl client:only="react" tune={`freq("220 275 330 440")`} />
+
+In this example, we play A3 (220Hz), C#4 natural (275Hz), E4 (330Hz) and A4 (440Hz).
+
+<br />
+
+# Playing Sounds
+
+Instead of pitches, we can also play sounds with `s`:
+
+<MiniRepl client:only="react" tune={`s("bd hh sd hh")`} />
+
+Similarly, we can also use `s` to change the sound of our pitches:
+
+<MiniRepl client:only="react" tune={`note("a3 c#4 e4 a4").s("sawtooth")`} />
+
+Try changing the sound to `square`, `triangle` or `sine`!
+
+We will go into the defails of sounds and synths [later](/learn/synths-samples-effects).
+
+<br />
+
+# Syntax
+
+So far, we've seen the following syntax:
+
+```
+xxx("foo").yyy("bar")
+```
+
+Generally, `xxx` and `yyy` are called functions, while `foo` and `bar` are called function arguments.
+So far, we've used the functions to declare which aspect of the sound we want to control, and their arguments for the actual data.
+The `yyy` function is called a chained function, because it is appended with a dot.
+
+Strudel makes heavy use of chained functions. Here is a more extreme example:
+
+<MiniRepl
+  client:idle
+  tune={`note("a3 c#4 e4 a4")
+.s("sawtooth")
+.cutoff(500)
+//.delay(0.5)
+.room(0.5)`}
+/>
+
+The `//` is a line comment, resulting in the `delay` function being ignored.
+It is a handy way to quickly turn stuff on and off. Try uncommenting this line by deleting `//`!
+
+The good news is, that this covers 99% of the JavaScript syntax needed for Strudel!
+
+Let's now look at the way we can express rhythms..
+
+<br />

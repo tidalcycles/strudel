@@ -1,0 +1,7 @@
+---
+import { MiniRepl } from './MiniRepl';
+const { tune } = Astro.props;
+import '@strudel.cycles/react/dist/style.css';
+---
+
+<MiniRepl tune={tune} client:only="react" />

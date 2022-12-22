@@ -1,0 +1,6 @@
+---
+import { JsDoc } from './JsDoc';
+const { name, h } = Astro.props;
+---
+
+<JsDoc name={name} h={h} client:only="react" />

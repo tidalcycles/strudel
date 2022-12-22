@@ -1,0 +1,9 @@
+@import '@strudel.cycles/react/dist/style.css';
+
+body {
+  background-color: #222;
+}
+
+.cm-gutters {
+  display: none !important;
+}

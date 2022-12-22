@@ -1,0 +1,250 @@
+---
+title: What is Strudel?
+description: Strudel Tutorial
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Functional JavaScript API
+
+While the mini notation is powerful on its own, there is much more to discover.
+Internally, the mini notation will expand to use the actual functional JavaScript API.
+
+For example, this Pattern in Mini Notation:
+
+<MiniRepl client:only="react" tune={`note("c3 eb3 g3")`} />
+
+is equivalent to this Pattern without Mini Notation:
+
+<MiniRepl client:only="react" tune={`note(seq(c3, eb3, g3))`} />
+
+Similarly, there is an equivalent function for every aspect of the mini notation.
+
+Which representation to use is a matter of context. As a rule of thumb, you can think of the JavaScript API
+to fit better for the larger context, while mini notation is more practical for individiual rhythms.
+
+## Limits of Mini Notation
+
+While the Mini Notation is a powerful way to write rhythms shortly, it also has its limits. Take this example:
+
+<MiniRepl
+  client:idle
+  tune={`stack(
+  note("c2 eb2(3,8)").s('sawtooth').cutoff(800),
+  s("bd,~ sd,hh*4")
+)`}
+/>
+
+Here, we are using mini notation for the individual rhythms, while using the function `stack` to mix them.
+While stack is also available as `,` in mini notation, we cannot use it here, because we have different types of sounds.
+
+## Notes
+
+Notes are automatically available as variables:
+
+<MiniRepl client:only="react" tune={`note(seq(d4, fs4, a4)) // note("d4 f#4 a4")`} />
+
+An important difference to the mini notation:
+For sharp notes, the letter "s" is used instead of "#", because JavaScript does not support "#" in a variable name.
+
+The above is the same as:
+
+<MiniRepl client:only="react" tune={`note(seq('d4', 'f#4', 'a4'))`} />
+
+Using strings, you can also use "#".
+
+## Alternative Syntax
+
+In the above example, we are nesting a function inside a function, which makes reading the parens a little more difficult.
+To avoid getting to many nested parens, there is an alternative syntax to add a type to a pattern:
+
+<MiniRepl client:only="react" tune={`seq(d4, fs4, a4).note()`} />
+
+You can use this with any function that declares a type (like `n`, `s`, `note`, `freq` etc), just make sure to leave the parens empty!
+
+## Pattern Factories
+
+The following functions will return a pattern.
+
+### cat
+
+<JsDoc client:idle name="cat" h={0} />
+
+### seq
+
+<JsDoc client:idle name="seq" h={0} />
+
+### stack
+
+<JsDoc client:idle name="stack" h={0} />
+
+### timeCat
+
+<JsDoc client:idle name="timeCat" h={0} />
+
+## Combining Patterns
+
+You can freely mix JS patterns, mini patterns and values! For example, this pattern:
+
+<MiniRepl
+  client:idle
+  tune={`cat(
+  stack(g3,b3,e4),
+  stack(a3,c3,e4),
+  stack(b3,d3,fs4),
+  stack(b3,e4,g4)
+).note()`}
+/>
+
+...is equivalent to:
+
+<MiniRepl
+  client:idle
+  tune={`cat(
+  "g3,b3,e4",
+  "a3,c3,e4",
+  "b3,d3,f#4",
+  "b3,e4,g4"
+).note()`}
+/>
+
+... as well as:
+
+<MiniRepl client:only="react" tune={`note("<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>")`} />
+
+While mini notation is almost always shorter, it only has a handful of modifiers: \* / ! @.
+When using JS patterns, there is a lot more you can do.
+
+## Time Modifiers
+
+The following functions modify a pattern temporal structure in some way.
+
+### Pattern.slow
+
+<JsDoc client:idle name="Pattern.slow" h={0} />
+
+### Pattern.fast
+
+<JsDoc client:idle name="Pattern.fast" h={0} />
+
+### Pattern.early
+
+<JsDoc client:idle name="Pattern.early" h={0} />
+
+### Pattern.late
+
+<JsDoc client:idle name="Pattern.late" h={0} />
+
+### Pattern.legato
+
+<JsDoc client:idle name="Pattern.legato" h={0} />
+
+### Pattern.struct
+
+<JsDoc client:idle name="Pattern.struct" h={0} />
+
+### Pattern.euclid
+
+<JsDoc client:idle name="Pattern.euclid" h={0} />
+
+### Pattern.euclidLegato
+
+<JsDoc client:idle name="Pattern.euclidLegato" h={0} />
+
+### Pattern.rev
+
+<JsDoc client:idle name="Pattern.rev" h={0} />
+
+### Pattern.iter
+
+<JsDoc client:idle name="Pattern.iter" h={0} />
+
+### Pattern.iterBack
+
+<JsDoc client:idle name="Pattern.iterBack" h={0} />
+
+## Conditional Modifiers
+
+### Pattern.every
+
+<JsDoc client:idle name="Pattern.every" h={0} />
+
+### Pattern.when
+
+<JsDoc client:idle name="Pattern.when" h={0} />
+
+## Accumulation Modifiers
+
+### Pattern.stack
+
+<JsDoc client:idle name="Pattern.stack" h={0} />
+
+### Pattern.superimpose
+
+<JsDoc client:idle name="Pattern.superimpose" h={0} />
+
+### Pattern.layer
+
+<JsDoc client:idle name="Pattern.layer" h={0} />
+
+### Pattern.off
+
+<JsDoc client:idle name="Pattern.off" h={0} />
+
+### Pattern.echo
+
+<JsDoc client:idle name="Pattern.echo" h={0} />
+
+### Pattern.echoWith
+
+<JsDoc client:idle name="Pattern.echoWith" h={0} />
+
+## Concat Modifiers
+
+### Pattern.seq
+
+<JsDoc client:idle name="Pattern.seq" h={0} />
+
+### Pattern.cat
+
+<JsDoc client:idle name="Pattern.cat" h={0} />
+
+## Value Modifiers
+
+### Pattern.add
+
+<JsDoc client:idle name="Pattern.add" h={0} />
+
+### Pattern.sub
+
+<JsDoc client:idle name="Pattern.sub" h={0} />
+
+### Pattern.mul
+
+<JsDoc client:idle name="Pattern.mul" h={0} />
+
+### Pattern.div
+
+<JsDoc client:idle name="Pattern.div" h={0} />
+
+### Pattern.round
+
+<JsDoc client:idle name="Pattern.round" h={0} />
+
+### Pattern.apply
+
+<JsDoc client:idle name="Pattern.apply" h={0} />
+
+### Pattern.range
+
+<JsDoc client:idle name="Pattern.range" h={0} />
+
+### Pattern.chunk
+
+<JsDoc client:idle name="Pattern.chunk" h={0} />
+
+### Pattern.chunkBack
+
+<JsDoc client:idle name="Pattern.chunkBack" h={0} />

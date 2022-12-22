@@ -1,0 +1,127 @@
+---
+title: Mini Notation
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Mini Notation
+
+Similar to Tidal Cycles, Strudel has an embedded mini language that is designed to write rhythmic patterns in a short manner.
+Before diving deeper into the details, here is a flavor of how the mini language looks like:
+
+<MiniRepl
+  client:idle
+  tune={`note(\`[
+  [
+    [e5 [b4 c5] d5 [c5 b4]]
+    [a4 [a4 c5] e5 [d5 c5]]
+    [b4 [~ c5] d5 e5]
+    [c5 a4 a4 ~]
+    [[~ d5] [~ f5] a5 [g5 f5]]
+    [e5 [~ c5] e5 [d5 c5]]
+    [b4 [b4 c5] d5 e5]
+    [c5 a4 a4 ~]
+  ],[
+    [[e2 e3]*4]
+    [[a2 a3]*4]
+    [[g#2 g#3]*2 [e2 e3]*2]
+    [a2 a3 a2 a3 a2 a3 b1 c2]
+    [[d2 d3]*4]
+    [[c2 c3]*4]
+    [[b1 b2]*2 [e2 e3]*2]
+    [[a1 a2]*4]
+  ]
+]/16\`)`}
+/>
+
+The snippet above is enclosed in backticks (`), which allows you to write multi-line strings.
+You can also use double quotes (") for single line mini notation.
+
+## Sequences
+
+We can play more notes by separating them with spaces:
+
+<MiniRepl client:only="react" tune={`note("e5 b4 d5 c5")`} />
+
+Here, those four notes are squashed into one cycle, so each note is a quarter second long.
+Try adding or removing notes and notice how the tempo changes!
+
+## Division
+
+We can slow the sequence down by enclosing it in brackets and dividing it by a number:
+
+<MiniRepl client:only="react" tune={`note("[e5 b4 d5 c5]/2")`} />
+
+The division by two means that the sequence will be played over the course of two cycles.
+You can also use decimal numbers for any tempo you like.
+
+## Angle Brackets
+
+Using angle brackets, we can define the sequence length based on the number of children:
+
+<MiniRepl client:only="react" tune={`note("<e5 b4 d5 c5>")`} />
+
+The above snippet is the same as:
+
+<MiniRepl client:only="react" tune={`note("[e5 b4 d5 c5]/4")`} />
+
+The advantage of the angle brackets, is that we can add more children without needing to change the number at the end.
+
+## Multiplication
+
+Contrary to division, a sequence can be sped up by multiplying it by a number:
+
+<MiniRepl client:only="react" tune={`note("[e5 b4 d5 c5]*2")`} />
+
+The multiplication by 2 here means that the sequence will play twice a cycle.
+
+## Bracket Nesting
+
+To create more interesting rhythms, you can nest sequences with brackets, like this:
+
+<MiniRepl client:only="react" tune={`note("e5 [b4 c5] d5 [c5 b4]")`} />
+
+## Rests
+
+The "~" represents a rest:
+
+<MiniRepl client:only="react" tune={`note("[b4 [~ c5] d5 e5]")`} />
+
+## Parallel
+
+Using commas, we can play chords:
+
+<MiniRepl client:only="react" tune={`note("g3,b3,e4")`} />
+
+To play multiple chords in a sequence, we have to wrap them in brackets:
+
+<MiniRepl client:only="react" tune={`note("<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>")`} />
+
+## Elongation
+
+With the "@" symbol, we can specify temporal "weight" of a sequence child:
+
+<MiniRepl client:only="react" tune={`note("<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>")`} />
+
+Here, the first chord has a weight of 2, making it twice the length of the other chords. The default weight is 1.
+
+## Replication
+
+Using "!" we can repeat without speeding up:
+
+<MiniRepl client:only="react" tune={`note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>")`} />
+
+In essence, the `x!n` is like a shortcut for `[x*n]@n`.
+
+## Euclidian
+
+Using round brackets, we can create rhythmical sub-divisions based on three parameters: beats, segments and offset.
+The first parameter controls how may beats will be played.
+The second parameter controls the total amount of segments the beats will be distributed over.
+The third (optional) parameter controls the starting position for distributing the beats.
+One popular Euclidian rhythm (going by various names, such as "Pop Clave") is "(3,8,0)" or simply "(3,8)",
+resulting in a rhythmical structure of "x ~ ~ x ~ ~ x ~" (3 beats over 8 segments, starting on position 1).
+
+<MiniRepl client:only="react" tune={`note("e5(2,8) b4(3,8) d5(2,8) c5(3,8)").slow(4)`} />
