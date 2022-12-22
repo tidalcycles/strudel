@@ -1,7 +1,7 @@
 {
-  "name": "@strudel.cycles/website",
+  "name": "@example/docs",
   "type": "module",
-  "version": "0.5.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "astro dev",
