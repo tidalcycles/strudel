@@ -6,6 +6,8 @@ import SidebarToggle from './SidebarToggle';
 // import LanguageSelect from './LanguageSelect';
 import Search from './Search';
 import CommandLineIcon from '@heroicons/react/20/solid/CommandLineIcon';
+import MobileNav from '../../docs/MobileNav';
+import { SIDEBAR } from '../../config';
 
 type Props = {
   currentPage: string;
@@ -13,9 +15,11 @@ type Props = {
 
 const { currentPage } = Astro.props as Props;
 // const lang = getLanguageFromURL(currentPage);
+const langCode = 'en'; // getLanguageFromURL(currentPage);
+const sidebar = SIDEBAR[langCode];
 ---
 
-<nav class="flex justify-between py-2 px-4 items-center h-25 bg-[#161616]" title="Top Navigation">
+<nav class="flex justify-between py-2 px-4 items-center h-14 max-h-14 bg-[#161616]" title="Top Navigation">
   <!--     <div class="menu-toggle">
       <SidebarToggle client:idle />
     </div> -->
@@ -34,9 +38,12 @@ const { currentPage } = Astro.props as Props;
   <div class="search-item h-10">
     <!--     <Search client:idle /> -->
   </div>
-  <a href=".." class="cursor-pointer items-center flex space-x-1"
+  <a href=".." class="hidden md:flex cursor-pointer items-center space-x-1"
     ><CommandLineIcon className="w-5 h-5" /><span>go to REPL</span>
   </a>
+  <div class="md:hidden">
+    <MobileNav sidebar={sidebar} client:idle />
+  </div>
 </nav>
 
 <style>

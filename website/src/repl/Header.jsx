@@ -31,8 +31,7 @@ export function Header({ context }) {
     <header
       id="header"
       className={cx(
-        'flex-none w-full md:flex text-black justify-between z-[100] text-lg  select-none sticky top-0',
-        isEmbedded ? 'h-12 md:h-8' : 'h-25 md:h-14',
+        'py-1 flex-none w-full md:flex text-black justify-between z-[100] text-lg  select-none sticky top-0',
         !isZen && 'bg-header',
       )}
     >
