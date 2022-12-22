@@ -46,6 +46,7 @@
   "homepage": "https://strudel.tidalcycles.org",
   "devDependencies": {
     "@vitest/ui": "^0.25.7",
+    "astro": "^1.7.2",
     "c8": "^7.12.0",
     "eslint": "^8.28.0",
     "events": "^3.3.0",
