@@ -21,7 +21,7 @@ import './Repl.css';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import { prebake } from './prebake.mjs';
-import * as tunes from '../../../tunes.mjs';
+import * as tunes from './tunes.mjs';
 
 initAudioOnFirstClick();
 
