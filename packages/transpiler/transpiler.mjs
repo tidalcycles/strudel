@@ -1,7 +1,7 @@
 import escodegen from 'escodegen';
 import { parse } from 'acorn';
 import { walk } from 'estree-walker';
-import { isNote } from '@strudel.cycles/core';
+import { isNoteWithOctave } from '@strudel.cycles/core';
 
 export function transpiler(input, options = {}) {
   const { wrapAsync = false, addReturn = true, simpleLocs = false } = options;
@@ -25,11 +25,11 @@ export function transpiler(input, options = {}) {
         this.skip();
         return this.replace(miniWithLocation(value, node, simpleLocs));
       }
-      if (node.type === 'Identifier' && isNote(node.name)) {
+      // TODO: remove pseudo note variables?
+      if (node.type === 'Identifier' && isNoteWithOctave(node.name)) {
         this.skip();
         return this.replace({ type: 'Literal', value: node.name });
       }
-      // TODO:
     },
     leave(node, parent, prop, index) {},
   });
