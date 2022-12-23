@@ -5,6 +5,7 @@
   "description": "Port of tidalcycles to javascript",
   "scripts": {
     "pretest": "npm run jsdoc-json",
+    "prebuild": "npm run jsdoc-json",
     "test": "vitest run --version",
     "test-ui": "vitest --ui",
     "test-coverage": "vitest --coverage",
