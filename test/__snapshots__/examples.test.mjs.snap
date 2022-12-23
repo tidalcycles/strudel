@@ -257,6 +257,19 @@ exports[`runs examples > example "apply" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "attack" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | note:c3 attack:0 ]",
+  "[ 1/2 → 1/1 | note:e3 attack:0 ]",
+  "[ 1/1 → 3/2 | note:c3 attack:0.1 ]",
+  "[ 3/2 → 2/1 | note:e3 attack:0.1 ]",
+  "[ 2/1 → 5/2 | note:c3 attack:0.5 ]",
+  "[ 5/2 → 3/1 | note:e3 attack:0.5 ]",
+  "[ 3/1 → 7/2 | note:c3 attack:0 ]",
+  "[ 7/2 → 4/1 | note:e3 attack:0 ]",
+]
+`;
+
 exports[`runs examples > example "bandf" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | s:bd bandf:1000 ]",
@@ -605,6 +618,19 @@ exports[`runs examples > example "cutoff" example index 0 1`] = `
   "[ 3/1 → 10/3 | s:hh cutoff:500 ]",
   "[ 10/3 → 11/3 | s:hh cutoff:500 ]",
   "[ 11/3 → 4/1 | s:hh cutoff:500 ]",
+]
+`;
+
+exports[`runs examples > example "decay" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | note:c3 decay:0.1 sustain:0 ]",
+  "[ 1/2 → 1/1 | note:e3 decay:0.1 sustain:0 ]",
+  "[ 1/1 → 3/2 | note:c3 decay:0.2 sustain:0 ]",
+  "[ 3/2 → 2/1 | note:e3 decay:0.2 sustain:0 ]",
+  "[ 2/1 → 5/2 | note:c3 decay:0.3 sustain:0 ]",
+  "[ 5/2 → 3/1 | note:e3 decay:0.3 sustain:0 ]",
+  "[ 3/1 → 7/2 | note:c3 decay:0.4 sustain:0 ]",
+  "[ 7/2 → 4/1 | note:e3 decay:0.4 sustain:0 ]",
 ]
 `;
 
@@ -2319,6 +2345,27 @@ exports[`runs examples > example "rarely" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "release" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:c3 release:0 ]",
+  "[ 1/4 → 1/2 | note:e3 release:0 ]",
+  "[ 1/2 → 3/4 | note:g3 release:0 ]",
+  "[ 3/4 → 1/1 | note:c4 release:0 ]",
+  "[ 1/1 → 5/4 | note:c3 release:0 ]",
+  "[ 5/4 → 3/2 | note:e3 release:0 ]",
+  "[ 3/2 → 7/4 | note:g3 release:0 ]",
+  "[ 7/4 → 2/1 | note:c4 release:0 ]",
+  "[ 2/1 → 9/4 | note:c3 release:0.1 ]",
+  "[ 9/4 → 5/2 | note:e3 release:0.1 ]",
+  "[ 5/2 → 11/4 | note:g3 release:0.1 ]",
+  "[ 11/4 → 3/1 | note:c4 release:0.1 ]",
+  "[ 3/1 → 13/4 | note:c3 release:0.1 ]",
+  "[ 13/4 → 7/2 | note:e3 release:0.1 ]",
+  "[ 7/2 → 15/4 | note:g3 release:0.1 ]",
+  "[ 15/4 → 4/1 | note:c4 release:0.1 ]",
+]
+`;
+
 exports[`runs examples > example "resonance" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | s:bd cutoff:2000 resonance:0 ]",
@@ -2932,6 +2979,19 @@ exports[`runs examples > example "superimpose" example index 0 1`] = `
   "[ 2/1 → 9/4 | note:Eb3 ]",
   "[ 9/4 → 5/2 | note:Eb3 ]",
   "[ 5/2 → 11/4 | note:Eb3 ]",
+]
+`;
+
+exports[`runs examples > example "sustain" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | note:c3 decay:0.2 sustain:0 ]",
+  "[ 1/2 → 1/1 | note:e3 decay:0.2 sustain:0 ]",
+  "[ 1/1 → 3/2 | note:c3 decay:0.2 sustain:0.1 ]",
+  "[ 3/2 → 2/1 | note:e3 decay:0.2 sustain:0.1 ]",
+  "[ 2/1 → 5/2 | note:c3 decay:0.2 sustain:0.4 ]",
+  "[ 5/2 → 3/1 | note:e3 decay:0.2 sustain:0.4 ]",
+  "[ 3/1 → 7/2 | note:c3 decay:0.2 sustain:0.6 ]",
+  "[ 7/2 → 4/1 | note:e3 decay:0.2 sustain:0.6 ]",
 ]
 `;
 
