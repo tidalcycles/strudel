@@ -225,9 +225,8 @@ function isPatternArg(parents) {
 function hasModifierCall(parent) {
   // TODO: modifiers are more than composables, for example every is not composable but should be seen as modifier..
   // need all prototypes of Pattern
-  return (
-    parent?.type === 'StaticMemberExpression' && Object.keys(Pattern.prototype.composable).includes(parent.property)
-  );
+  return parent?.type === 'StaticMemberExpression';
+  // && Object.keys(Pattern.prototype.composable).includes(parent.property)
 }
 const factories = Object.keys(Pattern.prototype.factories).concat(['mini']);
 

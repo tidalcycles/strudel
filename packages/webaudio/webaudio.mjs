@@ -4,7 +4,6 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// import { Pattern, getFrequency, patternify2 } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
 import { fromMidi, logger, toMidi } from '@strudel.cycles/core';
 import './feedbackdelay.mjs';
@@ -289,10 +288,10 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
 
     if (soundfont) {
       // is soundfont
-      bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac);
+      bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac, freq);
     } else {
       // is sample from loaded samples(..)
-      bufferSource = await getSampleBufferSource(s, n, note, speed);
+      bufferSource = await getSampleBufferSource(s, n, note, speed, freq);
     }
     // asny stuff above took too long?
     if (ac.currentTime > t) {

@@ -10,7 +10,8 @@ import {
   tokenizeNote,
   toMidi,
   fromMidi,
-  mod,
+  freqToMidi,
+  _mod,
   compose,
   getFrequency,
   getPlayableNoteValue,
@@ -94,6 +95,12 @@ describe('fromMidi', () => {
     expect(fromMidi(57)).toEqual(220);
   });
 });
+describe('freqToMidi', () => {
+  it('should turn frequency into midi', () => {
+    expect(freqToMidi(440)).toEqual(69);
+    expect(freqToMidi(220)).toEqual(57);
+  });
+});
 describe('getFrequency', () => {
   const happify = (val, context = {}) => pure(val).firstCycle()[0].setContext(context);
   it('should turn note into frequency', () => {
@@ -118,22 +125,22 @@ describe('getFrequency', () => {
   });
 });
 
-describe('mod', () => {
+describe('_mod', () => {
   it('should work like regular modulo with positive numbers', () => {
-    expect(mod(0, 3)).toEqual(0);
-    expect(mod(1, 3)).toEqual(1);
-    expect(mod(2, 3)).toEqual(2);
-    expect(mod(3, 3)).toEqual(0);
-    expect(mod(4, 3)).toEqual(1);
-    expect(mod(4, 2)).toEqual(0);
+    expect(_mod(0, 3)).toEqual(0);
+    expect(_mod(1, 3)).toEqual(1);
+    expect(_mod(2, 3)).toEqual(2);
+    expect(_mod(3, 3)).toEqual(0);
+    expect(_mod(4, 3)).toEqual(1);
+    expect(_mod(4, 2)).toEqual(0);
   });
   it('should work with negative numbers', () => {
-    expect(mod(-1, 3)).toEqual(2);
-    expect(mod(-2, 3)).toEqual(1);
-    expect(mod(-3, 3)).toEqual(0);
-    expect(mod(-4, 3)).toEqual(2);
-    expect(mod(-5, 3)).toEqual(1);
-    expect(mod(-3, 2)).toEqual(1);
+    expect(_mod(-1, 3)).toEqual(2);
+    expect(_mod(-2, 3)).toEqual(1);
+    expect(_mod(-3, 3)).toEqual(0);
+    expect(_mod(-4, 3)).toEqual(2);
+    expect(_mod(-5, 3)).toEqual(1);
+    expect(_mod(-3, 2)).toEqual(1);
   });
 });
 

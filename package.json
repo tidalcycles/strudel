@@ -1,24 +1,29 @@
 {
   "name": "@strudel.cycles/monorepo",
-  "version": "0.0.4",
+  "version": "0.5.0",
   "private": true,
   "description": "Port of tidalcycles to javascript",
   "scripts": {
-    "pretest": "cd tutorial && npm run jsdoc-json",
-    "test": "npm run lint && vitest run --version",
+    "pretest": "npm run jsdoc-json",
+    "prebuild": "npm run jsdoc-json",
+    "test": "vitest run --version",
     "test-ui": "vitest --ui",
     "test-coverage": "vitest --coverage",
     "bootstrap": "lerna bootstrap",
-    "setup": "npm i && npm run bootstrap && cd repl && npm i && cd ../tutorial && npm i",
+    "setup": "npm i && npm run bootstrap && cd website && npm i",
     "snapshot": "vitest run -u --silent",
-    "repl": "cd repl && npm run dev",
+    "repl": "cd website && npm run dev",
     "osc": "cd packages/osc && npm run server",
-    "build": "rm -rf out && cd repl && npm run build && cd ../tutorial && npm run build",
+    "build": "cd website && npm run build",
     "preview": "npx serve ./out",
     "deploy": "NODE_DEBUG=gh-pages gh-pages -d out",
     "jsdoc": "jsdoc packages/ -c jsdoc.config.json",
     "jsdoc-json": "jsdoc packages/ --template ./node_modules/jsdoc-json --destination doc.json -c jsdoc.config.json",
-    "lint": "npx eslint . --ext mjs,js --quiet"
+    "lint": "eslint . --ext mjs,js --quiet",
+    "codeformat": "prettier --write .",
+    "format-check": "prettier --check .",
+    "check": "npm run format-check && npm run lint && npm run test",
+    "iclc": "cd paper && pandoc --template=pandoc/iclc.html --citeproc  --number-sections iclc2023.md -o iclc2023.html && pandoc --template=pandoc/iclc.latex --citeproc --number-sections iclc2023.md -o iclc2023.pdf"
   },
   "workspaces": [
     "packages/*"
@@ -41,7 +46,7 @@
   },
   "homepage": "https://strudel.tidalcycles.org",
   "devDependencies": {
-    "@vitest/ui": "^0.21.1",
+    "@vitest/ui": "^0.25.7",
     "c8": "^7.12.0",
     "eslint": "^8.28.0",
     "events": "^3.3.0",
@@ -50,7 +55,8 @@
     "jsdoc-json": "^2.0.2",
     "jsdoc-to-markdown": "^7.1.1",
     "lerna": "^4.0.0",
+    "prettier": "^2.8.1",
     "rollup-plugin-visualizer": "^5.8.1",
-    "vitest": "^0.21.1"
+    "vitest": "^0.25.7"
   }
 }

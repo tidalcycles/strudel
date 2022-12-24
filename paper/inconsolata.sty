@@ -1,0 +1,92 @@
+% Copyright 2014 Michael Sharpe
+% Based initially on Karl Berry's inconsolata.sty.
+% You may freely use, modify and/or distribute this file.
+
+\def\fileversion{1.05}
+\def\filedate{2014/06/22}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{inconsolata}[\filedate\space v\fileversion]
+\message{`inconsolata-zi4' v\fileversion, \filedate\space Text macros for Inconsolata (msharpe)}
+
+\RequirePackage{textcomp}
+\RequirePackage{keyval}
+
+\newcount\zifour@ocount
+\newif\ifzifour@altzero
+\newif\ifzifour@noupq
+\define@key{zifour}{scaled}[1.0]{\def\zifour@scaled{s*[#1]}}
+
+\DeclareOption*{%
+  \begingroup
+  \edef\x{\endgroup
+    \noexpand\setkeys{zifour}{\CurrentOption}}%
+  \x}
+
+% by default, change \tt to mean zi4.
+\newcommand*{\zifour@default}{%
+  \renewcommand*{\ttdefault}{zi4}%
+}
+
+% option [nott] to avoid changing tt.
+\DeclareOption{nott}{%
+  \renewcommand*{\zifour@default}{}%
+}
+% option [noupquote] to prevent loading upquote.
+\DeclareOption{noupquote}{%
+  \zifour@noupqtrue}%
+  
+% option var0---use unslashed zero (slashed is default)
+\DeclareOption{var0}{%
+  \zifour@altzerotrue\advance\zifour@ocount \tw@ %
+}
+\DeclareOption{varl}{%
+  \advance\zifour@ocount \@ne %
+}
+\DeclareOption{varqu}{%
+  \advance\zifour@ocount 4\relax %
+}
+
+\ProcessOptions*
+\zifour@default
+\edef\zifour@opt{\the\zifour@ocount}
+\ifzifour@altzero 
+  \advance\zifour@ocount -\tw@
+\else
+  \advance\zifour@ocount \tw@
+\fi
+\edef\zifour@altopt{\the\zifour@ocount}
+% define an \altzero macro which flips to slashed, unslashed
+\def\altzero{{\fontfamily{zi4}%
+ \fontshape{scit}%
+ \selectfont 0}}
+ 
+\def\zifour@T@ne@nc{T1}
+\def\zifour@OT@ne@nc{OT1}
+\def\zifour@LY@ne@nc{LY1}
+\def\zifour@QX@nc{QX}
+\def\zifour@TQS{%
+\UndeclareTextCommand{\textquotesingle}{\encodingdefault}
+\DeclareTextSymbol{\textquotesingle}{TS1}{39}}
+
+\ifzifour@noupq% do nothing
+  % Try to correct for wrong slots for QX
+  \ifx\encodingdefault\zifour@QX@nc
+    \zifour@TQS
+  \else
+    \ifx\encodingdefault\zifour@LY@ne@nc
+      \zifour@TQS
+    \fi
+  \fi     
+\else
+  \AtBeginDocument{%
+  \ifx\encodingdefault\zifour@T@ne@nc % do nothing
+  \else
+    \ifx\encodingdefault\zifour@OT@ne@nc % do nothing
+    \else
+      \zifour@TQS
+    \fi
+  \fi
+  \usepackage{upquote}}
+\fi
+
+\endinput

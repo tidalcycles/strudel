@@ -51,6 +51,7 @@ const generic_params = [
    *
    * @name accelerate
    * @param {number | Pattern} amount acceleration.
+   * @superdirtOnly
    * @example
    * s("sax").accelerate("<0 1 2 4 8 16>").slow(2).osc()
    *
@@ -75,19 +76,20 @@ const generic_params = [
    *
    * @name amp
    * @param {number | Pattern} amount gain.
+   * @superdirtOnly
    * @example
    * s("bd*8").amp(".1*2 .5 .1*2 .5 .1 .5").osc()
    *
    */
   ['f', 'amp', 'like @gain@, but linear.'],
-  // TODO: find out why 0 does not work, and it generally seems not right
-  /*
+  /**
    * A pattern of numbers to specify the attack time of an envelope applied to each sample.
+   * [More info about envelopes](/learn/synths-samples-effects/#envelope)
    *
    * @name attack
    * @param {number | Pattern} attack time in seconds.
    * @example
-   * n("c5 e5").s('superpiano').attack("<0 .1>").osc()
+   * note("c3 e3").attack("<0 .1 .5>")
    *
    */
   [
@@ -107,18 +109,36 @@ const generic_params = [
    */
   ['f', 'bank', 'selects sound bank to use'],
 
-  // TODO: find out how this works?
-  /*
-   * Envelope decay time = the time it takes after the attack time to reach the sustain level.
+  /**
+   * Gain envelope decay time = the time it takes after the attack time to reach the sustain level.
+   * [More info about envelopes](/learn/synths-samples-effects/#envelope)
    *
    * @name decay
    * @param {number | Pattern} time decay time in seconds
    * @example
-   * s("sax").cut(1).decay("<.1 .2 .3 .4>").sustain(0).osc()
+   * note("c3 e3").decay("<.1 .2 .3 .4>").sustain(0)
    *
    */
   ['f', 'decay', ''],
+  /**
+   * Gain envelope sustain level. [More info about envelopes](/learn/synths-samples-effects/#envelope)
+   *
+   * @name sustain
+   * @param {number | Pattern} gain sustain level between 0 and 1
+   * @example
+   * note("c3 e3").decay(.2).sustain("<0 .1 .4 .6 1>")
+   *
+   */
   ['f', 'sustain', ''],
+  /**
+   * Gain envelope release time. [More info about envelopes](/learn/synths-samples-effects/#envelope)
+   *
+   * @name release
+   * @param {number | Pattern} time release time in seconds
+   * @example
+   * note("c3 e3 g3 c4").release("<0 .1 .4 .6 1>/2")
+   *
+   */
   [
     'f',
     'release',
@@ -204,7 +224,7 @@ const generic_params = [
    * "c4 eb4 g4 bb4".legato("<0.125 .25 .5 .75 1 2 4>")
    *
    */
-  ['f', 'legato', 'controls the amount of overlap between two adjacent sounds'],
+  // ['f', 'legato', 'controls the amount of overlap between two adjacent sounds'],
   // ['f', 'clhatdecay', ''],
   /**
    * bit crusher effect.
@@ -400,7 +420,7 @@ const generic_params = [
    * @example
    * freq("220 110 440 110").s("superzow").osc()
    * @example
-   * freq("110".mulOut(".5 1.5 .6 [2 3]")).s("superzow").osc()
+   * freq("110".mul.out(".5 1.5 .6 [2 3]")).s("superzow").osc()
    *
    */
   ['f', 'freq', ''],
@@ -562,7 +582,7 @@ const generic_params = [
   // TODO: detune? https://tidalcycles.org/docs/patternlib/tutorials/synthesizers/#supersquare
   ['f', 'semitone', ''],
   // TODO: dedup with synth param, see https://tidalcycles.org/docs/reference/synthesizers/#superpiano
-  ['f', 'velocity', ''],
+  // ['f', 'velocity', ''],
   ['f', 'voice', ''], // TODO: synth param
   /**
    * Sets the level of reverb.

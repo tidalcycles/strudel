@@ -23,17 +23,16 @@ export async function getWriter(br = 38400) {
     const encoder = new TextEncoder();
     const writer = port.writable.getWriter();
     writeMessage = function (message, chk) {
-      const encoded = encoder.encode(message)
+      const encoded = encoder.encode(message);
       if (!chk) {
         writer.write(encoded);
-      }
-      else {
+      } else {
         const bytes = new Uint8Array(4);
         bytes[0] = 124; // | symbol
-        bytes[1] = (chk >> 8) & 0xFF;
-        bytes[2] = chk & 0xFF;
+        bytes[1] = (chk >> 8) & 0xff;
+        bytes[2] = chk & 0xff;
         bytes[3] = 59; // semicolon
-        const withchk = new Uint8Array(encoded.length+4)
+        const withchk = new Uint8Array(encoded.length + 4);
         withchk.set(encoded);
         withchk.set(bytes, encoded.length);
         writer.write(withchk);
@@ -48,12 +47,12 @@ const latency = 0.1;
 
 // crc16 (CCITT-FALSE) https://gist.github.com/tijnkooijmans/10981093
 function crc16(data) {
-  const length = data.length
+  const length = data.length;
   if (length == 0) {
     return 0;
   }
 
-  var crc = 0xFFFF;
+  var crc = 0xffff;
   for (var i = 0; i < length; ++i) {
     crc ^= data.charCodeAt(i) << 8;
     for (var j = 0; j < 8; ++j) {
@@ -64,7 +63,7 @@ function crc16(data) {
   return crc & 0xffff;
 }
 
-Pattern.prototype.serial = function (br=38400,sendcrc=false,singlecharids=false) {
+Pattern.prototype.serial = function (br = 38400, sendcrc = false, singlecharids = false) {
   return this.withHap((hap) => {
     if (!writeMessage) {
       getWriter(br);
@@ -96,7 +95,7 @@ Pattern.prototype.serial = function (br=38400,sendcrc=false,singlecharids=false)
           }
           message += ')';
           if (sendcrc) {
-            chk = crc16(message)
+            chk = crc16(message);
           }
         } else {
           for (const [key, val] of Object.entries(hap.value)) {
@@ -108,7 +107,9 @@ Pattern.prototype.serial = function (br=38400,sendcrc=false,singlecharids=false)
       }
       const offset = (time - currentTime + latency) * 1000;
 
-      window.setTimeout(function () {writeMessage(message, chk)}, offset);
+      window.setTimeout(function () {
+        writeMessage(message, chk);
+      }, offset);
     };
     return hap.setContext({ ...hap.context, onTrigger, dominantTrigger: true });
   });

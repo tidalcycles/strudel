@@ -1,0 +1,72 @@
+---
+title: Tonal API
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Tonal API
+
+The Tonal API, uses [tonaljs](https://github.com/tonaljs/tonal) to provide helpers for musical operations.
+
+### transpose(semitones)
+
+Transposes all notes to the given number of semitones:
+
+<MiniRepl client:only="react" tune={`"c2 c3".fast(2).transpose("<0 -2 5 3>".slow(2)).note()`} />
+
+This method gets really exciting when we use it with a pattern as above.
+
+Instead of numbers, scientific interval notation can be used as well:
+
+<MiniRepl client:only="react" tune={`"c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).note()`} />
+
+### scale(name)
+
+Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like scaleTranpose.
+
+<MiniRepl
+  client:idle
+  tune={`"0 2 4 6 4 2"
+.scale(seq('C2 major', 'C2 minor').slow(2))
+.note()`}
+/>
+
+Note that the scale root is octaved here. You can also omit the octave, then index zero will default to octave 3.
+
+All the available scale names can be found [here](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).
+
+### scaleTranspose(steps)
+
+Transposes notes inside the scale by the number of steps:
+
+<MiniRepl
+  client:idle
+  tune={`"-8 [2,4,6]"
+.scale('C4 bebop major')
+.scaleTranspose("<0 -1 -2 -3 -4 -5 -6 -4>")
+.note()`}
+/>
+
+### voicings(range?)
+
+Turns chord symbols into voicings, using the smoothest voice leading possible:
+
+<MiniRepl client:only="react" tune={`stack("<C^7 A7 Dm7 G7>".voicings('lefthand'), "<C3 A2 D3 G2>").note()`} />
+
+### rootNotes(octave = 2)
+
+Turns chord symbols into root notes of chords in given octave.
+
+<MiniRepl client:only="react" tune={`"<C^7 A7b13 Dm7 G7>".rootNotes(3).note()`} />
+
+Together with layer, struct and voicings, this can be used to create a basic backing track:
+
+<MiniRepl
+  client:idle
+  tune={`"<C^7 A7b13 Dm7 G7>".layer(
+  x => x.voicings('lefthand').struct("~ x").note(),
+  x => x.rootNotes(2).note().s('sawtooth').cutoff(800)
+)`}
+/>

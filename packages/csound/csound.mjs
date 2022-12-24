@@ -1,4 +1,4 @@
-import { getFrequency, logger, Pattern } from '@strudel.cycles/core';
+import { getFrequency, logger, register } from '@strudel.cycles/core';
 import { getAudioContext } from '@strudel.cycles/webaudio';
 import csd from './project.csd?raw';
 // import livecodeOrc from './livecode.orc?raw';
@@ -6,12 +6,24 @@ import presetsOrc from './presets.orc?raw';
 
 let csoundLoader, _csound;
 
-// triggers given instrument name using csound.
-Pattern.prototype._csound = function (instrument) {
+// initializes csound + can be used to reevaluate given instrument code
+export async function loadCSound(code = '') {
+  await init();
+  if (code) {
+    code = `${code}`;
+    //     ^       ^
+    // wrapping in backticks makes sure it works when calling as templated function
+    await _csound?.evalCode(code);
+  }
+}
+export const loadcsound = loadCSound;
+export const loadCsound = loadCSound;
+
+export const csound = register('csound', (instrument, pat) => {
   instrument = instrument || 'triangle';
   init(); // not async to support csound inside other patterns + to be able to call pattern methods after it
   // TODO: find a alternative way to wait for csound to load (to wait with first time playback)
-  return this.onTrigger((time, hap) => {
+  return pat.onTrigger((time, hap) => {
     if (!_csound) {
       logger('[csound] not loaded yet', 'warning');
       return;
@@ -40,20 +52,7 @@ Pattern.prototype._csound = function (instrument) {
     const msg = `i ${params.join(' ')}`;
     _csound.inputMessage(msg);
   });
-};
-
-// initializes csound + can be used to reevaluate given instrument code
-export async function csound(code = '') {
-  await init();
-  if (code) {
-    code = `${code}`;
-    //     ^       ^
-    // wrapping in backticks makes sure it works when calling as templated function
-    await _csound?.evalCode(code);
-  }
-}
-
-Pattern.prototype.define('csound', (a, pat) => pat.csound(a), { composable: false, patternified: true });
+});
 
 function eventLogger(type, args) {
   const [msg] = args;
@@ -80,21 +79,25 @@ function eventLogger(type, args) {
 
 async function load() {
   if (window.__csound__) {
-    // allows using some other csound instance
+    // Allows using some other csound instance.
+    // In that case, the external Csound is responsible
+    // for compiling an orchestra and starting to perform.
+    logger('[load] Using external Csound', 'warning');
     _csound = window.__csound__;
+    return _csound;
   } else {
     const { Csound } = await import('@csound/browser');
     _csound = await Csound({ audioContext: getAudioContext() });
+    _csound.removeAllListeners('message');
+    ['message'].forEach((k) => _csound.on(k, (...args) => eventLogger(k, args)));
+    await _csound.setOption('-m0d'); // see -m flag https://csound.com/docs/manual/CommandFlags.html
+    await _csound.setOption('--sample-accurate');
+    await _csound.compileCsdText(csd);
+    // await _csound.compileOrc(livecodeOrc);
+    await _csound.compileOrc(presetsOrc);
+    await _csound.start();
+    return _csound;
   }
-  _csound.removeAllListeners('message');
-  ['message'].forEach((k) => _csound.on(k, (...args) => eventLogger(k, args)));
-  await _csound.setOption('-m0d'); // see -m flag https://csound.com/docs/manual/CommandFlags.html
-  await _csound.setOption('--sample-accurate');
-  await _csound.compileCsdText(csd);
-  // await _csound.compileOrc(livecodeOrc);
-  await _csound.compileOrc(presetsOrc);
-  await _csound.start();
-  return _csound;
 }
 
 async function init() {
@@ -119,3 +122,49 @@ export async function loadOrc(url) {
   }
   await orcCache[url];
 }
+
+/**
+ * Sends notes to Csound for rendering with MIDI semantics. The hap value is
+ * translated to these Csound pfields:
+ *
+ *  p1 -- Csound instrument either as a number (1-based, can be a fraction),
+ *        or as a string name.
+ *  p2 -- time in beats (usually seconds) from start of performance.
+ *  p3 -- duration in beats (usually seconds).
+ *  p4 -- MIDI key number (as a real number, not an integer but in [0, 127].
+ *  p5 -- MIDI velocity (as a real number, not an integer but in [0, 127].
+ *  p6 -- Strudel controls, as a string.
+ */
+export const csoundm = register('csoundm', (instrument, pat) => {
+  let p1 = instrument;
+  if (typeof instrument === 'string') {
+    p1 = `"{instrument}"`;
+  }
+  init(); // not async to support csound inside other patterns + to be able to call pattern methods after it
+  return pat.onTrigger((tidal_time, hap) => {
+    if (!_csound) {
+      logger('[csound] not loaded yet', 'warning');
+      return;
+    }
+    if (typeof hap.value !== 'object') {
+      throw new Error('csound only support objects as hap values');
+    }
+    // Time in seconds counting from now.
+    const p2 = tidal_time - getAudioContext().currentTime;
+    const p3 = hap.duration.valueOf() + 0;
+    const frequency = getFrequency(hap);
+    // Translate frequency to MIDI key number _without_ rounding.
+    const C4 = 261.62558;
+    let octave = Math.log(frequency / C4) / Math.log(2.0) + 8.0;
+    const p4 = octave * 12.0 - 36.0;
+    // We prefer floating point precision, but over the MIDI range [0, 127].
+    const p5 = 127 * (hap.context?.velocity ?? 0.9);
+    // The Strudel controls as a string.
+    const p6 = Object.entries({ ...hap.value, frequency })
+      .flat()
+      .join('/');
+    const i_statement = `i ${p1} ${p2} ${p3} ${p4} ${p5} "${p6}"`;
+    console.log('[csoundm]:', i_statement);
+    _csound.inputMessage(i_statement);
+  });
+});

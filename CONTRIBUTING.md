@@ -12,8 +12,8 @@ To get in touch with the contributors, either
 
 ## Ask a Question
 
-If you have any questions about strudel, make sure you've read the
-[tutorial](https://strudel.tidalcycles.org/tutorial/) to find out if it answers your question.
+If you have any questions about strudel, make sure you've glanced through the
+[docs](https://strudel.tidalcycles.org/learn/) to find out if it answers your question.
 If not, use one of the Communication Channels above!
 
 Don't be afraid to ask! Your question might be of great value for other people too.
@@ -29,12 +29,10 @@ If you made some music with strudel, you can give back some love and share what 
 Your creation could also be part of the random selection in the REPL if you want.
 Use one of the Communication Channels listed above.
 
-## Improve the Tutorial
+## Improve the Docs
 
-If you find some weak spots in the [tutorial](https://strudel.tidalcycles.org/),
-you are welcome to improve them by editing [this file](https://github.com/tidalcycles/strudel/blob/main/tutorial/tutorial.mdx).
-
-This will even work without setting up a development environment, only a github account is required.
+If you find some weak spots in the [docs](https://strudel.tidalcycles.org/learn/getting-started),
+you can edit each file directly on github via the "Edit this page" link located in the right sidebar.
 
 ## Propose a Feature
 
