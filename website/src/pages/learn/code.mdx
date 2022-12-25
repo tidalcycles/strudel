@@ -1,0 +1,81 @@
+---
+title: Coding syntax
+description: Strudel Tutorial - Coding syntax
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Strudel Code
+
+Now that we have played some notes using different sounds, let's take a step back and look how we actually achieved this using _code_. 
+
+Let's look at this simple example again. What do we notice?
+
+<MiniRepl client:idle tune={`freq("220 275 330 440").s("sine")`} />
+
+- We have a word `freq` which is followed by some brackets `()` with some words/letters/numbers inside, surrounded by quotes `"a3 c#4 e4 a4"`.
+- Then we have a dot `.` followed by another similar piece of code `s("sawtooth")`.
+- We can also see these texts are _highlighted_ using colours: word `freq` is purple, the brackets `()` are grey, and the content inside the `""` are green.
+
+What happens if we try to 'break' this pattern in different ways?
+
+<MiniRepl client:idle tune={`freq(220 275 330 440).s(sine)`} />
+
+<MiniRepl client:idle tune={`freq("220 275 330 440")s("sine")`} />
+
+<MiniRepl client:idle tune={`freq["220 275 330 440"].s{"sine"}`} />
+
+Ok, none of these seem to work...
+
+<MiniRepl client:idle tune={`s("sine").freq("220 275 330 440")`} />
+
+This one does work, but now we can't hear the four different events and frequencies anymore.
+
+So what is going on here?
+
+# Functions, arguments and chaining
+
+So far, we've seen the following syntax:
+
+```
+xxx("foo").yyy("bar")
+```
+
+Generally, `xxx` and `yyy` are called [_functions_](https://en.wikipedia.org/wiki/Function_(computer_programming)), while `foo` and `bar` are called function [_arguments_ or _parameters_](https://en.wikipedia.org/wiki/Parameter_(computer_programming)).
+So far, we've used the functions to declare which aspect of the sound we want to control, and their arguments for the actual data.
+The `yyy` function is called a [_chained_ function](https://en.wikipedia.org/wiki/Method_chaining), because it is appended with a dot (`.`).
+
+Generally, the idea with chaining is that code such as `a("this").b("that").c("other")` allows `a`, `b` and `c` functions to happen in a specified order, without needing to write them as three separate lines of code.
+You can think of this as being similar to chaining audio effects together using guitar pedals or digital audio effects.
+
+Strudel makes heavy use of chained functions. Here is a more sophisticated example:
+
+<MiniRepl client:idle
+  tune={`note("a3 c#4 e4 a4")
+.s("sawtooth")
+.cutoff(500)
+//.delay(0.5)
+.room(0.5)`}
+/>
+
+# Comments
+
+The `//` in the example above is a line comment, resulting in the `delay` function being ignored.
+It is a handy way to quickly turn code on and off. 
+Try uncommenting this line by deleting `//` and refreshing the pattern.
+You can also use the keyboard shortcut `cmd-/` to toggle comments on and off.
+
+# Strings
+
+Ok, so what about the content inside the quotes (e.g. `"a3 c#4 e4 a4"`)? 
+In JavaScript, as in most programming languages, this content is referred to as being a [_string_](https://en.wikipedia.org/wiki/String_(computer_science)).
+A string is simply a sequence of individual characters.
+In TidalCycles, strings are used to write _patterns_ using the mini-notation, and you may hear the phrase _pattern string_ from time to time.
+
+The good news is, that this covers 99% of the JavaScript syntax needed for Strudel!
+
+Let's now look at the way we can express [Rhythms](/learn/mini-notation)...
+
+<br/>
