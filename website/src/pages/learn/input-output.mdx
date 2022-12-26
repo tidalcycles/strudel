@@ -7,16 +7,16 @@ layout: ../../layouts/MainLayout.astro
 import { MiniRepl } from '../../docs/MiniRepl';
 import { JsDoc } from '../../docs/JsDoc';
 
-# Alternative Outputs
+# MIDI and OSC
 
-The default audio output of Strudel uses the Web Audio API.
-It is also possible to use strudel with MIDI and OSC / Superdirt instead.
+The default audio output of Strudel uses the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API).
+It is also possible to use Strudel with MIDI and OSC / [SuperDirt](https://github.com/musikinformatik/SuperDirt/) instead.
 
 # MIDI API
 
 Strudel also supports midi via [webmidi](https://npmjs.com/package/webmidi).
 
-### midi(outputName?)
+## midi(outputName?)
 
 Either connect a midi device or use the IAC Driver (Mac) or Midi Through Port (Linux) for internal midi messages.
 If no outputName is given, it uses the first midi output it finds.
@@ -29,14 +29,14 @@ If no outputName is given, it uses the first midi output it finds.
 
 In the console, you will see a log of the available MIDI devices as soon as you run the code, e.g. `Midi connected! Using "Midi Through Port-0".`
 
-# Superdirt API
+# SuperDirt API
 
-In mainline tidal, the actual sound is generated via Superdirt, which runs inside Supercollider.
-Strudel also supports using Superdirt as a backend, although it requires some developer tooling to run.
+In mainline tidal, the actual sound is generated via [SuperDirt](https://github.com/musikinformatik/SuperDirt/), which runs inside SuperCollider.
+Strudel also supports using [SuperDirt](https://github.com/musikinformatik/SuperDirt/) as a backend, although it requires some developer tooling to run.
 
 ## Prequisites
 
-Getting Superdirt to work with Strudel, you need to
+Getting [SuperDirt](https://github.com/musikinformatik/SuperDirt/) to work with Strudel, you need to
 
 1. install SuperCollider + sc3 plugins, see [Tidal Docs](https://tidalcycles.org/docs/) (Install Tidal) for more info.
 2. install [node.js](https://nodejs.org/en/)
@@ -61,10 +61,12 @@ If you now hear sound, congratulations! If not, you can get help on the [#strude
 
 <JsDoc client:idle name="Pattern.osc" h={0} />
 
-## Superdirt Params
+## SuperDirt Params
 
-The following functions can be used with superdirt:
+The following functions can be used with [SuperDirt](https://github.com/musikinformatik/SuperDirt/):
 
 `s n note freq channel orbit cutoff resonance hcutoff hresonance bandf bandq djf vowel cut begin end loop fadeTime speed unitA gain amp accelerate crush coarse delay lock leslie lrate lsize pan panspan pansplay room size dry shape squiz waveloss attack decay octave detune tremolodepth`
 
 Please refer to [Tidal Docs](https://tidalcycles.org/) for more info.
+
+<br />

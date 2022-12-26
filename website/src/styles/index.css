@@ -7,3 +7,7 @@ body {
 .cm-gutters {
   display: none !important;
 }
+
+.prose > h1 {
+  padding-top: 30px;
+}
