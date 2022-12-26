@@ -5,6 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Pattern, toMidi, getDrawContext, freqToMidi } from './index.mjs';
+import { convertColorToNumber } from './color.mjs';
 
 const scale = (normalized, min, max) => normalized * (max - min) + min;
 const getValue = (e) => {
@@ -19,6 +20,9 @@ const getValue = (e) => {
   value = note ?? n ?? e.value;
   if (typeof value === 'string') {
     value = toMidi(value);
+  }
+  if (typeof value === 'object' && value.color) {
+    return convertColorToNumber(value.color);
   }
   return value;
 };
@@ -236,8 +240,9 @@ export function pianoroll({
     // .filter(inFrame)
     .forEach((event) => {
       const isActive = event.whole.begin <= time && event.whole.end > time;
-      ctx.fillStyle = event.context?.color || inactive;
-      ctx.strokeStyle = event.context?.color || active;
+      const color = event.value?.color || event.context?.color;
+      ctx.fillStyle = color || inactive;
+      ctx.strokeStyle = color || active;
       ctx.globalAlpha = event.context.velocity ?? 1;
       const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
       let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
