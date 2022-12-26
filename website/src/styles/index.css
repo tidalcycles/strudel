@@ -8,6 +8,6 @@ body {
   display: none !important;
 }
 
-h1 {
+.prose > h1 {
   padding-top: 30px;
 }
