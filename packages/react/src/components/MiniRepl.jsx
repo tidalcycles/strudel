@@ -1,18 +1,20 @@
-import React, { useState, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
+import { pianoroll } from '@strudel.cycles/core';
+import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-hook-inview';
+import 'tailwindcss/tailwind.css';
 import cx from '../cx';
 import useHighlighting from '../hooks/useHighlighting.mjs';
-import CodeMirror6, { flash } from './CodeMirror6';
-import 'tailwindcss/tailwind.css';
-import './style.css';
-import styles from './MiniRepl.module.css';
-import { Icon } from './Icon';
-import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
+import usePatternFrame from '../hooks/usePatternFrame.mjs';
 import useStrudel from '../hooks/useStrudel.mjs';
+import CodeMirror6, { flash } from './CodeMirror6';
+import { Icon } from './Icon';
+import styles from './MiniRepl.module.css';
+import './style.css';
 
 const getTime = () => getAudioContext().currentTime;
 
-export function MiniRepl({ tune, hideOutsideView = false, init, enableKeyboard }) {
+export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, withCanvas = false, canvasHeight = 200 }) {
   const {
     code,
     setCode,
@@ -26,11 +28,23 @@ export function MiniRepl({ tune, hideOutsideView = false, init, enableKeyboard }
     scheduler,
     togglePlay,
     stop,
+    canvasId,
   } = useStrudel({
     initialCode: tune,
     defaultOutput: webaudioOutput,
     getTime,
   });
+
+  usePatternFrame({
+    pattern,
+    started,
+    getTime: () => scheduler.now(),
+    onDraw: (time, haps) => {
+      const ctx = document.querySelector('#' + canvasId).getContext('2d');
+      pianoroll({ ctx, time, haps, autorange: 1, fold: 1, playhead: 1 });
+    },
+  });
+
   /*   useEffect(() => {
     init && activateCode();
   }, [init, activateCode]); */
@@ -88,6 +102,18 @@ export function MiniRepl({ tune, hideOutsideView = false, init, enableKeyboard }
       <div className={styles.body}>
         {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />}
       </div>
+      {withCanvas && (
+        <canvas
+          id={canvasId}
+          className="w-full pointer-events-none"
+          height={canvasHeight}
+          ref={(el) => {
+            if (el && el.width !== el.clientWidth) {
+              el.width = el.clientWidth;
+            }
+          }}
+        ></canvas>
+      )}
     </div>
   );
 }

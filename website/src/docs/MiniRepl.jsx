@@ -22,7 +22,7 @@ if (typeof window !== 'undefined') {
   prebake();
 }
 
-export function MiniRepl({ tune }) {
+export function MiniRepl({ tune, withCanvas }) {
   const [Repl, setRepl] = useState();
   useEffect(() => {
     // we have to load this package on the client
@@ -31,5 +31,5 @@ export function MiniRepl({ tune }) {
       setRepl(() => res.MiniRepl);
     });
   }, []);
-  return Repl ? <Repl tune={tune} hideOutsideView={true} /> : <pre>{tune}</pre>;
+  return Repl ? <Repl tune={tune} hideOutsideView={true} withCanvas={withCanvas} /> : <pre>{tune}</pre>;
 }
