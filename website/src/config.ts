@@ -45,12 +45,17 @@ export const SIDEBAR: Sidebar = {
   en: {
     Tutorial: [
       { text: 'Getting Started', link: 'learn/getting-started' },
-      { text: 'Mini Notation', link: 'learn/mini-notation' },
-      { text: 'Synths, Samples & FX', link: 'learn/synths-samples-effects' },
+      { text: 'Notes', link: 'learn/notes' },
+      { text: 'Sounds', link: 'learn/sounds' },
+      { text: 'Coding syntax', link: 'learn/code' },
+      { text: 'Mini-notation', link: 'learn/mini-notation' },
+      { text: 'Samples', link: 'learn/samples' },
+      { text: 'Synths', link: 'learn/synths' },
+      { text: 'Audio effects', link: 'learn/effects' },
       { text: 'Functions', link: 'learn/functions' },
       { text: 'Signals', link: 'learn/signals' },
       { text: 'Tonal', link: 'learn/tonal' },
-      { text: 'Outputs', link: 'learn/outputs' },
+      { text: 'MIDI & OSC', link: 'learn/input-output' },
     ],
   },
 };

@@ -10,7 +10,7 @@
     "test-ui": "vitest --ui",
     "test-coverage": "vitest --coverage",
     "bootstrap": "lerna bootstrap",
-    "setup": "npm i && npm run bootstrap && cd website && npm i",
+    "setup": "npm i && npm run jsdoc-json && npm run bootstrap && cd website && npm i",
     "snapshot": "vitest run -u --silent",
     "repl": "cd website && npm run dev",
     "osc": "cd packages/osc && npm run server",
