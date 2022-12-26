@@ -23,7 +23,8 @@ To know which sounds are available, open the [default sample map](https://strude
 You can load your own sample map using the `samples` function.
 In this example we create a map using sounds from the default sample map:
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   bd: 'bd/BT0AADA.wav',
   sd: 'sd/rytm-01-classic.wav',
@@ -35,7 +36,8 @@ s("bd sd,hh*8")`}
 When you load your own samples, you can choose the names that you will then refer to in your pattern string inside the `s` function.
 Compare with this example which uses the same samples, but with different names.
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   bassdrum: 'bd/BT0AADA.wav',
   snaredrum: 'sd/rytm-01-classic.wav',
@@ -49,15 +51,17 @@ Here we have changed the "map" to include longer sample names.
 # Loading Custom Samples
 
 The `samples` function has two arguments:
+
 - A [JavaScript object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) that maps sound names to audio file paths.
-- A base URL that comes before each path describing where the sample folder can be found online. 
+- A base URL that comes before each path describing where the sample folder can be found online.
   - Make sure your base URL ends with a slash, while your sample paths do **not** begin with one!
 
 To see how this looks in practice, compare the [DirtSamples GitHub repo](https://github.com/tidalcycles/Dirt-Samples) with the previous sample map example.
 
 Because GitHub is a popular place for uploading open source samples, it has its own shortcut:
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   bd: 'bd/BT0AADA.wav',
   sd: 'sd/rytm-01-classic.wav',
@@ -71,7 +75,8 @@ The format is `github:user/repo/branch/`.
 Let's see another example, this time based on the following GitHub repo: https://github.com/jarmitage/jarmitage.github.io.
 We can see there are some guitar samples inside the `/samples` folder, so let's try to load them:
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   g0: 'samples/guitar/guitar_0.wav',
   g1: 'samples/guitar/guitar_1.wav',
@@ -86,7 +91,8 @@ s("[g0 g1 g2 g3 g4]/5")`}
 
 It is also possible, to declare multiple files for one sound, using the array notation:
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
@@ -98,7 +104,8 @@ s("<bd:0 bd:1>,~ <sd:0 sd:1>,[hh:0 hh:1]*2")`}
 The `:0` `:1` etc. are the indices of the array.
 The sample number can also be set using `n`:
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
@@ -109,7 +116,8 @@ s("bd,~ sd,hh*4").n("<0 1>")`}
 
 In that case, we might load our guitar sample map a different way:
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   guitar: [
     'samples/guitar/guitar_0.wav', 
@@ -124,7 +132,8 @@ s("[guitar:0 guitar:1 guitar:2 guitar:3 guitar:4]/5")`}
 
 And as above, we can choose the sample number using `n` for even more flexibility:
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   guitar: [
     'samples/guitar/guitar_0.wav', 
@@ -141,7 +150,8 @@ n("<0 1 2 3 4>").s("guitar")`}
 
 For pitched sounds, you can use `note`, just like with synths:
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   'gtr': 'gtr/0001_cleanC.wav',
 }, 'github:tidalcycles/Dirt-Samples/master/');
@@ -151,7 +161,8 @@ note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').gain(.5)`}
 Here, the guitar samples will overlap, because they always play till the end.
 If we want them to behave more like a synth, we can add `clip(1)`:
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   'gtr': 'gtr/0001_cleanC.wav',
 }, 'github:tidalcycles/Dirt-Samples/master/');
@@ -163,7 +174,8 @@ note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').clip(1)
 
 If we have 2 samples with different base pitches, we can make them in tune by specifying the pitch like this:
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   'gtr': 'gtr/0001_cleanC.wav',
   'moog': { 'g3': 'moog/005_Mighty%20Moog%20G3.wav' },
@@ -176,7 +188,8 @@ If a sample has no pitch set, `c3` is the default.
 
 We can also declare different samples for different regions of the keyboard:
 
-<MiniRepl client:idle
+<MiniRepl
+  client:idle
   tune={`samples({
   'moog': {
     'g2': 'moog/004_Mighty%20Moog%20G2.wav',
@@ -212,4 +225,4 @@ Almost everything in Tidal can be patterned using strings!
 
 <JsDoc client:idle name="Pattern.chop" h={0} />
 
-<br/>
+<br />
