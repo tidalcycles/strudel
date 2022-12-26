@@ -5,7 +5,6 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Pattern, toMidi, getDrawContext, freqToMidi } from './index.mjs';
-import { convertColorToNumber } from './color.mjs';
 
 const scale = (normalized, min, max) => normalized * (max - min) + min;
 const getValue = (e) => {
@@ -20,9 +19,6 @@ const getValue = (e) => {
   value = note ?? n ?? e.value;
   if (typeof value === 'string') {
     value = toMidi(value);
-  }
-  if (typeof value === 'object' && value.color) {
-    return convertColorToNumber(value.color);
   }
   return value;
 };
