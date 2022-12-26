@@ -37,7 +37,7 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, withCa
 
   usePatternFrame({
     pattern,
-    started,
+    started: withCanvas && started,
     getTime: () => scheduler.now(),
     onDraw: (time, haps) => {
       const ctx = document.querySelector('#' + canvasId).getContext('2d');

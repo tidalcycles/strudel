@@ -1,9 +1,9 @@
-import i, { useCallback as N, useRef as E, useEffect as C, useMemo as V, useState as _, useLayoutEffect as U } from "react";
+import i, { useCallback as N, useRef as E, useEffect as F, useMemo as V, useState as _, useLayoutEffect as U } from "react";
 import Y from "@uiw/react-codemirror";
 import { Decoration as y, EditorView as W } from "@codemirror/view";
 import { StateEffect as $, StateField as G } from "@codemirror/state";
 import { javascript as Z } from "@codemirror/lang-javascript";
-import { tags as a } from "@lezer/highlight";
+import { tags as s } from "@lezer/highlight";
 import { createTheme as ee } from "@uiw/codemirror-themes";
 import { repl as te, pianoroll as re } from "@strudel.cycles/core";
 import { webaudioOutput as oe, getAudioContext as ne } from "@strudel.cycles/webaudio";
@@ -22,24 +22,24 @@ const ce = ee({
     gutterForeground: "#8a919966"
   },
   styles: [
-    { tag: a.keyword, color: "#c792ea" },
-    { tag: a.operator, color: "#89ddff" },
-    { tag: a.special(a.variableName), color: "#eeffff" },
-    { tag: a.typeName, color: "#c3e88d" },
-    { tag: a.atom, color: "#f78c6c" },
-    { tag: a.number, color: "#c3e88d" },
-    { tag: a.definition(a.variableName), color: "#82aaff" },
-    { tag: a.string, color: "#c3e88d" },
-    { tag: a.special(a.string), color: "#c3e88d" },
-    { tag: a.comment, color: "#7d8799" },
-    { tag: a.variableName, color: "#c792ea" },
-    { tag: a.tagName, color: "#c3e88d" },
-    { tag: a.bracket, color: "#525154" },
-    { tag: a.meta, color: "#ffcb6b" },
-    { tag: a.attributeName, color: "#c792ea" },
-    { tag: a.propertyName, color: "#c792ea" },
-    { tag: a.className, color: "#decb6b" },
-    { tag: a.invalid, color: "#ffffff" }
+    { tag: s.keyword, color: "#c792ea" },
+    { tag: s.operator, color: "#89ddff" },
+    { tag: s.special(s.variableName), color: "#eeffff" },
+    { tag: s.typeName, color: "#c3e88d" },
+    { tag: s.atom, color: "#f78c6c" },
+    { tag: s.number, color: "#c3e88d" },
+    { tag: s.definition(s.variableName), color: "#82aaff" },
+    { tag: s.string, color: "#c3e88d" },
+    { tag: s.special(s.string), color: "#c3e88d" },
+    { tag: s.comment, color: "#7d8799" },
+    { tag: s.variableName, color: "#c792ea" },
+    { tag: s.tagName, color: "#c3e88d" },
+    { tag: s.bracket, color: "#525154" },
+    { tag: s.meta, color: "#ffcb6b" },
+    { tag: s.attributeName, color: "#c792ea" },
+    { tag: s.propertyName, color: "#c792ea" },
+    { tag: s.className, color: "#decb6b" },
+    { tag: s.invalid, color: "#ffffff" }
   ]
 });
 const B = $.define(), ie = G.define({
@@ -51,8 +51,8 @@ const B = $.define(), ie = G.define({
       for (let t of r.effects)
         if (t.is(B))
           if (t.value) {
-            const s = y.mark({ attributes: { style: "background-color: #FFCA2880" } });
-            e = y.set([s.range(0, r.newDoc.length)]);
+            const a = y.mark({ attributes: { style: "background-color: #FFCA2880" } });
+            e = y.set([a.range(0, r.newDoc.length)]);
           } else
             e = y.set([]);
       return e;
@@ -73,7 +73,7 @@ const B = $.define(), ie = G.define({
     try {
       for (let t of r.effects)
         if (t.is(H)) {
-          const s = t.value.map(
+          const a = t.value.map(
             (n) => (n.context.locations || []).map(({ start: c, end: l }) => {
               const d = n.context.color || "#FFCA28";
               let o = r.newDoc.line(c.line).from + c.column, u = r.newDoc.line(l.line).from + l.column;
@@ -81,7 +81,7 @@ const B = $.define(), ie = G.define({
               return o > f || u > f ? void 0 : y.mark({ attributes: { style: `outline: 1.5px solid ${d};` } }).range(o, u);
             })
           ).flat().filter(Boolean) || [];
-          e = y.set(s, !0);
+          e = y.set(a, !0);
         }
       return e;
     } catch {
@@ -90,7 +90,7 @@ const B = $.define(), ie = G.define({
   },
   provide: (e) => W.decorations.from(e)
 }), de = [Z(), ce, ue, ie];
-function fe({ value: e, onChange: r, onViewChanged: t, onSelectionChange: s, options: n, editorDidMount: c }) {
+function fe({ value: e, onChange: r, onViewChanged: t, onSelectionChange: a, options: n, editorDidMount: c }) {
   const l = N(
     (u) => {
       r?.(u);
@@ -103,9 +103,9 @@ function fe({ value: e, onChange: r, onViewChanged: t, onSelectionChange: s, opt
     [t]
   ), o = N(
     (u) => {
-      u.selectionSet && s && s?.(u.state.selection);
+      u.selectionSet && a && a?.(u.state.selection);
     },
-    [s]
+    [a]
   );
   return /* @__PURE__ */ i.createElement(i.Fragment, null, /* @__PURE__ */ i.createElement(Y, {
     value: e,
@@ -118,14 +118,14 @@ function fe({ value: e, onChange: r, onViewChanged: t, onSelectionChange: s, opt
 function j(...e) {
   return e.filter(Boolean).join(" ");
 }
-function me({ view: e, pattern: r, active: t, getTime: s }) {
+function me({ view: e, pattern: r, active: t, getTime: a }) {
   const n = E([]), c = E();
-  C(() => {
+  F(() => {
     if (e)
       if (r && t) {
         let l = requestAnimationFrame(function d() {
           try {
-            const o = s(), f = [Math.max(c.current || o, o - 1 / 10, 0), o + 1 / 60];
+            const o = a(), f = [Math.max(c.current || o, o - 1 / 10, 0), o + 1 / 60];
             c.current = f[1], n.current = n.current.filter((v) => v.whole.end > o);
             const m = r.queryArc(...f).filter((v) => v.hasOnset());
             n.current = n.current.concat(m), e.dispatch({ effects: H.of(n.current) });
@@ -142,25 +142,25 @@ function me({ view: e, pattern: r, active: t, getTime: s }) {
   }, [r, t, e]);
 }
 function ge(e, r = !1) {
-  const t = E(), s = E(), n = (d) => {
-    if (s.current !== void 0) {
-      const o = d - s.current;
+  const t = E(), a = E(), n = (d) => {
+    if (a.current !== void 0) {
+      const o = d - a.current;
       e(d, o);
     }
-    s.current = d, t.current = requestAnimationFrame(n);
+    a.current = d, t.current = requestAnimationFrame(n);
   }, c = () => {
     t.current = requestAnimationFrame(n);
   }, l = () => {
     t.current && cancelAnimationFrame(t.current), delete t.current;
   };
-  return C(() => {
+  return F(() => {
     t.current && (l(), c());
-  }, [e]), C(() => (r && c(), l), []), {
+  }, [e]), F(() => (r && c(), l), []), {
     start: c,
     stop: l
   };
 }
-function pe({ pattern: e, started: r, getTime: t, onDraw: s }) {
+function pe({ pattern: e, started: r, getTime: t, onDraw: a }) {
   let n = E([]), c = E(null);
   const { start: l, stop: d } = ge(
     N(() => {
@@ -170,21 +170,21 @@ function pe({ pattern: e, started: r, getTime: t, onDraw: s }) {
         return;
       }
       const u = e.queryArc(Math.max(c.current, o - 1 / 10), o), f = 4;
-      c.current = o, n.current = (n.current || []).filter((m) => m.whole.end > o - f).concat(u.filter((m) => m.hasOnset())), s(o, n.current);
+      c.current = o, n.current = (n.current || []).filter((m) => m.whole.end > o - f).concat(u.filter((m) => m.hasOnset())), a(o, n.current);
     }, [e])
   );
-  C(() => {
+  F(() => {
     r ? l() : (n.current = [], d());
   }, [r]);
 }
 function he(e) {
-  return C(() => (window.addEventListener("message", e), () => window.removeEventListener("message", e)), [e]), N((r) => window.postMessage(r, "*"), []);
+  return F(() => (window.addEventListener("message", e), () => window.removeEventListener("message", e)), [e]), N((r) => window.postMessage(r, "*"), []);
 }
 function ve({
   defaultOutput: e,
   interval: r,
   getTime: t,
-  evalOnMount: s = !1,
+  evalOnMount: a = !1,
   initialCode: n = "",
   autolink: c = !1,
   beforeEval: l,
@@ -195,7 +195,7 @@ function ve({
 }) {
   const m = V(() => be(), []);
   f = f || `canvas-${m}`;
-  const [v, k] = _(), [M, T] = _(), [b, A] = _(n), [F, S] = _(), [z, D] = _(), [x, L] = _(!1), h = b !== F, { scheduler: g, evaluate: R, start: J, stop: O, pause: Q } = V(
+  const [v, k] = _(), [M, T] = _(), [b, A] = _(n), [C, S] = _(), [z, D] = _(), [x, L] = _(!1), h = b !== C, { scheduler: g, evaluate: R, start: J, stop: O, pause: Q } = V(
     () => te({
       interval: r,
       defaultOutput: e,
@@ -224,9 +224,9 @@ function ve({
     },
     [R, b]
   ), K = E();
-  return C(() => {
-    !K.current && s && b && (K.current = !0, P());
-  }, [P, s, b]), C(() => () => {
+  return F(() => {
+    !K.current && a && b && (K.current = !0, P());
+  }, [P, a, b]), F(() => () => {
     g.stop();
   }, [g]), {
     id: m,
@@ -239,7 +239,7 @@ function ve({
     evalError: M,
     evaluate: R,
     activateCode: P,
-    activeCode: F,
+    activeCode: C,
     isDirty: h,
     pattern: z,
     started: x,
@@ -278,16 +278,16 @@ function I({ type: e }) {
     })
   }[e]);
 }
-const we = "_container_3i85k_1", ye = "_header_3i85k_5", Ee = "_buttons_3i85k_9", ke = "_button_3i85k_9", _e = "_buttonDisabled_3i85k_17", Ce = "_error_3i85k_21", Fe = "_body_3i85k_25", w = {
+const we = "_container_3i85k_1", ye = "_header_3i85k_5", Ee = "_buttons_3i85k_9", ke = "_button_3i85k_9", _e = "_buttonDisabled_3i85k_17", Fe = "_error_3i85k_21", Ce = "_body_3i85k_25", w = {
   container: we,
   header: ye,
   buttons: Ee,
   button: ke,
   buttonDisabled: _e,
-  error: Ce,
-  body: Fe
+  error: Fe,
+  body: Ce
 }, Ne = () => ne().currentTime;
-function Be({ tune: e, hideOutsideView: r = !1, enableKeyboard: t, withCanvas: s = !1, canvasHeight: n = 200 }) {
+function Be({ tune: e, hideOutsideView: r = !1, enableKeyboard: t, withCanvas: a = !1, canvasHeight: n = 200 }) {
   const {
     code: c,
     setCode: l,
@@ -309,29 +309,29 @@ function Be({ tune: e, hideOutsideView: r = !1, enableKeyboard: t, withCanvas: s
   });
   pe({
     pattern: v,
-    started: k,
+    started: a && k,
     getTime: () => M.now(),
     onDraw: (h, g) => {
       const R = document.querySelector("#" + A).getContext("2d");
       re({ ctx: R, time: h, haps: g, autorange: 1, fold: 1, playhead: 1 });
     }
   });
-  const [F, S] = _(), [z, D] = ae({
+  const [C, S] = _(), [z, D] = ae({
     threshold: 0.01
   }), x = E(), L = V(() => ((D || !r) && (x.current = !0), D || x.current), [D, r]);
   return me({
-    view: F,
+    view: C,
     pattern: v,
     active: k && !m?.includes("strudel disable-highlighting"),
     getTime: () => M.getPhase()
   }), U(() => {
     if (t) {
       const h = async (g) => {
-        (g.ctrlKey || g.altKey) && (g.code === "Enter" ? (g.preventDefault(), le(F), await o()) : g.code === "Period" && (b(), g.preventDefault()));
+        (g.ctrlKey || g.altKey) && (g.code === "Enter" ? (g.preventDefault(), le(C), await o()) : g.code === "Period" && (b(), g.preventDefault()));
       };
       return window.addEventListener("keydown", h, !0), () => window.removeEventListener("keydown", h, !0);
     }
-  }, [t, v, c, d, b, F]), /* @__PURE__ */ i.createElement("div", {
+  }, [t, v, c, d, b, C]), /* @__PURE__ */ i.createElement("div", {
     className: w.container,
     ref: z
   }, /* @__PURE__ */ i.createElement("div", {
@@ -356,7 +356,7 @@ function Be({ tune: e, hideOutsideView: r = !1, enableKeyboard: t, withCanvas: s
     value: c,
     onChange: l,
     onViewChanged: S
-  })), s && /* @__PURE__ */ i.createElement("canvas", {
+  })), a && /* @__PURE__ */ i.createElement("canvas", {
     id: A,
     className: "w-full pointer-events-none",
     height: n,
