@@ -113,7 +113,10 @@ export function patternifyAST(ast, code) {
         return stack(...children);
       }
       if (alignment === 'p') {
-        return polymeter(...children);
+        // polymeter
+        const first = Fraction(children.length > 0 ? children[0].__weight : 1);
+        const aligned = children.map((child) => child.fast(first.div(child.__weight || Fraction(1))));
+        return stack(...aligned);
       }
       if (alignment === 'r') {
         // https://github.com/tidalcycles/strudel/issues/245#issuecomment-1345406422
@@ -125,14 +128,17 @@ export function patternifyAST(ast, code) {
         return slowcat(...children);
       }
       if (weightedChildren) {
+        const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
         const pat = timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
         if (alignment === 't') {
-          const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
           return pat._slow(weightSum); // timecat + slow
         }
+        pat.__weight = weightSum;
         return pat;
       }
-      return sequence(...children);
+      const pat = sequence(...children);
+      pat.__weight = Fraction(children.length);
+      return pat;
     }
     case 'element': {
       if (ast.source_ === '~') {

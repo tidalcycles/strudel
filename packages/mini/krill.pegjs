@@ -5,10 +5,10 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 // Some terminology:
-// a sequence = a serie of elements placed between quotes
-// a stack = a serie of vertically aligned slices sharing the same overall length
-// a slice = a serie of horizontally aligned elements
-// a choose = a serie of elements, one of which is chosen at random
+// a sequence = a series of elements placed between quotes
+// a stack = a series of vertically aligned slices sharing the same overall length
+// a slice = a series of horizontally aligned elements
+// a choose = a series of elements, one of which is chosen at random
 
 
 {
@@ -96,11 +96,15 @@ step = ws chars:step_char+ ws { return chars.join("") }
 sub_cycle = ws  "[" ws s:stack_or_choose ws "]" ws { return s}
 
 // define a polymeter e.g. {1 2, 3 [4]}
-sub_polymeter = ws  "{" ws s:polymeter_or_choose ws "}" ws { return s}
+// TODO - what to do with the fixed step operator?
+sub_polymeter = ws  "{" ws s:polymeter_or_choose ws "}" o:slice_fixed_step? ws { return s }
+
+polymeter_fixed_step = "%"a:number
+  { return { operator : { type_: "fixed-step", arguments_ :{ amount:a } } } }
 
 // define a timeline e.g <1 3 [3 5]>. We simply defer to a stack and change the alignement
 timeline = ws "<" ws sc:single_cycle ws ">" ws
-  { sc.arguments_.alignment = "t"; return sc;}
+  { sc.arguments_.alignment = 't'; return sc;}
 
 // a slice is either a single step or a sub cycle or sub polymeter
 slice = step / sub_cycle  / sub_polymeter / timeline
@@ -124,9 +128,6 @@ slice_slow = "/"a:number
 slice_fast = "*"a:number
   { return { operator : { type_: "stretch", arguments_ :{ amount:"1/"+a } } } }
 
-slice_fixed_step = "%"a:number
-  { return { operator : { type_: "fixed-step", arguments_ :{ amount:a } } } }
-
 slice_degrade = "?"a:number?
   { return { operator : { type_: "degradeBy", arguments_ :{ amount:(a? a : 0.5) } } } }
 
@@ -137,7 +138,7 @@ slice_with_modifier = s:slice o:slice_modifier?
 // a single cycle is a combination of one or more successive slices (as an array). If we
 // have only one element, we skip the array and return the element itself
 single_cycle = s:(slice_with_modifier)+
-  { return new PatternStub(s,"h"); }
+  { return new PatternStub(s,'h'); }
 
 // a stack is a series of vertically aligned single cycles, separated by a comma
 stack_tail = tail:(comma @single_cycle)+
@@ -202,7 +203,7 @@ group_operator = cat
 
 // cat is another form of timeline
 cat = "cat" ws "[" ws  s:sequence_or_operator ss:(comma v:sequence_or_operator { return v})* ws "]"
-  { ss.unshift(s); return new PatternStub(ss,"t"); }
+  { ss.unshift(s); return new PatternStub(ss,'t'); }
 
 // ------------------ high level sequence ---------------------------
 
