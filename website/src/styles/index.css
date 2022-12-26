@@ -8,6 +8,6 @@ body {
   display: none !important;
 }
 
-.prose > h1 {
-  padding-top: 30px;
+.prose > h1:not(:first-child) {
+  margin-top: 30px;
 }

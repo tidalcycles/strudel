@@ -49,6 +49,9 @@ export class Cyclist {
   getPhase() {
     return this.getTime() - this.origin - this.latency;
   }
+  now() {
+    return this.getTime() - this.origin + this.clock.minLatency;
+  }
   setStarted(v) {
     this.started = v;
     this.onToggle?.(v);

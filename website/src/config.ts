@@ -57,5 +57,10 @@ export const SIDEBAR: Sidebar = {
       { text: 'Tonal', link: 'learn/tonal' },
       { text: 'MIDI & OSC', link: 'learn/input-output' },
     ],
+    'Technical Manual': [
+      { text: 'Patterns', link: 'technical-manual/patterns' },
+      { text: 'REPL', link: 'technical-manual/repl' },
+      { text: 'Pattern Alignment', link: 'technical-manual/alignment' },
+    ],
   },
 };

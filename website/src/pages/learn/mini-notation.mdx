@@ -47,12 +47,12 @@ You can also use regular double quotes (`"`) for single line mini-notation, as w
 
 We can play more notes by separating them with spaces:
 
-<MiniRepl client:idle tune={`note("e5 b4 d5 c5")`} />
+<MiniRepl client:idle tune={`note("e5 b4 d5 c5")`} withCanvas />
 
 Here, those four notes are squashed into one cycle, so each note is a quarter second long.
 Try adding or removing notes and notice how the tempo changes!
 
-<MiniRepl client:idle tune={`note("e5 b4 d5 c5 e5 b4 d5 c5")`} />
+<MiniRepl client:idle tune={`note("e5 b4 d5 c5 e5 b4 d5 c5")`} withCanvas />
 
 Note that the overall duration of time does not change, and instead each note length descreases.
 This is a key idea, as it illustrates the 'Cycle' in TidalCycles!

@@ -14,8 +14,10 @@ function useStrudel({
   afterEval,
   onEvalError,
   onToggle,
+  canvasId,
 }) {
   const id = useMemo(() => s4(), []);
+  canvasId = canvasId || `canvas-${id}`;
   // scheduler
   const [schedulerError, setSchedulerError] = useState();
   const [evalError, setEvalError] = useState();
@@ -97,6 +99,8 @@ function useStrudel({
   };
   const error = schedulerError || evalError;
   return {
+    id,
+    canvasId,
     code,
     setCode,
     error,

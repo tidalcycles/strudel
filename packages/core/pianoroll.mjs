@@ -153,3 +153,132 @@ Pattern.prototype.pianoroll = function ({
   );
   return this;
 };
+
+// this function allows drawing a pianoroll without ties to Pattern.prototype
+// it will probably replace the above in the future
+export function pianoroll({
+  time,
+  haps,
+  cycles = 4,
+  playhead = 0.5,
+  flipTime = 0,
+  flipValues = 0,
+  hideNegative = false,
+  // inactive = '#C9E597',
+  // inactive = '#FFCA28',
+  inactive = '#7491D2',
+  active = '#FFCA28',
+  // background = '#2A3236',
+  background = 'transparent',
+  smear = 0,
+  playheadColor = 'white',
+  minMidi = 10,
+  maxMidi = 90,
+  autorange = 0,
+  timeframe: timeframeProp,
+  fold = 0,
+  vertical = 0,
+  ctx,
+} = {}) {
+  const w = ctx.canvas.width;
+  const h = ctx.canvas.height;
+  let from = -cycles * playhead;
+  let to = cycles * (1 - playhead);
+
+  if (timeframeProp) {
+    console.warn('timeframe is deprecated! use from/to instead');
+    from = 0;
+    to = timeframeProp;
+  }
+  if (!autorange && fold) {
+    console.warn('disabling autorange has no effect when fold is enabled');
+  }
+  const timeAxis = vertical ? h : w;
+  const valueAxis = vertical ? w : h;
+  let timeRange = vertical ? [timeAxis, 0] : [0, timeAxis]; // pixel range for time
+  const timeExtent = to - from; // number of seconds that fit inside the canvas frame
+  const valueRange = vertical ? [0, valueAxis] : [valueAxis, 0]; // pixel range for values
+  let valueExtent = maxMidi - minMidi + 1; // number of "slots" for values, overwritten if autorange true
+  let barThickness = valueAxis / valueExtent; // pixels per value, overwritten if autorange true
+  let foldValues = [];
+  flipTime && timeRange.reverse();
+  flipValues && valueRange.reverse();
+
+  // onQuery
+  const { min, max, values } = haps.reduce(
+    ({ min, max, values }, e) => {
+      const v = getValue(e);
+      return {
+        min: v < min ? v : min,
+        max: v > max ? v : max,
+        values: values.includes(v) ? values : [...values, v],
+      };
+    },
+    { min: Infinity, max: -Infinity, values: [] },
+  );
+  if (autorange) {
+    minMidi = min;
+    maxMidi = max;
+    valueExtent = maxMidi - minMidi + 1;
+  }
+  foldValues = values.sort((a, b) => a - b);
+  barThickness = fold ? valueAxis / foldValues.length : valueAxis / valueExtent;
+
+  ctx.fillStyle = background;
+  ctx.globalAlpha = 1; // reset!
+  if (!smear) {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillRect(0, 0, w, h);
+  }
+  /*   const inFrame = (event) =>
+    (!hideNegative || event.whole.begin >= 0) && event.whole.begin <= time + to && event.whole.end >= time + from; */
+  haps
+    // .filter(inFrame)
+    .forEach((event) => {
+      const isActive = event.whole.begin <= time && event.whole.end > time;
+      const color = event.value?.color || event.context?.color;
+      ctx.fillStyle = color || inactive;
+      ctx.strokeStyle = color || active;
+      ctx.globalAlpha = event.context.velocity ?? 1;
+      const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
+      let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
+      const value = getValue(event);
+      const valuePx = scale(
+        fold ? foldValues.indexOf(value) / foldValues.length : (Number(value) - minMidi) / valueExtent,
+        ...valueRange,
+      );
+      let margin = 0;
+      const offset = scale(time / timeExtent, ...timeRange);
+      let coords;
+      if (vertical) {
+        coords = [
+          valuePx + 1 - (flipValues ? barThickness : 0), // x
+          timeAxis - offset + timePx + margin + 1 - (flipTime ? 0 : durationPx), // y
+          barThickness - 2, // width
+          durationPx - 2, // height
+        ];
+      } else {
+        coords = [
+          timePx - offset + margin + 1 - (flipTime ? durationPx : 0), // x
+          valuePx + 1 - (flipValues ? 0 : barThickness), // y
+          durationPx - 2, // widith
+          barThickness - 2, // height
+        ];
+      }
+      isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
+    });
+  ctx.globalAlpha = 1; // reset!
+  const playheadPosition = scale(-from / timeExtent, ...timeRange);
+  // draw playhead
+  ctx.strokeStyle = playheadColor;
+  ctx.beginPath();
+  if (vertical) {
+    ctx.moveTo(0, playheadPosition);
+    ctx.lineTo(valueAxis, playheadPosition);
+  } else {
+    ctx.moveTo(playheadPosition, 0);
+    ctx.lineTo(playheadPosition, valueAxis);
+  }
+  ctx.stroke();
+  return this;
+}

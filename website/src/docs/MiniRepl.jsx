@@ -1,12 +1,9 @@
 import { evalScope, controls } from '@strudel.cycles/core';
-import { samples } from '@strudel.cycles/webaudio';
+import { initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 import { useEffect, useState } from 'react';
+import { prebake } from '../repl/prebake';
 
 if (typeof window !== 'undefined') {
-  fetch('https://strudel.tidalcycles.org/EmuSP12.json')
-    .then((res) => res.json())
-    .then((json) => samples(json, 'https://strudel.tidalcycles.org/EmuSP12/'));
-
   evalScope(
     controls,
     import('@strudel.cycles/core'),
@@ -20,7 +17,12 @@ if (typeof window !== 'undefined') {
   );
 }
 
-export function MiniRepl({ tune }) {
+if (typeof window !== 'undefined') {
+  initAudioOnFirstClick();
+  prebake();
+}
+
+export function MiniRepl({ tune, withCanvas }) {
   const [Repl, setRepl] = useState();
   useEffect(() => {
     // we have to load this package on the client
@@ -29,5 +31,5 @@ export function MiniRepl({ tune }) {
       setRepl(() => res.MiniRepl);
     });
   }, []);
-  return Repl ? <Repl tune={tune} hideOutsideView={true} /> : <pre>{tune}</pre>;
+  return Repl ? <Repl tune={tune} hideOutsideView={true} withCanvas={withCanvas} /> : <pre>{tune}</pre>;
 }
