@@ -37,7 +37,9 @@ describe('mini', () => {
     expect(minS('c3 [d3 [e3 f3]]')).toEqual(['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 7/8', 'f3: 7/8 - 1']);
   });
   it('supports curly brackets', () => {
-    expect(minS('{a b, c d e}')).toEqual(minS('[a b, c d]'));
+    expect(minS('{a b, c d e}*3')).toEqual(minS('[a b a b a b, c d e c d e]'));
+    expect(minS('{a b, c [d e] f}*3')).toEqual(minS('[a b a b a b, c [d e] f c [d e] f]'));
+    expect(minS('{a b c, d e}*2')).toEqual(minS('[a b c a b c, d e d e d e]'));
   });
   it('supports commas', () => {
     expect(minS('c3,e3,g3')).toEqual(['c3: 0 - 1', 'e3: 0 - 1', 'g3: 0 - 1']);
