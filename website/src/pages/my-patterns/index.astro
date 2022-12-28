@@ -19,12 +19,12 @@ const myPatterns = await getMyPatterns();
       Object.entries(myPatterns).map(([name, tune]) => (
         <a
           class="rounded-md bg-slate-900 hover:bg-slate-700 cursor-pointer relative"
-          href={`/#${btoa(tune as string)}`}
+          href={`../#${btoa(tune as string)}`}
         >
           <div class="absolute w-full h-full flex justify-center items-center">
             <span class="bg-slate-800 p-2 rounded-md text-white">{name}</span>
           </div>
-          <img src={`/my-patterns/${name}.png`} />
+          <img src={`./${name}.png`} />
         </a>
       ))
     }
