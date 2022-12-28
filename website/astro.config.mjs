@@ -31,6 +31,7 @@ export default defineConfig({
     tailwind(),
   ],
   site: `https://strudel.tidalcycles.org`,
+  base: '',
 });
 
 /*
