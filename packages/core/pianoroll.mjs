@@ -56,9 +56,6 @@ Pattern.prototype.pianoroll = function ({
     from = 0;
     to = timeframeProp;
   }
-  if (!autorange && fold) {
-    console.warn('disabling autorange has no effect when fold is enabled');
-  }
   const timeAxis = vertical ? h : w;
   const valueAxis = vertical ? w : h;
   let timeRange = vertical ? [timeAxis, 0] : [0, timeAxis]; // pixel range for time
@@ -189,9 +186,6 @@ export function pianoroll({
     console.warn('timeframe is deprecated! use from/to instead');
     from = 0;
     to = timeframeProp;
-  }
-  if (!autorange && fold) {
-    console.warn('disabling autorange has no effect when fold is enabled');
   }
   const timeAxis = vertical ? h : w;
   const valueAxis = vertical ? w : h;
