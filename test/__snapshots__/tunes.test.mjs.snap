@@ -339,8 +339,8 @@ exports[`renders tunes > tune: blippyRhodes 1`] = `
   "[ 2/3 → 43/60 | note:G3 s:rhodes clip:1 room:0.5 delay:0.3 delayfeedback:0.4 delaytime:0.08333333333333333 gain:0.5 ]",
   "[ 5/6 → 53/60 | note:G3 s:rhodes clip:1 room:0.5 delay:0.3 delayfeedback:0.4 delaytime:0.08333333333333333 gain:0.5 ]",
   "[ (0/1 → 2/3) ⇝ 4/3 | note:c2 gain:0.3 s:sawtooth cutoff:600 ]",
-  "[ 0/1 ⇜ (2/3 → 1/1) ⇝ 4/3 | note:c2 gain:0.3 s:sawtooth cutoff:600 ]",
   "[ (0/1 → 2/3) ⇝ 4/3 | note:36.02 gain:0.3 s:sawtooth cutoff:600 ]",
+  "[ 0/1 ⇜ (2/3 → 1/1) ⇝ 4/3 | note:c2 gain:0.3 s:sawtooth cutoff:600 ]",
   "[ 0/1 ⇜ (2/3 → 1/1) ⇝ 4/3 | note:36.02 gain:0.3 s:sawtooth cutoff:600 ]",
 ]
 `;
