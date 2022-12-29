@@ -32,7 +32,7 @@ function peg$padEnd(str, targetLength, padString) {
 }
 
 peg$SyntaxError.prototype.format = function(sources) {
-  var str = "peg error: " + this.message;
+  var str = "Error: " + this.message;
   if (this.location) {
     var src = null;
     var k;
@@ -271,8 +271,8 @@ function peg$parse(input, options) {
   var peg$f4 = function(a) { return { weight: a} };
   var peg$f5 = function(a) { return { replicate: a  } };
   var peg$f6 = function(p, s, r) { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r || 0 } } } };
-  var peg$f7 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:a } } } };
-  var peg$f8 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:"1/"+a } } } };
+  var peg$f7 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'slow' } } } };
+  var peg$f8 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'fast' } } } };
   var peg$f9 = function(a) { return { operator : { type_: "fixed-step", arguments_ :{ amount:a } } } };
   var peg$f10 = function(a) { return { operator : { type_: "degradeBy", arguments_ :{ amount:(a? a : 0.5) } } } };
   var peg$f11 = function(s, o) { return new ElementStub(s, o);};
