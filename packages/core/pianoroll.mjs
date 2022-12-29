@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern, toMidi, getDrawContext, freqToMidi } from './index.mjs';
+import { Pattern, toMidi, getDrawContext, freqToMidi, isNote } from './index.mjs';
 
 const scale = (normalized, min, max) => normalized * (max - min) + min;
 const getValue = (e) => {
@@ -12,13 +12,19 @@ const getValue = (e) => {
   if (typeof e.value !== 'object') {
     value = { value };
   }
-  let { note, n, freq } = value;
+  let { note, n, freq, s } = value;
   if (freq) {
-    note = freqToMidi(freq);
+    return freqToMidi(freq);
   }
-  value = note ?? n ?? e.value;
-  if (typeof value === 'string') {
-    value = toMidi(value);
+  note = note ?? n;
+  if (typeof note === 'string') {
+    return toMidi(note);
+  }
+  if (typeof note === 'number') {
+    return note;
+  }
+  if (s) {
+    return '_' + s;
   }
   return value;
 };
@@ -143,7 +149,7 @@ Pattern.prototype.pianoroll = function ({
           maxMidi = max;
           valueExtent = maxMidi - minMidi + 1;
         }
-        foldValues = values.sort((a, b) => a - b);
+        foldValues = values.sort((a, b) => String(a).localeCompare(String(b)));
         barThickness = fold ? valueAxis / foldValues.length : valueAxis / valueExtent;
       },
     },
@@ -215,7 +221,8 @@ export function pianoroll({
     maxMidi = max;
     valueExtent = maxMidi - minMidi + 1;
   }
-  foldValues = values.sort((a, b) => a - b);
+  // foldValues = values.sort((a, b) => a - b);
+  foldValues = values.sort((a, b) => String(a).localeCompare(String(b)));
   barThickness = fold ? valueAxis / foldValues.length : valueAxis / valueExtent;
 
   ctx.fillStyle = background;
