@@ -520,7 +520,7 @@ export const meltingsubmarine = `// licensed with CC BY-NC-SA 4.0 https://creati
 // by Felix Roos
 await samples('github:tidalcycles/Dirt-Samples/master/')
 stack(
-  s("bd:5,[~ <sd:1!3 sd:1(3,4,2)>],hh27*8") // drums
+  s("bd:5,[~ <sd:1!3 sd:1(3,4,2)>],hh27(3,4)") // drums
   .speed(perlin.range(.7,.9)) // random sample speed variation
   //.hush()
   ,"<a1 b1*2 a1(3,8) e2>" // bassline
