@@ -1,1 +1,71 @@
-TODO
+---
+title: Docs
+layout: ../../layouts/MainLayout.astro
+---
+
+# Docs
+
+The docs page is built ontop of astro's [docs site](https://github.com/withastro/astro/tree/main/examples/docs).
+
+## Adding a new Docs Page
+
+1. add a `.mdx` file in a path under `website/src/pages/`, e.g. [website/src/pages/learn/code.mdx](https://raw.githubusercontent.com/tidalcycles/strudel/main/website/src/pages/learn/code.mdx) will be available under https://strudel.tidalcycles.org/learn/code (or locally under `http://localhost:3000/learn/code`)
+2. make sure to copy the top part of another existing docs page. Adjust the title accordingly
+3. To add a link to the sidebar, add a new entry to `SIDEBAR` to [`config.ts`](https://github.com/tidalcycles/strudel/blob/main/website/src/config.ts)
+
+## Using the Mini REPL
+
+To add a Mini REPL, make sure to import:
+
+```js
+import { MiniRepl } from '../../docs/MiniRepl';
+```
+
+add a mini repl with
+
+```jsx
+<MiniRepl client:idle tune={`note("a3 c#4 e4 a4")`} />
+```
+
+- `client:idle` is required to tell astro that the repl should be interactive, see [Client Directive](https://docs.astro.build/en/reference/directives-reference/#client-directives)
+- `tune`: be any valid pattern code
+- `withCanvas`: If set, a canvas will be rendered below that shows a pianoroll (WIP)
+
+## In-Source Documentation
+
+You can add the in-source documentation for a function by using the `JsDoc` component. Import:
+
+```js
+import { JsDoc } from '../../docs/JsDoc';
+```
+
+Usage:
+
+```jsx
+<JsDoc client:idle name="bandf" h={0} />
+```
+
+- `name`: function name, as named with `@name` in jsdoc
+- `h`: level of heading. `0` will hide the heading. Hiding it allows using a manual heading which results in a nav link being generated in the right sidebar.
+
+### Writing jsdoc
+
+Documentation is written with [jsdoc](https://jsdoc.app/) comments. Example:
+
+```js
+/**
+ * Select a sound / sample by name.
+ *
+ * @name s
+ * @param {string | Pattern} sound The sound / pattern of sounds to pick
+ * @example
+ * s("bd hh")
+ *
+ */
+// implementation of s function
+```
+
+- Before each build, these comments will be rendered into `doc.json` using [jsdoc-json](https://www.npmjs.com/package/jsdoc-json) as a template
+- To regenerate the `doc.json` file manually, run `npm run jsdoc-json`
+- The file is used by the `JsDoc` component to find the documentation by name
+- Also, it is used for the `examples.test.mjs` snapshot test
