@@ -61,6 +61,8 @@ export const SIDEBAR: Sidebar = {
       { text: 'Patterns', link: 'technical-manual/patterns' },
       { text: 'REPL', link: 'technical-manual/repl' },
       { text: 'Pattern Alignment', link: 'technical-manual/alignment' },
+      { text: 'Docs', link: 'technical-manual/docs' },
+      { text: 'Testing', link: 'technical-manual/testing' },
     ],
   },
 };
