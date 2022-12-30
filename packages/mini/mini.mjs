@@ -23,8 +23,12 @@ const applyOptions = (parent) => (pat, i) => {
   if (operator) {
     switch (operator.type_) {
       case 'stretch': {
-        const speed = Fraction(operator.arguments_.amount).inverse();
-        return reify(pat).fast(speed);
+        const legalTypes = ['fast', 'slow'];
+        const { type, amount } = operator.arguments_;
+        if (!legalTypes.includes(type)) {
+          throw new Error(`mini: stretch: type must be one of ${legalTypes.join('|')} but got ${type}`);
+        }
+        return reify(pat)[type](amount);
       }
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
@@ -74,32 +78,32 @@ function resolveReplications(ast) {
   // could this be made easier?!
   ast.source_ = ast.source_.map((child) => {
     const { replicate, ...options } = child.options_ || {};
-    if (replicate) {
-      return {
-        ...child,
-        options_: { ...options, weight: replicate },
-        source_: {
-          type_: 'pattern',
-          arguments_: {
-            alignment: 'h',
-          },
-          source_: [
-            {
-              type_: 'element',
-              source_: child.source_,
-              location_: child.location_,
-              options_: {
-                operator: {
-                  type_: 'stretch',
-                  arguments_: { amount: Fraction(replicate).inverse().toString() },
-                },
+    if (!replicate) {
+      return child;
+    }
+    return {
+      ...child,
+      options_: { ...options, weight: replicate },
+      source_: {
+        type_: 'pattern',
+        arguments_: {
+          alignment: 'h',
+        },
+        source_: [
+          {
+            type_: 'element',
+            source_: child.source_,
+            location_: child.location_,
+            options_: {
+              operator: {
+                type_: 'stretch',
+                arguments_: { amount: replicate, type: 'fast' },
               },
             },
-          ],
-        },
-      };
-    }
-    return child;
+          },
+        ],
+      },
+    };
   });
 }
 

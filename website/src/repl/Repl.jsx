@@ -22,6 +22,7 @@ import { Footer } from './Footer';
 import { Header } from './Header';
 import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
+import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 
 initAudioOnFirstClick();
 
@@ -101,7 +102,8 @@ const { code: randomTune, name } = getRandomTune();
 
 export const ReplContext = createContext(null);
 
-export function Repl() {
+export function Repl({ embedded = false }) {
+  const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
   const [activeFooter, setActiveFooter] = useState('');
@@ -232,6 +234,7 @@ export function Repl() {
     }
   };
   const context = {
+    embedded,
     started,
     pending,
     isDirty,
@@ -269,7 +272,16 @@ export function Repl() {
         {error && (
           <div className="text-red-500 p-4 bg-lineblack animate-pulse">{error.message || 'Unknown Error :-/'}</div>
         )}
-        <Footer context={context} />
+        {isEmbedded && !started && (
+          <button
+            onClick={() => handleTogglePlay()}
+            className="text-white text-2xl fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-[1000] m-auto p-4 bg-black rounded-md flex items-center space-x-2"
+          >
+            <PlayCircleIcon className="w-6 h-6" />
+            <span>play</span>
+          </button>
+        )}
+        {!isEmbedded && <Footer context={context} />}
       </div>
     </ReplContext.Provider>
   );

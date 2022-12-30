@@ -116,10 +116,10 @@ slice_bjorklund = "(" ws p:number ws comma ws s:number ws comma? ws r:number? ws
   { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r || 0 } } } }
 
 slice_slow = "/"a:number
-  { return { operator : { type_: "stretch", arguments_ :{ amount:a } } } }
+  { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'slow' } } } }
 
 slice_fast = "*"a:number
-  { return { operator : { type_: "stretch", arguments_ :{ amount:"1/"+a } } } }
+  { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'fast' } } } }
 
 slice_fixed_step = "%"a:number
   { return { operator : { type_: "fixed-step", arguments_ :{ amount:a } } } }
