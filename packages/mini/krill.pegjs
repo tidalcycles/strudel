@@ -95,16 +95,24 @@ step = ws chars:step_char+ ws { return chars.join("") }
 // define a sub cycle e.g. [1 2, 3 [4]]
 sub_cycle = ws  "[" ws s:stack_or_choose ws "]" ws { return s }
 
-// define a timeline e.g <1 3 [3 5]>. We simply defer to a stack and change the alignement
-timeline = ws "<" ws s:sequence ws ">" ws
-  { s.arguments_.alignment = 'slowcat'; return s;}
+// define a polymeter e.g. {1 2, 3 4 5}
+polymeter = ws  "{" ws s:polymeter_stack ws "}" stepsPerCycle:polymeter_steps? ws
+  { s.arguments_.stepsPerCycle = stepsPerCycle ; return s; }
+
+polymeter_steps = "%"a:number
+  { return a }
+
+// define a step-per-cycle timeline e.g <1 3 [3 5]>. We simply defer to a sequence and
+// change the alignment to slowcat
+slow_sequence = ws "<" ws s:sequence ws ">" ws
+  { s.arguments_.alignment = 'slowcat'; return s; }
 
 // a slice is either a single step or a sub cycle
-slice = step / sub_cycle  / timeline
+slice = step / sub_cycle / polymeter / slow_sequence
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
-slice_modifier = slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_fixed_step / slice_replicate / slice_degrade
+slice_modifier = slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_replicate / slice_degrade
 
 slice_weight =  "@" a:number
   { return { weight: a} }
@@ -120,9 +128,6 @@ slice_slow = "/"a:number
 
 slice_fast = "*"a:number
   { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'fast' } } } }
-
-slice_fixed_step = "%"a:number
-  { return { operator : { type_: "fixed-step", arguments_ :{ amount:a } } } }
 
 slice_degrade = "?"a:number?
   { return { operator : { type_: "degradeBy", arguments_ :{ amount:(a? a : 0.5) } } } }
@@ -148,6 +153,9 @@ choose_tail = tail:(pipe @sequence)+
 // underlying element
 stack_or_choose = head:sequence tail:(stack_tail / choose_tail)?
   { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment); } else { return head; } }
+
+polymeter_stack = head:sequence tail:stack_tail?
+  { return new PatternStub(tail ? [head, ...tail.list] : [head], 'polymeter'); }
 
 
 // Mini-notation innards ends

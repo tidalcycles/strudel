@@ -114,6 +114,17 @@ export function patternifyAST(ast, code) {
       if (alignment === 'stack') {
         return strudel.stack(...children);
       }
+      if (alignment === 'polymeter') {
+        // polymeter
+        const stepsPerCycle = strudel.Fraction(
+          ast.arguments_.stepsPerCycle
+            ? ast.arguments_.stepsPerCycle
+            : strudel.Fraction(children.length > 0 ? children[0].__weight : 1),
+        );
+
+        const aligned = children.map((child) => child.fast(stepsPerCycle.div(child.__weight || strudel.Fraction(1))));
+        return strudel.stack(...aligned);
+      }
       if (alignment === 'rand') {
         // https://github.com/tidalcycles/strudel/issues/245#issuecomment-1345406422
         // return strudel.chooseInWith(strudel.rand.early(randOffset * _nextSeed()).segment(1), children);
@@ -124,14 +135,17 @@ export function patternifyAST(ast, code) {
         return strudel.slowcat(...children);
       }
       if (weightedChildren) {
+        const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
         const pat = strudel.timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
         if (alignment === 'slowcat') {
-          const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
           return pat._slow(weightSum); // timecat + slow
         }
+        pat.__weight = weightSum;
         return pat;
       }
-      return strudel.sequence(...children);
+      const pat = strudel.sequence(...children);
+      pat.__weight = strudel.Fraction(children.length);
+      return pat;
     }
     case 'element': {
       if (ast.source_ === '~') {
