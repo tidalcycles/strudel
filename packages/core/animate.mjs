@@ -1,20 +1,33 @@
 import { controls, Pattern, getDrawContext, silence, scheduler } from './index.mjs';
 const { createParams } = controls;
 
+let clearColor = '#20001010';
+let currentSmear = 0.5;
+export let syncAnimationWithScheduler = true;
+
 Pattern.prototype.animate = function (callback) {
   window.frame && cancelAnimationFrame(window.frame);
   const ctx = getDrawContext();
   const { clientWidth: ww, clientHeight: wh } = ctx.canvas;
-  const render = () => {
-    // const render = (t) => {
-    // t = Math.round(t);
-    // const frame = this.slow(1000).queryArc(t, t);
-    const t = scheduler.now();
-    const frame = this.queryArc(t, t);
-    ctx.fillStyle = '#20001005';
+  const render = (t) => {
+    let frame;
+    if (syncAnimationWithScheduler) {
+      t = scheduler.now();
+      frame = this.queryArc(t, t);
+    } else {
+      t = Math.round(t);
+      frame = this.slow(1000).queryArc(t, t);
+    }
+    ctx.fillStyle = clearColor;
     ctx.fillRect(0, 0, ww, wh);
     frame.forEach((f) => {
-      let { x, y, w, h, s, r, a = 0, fill = 'darkseagreen' } = f.value;
+      let { x, y, w, h, s, r, a = 0, fill = 'darkseagreen', smear } = f.value;
+      if (smear && smear !== currentSmear) {
+        currentSmear = smear;
+        let smearPart = Number((1 - smear) * 100).toFixed(0);
+        smearPart = smearPart.length === 1 ? `0${smearPart}` : smearPart;
+        clearColor = `#200010${smearPart}`;
+      }
       w *= ww;
       h *= wh;
       if (r !== undefined && a !== undefined) {
@@ -43,4 +56,4 @@ Pattern.prototype.animate = function (callback) {
   return silence;
 };
 
-export const { x, y, w, h, a, r, fill } = createParams('x', 'y', 'w', 'h', 'a', 'r', 'fill');
+export const { x, y, w, h, a, r, fill, smear } = createParams('x', 'y', 'w', 'h', 'a', 'r', 'fill', 'smear');
