@@ -151,10 +151,12 @@ export function patternifyAST(ast, code) {
         const [offsetStart = 0, offsetEnd = 0] = actual
           ? actual.split(ast.source_).map((p) => p.split('').filter((c) => c === ' ').length)
           : [];
-        return strudel.pure(value).withLocation(
-          [start.line, start.column + offsetStart, start.offset + offsetStart],
-          [start.line, end.column - offsetEnd, end.offset - offsetEnd],
-        );
+        return strudel
+          .pure(value)
+          .withLocation(
+            [start.line, start.column + offsetStart, start.offset + offsetStart],
+            [start.line, end.column - offsetEnd, end.offset - offsetEnd],
+          );
       }
       return patternifyAST(ast.source_, code);
     }
