@@ -7,8 +7,6 @@ This program is free software: you can redistribute it and/or modify it under th
 import * as krill from './krill-parser.js';
 import * as strudel from '@strudel.cycles/core';
 
-const { pure, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
-
 /* var _seedState = 0;
 const randOffset = 0.0002;
 
@@ -28,7 +26,7 @@ const applyOptions = (parent) => (pat, i) => {
         if (!legalTypes.includes(type)) {
           throw new Error(`mini: stretch: type must be one of ${legalTypes.join('|')} but got ${type}`);
         }
-        return reify(pat)[type](amount);
+        return strudel.reify(pat)[type](amount);
       }
       case 'bjorklund':
         return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
@@ -48,12 +46,12 @@ const applyOptions = (parent) => (pat, i) => {
 
         // this is how it was:
         /* 
-        return reify(pat)._degradeByWith(
+        return strudel.reify(pat)._degradeByWith(
           strudel.rand.early(randOffset * _nextSeed()).segment(1),
           operator.arguments_.amount ?? 0.5,
         ); 
         */
-        return reify(pat)._degradeBy(operator.arguments_.amount ?? 0.5);
+        return strudel.reify(pat)._degradeBy(operator.arguments_.amount ?? 0.5);
 
       // TODO: case 'fixed-step': "%"
     }
@@ -87,7 +85,7 @@ function resolveReplications(ast) {
       source_: {
         type_: 'pattern',
         arguments_: {
-          alignment: 'h',
+          alignment: 'fastcat',
         },
         source_: [
           {
@@ -113,31 +111,45 @@ export function patternifyAST(ast, code) {
       resolveReplications(ast);
       const children = ast.source_.map((child) => patternifyAST(child, code)).map(applyOptions(ast));
       const alignment = ast.arguments_.alignment;
-      if (alignment === 'v') {
-        return stack(...children);
+      if (alignment === 'stack') {
+        return strudel.stack(...children);
       }
-      if (alignment === 'r') {
+      if (alignment === 'polymeter') {
+        // polymeter
+        const stepsPerCycle = strudel.Fraction(
+          ast.arguments_.stepsPerCycle
+            ? ast.arguments_.stepsPerCycle
+            : strudel.Fraction(children.length > 0 ? children[0].__weight : 1),
+        );
+
+        const aligned = children.map((child) => child.fast(stepsPerCycle.div(child.__weight || strudel.Fraction(1))));
+        return strudel.stack(...aligned);
+      }
+      if (alignment === 'rand') {
         // https://github.com/tidalcycles/strudel/issues/245#issuecomment-1345406422
         // return strudel.chooseInWith(strudel.rand.early(randOffset * _nextSeed()).segment(1), children);
         return strudel.chooseCycles(...children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
-      if (!weightedChildren && alignment === 't') {
-        return slowcat(...children);
+      if (!weightedChildren && alignment === 'slowcat') {
+        return strudel.slowcat(...children);
       }
       if (weightedChildren) {
-        const pat = timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
-        if (alignment === 't') {
-          const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
+        const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
+        const pat = strudel.timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
+        if (alignment === 'slowcat') {
           return pat._slow(weightSum); // timecat + slow
         }
+        pat.__weight = weightSum;
         return pat;
       }
-      return sequence(...children);
+      const pat = strudel.sequence(...children);
+      pat.__weight = strudel.Fraction(children.length);
+      return pat;
     }
     case 'element': {
       if (ast.source_ === '~') {
-        return silence;
+        return strudel.silence;
       }
       if (typeof ast.source_ !== 'object') {
         if (!ast.location_) {
@@ -153,10 +165,12 @@ export function patternifyAST(ast, code) {
         const [offsetStart = 0, offsetEnd = 0] = actual
           ? actual.split(ast.source_).map((p) => p.split('').filter((c) => c === ' ').length)
           : [];
-        return pure(value).withLocation(
-          [start.line, start.column + offsetStart, start.offset + offsetStart],
-          [start.line, end.column - offsetEnd, end.offset - offsetEnd],
-        );
+        return strudel
+          .pure(value)
+          .withLocation(
+            [start.line, start.column + offsetStart, start.offset + offsetStart],
+            [start.line, end.column - offsetEnd, end.offset - offsetEnd],
+          );
       }
       return patternifyAST(ast.source_, code);
     }
@@ -183,10 +197,10 @@ export function patternifyAST(ast, code) {
       }); */
     /* case 'struct':
       // TODO:
-      return silence; */
+      return strudel.silence; */
     default:
       console.warn(`node type "${ast.type_}" not implemented -> returning silence`);
-      return silence;
+      return strudel.silence;
   }
 }
 
@@ -197,7 +211,7 @@ export const mini = (...strings) => {
     const ast = krill.parse(code);
     return patternifyAST(ast, code);
   });
-  return sequence(...pats);
+  return strudel.sequence(...pats);
 };
 
 // includes haskell style (raw krill parsing)
@@ -211,5 +225,5 @@ export function minify(thing) {
   if (typeof thing === 'string') {
     return mini(thing);
   }
-  return reify(thing);
+  return strudel.reify(thing);
 }
