@@ -3,6 +3,10 @@ import { evaluate as _evaluate } from './evaluate.mjs';
 import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
 
+export let scheduler; // expose scheduler to global scope
+// this is not optimal as it will only work for one repl at a time
+// TODO: use pattern.context to expose scheduler
+
 export function repl({
   interval,
   defaultOutput,
@@ -14,7 +18,7 @@ export function repl({
   transpiler,
   onToggle,
 }) {
-  const scheduler = new Cyclist({
+  scheduler = new Cyclist({
     interval,
     onTrigger: async (hap, deadline, duration) => {
       try {
