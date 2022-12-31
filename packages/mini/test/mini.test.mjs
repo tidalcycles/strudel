@@ -43,6 +43,8 @@ describe('mini', () => {
   });
   it('supports curly brackets with explicit step-per-cycle', () => {
     expect(minS('{a b, c d e}%3')).toEqual(minS('[a b a, c d e]'));
+    expect(minS('{a b, c d e}%5')).toEqual(minS('[a b a b a, c d e c d]'));
+    expect(minS('{a b, c d e}%6')).toEqual(minS('[a b a b a b, c d e c d e]'));
   });
   it('supports commas', () => {
     expect(minS('c3,e3,g3')).toEqual(['c3: 0 - 1', 'e3: 0 - 1', 'g3: 0 - 1']);
