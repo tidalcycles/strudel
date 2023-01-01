@@ -2,9 +2,10 @@
 
 This directory can be used to save your own patterns.
 
-0. fork the strudel repo
-1. Save one or more .txt files here.
-2. and run `npm run repl`
+0. fork and clone the strudel repository
+1. run `npm run setup` in the strudel folder
+1. Save one or more .txt files in this folder
+2. run `npm run repl` in the top-level strudel folder
 3. open `http://localhost:3000/my-patterns` !
 
 ## deploy
