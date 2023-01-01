@@ -7,7 +7,7 @@ Pattern.prototype.animate = function ({ callback, sync = false, smear = 0.5 } = 
   window.frame && cancelAnimationFrame(window.frame);
   const ctx = getDrawContext();
   const { clientWidth: ww, clientHeight: wh } = ctx.canvas;
-  let smearPart = Number((1 - smear) * 100).toFixed(0);
+  let smearPart = smear === 0 ? '99' : Number((1 - smear) * 100).toFixed(0);
   smearPart = smearPart.length === 1 ? `0${smearPart}` : smearPart;
   clearColor = `#200010${smearPart}`;
   const render = (t) => {
