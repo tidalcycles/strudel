@@ -30,7 +30,7 @@ export default defineConfig({
     mdx(options),
     tailwind(),
   ],
-  site: `https://strudel.tidalcycles.org`,
+  site: `https://patterns.slab.org`,
   base: '',
 });
 
