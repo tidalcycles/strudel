@@ -57,11 +57,11 @@ export const rescale = register('rescale', function (f, pat) {
   return pat.mul(x(f).w(f).y(f).h(f));
 });
 
-export const move = register('move', function (dx, dy, pat) {
+export const moveXY = register('moveXY', function (dx, dy, pat) {
   return pat.add(x(dx).y(dy));
 });
 
-export const zoom = register('zoom', function (f, pat) {
+export const zoomIn = register('zoomIn', function (f, pat) {
   const d = pure(1).sub(f).div(2);
   return pat.rescale(f).move(d, d);
 });
