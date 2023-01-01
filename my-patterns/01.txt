@@ -1,0 +1,5 @@
+s("bd:7").struct("x x [~ x] [x x*2]".iter(8))
+  .slow(1.4)
+  .off(0.25, x => x.speed(saw.range(3,2.5).color('green')))
+  .room(3).size(saw.slow(4))
+  .lastOf(4, x => x.bank("OberheimDMX")).legato(0.25)
