@@ -48,8 +48,8 @@ const _bjork = function (n, x) {
 
 const bjork = function (ons, steps) {
   const offs = steps - ons;
-  const x = Array(ons).fill([true]);
-  const y = Array(offs).fill([false]);
+  const x = Array(ons).fill([1]);
+  const y = Array(offs).fill([0]);
   const result = _bjork([ons, offs], [x, y]);
   return flatten(result[1][0]).concat(flatten(result[1][1]));
 };
@@ -131,7 +131,7 @@ const bjork = function (ons, steps) {
  */
 
 const _euclidRot = function (pulses, steps, rotation) {
-  const b = bjork(steps, pulses);
+  const b = bjork(pulses, steps);
   if (rotation) {
     return rotate(b, -rotation);
   }
@@ -139,11 +139,11 @@ const _euclidRot = function (pulses, steps, rotation) {
 };
 
 export const euclid = register('euclid', function (pulses, steps, pat) {
-  return pat.struct(_euclidRot(steps, pulses, 0));
+  return pat.struct(_euclidRot(pulses, steps, 0));
 });
 
 export const { euclidrot, euclidRot } = register(['euclidrot', 'euclidRot'], function (pulses, steps, rotation, pat) {
-  return pat.struct(_euclidRot(steps, pulses, rotation));
+  return pat.struct(_euclidRot(pulses, steps, rotation));
 });
 
 /**
@@ -156,14 +156,16 @@ export const { euclidrot, euclidRot } = register(['euclidrot', 'euclidRot'], fun
  */
 
 const _euclidLegato = function (pulses, steps, rotation, pat) {
+  if (pulses < 1) {
+    return silence;
+  }
   const bin_pat = _euclidRot(pulses, steps, rotation);
-  const firstOne = bin_pat.indexOf(1);
-  const gapless = rotate(bin_pat, firstOne)
+  const gapless = bin_pat
     .join('')
     .split('1')
     .slice(1)
     .map((s) => [s.length + 1, true]);
-  return pat.struct(timeCat(...gapless)).late(Fraction(firstOne).div(steps));
+  return pat.struct(timeCat(...gapless));
 };
 
 export const euclidLegato = register(['euclidLegato'], function (pulses, steps, pat) {
