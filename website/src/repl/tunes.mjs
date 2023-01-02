@@ -425,7 +425,7 @@ stack(
   .scale(cat('D minor pentatonic')).note()
   .s('bell').gain(.6).delay(.2).delaytime(1/3).delayfeedback(.8),
   // bass
-  "<D2 A2 G2 F2>".euclidLegato(6,8,1).note().s('bass').clip(1).gain(.8)
+  "<D2 A2 G2 F2>".euclidLegatoRot(6,8,1).note().s('bass').clip(1).gain(.8)
 )
   .slow(6)
   .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})

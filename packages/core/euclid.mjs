@@ -37,7 +37,7 @@ import Fraction from './fraction.mjs';
  * @returns Pattern
  * @example
  * // A Samba rhythm necklace from Brazil
- * note("c3").euclid(3,16,14)
+ * note("c3").euclidRot(3,16,14)
  */
 
 /**
@@ -46,7 +46,7 @@ import Fraction from './fraction.mjs';
  * @example // The archetypal pattern of the Cumbia from Colombia, as well as a Calypso rhythm from Trinidad.
  * note("c3").euclid(3,4)
  * @example // Another thirteenth century Persian rhythm by the name of Khafif-e-ramal, as well as a Rumanian folk-dance rhythm.
- * note("c3").euclid(3,5,2)
+ * note("c3").euclidRot(3,5,2)
  * @example // A Ruchenitza rhythm used in a Bulgarian folk-dance.
  * note("c3").euclid(3,7)
  * @example // The Cuban tresillo pattern.
@@ -111,7 +111,7 @@ export const { euclidrot, euclidRot } = register(['euclidrot', 'euclidRot'], fun
  */
 
 const _euclidLegato = function (pulses, steps, rotation, pat) {
-  const bin_pat = euclid(pulses, steps, rotation);
+  const bin_pat = _euclidRot(pulses, steps, rotation);
   const firstOne = bin_pat.indexOf(1);
   const gapless = rotate(bin_pat, firstOne)
     .join('')
