@@ -14,7 +14,7 @@ function _nextSeed() {
   return _seedState++;
 } */
 
-const applyOptions = (parent) => (pat, i) => {
+const applyOptions = (parent, code) => (pat, i) => {
   const ast = parent.source_[i];
   const options = ast.options_;
   const operator = options?.operator;
@@ -29,7 +29,18 @@ const applyOptions = (parent) => (pat, i) => {
         return strudel.reify(pat)[type](amount);
       }
       case 'bjorklund':
-        return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
+        if (operator.arguments_.rotation) {
+          return pat.euclidRot(
+            patternifyAST(operator.arguments_.pulse, code),
+            patternifyAST(operator.arguments_.step, code),
+            patternifyAST(operator.arguments_.rotation, code),
+          );
+        } else {
+          return pat.euclid(
+            patternifyAST(operator.arguments_.pulse, code),
+            patternifyAST(operator.arguments_.step, code),
+          );
+        }
       case 'degradeBy':
         // TODO: find out what is right here
         // example:
@@ -109,7 +120,7 @@ export function patternifyAST(ast, code) {
   switch (ast.type_) {
     case 'pattern': {
       resolveReplications(ast);
-      const children = ast.source_.map((child) => patternifyAST(child, code)).map(applyOptions(ast));
+      const children = ast.source_.map((child) => patternifyAST(child, code)).map(applyOptions(ast, code));
       const alignment = ast.arguments_.alignment;
       if (alignment === 'stack') {
         return strudel.stack(...children);

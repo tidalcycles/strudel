@@ -289,7 +289,7 @@ function peg$parse(input, options) {
   var peg$f18 = function(sc) { return sc; };
   var peg$f19 = function(s) { return { name: "struct", args: { mini:s }}};
   var peg$f20 = function(s) { return { name: "target", args : { name:s}}};
-  var peg$f21 = function(p, s, r) { return { name: "bjorklund", args :{ pulse: parseInt(p), step:parseInt(s) }}};
+  var peg$f21 = function(p, s, r) { return { name: "bjorklund", args :{ pulse: p, step:parseInt(s) }}};
   var peg$f22 = function(a) { return { name: "stretch", args :{ amount: a}}};
   var peg$f23 = function(a) { return { name: "shift", args :{ amount: "-"+a}}};
   var peg$f24 = function(a) { return { name: "shift", args :{ amount: a}}};
@@ -1161,13 +1161,13 @@ function peg$parse(input, options) {
     }
     if (s1 !== peg$FAILED) {
       s2 = peg$parsews();
-      s3 = peg$parsenumber();
+      s3 = peg$parseslice_with_modifier();
       if (s3 !== peg$FAILED) {
         s4 = peg$parsews();
         s5 = peg$parsecomma();
         if (s5 !== peg$FAILED) {
           s6 = peg$parsews();
-          s7 = peg$parsenumber();
+          s7 = peg$parseslice_with_modifier();
           if (s7 !== peg$FAILED) {
             s8 = peg$parsews();
             s9 = peg$parsecomma();
@@ -1175,7 +1175,7 @@ function peg$parse(input, options) {
               s9 = null;
             }
             s10 = peg$parsews();
-            s11 = peg$parsenumber();
+            s11 = peg$parseslice_with_modifier();
             if (s11 === peg$FAILED) {
               s11 = null;
             }

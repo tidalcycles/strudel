@@ -120,7 +120,7 @@ slice_weight =  "@" a:number
 slice_replicate = "!"a:number
   { return { replicate: a  } }
 
-slice_bjorklund = "(" ws p:number ws comma ws s:number ws comma? ws r:number? ws ")"
+slice_bjorklund = "(" ws p:slice_with_modifier ws comma ws s:slice_with_modifier ws comma? ws r:slice_with_modifier? ws ")"
   { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r || 0 } } } }
 
 slice_slow = "/"a:number
@@ -177,7 +177,7 @@ target = "target" ws quote s:step quote
   { return { name: "target", args : { name:s}}}
 
 bjorklund = "euclid" ws p:int ws s:int ws r:int?
-  { return { name: "bjorklund", args :{ pulse: parseInt(p), step:parseInt(s) }}}
+  { return { name: "bjorklund", args :{ pulse: p, step:parseInt(s) }}}
 
 slow = "slow" ws a:number
   { return { name: "stretch", args :{ amount: a}}}
