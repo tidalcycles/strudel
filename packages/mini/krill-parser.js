@@ -269,14 +269,14 @@ function peg$parse(input, options) {
   var peg$e47 = peg$literalExpectation("hush", false);
 
   var peg$f0 = function() { return parseFloat(text()); };
-  var peg$f1 = function(chars) { return chars.join("") };
+  var peg$f1 = function(chars) { return new AtomStub(chars.join("")) };
   var peg$f2 = function(s) { return s };
   var peg$f3 = function(s, stepsPerCycle) { s.arguments_.stepsPerCycle = stepsPerCycle ; return s; };
   var peg$f4 = function(a) { return a };
   var peg$f5 = function(s) { s.arguments_.alignment = 'slowcat'; return s; };
   var peg$f6 = function(a) { return { weight: a} };
   var peg$f7 = function(a) { return { replicate: a  } };
-  var peg$f8 = function(p, s, r) { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r || 0 } } } };
+  var peg$f8 = function(p, s, r) { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r } } } };
   var peg$f9 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'slow' } } } };
   var peg$f10 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'fast' } } } };
   var peg$f11 = function(a) { return { operator : { type_: "degradeBy", arguments_ :{ amount:(a? a : 0.5) } } } };
@@ -2147,6 +2147,13 @@ function peg$parse(input, options) {
     return s0;
   }
 
+
+  var AtomStub = function(source)
+  {
+    this.type_ = "atom";
+    this.source_ = source;
+    this.location_ = location();
+  }
 
   var PatternStub = function(source, alignment)
   {

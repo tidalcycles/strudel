@@ -185,6 +185,30 @@ export function patternifyAST(ast, code) {
       }
       return patternifyAST(ast.source_, code);
     }
+    case 'atom': {
+      if (ast.source_ === '~') {
+        return strudel.silence;
+      }
+      if (!ast.location_) {
+        console.warn('no location for', ast);
+        return ast.source_;
+      }
+      const { start, end } = ast.location_;
+      const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
+      // the following line expects the shapeshifter append .withMiniLocation
+      // because location_ is only relative to the mini string, but we need it relative to whole code
+      // make sure whitespaces are not part of the highlight:
+      const actual = code?.split('').slice(start.offset, end.offset).join('');
+      const [offsetStart = 0, offsetEnd = 0] = actual
+        ? actual.split(ast.source_).map((p) => p.split('').filter((c) => c === ' ').length)
+        : [];
+      return strudel
+        .pure(value)
+        .withLocation(
+          [start.line, start.column + offsetStart, start.offset + offsetStart],
+          [start.line, end.column - offsetEnd, end.offset - offsetEnd],
+        );
+    }
     case 'stretch':
       return patternifyAST(ast.source_, code).slow(ast.arguments_.amount);
     /* case 'scale':

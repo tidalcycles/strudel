@@ -12,6 +12,13 @@ This program is free software: you can redistribute it and/or modify it under th
 
 
 {
+  var AtomStub = function(source)
+  {
+    this.type_ = "atom";
+    this.source_ = source;
+    this.location_ = location();
+  }
+
   var PatternStub = function(source, alignment)
   {
     this.type_ = "pattern";
@@ -90,7 +97,7 @@ quote = '"' / "'"
 
 // single step definition (e.g bd)
 step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" / "_" / ":"
-step = ws chars:step_char+ ws { return chars.join("") }
+step = ws chars:step_char+ ws { return new AtomStub(chars.join("")) }
 
 // define a sub cycle e.g. [1 2, 3 [4]]
 sub_cycle = ws  "[" ws s:stack_or_choose ws "]" ws { return s }
@@ -121,7 +128,7 @@ slice_replicate = "!"a:number
   { return { replicate: a  } }
 
 slice_bjorklund = "(" ws p:slice_with_modifier ws comma ws s:slice_with_modifier ws comma? ws r:slice_with_modifier? ws ")"
-  { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r || 0 } } } }
+  { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r } } } }
 
 slice_slow = "/"a:number
   { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'slow' } } } }
