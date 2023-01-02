@@ -269,17 +269,17 @@ function peg$parse(input, options) {
   var peg$e47 = peg$literalExpectation("hush", false);
 
   var peg$f0 = function() { return parseFloat(text()); };
-  var peg$f1 = function(chars) { return chars.join("") };
+  var peg$f1 = function(chars) { return new AtomStub(chars.join("")) };
   var peg$f2 = function(s) { return s };
   var peg$f3 = function(s, stepsPerCycle) { s.arguments_.stepsPerCycle = stepsPerCycle ; return s; };
   var peg$f4 = function(a) { return a };
   var peg$f5 = function(s) { s.arguments_.alignment = 'slowcat'; return s; };
   var peg$f6 = function(a) { return { weight: a} };
-  var peg$f7 = function(a) { return { replicate: a  } };
-  var peg$f8 = function(p, s, r) { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r || 0 } } } };
+  var peg$f7 = function(a) { return { replicate: a } };
+  var peg$f8 = function(p, s, r) { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r } } } };
   var peg$f9 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'slow' } } } };
   var peg$f10 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'fast' } } } };
-  var peg$f11 = function(a) { return { operator : { type_: "degradeBy", arguments_ :{ amount:(a? a : 0.5) } } } };
+  var peg$f11 = function(a) { return { operator : { type_: "degradeBy", arguments_ :{ amount:a } } } };
   var peg$f12 = function(s, o) { return new ElementStub(s, o);};
   var peg$f13 = function(s) { return new PatternStub(s, 'fastcat'); };
   var peg$f14 = function(tail) { return { alignment: 'stack', list: tail }; };
@@ -289,7 +289,7 @@ function peg$parse(input, options) {
   var peg$f18 = function(sc) { return sc; };
   var peg$f19 = function(s) { return { name: "struct", args: { mini:s }}};
   var peg$f20 = function(s) { return { name: "target", args : { name:s}}};
-  var peg$f21 = function(p, s, r) { return { name: "bjorklund", args :{ pulse: parseInt(p), step:parseInt(s) }}};
+  var peg$f21 = function(p, s, r) { return { name: "bjorklund", args :{ pulse: p, step:parseInt(s) }}};
   var peg$f22 = function(a) { return { name: "stretch", args :{ amount: a}}};
   var peg$f23 = function(a) { return { name: "shift", args :{ amount: "-"+a}}};
   var peg$f24 = function(a) { return { name: "shift", args :{ amount: a}}};
@@ -992,7 +992,7 @@ function peg$parse(input, options) {
       if (peg$silentFails === 0) { peg$fail(peg$e23); }
     }
     if (s1 !== peg$FAILED) {
-      s2 = peg$parsenumber();
+      s2 = peg$parseslice();
       if (s2 !== peg$FAILED) {
         peg$savedPos = s0;
         s0 = peg$f4(s2);
@@ -1161,13 +1161,13 @@ function peg$parse(input, options) {
     }
     if (s1 !== peg$FAILED) {
       s2 = peg$parsews();
-      s3 = peg$parsenumber();
+      s3 = peg$parseslice_with_modifier();
       if (s3 !== peg$FAILED) {
         s4 = peg$parsews();
         s5 = peg$parsecomma();
         if (s5 !== peg$FAILED) {
           s6 = peg$parsews();
-          s7 = peg$parsenumber();
+          s7 = peg$parseslice_with_modifier();
           if (s7 !== peg$FAILED) {
             s8 = peg$parsews();
             s9 = peg$parsecomma();
@@ -1175,7 +1175,7 @@ function peg$parse(input, options) {
               s9 = null;
             }
             s10 = peg$parsews();
-            s11 = peg$parsenumber();
+            s11 = peg$parseslice_with_modifier();
             if (s11 === peg$FAILED) {
               s11 = null;
             }
@@ -1226,7 +1226,7 @@ function peg$parse(input, options) {
       if (peg$silentFails === 0) { peg$fail(peg$e30); }
     }
     if (s1 !== peg$FAILED) {
-      s2 = peg$parsenumber();
+      s2 = peg$parseslice();
       if (s2 !== peg$FAILED) {
         peg$savedPos = s0;
         s0 = peg$f9(s2);
@@ -1254,7 +1254,7 @@ function peg$parse(input, options) {
       if (peg$silentFails === 0) { peg$fail(peg$e31); }
     }
     if (s1 !== peg$FAILED) {
-      s2 = peg$parsenumber();
+      s2 = peg$parseslice();
       if (s2 !== peg$FAILED) {
         peg$savedPos = s0;
         s0 = peg$f10(s2);
@@ -2147,6 +2147,13 @@ function peg$parse(input, options) {
     return s0;
   }
 
+
+  var AtomStub = function(source)
+  {
+    this.type_ = "atom";
+    this.source_ = source;
+    this.location_ = location();
+  }
 
   var PatternStub = function(source, alignment)
   {

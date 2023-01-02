@@ -14,7 +14,7 @@ function _nextSeed() {
   return _seedState++;
 } */
 
-const applyOptions = (parent) => (pat, i) => {
+const applyOptions = (parent, code) => (pat, i) => {
   const ast = parent.source_[i];
   const options = ast.options_;
   const operator = options?.operator;
@@ -26,10 +26,21 @@ const applyOptions = (parent) => (pat, i) => {
         if (!legalTypes.includes(type)) {
           throw new Error(`mini: stretch: type must be one of ${legalTypes.join('|')} but got ${type}`);
         }
-        return strudel.reify(pat)[type](amount);
+        return strudel.reify(pat)[type](patternifyAST(amount, code));
       }
       case 'bjorklund':
-        return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
+        if (operator.arguments_.rotation) {
+          return pat.euclidRot(
+            patternifyAST(operator.arguments_.pulse, code),
+            patternifyAST(operator.arguments_.step, code),
+            patternifyAST(operator.arguments_.rotation, code),
+          );
+        } else {
+          return pat.euclid(
+            patternifyAST(operator.arguments_.pulse, code),
+            patternifyAST(operator.arguments_.step, code),
+          );
+        }
       case 'degradeBy':
         // TODO: find out what is right here
         // example:
@@ -51,9 +62,7 @@ const applyOptions = (parent) => (pat, i) => {
           operator.arguments_.amount ?? 0.5,
         ); 
         */
-        return strudel.reify(pat)._degradeBy(operator.arguments_.amount ?? 0.5);
-
-      // TODO: case 'fixed-step': "%"
+        return strudel.reify(pat).degradeBy(operator.arguments_.amount === null ? 0.5 : operator.arguments_.amount);
     }
     console.warn(`operator "${operator.type_}" not implemented`);
   }
@@ -72,57 +81,34 @@ const applyOptions = (parent) => (pat, i) => {
 };
 
 function resolveReplications(ast) {
-  // the general idea here: x!3 = [x*3]@3
-  // could this be made easier?!
-  ast.source_ = ast.source_.map((child) => {
-    const { replicate, ...options } = child.options_ || {};
-    if (!replicate) {
-      return child;
-    }
-    return {
-      ...child,
-      options_: { ...options, weight: replicate },
-      source_: {
-        type_: 'pattern',
-        arguments_: {
-          alignment: 'fastcat',
-        },
-        source_: [
-          {
-            type_: 'element',
-            source_: child.source_,
-            location_: child.location_,
-            options_: {
-              operator: {
-                type_: 'stretch',
-                arguments_: { amount: replicate, type: 'fast' },
-              },
-            },
-          },
-        ],
-      },
-    };
-  });
+  ast.source_ = strudel.flatten(
+    ast.source_.map((child) => {
+      const { replicate, ...options } = child.options_ || {};
+      if (!replicate) {
+        return [child];
+      }
+      delete child.options_.replicate;
+      return Array(replicate).fill(child);
+    }),
+  );
 }
 
 export function patternifyAST(ast, code) {
   switch (ast.type_) {
     case 'pattern': {
       resolveReplications(ast);
-      const children = ast.source_.map((child) => patternifyAST(child, code)).map(applyOptions(ast));
+      const children = ast.source_.map((child) => patternifyAST(child, code)).map(applyOptions(ast, code));
       const alignment = ast.arguments_.alignment;
       if (alignment === 'stack') {
         return strudel.stack(...children);
       }
       if (alignment === 'polymeter') {
         // polymeter
-        const stepsPerCycle = strudel.Fraction(
-          ast.arguments_.stepsPerCycle
-            ? ast.arguments_.stepsPerCycle
-            : strudel.Fraction(children.length > 0 ? children[0].__weight : 1),
-        );
+        const stepsPerCycle = ast.arguments_.stepsPerCycle
+          ? patternifyAST(ast.arguments_.stepsPerCycle, code).fmap((x) => strudel.Fraction(x))
+          : strudel.pure(strudel.Fraction(children.length > 0 ? children[0].__weight : 1));
 
-        const aligned = children.map((child) => child.fast(stepsPerCycle.div(child.__weight || strudel.Fraction(1))));
+        const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.__weight || 1))));
         return strudel.stack(...aligned);
       }
       if (alignment === 'rand') {
@@ -144,38 +130,38 @@ export function patternifyAST(ast, code) {
         return pat;
       }
       const pat = strudel.sequence(...children);
-      pat.__weight = strudel.Fraction(children.length);
+      pat.__weight = children.length;
       return pat;
     }
     case 'element': {
+      return patternifyAST(ast.source_, code);
+    }
+    case 'atom': {
       if (ast.source_ === '~') {
         return strudel.silence;
       }
-      if (typeof ast.source_ !== 'object') {
-        if (!ast.location_) {
-          console.warn('no location for', ast);
-          return ast.source_;
-        }
-        const { start, end } = ast.location_;
-        const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
-        // the following line expects the shapeshifter append .withMiniLocation
-        // because location_ is only relative to the mini string, but we need it relative to whole code
-        // make sure whitespaces are not part of the highlight:
-        const actual = code?.split('').slice(start.offset, end.offset).join('');
-        const [offsetStart = 0, offsetEnd = 0] = actual
-          ? actual.split(ast.source_).map((p) => p.split('').filter((c) => c === ' ').length)
-          : [];
-        return strudel
-          .pure(value)
-          .withLocation(
-            [start.line, start.column + offsetStart, start.offset + offsetStart],
-            [start.line, end.column - offsetEnd, end.offset - offsetEnd],
-          );
+      if (!ast.location_) {
+        console.warn('no location for', ast);
+        return ast.source_;
       }
-      return patternifyAST(ast.source_, code);
+      const { start, end } = ast.location_;
+      const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
+      // the following line expects the shapeshifter append .withMiniLocation
+      // because location_ is only relative to the mini string, but we need it relative to whole code
+      // make sure whitespaces are not part of the highlight:
+      const actual = code?.split('').slice(start.offset, end.offset).join('');
+      const [offsetStart = 0, offsetEnd = 0] = actual
+        ? actual.split(ast.source_).map((p) => p.split('').filter((c) => c === ' ').length)
+        : [];
+      return strudel
+        .pure(value)
+        .withLocation(
+          [start.line, start.column + offsetStart, start.offset + offsetStart],
+          [start.line, end.column - offsetEnd, end.offset - offsetEnd],
+        );
     }
     case 'stretch':
-      return patternifyAST(ast.source_, code).slow(ast.arguments_.amount);
+      return patternifyAST(ast.source_, code).slow(patternifyAST(ast.arguments_.amount, code));
     /* case 'scale':
       let [tonic, scale] = Scale.tokenize(ast.arguments_.scale);
       const intervals = Scale.get(scale).intervals;
