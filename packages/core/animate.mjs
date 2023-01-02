@@ -1,4 +1,4 @@
-import { controls, Pattern, getDrawContext, silence, scheduler } from './index.mjs';
+import { controls, Pattern, getDrawContext, silence, register, pure } from './index.mjs';
 const { createParams } = controls;
 
 let clearColor = '#22222210';
@@ -12,13 +12,13 @@ Pattern.prototype.animate = function ({ callback, sync = false, smear = 0.5 } = 
   clearColor = `#200010${smearPart}`;
   const render = (t) => {
     let frame;
-    if (sync) {
+    /*     if (sync) {
       t = scheduler.now();
       frame = this.queryArc(t, t);
-    } else {
-      t = Math.round(t);
-      frame = this.slow(1000).queryArc(t, t);
-    }
+    } else { */
+    t = Math.round(t);
+    frame = this.slow(1000).queryArc(t, t);
+    // }
     ctx.fillStyle = clearColor;
     ctx.fillRect(0, 0, ww, wh);
     frame.forEach((f) => {
@@ -52,3 +52,16 @@ Pattern.prototype.animate = function ({ callback, sync = false, smear = 0.5 } = 
 };
 
 export const { x, y, w, h, a, r, fill, smear } = createParams('x', 'y', 'w', 'h', 'a', 'r', 'fill', 'smear');
+
+export const rescale = register('rescale', function (f, pat) {
+  return pat.mul(x(f).w(f).y(f).h(f));
+});
+
+export const moveXY = register('moveXY', function (dx, dy, pat) {
+  return pat.add(x(dx).y(dy));
+});
+
+export const zoomIn = register('zoomIn', function (f, pat) {
+  const d = pure(1).sub(f).div(2);
+  return pat.rescale(f).move(d, d);
+});
