@@ -275,11 +275,11 @@ function peg$parse(input, options) {
   var peg$f4 = function(a) { return a };
   var peg$f5 = function(s) { s.arguments_.alignment = 'slowcat'; return s; };
   var peg$f6 = function(a) { return { weight: a} };
-  var peg$f7 = function(a) { return { replicate: a  } };
+  var peg$f7 = function(a) { return { replicate: a } };
   var peg$f8 = function(p, s, r) { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r } } } };
   var peg$f9 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'slow' } } } };
   var peg$f10 = function(a) { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'fast' } } } };
-  var peg$f11 = function(a) { return { operator : { type_: "degradeBy", arguments_ :{ amount:(a? a : 0.5) } } } };
+  var peg$f11 = function(a) { return { operator : { type_: "degradeBy", arguments_ :{ amount:a } } } };
   var peg$f12 = function(s, o) { return new ElementStub(s, o);};
   var peg$f13 = function(s) { return new PatternStub(s, 'fastcat'); };
   var peg$f14 = function(tail) { return { alignment: 'stack', list: tail }; };
@@ -992,7 +992,7 @@ function peg$parse(input, options) {
       if (peg$silentFails === 0) { peg$fail(peg$e23); }
     }
     if (s1 !== peg$FAILED) {
-      s2 = peg$parsenumber();
+      s2 = peg$parseslice();
       if (s2 !== peg$FAILED) {
         peg$savedPos = s0;
         s0 = peg$f4(s2);
@@ -1226,7 +1226,7 @@ function peg$parse(input, options) {
       if (peg$silentFails === 0) { peg$fail(peg$e30); }
     }
     if (s1 !== peg$FAILED) {
-      s2 = peg$parsenumber();
+      s2 = peg$parseslice();
       if (s2 !== peg$FAILED) {
         peg$savedPos = s0;
         s0 = peg$f9(s2);
@@ -1254,7 +1254,7 @@ function peg$parse(input, options) {
       if (peg$silentFails === 0) { peg$fail(peg$e31); }
     }
     if (s1 !== peg$FAILED) {
-      s2 = peg$parsenumber();
+      s2 = peg$parseslice();
       if (s2 !== peg$FAILED) {
         peg$savedPos = s0;
         s0 = peg$f10(s2);

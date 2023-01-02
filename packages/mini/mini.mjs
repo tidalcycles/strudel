@@ -26,7 +26,7 @@ const applyOptions = (parent, code) => (pat, i) => {
         if (!legalTypes.includes(type)) {
           throw new Error(`mini: stretch: type must be one of ${legalTypes.join('|')} but got ${type}`);
         }
-        return strudel.reify(pat)[type](amount);
+        return strudel.reify(pat)[type](patternifyAST(amount, code));
       }
       case 'bjorklund':
         if (operator.arguments_.rotation) {
@@ -62,9 +62,7 @@ const applyOptions = (parent, code) => (pat, i) => {
           operator.arguments_.amount ?? 0.5,
         ); 
         */
-        return strudel.reify(pat)._degradeBy(operator.arguments_.amount ?? 0.5);
-
-      // TODO: case 'fixed-step': "%"
+        return strudel.reify(pat).degradeBy(operator.arguments_.amount === null ? 0.5 : operator.arguments_.amount);
     }
     console.warn(`operator "${operator.type_}" not implemented`);
   }
@@ -83,37 +81,16 @@ const applyOptions = (parent, code) => (pat, i) => {
 };
 
 function resolveReplications(ast) {
-  // the general idea here: x!3 = [x*3]@3
-  // could this be made easier?!
-  ast.source_ = ast.source_.map((child) => {
-    const { replicate, ...options } = child.options_ || {};
-    if (!replicate) {
-      return child;
-    }
-    return {
-      ...child,
-      options_: { ...options, weight: replicate },
-      source_: {
-        type_: 'pattern',
-        arguments_: {
-          alignment: 'fastcat',
-        },
-        source_: [
-          {
-            type_: 'element',
-            source_: child.source_,
-            location_: child.location_,
-            options_: {
-              operator: {
-                type_: 'stretch',
-                arguments_: { amount: replicate, type: 'fast' },
-              },
-            },
-          },
-        ],
-      },
-    };
-  });
+  ast.source_ = strudel.flatten(
+    ast.source_.map((child) => {
+      const { replicate, ...options } = child.options_ || {};
+      if (!replicate) {
+        return [child];
+      }
+      delete child.options_.replicate;
+      return Array(replicate).fill(child);
+    }),
+  );
 }
 
 export function patternifyAST(ast, code) {
@@ -127,13 +104,11 @@ export function patternifyAST(ast, code) {
       }
       if (alignment === 'polymeter') {
         // polymeter
-        const stepsPerCycle = strudel.Fraction(
-          ast.arguments_.stepsPerCycle
-            ? ast.arguments_.stepsPerCycle
-            : strudel.Fraction(children.length > 0 ? children[0].__weight : 1),
-        );
+        const stepsPerCycle = ast.arguments_.stepsPerCycle
+          ? patternifyAST(ast.arguments_.stepsPerCycle, code).fmap((x) => strudel.Fraction(x))
+          : strudel.pure(strudel.Fraction(children.length > 0 ? children[0].__weight : 1));
 
-        const aligned = children.map((child) => child.fast(stepsPerCycle.div(child.__weight || strudel.Fraction(1))));
+        const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.__weight || 1))));
         return strudel.stack(...aligned);
       }
       if (alignment === 'rand') {
@@ -155,7 +130,7 @@ export function patternifyAST(ast, code) {
         return pat;
       }
       const pat = strudel.sequence(...children);
-      pat.__weight = strudel.Fraction(children.length);
+      pat.__weight = children.length;
       return pat;
     }
     case 'element': {
@@ -210,7 +185,7 @@ export function patternifyAST(ast, code) {
         );
     }
     case 'stretch':
-      return patternifyAST(ast.source_, code).slow(ast.arguments_.amount);
+      return patternifyAST(ast.source_, code).slow(patternifyAST(ast.arguments_.amount, code));
     /* case 'scale':
       let [tonic, scale] = Scale.tokenize(ast.arguments_.scale);
       const intervals = Scale.get(scale).intervals;

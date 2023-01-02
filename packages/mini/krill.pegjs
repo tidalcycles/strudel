@@ -106,7 +106,7 @@ sub_cycle = ws  "[" ws s:stack_or_choose ws "]" ws { return s }
 polymeter = ws  "{" ws s:polymeter_stack ws "}" stepsPerCycle:polymeter_steps? ws
   { s.arguments_.stepsPerCycle = stepsPerCycle ; return s; }
 
-polymeter_steps = "%"a:number
+polymeter_steps = "%"a:slice
   { return a }
 
 // define a step-per-cycle timeline e.g <1 3 [3 5]>. We simply defer to a sequence and
@@ -125,19 +125,19 @@ slice_weight =  "@" a:number
   { return { weight: a} }
   
 slice_replicate = "!"a:number
-  { return { replicate: a  } }
+  { return { replicate: a } }
 
 slice_bjorklund = "(" ws p:slice_with_modifier ws comma ws s:slice_with_modifier ws comma? ws r:slice_with_modifier? ws ")"
   { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r } } } }
 
-slice_slow = "/"a:number
+slice_slow = "/"a:slice
   { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'slow' } } } }
 
-slice_fast = "*"a:number
+slice_fast = "*"a:slice
   { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'fast' } } } }
 
 slice_degrade = "?"a:number?
-  { return { operator : { type_: "degradeBy", arguments_ :{ amount:(a? a : 0.5) } } } }
+  { return { operator : { type_: "degradeBy", arguments_ :{ amount:a } } } }
 
 // a slice with an modifier applied i.e [bd@4 sd@3]@2 hh]
 slice_with_modifier = s:slice o:slice_modifier?
