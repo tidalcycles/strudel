@@ -71,6 +71,7 @@ describe('mini', () => {
   });
   it('supports replication', () => {
     expect(minS('a!3 b')).toEqual(['a: 0 - 1/4', 'a: 1/4 - 1/2', 'a: 1/2 - 3/4', 'b: 3/4 - 1']);
+    expect(minS('[<a b c>]!3 d')).toEqual(minS('<a b c> <a b c> <a b c> d'));
   });
   it('supports euclidean rhythms', () => {
     expect(minS('a(3, 8)')).toEqual(['a: 0 - 1/8', 'a: 3/8 - 1/2', 'a: 3/4 - 7/8']);
