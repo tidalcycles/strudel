@@ -8,7 +8,10 @@ type ItemOffsets = {
   topOffset: number;
 };
 
-const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[] }> = ({ headings = [] }) => {
+const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[]; currentPage: string }> = ({
+  headings = [],
+  currentPage,
+}) => {
   const toc = useRef<any>();
   const onThisPageID = 'on-this-page-heading';
   const itemOffsets = useRef<ItemOffsets[]>([]);
@@ -73,7 +76,7 @@ const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[] }> = ({
           .map((heading) => (
             <li className={`w-full`}>
               <a
-                href={`#${heading.slug}`}
+                href={`${currentPage}#${heading.slug}`}
                 onClick={onLinkClick}
                 className={`py-0.5 block cursor-pointer w-full border-l-4 border-header hover:bg-header ${
                   ['pl-4', 'pl-9', 'pl-12'][heading.depth - minDepth]
