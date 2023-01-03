@@ -21,7 +21,10 @@ const myPatterns = await getMyPatterns();
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 p-2 select-none">
     {
       Object.entries(myPatterns).map(([name, tune]) => (
-        <a class="rounded-md bg-slate-900 hover:bg-slate-700 cursor-pointer relative" href={`#${btoa(tune as string)}`}>
+        <a
+          class="rounded-md bg-slate-900 hover:bg-slate-700 cursor-pointer relative"
+          href={`./#${btoa(tune as string)}`}
+        >
           <div class="absolute w-full h-full flex justify-center items-center">
             <span class="bg-slate-800 p-2 rounded-md text-white">{name}</span>
           </div>
