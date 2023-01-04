@@ -1,0 +1,13 @@
+samples({
+  atlast: ['extra-samples/atlast/0_piano.wav', 'extra-samples/atlast/1_vocal.wav', 'extra-samples/atlast/2_hardly.wav'],
+}, 'github:yaxu/spicule/master/');
+
+s("atlast:2")
+  .chop(32)
+  .inside(4,iter("8"))
+  .room(0.3)
+  .size(0.6)
+  .jux(rev)
+  .when("[1 0 0 0]".iter(4).fast(4), x => x.slow(2).speed(0.5).crush(4))
+  .slow(4.2)
+
