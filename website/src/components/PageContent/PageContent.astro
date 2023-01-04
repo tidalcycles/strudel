@@ -12,6 +12,7 @@ type Props = {
 
 const { frontmatter, headings, githubEditUrl } = Astro.props as Props;
 const title = frontmatter.title;
+const currentPage = Astro.url.pathname;
 ---
 
 <article id="article" class="content">
@@ -19,7 +20,7 @@ const title = frontmatter.title;
     <!-- TODO: add dropdown toc on mobile -->
     <!--     <nav class="block sm:hidden mb-8">
       <span>On this Page:</span>
-      <TableOfContents client:media="(max-width: 50em)" headings={headings} />
+      <TableOfContents client:media="(max-width: 50em)" headings={headings} currentPage={currentPage} />
     </nav> -->
     <div class="prose prose-invert max-w-full pb-8">
       <slot />

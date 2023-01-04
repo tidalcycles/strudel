@@ -1,5 +1,8 @@
 ---
 import '../styles/index.css';
+
+const { BASE_URL } = import.meta.env;
+const base = BASE_URL;
 ---
 
 <!-- Global Metadata -->
@@ -7,9 +10,11 @@ import '../styles/index.css';
 <meta name="viewport" content="width=device-width" />
 <meta name="generator" content={Astro.generator} />
 
-<link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+<link rel="icon" type="image/svg+xml" href="favicon.ico" />
 
-<link rel="sitemap" href="/sitemap.xml" />
+<link rel="sitemap" href="./sitemap.xml" />
+
+<base href={base} />
 
 <!-- Preload Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,7 +22,7 @@ import '../styles/index.css';
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital@0;1&display=swap" rel="stylesheet" />
 
 <!-- Scrollable a11y code helper -->
-<script src="/make-scrollable-code-focusable.js" is:inline></script>
+<script src="./make-scrollable-code-focusable.js" is:inline></script>
 
 <!-- This is intentionally inlined to avoid FOUC -->
 <script is:inline>
