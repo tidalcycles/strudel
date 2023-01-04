@@ -7,7 +7,9 @@ type Props = {
 };
 
 const { currentPage } = Astro.props as Props;
-const currentPageMatch = currentPage.endsWith('/') ? currentPage.slice(1, -1) : currentPage.slice(1);
+const { BASE_URL } = import.meta.env;
+let currentPageMatch = currentPage.slice(BASE_URL.length, currentPage.endsWith('/') ? -1 : undefined);
+
 const langCode = 'en'; // getLanguageFromURL(currentPage);
 const sidebar = SIDEBAR[langCode];
 ---
@@ -21,7 +23,7 @@ const sidebar = SIDEBAR[langCode];
             <h2>{header}</h2>
             <ul>
               {children.map((child) => {
-                const url = Astro.site?.pathname + child.link;
+                const url = '.' + Astro.site?.pathname + child.link;
                 return (
                   <li class="">
                     <a
