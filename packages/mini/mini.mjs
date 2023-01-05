@@ -90,8 +90,6 @@ function resolveReplications(ast) {
 }
 
 export function patternifyAST(ast, code) {
-  console.log('aha');
-  console.log(ast);
   switch (ast.type_) {
     case 'pattern': {
       resolveReplications(ast);
