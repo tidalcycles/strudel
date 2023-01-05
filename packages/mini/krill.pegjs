@@ -119,32 +119,39 @@ slice = step / sub_cycle / polymeter / slow_sequence
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
-slice_modifier = slice_weight / slice_bjorklund / slice_slow / slice_fast / slice_replicate / slice_degrade
+slice_op = op_weight / op_bjorklund / op_slow / op_fast / op_replicate / op_degrade
 
-slice_weight =  "@" a:number
-  { return { weight: a} }
+op_weight =  "@" a:number
+  { return x => x.options_['weight'] = a }
   
-slice_replicate = "!"a:number
-  { return { replicate: a } }
+op_replicate = "!"a:number
+  { return x => x.options_['reps'] = a }
 
-slice_bjorklund = "(" ws p:slice_with_modifier ws comma ws s:slice_with_modifier ws comma? ws r:slice_with_modifier? ws ")"
-  { return { operator : { type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r } } } }
+op_bjorklund = "(" ws p:slice_with_ops ws comma ws s:slice_with_ops ws comma? ws r:slice_with_ops? ws ")"
+  { return x => x.options_['ops'].push({ type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r }}) }
 
-slice_slow = "/"a:slice
-  { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'slow' } } } }
+op_slow = "/"a:slice
+  { return x => x.options_['ops'].push({ type_: "stretch", arguments_ :{ amount:a, type: 'slow' }}) }
 
-slice_fast = "*"a:slice
-  { return { operator : { type_: "stretch", arguments_ :{ amount:a, type: 'fast' } } } }
+op_fast = "*"a:slice
+  { return x => x.options_['ops'].push({ type_: "stretch", arguments_ :{ amount:a, type: 'fast' }}) }
 
-slice_degrade = "?"a:number?
-  { return { operator : { type_: "degradeBy", arguments_ :{ amount:a } } } }
+op_degrade = "?"a:number?
+  { return x => x.options_['ops'].push({ type_: "degradeBy", arguments_ :{ amount:a } }) }
 
 // a slice with an modifier applied i.e [bd@4 sd@3]@2 hh]
-slice_with_modifier = s:slice o:slice_modifier?
-  { return new ElementStub(s, o);}
+slice_with_ops = s:slice ops:slice_op*
+  { const result = new ElementStub(s, {ops: [], weight: 1, reps: 1});
+    for (const op of ops) {
+      console.log("hmm");
+      op(result);
+      console.log("ha");
+    }
+    return result;
+  }
 
 // a sequence is a combination of one or more successive slices (as an array)
-sequence = s:(slice_with_modifier)+
+sequence = s:(slice_with_ops)+
   { return new PatternStub(s, 'fastcat'); }
 
 // a stack is a series of vertically aligned sequence, separated by a comma

@@ -17,83 +17,81 @@ function _nextSeed() {
 const applyOptions = (parent, code) => (pat, i) => {
   const ast = parent.source_[i];
   const options = ast.options_;
-  const operator = options?.operator;
-  if (operator) {
-    switch (operator.type_) {
-      case 'stretch': {
-        const legalTypes = ['fast', 'slow'];
-        const { type, amount } = operator.arguments_;
-        if (!legalTypes.includes(type)) {
-          throw new Error(`mini: stretch: type must be one of ${legalTypes.join('|')} but got ${type}`);
+  const ops = options?.ops;
+  if (ops) {
+    for (const op of ops) {
+      switch (op.type_) {
+        case 'stretch': {
+          const legalTypes = ['fast', 'slow'];
+          const { type, amount } = op.arguments_;
+          if (!legalTypes.includes(type)) {
+            throw new Error(`mini: stretch: type must be one of ${legalTypes.join('|')} but got ${type}`);
+          }
+          pat = strudel.reify(pat)[type](patternifyAST(amount, code));
+          break;
         }
-        return strudel.reify(pat)[type](patternifyAST(amount, code));
-      }
-      case 'bjorklund':
-        if (operator.arguments_.rotation) {
-          return pat.euclidRot(
-            patternifyAST(operator.arguments_.pulse, code),
-            patternifyAST(operator.arguments_.step, code),
-            patternifyAST(operator.arguments_.rotation, code),
-          );
-        } else {
-          return pat.euclid(
-            patternifyAST(operator.arguments_.pulse, code),
-            patternifyAST(operator.arguments_.step, code),
-          );
+        case 'bjorklund': {
+          if (op.arguments_.rotation) {
+            pat = pat.euclidRot(
+              patternifyAST(op.arguments_.pulse, code),
+              patternifyAST(op.arguments_.step, code),
+              patternifyAST(op.arguments_.rotation, code),
+            );
+          } else {
+            pat = pat.euclid(patternifyAST(op.arguments_.pulse, code), patternifyAST(op.arguments_.step, code));
+          }
+          break;
         }
-      case 'degradeBy':
-        // TODO: find out what is right here
-        // example:
-        /*
+        case 'degradeBy': {
+          // TODO: find out what is right here
+          // example:
+          /*
            stack(
              s("hh*8").degrade(),
              s("[ht*8]?")
            )
         */
-        // above example will only be in sync when _degradeBy is used...
-        // it also seems that the nextSeed will create undeterministic behaviour
-        // as it uses a global _seedState. This is probably the reason for
-        // https://github.com/tidalcycles/strudel/issues/245
+          // above example will only be in sync when _degradeBy is used...
+          // it also seems that the nextSeed will create undeterministic behaviour
+          // as it uses a global _seedState. This is probably the reason for
+          // https://github.com/tidalcycles/strudel/issues/245
 
-        // this is how it was:
-        /* 
+          // this is how it was:
+          /* 
         return strudel.reify(pat)._degradeByWith(
           strudel.rand.early(randOffset * _nextSeed()).segment(1),
-          operator.arguments_.amount ?? 0.5,
+          op.arguments_.amount ?? 0.5,
         ); 
         */
-        return strudel.reify(pat).degradeBy(operator.arguments_.amount === null ? 0.5 : operator.arguments_.amount);
+          pat = strudel.reify(pat).degradeBy(op.arguments_.amount === null ? 0.5 : op.arguments_.amount);
+          break;
+        }
+        default: {
+          console.warn(`operator "${op.type_}" not implemented`);
+        }
+      }
     }
-    console.warn(`operator "${operator.type_}" not implemented`);
   }
-  if (options?.weight) {
-    // weight is handled by parent
-    return pat;
-  }
-  // TODO: bjorklund e.g. "c3(5,8)"
-  const unimplemented = Object.keys(options || {}).filter((key) => key !== 'operator');
-  if (unimplemented.length) {
-    console.warn(
-      `option${unimplemented.length > 1 ? 's' : ''} ${unimplemented.map((o) => `"${o}"`).join(', ')} not implemented`,
-    );
-  }
+
   return pat;
 };
 
 function resolveReplications(ast) {
   ast.source_ = strudel.flatten(
     ast.source_.map((child) => {
-      const { replicate, ...options } = child.options_ || {};
-      if (!replicate) {
+      const { reps } = child.options_ || {};
+      if (!reps) {
         return [child];
       }
-      delete child.options_.replicate;
-      return Array(replicate).fill(child);
+      delete child.options_.reps;
+      return Array(reps).fill(child);
     }),
   );
 }
 
 export function patternifyAST(ast, code) {
+  console.log('aha');
+  console.log(ast);
   switch (ast.type_) {
     case 'pattern': {
       resolveReplications(ast);
