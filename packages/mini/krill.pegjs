@@ -143,9 +143,7 @@ op_degrade = "?"a:number?
 slice_with_ops = s:slice ops:slice_op*
   { const result = new ElementStub(s, {ops: [], weight: 1, reps: 1});
     for (const op of ops) {
-      console.log("hmm");
       op(result);
-      console.log("ha");
     }
     return result;
   }
