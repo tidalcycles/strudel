@@ -56,6 +56,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Signals', link: 'learn/signals' },
       { text: 'Tonal', link: 'learn/tonal' },
       { text: 'MIDI & OSC', link: 'learn/input-output' },
+      { text: 'Strudel vs Tidal', link: 'learn/strudel-vs-tidal' },
     ],
     'Technical Manual': [
       { text: 'Patterns', link: 'technical-manual/patterns' },
