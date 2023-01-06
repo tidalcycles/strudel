@@ -155,22 +155,26 @@ const generic_params = [
    *
    * @name bandf
    * @param {number | Pattern} frequency center frequency
+   * @synonyms bpf
    * @example
    * s("bd sd,hh*3").bandf("<1000 2000 4000 8000>")
    *
    */
   ['f', 'bandf', 'A pattern of numbers from 0 to 1. Sets the center frequency of the band-pass filter.'],
+  ['f', 'bpf', ''],
   // TODO: in tidal, it seems to be normalized
   /**
    * Sets the q-factor of the band-pass filter
    *
    * @name bandq
    * @param {number | Pattern} q q factor
+   * @synonyms bpq
    * @example
    * s("bd sd").bandf(500).bandq("<0 1 2 3>")
    *
    */
   ['f', 'bandq', 'a pattern of anumbers from 0 to 1. Sets the q-factor of the band-pass filter.'],
+  ['f', 'bpq', ''],
   /**
    * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.
    *
@@ -282,53 +286,50 @@ const generic_params = [
    *
    * @name cutoff
    * @param {number | Pattern} frequency audible between 0 and 20000
+   * @synonyms lpf
    * @example
    * s("bd sd,hh*3").cutoff("<4000 2000 1000 500 200 100>")
    *
    */
-  // TODO: add lpf synonym
   ['f', 'cutoff', 'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the low-pass filter.'],
+  ['f', 'lpf'],
   /**
    * Applies the cutoff frequency of the high-pass filter.
    *
    * @name hcutoff
    * @param {number | Pattern} frequency audible between 0 and 20000
+   * @synonyms hpf
    * @example
    * s("bd sd,hh*4").hcutoff("<4000 2000 1000 500 200 100>")
    *
    */
-  // TODO: add hpf synonym
-  [
-    'f',
-    'hcutoff',
-    'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the high-pass filter. Also has alias @hpf@',
-  ],
+  ['f', 'hcutoff', ''],
+  ['f', 'hpf', ''],
   /**
    * Applies the resonance of the high-pass filter.
    *
    * @name hresonance
    * @param {number | Pattern} q resonance factor between 0 and 50
+   * @synonyms hpq
    * @example
    * s("bd sd,hh*4").hcutoff(2000).hresonance("<0 10 20 30>")
    *
    */
-  [
-    'f',
-    'hresonance',
-    'a pattern of numbers from 0 to 1. Applies the resonance of the high-pass filter. Has alias @hpq@',
-  ],
+  ['f', 'hpq', ''],
+  ['f', 'hresonance', ''],
   // TODO: add hpq synonym
   /**
    * Applies the cutoff frequency of the low-pass filter.
    *
    * @name resonance
    * @param {number | Pattern} q resonance factor between 0 and 50
+   * @synonyms lpq
    * @example
    * s("bd sd,hh*4").cutoff(2000).resonance("<0 10 20 30>")
    *
    */
-  ['f', 'resonance', 'a pattern of numbers from 0 to 1. Specifies the resonance of the low-pass filter.'],
-  // TODO: add lpq synonym?
+  ['f', 'lpq'],
+  ['f', 'resonance', ''],
   /**
    * DJ filter, below 0.5 is low pass filter, above is high pass filter.
    *
