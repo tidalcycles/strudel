@@ -4,35 +4,40 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern, timeCat } from './pattern.mjs';
+import { Pattern, timeCat, register } from './pattern.mjs';
 import bjork from 'bjork';
 import { rotate } from './util.mjs';
 import Fraction from './fraction.mjs';
 
-const euclid = (pulses, steps, rotation = 0) => {
-  const b = bjork(steps, pulses);
-  if (rotation) {
-    return rotate(b, -rotation);
-  }
-  return b;
-};
-
 /**
  * Changes the structure of the pattern to form an euclidean rhythm.
- * Euclidian rhythms are rhythms obtained using the greatest common divisor of two numbers.
- * They were described in 2004 by Godfried Toussaint, a canadian computer scientist.
- * Euclidian rhythms are really useful for computer/algorithmic music because they can accurately
- * describe a large number of rhythms used in the most important music world traditions.
+ * Euclidian rhythms are rhythms obtained using the greatest common
+ * divisor of two numbers.  They were described in 2004 by Godfried
+ * Toussaint, a canadian computer scientist.  Euclidian rhythms are
+ * really useful for computer/algorithmic music because they can
+ * describe a large number of rhythms with a couple of numbers.
  *
  * @memberof Pattern
  * @name euclid
  * @param {number} pulses the number of onsets / beats
  * @param {number} steps the number of steps to fill
- * @param {number} rotation (optional) offset in steps
  * @returns Pattern
  * @example
  * // The Cuban tresillo pattern.
  * note("c3").euclid(3,8)
+ */
+
+/**
+ * Like `iter`, but has an additional parameter for 'rotating' the resulting sequence.
+ * @memberof Pattern
+ * @name euclidRot
+ * @param {number} pulses the number of onsets / beats
+ * @param {number} steps the number of steps to fill
+ * @param {number} rotation offset in steps
+ * @returns Pattern
+ * @example
+ * // A Samba rhythm necklace from Brazil
+ * note("c3").euclidRot(3,16,14)
  */
 
 /**
@@ -41,7 +46,7 @@ const euclid = (pulses, steps, rotation = 0) => {
  * @example // The archetypal pattern of the Cumbia from Colombia, as well as a Calypso rhythm from Trinidad.
  * note("c3").euclid(3,4)
  * @example // Another thirteenth century Persian rhythm by the name of Khafif-e-ramal, as well as a Rumanian folk-dance rhythm.
- * note("c3").euclid(3,5,2)
+ * note("c3").euclidRot(3,5,2)
  * @example // A Ruchenitza rhythm used in a Bulgarian folk-dance.
  * note("c3").euclid(3,7)
  * @example // The Cuban tresillo pattern.
@@ -71,34 +76,55 @@ const euclid = (pulses, steps, rotation = 0) => {
  * @example // A common West African bell pattern.
  * note("c3").euclid(7,12)
  * @example // A Samba rhythm necklace from Brazil.
- * note("c3").euclid(7,16,14)
+ * note("c3").euclidRot(7,16,14)
  * @example // A rhythm necklace used in the Central African Republic.
  * note("c3").euclid(9,16)
  * @example // A rhythm necklace of the Aka Pygmies of Central Africa.
- * note("c3").euclid(11,24,14)
+ * note("c3").euclidRot(11,24,14)
  * @example // Another rhythm necklace of the Aka Pygmies of the upper Sangha.
- * note("c3").euclid(13,24,5)
+ * note("c3").euclidRot(13,24,5)
  */
-Pattern.prototype.euclid = function (pulses, steps, rotation = 0) {
-  return this.struct(euclid(pulses, steps, rotation));
+
+const _euclidRot = function (pulses, steps, rotation) {
+  const b = bjork(steps, pulses);
+  if (rotation) {
+    return rotate(b, -rotation);
+  }
+  return b;
 };
 
+export const euclid = register('euclid', function (pulses, steps, pat) {
+  return pat.struct(_euclidRot(steps, pulses, 0));
+});
+
+export const { euclidrot, euclidRot } = register(['euclidrot', 'euclidRot'], function (pulses, steps, rotation, pat) {
+  return pat.struct(_euclidRot(steps, pulses, rotation));
+});
+
 /**
- * Similar to `.euclid`, but each pulse is held until the next pulse, so there will be no gaps.
+ * Similar to `euclid`, but each pulse is held until the next pulse,
+ * so there will be no gaps.
  * @name euclidLegato
  * @memberof Pattern
  * @example
  * n("g2").decay(.1).sustain(.3).euclidLegato(3,8)
  */
-Pattern.prototype.euclidLegato = function (pulses, steps, rotation = 0) {
-  const bin_pat = euclid(pulses, steps, rotation);
+
+const _euclidLegato = function (pulses, steps, rotation, pat) {
+  const bin_pat = _euclidRot(pulses, steps, rotation);
   const firstOne = bin_pat.indexOf(1);
   const gapless = rotate(bin_pat, firstOne)
     .join('')
     .split('1')
     .slice(1)
     .map((s) => [s.length + 1, true]);
-  return this.struct(timeCat(...gapless)).late(Fraction(firstOne).div(steps));
+  return pat.struct(timeCat(...gapless)).late(Fraction(firstOne).div(steps));
 };
 
-export default euclid;
+export const euclidLegato = register(['euclidLegato'], function (pulses, steps, pat) {
+  return _euclidLegato(pulses, steps, 0, pat);
+});
+
+export const euclidLegatoRot = register(['euclidLegatoRot'], function (pulses, steps, rotation, pat) {
+  return _euclidLegato(pulses, steps, rotation, pat);
+});

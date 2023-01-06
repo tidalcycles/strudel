@@ -9,9 +9,10 @@ type Props = {
 };
 
 const { headings, githubEditUrl } = Astro.props as Props;
+const currentPage = Astro.url.pathname;
 ---
 
 <nav aria-labelledby="grid-right">
-  <TableOfContents client:media="(min-width: 50em)" headings={headings} />
+  <TableOfContents client:media="(min-width: 50em)" headings={headings} currentPage={currentPage} />
   <MoreMenu editHref={githubEditUrl} />
 </nav>

@@ -21,6 +21,21 @@ describe('mini', () => {
     expect(minS('a b')).toEqual(['a: 0 - 1/2', 'b: 1/2 - 1']);
     expect(minS('a b c')).toEqual(['a: 0 - 1/3', 'b: 1/3 - 2/3', 'c: 2/3 - 1']);
   });
+  it('supports fast', () => {
+    expect(minS('a*3 b')).toEqual(minS('[a a a] b'));
+  });
+  it('supports patterned fast', () => {
+    expect(minS('[a*<3 5>]*2')).toEqual(minS('[a a a] [a a a a a]'));
+  });
+  it('supports slow', () => {
+    expect(minS('[a a a]/3 b')).toEqual(minS('a b'));
+  });
+  it('supports patterned slow', () => {
+    expect(minS('[a a a a a a a a]/[2 4]')).toEqual(minS('[a a] a'));
+  });
+  it('supports patterned fast', () => {
+    expect(minS('[a*<3 5>]*2')).toEqual(minS('[a a a] [a a a a a]'));
+  });
   it('supports slowcat', () => {
     expect(minV('<a b>')).toEqual(['a']);
   });
@@ -36,6 +51,16 @@ describe('mini', () => {
     expect(minS('c3 [d3 e3]')).toEqual(['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 1']);
     expect(minS('c3 [d3 [e3 f3]]')).toEqual(['c3: 0 - 1/2', 'd3: 1/2 - 3/4', 'e3: 3/4 - 7/8', 'f3: 7/8 - 1']);
   });
+  it('supports curly brackets', () => {
+    expect(minS('{a b, c d e}*3')).toEqual(minS('[a b a b a b, c d e c d e]'));
+    expect(minS('{a b, c [d e] f}*3')).toEqual(minS('[a b a b a b, c [d e] f c [d e] f]'));
+    expect(minS('{a b c, d e}*2')).toEqual(minS('[a b c a b c, d e d e d e]'));
+  });
+  it('supports curly brackets with explicit step-per-cycle', () => {
+    expect(minS('{a b, c d e}%3')).toEqual(minS('[a b a, c d e]'));
+    expect(minS('{a b, c d e}%5')).toEqual(minS('[a b a b a, c d e c d]'));
+    expect(minS('{a b, c d e}%6')).toEqual(minS('[a b a b a b, c d e c d e]'));
+  });
   it('supports commas', () => {
     expect(minS('c3,e3,g3')).toEqual(['c3: 0 - 1', 'e3: 0 - 1', 'g3: 0 - 1']);
     expect(minS('[c3,e3,g3] f3')).toEqual(['c3: 0 - 1/2', 'e3: 0 - 1/2', 'g3: 0 - 1/2', 'f3: 1/2 - 1']);
@@ -46,9 +71,13 @@ describe('mini', () => {
   });
   it('supports replication', () => {
     expect(minS('a!3 b')).toEqual(['a: 0 - 1/4', 'a: 1/4 - 1/2', 'a: 1/2 - 3/4', 'b: 3/4 - 1']);
+    expect(minS('[<a b c>]!3 d')).toEqual(minS('<a b c> <a b c> <a b c> d'));
   });
   it('supports euclidean rhythms', () => {
     expect(minS('a(3, 8)')).toEqual(['a: 0 - 1/8', 'a: 3/8 - 1/2', 'a: 3/4 - 7/8']);
+  });
+  it('supports patterning euclidean rhythms', () => {
+    expect(minS('[a(<3 5>, <8 16>)]*2')).toEqual(minS('a(3,8) a(5,16)'));
   });
   it('supports the ? operator', () => {
     expect(
