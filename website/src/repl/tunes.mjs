@@ -167,9 +167,9 @@ export const sampleDrums = `samples({
 }, 'https://loophole-letters.vercel.app/samples/tidal/')
 
 stack(
-  "<bd!3 bd(3,4,2)>".color('#F5A623'),
+  "<bd!3 bd(3,4,3)>".color('#F5A623'),
   "hh*4".color('#673AB7'),
-  "~ <sn!3 sn(3,4,1)>".color('#4CAF50')
+  "~ <sn!3 sn(3,4,2)>".color('#4CAF50')
 ).s()
 .pianoroll({fold:1})
 `;
@@ -328,7 +328,7 @@ stack(
   "<0 1 2 3>(3,8,2)"
   .scale(scale)
   .off(1/4, scaleTranspose("2,4")),
-  "<0 4>(5,8)".scale(scale).transpose(-12)
+  "<0 4>(5,8,-1)".scale(scale).transpose(-12)
 )
   .velocity(".6 .7".fast(4))
   .legato("2")
@@ -349,7 +349,7 @@ stack(
   .add("<0 1 2 1>").hush(),
   n("<0 1 2 3>(3,8,2)")
   .off(1/4, add("2,4")),
-  n("<0 4>(5,8)").sub(7)
+  n("<0 4>(5,8,-1)").sub(7)
 )
   .scale(scale)
   .gain(".6 .7".fast(4))
@@ -363,7 +363,7 @@ stack(
 
 export const echoPiano = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // by Felix Roos
-"<0 2 [4 6](3,4,1) 3*2>"
+"<0 2 [4 6](3,4,2) 3*2>"
 .scale('D minor')
 .color('salmon')
 .off(1/4, x=>x.scaleTranspose(2).color('green'))
@@ -425,7 +425,7 @@ stack(
   .scale(cat('D minor pentatonic')).note()
   .s('bell').gain(.6).delay(.2).delaytime(1/3).delayfeedback(.8),
   // bass
-  "<D2 A2 G2 F2>".euclidLegatoRot(6,8,1).note().s('bass').clip(1).gain(.8)
+  "<D2 A2 G2 F2>".euclidLegatoRot(6,8,4).note().s('bass').clip(1).gain(.8)
 )
   .slow(6)
   .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})
@@ -464,7 +464,7 @@ samples({
 }, 'https://freesound.org/data/previews/')
 
 stack(
-  "-7 0 -7 7".struct("x(5,8,2)").fast(2).sub(7)
+  "-7 0 -7 7".struct("x(5,8,1)").fast(2).sub(7)
   .scale(scales)
   .n()
   .s("sawtooth,square")
@@ -520,7 +520,7 @@ export const meltingsubmarine = `// licensed with CC BY-NC-SA 4.0 https://creati
 // by Felix Roos
 await samples('github:tidalcycles/Dirt-Samples/master/')
 stack(
-  s("bd:5,[~ <sd:1!3 sd:1(3,4,2)>],hh27(3,4)") // drums
+  s("bd:5,[~ <sd:1!3 sd:1(3,4,3)>],hh27(3,4,1)") // drums
   .speed(perlin.range(.7,.9)) // random sample speed variation
   //.hush()
   ,"<a1 b1*2 a1(3,8) e2>" // bassline
@@ -542,7 +542,7 @@ stack(
   .cutoff(500) // fixed cutoff
   .attack(1) // slowly fade in
   //.hush()
-  ,"a4 c5 <e6 a6>".struct("x(5,8)")
+  ,"a4 c5 <e6 a6>".struct("x(5,8,-1)")
   .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
   .add(perlin.range(0,.5)) // random pitch variation
   .n() // wrap in "n"
@@ -673,7 +673,7 @@ stack(
   .orbit(2).delay(.2).delaytime(".33 | .6 | .166 | .25")
   .room(1).gain(.5).mask("<0 1>/8"),
   // bell
-  note(rand.range(0,12).struct("x(5,8)").scale('g2 minor pentatonic')).s('bell').begin(.05)
+  note(rand.range(0,12).struct("x(5,8,-1)").scale('g2 minor pentatonic')).s('bell').begin(.05)
   .delay(.2).degradeBy(.4).gain(.4)
   .mask("<1 0>/8")
 ).slow(5)`;
@@ -737,9 +737,9 @@ stack(
   .rarely(x=>x.speed(".5").delay(.5))
   .end(perlin.range(0.02,.05).slow(8))
   .bank('RolandTR909').room(.5)
-  .gain("0.4,0.4(5,8)"),
+  .gain("0.4,0.4(5,8,-1)"),
   
-  note("<0 2 5 3>".scale('G1 minor')).struct("x(5,8)")
+  note("<0 2 5 3>".scale('G1 minor')).struct("x(5,8,-1)")
   .s('sawtooth').decay(.1).sustain(0),
   
   note("<G4 A4 Bb4 A4>,Bb3,D3").struct("~ x*2").s('square').clip(1)
@@ -783,7 +783,7 @@ stack(
   s("breath").room(1).shape(.6).chop(16).rev().mask("<x ~@7>")
   ,
   n("0 1").s("east").delay(.5).degradeBy(.8).speed(rand.range(.5,1.5))
-).reset("<x@7 x(5,8)>")`;
+).reset("<x@7 x(5,8,-1)>")`;
 
 export const juxUndTollerei = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // by Felix Roos
@@ -824,7 +824,7 @@ instr CoolSynth
     out(asig, asig)
 endin\`
 
-"<0 2 [4 6](3,4,1) 3*2>"
+"<0 2 [4 6](3,4,2) 3*2>"
 .off(1/4, add(2))
 .off(1/2, add(6))
 .scale('D minor')

@@ -1,13 +1,58 @@
 /*
-euclid.mjs - <short description TODO>
-Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/euclid.mjs>
+euclid.mjs - Bjorklund/Euclidean/Diaspora rhythms
+Copyright (C) 2023 Rohan Drape and strudel contributors
+
+See <https://github.com/tidalcycles/strudel/blob/main/packages/core/euclid.mjs> for authors of this file.
+
+The Bjorklund algorithm implementation is ported from the Haskell Music Theory Haskell module by Rohan Drape -
+https://rohandrape.net/?t=hmt
+
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern, timeCat, register } from './pattern.mjs';
-import bjork from 'bjork';
-import { rotate } from './util.mjs';
+import { Pattern, timeCat, register, silence } from './pattern.mjs';
+import { rotate, flatten } from './util.mjs';
 import Fraction from './fraction.mjs';
+
+const splitAt = function (index, value) {
+  return [value.slice(0, index), value.slice(index)];
+};
+
+const zipWith = (f, xs, ys) => xs.map((n, i) => f(n, ys[i]));
+
+const left = function (n, x) {
+  const [ons, offs] = n;
+  const [xs, ys] = x;
+  const [_xs, __xs] = splitAt(offs, xs);
+  return [
+    [offs, ons - offs],
+    [zipWith((a, b) => a.concat(b), _xs, ys), __xs],
+  ];
+};
+
+const right = function (n, x) {
+  const [ons, offs] = n;
+  const [xs, ys] = x;
+  const [_ys, __ys] = splitAt(ons, ys);
+  const result = [
+    [ons, offs - ons],
+    [zipWith((a, b) => a.concat(b), xs, _ys), __ys],
+  ];
+  return result;
+};
+
+const _bjork = function (n, x) {
+  const [ons, offs] = n;
+  return Math.min(ons, offs) <= 1 ? [n, x] : _bjork(...(ons > offs ? left(n, x) : right(n, x)));
+};
+
+const bjork = function (ons, steps) {
+  const offs = steps - ons;
+  const x = Array(ons).fill([1]);
+  const y = Array(offs).fill([0]);
+  const result = _bjork([ons, offs], [x, y]);
+  return flatten(result[1][0]).concat(flatten(result[1][1]));
+};
 
 /**
  * Changes the structure of the pattern to form an euclidean rhythm.
@@ -86,7 +131,7 @@ import Fraction from './fraction.mjs';
  */
 
 const _euclidRot = function (pulses, steps, rotation) {
-  const b = bjork(steps, pulses);
+  const b = bjork(pulses, steps);
   if (rotation) {
     return rotate(b, -rotation);
   }
@@ -94,11 +139,11 @@ const _euclidRot = function (pulses, steps, rotation) {
 };
 
 export const euclid = register('euclid', function (pulses, steps, pat) {
-  return pat.struct(_euclidRot(steps, pulses, 0));
+  return pat.struct(_euclidRot(pulses, steps, 0));
 });
 
 export const { euclidrot, euclidRot } = register(['euclidrot', 'euclidRot'], function (pulses, steps, rotation, pat) {
-  return pat.struct(_euclidRot(steps, pulses, rotation));
+  return pat.struct(_euclidRot(pulses, steps, rotation));
 });
 
 /**
@@ -111,14 +156,16 @@ export const { euclidrot, euclidRot } = register(['euclidrot', 'euclidRot'], fun
  */
 
 const _euclidLegato = function (pulses, steps, rotation, pat) {
+  if (pulses < 1) {
+    return silence;
+  }
   const bin_pat = _euclidRot(pulses, steps, rotation);
-  const firstOne = bin_pat.indexOf(1);
-  const gapless = rotate(bin_pat, firstOne)
+  const gapless = bin_pat
     .join('')
     .split('1')
     .slice(1)
     .map((s) => [s.length + 1, true]);
-  return pat.struct(timeCat(...gapless)).late(Fraction(firstOne).div(steps));
+  return pat.struct(timeCat(...gapless));
 };
 
 export const euclidLegato = register(['euclidLegato'], function (pulses, steps, pat) {
