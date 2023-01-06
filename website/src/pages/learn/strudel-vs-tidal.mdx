@@ -103,3 +103,44 @@ it aims to provide a standalone live coding environment that runs entirely in th
 
 Many of SuperDirt's effects have been reimplemented in Strudel, using the Web Audio API.
 You can find a [list of available effects here](./learn/effects).
+
+### Sampler
+
+Strudel's sampler supports [a subset](http://127.0.0.1:3000/learn/samples) of Superdirt's sampler.
+Also, samples are always loaded from a URL rather than from the disk, although [that might be possible in the future](https://github.com/tidalcycles/strudel/issues/118).
+
+## Evaluation
+
+The Strudel REPL does not support [block based evaluation](https://github.com/tidalcycles/strudel/issues/34) yet.
+You can use the following "workaround" to create multiple patterns that can be turned on and off:
+
+```txt
+let a = note("c a f e")
+
+let b = s("bd sd")
+
+stack(
+  a,
+  // b
+)
+```
+
+Alternatively, you could write everything as one `stack` and use `.hush()` to silence a pattern:
+
+```txt
+stack(
+  note("c a f e"),
+  s("bd sd").hush()
+)
+```
+
+Note that strudel will always use the last statement in your code as the pattern for querying
+
+## Tempo
+
+Strudels tempo is 1 cycle per second, while tidal defaults to `0.5625`.
+You can get the same tempo as tidal with:
+
+```txt
+note("c a f e").fast(.5625);
+```

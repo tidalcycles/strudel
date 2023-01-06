@@ -1,9 +1,9 @@
-h1::before,
-h2::before,
-h3::before,
-h4::before,
-h5::before,
-h6::before {
+.prose h1::before,
+.prose h2::before,
+.prose h3::before,
+.prose h4::before,
+.prose h5::before,
+.prose h6::before {
   display: block;
   content: ' ';
   margin-top: -70px;
@@ -13,12 +13,12 @@ h6::before {
   position: relative;
 }
 
-h1:hover .icon-link,
-h2:hover .icon-link,
-h3:hover .icon-link,
-h4:hover .icon-link,
-h5:hover .icon-link,
-h6:hover .icon-link,
+.prose h1:hover .icon-link,
+.prose h2:hover .icon-link,
+.prose h3:hover .icon-link,
+.prose h4:hover .icon-link,
+.prose h5:hover .icon-link,
+.prose h6:hover .icon-link,
 .icon.icon-link:hover {
   visibility: visible;
 }
