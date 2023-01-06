@@ -211,12 +211,22 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     n = 0,
     note,
     gain = 0.8,
-    cutoff,
-    resonance = 1,
-    hcutoff,
-    hresonance = 1,
-    bandf,
-    bandq = 1,
+    // low pass
+    lpf,
+    cutoff = lpf,
+    lpq = 1,
+    resonance = lpq,
+    // high pass
+    hpf,
+    hcutoff = hpf,
+    hpq = 1,
+    hresonance = hpq,
+    // band pass
+    bpf,
+    bandf = bpf,
+    bpq = 1,
+    bandq = bpq,
+    //
     coarse,
     crush,
     shape,

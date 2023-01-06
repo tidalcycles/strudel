@@ -1,0 +1,146 @@
+---
+title: Strudel vs Tidal
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Comparing Strudel and Tidal
+
+This page is dedicated to exisiting tidal users, giving an overview of all the differences between Strudel and Tidal.
+
+## Language
+
+Strudel is written in JavaScript, while Tidal is written in Haskell.
+
+### Example
+
+This difference is most obvious when looking at the syntax:
+
+```hs
+iter 4 $ every 3 (||+ n "10 20") $ (n "0 1 3") # s "triangle" # crush 4
+```
+
+One _could_ express that pattern to Strudel like so:
+
+```txt
+iter(4, every(3, add.squeeze("10 20"), n("0 1 3").s("triangle").crush(4)))
+```
+
+- The `$` operator does not exist, so the `iter` function has to wrap everything in parens.
+- Custom operators like `||+` are explicit function calls, `add.squeeze` in this case
+- The `#` operator is replaced with a chained function call `# crush 4` => `.crush(4)`
+
+Unlike Haskell, JavaScript lacks the ability to define custom infix
+operators, or change the meaning of existing ones.
+
+Before you discard Strudel as an unwieldy paren monster, look at this alternative way to write the above:
+
+```txt
+n("0 1 3").every(3, add.squeeze("10 20")).iter(4).s("triangle").crush(4)
+```
+
+By reordering calls, the parens are much less nested.
+As a general rule by thumb, you could say that everything Tidal does with `$` is reversed in Strudel:
+
+`iter 4 $ every 3 (||+ n "10 20") $ (n "0 1 3")`
+
+becomes
+
+`n("0 1 3").every(3, add.squeeze("10 20")).iter(4)`
+
+Simply put, `foo x $ bar x` becomes `bar(x).foo(x)`.
+
+### Operators
+
+The [custom operators of tidal](https://tidalcycles.org/docs/reference/pattern_structure/#all-the-operators) are normal functions in strudel:
+
+| function    | tidal  | strudel |
+| ----------- | ------ | ------- |
+| add         | \|+ n  | .add(n) |
+| subtract    | \|- n  | .sub(n) |
+| multiply    | \|\* n | .mul(n) |
+| divide      | \|\/ n | .div(n) |
+| modulo      | \|\% n | .mod(n) |
+| left values | \|\< n | .set(n) |
+
+The above list only displays the operators taking the structure comes from the `left`.
+For each of those, a `right` and `both` variant also exists.
+As this directional thinking only works with code, strudel calls these `in` / `out` / `mix`:
+
+| direction | tidal   | strudel     |
+| --------- | ------- | ----------- |
+| left      | \|+ n   | .add.in(n)  |
+| right     | +\| n   | .add.out(n) |
+| both      | \|+\| n | .add.mix(n) |
+
+Instead of `+` / `add`, you can use any of the available operators of the first list.
+
+## Function Compatibility
+
+[This issue](https://github.com/tidalcycles/strudel/issues/31) tracks which Tidal functions are implemented in Strudel.
+The list might not be 100% up to date and probably also misses some functions completely..
+Feel encouraged to search the source code for a function you're looking for.
+If you find a function that's not on the list, please tell!
+
+## Control Params
+
+As seen in the example, the `#` operator (shorthand for `|>`) is also just a function call in strudel.
+So `note "c5" # s "gtr"` becomes `note("c5").s('gtr')`.
+
+[This file](https://github.com/tidalcycles/strudel/blob/main/packages/core/controls.mjs) lists all available control params.
+Note that not all of those work in the Webaudio Output of Strudel.
+If you find a tidal control that's not on the list, please tell!
+
+## Sound
+
+Tidal is commonly paired with Superdirt / Supercollider for sound generation.
+While Strudel also has a way of [communicating with Superdirt](./learn/input-output),
+it aims to provide a standalone live coding environment that runs entirely in the browser.
+
+### Audio Effects
+
+Many of SuperDirt's effects have been reimplemented in Strudel, using the Web Audio API.
+You can find a [list of available effects here](./learn/effects).
+
+### Sampler
+
+Strudel's sampler supports [a subset](http://127.0.0.1:3000/learn/samples) of Superdirt's sampler.
+Also, samples are always loaded from a URL rather than from the disk, although [that might be possible in the future](https://github.com/tidalcycles/strudel/issues/118).
+
+## Evaluation
+
+The Strudel REPL does not support [block based evaluation](https://github.com/tidalcycles/strudel/issues/34) yet.
+You can use the following "workaround" to create multiple patterns that can be turned on and off:
+
+```txt
+let a = note("c a f e")
+
+let b = s("bd sd")
+
+stack(
+  a,
+  // b
+)
+```
+
+Alternatively, you could write everything as one `stack` and use `.hush()` to silence a pattern:
+
+```txt
+stack(
+  note("c a f e"),
+  s("bd sd").hush()
+)
+```
+
+Note that strudel will always use the last statement in your code as the pattern for querying
+
+## Tempo
+
+Strudels tempo is 1 cycle per second, while tidal defaults to `0.5625`.
+You can get the same tempo as tidal with:
+
+```txt
+note("c a f e").fast(.5625);
+```

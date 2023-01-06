@@ -155,22 +155,26 @@ const generic_params = [
    *
    * @name bandf
    * @param {number | Pattern} frequency center frequency
+   * @synonyms bpf
    * @example
    * s("bd sd,hh*3").bandf("<1000 2000 4000 8000>")
    *
    */
   ['f', 'bandf', 'A pattern of numbers from 0 to 1. Sets the center frequency of the band-pass filter.'],
+  ['f', 'bpf', ''],
   // TODO: in tidal, it seems to be normalized
   /**
    * Sets the q-factor of the band-pass filter
    *
    * @name bandq
    * @param {number | Pattern} q q factor
+   * @synonyms bpq
    * @example
    * s("bd sd").bandf(500).bandq("<0 1 2 3>")
    *
    */
   ['f', 'bandq', 'a pattern of anumbers from 0 to 1. Sets the q-factor of the band-pass filter.'],
+  ['f', 'bpq', ''],
   /**
    * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.
    *
@@ -269,7 +273,7 @@ const generic_params = [
    * @name cut
    * @param {number | Pattern} group cut group number
    * @example
-   * s("bd sax").cut(1).osc()
+   * s("rd*4").cut(1)
    *
    */
   [
@@ -282,53 +286,50 @@ const generic_params = [
    *
    * @name cutoff
    * @param {number | Pattern} frequency audible between 0 and 20000
+   * @synonyms lpf
    * @example
    * s("bd sd,hh*3").cutoff("<4000 2000 1000 500 200 100>")
    *
    */
-  // TODO: add lpf synonym
   ['f', 'cutoff', 'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the low-pass filter.'],
+  ['f', 'lpf'],
   /**
    * Applies the cutoff frequency of the high-pass filter.
    *
    * @name hcutoff
    * @param {number | Pattern} frequency audible between 0 and 20000
+   * @synonyms hpf
    * @example
    * s("bd sd,hh*4").hcutoff("<4000 2000 1000 500 200 100>")
    *
    */
-  // TODO: add hpf synonym
-  [
-    'f',
-    'hcutoff',
-    'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the high-pass filter. Also has alias @hpf@',
-  ],
+  ['f', 'hcutoff', ''],
+  ['f', 'hpf', ''],
   /**
    * Applies the resonance of the high-pass filter.
    *
    * @name hresonance
    * @param {number | Pattern} q resonance factor between 0 and 50
+   * @synonyms hpq
    * @example
    * s("bd sd,hh*4").hcutoff(2000).hresonance("<0 10 20 30>")
    *
    */
-  [
-    'f',
-    'hresonance',
-    'a pattern of numbers from 0 to 1. Applies the resonance of the high-pass filter. Has alias @hpq@',
-  ],
+  ['f', 'hpq', ''],
+  ['f', 'hresonance', ''],
   // TODO: add hpq synonym
   /**
    * Applies the cutoff frequency of the low-pass filter.
    *
    * @name resonance
    * @param {number | Pattern} q resonance factor between 0 and 50
+   * @synonyms lpq
    * @example
    * s("bd sd,hh*4").cutoff(2000).resonance("<0 10 20 30>")
    *
    */
-  ['f', 'resonance', 'a pattern of numbers from 0 to 1. Specifies the resonance of the low-pass filter.'],
-  // TODO: add lpq synonym?
+  ['f', 'lpq'],
+  ['f', 'resonance', ''],
   /**
    * DJ filter, below 0.5 is low pass filter, above is high pass filter.
    *
@@ -341,17 +342,36 @@ const generic_params = [
   ['f', 'djf', 'DJ filter, below 0.5 is low pass filter, above is high pass filter.'],
   // ['f', 'cutoffegint', ''],
   // TODO: does not seem to work
-  /*
+  /**
    * Sets the level of the delay signal.
    *
    * @name delay
    * @param {number | Pattern} level between 0 and 1
    * @example
-   * s("bd").delay("<0 .5 .75 1>").osc()
+   * s("bd").delay("<0 .25 .5 1>")
    *
    */
   ['f', 'delay', 'a pattern of numbers from 0 to 1. Sets the level of the delay signal.'],
+  /**
+   * Sets the level of the signal that is fed back into the delay.
+   * Caution: Values >= 1 will result in a signal that gets louder and louder! Don't do it
+   *
+   * @name delayfeedback
+   * @param {number | Pattern} feedback between 0 and 1
+   * @example
+   * s("bd").delay(.25).delayfeedback("<.25 .5 .75 1>").slow(2)
+   *
+   */
   ['f', 'delayfeedback', 'a pattern of numbers from 0 to 1. Sets the amount of delay feedback.'],
+  /**
+   * Sets the time of the delay effect.
+   *
+   * @name delaytime
+   * @param {number | Pattern} seconds between 0 and Infinity
+   * @example
+   * s("bd").delay(.25).delaytime("<.125 .25 .5 1>").slow(2)
+   *
+   */
   ['f', 'delaytime', 'a pattern of numbers from 0 to 1. Sets the length of the delay.'],
   /* // TODO: test
    * Specifies whether delaytime is calculated relative to cps.
@@ -504,11 +524,15 @@ const generic_params = [
   // ['f', 'ophatdecay', ''],
   // TODO: example
   /**
-   * a pattern of numbers. An `orbit` is a global parameter context for patterns. Patterns with the same orbit will share hardware output bus offset and global effects, e.g. reverb and delay. The maximum number of orbits is specified in the superdirt startup, numbers higher than maximum will wrap around.
+   * An `orbit` is a global parameter context for patterns. Patterns with the same orbit will share the same global effects.
    *
    * @name orbit
    * @param {number | Pattern} number
-   *
+   * @example
+   * stack(
+   *   s("hh*3").delay(.5).delaytime(.25).orbit(1),
+   *   s("~ sd").delay(.5).delaytime(.125).orbit(2)
+   * )
    */
   [
     'i',
@@ -590,7 +614,7 @@ const generic_params = [
    * @name room
    * @param {number | Pattern} level between 0 and 1
    * @example
-   * s("bd sd").room("<0 .2 .4 .6 .8 1>").osc()
+   * s("bd sd").room("<0 .2 .4 .6 .8 1>")
    *
    */
   ['f', 'room', 'a pattern of numbers from 0 to 1. Sets the level of reverb.'],
@@ -598,9 +622,9 @@ const generic_params = [
    * Sets the room size of the reverb, see {@link room}.
    *
    * @name size
-   * @param {number | Pattern} size between 0 and 1
+   * @param {number | Pattern} size between 0 and 10
    * @example
-   * s("bd sd").room(.8).size("<0 .2 .4 .6 .8 1>").osc()
+   * s("bd sd").room(.8).size("<0 1 2 4 8>")
    *
    */
   // TODO: find out why :
@@ -640,9 +664,9 @@ const generic_params = [
    * @name speed
    * @param {number | Pattern} speed -inf to inf, negative numbers play the sample backwards.
    * @example
-   * s("bd").speed("<1 2 4 1 -2 -4>").osc()
+   * s("bd").speed("<1 2 4 1 -2 -4>")
    * @example
-   * speed("1 1.5*2 [2 1.1]").s("sax").cut(1).osc()
+   * speed("1 1.5*2 [2 1.1]").s("piano").clip(1)
    *
    */
   [

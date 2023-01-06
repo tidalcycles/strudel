@@ -1150,14 +1150,22 @@ exports[`runs examples > example "crush" example index 0 1`] = `
 
 exports[`runs examples > example "cut" example index 0 1`] = `
 [
-  "[ 0/1 → 1/2 | s:bd cut:1 ]",
-  "[ 1/2 → 1/1 | s:sax cut:1 ]",
-  "[ 1/1 → 3/2 | s:bd cut:1 ]",
-  "[ 3/2 → 2/1 | s:sax cut:1 ]",
-  "[ 2/1 → 5/2 | s:bd cut:1 ]",
-  "[ 5/2 → 3/1 | s:sax cut:1 ]",
-  "[ 3/1 → 7/2 | s:bd cut:1 ]",
-  "[ 7/2 → 4/1 | s:sax cut:1 ]",
+  "[ 0/1 → 1/4 | s:rd cut:1 ]",
+  "[ 1/4 → 1/2 | s:rd cut:1 ]",
+  "[ 1/2 → 3/4 | s:rd cut:1 ]",
+  "[ 3/4 → 1/1 | s:rd cut:1 ]",
+  "[ 1/1 → 5/4 | s:rd cut:1 ]",
+  "[ 5/4 → 3/2 | s:rd cut:1 ]",
+  "[ 3/2 → 7/4 | s:rd cut:1 ]",
+  "[ 7/4 → 2/1 | s:rd cut:1 ]",
+  "[ 2/1 → 9/4 | s:rd cut:1 ]",
+  "[ 9/4 → 5/2 | s:rd cut:1 ]",
+  "[ 5/2 → 11/4 | s:rd cut:1 ]",
+  "[ 11/4 → 3/1 | s:rd cut:1 ]",
+  "[ 3/1 → 13/4 | s:rd cut:1 ]",
+  "[ 13/4 → 7/2 | s:rd cut:1 ]",
+  "[ 7/2 → 15/4 | s:rd cut:1 ]",
+  "[ 15/4 → 4/1 | s:rd cut:1 ]",
 ]
 `;
 
@@ -1298,6 +1306,33 @@ exports[`runs examples > example "degradeBy" example index 1 1`] = `
   "[ 29/8 → 15/4 | s:hh ]",
   "[ 15/4 → 31/8 | s:hh ]",
   "[ 31/8 → 4/1 | s:hh ]",
+]
+`;
+
+exports[`runs examples > example "delay" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | s:bd delay:0 ]",
+  "[ 1/1 → 2/1 | s:bd delay:0.25 ]",
+  "[ 2/1 → 3/1 | s:bd delay:0.5 ]",
+  "[ 3/1 → 4/1 | s:bd delay:1 ]",
+]
+`;
+
+exports[`runs examples > example "delayfeedback" example index 0 1`] = `
+[
+  "[ (0/1 → 1/1) ⇝ 2/1 | s:bd delay:0.25 delayfeedback:0.25 ]",
+  "[ 0/1 ⇜ (1/1 → 2/1) | s:bd delay:0.25 delayfeedback:0.25 ]",
+  "[ (2/1 → 3/1) ⇝ 4/1 | s:bd delay:0.25 delayfeedback:0.5 ]",
+  "[ 2/1 ⇜ (3/1 → 4/1) | s:bd delay:0.25 delayfeedback:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "delaytime" example index 0 1`] = `
+[
+  "[ (0/1 → 1/1) ⇝ 2/1 | s:bd delay:0.25 delaytime:0.125 ]",
+  "[ 0/1 ⇜ (1/1 → 2/1) | s:bd delay:0.25 delaytime:0.125 ]",
+  "[ (2/1 → 3/1) ⇝ 4/1 | s:bd delay:0.25 delaytime:0.25 ]",
+  "[ 2/1 ⇜ (3/1 → 4/1) | s:bd delay:0.25 delaytime:0.25 ]",
 ]
 `;
 
@@ -2206,6 +2241,27 @@ exports[`runs examples > example "often" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "orbit" example index 0 1`] = `
+[
+  "[ 0/1 → 1/3 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 1/3 → 2/3 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 2/3 → 1/1 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 1/1 → 4/3 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 4/3 → 5/3 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 5/3 → 2/1 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 2/1 → 7/3 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 7/3 → 8/3 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 8/3 → 3/1 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 3/1 → 10/3 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 10/3 → 11/3 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 11/3 → 4/1 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",
+  "[ 1/2 → 1/1 | s:sd delay:0.5 delaytime:0.125 orbit:2 ]",
+  "[ 3/2 → 2/1 | s:sd delay:0.5 delaytime:0.125 orbit:2 ]",
+  "[ 5/2 → 3/1 | s:sd delay:0.5 delaytime:0.125 orbit:2 ]",
+  "[ 7/2 → 4/1 | s:sd delay:0.5 delaytime:0.125 orbit:2 ]",
+]
+`;
+
 exports[`runs examples > example "pan" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | s:bd pan:0.5 ]",
@@ -2718,12 +2774,12 @@ exports[`runs examples > example "size" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | s:bd room:0.8 size:0 ]",
   "[ 1/2 → 1/1 | s:sd room:0.8 size:0 ]",
-  "[ 1/1 → 3/2 | s:bd room:0.8 size:0.2 ]",
-  "[ 3/2 → 2/1 | s:sd room:0.8 size:0.2 ]",
-  "[ 2/1 → 5/2 | s:bd room:0.8 size:0.4 ]",
-  "[ 5/2 → 3/1 | s:sd room:0.8 size:0.4 ]",
-  "[ 3/1 → 7/2 | s:bd room:0.8 size:0.6 ]",
-  "[ 7/2 → 4/1 | s:sd room:0.8 size:0.6 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.8 size:1 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.8 size:1 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.8 size:2 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.8 size:2 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.8 size:4 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.8 size:4 ]",
 ]
 `;
 
@@ -2829,26 +2885,26 @@ exports[`runs examples > example "speed" example index 0 1`] = `
 
 exports[`runs examples > example "speed" example index 1 1`] = `
 [
-  "[ 0/1 → 1/3 | speed:1 s:sax cut:1 ]",
-  "[ 1/3 → 1/2 | speed:1.5 s:sax cut:1 ]",
-  "[ 1/2 → 2/3 | speed:1.5 s:sax cut:1 ]",
-  "[ 2/3 → 5/6 | speed:2 s:sax cut:1 ]",
-  "[ 5/6 → 1/1 | speed:1.1 s:sax cut:1 ]",
-  "[ 1/1 → 4/3 | speed:1 s:sax cut:1 ]",
-  "[ 4/3 → 3/2 | speed:1.5 s:sax cut:1 ]",
-  "[ 3/2 → 5/3 | speed:1.5 s:sax cut:1 ]",
-  "[ 5/3 → 11/6 | speed:2 s:sax cut:1 ]",
-  "[ 11/6 → 2/1 | speed:1.1 s:sax cut:1 ]",
-  "[ 2/1 → 7/3 | speed:1 s:sax cut:1 ]",
-  "[ 7/3 → 5/2 | speed:1.5 s:sax cut:1 ]",
-  "[ 5/2 → 8/3 | speed:1.5 s:sax cut:1 ]",
-  "[ 8/3 → 17/6 | speed:2 s:sax cut:1 ]",
-  "[ 17/6 → 3/1 | speed:1.1 s:sax cut:1 ]",
-  "[ 3/1 → 10/3 | speed:1 s:sax cut:1 ]",
-  "[ 10/3 → 7/2 | speed:1.5 s:sax cut:1 ]",
-  "[ 7/2 → 11/3 | speed:1.5 s:sax cut:1 ]",
-  "[ 11/3 → 23/6 | speed:2 s:sax cut:1 ]",
-  "[ 23/6 → 4/1 | speed:1.1 s:sax cut:1 ]",
+  "[ 0/1 → 1/3 | speed:1 s:piano clip:1 ]",
+  "[ 1/3 → 1/2 | speed:1.5 s:piano clip:1 ]",
+  "[ 1/2 → 2/3 | speed:1.5 s:piano clip:1 ]",
+  "[ 2/3 → 5/6 | speed:2 s:piano clip:1 ]",
+  "[ 5/6 → 1/1 | speed:1.1 s:piano clip:1 ]",
+  "[ 1/1 → 4/3 | speed:1 s:piano clip:1 ]",
+  "[ 4/3 → 3/2 | speed:1.5 s:piano clip:1 ]",
+  "[ 3/2 → 5/3 | speed:1.5 s:piano clip:1 ]",
+  "[ 5/3 → 11/6 | speed:2 s:piano clip:1 ]",
+  "[ 11/6 → 2/1 | speed:1.1 s:piano clip:1 ]",
+  "[ 2/1 → 7/3 | speed:1 s:piano clip:1 ]",
+  "[ 7/3 → 5/2 | speed:1.5 s:piano clip:1 ]",
+  "[ 5/2 → 8/3 | speed:1.5 s:piano clip:1 ]",
+  "[ 8/3 → 17/6 | speed:2 s:piano clip:1 ]",
+  "[ 17/6 → 3/1 | speed:1.1 s:piano clip:1 ]",
+  "[ 3/1 → 10/3 | speed:1 s:piano clip:1 ]",
+  "[ 10/3 → 7/2 | speed:1.5 s:piano clip:1 ]",
+  "[ 7/2 → 11/3 | speed:1.5 s:piano clip:1 ]",
+  "[ 11/3 → 23/6 | speed:2 s:piano clip:1 ]",
+  "[ 23/6 → 4/1 | speed:1.1 s:piano clip:1 ]",
 ]
 `;
 
