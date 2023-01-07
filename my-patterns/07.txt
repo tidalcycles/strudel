@@ -4,7 +4,7 @@ var a = s("mt <ht:4*2 ht:4> mt rim")
 
 var b = s("sd*<2@3 2@1 1.5@4 1@1>").gain(1)
   .hcutoff(3000)
-.
+
 stack(a,
       b
      )
