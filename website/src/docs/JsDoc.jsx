@@ -2,7 +2,7 @@ import jsdoc from '../../../doc.json'; // doc.json is built with `npm run jsdoc-
 const docs = jsdoc.docs.reduce((acc, obj) => Object.assign(acc, { [obj.longname]: obj }), {});
 import { MiniRepl } from './MiniRepl';
 
-export function JsDoc({ name, h = 3 }) {
+export function JsDoc({ name, h = 3, hideDescription }) {
   const item = docs[name];
   if (!item) {
     console.warn('Not found: ' + name);
@@ -16,7 +16,7 @@ export function JsDoc({ name, h = 3 }) {
   return (
     <>
       {!!h && <CustomHeading>{item.longname}</CustomHeading>}
-      <div dangerouslySetInnerHTML={{ __html: description }} />
+      {!hideDescription && <div dangerouslySetInnerHTML={{ __html: description }} />}
       <ul>
         {item.params?.map((param, i) => (
           <li key={i}>
