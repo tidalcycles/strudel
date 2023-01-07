@@ -1,0 +1,9 @@
+var a = s("mt [ht lt] <mt [~ mt] mt> misc:1")
+  .off ("<0.25 0.125>", x => x.n(2).speed(2))
+  .fast("<2 3@2>")
+  .bank("ViscoSpaceDrum")
+  .slow(4)
+
+var b = s("[clap:2 ~ clap:6]*2").speed(1.4)
+
+stack(a,b)
