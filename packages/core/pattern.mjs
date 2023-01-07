@@ -712,7 +712,7 @@ export class Pattern {
    * @memberof Pattern
    * @example
    * s("hh*2").stack(
-   *   n("c2(3,8)")
+   *   note("c2(3,8)")
    * )
    */
   stack(...pats) {
@@ -729,7 +729,7 @@ export class Pattern {
    * @memberof Pattern
    * @example
    * s("hh*2").seq(
-   *   n("c2(3,8)")
+   *   note("c2(3,8)")
    * )
    */
   seq(...pats) {
@@ -742,7 +742,7 @@ export class Pattern {
    * @memberof Pattern
    * @example
    * s("hh*2").cat(
-   *   n("c2(3,8)")
+   *   note("c2(3,8)")
    * )
    */
   cat(...pats) {

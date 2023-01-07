@@ -1,0 +1,61 @@
+---
+title: Value Modifiers
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Value Modifiers
+
+## Notes
+
+Notes are automatically available as variables:
+
+<MiniRepl client:only="react" tune={`note(seq(d4, fs4, a4)) // note("d4 f#4 a4")`} />
+
+An important difference to the mini notation:
+For sharp notes, the letter "s" is used instead of "#", because JavaScript does not support "#" in a variable name.
+
+The above is the same as:
+
+<MiniRepl client:only="react" tune={`note(seq('d4', 'f#4', 'a4'))`} />
+
+Using strings, you can also use "#".
+
+## Alternative Syntax
+
+In the above example, we are nesting a function inside a function, which makes reading the parens a little more difficult.
+To avoid getting to many nested parens, there is an alternative syntax to add a type to a pattern:
+
+<MiniRepl client:only="react" tune={`seq(d4, fs4, a4).note()`} />
+
+You can use this with any function that declares a type (like `n`, `s`, `note`, `freq` etc), just make sure to leave the parens empty!
+
+## Pattern.add
+
+<JsDoc client:idle name="Pattern.add" h={0} />
+
+## Pattern.sub
+
+<JsDoc client:idle name="Pattern.sub" h={0} />
+
+## Pattern.mul
+
+<JsDoc client:idle name="Pattern.mul" h={0} />
+
+## Pattern.div
+
+<JsDoc client:idle name="Pattern.div" h={0} />
+
+## Pattern.round
+
+<JsDoc client:idle name="Pattern.round" h={0} />
+
+## Pattern.apply
+
+<JsDoc client:idle name="Pattern.apply" h={0} />
+
+## Pattern.range
+
+<JsDoc client:idle name="Pattern.range" h={0} />
