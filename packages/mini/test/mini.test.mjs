@@ -79,6 +79,40 @@ describe('mini', () => {
   it('supports patterning euclidean rhythms', () => {
     expect(minS('[a(<3 5>, <8 16>)]*2')).toEqual(minS('a(3,8) a(5,16)'));
   });
+  it("reproduces Toussaint's example euclidean algorithms", () => {
+    const checkEuclid = function (spec, target) {
+      expect(minS(`x(${spec[0]},${spec[1]})`)).toEqual(minS(target));
+    };
+    checkEuclid([1, 2], 'x ~');
+    checkEuclid([1, 3], 'x ~ ~');
+    checkEuclid([1, 4], 'x ~ ~ ~');
+    checkEuclid([4, 12], 'x ~ ~ x ~ ~ x ~ ~ x ~ ~');
+    checkEuclid([2, 5], 'x ~ x ~ ~');
+    // checkEuclid([3, 4], "x ~ x x"); // Toussaint is wrong..
+    checkEuclid([3, 4], 'x x x ~'); // correction
+    checkEuclid([3, 5], 'x ~ x ~ x');
+    checkEuclid([3, 7], 'x ~ x ~ x ~ ~');
+    checkEuclid([3, 8], 'x ~ ~ x ~ ~ x ~');
+    checkEuclid([4, 7], 'x ~ x ~ x ~ x');
+    checkEuclid([4, 9], 'x ~ x ~ x ~ x ~ ~');
+    checkEuclid([4, 11], 'x ~ ~ x ~ ~ x ~ ~ x ~');
+    // checkEuclid([5, 6], "x ~ x x x x"); // Toussaint is wrong..
+    checkEuclid([5, 6], 'x x x x x ~'); // correction
+    checkEuclid([5, 7], 'x ~ x x ~ x x');
+    checkEuclid([5, 8], 'x ~ x x ~ x x ~');
+    checkEuclid([5, 9], 'x ~ x ~ x ~ x ~ x');
+    checkEuclid([5, 11], 'x ~ x ~ x ~ x ~ x ~ ~');
+    checkEuclid([5, 12], 'x ~ ~ x ~ x ~ ~ x ~ x ~');
+    // checkEuclid([5, 16], "x ~ ~ x ~ ~ x ~ ~ x ~ ~ x ~ ~ ~ ~");  // Toussaint is wrong..
+    checkEuclid([5, 16], 'x ~ ~ x ~ ~ x ~ ~ x ~ ~ x ~ ~ ~'); // correction
+    // checkEuclid([7, 8], "x ~ x x x x x x"); // Toussaint is wrong..
+    checkEuclid([7, 8], 'x x x x x x x ~'); // Correction
+    checkEuclid([7, 12], 'x ~ x x ~ x ~ x x ~ x ~');
+    checkEuclid([7, 16], 'x ~ ~ x ~ x ~ x ~ ~ x ~ x ~ x ~');
+    checkEuclid([9, 16], 'x ~ x x ~ x ~ x ~ x x ~ x ~ x ~');
+    checkEuclid([11, 24], 'x ~ ~ x ~ x ~ x ~ x ~ x ~ ~ x ~ x ~ x ~ x ~ x ~');
+    checkEuclid([13, 24], 'x ~ x x ~ x ~ x ~ x ~ x ~ x x ~ x ~ x ~ x ~ x ~');
+  });
   it('supports the ? operator', () => {
     expect(
       mini('a?')
