@@ -391,7 +391,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
 
 export const webaudioOutputTrigger = (t, hap, ct, cps) => webaudioOutput(hap, t - ct, hap.duration / cps);
 
-Pattern.prototype.out = function () {
+Pattern.prototype.webaudio = function () {
   // TODO: refactor (t, hap, ct, cps) to (hap, deadline, duration) ?
   return this.onTrigger(webaudioOutputTrigger);
 };
