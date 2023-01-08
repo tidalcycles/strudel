@@ -154,6 +154,11 @@ describe('Pattern', () => {
       ).toBe(7);
     });
   });
+  describe('out()', () => {
+    it('is an alias for set.out()', () => {
+      sameFirst(sequence(1, 2).out(5, 6, 7, 8), sequence(1, 2).set.out(5, 6, 7, 8));
+    });
+  });
   describe('add()', () => {
     it('works as toplevel function', () => {
       expect(add(pure(4), pure(5)).query(st(0, 1))[0].value).toBe(9);
