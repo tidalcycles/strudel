@@ -10,16 +10,16 @@ import { JsDoc } from '../../docs/JsDoc';
 # Notes
 
 Pitches are an essential building block for music.
-In Strudel, there are three different ways to express a pitch, `note`, `n` and `freq`.
+In Strudel, pitches can be expressed as note names, note numbers or frequencies.
 Here's the same pattern written in three different ways:
 
 - `note`: letter notation, good for those who are familiar with western music theory:
 
   <MiniRepl client:idle tune={`note("a3 c#4 e4 a4")`} />
 
-- `n`: number notation, good for those who want to use recognisable pitches, but don't care about music theory:
+- `note`: number notation, good for those who want to use recognisable pitches, but don't care about music theory:
 
-  <MiniRepl client:idle tune={`n("57 61 64 69")`} />
+  <MiniRepl client:idle tune={`note("57 61 64 69")`} />
 
 - `freq`: frequency notation, good for those who want to go beyond standardised tuning systems:
 
@@ -27,28 +27,28 @@ Here's the same pattern written in three different ways:
 
 Let's look at `note`, `n` and `freq` in more detail...
 
-# `note`
+## `note` names
 
-Notes are notated with the note letter, followed by the octave number. You can notate flats with `b` and sharps with `#`.
+Notes names can be notated with the note letter, followed by the octave number. You can notate flats with `b` and sharps with `#`.
 
 <MiniRepl client:idle tune={`note("a3 c#4 e4 a4")`} />
 
 By the way, you can edit the contents of the player, and press "update" to hear your change!
 You can also press "play" on the next player without needing to stop the last one.
 
-# `n`
+## `note` numbers
 
-If you prefer, you can also use numbers with `n` instead:
+If you prefer, you can also use numbers with `note` instead:
 
-<MiniRepl client:idle tune={`n("57 61 64 69")`} />
+<MiniRepl client:idle tune={`note("57 61 64 69")`} />
 
 These numbers are interpreted as so called [MIDI numbers](https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies), where adjacent whole numbers are one 'semitone' apart.
 
 You could also write decimal numbers to get 'microtonal' pitches (in between the black and white piano notes):
 
-<MiniRepl client:idle tune={`n("74.5 75 75.5 76")`} />
+<MiniRepl client:idle tune={`note("74.5 75 75.5 76")`} />
 
-# `freq`
+## `freq`
 
 To get maximum freedom, you can also use `freq` to directly control the frequency:
 
@@ -76,13 +76,13 @@ The less distance we can hear between the frequencies!
 
 Why is this? [Human hearing operates logarithmically](https://www.audiocheck.net/soundtests_nonlinear.php).
 
-# From notes to sounds
+## From notes to sounds
 
 In this page, when we played a pattern of notes like this:
 
 <MiniRepl client:idle tune={`note("a3 c#4 e4 a4")`} />
 
-We heard a simple synthesised sound, in fact we heard a [square wave oscillator](https://en.wikipedia.org/wiki/Square_wave).
+We heard a simple synthesised sound, in fact we heard a [triangle wave oscillator](https://en.wikipedia.org/wiki/Triangle_wave).
 
 This is the default synthesiser used by Strudel, but how do we then make different sounds in Strudel?
 
