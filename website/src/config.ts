@@ -49,7 +49,6 @@ export const SIDEBAR: Sidebar = {
       { text: 'Sounds', link: 'learn/sounds' },
       { text: 'Coding syntax', link: 'learn/code' },
       { text: 'Mini-Notation', link: 'learn/mini-notation' },
-      { text: 'Signals', link: 'learn/signals' },
     ],
     'Making Sound': [
       { text: 'Samples', link: 'learn/samples' },
@@ -60,18 +59,19 @@ export const SIDEBAR: Sidebar = {
       { text: 'Introduction', link: 'functions/intro' },
       { text: 'Value Modifiers', link: 'functions/value-modifiers' },
       { text: 'Factories', link: 'learn/factories' },
+      { text: 'Signals', link: 'learn/signals' },
       { text: 'Time Modifiers', link: 'learn/time-modifiers' },
       { text: 'Conditional Modifiers', link: 'learn/conditional-modifiers' },
       { text: 'Tonal', link: 'learn/tonal' },
     ],
     More: [
+      { text: 'Patterns', link: 'technical-manual/patterns' },
+      { text: 'Pattern Alignment', link: 'technical-manual/alignment' },
       { text: 'MIDI & OSC', link: 'learn/input-output' },
       { text: 'Strudel vs Tidal', link: 'learn/strudel-vs-tidal' },
     ],
-    'Technical Manual': [
-      { text: 'Patterns', link: 'technical-manual/patterns' },
+    Development: [
       { text: 'REPL', link: 'technical-manual/repl' },
-      { text: 'Pattern Alignment', link: 'technical-manual/alignment' },
       { text: 'Docs', link: 'technical-manual/docs' },
       { text: 'Testing', link: 'technical-manual/testing' },
     ],
