@@ -12,6 +12,7 @@ function useStrudel({
   autolink = false,
   beforeEval,
   afterEval,
+  editPattern,
   onEvalError,
   onToggle,
   canvasId,
@@ -44,6 +45,7 @@ function useStrudel({
           setCode(code);
           beforeEval?.();
         },
+        editPattern: editPattern ? (pat) => editPattern(pat, id) : undefined,
         afterEval: ({ pattern: _pattern, code }) => {
           setActiveCode(code);
           setPattern(_pattern);

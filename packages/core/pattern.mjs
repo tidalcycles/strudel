@@ -712,7 +712,7 @@ export class Pattern {
    * @memberof Pattern
    * @example
    * s("hh*2").stack(
-   *   n("c2(3,8)")
+   *   note("c2(3,8)")
    * )
    */
   stack(...pats) {
@@ -729,7 +729,7 @@ export class Pattern {
    * @memberof Pattern
    * @example
    * s("hh*2").seq(
-   *   n("c2(3,8)")
+   *   note("c2(3,8)")
    * )
    */
   seq(...pats) {
@@ -742,7 +742,7 @@ export class Pattern {
    * @memberof Pattern
    * @example
    * s("hh*2").cat(
-   *   n("c2(3,8)")
+   *   note("c2(3,8)")
    * )
    */
   cat(...pats) {
@@ -776,8 +776,10 @@ export class Pattern {
     );
   }
 
-  log(func = (_, hap) => `[hap] ${hap.showWhole(true)}`) {
-    return this.onTrigger((...args) => logger(func(...args)), false);
+  log(func = (_, hap) => `[hap] ${hap.showWhole(true)}`, getData = (_, hap) => ({ hap })) {
+    return this.onTrigger((...args) => {
+      logger(func(...args), undefined, getData(...args));
+    }, false);
   }
 
   logValues(func = id) {
@@ -1045,7 +1047,12 @@ Pattern.prototype.factories = {
 
 // Elemental patterns
 
-// Nothing
+/**
+ * Does absolutely nothing..
+ * @name silence
+ * @example
+ * silence // "~"
+ */
 export const silence = new Pattern(() => []);
 
 /** A discrete value that repeats once per cycle.
@@ -1215,7 +1222,17 @@ function _sequenceCount(x) {
   }
   return [reify(x), 1];
 }
-
+/**
+ * Aligns one or more given sequences to the given number of steps per cycle.
+ *
+ * @name polymeterSteps
+ * @param  {number} steps how many items are placed in one cycle
+ * @param  {any[]} sequences one or more arrays of Patterns / values
+ * @example
+ * polymeterSteps(2, ["c", "d", "e", "f", "g", "f", "e", "d"])
+ * .note().stack(s("bd")) // 1 cycle = 1 bd = 2 notes
+ * // note("{c d e f g f e d}%2").stack(s("bd"))
+ */
 export function polymeterSteps(steps, ...args) {
   const seqs = args.map((a) => _sequenceCount(a));
   if (seqs.length == 0) {
@@ -1238,6 +1255,14 @@ export function polymeterSteps(steps, ...args) {
   return stack(...pats);
 }
 
+/**
+ * Combines the given lists of patterns with the same pulse. This will create so called polymeters when different sized sequences are used.
+ * @name polymeter
+ * @example
+ * polymeter(["c", "eb", "g"], ["c2", "g2"]).note()
+ * // "{c eb g, c2 g2}".note()
+ *
+ */
 export function polymeter(...args) {
   return polymeterSteps(0, ...args);
 }
@@ -1354,7 +1379,11 @@ export const round = register('round', function (pat) {
  * Assumes a numerical pattern. Returns a new pattern with all values set to
  * their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2`
  * replaced with `-5`.
+ * @name floor
+ * @memberof Pattern
  * @returns Pattern
+ * @example
+ * "42 42.1 42.5 43".floor().note()
  */
 export const floor = register('floor', function (pat) {
   return pat.asNumber().fmap((v) => Math.floor(v));
@@ -1364,7 +1393,11 @@ export const floor = register('floor', function (pat) {
  * Assumes a numerical pattern. Returns a new pattern with all values set to
  * their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2`
  * replaced with `-4`.
+ * @name ceil
+ * @memberof Pattern
  * @returns Pattern
+ * @example
+ * "42 42.1 42.5 43".ceil().note()
  */
 export const ceil = register('ceil', function (pat) {
   return pat.asNumber().fmap((v) => Math.ceil(v));

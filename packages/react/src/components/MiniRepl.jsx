@@ -1,6 +1,6 @@
 import { pianoroll } from '@strudel.cycles/core';
 import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useLayoutEffect, useMemo, useRef, useState, useCallback, useEffect } from 'react';
 import { useInView } from 'react-hook-inview';
 import 'tailwindcss/tailwind.css';
 import cx from '../cx';
@@ -11,6 +11,7 @@ import CodeMirror6, { flash } from './CodeMirror6';
 import { Icon } from './Icon';
 import styles from './MiniRepl.module.css';
 import './style.css';
+import { logger } from '@strudel.cycles/core';
 
 const getTime = () => getAudioContext().currentTime;
 
@@ -29,10 +30,14 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, withCa
     togglePlay,
     stop,
     canvasId,
+    id: replId,
   } = useStrudel({
     initialCode: tune,
     defaultOutput: webaudioOutput,
     getTime,
+    editPattern: (pat, id) => {
+      return pat.withContext((ctx) => ({ ...ctx, id }));
+    },
   });
 
   usePatternFrame({
@@ -86,6 +91,20 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, withCa
     }
   }, [enableKeyboard, pattern, code, evaluate, stop, view]);
 
+  const [log, setLog] = useState([]);
+  useLogger(
+    useCallback((e) => {
+      const { data } = e.detail;
+      const logId = data?.hap?.context?.id;
+      // const logId = data?.pattern?.meta?.id;
+      if (logId === replId) {
+        setLog((l) => {
+          return l.concat([e.detail]).slice(-10);
+        });
+      }
+    }, []),
+  );
+
   return (
     <div className={styles.container} ref={ref}>
       <div className={styles.header}>
@@ -114,6 +133,28 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, withCa
           }}
         ></canvas>
       )}
+      {!!log.length && (
+        <div className="sc-bg-gray-800 sc-rounded-md sc-p-2">
+          {log.map(({ message }, i) => (
+            <div key={i}>{message}</div>
+          ))}
+        </div>
+      )}
     </div>
   );
+}
+
+// TODO: dedupe
+function useLogger(onTrigger) {
+  useEvent(logger.key, onTrigger);
+}
+
+// TODO: dedupe
+function useEvent(name, onTrigger, useCapture = false) {
+  useEffect(() => {
+    document.addEventListener(name, onTrigger, useCapture);
+    return () => {
+      document.removeEventListener(name, onTrigger, useCapture);
+    };
+  }, [onTrigger]);
 }

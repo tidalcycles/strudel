@@ -1,0 +1,75 @@
+---
+title: Time Modifiers
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Time Modifiers
+
+The following functions modify a pattern temporal structure in some way.
+Some of these have equivalent operators in the Mini Notation:
+
+| function               | mini         |
+| ---------------------- | ------------ |
+| `"x".slow(2)`          | `"x/2"`      |
+| `"x".fast(2)`          | `"x*2"`      |
+| `"x".euclid(3,8)`      | `"x(3,8)"`   |
+| `"x".euclidRot(3,8,1)` | `"x(3,8,1)"` |
+
+## slow
+
+<JsDoc client:idle name="Pattern.slow" h={0} />
+
+## fast
+
+<JsDoc client:idle name="Pattern.fast" h={0} />
+
+## early
+
+<JsDoc client:idle name="Pattern.early" h={0} />
+
+## late
+
+<JsDoc client:idle name="Pattern.late" h={0} />
+
+## legato
+
+<JsDoc client:idle name="Pattern.legato" h={0} />
+
+## struct
+
+<JsDoc client:idle name="Pattern.struct" h={0} />
+
+## euclid
+
+<JsDoc client:idle name="Pattern.euclid" h={0} />
+
+### euclidRot
+
+<JsDoc client:idle name="Pattern.euclidRot" h={0} />
+
+### euclidLegato
+
+<JsDoc client:idle name="Pattern.euclidLegato" h={0} />
+
+## rev
+
+<JsDoc client:idle name="Pattern.rev" h={0} />
+
+## iter
+
+<JsDoc client:idle name="Pattern.iter" h={0} />
+
+### iterBack
+
+<JsDoc client:idle name="Pattern.iterBack" h={0} />
+
+## chunk
+
+<JsDoc client:idle name="Pattern.chunk" h={0} />
+
+### chunkBack
+
+<JsDoc client:idle name="Pattern.chunkBack" h={0} />
