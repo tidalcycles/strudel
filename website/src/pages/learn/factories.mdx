@@ -1,5 +1,5 @@
 ---
-title: Pattern Factories
+title: Pattern Constructors
 description: Strudel Tutorial
 layout: ../../layouts/MainLayout.astro
 ---
@@ -7,10 +7,10 @@ layout: ../../layouts/MainLayout.astro
 import { MiniRepl } from '../../docs/MiniRepl';
 import { JsDoc } from '../../docs/JsDoc';
 
-# Pattern Factories
+# Pattern Constructors
 
 The following functions will return a pattern.
-Most of these are also used by the Mini Notation:
+These are the equivalents used by the Mini Notation:
 
 | function                       | mini             |
 | ------------------------------ | ---------------- |
@@ -56,36 +56,3 @@ As a chained function:
 ## polymeterSteps
 
 <JsDoc client:idle name="polymeterSteps" h={0} />
-
-# Combining Patterns
-
-You can freely mix JS patterns, mini patterns and values! For example, this pattern:
-
-<MiniRepl
-  client:idle
-  tune={`cat(
-  stack(g3,b3,e4),
-  stack(a3,c3,e4),
-  stack(b3,d3,fs4),
-  stack(b3,e4,g4)
-).note()`}
-/>
-
-...is equivalent to:
-
-<MiniRepl
-  client:idle
-  tune={`cat(
-  "g3,b3,e4",
-  "a3,c3,e4",
-  "b3,d3,f#4",
-  "b3,e4,g4"
-).note()`}
-/>
-
-... as well as:
-
-<MiniRepl client:only="react" tune={`note("<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>")`} />
-
-While mini notation is almost always shorter, it only has a handful of modifiers: \* / ! @.
-When using JS patterns, there is a lot more you can do.

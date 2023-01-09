@@ -1,6 +1,5 @@
 ---
-title: Pattern Factories
-description: Strudel Tutorial
+title: Time Modifiers
 layout: ../../layouts/MainLayout.astro
 ---
 
@@ -10,6 +9,14 @@ import { JsDoc } from '../../docs/JsDoc';
 # Time Modifiers
 
 The following functions modify a pattern temporal structure in some way.
+Some of these have equivalent operators in the Mini Notation:
+
+| function               | mini         |
+| ---------------------- | ------------ |
+| `"x".slow(2)`          | `"x/2"`      |
+| `"x".fast(2)`          | `"x*2"`      |
+| `"x".euclid(3,8)`      | `"x(3,8)"`   |
+| `"x".euclidRot(3,8,1)` | `"x(3,8,1)"` |
 
 ## slow
 
@@ -39,7 +46,11 @@ The following functions modify a pattern temporal structure in some way.
 
 <JsDoc client:idle name="Pattern.euclid" h={0} />
 
-## euclidLegato
+### euclidRot
+
+<JsDoc client:idle name="Pattern.euclidRot" h={0} />
+
+### euclidLegato
 
 <JsDoc client:idle name="Pattern.euclidLegato" h={0} />
 
@@ -51,11 +62,11 @@ The following functions modify a pattern temporal structure in some way.
 
 <JsDoc client:idle name="Pattern.iter" h={0} />
 
-## iterBack
+### iterBack
 
 <JsDoc client:idle name="Pattern.iterBack" h={0} />
 
-### chunk
+## chunk
 
 <JsDoc client:idle name="Pattern.chunk" h={0} />
 

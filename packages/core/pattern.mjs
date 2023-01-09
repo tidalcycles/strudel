@@ -1215,7 +1215,17 @@ function _sequenceCount(x) {
   }
   return [reify(x), 1];
 }
-
+/**
+ * Aligns one or more given sequences to the given number of steps per cycle.
+ *
+ * @name polymeterSteps
+ * @param  {number} steps how many items are placed in one cycle
+ * @param  {any[]} sequences one or more arrays of Patterns / values
+ * @example
+ * polymeterSteps(2, ["c", "d", "e", "f", "g", "f", "e", "d"])
+ * .note().stack(s("bd")) // 1 cycle = 1 bd = 2 notes
+ * // note("{c d e f g f e d}%2").stack(s("bd"))
+ */
 export function polymeterSteps(steps, ...args) {
   const seqs = args.map((a) => _sequenceCount(a));
   if (seqs.length == 0) {
@@ -1238,6 +1248,14 @@ export function polymeterSteps(steps, ...args) {
   return stack(...pats);
 }
 
+/**
+ * Combines the given lists of patterns with the same pulse. This will create so called polymeters when different sized sequences are used.
+ * @name polymeter
+ * @example
+ * polymeter(["c", "eb", "g"], ["c2", "g2"]).note()
+ * // "{c eb g, c2 g2}".note()
+ *
+ */
 export function polymeter(...args) {
   return polymeterSteps(0, ...args);
 }

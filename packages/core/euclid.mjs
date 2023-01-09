@@ -73,7 +73,7 @@ const bjork = function (ons, steps) {
  */
 
 /**
- * Like `iter`, but has an additional parameter for 'rotating' the resulting sequence.
+ * Like `euclid`, but has an additional parameter for 'rotating' the resulting sequence.
  * @memberof Pattern
  * @name euclidRot
  * @param {number} pulses the number of onsets / beats

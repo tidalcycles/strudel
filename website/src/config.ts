@@ -55,14 +55,14 @@ export const SIDEBAR: Sidebar = {
       { text: 'Synths', link: 'learn/synths' },
       { text: 'Audio Effects', link: 'learn/effects' },
     ],
-    Functions: [
+    'Pattern Functions': [
       { text: 'Introduction', link: 'functions/intro' },
-      { text: 'Value Modifiers', link: 'functions/value-modifiers' },
-      { text: 'Factories', link: 'learn/factories' },
-      { text: 'Signals', link: 'learn/signals' },
+      { text: 'Pattern Constructors', link: 'learn/factories' },
       { text: 'Time Modifiers', link: 'learn/time-modifiers' },
+      { text: 'Value Modifiers', link: 'functions/value-modifiers' },
+      { text: 'Signals', link: 'learn/signals' },
       { text: 'Conditional Modifiers', link: 'learn/conditional-modifiers' },
-      { text: 'Tonal', link: 'learn/tonal' },
+      { text: 'Tonal Modifiers', link: 'learn/tonal' },
     ],
     More: [
       { text: 'Patterns', link: 'technical-manual/patterns' },
