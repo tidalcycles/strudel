@@ -12,6 +12,7 @@ export function repl({
   afterEval,
   getTime,
   transpiler,
+  editPattern,
   onToggle,
 }) {
   const scheduler = new Cyclist({
@@ -41,8 +42,10 @@ export function repl({
     }
     try {
       beforeEval?.({ code });
-      const { pattern } = await _evaluate(code, transpiler);
+      let { pattern } = await _evaluate(code, transpiler);
+
       logger(`[eval] code updated`);
+      pattern = editPattern?.(pattern) || pattern;
       scheduler.setPattern(pattern, autostart);
       afterEval?.({ code, pattern });
       return pattern;

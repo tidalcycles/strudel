@@ -776,8 +776,10 @@ export class Pattern {
     );
   }
 
-  log(func = (_, hap) => `[hap] ${hap.showWhole(true)}`) {
-    return this.onTrigger((...args) => logger(func(...args)), false);
+  log(func = (_, hap) => `[hap] ${hap.showWhole(true)}`, getData = (_, hap) => ({ hap })) {
+    return this.onTrigger((...args) => {
+      logger(func(...args), undefined, getData(...args));
+    }, false);
   }
 
   logValues(func = id) {
@@ -1045,7 +1047,12 @@ Pattern.prototype.factories = {
 
 // Elemental patterns
 
-// Nothing
+/**
+ * Does absolutely nothing..
+ * @name silence
+ * @example
+ * silence // "~"
+ */
 export const silence = new Pattern(() => []);
 
 /** A discrete value that repeats once per cycle.
@@ -1372,7 +1379,11 @@ export const round = register('round', function (pat) {
  * Assumes a numerical pattern. Returns a new pattern with all values set to
  * their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2`
  * replaced with `-5`.
+ * @name floor
+ * @memberof Pattern
  * @returns Pattern
+ * @example
+ * "42 42.1 42.5 43".floor().note()
  */
 export const floor = register('floor', function (pat) {
   return pat.asNumber().fmap((v) => Math.floor(v));
@@ -1382,7 +1393,11 @@ export const floor = register('floor', function (pat) {
  * Assumes a numerical pattern. Returns a new pattern with all values set to
  * their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2`
  * replaced with `-4`.
+ * @name ceil
+ * @memberof Pattern
  * @returns Pattern
+ * @example
+ * "42 42.1 42.5 43".ceil().note()
  */
 export const ceil = register('ceil', function (pat) {
   return pat.asNumber().fmap((v) => Math.ceil(v));

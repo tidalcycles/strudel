@@ -195,9 +195,14 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       hap.value = { note: hap.value };
     } */
   if (typeof hap.value !== 'object') {
-    throw new Error(
-      `hap.value ${hap.value} is not supported by webaudio output. Hint: append .note() or .s() to the end`,
+    logger(
+      `hap.value "${hap.value}" is not supported by webaudio output. Hint: append .note() or .s() to the end`,
+      'error',
     );
+    /*     throw new Error(
+      `hap.value "${hap.value}"" is not supported by webaudio output. Hint: append .note() or .s() to the end`,
+    ); */
+    return;
   }
   // calculate correct time (tone.js workaround)
   let t = ac.currentTime + deadline;
