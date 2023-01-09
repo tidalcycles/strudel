@@ -59,7 +59,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Introduction', link: 'functions/intro' },
       { text: 'Pattern Constructors', link: 'learn/factories' },
       { text: 'Time Modifiers', link: 'learn/time-modifiers' },
-      { text: 'Value Modifiers', link: 'functions/value-modifiers' },
+      { text: 'Control Parameters', link: 'functions/value-modifiers' },
       { text: 'Signals', link: 'learn/signals' },
       { text: 'Conditional Modifiers', link: 'learn/conditional-modifiers' },
       { text: 'Tonal Modifiers', link: 'learn/tonal' },
