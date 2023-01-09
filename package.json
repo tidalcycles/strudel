@@ -15,7 +15,7 @@
     "repl": "cd website && npm run dev",
     "osc": "cd packages/osc && npm run server",
     "build": "cd website && npm run build",
-    "preview": "npx serve ./out",
+    "preview": "cd website && npm run preview",
     "deploy": "NODE_DEBUG=gh-pages gh-pages -d out",
     "jsdoc": "jsdoc packages/ -c jsdoc.config.json",
     "jsdoc-json": "jsdoc packages/ --template ./node_modules/jsdoc-json --destination doc.json -c jsdoc.config.json",

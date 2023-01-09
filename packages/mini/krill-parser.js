@@ -282,9 +282,7 @@ function peg$parse(input, options) {
   var peg$f11 = function(a) { return x => x.options_['ops'].push({ type_: "degradeBy", arguments_ :{ amount:a } }) };
   var peg$f12 = function(s, ops) { const result = new ElementStub(s, {ops: [], weight: 1, reps: 1});
     for (const op of ops) {
-      console.log("hmm");
       op(result);
-      console.log("ha");
     }
     return result;
   };
