@@ -1569,6 +1569,13 @@ export const outside = register('outside', function (factor, f, pat) {
  */
 export const lastOf = register('lastOf', function (n, func, pat) {
   const pats = Array(n - 1).fill(pat);
+  
+  // It seems we have a pattern, but with a 'compose' function, let's
+  // use that
+  if ('__compose' in func) {
+    func = func.__compose;
+  }
+  
   pats.push(func(pat));
   return slowcatPrime(...pats);
 });

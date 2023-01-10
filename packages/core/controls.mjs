@@ -819,7 +819,15 @@ const _setter = (func, name) =>
   };
 
 generic_params.forEach(([type, name, description]) => {
-  controls[name] = (...pats) => _name(name, ...pats);
+  controls[name] = function (...pats) {
+    const result = _name(name, ...pats);
+
+    // Add a function for composing this control with another pattern
+    result.__compose = function (pat) {
+      return pat[name](...pats);
+    };
+    return result;
+  };
   Pattern.prototype[name] = _setter(controls[name], name);
 });
 
