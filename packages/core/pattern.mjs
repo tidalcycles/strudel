@@ -53,6 +53,10 @@ export class Pattern {
     return this.withValue(func);
   }
 
+  applyValue(func) {
+    return this.withValue((x) => x(func));
+  }
+
   appWhole(whole_func, pat_val) {
     // Assumes 'this' is a pattern of functions, and given a function to
     // resolve wholes, applies a given pattern of values to that
@@ -1303,11 +1307,11 @@ export const and = curry((a, b) => reify(b).and(a));
 export const or = curry((a, b) => reify(b).or(a));
 export const func = curry((a, b) => reify(b).func(a));
 
-export function register(name, func) {
+export function register(name, func, f_params = null) {
   if (Array.isArray(name)) {
     const result = {};
     for (const name_item of name) {
-      result[name_item] = register(name_item, func);
+      result[name_item] = register(name_item, func, f_params);
     }
     return result;
   }
@@ -1331,7 +1335,23 @@ export function register(name, func) {
       return func(...args, pat);
     };
     mapFn = curry(mapFn, null, arity - 1);
-    return right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
+
+    function app(acc, p, i) {
+      if (f_params != null && f_params.length > i + 1 && f_params[i + 1] && '__compose' in p) {
+        return acc.applyValue(p.__compose);
+      }
+      return acc.appLeft(p);
+    }
+
+    var start;
+    if (f_params != null && f_params.length > 0 && f_params[0] && '__compose' in left) {
+      start = pure(mapFn(left.__compose));
+    } else {
+      start = left.fmap(mapFn);
+    }
+
+    // Don't use applicative for patterns that have a '__compose' function
+    return right.reduce(app, start).innerJoin();
   };
 
   Pattern.prototype[name] = function (...args) {
@@ -1567,18 +1587,16 @@ export const outside = register('outside', function (factor, f, pat) {
  * @example
  * note("c3 d3 e3 g3").lastOf(4, x=>x.rev())
  */
-export const lastOf = register('lastOf', function (n, func, pat) {
-  const pats = Array(n - 1).fill(pat);
-
-  // It seems we have a pattern, but with a 'compose' function, let's
-  // use that
-  if ('__compose' in func) {
-    func = func.__compose;
-  }
-
-  pats.push(func(pat));
-  return slowcatPrime(...pats);
-});
+export const lastOf = register(
+  'lastOf',
+  function (n, func, pat) {
+    const pats = Array(n - 1).fill(pat);
+    pats.push(func(pat));
+    return slowcatPrime(...pats);
+  },
+  // second parameter is a function
+  [false, true],
+);
 
 /**
  * Applies the given function every n cycles, starting from the first cycle.
@@ -1601,11 +1619,16 @@ export const lastOf = register('lastOf', function (n, func, pat) {
  * @example
  * note("c3 d3 e3 g3").every(4, x=>x.rev())
  */
-export const { firstOf, every } = register(['firstOf', 'every'], function (n, func, pat) {
-  const pats = Array(n - 1).fill(pat);
-  pats.unshift(func(pat));
-  return slowcatPrime(...pats);
-});
+export const { firstOf, every } = register(
+  ['firstOf', 'every'],
+  function (n, func, pat) {
+    const pats = Array(n - 1).fill(pat);
+    pats.unshift(func(pat));
+    return slowcatPrime(...pats);
+  },
+  // second parameter is a function
+  [false, true],
+);
 
 /**
  * Like layer, but with a single function:
@@ -1774,9 +1797,13 @@ export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func,
   return stack(left, func(right));
 });
 
-export const jux = register('jux', function (func, pat) {
-  return pat._juxBy(1, func, pat);
-});
+export const jux = register(
+  'jux',
+  function (func, pat) {
+    return pat._juxBy(1, func, pat);
+  },
+  [true],
+);
 
 export const { stutWith, stutwith } = register(['stutWith', 'stutwith'], function (times, time, func, pat) {
   return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
