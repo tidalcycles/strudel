@@ -1,0 +1,15 @@
+var a = s("<[bd [~ sd] <mt ht> sd] !3 [bd [cb sd]]!3>")
+  .off("<1 3>".div("<16 8 16>"), x => x.mix(speed("1 2 3 [4 5]")).n("<0 1 2>"))
+  .off(0.125, x => x.mul(speed(2)))
+  .bank("ViscoSpaceDrum")
+  .jux(rev)
+  .end(0.3).room(0.3).size(0.3)
+
+var b = s("[[<bd:4> lt:7/2 ht:6/3 ~] ~] sd [~ bd:2] sd")
+  .gain(1.8).speed("[2.1,2.11]".add(perlin.mul(0.5).slow(2)))
+  .crush(3).end(0.7)
+  .bank("RolandTR909")
+
+stack(a,b)
+  .slow(1.2)
+

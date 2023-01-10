@@ -1,0 +1,4 @@
+stack(n("{4 [~ 4] ~ [5*3 ~ 3]@2, 2 ~ [3 7 ~ 5]@2}%3").s("snare_rim <snare_hi snare_low>").gain(2).speed("[2,2 [2.02|2.03]]"),
+      s("clap:1 [~ clap:0] [~ clap:3]").iter(3).speed(1.5).gain(0.4).color("green").delay(0.25).delaytime(1/12).delayfeedback(0.6),
+      n("3 2 [1 5]").s("framedrum").gain(2).speed(2)
+     ).room(saw.range(0, 2).slow(32)).size(1.5)

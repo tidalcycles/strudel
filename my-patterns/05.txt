@@ -1,0 +1,26 @@
+var isSubset = (superObj, subObj) => {
+    return Object.keys(subObj).every(ele => {
+        if (typeof subObj[ele] == 'object') {
+            return isSubset(superObj[ele], subObj[ele]);
+        }
+        return subObj[ele] === superObj[ele]
+    });
+};
+
+Pattern.prototype.match = function (o, f) {
+  return stack(this.filterValues(v => !isSubset(v,o)), f(this.filterValues(v => isSubset(v, o))));
+}
+
+x = s("bd sd [~ hh] sd [~ bd] [~ rd] rm bd*2")
+  .bank("SequentialCircuitsDrumtracks")
+  .off("1".div("[8 16]/1.2"), x => x.speed(2).gain(0.8).n(3))
+  .speed(1.5)
+  .juxBy(0.25,rev)
+  .match({s: 'rd'}, pat => pat.crush(2).end(0.1))
+
+y = s("bd:4(7,12,<0 2>)").gain(0.7).crush(3).speed(0.8).end(0.3)
+      .fast(16/12)
+
+stack(x,y)
+  .slow(2.1).when("<0!8 1!4>", x => x.speed(saw.add(1)))
+

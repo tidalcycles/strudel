@@ -1,0 +1,3 @@
+stack(n("{4 [~ 4] ~ [4 ~ 3]@2, 2 ~ [3 7 5]@2}%4").s("snare_hi").speed(1.2),
+      s("clap:1 [~ clap:0] [~ clap:3]").iter(3).speed(1.5).gain(0.4).color("green")
+     )

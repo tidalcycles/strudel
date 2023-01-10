@@ -1,0 +1,8 @@
+s("bd hh sd oh".fast(2))
+  .squeeze(n("<[0 1] 2 [0 4]>"))
+  .bank("RolandTR909")
+  .reset("1".euclidLegato("<3 2 3 5>","8"))
+  .sometimesBy("0.2", x => x.crush("3"))
+  .speed("[<1.02 1>,1.03]")
+  .when("0 0 [0|1] 0",x => x.fast(1.5).add(speed("-2")))
+  .slow(1.7)
