@@ -836,7 +836,7 @@ Pattern.prototype.collect = function () {
  * Selects indices in in stacked notes.
  * @example
  * note("<[c,eb,g]!2 [c,f,ab] [d,f,ab]>")
- * .arp("0 [0,2] 1 [0,2]").slow(2)
+ * .arpWith(haps => haps[2])
  * */
 Pattern.prototype.arpWith = function (func) {
   return this.collect()
