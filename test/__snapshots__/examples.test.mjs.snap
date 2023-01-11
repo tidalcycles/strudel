@@ -841,18 +841,10 @@ exports[`runs examples > example "arp" example index 0 1`] = `
 
 exports[`runs examples > example "arpWith" example index 0 1`] = `
 [
-  "[ 0/1 → 1/2 | note:c ]",
-  "[ 1/2 → 1/1 | note:c ]",
-  "[ 1/2 → 1/1 | note:g ]",
-  "[ 1/1 → 3/2 | note:eb ]",
-  "[ 3/2 → 2/1 | note:c ]",
-  "[ 3/2 → 2/1 | note:g ]",
-  "[ 2/1 → 5/2 | note:c ]",
-  "[ 5/2 → 3/1 | note:c ]",
-  "[ 5/2 → 3/1 | note:g ]",
-  "[ 3/1 → 7/2 | note:eb ]",
-  "[ 7/2 → 4/1 | note:c ]",
-  "[ 7/2 → 4/1 | note:g ]",
+  "[ 0/1 → 1/1 | note:g ]",
+  "[ 1/1 → 2/1 | note:g ]",
+  "[ 2/1 → 3/1 | note:ab ]",
+  "[ 3/1 → 4/1 | note:ab ]",
 ]
 `;
 
