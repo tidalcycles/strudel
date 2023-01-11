@@ -127,7 +127,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
       const [_, path] = sampleMap.split('github:');
       sampleMap = `https://raw.githubusercontent.com/${path}/strudel.json`;
       // undici fails if a patchspec has a duplicated directory separator.
-      sampleMap = sampleMap.replace("//strudel.json", "/strudel.json");
+      sampleMap = sampleMap.replace('//strudel.json', '/strudel.json');
     }
     if (typeof fetch !== 'function') {
       // not a browser
