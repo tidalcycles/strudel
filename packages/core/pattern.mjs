@@ -1010,9 +1010,6 @@ function _composeOp(a, b, func) {
   /**
    * Applies the given structure to the pattern:
    *
-   * @name struct
-   * @memberof Pattern
-   * @returns Pattern
    * @example
    * note("c3,eb3,g3")
    *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
@@ -1024,18 +1021,37 @@ function _composeOp(a, b, func) {
   Pattern.prototype.structAll = function (...args) {
     return this.keep.out(...args);
   };
+  /**
+   * Returns silence when mask is 0 or "~"
+   *
+   * @example
+   * note("c [eb,g] d [eb,g]").mask("<1 [0 1]>").slow(2)
+   */
   Pattern.prototype.mask = function (...args) {
     return this.keepif.in(...args);
   };
   Pattern.prototype.maskAll = function (...args) {
     return this.keep.in(...args);
   };
+  /**
+   * Resets the pattern to the start of the cycle for each onset of the reset pattern.
+   *
+   * @example
+   * s("<bd lt> sd, hh*4").reset("<x@3 x(3,8)>")
+   */
   Pattern.prototype.reset = function (...args) {
     return this.keepif.trig(...args);
   };
   Pattern.prototype.resetAll = function (...args) {
     return this.keep.trig(...args);
   };
+  /**
+   * Restarts the pattern for each onset of the restart pattern.
+   * While reset will only reset the current cycle, restart will start from cycle 0.
+   *
+   * @example
+   * s("<bd lt> sd, hh*4").restart("<x@3 x(3,8)>")
+   */
   Pattern.prototype.restart = function (...args) {
     return this.keepif.trigzero(...args);
   };
@@ -1049,6 +1065,7 @@ export const polyrhythm = stack;
 export const pr = stack;
 
 // methods that create patterns, which are added to patternified Pattern methods
+// TODO: remove? this is only used in old transpiler (shapeshifter)
 Pattern.prototype.factories = {
   pure,
   stack,
@@ -1118,6 +1135,7 @@ export function reify(thing) {
 /** The given items are played at the same time at the same length.
  *
  * @return {Pattern}
+ * @synonyms polyrhythm, pr
  * @example
  * stack(g3, b3, [e4, d4]).note() // "g3,b3,[e4,d4]".note()
  */
@@ -1277,7 +1295,8 @@ export function polymeterSteps(steps, ...args) {
 
 /**
  * Combines the given lists of patterns with the same pulse. This will create so called polymeters when different sized sequences are used.
- * @name polymeter
+ * @name polymeters
+ * @synonyms pm
  * @example
  * polymeter(["c", "eb", "g"], ["c2", "g2"]).note()
  * // "{c eb g, c2 g2}".note()
@@ -1455,23 +1474,27 @@ export const range = register('range', function (min, max, pat) {
 });
 
 /**
- * Assumes a numerical pattern, containing unipolar values in the range 0 ..
- * 1. Returns a new pattern with values scaled to the given min/max range,
+ * Assumes a numerical pattern, containing unipolar values in the range 0 .. 1
+ * Returns a new pattern with values scaled to the given min/max range,
  * following an exponential curve.
- * @param {Number} min
- * @param {Number} max
+ * @name rangex
+ * @memberof Pattern
  * @returns Pattern
+ * @example
+ * s("bd sd,hh*4").cutoff(sine.rangex(500,2000).slow(4))
  */
 export const rangex = register('rangex', function (min, max, pat) {
   return pat._range(Math.log(min), Math.log(max)).fmap(Math.exp);
 });
 
 /**
- * Assumes a numerical pattern, containing bipolar values in the range -1 ..
- * 1. Returns a new pattern with values scaled to the given min/max range.
- * @param {Number} min
- * @param {Number} max
+ * Assumes a numerical pattern, containing bipolar values in the range -1 .. 1
+ * Returns a new pattern with values scaled to the given min/max range.
+ * @name range2
+ * @memberof Pattern
  * @returns Pattern
+ * @example
+ * s("bd sd,hh*4").cutoff(sine2.range2(500,2000).slow(4))
  */
 export const range2 = register('range2', function (min, max, pat) {
   return pat.fromBipolar()._range(min, max);
