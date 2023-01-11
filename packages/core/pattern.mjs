@@ -1569,13 +1569,21 @@ export const { slow, sparsity } = register(['slow', 'sparsity'], function (facto
 
 // Should these really be in alphabetical order? a shame to split
 // fast/slow, inside/outside..
-export const inside = register('inside', function (factor, f, pat) {
-  return f(pat._slow(factor))._fast(factor);
-});
+export const inside = register(
+  'inside',
+  function (factor, f, pat) {
+    return f(pat._slow(factor))._fast(factor);
+  },
+  [false, true],
+);
 
-export const outside = register('outside', function (factor, f, pat) {
-  return f(pat._fast(factor))._slow(factor);
-});
+export const outside = register(
+  'outside',
+  function (factor, f, pat) {
+    return f(pat._fast(factor))._slow(factor);
+  },
+  [false, true],
+);
 
 /**
  * Applies the given function every n cycles, starting from the last cycle.
@@ -1637,9 +1645,13 @@ export const { firstOf, every } = register(
  * @example
  * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4")).note()
  */
-export const apply = register('apply', function (func, pat) {
-  return func(pat);
-});
+export const apply = register(
+  'apply',
+  function (func, pat) {
+    return func(pat);
+  },
+  [true],
+);
 
 // cpm = cycles per minute
 // TODO - global clock
@@ -1719,9 +1731,13 @@ export const { invert, inv } = register(['invert', 'inv'], function (pat) {
  * @example
  * "c3 eb3 g3".when("<0 1>/2", x=>x.sub(5)).note()
  */
-export const when = register('when', function (on, func, pat) {
-  return on ? func(pat) : pat;
-});
+export const when = register(
+  'when',
+  function (on, func, pat) {
+    return on ? func(pat) : pat;
+  },
+  [false, true],
+);
 
 /**
  * Superimposes the function result on top of the original pattern, delayed by the given time.
@@ -1733,9 +1749,13 @@ export const when = register('when', function (on, func, pat) {
  * @example
  * "c3 eb3 g3".off(1/8, x=>x.add(7)).note()
  */
-export const off = register('off', function (time_pat, func, pat) {
-  return stack(pat, func(pat.late(time_pat)));
-});
+export const off = register(
+  'off',
+  function (time_pat, func, pat) {
+    return stack(pat, func(pat.late(time_pat)));
+  },
+  [false, true],
+);
 
 /**
  * Returns a new pattern where every other cycle is played once, twice as
@@ -1783,19 +1803,23 @@ export const palindrome = register('palindrome', function (pat) {
   return pat.every(2, rev);
 });
 
-export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func, pat) {
-  by /= 2;
-  const elem_or = function (dict, key, dflt) {
-    if (key in dict) {
-      return dict[key];
-    }
-    return dflt;
-  };
-  const left = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) - by }));
-  const right = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by }));
+export const { juxBy, juxby } = register(
+  ['juxBy', 'juxby'],
+  function (by, func, pat) {
+    by /= 2;
+    const elem_or = function (dict, key, dflt) {
+      if (key in dict) {
+        return dict[key];
+      }
+      return dflt;
+    };
+    const left = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) - by }));
+    const right = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by }));
 
-  return stack(left, func(right));
-});
+    return stack(left, func(right));
+  },
+  [false, true],
+);
 
 export const jux = register(
   'jux',
@@ -1805,9 +1829,13 @@ export const jux = register(
   [true],
 );
 
-export const { stutWith, stutwith } = register(['stutWith', 'stutwith'], function (times, time, func, pat) {
-  return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
-});
+export const { stutWith, stutwith } = register(
+  ['stutWith', 'stutwith'],
+  function (times, time, func, pat) {
+    return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
+  },
+  [false, false, true],
+);
 
 export const stut = register('stut', function (times, feedback, time, pat) {
   return pat._stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
@@ -1826,9 +1854,13 @@ export const stut = register('stut', function (times, feedback, time, pat) {
  * .echoWith(4, 1/8, (p,n) => p.add(n*2))
  * .scale('C minor').note().legato(.2)
  */
-export const { echoWith, echowith } = register(['echoWith', 'echowith'], function (times, time, func, pat) {
-  return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
-});
+export const { echoWith, echowith } = register(
+  ['echoWith', 'echowith'],
+  function (times, time, func, pat) {
+    return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
+  },
+  [false, false, true],
+);
 
 /**
  * Superimpose and offset multiple times, gradually decreasing the velocity
@@ -1894,9 +1926,13 @@ const _chunk = function (n, func, pat, back = false) {
   return pat.when(binary_pat, func);
 };
 
-export const chunk = register('chunk', function (n, func, pat) {
-  return _chunk(n, func, pat, false);
-});
+export const chunk = register(
+  'chunk',
+  function (n, func, pat) {
+    return _chunk(n, func, pat, false);
+  },
+  [false, true],
+);
 
 /**
  * Like `chunk`, but cycles through the parts in reverse order. Known as chunk' in tidalcycles
@@ -1906,9 +1942,13 @@ export const chunk = register('chunk', function (n, func, pat) {
  * @example
  * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note()
  */
-export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], function (n, func, pat) {
-  return _chunk(n, func, pat, true);
-});
+export const { chunkBack, chunkback } = register(
+  ['chunkBack', 'chunkback'],
+  function (n, func, pat) {
+    return _chunk(n, func, pat, true);
+  },
+  [false, true],
+);
 
 // TODO - redefine elsewhere in terms of mask
 export const bypass = register('bypass', function (on, pat) {
