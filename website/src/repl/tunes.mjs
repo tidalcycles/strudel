@@ -857,7 +857,7 @@ export const arpoon = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.
 await samples('github:tidalcycles/Dirt-Samples/master')
 
 "<<Am7 C^7> C7 F^7 [Fm7 E7b9]>".voicings('lefthand')
-  .arp("[0,3] 2 [1,3] 2".fast(3)).legato(2)
+  .arp("[0,3] 2 [1,3] 2".fast(3).lastOf(4, fast(2))).legato(2)
   .add(perlin.range(0,0.2)).sub("<0 -12>/8")
   .note().cutoff(perlin.range(500,4000)).resonance(12)
   .gain("<.5 .8>*16")
@@ -867,5 +867,5 @@ await samples('github:tidalcycles/Dirt-Samples/master')
   .s('piano').clip(1)
   .stack("<<A1 C2>!2 F2 [F2 E2]>".add.out("0 -5".fast(2)).add("0,.12").note().s('sawtooth').clip(1).cutoff(300))
   .slow(4)
-  .stack(s("bd*4, [~ [hh hh? hh?]]*2,~ [sd ~ [sd:2? bd?]]").arp("0|1").bank('RolandTR909').gain(.5).slow(2))
+  .stack(s("bd*4, [~ [hh hh? hh?]]*2,~ [sd ~ [sd:2? bd?]]").bank('RolandTR909').gain(.5).slow(2))
 `;

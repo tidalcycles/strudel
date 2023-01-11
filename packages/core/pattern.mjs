@@ -735,6 +735,7 @@ export class Pattern {
    * Appends the given pattern(s) to the current pattern. Synonyms: .sequence .fastcat
    * @name seq
    * @memberof Pattern
+   * @synonyms sequence, fastcat
    * @example
    * s("hh*2").seq(
    *   note("c2(3,8)")
@@ -748,6 +749,7 @@ export class Pattern {
    * Appends the given pattern(s) to the next cycle. Synonym: .slowcat
    * @name cat
    * @memberof Pattern
+   * @synonyms slowcat
    * @example
    * s("hh*2").cat(
    *   note("c2(3,8)")
@@ -830,15 +832,25 @@ Pattern.prototype.collect = function () {
   );
 };
 
-// applies func to each array of congruent haps
+/**
+ * Selects indices in in stacked notes.
+ * @example
+ * note("<[c,eb,g]!2 [c,f,ab] [d,f,ab]>")
+ * .arp("0 [0,2] 1 [0,2]").slow(2)
+ * */
 Pattern.prototype.arpWith = function (func) {
   return this.collect()
     .fmap((v) => reify(func(v)))
-    .squeezeJoin()
+    .innerJoin()
     .withHap((h) => new Hap(h.whole, h.part, h.value.value, h.combineContext(h.value)));
 };
 
-// applies pattern of indices to each array of congruent haps
+/**
+ * Selects indices in in stacked notes.
+ * @example
+ * note("<[c,eb,g]!2 [c,f,ab] [d,f,ab]>")
+ * .arp("0 [0,2] 1 [0,2]").slow(2)
+ * */
 Pattern.prototype.arp = function (pat) {
   return this.arpWith((haps) => pat.fmap((i) => haps[i % haps.length]));
 };
