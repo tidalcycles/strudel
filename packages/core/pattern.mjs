@@ -39,8 +39,11 @@ export class Pattern {
   /**
    * Returns a new pattern, with the function applied to the value of
    * each hap. It has the alias {@link Pattern#fmap}.
-   * @param {Function} func
+   * @synonyms fmap
+   * @param {Function} func to to apply to the value
    * @returns Pattern
+   * @example
+   * "0 1 2".withValue(v => v + 10).log()
    */
   withValue(func) {
     return new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
@@ -53,10 +56,15 @@ export class Pattern {
     return this.withValue(func);
   }
 
+  /**
+   * Assumes 'this' is a pattern of functions, and given a function to
+   * resolve wholes, applies a given pattern of values to that
+   * pattern of functions.
+   * @param {Function} whole_func
+   * @param {Function} func
+   * @returns Pattern
+   */
   appWhole(whole_func, pat_val) {
-    // Assumes 'this' is a pattern of functions, and given a function to
-    // resolve wholes, applies a given pattern of values to that
-    // pattern of functions.
     const pat_func = this;
     const query = function (state) {
       const hap_funcs = pat_func.query(state);
