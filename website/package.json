@@ -37,6 +37,8 @@
     "tailwindcss": "^3.2.4"
   },
   "devDependencies": {
-    "html-escaper": "^3.0.3"
+    "audiobuffer-to-wav": "^1.0.0",
+    "html-escaper": "^3.0.3",
+    "node-web-audio-api": "^0.5.0"
   }
 }
