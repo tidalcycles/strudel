@@ -1336,6 +1336,8 @@ export function register(name, func, f_params = null) {
     };
     mapFn = curry(mapFn, null, arity - 1);
 
+    // Don't use applicative for arguments that a) have a '__compose' function and b) are
+    // marked as being a higher order function parameter
     function app(acc, p, i) {
       if (f_params != null && f_params.length > i + 1 && f_params[i + 1] && '__compose' in p) {
         return acc.applyValue(p.__compose);
@@ -1344,13 +1346,13 @@ export function register(name, func, f_params = null) {
     }
 
     var start;
+    // Do the same check for the first parameter.. a bit repetitive
     if (f_params != null && f_params.length > 0 && f_params[0] && '__compose' in left) {
       start = pure(mapFn(left.__compose));
     } else {
       start = left.fmap(mapFn);
     }
 
-    // Don't use applicative for patterns that have a '__compose' function
     return right.reduce(app, start).innerJoin();
   };
 
@@ -1363,7 +1365,19 @@ export function register(name, func, f_params = null) {
     } else if (arity !== args.length + 1) {
       throw new Error(`.${name}() expects ${arity - 1} inputs but got ${args.length}.`);
     }
-    return pfunc(...args, this);
+    const result = pfunc(...args, this);
+
+    // speed(2,3).__compose(pat) = pat.speed(2,3)
+    // and so
+    // speed(2,3).fast(2).__compose(pat) = pat.speed(2,3).fast(2)
+    if ('__compose' in this) {
+      const pata = this;
+      result.__compose = function (patb) {
+        return pata.__compose(patb)[name](...args);
+      };
+    }
+
+    return result;
   };
 
   if (arity > 1) {
