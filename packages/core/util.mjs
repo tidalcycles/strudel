@@ -147,7 +147,16 @@ export function curry(func, overload, arity = func.length) {
       return func.apply(this, args);
     } else {
       const partial = function (...args2) {
-        return curried.apply(this, args.concat(args2));
+        const result = curried.apply(this, args.concat(args2));
+        if (args.length == arity - 1) {
+          // The penultimate arg.. so add some composition magic
+          // TODO - To make this useful, we also need to add stub functions for every pattern method to
+          // do the actual composing
+          result.__compose = function (pat) {
+            return result(pat);
+          };
+        }
+        return result;
       };
       if (overload) {
         overload(partial, args);
