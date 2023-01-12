@@ -687,6 +687,7 @@ export class Pattern {
    * Layers the result of the given function(s). Like {@link Pattern.superimpose}, but without the original pattern:
    * @name layer
    * @memberof Pattern
+   * @synonyms apply
    * @returns Pattern
    * @example
    * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
@@ -1503,8 +1504,16 @@ export const range2 = register('range2', function (min, max, pat) {
 //////////////////////////////////////////////////////////////////////
 // Structural and temporal transformations
 
-// Compress each cycle into the given timespan, leaving a gap
+/** Compress each cycle into the given timespan, leaving a gap
+ * @example
+ * cat(
+ *   s("bd sd").compress(.25,.75),
+ *   s("~ bd sd ~")
+ * )
+ */
 export const compress = register('compress', function (b, e, pat) {
+  b = Fraction(b);
+  e = Fraction(e);
   if (b.gt(e) || b.gt(1) || e.gt(1) || b.lt(0) || e.lt(0)) {
     return silence;
   }
@@ -1515,6 +1524,13 @@ export const { compressSpan, compressspan } = register(['compressSpan', 'compres
   return pat._compress(span.begin, span.end);
 });
 
+/**
+ * speeds up a pattern like fast, but rather than it playing multiple times as fast would it instead leaves a gap in the remaining space of the cycle. For example, the following will play the sound pattern "bd sn" only once but compressed into the first half of the cycle, i.e. twice as fast.
+ * @name fastGap
+ * @synonyms fastgap
+ * @example
+ * s("bd sd").fastGap(2)
+ */
 export const { fastGap, fastgap } = register(['fastGap', 'fastgap'], function (factor, pat) {
   // A bit fiddly, to drop zero-width queries at the start of the next cycle
   const qf = function (span) {
@@ -1545,10 +1561,14 @@ export const { fastGap, fastgap } = register(['fastGap', 'fastgap'], function (f
   return pat.withQuerySpanMaybe(qf).withHap(ef).splitQueries();
 });
 
-// Similar to compress, but doesn't leave gaps, and the 'focus' can be
-// bigger than a cycle
-
+/**
+ * Similar to compress, but doesn't leave gaps, and the 'focus' can be bigger than a cycle
+ * @example
+ * s("bd hh sd hh").focus(1/4, 3/4)
+ */
 export const focus = register('focus', function (b, e, pat) {
+  b = Fraction(b);
+  e = Fraction(e);
   return pat._fast(Fraction(1).div(e.sub(b))).late(b.cyclePos());
 });
 
@@ -1556,6 +1576,10 @@ export const { focusSpan, focusspan } = register(['focusSpan', 'focusspan'], fun
   return pat._focus(span.begin, span.end);
 });
 
+/** The ply function repeats each event the given number of times.
+ * @example
+ * s("bd ~ sd cp").ply("<1 2 3>")
+ */
 export const ply = register('ply', function (factor, pat) {
   return pat.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
 });
@@ -1564,6 +1588,7 @@ export const ply = register('ply', function (factor, pat) {
  * Speed up a pattern by the given factor. Used by "*" in mini notation.
  *
  * @name fast
+ * @synonyms density
  * @memberof Pattern
  * @param {number | Pattern} factor speed up factor
  * @returns Pattern
@@ -1580,6 +1605,7 @@ export const { fast, density } = register(['fast', 'density'], function (factor,
  * Slow down a pattern over the given number of cycles. Like the "/" operator in mini notation.
  *
  * @name slow
+ * @synonyms sparsity
  * @memberof Pattern
  * @param {number | Pattern} factor slow down factor
  * @returns Pattern
@@ -1590,12 +1616,22 @@ export const { slow, sparsity } = register(['slow', 'sparsity'], function (facto
   return pat._fast(Fraction(1).div(factor));
 });
 
-// Should these really be in alphabetical order? a shame to split
-// fast/slow, inside/outside..
+/**
+ * Carries out an operation 'inside' a cycle.
+ * @example
+ * "0 1 2 3 4 3 2 1".inside(4, rev).scale('C major').note()
+ * // "0 1 2 3 4 3 2 1".slow(4).rev().fast(4).scale('C major').note()
+ */
 export const inside = register('inside', function (factor, f, pat) {
   return f(pat._slow(factor))._fast(factor);
 });
 
+/**
+ * Carries out an operation 'outside' a cycle.
+ * @example
+ * "<[0 1] 2 [3 4] 5>".outside(4, rev).scale('C major').note()
+ * // "<[0 1] 2 [3 4] 5>".fast(4).rev().slow(4).scale('C major').note()
+ */
 export const outside = register('outside', function (factor, f, pat) {
   return f(pat._fast(factor))._slow(factor);
 });
@@ -1650,11 +1686,16 @@ export const { firstOf, every } = register(['firstOf', 'every'], function (n, fu
  * @example
  * "<c3 eb3 g3>".scale('C minor').apply(scaleTranspose("0,2,4")).note()
  */
+// TODO: remove or dedupe with layer?
 export const apply = register('apply', function (func, pat) {
   return func(pat);
 });
 
-// cpm = cycles per minute
+/**
+ * Plays the pattern at the given cycles per minute.
+ * @example
+ * s("<bd sd>,hh*2").cpm(90) // = 90 bpm
+ */
 // TODO - global clock
 export const cpm = register('cpm', function (cpm, pat) {
   return pat._fast(cpm / 60);
@@ -1690,6 +1731,13 @@ export const late = register('late', function (offset, pat) {
   return pat._early(Fraction(0).sub(offset));
 });
 
+/**
+ * Plays a portion of a pattern, specified by the beginning and end of a time span. The new resulting pattern is played over the time period of the original pattern:
+ *
+ * @example
+ * s("bd*2 hh*3 [sd bd]*2 perc").zoom(0.25, 0.75)
+ * // s("hh*3 [sd bd]*2") // equivalent
+ */
 export const zoom = register('zoom', function (s, e, pat) {
   e = Fraction(e);
   s = Fraction(s);
