@@ -1,0 +1,265 @@
+---
+title: Internals
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Internal Functions
+
+These functions are more low level, probably not needed by the live coder.
+
+# Haskell-style functor, applicative and monadic operations
+
+## withValue
+
+<JsDoc client:idle name="Pattern#withValue" h={0} />
+
+## appWhole
+
+<JsDoc client:idle name="Pattern#appWhole" h={0} />
+
+## appBoth
+
+<JsDoc client:idle name="Pattern#appBoth" h={0} />
+
+## appLeft
+
+<JsDoc client:idle name="Pattern#appLeft" h={0} />
+
+## appRight
+
+<JsDoc client:idle name="Pattern#appRight" h={0} />
+
+## bindWhole
+
+<JsDoc client:idle name="Pattern#bindWhole" h={0} />
+
+## bind
+
+<JsDoc client:idle name="Pattern#bind" h={0} />
+
+## join
+
+<JsDoc client:idle name="Pattern#join" h={0} />
+
+## outerBind
+
+<JsDoc client:idle name="Pattern#outerBind" h={0} />
+
+## outerJoin
+
+<JsDoc client:idle name="Pattern#outerJoin" h={0} />
+
+## innerBind
+
+<JsDoc client:idle name="Pattern#innerBind" h={0} />
+
+## innerJoin
+
+<JsDoc client:idle name="Pattern#innerJoin" h={0} />
+
+## trigJoin
+
+<JsDoc client:idle name="Pattern#trigJoin" h={0} />
+
+## trigzeroJoin
+
+<JsDoc client:idle name="Pattern#trigzeroJoin" h={0} />
+
+## squeezeJoin
+
+<JsDoc client:idle name="Pattern#squeezeJoin" h={0} />
+
+## squeezeBind
+
+<JsDoc client:idle name="Pattern#squeezeBind" h={0} />
+
+# Utility methods mainly for internal use
+
+## queryArc
+
+<JsDoc client:idle name="Pattern#queryArc" h={0} />
+
+## splitQueries
+
+<JsDoc client:idle name="Pattern#splitQueries" h={0} />
+
+## withQuerySpan
+
+<JsDoc client:idle name="Pattern#withQuerySpan" h={0} />
+
+## withQuerySpanMaybe
+
+<JsDoc client:idle name="Pattern#withQuerySpanMaybe" h={0} />
+
+## withQueryTime
+
+<JsDoc client:idle name="Pattern#withQueryTime" h={0} />
+
+## withHapSpan
+
+<JsDoc client:idle name="Pattern#withHapSpan" h={0} />
+
+## withHapTime
+
+<JsDoc client:idle name="Pattern#withHapTime" h={0} />
+
+## withHaps
+
+<JsDoc client:idle name="Pattern#withHaps" h={0} />
+
+## withHap
+
+<JsDoc client:idle name="Pattern#withHap" h={0} />
+
+## setContext
+
+<JsDoc client:idle name="Pattern#setContext" h={0} />
+
+## withContext
+
+<JsDoc client:idle name="Pattern#setContext" h={0} />
+
+## stripContext
+
+<JsDoc client:idle name="Pattern#stripContext" h={0} />
+
+## withLocation
+
+<JsDoc client:idle name="Pattern#withLocation" h={0} />
+
+## withMiniLocation
+
+<JsDoc client:idle name="Pattern#withMiniLocation" h={0} />
+
+## filterHaps
+
+<JsDoc client:idle name="Pattern#filterHaps" h={0} />
+
+## filterValues
+
+<JsDoc client:idle name="Pattern#filterValues" h={0} />
+
+## removeUndefineds
+
+<JsDoc client:idle name="Pattern#filterValues" h={0} />
+
+## onsetsOnly
+
+<JsDoc client:idle name="Pattern#onsetsOnly" h={0} />
+
+## discreteOnly
+
+<JsDoc client:idle name="Pattern#discreteOnly" h={0} />
+
+## defragmentHaps
+
+<JsDoc client:idle name="Pattern#defragmentHaps" h={0} />
+
+## firstCycle
+
+<JsDoc client:idle name="Pattern#firstCycle" h={0} />
+
+## firstCycleValues
+
+<JsDoc client:idle name="Pattern#firstCycleValues" h={0} />
+
+## showFirstCycle
+
+<JsDoc client:idle name="Pattern#showFirstCycle" h={0} />
+
+## sortHapsByPart
+
+<JsDoc client:idle name="Pattern#sortHapsByPart" h={0} />
+
+## asNumber
+
+<JsDoc client:idle name="Pattern#sortHapsByPart" h={0} />
+
+# Operators
+
+- \_opIn
+- \_opOut
+- \_opMix
+- \_opSqueeze
+- \_opSqueezeOut
+- \_opTrig
+- \_opTrigzero
+
+# Other
+
+## onTrigger
+
+<JsDoc client:idle name="Pattern#onTrigger" h={0} />
+
+## log
+
+<JsDoc client:idle name="Pattern#log" h={0} />
+
+## logValues
+
+<JsDoc client:idle name="Pattern#logValues" h={0} />
+
+## drawLine
+
+<JsDoc client:idle name="Pattern#drawLine" h={0} />
+
+## collect
+
+# Functions
+
+## groupHapsBy
+
+<JsDoc client:idle name="groupHapsBy" h={0} />
+
+## pure
+
+<JsDoc client:idle name="pure" h={0} />
+
+## reify
+
+<JsDoc client:idle name="reify" h={0} />
+
+## slowcatPrime
+
+<JsDoc client:idle name="slowcatPrime" h={0} />
+
+## isPattern
+
+<JsDoc client:idle name="isPattern" h={0} />
+
+## register
+
+<JsDoc client:idle name="register" h={0} />
+
+## toBipolar
+
+<JsDoc client:idle name="toBipolar" h={0} />
+
+## fromBipolar
+
+<JsDoc client:idle name="fromBipolar" h={0} />
+
+## compressSpan
+
+<JsDoc client:idle name="compressSpan" h={0} />
+
+## focus
+
+<JsDoc client:idle name="focus" h={0} />
+
+## focusSpan
+
+## \_composeOp
+
+# Composers
+
+```
+set keep keepif add sub mul div mod pow band bor bxor blshift brshift lt gt lte gte eq eqt ne net and or func
+```
+
+```
+In Out Mix Squeeze SqueezeOut Trig Trigzero
+```
