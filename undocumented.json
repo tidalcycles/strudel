@@ -51,7 +51,6 @@
     "setStringParser",
     "isPattern",
     "reify",
-    "polymeter",
     "set",
     "keep",
     "keepif",

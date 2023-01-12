@@ -1296,7 +1296,6 @@ export function polymeterSteps(steps, ...args) {
 
 /**
  * Combines the given lists of patterns with the same pulse. This will create so called polymeters when different sized sequences are used.
- * @name polymeters
  * @synonyms pm
  * @example
  * polymeter(["c", "eb", "g"], ["c2", "g2"]).note()
