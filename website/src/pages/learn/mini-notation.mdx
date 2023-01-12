@@ -39,11 +39,15 @@ Before diving deeper into the details, here is a flavour of how the mini-notatio
 ]/16\`)`}
 />
 
-Note that the snippet above is enclosed in backticks (`), which allows you to write multi-line strings.
+## Mini Notation Format
+
+The snippet above is enclosed in backticks (`), which allows you to write multi-line strings.
 
 You can also use regular double quotes (`"`) for single line mini-notation, as we have done already.
 
-# Sequences of events in a cycle
+If you do just want to get a regular string that is _not_ parsed as mini-notation, use single quotes (`'`).
+
+## Sequences of events in a cycle
 
 We can play more notes by separating them with spaces:
 
@@ -64,7 +68,7 @@ Taking the two examples above, we have four and eight events respectively, and s
 This is perhaps counter-intuitive if you are used to adding notes in a sequencer or piano roll and the overall length increasing.
 But, it will begin to make sense as we go through more elements of mini-notation.
 
-# Division
+## Division
 
 We can slow the sequence down by enclosing it in brackets and dividing it by a number (`/2`):
 
@@ -75,7 +79,7 @@ You can also use decimal numbers for any tempo you like (`/2.75`).
 
 <MiniRepl client:idle tune={`note("[e5 b4 d5 c5]/2.75")`} />
 
-# Angle Brackets
+## Angle Brackets
 
 Using angle brackets `<>`, we can define the sequence length based on the number of events:
 
@@ -93,7 +97,7 @@ The advantage of the angle brackets, is that we can add more events without need
 
 This is more similar to traditional music sequencers and piano rolls, where adding a note increases the perceived overall duration.
 
-# Multiplication
+## Multiplication
 
 Contrary to division, a sequence can be sped up by multiplying it by a number using the asterisk symbol (`*`):
 
@@ -107,7 +111,7 @@ As with divisions, multiplications can be decimal (`*2.75`):
 
 Actually, this is not true, but this will be [fixed](https://github.com/tidalcycles/strudel/issues/314) :)
 
-# Subdividing time with bracket nesting
+## Subdividing time with bracket nesting
 
 To create more interesting rhythms, you can _nest_ or _enclose_ sequences (put sequences inside sequences) with brackets `[]`, like this:
 
@@ -125,13 +129,13 @@ This is a very simple change to make, but it has profound consequences.
 Remember what we said earlier about how the cycles in tidal stay the same length, and the individual event lengths are divided up in this cycle?
 Well, what this means is that in TidalCycles, not only can you divide time any way you want, and you can also subdivide time any way you want!
 
-# Rests
+## Rests
 
 The "~" represents a rest, and will create silence between other events:
 
 <MiniRepl client:idle tune={`note("[b4 [~ c5] d5 e5]")`} />
 
-# Parallel / polyphony
+## Parallel / polyphony
 
 Using commas, we can play chords.
 The following are the same:
@@ -143,7 +147,7 @@ But to play multiple chords in a sequence, we have to wrap them in brackets:
 
 <MiniRepl client:idle tune={`note("<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>")`} />
 
-# Elongation
+## Elongation
 
 With the "@" symbol, we can specify temporal "weight" of a sequence child:
 
@@ -151,7 +155,7 @@ With the "@" symbol, we can specify temporal "weight" of a sequence child:
 
 Here, the first chord has a weight of 2, making it twice the length of the other chords. The default weight is 1.
 
-# Replication
+## Replication
 
 Using "!" we can repeat without speeding up:
 
@@ -159,7 +163,7 @@ Using "!" we can repeat without speeding up:
 
 In essence, the `x!n` is like a shortcut for `[x*n]@n`.
 
-# Mini-notation review
+## Mini-notation review
 
 To recap what we've learned so far, compare the following patterns:
 
@@ -171,7 +175,7 @@ To recap what we've learned so far, compare the following patterns:
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>")`} />
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>")`} />
 
-# Euclidian rhythms
+## Euclidian rhythms
 
 Using round brackets after an event, we can create rhythmical sub-divisions based on three parameters: `beats`, `segments` and `offset`.
 This algorithm can be found in many different types of music software, and is often referred to as a [Euclidean rhythm](https://en.wikipedia.org/wiki/Euclidean_rhythm) sequencer, after computer scientist Godfriend Toussaint.
@@ -198,7 +202,7 @@ Note that since the example above does not use the third `offset` parameter, it 
 
 Let's look at those three parameters in detail.
 
-## Beats
+### Beats
 
 `beats`: the first parameter controls how may beats will be played.
 Compare these:
@@ -207,7 +211,7 @@ Compare these:
 <MiniRepl client:idle tune={`s("bd(5,8)")`} />
 <MiniRepl client:idle tune={`s("bd(7,8)")`} />
 
-## Segments
+### Segments
 
 `segments`: the second parameter controls the total amount of segments the beats will be distributed over:
 
@@ -215,7 +219,7 @@ Compare these:
 <MiniRepl client:idle tune={`s("bd(3,8)")`} />
 <MiniRepl client:idle tune={`s("bd(3,13)")`} />
 
-## Offsets
+### Offsets
 
 `offset`: the third (optional) parameter controls the starting position for distributing the beats.
 We need a secondary rhythm to hear the difference:
@@ -224,7 +228,7 @@ We need a secondary rhythm to hear the difference:
 <MiniRepl client:idle tune={`s("bd(3,8,3), hh cp")`} />
 <MiniRepl client:idle tune={`s("bd(3,8,5), hh cp")`} />
 
-# Mini-notation exercise
+## Mini-notation exercise
 
 The most fun thing about the mini-notation, is that everything you have just learned can be combined in various ways!
 
