@@ -1333,6 +1333,13 @@ export const and = curry((a, b) => reify(b).and(a));
 export const or = curry((a, b) => reify(b).or(a));
 export const func = curry((a, b) => reify(b).func(a));
 
+/**
+ * Registers a new pattern method. The method is added to the Pattern class + the standalone function is returned from register.
+ *
+ * @param {string} name name of the function
+ * @param {function} func function with 1 or more params, where last is the current pattern
+ *
+ */
 export function register(name, func) {
   if (Array.isArray(name)) {
     const result = {};
@@ -1742,6 +1749,12 @@ export const { zoomArc, zoomarc } = register(['zoomArc', 'zoomarc'], function (a
   return pat.zoom(a.begin, a.end);
 });
 
+/**
+ * Selects the given fraction of the pattern and repeats that part to fill the remainder of the cycle.
+ * @param {number} fraction fraction to select
+ * @example
+ * s("lt ht mt cp, [hh oh]*2").linger("<1 .5 .25 .125>")
+ */
 export const linger = register('linger', function (t, pat) {
   if (t == 0) {
     return silence;
@@ -1751,10 +1764,23 @@ export const linger = register('linger', function (t, pat) {
   return pat._zoom(0, t)._slow(t);
 });
 
+/**
+ * Samples the pattern at a rate of n events per cycle. Useful for turning a continuous pattern into a discrete one.
+ * @param {number} segments number of segments per cycle
+ * @example
+ * note(saw.range(0,12).segment(24)).add(40)
+ */
 export const segment = register('segment', function (rate, pat) {
   return pat.struct(pure(true)._fast(rate));
 });
 
+/**
+ * Swaps 1s and 0s in a binary pattern.
+ * @name invert
+ * @synonyms inv
+ * @example
+ * s("bd").struct("1 0 0 1 0 0 1 0".lastOf(4, invert))
+ */
 export const { invert, inv } = register(['invert', 'inv'], function (pat) {
   // Swap true/false in a binary pattern
   return pat.fmap((x) => !x);
@@ -1826,14 +1852,34 @@ export const rev = register('rev', function (pat) {
   return new Pattern(query).splitQueries();
 });
 
+/**
+ * Silences a pattern.
+ * @example
+ * stack(
+ *   s("bd").hush(),
+ *   s("hh*3")
+ * )
+ */
 export const hush = register('hush', function (pat) {
   return silence;
 });
 
+/**
+ * Applies `rev` to a pattern every other cycle, so that the pattern alternates between forwards and backwards.
+ * @example
+ * note("c d e g").palindrome()
+ */
 export const palindrome = register('palindrome', function (pat) {
   return pat.every(2, rev);
 });
 
+/**
+ * Jux with adjustable stereo width. 0 = mono, 1 = full stereo.
+ * @name juxBy
+ * @synonyms juxby
+ * @example
+ * s("lt ht mt ht hh").juxBy("<0 .5 1>/2", rev)
+ */
 export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func, pat) {
   by /= 2;
   const elem_or = function (dict, key, dflt) {
@@ -1848,6 +1894,11 @@ export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func,
   return stack(left, func(right));
 });
 
+/**
+ * The jux function creates strange stereo effects, by applying a function to a pattern, but only in the right-hand channel.
+ * @example
+ * s("lt ht mt ht hh").jux(rev)
+ */
 export const jux = register('jux', function (func, pat) {
   return pat._juxBy(1, func, pat);
 });
