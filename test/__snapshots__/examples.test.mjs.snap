@@ -2556,24 +2556,7 @@ exports[`runs examples > example "ply" example index 0 1`] = `
 ]
 `;
 
-exports[`runs examples > example "polymeterSteps" example index 0 1`] = `
-[
-  "[ 0/1 → 1/2 | note:c ]",
-  "[ 1/2 → 1/1 | note:d ]",
-  "[ 1/1 → 3/2 | note:e ]",
-  "[ 3/2 → 2/1 | note:f ]",
-  "[ 2/1 → 5/2 | note:g ]",
-  "[ 5/2 → 3/1 | note:f ]",
-  "[ 3/1 → 7/2 | note:e ]",
-  "[ 7/2 → 4/1 | note:d ]",
-  "[ 0/1 → 1/1 | s:bd ]",
-  "[ 1/1 → 2/1 | s:bd ]",
-  "[ 2/1 → 3/1 | s:bd ]",
-  "[ 3/1 → 4/1 | s:bd ]",
-]
-`;
-
-exports[`runs examples > example "polymeters" example index 0 1`] = `
+exports[`runs examples > example "polymeter" example index 0 1`] = `
 [
   "[ 0/1 → 1/3 | note:c ]",
   "[ 1/3 → 2/3 | note:eb ]",
@@ -2599,6 +2582,23 @@ exports[`runs examples > example "polymeters" example index 0 1`] = `
   "[ 3/1 → 10/3 | note:g2 ]",
   "[ 10/3 → 11/3 | note:c2 ]",
   "[ 11/3 → 4/1 | note:g2 ]",
+]
+`;
+
+exports[`runs examples > example "polymeterSteps" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | note:c ]",
+  "[ 1/2 → 1/1 | note:d ]",
+  "[ 1/1 → 3/2 | note:e ]",
+  "[ 3/2 → 2/1 | note:f ]",
+  "[ 2/1 → 5/2 | note:g ]",
+  "[ 5/2 → 3/1 | note:f ]",
+  "[ 3/1 → 7/2 | note:e ]",
+  "[ 7/2 → 4/1 | note:d ]",
+  "[ 0/1 → 1/1 | s:bd ]",
+  "[ 1/1 → 2/1 | s:bd ]",
+  "[ 2/1 → 3/1 | s:bd ]",
+  "[ 3/1 → 4/1 | s:bd ]",
 ]
 `;
 
