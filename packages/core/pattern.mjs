@@ -1915,12 +1915,12 @@ export const jux = register('jux', function (func, pat) {
  * .echoWith(4, 1/8, (p,n) => p.add(n*2))
  * .scale('C minor').note().legato(.2)
  */
-export const { echoWith, echowith } = register(['echoWith', 'echowith'], function (times, time, func, pat) {
-  return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
-});
-
-export const stutWith = echoWith;
-export const stutwith = echoWith;
+export const { echoWith, echowith, stutWith, stutwith } = register(
+  ['echoWith', 'echowith', 'stutWith', 'stutwith'],
+  function (times, time, func, pat) {
+    return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
+  },
+);
 
 /**
  * Superimpose and offset multiple times, gradually decreasing the velocity
@@ -1947,7 +1947,7 @@ export const echo = register('echo', function (times, time, feedback, pat) {
  * s("bd sd").stut(3, .8, 1/6)
  */
 export const stut = register('stut', function (times, feedback, time, pat) {
-  return pat._stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+  return pat._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
 });
 
 /**
