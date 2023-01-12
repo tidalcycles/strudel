@@ -1089,6 +1089,19 @@ exports[`runs examples > example "coarse" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "compress" example index 0 1`] = `
+[
+  "[ 1/4 → 1/2 | s:bd ]",
+  "[ 1/2 → 3/4 | s:sd ]",
+  "[ 5/4 → 3/2 | s:bd ]",
+  "[ 3/2 → 7/4 | s:sd ]",
+  "[ 9/4 → 5/2 | s:bd ]",
+  "[ 5/2 → 11/4 | s:sd ]",
+  "[ 13/4 → 7/2 | s:bd ]",
+  "[ 7/2 → 15/4 | s:sd ]",
+]
+`;
+
 exports[`runs examples > example "cosine" example index 0 1`] = `
 [
   "[ 0/1 → 1/8 | note:Eb4 ]",
@@ -1155,6 +1168,31 @@ exports[`runs examples > example "cosine" example index 0 1`] = `
   "[ 15/4 → 31/8 | note:C5 ]",
   "[ 31/8 → 4/1 | note:C4 ]",
   "[ 31/8 → 4/1 | note:D5 ]",
+]
+`;
+
+exports[`runs examples > example "cpm" example index 0 1`] = `
+[
+  "[ 0/1 → 2/3 | s:bd ]",
+  "[ 0/1 → 1/3 | s:hh ]",
+  "[ 1/3 → 2/3 | s:hh ]",
+  "[ (2/3 → 1/1) ⇝ 4/3 | s:sd ]",
+  "[ 2/3 → 1/1 | s:hh ]",
+  "[ 2/3 ⇜ (1/1 → 4/3) | s:sd ]",
+  "[ 1/1 → 4/3 | s:hh ]",
+  "[ 4/3 → 2/1 | s:bd ]",
+  "[ 4/3 → 5/3 | s:hh ]",
+  "[ 5/3 → 2/1 | s:hh ]",
+  "[ 2/1 → 8/3 | s:sd ]",
+  "[ 2/1 → 7/3 | s:hh ]",
+  "[ 7/3 → 8/3 | s:hh ]",
+  "[ (8/3 → 3/1) ⇝ 10/3 | s:bd ]",
+  "[ 8/3 → 3/1 | s:hh ]",
+  "[ 8/3 ⇜ (3/1 → 10/3) | s:bd ]",
+  "[ 3/1 → 10/3 | s:hh ]",
+  "[ 10/3 → 4/1 | s:sd ]",
+  "[ 10/3 → 11/3 | s:hh ]",
+  "[ 11/3 → 4/1 | s:hh ]",
 ]
 `;
 
@@ -1685,6 +1723,19 @@ exports[`runs examples > example "fast" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "fastGap" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd ]",
+  "[ 1/4 → 1/2 | s:sd ]",
+  "[ 1/1 → 5/4 | s:bd ]",
+  "[ 5/4 → 3/2 | s:sd ]",
+  "[ 2/1 → 9/4 | s:bd ]",
+  "[ 9/4 → 5/2 | s:sd ]",
+  "[ 3/1 → 13/4 | s:bd ]",
+  "[ 13/4 → 7/2 | s:sd ]",
+]
+`;
+
 exports[`runs examples > example "fastcat" example index 0 1`] = `
 [
   "[ 0/1 → 1/3 | e5 ]",
@@ -1745,6 +1796,43 @@ exports[`runs examples > example "floor" example index 0 1`] = `
   "[ 13/4 → 7/2 | note:42 ]",
   "[ 7/2 → 15/4 | note:42 ]",
   "[ 15/4 → 4/1 | note:43 ]",
+]
+`;
+
+exports[`runs examples > example "focus" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | s:sd ]",
+  "[ 1/8 → 1/4 | s:hh ]",
+  "[ 1/4 → 3/8 | s:bd ]",
+  "[ 3/8 → 1/2 | s:hh ]",
+  "[ 1/2 → 5/8 | s:sd ]",
+  "[ 5/8 → 3/4 | s:hh ]",
+  "[ 3/4 → 7/8 | s:bd ]",
+  "[ 7/8 → 1/1 | s:hh ]",
+  "[ 1/1 → 9/8 | s:sd ]",
+  "[ 9/8 → 5/4 | s:hh ]",
+  "[ 5/4 → 11/8 | s:bd ]",
+  "[ 11/8 → 3/2 | s:hh ]",
+  "[ 3/2 → 13/8 | s:sd ]",
+  "[ 13/8 → 7/4 | s:hh ]",
+  "[ 7/4 → 15/8 | s:bd ]",
+  "[ 15/8 → 2/1 | s:hh ]",
+  "[ 2/1 → 17/8 | s:sd ]",
+  "[ 17/8 → 9/4 | s:hh ]",
+  "[ 9/4 → 19/8 | s:bd ]",
+  "[ 19/8 → 5/2 | s:hh ]",
+  "[ 5/2 → 21/8 | s:sd ]",
+  "[ 21/8 → 11/4 | s:hh ]",
+  "[ 11/4 → 23/8 | s:bd ]",
+  "[ 23/8 → 3/1 | s:hh ]",
+  "[ 3/1 → 25/8 | s:sd ]",
+  "[ 25/8 → 13/4 | s:hh ]",
+  "[ 13/4 → 27/8 | s:bd ]",
+  "[ 27/8 → 7/2 | s:hh ]",
+  "[ 7/2 → 29/8 | s:sd ]",
+  "[ 29/8 → 15/4 | s:hh ]",
+  "[ 15/4 → 31/8 | s:bd ]",
+  "[ 31/8 → 4/1 | s:hh ]",
 ]
 `;
 
@@ -1886,6 +1974,43 @@ exports[`runs examples > example "hresonance" example index 0 1`] = `
   "[ 13/4 → 7/2 | s:hh hcutoff:2000 hresonance:30 ]",
   "[ 7/2 → 15/4 | s:hh hcutoff:2000 hresonance:30 ]",
   "[ 15/4 → 4/1 | s:hh hcutoff:2000 hresonance:30 ]",
+]
+`;
+
+exports[`runs examples > example "inside" example index 0 1`] = `
+[
+  "[ 1/8 → 1/4 | note:C3 ]",
+  "[ 0/1 → 1/8 | note:D3 ]",
+  "[ 3/8 → 1/2 | note:E3 ]",
+  "[ 1/4 → 3/8 | note:F3 ]",
+  "[ 5/8 → 3/4 | note:G3 ]",
+  "[ 1/2 → 5/8 | note:F3 ]",
+  "[ 7/8 → 1/1 | note:E3 ]",
+  "[ 3/4 → 7/8 | note:D3 ]",
+  "[ 9/8 → 5/4 | note:C3 ]",
+  "[ 1/1 → 9/8 | note:D3 ]",
+  "[ 11/8 → 3/2 | note:E3 ]",
+  "[ 5/4 → 11/8 | note:F3 ]",
+  "[ 13/8 → 7/4 | note:G3 ]",
+  "[ 3/2 → 13/8 | note:F3 ]",
+  "[ 15/8 → 2/1 | note:E3 ]",
+  "[ 7/4 → 15/8 | note:D3 ]",
+  "[ 17/8 → 9/4 | note:C3 ]",
+  "[ 2/1 → 17/8 | note:D3 ]",
+  "[ 19/8 → 5/2 | note:E3 ]",
+  "[ 9/4 → 19/8 | note:F3 ]",
+  "[ 21/8 → 11/4 | note:G3 ]",
+  "[ 5/2 → 21/8 | note:F3 ]",
+  "[ 23/8 → 3/1 | note:E3 ]",
+  "[ 11/4 → 23/8 | note:D3 ]",
+  "[ 25/8 → 13/4 | note:C3 ]",
+  "[ 3/1 → 25/8 | note:D3 ]",
+  "[ 27/8 → 7/2 | note:E3 ]",
+  "[ 13/4 → 27/8 | note:F3 ]",
+  "[ 29/8 → 15/4 | note:G3 ]",
+  "[ 7/2 → 29/8 | note:F3 ]",
+  "[ 31/8 → 4/1 | note:E3 ]",
+  "[ 15/4 → 31/8 | note:D3 ]",
 ]
 `;
 
@@ -2125,6 +2250,20 @@ exports[`runs examples > example "lsize" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "mask" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | note:c ]",
+  "[ 1/2 → 1/1 | note:eb ]",
+  "[ 1/2 → 1/1 | note:g ]",
+  "[ 1/1 → 3/2 | note:d ]",
+  "[ 3/2 → 2/1 | note:eb ]",
+  "[ 3/2 → 2/1 | note:g ]",
+  "[ 3/1 → 7/2 | note:d ]",
+  "[ 7/2 → 4/1 | note:eb ]",
+  "[ 7/2 → 4/1 | note:g ]",
+]
+`;
+
 exports[`runs examples > example "mul" example index 0 1`] = `
 [
   "[ 0/1 → 1/3 | freq:150 ]",
@@ -2330,6 +2469,17 @@ exports[`runs examples > example "orbit" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "outside" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:A3 ]",
+  "[ 3/2 → 2/1 | note:F3 ]",
+  "[ 1/1 → 3/2 | note:G3 ]",
+  "[ 2/1 → 3/1 | note:E3 ]",
+  "[ 7/2 → 4/1 | note:C3 ]",
+  "[ 3/1 → 7/2 | note:D3 ]",
+]
+`;
+
 exports[`runs examples > example "pan" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | s:bd pan:0.5 ]",
@@ -2380,6 +2530,32 @@ exports[`runs examples > example "perlin" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "ply" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd ]",
+  "[ 1/2 → 3/4 | s:sd ]",
+  "[ 3/4 → 1/1 | s:cp ]",
+  "[ 1/1 → 9/8 | s:bd ]",
+  "[ 9/8 → 5/4 | s:bd ]",
+  "[ 3/2 → 13/8 | s:sd ]",
+  "[ 13/8 → 7/4 | s:sd ]",
+  "[ 7/4 → 15/8 | s:cp ]",
+  "[ 15/8 → 2/1 | s:cp ]",
+  "[ 2/1 → 25/12 | s:bd ]",
+  "[ 25/12 → 13/6 | s:bd ]",
+  "[ 13/6 → 9/4 | s:bd ]",
+  "[ 5/2 → 31/12 | s:sd ]",
+  "[ 31/12 → 8/3 | s:sd ]",
+  "[ 8/3 → 11/4 | s:sd ]",
+  "[ 11/4 → 17/6 | s:cp ]",
+  "[ 17/6 → 35/12 | s:cp ]",
+  "[ 35/12 → 3/1 | s:cp ]",
+  "[ 3/1 → 13/4 | s:bd ]",
+  "[ 7/2 → 15/4 | s:sd ]",
+  "[ 15/4 → 4/1 | s:cp ]",
+]
+`;
+
 exports[`runs examples > example "polymeter" example index 0 1`] = `
 [
   "[ 0/1 → 1/3 | note:c ]",
@@ -2423,6 +2599,35 @@ exports[`runs examples > example "polymeterSteps" example index 0 1`] = `
   "[ 1/1 → 2/1 | s:bd ]",
   "[ 2/1 → 3/1 | s:bd ]",
   "[ 3/1 → 4/1 | s:bd ]",
+]
+`;
+
+exports[`runs examples > example "polymeters" example index 0 1`] = `
+[
+  "[ 0/1 → 1/3 | note:c ]",
+  "[ 1/3 → 2/3 | note:eb ]",
+  "[ 2/3 → 1/1 | note:g ]",
+  "[ 1/1 → 4/3 | note:c ]",
+  "[ 4/3 → 5/3 | note:eb ]",
+  "[ 5/3 → 2/1 | note:g ]",
+  "[ 2/1 → 7/3 | note:c ]",
+  "[ 7/3 → 8/3 | note:eb ]",
+  "[ 8/3 → 3/1 | note:g ]",
+  "[ 3/1 → 10/3 | note:c ]",
+  "[ 10/3 → 11/3 | note:eb ]",
+  "[ 11/3 → 4/1 | note:g ]",
+  "[ 0/1 → 1/3 | note:c2 ]",
+  "[ 1/3 → 2/3 | note:g2 ]",
+  "[ 2/3 → 1/1 | note:c2 ]",
+  "[ 1/1 → 4/3 | note:g2 ]",
+  "[ 4/3 → 5/3 | note:c2 ]",
+  "[ 5/3 → 2/1 | note:g2 ]",
+  "[ 2/1 → 7/3 | note:c2 ]",
+  "[ 7/3 → 8/3 | note:g2 ]",
+  "[ 8/3 → 3/1 | note:c2 ]",
+  "[ 3/1 → 10/3 | note:g2 ]",
+  "[ 10/3 → 11/3 | note:c2 ]",
+  "[ 11/3 → 4/1 | note:g2 ]",
 ]
 `;
 
@@ -2495,6 +2700,64 @@ exports[`runs examples > example "range" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "range2" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd cutoff:1537.0125742738173 ]",
+  "[ 1/2 → 1/1 | s:sd cutoff:1942.909649383465 ]",
+  "[ 0/1 → 1/4 | s:hh cutoff:1396.3177415120963 ]",
+  "[ 1/4 → 1/2 | s:hh cutoff:1666.6776747647016 ]",
+  "[ 1/2 → 3/4 | s:hh cutoff:1873.602209226909 ]",
+  "[ 3/4 → 1/1 | s:hh cutoff:1985.5889603024227 ]",
+  "[ 1/1 → 3/2 | s:bd cutoff:1942.909649383465 ]",
+  "[ 3/2 → 2/1 | s:sd cutoff:1537.0125742738173 ]",
+  "[ 1/1 → 5/4 | s:hh cutoff:1985.5889603024227 ]",
+  "[ 5/4 → 3/2 | s:hh cutoff:1873.602209226909 ]",
+  "[ 3/2 → 7/4 | s:hh cutoff:1666.6776747647016 ]",
+  "[ 7/4 → 2/1 | s:hh cutoff:1396.3177415120965 ]",
+  "[ 2/1 → 5/2 | s:bd cutoff:962.9874257261828 ]",
+  "[ 5/2 → 3/1 | s:sd cutoff:557.0903506165351 ]",
+  "[ 2/1 → 9/4 | s:hh cutoff:1103.6822584879037 ]",
+  "[ 9/4 → 5/2 | s:hh cutoff:833.3223252352985 ]",
+  "[ 5/2 → 11/4 | s:hh cutoff:626.3977907730911 ]",
+  "[ 11/4 → 3/1 | s:hh cutoff:514.4110396975773 ]",
+  "[ 3/1 → 7/2 | s:bd cutoff:557.090350616535 ]",
+  "[ 7/2 → 4/1 | s:sd cutoff:962.9874257261822 ]",
+  "[ 3/1 → 13/4 | s:hh cutoff:514.4110396975772 ]",
+  "[ 13/4 → 7/2 | s:hh cutoff:626.397790773091 ]",
+  "[ 7/2 → 15/4 | s:hh cutoff:833.3223252352984 ]",
+  "[ 15/4 → 4/1 | s:hh cutoff:1103.6822584879035 ]",
+]
+`;
+
+exports[`runs examples > example "rangex" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd cutoff:1303.7646214531312 ]",
+  "[ 1/2 → 1/1 | s:sd cutoff:1897.2102033890155 ]",
+  "[ 0/1 → 1/4 | s:hh cutoff:1144.7958299590086 ]",
+  "[ 1/4 → 1/2 | s:hh cutoff:1469.7494449054268 ]",
+  "[ 1/2 → 3/4 | s:hh cutoff:1779.4971377133336 ]",
+  "[ 3/4 → 1/1 | s:hh cutoff:1973.5393435463043 ]",
+  "[ 1/1 → 3/2 | s:bd cutoff:1897.2102033890155 ]",
+  "[ 3/2 → 2/1 | s:sd cutoff:1303.7646214531312 ]",
+  "[ 1/1 → 5/4 | s:hh cutoff:1973.5393435463043 ]",
+  "[ 5/4 → 3/2 | s:hh cutoff:1779.4971377133336 ]",
+  "[ 3/2 → 7/4 | s:hh cutoff:1469.7494449054268 ]",
+  "[ 7/4 → 2/1 | s:hh cutoff:1144.7958299590086 ]",
+  "[ 2/1 → 5/2 | s:bd cutoff:767.0096147304824 ]",
+  "[ 5/2 → 3/1 | s:sd cutoff:527.0897226958216 ]",
+  "[ 2/1 → 9/4 | s:hh cutoff:873.5182063301246 ]",
+  "[ 9/4 → 5/2 | s:hh cutoff:680.3880780266911 ]",
+  "[ 5/2 → 11/4 | s:hh cutoff:561.9565094018676 ]",
+  "[ 11/4 → 3/1 | s:hh cutoff:506.70385835991164 ]",
+  "[ 3/1 → 7/2 | s:bd cutoff:527.0897226958216 ]",
+  "[ 7/2 → 4/1 | s:sd cutoff:767.0096147304824 ]",
+  "[ 3/1 → 13/4 | s:hh cutoff:506.7038583599112 ]",
+  "[ 13/4 → 7/2 | s:hh cutoff:561.9565094018676 ]",
+  "[ 7/2 → 15/4 | s:hh cutoff:680.3880780266911 ]",
+  "[ 15/4 → 4/1 | s:hh cutoff:873.5182063301246 ]",
+]
+`;
+
 exports[`runs examples > example "rarely" example index 0 1`] = `
 [
   "[ 0/1 → 1/8 | s:hh ]",
@@ -2553,6 +2816,35 @@ exports[`runs examples > example "release" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "reset" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd ]",
+  "[ 1/2 → 1/1 | s:sd ]",
+  "[ 0/1 → 1/4 | s:hh ]",
+  "[ 1/4 → 1/2 | s:hh ]",
+  "[ 1/2 → 3/4 | s:hh ]",
+  "[ 3/4 → 1/1 | s:hh ]",
+  "[ 1/1 → 3/2 | s:lt ]",
+  "[ 3/2 → 2/1 | s:sd ]",
+  "[ 1/1 → 5/4 | s:hh ]",
+  "[ 5/4 → 3/2 | s:hh ]",
+  "[ 3/2 → 7/4 | s:hh ]",
+  "[ 7/4 → 2/1 | s:hh ]",
+  "[ 2/1 → 5/2 | s:bd ]",
+  "[ 5/2 → 3/1 | s:sd ]",
+  "[ 2/1 → 9/4 | s:hh ]",
+  "[ 9/4 → 5/2 | s:hh ]",
+  "[ 5/2 → 11/4 | s:hh ]",
+  "[ 11/4 → 3/1 | s:hh ]",
+  "[ 3/1 → 25/8 | s:lt ]",
+  "[ 3/1 → 25/8 | s:hh ]",
+  "[ 27/8 → 7/2 | s:lt ]",
+  "[ 27/8 → 7/2 | s:hh ]",
+  "[ 15/4 → 31/8 | s:lt ]",
+  "[ 15/4 → 31/8 | s:hh ]",
+]
+`;
+
 exports[`runs examples > example "resonance" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | s:bd cutoff:2000 resonance:0 ]",
@@ -2579,6 +2871,35 @@ exports[`runs examples > example "resonance" example index 0 1`] = `
   "[ 13/4 → 7/2 | s:hh cutoff:2000 resonance:30 ]",
   "[ 7/2 → 15/4 | s:hh cutoff:2000 resonance:30 ]",
   "[ 15/4 → 4/1 | s:hh cutoff:2000 resonance:30 ]",
+]
+`;
+
+exports[`runs examples > example "restart" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd ]",
+  "[ 1/2 → 1/1 | s:sd ]",
+  "[ 0/1 → 1/4 | s:hh ]",
+  "[ 1/4 → 1/2 | s:hh ]",
+  "[ 1/2 → 3/4 | s:hh ]",
+  "[ 3/4 → 1/1 | s:hh ]",
+  "[ 1/1 → 3/2 | s:lt ]",
+  "[ 3/2 → 2/1 | s:sd ]",
+  "[ 1/1 → 5/4 | s:hh ]",
+  "[ 5/4 → 3/2 | s:hh ]",
+  "[ 3/2 → 7/4 | s:hh ]",
+  "[ 7/4 → 2/1 | s:hh ]",
+  "[ 2/1 → 5/2 | s:bd ]",
+  "[ 5/2 → 3/1 | s:sd ]",
+  "[ 2/1 → 9/4 | s:hh ]",
+  "[ 9/4 → 5/2 | s:hh ]",
+  "[ 5/2 → 11/4 | s:hh ]",
+  "[ 11/4 → 3/1 | s:hh ]",
+  "[ 3/1 → 25/8 | s:bd ]",
+  "[ 3/1 → 25/8 | s:hh ]",
+  "[ 27/8 → 7/2 | s:bd ]",
+  "[ 27/8 → 7/2 | s:hh ]",
+  "[ 15/4 → 31/8 | s:bd ]",
+  "[ 15/4 → 31/8 | s:hh ]",
 ]
 `;
 
@@ -3459,5 +3780,38 @@ exports[`runs examples > example "withValue" example index 0 1`] = `
   "[ 3/1 → 10/3 | 10 ]",
   "[ 10/3 → 11/3 | 11 ]",
   "[ 11/3 → 4/1 | 12 ]",
+]
+`;
+
+exports[`runs examples > example "zoom" example index 0 1`] = `
+[
+  "[ 0/1 → 1/6 | s:hh ]",
+  "[ 1/6 → 1/3 | s:hh ]",
+  "[ 1/3 → 1/2 | s:hh ]",
+  "[ 1/2 → 5/8 | s:sd ]",
+  "[ 5/8 → 3/4 | s:bd ]",
+  "[ 3/4 → 7/8 | s:sd ]",
+  "[ 7/8 → 1/1 | s:bd ]",
+  "[ 1/1 → 7/6 | s:hh ]",
+  "[ 7/6 → 4/3 | s:hh ]",
+  "[ 4/3 → 3/2 | s:hh ]",
+  "[ 3/2 → 13/8 | s:sd ]",
+  "[ 13/8 → 7/4 | s:bd ]",
+  "[ 7/4 → 15/8 | s:sd ]",
+  "[ 15/8 → 2/1 | s:bd ]",
+  "[ 2/1 → 13/6 | s:hh ]",
+  "[ 13/6 → 7/3 | s:hh ]",
+  "[ 7/3 → 5/2 | s:hh ]",
+  "[ 5/2 → 21/8 | s:sd ]",
+  "[ 21/8 → 11/4 | s:bd ]",
+  "[ 11/4 → 23/8 | s:sd ]",
+  "[ 23/8 → 3/1 | s:bd ]",
+  "[ 3/1 → 19/6 | s:hh ]",
+  "[ 19/6 → 10/3 | s:hh ]",
+  "[ 10/3 → 7/2 | s:hh ]",
+  "[ 7/2 → 29/8 | s:sd ]",
+  "[ 29/8 → 15/4 | s:bd ]",
+  "[ 15/4 → 31/8 | s:sd ]",
+  "[ 31/8 → 4/1 | s:bd ]",
 ]
 `;
