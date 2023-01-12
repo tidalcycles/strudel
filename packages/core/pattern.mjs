@@ -23,7 +23,6 @@ export const setStringParser = (parser) => (stringParser = parser);
 
 /** @class Class representing a pattern. */
 export class Pattern {
-  _Pattern = true; // this property is used to detect if a pattern that fails instanceof Pattern is an instance of another Pattern
   /**
    * Create a pattern. As an end user, you will most likely not create a Pattern directly.
    *
@@ -31,6 +30,7 @@ export class Pattern {
    */
   constructor(query) {
     this.query = query;
+    this._Pattern = true; // this property is used to detect if a pattern that fails instanceof Pattern is an instance of another Pattern
   }
 
   //////////////////////////////////////////////////////////////////////
