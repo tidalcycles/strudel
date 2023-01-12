@@ -22,6 +22,7 @@
     "lint": "eslint . --ext mjs,js --quiet",
     "codeformat": "prettier --write .",
     "format-check": "prettier --check .",
+    "report-undocumented": "node undocumented.mjs > undocumented.json",
     "check": "npm run format-check && npm run lint && npm run test",
     "iclc": "cd paper && pandoc --template=pandoc/iclc.html --citeproc  --number-sections iclc2023.md -o iclc2023.html && pandoc --template=pandoc/iclc.latex --citeproc --number-sections iclc2023.md -o iclc2023.pdf"
   },
@@ -47,8 +48,10 @@
   "homepage": "https://strudel.tidalcycles.org",
   "devDependencies": {
     "@vitest/ui": "^0.25.7",
+    "acorn-static-class-features": "^1.0.0",
     "c8": "^7.12.0",
     "canvas": "^2.11.0",
+    "dependency-tree": "^9.0.0",
     "eslint": "^8.28.0",
     "events": "^3.3.0",
     "gh-pages": "^4.0.0",
