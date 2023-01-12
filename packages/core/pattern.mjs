@@ -733,7 +733,7 @@ export class Pattern {
   }
 
   /**
-   * Appends the given pattern(s) to the current pattern. Synonyms: .sequence .fastcat
+   * Appends the given pattern(s) to the current pattern.
    * @name seq
    * @memberof Pattern
    * @synonyms sequence, fastcat
@@ -747,7 +747,7 @@ export class Pattern {
   }
 
   /**
-   * Appends the given pattern(s) to the next cycle. Synonym: .slowcat
+   * Appends the given pattern(s) to the next cycle.
    * @name cat
    * @memberof Pattern
    * @synonyms slowcat
@@ -1191,24 +1191,10 @@ export function slowcatPrime(...pats) {
   return new Pattern(query).splitQueries();
 }
 
-/** Concatenation: as with {@link slowcat}, but squashes a cycle from each pattern into one cycle
- *
- * Synonyms: {@link Pattern.seq}, {@link Pattern.sequence}
+/** The given items are con**cat**enated, where each one takes one cycle.
  *
  * @param {...any} items - The items to concatenate
- * @return {Pattern}
- * @example
- * fastcat(e5, b4, [d5, c5])
- * // sequence(e5, b4, [d5, c5])
- * // seq(e5, b4, [d5, c5])
- */
-export function fastcat(...pats) {
-  return slowcat(...pats)._fast(pats.length);
-}
-
-/** The given items are con**cat**enated, where each one takes one cycle. Synonym: slowcat
- *
- * @param {...any} items - The items to concatenate
+ * @synonyms slowcat
  * @return {Pattern}
  * @example
  * cat(e5, b4, [d5, c5]).note() // "<e5 b4 [d5 c5]>".note()
@@ -1235,12 +1221,17 @@ export function timeCat(...timepats) {
   return stack(...pats);
 }
 
+export function fastcat(...pats) {
+  return slowcat(...pats)._fast(pats.length);
+}
+
 /** See {@link fastcat} */
 export function sequence(...pats) {
   return fastcat(...pats);
 }
 
-/** Like **cat**, but the items are crammed into one cycle. Synonyms: fastcat, sequence
+/** Like **cat**, but the items are crammed into one cycle.
+ * @synonyms fastcat, sequence
  * @example
  * seq(e5, b4, [d5, c5]).note() // "e5 b4 [d5 c5]".note()
  *

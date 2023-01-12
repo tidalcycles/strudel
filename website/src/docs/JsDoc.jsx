@@ -2,12 +2,15 @@ import jsdoc from '../../../doc.json'; // doc.json is built with `npm run jsdoc-
 const docs = jsdoc.docs.reduce((acc, obj) => Object.assign(acc, { [obj.longname]: obj }), {});
 import { MiniRepl } from './MiniRepl';
 
+const getTag = (title, item) => item.tags?.find((t) => t.title === title)?.text;
+
 export function JsDoc({ name, h = 3, hideDescription }) {
   const item = docs[name];
   if (!item) {
     console.warn('Not found: ' + name);
     return <div />;
   }
+  const synonyms = getTag('synonyms', item)?.split(', ') || [];
   const CustomHeading = `h${h}`;
   const description = item.description.replaceAll(/\{@link ([a-zA-Z\.]+)?#?([a-zA-Z]*)\}/g, (_, a, b) => {
     // console.log(_, 'a', a, 'b', b);
@@ -16,7 +19,16 @@ export function JsDoc({ name, h = 3, hideDescription }) {
   return (
     <>
       {!!h && <CustomHeading>{item.longname}</CustomHeading>}
-      {!hideDescription && <div dangerouslySetInnerHTML={{ __html: description }} />}
+      {!hideDescription && (
+        <>
+          {!!synonyms.length && (
+            <span>
+              Synonyms: <code>{synonyms.join(', ')}</code>
+            </span>
+          )}
+          <div dangerouslySetInnerHTML={{ __html: description }} />
+        </>
+      )}
       <ul>
         {item.params?.map((param, i) => (
           <li key={i}>
