@@ -828,12 +828,14 @@ generic_params.forEach(([type, name, description]) => {
     };
     return result;
   };
+  Pattern.__registered.push(name);
   Pattern.prototype[name] = _setter(controls[name], name);
 });
 
 // create custom param
 controls.createParam = (name) => {
   const func = (...pats) => _name(name, ...pats);
+  Pattern.__registered.push(name);
   Pattern.prototype[name] = _setter(func, name);
   return (...pats) => _name(name, ...pats);
 };

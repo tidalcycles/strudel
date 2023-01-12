@@ -1356,6 +1356,11 @@ export function register(name, func, f_params = null) {
     return right.reduce(app, start).innerJoin();
   };
 
+  if (!Pattern.__registered) {
+    Pattern.__registered = [];
+  }
+  Pattern.__registered.push(name);
+
   Pattern.prototype[name] = function (...args) {
     args = args.map(reify);
     // For methods that take a single argument (plus 'this'), allow

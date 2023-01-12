@@ -4,6 +4,8 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { Pattern } from './pattern.mjs';
+
 // returns true if the given string is a note
 export const isNoteWithOctave = (name) => /^[a-gA-G][#bs]*[0-9]$/.test(name);
 export const isNote = (name) => /^[a-gA-G][#bs]*[0-9]?$/.test(name);
@@ -147,17 +149,27 @@ export function curry(func, overload, arity = func.length) {
       return func.apply(this, args);
     } else {
       const partial = function (...args2) {
-        const result = curried.apply(this, args.concat(args2));
-        if (args.length == arity - 1) {
-          // The penultimate arg.. so add some composition magic
-          // TODO - To make this useful, we also need to add stub functions for every pattern method to
-          // do the actual composing
-          result.__compose = function (pat) {
-            return result(pat);
+        return curried.apply(this, args.concat(args2));
+      };
+
+      if (args.length == arity - 1) {
+        // The penultimate arg.. so add some composition magic
+        // TODO - To make this useful, we also need to add stub functions for every pattern method to
+        // do the actual composing
+        for (const r of Pattern.__registered) {
+          partial[r] = function (...args) {
+            const result = new Pattern(() => []);
+            result.__compose = function (pat) {
+              return partial(pat)[r](...args);
+            };
+            return result;
           };
         }
-        return result;
-      };
+        partial.__compose = function (pat) {
+          return partial(pat);
+        };
+      }
+
       if (overload) {
         overload(partial, args);
       }
