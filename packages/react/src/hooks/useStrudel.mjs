@@ -96,7 +96,8 @@ function useStrudel({
       if (drawContext && onDraw) {
         const [_, lookahead] = drawTime;
         const haps = pat.queryArc(0, lookahead);
-        onDraw(pat, 0, haps, drawTime);
+        // draw at -0.001 to avoid activating haps at 0
+        onDraw(pat, -0.001, haps, drawTime);
       }
     },
     [drawTime, onDraw],

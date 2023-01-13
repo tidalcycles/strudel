@@ -119,13 +119,14 @@ function Y(...e) {
   return e.filter(Boolean).join(" ");
 }
 function _e({ view: e, pattern: r, active: t, getTime: n }) {
-  const c = N([]), m = N();
+  const c = N([]), m = N(0);
   k(() => {
     if (e)
       if (r && t) {
+        m.current = 0;
         let s = requestAnimationFrame(function a() {
           try {
-            const i = n(), b = [Math.max(m.current || i, i - 1 / 10, 0), i + 1 / 60];
+            const i = n(), b = [Math.max(m.current ?? i, i - 1 / 10, -0.01), i + 1 / 60];
             m.current = b[1], c.current = c.current.filter((h) => h.whole.end > i);
             const l = r.queryArc(...b).filter((h) => h.hasOnset());
             c.current = c.current.concat(l), e.dispatch({ effects: B.of(c.current) });
@@ -166,7 +167,7 @@ function Ae({ pattern: e, started: r, getTime: t, onDraw: n, drawTime: c = [-2, 
   let a = N([]), i = N(null);
   k(() => {
     if (e) {
-      const l = t(), h = e.queryArc(l, l + s + 0.1);
+      const l = t(), h = e.queryArc(Math.max(l, 0), l + s + 0.1);
       a.current = a.current.filter((v) => v.whole.begin < l), a.current = a.current.concat(h);
     }
   }, [e]);
@@ -210,7 +211,7 @@ function De({
 }) {
   const F = G(() => Ce(), []);
   l = l || `canvas-${F}`;
-  const [x, z] = M(), [R, H] = M(), [E, C] = M(c), [P, I] = M(), [D, S] = M(), [L, V] = M(!1), K = E !== P, { scheduler: o, evaluate: p, start: Q, stop: O, pause: ne } = G(
+  const [q, z] = M(), [R, H] = M(), [E, C] = M(c), [P, I] = M(), [D, S] = M(), [x, V] = M(!1), K = E !== P, { scheduler: o, evaluate: p, start: Q, stop: O, pause: ne } = G(
     () => ge({
       interval: r,
       defaultOutput: e,
@@ -241,7 +242,7 @@ function De({
       return oe({ type: "start", from: F }), y;
     },
     [p, E]
-  ), q = w(
+  ), L = w(
     (f, y, W, $) => {
       const { onPaint: se } = f.context || {}, ie = typeof h == "function" ? h(l) : h;
       se?.(ie, y, W, $);
@@ -249,34 +250,34 @@ function De({
     [h, l]
   ), U = w(
     (f) => {
-      if (h && q) {
+      if (h && L) {
         const [y, W] = v, $ = f.queryArc(0, W);
-        q(f, 0, $, v);
+        L(f, -1e-3, $, v);
       }
     },
-    [v, q]
+    [v, L]
   ), X = N();
   k(() => {
-    !X.current && h && q && n && E && (X.current = !0, p(E, !1).then((f) => U(f)));
+    !X.current && h && L && n && E && (X.current = !0, p(E, !1).then((f) => U(f)));
   }, [j, n, E, U]), k(() => () => {
     o.stop();
   }, [o]);
   const ae = async () => {
-    L ? (o.stop(), U(D)) : await j();
-  }, ce = x || R;
+    x ? (o.stop(), U(D)) : await j();
+  }, ce = q || R;
   return Ae({
     pattern: D,
-    started: h && L,
+    started: h && x,
     getTime: () => o.now(),
     drawTime: v,
-    onDraw: q
+    onDraw: L
   }), {
     id: F,
     canvasId: l,
     code: E,
     setCode: C,
     error: ce,
-    schedulerError: x,
+    schedulerError: q,
     scheduler: o,
     evalError: R,
     evaluate: p,
@@ -284,7 +285,7 @@ function De({
     activeCode: P,
     isDirty: K,
     pattern: D,
-    started: L,
+    started: x,
     start: Q,
     stop: O,
     pause: ne,
@@ -323,11 +324,11 @@ function Z({ type: e }) {
     })
   }[e]);
 }
-const Re = "_container_3i85k_1", Le = "_header_3i85k_5", qe = "_buttons_3i85k_9", xe = "_button_3i85k_9", ze = "_buttonDisabled_3i85k_17", He = "_error_3i85k_21", Pe = "_body_3i85k_25", _ = {
+const Re = "_container_3i85k_1", xe = "_header_3i85k_5", Le = "_buttons_3i85k_9", qe = "_button_3i85k_9", ze = "_buttonDisabled_3i85k_17", He = "_error_3i85k_21", Pe = "_body_3i85k_25", _ = {
   container: Re,
-  header: Le,
-  buttons: qe,
-  button: xe,
+  header: xe,
+  buttons: Le,
+  button: qe,
   buttonDisabled: ze,
   error: He,
   body: Pe
@@ -344,7 +345,7 @@ function Ye({ tune: e, hideOutsideView: r = !1, enableKeyboard: t, drawTime: n, 
     activeCode: h,
     pattern: v,
     started: F,
-    scheduler: x,
+    scheduler: q,
     togglePlay: z,
     stop: R,
     canvasId: H,
@@ -359,12 +360,12 @@ function Ye({ tune: e, hideOutsideView: r = !1, enableKeyboard: t, drawTime: n, 
     drawTime: n
   }), [C, P] = M(), [I, D] = he({
     threshold: 0.01
-  }), S = N(), L = G(() => ((D || !r) && (S.current = !0), D || S.current), [D, r]);
+  }), S = N(), x = G(() => ((D || !r) && (S.current = !0), D || S.current), [D, r]);
   _e({
     view: C,
     pattern: v,
     active: F && !h?.includes("strudel disable-highlighting"),
-    getTime: () => x.now()
+    getTime: () => q.now()
   }), T(() => {
     if (t) {
       const o = async (p) => {
@@ -400,7 +401,7 @@ function Ye({ tune: e, hideOutsideView: r = !1, enableKeyboard: t, drawTime: n, 
     className: _.error
   }, b.message)), /* @__PURE__ */ d.createElement("div", {
     className: _.body
-  }, L && /* @__PURE__ */ d.createElement(Fe, {
+  }, x && /* @__PURE__ */ d.createElement(Fe, {
     value: s,
     onChange: a,
     onViewChanged: P
