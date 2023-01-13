@@ -284,14 +284,14 @@ export function pianoroll({
   return this;
 }
 
-function getOptions(drawTime, options) {
+function getOptions(drawTime, options = {}) {
   let [lookbehind, lookahead] = drawTime;
   lookbehind = Math.abs(lookbehind);
   const cycles = lookahead + lookbehind;
   const playhead = lookbehind / cycles;
-  return { ...options, cycles, playhead };
+  return { fold: 1, ...options, cycles, playhead };
 }
 
-Pattern.prototype.punchcard = function (options = { fold: 1 }) {
+Pattern.prototype.punchcard = function (options) {
   return this.onPaint((ctx, time, haps, drawTime) => pianoroll({ ctx, time, haps, ...getOptions(drawTime, options) }));
 };
