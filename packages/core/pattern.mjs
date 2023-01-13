@@ -1333,6 +1333,13 @@ export const and = curry((a, b) => reify(b).and(a));
 export const or = curry((a, b) => reify(b).or(a));
 export const func = curry((a, b) => reify(b).func(a));
 
+/**
+ * Registers a new pattern method. The method is added to the Pattern class + the standalone function is returned from register.
+ *
+ * @param {string} name name of the function
+ * @param {function} func function with 1 or more params, where last is the current pattern
+ *
+ */
 export function register(name, func) {
   if (Array.isArray(name)) {
     const result = {};
@@ -1742,6 +1749,12 @@ export const { zoomArc, zoomarc } = register(['zoomArc', 'zoomarc'], function (a
   return pat.zoom(a.begin, a.end);
 });
 
+/**
+ * Selects the given fraction of the pattern and repeats that part to fill the remainder of the cycle.
+ * @param {number} fraction fraction to select
+ * @example
+ * s("lt ht mt cp, [hh oh]*2").linger("<1 .5 .25 .125>")
+ */
 export const linger = register('linger', function (t, pat) {
   if (t == 0) {
     return silence;
@@ -1751,10 +1764,23 @@ export const linger = register('linger', function (t, pat) {
   return pat._zoom(0, t)._slow(t);
 });
 
+/**
+ * Samples the pattern at a rate of n events per cycle. Useful for turning a continuous pattern into a discrete one.
+ * @param {number} segments number of segments per cycle
+ * @example
+ * note(saw.range(0,12).segment(24)).add(40)
+ */
 export const segment = register('segment', function (rate, pat) {
   return pat.struct(pure(true)._fast(rate));
 });
 
+/**
+ * Swaps 1s and 0s in a binary pattern.
+ * @name invert
+ * @synonyms inv
+ * @example
+ * s("bd").struct("1 0 0 1 0 0 1 0".lastOf(4, invert))
+ */
 export const { invert, inv } = register(['invert', 'inv'], function (pat) {
   // Swap true/false in a binary pattern
   return pat.fmap((x) => !x);
@@ -1826,14 +1852,34 @@ export const rev = register('rev', function (pat) {
   return new Pattern(query).splitQueries();
 });
 
+/**
+ * Silences a pattern.
+ * @example
+ * stack(
+ *   s("bd").hush(),
+ *   s("hh*3")
+ * )
+ */
 export const hush = register('hush', function (pat) {
   return silence;
 });
 
+/**
+ * Applies `rev` to a pattern every other cycle, so that the pattern alternates between forwards and backwards.
+ * @example
+ * note("c d e g").palindrome()
+ */
 export const palindrome = register('palindrome', function (pat) {
   return pat.every(2, rev);
 });
 
+/**
+ * Jux with adjustable stereo width. 0 = mono, 1 = full stereo.
+ * @name juxBy
+ * @synonyms juxby
+ * @example
+ * s("lt ht mt ht hh").juxBy("<0 .5 1>/2", rev)
+ */
 export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func, pat) {
   by /= 2;
   const elem_or = function (dict, key, dflt) {
@@ -1848,23 +1894,19 @@ export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func,
   return stack(left, func(right));
 });
 
+/**
+ * The jux function creates strange stereo effects, by applying a function to a pattern, but only in the right-hand channel.
+ * @example
+ * s("lt ht mt ht hh").jux(rev)
+ */
 export const jux = register('jux', function (func, pat) {
   return pat._juxBy(1, func, pat);
-});
-
-export const { stutWith, stutwith } = register(['stutWith', 'stutwith'], function (times, time, func, pat) {
-  return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
-});
-
-export const stut = register('stut', function (times, feedback, time, pat) {
-  return pat._stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
 });
 
 /**
  * Superimpose and offset multiple times, applying the given function each time.
  * @name echoWith
- * @memberof Pattern
- * @returns Pattern
+ * @synonyms echowith, stutWith, stutwith
  * @param {number} times how many times to repeat
  * @param {number} time cycle offset between iterations
  * @param {function} func function to apply, given the pattern and the iteration index
@@ -1873,9 +1915,12 @@ export const stut = register('stut', function (times, feedback, time, pat) {
  * .echoWith(4, 1/8, (p,n) => p.add(n*2))
  * .scale('C minor').note().legato(.2)
  */
-export const { echoWith, echowith } = register(['echoWith', 'echowith'], function (times, time, func, pat) {
-  return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
-});
+export const { echoWith, echowith, stutWith, stutwith } = register(
+  ['echoWith', 'echowith', 'stutWith', 'stutwith'],
+  function (times, time, func, pat) {
+    return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
+  },
+);
 
 /**
  * Superimpose and offset multiple times, gradually decreasing the velocity
@@ -1889,6 +1934,19 @@ export const { echoWith, echowith } = register(['echoWith', 'echowith'], functio
  * s("bd sd").echo(3, 1/6, .8)
  */
 export const echo = register('echo', function (times, time, feedback, pat) {
+  return pat._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+});
+
+/**
+ * Deprecated. Like echo, but the last 2 parameters are flipped.
+ * @name stut
+ * @param {number} times how many times to repeat
+ * @param {number} feedback velocity multiplicator for each iteration
+ * @param {number} time cycle offset between iterations
+ * @example
+ * s("bd sd").stut(3, .8, 1/6)
+ */
+export const stut = register('stut', function (times, feedback, time, pat) {
   return pat._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
 });
 
@@ -1917,6 +1975,7 @@ export const iter = register('iter', function (times, pat) {
 /**
  * Like `iter`, but plays the subdivisions in reverse order. Known as iter' in tidalcycles
  * @name iterBack
+ * @synonyms iterback
  * @memberof Pattern
  * @returns Pattern
  * @example
@@ -1948,6 +2007,7 @@ export const chunk = register('chunk', function (n, func, pat) {
 /**
  * Like `chunk`, but cycles through the parts in reverse order. Known as chunk' in tidalcycles
  * @name chunkBack
+ * @synonyms chunkback
  * @memberof Pattern
  * @returns Pattern
  * @example
@@ -1960,7 +2020,7 @@ export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], fun
 // TODO - redefine elsewhere in terms of mask
 export const bypass = register('bypass', function (on, pat) {
   on = Boolean(parseInt(on));
-  return on ? silence : this;
+  return on ? silence : pat;
 });
 
 // sets absolute duration of haps
@@ -1969,7 +2029,10 @@ export const duration = register('duration', function (value, pat) {
   return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
 });
 
-// TODO - make control?
+/**
+ * Sets the color of the hap in visualizations like pianoroll or highlighting.
+ */
+// TODO: move this to controls https://github.com/tidalcycles/strudel/issues/288
 export const { color, colour } = register(['color', 'colour'], function (color, pat) {
   return pat.withContext((context) => ({ ...context, color }));
 });
