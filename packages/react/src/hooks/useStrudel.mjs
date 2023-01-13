@@ -1,6 +1,7 @@
 import { useRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { repl } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
+import usePatternFrame from './usePatternFrame';
 import usePostMessage from './usePostMessage.mjs';
 
 function useStrudel({
@@ -12,10 +13,11 @@ function useStrudel({
   autolink = false,
   beforeEval,
   afterEval,
-  editPattern,
   onEvalError,
   onToggle,
   canvasId,
+  drawContext,
+  drawTime = [-2, 2],
 }) {
   const id = useMemo(() => s4(), []);
   canvasId = canvasId || `canvas-${id}`;
@@ -40,12 +42,12 @@ function useStrudel({
           onEvalError?.(err);
         },
         getTime,
+        drawContext,
         transpiler,
         beforeEval: ({ code }) => {
           setCode(code);
           beforeEval?.();
         },
-        editPattern: editPattern ? (pat) => editPattern(pat, id) : undefined,
         afterEval: ({ pattern: _pattern, code }) => {
           setActiveCode(code);
           setPattern(_pattern);
@@ -71,19 +73,40 @@ function useStrudel({
   });
   const activateCode = useCallback(
     async (autostart = true) => {
-      await evaluate(code, autostart);
+      const res = await evaluate(code, autostart);
       broadcast({ type: 'start', from: id });
+      return res;
     },
     [evaluate, code],
   );
 
+  const onDraw = useCallback(
+    (pattern, time, haps, drawTime) => {
+      const { onPaint } = pattern.context || {};
+      const ctx = typeof drawContext === 'function' ? drawContext(canvasId) : drawContext;
+      onPaint?.(ctx, time, haps, drawTime);
+    },
+    [drawContext, canvasId],
+  );
+
+  const drawFirstFrame = useCallback(
+    (pat) => {
+      if (drawContext && onDraw) {
+        const [_, lookahead] = drawTime;
+        const haps = pat.queryArc(0, lookahead);
+        onDraw(pat, 0, haps, drawTime);
+      }
+    },
+    [drawTime, onDraw],
+  );
+
   const inited = useRef();
   useEffect(() => {
-    if (!inited.current && evalOnMount && code) {
+    if (!inited.current && drawContext && onDraw && evalOnMount && code) {
       inited.current = true;
-      activateCode();
+      evaluate(code, false).then((pat) => drawFirstFrame(pat));
     }
-  }, [activateCode, evalOnMount, code]);
+  }, [activateCode, evalOnMount, code, drawFirstFrame]);
 
   // this will stop the scheduler when hot reloading in development
   useEffect(() => {
@@ -94,12 +117,22 @@ function useStrudel({
 
   const togglePlay = async () => {
     if (started) {
-      scheduler.pause();
+      scheduler.stop();
+      drawFirstFrame(pattern);
     } else {
       await activateCode();
     }
   };
   const error = schedulerError || evalError;
+
+  usePatternFrame({
+    pattern,
+    started: drawContext && started,
+    getTime: () => scheduler.now(),
+    drawTime,
+    onDraw,
+  });
+
   return {
     id,
     canvasId,

@@ -29,7 +29,11 @@ add a mini repl with
 
 - `client:idle` is required to tell astro that the repl should be interactive, see [Client Directive](https://docs.astro.build/en/reference/directives-reference/#client-directives)
 - `tune`: be any valid pattern code
-- `withCanvas`: If set, a canvas will be rendered below that shows a pianoroll (WIP)
+- `drawTime`: time window for drawing. Use together with `.noteroll()`. Example:
+
+```jsx
+<MiniRepl client:idle tune={`note("a3 c#4 e4 a4").noteroll()`} drawTime={[0, 2]} />
+```
 
 ## In-Source Documentation
 

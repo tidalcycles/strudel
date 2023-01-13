@@ -1,11 +1,9 @@
-import { pianoroll } from '@strudel.cycles/core';
 import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
 import React, { useLayoutEffect, useMemo, useRef, useState, useCallback, useEffect } from 'react';
 import { useInView } from 'react-hook-inview';
 import 'tailwindcss/tailwind.css';
 import cx from '../cx';
 import useHighlighting from '../hooks/useHighlighting.mjs';
-import usePatternFrame from '../hooks/usePatternFrame.mjs';
 import useStrudel from '../hooks/useStrudel.mjs';
 import CodeMirror6, { flash } from './CodeMirror6';
 import { Icon } from './Icon';
@@ -15,7 +13,7 @@ import { logger } from '@strudel.cycles/core';
 
 const getTime = () => getAudioContext().currentTime;
 
-export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, withCanvas = false, canvasHeight = 200 }) {
+export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTime, canvasHeight = 200 }) {
   const {
     code,
     setCode,
@@ -35,24 +33,11 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, withCa
     initialCode: tune,
     defaultOutput: webaudioOutput,
     getTime,
-    editPattern: (pat, id) => {
-      return pat.withContext((ctx) => ({ ...ctx, id }));
-    },
+    evalOnMount: !!drawTime,
+    drawContext: !!drawTime ? (canvasId) => document.querySelector('#' + canvasId)?.getContext('2d') : null,
+    drawTime,
   });
 
-  usePatternFrame({
-    pattern,
-    started: withCanvas && started,
-    getTime: () => scheduler.now(),
-    onDraw: (time, haps) => {
-      const ctx = document.querySelector('#' + canvasId).getContext('2d');
-      pianoroll({ ctx, time, haps, autorange: 1, fold: 1, playhead: 1 });
-    },
-  });
-
-  /*   useEffect(() => {
-    init && activateCode();
-  }, [init, activateCode]); */
   const [view, setView] = useState();
   const [ref, isVisible] = useInView({
     threshold: 0.01,
@@ -68,7 +53,7 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, withCa
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
-    getTime: () => scheduler.getPhase(),
+    getTime: () => scheduler.now(),
   });
 
   // set active pattern on ctrl+enter
@@ -110,7 +95,7 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, withCa
       <div className={styles.header}>
         <div className={styles.buttons}>
           <button className={cx(styles.button, started ? 'sc-animate-pulse' : '')} onClick={() => togglePlay()}>
-            <Icon type={started ? 'pause' : 'play'} />
+            <Icon type={started ? 'stop' : 'play'} />
           </button>
           <button className={cx(isDirty ? styles.button : styles.buttonDisabled)} onClick={() => activateCode()}>
             <Icon type="refresh" />
@@ -121,7 +106,7 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, withCa
       <div className={styles.body}>
         {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />}
       </div>
-      {withCanvas && (
+      {drawTime && (
         <canvas
           id={canvasId}
           className="w-full pointer-events-none"

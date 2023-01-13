@@ -1,15 +1,15 @@
-import l, { useCallback as N, useRef as k, useEffect as _, useMemo as K, useState as w, useLayoutEffect as G } from "react";
-import Z from "@uiw/react-codemirror";
-import { Decoration as y, EditorView as J } from "@codemirror/view";
-import { StateEffect as Q, StateField as X } from "@codemirror/state";
-import { javascript as ee } from "@codemirror/lang-javascript";
-import { tags as s } from "@lezer/highlight";
-import { createTheme as te } from "@uiw/codemirror-themes";
-import { repl as re, logger as ne, pianoroll as oe } from "@strudel.cycles/core";
-import { webaudioOutput as ae, getAudioContext as ce } from "@strudel.cycles/webaudio";
-import { useInView as se } from "react-hook-inview";
-import { transpiler as ie } from "@strudel.cycles/transpiler";
-const le = te({
+import l, { useCallback as w, useRef as A, useEffect as k, useMemo as $, useState as _, useLayoutEffect as Y } from "react";
+import ie from "@uiw/react-codemirror";
+import { Decoration as M, EditorView as Z } from "@codemirror/view";
+import { StateEffect as ee, StateField as te } from "@codemirror/state";
+import { javascript as le } from "@codemirror/lang-javascript";
+import { tags as i } from "@lezer/highlight";
+import { createTheme as ue } from "@uiw/codemirror-themes";
+import { webaudioOutput as de, getAudioContext as fe } from "@strudel.cycles/webaudio";
+import { useInView as me } from "react-hook-inview";
+import { repl as he, logger as ge } from "@strudel.cycles/core";
+import { transpiler as pe } from "@strudel.cycles/transpiler";
+const ve = ue({
   theme: "dark",
   settings: {
     background: "#222",
@@ -22,241 +22,273 @@ const le = te({
     gutterForeground: "#8a919966"
   },
   styles: [
-    { tag: s.keyword, color: "#c792ea" },
-    { tag: s.operator, color: "#89ddff" },
-    { tag: s.special(s.variableName), color: "#eeffff" },
-    { tag: s.typeName, color: "#c3e88d" },
-    { tag: s.atom, color: "#f78c6c" },
-    { tag: s.number, color: "#c3e88d" },
-    { tag: s.definition(s.variableName), color: "#82aaff" },
-    { tag: s.string, color: "#c3e88d" },
-    { tag: s.special(s.string), color: "#c3e88d" },
-    { tag: s.comment, color: "#7d8799" },
-    { tag: s.variableName, color: "#c792ea" },
-    { tag: s.tagName, color: "#c3e88d" },
-    { tag: s.bracket, color: "#525154" },
-    { tag: s.meta, color: "#ffcb6b" },
-    { tag: s.attributeName, color: "#c792ea" },
-    { tag: s.propertyName, color: "#c792ea" },
-    { tag: s.className, color: "#decb6b" },
-    { tag: s.invalid, color: "#ffffff" }
+    { tag: i.keyword, color: "#c792ea" },
+    { tag: i.operator, color: "#89ddff" },
+    { tag: i.special(i.variableName), color: "#eeffff" },
+    { tag: i.typeName, color: "#c3e88d" },
+    { tag: i.atom, color: "#f78c6c" },
+    { tag: i.number, color: "#c3e88d" },
+    { tag: i.definition(i.variableName), color: "#82aaff" },
+    { tag: i.string, color: "#c3e88d" },
+    { tag: i.special(i.string), color: "#c3e88d" },
+    { tag: i.comment, color: "#7d8799" },
+    { tag: i.variableName, color: "#c792ea" },
+    { tag: i.tagName, color: "#c3e88d" },
+    { tag: i.bracket, color: "#525154" },
+    { tag: i.meta, color: "#ffcb6b" },
+    { tag: i.attributeName, color: "#c792ea" },
+    { tag: i.propertyName, color: "#c792ea" },
+    { tag: i.className, color: "#decb6b" },
+    { tag: i.invalid, color: "#ffffff" }
   ]
 });
-const j = Q.define(), ue = X.define({
+const G = ee.define(), be = te.define({
   create() {
-    return y.none;
+    return M.none;
   },
   update(e, r) {
     try {
       for (let t of r.effects)
-        if (t.is(j))
+        if (t.is(G))
           if (t.value) {
-            const a = y.mark({ attributes: { style: "background-color: #FFCA2880" } });
-            e = y.set([a.range(0, r.newDoc.length)]);
+            const o = M.mark({ attributes: { style: "background-color: #FFCA2880" } });
+            e = M.set([o.range(0, r.newDoc.length)]);
           } else
-            e = y.set([]);
+            e = M.set([]);
       return e;
     } catch (t) {
       return console.warn("flash error", t), e;
     }
   },
-  provide: (e) => J.decorations.from(e)
-}), de = (e) => {
-  e.dispatch({ effects: j.of(!0) }), setTimeout(() => {
-    e.dispatch({ effects: j.of(!1) });
+  provide: (e) => Z.decorations.from(e)
+}), Ee = (e) => {
+  e.dispatch({ effects: G.of(!0) }), setTimeout(() => {
+    e.dispatch({ effects: G.of(!1) });
   }, 200);
-}, z = Q.define(), fe = X.define({
+}, O = ee.define(), ye = te.define({
   create() {
-    return y.none;
+    return M.none;
   },
   update(e, r) {
     try {
       for (let t of r.effects)
-        if (t.is(z)) {
-          const a = t.value.map(
-            (o) => (o.context.locations || []).map(({ start: i, end: u }) => {
-              const m = o.context.color || "#FFCA28";
-              let n = r.newDoc.line(i.line).from + i.column, d = r.newDoc.line(u.line).from + u.column;
-              const v = r.newDoc.length;
-              return n > v || d > v ? void 0 : y.mark({ attributes: { style: `outline: 1.5px solid ${m};` } }).range(n, d);
+        if (t.is(O)) {
+          const o = t.value.map(
+            (u) => (u.context.locations || []).map(({ start: m, end: d }) => {
+              const a = u.context.color || "#FFCA28";
+              let c = r.newDoc.line(m.line).from + m.column, h = r.newDoc.line(d.line).from + d.column;
+              const g = r.newDoc.length;
+              return c > g || h > g ? void 0 : M.mark({ attributes: { style: `outline: 1.5px solid ${a};` } }).range(c, h);
             })
           ).flat().filter(Boolean) || [];
-          e = y.set(a, !0);
+          e = M.set(o, !0);
         }
       return e;
     } catch {
-      return y.set([]);
+      return M.set([]);
     }
   },
-  provide: (e) => J.decorations.from(e)
-}), me = [ee(), le, fe, ue];
-function ge({ value: e, onChange: r, onViewChanged: t, onSelectionChange: a, options: o, editorDidMount: i }) {
-  const u = N(
-    (d) => {
-      r?.(d);
+  provide: (e) => Z.decorations.from(e)
+}), we = [le(), ve, ye, be];
+function ke({ value: e, onChange: r, onViewChanged: t, onSelectionChange: o, options: u, editorDidMount: m }) {
+  const d = w(
+    (h) => {
+      r?.(h);
     },
     [r]
-  ), m = N(
-    (d) => {
-      t?.(d);
+  ), a = w(
+    (h) => {
+      t?.(h);
     },
     [t]
-  ), n = N(
-    (d) => {
-      d.selectionSet && a && a?.(d.state.selection);
+  ), c = w(
+    (h) => {
+      h.selectionSet && o && o?.(h.state.selection);
     },
-    [a]
+    [o]
   );
-  return /* @__PURE__ */ l.createElement(l.Fragment, null, /* @__PURE__ */ l.createElement(Z, {
+  return /* @__PURE__ */ l.createElement(l.Fragment, null, /* @__PURE__ */ l.createElement(ie, {
     value: e,
-    onChange: u,
-    onCreateEditor: m,
-    onUpdate: n,
-    extensions: me
+    onChange: d,
+    onCreateEditor: a,
+    onUpdate: c,
+    extensions: we
   }));
 }
-function W(...e) {
+function T(...e) {
   return e.filter(Boolean).join(" ");
 }
-function pe({ view: e, pattern: r, active: t, getTime: a }) {
-  const o = k([]), i = k();
-  _(() => {
+function Fe({ view: e, pattern: r, active: t, getTime: o }) {
+  const u = A([]), m = A();
+  k(() => {
     if (e)
       if (r && t) {
-        let u = requestAnimationFrame(function m() {
+        let d = requestAnimationFrame(function a() {
           try {
-            const n = a(), v = [Math.max(i.current || n, n - 1 / 10, 0), n + 1 / 60];
-            i.current = v[1], o.current = o.current.filter((p) => p.whole.end > n);
-            const h = r.queryArc(...v).filter((p) => p.hasOnset());
-            o.current = o.current.concat(h), e.dispatch({ effects: z.of(o.current) });
+            const c = o(), g = [Math.max(m.current || c, c - 1 / 10, 0), c + 1 / 60];
+            m.current = g[1], u.current = u.current.filter((p) => p.whole.end > c);
+            const n = r.queryArc(...g).filter((p) => p.hasOnset());
+            u.current = u.current.concat(n), e.dispatch({ effects: O.of(u.current) });
           } catch {
-            e.dispatch({ effects: z.of([]) });
+            e.dispatch({ effects: O.of([]) });
           }
-          u = requestAnimationFrame(m);
+          d = requestAnimationFrame(a);
         });
         return () => {
-          cancelAnimationFrame(u);
+          cancelAnimationFrame(d);
         };
       } else
-        o.current = [], e.dispatch({ effects: z.of([]) });
+        u.current = [], e.dispatch({ effects: O.of([]) });
   }, [r, t, e]);
 }
-function he(e, r = !1) {
-  const t = k(), a = k(), o = (m) => {
-    if (a.current !== void 0) {
-      const n = m - a.current;
-      e(m, n);
+function _e(e, r = !1) {
+  const t = A(), o = A(), u = (a) => {
+    if (o.current !== void 0) {
+      const c = a - o.current;
+      e(a, c);
     }
-    a.current = m, t.current = requestAnimationFrame(o);
-  }, i = () => {
-    t.current = requestAnimationFrame(o);
-  }, u = () => {
+    o.current = a, t.current = requestAnimationFrame(u);
+  }, m = () => {
+    t.current = requestAnimationFrame(u);
+  }, d = () => {
     t.current && cancelAnimationFrame(t.current), delete t.current;
   };
-  return _(() => {
-    t.current && (u(), i());
-  }, [e]), _(() => (r && i(), u), []), {
-    start: i,
-    stop: u
+  return k(() => {
+    t.current && (d(), m());
+  }, [e]), k(() => (r && m(), d), []), {
+    start: m,
+    stop: d
   };
 }
-function ve({ pattern: e, started: r, getTime: t, onDraw: a }) {
-  let o = k([]), i = k(null);
-  const { start: u, stop: m } = he(
-    N(() => {
-      const n = t();
-      if (i.current === null) {
-        i.current = n;
+function Me({ pattern: e, started: r, getTime: t, onDraw: o, drawTime: u = [-2, 2] }) {
+  let [m, d] = u;
+  m = Math.abs(m);
+  let a = A([]), c = A(null);
+  k(() => {
+    if (e) {
+      const n = t(), p = e.queryArc(n, n + d);
+      a.current = a.current.filter((b) => b.whole.begin < n), a.current = a.current.concat(p);
+    }
+  }, [e]);
+  const { start: h, stop: g } = _e(
+    w(() => {
+      const n = t() + d;
+      if (c.current === null) {
+        c.current = n;
         return;
       }
-      const d = e.queryArc(Math.max(i.current, n - 1 / 10), n), v = 4;
-      i.current = n, o.current = (o.current || []).filter((h) => h.whole.end > n - v).concat(d.filter((h) => h.hasOnset())), a(n, o.current);
+      const p = e.queryArc(Math.max(c.current, n - 1 / 10), n);
+      c.current = n, a.current = (a.current || []).filter((b) => b.whole.end > n - m - d).concat(p.filter((b) => b.hasOnset())), o(e, n - d, a.current, u);
     }, [e])
   );
-  _(() => {
-    r ? u() : (o.current = [], m());
+  k(() => {
+    r ? h() : (a.current = [], g());
   }, [r]);
 }
-function be(e) {
-  return _(() => (window.addEventListener("message", e), () => window.removeEventListener("message", e)), [e]), N((r) => window.postMessage(r, "*"), []);
+function Ae(e) {
+  return k(() => (window.addEventListener("message", e), () => window.removeEventListener("message", e)), [e]), w((r) => window.postMessage(r, "*"), []);
 }
-function Ee({
+function Ne({
   defaultOutput: e,
   interval: r,
   getTime: t,
-  evalOnMount: a = !1,
-  initialCode: o = "",
-  autolink: i = !1,
-  beforeEval: u,
-  afterEval: m,
-  editPattern: n,
-  onEvalError: d,
-  onToggle: v,
-  canvasId: h
+  evalOnMount: o = !1,
+  initialCode: u = "",
+  autolink: m = !1,
+  beforeEval: d,
+  afterEval: a,
+  onEvalError: c,
+  onToggle: h,
+  canvasId: g,
+  drawContext: n,
+  drawTime: p = [-2, 2]
 }) {
-  const p = K(() => we(), []);
-  h = h || `canvas-${p}`;
-  const [F, A] = w(), [P, D] = w(), [b, q] = w(o), [x, V] = w(), [I, R] = w(), [L, B] = w(!1), H = b !== x, { scheduler: M, evaluate: c, start: f, stop: C, pause: O } = K(
-    () => re({
+  const b = $(() => De(), []);
+  g = g || `canvas-${b}`;
+  const [q, x] = _(), [C, z] = _(), [E, D] = _(u), [H, B] = _(), [N, P] = _(), [R, S] = _(!1), I = E !== H, { scheduler: s, evaluate: v, start: J, stop: V, pause: re } = $(
+    () => he({
       interval: r,
       defaultOutput: e,
-      onSchedulerError: A,
-      onEvalError: (g) => {
-        D(g), d?.(g);
+      onSchedulerError: x,
+      onEvalError: (f) => {
+        z(f), c?.(f);
       },
       getTime: t,
-      transpiler: ie,
-      beforeEval: ({ code: g }) => {
-        q(g), u?.();
+      drawContext: n,
+      transpiler: pe,
+      beforeEval: ({ code: f }) => {
+        D(f), d?.();
       },
-      editPattern: n ? (g) => n(g, p) : void 0,
-      afterEval: ({ pattern: g, code: T }) => {
-        V(T), R(g), D(), A(), i && (window.location.hash = "#" + encodeURIComponent(btoa(T))), m?.();
+      afterEval: ({ pattern: f, code: y }) => {
+        B(y), P(f), z(), x(), m && (window.location.hash = "#" + encodeURIComponent(btoa(y))), a?.();
       },
-      onToggle: (g) => {
-        B(g), v?.(g);
+      onToggle: (f) => {
+        S(f), h?.(f);
       }
     }),
     [e, r, t]
-  ), Y = be(({ data: { from: g, type: T } }) => {
-    T === "start" && g !== p && C();
-  }), S = N(
-    async (g = !0) => {
-      await c(b, g), Y({ type: "start", from: p });
+  ), ne = Ae(({ data: { from: f, type: y } }) => {
+    y === "start" && f !== b && V();
+  }), K = w(
+    async (f = !0) => {
+      const y = await v(E, f);
+      return ne({ type: "start", from: b }), y;
     },
-    [c, b]
-  ), U = k();
-  return _(() => {
-    !U.current && a && b && (U.current = !0, S());
-  }, [S, a, b]), _(() => () => {
-    M.stop();
-  }, [M]), {
-    id: p,
-    canvasId: h,
-    code: b,
-    setCode: q,
-    error: F || P,
-    schedulerError: F,
-    scheduler: M,
-    evalError: P,
-    evaluate: c,
-    activateCode: S,
-    activeCode: x,
-    isDirty: H,
-    pattern: I,
-    started: L,
-    start: f,
-    stop: C,
-    pause: O,
-    togglePlay: async () => {
-      L ? M.pause() : await S();
-    }
+    [v, E]
+  ), L = w(
+    (f, y, U, W) => {
+      const { onPaint: ce } = f.context || {}, se = typeof n == "function" ? n(g) : n;
+      ce?.(se, y, U, W);
+    },
+    [n, g]
+  ), j = w(
+    (f) => {
+      if (n && L) {
+        const [y, U] = p, W = f.queryArc(0, U);
+        L(f, 0, W, p);
+      }
+    },
+    [p, L]
+  ), Q = A();
+  k(() => {
+    !Q.current && n && L && o && E && (Q.current = !0, v(E, !1).then((f) => j(f)));
+  }, [K, o, E, j]), k(() => () => {
+    s.stop();
+  }, [s]);
+  const oe = async () => {
+    R ? (s.stop(), j(N)) : await K();
+  }, ae = q || C;
+  return Me({
+    pattern: N,
+    started: n && R,
+    getTime: () => s.now(),
+    drawTime: p,
+    onDraw: L
+  }), {
+    id: b,
+    canvasId: g,
+    code: E,
+    setCode: D,
+    error: ae,
+    schedulerError: q,
+    scheduler: s,
+    evalError: C,
+    evaluate: v,
+    activateCode: K,
+    activeCode: H,
+    isDirty: I,
+    pattern: N,
+    started: R,
+    start: J,
+    stop: V,
+    pause: re,
+    togglePlay: oe
   };
 }
-function we() {
+function De() {
   return Math.floor((1 + Math.random()) * 65536).toString(16).substring(1);
 }
-function $({ type: e }) {
+function X({ type: e }) {
   return /* @__PURE__ */ l.createElement("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     className: "sc-h-5 sc-w-5",
@@ -277,125 +309,122 @@ function $({ type: e }) {
       fillRule: "evenodd",
       d: "M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z",
       clipRule: "evenodd"
+    }),
+    stop: /* @__PURE__ */ l.createElement("path", {
+      fillRule: "evenodd",
+      d: "M2 10a8 8 0 1116 0 8 8 0 01-16 0zm5-2.25A.75.75 0 017.75 7h4.5a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75h-4.5a.75.75 0 01-.75-.75v-4.5z",
+      clipRule: "evenodd"
     })
   }[e]);
 }
-const ye = "_container_3i85k_1", ke = "_header_3i85k_5", _e = "_buttons_3i85k_9", Fe = "_button_3i85k_9", Ce = "_buttonDisabled_3i85k_17", Ne = "_error_3i85k_21", xe = "_body_3i85k_25", E = {
-  container: ye,
-  header: ke,
-  buttons: _e,
-  button: Fe,
-  buttonDisabled: Ce,
-  error: Ne,
-  body: xe
-}, Me = () => ce().currentTime;
-function je({ tune: e, hideOutsideView: r = !1, enableKeyboard: t, withCanvas: a = !1, canvasHeight: o = 200 }) {
+const Ce = "_container_3i85k_1", Re = "_header_3i85k_5", Le = "_buttons_3i85k_9", qe = "_button_3i85k_9", xe = "_buttonDisabled_3i85k_17", ze = "_error_3i85k_21", He = "_body_3i85k_25", F = {
+  container: Ce,
+  header: Re,
+  buttons: Le,
+  button: qe,
+  buttonDisabled: xe,
+  error: ze,
+  body: He
+}, Pe = () => fe().currentTime;
+function Te({ tune: e, hideOutsideView: r = !1, enableKeyboard: t, drawTime: o, canvasHeight: u = 200 }) {
   const {
-    code: i,
-    setCode: u,
-    evaluate: m,
-    activateCode: n,
-    error: d,
-    isDirty: v,
-    activeCode: h,
+    code: m,
+    setCode: d,
+    evaluate: a,
+    activateCode: c,
+    error: h,
+    isDirty: g,
+    activeCode: n,
     pattern: p,
-    started: F,
-    scheduler: A,
-    togglePlay: P,
-    stop: D,
-    canvasId: b,
-    id: q
-  } = Ee({
+    started: b,
+    scheduler: q,
+    togglePlay: x,
+    stop: C,
+    canvasId: z,
+    id: E
+  } = Ne({
     initialCode: e,
-    defaultOutput: ae,
-    getTime: Me,
-    editPattern: (c, f) => c.withContext((C) => ({ ...C, id: f }))
-  });
-  ve({
-    pattern: p,
-    started: a && F,
-    getTime: () => A.now(),
-    onDraw: (c, f) => {
-      const C = document.querySelector("#" + b).getContext("2d");
-      oe({ ctx: C, time: c, haps: f, autorange: 1, fold: 1, playhead: 1 });
-    }
-  });
-  const [x, V] = w(), [I, R] = se({
+    defaultOutput: de,
+    getTime: Pe,
+    evalOnMount: !!o,
+    drawContext: o ? (s) => document.querySelector("#" + s)?.getContext("2d") : null,
+    drawTime: o
+  }), [D, H] = _(), [B, N] = me({
     threshold: 0.01
-  }), L = k(), B = K(() => ((R || !r) && (L.current = !0), R || L.current), [R, r]);
-  pe({
-    view: x,
+  }), P = A(), R = $(() => ((N || !r) && (P.current = !0), N || P.current), [N, r]);
+  Fe({
+    view: D,
     pattern: p,
-    active: F && !h?.includes("strudel disable-highlighting"),
-    getTime: () => A.getPhase()
-  }), G(() => {
+    active: b && !n?.includes("strudel disable-highlighting"),
+    getTime: () => q.now()
+  }), Y(() => {
     if (t) {
-      const c = async (f) => {
-        (f.ctrlKey || f.altKey) && (f.code === "Enter" ? (f.preventDefault(), de(x), await n()) : f.code === "Period" && (D(), f.preventDefault()));
+      const s = async (v) => {
+        (v.ctrlKey || v.altKey) && (v.code === "Enter" ? (v.preventDefault(), Ee(D), await c()) : v.code === "Period" && (C(), v.preventDefault()));
       };
-      return window.addEventListener("keydown", c, !0), () => window.removeEventListener("keydown", c, !0);
+      return window.addEventListener("keydown", s, !0), () => window.removeEventListener("keydown", s, !0);
     }
-  }, [t, p, i, m, D, x]);
-  const [H, M] = w([]);
-  return Ae(
-    N((c) => {
-      const { data: f } = c.detail;
-      f?.hap?.context?.id === q && M((O) => O.concat([c.detail]).slice(-10));
+  }, [t, p, m, a, C, D]);
+  const [S, I] = _([]);
+  return Se(
+    w((s) => {
+      const { data: v } = s.detail;
+      v?.hap?.context?.id === E && I((V) => V.concat([s.detail]).slice(-10));
     }, [])
   ), /* @__PURE__ */ l.createElement("div", {
-    className: E.container,
-    ref: I
+    className: F.container,
+    ref: B
   }, /* @__PURE__ */ l.createElement("div", {
-    className: E.header
+    className: F.header
   }, /* @__PURE__ */ l.createElement("div", {
-    className: E.buttons
+    className: F.buttons
   }, /* @__PURE__ */ l.createElement("button", {
-    className: W(E.button, F ? "sc-animate-pulse" : ""),
-    onClick: () => P()
-  }, /* @__PURE__ */ l.createElement($, {
-    type: F ? "pause" : "play"
+    className: T(F.button, b ? "sc-animate-pulse" : ""),
+    onClick: () => x()
+  }, /* @__PURE__ */ l.createElement(X, {
+    type: b ? "stop" : "play"
   })), /* @__PURE__ */ l.createElement("button", {
-    className: W(v ? E.button : E.buttonDisabled),
-    onClick: () => n()
-  }, /* @__PURE__ */ l.createElement($, {
+    className: T(g ? F.button : F.buttonDisabled),
+    onClick: () => c()
+  }, /* @__PURE__ */ l.createElement(X, {
     type: "refresh"
-  }))), d && /* @__PURE__ */ l.createElement("div", {
-    className: E.error
-  }, d.message)), /* @__PURE__ */ l.createElement("div", {
-    className: E.body
-  }, B && /* @__PURE__ */ l.createElement(ge, {
-    value: i,
-    onChange: u,
-    onViewChanged: V
-  })), a && /* @__PURE__ */ l.createElement("canvas", {
-    id: b,
+  }))), h && /* @__PURE__ */ l.createElement("div", {
+    className: F.error
+  }, h.message)), /* @__PURE__ */ l.createElement("div", {
+    className: F.body
+  }, R && /* @__PURE__ */ l.createElement(ke, {
+    value: m,
+    onChange: d,
+    onViewChanged: H
+  })), o && /* @__PURE__ */ l.createElement("canvas", {
+    id: z,
     className: "w-full pointer-events-none",
-    height: o,
-    ref: (c) => {
-      c && c.width !== c.clientWidth && (c.width = c.clientWidth);
+    height: u,
+    ref: (s) => {
+      s && s.width !== s.clientWidth && (s.width = s.clientWidth);
     }
-  }), !!H.length && /* @__PURE__ */ l.createElement("div", {
+  }), !!S.length && /* @__PURE__ */ l.createElement("div", {
     className: "sc-bg-gray-800 sc-rounded-md sc-p-2"
-  }, H.map(({ message: c }, f) => /* @__PURE__ */ l.createElement("div", {
-    key: f
-  }, c))));
+  }, S.map(({ message: s }, v) => /* @__PURE__ */ l.createElement("div", {
+    key: v
+  }, s))));
 }
-function Ae(e) {
-  De(ne.key, e);
+function Se(e) {
+  Ve(ge.key, e);
 }
-function De(e, r, t = !1) {
-  _(() => (document.addEventListener(e, r, t), () => {
+function Ve(e, r, t = !1) {
+  k(() => (document.addEventListener(e, r, t), () => {
     document.removeEventListener(e, r, t);
   }), [r]);
 }
-const Ue = (e) => G(() => (window.addEventListener("keydown", e, !0), () => window.removeEventListener("keydown", e, !0)), [e]);
+const Xe = (e) => Y(() => (window.addEventListener("keydown", e, !0), () => window.removeEventListener("keydown", e, !0)), [e]);
 export {
-  ge as CodeMirror,
-  je as MiniRepl,
-  W as cx,
-  de as flash,
-  pe as useHighlighting,
-  Ue as useKeydown,
-  be as usePostMessage,
-  Ee as useStrudel
+  ke as CodeMirror,
+  Te as MiniRepl,
+  T as cx,
+  Ee as flash,
+  Fe as useHighlighting,
+  Xe as useKeydown,
+  Ae as usePostMessage,
+  Ne as useStrudel
 };

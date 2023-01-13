@@ -283,3 +283,13 @@ export function pianoroll({
   ctx.stroke();
   return this;
 }
+
+Pattern.prototype.noteroll = function (options = { fold: 1 }) {
+  return this.onPaint((ctx, time, haps, drawTime) => {
+    let [lookbehind, lookahead] = drawTime;
+    lookbehind = Math.abs(lookbehind);
+    const cycles = lookahead + lookbehind;
+    const playhead = lookbehind / cycles;
+    pianoroll({ ctx, time, haps, ...options, cycles, playhead });
+  });
+};
