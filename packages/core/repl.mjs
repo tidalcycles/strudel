@@ -13,7 +13,7 @@ export function repl({
   getTime,
   transpiler,
   onToggle,
-  drawContext,
+  editPattern,
 }) {
   const scheduler = new Cyclist({
     interval,
@@ -45,6 +45,7 @@ export function repl({
       let { pattern } = await _evaluate(code, transpiler);
 
       logger(`[eval] code updated`);
+      pattern = editPattern?.(pattern) || pattern;
       scheduler.setPattern(pattern, autostart);
       afterEval?.({ code, pattern });
       return pattern;

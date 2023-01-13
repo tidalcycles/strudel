@@ -10,7 +10,7 @@ function usePatternFrame({ pattern, started, getTime, onDraw, drawTime = [-2, 2]
   useEffect(() => {
     if (pattern) {
       const t = getTime();
-      const futureHaps = pattern.queryArc(t, t + lookahead);
+      const futureHaps = pattern.queryArc(t, t + lookahead + 0.1); // +0.1 = workaround for weird holes in query..
       visibleHaps.current = visibleHaps.current.filter((h) => h.whole.begin < t);
       visibleHaps.current = visibleHaps.current.concat(futureHaps);
     }

@@ -13,7 +13,8 @@ import { logger } from '@strudel.cycles/core';
 
 const getTime = () => getAudioContext().currentTime;
 
-export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTime, canvasHeight = 200 }) {
+export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTime, punchcard, canvasHeight = 200 }) {
+  drawTime = drawTime || (punchcard ? [0, 4] : undefined);
   const {
     code,
     setCode,
@@ -32,6 +33,7 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTi
   } = useStrudel({
     initialCode: tune,
     defaultOutput: webaudioOutput,
+    editPattern: (pat) => (punchcard ? pat.punchcard() : pat),
     getTime,
     evalOnMount: !!drawTime,
     drawContext: !!drawTime ? (canvasId) => document.querySelector('#' + canvasId)?.getContext('2d') : null,

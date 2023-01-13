@@ -12,6 +12,7 @@ function useStrudel({
   initialCode = '',
   autolink = false,
   beforeEval,
+  editPattern,
   afterEval,
   onEvalError,
   onToggle,
@@ -44,6 +45,7 @@ function useStrudel({
         getTime,
         drawContext,
         transpiler,
+        editPattern,
         beforeEval: ({ code }) => {
           setCode(code);
           beforeEval?.();

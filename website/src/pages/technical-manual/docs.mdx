@@ -29,11 +29,11 @@ add a mini repl with
 
 - `client:idle` is required to tell astro that the repl should be interactive, see [Client Directive](https://docs.astro.build/en/reference/directives-reference/#client-directives)
 - `tune`: be any valid pattern code
-- `drawTime`: time window for drawing. Use together with `.punchcard()`. Example:
+- `punchcard`: if added, a punchcard / pianoroll visualization is renderd
+- `drawTime`: time window for drawing, defaults to `[0, 4]`
+- `canvasHeight`: height of the canvas, defaults to 100px
 
-```jsx
-<MiniRepl client:idle tune={`note("a3 c#4 e4 a4").punchcard()`} drawTime={[0, 2]} />
-```
+See `mini-notation.mdx` for usage examples
 
 ## In-Source Documentation
 

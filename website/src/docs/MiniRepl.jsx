@@ -22,7 +22,7 @@ if (typeof window !== 'undefined') {
   prebake();
 }
 
-export function MiniRepl({ tune, drawTime }) {
+export function MiniRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
   const [Repl, setRepl] = useState();
   useEffect(() => {
     // we have to load this package on the client
@@ -31,5 +31,11 @@ export function MiniRepl({ tune, drawTime }) {
       setRepl(() => res.MiniRepl);
     });
   }, []);
-  return Repl ? <Repl tune={tune} hideOutsideView={true} drawTime={drawTime} /> : <pre>{tune}</pre>;
+  return Repl ? (
+    <div className="mb-4">
+      <Repl tune={tune} hideOutsideView={true} drawTime={drawTime} punchcard={punchcard} canvasHeight={canvasHeight} />
+    </div>
+  ) : (
+    <pre>{tune}</pre>
+  );
 }
