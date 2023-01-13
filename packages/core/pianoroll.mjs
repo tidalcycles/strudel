@@ -284,12 +284,14 @@ export function pianoroll({
   return this;
 }
 
-Pattern.prototype.noteroll = function (options = { fold: 1 }) {
-  return this.onPaint((ctx, time, haps, drawTime) => {
-    let [lookbehind, lookahead] = drawTime;
-    lookbehind = Math.abs(lookbehind);
-    const cycles = lookahead + lookbehind;
-    const playhead = lookbehind / cycles;
-    pianoroll({ ctx, time, haps, ...options, cycles, playhead });
-  });
+function getOptions(drawTime, options) {
+  let [lookbehind, lookahead] = drawTime;
+  lookbehind = Math.abs(lookbehind);
+  const cycles = lookahead + lookbehind;
+  const playhead = lookbehind / cycles;
+  return { ...options, cycles, playhead };
+}
+
+Pattern.prototype.punchcard = function (options = { fold: 1 }) {
+  return this.onPaint((ctx, time, haps, drawTime) => pianoroll({ ctx, time, haps, ...getOptions(drawTime, options) }));
 };

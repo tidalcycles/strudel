@@ -54,9 +54,10 @@ evalScope(
 export let loadedSamples = [];
 const presets = prebake();
 
-let drawContext;
+let drawContext, clearCanvas;
 if (typeof window !== 'undefined') {
   drawContext = getDrawContext();
+  clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
 }
 
 Promise.all([...modules, presets]).then((data) => {
@@ -209,6 +210,7 @@ export function Repl({ embedded = false }) {
   const handleShuffle = async () => {
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
+    clearCanvas();
     resetLoadedSamples();
     await prebake(); // declare default samples
     await evaluate(code, false);

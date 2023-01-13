@@ -178,12 +178,16 @@ function Me({ pattern: e, started: r, getTime: t, onDraw: o, drawTime: u = [-2, 
         return;
       }
       const p = e.queryArc(Math.max(c.current, n - 1 / 10), n);
-      c.current = n, a.current = (a.current || []).filter((b) => b.whole.end > n - m - d).concat(p.filter((b) => b.hasOnset())), o(e, n - d, a.current, u);
+      c.current = n, a.current = (a.current || []).filter((b) => b.whole.end >= n - m - d).concat(p.filter((b) => b.hasOnset())), o(e, n - d, a.current, u);
     }, [e])
   );
-  k(() => {
+  return k(() => {
     r ? h() : (a.current = [], g());
-  }, [r]);
+  }, [r]), {
+    clear: () => {
+      a.current = [];
+    }
+  };
 }
 function Ae(e) {
   return k(() => (window.addEventListener("message", e), () => window.removeEventListener("message", e)), [e]), w((r) => window.postMessage(r, "*"), []);

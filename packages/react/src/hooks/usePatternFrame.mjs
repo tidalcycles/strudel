@@ -25,7 +25,7 @@ function usePatternFrame({ pattern, started, getTime, onDraw, drawTime = [-2, 2]
       const haps = pattern.queryArc(Math.max(lastFrame.current, phase - 1 / 10), phase);
       lastFrame.current = phase;
       visibleHaps.current = (visibleHaps.current || [])
-        .filter((h) => h.whole.end > phase - lookbehind - lookahead) // in frame
+        .filter((h) => h.whole.end >= phase - lookbehind - lookahead) // in frame
         .concat(haps.filter((h) => h.hasOnset()));
       onDraw(pattern, phase - lookahead, visibleHaps.current, drawTime);
     }, [pattern]),
@@ -38,6 +38,11 @@ function usePatternFrame({ pattern, started, getTime, onDraw, drawTime = [-2, 2]
       stopFrame();
     }
   }, [started]);
+  return {
+    clear: () => {
+      visibleHaps.current = [];
+    },
+  };
 }
 
 export default usePatternFrame;
