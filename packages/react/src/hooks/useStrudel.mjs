@@ -12,8 +12,8 @@ function useStrudel({
   initialCode = '',
   autolink = false,
   beforeEval,
-  editPattern,
   afterEval,
+  editPattern,
   onEvalError,
   onToggle,
   canvasId,
@@ -105,11 +105,11 @@ function useStrudel({
 
   const inited = useRef();
   useEffect(() => {
-    if (!inited.current && drawContext && onDraw && evalOnMount && code) {
+    if (!inited.current && evalOnMount && code) {
       inited.current = true;
       evaluate(code, false).then((pat) => drawFirstFrame(pat));
     }
-  }, [activateCode, evalOnMount, code, drawFirstFrame]);
+  }, [evalOnMount, code, evaluate, drawFirstFrame]);
 
   // this will stop the scheduler when hot reloading in development
   useEffect(() => {
