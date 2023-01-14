@@ -15,6 +15,11 @@ const getTime = () => getAudioContext().currentTime;
 
 export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTime, punchcard, canvasHeight = 200 }) {
   drawTime = drawTime || (punchcard ? [0, 4] : undefined);
+  const evalOnMount = !!drawTime;
+  const drawContext = useCallback(
+    !!drawTime ? (canvasId) => document.querySelector('#' + canvasId)?.getContext('2d') : null,
+    [drawTime],
+  );
   const {
     code,
     setCode,
@@ -35,8 +40,8 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTi
     defaultOutput: webaudioOutput,
     editPattern: (pat) => (punchcard ? pat.punchcard() : pat),
     getTime,
-    evalOnMount: !!drawTime,
-    drawContext: !!drawTime ? (canvasId) => document.querySelector('#' + canvasId)?.getContext('2d') : null,
+    evalOnMount,
+    drawContext,
     drawTime,
   });
 

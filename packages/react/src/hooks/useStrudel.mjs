@@ -100,7 +100,7 @@ function useStrudel({
         onDraw(pat, -0.001, haps, drawTime);
       }
     },
-    [drawTime, onDraw],
+    [drawContext, drawTime, onDraw],
   );
 
   const inited = useRef();
