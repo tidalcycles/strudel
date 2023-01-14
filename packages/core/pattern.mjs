@@ -2060,6 +2060,7 @@ export const velocity = register('velocity', function (velocity, pat) {
  */
 // TODO - fix
 export const legato = register('legato', function (value, pat) {
+  value = Fraction(value);
   return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
 });
 

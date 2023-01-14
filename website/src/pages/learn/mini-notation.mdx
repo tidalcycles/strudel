@@ -51,12 +51,12 @@ If you do just want to get a regular string that is _not_ parsed as mini-notatio
 
 We can play more notes by separating them with spaces:
 
-<MiniRepl client:idle tune={`note("e5 b4 d5 c5")`} withCanvas />
+<MiniRepl client:idle tune={`note("c e g b")`} punchcard />
 
 Here, those four notes are squashed into one cycle, so each note is a quarter second long.
 Try adding or removing notes and notice how the tempo changes!
 
-<MiniRepl client:idle tune={`note("e5 b4 d5 c5 e5 b4 d5 c5")`} withCanvas />
+<MiniRepl client:idle tune={`note("c d e f g a b")`} punchcard />
 
 Note that the overall duration of time does not change, and instead each note length descreases.
 This is a key idea, as it illustrates the 'Cycle' in TidalCycles!
@@ -72,28 +72,28 @@ But, it will begin to make sense as we go through more elements of mini-notation
 
 We can slow the sequence down by enclosing it in brackets and dividing it by a number (`/2`):
 
-<MiniRepl client:idle tune={`note("[e5 b4 d5 c5]/2")`} />
+<MiniRepl client:idle tune={`note("[e5 b4 d5 c5]/2")`} punchcard />
 
 The division by two means that the sequence will be played over the course of two cycles.
 You can also use decimal numbers for any tempo you like (`/2.75`).
 
-<MiniRepl client:idle tune={`note("[e5 b4 d5 c5]/2.75")`} />
+<MiniRepl client:idle tune={`note("[e5 b4 d5 c5]/2.75")`} punchcard />
 
 ## Angle Brackets
 
 Using angle brackets `<>`, we can define the sequence length based on the number of events:
 
-<MiniRepl client:idle tune={`note("<e5 b4 d5 c5>")`} />
+<MiniRepl client:idle tune={`note("<e5 b4 d5 c5>")`} punchcard />
 
 The above snippet is the same as:
 
-<MiniRepl client:idle tune={`note("[e5 b4 d5 c5]/4")`} />
+<MiniRepl client:idle tune={`note("[e5 b4 d5 c5]/4")`} punchcard />
 
 The advantage of the angle brackets, is that we can add more events without needing to change the number at the end.
 
-<MiniRepl client:idle tune={`note("<e5 b4 d5 c5 e5>")`} />
+<MiniRepl client:idle tune={`note("<e5 b4 d5 c5 e5>")`} punchcard />
 
-<MiniRepl client:idle tune={`note("<e5 b4 d5 c5 e5 b4>")`} />
+<MiniRepl client:idle tune={`note("<e5 b4 d5 c5 e5 b4>")`} punchcard />
 
 This is more similar to traditional music sequencers and piano rolls, where adding a note increases the perceived overall duration.
 
@@ -101,15 +101,13 @@ This is more similar to traditional music sequencers and piano rolls, where addi
 
 Contrary to division, a sequence can be sped up by multiplying it by a number using the asterisk symbol (`*`):
 
-<MiniRepl client:idle tune={`note("[e5 b4 d5 c5]*2")`} />
+<MiniRepl client:idle tune={`note("[e5 b4 d5 c5]*2")`} punchcard />
 
 The multiplication by two here means that the sequence will play twice a cycle.
 
 As with divisions, multiplications can be decimal (`*2.75`):
 
-<MiniRepl client:idle tune={`note("[e5 b4 d5 c5]*2.75")`} />
-
-Actually, this is not true, but this will be [fixed](https://github.com/tidalcycles/strudel/issues/314) :)
+<MiniRepl client:idle tune={`note("[e5 b4 d5 c5]*2.75")`} punchcard />
 
 ## Subdividing time with bracket nesting
 
@@ -133,7 +131,7 @@ Well, what this means is that in TidalCycles, not only can you divide time any w
 
 The "~" represents a rest, and will create silence between other events:
 
-<MiniRepl client:idle tune={`note("[b4 [~ c5] d5 e5]")`} />
+<MiniRepl client:idle tune={`note("[b4 [~ c5] d5 e5]")`} punchcard />
 
 ## Parallel / polyphony
 
@@ -141,17 +139,17 @@ Using commas, we can play chords.
 The following are the same:
 
 <MiniRepl client:idle tune={`note("[g3,b3,e4]")`} />
-<MiniRepl client:idle tune={`note("g3,b3,e4")`} />
+<MiniRepl client:idle tune={`note("g3,b3,e4")`} punchcard canvasHeight={80} />
 
 But to play multiple chords in a sequence, we have to wrap them in brackets:
 
-<MiniRepl client:idle tune={`note("<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>")`} />
+<MiniRepl client:idle tune={`note("<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>")`} punchcard />
 
 ## Elongation
 
 With the "@" symbol, we can specify temporal "weight" of a sequence child:
 
-<MiniRepl client:idle tune={`note("<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>")`} />
+<MiniRepl client:idle tune={`note("<[g3,b3,e4]@2 [a3,c3,e4] [b3,d3,f#4]>")`} punchcard />
 
 Here, the first chord has a weight of 2, making it twice the length of the other chords. The default weight is 1.
 
@@ -159,7 +157,7 @@ Here, the first chord has a weight of 2, making it twice the length of the other
 
 Using "!" we can repeat without speeding up:
 
-<MiniRepl client:idle tune={`note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>")`} />
+<MiniRepl client:idle tune={`note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>")`} punchcard />
 
 In essence, the `x!n` is like a shortcut for `[x*n]@n`.
 
@@ -181,24 +179,24 @@ Using round brackets after an event, we can create rhythmical sub-divisions base
 This algorithm can be found in many different types of music software, and is often referred to as a [Euclidean rhythm](https://en.wikipedia.org/wiki/Euclidean_rhythm) sequencer, after computer scientist Godfriend Toussaint.
 Why is it interesting? Well, consider the following simple example:
 
-<MiniRepl client:idle tune={`s("bd(3,8,0)")`} />
+<MiniRepl client:idle tune={`s("bd(3,8,0)")`} punchcard canvasHeight={50} />
 
 Sound familiar?
 This is a popular Euclidian rhythm going by various names, such as "Pop Clave".
 These rhythms can be found in all musical cultures, and the Euclidian rhythm algorithm allows us to express them extremely easily.
 Writing this rhythm out in full require describing:
 
-<MiniRepl client:idle tune={`s("bd ~ ~ bd ~ ~ bd ~")`} />
+<MiniRepl client:idle tune={`s("bd ~ ~ bd ~ ~ bd ~")`} punchcard canvasHeight={50} />
 
 But using the Euclidian rhythm notation, we only need to express "3 beats over 8 segments, starting on position 1".
 
 This makes it easy to write patterns with interesting rhythmic structures and variations that still sound familiar:
 
-<MiniRepl client:idle tune={`note("e5(2,8) b4(3,8) d5(2,8) c5(3,8)").slow(4)`} />
+<MiniRepl client:idle tune={`note("e5(2,8) b4(3,8) d5(2,8) c5(3,8)").slow(4)`} punchcard canvasHeight={50} />
 
 Note that since the example above does not use the third `offset` parameter, it can be written simply as `"(3,8)"`.
 
-<MiniRepl client:idle tune={`s("bd(3,8)")`} />
+<MiniRepl client:idle tune={`s("bd(3,8)")`} punchcard canvasHeight={50} />
 
 Let's look at those three parameters in detail.
 
@@ -207,26 +205,26 @@ Let's look at those three parameters in detail.
 `beats`: the first parameter controls how may beats will be played.
 Compare these:
 
-<MiniRepl client:idle tune={`s("bd(2,8)")`} />
-<MiniRepl client:idle tune={`s("bd(5,8)")`} />
-<MiniRepl client:idle tune={`s("bd(7,8)")`} />
+<MiniRepl client:idle tune={`s("bd(2,8)")`} punchcard canvasHeight={50} />
+<MiniRepl client:idle tune={`s("bd(5,8)")`} punchcard canvasHeight={50} />
+<MiniRepl client:idle tune={`s("bd(7,8)")`} punchcard canvasHeight={50} />
 
 ### Segments
 
 `segments`: the second parameter controls the total amount of segments the beats will be distributed over:
 
-<MiniRepl client:idle tune={`s("bd(3,4)")`} />
-<MiniRepl client:idle tune={`s("bd(3,8)")`} />
-<MiniRepl client:idle tune={`s("bd(3,13)")`} />
+<MiniRepl client:idle tune={`s("bd(3,4)")`} punchcard canvasHeight={50} />
+<MiniRepl client:idle tune={`s("bd(3,8)")`} punchcard canvasHeight={50} />
+<MiniRepl client:idle tune={`s("bd(3,13)")`} punchcard canvasHeight={50} />
 
 ### Offsets
 
 `offset`: the third (optional) parameter controls the starting position for distributing the beats.
 We need a secondary rhythm to hear the difference:
 
-<MiniRepl client:idle tune={`s("bd(3,8,0), hh cp")`} />
-<MiniRepl client:idle tune={`s("bd(3,8,3), hh cp")`} />
-<MiniRepl client:idle tune={`s("bd(3,8,5), hh cp")`} />
+<MiniRepl client:idle tune={`s("bd(3,8,0), hh cp")`} punchcard />
+<MiniRepl client:idle tune={`s("bd(3,8,3), hh cp")`} punchcard />
+<MiniRepl client:idle tune={`s("bd(3,8,5), hh cp")`} punchcard />
 
 ## Mini-notation exercise
 
