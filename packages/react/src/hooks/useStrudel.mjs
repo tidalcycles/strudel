@@ -30,6 +30,7 @@ function useStrudel({
   const [pattern, setPattern] = useState();
   const [started, setStarted] = useState(false);
   const isDirty = code !== activeCode;
+  const shouldPaint = useCallback((pat) => !!(pat?.context?.onPaint && drawContext), [drawContext]);
 
   // TODO: make sure this hook reruns when scheduler.started changes
   const { scheduler, evaluate, start, stop, pause } = useMemo(
@@ -93,14 +94,14 @@ function useStrudel({
 
   const drawFirstFrame = useCallback(
     (pat) => {
-      if (drawContext && onDraw) {
+      if (shouldPaint(pat)) {
         const [_, lookahead] = drawTime;
         const haps = pat.queryArc(0, lookahead);
         // draw at -0.001 to avoid activating haps at 0
         onDraw(pat, -0.001, haps, drawTime);
       }
     },
-    [drawContext, drawTime, onDraw],
+    [drawTime, onDraw, shouldPaint],
   );
 
   const inited = useRef();
@@ -130,7 +131,7 @@ function useStrudel({
 
   usePatternFrame({
     pattern,
-    started: drawContext && started,
+    started: shouldPaint(pattern) && started,
     getTime: () => scheduler.now(),
     drawTime,
     onDraw,
