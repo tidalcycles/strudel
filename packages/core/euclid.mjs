@@ -46,7 +46,7 @@ const _bjork = function (n, x) {
   return Math.min(ons, offs) <= 1 ? [n, x] : _bjork(...(ons > offs ? left(n, x) : right(n, x)));
 };
 
-const bjork = function (ons, steps) {
+export const bjork = function (ons, steps) {
   const offs = steps - ons;
   const x = Array(ons).fill([1]);
   const y = Array(offs).fill([0]);

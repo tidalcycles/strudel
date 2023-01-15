@@ -334,7 +334,12 @@ export class Pattern {
    * silence
    */
   queryArc(begin, end) {
-    return this.query(new State(new TimeSpan(begin, end)));
+    try {
+      return this.query(new State(new TimeSpan(begin, end)));
+    } catch (err) {
+      logger(`[query]: ${err.message}`, 'error');
+      return [];
+    }
   }
 
   /**
