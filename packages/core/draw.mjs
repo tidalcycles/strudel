@@ -59,3 +59,9 @@ export const cleanupDraw = (clearScreen = true) => {
     clearInterval(window.strudelScheduler);
   }
 };
+
+Pattern.prototype.onPaint = function (onPaint) {
+  // this is evil! TODO: add pattern.context
+  this.context = { onPaint };
+  return this;
+};

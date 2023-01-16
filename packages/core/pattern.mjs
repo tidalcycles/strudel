@@ -338,7 +338,12 @@ export class Pattern {
    * silence
    */
   queryArc(begin, end) {
-    return this.query(new State(new TimeSpan(begin, end)));
+    try {
+      return this.query(new State(new TimeSpan(begin, end)));
+    } catch (err) {
+      logger(`[query]: ${err.message}`, 'error');
+      return [];
+    }
   }
 
   /**
@@ -1980,23 +1985,10 @@ export const jux = register(
   [true],
 );
 
-export const { stutWith, stutwith } = register(
-  ['stutWith', 'stutwith'],
-  function (times, time, func, pat) {
-    return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
-  },
-  [false, false, true],
-);
-
-export const stut = register('stut', function (times, feedback, time, pat) {
-  return pat._stutWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
-});
-
 /**
  * Superimpose and offset multiple times, applying the given function each time.
  * @name echoWith
- * @memberof Pattern
- * @returns Pattern
+ * @synonyms echowith, stutWith, stutwith
  * @param {number} times how many times to repeat
  * @param {number} time cycle offset between iterations
  * @param {function} func function to apply, given the pattern and the iteration index
@@ -2005,8 +1997,8 @@ export const stut = register('stut', function (times, feedback, time, pat) {
  * .echoWith(4, 1/8, (p,n) => p.add(n*2))
  * .scale('C minor').note().legato(.2)
  */
-export const { echoWith, echowith } = register(
-  ['echoWith', 'echowith'],
+export const { echoWith, echowith, stutWith, stutwith } = register(
+  ['echoWith', 'echowith', 'stutWith', 'stutwith'],
   function (times, time, func, pat) {
     return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
   },
@@ -2025,6 +2017,19 @@ export const { echoWith, echowith } = register(
  * s("bd sd").echo(3, 1/6, .8)
  */
 export const echo = register('echo', function (times, time, feedback, pat) {
+  return pat._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+});
+
+/**
+ * Deprecated. Like echo, but the last 2 parameters are flipped.
+ * @name stut
+ * @param {number} times how many times to repeat
+ * @param {number} feedback velocity multiplicator for each iteration
+ * @param {number} time cycle offset between iterations
+ * @example
+ * s("bd sd").stut(3, .8, 1/6)
+ */
+export const stut = register('stut', function (times, feedback, time, pat) {
   return pat._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
 });
 
@@ -2053,6 +2058,7 @@ export const iter = register('iter', function (times, pat) {
 /**
  * Like `iter`, but plays the subdivisions in reverse order. Known as iter' in tidalcycles
  * @name iterBack
+ * @synonyms iterback
  * @memberof Pattern
  * @returns Pattern
  * @example
@@ -2088,6 +2094,7 @@ export const chunk = register(
 /**
  * Like `chunk`, but cycles through the parts in reverse order. Known as chunk' in tidalcycles
  * @name chunkBack
+ * @synonyms chunkback
  * @memberof Pattern
  * @returns Pattern
  * @example
@@ -2104,7 +2111,7 @@ export const { chunkBack, chunkback } = register(
 // TODO - redefine elsewhere in terms of mask
 export const bypass = register('bypass', function (on, pat) {
   on = Boolean(parseInt(on));
-  return on ? silence : this;
+  return on ? silence : pat;
 });
 
 // sets absolute duration of haps
@@ -2113,7 +2120,10 @@ export const duration = register('duration', function (value, pat) {
   return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
 });
 
-// TODO - make control?
+/**
+ * Sets the color of the hap in visualizations like pianoroll or highlighting.
+ */
+// TODO: move this to controls https://github.com/tidalcycles/strudel/issues/288
 export const { color, colour } = register(['color', 'colour'], function (color, pat) {
   return pat.withContext((context) => ({ ...context, color }));
 });
@@ -2141,6 +2151,7 @@ export const velocity = register('velocity', function (velocity, pat) {
  */
 // TODO - fix
 export const legato = register('legato', function (value, pat) {
+  value = Fraction(value);
   return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
 });
 

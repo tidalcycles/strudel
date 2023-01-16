@@ -621,14 +621,15 @@ const generic_params = [
   /**
    * Sets the room size of the reverb, see {@link room}.
    *
-   * @name size
+   * @name roomsize
+   * @synonyms size
    * @param {number | Pattern} size between 0 and 10
    * @example
-   * s("bd sd").room(.8).size("<0 1 2 4 8>")
+   * s("bd sd").room(.8).roomsize("<0 1 2 4 8>")
    *
    */
   // TODO: find out why :
-  // s("bd sd").room(.8).size("<0 .2 .4 .6 .8 [1,0]>").osc()
+  // s("bd sd").room(.8).roomsize("<0 .2 .4 .6 .8 [1,0]>").osc()
   // .. does not work. Is it because room is only one effect?
   [
     'f',
