@@ -1677,7 +1677,7 @@ export const inside = register(
  * "<[0 1] 2 [3 4] 5>".outside(4, rev).scale('C major').note()
  * // "<[0 1] 2 [3 4] 5>".fast(4).rev().slow(4).scale('C major').note()
  */
- export const outside = register(
+export const outside = register(
   'outside',
   function (factor, f, pat) {
     return f(pat._fast(factor))._slow(factor);
