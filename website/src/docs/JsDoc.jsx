@@ -4,7 +4,7 @@ import { MiniRepl } from './MiniRepl';
 
 const getTag = (title, item) => item.tags?.find((t) => t.title === title)?.text;
 
-export function JsDoc({ name, h = 3, hideDescription }) {
+export function JsDoc({ name, h = 3, hideDescription, punchcard, canvasHeight }) {
   const item = docs[name];
   if (!item) {
     console.warn('Not found: ' + name);
@@ -40,7 +40,7 @@ export function JsDoc({ name, h = 3, hideDescription }) {
       {item.examples?.length ? (
         <div className="space-y-2">
           {item.examples?.map((example, k) => (
-            <MiniRepl tune={example} key={k} />
+            <MiniRepl tune={example} key={k} {...{ punchcard, canvasHeight }} />
           ))}
         </div>
       ) : (

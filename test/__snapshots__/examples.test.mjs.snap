@@ -3118,6 +3118,27 @@ exports[`runs examples > example "round" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "run" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:C4 ]",
+  "[ 1/4 → 1/2 | note:D4 ]",
+  "[ 1/2 → 3/4 | note:E4 ]",
+  "[ 3/4 → 1/1 | note:F4 ]",
+  "[ 1/1 → 5/4 | note:C4 ]",
+  "[ 5/4 → 3/2 | note:D4 ]",
+  "[ 3/2 → 7/4 | note:E4 ]",
+  "[ 7/4 → 2/1 | note:F4 ]",
+  "[ 2/1 → 9/4 | note:C4 ]",
+  "[ 9/4 → 5/2 | note:D4 ]",
+  "[ 5/2 → 11/4 | note:E4 ]",
+  "[ 11/4 → 3/1 | note:F4 ]",
+  "[ 3/1 → 13/4 | note:C4 ]",
+  "[ 13/4 → 7/2 | note:D4 ]",
+  "[ 7/2 → 15/4 | note:E4 ]",
+  "[ 15/4 → 4/1 | note:F4 ]",
+]
+`;
+
 exports[`runs examples > example "s" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | s:bd ]",
