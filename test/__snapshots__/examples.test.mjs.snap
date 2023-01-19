@@ -1736,27 +1736,6 @@ exports[`runs examples > example "fastGap" example index 0 1`] = `
 ]
 `;
 
-exports[`runs examples > example "fastcat" example index 0 1`] = `
-[
-  "[ 0/1 → 1/3 | e5 ]",
-  "[ 1/3 → 2/3 | b4 ]",
-  "[ 2/3 → 5/6 | d5 ]",
-  "[ 5/6 → 1/1 | c5 ]",
-  "[ 1/1 → 4/3 | e5 ]",
-  "[ 4/3 → 5/3 | b4 ]",
-  "[ 5/3 → 11/6 | d5 ]",
-  "[ 11/6 → 2/1 | c5 ]",
-  "[ 2/1 → 7/3 | e5 ]",
-  "[ 7/3 → 8/3 | b4 ]",
-  "[ 8/3 → 17/6 | d5 ]",
-  "[ 17/6 → 3/1 | c5 ]",
-  "[ 3/1 → 10/3 | e5 ]",
-  "[ 10/3 → 11/3 | b4 ]",
-  "[ 11/3 → 23/6 | d5 ]",
-  "[ 23/6 → 4/1 | c5 ]",
-]
-`;
-
 exports[`runs examples > example "firstOf" example index 0 1`] = `
 [
   "[ 3/4 → 1/1 | note:c3 ]",
@@ -3481,19 +3460,6 @@ exports[`runs examples > example "sine" example index 0 1`] = `
   "[ 29/8 → 15/4 | note:Eb3 ]",
   "[ 15/4 → 31/8 | note:G3 ]",
   "[ 31/8 → 4/1 | note:C4 ]",
-]
-`;
-
-exports[`runs examples > example "size" example index 0 1`] = `
-[
-  "[ 0/1 → 1/2 | s:bd room:0.8 size:0 ]",
-  "[ 1/2 → 1/1 | s:sd room:0.8 size:0 ]",
-  "[ 1/1 → 3/2 | s:bd room:0.8 size:1 ]",
-  "[ 3/2 → 2/1 | s:sd room:0.8 size:1 ]",
-  "[ 2/1 → 5/2 | s:bd room:0.8 size:2 ]",
-  "[ 5/2 → 3/1 | s:sd room:0.8 size:2 ]",
-  "[ 3/1 → 7/2 | s:bd room:0.8 size:4 ]",
-  "[ 7/2 → 4/1 | s:sd room:0.8 size:4 ]",
 ]
 `;
 
