@@ -466,14 +466,14 @@ samples({
 stack(
   "-7 0 -7 7".struct("x(5,8,1)").fast(2).sub(7)
   .scale(scales)
-  .n()
+  .note()
   .s("sawtooth,square")
   .gain(.3).attack(0.01).decay(0.1).sustain(.5)
   .apply(filter1),
   "~@3 [<2 3>,<4 5>]"
   .echo(4,1/16,.7)
   .scale(scales)
-  .n()
+  .note()
   .s('square').gain(.7)
   .attack(0.01).decay(0.1).sustain(0)
   .apply(filter1),
@@ -484,7 +484,7 @@ stack(
   .fast(2)
   .echo(32, 1/8, .8)
   .scale(scales)
-  .n()
+  .note()
   .s("sawtooth")
   .gain(sine.range(.1,.4).slow(8))
   .attack(.001).decay(.2).sustain(0)
@@ -527,7 +527,7 @@ stack(
   .off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
   .add(perlin.range(0,.5)) // random pitch variation
   .superimpose(add(.05)) // add second, slightly detuned voice
-  .n() // wrap in "n"
+  .note() // wrap in "note"
   .decay(.15).sustain(0) // make each note of equal length
   .s('sawtooth') // waveform
   .gain(.4) // turn down
@@ -536,7 +536,7 @@ stack(
   ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings('lefthand') // chords
   .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
   .add(perlin.range(0,.5)) // random pitch variation
-  .n() // wrap in "n"
+  .note() // wrap in "note"
   .s('sawtooth') // waveform
   .gain(.16) // turn down
   .cutoff(500) // fixed cutoff
@@ -545,7 +545,7 @@ stack(
   ,"a4 c5 <e6 a6>".struct("x(5,8,-1)")
   .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
   .add(perlin.range(0,.5)) // random pitch variation
-  .n() // wrap in "n"
+  .note() // wrap in "note"
   .decay(.1).sustain(0) // make notes short
   .s('triangle') // waveform
   .degradeBy(perlin.range(0,.5)) // randomly controlled random removal :)
@@ -565,12 +565,12 @@ samples({
 
 "C^7 Am7 Dm7 G7".slow(2).voicings('lefthand')
   .stack("0@6 [<1 2> <2 0> 1]@2".scale('C5 major'))
-  .n().slow(4)
+  .note().slow(4)
   .s('0040_FluidR3_GM_sf2_file')
   .color('steelblue')
   .stack(
    "<-7 ~@2 [~@2 -7] -9 ~@2 [~@2 -9] -10!2 ~ [~@2 -10] -5 ~ [-3 -2 -10]@2>*2".scale('C3 major')
-    .n().s('sawtooth').color('brown')
+    .note().s('sawtooth').color('brown')
   )
   .attack(0.05).decay(.1).sustain(.7)
   .cutoff(perlin.range(800,2000))

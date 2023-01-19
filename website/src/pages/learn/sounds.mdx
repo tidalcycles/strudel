@@ -20,15 +20,17 @@ You can learn more about both of these approaches in the pages [Synths](/learn/s
 
 # Combining notes and sounds
 
-In both of the above cases, we are no longer directly controlling the `note`/`n`/`freq` of the sound heard via `s`, as we were in the [Notes](/strudel/notes) page.
+In both of the above cases, we are no longer directly controlling the `note`/`freq` of the sound heard via `s`, as we were in the [Notes](/strudel/notes) page.
 
-So how can we both control the sound and the pitch? We can _combine_ `note`/`n`/`freq` with `s` to change the sound of our pitches:
+So how can we both control the sound and the pitch? We can _combine_ `note`/`freq` with `s` to change the sound of our pitches:
 
 <MiniRepl client:idle tune={`note("a3 c#4 e4 a4").s("sawtooth")`} />
 
-<MiniRepl client:idle tune={`n("57 61 64 69").s("triangle")`} />
+<MiniRepl client:idle tune={`note("57 61 64 69").s("sine")`} />
 
-<MiniRepl client:idle tune={`freq("220 275 330 440").s("sine")`} />
+<MiniRepl client:idle tune={`freq("220 275 330 440").s("triangle")`} />
+
+The last example will actually sound the same with or without `s`, because `triangle` is the default value for `s`.
 
 What about combining different notes with different sounds at the same time?
 
@@ -37,5 +39,3 @@ What about combining different notes with different sounds at the same time?
 Hmm, something interesting is going on there, related to there being five notes and three sounds.
 
 Let's now take a step back and think about the Strudel [Code](/learn/code) we've been hearing so far.
-
-<br />

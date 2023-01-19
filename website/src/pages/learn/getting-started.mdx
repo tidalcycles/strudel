@@ -60,7 +60,7 @@ s("bd,[~ <sd!3 sd(3,4,2)>],hh*8") // drums
 .off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
 .add(perlin.range(0,.5)) // random pitch variation
 .superimpose(add(.05)) // add second, slightly detuned voice
-.n() // wrap in "n"
+.note() // wrap in "note"
 .decay(.15).sustain(0) // make each note of equal length
 .s('sawtooth') // waveform
 .gain(.4) // turn down
@@ -68,7 +68,7 @@ s("bd,[~ <sd!3 sd(3,4,2)>],hh*8") // drums
 ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings('lefthand') // chords
 .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
 .add(perlin.range(0,.5)) // random pitch variation
-.n() // wrap in "n"
+.note() // wrap in "note"
 .s('sawtooth') // waveform
 .gain(.16) // turn down
 .cutoff(500) // fixed cutoff
