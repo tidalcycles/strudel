@@ -31,7 +31,7 @@ export function composify(func) {
   return func;
 }
 
-function registerMethod(name) {
+export function registerMethod(name) {
   methodRegistry.push([
     name,
     function (...args) {
