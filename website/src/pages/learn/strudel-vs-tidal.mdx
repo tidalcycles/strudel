@@ -18,13 +18,13 @@ Strudel is written in JavaScript, while Tidal is written in Haskell.
 
 This difference is most obvious when looking at the syntax:
 
-```hs
+```haskell
 iter 4 $ every 3 (||+ n "10 20") $ (n "0 1 3") # s "triangle" # crush 4
 ```
 
 One _could_ express that pattern to Strudel like so:
 
-```txt
+```
 iter(4, every(3, add.squeeze("10 20"), n("0 1 3").s("triangle").crush(4)))
 ```
 
@@ -37,7 +37,7 @@ operators, or change the meaning of existing ones.
 
 Before you discard Strudel as an unwieldy paren monster, look at this alternative way to write the above:
 
-```txt
+```
 n("0 1 3").every(3, add.squeeze("10 20")).iter(4).s("triangle").crush(4)
 ```
 
@@ -114,7 +114,7 @@ Also, samples are always loaded from a URL rather than from the disk, although [
 The Strudel REPL does not support [block based evaluation](https://github.com/tidalcycles/strudel/issues/34) yet.
 You can use the following "workaround" to create multiple patterns that can be turned on and off:
 
-```txt
+```
 let a = note("c a f e")
 
 let b = s("bd sd")
@@ -127,7 +127,7 @@ stack(
 
 Alternatively, you could write everything as one `stack` and use `.hush()` to silence a pattern:
 
-```txt
+```
 stack(
   note("c a f e"),
   s("bd sd").hush()
@@ -141,6 +141,6 @@ Note that strudel will always use the last statement in your code as the pattern
 Strudels tempo is 1 cycle per second, while tidal defaults to `0.5625`.
 You can get the same tempo as tidal with:
 
-```txt
+```
 note("c a f e").fast(.5625);
 ```

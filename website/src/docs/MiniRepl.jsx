@@ -3,8 +3,9 @@ import { initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 import { useEffect, useState } from 'react';
 import { prebake } from '../repl/prebake';
 
+let modules;
 if (typeof window !== 'undefined') {
-  evalScope(
+  modules = evalScope(
     controls,
     import('@strudel.cycles/core'),
     // import('@strudel.cycles/tone'),
@@ -22,14 +23,20 @@ if (typeof window !== 'undefined') {
   prebake();
 }
 
-export function MiniRepl({ tune, withCanvas }) {
+export function MiniRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
   const [Repl, setRepl] = useState();
   useEffect(() => {
     // we have to load this package on the client
     // because codemirror throws an error on the server
-    import('@strudel.cycles/react').then((res) => {
-      setRepl(() => res.MiniRepl);
-    });
+    Promise.all([import('@strudel.cycles/react'), modules])
+      .then(([res]) => setRepl(() => res.MiniRepl))
+      .catch((err) => console.error(err));
   }, []);
-  return Repl ? <Repl tune={tune} hideOutsideView={true} withCanvas={withCanvas} /> : <pre>{tune}</pre>;
+  return Repl ? (
+    <div className="mb-4">
+      <Repl tune={tune} hideOutsideView={true} drawTime={drawTime} punchcard={punchcard} canvasHeight={canvasHeight} />
+    </div>
+  ) : (
+    <pre>{tune}</pre>
+  );
 }

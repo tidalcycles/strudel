@@ -334,7 +334,12 @@ export class Pattern {
    * silence
    */
   queryArc(begin, end) {
-    return this.query(new State(new TimeSpan(begin, end)));
+    try {
+      return this.query(new State(new TimeSpan(begin, end)));
+    } catch (err) {
+      logger(`[query]: ${err.message}`, 'error');
+      return [];
+    }
   }
 
   /**
@@ -2060,6 +2065,7 @@ export const velocity = register('velocity', function (velocity, pat) {
  */
 // TODO - fix
 export const legato = register('legato', function (value, pat) {
+  value = Fraction(value);
   return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
 });
 

@@ -44,6 +44,7 @@ import {
   ply,
   rev,
   time,
+  run,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -906,6 +907,11 @@ describe('Pattern', () => {
       expect(sequence(-1, -0.5, 0, 0.5).range2(1000, 1100).firstCycle()).toStrictEqual(
         sequence(1000, 1025, 1050, 1075).firstCycle(),
       );
+    });
+  });
+  describe('run', () => {
+    it('Can run', () => {
+      expect(run(4).firstCycle()).toStrictEqual(sequence(0, 1, 2, 3).firstCycle());
     });
   });
   describe('linger', () => {
