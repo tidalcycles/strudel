@@ -21,6 +21,48 @@ let stringParser;
 // intended to use with mini to automatically interpret all strings as mini notation
 export const setStringParser = (parser) => (stringParser = parser);
 
+const methodRegistry = [];
+
+export function composify(func) {
+  for (const [name, method] of methodRegistry) {
+    func[name] = method;
+  }
+  func.__composified = true;
+  return func;
+}
+
+function registerMethod(name) {
+  methodRegistry.push([
+    name,
+    function (...args) {
+      const func = this;
+      const composed = (pat) => func(pat)[name](...args);
+      return composify(composed);
+    },
+  ]);
+}
+
+export function curryPattern(func, arity = func.length) {
+  const fn = function curried(...args) {
+    if (args.length >= arity) {
+      return func.apply(this, args);
+    }
+
+    const partial = function (...args2) {
+      return curried.apply(this, args.concat(args2));
+    };
+    if (args.length == arity - 1) {
+      return composify(partial);
+    }
+
+    return partial;
+  };
+  if (arity == 1) {
+    composify(fn);
+  }
+  return fn;
+}
+
 /** @class Class representing a pattern. */
 export class Pattern {
   /**
@@ -617,7 +659,9 @@ export class Pattern {
    * Accessor for a list of values returned by querying the first cycle.
    */
   get firstCycleValues() {
-    return this.firstCycle().map((hap) => hap.value);
+    return this.sortHapsByPart()
+      .firstCycle()
+      .map((hap) => hap.value);
   }
 
   /**
@@ -1356,6 +1400,8 @@ export function register(name, func) {
   const arity = func.length;
   var pfunc; // the patternified function
 
+  registerMethod(name);
+
   pfunc = function (...args) {
     args = args.map(reify);
     const pat = args[args.length - 1];
@@ -1372,8 +1418,13 @@ export function register(name, func) {
         .map((_, i) => args[i] ?? undefined);
       return func(...args, pat);
     };
-    mapFn = curry(mapFn, null, arity - 1);
-    return right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
+    mapFn = curryPattern(mapFn, arity - 1);
+
+    // Don't use applicative for function arguments
+    const app = (acc, p, i) => (p instanceof Function ? acc.applyValue(p.func) : acc.appLeft(p));
+    const start = left instanceof Function ? pure(mapFn(left.func)) : left.fmap(mapFn);
+
+    return right.reduce(app, start).innerJoin();
   };
 
   Pattern.prototype[name] = function (...args) {
@@ -1398,7 +1449,7 @@ export function register(name, func) {
 
   // toplevel functions get curried as well as patternified
   // because pfunc uses spread args, we need to state the arity explicitly!
-  return curry(pfunc, null, arity);
+  return curryPattern(pfunc, arity);
 }
 
 //////////////////////////////////////////////////////////////////////
