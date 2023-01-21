@@ -23,6 +23,11 @@ export const setStringParser = (parser) => (stringParser = parser);
 
 const methodRegistry = [];
 
+//////////////////////////////////////////////////////////////////////
+// Magic for supporting higher order composition of method chains
+
+class Hitch {}
+
 export function composify(func) {
   if (!func.__composified) {
     for (const [name, method] of methodRegistry) {
@@ -42,7 +47,18 @@ export function registerMethod(name) {
       return composify(composed);
     },
   ]);
+  Hitch.prototype[name] = function (...args) {
+    return composify((pat) => pat[name](...args));
+  };
 }
+
+/**
+ * An object that only exists to create a 'starter' function for chaining methods together. For example, `s("bd sd").every(3, hitch.fast(2).speed("3 5"))`. This is a less flexible but slightly easier to type lambda, in that this example could also be written `s("bd sd").every(3, x => x.fast(2).speed("3 5"))`
+ * @param {Function} whole_func
+ * @param {Function} func
+ * @returns Pattern
+ */
+export const hitch = new Hitch();
 
 export function addToPrototype(name, func) {
   Pattern.prototype[name] = func;
@@ -69,6 +85,9 @@ export function curryPattern(func, arity = func.length) {
   }
   return fn;
 }
+
+//////////////////////////////////////////////////////////////////////
+// The core Pattern class
 
 /** @class Class representing a pattern. */
 export class Pattern {
