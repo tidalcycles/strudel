@@ -24,10 +24,12 @@ export const setStringParser = (parser) => (stringParser = parser);
 const methodRegistry = [];
 
 export function composify(func) {
-  for (const [name, method] of methodRegistry) {
-    func[name] = method;
+  if (!func.__composified) {
+    for (const [name, method] of methodRegistry) {
+      func[name] = method;
+    }
+    func.__composified = true;
   }
-  func.__composified = true;
   return func;
 }
 
@@ -40,6 +42,11 @@ export function registerMethod(name) {
       return composify(composed);
     },
   ]);
+}
+
+export function addToPrototype(name, func) {
+  Pattern.prototype[name] = func;
+  registerMethod(name);
 }
 
 export function curryPattern(func, arity = func.length) {
@@ -876,11 +883,11 @@ function groupHapsBy(eq, haps) {
 const congruent = (a, b) => a.spanEquals(b);
 // Pattern<Hap<T>> -> Pattern<Hap<T[]>>
 // returned pattern contains arrays of congruent haps
-Pattern.prototype.collect = function () {
+addToPrototype('collect', function () {
   return this.withHaps((haps) =>
     groupHapsBy(congruent, haps).map((_haps) => new Hap(_haps[0].whole, _haps[0].part, _haps, {})),
   );
-};
+});
 
 /**
  * Selects indices in in stacked notes.
@@ -888,12 +895,12 @@ Pattern.prototype.collect = function () {
  * note("<[c,eb,g]!2 [c,f,ab] [d,f,ab]>")
  * .arpWith(haps => haps[2])
  * */
-Pattern.prototype.arpWith = function (func) {
+addToPrototype('arpWith', function (func) {
   return this.collect()
     .fmap((v) => reify(func(v)))
     .innerJoin()
     .withHap((h) => new Hap(h.whole, h.part, h.value.value, h.combineContext(h.value)));
-};
+});
 
 /**
  * Selects indices in in stacked notes.
@@ -901,9 +908,9 @@ Pattern.prototype.arpWith = function (func) {
  * note("<[c,eb,g]!2 [c,f,ab] [d,f,ab]>")
  * .arp("0 [0,2] 1 [0,2]").slow(2)
  * */
-Pattern.prototype.arp = function (pat) {
+addToPrototype('arp', function (pat) {
   return this.arpWith((haps) => pat.fmap((i) => haps[i % haps.length]));
-};
+});
 
 //////////////////////////////////////////////////////////////////////
 // compose matrix functions
@@ -1007,9 +1014,9 @@ function _composeOp(a, b, func) {
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
     // make plain version, e.g. pat._add(value) adds that plain value
     // to all the values in pat
-    Pattern.prototype['_' + what] = function (value) {
+    addToPrototype('_' + what, function (value) {
       return this.fmap((x) => op(x, value));
-    };
+    });
 
     // make patternified monster version
     Object.defineProperty(Pattern.prototype, what, {
@@ -1050,9 +1057,9 @@ function _composeOp(a, b, func) {
 
     // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
     for (const how of hows) {
-      Pattern.prototype[how.toLowerCase()] = function (...args) {
+      addToPrototype(how.toLowerCase(), function (...args) {
         return this.set[how.toLowerCase()](args);
-      };
+      });
     }
   }
 
@@ -1065,36 +1072,36 @@ function _composeOp(a, b, func) {
    *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
    *   .slow(4)
    */
-  Pattern.prototype.struct = function (...args) {
+  addToPrototype('struct', function (...args) {
     return this.keepif.out(...args);
-  };
-  Pattern.prototype.structAll = function (...args) {
+  });
+  addToPrototype('structAll', function (...args) {
     return this.keep.out(...args);
-  };
+  });
   /**
    * Returns silence when mask is 0 or "~"
    *
    * @example
    * note("c [eb,g] d [eb,g]").mask("<1 [0 1]>").slow(2)
    */
-  Pattern.prototype.mask = function (...args) {
+  addToPrototype('mask', function (...args) {
     return this.keepif.in(...args);
-  };
-  Pattern.prototype.maskAll = function (...args) {
+  });
+  addToPrototype('maskAll', function (...args) {
     return this.keep.in(...args);
-  };
+  });
   /**
    * Resets the pattern to the start of the cycle for each onset of the reset pattern.
    *
    * @example
    * s("<bd lt> sd, hh*4").reset("<x@3 x(3,8)>")
    */
-  Pattern.prototype.reset = function (...args) {
+  addToPrototype('reset', function (...args) {
     return this.keepif.trig(...args);
-  };
-  Pattern.prototype.resetAll = function (...args) {
+  });
+  addToPrototype('resetAll', function (...args) {
     return this.keep.trig(...args);
-  };
+  });
   /**
    * Restarts the pattern for each onset of the restart pattern.
    * While reset will only reset the current cycle, restart will start from cycle 0.
@@ -1102,12 +1109,12 @@ function _composeOp(a, b, func) {
    * @example
    * s("<bd lt> sd, hh*4").restart("<x@3 x(3,8)>")
    */
-  Pattern.prototype.restart = function (...args) {
+  addToPrototype('restart', function (...args) {
     return this.keepif.trigzero(...args);
-  };
-  Pattern.prototype.restartAll = function (...args) {
+  });
+  addToPrototype('restartAll', function (...args) {
     return this.keep.trigzero(...args);
-  };
+  });
 })();
 
 // aliases
