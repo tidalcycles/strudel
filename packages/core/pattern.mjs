@@ -26,6 +26,7 @@ const methodRegistry = [];
 //////////////////////////////////////////////////////////////////////
 // Magic for supporting higher order composition of method chains
 
+// A class for collecting methods for creating 'hitch' objects that start a chain of composed methods.
 class Hitch {}
 
 export function composify(func) {
