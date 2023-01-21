@@ -1055,6 +1055,8 @@ function _composeOp(a, b, func) {
       },
     });
 
+    registerMethod(what);
+
     // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
     for (const how of hows) {
       addToPrototype(how.toLowerCase(), function (...args) {
@@ -1358,36 +1360,36 @@ export function pm(...args) {
   polymeter(...args);
 }
 
-export const mask = curry((a, b) => reify(b).mask(a));
-export const struct = curry((a, b) => reify(b).struct(a));
-export const superimpose = curry((a, b) => reify(b).superimpose(...a));
+export const mask = curryPattern((a, b) => reify(b).mask(a));
+export const struct = curryPattern((a, b) => reify(b).struct(a));
+export const superimpose = curryPattern((a, b) => reify(b).superimpose(...a));
 
 // operators
-export const set = curry((a, b) => reify(b).set(a));
-export const keep = curry((a, b) => reify(b).keep(a));
-export const keepif = curry((a, b) => reify(b).keepif(a));
-export const add = curry((a, b) => reify(b).add(a));
-export const sub = curry((a, b) => reify(b).sub(a));
-export const mul = curry((a, b) => reify(b).mul(a));
-export const div = curry((a, b) => reify(b).div(a));
-export const mod = curry((a, b) => reify(b).mod(a));
-export const pow = curry((a, b) => reify(b).pow(a));
-export const band = curry((a, b) => reify(b).band(a));
-export const bor = curry((a, b) => reify(b).bor(a));
-export const bxor = curry((a, b) => reify(b).bxor(a));
-export const blshift = curry((a, b) => reify(b).blshift(a));
-export const brshift = curry((a, b) => reify(b).brshift(a));
-export const lt = curry((a, b) => reify(b).lt(a));
-export const gt = curry((a, b) => reify(b).gt(a));
-export const lte = curry((a, b) => reify(b).lte(a));
-export const gte = curry((a, b) => reify(b).gte(a));
-export const eq = curry((a, b) => reify(b).eq(a));
-export const eqt = curry((a, b) => reify(b).eqt(a));
-export const ne = curry((a, b) => reify(b).ne(a));
-export const net = curry((a, b) => reify(b).net(a));
-export const and = curry((a, b) => reify(b).and(a));
-export const or = curry((a, b) => reify(b).or(a));
-export const func = curry((a, b) => reify(b).func(a));
+export const set = curryPattern((a, b) => reify(b).set(a));
+export const keep = curryPattern((a, b) => reify(b).keep(a));
+export const keepif = curryPattern((a, b) => reify(b).keepif(a));
+export const add = curryPattern((a, b) => reify(b).add(a));
+export const sub = curryPattern((a, b) => reify(b).sub(a));
+export const mul = curryPattern((a, b) => reify(b).mul(a));
+export const div = curryPattern((a, b) => reify(b).div(a));
+export const mod = curryPattern((a, b) => reify(b).mod(a));
+export const pow = curryPattern((a, b) => reify(b).pow(a));
+export const band = curryPattern((a, b) => reify(b).band(a));
+export const bor = curryPattern((a, b) => reify(b).bor(a));
+export const bxor = curryPattern((a, b) => reify(b).bxor(a));
+export const blshift = curryPattern((a, b) => reify(b).blshift(a));
+export const brshift = curryPattern((a, b) => reify(b).brshift(a));
+export const lt = curryPattern((a, b) => reify(b).lt(a));
+export const gt = curryPattern((a, b) => reify(b).gt(a));
+export const lte = curryPattern((a, b) => reify(b).lte(a));
+export const gte = curryPattern((a, b) => reify(b).gte(a));
+export const eq = curryPattern((a, b) => reify(b).eq(a));
+export const eqt = curryPattern((a, b) => reify(b).eqt(a));
+export const ne = curryPattern((a, b) => reify(b).ne(a));
+export const net = curryPattern((a, b) => reify(b).net(a));
+export const and = curryPattern((a, b) => reify(b).and(a));
+export const or = curryPattern((a, b) => reify(b).or(a));
+export const func = curryPattern((a, b) => reify(b).func(a));
 
 /**
  * Registers a new pattern method. The method is added to the Pattern class + the standalone function is returned from register.
