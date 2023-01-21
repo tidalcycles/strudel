@@ -54,6 +54,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Samples', link: 'learn/samples' },
       { text: 'Synths', link: 'learn/synths' },
       { text: 'Audio Effects', link: 'learn/effects' },
+      { text: 'CSound', link: 'learn/csound' },
     ],
     'Pattern Functions': [
       { text: 'Introduction', link: 'functions/intro' },
