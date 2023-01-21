@@ -28,10 +28,23 @@ export class Pattern {
    *
    * @param {function} query - The function that maps a {@link State} to an array of {@link Hap}.
    */
-  constructor(query) {
+  constructor(query, as_function) {
     this.query = query;
     this._Pattern = true; // this property is used to detect if a pattern that fails instanceof Pattern is an instance of another Pattern
+    this.__as_function = as_function;
   }
+
+  // TODO - would a default 'as_function' be useful?
+  // /**
+  //  * Accessor for pattern-as-function
+  //  */
+  // get as_function() {
+  //   if (!this.__as_function) {
+  //     // TODO - add other alignments
+  //     this.__as_function = x => x.set(this);
+  //   }
+  //   return this.__as_function;
+  // }
 
   //////////////////////////////////////////////////////////////////////
   // Haskell-style functor, applicative and monadic operations
@@ -1378,19 +1391,19 @@ export function register(name, func, f_params = null) {
     };
     mapFn = curry(mapFn, null, arity - 1);
 
-    // Don't use applicative for arguments that a) have a '__compose' function and b) are
+    // Don't use applicative for arguments that a) have a '__as_function' function and b) are
     // marked as being a higher order function parameter
     function app(acc, p, i) {
-      if (f_params != null && f_params.length > i + 1 && f_params[i + 1] && '__compose' in p) {
-        return acc.applyValue(p.__compose);
+      if (f_params != null && f_params.length > i + 1 && f_params[i + 1] && '__as_function' in p) {
+        return acc.applyValue(p.__as_function);
       }
       return acc.appLeft(p);
     }
 
     var start;
     // Do the same check for the first parameter.. a bit repetitive
-    if (f_params != null && f_params.length > 0 && f_params[0] && '__compose' in left) {
-      start = pure(mapFn(left.__compose));
+    if (f_params != null && f_params.length > 0 && f_params[0] && '__as_function' in left) {
+      start = pure(mapFn(left.__as_function));
     } else {
       start = left.fmap(mapFn);
     }
@@ -1414,13 +1427,13 @@ export function register(name, func, f_params = null) {
     }
     const result = pfunc(...args, this);
 
-    // speed(2,3).__compose(pat) = pat.speed(2,3)
+    // speed(2,3).__as_function(pat) = pat.speed(2,3)
     // and so
-    // speed(2,3).fast(2).__compose(pat) = pat.speed(2,3).fast(2)
-    if ('__compose' in this) {
+    // speed(2,3).fast(2).__as_function(pat) = pat.speed(2,3).fast(2)
+    if ('__as_function' in this) {
       const pata = this;
-      result.__compose = function (patb) {
-        return pata.__compose(patb)[name](...args);
+      result.__as_function = function (patb) {
+        return pata.__as_function(patb)[name](...args);
       };
     }
 

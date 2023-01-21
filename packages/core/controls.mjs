@@ -824,7 +824,7 @@ generic_params.forEach(([type, name, description]) => {
     const result = _name(name, ...pats);
 
     // Add a function for composing this control with another pattern
-    result.__compose = function (pat) {
+    result.__as_function = function (pat) {
       return pat[name](...pats);
     };
     return result;
