@@ -11,7 +11,9 @@ import './reverb.mjs';
 import { getSampleBufferSource } from './sampler.mjs';
 const { Pattern } = strudel;
 import './vowel.mjs';
-import workletsUrl from './worklets.mjs?url';
+
+// Workaround for handling webpack https://github.com/webpack/webpack/issues/11543
+const workletsUrl = new URL('./worklets.mjs?url', import.meta.url);
 
 // export const getAudioContext = () => Tone.getContext().rawContext;
 
