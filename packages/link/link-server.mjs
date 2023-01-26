@@ -1,7 +1,9 @@
-//// get pattern
-
 import { evaluate } from '@strudel.cycles/transpiler';
 import { evalScope, controls, getFrequency } from '@strudel.cycles/core';
+import { AudioContext, OscillatorNode, GainNode } from 'node-web-audio-api';
+import abletonlink from 'abletonlink';
+
+//// prepare pattern
 
 await evalScope(
   controls,
@@ -12,15 +14,15 @@ await evalScope(
   // import('@strudel.cycles/osc'),
 );
 
-const { pattern } = await evaluate(`note("<Dm7 G7 C^7!2>".voicings('lefthand')).gain(.25).s('sawtooth')`);
+const { pattern } = await evaluate(
+  `note("<Dm7 G7 C^7!2>".voicings('lefthand')).ply(8).gain(.0625).s('sawtooth').early(.06)`,
+);
 
-//// web audio
-
-import { AudioContext, OscillatorNode, GainNode } from 'node-web-audio-api';
+//// web audio logic
 
 const ac = new AudioContext();
 
-export function playHaps(ac, haps, beat, cps = 1) {
+export function playHaps(haps, beat, cps = 1) {
   const ct = ac.currentTime;
   haps
     .filter((hap) => hap.hasOnset())
@@ -46,9 +48,8 @@ export function playHaps(ac, haps, beat, cps = 1) {
     });
 }
 
-//// link
+//// link scheduling
 
-import abletonlink from 'abletonlink';
 const link = new abletonlink();
 
 let lastBeat;
@@ -56,7 +57,7 @@ link.startUpdate(60, (beat, phase, bpm) => {
   if (lastBeat !== undefined) {
     const cps = bpm / 60;
     const haps = pattern.slow(2).queryArc(lastBeat, beat);
-    playHaps(ac, haps, lastBeat, cps);
+    playHaps(haps, lastBeat, cps);
   }
   lastBeat = beat;
 });
