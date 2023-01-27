@@ -13,7 +13,7 @@ const { Pattern } = strudel;
 import './vowel.mjs';
 
 // Workaround for handling webpack https://github.com/webpack/webpack/issues/11543
-const workletsUrl = new URL('./worklets.mjs?url', import.meta.url);
+const workletsUrl = new URL('./worklets.mjs', import.meta.url);
 
 // export const getAudioContext = () => Tone.getContext().rawContext;
 
