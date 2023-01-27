@@ -2028,6 +2028,16 @@ export const bypass = register('bypass', function (on, pat) {
   return on ? silence : pat;
 });
 
+/**
+ * Loops the pattern inside at `offset` for `cycles`.
+ * @param {number} offset start point of loop in cycles
+ * @param {number} cycles loop length in cycles
+ * @example
+ * // Looping a portion of randomness
+ * note(irand(8).segment(4).scale('C3 minor')).ribbon(1337, 2)
+ */
+export const ribbon = register('ribbon', (offset, cycles, pat) => pat.early(offset).restart(pure(1).slow(cycles)));
+
 // sets absolute duration of haps
 // TODO - fix
 export const duration = register('duration', function (value, pat) {
