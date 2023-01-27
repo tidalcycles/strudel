@@ -116,7 +116,7 @@ strudel.Pattern.prototype.filter = function () {
 strudel.Pattern.prototype.adsr = function () {
   return this;
 };
-strudel.Pattern.prototype.out = function () {
+strudel.Pattern.prototype.webaudio = function () {
   return this;
 };
 strudel.Pattern.prototype.soundfont = function () {

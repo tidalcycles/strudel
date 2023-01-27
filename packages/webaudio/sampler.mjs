@@ -124,7 +124,8 @@ let sampleCache = { current: undefined };
 export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
   if (typeof sampleMap === 'string') {
     if (sampleMap.startsWith('github:')) {
-      const [_, path] = sampleMap.split('github:');
+      let [_, path] = sampleMap.split('github:');
+      path = path.endsWith('/') ? path.slice(0, -1) : path;
       sampleMap = `https://raw.githubusercontent.com/${path}/strudel.json`;
     }
     if (typeof fetch !== 'function') {

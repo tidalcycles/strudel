@@ -22,11 +22,11 @@ Pattern.prototype.animate = function ({ callback, sync = false, smear = 0.5 } = 
     ctx.fillStyle = clearColor;
     ctx.fillRect(0, 0, ww, wh);
     frame.forEach((f) => {
-      let { x, y, w, h, s, r, a = 0, fill = 'darkseagreen' } = f.value;
+      let { x, y, w, h, s, r, angle = 0, fill = 'darkseagreen' } = f.value;
       w *= ww;
       h *= wh;
-      if (r !== undefined && a !== undefined) {
-        const radians = a * 2 * Math.PI;
+      if (r !== undefined && angle !== undefined) {
+        const radians = angle * 2 * Math.PI;
         const [cx, cy] = [(ww - w) / 2, (wh - h) / 2];
         x = cx + Math.cos(radians) * r * cx;
         y = cy + Math.sin(radians) * r * cy;
@@ -51,7 +51,7 @@ Pattern.prototype.animate = function ({ callback, sync = false, smear = 0.5 } = 
   return silence;
 };
 
-export const { x, y, w, h, a, r, fill, smear } = createParams('x', 'y', 'w', 'h', 'a', 'r', 'fill', 'smear');
+export const { x, y, w, h, angle, r, fill, smear } = createParams('x', 'y', 'w', 'h', 'angle', 'r', 'fill', 'smear');
 
 export const rescale = register('rescale', function (f, pat) {
   return pat.mul(x(f).w(f).y(f).h(f));

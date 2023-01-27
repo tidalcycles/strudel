@@ -12,8 +12,8 @@ export function repl({
   afterEval,
   getTime,
   transpiler,
-  editPattern,
   onToggle,
+  editPattern,
 }) {
   const scheduler = new Cyclist({
     interval,
@@ -35,7 +35,7 @@ export function repl({
     getTime,
     onToggle,
   });
-  setTime(() => scheduler.getPhase()); // TODO: refactor?
+  setTime(() => scheduler.now()); // TODO: refactor?
   const evaluate = async (code, autostart = true) => {
     if (!code) {
       throw new Error('no code to evaluate');

@@ -28,7 +28,7 @@ Strudel however runs directly in your web browser, does not require any custom s
 The main place to actually make music with Strudel is the [Strudel REPL](https://strudel.tidalcycles.org/) ([what is a REPL?](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)), but in these pages you will also encounter interactive "MiniREPLs" where you can listen to and edit Strudel patterns.
 Try clicking the play icon below:
 
-<MiniRepl client:idle tune={`s("bd sd")`} />
+<MiniRepl client:idle tune={`s("bd sd")`} punchcard />
 
 Then edit the text so it reads `s("bd sd cp hh")` and click the refresh icon.
 Congratulations, you have now live coded your first Strudel pattern!
@@ -54,13 +54,13 @@ Alternatively, you can get a taste of what Strudel can do by clicking play on th
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
 }, 'github:tidalcycles/Dirt-Samples/master/');
 stack(
-s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
+s("bd,[~ <sd!3 sd(3,4,2)>],hh*8") // drums
 .speed(perlin.range(.7,.9)) // random sample speed variation
 ,"<a1 b1\*2 a1(3,8) e2>" // bassline
 .off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
 .add(perlin.range(0,.5)) // random pitch variation
 .superimpose(add(.05)) // add second, slightly detuned voice
-.n() // wrap in "n"
+.note() // wrap in "note"
 .decay(.15).sustain(0) // make each note of equal length
 .s('sawtooth') // waveform
 .gain(.4) // turn down
@@ -68,7 +68,7 @@ s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
 ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings('lefthand') // chords
 .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
 .add(perlin.range(0,.5)) // random pitch variation
-.n() // wrap in "n"
+.note() // wrap in "note"
 .s('sawtooth') // waveform
 .gain(.16) // turn down
 .cutoff(500) // fixed cutoff

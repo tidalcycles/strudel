@@ -54,6 +54,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Samples', link: 'learn/samples' },
       { text: 'Synths', link: 'learn/synths' },
       { text: 'Audio Effects', link: 'learn/effects' },
+      { text: 'CSound', link: 'learn/csound' },
     ],
     'Pattern Functions': [
       { text: 'Introduction', link: 'functions/intro' },
@@ -62,6 +63,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Control Parameters', link: 'functions/value-modifiers' },
       { text: 'Signals', link: 'learn/signals' },
       { text: 'Conditional Modifiers', link: 'learn/conditional-modifiers' },
+      { text: 'Accumulation', link: 'learn/accumulation' },
       { text: 'Tonal Modifiers', link: 'learn/tonal' },
     ],
     More: [
@@ -74,6 +76,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'REPL', link: 'technical-manual/repl' },
       { text: 'Docs', link: 'technical-manual/docs' },
       { text: 'Testing', link: 'technical-manual/testing' },
+      // { text: 'Internals', link: 'technical-manual/internals' },
     ],
   },
 };

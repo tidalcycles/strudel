@@ -12,7 +12,7 @@ const { headings, githubEditUrl } = Astro.props as Props;
 const currentPage = Astro.url.pathname;
 ---
 
-<nav aria-labelledby="grid-right">
+<nav aria-labelledby="grid-right" class="w-64">
   <TableOfContents client:media="(min-width: 50em)" headings={headings} currentPage={currentPage} />
   <MoreMenu editHref={githubEditUrl} />
 </nav>
