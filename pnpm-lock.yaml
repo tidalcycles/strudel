@@ -199,6 +199,7 @@ importers:
       node-fetch: ^3.2.6
       sfumato: ^0.1.2
       soundfont2: ^0.4.0
+      vite: ^3.2.2
     dependencies:
       '@strudel.cycles/core': link:../core
       '@strudel.cycles/webaudio': link:../webaudio
@@ -206,6 +207,7 @@ importers:
       soundfont2: 0.4.0
     devDependencies:
       node-fetch: 3.3.0
+      vite: 3.2.5
 
   packages/tonal:
     specifiers:
