@@ -9,7 +9,8 @@
   },
   "scripts": {
     "build": "vite build",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",

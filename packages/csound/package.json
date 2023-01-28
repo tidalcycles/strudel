@@ -8,7 +8,8 @@
     "module": "dist/index.mjs"
   },
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
