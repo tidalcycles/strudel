@@ -60,6 +60,12 @@
     "lerna": "^4.0.0",
     "prettier": "^2.8.1",
     "rollup-plugin-visualizer": "^5.8.1",
-    "vitest": "^0.25.7"
+    "vitest": "^0.25.7",
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/transpiler": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
+    "@strudel.cycles/mini": "workspace:*",
+    "@strudel.cycles/tonal": "workspace:*",
+    "@strudel.cycles/xen": "workspace:*"
   }
 }

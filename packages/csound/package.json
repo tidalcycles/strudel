@@ -27,6 +27,8 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
     "@csound/browser": "^6.18.3"
   }
 }

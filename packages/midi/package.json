@@ -21,7 +21,9 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/tone": "^0.5.0",
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
+    "@strudel.cycles/tone": "workspace:*",
     "tone": "^14.7.77",
     "webmidi": "^3.0.21"
   }

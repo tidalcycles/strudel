@@ -35,5 +35,8 @@
     "shift-parser": "^8.0.0",
     "shift-spec": "^2019.0.0",
     "shift-traverser": "^1.0.0"
+  },
+  "devDependencies": {
+    "@strudel.cycles/mini": "workspace:*"
   }
 }
