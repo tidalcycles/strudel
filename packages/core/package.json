@@ -1,11 +1,16 @@
 {
   "name": "@strudel.cycles/core",
-  "version": "0.5.0",
+  "version": "0.6.8",
   "description": "Port of Tidal Cycles to JavaScript",
   "main": "index.mjs",
   "type": "module",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "build": "vite build"
   },
   "repository": {
     "type": "git",
@@ -29,6 +34,7 @@
   },
   "gitHead": "0e26d4e741500f5bae35b023608f062a794905c2",
   "devDependencies": {
+    "vite": "^3.2.2",
     "vitest": "^0.25.7"
   }
 }

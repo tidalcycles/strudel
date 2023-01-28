@@ -52,10 +52,12 @@ importers:
   packages/core:
     specifiers:
       fraction.js: ^4.2.0
+      vite: ^3.2.2
       vitest: ^0.25.7
     dependencies:
       fraction.js: 4.2.0
     devDependencies:
+      vite: 3.2.5
       vitest: 0.25.8
 
   packages/csound:
