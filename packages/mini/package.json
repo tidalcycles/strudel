@@ -4,9 +4,14 @@
   "description": "Mini notation for strudel",
   "main": "index.mjs",
   "type": "module",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
   "scripts": {
     "test": "vitest run",
-    "build:parser": "peggy -o krill-parser.js --format es ./krill.pegjs"
+    "build:parser": "peggy -o krill-parser.js --format es ./krill.pegjs",
+    "build": "vite build"
   },
   "repository": {
     "type": "git",
@@ -30,6 +35,7 @@
   },
   "devDependencies": {
     "peggy": "^2.0.1",
+    "vite": "^3.2.2",
     "vitest": "^0.25.7"
   }
 }

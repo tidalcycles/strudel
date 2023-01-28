@@ -110,11 +110,13 @@ importers:
     specifiers:
       '@strudel.cycles/core': workspace:*
       peggy: ^2.0.1
+      vite: ^3.2.2
       vitest: ^0.25.7
     dependencies:
       '@strudel.cycles/core': link:../core
     devDependencies:
       peggy: 2.0.1
+      vite: 3.2.5
       vitest: 0.25.8
 
   packages/osc:
