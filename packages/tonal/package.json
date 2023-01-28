@@ -3,10 +3,15 @@
   "version": "0.5.0",
   "description": "Tonal functions for strudel",
   "main": "index.mjs",
-  "type": "module",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
   "scripts": {
+    "build": "vite build",
     "test": "vitest run"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -31,6 +36,7 @@
     "webmidi": "^3.0.21"
   },
   "devDependencies": {
+    "vite": "^3.2.2",
     "vitest": "^0.25.7"
   }
 }
