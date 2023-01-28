@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.5.0",
+    "@strudel.cycles/core": "workspace:*",
     "acorn": "^8.8.1",
     "escodegen": "^2.0.0",
     "estree-walker": "^3.0.1"
