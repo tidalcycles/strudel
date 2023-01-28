@@ -37,6 +37,7 @@
     "shift-traverser": "^1.0.0"
   },
   "devDependencies": {
-    "@strudel.cycles/mini": "workspace:*"
+    "@strudel.cycles/mini": "workspace:*",
+    "vitest": "^0.25.7"
   }
 }

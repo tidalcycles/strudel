@@ -25,5 +25,8 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@strudel.cycles/core": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^0.25.7"
   }
 }

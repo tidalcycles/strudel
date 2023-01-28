@@ -29,5 +29,8 @@
     "@tonaljs/tonal": "^4.7.2",
     "chord-voicings": "^0.0.1",
     "webmidi": "^3.0.21"
+  },
+  "devDependencies": {
+    "vitest": "^0.25.7"
   }
 }

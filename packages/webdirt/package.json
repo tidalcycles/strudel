@@ -23,6 +23,10 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
     "WebDirt": "github:dktr0/WebDirt"
+  },
+  "devDependencies": {
+    "vitest": "^0.25.7"
   }
 }

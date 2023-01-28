@@ -27,5 +27,8 @@
   "dependencies": {
     "fraction.js": "^4.2.0"
   },
-  "gitHead": "0e26d4e741500f5bae35b023608f062a794905c2"
+  "gitHead": "0e26d4e741500f5bae35b023608f062a794905c2",
+  "devDependencies": {
+    "vitest": "^0.25.7"
+  }
 }

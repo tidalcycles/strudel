@@ -24,5 +24,8 @@
   "dependencies": {
     "@strudel.cycles/core": "workspace:*",
     "tone": "^14.7.77"
+  },
+  "devDependencies": {
+    "vitest": "^0.25.7"
   }
 }

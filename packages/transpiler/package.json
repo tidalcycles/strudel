@@ -28,5 +28,8 @@
     "acorn": "^8.8.1",
     "escodegen": "^2.0.0",
     "estree-walker": "^3.0.1"
+  },
+  "devDependencies": {
+    "vitest": "^0.25.8"
   }
 }

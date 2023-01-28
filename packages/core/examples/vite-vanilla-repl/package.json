@@ -11,5 +11,11 @@
   },
   "devDependencies": {
     "vite": "^3.2.0"
+  },
+  "dependencies": {
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/mini": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
+    "@strudel.cycles/tonal": "workspace:*"
   }
 }

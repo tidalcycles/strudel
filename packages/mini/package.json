@@ -31,6 +31,7 @@
     "@strudel.cycles/tone": "workspace:*"
   },
   "devDependencies": {
-    "peggy": "^2.0.1"
+    "peggy": "^2.0.1",
+    "vitest": "^0.25.7"
   }
 }
