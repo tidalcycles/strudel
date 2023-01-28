@@ -914,6 +914,13 @@ describe('Pattern', () => {
       expect(run(4).firstCycle()).toStrictEqual(sequence(0, 1, 2, 3).firstCycle());
     });
   });
+  describe('ribbon', () => {
+    it('Can ribbon', () => {
+      expect(cat(0, 1, 2, 3, 4, 5, 6, 7).ribbon(2, 4).fast(4).firstCycle()).toStrictEqual(
+        sequence(2, 3, 4, 5).firstCycle(),
+      );
+    });
+  });
   describe('linger', () => {
     it('Can linger on the first quarter of a cycle', () => {
       expect(sequence(0, 1, 2, 3, 4, 5, 6, 7).linger(0.25).firstCycle()).toStrictEqual(

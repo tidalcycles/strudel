@@ -3066,6 +3066,27 @@ exports[`runs examples > example "rev" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "ribbon" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:C3 ]",
+  "[ 1/4 → 1/2 | note:G3 ]",
+  "[ 1/2 → 3/4 | note:Eb3 ]",
+  "[ 3/4 → 1/1 | note:Bb3 ]",
+  "[ 1/1 → 5/4 | note:C3 ]",
+  "[ 5/4 → 3/2 | note:D3 ]",
+  "[ 3/2 → 7/4 | note:G3 ]",
+  "[ 7/4 → 2/1 | note:Eb3 ]",
+  "[ 2/1 → 9/4 | note:C3 ]",
+  "[ 9/4 → 5/2 | note:G3 ]",
+  "[ 5/2 → 11/4 | note:Eb3 ]",
+  "[ 11/4 → 3/1 | note:Bb3 ]",
+  "[ 3/1 → 13/4 | note:C3 ]",
+  "[ 13/4 → 7/2 | note:D3 ]",
+  "[ 7/2 → 15/4 | note:G3 ]",
+  "[ 15/4 → 4/1 | note:Eb3 ]",
+]
+`;
+
 exports[`runs examples > example "room" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | s:bd room:0 ]",
