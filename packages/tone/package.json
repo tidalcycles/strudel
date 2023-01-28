@@ -1,9 +1,16 @@
 {
   "name": "@strudel.cycles/tone",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Tone.js API for strudel",
   "main": "index.mjs",
   "type": "module",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
+  "scripts": {
+    "build": "vite build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -26,6 +33,7 @@
     "tone": "^14.7.77"
   },
   "devDependencies": {
+    "vite": "^3.2.2",
     "vitest": "^0.25.7"
   }
 }
