@@ -245,6 +245,7 @@ importers:
       acorn: ^8.8.1
       escodegen: ^2.0.0
       estree-walker: ^3.0.1
+      vite: ^3.2.2
       vitest: ^0.25.8
     dependencies:
       '@strudel.cycles/core': link:../core
@@ -252,6 +253,7 @@ importers:
       escodegen: 2.0.0
       estree-walker: 3.0.3
     devDependencies:
+      vite: 3.2.5
       vitest: 0.25.8
 
   packages/webaudio:
