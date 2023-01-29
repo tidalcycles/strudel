@@ -22,6 +22,7 @@ let stringParser;
 export const setStringParser = (parser) => (stringParser = parser);
 
 const methodRegistry = [];
+const controlRegistry = [];
 
 //////////////////////////////////////////////////////////////////////
 // Magic for supporting higher order composition of method chains
@@ -53,8 +54,13 @@ export function registerMethod(name) {
   };
 }
 
+export function registerControl(name, func) {
+  registerMethod(name);
+  controlRegistry.push([name, func]);
+}
+
 /**
- * An object that only exists to create a 'starter' function for chaining methods together. For example, `s("bd sd").every(3, hitch.fast(2).speed("3 5"))`. This is a less flexible but slightly easier to type lambda, in that this example could also be written `s("bd sd").every(3, x => x.fast(2).speed("3 5"))`
+ * An object that only exists to turn control patterns into functions. For example, `s("bd sd").every(3, speed("3 5").fast(2))`. This is a less flexible but slightly easier-to-type lambda, in that this example could also be written `s("bd sd").every(3, x => x.speed("3 5").fast(2))`
  * @param {Function} whole_func
  * @param {Function} func
  * @returns Pattern
@@ -1050,7 +1056,7 @@ function _composeOp(a, b, func) {
 
         // add methods to that function for each behaviour
         for (const how of hows) {
-          wrapper[how.toLowerCase()] = function (...other) {
+          const howfunc = function (...other) {
             var howpat = pat;
             other = sequence(other);
             if (preprocess) {
@@ -1068,21 +1074,44 @@ function _composeOp(a, b, func) {
             }
             return result;
           };
+
+          for (const [controlname, controlfunc] of controlRegistry) {
+            howfunc[controlname] = (...args) => howfunc(controlfunc(...args));
+          }
+          wrapper[how.toLowerCase()] = howfunc;
         }
         wrapper.squeezein = wrapper.squeeze;
+
+        for (const [controlname, controlfunc] of controlRegistry) {
+          wrapper[controlname] = (...args) => wrapper.in(controlfunc(...args));
+        }
+        // s("bd").set.n(3).fast(2)
 
         return wrapper;
       },
     });
 
     registerMethod(what);
+  }
 
-    // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
-    for (const how of hows) {
-      addToPrototype(how.toLowerCase(), function (...args) {
-        return this.set[how.toLowerCase()](args);
-      });
-    }
+  // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
+  for (const how of hows) {
+    const howLower = how.toLowerCase();
+
+    // Using a 'get'ted function so that all the controls are added
+    Object.defineProperty(Pattern.prototype, howLower, {
+      get: function () {
+        const pat = this;
+        const howfunc = function (...args) {
+          return pat.set[howLower](args);
+        };
+        for (const [controlname, controlfunc] of controlRegistry) {
+          howfunc[controlname] = (...args) => howfunc(controlfunc(...args));
+        }
+        return howfunc;
+      },
+    });
+    registerMethod(howLower);
   }
 
   // binary composers
@@ -1410,6 +1439,17 @@ export const net = curryPattern((a, b) => reify(b).net(a));
 export const and = curryPattern((a, b) => reify(b).and(a));
 export const or = curryPattern((a, b) => reify(b).or(a));
 export const func = curryPattern((a, b) => reify(b).func(a));
+
+// alignments
+// export const in = curryPattern((a, b) => reify(b).in(a)); // reserved word :(
+export const out = curryPattern((a, b) => reify(b).out(a));
+export const mix = curryPattern((a, b) => reify(b).mix(a));
+export const squeeze = curryPattern((a, b) => reify(b).squeeze(a));
+export const squeezeout = curryPattern((a, b) => reify(b).squeezeOut(a));
+export const squeezeOut = squeezeout;
+export const trig = curryPattern((a, b) => reify(b).trig(a));
+export const trigzero = curryPattern((a, b) => reify(b).trigzero(a));
+export const trigZero = trigzero;
 
 /**
  * Registers a new pattern method. The method is added to the Pattern class + the standalone function is returned from register.
