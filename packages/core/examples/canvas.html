@@ -2,13 +2,13 @@
   <input
     type="text"
     id="text"
-    value="cat('orange', 'indigo')"
+    value="seq('tomato', 'indigo', ['white', 'steelblue']).fast(4)"
     style="width: 100%; font-size: 2em; background: black; color: white; outline: none; position: absolute; top: 0"
     spellcheck="false"
   />
   <canvas id="canvas"></canvas>
   <script type="module">
-    const strudel = await import('https://cdn.skypack.dev/@strudel.cycles/core@0.0.2');
+    const strudel = await import('https://cdn.skypack.dev/@strudel.cycles/core@0.6.8');
     // this adds all strudel functions to the global scope, to be used by eval
     Object.assign(window, strudel);
     // setup elements

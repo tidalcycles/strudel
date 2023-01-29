@@ -15,6 +15,7 @@
   "dependencies": {
     "@strudel.cycles/core": "workspace:*",
     "@strudel.cycles/mini": "workspace:*",
+    "@strudel.cycles/transpiler": "workspace:*",
     "@strudel.cycles/webaudio": "workspace:*",
     "@strudel.cycles/tonal": "workspace:*"
   }

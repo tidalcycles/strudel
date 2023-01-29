@@ -6,46 +6,36 @@
     <title>Buildless Vanilla Strudel REPL</title>
   </head>
   <body style="margin: 0; background: #222">
-    <div style="display: grid; height: 100vh">
+    <div style="display: grid; height: 100vh; grid-template-rows: 32px auto">
+      <button id="start" style="width: 100vw; height: 32px">evaluate</button>
       <textarea
         id="text"
         style="font-size: 2em; border: 0; color: white; background: transparent; outline: none; padding: 20px"
         spellcheck="false"
       ></textarea>
     </div>
-    <button
-      id="start"
-      style="
-        position: absolute;
-        border-radius: 10px;
-        top: 20px;
-        right: 20px;
-        padding: 20px;
-        border: 2px solid white;
-        background: transparent;
-        color: white;
-        cursor: pointer;
-      "
-    >
-      evaluate
-    </button>
     <div id="output"></div>
     <script type="module">
-      import { controls, repl, evalScope } from 'https://cdn.skypack.dev/@strudel.cycles/core@0.3.2';
-      import { mini } from 'https://cdn.skypack.dev/@strudel.cycles/mini@0.3.2';
-      import { transpiler } from 'https://cdn.skypack.dev/@strudel.cycles/transpiler@0.3.2';
-      import { getAudioContext, webaudioOutput } from 'https://cdn.skypack.dev/@strudel.cycles/webaudio@0.3.3';
+      import { controls, repl, evalScope } from 'https://cdn.skypack.dev/@strudel.cycles/core@0.6.8';
+      import { mini } from 'https://cdn.skypack.dev/@strudel.cycles/mini@0.6.0';
+      import { transpiler } from 'https://cdn.skypack.dev/@strudel.cycles/transpiler@0.6.0';
+      import {
+        getAudioContext,
+        webaudioOutput,
+        initAudioOnFirstClick,
+      } from 'https://cdn.skypack.dev/@strudel.cycles/webaudio@0.6.0';
 
+      initAudioOnFirstClick();
       const ctx = getAudioContext();
       const input = document.getElementById('text');
       input.innerHTML = getTune();
 
       evalScope(
         controls,
-        import('https://cdn.skypack.dev/@strudel.cycles/core@0.3.2'),
-        import('https://cdn.skypack.dev/@strudel.cycles/mini@0.3.2'),
-        import('https://cdn.skypack.dev/@strudel.cycles/tonal@0.3.3'),
-        import('https://cdn.skypack.dev/@strudel.cycles/webaudio@0.3.3'),
+        import('https://cdn.skypack.dev/@strudel.cycles/core@0.6.8'),
+        import('https://cdn.skypack.dev/@strudel.cycles/mini@0.6.0'),
+        import('https://cdn.skypack.dev/@strudel.cycles/tonal@0.6.0'),
+        import('https://cdn.skypack.dev/@strudel.cycles/webaudio@0.6.0'),
       );
 
       const { evaluate } = repl({
