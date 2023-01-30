@@ -65,12 +65,14 @@ importers:
       '@strudel.cycles/core': workspace:*
       '@strudel.cycles/mini': workspace:*
       '@strudel.cycles/tonal': workspace:*
+      '@strudel.cycles/transpiler': workspace:*
       '@strudel.cycles/webaudio': workspace:*
       vite: ^3.2.0
     dependencies:
       '@strudel.cycles/core': link:../..
       '@strudel.cycles/mini': link:../../../mini
       '@strudel.cycles/tonal': link:../../../tonal
+      '@strudel.cycles/transpiler': link:../../../transpiler
       '@strudel.cycles/webaudio': link:../../../webaudio
     devDependencies:
       vite: 3.2.5
