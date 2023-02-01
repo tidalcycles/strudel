@@ -200,6 +200,43 @@ importers:
       tailwindcss: 3.2.4_postcss@8.4.21
       vite: 3.2.5
 
+  packages/react/examples/nano-repl:
+    specifiers:
+      '@strudel.cycles/core': workspace:*
+      '@strudel.cycles/mini': workspace:*
+      '@strudel.cycles/osc': workspace:*
+      '@strudel.cycles/react': workspace:*
+      '@strudel.cycles/tonal': workspace:*
+      '@strudel.cycles/transpiler': workspace:*
+      '@strudel.cycles/webaudio': workspace:*
+      '@types/react': ^18.0.17
+      '@types/react-dom': ^18.0.6
+      '@vitejs/plugin-react': ^2.0.1
+      autoprefixer: ^10.4.8
+      postcss: ^8.4.16
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      tailwindcss: ^3.1.8
+      vite: ^3.0.7
+    dependencies:
+      '@strudel.cycles/core': link:../../../core
+      '@strudel.cycles/mini': link:../../../mini
+      '@strudel.cycles/osc': link:../../../osc
+      '@strudel.cycles/react': link:../..
+      '@strudel.cycles/tonal': link:../../../tonal
+      '@strudel.cycles/transpiler': link:../../../transpiler
+      '@strudel.cycles/webaudio': link:../../../webaudio
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    devDependencies:
+      '@types/react': 18.0.27
+      '@types/react-dom': 18.0.10
+      '@vitejs/plugin-react': 2.2.0_vite@3.2.5
+      autoprefixer: 10.4.13_postcss@8.4.21
+      postcss: 8.4.21
+      tailwindcss: 3.2.4_postcss@8.4.21
+      vite: 3.2.5
+
   packages/serial:
     specifiers:
       '@strudel.cycles/core': workspace:*
@@ -2816,7 +2853,6 @@ packages:
     resolution: {integrity: sha512-E42GW/JA4Qv15wQdqJq8DL4JhNpB3prJgjgapN3qJT9K2zO5IIAQh4VXvCEDupoqAwnz0cY4RlXeC/ajX5SFHg==}
     dependencies:
       '@types/react': 18.0.27
-    dev: false
 
   /@types/react/17.0.53:
     resolution: {integrity: sha512-1yIpQR2zdYu1Z/dc1OxC+MA6GR240u3gcnP4l6mvj/PJiVaqHsQPmWttsvHsfnhfPbU2FuGmo0wSITPygjBmsw==}
@@ -2832,7 +2868,6 @@ packages:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
       csstype: 3.1.1
-    dev: false
 
   /@types/resolve/1.20.2:
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
