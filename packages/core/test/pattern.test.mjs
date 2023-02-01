@@ -949,4 +949,14 @@ describe('Pattern', () => {
       expect(stack(sequence('a', silence), pure('a').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(2);
     });
   });
+  describe('press', () => {
+    it('Can syncopate events', () => {
+      sameFirst(sequence('a', 'b', 'c', 'd').press(), sequence(silence, 'a', silence, 'b', silence, 'c', silence, 'd'));
+    });
+  });
+  describe('hurry', () => {
+    it('Can speed up patterns and sounds', () => {
+      sameFirst(s('a', 'b').hurry(2), s('a', 'b').fast(2).speed(2));
+    });
+  });
 });
