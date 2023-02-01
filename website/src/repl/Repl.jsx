@@ -16,7 +16,6 @@ import {
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
-import * as WebDirt from 'WebDirt';
 import './Repl.css';
 import { Footer } from './Footer';
 import { Header } from './Header';
@@ -47,7 +46,6 @@ const modules = [
 
 evalScope(
   controls, // sadly, this cannot be exported from core direclty
-  { WebDirt },
   ...modules,
 );
 

@@ -1,16 +1,20 @@
 {
   "name": "@strudel.cycles/webaudio",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Web Audio helpers for Strudel",
   "main": "index.mjs",
   "type": "module",
   "directories": {
     "example": "examples"
   },
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
   "scripts": {
     "example": "npx parcel examples/repl.html",
     "build": "vite build",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -30,6 +34,9 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.5.0"
+    "@strudel.cycles/core": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^3.2.2"
   }
 }

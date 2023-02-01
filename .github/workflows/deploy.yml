@@ -22,15 +22,18 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: "npm"
+          cache: "pnpm"
       - name: Install Dependencies
-        run: npm ci && cd website && npm ci
+        run: pnpm ci
 
       - name: Build
-        run: npm run build
+        run: pnpm build
 
       - name: Setup Pages
         uses: actions/configure-pages@v2

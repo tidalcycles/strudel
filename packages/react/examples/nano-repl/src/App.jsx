@@ -1,27 +1,21 @@
-import { evalScope, controls } from '@strudel.cycles/core';
-import { getAudioContext, panic, webaudioOutput } from '@strudel.cycles/webaudio';
+import { controls, evalScope } from '@strudel.cycles/core';
+import { CodeMirror, useHighlighting, useKeydown, useStrudel, flash } from '@strudel.cycles/react';
+import { getAudioContext, initAudioOnFirstClick, panic, webaudioOutput } from '@strudel.cycles/webaudio';
 import { useCallback, useState } from 'react';
-import CodeMirror, { flash } from '../../../src/components/CodeMirror6';
-import useKeydown from '../../../src/hooks/useKeydown.mjs';
-import useStrudel from '../../../src/hooks/useStrudel';
-import useHighlighting from '../../../src/hooks/useHighlighting';
 import './style.css';
 // import { prebake } from '../../../../../repl/src/prebake.mjs';
+
+initAudioOnFirstClick();
 
 // TODO: only import stuff when play is pressed?
 evalScope(
   controls,
   import('@strudel.cycles/core'),
-  // import('@strudel.cycles/tone'),
-  // import('@strudel.cycles/midi'), // TODO: find out why midi loads tone.js
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
   import('@strudel.cycles/osc'),
-  import('@strudel.cycles/webdirt'),
-  import('@strudel.cycles/serial'),
-  import('@strudel.cycles/soundfonts'),
 );
 
 const defaultTune = `samples({
@@ -30,7 +24,7 @@ const defaultTune = `samples({
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
 }, 'github:tidalcycles/Dirt-Samples/master/');
 stack(
-  s("bd,[~ <sd!3 sd(3,4,2)>],hh(3,4)") // drums
+  s("bd,[~ <sd!3 sd(3,4,2)>],hh*8") // drums
   .speed(perlin.range(.7,.9)) // random sample speed variation
   //.hush()
   ,"<a1 b1*2 a1(3,8) e2>" // bassline
@@ -43,7 +37,7 @@ stack(
   .gain(.4) // turn down
   .cutoff(sine.slow(7).range(300,5000)) // automate cutoff
   //.hush()
-  ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings() // chords
+  ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings('lefthand') // chords
   .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
   .add(perlin.range(0,.5)) // random pitch variation
   .n() // wrap in "n"
@@ -103,7 +97,7 @@ function App() {
               scheduler.start();
             }
           } else if (e.code === 'Period') {
-            scheduler.pause();
+            scheduler.stop();
             panic();
             e.preventDefault();
           }
@@ -114,13 +108,11 @@ function App() {
   );
   return (
     <div>
-      {/* <textarea value={code} onChange={(e) => setCode(e.target.value)} cols="64" rows="30" /> */}
-      <nav className="z-[12] w-full flex justify-center absolute bottom-0">
+      <nav className="z-[12] w-full flex justify-center fixed bottom-0">
         <div className="bg-slate-500 space-x-2 px-2 rounded-t-md">
           <button
             onClick={async () => {
               await evaluate(code);
-              await getAudioContext().resume();
               scheduler.start();
             }}
           >

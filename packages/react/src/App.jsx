@@ -6,7 +6,6 @@ import { controls, evalScope } from '@strudel.cycles/core';
 evalScope(
   controls,
   import('@strudel.cycles/core'),
-  // import('@strudel.cycles/tone'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
   import('@strudel.cycles/midi'),

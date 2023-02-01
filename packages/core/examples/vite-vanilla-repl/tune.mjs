@@ -1,4 +1,4 @@
-/* export default `await samples('github:tidalcycles/Dirt-Samples/master')
+export default `await samples('github:tidalcycles/Dirt-Samples/master')
 
 stack(
   // amen
@@ -29,11 +29,3 @@ stack(
   ,
   n("0 1").s("east").delay(.5).degradeBy(.8).speed(rand.range(.5,1.5))
 ).reset("<x@7 x(5,8)>")`;
- */
-
-export default `stack(
-  n("c3 [eb3,g3]")
-  .delay("<0 .5>")
-  .delaytime(".16 | .33")
-  .delayfeedback(".6 | .8")
-).sometimes(x=>x.speed("-1"))`;

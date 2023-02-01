@@ -14,7 +14,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src', 'index.js'),
       formats: ['es', 'cjs'],
-      fileName: (ext) => `index.${ext}.js`,
+      fileName: (ext) => ({ es: 'index.mjs', cjs: 'index.js' }[ext]),
       // for UMD name: 'GlobalName'
     },
     rollupOptions: {

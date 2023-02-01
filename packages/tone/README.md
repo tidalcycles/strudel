@@ -1,8 +1,10 @@
 # @strudel.cycles/tone
 
-Note: This package still works but is no longer maintained in favor of `@strudel.cycles/webaudio`.
-
 This package adds Tone.js functions to strudel Patterns.
+
+## Deprecation Note
+
+This package will not be developed further. Consider using `@strudel.cycles/webaudio` as a replacement.
 
 ## Install
 
@@ -30,6 +32,3 @@ document.getElementById('play').addEventListener('click', async () => {
   Tone.getTransport().start('+0.1');
 });
 ```
-
-[open in codesandbox](https://codesandbox.io/s/strudel-tone-example-5ph2te?file=/src/index.js:0-708)
-
