@@ -43,10 +43,7 @@
         getTime: () => ctx.currentTime,
         transpiler,
       });
-      document.getElementById('start').addEventListener('click', () => {
-        ctx.resume();
-        evaluate(input.value);
-      });
+      document.getElementById('start').addEventListener('click', () => evaluate(input.value));
 
       function getTune() {
         return `await samples('github:tidalcycles/Dirt-Samples/master')

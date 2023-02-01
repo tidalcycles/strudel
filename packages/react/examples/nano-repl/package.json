@@ -1,7 +1,7 @@
 {
-  "name": "nano-repl",
+  "name": "@strudel.cycles/nano-repl",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.6.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

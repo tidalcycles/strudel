@@ -1,7 +1,6 @@
 # @strudel.cycles/webaudio
 
-This package contains a scheduler + a clockworker and synths based on the Web Audio API.
-It's an alternative to `@strudel.cycles/tone`, with better performance, but less features.
+This package contains helpers to make music with strudel and the Web Audio API.
 
 ## Install
 
@@ -12,18 +11,25 @@ npm i @strudel.cycles/webaudio --save
 ## Example
 
 ```js
-import { Scheduler, getAudioContext } from '@strudel.cycles/webaudio';
+import { repl, controls } from "@strudel.cycles/core";
+import { initAudioOnFirstClick, getAudioContext, webaudioOutput } from "@strudel.cycles/webaudio";
+const { note } = controls;
 
-const scheduler = new Scheduler({
-  audioContext: getAudioContext(),
-  interval: 0.1,
-  onEvent: (e) => e.context?.createAudioNode?.(e),
+initAudioOnFirstClick();
+const ctx = getAudioContext();
+
+const { scheduler } = repl({
+  defaultOutput: webaudioOutput,
+  getTime: () => ctx.currentTime
 });
-const pattern = sequence([55, 99], 110).osc('sawtooth');
+
+const pattern = note("c3", ["eb3", "g3"]).s("sawtooth");
+
 scheduler.setPattern(pattern);
-scheduler.start();
-//scheduler.stop()
+document.getElementById("start").addEventListener("click", () => scheduler.start());
+document.getElementById("stop").addEventListener("click", () => scheduler.stop());
 ```
 
-A more sophisticated example can be found in [examples/repl.html](./examples/repl.html).
-You can run it by opening the html file with your browser, or by clicking [this link](https://raw.githack.com/tidalcycles/strudel/main/packages/webaudio/examples/repl.html)
+[Play with the example codesandbox](https://codesandbox.io/s/amazing-dawn-gclfwg?file=/src/index.js).
+
+Read more in the docs about [samples](https://strudel.tidalcycles.org/learn/samples/), [synths](https://strudel.tidalcycles.org/learn/synths/) and [effects](https://strudel.tidalcycles.org/learn/effects/).
