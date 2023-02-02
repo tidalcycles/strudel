@@ -92,6 +92,7 @@ async function load() {
     ['message'].forEach((k) => _csound.on(k, (...args) => eventLogger(k, args)));
     await _csound.setOption('-m0d'); // see -m flag https://csound.com/docs/manual/CommandFlags.html
     await _csound.setOption('--sample-accurate');
+    await _csound.setOption('-odac');
     await _csound.compileCsdText(csd);
     // await _csound.compileOrc(livecodeOrc);
     await _csound.compileOrc(presetsOrc);
