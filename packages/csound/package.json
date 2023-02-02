@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/csound",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "csound bindings for strudel",
   "main": "index.mjs",
   "publishConfig": {
@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@csound/browser": "^6.18.3",
+    "@csound/browser": "6.18.3",
     "@strudel.cycles/core": "workspace:*",
     "@strudel.cycles/webaudio": "workspace:*"
   },
