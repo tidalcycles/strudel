@@ -147,7 +147,9 @@ export const scale = register('scale', function (scale /* : string */, pat) {
     if (!isNaN(asNumber)) {
       let [tonic, scaleName] = Scale.tokenize(scale);
       const { pc, oct = 3 } = Note.get(tonic);
-      note = scaleOffset(pc + ' ' + scaleName, asNumber, pc + oct);
+      const scaleWIthOctave = `${pc + oct} ${scaleName}`;
+      const degree = Scale.degrees(scaleWIthOctave);
+      note = degree(asNumber + (asNumber >= 0 ? 1 : 0));
     }
     return hap.withValue(() => (isObject ? { ...hap.value, note } : note)).setContext({ ...hap.context, scale });
   });
