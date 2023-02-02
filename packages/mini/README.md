@@ -40,5 +40,5 @@ The parser [krill-parser.js] is generated from [krill.pegjs](./krill.pegjs) usin
 To generate the parser, run
 
 ```js
-npm run build:parser
+npm build:parser
 ```

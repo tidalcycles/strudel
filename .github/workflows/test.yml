@@ -11,11 +11,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
-      - run: npm install
-      - run: npm run format-check
-      - run: npm run lint
-      - run: npm test
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm run format-check
+      - run: pnpm run lint
+      - run: pnpm test

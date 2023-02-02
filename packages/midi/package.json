@@ -1,8 +1,16 @@
 {
   "name": "@strudel.cycles/midi",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Midi API for strudel",
   "main": "index.mjs",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -21,8 +29,11 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/tone": "^0.5.0",
-    "tone": "^14.7.77",
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
     "webmidi": "^3.0.21"
+  },
+  "devDependencies": {
+    "vite": "^3.2.2"
   }
 }

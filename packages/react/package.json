@@ -1,24 +1,18 @@
 {
   "name": "@strudel.cycles/react",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "React components for strudel",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.es.js",
-  "exports": {
-    ".": {
-      "require": "./dist/index.cjs.js",
-      "import": "./dist/index.es.js"
-    },
-    "./dist/style.css": "./dist/style.css"
+  "main": "src/index.js",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "watch": "vite build --watch",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -39,10 +33,12 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.1",
-    "@strudel.cycles/core": "^0.5.0",
-    "@strudel.cycles/tone": "^0.5.0",
-    "@strudel.cycles/transpiler": "^0.5.0",
-    "@strudel.cycles/webaudio": "^0.5.0",
+    "@codemirror/state": "^6.2.0",
+    "@codemirror/view": "^6.7.3",
+    "@lezer/highlight": "^1.1.3",
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/transpiler": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
     "@uiw/codemirror-themes": "^4.12.4",
     "@uiw/react-codemirror": "^4.12.4",
     "react-hook-inview": "^4.5.0"

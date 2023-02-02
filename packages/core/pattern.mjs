@@ -1604,6 +1604,15 @@ export const { fast, density } = register(['fast', 'density'], function (factor,
 });
 
 /**
+ * Both speeds up the pattern (like 'fast') and the sample playback (like 'speed').
+ * @example
+ * s("bd sd:2").hurry("<1 2 4 3>").slow(1.5)
+ */
+export const hurry = register('hurry', function (r, pat) {
+  return pat._fast(r).mul(pure({ speed: r }));
+});
+
+/**
  * Slow down a pattern over the given number of cycles. Like the "/" operator in mini notation.
  *
  * @name slow
@@ -1857,6 +1866,29 @@ export const rev = register('rev', function (pat) {
   return new Pattern(query).splitQueries();
 });
 
+/** Like press, but allows you to specify the amount by which each
+ * event is shifted. pressBy(0.5) is the same as press, while
+ * pressBy(1/3) shifts each event by a third of its timespan.
+ * @example
+ * stack(s("hh*4"),
+ *       s("bd mt sd ht").pressBy("<0 0.5 0.25>")
+ *      ).slow(2)
+ */
+export const pressBy = register('pressBy', function (r, pat) {
+  return pat.fmap((x) => pure(x).compress(r, 1)).squeezeJoin();
+});
+
+/**
+ * Syncopates a rhythm, by shifting each event halfway into its timespan.
+ * @example
+ * stack(s("hh*4"),
+ *       s("bd mt sd ht").every(4, press)
+ *      ).slow(2)
+ */
+export const press = register('press', function (pat) {
+  return pat._pressBy(0.5);
+});
+
 /**
  * Silences a pattern.
  * @example
@@ -2027,6 +2059,16 @@ export const bypass = register('bypass', function (on, pat) {
   on = Boolean(parseInt(on));
   return on ? silence : pat;
 });
+
+/**
+ * Loops the pattern inside at `offset` for `cycles`.
+ * @param {number} offset start point of loop in cycles
+ * @param {number} cycles loop length in cycles
+ * @example
+ * // Looping a portion of randomness
+ * note(irand(8).segment(4).scale('C3 minor')).ribbon(1337, 2)
+ */
+export const ribbon = register('ribbon', (offset, cycles, pat) => pat.early(offset).restart(pure(1).slow(cycles)));
 
 // sets absolute duration of haps
 // TODO - fix

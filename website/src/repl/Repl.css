@@ -1,5 +1,3 @@
-@import '@strudel.cycles/react/dist/style.css';
-
 .darken::before {
   content: ' ';
   position: fixed;

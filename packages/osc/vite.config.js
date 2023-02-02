@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [],
   build: {
     lib: {
-      entry: resolve(__dirname, 'index.mjs'),
+      entry: resolve(__dirname, 'osc.mjs'),
       formats: ['es', 'cjs'],
       fileName: (ext) => ({ es: 'index.mjs', cjs: 'index.js' }[ext]),
     },

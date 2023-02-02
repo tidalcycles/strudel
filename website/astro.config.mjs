@@ -32,6 +32,12 @@ export default defineConfig({
   ],
   site: `https://strudel.tidalcycles.org`,
   base: '/',
+  vite: {
+    ssr: {
+      // Example: Force a broken package to skip SSR processing, if needed
+      external: ['fraction.js'], // https://github.com/infusion/Fraction.js/issues/51
+    },
+  },
 });
 
 /*

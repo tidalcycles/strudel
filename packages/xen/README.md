@@ -1,6 +1,6 @@
 # @strudel.cycles/xen
 
-This package adds xenharmonic / microtonal functions to strudel Patterns.
+This package adds xenharmonic / microtonal functions to strudel Patterns. Further documentation + examples will follow.
 
 ## Install
 

@@ -1,13 +1,13 @@
 <input
   type="text"
   id="text"
-  value="cat('a', 'b')"
+  value="seq('a', ['b', 'c'])"
   style="width: 100%; font-size: 2em; outline: none; margin-bottom: 10px"
   spellcheck="false"
 />
 <div id="output"></div>
 <script type="module">
-  const strudel = await import('https://cdn.skypack.dev/@strudel.cycles/core@0.0.2');
+  const strudel = await import('https://cdn.skypack.dev/@strudel.cycles/core@0.6.8');
   Object.assign(window, strudel); // assign all strudel functions to global scope to use with eval
   const input = document.getElementById('text');
   const getEvents = () => {
