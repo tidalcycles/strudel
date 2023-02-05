@@ -12,13 +12,96 @@ import { JsDoc } from '../../docs/JsDoc';
 Wether you're using a synth or a sample, you can apply any of the following built-in audio effects.
 As you might suspect, the effects can be chained together, and they accept a pattern string as their argument.
 
-## bandf
+# Filters
 
-<JsDoc client:idle name="bandf" h={0} />
+Filters are an essential building block of [subtractive synthesis](https://en.wikipedia.org/wiki/Subtractive_synthesis).
+Strudel comes with 3 types of filters:
 
-## bandq
+- low-pass filter: low frequencies may _pass_, high frequencies are cut off
+- high-pass filter: high frequencies may _pass_, low frequencies are cut off
+- band-pass filters: only a frequency band may _pass_, low and high frequencies around are cut off
 
-<JsDoc client:idle name="bandq" h={0} />
+Each filter has 2 parameters:
+
+- cutoff: the frequency at which the filter starts to work. e.g. a low-pass filter with a cutoff of 1000Hz allows frequencies below 1000Hz to pass.
+- q-value: Controls the resonance of the filter. Higher values sound more aggressive. Also see [Q-Factor](https://en.wikipedia.org/wiki/Q_factor)
+
+## lpf
+
+<JsDoc client:idle name="lpf" h={0} />
+
+## lpq
+
+<JsDoc client:idle name="lpq" h={0} />
+
+## hpf
+
+<JsDoc client:idle name="hpf" h={0} />
+
+## hpq
+
+<JsDoc client:idle name="hpq" h={0} />
+
+## bpf
+
+<JsDoc client:idle name="bpf" h={0} />
+
+## bpq
+
+<JsDoc client:idle name="bpq" h={0} />
+
+## vowel
+
+<JsDoc client:idle name="vowel" h={0} />
+
+# Amplitude Envelope
+
+The amplitude [envelope](<https://en.wikipedia.org/wiki/Envelope_(music)>) controls the dynamic contour of a sound.
+Strudel uses ADSR envelopes, which are probably the most common way to describe an envelope:
+
+![ADSR](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/ADSR_parameter.svg/1920px-ADSR_parameter.svg.png)
+
+## attack
+
+<JsDoc client:idle name="attack" h={0} />
+
+## decay
+
+<JsDoc client:idle name="decay" h={0} />
+
+## sustain
+
+<JsDoc client:idle name="sustain" h={0} />
+
+## release
+
+<JsDoc client:idle name="release" h={0} />
+
+# Dynamics
+
+## gain
+
+<JsDoc client:idle name="gain" h={0} />
+
+## velocity
+
+<JsDoc client:idle name="velocity" h={0} />
+
+# Panning
+
+## jux
+
+<JsDoc client:idle name="jux" h={0} />
+
+## juxBy
+
+<JsDoc client:idle name="juxBy" h={0} />
+
+## pan
+
+<JsDoc client:idle name="pan" h={0} />
+
+# Waveshaping
 
 ## coarse
 
@@ -28,49 +111,9 @@ As you might suspect, the effects can be chained together, and they accept a pat
 
 <JsDoc client:idle name="crush" h={0} />
 
-## cutoff
-
-<JsDoc client:idle name="cutoff" h={0} />
-
-## gain
-
-<JsDoc client:idle name="gain" h={0} />
-
-## hcutoff
-
-<JsDoc client:idle name="hcutoff" h={0} />
-
-## hresonance
-
-<JsDoc client:idle name="hresonance" h={0} />
-
-## pan
-
-<JsDoc client:idle name="pan" h={0} />
-
-## resonance
-
-<JsDoc client:idle name="resonance" h={0} />
-
 ## shape
 
 <JsDoc client:idle name="shape" h={0} />
-
-## velocity
-
-<JsDoc client:idle name="velocity" h={0} />
-
-## vowel
-
-<JsDoc client:idle name="vowel" h={0} />
-
-## jux
-
-<JsDoc client:idle name="jux" h={0} />
-
-## juxBy
-
-<JsDoc client:idle name="juxBy" h={0} />
 
 # Global Effects
 
