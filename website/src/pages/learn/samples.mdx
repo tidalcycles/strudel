@@ -19,7 +19,7 @@ Strudel allows loading samples in the form of audio files of various formats (wa
 
 By default, strudel comes with a built-in "sample map", providing a solid base to play with.
 
-<MiniRepl client:idle client:idle tune={`s("bd sd,hh*8, misc/2")`} />
+<MiniRepl client:idle tune={`s("bd sd,hh*8, misc/2")`} />
 
 Here, we are using the `s` function to play back different default samples (`bd`, `sd`, `hh` and `misc`) to get a drum beat.
 
@@ -60,15 +60,15 @@ If we look at the `samples` tab, we can see that the drum samples are all prefix
 
 We _could_ use them like this:
 
-<MiniRepl client:idle client:idle tune={`s("RolandTR808_bd RolandTR808_sd,RolandTR808_hh*8")`} />
+<MiniRepl client:idle tune={`s("RolandTR808_bd RolandTR808_sd,RolandTR808_hh*8")`} />
 
 ... but thats obviously a bit much to write. Using the `bank` function, we can shorten this to:
 
-<MiniRepl client:idle client:idle tune={`s("bd sd,hh*8").bank("RolandTR808")`} />
+<MiniRepl client:idle tune={`s("bd sd,hh*8").bank("RolandTR808")`} />
 
 You could even pattern the bank to switch between different drum machines:
 
-<MiniRepl client:idle client:idle tune={`s("bd sd,hh*8").bank("<RolandTR808 RolandTR909>")`} />
+<MiniRepl client:idle tune={`s("bd sd,hh*8").bank("<RolandTR808 RolandTR909>")`} />
 
 Behind the scenes, `bank` will just prepend the drum machine name to the sample name with `_` to get the full name.
 This of course only works because the name after `_` (`bd`, `sd` etc..) is standardized.
@@ -80,17 +80,17 @@ If we look again at the `samples` tab, there is also a number behind each name, 
 For example `RolandTR909_hh(4)` means there are 4 samples of a TR909 hihat available.
 By default, `s` will play the first sample, but we can selecting the other ones using `n`, starting from 0:
 
-<MiniRepl client:idle client:idle tune={`s("hh*4").bank("RolandTR909").n("<0 1 2 3>")`} />
+<MiniRepl client:idle tune={`s("hh*4").bank("RolandTR909").n("<0 1 2 3>")`} />
 
 Numbers that are too high will just wrap around to the beginning
 
-<MiniRepl client:idle client:idle tune={`s("hh*4").bank("RolandTR909").n("<0 1 2 3 4 5 6 7>")`} />
+<MiniRepl client:idle tune={`s("hh*4").bank("RolandTR909").n("<0 1 2 3 4 5 6 7>")`} />
 
 Here, 0-3 will play the same sounds as 4-7, because `RolandTR909_hh` only has 4 sounds.
 
 Selecting sounds also works inside the mini notation, using "`:`" like this:
 
-<MiniRepl client:idle client:idle tune={`s("bd:1 bd:2,hh:0 hh:1 hh:2 hh:3").bank("RolandTR909")`} />
+<MiniRepl client:idle tune={`s("bd:1 bd:2,hh:0 hh:1 hh:2 hh:3").bank("RolandTR909")`} />
 
 # Loading Custom Samples
 
