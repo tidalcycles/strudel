@@ -277,50 +277,49 @@ const generic_params = [
     'In the style of classic drum-machines, `cut` will stop a playing sample as soon as another samples with in same cutgroup is to be played. An example would be an open hi-hat followed by a closed one, essentially muting the open.',
   ],
   /**
-   * Applies the cutoff frequency of the low-pass filter.
+   * Applies the cutoff frequency of the **l**ow-**p**ass **f**ilter.
    *
    * @name lpf
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @synonyms cutoff
    * @example
-   * s("bd sd,hh*3").cutoff("<4000 2000 1000 500 200 100>")
+   * s("bd sd,hh*3").lpf("<4000 2000 1000 500 200 100>")
    *
    */
   ['f', 'lpf'],
   ['f', 'cutoff', 'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the low-pass filter.'],
   /**
-   * Applies the cutoff frequency of the high-pass filter.
+   * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
    *
    * @name hpf
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @synonyms hcutoff
    * @example
-   * s("bd sd,hh*4").hcutoff("<4000 2000 1000 500 200 100>")
+   * s("bd sd,hh*4").hpf("<4000 2000 1000 500 200 100>")
    *
    */
   ['f', 'hpf', ''],
   ['f', 'hcutoff', ''],
   /**
-   * Applies the resonance of the high-pass filter.
+   * Controls the **h**igh-**p**ass **q**-value.
    *
    * @name hpq
    * @param {number | Pattern} q resonance factor between 0 and 50
    * @synonyms hresonance
    * @example
-   * s("bd sd,hh*4").hcutoff(2000).hresonance("<0 10 20 30>")
+   * s("bd sd,hh*4").hpf(2000).hpq("<0 10 20 30>")
    *
    */
   ['f', 'hresonance', ''],
   ['f', 'hpq', ''],
-  // TODO: add hpq synonym
   /**
-   * Applies the cutoff frequency of the low-pass filter.
+   * Controls the **l**ow-**p**ass **q**-value.
    *
    * @name lpq
    * @param {number | Pattern} q resonance factor between 0 and 50
    * @synonyms resonance
    * @example
-   * s("bd sd,hh*4").cutoff(2000).resonance("<0 10 20 30>")
+   * s("bd sd,hh*4").lpf(2000).lpq("<0 10 20 30>")
    *
    */
   ['f', 'lpq'],
