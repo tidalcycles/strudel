@@ -1,5 +1,6 @@
 import { logger, toMidi, valueToMidi } from '@strudel.cycles/core';
 import { getAudioContext } from './index.mjs';
+import { get, set } from 'idb-keyval';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
 const loadCache = {}; // string: Promise<ArrayBuffer>
@@ -74,22 +75,37 @@ export const getSampleBufferSource = async (s, n, note, speed, freq) => {
   return bufferSource;
 };
 
-export const loadBuffer = (url, ac, s, n = 0) => {
+const useOfflineCache = true;
+
+export const loadBuffer = async (url, ac, s, n = 0) => {
   const label = s ? `sound "${s}:${n}"` : 'sample';
+  // only load if not already requested (loadCache = cache promises loading buffers by url)
   if (!loadCache[url]) {
-    logger(`[sampler] load ${label}..`, 'load-sample', { url });
-    const timestamp = Date.now();
-    loadCache[url] = fetch(url)
-      .then((res) => res.arrayBuffer())
-      .then(async (res) => {
-        const took = Date.now() - timestamp;
-        const size = humanFileSize(res.byteLength);
-        // const downSpeed = humanFileSize(res.byteLength / took);
-        logger(`[sampler] load ${label}... done! loaded ${size} in ${took}ms`, 'loaded-sample', { url });
-        const decoded = await ac.decodeAudioData(res);
-        bufferCache[url] = decoded;
-        return decoded;
-      });
+    loadCache[url] = (async () => {
+      logger(`[sampler] load ${label}..`, 'load-sample', { url });
+      const timestamp = Date.now();
+      if (useOfflineCache) {
+        const cachedDataUrl = await get(url);
+        if (cachedDataUrl) {
+          // buffer has been loaded into offline cache in a previous session
+          logger(`[sampler] load ${label}... done! found in offline cache!`, 'loaded-sample', { url });
+          return dataUrlToAudioBuffer(ac, cachedDataUrl);
+        }
+      }
+      // buffer not cached offline => fetch from url =>
+      const res = await fetch(url);
+      const buf = await res.arrayBuffer();
+      if (useOfflineCache) {
+        // we don't need to wait for the offline cache to finish here
+        bufferToDataUrl(buf).then((dataUrl) => set(url, dataUrl));
+      }
+      const audioBuffer = await ac.decodeAudioData(buf);
+      const took = Date.now() - timestamp;
+      const size = humanFileSize(buf.byteLength);
+      logger(`[sampler] load ${label}... done! loaded ${size} in ${took}ms`, 'loaded-sample', { url });
+      bufferCache[url] = audioBuffer;
+      return audioBuffer;
+    })();
   }
   return loadCache[url];
 };
@@ -179,3 +195,20 @@ export const resetLoadedSamples = () => {
 };
 
 export const getLoadedSamples = () => sampleCache.current;
+
+async function bufferToDataUrl(buf) {
+  return new Promise((resolve) => {
+    var blob = new Blob([buf], { type: 'application/octet-binary' });
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      resolve(event.target.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+}
+
+function dataUrlToAudioBuffer(ctx, dataUrl) {
+  return fetch(dataUrl)
+    .then((res) => res.arrayBuffer())
+    .then((res) => ctx.decodeAudioData(res));
+}
