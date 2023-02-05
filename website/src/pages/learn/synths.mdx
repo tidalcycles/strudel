@@ -28,15 +28,3 @@ The power of patterns allows us to sequence any _param_ independently:
 
 Now we not only pattern the notes, but the sound as well!
 `sawtooth` `square` and `triangle` are the basic waveforms available in `s`.
-
-## Ampltude Envelope
-
-You can control the envelope of a synth using the `attack`, `decay`, `sustain` and `release` functions:
-
-<MiniRepl
-  client:idle
-  tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth')
-  .attack(.1).decay(.1).sustain(.2).release(.1)`}
-/>
-
-<br />

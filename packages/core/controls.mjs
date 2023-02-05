@@ -83,8 +83,7 @@ const generic_params = [
    */
   ['f', 'amp', 'like @gain@, but linear.'],
   /**
-   * A pattern of numbers to specify the attack time of an envelope applied to each sample.
-   * [More info about envelopes](/learn/synths-samples-effects/#envelope)
+   * Amplitude envelope attack time: Specifies how long it takes for the sound to reach its peak value, relative to the onset.
    *
    * @name attack
    * @param {number | Pattern} attack time in seconds.
@@ -92,11 +91,7 @@ const generic_params = [
    * note("c3 e3").attack("<0 .1 .5>")
    *
    */
-  [
-    'f',
-    'attack',
-    'a pattern of numbers to specify the attack time (in seconds) of an envelope applied to each sample.',
-  ],
+  ['f', 'attack'],
 
   /**
    * Select the sound bank to use. To be used together with `s`. The bank name (+ "_") will be prepended to the value of `s`.
@@ -110,8 +105,8 @@ const generic_params = [
   ['f', 'bank', 'selects sound bank to use'],
 
   /**
-   * Gain envelope decay time = the time it takes after the attack time to reach the sustain level.
-   * [More info about envelopes](/learn/synths-samples-effects/#envelope)
+   * Amplitude envelope decay time: the time it takes after the attack time to reach the sustain level.
+   * Note that the decay is only audible if the sustain value is lower than 1.
    *
    * @name decay
    * @param {number | Pattern} time decay time in seconds
@@ -121,7 +116,7 @@ const generic_params = [
    */
   ['f', 'decay', ''],
   /**
-   * Gain envelope sustain level. [More info about envelopes](/learn/synths-samples-effects/#envelope)
+   * Amplitude envelope sustain level: The level which is reached after attack / decay, being sustained until the offset.
    *
    * @name sustain
    * @param {number | Pattern} gain sustain level between 0 and 1
@@ -131,7 +126,7 @@ const generic_params = [
    */
   ['f', 'sustain', ''],
   /**
-   * Gain envelope release time. [More info about envelopes](/learn/synths-samples-effects/#envelope)
+   * Amplitude envelope release time: The time it takes after the offset to go from sustain level to zero.
    *
    * @name release
    * @param {number | Pattern} time release time in seconds
@@ -151,30 +146,30 @@ const generic_params = [
   ],
   // TODO: in tidal, it seems to be normalized
   /**
-   * Sets the center frequency of the band-pass filter.
+   * Sets the center frequency of the **b**and-**p**ass **f**ilter.
    *
-   * @name bandf
+   * @name bpf
    * @param {number | Pattern} frequency center frequency
-   * @synonyms bpf
+   * @synonyms bandf
    * @example
-   * s("bd sd,hh*3").bandf("<1000 2000 4000 8000>")
+   * s("bd sd,hh*3").bpf("<1000 2000 4000 8000>")
    *
    */
-  ['f', 'bandf', 'A pattern of numbers from 0 to 1. Sets the center frequency of the band-pass filter.'],
   ['f', 'bpf', ''],
+  ['f', 'bandf', 'A pattern of numbers from 0 to 1. Sets the center frequency of the band-pass filter.'],
   // TODO: in tidal, it seems to be normalized
   /**
-   * Sets the q-factor of the band-pass filter
+   * Sets the **b**and-**p**ass **q**-factor (resonance)
    *
-   * @name bandq
+   * @name bpq
    * @param {number | Pattern} q q factor
-   * @synonyms bpq
+   * @synonyms bandq
    * @example
-   * s("bd sd").bandf(500).bandq("<0 1 2 3>")
+   * s("bd sd").bpf(500).bpq("<0 1 2 3>")
    *
    */
-  ['f', 'bandq', 'a pattern of anumbers from 0 to 1. Sets the q-factor of the band-pass filter.'],
   ['f', 'bpq', ''],
+  ['f', 'bandq', 'a pattern of anumbers from 0 to 1. Sets the q-factor of the band-pass filter.'],
   /**
    * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.
    *
@@ -282,50 +277,49 @@ const generic_params = [
     'In the style of classic drum-machines, `cut` will stop a playing sample as soon as another samples with in same cutgroup is to be played. An example would be an open hi-hat followed by a closed one, essentially muting the open.',
   ],
   /**
-   * Applies the cutoff frequency of the low-pass filter.
+   * Applies the cutoff frequency of the **l**ow-**p**ass **f**ilter.
    *
-   * @name cutoff
+   * @name lpf
    * @param {number | Pattern} frequency audible between 0 and 20000
-   * @synonyms lpf
+   * @synonyms cutoff
    * @example
-   * s("bd sd,hh*3").cutoff("<4000 2000 1000 500 200 100>")
+   * s("bd sd,hh*3").lpf("<4000 2000 1000 500 200 100>")
    *
    */
-  ['f', 'cutoff', 'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the low-pass filter.'],
   ['f', 'lpf'],
+  ['f', 'cutoff', 'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the low-pass filter.'],
   /**
-   * Applies the cutoff frequency of the high-pass filter.
+   * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
    *
-   * @name hcutoff
+   * @name hpf
    * @param {number | Pattern} frequency audible between 0 and 20000
-   * @synonyms hpf
+   * @synonyms hcutoff
    * @example
-   * s("bd sd,hh*4").hcutoff("<4000 2000 1000 500 200 100>")
+   * s("bd sd,hh*4").hpf("<4000 2000 1000 500 200 100>")
    *
    */
-  ['f', 'hcutoff', ''],
   ['f', 'hpf', ''],
+  ['f', 'hcutoff', ''],
   /**
-   * Applies the resonance of the high-pass filter.
+   * Controls the **h**igh-**p**ass **q**-value.
    *
-   * @name hresonance
+   * @name hpq
    * @param {number | Pattern} q resonance factor between 0 and 50
-   * @synonyms hpq
+   * @synonyms hresonance
    * @example
-   * s("bd sd,hh*4").hcutoff(2000).hresonance("<0 10 20 30>")
+   * s("bd sd,hh*4").hpf(2000).hpq("<0 10 20 30>")
    *
    */
-  ['f', 'hpq', ''],
   ['f', 'hresonance', ''],
-  // TODO: add hpq synonym
+  ['f', 'hpq', ''],
   /**
-   * Applies the cutoff frequency of the low-pass filter.
+   * Controls the **l**ow-**p**ass **q**-value.
    *
-   * @name resonance
+   * @name lpq
    * @param {number | Pattern} q resonance factor between 0 and 50
-   * @synonyms lpq
+   * @synonyms resonance
    * @example
-   * s("bd sd,hh*4").cutoff(2000).resonance("<0 10 20 30>")
+   * s("bd sd,hh*4").lpf(2000).lpq("<0 10 20 30>")
    *
    */
   ['f', 'lpq'],
