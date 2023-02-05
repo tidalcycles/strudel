@@ -26,7 +26,7 @@ export const backgroundImage = function (src, animateOptions = {}) {
     ({
       style: () => (container.style = bg + ';' + value),
       className: () => (container.className = value + ' ' + initialClassName),
-    }[option]());
+    })[option]();
   };
   const funcOptions = Object.entries(animateOptions).filter(([_, v]) => typeof v === 'function');
   const stringOptions = Object.entries(animateOptions).filter(([_, v]) => typeof v === 'string');

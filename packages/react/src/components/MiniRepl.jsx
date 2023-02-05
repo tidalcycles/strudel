@@ -101,7 +101,7 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTi
     <div className={styles.container} ref={ref}>
       <div className={styles.header}>
         <div className={styles.buttons}>
-          <button className={cx(styles.button, started ? 'sc-animate-pulse' : '')} onClick={() => togglePlay()}>
+          <button className={cx(styles.button, started ? 'animate-pulse' : '')} onClick={() => togglePlay()}>
             <Icon type={started ? 'stop' : 'play'} />
           </button>
           <button className={cx(isDirty ? styles.button : styles.buttonDisabled)} onClick={() => activateCode()}>
@@ -126,7 +126,7 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTi
         ></canvas>
       )}
       {!!log.length && (
-        <div className="sc-bg-gray-800 sc-rounded-md sc-p-2">
+        <div className="bg-gray-800 rounded-md p-2">
           {log.map(({ message }, i) => (
             <div key={i}>{message}</div>
           ))}

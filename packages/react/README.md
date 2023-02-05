@@ -33,11 +33,4 @@ export function Repl({ tune }) {
 }
 ```
 
-## Development
-
-If you change something in here and want to see the changes in the repl, make sure to run `npm run build` inside this folder!
-
-```js
-npm run dev # dev server
-npm run build # build package
-```
+For a more sophisticated example, check out the [nano-repl](./examples/nano-repl/)!

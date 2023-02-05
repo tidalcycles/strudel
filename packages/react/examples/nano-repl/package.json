@@ -1,7 +1,7 @@
 {
-  "name": "nano-repl",
+  "name": "@strudel.cycles/nano-repl",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.6.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,14 @@
   },
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/osc": "workspace:*",
+    "@strudel.cycles/mini": "workspace:*",
+    "@strudel.cycles/transpiler": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
+    "@strudel.cycles/tonal": "workspace:*",
+    "@strudel.cycles/react": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",

@@ -40,7 +40,7 @@ export const ALGOLIA = {
   apiKey: 'XXXXXXXXXX',
 };
 
-export type Sidebar = Record<typeof KNOWN_LANGUAGE_CODES[number], Record<string, { text: string; link: string }[]>>;
+export type Sidebar = Record<(typeof KNOWN_LANGUAGE_CODES)[number], Record<string, { text: string; link: string }[]>>;
 export const SIDEBAR: Sidebar = {
   en: {
     Tutorial: [

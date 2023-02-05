@@ -203,6 +203,21 @@ note("g2!2 <bb2 c3>!2, <c4@3 [<eb4 bb3> g4 f4]>")
 
 The sampler will always pick the closest matching sample for the current note!
 
+# Shabda
+
+If you don't want to select samples by hand, there is also the wonderful tool called [shabda](https://shabda.ndre.gr/).
+With it, you can enter any sample name(s) to query from [freesound.org](https://freesound.org/). Example:
+
+<MiniRepl
+  client:idle
+  tune={`await samples('https://shabda.ndre.gr/bass:4,hihat:4,rimshot:2.json?strudel=1')
+stack(
+  n("0 1 2 3").s('bass').slow(2),
+  n("0 1*2 2 3*2").s('hihat'),
+  n("~ 0 ~ 1").s('rimshot')
+).clip(1)`}
+/>
+
 # Sampler Effects
 
 Below are four different examples of sampler "effects" which are functions that can be used to change the behaviour of sample playback.
