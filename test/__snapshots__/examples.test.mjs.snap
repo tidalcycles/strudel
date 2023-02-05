@@ -1060,6 +1060,27 @@ exports[`runs examples > example "chunkBack" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "clip" example index 0 1`] = `
+[
+  "[ 0/1 → 1/5 | note:c s:piano clip:1 ]",
+  "[ 1/5 → 2/5 | note:a s:piano clip:1 ]",
+  "[ 2/5 → 3/5 | note:f s:piano clip:1 ]",
+  "[ 3/5 → 4/5 | note:e s:piano clip:1 ]",
+  "[ 1/1 → 6/5 | note:c s:piano clip:1 ]",
+  "[ 6/5 → 7/5 | note:a s:piano clip:1 ]",
+  "[ 7/5 → 8/5 | note:f s:piano clip:1 ]",
+  "[ 8/5 → 9/5 | note:e s:piano clip:1 ]",
+  "[ 2/1 → 11/5 | note:c s:piano clip:1 ]",
+  "[ 11/5 → 12/5 | note:a s:piano clip:1 ]",
+  "[ 12/5 → 13/5 | note:f s:piano clip:1 ]",
+  "[ 13/5 → 14/5 | note:e s:piano clip:1 ]",
+  "[ 3/1 → 16/5 | note:c s:piano clip:1 ]",
+  "[ 16/5 → 17/5 | note:a s:piano clip:1 ]",
+  "[ 17/5 → 18/5 | note:f s:piano clip:1 ]",
+  "[ 18/5 → 19/5 | note:e s:piano clip:1 ]",
+]
+`;
+
 exports[`runs examples > example "coarse" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | s:bd coarse:1 ]",

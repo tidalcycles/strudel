@@ -798,6 +798,16 @@ const generic_params = [
   ['f', 'uid', ''],
   ['f', 'val', ''],
   ['f', 'cps', ''],
+  /**
+   * If set to 1, samples will be cut to the duration of their event.
+   * In tidal, this would be done with legato, which [is about to land in strudel too](https://github.com/tidalcycles/strudel/issues/111)
+   *
+   * @name clip
+   * @param {number | Pattern} active 1 or 0
+   * @example
+   * note("c a f e ~").s("piano").clip(1)
+   *
+   */
   ['f', 'clip', ''],
 ];
 
