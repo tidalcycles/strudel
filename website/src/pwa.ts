@@ -1,4 +1,4 @@
-import { registerSW } from 'virtual:pwa-register'
+import { registerSW } from 'virtual:pwa-register';
 
 registerSW({
   immediate: true,
@@ -8,4 +8,4 @@ registerSW({
   onOfflineReady() {
     // console.log('PWA application ready to work offline')
   },
-})
+});
