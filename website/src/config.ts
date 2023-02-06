@@ -1,16 +1,14 @@
 export const SITE = {
-  title: 'Strudel Docs',
-  description: 'Documentation for the Strudel Live Coding Language',
-  defaultLanguage: 'en_US',
+  title: 'Strudel',
+  description: 'Strudel is a music live coding editor that brings TidalCycles to the browser.',
+  defaultLanguage: 'en',
 };
 
 export const OPEN_GRAPH = {
   image: {
-    src: 'https://github.com/withastro/astro/blob/main/assets/social/banner-minimal.png?raw=true',
-    alt:
-      'astro logo on a starry expanse of space,' + ' with a purple saturn-like planet floating in the right foreground',
+    src: 'https://strudel.tidalcycles.org/icon.png',
+    alt: 'Strudel Logo',
   },
-  twitter: 'astrodotbuild',
 };
 
 // This is the type of the frontmatter you put in the docs markdown files.
