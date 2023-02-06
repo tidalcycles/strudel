@@ -9,6 +9,7 @@ import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 import tailwind from '@astrojs/tailwind';
+import AstroPWA from '@vite-pwa/astro';
 // import { visualizer } from 'rollup-plugin-visualizer';
 
 const options = {
@@ -29,6 +30,45 @@ export default defineConfig({
     react(),
     mdx(options),
     tailwind(),
+    AstroPWA({
+      devOptions: {
+        enabled: true,
+      },
+      manifest: {
+        includeAssets: ['favicon.ico', 'icons/apple-icon-180.png', 'favicon.svg'],
+        name: 'Strudel REPL',
+        short_name: 'Strudel',
+        description:
+          'Strudel is a music live coding environment for the browser, porting the TidalCycles pattern language to JavaScript.',
+        theme_color: '#222222',
+        icons: [
+          {
+            src: 'icons/manifest-icon-192.maskable.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: 'icons/manifest-icon-192.maskable.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+          {
+            src: 'icons/manifest-icon-512.maskable.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: 'icons/manifest-icon-512.maskable.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+        ],
+      },
+    }),
   ],
   site: `https://strudel.tidalcycles.org`,
   base: '/',

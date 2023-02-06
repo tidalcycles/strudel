@@ -22,7 +22,7 @@ const currentFile = `src/pages${currentPage.replace(/\/$/, '')}.mdx`;
 const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 ---
 
-<html dir={frontmatter.dir ?? 'ltr'} lang={frontmatter.lang ?? 'en-us'} class="initial">
+<html dir={frontmatter.dir ?? 'ltr'} lang={frontmatter.lang ?? 'en'} class="initial">
   <head>
     <HeadCommon />
     <HeadSEO frontmatter={frontmatter} canonicalUrl={canonicalURL} />
