@@ -19,6 +19,13 @@ npm run build # <- builds repl + tutorial to ../docs
 npm run preview # <- test static build
 ```
 
+## Generate PWA icons
+
+```sh
+cd website/public
+npx pwa-asset-generator icon.png icons
+```
+
 # Standard Readme of Astro Starter Kit: Docs Site
 
 ```bash

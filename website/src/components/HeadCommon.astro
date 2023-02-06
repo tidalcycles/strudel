@@ -1,4 +1,5 @@
 ---
+import { pwaInfo } from 'virtual:pwa-info';
 import '../styles/index.css';
 
 const { BASE_URL } = import.meta.env;
@@ -12,7 +13,18 @@ const base = BASE_URL;
 
 <link rel="icon" type="image/svg+xml" href="favicon.ico" />
 
+<meta
+  name="description"
+  content="Strudel is a music live coding environment for the browser, porting the TidalCycles pattern language to JavaScript."
+/>
+<link rel="icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/icons/apple-icon-180.png" sizes="180x180" />
+<meta name="theme-color" content="#222222" />
+
 <base href={base} />
 
 <!-- Scrollable a11y code helper -->
 <script src="./make-scrollable-code-focusable.js" is:inline></script>
+
+<script src="/src/pwa.ts"></script>
+{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
