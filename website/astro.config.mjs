@@ -53,7 +53,7 @@ export default defineConfig({
         ],
       },
       devOptions: {
-        enabled: true,
+        enabled: false,
       },
       manifest: {
         includeAssets: ['favicon.ico', 'icons/apple-icon-180.png', 'favicon.svg'],
