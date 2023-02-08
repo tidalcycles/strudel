@@ -7,6 +7,7 @@ An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using w
 - Try it here: <https://strudel.tidalcycles.org/>
 - Docs: <https://strudel.tidalcycles.org/learn/>
 - Technical Blog Post: <https://loophole-letters.vercel.app/strudel>
+- 1 Year of Strudel Blog Post: <https://loophole-letters.vercel.app/strudel1year>
 
 ## Running Locally
 

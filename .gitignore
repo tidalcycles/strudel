@@ -38,3 +38,5 @@ talk/public/samples
 server/samples/old
 repl/stats.html
 coverage
+public/icons/apple-splash-*
+dev-dist

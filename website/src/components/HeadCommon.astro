@@ -1,4 +1,5 @@
 ---
+import { pwaInfo } from 'virtual:pwa-info';
 import '../styles/index.css';
 
 const { BASE_URL } = import.meta.env;
@@ -12,34 +13,18 @@ const base = BASE_URL;
 
 <link rel="icon" type="image/svg+xml" href="favicon.ico" />
 
-<link rel="sitemap" href="./sitemap.xml" />
+<meta
+  name="description"
+  content="Strudel is a music live coding environment for the browser, porting the TidalCycles pattern language to JavaScript."
+/>
+<link rel="icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/icons/apple-icon-180.png" sizes="180x180" />
+<meta name="theme-color" content="#222222" />
 
 <base href={base} />
-
-<!-- Preload Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital@0;1&display=swap" rel="stylesheet" />
 
 <!-- Scrollable a11y code helper -->
 <script src="./make-scrollable-code-focusable.js" is:inline></script>
 
-<!-- This is intentionally inlined to avoid FOUC -->
-<script is:inline>
-  /*   const root = document.documentElement;
-  const theme = localStorage.getItem('theme');
-  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    root.classList.add('theme-dark');
-  } else {
-    root.classList.remove('theme-dark');
-  } */
-</script>
-
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-TEL60V1WM9" is:inline></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-TEL60V1WM9');
-</script> -->
+<script src="/src/pwa.ts"></script>
+{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
