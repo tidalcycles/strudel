@@ -37,12 +37,18 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,wav,mp3,ogg}'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/raw\.githubusercontent\.com\/.*/i,
+            urlPattern: ({ url }) => {
+              [
+                /^https:\/\/raw\.githubusercontent\.com\/.*/i,
+                /^https:\/\/freesound\.org\/.*/i,
+                /^https:\/\/shabda\.ndre\.gr\/.*/i,
+              ].some((regex) => regex.test(url));
+            },
             handler: 'CacheFirst',
             options: {
               cacheName: 'github-files',
               expiration: {
-                maxEntries: 200,
+                maxEntries: 5000,
                 maxAgeSeconds: 60 * 60 * 24 * 30, // <== 14 days
               },
               cacheableResponse: {
@@ -53,7 +59,7 @@ export default defineConfig({
         ],
       },
       devOptions: {
-        enabled: true,
+        enabled: false,
       },
       manifest: {
         includeAssets: ['favicon.ico', 'icons/apple-icon-180.png', 'favicon.svg'],
