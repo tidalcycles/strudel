@@ -5,11 +5,12 @@ import { nanoid } from 'nanoid';
 import React, { useContext, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useEvent, loadedSamples, ReplContext } from './Repl';
 import { Reference } from './Reference';
+import * as themes from './themes.mjs';
 
 export function Footer({ context }) {
   // const [activeFooter, setActiveFooter] = useState('console');
   // const { activeFooter, setActiveFooter, isZen } = useContext?.(ReplContext);
-  const { activeFooter, setActiveFooter, isZen } = context;
+  const { activeFooter, setActiveFooter, isZen, setTheme } = context;
   const footerContent = useRef();
   const [log, setLog] = useState([]);
 
@@ -69,11 +70,12 @@ export function Footer({ context }) {
   return (
     <footer className="bg-footer z-[20]">
       <div className="flex justify-between px-2">
-        <div className={cx('flex select-none', activeFooter && 'pb-2')}>
+        <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
           <FooterTab name="intro" label="welcome" />
           <FooterTab name="samples" />
           <FooterTab name="console" />
           <FooterTab name="reference" />
+          <FooterTab name="settings" />
         </div>
         {activeFooter !== '' && (
           <button onClick={() => setActiveFooter('')} className="text-white" aria-label="Close Panel">
@@ -161,6 +163,21 @@ export function Footer({ context }) {
                     : 1}
                   ){' '}
                 </span>
+              ))}
+            </div>
+          )}
+          {activeFooter === 'settings' && (
+            <div>
+              {Object.entries(themes).map(([k, t]) => (
+                <li key={k}>
+                  <a
+                    onClick={() => {
+                      setTheme(t);
+                    }}
+                  >
+                    {k}
+                  </a>
+                </li>
               ))}
             </div>
           )}

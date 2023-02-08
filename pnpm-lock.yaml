@@ -373,6 +373,7 @@ importers:
       '@types/node': ^18.0.0
       '@types/react': ^18.0.26
       '@types/react-dom': ^18.0.9
+      '@uiw/codemirror-themes-all': ^4.19.7
       '@vite-pwa/astro': ^0.0.1
       astro: ^1.7.2
       canvas: ^2.11.0
@@ -415,6 +416,7 @@ importers:
       '@types/node': 18.11.18
       '@types/react': 18.0.27
       '@types/react-dom': 18.0.10
+      '@uiw/codemirror-themes-all': 4.19.7
       astro: 1.9.2_@types+node@18.11.18
       canvas: 2.11.0
       fraction.js: 4.2.0
@@ -3990,6 +3992,181 @@ packages:
       '@codemirror/language': 6.4.0
       '@codemirror/lint': 6.1.0
       '@codemirror/search': 6.2.3
+      '@codemirror/state': 6.2.0
+      '@codemirror/view': 6.7.3
+    dev: false
+
+  /@uiw/codemirror-theme-abcdef/4.19.7:
+    resolution: {integrity: sha512-mkZrkcq0AfRXNfUQ9sZWe6is8VKfbFWvtbFLGtMqTctdzUbZS/SJj4+W5D1fHMdRBegWn3T5u3fDshtJq/Ky5Q==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-androidstudio/4.19.7:
+    resolution: {integrity: sha512-emZ9xWH/kOF3TZcCghQWBz5XUG2sM0/okVkXKIbt28uMp5EgPiSKxCR8tUNOXU2WvyFhkgfoNFl5kH+YfjCaNA==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-atomone/4.19.7:
+    resolution: {integrity: sha512-YBljhvQz2VynKt0bk6jOdPRblK/JtIRst6JDCfXg0TZGkxsNng9uJgYeIT7uNRDvXPtmg47hSqpjL7X0XeSFKg==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-aura/4.19.7:
+    resolution: {integrity: sha512-n1P3nD0f3RucFeqWZ4tGpKTz/G352XNN7JCCx0pTTSrcC6gXVwrTazAGjjmq60R5za2lufEP3u/PYGgz8joVlg==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-bbedit/4.19.7:
+    resolution: {integrity: sha512-WjrkNhwHNU+KiwJLbrdTin9YVq5UmveLuH3VFtswLxw8hlFjjEziKgpErD4C8PsC125o6Dlcc7p1nbqVSmQjog==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-bespin/4.19.7:
+    resolution: {integrity: sha512-ta0o7eX0G3OmDKbQJci51+YM1XFEAR5+21pbcjAQMgD85ZRV23A+8iW+simHNRiRA31cv09pi+tdfXQGcx4drg==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-darcula/4.19.7:
+    resolution: {integrity: sha512-BNRoEOjTHfolU+VfwT2MZehVaokG3bJuq1we2PcHXSKZtGUT2fHmDNZQ3BSiLUDfC/1f6/Aqf63T8u7mAWB2zw==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-dracula/4.19.7:
+    resolution: {integrity: sha512-QnVjtq31vqjVcq5GItbfXuaB7c9DAwSvqiTtFLxLXqPO37lwwyYmrMdd5AbFsGlVv3Bxq4zvJ3LbyVlF6mexcA==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-duotone/4.19.7:
+    resolution: {integrity: sha512-SncdJtjQVBAReEtOPAYJoxitZqxHCbmkJCyZqOj81VB8HI8sdC9pOvdOVviT22/1nzosspmRYoPSHNbq0Jzx6Q==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-eclipse/4.19.7:
+    resolution: {integrity: sha512-msy5pkECeslpb9J8RT+Oj1XIV7GfOMIl400BG/A2beMXktdBTvomtsjBvn2i124pxevafK0iiuXDm8Rpk9x/9w==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-github/4.19.7:
+    resolution: {integrity: sha512-yeBKOS31bJWvxHWv/hO8CC5Hz657poyuCRX533B+7c2W3B5TX48i49GC9k91yX/BfCsTVqneONk4ZgRWGJkDww==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-gruvbox-dark/4.19.7:
+    resolution: {integrity: sha512-Qc1eTPv5KFJ96HIv4tyGFKZ4cWJeEQfwQ6PCHPCMEjEhQEXrT2jkveEUWL/JiUADrF3B32eB3k8f6D0kfZiDyw==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-material/4.19.7:
+    resolution: {integrity: sha512-uJmausR247K31mM3mjHAAFDQJSB+PB9Wux+aXksGU8QMVSCm7QGBUD6oKrtdQ0+KusdtpO3x+XprlNXhAXDcIw==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-noctis-lilac/4.19.7:
+    resolution: {integrity: sha512-7j7jA+s0skPKp7BRPI8AmWjgounCgf+1lYDnGjezPsZhM60v9GN9JQRZgI0zNub4kaRz9efXI65E5yN0chjR5w==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-nord/4.19.7:
+    resolution: {integrity: sha512-nAz4mBHMURyZ/o0b1W1VN9Qp5SvS8frOVEbJyDoCg6MFQ3NYOE8QNPzWIl7525Z8D+bpSHZz9leGuopT2vmXzA==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-okaidia/4.19.7:
+    resolution: {integrity: sha512-a2NONl4hGW9toluBfhr530BolSRoFGAhqFZMSq4RT/GeeKACE3hI7+uDeJID9B3D9Xh0d9C0VEksvGgEDuVD2g==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-solarized/4.19.7:
+    resolution: {integrity: sha512-do+SQtXzEVokfFcfIRr6MLceVfE3cHiTFaWQ0npWi5rzc/0i+BNe3J4ewGjUyU2Bofi/LYhAuTTiVoaKNdc5gQ==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-sublime/4.19.7:
+    resolution: {integrity: sha512-TakRTzdbiLJTfM1htEKVPcHFpnHzUYOFexE5UQQD9BLPfTABTAWLSjb+DeCfbP+m0gsTyzvHd8gH4t+WDIK4gQ==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-tokyo-night-day/4.19.7:
+    resolution: {integrity: sha512-0oyfyoNNfaKOW2TkJFHMUyI/kyoI6DXYd+Drkp4vHGd8zaLZWm/yyi05b0Nk/RKXnOfzrmLY0uU0FL4471rM1w==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-tokyo-night-storm/4.19.7:
+    resolution: {integrity: sha512-ObXQDcfECWd9EeawRXqkQQUxdwFF6RdqusEmRl5SJYorcGZA/6zsmxpIjtmXRKwBj0vv+pMk/RKoEmedglMMjw==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-tokyo-night/4.19.7:
+    resolution: {integrity: sha512-D/oLEsamQ7goFYnP46kyrt60vc2Tx8nC9FWyHqJvD3DL8+ugUsQvCL2oIadCadfMm7pQrFj1ILfokb8uC9W5eg==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-vscode/4.19.7:
+    resolution: {integrity: sha512-LaT9kSr7U6JTKxTYN0XkKZva5dtM63ltp7ae3JQsinL4ePoI1xNgn0Z4XapCK0VK1VyYbFKEWz3RN8s+pX+N1Q==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-theme-xcode/4.19.7:
+    resolution: {integrity: sha512-Le3qV3kJe2QgHjfxHHkEvpXF+XSQVUAdDPY2xnyDzijBooxd61ukFqgEPDPHVPT1Aqh+VHglafQRNOxChnlwdQ==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-themes-all/4.19.7:
+    resolution: {integrity: sha512-JCVwjZF9+omz+RaNEJXd0estiD7VliKZe1XvaPG3dy0MqQMJLzoUPxaagetPJlaCskrz1piXYL4V0Qp0J6ni8Q==}
+    dependencies:
+      '@uiw/codemirror-theme-abcdef': 4.19.7
+      '@uiw/codemirror-theme-androidstudio': 4.19.7
+      '@uiw/codemirror-theme-atomone': 4.19.7
+      '@uiw/codemirror-theme-aura': 4.19.7
+      '@uiw/codemirror-theme-bbedit': 4.19.7
+      '@uiw/codemirror-theme-bespin': 4.19.7
+      '@uiw/codemirror-theme-darcula': 4.19.7
+      '@uiw/codemirror-theme-dracula': 4.19.7
+      '@uiw/codemirror-theme-duotone': 4.19.7
+      '@uiw/codemirror-theme-eclipse': 4.19.7
+      '@uiw/codemirror-theme-github': 4.19.7
+      '@uiw/codemirror-theme-gruvbox-dark': 4.19.7
+      '@uiw/codemirror-theme-material': 4.19.7
+      '@uiw/codemirror-theme-noctis-lilac': 4.19.7
+      '@uiw/codemirror-theme-nord': 4.19.7
+      '@uiw/codemirror-theme-okaidia': 4.19.7
+      '@uiw/codemirror-theme-solarized': 4.19.7
+      '@uiw/codemirror-theme-sublime': 4.19.7
+      '@uiw/codemirror-theme-tokyo-night': 4.19.7
+      '@uiw/codemirror-theme-tokyo-night-day': 4.19.7
+      '@uiw/codemirror-theme-tokyo-night-storm': 4.19.7
+      '@uiw/codemirror-theme-vscode': 4.19.7
+      '@uiw/codemirror-theme-xcode': 4.19.7
+      '@uiw/codemirror-themes': 4.19.7
+    dev: false
+
+  /@uiw/codemirror-themes/4.19.7:
+    resolution: {integrity: sha512-M/42RkPI60ItlssmNuEoZO2MQvlY6fRmdX7XRUAhKjxczZoaq8xS6HIvv1whGf2zGsTrwdVTPCm6ls0l17dvPA==}
+    dependencies:
+      '@codemirror/language': 6.4.0
       '@codemirror/state': 6.2.0
       '@codemirror/view': 6.7.3
     dev: false

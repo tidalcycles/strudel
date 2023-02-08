@@ -79,9 +79,17 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-const extensions = [javascript(), strudelTheme, highlightField, flashField];
+const extensions = [javascript(), highlightField, flashField];
 
-export default function CodeMirror({ value, onChange, onViewChanged, onSelectionChange, options, editorDidMount }) {
+export default function CodeMirror({
+  value,
+  onChange,
+  onViewChanged,
+  onSelectionChange,
+  theme,
+  options,
+  editorDidMount,
+}) {
   const handleOnChange = useCallback(
     (value) => {
       onChange?.(value);
@@ -106,6 +114,7 @@ export default function CodeMirror({ value, onChange, onViewChanged, onSelection
     <>
       <_CodeMirror
         value={value}
+        theme={theme || strudelTheme}
         onChange={handleOnChange}
         onCreateEditor={handleOnCreateEditor}
         onUpdate={handleOnUpdate}
