@@ -5,12 +5,12 @@ import { nanoid } from 'nanoid';
 import React, { useContext, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useEvent, loadedSamples, ReplContext } from './Repl';
 import { Reference } from './Reference';
-import * as themes from './themes.mjs';
+import { themes, themeColors } from './themes.mjs';
 
 export function Footer({ context }) {
   // const [activeFooter, setActiveFooter] = useState('console');
   // const { activeFooter, setActiveFooter, isZen } = useContext?.(ReplContext);
-  const { activeFooter, setActiveFooter, isZen, setTheme } = context;
+  const { activeFooter, setActiveFooter, isZen, theme, setTheme } = context;
   const footerContent = useRef();
   const [log, setLog] = useState([]);
 
@@ -166,22 +166,31 @@ export function Footer({ context }) {
               ))}
             </div>
           )}
+          {activeFooter === 'reference' && <Reference />}
           {activeFooter === 'settings' && (
-            <div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 p-2">
               {Object.entries(themes).map(([k, t]) => (
-                <li key={k}>
-                  <a
-                    onClick={() => {
-                      setTheme(t);
-                    }}
-                  >
-                    {k}
-                  </a>
-                </li>
+                <div
+                  key={k}
+                  className={classNames(
+                    'border-4 border-transparent cursor-pointer p-4 bg-bg rounded-md hover:bg-stone-700',
+                    theme === t ? '!border-stone-500' : '',
+                  )}
+                  onClick={() => {
+                    console.log(k, themeColors(t));
+                    setTheme(t);
+                  }}
+                >
+                  <div className="mb-2 w-full text-center">{k}</div>
+                  <div className="flex justify-stretch overflow-hidden rounded-md">
+                    {themeColors(t).map((c, i) => (
+                      <div key={i} className="grow h-6" style={{ background: c }} />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           )}
-          {activeFooter === 'reference' && <Reference />}
         </div>
       )}
     </footer>
@@ -211,4 +220,8 @@ function linkify(inputText) {
   replacedText = replacedText.replace(replacePattern3, '<a class="underline" href="mailto:$1">$1</a>');
 
   return replacedText;
+}
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ');
 }
