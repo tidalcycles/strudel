@@ -76,7 +76,7 @@ export function Footer({ context }) {
           <FooterTab name="reference" />
         </div>
         {activeFooter !== '' && (
-          <button onClick={() => setActiveFooter('')} className="text-white">
+          <button onClick={() => setActiveFooter('')} className="text-white" aria-label="Close Panel">
             <XMarkIcon className="w-5 h-5" />
           </button>
         )}
