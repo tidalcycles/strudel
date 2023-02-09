@@ -222,10 +222,10 @@ export function Repl({ embedded = false }) {
     }
     // generate uuid in the browser
     const hash = nanoid(12);
+    const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
     const { data, error } = await supabase.from('code').insert([{ code: codeToShare, hash }]);
     if (!error) {
       setLastShared(activeCode || code);
-      const shareUrl = window.location.origin + '?' + hash;
       // copy shareUrl to clipboard
       await navigator.clipboard.writeText(shareUrl);
       const message = `Link copied to clipboard: ${shareUrl}`;

@@ -3,6 +3,10 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "skipLibCheck": true,
-    "jsxImportSource": "react"
+    "jsxImportSource": "react",
+    "noImplicitAny": false,
+    "types": [
+      "vite-plugin-pwa/client"
+    ]
   }
 }
