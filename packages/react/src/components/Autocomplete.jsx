@@ -2,6 +2,11 @@ import { createRoot } from 'react-dom/client';
 import jsdoc from '../../../../doc.json';
 
 const getDocLabel = (doc) => doc.name || doc.longname;
+const getInnerText = (html) => {
+  var div = document.createElement('div');
+  div.innerHTML = html;
+  return div.textContent || div.innerText || '';
+};
 
 export function Autocomplete({ doc }) {
   return (
@@ -11,7 +16,7 @@ export function Autocomplete({ doc }) {
       <ul>
         {doc.params?.map(({ name, type, description }, i) => (
           <li key={i}>
-            {name} : {type.names?.join(' | ')} {description ? <> - {description}</> : ''}
+            {name} : {type.names?.join(' | ')} {description ? <> - {getInnerText(description)}</> : ''}
           </li>
         ))}
       </ul>
