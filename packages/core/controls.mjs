@@ -30,6 +30,25 @@ const generic_params = [
    */
   // also see https://github.com/tidalcycles/strudel/pull/63
   ['f', 'n', 'The sample number to choose for a synth or sampleset'],
+  /**
+   * Plays the given note name or midi number. A note name consists of
+   *
+   * - a letter (a-g or A-G)
+   * - optional accidentals (b or #)
+   * - optional octave number (0-9). Defaults to 3
+   *
+   * Examples of valid note names: `c`, `bb`, `Bb`, `f#`, `c3`, `A4`, `Eb2`, `c#5`
+   *
+   * You can also use midi numbers instead of note names, where 69 is mapped to A4 440Hz in 12EDO.
+   *
+   * @name note
+   * @example
+   * note("c a f e")
+   * @example
+   * note("c4 a4 f4 e4")
+   * @example
+   * note("60 69 65 64")
+   */
   ['f', 'note', 'The note or pitch to play a sound or synth with'],
   //['s', 'toArg', 'for internal sound routing'],
   // ["f", "from", "for internal sound routing"),
