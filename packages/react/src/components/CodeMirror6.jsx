@@ -7,7 +7,7 @@ import strudelTheme from '../themes/strudel-theme';
 import './style.css';
 import { useCallback } from 'react';
 import { autocompletion } from '@codemirror/autocomplete';
-import jsdoc from '../../../../doc.json';
+import { strudelAutocomplete } from './Autocomplete';
 
 export const setFlash = StateEffect.define();
 const flashField = StateField.define({
@@ -80,72 +80,6 @@ const highlightField = StateField.define({
   },
   provide: (f) => EditorView.decorations.from(f),
 });
-
-const getDocLabel = (doc) => doc.name || doc.longname;
-const jsdocCompletions = jsdoc.docs
-  .filter(
-    (doc) =>
-      getDocLabel(doc) &&
-      !getDocLabel(doc).startsWith('_') &&
-      !['package'].includes(doc.kind) &&
-      !['superdirtOnly', 'noAutocomplete'].some((tag) => doc.tags?.find((t) => t.originalTitle === tag)),
-  )
-  // https://codemirror.net/docs/ref/#autocomplete.Completion
-  .map((doc) /*: Completion */ => ({
-    label: getDocLabel(doc),
-    // detail: 'xxx', // An optional short piece of information to show (with a different style) after the label.
-    info: () => {
-      const heading = document.createElement('h3');
-      heading.innerText = getDocLabel(doc);
-      heading.style = 'padding-top:0;margin-top:0';
-      const description = document.createElement('div');
-      description.innerHTML = doc.description;
-      const params = document.createElement('ul');
-      doc.params?.forEach(({ name, type, description }) => {
-        const li = document.createElement('li');
-        const span = document.createElement('span');
-        span.innerText = name + ': ' + type.names?.join(' | ') + (description ? ' - ' : '');
-        const c = document.createElement('span');
-        c.innerHTML = description || '';
-        const comment = document.createElement('span');
-        comment.innerHTML = c.innerText;
-        li.appendChild(span);
-        li.appendChild(comment);
-        params.appendChild(li);
-      });
-      const examples = document.createElement('div');
-      doc.examples?.forEach((ex) => {
-        const code = document.createElement('pre');
-        code.style = 'font-size:14px';
-        code.innerText = ex;
-        examples.appendChild(code);
-      });
-      const node = document.createElement('div');
-      node.classList.add('prose');
-      node.classList.add('prose-invert');
-      node.style = 'max-width:500px;max-height:400px;overflow:auto';
-      node.appendChild(heading);
-      node.appendChild(description);
-      node.appendChild(params);
-      node.appendChild(examples);
-      return node;
-    }, // Additional info to show when the completion is selected
-    type: 'function', // https://codemirror.net/docs/ref/#autocomplete.Completion.type
-  }));
-
-export const strudelAutocomplete = (context /* : CompletionContext */) => {
-  let word = context.matchBefore(/\w*/);
-  if (word.from == word.to && !context.explicit) return null;
-  return {
-    from: word.from,
-    options: jsdocCompletions,
-    /*     options: [
-      { label: 'match', type: 'keyword' },
-      { label: 'hello', type: 'variable', info: '(World)' },
-      { label: 'magic', type: 'text', apply: '⠁⭒*.✩.*⭒⠁', detail: 'macro' },
-    ], */
-  };
-};
 
 const extensions = [
   javascript(),

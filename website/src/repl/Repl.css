@@ -18,3 +18,7 @@
   padding-top: 12px !important;
   padding-left: 8px !important;
 }
+
+.cm-scroller {
+  padding-bottom: 50vh;
+}
