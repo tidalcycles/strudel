@@ -82,7 +82,6 @@ const highlightField = StateField.define({
 });
 
 const getDocLabel = (doc) => doc.name || doc.longname;
-console.log(jsdoc.docs.sort((a, b) => a.name.localeCompare(b.name)));
 const jsdocCompletions = jsdoc.docs
   .filter(
     (doc) =>
@@ -133,7 +132,6 @@ const jsdocCompletions = jsdoc.docs
     }, // Additional info to show when the completion is selected
     type: 'function', // https://codemirror.net/docs/ref/#autocomplete.Completion.type
   }));
-console.log(jsdocCompletions);
 
 export const strudelAutocomplete = (context /* : CompletionContext */) => {
   let word = context.matchBefore(/\w*/);
