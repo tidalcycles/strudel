@@ -63,6 +63,27 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTi
     getTime: () => scheduler.now(),
   });
 
+  // keyboard shortcuts
+  useKeydown(
+    useCallback(
+      async (e) => {
+        if (view?.hasFocus) {
+          if (e.ctrlKey || e.altKey) {
+            if (e.code === 'Enter') {
+              e.preventDefault();
+              flash(view);
+              await activateCode();
+            } else if (e.code === 'Period') {
+              stop();
+              e.preventDefault();
+            }
+          }
+        }
+      },
+      [activateCode, stop, view],
+    ),
+  );
+
   // set active pattern on ctrl+enter
   useLayoutEffect(() => {
     if (enableKeyboard) {
@@ -149,4 +170,9 @@ function useEvent(name, onTrigger, useCapture = false) {
       document.removeEventListener(name, onTrigger, useCapture);
     };
   }, [onTrigger]);
+}
+
+// TODO: dedupe
+function useKeydown(onTrigger) {
+  useEvent('keydown', onTrigger, true);
 }
