@@ -46,14 +46,20 @@ const base = BASE_URL;
     };
   }
   function setTheme(name) {
-    console.log('setTheme', name);
     const { settings } = getTheme(name);
-    const cssVariables = Object.entries(settings)
-      .map(([key, value]) => `--${key}: ${value};`)
-      .join('\n');
+    // set css variables
     themeStyle.innerHTML = `:root {
-      ${cssVariables}
+      ${Object.entries(settings)
+        .map(([key, value]) => `--${key}: ${value};`)
+        .join('\n')}
     }`;
+    // tailwind dark mode
+    if (settings.light) {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+    // persist theme name
     localStorage.setItem('strudel-theme', name);
   }
   setTheme(localStorage.getItem('strudel-theme'));

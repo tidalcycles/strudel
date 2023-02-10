@@ -14,7 +14,7 @@ export function Reference() {
         ))}
       </div>
       <div className="break-normal w-full h-full overflow-auto pl-4 flex relative">
-        <div className="prose prose-invert">
+        <div className="prose dark:prose-invert">
           <h2>API Reference</h2>
           <p>
             This is the long list functions you can use! Remember that you don't need to remember all of those and that

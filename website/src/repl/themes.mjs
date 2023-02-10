@@ -177,6 +177,7 @@ export const settings = {
     lineHighlight: '#36334280',
   },
   eclipse: {
+    light: true,
     background: '#fff',
     foreground: '#000',
     caret: '#FFFFFF',
@@ -188,6 +189,7 @@ export const settings = {
     gutterBorder: 'transparent',
   },
   githubLight: {
+    light: true,
     background: '#fff',
     foreground: '#24292e',
     selection: '#BBDFFF',
@@ -214,6 +216,7 @@ export const settings = {
     gutterForeground: '#7c6f64',
   },
   gruvboxLight: {
+    light: true,
     background: '#fbf1c7',
     foreground: '#3c3836',
     caret: '#af3a03',
@@ -236,6 +239,7 @@ export const settings = {
     lineHighlight: '#545b61',
   },
   materialLight: {
+    light: true,
     background: '#FAFAFA',
     foreground: '#90A4AE',
     caret: '#272727',
@@ -247,6 +251,7 @@ export const settings = {
     lineHighlight: '#CCD7DA50',
   },
   noctisLilac: {
+    light: true,
     background: '#f2f1f8',
     foreground: '#0c006b',
     caret: '#5c49e9',
@@ -278,6 +283,7 @@ export const settings = {
     lineHighlight: '#00000059',
   },
   solarizedLight: {
+    light: true,
     background: '#fdf6e3',
     foreground: '#657b83',
     caret: '#586e75',
@@ -308,6 +314,7 @@ export const settings = {
     lineHighlight: '#00000059',
   },
   tokyoNightDay: {
+    light: true,
     background: '#e1e2e7',
     foreground: '#3760bf',
     caret: '#3760bf',
@@ -353,6 +360,7 @@ export const settings = {
     fontFamily: 'Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace',
   },
   xcodeLight: {
+    light: true,
     background: '#fff',
     foreground: '#3D3D3D',
     selection: '#BBDFFF',
@@ -368,13 +376,6 @@ export const settings = {
     selection: '#727377',
     selectionMatch: '#727377',
     lineHighlight: '#2F3239',
-  },
-};
-
-export const vars = {
-  abcdef: {
-    bg: '#0f0f0f',
-    activeLine: '#314151',
   },
 };
 

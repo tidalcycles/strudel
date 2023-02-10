@@ -2,8 +2,8 @@ import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon';
 import { logger } from '@strudel.cycles/core';
 import { cx } from '@strudel.cycles/react';
 import { nanoid } from 'nanoid';
-import React, { useContext, useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { useEvent, loadedSamples, ReplContext } from './Repl';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useEvent, loadedSamples } from './Repl';
 import { Reference } from './Reference';
 import { themes, themeColors } from './themes.mjs';
 
@@ -89,7 +89,7 @@ export function Footer({ context }) {
           ref={footerContent}
         >
           {activeFooter === 'intro' && (
-            <div className="prose prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
+            <div className="prose dark:prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
               <h3>
                 <span className={cx('animate-spin inline-block select-none')}>🌀</span> welcome
               </h3>
@@ -229,3 +229,20 @@ function linkify(inputText) {
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
+
+/* export function useTheme() {
+  const [theme, setTheme] = useState(localStorage.getItem('strudel-theme'));
+  useEvent('strudel-theme', (e) => {
+    console.log(e.detail);
+    setTheme(e.detail);
+  });
+  const themeSettings = settings[theme || 'strudelTheme'];
+  return {
+    theme,
+    setTheme,
+    settings: themeSettings,
+    isDark: !themeSettings.light,
+    isLight: !!themeSettings.light,
+  };
+}
+ */
