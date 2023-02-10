@@ -134,7 +134,7 @@ export function Footer({ context }) {
             </div>
           )}
           {activeFooter === 'console' && (
-            <div className="break-all px-4">
+            <div className="break-all px-4 dark:text-white text-stone-900">
               {log.map((l, i) => {
                 const message = linkify(l.message);
                 return (
@@ -150,8 +150,8 @@ export function Footer({ context }) {
             </div>
           )}
           {activeFooter === 'samples' && (
-            <div className="break-normal w-full px-4">
-              <span className="text-white">{loadedSamples.length} banks loaded:</span>
+            <div className="break-normal w-full px-4 dark:text-white text-stone-900">
+              <span>{loadedSamples.length} banks loaded:</span>
               {loadedSamples.map(([name, samples]) => (
                 <span key={name} className="cursor-pointer hover:text-tertiary" onClick={() => {}}>
                   {' '}

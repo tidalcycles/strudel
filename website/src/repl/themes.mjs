@@ -31,6 +31,7 @@ import {
 } from '@uiw/codemirror-themes-all';
 
 export const themes = {
+  // none: 'none',
   abcdef,
   androidstudio,
   atomone,
@@ -63,6 +64,11 @@ export const themes = {
 };
 
 export const settings = {
+  none: {
+    background: '#222',
+    foreground: '#FFFFFF',
+    lineHighlight: '#00000059',
+  },
   strudelTheme: {
     background: '#222',
     foreground: '#FFFFFF',

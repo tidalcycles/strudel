@@ -283,7 +283,7 @@ export function Repl({ embedded = false }) {
           />
         </section>
         {error && (
-          <div className="text-red-500 p-4 bg-lineblack animate-pulse">{error.message || 'Unknown Error :-/'}</div>
+          <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>
         )}
         {isEmbedded && !started && (
           <button

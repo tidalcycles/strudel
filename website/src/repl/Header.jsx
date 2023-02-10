@@ -48,7 +48,6 @@ export function Header({ context }) {
           }}
           className={cx(
             isEmbedded ? 'text-l cursor-pointer' : 'text-xl',
-            // 'bg-clip-text bg-gradient-to-r from-primary to-secondary  text-transparent font-bold',
             'text-foreground font-bold flex space-x-2 items-center',
           )}
         >
