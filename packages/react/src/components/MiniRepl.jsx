@@ -11,6 +11,7 @@ import styles from './MiniRepl.module.css';
 import './style.css';
 import { logger } from '@strudel.cycles/core';
 import useEvent from '../hooks/useEvent.mjs';
+import useKeydown from '../hooks/useKeydown.mjs';
 
 const getTime = () => getAudioContext().currentTime;
 
@@ -73,6 +74,27 @@ export function MiniRepl({
     getTime: () => scheduler.now(),
     color: highlightColor,
   });
+
+  // keyboard shortcuts
+  useKeydown(
+    useCallback(
+      async (e) => {
+        if (view?.hasFocus) {
+          if (e.ctrlKey || e.altKey) {
+            if (e.code === 'Enter') {
+              e.preventDefault();
+              flash(view);
+              await activateCode();
+            } else if (e.code === 'Period') {
+              stop();
+              e.preventDefault();
+            }
+          }
+        }
+      },
+      [activateCode, stop, view],
+    ),
+  );
 
   // set active pattern on ctrl+enter
   useLayoutEffect(() => {
