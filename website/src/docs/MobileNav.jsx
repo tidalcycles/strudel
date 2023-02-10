@@ -36,7 +36,9 @@ export default function MobileNav({ sidebar }) {
                       as="a"
                       href={`/${item.link}`}
                       className={classNames(
-                        item.current ? 'bg-background text-white' : 'text-gray-300 hover:bg-lineHighlight hover:text-white',
+                        item.current
+                          ? 'bg-background text-white'
+                          : 'text-gray-300 hover:bg-lineHighlight hover:text-white',
                         'block px-3 py-2 rounded-md text-base font-medium',
                       )}
                       aria-current={item.current ? 'page' : undefined}
