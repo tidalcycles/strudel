@@ -32,7 +32,7 @@ export function Header({ context }) {
       id="header"
       className={cx(
         'py-1 flex-none w-full text-black justify-between z-[100] text-lg  select-none sticky top-0',
-        !isZen && !isEmbedded && 'bg-header',
+        !isZen && !isEmbedded && 'bg-lineHighlight',
         isEmbedded ? 'flex' : 'md:flex',
       )}
     >
@@ -48,8 +48,7 @@ export function Header({ context }) {
           }}
           className={cx(
             isEmbedded ? 'text-l cursor-pointer' : 'text-xl',
-            // 'bg-clip-text bg-gradient-to-r from-primary to-secondary  text-transparent font-bold',
-            'text-white font-bold flex space-x-2 items-center',
+            'text-foreground font-bold flex space-x-2 items-center',
           )}
         >
           <div
@@ -66,7 +65,7 @@ export function Header({ context }) {
         </h1>
       </div>
       {!isZen && (
-        <div className="flex max-w-full overflow-auto text-white ">
+        <div className="flex max-w-full overflow-auto text-foreground">
           <button
             onClick={handleTogglePlay}
             title={started ? 'stop' : 'play'}

@@ -1,0 +1,9 @@
+.cm-activeLine {
+  background-color: transparent !important;
+}
+
+.cm-theme {
+  background-color: var(--background);
+  border: 1px solid var(--lineHighlight);
+  padding: 2px;
+}

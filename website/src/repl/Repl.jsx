@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { cleanupDraw, cleanupUi, controls, evalScope, getDrawContext, logger } from '@strudel.cycles/core';
-import { CodeMirror, cx, flash, useHighlighting, useStrudel } from '@strudel.cycles/react';
+import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
 import {
   getAudioContext,
   getLoadedSamples,
@@ -22,6 +22,10 @@ import { Header } from './Header';
 import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
+import { themes } from './themes.mjs';
+import useTheme from '../useTheme';
+
+const initialTheme = localStorage.getItem('strudel-theme') || 'strudelTheme';
 
 initAudioOnFirstClick();
 
@@ -109,6 +113,7 @@ export const ReplContext = createContext(null);
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
+  const [theme, setTheme] = useState(initialTheme);
   const [lastShared, setLastShared] = useState();
   const [activeFooter, setActiveFooter] = useState('');
   const [isZen, setIsZen] = useState(false);
@@ -167,12 +172,15 @@ export function Repl({ embedded = false }) {
     ),
   );
 
+  const { settings } = useTheme();
+
   // highlighting
   useHighlighting({
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
     getTime: () => scheduler.now(),
+    color: settings?.foreground,
   });
 
   //
@@ -255,6 +263,8 @@ export function Repl({ embedded = false }) {
     handleShare,
     isZen,
     setIsZen,
+    theme,
+    setTheme,
   };
   return (
     // bg-gradient-to-t from-blue-900 to-slate-900
@@ -269,6 +279,7 @@ export function Repl({ embedded = false }) {
         <Header context={context} />
         <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-0" id="code">
           <CodeMirror
+            theme={themes[theme] || themes.strudelTheme}
             value={code}
             onChange={handleChangeCode}
             onViewChanged={setView}
@@ -276,7 +287,7 @@ export function Repl({ embedded = false }) {
           />
         </section>
         {error && (
-          <div className="text-red-500 p-4 bg-lineblack animate-pulse">{error.message || 'Unknown Error :-/'}</div>
+          <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>
         )}
         {isEmbedded && !started && (
           <button
@@ -291,16 +302,4 @@ export function Repl({ embedded = false }) {
       </div>
     </ReplContext.Provider>
   );
-}
-
-export function useEvent(name, onTrigger, useCapture = false) {
-  useEffect(() => {
-    document.addEventListener(name, onTrigger, useCapture);
-    return () => {
-      document.removeEventListener(name, onTrigger, useCapture);
-    };
-  }, [onTrigger]);
-}
-function useKeydown(onTrigger) {
-  useEvent('keydown', onTrigger, true);
 }

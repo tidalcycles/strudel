@@ -49,11 +49,12 @@ const highlightField = StateField.define({
     try {
       for (let e of tr.effects) {
         if (e.is(setHighlights)) {
+          const { haps } = e.value;
           const marks =
-            e.value
+            haps
               .map((hap) =>
                 (hap.context.locations || []).map(({ start, end }) => {
-                  const color = hap.context.color || '#FFCA28';
+                  const color = hap.context.color || e.value.color || '#FFCA28';
                   let from = tr.newDoc.line(start.line).from + start.column;
                   let to = tr.newDoc.line(end.line).from + end.column;
                   const l = tr.newDoc.length;
@@ -79,9 +80,17 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-const extensions = [javascript(), strudelTheme, highlightField, flashField];
+const extensions = [javascript(), highlightField, flashField];
 
-export default function CodeMirror({ value, onChange, onViewChanged, onSelectionChange, options, editorDidMount }) {
+export default function CodeMirror({
+  value,
+  onChange,
+  onViewChanged,
+  onSelectionChange,
+  theme,
+  options,
+  editorDidMount,
+}) {
   const handleOnChange = useCallback(
     (value) => {
       onChange?.(value);
@@ -106,6 +115,7 @@ export default function CodeMirror({ value, onChange, onViewChanged, onSelection
     <>
       <_CodeMirror
         value={value}
+        theme={theme || strudelTheme}
         onChange={handleOnChange}
         onCreateEditor={handleOnCreateEditor}
         onUpdate={handleOnUpdate}

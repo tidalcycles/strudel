@@ -2,6 +2,10 @@ import { evalScope, controls } from '@strudel.cycles/core';
 import { initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 import { useEffect, useState } from 'react';
 import { prebake } from '../repl/prebake';
+import { themes, settings } from '../repl/themes.mjs';
+import './MiniRepl.css';
+
+const theme = localStorage.getItem('strudel-theme') || 'strudelTheme';
 
 let modules;
 if (typeof window !== 'undefined') {
@@ -32,9 +36,18 @@ export function MiniRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
       .then(([res]) => setRepl(() => res.MiniRepl))
       .catch((err) => console.error(err));
   }, []);
+  // const { settings } = useTheme();
   return Repl ? (
     <div className="mb-4">
-      <Repl tune={tune} hideOutsideView={true} drawTime={drawTime} punchcard={punchcard} canvasHeight={canvasHeight} />
+      <Repl
+        tune={tune}
+        hideOutsideView={true}
+        drawTime={drawTime}
+        punchcard={punchcard}
+        canvasHeight={canvasHeight}
+        theme={themes[theme]}
+        highlightColor={settings[theme]?.foreground}
+      />
     </div>
   ) : (
     <pre>{tune}</pre>
