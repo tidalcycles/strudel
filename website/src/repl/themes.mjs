@@ -61,6 +61,18 @@ export const themes = {
   tokyoNightDay,
   xcodeLight,
 };
+// TODO: persist theme
+export const defaultSettingsAura = {
+  background: '#21202e',
+  foreground: '#edecee',
+  caret: '#a277ff',
+  selection: '#3d375e7f',
+  selectionMatch: '#3d375e7f',
+  gutterBackground: '#21202e',
+  gutterForeground: '#edecee',
+  gutterBorder: 'transparent',
+  lineHighlight: '#a394f033',
+};
 
 export const vars = {
   abcdef: {

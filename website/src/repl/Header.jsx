@@ -32,7 +32,7 @@ export function Header({ context }) {
       id="header"
       className={cx(
         'py-1 flex-none w-full text-black justify-between z-[100] text-lg  select-none sticky top-0',
-        !isZen && !isEmbedded && 'bg-header',
+        !isZen && !isEmbedded && 'bg-lineHighlight',
         isEmbedded ? 'flex' : 'md:flex',
       )}
     >

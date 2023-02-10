@@ -68,7 +68,7 @@ export function Footer({ context }) {
     return null;
   }
   return (
-    <footer className="bg-footer z-[20]">
+    <footer className="bg-lineHighlight z-[20]">
       <div className="flex justify-between px-2">
         <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
           <FooterTab name="intro" label="welcome" />
@@ -179,6 +179,22 @@ export function Footer({ context }) {
                   onClick={() => {
                     console.log(k, themeColors(t));
                     setTheme(t);
+                    document.dispatchEvent(
+                      new CustomEvent('strudel-theme', {
+                        detail: {
+                          // TODO: dynamic
+                          background: '#21202e',
+                          foreground: '#edecee',
+                          caret: '#a277ff',
+                          selection: '#3d375e7f',
+                          selectionMatch: '#3d375e7f',
+                          gutterBackground: '#21202e',
+                          gutterForeground: '#edecee',
+                          gutterBorder: 'transparent',
+                          lineHighlight: '#a394f033',
+                        },
+                      }),
+                    );
                   }}
                 >
                   <div className="mb-2 w-full text-center">{k}</div>

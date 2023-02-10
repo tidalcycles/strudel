@@ -28,3 +28,34 @@ const base = BASE_URL;
 
 <script src="/src/pwa.ts"></script>
 {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+
+<script>
+  // const themeStyle = document.getElementById('theme');
+  const themeStyle = document.createElement('style');
+  themeStyle.id = 'strudel-theme';
+  document.head.append(themeStyle);
+  function setTheme(theme) {
+    const cssVariables = Object.entries(theme)
+      .map(([key, value]) => `--${key}: ${value};`)
+      .join('\n');
+    themeStyle.innerHTML = `:root {
+      ${cssVariables}
+    }`;
+  }
+  // default theme
+  setTheme({
+    background: '#222',
+    foreground: '#FFFFFF',
+    caret: '#FFFFFF',
+    selection: '#49483E',
+    selectionMatch: '#49483E',
+    gutterBackground: '#272822',
+    gutterForeground: '#FFFFFF70',
+    lineHighlight: '#00000059',
+  });
+  document.addEventListener('strudel-theme', (e: any) => {
+    console.log('strudel theme', e.detail);
+    // TODO: persist theme
+    setTheme(e.detail);
+  });
+</script>

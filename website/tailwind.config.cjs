@@ -22,6 +22,16 @@ module.exports = {
         header: '#00000050',
         // header: 'transparent',
         footer: '#00000050',
+        // codemirror-theme settings
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        caret: 'var(--caret)',
+        selection: 'var(--selection)',
+        selectionMatch: 'var(--selectionMatch)',
+        gutterBackground: 'var(--gutterBackground)',
+        gutterForeground: 'var(--gutterForeground)',
+        gutterBorder: 'var(--gutterBorder)',
+        lineHighlight: 'var(--lineHighlight)',
       },
       typography(theme) {
         return {
