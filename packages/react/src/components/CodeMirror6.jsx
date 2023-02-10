@@ -49,11 +49,12 @@ const highlightField = StateField.define({
     try {
       for (let e of tr.effects) {
         if (e.is(setHighlights)) {
+          const { haps } = e.value;
           const marks =
-            e.value
+            haps
               .map((hap) =>
                 (hap.context.locations || []).map(({ start, end }) => {
-                  const color = hap.context.color || '#FFCA28';
+                  const color = hap.context.color || e.value.color || '#FFCA28';
                   let from = tr.newDoc.line(start.line).from + start.column;
                   let to = tr.newDoc.line(end.line).from + end.column;
                   const l = tr.newDoc.length;

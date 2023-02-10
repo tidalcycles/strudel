@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { cleanupDraw, cleanupUi, controls, evalScope, getDrawContext, logger } from '@strudel.cycles/core';
-import { CodeMirror, cx, flash, useHighlighting, useStrudel } from '@strudel.cycles/react';
+import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
 import {
   getAudioContext,
   getLoadedSamples,
@@ -23,6 +23,7 @@ import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
+import useTheme from '../useTheme';
 
 const initialTheme = localStorage.getItem('strudel-theme') || 'strudelTheme';
 
@@ -171,12 +172,15 @@ export function Repl({ embedded = false }) {
     ),
   );
 
+  const { settings } = useTheme();
+
   // highlighting
   useHighlighting({
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
     getTime: () => scheduler.now(),
+    color: settings?.foreground,
   });
 
   //
@@ -298,16 +302,4 @@ export function Repl({ embedded = false }) {
       </div>
     </ReplContext.Provider>
   );
-}
-
-export function useEvent(name, onTrigger, useCapture = false) {
-  useEffect(() => {
-    document.addEventListener(name, onTrigger, useCapture);
-    return () => {
-      document.removeEventListener(name, onTrigger, useCapture);
-    };
-  }, [onTrigger]);
-}
-function useKeydown(onTrigger) {
-  useEvent('keydown', onTrigger, true);
 }

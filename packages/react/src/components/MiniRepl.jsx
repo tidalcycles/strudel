@@ -10,6 +10,7 @@ import { Icon } from './Icon';
 import styles from './MiniRepl.module.css';
 import './style.css';
 import { logger } from '@strudel.cycles/core';
+import useEvent from '../hooks/useEvent.mjs';
 
 const getTime = () => getAudioContext().currentTime;
 
@@ -21,6 +22,7 @@ export function MiniRepl({
   punchcard,
   canvasHeight = 200,
   theme,
+  highlightColor,
 }) {
   drawTime = drawTime || (punchcard ? [0, 4] : undefined);
   const evalOnMount = !!drawTime;
@@ -69,6 +71,7 @@ export function MiniRepl({
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
     getTime: () => scheduler.now(),
+    color: highlightColor,
   });
 
   // set active pattern on ctrl+enter
@@ -147,14 +150,4 @@ export function MiniRepl({
 // TODO: dedupe
 function useLogger(onTrigger) {
   useEvent(logger.key, onTrigger);
-}
-
-// TODO: dedupe
-function useEvent(name, onTrigger, useCapture = false) {
-  useEffect(() => {
-    document.addEventListener(name, onTrigger, useCapture);
-    return () => {
-      document.removeEventListener(name, onTrigger, useCapture);
-    };
-  }, [onTrigger]);
 }

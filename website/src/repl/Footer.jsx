@@ -1,9 +1,10 @@
 import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon';
 import { logger } from '@strudel.cycles/core';
-import { cx } from '@strudel.cycles/react';
+import { useEvent, cx } from '@strudel.cycles/react';
+// import { cx } from '@strudel.cycles/react';
 import { nanoid } from 'nanoid';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { useEvent, loadedSamples } from './Repl';
+import { loadedSamples } from './Repl';
 import { Reference } from './Reference';
 import { themes, themeColors } from './themes.mjs';
 
@@ -172,7 +173,7 @@ export function Footer({ context }) {
               {Object.entries(themes).map(([k, t]) => (
                 <div
                   key={k}
-                  className={classNames(
+                  className={cx(
                     'border-2 border-transparent cursor-pointer p-4 bg-background bg-opacity-25 rounded-md',
                     theme === k ? '!border-foreground' : '',
                   )}
@@ -225,24 +226,3 @@ function linkify(inputText) {
 
   return replacedText;
 }
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
-
-/* export function useTheme() {
-  const [theme, setTheme] = useState(localStorage.getItem('strudel-theme'));
-  useEvent('strudel-theme', (e) => {
-    console.log(e.detail);
-    setTheme(e.detail);
-  });
-  const themeSettings = settings[theme || 'strudelTheme'];
-  return {
-    theme,
-    setTheme,
-    settings: themeSettings,
-    isDark: !themeSettings.light,
-    isLight: !!themeSettings.light,
-  };
-}
- */
