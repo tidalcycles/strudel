@@ -75,7 +75,7 @@ export function Footer({ context }) {
           <FooterTab name="samples" />
           <FooterTab name="console" />
           <FooterTab name="reference" />
-          <FooterTab name="settings" />
+          <FooterTab name="theme" />
         </div>
         {activeFooter !== '' && (
           <button onClick={() => setActiveFooter('')} className="text-foreground" aria-label="Close Panel">
@@ -167,13 +167,13 @@ export function Footer({ context }) {
             </div>
           )}
           {activeFooter === 'reference' && <Reference />}
-          {activeFooter === 'settings' && (
+          {activeFooter === 'theme' && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 p-2">
               {Object.entries(themes).map(([k, t]) => (
                 <div
                   key={k}
                   className={classNames(
-                    'border-2 border-transparent cursor-pointer p-4 bg-background rounded-md',
+                    'border-2 border-transparent cursor-pointer p-4 bg-background bg-opacity-25 rounded-md',
                     theme === k ? '!border-foreground' : '',
                   )}
                   onClick={() => {

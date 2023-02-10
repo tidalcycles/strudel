@@ -15,6 +15,7 @@ module.exports = {
         highlight: '#bb8800',
         // codemirror-theme settings
         background: 'var(--background)',
+        lineBackground: 'var(--lineBackground)',
         foreground: 'var(--foreground)',
         caret: 'var(--caret)',
         selection: 'var(--selection)',

@@ -12,7 +12,3 @@
 .cm-theme-light {
   width: 100%;
 }
-
-.cm-line > * {
-  background: var(--background);
-}

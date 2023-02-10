@@ -5,6 +5,8 @@ import { settings } from '../repl/themes.mjs';
 
 const { BASE_URL } = import.meta.env;
 const base = BASE_URL;
+
+const { strudelTheme } = settings;
 ---
 
 <!-- Global Metadata -->
@@ -28,14 +30,28 @@ const base = BASE_URL;
 <script src="./make-scrollable-code-focusable.js" is:inline></script>
 
 <script src="/src/pwa.ts"></script>
+<!-- this does not work for some reason: -->
+<!-- <style is:global define:vars={strudelTheme}></style> -->
+<!-- the following variables are just a fallback to make sure everything is readable without JS -->
+<style is:global>
+  :root {
+    --background: #222;
+    --lineBackground: #22222250;
+    --foreground: #fff;
+    --caret: #ffcc00;
+    --selection: rgba(128, 203, 196, 0.5);
+    --selectionMatch: #036dd626;
+    --lineHighlight: #00000050;
+    --gutterBackground: transparent;
+    --gutterForeground: #8a919966;
+  }
+</style>
 {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
 
-<script define:vars={{ settings }}>
-  // const themeStyle = document.getElementById('theme');
+<script define:vars={{ settings, strudelTheme }} is:inline>
   const themeStyle = document.createElement('style');
   themeStyle.id = 'strudel-theme';
   document.head.append(themeStyle);
-
   function getTheme(name) {
     if (!settings[name]) {
       console.warn('theme', name, 'has no settings');
@@ -50,7 +66,8 @@ const base = BASE_URL;
     // set css variables
     themeStyle.innerHTML = `:root {
       ${Object.entries(settings)
-        .map(([key, value]) => `--${key}: ${value};`)
+        // important to override fallback
+        .map(([key, value]) => `--${key}: ${value} !important;`)
         .join('\n')}
     }`;
     // tailwind dark mode
@@ -60,7 +77,7 @@ const base = BASE_URL;
       document.documentElement.classList.add('dark');
     }
     // persist theme name
-    localStorage.setItem('strudel-theme', name);
+    localStorage.setItem('strudel-theme', name || 'strudelTheme');
   }
   setTheme(localStorage.getItem('strudel-theme'));
   document.addEventListener('strudel-theme', (e) => setTheme(e.detail));

@@ -1,9 +1,9 @@
 .container {
-  @apply rounded-md overflow-hidden bg-[#222222];
+  @apply overflow-hidden;
 }
 
 .header {
-  @apply flex justify-between bg-slate-700 border-t border-slate-500;
+  @apply flex justify-between bg-lineHighlight border-t border-l border-r border-lineHighlight rounded-t-md overflow-hidden;
 }
 
 .buttons {
@@ -11,11 +11,11 @@
 }
 
 .button {
-  @apply cursor-pointer w-16 flex items-center justify-center p-1 bg-slate-700 border-r border-slate-500  text-white hover:bg-slate-600;
+  @apply cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground hover:bg-background;
 }
 
 .buttonDisabled {
-  @apply w-16 flex items-center justify-center p-1 bg-slate-600 text-slate-400 cursor-not-allowed;
+  @apply w-16 flex items-center justify-center p-1 opacity-50 cursor-not-allowed border-r border-lineHighlight;
 }
 
 .error {

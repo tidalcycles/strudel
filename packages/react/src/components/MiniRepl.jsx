@@ -13,7 +13,15 @@ import { logger } from '@strudel.cycles/core';
 
 const getTime = () => getAudioContext().currentTime;
 
-export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTime, punchcard, canvasHeight = 200 }) {
+export function MiniRepl({
+  tune,
+  hideOutsideView = false,
+  enableKeyboard,
+  drawTime,
+  punchcard,
+  canvasHeight = 200,
+  theme,
+}) {
   drawTime = drawTime || (punchcard ? [0, 4] : undefined);
   const evalOnMount = !!drawTime;
   const drawContext = useCallback(
@@ -111,7 +119,7 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTi
         {error && <div className={styles.error}>{error.message}</div>}
       </div>
       <div className={styles.body}>
-        {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />}
+        {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} theme={theme} />}
       </div>
       {drawTime && (
         <canvas

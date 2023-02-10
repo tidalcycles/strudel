@@ -6,4 +6,5 @@ export { default as useHighlighting } from './hooks/useHighlighting';
 export { default as usePostMessage } from './hooks/usePostMessage';
 export { default as useStrudel } from './hooks/useStrudel';
 export { default as useKeydown } from './hooks/useKeydown';
+export { default as strudelTheme } from './themes/strudel-theme';
 export { default as cx } from './cx';
