@@ -22,7 +22,9 @@ import { Header } from './Header';
 import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
-import strudelTheme from '@strudel.cycles/react/src/themes/strudel-theme';
+import { themes } from './themes.mjs';
+
+const initialTheme = localStorage.getItem('strudel-theme') || 'strudelTheme';
 
 initAudioOnFirstClick();
 
@@ -110,7 +112,7 @@ export const ReplContext = createContext(null);
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
-  const [theme, setTheme] = useState(strudelTheme);
+  const [theme, setTheme] = useState(initialTheme);
   const [lastShared, setLastShared] = useState();
   const [activeFooter, setActiveFooter] = useState('');
   const [isZen, setIsZen] = useState(false);
@@ -273,7 +275,7 @@ export function Repl({ embedded = false }) {
         <Header context={context} />
         <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-0" id="code">
           <CodeMirror
-            theme={theme}
+            theme={themes[theme] || themes.strudelTheme}
             value={code}
             onChange={handleChangeCode}
             onViewChanged={setView}

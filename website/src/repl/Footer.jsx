@@ -55,8 +55,8 @@ export function Footer({ context }) {
       <div
         onClick={() => setActiveFooter(name)}
         className={cx(
-          'h-8 px-2 text-white cursor-pointer hover:text-tertiary flex items-center space-x-1 border-b',
-          activeFooter === name ? 'border-white hover:border-tertiary' : 'border-transparent',
+          'h-8 px-2 text-foreground cursor-pointer hover:text-tertiary flex items-center space-x-1 border-b',
+          activeFooter === name ? 'border-foreground hover:border-tertiary' : 'border-transparent',
         )}
       >
         {label || name}
@@ -78,7 +78,7 @@ export function Footer({ context }) {
           <FooterTab name="settings" />
         </div>
         {activeFooter !== '' && (
-          <button onClick={() => setActiveFooter('')} className="text-white" aria-label="Close Panel">
+          <button onClick={() => setActiveFooter('')} className="text-foreground" aria-label="Close Panel">
             <XMarkIcon className="w-5 h-5" />
           </button>
         )}
@@ -173,31 +173,19 @@ export function Footer({ context }) {
                 <div
                   key={k}
                   className={classNames(
-                    'border-4 border-transparent cursor-pointer p-4 bg-bg rounded-md hover:bg-stone-700',
-                    theme === t ? '!border-stone-500' : '',
+                    'border-2 border-transparent cursor-pointer p-4 bg-background rounded-md',
+                    theme === k ? '!border-foreground' : '',
                   )}
                   onClick={() => {
-                    console.log(k, themeColors(t));
-                    setTheme(t);
+                    setTheme(k);
                     document.dispatchEvent(
                       new CustomEvent('strudel-theme', {
-                        detail: {
-                          // TODO: dynamic
-                          background: '#21202e',
-                          foreground: '#edecee',
-                          caret: '#a277ff',
-                          selection: '#3d375e7f',
-                          selectionMatch: '#3d375e7f',
-                          gutterBackground: '#21202e',
-                          gutterForeground: '#edecee',
-                          gutterBorder: 'transparent',
-                          lineHighlight: '#a394f033',
-                        },
+                        detail: k,
                       }),
                     );
                   }}
                 >
-                  <div className="mb-2 w-full text-center">{k}</div>
+                  <div className="mb-2 w-full text-center text-foreground">{k}</div>
                   <div className="flex justify-stretch overflow-hidden rounded-md">
                     {themeColors(t).map((c, i) => (
                       <div key={i} className="grow h-6" style={{ background: c }} />

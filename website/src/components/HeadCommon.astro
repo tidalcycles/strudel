@@ -1,6 +1,7 @@
 ---
 import { pwaInfo } from 'virtual:pwa-info';
 import '../styles/index.css';
+import { settings } from '../repl/themes.mjs';
 
 const { BASE_URL } = import.meta.env;
 const base = BASE_URL;
@@ -29,33 +30,32 @@ const base = BASE_URL;
 <script src="/src/pwa.ts"></script>
 {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
 
-<script>
+<script define:vars={{ settings }}>
   // const themeStyle = document.getElementById('theme');
   const themeStyle = document.createElement('style');
   themeStyle.id = 'strudel-theme';
   document.head.append(themeStyle);
-  function setTheme(theme) {
-    const cssVariables = Object.entries(theme)
+
+  function getTheme(name) {
+    if (!settings[name]) {
+      console.warn('theme', name, 'has no settings');
+    }
+    return {
+      name,
+      settings: settings[name] || settings.strudelTheme,
+    };
+  }
+  function setTheme(name) {
+    console.log('setTheme', name);
+    const { settings } = getTheme(name);
+    const cssVariables = Object.entries(settings)
       .map(([key, value]) => `--${key}: ${value};`)
       .join('\n');
     themeStyle.innerHTML = `:root {
       ${cssVariables}
     }`;
+    localStorage.setItem('strudel-theme', name);
   }
-  // default theme
-  setTheme({
-    background: '#222',
-    foreground: '#FFFFFF',
-    caret: '#FFFFFF',
-    selection: '#49483E',
-    selectionMatch: '#49483E',
-    gutterBackground: '#272822',
-    gutterForeground: '#FFFFFF70',
-    lineHighlight: '#00000059',
-  });
-  document.addEventListener('strudel-theme', (e: any) => {
-    console.log('strudel theme', e.detail);
-    // TODO: persist theme
-    setTheme(e.detail);
-  });
+  setTheme(localStorage.getItem('strudel-theme'));
+  document.addEventListener('strudel-theme', (e) => setTheme(e.detail));
 </script>
