@@ -10,10 +10,21 @@ import { Icon } from './Icon';
 import styles from './MiniRepl.module.css';
 import './style.css';
 import { logger } from '@strudel.cycles/core';
+import useEvent from '../hooks/useEvent.mjs';
+import useKeydown from '../hooks/useKeydown.mjs';
 
 const getTime = () => getAudioContext().currentTime;
 
-export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTime, punchcard, canvasHeight = 200 }) {
+export function MiniRepl({
+  tune,
+  hideOutsideView = false,
+  enableKeyboard,
+  drawTime,
+  punchcard,
+  canvasHeight = 200,
+  theme,
+  highlightColor,
+}) {
   drawTime = drawTime || (punchcard ? [0, 4] : undefined);
   const evalOnMount = !!drawTime;
   const drawContext = useCallback(
@@ -61,7 +72,29 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTi
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
     getTime: () => scheduler.now(),
+    color: highlightColor,
   });
+
+  // keyboard shortcuts
+  useKeydown(
+    useCallback(
+      async (e) => {
+        if (view?.hasFocus) {
+          if (e.ctrlKey || e.altKey) {
+            if (e.code === 'Enter') {
+              e.preventDefault();
+              flash(view);
+              await activateCode();
+            } else if (e.code === 'Period') {
+              stop();
+              e.preventDefault();
+            }
+          }
+        }
+      },
+      [activateCode, stop, view],
+    ),
+  );
 
   // set active pattern on ctrl+enter
   useLayoutEffect(() => {
@@ -111,7 +144,7 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTi
         {error && <div className={styles.error}>{error.message}</div>}
       </div>
       <div className={styles.body}>
-        {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} />}
+        {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} theme={theme} />}
       </div>
       {drawTime && (
         <canvas
@@ -139,14 +172,4 @@ export function MiniRepl({ tune, hideOutsideView = false, enableKeyboard, drawTi
 // TODO: dedupe
 function useLogger(onTrigger) {
   useEvent(logger.key, onTrigger);
-}
-
-// TODO: dedupe
-function useEvent(name, onTrigger, useCapture = false) {
-  useEffect(() => {
-    document.addEventListener(name, onTrigger, useCapture);
-    return () => {
-      document.removeEventListener(name, onTrigger, useCapture);
-    };
-  }, [onTrigger]);
 }
