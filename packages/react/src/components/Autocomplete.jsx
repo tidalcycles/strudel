@@ -8,9 +8,11 @@ const getInnerText = (html) => {
   return div.textContent || div.innerText || '';
 };
 
+// atomone, darcula, dracula, duotoneDark, eclipse, gruvboxLight autocompletes are flipped in darkness / lightness
+
 export function Autocomplete({ doc }) {
   return (
-    <div className="prose prose-invert  max-h-[400px] overflow-auto">
+    <div className="prose dark:prose-invert  max-h-[400px] overflow-auto">
       <h3 className="pt-0 mt-0">{getDocLabel(doc)}</h3>
       <div dangerouslySetInnerHTML={{ __html: doc.description }} />
       <ul>
