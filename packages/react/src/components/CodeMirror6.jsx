@@ -87,7 +87,8 @@ const extensions = [
   highlightField,
   flashField,
   // javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
-  autocompletion({ override: [strudelAutocomplete] }),
+  // autocompletion({ override: [strudelAutocomplete] }),
+  autocompletion({ override: [] }), // wait for https://github.com/uiwjs/react-codemirror/pull/458
 ];
 
 export default function CodeMirror({
