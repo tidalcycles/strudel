@@ -111,7 +111,9 @@ let sampleCache = { current: undefined };
 
 /**
  * Loads a collection of samples to use with `s`
- *
+ * @example
+ * samples('github:tidalcycles/Dirt-Samples/master');
+ * s("[bd ~]*2, [~ hh]*2, ~ sd")
  * @example
  * samples({
  *  bd: '808bd/BD0000.WAV',

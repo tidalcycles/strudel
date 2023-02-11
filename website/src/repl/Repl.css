@@ -15,6 +15,9 @@
   padding-left: 8px !important;
 }
 
+.cm-scroller {
+  padding-bottom: 50vh;
+}
 .cm-line > * {
   background: var(--lineBackground);
 }

@@ -6,6 +6,8 @@ import { javascript } from '@codemirror/lang-javascript';
 import strudelTheme from '../themes/strudel-theme';
 import './style.css';
 import { useCallback } from 'react';
+import { autocompletion } from '@codemirror/autocomplete';
+import { strudelAutocomplete } from './Autocomplete';
 
 export const setFlash = StateEffect.define();
 const flashField = StateField.define({
@@ -80,7 +82,14 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-const extensions = [javascript(), highlightField, flashField];
+const extensions = [
+  javascript(),
+  highlightField,
+  flashField,
+  // javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
+  // autocompletion({ override: [strudelAutocomplete] }),
+  autocompletion({ override: [] }), // wait for https://github.com/uiwjs/react-codemirror/pull/458
+];
 
 export default function CodeMirror({
   value,

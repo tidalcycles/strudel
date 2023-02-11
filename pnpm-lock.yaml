@@ -159,6 +159,7 @@ importers:
 
   packages/react:
     specifiers:
+      '@codemirror/autocomplete': ^6.4.0
       '@codemirror/lang-javascript': ^6.1.1
       '@codemirror/state': ^6.2.0
       '@codemirror/view': ^6.7.3
@@ -179,6 +180,7 @@ importers:
       tailwindcss: ^3.0.24
       vite: ^3.2.2
     dependencies:
+      '@codemirror/autocomplete': 6.4.0_a4vbhepr4qhxm5cldqd4jpyase
       '@codemirror/lang-javascript': 6.1.2
       '@codemirror/state': 6.2.0
       '@codemirror/view': 6.7.3
@@ -187,7 +189,7 @@ importers:
       '@strudel.cycles/transpiler': link:../transpiler
       '@strudel.cycles/webaudio': link:../webaudio
       '@uiw/codemirror-themes': 4.19.7_a4vbhepr4qhxm5cldqd4jpyase
-      '@uiw/react-codemirror': 4.19.7_b6o5qp6ml4k7skggixohr5abde
+      '@uiw/react-codemirror': 4.19.7_r3x7zzmc35ug7i3c2vv4bf5iey
       react-hook-inview: 4.5.0_sfoxds7t5ydpegc3knd667wn6m
     devDependencies:
       '@types/react': 17.0.53
@@ -3981,9 +3983,10 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: false
 
-  /@uiw/codemirror-extensions-basic-setup/4.19.7_a4vbhepr4qhxm5cldqd4jpyase:
+  /@uiw/codemirror-extensions-basic-setup/4.19.7_cgfc5aojxuwjajwhkrgidrzxoa:
     resolution: {integrity: sha512-pk0JTFJAZOGxouBB1pdBtb59qKibO9DW4hER4VSFGBGW3TBDeXUwL/gKujhRpySHG2MtG09cgt4a3XOFIWwXTw==}
     peerDependencies:
+      '@codemirror/autocomplete': '>=6.0.0'
       '@codemirror/state': '>=6.0.0'
       '@codemirror/view': '>=6.0.0'
     dependencies:
@@ -4182,7 +4185,7 @@ packages:
       '@codemirror/view': 6.7.3
     dev: false
 
-  /@uiw/react-codemirror/4.19.7_b6o5qp6ml4k7skggixohr5abde:
+  /@uiw/react-codemirror/4.19.7_r3x7zzmc35ug7i3c2vv4bf5iey:
     resolution: {integrity: sha512-IHvpYWVSdiaHX0Fk6oY6YyAJigDnyvSpWKNUTRzsMNxB+8/wqZ8lior4TprXH0zyLxW5F1+bTyifFFTeg+X3Sw==}
     peerDependencies:
       '@codemirror/state': '>=6.0.0'
@@ -4195,10 +4198,12 @@ packages:
       '@codemirror/state': 6.2.0
       '@codemirror/theme-one-dark': 6.1.0
       '@codemirror/view': 6.7.3
-      '@uiw/codemirror-extensions-basic-setup': 4.19.7_a4vbhepr4qhxm5cldqd4jpyase
+      '@uiw/codemirror-extensions-basic-setup': 4.19.7_cgfc5aojxuwjajwhkrgidrzxoa
       codemirror: 6.0.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
+    transitivePeerDependencies:
+      - '@codemirror/autocomplete'
     dev: false
 
   /@vite-pwa/astro/0.0.1:
