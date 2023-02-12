@@ -10,6 +10,7 @@ type Props = {
 
 const { headings, githubEditUrl } = Astro.props as Props;
 let currentPage = Astro.url.pathname;
+// remove slash before #
 currentPage = currentPage.endsWith('/') ? currentPage.slice(0, -1) : currentPage;
 ---
 
