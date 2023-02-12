@@ -9,7 +9,9 @@ type Props = {
 };
 
 const { headings, githubEditUrl } = Astro.props as Props;
-const currentPage = Astro.url.pathname;
+let currentPage = Astro.url.pathname;
+// remove slash before #
+currentPage = currentPage.endsWith('/') ? currentPage.slice(0, -1) : currentPage;
 ---
 
 <nav aria-labelledby="grid-right" class="w-64 text-foreground">
