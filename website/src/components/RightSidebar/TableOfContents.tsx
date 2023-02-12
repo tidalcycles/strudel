@@ -12,6 +12,8 @@ const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[]; curren
   headings = [],
   currentPage,
 }) => {
+  // remove slash before #
+  currentPage = currentPage.endsWith('/') ? currentPage.slice(0, -1) : currentPage;
   const toc = useRef<any>();
   const onThisPageID = 'on-this-page-heading';
   const itemOffsets = useRef<ItemOffsets[]>([]);
