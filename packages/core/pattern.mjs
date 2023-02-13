@@ -23,6 +23,7 @@ export const setStringParser = (parser) => (stringParser = parser);
 
 const methodRegistry = [];
 const controlRegistry = [];
+const composifiedRegistry = [];
 
 //////////////////////////////////////////////////////////////////////
 // Magic for supporting higher order composition of method chains
@@ -37,18 +38,23 @@ export function composify(func) {
     }
     func.__composified = true;
   }
+  composifiedRegistry.push(func);
   return func;
 }
 
 export function registerMethod(name) {
-  methodRegistry.push([
-    name,
-    function (...args) {
-      const func = this;
-      const composed = (pat) => func(pat)[name](...args);
-      return composify(composed);
-    },
-  ]);
+  const method = function (...args) {
+    const func = this;
+    const composed = (pat) => func(pat)[name](...args);
+    return composify(composed);
+  };
+  methodRegistry.push([name, method]);
+
+  // Add to functions already 'composified'
+  for (var composified of composifiedRegistry) {
+    composified[name] = method;
+  }
+
   Hitch.prototype[name] = function (...args) {
     return composify((pat) => pat[name](...args));
   };
