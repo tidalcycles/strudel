@@ -3,6 +3,10 @@
 This package contains the strudel code transformer and evaluator.
 It allows creating strudel patterns from input code that is optimized for minimal keystrokes and human readability.
 
+## Deprecation Note
+
+This package will not be developed further. Consider using `@strudel.cycles/transpiler` as a replacement.
+
 ## Install
 
 ```sh

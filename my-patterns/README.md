@@ -20,11 +20,8 @@ Example: <https://felixroos.github.io/strudel/swatch/>
 ### 6. edit `website/astro.config.mjs` to use site: `https://<your-username>.github.io` and base `/strudel`, like this
 
 ```js
-export default defineConfig({
-  /* ... rest of config ... */
-  site: 'https://<your-username>.github.io',
-  base: '/strudel',
-});
+const site = 'https://<your-username>.github.io';
+const base = '/strudel';
 ```
 
 ### 7. commit & push the changes

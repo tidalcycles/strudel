@@ -102,6 +102,7 @@ export class Pattern {
    * Create a pattern. As an end user, you will most likely not create a Pattern directly.
    *
    * @param {function} query - The function that maps a {@link State} to an array of {@link Hap}.
+   * @noAutocomplete
    */
   constructor(query) {
     this.query = query;
@@ -126,6 +127,7 @@ export class Pattern {
 
   /**
    * see {@link Pattern#withValue}
+   * @noAutocomplete
    */
   fmap(func) {
     return this.withValue(func);
@@ -137,6 +139,7 @@ export class Pattern {
    * pattern of functions.
    * @param {Function} whole_func
    * @param {Function} func
+   * @noAutocomplete
    * @returns Pattern
    */
   appWhole(whole_func, pat_val) {
@@ -172,6 +175,7 @@ export class Pattern {
    * are not the same but do intersect, the resulting hap has a timespan of the
    * intersection. This applies to both the part and the whole timespan.
    * @param {Pattern} pat_val
+   * @noAutocomplete
    * @returns Pattern
    */
   appBoth(pat_val) {
@@ -192,6 +196,7 @@ export class Pattern {
    * are preserved from the pattern of functions (often referred to as the left
    * hand or inner pattern).
    * @param {Pattern} pat_val
+   * @noAutocomplete
    * @returns Pattern
    */
   appLeft(pat_val) {
@@ -222,6 +227,7 @@ export class Pattern {
    * pattern of values, i.e. structure is preserved from the right hand/outer
    * pattern.
    * @param {Pattern} pat_val
+   * @noAutocomplete
    * @returns Pattern
    */
   appRight(pat_val) {
@@ -407,6 +413,7 @@ export class Pattern {
    * const haps = pattern.queryArc(0, 1)
    * console.log(haps)
    * silence
+   * @noAutocomplete
    */
   queryArc(begin, end) {
     try {
@@ -422,6 +429,7 @@ export class Pattern {
    * some calculations easier to express, as all haps are then constrained to
    * happen within a cycle.
    * @returns Pattern
+   * @noAutocomplete
    */
   splitQueries() {
     const pat = this;
@@ -436,6 +444,7 @@ export class Pattern {
    * timespan before passing it to the original pattern.
    * @param {Function} func the function to apply
    * @returns Pattern
+   * @noAutocomplete
    */
   withQuerySpan(func) {
     return new Pattern((state) => this.query(state.withSpan(func)));
@@ -457,6 +466,7 @@ export class Pattern {
    * begin and end time of the query timespan.
    * @param {Function} func the function to apply
    * @returns Pattern
+   * @noAutocomplete
    */
   withQueryTime(func) {
     return new Pattern((state) => this.query(state.withSpan((span) => span.withTime(func))));
@@ -468,6 +478,7 @@ export class Pattern {
    * present, `whole` timespans).
    * @param {Function} func
    * @returns Pattern
+   * @noAutocomplete
    */
   withHapSpan(func) {
     return new Pattern((state) => this.query(state).map((hap) => hap.withSpan(func)));
@@ -478,6 +489,7 @@ export class Pattern {
    * begin and end time of the hap timespans.
    * @param {Function} func the function to apply
    * @returns Pattern
+   * @noAutocomplete
    */
   withHapTime(func) {
     return this.withHapSpan((span) => span.withTime(func));
@@ -487,6 +499,7 @@ export class Pattern {
    * Returns a new pattern with the given function applied to the list of haps returned by every query.
    * @param {Function} func
    * @returns Pattern
+   * @noAutocomplete
    */
   withHaps(func) {
     return new Pattern((state) => func(this.query(state)));
@@ -496,6 +509,7 @@ export class Pattern {
    * As with {@link Pattern#withHaps}, but applies the function to every hap, rather than every list of haps.
    * @param {Function} func
    * @returns Pattern
+   * @noAutocomplete
    */
   withHap(func) {
     return this.withHaps((haps) => haps.map(func));
@@ -505,6 +519,7 @@ export class Pattern {
    * Returns a new pattern with the context field set to every hap set to the given value.
    * @param {*} context
    * @returns Pattern
+   * @noAutocomplete
    */
   setContext(context) {
     return this.withHap((hap) => hap.setContext(context));
@@ -514,6 +529,7 @@ export class Pattern {
    * Returns a new pattern with the given function applied to the context field of every hap.
    * @param {Function} func
    * @returns Pattern
+   * @noAutocomplete
    */
   withContext(func) {
     return this.withHap((hap) => hap.setContext(func(hap.context)));
@@ -522,6 +538,7 @@ export class Pattern {
   /**
    * Returns a new pattern with the context field of every hap set to an empty object.
    * @returns Pattern
+   * @noAutocomplete
    */
   stripContext() {
     return this.withHap((hap) => hap.setContext({}));
@@ -533,6 +550,7 @@ export class Pattern {
    * @param {Number} start
    * @param {Number} end
    * @returns Pattern
+   * @noAutocomplete
    */
   withLocation(start, end) {
     const location = {
@@ -575,6 +593,7 @@ export class Pattern {
    * Returns a new Pattern, which only returns haps that meet the given test.
    * @param {Function} hap_test - a function which returns false for haps to be removed from the pattern
    * @returns Pattern
+   * @noAutocomplete
    */
   filterHaps(hap_test) {
     return new Pattern((state) => this.query(state).filter(hap_test));
@@ -585,6 +604,7 @@ export class Pattern {
    * inside haps.
    * @param {Function} value_test
    * @returns Pattern
+   * @noAutocomplete
    */
   filterValues(value_test) {
     return new Pattern((state) => this.query(state).filter((hap) => value_test(hap.value)));
@@ -594,6 +614,7 @@ export class Pattern {
    * Returns a new pattern, with haps containing undefined values removed from
    * query results.
    * @returns Pattern
+   * @noAutocomplete
    */
   removeUndefineds() {
     return this.filterValues((val) => val != undefined);
@@ -604,6 +625,7 @@ export class Pattern {
    * with an onset is one with a `whole` timespan that begins at the same time
    * as its `part` timespan.
    * @returns Pattern
+   * @noAutocomplete
    */
   onsetsOnly() {
     // Returns a new pattern that will only return haps where the start
@@ -616,6 +638,7 @@ export class Pattern {
    * Returns a new pattern, with 'continuous' haps (those without 'whole'
    * timespans) removed from query results.
    * @returns Pattern
+   * @noAutocomplete
    */
   discreteOnly() {
     // removes continuous haps that don't have a 'whole' timespan
@@ -625,6 +648,7 @@ export class Pattern {
   /**
    * Combines adjacent haps with the same value and whole.  Only
    * intended for use in tests.
+   * @noAutocomplete
    */
   defragmentHaps() {
     // remove continuous haps
@@ -679,6 +703,7 @@ export class Pattern {
    * @param {Boolean} with_context - set to true, otherwise the context field
    * will be stripped from the resulting haps.
    * @returns [Hap]
+   * @noAutocomplete
    */
   firstCycle(with_context = false) {
     var self = this;
@@ -690,6 +715,7 @@ export class Pattern {
 
   /**
    * Accessor for a list of values returned by querying the first cycle.
+   * @noAutocomplete
    */
   get firstCycleValues() {
     return this.sortHapsByPart()
@@ -699,6 +725,7 @@ export class Pattern {
 
   /**
    * More human-readable version of the {@link Pattern#firstCycleValues} accessor.
+   * @noAutocomplete
    */
   get showFirstCycle() {
     return this.firstCycle().map(
@@ -710,6 +737,7 @@ export class Pattern {
    * Returns a new pattern, which returns haps sorted in temporal order. Mainly
    * of use when comparing two patterns for equality, in tests.
    * @returns Pattern
+   * @noAutocomplete
    */
   sortHapsByPart() {
     return this.withHaps((haps) =>
@@ -1205,6 +1233,7 @@ export const silence = new Pattern(() => []);
  * @returns {Pattern}
  * @example
  * pure('e4') // "e4"
+ * @noAutocomplete
  */
 export function pure(value) {
   function query(state) {
@@ -1456,6 +1485,7 @@ export const trigZero = trigzero;
  *
  * @param {string} name name of the function
  * @param {function} func function with 1 or more params, where last is the current pattern
+ * @noAutocomplete
  *
  */
 export function register(name, func) {
@@ -1568,15 +1598,17 @@ export const ceil = register('ceil', function (pat) {
  * Assumes a numerical pattern, containing unipolar values in the range 0 ..
  * 1. Returns a new pattern with values scaled to the bipolar range -1 .. 1
  * @returns Pattern
+ * @noAutocomplete
  */
 export const toBipolar = register('toBipolar', function (pat) {
   return pat.fmap((x) => x * 2 - 1);
 });
 
 /**
- * Assumes a numerical pattern, containing bipolar values in the range -1 ..
- * 1. Returns a new pattern with values scaled to the unipolar range 0 .. 1
+ * Assumes a numerical pattern, containing bipolar values in the range -1 .. 1
+ * Returns a new pattern with values scaled to the unipolar range 0 .. 1
  * @returns Pattern
+ * @noAutocomplete
  */
 export const fromBipolar = register('fromBipolar', function (pat) {
   return pat.fmap((x) => (x + 1) / 2);
@@ -1721,6 +1753,15 @@ export const { fast, density } = register(['fast', 'density'], function (factor,
   factor = Fraction(factor);
   const fastQuery = pat.withQueryTime((t) => t.mul(factor));
   return fastQuery.withHapTime((t) => t.div(factor));
+});
+
+/**
+ * Both speeds up the pattern (like 'fast') and the sample playback (like 'speed').
+ * @example
+ * s("bd sd:2").hurry("<1 2 4 3>").slow(1.5)
+ */
+export const hurry = register('hurry', function (r, pat) {
+  return pat._fast(r).mul(pure({ speed: r }));
 });
 
 /**
@@ -1977,6 +2018,29 @@ export const rev = register('rev', function (pat) {
   return new Pattern(query).splitQueries();
 });
 
+/** Like press, but allows you to specify the amount by which each
+ * event is shifted. pressBy(0.5) is the same as press, while
+ * pressBy(1/3) shifts each event by a third of its timespan.
+ * @example
+ * stack(s("hh*4"),
+ *       s("bd mt sd ht").pressBy("<0 0.5 0.25>")
+ *      ).slow(2)
+ */
+export const pressBy = register('pressBy', function (r, pat) {
+  return pat.fmap((x) => pure(x).compress(r, 1)).squeezeJoin();
+});
+
+/**
+ * Syncopates a rhythm, by shifting each event halfway into its timespan.
+ * @example
+ * stack(s("hh*4"),
+ *       s("bd mt sd ht").every(4, press)
+ *      ).slow(2)
+ */
+export const press = register('press', function (pat) {
+  return pat._pressBy(0.5);
+});
+
 /**
  * Silences a pattern.
  * @example
@@ -2147,6 +2211,16 @@ export const bypass = register('bypass', function (on, pat) {
   on = Boolean(parseInt(on));
   return on ? silence : pat;
 });
+
+/**
+ * Loops the pattern inside at `offset` for `cycles`.
+ * @param {number} offset start point of loop in cycles
+ * @param {number} cycles loop length in cycles
+ * @example
+ * // Looping a portion of randomness
+ * note(irand(8).segment(4).scale('C3 minor')).ribbon(1337, 2)
+ */
+export const ribbon = register('ribbon', (offset, cycles, pat) => pat.early(offset).restart(pure(1).slow(cycles)));
 
 // sets absolute duration of haps
 // TODO - fix

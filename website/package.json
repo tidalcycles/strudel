@@ -1,7 +1,7 @@
 {
-  "name": "@example/docs",
+  "name": "@strudel.cycles/website",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "dev": "astro dev",
@@ -21,22 +21,41 @@
     "@docsearch/react": "^3.1.0",
     "@headlessui/react": "^1.7.7",
     "@heroicons/react": "^2.0.13",
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/csound": "workspace:*",
+    "@strudel.cycles/midi": "workspace:*",
+    "@strudel.cycles/mini": "workspace:*",
+    "@strudel.cycles/osc": "workspace:*",
+    "@strudel.cycles/react": "workspace:*",
+    "@strudel.cycles/serial": "workspace:*",
+    "@strudel.cycles/soundfonts": "workspace:*",
+    "@strudel.cycles/tonal": "workspace:*",
+    "@strudel.cycles/transpiler": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
+    "@strudel.cycles/xen": "workspace:*",
     "@supabase/supabase-js": "^1.35.3",
     "@tailwindcss/typography": "^0.5.8",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",
+    "@uiw/codemirror-themes-all": "^4.19.8",
     "astro": "^1.7.2",
+    "canvas": "^2.11.0",
+    "fraction.js": "^4.2.0",
     "nanoid": "^4.0.0",
     "preact": "^10.7.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rehype-autolink-headings": "^6.1.1",
     "rehype-slug": "^5.0.1",
+    "rehype-urls": "^1.1.1",
     "remark-toc": "^8.0.1",
     "tailwindcss": "^3.2.4"
   },
   "devDependencies": {
-    "html-escaper": "^3.0.3"
+    "@vite-pwa/astro": "^0.0.1",
+    "html-escaper": "^3.0.3",
+    "vite-plugin-pwa": "^0.14.1",
+    "workbox-window": "^6.5.4"
   }
 }

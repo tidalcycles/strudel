@@ -1,15 +1,17 @@
 import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon';
 import { logger } from '@strudel.cycles/core';
-import { cx } from '@strudel.cycles/react';
+import { useEvent, cx } from '@strudel.cycles/react';
+// import { cx } from '@strudel.cycles/react';
 import { nanoid } from 'nanoid';
-import React, { useContext, useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { useEvent, loadedSamples, ReplContext } from './Repl';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { loadedSamples } from './Repl';
 import { Reference } from './Reference';
+import { themes, themeColors } from './themes.mjs';
 
 export function Footer({ context }) {
   // const [activeFooter, setActiveFooter] = useState('console');
   // const { activeFooter, setActiveFooter, isZen } = useContext?.(ReplContext);
-  const { activeFooter, setActiveFooter, isZen } = context;
+  const { activeFooter, setActiveFooter, isZen, theme, setTheme } = context;
   const footerContent = useRef();
   const [log, setLog] = useState([]);
 
@@ -54,8 +56,8 @@ export function Footer({ context }) {
       <div
         onClick={() => setActiveFooter(name)}
         className={cx(
-          'h-8 px-2 text-white cursor-pointer hover:text-tertiary flex items-center space-x-1 border-b',
-          activeFooter === name ? 'border-white hover:border-tertiary' : 'border-transparent',
+          'h-8 px-2 text-foreground cursor-pointer hover:text-tertiary flex items-center space-x-1 border-b',
+          activeFooter === name ? 'border-foreground hover:border-tertiary' : 'border-transparent',
         )}
       >
         {label || name}
@@ -67,16 +69,17 @@ export function Footer({ context }) {
     return null;
   }
   return (
-    <footer className="bg-footer z-[20]">
+    <footer className="bg-lineHighlight z-[20]">
       <div className="flex justify-between px-2">
-        <div className={cx('flex select-none', activeFooter && 'pb-2')}>
+        <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
           <FooterTab name="intro" label="welcome" />
           <FooterTab name="samples" />
           <FooterTab name="console" />
           <FooterTab name="reference" />
+          <FooterTab name="theme" />
         </div>
         {activeFooter !== '' && (
-          <button onClick={() => setActiveFooter('')} className="text-white">
+          <button onClick={() => setActiveFooter('')} className="text-foreground" aria-label="Close Panel">
             <XMarkIcon className="w-5 h-5" />
           </button>
         )}
@@ -87,7 +90,7 @@ export function Footer({ context }) {
           ref={footerContent}
         >
           {activeFooter === 'intro' && (
-            <div className="prose prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
+            <div className="prose dark:prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
               <h3>
                 <span className={cx('animate-spin inline-block select-none')}>🌀</span> welcome
               </h3>
@@ -132,7 +135,7 @@ export function Footer({ context }) {
             </div>
           )}
           {activeFooter === 'console' && (
-            <div className="break-all px-4">
+            <div className="break-all px-4 dark:text-white text-stone-900">
               {log.map((l, i) => {
                 const message = linkify(l.message);
                 return (
@@ -148,8 +151,8 @@ export function Footer({ context }) {
             </div>
           )}
           {activeFooter === 'samples' && (
-            <div className="break-normal w-full px-4">
-              <span className="text-white">{loadedSamples.length} banks loaded:</span>
+            <div className="break-normal w-full px-4 dark:text-white text-stone-900">
+              <span>{loadedSamples.length} banks loaded:</span>
               {loadedSamples.map(([name, samples]) => (
                 <span key={name} className="cursor-pointer hover:text-tertiary" onClick={() => {}}>
                   {' '}
@@ -165,6 +168,34 @@ export function Footer({ context }) {
             </div>
           )}
           {activeFooter === 'reference' && <Reference />}
+          {activeFooter === 'theme' && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 p-2">
+              {Object.entries(themes).map(([k, t]) => (
+                <div
+                  key={k}
+                  className={cx(
+                    'border-2 border-transparent cursor-pointer p-4 bg-background bg-opacity-25 rounded-md',
+                    theme === k ? '!border-foreground' : '',
+                  )}
+                  onClick={() => {
+                    setTheme(k);
+                    document.dispatchEvent(
+                      new CustomEvent('strudel-theme', {
+                        detail: k,
+                      }),
+                    );
+                  }}
+                >
+                  <div className="mb-2 w-full text-center text-foreground">{k}</div>
+                  <div className="flex justify-stretch overflow-hidden rounded-md">
+                    {themeColors(t).map((c, i) => (
+                      <div key={i} className="grow h-6" style={{ background: c }} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </footer>

@@ -1,9 +1,17 @@
 {
   "name": "@strudel.cycles/webdirt",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "WebDirt integration for Strudel",
   "main": "index.mjs",
   "type": "module",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -22,7 +30,12 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "^0.5.0",
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
     "WebDirt": "github:dktr0/WebDirt"
+  },
+  "devDependencies": {
+    "vite": "^3.2.2",
+    "vitest": "^0.25.7"
   }
 }

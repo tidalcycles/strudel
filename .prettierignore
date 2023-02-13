@@ -7,3 +7,6 @@
 packages/mini/krill-parser.js
 packages/xen/tunejs.js
 paper
+pnpm-lock.yaml
+pnpm-workspace.yaml
+**/dev-dist

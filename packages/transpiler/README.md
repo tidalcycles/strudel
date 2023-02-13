@@ -6,8 +6,6 @@ This package contains a JS code transpiler with the following features:
 - converts pseudo note variables to note strings
 - adds return statement to the last expression
 
-The transpiler is written with [acorn](https://github.com/acornjs/acorn) and aims to replace the `@strudel.cycles/eval` package, which uses [shift-ast](https://www.npmjs.com/package/shift-ast).
-
 ## Install
 
 ```sh

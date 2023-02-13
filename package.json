@@ -4,18 +4,20 @@
   "private": true,
   "description": "Port of tidalcycles to javascript",
   "scripts": {
+    "setup": "pnpm i",
     "pretest": "npm run jsdoc-json",
     "prebuild": "npm run jsdoc-json",
-    "test": "vitest run --version",
-    "test-ui": "vitest --ui",
-    "test-coverage": "vitest --coverage",
-    "bootstrap": "lerna bootstrap",
-    "setup": "npm i && npm run jsdoc-json && npm run bootstrap && cd website && npm i",
-    "snapshot": "vitest run -u --silent",
-    "repl": "cd website && npm run dev",
-    "osc": "cd packages/osc && npm run server",
-    "build": "cd website && npm run build",
+    "prestart": "npm run jsdoc-json",
+    "test": "npm run pretest && vitest run --version",
+    "test-ui": "npm run pretest && vitest --ui",
+    "test-coverage": "npm run pretest && vitest --coverage",
+    "snapshot": "npm run pretest && vitest run -u --silent",
+    "repl": "npm run prestart && cd website && npm run dev",
+    "start": "npm run prestart && cd website && npm run dev",
+    "dev": "npm run prestart && cd website && npm run dev",
+    "build": "npm run prebuild && cd website && npm run build",
     "preview": "cd website && npm run preview",
+    "osc": "cd packages/osc && npm run server",
     "deploy": "NODE_DEBUG=gh-pages gh-pages -d out",
     "jsdoc": "jsdoc packages/ -c jsdoc.config.json",
     "jsdoc-json": "jsdoc packages/ --template ./node_modules/jsdoc-json --destination doc.json -c jsdoc.config.json",
@@ -26,9 +28,6 @@
     "check": "npm run format-check && npm run lint && npm run test",
     "iclc": "cd paper && pandoc --template=pandoc/iclc.html --citeproc  --number-sections iclc2023.md -o iclc2023.html && pandoc --template=pandoc/iclc.latex --citeproc --number-sections iclc2023.md -o iclc2023.pdf"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -46,12 +45,22 @@
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
   "homepage": "https://strudel.tidalcycles.org",
+  "dependencies": {
+    "dependency-tree": "^9.0.0",
+    "vitest": "^0.25.7",
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/mini": "workspace:*",
+    "@strudel.cycles/tonal": "workspace:*",
+    "@strudel.cycles/transpiler": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
+    "@strudel.cycles/xen": "workspace:*"
+  },
   "devDependencies": {
     "@vitest/ui": "^0.25.7",
     "c8": "^7.12.0",
     "canvas": "^2.11.0",
-    "dependency-tree": "^9.0.0",
     "eslint": "^8.28.0",
+    "eslint-plugin-import": "^2.27.5",
     "events": "^3.3.0",
     "gh-pages": "^4.0.0",
     "jsdoc": "^3.6.10",
@@ -59,7 +68,6 @@
     "jsdoc-to-markdown": "^7.1.1",
     "lerna": "^4.0.0",
     "prettier": "^2.8.1",
-    "rollup-plugin-visualizer": "^5.8.1",
-    "vitest": "^0.25.7"
+    "rollup-plugin-visualizer": "^5.8.1"
   }
 }

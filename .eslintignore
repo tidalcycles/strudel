@@ -15,3 +15,6 @@ vite.config.js
 !**/*.mjs
 **/*.tsx
 **/*.ts
+**/*.json
+**/dev-dist
+**/dist

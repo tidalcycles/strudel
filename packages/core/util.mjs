@@ -58,6 +58,7 @@ export const valueToMidi = (value, fallbackValue) => {
 
 /**
  * @deprecated does not appear to be referenced or invoked anywhere in the codebase
+ * @noAutocomplete
  */
 export const getFreq = (noteOrMidi) => {
   if (typeof noteOrMidi === 'number') {
@@ -68,6 +69,7 @@ export const getFreq = (noteOrMidi) => {
 
 /**
  * @deprecated does not appear to be referenced or invoked anywhere in the codebase
+ * @noAutocomplete
  */
 export const midi2note = (n) => {
   const oct = Math.floor(n / 12) - 1;

@@ -1,5 +1,3 @@
-@import '@strudel.cycles/react/dist/style.css';
-
 .darken::before {
   content: ' ';
   position: fixed;
@@ -12,11 +10,14 @@
   opacity: 0.5;
 }
 
-.cm-gutters {
-  display: none !important;
-}
-
-.cm-content {
+#code .cm-content {
   padding-top: 12px !important;
   padding-left: 8px !important;
+}
+
+#code .cm-scroller {
+  padding-bottom: 50vh;
+}
+#code .cm-line > * {
+  background: var(--lineBackground);
 }
