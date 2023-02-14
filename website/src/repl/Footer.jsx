@@ -201,7 +201,12 @@ export function Footer({ context }) {
           {activeFooter === 'wams' && (
             <div className="break-normal w-full px-4 dark:text-white text-stone-900">
               <span>{Object.keys(getWamInstances()).length} loaded:</span>
-              <select onChange={(e) => showWAM(e)}><option key="--">--</option>{Object.keys(getWamInstances()).map(w => <option key={w}>{w}</option>)}</select>
+              <select onChange={(e) => showWAM(e)}>
+                <option key="--">--</option>
+                {Object.keys(getWamInstances()).map((w) => (
+                  <option key={w}>{w}</option>
+                ))}
+              </select>
               <div id="wam-gui"></div>
             </div>
           )}
@@ -242,14 +247,13 @@ const showWAM = async (e) => {
   const guiDiv = document.getElementById('wam-gui');
   guiDiv.innerHTML = '';
   guiDiv.appendChild(gui);
-  
-  const params = await wam.audioNode.getParameterInfo()
+
+  const params = await wam.audioNode.getParameterInfo();
 
   for (let id of Object.keys(params)) {
     const param = params[id];
     const input = document.createElement('div');
-    input.innerHTML = `<label>${id}</label>: type ${param.type}, min ${param.minValue}, max ${param.maxValue}`
+    input.innerHTML = `<label>${id}</label>: type ${param.type}, min ${param.minValue}, max ${param.maxValue}`;
     guiDiv.appendChild(input);
   }
-
-}
+};

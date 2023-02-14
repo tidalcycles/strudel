@@ -46,7 +46,7 @@ const modules = [
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
   import('@strudel.cycles/csound'),
-  import('@strudel.cycles/wam')
+  import('@strudel.cycles/wam'),
 ];
 
 evalScope(
