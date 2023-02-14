@@ -25,7 +25,7 @@ const alignments = ['in', 'out', 'mix', 'squeeze', 'squeezeout', 'trig', 'trigze
 
 const methodRegistry = [];
 const controlRegistry = [];
-const controlListeners = [];
+const controlSubscribers = [];
 const composifiedRegistry = [];
 
 //////////////////////////////////////////////////////////////////////
@@ -66,8 +66,8 @@ export function registerMethod(name) {
 export function registerControl(controlname, controlfunc) {
   registerMethod(controlname);
   controlRegistry.push([controlname, controlfunc]);
-  for (const listener of controlListeners) {
-    listener(controlname, controlfunc);
+  for (const subscriber of controlSubscribers) {
+    subscriber(controlname, controlfunc);
   }
 }
 
@@ -75,7 +75,7 @@ export function withControls(func) {
   for (const [controlname, controlfunc] of controlRegistry) {
     func(controlname, controlfunc);
   }
-  controlListeners.push(func);
+  controlSubscribers.push(func);
 }
 
 /**
