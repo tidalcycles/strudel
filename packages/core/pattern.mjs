@@ -820,6 +820,22 @@ export class Pattern {
     );
   }
 
+  addTrigger(onTrigger) {
+    return this.withHap((hap) =>
+      hap.setContext({
+        ...hap.context,
+        onTrigger: (...args) => {
+          if (hap.context.onTrigger) {
+            hap.context.onTrigger(...args);
+          }
+          onTrigger(...args);
+        },
+        // this flag causes the default output to be ignored
+        dominantTrigger: true,
+      }),
+    );
+  }
+
   log(func = (_, hap) => `[hap] ${hap.showWhole(true)}`, getData = (_, hap) => ({ hap })) {
     return this.onTrigger((...args) => {
       logger(func(...args), undefined, getData(...args));
