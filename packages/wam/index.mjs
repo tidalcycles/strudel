@@ -8,54 +8,53 @@ let wams = {};
 // this is a map of all WebAudioModule instances (possibly more than one per WAM)
 let wamInstances = {};
 export const getWamInstances = () => wamInstances;
+export const getWamInstance = (key) => {
+  if (!key) {
+    throw new Error(`no .wam set`);
+  }
+  let instance = wamInstances[key];
+  if (!instance) {
+    throw new Error(`wam instance "${key}" not found`);
+  }
+  return instance;
+};
 
-// has the WAM host been initialized?
-let initialized = false;
+// holds a promise of the wam host init
+let hostInit;
+// maps wam keys to init promises
+let instanceInit = {};
 
 // host groups of WAMs can interact with one another, but not directly across groups
 const hostGroupId = 'strudel';
 
-export const loadWAM = async function (name, url, what) {
-  if (!initialized) {
-    await initializeWamHost(getAudioContext(), hostGroupId);
-    initialized = true;
-  }
+export const loadWAM = async function (name, url) {
+  // memoized wam host init
+  hostInit = hostInit || initializeWamHost(getAudioContext(), hostGroupId);
+  await hostInit;
+  // memoized wam file import
+  wams[url] = wams[url] || import(/* @vite-ignore */ url);
+  const { default: WAM } = await wams[url];
 
-  if (wamInstances[name]) {
-    return wamInstances[name];
-  }
-
-  if (!wams[url]) {
-    const { default: WAM } = await import(
-      /* @vite-ignore */
-      url
-    );
-
-    wams[url] = WAM;
-  }
-
-  const instance = new wams[url](hostGroupId, getAudioContext());
-
-  await instance.initialize();
-
-  instance.audioNode.connect(getAudioContext().destination);
-
-  wamInstances[name] = instance;
-
-  return instance;
+  // memoized instance ini
+  instanceInit[name] =
+    instanceInit[name] ||
+    new Promise(async (resolve) => {
+      const instance = new WAM(hostGroupId, getAudioContext());
+      await instance.initialize();
+      instance.audioNode.connect(getAudioContext().destination);
+      resolve(instance);
+    });
+  // save loaded instance
+  wamInstances[name] = await instanceInit[name];
+  return wamInstances[name];
 };
 
 export const loadwam = loadWAM;
 export const loadWam = loadWAM;
 
 export const wam = register('wam', function (name, pat) {
-  return pat.onTrigger((time, hap) => {
-    let i = wamInstances[name];
-
-    if (!i) {
-      return;
-    }
-
+  return pat.set({ wam: name }).addTrigger((time, hap) => {
+    const i = getWamInstance(name);
     let note = toMidi(hap.value.note);
     let velocity = hap.context?.velocity ?? 0.75;
     let endTime = time + hap.duration.valueOf();
@@ -74,20 +73,18 @@ export const wam = register('wam', function (name, pat) {
   });
 });
 
-export const param = register('param', function (wam, param, pat) {
-  return pat.onTrigger((time, hap) => {
-    let i = wamInstances[wam];
-    if (!i) {
-      return;
-    }
+export const param = register('param', function (param, value, pat) {
+  return pat.addTrigger((time, hap) => {
+    const { wam } = hap.value;
+    const i = getWamInstance(wam);
     i.audioNode.scheduleEvents({
       time: time,
       type: 'wam-automation',
       data: {
         id: param,
         normalized: false,
-        value: hap.value,
+        value: value,
       },
     });
-  }, false);
+  });
 });
