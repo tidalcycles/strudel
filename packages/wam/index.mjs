@@ -35,15 +35,15 @@ export const loadWAM = async function (name, url) {
   wams[url] = wams[url] || import(/* @vite-ignore */ url);
   const { default: WAM } = await wams[url];
 
+  const instance = new WAM(hostGroupId, getAudioContext());
   // memoized instance ini
   instanceInit[name] =
     instanceInit[name] ||
-    new Promise(async (resolve) => {
-      const instance = new WAM(hostGroupId, getAudioContext());
-      await instance.initialize();
+    instance.initialize().then(() => {
       instance.audioNode.connect(getAudioContext().destination);
-      resolve(instance);
+      return instance;
     });
+
   // save loaded instance
   wamInstances[name] = await instanceInit[name];
   return wamInstances[name];
