@@ -312,6 +312,21 @@ importers:
       vite: 3.2.5
       vitest: 0.25.8
 
+  packages/wam:
+    specifiers:
+      '@strudel.cycles/core': workspace:*
+      '@webaudiomodules/sdk': ^0.0.10
+      tone: ^14.7.77
+      vite: ^3.2.2
+      vitest: ^0.25.7
+    dependencies:
+      '@strudel.cycles/core': link:../core
+      '@webaudiomodules/sdk': 0.0.10
+      tone: 14.7.77
+    devDependencies:
+      vite: 3.2.5
+      vitest: 0.25.8
+
   packages/webaudio:
     specifiers:
       '@strudel.cycles/core': workspace:*
@@ -368,6 +383,7 @@ importers:
       '@strudel.cycles/soundfonts': workspace:*
       '@strudel.cycles/tonal': workspace:*
       '@strudel.cycles/transpiler': workspace:*
+      '@strudel.cycles/wam': workspace:*
       '@strudel.cycles/webaudio': workspace:*
       '@strudel.cycles/xen': workspace:*
       '@supabase/supabase-js': ^1.35.3
@@ -412,6 +428,7 @@ importers:
       '@strudel.cycles/soundfonts': link:../packages/soundfonts
       '@strudel.cycles/tonal': link:../packages/tonal
       '@strudel.cycles/transpiler': link:../packages/transpiler
+      '@strudel.cycles/wam': link:../packages/wam
       '@strudel.cycles/webaudio': link:../packages/webaudio
       '@strudel.cycles/xen': link:../packages/xen
       '@supabase/supabase-js': 1.35.7
@@ -4247,6 +4264,10 @@ packages:
 
   /@vscode/l10n/0.0.11:
     resolution: {integrity: sha512-ukOMWnCg1tCvT7WnDfsUKQOFDQGsyR5tNgRpwmqi+5/vzU3ghdDXzvIM4IOPdSb3OeSsBNvmSL8nxIVOqi2WXA==}
+    dev: false
+
+  /@webaudiomodules/sdk/0.0.10:
+    resolution: {integrity: sha512-owzwJL3ETntGH325vxDZ5vJlrEIYlhqVjw9xu1z+M1zebX7vcWAzh/Bf6GxISFeKoVSH4te90q1BYPdzmh+PeA==}
     dev: false
 
   /JSONStream/1.3.5:
