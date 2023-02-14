@@ -935,6 +935,10 @@ describe('Pattern', () => {
       sameFirst(s('bd').set.in.n(3), s('bd').n(3));
       sameFirst(s('bd').set.squeeze.n(3, 4), sequence(s('bd').n(3), s('bd').n(4)));
     });
+    it('Can combine functions with alignmed controls', () => {
+      sameFirst(s('bd').apply(fast(2).set(n(3))), s('bd').fast(2).set.in.n(3));
+      sameFirst(s('bd').apply(fast(2).set.in.n(3)), s('bd').fast(2).set.in.n(3));
+    });
     it('Can squeeze arguments', () => {
       expect(sequence(1, 2).add.squeeze(4, 5).firstCycle()).toStrictEqual(sequence(5, 6, 6, 7).firstCycle());
     });
