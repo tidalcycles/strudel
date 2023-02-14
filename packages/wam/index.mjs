@@ -21,7 +21,7 @@ export const loadWAM = async function (name, url, what) {
         initialized = true
     }
 
-    if (!!wamInstances[name]) {
+    if (wamInstances[name]) {
         return wamInstances[name]
     }
     
