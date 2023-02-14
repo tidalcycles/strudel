@@ -7,6 +7,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { loadedSamples } from './Repl';
 import { Reference } from './Reference';
 import { themes, themeColors } from './themes.mjs';
+import { getWamInstances } from '@strudel.cycles/wam';
 
 export function Footer({ context }) {
   // const [activeFooter, setActiveFooter] = useState('console');
@@ -77,6 +78,7 @@ export function Footer({ context }) {
           <FooterTab name="console" />
           <FooterTab name="reference" />
           <FooterTab name="theme" />
+          <FooterTab name="wams" />
         </div>
         {activeFooter !== '' && (
           <button onClick={() => setActiveFooter('')} className="text-foreground" aria-label="Close Panel">
@@ -196,6 +198,13 @@ export function Footer({ context }) {
               ))}
             </div>
           )}
+          {activeFooter === 'wams' && (
+            <div className="break-normal w-full px-4 dark:text-white text-stone-900">
+              <span>{Object.keys(getWamInstances()).length} loaded:</span>
+              <select onChange={(e) => showWAM(e)}><option key="--">--</option>{Object.keys(getWamInstances()).map(w => <option key={w}>{w}</option>)}</select>
+              <div id="wam-gui"></div>
+            </div>
+          )}
         </div>
       )}
     </footer>
@@ -225,4 +234,22 @@ function linkify(inputText) {
   replacedText = replacedText.replace(replacePattern3, '<a class="underline" href="mailto:$1">$1</a>');
 
   return replacedText;
+}
+
+const showWAM = async (e) => {
+  const wam = getWamInstances()[e.target.value];
+  const gui = await wam.createGui();
+  const guiDiv = document.getElementById('wam-gui');
+  guiDiv.innerHTML = '';
+  guiDiv.appendChild(gui);
+  
+  const params = await wam.audioNode.getParameterInfo()
+
+  for (let id of Object.keys(params)) {
+    const param = params[id];
+    const input = document.createElement('div');
+    input.innerHTML = `<label>${id}</label>: type ${param.type}, min ${param.minValue}, max ${param.maxValue}`
+    guiDiv.appendChild(input);
+  }
+
 }

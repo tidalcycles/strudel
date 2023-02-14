@@ -6,7 +6,8 @@ import {initializeWamHost} from '@webaudiomodules/sdk'
 let wams = {};
 
 // this is a map of all WebAudioModule instances (possibly more than one per WAM)
-let instances = {};
+let wamInstances = {};
+export const getWamInstances = () => wamInstances;
 
 // has the WAM host been initialized?
 let initialized = false
@@ -20,8 +21,8 @@ export const loadWAM = async function (name, url, what) {
         initialized = true
     }
 
-    if (!!instances[name]) {
-        return instances[name]
+    if (!!wamInstances[name]) {
+        return wamInstances[name]
     }
     
     if (!wams[url]) {
@@ -38,7 +39,7 @@ export const loadWAM = async function (name, url, what) {
 
     instance.audioNode.connect(getAudioContext().destination);
 
-    instances[name] = instance
+    wamInstances[name] = instance
 
     return instance
 }
@@ -48,7 +49,7 @@ export const loadWam = loadWAM;
 
 export const wam = register('wam', function (name, pat) {
     return pat.onTrigger((time, hap) => {
-        let i = instances[name]
+        let i = wamInstances[name]
 
         if (!i) {
             return
@@ -72,24 +73,20 @@ export const wam = register('wam', function (name, pat) {
     });
   });
 
-export const param = register('param', function(wam, param, value, pat) {
-    return pat.onTrigger((time, hap) => {        
-        let i = instances[wam]
-
-        if (!i) {
-            return
-        }
-
-        debugger
-        
-        i.audioNode.scheduleEvents({
-            time: time,
-            type: "wam-automation",
-            data: {
-                id: param,
-                normalized: false,
-                value: value
-            },
-        })
-    })
-})
+export const param = register('param', function (wam, param, pat) {
+    return pat.onTrigger((time, hap) => {
+      let i = wamInstances[wam];
+      if (!i) {
+        return;
+      }
+      i.audioNode.scheduleEvents({
+        time: time,
+        type: 'wam-automation',
+        data: {
+          id: param,
+          normalized: false,
+          value: hap.value,
+        },
+      });
+    }, false);
+  });
