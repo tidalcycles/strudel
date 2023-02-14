@@ -21,8 +21,11 @@ let stringParser;
 // intended to use with mini to automatically interpret all strings as mini notation
 export const setStringParser = (parser) => (stringParser = parser);
 
+const alignments = ['in', 'out', 'mix', 'squeeze', 'squeezeout', 'trig', 'trigzero'];
+
 const methodRegistry = [];
 const controlRegistry = [];
+const controlListeners = [];
 const composifiedRegistry = [];
 
 //////////////////////////////////////////////////////////////////////
@@ -60,9 +63,19 @@ export function registerMethod(name) {
   };
 }
 
-export function registerControl(name, func) {
-  registerMethod(name);
-  controlRegistry.push([name, func]);
+export function registerControl(controlname, controlfunc) {
+  registerMethod(controlname);
+  controlRegistry.push([controlname, controlfunc]);
+  for (const listener of controlListeners) {
+    listener(controlname, controlfunc);
+  }
+}
+
+export function withControls(func) {
+  for (const [controlname, controlfunc] of controlRegistry) {
+    func(controlname, controlfunc);
+  }
+  controlListeners.push(func);
 }
 
 /**
@@ -776,7 +789,7 @@ export class Pattern {
     const otherPat = reify(other);
     return this.fmap((a) => otherPat.fmap((b) => func(a)(b))).squeezeJoin();
   }
-  _opSqueezeOut(other, func) {
+  _opSqueezeout(other, func) {
     const thisPat = this;
     const otherPat = reify(other);
     return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a))).squeezeJoin();
@@ -1068,7 +1081,7 @@ function _composeOp(a, b, func) {
     func: [(a, b) => b(a)],
   };
 
-  const hows = ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero'];
+  const hows = alignments.map((x) => x.charAt(0).toUpperCase() + x.slice(1));
 
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
@@ -1129,9 +1142,7 @@ function _composeOp(a, b, func) {
   }
 
   // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
-  for (const how of hows) {
-    const howLower = how.toLowerCase();
-
+  for (const howLower of alignments) {
     // Using a 'get'ted function so that all the controls are added
     Object.defineProperty(Pattern.prototype, howLower, {
       get: function () {
@@ -1448,43 +1459,64 @@ export const mask = curryPattern((a, b) => reify(b).mask(a));
 export const struct = curryPattern((a, b) => reify(b).struct(a));
 export const superimpose = curryPattern((a, b) => reify(b).superimpose(...a));
 
+const methodToFunction = function (name, addAlignments = false) {
+  const func = curryPattern((a, b) => reify(b)[name](a));
+
+  withControls((controlname, controlfunc) => {
+    func[controlname] = function (...pats) {
+      return func(controlfunc(...pats));
+    };
+  });
+
+  if (addAlignments) {
+    for (const alignment of alignments) {
+      func[alignment] = curryPattern((a, b) => reify(b)[name][alignment](a));
+      withControls((controlname, controlfunc) => {
+        func[alignment][controlname] = function (...pats) {
+          return func[alignment](controlfunc(...pats));
+        };
+      });
+    }
+  }
+
+  return func;
+};
+
 // operators
-export const set = curryPattern((a, b) => reify(b).set(a));
-export const keep = curryPattern((a, b) => reify(b).keep(a));
-export const keepif = curryPattern((a, b) => reify(b).keepif(a));
-export const add = curryPattern((a, b) => reify(b).add(a));
-export const sub = curryPattern((a, b) => reify(b).sub(a));
-export const mul = curryPattern((a, b) => reify(b).mul(a));
-export const div = curryPattern((a, b) => reify(b).div(a));
-export const mod = curryPattern((a, b) => reify(b).mod(a));
-export const pow = curryPattern((a, b) => reify(b).pow(a));
-export const band = curryPattern((a, b) => reify(b).band(a));
-export const bor = curryPattern((a, b) => reify(b).bor(a));
-export const bxor = curryPattern((a, b) => reify(b).bxor(a));
-export const blshift = curryPattern((a, b) => reify(b).blshift(a));
-export const brshift = curryPattern((a, b) => reify(b).brshift(a));
-export const lt = curryPattern((a, b) => reify(b).lt(a));
-export const gt = curryPattern((a, b) => reify(b).gt(a));
-export const lte = curryPattern((a, b) => reify(b).lte(a));
-export const gte = curryPattern((a, b) => reify(b).gte(a));
-export const eq = curryPattern((a, b) => reify(b).eq(a));
-export const eqt = curryPattern((a, b) => reify(b).eqt(a));
-export const ne = curryPattern((a, b) => reify(b).ne(a));
-export const net = curryPattern((a, b) => reify(b).net(a));
-export const and = curryPattern((a, b) => reify(b).and(a));
-export const or = curryPattern((a, b) => reify(b).or(a));
-export const func = curryPattern((a, b) => reify(b).func(a));
+export const set = methodToFunction('set', true);
+export const keep = methodToFunction('keep', true);
+export const keepif = methodToFunction('keepif', true);
+export const add = methodToFunction('add', true);
+export const sub = methodToFunction('sub', true);
+export const mul = methodToFunction('mul', true);
+export const div = methodToFunction('div', true);
+export const mod = methodToFunction('mod', true);
+export const pow = methodToFunction('pow', true);
+export const band = methodToFunction('band', true);
+export const bor = methodToFunction('bor', true);
+export const bxor = methodToFunction('bxor', true);
+export const blshift = methodToFunction('blshift', true);
+export const brshift = methodToFunction('brshift', true);
+export const lt = methodToFunction('lt', true);
+export const gt = methodToFunction('gt', true);
+export const lte = methodToFunction('lte', true);
+export const gte = methodToFunction('gte', true);
+export const eq = methodToFunction('eq', true);
+export const eqt = methodToFunction('eqt', true);
+export const ne = methodToFunction('ne', true);
+export const net = methodToFunction('net', true);
+export const and = methodToFunction('and', true);
+export const or = methodToFunction('or', true);
+export const func = methodToFunction('func', true);
 
 // alignments
-// export const in = curryPattern((a, b) => reify(b).in(a)); // reserved word :(
-export const out = curryPattern((a, b) => reify(b).out(a));
-export const mix = curryPattern((a, b) => reify(b).mix(a));
-export const squeeze = curryPattern((a, b) => reify(b).squeeze(a));
-export const squeezeout = curryPattern((a, b) => reify(b).squeezeOut(a));
-export const squeezeOut = squeezeout;
-export const trig = curryPattern((a, b) => reify(b).trig(a));
-export const trigzero = curryPattern((a, b) => reify(b).trigzero(a));
-export const trigZero = trigzero;
+// export const in = methodToFunction('in'); // reserved word :(
+export const out = methodToFunction('out');
+export const mix = methodToFunction('mix');
+export const squeeze = methodToFunction('squeeze');
+export const squeezeout = methodToFunction('squeezeout');
+export const trig = methodToFunction('trig');
+export const trigzero = methodToFunction('trigzero');
 
 /**
  * Registers a new pattern method. The method is added to the Pattern class + the standalone function is returned from register.

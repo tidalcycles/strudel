@@ -206,7 +206,7 @@ describe('Pattern', () => {
         ),
       );
     });
-    it('can SqueezeOut() structure', () => {
+    it('can squeezeout() structure', () => {
       sameFirst(
         sequence(1, [2, 3]).add.squeezeout(10, 20, 30),
         sequence([11, [12, 13]], [21, [22, 23]], [31, [32, 33]]),
@@ -254,7 +254,7 @@ describe('Pattern', () => {
         ),
       );
     });
-    it('can SqueezeOut() structure', () => {
+    it('can squeezeout() structure', () => {
       sameFirst(sequence(1, [2, 3]).keep.squeezeout(10, 20, 30), sequence([1, [2, 3]], [1, [2, 3]], [1, [2, 3]]));
     });
   });
@@ -296,7 +296,7 @@ describe('Pattern', () => {
         ),
       );
     });
-    it('can SqueezeOut() structure', () => {
+    it('can squeezeout() structure', () => {
       sameFirst(sequence(1, [2, 3]).keepif.squeezeout(true, true, false), sequence([1, [2, 3]], [1, [2, 3]], silence));
     });
   });
@@ -969,8 +969,12 @@ describe('Pattern', () => {
     it('Can compose functions', () => {
       sameFirst(sequence(3, 4).fast(2).rev().fast(2), fast(2).rev().fast(2)(sequence(3, 4)));
     });
-    it('Can compose aligned controls', () => {
+    it('Can compose by method chaining operators with controls', () => {
       sameFirst(s('bd').apply(set.n(3).fast(2)), s('bd').set.n(3).fast(2));
+    });
+    it('Can compose by method chaining operators and alignments with controls', () => {
+      sameFirst(s('bd').apply(set.in.n(3).fast(2)), s('bd').set.n(3).fast(2));
+      //      sameFirst(s('bd').apply(set.squeeze.n(3).fast(2)), s('bd').set.squeeze.n(3).fast(2));
     });
   });
   describe('hitch', () => {
