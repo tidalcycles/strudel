@@ -1132,7 +1132,6 @@ function _composeOp(a, b, func) {
         for (const [controlname, controlfunc] of controlRegistry) {
           wrapper[controlname] = (...args) => wrapper.in(controlfunc(...args));
         }
-        // s("bd").set.n(3).fast(2)
 
         return wrapper;
       },
