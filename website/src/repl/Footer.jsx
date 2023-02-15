@@ -7,7 +7,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { loadedSamples } from './Repl';
 import { Reference } from './Reference';
 import { themes, themeColors } from './themes.mjs';
-import { getWamInstances } from '@strudel.cycles/wam';
+import { getAutomatedWamParams, getWamInstances } from '@strudel.cycles/wam';
 
 export function Footer({ context }) {
   // const [activeFooter, setActiveFooter] = useState('console');
@@ -69,6 +69,7 @@ export function Footer({ context }) {
   if (isZen) {
     return null;
   }
+
   return (
     <footer className="bg-lineHighlight z-[20]">
       <div className="flex justify-between px-2">
@@ -208,6 +209,7 @@ export function Footer({ context }) {
                 ))}
               </select>
               <div id="wam-gui"></div>
+              <button onClick={() => wamPreset()}>preset</button>
             </div>
           )}
         </div>
@@ -241,8 +243,17 @@ function linkify(inputText) {
   return replacedText;
 }
 
+let wamGui = null;
+let displayedWam = null;
+
 const showWAM = async (e) => {
+  if (displayedWam !== null && wamGui !== null) {
+    displayedWam.destroyGui(wamGui);
+  }
+
   const wam = getWamInstances()[e.target.value];
+  displayedWam = e.target.value;
+
   const gui = await wam.createGui();
   const guiDiv = document.getElementById('wam-gui');
   guiDiv.innerHTML = '';
@@ -257,3 +268,24 @@ const showWAM = async (e) => {
     guiDiv.appendChild(input);
   }
 };
+
+const wamPreset = async () => {
+  const wam = getWamInstances()[displayedWam];
+
+  const params = await wam.audioNode.getParameterInfo();
+  const values = await wam.audioNode.getParameterValues();
+
+  let preset = {}
+  const automatedParams = getAutomatedWamParams()[displayedWam];
+
+  for (let id of Object.keys(params)) {
+    if (automatedParams[id]) {
+      continue
+    }
+    if (values[id].value.toFixed(6) == params[id].defaultValue.toFixed(6)) {
+      continue
+    }
+    preset[id] = values[id].value;
+  }
+  console.log("preset", preset);
+}

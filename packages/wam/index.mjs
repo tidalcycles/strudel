@@ -23,6 +23,9 @@ export const getWamInstance = (key) => {
 let hostInit;
 // maps wam keys to init promises
 let instanceInit = {};
+// maps wam keys to a list of params that are automated
+let automatedWamParams = {};
+export const getAutomatedWamParams = () => automatedWamParams;
 
 // host groups of WAMs can interact with one another, but not directly across groups
 const hostGroupId = 'strudel';
@@ -77,6 +80,13 @@ export const param = register('param', function (param, value, pat) {
   return pat.addTrigger((time, hap) => {
     const { wam } = hap.value;
     const i = getWamInstance(wam);
+
+    // save param automation
+    if (!automatedWamParams[wam]) {
+      automatedWamParams[wam] = {};
+    }
+    automatedWamParams[wam][param] = true;
+
     i.audioNode.scheduleEvents({
       time: time,
       type: 'wam-automation',
