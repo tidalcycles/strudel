@@ -24,6 +24,7 @@ export const setStringParser = (parser) => (stringParser = parser);
 const alignments = ['in', 'out', 'mix', 'squeeze', 'squeezeout', 'trig', 'trigzero'];
 
 const methodRegistry = [];
+const getterRegistry = [];
 const controlRegistry = [];
 const controlSubscribers = [];
 const composifiedRegistry = [];
@@ -39,19 +40,60 @@ export function composify(func) {
     for (const [name, method] of methodRegistry) {
       func[name] = method;
     }
+    for (const [name, getter] of getterRegistry) {
+      Object.defineProperty(func, name, getter);
+    }
     func.__composified = true;
   }
   composifiedRegistry.push(func);
   return func;
 }
 
-export function registerMethod(name) {
+export function registerMethod(name, addAlignments = false, addControls = false) {
   const method = function (...args) {
     const func = this;
     const composed = (pat) => func(pat)[name](...args);
     return composify(composed);
   };
-  methodRegistry.push([name, method]);
+
+  if (addAlignments || addControls) {
+    const getter = {
+      get: function () {
+        const func = this;
+        const wrapped = function (...args) {
+          const composed = (pat) => func(pat)[name](...args);
+          return composify(composed);
+        };
+
+        if (addAlignments) {
+          for (const alignment of alignments) {
+            wrapped[alignment] = function (...args) {
+              const composed = (pat) => func(pat)[name][alignment](...args);
+              return composify(composed);
+            };
+            for (const [controlname, controlfunc] of controlRegistry) {
+              wrapped[alignment][controlname] = function (...args) {
+                const composed = (pat) => func(pat)[name][alignment](controlfunc(...args));
+                return composify(composed);
+              };
+            }
+          }
+        }
+        if (addControls) {
+          for (const [controlname, controlfunc] of controlRegistry) {
+            wrapped[controlname] = function (...args) {
+              const composed = (pat) => func(pat)[name](controlfunc(...args));
+              return composify(composed);
+            };
+          }
+        }
+        return wrapped;
+      },
+    };
+    getterRegistry.push([name, getter]);
+  } else {
+    methodRegistry.push([name, method]);
+  }
 
   // Add to functions already 'composified'
   for (var composified of composifiedRegistry) {
@@ -1137,7 +1179,7 @@ function _composeOp(a, b, func) {
       },
     });
 
-    registerMethod(what);
+    registerMethod(what, true, true);
   }
 
   // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
@@ -1155,7 +1197,7 @@ function _composeOp(a, b, func) {
         return howfunc;
       },
     });
-    registerMethod(howLower);
+    registerMethod(howLower, false, true);
   }
 
   // binary composers
