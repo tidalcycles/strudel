@@ -828,29 +828,26 @@ const generic_params = [
 
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 
-const _name = (name, ...pats) => sequence(...pats).withValue((x) => ({ [name]: x }));
-
-const _setter = (func, name) =>
-  function (...pats) {
+const makeControl = function (name) {
+  const func = (...pats) => sequence(...pats).withValue((x) => ({ [name]: x }));
+  const setter = function (...pats) {
     if (!pats.length) {
       return this.fmap((value) => ({ [name]: value }));
     }
     return this.set(func(...pats));
   };
+  Pattern.prototype[name] = setter;
+  registerControl(name, func);
+  return func;
+};
 
 generic_params.forEach(([type, name, description]) => {
-  controls[name] = (...pats) => _name(name, ...pats);
-  Pattern.prototype[name] = _setter(controls[name], name);
-  registerControl(name, controls[name]);
+  controls[name] = makeControl(name);
 });
 
 // create custom param
 controls.createParam = (name) => {
-  const func = (...pats) => _name(name, ...pats);
-  Pattern.prototype[name] = _setter(func, name);
-  const result = (...pats) => _name(name, ...pats);
-  registerControl(name, result);
-  return result;
+  return makeControl(name);
 };
 
 controls.createParams = (...names) =>
