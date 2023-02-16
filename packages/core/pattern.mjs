@@ -95,7 +95,7 @@ export function registerMethod(name, addAlignments = false, addControls = false)
     getterRegistry.push([name, getter]);
 
     // Add to functions already 'composified'
-    for (var composified of composifiedRegistry) {
+    for (const composified of composifiedRegistry) {
       Object.defineProperty(composified, name, getter);
     }
   } else {
@@ -110,7 +110,7 @@ export function registerMethod(name, addAlignments = false, addControls = false)
     methodRegistry.push([name, method]);
 
     // Add to functions already 'composified'
-    for (var composified of composifiedRegistry) {
+    for (const composified of composifiedRegistry) {
       composified[name] = method;
     }
   }
@@ -1591,11 +1591,10 @@ export function register(name, func) {
     return result;
   }
   const arity = func.length;
-  var pfunc; // the patternified function
 
   registerMethod(name);
 
-  pfunc = function (...args) {
+  const pfunc = function (...args) {
     args = args.map(reify);
     const pat = args[args.length - 1];
     if (arity === 1) {
@@ -1613,9 +1612,8 @@ export function register(name, func) {
     };
     mapFn = curryPattern(mapFn, arity - 1);
 
-    // Don't use applicative for function arguments
-    const app = (acc, p, i) => (p instanceof Function ? acc.applyValue(p.func) : acc.appLeft(p));
-    const start = left instanceof Function ? pure(mapFn(left.func)) : left.fmap(mapFn);
+    const app = (acc, p) => acc.appLeft(p);
+    const start = left.fmap(mapFn);
 
     return right.reduce(app, start).innerJoin();
   };
