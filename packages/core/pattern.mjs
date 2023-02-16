@@ -32,10 +32,6 @@ const composifiedRegistry = [];
 //////////////////////////////////////////////////////////////////////
 // Magic for supporting higher order composition of method chains
 
-// A class for collecting methods for creating a 'hitch' object that starts a chain of
-// composed methods.
-class Hitch {}
-
 // Dresses the given (unary) function with methods for composition chaining, so e.g.
 // `fast(2).iter(4)` composes to pattern functions into a new one.
 function composify(func) {
@@ -114,10 +110,6 @@ export function registerMethod(name, addAlignments = false, addControls = false)
       composified[name] = method;
     }
   }
-
-  Hitch.prototype[name] = function (...args) {
-    return composify((pat) => pat[name](...args));
-  };
 }
 
 export function registerControl(controlname, controlfunc) {
@@ -134,14 +126,6 @@ export function withControls(func) {
   }
   controlSubscribers.push(func);
 }
-
-/**
- * An object that only exists to turn control patterns into functions. For example, `s("bd sd").every(3, hitch.speed("3 5").fast(2))`. This is a less flexible but slightly easier-to-type lambda, in that this example could also be written `s("bd sd").every(3, x => x.speed("3 5").fast(2))`
- * @param {Function} whole_func
- * @param {Function} func
- * @returns Pattern
- */
-export const hitch = new Hitch();
 
 export function addToPrototype(name, func) {
   Pattern.prototype[name] = func;

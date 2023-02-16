@@ -981,9 +981,4 @@ describe('Pattern', () => {
       //      sameFirst(s('bd').apply(set.squeeze.n(3).fast(2)), s('bd').set.squeeze.n(3).fast(2));
     });
   });
-  describe('hitch', () => {
-    it("Can 'hitch' composed functions on to a pattern", () => {
-      sameFirst(s('bd sd').apply(hitch.fast(2).n(3)), s('bd sd').fast(2).n(3));
-    });
-  });
 });
