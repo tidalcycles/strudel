@@ -32,10 +32,13 @@ const composifiedRegistry = [];
 //////////////////////////////////////////////////////////////////////
 // Magic for supporting higher order composition of method chains
 
-// A class for collecting methods for creating 'hitch' objects that start a chain of composed methods.
+// A class for collecting methods for creating a 'hitch' object that starts a chain of
+// composed methods.
 class Hitch {}
 
-export function composify(func) {
+// Dresses the given (unary) function with methods for composition chaining, so e.g.
+// `fast(2).iter(4)` composes to pattern functions into a new one.
+function composify(func) {
   if (!func.__composified) {
     for (const [name, method] of methodRegistry) {
       func[name] = method;
@@ -46,7 +49,7 @@ export function composify(func) {
     func.__composified = true;
     composifiedRegistry.push(func);
   } else {
-    console.log('attempt at multi-composifying');
+    console.log('Warning: attempt at composifying a function more than once');
   }
   return func;
 }
@@ -133,7 +136,7 @@ export function withControls(func) {
 }
 
 /**
- * An object that only exists to turn control patterns into functions. For example, `s("bd sd").every(3, speed("3 5").fast(2))`. This is a less flexible but slightly easier-to-type lambda, in that this example could also be written `s("bd sd").every(3, x => x.speed("3 5").fast(2))`
+ * An object that only exists to turn control patterns into functions. For example, `s("bd sd").every(3, hitch.speed("3 5").fast(2))`. This is a less flexible but slightly easier-to-type lambda, in that this example could also be written `s("bd sd").every(3, x => x.speed("3 5").fast(2))`
  * @param {Function} whole_func
  * @param {Function} func
  * @returns Pattern
