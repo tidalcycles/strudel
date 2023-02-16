@@ -1,0 +1,56 @@
+---
+// import { getLanguageFromURL } from '../../languages';
+import { SIDEBAR } from '../../config';
+
+type Props = {
+  currentPage: string;
+};
+
+const { currentPage } = Astro.props as Props;
+const { BASE_URL } = import.meta.env;
+let currentPageMatch = currentPage.slice(BASE_URL.length, currentPage.endsWith('/') ? -1 : undefined);
+
+const langCode = 'en'; // getLanguageFromURL(currentPage);
+const sidebar = SIDEBAR[langCode];
+---
+
+<nav aria-labelledby="grid-left" class="max-h-full overflow-auto pb-20 text-foreground">
+  <ul>
+    {
+      Object.entries(sidebar).map(([header, children]) => (
+        <li>
+          <div class="nav-group pb-4">
+            <h2>{header}</h2>
+            <ul>
+              {children.map((child) => {
+                const url = '.' + Astro.site?.pathname + child.link;
+                return (
+                  <li class="">
+                    <a
+                      class={`pl-4 py-0.5 w-full hover:bg-lineHighlight block${
+                        currentPageMatch === child.link ? ' bg-lineHighlight' : ''
+                      }`}
+                      href={url}
+                      aria-current={currentPageMatch === child.link ? 'page' : false}
+                    >
+                      {child.text}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script is:inline>
+  window.addEventListener('DOMContentLoaded', () => {
+    var target = document.querySelector('[aria-current="page"]');
+    if (target && target.offsetTop > window.innerHeight - 100) {
+      document.querySelector('.nav-groups').scrollTop = target.offsetTop;
+    }
+  });
+</script>

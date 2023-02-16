@@ -5,10 +5,10 @@
   font-size: 18px;
 }
 
-.cm-theme-light {
+.cm-theme {
   width: 100%;
 }
 
-.cm-line > * {
-  background: #00000095;
+.cm-theme-light {
+  width: 100%;
 }

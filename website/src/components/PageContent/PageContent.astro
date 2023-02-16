@@ -1,0 +1,42 @@
+---
+import type { Frontmatter } from '../../config';
+import MoreMenu from '../RightSidebar/MoreMenu.astro';
+import TableOfContents from '../RightSidebar/TableOfContents';
+import type { MarkdownHeading } from 'astro';
+
+type Props = {
+  frontmatter: Frontmatter;
+  headings: MarkdownHeading[];
+  githubEditUrl: string;
+};
+
+const { frontmatter, headings, githubEditUrl } = Astro.props as Props;
+const title = frontmatter.title;
+const currentPage = Astro.url.pathname;
+---
+
+<article id="article" class="content">
+  <section class="main-section">
+    <!-- TODO: add dropdown toc on mobile -->
+    <!--     <nav class="block sm:hidden mb-8">
+      <span>On this Page:</span>
+      <TableOfContents client:media="(max-width: 50em)" headings={headings} currentPage={currentPage} />
+    </nav> -->
+    <div class="prose dark:prose-invert max-w-full pb-8">
+      <slot />
+    </div>
+  </section>
+  <nav class="block sm:hidden">
+    <MoreMenu editHref={githubEditUrl} />
+  </nav>
+</article>
+<style>
+  .content {
+    padding: 0;
+    max-width: 75ch;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+</style>

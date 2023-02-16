@@ -19,7 +19,14 @@ export const evalScope = async (...args) => {
       console.warn(`evalScope: module with index ${i} could not be loaded:`, result.reason);
     }
   });
-  Object.assign(globalThis, ...modules);
+  // Object.assign(globalThis, ...modules);
+  // below is a fix for above commented out line
+  // same error as https://github.com/vitest-dev/vitest/issues/1807 when running this on astro server
+  modules.forEach((module) => {
+    Object.entries(module).forEach(([name, value]) => {
+      globalThis[name] = value;
+    });
+  });
 };
 
 function safeEval(str, options = {}) {

@@ -1,0 +1,14 @@
+---
+import HeadCommon from '../components/HeadCommon.astro';
+import { Repl } from '../repl/Repl.jsx';
+---
+
+<html lang="en" class="dark">
+  <head>
+    <HeadCommon />
+    <title>Strudel REPL</title>
+  </head>
+  <body class="bg-background">
+    <Repl client:only="react" />
+  </body>
+</html>

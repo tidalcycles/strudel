@@ -1,0 +1,12 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "jsxImportSource": "react",
+    "noImplicitAny": false,
+    "types": [
+      "vite-plugin-pwa/client"
+    ]
+  }
+}

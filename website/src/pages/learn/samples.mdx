@@ -1,0 +1,324 @@
+---
+title: Samples
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Samples
+
+Samples are the most common way to make sound with tidal and strudel.
+A sample is a (commonly short) piece of audio that is used as a basis for sound generation, undergoing various transformations.
+Music that is based on samples can be thought of as a collage of sound. [Read more about Sampling](<https://en.wikipedia.org/wiki/Sampling_(music)>)
+
+Strudel allows loading samples in the form of audio files of various formats (wav, mp3, ogg) from any publicly available URL.
+
+# Default Samples
+
+By default, strudel comes with a built-in "sample map", providing a solid base to play with.
+
+<MiniRepl client:idle tune={`s("bd sd,hh*8, misc/2")`} />
+
+Here, we are using the `s` function to play back different default samples (`bd`, `sd`, `hh` and `misc`) to get a drum beat.
+
+For drum sounds, strudel uses the comprehensive [tidal-drum-machines](https://github.com/ritchse/tidal-drum-machines) library, with the following naming convention:
+
+| Drum                                | Abbreviation |
+| ----------------------------------- | ------------ |
+| Bass drum, Kick drum                | bd           |
+| Snare drum                          | sd           |
+| Rimshot                             | rim          |
+| Clap                                | cp           |
+| Closed hi-hat                       | hh           |
+| Open hi-hat                         | oh           |
+| Crash                               | cr           |
+| Ride                                | rd           |
+| Shakers (and maracas, cabasas, etc) | sh           |
+| High tom                            | ht           |
+| Medium tom                          | mt           |
+| Low tom                             | lt           |
+| Cowbell                             | cb           |
+| Tambourine                          | tb           |
+| Other percussions                   | perc         |
+| Miscellaneous samples               | misc         |
+| Effects                             | fx           |
+
+Furthermore, strudel also loads instrument samples from [VCSL](https://github.com/sgossner/VCSL) by default.
+
+To see which sample names are available, open the `samples` tab in the [REPL](https://strudel.tidalcycles.org/).
+
+Note that only the sample maps (mapping names to URLs) are loaded initially, while the audio samples itself are not loaded until they are actually played.
+This behaviour of loading things only when they are needed is also called `lazy loading`.
+While it saves resources, it can also lead to sounds not being audible the first time they are triggered, because the sound is still loading.
+[This might be fixed in the future](https://github.com/tidalcycles/strudel/issues/187)
+
+# Sound Banks
+
+If we look at the `samples` tab, we can see that the drum samples are all prefixed with drum machine names: `RolandTR808_bd`, `RolandTR808_sd`, `RolandTR808_hh` etc..
+
+We _could_ use them like this:
+
+<MiniRepl client:idle tune={`s("RolandTR808_bd RolandTR808_sd,RolandTR808_hh*8")`} />
+
+... but thats obviously a bit much to write. Using the `bank` function, we can shorten this to:
+
+<MiniRepl client:idle tune={`s("bd sd,hh*8").bank("RolandTR808")`} />
+
+You could even pattern the bank to switch between different drum machines:
+
+<MiniRepl client:idle tune={`s("bd sd,hh*8").bank("<RolandTR808 RolandTR909>")`} />
+
+Behind the scenes, `bank` will just prepend the drum machine name to the sample name with `_` to get the full name.
+This of course only works because the name after `_` (`bd`, `sd` etc..) is standardized.
+Also note that some banks won't have samples for all sounds!
+
+# Selecting Sounds
+
+If we look again at the `samples` tab, there is also a number behind each name, indicating how many individual samples are available.
+For example `RolandTR909_hh(4)` means there are 4 samples of a TR909 hihat available.
+By default, `s` will play the first sample, but we can selecting the other ones using `n`, starting from 0:
+
+<MiniRepl client:idle tune={`s("hh*4").bank("RolandTR909").n("<0 1 2 3>")`} />
+
+Numbers that are too high will just wrap around to the beginning
+
+<MiniRepl client:idle tune={`s("hh*4").bank("RolandTR909").n("<0 1 2 3 4 5 6 7>")`} />
+
+Here, 0-3 will play the same sounds as 4-7, because `RolandTR909_hh` only has 4 sounds.
+
+Selecting sounds also works inside the mini notation, using "`:`" like this:
+
+<MiniRepl client:idle tune={`s("bd:1 bd:2,hh:0 hh:1 hh:2 hh:3").bank("RolandTR909")`} />
+
+# Loading Custom Samples
+
+You can load your own sample map using the `samples` function.
+In this example we create a map using sounds from the default sample map:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  bd: 'bd/BT0AADA.wav',
+  sd: 'sd/rytm-01-classic.wav',
+  hh: 'hh27/000_hh27closedhh.wav',
+}, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
+s("bd sd,hh*8")`}
+/>
+
+When you load your own samples, you can choose the names that you will then refer to in your pattern string inside the `s` function.
+Compare with this example which uses the same samples, but with different names.
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  bassdrum: 'bd/BT0AADA.wav',
+  snaredrum: 'sd/rytm-01-classic.wav',
+  hihat: 'hh27/000_hh27closedhh.wav',
+}, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
+s("bassdrum snaredrum, hihat*8")`}
+/>
+
+Here we have changed the "map" to include longer sample names.
+
+## The `samples` function
+
+The `samples` function has two arguments:
+
+- A [JavaScript object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) that maps sound names to audio file paths.
+- A base URL that comes before each path describing where the sample folder can be found online.
+  - Make sure your base URL ends with a slash, while your sample paths do **not** begin with one!
+
+To see how this looks in practice, compare the [DirtSamples GitHub repo](https://github.com/tidalcycles/Dirt-Samples) with the previous sample map example.
+
+Because GitHub is a popular place for uploading open source samples, it has its own shortcut:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  bd: 'bd/BT0AADA.wav',
+  sd: 'sd/rytm-01-classic.wav',
+  hh: 'hh27/000_hh27closedhh.wav',
+}, 'github:tidalcycles/Dirt-Samples/master/');
+s("bd sd,hh*8")`}
+/>
+
+The format is `github:user/repo/branch/`.
+
+Let's see another example, this time based on the following GitHub repo: https://github.com/jarmitage/jarmitage.github.io.
+We can see there are some guitar samples inside the `/samples` folder, so let's try to load them:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  g0: 'samples/guitar/guitar_0.wav',
+  g1: 'samples/guitar/guitar_1.wav',
+  g2: 'samples/guitar/guitar_2.wav',
+  g3: 'samples/guitar/guitar_3.wav',
+  g4: 'samples/guitar/guitar_4.wav'
+}, 'github:jarmitage/jarmitage.github.io/master/');
+s("[g0 g1 g2 g3 g4]/5")`}
+/>
+
+## Multiple Samples per Sound
+
+It is also possible, to declare multiple files for one sound, using the array notation:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+s("<bd:0 bd:1>,~ <sd:0 sd:1>,[hh:0 hh:1]*2")`}
+/>
+
+The `:0` `:1` etc. are the indices of the array.
+The sample number can also be set using `n`:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
+  sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
+  hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
+}, 'github:tidalcycles/Dirt-Samples/master/');
+s("bd,~ sd,hh*4").n("<0 1>")`}
+/>
+
+In that case, we might load our guitar sample map a different way:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  guitar: [
+    'samples/guitar/guitar_0.wav', 
+    'samples/guitar/guitar_1.wav', 
+    'samples/guitar/guitar_2.wav', 
+    'samples/guitar/guitar_3.wav', 
+    'samples/guitar/guitar_4.wav'
+  ]
+}, 'github:jarmitage/jarmitage.github.io/master/');
+s("[guitar:0 guitar:1 guitar:2 guitar:3 guitar:4]/5")`}
+/>
+
+And as above, we can choose the sample number using `n` for even more flexibility:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  guitar: [
+    'samples/guitar/guitar_0.wav', 
+    'samples/guitar/guitar_1.wav', 
+    'samples/guitar/guitar_2.wav', 
+    'samples/guitar/guitar_3.wav', 
+    'samples/guitar/guitar_4.wav'
+  ]
+}, 'github:jarmitage/jarmitage.github.io/master/');
+n("<0 1 2 3 4>").s("guitar")`}
+/>
+
+## Pitched Sounds
+
+For pitched sounds, you can use `note`, just like with synths:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  'gtr': 'gtr/0001_cleanC.wav',
+}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').gain(.5)`}
+/>
+
+Here, the guitar samples will overlap, because they always play till the end.
+If we want them to behave more like a synth, we can add `clip(1)`:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  'gtr': 'gtr/0001_cleanC.wav',
+}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').clip(1)
+  .gain(.5)`}
+/>
+
+## Base Pitch
+
+If we have 2 samples with different base pitches, we can make them in tune by specifying the pitch like this:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  'gtr': 'gtr/0001_cleanC.wav',
+  'moog': { 'g3': 'moog/005_Mighty%20Moog%20G3.wav' },
+}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s("gtr,moog").clip(1)
+  .gain(.5)`}
+/>
+
+If a sample has no pitch set, `c3` is the default.
+
+We can also declare different samples for different regions of the keyboard:
+
+<MiniRepl
+  client:idle
+  tune={`samples({
+  'moog': {
+    'g2': 'moog/004_Mighty%20Moog%20G2.wav',
+    'g3': 'moog/005_Mighty%20Moog%20G3.wav',
+    'g4': 'moog/006_Mighty%20Moog%20G4.wav',
+  }}, 'github:tidalcycles/Dirt-Samples/master/');
+note("g2!2 <bb2 c3>!2, <c4@3 [<eb4 bb3> g4 f4]>")
+  .s('moog').clip(1)
+  .gain(.5)`}
+/>
+
+The sampler will always pick the closest matching sample for the current note!
+
+## Shabda
+
+If you don't want to select samples by hand, there is also the wonderful tool called [shabda](https://shabda.ndre.gr/).
+With it, you can enter any sample name(s) to query from [freesound.org](https://freesound.org/). Example:
+
+<MiniRepl
+  client:idle
+  tune={`await samples('https://shabda.ndre.gr/bass:4,hihat:4,rimshot:2.json?strudel=1')
+stack(
+  n("0 1 2 3").s('bass').slow(2),
+  n("0 1*2 2 3*2").s('hihat'),
+  n("~ 0 ~ 1").s('rimshot')
+).clip(1)`}
+/>
+
+# Sampler Effects
+
+Sampler effects are functions that can be used to change the behaviour of sample playback.
+
+### begin
+
+<JsDoc client:idle name="Pattern.begin" h={0} />
+
+### end
+
+<JsDoc client:idle name="Pattern.end" h={0} />
+
+### cut
+
+<JsDoc client:idle name="cut" h={0} />
+
+### clip
+
+<JsDoc client:idle name="clip" h={0} />
+
+### loopAt
+
+<JsDoc client:idle name="Pattern.loopAt" h={0} />
+
+### chop
+
+<JsDoc client:idle name="Pattern.chop" h={0} />
+
+### speed
+
+<JsDoc client:idle name="speed" h={0} />

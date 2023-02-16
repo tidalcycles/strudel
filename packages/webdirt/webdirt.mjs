@@ -59,6 +59,7 @@ export function loadWebDirt(config) {
  * @returns Pattern
  * @example
  * s("bd*2 hh sd hh").n("<0 1>").webdirt()
+ * @noAutocomplete
  */
 Pattern.prototype.webdirt = function () {
   // create a WebDirt object and initialize Web Audio context

@@ -12,8 +12,8 @@ To get in touch with the contributors, either
 
 ## Ask a Question
 
-If you have any questions about strudel, make sure you've read the
-[tutorial](https://strudel.tidalcycles.org/tutorial/) to find out if it answers your question.
+If you have any questions about strudel, make sure you've glanced through the
+[docs](https://strudel.tidalcycles.org/learn/) to find out if it answers your question.
 If not, use one of the Communication Channels above!
 
 Don't be afraid to ask! Your question might be of great value for other people too.
@@ -29,12 +29,10 @@ If you made some music with strudel, you can give back some love and share what 
 Your creation could also be part of the random selection in the REPL if you want.
 Use one of the Communication Channels listed above.
 
-## Improve the Tutorial
+## Improve the Docs
 
-If you find some weak spots in the [tutorial](https://strudel.tidalcycles.org/),
-you are welcome to improve them by editing [this file](https://github.com/tidalcycles/strudel/blob/main/tutorial/tutorial.mdx).
-
-This will even work without setting up a development environment, only a github account is required.
+If you find some weak spots in the [docs](https://strudel.tidalcycles.org/learn/getting-started),
+you can edit each file directly on github via the "Edit this page" link located in the right sidebar.
 
 ## Propose a Feature
 
@@ -60,23 +58,22 @@ To fix a bug that has been reported,
 ## Write Tests
 
 There are still many tests that have not been written yet! Reading and writing tests is a great opportunity to get familiar with the codebase.
-You can find the tests in each package in the `test` folder. To run all tests, run `npm test` from the root folder.
+You can find the tests in each package in the `test` folder. To run all tests, run `pnpm test` from the root folder.
 
 ## Project Setup
 
 To get the project up and running for development, make sure you have installed:
 
-- git
-- node, preferably v16
+- [git](https://git-scm.com/)
+- [node](https://nodejs.org/en/) >= 18
+- [pnpm](https://pnpm.io/) (`npm i pnpm -g`)
 
 then, do the following:
 
 ```sh
 git clone https://github.com/tidalcycles/strudel.git && cd strudel
-npm i # install at root to symlink packages
-npx lerna bootstrap # install all dependencies in packages
-cd repl && npm i # install repl dependencies
-npm run start # start repl
+pnpm i # install at root to symlink packages
+pnpm start # start repl
 ```
 
 Those commands might look slightly different for your OS.
@@ -85,6 +82,10 @@ Please report any problems you've had with the setup instructions!
 ## Code Style
 
 To make sure the code changes only where it should, we are using prettier to unify the code style.
+
+- You can format all files at once by running `pnpm prettier` from the project root
+- Run `pnpm format-check` from the project root to check if all files are well formatted
+
 If you use VSCode, you can
 
 1. install [the prettier extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
@@ -92,12 +93,29 @@ If you use VSCode, you can
 3. Choose "Configure Default Formatter..."
 4. Select prettier
 
+## ESLint
+
+To prevent unwanted runtime errors, this project uses [eslint](https://eslint.org/).
+
+- You can check for lint errors by running `pnpm lint`
+
+There are also eslint extensions / plugins for most editors.
+
+## Running Tests
+
+- Run all tests with `pnpm test`
+- Run all tests with UI using `pnpm test-ui`
+
+## Running all CI Checks
+
+When opening a PR, the CI runner will automatically check the code style and eslint, as well as run all tests.
+You can run the same check with `pnpm check`
+
 ## Package Workflow
 
 The project is split into multiple [packages](https://github.com/tidalcycles/strudel/tree/main/packages) with independent versioning.
-When you run `npm i` on the root folder, [npm workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces) will symlink all packages
-in the `node_modules` folder. This will allow any js file to import `@strudel.cycles/<package-name>` to get the local version,
-which allows developing multiple packages at the same time
+When you run `pnpm i` on the root folder, [pnpm workspaces](https://pnpm.io/workspaces) will install all dependencies of all subpackages. This will allow any js file to import `@strudel.cycles/<package-name>` to get the local version,
+allowing to develop multiple packages at the same time.
 
 ## Package Publishing
 
@@ -108,12 +126,15 @@ npm login
 npx lerna publish
 ```
 
+To manually publish a single package, increase the version in the `package.json`, then run `pnpm publish`.
+Important: Always publish with `pnpm`, as `npm` does not support overriding main files in `publishConfig`, which is done in all the packages.
+
 ### New Packages
 
 To add a new package, you have to publish it manually the first time, using:
 
 ```sh
-cd packages/<package-name> && npm publish --access public
+cd packages/<package-name> && pnpm publish --access public
 ```
 
 ## Have Fun

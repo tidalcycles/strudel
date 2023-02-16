@@ -13,6 +13,7 @@ export function repl({
   getTime,
   transpiler,
   onToggle,
+  editPattern,
 }) {
   const scheduler = new Cyclist({
     interval,
@@ -34,15 +35,17 @@ export function repl({
     getTime,
     onToggle,
   });
-  setTime(() => scheduler.getPhase()); // TODO: refactor?
+  setTime(() => scheduler.now()); // TODO: refactor?
   const evaluate = async (code, autostart = true) => {
     if (!code) {
       throw new Error('no code to evaluate');
     }
     try {
       beforeEval?.({ code });
-      const { pattern } = await _evaluate(code, transpiler);
+      let { pattern } = await _evaluate(code, transpiler);
+
       logger(`[eval] code updated`);
+      pattern = editPattern?.(pattern) || pattern;
       scheduler.setPattern(pattern, autostart);
       afterEval?.({ code, pattern });
       return pattern;

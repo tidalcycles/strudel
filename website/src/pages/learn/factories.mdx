@@ -1,0 +1,66 @@
+---
+title: Pattern Constructors
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Pattern Constructors
+
+The following functions will return a pattern.
+These are the equivalents used by the Mini Notation:
+
+| function                       | mini             |
+| ------------------------------ | ---------------- |
+| `cat(x, y)`                    | `"<x y>"`        |
+| `seq(x, y)`                    | `"x y"`          |
+| `stack(x, y)`                  | `"x,y"`          |
+| `timeCat([3,x],[2,y])`         | `"x@3 y@2"`      |
+| `polymeter([a, b, c], [x, y])` | `"{a b c, x y}"` |
+| `polymeterSteps(2, x, y, z)`   | `"{x y z}%2"`    |
+| `silence`                      | `"~"`            |
+
+## cat
+
+<JsDoc client:idle name="cat" h={0} />
+
+You can also use cat as a chained function like this:
+
+<JsDoc client:idle name="Pattern.cat" h={0} hideDescription />
+
+## seq
+
+<JsDoc client:idle name="seq" h={0} />
+
+Or as a chained function:
+
+<JsDoc client:idle name="Pattern.seq" h={0} hideDescription />
+
+## stack
+
+<JsDoc client:idle name="stack" h={0} />
+
+As a chained function:
+
+<JsDoc client:idle name="Pattern.stack" h={0} hideDescription />
+
+## timeCat
+
+<JsDoc client:idle name="timeCat" h={0} />
+
+## polymeter
+
+<JsDoc client:idle name="polymeter" h={0} />
+
+## polymeterSteps
+
+<JsDoc client:idle name="polymeterSteps" h={0} />
+
+## silence
+
+<JsDoc client:idle name="silence" h={0} />
+
+## run
+
+<JsDoc client:idle name="run" h={0} punchcard />

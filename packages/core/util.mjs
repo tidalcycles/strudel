@@ -5,7 +5,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 // returns true if the given string is a note
-export const isNote = (name) => /^[a-gA-G][#bs]*[0-9]$/.test(name);
+export const isNoteWithOctave = (name) => /^[a-gA-G][#bs]*[0-9]$/.test(name);
+export const isNote = (name) => /^[a-gA-G][#bs]*[0-9]?$/.test(name);
 export const tokenizeNote = (note) => {
   if (typeof note !== 'string') {
     return [];
@@ -19,7 +20,7 @@ export const tokenizeNote = (note) => {
 
 // turns the given note into its midi number representation
 export const toMidi = (note) => {
-  const [pc, acc, oct] = tokenizeNote(note);
+  const [pc, acc, oct = 3] = tokenizeNote(note);
   if (!pc) {
     throw new Error('not a note: "' + note + '"');
   }
@@ -57,6 +58,7 @@ export const valueToMidi = (value, fallbackValue) => {
 
 /**
  * @deprecated does not appear to be referenced or invoked anywhere in the codebase
+ * @noAutocomplete
  */
 export const getFreq = (noteOrMidi) => {
   if (typeof noteOrMidi === 'number') {
@@ -67,6 +69,7 @@ export const getFreq = (noteOrMidi) => {
 
 /**
  * @deprecated does not appear to be referenced or invoked anywhere in the codebase
+ * @noAutocomplete
  */
 export const midi2note = (n) => {
   const oct = Math.floor(n / 12) - 1;

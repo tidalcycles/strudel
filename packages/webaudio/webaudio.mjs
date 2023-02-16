@@ -126,21 +126,24 @@ function getWorklet(ac, processor, params) {
 }
 
 // this function should be called on first user interaction (to avoid console warning)
-export function initAudio() {
+export async function initAudio() {
   if (typeof window !== 'undefined') {
     try {
-      getAudioContext().resume();
-      loadWorklets();
+      await getAudioContext().resume();
+      await loadWorklets();
     } catch (err) {
       console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
     }
   }
 }
 
-export function initAudioOnFirstClick() {
-  document.addEventListener('click', function listener() {
-    initAudio();
-    document.removeEventListener('click', listener);
+export async function initAudioOnFirstClick() {
+  return new Promise((resolve) => {
+    document.addEventListener('click', async function listener() {
+      await initAudio();
+      resolve();
+      document.removeEventListener('click', listener);
+    });
   });
 }
 
@@ -195,9 +198,14 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
       hap.value = { note: hap.value };
     } */
   if (typeof hap.value !== 'object') {
-    throw new Error(
-      `hap.value ${hap.value} is not supported by webaudio output. Hint: append .note() or .s() to the end`,
+    logger(
+      `hap.value "${hap.value}" is not supported by webaudio output. Hint: append .note() or .s() to the end`,
+      'error',
     );
+    /*     throw new Error(
+      `hap.value "${hap.value}"" is not supported by webaudio output. Hint: append .note() or .s() to the end`,
+    ); */
+    return;
   }
   // calculate correct time (tone.js workaround)
   let t = ac.currentTime + deadline;
@@ -211,12 +219,22 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     n = 0,
     note,
     gain = 0.8,
-    cutoff,
-    resonance = 1,
-    hcutoff,
-    hresonance = 1,
-    bandf,
-    bandq = 1,
+    // low pass
+    lpf,
+    cutoff = lpf,
+    lpq = 1,
+    resonance = lpq,
+    // high pass
+    hpf,
+    hcutoff = hpf,
+    hpq = 1,
+    hresonance = hpq,
+    // band pass
+    bpf,
+    bandf = bpf,
+    bpq = 1,
+    bandq = bpq,
+    //
     coarse,
     crush,
     shape,
@@ -381,7 +399,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
 
 export const webaudioOutputTrigger = (t, hap, ct, cps) => webaudioOutput(hap, t - ct, hap.duration / cps);
 
-Pattern.prototype.out = function () {
+Pattern.prototype.webaudio = function () {
   // TODO: refactor (t, hap, ct, cps) to (hap, deadline, duration) ?
   return this.onTrigger(webaudioOutputTrigger);
 };

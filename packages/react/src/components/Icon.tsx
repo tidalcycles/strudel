@@ -2,7 +2,7 @@ import React from 'react';
 
 export function Icon({ type }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" className="sc-h-5 sc-w-5" viewBox="0 0 20 20" fill="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
       {
         {
           refresh: (
@@ -23,6 +23,13 @@ export function Icon({ type }) {
             <path
               fillRule="evenodd"
               d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
+              clipRule="evenodd"
+            />
+          ),
+          stop: (
+            <path
+              fillRule="evenodd"
+              d="M2 10a8 8 0 1116 0 8 8 0 01-16 0zm5-2.25A.75.75 0 017.75 7h4.5a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75h-4.5a.75.75 0 01-.75-.75v-4.5z"
               clipRule="evenodd"
             />
           ),

@@ -44,6 +44,7 @@ import {
   ply,
   rev,
   time,
+  run,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -152,6 +153,11 @@ describe('Pattern', () => {
           .fmap((x) => x + 4)
           .firstCycle()[0].value,
       ).toBe(7);
+    });
+  });
+  describe('out()', () => {
+    it('is an alias for set.out()', () => {
+      sameFirst(sequence(1, 2).out(5, 6, 7, 8), sequence(1, 2).set.out(5, 6, 7, 8));
     });
   });
   describe('add()', () => {
@@ -903,6 +909,18 @@ describe('Pattern', () => {
       );
     });
   });
+  describe('run', () => {
+    it('Can run', () => {
+      expect(run(4).firstCycle()).toStrictEqual(sequence(0, 1, 2, 3).firstCycle());
+    });
+  });
+  describe('ribbon', () => {
+    it('Can ribbon', () => {
+      expect(cat(0, 1, 2, 3, 4, 5, 6, 7).ribbon(2, 4).fast(4).firstCycle()).toStrictEqual(
+        sequence(2, 3, 4, 5).firstCycle(),
+      );
+    });
+  });
   describe('linger', () => {
     it('Can linger on the first quarter of a cycle', () => {
       expect(sequence(0, 1, 2, 3, 4, 5, 6, 7).linger(0.25).firstCycle()).toStrictEqual(
@@ -929,6 +947,16 @@ describe('Pattern', () => {
     });
     it('Doesnt merge two touching haps with different wholes', () => {
       expect(stack(sequence('a', silence), pure('a').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(2);
+    });
+  });
+  describe('press', () => {
+    it('Can syncopate events', () => {
+      sameFirst(sequence('a', 'b', 'c', 'd').press(), sequence(silence, 'a', silence, 'b', silence, 'c', silence, 'd'));
+    });
+  });
+  describe('hurry', () => {
+    it('Can speed up patterns and sounds', () => {
+      sameFirst(s('a', 'b').hurry(2), s('a', 'b').fast(2).speed(2));
     });
   });
 });

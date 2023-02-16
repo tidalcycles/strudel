@@ -1,0 +1,42 @@
+.prose h1::before,
+.prose h2::before,
+.prose h3::before,
+.prose h4::before,
+.prose h5::before,
+.prose h6::before {
+  display: block;
+  content: ' ';
+  margin-top: -70px;
+  height: 70px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.icon.icon-link {
+  visibility: hidden;
+}
+
+.prose h1:hover .icon.icon-link,
+.prose h2:hover .icon.icon-link,
+.prose h3:hover .icon.icon-link,
+.prose h4:hover .icon.icon-link,
+.prose h5:hover .icon.icon-link,
+.prose h6:hover .icon.icon-link {
+  visibility: visible;
+}
+
+.prose h1 > a,
+.prose h2 > a,
+.prose h3 > a,
+.prose h4 > a,
+.prose h5 > a,
+.prose h6 > a {
+  text-decoration: none !important;
+}
+
+.icon.icon-link::after {
+  content: '#';
+  margin-left: 8px;
+  font-size: 0.9em;
+  opacity: 50%;
+}

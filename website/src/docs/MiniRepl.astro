@@ -1,0 +1,6 @@
+---
+import { MiniRepl } from './MiniRepl';
+const { tune } = Astro.props;
+---
+
+<MiniRepl tune={tune} client:only="react" />

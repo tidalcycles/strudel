@@ -2,6 +2,10 @@
 
 This package adds Tone.js functions to strudel Patterns.
 
+## Deprecation Note
+
+This package will not be developed further. Consider using `@strudel.cycles/webaudio` as a replacement.
+
 ## Install
 
 ```sh
@@ -28,14 +32,3 @@ document.getElementById('play').addEventListener('click', async () => {
   Tone.getTransport().start('+0.1');
 });
 ```
-
-[open in codesandbox](https://codesandbox.io/s/strudel-tone-example-5ph2te?file=/src/index.js:0-708)
-
-## API
-
-See "Tone API" in the [Strudel Tutorial](https://strudel.tidalcycles.org/tutorial/)
-
-## Dev Notes
-
-- `@tonejs/piano` has peer dependency on `webmidi@^2.5.1`! A newer version of webmidi will break.
-- If you use Tone in another package, make sure to `import { Tone } from '@strudel.cycles/tone`, to ensure you get the same AudioContext.

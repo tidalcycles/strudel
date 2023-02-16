@@ -1,0 +1,7 @@
+.cm-gutters {
+  display: none !important;
+}
+
+.prose > h1:not(:first-child) {
+  margin-top: 30px;
+}

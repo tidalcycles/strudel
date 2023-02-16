@@ -1,0 +1,162 @@
+---
+title: Control Parameters
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Control Parameters
+
+Besides functions that control time, we saw earlier that functions like `note` and `cutoff` control different parameters (short params) of an event.
+Let's now look more closely at how these `param(eter) functions` work.
+
+# Parameter Functions
+
+A very powerful feature of tidal patterns is that each parameter can be controlled independently:
+
+<MiniRepl
+  client:only="react"
+  tune={`note("c a f e")
+.cutoff("<500 1000 2000 [4000 8000]>")
+.gain(.8)
+.s('sawtooth')
+.log()`}
+/>
+
+In this example, the parameters `note`, `cutoff`, `gain` and `s` are controlled independently by either patterns or plain values (numbers / text).
+After pressing play, we can observe the time and parameter values of each event (hap) in the output created by `.log()`.
+
+## Plain vs Parameterized Values
+
+Patterns that are not wrapped inside a param function will contain unlabeled `plain values`:
+
+<MiniRepl client:only="react" tune={`"<c e g>".log()`} />
+
+This will not generate any sound output, because Strudel could only guess which param is meant by these letters.
+
+Now compare that to the version wrapped in `note`:
+
+<MiniRepl client:only="react" tune={`note("<c e g>").log()`} />
+
+Now it is clear that these letters are meant to be played as notes.
+Under the hood, the `note` function (as well as all other param functions)
+will wrap each plain value in an object. If the note function did not exist, we would need to write:
+
+<MiniRepl client:only="react" tune={`cat({note:'c'},{note:'e'},{note:'g'}).log()`} />
+
+This will have the same output, though it is rather unwieldy to read and write.
+
+## Wrapping Parameter Functions
+
+To avoid too much nesting, param functions can also be chained like this:
+
+<MiniRepl client:only="react" tune={`cat('c', 'e', 'g').note().log()`} />
+
+This is equivalent to `note(cat('c','e','g')).log()`.
+
+You can use this with any function that declares a type (like `n`, `s`, `note`, `freq` etc), just make sure to leave the parens empty!
+
+## Plain Value Modification
+
+Patterns of plain values can be modified with any of the following operators:
+
+<MiniRepl client:only="react" tune={`"50 60 70".add("<0 1 2>").log()`} />
+
+Here, the add function modifies the numbers on the left.
+Again, there is no output because these numbers have no meaning without a param.
+
+## Param Value Modification
+
+To modify a parameter value, you can either:
+
+- Use the operator on the plain value pattern, inside the param function:
+
+  <MiniRepl client:only="react" tune={`note("50 60 70".add("<0 1 2>")).room(.1).log()`} />
+
+- Similarly, use the operator on the plain value pattern and wrap it later:
+
+  <MiniRepl client:only="react" tune={`"50 60 70".add("<0 1 2>").note().room(.1).log()`} />
+
+- Specify which param should be modified inside the operator function:
+
+  <MiniRepl client:only="react" tune={`note("50 60 70").room(.1).add(note("<0 1 2>")).log()`} />
+
+- Modify _all_ numeral params:
+
+  <MiniRepl client:only="react" tune={`note("50 60 70").room(.1).add("<0 1 2>").log()`} />
+
+Which of these 3 ways to use strongly depends on the context!
+Note that the order of chaining param functions also matters!
+In the last example, the `room` value would not have changed if it was applied later:
+
+<MiniRepl client:only="react" tune={`note("50 60 70").add("<0 1 2>").room(.1).log()`} />
+
+This shows how the execution of the chained functions goes from left to right.
+In this case, the `.add` will only modify what's on the left side.
+
+# Operators
+
+This group of functions allows to modify the value of events.
+
+## add
+
+<JsDoc client:idle name="Pattern.add" h={0} />
+
+## sub
+
+<JsDoc client:idle name="Pattern.sub" h={0} />
+
+## mul
+
+<JsDoc client:idle name="Pattern.mul" h={0} />
+
+## div
+
+<JsDoc client:idle name="Pattern.div" h={0} />
+
+## round
+
+<JsDoc client:idle name="Pattern.round" h={0} />
+
+## floor
+
+<JsDoc client:idle name="Pattern.floor" h={0} />
+
+## ceil
+
+<JsDoc client:idle name="Pattern.ceil" h={0} />
+
+## range
+
+<JsDoc client:idle name="Pattern.range" h={0} />
+
+## rangex
+
+<JsDoc client:idle name="Pattern.rangex" h={0} />
+
+## range2
+
+<JsDoc client:idle name="Pattern.range2" h={0} />
+
+# Custom Parameters
+
+You can also create your own parameters:
+
+<MiniRepl
+  client:only="react"
+  tune={`let x = createParam('x')
+x(sine.range(0, 200))
+`}
+/>
+
+Multiple params can also be created in a more consice way, using `createParams`:
+
+<MiniRepl
+  client:only="react"
+  tune={`let { x, y } = createParams('x', 'y');
+x(sine.range(0, 200)).y(cosine.range(0, 200));
+`}
+/>
+
+Note that these params will not do anything until you give them meaning in your custom output!

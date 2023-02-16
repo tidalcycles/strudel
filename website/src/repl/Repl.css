@@ -1,0 +1,23 @@
+.darken::before {
+  content: ' ';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  background: black;
+  opacity: 0.5;
+}
+
+#code .cm-content {
+  padding-top: 12px !important;
+  padding-left: 8px !important;
+}
+
+#code .cm-scroller {
+  padding-bottom: 50vh;
+}
+#code .cm-line > * {
+  background: var(--lineBackground);
+}

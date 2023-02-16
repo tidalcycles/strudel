@@ -32,7 +32,7 @@ yields:
 
 ## Mini Notation API
 
-See "Mini Notation" in the [Strudel Tutorial](https://strudel.tidalcycles.org/tutorial/)
+See "Mini Notation" in the [Strudel Tutorial](https://strudel.tidalcycles.org/learn/mini-notation)
 
 ## Building the Parser
 
@@ -40,5 +40,5 @@ The parser [krill-parser.js] is generated from [krill.pegjs](./krill.pegjs) usin
 To generate the parser, run
 
 ```js
-npm run build:parser
+npm build:parser
 ```

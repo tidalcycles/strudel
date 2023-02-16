@@ -8,13 +8,10 @@ import createClock from './zyklus.mjs';
 import { logger } from './logger.mjs';
 
 export class Cyclist {
-  worker;
-  pattern;
-  started = false;
-  cps = 1; // TODO
-  getTime;
-  phase = 0;
   constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
+    this.started = false;
+    this.cps = 1; // TODO
+    this.phase = 0;
     this.getTime = getTime;
     this.onToggle = onToggle;
     this.latency = latency;
@@ -48,6 +45,9 @@ export class Cyclist {
   }
   getPhase() {
     return this.getTime() - this.origin - this.latency;
+  }
+  now() {
+    return this.getTime() - this.origin + this.clock.minLatency;
   }
   setStarted(v) {
     this.started = v;

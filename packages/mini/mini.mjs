@@ -7,8 +7,6 @@ This program is free software: you can redistribute it and/or modify it under th
 import * as krill from './krill-parser.js';
 import * as strudel from '@strudel.cycles/core';
 
-const { pure, Fraction, stack, slowcat, sequence, timeCat, silence, reify } = strudel;
-
 /* var _seedState = 0;
 const randOffset = 0.0002;
 
@@ -16,148 +14,150 @@ function _nextSeed() {
   return _seedState++;
 } */
 
-const applyOptions = (parent) => (pat, i) => {
+const applyOptions = (parent, code) => (pat, i) => {
   const ast = parent.source_[i];
   const options = ast.options_;
-  const operator = options?.operator;
-  if (operator) {
-    switch (operator.type_) {
-      case 'stretch': {
-        const speed = Fraction(operator.arguments_.amount).inverse();
-        return reify(pat).fast(speed);
-      }
-      case 'bjorklund':
-        return pat.euclid(operator.arguments_.pulse, operator.arguments_.step, operator.arguments_.rotation);
-      case 'degradeBy':
-        // TODO: find out what is right here
-        // example:
-        /*
+  const ops = options?.ops;
+  if (ops) {
+    for (const op of ops) {
+      switch (op.type_) {
+        case 'stretch': {
+          const legalTypes = ['fast', 'slow'];
+          const { type, amount } = op.arguments_;
+          if (!legalTypes.includes(type)) {
+            throw new Error(`mini: stretch: type must be one of ${legalTypes.join('|')} but got ${type}`);
+          }
+          pat = strudel.reify(pat)[type](patternifyAST(amount, code));
+          break;
+        }
+        case 'bjorklund': {
+          if (op.arguments_.rotation) {
+            pat = pat.euclidRot(
+              patternifyAST(op.arguments_.pulse, code),
+              patternifyAST(op.arguments_.step, code),
+              patternifyAST(op.arguments_.rotation, code),
+            );
+          } else {
+            pat = pat.euclid(patternifyAST(op.arguments_.pulse, code), patternifyAST(op.arguments_.step, code));
+          }
+          break;
+        }
+        case 'degradeBy': {
+          // TODO: find out what is right here
+          // example:
+          /*
            stack(
              s("hh*8").degrade(),
              s("[ht*8]?")
            )
         */
-        // above example will only be in sync when _degradeBy is used...
-        // it also seems that the nextSeed will create undeterministic behaviour
-        // as it uses a global _seedState. This is probably the reason for
-        // https://github.com/tidalcycles/strudel/issues/245
+          // above example will only be in sync when _degradeBy is used...
+          // it also seems that the nextSeed will create undeterministic behaviour
+          // as it uses a global _seedState. This is probably the reason for
+          // https://github.com/tidalcycles/strudel/issues/245
 
-        // this is how it was:
-        /* 
-        return reify(pat)._degradeByWith(
+          // this is how it was:
+          /* 
+        return strudel.reify(pat)._degradeByWith(
           strudel.rand.early(randOffset * _nextSeed()).segment(1),
-          operator.arguments_.amount ?? 0.5,
+          op.arguments_.amount ?? 0.5,
         ); 
         */
-        return reify(pat)._degradeBy(operator.arguments_.amount ?? 0.5);
-
-      // TODO: case 'fixed-step': "%"
+          pat = strudel.reify(pat).degradeBy(op.arguments_.amount === null ? 0.5 : op.arguments_.amount);
+          break;
+        }
+        default: {
+          console.warn(`operator "${op.type_}" not implemented`);
+        }
+      }
     }
-    console.warn(`operator "${operator.type_}" not implemented`);
   }
-  if (options?.weight) {
-    // weight is handled by parent
-    return pat;
-  }
-  // TODO: bjorklund e.g. "c3(5,8)"
-  const unimplemented = Object.keys(options || {}).filter((key) => key !== 'operator');
-  if (unimplemented.length) {
-    console.warn(
-      `option${unimplemented.length > 1 ? 's' : ''} ${unimplemented.map((o) => `"${o}"`).join(', ')} not implemented`,
-    );
-  }
+
   return pat;
 };
 
 function resolveReplications(ast) {
-  // the general idea here: x!3 = [x*3]@3
-  // could this be made easier?!
-  ast.source_ = ast.source_.map((child) => {
-    const { replicate, ...options } = child.options_ || {};
-    if (replicate) {
-      return {
-        ...child,
-        options_: { ...options, weight: replicate },
-        source_: {
-          type_: 'pattern',
-          arguments_: {
-            alignment: 'h',
-          },
-          source_: [
-            {
-              type_: 'element',
-              source_: child.source_,
-              location_: child.location_,
-              options_: {
-                operator: {
-                  type_: 'stretch',
-                  arguments_: { amount: Fraction(replicate).inverse().toString() },
-                },
-              },
-            },
-          ],
-        },
-      };
-    }
-    return child;
-  });
+  ast.source_ = strudel.flatten(
+    ast.source_.map((child) => {
+      const { reps } = child.options_ || {};
+      if (!reps) {
+        return [child];
+      }
+      delete child.options_.reps;
+      return Array(reps).fill(child);
+    }),
+  );
 }
 
 export function patternifyAST(ast, code) {
   switch (ast.type_) {
     case 'pattern': {
       resolveReplications(ast);
-      const children = ast.source_.map((child) => patternifyAST(child, code)).map(applyOptions(ast));
+      const children = ast.source_.map((child) => patternifyAST(child, code)).map(applyOptions(ast, code));
       const alignment = ast.arguments_.alignment;
-      if (alignment === 'v') {
-        return stack(...children);
+      if (alignment === 'stack') {
+        return strudel.stack(...children);
       }
-      if (alignment === 'r') {
+      if (alignment === 'polymeter') {
+        // polymeter
+        const stepsPerCycle = ast.arguments_.stepsPerCycle
+          ? patternifyAST(ast.arguments_.stepsPerCycle, code).fmap((x) => strudel.Fraction(x))
+          : strudel.pure(strudel.Fraction(children.length > 0 ? children[0].__weight : 1));
+
+        const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.__weight || 1))));
+        return strudel.stack(...aligned);
+      }
+      if (alignment === 'rand') {
         // https://github.com/tidalcycles/strudel/issues/245#issuecomment-1345406422
         // return strudel.chooseInWith(strudel.rand.early(randOffset * _nextSeed()).segment(1), children);
         return strudel.chooseCycles(...children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
-      if (!weightedChildren && alignment === 't') {
-        return slowcat(...children);
+      if (!weightedChildren && alignment === 'slowcat') {
+        return strudel.slowcat(...children);
       }
       if (weightedChildren) {
-        const pat = timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
-        if (alignment === 't') {
-          const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
+        const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
+        const pat = strudel.timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
+        if (alignment === 'slowcat') {
           return pat._slow(weightSum); // timecat + slow
         }
+        pat.__weight = weightSum;
         return pat;
       }
-      return sequence(...children);
+      const pat = strudel.sequence(...children);
+      pat.__weight = children.length;
+      return pat;
     }
     case 'element': {
+      return patternifyAST(ast.source_, code);
+    }
+    case 'atom': {
       if (ast.source_ === '~') {
-        return silence;
+        return strudel.silence;
       }
-      if (typeof ast.source_ !== 'object') {
-        if (!ast.location_) {
-          console.warn('no location for', ast);
-          return ast.source_;
-        }
-        const { start, end } = ast.location_;
-        const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
-        // the following line expects the shapeshifter append .withMiniLocation
-        // because location_ is only relative to the mini string, but we need it relative to whole code
-        // make sure whitespaces are not part of the highlight:
-        const actual = code?.split('').slice(start.offset, end.offset).join('');
-        const [offsetStart = 0, offsetEnd = 0] = actual
-          ? actual.split(ast.source_).map((p) => p.split('').filter((c) => c === ' ').length)
-          : [];
-        return pure(value).withLocation(
+      if (!ast.location_) {
+        console.warn('no location for', ast);
+        return ast.source_;
+      }
+      const { start, end } = ast.location_;
+      const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
+      // the following line expects the shapeshifter append .withMiniLocation
+      // because location_ is only relative to the mini string, but we need it relative to whole code
+      // make sure whitespaces are not part of the highlight:
+      const actual = code?.split('').slice(start.offset, end.offset).join('');
+      const [offsetStart = 0, offsetEnd = 0] = actual
+        ? actual.split(ast.source_).map((p) => p.split('').filter((c) => c === ' ').length)
+        : [];
+      return strudel
+        .pure(value)
+        .withLocation(
           [start.line, start.column + offsetStart, start.offset + offsetStart],
           [start.line, end.column - offsetEnd, end.offset - offsetEnd],
         );
-      }
-      return patternifyAST(ast.source_, code);
     }
     case 'stretch':
-      return patternifyAST(ast.source_, code).slow(ast.arguments_.amount);
+      return patternifyAST(ast.source_, code).slow(patternifyAST(ast.arguments_.amount, code));
     /* case 'scale':
       let [tonic, scale] = Scale.tokenize(ast.arguments_.scale);
       const intervals = Scale.get(scale).intervals;
@@ -179,10 +179,10 @@ export function patternifyAST(ast, code) {
       }); */
     /* case 'struct':
       // TODO:
-      return silence; */
+      return strudel.silence; */
     default:
       console.warn(`node type "${ast.type_}" not implemented -> returning silence`);
-      return silence;
+      return strudel.silence;
   }
 }
 
@@ -193,7 +193,7 @@ export const mini = (...strings) => {
     const ast = krill.parse(code);
     return patternifyAST(ast, code);
   });
-  return sequence(...pats);
+  return strudel.sequence(...pats);
 };
 
 // includes haskell style (raw krill parsing)
@@ -207,5 +207,5 @@ export function minify(thing) {
   if (typeof thing === 'string') {
     return mini(thing);
   }
-  return reify(thing);
+  return strudel.reify(thing);
 }

@@ -33,6 +33,7 @@ b: 3/2 - 7/4
 c: 7/4 - 2
 ```
 
-- [play with @strudel.cycles/core on codesandbox](https://codesandbox.io/s/strudel-core-test-qmz6qr?file=/src/index.js).
-- [open color pattern example](https://raw.githack.com/tidalcycles/strudel/package-examples/packages/core/examples/canvas.html)
-- [open minimal repl example](https://raw.githack.com/tidalcycles/strudel/package-examples/packages/core/examples/metro.html)
+- [play with @strudel.cycles/core on codesandbox](https://codesandbox.io/s/strudel-core-test-forked-9ywhv7?file=/src/index.js).
+- [open color pattern example](https://raw.githack.com/tidalcycles/strudel/main/packages/core/examples/canvas.html)
+- [open minimal repl example](https://raw.githack.com/tidalcycles/strudel/main/packages/core/examples/vanilla.html)
+- [open minimal vite example](./examples/vite-vanilla-repl/)

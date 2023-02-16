@@ -1,0 +1,54 @@
+
+\def\Hline{\noalign{\hrule height 0.4mm}}
+%\newcommand{\bm}[1]{\mbox{\boldmath{$#1$}}}
+\newcommand{\figbox}[1]{\fbox{\parbox{\columnwidth}{\centering{ #1 }}}}
+\newcommand{\range}[2]{{#1,\cdots,#2\;}}
+\newcommand{\secref}[1]{\mbox{Section~\ref{#1}}}
+\newcommand{\tabref}[1]{\mbox{Table~\ref{#1}}}
+\newcommand{\figref}[1]{\mbox{Figure~\ref{#1}}}
+\newcommand{\eqnref}[1]{\mbox{Eq.~(\ref{#1})}}
+
+\renewcommand{\sfdefault}{phv}
+\renewcommand{\rmdefault}{ptm}
+\renewcommand{\ttdefault}{pcr}
+
+\setlength{\paperheight}{297mm}
+\setlength{\paperwidth}{210mm}
+\setlength{\textheight}{252mm}
+\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{8mm}
+\setlength{\headheight}{0mm}
+\setlength{\voffset}{-12mm}
+\setlength{\hoffset}{0mm}
+\setlength{\marginparwidth}{0mm}
+\setlength{\parindent}{2mm} %1pc
+\setlength{\topmargin}{-5mm}
+\setlength{\oddsidemargin}{-6mm}
+\setlength{\evensidemargin}{-6mm}
+
+\setlength\normallineskip{1\p@}
+\setlength\parskip{0\p@ \@plus \p@}
+%\def\baselinestretch{0.98}
+
+\def\normalsize{\@setsize\normalsize{12pt}\xpt\@xpt}
+\def\small{\@setsize\small{10pt}\ixpt\@ixpt}
+\def\footnotesize{\@setsize\footnotesize{8pt}\viiipt\@viiipt}
+\def\scriptsize{\@setsize\scriptsize{8pt}\viipt\@viipt}
+\def\tiny{\@setsize\tiny{7pt}\vipt\@vipt}
+\def\large{\@setsize\large{14pt}\xiipt\@xiipt}
+\def\Large{\@setsize\Large{16pt}\xivpt\@xivpt}
+\def\LARGE{\@setsize\LARGE{20pt}\xviipt\@xviipt}
+\def\huge{\@setsize\huge{23pt}\xxpt\@xxpt}
+\def\Huge{\@setsize\Huge{28pt}\xxvpt\@xxvpt}
+
+\pagestyle{empty}
+
+\def\abstract{
+  \begin{center}{
+  \bf ABSTRACT
+  }
+  \end{center}
+}
+\def\endabstract{\par}
+
+\flushbottom

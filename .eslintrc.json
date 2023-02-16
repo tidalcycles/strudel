@@ -9,8 +9,9 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": [],
+  "plugins": ["import"],
   "rules": {
-    "no-unused-vars": ["warn", { "destructuredArrayIgnorePattern": ".", "ignoreRestSiblings": false }]
+    "no-unused-vars": ["warn", { "destructuredArrayIgnorePattern": ".", "ignoreRestSiblings": false }],
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
   }
 }

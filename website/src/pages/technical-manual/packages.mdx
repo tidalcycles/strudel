@@ -1,0 +1,79 @@
+---
+title: Strudel Packages
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+
+## Strudel Packages
+
+The [strudel repo](github.com/tidalcycles/strudel) is organized into packages, using [npm workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces).
+Publishing packages is done with [lerna](https://lerna.js.org/).
+
+There are different packages for different purposes. They..
+
+- split up the code into smaller chunks
+- can be selectively used to implement some sort of time based system
+
+[See the latest published packages on npm](https://www.npmjs.com/search?q=%40strudel.cycles).
+
+### Important bits
+
+- The [root package.json](https://github.com/tidalcycles/strudel/blob/main/package.json) specifies `packages/*` as `workspaces`
+- Each folder in `packages` comes with its own `package.json`, defining a package name of the format `@strudel.cycles/<name>`
+- Running `npm i` from the root folder will symlink all packages to the `node_modules` folder, e.g. `node_modules/@strudel.cycles/core` symlinks `packages/core`
+- These symlinks allow importing the packages with their package name, instead of a relative path, e.g. `import { seq } from '@strudel.cycles/core'`, instead of `import { seq } from '../core/`.
+  This works because the [bare module import](https://vitejs.dev/guide/features.html#npm-dependency-resolving-and-pre-bundling) `@strudel.cycles/core` is resolved to `node_modules/@strudel.cycles/core`.
+  In a project that installs the published packages from npm, these imports will still work, whereas relative ones might not.
+- When a strudel package is importing from another strudel package, the package that is imported from should be listed in the `dependencies` field of the `package.json`.
+  For example, [@strudel.cycles/mini lists `@strudel.cycles/core` as a dependency](https://github.com/tidalcycles/strudel/blob/main/packages/mini/package.json).
+- In development, files in any package can be changed and saved to instantly update the dev server via [hot module replacement](https://vitejs.dev/guide/features.html#hot-module-replacement)
+- To publish packages, `npx lerna publish` will check which packages were changed since the last publish and publish only those.
+  The version numbers in the dependencies of each packages will be updated automatically to the latest version.
+
+### Building & Publishing
+
+Currently, all packages are only published as ESM with vite flavour.
+To build standardized ESM and CJS files, a `vite.config.js` like that is needed:
+
+```js
+import { defineConfig } from 'vite';
+import { dependencies } from './package.json';
+import { resolve } from 'path';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [],
+  build: {
+    lib: {
+      entry: resolve(__dirname, 'index.mjs'),
+      formats: ['es', 'cjs'],
+      fileName: (ext) => ({ es: 'index.mjs', cjs: 'index.js' }[ext]),
+    },
+    rollupOptions: {
+      external: [...Object.keys(dependencies)],
+    },
+    target: 'esnext',
+  },
+});
+```
+
+This will build `index.mjs` (ESM) and `index.js` (CJS) to the dist folder.
+
+### What's the main file?
+
+Currently, each package uses the unbundled `index.mjs` as its main file, which must change for the published version.
+There are 2 ways to handle this:
+
+1. `main` = `dist/index.js`, `module` = `dist/index.mjs`. The built files are used. This means that changing a source file won't take effect in the dev server without a rebuild.
+2. Use different `package.json` files for dev vs publish. So the unbuilt `index.mjs` could be used in dev, while the built files can be used when publishing.
+
+Option 1 could be done with [workspace watching](https://lerna.js.org/docs/features/workspace-watching), although it might make the dev server less snappy..
+Option 2 can be done by [publishing just the dist folder and copying over the `package.json` file](https://stackoverflow.com/questions/37862712/how-to-publish-contents-only-of-a-specific-folder).
+Sadly, [this does not fit into how lerna works](https://github.com/lerna/lerna/issues/91).
+
+https://github.com/changesets/changesets
+
+https://turbo.build/repo/docs/handbook/publishing-packages/versioning-and-publishing
+
+https://pnpm.io/workspaces

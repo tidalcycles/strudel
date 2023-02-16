@@ -111,7 +111,9 @@ let sampleCache = { current: undefined };
 
 /**
  * Loads a collection of samples to use with `s`
- *
+ * @example
+ * samples('github:tidalcycles/Dirt-Samples/master');
+ * s("[bd ~]*2, [~ hh]*2, ~ sd")
  * @example
  * samples({
  *  bd: '808bd/BD0000.WAV',
@@ -124,7 +126,8 @@ let sampleCache = { current: undefined };
 export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
   if (typeof sampleMap === 'string') {
     if (sampleMap.startsWith('github:')) {
-      const [_, path] = sampleMap.split('github:');
+      let [_, path] = sampleMap.split('github:');
+      path = path.endsWith('/') ? path.slice(0, -1) : path;
       sampleMap = `https://raw.githubusercontent.com/${path}/strudel.json`;
     }
     if (typeof fetch !== 'function') {

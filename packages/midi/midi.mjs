@@ -11,10 +11,14 @@ import { getAudioContext } from '@strudel.cycles/webaudio';
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
 
+function supportsMidi() {
+  return typeof navigator.requestMIDIAccess === 'function';
+}
+
 export function enableWebMidi(options = {}) {
   const { onReady, onConnected, onDisconnected } = options;
 
-  if (typeof navigator.requestMIDIAccess !== 'function') {
+  if (!supportsMidi()) {
     throw new Error('Your Browser does not support WebMIDI.');
   }
   return new Promise((resolve, reject) => {
@@ -42,23 +46,43 @@ export function enableWebMidi(options = {}) {
 // const outputByName = (name: string) => WebMidi.getOutputByName(name);
 const outputByName = (name) => WebMidi.getOutputByName(name);
 
+let midiReady;
+
+// output?: string | number, outputs: typeof WebMidi.outputs
+function getDevice(output, outputs) {
+  if (!outputs.length) {
+    throw new Error(`🔌 No MIDI devices found. Connect a device or enable IAC Driver.`);
+  }
+  if (typeof output === 'number') {
+    return outputs[output];
+  }
+  if (typeof output === 'string') {
+    return outputByName(output);
+  }
+  return outputs[0];
+}
+
 // Pattern.prototype.midi = function (output: string | number, channel = 1) {
-Pattern.prototype.midi = async function (output, channel = 1) {
-  await enableWebMidi({
+Pattern.prototype.midi = function (output, channel = 1) {
+  if (!supportsMidi()) {
+    throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
+  }
+  /* await */ enableWebMidi({
     onConnected: ({ outputs }) =>
       logger(`Midi device connected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`),
     onDisconnected: ({ outputs }) =>
       logger(`Midi device disconnected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`),
     onReady: ({ outputs }) => {
-      const chosenOutput = output ?? outputs[0];
+      const device = getDevice(output, outputs);
       const otherOutputs = outputs
-        .filter((o) => o.name !== chosenOutput.name)
+        .filter((o) => o.name !== device.name)
         .map((o) => `'${o.name}'`)
         .join(' | ');
-      logger(`Midi connected! Using "${chosenOutput.name}". ${otherOutputs ? `Also available: ${otherOutputs}` : ''}`);
+      midiReady = true;
+      logger(`Midi connected! Using "${device.name}". ${otherOutputs ? `Also available: ${otherOutputs}` : ''}`);
     },
   });
-  if (isPattern(output?.constructor?.name)) {
+  if (isPattern(output)) {
     throw new Error(
       `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
         WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
@@ -71,20 +95,10 @@ Pattern.prototype.midi = async function (output, channel = 1) {
     if (!isNote(note)) {
       throw new Error('not a note: ' + note);
     }
-    if (!WebMidi.enabled) {
-      throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
+    if (!midiReady) {
+      return;
     }
-    if (!WebMidi.outputs.length) {
-      throw new Error(`🔌 No MIDI devices found. Connect a device or enable IAC Driver.`);
-    }
-    let device;
-    if (typeof output === 'number') {
-      device = WebMidi.outputs[output];
-    } else if (typeof output === 'string') {
-      device = outputByName(output);
-    } else {
-      device = WebMidi.outputs[0];
-    }
+    const device = getDevice(output, WebMidi.outputs);
     if (!device) {
       throw new Error(
         `🔌 MIDI device '${output ? output : ''}' not found. Use one of ${WebMidi.outputs

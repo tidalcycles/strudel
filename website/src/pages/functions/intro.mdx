@@ -1,0 +1,73 @@
+---
+title: JavaScript API
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Functional JavaScript API
+
+While the mini notation is powerful on its own, there is much more to discover.
+Internally, the mini notation will expand to use the actual functional JavaScript API.
+
+For example, this Pattern in Mini Notation:
+
+<MiniRepl client:only="react" tune={`note("c3 eb3 g3")`} />
+
+is equivalent to this Pattern without Mini Notation:
+
+<MiniRepl client:only="react" tune={`note(seq(c3, eb3, g3))`} />
+
+Similarly, there is an equivalent function for every aspect of the mini notation.
+
+Which representation to use is a matter of context. As a rule of thumb, you can think of the JavaScript API
+to fit better for the larger context, while mini notation is more practical for individiual rhythms.
+
+## Limits of Mini Notation
+
+While the Mini Notation is a powerful way to write rhythms shortly, it also has its limits. Take this example:
+
+<MiniRepl
+  client:idle
+  tune={`stack(
+  note("c2 eb2(3,8)").s('sawtooth').cutoff(800),
+  s("bd,~ sd,hh*4")
+)`}
+/>
+
+Here, we are using mini notation for the individual rhythms, while using the function `stack` to mix them.
+While stack is also available as `,` in mini notation, we cannot use it here, because we have different types of sounds.
+
+## Combining Patterns
+
+You can freely mix JS patterns, mini patterns and values! For example, this pattern:
+
+<MiniRepl
+  client:idle
+  tune={`cat(
+  stack(g3,b3,e4),
+  stack(a3,c3,e4),
+  stack(b3,d3,fs4),
+  stack(b3,e4,g4)
+).note()`}
+/>
+
+...is equivalent to:
+
+<MiniRepl
+  client:idle
+  tune={`cat(
+  "g3,b3,e4",
+  "a3,c3,e4",
+  "b3,d3,f#4",
+  "b3,e4,g4"
+).note()`}
+/>
+
+... as well as:
+
+<MiniRepl client:only="react" tune={`note("<[g3,b3,e4] [a3,c3,e4] [b3,d3,f#4] [b3,e4,g4]>")`} />
+
+While mini notation is almost always shorter, it only has a handful of modifiers: \* / ! @.
+When using JS patterns, there is a lot more you can do.

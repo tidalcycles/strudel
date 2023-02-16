@@ -33,9 +33,12 @@ describe('isNote', () => {
       expect(isNote(note)).toBe(true);
     });
   });
+  it('should recognize notes without octave', () => {
+    expect(isNote('C')).toBe(true);
+    expect(isNote('Bb')).toBe(true);
+  });
   it('should not recognize invalid notes', () => {
     expect(isNote('H5')).toBe(false);
-    expect(isNote('C')).toBe(false);
     expect(isNote('X')).toBe(false);
     expect(isNote(1)).toBe(false);
   });
@@ -189,6 +192,7 @@ describe('parseNumeral', () => {
     expect(parseNumeral(1.5)).toBe(1.5);
   });
   it('should parse notes', () => {
+    expect(parseNumeral('c')).toBe(48);
     expect(parseNumeral('c4')).toBe(60);
     expect(parseNumeral('c#4')).toBe(61);
     expect(parseNumeral('db4')).toBe(61);
