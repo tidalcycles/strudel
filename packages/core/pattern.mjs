@@ -44,19 +44,17 @@ export function composify(func) {
       Object.defineProperty(func, name, getter);
     }
     func.__composified = true;
+    composifiedRegistry.push(func);
+  } else {
+    console.log('attempt at multi-composifying');
   }
-  composifiedRegistry.push(func);
   return func;
 }
 
 export function registerMethod(name, addAlignments = false, addControls = false) {
-  const method = function (...args) {
-    const func = this;
-    const composed = (pat) => func(pat)[name](...args);
-    return composify(composed);
-  };
-
   if (addAlignments || addControls) {
+    // This method needs to make its 'this' object available to chained alignments and/or
+    // control parameters, so it has to be implemented as a getter
     const getter = {
       get: function () {
         const func = this;
@@ -90,14 +88,28 @@ export function registerMethod(name, addAlignments = false, addControls = false)
         return wrapped;
       },
     };
-    getterRegistry.push([name, getter]);
-  } else {
-    methodRegistry.push([name, method]);
-  }
 
-  // Add to functions already 'composified'
-  for (var composified of composifiedRegistry) {
-    composified[name] = method;
+    getterRegistry.push([name, getter]);
+
+    // Add to functions already 'composified'
+    for (var composified of composifiedRegistry) {
+      Object.defineProperty(composified, name, getter);
+    }
+  } else {
+    // No chained alignments/controls needed, so we can just add as a plain method,
+    // probably more efficient this way?
+    const method = function (...args) {
+      const func = this;
+      const composed = (pat) => func(pat)[name](...args);
+      return composify(composed);
+    };
+
+    methodRegistry.push([name, method]);
+
+    // Add to functions already 'composified'
+    for (var composified of composifiedRegistry) {
+      composified[name] = method;
+    }
   }
 
   Hitch.prototype[name] = function (...args) {
