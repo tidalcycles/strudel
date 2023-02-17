@@ -10,14 +10,14 @@
   opacity: 0.5;
 }
 
-.cm-content {
+#code .cm-content {
   padding-top: 12px !important;
   padding-left: 8px !important;
 }
 
-.cm-scroller {
+#code .cm-scroller {
   padding-bottom: 50vh;
 }
-.cm-line > * {
+#code .cm-line > * {
   background: var(--lineBackground);
 }

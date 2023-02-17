@@ -82,12 +82,34 @@ Please report any problems you've had with the setup instructions!
 ## Code Style
 
 To make sure the code changes only where it should, we are using prettier to unify the code style.
+
+- You can format all files at once by running `pnpm prettier` from the project root
+- Run `pnpm format-check` from the project root to check if all files are well formatted
+
 If you use VSCode, you can
 
 1. install [the prettier extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 2. open command palette and run "Format Document With..."
 3. Choose "Configure Default Formatter..."
 4. Select prettier
+
+## ESLint
+
+To prevent unwanted runtime errors, this project uses [eslint](https://eslint.org/).
+
+- You can check for lint errors by running `pnpm lint`
+
+There are also eslint extensions / plugins for most editors.
+
+## Running Tests
+
+- Run all tests with `pnpm test`
+- Run all tests with UI using `pnpm test-ui`
+
+## Running all CI Checks
+
+When opening a PR, the CI runner will automatically check the code style and eslint, as well as run all tests.
+You can run the same check with `pnpm check`
 
 ## Package Workflow
 
