@@ -8,6 +8,7 @@ import './style.css';
 import { useCallback } from 'react';
 import { autocompletion } from '@codemirror/autocomplete';
 import { strudelAutocomplete } from './Autocomplete';
+import { vim } from '@replit/codemirror-vim';
 
 export const setFlash = StateEffect.define();
 const flashField = StateField.define({
@@ -84,6 +85,7 @@ const highlightField = StateField.define({
 
 const extensions = [
   javascript(),
+  vim(),
   highlightField,
   flashField,
   // javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
