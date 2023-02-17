@@ -207,7 +207,6 @@ export function parseFractional(numOrString) {
 
 export const fractionalArgs = (fn) => mapArgs(fn, parseFractional);
 
-
 export const splitAt = function (index, value) {
   return [value.slice(0, index), value.slice(index)];
 };
