@@ -76,7 +76,7 @@ export function Footer({ context }) {
           <FooterTab name="samples" />
           <FooterTab name="console" />
           <FooterTab name="reference" />
-          <FooterTab name="theme" />
+          <FooterTab name="settings" />
         </div>
         {activeFooter !== '' && (
           <button onClick={() => setActiveFooter('')} className="text-foreground" aria-label="Close Panel">
@@ -89,113 +89,11 @@ export function Footer({ context }) {
           className="text-white font-mono text-sm h-[360px] flex-none overflow-auto max-w-full relative"
           ref={footerContent}
         >
-          {activeFooter === 'intro' && (
-            <div className="prose dark:prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
-              <h3>
-                <span className={cx('animate-spin inline-block select-none')}>🌀</span> welcome
-              </h3>
-              <p>
-                You have found <span className="underline">strudel</span>, a new live coding platform to write dynamic
-                music pieces in the browser! It is free and open-source and made for beginners and experts alike. To get
-                started:
-                <br />
-                <br />
-                <span className="underline">1. hit play</span> - <span className="underline">2. change something</span>{' '}
-                - <span className="underline">3. hit update</span>
-                <br />
-                If you don't like what you hear, try <span className="underline">shuffle</span>!
-              </p>
-              <p>
-                To learn more about what this all means, check out the{' '}
-                <a href="./learn/getting-started" target="_blank">
-                  interactive tutorial
-                </a>
-                . Also feel free to join the{' '}
-                <a href="https://discord.com/invite/HGEdXmRkzT" target="_blank">
-                  tidalcycles discord channel
-                </a>{' '}
-                to ask any questions, give feedback or just say hello.
-              </p>
-              <h3>about</h3>
-              <p>
-                strudel is a JavaScript version of{' '}
-                <a href="tidalcycles.org/" target="_blank">
-                  tidalcycles
-                </a>
-                , which is a popular live coding language for music, written in Haskell. You can find the source code at{' '}
-                <a href="https://github.com/tidalcycles/strudel" target="_blank">
-                  github
-                </a>
-                . Please consider to{' '}
-                <a href="https://opencollective.com/tidalcycles" target="_blank">
-                  support this project
-                </a>{' '}
-                to ensure ongoing development 💖
-              </p>
-            </div>
-          )}
-          {activeFooter === 'console' && (
-            <div className="break-all px-4 dark:text-white text-stone-900">
-              {log.map((l, i) => {
-                const message = linkify(l.message);
-                return (
-                  <div
-                    key={l.id}
-                    className={cx(l.type === 'error' && 'text-red-500', l.type === 'highlight' && 'text-highlight')}
-                  >
-                    <span dangerouslySetInnerHTML={{ __html: message }} />
-                    {l.count ? ` (${l.count})` : ''}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-          {activeFooter === 'samples' && (
-            <div className="break-normal w-full px-4 dark:text-white text-stone-900">
-              <span>{loadedSamples.length} banks loaded:</span>
-              {loadedSamples.map(([name, samples]) => (
-                <span key={name} className="cursor-pointer hover:text-tertiary" onClick={() => {}}>
-                  {' '}
-                  {name}(
-                  {Array.isArray(samples)
-                    ? samples.length
-                    : typeof samples === 'object'
-                    ? Object.values(samples).length
-                    : 1}
-                  ){' '}
-                </span>
-              ))}
-            </div>
-          )}
+          {activeFooter === 'intro' && <WelcomeTab />}
+          {activeFooter === 'console' && <ConsoleTab log={log} />}
+          {activeFooter === 'samples' && <SamplesTab />}
           {activeFooter === 'reference' && <Reference />}
-          {activeFooter === 'theme' && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 p-2">
-              {Object.entries(themes).map(([k, t]) => (
-                <div
-                  key={k}
-                  className={cx(
-                    'border-2 border-transparent cursor-pointer p-4 bg-background bg-opacity-25 rounded-md',
-                    theme === k ? '!border-foreground' : '',
-                  )}
-                  onClick={() => {
-                    setTheme(k);
-                    document.dispatchEvent(
-                      new CustomEvent('strudel-theme', {
-                        detail: k,
-                      }),
-                    );
-                  }}
-                >
-                  <div className="mb-2 w-full text-center text-foreground">{k}</div>
-                  <div className="flex justify-stretch overflow-hidden rounded-md">
-                    {themeColors(t).map((c, i) => (
-                      <div key={i} className="grow h-6" style={{ background: c }} />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          {activeFooter === 'settings' && <SettingsTab theme={theme} setTheme={setTheme} />}
         </div>
       )}
     </footer>
@@ -225,4 +123,119 @@ function linkify(inputText) {
   replacedText = replacedText.replace(replacePattern3, '<a class="underline" href="mailto:$1">$1</a>');
 
   return replacedText;
+}
+
+function WelcomeTab() {
+  return (
+    <div className="prose dark:prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
+      <h3>
+        <span className={cx('animate-spin inline-block select-none')}>🌀</span> welcome
+      </h3>
+      <p>
+        You have found <span className="underline">strudel</span>, a new live coding platform to write dynamic music
+        pieces in the browser! It is free and open-source and made for beginners and experts alike. To get started:
+        <br />
+        <br />
+        <span className="underline">1. hit play</span> - <span className="underline">2. change something</span> -{' '}
+        <span className="underline">3. hit update</span>
+        <br />
+        If you don't like what you hear, try <span className="underline">shuffle</span>!
+      </p>
+      <p>
+        To learn more about what this all means, check out the{' '}
+        <a href="./learn/getting-started" target="_blank">
+          interactive tutorial
+        </a>
+        . Also feel free to join the{' '}
+        <a href="https://discord.com/invite/HGEdXmRkzT" target="_blank">
+          tidalcycles discord channel
+        </a>{' '}
+        to ask any questions, give feedback or just say hello.
+      </p>
+      <h3>about</h3>
+      <p>
+        strudel is a JavaScript version of{' '}
+        <a href="tidalcycles.org/" target="_blank">
+          tidalcycles
+        </a>
+        , which is a popular live coding language for music, written in Haskell. You can find the source code at{' '}
+        <a href="https://github.com/tidalcycles/strudel" target="_blank">
+          github
+        </a>
+        . Please consider to{' '}
+        <a href="https://opencollective.com/tidalcycles" target="_blank">
+          support this project
+        </a>{' '}
+        to ensure ongoing development 💖
+      </p>
+    </div>
+  );
+}
+
+function ConsoleTab({ log }) {
+  return (
+    <div className="break-all px-4 dark:text-white text-stone-900">
+      {log.map((l, i) => {
+        const message = linkify(l.message);
+        return (
+          <div
+            key={l.id}
+            className={cx(l.type === 'error' && 'text-red-500', l.type === 'highlight' && 'text-highlight')}
+          >
+            <span dangerouslySetInnerHTML={{ __html: message }} />
+            {l.count ? ` (${l.count})` : ''}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function SamplesTab() {
+  return (
+    <div className="break-normal w-full px-4 dark:text-white text-stone-900">
+      <span>{loadedSamples.length} banks loaded:</span>
+      {loadedSamples.map(([name, samples]) => (
+        <span key={name} className="cursor-pointer hover:text-tertiary" onClick={() => {}}>
+          {' '}
+          {name}(
+          {Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1}){' '}
+        </span>
+      ))}
+    </div>
+  );
+}
+function SettingsTab({ theme, setTheme }) {
+  /*<input type="checkbox" value={vimMode} onChange={(checked)=>{
+              console.log('vim mode toggle', checked)
+              }}/>*/
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 p-2">
+      {Object.entries(themes).map(([k, t]) => (
+        <div
+          key={k}
+          className={cx(
+            'border-2 border-transparent cursor-pointer p-4 bg-background bg-opacity-25 rounded-md',
+            theme === k ? '!border-foreground' : '',
+          )}
+          onClick={() => {
+            setTheme(k);
+            document.dispatchEvent(
+              new CustomEvent('strudel-theme', {
+                detail: k,
+              }),
+            );
+          }}
+        >
+          <div className="mb-2 w-full text-center text-foreground">{k}</div>
+          <div className="flex justify-stretch overflow-hidden rounded-md">
+            {themeColors(t).map((c, i) => (
+              <div key={i} className="grow h-6" style={{ background: c }} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
