@@ -2419,7 +2419,6 @@ const _loopAt = function (factor, pat, cps = 1) {
     .slow(factor);
 };
 
-
 const slice = register('slice', function (n, o, pat) {
   // If it's not an object, assume it's a string and make it a 's' control parameter
   if (!o instanceof Object) {
