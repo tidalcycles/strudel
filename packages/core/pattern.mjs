@@ -2421,15 +2421,15 @@ const _loopAt = function (factor, pat, cps = 1) {
 
 const slice = register('slice', function (n, o, pat) {
   // If it's not an object, assume it's a string and make it a 's' control parameter
-  if (!o instanceof Object) {
-    o = { s: str };
+  if (!(o instanceof Object)) {
+    o = { s: o };
   }
   return pat.fmap((i) => {
     const o2 = {
       begin: i / n,
       end: (i + 1) / n,
     };
-    return { ...str, ...o2 };
+    return { ...o, ...o2 };
   });
 });
 
