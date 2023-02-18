@@ -15,3 +15,4 @@ export * from './packages/transpiler/index.mjs';
 export * from './packages/webaudio/index.mjs';
 export * from './packages/webdirt/index.mjs';
 export * from './packages/xen/index.mjs';
+export * from './packages/wam/index.mjs';

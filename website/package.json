@@ -31,6 +31,7 @@
     "@strudel.cycles/soundfonts": "workspace:*",
     "@strudel.cycles/tonal": "workspace:*",
     "@strudel.cycles/transpiler": "workspace:*",
+    "@strudel.cycles/wam": "workspace:*",
     "@strudel.cycles/webaudio": "workspace:*",
     "@strudel.cycles/xen": "workspace:*",
     "@supabase/supabase-js": "^1.35.3",
