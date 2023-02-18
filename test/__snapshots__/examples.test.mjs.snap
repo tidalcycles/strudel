@@ -4231,6 +4231,48 @@ exports[`runs examples > example "vowel" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "weave" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | pan:0.015625 s:bd ]",
+  "[ 3/8 → 1/2 | pan:0.109375 s:bd ]",
+  "[ 3/4 → 7/8 | pan:0.203125 s:bd ]",
+  "[ 1/1 → 9/8 | pan:0.265625 s:bd ]",
+  "[ 11/8 → 3/2 | pan:0.359375 s:bd ]",
+  "[ 7/4 → 15/8 | pan:0.453125 s:bd ]",
+  "[ 2/1 → 17/8 | pan:0.515625 s:bd ]",
+  "[ 19/8 → 5/2 | pan:0.609375 s:bd ]",
+  "[ 11/4 → 23/8 | pan:0.703125 s:bd ]",
+  "[ 3/1 → 25/8 | pan:0.765625 s:bd ]",
+  "[ 27/8 → 7/2 | pan:0.859375 s:bd ]",
+  "[ 15/4 → 31/8 | pan:0.953125 s:bd ]",
+  "[ 1/2 → 1/1 | pan:0.6875 s:sd ]",
+  "[ 3/2 → 2/1 | pan:0.9375 s:sd ]",
+  "[ 5/2 → 3/1 | pan:0.1875 s:sd ]",
+  "[ 7/2 → 4/1 | pan:0.4375 s:sd ]",
+]
+`;
+
+exports[`runs examples > example "weave" example index 1 1`] = `
+[
+  "[ 0/1 → 1/8 | n:0 s:bd ]",
+  "[ 3/8 → 1/2 | n:0 s:bd ]",
+  "[ 3/4 → 7/8 | n:0 s:bd ]",
+  "[ 1/1 → 9/8 | n:1 s:bd ]",
+  "[ 11/8 → 3/2 | n:1 s:bd ]",
+  "[ 7/4 → 15/8 | n:1 s:bd ]",
+  "[ 2/1 → 17/8 | n:2 s:bd ]",
+  "[ 19/8 → 5/2 | n:2 s:bd ]",
+  "[ 11/4 → 23/8 | n:2 s:bd ]",
+  "[ 3/1 → 25/8 | n:3 s:bd ]",
+  "[ 27/8 → 7/2 | n:3 s:bd ]",
+  "[ 15/4 → 31/8 | n:3 s:bd ]",
+  "[ 1/2 → 1/1 | n:4 s:sd ]",
+  "[ 3/2 → 2/1 | n:5 s:sd ]",
+  "[ 5/2 → 3/1 | n:6 s:sd ]",
+  "[ 7/2 → 4/1 | n:7 s:sd ]",
+]
+`;
+
 exports[`runs examples > example "webdirt" example index 0 1`] = `
 [
   "[ 0/1 → 1/8 | s:bd n:0 ]",

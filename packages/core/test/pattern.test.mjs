@@ -981,4 +981,9 @@ describe('Pattern', () => {
       //      sameFirst(s('bd').apply(set.squeeze.n(3).fast(2)), s('bd').set.squeeze.n(3).fast(2));
     });
   });
+  describe('weave', () => {
+    it('Can distribute patterns along a pattern', () => {
+      sameFirst(n(0, 1).weave(2, s('bd', silence), s(silence, 'sd')), sequence(s('bd').n(0), s('sd').n(1)));
+    });
+  });
 });
