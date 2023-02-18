@@ -2419,6 +2419,41 @@ const _loopAt = function (factor, pat, cps = 1) {
     .slow(factor);
 };
 
+
+const slice = register('slice', function (n, o, pat) {
+  // If it's not an object, assume it's a string and make it a 's' control parameter
+  if (!o instanceof Object) {
+    o = { s: str };
+  }
+  return pat.fmap((i) => {
+    const o2 = {
+      begin: i / n,
+      end: (i + 1) / n,
+    };
+    return { ...str, ...o2 };
+  });
+});
+
+const splice = register('splice', function (n, o1, pat) {
+  // If it's not an object, assume it's a string and make it a 's' control parameter
+  if (!(o1 instanceof Object)) {
+    o1 = { s: o1 };
+  }
+  let sz = 1 / n;
+
+  return pat.withHap((ev) => {
+    const d = sz / ev.whole.duration;
+    const i = ev.value;
+    const o2 = {
+      begin: i / n,
+      end: (i + 1) / n,
+      speed: d * (o1.speed || 1),
+      unit: 'c',
+    };
+    return ev.withValue(() => ({ ...o1, ...o2 }));
+  });
+});
+
 const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
   return _loopAt(factor, pat, 1);
 });
