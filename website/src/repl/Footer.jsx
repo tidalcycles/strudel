@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { loadedSamples } from './Repl';
 import { Reference } from './Reference';
-import { themes, themeColors } from './themes.mjs';
+import { themes } from './themes.mjs';
 import useStore from '../useStore.mjs';
 
 export function Footer({ context }) {
@@ -209,7 +209,7 @@ function SamplesTab() {
 
 function ButtonGroup({ value, onChange, items }) {
   return (
-    <div className="flex grow">
+    <div className="flex grow border border-foreground rounded-md">
       {Object.entries(items).map(([key, label], i, arr) => (
         <button
           key={key}
@@ -282,7 +282,7 @@ function SettingsTab() {
   const { theme, keybindings, fontSize } = state;
   return (
     <div className="text-foreground p-4 space-y-4">
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormItem label="Theme">
           <SelectInput
             options={themeOptions}

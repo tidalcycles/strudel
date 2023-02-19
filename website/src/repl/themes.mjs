@@ -31,9 +31,17 @@ import {
 } from '@uiw/codemirror-themes-all';
 
 import strudelTheme from '@strudel.cycles/react/src/themes/strudel-theme';
+import bluescreen, { settings as bluescreenSettings } from '@strudel.cycles/react/src/themes/bluescreen';
+import blackscreen, { settings as blackscreenSettings } from '@strudel.cycles/react/src/themes/blackscreen';
+import whitescreen, { settings as whitescreenSettings } from '@strudel.cycles/react/src/themes/whitescreen';
+import gameboy, { settings as gameboySettings } from '@strudel.cycles/react/src/themes/gameboy';
 
 export const themes = {
   strudelTheme,
+  bluescreen,
+  blackscreen,
+  whitescreen,
+  gameboy,
   abcdef,
   androidstudio,
   atomone,
@@ -82,6 +90,10 @@ export const settings = {
     // gutterForeground: '#8a919966',
     gutterForeground: '#8a919966',
   },
+  bluescreen: bluescreenSettings,
+  blackscreen: blackscreenSettings,
+  whitescreen: whitescreenSettings,
+  gameboy: gameboySettings,
   abcdef: {
     background: '#0f0f0f',
     lineBackground: '#0f0f0f50',

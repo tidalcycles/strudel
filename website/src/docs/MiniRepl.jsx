@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { prebake } from '../repl/prebake';
 import { themes, settings } from '../repl/themes.mjs';
 import './MiniRepl.css';
-
-const theme = localStorage.getItem('strudel-theme') || 'strudelTheme';
+import useStore from '../useStore.mjs';
 
 let modules;
 if (typeof window !== 'undefined') {
@@ -29,6 +28,9 @@ if (typeof window !== 'undefined') {
 
 export function MiniRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
   const [Repl, setRepl] = useState();
+  const {
+    state: { theme },
+  } = useStore();
   useEffect(() => {
     // we have to load this package on the client
     // because codemirror throws an error on the server
