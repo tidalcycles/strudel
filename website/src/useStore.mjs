@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 // import { useEvent } from '@strudel.cycles/react';
-import * as Store from '../public/store.mjs';
+import * as Store from './store.mjs';
 import {} from 'react';
 
 function useStore() {
