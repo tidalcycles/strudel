@@ -58,15 +58,15 @@ const highlightField = StateField.define({
             haps
               .map((hap) =>
                 (hap.context.locations || []).map(({ start, end }) => {
-                  const color = hap.context.color || e.value.color || '#FFCA28';
+                  // const color = hap.context.color || e.value.color || '#FFCA28';
                   let from = tr.newDoc.line(start.line).from + start.column;
                   let to = tr.newDoc.line(end.line).from + end.column;
                   const l = tr.newDoc.length;
                   if (from > l || to > l) {
                     return; // dont mark outside of range, as it will throw an error
                   }
-                  // const mark = Decoration.mark({ attributes: { style: `outline: 1px solid ${color}` } });
-                  const mark = Decoration.mark({ attributes: { style: `outline: 1.5px solid ${color};` } });
+                  //const mark = Decoration.mark({ attributes: { style: `outline: 2px solid ${color};` } });
+                  const mark = Decoration.mark({ attributes: { class: `outline outline-2 outline-foreground` } });
                   return mark.range(from, to);
                 }),
               )

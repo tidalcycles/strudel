@@ -183,7 +183,6 @@ export function Repl({ embedded = false }) {
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
     getTime: () => scheduler.now(),
-    color: themeSettings?.foreground,
   });
 
   //
@@ -273,7 +272,7 @@ export function Repl({ embedded = false }) {
     <ReplContext.Provider value={context}>
       <div
         className={cx(
-          'h-screen flex flex-col',
+          'h-full flex flex-col',
           //        'bg-gradient-to-t from-green-900 to-slate-900', //
         )}
       >

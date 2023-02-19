@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { setHighlights } from '../components/CodeMirror6';
 
-function useHighlighting({ view, pattern, active, getTime, color }) {
+function useHighlighting({ view, pattern, active, getTime }) {
   const highlights = useRef([]);
   const lastEnd = useRef(0);
   useEffect(() => {
@@ -19,7 +19,7 @@ function useHighlighting({ view, pattern, active, getTime, color }) {
             highlights.current = highlights.current.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
             highlights.current = highlights.current.concat(haps); // add potential new onsets
-            view.dispatch({ effects: setHighlights.of({ haps: highlights.current, color }) }); // highlight all still active + new active haps
+            view.dispatch({ effects: setHighlights.of({ haps: highlights.current }) }); // highlight all still active + new active haps
           } catch (err) {
             view.dispatch({ effects: setHighlights.of({ haps: [] }) });
           }
@@ -33,7 +33,7 @@ function useHighlighting({ view, pattern, active, getTime, color }) {
         view.dispatch({ effects: setHighlights.of({ haps: [] }) });
       }
     }
-  }, [pattern, active, view, color]);
+  }, [pattern, active, view]);
 }
 
 export default useHighlighting;
