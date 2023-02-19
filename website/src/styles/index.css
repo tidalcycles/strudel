@@ -21,3 +21,8 @@
 :root {
   --app-height: 100vh;
 }
+
+#console-tab,
+#samples-tab {
+  font-family: BigBlueTerminal, monospace;
+}

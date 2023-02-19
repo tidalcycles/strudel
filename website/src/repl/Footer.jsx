@@ -175,7 +175,13 @@ function WelcomeTab() {
 
 function ConsoleTab({ log }) {
   return (
-    <div className="break-all px-4 dark:text-white text-stone-900">
+    <div id="console-tab" className="break-all px-4 dark:text-white text-stone-900">
+      <pre>{`███████╗████████╗██████╗ ██╗   ██╗██████╗ ███████╗██╗     
+██╔════╝╚══██╔══╝██╔══██╗██║   ██║██╔══██╗██╔════╝██║     
+███████╗   ██║   ██████╔╝██║   ██║██║  ██║█████╗  ██║     
+╚════██║   ██║   ██╔══██╗██║   ██║██║  ██║██╔══╝  ██║     
+███████║   ██║   ██║  ██║╚██████╔╝██████╔╝███████╗███████╗
+╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝`}</pre>
       {log.map((l, i) => {
         const message = linkify(l.message);
         return (
@@ -191,7 +197,7 @@ function ConsoleTab({ log }) {
 
 function SamplesTab() {
   return (
-    <div className="break-normal w-full px-4 dark:text-white text-stone-900">
+    <div id="samples-tab" className="break-normal w-full px-4 dark:text-white text-stone-900">
       <span>{loadedSamples.length} banks loaded:</span>
       {loadedSamples.map(([name, samples]) => (
         <span key={name} className="cursor-pointer hover:opacity-50" onClick={() => {}}>
