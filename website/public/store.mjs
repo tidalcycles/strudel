@@ -1,7 +1,15 @@
 export const storeKey = 'strudel-settings';
+const defaults = {
+  keybindings: 'codemirror',
+  theme: 'strudelTheme',
+  fontSize: 18,
+};
 
 export function get(prop) {
-  const state = JSON.parse(localStorage.getItem(storeKey));
+  let state = {
+    ...defaults,
+    ...JSON.parse(localStorage.getItem(storeKey) || '{}'),
+  };
   if (!prop) {
     return state;
   }

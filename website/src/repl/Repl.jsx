@@ -121,7 +121,7 @@ export function Repl({ embedded = false }) {
 
   const { theme, themeSettings } = useTheme();
   const {
-    state: { vim },
+    state: { keybindings, fontSize },
   } = useStore();
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
@@ -282,7 +282,8 @@ export function Repl({ embedded = false }) {
           <CodeMirror
             theme={themes[theme] || themes.strudelTheme}
             value={code}
-            vimMode={vim}
+            keybindings={keybindings}
+            fontSize={fontSize}
             onChange={handleChangeCode}
             onViewChanged={setView}
             onSelectionChange={handleSelectionChange}

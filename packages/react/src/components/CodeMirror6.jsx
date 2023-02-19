@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 import { autocompletion } from '@codemirror/autocomplete';
 import { strudelAutocomplete } from './Autocomplete';
 import { vim } from '@replit/codemirror-vim';
+import { emacs } from '@replit/codemirror-emacs';
 
 export const setFlash = StateEffect.define();
 const flashField = StateField.define({
@@ -98,7 +99,8 @@ export default function CodeMirror({
   onViewChanged,
   onSelectionChange,
   theme,
-  vimMode,
+  keybindings,
+  fontSize = 18,
   options,
   editorDidMount,
 }) {
@@ -122,9 +124,18 @@ export default function CodeMirror({
     },
     [onSelectionChange],
   );
-  const extensions = useMemo(() => [...staticExtensions, ...(vimMode ? [vim()] : [])], [vimMode]);
+  const extensions = useMemo(() => {
+    let bindings = {
+      vim,
+      emacs,
+    };
+    if (bindings[keybindings]) {
+      return [...staticExtensions, bindings[keybindings]()];
+    }
+    return staticExtensions;
+  }, [keybindings]);
   return (
-    <>
+    <div style={{ fontSize }} className="w-full">
       <_CodeMirror
         value={value}
         theme={theme || strudelTheme}
@@ -133,7 +144,7 @@ export default function CodeMirror({
         onUpdate={handleOnUpdate}
         extensions={extensions}
       />
-    </>
+    </div>
   );
 }
 

@@ -206,34 +206,107 @@ function SamplesTab() {
     </div>
   );
 }
+
+function ButtonGroup({ value, onChange, items }) {
+  return (
+    <div className="flex grow">
+      {Object.entries(items).map(([key, label], i, arr) => (
+        <button
+          key={key}
+          onClick={() => onChange(key)}
+          className={cx(
+            'p-2 grow',
+            i === 0 && 'rounded-l-md',
+            i === arr.length - 1 && 'rounded-r-md',
+            value === key ? 'bg-background' : 'bg-lineHighlight',
+          )}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function SelectInput({ value, options, onChange }) {
+  return (
+    <select
+      className="p-2 bg-background rounded-md text-foreground"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    >
+      {Object.entries(options).map(([k, label]) => (
+        <option key={k} className="bg-background" value={k}>
+          {label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function NumberSlider({ value, onChange, step = 1, ...rest }) {
+  return (
+    <div className="flex space-x-2 gap-1">
+      <input
+        className="p-2 grow"
+        type="range"
+        value={value}
+        step={step}
+        onChange={(e) => onChange(Number(e.target.value))}
+        {...rest}
+      />
+      <input
+        type="number"
+        value={value}
+        step={step}
+        className="w-16 bg-background rounded-md"
+        onChange={(e) => onChange(Number(e.target.value))}
+      />
+    </div>
+  );
+}
+
+function FormItem({ label, children }) {
+  return (
+    <div className="grid gap-2">
+      <label>{label}</label>
+      {children}
+    </div>
+  );
+}
+
+const themeOptions = Object.fromEntries(Object.keys(themes).map((k) => [k, k]));
+
 function SettingsTab() {
   const { state, update } = useStore();
-  const { theme, vim } = state;
+  const { theme, keybindings, fontSize } = state;
   return (
-    <div className="text-foreground grid space-y-4 p-2">
-      <label className="space-x-2">
-        <span>Theme</span>
-        <select
-          className="p-2 bg-background rounded-md text-foreground"
-          value={theme}
-          onChange={(e) => update((current) => ({ ...current, theme: e.target.value }))}
-        >
-          {Object.entries(themes).map(([k, t]) => (
-            <option key={k} className="bg-background">
-              {k}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="space-x-2">
-        <input
-          className="bg-background w-5 h-5 rounded-md"
-          type="checkbox"
-          checked={vim}
-          onChange={(e) => update((current) => ({ ...current, vim: e.target.checked }))}
-        />
-        <span>Vim Mode</span>
-      </label>
+    <div className="text-foreground p-4 space-y-4">
+      <div className="grid grid-cols-2 gap-2">
+        <FormItem label="Theme">
+          <SelectInput
+            options={themeOptions}
+            value={theme}
+            onChange={(theme) => update((current) => ({ ...current, theme }))}
+          />
+        </FormItem>
+        <FormItem label="Font Size">
+          <NumberSlider
+            value={fontSize}
+            onChange={(fontSize) => update((current) => ({ ...current, fontSize }))}
+            min={10}
+            max={40}
+            step={2}
+          />
+        </FormItem>
+      </div>
+      <FormItem label="Keybindings">
+        <ButtonGroup
+          value={keybindings}
+          onChange={(keybindings) => update((current) => ({ ...current, keybindings }))}
+          items={{ codemirror: 'Codemirror', vim: 'Vim', emacs: 'Emacs' }}
+        ></ButtonGroup>
+      </FormItem>
     </div>
   );
 }

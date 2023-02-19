@@ -164,6 +164,7 @@ importers:
       '@codemirror/state': ^6.2.0
       '@codemirror/view': ^6.7.3
       '@lezer/highlight': ^1.1.3
+      '@replit/codemirror-emacs': ^6.0.0
       '@replit/codemirror-vim': ^6.0.6
       '@strudel.cycles/core': workspace:*
       '@strudel.cycles/transpiler': workspace:*
@@ -186,6 +187,7 @@ importers:
       '@codemirror/state': 6.2.0
       '@codemirror/view': 6.7.3
       '@lezer/highlight': 1.1.3
+      '@replit/codemirror-emacs': 6.0.0_cgfc5aojxuwjajwhkrgidrzxoa
       '@replit/codemirror-vim': 6.0.6_a4vbhepr4qhxm5cldqd4jpyase
       '@strudel.cycles/core': link:../core
       '@strudel.cycles/transpiler': link:../transpiler
@@ -3402,6 +3404,20 @@ packages:
     dependencies:
       '@proload/core': 0.3.3
       tsm: 2.3.0
+    dev: false
+
+  /@replit/codemirror-emacs/6.0.0_cgfc5aojxuwjajwhkrgidrzxoa:
+    resolution: {integrity: sha512-zxSDg3UKm7811hjqNtgvK9G0IBtCWf82Idb9nZQo0ldmGl4d9SV7oCSuXQ58NmOG4AV7coD7kgFSZhEqHhyQhA==}
+    peerDependencies:
+      '@codemirror/autocomplete': ^6.0.2
+      '@codemirror/commands': ^6.0.0
+      '@codemirror/search': ^6.0.0
+      '@codemirror/state': ^6.0.1
+      '@codemirror/view': ^6.0.2
+    dependencies:
+      '@codemirror/autocomplete': 6.4.0_a4vbhepr4qhxm5cldqd4jpyase
+      '@codemirror/state': 6.2.0
+      '@codemirror/view': 6.7.3
     dev: false
 
   /@replit/codemirror-vim/6.0.6_a4vbhepr4qhxm5cldqd4jpyase:
