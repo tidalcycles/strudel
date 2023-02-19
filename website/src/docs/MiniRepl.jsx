@@ -47,7 +47,6 @@ export function MiniRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
         punchcard={punchcard}
         canvasHeight={canvasHeight}
         theme={themes[theme]}
-        highlightColor={settings[theme]?.foreground}
       />
     </div>
   ) : (

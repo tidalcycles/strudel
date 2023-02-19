@@ -34,14 +34,14 @@ import strudelTheme from '@strudel.cycles/react/src/themes/strudel-theme';
 import bluescreen, { settings as bluescreenSettings } from '@strudel.cycles/react/src/themes/bluescreen';
 import blackscreen, { settings as blackscreenSettings } from '@strudel.cycles/react/src/themes/blackscreen';
 import whitescreen, { settings as whitescreenSettings } from '@strudel.cycles/react/src/themes/whitescreen';
-import gameboy, { settings as gameboySettings } from '@strudel.cycles/react/src/themes/gameboy';
+import algoboy, { settings as algoboySettings } from '@strudel.cycles/react/src/themes/algoboy';
 
 export const themes = {
   strudelTheme,
   bluescreen,
   blackscreen,
   whitescreen,
-  gameboy,
+  algoboy,
   abcdef,
   androidstudio,
   atomone,
@@ -93,7 +93,7 @@ export const settings = {
   bluescreen: bluescreenSettings,
   blackscreen: blackscreenSettings,
   whitescreen: whitescreenSettings,
-  gameboy: gameboySettings,
+  algoboy: algoboySettings,
   abcdef: {
     background: '#0f0f0f',
     lineBackground: '#0f0f0f50',

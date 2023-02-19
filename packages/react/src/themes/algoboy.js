@@ -8,9 +8,11 @@ export const settings = {
   selectionMatch: '#ffffff26',
   lineHighlight: '#8bac0f',
   lineBackground: '#9bbc0f50',
+  //lineBackground: 'transparent',
   gutterBackground: 'transparent',
   gutterForeground: '#0f380f',
   light: true,
+  fontFamily: 'PressStart, monospace',
 };
 export default createTheme({
   theme: 'light',
