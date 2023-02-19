@@ -25,6 +25,9 @@ module.exports = {
         gutterBorder: 'var(--gutterBorder)',
         lineHighlight: 'var(--lineHighlight)',
       },
+      spacing: {
+        'app-height': 'var(--app-height)',
+      },
       typography(theme) {
         return {
           DEFAULT: {
