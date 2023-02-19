@@ -24,6 +24,7 @@ import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
 import useTheme from '../useTheme';
+import useStore from '../useStore.mjs';
 
 const initialTheme = localStorage.getItem('strudel-theme') || 'strudelTheme';
 
@@ -113,11 +114,15 @@ export const ReplContext = createContext(null);
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
-  const [theme, setTheme] = useState(initialTheme);
   const [lastShared, setLastShared] = useState();
   const [activeFooter, setActiveFooter] = useState('');
   const [isZen, setIsZen] = useState(false);
   const [pending, setPending] = useState(false);
+
+  const { theme, themeSettings } = useTheme();
+  const {
+    state: { vim },
+  } = useStore();
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
@@ -172,15 +177,13 @@ export function Repl({ embedded = false }) {
     ),
   );
 
-  const { settings } = useTheme();
-
   // highlighting
   useHighlighting({
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
     getTime: () => scheduler.now(),
-    color: settings?.foreground,
+    color: themeSettings?.foreground,
   });
 
   //
@@ -263,8 +266,6 @@ export function Repl({ embedded = false }) {
     handleShare,
     isZen,
     setIsZen,
-    theme,
-    setTheme,
   };
   return (
     // bg-gradient-to-t from-blue-900 to-slate-900
@@ -281,6 +282,7 @@ export function Repl({ embedded = false }) {
           <CodeMirror
             theme={themes[theme] || themes.strudelTheme}
             value={code}
+            vimMode={vim}
             onChange={handleChangeCode}
             onViewChanged={setView}
             onSelectionChange={handleSelectionChange}

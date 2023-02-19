@@ -48,7 +48,8 @@ const { strudelTheme } = settings;
 </style>
 {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
 
-<script define:vars={{ settings, strudelTheme }} is:inline>
+<script define:vars={{ settings, strudelTheme }} is:inline type="module">
+  import { watch, get } from './store.mjs';
   const themeStyle = document.createElement('style');
   themeStyle.id = 'strudel-theme';
   document.head.append(themeStyle);
@@ -76,9 +77,7 @@ const { strudelTheme } = settings;
     } else {
       document.documentElement.classList.add('dark');
     }
-    // persist theme name
-    localStorage.setItem('strudel-theme', name || 'strudelTheme');
   }
-  setTheme(localStorage.getItem('strudel-theme'));
-  document.addEventListener('strudel-theme', (e) => setTheme(e.detail));
+  setTheme(get().theme);
+  watch(setTheme, 'theme');
 </script>

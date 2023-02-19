@@ -7,11 +7,12 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { loadedSamples } from './Repl';
 import { Reference } from './Reference';
 import { themes, themeColors } from './themes.mjs';
+import useStore from '../useStore.mjs';
 
 export function Footer({ context }) {
   // const [activeFooter, setActiveFooter] = useState('console');
   // const { activeFooter, setActiveFooter, isZen } = useContext?.(ReplContext);
-  const { activeFooter, setActiveFooter, isZen, theme, setTheme } = context;
+  const { activeFooter, setActiveFooter, isZen } = context;
   const footerContent = useRef();
   const [log, setLog] = useState([]);
 
@@ -93,7 +94,7 @@ export function Footer({ context }) {
           {activeFooter === 'console' && <ConsoleTab log={log} />}
           {activeFooter === 'samples' && <SamplesTab />}
           {activeFooter === 'reference' && <Reference />}
-          {activeFooter === 'settings' && <SettingsTab theme={theme} setTheme={setTheme} />}
+          {activeFooter === 'settings' && <SettingsTab />}
         </div>
       )}
     </footer>
@@ -205,37 +206,34 @@ function SamplesTab() {
     </div>
   );
 }
-function SettingsTab({ theme, setTheme }) {
-  /*<input type="checkbox" value={vimMode} onChange={(checked)=>{
-              console.log('vim mode toggle', checked)
-              }}/>*/
-
+function SettingsTab() {
+  const { state, update } = useStore();
+  const { theme, vim } = state;
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 p-2">
-      {Object.entries(themes).map(([k, t]) => (
-        <div
-          key={k}
-          className={cx(
-            'border-2 border-transparent cursor-pointer p-4 bg-background bg-opacity-25 rounded-md',
-            theme === k ? '!border-foreground' : '',
-          )}
-          onClick={() => {
-            setTheme(k);
-            document.dispatchEvent(
-              new CustomEvent('strudel-theme', {
-                detail: k,
-              }),
-            );
-          }}
+    <div className="text-foreground grid space-y-4 p-2">
+      <label className="space-x-2">
+        <span>Theme</span>
+        <select
+          className="p-2 bg-background rounded-md text-foreground"
+          value={theme}
+          onChange={(e) => update((current) => ({ ...current, theme: e.target.value }))}
         >
-          <div className="mb-2 w-full text-center text-foreground">{k}</div>
-          <div className="flex justify-stretch overflow-hidden rounded-md">
-            {themeColors(t).map((c, i) => (
-              <div key={i} className="grow h-6" style={{ background: c }} />
-            ))}
-          </div>
-        </div>
-      ))}
+          {Object.entries(themes).map(([k, t]) => (
+            <option key={k} className="bg-background">
+              {k}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="space-x-2">
+        <input
+          className="bg-background w-5 h-5 rounded-md"
+          type="checkbox"
+          checked={vim}
+          onChange={(e) => update((current) => ({ ...current, vim: e.target.checked }))}
+        />
+        <span>Vim Mode</span>
+      </label>
     </div>
   );
 }

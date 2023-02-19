@@ -36,7 +36,6 @@ export function MiniRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
       .then(([res]) => setRepl(() => res.MiniRepl))
       .catch((err) => console.error(err));
   }, []);
-  // const { settings } = useTheme();
   return Repl ? (
     <div className="mb-4">
       <Repl

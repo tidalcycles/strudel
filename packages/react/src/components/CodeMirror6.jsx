@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import _CodeMirror from '@uiw/react-codemirror';
 import { EditorView, Decoration } from '@codemirror/view';
 import { StateField, StateEffect } from '@codemirror/state';
@@ -83,9 +83,8 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-const extensions = [
+const staticExtensions = [
   javascript(),
-  vim(),
   highlightField,
   flashField,
   // javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
@@ -99,6 +98,7 @@ export default function CodeMirror({
   onViewChanged,
   onSelectionChange,
   theme,
+  vimMode,
   options,
   editorDidMount,
 }) {
@@ -122,6 +122,7 @@ export default function CodeMirror({
     },
     [onSelectionChange],
   );
+  const extensions = useMemo(() => [...staticExtensions, ...(vimMode ? [vim()] : [])], [vimMode]);
   return (
     <>
       <_CodeMirror
