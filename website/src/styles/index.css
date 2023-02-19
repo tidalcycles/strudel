@@ -1,7 +1,15 @@
+@font-face {
+  font-family: 'PressStart';
+  src: url('/fonts/PressStart2P/PressStart2P-Regular.ttf');
+}
+
 .cm-gutters {
   display: none !important;
 }
 
 .prose > h1:not(:first-child) {
   margin-top: 30px;
+}
+:root {
+  --app-height: 100vh;
 }
