@@ -2,6 +2,7 @@ import { tags as t } from '@lezer/highlight';
 import { createTheme } from '@uiw/codemirror-themes';
 export const settings = {
   background: '#051DB5',
+  lineBackground: '#051DB550',
   foreground: 'white', // whats that?
   caret: 'white',
   selection: 'rgba(128, 203, 196, 0.5)',
