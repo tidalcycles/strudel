@@ -11,6 +11,7 @@ export const settings = {
   gutterBackground: 'transparent',
   // gutterForeground: '#8a919966',
   gutterForeground: '#8a919966',
+  fontFamily: 'BigBlueTerminal, monospace',
 };
 
 export default createTheme({

@@ -35,6 +35,7 @@ import bluescreen, { settings as bluescreenSettings } from '@strudel.cycles/reac
 import blackscreen, { settings as blackscreenSettings } from '@strudel.cycles/react/src/themes/blackscreen';
 import whitescreen, { settings as whitescreenSettings } from '@strudel.cycles/react/src/themes/whitescreen';
 import algoboy, { settings as algoboySettings } from '@strudel.cycles/react/src/themes/algoboy';
+import terminal, { settings as terminalSettings } from '@strudel.cycles/react/src/themes/terminal';
 
 export const themes = {
   strudelTheme,
@@ -42,6 +43,7 @@ export const themes = {
   blackscreen,
   whitescreen,
   algoboy,
+  terminal,
   abcdef,
   androidstudio,
   atomone,
@@ -94,6 +96,7 @@ export const settings = {
   blackscreen: blackscreenSettings,
   whitescreen: whitescreenSettings,
   algoboy: algoboySettings,
+  terminal: terminalSettings,
   abcdef: {
     background: '#0f0f0f',
     lineBackground: '#0f0f0f50',
