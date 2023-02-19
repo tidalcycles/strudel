@@ -57,8 +57,8 @@ export function Footer({ context }) {
       <div
         onClick={() => setActiveFooter(name)}
         className={cx(
-          'h-8 px-2 text-foreground cursor-pointer hover:text-tertiary flex items-center space-x-1 border-b',
-          activeFooter === name ? 'border-foreground hover:border-tertiary' : 'border-transparent',
+          'h-8 px-2 text-foreground cursor-pointer hover:opacity-50 flex items-center space-x-1 border-b',
+          activeFooter === name ? 'border-foreground' : 'border-transparent',
         )}
       >
         {label || name}
@@ -179,10 +179,7 @@ function ConsoleTab({ log }) {
       {log.map((l, i) => {
         const message = linkify(l.message);
         return (
-          <div
-            key={l.id}
-            className={cx(l.type === 'error' && 'text-red-500', l.type === 'highlight' && 'text-highlight')}
-          >
+          <div key={l.id} className={cx(l.type === 'error' && 'text-red-500', l.type === 'highlight' && 'underline')}>
             <span dangerouslySetInnerHTML={{ __html: message }} />
             {l.count ? ` (${l.count})` : ''}
           </div>
@@ -197,7 +194,7 @@ function SamplesTab() {
     <div className="break-normal w-full px-4 dark:text-white text-stone-900">
       <span>{loadedSamples.length} banks loaded:</span>
       {loadedSamples.map(([name, samples]) => (
-        <span key={name} className="cursor-pointer hover:text-tertiary" onClick={() => {}}>
+        <span key={name} className="cursor-pointer hover:opacity-50" onClick={() => {}}>
           {' '}
           {name}(
           {Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1}){' '}

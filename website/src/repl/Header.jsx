@@ -69,7 +69,7 @@ export function Header({ context }) {
           <button
             onClick={handleTogglePlay}
             title={started ? 'stop' : 'play'}
-            className={cx(!isEmbedded ? 'p-2' : 'px-2', 'hover:text-tertiary', !started && 'animate-pulse')}
+            className={cx(!isEmbedded ? 'p-2' : 'px-2', 'hover:opacity-50', !started && 'animate-pulse')}
           >
             {!pending ? (
               <span className={cx('flex items-center space-x-1', isEmbedded ? '' : 'w-16')}>
@@ -86,7 +86,7 @@ export function Header({ context }) {
             className={cx(
               'flex items-center space-x-1',
               !isEmbedded ? 'p-2' : 'px-2',
-              !isDirty || !activeCode ? 'opacity-50' : 'hover:text-tertiary',
+              !isDirty || !activeCode ? 'opacity-50' : 'hover:opacity-50',
             )}
           >
             {/*             <CommandLineIcon className="w-6 h-6" /> */}
@@ -96,7 +96,7 @@ export function Header({ context }) {
           {!isEmbedded && (
             <button
               title="shuffle"
-              className="hover:text-tertiary p-2 flex items-center space-x-1"
+              className="hover:opacity-50 p-2 flex items-center space-x-1"
               onClick={handleShuffle}
             >
               <SparklesIcon className="w-6 h-6" />
@@ -107,7 +107,7 @@ export function Header({ context }) {
             <button
               title="share"
               className={cx(
-                'cursor-pointer hover:text-tertiary flex items-center space-x-1',
+                'cursor-pointer hover:opacity-50 flex items-center space-x-1',
                 !isEmbedded ? 'p-2' : 'px-2',
               )}
               onClick={handleShare}
@@ -120,21 +120,21 @@ export function Header({ context }) {
             <a
               title="learn"
               href="./learn/getting-started"
-              className={cx('hover:text-tertiary flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
+              className={cx('hover:opacity-50 flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
             >
               <AcademicCapIcon className="w-6 h-6" />
               <span>learn</span>
             </a>
           )}
           {/* {isEmbedded && (
-            <button className={cx('hover:text-tertiary px-2')}>
+            <button className={cx('hover:opacity-50 px-2')}>
               <a href={window.location.href} target="_blank" rel="noopener noreferrer" title="Open in REPL">
                 🚀
               </a>
             </button>
           )}
           {isEmbedded && (
-            <button className={cx('hover:text-tertiary px-2')}>
+            <button className={cx('hover:opacity-50 px-2')}>
               <a
                 onClick={() => {
                   window.location.href = initialUrl;

@@ -11,8 +11,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        tertiary: '#82aaff',
-        highlight: '#bb8800',
         // codemirror-theme settings
         background: 'var(--background)',
         lineBackground: 'var(--lineBackground)',
