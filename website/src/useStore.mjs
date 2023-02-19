@@ -6,7 +6,7 @@ import {} from 'react';
 function useStore() {
   const [state, setState] = useState(Store.get());
   useEvent(Store.storeKey, (e) => setState(e.detail.next));
-  return { state, update: Store.updateState };
+  return { state, ...Store };
 }
 
 // TODO: dedupe

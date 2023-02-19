@@ -275,7 +275,7 @@ function FormItem({ label, children }) {
 const themeOptions = Object.fromEntries(Object.keys(themes).map((k) => [k, k]));
 
 function SettingsTab() {
-  const { state, update } = useStore();
+  const { state, update, reset } = useStore();
   const { theme, keybindings, fontSize } = state;
   return (
     <div className="text-foreground p-4 space-y-4">
@@ -303,6 +303,18 @@ function SettingsTab() {
           onChange={(keybindings) => update((current) => ({ ...current, keybindings }))}
           items={{ codemirror: 'Codemirror', vim: 'Vim', emacs: 'Emacs' }}
         ></ButtonGroup>
+      </FormItem>
+      <FormItem label="Reset Settings">
+        <button
+          className="bg-background p-2 max-w-[300px] rounded-md hover:opacity-50"
+          onClick={() => {
+            if (confirm('Sure?')) {
+              reset();
+            }
+          }}
+        >
+          restore default settings
+        </button>
       </FormItem>
     </div>
   );

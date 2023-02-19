@@ -20,7 +20,7 @@ export function set(next) {
   localStorage.setItem(storeKey, JSON.stringify(next));
 }
 
-export function updateState(func) {
+export function update(func) {
   const prev = get();
   const next = func(prev);
   set(next);
@@ -29,6 +29,10 @@ export function updateState(func) {
       detail: { next, prev },
     }),
   );
+}
+
+export function reset() {
+  update(() => defaults);
 }
 
 export function watch(func, prop) {
