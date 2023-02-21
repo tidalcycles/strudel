@@ -1595,11 +1595,11 @@ export const trigzero = methodToFunction('trigzero');
  * @noAutocomplete
  *
  */
-export function register(name, func) {
+export function register(name, func, patternify = true) {
   if (Array.isArray(name)) {
     const result = {};
     for (const name_item of name) {
-      result[name_item] = register(name_item, func);
+      result[name_item] = register(name_item, func, patternify);
     }
     return result;
   }
@@ -1607,29 +1607,40 @@ export function register(name, func) {
 
   registerMethod(name);
 
-  const pfunc = function (...args) {
-    args = args.map(reify);
-    const pat = args[args.length - 1];
-    if (arity === 1) {
-      return func(pat);
-    }
-    const [left, ...right] = args.slice(0, -1);
-    let mapFn = (...args) => {
-      // make sure to call func with the correct argument count
-      // args.length is expected to be <= arity-1
-      // so we set undefined args explicitly undefined
-      Array(arity - 1)
-        .fill()
-        .map((_, i) => args[i] ?? undefined);
-      return func(...args, pat);
+  var pfunc;
+
+  if (patternify) {
+    pfunc = function (...args) {
+      args = args.map(reify);
+      const pat = args[args.length - 1];
+      if (arity === 1) {
+        return func(pat);
+      }
+      const [left, ...right] = args.slice(0, -1);
+      let mapFn = (...args) => {
+        // make sure to call func with the correct argument count
+        // args.length is expected to be <= arity-1
+        // so we set undefined args explicitly undefined
+        Array(arity - 1)
+          .fill()
+          .map((_, i) => args[i] ?? undefined);
+        return func(...args, pat);
+      };
+      mapFn = curryPattern(mapFn, arity - 1);
+
+      const app = function (acc, p, i) {
+        return acc.appLeft(p);
+      };
+      const start = left.fmap(mapFn);
+
+      return right.reduce(app, start).innerJoin();
     };
-    mapFn = curryPattern(mapFn, arity - 1);
-
-    const app = (acc, p) => acc.appLeft(p);
-    const start = left.fmap(mapFn);
-
-    return right.reduce(app, start).innerJoin();
-  };
+  } else {
+    pfunc = function (...args) {
+      args = args.map(reify);
+      return func(...args);
+    };
+  }
 
   Pattern.prototype[name] = function (...args) {
     args = args.map(reify);
@@ -2419,39 +2430,40 @@ const _loopAt = function (factor, pat, cps = 1) {
     .slow(factor);
 };
 
-const slice = register('slice', function (n, o, pat) {
-  // If it's not an object, assume it's a string and make it a 's' control parameter
-  if (!(o instanceof Object)) {
-    o = { s: o };
-  }
-  return pat.fmap((i) => {
-    const o2 = {
-      begin: i / n,
-      end: (i + 1) / n,
-    };
-    return { ...o, ...o2 };
-  });
-});
+const slice = register(
+  'slice',
+  function (npat, ipat, opat) {
+    return npat.innerBind((n) =>
+      ipat.outerBind((i) =>
+        opat.outerBind((o) => {
+          // If it's not an object, assume it's a string and make it a 's' control parameter
+          o = o instanceof Object ? o : { s: o };
+          // Remember we must stay pure and avoid editing the object directly
+          const toAdd = { begin: i / n, end: (i + 1) / n, _slices: n };
+          return pure({ ...toAdd, ...o });
+        }),
+      ),
+    );
+  },
+  false, // turns off auto-patternification
+);
 
-const splice = register('splice', function (n, o1, pat) {
-  // If it's not an object, assume it's a string and make it a 's' control parameter
-  if (!(o1 instanceof Object)) {
-    o1 = { s: o1 };
-  }
-  let sz = 1 / n;
-
-  return pat.withHap((ev) => {
-    const d = sz / ev.whole.duration;
-    const i = ev.value;
-    const o2 = {
-      begin: i / n,
-      end: (i + 1) / n,
-      speed: d * (o1.speed || 1),
-      unit: 'c',
-    };
-    return ev.withValue(() => ({ ...o1, ...o2 }));
-  });
-});
+const splice = register(
+  'splice',
+  function (npat, ipat, opat) {
+    const sliced = slice(npat, ipat, opat);
+    return sliced.withHap(function (hap) {
+      return hap.withValue((v) => ({
+        ...{
+          speed: (1 / v._slices / hap.whole.duration) * (v.speed || 1),
+          unit: 'c',
+        },
+        ...v,
+      }));
+    });
+  },
+  false, // turns off auto-patternification
+);
 
 const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
   return _loopAt(factor, pat, 1);
