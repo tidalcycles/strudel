@@ -23,9 +23,10 @@ import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
-import { useSettings } from '../settings.mjs';
+import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
 
-const initialTheme = localStorage.getItem('strudel-theme') || 'strudelTheme';
+const { latestCode } = settingsMap.get();
+console.log('latestCode', latestCode);
 
 initAudioOnFirstClick();
 
@@ -114,7 +115,6 @@ export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
-  const [activeFooter, setActiveFooter] = useState('');
   const [isZen, setIsZen] = useState(false);
   const [pending, setPending] = useState(false);
 
@@ -125,14 +125,14 @@ export function Repl({ embedded = false }) {
       initialCode: '// LOADING',
       defaultOutput: webaudioOutput,
       getTime,
-      autolink: true,
       beforeEval: () => {
         cleanupUi();
         cleanupDraw();
         setPending(true);
       },
-      afterEval: () => {
+      afterEval: ({ code }) => {
         setPending(false);
+        setLatestCode(code);
       },
       onToggle: (play) => !play && cleanupDraw(false),
       drawContext,
@@ -141,16 +141,13 @@ export function Repl({ embedded = false }) {
   // init code
   useEffect(() => {
     initCode().then((decoded) => {
-      if (!decoded) {
-        setActiveFooter('intro'); // TODO: get rid
-      }
       logger(
         `Welcome to Strudel! ${
           decoded ? `I have loaded the code from the URL.` : `A random code snippet named "${name}" has been loaded!`
         } Press play or hit ctrl+enter to run it!`,
         'highlight',
       );
-      setCode(decoded || randomTune);
+      setCode(latestCode || decoded || randomTune);
     });
   }, []);
 
@@ -252,8 +249,6 @@ export function Repl({ embedded = false }) {
     isDirty,
     lastShared,
     activeCode,
-    activeFooter,
-    setActiveFooter,
     handleChangeCode,
     handleTogglePlay,
     handleUpdate,

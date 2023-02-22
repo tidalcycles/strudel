@@ -10,7 +10,6 @@ function useStrudel({
   getTime,
   evalOnMount = false,
   initialCode = '',
-  autolink = false,
   beforeEval,
   afterEval,
   editPattern,
@@ -51,15 +50,13 @@ function useStrudel({
           setCode(code);
           beforeEval?.();
         },
-        afterEval: ({ pattern: _pattern, code }) => {
+        afterEval: (res) => {
+          const { pattern: _pattern, code } = res;
           setActiveCode(code);
           setPattern(_pattern);
           setEvalError();
           setSchedulerError();
-          if (autolink) {
-            window.location.hash = '#' + encodeURIComponent(btoa(code));
-          }
-          afterEval?.();
+          afterEval?.(res);
         },
         onToggle: (v) => {
           setStarted(v);

@@ -7,14 +7,13 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { loadedSamples } from './Repl';
 import { Reference } from './Reference';
 import { themes } from './themes.mjs';
-import { useSettings, settingsMap } from '../settings.mjs';
+import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../settings.mjs';
 
 export function Footer({ context }) {
-  // const [activeFooter, setActiveFooter] = useState('console');
-  // const { activeFooter, setActiveFooter, isZen } = useContext?.(ReplContext);
-  const { activeFooter, setActiveFooter, isZen } = context;
+  const { isZen } = context;
   const footerContent = useRef();
   const [log, setLog] = useState([]);
+  const { activeFooter } = useSettings();
 
   useLayoutEffect(() => {
     if (footerContent.current && activeFooter === 'console') {
@@ -323,7 +322,7 @@ function SettingsTab() {
           className="bg-background p-2 max-w-[300px] rounded-md hover:opacity-50"
           onClick={() => {
             if (confirm('Sure?')) {
-              settingsMap.setKey(defaultSettings);
+              settingsMap.set(defaultSettings);
             }
           }}
         >
