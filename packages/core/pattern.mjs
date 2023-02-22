@@ -2430,6 +2430,15 @@ const _loopAt = function (factor, pat, cps = 1) {
     .slow(factor);
 };
 
+/**
+ * Chops samples into the given number of slices, triggering those slices with a given pattern of slice numbers.
+ * @name slice
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * await samples('github:tidalcycles/Dirt-Samples/master')
+ * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(1.5)
+ */
 const slice = register(
   'slice',
   function (npat, ipat, opat) {
@@ -2448,6 +2457,15 @@ const slice = register(
   false, // turns off auto-patternification
 );
 
+/**
+ * Works the same as slice, but changes the playback speed of each slice to match the duration of its step.
+ * @name splice
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * await samples('github:tidalcycles/Dirt-Samples/master')
+ * s("breaks165").splice(8,  "0 1 [2 3 0]@2 3 0@2 7").hurry(0.65)
+ */
 const splice = register(
   'splice',
   function (npat, ipat, opat) {

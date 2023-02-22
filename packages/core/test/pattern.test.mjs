@@ -47,6 +47,7 @@ import {
   run,
   hitch,
   set,
+  begin,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -984,6 +985,32 @@ describe('Pattern', () => {
   describe('weave', () => {
     it('Can distribute patterns along a pattern', () => {
       sameFirst(n(0, 1).weave(2, s('bd', silence), s(silence, 'sd')), sequence(s('bd').n(0), s('sd').n(1)));
+    });
+  });
+  describe('slice', () => {
+    it('Can slice a sample', () => {
+      sameFirst(
+        s('break').slice(4, sequence(0, 1, 2, 3)),
+        sequence(
+          { begin: 0, end: 0.25, s: 'break', _slices: 4 },
+          { begin: 0.25, end: 0.5, s: 'break', _slices: 4 },
+          { begin: 0.5, end: 0.75, s: 'break', _slices: 4 },
+          { begin: 0.75, end: 1, s: 'break', _slices: 4 },
+        ),
+      );
+    });
+  });
+  describe('splice', () => {
+    it('Can splice a sample', () => {
+      sameFirst(
+        s('break').splice(4, sequence(0, 1, 2, 3)),
+        sequence(
+          { begin: 0, end: 0.25, s: 'break', _slices: 4, unit: 'c', speed: 1 },
+          { begin: 0.25, end: 0.5, s: 'break', _slices: 4, unit: 'c', speed: 1 },
+          { begin: 0.5, end: 0.75, s: 'break', _slices: 4, unit: 'c', speed: 1 },
+          { begin: 0.75, end: 1, s: 'break', _slices: 4, unit: 'c', speed: 1 },
+        ),
+      );
     });
   });
 });
