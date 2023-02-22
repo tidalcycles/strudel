@@ -10,10 +10,9 @@ import { themes } from './themes.mjs';
 import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../settings.mjs';
 
 export function Footer({ context }) {
-  const { isZen } = context;
   const footerContent = useRef();
   const [log, setLog] = useState([]);
-  const { activeFooter } = useSettings();
+  const { activeFooter, isZen } = useSettings();
 
   useLayoutEffect(() => {
     if (footerContent.current && activeFooter === 'console') {

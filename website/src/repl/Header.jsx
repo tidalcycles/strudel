@@ -6,6 +6,7 @@ import SparklesIcon from '@heroicons/react/20/solid/SparklesIcon';
 import StopCircleIcon from '@heroicons/react/20/solid/StopCircleIcon';
 import { cx } from '@strudel.cycles/react';
 import React, { useContext } from 'react';
+import { useSettings, setIsZen } from '../settings.mjs';
 // import { ReplContext } from './Repl';
 import './Repl.css';
 
@@ -21,11 +22,9 @@ export function Header({ context }) {
     handleUpdate,
     handleShuffle,
     handleShare,
-    isZen,
-    setIsZen,
   } = context;
   const isEmbedded = embedded || window.location !== window.parent.location;
-  // useContext(ReplContext)
+  const { isZen } = useSettings();
 
   return (
     <header
@@ -53,7 +52,11 @@ export function Header({ context }) {
         >
           <div
             className={cx('mt-[1px]', started && 'animate-spin', 'cursor-pointer')}
-            onClick={() => !isEmbedded && setIsZen((z) => !z)}
+            onClick={() => {
+              if (!isEmbedded) {
+                setIsZen(!isZen);
+              }
+            }}
           >
             🌀
           </div>

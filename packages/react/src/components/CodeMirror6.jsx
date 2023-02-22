@@ -136,7 +136,7 @@ export default function CodeMirror({
     return staticExtensions;
   }, [keybindings]);
   return (
-    <div style={{ fontSize: parseInt(fontSize), fontFamily }} className="w-full">
+    <div style={{ fontSize, fontFamily }} className="w-full">
       <_CodeMirror
         value={value}
         theme={theme || strudelTheme}

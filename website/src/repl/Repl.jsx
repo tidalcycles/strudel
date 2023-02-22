@@ -26,7 +26,6 @@ import { themes } from './themes.mjs';
 import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
 
 const { latestCode } = settingsMap.get();
-console.log('latestCode', latestCode);
 
 initAudioOnFirstClick();
 
@@ -115,7 +114,6 @@ export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
-  const [isZen, setIsZen] = useState(false);
   const [pending, setPending] = useState(false);
 
   const { theme, keybindings, fontSize, fontFamily } = useSettings();
@@ -254,8 +252,6 @@ export function Repl({ embedded = false }) {
     handleUpdate,
     handleShuffle,
     handleShare,
-    isZen,
-    setIsZen,
   };
   return (
     // bg-gradient-to-t from-blue-900 to-slate-900

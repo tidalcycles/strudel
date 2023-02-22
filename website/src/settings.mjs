@@ -8,14 +8,21 @@ export const defaultSettings = {
   fontFamily: 'monospace',
   fontSize: 18,
   latestCode: '',
+  isZen: false,
 };
 
 export const settingsMap = persistentMap('strudel-settings', defaultSettings);
 
 export function useSettings() {
-  return useStore(settingsMap);
+  const state = useStore(settingsMap);
+  return {
+    ...state,
+    isZen: [true, 'true'].includes(state.isZen) ? true : false,
+    fontSize: Number(state.fontSize),
+  };
 }
 
 export const setActiveFooter = (tab) => settingsMap.setKey('activeFooter', tab);
 
 export const setLatestCode = (code) => settingsMap.setKey('latestCode', code);
+export const setIsZen = (active) => settingsMap.setKey('isZen', !!active);
