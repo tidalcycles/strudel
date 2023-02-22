@@ -131,6 +131,7 @@ export function Repl({ embedded = false }) {
       afterEval: ({ code }) => {
         setPending(false);
         setLatestCode(code);
+        window.location.hash = '#' + encodeURIComponent(btoa(code));
       },
       onToggle: (play) => !play && cleanupDraw(false),
       drawContext,
@@ -145,7 +146,7 @@ export function Repl({ embedded = false }) {
         } Press play or hit ctrl+enter to run it!`,
         'highlight',
       );
-      setCode(latestCode || decoded || randomTune);
+      setCode(decoded || latestCode || randomTune);
     });
   }, []);
 
