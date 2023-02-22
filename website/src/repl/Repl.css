@@ -17,6 +17,7 @@
 
 #code .cm-scroller {
   padding-bottom: 50vh;
+  font-family: inherit;
 }
 #code .cm-line > * {
   background: var(--lineBackground);

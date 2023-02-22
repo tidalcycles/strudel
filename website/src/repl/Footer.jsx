@@ -6,14 +6,13 @@ import { nanoid } from 'nanoid';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { loadedSamples } from './Repl';
 import { Reference } from './Reference';
-import { themes, themeColors } from './themes.mjs';
+import { themes } from './themes.mjs';
+import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../settings.mjs';
 
 export function Footer({ context }) {
-  // const [activeFooter, setActiveFooter] = useState('console');
-  // const { activeFooter, setActiveFooter, isZen } = useContext?.(ReplContext);
-  const { activeFooter, setActiveFooter, isZen, theme, setTheme } = context;
   const footerContent = useRef();
   const [log, setLog] = useState([]);
+  const { activeFooter, isZen } = useSettings();
 
   useLayoutEffect(() => {
     if (footerContent.current && activeFooter === 'console') {
@@ -56,8 +55,8 @@ export function Footer({ context }) {
       <div
         onClick={() => setActiveFooter(name)}
         className={cx(
-          'h-8 px-2 text-foreground cursor-pointer hover:text-tertiary flex items-center space-x-1 border-b',
-          activeFooter === name ? 'border-foreground hover:border-tertiary' : 'border-transparent',
+          'h-8 px-2 text-foreground cursor-pointer hover:opacity-50 flex items-center space-x-1 border-b',
+          activeFooter === name ? 'border-foreground' : 'border-transparent',
         )}
       >
         {label || name}
@@ -76,7 +75,7 @@ export function Footer({ context }) {
           <FooterTab name="samples" />
           <FooterTab name="console" />
           <FooterTab name="reference" />
-          <FooterTab name="theme" />
+          <FooterTab name="settings" />
         </div>
         {activeFooter !== '' && (
           <button onClick={() => setActiveFooter('')} className="text-foreground" aria-label="Close Panel">
@@ -89,113 +88,11 @@ export function Footer({ context }) {
           className="text-white font-mono text-sm h-[360px] flex-none overflow-auto max-w-full relative"
           ref={footerContent}
         >
-          {activeFooter === 'intro' && (
-            <div className="prose dark:prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
-              <h3>
-                <span className={cx('animate-spin inline-block select-none')}>🌀</span> welcome
-              </h3>
-              <p>
-                You have found <span className="underline">strudel</span>, a new live coding platform to write dynamic
-                music pieces in the browser! It is free and open-source and made for beginners and experts alike. To get
-                started:
-                <br />
-                <br />
-                <span className="underline">1. hit play</span> - <span className="underline">2. change something</span>{' '}
-                - <span className="underline">3. hit update</span>
-                <br />
-                If you don't like what you hear, try <span className="underline">shuffle</span>!
-              </p>
-              <p>
-                To learn more about what this all means, check out the{' '}
-                <a href="./learn/getting-started" target="_blank">
-                  interactive tutorial
-                </a>
-                . Also feel free to join the{' '}
-                <a href="https://discord.com/invite/HGEdXmRkzT" target="_blank">
-                  tidalcycles discord channel
-                </a>{' '}
-                to ask any questions, give feedback or just say hello.
-              </p>
-              <h3>about</h3>
-              <p>
-                strudel is a JavaScript version of{' '}
-                <a href="tidalcycles.org/" target="_blank">
-                  tidalcycles
-                </a>
-                , which is a popular live coding language for music, written in Haskell. You can find the source code at{' '}
-                <a href="https://github.com/tidalcycles/strudel" target="_blank">
-                  github
-                </a>
-                . Please consider to{' '}
-                <a href="https://opencollective.com/tidalcycles" target="_blank">
-                  support this project
-                </a>{' '}
-                to ensure ongoing development 💖
-              </p>
-            </div>
-          )}
-          {activeFooter === 'console' && (
-            <div className="break-all px-4 dark:text-white text-stone-900">
-              {log.map((l, i) => {
-                const message = linkify(l.message);
-                return (
-                  <div
-                    key={l.id}
-                    className={cx(l.type === 'error' && 'text-red-500', l.type === 'highlight' && 'text-highlight')}
-                  >
-                    <span dangerouslySetInnerHTML={{ __html: message }} />
-                    {l.count ? ` (${l.count})` : ''}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-          {activeFooter === 'samples' && (
-            <div className="break-normal w-full px-4 dark:text-white text-stone-900">
-              <span>{loadedSamples.length} banks loaded:</span>
-              {loadedSamples.map(([name, samples]) => (
-                <span key={name} className="cursor-pointer hover:text-tertiary" onClick={() => {}}>
-                  {' '}
-                  {name}(
-                  {Array.isArray(samples)
-                    ? samples.length
-                    : typeof samples === 'object'
-                    ? Object.values(samples).length
-                    : 1}
-                  ){' '}
-                </span>
-              ))}
-            </div>
-          )}
+          {activeFooter === 'intro' && <WelcomeTab />}
+          {activeFooter === 'console' && <ConsoleTab log={log} />}
+          {activeFooter === 'samples' && <SamplesTab />}
           {activeFooter === 'reference' && <Reference />}
-          {activeFooter === 'theme' && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 p-2">
-              {Object.entries(themes).map(([k, t]) => (
-                <div
-                  key={k}
-                  className={cx(
-                    'border-2 border-transparent cursor-pointer p-4 bg-background bg-opacity-25 rounded-md',
-                    theme === k ? '!border-foreground' : '',
-                  )}
-                  onClick={() => {
-                    setTheme(k);
-                    document.dispatchEvent(
-                      new CustomEvent('strudel-theme', {
-                        detail: k,
-                      }),
-                    );
-                  }}
-                >
-                  <div className="mb-2 w-full text-center text-foreground">{k}</div>
-                  <div className="flex justify-stretch overflow-hidden rounded-md">
-                    {themeColors(t).map((c, i) => (
-                      <div key={i} className="grow h-6" style={{ background: c }} />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          {activeFooter === 'settings' && <SettingsTab />}
         </div>
       )}
     </footer>
@@ -225,4 +122,212 @@ function linkify(inputText) {
   replacedText = replacedText.replace(replacePattern3, '<a class="underline" href="mailto:$1">$1</a>');
 
   return replacedText;
+}
+
+function WelcomeTab() {
+  return (
+    <div className="prose dark:prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
+      <h3>
+        <span className={cx('animate-spin inline-block select-none')}>🌀</span> welcome
+      </h3>
+      <p>
+        You have found <span className="underline">strudel</span>, a new live coding platform to write dynamic music
+        pieces in the browser! It is free and open-source and made for beginners and experts alike. To get started:
+        <br />
+        <br />
+        <span className="underline">1. hit play</span> - <span className="underline">2. change something</span> -{' '}
+        <span className="underline">3. hit update</span>
+        <br />
+        If you don't like what you hear, try <span className="underline">shuffle</span>!
+      </p>
+      <p>
+        To learn more about what this all means, check out the{' '}
+        <a href="./learn/getting-started" target="_blank">
+          interactive tutorial
+        </a>
+        . Also feel free to join the{' '}
+        <a href="https://discord.com/invite/HGEdXmRkzT" target="_blank">
+          tidalcycles discord channel
+        </a>{' '}
+        to ask any questions, give feedback or just say hello.
+      </p>
+      <h3>about</h3>
+      <p>
+        strudel is a JavaScript version of{' '}
+        <a href="tidalcycles.org/" target="_blank">
+          tidalcycles
+        </a>
+        , which is a popular live coding language for music, written in Haskell. You can find the source code at{' '}
+        <a href="https://github.com/tidalcycles/strudel" target="_blank">
+          github
+        </a>
+        . Please consider to{' '}
+        <a href="https://opencollective.com/tidalcycles" target="_blank">
+          support this project
+        </a>{' '}
+        to ensure ongoing development 💖
+      </p>
+    </div>
+  );
+}
+
+function ConsoleTab({ log }) {
+  return (
+    <div id="console-tab" className="break-all px-4 dark:text-white text-stone-900">
+      <pre>{`███████╗████████╗██████╗ ██╗   ██╗██████╗ ███████╗██╗     
+██╔════╝╚══██╔══╝██╔══██╗██║   ██║██╔══██╗██╔════╝██║     
+███████╗   ██║   ██████╔╝██║   ██║██║  ██║█████╗  ██║     
+╚════██║   ██║   ██╔══██╗██║   ██║██║  ██║██╔══╝  ██║     
+███████║   ██║   ██║  ██║╚██████╔╝██████╔╝███████╗███████╗
+╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝`}</pre>
+      {log.map((l, i) => {
+        const message = linkify(l.message);
+        return (
+          <div key={l.id} className={cx(l.type === 'error' && 'text-red-500', l.type === 'highlight' && 'underline')}>
+            <span dangerouslySetInnerHTML={{ __html: message }} />
+            {l.count ? ` (${l.count})` : ''}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function SamplesTab() {
+  return (
+    <div id="samples-tab" className="break-normal w-full px-4 dark:text-white text-stone-900">
+      <span>{loadedSamples.length} banks loaded:</span>
+      {loadedSamples.map(([name, samples]) => (
+        <span key={name} className="cursor-pointer hover:opacity-50" onClick={() => {}}>
+          {' '}
+          {name}(
+          {Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1}){' '}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function ButtonGroup({ value, onChange, items }) {
+  return (
+    <div className="flex grow border border-foreground rounded-md">
+      {Object.entries(items).map(([key, label], i, arr) => (
+        <button
+          key={key}
+          onClick={() => onChange(key)}
+          className={cx(
+            'p-2 grow',
+            i === 0 && 'rounded-l-md',
+            i === arr.length - 1 && 'rounded-r-md',
+            value === key ? 'bg-background' : 'bg-lineHighlight',
+          )}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function SelectInput({ value, options, onChange }) {
+  return (
+    <select
+      className="p-2 bg-background rounded-md text-foreground"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    >
+      {Object.entries(options).map(([k, label]) => (
+        <option key={k} className="bg-background" value={k}>
+          {label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function NumberSlider({ value, onChange, step = 1, ...rest }) {
+  return (
+    <div className="flex space-x-2 gap-1">
+      <input
+        className="p-2 grow"
+        type="range"
+        value={value}
+        step={step}
+        onChange={(e) => onChange(Number(e.target.value))}
+        {...rest}
+      />
+      <input
+        type="number"
+        value={value}
+        step={step}
+        className="w-16 bg-background rounded-md"
+        onChange={(e) => onChange(Number(e.target.value))}
+      />
+    </div>
+  );
+}
+
+function FormItem({ label, children }) {
+  return (
+    <div className="grid gap-2">
+      <label>{label}</label>
+      {children}
+    </div>
+  );
+}
+
+const themeOptions = Object.fromEntries(Object.keys(themes).map((k) => [k, k]));
+const fontFamilyOptions = {
+  monospace: 'monospace',
+  BigBlueTerminal: 'BigBlueTerminal',
+  x3270: 'x3270',
+  PressStart: 'PressStart2P',
+};
+
+function SettingsTab() {
+  const { theme, keybindings, fontSize, fontFamily } = useSettings();
+  return (
+    <div className="text-foreground p-4 space-y-4">
+      <FormItem label="Theme">
+        <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
+      </FormItem>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormItem label="Font Family">
+          <SelectInput
+            options={fontFamilyOptions}
+            value={fontFamily}
+            onChange={(fontFamily) => settingsMap.setKey('fontFamily', fontFamily)}
+          />
+        </FormItem>
+        <FormItem label="Font Size">
+          <NumberSlider
+            value={fontSize}
+            onChange={(fontSize) => settingsMap.setKey('fontSize', fontSize)}
+            min={10}
+            max={40}
+            step={2}
+          />
+        </FormItem>
+      </div>
+      <FormItem label="Keybindings">
+        <ButtonGroup
+          value={keybindings}
+          onChange={(keybindings) => settingsMap.setKey('keybindings', keybindings)}
+          items={{ codemirror: 'Codemirror', vim: 'Vim', emacs: 'Emacs' }}
+        ></ButtonGroup>
+      </FormItem>
+      <FormItem label="Reset Settings">
+        <button
+          className="bg-background p-2 max-w-[300px] rounded-md hover:opacity-50"
+          onClick={() => {
+            if (confirm('Sure?')) {
+              settingsMap.set(defaultSettings);
+            }
+          }}
+        >
+          restore default settings
+        </button>
+      </FormItem>
+    </div>
+  );
 }

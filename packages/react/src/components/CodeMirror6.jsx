@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import _CodeMirror from '@uiw/react-codemirror';
 import { EditorView, Decoration } from '@codemirror/view';
 import { StateField, StateEffect } from '@codemirror/state';
@@ -8,6 +8,8 @@ import './style.css';
 import { useCallback } from 'react';
 import { autocompletion } from '@codemirror/autocomplete';
 import { strudelAutocomplete } from './Autocomplete';
+import { vim } from '@replit/codemirror-vim';
+import { emacs } from '@replit/codemirror-emacs';
 
 export const setFlash = StateEffect.define();
 const flashField = StateField.define({
@@ -56,15 +58,15 @@ const highlightField = StateField.define({
             haps
               .map((hap) =>
                 (hap.context.locations || []).map(({ start, end }) => {
-                  const color = hap.context.color || e.value.color || '#FFCA28';
+                  // const color = hap.context.color || e.value.color || '#FFCA28';
                   let from = tr.newDoc.line(start.line).from + start.column;
                   let to = tr.newDoc.line(end.line).from + end.column;
                   const l = tr.newDoc.length;
                   if (from > l || to > l) {
                     return; // dont mark outside of range, as it will throw an error
                   }
-                  // const mark = Decoration.mark({ attributes: { style: `outline: 1px solid ${color}` } });
-                  const mark = Decoration.mark({ attributes: { style: `outline: 1.5px solid ${color};` } });
+                  //const mark = Decoration.mark({ attributes: { style: `outline: 2px solid ${color};` } });
+                  const mark = Decoration.mark({ attributes: { class: `outline outline-2 outline-foreground` } });
                   return mark.range(from, to);
                 }),
               )
@@ -82,7 +84,7 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-const extensions = [
+const staticExtensions = [
   javascript(),
   highlightField,
   flashField,
@@ -97,6 +99,9 @@ export default function CodeMirror({
   onViewChanged,
   onSelectionChange,
   theme,
+  keybindings,
+  fontSize = 18,
+  fontFamily = 'monospace',
   options,
   editorDidMount,
 }) {
@@ -120,8 +125,18 @@ export default function CodeMirror({
     },
     [onSelectionChange],
   );
+  const extensions = useMemo(() => {
+    let bindings = {
+      vim,
+      emacs,
+    };
+    if (bindings[keybindings]) {
+      return [...staticExtensions, bindings[keybindings]()];
+    }
+    return staticExtensions;
+  }, [keybindings]);
   return (
-    <>
+    <div style={{ fontSize, fontFamily }} className="w-full">
       <_CodeMirror
         value={value}
         theme={theme || strudelTheme}
@@ -130,7 +145,7 @@ export default function CodeMirror({
         onUpdate={handleOnUpdate}
         extensions={extensions}
       />
-    </>
+    </div>
   );
 }
 

@@ -23,7 +23,6 @@ export function MiniRepl({
   punchcard,
   canvasHeight = 200,
   theme,
-  highlightColor,
 }) {
   drawTime = drawTime || (punchcard ? [0, 4] : undefined);
   const evalOnMount = !!drawTime;
@@ -72,7 +71,6 @@ export function MiniRepl({
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
     getTime: () => scheduler.now(),
-    color: highlightColor,
   });
 
   // keyboard shortcuts

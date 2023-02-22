@@ -23,9 +23,9 @@ import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
-import useTheme from '../useTheme';
+import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
 
-const initialTheme = localStorage.getItem('strudel-theme') || 'strudelTheme';
+const { latestCode } = settingsMap.get();
 
 initAudioOnFirstClick();
 
@@ -113,25 +113,24 @@ export const ReplContext = createContext(null);
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
-  const [theme, setTheme] = useState(initialTheme);
   const [lastShared, setLastShared] = useState();
-  const [activeFooter, setActiveFooter] = useState('');
-  const [isZen, setIsZen] = useState(false);
   const [pending, setPending] = useState(false);
+
+  const { theme, keybindings, fontSize, fontFamily } = useSettings();
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
       initialCode: '// LOADING',
       defaultOutput: webaudioOutput,
       getTime,
-      autolink: true,
       beforeEval: () => {
         cleanupUi();
         cleanupDraw();
         setPending(true);
       },
-      afterEval: () => {
+      afterEval: ({ code }) => {
         setPending(false);
+        setLatestCode(code);
       },
       onToggle: (play) => !play && cleanupDraw(false),
       drawContext,
@@ -140,16 +139,13 @@ export function Repl({ embedded = false }) {
   // init code
   useEffect(() => {
     initCode().then((decoded) => {
-      if (!decoded) {
-        setActiveFooter('intro'); // TODO: get rid
-      }
       logger(
         `Welcome to Strudel! ${
           decoded ? `I have loaded the code from the URL.` : `A random code snippet named "${name}" has been loaded!`
         } Press play or hit ctrl+enter to run it!`,
         'highlight',
       );
-      setCode(decoded || randomTune);
+      setCode(latestCode || decoded || randomTune);
     });
   }, []);
 
@@ -172,15 +168,12 @@ export function Repl({ embedded = false }) {
     ),
   );
 
-  const { settings } = useTheme();
-
   // highlighting
   useHighlighting({
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
     getTime: () => scheduler.now(),
-    color: settings?.foreground,
   });
 
   //
@@ -254,17 +247,11 @@ export function Repl({ embedded = false }) {
     isDirty,
     lastShared,
     activeCode,
-    activeFooter,
-    setActiveFooter,
     handleChangeCode,
     handleTogglePlay,
     handleUpdate,
     handleShuffle,
     handleShare,
-    isZen,
-    setIsZen,
-    theme,
-    setTheme,
   };
   return (
     // bg-gradient-to-t from-blue-900 to-slate-900
@@ -272,7 +259,7 @@ export function Repl({ embedded = false }) {
     <ReplContext.Provider value={context}>
       <div
         className={cx(
-          'h-screen flex flex-col',
+          'h-full flex flex-col',
           //        'bg-gradient-to-t from-green-900 to-slate-900', //
         )}
       >
@@ -281,6 +268,9 @@ export function Repl({ embedded = false }) {
           <CodeMirror
             theme={themes[theme] || themes.strudelTheme}
             value={code}
+            keybindings={keybindings}
+            fontSize={fontSize}
+            fontFamily={fontFamily}
             onChange={handleChangeCode}
             onViewChanged={setView}
             onSelectionChange={handleSelectionChange}

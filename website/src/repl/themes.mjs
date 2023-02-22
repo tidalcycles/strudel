@@ -31,9 +31,19 @@ import {
 } from '@uiw/codemirror-themes-all';
 
 import strudelTheme from '@strudel.cycles/react/src/themes/strudel-theme';
+import bluescreen, { settings as bluescreenSettings } from '@strudel.cycles/react/src/themes/bluescreen';
+import blackscreen, { settings as blackscreenSettings } from '@strudel.cycles/react/src/themes/blackscreen';
+import whitescreen, { settings as whitescreenSettings } from '@strudel.cycles/react/src/themes/whitescreen';
+import algoboy, { settings as algoboySettings } from '@strudel.cycles/react/src/themes/algoboy';
+import terminal, { settings as terminalSettings } from '@strudel.cycles/react/src/themes/terminal';
 
 export const themes = {
   strudelTheme,
+  bluescreen,
+  blackscreen,
+  whitescreen,
+  algoboy,
+  terminal,
   abcdef,
   androidstudio,
   atomone,
@@ -82,6 +92,11 @@ export const settings = {
     // gutterForeground: '#8a919966',
     gutterForeground: '#8a919966',
   },
+  bluescreen: bluescreenSettings,
+  blackscreen: blackscreenSettings,
+  whitescreen: whitescreenSettings,
+  algoboy: algoboySettings,
+  terminal: terminalSettings,
   abcdef: {
     background: '#0f0f0f',
     lineBackground: '#0f0f0f50',
@@ -395,7 +410,6 @@ export const settings = {
     gutterBackground: '#1e1e1e',
     gutterForeground: '#838383',
     gutterActiveForeground: '#fff',
-    fontFamily: 'Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace',
   },
   xcodeLight: {
     light: true,
