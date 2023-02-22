@@ -977,7 +977,7 @@ export class Pattern {
 }
 
 //////////////////////////////////////////////////////////////////////
-// functions relating to chords/patterns of lists
+// functions relating to chords/patterns of lists/lists of patterns
 
 // returns Array<Hap[]> where each list of haps satisfies eq
 function groupHapsBy(eq, haps) {
@@ -1024,6 +1024,35 @@ addToPrototype('arpWith', function (func) {
  * */
 addToPrototype('arp', function (pat) {
   return this.arpWith((haps) => pat.fmap((i) => haps[i % haps.length]));
+});
+
+/**
+ * Takes a time duration followed by one or more patterns, and shifts the given patterns in time, so they are
+ * distributed equally over the given time duration. They are then combined with the pattern 'weave' is called on, after it has been stretched out (i.e. slowed down by) the time duration.
+ * @name weave
+ * @memberof Pattern
+ * @example pan(saw).weave(4, s("bd(3,8)"), s("~ sd"))
+ * @example n("0 1 2 3 4 5 6 7").weave(8, s("bd(3,8)"), s("~ sd"))
+ */
+
+addToPrototype('weave', function (t, ...pats) {
+  return this.weaveWith(t, ...pats.map((x) => set.out(x)));
+});
+
+/**
+ * Like 'weave', but accepts functions rather than patterns, which are applied to the pattern.
+ * @name weaveWith
+ * @memberof Pattern
+ */
+
+addToPrototype('weaveWith', function (t, ...funcs) {
+  const pat = this;
+  const l = funcs.length;
+  t = Fraction(t);
+  if (l == 0) {
+    return silence;
+  }
+  return stack(...funcs.map((func, i) => pat.inside(t, func).early(Fraction(i).div(l))))._slow(t);
 });
 
 //////////////////////////////////////////////////////////////////////
@@ -1566,11 +1595,11 @@ export const trigzero = methodToFunction('trigzero');
  * @noAutocomplete
  *
  */
-export function register(name, func) {
+export function register(name, func, patternify = true) {
   if (Array.isArray(name)) {
     const result = {};
     for (const name_item of name) {
-      result[name_item] = register(name_item, func);
+      result[name_item] = register(name_item, func, patternify);
     }
     return result;
   }
@@ -1578,29 +1607,40 @@ export function register(name, func) {
 
   registerMethod(name);
 
-  const pfunc = function (...args) {
-    args = args.map(reify);
-    const pat = args[args.length - 1];
-    if (arity === 1) {
-      return func(pat);
-    }
-    const [left, ...right] = args.slice(0, -1);
-    let mapFn = (...args) => {
-      // make sure to call func with the correct argument count
-      // args.length is expected to be <= arity-1
-      // so we set undefined args explicitly undefined
-      Array(arity - 1)
-        .fill()
-        .map((_, i) => args[i] ?? undefined);
-      return func(...args, pat);
+  var pfunc;
+
+  if (patternify) {
+    pfunc = function (...args) {
+      args = args.map(reify);
+      const pat = args[args.length - 1];
+      if (arity === 1) {
+        return func(pat);
+      }
+      const [left, ...right] = args.slice(0, -1);
+      let mapFn = (...args) => {
+        // make sure to call func with the correct argument count
+        // args.length is expected to be <= arity-1
+        // so we set undefined args explicitly undefined
+        Array(arity - 1)
+          .fill()
+          .map((_, i) => args[i] ?? undefined);
+        return func(...args, pat);
+      };
+      mapFn = curryPattern(mapFn, arity - 1);
+
+      const app = function (acc, p, i) {
+        return acc.appLeft(p);
+      };
+      const start = left.fmap(mapFn);
+
+      return right.reduce(app, start).innerJoin();
     };
-    mapFn = curryPattern(mapFn, arity - 1);
-
-    const app = (acc, p) => acc.appLeft(p);
-    const start = left.fmap(mapFn);
-
-    return right.reduce(app, start).innerJoin();
-  };
+  } else {
+    pfunc = function (...args) {
+      args = args.map(reify);
+      return func(...args);
+    };
+  }
 
   Pattern.prototype[name] = function (...args) {
     args = args.map(reify);
@@ -2389,6 +2429,59 @@ const _loopAt = function (factor, pat, cps = 1) {
     .unit('c')
     .slow(factor);
 };
+
+/**
+ * Chops samples into the given number of slices, triggering those slices with a given pattern of slice numbers.
+ * @name slice
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * await samples('github:tidalcycles/Dirt-Samples/master')
+ * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(1.5)
+ */
+const slice = register(
+  'slice',
+  function (npat, ipat, opat) {
+    return npat.innerBind((n) =>
+      ipat.outerBind((i) =>
+        opat.outerBind((o) => {
+          // If it's not an object, assume it's a string and make it a 's' control parameter
+          o = o instanceof Object ? o : { s: o };
+          // Remember we must stay pure and avoid editing the object directly
+          const toAdd = { begin: i / n, end: (i + 1) / n, _slices: n };
+          return pure({ ...toAdd, ...o });
+        }),
+      ),
+    );
+  },
+  false, // turns off auto-patternification
+);
+
+/**
+ * Works the same as slice, but changes the playback speed of each slice to match the duration of its step.
+ * @name splice
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * await samples('github:tidalcycles/Dirt-Samples/master')
+ * s("breaks165").splice(8,  "0 1 [2 3 0]@2 3 0@2 7").hurry(0.65)
+ */
+const splice = register(
+  'splice',
+  function (npat, ipat, opat) {
+    const sliced = slice(npat, ipat, opat);
+    return sliced.withHap(function (hap) {
+      return hap.withValue((v) => ({
+        ...{
+          speed: (1 / v._slices / hap.whole.duration) * (v.speed || 1),
+          unit: 'c',
+        },
+        ...v,
+      }));
+    });
+  },
+  false, // turns off auto-patternification
+);
 
 const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
   return _loopAt(factor, pat, 1);
