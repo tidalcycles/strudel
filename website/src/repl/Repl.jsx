@@ -23,8 +23,7 @@ import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
-import useTheme from '../useTheme';
-import useStore from '../useStore.mjs';
+import { useSettings } from '../settings.mjs';
 
 const initialTheme = localStorage.getItem('strudel-theme') || 'strudelTheme';
 
@@ -119,10 +118,7 @@ export function Repl({ embedded = false }) {
   const [isZen, setIsZen] = useState(false);
   const [pending, setPending] = useState(false);
 
-  const { theme, themeSettings } = useTheme();
-  const {
-    state: { keybindings, fontSize, fontFamily },
-  } = useStore();
+  const { theme, keybindings, fontSize, fontFamily } = useSettings();
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({

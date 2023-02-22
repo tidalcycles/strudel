@@ -47,37 +47,34 @@ const base = BASE_URL;
 
 <script>
   import { settings } from '../repl/themes.mjs';
-  import { watch, get } from '../store.mjs';
+  import { settingsMap } from '../settings.mjs';
+  import { listenKeys } from 'nanostores';
   const themeStyle = document.createElement('style');
   themeStyle.id = 'strudel-theme';
   document.head.append(themeStyle);
-  function getTheme(name) {
+  function activateTheme(name) {
     if (!settings[name]) {
-      console.warn('theme', name, 'has no settings');
+      console.warn('theme', name, 'has no settings.. defaulting to strudelTheme settings');
     }
-    return {
-      name,
-      settings: settings[name] || settings.strudelTheme,
-    };
-  }
-  function setTheme(name) {
-    const { settings } = getTheme(name);
+    const themeSettings = settings[name] || settings.strudelTheme;
     // set css variables
     themeStyle.innerHTML = `:root {
-      ${Object.entries(settings)
+      ${Object.entries(themeSettings)
         // important to override fallback
         .map(([key, value]) => `--${key}: ${value} !important;`)
         .join('\n')}
     }`;
     // tailwind dark mode
-    if (settings.light) {
+    if (themeSettings.light) {
       document.documentElement.classList.remove('dark');
     } else {
       document.documentElement.classList.add('dark');
     }
   }
-  setTheme(get().theme);
-  watch(setTheme, 'theme');
+
+  activateTheme(settingsMap.get().theme);
+  listenKeys(settingsMap, ['theme'], ({ theme }) => activateTheme(theme));
+
   // https://medium.com/quick-code/100vh-problem-with-ios-safari-92ab23c852a8
   const appHeight = () => {
     const doc = document.documentElement;

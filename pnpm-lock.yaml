@@ -362,6 +362,8 @@ importers:
       '@docsearch/react': ^3.1.0
       '@headlessui/react': ^1.7.7
       '@heroicons/react': ^2.0.13
+      '@nanostores/persistent': ^0.7.0
+      '@nanostores/react': ^0.4.1
       '@strudel.cycles/core': workspace:*
       '@strudel.cycles/csound': workspace:*
       '@strudel.cycles/midi': workspace:*
@@ -387,6 +389,7 @@ importers:
       fraction.js: ^4.2.0
       html-escaper: ^3.0.3
       nanoid: ^4.0.0
+      nanostores: ^0.7.4
       preact: ^10.7.3
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -407,6 +410,8 @@ importers:
       '@docsearch/react': 3.3.2_y6lbs4o5th67cuzjdmtw5eqh7a
       '@headlessui/react': 1.7.8_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.14_react@18.2.0
+      '@nanostores/persistent': 0.7.0_nanostores@0.7.4
+      '@nanostores/react': 0.4.1_nkfnbc2tpc77iht7asm3uqwau4
       '@strudel.cycles/core': link:../packages/core
       '@strudel.cycles/csound': link:../packages/csound
       '@strudel.cycles/midi': link:../packages/midi
@@ -430,6 +435,7 @@ importers:
       canvas: 2.11.0
       fraction.js: 4.2.0
       nanoid: 4.0.0
+      nanostores: 0.7.4
       preact: 10.11.3
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -3168,6 +3174,27 @@ packages:
       vfile: 5.3.6
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@nanostores/persistent/0.7.0_nanostores@0.7.4:
+    resolution: {integrity: sha512-4PAInL/T1hbftZUJ0cmgdFHBMalUoq7BUXFBy7QfyMv/8X3LPTYNh/yxspL7+J+XM3UNvVI7IFRMMs6FBasjhQ==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
+    peerDependencies:
+      nanostores: ^0.7.0
+    dependencies:
+      nanostores: 0.7.4
+    dev: false
+
+  /@nanostores/react/0.4.1_nkfnbc2tpc77iht7asm3uqwau4:
+    resolution: {integrity: sha512-lsv0CYrMxczbXtoV/mxFVEoL/uVjEjseoP89srO/5yNAOkJka+dSFS7LYyWEbuvCPO7EgbtkvRpO5V+OztKQOw==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
+    peerDependencies:
+      nanostores: ^0.7.0
+      react: '>=18.0.0'
+    dependencies:
+      nanostores: 0.7.4
+      react: 18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
   /@nodelib/fs.scandir/2.1.5:
@@ -9646,6 +9673,11 @@ packages:
     hasBin: true
     dev: false
 
+  /nanostores/0.7.4:
+    resolution: {integrity: sha512-MBeUVt7NBcXqh7AGT+KSr3O0X/995CZsvcP2QEMP+PXFwb07qv3Vjyq+EX0yS8f12Vv3Tn2g/BvK/OZoMhJlOQ==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
+    dev: false
+
   /napi-build-utils/1.0.2:
     resolution: {integrity: sha512-ONmRUqK7zj7DWX0D9ADe03wbwOBZxNAfF20PlGfCWQcD3+/MakShIHrMqx9YwPTfxDdF1zLeL+RGZiR9kGMLdg==}
     dev: true
@@ -12850,6 +12882,14 @@ packages:
     dependencies:
       punycode: 2.3.0
     dev: true
+
+  /use-sync-external-store/1.2.0_react@18.2.0:
+    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /utf-8-validate/5.0.10:
     resolution: {integrity: sha512-Z6czzLq4u8fPOyx7TU6X3dvUZVvoJmxSQ+IcrlmagKhilxlhZgxPK6C5Jqbkw1IDUmFTM+cz9QDnnLTwDz/2gQ==}

@@ -7,7 +7,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { loadedSamples } from './Repl';
 import { Reference } from './Reference';
 import { themes } from './themes.mjs';
-import useStore from '../useStore.mjs';
+import { useSettings, settingsMap } from '../settings.mjs';
 
 export function Footer({ context }) {
   // const [activeFooter, setActiveFooter] = useState('console');
@@ -287,29 +287,24 @@ const fontFamilyOptions = {
 };
 
 function SettingsTab() {
-  const { state, update, reset } = useStore();
-  const { theme, keybindings, fontSize, fontFamily } = state;
+  const { theme, keybindings, fontSize, fontFamily } = useSettings();
   return (
     <div className="text-foreground p-4 space-y-4">
       <FormItem label="Theme">
-        <SelectInput
-          options={themeOptions}
-          value={theme}
-          onChange={(theme) => update((current) => ({ ...current, theme }))}
-        />
+        <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormItem label="Font Family">
           <SelectInput
             options={fontFamilyOptions}
             value={fontFamily}
-            onChange={(fontFamily) => update((current) => ({ ...current, fontFamily }))}
+            onChange={(fontFamily) => settingsMap.setKey('fontFamily', fontFamily)}
           />
         </FormItem>
         <FormItem label="Font Size">
           <NumberSlider
             value={fontSize}
-            onChange={(fontSize) => update((current) => ({ ...current, fontSize }))}
+            onChange={(fontSize) => settingsMap.setKey('fontSize', fontSize)}
             min={10}
             max={40}
             step={2}
@@ -319,7 +314,7 @@ function SettingsTab() {
       <FormItem label="Keybindings">
         <ButtonGroup
           value={keybindings}
-          onChange={(keybindings) => update((current) => ({ ...current, keybindings }))}
+          onChange={(keybindings) => settingsMap.setKey('keybindings', keybindings)}
           items={{ codemirror: 'Codemirror', vim: 'Vim', emacs: 'Emacs' }}
         ></ButtonGroup>
       </FormItem>
@@ -328,7 +323,7 @@ function SettingsTab() {
           className="bg-background p-2 max-w-[300px] rounded-md hover:opacity-50"
           onClick={() => {
             if (confirm('Sure?')) {
-              reset();
+              settingsMap.setKey(defaultSettings);
             }
           }}
         >
