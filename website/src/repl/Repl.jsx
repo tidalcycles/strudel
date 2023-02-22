@@ -121,7 +121,7 @@ export function Repl({ embedded = false }) {
 
   const { theme, themeSettings } = useTheme();
   const {
-    state: { keybindings, fontSize },
+    state: { keybindings, fontSize, fontFamily },
   } = useStore();
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
@@ -283,6 +283,7 @@ export function Repl({ embedded = false }) {
             value={code}
             keybindings={keybindings}
             fontSize={fontSize}
+            fontFamily={fontFamily}
             onChange={handleChangeCode}
             onViewChanged={setView}
             onSelectionChange={handleSelectionChange}

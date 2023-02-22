@@ -101,6 +101,7 @@ export default function CodeMirror({
   theme,
   keybindings,
   fontSize = 18,
+  fontFamily = 'monospace',
   options,
   editorDidMount,
 }) {
@@ -135,7 +136,7 @@ export default function CodeMirror({
     return staticExtensions;
   }, [keybindings]);
   return (
-    <div style={{ fontSize }} className="w-full">
+    <div style={{ fontSize, fontFamily }} className="w-full">
       <_CodeMirror
         value={value}
         theme={theme || strudelTheme}

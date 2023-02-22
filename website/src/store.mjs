@@ -2,6 +2,7 @@ export const storeKey = 'strudel-settings';
 const defaults = {
   keybindings: 'codemirror',
   theme: 'strudelTheme',
+  fontFamily: 'monospace',
   fontSize: 18,
 };
 

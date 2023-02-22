@@ -9,8 +9,6 @@ export const settings = {
   lineHighlight: '#ffffff10',
   gutterBackground: 'transparent',
   gutterForeground: '#8a919966',
-  //fontFamily: 'BigBlueTerminal, monospace',
-  fontFamily: 'x3270, monospace',
 };
 export default createTheme({
   theme: 'dark',

@@ -7,10 +7,9 @@ export const settings = {
   selection: '#ffffff20',
   selectionMatch: '#036dd626',
   lineHighlight: '#ffffff10',
+  lineBackground: '#00000050',
   gutterBackground: 'transparent',
   gutterForeground: '#8a919966',
-  fontFamily: 'BigBlueTerminal, monospace',
-  //fontFamily: 'x3270, monospace',
 };
 export default createTheme({
   theme: 'dark',

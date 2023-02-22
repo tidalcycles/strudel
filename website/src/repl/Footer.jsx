@@ -279,18 +279,31 @@ function FormItem({ label, children }) {
 }
 
 const themeOptions = Object.fromEntries(Object.keys(themes).map((k) => [k, k]));
+const fontFamilyOptions = {
+  monospace: 'monospace',
+  BigBlueTerminal: 'BigBlueTerminal',
+  x3270: 'x3270',
+  PressStart: 'PressStart2P',
+};
 
 function SettingsTab() {
   const { state, update, reset } = useStore();
-  const { theme, keybindings, fontSize } = state;
+  const { theme, keybindings, fontSize, fontFamily } = state;
   return (
     <div className="text-foreground p-4 space-y-4">
+      <FormItem label="Theme">
+        <SelectInput
+          options={themeOptions}
+          value={theme}
+          onChange={(theme) => update((current) => ({ ...current, theme }))}
+        />
+      </FormItem>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormItem label="Theme">
+        <FormItem label="Font Family">
           <SelectInput
-            options={themeOptions}
-            value={theme}
-            onChange={(theme) => update((current) => ({ ...current, theme }))}
+            options={fontFamilyOptions}
+            value={fontFamily}
+            onChange={(fontFamily) => update((current) => ({ ...current, fontFamily }))}
           />
         </FormItem>
         <FormItem label="Font Size">

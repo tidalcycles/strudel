@@ -12,7 +12,6 @@ export const settings = {
   gutterBackground: 'transparent',
   gutterForeground: '#0f380f',
   light: true,
-  fontFamily: 'PressStart, monospace',
 };
 export default createTheme({
   theme: 'light',
