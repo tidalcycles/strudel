@@ -5,8 +5,9 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as _WebMidi from 'webmidi';
-import { Pattern, isPattern, isNote, getPlayableNoteValue, logger } from '@strudel.cycles/core';
+import { Pattern, isPattern, logger } from '@strudel.cycles/core';
 import { getAudioContext } from '@strudel.cycles/webaudio';
+import { toMidi } from '@strudel.cycles/core';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
@@ -90,11 +91,6 @@ Pattern.prototype.midi = function (output, channel = 1) {
     );
   }
   return this.onTrigger((time, hap) => {
-    let note = getPlayableNoteValue(hap);
-    const velocity = hap.context?.velocity ?? 0.9;
-    if (!isNote(note)) {
-      throw new Error('not a note: ' + note);
-    }
     if (!midiReady) {
       return;
     }
@@ -106,15 +102,28 @@ Pattern.prototype.midi = function (output, channel = 1) {
           .join(' | ')}`,
       );
     }
-    // console.log('midi', value, output);
+    hap.ensureObjectValue();
+
+    // calculate time
     const timingOffset = WebMidi.time - getAudioContext().currentTime * 1000;
     time = time * 1000 + timingOffset;
-    // const inMs = '+' + (time - Tone.getContext().currentTime) * 1000;
-    // await enableWebMidi()
-    device.playNote(note, channel, {
-      time,
-      duration: hap.duration.valueOf() * 1000 - 5,
-      attack: velocity,
-    });
+
+    // destructure value
+    const { note, nrpnn, nrpv, ccn, ccv } = hap.value;
+    const velocity = hap.context?.velocity ?? 0.9; // TODO: refactor velocity
+    const duration = hap.duration.valueOf() * 1000 - 5;
+
+    if (note) {
+      const midiNumber = toMidi(note);
+      console.log('midi number', midiNumber);
+      device.playNote(midiNumber, channel, {
+        time,
+        duration,
+        attack: velocity,
+      });
+    }
+    if (ccn && ccv) {
+      device.sendControlChange(ccn, ccv, channel, { time });
+    }
   });
 };
