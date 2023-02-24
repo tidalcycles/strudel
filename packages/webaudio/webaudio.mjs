@@ -193,21 +193,9 @@ function effectSend(input, effect, wet) {
 // export const webaudioOutput = async (t, hap, ct, cps) => {
 export const webaudioOutput = async (hap, deadline, hapDuration) => {
   const ac = getAudioContext();
-  /* if (isNote(hap.value)) {
-      // supports primitive hap values that look like notes
-      hap.value = { note: hap.value };
-    } */
-  if (typeof hap.value !== 'object') {
-    logger(
-      `hap.value "${hap.value}" is not supported by webaudio output. Hint: append .note() or .s() to the end`,
-      'error',
-    );
-    /*     throw new Error(
-      `hap.value "${hap.value}"" is not supported by webaudio output. Hint: append .note() or .s() to the end`,
-    ); */
-    return;
-  }
-  // calculate correct time (tone.js workaround)
+  hap.ensureObjectValue();
+
+  // calculate absolute time
   let t = ac.currentTime + deadline;
   // destructure value
   let {
