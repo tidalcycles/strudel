@@ -22,11 +22,34 @@ If no outputName is given, it uses the first midi output it finds.
 
 <MiniRepl
   client:idle
-  tune={`stack("<C^7 A7 Dm7 G7>".voicings('lefthand'), "<C3 A2 D3 G2>")
+  tune={`stack("<C^7 A7 Dm7 G7>".voicings('lefthand'), "<C3 A2 D3 G2>").note()
   .midi()`}
 />
 
 In the console, you will see a log of the available MIDI devices as soon as you run the code, e.g. `Midi connected! Using "Midi Through Port-0".`
+
+## midichan(number)
+
+Selects the MIDI channel to use. If not used, `.midi` will use channel 1 by default.
+
+## ccn && ccv
+
+- `ccn` sets the cc number. Depends on your synths midi mapping
+- `ccv` sets the cc value. normalized from 0 to 1.
+
+<MiniRepl client:idle tune={`note("c a f e").ccn(74).ccv(sine.slow(4)).midi()`} />
+
+In the above snippet, `ccn` is set to 74, which is the filter cutoff for many synths. `ccv` is controlled by a saw pattern.
+Having everything in one pattern, the `ccv` pattern will be aligned to the note pattern, because the structure comes from the left by default.
+But you can also control cc messages separately like this:
+
+<MiniRepl
+  client:idle
+  tune={`stack(
+  note("c a f e"),
+  ccv(sine.segment(16).slow(4)).ccn(74)
+).midi()`}
+/>
 
 # SuperDirt API
 

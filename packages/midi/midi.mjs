@@ -64,7 +64,7 @@ function getDevice(output, outputs) {
 }
 
 // Pattern.prototype.midi = function (output: string | number, channel = 1) {
-Pattern.prototype.midi = function (output, channel = 1) {
+Pattern.prototype.midi = function (output) {
   if (!supportsMidi()) {
     throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
   }
@@ -109,21 +109,27 @@ Pattern.prototype.midi = function (output, channel = 1) {
     time = time * 1000 + timingOffset;
 
     // destructure value
-    const { note, nrpnn, nrpv, ccn, ccv } = hap.value;
+    const { note, nrpnn, nrpv, ccn, ccv, midichan = 1 } = hap.value;
     const velocity = hap.context?.velocity ?? 0.9; // TODO: refactor velocity
     const duration = hap.duration.valueOf() * 1000 - 5;
 
     if (note) {
       const midiNumber = toMidi(note);
-      console.log('midi number', midiNumber);
-      device.playNote(midiNumber, channel, {
+      device.playNote(midiNumber, midichan, {
         time,
         duration,
         attack: velocity,
       });
     }
-    if (ccn && ccv) {
-      device.sendControlChange(ccn, ccv, channel, { time });
+    if (ccv && ccn) {
+      if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
+        throw new Error('expected ccv to be a number between 0 and 1');
+      }
+      if (!['string', 'number'].includes(typeof ccn)) {
+        throw new Error('expected ccn to be a number or a string');
+      }
+      const scaled = Math.round(ccv * 127);
+      device.sendControlChange(ccn, scaled, midichan, { time });
     }
   });
 };
