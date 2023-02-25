@@ -11,6 +11,7 @@ importers:
       '@strudel.cycles/webaudio': workspace:*
       '@strudel.cycles/xen': workspace:*
       '@vitest/ui': ^0.25.7
+      acorn: ^8.8.1
       c8: ^7.12.0
       canvas: ^2.11.0
       dependency-tree: ^9.0.0
@@ -32,6 +33,7 @@ importers:
       '@strudel.cycles/transpiler': link:packages/transpiler
       '@strudel.cycles/webaudio': link:packages/webaudio
       '@strudel.cycles/xen': link:packages/xen
+      acorn: 8.8.2
       dependency-tree: 9.0.0
       vitest: 0.25.8_@vitest+ui@0.25.8
     devDependencies:
