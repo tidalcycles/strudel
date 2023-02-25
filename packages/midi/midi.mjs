@@ -5,8 +5,9 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as _WebMidi from 'webmidi';
-import { Pattern, isPattern, isNote, getPlayableNoteValue, logger } from '@strudel.cycles/core';
+import { Pattern, isPattern, logger } from '@strudel.cycles/core';
 import { getAudioContext } from '@strudel.cycles/webaudio';
+import { toMidi } from '@strudel.cycles/core';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
@@ -63,7 +64,7 @@ function getDevice(output, outputs) {
 }
 
 // Pattern.prototype.midi = function (output: string | number, channel = 1) {
-Pattern.prototype.midi = function (output, channel = 1) {
+Pattern.prototype.midi = function (output) {
   if (!supportsMidi()) {
     throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
   }
@@ -90,11 +91,6 @@ Pattern.prototype.midi = function (output, channel = 1) {
     );
   }
   return this.onTrigger((time, hap) => {
-    let note = getPlayableNoteValue(hap);
-    const velocity = hap.context?.velocity ?? 0.9;
-    if (!isNote(note)) {
-      throw new Error('not a note: ' + note);
-    }
     if (!midiReady) {
       return;
     }
@@ -106,15 +102,34 @@ Pattern.prototype.midi = function (output, channel = 1) {
           .join(' | ')}`,
       );
     }
-    // console.log('midi', value, output);
+    hap.ensureObjectValue();
+
+    // calculate time
     const timingOffset = WebMidi.time - getAudioContext().currentTime * 1000;
     time = time * 1000 + timingOffset;
-    // const inMs = '+' + (time - Tone.getContext().currentTime) * 1000;
-    // await enableWebMidi()
-    device.playNote(note, channel, {
-      time,
-      duration: hap.duration.valueOf() * 1000 - 5,
-      attack: velocity,
-    });
+
+    // destructure value
+    const { note, nrpnn, nrpv, ccn, ccv, midichan = 1 } = hap.value;
+    const velocity = hap.context?.velocity ?? 0.9; // TODO: refactor velocity
+    const duration = hap.duration.valueOf() * 1000 - 5;
+
+    if (note) {
+      const midiNumber = toMidi(note);
+      device.playNote(midiNumber, midichan, {
+        time,
+        duration,
+        attack: velocity,
+      });
+    }
+    if (ccv && ccn) {
+      if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
+        throw new Error('expected ccv to be a number between 0 and 1');
+      }
+      if (!['string', 'number'].includes(typeof ccn)) {
+        throw new Error('expected ccn to be a number or a string');
+      }
+      const scaled = Math.round(ccv * 127);
+      device.sendControlChange(ccn, scaled, midichan, { time });
+    }
   });
 };

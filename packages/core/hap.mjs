@@ -126,6 +126,19 @@ export class Hap {
   setContext(context) {
     return new Hap(this.whole, this.part, this.value, context);
   }
+
+  ensureObjectValue() {
+    /* if (isNote(hap.value)) {
+      // supports primitive hap values that look like notes
+      hap.value = { note: hap.value };
+    } */
+    if (typeof this.value !== 'object') {
+      throw new Error(
+        `expected hap.value to be an object, but got "${this.value}". Hint: append .note() or .s() to the end`,
+        'error',
+      );
+    }
+  }
 }
 
 export default Hap;
