@@ -1632,7 +1632,6 @@ export function register(name, func) {
   };
 
   Pattern.prototype[name] = function (...args) {
-    args = args.map(reify);
     // For methods that take a single argument (plus 'this'), allow
     // multiple arguments but sequence them
     if (arity === 2 && args.length !== 1) {
@@ -1640,6 +1639,7 @@ export function register(name, func) {
     } else if (arity !== args.length + 1) {
       throw new Error(`.${name}() expects ${arity - 1} inputs but got ${args.length}.`);
     }
+    args = args.map(reify);
     return pfunc(...args, this);
   };
 
