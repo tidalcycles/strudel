@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern, sequence, registerControl } from './pattern.mjs';
+import { Pattern, sequence, register } from './pattern.mjs';
 
 const controls = {};
 const generic_params = [
@@ -828,18 +828,12 @@ const generic_params = [
 
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 
-const makeControl = function (name) {
-  const func = (...pats) => sequence(...pats).withValue((x) => ({ [name]: x }));
-  const setter = function (...pats) {
-    if (!pats.length) {
-      return this.fmap((value) => ({ [name]: value }));
-    }
-    return this.set(func(...pats));
-  };
-  Pattern.prototype[name] = setter;
-  registerControl(name, func);
-  return func;
-};
+controls.play = {}
+
+const makeControl = name => {
+  controls.play[name] = pat => pat.fmap(v => ({[name]: v}))
+  return register(name, (v, pat) => pat.fmap(o => ({...o, ...{[name]: v}})))
+}
 
 generic_params.forEach(([type, name, description]) => {
   controls[name] = makeControl(name);
