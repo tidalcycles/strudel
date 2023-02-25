@@ -2,11 +2,11 @@
   background-color: transparent !important;
   height: 100%;
   z-index: 11;
-  font-size: 18px;
 }
 
 .cm-theme {
   width: 100%;
+  height: 100%;
 }
 
 .cm-theme-light {

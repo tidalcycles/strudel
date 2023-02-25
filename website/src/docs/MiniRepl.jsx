@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { prebake } from '../repl/prebake';
 import { themes, settings } from '../repl/themes.mjs';
 import './MiniRepl.css';
-
-const theme = localStorage.getItem('strudel-theme') || 'strudelTheme';
+import { useSettings } from '../settings.mjs';
 
 let modules;
 if (typeof window !== 'undefined') {
@@ -29,6 +28,7 @@ if (typeof window !== 'undefined') {
 
 export function MiniRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
   const [Repl, setRepl] = useState();
+  const { theme } = useSettings();
   useEffect(() => {
     // we have to load this package on the client
     // because codemirror throws an error on the server
@@ -36,7 +36,6 @@ export function MiniRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
       .then(([res]) => setRepl(() => res.MiniRepl))
       .catch((err) => console.error(err));
   }, []);
-  // const { settings } = useTheme();
   return Repl ? (
     <div className="mb-4">
       <Repl
@@ -46,7 +45,6 @@ export function MiniRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
         punchcard={punchcard}
         canvasHeight={canvasHeight}
         theme={themes[theme]}
-        highlightColor={settings[theme]?.foreground}
       />
     </div>
   ) : (

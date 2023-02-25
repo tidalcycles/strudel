@@ -1,12 +1,9 @@
 ---
 import { pwaInfo } from 'virtual:pwa-info';
 import '../styles/index.css';
-import { settings } from '../repl/themes.mjs';
 
 const { BASE_URL } = import.meta.env;
 const base = BASE_URL;
-
-const { strudelTheme } = settings;
 ---
 
 <!-- Global Metadata -->
@@ -48,37 +45,43 @@ const { strudelTheme } = settings;
 </style>
 {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
 
-<script define:vars={{ settings, strudelTheme }} is:inline>
+<script>
+  import { settings } from '../repl/themes.mjs';
+  import { settingsMap } from '../settings.mjs';
+  import { listenKeys } from 'nanostores';
   const themeStyle = document.createElement('style');
   themeStyle.id = 'strudel-theme';
   document.head.append(themeStyle);
-  function getTheme(name) {
+  function activateTheme(name) {
     if (!settings[name]) {
-      console.warn('theme', name, 'has no settings');
+      console.warn('theme', name, 'has no settings.. defaulting to strudelTheme settings');
     }
-    return {
-      name,
-      settings: settings[name] || settings.strudelTheme,
-    };
-  }
-  function setTheme(name) {
-    const { settings } = getTheme(name);
+    const themeSettings = settings[name] || settings.strudelTheme;
     // set css variables
     themeStyle.innerHTML = `:root {
-      ${Object.entries(settings)
+      ${Object.entries(themeSettings)
         // important to override fallback
         .map(([key, value]) => `--${key}: ${value} !important;`)
         .join('\n')}
     }`;
     // tailwind dark mode
-    if (settings.light) {
+    if (themeSettings.light) {
       document.documentElement.classList.remove('dark');
     } else {
       document.documentElement.classList.add('dark');
     }
-    // persist theme name
-    localStorage.setItem('strudel-theme', name || 'strudelTheme');
   }
-  setTheme(localStorage.getItem('strudel-theme'));
-  document.addEventListener('strudel-theme', (e) => setTheme(e.detail));
+
+  activateTheme(settingsMap.get().theme);
+  listenKeys(settingsMap, ['theme'], ({ theme }) => activateTheme(theme));
+
+  // https://medium.com/quick-code/100vh-problem-with-ios-safari-92ab23c852a8
+  const appHeight = () => {
+    const doc = document.documentElement;
+    doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+  };
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', appHeight);
+    appHeight();
+  }
 </script>
