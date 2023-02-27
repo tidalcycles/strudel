@@ -21,141 +21,6 @@ let stringParser;
 // intended to use with mini to automatically interpret all strings as mini notation
 export const setStringParser = (parser) => (stringParser = parser);
 
-const alignments = ['in', 'out', 'mix', 'squeeze', 'squeezeout', 'trig', 'trigzero'];
-
-const methodRegistry = [];
-const getterRegistry = [];
-const controlRegistry = [];
-const controlSubscribers = [];
-const composifiedRegistry = [];
-
-//////////////////////////////////////////////////////////////////////
-// Magic for supporting higher order composition of method chains
-
-// Dresses the given (unary) function with methods for composition chaining, so e.g.
-// `fast(2).iter(4)` composes to pattern functions into a new one.
-function composify(func) {
-  if (!func.__composified) {
-    for (const [name, method] of methodRegistry) {
-      func[name] = method;
-    }
-    for (const [name, getter] of getterRegistry) {
-      Object.defineProperty(func, name, getter);
-    }
-    func.__composified = true;
-    composifiedRegistry.push(func);
-  } else {
-    console.log('Warning: attempt at composifying a function more than once');
-  }
-  return func;
-}
-
-export function registerMethod(name, addAlignments = false, addControls = false) {
-  if (addAlignments || addControls) {
-    // This method needs to make its 'this' object available to chained alignments and/or
-    // control parameters, so it has to be implemented as a getter
-    const getter = {
-      get: function () {
-        const func = this;
-        const wrapped = function (...args) {
-          const composed = (pat) => func(pat)[name](...args);
-          return composify(composed);
-        };
-
-        if (addAlignments) {
-          for (const alignment of alignments) {
-            wrapped[alignment] = function (...args) {
-              const composed = (pat) => func(pat)[name][alignment](...args);
-              return composify(composed);
-            };
-            for (const [controlname, controlfunc] of controlRegistry) {
-              wrapped[alignment][controlname] = function (...args) {
-                const composed = (pat) => func(pat)[name][alignment](controlfunc(...args));
-                return composify(composed);
-              };
-            }
-          }
-        }
-        if (addControls) {
-          for (const [controlname, controlfunc] of controlRegistry) {
-            wrapped[controlname] = function (...args) {
-              const composed = (pat) => func(pat)[name](controlfunc(...args));
-              return composify(composed);
-            };
-          }
-        }
-        return wrapped;
-      },
-    };
-
-    getterRegistry.push([name, getter]);
-
-    // Add to functions already 'composified'
-    for (const composified of composifiedRegistry) {
-      Object.defineProperty(composified, name, getter);
-    }
-  } else {
-    // No chained alignments/controls needed, so we can just add as a plain method,
-    // probably more efficient this way?
-    const method = function (...args) {
-      const func = this;
-      const composed = (pat) => func(pat)[name](...args);
-      return composify(composed);
-    };
-
-    methodRegistry.push([name, method]);
-
-    // Add to functions already 'composified'
-    for (const composified of composifiedRegistry) {
-      composified[name] = method;
-    }
-  }
-}
-
-export function registerControl(controlname, controlfunc) {
-  registerMethod(controlname);
-  controlRegistry.push([controlname, controlfunc]);
-  for (const subscriber of controlSubscribers) {
-    subscriber(controlname, controlfunc);
-  }
-}
-
-export function withControls(func) {
-  for (const [controlname, controlfunc] of controlRegistry) {
-    func(controlname, controlfunc);
-  }
-  controlSubscribers.push(func);
-}
-
-export function addToPrototype(name, func) {
-  Pattern.prototype[name] = func;
-  registerMethod(name);
-}
-
-export function curryPattern(func, arity = func.length) {
-  const fn = function curried(...args) {
-    if (args.length >= arity) {
-      return func.apply(this, args);
-    }
-
-    const partial = function (...args2) {
-      return curried.apply(this, args.concat(args2));
-    };
-    if (args.length == arity - 1) {
-      return composify(partial);
-    }
-
-    return partial;
-  };
-  if (arity == 1) {
-    composify(fn);
-  }
-  return fn;
-}
-
-//////////////////////////////////////////////////////////////////////
-// The core Pattern class
-
 /** @class Class representing a pattern. */
 export class Pattern {
   /**
@@ -778,9 +643,7 @@ export class Pattern {
    * @noAutocomplete
    */
   get firstCycleValues() {
-    return this.sortHapsByPart()
-      .firstCycle()
-      .map((hap) => hap.value);
+    return this.firstCycle().map((hap) => hap.value);
   }
 
   /**
@@ -830,7 +693,7 @@ export class Pattern {
     const otherPat = reify(other);
     return this.fmap((a) => otherPat.fmap((b) => func(a)(b))).squeezeJoin();
   }
-  _opSqueezeout(other, func) {
+  _opSqueezeOut(other, func) {
     const thisPat = this;
     const otherPat = reify(other);
     return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a))).squeezeJoin();
@@ -997,11 +860,11 @@ function groupHapsBy(eq, haps) {
 const congruent = (a, b) => a.spanEquals(b);
 // Pattern<Hap<T>> -> Pattern<Hap<T[]>>
 // returned pattern contains arrays of congruent haps
-addToPrototype('collect', function () {
+Pattern.prototype.collect = function () {
   return this.withHaps((haps) =>
     groupHapsBy(congruent, haps).map((_haps) => new Hap(_haps[0].whole, _haps[0].part, _haps, {})),
   );
-});
+};
 
 /**
  * Selects indices in in stacked notes.
@@ -1009,12 +872,12 @@ addToPrototype('collect', function () {
  * note("<[c,eb,g]!2 [c,f,ab] [d,f,ab]>")
  * .arpWith(haps => haps[2])
  * */
-addToPrototype('arpWith', function (func) {
+Pattern.prototype.arpWith = function (func) {
   return this.collect()
     .fmap((v) => reify(func(v)))
     .innerJoin()
     .withHap((h) => new Hap(h.whole, h.part, h.value.value, h.combineContext(h.value)));
-});
+};
 
 /**
  * Selects indices in in stacked notes.
@@ -1022,28 +885,27 @@ addToPrototype('arpWith', function (func) {
  * note("<[c,eb,g]!2 [c,f,ab] [d,f,ab]>")
  * .arp("0 [0,2] 1 [0,2]").slow(2)
  * */
-addToPrototype('arp', function (pat) {
+Pattern.prototype.arp = function (pat) {
   return this.arpWith((haps) => pat.fmap((i) => haps[i % haps.length]));
-});
+};
 
-/**
+/*
  * Takes a time duration followed by one or more patterns, and shifts the given patterns in time, so they are
  * distributed equally over the given time duration. They are then combined with the pattern 'weave' is called on, after it has been stretched out (i.e. slowed down by) the time duration.
  * @name weave
  * @memberof Pattern
  * @example pan(saw).weave(4, s("bd(3,8)"), s("~ sd"))
  * @example n("0 1 2 3 4 5 6 7").weave(8, s("bd(3,8)"), s("~ sd"))
- */
 
 addToPrototype('weave', function (t, ...pats) {
   return this.weaveWith(t, ...pats.map((x) => set.out(x)));
 });
 
-/**
+*/
+/*
  * Like 'weave', but accepts functions rather than patterns, which are applied to the pattern.
  * @name weaveWith
  * @memberof Pattern
- */
 
 addToPrototype('weaveWith', function (t, ...funcs) {
   const pat = this;
@@ -1054,6 +916,7 @@ addToPrototype('weaveWith', function (t, ...funcs) {
   }
   return stack(...funcs.map((func, i) => pat.inside(t, func).early(Fraction(i).div(l))))._slow(t);
 });
+*/
 
 //////////////////////////////////////////////////////////////////////
 // compose matrix functions
@@ -1151,15 +1014,15 @@ function _composeOp(a, b, func) {
     func: [(a, b) => b(a)],
   };
 
-  const hows = alignments.map((x) => x.charAt(0).toUpperCase() + x.slice(1));
+  const hows = ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero'];
 
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
     // make plain version, e.g. pat._add(value) adds that plain value
     // to all the values in pat
-    addToPrototype('_' + what, function (value) {
+    Pattern.prototype['_' + what] = function (value) {
       return this.fmap((x) => op(x, value));
-    });
+    };
 
     // make patternified monster version
     Object.defineProperty(Pattern.prototype, what, {
@@ -1173,7 +1036,7 @@ function _composeOp(a, b, func) {
 
         // add methods to that function for each behaviour
         for (const how of hows) {
-          const howfunc = function (...other) {
+          wrapper[how.toLowerCase()] = function (...other) {
             var howpat = pat;
             other = sequence(other);
             if (preprocess) {
@@ -1191,41 +1054,19 @@ function _composeOp(a, b, func) {
             }
             return result;
           };
-
-          for (const [controlname, controlfunc] of controlRegistry) {
-            howfunc[controlname] = (...args) => howfunc(controlfunc(...args));
-          }
-          wrapper[how.toLowerCase()] = howfunc;
         }
         wrapper.squeezein = wrapper.squeeze;
-
-        for (const [controlname, controlfunc] of controlRegistry) {
-          wrapper[controlname] = (...args) => wrapper.in(controlfunc(...args));
-        }
 
         return wrapper;
       },
     });
 
-    registerMethod(what, true, true);
-  }
-
-  // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
-  for (const howLower of alignments) {
-    // Using a 'get'ted function so that all the controls are added
-    Object.defineProperty(Pattern.prototype, howLower, {
-      get: function () {
-        const pat = this;
-        const howfunc = function (...args) {
-          return pat.set[howLower](args);
-        };
-        for (const [controlname, controlfunc] of controlRegistry) {
-          howfunc[controlname] = (...args) => howfunc(controlfunc(...args));
-        }
-        return howfunc;
-      },
-    });
-    registerMethod(howLower, false, true);
+    // Default op to 'set', e.g. pat.squeeze(pat2) = pat.set.squeeze(pat2)
+    for (const how of hows) {
+      Pattern.prototype[how.toLowerCase()] = function (...args) {
+        return this.set[how.toLowerCase()](args);
+      };
+    }
   }
 
   // binary composers
@@ -1237,36 +1078,36 @@ function _composeOp(a, b, func) {
    *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
    *   .slow(4)
    */
-  addToPrototype('struct', function (...args) {
+  Pattern.prototype.struct = function (...args) {
     return this.keepif.out(...args);
-  });
-  addToPrototype('structAll', function (...args) {
+  };
+  Pattern.prototype.structAll = function (...args) {
     return this.keep.out(...args);
-  });
+  };
   /**
    * Returns silence when mask is 0 or "~"
    *
    * @example
    * note("c [eb,g] d [eb,g]").mask("<1 [0 1]>").slow(2)
    */
-  addToPrototype('mask', function (...args) {
+  Pattern.prototype.mask = function (...args) {
     return this.keepif.in(...args);
-  });
-  addToPrototype('maskAll', function (...args) {
+  };
+  Pattern.prototype.maskAll = function (...args) {
     return this.keep.in(...args);
-  });
+  };
   /**
    * Resets the pattern to the start of the cycle for each onset of the reset pattern.
    *
    * @example
    * s("<bd lt> sd, hh*4").reset("<x@3 x(3,8)>")
    */
-  addToPrototype('reset', function (...args) {
+  Pattern.prototype.reset = function (...args) {
     return this.keepif.trig(...args);
-  });
-  addToPrototype('resetAll', function (...args) {
+  };
+  Pattern.prototype.resetAll = function (...args) {
     return this.keep.trig(...args);
-  });
+  };
   /**
    * Restarts the pattern for each onset of the restart pattern.
    * While reset will only reset the current cycle, restart will start from cycle 0.
@@ -1274,12 +1115,12 @@ function _composeOp(a, b, func) {
    * @example
    * s("<bd lt> sd, hh*4").restart("<x@3 x(3,8)>")
    */
-  addToPrototype('restart', function (...args) {
+  Pattern.prototype.restart = function (...args) {
     return this.keepif.trigzero(...args);
-  });
-  addToPrototype('restartAll', function (...args) {
+  };
+  Pattern.prototype.restartAll = function (...args) {
     return this.keep.trigzero(...args);
-  });
+  };
 })();
 
 // aliases
@@ -1524,68 +1365,36 @@ export function pm(...args) {
   polymeter(...args);
 }
 
-export const mask = curryPattern((a, b) => reify(b).mask(a));
-export const struct = curryPattern((a, b) => reify(b).struct(a));
-export const superimpose = curryPattern((a, b) => reify(b).superimpose(...a));
-
-const methodToFunction = function (name, addAlignments = false) {
-  const func = curryPattern((a, b) => reify(b)[name](a));
-
-  withControls((controlname, controlfunc) => {
-    func[controlname] = function (...pats) {
-      return func(controlfunc(...pats));
-    };
-  });
-
-  if (addAlignments) {
-    for (const alignment of alignments) {
-      func[alignment] = curryPattern((a, b) => reify(b)[name][alignment](a));
-      withControls((controlname, controlfunc) => {
-        func[alignment][controlname] = function (...pats) {
-          return func[alignment](controlfunc(...pats));
-        };
-      });
-    }
-  }
-
-  return func;
-};
+export const mask = curry((a, b) => reify(b).mask(a));
+export const struct = curry((a, b) => reify(b).struct(a));
+export const superimpose = curry((a, b) => reify(b).superimpose(...a));
 
 // operators
-export const set = methodToFunction('set', true);
-export const keep = methodToFunction('keep', true);
-export const keepif = methodToFunction('keepif', true);
-export const add = methodToFunction('add', true);
-export const sub = methodToFunction('sub', true);
-export const mul = methodToFunction('mul', true);
-export const div = methodToFunction('div', true);
-export const mod = methodToFunction('mod', true);
-export const pow = methodToFunction('pow', true);
-export const band = methodToFunction('band', true);
-export const bor = methodToFunction('bor', true);
-export const bxor = methodToFunction('bxor', true);
-export const blshift = methodToFunction('blshift', true);
-export const brshift = methodToFunction('brshift', true);
-export const lt = methodToFunction('lt', true);
-export const gt = methodToFunction('gt', true);
-export const lte = methodToFunction('lte', true);
-export const gte = methodToFunction('gte', true);
-export const eq = methodToFunction('eq', true);
-export const eqt = methodToFunction('eqt', true);
-export const ne = methodToFunction('ne', true);
-export const net = methodToFunction('net', true);
-export const and = methodToFunction('and', true);
-export const or = methodToFunction('or', true);
-export const func = methodToFunction('func', true);
-
-// alignments
-// export const in = methodToFunction('in'); // reserved word :(
-export const out = methodToFunction('out');
-export const mix = methodToFunction('mix');
-export const squeeze = methodToFunction('squeeze');
-export const squeezeout = methodToFunction('squeezeout');
-export const trig = methodToFunction('trig');
-export const trigzero = methodToFunction('trigzero');
+export const set = curry((a, b) => reify(b).set(a));
+export const keep = curry((a, b) => reify(b).keep(a));
+export const keepif = curry((a, b) => reify(b).keepif(a));
+export const add = curry((a, b) => reify(b).add(a));
+export const sub = curry((a, b) => reify(b).sub(a));
+export const mul = curry((a, b) => reify(b).mul(a));
+export const div = curry((a, b) => reify(b).div(a));
+export const mod = curry((a, b) => reify(b).mod(a));
+export const pow = curry((a, b) => reify(b).pow(a));
+export const band = curry((a, b) => reify(b).band(a));
+export const bor = curry((a, b) => reify(b).bor(a));
+export const bxor = curry((a, b) => reify(b).bxor(a));
+export const blshift = curry((a, b) => reify(b).blshift(a));
+export const brshift = curry((a, b) => reify(b).brshift(a));
+export const lt = curry((a, b) => reify(b).lt(a));
+export const gt = curry((a, b) => reify(b).gt(a));
+export const lte = curry((a, b) => reify(b).lte(a));
+export const gte = curry((a, b) => reify(b).gte(a));
+export const eq = curry((a, b) => reify(b).eq(a));
+export const eqt = curry((a, b) => reify(b).eqt(a));
+export const ne = curry((a, b) => reify(b).ne(a));
+export const net = curry((a, b) => reify(b).net(a));
+export const and = curry((a, b) => reify(b).and(a));
+export const or = curry((a, b) => reify(b).or(a));
+export const func = curry((a, b) => reify(b).func(a));
 
 /**
  * Registers a new pattern method. The method is added to the Pattern class + the standalone function is returned from register.
@@ -1604,43 +1413,27 @@ export function register(name, func, patternify = true) {
     return result;
   }
   const arity = func.length;
+  var pfunc; // the patternified function
 
-  registerMethod(name);
-
-  var pfunc;
-
-  if (patternify) {
-    pfunc = function (...args) {
-      args = args.map(reify);
-      const pat = args[args.length - 1];
-      if (arity === 1) {
-        return func(pat);
-      }
-      const [left, ...right] = args.slice(0, -1);
-      let mapFn = (...args) => {
-        // make sure to call func with the correct argument count
-        // args.length is expected to be <= arity-1
-        // so we set undefined args explicitly undefined
-        Array(arity - 1)
-          .fill()
-          .map((_, i) => args[i] ?? undefined);
-        return func(...args, pat);
-      };
-      mapFn = curryPattern(mapFn, arity - 1);
-
-      const app = function (acc, p, i) {
-        return acc.appLeft(p);
-      };
-      const start = left.fmap(mapFn);
-
-      return right.reduce(app, start).innerJoin();
+  pfunc = function (...args) {
+    args = args.map(reify);
+    const pat = args[args.length - 1];
+    if (arity === 1) {
+      return func(pat);
+    }
+    const [left, ...right] = args.slice(0, -1);
+    let mapFn = (...args) => {
+      // make sure to call func with the correct argument count
+      // args.length is expected to be <= arity-1
+      // so we set undefined args explicitly undefined
+      Array(arity - 1)
+        .fill()
+        .map((_, i) => args[i] ?? undefined);
+      return func(...args, pat);
     };
-  } else {
-    pfunc = function (...args) {
-      args = args.map(reify);
-      return func(...args);
-    };
-  }
+    mapFn = curry(mapFn, null, arity - 1);
+    return right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
+  };
 
   Pattern.prototype[name] = function (...args) {
     // For methods that take a single argument (plus 'this'), allow
@@ -1664,7 +1457,7 @@ export function register(name, func, patternify = true) {
 
   // toplevel functions get curried as well as patternified
   // because pfunc uses spread args, we need to state the arity explicitly!
-  return curryPattern(pfunc, arity);
+  return curry(pfunc, null, arity);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2430,7 +2223,7 @@ const _loopAt = function (factor, pat, cps = 1) {
     .slow(factor);
 };
 
-/**
+/*
  * Chops samples into the given number of slices, triggering those slices with a given pattern of slice numbers.
  * @name slice
  * @memberof Pattern
@@ -2438,12 +2231,11 @@ const _loopAt = function (factor, pat, cps = 1) {
  * @example
  * await samples('github:tidalcycles/Dirt-Samples/master')
  * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(1.5)
- */
 const slice = register(
   'slice',
   function (npat, ipat, opat) {
     return npat.innerBind((n) =>
-      ipat.outerBind((i) =>
+    ipat.outerBind((i) =>
         opat.outerBind((o) => {
           // If it's not an object, assume it's a string and make it a 's' control parameter
           o = o instanceof Object ? o : { s: o };
@@ -2456,8 +2248,9 @@ const slice = register(
   },
   false, // turns off auto-patternification
 );
+*/
 
-/**
+/*
  * Works the same as slice, but changes the playback speed of each slice to match the duration of its step.
  * @name splice
  * @memberof Pattern
@@ -2465,7 +2258,6 @@ const slice = register(
  * @example
  * await samples('github:tidalcycles/Dirt-Samples/master')
  * s("breaks165").splice(8,  "0 1 [2 3 0]@2 3 0@2 7").hurry(0.65)
- */
 const splice = register(
   'splice',
   function (npat, ipat, opat) {
@@ -2481,7 +2273,8 @@ const splice = register(
     });
   },
   false, // turns off auto-patternification
-);
+  );
+  */
 
 const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
   return _loopAt(factor, pat, 1);
