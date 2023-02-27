@@ -5,75 +5,58 @@ layout: ../../layouts/MainLayout.astro
 
 import { MiniRepl } from '../../docs/MiniRepl';
 
-## Strudel Packages
+# Strudel Packages
 
-The [strudel repo](github.com/tidalcycles/strudel) is organized into packages, using [npm workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces).
-Publishing packages is done with [lerna](https://lerna.js.org/).
+The [strudel repo](github.com/tidalcycles/strudel) is organized as a monorepo, containing multiple npm packages.
+The purpose of the multiple packages is to
 
-There are different packages for different purposes. They..
+- organize the codebase into more modular, encapsulated pieces
+- be able to opt out of certain functionalities
+- keep the dependencies of the core packages small
 
-- split up the code into smaller chunks
-- can be selectively used to implement some sort of time based system
+## Overview
 
 [See the latest published packages on npm](https://www.npmjs.com/search?q=%40strudel.cycles).
+Here is an overview of all the packages:
 
-### Important bits
+### Essential Packages
 
-- The [root package.json](https://github.com/tidalcycles/strudel/blob/main/package.json) specifies `packages/*` as `workspaces`
-- Each folder in `packages` comes with its own `package.json`, defining a package name of the format `@strudel.cycles/<name>`
-- Running `npm i` from the root folder will symlink all packages to the `node_modules` folder, e.g. `node_modules/@strudel.cycles/core` symlinks `packages/core`
-- These symlinks allow importing the packages with their package name, instead of a relative path, e.g. `import { seq } from '@strudel.cycles/core'`, instead of `import { seq } from '../core/`.
-  This works because the [bare module import](https://vitejs.dev/guide/features.html#npm-dependency-resolving-and-pre-bundling) `@strudel.cycles/core` is resolved to `node_modules/@strudel.cycles/core`.
-  In a project that installs the published packages from npm, these imports will still work, whereas relative ones might not.
-- When a strudel package is importing from another strudel package, the package that is imported from should be listed in the `dependencies` field of the `package.json`.
-  For example, [@strudel.cycles/mini lists `@strudel.cycles/core` as a dependency](https://github.com/tidalcycles/strudel/blob/main/packages/mini/package.json).
-- In development, files in any package can be changed and saved to instantly update the dev server via [hot module replacement](https://vitejs.dev/guide/features.html#hot-module-replacement)
-- To publish packages, `npx lerna publish` will check which packages were changed since the last publish and publish only those.
-  The version numbers in the dependencies of each packages will be updated automatically to the latest version.
+These package are the most essential. You might want to use all of those if you're using strudel in your project:
 
-### Building & Publishing
+- [core](https://github.com/tidalcycles/strudel/tree/main/packages/core#strudelcyclescore): tidal pattern engine with core primitives
+- [mini](https://github.com/tidalcycles/strudel/tree/main/packages/mini#strudelcyclesmini): mini notation parser + core bindings
+- [transpiler](https://github.com/tidalcycles/strudel/tree/main/packages/transpiler#strudelcyclestranspiler): user code transpiler. syntax sugar + highlighting
 
-Currently, all packages are only published as ESM with vite flavour.
-To build standardized ESM and CJS files, a `vite.config.js` like that is needed:
+### Language Extensions
 
-```js
-import { defineConfig } from 'vite';
-import { dependencies } from './package.json';
-import { resolve } from 'path';
+These packages extend the pattern language by specific functions
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [],
-  build: {
-    lib: {
-      entry: resolve(__dirname, 'index.mjs'),
-      formats: ['es', 'cjs'],
-      fileName: (ext) => ({ es: 'index.mjs', cjs: 'index.js' }[ext]),
-    },
-    rollupOptions: {
-      external: [...Object.keys(dependencies)],
-    },
-    target: 'esnext',
-  },
-});
-```
+- [tonal](https://github.com/tidalcycles/strudel/tree/main/packages/tonal): tonal functions for scales and chords
+- [xen](https://github.com/tidalcycles/strudel/tree/main/packages/xen): microtonal / xenharmonic functions
 
-This will build `index.mjs` (ESM) and `index.js` (CJS) to the dist folder.
+### Outputs
 
-### What's the main file?
+These packages provide bindings for different ways to output strudel patterns:
 
-Currently, each package uses the unbundled `index.mjs` as its main file, which must change for the published version.
-There are 2 ways to handle this:
+- [webaudio](https://github.com/tidalcycles/strudel/tree/main/packages/webaudio#strudelcycleswebaudio): the default webaudio output
+- [osc](https://github.com/tidalcycles/strudel/tree/main/packages/osc#strudelcyclesosc): bindings to communicate via OSC
+- [midi](https://github.com/tidalcycles/strudel/tree/main/packages/midi#strudelcyclesmidi): webmidi bindings
+- [csound](https://github.com/tidalcycles/strudel/tree/main/packages/csound#strudelcyclescsound): csound bindings
+- [soundfonts](https://github.com/tidalcycles/strudel/tree/main/packages/serial#strudelcyclessoundfonts): Soundfont support
+- [serial](https://github.com/tidalcycles/strudel/tree/main/packages/serial#strudelcyclesserial): webserial bindings
 
-1. `main` = `dist/index.js`, `module` = `dist/index.mjs`. The built files are used. This means that changing a source file won't take effect in the dev server without a rebuild.
-2. Use different `package.json` files for dev vs publish. So the unbuilt `index.mjs` could be used in dev, while the built files can be used when publishing.
+### Others
 
-Option 1 could be done with [workspace watching](https://lerna.js.org/docs/features/workspace-watching), although it might make the dev server less snappy..
-Option 2 can be done by [publishing just the dist folder and copying over the `package.json` file](https://stackoverflow.com/questions/37862712/how-to-publish-contents-only-of-a-specific-folder).
-Sadly, [this does not fit into how lerna works](https://github.com/lerna/lerna/issues/91).
+- [embed](https://github.com/tidalcycles/strudel/tree/main/packages/embed#strudelcyclesembed): embeddable REPL web component
+- [react](https://github.com/tidalcycles/strudel/tree/main/packages/react#strudelcyclesreact): react hooks and components for strudel
 
-https://github.com/changesets/changesets
+### No Longer Maintained
 
-https://turbo.build/repo/docs/handbook/publishing-packages/versioning-and-publishing
+- [eval](https://github.com/tidalcycles/strudel/tree/main/packages/eval): old code transpiler
+- [tone](https://github.com/tidalcycles/strudel/tree/main/packages/tone#strudelcyclestone): bindings for Tone.js instruments and effects
+- [webdirt](https://github.com/tidalcycles/strudel/tree/main/packages/webdirt): webdirt bindings, replaced by webaudio package
 
-https://pnpm.io/workspaces
+## Tools
+
+- [pnpm workspaces](https://pnpm.io/)
+- Publishing packages is done with [lerna](https://lerna.js.org/).
