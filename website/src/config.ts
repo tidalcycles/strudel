@@ -73,9 +73,9 @@ export const SIDEBAR: Sidebar = {
     ],
     Development: [
       { text: 'REPL', link: 'technical-manual/repl' },
+      { text: 'Packages', link: 'technical-manual/packages' },
       { text: 'Docs', link: 'technical-manual/docs' },
       { text: 'Testing', link: 'technical-manual/testing' },
-      // { text: 'Packages', link: 'technical-manual/packages' },
       // { text: 'Internals', link: 'technical-manual/internals' },
     ],
   },
