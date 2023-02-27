@@ -139,7 +139,7 @@ export const removeUndefineds = (xs) => xs.filter((x) => x != undefined);
 export const flatten = (arr) => [].concat(...arr);
 
 export const id = (a) => a;
-export const constant = curry((a, b) => a);
+export const constant = (a, b) => a;
 
 export const listRange = (min, max) => Array.from({ length: max - min + 1 }, (_, i) => i + min);
 
