@@ -30,4 +30,5 @@ note(`[[e5 [b4 c5] d5 [c5 b4]]
 </strudel-repl>
 ```
 
-Note that the Code is placed inside HTML comments to prevent the browser from treating it as HTML.
+- Note that the Code is placed inside HTML comments to prevent the browser from treating it as HTML.
+- [Play with this example on stackblitz](https://stackblitz.com/edit/js-75cvww?file=index.html)
