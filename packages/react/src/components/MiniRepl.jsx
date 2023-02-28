@@ -7,7 +7,6 @@ import useHighlighting from '../hooks/useHighlighting.mjs';
 import useStrudel from '../hooks/useStrudel.mjs';
 import CodeMirror6, { flash } from './CodeMirror6';
 import { Icon } from './Icon';
-import styles from './MiniRepl.module.css';
 import './style.css';
 import { logger } from '@strudel.cycles/core';
 import useEvent from '../hooks/useEvent.mjs';
@@ -129,19 +128,32 @@ export function MiniRepl({
   );
 
   return (
-    <div className={styles.container} ref={ref}>
-      <div className={styles.header}>
-        <div className={styles.buttons}>
-          <button className={cx(styles.button, started ? 'animate-pulse' : '')} onClick={() => togglePlay()}>
+    <div className="overflow-hidden rounded-t-md bg-background border border-lineHighlight" ref={ref}>
+      <div className="flex justify-between bg-lineHighlight">
+        <div className="flex">
+          <button
+            className={cx(
+              'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background',
+              started ? 'animate-pulse' : '',
+            )}
+            onClick={() => togglePlay()}
+          >
             <Icon type={started ? 'stop' : 'play'} />
           </button>
-          <button className={cx(isDirty ? styles.button : styles.buttonDisabled)} onClick={() => activateCode()}>
+          <button
+            className={cx(
+              isDirty
+                ? 'cursor-pointer w-16 flex items-center justify-center p-1 text-foreground bg-lineHighlight hover:bg-background'
+                : 'w-16 flex items-center justify-center p-1 opacity-50 cursor-not-allowed bg-lineHighlight',
+            )}
+            onClick={() => activateCode()}
+          >
             <Icon type="refresh" />
           </button>
         </div>
-        {error && <div className={styles.error}>{error.message}</div>}
+        {error && <div className="text-right p-1 text-sm text-red-200">{error.message}</div>}
       </div>
-      <div className={styles.body}>
+      <div className="overflow-auto relative">
         {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} theme={theme} />}
       </div>
       {drawTime && (
