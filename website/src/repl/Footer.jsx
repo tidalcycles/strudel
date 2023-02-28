@@ -92,7 +92,7 @@ export function Footer({ context }) {
           {activeFooter === 'console' && <ConsoleTab log={log} />}
           {activeFooter === 'samples' && <SamplesTab />}
           {activeFooter === 'reference' && <Reference />}
-          {activeFooter === 'settings' && <SettingsTab />}
+          {activeFooter === 'settings' && <SettingsTab scheduler={context.scheduler} />}
         </div>
       )}
     </footer>
@@ -284,10 +284,28 @@ const fontFamilyOptions = {
   PressStart: 'PressStart2P',
 };
 
-function SettingsTab() {
+function SettingsTab({ scheduler }) {
   const { theme, keybindings, fontSize, fontFamily } = useSettings();
   return (
     <div className="text-foreground p-4 space-y-4">
+      <FormItem label="Tempo">
+        <div className="space-x-4">
+          <button
+            onClick={() => {
+              scheduler.setCps(scheduler.cps - 0.1);
+            }}
+          >
+            slower
+          </button>
+          <button
+            onClick={() => {
+              scheduler.setCps(scheduler.cps + 0.1);
+            }}
+          >
+            faster
+          </button>
+        </div>
+      </FormItem>
       <FormItem label="Theme">
         <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>
