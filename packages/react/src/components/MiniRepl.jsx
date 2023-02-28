@@ -142,9 +142,8 @@ export function MiniRepl({
           </button>
           <button
             className={cx(
-              isDirty
-                ? 'cursor-pointer w-16 flex items-center justify-center p-1 text-foreground bg-lineHighlight hover:bg-background'
-                : 'w-16 flex items-center justify-center p-1 opacity-50 cursor-not-allowed bg-lineHighlight',
+              'w-16 flex items-center justify-center p-1 text-foreground border-lineHighlight bg-lineHighlight',
+              isDirty ? 'text-foreground hover:bg-background cursor-pointer' : 'opacity-50 cursor-not-allowed',
             )}
             onClick={() => activateCode()}
           >
