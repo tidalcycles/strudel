@@ -39,7 +39,7 @@ export class Cyclist {
             if (hap.part.begin.equals(hap.whole.begin)) {
               const deadline = (hap.whole.begin - begin) / this.cps + tickdeadline + latency;
               const duration = hap.duration / this.cps;
-              onTrigger?.(hap, deadline, duration);
+              onTrigger?.(hap, deadline, duration, this.cps);
             }
           });
         } catch (e) {
