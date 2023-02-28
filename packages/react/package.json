@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/react",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "React components for strudel",
   "main": "src/index.js",
   "publishConfig": {
