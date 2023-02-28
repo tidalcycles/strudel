@@ -34,7 +34,7 @@ const composifiedRegistry = [];
 
 // Dresses the given (unary) function with methods for composition chaining, so e.g.
 // `fast(2).iter(4)` composes to pattern functions into a new one.
-function composify(func) {
+function composify(func, longlived) {
   if (!func.__composified) {
     for (const [name, method] of methodRegistry) {
       func[name] = method;
@@ -43,7 +43,9 @@ function composify(func) {
       Object.defineProperty(func, name, getter);
     }
     func.__composified = true;
-    composifiedRegistry.push(func);
+    if (longlived) {
+      composifiedRegistry.push(func);
+    }
   } else {
     console.log('Warning: attempt at composifying a function more than once');
   }
@@ -132,7 +134,7 @@ export function addToPrototype(name, func) {
   registerMethod(name);
 }
 
-export function curryPattern(func, arity = func.length) {
+export function curryPattern(func, arity = func.length, longlived = false) {
   const fn = function curried(...args) {
     if (args.length >= arity) {
       return func.apply(this, args);
@@ -148,7 +150,7 @@ export function curryPattern(func, arity = func.length) {
     return partial;
   };
   if (arity == 1) {
-    composify(fn);
+    composify(fn, longlived);
   }
   return fn;
 }
@@ -1664,7 +1666,9 @@ export function register(name, func, patternify = true) {
 
   // toplevel functions get curried as well as patternified
   // because pfunc uses spread args, we need to state the arity explicitly!
-  return curryPattern(pfunc, arity);
+  // set 'longlived' to true for single-argument functions, so their 'composified'
+  // methods get updated for things added in the future
+  return curryPattern(pfunc, arity, arity == 1);
 }
 
 //////////////////////////////////////////////////////////////////////
