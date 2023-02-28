@@ -7,7 +7,7 @@ import strudelTheme from '../themes/strudel-theme';
 import './style.css';
 import { useCallback } from 'react';
 import { autocompletion } from '@codemirror/autocomplete';
-import { strudelAutocomplete } from './Autocomplete';
+//import { strudelAutocomplete } from './Autocomplete';
 import { vim } from '@replit/codemirror-vim';
 import { emacs } from '@replit/codemirror-emacs';
 
