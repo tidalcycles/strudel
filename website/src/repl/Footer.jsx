@@ -288,7 +288,7 @@ function SettingsTab({ scheduler }) {
   const { theme, keybindings, fontSize, fontFamily } = useSettings();
   return (
     <div className="text-foreground p-4 space-y-4">
-      <FormItem label="Tempo">
+      {/* <FormItem label="Tempo">
         <div className="space-x-4">
           <button
             onClick={() => {
@@ -305,7 +305,7 @@ function SettingsTab({ scheduler }) {
             faster
           </button>
         </div>
-      </FormItem>
+      </FormItem> */}
       <FormItem label="Theme">
         <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>
