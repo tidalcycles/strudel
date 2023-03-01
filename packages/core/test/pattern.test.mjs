@@ -45,6 +45,9 @@ import {
   rev,
   time,
   run,
+  hitch,
+  set,
+  begin,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -204,7 +207,7 @@ describe('Pattern', () => {
         ),
       );
     });
-    it('can SqueezeOut() structure', () => {
+    it('can squeezeout() structure', () => {
       sameFirst(
         sequence(1, [2, 3]).add.squeezeout(10, 20, 30),
         sequence([11, [12, 13]], [21, [22, 23]], [31, [32, 33]]),
@@ -252,7 +255,7 @@ describe('Pattern', () => {
         ),
       );
     });
-    it('can SqueezeOut() structure', () => {
+    it('can squeezeout() structure', () => {
       sameFirst(sequence(1, [2, 3]).keep.squeezeout(10, 20, 30), sequence([1, [2, 3]], [1, [2, 3]], [1, [2, 3]]));
     });
   });
@@ -294,7 +297,7 @@ describe('Pattern', () => {
         ),
       );
     });
-    it('can SqueezeOut() structure', () => {
+    it('can squeezeout() structure', () => {
       sameFirst(sequence(1, [2, 3]).keepif.squeezeout(true, true, false), sequence([1, [2, 3]], [1, [2, 3]], silence));
     });
   });
@@ -929,6 +932,14 @@ describe('Pattern', () => {
     });
   });
   describe('alignments', () => {
+    it('Can combine controls', () => {
+      sameFirst(s('bd').set.in.n(3), s('bd').n(3));
+      sameFirst(s('bd').set.squeeze.n(3, 4), sequence(s('bd').n(3), s('bd').n(4)));
+    });
+    it('Can combine functions with alignmed controls', () => {
+      sameFirst(s('bd').apply(fast(2).set(n(3))), s('bd').fast(2).set.in.n(3));
+      sameFirst(s('bd').apply(fast(2).set.in.n(3)), s('bd').fast(2).set.in.n(3));
+    });
     it('Can squeeze arguments', () => {
       expect(sequence(1, 2).add.squeeze(4, 5).firstCycle()).toStrictEqual(sequence(5, 6, 6, 7).firstCycle());
     });
@@ -959,7 +970,7 @@ describe('Pattern', () => {
       sameFirst(s('a', 'b').hurry(2), s('a', 'b').fast(2).speed(2));
     });
   });
-  /*describe('composable functions', () => {
+  describe('composable functions', () => {
     it('Can compose functions', () => {
       sameFirst(sequence(3, 4).fast(2).rev().fast(2), fast(2).rev().fast(2)(sequence(3, 4)));
     });
@@ -1001,5 +1012,5 @@ describe('Pattern', () => {
         ),
       );
     });
-  });*/
+  });
 });
