@@ -311,7 +311,6 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
     }
     bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
     if (unit === 'c') {
-      console.log(cps)
       // are there other units?
       bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration * cps;
     }
