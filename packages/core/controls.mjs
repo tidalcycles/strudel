@@ -78,6 +78,8 @@ const generic_params = [
     'gain',
     'a pattern of numbers that specify volume. Values less than 1 make the sound quieter. Values greater than 1 make the sound louder. For the linear equivalent, see @amp@.',
   ],
+  ['f', 'gainpre'],
+  ['f', 'gainpost'],
   /**
    * Like {@link gain}, but linear.
    *

@@ -207,6 +207,8 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     n = 0,
     note,
     gain = 0.8,
+    gainpost = 1,
+    gainpre = 1,
     // low pass
     lpf,
     cutoff = lpf,
@@ -361,22 +363,25 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
   }
 
   // last gain
-  const post = gainNode(1);
-  chain.push(post);
-  post.connect(getDestination());
+  const pre = gainNode(gainpre);
+  chain.push(pre);
 
   // delay
   let delaySend;
   if (delay > 0 && delaytime > 0 && delayfeedback > 0) {
     const delyNode = getDelay(orbit, delaytime, delayfeedback, t);
-    delaySend = effectSend(post, delyNode, delay);
+    delaySend = effectSend(pre, delyNode, delay);
   }
   // reverb
   let reverbSend;
   if (room > 0 && roomsize > 0) {
     const reverbNode = getReverb(orbit, roomsize);
-    reverbSend = effectSend(post, reverbNode, room);
+    reverbSend = effectSend(pre, reverbNode, room);
   }
+
+  const post = gainNode(gainpost);
+  chain.push(post);
+  post.connect(getDestination());
 
   // connect chain elements together
   chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
