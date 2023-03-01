@@ -120,6 +120,25 @@ importers:
       vite: 3.2.5
       vitest: 0.25.8
 
+  packages/link:
+    specifiers:
+      '@strudel.cycles/core': workspace:^0.6.8
+      '@strudel.cycles/mini': workspace:^0.6.0
+      '@strudel.cycles/osc': workspace:^0.6.0
+      '@strudel.cycles/tonal': workspace:^0.6.0
+      '@strudel.cycles/transpiler': workspace:^0.6.0
+      abletonlink: ^0.1.3
+      node-web-audio-api: ^0.5.0
+    dependencies:
+      '@strudel.cycles/core': link:../core
+      '@strudel.cycles/mini': link:../mini
+      '@strudel.cycles/osc': link:../osc
+      '@strudel.cycles/tonal': link:../tonal
+      '@strudel.cycles/transpiler': link:../transpiler
+    devDependencies:
+      abletonlink: 0.1.3
+      node-web-audio-api: 0.5.0
+
   packages/midi:
     specifiers:
       '@strudel.cycles/core': workspace:*
@@ -3199,6 +3218,22 @@ packages:
       use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
+  /@napi-rs/cli/2.14.8:
+    resolution: {integrity: sha512-IvA3s8BqohMdUbOkFn7+23u1dhIJZCkA8Xps7DD4SLdCMbcbUF6MUuKiqxuqmVHBFTaxU25sU56WdX3efqGgPw==}
+    engines: {node: '>= 10'}
+    hasBin: true
+    dev: true
+
+  /@napi-rs/triples/1.1.0:
+    resolution: {integrity: sha512-XQr74QaLeMiqhStEhLn1im9EOMnkypp7MZOwQhGzqp2Weu5eQJbpPxWxixxlYRKWPOmJjsk6qYfYH9kq43yc2w==}
+    dev: true
+
+  /@node-rs/helper/1.3.3:
+    resolution: {integrity: sha512-p4OdfQObGN9YFy5WZaGwlPYICQSe7xZYyXB0sxREmvj1HzGKp5bPg2PlfgfMZEfnjIA882B9ZrnagYzZihIwjA==}
+    dependencies:
+      '@napi-rs/triples': 1.1.0
+    dev: true
+
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -4331,6 +4366,15 @@ packages:
   /abbrev/1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
 
+  /abletonlink/0.1.3:
+    resolution: {integrity: sha512-rPMS0X6+wcW607Lpr3XeqfMJ26oNDc/Yx6+5oEtkS9CYr2rKRh6dfiaHpDxhoEqKZtBrZY0JWOlkZhD49tesjQ==}
+    engines: {node: '>=6.0.0'}
+    requiresBuild: true
+    dependencies:
+      bindings: 1.5.0
+      node-addon-api: 2.0.2
+    dev: true
+
   /acorn-jsx/5.3.2_acorn@8.8.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
@@ -4880,6 +4924,12 @@ packages:
   /binary-extensions/2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
+
+  /bindings/1.5.0:
+    resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
+    dependencies:
+      file-uri-to-path: 1.0.0
+    dev: true
 
   /bl/4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
@@ -6847,6 +6897,10 @@ packages:
     dependencies:
       array-back: 5.0.0
       glob: 7.2.3
+    dev: true
+
+  /file-uri-to-path/1.0.0:
+    resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
     dev: true
 
   /filelist/1.0.4:
@@ -9713,6 +9767,10 @@ packages:
       semver: 5.7.1
     dev: true
 
+  /node-addon-api/2.0.2:
+    resolution: {integrity: sha512-Ntyt4AIXyaLIuMHF6IOoTakB3K+RWxwtsHNRxllEoA6vPwP9o4866g6YWDLUdnucilZhmkxiHwHr11gAENw+QA==}
+    dev: true
+
   /node-domexception/1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
@@ -9804,6 +9862,14 @@ packages:
     dependencies:
       '@babel/parser': 7.20.13
     dev: false
+
+  /node-web-audio-api/0.5.0:
+    resolution: {integrity: sha512-HMFQHti2RnhgAzIrK6PSpDqgwKHMdeWsVILBwEQcCWzol9nGDK+QQQCJPWpMTfvTuGsfEletzRqz+p6fhcjDuA==}
+    engines: {node: '>= 14'}
+    dependencies:
+      '@napi-rs/cli': 2.14.8
+      '@node-rs/helper': 1.3.3
+    dev: true
 
   /nopt/4.0.3:
     resolution: {integrity: sha512-CvaGwVMztSMJLOeXPrez7fyfObdZqNUK1cPAEzLHrTybIua9pMdmmPR5YwtfNftIOMv3DPUhFaxsZMNTQO20Kg==}
