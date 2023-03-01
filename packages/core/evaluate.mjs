@@ -6,12 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { isPattern } from './index.mjs';
 
-let scoped = false;
 export const evalScope = async (...args) => {
-  if (scoped) {
-    console.warn('evalScope was called more than once.');
-  }
-  scoped = true;
   const results = await Promise.allSettled(args);
   const modules = results.filter((result) => result.status === 'fulfilled').map((r) => r.value);
   results.forEach((result, i) => {
@@ -42,9 +37,6 @@ function safeEval(str, options = {}) {
 }
 
 export const evaluate = async (code, transpiler) => {
-  if (!scoped) {
-    await evalScope(); // at least scope Pattern.prototype.boostrap
-  }
   if (transpiler) {
     code = transpiler(code); // transform syntactically correct js code to semantically usable code
   }

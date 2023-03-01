@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { setHighlights } from '../components/CodeMirror6';
+const round = (x) => Math.round(x * 1000) / 1000;
 
 function useHighlighting({ view, pattern, active, getTime }) {
   const highlights = useRef([]);
@@ -14,7 +15,7 @@ function useHighlighting({ view, pattern, active, getTime }) {
             // force min framerate of 10 fps => fixes crash on tab refocus, where lastEnd could be far away
             // see https://github.com/tidalcycles/strudel/issues/108
             const begin = Math.max(lastEnd.current ?? audioTime, audioTime - 1 / 10, -0.01); // negative time seems buggy
-            const span = [begin, audioTime + 1 / 60];
+            const span = [round(begin), round(audioTime + 1 / 60)];
             lastEnd.current = span[1];
             highlights.current = highlights.current.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());

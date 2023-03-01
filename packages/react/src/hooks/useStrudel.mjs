@@ -32,7 +32,7 @@ function useStrudel({
   const shouldPaint = useCallback((pat) => !!(pat?.context?.onPaint && drawContext), [drawContext]);
 
   // TODO: make sure this hook reruns when scheduler.started changes
-  const { scheduler, evaluate, start, stop, pause } = useMemo(
+  const { scheduler, evaluate, start, stop, pause, setCps } = useMemo(
     () =>
       repl({
         interval,
@@ -153,6 +153,7 @@ function useStrudel({
     stop,
     pause,
     togglePlay,
+    setCps,
   };
 }
 
