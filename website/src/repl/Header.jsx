@@ -6,6 +6,7 @@ import SparklesIcon from '@heroicons/react/20/solid/SparklesIcon';
 import StopCircleIcon from '@heroicons/react/20/solid/StopCircleIcon';
 import { cx } from '@strudel.cycles/react';
 import React, { useContext } from 'react';
+import { useSettings, setIsZen } from '../settings.mjs';
 // import { ReplContext } from './Repl';
 import './Repl.css';
 
@@ -21,18 +22,16 @@ export function Header({ context }) {
     handleUpdate,
     handleShuffle,
     handleShare,
-    isZen,
-    setIsZen,
   } = context;
   const isEmbedded = embedded || window.location !== window.parent.location;
-  // useContext(ReplContext)
+  const { isZen } = useSettings();
 
   return (
     <header
       id="header"
       className={cx(
         'py-1 flex-none w-full text-black justify-between z-[100] text-lg  select-none sticky top-0',
-        !isZen && !isEmbedded && 'bg-header',
+        !isZen && !isEmbedded && 'bg-lineHighlight',
         isEmbedded ? 'flex' : 'md:flex',
       )}
     >
@@ -48,13 +47,16 @@ export function Header({ context }) {
           }}
           className={cx(
             isEmbedded ? 'text-l cursor-pointer' : 'text-xl',
-            // 'bg-clip-text bg-gradient-to-r from-primary to-secondary  text-transparent font-bold',
-            'text-white font-bold flex space-x-2 items-center',
+            'text-foreground font-bold flex space-x-2 items-center',
           )}
         >
           <div
             className={cx('mt-[1px]', started && 'animate-spin', 'cursor-pointer')}
-            onClick={() => !isEmbedded && setIsZen((z) => !z)}
+            onClick={() => {
+              if (!isEmbedded) {
+                setIsZen(!isZen);
+              }
+            }}
           >
             🌀
           </div>
@@ -66,11 +68,11 @@ export function Header({ context }) {
         </h1>
       </div>
       {!isZen && (
-        <div className="flex max-w-full overflow-auto text-white ">
+        <div className="flex max-w-full overflow-auto text-foreground">
           <button
             onClick={handleTogglePlay}
             title={started ? 'stop' : 'play'}
-            className={cx(!isEmbedded ? 'p-2' : 'px-2', 'hover:text-tertiary', !started && 'animate-pulse')}
+            className={cx(!isEmbedded ? 'p-2' : 'px-2', 'hover:opacity-50', !started && 'animate-pulse')}
           >
             {!pending ? (
               <span className={cx('flex items-center space-x-1', isEmbedded ? '' : 'w-16')}>
@@ -87,7 +89,7 @@ export function Header({ context }) {
             className={cx(
               'flex items-center space-x-1',
               !isEmbedded ? 'p-2' : 'px-2',
-              !isDirty || !activeCode ? 'opacity-50' : 'hover:text-tertiary',
+              !isDirty || !activeCode ? 'opacity-50' : 'hover:opacity-50',
             )}
           >
             {/*             <CommandLineIcon className="w-6 h-6" /> */}
@@ -97,7 +99,7 @@ export function Header({ context }) {
           {!isEmbedded && (
             <button
               title="shuffle"
-              className="hover:text-tertiary p-2 flex items-center space-x-1"
+              className="hover:opacity-50 p-2 flex items-center space-x-1"
               onClick={handleShuffle}
             >
               <SparklesIcon className="w-6 h-6" />
@@ -108,7 +110,7 @@ export function Header({ context }) {
             <button
               title="share"
               className={cx(
-                'cursor-pointer hover:text-tertiary flex items-center space-x-1',
+                'cursor-pointer hover:opacity-50 flex items-center space-x-1',
                 !isEmbedded ? 'p-2' : 'px-2',
               )}
               onClick={handleShare}
@@ -121,21 +123,21 @@ export function Header({ context }) {
             <a
               title="learn"
               href="./learn/getting-started"
-              className={cx('hover:text-tertiary flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
+              className={cx('hover:opacity-50 flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
             >
               <AcademicCapIcon className="w-6 h-6" />
               <span>learn</span>
             </a>
           )}
           {/* {isEmbedded && (
-            <button className={cx('hover:text-tertiary px-2')}>
+            <button className={cx('hover:opacity-50 px-2')}>
               <a href={window.location.href} target="_blank" rel="noopener noreferrer" title="Open in REPL">
                 🚀
               </a>
             </button>
           )}
           {isEmbedded && (
-            <button className={cx('hover:text-tertiary px-2')}>
+            <button className={cx('hover:opacity-50 px-2')}>
               <a
                 onClick={() => {
                   window.location.href = initialUrl;

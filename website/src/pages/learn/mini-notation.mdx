@@ -58,7 +58,7 @@ Try adding or removing notes and notice how the tempo changes!
 
 <MiniRepl client:idle tune={`note("c d e f g a b")`} punchcard />
 
-Note that the overall duration of time does not change, and instead each note length descreases.
+Note that the overall duration of time does not change, and instead each note length decreases.
 This is a key idea, as it illustrates the 'Cycle' in TidalCycles!
 
 Each space-separated note in this sequence is an _event_.
@@ -103,7 +103,7 @@ Contrary to division, a sequence can be sped up by multiplying it by a number us
 
 <MiniRepl client:idle tune={`note("[e5 b4 d5 c5]*2")`} punchcard />
 
-The multiplication by two here means that the sequence will play twice a cycle.
+The multiplication by two here means that the sequence will play twice per cycle.
 
 As with divisions, multiplications can be decimal (`*2.75`):
 
@@ -158,8 +158,6 @@ Here, the first chord has a weight of 2, making it twice the length of the other
 Using "!" we can repeat without speeding up:
 
 <MiniRepl client:idle tune={`note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>")`} punchcard />
-
-In essence, the `x!n` is like a shortcut for `[x*n]@n`.
 
 ## Mini-notation review
 
@@ -235,3 +233,5 @@ Starting with this one `n`, can you make a _pattern string_ that uses every sing
 <MiniRepl client:idle tune={`n("60")`} />
 
 <br />
+
+Next: How do [Samples](/learn/samples) play into this?

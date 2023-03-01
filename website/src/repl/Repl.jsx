@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { cleanupDraw, cleanupUi, controls, evalScope, getDrawContext, logger } from '@strudel.cycles/core';
-import { CodeMirror, cx, flash, useHighlighting, useStrudel } from '@strudel.cycles/react';
+import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
 import {
   getAudioContext,
   getLoadedSamples,
@@ -22,6 +22,10 @@ import { Header } from './Header';
 import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
+import { themes } from './themes.mjs';
+import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
+
+const { latestCode } = settingsMap.get();
 
 initAudioOnFirstClick();
 
@@ -110,23 +114,24 @@ export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
-  const [activeFooter, setActiveFooter] = useState('');
-  const [isZen, setIsZen] = useState(false);
   const [pending, setPending] = useState(false);
+
+  const { theme, keybindings, fontSize, fontFamily } = useSettings();
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
       initialCode: '// LOADING',
       defaultOutput: webaudioOutput,
       getTime,
-      autolink: true,
       beforeEval: () => {
         cleanupUi();
         cleanupDraw();
         setPending(true);
       },
-      afterEval: () => {
+      afterEval: ({ code }) => {
         setPending(false);
+        setLatestCode(code);
+        window.location.hash = '#' + encodeURIComponent(btoa(code));
       },
       onToggle: (play) => !play && cleanupDraw(false),
       drawContext,
@@ -135,16 +140,13 @@ export function Repl({ embedded = false }) {
   // init code
   useEffect(() => {
     initCode().then((decoded) => {
-      if (!decoded) {
-        setActiveFooter('intro'); // TODO: get rid
-      }
       logger(
         `Welcome to Strudel! ${
           decoded ? `I have loaded the code from the URL.` : `A random code snippet named "${name}" has been loaded!`
         } Press play or hit ctrl+enter to run it!`,
         'highlight',
       );
-      setCode(decoded || randomTune);
+      setCode(decoded || latestCode || randomTune);
     });
   }, []);
 
@@ -240,21 +242,18 @@ export function Repl({ embedded = false }) {
     }
   };
   const context = {
+    scheduler,
     embedded,
     started,
     pending,
     isDirty,
     lastShared,
     activeCode,
-    activeFooter,
-    setActiveFooter,
     handleChangeCode,
     handleTogglePlay,
     handleUpdate,
     handleShuffle,
     handleShare,
-    isZen,
-    setIsZen,
   };
   return (
     // bg-gradient-to-t from-blue-900 to-slate-900
@@ -262,21 +261,28 @@ export function Repl({ embedded = false }) {
     <ReplContext.Provider value={context}>
       <div
         className={cx(
-          'h-screen flex flex-col',
+          'h-full flex flex-col',
           //        'bg-gradient-to-t from-green-900 to-slate-900', //
         )}
       >
         <Header context={context} />
         <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-0" id="code">
           <CodeMirror
+            theme={themes[theme] || themes.strudelTheme}
             value={code}
+            keybindings={keybindings}
+            fontSize={fontSize}
+            fontFamily={fontFamily}
             onChange={handleChangeCode}
-            onViewChanged={setView}
+            onViewChanged={(v) => {
+              setView(v);
+              // window.editorView = v;
+            }}
             onSelectionChange={handleSelectionChange}
           />
         </section>
         {error && (
-          <div className="text-red-500 p-4 bg-lineblack animate-pulse">{error.message || 'Unknown Error :-/'}</div>
+          <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>
         )}
         {isEmbedded && !started && (
           <button
@@ -291,16 +297,4 @@ export function Repl({ embedded = false }) {
       </div>
     </ReplContext.Provider>
   );
-}
-
-export function useEvent(name, onTrigger, useCapture = false) {
-  useEffect(() => {
-    document.addEventListener(name, onTrigger, useCapture);
-    return () => {
-      document.removeEventListener(name, onTrigger, useCapture);
-    };
-  }, [onTrigger]);
-}
-function useKeydown(onTrigger) {
-  useEvent('keydown', onTrigger, true);
 }

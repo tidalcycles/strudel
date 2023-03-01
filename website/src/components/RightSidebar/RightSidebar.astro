@@ -2,6 +2,7 @@
 import TableOfContents from './TableOfContents';
 import MoreMenu from './MoreMenu.astro';
 import type { MarkdownHeading } from 'astro';
+import AvatarList from '../Footer/AvatarList.astro';
 
 type Props = {
   headings: MarkdownHeading[];
@@ -9,10 +10,13 @@ type Props = {
 };
 
 const { headings, githubEditUrl } = Astro.props as Props;
-const currentPage = Astro.url.pathname;
+let currentPage = Astro.url.pathname;
+// remove slash before #
+currentPage = currentPage.endsWith('/') ? currentPage.slice(0, -1) : currentPage;
 ---
 
-<nav aria-labelledby="grid-right" class="w-64">
+<nav aria-labelledby="grid-right" class="w-64 text-foreground">
   <TableOfContents client:media="(min-width: 50em)" headings={headings} currentPage={currentPage} />
   <MoreMenu editHref={githubEditUrl} />
+  <!-- <AvatarList path={currentPage} /> -->
 </nav>

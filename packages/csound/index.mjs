@@ -28,9 +28,7 @@ export const csound = register('csound', (instrument, pat) => {
       logger('[csound] not loaded yet', 'warning');
       return;
     }
-    if (typeof hap.value !== 'object') {
-      throw new Error('csound only support objects as hap values');
-    }
+    hap.ensureObjectValue();
     let { gain = 0.8 } = hap.value;
     gain *= 0.2;
 

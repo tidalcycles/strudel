@@ -33,9 +33,9 @@ export const COMMUNITY_INVITE_URL = `https://discord.com/invite/HGEdXmRkzT`;
 
 // See "Algolia" section of the README for more information.
 export const ALGOLIA = {
-  indexName: 'XXXXXXXXXX',
-  appId: 'XXXXXXXXXX',
-  apiKey: 'XXXXXXXXXX',
+  indexName: 'strudel-tidalcycles',
+  appId: 'SAZ71S8CLS',
+  apiKey: 'd5044f9d21b80e7721e5b0067a8730b1',
 };
 
 export type Sidebar = Record<(typeof KNOWN_LANGUAGE_CODES)[number], Record<string, { text: string; link: string }[]>>;
@@ -65,16 +65,17 @@ export const SIDEBAR: Sidebar = {
       { text: 'Tonal Modifiers', link: 'learn/tonal' },
     ],
     More: [
+      { text: 'MIDI & OSC', link: 'learn/input-output' },
+      { text: 'Offline', link: 'learn/pwa' },
       { text: 'Patterns', link: 'technical-manual/patterns' },
       { text: 'Pattern Alignment', link: 'technical-manual/alignment' },
-      { text: 'MIDI & OSC', link: 'learn/input-output' },
       { text: 'Strudel vs Tidal', link: 'learn/strudel-vs-tidal' },
     ],
     Development: [
       { text: 'REPL', link: 'technical-manual/repl' },
+      { text: 'Packages', link: 'technical-manual/packages' },
       { text: 'Docs', link: 'technical-manual/docs' },
       { text: 'Testing', link: 'technical-manual/testing' },
-      { text: 'Packages', link: 'technical-manual/packages' },
       // { text: 'Internals', link: 'technical-manual/internals' },
     ],
   },

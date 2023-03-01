@@ -2,6 +2,9 @@ import { evalScope, controls } from '@strudel.cycles/core';
 import { initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 import { useEffect, useState } from 'react';
 import { prebake } from '../repl/prebake';
+import { themes, settings } from '../repl/themes.mjs';
+import './MiniRepl.css';
+import { useSettings } from '../settings.mjs';
 
 let modules;
 if (typeof window !== 'undefined') {
@@ -25,6 +28,7 @@ if (typeof window !== 'undefined') {
 
 export function MiniRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
   const [Repl, setRepl] = useState();
+  const { theme } = useSettings();
   useEffect(() => {
     // we have to load this package on the client
     // because codemirror throws an error on the server
@@ -34,7 +38,14 @@ export function MiniRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
   }, []);
   return Repl ? (
     <div className="mb-4">
-      <Repl tune={tune} hideOutsideView={true} drawTime={drawTime} punchcard={punchcard} canvasHeight={canvasHeight} />
+      <Repl
+        tune={tune}
+        hideOutsideView={true}
+        drawTime={drawTime}
+        punchcard={punchcard}
+        canvasHeight={canvasHeight}
+        theme={themes[theme]}
+      />
     </div>
   ) : (
     <pre>{tune}</pre>

@@ -1,5 +1,14 @@
-body {
-  background-color: #222;
+@font-face {
+  font-family: 'PressStart';
+  src: url('/fonts/PressStart2P/PressStart2P-Regular.ttf');
+}
+@font-face {
+  font-family: 'BigBlueTerminal';
+  src: url('/fonts/BigBlueTerminal/BigBlue_TerminalPlus.TTF');
+}
+@font-face {
+  font-family: 'x3270';
+  src: url('/fonts/3270/3270-Regular.ttf');
 }
 
 .cm-gutters {
@@ -8,4 +17,12 @@ body {
 
 .prose > h1:not(:first-child) {
   margin-top: 30px;
+}
+:root {
+  --app-height: 100vh;
+}
+
+#console-tab,
+#samples-tab {
+  font-family: BigBlueTerminal, monospace;
 }

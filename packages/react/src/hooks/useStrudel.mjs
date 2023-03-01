@@ -10,7 +10,6 @@ function useStrudel({
   getTime,
   evalOnMount = false,
   initialCode = '',
-  autolink = false,
   beforeEval,
   afterEval,
   editPattern,
@@ -33,7 +32,7 @@ function useStrudel({
   const shouldPaint = useCallback((pat) => !!(pat?.context?.onPaint && drawContext), [drawContext]);
 
   // TODO: make sure this hook reruns when scheduler.started changes
-  const { scheduler, evaluate, start, stop, pause } = useMemo(
+  const { scheduler, evaluate, start, stop, pause, setCps } = useMemo(
     () =>
       repl({
         interval,
@@ -51,15 +50,13 @@ function useStrudel({
           setCode(code);
           beforeEval?.();
         },
-        afterEval: ({ pattern: _pattern, code }) => {
+        afterEval: (res) => {
+          const { pattern: _pattern, code } = res;
           setActiveCode(code);
           setPattern(_pattern);
           setEvalError();
           setSchedulerError();
-          if (autolink) {
-            window.location.hash = '#' + encodeURIComponent(btoa(code));
-          }
-          afterEval?.();
+          afterEval?.(res);
         },
         onToggle: (v) => {
           setStarted(v);
@@ -156,6 +153,7 @@ function useStrudel({
     stop,
     pause,
     togglePlay,
+    setCps,
   };
 }
 

@@ -39,14 +39,16 @@ let startedAt = -1;
 /**
  *
  * Sends each hap as an OSC message, which can be picked up by SuperCollider or any other OSC-enabled software.
+ * For more info, read [MIDI & OSC in the docs](https://strudel.tidalcycles.org/learn/input-output)
  *
  * @name osc
  * @memberof Pattern
  * @returns Pattern
  */
-Pattern.prototype.osc = async function () {
-  const osc = await connect();
-  return this.onTrigger((time, hap, currentTime, cps = 1) => {
+Pattern.prototype.osc = function () {
+  return this.onTrigger(async (time, hap, currentTime, cps = 1) => {
+    hap.ensureObjectValue();
+    const osc = await connect();
     const cycle = hap.wholeOrPart().begin.valueOf();
     const delta = hap.duration.valueOf();
     // time should be audio time of onset

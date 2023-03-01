@@ -23,7 +23,7 @@ export default function MobileNav({ sidebar }) {
             <div className="space-y-1 px-4 py-4 bg-[#161616]">
               <a
                 href=".."
-                className="py-2 flex cursor-pointer items-center space-x-1 hover:bg-bg hover:px-2 rounded-md"
+                className="py-2 flex cursor-pointer items-center space-x-1 hover:bg-background hover:px-2 rounded-md"
               >
                 <span>go to REPL</span>
               </a>
@@ -36,7 +36,9 @@ export default function MobileNav({ sidebar }) {
                       as="a"
                       href={`/${item.link}`}
                       className={classNames(
-                        item.current ? 'bg-bg text-white' : 'text-gray-300 hover:bg-bg hover:text-white',
+                        item.current
+                          ? 'bg-background text-white'
+                          : 'text-gray-300 hover:bg-lineHighlight hover:text-white',
                         'block px-3 py-2 rounded-md text-base font-medium',
                       )}
                       aria-current={item.current ? 'page' : undefined}

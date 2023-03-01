@@ -11,14 +11,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Pattern, timeCat, register, silence } from './pattern.mjs';
-import { rotate, flatten } from './util.mjs';
+import { rotate, flatten, splitAt, zipWith } from './util.mjs';
 import Fraction from './fraction.mjs';
-
-const splitAt = function (index, value) {
-  return [value.slice(0, index), value.slice(index)];
-};
-
-const zipWith = (f, xs, ys) => xs.map((n, i) => f(n, ys[i]));
 
 const left = function (n, x) {
   const [ons, offs] = n;

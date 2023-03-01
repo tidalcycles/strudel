@@ -27,4 +27,61 @@ const base = BASE_URL;
 <script src="./make-scrollable-code-focusable.js" is:inline></script>
 
 <script src="/src/pwa.ts"></script>
+<!-- this does not work for some reason: -->
+<!-- <style is:global define:vars={strudelTheme}></style> -->
+<!-- the following variables are just a fallback to make sure everything is readable without JS -->
+<style is:global>
+  :root {
+    --background: #222;
+    --lineBackground: #22222250;
+    --foreground: #fff;
+    --caret: #ffcc00;
+    --selection: rgba(128, 203, 196, 0.5);
+    --selectionMatch: #036dd626;
+    --lineHighlight: #00000050;
+    --gutterBackground: transparent;
+    --gutterForeground: #8a919966;
+  }
+</style>
 {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+
+<script>
+  import { settings } from '../repl/themes.mjs';
+  import { settingsMap } from '../settings.mjs';
+  import { listenKeys } from 'nanostores';
+  const themeStyle = document.createElement('style');
+  themeStyle.id = 'strudel-theme';
+  document.head.append(themeStyle);
+  function activateTheme(name) {
+    if (!settings[name]) {
+      console.warn('theme', name, 'has no settings.. defaulting to strudelTheme settings');
+    }
+    const themeSettings = settings[name] || settings.strudelTheme;
+    // set css variables
+    themeStyle.innerHTML = `:root {
+      ${Object.entries(themeSettings)
+        // important to override fallback
+        .map(([key, value]) => `--${key}: ${value} !important;`)
+        .join('\n')}
+    }`;
+    // tailwind dark mode
+    if (themeSettings.light) {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+  }
+
+  activateTheme(settingsMap.get().theme);
+  listenKeys(settingsMap, ['theme'], ({ theme }) => activateTheme(theme));
+
+  // https://medium.com/quick-code/100vh-problem-with-ios-safari-92ab23c852a8
+  const appHeight = () => {
+    const doc = document.documentElement;
+    doc.style.setProperty('--app-height', `${window.innerHeight - 1}px`);
+  };
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', appHeight);
+    appHeight();
+  }
+</script>

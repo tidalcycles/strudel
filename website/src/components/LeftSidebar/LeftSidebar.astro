@@ -14,7 +14,7 @@ const langCode = 'en'; // getLanguageFromURL(currentPage);
 const sidebar = SIDEBAR[langCode];
 ---
 
-<nav aria-labelledby="grid-left" class="max-h-full overflow-auto pb-20">
+<nav aria-labelledby="grid-left" class="max-h-full overflow-auto pb-20 text-foreground">
   <ul>
     {
       Object.entries(sidebar).map(([header, children]) => (
@@ -23,12 +23,12 @@ const sidebar = SIDEBAR[langCode];
             <h2>{header}</h2>
             <ul>
               {children.map((child) => {
-                const url = '.' + Astro.site?.pathname + child.link;
+                const url = Astro.site?.pathname + child.link;
                 return (
                   <li class="">
                     <a
-                      class={`pl-4 py-0.5 w-full hover:bg-header block${
-                        currentPageMatch === child.link ? ' bg-header' : ''
+                      class={`pl-4 py-0.5 w-full hover:bg-lineHighlight block${
+                        currentPageMatch === child.link ? ' bg-lineHighlight' : ''
                       }`}
                       href={url}
                       aria-current={currentPageMatch === child.link ? 'page' : false}

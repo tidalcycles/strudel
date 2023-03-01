@@ -9,3 +9,4 @@ packages/xen/tunejs.js
 paper
 pnpm-lock.yaml
 pnpm-workspace.yaml
+**/dev-dist
