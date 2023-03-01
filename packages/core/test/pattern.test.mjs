@@ -976,6 +976,7 @@ describe('Pattern', () => {
       sameFirst(n(0, 1).weave(2, s('bd', silence), s(silence, 'sd')), sequence(s('bd').n(0), s('sd').n(1)));
     });
   });
+  */
   describe('slice', () => {
     it('Can slice a sample', () => {
       sameFirst(
@@ -1001,5 +1002,5 @@ describe('Pattern', () => {
         ),
       );
     });
-  });*/
+  });
 });
