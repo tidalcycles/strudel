@@ -13,6 +13,7 @@ const generic_params = [
    *
    * @name s
    * @param {string | Pattern} sound The sound / pattern of sounds to pick
+   * @synonyms sound
    * @example
    * s("bd hh")
    *
@@ -88,6 +89,7 @@ const generic_params = [
    *
    * @name attack
    * @param {number | Pattern} attack time in seconds.
+   * @synonyms att
    * @example
    * note("c3 e3").attack("<0 .1 .5>")
    *
@@ -121,6 +123,7 @@ const generic_params = [
    *
    * @name sustain
    * @param {number | Pattern} gain sustain level between 0 and 1
+   * @synonyms sus
    * @example
    * note("c3 e3").decay(.2).sustain("<0 .1 .4 .6 1>")
    *
@@ -131,6 +134,7 @@ const generic_params = [
    *
    * @name release
    * @param {number | Pattern} time release time in seconds
+   * @synonyms rel
    * @example
    * note("c3 e3 g3 c4").release("<0 .1 .4 .6 1>/2")
    *
@@ -256,7 +260,7 @@ const generic_params = [
    *
    * @name lpf
    * @param {number | Pattern} frequency audible between 0 and 20000
-   * @synonyms cutoff
+   * @synonyms cutoff, ctf
    * @example
    * s("bd sd,hh*3").lpf("<4000 2000 1000 500 200 100>")
    *
@@ -326,6 +330,7 @@ const generic_params = [
    *
    * @name delayfeedback
    * @param {number | Pattern} feedback between 0 and 1
+   * @synonyms delayfb, dfb
    * @example
    * s("bd").delay(.25).delayfeedback("<.25 .5 .75 1>").slow(2)
    *
@@ -336,6 +341,7 @@ const generic_params = [
    *
    * @name delaytime
    * @param {number | Pattern} seconds between 0 and Infinity
+   * @synonyms delayt, dt
    * @example
    * s("bd").delay(.25).delaytime("<.125 .25 .5 1>").slow(2)
    *
@@ -356,6 +362,7 @@ const generic_params = [
    *
    * @name detune
    * @param {number | Pattern} amount between 0 and 1
+   * @synonyms det
    * @superdirtOnly
    * @example
    * n("0 3 7").s('superzow').octave(3).detune("<0 .25 .5 1 2>").osc()
@@ -553,8 +560,8 @@ const generic_params = [
    * Sets the room size of the reverb, see {@link room}.
    *
    * @name roomsize
-   * @synonyms size
    * @param {number | Pattern} size between 0 and 10
+   * @synonyms size, sz
    * @example
    * s("bd sd").room(.8).roomsize("<0 1 2 4 8>")
    *
