@@ -162,7 +162,8 @@ const generic_params = [
    * s("bd sd,hh*3").bpf("<1000 2000 4000 8000>")
    *
    */
-  ['f', 'bpf', ''],
+  // currently an alias of 'bandf' https://github.com/tidalcycles/strudel/issues/496
+  // ['f', 'bpf', ''],
   ['f', 'bandf', 'A pattern of numbers from 0 to 1. Sets the center frequency of the band-pass filter.'],
   // TODO: in tidal, it seems to be normalized
   /**
@@ -175,7 +176,8 @@ const generic_params = [
    * s("bd sd").bpf(500).bpq("<0 1 2 3>")
    *
    */
-  ['f', 'bpq', ''],
+  // currently an alias of 'bandq' https://github.com/tidalcycles/strudel/issues/496
+  // ['f', 'bpq', ''],
   ['f', 'bandq', 'a pattern of anumbers from 0 to 1. Sets the q-factor of the band-pass filter.'],
   /**
    * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.
@@ -293,7 +295,8 @@ const generic_params = [
    * s("bd sd,hh*3").lpf("<4000 2000 1000 500 200 100>")
    *
    */
-  ['f', 'lpf'],
+  // currently an alias of 'cutoff' https://github.com/tidalcycles/strudel/issues/496
+  // ['f', 'lpf'],
   ['f', 'cutoff', 'a pattern of numbers from 0 to 1. Applies the cutoff frequency of the low-pass filter.'],
   /**
    * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
@@ -305,7 +308,8 @@ const generic_params = [
    * s("bd sd,hh*4").hpf("<4000 2000 1000 500 200 100>")
    *
    */
-  ['f', 'hpf', ''],
+  // currently an alias of 'hcutoff' https://github.com/tidalcycles/strudel/issues/496
+  // ['f', 'hpf', ''],
   ['f', 'hcutoff', ''],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
@@ -318,6 +322,7 @@ const generic_params = [
    *
    */
   ['f', 'hresonance', ''],
+  // currently an alias of 'hresonance' https://github.com/tidalcycles/strudel/issues/496
   ['f', 'hpq', ''],
   /**
    * Controls the **l**ow-**p**ass **q**-value.
@@ -329,7 +334,8 @@ const generic_params = [
    * s("bd sd,hh*4").lpf(2000).lpq("<0 10 20 30>")
    *
    */
-  ['f', 'lpq'],
+  // currently an alias of 'resonance' https://github.com/tidalcycles/strudel/issues/496
+  //['f', 'lpq'],
   ['f', 'resonance', ''],
   /**
    * DJ filter, below 0.5 is low pass filter, above is high pass filter.
@@ -826,6 +832,36 @@ const generic_params = [
   ['f', 'clip', ''],
 ];
 
+const alias_params = [
+  ['sound', 's'],
+  ['att', 'attack'],
+  ['bpf', 'bandf'],
+  ['bpq', 'bandq'],
+  ['ctf', 'cutoff'],
+  ['delayfb', 'delayfeedback'],
+  ['dfb', 'delayfeedback'],
+  ['delayt', 'delaytime'],
+  ['dt', 'delaytime'],
+  ['det', 'detune'],
+  ['fadeOutTime', 'fadeTime'],
+  ['gat', 'gate'],
+  ['hpf', 'hcutoff'],
+  ['hpq', 'hresonance'],
+  ['lfoc', 'lfocutoffint'],
+  ['lfoi', 'lfoint'],
+  ['lfop', 'lfopitchint'],
+  ['lpf', 'cutoff'],
+  ['lpq', 'resonance'],
+  ['phasdp', 'phaserdepth'],
+  ['phasr', 'phaserrate'],
+  ['por', 'portamento'],
+  ['rel', 'release'],
+  ['sz', 'size'],
+  ['sus', 'sustain'],
+  ['tremdp', 'tremolodepth'],
+  ['tremr', 'tremolorate'],
+];
+
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 
 const _name = (name, ...pats) => sequence(...pats).withValue((x) => ({ [name]: x }));
@@ -841,6 +877,11 @@ const _setter = (func, name) =>
 generic_params.forEach(([type, name, description]) => {
   controls[name] = (...pats) => _name(name, ...pats);
   Pattern.prototype[name] = _setter(controls[name], name);
+});
+
+alias_params.forEach(([alias, name]) => {
+  controls[alias] = controls[name];
+  Pattern.prototype[alias] = Pattern.prototype[name];
 });
 
 // create custom param
