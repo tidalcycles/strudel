@@ -146,6 +146,7 @@ export const scale = register('scale', function (scale /* : string */, pat) {
     let note = isObject ? hap.value.n : hap.value;
     const asNumber = Number(note);
     if (!isNaN(asNumber)) {
+      scale = scale.replaceAll('_', ' ');
       let [tonic, scaleName] = Scale.tokenize(scale);
       const { pc, oct = 3 } = Note.get(tonic);
       note = scaleOffset(pc + ' ' + scaleName, asNumber, pc + oct);
