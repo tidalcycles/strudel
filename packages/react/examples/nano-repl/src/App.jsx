@@ -66,7 +66,7 @@ function App() {
   const [code, setCode] = useState(defaultTune);
   const [view, setView] = useState();
   // const [code, setCode] = useState(`"c3".note().slow(2)`);
-  const { scheduler, evaluate, schedulerError, evalError, isDirty, activeCode, pattern } = useStrudel({
+  const { scheduler, evaluate, schedulerError, evalError, isDirty, activeCode, pattern, started } = useStrudel({
     code,
     defaultOutput: webaudioOutput,
     getTime,
@@ -75,8 +75,8 @@ function App() {
   useHighlighting({
     view,
     pattern,
-    active: !activeCode?.includes('strudel disable-highlighting'),
-    getTime: () => scheduler.getPhase(),
+    active: started && !activeCode?.includes('strudel disable-highlighting'),
+    getTime: () => scheduler.now(),
   });
 
   const error = evalError || schedulerError;
