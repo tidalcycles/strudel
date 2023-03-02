@@ -215,7 +215,6 @@ const generic_params = [
    * @name loopEnd
    * @param {number | Pattern} position position from 0 - 1 where the loop ends
    * @example
-   * @example
    * note("<c a f e>").s("piano")
    * .loopBegin(.2).loopEnd("<.3 .4 .5 .6>")
    *
