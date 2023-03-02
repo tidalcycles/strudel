@@ -191,7 +191,7 @@ function effectSend(input, effect, wet) {
 }
 
 // export const webaudioOutput = async (t, hap, ct, cps) => {
-export const webaudioOutput = async (hap, deadline, hapDuration) => {
+export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
   const ac = getAudioContext();
   hap.ensureObjectValue();
 
@@ -305,7 +305,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
     if (unit === 'c') {
       // are there other units?
-      bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration;
+      bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration * cps;
     }
     let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration / bufferSource.playbackRate.value;
     // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
@@ -378,7 +378,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
   chain[0].onended = () => chain.concat([delaySend, reverbSend]).forEach((n) => n?.disconnect());
 };
 
-export const webaudioOutputTrigger = (t, hap, ct, cps) => webaudioOutput(hap, t - ct, hap.duration / cps);
+export const webaudioOutputTrigger = (t, hap, ct, cps) => webaudioOutput(hap, t - ct, hap.duration / cps, cps);
 
 Pattern.prototype.webaudio = function () {
   // TODO: refactor (t, hap, ct, cps) to (hap, deadline, duration) ?

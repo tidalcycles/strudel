@@ -21,7 +21,7 @@ export function repl({
     onTrigger: async (hap, deadline, duration, cps) => {
       try {
         if (!hap.context.onTrigger || !hap.context.dominantTrigger) {
-          await defaultOutput(hap, deadline, duration);
+          await defaultOutput(hap, deadline, duration, cps);
         }
         if (hap.context.onTrigger) {
           // call signature of output / onTrigger is different...

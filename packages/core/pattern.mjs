@@ -1415,25 +1415,32 @@ export function register(name, func, patternify = true) {
   const arity = func.length;
   var pfunc; // the patternified function
 
-  pfunc = function (...args) {
-    args = args.map(reify);
-    const pat = args[args.length - 1];
-    if (arity === 1) {
-      return func(pat);
-    }
-    const [left, ...right] = args.slice(0, -1);
-    let mapFn = (...args) => {
-      // make sure to call func with the correct argument count
-      // args.length is expected to be <= arity-1
-      // so we set undefined args explicitly undefined
-      Array(arity - 1)
-        .fill()
-        .map((_, i) => args[i] ?? undefined);
-      return func(...args, pat);
+  if (patternify) {
+    pfunc = function (...args) {
+      args = args.map(reify);
+      const pat = args[args.length - 1];
+      if (arity === 1) {
+        return func(pat);
+      }
+      const [left, ...right] = args.slice(0, -1);
+      let mapFn = (...args) => {
+        // make sure to call func with the correct argument count
+        // args.length is expected to be <= arity-1
+        // so we set undefined args explicitly undefined
+        Array(arity - 1)
+          .fill()
+          .map((_, i) => args[i] ?? undefined);
+        return func(...args, pat);
+      };
+      mapFn = curry(mapFn, null, arity - 1);
+      return right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
     };
-    mapFn = curry(mapFn, null, arity - 1);
-    return right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
-  };
+  } else {
+    pfunc = function (...args) {
+      args = args.map(reify);
+      return func(...args);
+    };
+  }
 
   Pattern.prototype[name] = function (...args) {
     // For methods that take a single argument (plus 'this'), allow
@@ -2231,11 +2238,13 @@ const _loopAt = function (factor, pat, cps = 1) {
  * @example
  * await samples('github:tidalcycles/Dirt-Samples/master')
  * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(1.5)
+ */
+
 const slice = register(
   'slice',
   function (npat, ipat, opat) {
     return npat.innerBind((n) =>
-    ipat.outerBind((i) =>
+      ipat.outerBind((i) =>
         opat.outerBind((o) => {
           // If it's not an object, assume it's a string and make it a 's' control parameter
           o = o instanceof Object ? o : { s: o };
@@ -2248,7 +2257,6 @@ const slice = register(
   },
   false, // turns off auto-patternification
 );
-*/
 
 /*
  * Works the same as slice, but changes the playback speed of each slice to match the duration of its step.
@@ -2258,6 +2266,8 @@ const slice = register(
  * @example
  * await samples('github:tidalcycles/Dirt-Samples/master')
  * s("breaks165").splice(8,  "0 1 [2 3 0]@2 3 0@2 7").hurry(0.65)
+ */
+
 const splice = register(
   'splice',
   function (npat, ipat, opat) {
@@ -2273,8 +2283,7 @@ const splice = register(
     });
   },
   false, // turns off auto-patternification
-  );
-  */
+);
 
 const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
   return _loopAt(factor, pat, 1);
