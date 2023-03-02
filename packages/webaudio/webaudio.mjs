@@ -231,7 +231,8 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
     unit,
     nudge = 0, // TODO: is this in seconds?
     cut,
-    loop,
+    loopBegin,
+    loopEnd,
     orbit = 1,
     room,
     size = 2,
@@ -307,17 +308,21 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
       // are there other units?
       bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration * cps;
     }
-    let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration / bufferSource.playbackRate.value;
+    const loop = loopBegin !== undefined || loopEnd !== undefined;
+    let duration =
+      soundfont || clip || loop ? hapDuration : bufferSource.buffer.duration / bufferSource.playbackRate.value;
     // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
     // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
     // the midway point through a 10-second audio buffer is still 5."
     const offset = begin * duration * bufferSource.playbackRate.value;
     duration = (end - begin) * duration;
     if (loop) {
+      loopBegin = loopBegin ?? 0;
+      loopEnd = loopEnd ?? 1;
       bufferSource.loop = true;
-      bufferSource.loopStart = offset;
-      bufferSource.loopEnd = offset + duration;
-      duration = loop * duration;
+      bufferSource.loopStart = offset + loopBegin * duration;
+      bufferSource.loopEnd = offset + duration - (1 - loopEnd) * duration;
+      duration = hapDuration;
     }
     t += nudge;
 

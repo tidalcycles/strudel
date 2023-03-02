@@ -193,16 +193,34 @@ const generic_params = [
    */
   ['end'],
   /**
-   * Loops the sample (from `begin` to `end`) the specified number of times.
-   * Note that the tempo of the loop is not synced with the cycle tempo.
+   * Loops the sample from `loopBegin` to `loopEnd`. If one or both of those are set,
+   * the sample is looped to fill the event duration, instead of playing the whole sample.
+   * If only `loopBegin` is set, `loopEnd` defaults to 1.
+   * If only `loopEnd` is set, `loopBegin` defaults to 0.
    *
-   * @name loop
-   * @param {number | Pattern} times How often the sample is looped
+   * @name loopBegin
+   * @param {number | Pattern} position position from 0 - 1 where the loop starts
    * @example
-   * s("bd").loop("<1 2 3 4>").osc()
+   * note("<c a f e>").s("piano")
+   * .loopBegin("<0 .24 .32>").loopEnd(.5)
    *
    */
-  ['loop'],
+  ['loopBegin'],
+  /**
+   * Loops the sample from `loopBegin` to `loopEnd`. If one or both of those are set,
+   * the sample is looped to fill the event duration, instead of playing the whole sample.
+   * If only `loopBegin` is set, `loopEnd` defaults to 1.
+   * If only `loopEnd` is set, `loopBegin` defaults to 0.
+   *
+   * @name loopEnd
+   * @param {number | Pattern} position position from 0 - 1 where the loop ends
+   * @example
+   * @example
+   * note("<c a f e>").s("piano")
+   * .loopBegin(.2).loopEnd("<.3 .4 .5 .6>")
+   *
+   */
+  ['loopEnd'],
   // TODO: currently duplicated with "native" legato
   // TODO: superdirt legato will do more: https://youtu.be/dQPmE1WaD1k?t=419
   /**
