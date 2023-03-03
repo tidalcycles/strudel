@@ -1284,6 +1284,20 @@ export function timeCat(...timepats) {
   return stack(...pats);
 }
 
+/**
+ * Allows to arrange multiple patterns together over multiple cycles.
+ * Takes a variable number of arrays with two elements specifying the number of cycles and the pattern to use.
+ *
+ * @return {Pattern}
+ * @example
+ * arrange([4, "<c a f e>(3,8)"],[2, "<g a>(5,8)"]).note()
+ */
+export function arrange(...sections) {
+  const total = sections.reduce((sum, [cycles]) => sum + cycles, 0);
+  sections = sections.map(([cycles, section]) => [cycles, section.fast(cycles)]);
+  return timeCat(...sections).slow(total);
+}
+
 export function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);
 }
