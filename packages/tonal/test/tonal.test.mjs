@@ -30,4 +30,11 @@ describe('tonal', () => {
         .firstCycleValues.map((h) => h.note),
     ).toEqual(['C3', 'D3', 'E3']);
   });
+  it('scale with colon', () => {
+    expect(
+      n(0, 1, 2)
+        .scale('C:major')
+        .firstCycleValues.map((h) => h.note),
+    ).toEqual(['C3', 'D3', 'E3']);
+  });
 });
