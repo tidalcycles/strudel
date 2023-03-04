@@ -124,7 +124,7 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
  * Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like {@link Pattern#scaleTranspose}.
  *
  * A scale consists of a root note (e.g. `c4`, `c`, `f#`, `bb4`) followed by semicolon (':') and then a [scale type](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).
- * 
+ *
  * The root note defaults to octave 3, if no octave number is given.
  *
  * @memberof Pattern
