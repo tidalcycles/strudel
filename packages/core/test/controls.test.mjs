@@ -14,15 +14,15 @@ describe('controls', () => {
   });
   it('should support compound controls', () => {
     expect(controls.s(mini('bd:3')).firstCycleValues).toEqual([{ s: 'bd', n: 3 }]);
-    expect(controls.s(mini('bd:3 sd:4')).firstCycleValues).toEqual([
+    expect(controls.s(mini('bd:3 sd:4:1.4')).firstCycleValues).toEqual([
       { s: 'bd', n: 3 },
-      { s: 'sd', n: 4 },
+      { s: 'sd', n: 4, gain: 1.4 },
     ]);
   });
   it('should support ignore extra elements in compound controls', () => {
-    expect(controls.s(mini('bd:3:5 sd:4:bing:3:17')).firstCycleValues).toEqual([
-      { s: 'bd', n: 3 },
-      { s: 'sd', n: 4 },
+    expect(controls.s(mini('bd:3:0.4 sd:4:0.5:3:17')).firstCycleValues).toEqual([
+      { s: 'bd', n: 3, gain: 0.4 },
+      { s: 'sd', n: 4, gain: 0.5 },
     ]);
   });
 });

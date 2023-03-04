@@ -10,16 +10,19 @@ import { zipWith } from './util.mjs';
 const controls = {};
 const generic_params = [
   /**
-   * Select a sound / sample by name.
+   * Select a sound / sample by name. When using mininotation, you can also optionally supply 'n' and 'gain' parameters
+   * separated by ':'.
    *
    * @name s
    * @param {string | Pattern} sound The sound / pattern of sounds to pick
    * @synonyms sound
    * @example
    * s("bd hh")
+   * @example
+   * s("bd:0 bd:1 bd:0:0.3 bd:1:1.4")
    *
    */
-  [['s', 'n'], 'sound'],
+  [['s', 'n', 'gain'], 'sound'],
   /**
    * Selects the given index from the sample map.
    * Numbers too high will wrap around.
@@ -51,7 +54,7 @@ const generic_params = [
    * @example
    * note("60 69 65 64")
    */
-  ['note'],
+  [['note', 'n']],
 
   /**
    * A pattern of numbers that speed up (or slow down) samples while they play. Currently only supported by osc / superdirt.
@@ -144,7 +147,8 @@ const generic_params = [
   ['hold'],
   // TODO: in tidal, it seems to be normalized
   /**
-   * Sets the center frequency of the **b**and-**p**ass **f**ilter.
+   * Sets the center frequency of the **b**and-**p**ass **f**ilter. When using mininotation, you
+   * can also optionally supply the 'bpq' parameter separated by ':'.
    *
    * @name bpf
    * @param {number | Pattern} frequency center frequency
@@ -153,12 +157,10 @@ const generic_params = [
    * s("bd sd,hh*3").bpf("<1000 2000 4000 8000>")
    *
    */
-  // currently an alias of 'bandf' https://github.com/tidalcycles/strudel/issues/496
-  // ['bpf'],
   [['bandf', 'bandq'], 'bpf', 'bp'],
   // TODO: in tidal, it seems to be normalized
   /**
-   * Sets the **b**and-**p**ass **q**-factor (resonance)
+   * Sets the **b**and-**p**ass **q**-factor (resonance).
    *
    * @name bpq
    * @param {number | Pattern} q q factor
@@ -259,22 +261,30 @@ const generic_params = [
   /**
    * Applies the cutoff frequency of the **l**ow-**p**ass **f**ilter.
    *
+   * When using mininotation, you can also optionally add the 'lpq' parameter, separated by ':'.
+   *
    * @name lpf
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @synonyms cutoff, ctf, lp
    * @example
    * s("bd sd,hh*3").lpf("<4000 2000 1000 500 200 100>")
+   * @example
+   * s("bd*8").lpf("1000:0 1000:10 1000:20 1000:30")
    *
    */
   [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
   /**
    * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
    *
+   * When using mininotation, you can also optionally add the 'hpq' parameter, separated by ':'.
+   *
    * @name hpf
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @synonyms hp, hcutoff
    * @example
    * s("bd sd,hh*4").hpf("<4000 2000 1000 500 200 100>")
+   * @example
+   * s("bd sd,hh*4").hpf("<2000 2000:25>")
    *
    */
   // currently an alias of 'hcutoff' https://github.com/tidalcycles/strudel/issues/496
@@ -318,10 +328,16 @@ const generic_params = [
   /**
    * Sets the level of the delay signal.
    *
+   * When using mininotation, you can also optionally add the 'delaytime' and 'delayfeedback' parameter,
+   * separated by ':'.
+   *
+   *
    * @name delay
    * @param {number | Pattern} level between 0 and 1
    * @example
    * s("bd").delay("<0 .25 .5 1>")
+   * @example
+   * s("bd bd").delay("0.65:0.25:0.9 0.65:0.125:0.7")
    *
    */
   [['delay', 'delaytime', 'delayfeedback']],
@@ -550,10 +566,14 @@ const generic_params = [
   /**
    * Sets the level of reverb.
    *
+   * When using mininotation, you can also optionally add the 'size' parameter, separated by ':'.
+   *
    * @name room
    * @param {number | Pattern} level between 0 and 1
    * @example
    * s("bd sd").room("<0 .2 .4 .6 .8 1>")
+   * @example
+   * s("bd sd").room("<0.9:1 0.9:4>")
    *
    */
   [['room', 'size']],
