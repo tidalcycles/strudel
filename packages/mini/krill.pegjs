@@ -96,7 +96,7 @@ quote = '"' / "'"
 // ------------------ steps and cycles ---------------------------
 
 // single step definition (e.g bd)
-step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" / "_" / ":"
+step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" / "_"
 step = ws chars:step_char+ ws { return new AtomStub(chars.join("")) }
 
 // define a sub cycle e.g. [1 2, 3 [4]]
@@ -119,7 +119,7 @@ slice = step / sub_cycle / polymeter / slow_sequence
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
-slice_op = op_weight / op_bjorklund / op_slow / op_fast / op_replicate / op_degrade
+slice_op = op_weight / op_bjorklund / op_slow / op_fast / op_replicate / op_degrade / op_tail
 
 op_weight =  "@" a:number
   { return x => x.options_['weight'] = a }
@@ -138,6 +138,9 @@ op_fast = "*"a:slice
 
 op_degrade = "?"a:number?
   { return x => x.options_['ops'].push({ type_: "degradeBy", arguments_ :{ amount:a } }) }
+
+op_tail = ":" s:slice
+  { return x => x.options_['ops'].push({ type_: "tail", arguments_ :{ element:s } }) }
 
 // a slice with an modifier applied i.e [bd@4 sd@3]@2 hh]
 slice_with_ops = s:slice ops:slice_op*
