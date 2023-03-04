@@ -140,6 +140,9 @@ describe('mini', () => {
     expect(haps.length < 230).toBe(true);
     // 'Had too many cycles remaining after degradeBy 0.8');
   });
+  it('supports lists', () => {
+    expect(minV('a:b c:d:[e:f] g')).toEqual([['a', 'b'], ['c', 'd', ['e', 'f']], 'g']);
+  });
   /*it('supports the random choice operator ("|") with nesting', () => {
     const numCycles = 900;
     const haps = mini('a | [b | c] | [d | e | f]').queryArc(0, numCycles);

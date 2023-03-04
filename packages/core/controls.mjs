@@ -742,7 +742,11 @@ controls.createParam = function (names) {
     withVal = (xs) => {
       if (Array.isArray(xs)) {
         const result = {};
-        xs.forEach((x, i) => (result[names[i]] = x));
+        xs.forEach((x, i) => {
+          if (i < names.length) {
+            result[names[i]] = x;
+          }
+        });
         return result;
       } else {
         return { [name]: xs };
