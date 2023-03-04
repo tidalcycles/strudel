@@ -141,6 +141,7 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
  */
 
 export const scale = register('scale', function (scale, pat) {
+  // Supports ':' list syntax in mininotation
   if (Array.isArray(scale)) {
     scale = scale.join(' ');
   }
@@ -149,6 +150,7 @@ export const scale = register('scale', function (scale, pat) {
     let note = isObject ? hap.value.n : hap.value;
     const asNumber = Number(note);
     if (!isNaN(asNumber)) {
+      // TODO: worth keeping for supporting ':' in (non-mininotation) strings?
       scale = scale.replaceAll(':', ' ');
       let [tonic, scaleName] = Scale.tokenize(scale);
       const { pc, oct = 3 } = Note.get(tonic);
