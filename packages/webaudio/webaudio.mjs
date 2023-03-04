@@ -97,17 +97,6 @@ const getSoundfontKey = (s) => {
   return;
 };
 
-const splitSN = (s, n) => {
-  if (!s.includes(':')) {
-    return [s, n];
-  }
-  let [s2, n2] = s.split(':');
-  if (isNaN(Number(n2))) {
-    return [s, n];
-  }
-  return [s2, n2];
-};
-
 let workletsLoading;
 function loadWorklets() {
   if (workletsLoading) {
@@ -242,12 +231,6 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
   const chain = [];
   if (bank && s) {
     s = `${bank}_${s}`;
-  }
-  if (typeof s === 'string') {
-    [s, n] = splitSN(s, n);
-  }
-  if (typeof note === 'string') {
-    [note, n] = splitSN(note, n);
   }
   if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
     // destructure adsr here, because the default should be different for synths and samples
