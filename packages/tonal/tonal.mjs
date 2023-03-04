@@ -123,20 +123,19 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
 /**
  * Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like {@link Pattern#scaleTranspose}.
  *
- * A scale consists of a root note (e.g. `c4`, `c`, `f#`, `bb4`) followed by a [scale type](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).
+ * A scale consists of a root note (e.g. `c4`, `c`, `f#`, `bb4`) followed by semicolon (':') and then a [scale type](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).
+ * 
  * The root note defaults to octave 3, if no octave number is given.
- * Note that you currently cannot pattern `scale` with the mini notation, because the scale name includes a space.
- * This will be improved in the future. Until then, use a sequence function like `cat` or `seq`.
  *
  * @memberof Pattern
  * @name scale
  * @param {string} scale Name of scale
  * @returns Pattern
  * @example
- * "0 2 4 6 4 2".scale('C2 major').note()
+ * "0 2 4 6 4 2".scale("C2:major").note()
  * @example
  * "0 2 4 6 4 2"
- * .scale(seq('C2 major', 'C2 minor').slow(2))
+ * .scale("C2:<major minor>").slow(2))
  * .note()
  */
 
