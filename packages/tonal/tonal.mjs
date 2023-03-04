@@ -140,7 +140,10 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
  * .note()
  */
 
-export const scale = register('scale', function (scale /* : string */, pat) {
+export const scale = register('scale', function (scale, pat) {
+  if (Array.isArray(scale)) {
+    scale = scale.join(' ');
+  }
   return pat.withHap((hap) => {
     const isObject = typeof hap.value === 'object';
     let note = isObject ? hap.value.n : hap.value;
