@@ -5,6 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Pattern, sequence } from './pattern.mjs';
+import { zipWith } from './util.mjs';
 
 const controls = {};
 const generic_params = [
@@ -18,7 +19,7 @@ const generic_params = [
    * s("bd hh")
    *
    */
-  ['s', 'sound'],
+  [['s', 'n'], 'sound'],
   /**
    * Selects the given index from the sample map.
    * Numbers too high will wrap around.
@@ -147,14 +148,14 @@ const generic_params = [
    *
    * @name bpf
    * @param {number | Pattern} frequency center frequency
-   * @synonyms bandf
+   * @synonyms bandf, bp
    * @example
    * s("bd sd,hh*3").bpf("<1000 2000 4000 8000>")
    *
    */
   // currently an alias of 'bandf' https://github.com/tidalcycles/strudel/issues/496
   // ['bpf'],
-  ['bandf', 'bpf'],
+  [['bandf', 'bandq'], 'bpf', 'bp'],
   // TODO: in tidal, it seems to be normalized
   /**
    * Sets the **b**and-**p**ass **q**-factor (resonance)
@@ -260,25 +261,25 @@ const generic_params = [
    *
    * @name lpf
    * @param {number | Pattern} frequency audible between 0 and 20000
-   * @synonyms cutoff, ctf
+   * @synonyms cutoff, ctf, lp
    * @example
    * s("bd sd,hh*3").lpf("<4000 2000 1000 500 200 100>")
    *
    */
-  ['cutoff', 'ctf', 'lpf'],
+  [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
   /**
    * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
    *
    * @name hpf
    * @param {number | Pattern} frequency audible between 0 and 20000
-   * @synonyms hcutoff
+   * @synonyms hp, hcutoff
    * @example
    * s("bd sd,hh*4").hpf("<4000 2000 1000 500 200 100>")
    *
    */
   // currently an alias of 'hcutoff' https://github.com/tidalcycles/strudel/issues/496
   // ['hpf'],
-  ['hcutoff', 'hpf'],
+  [['hcutoff', 'hresonance'], 'hpf', 'hp'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
    *
@@ -323,7 +324,7 @@ const generic_params = [
    * s("bd").delay("<0 .25 .5 1>")
    *
    */
-  ['delay'],
+  [['delay', 'delaytime', 'delayfeedback']],
   /**
    * Sets the level of the signal that is fed back into the delay.
    * Caution: Values >= 1 will result in a signal that gets louder and louder! Don't do it
@@ -555,7 +556,7 @@ const generic_params = [
    * s("bd sd").room("<0 .2 .4 .6 .8 1>")
    *
    */
-  ['room'],
+  [['room', 'size']],
   /**
    * Sets the room size of the reverb, see {@link room}.
    *
@@ -733,31 +734,45 @@ const generic_params = [
 
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 
-const _name = (name, ...pats) => sequence(...pats).withValue((x) => ({ [name]: x }));
+controls.createParam = function (names) {
+  const name = Array.isArray(names) ? names[0] : names;
 
-const _setter = (func, name) =>
-  function (...pats) {
+  var withVal;
+  if (Array.isArray(names)) {
+    withVal = (xs) => {
+      if (Array.isArray(xs)) {
+        const result = {};
+        xs.forEach((x, i) => (result[names[i]] = x));
+        return result;
+      } else {
+        return { [name]: xs };
+      }
+    };
+  } else {
+    withVal = (x) => ({ [name]: x });
+  }
+
+  const func = (...pats) => sequence(...pats).withValue(withVal);
+
+  const setter = function (...pats) {
     if (!pats.length) {
-      return this.fmap((value) => ({ [name]: value }));
+      return this.fmap(withVal);
     }
     return this.set(func(...pats));
   };
+  Pattern.prototype[name] = setter;
+  return func;
+};
 
-generic_params.forEach(([name, ...aliases]) => {
-  controls[name] = (...pats) => _name(name, ...pats);
-  Pattern.prototype[name] = _setter(controls[name], name);
+generic_params.forEach(([names, ...aliases]) => {
+  const name = Array.isArray(names) ? names[0] : names;
+  controls[name] = controls.createParam(names);
+
   aliases.forEach((alias) => {
     controls[alias] = controls[name];
     Pattern.prototype[alias] = Pattern.prototype[name];
   });
 });
-
-// create custom param
-controls.createParam = (name) => {
-  const func = (...pats) => _name(name, ...pats);
-  Pattern.prototype[name] = _setter(func, name);
-  return (...pats) => _name(name, ...pats);
-};
 
 controls.createParams = (...names) =>
   names.reduce((acc, name) => Object.assign(acc, { [name]: controls.createParam(name) }), {});
