@@ -3567,6 +3567,43 @@ exports[`runs examples > example "scale" example index 1 1`] = `
 ]
 `;
 
+exports[`runs examples > example "scale" example index 2 1`] = `
+[
+  "[ 7/8 → 1/1 | note:C2 s:folkharp ]",
+  "[ 3/4 → 7/8 | note:D2 s:folkharp ]",
+  "[ 5/8 → 3/4 | note:E2 s:folkharp ]",
+  "[ 1/2 → 5/8 | note:F2 s:folkharp ]",
+  "[ 3/8 → 1/2 | note:G2 s:folkharp ]",
+  "[ 1/4 → 3/8 | note:A2 s:folkharp ]",
+  "[ 1/8 → 1/4 | note:B2 s:folkharp ]",
+  "[ 0/1 → 1/8 | note:C3 s:folkharp ]",
+  "[ 15/8 → 2/1 | note:C2 s:folkharp ]",
+  "[ 7/4 → 15/8 | note:D2 s:folkharp ]",
+  "[ 13/8 → 7/4 | note:Eb2 s:folkharp ]",
+  "[ 3/2 → 13/8 | note:F2 s:folkharp ]",
+  "[ 11/8 → 3/2 | note:G2 s:folkharp ]",
+  "[ 5/4 → 11/8 | note:Ab2 s:folkharp ]",
+  "[ 9/8 → 5/4 | note:Bb2 s:folkharp ]",
+  "[ 1/1 → 9/8 | note:C3 s:folkharp ]",
+  "[ 23/8 → 3/1 | note:C2 s:folkharp ]",
+  "[ 11/4 → 23/8 | note:D2 s:folkharp ]",
+  "[ 21/8 → 11/4 | note:E2 s:folkharp ]",
+  "[ 5/2 → 21/8 | note:F2 s:folkharp ]",
+  "[ 19/8 → 5/2 | note:G2 s:folkharp ]",
+  "[ 9/4 → 19/8 | note:A2 s:folkharp ]",
+  "[ 17/8 → 9/4 | note:B2 s:folkharp ]",
+  "[ 2/1 → 17/8 | note:C3 s:folkharp ]",
+  "[ 31/8 → 4/1 | note:C2 s:folkharp ]",
+  "[ 15/4 → 31/8 | note:D2 s:folkharp ]",
+  "[ 29/8 → 15/4 | note:Eb2 s:folkharp ]",
+  "[ 7/2 → 29/8 | note:F2 s:folkharp ]",
+  "[ 27/8 → 7/2 | note:G2 s:folkharp ]",
+  "[ 13/4 → 27/8 | note:Ab2 s:folkharp ]",
+  "[ 25/8 → 13/4 | note:Bb2 s:folkharp ]",
+  "[ 3/1 → 25/8 | note:C3 s:folkharp ]",
+]
+`;
+
 exports[`runs examples > example "scaleTranspose" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | note:C3 ]",
