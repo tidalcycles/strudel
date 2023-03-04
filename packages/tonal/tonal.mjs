@@ -135,8 +135,11 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
  * "0 2 4 6 4 2".scale("C2:major").note()
  * @example
  * "0 2 4 6 4 2"
- * .scale("C2:<major minor>").slow(2))
+ * .scale("C2:<major minor>")
  * .note()
+ * @example
+ * "0 1 2 3 4 5 6 7".rev().scale("C2:<major minor>").note()
+ * .s("folkharp")
  */
 
 export const scale = register('scale', function (scale, pat) {
