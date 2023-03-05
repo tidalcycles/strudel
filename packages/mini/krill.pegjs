@@ -103,7 +103,7 @@ quote = '"' / "'"
 // ------------------ steps and cycles ---------------------------
 
 // single step definition (e.g bd)
-step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "_"
+step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "_" / "^"
 step = ws chars:step_char+ ws { return new AtomStub(chars.join("")) }
 
 memory = ws "^" h:[A-Za-z] t:[A-Za-z0-9_]+ { return new MemoryStub(h + t.join("")) }
@@ -124,7 +124,7 @@ slow_sequence = ws "<" ws s:sequence ws ">" ws
   { s.arguments_.alignment = 'slowcat'; return s; }
 
 // a slice is either a single step or a sub cycle
-slice = step / memory / sub_cycle / polymeter / slow_sequence
+slice = memory / step / sub_cycle / polymeter / slow_sequence
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators

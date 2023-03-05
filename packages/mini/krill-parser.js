@@ -846,6 +846,15 @@ function peg$parse(input, options) {
               s0 = peg$FAILED;
               if (peg$silentFails === 0) { peg$fail(peg$e16); }
             }
+            if (s0 === peg$FAILED) {
+              if (input.charCodeAt(peg$currPos) === 94) {
+                s0 = peg$c10;
+                peg$currPos++;
+              } else {
+                s0 = peg$FAILED;
+                if (peg$silentFails === 0) { peg$fail(peg$e17); }
+              }
+            }
           }
         }
       }
@@ -1110,9 +1119,9 @@ function peg$parse(input, options) {
   function peg$parseslice() {
     var s0;
 
-    s0 = peg$parsestep();
+    s0 = peg$parsememory();
     if (s0 === peg$FAILED) {
-      s0 = peg$parsememory();
+      s0 = peg$parsestep();
       if (s0 === peg$FAILED) {
         s0 = peg$parsesub_cycle();
         if (s0 === peg$FAILED) {
