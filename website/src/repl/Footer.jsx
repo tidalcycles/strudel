@@ -4,7 +4,6 @@ import { useEvent, cx } from '@strudel.cycles/react';
 // import { cx } from '@strudel.cycles/react';
 import { nanoid } from 'nanoid';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { loadedSamples } from './Repl';
 import { Reference } from './Reference';
 import { themes } from './themes.mjs';
 import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../settings.mjs';
@@ -196,14 +195,15 @@ function ConsoleTab({ log }) {
 function SamplesTab() {
   return (
     <div id="samples-tab" className="break-normal w-full px-4 dark:text-white text-stone-900">
-      <span>{loadedSamples.length} banks loaded:</span>
+      TODO: use nanostore with sampleMap
+      {/* <span>{loadedSamples.length} banks loaded:</span>
       {loadedSamples.map(([name, samples]) => (
         <span key={name} className="cursor-pointer hover:opacity-50" onClick={() => {}}>
           {' '}
           {name}(
           {Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1}){' '}
         </span>
-      ))}
+      ))} */}
     </div>
   );
 }

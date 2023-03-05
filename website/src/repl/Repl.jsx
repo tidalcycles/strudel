@@ -6,13 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { cleanupDraw, cleanupUi, controls, evalScope, getDrawContext, logger } from '@strudel.cycles/core';
 import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
-import {
-  getAudioContext,
-  getLoadedSamples,
-  initAudioOnFirstClick,
-  resetLoadedSamples,
-  webaudioOutput,
-} from '@strudel.cycles/webaudio';
+import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
@@ -53,7 +47,6 @@ evalScope(
   ...modules,
 );
 
-export let loadedSamples = [];
 const presets = prebake();
 
 let drawContext, clearCanvas;
@@ -61,11 +54,6 @@ if (typeof window !== 'undefined') {
   drawContext = getDrawContext();
   clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
 }
-
-Promise.all([...modules, presets]).then((data) => {
-  // console.log('modules and sample registry loade', data);
-  loadedSamples = Object.entries(getLoadedSamples() || {});
-});
 
 const getTime = () => getAudioContext().currentTime;
 
@@ -211,7 +199,7 @@ export function Repl({ embedded = false }) {
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
     clearCanvas();
-    resetLoadedSamples();
+    resetLoadedSounds();
     await prebake(); // declare default samples
     await evaluate(code, false);
   };

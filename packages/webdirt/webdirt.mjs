@@ -1,7 +1,7 @@
 import * as strudel from '@strudel.cycles/core';
 const { Pattern } = strudel;
 import * as WebDirt from 'WebDirt';
-import { getLoadedSamples, loadBuffer, getLoadedBuffer } from '@strudel.cycles/webaudio';
+//import { loadBuffer, getLoadedBuffer } from '@strudel.cycles/webaudio';
 
 let webDirt;
 
@@ -63,7 +63,7 @@ export function loadWebDirt(config) {
  */
 Pattern.prototype.webdirt = function () {
   // create a WebDirt object and initialize Web Audio context
-  return this.onTrigger(async (time, e, currentTime) => {
+  /* return this.onTrigger(async (time, e, currentTime) => {
     if (!webDirt) {
       throw new Error('WebDirt not initialized!');
     }
@@ -92,5 +92,5 @@ Pattern.prototype.webdirt = function () {
         webDirt.playSample(msg, deadline);
       }
     }
-  });
+  }); */
 };

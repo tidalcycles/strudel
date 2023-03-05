@@ -24,6 +24,15 @@ const generic_params = [
    */
   [['s', 'n', 'gain'], 'sound'],
   /**
+   * Define a custom webaudio node to use as a sound source.
+   *
+   * @name source
+   * @param {function} getSource
+   * @synonyms src
+   *
+   */
+  ['source', 'src'],
+  /**
    * Selects the given index from the sample map.
    * Numbers too high will wrap around.
    * `n` can also be used to play midi numbers, but it is recommended to use `note` instead.

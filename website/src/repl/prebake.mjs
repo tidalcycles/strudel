@@ -1,9 +1,10 @@
 import { Pattern, toMidi, valueToMidi } from '@strudel.cycles/core';
-import { samples } from '@strudel.cycles/webaudio';
+import { loadSynthSounds, samples } from '@strudel.cycles/webaudio';
 
 export async function prebake() {
   // https://archive.org/details/SalamanderGrandPianoV3
   // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
+  loadSynthSounds();
   return await Promise.all([
     samples(`./piano.json`, `./piano/`),
     // https://github.com/sgossner/VCSL/
