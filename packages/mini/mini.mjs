@@ -152,11 +152,12 @@ export function patternifyAST(ast, code) {
     case 'memory': {
       const name = ast.source_;
       if (name in memory) {
-        return new Pattern((state) => {
+        return new strudel.Pattern((state) => {
           return memory[name].query(state);
         });
       }
-      return pure(nil);
+      // TODO - how to default a memory.. via a list?
+      return strudel.pure(undefined);
     }
     case 'atom': {
       if (ast.source_ === '~') {
