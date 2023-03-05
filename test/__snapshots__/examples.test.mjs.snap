@@ -848,6 +848,23 @@ exports[`runs examples > example "arpWith" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "arrange" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | note:c ]",
+  "[ 3/8 → 1/2 | note:c ]",
+  "[ 3/4 → 7/8 | note:c ]",
+  "[ 1/1 → 9/8 | note:a ]",
+  "[ 11/8 → 3/2 | note:a ]",
+  "[ 7/4 → 15/8 | note:a ]",
+  "[ 2/1 → 17/8 | note:f ]",
+  "[ 19/8 → 5/2 | note:f ]",
+  "[ 11/4 → 23/8 | note:f ]",
+  "[ 3/1 → 25/8 | note:e ]",
+  "[ 27/8 → 7/2 | note:e ]",
+  "[ 15/4 → 31/8 | note:e ]",
+]
+`;
+
 exports[`runs examples > example "attack" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | note:c3 attack:0 ]",
