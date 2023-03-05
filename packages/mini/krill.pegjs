@@ -19,6 +19,13 @@ This program is free software: you can redistribute it and/or modify it under th
     this.location_ = location();
   }
 
+  var MemoryStub = function(source)
+  {
+    this.type_ = "memory";
+    this.source_ = source;
+    this.location_ = location();
+  }
+
   var PatternStub = function(source, alignment)
   {
     this.type_ = "pattern";
@@ -96,8 +103,10 @@ quote = '"' / "'"
 // ------------------ steps and cycles ---------------------------
 
 // single step definition (e.g bd)
-step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "^" / "_"
+step_char =  [0-9a-zA-Z~] / "-" / "#" / "." / "_"
 step = ws chars:step_char+ ws { return new AtomStub(chars.join("")) }
+
+memory = ws "^" h:[A-Za-z] t:[A-Za-z0-9_]+ { return new MemoryStub(h + t.join("")) }
 
 // define a sub cycle e.g. [1 2, 3 [4]]
 sub_cycle = ws  "[" ws s:stack_or_choose ws "]" ws { return s }
@@ -115,7 +124,7 @@ slow_sequence = ws "<" ws s:sequence ws ">" ws
   { s.arguments_.alignment = 'slowcat'; return s; }
 
 // a slice is either a single step or a sub cycle
-slice = step / sub_cycle / polymeter / slow_sequence
+slice = step / memory / sub_cycle / polymeter / slow_sequence
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators

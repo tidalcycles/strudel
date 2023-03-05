@@ -14,6 +14,17 @@ function _nextSeed() {
   return _seedState++;
 } */
 
+const memory = {};
+
+export const remember = (name, pat) => {
+  if (pat) {
+    memory[name] = pat;
+  } else {
+    pat = memory[name];
+  }
+  return pat;
+};
+
 const applyOptions = (parent, code) => (pat, i) => {
   const ast = parent.source_[i];
   const options = ast.options_;
@@ -137,6 +148,15 @@ export function patternifyAST(ast, code) {
     }
     case 'element': {
       return patternifyAST(ast.source_, code);
+    }
+    case 'memory': {
+      const name = ast.source_;
+      if (name in memory) {
+        return new Pattern((state) => {
+          return memory[name].query(state);
+        });
+      }
+      return pure(nil);
     }
     case 'atom': {
       if (ast.source_ === '~') {
