@@ -9,6 +9,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import '../tonal.mjs'; // need to import this to add prototypes
 import { pure, controls, seq } from '@strudel.cycles/core';
 import { describe, it, expect } from 'vitest';
+import { mini } from '../../mini/mini.mjs';
 const { n } = controls;
 
 describe('tonal', () => {
@@ -27,6 +28,20 @@ describe('tonal', () => {
     expect(
       n(0, 1, 2)
         .scale('C major')
+        .firstCycleValues.map((h) => h.note),
+    ).toEqual(['C3', 'D3', 'E3']);
+  });
+  it('scale with colon', () => {
+    expect(
+      n(0, 1, 2)
+        .scale('C:major')
+        .firstCycleValues.map((h) => h.note),
+    ).toEqual(['C3', 'D3', 'E3']);
+  });
+  it('scale with mininotation colon', () => {
+    expect(
+      n(0, 1, 2)
+        .scale(mini('C:major'))
         .firstCycleValues.map((h) => h.note),
     ).toEqual(['C3', 'D3', 'E3']);
   });

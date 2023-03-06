@@ -242,6 +242,7 @@ export function Repl({ embedded = false }) {
     }
   };
   const context = {
+    scheduler,
     embedded,
     started,
     pending,
@@ -273,7 +274,10 @@ export function Repl({ embedded = false }) {
             fontSize={fontSize}
             fontFamily={fontFamily}
             onChange={handleChangeCode}
-            onViewChanged={setView}
+            onViewChanged={(v) => {
+              setView(v);
+              // window.editorView = v;
+            }}
             onSelectionChange={handleSelectionChange}
           />
         </section>

@@ -19,7 +19,10 @@ const langCode = 'en'; // getLanguageFromURL(currentPage);
 const sidebar = SIDEBAR[langCode];
 ---
 
-<nav class="flex justify-between py-2 px-4 items-center h-14 max-h-14 bg-lineHighlight text-foreground" title="Top Navigation">
+<nav
+  class="flex justify-between py-2 px-4 items-center h-14 max-h-14 bg-lineHighlight text-foreground"
+  title="Top Navigation"
+>
   <!--     <div class="menu-toggle">
       <SidebarToggle client:idle />
     </div> -->
@@ -36,7 +39,7 @@ const sidebar = SIDEBAR[langCode];
   </div>
   {/* KNOWN_LANGUAGE_CODES.length > 1 && <LanguageSelect lang={lang} client:idle /> */}
   <div class="search-item h-10">
-    <!--     <Search client:idle /> -->
+    <!-- <Search client:idle /> -->
   </div>
   <a href="./" class="hidden md:flex cursor-pointer items-center space-x-1"
     ><CommandLineIcon className="w-5 h-5" /><span>go to REPL</span>

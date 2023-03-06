@@ -13,24 +13,43 @@ npm i @strudel.cycles/react
 Here is a minimal example of how to set up a MiniRepl:
 
 ```jsx
-import { evalScope, controls } from '@strudel.cycles/core';
+import * as React from 'react';
+import '@strudel.cycles/react/dist/style.css';
 import { MiniRepl } from '@strudel.cycles/react';
-import { prebake } from '../repl/src/prebake.mjs';
+import { evalScope, controls } from '@strudel.cycles/core';
+import { samples, initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 
-evalScope(
-  controls,
-  import('@strudel.cycles/core'),
-  import('@strudel.cycles/tonal'),
-  import('@strudel.cycles/mini'),
-  import('@strudel.cycles/webaudio'),
-  /* probably import other strudel packages */
-);
+async function prebake() {
+  await samples(
+    'https://strudel.tidalcycles.org/tidal-drum-machines.json',
+    'github:ritchse/tidal-drum-machines/main/machines/'
+  );
+  await samples(
+    'https://strudel.tidalcycles.org/EmuSP12.json',
+    'https://strudel.tidalcycles.org/EmuSP12/'
+  );
+}
 
-prebake();
+async function init() {
+  await evalScope(
+    controls,
+    import('@strudel.cycles/core'),
+    import('@strudel.cycles/mini'),
+    import('@strudel.cycles/webaudio'),
+    import('@strudel.cycles/tonal')
+  );
+  await prebake();
+  initAudioOnFirstClick();
+}
 
-export function Repl({ tune }) {
-  return <MiniRepl tune={tune} hideOutsideView={true} />;
+if (typeof window !== 'undefined') {
+  init();
+}
+
+export default function App() {
+  return <MiniRepl tune={`s("bd sd,hh*4")`} />;
 }
 ```
 
-For a more sophisticated example, check out the [nano-repl](./examples/nano-repl/)!
+- Open [example on stackblitz](https://stackblitz.com/edit/react-ts-saaair?file=tune.tsx,App.tsx)
+- Also check out the [nano-repl](./examples/nano-repl/) for a more sophisticated example

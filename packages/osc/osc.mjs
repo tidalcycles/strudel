@@ -47,6 +47,7 @@ let startedAt = -1;
  */
 Pattern.prototype.osc = function () {
   return this.onTrigger(async (time, hap, currentTime, cps = 1) => {
+    hap.ensureObjectValue();
     const osc = await connect();
     const cycle = hap.wholeOrPart().begin.valueOf();
     const delta = hap.duration.valueOf();

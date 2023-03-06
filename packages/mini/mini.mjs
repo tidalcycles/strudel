@@ -18,6 +18,7 @@ const applyOptions = (parent, code) => (pat, i) => {
   const ast = parent.source_[i];
   const options = ast.options_;
   const ops = options?.ops;
+
   if (ops) {
     for (const op of ops) {
       switch (op.type_) {
@@ -64,6 +65,11 @@ const applyOptions = (parent, code) => (pat, i) => {
         ); 
         */
           pat = strudel.reify(pat).degradeBy(op.arguments_.amount === null ? 0.5 : op.arguments_.amount);
+          break;
+        }
+        case 'tail': {
+          const friend = patternifyAST(op.arguments_.element, code);
+          pat = pat.fmap((a) => (b) => Array.isArray(a) ? [...a, b] : [a, b]).appLeft(friend);
           break;
         }
         default: {

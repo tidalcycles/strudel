@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/react",
-  "version": "0.6.0",
+  "version": "0.6.4",
   "description": "React components for strudel",
   "main": "src/index.js",
   "publishConfig": {
@@ -47,17 +47,17 @@
     "react-hook-inview": "^4.5.0"
   },
   "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^17.0.2",
-    "@types/react-dom": "^17.0.2",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^2.2.0",
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.18",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "tailwindcss": "^3.0.24",
     "vite": "^3.2.2"
   }

@@ -97,17 +97,6 @@ const getSoundfontKey = (s) => {
   return;
 };
 
-const splitSN = (s, n) => {
-  if (!s.includes(':')) {
-    return [s, n];
-  }
-  let [s2, n2] = s.split(':');
-  if (isNaN(Number(n2))) {
-    return [s, n];
-  }
-  return [s2, n2];
-};
-
 let workletsLoading;
 function loadWorklets() {
   if (workletsLoading) {
@@ -191,23 +180,11 @@ function effectSend(input, effect, wet) {
 }
 
 // export const webaudioOutput = async (t, hap, ct, cps) => {
-export const webaudioOutput = async (hap, deadline, hapDuration) => {
+export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
   const ac = getAudioContext();
-  /* if (isNote(hap.value)) {
-      // supports primitive hap values that look like notes
-      hap.value = { note: hap.value };
-    } */
-  if (typeof hap.value !== 'object') {
-    logger(
-      `hap.value "${hap.value}" is not supported by webaudio output. Hint: append .note() or .s() to the end`,
-      'error',
-    );
-    /*     throw new Error(
-      `hap.value "${hap.value}"" is not supported by webaudio output. Hint: append .note() or .s() to the end`,
-    ); */
-    return;
-  }
-  // calculate correct time (tone.js workaround)
+  hap.ensureObjectValue();
+
+  // calculate absolute time
   let t = ac.currentTime + deadline;
   // destructure value
   let {
@@ -220,20 +197,14 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     note,
     gain = 0.8,
     // low pass
-    lpf,
-    cutoff = lpf,
-    lpq = 1,
-    resonance = lpq,
+    cutoff,
+    resonance = 1,
     // high pass
-    hpf,
-    hcutoff = hpf,
-    hpq = 1,
-    hresonance = hpq,
+    hcutoff,
+    hresonance = 1,
     // band pass
-    bpf,
-    bandf = bpf,
-    bpq = 1,
-    bandq = bpq,
+    bandf,
+    bandq = 1,
     //
     coarse,
     crush,
@@ -253,7 +224,6 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     orbit = 1,
     room,
     size = 2,
-    roomsize = size,
   } = hap.value;
   const { velocity = 1 } = hap.context;
   gain *= velocity; // legacy fix for velocity
@@ -261,12 +231,6 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
   const chain = [];
   if (bank && s) {
     s = `${bank}_${s}`;
-  }
-  if (typeof s === 'string') {
-    [s, n] = splitSN(s, n);
-  }
-  if (typeof note === 'string') {
-    [note, n] = splitSN(note, n);
   }
   if (!s || ['sine', 'square', 'triangle', 'sawtooth'].includes(s)) {
     // destructure adsr here, because the default should be different for synths and samples
@@ -324,7 +288,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
     bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
     if (unit === 'c') {
       // are there other units?
-      bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration;
+      bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration * cps;
     }
     let duration = soundfont || clip ? hapDuration : bufferSource.buffer.duration / bufferSource.playbackRate.value;
     // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
@@ -385,8 +349,8 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
   }
   // reverb
   let reverbSend;
-  if (room > 0 && roomsize > 0) {
-    const reverbNode = getReverb(orbit, roomsize);
+  if (room > 0 && size > 0) {
+    const reverbNode = getReverb(orbit, size);
     reverbSend = effectSend(post, reverbNode, room);
   }
 
@@ -397,7 +361,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration) => {
   chain[0].onended = () => chain.concat([delaySend, reverbSend]).forEach((n) => n?.disconnect());
 };
 
-export const webaudioOutputTrigger = (t, hap, ct, cps) => webaudioOutput(hap, t - ct, hap.duration / cps);
+export const webaudioOutputTrigger = (t, hap, ct, cps) => webaudioOutput(hap, t - ct, hap.duration / cps, cps);
 
 Pattern.prototype.webaudio = function () {
   // TODO: refactor (t, hap, ct, cps) to (hap, deadline, duration) ?
