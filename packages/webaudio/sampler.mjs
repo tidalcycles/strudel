@@ -179,11 +179,6 @@ export async function onTriggerSample(options, bank) {
     // no playback
     return;
   }
-  if (!s) {
-    // is this check really needed?
-    console.warn('no sample specified');
-    return;
-  }
   //const soundfont = getSoundfontKey(s);
   let bufferSource;
 

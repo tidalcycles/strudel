@@ -2,7 +2,7 @@ import { fromMidi, toMidi } from '@strudel.cycles/core';
 import { setSound } from './webaudio.mjs';
 import { getOscillator, gainNode, getADSR } from './helpers.mjs';
 
-export function loadSynthSounds() {
+export function registerSynthSounds() {
   ['sine', 'square', 'triangle', 'sawtooth'].forEach((wave) => {
     setSound(wave, ({ hap, duration, t }) => {
       // destructure adsr here, because the default should be different for synths and samples

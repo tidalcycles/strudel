@@ -7,6 +7,8 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { Reference } from './Reference';
 import { themes } from './themes.mjs';
 import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../settings.mjs';
+import { soundMap } from '@strudel.cycles/webaudio';
+import { useStore } from '@nanostores/react';
 
 export function Footer({ context }) {
   const footerContent = useRef();
@@ -71,7 +73,7 @@ export function Footer({ context }) {
       <div className="flex justify-between px-2">
         <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
           <FooterTab name="intro" label="welcome" />
-          <FooterTab name="samples" />
+          <FooterTab name="sounds" />
           <FooterTab name="console" />
           <FooterTab name="reference" />
           <FooterTab name="settings" />
@@ -89,7 +91,7 @@ export function Footer({ context }) {
         >
           {activeFooter === 'intro' && <WelcomeTab />}
           {activeFooter === 'console' && <ConsoleTab log={log} />}
-          {activeFooter === 'samples' && <SamplesTab />}
+          {activeFooter === 'sounds' && <SoundsTab />}
           {activeFooter === 'reference' && <Reference />}
           {activeFooter === 'settings' && <SettingsTab scheduler={context.scheduler} />}
         </div>
@@ -192,18 +194,19 @@ function ConsoleTab({ log }) {
   );
 }
 
-function SamplesTab() {
+function SoundsTab() {
+  const sounds = useStore(soundMap);
   return (
-    <div id="samples-tab" className="break-normal w-full px-4 dark:text-white text-stone-900">
-      TODO: use nanostore with sampleMap
-      {/* <span>{loadedSamples.length} banks loaded:</span>
-      {loadedSamples.map(([name, samples]) => (
+    <div id="sounds-tab" className="break-normal w-full px-4 dark:text-white text-stone-900">
+      {/*  <span>{loadedSamples.length} banks loaded:</span> */}
+      {Object.entries(sounds).map(([name, samples]) => (
         <span key={name} className="cursor-pointer hover:opacity-50" onClick={() => {}}>
           {' '}
-          {name}(
-          {Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1}){' '}
+          {name}
+          {/* (
+          {Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1}) */}
         </span>
-      ))} */}
+      ))}
     </div>
   );
 }

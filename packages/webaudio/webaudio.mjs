@@ -11,15 +11,14 @@ const { Pattern } = strudel;
 import './vowel.mjs';
 import workletsUrl from './worklets.mjs?url';
 import { getFilter, gainNode } from './helpers.mjs';
+import { map } from 'nanostores';
 
-// export const getAudioContext = () => Tone.getContext().rawContext;
-
-export const soundMap = new Map();
+export const soundMap = map();
 // onTrigger = ({ hap: Hap, t: number, deadline: number, duration: number, cps: number }) => AudioNode
 export function setSound(key, onTrigger) {
-  soundMap.set(key, onTrigger);
+  soundMap.setKey(key, onTrigger);
 }
-export const resetLoadedSounds = () => soundMap.clear();
+export const resetLoadedSounds = () => soundMap.set({});
 
 let audioContext;
 export const getAudioContext = () => {
@@ -161,14 +160,17 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
   if (bank && s) {
     s = `${bank}_${s}`;
   }
-  if (soundMap.has(s)) {
-    const node = await soundMap.get(s)({ hap, t, deadline, duration: hapDuration, cps });
-    chain.push(node);
-  } else if (source) {
-    chain.push(source({ hap, t, deadline, duration: hapDuration, cps }));
+  // get source AudioNode
+  let node;
+  const options = { hap, t, deadline, duration: hapDuration, cps };
+  if (source) {
+    node = source(options);
+  } else if (soundMap.get()[s]) {
+    node = await soundMap.get()[s](options);
   } else {
     throw new Error(`sound ${s} not found! Is it loaded?`);
   }
+  chain.push(node);
 
   // gain stage
   chain.push(gainNode(gain));
