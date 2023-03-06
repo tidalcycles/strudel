@@ -14,8 +14,8 @@ An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using w
 After cloning the project, you can run the REPL locally:
 
 ```bash
-npm run setup
-npm run repl
+pnpm run setup
+pnpm run repl
 ```
 
 ## Using Strudel In Your Project
