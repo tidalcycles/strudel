@@ -149,7 +149,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
         }),
       );
     }
-    setSound(key, (options) => onTriggerSample(options, value));
+    setSound(key, (options) => onTriggerSample(options, value), { type: 'sample', samples: value });
   });
 };
 

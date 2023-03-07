@@ -15,8 +15,8 @@ import { map } from 'nanostores';
 
 export const soundMap = map();
 // onTrigger = ({ hap: Hap, t: number, deadline: number, duration: number, cps: number }) => AudioNode
-export function setSound(key, onTrigger) {
-  soundMap.setKey(key, onTrigger);
+export function setSound(key, onTrigger, data = {}) {
+  soundMap.setKey(key, { onTrigger, data });
 }
 export const resetLoadedSounds = () => soundMap.set({});
 
@@ -166,7 +166,8 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
   if (source) {
     node = source(options);
   } else if (soundMap.get()[s]) {
-    node = await soundMap.get()[s](options);
+    const { onTrigger } = soundMap.get()[s];
+    node = await onTrigger(options);
   } else {
     throw new Error(`sound ${s} not found! Is it loaded?`);
   }

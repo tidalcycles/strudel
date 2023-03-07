@@ -196,15 +196,15 @@ function ConsoleTab({ log }) {
 
 function SoundsTab() {
   const sounds = useStore(soundMap);
+  const getSamples = (samples) =>
+    Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1;
   return (
     <div id="sounds-tab" className="break-normal w-full px-4 dark:text-white text-stone-900">
       {/*  <span>{loadedSamples.length} banks loaded:</span> */}
-      {Object.entries(sounds).map(([name, samples]) => (
+      {Object.entries(sounds).map(([name, { data }]) => (
         <span key={name} className="cursor-pointer hover:opacity-50" onClick={() => {}}>
           {' '}
-          {name}
-          {/* (
-          {Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1}) */}
+          {name} {data?.type === 'sample' ? `(${getSamples(data.samples)})` : ''}
         </span>
       ))}
     </div>
