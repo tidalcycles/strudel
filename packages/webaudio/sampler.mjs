@@ -105,7 +105,7 @@ export const getLoadedBuffer = (url) => {
  *
  */
 
-export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
+export const samples = async (sampleMap, baseUrl = sampleMap._base || '', options = {}) => {
   if (typeof sampleMap === 'string') {
     if (sampleMap.startsWith('github:')) {
       let [_, path] = sampleMap.split('github:');
@@ -123,12 +123,13 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
     }
     return fetch(sampleMap)
       .then((res) => res.json())
-      .then((json) => samples(json, baseUrl || json._base || base))
+      .then((json) => samples(json, baseUrl || json._base || base, options))
       .catch((error) => {
         console.error(error);
         throw new Error(`error loading "${sampleMap}"`);
       });
   }
+  const { prebake } = options;
   Object.entries(sampleMap).forEach(([key, value]) => {
     if (typeof value === 'string') {
       value = [value];
@@ -149,7 +150,12 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
         }),
       );
     }
-    setSound(key, (options) => onTriggerSample(options, value), { type: 'sample', samples: value });
+    setSound(key, (options) => onTriggerSample(options, value), {
+      type: 'sample',
+      samples: value,
+      baseUrl,
+      prebake,
+    });
   });
 };
 

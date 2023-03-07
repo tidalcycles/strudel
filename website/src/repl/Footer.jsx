@@ -3,7 +3,7 @@ import { logger } from '@strudel.cycles/core';
 import { useEvent, cx } from '@strudel.cycles/react';
 // import { cx } from '@strudel.cycles/react';
 import { nanoid } from 'nanoid';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useMemo, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { Reference } from './Reference';
 import { themes } from './themes.mjs';
 import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../settings.mjs';
@@ -194,19 +194,67 @@ function ConsoleTab({ log }) {
   );
 }
 
+/*
+function groupBy(obj = {}, getter) {
+  const grouped = Object.entries(obj).reduce((acc, [key, value]) => {
+    const propValue = getter(value, key);
+    if (!acc.has(propValue)) {
+      acc.set(propValue, new Map());
+    }
+    acc.get(propValue).set(key, value);
+    return acc;
+  }, new Map());
+  return grouped;
+}
+ const grouped = useMemo(() => {
+  if (!sounds) {
+    return {};
+  }
+  return groupBy(sounds, (s) =>
+    s.data.type === 'sample' ? 'Samples from ' + s.data?.baseUrl : 'Type ' + s.data.type,
+  );
+}, [sounds]); 
+
+         {Array.from(grouped).map(([category, sounds]) => (
+        <Fragment key={category}>
+           <h3 className="pb-2 pt-4 text-lg">{category}:</h3>  
+        </Fragment>
+      ))} 
+*/
+
+const getSamples = (samples) =>
+  Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1;
+
 function SoundsTab() {
   const sounds = useStore(soundMap);
-  const getSamples = (samples) =>
-    Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1;
+  const { soundsFilter } = useSettings();
+
+  const soundEntries = useMemo(() => {
+    if (!sounds) {
+      return [];
+    }
+    if (soundsFilter === 'hideDefaults') {
+      return Object.entries(sounds).filter(([_, { data }]) => !data.prebake);
+    }
+    return Object.entries(sounds);
+  }, [sounds, soundsFilter]);
   return (
     <div id="sounds-tab" className="break-normal w-full px-4 dark:text-white text-stone-900">
-      {/*  <span>{loadedSamples.length} banks loaded:</span> */}
-      {Object.entries(sounds).map(([name, { data }]) => (
-        <span key={name} className="cursor-pointer hover:opacity-50" onClick={() => {}}>
-          {' '}
-          {name} {data?.type === 'sample' ? `(${getSamples(data.samples)})` : ''}
-        </span>
-      ))}
+      <ButtonGroup
+        value={soundsFilter}
+        onChange={(value) => settingsMap.setKey('soundsFilter', value)}
+        items={{ all: 'All', hideDefaults: 'Hide Defaults' }}
+      ></ButtonGroup>
+      <div className="pt-4">
+        {soundEntries.map(([name, { data }]) => (
+          <span key={name} className="cursor-pointer hover:opacity-50" onClick={() => {}}>
+            {' '}
+            {name}
+            {data?.type === 'sample' ? `(${getSamples(data.samples)})` : ''}
+          </span>
+        ))}
+        {!soundEntries.length ? 'No Sounds' : ''}
+      </div>
     </div>
   );
 }

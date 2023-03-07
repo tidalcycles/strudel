@@ -32,7 +32,7 @@ export function registerSynthSounds() {
         //chain.push(adsr);
         return o.connect(g).connect(adsr);
       },
-      { type: 'synth' },
+      { type: 'synth', prebake: true },
     );
   });
 }

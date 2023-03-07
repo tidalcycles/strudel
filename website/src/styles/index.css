@@ -22,7 +22,6 @@
   --app-height: 100vh;
 }
 
-#console-tab,
-#sounds-tab {
+#console-tab {
   font-family: BigBlueTerminal, monospace;
 }
