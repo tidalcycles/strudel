@@ -1,4 +1,6 @@
 import { toMidi } from '@strudel.cycles/core';
+import { getAudioContext, registerSound } from '@strudel.cycles/webaudio';
+import { instruments } from './list.mjs';
 
 let loadCache = {};
 async function loadFont(name) {
@@ -8,7 +10,6 @@ async function loadFont(name) {
   const load = async () => {
     // TODO: make soundfont source configurable
     const url = `https://felixroos.github.io/webaudiofontdata/sound/${name}.js`;
-    console.log('load font', name, url);
     const preset = await fetch(url).then((res) => res.text());
     let [_, data] = preset.split('={');
     return eval('{' + data);
@@ -113,4 +114,25 @@ async function getBuffer(zone, audioContext) {
       return new Promise((resolve) => audioContext.decodeAudioData(arraybuffer, resolve));
     }
   }
+}
+
+export function registerSoundfonts() {
+  instruments.forEach((instrument) => {
+    registerSound(
+      instrument,
+      async (time, value, onended) => {
+        const { note, n } = value;
+        const ctx = getAudioContext();
+        const bufferSource = await getFontBufferSource(instrument, note || n, ctx);
+        bufferSource.start(time);
+        const stop = (time) => bufferSource.stop(time);
+        bufferSource.onended = () => {
+          bufferSource.disconnect();
+          onended();
+        };
+        return { node: bufferSource, stop };
+      },
+      { type: 'soundfont', prebake: true },
+    );
+  });
 }

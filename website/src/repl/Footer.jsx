@@ -233,8 +233,17 @@ function SoundsTab() {
     if (!sounds) {
       return [];
     }
-    if (soundsFilter === 'hideDefaults') {
+    if (soundsFilter === 'user') {
       return Object.entries(sounds).filter(([_, { data }]) => !data.prebake);
+    }
+    if (soundsFilter === 'samples') {
+      return Object.entries(sounds).filter(([_, { data }]) => data.type === 'sample');
+    }
+    if (soundsFilter === 'synths') {
+      return Object.entries(sounds).filter(([_, { data }]) => data.type === 'synth');
+    }
+    if (soundsFilter === 'soundfonts') {
+      return Object.entries(sounds).filter(([_, { data }]) => data.type === 'soundfont');
     }
     return Object.entries(sounds);
   }, [sounds, soundsFilter]);
@@ -249,16 +258,21 @@ function SoundsTab() {
       <ButtonGroup
         value={soundsFilter}
         onChange={(value) => settingsMap.setKey('soundsFilter', value)}
-        items={{ all: 'All', hideDefaults: 'Hide Defaults' }}
+        items={{ samples: 'Samples', synths: 'Synths', soundfonts: 'Soundfonts', user: 'Custom' }}
       ></ButtonGroup>
-      <div className="pt-4 select-none">
+      <div className="pt-4 ">
         {soundEntries.map(([name, { data, onTrigger }]) => (
           <span
             key={name}
             className="cursor-pointer hover:opacity-50"
             onMouseDown={async () => {
               const ctx = getAudioContext();
-              const params = { freq: 220, s: name, clip: 1, release: 0.5 };
+              const params = {
+                note: ['synth', 'soundfont'].includes(data.type) ? 'a3' : undefined,
+                s: name,
+                clip: 1,
+                release: 0.5,
+              };
               const time = ctx.currentTime + 0.05;
               const onended = () => trigRef.current?.node?.disconnect();
               trigRef.current = Promise.resolve(onTrigger(time, params, onended));
@@ -272,7 +286,7 @@ function SoundsTab() {
             {data?.type === 'sample' ? `(${getSamples(data.samples)})` : ''}
           </span>
         ))}
-        {!soundEntries.length ? 'No Sounds' : ''}
+        {!soundEntries.length ? 'No custom sounds loaded in this pattern (yet).' : ''}
       </div>
     </div>
   );

@@ -251,23 +251,3 @@ export async function onTriggerSample(t, value, onended, bank) {
 
   return handle;
 }
-
-/*const getSoundfontKey = (s) => {
-  if (!globalThis.soundfontList) {
-    // soundfont package not loaded
-    return false;
-  }
-  if (globalThis.soundfontList?.instruments?.includes(s)) {
-    return s;
-  }
-  // check if s is one of the soundfonts, which are loaded into globalThis, to avoid coupling both packages
-  const nameIndex = globalThis.soundfontList?.instrumentNames?.indexOf(s);
-  // convert number nameIndex (0-128) to 3 digit string (001-128)
-  const name = nameIndex < 10 ? `00${nameIndex}` : nameIndex < 100 ? `0${nameIndex}` : nameIndex;
-  if (nameIndex !== -1) {
-    // TODO: indices of instrumentNames do not seem to match instruments
-    return globalThis.soundfontList.instruments.find((instrument) => instrument.startsWith(name));
-  }
-  return;
-};*/
-// bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac, freq);
