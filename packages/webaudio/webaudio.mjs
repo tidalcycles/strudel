@@ -18,6 +18,9 @@ export const soundMap = map();
 export function setSound(key, onTrigger, data = {}) {
   soundMap.setKey(key, { onTrigger, data });
 }
+export function getSound(s) {
+  return soundMap.get()[s];
+}
 export const resetLoadedSounds = () => soundMap.set({});
 
 let audioContext;
@@ -166,8 +169,8 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
   let sourceNode;
   if (source) {
     sourceNode = source(t, hap.value);
-  } else if (soundMap.get()[s]) {
-    const { onTrigger } = soundMap.get()[s];
+  } else if (getSound(s)) {
+    const { onTrigger } = getSound(s);
     const soundHandle = await onTrigger(t, hap.value, onended);
     if (soundHandle) {
       sourceNode = soundHandle.node;
