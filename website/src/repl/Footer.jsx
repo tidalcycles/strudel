@@ -258,7 +258,10 @@ function SoundsTab() {
             className="cursor-pointer hover:opacity-50"
             onMouseDown={async () => {
               const ctx = getAudioContext();
-              trigRef.current = Promise.resolve(onTrigger(ctx.currentTime + 0.05, { freq: 220, s: name, clip: 1 }));
+              const params = { freq: 220, s: name, clip: 1, release: 0.5 };
+              const time = ctx.currentTime + 0.05;
+              const onended = () => trigRef.current?.node?.disconnect();
+              trigRef.current = Promise.resolve(onTrigger(time, params, onended));
               trigRef.current.then((ref) => {
                 ref?.node.connect(ctx.destination);
               });
