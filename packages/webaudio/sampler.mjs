@@ -150,7 +150,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
         }),
       );
     }
-    setSound(key, (t, hapValue) => onTriggerSample(t, hapValue, value), {
+    setSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
       type: 'sample',
       samples: value,
       baseUrl,
@@ -161,7 +161,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
 
 const cutGroups = [];
 
-export async function onTriggerSample(t, value, bank) {
+export async function onTriggerSample(t, value, onended, bank) {
   const {
     s,
     freq,
@@ -176,24 +176,19 @@ export async function onTriggerSample(t, value, bank) {
     begin = 0,
     end = 1,
   } = value;
-  const ac = getAudioContext();
-  // destructure adsr here, because the default should be different for synths and samples
-  const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
   // load sample
   if (speed === 0) {
     // no playback
     return;
   }
+  const ac = getAudioContext();
+  // destructure adsr here, because the default should be different for synths and samples
+  const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
   //const soundfont = getSoundfontKey(s);
-  let bufferSource;
+  const time = t + nudge;
 
-  //if (soundfont) {
-  // is soundfont
-  //bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac, freq);
-  //} else {
-  // is sample from loaded samples(..)
-  bufferSource = await getSampleBufferSource(s, n, note, speed, freq, bank);
-  //}
+  const bufferSource = await getSampleBufferSource(s, n, note, speed, freq, bank);
+
   // asny stuff above took too long?
   if (ac.currentTime > t) {
     logger(`[sampler] still loading sound "${s}:${n}"`, 'highlight');
@@ -201,7 +196,7 @@ export async function onTriggerSample(t, value, bank) {
     return;
   }
   if (!bufferSource) {
-    console.warn('no buffer source');
+    logger(`[sampler] could not load "${s}:${n}"`, 'error');
     return;
   }
   bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
@@ -212,7 +207,6 @@ export async function onTriggerSample(t, value, bank) {
   // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
   // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
   // the midway point through a 10-second audio buffer is still 5."
-  const time = t + nudge;
   const offset = begin * bufferSource.buffer.duration;
   bufferSource.start(time, offset);
   const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
@@ -229,19 +223,33 @@ export async function onTriggerSample(t, value, bank) {
   }*/
   const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
   bufferSource.connect(envelope);
-  if (cut !== undefined) {
-    cutGroups[cut]?.stop(time); // fade out?
-    cutGroups[cut] = bufferSource;
-  }
-  const stop = (endTime) => {
+  bufferSource.onended = function () {
+    bufferSource.disconnect();
+    envelope.disconnect();
+    onended();
+  };
+  const stop = (endTime, playWholeBuffer = !clip) => {
     let releaseTime = endTime;
-    if (!clip) {
+    if (playWholeBuffer) {
       releaseTime = t + (end - begin) * bufferDuration;
     }
     bufferSource.stop(releaseTime + release);
     releaseEnvelope(releaseTime);
   };
-  return { node: envelope, stop };
+  const handle = { node: envelope, bufferSource, stop };
+
+  // cut groups
+  // TODO: sometimes, the cutting won't work for very fast triggering...
+  // it worked before :-/
+  if (cut !== undefined) {
+    const prev = cutGroups[cut];
+    if (prev) {
+      prev.stop(time, false);
+    }
+    cutGroups[cut] = handle;
+  }
+
+  return handle;
 }
 
 /*const getSoundfontKey = (s) => {
@@ -262,3 +270,4 @@ export async function onTriggerSample(t, value, bank) {
   }
   return;
 };*/
+// bufferSource = await globalThis.getFontBufferSource(soundfont, note || n, ac, freq);

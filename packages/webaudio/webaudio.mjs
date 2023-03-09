@@ -155,8 +155,10 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
   } = hap.value;
   const { velocity = 1 } = hap.context;
   gain *= velocity; // legacy fix for velocity
-  // the chain will hold all audio nodes that connect to each other
-  const chain = [];
+  let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
+  const onended = () => {
+    toDisconnect.forEach((n) => n?.disconnect());
+  };
   if (bank && s) {
     s = `${bank}_${s}`;
   }
@@ -166,7 +168,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
     sourceNode = source(t, hap.value);
   } else if (soundMap.get()[s]) {
     const { onTrigger } = soundMap.get()[s];
-    const soundHandle = await onTrigger(t, hap.value);
+    const soundHandle = await onTrigger(t, hap.value, onended);
     if (soundHandle) {
       sourceNode = soundHandle.node;
       soundHandle.stop(t + hapDuration);
@@ -183,6 +185,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
     logger('[webaudio] skip hap: still loading', ac.currentTime - t);
     return;
   }
+  const chain = []; // audio nodes that will be connected to each other sequentially
   chain.push(sourceNode);
 
   // gain stage
@@ -227,8 +230,9 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
   // connect chain elements together
   chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
 
-  // disconnect all nodes when source node has ended:
-  chain[0].onended = () => chain.concat([delaySend, reverbSend]).forEach((n) => n?.disconnect());
+  // toDisconnect = all the node that should be disconnected in onended callback
+  // this is crucial for performance
+  toDisconnect = chain.concat([delaySend, reverbSend]);
 };
 
 export const webaudioOutputTrigger = (t, hap, ct, cps) => webaudioOutput(hap, t - ct, hap.duration / cps, cps);

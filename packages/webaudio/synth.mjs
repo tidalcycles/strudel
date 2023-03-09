@@ -6,7 +6,7 @@ export function registerSynthSounds() {
   ['sine', 'square', 'triangle', 'sawtooth'].forEach((wave) => {
     setSound(
       wave,
-      (t, value) => {
+      (t, value, onended) => {
         // destructure adsr here, because the default should be different for synths and samples
         const { attack = 0.001, decay = 0.05, sustain = 0.6, release = 0.01 } = value;
         let { n, note, freq } = value;
@@ -25,6 +25,11 @@ export function registerSynthSounds() {
         const g = gainNode(0.3);
         // envelope
         const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
+        o.onended = () => {
+          o.disconnect();
+          g.disconnect();
+          onended();
+        };
         return {
           node: o.connect(g).connect(envelope),
           stop: (t) => {
