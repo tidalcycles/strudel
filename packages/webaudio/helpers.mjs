@@ -6,14 +6,33 @@ export function gainNode(value) {
   return node;
 }
 
-export const getOscillator = ({ s, freq, t, duration, release }) => {
+export const getOscillator = ({ s, freq, t }) => {
   // make oscillator
   const o = getAudioContext().createOscillator();
   o.type = s || 'triangle';
   o.frequency.value = Number(freq);
   o.start(t);
-  o.stop(t + duration + release);
-  return o;
+  //o.stop(t + duration + release);
+  const stop = (time) => o.stop(time);
+  return { node: o, stop };
+};
+
+// alternative to getADSR returning the gain node and a stop handle to trigger the release anytime in the future
+export const getEnvelope = (attack, decay, sustain, release, velocity, begin) => {
+  const gainNode = getAudioContext().createGain();
+  gainNode.gain.setValueAtTime(0, begin);
+  gainNode.gain.linearRampToValueAtTime(velocity, begin + attack); // attack
+  gainNode.gain.linearRampToValueAtTime(sustain * velocity, begin + attack + decay); // sustain start
+  // sustain end
+  return {
+    node: gainNode,
+    stop: (t) => {
+      gainNode.gain.setValueAtTime(sustain * velocity, t);
+      gainNode.gain.linearRampToValueAtTime(0, t + release);
+    },
+  };
+  // gainNode.gain.linearRampToValueAtTime(0, end + release); // release
+  // return gainNode;
 };
 
 export const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {

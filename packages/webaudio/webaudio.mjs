@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import * as strudel from '@strudel.cycles/core';
 import './feedbackdelay.mjs';
 import './reverb.mjs';
-const { Pattern } = strudel;
+const { Pattern, logger } = strudel;
 import './vowel.mjs';
 import workletsUrl from './worklets.mjs?url';
 import { getFilter, gainNode } from './helpers.mjs';
@@ -125,7 +125,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
 
   // calculate absolute time
   let t = ac.currentTime + deadline;
-  // destructure value
+  // destructure
   let {
     s = 'triangle',
     bank,
@@ -161,17 +161,29 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
     s = `${bank}_${s}`;
   }
   // get source AudioNode
-  let node;
-  const options = { hap, t, deadline, duration: hapDuration, cps };
+  let sourceNode;
   if (source) {
-    node = source(options);
+    sourceNode = source(t, hap.value);
   } else if (soundMap.get()[s]) {
     const { onTrigger } = soundMap.get()[s];
-    node = await onTrigger(options);
+    const soundHandle = await onTrigger(t, hap.value);
+    if (soundHandle) {
+      sourceNode = soundHandle.node;
+      soundHandle.stop(t + hapDuration);
+    }
   } else {
     throw new Error(`sound ${s} not found! Is it loaded?`);
   }
-  chain.push(node);
+  if (!sourceNode) {
+    // if onTrigger does not return anything, we will just silently skip
+    // this can be used for things like speed(0) in the sampler
+    return;
+  }
+  if (ac.currentTime > t) {
+    logger('[webaudio] skip hap: still loading', ac.currentTime - t);
+    return;
+  }
+  chain.push(sourceNode);
 
   // gain stage
   chain.push(gainNode(gain));

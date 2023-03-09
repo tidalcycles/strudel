@@ -62,6 +62,7 @@ export function loadWebDirt(config) {
  * @noAutocomplete
  */
 Pattern.prototype.webdirt = function () {
+  throw new Error('webdirt support has been dropped..');
   // create a WebDirt object and initialize Web Audio context
   /* return this.onTrigger(async (time, e, currentTime) => {
     if (!webDirt) {

@@ -1,6 +1,6 @@
 import { logger, toMidi, valueToMidi } from '@strudel.cycles/core';
 import { getAudioContext, setSound } from './index.mjs';
-import { getADSR } from './helpers.mjs';
+import { getEnvelope } from './helpers.mjs';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
 const loadCache = {}; // string: Promise<ArrayBuffer>
@@ -150,7 +150,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
         }),
       );
     }
-    setSound(key, (options) => onTriggerSample(options, value), {
+    setSound(key, (t, hapValue) => onTriggerSample(t, hapValue, value), {
       type: 'sample',
       samples: value,
       baseUrl,
@@ -161,8 +161,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
 
 const cutGroups = [];
 
-export async function onTriggerSample(options, bank) {
-  const { hap, duration: hapDuration, t, cps } = options;
+export async function onTriggerSample(t, value, bank) {
   const {
     s,
     freq,
@@ -176,10 +175,10 @@ export async function onTriggerSample(options, bank) {
     speed = 1, // sample playback speed
     begin = 0,
     end = 1,
-  } = hap.value;
+  } = value;
   const ac = getAudioContext();
   // destructure adsr here, because the default should be different for synths and samples
-  const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = hap.value;
+  const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
   // load sample
   if (speed === 0) {
     // no playback
@@ -208,34 +207,41 @@ export async function onTriggerSample(options, bank) {
   bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
   if (unit === 'c') {
     // are there other units?
-    bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration * cps;
+    bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration * 1; //cps;
   }
-  const shouldClip = /* soundfont || */ clip;
-  let duration = shouldClip ? hapDuration : bufferSource.buffer.duration / bufferSource.playbackRate.value;
   // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
   // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
   // the midway point through a 10-second audio buffer is still 5."
-  const offset = begin * duration * bufferSource.playbackRate.value;
-  duration = (end - begin) * duration;
-  if (loop) {
+  const time = t + nudge;
+  const offset = begin * bufferSource.buffer.duration;
+  bufferSource.start(time, offset);
+  const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
+  /*if (loop) {
+    // TODO: idea for loopBegin / loopEnd
+    // if one of [loopBegin,loopEnd] is <= 1, interpret it as normlized
+    // if [loopBegin,loopEnd] is bigger >= 1, interpret it as sample number
+    // this will simplify perfectly looping things, while still keeping the normalized option
+    // the only drawback is that looping between samples 0 and 1 is not possible (which is not real use case)
     bufferSource.loop = true;
     bufferSource.loopStart = offset;
     bufferSource.loopEnd = offset + duration;
     duration = loop * duration;
-  }
-  const time = t + nudge;
-
-  bufferSource.start(time, offset);
+  }*/
+  const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
+  bufferSource.connect(envelope);
   if (cut !== undefined) {
     cutGroups[cut]?.stop(time); // fade out?
     cutGroups[cut] = bufferSource;
   }
-  //chain.push(bufferSource);
-  bufferSource.stop(t + duration + release);
-  const adsr = getADSR(attack, decay, sustain, release, 1, time, time + duration);
-  bufferSource.connect(adsr);
-  //chain.push(adsr);
-  return adsr;
+  const stop = (endTime) => {
+    let releaseTime = endTime;
+    if (!clip) {
+      releaseTime = t + (end - begin) * bufferDuration;
+    }
+    bufferSource.stop(releaseTime + release);
+    releaseEnvelope(releaseTime);
+  };
+  return { node: envelope, stop };
 }
 
 /*const getSoundfontKey = (s) => {

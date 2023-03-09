@@ -7,7 +7,7 @@ import React, { useMemo, useCallback, useLayoutEffect, useRef, useState } from '
 import { Reference } from './Reference';
 import { themes } from './themes.mjs';
 import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../settings.mjs';
-import { soundMap } from '@strudel.cycles/webaudio';
+import { getAudioContext, soundMap } from '@strudel.cycles/webaudio';
 import { useStore } from '@nanostores/react';
 
 export function Footer({ context }) {
@@ -238,6 +238,12 @@ function SoundsTab() {
     }
     return Object.entries(sounds);
   }, [sounds, soundsFilter]);
+  // holds mutable ref to current triggered sound
+  const trigRef = useRef();
+  // stop current sound on mouseup
+  useEvent('mouseup', () => {
+    trigRef.current?.then((ref) => ref?.stop(getAudioContext().currentTime + 0.01));
+  });
   return (
     <div id="sounds-tab" className="break-normal w-full px-4 dark:text-white text-stone-900">
       <ButtonGroup
@@ -245,9 +251,19 @@ function SoundsTab() {
         onChange={(value) => settingsMap.setKey('soundsFilter', value)}
         items={{ all: 'All', hideDefaults: 'Hide Defaults' }}
       ></ButtonGroup>
-      <div className="pt-4">
-        {soundEntries.map(([name, { data }]) => (
-          <span key={name} className="cursor-pointer hover:opacity-50" onClick={() => {}}>
+      <div className="pt-4 select-none">
+        {soundEntries.map(([name, { data, onTrigger }]) => (
+          <span
+            key={name}
+            className="cursor-pointer hover:opacity-50"
+            onMouseDown={async () => {
+              const ctx = getAudioContext();
+              trigRef.current = Promise.resolve(onTrigger(ctx.currentTime + 0.05, { freq: 220, s: name, clip: 1 }));
+              trigRef.current.then((ref) => {
+                ref?.node.connect(ctx.destination);
+              });
+            }}
+          >
             {' '}
             {name}
             {data?.type === 'sample' ? `(${getSamples(data.samples)})` : ''}
