@@ -14,8 +14,7 @@ import { getFilter, gainNode } from './helpers.mjs';
 import { map } from 'nanostores';
 
 export const soundMap = map();
-// onTrigger = ({ hap: Hap, t: number, deadline: number, duration: number, cps: number }) => AudioNode
-export function setSound(key, onTrigger, data = {}) {
+export function registerSound(key, onTrigger, data = {}) {
   soundMap.setKey(key, { onTrigger, data });
 }
 export function getSound(s) {

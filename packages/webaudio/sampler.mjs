@@ -1,5 +1,5 @@
 import { logger, toMidi, valueToMidi } from '@strudel.cycles/core';
-import { getAudioContext, setSound } from './index.mjs';
+import { getAudioContext, registerSound } from './index.mjs';
 import { getEnvelope } from './helpers.mjs';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
@@ -150,7 +150,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
         }),
       );
     }
-    setSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
+    registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
       type: 'sample',
       samples: value,
       baseUrl,
