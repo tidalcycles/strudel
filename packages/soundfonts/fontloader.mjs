@@ -126,13 +126,18 @@ export function registerSoundfonts() {
         const bufferSource = await getFontBufferSource(instrument, note || n, ctx);
         bufferSource.start(time);
         const stop = (time) => bufferSource.stop(time);
+        const g = new GainNode(ctx, { gain: 0.3 });
+        bufferSource.connect(g);
         bufferSource.onended = () => {
           bufferSource.disconnect();
+          g.disconnect();
           onended();
         };
-        return { node: bufferSource, stop };
+        return { node: g, stop };
       },
       { type: 'soundfont', prebake: true },
     );
   });
 }
+
+registerSoundfonts();
