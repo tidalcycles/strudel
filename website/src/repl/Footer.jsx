@@ -251,7 +251,10 @@ function SoundsTab() {
   const trigRef = useRef();
   // stop current sound on mouseup
   useEvent('mouseup', () => {
-    trigRef.current?.then((ref) => ref?.stop(getAudioContext().currentTime + 0.01));
+    trigRef.current?.then((ref) => {
+      ref?.stop(getAudioContext().currentTime + 0.01);
+      trigRef.current = undefined;
+    });
   });
   return (
     <div id="sounds-tab" className="break-normal w-full px-4 dark:text-white text-stone-900">
@@ -264,7 +267,7 @@ function SoundsTab() {
         {soundEntries.map(([name, { data, onTrigger }]) => (
           <span
             key={name}
-            className="cursor-pointer hover:opacity-50"
+            className="cursor-pointer hover:opacity-50 block"
             onMouseDown={async () => {
               const ctx = getAudioContext();
               const params = {
