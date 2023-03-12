@@ -858,6 +858,8 @@ export const instruments = [
   //'0650_SoundBlasterOld_sf2',
   '0651_Aspirin_sf2_file',
   '0651_FluidR3_GM_sf2_file', // really stringy
+
+  // Tenor Sax: Reed
   '0660_Aspirin_sf2_file',
   '0660_Chaos_sf2_file',
   //'0660_FluidR3_GM_sf2_file', // weird pitches
@@ -1126,51 +1128,57 @@ export const instruments = [
   //'0881_SoundBlasterOld_sf2',
   '0882_Aspirin_sf2_file', // staccato
   // '0882_FluidR3_GM_sf2_file', // missing
-
   '0882_GeneralUserGS_sf2_file',
-  '0883_GeneralUserGS_sf2_file',
-  '0884_GeneralUserGS_sf2_file',
+  //'0883_GeneralUserGS_sf2_file', // missing
+  // '0884_GeneralUserGS_sf2_file', // broken
   '0885_GeneralUserGS_sf2_file',
-  '0886_GeneralUserGS_sf2_file',
+  //'0886_GeneralUserGS_sf2_file', // not a pad
   '0887_GeneralUserGS_sf2_file',
-  '0888_GeneralUserGS_sf2_file',
-  '0889_GeneralUserGS_sf2_file',
+  //'0888_GeneralUserGS_sf2_file', // not a pad
+  //'0889_GeneralUserGS_sf2_file', // not a pad
 
+  // Pad 2 (warm): Synth Pad
   '0890_Aspirin_sf2_file',
   '0890_Chaos_sf2_file',
   '0890_FluidR3_GM_sf2_file',
-  '0890_GeneralUserGS_sf2_file',
+  '0890_GeneralUserGS_sf2_file', // 1mb large
   '0890_JCLive_sf2_file',
   //'0890_SBLive_sf2',
   //'0890_SoundBlasterOld_sf2',
   '0891_Aspirin_sf2_file',
   '0891_FluidR3_GM_sf2_file',
-  '0891_GeneralUserGS_sf2_file',
-  '0900_Aspirin_sf2_file',
+  // '0891_GeneralUserGS_sf2_file', // noise
+
+  // Pad 3 (polysynth): Synth Pad
+  //'0900_Aspirin_sf2_file', // same as belo
   '0900_Chaos_sf2_file',
   '0900_FluidR3_GM_sf2_file',
   '0900_GeneralUserGS_sf2_file',
-  '0900_JCLive_sf2_file',
+  '0900_JCLive_sf2_file', // a bit plucky for a pad
   //'0900_SBLive_sf2',
   //'0900_SoundBlasterOld_sf2',
   '0901_Aspirin_sf2_file',
   '0901_FluidR3_GM_sf2_file',
   '0901_GeneralUserGS_sf2_file',
   //'0901_SoundBlasterOld_sf2',
+
+  // Pad 4 (choir): Synth Pad
   '0910_Aspirin_sf2_file',
-  '0910_Chaos_sf2_file',
+  //'0910_Chaos_sf2_file', // +1oct
   '0910_FluidR3_GM_sf2_file',
   '0910_GeneralUserGS_sf2_file',
   '0910_JCLive_sf2_file',
   //'0910_SBLive_sf2',
   //'0910_SoundBlasterOld_sf2',
-  '0911_Aspirin_sf2_file',
+  // '0911_Aspirin_sf2_file', // fluty, crackles
   '0911_GeneralUserGS_sf2_file',
-  '0911_JCLive_sf2_file',
+  '0911_JCLive_sf2_file', // the only choiry pad
   //'0911_SoundBlasterOld_sf2',
+
+  // Pad 5 (bowed): Synth Pad
   '0920_Aspirin_sf2_file',
-  '0920_Chaos_sf2_file',
-  '0920_FluidR3_GM_sf2_file',
+  //'0920_Chaos_sf2_file', // same as above
+  //'0920_FluidR3_GM_sf2_file', // detuned?
   '0920_GeneralUserGS_sf2_file',
   '0920_JCLive_sf2_file',
   //'0920_SBLive_sf2',
@@ -1178,18 +1186,22 @@ export const instruments = [
   '0921_Aspirin_sf2_file',
   '0921_GeneralUserGS_sf2_file',
   //'0921_SoundBlasterOld_sf2',
+
+  // Pad 6 (metallic): Synth Pad
   '0930_Aspirin_sf2_file',
   '0930_Chaos_sf2_file',
-  '0930_FluidR3_GM_sf2_file',
+  '0930_FluidR3_GM_sf2_file', // little crackles
   '0930_GeneralUserGS_sf2_file',
-  '0930_JCLive_sf2_file',
+  // '0930_JCLive_sf2_file', // buggy zones: guitar / synth
   //'0930_SBLive_sf2',
   //'0930_SoundBlasterOld_sf2',
-  '0931_Aspirin_sf2_file',
+  '0931_Aspirin_sf2_file', // sitar
   '0931_FluidR3_GM_sf2_file',
-  '0931_GeneralUserGS_sf2_file',
+  '0931_GeneralUserGS_sf2_file', // guitar
   //'0931_SoundBlasterOld_sf2',
-  '0940_Aspirin_sf2_file',
+
+  // Pad 7 (halo): Synth Pad
+  // '0940_Aspirin_sf2_file', // same as below
   '0940_Chaos_sf2_file',
   '0940_FluidR3_GM_sf2_file',
   '0940_GeneralUserGS_sf2_file',
@@ -1200,6 +1212,8 @@ export const instruments = [
   '0941_FluidR3_GM_sf2_file',
   '0941_GeneralUserGS_sf2_file',
   '0941_JCLive_sf2_file',
+
+  // Pad 8 (sweep): Synth Pad
   '0950_Aspirin_sf2_file',
   '0950_Chaos_sf2_file',
   '0950_FluidR3_GM_sf2_file',
@@ -1209,58 +1223,68 @@ export const instruments = [
   //'0950_SoundBlasterOld_sf2',
   '0951_FluidR3_GM_sf2_file',
   '0951_GeneralUserGS_sf2_file',
-  '0960_Aspirin_sf2_file',
-  '0960_Chaos_sf2_file',
-  '0960_FluidR3_GM_sf2_file',
-  '0960_GeneralUserGS_sf2_file',
-  '0960_JCLive_sf2_file',
+
+  // FX 1 (rain): Synth Effects
+  //'0960_Aspirin_sf2_file', //mixed samples?
+  '0960_Chaos_sf2_file', // pad?
+  '0960_FluidR3_GM_sf2_file', // ???
+  '0960_GeneralUserGS_sf2_file', // pad
+  // '0960_JCLive_sf2_file', // mixed samples?
   //'0960_SBLive_sf2',
   //'0960_SoundBlasterOld_sf2',
   '0961_Aspirin_sf2_file',
   '0961_FluidR3_GM_sf2_file',
-  '0961_GeneralUserGS_sf2_file',
+  // '0961_GeneralUserGS_sf2_file', // ?!?!
   //'0961_SoundBlasterOld_sf2',
   '0962_GeneralUserGS_sf2_file',
+
+  // FX 2 (soundtrack): Synth Effects
   '0970_Aspirin_sf2_file',
-  '0970_Chaos_sf2_file',
+  //'0970_Chaos_sf2_file', // wrong pitch
   '0970_FluidR3_GM_sf2_file',
-  '0970_GeneralUserGS_sf2_file',
-  '0970_JCLive_sf2_file',
+  '0970_GeneralUserGS_sf2_file', // not looping..
+  //'0970_JCLive_sf2_file', // wrong pitch
   //'0970_SBLive_sf2',
   //'0970_SoundBlasterOld_sf2',
   '0971_FluidR3_GM_sf2_file',
   '0971_GeneralUserGS_sf2_file',
   //'0971_SoundBlasterOld_sf2',
+
+  // FX 3 (crystal): Synth Effects
   '0980_Aspirin_sf2_file',
   '0980_Chaos_sf2_file',
-  '0980_FluidR3_GM_sf2_file',
+  // '0980_FluidR3_GM_sf2_file', // some notes are weird
   '0980_GeneralUserGS_sf2_file',
   '0980_JCLive_sf2_file',
   //'0980_SBLive_sf2',
   //'0980_SoundBlasterOld_sf2',
-  '0981_Aspirin_sf2_file',
-  '0981_FluidR3_GM_sf2_file',
+  '0981_Aspirin_sf2_file', // strings
+  '0981_FluidR3_GM_sf2_file', // mallet
   '0981_GeneralUserGS_sf2_file',
   //'0981_SoundBlasterOld_sf2',
   '0982_GeneralUserGS_sf2_file',
-  '0983_GeneralUserGS_sf2_file',
+  '0983_GeneralUserGS_sf2_file', // guitar
   '0984_GeneralUserGS_sf2_file',
-  '0990_Aspirin_sf2_file',
-  '0990_Chaos_sf2_file',
-  '0990_FluidR3_GM_sf2_file',
-  '0990_GeneralUserGS_sf2_file',
-  '0990_JCLive_sf2_file',
+
+  // FX 4 (atmosphere): Synth Effects
+  '0990_Aspirin_sf2_file', // pad
+  '0990_Chaos_sf2_file', // pad
+  '0990_FluidR3_GM_sf2_file', // guitar
+  '0990_GeneralUserGS_sf2_file', // guitar
+  '0990_JCLive_sf2_file', // pad
   //'0990_SBLive_sf2',
   //'0990_SoundBlasterOld_sf2',
-  '0991_Aspirin_sf2_file',
-  '0991_FluidR3_GM_sf2_file',
-  '0991_GeneralUserGS_sf2_file',
-  '0991_JCLive_sf2_file',
+  '0991_Aspirin_sf2_file', // guitar
+  '0991_FluidR3_GM_sf2_file', // pad
+  '0991_GeneralUserGS_sf2_file', // pad
+  '0991_JCLive_sf2_file', // guitar
   //'0991_SoundBlasterOld_sf2',
-  '0992_FluidR3_GM_sf2_file',
-  '0992_JCLive_sf2_file',
-  '0993_JCLive_sf2_file',
-  '0994_JCLive_sf2_file',
+  '0992_FluidR3_GM_sf2_file', // pad
+  '0992_JCLive_sf2_file', // guitar
+  '0993_JCLive_sf2_file', // guitar
+  '0994_JCLive_sf2_file', // guitar
+
+  // FX 5 (brightness): Synth Effects
   '1000_Aspirin_sf2_file',
   '1000_Chaos_sf2_file',
   '1000_FluidR3_GM_sf2_file',
@@ -1276,6 +1300,8 @@ export const instruments = [
   '1002_Aspirin_sf2_file',
   '1002_FluidR3_GM_sf2_file',
   '1002_GeneralUserGS_sf2_file',
+
+  // FX 6 (goblins): Synth Effects
   '1010_Aspirin_sf2_file',
   '1010_Chaos_sf2_file',
   '1010_FluidR3_GM_sf2_file',
@@ -1287,6 +1313,8 @@ export const instruments = [
   '1011_FluidR3_GM_sf2_file',
   '1011_JCLive_sf2_file',
   '1012_Aspirin_sf2_file',
+
+  // FX 7 (echoes): Synth Effects
   '1020_Aspirin_sf2_file',
   '1020_Chaos_sf2_file',
   '1020_FluidR3_GM_sf2_file',
@@ -1300,6 +1328,8 @@ export const instruments = [
   '1021_JCLive_sf2_file',
   //'1021_SoundBlasterOld_sf2',
   '1022_GeneralUserGS_sf2_file',
+
+  // FX 8 (sci-fi): Synth Effects
   '1030_Aspirin_sf2_file',
   '1030_Chaos_sf2_file',
   '1030_FluidR3_GM_sf2_file',
@@ -1312,6 +1342,8 @@ export const instruments = [
   '1031_GeneralUserGS_sf2_file',
   //'1031_SoundBlasterOld_sf2',
   '1032_FluidR3_GM_sf2_file',
+
+  // 'Sitar: Ethnic
   '1040_Aspirin_sf2_file',
   '1040_Chaos_sf2_file',
   '1040_FluidR3_GM_sf2_file',
@@ -1321,6 +1353,8 @@ export const instruments = [
   //'1040_SoundBlasterOld_sf2',
   '1041_FluidR3_GM_sf2_file',
   '1041_GeneralUserGS_sf2_file',
+
+  // Banjo: Ethnic
   '1050_Aspirin_sf2_file',
   '1050_Chaos_sf2_file',
   '1050_FluidR3_GM_sf2_file',
@@ -1329,6 +1363,8 @@ export const instruments = [
   //'1050_SBLive_sf2',
   //'1050_SoundBlasterOld_sf2',
   '1051_GeneralUserGS_sf2_file',
+
+  // Shamisen: Ethnic
   '1060_Aspirin_sf2_file',
   '1060_Chaos_sf2_file',
   '1060_FluidR3_GM_sf2_file',
@@ -1339,6 +1375,8 @@ export const instruments = [
   '1061_FluidR3_GM_sf2_file',
   '1061_GeneralUserGS_sf2_file',
   //'1061_SoundBlasterOld_sf2',
+
+  // Koto: Ethnic
   '1070_Aspirin_sf2_file',
   '1070_Chaos_sf2_file',
   '1070_FluidR3_GM_sf2_file',
@@ -1350,6 +1388,8 @@ export const instruments = [
   '1071_GeneralUserGS_sf2_file',
   '1072_GeneralUserGS_sf2_file',
   '1073_GeneralUserGS_sf2_file',
+
+  // Kalimba: Ethnic
   '1080_Aspirin_sf2_file',
   '1080_Chaos_sf2_file',
   '1080_FluidR3_GM_sf2_file',
@@ -1358,6 +1398,8 @@ export const instruments = [
   //'1080_SBLive_sf2',
   //'1080_SoundBlasterOld_sf2',
   //'1081_SoundBlasterOld_sf2',
+
+  // Bagpipe: Ethnic
   '1090_Aspirin_sf2_file',
   '1090_Chaos_sf2_file',
   '1090_FluidR3_GM_sf2_file',
@@ -1366,6 +1408,8 @@ export const instruments = [
   //'1090_SBLive_sf2',
   //'1090_SoundBlasterOld_sf2',
   //'1091_SoundBlasterOld_sf2',
+
+  // Fiddle: Ethnic
   '1100_Aspirin_sf2_file',
   '1100_Chaos_sf2_file',
   '1100_FluidR3_GM_sf2_file',
@@ -1377,6 +1421,8 @@ export const instruments = [
   '1101_FluidR3_GM_sf2_file',
   '1101_GeneralUserGS_sf2_file',
   '1102_GeneralUserGS_sf2_file',
+
+  // Shanai: Ethnic
   '1110_Aspirin_sf2_file',
   '1110_Chaos_sf2_file',
   '1110_FluidR3_GM_sf2_file',
@@ -1384,6 +1430,8 @@ export const instruments = [
   '1110_JCLive_sf2_file',
   //'1110_SBLive_sf2',
   //'1110_SoundBlasterOld_sf2',
+
+  // Tinkle Bell: Percussive
   '1120_Aspirin_sf2_file',
   '1120_Chaos_sf2_file',
   '1120_FluidR3_GM_sf2_file',
@@ -1392,6 +1440,8 @@ export const instruments = [
   //'1120_SBLive_sf2',
   //'1120_SoundBlasterOld_sf2',
   //'1121_SoundBlasterOld_sf2',
+
+  // Agogo: Percussive
   '1130_Aspirin_sf2_file',
   '1130_Chaos_sf2_file',
   '1130_FluidR3_GM_sf2_file',
@@ -1401,6 +1451,8 @@ export const instruments = [
   //'1130_SoundBlasterOld_sf2',
   '1131_FluidR3_GM_sf2_file',
   //'1131_SoundBlasterOld_sf2',
+
+  // Steel Drums: Percussive
   '1140_Aspirin_sf2_file',
   '1140_Chaos_sf2_file',
   '1140_FluidR3_GM_sf2_file',
@@ -1409,6 +1461,8 @@ export const instruments = [
   //'1140_SBLive_sf2',
   //'1140_SoundBlasterOld_sf2',
   '1141_FluidR3_GM_sf2_file',
+
+  // Woodblock: Percussive
   '1150_Aspirin_sf2_file',
   '1150_Chaos_sf2_file',
   '1150_FluidR3_GM_sf2_file',
@@ -1420,6 +1474,8 @@ export const instruments = [
   '1151_GeneralUserGS_sf2_file',
   '1152_FluidR3_GM_sf2_file',
   '1152_GeneralUserGS_sf2_file',
+
+  // Taiko Drum: Percussive
   '1160_Aspirin_sf2_file',
   '1160_Chaos_sf2_file',
   '1160_FluidR3_GM_sf2_file',
@@ -1433,6 +1489,8 @@ export const instruments = [
   '1162_FluidR3_GM_sf2_file',
   '1162_GeneralUserGS_sf2_file',
   '1163_FluidR3_GM_sf2_file',
+
+  // Melodic Tom: Percussive
   '1170_Aspirin_sf2_file',
   '1170_Chaos_sf2_file',
   '1170_FluidR3_GM_sf2_file',
@@ -1444,6 +1502,8 @@ export const instruments = [
   '1171_GeneralUserGS_sf2_file',
   '1172_FluidR3_GM_sf2_file',
   '1173_FluidR3_GM_sf2_file',
+
+  // Synth Drum: Percussive
   '1180_Aspirin_sf2_file',
   '1180_Chaos_sf2_file',
   '1180_FluidR3_GM_sf2_file',
@@ -1454,6 +1514,8 @@ export const instruments = [
   '1181_FluidR3_GM_sf2_file',
   '1181_GeneralUserGS_sf2_file',
   //'1181_SoundBlasterOld_sf2',
+
+  // Reverse Cymbal: Percussive
   '1190_Aspirin_sf2_file',
   '1190_Chaos_sf2_file',
   '1190_FluidR3_GM_sf2_file',
@@ -1465,6 +1527,8 @@ export const instruments = [
   '1192_GeneralUserGS_sf2_file',
   '1193_GeneralUserGS_sf2_file',
   '1194_GeneralUserGS_sf2_file',
+
+  // Guitar Fret Noise: Sound effects
   '1200_Aspirin_sf2_file',
   '1200_Chaos_sf2_file',
   '1200_FluidR3_GM_sf2_file',
@@ -1475,6 +1539,8 @@ export const instruments = [
   '1201_Aspirin_sf2_file',
   '1201_GeneralUserGS_sf2_file',
   '1202_GeneralUserGS_sf2_file',
+
+  // Breath Noise: Sound effects
   '1210_Aspirin_sf2_file',
   '1210_Chaos_sf2_file',
   '1210_FluidR3_GM_sf2_file',
@@ -1485,6 +1551,8 @@ export const instruments = [
   '1211_Aspirin_sf2_file',
   '1211_GeneralUserGS_sf2_file',
   '1212_GeneralUserGS_sf2_file',
+
+  // Seashore: Sound effects
   '1220_Aspirin_sf2_file',
   '1220_Chaos_sf2_file',
   '1220_FluidR3_GM_sf2_file',
@@ -1503,6 +1571,8 @@ export const instruments = [
   '1224_GeneralUserGS_sf2_file',
   '1225_GeneralUserGS_sf2_file',
   '1226_GeneralUserGS_sf2_file',
+
+  // Bird Tweet: Sound effects
   '1230_Aspirin_sf2_file',
   '1230_Chaos_sf2_file',
   '1230_FluidR3_GM_sf2_file',
@@ -1516,6 +1586,8 @@ export const instruments = [
   '1232_GeneralUserGS_sf2_file',
   '1233_GeneralUserGS_sf2_file',
   '1234_GeneralUserGS_sf2_file',
+
+  // Telephone Ring: Sound effects
   '1240_Aspirin_sf2_file',
   '1240_Chaos_sf2_file',
   '1240_FluidR3_GM_sf2_file',
@@ -1531,6 +1603,8 @@ export const instruments = [
   '1243_GeneralUserGS_sf2_file',
   '1244_Aspirin_sf2_file',
   '1244_GeneralUserGS_sf2_file',
+
+  // Helicopter: Sound effects
   '1250_Aspirin_sf2_file',
   '1250_Chaos_sf2_file',
   '1250_FluidR3_GM_sf2_file',
@@ -1557,6 +1631,8 @@ export const instruments = [
   '1258_Aspirin_sf2_file',
   '1258_GeneralUserGS_sf2_file',
   '1259_GeneralUserGS_sf2_file',
+
+  // Applause: Sound effects
   '1260_Aspirin_sf2_file',
   '1260_Chaos_sf2_file',
   '1260_FluidR3_GM_sf2_file',
@@ -1574,6 +1650,8 @@ export const instruments = [
   '1264_GeneralUserGS_sf2_file',
   '1265_Aspirin_sf2_file',
   '1265_GeneralUserGS_sf2_file',
+
+  // Gunshot: Sound effects
   '1270_Aspirin_sf2_file',
   '1270_Chaos_sf2_file',
   '1270_FluidR3_GM_sf2_file',
