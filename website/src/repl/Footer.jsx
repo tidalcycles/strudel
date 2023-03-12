@@ -282,6 +282,8 @@ const fontFamilyOptions = {
   BigBlueTerminal: 'BigBlueTerminal',
   x3270: 'x3270',
   PressStart: 'PressStart2P',
+  galactico: 'galactico',
+  'we-come-in-peace': 'we-come-in-peace',
 };
 
 function SettingsTab({ scheduler }) {

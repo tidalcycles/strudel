@@ -10,6 +10,14 @@
   font-family: 'x3270';
   src: url('/fonts/3270/3270-Regular.ttf');
 }
+@font-face {
+  font-family: 'galactico';
+  src: url('/fonts/galactico/Galactico-Basic.otf');
+}
+@font-face {
+  font-family: 'we-come-in-peace';
+  src: url('/fonts/we-come-in-peace/we-come-in-peace-bb.regular.ttf');
+}
 
 .cm-gutters {
   display: none !important;
