@@ -805,7 +805,7 @@ export const instruments = [
   //'0610_SBLive_sf2',
   //'0610_SoundBlasterOld_sf2',
   // '0611_GeneralUserGS_sf2_file', // missing sounds
-  '0612_GeneralUserGS_sf2_file',
+  // '0612_GeneralUserGS_sf2_file',
   //'0613_GeneralUserGS_sf2_file', // -1 oct
   // '0614_GeneralUserGS_sf2_file', // missing sounds
   // '0615_GeneralUserGS_sf2_file', // missing sounds

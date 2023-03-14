@@ -85,10 +85,7 @@ export function Footer({ context }) {
         )}
       </div>
       {activeFooter !== '' && (
-        <div
-          className="text-white font-mono text-sm h-[360px] flex-none overflow-auto max-w-full relative"
-          ref={footerContent}
-        >
+        <div className="text-white flex-none h-[360px] overflow-auto max-w-full relative" ref={footerContent}>
           {activeFooter === 'intro' && <WelcomeTab />}
           {activeFooter === 'console' && <ConsoleTab log={log} />}
           {activeFooter === 'sounds' && <SoundsTab />}
@@ -174,7 +171,7 @@ function WelcomeTab() {
 
 function ConsoleTab({ log }) {
   return (
-    <div id="console-tab" className="break-all px-4 dark:text-white text-stone-900">
+    <div id="console-tab" className="break-all px-4 dark:text-white text-stone-900 text-sm">
       <pre>{`███████╗████████╗██████╗ ██╗   ██╗██████╗ ███████╗██╗     
 ██╔════╝╚══██╔══╝██╔══██╗██║   ██║██╔══██╗██╔════╝██║     
 ███████╗   ██║   ██████╔╝██║   ██║██║  ██║█████╗  ██║     
@@ -228,24 +225,24 @@ const getSamples = (samples) =>
 function SoundsTab() {
   const sounds = useStore(soundMap);
   const { soundsFilter } = useSettings();
-
   const soundEntries = useMemo(() => {
+    let filtered = Object.entries(sounds).filter(([key]) => !key.startsWith('_'));
     if (!sounds) {
       return [];
     }
     if (soundsFilter === 'user') {
-      return Object.entries(sounds).filter(([_, { data }]) => !data.prebake);
+      return filtered.filter(([key, { data }]) => !data.prebake);
     }
     if (soundsFilter === 'samples') {
-      return Object.entries(sounds).filter(([_, { data }]) => data.type === 'sample');
+      return filtered.filter(([_, { data }]) => data.type === 'sample');
     }
     if (soundsFilter === 'synths') {
-      return Object.entries(sounds).filter(([_, { data }]) => data.type === 'synth');
+      return filtered.filter(([_, { data }]) => data.type === 'synth');
     }
     if (soundsFilter === 'soundfonts') {
-      return Object.entries(sounds).filter(([_, { data }]) => data.type === 'soundfont');
+      return filtered.filter(([_, { data }]) => data.type === 'soundfont');
     }
-    return Object.entries(sounds);
+    return filtered;
   }, [sounds, soundsFilter]);
   // holds mutable ref to current triggered sound
   const trigRef = useRef();
@@ -257,13 +254,15 @@ function SoundsTab() {
     });
   });
   return (
-    <div id="sounds-tab" className="break-normal w-full px-4 dark:text-white text-stone-900">
-      <ButtonGroup
-        value={soundsFilter}
-        onChange={(value) => settingsMap.setKey('soundsFilter', value)}
-        items={{ samples: 'Samples', synths: 'Synths', soundfonts: 'Soundfonts', user: 'Custom' }}
-      ></ButtonGroup>
-      <div className="pt-4 ">
+    <div id="sounds-tab" className="flex flex-col w-full h-full dark:text-white text-stone-900">
+      <div className="px-2 pb-2 flex-none">
+        <ButtonGroup
+          value={soundsFilter}
+          onChange={(value) => settingsMap.setKey('soundsFilter', value)}
+          items={{ samples: 'Samples', synths: 'Synths', soundfonts: 'Soundfonts', user: 'Custom' }}
+        ></ButtonGroup>
+      </div>
+      <div className="p-2 min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal">
         {soundEntries.map(([name, { data, onTrigger }]) => (
           <span
             key={name}
@@ -297,19 +296,20 @@ function SoundsTab() {
 
 function ButtonGroup({ value, onChange, items }) {
   return (
-    <div className="flex grow border border-foreground rounded-md">
+    <div className="flex max-w-lg">
       {Object.entries(items).map(([key, label], i, arr) => (
         <button
           key={key}
           onClick={() => onChange(key)}
           className={cx(
-            'p-2 grow',
-            i === 0 && 'rounded-l-md',
-            i === arr.length - 1 && 'rounded-r-md',
-            value === key ? 'bg-background' : 'bg-lineHighlight',
+            'px-2 border-b h-8',
+            // i === 0 && 'rounded-l-md',
+            // i === arr.length - 1 && 'rounded-r-md',
+            // value === key ? 'bg-background' : 'bg-lineHighlight',
+            value === key ? 'border-foreground' : 'border-transparent',
           )}
         >
-          {label}
+          {label.toLowerCase()}
         </button>
       ))}
     </div>

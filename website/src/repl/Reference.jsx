@@ -6,7 +6,7 @@ const visibleFunctions = jsdocJson.docs
 export function Reference() {
   return (
     <div className="flex h-full w-full pt-2 text-foreground">
-      <div className="w-64 flex-none h-full overflow-y-auto overflow-x-hidden pr-4">
+      <div className="w-42 flex-none h-full overflow-y-auto overflow-x-hidden pr-4">
         {visibleFunctions.map((entry, i) => (
           <a key={i} className="cursor-pointer block hover:bg-lineHighlight py-1 px-4" href={`#doc-${i}`}>
             {entry.name} {/* <span className="text-gray-600">{entry.meta.filename}</span> */}
