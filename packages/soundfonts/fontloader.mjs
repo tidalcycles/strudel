@@ -1,5 +1,5 @@
 import { toMidi } from '@strudel.cycles/core';
-import { getAudioContext, registerSound } from '@strudel.cycles/webaudio';
+import { getAudioContext, registerSound, getEnvelope } from '@strudel.cycles/webaudio';
 import { instruments } from './list.mjs';
 
 let loadCache = {};
@@ -122,18 +122,22 @@ export function registerSoundfonts() {
       instrument,
       async (time, value, onended) => {
         const { note, n } = value;
+        const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
         const ctx = getAudioContext();
         const bufferSource = await getFontBufferSource(instrument, note || n, ctx);
         bufferSource.start(time);
-        const stop = (time) => bufferSource.stop(time);
-        const g = new GainNode(ctx, { gain: 0.3 });
-        bufferSource.connect(g);
+        const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 0.3, time);
+        bufferSource.connect(envelope);
+        const stop = (releaseTime) => {
+          bufferSource.stop(releaseTime + release);
+          releaseEnvelope(releaseTime);
+        };
         bufferSource.onended = () => {
           bufferSource.disconnect();
-          g.disconnect();
+          envelope.disconnect();
           onended();
         };
-        return { node: g, stop };
+        return { node: envelope, stop };
       },
       { type: 'soundfont', prebake: true },
     );
