@@ -248,9 +248,10 @@ function SoundsTab() {
   const trigRef = useRef();
   // stop current sound on mouseup
   useEvent('mouseup', () => {
-    trigRef.current?.then((ref) => {
+    const t = trigRef.current;
+    trigRef.current = undefined;
+    t?.then((ref) => {
       ref?.stop(getAudioContext().currentTime + 0.01);
-      trigRef.current = undefined;
     });
   });
   return (
