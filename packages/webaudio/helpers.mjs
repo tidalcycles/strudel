@@ -27,12 +27,15 @@ export const getEnvelope = (attack, decay, sustain, release, velocity, begin) =>
   return {
     node: gainNode,
     stop: (t) => {
-      gainNode.gain.setValueAtTime(sustain * velocity, t);
+      if (typeof gainNode.gain.cancelAndHoldAtTime === 'function') {
+        gainNode.gain.cancelAndHoldAtTime(t);
+      } else {
+        // firefox: this will glitch when the sustain has not been reached yet at the time of release
+        gainNode.gain.setValueAtTime(sustain * velocity, t);
+      }
       gainNode.gain.linearRampToValueAtTime(0, t + release);
     },
   };
-  // gainNode.gain.linearRampToValueAtTime(0, end + release); // release
-  // return gainNode;
 };
 
 export const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {

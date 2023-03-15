@@ -223,9 +223,12 @@ export async function onTriggerSample(t, value, onended, bank) {
   }*/
   const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
   bufferSource.connect(envelope);
+  const out = ac.createGain(); // we need a separate gain for the cutgroups because firefox...
+  envelope.connect(out);
   bufferSource.onended = function () {
     bufferSource.disconnect();
     envelope.disconnect();
+    out.disconnect();
     onended();
   };
   const stop = (endTime, playWholeBuffer = !clip) => {
@@ -236,15 +239,14 @@ export async function onTriggerSample(t, value, onended, bank) {
     bufferSource.stop(releaseTime + release);
     releaseEnvelope(releaseTime);
   };
-  const handle = { node: envelope, bufferSource, stop };
+  const handle = { node: out, bufferSource, stop };
 
   // cut groups
-  // TODO: sometimes, the cutting won't work for very fast triggering...
-  // it worked before :-/
   if (cut !== undefined) {
     const prev = cutGroups[cut];
     if (prev) {
-      prev.stop(time, false);
+      prev.node.gain.setValueAtTime(1, time);
+      prev.node.gain.linearRampToValueAtTime(0, time + 0.01);
     }
     cutGroups[cut] = handle;
   }
