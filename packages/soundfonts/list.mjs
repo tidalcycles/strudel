@@ -1,4 +1,7 @@
+// this list is not used anymore..
+
 export const instruments = [
+
   // Acoustic Grand Piano: Piano
   '0000_JCLive_sf2_file',
   '0000_Aspirin_sf2_file',
@@ -9,10 +12,6 @@ export const instruments = [
   //'0000_SoundBlasterOld_sf2',
   '0001_FluidR3_GM_sf2_file',
   '0001_GeneralUserGS_sf2_file',
-
-  // ??
-  '0002_GeneralUserGS_sf2_file', // strring
-  '0003_GeneralUserGS_sf2_file', // vibraphone like
 
   // Bright Acoustic Piano: Piano
   '0010_Aspirin_sf2_file',
@@ -25,7 +24,6 @@ export const instruments = [
   '0011_Aspirin_sf2_file',
   '0011_FluidR3_GM_sf2_file',
   '0011_GeneralUserGS_sf2_file',
-
   '0012_GeneralUserGS_sf2_file', // string??
 
   // Electric Grand Piano: Piano
@@ -66,8 +64,6 @@ export const instruments = [
   '0041_GeneralUserGS_sf2_file', // staccato rhodes
   //'0041_SoundBlasterOld_sf2', // ?
   '0042_GeneralUserGS_sf2_file', // staccato wurly
-
-  // ???
   '0043_GeneralUserGS_sf2_file', // high bell
   '0044_GeneralUserGS_sf2_file', // reed organ
   //'0045_GeneralUserGS_sf2_file', // ?
@@ -232,8 +228,6 @@ export const instruments = [
   '0180_JCLive_sf2_file',
   //'0180_SBLive_sf2',
   //'0180_SoundBlasterOld_sf2',
-
-  // ???
   //'0181_Aspirin_sf2_file', // flute
   //'0181_GeneralUserGS_sf2_file', // marimbalike
   //'0181_SoundBlasterOld_sf2',
@@ -415,7 +409,6 @@ export const instruments = [
   //'0300_SBLive_sf2',
   //'0300_SoundBlasterOld_sf2',
   // '0301_Aspirin_sf2_file', // missing
-
   //'0301_FluidR3_GM_sf2_file', // weird broken bell
   // '0301_GeneralUserGS_sf2_file', // broken
   // '0301_JCLive_sf2_file', // broken
@@ -632,7 +625,6 @@ export const instruments = [
   '0480_JCLive_sf2_file',
   //'0480_SBLive_sf2',
   //'0480_SoundBlasterOld_sf2',
-
   // these dont work..
   //'04810_GeneralUserGS_sf2_file', // missing notes + brass
   //'04811_GeneralUserGS_sf2_file',  // missing notes + brass
@@ -642,7 +634,6 @@ export const instruments = [
   //'04815_GeneralUserGS_sf2_file',
   //'04816_GeneralUserGS_sf2_file',
   //'04817_GeneralUserGS_sf2_file',
-
   '0481_Aspirin_sf2_file',
   '0481_FluidR3_GM_sf2_file', // brass
   '0481_GeneralUserGS_sf2_file',
