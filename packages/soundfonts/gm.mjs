@@ -1,6 +1,6 @@
 export default {
   gm_piano: [
-    //'gm_acoustic-piano': [
+    //'gm_acoustic_piano': [
     // Acoustic Grand Piano: Piano
     '0000_JCLive_sf2_file',
     '0000_FluidR3_GM_sf2_file',
@@ -12,7 +12,7 @@ export default {
     '0001_FluidR3_GM_sf2_file',
     '0001_GeneralUserGS_sf2_file',
     //],
-    //'gm_bright-acoustic-piano': [
+    //'gm_bright_acoustic_piano': [
     // Bright Acoustic Piano: Piano
     '0010_Aspirin_sf2_file',
     '0010_Chaos_sf2_file',
@@ -26,7 +26,7 @@ export default {
     '0011_GeneralUserGS_sf2_file',
     '0012_GeneralUserGS_sf2_file',
     //],
-    //'gm_electric-grand-piano': [
+    //'gm_electric_grand_piano': [
     // Electric Grand Piano: Piano
     '0020_Aspirin_sf2_file',
     '0020_Chaos_sf2_file',
@@ -40,8 +40,8 @@ export default {
     // ?
     '0022_Aspirin_sf2_file',
     //],
-    //'gm_honky-tonk-piano': [
-    // Honky-tonk Piano: Piano
+    //'gm_honky_tonk_piano': [
+    // Honky_tonk Piano: Piano
     '0030_Aspirin_sf2_file',
     '0030_Chaos_sf2_file',
     '0030_FluidR3_GM_sf2_file',
@@ -139,7 +139,7 @@ export default {
     //0090_SoundBlasterOld_sf2
     //0091_SoundBlasterOld_sf
   ],
-  'gm_music-box': [
+  gm_music_box: [
     // Music Box: Chromatic Percussion
     '0100_JCLive_sf2_file',
     '0100_Aspirin_sf2_file',
@@ -185,7 +185,7 @@ export default {
     //0130_SoundBlasterOld_sf2
     '0131_FluidR3_GM_sf2_file',
   ],
-  'gm_tubular-bells': [
+  gm_tubular_bells: [
     // Tubular Bells: Chromatic Percussion
     '0140_JCLive_sf2_file',
     '0140_Aspirin_sf2_file',
@@ -210,7 +210,7 @@ export default {
     //0150_SoundBlasterOld_sf2
     '0151_FluidR3_GM_sf2_file',
   ],
-  'gm_drawbar-organ': [
+  gm_drawbar_organ: [
     // Drawbar Organ: Organ
     '0160_JCLive_sf2_file',
     '0160_Aspirin_sf2_file',
@@ -223,7 +223,7 @@ export default {
     '0161_FluidR3_GM_sf2_file',
     //0161_SoundBlasterOld_sf
   ],
-  'gm_percussive-organ': [
+  gm_percussive_organ: [
     // Percussive Organ: Organ
     '0170_JCLive_sf2_file',
     '0170_Aspirin_sf2_file',
@@ -236,7 +236,7 @@ export default {
     // 0171_GeneralUserGS_sf2_file  // repitched
     '0172_FluidR3_GM_sf2_file',
   ],
-  'gm_rock-organ': [
+  gm_rock_organ: [
     // Rock Organ: Organ
     '0180_JCLive_sf2_file',
     '0180_Aspirin_sf2_file',
@@ -249,7 +249,7 @@ export default {
     //0181_GeneralUserGS_sf2_file // marimbalike
     //0181_SoundBlasterOld_sf
   ],
-  'gm_church-organ': [
+  gm_church_organ: [
     // Church Organ: Organ
     '0190_JCLive_sf2_file',
     '0190_Aspirin_sf2_file',
@@ -262,7 +262,7 @@ export default {
     //0191_GeneralUserGS_sf2_file // weird organ
     //0191_SoundBlasterOld_sf
   ],
-  'gm_reed-organ': [
+  gm_reed_organ: [
     // Reed Organ: Organ
     '0200_JCLive_sf2_file',
     '0200_Aspirin_sf2_file',
@@ -318,7 +318,7 @@ export default {
     '0232_FluidR3_GM_sf2_file',
     '0233_FluidR3_GM_sf2_file',
   ],
-  'gm_acoustic-guitar-nylon': [
+  gm_acoustic_guitar_nylon: [
     // Acoustic Guitar (nylon): Guitar
     '0240_JCLive_sf2_file',
     '0240_Aspirin_sf2_file',
@@ -333,7 +333,7 @@ export default {
     '0242_JCLive_sf2_file',
     '0243_JCLive_sf2_file',
   ],
-  'gm_acoustic-guitar-steel': [
+  gm_acoustic_guitar_steel: [
     // Acoustic Guitar (steel): Guitar
     '0253_Acoustic_Guitar_sf2_file',
     '0250_Aspirin_sf2_file',
@@ -354,7 +354,7 @@ export default {
     '0254_GeneralUserGS_sf2_file',
     //0255_GeneralUserGS_sf2_file // no guitar.
   ],
-  'gm_electric-guitar-jazz': [
+  gm_electric_guitar_jazz: [
     // Electric Guitar (jazz): Guitar
     '0260_JCLive_sf2_file',
     '0260_Aspirin_sf2_file',
@@ -369,7 +369,7 @@ export default {
     '0261_Stratocaster_sf2_file',
     '0262_Stratocaster_sf2_file',
   ],
-  'gm_electric-guitar-clean': [
+  gm_electric_guitar_clean: [
     // Electric Guitar (clean): Guitar
     '0270_Aspirin_sf2_file',
     '0270_Chaos_sf2_file',
@@ -385,7 +385,7 @@ export default {
     '0271_Stratocaster_sf2_file',
     '0272_Stratocaster_sf2_file',
   ],
-  'gm_electric-guitar-muted': [
+  gm_electric_guitar_muted: [
     // Electric Guitar (muted): Guitar
     '0280_Aspirin_sf2_file',
     '0280_Chaos_sf2_file',
@@ -404,7 +404,7 @@ export default {
     // 0282_GeneralUserGS_sf2_file // broken: missing notes
     // 0283_GeneralUserGS_sf2_file // missin
   ],
-  'gm_overdriven-guitar': [
+  gm_overdriven_guitar: [
     // Overdriven Guitar: Guitar
     '0290_FluidR3_GM_sf2_file',
     '0290_Aspirin_sf2_file',
@@ -425,7 +425,7 @@ export default {
     // 0292_LesPaul_sf2 // broken
     '0292_LesPaul_sf2_file',
   ],
-  'gm_distortion-guitar': [
+  gm_distortion_guitar: [
     // Distortion Guitar: Guitar
     '0300_FluidR3_GM_sf2_file',
     '0300_Aspirin_sf2_file',
@@ -434,7 +434,7 @@ export default {
     // 0300_JCLive_sf2_file // broken
     // 0300_LesPaul_sf2 // broken
     '0300_LesPaul_sf2_file',
-    //0300_SBAWE32_sf2_file // -2 octave
+    //0300_SBAWE32_sf2_file // _2 octave
     //0300_SBLive_sf2
     //0300_SoundBlasterOld_sf2
     // 0301_Aspirin_sf2_file // missing
@@ -449,7 +449,7 @@ export default {
     // 0303_Aspirin_sf2_file // guitar harmonic??
     '0304_Aspirin_sf2_file',
   ],
-  'gm_guitar-harmonics': [
+  gm_guitar_harmonics: [
     // Guitar Harmonics: Guitar
     '0310_Aspirin_sf2_file',
     '0310_FluidR3_GM_sf2_file',
@@ -464,7 +464,7 @@ export default {
     //0311_FluidR3_GM_sf2_file // knackt
     //0311_GeneralUserGS_sf2_file // wrong note
   ],
-  'gm_acoustic-bass': [
+  gm_acoustic_bass: [
     // Acoustic Bass: Bass
     '0320_JCLive_sf2_file',
     '0320_FluidR3_GM_sf2_file',
@@ -476,7 +476,7 @@ export default {
     // 0321_GeneralUserGS_sf2_file // nice sound but missing notes
     // 0322_GeneralUserGS_sf2_file // missing note
   ],
-  'gm_electric-bass-finger': [
+  gm_electric_bass_finger: [
     // Electric Bass (finger): Bass
     '0330_JCLive_sf2_file',
     '0330_FluidR3_GM_sf2_fible',
@@ -488,7 +488,7 @@ export default {
     //0331_GeneralUserGS_sf2_file // knackt
     // 0332_GeneralUserGS_sf2_file // missin
   ],
-  'gm_electric-bass-pick': [
+  gm_electric_bass_pick: [
     // Electric Bass (pick): Bass
     '0340_JCLive_sf2_file',
     '0340_FluidR3_GM_sf2_file',
@@ -500,29 +500,29 @@ export default {
     '0341_Aspirin_sf2_file',
     //0341_GeneralUserGS_sf2_file // knack
   ],
-  'gm_fretless-bass': [
+  gm_fretless_bass: [
     // Fretless Bass: Bass
     '0350_Aspirin_sf2_file',
     // 0350_Chaos_sf2_file // same as last
     //0350_FluidR3_GM_sf2_file // knackt
-    //0350_GeneralUserGS_sf2_file // -1 oct + knackt
+    //0350_GeneralUserGS_sf2_file // _1 oct + knackt
     '0350_JCLive_sf2_file',
     //0350_SBLive_sf2
     //0350_SoundBlasterOld_sf2
     //0351_GeneralUserGS_sf2_file // missin
   ],
-  'gm_slap-bass-1': [
+  gm_slap_bass_1: [
     // Slap Bass 1: Bass
     '0360_Aspirin_sf2_file',
     '0360_JCLive_sf2_file',
     '0360_FluidR3_GM_sf2_file',
     '0360_Chaos_sf2_file',
-    //0360_GeneralUserGS_sf2_file // -1 oct
+    //0360_GeneralUserGS_sf2_file // _1 oct
     //0360_SBLive_sf2
     //0360_SoundBlasterOld_sf2
     //0361_GeneralUserGS_sf2_file // missin
   ],
-  'gm_slap-bass-2': [
+  gm_slap_bass_2: [
     // Slap Bass 2: Bass
     '0370_Aspirin_sf2_file',
     // 0370_Chaos_sf2_file // same as last
@@ -535,7 +535,7 @@ export default {
     //0372_GeneralUserGS_sf2_file // detuned
     //0385_GeneralUserGS_sf2_file // missin
   ],
-  'gm_synth-bass-1': [
+  gm_synth_bass_1: [
     // Synth Bass 1: Bass
     '0380_Aspirin_sf2_file',
     '0380_Chaos_sf2_file',
@@ -553,7 +553,7 @@ export default {
     //0386_GeneralUserGS_sf2_file // knackt
     '0387_GeneralUserGS_sf2_file',
   ],
-  'gm_synth-bass-2': [
+  gm_synth_bass_2: [
     // Synth Bass 2: Bass
     '0390_Aspirin_sf2_file',
     // 0390_Chaos_sf2_file // same as last
@@ -566,7 +566,7 @@ export default {
     // 0391_GeneralUserGS_sf2_file // missing
     //0391_SoundBlasterOld_sf2
     '0392_FluidR3_GM_sf2_file',
-    //0392_GeneralUserGS_sf2_file // kein synth und -1oct
+    //0392_GeneralUserGS_sf2_file // kein synth und _1oct
     '0393_GeneralUserGS_sf2_file',
   ],
   gm_violin: [
@@ -612,12 +612,12 @@ export default {
     '0430_Chaos_sf2_file',
     // 0430_FluidR3_GM_sf2_file // missing notes
     '0430_GeneralUserGS_sf2_file',
-    //0430_JCLive_sf2_file // -1 oct und meh
+    //0430_JCLive_sf2_file // _1 oct und meh
     //0430_SBLive_sf2
     //0430_SoundBlasterOld_sf2
     // 0431_FluidR3_GM_sf2_file // missing note
   ],
-  'gm_tremolo-strings': [
+  gm_tremolo_strings: [
     // Tremolo Strings: Strings
     '0440_Aspirin_sf2_file',
     '0440_Chaos_sf2_file',
@@ -629,7 +629,7 @@ export default {
     '0441_GeneralUserGS_sf2_file',
     '0442_GeneralUserGS_sf2_file',
   ],
-  'gm_pizzicato-strings': [
+  gm_pizzicato_strings: [
     // Pizzicato Strings: Strings
     '0450_Aspirin_sf2_file',
     '0450_Chaos_sf2_file',
@@ -640,7 +640,7 @@ export default {
     //0450_SoundBlasterOld_sf2
     '0451_FluidR3_GM_sf2_file',
   ],
-  'gm_orchestral-harp': [
+  gm_orchestral_harp: [
     // Orchestral Harp: Strings
     '0460_Aspirin_sf2_file',
     // 0460_Chaos_sf2_file // knackt
@@ -663,7 +663,7 @@ export default {
     '0471_FluidR3_GM_sf2_file',
     '0471_GeneralUserGS_sf2_file',
   ],
-  'gm_string-ensemble-1': [
+  gm_string_ensemble_1: [
     // String Ensemble 1: Ensemble
     '0480_Aspirin_sf2_file',
     '0480_Chaos_sf2_file',
@@ -695,7 +695,7 @@ export default {
     //0488_GeneralUserGS_sf2_file
     //0489_GeneralUserGS_sf2_fil
   ],
-  'gm_string-ensemble-2': [
+  gm_string_ensemble_2: [
     // String Ensemble 2: Ensemble
     '0490_Aspirin_sf2_file',
     '0490_Chaos_sf2_file',
@@ -707,7 +707,7 @@ export default {
     '0491_GeneralUserGS_sf2_file',
     '0492_GeneralUserGS_sf2_file',
   ],
-  'gm_synth-strings-1': [
+  gm_synth_strings_1: [
     // Synth Strings 1: Ensemble
     '0500_Aspirin_sf2_file',
     // 0500_Chaos_sf2_file // same as above
@@ -724,7 +724,7 @@ export default {
     // 0504_FluidR3_GM_sf2_file // missing
     '0505_FluidR3_GM_sf2_file',
   ],
-  'gm_synth-strings-2': [
+  gm_synth_strings_2: [
     // Synth Strings 2: Ensemble
     '0510_Aspirin_sf2_file',
     '0510_Chaos_sf2_file',
@@ -736,7 +736,7 @@ export default {
     '0511_GeneralUserGS_sf2_file',
     //0511_SoundBlasterOld_sf
   ],
-  'gm_choir-aahs': [
+  gm_choir_aahs: [
     // Choir Aahs: Ensemble
     '0520_Aspirin_sf2_file',
     '0520_Chaos_sf2_file',
@@ -751,7 +751,7 @@ export default {
     //0521_SoundBlasterOld_sf2
     '0522_Soul_Ahhs_sf2_file',
   ],
-  'gm_voice-oohs': [
+  gm_voice_oohs: [
     // Voice Oohs: Ensemble
     '0530_Aspirin_sf2_file',
     '0530_Chaos_sf2_file',
@@ -766,7 +766,7 @@ export default {
     '0531_JCLive_sf2_file',
     //0531_SoundBlasterOld_sf
   ],
-  'gm_synth-choir': [
+  gm_synth_choir: [
     // Synth Choir: Ensemble
     '0540_Aspirin_sf2_file',
     '0540_Chaos_sf2_file',
@@ -777,7 +777,7 @@ export default {
     //0540_SoundBlasterOld_sf2
     '0541_FluidR3_GM_sf2_file',
   ],
-  'gm_orchestra-hit': [
+  gm_orchestra_hit: [
     // Orchestra Hit: Ensemble
     '0550_Aspirin_sf2_file',
     '0550_Chaos_sf2_file',
@@ -795,7 +795,7 @@ export default {
     '0560_JCLive_sf2_file',
     '0560_Aspirin_sf2_file',
     '0560_Chaos_sf2_file',
-    //0560_GeneralUserGS_sf2_file // -1 oct
+    //0560_GeneralUserGS_sf2_file // _1 oct
     //0560_SBLive_sf2
     //0560_SoundBlasterOld_sf
   ],
@@ -805,7 +805,7 @@ export default {
     '0570_Chaos_sf2_file',
     '0570_FluidR3_GM_sf2_file',
     '0570_GeneralUserGS_sf2_file',
-    //0570_JCLive_sf2_file // -1oct
+    //0570_JCLive_sf2_file // _1oct
     //0570_SBLive_sf2
     //0570_SoundBlasterOld_sf2
     '0571_GeneralUserGS_sf2_file',
@@ -816,12 +816,12 @@ export default {
     '0580_Aspirin_sf2_file',
     '0580_Chaos_sf2_file',
     '0580_GeneralUserGS_sf2_file',
-    //0580_JCLive_sf2_file // -1oct
+    //0580_JCLive_sf2_file // _1oct
     //0580_SBLive_sf2
     //0580_SoundBlasterOld_sf2
     //0581_GeneralUserGS_sf2_file // missin
   ],
-  'gm_muted-trumpet': [
+  gm_muted_trumpet: [
     // Muted Trumpet: Brass
     '0590_JCLive_sf2_file',
     '0590_Aspirin_sf2_file',
@@ -832,7 +832,7 @@ export default {
     //0590_SoundBlasterOld_sf2
     // 0591_GeneralUserGS_sf2_file // missin
   ],
-  'gm_french-horn': [
+  gm_french_horn: [
     // French Horn: Brass
     '0600_Aspirin_sf2_file',
     //0600_Chaos_sf2_file // weird jumps
@@ -846,7 +846,7 @@ export default {
     // 0602_GeneralUserGS_sf2_file // bad gain diffs
     // 0603_GeneralUserGS_sf2_file // tiny crackle
   ],
-  'gm_brass-section': [
+  gm_brass_section: [
     // Brass Section: Brass
     '0610_JCLive_sf2_file',
     '0610_Aspirin_sf2_file',
@@ -857,11 +857,11 @@ export default {
     //0610_SoundBlasterOld_sf2
     // 0611_GeneralUserGS_sf2_file // missing sounds
     // 0612_GeneralUserGS_sf2_file
-    //0613_GeneralUserGS_sf2_file // -1 oct
+    //0613_GeneralUserGS_sf2_file // _1 oct
     // 0614_GeneralUserGS_sf2_file // missing sounds
     // 0615_GeneralUserGS_sf2_file // missing sound
   ],
-  'gm_synth-brass-1': [
+  gm_synth_brass_1: [
     // Synth Brass 1: Brass
     '0620_Aspirin_sf2_file',
     //0620_Chaos_sf2_file // weird gain diff
@@ -876,7 +876,7 @@ export default {
     //0622_FluidR3_GM_sf2_file // loud..
     //0622_GeneralUserGS_sf2_file // loud + crackle
   ],
-  'gm_synth-brass-2': [
+  gm_synth_brass_2: [
     // Synth Brass 2: Brass
     '0630_Aspirin_sf2_file',
     '0630_Chaos_sf2_file',
@@ -891,7 +891,7 @@ export default {
     '0632_FluidR3_GM_sf2_file',
     '0633_FluidR3_GM_sf2_file',
   ],
-  'gm_soprano-sax': [
+  gm_soprano_sax: [
     // Soprano Sax: Reed
     '0640_JCLive_sf2_file',
     '0640_Aspirin_sf2_file',
@@ -902,7 +902,7 @@ export default {
     //0640_SoundBlasterOld_sf2
     '0641_FluidR3_GM_sf2_file',
   ],
-  'gm_alto-sax': [
+  gm_alto_sax: [
     // Alto Sax: Reed
     //0650_Aspirin_sf2_file // this is not an alto sax
     '0650_JCLive_sf2_file',
@@ -914,7 +914,7 @@ export default {
     '0651_Aspirin_sf2_file',
     '0651_FluidR3_GM_sf2_file',
   ],
-  'gm_tenor-sax': [
+  gm_tenor_sax: [
     // Tenor Sax: Reed
     '0660_JCLive_sf2_file',
     '0660_Aspirin_sf2_file',
@@ -926,7 +926,7 @@ export default {
     // 0661_FluidR3_GM_sf2_file // weird pitches
     // 0661_GeneralUserGS_sf2_file // missin
   ],
-  'gm_baritone-sax': [
+  gm_baritone_sax: [
     // Baritone Sax: Reed
     '0670_JCLive_sf2_file',
     '0670_Aspirin_sf2_file',
@@ -948,7 +948,7 @@ export default {
     //0680_SoundBlasterOld_sf2
     '0681_FluidR3_GM_sf2_file',
   ],
-  'gm_english-horn': [
+  gm_english_horn: [
     // English Horn: Reed
     '0690_JCLive_sf2_file',
     '0690_Aspirin_sf2_file',
@@ -1018,7 +1018,7 @@ export default {
     //0740_SoundBlasterOld_sf2
     // 0741_GeneralUserGS_sf2_file // missin
   ],
-  'gm_pan-flute': [
+  gm_pan_flute: [
     // Pan Flute: Pipe
     '0750_JCLive_sf2_file',
     '0750_FluidR3_GM_sf2_file',
@@ -1032,7 +1032,7 @@ export default {
     '0751_GeneralUserGS_sf2_file',
     //0751_SoundBlasterOld_sf
   ],
-  'gm_blown-bottle': [
+  gm_blown_bottle: [
     // Blown bottle: Pipe
     '0760_FluidR3_GM_sf2_file',
     '0760_JCLive_sf2_file',
@@ -1081,7 +1081,7 @@ export default {
     //0790_SoundBlasterOld_sf2
     //0791_GeneralUserGS_sf2_file // missin
   ],
-  'gm_lead-1-square': [
+  gm_lead_1_square: [
     // Lead 1 (square): Synth Lead
     '0800_Aspirin_sf2_file',
     '0800_Chaos_sf2_file',
@@ -1093,7 +1093,7 @@ export default {
     //0801_FluidR3_GM_sf2_file // detune
     // 0801_GeneralUserGS_sf2_file // detun
   ],
-  'gm_lead-2-sawtooth': [
+  gm_lead_2_sawtooth: [
     // Lead 2 (sawtooth): Synth Lead
     '0810_JCLive_sf2_file',
     '0810_Aspirin_sf2_file',
@@ -1106,7 +1106,7 @@ export default {
     '0811_GeneralUserGS_sf2_file',
     //0811_SoundBlasterOld_sf
   ],
-  'gm_lead-3-calliope': [
+  gm_lead_3_calliope: [
     // Lead 3 (calliope): Synth Lead
     '0820_JCLive_sf2_file',
     '0820_Aspirin_sf2_file',
@@ -1121,7 +1121,7 @@ export default {
     // 0822_GeneralUserGS_sf2_file // missing
     //0823_GeneralUserGS_sf2_file // missin
   ],
-  'gm_lead-4-chiff': [
+  gm_lead_4_chiff: [
     // Lead 4 (chiff): Synth Lead
     '0830_JCLive_sf2_file',
     '0830_Aspirin_sf2_file',
@@ -1134,7 +1134,7 @@ export default {
     '0831_GeneralUserGS_sf2_file',
     //0831_SoundBlasterOld_sf
   ],
-  'gm_lead-5-charang': [
+  gm_lead_5_charang: [
     // Lead 5 (charang): Synth Lead
     '0840_JCLive_sf2_file',
     '0840_FluidR3_GM_sf2_file',
@@ -1151,7 +1151,7 @@ export default {
     //0841_SoundBlasterOld_sf2
     '0842_FluidR3_GM_sf2_file',
   ],
-  'gm_lead-6-voice': [
+  gm_lead_6_voice: [
     // Lead 6 (voice): Synth Lead
     '0850_JCLive_sf2_file',
     '0850_Aspirin_sf2_file',
@@ -1165,7 +1165,7 @@ export default {
     '0851_JCLive_sf2_file',
     //0851_SoundBlasterOld_sf
   ],
-  'gm_lead-7-fifths': [
+  gm_lead_7_fifths: [
     // Lead 7 (fifths): Synth Lead
     '0860_JCLive_sf2_file',
     '0860_Aspirin_sf2_file',
@@ -1178,7 +1178,7 @@ export default {
     // 0861_FluidR3_GM_sf2_file // lout and not fitting
     //0861_SoundBlasterOld_sf
   ],
-  'gm_lead-8-bass-lead': [
+  gm_lead_8_bass_lead: [
     // Lead 8 (bass + lead): Synth Lead
     '0870_JCLive_sf2_file',
     '0870_Aspirin_sf2_file',
@@ -1191,7 +1191,7 @@ export default {
     //0872_GeneralUserGS_sf2_file // loud
     //0873_GeneralUserGS_sf2_file // lou
   ],
-  'gm_pad-new-age': [
+  gm_pad_new_age: [
     // Pad 1 (new age): Synth Pad
     '0880_JCLive_sf2_file',
     '0880_Aspirin_sf2_file',
@@ -1215,7 +1215,7 @@ export default {
     //0888_GeneralUserGS_sf2_file // not a pad
     //0889_GeneralUserGS_sf2_file // not a pa
   ],
-  'gm_pad-warm': [
+  gm_pad_warm: [
     // Pad 2 (warm): Synth Pad
     '0890_JCLive_sf2_file',
     '0890_Aspirin_sf2_file',
@@ -1228,7 +1228,7 @@ export default {
     '0891_FluidR3_GM_sf2_file',
     // 0891_GeneralUserGS_sf2_file // nois
   ],
-  'gm_pad-poly': [
+  gm_pad_poly: [
     // Pad 3 (polysynth): Synth Pad
     //0900_Aspirin_sf2_file // same as belo
     '0900_JCLive_sf2_file',
@@ -1242,12 +1242,12 @@ export default {
     '0901_GeneralUserGS_sf2_file',
     //0901_SoundBlasterOld_sf
   ],
-  'gm_pad-choir': [
+  gm_pad_choir: [
     // Pad 4 (choir): Synth Pad
+    '0910_FluidR3_GM_sf2_file',
     '0910_JCLive_sf2_file',
     '0910_Aspirin_sf2_file',
     //0910_Chaos_sf2_file // +1oct
-    '0910_FluidR3_GM_sf2_file',
     '0910_GeneralUserGS_sf2_file',
     //0910_SBLive_sf2
     //0910_SoundBlasterOld_sf2
@@ -1256,7 +1256,7 @@ export default {
     '0911_JCLive_sf2_file',
     //0911_SoundBlasterOld_sf
   ],
-  'gm_pad-bowed': [
+  gm_pad_bowed: [
     // Pad 5 (bowed): Synth Pad
     '0920_JCLive_sf2_file',
     '0920_Aspirin_sf2_file',
@@ -1269,7 +1269,7 @@ export default {
     '0921_GeneralUserGS_sf2_file',
     //0921_SoundBlasterOld_sf
   ],
-  'gm_pad-metallic': [
+  gm_pad_metallic: [
     // Pad 6 (metallic): Synth Pad
     '0930_Aspirin_sf2_file',
     '0930_Chaos_sf2_file',
@@ -1283,7 +1283,7 @@ export default {
     '0931_GeneralUserGS_sf2_file',
     //0931_SoundBlasterOld_sf
   ],
-  'gm_pad-halo': [
+  gm_pad_halo: [
     // Pad 7 (halo): Synth Pad
     // 0940_Aspirin_sf2_file // same as below
     '0940_Chaos_sf2_file',
@@ -1297,7 +1297,7 @@ export default {
     '0941_GeneralUserGS_sf2_file',
     '0941_JCLive_sf2_file',
   ],
-  'gm_pad-sweep': [
+  gm_pad_sweep: [
     // Pad 8 (sweep): Synth Pad
     '0950_Aspirin_sf2_file',
     '0950_Chaos_sf2_file',
@@ -1309,7 +1309,7 @@ export default {
     '0951_FluidR3_GM_sf2_file',
     '0951_GeneralUserGS_sf2_file',
   ],
-  'gm_fx-rain': [
+  gm_fx_rain: [
     // FX 1 (rain): Synth Effects
     //0960_Aspirin_sf2_file //mixed samples?
     '0960_FluidR3_GM_sf2_file',
@@ -1324,7 +1324,7 @@ export default {
     //0961_SoundBlasterOld_sf2
     '0962_GeneralUserGS_sf2_file',
   ],
-  'gm_fx-soundtrack': [
+  gm_fx_soundtrack: [
     // FX 2 (soundtrack): Synth Effects
     '0970_FluidR3_GM_sf2_file',
     '0970_Aspirin_sf2_file',
@@ -1337,7 +1337,7 @@ export default {
     '0971_GeneralUserGS_sf2_file',
     //0971_SoundBlasterOld_sf
   ],
-  'gm_fx-crystal': [
+  gm_fx_crystal: [
     // FX 3 (crystal): Synth Effects
     '0980_Aspirin_sf2_file',
     '0980_JCLive_sf2_file',
@@ -1354,7 +1354,7 @@ export default {
     '0983_GeneralUserGS_sf2_file',
     '0984_GeneralUserGS_sf2_file',
   ],
-  'gm_fx-atmosphere': [
+  gm_fx_atmosphere: [
     // FX 4 (atmosphere): Synth Effects
     '0990_JCLive_sf2_file',
     '0990_Aspirin_sf2_file',
@@ -1373,7 +1373,7 @@ export default {
     '0993_JCLive_sf2_file',
     '0994_JCLive_sf2_file',
   ],
-  'gm_fx-brightness': [
+  gm_fx_brightness: [
     // FX 5 (brightness): Synth Effects
     '1000_JCLive_sf2_file',
     '1000_Aspirin_sf2_file',
@@ -1391,7 +1391,7 @@ export default {
     '1002_FluidR3_GM_sf2_file',
     '1002_GeneralUserGS_sf2_file',
   ],
-  'gm_fx-goblins': [
+  gm_fx_goblins: [
     // FX 6 (goblins): Synth Effects
     '1010_FluidR3_GM_sf2_file',
     '1010_JCLive_sf2_file',
@@ -1405,7 +1405,7 @@ export default {
     '1011_JCLive_sf2_file',
     '1012_Aspirin_sf2_file',
   ],
-  'gm_fx-echoes': [
+  gm_fx_echoes: [
     // FX 7 (echoes): Synth Effects
     '1020_FluidR3_GM_sf2_file',
     '1020_JCLive_sf2_file',
@@ -1421,8 +1421,8 @@ export default {
     //1021_SoundBlasterOld_sf2
     '1022_GeneralUserGS_sf2_file',
   ],
-  'gm_fx-sci-fi': [
-    // FX 8 (sci-fi): Synth Effects
+  gm_fx_sci_fi: [
+    // FX 8 (sci_fi): Synth Effects
     '1030_FluidR3_GM_sf2_file',
     '1030_Aspirin_sf2_file',
     '1030_Chaos_sf2_file',
@@ -1532,7 +1532,7 @@ export default {
     //1110_SBLive_sf2
     //1110_SoundBlasterOld_sf
   ],
-  'gm_tinkle-bell': [
+  gm_tinkle_bell: [
     // Tinkle Bell: Percussive
     '1120_Aspirin_sf2_file',
     // '1120_Chaos_sf2_file', // same as above
@@ -1555,7 +1555,7 @@ export default {
     '1131_FluidR3_GM_sf2_file',
     //1131_SoundBlasterOld_sf
   ],
-  'gm_steel-drums': [
+  gm_steel_drums: [
     // Steel Drums: Percussive
     '1140_FluidR3_GM_sf2_file',
     '1140_Aspirin_sf2_file',
@@ -1580,7 +1580,7 @@ export default {
     '1152_FluidR3_GM_sf2_file',
     '1152_GeneralUserGS_sf2_file',
   ],
-  'gm_taiko-drum': [
+  gm_taiko_drum: [
     // Taiko Drum: Percussive
     '1160_JCLive_sf2_file',
     '1160_FluidR3_GM_sf2_file',
@@ -1596,7 +1596,7 @@ export default {
     '1162_GeneralUserGS_sf2_file',
     '1163_FluidR3_GM_sf2_file',
   ],
-  'gm_melodic-tom': [
+  gm_melodic_tom: [
     // Melodic Tom: Percussive
     '1170_JCLive_sf2_file',
     '1170_Aspirin_sf2_file',
@@ -1610,7 +1610,7 @@ export default {
     '1172_FluidR3_GM_sf2_file',
     '1173_FluidR3_GM_sf2_file',
   ],
-  'gm_synth-drum': [
+  gm_synth_drum: [
     // Synth Drum: Percussive
     '1180_JCLive_sf2_file',
     '1180_Aspirin_sf2_file',
@@ -1623,7 +1623,7 @@ export default {
     '1181_GeneralUserGS_sf2_file',
     //1181_SoundBlasterOld_sf
   ],
-  'gm_reverse-cymbal': [
+  gm_reverse_cymbal: [
     // Reverse Cymbal: Percussive
     '1190_JCLive_sf2_file',
     '1190_Aspirin_sf2_file',
@@ -1637,7 +1637,7 @@ export default {
     '1193_GeneralUserGS_sf2_file',
     '1194_GeneralUserGS_sf2_file',
   ],
-  'gm_guitar-fret-noise': [
+  gm_guitar_fret_noise: [
     // Guitar Fret Noise: Sound effects
     '1200_JCLive_sf2_file',
     '1200_Aspirin_sf2_file',
@@ -1650,7 +1650,7 @@ export default {
     '1201_GeneralUserGS_sf2_file',
     '1202_GeneralUserGS_sf2_file',
   ],
-  'gm_breath-noise': [
+  gm_breath_noise: [
     // Breath Noise: Sound effects
     '1210_FluidR3_GM_sf2_file',
     '1210_JCLive_sf2_file',
@@ -1684,7 +1684,7 @@ export default {
     '1225_GeneralUserGS_sf2_file',
     '1226_GeneralUserGS_sf2_file',
   ],
-  'gm_bird-tweet': [
+  gm_bird_tweet: [
     // Bird Tweet: Sound effects
     '1230_FluidR3_GM_sf2_file',
     '1230_JCLive_sf2_file',
