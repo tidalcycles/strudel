@@ -191,34 +191,6 @@ function ConsoleTab({ log }) {
   );
 }
 
-/*
-function groupBy(obj = {}, getter) {
-  const grouped = Object.entries(obj).reduce((acc, [key, value]) => {
-    const propValue = getter(value, key);
-    if (!acc.has(propValue)) {
-      acc.set(propValue, new Map());
-    }
-    acc.get(propValue).set(key, value);
-    return acc;
-  }, new Map());
-  return grouped;
-}
- const grouped = useMemo(() => {
-  if (!sounds) {
-    return {};
-  }
-  return groupBy(sounds, (s) =>
-    s.data.type === 'sample' ? 'Samples from ' + s.data?.baseUrl : 'Type ' + s.data.type,
-  );
-}, [sounds]); 
-
-         {Array.from(grouped).map(([category, sounds]) => (
-        <Fragment key={category}>
-           <h3 className="pb-2 pt-4 text-lg">{category}:</h3>  
-        </Fragment>
-      ))} 
-*/
-
 const getSamples = (samples) =>
   Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1;
 
@@ -233,14 +205,14 @@ function SoundsTab() {
     if (soundsFilter === 'user') {
       return filtered.filter(([key, { data }]) => !data.prebake);
     }
+    if (soundsFilter === 'drums') {
+      return filtered.filter(([_, { data }]) => data.type === 'sample' && data.tag === 'drum-machines');
+    }
     if (soundsFilter === 'samples') {
-      return filtered.filter(([_, { data }]) => data.type === 'sample');
+      return filtered.filter(([_, { data }]) => data.type === 'sample' && data.tag !== 'drum-machines');
     }
     if (soundsFilter === 'synths') {
-      return filtered.filter(([_, { data }]) => data.type === 'synth');
-    }
-    if (soundsFilter === 'soundfonts') {
-      return filtered.filter(([_, { data }]) => data.type === 'soundfont');
+      return filtered.filter(([_, { data }]) => ['synth', 'soundfont'].includes(data.type));
     }
     return filtered;
   }, [sounds, soundsFilter]);
@@ -260,14 +232,19 @@ function SoundsTab() {
         <ButtonGroup
           value={soundsFilter}
           onChange={(value) => settingsMap.setKey('soundsFilter', value)}
-          items={{ samples: 'Samples', synths: 'Synths', soundfonts: 'Soundfonts', user: 'Custom' }}
+          items={{
+            samples: 'samples',
+            drums: 'drum-machines',
+            synths: 'Synths',
+            user: 'User',
+          }}
         ></ButtonGroup>
       </div>
       <div className="p-2 min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal">
         {soundEntries.map(([name, { data, onTrigger }]) => (
           <span
             key={name}
-            className="cursor-pointer hover:opacity-50 block"
+            className="cursor-pointer hover:opacity-50"
             onMouseDown={async () => {
               const ctx = getAudioContext();
               const params = {
@@ -287,6 +264,7 @@ function SoundsTab() {
             {' '}
             {name}
             {data?.type === 'sample' ? `(${getSamples(data.samples)})` : ''}
+            {data?.type === 'soundfont' ? `(${data.fonts.length})` : ''}
           </span>
         ))}
         {!soundEntries.length ? 'No custom sounds loaded in this pattern (yet).' : ''}

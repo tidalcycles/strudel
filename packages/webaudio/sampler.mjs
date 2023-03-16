@@ -129,7 +129,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
         throw new Error(`error loading "${sampleMap}"`);
       });
   }
-  const { prebake } = options;
+  const { prebake, tag } = options;
   Object.entries(sampleMap).forEach(([key, value]) => {
     if (typeof value === 'string') {
       value = [value];
@@ -155,6 +155,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
       samples: value,
       baseUrl,
       prebake,
+      tag,
     });
   });
 };

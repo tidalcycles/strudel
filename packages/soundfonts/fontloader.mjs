@@ -140,7 +140,7 @@ export function registerSoundfonts() {
         };
         return { node: envelope, stop };
       },
-      { type: 'soundfont', prebake: true },
+      { type: 'soundfont', prebake: true, fonts },
     );
   });
 }

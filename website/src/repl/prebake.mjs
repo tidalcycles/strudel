@@ -13,8 +13,11 @@ export async function prebake() {
     // https://api.github.com/repositories/126427031/contents/
     // LICENSE: CC0 general-purpose
     samples(`./vcsl.json`, 'github:sgossner/VCSL/master/', { prebake: true }),
-    samples(`./tidal-drum-machines.json`, 'github:ritchse/tidal-drum-machines/main/machines/', { prebake: true }),
-    samples(`./EmuSP12.json`, `./EmuSP12/`, { prebake: true }),
+    samples(`./tidal-drum-machines.json`, 'github:ritchse/tidal-drum-machines/main/machines/', {
+      prebake: true,
+      tag: 'drum-machines',
+    }),
+    samples(`./EmuSP12.json`, `./EmuSP12/`, { prebake: true, tag: 'drum-machines' }),
     // samples('github:tidalcycles/Dirt-Samples/master'),
   ]);
 }
