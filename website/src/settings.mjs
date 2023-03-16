@@ -9,6 +9,7 @@ export const defaultSettings = {
   fontSize: 18,
   latestCode: '',
   isZen: false,
+  soundsFilter: 'all',
 };
 
 export const settingsMap = persistentMap('strudel-settings', defaultSettings);

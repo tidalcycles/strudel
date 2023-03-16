@@ -30,7 +30,6 @@
   --app-height: 100vh;
 }
 
-#console-tab,
-#samples-tab {
+#console-tab {
   font-family: BigBlueTerminal, monospace;
 }

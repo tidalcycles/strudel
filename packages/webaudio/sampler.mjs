@@ -1,5 +1,6 @@
 import { logger, toMidi, valueToMidi } from '@strudel.cycles/core';
-import { getAudioContext } from './index.mjs';
+import { getAudioContext, registerSound } from './index.mjs';
+import { getEnvelope } from './helpers.mjs';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
 const loadCache = {}; // string: Promise<ArrayBuffer>
@@ -20,7 +21,7 @@ function humanFileSize(bytes, si) {
   return bytes.toFixed(1) + ' ' + units[u];
 }
 
-export const getSampleBufferSource = async (s, n, note, speed, freq) => {
+export const getSampleBufferSource = async (s, n, note, speed, freq, bank) => {
   let transpose = 0;
   if (freq !== undefined && note !== undefined) {
     logger('[sampler] hap has note and freq. ignoring note', 'warning');
@@ -29,23 +30,6 @@ export const getSampleBufferSource = async (s, n, note, speed, freq) => {
   transpose = midi - 36; // C3 is middle C
 
   const ac = getAudioContext();
-  // is sample from loaded samples(..)
-  const samples = getLoadedSamples();
-  if (!samples) {
-    throw new Error('no samples loaded');
-  }
-  const bank = samples?.[s];
-  if (!bank) {
-    throw new Error(
-      `sample not found: "${s}"`,
-      // , try one of ${Object.keys(samples)
-      // .map((s) => `"${s}"`)
-      // .join(', ')}.
-    );
-  }
-  if (typeof bank !== 'object') {
-    throw new Error('wrong format for sample bank:', s);
-  }
   let sampleUrl;
   if (Array.isArray(bank)) {
     sampleUrl = bank[n % bank.length];
@@ -107,8 +91,6 @@ export const getLoadedBuffer = (url) => {
   return bufferCache[url];
 };
 
-let sampleCache = { current: undefined };
-
 /**
  * Loads a collection of samples to use with `s`
  * @example
@@ -123,7 +105,7 @@ let sampleCache = { current: undefined };
  *
  */
 
-export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
+export const samples = async (sampleMap, baseUrl = sampleMap._base || '', options = {}) => {
   if (typeof sampleMap === 'string') {
     if (sampleMap.startsWith('github:')) {
       let [_, path] = sampleMap.split('github:');
@@ -141,43 +123,134 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '') => {
     }
     return fetch(sampleMap)
       .then((res) => res.json())
-      .then((json) => samples(json, baseUrl || json._base || base))
+      .then((json) => samples(json, baseUrl || json._base || base, options))
       .catch((error) => {
         console.error(error);
         throw new Error(`error loading "${sampleMap}"`);
       });
   }
-  sampleCache.current = {
-    ...sampleCache.current,
-    ...Object.fromEntries(
-      Object.entries(sampleMap).map(([key, value]) => {
-        if (typeof value === 'string') {
-          value = [value];
-        }
-        if (typeof value !== 'object') {
-          throw new Error('wrong sample map format for ' + key);
-        }
-        baseUrl = value._base || baseUrl;
-        const replaceUrl = (v) => (baseUrl + v).replace('github:', 'https://raw.githubusercontent.com/');
-        if (Array.isArray(value)) {
-          return [key, value.map(replaceUrl)];
-        }
-        // must be object
-        return [
-          key,
-          Object.fromEntries(
-            Object.entries(value).map(([note, samples]) => {
-              return [note, (typeof samples === 'string' ? [samples] : samples).map(replaceUrl)];
-            }),
-          ),
-        ];
-      }),
-    ),
+  const { prebake, tag } = options;
+  Object.entries(sampleMap).forEach(([key, value]) => {
+    if (typeof value === 'string') {
+      value = [value];
+    }
+    if (typeof value !== 'object') {
+      throw new Error('wrong sample map format for ' + key);
+    }
+    baseUrl = value._base || baseUrl;
+    const replaceUrl = (v) => (baseUrl + v).replace('github:', 'https://raw.githubusercontent.com/');
+    if (Array.isArray(value)) {
+      //return [key, value.map(replaceUrl)];
+      value = value.map(replaceUrl);
+    } else {
+      // must be object
+      value = Object.fromEntries(
+        Object.entries(value).map(([note, samples]) => {
+          return [note, (typeof samples === 'string' ? [samples] : samples).map(replaceUrl)];
+        }),
+      );
+    }
+    registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
+      type: 'sample',
+      samples: value,
+      baseUrl,
+      prebake,
+      tag,
+    });
+  });
+};
+
+const cutGroups = [];
+
+export async function onTriggerSample(t, value, onended, bank) {
+  const {
+    s,
+    freq,
+    unit,
+    nudge = 0, // TODO: is this in seconds?
+    cut,
+    loop,
+    clip = 0, // if 1, samples will be cut off when the hap ends
+    n = 0,
+    note,
+    speed = 1, // sample playback speed
+    begin = 0,
+    end = 1,
+  } = value;
+  // load sample
+  if (speed === 0) {
+    // no playback
+    return;
+  }
+  const ac = getAudioContext();
+  // destructure adsr here, because the default should be different for synths and samples
+  const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
+  //const soundfont = getSoundfontKey(s);
+  const time = t + nudge;
+
+  const bufferSource = await getSampleBufferSource(s, n, note, speed, freq, bank);
+
+  // asny stuff above took too long?
+  if (ac.currentTime > t) {
+    logger(`[sampler] still loading sound "${s}:${n}"`, 'highlight');
+    // console.warn('sample still loading:', s, n);
+    return;
+  }
+  if (!bufferSource) {
+    logger(`[sampler] could not load "${s}:${n}"`, 'error');
+    return;
+  }
+  bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
+  if (unit === 'c') {
+    // are there other units?
+    bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration * 1; //cps;
+  }
+  // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
+  // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
+  // the midway point through a 10-second audio buffer is still 5."
+  const offset = begin * bufferSource.buffer.duration;
+  bufferSource.start(time, offset);
+  const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
+  /*if (loop) {
+    // TODO: idea for loopBegin / loopEnd
+    // if one of [loopBegin,loopEnd] is <= 1, interpret it as normlized
+    // if [loopBegin,loopEnd] is bigger >= 1, interpret it as sample number
+    // this will simplify perfectly looping things, while still keeping the normalized option
+    // the only drawback is that looping between samples 0 and 1 is not possible (which is not real use case)
+    bufferSource.loop = true;
+    bufferSource.loopStart = offset;
+    bufferSource.loopEnd = offset + duration;
+    duration = loop * duration;
+  }*/
+  const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
+  bufferSource.connect(envelope);
+  const out = ac.createGain(); // we need a separate gain for the cutgroups because firefox...
+  envelope.connect(out);
+  bufferSource.onended = function () {
+    bufferSource.disconnect();
+    envelope.disconnect();
+    out.disconnect();
+    onended();
   };
-};
+  const stop = (endTime, playWholeBuffer = !clip) => {
+    let releaseTime = endTime;
+    if (playWholeBuffer) {
+      releaseTime = t + (end - begin) * bufferDuration;
+    }
+    bufferSource.stop(releaseTime + release);
+    releaseEnvelope(releaseTime);
+  };
+  const handle = { node: out, bufferSource, stop };
 
-export const resetLoadedSamples = () => {
-  sampleCache.current = undefined;
-};
+  // cut groups
+  if (cut !== undefined) {
+    const prev = cutGroups[cut];
+    if (prev) {
+      prev.node.gain.setValueAtTime(1, time);
+      prev.node.gain.linearRampToValueAtTime(0, time + 0.01);
+    }
+    cutGroups[cut] = handle;
+  }
 
-export const getLoadedSamples = () => sampleCache.current;
+  return handle;
+}

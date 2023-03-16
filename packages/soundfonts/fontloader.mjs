@@ -1,4 +1,6 @@
 import { toMidi } from '@strudel.cycles/core';
+import { getAudioContext, registerSound, getEnvelope } from '@strudel.cycles/webaudio';
+import gm from './gm.mjs';
 
 let loadCache = {};
 async function loadFont(name) {
@@ -8,7 +10,6 @@ async function loadFont(name) {
   const load = async () => {
     // TODO: make soundfont source configurable
     const url = `https://felixroos.github.io/webaudiofontdata/sound/${name}.js`;
-    console.log('load font', name, url);
     const preset = await fetch(url).then((res) => res.text());
     let [_, data] = preset.split('={');
     return eval('{' + data);
@@ -114,3 +115,34 @@ async function getBuffer(zone, audioContext) {
     }
   }
 }
+
+export function registerSoundfonts() {
+  Object.entries(gm).forEach(([name, fonts]) => {
+    registerSound(
+      name,
+      async (time, value, onended) => {
+        const { note = 'c3', n = 0 } = value;
+        const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
+        const font = fonts[n % fonts.length];
+        const ctx = getAudioContext();
+        const bufferSource = await getFontBufferSource(font, note, ctx);
+        bufferSource.start(time);
+        const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 0.3, time);
+        bufferSource.connect(envelope);
+        const stop = (releaseTime) => {
+          bufferSource.stop(releaseTime + release);
+          releaseEnvelope(releaseTime);
+        };
+        bufferSource.onended = () => {
+          bufferSource.disconnect();
+          envelope.disconnect();
+          onended();
+        };
+        return { node: envelope, stop };
+      },
+      { type: 'soundfont', prebake: true, fonts },
+    );
+  });
+}
+
+registerSoundfonts();

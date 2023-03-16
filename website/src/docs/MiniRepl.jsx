@@ -18,6 +18,7 @@ if (typeof window !== 'undefined') {
     import('@strudel.cycles/webaudio'),
     import('@strudel.cycles/osc'),
     import('@strudel.cycles/csound'),
+    import('@strudel.cycles/soundfonts'),
   );
 }
 

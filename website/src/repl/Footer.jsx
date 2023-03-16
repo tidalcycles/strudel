@@ -3,11 +3,12 @@ import { logger } from '@strudel.cycles/core';
 import { useEvent, cx } from '@strudel.cycles/react';
 // import { cx } from '@strudel.cycles/react';
 import { nanoid } from 'nanoid';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { loadedSamples } from './Repl';
+import React, { useMemo, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { Reference } from './Reference';
 import { themes } from './themes.mjs';
 import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../settings.mjs';
+import { getAudioContext, soundMap } from '@strudel.cycles/webaudio';
+import { useStore } from '@nanostores/react';
 
 export function Footer({ context }) {
   const footerContent = useRef();
@@ -72,7 +73,7 @@ export function Footer({ context }) {
       <div className="flex justify-between px-2">
         <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
           <FooterTab name="intro" label="welcome" />
-          <FooterTab name="samples" />
+          <FooterTab name="sounds" />
           <FooterTab name="console" />
           <FooterTab name="reference" />
           <FooterTab name="settings" />
@@ -84,13 +85,10 @@ export function Footer({ context }) {
         )}
       </div>
       {activeFooter !== '' && (
-        <div
-          className="text-white font-mono text-sm h-[360px] flex-none overflow-auto max-w-full relative"
-          ref={footerContent}
-        >
+        <div className="text-white flex-none h-[360px] overflow-auto max-w-full relative" ref={footerContent}>
           {activeFooter === 'intro' && <WelcomeTab />}
           {activeFooter === 'console' && <ConsoleTab log={log} />}
-          {activeFooter === 'samples' && <SamplesTab />}
+          {activeFooter === 'sounds' && <SoundsTab />}
           {activeFooter === 'reference' && <Reference />}
           {activeFooter === 'settings' && <SettingsTab scheduler={context.scheduler} />}
         </div>
@@ -173,7 +171,7 @@ function WelcomeTab() {
 
 function ConsoleTab({ log }) {
   return (
-    <div id="console-tab" className="break-all px-4 dark:text-white text-stone-900">
+    <div id="console-tab" className="break-all px-4 dark:text-white text-stone-900 text-sm">
       <pre>{`███████╗████████╗██████╗ ██╗   ██╗██████╗ ███████╗██╗     
 ██╔════╝╚══██╔══╝██╔══██╗██║   ██║██╔══██╗██╔════╝██║     
 ███████╗   ██║   ██████╔╝██║   ██║██║  ██║█████╗  ██║     
@@ -193,36 +191,104 @@ function ConsoleTab({ log }) {
   );
 }
 
-function SamplesTab() {
+const getSamples = (samples) =>
+  Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1;
+
+function SoundsTab() {
+  const sounds = useStore(soundMap);
+  const { soundsFilter } = useSettings();
+  const soundEntries = useMemo(() => {
+    let filtered = Object.entries(sounds).filter(([key]) => !key.startsWith('_'));
+    if (!sounds) {
+      return [];
+    }
+    if (soundsFilter === 'user') {
+      return filtered.filter(([key, { data }]) => !data.prebake);
+    }
+    if (soundsFilter === 'drums') {
+      return filtered.filter(([_, { data }]) => data.type === 'sample' && data.tag === 'drum-machines');
+    }
+    if (soundsFilter === 'samples') {
+      return filtered.filter(([_, { data }]) => data.type === 'sample' && data.tag !== 'drum-machines');
+    }
+    if (soundsFilter === 'synths') {
+      return filtered.filter(([_, { data }]) => ['synth', 'soundfont'].includes(data.type));
+    }
+    return filtered;
+  }, [sounds, soundsFilter]);
+  // holds mutable ref to current triggered sound
+  const trigRef = useRef();
+  // stop current sound on mouseup
+  useEvent('mouseup', () => {
+    const t = trigRef.current;
+    trigRef.current = undefined;
+    t?.then((ref) => {
+      ref?.stop(getAudioContext().currentTime + 0.01);
+    });
+  });
   return (
-    <div id="samples-tab" className="break-normal w-full px-4 dark:text-white text-stone-900">
-      <span>{loadedSamples.length} banks loaded:</span>
-      {loadedSamples.map(([name, samples]) => (
-        <span key={name} className="cursor-pointer hover:opacity-50" onClick={() => {}}>
-          {' '}
-          {name}(
-          {Array.isArray(samples) ? samples.length : typeof samples === 'object' ? Object.values(samples).length : 1}){' '}
-        </span>
-      ))}
+    <div id="sounds-tab" className="flex flex-col w-full h-full dark:text-white text-stone-900">
+      <div className="px-2 pb-2 flex-none">
+        <ButtonGroup
+          value={soundsFilter}
+          onChange={(value) => settingsMap.setKey('soundsFilter', value)}
+          items={{
+            samples: 'samples',
+            drums: 'drum-machines',
+            synths: 'Synths',
+            user: 'User',
+          }}
+        ></ButtonGroup>
+      </div>
+      <div className="p-2 min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal">
+        {soundEntries.map(([name, { data, onTrigger }]) => (
+          <span
+            key={name}
+            className="cursor-pointer hover:opacity-50"
+            onMouseDown={async () => {
+              const ctx = getAudioContext();
+              const params = {
+                note: ['synth', 'soundfont'].includes(data.type) ? 'a3' : undefined,
+                s: name,
+                clip: 1,
+                release: 0.5,
+              };
+              const time = ctx.currentTime + 0.05;
+              const onended = () => trigRef.current?.node?.disconnect();
+              trigRef.current = Promise.resolve(onTrigger(time, params, onended));
+              trigRef.current.then((ref) => {
+                ref?.node.connect(ctx.destination);
+              });
+            }}
+          >
+            {' '}
+            {name}
+            {data?.type === 'sample' ? `(${getSamples(data.samples)})` : ''}
+            {data?.type === 'soundfont' ? `(${data.fonts.length})` : ''}
+          </span>
+        ))}
+        {!soundEntries.length ? 'No custom sounds loaded in this pattern (yet).' : ''}
+      </div>
     </div>
   );
 }
 
 function ButtonGroup({ value, onChange, items }) {
   return (
-    <div className="flex grow border border-foreground rounded-md">
+    <div className="flex max-w-lg">
       {Object.entries(items).map(([key, label], i, arr) => (
         <button
           key={key}
           onClick={() => onChange(key)}
           className={cx(
-            'p-2 grow',
-            i === 0 && 'rounded-l-md',
-            i === arr.length - 1 && 'rounded-r-md',
-            value === key ? 'bg-background' : 'bg-lineHighlight',
+            'px-2 border-b h-8',
+            // i === 0 && 'rounded-l-md',
+            // i === arr.length - 1 && 'rounded-r-md',
+            // value === key ? 'bg-background' : 'bg-lineHighlight',
+            value === key ? 'border-foreground' : 'border-transparent',
           )}
         >
-          {label}
+          {label.toLowerCase()}
         </button>
       ))}
     </div>

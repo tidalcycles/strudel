@@ -1,5 +1,5 @@
 import { Pattern, getPlayableNoteValue, toMidi } from '@strudel.cycles/core';
-import { getAudioContext } from '@strudel.cycles/webaudio';
+import { getAudioContext, registerSound } from '@strudel.cycles/webaudio';
 import { loadSoundfont as _loadSoundfont, startPresetNote } from 'sfumato';
 
 Pattern.prototype.soundfont = function (sf, n = 0) {
@@ -21,5 +21,29 @@ export function loadSoundfont(url) {
   }
   const sf = _loadSoundfont(url);
   soundfontCache.set(url, sf);
+  /*sf.then((font) => {
+    font.presets.forEach((preset) => {
+      console.log('preset', preset.header.name);
+      registerSound(
+        preset.header.name.replaceAll(' ', '_'),
+        (time, value, onended) => {
+          const ctx = getAudioContext();
+          let { note } = value; // freq ?
+
+          const p = font.presets.find((p) => p.header.name === preset.header.name);
+
+          if (!p) {
+            throw new Error('preset not found');
+          }
+          const deadline = time; // - ctx.currentTime;
+          const args = [ctx, p, toMidi(note), deadline];
+          const stop = startPresetNote(...args);
+          return { node: undefined, stop };
+        },
+        { type: 'soundfont' },
+      );
+    });
+    //console.log('f', f);
+  });*/
   return sf;
 }
