@@ -1,7 +1,6 @@
 // this list is not used anymore..
 
 export const instruments = [
-
   // Acoustic Grand Piano: Piano
   '0000_JCLive_sf2_file',
   '0000_Aspirin_sf2_file',
