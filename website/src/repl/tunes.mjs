@@ -566,7 +566,7 @@ samples({
 "C^7 Am7 Dm7 G7".slow(2).voicings('lefthand')
   .stack("0@6 [<1 2> <2 0> 1]@2".scale('C5 major'))
   .note().slow(4)
-  .s('0040_FluidR3_GM_sf2_file')
+  .s("gm_epiano1:1")
   .color('steelblue')
   .stack(
    "<-7 ~@2 [~@2 -7] -9 ~@2 [~@2 -9] -10!2 ~ [~@2 -10] -5 ~ [-3 -2 -10]@2>*2".scale('C3 major')
