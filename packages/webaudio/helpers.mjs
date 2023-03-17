@@ -27,12 +27,13 @@ export const getEnvelope = (attack, decay, sustain, release, velocity, begin) =>
   return {
     node: gainNode,
     stop: (t) => {
-      if (typeof gainNode.gain.cancelAndHoldAtTime === 'function') {
-        gainNode.gain.cancelAndHoldAtTime(t);
-      } else {
-        // firefox: this will glitch when the sustain has not been reached yet at the time of release
-        gainNode.gain.setValueAtTime(sustain * velocity, t);
-      }
+      //if (typeof gainNode.gain.cancelAndHoldAtTime === 'function') {
+      // gainNode.gain.cancelAndHoldAtTime(t); // this seems to release instantly....
+      // see https://discord.com/channels/779427371270275082/937365093082079272/1086053607360712735
+      //} else {
+      // firefox: this will glitch when the sustain has not been reached yet at the time of release
+      gainNode.gain.setValueAtTime(sustain * velocity, t);
+      //}
       gainNode.gain.linearRampToValueAtTime(0, t + release);
     },
   };
