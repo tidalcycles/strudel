@@ -32,9 +32,9 @@ export function registerSynthSounds() {
         };
         return {
           node: o.connect(g).connect(envelope),
-          stop: (t) => {
-            releaseEnvelope(t);
-            stop(t + release);
+          stop: (releaseTime) => {
+            releaseEnvelope(releaseTime);
+            stop(releaseTime + release);
           },
         };
       },
