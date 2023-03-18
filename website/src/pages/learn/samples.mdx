@@ -46,16 +46,16 @@ For drum sounds, strudel uses the comprehensive [tidal-drum-machines](https://gi
 
 Furthermore, strudel also loads instrument samples from [VCSL](https://github.com/sgossner/VCSL) by default.
 
-To see which sample names are available, open the `samples` tab in the [REPL](https://strudel.tidalcycles.org/).
+To see which sample names are available, open the `sounds` tab in the [REPL](https://strudel.tidalcycles.org/).
 
-Note that only the sample maps (mapping names to URLs) are loaded initially, while the audio samples itself are not loaded until they are actually played.
+Note that only the sample maps (mapping names to URLs) are loaded initially, while the audio samples themselves are not loaded until they are actually played.
 This behaviour of loading things only when they are needed is also called `lazy loading`.
 While it saves resources, it can also lead to sounds not being audible the first time they are triggered, because the sound is still loading.
 [This might be fixed in the future](https://github.com/tidalcycles/strudel/issues/187)
 
 # Sound Banks
 
-If we look at the `samples` tab, we can see that the drum samples are all prefixed with drum machine names: `RolandTR808_bd`, `RolandTR808_sd`, `RolandTR808_hh` etc..
+If we open the `sounds` tab and then `drum machines`, we can see that the drum samples are all prefixed with drum machine names: `RolandTR808_bd`, `RolandTR808_sd`, `RolandTR808_hh` etc..
 
 We _could_ use them like this:
 
@@ -75,9 +75,9 @@ Also note that some banks won't have samples for all sounds!
 
 # Selecting Sounds
 
-If we look again at the `samples` tab, there is also a number behind each name, indicating how many individual samples are available.
+If we open the `sounds` tab again, followed by tab `drum machines`, there is also a number behind each name, indicating how many individual samples are available.
 For example `RolandTR909_hh(4)` means there are 4 samples of a TR909 hihat available.
-By default, `s` will play the first sample, but we can selecting the other ones using `n`, starting from 0:
+By default, `s` will play the first sample, but we can select the other ones using `n`, starting from 0:
 
 <MiniRepl client:idle tune={`s("hh*4").bank("RolandTR909").n("<0 1 2 3>")`} />
 
