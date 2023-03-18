@@ -1376,7 +1376,7 @@ export function polymeter(...args) {
 
 // alias
 export function pm(...args) {
-  polymeter(...args);
+  return polymeter(...args);
 }
 
 export const mask = curry((a, b) => reify(b).mask(a));
