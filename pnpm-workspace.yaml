@@ -2,5 +2,6 @@ packages:
   # all packages in direct subdirs of packages/
   - "packages/*"
   - "website/"
+  - "iclc2023/slides/"
   - "packages/core/examples/vite-vanilla-repl"
   - "packages/react/examples/nano-repl"

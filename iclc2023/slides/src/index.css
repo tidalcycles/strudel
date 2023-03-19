@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.cm-activeLine {
+  background-color: transparent !important;
+}
+
+.cm-theme {
+  background-color: var(--background);
+  border: 1px solid var(--lineHighlight);
+  padding: 2px;
+}
+
+.cm-gutters {
+  display: none !important;
+}
