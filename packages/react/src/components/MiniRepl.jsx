@@ -21,6 +21,7 @@ export function MiniRepl({
   drawTime,
   punchcard,
   canvasHeight = 200,
+  fontSize = 18,
   theme,
 }) {
   drawTime = drawTime || (punchcard ? [0, 4] : undefined);
@@ -153,7 +154,9 @@ export function MiniRepl({
         {error && <div className="text-right p-1 text-sm text-red-200">{error.message}</div>}
       </div>
       <div className="overflow-auto relative">
-        {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} theme={theme} />}
+        {show && (
+          <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} theme={theme} fontSize={fontSize} />
+        )}
       </div>
       {drawTime && (
         <canvas
