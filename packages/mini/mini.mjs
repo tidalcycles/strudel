@@ -39,10 +39,9 @@ const applyOptions = (parent, code) => (pat, i) => {
           break;
         }
         case 'degradeBy': {
-          pat = strudel.reify(pat)._degradeByWith(
-            strudel.rand.early(randOffset * op.arguments_.seed),
-            op.arguments_.amount ?? 0.5,
-          );
+          pat = strudel
+            .reify(pat)
+            ._degradeByWith(strudel.rand.early(randOffset * op.arguments_.seed), op.arguments_.amount ?? 0.5);
           break;
         }
         case 'tail': {
