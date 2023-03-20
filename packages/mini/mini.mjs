@@ -7,12 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import * as krill from './krill-parser.js';
 import * as strudel from '@strudel.cycles/core';
 
-/* var _seedState = 0;
 const randOffset = 0.0002;
-
-function _nextSeed() {
-  return _seedState++;
-} */
 
 const applyOptions = (parent, code) => (pat, i) => {
   const ast = parent.source_[i];
@@ -44,27 +39,10 @@ const applyOptions = (parent, code) => (pat, i) => {
           break;
         }
         case 'degradeBy': {
-          // TODO: find out what is right here
-          // example:
-          /*
-           stack(
-             s("hh*8").degrade(),
-             s("[ht*8]?")
-           )
-        */
-          // above example will only be in sync when _degradeBy is used...
-          // it also seems that the nextSeed will create undeterministic behaviour
-          // as it uses a global _seedState. This is probably the reason for
-          // https://github.com/tidalcycles/strudel/issues/245
-
-          // this is how it was:
-          /* 
-        return strudel.reify(pat)._degradeByWith(
-          strudel.rand.early(randOffset * _nextSeed()).segment(1),
-          op.arguments_.amount ?? 0.5,
-        ); 
-        */
-          pat = strudel.reify(pat).degradeBy(op.arguments_.amount === null ? 0.5 : op.arguments_.amount);
+          pat = strudel.reify(pat)._degradeByWith(
+            strudel.rand.early(randOffset * op.arguments_.seed).segment(1),
+            op.arguments_.amount ?? 0.5,
+          );
           break;
         }
         case 'tail': {
@@ -114,9 +92,7 @@ export function patternifyAST(ast, code) {
         return strudel.stack(...aligned);
       }
       if (alignment === 'rand') {
-        // https://github.com/tidalcycles/strudel/issues/245#issuecomment-1345406422
-        // return strudel.chooseInWith(strudel.rand.early(randOffset * _nextSeed()).segment(1), children);
-        return strudel.chooseCycles(...children);
+        return strudel.chooseInWith(strudel.rand.early(randOffset * ast.arguments_.seed).segment(1), children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
       if (!weightedChildren && alignment === 'slowcat') {
