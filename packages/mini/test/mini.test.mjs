@@ -143,7 +143,7 @@ describe('mini', () => {
   it('supports lists', () => {
     expect(minV('a:b c:d:[e:f] g')).toEqual([['a', 'b'], ['c', 'd', ['e', 'f']], 'g']);
   });
-  /*it('supports the random choice operator ("|") with nesting', () => {
+  it('supports the random choice operator ("|") with nesting', () => {
     const numCycles = 900;
     const haps = mini('a | [b | c] | [d | e | f]').queryArc(0, numCycles);
     // Should have about 1/3 a, 1/6 each of b | c, and 1/9 each of d | e | f.
@@ -168,6 +168,5 @@ describe('mini', () => {
     // 15.086 is the chisq for 5 degrees of freedom at 99%, so for 99% of uniformly-distributed
     //  PRNG, this test should succeed
     expect(chisq <= 15.086).toBe(true);
-    // assert(chisq <= 15.086, chisq + ' was expected to be less than 15.086 under chi-squared test');
-  });*/
+  });
 });
