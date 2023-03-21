@@ -140,8 +140,20 @@ describe('mini', () => {
     expect(haps.length < 230).toBe(true);
     // 'Had too many cycles remaining after degradeBy 0.8');
   });
-  it('supports lists', () => {
-    expect(minV('a:b c:d:[e:f] g')).toEqual([['a', 'b'], ['c', 'd', ['e', 'f']], 'g']);
+  it('supports multiple independent uses of the random choice operator ("|")', () => {
+    const numCycles = 1000;
+    const values = mini('[a|b] [a|b]')
+      .queryArc(0, numCycles)
+      .map((e) => e.value);
+    const observed = { aa: 0, ab: 0, ba: 0, bb: 0 };
+    for (let i = 0; i < values.length; i += 2) {
+      const chunk = values.slice(i, i + 2);
+      observed[chunk.join('')]++;
+    }
+    for (const count of Object.values(observed)) {
+      // Should fall within 99% confidence interval for binomial with p=0.25.
+      expect(215 <= count && count <= 286).toBe(true);
+    }
   });
   it('supports the random choice operator ("|") with nesting', () => {
     const numCycles = 900;
@@ -168,5 +180,8 @@ describe('mini', () => {
     // 15.086 is the chisq for 5 degrees of freedom at 99%, so for 99% of uniformly-distributed
     //  PRNG, this test should succeed
     expect(chisq <= 15.086).toBe(true);
+  });
+  it('supports lists', () => {
+    expect(minV('a:b c:d:[e:f] g')).toEqual([['a', 'b'], ['c', 'd', ['e', 'f']], 'g']);
   });
 });
