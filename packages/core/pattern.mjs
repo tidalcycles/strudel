@@ -1127,6 +1127,8 @@ function _composeOp(a, b, func) {
 export const polyrhythm = stack;
 export const pr = stack;
 
+export const pm = polymeter;
+
 // methods that create patterns, which are added to patternified Pattern methods
 // TODO: remove? this is only used in old transpiler (shapeshifter)
 Pattern.prototype.factories = {
@@ -1372,11 +1374,6 @@ export function polymeterSteps(steps, ...args) {
  */
 export function polymeter(...args) {
   return polymeterSteps(0, ...args);
-}
-
-// alias
-export function pm(...args) {
-  polymeter(...args);
 }
 
 export const mask = curry((a, b) => reify(b).mask(a));
