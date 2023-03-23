@@ -42,7 +42,7 @@ const modules = [
   import('@strudel.cycles/csound'),
 ];
 
-evalScope(
+const modulesLoading = evalScope(
   controls, // sadly, this cannot be exported from core direclty
   ...modules,
 );
@@ -102,7 +102,7 @@ export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
-  const [pending, setPending] = useState(false);
+  const [pending, setPending] = useState(true);
 
   const { theme, keybindings, fontSize, fontFamily } = useSettings();
 
@@ -111,10 +111,11 @@ export function Repl({ embedded = false }) {
       initialCode: '// LOADING',
       defaultOutput: webaudioOutput,
       getTime,
-      beforeEval: () => {
+      beforeEval: async () => {
+        setPending(true);
+        await modulesLoading;
         cleanupUi();
         cleanupDraw();
-        setPending(true);
       },
       afterEval: ({ code }) => {
         setPending(false);
@@ -135,6 +136,7 @@ export function Repl({ embedded = false }) {
         'highlight',
       );
       setCode(decoded || latestCode || randomTune);
+      setPending(false);
     });
   }, []);
 
@@ -144,6 +146,10 @@ export function Repl({ embedded = false }) {
       async (e) => {
         if (e.ctrlKey || e.altKey) {
           if (e.code === 'Enter') {
+            if (getAudioContext().state !== 'running') {
+              alert('please click play to initialize the audio. you can use shortcuts after that!');
+              return;
+            }
             e.preventDefault();
             flash(view);
             await activateCode();
