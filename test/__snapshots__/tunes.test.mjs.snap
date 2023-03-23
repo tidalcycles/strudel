@@ -63,6 +63,7 @@ exports[`renders tunes > tune: arpoon 1`] = `
   "[ 0/1 → 1/2 | s:bd bank:RolandTR909 gain:0.5 ]",
   "[ 1/2 → 1/1 | s:bd bank:RolandTR909 gain:0.5 ]",
   "[ 1/2 → 2/3 | s:hh bank:RolandTR909 gain:0.5 ]",
+  "[ 5/6 → 1/1 | s:hh bank:RolandTR909 gain:0.5 ]",
 ]
 `;
 
