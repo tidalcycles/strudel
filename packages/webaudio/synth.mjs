@@ -1,4 +1,4 @@
-import { fromMidi, toMidi } from '@strudel.cycles/core';
+import { midiToFreq, noteToMidi } from '@strudel.cycles/core';
 import { registerSound } from './webaudio.mjs';
 import { getOscillator, gainNode, getEnvelope } from './helpers.mjs';
 
@@ -13,11 +13,11 @@ export function registerSynthSounds() {
         // with synths, n and note are the same thing
         n = note || n || 36;
         if (typeof n === 'string') {
-          n = toMidi(n); // e.g. c3 => 48
+          n = noteToMidi(n); // e.g. c3 => 48
         }
         // get frequency
         if (!freq && typeof n === 'number') {
-          freq = fromMidi(n); // + 48);
+          freq = midiToFreq(n); // + 48);
         }
         // maybe pull out the above frequency resolution?? (there is also getFrequency but it has no default)
         // make oscillator

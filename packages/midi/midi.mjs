@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import * as _WebMidi from 'webmidi';
 import { Pattern, isPattern, logger } from '@strudel.cycles/core';
 import { getAudioContext } from '@strudel.cycles/webaudio';
-import { toMidi } from '@strudel.cycles/core';
+import { noteToMidi } from '@strudel.cycles/core';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
@@ -114,7 +114,7 @@ Pattern.prototype.midi = function (output) {
     const duration = hap.duration.valueOf() * 1000 - 5;
 
     if (note) {
-      const midiNumber = toMidi(note);
+      const midiNumber = noteToMidi(note);
       device.playNote(midiNumber, midichan, {
         time,
         duration,

@@ -8,8 +8,8 @@ import { pure } from '../pattern.mjs';
 import {
   isNote,
   tokenizeNote,
-  toMidi,
-  fromMidi,
+  noteToMidi,
+  midiToFreq,
   freqToMidi,
   _mod,
   compose,
@@ -75,27 +75,27 @@ describe('isNote', () => {
     expect(tokenizeNote(123)).toStrictEqual([]);
   });
 });
-describe('toMidi', () => {
+describe('noteToMidi', () => {
   it('should turn notes into midi', () => {
-    expect(toMidi('A4')).toEqual(69);
-    expect(toMidi('C4')).toEqual(60);
-    expect(toMidi('Db4')).toEqual(61);
-    expect(toMidi('C3')).toEqual(48);
-    expect(toMidi('Cb3')).toEqual(47);
-    expect(toMidi('Cbb3')).toEqual(46);
-    expect(toMidi('C#3')).toEqual(49);
-    expect(toMidi('C#3')).toEqual(49);
-    expect(toMidi('C##3')).toEqual(50);
+    expect(noteToMidi('A4')).toEqual(69);
+    expect(noteToMidi('C4')).toEqual(60);
+    expect(noteToMidi('Db4')).toEqual(61);
+    expect(noteToMidi('C3')).toEqual(48);
+    expect(noteToMidi('Cb3')).toEqual(47);
+    expect(noteToMidi('Cbb3')).toEqual(46);
+    expect(noteToMidi('C#3')).toEqual(49);
+    expect(noteToMidi('C#3')).toEqual(49);
+    expect(noteToMidi('C##3')).toEqual(50);
   });
   it('should throw an error when given a non-note', () => {
-    expect(() => toMidi('Q')).toThrowError(`not a note: "Q"`);
-    expect(() => toMidi('Z')).toThrowError(`not a note: "Z"`);
+    expect(() => noteToMidi('Q')).toThrowError(`not a note: "Q"`);
+    expect(() => noteToMidi('Z')).toThrowError(`not a note: "Z"`);
   });
 });
-describe('fromMidi', () => {
+describe('midiToFreq', () => {
   it('should turn midi into frequency', () => {
-    expect(fromMidi(69)).toEqual(440);
-    expect(fromMidi(57)).toEqual(220);
+    expect(midiToFreq(69)).toEqual(440);
+    expect(midiToFreq(57)).toEqual(220);
   });
 });
 describe('freqToMidi', () => {

@@ -1,4 +1,4 @@
-import { Pattern, getPlayableNoteValue, toMidi } from '@strudel.cycles/core';
+import { Pattern, getPlayableNoteValue, noteToMidi } from '@strudel.cycles/core';
 import { getAudioContext, registerSound } from '@strudel.cycles/webaudio';
 import { loadSoundfont as _loadSoundfont, startPresetNote } from 'sfumato';
 
@@ -8,7 +8,7 @@ Pattern.prototype.soundfont = function (sf, n = 0) {
     const note = getPlayableNoteValue(h);
     const preset = sf.presets[n % sf.presets.length];
     const deadline = ctx.currentTime + t - ct;
-    const args = [ctx, preset, toMidi(note), deadline];
+    const args = [ctx, preset, noteToMidi(note), deadline];
     const stop = startPresetNote(...args);
     stop(deadline + h.duration);
   });
@@ -36,7 +36,7 @@ export function loadSoundfont(url) {
             throw new Error('preset not found');
           }
           const deadline = time; // - ctx.currentTime;
-          const args = [ctx, p, toMidi(note), deadline];
+          const args = [ctx, p, noteToMidi(note), deadline];
           const stop = startPresetNote(...args);
           return { node: undefined, stop };
         },
