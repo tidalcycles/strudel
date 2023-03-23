@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/webdirt",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "WebDirt integration for Strudel",
   "main": "index.mjs",
   "type": "module",
