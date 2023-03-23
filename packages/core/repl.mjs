@@ -41,7 +41,7 @@ export function repl({
       throw new Error('no code to evaluate');
     }
     try {
-      beforeEval?.({ code });
+      await beforeEval?.({ code });
       let { pattern } = await _evaluate(code, transpiler);
 
       logger(`[eval] code updated`);
