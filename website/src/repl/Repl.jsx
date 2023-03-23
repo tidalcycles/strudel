@@ -206,6 +206,7 @@ export function Repl({ embedded = false }) {
     logger(`[repl] ✨ loading random tune "${name}"`);
     clearCanvas();
     resetLoadedSounds();
+    scheduler.setCps(1);
     await prebake(); // declare default samples
     await evaluate(code, false);
   };
