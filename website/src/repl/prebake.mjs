@@ -1,4 +1,4 @@
-import { Pattern, toMidi, valueToMidi } from '@strudel.cycles/core';
+import { Pattern, noteToMidi, valueToMidi } from '@strudel.cycles/core';
 //import { registerSoundfonts } from '@strudel.cycles/soundfonts';
 import { registerSynthSounds, samples } from '@strudel.cycles/webaudio';
 
@@ -22,7 +22,7 @@ export async function prebake() {
   ]);
 }
 
-const maxPan = toMidi('C8');
+const maxPan = noteToMidi('C8');
 const panwidth = (pan, width) => pan * width + (1 - width) / 2;
 
 Pattern.prototype.piano = function () {
