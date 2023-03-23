@@ -147,7 +147,7 @@ export function Repl({ embedded = false }) {
             e.preventDefault();
             flash(view);
             await activateCode();
-          } else if (e.code === 'Period') {
+          } else if (e.key === '.') {
             stop();
             e.preventDefault();
           }
