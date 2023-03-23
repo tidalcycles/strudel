@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/transpiler",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Transpiler for strudel user code. Converts syntactically correct but semantically meaningless JS into evaluatable strudel code.",
   "main": "index.mjs",
   "publishConfig": {
