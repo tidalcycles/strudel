@@ -279,7 +279,7 @@ function peg$parse(input, options) {
   var peg$f8 = function(p, s, r) { return x => x.options_['ops'].push({ type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r }}) };
   var peg$f9 = function(a) { return x => x.options_['ops'].push({ type_: "stretch", arguments_ :{ amount:a, type: 'slow' }}) };
   var peg$f10 = function(a) { return x => x.options_['ops'].push({ type_: "stretch", arguments_ :{ amount:a, type: 'fast' }}) };
-  var peg$f11 = function(a) { return x => x.options_['ops'].push({ type_: "degradeBy", arguments_ :{ amount:a } }) };
+  var peg$f11 = function(a) { return x => x.options_['ops'].push({ type_: "degradeBy", arguments_ :{ amount:a, seed: seed++ } }) };
   var peg$f12 = function(s) { return x => x.options_['ops'].push({ type_: "tail", arguments_ :{ element:s } }) };
   var peg$f13 = function(s, ops) { const result = new ElementStub(s, {ops: [], weight: 1, reps: 1});
     for (const op of ops) {
@@ -289,8 +289,8 @@ function peg$parse(input, options) {
   };
   var peg$f14 = function(s) { return new PatternStub(s, 'fastcat'); };
   var peg$f15 = function(tail) { return { alignment: 'stack', list: tail }; };
-  var peg$f16 = function(tail) { return { alignment: 'rand', list: tail }; };
-  var peg$f17 = function(head, tail) { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment); } else { return head; } };
+  var peg$f16 = function(tail) { return { alignment: 'rand', list: tail, seed: seed++ }; };
+  var peg$f17 = function(head, tail) { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment, tail.seed); } else { return head; } };
   var peg$f18 = function(head, tail) { return new PatternStub(tail ? [head, ...tail.list] : [head], 'polymeter'); };
   var peg$f19 = function(sc) { return sc; };
   var peg$f20 = function(s) { return { name: "struct", args: { mini:s }}};
@@ -2185,10 +2185,13 @@ function peg$parse(input, options) {
     this.location_ = location();
   }
 
-  var PatternStub = function(source, alignment)
+  var PatternStub = function(source, alignment, seed)
   {
     this.type_ = "pattern";
-    this.arguments_ = { alignment : alignment};
+    this.arguments_ = { alignment: alignment };
+    if (seed !== undefined) {
+      this.arguments_.seed = seed;
+    }
     this.source_ = source;
   }
 
@@ -2214,6 +2217,7 @@ function peg$parse(input, options) {
     this.options_ = options;
   }
 
+  var seed = 0;
 
   peg$result = peg$startRuleFunction();
 

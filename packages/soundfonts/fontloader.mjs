@@ -1,4 +1,4 @@
-import { toMidi } from '@strudel.cycles/core';
+import { noteToMidi, freqToMidi } from '@strudel.cycles/core';
 import { getAudioContext, registerSound, getEnvelope } from '@strudel.cycles/webaudio';
 import gm from './gm.mjs';
 
@@ -18,15 +18,24 @@ async function loadFont(name) {
   return loadCache[name];
 }
 
-export async function getFontBufferSource(name, pitch, ac) {
-  if (typeof pitch === 'string') {
-    pitch = toMidi(pitch);
+export async function getFontBufferSource(name, value, ac) {
+  let { note = 'c3', freq } = value;
+  let midi;
+  if (freq) {
+    midi = freqToMidi(freq);
+  } else if (typeof note === 'string') {
+    midi = noteToMidi(note);
+  } else if (typeof note === 'number') {
+    midi = note;
+  } else {
+    throw new Error(`unexpected "note" type "${typeof note}"`);
   }
-  const { buffer, zone } = await getFontPitch(name, pitch, ac);
+
+  const { buffer, zone } = await getFontPitch(name, midi, ac);
   const src = ac.createBufferSource();
   src.buffer = buffer;
   const baseDetune = zone.originalPitch - 100.0 * zone.coarseTune - zone.fineTune;
-  const playbackRate = 1.0 * Math.pow(2, (100.0 * pitch - baseDetune) / 1200.0);
+  const playbackRate = 1.0 * Math.pow(2, (100.0 * midi - baseDetune) / 1200.0);
   // src detune?
   src.playbackRate.value = playbackRate;
   const loop = zone.loopStart > 1 && zone.loopStart < zone.loopEnd;
@@ -121,11 +130,11 @@ export function registerSoundfonts() {
     registerSound(
       name,
       async (time, value, onended) => {
-        const { note = 'c3', n = 0 } = value;
+        const { n = 0 } = value;
         const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
         const font = fonts[n % fonts.length];
         const ctx = getAudioContext();
-        const bufferSource = await getFontBufferSource(font, note, ctx);
+        const bufferSource = await getFontBufferSource(font, value, ctx);
         bufferSource.start(time);
         const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 0.3, time);
         bufferSource.connect(envelope);

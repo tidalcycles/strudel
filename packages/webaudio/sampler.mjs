@@ -1,4 +1,4 @@
-import { logger, toMidi, valueToMidi } from '@strudel.cycles/core';
+import { logger, noteToMidi, valueToMidi } from '@strudel.cycles/core';
 import { getAudioContext, registerSound } from './index.mjs';
 import { getEnvelope } from './helpers.mjs';
 
@@ -34,7 +34,7 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank) => {
   if (Array.isArray(bank)) {
     sampleUrl = bank[n % bank.length];
   } else {
-    const midiDiff = (noteA) => toMidi(noteA) - midi;
+    const midiDiff = (noteA) => noteToMidi(noteA) - midi;
     // object format will expect keys as notes
     const closest = Object.keys(bank)
       .filter((k) => !k.startsWith('_'))

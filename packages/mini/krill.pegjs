@@ -19,10 +19,13 @@ This program is free software: you can redistribute it and/or modify it under th
     this.location_ = location();
   }
 
-  var PatternStub = function(source, alignment)
+  var PatternStub = function(source, alignment, seed)
   {
     this.type_ = "pattern";
-    this.arguments_ = { alignment : alignment};
+    this.arguments_ = { alignment: alignment };
+    if (seed !== undefined) {
+      this.arguments_.seed = seed;
+    }
     this.source_ = source;
   }
 
@@ -48,6 +51,7 @@ This program is free software: you can redistribute it and/or modify it under th
     this.options_ = options;
   }
 
+  var seed = 0;
 }
 
 start = statement
@@ -137,7 +141,7 @@ op_fast = "*"a:slice
   { return x => x.options_['ops'].push({ type_: "stretch", arguments_ :{ amount:a, type: 'fast' }}) }
 
 op_degrade = "?"a:number?
-  { return x => x.options_['ops'].push({ type_: "degradeBy", arguments_ :{ amount:a } }) }
+  { return x => x.options_['ops'].push({ type_: "degradeBy", arguments_ :{ amount:a, seed: seed++ } }) }
 
 op_tail = ":" s:slice
   { return x => x.options_['ops'].push({ type_: "tail", arguments_ :{ element:s } }) }
@@ -162,12 +166,12 @@ stack_tail = tail:(comma @sequence)+
 // a choose is a series of pipe-separated sequence, one of which is
 // chosen at random, each cycle
 choose_tail = tail:(pipe @sequence)+
-  { return { alignment: 'rand', list: tail }; }
+  { return { alignment: 'rand', list: tail, seed: seed++ }; }
 
 // if the stack contains only one element, we don't create a stack but return the
 // underlying element
 stack_or_choose = head:sequence tail:(stack_tail / choose_tail)?
-  { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment); } else { return head; } }
+  { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment, tail.seed); } else { return head; } }
 
 polymeter_stack = head:sequence tail:stack_tail?
   { return new PatternStub(tail ? [head, ...tail.list] : [head], 'polymeter'); }

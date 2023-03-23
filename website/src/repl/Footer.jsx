@@ -152,7 +152,7 @@ function WelcomeTab() {
       <h3>about</h3>
       <p>
         strudel is a JavaScript version of{' '}
-        <a href="tidalcycles.org/" target="_blank">
+        <a href="https://tidalcycles.org/" target="_blank">
           tidalcycles
         </a>
         , which is a popular live coding language for music, written in Haskell. You can find the source code at{' '}
