@@ -109,7 +109,7 @@ export function Repl({ embedded = false }) {
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
-      initialCode: '// LOADING',
+      initialCode: '// LOADING...',
       defaultOutput: webaudioOutput,
       getTime,
       beforeEval: async () => {
@@ -122,6 +122,9 @@ export function Repl({ embedded = false }) {
         setPending(false);
         setLatestCode(code);
         window.location.hash = '#' + encodeURIComponent(btoa(code));
+      },
+      onEvalError: (err) => {
+        setPending(false);
       },
       onToggle: (play) => !play && cleanupDraw(false),
       drawContext,
