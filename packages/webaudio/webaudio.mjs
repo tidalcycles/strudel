@@ -170,7 +170,7 @@ export const webaudioOutput = async (hap, deadline, hapDuration, cps) => {
     sourceNode = source(t, hap.value, hapDuration);
   } else if (getSound(s)) {
     const { onTrigger } = getSound(s);
-    const soundHandle = await onTrigger(t, hap.value, onended);
+    const soundHandle = await onTrigger(t, { ...hap.value, s }, onended);
     if (soundHandle) {
       sourceNode = soundHandle.node;
       soundHandle.stop(t + hapDuration);

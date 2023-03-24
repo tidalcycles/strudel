@@ -46,8 +46,8 @@ export function repl({
 
       logger(`[eval] code updated`);
       pattern = editPattern?.(pattern) || pattern;
+      await afterEval?.({ code, pattern });
       scheduler.setPattern(pattern, autostart);
-      afterEval?.({ code, pattern });
       return pattern;
     } catch (err) {
       // console.warn(`[repl] eval error: ${err.message}`);

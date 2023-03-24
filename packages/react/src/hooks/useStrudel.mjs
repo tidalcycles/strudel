@@ -50,13 +50,13 @@ function useStrudel({
           setCode(code);
           await beforeEval?.();
         },
-        afterEval: (res) => {
+        afterEval: async (res) => {
           const { pattern: _pattern, code } = res;
           setActiveCode(code);
           setPattern(_pattern);
           setEvalError();
           setSchedulerError();
-          afterEval?.(res);
+          await afterEval?.(res);
         },
         onToggle: (v) => {
           setStarted(v);

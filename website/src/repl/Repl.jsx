@@ -118,10 +118,38 @@ export function Repl({ embedded = false }) {
         cleanupUi();
         cleanupDraw();
       },
-      afterEval: ({ code }) => {
+      afterEval: async ({ code, pattern }) => {
+        // preload sounds
+        const t = scheduler.getTime();
+        const lookahead = 16;
+        const upcoming = pattern
+          .queryArc(t, t + lookahead)
+          .filter((h) => h.value.s)
+          .map((h) => `${h.value.bank ? `${h.value.bank}_` : ''}${h.value.s}:${h.value.n || 0}`)
+          .filter((v, i, all) => all.indexOf(v) === i);
+        // console.log('now preloading sounds:', upcoming);
+        const preload = upcoming.map(async (v) => {
+          const [s, n] = v.split(':');
+          const sound = soundMap.value[s];
+          if (!sound) {
+            throw new Error(`[preload] error: sound not found: "${s}:${n}"`);
+          }
+          // TODO: only preload if not already preloaded...
+          // TODO: add sound.preload interface that only loads the sample, without creating a buffersource
+          return sound.onTrigger(getAudioContext().currentTime + 0.5, { s, n }, () => {
+            // console.log('onended');
+          });
+        });
+        await Promise.all(preload);
+        // console.log('preloading done');
+
         setPending(false);
         setLatestCode(code);
         window.location.hash = '#' + encodeURIComponent(btoa(code));
+      },
+      onEvalError: (err) => {
+        console.log('errr');
+        setPending(false);
       },
       onToggle: (play) => !play && cleanupDraw(false),
       drawContext,
