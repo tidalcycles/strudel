@@ -737,9 +737,15 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
-   *   .superimpose(x=>x.add(2))
-   *   .scale('C minor').note()
+   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4".add("<0 5 4>*4")
+   *   .superimpose(
+   *     x=>x.add(2),
+   *     x=>x.mul(4),
+   *     x=>x.div(3),
+   *     x=>x.sub(4),
+   *   )
+   *   .scale('C minor').note().s("sawtooth")
+   *   .delay(".5:.75:.2")
    */
   superimpose(...funcs) {
     return this.stack(...funcs.map((func) => func(this)));
