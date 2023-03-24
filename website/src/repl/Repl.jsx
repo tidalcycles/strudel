@@ -18,6 +18,7 @@ import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
 import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
+import Loader from './Loader';
 
 const { latestCode } = settingsMap.get();
 
@@ -260,6 +261,7 @@ export function Repl({ embedded = false }) {
           //        'bg-gradient-to-t from-green-900 to-slate-900', //
         )}
       >
+        <Loader active={pending} />
         <Header context={context} />
         <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-0" id="code">
           <CodeMirror
