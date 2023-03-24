@@ -18,6 +18,7 @@ import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
 import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
+import Loader from './Loader';
 
 const { latestCode } = settingsMap.get();
 
@@ -42,7 +43,7 @@ const modules = [
   import('@strudel.cycles/csound'),
 ];
 
-evalScope(
+const modulesLoading = evalScope(
   controls, // sadly, this cannot be exported from core direclty
   ...modules,
 );
@@ -102,7 +103,7 @@ export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
-  const [pending, setPending] = useState(false);
+  const [pending, setPending] = useState(true);
 
   const { theme, keybindings, fontSize, fontFamily } = useSettings();
 
@@ -111,10 +112,11 @@ export function Repl({ embedded = false }) {
       initialCode: '// LOADING',
       defaultOutput: webaudioOutput,
       getTime,
-      beforeEval: () => {
+      beforeEval: async () => {
+        setPending(true);
+        await modulesLoading;
         cleanupUi();
         cleanupDraw();
-        setPending(true);
       },
       afterEval: ({ code }) => {
         setPending(false);
@@ -135,6 +137,7 @@ export function Repl({ embedded = false }) {
         'highlight',
       );
       setCode(decoded || latestCode || randomTune);
+      setPending(false);
     });
   }, []);
 
@@ -144,10 +147,14 @@ export function Repl({ embedded = false }) {
       async (e) => {
         if (e.ctrlKey || e.altKey) {
           if (e.code === 'Enter') {
+            if (getAudioContext().state !== 'running') {
+              alert('please click play to initialize the audio. you can use shortcuts after that!');
+              return;
+            }
             e.preventDefault();
             flash(view);
             await activateCode();
-          } else if (e.code === 'Period') {
+          } else if (e.key === '.') {
             stop();
             e.preventDefault();
           }
@@ -200,6 +207,7 @@ export function Repl({ embedded = false }) {
     logger(`[repl] ✨ loading random tune "${name}"`);
     clearCanvas();
     resetLoadedSounds();
+    scheduler.setCps(1);
     await prebake(); // declare default samples
     await evaluate(code, false);
   };
@@ -253,6 +261,7 @@ export function Repl({ embedded = false }) {
           //        'bg-gradient-to-t from-green-900 to-slate-900', //
         )}
       >
+        <Loader active={pending} />
         <Header context={context} />
         <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-0" id="code">
           <CodeMirror

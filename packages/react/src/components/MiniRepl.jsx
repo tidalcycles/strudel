@@ -82,7 +82,7 @@ export function MiniRepl({
               e.preventDefault();
               flash(view);
               await activateCode();
-            } else if (e.code === 'Period') {
+            } else if (e.key === '.') {
               stop();
               e.preventDefault();
             }
@@ -92,26 +92,6 @@ export function MiniRepl({
       [activateCode, stop, view],
     ),
   );
-
-  // set active pattern on ctrl+enter
-  useLayoutEffect(() => {
-    if (enableKeyboard) {
-      const handleKeyPress = async (e) => {
-        if (e.ctrlKey || e.altKey) {
-          if (e.code === 'Enter') {
-            e.preventDefault();
-            flash(view);
-            await activateCode();
-          } else if (e.code === 'Period') {
-            stop();
-            e.preventDefault();
-          }
-        }
-      };
-      window.addEventListener('keydown', handleKeyPress, true);
-      return () => window.removeEventListener('keydown', handleKeyPress, true);
-    }
-  }, [enableKeyboard, pattern, code, evaluate, stop, view]);
 
   const [log, setLog] = useState([]);
   useLogger(

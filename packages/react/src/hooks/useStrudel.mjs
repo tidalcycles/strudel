@@ -46,9 +46,9 @@ function useStrudel({
         drawContext,
         transpiler,
         editPattern,
-        beforeEval: ({ code }) => {
+        beforeEval: async ({ code }) => {
           setCode(code);
-          beforeEval?.();
+          await beforeEval?.();
         },
         afterEval: (res) => {
           const { pattern: _pattern, code } = res;

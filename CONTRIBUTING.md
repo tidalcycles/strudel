@@ -123,7 +123,14 @@ To publish all packages that have been changed since the last release, run:
 
 ```sh
 npm login
-npx lerna publish
+
+# this will increment all the versions in package.json files of non private packages to selected versions
+npx lerna version --no-private
+
+# publish all packages inside /packages using pnpm! don't use lerna to publish!!
+pnpm --filter "./packages/**" publish --dry-run
+
+# the last command was only a dry-run, make sure everything looks ok, if yes, run the same command without flag
 ```
 
 To manually publish a single package, increase the version in the `package.json`, then run `pnpm publish`.
