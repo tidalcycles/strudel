@@ -350,6 +350,8 @@ const fontFamilyOptions = {
   PressStart: 'PressStart2P',
   galactico: 'galactico',
   'we-come-in-peace': 'we-come-in-peace',
+  FiraCode: 'FiraCode',
+  'FiraCode-SemiBold': 'FiraCode SemiBold',
 };
 
 function SettingsTab({ scheduler }) {
