@@ -123,6 +123,9 @@ export function Repl({ embedded = false }) {
         setLatestCode(code);
         window.location.hash = '#' + encodeURIComponent(btoa(code));
       },
+      onEvalError: (err) => {
+        setPending(false);
+      },
       onToggle: (play) => !play && cleanupDraw(false),
       drawContext,
     });
