@@ -182,7 +182,7 @@ polymeter_stack = head:sequence tail:stack_tail?
 // Experimental haskellish parser begins
 
 // mini-notation = a quoted stack
-mini = ws quote sc:stack_or_choose quote
+mini = ws quote ws sc:stack_or_choose ws quote
   { return sc; }
 
 // ------------------ operators ---------------------------
