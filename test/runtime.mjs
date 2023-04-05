@@ -29,7 +29,7 @@ import '@strudel.cycles/xen/xen.mjs';
 // import '@strudel.cycles/webaudio/webaudio.mjs';
 // import '@strudel.cycles/serial/serial.mjs';
 // import controls from '@strudel.cycles/core/controls.mjs';
-import '../website/src/repl/prebake';
+import '../website/src/repl/piano';
 
 class MockedNode {
   chain() {
