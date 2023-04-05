@@ -21,9 +21,10 @@ const snippets = [
   $ sound "bd sd"`,
     [
       `sound("bd sd")
-  .every(3, fast(2))
+  .every(3, fast("2"))
   .jux(rev)`,
     ],
+    'Higher order transformations (with partial application)',
   ],
   [
     `jux rev 
@@ -34,6 +35,7 @@ const snippets = [
   .every("<3 5>", fast("1 2"))
   .jux(rev)`,
     ],
+    'Patterns all the way down',
   ],
 ];
 
@@ -51,13 +53,13 @@ function SyntaxComparison() {
             <h3 className="pb-4">{label}</h3>
             <div>
               <div className="flex space-x-2">
-                <img src="./img/haskell.png" className="h-10 mt-1" />
+                <img src="./img/haskell.png" className="h-10 mt-2" />
                 <Highlight language="haskell" code={hs} />
               </div>
               <div>
-                {js.map((c) => (
-                  <div className="flex space-x-2">
-                    <img src="./img/js.jpg" className="h-10 mt-1" />
+                {js.map((c, j) => (
+                  <div className="flex space-x-2" key={j}>
+                    <img src="./img/js.jpg" className="h-10 mt-2" />
                     <SlideRepl tune={c} hideHeader />
                   </div>
                 ))}
