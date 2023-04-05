@@ -1,13 +1,13 @@
 import { Pattern, noteToMidi, valueToMidi } from '@strudel.cycles/core';
-//import { registerSoundfonts } from '@strudel.cycles/soundfonts';
+import { registerSoundfonts } from '@strudel.cycles/soundfonts';
 import { registerSynthSounds, samples } from '@strudel.cycles/webaudio';
 
 export async function prebake() {
   // https://archive.org/details/SalamanderGrandPianoV3
   // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
-  registerSynthSounds();
-  //registerSoundfonts();
   await Promise.all([
+    registerSynthSounds(),
+    registerSoundfonts(),
     samples(`./piano.json`, `./piano/`, { prebake: true }),
     // https://github.com/sgossner/VCSL/
     // https://api.github.com/repositories/126427031/contents/
