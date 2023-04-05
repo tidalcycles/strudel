@@ -10,6 +10,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        train: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+      },
+      animation: {
+        train: 'train 2s linear infinite',
+      },
       colors: {
         // codemirror-theme settings
         background: 'var(--background)',

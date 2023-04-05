@@ -41,18 +41,7 @@ export function repl({
       throw new Error('no code to evaluate');
     }
     try {
-      beforeEval?.({ code });
-      scheduler.setCps(1); // reset cps in case the code does not contain a setCps call
-      // problem: when the code does contain a setCps after an awaited promise,
-      // the cps will be 1 until the promise resolves
-      // example:
-      /*
-      await new Promise(resolve => setTimeout(resolve,1000))
-      setCps(.5)
-      note("c a f e")
-      */
-      // to make sure the setCps inside the code is called immediately,
-      // it has to be placed first
+      await beforeEval?.({ code });
       let { pattern } = await _evaluate(code, transpiler);
 
       logger(`[eval] code updated`);

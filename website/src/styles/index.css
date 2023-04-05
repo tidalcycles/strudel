@@ -18,6 +18,14 @@
   font-family: 'we-come-in-peace';
   src: url('/fonts/we-come-in-peace/we-come-in-peace-bb.regular.ttf');
 }
+@font-face {
+  font-family: 'FiraCode';
+  src: url('/fonts/FiraCode/FiraCode-Regular.ttf');
+}
+@font-face {
+  font-family: 'FiraCode-SemiBold';
+  src: url('/fonts/FiraCode/FiraCode-SemiBold.ttf');
+}
 
 .cm-gutters {
   display: none !important;
