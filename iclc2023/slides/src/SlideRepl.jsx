@@ -20,7 +20,7 @@ if (typeof window !== 'undefined') {
   prebake();
 }
 
-export function SlideRepl({ tune, drawTime, punchcard, canvasHeight = 100, hideHeader = false }) {
+export function SlideRepl({ tune, drawTime, punchcard, canvasHeight = 100, hideHeader = false, fontSize = 32 }) {
   // const { theme } = useSettings();
   return (
     <div className="mb-4">
@@ -31,7 +31,7 @@ export function SlideRepl({ tune, drawTime, punchcard, canvasHeight = 100, hideH
         drawTime={drawTime}
         punchcard={punchcard}
         canvasHeight={canvasHeight}
-        fontSize={32}
+        fontSize={fontSize}
         theme={atomone}
         // theme={themes[theme]}
       />
