@@ -1,0 +1,15 @@
+import { SlideRepl } from '../SlideRepl.jsx';
+
+# Pattern Example
+
+<SlideRepl
+  tune={`"<0 2 [4 6](3,4,1) 3>"
+.off(1/4, add(2))
+.off(1/2, add(6))
+.scale('D minor')
+.legato(.25)
+.note().s("sawtooth square")
+.delay(.8).delaytime(.125)`}
+  hideHeader
+  punchcard
+/>

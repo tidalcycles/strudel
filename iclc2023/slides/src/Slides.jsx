@@ -16,17 +16,18 @@ const loadedMDXFiles = await Promise.all(
   }),
 );
 
-const order = ['01', '02-0', '02-1', '02-2', '03'];
+const order = ['01', '02-0', '02-1', '02-2', '03-0', '03-1', '04'];
 
 const slideEntries = order.map((name) => loadedMDXFiles.find(([file]) => file === name));
 
 // current slide index is persisted, so it's safe to refresh the browser
 export const slideIndex = persistentAtom('slideIndex', '0');
 
+export const prev = () => slideIndex.set((parseInt(slideIndex.get()) - 1 + slideEntries.length) % slideEntries.length);
+export const next = () => slideIndex.set((parseInt(slideIndex.get()) + 1) % slideEntries.length);
+
 function Slides() {
   const activeIndex = parseInt(useStore(slideIndex));
-  const prev = () => slideIndex.set((activeIndex - 1 + slideEntries.length) % slideEntries.length);
-  const next = () => slideIndex.set((activeIndex + 1) % slideEntries.length);
 
   useEvent('click', (e) => {
     if (!e.ctrlKey) {

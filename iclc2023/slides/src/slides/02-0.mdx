@@ -12,8 +12,6 @@ import { SlideRepl } from '../SlideRepl.jsx';
   hideHeader
   fontSize={24}
   tune={`// froos - freakuency - 2023/03/29
-setcps(.5)
-//
 await samples('https://shabda.ndre.gr/speech/frequency,freaky.json?strudel=1')
 //
 stack(
@@ -31,5 +29,5 @@ stack(
   .mask("<0 1>")
 ).restart("<1@3 1*[4 [8 16]]>")
   .stack(s("<~ [[~@2.4 freaky] frequency]>/2").delay(.8)
-  .echoWith(4,-.0125,(p,n)=>p.speed(1-n*.1).gain(n*.2)))`}
+  .echoWith(4,-.0125,(p,n)=>p.speed(1-n*.1).gain(n*.2))).slow(2)`}
 />

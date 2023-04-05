@@ -3,6 +3,7 @@ import { initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 import { MiniRepl as _MiniRepl } from '@strudel.cycles/react';
 import { prebake } from './prebake';
 import { atomone } from '@uiw/codemirror-themes-all';
+import blackscreen from '@strudel.cycles/react/src/themes/blackscreen';
 
 if (typeof window !== 'undefined') {
   await evalScope(
@@ -20,7 +21,15 @@ if (typeof window !== 'undefined') {
   prebake();
 }
 
-export function SlideRepl({ tune, drawTime, punchcard, canvasHeight = 100, hideHeader = false, fontSize = 32 }) {
+export function SlideRepl({
+  tune,
+  drawTime,
+  punchcard,
+  canvasHeight = 100,
+  hideHeader = false,
+  fontSize = 32,
+  disabled = false,
+}) {
   // const { theme } = useSettings();
   return (
     <div className="mb-4">
@@ -32,7 +41,7 @@ export function SlideRepl({ tune, drawTime, punchcard, canvasHeight = 100, hideH
         punchcard={punchcard}
         canvasHeight={canvasHeight}
         fontSize={fontSize}
-        theme={atomone}
+        theme={disabled ? blackscreen : atomone}
         // theme={themes[theme]}
       />
     </div>

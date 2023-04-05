@@ -48,25 +48,31 @@ function SyntaxComparison() {
           <div>Tidal</div>
           <div>Strudel</div>
         </div> */}
-        {snippets.slice(0, step).map(([hs, js, label], i) => (
-          <div key={i} className={`border-t border-gray-500 py-4`}>
-            <h3 className="pb-4">{label}</h3>
-            <div>
-              <div className="flex space-x-2">
-                <img src="./img/haskell.png" className="h-10 mt-2" />
-                <Highlight language="haskell" code={hs} />
-              </div>
+        {snippets.slice(0, step).map(([hs, js, label], i) => {
+          const isActive = i === step - 1;
+          return (
+            <div
+              key={i}
+              className={`border-l-4 pl-8 border-gray-500 py-4 ${isActive ? 'p-4 border-yellow-500' : ''}`}
+            >
+              <h3 className="pb-4">{label}</h3>
               <div>
-                {js.map((c, j) => (
-                  <div className="flex space-x-2" key={j}>
-                    <img src="./img/js.jpg" className="h-10 mt-2" />
-                    <SlideRepl tune={c} hideHeader />
-                  </div>
-                ))}
+                <div className="flex space-x-4">
+                  <img src="./img/haskell.png" className="h-10 mt-2" />
+                  <Highlight language="haskell" code={hs} />
+                </div>
+                <div>
+                  {js.map((c, j) => (
+                    <div className="flex space-x-4" key={j}>
+                      <img src="./img/js.jpg" className={`h-10 mt-2`} />
+                      <SlideRepl tune={c} hideHeader />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       {step < snippets.length && <button onClick={() => setStep((r) => r + 1)}>next</button>}
     </>
