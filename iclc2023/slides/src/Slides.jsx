@@ -59,7 +59,7 @@ function Slides() {
           )}
         >
           <div className="prose prose-invert w-[1400px] max-w-full overflow-auto" style={{ fontSize: '2em' }}>
-            <Slide />
+            {Math.abs(i - activeIndex) < 2 && <Slide />}
           </div>
         </div>
       ))}
