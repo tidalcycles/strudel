@@ -9,11 +9,11 @@ export async function prebake() {
   await Promise.all([
     /* samples(`./piano.json`, `./piano/`, { prebake: true }),
     samples(`./vcsl.json`, 'github:sgossner/VCSL/master/', { prebake: true }),
-    samples(`./tidal-drum-machines.json`, 'github:ritchse/tidal-drum-machines/main/machines/', {
+    */ samples(`./tidal-drum-machines.json`, 'github:ritchse/tidal-drum-machines/main/machines/', {
       prebake: true,
       tag: 'drum-machines',
-    }),
-    samples(`./EmuSP12.json`, `./EmuSP12/`, { prebake: true, tag: 'drum-machines' }), */
+    }) /*
+    samples(`./EmuSP12.json`, `./EmuSP12/`, { prebake: true, tag: 'drum-machines' }), */,
     // samples('github:tidalcycles/Dirt-Samples/master'),
     samples('github:tidalcycles/Dirt-Samples/master'),
   ]);
