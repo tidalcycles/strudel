@@ -16,7 +16,7 @@ const loadedMDXFiles = await Promise.all(
   }),
 );
 
-const order = ['01', '02'];
+const order = ['01', '02-0', '02-1', '02-2', '03'];
 
 const slideEntries = order.map((name) => loadedMDXFiles.find(([file]) => file === name));
 
@@ -39,13 +39,13 @@ function Slides() {
       next();
     }
   });
-  useEvent('keydown', (e) => {
+  /*useEvent('keydown', (e) => {
     if (e.key === 'Home') {
       prev();
     } else if (e.key === 'End') {
       next();
     }
-  });
+  });*/
 
   return (
     <div className="w-screen h-screen overflow-hidden relative">
@@ -58,7 +58,7 @@ function Slides() {
             i > activeIndex && 'translate-x-full',
           )}
         >
-          <div className="prose prose-invert select-none w-[800px] max-w-full">
+          <div className="prose prose-invert w-[1400px] max-w-full overflow-auto" style={{ fontSize: '2em' }}>
             <Slide />
           </div>
         </div>

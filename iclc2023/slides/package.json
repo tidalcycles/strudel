@@ -12,14 +12,17 @@
     "@mdx-js/rollup": "^2.3.0",
     "@nanostores/persistent": "^0.7.0",
     "@nanostores/react": "^0.4.1",
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/react": "workspace:*",
+    "@strudel.cycles/soundfonts": "workspace:*",
+    "@strudel.cycles/tonal": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
+    "@uiw/codemirror-themes-all": "^4.19.8",
     "nanostores": "^0.7.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@strudel.cycles/react": "workspace:*",
-    "@strudel.cycles/core": "workspace:*",
-    "@strudel.cycles/tonal": "workspace:*",
-    "@strudel.cycles/webaudio": "workspace:*",
-    "@strudel.cycles/soundfonts": "workspace:*"
+    "react-syntax-highlighter": "^15.5.0",
+    "remark-gfm": "^3.0.1"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.8",

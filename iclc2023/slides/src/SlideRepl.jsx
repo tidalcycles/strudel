@@ -2,8 +2,7 @@ import { evalScope, controls } from '@strudel.cycles/core';
 import { initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 import { MiniRepl as _MiniRepl } from '@strudel.cycles/react';
 import { prebake } from './prebake';
-//import { themes } from '../repl/themes.mjs';
-// import { useSettings } from '../settings.mjs';
+import { atomone } from '@uiw/codemirror-themes-all';
 
 if (typeof window !== 'undefined') {
   await evalScope(
@@ -21,17 +20,19 @@ if (typeof window !== 'undefined') {
   prebake();
 }
 
-export function SlideRepl({ tune, drawTime, punchcard, canvasHeight = 100 }) {
+export function SlideRepl({ tune, drawTime, punchcard, canvasHeight = 100, hideHeader = false }) {
   // const { theme } = useSettings();
   return (
     <div className="mb-4">
       <_MiniRepl
+        hideHeader={hideHeader}
         tune={tune}
         hideOutsideView={true}
         drawTime={drawTime}
         punchcard={punchcard}
         canvasHeight={canvasHeight}
         fontSize={32}
+        theme={atomone}
         // theme={themes[theme]}
       />
     </div>
