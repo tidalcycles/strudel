@@ -1,18 +1,5 @@
-import { SlideRepl } from '../SlideRepl.jsx';
-import Highlight from '../Highlight.jsx';
+import QueryDemo from '../QueryDemo.jsx';
 
-# From Patterns to Events
+# Patterns -> Events
 
-<SlideRepl tune={`sound("bd [hh sd]").log()`} hideHeader punchcard />
-
-query = get events within time arc. event = time + value
-
-<Highlight code={`sound("bd [hh sd]").queryArc(0, 1)`} language="javascript" />
-
-```plaintext
-[
-  "0/1 -> 1/2 | sound:bd",
-  "1/2 -> 3/4 | sound:hh",
-  "3/4 -> 1/1 | sound:sd",
-]
-```
+<QueryDemo />

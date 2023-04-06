@@ -43,6 +43,11 @@ function SyntaxComparison() {
   const [step, setStep] = useState(1);
   return (
     <>
+      <h1>
+        Haskell -&gt; JavaScript
+        <br />
+        <small>Internal DSL / Fluent Interface</small>
+      </h1>
       <div className=" not-prose justify-start items-start">
         {/* <div className="grid grid-cols-2">
           <div>Tidal</div>
@@ -51,10 +56,7 @@ function SyntaxComparison() {
         {snippets.slice(0, step).map(([hs, js, label], i) => {
           const isActive = i === step - 1;
           return (
-            <div
-              key={i}
-              className={`border-l-4 pl-8 border-gray-500 py-4 ${isActive ? 'p-4 border-yellow-500' : ''}`}
-            >
+            <div key={i} className={`border-l-4 pl-8 border-gray-500 py-4 ${isActive ? 'p-4 border-yellow-500' : ''}`}>
               <h3 className="pb-4">{label}</h3>
               <div>
                 <div className="flex space-x-4">

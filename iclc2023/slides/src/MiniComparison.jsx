@@ -14,7 +14,11 @@ function MiniComparison() {
   const [step, setStep] = useState(1);
   return (
     <>
-      <h1>From Mini Notation to JavaScript</h1>
+      <h1>
+        Mini Notation -&gt; JavaScript
+        <br />
+        <small>External DSL</small>
+      </h1>
       <div className="not-prose">
         {snippets.slice(0, step).map(([a, b, label], i) => {
           const isActive = i === step - 1;
