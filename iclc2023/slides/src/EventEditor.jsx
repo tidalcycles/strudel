@@ -28,7 +28,7 @@ function EventEditor({ code: initialCode }) {
               await initAudio;
               json.forEach((value) => {
                 const hap = new Hap(new TimeSpan(0, 1), new TimeSpan(0, 1), value);
-                webaudioOutput(hap, 0.1, 1, 1);
+                webaudioOutput(hap, 0.01, 1, 1);
               });
             } else if (e.key === '.') {
               stop();

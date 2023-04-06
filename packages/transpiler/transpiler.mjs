@@ -4,7 +4,7 @@ import { walk } from 'estree-walker';
 import { isNoteWithOctave } from '@strudel.cycles/core';
 
 export function transpiler(input, options = {}) {
-  const { wrapAsync = false, addReturn = true, simpleLocs = false } = options;
+  const { wrapAsync = false, addReturn = true, simpleLocs = false, codegenOptions = {} } = options;
 
   let ast = parse(input, {
     ecmaVersion: 2022,
@@ -47,7 +47,7 @@ export function transpiler(input, options = {}) {
       argument: expression,
     };
   }
-  const output = escodegen.generate(ast);
+  const output = escodegen.generate(ast, codegenOptions);
   if (wrapAsync) {
     return `(async ()=>{${output}})()`;
   }

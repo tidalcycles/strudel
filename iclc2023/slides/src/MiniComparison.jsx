@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { SlideRepl } from './SlideRepl.jsx';
+import Stepper from './Stepper.jsx';
 
 const snippets = [
   [`sound("bd [hh sd]")`, `sound(seq("bd", ["hh", "sd"]))`, 'Nested Sequences'], //
@@ -11,7 +11,6 @@ const snippets = [
 ];
 
 function MiniComparison() {
-  const [step, setStep] = useState(1);
   return (
     <>
       <h1>
@@ -19,25 +18,21 @@ function MiniComparison() {
         <br />
         <small>External DSL</small>
       </h1>
-      <div className="not-prose">
-        {snippets.slice(0, step).map(([a, b, label], i) => {
-          const isActive = i === step - 1;
-          return (
-            <div key={i} className={`border-l-4 pl-8 border-gray-500 py-4 ${isActive ? 'p-4 border-yellow-500' : ''}`}>
-              <h3 className="pb-4">{label}</h3>
-              <div className="flex space-x-2">
-                <img src="./img/tidalcycles.svg" className={`h-10 mt-2`} />
-                <SlideRepl tune={a} hideHeader />
-              </div>
-              <div className="flex space-x-2">
-                <img src="./img/js.jpg" className={`h-10 mt-2`} />
-                <SlideRepl tune={b} hideHeader />
-              </div>
+      <Stepper
+        steps={snippets.map(([a, b, label]) => (
+          <>
+            <h3 className="pb-4">{label}</h3>
+            <div className="flex space-x-2">
+              <img src="./img/tidalcycles.svg" className={`h-10 mt-2`} />
+              <SlideRepl tune={a} hideHeader />
             </div>
-          );
-        })}
-      </div>
-      {step < snippets.length && <button onClick={() => setStep((r) => r + 1)}>next</button>}
+            <div className="flex space-x-2">
+              <img src="./img/js.jpg" className={`h-10 mt-2`} />
+              <SlideRepl tune={b} hideHeader />
+            </div>
+          </>
+        ))}
+      />
     </>
   );
 }

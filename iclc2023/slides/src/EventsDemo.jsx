@@ -1,8 +1,8 @@
 import EventEditor from './EventEditor.jsx';
-import { useState } from 'react';
+import Stepper from './Stepper.jsx';
 
 const snippets = [
-  [`{ "s": "cp" }`, 'Samples'],
+  [`{ "s": "cp", "crush": 4 }`, 'Samples'],
   [`{ "s": "sawtooth", "note": "e3" }`, 'Oscillators'],
   [
     `[
@@ -24,21 +24,15 @@ const snippets = [
 ];
 
 function EventsDemo() {
-  const [step, setStep] = useState(1);
-
   return (
-    <div className="not-prose">
-      {snippets.slice(0, step).map(([code, label], i) => {
-        const isActive = i === step - 1;
-        return (
-          <div key={i} className={`border-l-4 pl-8 border-gray-500 py-4 ${isActive ? 'p-4 border-yellow-500' : ''}`}>
-            <h3 className="pb-4">{label}</h3>
-            <EventEditor code={code} />
-          </div>
-        );
-      })}
-      {step < snippets.length && <button onClick={() => setStep((r) => r + 1)}>next</button>}
-    </div>
+    <Stepper
+      steps={snippets.map(([code, label]) => (
+        <>
+          <h3 className="pb-4">{label}</h3>
+          <EventEditor code={code} />
+        </>
+      ))}
+    />
   );
 }
 
