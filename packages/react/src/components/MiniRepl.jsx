@@ -49,7 +49,10 @@ export function MiniRepl({
   } = useStrudel({
     initialCode: tune,
     defaultOutput: webaudioOutput,
-    editPattern: (pat) => (punchcard ? pat.punchcard() : pat),
+    editPattern: (pat, id) => {
+      pat = pat.withContext((ctx) => ({ ...ctx, id }));
+      return punchcard ? pat.punchcard() : pat;
+    },
     getTime,
     evalOnMount,
     drawContext,
@@ -103,7 +106,7 @@ export function MiniRepl({
       // const logId = data?.pattern?.meta?.id;
       if (logId === replId) {
         setLog((l) => {
-          return l.concat([e.detail]).slice(-10);
+          return l.concat([e.detail]).slice(-8);
         });
       }
     }, []),

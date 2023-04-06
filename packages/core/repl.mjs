@@ -16,6 +16,7 @@ export function repl({
   onToggle,
   editPattern,
 }) {
+  const id = s4();
   const scheduler = new Cyclist({
     interval,
     onTrigger: async (hap, deadline, duration, cps) => {
@@ -45,7 +46,7 @@ export function repl({
       let { pattern } = await _evaluate(code, transpiler);
 
       logger(`[eval] code updated`);
-      pattern = editPattern?.(pattern) || pattern;
+      pattern = editPattern?.(pattern, id) || pattern;
       scheduler.setPattern(pattern, autostart);
       afterEval?.({ code, pattern });
       return pattern;
@@ -63,5 +64,11 @@ export function repl({
     setCps,
     setcps: setCps,
   });
-  return { scheduler, evaluate, start, stop, pause, setCps };
+  return { scheduler, evaluate, start, stop, pause, setCps, id };
+}
+
+function s4() {
+  return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
 }
