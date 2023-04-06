@@ -16,7 +16,7 @@ const loadedMDXFiles = await Promise.all(
   }),
 );
 
-const order = ['01', '02-0', '02-1', '02-2', 'mini-comparison', 'patterns-events', '04'];
+const order = ['01', '02-0', '02-1', '02-2', 'mini-comparison', 'patterns-events', 'events-audio', '04'];
 
 const slideEntries = order.map((name) => loadedMDXFiles.find(([file]) => file === name));
 
