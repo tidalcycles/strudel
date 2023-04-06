@@ -15,3 +15,7 @@
 .cm-gutters {
   display: none !important;
 }
+
+img {
+  @apply rounded-xl overflow-hidden;
+}

@@ -30,9 +30,8 @@ export function SlideRepl({
   fontSize = 32,
   disabled = false,
 }) {
-  // const { theme } = useSettings();
   return (
-    <div className="mb-4">
+    <div className="mb-4 not-prose rounded-xl overflow-hidden">
       <_MiniRepl
         hideHeader={hideHeader}
         tune={tune}

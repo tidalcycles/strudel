@@ -16,7 +16,7 @@ const loadedMDXFiles = await Promise.all(
   }),
 );
 
-const order = ['01', '02-0', '02-1', '02-2', '03-0', '03-1', '04'];
+const order = ['01', '02-0', '02-1', '02-2', 'mini-comparison', 'patterns-events', '04'];
 
 const slideEntries = order.map((name) => loadedMDXFiles.find(([file]) => file === name));
 
@@ -54,12 +54,12 @@ function Slides() {
         <div
           key={i}
           className={cx(
-            `bg-slate-900 w-full h-full flex justify-center p-12 absolute top-0 transition-all ease-in-out duration-500`,
+            `bg-slate-900 w-full h-full flex justify-center absolute top-0 transition-all ease-in-out duration-500 overflow-auto`,
             i < activeIndex && '-translate-x-full',
             i > activeIndex && 'translate-x-full',
           )}
         >
-          <div className="prose prose-invert w-[1400px] max-w-full overflow-auto" style={{ fontSize: '2em' }}>
+          <div className="prose prose-invert w-[1400px] p-12 max-w-full" style={{ fontSize: '2em' }}>
             {Math.abs(i - activeIndex) < 2 && <Slide />}
           </div>
         </div>
