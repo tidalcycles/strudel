@@ -66,28 +66,12 @@ function TranspilationDemo() {
     <div className="not-prose space-y-8">
       <Stepper
         steps={[
-          <>
-            <ul className="list-decimal pl-8">
-              <li>Enter JS Code</li>
-              <li>Parse JS Code with acorn to get AST</li>
-              <li>Modify AST with estree-walker</li>
-              <li>Convert modified AST back to JS with escodegen</li>
-            </ul>
-          </>,
+          <ul className="list-decimal pl-8">
+            <li>Parse JS Code with acorn to get AST</li>
+            <li>Modify AST with estree-walker</li>
+            <li>Convert modified AST back to JS with escodegen</li>
+          </ul>,
           <TranspilationEditor code={`"bd [hh sd]"`} />,
-          <div className="space-y-2 py-2">
-            <span>⬇️ calls</span>
-            <Highlight
-              code={`seq(
-  reify('bd').withLocation([1,1,1], [1,4,4]),
-  seq(
-    reify('hh').withLocation([1,5,5], [1,8,8]),
-    reify('sd').withLocation([1,8,8], [1,10,10]),
-  )
-).withMiniLocation([1,0,0],[1,12,12])`}
-            />
-            <span>➡️ location can be used for highlighting</span>
-          </div>,
         ]}
       />
     </div>

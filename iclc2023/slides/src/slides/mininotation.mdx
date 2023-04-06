@@ -1,0 +1,27 @@
+import Highlight from '../Highlight';
+import Stepper from '../Stepper';
+
+# User Code: Mini Notation
+
+<Stepper
+  steps={[
+    <ul className="list-decimal pl-8">
+      <li>Parse Mini Notation to get AST</li>
+      <li>walk AST and construct function calls</li>
+    </ul>,
+    <div className="space-y-2 py-2">
+      <Highlight code={`mini('bd [hh sd]')`} />
+      <span>⬇️ resulting calls</span>
+      <Highlight
+        code={`seq(
+  reify('bd').withLocation([1,1,1], [1,4,4]),
+  seq(
+    reify('hh').withLocation([1,5,5], [1,8,8]),
+    reify('sd').withLocation([1,8,8], [1,10,10]),
+  )
+)`}
+      />
+      <span>➡️ location can be used for highlighting</span>
+    </div>,
+  ]}
+/>

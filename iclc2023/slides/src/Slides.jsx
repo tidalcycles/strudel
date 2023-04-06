@@ -21,12 +21,18 @@ const order = [
   'whatIsStrudel',
   'history',
   'hs2js',
-  'mini-comparison',
   'patterns-events',
-  'events-audio',
-  'transpilation',
+  'events-audio', // outputs
+  'outputs',
+  //
   'replflow',
-  'systems',
+  'transpilation',
+  'mininotation',
+  'mini-comparison',
+  // scheduling?
+  // pattern alignment?
+  // flexible typing?
+  // future outlook?
 ];
 
 const slideEntries = order.map((name) => loadedMDXFiles.find(([file]) => file === name));

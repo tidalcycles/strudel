@@ -8,7 +8,7 @@ import hs from 'react-syntax-highlighter/dist/esm/languages/hljs/haskell';
 SyntaxHighlighter.registerLanguage('javascript', js);
 SyntaxHighlighter.registerLanguage('haskell', hs);
 
-function Highlight({ code, language }) {
+function Highlight({ code, language = 'javascript' }) {
   return (
     <div className="text-[32px] leading-10 rounded-xl overflow-hidden">
       <SyntaxHighlighter language={language} style={atomOneDark} customStyle={{ padding: '8px 10px' }}>
