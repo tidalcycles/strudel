@@ -20,17 +20,19 @@ function MiniComparison() {
       </h1>
       <Stepper
         steps={snippets.map(([a, b, label]) => (
-          <>
+          <div className="py-4">
             <h3 className="pb-4">{label}</h3>
-            <div className="flex space-x-2">
-              <img src="./img/tidalcycles.svg" className={`h-10 mt-2`} />
-              <SlideRepl tune={a} hideHeader />
+            <div className="space-y-2">
+              <div className="flex space-x-2">
+                <img src="./img/tidalcycles.svg" className={`h-10 mt-2`} />
+                <SlideRepl tune={a} hideHeader />
+              </div>
+              <div className="flex space-x-2">
+                <img src="./img/js.jpg" className={`h-10 mt-2`} />
+                <SlideRepl tune={b} hideHeader />
+              </div>
             </div>
-            <div className="flex space-x-2">
-              <img src="./img/js.jpg" className={`h-10 mt-2`} />
-              <SlideRepl tune={b} hideHeader />
-            </div>
-          </>
+          </div>
         ))}
       />
     </>

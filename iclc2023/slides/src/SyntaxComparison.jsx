@@ -49,9 +49,9 @@ function SyntaxComparison() {
       </h1>
       <Stepper
         steps={snippets.map(([hs, js, label]) => (
-          <>
-            <h3 className="pb-4">{label}</h3>
-            <div>
+          <div className="py-4 space-y-4">
+            <h3>{label}</h3>
+            <div className="space-y-2">
               <div className="flex space-x-4">
                 <img src="./img/haskell.png" className="h-10 mt-2" />
                 <Highlight language="haskell" code={hs} />
@@ -65,7 +65,7 @@ function SyntaxComparison() {
                 ))}
               </div>
             </div>
-          </>
+          </div>
         ))}
       />
     </>

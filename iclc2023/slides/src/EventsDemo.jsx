@@ -27,10 +27,10 @@ function EventsDemo() {
   return (
     <Stepper
       steps={snippets.map(([code, label]) => (
-        <>
-          <h3 className="pb-4">{label}</h3>
+        <div className="py-4 space-y-4">
+          <h3>{label}</h3>
           <EventEditor code={code} />
-        </>
+        </div>
       ))}
     />
   );

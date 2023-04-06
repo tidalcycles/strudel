@@ -10,7 +10,7 @@ SyntaxHighlighter.registerLanguage('haskell', hs);
 
 function Highlight({ code, language }) {
   return (
-    <div className="mb-4 text-[32px] leading-10 rounded-xl overflow-hidden">
+    <div className="text-[32px] leading-10 rounded-xl overflow-hidden">
       <SyntaxHighlighter language={language} style={atomOneDark} customStyle={{ padding: '8px 10px' }}>
         {code}
       </SyntaxHighlighter>

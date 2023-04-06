@@ -31,7 +31,7 @@ export function SlideRepl({
   disabled = false,
 }) {
   return (
-    <div className="mb-4 not-prose rounded-xl overflow-hidden">
+    <div className="not-prose rounded-xl overflow-hidden">
       <_MiniRepl
         hideHeader={hideHeader}
         tune={tune}

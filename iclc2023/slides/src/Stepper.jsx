@@ -7,7 +7,7 @@ function Stepper({ steps }) {
       {steps.slice(0, step).map((snippet, i) => {
         const isActive = i === step - 1;
         return (
-          <div key={i} className={`border-l-4 pl-8 border-gray-500 py-4 ${isActive ? 'p-4 border-yellow-500' : ''}`}>
+          <div key={i} className={`border-l-4 pl-8 border-gray-500 ${isActive ? 'border-yellow-500' : ''}`}>
             {snippet}
           </div>
         );
