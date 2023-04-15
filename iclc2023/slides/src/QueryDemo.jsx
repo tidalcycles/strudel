@@ -3,7 +3,13 @@ import Highlight from './Highlight.jsx';
 import Stepper from './Stepper.jsx';
 
 const snippets = [
-  [<SlideRepl tune={`s("bd [hh sd]").crush(4).log()`} hideHeader />, 'Logging Events'],
+  [
+    <>
+      {' '}
+      <SlideRepl tune={`s("bd [hh sd]").crush(4).log()`} hideHeader />
+    </>,
+    'Logging Events',
+  ],
   [
     <>
       <Highlight
@@ -27,14 +33,17 @@ console.log(events.map(e => e.show()))`}
 
 function QueryDemo() {
   return (
-    <Stepper
-      steps={snippets.map(([snippet, label]) => (
-        <div className="py-4 space-y-4">
-          <h3>{label}</h3>
-          {snippet}
-        </div>
-      ))}
-    />
+    <>
+      <img src="./img/queryflow.png" className="w-[800px]" />
+      <Stepper
+        steps={snippets.map(([snippet, label]) => (
+          <div className="py-4 space-y-4">
+            <h3>{label}</h3>
+            {snippet}
+          </div>
+        ))}
+      />
+    </>
   );
 }
 

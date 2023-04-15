@@ -27,15 +27,19 @@ const order = [
   'repl-features',
   'viz',
 
-  'patterns-events',
-  'events-audio', // outputs
-  'outputs',
-  //
   'replflow',
+
+  // User Code
   'transpilation',
   'mininotation',
   'mini-comparison',
-  // scheduling?
+  // Patterns
+  'patterns-events',
+  // scheduler?
+  // Output
+  'events-audio',
+  'outputs',
+  //
   // pattern alignment?
   // flexible typing?
   // future outlook?

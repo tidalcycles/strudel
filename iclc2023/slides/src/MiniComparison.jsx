@@ -14,7 +14,7 @@ function MiniComparison() {
   return (
     <>
       <h1>
-        Mini Notation -&gt; JavaScript
+        User Code: Mini Notation -&gt; JavaScript
         <br />
         <small>External DSL</small>
       </h1>

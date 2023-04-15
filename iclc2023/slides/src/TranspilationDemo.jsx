@@ -66,11 +66,14 @@ function TranspilationDemo() {
     <div className="not-prose space-y-8">
       <Stepper
         steps={[
-          <ul className="list-decimal pl-8">
-            <li>Parse JS Code with acorn to get AST</li>
-            <li>Modify AST with estree-walker</li>
-            <li>Convert modified AST back to JS with escodegen</li>
-          </ul>,
+          <>
+            <img src="./img/transpileflow.png" className="h-[500px]" />
+            <ul className="list-decimal pl-8">
+              <li>Parse JS Code with acorn to get AST</li>
+              <li>Modify AST with estree-walker</li>
+              <li>Convert modified AST back to JS with escodegen</li>
+            </ul>
+          </>,
           <TranspilationEditor code={`"bd [hh sd]"`} />,
         ]}
       />
