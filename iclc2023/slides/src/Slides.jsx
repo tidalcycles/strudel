@@ -21,6 +21,12 @@ const order = [
   'whatIsStrudel',
   'history',
   'hs2js',
+
+  'usage',
+  'repl',
+  'repl-features',
+  'viz',
+
   'patterns-events',
   'events-audio', // outputs
   'outputs',
