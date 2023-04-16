@@ -3,13 +3,13 @@ import { getAudioContext, registerSound, getEnvelope } from '@strudel.cycles/web
 import gm from './gm.mjs';
 
 let loadCache = {};
-async function loadFont(name) {
+async function loadFont(name, base) {
   if (loadCache[name]) {
     return loadCache[name];
   }
   const load = async () => {
     // TODO: make soundfont source configurable
-    const url = `https://felixroos.github.io/webaudiofontdata/sound/${name}.js`;
+    const url = `${base}${name}.js`;
     const preset = await fetch(url).then((res) => res.text());
     let [_, data] = preset.split('={');
     return eval('{' + data);
@@ -18,7 +18,7 @@ async function loadFont(name) {
   return loadCache[name];
 }
 
-export async function getFontBufferSource(name, value, ac) {
+export async function getFontBufferSource(name, value, ac, base) {
   let { note = 'c3', freq } = value;
   let midi;
   if (freq) {
@@ -31,7 +31,7 @@ export async function getFontBufferSource(name, value, ac) {
     throw new Error(`unexpected "note" type "${typeof note}"`);
   }
 
-  const { buffer, zone } = await getFontPitch(name, midi, ac);
+  const { buffer, zone } = await getFontPitch(name, midi, ac, base);
   const src = ac.createBufferSource();
   src.buffer = buffer;
   const baseDetune = zone.originalPitch - 100.0 * zone.coarseTune - zone.fineTune;
@@ -55,14 +55,14 @@ export async function getFontBufferSource(name, value, ac) {
 }
 
 let bufferCache = {};
-export async function getFontPitch(name, pitch, ac) {
+export async function getFontPitch(name, pitch, ac, base) {
   const key = `${name}:::${pitch}`;
   if (bufferCache[key]) {
     return bufferCache[key];
   }
   // console.log('load buffer', key);
   const load = async () => {
-    const preset = await loadFont(name);
+    const preset = await loadFont(name, base);
     if (!preset) {
       throw new Error(`Could not load soundfont ${name}`);
     }
@@ -125,7 +125,7 @@ async function getBuffer(zone, audioContext) {
   }
 }
 
-export function registerSoundfonts() {
+export function registerSoundfonts(base = `https://felixroos.github.io/webaudiofontdata/sound/`) {
   Object.entries(gm).forEach(([name, fonts]) => {
     registerSound(
       name,
@@ -134,7 +134,7 @@ export function registerSoundfonts() {
         const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
         const font = fonts[n % fonts.length];
         const ctx = getAudioContext();
-        const bufferSource = await getFontBufferSource(font, value, ctx);
+        const bufferSource = await getFontBufferSource(font, value, ctx, base);
         bufferSource.start(time);
         const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 0.3, time);
         bufferSource.connect(envelope);
