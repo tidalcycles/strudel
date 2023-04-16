@@ -28,6 +28,7 @@ const order = [
   'hs2js',
 
   'usage',
+  'swatch',
   'repl',
   'repl-features',
   'viz',
@@ -37,7 +38,7 @@ const order = [
   // User Code
   'transpilation',
   'mininotation',
-  'mini-comparison',
+  'mini-comparison', // remove?
   // Patterns
   'patterns-events',
   // scheduler?
@@ -47,13 +48,13 @@ const order = [
   'csound',
   //
   // pattern alignment?
-  // flexible typing?
-  // future outlook?
   'bad',
   'good',
   'future',
   'end',
 ];
+// examples swatch
+// draw examples!!
 
 const slideEntries = order.map((name) => loadedMDXFiles.find(([file]) => file === name));
 
