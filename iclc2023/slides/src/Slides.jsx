@@ -43,6 +43,7 @@ const order = [
   // pattern alignment?
   // flexible typing?
   // future outlook?
+  'end',
 ];
 
 const slideEntries = order.map((name) => loadedMDXFiles.find(([file]) => file === name));

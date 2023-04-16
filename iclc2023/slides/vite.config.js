@@ -12,4 +12,7 @@ const options = {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), mdx(options)],
+  build: {
+    target: 'esnext', //browsers can handle the latest ES features
+  },
 });
