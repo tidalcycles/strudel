@@ -13,11 +13,7 @@ const snippets = [
 function MiniComparison() {
   return (
     <>
-      <h1>
-        User Code: Mini Notation -&gt; JavaScript
-        <br />
-        <small>External DSL</small>
-      </h1>
+      <h1>User Code: Mini Notation -&gt; JavaScript</h1>
       <Stepper
         steps={snippets.map(([a, b, label]) => (
           <div className="py-4">

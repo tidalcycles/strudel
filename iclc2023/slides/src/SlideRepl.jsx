@@ -13,6 +13,7 @@ if (typeof window !== 'undefined') {
     import('@strudel.cycles/mini'),
     import('@strudel.cycles/webaudio'),
     import('@strudel.cycles/soundfonts'),
+    import('@strudel.cycles/csound'),
   );
 }
 

@@ -7,14 +7,19 @@ function cx(...classes) {
 }
 // https://vitejs.dev/guide/features.html#glob-import
 const slideImports = import.meta.glob('./slides/*.mdx');
+//const slideImports = import.meta.glob('./slides/*.mdx', { eager: true });
+console.log('load slides...', slideImports);
 
 const loadedMDXFiles = await Promise.all(
   Object.entries(slideImports).map(async ([path, load]) => {
+    //Object.entries(slideImports).map(async ([path, m]) => {
     const segments = path.split('/');
     const filename = segments[segments.length - 1].slice(0, -4); // expects .mdx at the end
     return [filename, (await load()).default];
+    //return [filename, m.default];
   }),
 );
+console.log('load done!');
 
 const order = [
   'cover',
@@ -39,10 +44,14 @@ const order = [
   // Output
   'events-audio',
   'outputs',
+  'csound',
   //
   // pattern alignment?
   // flexible typing?
   // future outlook?
+  'bad',
+  'good',
+  'future',
   'end',
 ];
 
@@ -57,7 +66,7 @@ export const next = () => slideIndex.set((parseInt(slideIndex.get()) + 1) % slid
 function Slides() {
   const activeIndex = parseInt(useStore(slideIndex));
 
-  useEvent('click', (e) => {
+  /*useEvent('click', (e) => {
     if (!e.ctrlKey) {
       return;
     }
@@ -67,7 +76,7 @@ function Slides() {
     } else {
       next();
     }
-  });
+  });*/
   /*useEvent('keydown', (e) => {
     if (e.key === 'Home') {
       prev();
@@ -88,10 +97,18 @@ function Slides() {
           )}
         >
           <div className="prose prose-invert w-[1400px] p-12 max-w-full" style={{ fontSize: '2em' }}>
-            {Math.abs(i - activeIndex) < 2 && <Slide />}
+            {Math.abs(i - activeIndex) <= 1 && <Slide />}
           </div>
         </div>
       ))}
+      <div className="text-white text-2xl text-bold cursor-pointer select-none">
+        <div className="fixed left-0 p-4 h-full items-start flex hover:bg-[#00000050]" onClick={() => prev()}>
+          &lt;
+        </div>
+        <div className="fixed right-0 p-4 h-full items-start flex hover:bg-[#00000050]" onClick={() => next()}>
+          &gt;
+        </div>
+      </div>
       <div className="absolute top-0 w-full">
         <div className="h-[5px] bg-slate-500 w-full z-100">
           <div

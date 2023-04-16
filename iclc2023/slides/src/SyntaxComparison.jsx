@@ -42,31 +42,29 @@ const snippets = [
 function SyntaxComparison() {
   return (
     <>
-      <h1>
-        Haskell -&gt; JavaScript
-        <br />
-        <small>Internal DSL / Fluent Interface</small>
-      </h1>
+      <h1>Haskell -&gt; JavaScript</h1>
       <Stepper
-        steps={snippets.map(([hs, js, label]) => (
-          <div className="py-4 space-y-4">
-            <h3>{label}</h3>
-            <div className="space-y-2">
-              <div className="flex space-x-4">
-                <img src="./img/haskell.png" className="h-10 mt-2" />
-                <Highlight language="haskell" code={hs} />
-              </div>
-              <div>
-                {js.map((c, j) => (
-                  <div className="flex space-x-4" key={j}>
-                    <img src="./img/js.jpg" className={`h-10 mt-2`} />
-                    <SlideRepl tune={c} hideHeader />
-                  </div>
-                ))}
+        steps={snippets
+          .map(([hs, js, label]) => (
+            <div className="py-4 space-y-4">
+              <h3>{label}</h3>
+              <div className="space-y-2">
+                <div className="flex space-x-4">
+                  <img src="./img/haskell.png" className="h-10 mt-2" />
+                  <Highlight language="haskell" code={hs} />
+                </div>
+                <div>
+                  {js.map((c, j) => (
+                    <div className="flex space-x-4" key={j}>
+                      <img src="./img/js.jpg" className={`h-10 mt-2`} />
+                      <SlideRepl tune={c} hideHeader />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+          .concat([<>Fluent Interface: Just chain all the things!</>])}
       />
     </>
   );
