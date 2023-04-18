@@ -38,14 +38,14 @@ const order = [
   // User Code
   'transpilation',
   'mininotation',
-  'mini-comparison', // remove?
+  // 'mini-comparison', // remove?
   // Patterns
-  'patterns-events',
+  // 'patterns-events', // remove?
   // scheduler?
   // Output
-  'events-audio',
+  // 'events-audio', // remove?
   'outputs',
-  'csound',
+  // 'csound', // remove?
   //
   // pattern alignment?
   'bad',
