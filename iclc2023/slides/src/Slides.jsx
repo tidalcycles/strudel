@@ -30,7 +30,7 @@ const order = [
   'usage',
   'swatch',
   'repl',
-  'repl-features',
+  //'repl-features',
   'viz',
 
   'replflow',
@@ -40,10 +40,10 @@ const order = [
   'mininotation',
   // 'mini-comparison', // remove?
   // Patterns
-  // 'patterns-events', // remove?
+  'patterns-events', // remove?
   // scheduler?
   // Output
-  // 'events-audio', // remove?
+  'events-audio', // remove?
   'outputs',
   // 'csound', // remove?
   //
