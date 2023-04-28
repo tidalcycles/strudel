@@ -37,6 +37,6 @@
   "devDependencies": {
     "peggy": "^2.0.1",
     "vite": "^3.2.2",
-    "vitest": "^0.25.7"
+    "vitest": "^0.28.0"
   }
 }
