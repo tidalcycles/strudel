@@ -30,11 +30,11 @@ importers:
         version: 9.0.0
       vitest:
         specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.25.8)
+        version: 0.28.0(@vitest/ui@0.28.0)
     devDependencies:
       '@vitest/ui':
-        specifier: ^0.25.7
-        version: 0.25.8
+        specifier: ^0.28.0
+        version: 0.28.0
       c8:
         specifier: ^7.12.0
         version: 7.12.0
@@ -83,7 +83,7 @@ importers:
         version: 3.2.5(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.25.8)
+        version: 0.28.0(@vitest/ui@0.28.0)
 
   packages/core/examples/vite-vanilla-repl:
     dependencies:
@@ -157,7 +157,7 @@ importers:
         version: 3.2.5(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.25.8)
+        version: 0.28.0(@vitest/ui@0.28.0)
 
   packages/midi:
     dependencies:
@@ -189,7 +189,7 @@ importers:
         version: 3.2.5(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.25.8)
+        version: 0.28.0(@vitest/ui@0.28.0)
 
   packages/osc:
     dependencies:
@@ -381,7 +381,7 @@ importers:
         version: 3.2.5(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.25.8)
+        version: 0.28.0(@vitest/ui@0.28.0)
 
   packages/tone:
     dependencies:
@@ -397,7 +397,7 @@ importers:
         version: 3.2.5(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.25.8)
+        version: 0.28.0(@vitest/ui@0.28.0)
 
   packages/transpiler:
     dependencies:
@@ -419,7 +419,7 @@ importers:
         version: 3.2.5(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.25.8)
+        version: 0.28.0(@vitest/ui@0.28.0)
 
   packages/webaudio:
     dependencies:
@@ -451,7 +451,7 @@ importers:
         version: 3.2.5(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.25.8)
+        version: 0.28.0(@vitest/ui@0.28.0)
 
   packages/xen:
     dependencies:
@@ -464,7 +464,7 @@ importers:
         version: 3.2.5(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.25.8)
+        version: 0.28.0(@vitest/ui@0.28.0)
 
   website:
     dependencies:
@@ -3993,9 +3993,13 @@ packages:
     dependencies:
       tinyspy: 1.0.2
 
-  /@vitest/ui@0.25.8:
-    resolution: {integrity: sha512-wfuhghldD5QHLYpS46GK8Ru8P3XcMrWvFjRQD21KNzc9Y/qtJsqoC8KmT6xWVkMNw4oHYixpo3a4ZySRJdserw==}
+  /@vitest/ui@0.28.0:
+    resolution: {integrity: sha512-ihcVEx8t1gZXMboPGcIvoHk+PxiW5USxDMqnZOeUVIUm+XrRCtoJ96YDXdeR6MyPWeYLBPXfBWSxp5gMqoNSkw==}
     dependencies:
+      fast-glob: 3.2.12
+      flatted: 3.2.7
+      pathe: 1.1.0
+      picocolors: 1.0.0
       sirv: 2.0.2
 
   /@vitest/utils@0.28.0:
@@ -12708,7 +12712,7 @@ packages:
       vite: 3.2.5(@types/node@18.11.18)
     dev: false
 
-  /vitest@0.28.0(@vitest/ui@0.25.8):
+  /vitest@0.28.0(@vitest/ui@0.28.0):
     resolution: {integrity: sha512-qgPw3vHEOc36wJBknmmeWIpuaLnXtWZinkeT8aOTyIuBYipgpabVzWjWgCilKDa8F+ZrY2cHeH2xGUCYOc5/XA==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
@@ -12736,7 +12740,7 @@ packages:
       '@vitest/expect': 0.28.0
       '@vitest/runner': 0.28.0
       '@vitest/spy': 0.28.0
-      '@vitest/ui': 0.25.8
+      '@vitest/ui': 0.28.0
       '@vitest/utils': 0.28.0
       acorn: 8.8.2
       acorn-walk: 8.2.0
