@@ -59,7 +59,7 @@
   "devDependencies": {
     "@vite-pwa/astro": "^0.0.1",
     "html-escaper": "^3.0.3",
-    "vite-plugin-pwa": "^0.14.1",
+    "vite-plugin-pwa": "^0.14.7",
     "workbox-window": "^6.5.4"
   }
 }
