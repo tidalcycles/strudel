@@ -54,7 +54,7 @@
     "@strudel.cycles/xen": "workspace:*",
     "acorn": "^8.8.1",
     "dependency-tree": "^9.0.0",
-    "vitest": "^0.25.7"
+    "vitest": "^0.28.0"
   },
   "devDependencies": {
     "@vitest/ui": "^0.25.7",
