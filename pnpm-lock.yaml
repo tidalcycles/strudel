@@ -54,14 +54,14 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       jsdoc:
-        specifier: ^3.6.10
-        version: 3.6.11
+        specifier: ^4.0.2
+        version: 4.0.2
       jsdoc-json:
         specifier: ^2.0.2
         version: 2.0.2
       jsdoc-to-markdown:
-        specifier: ^7.1.1
-        version: 7.1.1
+        specifier: ^8.0.0
+        version: 8.0.0
       lerna:
         specifier: ^6.5.1
         version: 6.5.1
@@ -798,8 +798,8 @@ packages:
     engines: {node: ^14.18.0 || >=16.12.0}
     dependencies:
       '@astrojs/prism': 1.0.2
-      '@mdx-js/mdx': 2.2.1
-      '@mdx-js/rollup': 2.2.1(rollup@3.12.0)
+      '@mdx-js/mdx': 2.3.0
+      '@mdx-js/rollup': 2.3.0(rollup@3.12.0)
       acorn: 8.8.2
       es-module-lexer: 0.10.5
       estree-util-visit: 1.2.1
@@ -1189,6 +1189,13 @@ packages:
 
   /@babel/parser@7.20.13:
     resolution: {integrity: sha512-gFDLKMfpiXCsjt4za2JA9oTMn70CeseCehb11kRZgvd7+F67Hih3OHOK24cRrWECJ/ljfPGac6ygXAs/C8kIvw==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+    dependencies:
+      '@babel/types': 7.20.7
+
+  /@babel/parser@7.21.4:
+    resolution: {integrity: sha512-alVJj7k7zIxqBZ7BTRhz0IqJFxW1VJbm6N8JbcYhQ186df9ZBPbZBmWSqAMXwHGsCJdYks7z/voa3ibiS5bCIw==}
     engines: {node: '>=6.0.0'}
     hasBin: true
     dependencies:
@@ -2062,7 +2069,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/code-frame': 7.18.6
-      '@babel/parser': 7.20.13
+      '@babel/parser': 7.21.4
       '@babel/types': 7.20.7
 
   /@babel/traverse@7.20.13:
@@ -2075,7 +2082,7 @@ packages:
       '@babel/helper-function-name': 7.19.0
       '@babel/helper-hoist-variables': 7.18.6
       '@babel/helper-split-export-declaration': 7.18.6
-      '@babel/parser': 7.20.13
+      '@babel/parser': 7.21.4
       '@babel/types': 7.20.7
       debug: 4.3.4
       globals: 11.12.0
@@ -2453,8 +2460,8 @@ packages:
       - encoding
       - supports-color
 
-  /@mdx-js/mdx@2.2.1:
-    resolution: {integrity: sha512-hZ3ex7exYLJn6FfReq8yTvA6TE53uW9UHJQM9IlSauOuS55J9y8RtA7W+dzp6Yrzr00/U1sd7q+Wf61q6SfiTQ==}
+  /@mdx-js/mdx@2.3.0:
+    resolution: {integrity: sha512-jLuwRlz8DQfQNiUCJR50Y09CGPq3fLtmtUQfVrj79E0JWu3dvsVcxVIcfhR5h0iXu+/z++zDrYeiJqifRynJkA==}
     dependencies:
       '@types/estree-jsx': 1.0.0
       '@types/mdx': 2.0.3
@@ -2477,12 +2484,12 @@ packages:
       - supports-color
     dev: false
 
-  /@mdx-js/rollup@2.2.1(rollup@3.12.0):
-    resolution: {integrity: sha512-wpGeK9iO7gPEIyC/ZTiggLY/MkEWDj5IWSsjlpkefgjb5RbmUukXU6/D2rHA+VAopxigS3NlaIL2ctpYBi4fmg==}
+  /@mdx-js/rollup@2.3.0(rollup@3.12.0):
+    resolution: {integrity: sha512-wLvRfJS/M4UmdqTd+WoaySEE7q4BIejYf1xAHXYvtT1du/1Tl/z2450Gg2+Hu7fh05KwRRiehiTP9Yc/Dtn0fA==}
     peerDependencies:
       rollup: '>=2'
     dependencies:
-      '@mdx-js/mdx': 2.2.1
+      '@mdx-js/mdx': 2.3.0
       '@rollup/pluginutils': 5.0.2(rollup@3.12.0)
       rollup: 3.12.0
       source-map: 0.7.4
@@ -3380,7 +3387,7 @@ packages:
   /@types/babel__template@7.4.1:
     resolution: {integrity: sha512-azBFKemX6kMg5Io+/rdGT0dkGreboUVR0Cdm3fz9QJWpaQGJRQXl7C+6hOTCZcMll7KFyEQpgbYI2lHdsS4U7g==}
     dependencies:
-      '@babel/parser': 7.20.13
+      '@babel/parser': 7.21.4
       '@babel/types': 7.20.7
 
   /@types/babel__traverse@7.18.3:
@@ -7849,8 +7856,8 @@ packages:
       xmlcreate: 2.0.4
     dev: true
 
-  /jsdoc-api@7.2.0:
-    resolution: {integrity: sha512-93YDnlm/OYTlLOFeNs4qAv0RBCJ0kGj67xQaWy8wrbk97Rw1EySitoOTHsTHXPEs3uyx2IStPKGrbE7LTnZXbA==}
+  /jsdoc-api@8.0.0:
+    resolution: {integrity: sha512-Rnhor0suB1Ds1abjmFkFfKeD+kSMRN9oHMTMZoJVUrmtCGDwXty+sWMA9sa4xbe4UyxuPjhC7tavZ40mDKK6QQ==}
     engines: {node: '>=12.17'}
     dependencies:
       array-back: 6.2.2
@@ -7858,7 +7865,7 @@ packages:
       collect-all: 1.0.4
       file-set: 4.0.2
       fs-then-native: 2.0.0
-      jsdoc: 4.0.0
+      jsdoc: 4.0.2
       object-to-spawn-args: 2.0.1
       temp-path: 1.0.0
       walk-back: 5.1.0
@@ -7880,8 +7887,8 @@ packages:
       test-value: 3.0.0
     dev: true
 
-  /jsdoc-to-markdown@7.1.1:
-    resolution: {integrity: sha512-CI86d63xAVNO+ENumWwmJ034lYe5iGU5GwjtTA11EuphP9tpnoi4hrKgR/J8uME0D+o4KUpVfwX1fjZhc8dEtg==}
+  /jsdoc-to-markdown@8.0.0:
+    resolution: {integrity: sha512-2FQvYkg491+FP6s15eFlgSSWs69CvQrpbABGYBtvAvGWy/lWo8IKKToarT283w59rQFrpcjHl3YdhHCa3l7gXg==}
     engines: {node: '>=12.17'}
     hasBin: true
     dependencies:
@@ -7889,39 +7896,17 @@ packages:
       command-line-tool: 0.8.0
       config-master: 3.1.0
       dmd: 6.2.0
-      jsdoc-api: 7.2.0
+      jsdoc-api: 8.0.0
       jsdoc-parse: 6.2.0
       walk-back: 5.1.0
     dev: true
 
-  /jsdoc@3.6.11:
-    resolution: {integrity: sha512-8UCU0TYeIYD9KeLzEcAu2q8N/mx9O3phAGl32nmHlE0LpaJL71mMkP4d+QE5zWfNt50qheHtOZ0qoxVrsX5TUg==}
+  /jsdoc@4.0.2:
+    resolution: {integrity: sha512-e8cIg2z62InH7azBBi3EsSEqrKx+nUtAS5bBcYTSpZFA+vhNPyhv8PTFZ0WsjOPDj04/dOLlm08EDcQJDqaGQg==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
-      '@babel/parser': 7.20.13
-      '@types/markdown-it': 12.2.3
-      bluebird: 3.7.2
-      catharsis: 0.9.0
-      escape-string-regexp: 2.0.0
-      js2xmlparser: 4.0.2
-      klaw: 3.0.0
-      markdown-it: 12.3.2
-      markdown-it-anchor: 8.6.6(@types/markdown-it@12.2.3)(markdown-it@12.3.2)
-      marked: 4.2.12
-      mkdirp: 1.0.4
-      requizzle: 0.2.4
-      strip-json-comments: 3.1.1
-      taffydb: 2.6.2
-      underscore: 1.13.6
-    dev: true
-
-  /jsdoc@4.0.0:
-    resolution: {integrity: sha512-tzTgkklbWKrlaQL2+e3NNgLcZu3NaK2vsHRx7tyHQ+H5jcB9Gx0txSd2eJWlMC/xU1+7LQu4s58Ry0RkuaEQVg==}
-    engines: {node: '>=12.0.0'}
-    hasBin: true
-    dependencies:
-      '@babel/parser': 7.20.13
+      '@babel/parser': 7.21.4
       '@jsdoc/salty': 0.2.3
       '@types/markdown-it': 12.2.3
       bluebird: 3.7.2
@@ -9378,7 +9363,7 @@ packages:
     resolution: {integrity: sha512-8Q1hXew6ETzqKRAs3jjLioSxNfT1cx74ooiF8RlAONwVMcfq+UdzLC2eB5qcPldUxaE5w3ytLkrmV1TGddhZTA==}
     engines: {node: '>=6.0'}
     dependencies:
-      '@babel/parser': 7.20.13
+      '@babel/parser': 7.21.4
     dev: false
 
   /node-source-walk@5.0.0:
@@ -11633,10 +11618,6 @@ packages:
       lodash.padend: 4.6.1
       typical: 2.6.1
       wordwrapjs: 3.0.0
-    dev: true
-
-  /taffydb@2.6.2:
-    resolution: {integrity: sha512-y3JaeRSplks6NYQuCOj3ZFMO3j60rTwbuKCvZxsAraGYH2epusatvZ0baZYA01WsGqJBq/Dl6vOrMUJqyMj8kA==}
     dev: true
 
   /tailwindcss@3.2.4(postcss@8.4.21):

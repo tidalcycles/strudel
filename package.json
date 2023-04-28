@@ -64,9 +64,9 @@
     "eslint-plugin-import": "^2.27.5",
     "events": "^3.3.0",
     "gh-pages": "^4.0.0",
-    "jsdoc": "^3.6.10",
+    "jsdoc": "^4.0.2",
     "jsdoc-json": "^2.0.2",
-    "jsdoc-to-markdown": "^7.1.1",
+    "jsdoc-to-markdown": "^8.0.0",
     "lerna": "^6.5.1",
     "prettier": "^2.8.1",
     "rollup-plugin-visualizer": "^5.8.1"
