@@ -57,7 +57,7 @@
     "tailwindcss": "^3.2.4"
   },
   "devDependencies": {
-    "@vite-pwa/astro": "^0.0.1",
+    "@vite-pwa/astro": "^0.0.5",
     "html-escaper": "^3.0.3",
     "vite-plugin-pwa": "^0.14.7",
     "workbox-window": "^6.5.4"
