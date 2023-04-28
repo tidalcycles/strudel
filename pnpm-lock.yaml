@@ -427,8 +427,8 @@ importers:
         specifier: workspace:*
         version: link:../core
       nanostores:
-        specifier: ^0.7.4
-        version: 0.7.4
+        specifier: ^0.8.1
+        version: 0.8.1
     devDependencies:
       vite:
         specifier: ^3.2.2
@@ -496,11 +496,11 @@ importers:
         specifier: ^2.0.13
         version: 2.0.14(react@18.2.0)
       '@nanostores/persistent':
-        specifier: ^0.7.0
-        version: 0.7.0(nanostores@0.7.4)
+        specifier: ^0.8.0
+        version: 0.8.0(nanostores@0.8.1)
       '@nanostores/react':
-        specifier: ^0.4.1
-        version: 0.4.1(nanostores@0.7.4)(react@18.2.0)
+        specifier: ^0.5.0
+        version: 0.5.0(nanostores@0.8.1)(react@18.2.0)
       '@strudel.cycles/core':
         specifier: workspace:*
         version: link:../packages/core
@@ -571,8 +571,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       nanostores:
-        specifier: ^0.7.4
-        version: 0.7.4
+        specifier: ^0.8.1
+        version: 0.8.1
       preact:
         specifier: ^10.7.3
         version: 10.11.3
@@ -2502,23 +2502,23 @@ packages:
       - supports-color
     dev: false
 
-  /@nanostores/persistent@0.7.0(nanostores@0.7.4):
-    resolution: {integrity: sha512-4PAInL/T1hbftZUJ0cmgdFHBMalUoq7BUXFBy7QfyMv/8X3LPTYNh/yxspL7+J+XM3UNvVI7IFRMMs6FBasjhQ==}
-    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
+  /@nanostores/persistent@0.8.0(nanostores@0.8.1):
+    resolution: {integrity: sha512-R9jfwdcC4CjRgAApOrqjOO0XYXqAMvGGK1L5ztPl9xAEtECSrE2BbEJcHqZULNf40/dFJbi2Qdu0zKSvvSNbEQ==}
+    engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
-      nanostores: ^0.7.0
+      nanostores: ^0.8.0
     dependencies:
-      nanostores: 0.7.4
+      nanostores: 0.8.1
     dev: false
 
-  /@nanostores/react@0.4.1(nanostores@0.7.4)(react@18.2.0):
-    resolution: {integrity: sha512-lsv0CYrMxczbXtoV/mxFVEoL/uVjEjseoP89srO/5yNAOkJka+dSFS7LYyWEbuvCPO7EgbtkvRpO5V+OztKQOw==}
-    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
+  /@nanostores/react@0.5.0(nanostores@0.8.1)(react@18.2.0):
+    resolution: {integrity: sha512-1i+VhIwK+R51RXmnLul/C7a2WYkBF17/KsHsPzIboMXVjKfUvPbViZrwaeiqLFyHFUPgylq2//VkPqx3wmiCeg==}
+    engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
-      nanostores: ^0.7.0
+      nanostores: ^0.8.0
       react: '>=18.0.0'
     dependencies:
-      nanostores: 0.7.4
+      nanostores: 0.8.1
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
@@ -9422,9 +9422,9 @@ packages:
     hasBin: true
     dev: false
 
-  /nanostores@0.7.4:
-    resolution: {integrity: sha512-MBeUVt7NBcXqh7AGT+KSr3O0X/995CZsvcP2QEMP+PXFwb07qv3Vjyq+EX0yS8f12Vv3Tn2g/BvK/OZoMhJlOQ==}
-    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
+  /nanostores@0.8.1:
+    resolution: {integrity: sha512-1ZCfQtII2XeFDrtqXL2cdQ/diGrLxzRB3YMyQjn8m7GSGQrJfGST2iuqMpWnS/ZlifhtjgR/SX0Jy6Uij6lRLA==}
+    engines: {node: ^16.0.0 || >=18.0.0}
     dev: false
 
   /napi-build-utils@1.0.2:
