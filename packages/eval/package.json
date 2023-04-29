@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@strudel.cycles/mini": "workspace:*",
-    "vite": "^3.2.2",
+    "vite": "^4.3.3",
     "vitest": "^0.28.0"
   }
 }

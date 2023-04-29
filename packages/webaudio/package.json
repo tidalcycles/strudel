@@ -38,6 +38,6 @@
     "nanostores": "^0.8.1"
   },
   "devDependencies": {
-    "vite": "^3.2.2"
+    "vite": "^4.3.3"
   }
 }
