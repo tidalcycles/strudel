@@ -2,7 +2,6 @@
 // import { getLanguageFromURL, KNOWN_LANGUAGE_CODES } from '../../languages';
 import * as CONFIG from '../../config';
 // import AstroLogo from './AstroLogo.astro';
-import SidebarToggle from './SidebarToggle';
 // import LanguageSelect from './LanguageSelect';
 import Search from './Search';
 import CommandLineIcon from '@heroicons/react/20/solid/CommandLineIcon';
@@ -23,9 +22,6 @@ const sidebar = SIDEBAR[langCode];
   class="flex justify-between py-2 px-4 items-center h-14 max-h-14 bg-lineHighlight text-foreground"
   title="Top Navigation"
 >
-  <!--     <div class="menu-toggle">
-      <SidebarToggle client:idle />
-    </div> -->
   <div class="flex overflow-visible items-center grow" style="overflow:visible">
     <a href="/" class="flex items-center text-2xl space-x-2">
       <h1 class="font-bold flex space-x-2 items-baseline text-xl">

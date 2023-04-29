@@ -1,17 +1,14 @@
 import { unescape } from 'html-escaper';
 import type { MarkdownHeading } from 'astro';
-import type { FunctionalComponent } from 'preact';
-import { useState, useEffect, useRef } from 'preact/hooks';
+import type { FC } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 type ItemOffsets = {
   id: string;
   topOffset: number;
 };
 
-const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[]; currentPage: string }> = ({
-  headings = [],
-  currentPage,
-}) => {
+const TableOfContents: FC<{ headings: MarkdownHeading[]; currentPage: string }> = ({ headings = [], currentPage }) => {
   const toc = useRef<any>();
   const onThisPageID = 'on-this-page-heading';
   const itemOffsets = useRef<ItemOffsets[]>([]);
@@ -73,8 +70,8 @@ const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[]; curren
       <ul ref={toc}>
         {headings
           .filter(({ depth }) => depth >= minDepth && depth < 4)
-          .map((heading) => (
-            <li className={`w-full`}>
+          .map((heading, i) => (
+            <li className={`w-full`} key={i}>
               <a
                 href={`${currentPage}#${heading.slug}`}
                 onClick={onLinkClick}
