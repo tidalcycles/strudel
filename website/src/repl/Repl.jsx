@@ -78,7 +78,7 @@ async function initCode() {
             console.warn('failed to load hash', err);
           }
           if (data.length) {
-            console.log('load hash from database', hash);
+            //console.log('load hash from database', hash);
             return data[0].code;
           }
         });
