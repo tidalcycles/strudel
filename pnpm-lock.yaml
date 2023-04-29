@@ -481,17 +481,17 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(astro@2.3.2)(tailwindcss@3.2.4)
       '@docsearch/css':
-        specifier: ^3.1.0
-        version: 3.3.2
+        specifier: ^3.3.4
+        version: 3.3.4
       '@docsearch/react':
-        specifier: ^3.1.0
-        version: 3.3.2(@algolia/client-search@4.14.3)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^3.3.4
+        version: 3.3.4(@algolia/client-search@4.14.3)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0)
       '@headlessui/react':
-        specifier: ^1.7.7
-        version: 1.7.8(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^1.7.14
+        version: 1.7.14(react-dom@18.2.0)(react@18.2.0)
       '@heroicons/react':
-        specifier: ^2.0.13
-        version: 2.0.14(react@18.2.0)
+        specifier: ^2.0.17
+        version: 2.0.17(react@18.2.0)
       '@nanostores/persistent':
         specifier: ^0.8.0
         version: 0.8.0(nanostores@0.8.1)
@@ -607,25 +607,25 @@ importers:
 
 packages:
 
-  /@algolia/autocomplete-core@1.7.4:
-    resolution: {integrity: sha512-daoLpQ3ps/VTMRZDEBfU8ixXd+amZcNJ4QSP3IERGyzqnL5Ch8uSRFt/4G8pUvW9c3o6GA4vtVv4I4lmnkdXyg==}
+  /@algolia/autocomplete-core@1.8.2:
+    resolution: {integrity: sha512-mTeshsyFhAqw/ebqNsQpMtbnjr+qVOSKXArEj4K0d7sqc8It1XD0gkASwecm9mF/jlOQ4Z9RNg1HbdA8JPdRwQ==}
     dependencies:
-      '@algolia/autocomplete-shared': 1.7.4
+      '@algolia/autocomplete-shared': 1.8.2
     dev: false
 
-  /@algolia/autocomplete-preset-algolia@1.7.4(@algolia/client-search@4.14.3)(algoliasearch@4.14.3):
-    resolution: {integrity: sha512-s37hrvLEIfcmKY8VU9LsAXgm2yfmkdHT3DnA3SgHaY93yjZ2qL57wzb5QweVkYuEBZkT2PIREvRoLXC2sxTbpQ==}
+  /@algolia/autocomplete-preset-algolia@1.8.2(@algolia/client-search@4.14.3)(algoliasearch@4.14.3):
+    resolution: {integrity: sha512-J0oTx4me6ZM9kIKPuL3lyU3aB8DEvpVvR6xWmHVROx5rOYJGQcZsdG4ozxwcOyiiu3qxMkIbzntnV1S1VWD8yA==}
     peerDependencies:
       '@algolia/client-search': '>= 4.9.1 < 6'
       algoliasearch: '>= 4.9.1 < 6'
     dependencies:
-      '@algolia/autocomplete-shared': 1.7.4
+      '@algolia/autocomplete-shared': 1.8.2
       '@algolia/client-search': 4.14.3
       algoliasearch: 4.14.3
     dev: false
 
-  /@algolia/autocomplete-shared@1.7.4:
-    resolution: {integrity: sha512-2VGCk7I9tA9Ge73Km99+Qg87w0wzW4tgUruvWAn/gfey1ZXgmxZtyIRBebk35R1O8TbK77wujVtCnpsGpRy1kg==}
+  /@algolia/autocomplete-shared@1.8.2:
+    resolution: {integrity: sha512-b6Z/X4MczChMcfhk6kfRmBzPgjoPzuS9KGR4AFsiLulLNRAAqhP+xZTKtMnZGhLuc61I20d5WqlId02AZvcO6g==}
     dev: false
 
   /@algolia/cache-browser-local-storage@4.14.3:
@@ -2178,12 +2178,12 @@ packages:
       - eslint
     dev: false
 
-  /@docsearch/css@3.3.2:
-    resolution: {integrity: sha512-dctFYiwbvDZkksMlsmc7pj6W6By/EjnVXJq5TEPd05MwQe+dcdHJgaIn1c8wfsucxHpIsdrUcgSkACHCq6aIhw==}
+  /@docsearch/css@3.3.4:
+    resolution: {integrity: sha512-vDwCDoVXDgopw/hvr0zEADew2wWaGP8Qq0Bxhgii1Ewz2t4fQeyJwIRN/mWADeLFYPVkpz8TpEbxya/i6Tm0WA==}
     dev: false
 
-  /@docsearch/react@3.3.2(@algolia/client-search@4.14.3)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-ugILab2TYKSh6IEHf6Z9xZbOovsYbsdfo60PBj+Bw+oMJ1MHJ7pBt1TTcmPki1hSgg8mysgKy2hDiVdPm7XWSQ==}
+  /@docsearch/react@3.3.4(@algolia/client-search@4.14.3)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-aeOf1WC5zMzBEi2SI6WWznOmIo9rnpN4p7a3zHXxowVciqlI4HsZGtOR9nFOufLeolv7HibwLlaM0oyUqJxasw==}
     peerDependencies:
       '@types/react': '>= 16.8.0 < 19.0.0'
       react: '>= 16.8.0 < 19.0.0'
@@ -2196,9 +2196,9 @@ packages:
       react-dom:
         optional: true
     dependencies:
-      '@algolia/autocomplete-core': 1.7.4
-      '@algolia/autocomplete-preset-algolia': 1.7.4(@algolia/client-search@4.14.3)(algoliasearch@4.14.3)
-      '@docsearch/css': 3.3.2
+      '@algolia/autocomplete-core': 1.8.2
+      '@algolia/autocomplete-preset-algolia': 1.8.2(@algolia/client-search@4.14.3)(algoliasearch@4.14.3)
+      '@docsearch/css': 3.3.4
       '@types/react': 18.0.27
       algoliasearch: 4.14.3
       react: 18.2.0
@@ -2432,8 +2432,8 @@ packages:
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
     dev: true
 
-  /@headlessui/react@1.7.8(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-zcwb0kd7L05hxmoAMIioEaOn235Dg0fUO+iGbLPgLVSjzl/l39V6DTpC2Df49PE5aG5/f5q0PZ9ZHZ78ENNV+A==}
+  /@headlessui/react@1.7.14(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-znzdq9PG8rkwcu9oQ2FwIy0ZFtP9Z7ycS+BAqJ3R5EIqC/0bJGvhT7193rFf+45i9nnPsYvCQVW4V/bB9Xc+gA==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16 || ^17 || ^18
@@ -2444,8 +2444,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@heroicons/react@2.0.14(react@18.2.0):
-    resolution: {integrity: sha512-eFL4if6L7woL1fUvk/jjXx4z9NxVESHHrQnEd2qKVelTFTIr/3VLGWdPb0biia9ZVe26P0JSs/xmOlRNur3SrQ==}
+  /@heroicons/react@2.0.17(react@18.2.0):
+    resolution: {integrity: sha512-90GMZktkA53YbNzHp6asVEDevUQCMtxWH+2UK2S8OpnLEu7qckTJPhNxNQG52xIR1WFTwFqtH6bt7a60ZNcLLA==}
     peerDependencies:
       react: '>= 16'
     dependencies:
