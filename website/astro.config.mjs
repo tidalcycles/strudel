@@ -11,7 +11,7 @@ import tailwind from '@astrojs/tailwind';
 import AstroPWA from '@vite-pwa/astro';
 // import { visualizer } from 'rollup-plugin-visualizer';
 
-const site = `https://strudel.tidalcycles.org`; // root url without a path
+const site = `https://strudel.tidalcycles.org/`; // root url without a path
 const base = '/'; // base path of the strudel site
 
 // this rehype plugin converts relative anchor links to absolute ones
