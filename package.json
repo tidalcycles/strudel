@@ -57,15 +57,15 @@
   },
   "devDependencies": {
     "@vitest/ui": "^0.28.0",
-    "canvas": "^2.11.0",
-    "eslint": "^8.28.0",
+    "canvas": "^2.11.2",
+    "eslint": "^8.39.0",
     "eslint-plugin-import": "^2.27.5",
     "events": "^3.3.0",
     "jsdoc": "^4.0.2",
     "jsdoc-json": "^2.0.2",
     "jsdoc-to-markdown": "^8.0.0",
     "lerna": "^6.6.1",
-    "prettier": "^2.8.1",
+    "prettier": "^2.8.8",
     "rollup-plugin-visualizer": "^5.8.1"
   }
 }

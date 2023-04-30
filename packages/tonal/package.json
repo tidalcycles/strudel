@@ -34,7 +34,7 @@
     "@strudel.cycles/core": "workspace:*",
     "@tonaljs/tonal": "^4.7.2",
     "chord-voicings": "^0.0.1",
-    "webmidi": "^3.0.21"
+    "webmidi": "^3.1.5"
   },
   "devDependencies": {
     "vite": "^4.3.3",
