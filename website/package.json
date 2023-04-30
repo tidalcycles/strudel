@@ -52,7 +52,7 @@
     "rehype-slug": "^5.0.1",
     "rehype-urls": "^1.1.1",
     "remark-toc": "^8.0.1",
-    "tailwindcss": "^3.2.4"
+    "tailwindcss": "^3.3.2"
   },
   "devDependencies": {
     "@vite-pwa/astro": "^0.0.5",
