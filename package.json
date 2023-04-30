@@ -64,7 +64,7 @@
     "jsdoc": "^4.0.2",
     "jsdoc-json": "^2.0.2",
     "jsdoc-to-markdown": "^8.0.0",
-    "lerna": "^6.5.1",
+    "lerna": "^6.6.1",
     "prettier": "^2.8.1",
     "rollup-plugin-visualizer": "^5.8.1"
   }
