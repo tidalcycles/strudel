@@ -66,6 +66,31 @@ importers:
         specifier: ^5.8.1
         version: 5.9.0
 
+  packages/codemirror:
+    dependencies:
+      '@codemirror/commands':
+        specifier: ^6.2.4
+        version: 6.2.4
+      '@codemirror/lang-javascript':
+        specifier: ^6.1.7
+        version: 6.1.7
+      '@codemirror/language':
+        specifier: ^6.6.0
+        version: 6.6.0
+      '@codemirror/state':
+        specifier: ^6.2.0
+        version: 6.2.0
+      '@codemirror/view':
+        specifier: ^6.10.0
+        version: 6.10.0
+      '@lezer/highlight':
+        specifier: ^1.1.4
+        version: 1.1.4
+    devDependencies:
+      vite:
+        specifier: ^4.3.3
+        version: 4.3.3(@types/node@18.16.3)
+
   packages/core:
     dependencies:
       fraction.js:
@@ -103,24 +128,6 @@ importers:
 
   packages/core/examples/vite-vanilla-repl-cm6:
     dependencies:
-      '@codemirror/commands':
-        specifier: ^6.2.4
-        version: 6.2.4
-      '@codemirror/lang-javascript':
-        specifier: ^6.1.7
-        version: 6.1.7
-      '@codemirror/language':
-        specifier: ^6.6.0
-        version: 6.6.0
-      '@codemirror/state':
-        specifier: ^6.2.0
-        version: 6.2.0
-      '@codemirror/view':
-        specifier: ^6.10.0
-        version: 6.10.0
-      '@lezer/highlight':
-        specifier: ^1.1.4
-        version: 1.1.4
       '@strudel.cycles/core':
         specifier: workspace:*
         version: link:../..
@@ -139,6 +146,9 @@ importers:
       '@strudel.cycles/webaudio':
         specifier: workspace:*
         version: link:../../../webaudio
+      '@strudel/codemirror':
+        specifier: workspace:*
+        version: link:../../../codemirror
     devDependencies:
       vite:
         specifier: ^4.3.2
