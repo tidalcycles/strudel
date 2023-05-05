@@ -19,7 +19,6 @@ export * from './speak.mjs';
 export * from './evaluate.mjs';
 export * from './repl.mjs';
 export * from './logger.mjs';
-export * from './time.mjs';
 export * from './draw.mjs';
 export * from './animate.mjs';
 export * from './pianoroll.mjs';
