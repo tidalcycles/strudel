@@ -128,6 +128,7 @@ export const flash = (view, ms = 200) => {
 
 export class StrudelMirror {
   constructor({ root, initialCode = '', onEvaluate, onStop }) {
+    this.code = initialCode;
     this.view = initEditor({
       root,
       initialCode,

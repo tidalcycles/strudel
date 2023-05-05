@@ -7,7 +7,6 @@ import { funk42 } from './tunes';
 import { pianoroll, getDrawOptions } from '@strudel.cycles/core';
 import './style.css';
 
-let code = funk42;
 const repl = initStrudel();
 const canvas = document.getElementById('roll');
 canvas.width = canvas.width * 2;
@@ -15,10 +14,7 @@ canvas.height = canvas.height * 2;
 
 const editor = new StrudelMirror({
   root: document.getElementById('editor'),
-  initialCode: code,
-  onChange: (v) => {
-    code = v.state.doc.toString();
-  },
+  initialCode: funk42,
   onEvaluate,
   onStop,
 });
@@ -28,10 +24,10 @@ async function onEvaluate() {
   editor.flash();
   if (!scheduler.started) {
     scheduler.stop();
-    await evaluate(code);
+    await evaluate(editor.code);
     drawer.start(scheduler);
   } else {
-    await evaluate(code);
+    await evaluate(editor.code);
     drawer.invalidate(); // this is a bit mystic
   }
 }
