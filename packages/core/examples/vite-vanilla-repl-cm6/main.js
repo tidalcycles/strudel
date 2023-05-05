@@ -2,10 +2,13 @@
 
 import { initEditor, highlightHaps, flash } from './codemirror';
 import { initStrudel } from './strudel';
-import { Highlighter } from './highlighter';
+import { Drawer } from './drawer';
 import { bumpStreet } from './tunes';
+import { pianoroll, getDrawOptions } from '@strudel.cycles/core';
+
 let code = bumpStreet;
 const repl = initStrudel();
+const roll = document.getElementById('roll');
 
 const view = initEditor({
   initialCode: code,
@@ -22,20 +25,27 @@ async function onEvaluate() {
   if (!scheduler.started) {
     scheduler.stop();
     await evaluate(code);
-    highlighter.start(scheduler);
+    drawer.start(scheduler);
   } else {
     await evaluate(code);
+    drawer.invalidate(); // this is a bit mystic
   }
 }
 
 async function onStop() {
   const { scheduler } = await repl;
   scheduler.stop();
-  highlighter.stop();
+  drawer.stop();
 }
-
-let highlighter = new Highlighter((haps) => highlightHaps(view, haps));
+const ctx = roll.getContext('2d');
+let drawer = new Drawer(
+  (haps, time, { drawTime }) => {
+    const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.whole.end);
+    highlightHaps(view, currentFrame);
+    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { fold: 1 }) });
+  },
+  [-2, 2],
+);
 
 document.getElementById('play').addEventListener('click', () => onEvaluate());
-
 document.getElementById('stop').addEventListener('click', async () => onStop());
