@@ -5,28 +5,36 @@ import { initStrudel } from './strudel';
 import { Highlighter } from './highlighter';
 import { bumpStreet } from './tunes';
 let code = bumpStreet;
-
-const view = initEditor(code, (v) => {
-  code = v.state.doc.toString();
-});
 const repl = initStrudel();
 
-let highlighter = new Highlighter((haps) => highlightHaps(view, haps));
-
-document.getElementById('play').addEventListener('click', async () => {
+async function onEvaluate() {
   const { evaluate, scheduler } = await repl;
   if (!scheduler.started) {
     scheduler.stop();
-    scheduler.lastEnd = 0;
     await evaluate(code);
     highlighter.start(scheduler);
   } else {
     await evaluate(code);
   }
+}
+
+async function onStop() {
+  const { scheduler } = await repl;
+  scheduler.stop();
+  highlighter.stop();
+}
+
+const view = initEditor({
+  initialCode: code,
+  onChange: (v) => {
+    code = v.state.doc.toString();
+  },
+  onEvaluate,
+  onStop,
 });
 
-document.getElementById('stop').addEventListener('click', async () => {
-  const { stop } = await repl;
-  stop();
-  highlighter.stop();
-});
+let highlighter = new Highlighter((haps) => highlightHaps(view, haps));
+
+document.getElementById('play').addEventListener('click', () => onEvaluate());
+
+document.getElementById('stop').addEventListener('click', async () => onStop());

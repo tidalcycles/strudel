@@ -7,7 +7,7 @@ import { StateField, StateEffect } from '@codemirror/state';
 import './style.css';
 
 // https://codemirror.net/docs/guide/
-export function initEditor(initialCode, onUpdate) {
+export function initEditor({ initialCode, onChange, onEvaluate, onStop }) {
   let state = EditorState.create({
     doc: initialCode,
     extensions: [
@@ -22,9 +22,17 @@ export function initEditor(initialCode, onUpdate) {
       syntaxHighlighting(defaultHighlightStyle),
       keymap.of(defaultKeymap),
       //flashField,
-      EditorView.updateListener.of((v) => {
-        onUpdate(v);
-      }),
+      EditorView.updateListener.of((v) => onChange(v)),
+      keymap.of([
+        {
+          key: 'Ctrl-Enter',
+          run: () => onEvaluate(),
+        },
+        {
+          key: 'Ctrl-.',
+          run: () => onStop(),
+        },
+      ]),
     ],
   });
 
