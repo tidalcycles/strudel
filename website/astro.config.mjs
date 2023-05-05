@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import preact from '@astrojs/preact';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 
@@ -12,7 +11,7 @@ import tailwind from '@astrojs/tailwind';
 import AstroPWA from '@vite-pwa/astro';
 // import { visualizer } from 'rollup-plugin-visualizer';
 
-const site = `https://strudel.tidalcycles.org`; // root url without a path
+const site = `https://strudel.tidalcycles.org/`; // root url without a path
 const base = '/'; // base path of the strudel site
 
 // this rehype plugin converts relative anchor links to absolute ones
@@ -47,9 +46,6 @@ const options = {
 // https://astro.build/config
 export default defineConfig({
   integrations: [
-    // Enable Preact to support Preact JSX components.
-    preact(),
-    // Enable React for the Algolia search component.
     react(),
     mdx(options),
     tailwind(),
