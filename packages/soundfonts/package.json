@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/soundfonts",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Soundsfont support for strudel",
   "main": "index.mjs",
   "publishConfig": {
