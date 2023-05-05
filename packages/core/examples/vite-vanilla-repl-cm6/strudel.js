@@ -1,6 +1,5 @@
-import { getAudioContext, webaudioOutput, initAudioOnFirstClick, registerSynthSounds } from '@strudel.cycles/webaudio';
+import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel.cycles/webaudio';
 
-const initAudio = initAudioOnFirstClick();
 const ctx = getAudioContext();
 
 export async function initStrudel(options = {}) {
@@ -18,7 +17,7 @@ export async function initStrudel(options = {}) {
     import('@strudel.cycles/webaudio'),
   );
 
-  await Promise.all([initAudio, loadModules, registerSynthSounds(), registerSoundfonts()]);
+  await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
 
   return repl({
     defaultOutput: webaudioOutput,

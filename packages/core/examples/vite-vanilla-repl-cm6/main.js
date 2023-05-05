@@ -5,11 +5,9 @@ import { initStrudel } from './strudel';
 import { funk42 } from './tunes';
 import { pianoroll, getDrawOptions, Drawer } from '@strudel.cycles/core';
 import './style.css';
+import { initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 
-const repl = initStrudel();
-const canvas = document.getElementById('roll');
-canvas.width = canvas.width * 2;
-canvas.height = canvas.height * 2;
+const initAudio = initAudioOnFirstClick();
 
 const editor = new StrudelMirror({
   root: document.getElementById('editor'),
@@ -18,8 +16,26 @@ const editor = new StrudelMirror({
   onStop,
 });
 
+async function drawFirstFrame(editor, repl) {
+  const { evaluate } = repl;
+  const pattern = await evaluate(editor.code, false);
+  const initialHaps = pattern.queryArc(0, drawTime[1]);
+  drawPianoroll(initialHaps, 0);
+  return repl;
+}
+
+const repl = initStrudel().then(async (repl) => {
+  await drawFirstFrame(editor, repl);
+  return repl;
+});
+
+const canvas = document.getElementById('roll');
+canvas.width = canvas.width * 2;
+canvas.height = canvas.height * 2;
+
 async function onEvaluate() {
   const { evaluate, scheduler } = await repl;
+  await initAudio;
   editor.flash();
   if (!scheduler.started) {
     scheduler.stop();
@@ -37,15 +53,17 @@ async function onStop() {
   drawer.stop();
 }
 
+const drawTime = [-2, 2];
+function drawPianoroll(haps, time) {
+  pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { fold: 0 }) });
+}
+
 const ctx = canvas.getContext('2d');
-let drawer = new Drawer(
-  (haps, time, { drawTime }) => {
-    const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.whole.end);
-    editor.highlight(currentFrame);
-    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { fold: 0 }) });
-  },
-  [-2, 2],
-);
+let drawer = new Drawer((haps, time) => {
+  const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.whole.end);
+  editor.highlight(currentFrame);
+  drawPianoroll(haps, time);
+}, drawTime);
 
 document.getElementById('play').addEventListener('click', () => onEvaluate());
 document.getElementById('stop').addEventListener('click', async () => onStop());
