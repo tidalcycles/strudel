@@ -4,14 +4,14 @@ import { defaultKeymap } from '@codemirror/commands';
 import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
 import { javascript } from '@codemirror/lang-javascript';
 import { StateField, StateEffect } from '@codemirror/state';
-import { oneDark } from './one-dark';
+import { oneDark } from './themes/one-dark';
 
 // https://codemirror.net/docs/guide/
-export function initEditor({ initialCode, onChange, onEvaluate, onStop }) {
+export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, theme = oneDark, root }) {
   let state = EditorState.create({
     doc: initialCode,
     extensions: [
-      oneDark,
+      theme,
       javascript(),
       lineNumbers(),
       highlightField,
@@ -35,7 +35,7 @@ export function initEditor({ initialCode, onChange, onEvaluate, onStop }) {
 
   return new EditorView({
     state,
-    parent: document.getElementById('editor'),
+    parent: root,
   });
 }
 
@@ -119,9 +119,29 @@ const flashField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-export const flash = (view) => {
+export const flash = (view, ms = 200) => {
   view.dispatch({ effects: setFlash.of(true) });
   setTimeout(() => {
     view.dispatch({ effects: setFlash.of(false) });
-  }, 200);
+  }, ms);
 };
+
+export class StrudelMirror {
+  constructor({ root, initialCode = '', onEvaluate, onStop }) {
+    this.view = initEditor({
+      root,
+      initialCode,
+      onChange: (v) => {
+        this.code = v.state.doc.toString();
+      },
+      onEvaluate,
+      onStop,
+    });
+  }
+  flash(ms) {
+    flash(this.view, ms);
+  }
+  highlight(haps) {
+    highlightHaps(this.view, haps);
+  }
+}

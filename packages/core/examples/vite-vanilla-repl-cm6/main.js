@@ -1,9 +1,9 @@
 // moved from sandbox: https://codesandbox.io/s/vanilla-codemirror-strudel-2wb7yw?file=/index.html:114-186
 
-import { initEditor, highlightHaps, flash } from './codemirror';
+import { StrudelMirror } from '@strudel/codemirror';
 import { initStrudel } from './strudel';
 import { Drawer } from './drawer';
-import { bumpStreet, trafficFlam, funk42 } from './tunes';
+import { funk42 } from './tunes';
 import { pianoroll, getDrawOptions } from '@strudel.cycles/core';
 import './style.css';
 
@@ -13,7 +13,8 @@ const canvas = document.getElementById('roll');
 canvas.width = canvas.width * 2;
 canvas.height = canvas.height * 2;
 
-const view = initEditor({
+const editor = new StrudelMirror({
+  root: document.getElementById('editor'),
   initialCode: code,
   onChange: (v) => {
     code = v.state.doc.toString();
@@ -24,7 +25,7 @@ const view = initEditor({
 
 async function onEvaluate() {
   const { evaluate, scheduler } = await repl;
-  flash(view);
+  editor.flash();
   if (!scheduler.started) {
     scheduler.stop();
     await evaluate(code);
@@ -40,11 +41,12 @@ async function onStop() {
   scheduler.stop();
   drawer.stop();
 }
+
 const ctx = canvas.getContext('2d');
 let drawer = new Drawer(
   (haps, time, { drawTime }) => {
     const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.whole.end);
-    highlightHaps(view, currentFrame);
+    editor.highlight(currentFrame);
     pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { fold: 0 }) });
   },
   [-2, 2],

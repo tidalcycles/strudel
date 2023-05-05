@@ -12,12 +12,7 @@
     "vite": "^4.3.2"
   },
   "dependencies": {
-    "@codemirror/commands": "^6.2.4",
-    "@codemirror/lang-javascript": "^6.1.7",
-    "@codemirror/language": "^6.6.0",
-    "@codemirror/state": "^6.2.0",
-    "@codemirror/view": "^6.10.0",
-    "@lezer/highlight": "^1.1.4",
+    "@strudel/codemirror": "workspace:*",
     "@strudel.cycles/core": "workspace:*",
     "@strudel.cycles/mini": "workspace:*",
     "@strudel.cycles/soundfonts": "workspace:*",
