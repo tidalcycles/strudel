@@ -2,6 +2,7 @@ body,
 html {
   margin: 0;
   height: 100%;
+  background: #282c34;
 }
 
 main {
@@ -14,6 +15,7 @@ main {
   flex-grow: 1;
   max-height: 100%;
   position: relative;
+  overflow:auto;
 }
 
 #editor {

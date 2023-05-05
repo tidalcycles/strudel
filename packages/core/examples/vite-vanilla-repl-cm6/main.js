@@ -3,12 +3,15 @@
 import { initEditor, highlightHaps, flash } from './codemirror';
 import { initStrudel } from './strudel';
 import { Drawer } from './drawer';
-import { bumpStreet } from './tunes';
+import { bumpStreet, trafficFlam, funk42 } from './tunes';
 import { pianoroll, getDrawOptions } from '@strudel.cycles/core';
+import './style.css';
 
-let code = bumpStreet;
+let code = funk42;
 const repl = initStrudel();
-const roll = document.getElementById('roll');
+const canvas = document.getElementById('roll');
+canvas.width = canvas.width * 2;
+canvas.height = canvas.height * 2;
 
 const view = initEditor({
   initialCode: code,
@@ -37,12 +40,12 @@ async function onStop() {
   scheduler.stop();
   drawer.stop();
 }
-const ctx = roll.getContext('2d');
+const ctx = canvas.getContext('2d');
 let drawer = new Drawer(
   (haps, time, { drawTime }) => {
     const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.whole.end);
     highlightHaps(view, currentFrame);
-    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { fold: 1 }) });
+    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { fold: 0 }) });
   },
   [-2, 2],
 );

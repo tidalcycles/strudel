@@ -17,11 +17,12 @@
     "@codemirror/language": "^6.6.0",
     "@codemirror/state": "^6.2.0",
     "@codemirror/view": "^6.10.0",
+    "@lezer/highlight": "^1.1.4",
     "@strudel.cycles/core": "workspace:*",
     "@strudel.cycles/mini": "workspace:*",
+    "@strudel.cycles/soundfonts": "workspace:*",
     "@strudel.cycles/tonal": "workspace:*",
     "@strudel.cycles/transpiler": "workspace:*",
-    "@strudel.cycles/webaudio": "workspace:*",
-    "@strudel.cycles/soundfonts": "workspace:*"
+    "@strudel.cycles/webaudio": "workspace:*"
   }
 }

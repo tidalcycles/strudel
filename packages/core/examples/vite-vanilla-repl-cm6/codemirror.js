@@ -4,13 +4,14 @@ import { defaultKeymap } from '@codemirror/commands';
 import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
 import { javascript } from '@codemirror/lang-javascript';
 import { StateField, StateEffect } from '@codemirror/state';
-import './style.css';
+import { oneDark } from './one-dark';
 
 // https://codemirror.net/docs/guide/
 export function initEditor({ initialCode, onChange, onEvaluate, onStop }) {
   let state = EditorState.create({
     doc: initialCode,
     extensions: [
+      oneDark,
       javascript(),
       lineNumbers(),
       highlightField,
