@@ -2,9 +2,8 @@
 
 import { StrudelMirror } from '@strudel/codemirror';
 import { initStrudel } from './strudel';
-import { Drawer } from './drawer';
 import { funk42 } from './tunes';
-import { pianoroll, getDrawOptions } from '@strudel.cycles/core';
+import { pianoroll, getDrawOptions, Drawer } from '@strudel.cycles/core';
 import './style.css';
 
 const repl = initStrudel();
