@@ -4,15 +4,6 @@ html {
   height: 100%;
 }
 
-#editor {
-  overflow: auto;
-  height: 100%;
-}
-
-.cm-editor {
-  height: 100%;
-}
-
 main {
   height: 100%;
   display: flex;
@@ -21,6 +12,16 @@ main {
 
 .container {
   flex-grow: 1;
+  max-height: 100%;
+  position: relative;
+}
+
+#editor {
+  overflow: auto;
+}
+
+.cm-editor {
+  height: 100%;
 }
 
 #roll {
