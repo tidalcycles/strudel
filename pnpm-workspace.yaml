@@ -3,4 +3,5 @@ packages:
   - "packages/*"
   - "website/"
   - "packages/core/examples/vite-vanilla-repl"
+  - "packages/core/examples/vite-vanilla-repl-cm6"
   - "packages/react/examples/nano-repl"

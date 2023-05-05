@@ -1,0 +1,24 @@
+body,
+html {
+  margin: 0;
+  height: 100%;
+}
+
+#editor {
+  overflow: auto;
+  height: 100%;
+}
+
+.cm-editor {
+  height: 100%;
+}
+
+main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  flex-grow: 1;
+}
