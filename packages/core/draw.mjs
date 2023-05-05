@@ -97,19 +97,18 @@ export class Drawer {
       },
     );
   }
-  check() {
-    if (!this.scheduler) {
-      throw new Error('no scheduler set..');
+  invalidate(scheduler = this.scheduler) {
+    if (!scheduler) {
+      return;
     }
-  }
-  invalidate() {
-    this.check();
-    const t = this.scheduler.now();
+    this.scheduler = scheduler;
+    const t = scheduler.now();
     let [_, lookahead] = this.drawTime;
+    const [begin, end] = [Math.max(t, 0), t + lookahead + 0.1];
     // remove all future haps
     this.visibleHaps = this.visibleHaps.filter((h) => h.whole.begin < t);
     // query future haps
-    const futureHaps = this.scheduler.pattern.queryArc(Math.max(t, 0), t + lookahead + 0.1); // +0.1 = workaround for weird holes in query..
+    const futureHaps = scheduler.pattern.queryArc(begin, end); // +0.1 = workaround for weird holes in query..
     // append future haps
     this.visibleHaps = this.visibleHaps.concat(futureHaps);
   }

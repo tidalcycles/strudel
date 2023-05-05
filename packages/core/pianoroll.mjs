@@ -175,3 +175,8 @@ Pattern.prototype.pianoroll = function (options) {
     pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { fold: 0, ...options }) }),
   );
 };
+
+export function drawPianoroll(options) {
+  const { drawTime, ...rest } = options;
+  pianoroll({ ...getDrawOptions(drawTime), ...rest });
+}

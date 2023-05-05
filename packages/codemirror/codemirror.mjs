@@ -5,6 +5,7 @@ import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
 import { javascript } from '@codemirror/lang-javascript';
 import { StateField, StateEffect } from '@codemirror/state';
 import { oneDark } from './themes/one-dark';
+import { repl, Drawer } from '@strudel.cycles/core';
 
 // https://codemirror.net/docs/guide/
 export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, theme = oneDark, root }) {
@@ -127,22 +128,72 @@ export const flash = (view, ms = 200) => {
 };
 
 export class StrudelMirror {
-  constructor({ root, initialCode = '', onEvaluate, onStop }) {
+  constructor(options) {
+    const { root, initialCode = '', onDraw, drawTime = [-2, 2], prebake, ...replOptions } = options;
     this.code = initialCode;
-    this.view = initEditor({
+
+    this.drawer = new Drawer((haps, time) => {
+      const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.whole.end);
+      this.highlight(currentFrame);
+      onDraw?.(haps, time, currentFrame);
+    }, drawTime);
+
+    const prebaked = prebake();
+    prebaked.then(async () => {
+      if (!onDraw) {
+        return;
+      }
+      const { scheduler, evaluate } = await this.repl;
+      // draw first frame instantly
+      prebaked.then(async () => {
+        await evaluate(this.code, false);
+        this.drawer.invalidate(scheduler);
+        onDraw?.(this.drawer.visibleHaps, 0, []);
+      });
+    });
+
+    this.repl = repl({
+      ...replOptions,
+      onToggle: async (started) => {
+        replOptions?.onToggle?.(started);
+        const { scheduler } = await this.repl;
+        if (started) {
+          this.drawer.start(scheduler);
+        } else {
+          this.drawer.stop();
+        }
+      },
+      beforeEval: async () => {
+        await prebaked;
+      },
+      afterEval: (options) => {
+        replOptions?.afterEval?.(options);
+        this.drawer.invalidate();
+      },
+    });
+    this.editor = initEditor({
       root,
       initialCode,
       onChange: (v) => {
         this.code = v.state.doc.toString();
       },
-      onEvaluate,
-      onStop,
+      onEvaluate: () => this.evaluate(),
+      onStop: () => this.stop(),
     });
   }
+  async evaluate() {
+    const { evaluate } = await this.repl;
+    this.flash();
+    await evaluate(this.code);
+  }
+  async stop() {
+    const { scheduler } = await this.repl;
+    scheduler.stop();
+  }
   flash(ms) {
-    flash(this.view, ms);
+    flash(this.editor, ms);
   }
   highlight(haps) {
-    highlightHaps(this.view, haps);
+    highlightHaps(this.editor, haps);
   }
 }

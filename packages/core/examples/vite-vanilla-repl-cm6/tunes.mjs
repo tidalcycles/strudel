@@ -78,7 +78,7 @@ let drums = stack(
   s("bd*2, ~ sd").bank('RolandTR707').room("0 .1"),
   s("hh*4").begin(.2).release(.02).end(.25).release(.02)
   .gain(.3).bank('RolandTR707').late(.02).room(.5),
-  s("shaker_small").struct("[x x*2]*2").speed(".8,.9").release(.02)
+  //s("shaker_small").struct("[x x*2]*2").speed(".8,.9").release(.02)
 ).fast(2)
 
 let wurli = note(\`<
