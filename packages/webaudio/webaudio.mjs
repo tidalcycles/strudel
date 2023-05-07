@@ -243,3 +243,16 @@ Pattern.prototype.webaudio = function () {
   // TODO: refactor (t, hap, ct, cps) to (hap, deadline, duration) ?
   return this.onTrigger(webaudioOutputTrigger);
 };
+
+export function webaudioScheduler(options = {}) {
+  options = {
+    getTime: () => getAudioContext().currentTime,
+    defaultOutput: webaudioOutput,
+    ...options,
+  };
+  const { defaultOutput, getTime } = options;
+  return new strudel.Cyclist({
+    ...options,
+    onTrigger: strudel.getTrigger({ defaultOutput, getTime }),
+  });
+}

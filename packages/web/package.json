@@ -2,7 +2,7 @@
   "name": "@strudel/web",
   "version": "0.8.0",
   "description": "Easy to setup, opiniated bundle of Strudel for the browser.",
-  "main": "repl.mjs",
+  "main": "web.mjs",
   "publishConfig": {
     "main": "dist/index.js",
     "module": "dist/index.mjs"

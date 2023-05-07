@@ -190,3 +190,8 @@ export function minify(thing) {
   }
   return strudel.reify(thing);
 }
+
+// calling this function will cause patterns to parse strings as mini notation by default
+export function miniAllStrings() {
+  strudel.setStringParser(mini);
+}

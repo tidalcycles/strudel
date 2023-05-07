@@ -13,17 +13,16 @@
     <button id="c">C</button>
     <button id="stop">stop</button>
     <script type="module">
-      import { repl, samples } from '@strudel/web';
-
-      const strudel = repl({
+      import { init } from '@strudel/web';
+      init({
         prebake: () => samples('github:tidalcycles/Dirt-Samples/master'),
       });
 
       const click = (id, action) => document.getElementById(id).addEventListener('click', action);
-      click('a', () => strudel.evaluate('s("bd,jvbass(3,8)").jux(rev)'));
-      click('b', () => strudel.evaluate('s("bd*2,hh(3,4),jvbass(5,8,1)").jux(rev)'));
-      click('c', () => strudel.evaluate('s("bd*2,hh(3,4),jvbass:[0 4](5,8,1)").jux(rev).stack(s("~ sd"))'));
-      click('stop', () => strudel.stop());
+      click('a', () => evaluate(`s('bd,jvbass(3,8)').jux(rev)`));
+      click('b', () => s('bd*2,hh(3,4),jvbass(5,8,1)').jux(rev).play());
+      click('c', () => s('bd*2,hh(3,4),jvbass:[0 4](5,8,1)').jux(rev).stack(s('~ sd')).play());
+      click('stop', () => hush());
     </script>
   </body>
 </html>
