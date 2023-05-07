@@ -471,6 +471,41 @@ importers:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
 
+  packages/web:
+    dependencies:
+      '@strudel.cycles/core':
+        specifier: workspace:*
+        version: link:../core
+      '@strudel.cycles/mini':
+        specifier: workspace:*
+        version: link:../mini
+      '@strudel.cycles/soundfonts':
+        specifier: workspace:*
+        version: link:../soundfonts
+      '@strudel.cycles/tonal':
+        specifier: workspace:*
+        version: link:../tonal
+      '@strudel.cycles/transpiler':
+        specifier: workspace:*
+        version: link:../transpiler
+      '@strudel.cycles/webaudio':
+        specifier: workspace:*
+        version: link:../webaudio
+    devDependencies:
+      vite:
+        specifier: ^4.3.3
+        version: 4.3.3(@types/node@18.16.3)
+
+  packages/web/examples/repl-example:
+    dependencies:
+      '@strudel/web':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      vite:
+        specifier: ^4.3.2
+        version: 4.3.3(@types/node@18.16.3)
+
   packages/webaudio:
     dependencies:
       '@strudel.cycles/core':
