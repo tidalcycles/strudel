@@ -50,9 +50,10 @@ const modulesLoading = evalScope(
 
 const presets = prebake();
 
-let drawContext;
+let drawContext, clearCanvas;
 if (typeof window !== 'undefined') {
   drawContext = getDrawContext();
+  clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
 }
 
 const getTime = () => getAudioContext().currentTime;
@@ -207,7 +208,7 @@ export function Repl({ embedded = false }) {
   const handleShuffle = async () => {
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
-    cleanupDraw();
+    clearCanvas();
     resetLoadedSounds();
     scheduler.setCps(1);
     await prebake(); // declare default samples

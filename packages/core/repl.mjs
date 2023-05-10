@@ -1,6 +1,7 @@
 import { Cyclist } from './cyclist.mjs';
 import { evaluate as _evaluate } from './evaluate.mjs';
 import { logger } from './logger.mjs';
+import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
 
 export function repl({
@@ -26,6 +27,7 @@ export function repl({
     pattern = editPattern?.(pattern) || pattern;
     scheduler.setPattern(pattern, autostart);
   };
+  setTime(() => scheduler.now()); // TODO: refactor?
   const evaluate = async (code, autostart = true) => {
     if (!code) {
       throw new Error('no code to evaluate');
