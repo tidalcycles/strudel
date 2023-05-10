@@ -29,7 +29,7 @@ export async function defaultPrebake() {
 let initDone;
 
 let scheduler;
-export function init(options = {}) {
+export function initStrudel(options = {}) {
   initAudioOnFirstClick();
   miniAllStrings();
   const { prebake, ...schedulerOptions } = options;
@@ -40,6 +40,8 @@ export function init(options = {}) {
   })();
   scheduler = webaudioScheduler(schedulerOptions);
 }
+
+window.initStrudel = initStrudel;
 
 // this method will play the pattern on the default scheduler
 Pattern.prototype.play = function () {
