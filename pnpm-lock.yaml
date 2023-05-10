@@ -479,9 +479,6 @@ importers:
       '@strudel.cycles/mini':
         specifier: workspace:*
         version: link:../mini
-      '@strudel.cycles/soundfonts':
-        specifier: workspace:*
-        version: link:../soundfonts
       '@strudel.cycles/tonal':
         specifier: workspace:*
         version: link:../tonal
