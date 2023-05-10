@@ -22,7 +22,7 @@ export async function defaultPrebake() {
     import('@strudel.cycles/webaudio'),
     { hush, evaluate },
   );
-  await Promise.all([loadModules, registerSynthSounds()/* , registerSoundfonts() */]);
+  await Promise.all([loadModules, registerSynthSounds() /* , registerSoundfonts() */]);
 }
 
 // when this function finishes, everything is initialized
