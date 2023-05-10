@@ -1,13 +1,13 @@
 export * from '@strudel.cycles/core';
 export * from '@strudel.cycles/webaudio';
-export * from '@strudel.cycles/soundfonts';
+//export * from '@strudel.cycles/soundfonts';
 export * from '@strudel.cycles/transpiler';
 export * from '@strudel.cycles/mini';
 export * from '@strudel.cycles/tonal';
 export * from '@strudel.cycles/webaudio';
 import { Pattern, evalScope, controls } from '@strudel.cycles/core';
 import { initAudioOnFirstClick, registerSynthSounds, webaudioScheduler } from '@strudel.cycles/webaudio';
-import { registerSoundfonts } from '@strudel.cycles/soundfonts';
+// import { registerSoundfonts } from '@strudel.cycles/soundfonts';
 import { evaluate as _evaluate } from '@strudel.cycles/transpiler';
 import { miniAllStrings } from '@strudel.cycles/mini';
 
@@ -22,7 +22,7 @@ export async function defaultPrebake() {
     import('@strudel.cycles/webaudio'),
     { hush, evaluate },
   );
-  await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
+  await Promise.all([loadModules, registerSynthSounds()/* , registerSoundfonts() */]);
 }
 
 // when this function finishes, everything is initialized
