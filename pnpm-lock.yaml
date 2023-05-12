@@ -341,6 +341,9 @@ importers:
       '@strudel.cycles/react':
         specifier: workspace:*
         version: link:../..
+      '@strudel.cycles/soundfonts':
+        specifier: workspace:*
+        version: link:../../../soundfonts
       '@strudel.cycles/tonal':
         specifier: workspace:*
         version: link:../../../tonal

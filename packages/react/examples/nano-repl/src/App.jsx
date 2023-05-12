@@ -1,22 +1,34 @@
 import { controls, evalScope } from '@strudel.cycles/core';
 import { CodeMirror, useHighlighting, useKeydown, useStrudel, flash } from '@strudel.cycles/react';
-import { getAudioContext, initAudioOnFirstClick, panic, webaudioOutput } from '@strudel.cycles/webaudio';
+import {
+  getAudioContext,
+  initAudioOnFirstClick,
+  panic,
+  webaudioOutput,
+  registerSynthSounds,
+} from '@strudel.cycles/webaudio';
+import { registerSoundfonts } from '@strudel.cycles/soundfonts';
 import { useCallback, useState } from 'react';
 import './style.css';
 // import { prebake } from '../../../../../repl/src/prebake.mjs';
 
 initAudioOnFirstClick();
 
-// TODO: only import stuff when play is pressed?
-evalScope(
-  controls,
-  import('@strudel.cycles/core'),
-  import('@strudel.cycles/tonal'),
-  import('@strudel.cycles/mini'),
-  import('@strudel.cycles/xen'),
-  import('@strudel.cycles/webaudio'),
-  import('@strudel.cycles/osc'),
-);
+async function init() {
+  // TODO: only import stuff when play is pressed?
+  const loadModules = evalScope(
+    controls,
+    import('@strudel.cycles/core'),
+    import('@strudel.cycles/tonal'),
+    import('@strudel.cycles/mini'),
+    import('@strudel.cycles/xen'),
+    import('@strudel.cycles/webaudio'),
+    import('@strudel.cycles/osc'),
+  );
+
+  await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
+}
+init();
 
 const defaultTune = `samples({
   bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
@@ -31,7 +43,7 @@ stack(
   .off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
   .add(perlin.range(0,.5)) // random pitch variation
   .superimpose(add(.05)) // add second, slightly detuned voice
-  .n() // wrap in "n"
+  .note() // wrap in "note"
   .decay(.15).sustain(0) // make each note of equal length
   .s('sawtooth') // waveform
   .gain(.4) // turn down
@@ -40,7 +52,7 @@ stack(
   ,"<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings('lefthand') // chords
   .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
   .add(perlin.range(0,.5)) // random pitch variation
-  .n() // wrap in "n"
+  .note() // wrap in "n"
   .s('square') // waveform
   .gain(.16) // turn down
   .cutoff(500) // fixed cutoff
@@ -49,7 +61,7 @@ stack(
   ,"a4 c5 <e6 a6>".struct("x(5,8)")
   .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
   .add(perlin.range(0,.5)) // random pitch variation
-  .n() // wrap in "n"
+  .note() // wrap in "note"
   .decay(.1).sustain(0) // make notes short
   .s('triangle') // waveform
   .degradeBy(perlin.range(0,.5)) // randomly controlled random removal :)
@@ -103,7 +115,7 @@ function App() {
           }
         }
       },
-      [scheduler, evaluate, view],
+      [scheduler, evaluate, view, code],
     ),
   );
   return (
