@@ -32,11 +32,11 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@csound/browser": "6.18.5",
+    "@csound/browser": "6.18.7",
     "@strudel.cycles/core": "workspace:*",
     "@strudel.cycles/webaudio": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^3.2.2"
+    "vite": "^4.3.3"
   }
 }

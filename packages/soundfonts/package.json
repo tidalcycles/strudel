@@ -36,7 +36,7 @@
     "soundfont2": "^0.4.0"
   },
   "devDependencies": {
-    "node-fetch": "^3.2.6",
-    "vite": "^3.2.2"
+    "node-fetch": "^3.3.1",
+    "vite": "^4.3.3"
   }
 }
