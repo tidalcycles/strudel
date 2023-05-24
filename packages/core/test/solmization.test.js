@@ -1,16 +1,44 @@
 /*test for issue 302 support alternative solmization types */
 import { midi2note } from '../util.mjs';
+import { test } from 'vitest';
+import assert from 'assert';
 
-console.log(midi2note(60, 'letters')); /* should be C4*/
-console.log(midi2note(60, 'solfeggio')); /* should be Do4*/
-console.log(midi2note(60, 'indian')); /* should be Sa4*/
-console.log(midi2note(60, 'german')); /* should be C4*/
-console.log(midi2note(60, 'byzantine')); /* should be Ni4*/
-console.log(midi2note(60, 'japanese')); /* should be I4*/
+test('midi2note - letters', () => {
+  const result = midi2note(60, 'letters');
+  const expected = 'C4';
+  assert.equal(result, expected);
+});
 
-console.log(midi2note(70, 'letters')); /* should be Bb4*/
-console.log(midi2note(70, 'solfeggio')); /* should be Sib4*/
-console.log(midi2note(70, 'indian')); /* should be Ni4*/
-console.log(midi2note(70, 'german')); /* should be Hb4*/
-console.log(midi2note(70, 'byzantine')); /* should be Zob4*/
-console.log(midi2note(70, 'japanese')); /* should be To4*/
+test('midi2note - solfeggio', () => {
+  const result = midi2note(60, 'solfeggio');
+  const expected = 'Do4';
+  assert.equal(result, expected);
+});
+
+
+test('midi2note - indian', () => {
+    const result = midi2note(60, 'indian');
+    const expected = 'Sa4';
+    assert.equal(result, expected);
+  });
+
+test('midi2note - german', () => {
+    const result = midi2note(60, 'german');
+    const expected = 'C4';
+    assert.equal(result, expected);
+  });
+
+test('midi2note - byzantine', () => {
+    const result = midi2note(60, 'byzantine');
+    const expected = 'Ni4';
+    assert.equal(result, expected);
+  });
+
+test('midi2note - japanese', () => {
+    const result = midi2note(60, 'japanese');
+    const expected = 'I4';
+    assert.equal(result, expected);
+  });
+
+
+
