@@ -52,8 +52,7 @@
     "@strudel.cycles/webaudio": "workspace:*",
     "@strudel.cycles/xen": "workspace:*",
     "acorn": "^8.8.1",
-    "dependency-tree": "^9.0.0",
-    "vitest": "^0.28.0"
+    "dependency-tree": "^9.0.0"
   },
   "devDependencies": {
     "@vitest/ui": "^0.28.0",
@@ -66,6 +65,7 @@
     "jsdoc-to-markdown": "^8.0.0",
     "lerna": "^6.6.1",
     "prettier": "^2.8.8",
-    "rollup-plugin-visualizer": "^5.8.1"
+    "rollup-plugin-visualizer": "^5.8.1",
+    "vitest": "^0.28.0"
   }
 }
