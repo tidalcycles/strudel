@@ -71,11 +71,26 @@ export const getFreq = (noteOrMidi) => {
  * @deprecated does not appear to be referenced or invoked anywhere in the codebase
  * @noAutocomplete
  */
-export const midi2note = (n) => {
+/* added code from here to solve issue 302*/
+
+export const midi2note = (n,notation = 'letters') => {
+  const solfeggio = ['Do','Reb','Re', 'Mib','Mi','Fa', 'Solb','Sol', 'Lab', 'La', 'Sib','Si']; /*solffegio notes*/
+  const indian = ['Sa', 'Re', 'Ga', 'Ma', 'Pa', 'Dha', 'Ni']; /*indian musical notes,  seems like they do not use flats or sharps*/
+  const german = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A','Hb','H']; /*german & dutch musical notes*/
+  const byzantine = ['Ni', 'Pab', 'Pa', 'Voub', 'Vou', 'Ga', 'Dib', 'Di', 'Keb', 'Ke', 'Zob','Zo']; /*byzantine musical notes*/
+  const japanese = [ 'I', 'Ro', 'Ha', 'Ni' , 'Ho' , 'He', 'To']; /*traditional japanese musical notes, seems like they do not use falts or sharps*/
+  const pc = notation === 'solfeggio' ? solfeggio : /*check if its is any of the following*/
+    notation === 'indian' ? indian :
+    notation === 'german' ? german :
+    notation === 'byzantine' ? byzantine :
+    notation === 'japanese' ? japanese :
+  ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']; /*if not use standard version*/
+  const note = pc[n % 12]; /*calculating the midi value to the note*/
   const oct = Math.floor(n / 12) - 1;
-  const pc = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'][n % 12];
-  return pc + oct;
+  return note + oct;
 };
+/*testing if the function works by using the file solmization.test.mjs
+ in the test folder*/
 
 // modulo that works with negative numbers e.g. _mod(-1, 3) = 2. Works on numbers (rather than patterns of numbers, as @mod@ from pattern.mjs does)
 export const _mod = (n, m) => ((n % m) + m) % m;
