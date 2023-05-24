@@ -1,4 +1,3 @@
-
 /*test for issue 302 support alternative solmization types */
 import { midi2note } from '../util.mjs';
 
