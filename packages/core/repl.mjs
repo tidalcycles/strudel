@@ -18,23 +18,15 @@ export function repl({
 }) {
   const scheduler = new Cyclist({
     interval,
-    onTrigger: async (hap, deadline, duration, cps) => {
-      try {
-        if (!hap.context.onTrigger || !hap.context.dominantTrigger) {
-          await defaultOutput(hap, deadline, duration, cps);
-        }
-        if (hap.context.onTrigger) {
-          // call signature of output / onTrigger is different...
-          await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps);
-        }
-      } catch (err) {
-        logger(`[cyclist] error: ${err.message}`, 'error');
-      }
-    },
+    onTrigger: getTrigger({ defaultOutput, getTime }),
     onError: onSchedulerError,
     getTime,
     onToggle,
   });
+  const setPattern = (pattern, autostart = true) => {
+    pattern = editPattern?.(pattern) || pattern;
+    scheduler.setPattern(pattern, autostart);
+  };
   setTime(() => scheduler.now()); // TODO: refactor?
   const evaluate = async (code, autostart = true) => {
     if (!code) {
@@ -45,8 +37,7 @@ export function repl({
       let { pattern } = await _evaluate(code, transpiler);
 
       logger(`[eval] code updated`);
-      pattern = editPattern?.(pattern) || pattern;
-      scheduler.setPattern(pattern, autostart);
+      setPattern(pattern, autostart);
       afterEval?.({ code, pattern });
       return pattern;
     } catch (err) {
@@ -63,5 +54,21 @@ export function repl({
     setCps,
     setcps: setCps,
   });
-  return { scheduler, evaluate, start, stop, pause, setCps };
+  return { scheduler, evaluate, start, stop, pause, setCps, setPattern };
 }
+
+export const getTrigger =
+  ({ getTime, defaultOutput }) =>
+  async (hap, deadline, duration, cps) => {
+    try {
+      if (!hap.context.onTrigger || !hap.context.dominantTrigger) {
+        await defaultOutput(hap, deadline, duration, cps);
+      }
+      if (hap.context.onTrigger) {
+        // call signature of output / onTrigger is different...
+        await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps);
+      }
+    } catch (err) {
+      logger(`[cyclist] error: ${err.message}`, 'error');
+    }
+  };

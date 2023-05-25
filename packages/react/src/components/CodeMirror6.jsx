@@ -67,7 +67,7 @@ const highlightField = StateField.define({
                   }
                   let mark;
                   if (color) {
-                    mark = Decoration.mark({ attributes: { style: `outline: 4px solid ${color};` } });
+                    mark = Decoration.mark({ attributes: { style: `outline: 2px solid ${color};` } });
                   } else {
                     mark = Decoration.mark({ attributes: { class: `outline outline-2 outline-foreground` } });
                   }
