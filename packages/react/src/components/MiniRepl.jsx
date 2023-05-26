@@ -20,11 +20,12 @@ export function MiniRepl({
   enableKeyboard,
   drawTime,
   punchcard,
-  span,
   canvasHeight = 200,
+  fontSize = 18,
+  hideHeader = false,
   theme,
 }) {
-  drawTime = drawTime || (punchcard ? span || [0, 4] : undefined);
+  drawTime = drawTime || (punchcard ? [0, 4] : undefined);
   const evalOnMount = !!drawTime;
   const drawContext = useCallback(
     !!drawTime ? (canvasId) => document.querySelector('#' + canvasId)?.getContext('2d') : null,
@@ -48,7 +49,10 @@ export function MiniRepl({
   } = useStrudel({
     initialCode: tune,
     defaultOutput: webaudioOutput,
-    editPattern: (pat) => (punchcard ? pat.punchcard() : pat),
+    editPattern: (pat, id) => {
+      //pat = pat.withContext((ctx) => ({ ...ctx, id }));
+      return punchcard ? pat.punchcard() : pat;
+    },
     getTime,
     evalOnMount,
     drawContext,
@@ -102,7 +106,7 @@ export function MiniRepl({
       // const logId = data?.pattern?.meta?.id;
       if (logId === replId) {
         setLog((l) => {
-          return l.concat([e.detail]).slice(-10);
+          return l.concat([e.detail]).slice(-8);
         });
       }
     }, []),
@@ -110,31 +114,35 @@ export function MiniRepl({
 
   return (
     <div className="overflow-hidden rounded-t-md bg-background border border-lineHighlight" ref={ref}>
-      <div className="flex justify-between bg-lineHighlight">
-        <div className="flex">
-          <button
-            className={cx(
-              'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background',
-              started ? 'animate-pulse' : '',
-            )}
-            onClick={() => togglePlay()}
-          >
-            <Icon type={started ? 'stop' : 'play'} />
-          </button>
-          <button
-            className={cx(
-              'w-16 flex items-center justify-center p-1 text-foreground border-lineHighlight bg-lineHighlight',
-              isDirty ? 'text-foreground hover:bg-background cursor-pointer' : 'opacity-50 cursor-not-allowed',
-            )}
-            onClick={() => activateCode()}
-          >
-            <Icon type="refresh" />
-          </button>
+      {!hideHeader && (
+        <div className="flex justify-between bg-lineHighlight">
+          <div className="flex">
+            <button
+              className={cx(
+                'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background',
+                started ? 'animate-pulse' : '',
+              )}
+              onClick={() => togglePlay()}
+            >
+              <Icon type={started ? 'stop' : 'play'} />
+            </button>
+            <button
+              className={cx(
+                'w-16 flex items-center justify-center p-1 text-foreground border-lineHighlight bg-lineHighlight',
+                isDirty ? 'text-foreground hover:bg-background cursor-pointer' : 'opacity-50 cursor-not-allowed',
+              )}
+              onClick={() => activateCode()}
+            >
+              <Icon type="refresh" />
+            </button>
+          </div>
         </div>
-        {error && <div className="text-right p-1 text-sm text-red-200">{error.message}</div>}
-      </div>
+      )}
       <div className="overflow-auto relative">
-        {show && <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} theme={theme} />}
+        {show && (
+          <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} theme={theme} fontSize={fontSize} />
+        )}
+        {error && <div className="text-right p-1 text-md text-red-200">{error.message}</div>}
       </div>
       {drawTime && (
         <canvas

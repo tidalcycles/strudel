@@ -1,4 +1,11 @@
-Everythings repeats once per second => 1 **c**ycle **p**er **s**econd (cps)
+<Box>
+
+1. press play button to start
+2. change `house` to `casio`
+3. press refresh button to update
+4. press stop button to stop
+
+</Box>
 
 **Change tempo**
 
@@ -33,5 +40,17 @@ adding your own samples
   punchcard
 />
 
-
 n(run(8)).sound("east")
+
+Shorter variant:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`sound(\`
+[~  ~  oh ~ ] ~ ~ ~,
+[hh*2 ~] hh*2 hh*2 hh*2,
+[~ cp]*2,
+bd [~  ~  ~  bd] [~  bd] [~  ~  ~ bd]
+\`).cpm(90/4)`}
+/>

@@ -27,7 +27,7 @@ if (typeof window !== 'undefined') {
   prebake();
 }
 
-export function MiniRepl({ tune, drawTime, punchcard, span = [0, 4], canvasHeight = 100 }) {
+export function MiniRepl({ tune, drawTime, punchcard, span = [0, 4], canvasHeight = 100, hideHeader }) {
   const [Repl, setRepl] = useState();
   const { theme } = useSettings();
   useEffect(() => {
@@ -47,6 +47,7 @@ export function MiniRepl({ tune, drawTime, punchcard, span = [0, 4], canvasHeigh
         span={span}
         canvasHeight={canvasHeight}
         theme={themes[theme]}
+        hideHeader={hideHeader}
       />
     </div>
   ) : (
