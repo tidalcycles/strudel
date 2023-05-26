@@ -22,8 +22,8 @@ export async function prebake() {
       tag: 'drum-machines',
     }),
     samples(`./EmuSP12.json`, `./EmuSP12/`, { prebake: true, tag: 'drum-machines' }),
-    // samples('github:tidalcycles/Dirt-Samples/master'),
   ]);
+  await samples('github:tidalcycles/Dirt-Samples/master');
 }
 
 const maxPan = noteToMidi('C8');

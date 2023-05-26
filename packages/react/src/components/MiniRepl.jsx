@@ -20,10 +20,11 @@ export function MiniRepl({
   enableKeyboard,
   drawTime,
   punchcard,
+  span,
   canvasHeight = 200,
   theme,
 }) {
-  drawTime = drawTime || (punchcard ? [0, 4] : undefined);
+  drawTime = drawTime || (punchcard ? span || [0, 4] : undefined);
   const evalOnMount = !!drawTime;
   const drawContext = useCallback(
     !!drawTime ? (canvasId) => document.querySelector('#' + canvasId)?.getContext('2d') : null,

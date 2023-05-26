@@ -1,0 +1,37 @@
+Everythings repeats once per second => 1 **c**ycle **p**er **s**econd (cps)
+
+**Change tempo**
+
+<MiniRepl
+  client:load
+  tune={`setcps(.5)
+sound("bd bd hh bd sn bd hh bd")`}
+  punchcard
+/>
+
+adding your own samples
+
+<MiniRepl
+  client:visible
+  tune={`sound(\`
+[~  ~  oh ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ],
+[hh hh ~  ~ ] [hh ~  hh ~ ] [hh ~  hh ~ ] [hh ~  hh ~ ],
+[~  ~  ~  ~ ] [cp ~  ~  ~ ] [~  ~  ~  ~ ] [cp ~  ~  ~ ],
+[bd ~  ~  ~ ] [~  ~  ~  bd] [~  ~  bd ~ ] [~  ~  ~ bd ]
+\`).slow(3)`}
+  punchcard
+/>
+
+<MiniRepl
+  client:visible
+  tune={`sound(\`
+[~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  oh:1 ~ ],
+[hh hh hh hh] [hh hh hh hh] [hh hh hh hh] [hh hh ~  ~ ],
+[~  ~  ~  ~ ] [cp ~  ~  ~ ] [~  ~  ~  ~ ] [~  cp ~  ~ ],
+[bd bd ~  ~ ] [~  ~  bd ~ ] [bd bd ~ bd ] [~  ~  ~  ~ ]
+\`).bank("<RolandTR808 AkaiMPC60>").slow(3)`}
+  punchcard
+/>
+
+
+n(run(8)).sound("east")

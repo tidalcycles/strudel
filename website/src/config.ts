@@ -38,9 +38,16 @@ export const ALGOLIA = {
   apiKey: 'd5044f9d21b80e7721e5b0067a8730b1',
 };
 
-export type Sidebar = Record<(typeof KNOWN_LANGUAGE_CODES)[number], Record<string, { text: string; link: string }[]>>;
+export type SidebarLang = Record<string, { text: string; link: string }[]>;
+export type Sidebar = Record<(typeof KNOWN_LANGUAGE_CODES)[number], SidebarLang>;
 export const SIDEBAR: Sidebar = {
   en: {
+    Workshop: [
+      { text: 'Intro', link: 'workshop/intro' },
+      { text: 'First Sounds', link: 'workshop/first-sounds' },
+      { text: 'First Effects', link: 'workshop/first-effects' },
+      { text: 'Mini Notation', link: 'workshop/mini-notation' },
+    ],
     Tutorial: [
       { text: 'Getting Started', link: 'learn/getting-started' },
       { text: 'Notes', link: 'learn/notes' },

@@ -1,0 +1,207 @@
+---
+title: First Sounds
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '@src/docs/MiniRepl';
+import Box from '@components/Box.astro';
+import QA from '@components/QA';
+
+# First Sounds
+
+## Make a Sound
+
+Let's start by making some noise:
+
+<MiniRepl client:visible tune={`sound("house")`} />
+
+<Box>
+
+1. press play button to start
+2. change `house` to `casio`
+3. press refresh button to update
+4. press stop button to stop
+
+</Box>
+
+Congratulations, you've played your first pattern!
+
+Instead of clicking update all the time, you can use keyboard shortcuts:
+
+<Box>
+
+1. click into the text field
+2. press `ctrl`+`enter` to play
+3. change `casio` to `crow`
+4. press `ctrl`+`enter` to update
+5. press `ctrl`+`.` to stop
+
+</Box>
+
+To play code like an instrument, these shortcuts should become second nature to you.
+
+**Try more Sounds**
+
+You can pick a different sample from the same set, with ':'
+
+<MiniRepl client:visible tune={`sound("east:1")`} />
+
+Try changing `east:1` to `east:2`
+
+Here are some more sound sets to try
+
+```
+casio control crow techno house jazz
+metal east jvbass juno insect space wind
+bd sd rim hh oh
+```
+
+<QA q="What does bd sd rim hh oh mean?" client:visible>
+
+- `bd` = **b**ass **d**rum
+- `sd` = **s**nare **d**rum
+- `sn` = **sn**are
+- `rim` = **rim**shot
+- `hh` = **h**i**h**at
+- `oh` = **o**pen **h**ihat
+
+</QA>
+
+## Sequences
+
+**Make a Sequence**
+
+<MiniRepl client:visible tune={`sound("bd hh sd hh:4")`} punchcard />
+
+Notice how the currently playing sound is highlighted in the code and also visualized below.
+
+<Box>
+
+Try adding more sounds to the sequence!
+
+</Box>
+
+**The longer the sequence, the faster it runs**
+
+<MiniRepl client:visible tune={`sound("bd bd hh bd sn bd hh bd")`} punchcard />
+
+The content of the sequence will be squished into one second, called a cycle.
+
+**One way to change the tempo is using `cpm`**
+
+<MiniRepl client:visible tune={`sound("bd bd hh bd sn bd hh bd").cpm(40)`} punchcard />
+
+<Box>
+
+cpm = cycles per minute
+
+By default, the tempo is 60 cycles per minute = 1 cycle per second.
+
+</Box>
+
+We will look at other ways to change the tempo later!
+
+**Add a rests in a sequence with '~'**
+
+<MiniRepl client:visible tune={`sound("bd hh ~ rim")`} punchcard />
+
+**Sub-Sequences with [brackets]**
+
+<MiniRepl client:visible tune={`sound("bd [hh hh] sn [hh bd]")`} punchcard />
+
+<Box>
+
+Try adding more sounds inside a bracket!
+
+</Box>
+
+Similar to the whole sequence, the content of a sub-sequence will be squished to the its own length.
+
+**Multiplication: Speed things up**
+
+<MiniRepl client:visible tune={`sound("bd hh*2 sn hh*3")`} punchcard />
+
+**Multiplication: Speeeeeeeeed things up**
+
+<MiniRepl client:visible tune={`sound("bd hh*16 sn hh*8")`} punchcard />
+
+<Box>
+
+Pitch = Really fast Rhythm
+
+</Box>
+
+**Sub-Sub-Sequences with [[brackets]]**
+
+<MiniRepl client:visible tune={`sound("bd [[hh sn] hh]")`} punchcard />
+
+**Play Sounds in parallel with comma**
+
+<MiniRepl client:visible tune={`sound("hh hh hh, bd casio")`} punchcard />
+
+<MiniRepl client:visible tune={`sound("hh hh hh, bd bd, ~ casio")`} punchcard />
+
+**Multiple Lines with backticks**
+
+<MiniRepl
+  client:visible
+  tune={`sound(\`hh*2 oh, 
+bd*2, [~ casio],
+[jvbass:0 jvbass:1] jvbass:1\`)`}
+  punchcard
+/>
+
+## Recap
+
+Now we've learned the basics of the so called Mini-Notation, the rhythm language of Tidal.
+This is what we've leared so far:
+
+| Concept           | Syntax     | Example                                                               |
+| ----------------- | ---------- | --------------------------------------------------------------------- |
+| Sequence          | space      | <MiniRepl client:visible tune={`sound("bd bd sn hh")`} />             |
+| Sample Number     | :x         | <MiniRepl client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
+| Rests             | ~          | <MiniRepl client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
+| Sub-Sequences     | \[ \]      | <MiniRepl client:visible tune={`sound("bd wind [metal jazz] hh")`} /> |
+| Sub-Sub-Sequences | \[ \[ \]\] | <MiniRepl client:visible tune={`sound("bd [metal [jazz sn]]")`} />    |
+| Speed up          | \*         | <MiniRepl client:visible tune={`sound("bd sn*2 cp*3")`} />            |
+| Parallel          | ,          | <MiniRepl client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />      |
+
+## Examples
+
+Imitation of a step sequencer:
+
+<MiniRepl
+  client:visible
+  tune={`sound(\`
+[~  ~  oh ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ],
+[hh hh ~  ~ ] [hh ~  hh ~ ] [hh ~  hh ~ ] [hh ~  hh ~ ],
+[~  ~  ~  ~ ] [cp ~  ~  ~ ] [~  ~  ~  ~ ] [cp ~  ~  ~ ],
+[bd ~  ~  ~ ] [~  ~  ~  bd] [~  ~  bd ~ ] [~  ~  ~  bd]
+\`).cpm(90/4)`}
+  punchcard
+/>
+
+Shorter variant:
+
+<MiniRepl
+  client:visible
+  tune={`sound(\`
+[~  ~  oh ~ ] ~ ~ ~,
+[hh*2 ~] hh*2 hh*2 hh*2,
+[~ cp]*2,
+bd [~  ~  ~  bd] [~  bd] [~  ~  ~ bd]
+\`).cpm(90/4)`}
+/>
+
+Another beat:
+
+<MiniRepl
+  client:visible
+  tune={`sound(\`
+[~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  oh:1 ~ ],
+[hh hh hh hh] [hh hh hh hh] [hh hh hh hh] [hh hh ~  ~ ],
+[~  ~  ~  ~ ] [cp ~  ~  ~ ] [~  ~  ~  ~ ] [~  cp ~  ~ ],
+[bd bd ~  ~ ] [~  ~  bd ~ ] [bd bd ~ bd ] [~  ~  ~  ~ ]
+\`).bank("RolandTR808").slow(3)`}
+  punchcard
+/>
