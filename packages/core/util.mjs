@@ -67,13 +67,14 @@ export const getFreq = (noteOrMidi) => {
   return midiToFreq(noteToMidi(noteOrMidi));
 };
 
+const pcs = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 /**
  * @deprecated does not appear to be referenced or invoked anywhere in the codebase
  * @noAutocomplete
  */
 export const midi2note = (n) => {
   const oct = Math.floor(n / 12) - 1;
-  const pc = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'][n % 12];
+  const pc = pcs[n % 12];
   return pc + oct;
 };
 

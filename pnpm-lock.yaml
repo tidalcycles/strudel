@@ -92,7 +92,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/core:
     dependencies:
@@ -102,7 +102,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -127,7 +127,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/core/examples/vite-vanilla-repl-cm6:
     dependencies:
@@ -155,7 +155,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.2
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/csound:
     dependencies:
@@ -171,7 +171,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/embed: {}
 
@@ -204,7 +204,7 @@ importers:
         version: link:../mini
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -223,7 +223,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/mini:
     dependencies:
@@ -236,7 +236,7 @@ importers:
         version: 3.0.2
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -255,7 +255,7 @@ importers:
         version: 5.8.1
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/react:
     dependencies:
@@ -325,7 +325,7 @@ importers:
         version: 3.3.2
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/react/examples/nano-repl:
     dependencies:
@@ -380,7 +380,7 @@ importers:
         version: 3.3.2
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/serial:
     dependencies:
@@ -390,7 +390,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/soundfonts:
     dependencies:
@@ -412,7 +412,7 @@ importers:
         version: 3.3.1
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/tonal:
     dependencies:
@@ -431,7 +431,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -447,7 +447,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -469,7 +469,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -494,7 +494,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/web/examples/repl-example:
     dependencies:
@@ -504,7 +504,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.2
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/webaudio:
     dependencies:
@@ -517,7 +517,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/webdirt:
     dependencies:
@@ -533,7 +533,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -546,7 +546,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -646,6 +646,9 @@ importers:
       canvas:
         specifier: ^2.11.2
         version: 2.11.2
+      claviature:
+        specifier: ^0.1.0
+        version: 0.1.0
       fraction.js:
         specifier: ^4.2.0
         version: 4.2.0
@@ -4502,7 +4505,7 @@ packages:
       '@babel/plugin-transform-react-jsx-self': 7.21.0(@babel/core@7.21.5)
       '@babel/plugin-transform-react-jsx-source': 7.19.6(@babel/core@7.21.5)
       react-refresh: 0.14.0
-      vite: 4.3.3(@types/node@18.16.3)
+      vite: 4.3.3(@types/node@18.11.18)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5412,6 +5415,10 @@ packages:
   /ci-info@3.7.1:
     resolution: {integrity: sha512-4jYS4MOAaCIStSRwiuxc4B8MYhIe676yO1sYGzARnjXkWpmzZMMYxY6zu8WYWDhSuth5zhrQ1rhNSibyyvv4/w==}
     engines: {node: '>=8'}
+
+  /claviature@0.1.0:
+    resolution: {integrity: sha512-Ai12axNwQ7x/F9QAj64RYKsgvi5Y33+X3GUSKAC/9s/adEws8TSSc0efeiqhKNGKBo6rT/c+CSCwSXzXxwxZzQ==}
+    dev: false
 
   /clean-stack@2.2.0:
     resolution: {integrity: sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==}

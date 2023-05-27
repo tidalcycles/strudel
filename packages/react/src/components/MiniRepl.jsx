@@ -18,18 +18,21 @@ export function MiniRepl({
   tune,
   hideOutsideView = false,
   enableKeyboard,
+  onTrigger,
   drawTime,
   punchcard,
+  onPaint,
   canvasHeight = 200,
   fontSize = 18,
   hideHeader = false,
   theme,
+  keybindings,
 }) {
   drawTime = drawTime || (punchcard ? [0, 4] : undefined);
   const evalOnMount = !!drawTime;
   const drawContext = useCallback(
-    !!drawTime ? (canvasId) => document.querySelector('#' + canvasId)?.getContext('2d') : null,
-    [drawTime],
+    punchcard ? (canvasId) => document.querySelector('#' + canvasId)?.getContext('2d') : null,
+    [punchcard],
   );
   const {
     code,
@@ -51,7 +54,15 @@ export function MiniRepl({
     defaultOutput: webaudioOutput,
     editPattern: (pat, id) => {
       //pat = pat.withContext((ctx) => ({ ...ctx, id }));
-      return punchcard ? pat.punchcard() : pat;
+      if (onTrigger) {
+        pat = pat.onTrigger(onTrigger, false);
+      }
+      if (onPaint) {
+        pat = pat.onPaint(onPaint);
+      } else if (punchcard) {
+        pat = pat.punchcard();
+      }
+      return pat;
     },
     getTime,
     evalOnMount,
@@ -87,7 +98,7 @@ export function MiniRepl({
               e.preventDefault();
               flash(view);
               await activateCode();
-            } else if (e.key === '.') {
+            } else if (e.key === '.' || e.code === 'Period') {
               stop();
               e.preventDefault();
             }
@@ -140,11 +151,18 @@ export function MiniRepl({
       )}
       <div className="overflow-auto relative">
         {show && (
-          <CodeMirror6 value={code} onChange={setCode} onViewChanged={setView} theme={theme} fontSize={fontSize} />
+          <CodeMirror6
+            value={code}
+            onChange={setCode}
+            onViewChanged={setView}
+            theme={theme}
+            fontSize={fontSize}
+            keybindings={keybindings}
+          />
         )}
         {error && <div className="text-right p-1 text-md text-red-200">{error.message}</div>}
       </div>
-      {drawTime && (
+      {punchcard && (
         <canvas
           id={canvasId}
           className="w-full pointer-events-none"
