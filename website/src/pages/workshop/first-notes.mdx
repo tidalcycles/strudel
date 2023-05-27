@@ -97,11 +97,17 @@ Try out different octaves (1-8)
 
 </Box>
 
+If you are not comfortable with the note letter system, it should be easier to use numbers instead.
+Most of the examples below will use numbers for that reason.
+We will also look at ways to make it easier to play the right notes later.
+
 ## changing the sound
 
 Just like with unpitched sounds, we can change the sound of our notes with `sound`:
 
-<MiniRepl hideHeader client:visible tune={`note("c2 g2, e3 b3 d4 e4").sound("piano")`} />
+<MiniRepl hideHeader client:visible tune={`note("36 43, 52 59 62 64").sound("piano")`} />
+
+{/* c2 g2, e3 b3 d4 e4 */}
 
 <Box>
 
@@ -157,6 +163,8 @@ We will see more ways to combine patterns later..
 
 The `/4` plays the sequence in brackets over 4 cycles (=4s).
 
+So each of the 4 notes is 1s long.
+
 Try adding more notes inside the brackets and notice how it gets faster.
 
 </Box>
@@ -181,47 +189,77 @@ Try adding more notes inside the brackets and notice how it does **not** get fas
   hideHeader
   client:visible
   tune={`note("<[36 48]*4 [34 46]*4 [41 53]*4 [39 51]*4>/2")
-  .sound("gm_acoustic_bass")`}
+.sound("gm_acoustic_bass")`}
 />
 
-**Play X per cycle with \{ \}**
+**Alternate between multiple things**
 
 <MiniRepl
   hideHeader
   client:visible
-  tune={`note(\`{
-[~ 60] 63 [60 63] [~ 63]
-[~ 60] 62 [60 62] [~ 62]
-[~ 60] 65 [60 65] [~ 65]
-[~ 60] 63 [60 63] [~ 63]
-}%2\`).sound("gm_xylophone")`}
-  punchcard
+  tune={`note("60 <63 62 65 63>")
+.sound("gm_xylophone")`}
+/>
+
+This is also useful for unpitched sounds:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`sound("bd*2, ~ <sd cp>, [~ hh]*2")
+.bank("RolandTR909")`}
+/>
+
+## Scales
+
+Finding the right notes can be difficult.. Scales are here to help:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`n("0 2 4 <[6,8] [7,9]>")
+.scale("C:minor").sound("piano")`}
 />
 
 <Box>
 
-Try different numbers after `%`
+Try out different numbers. Any number should sound good!
 
-`{ ... }%1` is the same as `< ... >`
+Try out different scales:
+
+- C:major
+- A2:minor
+- D:dorian
+- G:mixolydian
+- A2:minor:pentatonic
+- F:major:pentatonic
 
 </Box>
 
-## Examples
+**automate scales**
 
-Small Town Boy
+Just like anything, we can automate the scale with a pattern:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`n("0, 2 4 <[6,8] [7,9]>")
+.scale("<C:major F:lydian>/2")
+.sound("piano")`}
+/>
+
+## Examples
 
 <MiniRepl
   hideHeader
   client:visible
   tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
-.sound("gm_synth_bass_1").lpf(1000)`}
+.sound("gm_synth_bass_1")`}
 />
 
 <MiniRepl
   hideHeader
   client:visible
-  tune={`"<36  34 41 39>/2"
-.add.squeeze("[0 12]\*4")
-.note()
+  tune={`note("[0 12]*2".add("<36 34 41 39>/2"))
 .sound("gm_synth_bass_1")`}
 />
