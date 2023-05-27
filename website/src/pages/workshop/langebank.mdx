@@ -54,3 +54,38 @@ Shorter variant:
 bd [~  ~  ~  bd] [~  bd] [~  ~  ~ bd]
 \`).cpm(90/4)`}
 />
+
+polyrythms & polymeters
+
+-- This can make for flexible time signatures:
+
+d1 $ sound "[bd bd sn:5] [bd sn:3]"
+
+-- You can put subsequences inside subsequences:
+d1 $ sound "[[bd bd] bd sn:5] [bd sn:3]"
+
+-- Keep going..
+d1 $ sound "[[bd [bd bd bd bd]] bd sn:5] [bd sn:3]"
+
+-- * Polymetric / polyrhythmic sequences
+
+-- Play two subsequences at once by separating with a comma:
+
+d1 $ sound "[voodoo voodoo:3, arpy arpy:4 arpy:2]"
+
+-- compare how [,] and {,} work:
+
+d1 $ sound "[voodoo voodoo:3, arpy arpy:4 arpy:2]"
+
+d1 $ sound "{voodoo voodoo:3, arpy arpy:4 arpy:2}"
+
+d1 $ sound "[drum bd hh bd, can can:2 can:3 can:4 can:2]"
+
+d1 $ sound "{drum bd hh bd, can can:2 can:3 can:4 can:2}"
+
+d1 $ sound "[bd sn, can:2 can:3 can:1, arpy arpy:1 arpy:2 arpy:3 arpy:5]"
+
+d1 $ sound "{bd sn, can:2 can:3 can:1, arpy arpy:1 arpy:2 arpy:3 arpy:5}"
+
+
+

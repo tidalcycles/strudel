@@ -1,5 +1,6 @@
 import ChevronDownIcon from '@heroicons/react/20/solid/ChevronDownIcon';
 import ChevronUpIcon from '@heroicons/react/20/solid/ChevronUpIcon';
+import React from 'react';
 import { useState } from 'react';
 
 export default function QA({ children, q }) {

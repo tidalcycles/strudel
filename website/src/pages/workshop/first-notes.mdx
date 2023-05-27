@@ -1,0 +1,227 @@
+---
+title: First Notes
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '@src/docs/MiniRepl';
+import { midi2note } from '@strudel.cycles/core/';
+import Box from '@components/Box.astro';
+import QA from '@components/QA';
+
+# First Notes
+
+Let's look at how we can play notes
+
+## numbers and notes
+
+**play notes with numbers**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("48 52 55 59").sound("piano")`}
+  claviature
+  claviatureLabels={Object.fromEntries(
+    Array(49)
+      .fill()
+      .map((_, i) => [midi2note(i + 36), i + 36]),
+  )}
+/>
+
+<Box>
+
+Try out different numbers!
+
+Try decimal numbers, like 55.5
+
+</Box>
+
+**play notes with letters**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("c e g b").sound("piano")`}
+  claviature
+  claviatureLabels={Object.fromEntries(['c3', 'd3', 'e3', 'f3', 'g3', 'a3', 'b3'].map((n) => [n, n.split('')[0]]))}
+/>
+
+<Box>
+
+Try out different letters (a - g).
+
+Can you find melodies that are actual words? Hint: ☕ 😉 ⚪
+
+</Box>
+
+**add flats or sharps to play the black keys**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("db eb gb ab bb").sound("piano")`}
+  claviature
+  claviatureLabels={Object.fromEntries(
+    ['db3', 'eb3', 'gb3', 'ab3', 'bb3'].map((n) => [n, n.split('').slice(0, 2).join('')]),
+  )}
+/>
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("c# d# f# g# a#").sound("piano")`}
+  claviature
+  claviatureLabels={Object.fromEntries(
+    ['c#3', 'd#3', 'f#3', 'g#3', 'a#3'].map((n) => [n, n.split('').slice(0, 2).join('')]),
+  )}
+/>
+
+**play notes with letters in different octaves**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("c2 e3 g4 b5").sound("piano")`}
+  claviature
+  claviatureLabels={Object.fromEntries(['c1', 'c2', 'c3', 'c4', 'c5'].map((n) => [n, n]))}
+  claviatureLabels={Object.fromEntries(
+    Array(49)
+      .fill()
+      .map((_, i) => [midi2note(i + 36), midi2note(i + 36)]),
+  )}
+/>
+
+<Box>
+
+Try out different octaves (1-8)
+
+</Box>
+
+## changing the sound
+
+Just like with unpitched sounds, we can change the sound of our notes with `sound`:
+
+<MiniRepl hideHeader client:visible tune={`note("c2 g2, e3 b3 d4 e4").sound("piano")`} />
+
+<Box>
+
+Try out different sounds:
+
+- gm_electric_guitar_muted
+- gm_acoustic_bass
+- gm_voice_oohs
+- gm_blown_bottle
+- sawtooth
+- square
+- triangle
+- how about bd, sd or hh?
+- remove `.sound('...')` completely
+
+</Box>
+
+**switch between sounds**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("48 67 63 [62, 58]")
+.sound("piano gm_electric_guitar_muted")`}
+/>
+
+**stack multiple sounds**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("48 67 63 [62, 58]")
+.sound("piano, gm_electric_guitar_muted")`}
+/>
+
+<Box>
+
+The `note` and `sound` patterns are combined!
+
+We will see more ways to combine patterns later..
+
+</Box>
+
+## Longer Sequences
+
+**Divide sequences with `/` to slow them down**
+
+{/* [c2 bb1 f2 eb2] */}
+
+<MiniRepl hideHeader client:visible tune={`note("[36 34 41 39]/4").sound("gm_acoustic_bass")`} punchcard />
+
+<Box>
+
+The `/4` plays the sequence in brackets over 4 cycles (=4s).
+
+Try adding more notes inside the brackets and notice how it gets faster.
+
+</Box>
+
+Because it is so common to just play one thing per cycle, you can..
+
+**Play one per cycle with \< \>**
+
+<MiniRepl hideHeader client:visible tune={`note("<36 34 41 39>").sound("gm_acoustic_bass")`} punchcard />
+
+<Box>
+
+Try adding more notes inside the brackets and notice how it does **not** get faster.
+
+</Box>
+
+**Play one sequence per cycle**
+
+{/* <[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2 */}
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("<[36 48]*4 [34 46]*4 [41 53]*4 [39 51]*4>/2")
+  .sound("gm_acoustic_bass")`}
+/>
+
+**Play X per cycle with \{ \}**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note(\`{
+[~ 60] 63 [60 63] [~ 63]
+[~ 60] 62 [60 62] [~ 62]
+[~ 60] 65 [60 65] [~ 65]
+[~ 60] 63 [60 63] [~ 63]
+}%2\`).sound("gm_xylophone")`}
+  punchcard
+/>
+
+<Box>
+
+Try different numbers after `%`
+
+`{ ... }%1` is the same as `< ... >`
+
+</Box>
+
+## Examples
+
+Small Town Boy
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+.sound("gm_synth_bass_1").lpf(1000)`}
+/>
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`"<36  34 41 39>/2"
+.add.squeeze("[0 12]\*4")
+.note()
+.sound("gm_synth_bass_1")`}
+/>

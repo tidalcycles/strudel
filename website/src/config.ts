@@ -45,6 +45,7 @@ export const SIDEBAR: Sidebar = {
     Workshop: [
       { text: 'Intro', link: 'workshop/intro' },
       { text: 'First Sounds', link: 'workshop/first-sounds' },
+      { text: 'First Notes', link: 'workshop/first-notes' },
       { text: 'First Effects', link: 'workshop/first-effects' },
       { text: 'Mini Notation', link: 'workshop/mini-notation' },
     ],
