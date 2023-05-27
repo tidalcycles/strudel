@@ -67,7 +67,7 @@ d1 $ sound "[[bd bd] bd sn:5] [bd sn:3]"
 -- Keep going..
 d1 $ sound "[[bd [bd bd bd bd]] bd sn:5] [bd sn:3]"
 
--- * Polymetric / polyrhythmic sequences
+-- \* Polymetric / polyrhythmic sequences
 
 -- Play two subsequences at once by separating with a comma:
 
@@ -86,11 +86,6 @@ d1 $ sound "{drum bd hh bd, can can:2 can:3 can:4 can:2}"
 d1 $ sound "[bd sn, can:2 can:3 can:1, arpy arpy:1 arpy:2 arpy:3 arpy:5]"
 
 d1 $ sound "{bd sn, can:2 can:3 can:1, arpy arpy:1 arpy:2 arpy:3 arpy:5}"
-
-
-
-
-
 
 **Play X per cycle with \{ \}**
 
@@ -119,3 +114,41 @@ Try different numbers after `%`
 - `[]` squeezes contents to 1 cycle
 - `<>` plays one item per cycle
 - `{}%x` plays x items per cycle
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("[0 12]*2".add("<36 34 41 39>/2"))
+.sound("gm_synth_bass_1")`}
+/>
+
+vertical
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`n(\`<
+<[0,7] [-1,6] [-1,6] [-1,6]> 
+< 4     4      4      3> 
+<[2,7] [2,6]  [1,6]  [1,6]> 
+< 4     4      4      3>
+>*2\`)
+.scale("<E:minor>/4")
+.sound("piano")`}
+/>
+
+horizontal
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`
+n(\`<
+[0,7]  4 [2,7] 4
+[-1,6] 4 [2,6] 4
+[-1,6] 4 [1,6] 4
+[-1,6] 3 [1,6] 3
+>*2\`)
+.scale("<E:minor>/4")
+.sound("piano")`}
+/>

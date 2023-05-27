@@ -9,54 +9,52 @@ import { MiniRepl } from '../../docs/MiniRepl';
 
 **vowel**
 
-<MiniRepl client:load tune={`sound("drum drum drum drum").vowel("a o")`} />
+<MiniRepl hideHeader client:load tune={`sound("drum drum drum drum").vowel("a o")`} />
 
 You can probably think of more vowels :)
 
 **gain**
 
-<MiniRepl client:load tune={`sound("bd hh sn:1 hh sn:1 hh").gain("1 .5 .2")`} />
+<MiniRepl hideHeader client:load tune={`sound("bd hh sn:1 hh sn:1 hh").gain("1 .5 .2")`} />
 
 **control the gain with a sine wave**
 
-<MiniRepl client:load tune={`sound("hh*16").gain(sine)`} />
+<MiniRepl hideHeader client:load tune={`sound("hh*16").gain(sine)`} />
 
 Try also `saw`, `square`, `tri`
 
 **The 'structure' comes from the left - try swapping:**
 
-<MiniRepl client:load tune={`vowel("a o").sound("drum")`} />
+<MiniRepl hideHeader client:load tune={`vowel("a o").sound("drum")`} />
 
 **speed of playback, e.g. 2 = double speed (up 1 octave)**
 
-<MiniRepl client:load tune={`speed("1 2 4").sound("jungbass:6")`} />
+<MiniRepl hideHeader client:load tune={`speed("1 2 4").sound("jungbass:6")`} />
 
 <MiniRepl
+  hideHeader
   client:load
   tune={`sound("numbers:1 numbers:2 numbers:3 numbers:4")
 .speed("1 1.5 2 0.5")
 .slow(2)`}
 />
 
-**set note**
-
-<MiniRepl client:load tune={`note("40 43 47").sound("jungbass:6")`} />
-
 **pan**
 
 <MiniRepl
+  hideHeader
   client:load
   tune={`sound("numbers:1 numbers:2 numbers:3 numbers:4")
 .pan("0 0.3 .6 1")
 .slow(2)`}
 />
 
-<MiniRepl client:load tune={`sound("drum*8").pan(sine)`} />
+<MiniRepl hideHeader client:load tune={`sound("drum*8").pan(sine)`} />
 
 **delay**
 
-<MiniRepl client:load tune={`sound("bd sd").delay(".5:.1:.4")`} />
+<MiniRepl hideHeader client:load tune={`sound("bd sd").delay(".5:.1:.4")`} />
 
 **room**
 
-<MiniRepl client:load tune={`sound("bd sd").room(".5")`} />
+<MiniRepl hideHeader client:load tune={`sound("bd sd").room(".5")`} />

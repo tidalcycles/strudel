@@ -91,7 +91,7 @@ There are a lot more, but let's keep it simple for now
 
 In the last example, we already saw that you can play multiple sounds in a sequence by separating them with a space:
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh sd hh:4")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd hh sd hh")`} punchcard />
 
 Notice how the currently playing sound is highlighted in the code and also visualized below.
 
@@ -173,6 +173,18 @@ You can use as many commas as you want:
 
 <MiniRepl hideHeader client:visible tune={`sound("hh hh hh, bd bd, ~ casio")`} punchcard />
 
+Commas can also be used inside sub-sequences:
+
+<MiniRepl hideHeader client:visible tune={`sound("hh hh hh, bd [bd,casio]")`} punchcard />
+
+<Box>
+
+Notice how the 2 above are the same?
+
+It is quite common that there are many ways to express the same idea.
+
+</Box>
+
 **Multiple Lines with backticks**
 
 <MiniRepl
@@ -203,13 +215,18 @@ This is what we've leared so far:
 
 **Basic rock beat**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd sd, hh*4").bank('RolandTR505')`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd sd, hh*4").bank('RolandTR505').cpm(100/2)`} punchcard />
 
 **Classic house**
 
 <MiniRepl hideHeader client:visible tune={`sound("bd*2, ~ cp, [~ hh]*2").bank('RolandTR909')`} punchcard />
 
-Notice that the house and rock beats are extremely similar. Besides their different tempos and minor differences in the hihat and kick drum lines, these patterns are the same. You'll find certain drum patterns reused in many styles.
+<Box>
+
+Notice that the two patterns are extremely similar.
+Certain drum patterns are reused across genres.
+
+</Box>
 
 We Will Rock you
 
