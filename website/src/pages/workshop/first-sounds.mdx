@@ -190,9 +190,10 @@ It is quite common that there are many ways to express the same idea.
 <MiniRepl
   hideHeader
   client:visible
-  tune={`sound(\`hh*2 oh, 
-bd*2, [~ casio],
-[jvbass:0 jvbass:1] jvbass:1\`)`}
+  tune={`sound(\`bd*2, ~ cp, 
+~ ~ ~ oh, hh*4,
+[~ perc:1*2]*2,
+[~ jvbass]*2\`)`}
   punchcard
 />
 
@@ -201,25 +202,25 @@ bd*2, [~ casio],
 Now we've learned the basics of the so called Mini-Notation, the rhythm language of Tidal.
 This is what we've leared so far:
 
-| Concept           | Syntax     | Example                                                                          |
-| ----------------- | ---------- | -------------------------------------------------------------------------------- |
-| Sequence          | space      | <MiniRepl hideHeader client:visible tune={`sound("bd bd sn hh")`} />             |
-| Sample Number     | :x         | <MiniRepl hideHeader client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
-| Rests             | ~          | <MiniRepl hideHeader client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
-| Sub-Sequences     | \[ \]      | <MiniRepl hideHeader client:visible tune={`sound("bd wind [metal jazz] hh")`} /> |
-| Sub-Sub-Sequences | \[ \[ \]\] | <MiniRepl hideHeader client:visible tune={`sound("bd [metal [jazz sn]]")`} />    |
-| Speed up          | \*         | <MiniRepl hideHeader client:visible tune={`sound("bd sn*2 cp*3")`} />            |
-| Parallel          | ,          | <MiniRepl hideHeader client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />      |
+| Concept           | Syntax   | Example                                                                          |
+| ----------------- | -------- | -------------------------------------------------------------------------------- |
+| Sequence          | space    | <MiniRepl hideHeader client:visible tune={`sound("bd bd sn hh")`} />             |
+| Sample Number     | :x       | <MiniRepl hideHeader client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
+| Rests             | ~        | <MiniRepl hideHeader client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
+| Sub-Sequences     | \[\]     | <MiniRepl hideHeader client:visible tune={`sound("bd wind [metal jazz] hh")`} /> |
+| Sub-Sub-Sequences | \[\[\]\] | <MiniRepl hideHeader client:visible tune={`sound("bd [metal [jazz sn]]")`} />    |
+| Speed up          | \*       | <MiniRepl hideHeader client:visible tune={`sound("bd sn*2 cp*3")`} />            |
+| Parallel          | ,        | <MiniRepl hideHeader client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />      |
 
 ## Examples
 
 **Basic rock beat**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd sd, hh*4").bank('RolandTR505').cpm(100/2)`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd sd, hh*4").bank("RolandTR505").cpm(100/2)`} punchcard />
 
 **Classic house**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd*2, ~ cp, [~ hh]*2").bank('RolandTR909')`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd*2, ~ cp, [~ hh]*2").bank("RolandTR909")`} punchcard />
 
 <Box>
 
@@ -230,15 +231,15 @@ Certain drum patterns are reused across genres.
 
 We Will Rock you
 
-<MiniRepl hideHeader client:visible tune={`sound("bd*2 cp").bank('RolandTR707').cpm(81/2)`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd*2 cp").bank("RolandTR707").cpm(81/2)`} punchcard />
 
 **Yellow Magic Orchestra - Firecracker**
 
 <MiniRepl
   hideHeader
   client:visible
-  tune={`sound(\`bd sd, ~@3 hh ~ hh ~ ~, ~ perc:1*2 ~ perc:1\`)
-.bank('RolandCompurhythm1000')`}
+  tune={`sound("bd sd, ~ ~ ~ hh ~ hh ~ ~, ~ perc ~ perc:1*2")
+.bank("RolandCompurhythm1000")`}
   punchcard
 />
 
