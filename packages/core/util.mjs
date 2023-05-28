@@ -213,3 +213,5 @@ export const splitAt = function (index, value) {
 };
 
 export const zipWith = (f, xs, ys) => xs.map((n, i) => f(n, ys[i]));
+
+export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
