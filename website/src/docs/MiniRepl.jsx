@@ -60,6 +60,8 @@ export function MiniRepl({
         theme={themes[theme]}
         hideHeader={hideHeader}
         keybindings={keybindings}
+        fontFamily={fontFamily}
+        fontSize={fontSize}
         onPaint={
           claviature
             ? (ctx, time, haps, drawTime) => {

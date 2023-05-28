@@ -24,6 +24,7 @@ export function MiniRepl({
   onPaint,
   canvasHeight = 200,
   fontSize = 18,
+  fontFamily,
   hideHeader = false,
   theme,
   keybindings,
@@ -156,6 +157,7 @@ export function MiniRepl({
             onChange={setCode}
             onViewChanged={setView}
             theme={theme}
+            fontFamily={fontFamily}
             fontSize={fontSize}
             keybindings={keybindings}
           />
