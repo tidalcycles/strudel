@@ -4,6 +4,7 @@ layout: ../../layouts/MainLayout.astro
 ---
 
 import { MiniRepl } from '../../docs/MiniRepl';
+import QA from '@components/QA';
 
 # First Effects
 
@@ -104,6 +105,54 @@ Try to identify the individual parts of the stacks, pay attention to where the c
 The 3 parts (drums, bassline, chords) are exactly as earlier, just stacked together, separated by comma.
 
 </Box>
+
+**adsr envelope**
+
+<MiniRepl
+  hideHeader
+  client:load
+  tune={`note("<c3 bb2 f3 eb3>")
+.sound("sawtooth").lpf(600)
+.attack(.1)
+.decay(.1)
+.sustain(.25)
+.release(.2)`}
+/>
+
+<Box>
+
+Try to find out what the numbers do.. Compare the following
+
+- attack: `.5` vs `0`
+- decay: `.5` vs `0`
+- sustain: `1` vs `.25` vs `0`
+- release: `0` vs `.5` vs `1`
+
+Can you guess what they do?
+
+</Box>
+
+<QA q="Click to see solution" client:visible>
+
+- attack: time it takes to fade in
+- decay: time it takes to fade to sustain
+- sustain: level after decay
+- release: time it takes to fade out after note is finished
+
+![ADSR](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/ADSR_parameter.svg/1920px-ADSR_parameter.svg.png)
+
+</QA>
+
+**adsr short notation**
+
+<MiniRepl
+  hideHeader
+  client:load
+  tune={`note("<c3 bb2 f3 eb3>")
+.sound("sawtooth").lpf(600)
+.adsr(".1:.1:.5:.2")
+`}
+/>
 
 **delay**
 
