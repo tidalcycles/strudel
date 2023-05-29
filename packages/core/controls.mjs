@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern, sequence } from './pattern.mjs';
+import { Pattern, register, sequence } from './pattern.mjs';
 import { zipWith } from './util.mjs';
 
 const controls = {};
@@ -809,5 +809,16 @@ generic_params.forEach(([names, ...aliases]) => {
 
 controls.createParams = (...names) =>
   names.reduce((acc, name) => Object.assign(acc, { [name]: controls.createParam(name) }), {});
+
+controls.adsr = register('adsr', (adsr, pat) => {
+  adsr = !Array.isArray(adsr) ? [adsr] : adsr;
+  const [attack, decay, sustain, release] = adsr;
+  return pat.set({ attack, decay, sustain, release });
+});
+controls.ds = register('ds', (ds, pat) => {
+  ds = !Array.isArray(ds) ? [ds] : ds;
+  const [decay, sustain] = ds;
+  return pat.set({ decay, sustain });
+});
 
 export default controls;
