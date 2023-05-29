@@ -11,7 +11,9 @@ import Box from '@components/Box.astro';
 
 We have sounds, we have notes, now let's look at effects!
 
-**low-pass filter with lpf**
+## Some basic effects
+
+**low-pass filter**
 
 <MiniRepl
   hideHeader
@@ -22,12 +24,14 @@ We have sounds, we have notes, now let's look at effects!
 
 <Box>
 
+lpf = **l**ow **p**ass **f**ilter
+
 - Change lpf to 200. Notice how it gets muffled. Think of it as standing in front of the club with the door closed 🚪.
-- Now let's open the door... change it to 8000. Notice how it gets sharper 🪩
+- Now let's open the door... change it to 5000. Notice how it gets brighter ✨🪩
 
 </Box>
 
-**automate the filter**
+**pattern the filter**
 
 <MiniRepl
   hideHeader
@@ -41,6 +45,8 @@ We have sounds, we have notes, now let's look at effects!
 - Try adding more values
 - Notice how the pattern in lpf does not change the overall rhythm
 
+We will learn how to automate with waves later...
+
 </Box>
 
 **vowel**
@@ -52,13 +58,6 @@ We have sounds, we have notes, now let's look at effects!
 .sound("sawtooth").vowel("<a e i o>/2")`}
 />
 
-<Box>
-
-- Try adding more values
-- Notice how the pattern in lpf does not change the overall rhythm
-
-</Box>
-
 **gain**
 
 <MiniRepl
@@ -66,15 +65,17 @@ We have sounds, we have notes, now let's look at effects!
   client:load
   tune={`stack(
   sound("hh*8").gain("[.25 1]*2"),
-  sound("bd*2,~ rim")
+  sound("bd*2,~ sd:1")
 ) `}
+  punchcard
 />
 
 <Box>
 
 Rhythm is all about dynamics!
 
-Remove the gain and notice how flat it sounds.
+- Remove `.gain(...)` and notice how flat it sounds.
+- Bring it back by undoing (ctrl+z)
 
 </Box>
 
@@ -88,7 +89,7 @@ Let's combine all of the above into a little tune:
   tune={`stack(
   stack(
     sound("hh*8").gain("[.25 1]*2"),
-    sound("bd*2,~ rim")
+    sound("bd*2,~ sd:1")
   ),
   note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
   .sound("sawtooth").lpf("200 1000"),
@@ -99,28 +100,10 @@ Let's combine all of the above into a little tune:
 
 <Box>
 
-Pay attention to where the commas are and identify the individual parts of the stacks.
-The 3 parts (drums, bassline, chords) are exactly as earlier, just stacked together.
+Try to identify the individual parts of the stacks, pay attention to where the commas are.
+The 3 parts (drums, bassline, chords) are exactly as earlier, just stacked together, separated by comma.
 
 </Box>
-
-**fast and slow**
-
-We can use `fast` and `slow` to change the tempo of a pattern outside of Mini-Notation:
-
-<MiniRepl hideHeader client:load tune={`sound("bd*2,~ rim").slow(2)`} />
-
-<Box>
-
-Change the `slow` value. Try replacing it with `fast`.
-
-What happens if you use a pattern like `"<1 [2 4]>"`?
-
-</Box>
-
-By the way, inside Mini-Notation, `fast` is `*` and slow is `/`.
-
-<MiniRepl hideHeader client:load tune={`sound("[bd*2,~ rim]*<1 [2 4]>")`} />
 
 **delay**
 
@@ -144,7 +127,7 @@ What happens if you use `.delay(".8:.06:.8")` ? Can you guess what the third num
 
 </Box>
 
-**room**
+**room aka reverb**
 
 <MiniRepl
   hideHeader
@@ -169,35 +152,37 @@ Add a delay too!
   client:load
   tune={`stack(
   note("~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]")
-  .sound("gm_electric_guitar_muted"),
-  sound("<bd rim>").bank("RolandTR707"),
+  .sound("gm_electric_guitar_muted").delay(.5),
+  sound("<bd rim>").bank("RolandTR707").delay(.5),
   n("<4 [3@3 4] [<2 0> ~@16] ~>/2")
   .scale("D4:minor").sound("gm_accordion:2")
   .room(2).gain(.5)
-).delay(.5)`}
+)`}
 />
 
-**control the gain with a sine wave**
-
-<MiniRepl hideHeader client:load tune={`sound("hh*16").gain(sine)`} />
-
-Try also `saw`, `square`, `tri`
-
-**The 'structure' comes from the left - try swapping:**
-
-<MiniRepl hideHeader client:load tune={`vowel("a o").sound("drum")`} />
-
-**speed of playback, e.g. 2 = double speed (up 1 octave)**
-
-<MiniRepl hideHeader client:load tune={`speed("1 2 4").sound("jungbass:6")`} />
+Let's add a bass to make this complete:
 
 <MiniRepl
   hideHeader
   client:load
-  tune={`sound("numbers:1 numbers:2 numbers:3 numbers:4")
-.speed("1 1.5 2 0.5")
-.slow(2)`}
+  tune={`stack(
+  note("~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]")
+  .sound("gm_electric_guitar_muted").delay(.5),
+  sound("<bd rim>").bank("RolandTR707").delay(.5),
+  n("<4 [3@3 4] [<2 0> ~@16] ~>/2")
+  .scale("D4:minor").sound("gm_accordion:2")
+  .room(2).gain(.4),
+  n("<0 [~ 0] 4 [3 2] [0 ~] [0 ~] <0 2> ~>*2")
+  .scale("D2:minor")
+  .sound("sawtooth,triangle").lpf(800)
+)`}
 />
+
+<Box>
+
+Try adding `.hush()` at the end of one of the patterns in the stack...
+
+</Box>
 
 **pan**
 
@@ -209,12 +194,81 @@ Try also `saw`, `square`, `tri`
 .slow(2)`}
 />
 
-<MiniRepl hideHeader client:load tune={`sound("drum*8").pan(sine)`} />
+**speed**
 
-**delay**
+<MiniRepl hideHeader client:load tune={`sound("bd rim").speed("<1 2 -1 -2>").room(.2)`} />
 
-<MiniRepl hideHeader client:load tune={`sound("bd sd").delay(".5:.1:.4")`} />
+**fast and slow**
 
-**room**
+We can use `fast` and `slow` to change the tempo of a pattern outside of Mini-Notation:
 
-<MiniRepl hideHeader client:load tune={`sound("bd sd").room(".5")`} />
+<MiniRepl hideHeader client:load tune={`sound("bd*2,~ rim").slow(2)`} />
+
+<Box>
+
+Change the `slow` value. Try replacing it with `fast`.
+
+What happens if you use a pattern like `.fast("<1 [2 4]>")`?
+
+</Box>
+
+By the way, inside Mini-Notation, `fast` is `*` and slow is `/`.
+
+<MiniRepl hideHeader client:load tune={`sound("[bd*2,~ rim]*<1 [2 4]>")`} />
+
+## automation with signals
+
+Instead of changing values stepwise, we can also control them with signals:
+
+<MiniRepl hideHeader client:load tune={`sound("hh*16").gain(sine)`} punchcard />
+
+<Box>
+
+The basic waveforms for signals are `sine`, `saw`, `square`, `tri` 🌊
+
+Try also random signals `rand` and `perlin`!
+
+The gain is visualized as transparency in the pianoroll.
+
+</Box>
+
+**setting a range**
+
+<MiniRepl hideHeader client:load tune={`sound("hh*8").lpf(saw.range(500, 2000))`} />
+
+<Box>
+
+What happens if you flip the range values?
+
+</Box>
+
+**setting a range**
+
+By default, waves oscillate between 0 to 1. We can change that with `range`:
+
+<MiniRepl
+  hideHeader
+  client:load
+  tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+.sound("sawtooth")
+.lpf(sine.range(100, 2000).slow(8))`}
+/>
+
+<Box>
+
+Notice how the wave is slowed down. The whole automation will take 8 cycles to repeat.
+
+</Box>
+
+## Recap
+
+| name  | example                                                                                         |
+| ----- | ----------------------------------------------------------------------------------------------- |
+| lpf   | <MiniRepl hideHeader client:load tune={`note("c2 c3").s("sawtooth").lpf("<400 2000>")`} />      |
+| vowel | <MiniRepl hideHeader client:load tune={`note("c3 eb3 g3").s("sawtooth").vowel("<a e i o>")`} /> |
+| gain  | <MiniRepl hideHeader client:load tune={`s("hh*8").gain("[.25 1]*2")`} />                        |
+| delay | <MiniRepl hideHeader client:load tune={`s("bd rim").delay(.5)`} />                              |
+| room  | <MiniRepl hideHeader client:load tune={`s("bd rim").room(.5)`} />                               |
+| pan   | <MiniRepl hideHeader client:load tune={`s("bd rim").pan("0 1")`} />                             |
+| speed | <MiniRepl hideHeader client:load tune={`s("bd rim").speed("<1 2 -1 -2>")`} />                   |
+| range | <MiniRepl hideHeader client:load tune={`s("hh*16").lpf(saw.range(200,4000))`} />                |
