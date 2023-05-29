@@ -87,7 +87,7 @@ Pattern.prototype.pianoroll = function ({
         const isActive = event.whole.begin <= t && event.whole.end > t;
         ctx.fillStyle = event.context?.color || inactive;
         ctx.strokeStyle = event.context?.color || active;
-        ctx.globalAlpha = event.context.velocity ?? 1;
+        ctx.globalAlpha = event.context.velocity ?? event.value?.gain ?? 1;
         const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
         let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
         const value = getValue(event);
@@ -240,7 +240,7 @@ export function pianoroll({
       const color = event.value?.color || event.context?.color;
       ctx.fillStyle = color || inactive;
       ctx.strokeStyle = color || active;
-      ctx.globalAlpha = event.context.velocity ?? 1;
+      ctx.globalAlpha = event.context.velocity ?? event.value?.gain ?? 1;
       const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
       let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
       const value = getValue(event);
