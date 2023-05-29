@@ -212,6 +212,14 @@ This is what we've leared so far:
 | Speed up          | \*       | <MiniRepl hideHeader client:visible tune={`sound("bd sn*2 cp*3")`} />            |
 | Parallel          | ,        | <MiniRepl hideHeader client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />      |
 
+The Mini-Notation is usually used inside some function. These are the functions we've seen so far:
+
+| Name  | Description                         | Example                                                                            |
+| ----- | ----------------------------------- | ---------------------------------------------------------------------------------- |
+| sound | plays the sound of the given name   | <MiniRepl hideHeader client:visible tune={`sound("bd sd")`} />                     |
+| bank  | selects the sound bank              | <MiniRepl hideHeader client:visible tune={`sound("bd sd").bank("RolandTR909")`} /> |
+| cpm   | sets the tempo in cycles per minute | <MiniRepl hideHeader client:visible tune={`sound("bd sd").cpm(90)`} />             |
+
 ## Examples
 
 **Basic rock beat**
