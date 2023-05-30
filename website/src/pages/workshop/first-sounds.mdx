@@ -197,6 +197,16 @@ It is quite common that there are many ways to express the same idea.
   punchcard
 />
 
+**selecting sample numbers separately**
+
+Instead of using ":", we can also use the `n` function to select sample numbers:
+
+<MiniRepl hideHeader client:visible tune={`n("0 1 [4 2] 3*2").sound("jazz")`} punchcard />
+
+This is shorter and more readable than:
+
+<MiniRepl hideHeader client:visible tune={`sound("jazz:0 jazz:1 [jazz:4 jazz:2] jazz:3*2")`} punchcard />
+
 ## Recap
 
 Now we've learned the basics of the so called Mini-Notation, the rhythm language of Tidal.
@@ -219,6 +229,7 @@ The Mini-Notation is usually used inside some function. These are the functions 
 | sound | plays the sound of the given name   | <MiniRepl hideHeader client:visible tune={`sound("bd sd")`} />                     |
 | bank  | selects the sound bank              | <MiniRepl hideHeader client:visible tune={`sound("bd sd").bank("RolandTR909")`} /> |
 | cpm   | sets the tempo in cycles per minute | <MiniRepl hideHeader client:visible tune={`sound("bd sd").cpm(90)`} />             |
+| n     | select sample number                | <MiniRepl hideHeader client:visible tune={`n("0 1 4 2").sound("jazz")`} />         |
 
 ## Examples
 

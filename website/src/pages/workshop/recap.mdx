@@ -1,0 +1,98 @@
+---
+title: Recap
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+
+# Workshop Recap
+
+This page is just a listing of all functions covered in the workshop!
+
+## Mini Notation
+
+| Concept           | Syntax   | Example                                                                          |
+| ----------------- | -------- | -------------------------------------------------------------------------------- |
+| Sequence          | space    | <MiniRepl hideHeader client:visible tune={`sound("bd bd sn hh")`} />             |
+| Sample Number     | :x       | <MiniRepl hideHeader client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
+| Rests             | ~        | <MiniRepl hideHeader client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
+| Sub-Sequences     | \[\]     | <MiniRepl hideHeader client:visible tune={`sound("bd wind [metal jazz] hh")`} /> |
+| Sub-Sub-Sequences | \[\[\]\] | <MiniRepl hideHeader client:visible tune={`sound("bd [metal [jazz sn]]")`} />    |
+| Speed up          | \*       | <MiniRepl hideHeader client:visible tune={`sound("bd sn*2 cp*3")`} />            |
+| Parallel          | ,        | <MiniRepl hideHeader client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />      |
+| Slow down         | \/       | <MiniRepl hideHeader client:visible tune={`note("[c a f e]/2")`} />              |
+| Alternate         | \<\>     | <MiniRepl hideHeader client:visible tune={`note("c <e g>")`} />                  |
+| Elongate          | @        | <MiniRepl hideHeader client:visible tune={`note("c@3 e")`} />                    |
+| Replicate         | !        | <MiniRepl hideHeader client:visible tune={`note("c!3 e")`} />                    |
+
+## Sounds
+
+| Name  | Description                       | Example                                                                            |
+| ----- | --------------------------------- | ---------------------------------------------------------------------------------- |
+| sound | plays the sound of the given name | <MiniRepl hideHeader client:visible tune={`sound("bd sd")`} />                     |
+| bank  | selects the sound bank            | <MiniRepl hideHeader client:visible tune={`sound("bd sd").bank("RolandTR909")`} /> |
+| n     | select sample number              | <MiniRepl hideHeader client:visible tune={`n("0 1 4 2").sound("jazz")`} />         |
+
+## Notes
+
+| Name      | Description                         | Example                                                                                      |
+| --------- | ----------------------------------- | -------------------------------------------------------------------------------------------- |
+| note      | set pitch as number or letter       | <MiniRepl hideHeader client:visible tune={`note("b g e c").sound("piano")`} />               |
+| n + scale | set note in scale                   | <MiniRepl hideHeader client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
+| stack     | play patterns in parallel (read on) | <MiniRepl hideHeader client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
+
+## Audio Effects
+
+| name  | example                                                                                            |
+| ----- | -------------------------------------------------------------------------------------------------- |
+| lpf   | <MiniRepl hideHeader client:visible tune={`note("c2 c3").s("sawtooth").lpf("<400 2000>")`} />      |
+| vowel | <MiniRepl hideHeader client:visible tune={`note("c3 eb3 g3").s("sawtooth").vowel("<a e i o>")`} /> |
+| gain  | <MiniRepl hideHeader client:visible tune={`s("hh*8").gain("[.25 1]*2")`} />                        |
+| delay | <MiniRepl hideHeader client:visible tune={`s("bd rim").delay(.5)`} />                              |
+| room  | <MiniRepl hideHeader client:visible tune={`s("bd rim").room(.5)`} />                               |
+| pan   | <MiniRepl hideHeader client:visible tune={`s("bd rim").pan("0 1")`} />                             |
+| speed | <MiniRepl hideHeader client:visible tune={`s("bd rim").speed("<1 2 -1 -2>")`} />                   |
+| range | <MiniRepl hideHeader client:visible tune={`s("hh*16").lpf(saw.range(200,4000))`} />                |
+
+## Pattern Effects
+
+| name | description                         | example                                                                                        |
+| ---- | ----------------------------------- | ---------------------------------------------------------------------------------------------- |
+| cpm  | sets the tempo in cycles per minute | <MiniRepl hideHeader client:visible tune={`sound("bd sd").cpm(90)`} />                         |
+| fast | speed up                            | <MiniRepl hideHeader client:visible tune={`sound("bd sd").fast(2)`} />                         |
+| slow | slow down                           | <MiniRepl hideHeader client:visible tune={`sound("bd sd").slow(2)`} />                         |
+| rev  | reverse                             | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").rev()`} />            |
+| jux  | split left/right, modify right      | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").jux(rev)`} />         |
+| add  | add numbers / notes                 | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6".add("<0 1 2 1>")).scale("C:minor")`} /> |
+| ply  | speed up each event n times         | <MiniRepl hideHeader client:visible tune={`s("bd sd").ply("<1 2 3>")`} />                      |
+| off  | copy, shift time & modify           | <MiniRepl hideHeader client:visible tune={`s("bd sd, hh*4").off(1/8, x=>x.speed(2))`} />       |
+
+## Samples
+
+```
+casio control crow techno house jazz
+metal east jvbass juno insect space wind
+bd sd sn cp hh
+piano
+```
+
+## Synths
+
+```
+gm_electric_guitar_muted gm_acoustic_bass
+gm_voice_oohs gm_blown_bottle sawtooth square triangle
+gm_xylophone gm_synth_bass_1 gm_synth_strings_1
+```
+
+## Banks
+
+```
+RolandTR909
+```
+
+## Scales
+
+```
+major minor dorian mixolydian
+minor:pentatonic major:pentatonic
+```

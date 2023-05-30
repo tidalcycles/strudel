@@ -318,6 +318,14 @@ Let's recap what we've learned in this chapter:
 | Elongate  | @      | <MiniRepl hideHeader client:visible tune={`note("c@3 e")`} />       |
 | Replicate | !      | <MiniRepl hideHeader client:visible tune={`note("c!3 e")`} />       |
 
+New functions:
+
+| Name  | Description                         | Example                                                                                      |
+| ----- | ----------------------------------- | -------------------------------------------------------------------------------------------- |
+| note  | set pitch as number or letter       | <MiniRepl hideHeader client:visible tune={`note("b g e c").sound("piano")`} />               |
+| scale | interpret `n` as scale degree       | <MiniRepl hideHeader client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
+| stack | play patterns in parallel (read on) | <MiniRepl hideHeader client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
+
 ## Examples
 
 **Classy Bassline**
