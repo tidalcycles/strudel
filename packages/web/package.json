@@ -1,19 +1,17 @@
 {
-  "name": "@strudel.cycles/mini",
-  "version": "0.8.1",
-  "description": "Mini notation for strudel",
-  "main": "index.mjs",
-  "type": "module",
+  "name": "@strudel/web",
+  "version": "0.8.2",
+  "description": "Easy to setup, opiniated bundle of Strudel for the browser.",
+  "main": "web.mjs",
   "publishConfig": {
     "main": "dist/index.js",
     "module": "dist/index.mjs"
   },
   "scripts": {
-    "test": "vitest run",
-    "build:parser": "peggy -o krill-parser.js --format es ./krill.pegjs",
     "build": "vite build",
     "prepublishOnly": "npm run build"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -26,17 +24,22 @@
     "algorave"
   ],
   "author": "Felix Roos <flix91@gmail.com>",
+  "contributors": [
+    "Alex McLean <alex@slab.org>"
+  ],
   "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "workspace:*"
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
+    "@strudel.cycles/mini": "workspace:*",
+    "@strudel.cycles/tonal": "workspace:*",
+    "@strudel.cycles/transpiler": "workspace:*"
   },
   "devDependencies": {
-    "peggy": "^3.0.2",
-    "vite": "^4.3.3",
-    "vitest": "^0.28.0"
+    "vite": "^4.3.3"
   }
 }

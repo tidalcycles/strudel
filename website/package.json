@@ -8,7 +8,7 @@
     "start": "astro dev",
     "check": "astro check && tsc",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro preview --port 3009",
     "astro": "astro"
   },
   "dependencies": {

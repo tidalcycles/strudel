@@ -1,19 +1,17 @@
 {
-  "name": "@strudel.cycles/mini",
-  "version": "0.8.1",
-  "description": "Mini notation for strudel",
-  "main": "index.mjs",
-  "type": "module",
+  "name": "@strudel/codemirror",
+  "version": "0.8.3",
+  "description": "Codemirror Extensions for Strudel",
+  "main": "codemirror.mjs",
   "publishConfig": {
     "main": "dist/index.js",
     "module": "dist/index.mjs"
   },
   "scripts": {
-    "test": "vitest run",
-    "build:parser": "peggy -o krill-parser.js --format es ./krill.pegjs",
     "build": "vite build",
     "prepublishOnly": "npm run build"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tidalcycles/strudel.git"
@@ -26,17 +24,24 @@
     "algorave"
   ],
   "author": "Felix Roos <flix91@gmail.com>",
+  "contributors": [
+    "Alex McLean <alex@slab.org>"
+  ],
   "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
+    "@codemirror/commands": "^6.2.4",
+    "@codemirror/lang-javascript": "^6.1.7",
+    "@codemirror/language": "^6.6.0",
+    "@codemirror/state": "^6.2.0",
+    "@codemirror/view": "^6.10.0",
+    "@lezer/highlight": "^1.1.4",
     "@strudel.cycles/core": "workspace:*"
   },
   "devDependencies": {
-    "peggy": "^3.0.2",
-    "vite": "^4.3.3",
-    "vitest": "^0.28.0"
+    "vite": "^4.3.3"
   }
 }
