@@ -1,6 +1,8 @@
 ---
 import * as tunes from '../../../src/repl/tunes.mjs';
 import HeadCommon from '../../components/HeadCommon.astro';
+
+import { getMetadata } from '../metadata_parser';
 ---
 
 <head>
@@ -12,7 +14,7 @@ import HeadCommon from '../../components/HeadCommon.astro';
       Object.entries(tunes).map(([name, tune]) => (
         <a class="rounded-md bg-slate-900 hover:bg-slate-700 cursor-pointer relative" href={`./#${btoa(tune)}`}>
           <div class="absolute w-full h-full flex justify-center items-center">
-            <span class="bg-slate-800 p-2 rounded-md text-white">{name}</span>
+            <span class="bg-slate-800 p-2 rounded-md text-white">{getMetadata(tune)['title'] || name}</span>
           </div>
           <img src={`./img/example-${name}.png`} />
         </a>
