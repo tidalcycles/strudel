@@ -5,7 +5,7 @@ export function getMyPatterns() {
   return Object.fromEntries(
     Object.entries(my)
       .filter(([name]) => name.endsWith('.txt'))
-      .map(([name, raw]) => [ getMetadata(raw)['title'] || name.split('/').slice(-1), raw ]),
+      .map(([name, raw]) => [getMetadata(raw)['title'] || name.split('/').slice(-1), raw]),
   );
 }
 
