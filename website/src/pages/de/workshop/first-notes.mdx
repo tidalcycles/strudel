@@ -1,0 +1,388 @@
+---
+title: First Notes
+layout: ../../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '@src/docs/MiniRepl';
+import { midi2note } from '@strudel.cycles/core/';
+import Box from '@components/Box.astro';
+import QA from '@components/QA';
+
+# Erste Töne
+
+Jetzt schauen wir uns an wie man mit Tönen mit der `note` Funktion spielt.
+
+## Zahlen und Noten
+
+**Töne mit Zahlen**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("48 52 55 59").sound("piano")`}
+  claviature
+  claviatureLabels={Object.fromEntries(
+    Array(49)
+      .fill()
+      .map((_, i) => [midi2note(i + 36), i + 36]),
+  )}
+/>
+
+<Box>
+
+Probiere verschiedene Zahlen aus!
+
+Versuch auch mal Kommazahlen, z.B. 55.5 (beachte die englische Schreibweise von Kommazahlen mit "." anstatt ",")
+
+</Box>
+
+**Töne mit Buchstaben**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("c e g b").sound("piano")`}
+  claviature
+  claviatureLabels={Object.fromEntries(['c3', 'd3', 'e3', 'f3', 'g3', 'a3', 'b3'].map((n) => [n, n.split('')[0]]))}
+/>
+
+<Box>
+
+Versuch verschiedene Buchstaben aus (a - g).
+
+Findest du Melodien die auch gleichzeitig ein Wort sind? Tipp: ☕ 🙈 🧚
+
+</Box>
+
+**Vorzeichen**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("db eb gb ab bb").sound("piano")`}
+  claviature
+  claviatureLabels={Object.fromEntries(
+    ['db3', 'eb3', 'gb3', 'ab3', 'bb3'].map((n) => [n, n.split('').slice(0, 2).join('')]),
+  )}
+/>
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("c# d# f# g# a#").sound("piano")`}
+  claviature
+  claviatureLabels={Object.fromEntries(
+    ['c#3', 'd#3', 'f#3', 'g#3', 'a#3'].map((n) => [n, n.split('').slice(0, 2).join('')]),
+  )}
+/>
+
+**Andere Oktaven**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("c2 e3 g4 b5").sound("piano")`}
+  claviature
+  claviatureLabels={Object.fromEntries(['c1', 'c2', 'c3', 'c4', 'c5'].map((n) => [n, n]))}
+  claviatureLabels={Object.fromEntries(
+    Array(49)
+      .fill()
+      .map((_, i) => [midi2note(i + 36), midi2note(i + 36)]),
+  )}
+/>
+
+<Box>
+
+Probiere verschiedene Oktaven aus (1-8)
+
+</Box>
+
+Normalerweise kommen Leute die keine Noten besser mit Zahlen anstatt mit Buchstaben zurecht.
+Daher benutzen die folgenden Beispiele meistens Zahlen.
+Später sehen wir auch noch ein paar Tricks die es uns erleichtern Töne zu spielen die zueinander passen.
+
+## Den Sound verändern
+
+Genau wie bei geräuschhaften Sounds können wir den Klang unserer Töne mit `sound` verändern:
+
+<MiniRepl hideHeader client:visible tune={`note("36 43, 52 59 62 64").sound("piano")`} />
+
+<Box>
+
+Probier ein paar sounds aus:
+
+- gm_electric_guitar_muted - E-Gitarre
+- gm_acoustic_bass - Kontrabass
+- gm_voice_oohs - Chords
+- gm_blown_bottle - Flasche
+- sawtooth - Sägezahn-Welle
+- square - Rechteck-Welle
+- triangle - Dreieck-Welle
+- Was ist mit bd, sd oder hh?
+- Entferne `.sound('...')` komplett
+
+</Box>
+
+**Zwischen Sounds hin und her wechseln**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("48 67 63 [62, 58]")
+.sound("piano gm_electric_guitar_muted")`}
+/>
+
+**Gleichzeitige Sounds**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("48 67 63 [62, 58]")
+.sound("piano, gm_electric_guitar_muted")`}
+/>
+
+<Box>
+
+Die patterns in `note` und `sound` werden kombiniert!
+
+Wir schauen uns später noch mehr Möglichkeiten an wie man patterns kombiniert.
+
+</Box>
+
+## Längere Sequenzen
+
+**Divide sequences with `/` to slow them down**
+
+{/* [c2 bb1 f2 eb2] */}
+
+<MiniRepl hideHeader client:visible tune={`note("[36 34 41 39]/4").sound("gm_acoustic_bass")`} punchcard />
+
+<Box>
+
+The `/4` plays the sequence in brackets over 4 cycles (=4s).
+
+So each of the 4 notes is 1s long.
+
+Try adding more notes inside the brackets and notice how it gets faster.
+
+</Box>
+
+Because it is so common to just play one thing per cycle, you can..
+
+**Play one per cycle with \< \>**
+
+<MiniRepl hideHeader client:visible tune={`note("<36 34 41 39>").sound("gm_acoustic_bass")`} punchcard />
+
+<Box>
+
+Try adding more notes inside the brackets and notice how it does **not** get faster.
+
+</Box>
+
+**Play one sequence per cycle**
+
+{/* <[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2 */}
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("<[36 48]*4 [34 46]*4 [41 53]*4 [39 51]*4>/2")
+.sound("gm_acoustic_bass")`}
+  punchcard
+/>
+
+**Alternate between multiple things**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("60 <63 62 65 63>")
+.sound("gm_xylophone")`}
+  punchcard
+/>
+
+This is also useful for unpitched sounds:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`sound("bd*2, ~ <sd cp>, [~ hh]*2")
+.bank("RolandTR909")`}
+  punchcard
+/>
+
+## Scales
+
+Finding the right notes can be difficult.. Scales are here to help:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`n("0 2 4 <[6,8] [7,9]>")
+.scale("C:minor").sound("piano")`}
+  punchcard
+/>
+
+<Box>
+
+Try out different numbers. Any number should sound good!
+
+Try out different scales:
+
+- C:major
+- A2:minor
+- D:dorian
+- G:mixolydian
+- A2:minor:pentatonic
+- F:major:pentatonic
+
+</Box>
+
+**automate scales**
+
+Just like anything, we can automate the scale with a pattern:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`n("<0 -3>, 2 4 <[6,8] [7,9]>")
+.scale("<C:major D:mixolydian>/4")
+.sound("piano")`}
+  punchcard
+/>
+
+<Box>
+
+If you have no idea what these scale mean, don't worry.
+These are just labels for different sets of notes that go well together.
+
+Take your time and you'll find scales you like!
+
+</Box>
+
+## Repeat & Elongate
+
+**Elongate with @**
+
+<MiniRepl hideHeader client:visible tune={`note("c@3 eb").sound("gm_acoustic_bass")`} punchcard />
+
+<Box>
+
+Not using `@` is like using `@1`. In the above example, c is 3 units long and eb is 1 unit long.
+
+Try changing that number!
+
+</Box>
+
+**Elongate within sub-sequences**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`n("<[4@2 4] [5@2 5] [6@2 6] [5@2 5]>*2")
+.scale("<C2:mixolydian F2:mixolydian>/4")
+.sound("gm_acoustic_bass")`}
+  punchcard
+/>
+
+<Box>
+
+This groove is called a `shuffle`.
+Each beat has two notes, where the first is twice as long as the second.
+This is also sometimes called triplet swing. You'll often find it in blues and jazz.
+
+</Box>
+
+**Replicate**
+
+<MiniRepl hideHeader client:visible tune={`note("c!2 [eb,<g a bb a>]").sound("piano")`} punchcard />
+
+<Box>
+
+Try switching between `!`, `*` and `@`
+
+What's the difference?
+
+</Box>
+
+## Recap
+
+Let's recap what we've learned in this chapter:
+
+| Concept   | Syntax | Example                                                             |
+| --------- | ------ | ------------------------------------------------------------------- |
+| Slow down | \/     | <MiniRepl hideHeader client:visible tune={`note("[c a f e]/2")`} /> |
+| Alternate | \<\>   | <MiniRepl hideHeader client:visible tune={`note("c <e g>")`} />     |
+| Elongate  | @      | <MiniRepl hideHeader client:visible tune={`note("c@3 e")`} />       |
+| Replicate | !      | <MiniRepl hideHeader client:visible tune={`note("c!3 e")`} />       |
+
+New functions:
+
+| Name  | Description                         | Example                                                                                      |
+| ----- | ----------------------------------- | -------------------------------------------------------------------------------------------- |
+| note  | set pitch as number or letter       | <MiniRepl hideHeader client:visible tune={`note("b g e c").sound("piano")`} />               |
+| scale | interpret `n` as scale degree       | <MiniRepl hideHeader client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
+| stack | play patterns in parallel (read on) | <MiniRepl hideHeader client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
+
+## Examples
+
+**Classy Bassline**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+.sound("gm_synth_bass_1")
+.lpf(800) // <-- we'll learn about this soon`}
+/>
+
+**Classy Melody**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`n(\`<
+[~ 0] 2 [0 2] [~ 2]
+[~ 0] 1 [0 1] [~ 1]
+[~ 0] 3 [0 3] [~ 3]
+[~ 0] 2 [0 2] [~ 2]
+>*2\`).scale("C4:minor")
+.sound("gm_synth_strings_1")`}
+/>
+
+**Classy Drums**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`sound("bd*2, ~ <sd cp>, [~ hh]*2")
+.bank("RolandTR909")`}
+/>
+
+**If there just was a way to play all the above at the same time.......**
+
+<Box>
+
+It's called `stack` 😙
+
+</Box>
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`stack(
+  note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+  .sound("gm_synth_bass_1").lpf(800),
+  n(\`<
+  [~ 0] 2 [0 2] [~ 2]
+  [~ 0] 1 [0 1] [~ 1]
+  [~ 0] 3 [0 3] [~ 3]
+  [~ 0] 2 [0 2] [~ 2]
+  >*2\`).scale("C4:minor")
+  .sound("gm_synth_strings_1"),
+  sound("bd*2, ~ <sd cp>, [~ hh]*2")
+  .bank("RolandTR909")
+)`}
+/>
+
+This is starting to sound like actual music! We have sounds, we have notes, now the last piece of the puzzle is missing: [effects](/workshop/first-effects)

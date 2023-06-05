@@ -1,0 +1,69 @@
+---
+title: First Sounds
+layout: ../../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+
+# Mini Notation
+
+Mini Notation is everything between the quotes. It the short rhythm language of Tidal.
+
+## Cycles
+
+**The longer the sequence, the faster it runs**
+
+<MiniRepl client:load tune={`sound("bd bd hh bd sn bd hh bd")`} punchcard />
+
+**Play less sounds per cycle with \{curly braces\}**
+
+<MiniRepl client:load tune={`sound("{bd bd hh bd sn bd hh bd}%4")`} punchcard />
+
+**Use \`backticks\` for multiple lines**
+
+<MiniRepl
+  client:load
+  tune={`sound(\`{
+    bd bd hh bd 
+    sn bd hh bd
+    sn bd hh bd
+    sn bd hh hh:4
+}%4\`)`}
+  punchcard
+/>
+
+**Play one sounds per cycle with \<angle brackets\>**
+
+<MiniRepl client:load tune={`sound("<bd bd hh bd sn bd hh bd>")`} punchcard />
+
+This is the same as `{...}%1`
+
+## Operators
+
+**Multiplication: Speed things up**
+
+<MiniRepl client:load tune={`sound("bd hh*2 sn hh*2")`} punchcard />
+
+**Division: Slow things down**
+
+<MiniRepl client:load tune={`sound("bd/2 sd, hh*4")`} punchcard />
+
+`bd` will play only every second time
+
+## Combining it all
+
+**Speed up Sub-Sequences**
+
+<MiniRepl client:load tune={`sound("bd [sn hh]*2 sd hh")`} punchcard />
+
+**Slow down Sequences**
+
+<MiniRepl client:load tune={`sound("[bd [sn hh] sd hh]/2")`} punchcard />
+
+**Parallel Sub-Sequences**
+
+<MiniRepl client:load tune={`sound("bd [sn,hh] sd [hh:2,sn]")`} punchcard />
+
+**Sample Numbers on groups**
+
+<MiniRepl client:load tune={`sound("bd [sn,hh] sd [hh,sn]:2")`} punchcard />

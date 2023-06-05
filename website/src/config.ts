@@ -24,6 +24,7 @@ export type Frontmatter = {
 
 export const KNOWN_LANGUAGES = {
   English: 'en',
+  German: 'de',
 } as const;
 export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES);
 
@@ -41,6 +42,16 @@ export const ALGOLIA = {
 export type SidebarLang = Record<string, { text: string; link: string }[]>;
 export type Sidebar = Record<(typeof KNOWN_LANGUAGE_CODES)[number], SidebarLang>;
 export const SIDEBAR: Sidebar = {
+  de: {
+    Workshop: [
+      { text: 'Intro', link: 'de/workshop/intro' },
+      { text: 'Erste Sounds', link: 'de/workshop/first-sounds' },
+      { text: 'Erste Töne', link: 'de/workshop/first-notes' },
+      { text: 'Erste Effekte', link: 'de/workshop/first-effects' },
+      { text: 'Pattern Effekte', link: 'de/workshop/pattern-effects' },
+      { text: 'Rückblick', link: 'de/workshop/recap' },
+    ],
+  },
   en: {
     Workshop: [
       { text: 'Intro', link: 'workshop/intro' },
