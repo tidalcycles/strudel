@@ -70,6 +70,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Patterns', link: 'technical-manual/patterns' },
       { text: 'Pattern Alignment', link: 'technical-manual/alignment' },
       { text: 'Strudel vs Tidal', link: 'learn/strudel-vs-tidal' },
+      { text: 'Music metadata', link: 'learn/metadata' },
     ],
     Development: [
       { text: 'REPL', link: 'technical-manual/repl' },

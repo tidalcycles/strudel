@@ -1,0 +1,30 @@
+---
+title: Music metadata
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { JsDoc } from '../../docs/JsDoc';
+
+# Music metadata
+
+You can optionally add some music metadata in your Strudel code, by using tags in code comments like this:
+
+```
+// @license: CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
+// @author: Felix Roos
+// @details: Inspired by Friendship - Let's not talk about it (1979) :)
+```
+
+Like other comments, those are ignored by Strudel, but it can be used by other tools to retrieve some information about the music.
+
+It is for instance used by the [swatch tool](https://github.com/tidalcycles/strudel/tree/main/my-patterns) to display pattern titles in the [examples page](https://strudel.tidalcycles.org/examples/).
+
+Available tags are:
+- `@title`: music title
+- `@by`: music author(s), separated with comma, eventually followed with a link in `<>` (ex: `@author john doe <https://example.com>`)
+- `@license`: music license
+- `@details`: some additional information about the music
+- `@url`: web page related to the music (git repo, soundcloud link, etc.)
+- `@genre`: music genre (pop, jazz, etc)
+- `@album`: music album name
