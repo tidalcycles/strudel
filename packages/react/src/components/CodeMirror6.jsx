@@ -92,6 +92,7 @@ const staticExtensions = [
   javascript(),
   highlightField,
   flashField,
+  EditorView.lineWrapping,
   // javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
   // autocompletion({ override: [strudelAutocomplete] }),
   autocompletion({ override: [] }), // wait for https://github.com/uiwjs/react-codemirror/pull/458
