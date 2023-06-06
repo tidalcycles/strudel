@@ -151,7 +151,7 @@ Wir schauen uns später noch mehr Möglichkeiten an wie man patterns kombiniert.
 
 ## Längere Sequenzen
 
-**Divide sequences with `/` to slow them down**
+**Sequenzen verlangsamen mit `/`**
 
 {/* [c2 bb1 f2 eb2] */}
 
@@ -159,27 +159,27 @@ Wir schauen uns später noch mehr Möglichkeiten an wie man patterns kombiniert.
 
 <Box>
 
-The `/4` plays the sequence in brackets over 4 cycles (=4s).
+Das `/4` spielt die Sequenz 4 mal so langsam, also insgesamt 4 cycles = 4s.
 
-So each of the 4 notes is 1s long.
+Jede Note ist nun also 1s lang.
 
-Try adding more notes inside the brackets and notice how it gets faster.
+Schreib noch mehr Töne in die Klammern und achte darauf dass es schneller wird.
 
 </Box>
 
-Because it is so common to just play one thing per cycle, you can..
+Wenn eine Sequenz unabhängig von ihrem Inhalt immer gleich schnell bleiben soll, gibt es noch eine andere Art Klammern:
 
-**Play one per cycle with \< \>**
+**Eins pro Cycle per \< \>**
 
 <MiniRepl hideHeader client:visible tune={`note("<36 34 41 39>").sound("gm_acoustic_bass")`} punchcard />
 
 <Box>
 
-Try adding more notes inside the brackets and notice how it does **not** get faster.
+Füg noch mehr Töne hinzu und achte darauf wie das tempo gleich bleibt!
 
 </Box>
 
-**Play one sequence per cycle**
+**Eine Sequenz pro Cycle**
 
 {/* <[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2 */}
 
@@ -191,7 +191,7 @@ Try adding more notes inside the brackets and notice how it does **not** get fas
   punchcard
 />
 
-**Alternate between multiple things**
+**Alternativen**
 
 <MiniRepl
   hideHeader
@@ -201,7 +201,7 @@ Try adding more notes inside the brackets and notice how it does **not** get fas
   punchcard
 />
 
-This is also useful for unpitched sounds:
+Das ist auch praktisch für atonale Sounds:
 
 <MiniRepl
   hideHeader
@@ -211,9 +211,10 @@ This is also useful for unpitched sounds:
   punchcard
 />
 
-## Scales
+## Skalen
 
-Finding the right notes can be difficult.. Scales are here to help:
+Es kann mühsam sein die richtigen Noten zu finden wenn man alle zur Verfügung hat.
+Mit Skalen ist das einfacher:
 
 <MiniRepl
   hideHeader
@@ -225,9 +226,9 @@ Finding the right notes can be difficult.. Scales are here to help:
 
 <Box>
 
-Try out different numbers. Any number should sound good!
+Probier verschiedene Zahlen aus. Jede klingt gut!
 
-Try out different scales:
+Probier verschiedene Skalen:
 
 - C:major
 - A2:minor
@@ -238,9 +239,9 @@ Try out different scales:
 
 </Box>
 
-**automate scales**
+**Automatisierte Skalen**
 
-Just like anything, we can automate the scale with a pattern:
+Wie alle Funktionen können auch Skalen mit einem Pattern automatisiert werden:
 
 <MiniRepl
   hideHeader
@@ -253,28 +254,28 @@ Just like anything, we can automate the scale with a pattern:
 
 <Box>
 
-If you have no idea what these scale mean, don't worry.
-These are just labels for different sets of notes that go well together.
+Wenn du keine Ahnung hast was die Skalen bedeuten, keine Sorge.
+Es sind einfach nur Namen für verschiedene Gruppen von Tönen die gut zusammenpassen.
 
-Take your time and you'll find scales you like!
+Nimm dir Zeit um herauszufinden welche Skalen du magst.
 
 </Box>
 
-## Repeat & Elongate
+## Wiederholen und Verlängern
 
-**Elongate with @**
+**Verlängern mit @**
 
 <MiniRepl hideHeader client:visible tune={`note("c@3 eb").sound("gm_acoustic_bass")`} punchcard />
 
 <Box>
 
-Not using `@` is like using `@1`. In the above example, c is 3 units long and eb is 1 unit long.
+Ein Element ohne `@` ist gleichbedeutend mit `@1`. Im Beispiel ist `c` drei Einheiten lang, `eb` nur eine.
 
-Try changing that number!
+Spiel mit der Länge!
 
 </Box>
 
-**Elongate within sub-sequences**
+**Unter-Sequenzen verlängern**
 
 <MiniRepl
   hideHeader
@@ -287,46 +288,46 @@ Try changing that number!
 
 <Box>
 
-This groove is called a `shuffle`.
-Each beat has two notes, where the first is twice as long as the second.
-This is also sometimes called triplet swing. You'll often find it in blues and jazz.
+Dieser Groove wird auch `shuffle` genannt.
+Jeder Schlag enthält 2 Töne, wobei der erste doppelt so lang wie der zweite ist.
+Das nennt man auch manchmal `triolen swing`. Es ist ein typischer Rhythmus im Blues und Jazz.
 
 </Box>
 
-**Replicate**
+**Wiederholen**
 
 <MiniRepl hideHeader client:visible tune={`note("c!2 [eb,<g a bb a>]").sound("piano")`} punchcard />
 
 <Box>
 
-Try switching between `!`, `*` and `@`
+Wechsel zwischen `!`, `*` und `@` hin und her.
 
-What's the difference?
+Was ist der Unterschied?
 
 </Box>
 
-## Recap
+## Rückblick
 
-Let's recap what we've learned in this chapter:
+Das haben wir in diesem Kapitel gelernt:
 
-| Concept   | Syntax | Example                                                             |
-| --------- | ------ | ------------------------------------------------------------------- |
-| Slow down | \/     | <MiniRepl hideHeader client:visible tune={`note("[c a f e]/2")`} /> |
-| Alternate | \<\>   | <MiniRepl hideHeader client:visible tune={`note("c <e g>")`} />     |
-| Elongate  | @      | <MiniRepl hideHeader client:visible tune={`note("c@3 e")`} />       |
-| Replicate | !      | <MiniRepl hideHeader client:visible tune={`note("c!3 e")`} />       |
+| Concept      | Syntax | Example                                                             |
+| ------------ | ------ | ------------------------------------------------------------------- |
+| Verlangsamen | \/     | <MiniRepl hideHeader client:visible tune={`note("[c a f e]/2")`} /> |
+| Alternativen | \<\>   | <MiniRepl hideHeader client:visible tune={`note("c <e g>")`} />     |
+| Verlängern   | @      | <MiniRepl hideHeader client:visible tune={`note("c@3 e")`} />       |
+| Wiederholen  | !      | <MiniRepl hideHeader client:visible tune={`note("c!3 e")`} />       |
 
-New functions:
+Neue Funktionen:
 
-| Name  | Description                         | Example                                                                                      |
-| ----- | ----------------------------------- | -------------------------------------------------------------------------------------------- |
-| note  | set pitch as number or letter       | <MiniRepl hideHeader client:visible tune={`note("b g e c").sound("piano")`} />               |
-| scale | interpret `n` as scale degree       | <MiniRepl hideHeader client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
-| stack | play patterns in parallel (read on) | <MiniRepl hideHeader client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
+| Name  | Description                             | Example                                                                                      |
+| ----- | --------------------------------------- | -------------------------------------------------------------------------------------------- |
+| note  | Tonhöhe als Buchstabe oder Zahl         | <MiniRepl hideHeader client:visible tune={`note("b g e c").sound("piano")`} />               |
+| scale | Interpretiert `n` als Skalenstufe       | <MiniRepl hideHeader client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
+| stack | Spiele mehrere Patterns parallel (s.u.) | <MiniRepl hideHeader client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
 
-## Examples
+## Beispiele
 
-**Classy Bassline**
+**Bassline**
 
 <MiniRepl
   hideHeader
@@ -336,7 +337,7 @@ New functions:
 .lpf(800) // <-- we'll learn about this soon`}
 />
 
-**Classy Melody**
+**Melodie**
 
 <MiniRepl
   hideHeader
@@ -350,7 +351,7 @@ New functions:
 .sound("gm_synth_strings_1")`}
 />
 
-**Classy Drums**
+**Drums**
 
 <MiniRepl
   hideHeader
@@ -359,11 +360,11 @@ New functions:
 .bank("RolandTR909")`}
 />
 
-**If there just was a way to play all the above at the same time.......**
+**Wenn es doch nur einen Weg gäbe das alles gleichzeitig zu spielen.......**
 
 <Box>
 
-It's called `stack` 😙
+Das geht mit `stack` 😙
 
 </Box>
 
@@ -385,4 +386,5 @@ It's called `stack` 😙
 )`}
 />
 
-This is starting to sound like actual music! We have sounds, we have notes, now the last piece of the puzzle is missing: [effects](/workshop/first-effects)
+Das hört sich doch langsam nach echter Musik an!
+Wir haben Sounds, wir haben Töne.. noch ein Puzzleteil fehlt: [Effekte](/workshop/first-effects)
