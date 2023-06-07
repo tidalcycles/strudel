@@ -1,0 +1,74 @@
+---
+title: Intro
+layout: ../../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../../docs/MiniRepl';
+
+# Willkommen
+
+<img src="/icons/strudel_icon.png" className="w-32 animate-pulse md:float-right ml-8" />
+
+Willkommen zum Strudel Workshop!
+Du hast den richtigen Ort gefunden wenn du lernen möchstest wie man mit Code Musik macht.
+
+## Was ist Strudel
+
+Mit Strudel kann man dynamische Musikstücke in Echtzeit schreiben.
+Es ist eine in JavaScript entwickelte Version von [Tidal Cycles](https://tidalcycles.org/) und wurde 2022 von Alex McLean und Felix Roos initiiert.
+Tidal Cycles, auch bekannt unter dem Namen Tidal, ist eine Computersprache für algorithmische Muster.
+Obwohl sie meistens für die Erzeugung von Musik eingesetzt wird, kann sie für jede Art von Tätigkeit eingesetzt werden,
+in der Muster eine Rolle spielen.
+
+Du brauchst keine Erfahrung in JavaScript oder Tidal Cycles um mit Strudel Musik zu machen.
+Dieser interaktive Workshop leitet dich spielerisch durch die Grundlagen von Strudel.
+Der beste Ort um mit Strudel Musik zu machen ist das [Strudel REPL](https://strudel.tidalcycles.org/).
+
+## Was kann man mit Strudel machen?
+
+- Musik Live Coding: In Echtzeit mit Code Musik machen
+- Algorithmische Komposition: Schreibe Musik mithilfe Tidals einzigartiger Sprache für Muster
+- Lehren: Strudel eignet sich gut für Lehrende, da keine Installation nötig ist und die Sprache kein theoretisches Vorwissen erfordert.
+- Mit anderen Musik-Anwendungen kombinieren: Per MIDI oder OSC kann Strudel als flexibler Sequencer mit jedem Setup kombiniert werden
+
+## Beispiel
+
+Hier ist ein Beispiel wie Strudel klingen kann:
+
+<MiniRepl
+  client:idle
+  tune={`stack(
+  // drums
+  s("bd,[~ <sd!3 sd(3,4,2)>],hh*8")
+  .speed(perlin.range(.8,.9)), // random sample speed variation
+  // bassline
+  "<a1 b1\*2 a1(3,8) e2>" 
+  .off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
+  .add(perlin.range(0,.5)) // random pitch variation
+  .superimpose(add(.05)) // add second, slightly detuned voice
+  .note() // wrap in "note"
+  .decay(.15).sustain(0) // make each note of equal length
+  .s('sawtooth') // waveform
+  .gain(.4) // turn down
+  .cutoff(sine.slow(7).range(300,5000)), // automate cutoff
+  // chords
+  "<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings('lefthand') 
+  .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+  .add(perlin.range(0,.5)) // random pitch variation
+  .note() // wrap in "note"
+  .s('sawtooth') // waveform
+  .gain(.16) // turn down
+  .cutoff(500) // fixed cutoff
+  .attack(1) // slowly fade in
+)
+.slow(3/2)`}
+/>
+
+Mehr Beispiele gibt es [hier](/examples).
+
+Du kannst auch im [Strudel REPL](https://strudel.tidalcycles.org/) auf `shuffle` klicken um ein zufälliges Beispiel zu hören.
+
+## Workshop
+
+Der beste Weg um Strudel zu lernen ist der nun folgende Workshop.
+Wenn du bereit bist, lass uns loslegen mit deinen [ersten Sounds](/de/workshop/first-sounds).
