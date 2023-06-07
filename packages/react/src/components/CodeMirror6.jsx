@@ -104,6 +104,7 @@ export default function CodeMirror({
   onSelectionChange,
   theme,
   keybindings,
+  isLineNumbersDisplayed,
   fontSize = 18,
   fontFamily = 'monospace',
   options,
@@ -148,6 +149,7 @@ export default function CodeMirror({
         onCreateEditor={handleOnCreateEditor}
         onUpdate={handleOnUpdate}
         extensions={extensions}
+        basicSetup={{ lineNumbers: isLineNumbersDisplayed }}
       />
     </div>
   );
