@@ -2,10 +2,16 @@ const ALLOW_MANY = ['by', 'url', 'genre', 'license'];
 
 export function getMetadata(raw_code) {
   const comment_regexp = /\/\*([\s\S]*?)\*\/|\/\/(.*)$/gm;
+  const comments = [...raw_code.matchAll(comment_regexp)].map((c) => (c[1] || c[2] || '').trim());
   const tags = {};
 
-  for (const match of raw_code.matchAll(comment_regexp)) {
-    const tag_matches = (match[1] || match[2] || '').trim().split('@').slice(1);
+  const [prefix, title] = (comments[0] || '').split('"');
+  if (prefix.trim() === '' && title !== undefined) {
+    tags['title'] = title;
+  }
+
+  for (const comment of comments) {
+    const tag_matches = comment.split('@').slice(1);
     for (const tag_match of tag_matches) {
       let [tag, tag_value] = tag_match.split(/ (.*)/s);
       tag = tag.trim();

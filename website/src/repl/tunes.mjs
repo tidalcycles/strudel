@@ -121,7 +121,7 @@ stack(
   .room(1)
   //.pianoroll({fold:1})`;
 
-export const caverave = `// @title Caverave 
+export const caverave = `// "Caverave"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -186,7 +186,7 @@ export const barryHarris = `// adapted from a Barry Harris excercise
   .color('#00B8D4')
 `;
 
-export const blippyRhodes = `// @title Blippy Rhodes
+export const blippyRhodes = `// "Blippy Rhodes"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -230,7 +230,7 @@ stack(
 ).fast(3/2)
 //.pianoroll({fold:1})`;
 
-export const wavyKalimba = `// @title Wavy kalimba
+export const wavyKalimba = `// "Wavy kalimba"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -262,7 +262,7 @@ stack(
   .delay(.2)
   `;
 
-export const festivalOfFingers = `// @title Festival of fingers
+export const festivalOfFingers = `// "Festival of fingers"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -279,7 +279,7 @@ stack(
  .note().piano()`;
 
 // iter, echo, echoWith
-export const undergroundPlumber = `// @title Underground plumber
+export const undergroundPlumber = `// "Underground plumber"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 // @details inspired by Friendship - Let's not talk about it (1979) :)
@@ -307,7 +307,7 @@ stack(
   .fast(2/3)
   .pianoroll({})`;
 
-export const bridgeIsOver = `// @title Bridge is over
+export const bridgeIsOver = `// "Bridge is over"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos, bassline by BDP - The Bridge Is Over
 
@@ -330,7 +330,7 @@ stack(
   .pianoroll()
 `;
 
-export const goodTimes = `// @title Good times
+export const goodTimes = `// "Good times"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -375,7 +375,7 @@ stack(
   .pianoroll({maxMidi:100,minMidi:20})`;
 */
 
-export const echoPiano = `// @title Echo piano
+export const echoPiano = `// "Echo piano"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -424,7 +424,7 @@ stack(
   .legato(.5)
 ).fast(2).note()`;
 
-export const randomBells = `// @title Random bells
+export const randomBells = `// "Random bells"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -449,7 +449,7 @@ stack(
   .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})
   `;
 
-export const waa2 = `// @title Waa2
+export const waa2 = `// "Waa2"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -467,7 +467,7 @@ n(
   .room(.5)
   `;
 
-export const hyperpop = `// @title Hyperpop
+export const hyperpop = `// "Hyperpop"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -520,7 +520,7 @@ stack(
 ).slow(2)
 // strudel disable-highlighting`;
 
-export const festivalOfFingers3 = `// @title Festival of fingers 3
+export const festivalOfFingers3 = `// "Festival of fingers 3"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -540,7 +540,7 @@ export const festivalOfFingers3 = `// @title Festival of fingers 3
 .note().piano()
 //.pianoroll({maxMidi:160})`;
 
-export const meltingsubmarine = `// @title Melting submarine
+export const meltingsubmarine = `// "Melting submarine"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -580,7 +580,7 @@ stack(
 )
   .slow(3/2)`;
 
-export const outroMusic = `// @title Outro music
+export const outroMusic = `// "Outro music"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -611,7 +611,7 @@ samples({
   //.pianoroll({autorange:1,vertical:1,fold:0})
   `;
 
-export const bassFuge = `// @title Bass fuge
+export const bassFuge = `// "Bass fuge"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -639,7 +639,7 @@ x=>x.add(7).color('steelblue')
 .stack(s("bd:1*2,~ sd:0,[~ hh:0]*2"))
 .pianoroll({vertical:1})`;
 
-export const chop = `// @title Chop
+export const chop = `// "Chop"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -654,7 +654,7 @@ s("p")
   .sustain(.6)
   `;
 
-export const delay = `// @title Delay
+export const delay = `// "Delay"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -665,7 +665,7 @@ stack(
     .delayfeedback(".6 | .8")
   ).sometimes(x=>x.speed("-1"))`;
 
-export const orbit = `// @title Orbit
+export const orbit = `// "Orbit"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -681,7 +681,7 @@ stack(
     .orbit(2)
   ).sometimes(x=>x.speed("-1"))`;
 
-export const belldub = `// @title Belldub
+export const belldub = `// "Belldub"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -716,7 +716,7 @@ stack(
   .mask("<1 0>/8")
 ).slow(5)`;
 
-export const dinofunk = `// @title Dinofunk
+export const dinofunk = `// "Dinofunk"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -739,7 +739,7 @@ note("Abm7".voicings('lefthand').struct("x(3,8,1)".slow(2))),
 note("<b4 eb4>").s('dino').delay(.8).slow(8).room(.5)
 )`;
 
-export const sampleDemo = `// @title Sample demo
+export const sampleDemo = `// "Sample demo"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -757,7 +757,7 @@ stack(
   .release(.1).room(.5)
 )`;
 
-export const holyflute = `// @title Holy flute
+export const holyflute = `// "Holy flute"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -772,7 +772,7 @@ export const holyflute = `// @title Holy flute
 .pianoroll({fold:0,autorange:0,vertical:0,cycles:12,smear:0,minMidi:40})
 `;
 
-export const flatrave = `// @title Flatrave
+export const flatrave = `// "Flatrave"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -797,7 +797,7 @@ stack(
   .decay(.05).sustain(0).delay(.2).degradeBy(.5).mask("<0 1>/16")
 )`;
 
-export const amensister = `// @title Amensister
+export const amensister = `// "Amensister"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -833,7 +833,7 @@ stack(
   n("0 1").s("east").delay(.5).degradeBy(.8).speed(rand.range(.5,1.5))
 ).reset("<x@7 x(5,8,-1)>")`;
 
-export const juxUndTollerei = `// @title Jux und tollerei
+export const juxUndTollerei = `// "Jux und tollerei"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -848,7 +848,7 @@ note("c3 eb3 g3 bb3").palindrome()
 .delay(.5).delaytime(.1).delayfeedback(.4)
 .pianoroll()`;
 
-export const csoundDemo = `// @title CSound demo
+export const csoundDemo = `// "CSound demo"
 // @license with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
@@ -884,7 +884,7 @@ endin\`
 //.pianoroll()
 .csound('CoolSynth')`;
 
-export const loungeSponge = `// @title Lounge sponge
+export const loungeSponge = `// "Lounge sponge"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos, livecode.orc by Steven Yi
 
@@ -904,7 +904,7 @@ stack(
   s("bd*2,[~ hh]*2,~ cp").bank('RolandTR909')
 )`;
 
-export const arpoon = `// @title Arpoon
+export const arpoon = `// "Arpoon"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 

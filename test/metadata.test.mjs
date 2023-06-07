@@ -63,6 +63,51 @@ describe.concurrent('Metadata parser', () => {
     });
   });
 
+  it('loads a title tag with quotes syntax', async () => {
+    const tune = `// "Awesome song"`;
+    expect(getMetadata(tune)).toStrictEqual({
+      title: 'Awesome song',
+    });
+  });
+
+  it('loads a title tag with quotes syntax among other tags', async () => {
+    const tune = `// "Awesome song" made @by Sam`;
+    expect(getMetadata(tune)).toStrictEqual({
+      title: 'Awesome song',
+      by: ['Sam'],
+    });
+  });
+
+  it('loads a title tag with quotes syntax from block comment', async () => {
+    const tune = `/* "Awesome song"
+@by Sam */`;
+    expect(getMetadata(tune)).toStrictEqual({
+      title: 'Awesome song',
+      by: ['Sam'],
+    });
+  });
+
+  it('does not load a title tag with quotes syntax after a prefix', async () => {
+    const tune = `// I don't care about those "metadata".`;
+    expect(getMetadata(tune)).toStrictEqual({});
+  });
+
+  it('does not load a title tag with quotes syntax after an other comment', async () => {
+    const tune = `// I don't care about those
+// "metadata"`;
+    expect(getMetadata(tune)).toStrictEqual({});
+  });
+
+  it('does not load a title tag with quotes syntax after other tags', async () => {
+    const tune = `/*
+@by Sam aka "Lady Strudel"
+    "Sandyyy"
+*/`;
+    expect(getMetadata(tune)).toStrictEqual({
+      by: ['Sam aka "Lady Strudel"', '"Sandyyy"'],
+    });
+  });
+
   it('loads a tag list with comma-separated values syntax', async () => {
     const tune = `// @by Sam, Sandy`;
     expect(getMetadata(tune)).toStrictEqual({
@@ -159,15 +204,6 @@ describe.concurrent('Metadata parser', () => {
     });
   });
 
-  it('loads empty tags from block comment', async () => {
-    const tune = `/* @title
-@by */`;
-    expect(getMetadata(tune)).toStrictEqual({
-      title: '',
-      by: [],
-    });
-  });
-
   it('loads tags with whitespaces from inline comments', async () => {
     const tune = `   //   @title   Awesome   song   
    //    @by   Sam   Tagada   `;
@@ -184,6 +220,20 @@ describe.concurrent('Metadata parser', () => {
       title: 'Awesome song',
       by: ['Sam Tagada'],
     });
+  });
+
+  it('loads empty tags from block comment', async () => {
+    const tune = `/* @title
+@by */`;
+    expect(getMetadata(tune)).toStrictEqual({
+      title: '',
+      by: [],
+    });
+  });
+
+  it('does not load tags if there is not', async () => {
+    const tune = `note("a3 c#4 e4 a4")`;
+    expect(getMetadata(tune)).toStrictEqual({});
   });
 
   it('does not load code that looks like a metadata tag', async () => {
