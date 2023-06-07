@@ -27,10 +27,6 @@
   src: url('/fonts/FiraCode/FiraCode-SemiBold.ttf');
 }
 
-.cm-gutters {
-  display: none !important;
-}
-
 .prose > h1:not(:first-child) {
   margin-top: 30px;
 }
