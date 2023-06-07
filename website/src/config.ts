@@ -50,7 +50,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Erste Effekte', link: 'de/workshop/first-effects' },
       { text: 'Pattern Effekte', link: 'de/workshop/pattern-effects' },
       { text: 'Rückblick', link: 'de/workshop/recap' },
-      { text: 'More Pages in English', link: 'workshop/getting-started' },
+      { text: 'Mehr Seiten auf Englisch', link: 'workshop/getting-started' },
     ],
   },
   en: {
