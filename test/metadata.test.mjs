@@ -187,10 +187,10 @@ describe.concurrent('Metadata parser', () => {
   });
 
   it('does not load code that looks like a metadata tag', async () => {
-    const tune = `
-const str1 = '@title Awesome song'
-`;
+    const tune = `const str1 = '@title Awesome song'`;
+    // need a lexer to avoid this one, but it's a pretty rare use case:
+    // const tune = `const str1 = '// @title Awesome song'`;
+
     expect(getMetadata(tune)).toStrictEqual({});
   });
-
 });
