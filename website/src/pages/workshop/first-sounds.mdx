@@ -13,7 +13,7 @@ import QA from '@components/QA';
 
 Let's start by making some noise:
 
-<MiniRepl hideHeader client:visible tune={`sound("house")`} />
+<MiniRepl hideHeader client:visible tune={`sound("house")`} dirt />
 
 <Box>
 
@@ -61,7 +61,7 @@ These letter combinations stand for different parts of a drum set:
 
 - `bd` = **b**ass **d**rum
 - `sd` = **s**nare **d**rum
-- `sn` = **sn**are
+- `sd` = **sd**are
 - `rim` = **rim**shot
 - `hh` = **h**i**h**at
 - `oh` = **o**pen **h**ihat
@@ -103,13 +103,13 @@ Try adding more sounds to the sequence!
 
 **The longer the sequence, the faster it runs**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sn bd hh bd")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sd bd hh bd")`} punchcard />
 
 The content of a sequence will be squished into what's called a cycle.
 
 **One way to change the tempo is using `cpm`**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sn bd hh bd").cpm(40)`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sd bd hh bd").cpm(40)`} punchcard />
 
 <Box>
 
@@ -127,7 +127,7 @@ We will look at other ways to change the tempo later!
 
 **Sub-Sequences with [brackets]**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [hh hh] sn [hh bd]")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd [hh hh] sd [hh bd]")`} punchcard />
 
 <Box>
 
@@ -139,15 +139,15 @@ Similar to the whole sequence, the content of a sub-sequence will be squished to
 
 **Multiplication: Speed things up**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh*2 sn hh*3")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd hh*2 sd hh*3")`} punchcard />
 
 **Multiplication: Speed up sequences**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [hh sn]*2")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd [hh sd]*2")`} punchcard />
 
 **Multiplication: Speeeeeeeeed things up**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh*16 sn hh*8")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd hh*16 sd hh*8")`} punchcard />
 
 <Box>
 
@@ -157,7 +157,7 @@ Pitch = really fast rhythm
 
 **Sub-Sub-Sequences with [[brackets]]**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [[sn sn] hh]")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd [[sd sd] hh]")`} punchcard />
 
 <Box>
 
@@ -214,12 +214,12 @@ This is what we've leared so far:
 
 | Concept           | Syntax   | Example                                                                          |
 | ----------------- | -------- | -------------------------------------------------------------------------------- |
-| Sequence          | space    | <MiniRepl hideHeader client:visible tune={`sound("bd bd sn hh")`} />             |
+| Sequence          | space    | <MiniRepl hideHeader client:visible tune={`sound("bd bd sd hh")`} />             |
 | Sample Number     | :x       | <MiniRepl hideHeader client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
 | Rests             | ~        | <MiniRepl hideHeader client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
 | Sub-Sequences     | \[\]     | <MiniRepl hideHeader client:visible tune={`sound("bd wind [metal jazz] hh")`} /> |
-| Sub-Sub-Sequences | \[\[\]\] | <MiniRepl hideHeader client:visible tune={`sound("bd [metal [jazz sn]]")`} />    |
-| Speed up          | \*       | <MiniRepl hideHeader client:visible tune={`sound("bd sn*2 cp*3")`} />            |
+| Sub-Sub-Sequences | \[\[\]\] | <MiniRepl hideHeader client:visible tune={`sound("bd [metal [jazz sd]]")`} />    |
+| Speed up          | \*       | <MiniRepl hideHeader client:visible tune={`sound("bd sd*2 cp*3")`} />            |
 | Parallel          | ,        | <MiniRepl hideHeader client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />      |
 
 The Mini-Notation is usually used inside some function. These are the functions we've seen so far:

@@ -1,5 +1,5 @@
 ---
-title: Pattern Effects
+title: Pattern Effekte
 layout: ../../../layouts/MainLayout.astro
 ---
 
@@ -7,21 +7,21 @@ import { MiniRepl } from '@src/docs/MiniRepl';
 import Box from '@components/Box.astro';
 import QA from '@components/QA';
 
-# Pattern Effects
+# Pattern Effekte
 
-Up until now, most of the functions we've seen are what other music programs are typically capable of: sequencing sounds, playing notes, controlling effects.
+Bis jetzt sind die meisten Funktionen die wir kennengelernt haben ähnlich wie Funktionen in anderen Musik Programmen: Sequencing von Sounds, Noten und Effekten.
 
-In this chapter, we are going to look at functions that are more unique to tidal.
+In diesem Kapitel beschäftigen wir uns mit Funktionen die weniger herkömmlich oder auch enzigartig sind.
 
-**reverse patterns with rev**
+**rev = rückwärts abspielen**
 
 <MiniRepl hideHeader client:visible tune={`n("0 1 [4 3] 2").sound("jazz").rev()`} />
 
-**play pattern left and modify it right with jux**
+**jux = einen stereo kanal modifizieren**
 
 <MiniRepl hideHeader client:visible tune={`n("0 1 [4 3] 2").sound("jazz").jux(rev)`} />
 
-This is the same as:
+So würde man das ohne jux schreiben:
 
 <MiniRepl
   hideHeader
@@ -32,7 +32,7 @@ This is the same as:
 )`}
 />
 
-Let's visualize what happens here:
+Lass uns visualisieren was hier passiert:
 
 <MiniRepl
   hideHeader
@@ -46,15 +46,15 @@ Let's visualize what happens here:
 
 <Box>
 
-Try commenting out one of the two by adding `//` before a line
+Schreibe `//` vor eine der beiden Zeilen im `stack`!
 
 </Box>
 
-**multiple tempos**
+**mehrere tempos**
 
 <MiniRepl hideHeader client:visible tune={`note("c2, eb3 g3 [bb3 c4]").sound("piano").slow("1,2,3")`} />
 
-This is like doing
+Das hat den gleichen Effekt wie:
 
 <MiniRepl
   hideHeader
@@ -69,11 +69,11 @@ This is like doing
 
 <Box>
 
-Try commenting out one or more by adding `//` before a line
+Schreibe wieder `//` vor eine oder mehrere Zeilen im `stack`.
 
 </Box>
 
-**add**
+**add = addieren**
 
 <MiniRepl
   hideHeader
@@ -86,11 +86,13 @@ Try commenting out one or more by adding `//` before a line
 
 <Box>
 
-If you add a number to a note, the note will be treated as if it was a number
+Addiert man eine Zahl zu einer Note, verhält sich diese wie eine Zahl.
+
+z.B. c4 = 60, also ist c4 + 2 = 62
 
 </Box>
 
-We can add as often as we like:
+Man kann auch mehrmals addieren:
 
 <MiniRepl
   hideHeader
@@ -101,7 +103,7 @@ We can add as often as we like:
   punchcard
 />
 
-**add with scale**
+**add + scale**
 
 <MiniRepl
   hideHeader
@@ -112,7 +114,7 @@ We can add as often as we like:
   punchcard
 />
 
-**time to stack**
+**Alles zusammen**
 
 <MiniRepl
   hideHeader
@@ -134,13 +136,13 @@ We can add as often as we like:
 
 <MiniRepl hideHeader client:visible tune={`sound("hh, bd rim").bank("RolandTR707").ply(2)`} punchcard />
 
-this is like writing:
+das ist wie:
 
 <MiniRepl hideHeader client:visible tune={`sound("hh*2, bd*2 rim*2").bank("RolandTR707")`} punchcard />
 
 <Box>
 
-Try patterning the `ply` function, for example using `"<1 2 1 3>"`
+Probier `ply` mit einem pattern zu automatisieren, z.b. `"<1 2 1 3>"`
 
 </Box>
 
@@ -159,11 +161,11 @@ Try patterning the `ply` function, for example using `"<1 2 1 3>"`
 
 <Box>
 
-In the notation `x=>x.`, the `x` is the shifted pattern, which where modifying.
+In der notation `x=>x.`, das `x` ist das pattern das wir bearbeiten.
 
 </Box>
 
-The above is like writing:
+Das Beispiel oben sieht ohne `off` so aus:
 
 <MiniRepl
   hideHeader
@@ -176,7 +178,7 @@ The above is like writing:
   punchcard
 />
 
-off is also useful for sounds:
+`off` ist auch nützlich für sounds:
 
 <MiniRepl
   hideHeader
@@ -185,10 +187,10 @@ off is also useful for sounds:
   .off(1/8, x=>x.speed(1.5).gain(.25))`}
 />
 
-| name | description                    | example                                                                                        |
-| ---- | ------------------------------ | ---------------------------------------------------------------------------------------------- |
-| rev  | reverse                        | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").rev()`} />            |
-| jux  | split left/right, modify right | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").jux(rev)`} />         |
-| add  | add numbers / notes            | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6".add("<0 1 2 1>")).scale("C:minor")`} /> |
-| ply  | speed up each event n times    | <MiniRepl hideHeader client:visible tune={`s("bd sd").ply("<1 2 3>")`} />                      |
-| off  | copy, shift time & modify      | <MiniRepl hideHeader client:visible tune={`s("bd sd, hh*4").off(1/8, x=>x.speed(2))`} />       |
+| name | description                       | example                                                                                        |
+| ---- | --------------------------------- | ---------------------------------------------------------------------------------------------- |
+| rev  | rückwärts                         | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").rev()`} />            |
+| jux  | ein stereo-kanal modifizieren     | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").jux(rev)`} />         |
+| add  | addiert zahlen oder noten         | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6".add("<0 1 2 1>")).scale("C:minor")`} /> |
+| ply  | multipliziert jedes element x mal | <MiniRepl hideHeader client:visible tune={`s("bd sd").ply("<1 2 3>")`} />                      |
+| off  | verzögert eine modifizierte kopie | <MiniRepl hideHeader client:visible tune={`s("bd sd, hh*4").off(1/8, x=>x.speed(2))`} />       |

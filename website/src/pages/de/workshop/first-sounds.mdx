@@ -61,7 +61,6 @@ Diese 2-Buchstaben Kombinationen stehen für verschiedene Teile eines Drumsets:
 
 - `bd` = **b**ass **d**rum - Basstrommel
 - `sd` = **s**nare **d**rum - Schnarrtrommel
-- `sn` = **sn**are
 - `rim` = **rim**shot - Rahmenschlag
 - `hh` = **h**i**h**at
 - `oh` = **o**pen **h**ihat - Offenes Hi-Hat
@@ -104,13 +103,13 @@ Versuch noch mehr Sounds hinzuzfügen!
 
 **Je länger die Sequence, desto schneller**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sn bd hh bd")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sd bd hh bd")`} punchcard />
 
 Der Inhalt einer Sequence wird in einen sogenannten Cycle (=Zyklus) zusammengequetscht.
 
 **Tempo ändern mit `cpm`**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sn bd hh bd").cpm(40)`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sd bd hh bd").cpm(40)`} punchcard />
 
 <Box>
 
@@ -128,7 +127,7 @@ Wir werden später noch mehr Möglichkeiten kennen lernen wie man das Tempo ver�
 
 **Unter-Sequenzen mit [Klammern]**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [hh hh] sn [hh bd]")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd [hh hh] sd [hh bd]")`} punchcard />
 
 <Box>
 
@@ -140,15 +139,15 @@ Genau wie bei der ganzen Sequence wird der eine Unter-Sequence schneller je mehr
 
 **Multiplikation: Dinge schneller machen**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh*2 sn hh*3")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd hh*2 sd hh*3")`} punchcard />
 
 **Multiplikation: Unter-Sequences schneller machen**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [hh sn]*2")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd [hh sd]*2")`} punchcard />
 
 **Multiplikation: Vieeeeeeel schneller**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh*16 sn hh*8")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd hh*16 sd hh*8")`} punchcard />
 
 <Box>
 
@@ -158,7 +157,7 @@ Tonhöhe = sehr schneller Rhythmus
 
 **Unter-Unter-Sequenzen mit [[Klammern]]**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [[sn sn] hh]")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd [[sd sd] hh]")`} punchcard />
 
 <Box>
 
@@ -216,12 +215,12 @@ Das haben wir bisher gelernt:
 
 | Concept               | Syntax      | Example                                                                          |
 | --------------------- | ----------- | -------------------------------------------------------------------------------- |
-| Sequenz               | Leerzeichen | <MiniRepl hideHeader client:visible tune={`sound("bd bd sn hh")`} />             |
+| Sequenz               | Leerzeichen | <MiniRepl hideHeader client:visible tune={`sound("bd bd sd hh")`} />             |
 | Sound Nummer          | :x          | <MiniRepl hideHeader client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
 | Pausen                | ~           | <MiniRepl hideHeader client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
 | Unter-Sequenzen       | \[\]        | <MiniRepl hideHeader client:visible tune={`sound("bd wind [metal jazz] hh")`} /> |
-| Unter-Unter-Sequenzen | \[\[\]\]    | <MiniRepl hideHeader client:visible tune={`sound("bd [metal [jazz sn]]")`} />    |
-| Schneller             | \*          | <MiniRepl hideHeader client:visible tune={`sound("bd sn*2 cp*3")`} />            |
+| Unter-Unter-Sequenzen | \[\[\]\]    | <MiniRepl hideHeader client:visible tune={`sound("bd [metal [jazz sd]]")`} />    |
+| Schneller             | \*          | <MiniRepl hideHeader client:visible tune={`sound("bd sd*2 cp*3")`} />            |
 | Parallel              | ,           | <MiniRepl hideHeader client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />      |
 
 Die mit Apostrophen umgebene Mini-Notation benutzt man normalerweise in eine sogenannten Funktion.

@@ -1,18 +1,16 @@
 ---
-title: First Effects
+title: Erste Effekte
 layout: ../../../layouts/MainLayout.astro
 ---
 
 import { MiniRepl } from '../../../docs/MiniRepl';
 import QA from '@components/QA';
 
-# First Effects
+# Erste Effekte
 
 import Box from '@components/Box.astro';
 
-We have sounds, we have notes, now let's look at effects!
-
-## Some basic effects
+## Ein paar grundlegende Effekte
 
 **low-pass filter**
 
@@ -27,12 +25,12 @@ We have sounds, we have notes, now let's look at effects!
 
 lpf = **l**ow **p**ass **f**ilter
 
-- Change lpf to 200. Notice how it gets muffled. Think of it as standing in front of the club with the door closed 🚪.
-- Now let's open the door... change it to 5000. Notice how it gets brighter ✨🪩
+- Ändere `lpf` in 200. Hörst du wie der Bass dumpfer klingt? Es klingt so ähnlich als würde die Musik hinter einer geschlossenen Tür laufen 🚪
+- Lass uns nun die Tür öffnen: Ändere `lpf` in 5000. Der Klang wird dadurch viel heller und schärfer ✨🪩
 
 </Box>
 
-**pattern the filter**
+**filter automatisieren**
 
 <MiniRepl
   hideHeader
@@ -43,14 +41,14 @@ lpf = **l**ow **p**ass **f**ilter
 
 <Box>
 
-- Try adding more values
-- Notice how the pattern in lpf does not change the overall rhythm
+- Füg noch mehr `lpf` Werte hinzu
+- Das pattern in `lpf` ändert nicht den Rhythmus der Bassline
 
-We will learn how to automate with waves later...
+Später sehen wir wie man mit Wellenformen Dinge automatisieren kann.
 
 </Box>
 
-**vowel**
+**vowel = Vokal**
 
 <MiniRepl
   hideHeader
@@ -59,7 +57,7 @@ We will learn how to automate with waves later...
 .sound("sawtooth").vowel("<a e i o>/2")`}
 />
 
-**gain**
+**gain = Verstärkung**
 
 <MiniRepl
   hideHeader
@@ -73,16 +71,16 @@ We will learn how to automate with waves later...
 
 <Box>
 
-Rhythm is all about dynamics!
+Bei Rhythmen ist die Dynamik (= Veränderungen der Lautstärke) sehr wichtig.
 
-- Remove `.gain(...)` and notice how flat it sounds.
-- Bring it back by undoing (ctrl+z)
+- Entferne `.gain(...)` und achte darauf wie es viel flacher klingt.
+- Mach es rückgängig (strg+z dann strg+enter)
 
 </Box>
 
-**stacks within stacks**
+**stacks in stacks**
 
-Let's combine all of the above into a little tune:
+Lass uns die obigen Beispiele kombinieren:
 
 <MiniRepl
   hideHeader
@@ -101,12 +99,13 @@ Let's combine all of the above into a little tune:
 
 <Box>
 
-Try to identify the individual parts of the stacks, pay attention to where the commas are.
-The 3 parts (drums, bassline, chords) are exactly as earlier, just stacked together, separated by comma.
+Versuche die einzelnen Teile innerhalb `stack` zu erkennen, schau dir an wie die Kommas gesetzt sind.
+
+Die 3 Teile (Drums, Bass, Akkorde) sind genau wie vorher, nur in einem `stack`, getrennt durch Kommas
 
 </Box>
 
-**shape the sound with an adsr envelope**
+**Den Sound formen mit ADSR Hüllkurve**
 
 <MiniRepl
   hideHeader
@@ -121,29 +120,29 @@ The 3 parts (drums, bassline, chords) are exactly as earlier, just stacked toget
 
 <Box>
 
-Try to find out what the numbers do.. Compare the following
+Versuche herauszufinden was die Zahlen machen. Probier folgendes:
 
 - attack: `.5` vs `0`
 - decay: `.5` vs `0`
 - sustain: `1` vs `.25` vs `0`
 - release: `0` vs `.5` vs `1`
 
-Can you guess what they do?
+Kannst du erraten was die einzelnen Werte machen?
 
 </Box>
 
-<QA q="Click to see solution" client:visible>
+<QA q="Lösung anzeigen" client:visible>
 
-- attack: time it takes to fade in
-- decay: time it takes to fade to sustain
-- sustain: level after decay
-- release: time it takes to fade out after note is finished
+- attack (anschlagen): Zeit des Aufbaus
+- decay (zerfallen): Zeit des Abfalls
+- sustain (erhalten): Lautstärke nach Abfall
+- release (loslassen): Zeit des Abfalls nach dem Ende
 
 ![ADSR](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/ADSR_parameter.svg/1920px-ADSR_parameter.svg.png)
 
 </QA>
 
-**adsr short notation**
+**adsr Kurznotation**
 
 <MiniRepl
   hideHeader
@@ -154,7 +153,7 @@ Can you guess what they do?
 `}
 />
 
-**delay**
+**delay = Verzögerung**
 
 <MiniRepl
   hideHeader
@@ -168,15 +167,25 @@ Can you guess what they do?
 
 <Box>
 
-Try some `delay` values between 0 and 1. Btw, `.5` is short for `0.5`
+Probier verschiedene `delay` Werte zwischen 0 und 1. Übrigens: `.5` ist kurz für `0.5`.
 
-What happens if you use `.delay(".8:.125")` ? Can you guess what the second number does?
+Was passiert wenn du `.delay(".8:.125")` schreibst? Kannst du erraten was die zweite Zahl macht?
 
-What happens if you use `.delay(".8:.06:.8")` ? Can you guess what the third number does?
+Was passiert wenn du `.delay(".8:.06:.8")` schreibst? Kannst du erraten was die dritte Zahl macht?
 
 </Box>
 
-**room aka reverb**
+<QA q="Lösung anzeigen" client:visible>
+
+`delay("a:b:c")`:
+
+- a: Lautstärke des Delays
+- b: Verzögerungszeit
+- c: Feedback (je kleiner desto schneller verschwindet das Delay)
+
+</QA>
+
+**room aka reverb = Hall**
 
 <MiniRepl
   hideHeader
@@ -188,13 +197,13 @@ What happens if you use `.delay(".8:.06:.8")` ? Can you guess what the third num
 
 <Box>
 
-Try different values!
+Spiel mit verschiedenen Werten.
 
-Add a delay too!
+Füg auch ein Delay hinzu!
 
 </Box>
 
-**little dub tune**
+**kleiner dub tune**
 
 <MiniRepl
   hideHeader
@@ -209,7 +218,7 @@ Add a delay too!
 )`}
 />
 
-Let's add a bass to make this complete:
+Für echten Dub fehlt noch der Bass:
 
 <MiniRepl
   hideHeader
@@ -229,11 +238,11 @@ Let's add a bass to make this complete:
 
 <Box>
 
-Try adding `.hush()` at the end of one of the patterns in the stack...
+Füg `.hush()` ans ende eines Patterns im stack...
 
 </Box>
 
-**pan**
+**pan = Panorama**
 
 <MiniRepl
   hideHeader
@@ -243,57 +252,59 @@ Try adding `.hush()` at the end of one of the patterns in the stack...
 .slow(2)`}
 />
 
-**speed**
+**speed = Geschwindigkeit**
 
 <MiniRepl hideHeader client:visible tune={`sound("bd rim").speed("<1 2 -1 -2>").room(.2)`} />
 
-**fast and slow**
+**fast and slow = schnell und langsam**
 
-We can use `fast` and `slow` to change the tempo of a pattern outside of Mini-Notation:
+Mit `fast` und `slow` kann man das tempo eines patterns außerhalb der Mini-Notation ändern:
 
 <MiniRepl hideHeader client:visible tune={`sound("bd*2,~ rim").slow(2)`} />
 
 <Box>
 
-Change the `slow` value. Try replacing it with `fast`.
+Ändere den `slow` Wert. Tausche `slow` durch `fast`.
 
-What happens if you use a pattern like `.fast("<1 [2 4]>")`?
+Was passiert wenn du den Wert automatisierst? z.b. `.fast("<1 [2 4]>")` ?
 
 </Box>
 
-By the way, inside Mini-Notation, `fast` is `*` and slow is `/`.
+Übrigens, innerhalb der Mini-Notation, `fast` ist `*` und `slow` ist `/`.
 
 <MiniRepl hideHeader client:visible tune={`sound("[bd*2,~ rim]*<1 [2 4]>")`} />
 
-## automation with signals
+## Automation mit Signalen
 
-Instead of changing values stepwise, we can also control them with signals:
+Anstatt Werte schrittweise zu automatisieren können wir auch sogenannte Signale benutzen:
 
 <MiniRepl hideHeader client:visible tune={`sound("hh*16").gain(sine)`} punchcard />
 
 <Box>
 
-The basic waveforms for signals are `sine`, `saw`, `square`, `tri` 🌊
+Die grundlegenden Wellenformen sind `sine`, `saw`, `square`, `tri` 🌊
 
-Try also random signals `rand` and `perlin`!
+Probiere auch die zufälligen Signale `rand` und `perlin`!
 
-The gain is visualized as transparency in the pianoroll.
+Der `gain`-Wert (Verstärkung) wird in der Visualisierung als Transparenz dargestellt.
 
 </Box>
 
-**setting a range**
+**Bereich ändern mit `range`**
 
-By default, waves oscillate between 0 to 1. We can change that with `range`:
+Signale bewegen sich standardmäßig zwischen 0 und 1. Wir können das mit `range` ändern:
 
 <MiniRepl hideHeader client:visible tune={`sound("hh*8").lpf(saw.range(500, 2000))`} />
 
+`range` ist nützlich wenn wir Funktionen mit einem anderen Wertebereich als 0 und 1 automatisieren wollen (z.b. lpf)
+
 <Box>
 
-What happens if you flip the range values?
+Was passiert wenn du die beiden Werte vertauschst?
 
 </Box>
 
-We can change the automation speed with slow / fast:
+Wir können die Geschwindigkeit der Automation mit slow / fast ändern:
 
 <MiniRepl
   hideHeader
@@ -305,11 +316,11 @@ We can change the automation speed with slow / fast:
 
 <Box>
 
-The whole automation will now take 8 cycles to repeat.
+Die ganze Automation braucht nun 8 cycle bis sie sich wiederholt.
 
 </Box>
 
-## Recap
+## Rückblick
 
 | name  | example                                                                                            |
 | ----- | -------------------------------------------------------------------------------------------------- |

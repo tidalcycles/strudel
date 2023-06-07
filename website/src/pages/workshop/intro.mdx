@@ -3,20 +3,59 @@ title: Introduction
 layout: ../../layouts/MainLayout.astro
 ---
 
-# Introduction
+import { MiniRepl } from '../../docs/MiniRepl';
 
-## goals
+# Welcome
 
-- be beginner friendly
-- teach a representative subset of strudel / tidal
-- introduce one new thing at a time
-- give practical / musical examples
-- encourage self-experimentation
-- hands on learning > walls of text
-- maintain flow state
-- no setup required
+Welcome to the Strudel documentation pages!
+You've come to the right place if you want to learn how to make music with code.
 
-## inspired by
+## What is Strudel?
 
-- https://github.com/tidalcycles/tidal-workshop/blob/master/workshop.tidal
-- https://learningmusic.ableton.com
+With Strudel, you can expressively write dynamic music pieces.<br/>
+It is an official port of the [Tidal Cycles](https://tidalcycles.org/) pattern language to JavaScript.
+You don't need to know JavaScript or Tidal Cycles to make music with Strudel.
+This interactive tutorial will guide you through the basics of Strudel.<br/>
+The best place to actually make music with Strudel is the [Strudel REPL](https://strudel.tidalcycles.org/)
+
+## What can you do with Strudel?
+
+- live code music: make music with code in real time
+- algorithmic composition: compose music using tidal's unique approach to pattern manipulation
+- teaching: focussing on a low barrier of entry, Strudel is a good fit for teaching music and code at the same time.
+- integrate into your existing music setup: either via MIDI or OSC, you can use Strudel as a really flexible sequencer
+
+## Example
+
+Here is an example of how strudel can sound:
+
+<MiniRepl
+  client:idle
+  tune={`stack(
+  // drums
+  s("bd,[~ <sd!3 sd(3,4,2)>],hh*8")
+  .speed(perlin.range(.8,.9)), // random sample speed variation
+  // bassline
+  "<a1 b1\*2 a1(3,8) e2>" 
+  .off(1/8,x=>x.add(12).degradeBy(.5)) // random octave jumps
+  .add(perlin.range(0,.5)) // random pitch variation
+  .superimpose(add(.05)) // add second, slightly detuned voice
+  .note() // wrap in "note"
+  .decay(.15).sustain(0) // make each note of equal length
+  .s('sawtooth') // waveform
+  .gain(.4) // turn down
+  .cutoff(sine.slow(7).range(300,5000)), // automate cutoff
+  // chords
+  "<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>".voicings('lefthand') 
+  .superimpose(x=>x.add(.04)) // add second, slightly detuned voice
+  .add(perlin.range(0,.5)) // random pitch variation
+  .note() // wrap in "note"
+  .s('sawtooth') // waveform
+  .gain(.16) // turn down
+  .cutoff(500) // fixed cutoff
+  .attack(1) // slowly fade in
+)
+.slow(3/2)`}
+/>
+
+To hear more, go to the [Strudel REPL](https://strudel.tidalcycles.org/) and press shuffle to hear a random example pattern.

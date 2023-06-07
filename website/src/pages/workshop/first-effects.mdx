@@ -176,6 +176,16 @@ What happens if you use `.delay(".8:.06:.8")` ? Can you guess what the third num
 
 </Box>
 
+<QA q="Lösung anzeigen" client:visible>
+
+`delay("a:b:c")`:
+
+- a: delay volume
+- b: delay time
+- c: feedback (smaller number = quicker fade)
+
+</QA>
+
 **room aka reverb**
 
 <MiniRepl
@@ -261,7 +271,7 @@ What happens if you use a pattern like `.fast("<1 [2 4]>")`?
 
 </Box>
 
-By the way, inside Mini-Notation, `fast` is `*` and slow is `/`.
+By the way, inside Mini-Notation, `fast` is `*` and `slow` is `/`.
 
 <MiniRepl hideHeader client:visible tune={`sound("[bd*2,~ rim]*<1 [2 4]>")`} />
 
