@@ -152,3 +152,39 @@ n(\`<
 .scale("<E:minor>/4")
 .sound("piano")`}
 />
+
+# dinge die es im alten tutorial gab, die jetzt noch nicht im workshop sind
+
+## `freq`
+
+To get maximum freedom, you can also use `freq` to directly control the frequency:
+
+<MiniRepl client:idle tune={`freq("220 275 330 440")`} />
+
+## Hearing and frequency
+
+In the above example, we play A3 (220Hz), C#4 natural (275Hz), E4 (330Hz) and A4 (440Hz), mirroring our previous examples.
+
+But can you hear the difference between these individual frequencies?
+
+<MiniRepl client:idle tune={`freq("220 221 223 224")`} />
+
+How about these?
+
+<MiniRepl client:idle tune={`freq("2020 2021 2023 2024")`} />
+
+The higher we go up...
+
+<MiniRepl client:idle tune={`freq("5020 5021 5023 5024")`} />
+
+The less distance we can hear between the frequencies!
+
+<MiniRepl client:idle tune={`freq("10020 10021 10023 10024")`} />
+
+Why is this? [Human hearing operates logarithmically](https://www.audiocheck.net/soundtests_nonlinear.php).
+
+## coding syntax
+
+## getting-started
+
+## sounds
