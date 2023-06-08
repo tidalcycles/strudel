@@ -13,13 +13,13 @@ Dies ist das erste Kapitel im Strudel Workshop, schön dich an Bord zu haben!
 
 Los geht's mit ein paar Sounds:
 
-<MiniRepl hideHeader client:visible tune={`sound("house")`} />
+<MiniRepl hideHeader client:visible tune={`sound("casio")`} />
 
 <Box>
 
 1. ⬆️ Klicke in das obige Textfeld ⬆️
 2. Drücke `Strg`+`Enter` zum Abspielen
-3. Ändere `house` in `casio`
+3. Ändere `casio` in `metal`
 4. Drücke `Strg`+`Enter` zum Aktualisieren
 5. Drücke `Strg`+`.` zum Stoppen
 
@@ -27,26 +27,29 @@ Los geht's mit ein paar Sounds:
 
 Glückwunsch, du bist nun am live coden!
 
+Die ganze Seite ist voller interaktiver Textfelder.
+In jedes kannst du hineinklicken und mit `Strg`+`Enter` starten / aktualisieren und mit `Strg+.` stoppen.
+
 **Probiere mehr Sounds aus**
 
 Mit ":" kannst du einen anderen Sound aus dem Set wählen:
 
-<MiniRepl hideHeader client:visible tune={`sound("east:1")`} hideHeader />
+<MiniRepl hideHeader client:visible tune={`sound("casio:0")`} hideHeader />
 
 <Box>
 
-Ändere `east:1` in `east:2` um einen anderen Sound aus dem Set `east` zu hören.
-
-Du kannst auch andere Zahlen ausprobieren! Es kann sein dass du kurz nichts hörst während ein neuer Sound lädt.
-
-</Box>
+Ändere `casio:0` in `casio:1` um einen anderen Sound aus dem Set `casio` zu hören.
+Ohne Zahl ist gleichbedeutend mit `:0`
 
 Hier sind ein paar mehr Sounds zum ausprobieren:
 
 ```
-casio control crow techno house jazz
-metal east jvbass juno insect space wind
+insect wind jazz metal east crow casio
 ```
+
+Probier verschiedene Kombinationen von Sounds und Nummern! Es kann sein dass du kurz nichts hörst während ein neuer Sound lädt.
+
+</Box>
 
 Jetzt weißt du wie man verschiedene Sounds benutzt.
 Vorerst bleiben wir bei den voreingestellten Sounds, später erfahren wir noch wie man eigene benutzt.
@@ -103,13 +106,13 @@ Versuch noch mehr Sounds hinzuzfügen!
 
 **Je länger die Sequence, desto schneller**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sd bd hh bd")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd rim bd hh bd")`} punchcard />
 
 Der Inhalt einer Sequence wird in einen sogenannten Cycle (=Zyklus) zusammengequetscht.
 
 **Tempo ändern mit `cpm`**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sd bd hh bd").cpm(40)`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd rim bd hh bd").cpm(40)`} punchcard />
 
 <Box>
 
@@ -127,7 +130,7 @@ Wir werden später noch mehr Möglichkeiten kennen lernen wie man das Tempo ver�
 
 **Unter-Sequenzen mit [Klammern]**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [hh hh] sd [hh bd]")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd [hh hh] rim [hh bd]")`} punchcard />
 
 <Box>
 
@@ -157,7 +160,7 @@ Tonhöhe = sehr schneller Rhythmus
 
 **Unter-Unter-Sequenzen mit [[Klammern]]**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [[sd sd] hh]")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd [[rim rim] hh]")`} punchcard />
 
 <Box>
 

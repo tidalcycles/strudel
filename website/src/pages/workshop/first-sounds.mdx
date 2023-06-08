@@ -15,13 +15,13 @@ This is the first chapter of the Strudel Workshop, nice to have you on board!
 
 Let's start by making some noise:
 
-<MiniRepl hideHeader client:visible tune={`sound("house")`} dirt />
+<MiniRepl hideHeader client:visible tune={`sound("casio")`} dirt />
 
 <Box>
 
 1. ⬆️ click into the text field above ⬆️
 2. press `ctrl`+`enter` to play
-3. change `house` to `casio`
+3. change `casio` to `metal`
 4. press `ctrl`+`enter` to update
 5. press `ctrl`+`.` to stop
 
@@ -29,26 +29,29 @@ Let's start by making some noise:
 
 Congratulations, you are now live coding!
 
+The whole page is filled with these text fields to interact with.
+You can always click inside and hit `ctrl`+`enter` to start / update and `ctrl+.` to stop.
+
 **Try more Sounds**
 
 You can pick a different sample from the same set, with ':'
 
-<MiniRepl hideHeader client:visible tune={`sound("east:1")`} hideHeader />
+<MiniRepl hideHeader client:visible tune={`sound("casio:0")`} hideHeader />
 
 <Box>
 
-Try changing `east:1` to `east:2` to hear a different sound in the `east` set.
-
-You can try other numbers too! You might hear a little pause while the sound is loading
-
-</Box>
+Try changing `casio:0` to `casio:1` to hear a different sound in the `casio` set.
+Not using a number is like doing `:0`
 
 Here are some more sound sets to try:
 
 ```
-casio control crow techno house jazz
-metal east jvbass juno insect space wind
+insect wind jazz metal east crow casio
 ```
+
+Try out different Combinations of sounds and numbers! You might hear a little pause while the sound is loading
+
+</Box>
 
 Now you know how to use different sounds.
 For now we'll stick to this little selection of sounds, but we'll find out how to load your own sounds later.
@@ -105,13 +108,13 @@ Try adding more sounds to the sequence!
 
 **The longer the sequence, the faster it runs**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sd bd hh bd")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd rim bd hh bd")`} punchcard />
 
 The content of a sequence will be squished into what's called a cycle.
 
 **One way to change the tempo is using `cpm`**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd sd bd hh bd").cpm(40)`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd rim bd hh bd").cpm(40)`} punchcard />
 
 <Box>
 
@@ -141,15 +144,15 @@ Similar to the whole sequence, the content of a sub-sequence will be squished to
 
 **Multiplication: Speed things up**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh*2 sd hh*3")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd hh*2 rim hh*3")`} punchcard />
 
 **Multiplication: Speed up sequences**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [hh sd]*2")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd [hh rim]*2")`} punchcard />
 
 **Multiplication: Speeeeeeeeed things up**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh*16 sd hh*8")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd hh*16 rim hh*8")`} punchcard />
 
 <Box>
 
@@ -159,7 +162,7 @@ Pitch = really fast rhythm
 
 **Sub-Sub-Sequences with [[brackets]]**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [[sd sd] hh]")`} punchcard />
+<MiniRepl hideHeader client:visible tune={`sound("bd [[rim rim] hh]")`} punchcard />
 
 <Box>
 

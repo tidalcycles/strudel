@@ -22,8 +22,65 @@ export async function prebake() {
       tag: 'drum-machines',
     }),
     samples(`./EmuSP12.json`, `./EmuSP12/`, { prebake: true, tag: 'drum-machines' }),
+    samples(
+      {
+        casio: ['casio/high.wav', 'casio/low.wav', 'casio/noise.wav'],
+        crow: ['crow/000_crow.wav', 'crow/001_crow2.wav', 'crow/002_crow3.wav', 'crow/003_crow4.wav'],
+        insect: [
+          'insect/000_everglades_conehead.wav',
+          'insect/001_robust_shieldback.wav',
+          'insect/002_seashore_meadow_katydid.wav',
+        ],
+        wind: [
+          'wind/000_wind1.wav',
+          'wind/001_wind10.wav',
+          'wind/002_wind2.wav',
+          'wind/003_wind3.wav',
+          'wind/004_wind4.wav',
+          'wind/005_wind5.wav',
+          'wind/006_wind6.wav',
+          'wind/007_wind7.wav',
+          'wind/008_wind8.wav',
+          'wind/009_wind9.wav',
+        ],
+        jazz: [
+          'jazz/000_BD.wav',
+          'jazz/001_CB.wav',
+          'jazz/002_FX.wav',
+          'jazz/003_HH.wav',
+          'jazz/004_OH.wav',
+          'jazz/005_P1.wav',
+          'jazz/006_P2.wav',
+          'jazz/007_SN.wav',
+        ],
+        metal: [
+          'metal/000_0.wav',
+          'metal/001_1.wav',
+          'metal/002_2.wav',
+          'metal/003_3.wav',
+          'metal/004_4.wav',
+          'metal/005_5.wav',
+          'metal/006_6.wav',
+          'metal/007_7.wav',
+          'metal/008_8.wav',
+          'metal/009_9.wav',
+        ],
+        east: [
+          'east/000_nipon_wood_block.wav',
+          'east/001_ohkawa_mute.wav',
+          'east/002_ohkawa_open.wav',
+          'east/003_shime_hi.wav',
+          'east/004_shime_hi_2.wav',
+          'east/005_shime_mute.wav',
+          'east/006_taiko_1.wav',
+          'east/007_taiko_2.wav',
+          'east/008_taiko_3.wav',
+        ],
+      },
+      'github:tidalcycles/Dirt-Samples/master/',
+    ),
   ]);
-  await samples('github:tidalcycles/Dirt-Samples/master'); // TODO: remove
+  // await samples('github:tidalcycles/Dirt-Samples/master');
 }
 
 const maxPan = noteToMidi('C8');
