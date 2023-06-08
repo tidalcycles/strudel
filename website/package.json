@@ -4,11 +4,11 @@
   "version": "0.6.0",
   "private": true,
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --host 0.0.0.0",
     "start": "astro dev",
     "check": "astro check && tsc",
     "build": "astro build",
-    "preview": "astro preview --port 3009",
+    "preview": "astro preview --port 3009 --host 0.0.0.0",
     "astro": "astro"
   },
   "dependencies": {
