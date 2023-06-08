@@ -50,6 +50,7 @@ Pattern.prototype.pianoroll = function ({
   timeframe: timeframeProp,
   fold = 0,
   vertical = 0,
+  labels = 0,
 } = {}) {
   const ctx = getDrawContext();
   const w = ctx.canvas.width;
@@ -114,6 +115,14 @@ Pattern.prototype.pianoroll = function ({
           ];
         }
         isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
+        if (labels) {
+          const label = event.value.note ?? event.value.s + (event.value.n ? `:${event.value.n}` : '');
+          ctx.font = `${barThickness * 0.75}px monospace`;
+          ctx.strokeStyle = 'black';
+          ctx.fillStyle = isActive ? 'white' : 'black';
+          ctx.textBaseline = 'top';
+          ctx.fillText(label, ...coords);
+        }
       });
       ctx.globalAlpha = 1; // reset!
       const playheadPosition = scale(-from / timeExtent, ...timeRange);
@@ -181,6 +190,7 @@ export function pianoroll({
   timeframe: timeframeProp,
   fold = 0,
   vertical = 0,
+  labels = false,
   ctx,
 } = {}) {
   const w = ctx.canvas.width;
@@ -267,6 +277,14 @@ export function pianoroll({
         ];
       }
       isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
+      if (labels) {
+        const label = event.value.note ?? event.value.s + (event.value.n ? `:${event.value.n}` : '');
+        ctx.font = `${barThickness * 0.75}px monospace`;
+        ctx.strokeStyle = 'black';
+        ctx.fillStyle = isActive ? 'white' : 'black';
+        ctx.textBaseline = 'top';
+        ctx.fillText(label, ...coords);
+      }
     });
   ctx.globalAlpha = 1; // reset!
   const playheadPosition = scale(-from / timeExtent, ...timeRange);

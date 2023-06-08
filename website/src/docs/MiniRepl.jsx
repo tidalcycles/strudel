@@ -32,6 +32,7 @@ export function MiniRepl({
   tune,
   drawTime,
   punchcard,
+  punchcardLabels = true,
   span = [0, 4],
   canvasHeight = 100,
   hideHeader,
@@ -39,7 +40,7 @@ export function MiniRepl({
   claviatureLabels,
 }) {
   const [Repl, setRepl] = useState();
-  const { theme, keybindings, fontSize, fontFamily } = useSettings();
+  const { theme, keybindings, fontSize, fontFamily, isLineNumbersDisplayed } = useSettings();
   const [activeNotes, setActiveNotes] = useState([]);
   useEffect(() => {
     // we have to load this package on the client
@@ -55,6 +56,7 @@ export function MiniRepl({
         hideOutsideView={true}
         drawTime={claviature ? [0, 0] : drawTime}
         punchcard={punchcard}
+        punchcardLabels={punchcardLabels}
         span={span}
         canvasHeight={canvasHeight}
         theme={themes[theme]}
@@ -62,6 +64,7 @@ export function MiniRepl({
         keybindings={keybindings}
         fontFamily={fontFamily}
         fontSize={fontSize}
+        isLineNumbersDisplayed={isLineNumbersDisplayed}
         onPaint={
           claviature
             ? (ctx, time, haps, drawTime) => {

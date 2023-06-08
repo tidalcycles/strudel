@@ -21,6 +21,7 @@ export function MiniRepl({
   onTrigger,
   drawTime,
   punchcard,
+  punchcardLabels,
   onPaint,
   canvasHeight = 200,
   fontSize = 18,
@@ -28,6 +29,7 @@ export function MiniRepl({
   hideHeader = false,
   theme,
   keybindings,
+  isLineNumbersDisplayed,
 }) {
   drawTime = drawTime || (punchcard ? [0, 4] : undefined);
   const evalOnMount = !!drawTime;
@@ -61,7 +63,7 @@ export function MiniRepl({
       if (onPaint) {
         pat = pat.onPaint(onPaint);
       } else if (punchcard) {
-        pat = pat.punchcard();
+        pat = pat.punchcard({ labels: punchcardLabels });
       }
       return pat;
     },
@@ -160,6 +162,7 @@ export function MiniRepl({
             fontFamily={fontFamily}
             fontSize={fontSize}
             keybindings={keybindings}
+            isLineNumbersDisplayed={isLineNumbersDisplayed}
           />
         )}
         {error && <div className="text-right p-1 text-md text-red-200">{error.message}</div>}
