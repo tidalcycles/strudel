@@ -25,14 +25,14 @@ Los geht's mit ein paar Sounds:
 
 </Box>
 
-Glückwunsch, du bist nun am live coden!
+Glückwunsch, du kannst nun live coden!
 
 Die ganze Seite ist voller interaktiver Textfelder.
 In jedes kannst du hineinklicken und mit `Strg`+`Enter` starten / aktualisieren und mit `Strg+.` stoppen.
 
 **Probiere mehr Sounds aus**
 
-Mit ":" kannst du einen anderen Sound aus dem Set wählen:
+Mit `:` gefolgt von einer Zahl kannst du einen anderen Sound aus dem Set wählen:
 
 <MiniRepl hideHeader client:visible tune={`sound("casio:0")`} hideHeader />
 
@@ -44,7 +44,7 @@ Ohne Zahl ist gleichbedeutend mit `:0`
 Hier sind ein paar mehr Sounds zum ausprobieren:
 
 ```
-insect wind jazz metal east crow casio
+insect wind jazz metal east crow casio space numbers
 ```
 
 Probier verschiedene Kombinationen von Sounds und Nummern! Es kann sein dass du kurz nichts hörst während ein neuer Sound lädt.
@@ -195,8 +195,7 @@ Es kommt öfter vor dass man die gleiche Idee auf verschiedene Arten ausdrücken
   client:visible
   tune={`sound(\`bd*2, ~ cp, 
 ~ ~ ~ oh, hh*4,
-[~ perc:1*2]*2,
-[~ jvbass]*2\`)`}
+[~ sawtooth]*2\`)`}
   punchcard
 />
 

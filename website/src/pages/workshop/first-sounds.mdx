@@ -11,8 +11,6 @@ import QA from '@components/QA';
 
 This is the first chapter of the Strudel Workshop, nice to have you on board!
 
-## Make a Sound
-
 Let's start by making some noise:
 
 <MiniRepl hideHeader client:visible tune={`sound("casio")`} dirt />
@@ -34,7 +32,7 @@ You can always click inside and hit `ctrl`+`enter` to start / update and `ctrl+.
 
 **Try more Sounds**
 
-You can pick a different sample from the same set, with ':'
+You can pick a different sample from the same set, with `:`, followed by a number:
 
 <MiniRepl hideHeader client:visible tune={`sound("casio:0")`} hideHeader />
 
@@ -46,7 +44,7 @@ Not using a number is like doing `:0`
 Here are some more sound sets to try:
 
 ```
-insect wind jazz metal east crow casio
+insect wind jazz metal east crow casio space numbers
 ```
 
 Try out different Combinations of sounds and numbers! You might hear a little pause while the sound is loading
@@ -197,8 +195,7 @@ It is quite common that there are many ways to express the same idea.
   client:visible
   tune={`sound(\`bd*2, ~ cp, 
 ~ ~ ~ oh, hh*4,
-[~ perc:1*2]*2,
-[~ jvbass]*2\`)`}
+[~ sawtooth]*2\`)`}
   punchcard
 />
 

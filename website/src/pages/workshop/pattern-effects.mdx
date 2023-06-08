@@ -163,19 +163,6 @@ In the notation `x=>x.`, the `x` is the shifted pattern, which where modifying.
 
 </Box>
 
-The above is like writing:
-
-<MiniRepl
-  hideHeader
-  client:visible
-  tune={`stack(
-  n("<0 [4 <3 2>] <2 3> [~ 1]>*2").color("cyan"),
-  n("<0 [4 <3 2>] <2 3> [~ 1]>*2".add(7).late(1/8)).color("magenta")
-).scale("<C4:minor Db4:mixolydian>/2")
-.s("triangle").adsr(".01:.1:0").room(.5)`}
-  punchcard
-/>
-
 off is also useful for sounds:
 
 <MiniRepl
