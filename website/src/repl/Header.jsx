@@ -122,7 +122,7 @@ export function Header({ context }) {
           {!isEmbedded && (
             <a
               title="learn"
-              href="./learn/getting-started"
+              href="./workshop/getting-started"
               className={cx('hover:opacity-50 flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
             >
               <AcademicCapIcon className="w-6 h-6" />
