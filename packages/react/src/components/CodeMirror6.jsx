@@ -7,7 +7,7 @@ import strudelTheme from '../themes/strudel-theme';
 import './style.css';
 import { useCallback } from 'react';
 import { autocompletion } from '@codemirror/autocomplete';
-//import { strudelAutocomplete } from './Autocomplete';
+import { strudelAutocomplete } from './Autocomplete';
 import { vim } from '@replit/codemirror-vim';
 import { emacs } from '@replit/codemirror-emacs';
 
@@ -93,8 +93,7 @@ const staticExtensions = [
   highlightField,
   flashField,
   // javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
-  // autocompletion({ override: [strudelAutocomplete] }),
-  autocompletion({ override: [] }), // wait for https://github.com/uiwjs/react-codemirror/pull/458
+  autocompletion({ override: [strudelAutocomplete] }),
 ];
 
 export default function CodeMirror({
