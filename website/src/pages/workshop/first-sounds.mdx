@@ -11,7 +11,9 @@ import QA from '@components/QA';
 
 This is the first chapter of the Strudel Workshop, nice to have you on board!
 
-Let's start by making some noise:
+## Code Fields
+
+The workshop is full of interactive code fields. Let's learn how to use those. Here is one:
 
 <MiniRepl hideHeader client:visible tune={`sound("casio")`} dirt />
 
@@ -27,27 +29,39 @@ Let's start by making some noise:
 
 Congratulations, you are now live coding!
 
-The whole page is filled with these text fields to interact with.
-You can always click inside and hit `ctrl`+`enter` to start / update and `ctrl+.` to stop.
+## Sounds
 
-**Try more Sounds**
+We have just played a sound with `sound` like this:
 
-You can pick a different sample from the same set, with `:`, followed by a number:
-
-<MiniRepl hideHeader client:visible tune={`sound("casio:0")`} hideHeader />
+<MiniRepl hideHeader client:visible tune={`sound("casio")`} hideHeader />
 
 <Box>
 
-Try changing `casio:0` to `casio:1` to hear a different sound in the `casio` set.
-Not using a number is like doing `:0`
+`casio` is one of many standard sounds.
 
-Here are some more sound sets to try:
+Try out a few other sounds:
 
 ```
 insect wind jazz metal east crow casio space numbers
 ```
 
-Try out different Combinations of sounds and numbers! You might hear a little pause while the sound is loading
+You might hear a little pause while the sound is loading
+
+</Box>
+
+**Change Sample Number with :**
+
+One Sound can contain multiple samples (audio files).
+
+You can select the sample by appending `:` followed by a number to the name:
+
+<MiniRepl hideHeader client:visible tune={`sound("casio:1")`} hideHeader />
+
+<Box>
+
+Try different sound / sample number combinations.
+
+Not adding a number is like doing `:0`
 
 </Box>
 
@@ -60,6 +74,8 @@ By default, Strudel comes with a wide selection of drum sounds:
 
 <MiniRepl hideHeader client:visible tune={`sound("bd hh sd oh")`} hideHeader />
 
+<Box>
+
 These letter combinations stand for different parts of a drum set:
 
 - `bd` = **b**ass **d**rum
@@ -68,6 +84,10 @@ These letter combinations stand for different parts of a drum set:
 - `rim` = **rim**shot
 - `hh` = **h**i**h**at
 - `oh` = **o**pen **h**ihat
+
+Try out different drum sounds!
+
+</Box>
 
 To change the sound character of our drums, we can use `bank` to change the drum machine:
 
@@ -87,6 +107,8 @@ Try changing `RolandTR909` to one of
 - `ViscoSpaceDrum`
 
 There are a lot more, but let's keep it simple for now
+
+🦥 Pro-Tip: Mark a name via double click. Then just copy and paste!
 
 </Box>
 
