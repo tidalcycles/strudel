@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import _CodeMirror from '@uiw/react-codemirror';
 import { EditorView, Decoration } from '@codemirror/view';
 import { StateField, StateEffect } from '@codemirror/state';
-import { javascript } from '@codemirror/lang-javascript';
+import { javascript, javascriptLanguage } from '@codemirror/lang-javascript';
 import strudelTheme from '../themes/strudel-theme';
 import './style.css';
 import { useCallback } from 'react';
@@ -92,8 +92,7 @@ const staticExtensions = [
   javascript(),
   highlightField,
   flashField,
-  // javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
-  autocompletion({ override: [strudelAutocomplete] }),
+  javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
 ];
 
 export default function CodeMirror({
