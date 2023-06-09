@@ -175,13 +175,29 @@ Wenn eine Sequenz unabhängig von ihrem Inhalt immer gleich schnell bleiben soll
 
 <Box>
 
-Füg noch mehr Töne hinzu und achte darauf wie das tempo gleich bleibt!
+Füg noch mehr Töne hinzu und achte darauf wie das Tempo gleich bleibt!
+
+Tatsächlich sind diese Klammern nur eine Abkürzung:
+
+`<a b c>` = `[a b c]/3`
+
+`<a b c d>` = `[a b c d]/4`
+
+usw..
 
 </Box>
 
 **Eine Sequenz pro Cycle**
 
-{/* <[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2 */}
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("<[36 48] [34 46] [41 53] [39 51]>")
+.sound("gm_acoustic_bass")`}
+  punchcard
+/>
+
+oder auch...
 
 <MiniRepl
   hideHeader
@@ -192,6 +208,8 @@ Füg noch mehr Töne hinzu und achte darauf wie das tempo gleich bleibt!
 />
 
 **Alternativen**
+
+Ähnlich wie Unter-Sequenzen, kann auch `<...>` innerhalb einer Sequenz verwendet werden:
 
 <MiniRepl
   hideHeader
