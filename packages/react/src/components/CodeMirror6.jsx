@@ -143,9 +143,10 @@ export default function CodeMirror({
     return staticExtensions;
   }, [keybindings]);
 
-  const setAutoCompletion = isAutoCompletionEnabled => isAutoCompletionEnabled ?
-    javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }) :
-    autocompletion({ override: [] })
+  const setAutoCompletion = (isAutoCompletionEnabled) =>
+    isAutoCompletionEnabled
+      ? javascriptLanguage.data.of({ autocomplete: strudelAutocomplete })
+      : autocompletion({ override: [] });
 
   return (
     <div style={{ fontSize, fontFamily }} className="w-full">
@@ -155,7 +156,7 @@ export default function CodeMirror({
         onChange={handleOnChange}
         onCreateEditor={handleOnCreateEditor}
         onUpdate={handleOnUpdate}
-        extensions={[ ...extensions, setAutoCompletion(isAutoCompletionEnabled) ]}
+        extensions={[...extensions, setAutoCompletion(isAutoCompletionEnabled)]}
         basicSetup={{ lineNumbers: isLineNumbersDisplayed }}
       />
     </div>

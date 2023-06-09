@@ -364,14 +364,7 @@ const fontFamilyOptions = {
 };
 
 function SettingsTab({ scheduler }) {
-  const {
-    theme,
-    keybindings,
-    isLineNumbersDisplayed,
-    isAutoCompletionEnabled,
-    fontSize,
-    fontFamily
-  } = useSettings();
+  const { theme, keybindings, isLineNumbersDisplayed, isAutoCompletionEnabled, fontSize, fontFamily } = useSettings();
 
   return (
     <div className="text-foreground p-4 space-y-4">

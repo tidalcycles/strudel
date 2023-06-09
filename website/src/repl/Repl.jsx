@@ -105,14 +105,7 @@ export function Repl({ embedded = false }) {
   const [lastShared, setLastShared] = useState();
   const [pending, setPending] = useState(true);
 
-  const {
-    theme,
-    keybindings,
-    fontSize,
-    fontFamily,
-    isLineNumbersDisplayed,
-    isAutoCompletionEnabled
-  } = useSettings();
+  const { theme, keybindings, fontSize, fontFamily, isLineNumbersDisplayed, isAutoCompletionEnabled } = useSettings();
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
