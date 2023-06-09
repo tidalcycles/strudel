@@ -103,6 +103,7 @@ export default function CodeMirror({
   theme,
   keybindings,
   isLineNumbersDisplayed,
+  isAutoCompletionEnabled,
   fontSize = 18,
   fontFamily = 'monospace',
   options,
@@ -114,12 +115,14 @@ export default function CodeMirror({
     },
     [onChange],
   );
+
   const handleOnCreateEditor = useCallback(
     (view) => {
       onViewChanged?.(view);
     },
     [onViewChanged],
   );
+
   const handleOnUpdate = useCallback(
     (viewUpdate) => {
       if (viewUpdate.selectionSet && onSelectionChange) {
@@ -128,6 +131,7 @@ export default function CodeMirror({
     },
     [onSelectionChange],
   );
+
   const extensions = useMemo(() => {
     let bindings = {
       vim,
@@ -138,6 +142,11 @@ export default function CodeMirror({
     }
     return staticExtensions;
   }, [keybindings]);
+
+  const setAutoCompletion = isAutoCompletionEnabled => isAutoCompletionEnabled ?
+    javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }) :
+    autocompletion({ override: [] })
+
   return (
     <div style={{ fontSize, fontFamily }} className="w-full">
       <_CodeMirror
@@ -146,7 +155,7 @@ export default function CodeMirror({
         onChange={handleOnChange}
         onCreateEditor={handleOnCreateEditor}
         onUpdate={handleOnUpdate}
-        extensions={extensions}
+        extensions={[ ...extensions, setAutoCompletion(isAutoCompletionEnabled) ]}
         basicSetup={{ lineNumbers: isLineNumbersDisplayed }}
       />
     </div>
