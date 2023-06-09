@@ -6,23 +6,24 @@ layout: ../../layouts/MainLayout.astro
 import { MiniRepl } from '../../docs/MiniRepl';
 import { JsDoc } from '../../docs/JsDoc';
 
-# Functional JavaScript API
+# Pattern Functions
 
-While the mini notation is powerful on its own, there is much more to discover.
-Internally, the mini notation will expand to use the actual functional JavaScript API.
+Let's learn all about functions to create and modify patterns.
+At the core of Strudel, everything is made of functions.
 
-For example, this Pattern in Mini Notation:
+For example, everything you can do with the Mini-Notation can also be done with a function.
+This Pattern in Mini Notation:
 
 <MiniRepl client:only="react" tune={`note("c3 eb3 g3")`} />
 
 is equivalent to this Pattern without Mini Notation:
 
-<MiniRepl client:only="react" tune={`note(seq(c3, eb3, g3))`} />
+<MiniRepl client:only="react" tune={`note(seq("c3", "eb3", "g3"))`} />
 
 Similarly, there is an equivalent function for every aspect of the mini notation.
 
-Which representation to use is a matter of context. As a rule of thumb, you can think of the JavaScript API
-to fit better for the larger context, while mini notation is more practical for individiual rhythms.
+Which representation to use is a matter of context. As a rule of thumb, functions
+are better suited in a larger context, while mini notation is more practical for individiual rhythms.
 
 ## Limits of Mini Notation
 
@@ -46,10 +47,10 @@ You can freely mix JS patterns, mini patterns and values! For example, this patt
 <MiniRepl
   client:idle
   tune={`cat(
-  stack(g3,b3,e4),
-  stack(a3,c3,e4),
-  stack(b3,d3,fs4),
-  stack(b3,e4,g4)
+  stack("g3","b3","e4"),
+  stack("a3","c3","e4"),
+  stack("b3","d3","fs4"),
+  stack("b3","e4","g4")
 ).note()`}
 />
 
@@ -72,4 +73,4 @@ You can freely mix JS patterns, mini patterns and values! For example, this patt
 While mini notation is almost always shorter, it only has a handful of modifiers: \* / ! @.
 When using JS patterns, there is a lot more you can do.
 
-What [Pattern Constructors](/learn/factories) does Strudel offer?
+Next, let's look at how you can [create patterns](/learn/factories)

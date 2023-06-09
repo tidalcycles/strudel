@@ -24,6 +24,7 @@ export type Frontmatter = {
 
 export const KNOWN_LANGUAGES = {
   English: 'en',
+  German: 'de',
 } as const;
 export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES);
 
@@ -38,39 +39,55 @@ export const ALGOLIA = {
   apiKey: 'd5044f9d21b80e7721e5b0067a8730b1',
 };
 
-export type Sidebar = Record<(typeof KNOWN_LANGUAGE_CODES)[number], Record<string, { text: string; link: string }[]>>;
+export type SidebarLang = Record<string, { text: string; link: string }[]>;
+export type Sidebar = Record<(typeof KNOWN_LANGUAGE_CODES)[number], SidebarLang>;
 export const SIDEBAR: Sidebar = {
+  de: {
+    Workshop: [
+      { text: 'Intro', link: 'de/workshop/getting-started' },
+      { text: 'Erste Sounds', link: 'de/workshop/first-sounds' },
+      { text: 'Erste Töne', link: 'de/workshop/first-notes' },
+      { text: 'Erste Effekte', link: 'de/workshop/first-effects' },
+      { text: 'Pattern Effekte', link: 'de/workshop/pattern-effects' },
+      { text: 'Rückblick', link: 'de/workshop/recap' },
+      { text: 'Mehr Seiten auf Englisch', link: 'workshop/getting-started' },
+    ],
+  },
   en: {
-    Tutorial: [
-      { text: 'Getting Started', link: 'learn/getting-started' },
-      { text: 'Notes', link: 'learn/notes' },
-      { text: 'Sounds', link: 'learn/sounds' },
-      { text: 'Coding syntax', link: 'learn/code' },
-      { text: 'Mini-Notation', link: 'learn/mini-notation' },
+    Workshop: [
+      { text: 'Getting Started', link: 'workshop/getting-started' },
+      { text: 'First Sounds', link: 'workshop/first-sounds' },
+      { text: 'First Notes', link: 'workshop/first-notes' },
+      { text: 'First Effects', link: 'workshop/first-effects' },
+      { text: 'Pattern Effects', link: 'workshop/pattern-effects' },
+      { text: 'Recap', link: 'workshop/recap' },
+      { text: 'Workshop in German', link: 'de/workshop/getting-started' },
     ],
     'Making Sound': [
       { text: 'Samples', link: 'learn/samples' },
       { text: 'Synths', link: 'learn/synths' },
       { text: 'Audio Effects', link: 'learn/effects' },
+      { text: 'MIDI & OSC', link: 'learn/input-output' },
+    ],
+    More: [
+      { text: 'Mini-Notation', link: 'learn/mini-notation' },
+      { text: 'Coding syntax', link: 'learn/code' },
+      { text: 'Offline', link: 'learn/pwa' },
+      { text: 'Patterns', link: 'technical-manual/patterns' },
+      { text: 'Pattern Alignment', link: 'technical-manual/alignment' },
+      { text: 'Strudel vs Tidal', link: 'learn/strudel-vs-tidal' },
+      { text: 'Music metadata', link: 'learn/metadata' },
       { text: 'CSound', link: 'learn/csound' },
     ],
     'Pattern Functions': [
       { text: 'Introduction', link: 'functions/intro' },
-      { text: 'Pattern Constructors', link: 'learn/factories' },
+      { text: 'Creating Patterns', link: 'learn/factories' },
       { text: 'Time Modifiers', link: 'learn/time-modifiers' },
       { text: 'Control Parameters', link: 'functions/value-modifiers' },
       { text: 'Signals', link: 'learn/signals' },
       { text: 'Conditional Modifiers', link: 'learn/conditional-modifiers' },
       { text: 'Accumulation', link: 'learn/accumulation' },
       { text: 'Tonal Modifiers', link: 'learn/tonal' },
-    ],
-    More: [
-      { text: 'MIDI & OSC', link: 'learn/input-output' },
-      { text: 'Offline', link: 'learn/pwa' },
-      { text: 'Patterns', link: 'technical-manual/patterns' },
-      { text: 'Pattern Alignment', link: 'technical-manual/alignment' },
-      { text: 'Strudel vs Tidal', link: 'learn/strudel-vs-tidal' },
-      { text: 'Music metadata', link: 'learn/metadata' },
     ],
     Development: [
       { text: 'REPL', link: 'technical-manual/repl' },

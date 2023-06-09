@@ -157,7 +157,7 @@ export function Repl({ embedded = false }) {
             e.preventDefault();
             flash(view);
             await activateCode();
-          } else if (e.key === '.') {
+          } else if (e.key === '.' || e.keyCode === 'Period') {
             stop();
             e.preventDefault();
           }
