@@ -133,20 +133,24 @@ export default function CodeMirror({
   );
 
   const extensions = useMemo(() => {
+    let _extensions = [...staticExtensions];
     let bindings = {
       vim,
       emacs,
     };
-    if (bindings[keybindings]) {
-      return [...staticExtensions, bindings[keybindings]()];
-    }
-    return staticExtensions;
-  }, [keybindings]);
 
-  const setAutoCompletion = (isAutoCompletionEnabled) =>
-    isAutoCompletionEnabled
-      ? javascriptLanguage.data.of({ autocomplete: strudelAutocomplete })
-      : autocompletion({ override: [] });
+    if (bindings[keybindings]) {
+      _extensions.push(bindings[keybindings]());
+    }
+
+    if (isAutoCompletionEnabled) {
+      _extensions.push(javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }));
+    } else {
+      _extensions.push(autocompletion({ override: [] }));
+    }
+
+    return _extensions;
+  }, [keybindings, isAutoCompletionEnabled]);
 
   return (
     <div style={{ fontSize, fontFamily }} className="w-full">
@@ -156,7 +160,7 @@ export default function CodeMirror({
         onChange={handleOnChange}
         onCreateEditor={handleOnCreateEditor}
         onUpdate={handleOnUpdate}
-        extensions={[...extensions, setAutoCompletion(isAutoCompletionEnabled)]}
+        extensions={extensions}
         basicSetup={{ lineNumbers: isLineNumbersDisplayed }}
       />
     </div>
