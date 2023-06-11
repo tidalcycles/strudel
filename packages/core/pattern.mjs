@@ -1677,6 +1677,9 @@ export const ply = register('ply', function (factor, pat) {
  * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
  */
 export const { fast, density } = register(['fast', 'density'], function (factor, pat) {
+  if (factor === 0) {
+    return silence;
+  }
   factor = Fraction(factor);
   const fastQuery = pat.withQueryTime((t) => t.mul(factor));
   return fastQuery.withHapTime((t) => t.div(factor));
@@ -1703,6 +1706,9 @@ export const hurry = register('hurry', function (r, pat) {
  * s("<bd sd> hh").slow(2) // s("[<bd sd> hh]/2")
  */
 export const { slow, sparsity } = register(['slow', 'sparsity'], function (factor, pat) {
+  if (factor === 0) {
+    return silence;
+  }
   return pat._fast(Fraction(1).div(factor));
 });
 
