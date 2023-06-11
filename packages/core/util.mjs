@@ -6,12 +6,12 @@ This program is free software: you can redistribute it and/or modify it under th
 
 // returns true if the given string is a note
 export const isNoteWithOctave = (name) => /^[a-gA-G][#bs]*[0-9]$/.test(name);
-export const isNote = (name) => /^[a-gA-G][#bs]*[0-9]?$/.test(name);
+export const isNote = (name) => /^[a-gA-G][#bsf]*[0-9]?$/.test(name);
 export const tokenizeNote = (note) => {
   if (typeof note !== 'string') {
     return [];
   }
-  const [pc, acc = '', oct] = note.match(/^([a-gA-G])([#bs]*)([0-9])?$/)?.slice(1) || [];
+  const [pc, acc = '', oct] = note.match(/^([a-gA-G])([#bsf]*)([0-9])?$/)?.slice(1) || [];
   if (!pc) {
     return [];
   }
@@ -25,7 +25,7 @@ export const noteToMidi = (note) => {
     throw new Error('not a note: "' + note + '"');
   }
   const chroma = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 }[pc.toLowerCase()];
-  const offset = acc?.split('').reduce((o, char) => o + { '#': 1, b: -1, s: 1 }[char], 0) || 0;
+  const offset = acc?.split('').reduce((o, char) => o + { '#': 1, b: -1, s: 1, f: -1 }[char], 0) || 0;
   return (Number(oct) + 1) * 12 + chroma + offset;
 };
 export const midiToFreq = (n) => {
