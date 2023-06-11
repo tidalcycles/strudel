@@ -1,0 +1,363 @@
+---
+title: Erste Sounds
+layout: ../../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '@src/docs/MiniRepl';
+import Box from '@components/Box.astro';
+import QA from '@components/QA';
+
+# Erste Sounds
+
+Dies ist das erste Kapitel im Strudel Workshop, schön dich an Bord zu haben!
+
+## Textfelder
+
+Der Workshop ist voller interaktiver Textfelder. Lass uns lernen wie sie funktionieren. Hier ist eins:
+
+<MiniRepl hideHeader client:visible tune={`sound("casio")`} />
+
+<Box>
+
+1. ⬆️ Klicke in das obige Textfeld ⬆️
+2. Drücke `Strg`+`Enter` zum Abspielen
+3. Ändere `casio` in `metal`
+4. Drücke `Strg`+`Enter` zum Aktualisieren
+5. Drücke `Strg`+`Punkt` zum Stoppen
+
+Mac: `Strg` = `control` oder auch `option`
+
+</Box>
+
+Glückwunsch, du kannst jetzt live coden!
+
+## Sounds
+
+Gerade haben wir schon den ersten sound mit `sound` abgespielt:
+
+<MiniRepl hideHeader client:visible tune={`sound("casio")`} />
+
+<Box>
+
+`casio` ist einer von vielen Standard Sounds.
+
+Probier ein paar andere Sounds aus:
+
+```
+insect wind jazz metal east crow casio space numbers
+```
+
+Es kann sein, dass du kurz nichts hörst während ein neuer Sound lädt.
+
+</Box>
+
+**Sample Nummer ändern mit :**
+
+Ein Sound kann mehrere Samples (Audio Dateien) enthalten.
+
+Du kannst ein anderes Sample wählen, indem du `:` und eine Zahl an den Sound-Namen anhängst:
+
+<MiniRepl hideHeader client:visible tune={`sound("casio:1")`} hideHeader />
+
+<Box>
+
+Probiere verschiedene Sound / Zahlen Kombinationen.
+
+Ohne Zahl ist gleichbedeutend mit `:0`
+
+</Box>
+
+Jetzt weißt du wie man Sounds abspielt und ihre Sample Nummer einstellt.
+Vorerst bleiben wir bei den voreingestellten Sounds, später erfahren wir noch wie man eigene benutzt.
+
+## Drum Sounds
+
+Strudel kommt von Haus aus mit einer breiten Auswahl an Drum Sounds:
+
+<MiniRepl hideHeader client:visible tune={`sound("bd hh sd oh")`} hideHeader />
+
+<Box>
+
+Diese 2-Buchstaben Kombinationen stehen für verschiedene Teile eines Schlagzeugs:
+
+- `bd` = **b**ass **d**rum - Basstrommel
+- `sd` = **s**nare **d**rum - Schnarrtrommel
+- `rim` = **rim**shot - Rahmenschlag
+- `hh` = **h**i**h**at - Hallo Hut
+- `oh` = **o**pen **h**ihat - Offener Hallo Hut
+
+Probier verschiedene Sounds aus!
+
+</Box>
+
+Wir können den Charakter des Drum Sounds verändern, indem wir mit `bank` die Drum Machine auswählen:
+
+<MiniRepl hideHeader client:visible tune={`sound("bd hh sd oh").bank("RolandTR909")`} hideHeader />
+
+In diesem Beispiel ist `RolandTR909` der Name der Drum Machine, die eine prägende Rolle für House und Techno Musik spielte.
+
+<Box>
+
+Ändere `RolandTR909` in
+
+- `AkaiLinn`
+- `RhythmAce`
+- `RolandTR808`
+- `RolandTR707`
+- `ViscoSpaceDrum`
+
+Es gibt noch viel mehr, aber das sollte fürs Erste reichen..
+
+🦥 Tipp für faule: Mach Doppel-Klick auf einen Namen um ihn zu markieren.
+Dann kannst du ihn mit `Strg`+`C` kopieren und mit `Strg`+`V` einfügen.
+
+</Box>
+
+## Sequenzen / Sequences
+
+Im letzten Beispiel haben wir schon gesehen dass man mehrere Sounds hintereinander abspielen kann wenn man sie durch Leerzeichen trennt:
+
+<MiniRepl hideHeader client:visible tune={`sound("bd hh sd hh")`} punchcard />
+
+Beachte wie der aktuell gespielte Sound im Code markiert und auch darunter visualisiert wird.
+
+<Box>
+
+Versuch noch mehr Sounds hinzuzfügen!
+
+</Box>
+
+**Je länger die Sequence, desto schneller**
+
+<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd rim bd hh bd")`} punchcard />
+
+Der Inhalt einer Sequence wird in einen sogenannten Cycle (=Zyklus) zusammengequetscht.
+
+**Tempo ändern mit `cpm`**
+
+<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd rim bd hh bd").cpm(40)`} punchcard />
+
+<Box>
+
+cpm = **c**ycles per **m**inute = Cycles pro Minute
+
+Das Tempo ist standardmäßig auf 60cpm eingestellt, also 1 Cycle pro Sekunde.
+
+`cpm` ist angelehnt an `bpm` (=beats per minute).
+
+</Box>
+
+Wir werden später noch mehr Möglichkeiten kennen lernen das Tempo zu verändern.
+
+**Pausen mit '~'**
+
+<MiniRepl hideHeader client:visible tune={`sound("bd hh ~ rim")`} punchcard />
+
+<Box>
+
+Tilde tippen:
+
+- Windows / Linux: `Alt Gr` + `~`
+- Mac: `option` + `N`
+
+</Box>
+
+**Unter-Sequenzen mit [Klammern]**
+
+<MiniRepl hideHeader client:visible tune={`sound("bd [hh hh] rim [hh hh]")`} punchcard />
+
+<Box>
+
+Der Inhalt der Klammer wird ebenfalls zusammengequetscht!
+
+Füge noch mehr Sounds in die Klammern ein!
+
+</Box>
+
+Genau wie bei der ganzen Sequence wird eine Unter-Sequence schneller je mehr drin ist.
+
+**Multiplikation: Dinge schneller machen**
+
+<MiniRepl hideHeader client:visible tune={`sound("bd hh*2 sd hh*3")`} punchcard />
+
+**Multiplikation: Vieeeeeeel schneller**
+
+<MiniRepl hideHeader client:visible tune={`sound("bd hh*16 sd hh*8")`} punchcard />
+
+<Box>
+
+Tonhöhe = sehr schneller Rhythmus
+
+</Box>
+
+**Multiplikation: Ganze Unter-Sequences schneller machen**
+
+<MiniRepl hideHeader client:visible tune={`sound("bd [sd hh]*2")`} punchcard />
+
+Bolero:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`sound("sd sd*3 sd sd*3 sd sd sd sd*3 sd sd*3 sd*3 sd*3")
+.cpm(10)`}
+  punchcard
+/>
+
+**Unter-Unter-Sequenzen mit [[Klammern]]**
+
+<MiniRepl hideHeader client:visible tune={`sound("bd [[rim rim] hh]")`} punchcard />
+
+<Box>
+
+Du kannst so tief verschachteln wie du willst!
+
+</Box>
+
+**Parallele Sequenzen mit Komma**
+
+<MiniRepl hideHeader client:visible tune={`sound("hh hh hh, bd casio")`} punchcard />
+
+Du kannst so viele Kommas benutzen wie du möchtest:
+
+<MiniRepl hideHeader client:visible tune={`sound("hh hh hh, bd bd, ~ casio")`} punchcard />
+
+Kommas können auch in Unter-Sequenzen verwendet werden:
+
+<MiniRepl hideHeader client:visible tune={`sound("hh hh hh, bd [bd,casio]")`} punchcard />
+
+<Box>
+
+Ist dir aufgefallen dass sich die letzten beiden Beispiele gleich anhören?
+
+Es kommt öfter vor, dass man die gleiche Idee auf verschiedene Arten ausdrücken kann.
+
+</Box>
+
+**Mehrere Zeilen schreiben mit \` (backtick)**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`sound(\`bd*2, ~ cp, 
+~ ~ ~ oh, hh*4,
+[~ casio]*2\`)`}
+  punchcard
+/>
+
+<Box>
+
+Ob man " oder \` benutzt ist nur eine Frage der Übersichtlichkeit.
+
+</Box>
+
+**Sample Nummer separat auswählen**
+
+Benutzt man nur einen Sound mit unterschiedlichen Sample Nummer sieht das so aus:
+
+<MiniRepl hideHeader client:visible tune={`sound("jazz:0 jazz:1 [jazz:4 jazz:2] jazz:3*2")`} punchcard />
+
+Das gleiche kann man auch so schreiben:
+
+<MiniRepl hideHeader client:visible tune={`n("0 1 [4 2] 3*2").sound("jazz")`} punchcard />
+
+## Rückblick
+
+Wir haben jetzt die Grundlagen der sogenannten Mini-Notation gelernt, der Rhythmus-Sprache von Tidal.
+
+Das haben wir bisher gelernt:
+
+| Concept               | Syntax      | Example                                                                          |
+| --------------------- | ----------- | -------------------------------------------------------------------------------- |
+| Sequenz               | Leerzeichen | <MiniRepl hideHeader client:visible tune={`sound("bd bd sd hh")`} />             |
+| Sound Nummer          | :x          | <MiniRepl hideHeader client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
+| Pausen                | ~           | <MiniRepl hideHeader client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
+| Unter-Sequenzen       | \[\]        | <MiniRepl hideHeader client:visible tune={`sound("bd wind [metal jazz] hh")`} /> |
+| Unter-Unter-Sequenzen | \[\[\]\]    | <MiniRepl hideHeader client:visible tune={`sound("bd [metal [jazz sd]]")`} />    |
+| Schneller             | \*          | <MiniRepl hideHeader client:visible tune={`sound("bd sd*2 cp*3")`} />            |
+| Parallel              | ,           | <MiniRepl hideHeader client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />      |
+
+Die mit Apostrophen umgebene Mini-Notation benutzt man normalerweise in eine sogenannten Funktion.
+Die folgenden Funktionen haben wir bereits gesehen:
+
+| Name  | Description                            | Example                                                                            |
+| ----- | -------------------------------------- | ---------------------------------------------------------------------------------- |
+| sound | Spielt den Sound mit dem Namen         | <MiniRepl hideHeader client:visible tune={`sound("bd sd")`} />                     |
+| bank  | Wählt die Soundbank / Drum Machine     | <MiniRepl hideHeader client:visible tune={`sound("bd sd").bank("RolandTR909")`} /> |
+| cpm   | Tempo in **C**ycles **p**ro **M**inute | <MiniRepl hideHeader client:visible tune={`sound("bd sd").cpm(90)`} />             |
+| n     | Sample Nummer                          | <MiniRepl hideHeader client:visible tune={`n("0 1 4 2").sound("jazz")`} />         |
+
+## Beispiele
+
+**Einfacher Rock Beat**
+
+<MiniRepl hideHeader client:visible tune={`sound("bd sd, hh*4").bank("RolandTR505").cpm(100/2)`} punchcard />
+
+**Klassischer House**
+
+<MiniRepl hideHeader client:visible tune={`sound("bd*2, ~ cp, [~ hh]*2").bank("RolandTR909")`} punchcard />
+
+<Box>
+
+Ist die aufgefallen dass die letzten 2 Patterns extrem ähnlich sind?
+Bestimmte Drum Patterns werden oft genreübergreifend wiederverwendet.
+
+</Box>
+
+We Will Rock you
+
+<MiniRepl hideHeader client:visible tune={`sound("bd*2 cp").bank("RolandTR707").cpm(81/2)`} punchcard />
+
+**Yellow Magic Orchestra - Firecracker**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`sound("bd sd, ~ ~ ~ hh ~ hh ~ ~, ~ perc ~ perc:1*2")
+.bank("RolandCompurhythm1000")`}
+  punchcard
+/>
+
+**Nachahmung eines 16 step sequencers**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`sound(\`
+[~  ~  oh ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ],
+[hh hh ~  ~ ] [hh ~  hh ~ ] [hh ~  hh ~ ] [hh ~  hh ~ ],
+[~  ~  ~  ~ ] [cp ~  ~  ~ ] [~  ~  ~  ~ ] [cp ~  ~  ~ ],
+[bd ~  ~  ~ ] [~  ~  ~  bd] [~  ~  bd ~ ] [~  ~  ~  bd]
+\`).cpm(90/4)`}
+  punchcard
+/>
+
+**Noch eins**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`sound(\`
+[~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  oh:1 ~ ],
+[hh hh hh hh] [hh hh hh hh] [hh hh hh hh] [hh hh ~  ~ ],
+[~  ~  ~  ~ ] [cp ~  ~  ~ ] [~  ~  ~  ~ ] [~  cp ~  ~ ],
+[bd bd ~  ~ ] [~  ~  bd ~ ] [bd bd ~ bd ] [~  ~  ~  ~ ]
+\`).bank("RolandTR808").cpm(88/4)`}
+  punchcard
+/>
+
+**Nicht so typische Drums**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`s(\`jazz*2, 
+insect [crow metal] ~ ~, 
+~ space:4 ~ space:1,
+~ wind\`)
+.cpm(100/2)`}
+  punchcard
+/>
+
+Jetzt haben wir eine grundlegende Ahnung davon wie man mit Strudel Beats baut!
+Im nächsten Kapitel werden wir ein paar [Töne spielen](/de/workshop/first-notes).

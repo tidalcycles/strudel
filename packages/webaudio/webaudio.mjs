@@ -85,7 +85,12 @@ export async function initAudioOnFirstClick() {
 }
 
 let delays = {};
+const maxfeedback = 0.98;
 function getDelay(orbit, delaytime, delayfeedback, t) {
+  if (delayfeedback > maxfeedback) {
+    logger(`delayfeedback was clamped to ${maxfeedback} to save your ears`);
+  }
+  delayfeedback = strudel.clamp(delayfeedback, 0, 0.98);
   if (!delays[orbit]) {
     const ac = getAudioContext();
     const dly = ac.createFeedbackDelay(1, delaytime, delayfeedback);
@@ -243,3 +248,16 @@ Pattern.prototype.webaudio = function () {
   // TODO: refactor (t, hap, ct, cps) to (hap, deadline, duration) ?
   return this.onTrigger(webaudioOutputTrigger);
 };
+
+export function webaudioScheduler(options = {}) {
+  options = {
+    getTime: () => getAudioContext().currentTime,
+    defaultOutput: webaudioOutput,
+    ...options,
+  };
+  const { defaultOutput, getTime } = options;
+  return new strudel.Cyclist({
+    ...options,
+    onTrigger: strudel.getTrigger({ defaultOutput, getTime }),
+  });
+}

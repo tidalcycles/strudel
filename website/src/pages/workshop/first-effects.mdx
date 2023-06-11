@@ -1,0 +1,335 @@
+---
+title: First Effects
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import QA from '@components/QA';
+
+# First Effects
+
+import Box from '@components/Box.astro';
+
+We have sounds, we have notes, now let's look at effects!
+
+## Some basic effects
+
+**low-pass filter**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+.sound("sawtooth").lpf(800)`}
+/>
+
+<Box>
+
+lpf = **l**ow **p**ass **f**ilter
+
+- Change lpf to 200. Notice how it gets muffled. Think of it as standing in front of the club with the door closed 🚪.
+- Now let's open the door... change it to 5000. Notice how it gets brighter ✨🪩
+
+</Box>
+
+**pattern the filter**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+.sound("sawtooth").lpf("200 1000")`}
+/>
+
+<Box>
+
+- Try adding more values
+- Notice how the pattern in lpf does not change the overall rhythm
+
+We will learn how to automate with waves later...
+
+</Box>
+
+**vowel**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("<[c3,g3,e4] [bb2,f3,d4] [a2,f3,c4] [bb2,g3,eb4]>/2")
+.sound("sawtooth").vowel("<a e i o>/2")`}
+/>
+
+**gain**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`stack(
+  sound("hh*8").gain("[.25 1]*2"),
+  sound("bd*2,~ sd:1")
+) `}
+  punchcard
+/>
+
+<Box>
+
+Rhythm is all about dynamics!
+
+- Remove `.gain(...)` and notice how flat it sounds.
+- Bring it back by undoing (ctrl+z)
+
+</Box>
+
+**stacks within stacks**
+
+Let's combine all of the above into a little tune:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`stack(
+  stack(
+    sound("hh*8").gain("[.25 1]*2"),
+    sound("bd*2,~ sd:1")
+  ),
+  note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+  .sound("sawtooth").lpf("200 1000"),
+  note("<[c3,g3,e4] [bb2,f3,d4] [a2,f3,c4] [bb2,g3,eb4]>/2")
+  .sound("sawtooth").vowel("<a e i o>/2")
+) `}
+/>
+
+<Box>
+
+Try to identify the individual parts of the stacks, pay attention to where the commas are.
+The 3 parts (drums, bassline, chords) are exactly as earlier, just stacked together, separated by comma.
+
+</Box>
+
+**shape the sound with an adsr envelope**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("<c3 bb2 f3 eb3>")
+.sound("sawtooth").lpf(600)
+.attack(.1)
+.decay(.1)
+.sustain(.25)
+.release(.2)`}
+/>
+
+<Box>
+
+Try to find out what the numbers do.. Compare the following
+
+- attack: `.5` vs `0`
+- decay: `.5` vs `0`
+- sustain: `1` vs `.25` vs `0`
+- release: `0` vs `.5` vs `1`
+
+Can you guess what they do?
+
+</Box>
+
+<QA q="Click to see solution" client:visible>
+
+- attack: time it takes to fade in
+- decay: time it takes to fade to sustain
+- sustain: level after decay
+- release: time it takes to fade out after note is finished
+
+![ADSR](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/ADSR_parameter.svg/1920px-ADSR_parameter.svg.png)
+
+</QA>
+
+**adsr short notation**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("<c3 bb2 f3 eb3>")
+.sound("sawtooth").lpf(600)
+.adsr(".1:.1:.5:.2")
+`}
+/>
+
+**delay**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`stack(
+  note("~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]")
+  .sound("gm_electric_guitar_muted"),
+  sound("<bd rim>").bank("RolandTR707")
+).delay(".5")`}
+/>
+
+<Box>
+
+Try some `delay` values between 0 and 1. Btw, `.5` is short for `0.5`
+
+What happens if you use `.delay(".8:.125")` ? Can you guess what the second number does?
+
+What happens if you use `.delay(".8:.06:.8")` ? Can you guess what the third number does?
+
+</Box>
+
+<QA q="Lösung anzeigen" client:visible>
+
+`delay("a:b:c")`:
+
+- a: delay volume
+- b: delay time
+- c: feedback (smaller number = quicker fade)
+
+</QA>
+
+**room aka reverb**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`n("<4 [3@3 4] [<2 0> ~@16] ~>/2")
+.scale("D4:minor").sound("gm_accordion:2")
+.room(2)`}
+/>
+
+<Box>
+
+Try different values!
+
+Add a delay too!
+
+</Box>
+
+**little dub tune**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`stack(
+  note("~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]")
+  .sound("gm_electric_guitar_muted").delay(.5),
+  sound("<bd rim>").bank("RolandTR707").delay(.5),
+  n("<4 [3@3 4] [<2 0> ~@16] ~>/2")
+  .scale("D4:minor").sound("gm_accordion:2")
+  .room(2).gain(.5)
+)`}
+/>
+
+Let's add a bass to make this complete:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`stack(
+  note("~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]")
+  .sound("gm_electric_guitar_muted").delay(.5),
+  sound("<bd rim>").bank("RolandTR707").delay(.5),
+  n("<4 [3@3 4] [<2 0> ~@16] ~>/2")
+  .scale("D4:minor").sound("gm_accordion:2")
+  .room(2).gain(.4),
+  n("<0 [~ 0] 4 [3 2] [0 ~] [0 ~] <0 2> ~>*2")
+  .scale("D2:minor")
+  .sound("sawtooth,triangle").lpf(800)
+)`}
+/>
+
+<Box>
+
+Try adding `.hush()` at the end of one of the patterns in the stack...
+
+</Box>
+
+**pan**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`sound("numbers:1 numbers:2 numbers:3 numbers:4")
+.pan("0 0.3 .6 1")
+.slow(2)`}
+/>
+
+**speed**
+
+<MiniRepl hideHeader client:visible tune={`sound("bd rim").speed("<1 2 -1 -2>").room(.2)`} />
+
+**fast and slow**
+
+We can use `fast` and `slow` to change the tempo of a pattern outside of Mini-Notation:
+
+<MiniRepl hideHeader client:visible tune={`sound("bd*2,~ rim").slow(2)`} />
+
+<Box>
+
+Change the `slow` value. Try replacing it with `fast`.
+
+What happens if you use a pattern like `.fast("<1 [2 4]>")`?
+
+</Box>
+
+By the way, inside Mini-Notation, `fast` is `*` and `slow` is `/`.
+
+<MiniRepl hideHeader client:visible tune={`sound("[bd*2,~ rim]*<1 [2 4]>")`} />
+
+## automation with signals
+
+Instead of changing values stepwise, we can also control them with signals:
+
+<MiniRepl hideHeader client:visible tune={`sound("hh*16").gain(sine)`} punchcard punchcardLabels={false} />
+
+<Box>
+
+The basic waveforms for signals are `sine`, `saw`, `square`, `tri` 🌊
+
+Try also random signals `rand` and `perlin`!
+
+The gain is visualized as transparency in the pianoroll.
+
+</Box>
+
+**setting a range**
+
+By default, waves oscillate between 0 to 1. We can change that with `range`:
+
+<MiniRepl hideHeader client:visible tune={`sound("hh*8").lpf(saw.range(500, 2000))`} />
+
+<Box>
+
+What happens if you flip the range values?
+
+</Box>
+
+We can change the automation speed with slow / fast:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+.sound("sawtooth")
+.lpf(sine.range(100, 2000).slow(8))`}
+/>
+
+<Box>
+
+The whole automation will now take 8 cycles to repeat.
+
+</Box>
+
+## Recap
+
+| name  | example                                                                                            |
+| ----- | -------------------------------------------------------------------------------------------------- |
+| lpf   | <MiniRepl hideHeader client:visible tune={`note("c2 c3").s("sawtooth").lpf("<400 2000>")`} />      |
+| vowel | <MiniRepl hideHeader client:visible tune={`note("c3 eb3 g3").s("sawtooth").vowel("<a e i o>")`} /> |
+| gain  | <MiniRepl hideHeader client:visible tune={`s("hh*8").gain("[.25 1]*2")`} />                        |
+| delay | <MiniRepl hideHeader client:visible tune={`s("bd rim").delay(.5)`} />                              |
+| room  | <MiniRepl hideHeader client:visible tune={`s("bd rim").room(.5)`} />                               |
+| pan   | <MiniRepl hideHeader client:visible tune={`s("bd rim").pan("0 1")`} />                             |
+| speed | <MiniRepl hideHeader client:visible tune={`s("bd rim").speed("<1 2 -1 -2>")`} />                   |
+| range | <MiniRepl hideHeader client:visible tune={`s("hh*16").lpf(saw.range(200,4000))`} />                |
+
+Let us now take a look at some of Tidal's typical [pattern effects](/workshop/pattern-effects).

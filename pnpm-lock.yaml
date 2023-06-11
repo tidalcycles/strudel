@@ -66,6 +66,34 @@ importers:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
 
+  packages/codemirror:
+    dependencies:
+      '@codemirror/commands':
+        specifier: ^6.2.4
+        version: 6.2.4
+      '@codemirror/lang-javascript':
+        specifier: ^6.1.7
+        version: 6.1.7
+      '@codemirror/language':
+        specifier: ^6.6.0
+        version: 6.6.0
+      '@codemirror/state':
+        specifier: ^6.2.0
+        version: 6.2.0
+      '@codemirror/view':
+        specifier: ^6.10.0
+        version: 6.10.0
+      '@lezer/highlight':
+        specifier: ^1.1.4
+        version: 1.1.4
+      '@strudel.cycles/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      vite:
+        specifier: ^4.3.3
+        version: 4.3.3(@types/node@18.11.18)
+
   packages/core:
     dependencies:
       fraction.js:
@@ -74,7 +102,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -99,7 +127,35 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
+
+  packages/core/examples/vite-vanilla-repl-cm6:
+    dependencies:
+      '@strudel.cycles/core':
+        specifier: workspace:*
+        version: link:../..
+      '@strudel.cycles/mini':
+        specifier: workspace:*
+        version: link:../../../mini
+      '@strudel.cycles/soundfonts':
+        specifier: workspace:*
+        version: link:../../../soundfonts
+      '@strudel.cycles/tonal':
+        specifier: workspace:*
+        version: link:../../../tonal
+      '@strudel.cycles/transpiler':
+        specifier: workspace:*
+        version: link:../../../transpiler
+      '@strudel.cycles/webaudio':
+        specifier: workspace:*
+        version: link:../../../webaudio
+      '@strudel/codemirror':
+        specifier: workspace:*
+        version: link:../../../codemirror
+    devDependencies:
+      vite:
+        specifier: ^4.3.2
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/csound:
     dependencies:
@@ -115,7 +171,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/embed: {}
 
@@ -148,7 +204,7 @@ importers:
         version: link:../mini
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -167,7 +223,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/mini:
     dependencies:
@@ -180,7 +236,7 @@ importers:
         version: 3.0.2
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -199,7 +255,7 @@ importers:
         version: 5.8.1
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/react:
     dependencies:
@@ -220,10 +276,10 @@ importers:
         version: 1.1.4
       '@replit/codemirror-emacs':
         specifier: ^6.0.1
-        version: 6.0.1(@codemirror/autocomplete@6.6.0)(@codemirror/commands@6.2.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)
+        version: 6.0.1(@codemirror/autocomplete@6.6.0)(@codemirror/commands@6.2.4)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)
       '@replit/codemirror-vim':
         specifier: ^6.0.14
-        version: 6.0.14(@codemirror/commands@6.2.0)(@codemirror/language@6.6.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)
+        version: 6.0.14(@codemirror/commands@6.2.4)(@codemirror/language@6.6.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)
       '@strudel.cycles/core':
         specifier: workspace:*
         version: link:../core
@@ -269,7 +325,7 @@ importers:
         version: 3.3.2
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/react/examples/nano-repl:
     dependencies:
@@ -285,6 +341,9 @@ importers:
       '@strudel.cycles/react':
         specifier: workspace:*
         version: link:../..
+      '@strudel.cycles/soundfonts':
+        specifier: workspace:*
+        version: link:../../../soundfonts
       '@strudel.cycles/tonal':
         specifier: workspace:*
         version: link:../../../tonal
@@ -321,7 +380,7 @@ importers:
         version: 3.3.2
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/serial:
     dependencies:
@@ -331,7 +390,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/soundfonts:
     dependencies:
@@ -353,7 +412,7 @@ importers:
         version: 3.3.1
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/tonal:
     dependencies:
@@ -372,7 +431,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -388,7 +447,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -410,10 +469,42 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
+
+  packages/web:
+    dependencies:
+      '@strudel.cycles/core':
+        specifier: workspace:*
+        version: link:../core
+      '@strudel.cycles/mini':
+        specifier: workspace:*
+        version: link:../mini
+      '@strudel.cycles/tonal':
+        specifier: workspace:*
+        version: link:../tonal
+      '@strudel.cycles/transpiler':
+        specifier: workspace:*
+        version: link:../transpiler
+      '@strudel.cycles/webaudio':
+        specifier: workspace:*
+        version: link:../webaudio
+    devDependencies:
+      vite:
+        specifier: ^4.3.3
+        version: 4.3.3(@types/node@18.11.18)
+
+  packages/web/examples/repl-example:
+    dependencies:
+      '@strudel/web':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      vite:
+        specifier: ^4.3.2
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/webaudio:
     dependencies:
@@ -426,7 +517,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
 
   packages/webdirt:
     dependencies:
@@ -442,7 +533,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -455,7 +546,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
+        version: 4.3.3(@types/node@18.11.18)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -555,6 +646,9 @@ importers:
       canvas:
         specifier: ^2.11.2
         version: 2.11.2
+      claviature:
+        specifier: ^0.1.0
+        version: 0.1.0
       fraction.js:
         specifier: ^4.2.0
         version: 4.2.0
@@ -2268,8 +2362,8 @@ packages:
       '@lezer/common': 1.0.2
     dev: false
 
-  /@codemirror/commands@6.2.0:
-    resolution: {integrity: sha512-+00smmZBradoGFEkRjliN7BjqPh/Hx0KCHWOEibUmflUqZz2RwBTU0MrVovEEHozhx3AUSGcO/rl3/5f9e9Biw==}
+  /@codemirror/commands@6.2.4:
+    resolution: {integrity: sha512-42lmDqVH0ttfilLShReLXsDfASKLXzfyC36bzwcqzox9PlHulMcsUOfHXNo2X2aFMVNUoQ7j+d4q5bnfseYoOA==}
     dependencies:
       '@codemirror/language': 6.6.0
       '@codemirror/state': 6.2.0
@@ -3452,7 +3546,7 @@ packages:
       escalade: 3.1.1
     dev: false
 
-  /@replit/codemirror-emacs@6.0.1(@codemirror/autocomplete@6.6.0)(@codemirror/commands@6.2.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0):
+  /@replit/codemirror-emacs@6.0.1(@codemirror/autocomplete@6.6.0)(@codemirror/commands@6.2.4)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0):
     resolution: {integrity: sha512-2WYkODZGH1QVAXWuOxTMCwktkoZyv/BjYdJi2A5w4fRrmOQFuIACzb6pO9dgU3J+Pm2naeiX2C8veZr/3/r6AA==}
     peerDependencies:
       '@codemirror/autocomplete': ^6.0.2
@@ -3462,13 +3556,13 @@ packages:
       '@codemirror/view': ^6.3.0
     dependencies:
       '@codemirror/autocomplete': 6.6.0(@codemirror/language@6.6.0)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)(@lezer/common@1.0.2)
-      '@codemirror/commands': 6.2.0
+      '@codemirror/commands': 6.2.4
       '@codemirror/search': 6.2.3
       '@codemirror/state': 6.2.0
       '@codemirror/view': 6.10.0
     dev: false
 
-  /@replit/codemirror-vim@6.0.14(@codemirror/commands@6.2.0)(@codemirror/language@6.6.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0):
+  /@replit/codemirror-vim@6.0.14(@codemirror/commands@6.2.4)(@codemirror/language@6.6.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0):
     resolution: {integrity: sha512-wwhqhvL76FdRTdwfUWpKCbv0hkp2fvivfMosDVlL/popqOiNLtUhL02ThgHZH8mus/NkVr5Mj582lyFZqQrjOA==}
     peerDependencies:
       '@codemirror/commands': ^6.0.0
@@ -3477,7 +3571,7 @@ packages:
       '@codemirror/state': ^6.0.1
       '@codemirror/view': ^6.0.3
     dependencies:
-      '@codemirror/commands': 6.2.0
+      '@codemirror/commands': 6.2.4
       '@codemirror/language': 6.6.0
       '@codemirror/search': 6.2.3
       '@codemirror/state': 6.2.0
@@ -4073,7 +4167,7 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: false
 
-  /@uiw/codemirror-extensions-basic-setup@4.19.16(@codemirror/autocomplete@6.6.0)(@codemirror/commands@6.2.0)(@codemirror/language@6.6.0)(@codemirror/lint@6.1.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0):
+  /@uiw/codemirror-extensions-basic-setup@4.19.16(@codemirror/autocomplete@6.6.0)(@codemirror/commands@6.2.4)(@codemirror/language@6.6.0)(@codemirror/lint@6.1.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0):
     resolution: {integrity: sha512-Xm0RDpyYVZ/8hWqaBs3+wZwi4uLwZUBwp/uCt89X80FeR6mr3BFuC+a+gcDO4dBu3l+WQE3jJdhjKjB2TCY/PQ==}
     peerDependencies:
       '@codemirror/autocomplete': '>=6.0.0'
@@ -4085,7 +4179,7 @@ packages:
       '@codemirror/view': '>=6.0.0'
     dependencies:
       '@codemirror/autocomplete': 6.6.0(@codemirror/language@6.6.0)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)(@lezer/common@1.0.2)
-      '@codemirror/commands': 6.2.0
+      '@codemirror/commands': 6.2.4
       '@codemirror/language': 6.6.0
       '@codemirror/lint': 6.1.0
       '@codemirror/search': 6.2.3
@@ -4380,11 +4474,11 @@ packages:
       react-dom: '>=16.8.0'
     dependencies:
       '@babel/runtime': 7.20.13
-      '@codemirror/commands': 6.2.0
+      '@codemirror/commands': 6.2.4
       '@codemirror/state': 6.2.0
       '@codemirror/theme-one-dark': 6.1.0
       '@codemirror/view': 6.10.0
-      '@uiw/codemirror-extensions-basic-setup': 4.19.16(@codemirror/autocomplete@6.6.0)(@codemirror/commands@6.2.0)(@codemirror/language@6.6.0)(@codemirror/lint@6.1.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)
+      '@uiw/codemirror-extensions-basic-setup': 4.19.16(@codemirror/autocomplete@6.6.0)(@codemirror/commands@6.2.4)(@codemirror/language@6.6.0)(@codemirror/lint@6.1.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)
       codemirror: 6.0.1(@lezer/common@1.0.2)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -4415,7 +4509,7 @@ packages:
       '@babel/plugin-transform-react-jsx-self': 7.21.0(@babel/core@7.21.5)
       '@babel/plugin-transform-react-jsx-source': 7.19.6(@babel/core@7.21.5)
       react-refresh: 0.14.0
-      vite: 4.3.3(@types/node@18.16.3)
+      vite: 4.3.3(@types/node@18.11.18)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5338,6 +5432,10 @@ packages:
     resolution: {integrity: sha512-4jYS4MOAaCIStSRwiuxc4B8MYhIe676yO1sYGzARnjXkWpmzZMMYxY6zu8WYWDhSuth5zhrQ1rhNSibyyvv4/w==}
     engines: {node: '>=8'}
 
+  /claviature@0.1.0:
+    resolution: {integrity: sha512-Ai12axNwQ7x/F9QAj64RYKsgvi5Y33+X3GUSKAC/9s/adEws8TSSc0efeiqhKNGKBo6rT/c+CSCwSXzXxwxZzQ==}
+    dev: false
+
   /clean-stack@2.2.0:
     resolution: {integrity: sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==}
     engines: {node: '>=6'}
@@ -5458,7 +5556,7 @@ packages:
     resolution: {integrity: sha512-J8j+nZ+CdWmIeFIGXEFbFPtpiYacFMDR8GlHK3IyHQJMCaVRfGx9NT+Hxivv1ckLWPvNdZqndbr/7lVhrf/Svg==}
     dependencies:
       '@codemirror/autocomplete': 6.6.0(@codemirror/language@6.6.0)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)(@lezer/common@1.0.2)
-      '@codemirror/commands': 6.2.0
+      '@codemirror/commands': 6.2.4
       '@codemirror/language': 6.6.0
       '@codemirror/lint': 6.1.0
       '@codemirror/search': 6.2.3

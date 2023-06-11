@@ -1,3 +1,15 @@
+:root {
+  --background: #222;
+  --lineBackground: #22222299;
+  --foreground: #fff;
+  --caret: #ffcc00;
+  --selection: rgba(128, 203, 196, 0.5);
+  --selectionMatch: #036dd626;
+  --lineHighlight: #00000050;
+  --gutterBackground: transparent;
+  --gutterForeground: #8a919966;
+}
+
 .darken::before {
   content: ' ';
   position: fixed;
@@ -10,15 +22,26 @@
   opacity: 0.5;
 }
 
-#code .cm-content {
-  padding-top: 12px !important;
-  padding-left: 8px !important;
-}
-
 #code .cm-scroller {
+  padding-top: 10px !important;
   padding-bottom: 50vh;
   font-family: inherit;
 }
 #code .cm-line > * {
   background: var(--lineBackground);
+}
+
+#code .cm-editor {
+  background-color: transparent !important;
+  height: 100%;
+  z-index: 11;
+}
+
+#code .cm-theme {
+  width: 100%;
+  height: 100%;
+}
+
+#code .cm-theme-light {
+  width: 100%;
 }

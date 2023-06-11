@@ -4,16 +4,16 @@
   "version": "0.6.0",
   "private": true,
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --host 0.0.0.0",
     "start": "astro dev",
     "check": "astro check && tsc",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro preview --port 3009 --host 0.0.0.0",
     "astro": "astro"
   },
   "dependencies": {
     "@algolia/client-search": "^4.17.0",
-    "@astrojs/mdx": "^0.19.0",  
+    "@astrojs/mdx": "^0.19.0",
     "@astrojs/react": "^2.1.1",
     "@astrojs/tailwind": "^3.1.1",
     "@docsearch/css": "^3.3.4",
@@ -43,6 +43,7 @@
     "@uiw/codemirror-themes-all": "^4.19.16",
     "astro": "^2.3.2",
     "canvas": "^2.11.2",
+    "claviature": "^0.1.0",
     "fraction.js": "^4.2.0",
     "nanoid": "^4.0.2",
     "nanostores": "^0.8.1",

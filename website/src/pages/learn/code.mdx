@@ -6,31 +6,31 @@ layout: ../../layouts/MainLayout.astro
 import { MiniRepl } from '../../docs/MiniRepl';
 import { JsDoc } from '../../docs/JsDoc';
 
-# Strudel Code
+# Coding Syntax
 
-Now that we have played some notes using different sounds, let's take a step back and look how we actually achieved this using _code_.
+Let's take a step back and understand how the syntax in Strudel works.
 
-Let's look at this simple example again. What do we notice?
+Take a look at this simple example:
 
-<MiniRepl client:idle tune={`freq("220 275 330 440").s("sine")`} />
+<MiniRepl client:idle tune={`note("c a f e").s("piano")`} />
 
-- We have a word `freq` which is followed by some brackets `()` with some words/letters/numbers inside, surrounded by quotes `"220 275 330 440"` (corresponding to the pitches a3, c#4, e4, a4).
-- Then we have a dot `.` followed by another similar piece of code `s("sine")`.
-- We can also see these texts are _highlighted_ using colours: word `freq` is purple, the brackets `()` are grey, and the content inside the `""` are green.
+- We have a word `note` which is followed by some brackets `()` with some words/letters/numbers inside, surrounded by quotes `"c a f e"`
+- Then we have a dot `.` followed by another similar piece of code `s("piano")`.
+- We can also see these texts are _highlighted_ using colours: word `note` is purple, the brackets `()` are grey, and the content inside the `""` are green. (The colors could be different if you've changed the default theme)
 
 What happens if we try to 'break' this pattern in different ways?
 
-<MiniRepl client:idle tune={`freq(220 275 330 440).s(sine)`} />
+<MiniRepl client:idle tune={`note(c a f e).s(piano)`} />
 
-<MiniRepl client:idle tune={`freq("220 275 330 440")s("sine")`} />
+<MiniRepl client:idle tune={`note("c a f e")s("piano")`} />
 
-<MiniRepl client:idle tune={`freq["220 275 330 440"].s{"sine"}`} />
+<MiniRepl client:idle tune={`note["c a f e"].s{"piano"}`} />
 
 Ok, none of these seem to work...
 
-<MiniRepl client:idle tune={`s("sine").freq("220 275 330 440")`} />
+<MiniRepl client:idle tune={`s("piano").note("c a f e")`} />
 
-This one does work, but now we can't hear the four different events and frequencies anymore.
+This one does work, but now we only hear the first note...
 
 So what is going on here?
 
@@ -67,16 +67,17 @@ It is a handy way to quickly turn code on and off.
 Try uncommenting this line by deleting `//` and refreshing the pattern.
 You can also use the keyboard shortcut `cmd-/` to toggle comments on and off.
 
+You might noticed that some comments in the REPL samples include some words starting with a "@", like `@by` or `@license`.
+Those are just a convention to define some information about the music. We will talk about it in the [Music metadata](/learn/metadata) section.
+
 # Strings
 
-Ok, so what about the content inside the quotes (e.g. `"a3 c#4 e4 a4"`)?
+Ok, so what about the content inside the quotes (e.g. `"c a f e"`)?
 In JavaScript, as in most programming languages, this content is referred to as being a [_string_](<https://en.wikipedia.org/wiki/String_(computer_science)>).
 A string is simply a sequence of individual characters.
 In TidalCycles, double quoted strings are used to write _patterns_ using the mini-notation, and you may hear the phrase _pattern string_ from time to time.
 If you want to create a regular string and not a pattern, you can use single quotes, e.g. `'C minor'` will not be parsed as Mini Notation.
 
-The good news is, that this covers 99% of the JavaScript syntax needed for Strudel!
-
-Let's now look at the way we can express [Rhythms](/learn/mini-notation)...
+The good news is, that this covers most of the JavaScript syntax needed for Strudel!
 
 <br />

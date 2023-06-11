@@ -67,7 +67,7 @@ const highlightField = StateField.define({
                   }
                   let mark;
                   if (color) {
-                    mark = Decoration.mark({ attributes: { style: `outline: 4px solid ${color};` } });
+                    mark = Decoration.mark({ attributes: { style: `outline: 2px solid ${color};` } });
                   } else {
                     mark = Decoration.mark({ attributes: { class: `outline outline-2 outline-foreground` } });
                   }
@@ -104,6 +104,7 @@ export default function CodeMirror({
   onSelectionChange,
   theme,
   keybindings,
+  isLineNumbersDisplayed,
   fontSize = 18,
   fontFamily = 'monospace',
   options,
@@ -148,6 +149,7 @@ export default function CodeMirror({
         onCreateEditor={handleOnCreateEditor}
         onUpdate={handleOnUpdate}
         extensions={extensions}
+        basicSetup={{ lineNumbers: isLineNumbersDisplayed }}
       />
     </div>
   );

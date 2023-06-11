@@ -1,0 +1,47 @@
+{
+  "name": "@strudel/codemirror",
+  "version": "0.8.3",
+  "description": "Codemirror Extensions for Strudel",
+  "main": "codemirror.mjs",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "contributors": [
+    "Alex McLean <alex@slab.org>"
+  ],
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "@codemirror/commands": "^6.2.4",
+    "@codemirror/lang-javascript": "^6.1.7",
+    "@codemirror/language": "^6.6.0",
+    "@codemirror/state": "^6.2.0",
+    "@codemirror/view": "^6.10.0",
+    "@lezer/highlight": "^1.1.4",
+    "@strudel.cycles/core": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^4.3.3"
+  }
+}

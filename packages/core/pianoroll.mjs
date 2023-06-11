@@ -50,6 +50,7 @@ Pattern.prototype.pianoroll = function ({
   timeframe: timeframeProp,
   fold = 0,
   vertical = 0,
+  labels = 0,
 } = {}) {
   const ctx = getDrawContext();
   const w = ctx.canvas.width;
@@ -87,7 +88,7 @@ Pattern.prototype.pianoroll = function ({
         const isActive = event.whole.begin <= t && event.whole.end > t;
         ctx.fillStyle = event.context?.color || inactive;
         ctx.strokeStyle = event.context?.color || active;
-        ctx.globalAlpha = event.context.velocity ?? 1;
+        ctx.globalAlpha = event.context.velocity ?? event.value?.gain ?? 1;
         const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
         let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
         const value = getValue(event);
@@ -114,6 +115,14 @@ Pattern.prototype.pianoroll = function ({
           ];
         }
         isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
+        if (labels) {
+          const label = event.value.note ?? event.value.s + (event.value.n ? `:${event.value.n}` : '');
+          ctx.font = `${barThickness * 0.75}px monospace`;
+          ctx.strokeStyle = 'black';
+          ctx.fillStyle = isActive ? 'white' : 'black';
+          ctx.textBaseline = 'top';
+          ctx.fillText(label, ...coords);
+        }
       });
       ctx.globalAlpha = 1; // reset!
       const playheadPosition = scale(-from / timeExtent, ...timeRange);
@@ -181,6 +190,7 @@ export function pianoroll({
   timeframe: timeframeProp,
   fold = 0,
   vertical = 0,
+  labels = false,
   ctx,
 } = {}) {
   const w = ctx.canvas.width;
@@ -240,7 +250,7 @@ export function pianoroll({
       const color = event.value?.color || event.context?.color;
       ctx.fillStyle = color || inactive;
       ctx.strokeStyle = color || active;
-      ctx.globalAlpha = event.context.velocity ?? 1;
+      ctx.globalAlpha = event.context.velocity ?? event.value?.gain ?? 1;
       const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
       let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
       const value = getValue(event);
@@ -267,6 +277,14 @@ export function pianoroll({
         ];
       }
       isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
+      if (labels) {
+        const label = event.value.note ?? event.value.s + (event.value.n ? `:${event.value.n}` : '');
+        ctx.font = `${barThickness * 0.75}px monospace`;
+        ctx.strokeStyle = 'black';
+        ctx.fillStyle = isActive ? 'white' : 'black';
+        ctx.textBaseline = 'top';
+        ctx.fillText(label, ...coords);
+      }
     });
   ctx.globalAlpha = 1; // reset!
   const playheadPosition = scale(-from / timeExtent, ...timeRange);
@@ -284,7 +302,7 @@ export function pianoroll({
   return this;
 }
 
-function getOptions(drawTime, options = {}) {
+export function getDrawOptions(drawTime, options = {}) {
   let [lookbehind, lookahead] = drawTime;
   lookbehind = Math.abs(lookbehind);
   const cycles = lookahead + lookbehind;
@@ -293,5 +311,18 @@ function getOptions(drawTime, options = {}) {
 }
 
 Pattern.prototype.punchcard = function (options) {
-  return this.onPaint((ctx, time, haps, drawTime) => pianoroll({ ctx, time, haps, ...getOptions(drawTime, options) }));
+  return this.onPaint((ctx, time, haps, drawTime) =>
+    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, options) }),
+  );
 };
+
+/* Pattern.prototype.pianoroll = function (options) {
+  return this.onPaint((ctx, time, haps, drawTime) =>
+    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { fold: 0, ...options }) }),
+  );
+}; */
+
+export function drawPianoroll(options) {
+  const { drawTime, ...rest } = options;
+  pianoroll({ ...getDrawOptions(drawTime), ...rest });
+}

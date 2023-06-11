@@ -15,6 +15,7 @@
     "@strudel.cycles/osc": "workspace:*",
     "@strudel.cycles/mini": "workspace:*",
     "@strudel.cycles/transpiler": "workspace:*",
+    "@strudel.cycles/soundfonts": "workspace:*",
     "@strudel.cycles/webaudio": "workspace:*",
     "@strudel.cycles/tonal": "workspace:*",
     "@strudel.cycles/react": "workspace:*"
