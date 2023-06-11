@@ -67,78 +67,16 @@ export const getFreq = (noteOrMidi) => {
   return midiToFreq(noteToMidi(noteOrMidi));
 };
 
-
-/* added code from here to solve issue 302*/
-const solfeggio = ['Do', 'Reb', 'Re', 'Mib', 'Mi', 'Fa', 'Solb', 'Sol', 'Lab', 'La', 'Sib', 'Si']; /*solffegio notes*/
-  const indian = [
-    'Sa',
-    'Re',
-    'Ga',
-    'Ma',
-    'Pa',
-    'Dha',
-    'Ni',
-  ]; /*indian musical notes,  seems like they do not use flats or sharps*/
-  const german = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Hb', 'H']; /*german & dutch musical notes*/
-  const byzantine = [
-    'Ni',
-    'Pab',
-    'Pa',
-    'Voub',
-    'Vou',
-    'Ga',
-    'Dib',
-    'Di',
-    'Keb',
-    'Ke',
-    'Zob',
-    'Zo',
-  ]; /*byzantine musical notes*/
-  const japanese = [
-    'I',
-    'Ro',
-    'Ha',
-    'Ni',
-    'Ho',
-    'He',
-    'To',
-  ]; /*traditional japanese musical notes, seems like they do not use falts or sharps*/
-
-const english = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
-
-export const sol2note = (n, notation = 'letters') => {
-  
-  const pc =
-    notation === 'solfeggio'
-      ? solfeggio /*check if its is any of the following*/
-      : notation === 'indian'
-      ? indian
-      : notation === 'german'
-      ? german
-      : notation === 'byzantine'
-      ? byzantine
-      : notation === 'japanese'
-      ? japanese
-      : english; /*if not use standard version*/
-  const note = pc[n % 12]; /*calculating the midi value to the note*/
-  const oct = Math.floor(n / 12) - 1;
-  return note + oct;
-};
-
-
 const pcs = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 /**
- * @deprecated only used in workshop atm
+ * @deprecated only used in workshop (first-notes)
  * @noAutocomplete
  */
-export const midi2note = (n, notation = 'letters') => {
+export const midi2note = (n) => {
   const oct = Math.floor(n / 12) - 1;
-  //return note + oct;
   const pc = pcs[n % 12];
   return pc + oct;
 };
-/*testing if the function works by using the file solmization.test.mjs
- in the test folder*/
 
 // modulo that works with negative numbers e.g. _mod(-1, 3) = 2. Works on numbers (rather than patterns of numbers, as @mod@ from pattern.mjs does)
 export const _mod = (n, m) => ((n % m) + m) % m;
@@ -277,3 +215,59 @@ export const splitAt = function (index, value) {
 export const zipWith = (f, xs, ys) => xs.map((n, i) => f(n, ys[i]));
 
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+/* solmization, not used yet */
+const solfeggio = ['Do', 'Reb', 'Re', 'Mib', 'Mi', 'Fa', 'Solb', 'Sol', 'Lab', 'La', 'Sib', 'Si']; /*solffegio notes*/
+const indian = [
+  'Sa',
+  'Re',
+  'Ga',
+  'Ma',
+  'Pa',
+  'Dha',
+  'Ni',
+]; /*indian musical notes,  seems like they do not use flats or sharps*/
+const german = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Hb', 'H']; /*german & dutch musical notes*/
+const byzantine = [
+  'Ni',
+  'Pab',
+  'Pa',
+  'Voub',
+  'Vou',
+  'Ga',
+  'Dib',
+  'Di',
+  'Keb',
+  'Ke',
+  'Zob',
+  'Zo',
+]; /*byzantine musical notes*/
+const japanese = [
+  'I',
+  'Ro',
+  'Ha',
+  'Ni',
+  'Ho',
+  'He',
+  'To',
+]; /*traditional japanese musical notes, seems like they do not use falts or sharps*/
+
+const english = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+
+export const sol2note = (n, notation = 'letters') => {
+  const pc =
+    notation === 'solfeggio'
+      ? solfeggio /*check if its is any of the following*/
+      : notation === 'indian'
+      ? indian
+      : notation === 'german'
+      ? german
+      : notation === 'byzantine'
+      ? byzantine
+      : notation === 'japanese'
+      ? japanese
+      : english; /*if not use standard version*/
+  const note = pc[n % 12]; /*calculating the midi value to the note*/
+  const oct = Math.floor(n / 12) - 1;
+  return note + oct;
+};
