@@ -45,3 +45,11 @@
 #code .cm-theme-light {
   width: 100%;
 }
+
+#code .cm-cursorLayer {
+  animation-name: inherit !important;
+}
+
+#code .cm-cursor {
+  border-left: 2px solid currentcolor !important;
+}
