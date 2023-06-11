@@ -69,7 +69,7 @@ export const getFreq = (noteOrMidi) => {
 
 const pcs = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 /**
- * @deprecated does not appear to be referenced or invoked anywhere in the codebase
+ * @deprecated only used in workshop (first-notes)
  * @noAutocomplete
  */
 export const midi2note = (n) => {
@@ -215,3 +215,59 @@ export const splitAt = function (index, value) {
 export const zipWith = (f, xs, ys) => xs.map((n, i) => f(n, ys[i]));
 
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+/* solmization, not used yet */
+const solfeggio = ['Do', 'Reb', 'Re', 'Mib', 'Mi', 'Fa', 'Solb', 'Sol', 'Lab', 'La', 'Sib', 'Si']; /*solffegio notes*/
+const indian = [
+  'Sa',
+  'Re',
+  'Ga',
+  'Ma',
+  'Pa',
+  'Dha',
+  'Ni',
+]; /*indian musical notes,  seems like they do not use flats or sharps*/
+const german = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Hb', 'H']; /*german & dutch musical notes*/
+const byzantine = [
+  'Ni',
+  'Pab',
+  'Pa',
+  'Voub',
+  'Vou',
+  'Ga',
+  'Dib',
+  'Di',
+  'Keb',
+  'Ke',
+  'Zob',
+  'Zo',
+]; /*byzantine musical notes*/
+const japanese = [
+  'I',
+  'Ro',
+  'Ha',
+  'Ni',
+  'Ho',
+  'He',
+  'To',
+]; /*traditional japanese musical notes, seems like they do not use falts or sharps*/
+
+const english = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+
+export const sol2note = (n, notation = 'letters') => {
+  const pc =
+    notation === 'solfeggio'
+      ? solfeggio /*check if its is any of the following*/
+      : notation === 'indian'
+      ? indian
+      : notation === 'german'
+      ? german
+      : notation === 'byzantine'
+      ? byzantine
+      : notation === 'japanese'
+      ? japanese
+      : english; /*if not use standard version*/
+  const note = pc[n % 12]; /*calculating the midi value to the note*/
+  const oct = Math.floor(n / 12) - 1;
+  return note + oct;
+};
