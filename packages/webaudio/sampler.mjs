@@ -232,7 +232,7 @@ export async function onTriggerSample(t, value, onended, bank) {
     out.disconnect();
     onended();
   };
-  const stop = (endTime, playWholeBuffer = [undefined, false, null].includes(clip)) => {
+  const stop = (endTime, playWholeBuffer = clip === undefined) => {
     let releaseTime = endTime;
     if (playWholeBuffer) {
       releaseTime = t + (end - begin) * bufferDuration;
