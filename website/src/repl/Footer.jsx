@@ -364,7 +364,8 @@ const fontFamilyOptions = {
 };
 
 function SettingsTab({ scheduler }) {
-  const { theme, keybindings, isLineNumbersDisplayed, fontSize, fontFamily } = useSettings();
+  const { theme, keybindings, isLineNumbersDisplayed, isAutoCompletionEnabled, fontSize, fontFamily } = useSettings();
+
   return (
     <div className="text-foreground p-4 space-y-4">
       {/* <FormItem label="Tempo">
@@ -406,7 +407,7 @@ function SettingsTab({ scheduler }) {
           />
         </FormItem>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <FormItem label="Keybindings">
           <ButtonGroup
             value={keybindings}
@@ -418,6 +419,11 @@ function SettingsTab({ scheduler }) {
           label="Display line numbers"
           onChange={(cbEvent) => settingsMap.setKey('isLineNumbersDisplayed', cbEvent.target.checked)}
           value={isLineNumbersDisplayed}
+        />
+        <Checkbox
+          label="Enable auto-completion"
+          onChange={(cbEvent) => settingsMap.setKey('isAutoCompletionEnabled', cbEvent.target.checked)}
+          value={isAutoCompletionEnabled}
         />
       </div>
       <FormItem label="Reset Settings">

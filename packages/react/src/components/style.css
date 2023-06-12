@@ -24,3 +24,7 @@
 .cm-theme-light {
   width: 100%;
 }
+
+footer {
+  z-index: 0 !important;
+}
