@@ -32,7 +32,11 @@ export class Hap {
   }
 
   get duration() {
-    return this.whole.end.sub(this.whole.begin);
+    return this.whole.end.sub(this.whole.begin).mul(typeof this.value?.clip === 'number' ? this.value?.clip : 1);
+  }
+
+  get endClipped() {
+    return this.whole.begin.add(this.duration);
   }
 
   wholeOrPart() {

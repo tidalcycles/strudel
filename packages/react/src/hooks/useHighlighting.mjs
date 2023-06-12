@@ -17,7 +17,7 @@ function useHighlighting({ view, pattern, active, getTime }) {
             const begin = Math.max(lastEnd.current ?? audioTime, audioTime - 1 / 10, -0.01); // negative time seems buggy
             const span = [round(begin), round(audioTime + 1 / 60)];
             lastEnd.current = span[1];
-            highlights.current = highlights.current.filter((hap) => hap.whole.end > audioTime); // keep only highlights that are still active
+            highlights.current = highlights.current.filter((hap) => hap.endClipped > audioTime); // keep only highlights that are still active
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
             highlights.current = highlights.current.concat(haps); // add potential new onsets
             view.dispatch({ effects: setHighlights.of({ haps: highlights.current }) }); // highlight all still active + new active haps
