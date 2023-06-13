@@ -221,7 +221,7 @@ export const testCycles = {
   festivalOfFingers: 16,
   festivalOfFingers2: 22,
   undergroundPlumber: 20,
-  bridgeIsOver: 16,
+  bridgeIsOver: 8,
   goodTimes: 16,
   echoPiano: 8,
   sml1: 48,

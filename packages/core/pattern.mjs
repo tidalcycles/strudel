@@ -2035,7 +2035,7 @@ export const jux = register('jux', function (func, pat) {
  * @example
  * "<0 [2 4]>"
  * .echoWith(4, 1/8, (p,n) => p.add(n*2))
- * .scale('C minor').note().legato(.2)
+ * .scale('C minor').note().clip(.2)
  */
 export const { echoWith, echowith, stutWith, stutwith } = register(
   ['echoWith', 'echowith', 'stutWith', 'stutwith'],
@@ -2185,6 +2185,7 @@ export const velocity = register('velocity', function (velocity, pat) {
 /**
  *
  * Multiplies the hap duration with the given factor.
+ * With samples, `clip` might be a better function to use ([more info](https://github.com/tidalcycles/strudel/pull/598))
  * @name legato
  * @memberof Pattern
  * @example

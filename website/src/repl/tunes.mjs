@@ -205,27 +205,24 @@ samples({
   }
 }, 'https://loophole-letters.vercel.app/')
 
-const scales = cat('C major', 'C mixolydian', 'F lydian', ['F minor', cat('Db major','Db mixolydian')])
-
 stack(
   s("<bd sn> <hh hh*2 hh*3>").color('#00B8D4'),
   "<g4 c5 a4 [ab4 <eb5 f5>]>"
-  .scale(scales)
+  .scale("<C:major C:mixolydian F:lydian [F:minor <Db:major Db:mixolydian>]>")
   .struct("x*8")
   .scaleTranspose("0 [-5,-2] -7 [-9,-2]")
-  .legato(.3)
   .slow(2)
   .note()
+  .clip(.3)
   .s('rhodes')
-  .clip(1)
   .room(.5)
   .delay(.3)
   .delayfeedback(.4)
   .delaytime(1/12).gain(.5).color('#7ED321'),
-  "<c2 c3 f2 [[F2 C2] db2]>"
-  .legato("<1@3 [.3 1]>")
-  .slow(2).superimpose(x=>x.add(.02))
+  "<c2 c3 f2 [[F2 C2] db2]>/2"
+  .add("0,.02")
   .note().gain(.3)
+  .clip("<1@3 [.3 1]>/2")
   .s('sawtooth').cutoff(600).color('#F8E71C'),
 ).fast(3/2)
 //.pianoroll({fold:1})`;
@@ -237,7 +234,7 @@ export const wavyKalimba = `// "Wavy kalimba"
 samples({
   'kalimba': { c5:'https://freesound.org/data/previews/536/536549_11935698-lq.mp3' }
 })
-const scales = cat('C major', 'C mixolydian', 'F lydian', ['F minor', 'Db major'])
+const scales = "<C:major C:mixolydian F:lydian [F:minor Db:major]>"
 
 stack(
   "[0 2 4 6 9 2 0 -2]*3"
@@ -254,13 +251,11 @@ stack(
   .velocity(0.8)
   .slow(2)
 )
-  .legato("<.4 .8 1 1.2 1.4 1.6 1.8 2>/8")
   .fast(1)
   .note()
-  .clip(1)
+  .clip("<.4 .8 1 1.2 1.4 1.6 1.8 2>/8")
   .s('kalimba')
-  .delay(.2)
-  `;
+  .delay(.2)`;
 
 export const festivalOfFingers = `// "Festival of fingers"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
@@ -293,19 +288,19 @@ stack(
   s("<<bd*2 bd> sn> hh").fast(2).gain(.7),
   "[c2 a1 bb1 ~] ~"
   .echo(2, 1/16, 1)
-  .legato(.4)
   .slow(2)
   .layer(h)
   .note().s('square')
+  .clip(.4)
   .cutoff(400).decay(.12).sustain(0)
   ,
   "[g2,[c3 eb3]]".iter(4)
   .echoWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
-  .legato(.1)
   .layer(h).note()
+  .clip(.1)
 )
   .fast(2/3)
-  .pianoroll({})`;
+  .pianoroll()`;
 
 export const bridgeIsOver = `// "Bridge is over"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
@@ -314,19 +309,16 @@ export const bridgeIsOver = `// "Bridge is over"
 samples({mad:'https://freesound.org/data/previews/22/22274_109943-lq.mp3'})
 stack(
   stack(
-  "c3*2 [[c3@1.4 bb2] ab2] gb2*2 <[[gb2@1.4 ab2] bb2] gb2>".legato(".5 1".fast(2)).velocity(.8),
-  "0 ~".scale('c4 whole tone')
-    .euclidLegato(3,8).slow(2).mask("x ~")
-    .stutWith(8, 1/16, (x,n)=>x.scaleTranspose(n).velocity(Math.pow(.7,n)))
-    .scaleTranspose("<0 1 2 3 4 3 2 1>")
-    .fast(2)
-    .velocity(.7)
-    .legato(.5)
-    .stut(3, .5, 1/8)
-  ).transpose(-1).note().piano(),
+  note("c3*2 [[c3@1.4 bb2] ab2] gb2*2 <[[gb2@1.4 ab2] bb2] gb2>")
+    .gain(.8).clip("[.5 1]*2"),
+  n("<0 1 2 3 4 3 2 1>")
+    .clip(.5)
+    .echoWith(8, 1/32, (x,i)=>x.add(n(i)).velocity(Math.pow(.7,i)))
+    .scale('c4 whole tone')
+    .echo(3, 1/8, .5)
+  ).piano(),
   s("mad").slow(2)
 ).cpm(78).slow(4)
-  
   .pianoroll()
 `;
 
@@ -336,63 +328,39 @@ export const goodTimes = `// "Good times"
 
 const scale = cat('C3 dorian','Bb2 major').slow(4);
 stack(
-  "2*4".add(12).scale(scale)
-  .off(1/8, scaleTranspose("2")).fast(2)
-  .scaleTranspose("<0 1 2 1>").hush(),
-  "<0 1 2 3>(3,8,2)"
+  n("2*4".add(12)).off(1/8, add(2))
   .scale(scale)
-  .off(1/4, scaleTranspose("2,4")),
-  "<0 4>(5,8,-1)".scale(scale).transpose(-12)
+  .fast(2)
+  .add("<0 1 2 1>").hush(),
+  "<0 1 2 3>(3,8,2)".off(1/4, add("2,4"))
+  .n().scale(scale),
+  n("<0 4>(5,8,-1)").scale(scale).sub(note(12))
 )
   .velocity(".6 .7".fast(4))
-  .legato("2")
-  .scaleTranspose("<0>".slow(4))
-  .transpose(5)
-  .note().piano()
+  .add(note(4))
+  .piano()
+  .clip(2)
   .velocity(.8)
   .slow(2)
-  .pianoroll({maxMidi:100,minMidi:20})`;
-
-/* // new style notation:
-export const goodTimes = `// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
-// by Felix Roos
-const scale = cat('C3 dorian','Bb2 major').slow(4);
-stack(
-  n("2*4").add(12)
-  .off(1/8, add("2")).fast(2)
-  .add("<0 1 2 1>").hush(),
-  n("<0 1 2 3>(3,8,2)")
-  .off(1/4, add("2,4")),
-  n("<0 4>(5,8,-1)").sub(7)
-)
-  .scale(scale)
-  .gain(".6 .7".fast(4))
-  .legato(2)
-  .add(note(5))
-  .piano()
-  .mul(gain(.8))
-  .slow(2)
-  .pianoroll({maxMidi:100,minMidi:20})`;
-*/
+  .pianoroll()`;
 
 export const echoPiano = `// "Echo piano"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
-"<0 2 [4 6](3,4,2) 3*2>"
+n("<0 2 [4 6](3,4,2) 3*2>").color('salmon')
+.off(1/4, x=>x.add(2).color('green'))
+.off(1/2, x=>x.add(6).color('steelblue'))
 .scale('D minor')
-.color('salmon')
-.off(1/4, x=>x.scaleTranspose(2).color('green'))
-.off(1/2, x=>x.scaleTranspose(6).color('steelblue'))
-.legato(.5)
 .echo(4, 1/8, .5)
-.note().piano()
+.clip(.5)
+.piano()
 .pianoroll()`;
 
 export const sml1 = `// Hirokazu Tanaka - World 1-1
 stack(
   // melody
-  \`<
+  note(\`<
   [e5 ~] [[d5@2 c5] [~@2 e5]] ~ [~ [c5@2 d5]] [e5 e5] [d5 c5] [e5 f5] [g5 a5]
   [~ c5] [c5 d5] [e5 [c5@2 c5]] [~ c5] [f5 e5] [c5 d5] [~ g6] [g6 ~]
   [e5 ~] [[d5@2 c5] [~@2 e5]] ~ [~ [c5@2 d5]] [e5 e5] [d5 c5] [a5 g5] [c6 [e5@2 d5]]
@@ -401,28 +369,28 @@ stack(
   [f5 ~] [[g5@2 f5] ~] [[e5 ~] [f5 ~]] [[f#5 ~] [g5 ~]]
   [~ a5] [b5 c6] [b5@2 ~@2 g5] ~
   [eb6 d6] [~ c6] ~!2
-  >\`
-  .legato(.95),
+  >\`)
+  .clip(.95),
   // sub melody
-  \`<
+  note(\`<
   [~ g4]!2 [~ ab4]!2 [~ a4]!2 [~ bb4]!2 
   [~ a4]!2 [~ g4]!2 [d4 e4] [f4 gb4] ~!2
   [~ g4]!2 [~ ab4]!2 [~ a4]!2 [~ bb4]!2 
   [~ a4]!2 [~ g4]!2 [d4 e4] [f4 gb4] ~!2
   [~ c5]!4 [~ a4]!2 [[c4 ~] [d4 ~]] [[eb4 ~] [e4 ~]]
   [~ c5]!4 [~ eb5]!2 [g4*2 [f4 ~]] [[e4 ~] [d4 ~]]
-  >\`,
+  >\`),
   // bass
-  \`<
+  note(\`<
   c3!7 a3 f3!2
   e3!2 ~!4
   c3!7 a3 f3!2
   e3!2 ~!4
   f3!2 e3!2 d3!2 ~!2
   f3!2 e3!2 ab3!2 ~!2
-  >\`
-  .legato(.5)
-).fast(2).note()`;
+  >\`)
+  .clip(.5)
+).fast(2)`;
 
 export const randomBells = `// "Random bells"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
@@ -438,16 +406,14 @@ stack(
   "0".euclidLegato(3,8)
   .echo(3, 1/16, .5)
   .add(rand.range(0,12))
+  .scale("D:minor:pentatonic").note()
   .velocity(rand.range(.5,1))
-  .legato(rand.range(.4,3))
-  .scale(cat('D minor pentatonic')).note()
   .s('bell').gain(.6).delay(.2).delaytime(1/3).delayfeedback(.8),
   // bass
-  "<D2 A2 G2 F2>".euclidLegatoRot(6,8,4).note().s('bass').clip(1).gain(.8)
+  note("<D2 A2 G2 F2>").euclidLegatoRot(6,8,4).s('bass').clip(1).gain(.8)
 )
   .slow(6)
-  .pianoroll({minMidi:20,maxMidi:120,background:'transparent'})
-  `;
+  .pianoroll({vertical:1})`;
 
 export const waa2 = `// "Waa2"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
@@ -460,7 +426,7 @@ n(
   .off(1/8,x=>x.add(12))
 )
   .slow(2)
-  .legato(sine.range(0.3, 2).slow(28))
+  .clip(sine.range(0.3, 2).slow(28))
   .s("sawtooth square".fast(2))
   .cutoff(cosine.range(500,4000).slow(16))
   .gain(.5)
@@ -524,20 +490,22 @@ export const festivalOfFingers3 = `// "Festival of fingers 3"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
-"[-7*3],0,2,6,[8 7]"
-.echoWith(4,1/4, (x,n)=>x
-          .add(n*7)
-          .velocity(1/(n+1))
-          .legato(1/(n+1)))
-.velocity(perlin.range(.5,.9).slow(8))
-.stack("[22 25]*3"
-       .legato(sine.range(.5,2).slow(8))
-       .velocity(sine.range(.4,.8).slow(5))
-       .echo(4,1/12,.5))
-.scale(cat('D dorian','G mixolydian','C dorian','F mixolydian'))
-.legato(1)
-.slow(2)
-.note().piano()
+n("[-7*3],0,2,6,[8 7]")
+  .echoWith(
+    4, // echo 4 times
+    1/4, // 1/4s between echos
+    (x,i)=>x
+      .add(n(i*7)) // add octaves
+      .gain(1/(i+1)) // reduce gain
+      .clip(1/(i+1))
+    )
+  .velocity(perlin.range(.5,.9).slow(8))
+  .stack(n("[22 25]*3")
+         .clip(sine.range(.5,2).slow(8))
+         .gain(sine.range(.4,.8).slow(5))
+         .echo(4,1/12,.5))
+  .scale("<D:dorian G:mixolydian C:dorian F:mixolydian>")
+  .slow(2).piano()
 //.pianoroll({maxMidi:160})`;
 
 export const meltingsubmarine = `// "Melting submarine"
@@ -897,9 +865,9 @@ stack(
   ,
   note("<C2 A1 D2 F2>/2").ply(8).csound('Bass').gain("1 4 1 4")
   ,
-  note("0 7 [4 3] 2".fast(2/3).off(".25 .125",add("<2 4 -3 -1>"))
+  n("0 7 [4 3] 2".fast(2/3).off(".25 .125", add("<2 4 -3 -1>"))
   .slow(2).scale('A4 minor'))
-  .legato(.25).csound('SynHarp')
+  .clip(.25).csound('SynHarp')
   ,
   s("bd*2,[~ hh]*2,~ cp").bank('RolandTR909')
 )`;
@@ -910,15 +878,15 @@ export const arpoon = `// "Arpoon"
 
 await samples('github:tidalcycles/Dirt-Samples/master')
 
-"<<Am7 C^7> C7 F^7 [Fm7 E7b9]>".voicings('lefthand')
-  .arp("[0,3] 2 [1,3] 2".fast(3).lastOf(4, fast(2))).legato(2)
-  .add(perlin.range(0,0.2)).sub("<0 -12>/8")
-  .note().cutoff(perlin.range(500,4000)).resonance(12)
+note("<<Am7 C^7> C7 F^7 [Fm7 E7b9]>".voicings('lefthand'))
+  .arp("[0,3] 2 [1,3] 2".fast(3).lastOf(4, fast(2))).clip(2)
+  .add(perlin.range(0,0.2).add("<0 12>/8").note())
+  .cutoff(perlin.range(500,4000)).resonance(12)
   .gain("<.5 .8>*16")
   .decay(.16).sustain(0.5)
   .delay(.2)
   .room(.5).pan(sine.range(.3,.6))
-  .s('piano').clip(1)
+  .s('piano')
   .stack("<<A1 C2>!2 F2 [F2 E2]>".add.out("0 -5".fast(2)).add("0,.12").note().s('sawtooth').clip(1).cutoff(300))
   .slow(4)
   .stack(s("bd*4, [~ [hh hh? hh?]]*2,~ [sd ~ [sd:2? bd?]]").bank('RolandTR909').gain(.5).slow(2))

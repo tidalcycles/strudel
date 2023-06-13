@@ -222,6 +222,7 @@ const generic_params = [
    *
    * @name legato
    * @param {number | Pattern} duration between 0 and 1, where 1 is the length of the whole hap time
+   * @noAutocomplete
    * @example
    * "c4 eb4 g4 bb4".legato("<0.125 .25 .5 .75 1 2 4>")
    *

@@ -27,7 +27,7 @@ export const isaw2 = isaw.toBipolar();
  *
  * @return {Pattern}
  * @example
- * "c3 [eb3,g3] g2 [g3,bb3]".legato(saw.slow(4)).note()
+ * "c3 [eb3,g3] g2 [g3,bb3]".note().clip(saw.slow(4))
  * @example
  * saw.range(0,8).segment(8).scale('C major').slow(4).note()
  *
