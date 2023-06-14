@@ -3193,6 +3193,23 @@ exports[`runs examples > example "rarely" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "ratio" example index 0 1`] = `
+[
+  "[ (0/1 → 1/1) ⇝ 2/1 | freq:110 s:piano ]",
+  "[ (0/1 → 1/1) ⇝ 2/1 | freq:137.5 s:piano ]",
+  "[ (0/1 → 1/1) ⇝ 2/1 | freq:165 s:piano ]",
+  "[ 0/1 ⇜ (1/1 → 2/1) | freq:110 s:piano ]",
+  "[ 0/1 ⇜ (1/1 → 2/1) | freq:137.5 s:piano ]",
+  "[ 0/1 ⇜ (1/1 → 2/1) | freq:165 s:piano ]",
+  "[ (2/1 → 3/1) ⇝ 4/1 | freq:110 s:piano ]",
+  "[ (2/1 → 3/1) ⇝ 4/1 | freq:137.5 s:piano ]",
+  "[ (2/1 → 3/1) ⇝ 4/1 | freq:165 s:piano ]",
+  "[ 2/1 ⇜ (3/1 → 4/1) | freq:110 s:piano ]",
+  "[ 2/1 ⇜ (3/1 → 4/1) | freq:137.5 s:piano ]",
+  "[ 2/1 ⇜ (3/1 → 4/1) | freq:165 s:piano ]",
+]
+`;
+
 exports[`runs examples > example "release" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:c3 release:0 ]",

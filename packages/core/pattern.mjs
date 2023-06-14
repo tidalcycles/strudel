@@ -1582,6 +1582,24 @@ export const range2 = register('range2', function (min, max, pat) {
   return pat.fromBipolar()._range(min, max);
 });
 
+/**
+ * Allows dividing numbers via list notation using ":".
+ * Returns a new pattern with just numbers.
+ * @name ratio
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * ratio("1, 5:4, 3:2").mul(110).freq().s("piano").slow(2)
+ */
+export const ratio = register('ratio', (pat) =>
+  pat.fmap((v) => {
+    if (!Array.isArray(v)) {
+      return v;
+    }
+    return v.slice(1).reduce((acc, n) => acc / n, v[0]);
+  }),
+);
+
 //////////////////////////////////////////////////////////////////////
 // Structural and temporal transformations
 
