@@ -2,12 +2,12 @@ import React, { useMemo } from 'react';
 import _CodeMirror from '@uiw/react-codemirror';
 import { EditorView, Decoration } from '@codemirror/view';
 import { StateField, StateEffect } from '@codemirror/state';
-import { javascript } from '@codemirror/lang-javascript';
+import { javascript, javascriptLanguage } from '@codemirror/lang-javascript';
 import strudelTheme from '../themes/strudel-theme';
 import './style.css';
 import { useCallback } from 'react';
 import { autocompletion } from '@codemirror/autocomplete';
-//import { strudelAutocomplete } from './Autocomplete';
+import { strudelAutocomplete } from './Autocomplete';
 import { vim } from '@replit/codemirror-vim';
 import { emacs } from '@replit/codemirror-emacs';
 
@@ -92,9 +92,7 @@ const staticExtensions = [
   javascript(),
   highlightField,
   flashField,
-  // javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
-  // autocompletion({ override: [strudelAutocomplete] }),
-  autocompletion({ override: [] }), // wait for https://github.com/uiwjs/react-codemirror/pull/458
+  javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
 ];
 
 export default function CodeMirror({
@@ -105,6 +103,7 @@ export default function CodeMirror({
   theme,
   keybindings,
   isLineNumbersDisplayed,
+  isAutoCompletionEnabled,
   fontSize = 18,
   fontFamily = 'monospace',
   options,
@@ -116,12 +115,14 @@ export default function CodeMirror({
     },
     [onChange],
   );
+
   const handleOnCreateEditor = useCallback(
     (view) => {
       onViewChanged?.(view);
     },
     [onViewChanged],
   );
+
   const handleOnUpdate = useCallback(
     (viewUpdate) => {
       if (viewUpdate.selectionSet && onSelectionChange) {
@@ -130,16 +131,27 @@ export default function CodeMirror({
     },
     [onSelectionChange],
   );
+
   const extensions = useMemo(() => {
+    let _extensions = [...staticExtensions];
     let bindings = {
       vim,
       emacs,
     };
+
     if (bindings[keybindings]) {
-      return [...staticExtensions, bindings[keybindings]()];
+      _extensions.push(bindings[keybindings]());
     }
-    return staticExtensions;
-  }, [keybindings]);
+
+    if (isAutoCompletionEnabled) {
+      _extensions.push(javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }));
+    } else {
+      _extensions.push(autocompletion({ override: [] }));
+    }
+
+    return _extensions;
+  }, [keybindings, isAutoCompletionEnabled]);
+
   return (
     <div style={{ fontSize, fontFamily }} className="w-full">
       <_CodeMirror
