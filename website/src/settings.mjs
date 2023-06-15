@@ -6,6 +6,7 @@ export const defaultSettings = {
   keybindings: 'codemirror',
   isLineNumbersDisplayed: true,
   isAutoCompletionEnabled: false,
+  isLineWrappingEnabled: false,
   theme: 'strudelTheme',
   fontFamily: 'monospace',
   fontSize: 18,
@@ -23,6 +24,7 @@ export function useSettings() {
     isZen: [true, 'true'].includes(state.isZen) ? true : false,
     isLineNumbersDisplayed: [true, 'true'].includes(state.isLineNumbersDisplayed) ? true : false,
     isAutoCompletionEnabled: [true, 'true'].includes(state.isAutoCompletionEnabled) ? true : false,
+    isLineWrappingEnabled: [true, 'true'].includes(state.isLineWrappingEnabled) ? true : false,
     fontSize: Number(state.fontSize),
   };
 }
