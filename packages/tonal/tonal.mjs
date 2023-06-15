@@ -154,6 +154,7 @@ export const scale = register('scale', function (scale, pat) {
     if (!isNaN(asNumber)) {
       // TODO: worth keeping for supporting ':' in (non-mininotation) strings?
       scale = scale.replaceAll(':', ' ');
+      scale = scale.replaceAll(',', ' ');
       let [tonic, scaleName] = Scale.tokenize(scale);
       const { pc, oct = 3 } = Note.get(tonic);
       note = scaleOffset(pc + ' ' + scaleName, asNumber, pc + oct);
