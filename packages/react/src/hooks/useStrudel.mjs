@@ -29,7 +29,8 @@ function useStrudel({
   const [pattern, setPattern] = useState();
   const [started, setStarted] = useState(false);
   const isDirty = code !== activeCode;
-  const shouldPaint = useCallback((pat) => !!(pat?.context?.onPaint && drawContext), [drawContext]);
+  //const shouldPaint = useCallback((pat) => !!(pat?.context?.onPaint && drawContext), [drawContext]);
+  const shouldPaint = useCallback((pat) => !!pat?.context?.onPaint, []);
 
   // TODO: make sure this hook reruns when scheduler.started changes
   const { scheduler, evaluate, start, stop, pause, setCps } = useMemo(

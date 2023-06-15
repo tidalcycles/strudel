@@ -7,6 +7,11 @@
     "noImplicitAny": false,
     "types": [
       "vite-plugin-pwa/client"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@src/*": ["src/*"],
+    }
   }
 }

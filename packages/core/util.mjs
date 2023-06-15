@@ -6,12 +6,12 @@ This program is free software: you can redistribute it and/or modify it under th
 
 // returns true if the given string is a note
 export const isNoteWithOctave = (name) => /^[a-gA-G][#bs]*[0-9]$/.test(name);
-export const isNote = (name) => /^[a-gA-G][#bs]*[0-9]?$/.test(name);
+export const isNote = (name) => /^[a-gA-G][#bsf]*[0-9]?$/.test(name);
 export const tokenizeNote = (note) => {
   if (typeof note !== 'string') {
     return [];
   }
-  const [pc, acc = '', oct] = note.match(/^([a-gA-G])([#bs]*)([0-9])?$/)?.slice(1) || [];
+  const [pc, acc = '', oct] = note.match(/^([a-gA-G])([#bsf]*)([0-9])?$/)?.slice(1) || [];
   if (!pc) {
     return [];
   }
@@ -25,7 +25,7 @@ export const noteToMidi = (note) => {
     throw new Error('not a note: "' + note + '"');
   }
   const chroma = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 }[pc.toLowerCase()];
-  const offset = acc?.split('').reduce((o, char) => o + { '#': 1, b: -1, s: 1 }[char], 0) || 0;
+  const offset = acc?.split('').reduce((o, char) => o + { '#': 1, b: -1, s: 1, f: -1 }[char], 0) || 0;
   return (Number(oct) + 1) * 12 + chroma + offset;
 };
 export const midiToFreq = (n) => {
@@ -67,13 +67,14 @@ export const getFreq = (noteOrMidi) => {
   return midiToFreq(noteToMidi(noteOrMidi));
 };
 
+const pcs = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 /**
- * @deprecated does not appear to be referenced or invoked anywhere in the codebase
+ * @deprecated only used in workshop (first-notes)
  * @noAutocomplete
  */
 export const midi2note = (n) => {
   const oct = Math.floor(n / 12) - 1;
-  const pc = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'][n % 12];
+  const pc = pcs[n % 12];
   return pc + oct;
 };
 
@@ -212,3 +213,61 @@ export const splitAt = function (index, value) {
 };
 
 export const zipWith = (f, xs, ys) => xs.map((n, i) => f(n, ys[i]));
+
+export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+/* solmization, not used yet */
+const solfeggio = ['Do', 'Reb', 'Re', 'Mib', 'Mi', 'Fa', 'Solb', 'Sol', 'Lab', 'La', 'Sib', 'Si']; /*solffegio notes*/
+const indian = [
+  'Sa',
+  'Re',
+  'Ga',
+  'Ma',
+  'Pa',
+  'Dha',
+  'Ni',
+]; /*indian musical notes,  seems like they do not use flats or sharps*/
+const german = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Hb', 'H']; /*german & dutch musical notes*/
+const byzantine = [
+  'Ni',
+  'Pab',
+  'Pa',
+  'Voub',
+  'Vou',
+  'Ga',
+  'Dib',
+  'Di',
+  'Keb',
+  'Ke',
+  'Zob',
+  'Zo',
+]; /*byzantine musical notes*/
+const japanese = [
+  'I',
+  'Ro',
+  'Ha',
+  'Ni',
+  'Ho',
+  'He',
+  'To',
+]; /*traditional japanese musical notes, seems like they do not use falts or sharps*/
+
+const english = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+
+export const sol2note = (n, notation = 'letters') => {
+  const pc =
+    notation === 'solfeggio'
+      ? solfeggio /*check if its is any of the following*/
+      : notation === 'indian'
+      ? indian
+      : notation === 'german'
+      ? german
+      : notation === 'byzantine'
+      ? byzantine
+      : notation === 'japanese'
+      ? japanese
+      : english; /*if not use standard version*/
+  const note = pc[n % 12]; /*calculating the midi value to the note*/
+  const oct = Math.floor(n / 12) - 1;
+  return note + oct;
+};

@@ -1,4 +1,5 @@
-.cm-activeLine {
+.cm-activeLine,
+.cm-activeLineGutter {
   background-color: transparent !important;
 }
 
@@ -6,4 +7,20 @@
   background-color: var(--background);
   border: 1px solid var(--lineHighlight);
   padding: 2px;
+}
+
+.cm-scroller {
+  font-family: inherit !important;
+}
+
+.cm-gutters {
+  display: none !important;
+}
+
+.cm-cursorLayer {
+  animation-name: inherit !important;
+}
+
+.cm-cursor {
+  border-left: 2px solid currentcolor !important;
 }

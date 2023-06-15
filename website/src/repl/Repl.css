@@ -22,12 +22,8 @@
   opacity: 0.5;
 }
 
-#code .cm-content {
-  padding-top: 12px !important;
-  padding-left: 8px !important;
-}
-
 #code .cm-scroller {
+  padding-top: 10px !important;
   padding-bottom: 50vh;
   font-family: inherit;
 }
@@ -48,4 +44,12 @@
 
 #code .cm-theme-light {
   width: 100%;
+}
+
+#code .cm-cursorLayer {
+  animation-name: inherit !important;
+}
+
+#code .cm-cursor {
+  border-left: 2px solid currentcolor !important;
 }

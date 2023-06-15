@@ -105,7 +105,7 @@ export function Repl({ embedded = false }) {
   const [lastShared, setLastShared] = useState();
   const [pending, setPending] = useState(true);
 
-  const { theme, keybindings, fontSize, fontFamily } = useSettings();
+  const { theme, keybindings, fontSize, fontFamily, isLineNumbersDisplayed, isAutoCompletionEnabled } = useSettings();
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
@@ -157,7 +157,7 @@ export function Repl({ embedded = false }) {
             e.preventDefault();
             flash(view);
             await activateCode();
-          } else if (e.key === '.') {
+          } else if (e.key === '.' || e.code === 'Period') {
             stop();
             e.preventDefault();
           }
@@ -271,6 +271,8 @@ export function Repl({ embedded = false }) {
             theme={themes[theme] || themes.strudelTheme}
             value={code}
             keybindings={keybindings}
+            isLineNumbersDisplayed={isLineNumbersDisplayed}
+            isAutoCompletionEnabled={isAutoCompletionEnabled}
             fontSize={fontSize}
             fontFamily={fontFamily}
             onChange={handleChangeCode}

@@ -1,0 +1,183 @@
+---
+title: Pattern Effekte
+layout: ../../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '@src/docs/MiniRepl';
+import Box from '@components/Box.astro';
+import QA from '@components/QA';
+
+# Pattern Effekte
+
+Bis jetzt sind die meisten Funktionen die wir kennengelernt haben ähnlich wie Funktionen in anderen Musik Programmen: Sequencing von Sounds, Noten und Effekten.
+
+In diesem Kapitel beschäftigen wir uns mit Funktionen die weniger herkömmlich oder auch enzigartig sind.
+
+**rev = rückwärts abspielen**
+
+<MiniRepl hideHeader client:visible tune={`n("0 1 [4 3] 2").sound("jazz").rev()`} />
+
+**jux = einen stereo kanal modifizieren**
+
+<MiniRepl hideHeader client:visible tune={`n("0 1 [4 3] 2").sound("jazz").jux(rev)`} />
+
+So würde man das ohne jux schreiben:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`stack(
+  n("0 1 [4 3] 2").sound("jazz").pan(0),
+  n("0 1 [4 3] 2").sound("jazz").pan(1).rev()
+)`}
+/>
+
+Lass uns visualisieren was hier passiert:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`stack(
+  n("0 1 [4 3] 2").sound("jazz").pan(0).color("cyan"),
+  n("0 1 [4 3] 2").sound("jazz").pan(1).color("magenta").rev()
+)`}
+  punchcard
+/>
+
+<Box>
+
+Schreibe `//` vor eine der beiden Zeilen im `stack`!
+
+</Box>
+
+**mehrere tempos**
+
+<MiniRepl hideHeader client:visible tune={`note("c2, eb3 g3 [bb3 c4]").sound("piano").slow("1,2,3")`} />
+
+Das hat den gleichen Effekt wie:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`stack(
+  note("c2, eb3 g3 [bb3 c4]").s("piano").slow(1).color('cyan'),
+  note("c2, eb3 g3 [bb3 c4]").s("piano").slow(2).color('magenta'),
+  note("c2, eb3 g3 [bb3 c4]").s("piano").slow(3).color('yellow')
+)`}
+  punchcard
+/>
+
+<Box>
+
+Schreibe wieder `//` vor eine oder mehrere Zeilen im `stack`.
+
+</Box>
+
+**add = addieren**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("c2 [eb3,g3]".add("<0 <1 -1>>"))
+.color("<cyan <magenta yellow>>").adsr("[.1 0]:.2:[1 0]")
+.sound("gm_acoustic_bass").room(.5)`}
+  punchcard
+/>
+
+<Box>
+
+Addiert man eine Zahl zu einer Note, verhält sich diese wie eine Zahl.
+
+z.B. c4 = 60, also ist c4 + 2 = 62
+
+</Box>
+
+Man kann auch mehrmals addieren:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`note("c2 [eb3,g3]".add("<0 <1 -1>>").add("0,7"))
+.color("<cyan <magenta yellow>>").adsr("[.1 0]:.2:[1 0]")
+.sound("gm_acoustic_bass").room(.5)`}
+  punchcard
+/>
+
+**add + scale**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`n("<0 [2 4] <3 5> [~ <4 1>]>*2".add("<0 [0,2,4]>/4"))
+.scale("C5:minor").release(.5)
+.sound("gm_xylophone").room(.5)`}
+  punchcard
+/>
+
+**Alles zusammen**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`stack(
+  n("<0 [2 4] <3 5> [~ <4 1>]>*2".add("<0 [0,2,4]>/4"))
+  .scale("C5:minor")
+  .sound("gm_xylophone")
+  .room(.4).delay(.125),
+  note("c2 [eb3,g3]".add("<0 <1 -1>>"))
+  .adsr("[.1 0]:.2:[1 0]")
+  .sound("gm_acoustic_bass")
+  .room(.5),
+  n("0 1 [2 3] 2").sound("jazz").jux(rev).slow(2)
+)`}
+/>
+
+**ply**
+
+<MiniRepl hideHeader client:visible tune={`sound("hh, bd rim").bank("RolandTR707").ply(2)`} punchcard />
+
+das ist wie:
+
+<MiniRepl hideHeader client:visible tune={`sound("hh*2, bd*2 rim*2").bank("RolandTR707")`} punchcard />
+
+<Box>
+
+Probier `ply` mit einem pattern zu automatisieren, z.b. `"<1 2 1 3>"`
+
+</Box>
+
+**off**
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`n("<0 [4 <3 2>] <2 3> [~ 1]>"
+  .off(1/8, x=>x.add(4))
+  //.off(1/4, x=>x.add(7))
+).scale("<C5:minor Db5:mixolydian>/4")
+.s("triangle").room(.5).ds(".1:0").delay(.5)`}
+  punchcard
+/>
+
+<Box>
+
+In der notation `x=>x.`, das `x` ist das Pattern das wir bearbeiten.
+
+</Box>
+
+`off` ist auch nützlich für sounds:
+
+<MiniRepl
+  hideHeader
+  client:visible
+  tune={`s("bd sd,[~ hh]*2").bank("CasioRZ1")
+  .off(1/8, x=>x.speed(1.5).gain(.25))`}
+/>
+
+| name | description                       | example                                                                                        |
+| ---- | --------------------------------- | ---------------------------------------------------------------------------------------------- |
+| rev  | rückwärts                         | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").rev()`} />            |
+| jux  | ein stereo-kanal modifizieren     | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").jux(rev)`} />         |
+| add  | addiert zahlen oder noten         | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6".add("<0 1 2 1>")).scale("C:minor")`} /> |
+| ply  | multipliziert jedes element x mal | <MiniRepl hideHeader client:visible tune={`s("bd sd").ply("<1 2 3>")`} />                      |
+| off  | verzögert eine modifizierte kopie | <MiniRepl hideHeader client:visible tune={`s("bd sd, hh*4").off(1/8, x=>x.speed(2))`} />       |
