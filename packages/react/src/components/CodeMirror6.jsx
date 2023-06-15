@@ -88,12 +88,7 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-const staticExtensions = [
-  javascript(),
-  highlightField,
-  flashField,
-  javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
-];
+const staticExtensions = [javascript(), highlightField, flashField];
 
 export default function CodeMirror({
   value,
@@ -104,6 +99,7 @@ export default function CodeMirror({
   keybindings,
   isLineNumbersDisplayed,
   isAutoCompletionEnabled,
+  isLineWrappingEnabled,
   fontSize = 18,
   fontFamily = 'monospace',
   options,
@@ -149,8 +145,12 @@ export default function CodeMirror({
       _extensions.push(autocompletion({ override: [] }));
     }
 
+    if (isLineWrappingEnabled) {
+      _extensions.push(EditorView.lineWrapping);
+    }
+
     return _extensions;
-  }, [keybindings, isAutoCompletionEnabled]);
+  }, [keybindings, isAutoCompletionEnabled, isLineWrappingEnabled]);
 
   return (
     <div style={{ fontSize, fontFamily }} className="w-full">
