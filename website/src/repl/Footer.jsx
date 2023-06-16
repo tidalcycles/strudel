@@ -140,7 +140,7 @@ function WelcomeTab() {
       </p>
       <p>
         To learn more about what this all means, check out the{' '}
-        <a href="./learn/getting-started" target="_blank">
+        <a href="./workshop/getting-started" target="_blank">
           interactive tutorial
         </a>
         . Also feel free to join the{' '}

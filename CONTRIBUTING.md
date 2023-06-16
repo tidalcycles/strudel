@@ -31,7 +31,7 @@ Use one of the Communication Channels listed above.
 
 ## Improve the Docs
 
-If you find some weak spots in the [docs](https://strudel.tidalcycles.org/learn/getting-started),
+If you find some weak spots in the [docs](https://strudel.tidalcycles.org/workshop/getting-started/),
 you can edit each file directly on github via the "Edit this page" link located in the right sidebar.
 
 ## Propose a Feature
