@@ -87,7 +87,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Signals', link: 'learn/signals' },
       { text: 'Conditional Modifiers', link: 'learn/conditional-modifiers' },
       { text: 'Accumulation', link: 'learn/accumulation' },
-      { text: 'Tonal Modifiers', link: 'learn/tonal' },
+      { text: 'Tonal Functions', link: 'learn/tonal' },
     ],
     Development: [
       { text: 'REPL', link: 'technical-manual/repl' },

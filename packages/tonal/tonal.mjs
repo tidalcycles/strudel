@@ -145,7 +145,7 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
 export const scale = register('scale', function (scale, pat) {
   // Supports ':' list syntax in mininotation
   if (Array.isArray(scale)) {
-    scale = scale.join(' ');
+    scale = scale.flat().join(' ');
   }
   return pat.withHap((hap) => {
     const isObject = typeof hap.value === 'object';

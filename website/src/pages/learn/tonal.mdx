@@ -1,14 +1,29 @@
 ---
-title: Tonal API
+title: Tonal Functions
 layout: ../../layouts/MainLayout.astro
 ---
 
 import { MiniRepl } from '../../docs/MiniRepl';
 import { JsDoc } from '../../docs/JsDoc';
 
-# Tonal API
+# Tonal Functions
 
-The Tonal API, uses [tonaljs](https://github.com/tonaljs/tonal) to provide helpers for musical operations.
+These functions use [tonaljs](https://github.com/tonaljs/tonal) to provide helpers for musical operations.
+
+### scale(name)
+
+Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like scaleTranspose.
+
+<MiniRepl
+  client:idle
+  tune={`"0 2 4 6 4 2"
+.scale("C2:major C2:minor").slow(2))
+.note().s("piano")`}
+/>
+
+Note that the scale root is octaved here. You can also omit the octave, then index zero will default to octave 3.
+
+All the available scale names can be found [here](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).
 
 ### transpose(semitones)
 
@@ -21,21 +36,6 @@ This method gets really exciting when we use it with a pattern as above.
 Instead of numbers, scientific interval notation can be used as well:
 
 <MiniRepl client:only="react" tune={`"c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).note()`} />
-
-### scale(name)
-
-Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like scaleTranspose.
-
-<MiniRepl
-  client:idle
-  tune={`"0 2 4 6 4 2"
-.scale(seq('C2 major', 'C2 minor').slow(2))
-.note()`}
-/>
-
-Note that the scale root is octaved here. You can also omit the octave, then index zero will default to octave 3.
-
-All the available scale names can be found [here](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).
 
 ### scaleTranspose(steps)
 
