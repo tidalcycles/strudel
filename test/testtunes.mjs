@@ -364,7 +364,7 @@ export const customTrigger = `// licensed with CC BY-NC-SA 4.0 https://creativec
 // by Felix Roos
 stack(
   freq("55 [110,165] 110 [220,275]".mul("<1 <3/4 2/3>>").struct("x(3,8)").layer(x=>x.mul("1.006,.995"))),
-  freq("440(5,8)".legato(.18).mul("<1 3/4 2 2/3>")).gain(perlin.range(.2,.8))
+  freq("440(5,8)".clip(.18).mul("<1 3/4 2 2/3>")).gain(perlin.range(.2,.8))
 ).s("<sawtooth square>/2")
   .onTrigger((t,hap,ct)=>{
   const ac = Tone.getContext().rawContext;

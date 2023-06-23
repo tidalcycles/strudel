@@ -222,6 +222,7 @@ const generic_params = [
    *
    * @name legato
    * @param {number | Pattern} duration between 0 and 1, where 1 is the length of the whole hap time
+   * @noAutocomplete
    * @example
    * "c4 eb4 g4 bb4".legato("<0.125 .25 .5 .75 1 2 4>")
    *
@@ -749,13 +750,14 @@ const generic_params = [
   ['val'],
   ['cps'],
   /**
-   * If set to 1, samples will be cut to the duration of their event.
-   * In tidal, this would be done with legato, which [is about to land in strudel too](https://github.com/tidalcycles/strudel/issues/111)
+   * Multiplies the duration with the given number. Also cuts samples off at the end if they exceed the duration.
+   * In tidal, this would be done with legato, [which has a complicated history in strudel](https://github.com/tidalcycles/strudel/issues/111).
+   * For now, if you're coming from tidal, just think clip = legato.
    *
    * @name clip
-   * @param {number | Pattern} active 1 or 0
+   * @param {number | Pattern} factor >= 0
    * @example
-   * note("c a f e ~").s("piano").clip(1)
+   * note("c a f e").s("piano").clip("<.5 1 2>")
    *
    */
   ['clip'],

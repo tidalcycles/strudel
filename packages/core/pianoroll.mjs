@@ -83,9 +83,9 @@ Pattern.prototype.pianoroll = function ({
         ctx.fillRect(0, 0, w, h);
       }
       const inFrame = (event) =>
-        (!hideNegative || event.whole.begin >= 0) && event.whole.begin <= t + to && event.whole.end >= t + from;
+        (!hideNegative || event.whole.begin >= 0) && event.whole.begin <= t + to && event.endClipped >= t + from;
       events.filter(inFrame).forEach((event) => {
-        const isActive = event.whole.begin <= t && event.whole.end > t;
+        const isActive = event.whole.begin <= t && event.endClipped > t;
         ctx.fillStyle = event.context?.color || inactive;
         ctx.strokeStyle = event.context?.color || active;
         ctx.globalAlpha = event.context.velocity ?? event.value?.gain ?? 1;

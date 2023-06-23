@@ -170,7 +170,7 @@ export async function onTriggerSample(t, value, onended, bank) {
     nudge = 0, // TODO: is this in seconds?
     cut,
     loop,
-    clip = 0, // if 1, samples will be cut off when the hap ends
+    clip = undefined, // if 1, samples will be cut off when the hap ends
     n = 0,
     note,
     speed = 1, // sample playback speed
@@ -232,7 +232,7 @@ export async function onTriggerSample(t, value, onended, bank) {
     out.disconnect();
     onended();
   };
-  const stop = (endTime, playWholeBuffer = !clip) => {
+  const stop = (endTime, playWholeBuffer = clip === undefined) => {
     let releaseTime = endTime;
     if (playWholeBuffer) {
       releaseTime = t + (end - begin) * bufferDuration;
