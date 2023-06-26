@@ -29,6 +29,9 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
     devDependencies:
+      '@tauri-apps/cli':
+        specifier: ^1.4.0
+        version: 1.4.0
       '@vitest/ui':
         specifier: ^0.28.0
         version: 0.28.0
@@ -92,7 +95,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/core:
     dependencies:
@@ -102,7 +105,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -127,7 +130,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/core/examples/vite-vanilla-repl-cm6:
     dependencies:
@@ -155,7 +158,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.2
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/csound:
     dependencies:
@@ -171,7 +174,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/embed: {}
 
@@ -204,7 +207,7 @@ importers:
         version: link:../mini
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -223,7 +226,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/mini:
     dependencies:
@@ -236,7 +239,7 @@ importers:
         version: 3.0.2
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -255,7 +258,7 @@ importers:
         version: 5.8.1
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/react:
     dependencies:
@@ -325,7 +328,7 @@ importers:
         version: 3.3.2
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/react/examples/nano-repl:
     dependencies:
@@ -380,7 +383,7 @@ importers:
         version: 3.3.2
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/serial:
     dependencies:
@@ -390,7 +393,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/soundfonts:
     dependencies:
@@ -412,7 +415,7 @@ importers:
         version: 3.3.1
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/tonal:
     dependencies:
@@ -431,7 +434,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -447,7 +450,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -469,7 +472,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -494,7 +497,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/web/examples/repl-example:
     dependencies:
@@ -504,7 +507,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.2
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/webaudio:
     dependencies:
@@ -517,7 +520,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
 
   packages/webdirt:
     dependencies:
@@ -533,7 +536,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -546,7 +549,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.11.18)
+        version: 4.3.3(@types/node@18.16.3)
       vitest:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
@@ -3771,6 +3774,113 @@ packages:
       tailwindcss: 3.3.2
     dev: false
 
+  /@tauri-apps/cli-darwin-arm64@1.4.0:
+    resolution: {integrity: sha512-nA/ml0SfUt6/CYLVbHmT500Y+ijqsuv5+s9EBnVXYSLVg9kbPUZJJHluEYK+xKuOj6xzyuT/+rZFMRapmJD3jQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@tauri-apps/cli-darwin-x64@1.4.0:
+    resolution: {integrity: sha512-ov/F6Zr+dg9B0PtRu65stFo2G0ow2TUlneqYYrkj+vA3n+moWDHfVty0raDjMLQbQt3rv3uayFMXGPMgble9OA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@tauri-apps/cli-linux-arm-gnueabihf@1.4.0:
+    resolution: {integrity: sha512-zwjbiMncycXDV7doovymyKD7sCg53ouAmfgpUqEBOTY3vgBi9TwijyPhJOqoG5vUVWhouNBC08akGmE4dja15g==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@tauri-apps/cli-linux-arm64-gnu@1.4.0:
+    resolution: {integrity: sha512-5MCBcziqXC72mMXnkZU68mutXIR6zavDxopArE2gQtK841IlE06bIgtLi0kUUhlFJk2nhPRgiDgdLbrPlyt7fw==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@tauri-apps/cli-linux-arm64-musl@1.4.0:
+    resolution: {integrity: sha512-7J3pRB6n6uNYgIfCeKt2Oz8J7oSaz2s8GGFRRH2HPxuTHrBNCinzVYm68UhVpJrL3bnGkU0ziVZLsW/iaOGfUg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@tauri-apps/cli-linux-x64-gnu@1.4.0:
+    resolution: {integrity: sha512-Zh5gfAJxOv5AVWxcwuueaQ2vIAhlg0d6nZui6nMyfIJ8dbf3aZQ5ZzP38sYow5h/fbvgL+3GSQxZRBIa3c2E1w==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@tauri-apps/cli-linux-x64-musl@1.4.0:
+    resolution: {integrity: sha512-OLAYoICU3FaYiTdBsI+lQTKnDHeMmFMXIApN0M+xGiOkoIOQcV9CConMPjgmJQ867+NHRNgUGlvBEAh9CiJodQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@tauri-apps/cli-win32-arm64-msvc@1.4.0:
+    resolution: {integrity: sha512-gZ05GENFbI6CB5MlOUsLlU0kZ9UtHn9riYtSXKT6MYs8HSPRffPHaHSL0WxsJweWh9nR5Hgh/TUU8uW3sYCzCg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@tauri-apps/cli-win32-ia32-msvc@1.4.0:
+    resolution: {integrity: sha512-JsetT/lTx/Zq98eo8T5CiRyF1nKeX04RO8JlJrI3ZOYsZpp/A5RJvMd/szQ17iOzwiHdge+tx7k2jHysR6oBlQ==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@tauri-apps/cli-win32-x64-msvc@1.4.0:
+    resolution: {integrity: sha512-z8Olcnwp5aYhzqUAarFjqF+oELCjuYWnB2HAJHlfsYNfDCAORY5kct3Fklz8PSsubC3U2EugWn8n42DwnThurg==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@tauri-apps/cli@1.4.0:
+    resolution: {integrity: sha512-VXYr2i2iVFl98etQSQsqLzXgX96bnWiNZd1YADgatqwy/qecbd6Kl5ZAPB5R4ynsgE8A1gU7Fbzh7dCEQYFfmA==}
+    engines: {node: '>= 10'}
+    hasBin: true
+    optionalDependencies:
+      '@tauri-apps/cli-darwin-arm64': 1.4.0
+      '@tauri-apps/cli-darwin-x64': 1.4.0
+      '@tauri-apps/cli-linux-arm-gnueabihf': 1.4.0
+      '@tauri-apps/cli-linux-arm64-gnu': 1.4.0
+      '@tauri-apps/cli-linux-arm64-musl': 1.4.0
+      '@tauri-apps/cli-linux-x64-gnu': 1.4.0
+      '@tauri-apps/cli-linux-x64-musl': 1.4.0
+      '@tauri-apps/cli-win32-arm64-msvc': 1.4.0
+      '@tauri-apps/cli-win32-ia32-msvc': 1.4.0
+      '@tauri-apps/cli-win32-x64-msvc': 1.4.0
+    dev: true
+
   /@tonaljs/abc-notation@4.8.0:
     resolution: {integrity: sha512-JggT/DW4rMxu+q1WkeACrg52is3acp9zaW4LJmCheFi3CmLa63sy7/6mgKnlScTOvcpAyTcSytu0VbQHRXyBDA==}
     dependencies:
@@ -4509,7 +4619,7 @@ packages:
       '@babel/plugin-transform-react-jsx-self': 7.21.0(@babel/core@7.21.5)
       '@babel/plugin-transform-react-jsx-source': 7.19.6(@babel/core@7.21.5)
       react-refresh: 0.14.0
-      vite: 4.3.3(@types/node@18.11.18)
+      vite: 4.3.3
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -13121,6 +13231,38 @@ packages:
       workbox-window: 6.5.4
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /vite@4.3.3:
+    resolution: {integrity: sha512-MwFlLBO4udZXd+VBcezo3u8mC77YQk+ik+fbc0GZWGgzfbPP+8Kf0fldhARqvSYmtIWoAJ5BXPClUbMTlqFxrA==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.17.18
+      postcss: 8.4.23
+      rollup: 3.21.0
+    optionalDependencies:
+      fsevents: 2.3.2
     dev: true
 
   /vite@4.3.3(@types/node@18.11.18):
