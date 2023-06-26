@@ -19,6 +19,7 @@ import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
 import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
 import Loader from './Loader';
+import { settingPatterns } from '../settings.mjs';
 
 const { latestCode } = settingsMap.get();
 
@@ -45,6 +46,7 @@ const modules = [
 
 const modulesLoading = evalScope(
   controls, // sadly, this cannot be exported from core direclty
+  settingPatterns,
   ...modules,
 );
 
