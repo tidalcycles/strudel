@@ -2276,7 +2276,7 @@ const _loopAt = function (factor, pat, cps = 1) {
  * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(1.5)
  */
 
-const slice = register(
+export const slice = register(
   'slice',
   function (npat, ipat, opat) {
     return npat.innerBind((n) =>
@@ -2304,7 +2304,7 @@ const slice = register(
  * s("breaks165").splice(8,  "0 1 [2 3 0]@2 3 0@2 7").hurry(0.65)
  */
 
-const splice = register(
+export const splice = register(
   'splice',
   function (npat, ipat, opat) {
     const sliced = slice(npat, ipat, opat);
@@ -2321,10 +2321,6 @@ const splice = register(
   false, // turns off auto-patternification
 );
 
-const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
-  return _loopAt(factor, pat, 1);
-});
-
 /**
  * Makes the sample fit the given number of cycles and cps value, by
  * changing the speed. Please note that at some point cps will be
@@ -2338,6 +2334,6 @@ const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat)
  * s("rhodes").loopAtCps(4,1.5).cps(1.5)
  */
 // TODO - global cps clock
-const { loopAtCps, loopatcps } = register(['loopAtCps', 'loopatcps'], function (factor, cps, pat) {
+export const { loopAtCps, loopatcps } = register(['loopAtCps', 'loopatcps'], function (factor, cps, pat) {
   return _loopAt(factor, pat, cps);
 });

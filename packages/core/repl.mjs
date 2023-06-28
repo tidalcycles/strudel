@@ -3,6 +3,7 @@ import { evaluate as _evaluate } from './evaluate.mjs';
 import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
+import { register } from './pattern.mjs';
 
 export function repl({
   interval,
@@ -50,10 +51,32 @@ export function repl({
   const start = () => scheduler.start();
   const pause = () => scheduler.pause();
   const setCps = (cps) => scheduler.setCps(cps);
+  const setCpm = (cpm) => scheduler.setCps(cpm / 60);
+
+  // the following functions use the cps value, which is why they are defined here..
+  const loopAt = register('loopAt', (cycles, pat) => {
+    return pat.loopAtCps(cycles, scheduler.cps);
+  });
+
+  const fay = register('fay', (pat) =>
+    pat.withHap((hap) =>
+      hap.withValue((v) => ({
+        ...v,
+        speed: scheduler.cps / hap.whole.duration, // overwrite speed completely?
+        unit: 'c',
+      })),
+    ),
+  );
+
   evalScope({
+    loopAt,
+    fay,
     setCps,
     setcps: setCps,
+    setCpm,
+    setcpm: setCpm,
   });
+
   return { scheduler, evaluate, start, stop, pause, setCps, setPattern };
 }
 
