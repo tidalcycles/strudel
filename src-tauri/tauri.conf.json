@@ -4,7 +4,8 @@
     "beforeBuildCommand": "npm run build",
     "beforeDevCommand": "npm run dev",
     "devPath": "http://localhost:3000",
-    "distDir": "../website/dist"
+    "distDir": "../website/dist",
+    "withGlobalTauri": true
   },
   "package": {
     "productName": "Strudel",
@@ -12,7 +13,11 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": false,
+      "fs": {
+        "all": true,
+        "scope": ["$AUDIO/**", "$AUDIO"]
+      }
     },
     "bundle": {
       "active": true,
