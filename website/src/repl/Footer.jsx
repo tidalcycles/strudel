@@ -9,6 +9,9 @@ import { themes } from './themes.mjs';
 import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../settings.mjs';
 import { getAudioContext, soundMap } from '@strudel.cycles/webaudio';
 import { useStore } from '@nanostores/react';
+import { FilesTab } from './FilesTab';
+
+const TAURI = window.__TAURI__;
 
 export function Footer({ context }) {
   const footerContent = useRef();
@@ -77,6 +80,7 @@ export function Footer({ context }) {
           <FooterTab name="console" />
           <FooterTab name="reference" />
           <FooterTab name="settings" />
+          {TAURI && <FooterTab name="files" />}
         </div>
         {activeFooter !== '' && (
           <button onClick={() => setActiveFooter('')} className="text-foreground" aria-label="Close Panel">
@@ -91,6 +95,7 @@ export function Footer({ context }) {
           {activeFooter === 'sounds' && <SoundsTab />}
           {activeFooter === 'reference' && <Reference />}
           {activeFooter === 'settings' && <SettingsTab scheduler={context.scheduler} />}
+          {activeFooter === 'files' && <FilesTab />}
         </div>
       )}
     </footer>
