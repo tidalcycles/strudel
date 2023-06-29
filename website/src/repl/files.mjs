@@ -7,7 +7,10 @@ import {
   loadBuffer,
 } from '@strudel.cycles/webaudio';
 
-const TAURI = window.__TAURI__;
+let TAURI;
+if (typeof window !== 'undefined') {
+  TAURI = window?.__TAURI__;
+}
 export const { BaseDirectory, readDir, readBinaryFile, writeTextFile, readTextFile, exists } = TAURI?.fs || {};
 
 export const dir = BaseDirectory?.Audio; // https://tauri.app/v1/api/js/path#audiodir
