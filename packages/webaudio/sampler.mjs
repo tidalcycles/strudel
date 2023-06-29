@@ -119,6 +119,21 @@ export const processSampleMap = (sampleMap, fn, baseUrl = sampleMap._base || '')
   });
 };
 
+// allows adding a custom url prefix handler
+// for example, it is used by the desktop app to load samples starting with '~/music'
+let resourcePrefixHandlers = {};
+export function registerSamplesPrefix(prefix, resolve) {
+  resourcePrefixHandlers[prefix] = resolve;
+}
+// finds a prefix handler for the given url (if any)
+function getSamplesPrefixHandler(url) {
+  const handler = Object.entries(resourcePrefixHandlers).find(([key]) => url.startsWith(key));
+  if (handler) {
+    return handler[1];
+  }
+  return;
+}
+
 /**
  * Loads a collection of samples to use with `s`
  * @example
@@ -135,6 +150,11 @@ export const processSampleMap = (sampleMap, fn, baseUrl = sampleMap._base || '')
 
 export const samples = async (sampleMap, baseUrl = sampleMap._base || '', options = {}) => {
   if (typeof sampleMap === 'string') {
+    // check if custom prefix handler
+    const handler = getSamplesPrefixHandler(sampleMap);
+    if (handler) {
+      return handler(sampleMap);
+    }
     if (sampleMap.startsWith('github:')) {
       let [_, path] = sampleMap.split('github:');
       path = path.endsWith('/') ? path.slice(0, -1) : path;
