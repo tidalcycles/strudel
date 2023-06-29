@@ -105,7 +105,7 @@ Pattern.prototype.midi = function (output) {
     hap.ensureObjectValue();
 
     // calculate time
-    const timingOffset = WebMidi.time - getAudioContext().currentTime * 1000;
+    const timingOffset = WebMidi.time - getAudioContext().getOutputTimestamp().contextTime * 1000;
     time = time * 1000 + timingOffset;
 
     // destructure value
