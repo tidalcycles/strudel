@@ -1,6 +1,7 @@
 import { Pattern, noteToMidi, valueToMidi } from '@strudel.cycles/core';
 import { registerSynthSounds, samples } from '@strudel.cycles/webaudio';
 import './piano.mjs';
+import './files.mjs';
 
 export async function prebake() {
   // https://archive.org/details/SalamanderGrandPianoV3

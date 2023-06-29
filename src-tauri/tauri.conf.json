@@ -16,7 +16,7 @@
       "all": false,
       "fs": {
         "all": true,
-        "scope": ["$AUDIO/**", "$AUDIO"]
+        "scope": ["$HOME/**", "$HOME", "$HOME/*"]
       }
     },
     "bundle": {
