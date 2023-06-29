@@ -21,7 +21,7 @@ function humanFileSize(bytes, si) {
   return bytes.toFixed(1) + ' ' + units[u];
 }
 
-export const getSampleBufferSource = async (s, n, note, speed, freq, bank) => {
+export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resolveUrl) => {
   let transpose = 0;
   if (freq !== undefined && note !== undefined) {
     logger('[sampler] hap has note and freq. ignoring note', 'warning');
@@ -44,6 +44,9 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank) => {
       );
     transpose = -midiDiff(closest); // semitones to repitch
     sampleUrl = bank[closest][n % bank[closest].length];
+  }
+  if (resolveUrl) {
+    sampleUrl = await resolveUrl(sampleUrl);
   }
   let buffer = await loadBuffer(sampleUrl, ac, s, n);
   if (speed < 0) {
@@ -91,6 +94,31 @@ export const getLoadedBuffer = (url) => {
   return bufferCache[url];
 };
 
+export const processSampleMap = (sampleMap, fn, baseUrl = sampleMap._base || '') => {
+  return Object.entries(sampleMap).forEach(([key, value]) => {
+    if (typeof value === 'string') {
+      value = [value];
+    }
+    if (typeof value !== 'object') {
+      throw new Error('wrong sample map format for ' + key);
+    }
+    baseUrl = value._base || baseUrl;
+    const replaceUrl = (v) => (baseUrl + v).replace('github:', 'https://raw.githubusercontent.com/');
+    if (Array.isArray(value)) {
+      //return [key, value.map(replaceUrl)];
+      value = value.map(replaceUrl);
+    } else {
+      // must be object
+      value = Object.fromEntries(
+        Object.entries(value).map(([note, samples]) => {
+          return [note, (typeof samples === 'string' ? [samples] : samples).map(replaceUrl)];
+        }),
+      );
+    }
+    fn(key, value);
+  });
+};
+
 /**
  * Loads a collection of samples to use with `s`
  * @example
@@ -130,39 +158,23 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
       });
   }
   const { prebake, tag } = options;
-  Object.entries(sampleMap).forEach(([key, value]) => {
-    if (typeof value === 'string') {
-      value = [value];
-    }
-    if (typeof value !== 'object') {
-      throw new Error('wrong sample map format for ' + key);
-    }
-    baseUrl = value._base || baseUrl;
-    const replaceUrl = (v) => (baseUrl + v).replace('github:', 'https://raw.githubusercontent.com/');
-    if (Array.isArray(value)) {
-      //return [key, value.map(replaceUrl)];
-      value = value.map(replaceUrl);
-    } else {
-      // must be object
-      value = Object.fromEntries(
-        Object.entries(value).map(([note, samples]) => {
-          return [note, (typeof samples === 'string' ? [samples] : samples).map(replaceUrl)];
-        }),
-      );
-    }
-    registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
-      type: 'sample',
-      samples: value,
-      baseUrl,
-      prebake,
-      tag,
-    });
-  });
+  processSampleMap(
+    sampleMap,
+    (key, value) =>
+      registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
+        type: 'sample',
+        samples: value,
+        baseUrl,
+        prebake,
+        tag,
+      }),
+    baseUrl,
+  );
 };
 
 const cutGroups = [];
 
-export async function onTriggerSample(t, value, onended, bank) {
+export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   const {
     s,
     freq,
@@ -188,7 +200,7 @@ export async function onTriggerSample(t, value, onended, bank) {
   //const soundfont = getSoundfontKey(s);
   const time = t + nudge;
 
-  const bufferSource = await getSampleBufferSource(s, n, note, speed, freq, bank);
+  const bufferSource = await getSampleBufferSource(s, n, note, speed, freq, bank, resolveUrl);
 
   // asny stuff above took too long?
   if (ac.currentTime > t) {
