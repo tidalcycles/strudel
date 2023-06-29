@@ -58,7 +58,7 @@ export function repl({
     return pat.loopAtCps(cycles, scheduler.cps);
   });
 
-  const fay = register('fay', (pat) =>
+  const fit = register('fit', (pat) =>
     pat.withHap((hap) =>
       hap.withValue((v) => ({
         ...v,
@@ -70,7 +70,7 @@ export function repl({
 
   evalScope({
     loopAt,
-    fay,
+    fit,
     setCps,
     setcps: setCps,
     setCpm,
