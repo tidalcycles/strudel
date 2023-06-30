@@ -68,8 +68,9 @@ Pattern.prototype.spiral = function (options = {}) {
   } = options;
 
   function spiral({ ctx, time, haps, drawTime }) {
-    ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
-    const [cx, cy] = [ctx.canvas.width / 2, ctx.canvas.height / 2];
+    const [w, h] = [ctx.canvas.width, ctx.canvas.height];
+    ctx.clearRect(0, 0, w * 2, h * 2);
+    const [cx, cy] = [w / 2, h / 2];
     const settings = {
       margin: size / stretch,
       cx,

@@ -15,6 +15,14 @@ export const getDrawContext = (id = 'test-canvas') => {
     canvas.height = window.innerHeight;
     canvas.style = 'pointer-events:none;width:100%;height:100%;position:fixed;top:0;left:0';
     document.body.prepend(canvas);
+    let timeout;
+    window.addEventListener('resize', () => {
+      timeout && clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }, 200);
+    });
   }
   return canvas.getContext('2d');
 };
