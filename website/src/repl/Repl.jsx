@@ -9,7 +9,7 @@ import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '
 import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
-import React, { createContext, useCallback, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useState, useMemo } from 'react';
 import './Repl.css';
 import { Footer } from './Footer';
 import { Header } from './Header';
@@ -264,6 +264,11 @@ export function Repl({ embedded = false }) {
     handleShuffle,
     handleShare,
   };
+  const currentTheme = useMemo(() => themes[theme] || themes.strudelTheme, [theme]);
+  const handleViewChanged = useCallback((v) => {
+    setView(v);
+  }, []);
+
   return (
     // bg-gradient-to-t from-blue-900 to-slate-900
     // bg-gradient-to-t from-green-900 to-slate-900
@@ -278,7 +283,7 @@ export function Repl({ embedded = false }) {
         <Header context={context} />
         <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-0" id="code">
           <CodeMirror
-            theme={themes[theme] || themes.strudelTheme}
+            theme={currentTheme}
             value={code}
             keybindings={keybindings}
             isLineNumbersDisplayed={isLineNumbersDisplayed}
@@ -287,10 +292,7 @@ export function Repl({ embedded = false }) {
             fontSize={fontSize}
             fontFamily={fontFamily}
             onChange={handleChangeCode}
-            onViewChanged={(v) => {
-              setView(v);
-              // window.editorView = v;
-            }}
+            onViewChanged={handleViewChanged}
             onSelectionChange={handleSelectionChange}
           />
         </section>
