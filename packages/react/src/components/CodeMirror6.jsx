@@ -20,7 +20,7 @@ const flashField = StateField.define({
     try {
       for (let e of tr.effects) {
         if (e.is(setFlash)) {
-          if (e.value) {
+          if (e.value && tr.newDoc?.length?.length > 0) {
             const mark = Decoration.mark({ attributes: { style: `background-color: #FFCA2880` } });
             flash = Decoration.set([mark.range(0, tr.newDoc.length)]);
           } else {
@@ -152,6 +152,8 @@ export default function CodeMirror({
     return _extensions;
   }, [keybindings, isAutoCompletionEnabled, isLineWrappingEnabled]);
 
+  const basicSetup = useMemo(() => ({ lineNumbers: isLineNumbersDisplayed }), [isLineNumbersDisplayed]);
+
   return (
     <div style={{ fontSize, fontFamily }} className="w-full">
       <_CodeMirror
@@ -161,7 +163,7 @@ export default function CodeMirror({
         onCreateEditor={handleOnCreateEditor}
         onUpdate={handleOnUpdate}
         extensions={extensions}
-        basicSetup={{ lineNumbers: isLineNumbersDisplayed }}
+        basicSetup={basicSetup}
       />
     </div>
   );
