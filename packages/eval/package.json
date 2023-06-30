@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/eval",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Code evaluator for strudel",
   "main": "index.mjs",
   "publishConfig": {

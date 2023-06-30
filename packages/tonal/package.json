@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/tonal",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Tonal functions for strudel",
   "main": "index.mjs",
   "publishConfig": {
