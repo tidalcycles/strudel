@@ -50,6 +50,9 @@ const highlightField = StateField.define({
     return Decoration.none;
   },
   update(highlights, tr) {
+    // proper fix for https://github.com/tidalcycles/strudel/issues/178
+    // see https://discuss.codemirror.net/t/uncatchable-out-of-range-errors-when-document-changes/4864/5
+    highlights = highlights.map(tr.changes);
     try {
       for (let e of tr.effects) {
         if (e.is(setHighlights)) {
