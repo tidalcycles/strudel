@@ -214,7 +214,7 @@ export function Repl({ embedded = false }) {
   }, []);
 
   const handleDocChanged = useCallback(
-    (v) => {
+    ({ view }) => {
       if (!init) {
         // this is only for testing! try this pattern:
         /*
