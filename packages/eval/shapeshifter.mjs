@@ -129,8 +129,8 @@ export default (_code) => {
   if (shouldAddReturn) {
     addReturn(shifted);
   }
-  const generated = undisguiseImports(codegen(shifted));
-  return generated;
+  const output = undisguiseImports(codegen(shifted));
+  return { output };
 };
 
 // renames all import statements to "_mport" as Shift doesn't support dynamic import.

@@ -10,14 +10,16 @@ import shapeshifter, { wrappedAsync } from '../shapeshifter.mjs';
 describe('shapeshifter', () => {
   it('Should shift simple double quote string', () => {
     if (wrappedAsync) {
-      expect(shapeshifter('"c3"')).toEqual('(async()=>{return mini("c3").withMiniLocation([1,0,15],[1,4,19])})()');
+      expect(shapeshifter('"c3"').output).toEqual(
+        '(async()=>{return mini("c3").withMiniLocation([1,0,15],[1,4,19])})()',
+      );
     } else {
-      expect(shapeshifter('"c3"')).toEqual('return mini("c3").withMiniLocation([1,0,0],[1,4,4])');
+      expect(shapeshifter('"c3"').output).toEqual('return mini("c3").withMiniLocation([1,0,0],[1,4,4])');
     }
   });
   if (wrappedAsync) {
     it('Should handle dynamic imports', () => {
-      expect(shapeshifter('const { default: foo } = await import(\'https://bar.com/foo.js\');"c3"')).toEqual(
+      expect(shapeshifter('const { default: foo } = await import(\'https://bar.com/foo.js\');"c3"').output).toEqual(
         'const{default:foo}=await import("https://bar.com/foo.js");return mini("c3").withMiniLocation([1,64,79],[1,68,83])',
       );
     });

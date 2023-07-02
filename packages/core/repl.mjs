@@ -35,11 +35,10 @@ export function repl({
     }
     try {
       await beforeEval?.({ code });
-      let { pattern } = await _evaluate(code, transpiler);
-
+      let { pattern, meta } = await _evaluate(code, transpiler);
       logger(`[eval] code updated`);
       setPattern(pattern, autostart);
-      afterEval?.({ code, pattern });
+      afterEval?.({ code, pattern, meta });
       return pattern;
     } catch (err) {
       // console.warn(`[repl] eval error: ${err.message}`);

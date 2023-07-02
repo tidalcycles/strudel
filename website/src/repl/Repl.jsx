@@ -128,7 +128,8 @@ export function Repl({ embedded = false }) {
         cleanupUi();
         cleanupDraw();
       },
-      afterEval: ({ code }) => {
+      afterEval: ({ code, meta }) => {
+        console.log('miniLocations', meta.miniLocations);
         setPending(false);
         setLatestCode(code);
         window.location.hash = '#' + encodeURIComponent(btoa(code));

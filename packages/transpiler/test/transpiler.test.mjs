@@ -11,22 +11,22 @@ const simple = { wrapAsync: false, addReturn: false, simpleLocs: true };
 
 describe('transpiler', () => {
   it('wraps double quote string with mini and adds location', () => {
-    expect(transpiler('"c3"', simple)).toEqual("mini('c3').withMiniLocation(0, 4);");
-    expect(transpiler('stack("c3","bd sd")', simple)).toEqual(
+    expect(transpiler('"c3"', simple).output).toEqual("mini('c3').withMiniLocation(0, 4);");
+    expect(transpiler('stack("c3","bd sd")', simple).output).toEqual(
       "stack(mini('c3').withMiniLocation(6, 10), mini('bd sd').withMiniLocation(11, 18));",
     );
   });
   it('wraps backtick string with mini and adds location', () => {
-    expect(transpiler('`c3`', simple)).toEqual("mini('c3').withMiniLocation(0, 4);");
+    expect(transpiler('`c3`', simple).output).toEqual("mini('c3').withMiniLocation(0, 4);");
   });
   it('replaces note variables with note strings', () => {
-    expect(transpiler('seq(c3, d3)', simple)).toEqual("seq('c3', 'd3');");
+    expect(transpiler('seq(c3, d3)', simple).output).toEqual("seq('c3', 'd3');");
   });
   it('keeps tagged template literal as is', () => {
-    expect(transpiler('xxx`c3`', simple)).toEqual('xxx`c3`;');
+    expect(transpiler('xxx`c3`', simple).output).toEqual('xxx`c3`;');
   });
   it('supports top level await', () => {
-    expect(transpiler("await samples('xxx');", simple)).toEqual("await samples('xxx');");
+    expect(transpiler("await samples('xxx');", simple).output).toEqual("await samples('xxx');");
   });
   /*   it('parses dynamic imports', () => {
     expect(

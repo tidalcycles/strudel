@@ -37,8 +37,12 @@ function safeEval(str, options = {}) {
 }
 
 export const evaluate = async (code, transpiler) => {
+  let meta = {};
   if (transpiler) {
-    code = transpiler(code); // transform syntactically correct js code to semantically usable code
+    // transform syntactically correct js code to semantically usable code
+    const transpiled = transpiler(code);
+    code = transpiled.output;
+    meta = transpiled;
   }
   // if no transpiler is given, we expect a single instruction (!wrapExpression)
   const options = { wrapExpression: !!transpiler };
@@ -48,5 +52,5 @@ export const evaluate = async (code, transpiler) => {
     const message = `got "${typeof evaluated}" instead of pattern`;
     throw new Error(message + (typeof evaluated === 'function' ? ', did you forget to call a function?' : '.'));
   }
-  return { mode: 'javascript', pattern: evaluated };
+  return { mode: 'javascript', pattern: evaluated, meta };
 };

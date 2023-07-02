@@ -5,7 +5,7 @@ import { isNoteWithOctave } from '@strudel.cycles/core';
 import { getLeafLocations } from '@strudel.cycles/mini';
 
 export function transpiler(input, options = {}) {
-  const { wrapAsync = false, addReturn = true, simpleLocs = false, emitMiniLocations = false } = options;
+  const { wrapAsync = false, addReturn = true, simpleLocs = false, emitMiniLocations = true } = options;
 
   let ast = parse(input, {
     ecmaVersion: 2022,
@@ -62,7 +62,7 @@ export function transpiler(input, options = {}) {
     output = `(async ()=>{${output}})()`;
   }
   if (!emitMiniLocations) {
-    return output;
+    return { output };
   }
   return { output, miniLocations };
 }
