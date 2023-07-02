@@ -36,4 +36,12 @@ describe('transpiler', () => {
       }),
     ).toEqual("const {default: foo} = await import('https://bar.com/foo.js');");
   }); */
+  it('collections locations', () => {
+    const { miniLocations } = transpiler(`s("bd", "hh oh")`, { ...simple, emitMiniLocations: true });
+    expect(miniLocations).toEqual([
+      [3, 5],
+      [9, 11],
+      [12, 14],
+    ]);
+  });
 });

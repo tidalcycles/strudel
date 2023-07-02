@@ -2,9 +2,10 @@ import escodegen from 'escodegen';
 import { parse } from 'acorn';
 import { walk } from 'estree-walker';
 import { isNoteWithOctave } from '@strudel.cycles/core';
+import { getLeafLocations } from '@strudel.cycles/mini';
 
 export function transpiler(input, options = {}) {
-  const { wrapAsync = false, addReturn = true, simpleLocs = false } = options;
+  const { wrapAsync = false, addReturn = true, simpleLocs = false, emitMiniLocations = false } = options;
 
   let ast = parse(input, {
     ecmaVersion: 2022,
@@ -12,18 +13,27 @@ export function transpiler(input, options = {}) {
     locations: true,
   });
 
+  let miniLocations = [];
+  const collectMiniLocations = (value, node) => {
+    const leafLocs = getLeafLocations(`"${value}"`);
+    const withOffset = leafLocs.map((offsets) => offsets.map((o) => o + node.start));
+    miniLocations = miniLocations.concat(withOffset);
+  };
+
   walk(ast, {
-    enter(node, parent, prop, index) {
+    enter(node, parent /* , prop, index */) {
       if (isBackTickString(node, parent)) {
-        const { quasis, start, end } = node;
+        const { quasis } = node;
         const { raw } = quasis[0].value;
         this.skip();
-        return this.replace(miniWithLocation(raw, node, simpleLocs));
+        emitMiniLocations && collectMiniLocations(raw, node);
+        return this.replace(miniWithLocation(raw, node, simpleLocs, miniLocations));
       }
       if (isStringWithDoubleQuotes(node)) {
-        const { value, start, end } = node;
+        const { value } = node;
         this.skip();
-        return this.replace(miniWithLocation(value, node, simpleLocs));
+        emitMiniLocations && collectMiniLocations(value, node);
+        return this.replace(miniWithLocation(value, node, simpleLocs, miniLocations));
       }
       // TODO: remove pseudo note variables?
       if (node.type === 'Identifier' && isNoteWithOctave(node.name)) {
@@ -47,11 +57,14 @@ export function transpiler(input, options = {}) {
       argument: expression,
     };
   }
-  const output = escodegen.generate(ast);
+  let output = escodegen.generate(ast);
   if (wrapAsync) {
-    return `(async ()=>{${output}})()`;
+    output = `(async ()=>{${output}})()`;
   }
-  return output;
+  if (!emitMiniLocations) {
+    return output;
+  }
+  return { output, miniLocations };
 }
 
 function isStringWithDoubleQuotes(node, locations, code) {
