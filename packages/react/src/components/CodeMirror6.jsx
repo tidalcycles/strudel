@@ -44,12 +44,89 @@ export const flash = (view) => {
   }, 200);
 };
 
+export const setMiniLocations = StateEffect.define();
+export const showMiniLocations = StateEffect.define();
+export const updateMiniLocations = (view, locations) => {
+  view.dispatch({ effects: setMiniLocations.of(locations) });
+};
+export const highlightMiniLocations = (view, haps) => {
+  view.dispatch({ effects: showMiniLocations.of(haps) });
+};
+
+const miniLocations = StateField.define({
+  create() {
+    return Decoration.none;
+  },
+  update(locations, tr) {
+    locations = locations.map(tr.changes);
+
+    for (let e of tr.effects) {
+      if (e.is(setMiniLocations)) {
+        // this is called on eval, with the mini locations obtained from the transpiler
+        // codemirror will automatically remap the marks when the document is edited
+        // create a mark for each mini location, adding the range to the spec to find it later
+        const marks = e.value.map(
+          (range) =>
+            Decoration.mark({
+              range,
+              // this green is only to verify that the decoration moves when the document is edited
+              // it will be removed later, so the mark is not visible by default
+              attributes: { style: `background-color: #00CA2880` },
+            }), // -> Decoration
+        );
+        //
+        const decorations = marks
+          .map((mark) => {
+            let { range } = mark.spec;
+            range = range.map((v) => Math.min(v, tr.newDoc.length));
+            const [from, to] = range;
+            if (from < to) {
+              return mark.range(from, to); // -> Range<Decoration>
+            }
+          })
+          .filter(Boolean);
+        locations = Decoration.set(decorations); // -> DecorationSet === RangeSet<Decoration>
+      }
+      if (e.is(showMiniLocations)) {
+        // this is called every frame to show the locations that are currently active
+        // we can NOT create new marks because the context.locations haven't changed since eval time
+        // this is why we need to find a way to update the existing decorations, showing the ones that have an active range
+        const visible = e.value
+          .map((hap) => hap.context.locations.map(({ start, end }) => `${start.offset}:${end.offset}`))
+          .flat()
+          .filter((v, i, a) => a.indexOf(v) === i);
+        console.log('visible', visible); // e.g. [ "1:3", "8:9", "4:6" ]
+
+        // TODO: iterate over "locations" variable, get access to underlying mark.spec.range
+        // for each mark that is visible, change color (later remove green color...)
+        // How to iterate over DecorationSet ???
+
+        /* console.log('iter', iter.value.spec.range);
+        while (iter.next().value) {
+          console.log('iter', iter.value);
+        } */
+        /* locations = locations.update({
+          filter: (from, to) => {
+            //console.log('filter', from, to);
+            // const id = `${from}:${to}`;
+            //return visible.includes(`${from}:${to}`);
+            return true;
+          },
+        }); */
+      }
+    }
+    return locations;
+  },
+  provide: (f) => EditorView.decorations.from(f),
+});
+
 export const setHighlights = StateEffect.define();
 const highlightField = StateField.define({
   create() {
     return Decoration.none;
   },
   update(highlights, tr) {
+    highlights = highlights.map(tr.changes);
     try {
       for (let e of tr.effects) {
         if (e.is(setHighlights)) {
@@ -88,13 +165,14 @@ const highlightField = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-const staticExtensions = [javascript(), highlightField, flashField];
+const staticExtensions = [javascript(), highlightField, flashField, miniLocations];
 
 export default function CodeMirror({
   value,
   onChange,
   onViewChanged,
   onSelectionChange,
+  onDocChange,
   theme,
   keybindings,
   isLineNumbersDisplayed,
@@ -121,6 +199,9 @@ export default function CodeMirror({
 
   const handleOnUpdate = useCallback(
     (viewUpdate) => {
+      if (viewUpdate.docChanged && onDocChange) {
+        onDocChange?.(viewUpdate);
+      }
       if (viewUpdate.selectionSet && onSelectionChange) {
         onSelectionChange?.(viewUpdate.state.selection);
       }

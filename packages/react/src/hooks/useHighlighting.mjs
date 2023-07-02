@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { setHighlights } from '../components/CodeMirror6';
+import { setHighlights, highlightMiniLocations } from '../components/CodeMirror6';
 const round = (x) => Math.round(x * 1000) / 1000;
 
 function useHighlighting({ view, pattern, active, getTime }) {
@@ -21,6 +21,7 @@ function useHighlighting({ view, pattern, active, getTime }) {
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
             highlights.current = highlights.current.concat(haps); // add potential new onsets
             view.dispatch({ effects: setHighlights.of({ haps: highlights.current }) }); // highlight all still active + new active haps
+            highlightMiniLocations(view, highlights.current); // <- new method, replaces above line when done
           } catch (err) {
             view.dispatch({ effects: setHighlights.of({ haps: [] }) });
           }

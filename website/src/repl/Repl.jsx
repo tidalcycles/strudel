@@ -5,7 +5,15 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { cleanupDraw, cleanupUi, controls, evalScope, getDrawContext, logger } from '@strudel.cycles/core';
-import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
+import {
+  CodeMirror,
+  cx,
+  flash,
+  useHighlighting,
+  useStrudel,
+  useKeydown,
+  updateMiniLocations,
+} from '@strudel.cycles/react';
 import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
@@ -101,12 +109,13 @@ const { code: randomTune, name } = getRandomTune();
 
 export const ReplContext = createContext(null);
 
+let init = false; // this is bad! only for testing!
+
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
   const [pending, setPending] = useState(true);
-
   const {
     theme,
     keybindings,
@@ -129,7 +138,9 @@ export function Repl({ embedded = false }) {
         cleanupDraw();
       },
       afterEval: ({ code, meta }) => {
-        console.log('miniLocations', meta.miniLocations);
+        console.log('miniLocations', meta.miniLocations, view);
+        // TODO: find a way to get hold of the codemirror view
+        // then call updateMiniLocations
         setPending(false);
         setLatestCode(code);
         window.location.hash = '#' + encodeURIComponent(btoa(code));
@@ -201,6 +212,30 @@ export function Repl({ embedded = false }) {
     // TODO: scroll to selected function in reference
     // console.log('selectino change', selection.ranges[0].from);
   }, []);
+
+  const handleDocChanged = useCallback(
+    (v) => {
+      if (!init) {
+        // this is only for testing! try this pattern:
+        /*
+stack(
+  s("bd"),
+   s("hh oh*<2 3>")
+)
+        */
+        updateMiniLocations(view, [
+          [12, 14],
+          [23, 25],
+          [26, 28],
+          [30, 31],
+          [32, 33],
+        ]);
+        init = true;
+      }
+    },
+    [view],
+  );
+
   const handleTogglePlay = async () => {
     await getAudioContext().resume(); // fixes no sound in ios webkit
     if (!started) {
@@ -295,6 +330,7 @@ export function Repl({ embedded = false }) {
             onChange={handleChangeCode}
             onViewChanged={handleViewChanged}
             onSelectionChange={handleSelectionChange}
+            onDocChange={handleDocChanged}
           />
         </section>
         {error && (
