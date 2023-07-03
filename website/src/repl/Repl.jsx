@@ -126,6 +126,13 @@ export function Repl({ embedded = false }) {
     isLineWrappingEnabled,
   } = useSettings();
 
+  const [miniLocations, setMiniLocations] = useState([]);
+  useEffect(() => {
+    if (view) {
+      updateMiniLocations(view, miniLocations);
+    }
+  }, [view, miniLocations]);
+
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
       initialCode: '// LOADING...',
@@ -138,9 +145,7 @@ export function Repl({ embedded = false }) {
         cleanupDraw();
       },
       afterEval: ({ code, meta }) => {
-        console.log('miniLocations', meta.miniLocations, view);
-        // TODO: find a way to get hold of the codemirror view
-        // then call updateMiniLocations
+        setMiniLocations(meta.miniLocations);
         setPending(false);
         setLatestCode(code);
         window.location.hash = '#' + encodeURIComponent(btoa(code));

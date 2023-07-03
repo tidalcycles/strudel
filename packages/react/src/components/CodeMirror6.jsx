@@ -85,7 +85,7 @@ const miniLocations = StateField.define({
             }
           })
           .filter(Boolean);
-        locations = Decoration.set(decorations); // -> DecorationSet === RangeSet<Decoration>
+        locations = Decoration.set(decorations, true); // -> DecorationSet === RangeSet<Decoration>
       }
       if (e.is(showMiniLocations)) {
         // this is called every frame to show the locations that are currently active
