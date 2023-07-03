@@ -472,6 +472,25 @@ export class Pattern {
   /**
    * Returns a new pattern with the given location information added to the
    * context of every hap.
+   * @param {Number} start start offset
+   * @param {Number} end end offset
+   * @returns Pattern
+   * @noAutocomplete
+   */
+  withLoc(start, end) {
+    const location = {
+      start,
+      end,
+    };
+    return this.withContext((context) => {
+      const locations = (context.locations || []).concat([location]);
+      return { ...context, locations };
+    });
+  }
+
+  /**
+   * Deprecated: Returns a new pattern with the given location information added to the
+   * context of every hap.
    * @param {Number} start
    * @param {Number} end
    * @returns Pattern
@@ -488,6 +507,7 @@ export class Pattern {
     });
   }
 
+  // DEPRECATED:
   withMiniLocation(start, end) {
     const offset = {
       start: { line: start[0], column: start[1], offset: start[2] },

@@ -92,27 +92,40 @@ const miniLocations = StateField.define({
         // we can NOT create new marks because the context.locations haven't changed since eval time
         // this is why we need to find a way to update the existing decorations, showing the ones that have an active range
         const visible = e.value
-          .map((hap) => hap.context.locations.map(({ start, end }) => `${start.offset}:${end.offset}`))
+          .map((hap) => hap.context.locations.map(({ start, end }) => `${start}:${end}`))
           .flat()
           .filter((v, i, a) => a.indexOf(v) === i);
-        console.log('visible', visible); // e.g. [ "1:3", "8:9", "4:6" ]
+        // console.log('visible', visible); // e.g. [ "1:3", "8:9", "4:6" ]
 
-        // TODO: iterate over "locations" variable, get access to underlying mark.spec.range
-        // for each mark that is visible, change color (later remove green color...)
-        // How to iterate over DecorationSet ???
+        const iterator = locations.iter();
 
-        /* console.log('iter', iter.value.spec.range);
-        while (iter.next().value) {
-          console.log('iter', iter.value);
-        } */
-        /* locations = locations.update({
-          filter: (from, to) => {
-            //console.log('filter', from, to);
-            // const id = `${from}:${to}`;
-            //return visible.includes(`${from}:${to}`);
-            return true;
-          },
-        }); */
+        let mapping = {};
+        while (!!iterator.value) {
+          const {
+            from,
+            to,
+            value: {
+              spec: { range },
+            },
+          } = iterator;
+          const id = `${range[0]}:${range[1]}`;
+          mapping[id] = [from, to];
+          iterator.next();
+        }
+
+        const decorations = Object.entries(mapping)
+          .map(([range, [from, to]]) => {
+            let color = visible.includes(range) ? 'red' : 'transparent';
+            const mark = Decoration.mark({
+              range: range.split(':'),
+              // this green is only to verify that the decoration moves when the document is edited
+              // it will be removed later, so the mark is not visible by default
+              attributes: { style: `background-color: ${color}` },
+            });
+            return mark.range(from, to); // -> Range<Decoration>
+          })
+          .filter(Boolean);
+        locations = Decoration.set(decorations);
       }
     }
     return locations;
@@ -134,10 +147,10 @@ const highlightField = StateField.define({
           const marks =
             haps
               .map((hap) =>
-                (hap.context.locations || []).map(({ start, end }) => {
+                (hap.context.locations || []).map(({ start: from, end: to }) => {
                   const color = hap.context.color || e.value.color;
-                  let from = tr.newDoc.line(start.line).from + start.column;
-                  let to = tr.newDoc.line(end.line).from + end.column;
+                  /* let from = tr.newDoc.line(start.line).from + start.column;
+                  let to = tr.newDoc.line(end.line).from + end.column; */
                   const l = tr.newDoc.length;
                   if (from > l || to > l) {
                     return; // dont mark outside of range, as it will throw an error

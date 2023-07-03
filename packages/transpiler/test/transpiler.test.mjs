@@ -11,13 +11,13 @@ const simple = { wrapAsync: false, addReturn: false, simpleLocs: true };
 
 describe('transpiler', () => {
   it('wraps double quote string with mini and adds location', () => {
-    expect(transpiler('"c3"', simple).output).toEqual("mini('c3').withMiniLocation(0, 4);");
+    expect(transpiler('"c3"', simple).output).toEqual("m('c3', 0);");
     expect(transpiler('stack("c3","bd sd")', simple).output).toEqual(
-      "stack(mini('c3').withMiniLocation(6, 10), mini('bd sd').withMiniLocation(11, 18));",
+      "stack(m('c3', 6), m('bd sd', 11));",
     );
   });
   it('wraps backtick string with mini and adds location', () => {
-    expect(transpiler('`c3`', simple).output).toEqual("mini('c3').withMiniLocation(0, 4);");
+    expect(transpiler('`c3`', simple).output).toEqual("m('c3', 0);");
   });
   it('replaces note variables with note strings', () => {
     expect(transpiler('seq(c3, d3)', simple).output).toEqual("seq('c3', 'd3');");

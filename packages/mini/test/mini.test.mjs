@@ -192,16 +192,10 @@ describe('getLeafLocation', () => {
     const ast = mini2ast(code);
 
     const bd = ast.source_[0].source_;
-    expect(getLeafLocation(code, bd)).toEqual([
-      [1, 2, 1],
-      [1, 4, 3],
-    ]);
+    expect(getLeafLocation(code, bd)).toEqual([1, 3]);
 
     const sd = ast.source_[1].source_;
-    expect(getLeafLocation(code, sd)).toEqual([
-      [1, 5, 4],
-      [1, 7, 6],
-    ]);
+    expect(getLeafLocation(code, sd)).toEqual([4, 6]);
   });
 });
 

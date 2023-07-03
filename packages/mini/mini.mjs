@@ -69,9 +69,9 @@ function resolveReplications(ast) {
 }
 
 // expects ast from mini2ast + quoted mini string + optional callback when a node is entered
-export function patternifyAST(ast, code, onEnter) {
+export function patternifyAST(ast, code, onEnter, offset = 0) {
   onEnter?.(ast);
-  const enter = (node) => patternifyAST(node, code, onEnter);
+  const enter = (node) => patternifyAST(node, code, onEnter, offset);
   switch (ast.type_) {
     case 'pattern': {
       resolveReplications(ast);
@@ -121,8 +121,12 @@ export function patternifyAST(ast, code, onEnter) {
         return ast.source_;
       }
       const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
-      const [from, to] = getLeafLocation(code, ast);
-      return strudel.pure(value).withLocation(from, to);
+      if (offset === -1) {
+        // skip location handling (used when getting leaves to avoid confusion)
+        return strudel.pure(value);
+      }
+      const [from, to] = getLeafLocation(code, ast, offset);
+      return strudel.pure(value).withLoc(from, to);
     }
     case 'stretch':
       return enter(ast.source_).slow(enter(ast.arguments_.amount));
@@ -133,7 +137,7 @@ export function patternifyAST(ast, code, onEnter) {
 }
 
 // takes quoted mini string + leaf node within, returns source location of node (whitespace corrected)
-export const getLeafLocation = (code, leaf) => {
+export const getLeafLocation = (code, leaf, globalOffset = 0) => {
   // value is expected without quotes!
   const { start, end } = leaf.location_;
   const actual = code?.split('').slice(start.offset, end.offset).join('');
@@ -141,10 +145,7 @@ export const getLeafLocation = (code, leaf) => {
   const [offsetStart = 0, offsetEnd = 0] = actual
     ? actual.split(leaf.source_).map((p) => p.split('').filter((c) => c === ' ').length)
     : [];
-  return [
-    [start.line, start.column + offsetStart, start.offset + offsetStart],
-    [start.line, end.column - offsetEnd, end.offset - offsetEnd],
-  ];
+  return [start.offset + offsetStart + globalOffset, end.offset - offsetEnd + globalOffset];
 };
 
 // takes quoted mini string, returns ast
@@ -154,17 +155,22 @@ export const mini2ast = (code) => krill.parse(code);
 export const getLeaves = (code) => {
   const ast = mini2ast(code);
   let leaves = [];
-  patternifyAST(ast, code, (node) => {
-    if (node.type_ === 'atom') {
-      leaves.push(node);
-    }
-  });
+  patternifyAST(
+    ast,
+    code,
+    (node) => {
+      if (node.type_ === 'atom') {
+        leaves.push(node);
+      }
+    },
+    -1,
+  );
   return leaves;
 };
 
 // takes quoted mini string, returns locations [fromCol,toCol] of all leaf nodes
-export const getLeafLocations = (code) => {
-  return getLeaves(code).map((l) => getLeafLocation(code, l).map((l) => l[2]));
+export const getLeafLocations = (code, offset = 0) => {
+  return getLeaves(code).map((l) => getLeafLocation(code, l, offset));
 };
 
 // mini notation only (wraps in "")
@@ -175,6 +181,16 @@ export const mini = (...strings) => {
     return patternifyAST(ast, code);
   });
   return strudel.sequence(...pats);
+};
+
+// turns str mini string (without quotes) into pattern
+// offset is the position of the mini string in the JS code
+// each leaf node will get .withLoc added
+// this function is used by the transpiler for double quoted strings
+export const m = (str, offset) => {
+  const code = `"${str}"`;
+  const ast = mini2ast(code);
+  return patternifyAST(ast, code, null, offset);
 };
 
 // includes haskell style (raw krill parsing)

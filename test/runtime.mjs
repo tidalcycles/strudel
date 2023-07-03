@@ -10,7 +10,7 @@ import * as strudel from '@strudel.cycles/core';
 import * as webaudio from '@strudel.cycles/webaudio';
 import controls from '@strudel.cycles/core/controls.mjs';
 // import gist from '@strudel.cycles/core/gist.js';
-import { mini } from '@strudel.cycles/mini/mini.mjs';
+import { mini, m } from '@strudel.cycles/mini/mini.mjs';
 // import * as toneHelpers from '@strudel.cycles/tone/tone.mjs';
 // import * as voicingHelpers from '@strudel.cycles/tonal/voicings.mjs';
 // import * as uiHelpers from '@strudel.cycles/tone/ui.mjs';
@@ -174,6 +174,7 @@ evalScope(
     csound: id,
     loadOrc: id,
     mini,
+    m,
     getDrawContext,
     getAudioContext,
     loadSoundfont,

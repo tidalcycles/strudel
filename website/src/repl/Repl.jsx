@@ -220,7 +220,7 @@ export function Repl({ embedded = false }) {
         /*
 stack(
   s("bd"),
-   s("hh oh*<2 3>")
+  s("hh oh*<2 3>")
 )
         */
         updateMiniLocations(view, [
