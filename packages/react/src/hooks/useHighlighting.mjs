@@ -20,10 +20,9 @@ function useHighlighting({ view, pattern, active, getTime }) {
             highlights.current = highlights.current.filter((hap) => hap.endClipped > audioTime); // keep only highlights that are still active
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
             highlights.current = highlights.current.concat(haps); // add potential new onsets
-            // view.dispatch({ effects: setHighlights.of({ haps: highlights.current }) }); // highlight all still active + new active haps
-            highlightMiniLocations(view, highlights.current); // <- new method, replaces above line when done
+            highlightMiniLocations(view, highlights.current);
           } catch (err) {
-            view.dispatch({ effects: setHighlights.of({ haps: [] }) });
+            highlightMiniLocations(view, [])
           }
           frame = requestAnimationFrame(updateHighlights);
         });
@@ -31,8 +30,7 @@ function useHighlighting({ view, pattern, active, getTime }) {
           cancelAnimationFrame(frame);
         };
       } else {
-        highlights.current = [];
-        view.dispatch({ effects: setHighlights.of({ haps: [] }) });
+        highlightMiniLocations(view, []);
       }
     }
   }, [pattern, active, view]);
