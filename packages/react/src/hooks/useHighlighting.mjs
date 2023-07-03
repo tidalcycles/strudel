@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { setHighlights, highlightMiniLocations } from '../components/CodeMirror6';
+import { highlightMiniLocations } from '../components/CodeMirror6';
 const round = (x) => Math.round(x * 1000) / 1000;
 
 function useHighlighting({ view, pattern, active, getTime }) {
@@ -20,9 +20,9 @@ function useHighlighting({ view, pattern, active, getTime }) {
             highlights.current = highlights.current.filter((hap) => hap.endClipped > audioTime); // keep only highlights that are still active
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
             highlights.current = highlights.current.concat(haps); // add potential new onsets
-            highlightMiniLocations(view, highlights.current);
+            highlightMiniLocations(view, begin, highlights.current);
           } catch (err) {
-            highlightMiniLocations(view, [])
+            highlightMiniLocations(view, 0, [])
           }
           frame = requestAnimationFrame(updateHighlights);
         });
@@ -30,7 +30,8 @@ function useHighlighting({ view, pattern, active, getTime }) {
           cancelAnimationFrame(frame);
         };
       } else {
-        highlightMiniLocations(view, []);
+        highlights.current = [];
+        highlightMiniLocations(view, 0, highlights.current);
       }
     }
   }, [pattern, active, view]);
