@@ -1,10 +1,18 @@
-import { useEffect, useRef } from 'react';
-import { highlightMiniLocations } from '../components/CodeMirror6';
+import { useEffect, useRef, useState } from 'react';
+import { highlightMiniLocations, updateMiniLocations } from '../components/CodeMirror6';
 const round = (x) => Math.round(x * 1000) / 1000;
 
 function useHighlighting({ view, pattern, active, getTime }) {
   const highlights = useRef([]);
   const lastEnd = useRef(0);
+
+  const [miniLocations, setMiniLocations] = useState([]);
+  useEffect(() => {
+    if (view) {
+      updateMiniLocations(view, miniLocations);
+    }
+  }, [view, miniLocations]);
+
   useEffect(() => {
     if (view) {
       if (pattern && active) {
@@ -30,11 +38,14 @@ function useHighlighting({ view, pattern, active, getTime }) {
           cancelAnimationFrame(frame);
         };
       } else {
+        console.log('not active');
         highlights.current = [];
         highlightMiniLocations(view, 0, highlights.current);
       }
     }
   }, [pattern, active, view]);
+
+  return { setMiniLocations };
 }
 
 export default useHighlighting;

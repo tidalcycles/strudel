@@ -126,13 +126,6 @@ export function Repl({ embedded = false }) {
     isLineWrappingEnabled,
   } = useSettings();
 
-  const [miniLocations, setMiniLocations] = useState([]);
-  useEffect(() => {
-    if (view) {
-      updateMiniLocations(view, miniLocations);
-    }
-  }, [view, miniLocations]);
-
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
       initialCode: '// LOADING...',
@@ -195,7 +188,7 @@ export function Repl({ embedded = false }) {
   );
 
   // highlighting
-  useHighlighting({
+  const { setMiniLocations } = useHighlighting({
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),

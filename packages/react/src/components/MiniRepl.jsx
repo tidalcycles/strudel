@@ -71,6 +71,7 @@ export function MiniRepl({
     evalOnMount,
     drawContext,
     drawTime,
+    afterEval: ({ meta }) => setMiniLocations(meta.miniLocations),
   });
 
   const [view, setView] = useState();
@@ -84,7 +85,7 @@ export function MiniRepl({
     }
     return isVisible || wasVisible.current;
   }, [isVisible, hideOutsideView]);
-  useHighlighting({
+  const { setMiniLocations } = useHighlighting({
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),

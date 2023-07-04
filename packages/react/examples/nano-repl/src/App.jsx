@@ -82,9 +82,10 @@ function App() {
     code,
     defaultOutput: webaudioOutput,
     getTime,
+    afterEval: ({ meta }) => setMiniLocations(meta.miniLocations),
   });
 
-  useHighlighting({
+  const { setMiniLocations } = useHighlighting({
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),

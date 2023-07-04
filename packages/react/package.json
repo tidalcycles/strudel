@@ -42,6 +42,7 @@
     "@strudel.cycles/core": "workspace:*",
     "@strudel.cycles/transpiler": "workspace:*",
     "@strudel.cycles/webaudio": "workspace:*",
+    "@strudel/codemirror": "workspace:*",
     "@uiw/codemirror-themes": "^4.19.16",
     "@uiw/react-codemirror": "^4.19.16",
     "react-hook-inview": "^4.5.0"
