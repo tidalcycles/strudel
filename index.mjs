@@ -9,7 +9,6 @@ export * from './packages/react/index.mjs';
 export * from './packages/serial/index.mjs';
 export * from './packages/soundfonts/index.mjs';
 export * from './packages/tonal/index.mjs';
-export * from './packages/tone/index.mjs';
 export * from './packages/transpiler/index.mjs';
 export * from './packages/webaudio/index.mjs';
 export * from './packages/webdirt/index.mjs';

@@ -188,29 +188,6 @@
     "setVoicingRange"
   ],
   "/home/felix/projects/strudel/packages/tonal/index.mjs": [],
-  "/home/felix/projects/strudel/packages/tone/tone.mjs": [
-    "Tone",
-    "getDefaultSynth",
-    "tone",
-    "amsynth",
-    "duosynth",
-    "fmsynth",
-    "membrane",
-    "metal",
-    "monosynth",
-    "noise",
-    "pluck",
-    "polysynth",
-    "sampler",
-    "players",
-    "synth",
-    "vol",
-    "lowpass",
-    "highpass",
-    "adsr",
-    "out"
-  ],
-  "/home/felix/projects/strudel/packages/tone/index.mjs": [],
   "/home/felix/projects/strudel/packages/transpiler/transpiler.mjs": [
     "transpiler"
   ],
