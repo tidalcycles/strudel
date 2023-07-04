@@ -217,10 +217,6 @@
     "webaudioOutputTrigger"
   ],
   "/home/felix/projects/strudel/packages/webaudio/index.mjs": [],
-  "/home/felix/projects/strudel/packages/webdirt/webdirt.mjs": [
-    "loadWebDirt"
-  ],
-  "/home/felix/projects/strudel/packages/webdirt/index.mjs": [],
   "/home/felix/projects/strudel/packages/xen/xen.mjs": [
     "edo",
     "xen",
