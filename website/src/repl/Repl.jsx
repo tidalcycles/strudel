@@ -109,8 +109,6 @@ const { code: randomTune, name } = getRandomTune();
 
 export const ReplContext = createContext(null);
 
-let init = false; // this is bad! only for testing!
-
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
