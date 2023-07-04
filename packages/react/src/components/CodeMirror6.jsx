@@ -98,17 +98,17 @@ const visibleMiniLocations = StateField.define({
         // this is called every frame to show the locations that are currently active
         // we can NOT create new marks because the context.locations haven't changed since eval time
         // this is why we need to find a way to update the existing decorations, showing the ones that have an active range
-
+        const haps = new Map();
         for (let hap of e.value.haps) {
           for (let { start, end } of hap.context.locations) {
             let id = `${start}:${end}`;
-            if (!visible.haps.has(id) || visible.haps.get(id).whole.begin.lt(hap.whole.begin)) {
-              visible.haps.set(id, hap);
+            if (!haps.has(id) || haps.get(id).whole.begin.lt(hap.whole.begin)) {
+              haps.set(id, hap);
             }
           }
         }
 
-        visible = { atTime: e.value.atTime, haps: visible.haps };
+        visible = { atTime: e.value.atTime, haps };
       }
     }
 
@@ -136,6 +136,7 @@ const miniLocationHighlights = EditorView.decorations.compute([miniLocations, vi
       const color = hap.context.color ?? 'var(--foreground)';
 
       // Get explicit channels for color values
+      /* 
       const swatch = document.createElement('div');
       swatch.style.color = color;
       document.body.appendChild(swatch);
@@ -148,12 +149,14 @@ const miniLocationHighlights = EditorView.decorations.compute([miniLocations, vi
       // Get percentage of event
       const percent = 1 - (atTime - hap.whole.begin) / hap.whole.duration;
       channels[3] *= percent;
+      */
 
       builder.add(
         from,
         to,
         Decoration.mark({
-          attributes: { style: `outline: solid 2px rgba(${channels.join(', ')})` },
+          // attributes: { style: `outline: solid 2px rgba(${channels.join(', ')})` },
+          attributes: { style: `outline: solid 2px ${color}` },
         }),
       );
     }
