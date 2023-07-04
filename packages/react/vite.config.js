@@ -22,8 +22,6 @@ export default defineConfig({
         ...Object.keys(peerDependencies),
         ...Object.keys(dependencies),
         // TODO: find out which of below names are obsolete now
-        '@strudel.cycles/tone',
-        '@strudel.cycles/eval',
         '@strudel.cycles/transpiler',
         'acorn',
         '@strudel.cycles/core',

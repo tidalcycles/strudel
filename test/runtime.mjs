@@ -3,7 +3,6 @@
 // it might require mocking more stuff when tunes added that use other functions
 
 // import * as tunes from './tunes.mjs';
-// import { evaluate } from '@strudel.cycles/eval';
 import { evaluate } from '@strudel.cycles/transpiler';
 import { evalScope } from '@strudel.cycles/core';
 import * as strudel from '@strudel.cycles/core';
@@ -11,20 +10,14 @@ import * as webaudio from '@strudel.cycles/webaudio';
 import controls from '@strudel.cycles/core/controls.mjs';
 // import gist from '@strudel.cycles/core/gist.js';
 import { mini, m } from '@strudel.cycles/mini/mini.mjs';
-// import * as toneHelpers from '@strudel.cycles/tone/tone.mjs';
 // import * as voicingHelpers from '@strudel.cycles/tonal/voicings.mjs';
-// import * as uiHelpers from '@strudel.cycles/tone/ui.mjs';
-// import * as drawHelpers from '@strudel.cycles/tone/draw.mjs';
 // import euclid from '@strudel.cycles/core/euclid.mjs';
-// import '@strudel.cycles/tone/tone.mjs';
 // import '@strudel.cycles/midi/midi.mjs';
 import * as tonalHelpers from '@strudel.cycles/tonal';
 import '@strudel.cycles/xen/xen.mjs';
 // import '@strudel.cycles/xen/tune.mjs';
 // import '@strudel.cycles/core/euclid.mjs';
 // import '@strudel.cycles/core/speak.mjs'; // window is not defined
-// import '@strudel.cycles/tone/pianoroll.mjs';
-// import '@strudel.cycles/tone/draw.mjs';
 // import '@strudel.cycles/osc/osc.mjs';
 // import '@strudel.cycles/webaudio/webaudio.mjs';
 // import '@strudel.cycles/serial/serial.mjs';

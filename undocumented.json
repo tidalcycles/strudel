@@ -156,17 +156,6 @@
   ],
   "/home/felix/projects/strudel/packages/core/gist.js": [],
   "/home/felix/projects/strudel/packages/core/index.mjs": [],
-  "/home/felix/projects/strudel/packages/eval/shift-traverser/index.js": [],
-  "/home/felix/projects/strudel/packages/eval/shapeshifter.mjs": [
-    "addMiniLocations",
-    "minifyStrings",
-    "wrappedAsync",
-    "shouldAddReturn"
-  ],
-  "/home/felix/projects/strudel/packages/eval/evaluate.mjs": [
-    "evaluate"
-  ],
-  "/home/felix/projects/strudel/packages/eval/index.mjs": [],
   "/home/felix/projects/strudel/packages/midi/midi.mjs": [
     "WebMidi",
     "enableWebMidi"
@@ -199,29 +188,6 @@
     "setVoicingRange"
   ],
   "/home/felix/projects/strudel/packages/tonal/index.mjs": [],
-  "/home/felix/projects/strudel/packages/tone/tone.mjs": [
-    "Tone",
-    "getDefaultSynth",
-    "tone",
-    "amsynth",
-    "duosynth",
-    "fmsynth",
-    "membrane",
-    "metal",
-    "monosynth",
-    "noise",
-    "pluck",
-    "polysynth",
-    "sampler",
-    "players",
-    "synth",
-    "vol",
-    "lowpass",
-    "highpass",
-    "adsr",
-    "out"
-  ],
-  "/home/felix/projects/strudel/packages/tone/index.mjs": [],
   "/home/felix/projects/strudel/packages/transpiler/transpiler.mjs": [
     "transpiler"
   ],
@@ -251,10 +217,6 @@
     "webaudioOutputTrigger"
   ],
   "/home/felix/projects/strudel/packages/webaudio/index.mjs": [],
-  "/home/felix/projects/strudel/packages/webdirt/webdirt.mjs": [
-    "loadWebDirt"
-  ],
-  "/home/felix/projects/strudel/packages/webdirt/index.mjs": [],
   "/home/felix/projects/strudel/packages/xen/xen.mjs": [
     "edo",
     "xen",
