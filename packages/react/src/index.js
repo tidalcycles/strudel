@@ -1,6 +1,6 @@
 // import 'tailwindcss/tailwind.css';
 
-export { default as CodeMirror, flash } from './components/CodeMirror6'; // !SSR
+export { default as CodeMirror, flash, updateMiniLocations, highlightMiniLocations } from './components/CodeMirror6'; // !SSR
 export * from './components/MiniRepl'; // !SSR
 export { default as useHighlighting } from './hooks/useHighlighting'; // !SSR
 export { default as useStrudel } from './hooks/useStrudel'; // !SSR

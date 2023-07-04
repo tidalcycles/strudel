@@ -5,7 +5,15 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { cleanupDraw, cleanupUi, controls, evalScope, getDrawContext, logger } from '@strudel.cycles/core';
-import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
+import {
+  CodeMirror,
+  cx,
+  flash,
+  useHighlighting,
+  useStrudel,
+  useKeydown,
+  updateMiniLocations,
+} from '@strudel.cycles/react';
 import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
@@ -106,7 +114,6 @@ export function Repl({ embedded = false }) {
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
   const [pending, setPending] = useState(true);
-
   const {
     theme,
     keybindings,
@@ -128,7 +135,8 @@ export function Repl({ embedded = false }) {
         cleanupUi();
         cleanupDraw();
       },
-      afterEval: ({ code }) => {
+      afterEval: ({ code, meta }) => {
+        setMiniLocations(meta.miniLocations);
         setPending(false);
         setLatestCode(code);
         window.location.hash = '#' + encodeURIComponent(btoa(code));
@@ -178,7 +186,7 @@ export function Repl({ embedded = false }) {
   );
 
   // highlighting
-  useHighlighting({
+  const { setMiniLocations } = useHighlighting({
     view,
     pattern,
     active: started && !activeCode?.includes('strudel disable-highlighting'),
@@ -200,6 +208,7 @@ export function Repl({ embedded = false }) {
     // TODO: scroll to selected function in reference
     // console.log('selectino change', selection.ranges[0].from);
   }, []);
+
   const handleTogglePlay = async () => {
     await getAudioContext().resume(); // fixes no sound in ios webkit
     if (!started) {

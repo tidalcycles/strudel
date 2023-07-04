@@ -472,44 +472,18 @@ export class Pattern {
   /**
    * Returns a new pattern with the given location information added to the
    * context of every hap.
-   * @param {Number} start
-   * @param {Number} end
+   * @param {Number} start start offset
+   * @param {Number} end end offset
    * @returns Pattern
    * @noAutocomplete
    */
-  withLocation(start, end) {
+  withLoc(start, end) {
     const location = {
-      start: { line: start[0], column: start[1], offset: start[2] },
-      end: { line: end[0], column: end[1], offset: end[2] },
+      start,
+      end,
     };
     return this.withContext((context) => {
       const locations = (context.locations || []).concat([location]);
-      return { ...context, locations };
-    });
-  }
-
-  withMiniLocation(start, end) {
-    const offset = {
-      start: { line: start[0], column: start[1], offset: start[2] },
-      end: { line: end[0], column: end[1], offset: end[2] },
-    };
-    return this.withContext((context) => {
-      let locations = context.locations || [];
-      locations = locations.map(({ start, end }) => {
-        const colOffset = start.line === 1 ? offset.start.column : 0;
-        return {
-          start: {
-            ...start,
-            line: start.line - 1 + (offset.start.line - 1) + 1,
-            column: start.column - 1 + colOffset,
-          },
-          end: {
-            ...end,
-            line: end.line - 1 + (offset.start.line - 1) + 1,
-            column: end.column - 1 + colOffset,
-          },
-        };
-      });
       return { ...context, locations };
     });
   }

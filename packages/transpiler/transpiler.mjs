@@ -2,9 +2,10 @@ import escodegen from 'escodegen';
 import { parse } from 'acorn';
 import { walk } from 'estree-walker';
 import { isNoteWithOctave } from '@strudel.cycles/core';
+import { getLeafLocations } from '@strudel.cycles/mini';
 
 export function transpiler(input, options = {}) {
-  const { wrapAsync = false, addReturn = true, simpleLocs = false } = options;
+  const { wrapAsync = false, addReturn = true, emitMiniLocations = true } = options;
 
   let ast = parse(input, {
     ecmaVersion: 2022,
@@ -12,18 +13,27 @@ export function transpiler(input, options = {}) {
     locations: true,
   });
 
+  let miniLocations = [];
+  const collectMiniLocations = (value, node) => {
+    const leafLocs = getLeafLocations(`"${value}"`, node.start); // stimmt!
+    //const withOffset = leafLocs.map((offsets) => offsets.map((o) => o + node.start));
+    miniLocations = miniLocations.concat(leafLocs);
+  };
+
   walk(ast, {
-    enter(node, parent, prop, index) {
+    enter(node, parent /* , prop, index */) {
       if (isBackTickString(node, parent)) {
-        const { quasis, start, end } = node;
+        const { quasis } = node;
         const { raw } = quasis[0].value;
         this.skip();
-        return this.replace(miniWithLocation(raw, node, simpleLocs));
+        emitMiniLocations && collectMiniLocations(raw, node);
+        return this.replace(miniWithLocation(raw, node));
       }
       if (isStringWithDoubleQuotes(node)) {
-        const { value, start, end } = node;
+        const { value } = node;
         this.skip();
-        return this.replace(miniWithLocation(value, node, simpleLocs));
+        emitMiniLocations && collectMiniLocations(value, node);
+        return this.replace(miniWithLocation(value, node));
       }
       // TODO: remove pseudo note variables?
       if (node.type === 'Identifier' && isNoteWithOctave(node.name)) {
@@ -47,11 +57,14 @@ export function transpiler(input, options = {}) {
       argument: expression,
     };
   }
-  const output = escodegen.generate(ast);
+  let output = escodegen.generate(ast);
   if (wrapAsync) {
-    return `(async ()=>{${output}})()`;
+    output = `(async ()=>{${output}})()`;
   }
-  return output;
+  if (!emitMiniLocations) {
+    return { output };
+  }
+  return { output, miniLocations };
 }
 
 function isStringWithDoubleQuotes(node, locations, code) {
@@ -66,64 +79,18 @@ function isBackTickString(node, parent) {
   return node.type === 'TemplateLiteral' && parent.type !== 'TaggedTemplateExpression';
 }
 
-function miniWithLocation(value, node, simpleLocs) {
-  let locs;
-  const { start: fromOffset, end: toOffset } = node;
-  if (simpleLocs) {
-    locs = [
-      {
-        type: 'Literal',
-        value: fromOffset,
-      },
-      {
-        type: 'Literal',
-        value: toOffset,
-      },
-    ];
-  } else {
-    const {
-      loc: {
-        start: { line: fromLine, column: fromColumn },
-        end: { line: toLine, column: toColumn },
-      },
-    } = node;
-    locs = [
-      {
-        type: 'ArrayExpression',
-        elements: [fromLine, fromColumn, fromOffset].map((value) => ({
-          type: 'Literal',
-          value,
-        })),
-      },
-      {
-        type: 'ArrayExpression',
-        elements: [toLine, toColumn, toOffset].map((value) => ({
-          type: 'Literal',
-          value,
-        })),
-      },
-    ];
-  }
-  // with location
+function miniWithLocation(value, node) {
+  const { start: fromOffset } = node;
   return {
     type: 'CallExpression',
     callee: {
-      type: 'MemberExpression',
-      object: {
-        type: 'CallExpression',
-        callee: {
-          type: 'Identifier',
-          name: 'mini',
-        },
-        arguments: [{ type: 'Literal', value }],
-        optional: false,
-      },
-      property: {
-        type: 'Identifier',
-        name: 'withMiniLocation',
-      },
+      type: 'Identifier',
+      name: 'm',
     },
-    arguments: locs,
+    arguments: [
+      { type: 'Literal', value },
+      { type: 'Literal', value: fromOffset },
+    ],
     optional: false,
   };
 }

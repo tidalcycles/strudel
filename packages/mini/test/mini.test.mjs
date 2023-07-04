@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { mini } from '../mini.mjs';
+import { getLeafLocation, getLeafLocations, mini, mini2ast } from '../mini.mjs';
 import '@strudel.cycles/core/euclid.mjs';
 import { describe, expect, it } from 'vitest';
 
@@ -183,5 +183,38 @@ describe('mini', () => {
   });
   it('supports lists', () => {
     expect(minV('a:b c:d:[e:f] g')).toEqual([['a', 'b'], ['c', 'd', ['e', 'f']], 'g']);
+  });
+});
+
+describe('getLeafLocation', () => {
+  it('gets location of leaf nodes', () => {
+    const code = '"bd sd"';
+    const ast = mini2ast(code);
+
+    const bd = ast.source_[0].source_;
+    expect(getLeafLocation(code, bd)).toEqual([1, 3]);
+
+    const sd = ast.source_[1].source_;
+    expect(getLeafLocation(code, sd)).toEqual([4, 6]);
+  });
+});
+
+describe('getLeafLocations', () => {
+  it('gets locations of leaf nodes', () => {
+    expect(getLeafLocations('"bd sd"')).toEqual([
+      [1, 3], // bd columns
+      [4, 6], // sd columns
+    ]);
+    expect(getLeafLocations('"bd*2 [sd cp]"')).toEqual([
+      [1, 3], // bd columns
+      [7, 9], // sd columns
+      [10, 12], // cp columns
+      [4, 5], // "2" columns
+    ]);
+    expect(getLeafLocations('"bd*<2 3>"')).toEqual([
+      [1, 3], // bd columns
+      [5, 6], // "2" columns
+      [7, 8], // "3" columns
+    ]);
   });
 });

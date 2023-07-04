@@ -32,19 +32,17 @@ In the JavaScript world, using transpilation is a common practise to be able to 
 
 In the same tradition, Strudel can add a transpilation step to simplify the user code in the context of live coding. For example, the Strudel REPL lets the user create mini-notation patterns using just double quoted strings, while single quoted strings remain what they are:
 
-```js
-'c3 [e3 g3]*2';
+```strudel
+note("c3 [e3 g3]*2")
 ```
 
 is transpiled to:
 
-```js
-mini('c3 [e3 g3]*2').withMiniLocation([1, 0, 0], [1, 14, 14]);
+```strudel
+note(m('c3 [e3 g3]', 5))
 ```
 
-Here, the string is wrapped in `mini`, which will create a pattern from a mini-notation string. Additionally, the `withMiniLocation` method passes the original source code location of the string to the pattern, which enables highlighting active events.
-
-Other convenient features like pseudo variables, operator overloading and top level await are possible with transpilation.
+Here, the string is wrapped in `m`, which will create a pattern from a mini-notation string. As the second parameter, it gets passed source code location of the string, which enables highlighting active events later.
 
 After the transpilation, the code is ready to be evaluated into a `Pattern`.
 
@@ -56,16 +54,22 @@ While the transpilation allows JavaScript to express Patterns in a less verbose 
 
 The mini-notation parser is implemented using `peggy`, which allows generating performant parsers for Domain Specific Languages (DSLs) using a concise grammar notation. The generated parser turns the mini-notation string into an AST which is used to call the respective Strudel functions with the given structure. For example, `"c3 [e3 g3]*2"` will result in the following calls:
 
-```js
+```strudel
 seq(
-  reify('c3').withLocation([1, 1, 1], [1, 4, 4]),
-  seq(reify('e3').withLocation([1, 5, 5], [1, 8, 8]), reify('g3').withLocation([1, 8, 8], [1, 10, 10])).fast(2),
-);
+  reify('c3').withLoc(6, 9),
+  seq(reify('e3').withLoc(10, 12), reify('g3',).withLoc(13, 15))
+)
 ```
 
 ### Highlighting Locations
 
-As seen in the examples above, both the JS and the mini-notation parser add source code locations using `withMiniLocation` and `withLocation` methods. While the JS parser adds locations relative to the user code as a whole, the mini-notation adds locations relative to the position of the mini-notation string. The absolute location of elements within mini-notation can be calculated by simply adding both locations together. This absolute location can be used to highlight active events in real time.
+As seen in the examples above, both the mini-notation parser adds the source code locations using `withLoc`.
+This location is calculated inside the `m` function, as the sum of 2 locations:
+
+1. the location where the mini notation string begins, as obtained from the JS parser
+2. the location of the substring inside the mini notation, as obtained from the mini notation parser
+
+The sum of both is passed to `withLoc` to tell each element its location, which can be later used for highlighting when it's active.
 
 ### Mini Notation
 

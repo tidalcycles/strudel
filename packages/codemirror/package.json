@@ -2,7 +2,7 @@
   "name": "@strudel/codemirror",
   "version": "0.8.4",
   "description": "Codemirror Extensions for Strudel",
-  "main": "codemirror.mjs",
+  "main": "index.mjs",
   "publishConfig": {
     "main": "dist/index.js",
     "module": "dist/index.mjs"

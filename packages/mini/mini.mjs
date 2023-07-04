@@ -9,7 +9,7 @@ import * as strudel from '@strudel.cycles/core';
 
 const randOffset = 0.0003;
 
-const applyOptions = (parent, code) => (pat, i) => {
+const applyOptions = (parent, enter) => (pat, i) => {
   const ast = parent.source_[i];
   const options = ast.options_;
   const ops = options?.ops;
@@ -23,18 +23,14 @@ const applyOptions = (parent, code) => (pat, i) => {
           if (!legalTypes.includes(type)) {
             throw new Error(`mini: stretch: type must be one of ${legalTypes.join('|')} but got ${type}`);
           }
-          pat = strudel.reify(pat)[type](patternifyAST(amount, code));
+          pat = strudel.reify(pat)[type](enter(amount));
           break;
         }
         case 'bjorklund': {
           if (op.arguments_.rotation) {
-            pat = pat.euclidRot(
-              patternifyAST(op.arguments_.pulse, code),
-              patternifyAST(op.arguments_.step, code),
-              patternifyAST(op.arguments_.rotation, code),
-            );
+            pat = pat.euclidRot(enter(op.arguments_.pulse), enter(op.arguments_.step), enter(op.arguments_.rotation));
           } else {
-            pat = pat.euclid(patternifyAST(op.arguments_.pulse, code), patternifyAST(op.arguments_.step, code));
+            pat = pat.euclid(enter(op.arguments_.pulse), enter(op.arguments_.step));
           }
           break;
         }
@@ -45,7 +41,7 @@ const applyOptions = (parent, code) => (pat, i) => {
           break;
         }
         case 'tail': {
-          const friend = patternifyAST(op.arguments_.element, code);
+          const friend = enter(op.arguments_.element);
           pat = pat.fmap((a) => (b) => Array.isArray(a) ? [...a, b] : [a, b]).appLeft(friend);
           break;
         }
@@ -72,11 +68,14 @@ function resolveReplications(ast) {
   );
 }
 
-export function patternifyAST(ast, code) {
+// expects ast from mini2ast + quoted mini string + optional callback when a node is entered
+export function patternifyAST(ast, code, onEnter, offset = 0) {
+  onEnter?.(ast);
+  const enter = (node) => patternifyAST(node, code, onEnter, offset);
   switch (ast.type_) {
     case 'pattern': {
       resolveReplications(ast);
-      const children = ast.source_.map((child) => patternifyAST(child, code)).map(applyOptions(ast, code));
+      const children = ast.source_.map((child) => enter(child)).map(applyOptions(ast, enter));
       const alignment = ast.arguments_.alignment;
       if (alignment === 'stack') {
         return strudel.stack(...children);
@@ -84,7 +83,7 @@ export function patternifyAST(ast, code) {
       if (alignment === 'polymeter') {
         // polymeter
         const stepsPerCycle = ast.arguments_.stepsPerCycle
-          ? patternifyAST(ast.arguments_.stepsPerCycle, code).fmap((x) => strudel.Fraction(x))
+          ? enter(ast.arguments_.stepsPerCycle).fmap((x) => strudel.Fraction(x))
           : strudel.pure(strudel.Fraction(children.length > 0 ? children[0].__weight : 1));
 
         const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.__weight || 1))));
@@ -111,7 +110,7 @@ export function patternifyAST(ast, code) {
       return pat;
     }
     case 'element': {
-      return patternifyAST(ast.source_, code);
+      return enter(ast.source_);
     }
     case 'atom': {
       if (ast.source_ === '~') {
@@ -121,66 +120,82 @@ export function patternifyAST(ast, code) {
         console.warn('no location for', ast);
         return ast.source_;
       }
-      const { start, end } = ast.location_;
       const value = !isNaN(Number(ast.source_)) ? Number(ast.source_) : ast.source_;
-      // the following line expects the shapeshifter append .withMiniLocation
-      // because location_ is only relative to the mini string, but we need it relative to whole code
-      // make sure whitespaces are not part of the highlight:
-      const actual = code?.split('').slice(start.offset, end.offset).join('');
-      const [offsetStart = 0, offsetEnd = 0] = actual
-        ? actual.split(ast.source_).map((p) => p.split('').filter((c) => c === ' ').length)
-        : [];
-      return strudel
-        .pure(value)
-        .withLocation(
-          [start.line, start.column + offsetStart, start.offset + offsetStart],
-          [start.line, end.column - offsetEnd, end.offset - offsetEnd],
-        );
+      if (offset === -1) {
+        // skip location handling (used when getting leaves to avoid confusion)
+        return strudel.pure(value);
+      }
+      const [from, to] = getLeafLocation(code, ast, offset);
+      return strudel.pure(value).withLoc(from, to);
     }
     case 'stretch':
-      return patternifyAST(ast.source_, code).slow(patternifyAST(ast.arguments_.amount, code));
-    /* case 'scale':
-      let [tonic, scale] = Scale.tokenize(ast.arguments_.scale);
-      const intervals = Scale.get(scale).intervals;
-      const pattern = patternifyAST(ast.source_);
-      tonic = tonic || 'C4';
-      // console.log('scale', ast, pattern, tonic, scale);
-      console.log('tonic', tonic);
-      return pattern.fmap((step: any) => {
-        step = Number(step);
-        if (isNaN(step)) {
-          console.warn(`scale step "${step}" not a number`);
-          return step;
-        }
-        const octaves = Math.floor(step / intervals.length);
-        const mod = (n: number, m: number): number => (n < 0 ? mod(n + m, m) : n % m);
-        const index = mod(step, intervals.length); // % with negative numbers. e.g. -1 % 3 = 2
-        const interval = Interval.add(intervals[index], Interval.fromSemitones(octaves * 12));
-        return Note.transpose(tonic, interval || '1P');
-      }); */
-    /* case 'struct':
-      // TODO:
-      return strudel.silence; */
+      return enter(ast.source_).slow(enter(ast.arguments_.amount));
     default:
       console.warn(`node type "${ast.type_}" not implemented -> returning silence`);
       return strudel.silence;
   }
 }
 
+// takes quoted mini string + leaf node within, returns source location of node (whitespace corrected)
+export const getLeafLocation = (code, leaf, globalOffset = 0) => {
+  // value is expected without quotes!
+  const { start, end } = leaf.location_;
+  const actual = code?.split('').slice(start.offset, end.offset).join('');
+  // make sure whitespaces are not part of the highlight
+  const [offsetStart = 0, offsetEnd = 0] = actual
+    ? actual.split(leaf.source_).map((p) => p.split('').filter((c) => c === ' ').length)
+    : [];
+  return [start.offset + offsetStart + globalOffset, end.offset - offsetEnd + globalOffset];
+};
+
+// takes quoted mini string, returns ast
+export const mini2ast = (code) => krill.parse(code);
+
+// takes quoted mini string, returns all nodes that are leaves
+export const getLeaves = (code) => {
+  const ast = mini2ast(code);
+  let leaves = [];
+  patternifyAST(
+    ast,
+    code,
+    (node) => {
+      if (node.type_ === 'atom') {
+        leaves.push(node);
+      }
+    },
+    -1,
+  );
+  return leaves;
+};
+
+// takes quoted mini string, returns locations [fromCol,toCol] of all leaf nodes
+export const getLeafLocations = (code, offset = 0) => {
+  return getLeaves(code).map((l) => getLeafLocation(code, l, offset));
+};
+
 // mini notation only (wraps in "")
 export const mini = (...strings) => {
   const pats = strings.map((str) => {
     const code = `"${str}"`;
-    const ast = krill.parse(code);
+    const ast = mini2ast(code);
     return patternifyAST(ast, code);
   });
   return strudel.sequence(...pats);
 };
 
+// turns str mini string (without quotes) into pattern
+// offset is the position of the mini string in the JS code
+// each leaf node will get .withLoc added
+// this function is used by the transpiler for double quoted strings
+export const m = (str, offset) => {
+  const code = `"${str}"`;
+  const ast = mini2ast(code);
+  return patternifyAST(ast, code, null, offset);
+};
+
 // includes haskell style (raw krill parsing)
 export const h = (string) => {
-  const ast = krill.parse(string);
-  // console.log('ast', ast);
+  const ast = mini2ast(string);
   return patternifyAST(ast, string);
 };
 
