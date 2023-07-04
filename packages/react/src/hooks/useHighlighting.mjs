@@ -22,7 +22,7 @@ function useHighlighting({ view, pattern, active, getTime }) {
             highlights.current = highlights.current.concat(haps); // add potential new onsets
             highlightMiniLocations(view, begin, highlights.current);
           } catch (err) {
-            highlightMiniLocations(view, 0, [])
+            highlightMiniLocations(view, 0, []);
           }
           frame = requestAnimationFrame(updateHighlights);
         });
