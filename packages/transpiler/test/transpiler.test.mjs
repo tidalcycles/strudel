@@ -12,9 +12,7 @@ const simple = { wrapAsync: false, addReturn: false, simpleLocs: true };
 describe('transpiler', () => {
   it('wraps double quote string with mini and adds location', () => {
     expect(transpiler('"c3"', simple).output).toEqual("m('c3', 0);");
-    expect(transpiler('stack("c3","bd sd")', simple).output).toEqual(
-      "stack(m('c3', 6), m('bd sd', 11));",
-    );
+    expect(transpiler('stack("c3","bd sd")', simple).output).toEqual("stack(m('c3', 6), m('bd sd', 11));");
   });
   it('wraps backtick string with mini and adds location', () => {
     expect(transpiler('`c3`', simple).output).toEqual("m('c3', 0);");

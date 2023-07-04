@@ -1,10 +1,18 @@
-import { useEffect, useRef } from 'react';
-import { setHighlights, highlightMiniLocations } from '../components/CodeMirror6';
+import { useEffect, useRef, useState } from 'react';
+import { highlightMiniLocations, updateMiniLocations } from '../components/CodeMirror6';
 const round = (x) => Math.round(x * 1000) / 1000;
 
 function useHighlighting({ view, pattern, active, getTime }) {
   const highlights = useRef([]);
   const lastEnd = useRef(0);
+
+  const [miniLocations, setMiniLocations] = useState([]);
+  useEffect(() => {
+    if (view) {
+      updateMiniLocations(view, miniLocations);
+    }
+  }, [view, miniLocations]);
+
   useEffect(() => {
     if (view) {
       if (pattern && active) {
@@ -20,10 +28,9 @@ function useHighlighting({ view, pattern, active, getTime }) {
             highlights.current = highlights.current.filter((hap) => hap.endClipped > audioTime); // keep only highlights that are still active
             const haps = pattern.queryArc(...span).filter((hap) => hap.hasOnset());
             highlights.current = highlights.current.concat(haps); // add potential new onsets
-            // view.dispatch({ effects: setHighlights.of({ haps: highlights.current }) }); // highlight all still active + new active haps
-            highlightMiniLocations(view, highlights.current); // <- new method, replaces above line when done
+            highlightMiniLocations(view, begin, highlights.current);
           } catch (err) {
-            view.dispatch({ effects: setHighlights.of({ haps: [] }) });
+            highlightMiniLocations(view, 0, []);
           }
           frame = requestAnimationFrame(updateHighlights);
         });
@@ -31,11 +38,14 @@ function useHighlighting({ view, pattern, active, getTime }) {
           cancelAnimationFrame(frame);
         };
       } else {
+        console.log('not active');
         highlights.current = [];
-        view.dispatch({ effects: setHighlights.of({ haps: [] }) });
+        highlightMiniLocations(view, 0, highlights.current);
       }
     }
   }, [pattern, active, view]);
+
+  return { setMiniLocations };
 }
 
 export default useHighlighting;
