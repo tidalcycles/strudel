@@ -24,7 +24,7 @@ There are multiple npm packages you can use to use strudel, or only parts of it,
 
 - [`core`](./packages/core/): tidal pattern engine
 - [`mini`](./packages/mini): mini notation parser + core binding
-- [`eval`](./packages/eval): user code evaluator. syntax sugar + highlighting
+- [`transpiler`](./packages/transpiler): user code transpiler
 - [`tone`](./packages/tone): bindings for Tone.js instruments and effects
 - [`osc`](./packages/osc): bindings to communicate via OSC
 - [`midi`](./packages/midi): webmidi bindings

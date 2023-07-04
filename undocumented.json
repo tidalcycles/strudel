@@ -156,17 +156,6 @@
   ],
   "/home/felix/projects/strudel/packages/core/gist.js": [],
   "/home/felix/projects/strudel/packages/core/index.mjs": [],
-  "/home/felix/projects/strudel/packages/eval/shift-traverser/index.js": [],
-  "/home/felix/projects/strudel/packages/eval/shapeshifter.mjs": [
-    "addMiniLocations",
-    "minifyStrings",
-    "wrappedAsync",
-    "shouldAddReturn"
-  ],
-  "/home/felix/projects/strudel/packages/eval/evaluate.mjs": [
-    "evaluate"
-  ],
-  "/home/felix/projects/strudel/packages/eval/index.mjs": [],
   "/home/felix/projects/strudel/packages/midi/midi.mjs": [
     "WebMidi",
     "enableWebMidi"
