@@ -178,40 +178,6 @@ importers:
 
   packages/embed: {}
 
-  packages/eval:
-    dependencies:
-      '@strudel.cycles/core':
-        specifier: workspace:*
-        version: link:../core
-      estraverse:
-        specifier: ^5.3.0
-        version: 5.3.0
-      shift-ast:
-        specifier: ^7.0.0
-        version: 7.0.0
-      shift-codegen:
-        specifier: ^8.1.0
-        version: 8.1.0
-      shift-parser:
-        specifier: ^8.0.0
-        version: 8.0.0
-      shift-spec:
-        specifier: ^2019.0.0
-        version: 2019.0.0
-      shift-traverser:
-        specifier: ^1.0.0
-        version: 1.0.0
-    devDependencies:
-      '@strudel.cycles/mini':
-        specifier: workspace:*
-        version: link:../mini
-      vite:
-        specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
-      vitest:
-        specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.28.0)
-
   packages/midi:
     dependencies:
       '@strudel.cycles/core':
@@ -442,22 +408,6 @@ importers:
         specifier: ^0.28.0
         version: 0.28.0(@vitest/ui@0.28.0)
 
-  packages/tone:
-    dependencies:
-      '@strudel.cycles/core':
-        specifier: workspace:*
-        version: link:../core
-      tone:
-        specifier: ^14.7.77
-        version: 14.7.77
-    devDependencies:
-      vite:
-        specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
-      vitest:
-        specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.28.0)
-
   packages/transpiler:
     dependencies:
       '@strudel.cycles/core':
@@ -527,25 +477,6 @@ importers:
       vite:
         specifier: ^4.3.3
         version: 4.3.3(@types/node@18.16.3)
-
-  packages/webdirt:
-    dependencies:
-      '@strudel.cycles/core':
-        specifier: workspace:*
-        version: link:../core
-      '@strudel.cycles/webaudio':
-        specifier: workspace:*
-        version: link:../webaudio
-      WebDirt:
-        specifier: github:dktr0/WebDirt
-        version: github.com/dktr0/WebDirt/d2ce441e82a11036455e93643af5938a844eee27
-    devDependencies:
-      vite:
-        specifier: ^4.3.3
-        version: 4.3.3(@types/node@18.16.3)
-      vitest:
-        specifier: ^0.28.0
-        version: 0.28.0(@vitest/ui@0.28.0)
 
   packages/xen:
     dependencies:
@@ -6783,11 +6714,6 @@ packages:
     dependencies:
       estraverse: 5.3.0
 
-  /estraverse@4.2.0:
-    resolution: {integrity: sha512-VHvyaGnJy+FuGfcfaM7W7OZw4mQiKW73jPHwQXx2VnMSUBajYmytOT5sKEfsBvNPtGX6YDwcrGDz2eocoHg0JA==}
-    engines: {node: '>=0.10.0'}
-    dev: false
-
   /estraverse@5.3.0:
     resolution: {integrity: sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA==}
     engines: {node: '>=4.0'}
@@ -9791,10 +9717,6 @@ packages:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
     dev: true
 
-  /multimap@1.1.0:
-    resolution: {integrity: sha512-0ZIR9PasPxGXmRsEF8jsDzndzHDj7tIav+JUmvIFB/WHswliFnquxECT/De7GR4yg99ky/NlRKJT82G1y271bw==}
-    dev: false
-
   /multimatch@5.0.0:
     resolution: {integrity: sha512-ypMKuglUrZUD99Tk2bUQ+xNQj43lPEfAeX2o9cTteAmShXy2VHDJpuwu1o0xqoKCt9jLVAvwyFKdLTPXKAfJyA==}
     engines: {node: '>=10'}
@@ -11842,56 +11764,6 @@ packages:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
 
-  /shift-ast@7.0.0:
-    resolution: {integrity: sha512-O0INwsZa1XH/lMSf52udGnjNOxKBLxFiZHt0Ys3i6bqtwuGEA3eDR4+e0qJELIsCy8+BiTtlTgQzP76K1ehipQ==}
-    dev: false
-
-  /shift-codegen@8.1.0:
-    resolution: {integrity: sha512-hV48SiFM0pgTLCueh0iwqbvqElXPtZL69nb+3eXOU3iZZnLP+AlBQSLKKvHSPr/Onmk0lcUEkAM7RA6V6Wj1GQ==}
-    dependencies:
-      esutils: 2.0.3
-      object-assign: 4.1.1
-      shift-reducer: 7.0.0
-    dev: false
-
-  /shift-parser@8.0.0:
-    resolution: {integrity: sha512-IShW1wGhvA5e+SPNVQ+Dwi/Be6651F2jZc6wwYHbYW7PiswAYfvR/v3Q+CjjxsVCna5L6J5OtR6y+tkkCzvCfw==}
-    dependencies:
-      multimap: 1.1.0
-      shift-ast: 7.0.0
-      shift-reducer: 7.0.0
-      shift-regexp-acceptor: 3.0.0
-    dev: false
-
-  /shift-reducer@7.0.0:
-    resolution: {integrity: sha512-9igIDMHzp1+CkQZITGHM1sAd9jqMPV0vhqHuh8jlYumHSMIwsYcrDeo1tlpzNRUnfbEq1nLyh8Bf1YU8HGUE7g==}
-    dependencies:
-      shift-ast: 7.0.0
-    dev: false
-
-  /shift-regexp-acceptor@3.0.0:
-    resolution: {integrity: sha512-98UKizBjHY6SjjLUr51YYw4rtR+vxjGFm8znqNsoahesAI8Y9+WVAyiBCxxkov1KSDhW0Wz8FwwUqHnlFnjdUg==}
-    dependencies:
-      unicode-match-property-ecmascript: 1.0.4
-      unicode-match-property-value-ecmascript: 1.0.2
-      unicode-property-aliases-ecmascript: 1.0.4
-    dev: false
-
-  /shift-spec@2018.0.0:
-    resolution: {integrity: sha512-/aiPOkj7dbe+CV2VZhIMTHQToZmgniofpRG7Yr7x2/0sO6CSVC++py1Wzf+s+rWSTDHKcLvziVAxjRRV4i4EoQ==}
-    dev: false
-
-  /shift-spec@2019.0.0:
-    resolution: {integrity: sha512-vYfKl+afWPUj/wfr5T/+mdYvWx0nn8LY6hVdfZmFENdGEBpAfQyOTo4/5i+rs8mj+Jz4+0MnsP4vXagjEoHfEw==}
-    dev: false
-
-  /shift-traverser@1.0.0:
-    resolution: {integrity: sha512-DMY3512wJbdC+IC+nhLH3/Stgr2BbxbNcg7qyZ6+e5qNnNs8TBQJWdMsRgHlX1JXwF4C0ONKS8VUxsPT0Tf7aw==}
-    dependencies:
-      estraverse: 4.2.0
-      shift-spec: 2018.0.0
-    dev: false
-
   /shiki@0.11.1:
     resolution: {integrity: sha512-EugY9VASFuDqOexOgXR18ZV+TbFrQHeCpEYaXamO+SZlsnT/2LxuLBX25GGtIrwaEVFXUAbUQ601SWE2rMwWHA==}
     dependencies:
@@ -12624,13 +12496,6 @@ packages:
     dependencies:
       is-number: 7.0.0
 
-  /tone@14.7.77:
-    resolution: {integrity: sha512-tCfK73IkLHyzoKUvGq47gyDyxiKLFvKiVCOobynGgBB9Dl0NkxTM2p+eRJXyCYrjJwy9Y0XCMqD3uOYsYt2Fdg==}
-    dependencies:
-      standardized-audio-context: 25.3.37
-      tslib: 2.5.0
-    dev: false
-
   /totalist@3.0.0:
     resolution: {integrity: sha512-eM+pCBxXO/njtF7vdFsHuqb+ElbxqtI4r5EAvk6grfAFyJ6IvWlSkfZ5T9ozC6xWw3Fj1fGoSmrl0gUs46JVIw==}
     engines: {node: '>=6'}
@@ -12880,23 +12745,10 @@ packages:
   /unherit@3.0.1:
     resolution: {integrity: sha512-akOOQ/Yln8a2sgcLj4U0Jmx0R5jpIg2IUyRrWOzmEbjBtGzBdHtSeFKgoEcoH4KYIG/Pb8GQ/BwtYm0GCq1Sqg==}
 
-  /unicode-canonical-property-names-ecmascript@1.0.4:
-    resolution: {integrity: sha512-jDrNnXWHd4oHiTZnx/ZG7gtUTVp+gCcTTKr8L0HjlwphROEW3+Him+IpvC+xcJEFegapiMZyZe02CyuOnRmbnQ==}
-    engines: {node: '>=4'}
-    dev: false
-
   /unicode-canonical-property-names-ecmascript@2.0.0:
     resolution: {integrity: sha512-yY5PpDlfVIU5+y/BSCxAJRBIS1Zc2dDG3Ujq+sR0U+JjUevW2JhocOF+soROYDSaAezOzOKuyyixhD6mBknSmQ==}
     engines: {node: '>=4'}
     dev: true
-
-  /unicode-match-property-ecmascript@1.0.4:
-    resolution: {integrity: sha512-L4Qoh15vTfntsn4P1zqnHulG0LdXgjSO035fEpdtp6YxXhMT51Q6vgM5lYdG/5X3MjS+k/Y9Xw4SFCY9IkR0rg==}
-    engines: {node: '>=4'}
-    dependencies:
-      unicode-canonical-property-names-ecmascript: 1.0.4
-      unicode-property-aliases-ecmascript: 1.0.4
-    dev: false
 
   /unicode-match-property-ecmascript@2.0.0:
     resolution: {integrity: sha512-5kaZCrbp5mmbz5ulBkDkbY0SsPOjKqVS35VpL9ulMPfSl0J0Xsm+9Evphv9CoIZFwre7aJoa94AY6seMKGVN5Q==}
@@ -12906,20 +12758,10 @@ packages:
       unicode-property-aliases-ecmascript: 2.1.0
     dev: true
 
-  /unicode-match-property-value-ecmascript@1.0.2:
-    resolution: {integrity: sha512-Rx7yODZC1L/T8XKo/2kNzVAQaRE88AaMvI1EF/Xnj3GW2wzN6fop9DDWuFAKUVFH7vozkz26DzP0qyWLKLIVPQ==}
-    engines: {node: '>=4'}
-    dev: false
-
   /unicode-match-property-value-ecmascript@2.1.0:
     resolution: {integrity: sha512-qxkjQt6qjg/mYscYMC0XKRn3Rh0wFPlfxB0xkt9CfyTvpX1Ra0+rAmdX2QyAobptSEvuy4RtpPRui6XkV+8wjA==}
     engines: {node: '>=4'}
     dev: true
-
-  /unicode-property-aliases-ecmascript@1.0.4:
-    resolution: {integrity: sha512-2WSLa6OdYd2ng8oqiGIWnJqyFArvhn+5vgx5GTxMbUYjCYKUcuKS62YLFF0R/BDGlB1yzXjQOLtPAfHsgirEpg==}
-    engines: {node: '>=4'}
-    dev: false
 
   /unicode-property-aliases-ecmascript@2.1.0:
     resolution: {integrity: sha512-6t3foTQI9qne+OZoVQB/8x8rk2k1eVy1gRXhV3oFQ5T6R1dqQ1xtin3XqSlx3+ATBkliTaR/hHyJBm+LVPNM8w==}
@@ -13897,9 +13739,3 @@ packages:
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
-
-  github.com/dktr0/WebDirt/d2ce441e82a11036455e93643af5938a844eee27:
-    resolution: {tarball: https://codeload.github.com/dktr0/WebDirt/tar.gz/d2ce441e82a11036455e93643af5938a844eee27}
-    name: webdirt
-    version: 1.0.1
-    dev: false
