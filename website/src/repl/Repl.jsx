@@ -218,29 +218,6 @@ export function Repl({ embedded = false }) {
     // console.log('selectino change', selection.ranges[0].from);
   }, []);
 
-  const handleDocChanged = useCallback(
-    ({ view }) => {
-      if (!init) {
-        // this is only for testing! try this pattern:
-        /*
-stack(
-  s("bd"),
-  s("hh oh*<2 3>")
-)
-        */
-        updateMiniLocations(view, [
-          [12, 14],
-          [23, 25],
-          [26, 28],
-          [30, 31],
-          [32, 33],
-        ]);
-        init = true;
-      }
-    },
-    [view],
-  );
-
   const handleTogglePlay = async () => {
     await getAudioContext().resume(); // fixes no sound in ios webkit
     if (!started) {
@@ -335,7 +312,6 @@ stack(
             onChange={handleChangeCode}
             onViewChanged={handleViewChanged}
             onSelectionChange={handleSelectionChange}
-            onDocChange={handleDocChanged}
           />
         </section>
         {error && (
