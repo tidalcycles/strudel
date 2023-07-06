@@ -31,6 +31,7 @@ export const note2midi = (note) => {
   return pc2chroma(pc) + oct * 12 + 12;
 };
 
+// duplicate: util.mjs (does not support sharp flag)
 export const midi2note = (midi, sharp = false) => {
   const oct = Math.floor(midi / 12) - 1;
   const pc = (sharp ? sharps : flats)[midi % 12];
