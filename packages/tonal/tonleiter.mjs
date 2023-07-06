@@ -1,0 +1,126 @@
+// https://codesandbox.io/s/stateless-voicings-g2tmz0?file=/src/lib.js:0-2515
+
+const flats = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+const sharps = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const accs = { b: -1, '#': 1 };
+
+export const pc2chroma = (pc) => {
+  const [letter, ...rest] = pc.split('');
+  return flats.indexOf(letter) + rest.reduce((sum, sign) => sum + accs[sign], 0);
+};
+
+export const rotateChroma = (chroma, steps) => (chroma + steps) % 12;
+
+export const chroma2pc = (chroma, sharp = false) => {
+  return (sharp ? sharps : flats)[chroma];
+};
+
+export function tokenizeChord(chord) {
+  const match = (chord || '').match(/^([A-G][b#]*)([^/]*)[/]?([A-G][b#]*)?$/);
+  if (!match) {
+    // console.warn('could not tokenize chord', chord);
+    return [];
+  }
+  return match.slice(1);
+}
+export const note2pc = (note) => note.slice(0, -1);
+export const note2oct = (note) => Number(note.slice(-1));
+
+export const note2midi = (note) => {
+  const [pc, oct] = [note2pc(note), note2oct(note)];
+  return pc2chroma(pc) + oct * 12 + 12;
+};
+
+export const midi2note = (midi, sharp = false) => {
+  const oct = Math.floor(midi / 12) - 1;
+  const pc = (sharp ? sharps : flats)[midi % 12];
+  return pc + oct;
+};
+
+export function voiceBelow(maxNote, chord, voicingDictionary) {
+  const [root, symbol] = tokenizeChord(chord);
+  const maxPc = note2pc(maxNote);
+  const maxChroma = pc2chroma(maxPc);
+  const rootChroma = pc2chroma(root);
+  const voicings = voicingDictionary[symbol].map((voicing) =>
+    typeof voicing === 'string' ? voicing.split(' ').map((n) => parseInt(n, 10)) : voicing,
+  );
+
+  let minDistance, bestIndex;
+  voicings.forEach((voicing, i) => {
+    // get chroma of topnote
+    const topChroma = rotateChroma(voicing[voicing.length - 1], rootChroma);
+    // calculate distance up
+    const diff = (maxChroma - topChroma + 12) % 12;
+    if (minDistance === undefined || diff < minDistance) {
+      minDistance = diff;
+      bestIndex = i;
+    }
+  });
+  const voicing = voicings[bestIndex];
+  const maxMidi = note2midi(maxNote);
+  const topMidi = maxMidi - minDistance;
+
+  const voicingMidi = voicing.map((v) => topMidi - voicing[voicing.length - 1] + v);
+  return voicingMidi.map((n) => midi2note(n));
+}
+
+// https://github.com/tidalcycles/strudel/blob/14184993d0ee7d69c47df57ac864a1a0f99a893f/packages/tonal/tonleiter.mjs
+const steps = [1, 0, 2, 0, 3, 4, 0, 5, 0, 6, 0, 7];
+const notes = ['C', '', 'D', '', 'E', 'F', '', 'G', '', 'A', '', 'B'];
+const noteLetters = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+
+export const accidentalOffset = (accidentals) => {
+  return accidentals.split('#').length - accidentals.split('b').length;
+};
+
+const accidentalString = (offset) => {
+  if (offset < 0) {
+    return 'b'.repeat(-offset);
+  }
+  if (offset > 0) {
+    return '#'.repeat(offset);
+  }
+  return '';
+};
+
+export const Step = {
+  tokenize(step) {
+    const matches = step.match(/^([#b]*)([1-9][0-9]*)$/);
+    if (!matches) {
+      throw new Error(`Step.tokenize: not a valid step: ${step}`);
+    }
+    const [accidentals, stepNumber] = matches.slice(1);
+    return [accidentals, parseInt(stepNumber)];
+  },
+  accidentals(step) {
+    return accidentalOffset(Step.tokenize(step)[0]);
+  },
+};
+
+export const Note = {
+  // TODO: support octave numbers
+  tokenize(note) {
+    return [note[0], note.slice(1)];
+  },
+  accidentals(note) {
+    return accidentalOffset(this.tokenize(note)[1]);
+  },
+};
+
+// TODO: support octave numbers
+export function transpose(note, step) {
+  // example: E, 3
+  const stepNumber = Step.tokenize(step)[1]; // 3
+  const noteLetter = Note.tokenize(note)[0]; // E
+  const noteIndex = noteLetters.indexOf(noteLetter); // 2 "E is C+2"
+  const targetNote = noteLetters[(noteIndex + stepNumber - 1) % 8]; // G "G is a third above E"
+  const rootIndex = notes.indexOf(noteLetter); // 4 "E is 4 semitones above C"
+  const targetIndex = notes.indexOf(targetNote); // 7 "G is 7 semitones above C"
+  const indexOffset = targetIndex - rootIndex; // 3 (E to G is normally a 3 semitones)
+  const stepIndex = steps.indexOf(stepNumber); // 4 ("3" is normally 4 semitones)
+  const offsetAccidentals = accidentalString(Step.accidentals(step) + Note.accidentals(note) + stepIndex - indexOffset); // "we need to add a # to to the G to make it a major third from E"
+  return [targetNote, offsetAccidentals].join('');
+}
+
+//Note("Bb3").transpose("c3")
