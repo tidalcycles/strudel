@@ -29,7 +29,7 @@ export async function defaultPrebake() {
 let initDone;
 
 let scheduler;
-export function initStrudel(options = {}) {
+export async function initStrudel(options = {}) {
   initAudioOnFirstClick();
   miniAllStrings();
   const { prebake, ...schedulerOptions } = options;
@@ -39,6 +39,8 @@ export function initStrudel(options = {}) {
     await prebake?.();
   })();
   scheduler = webaudioScheduler(schedulerOptions);
+  await initDone;
+  return { scheduler };
 }
 
 window.initStrudel = initStrudel;
