@@ -198,6 +198,8 @@ export function pianoroll({
   let from = -cycles * playhead;
   let to = cycles * (1 - playhead);
 
+  ctx.lineWidth = 1;
+
   if (timeframeProp) {
     console.warn('timeframe is deprecated! use from/to instead');
     from = 0;
