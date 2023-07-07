@@ -2258,9 +2258,9 @@ export const slice = register(
         opat.outerBind((o) => {
           // If it's not an object, assume it's a string and make it a 's' control parameter
           o = o instanceof Object ? o : { s: o };
-          // Remember we must stay pure and avoid editing the object directly
-          const toAdd = { begin: i / n, end: (i + 1) / n, _slices: n };
-          return pure({ ...toAdd, ...o });
+          const begin = Array.isArray(n) ? n[i] : i / n;
+          const end = Array.isArray(n) ? n[i + 1] : (i + 1) / n;
+          return pure({ begin, end, _slices: n, ...o });
         }),
       ),
     );
