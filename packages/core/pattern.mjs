@@ -2240,14 +2240,18 @@ const _loopAt = function (factor, pat, cps = 1) {
     .slow(factor);
 };
 
-/*
+/**
  * Chops samples into the given number of slices, triggering those slices with a given pattern of slice numbers.
+ * Instead of a number, it also accepts a list of numbers from 0 to 1 to slice at specific points.
  * @name slice
  * @memberof Pattern
  * @returns Pattern
  * @example
  * await samples('github:tidalcycles/Dirt-Samples/master')
  * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(1.5)
+ * @example
+ * await samples('github:tidalcycles/Dirt-Samples/master')
+ * s("breaks125/2").fit().slice([0,.25,.5,.75], "0 1 1 <2 3>")
  */
 
 export const slice = register(
