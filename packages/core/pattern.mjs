@@ -2306,6 +2306,19 @@ export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (facto
   return _loopAt(factor, pat, 1);
 });
 
+// this function will be redefined in repl.mjs to use the correct cps value.
+// It is still here to work in cases where repl.mjs is not used
+
+export const fit = register('fit', (pat) =>
+  pat.withHap((hap) =>
+    hap.withValue((v) => ({
+      ...v,
+      speed: 1 / hap.whole.duration,
+      unit: 'c',
+    })),
+  ),
+);
+
 /**
  * Makes the sample fit the given number of cycles and cps value, by
  * changing the speed. Please note that at some point cps will be
