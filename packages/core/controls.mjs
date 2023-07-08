@@ -573,6 +573,12 @@ const generic_params = [
   // TODO: dedup with synth param, see https://tidalcycles.org/docs/reference/synthesizers/#superpiano
   // ['velocity'],
   ['voice'], // TODO: synth param
+
+  // voicings
+  ['chord'], // https://github.com/tidalcycles/strudel/issues/506
+  ['voiceBelow', 'voicebelow'], // https://github.com/tidalcycles/strudel/issues/506
+  ['voiceMax', 'voicemax'], // https://github.com/tidalcycles/strudel/issues/506
+
   /**
    * Sets the level of reverb.
    *

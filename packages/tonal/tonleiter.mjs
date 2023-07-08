@@ -1,3 +1,5 @@
+import { isNote, isNoteWithOctave } from '@strudel.cycles/core';
+
 // https://codesandbox.io/s/stateless-voicings-g2tmz0?file=/src/lib.js:0-2515
 
 const flats = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
@@ -29,6 +31,27 @@ export const note2oct = (note) => Number(note.slice(-1));
 export const note2midi = (note) => {
   const [pc, oct] = [note2pc(note), note2oct(note)];
   return pc2chroma(pc) + oct * 12 + 12;
+};
+export const note2chroma = (note) => {
+  return pc2chroma(note2pc(note));
+};
+
+// TODO: test
+export const midi2chroma = (midi) => midi % 12;
+
+// TODO: test and use in voicing function
+export const x2chroma = (x) => {
+  if (isNoteWithOctave(x)) {
+    return note2chroma(x);
+  }
+  if (isNote(x)) {
+    //pc
+    return pc2chroma(x);
+  }
+  if (typeof x === 'number') {
+    // expect midi
+    return midi2chroma(x);
+  }
 };
 
 // duplicate: util.mjs (does not support sharp flag)

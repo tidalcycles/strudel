@@ -55,6 +55,8 @@ describe('tonleiter', () => {
     expect(pc2chroma('D')).toBe(2);
     expect(pc2chroma('Db')).toBe(1);
     expect(pc2chroma('Dbb')).toBe(0);
+    //lowercase
+    // expect(pc2chroma('c')).toBe(0); // TODO
   });
   test('rotateChroma', () => {
     expect(rotateChroma(0, 1)).toBe(1);
@@ -80,6 +82,7 @@ describe('tonleiter', () => {
     expect(note2pc('C5')).toBe('C');
     // expect(note2pc('C52')).toBe('C'); // <- 2 digits fail
     expect(note2pc('Bb3')).toBe('Bb');
+    //expect(note2pc('F')).toBe('F'); // <- fails
   });
   test('note2oct', () => {
     expect(note2oct('C5')).toBe(5);
@@ -103,10 +106,12 @@ describe('tonleiter', () => {
     const voicingDictionary = {
       m7: [
         '3 7 10 14', // b3 5 b7 9
-        '10 14 5 19', // b7 9 b3 5
+        '10 14 15 19', // b7 9 b3 5
       ],
     };
     expect(voiceBelow('Bb4', 'Em7', voicingDictionary)).toEqual(['G3', 'B3', 'D4', 'Gb4']);
     expect(voiceBelow('D5', 'Cm7', voicingDictionary)).toEqual(['Eb4', 'G4', 'Bb4', 'D5']);
+    expect(voiceBelow('G5', 'Cm7', voicingDictionary)).toEqual(['Bb4', 'D5', 'Eb5', 'G5']);
+    // expect(voiceBelow('G4', 'Cm7', voicingDictionary)).toEqual(['Bb3', 'D4', 'Eb4', 'G4']);
   });
 });
