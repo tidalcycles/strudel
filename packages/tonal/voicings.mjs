@@ -139,13 +139,13 @@ export const rootNotes = register('rootNotes', function (octave, pat) {
 export const voicing = register('voicing', function (dictionary, pat) {
   return pat
     .fmap((value) => {
-      let { voiceMax: max, voiceBelow: below, voiceOffset: offset, chord, ...rest } = value;
+      let { voiceMax: max, voiceBelow: below, voiceOffset: offset, chord, n, ...rest } = value;
       let top = max || below;
       top = top?.note || top || 'c5';
       if (typeof dictionary === 'string') {
         dictionary = voicingRegistry[dictionary]?.dictionary;
       }
-      let notes = voiceBelow(top, chord, dictionary, offset);
+      let notes = voiceBelow(top, chord, dictionary, offset, n);
       if (below) {
         notes = notes.filter((n) => note2midi(n) !== note2midi(top));
       }

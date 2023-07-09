@@ -18,6 +18,7 @@ import {
   note2midi,
   midi2note,
   voiceBelow,
+  scaleStep,
 } from '../tonleiter.mjs';
 
 describe('tonleiter', () => {
@@ -101,6 +102,17 @@ describe('tonleiter', () => {
     expect(midi2note(60)).toBe('C4');
     expect(midi2note(61)).toBe('Db4');
     expect(midi2note(61, true)).toBe('C#4');
+  });
+  test('scaleStep', () => {
+    expect(scaleStep([60, 63, 67], 0)).toBe(60);
+    expect(scaleStep([60, 63, 67], 1)).toBe(63);
+    expect(scaleStep([60, 63, 67], 2)).toBe(67);
+    expect(scaleStep([60, 63, 67], 3)).toBe(72);
+    expect(scaleStep([60, 63, 67], 4)).toBe(75);
+    expect(scaleStep([60, 63, 67], -1)).toBe(55);
+    expect(scaleStep([60, 63, 67], -2)).toBe(51);
+    expect(scaleStep([60, 63, 67], -3)).toBe(48);
+    expect(scaleStep([60, 63, 67], -4)).toBe(43);
   });
   test('voiceBelow', () => {
     const voicingDictionary = {

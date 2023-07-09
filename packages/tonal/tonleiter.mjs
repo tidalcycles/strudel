@@ -61,7 +61,14 @@ export const midi2note = (midi, sharp = false) => {
   return pc + oct;
 };
 
-export function voiceBelow(maxNote, chord, voicingDictionary, offset = 0) {
+export function scaleStep(notes, offset) {
+  notes = notes.map((note) => (typeof note === 'string' ? note2midi(note) : note));
+  const octOffset = Math.floor(offset / notes.length) * 12;
+  offset = _mod(offset, 12);
+  return notes[offset % notes.length] + octOffset;
+}
+
+export function voiceBelow(maxNote, chord, voicingDictionary, offset = 0, n) {
   const [root, symbol] = tokenizeChord(chord);
   const maxPc = note2pc(maxNote);
   const maxChroma = pc2chroma(maxPc);
@@ -81,15 +88,18 @@ export function voiceBelow(maxNote, chord, voicingDictionary, offset = 0) {
     return diff;
   });
 
-  const octDiff =
-    offset >= 0 ? Math.ceil(offset / voicings.length) * 12 : Math.floor(Math.abs(offset) / voicings.length) * -12;
-  bestIndex = _mod(bestIndex + offset, voicings.length);
-  const voicing = voicings[bestIndex];
+  const octDiff = Math.ceil(offset / voicings.length) * 12;
+  const indexWithOffset = _mod(bestIndex + offset, voicings.length);
+  const voicing = voicings[indexWithOffset];
   const maxMidi = note2midi(maxNote);
-  const topMidi = maxMidi - chromaDiffs[bestIndex] + octDiff;
+  const topMidi = maxMidi - chromaDiffs[indexWithOffset] + octDiff;
 
   const voicingMidi = voicing.map((v) => topMidi - voicing[voicing.length - 1] + v);
-  return voicingMidi.map((n) => midi2note(n));
+  const notes = voicingMidi.map((n) => midi2note(n));
+  if (n !== undefined) {
+    return [scaleStep(notes, n)];
+  }
+  return notes;
 }
 
 // https://github.com/tidalcycles/strudel/blob/14184993d0ee7d69c47df57ac864a1a0f99a893f/packages/tonal/tonleiter.mjs
