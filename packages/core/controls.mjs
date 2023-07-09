@@ -578,6 +578,7 @@ const generic_params = [
   ['chord'], // https://github.com/tidalcycles/strudel/issues/506
   ['voiceBelow', 'voicebelow'], // https://github.com/tidalcycles/strudel/issues/506
   ['voiceMax', 'voicemax'], // https://github.com/tidalcycles/strudel/issues/506
+  ['voiceOffset', 'voiceoffset'], // https://github.com/tidalcycles/strudel/issues/506
 
   /**
    * Sets the level of reverb.

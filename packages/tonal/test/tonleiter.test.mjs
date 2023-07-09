@@ -113,5 +113,6 @@ describe('tonleiter', () => {
     expect(voiceBelow('D5', 'Cm7', voicingDictionary)).toEqual(['Eb4', 'G4', 'Bb4', 'D5']);
     expect(voiceBelow('G5', 'Cm7', voicingDictionary)).toEqual(['Bb4', 'D5', 'Eb5', 'G5']);
     // expect(voiceBelow('G4', 'Cm7', voicingDictionary)).toEqual(['Bb3', 'D4', 'Eb4', 'G4']);
+    // TODO: test with offset
   });
 });
