@@ -1,4 +1,4 @@
-import { isNote, isNoteWithOctave } from '@strudel.cycles/core';
+import { isNote, isNoteWithOctave, _mod } from '@strudel.cycles/core';
 
 // https://codesandbox.io/s/stateless-voicings-g2tmz0?file=/src/lib.js:0-2515
 
@@ -61,7 +61,7 @@ export const midi2note = (midi, sharp = false) => {
   return pc + oct;
 };
 
-export function voiceBelow(maxNote, chord, voicingDictionary) {
+export function voiceBelow(maxNote, chord, voicingDictionary, offset = 0) {
   const [root, symbol] = tokenizeChord(chord);
   const maxPc = note2pc(maxNote);
   const maxChroma = pc2chroma(maxPc);
@@ -71,19 +71,22 @@ export function voiceBelow(maxNote, chord, voicingDictionary) {
   );
 
   let minDistance, bestIndex;
-  voicings.forEach((voicing, i) => {
-    // get chroma of topnote
-    const topChroma = rotateChroma(voicing[voicing.length - 1], rootChroma);
-    // calculate distance up
-    const diff = (maxChroma - topChroma + 12) % 12;
+  // calculate distances up from voicing top notes
+  let chromaDiffs = voicings.map((v, i) => {
+    const diff = _mod(maxChroma - v.slice(-1)[0] - rootChroma, 12);
     if (minDistance === undefined || diff < minDistance) {
       minDistance = diff;
       bestIndex = i;
     }
+    return diff;
   });
+
+  const octDiff =
+    offset >= 0 ? Math.ceil(offset / voicings.length) * 12 : Math.floor(Math.abs(offset) / voicings.length) * -12;
+  bestIndex = _mod(bestIndex + offset, voicings.length);
   const voicing = voicings[bestIndex];
   const maxMidi = note2midi(maxNote);
-  const topMidi = maxMidi - minDistance;
+  const topMidi = maxMidi - chromaDiffs[bestIndex] + octDiff;
 
   const voicingMidi = voicing.map((v) => topMidi - voicing[voicing.length - 1] + v);
   return voicingMidi.map((n) => midi2note(n));
