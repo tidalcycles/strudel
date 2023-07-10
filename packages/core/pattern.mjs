@@ -2240,14 +2240,18 @@ const _loopAt = function (factor, pat, cps = 1) {
     .slow(factor);
 };
 
-/*
+/**
  * Chops samples into the given number of slices, triggering those slices with a given pattern of slice numbers.
+ * Instead of a number, it also accepts a list of numbers from 0 to 1 to slice at specific points.
  * @name slice
  * @memberof Pattern
  * @returns Pattern
  * @example
  * await samples('github:tidalcycles/Dirt-Samples/master')
  * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(1.5)
+ * @example
+ * await samples('github:tidalcycles/Dirt-Samples/master')
+ * s("breaks125/2").fit().slice([0,.25,.5,.75], "0 1 1 <2 3>")
  */
 
 export const slice = register(
@@ -2258,9 +2262,9 @@ export const slice = register(
         opat.outerBind((o) => {
           // If it's not an object, assume it's a string and make it a 's' control parameter
           o = o instanceof Object ? o : { s: o };
-          // Remember we must stay pure and avoid editing the object directly
-          const toAdd = { begin: i / n, end: (i + 1) / n, _slices: n };
-          return pure({ ...toAdd, ...o });
+          const begin = Array.isArray(n) ? n[i] : i / n;
+          const end = Array.isArray(n) ? n[i + 1] : (i + 1) / n;
+          return pure({ begin, end, _slices: n, ...o });
         }),
       ),
     );
@@ -2301,6 +2305,19 @@ export const splice = register(
 export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
   return _loopAt(factor, pat, 1);
 });
+
+// this function will be redefined in repl.mjs to use the correct cps value.
+// It is still here to work in cases where repl.mjs is not used
+
+export const fit = register('fit', (pat) =>
+  pat.withHap((hap) =>
+    hap.withValue((v) => ({
+      ...v,
+      speed: 1 / hap.whole.duration,
+      unit: 'c',
+    })),
+  ),
+);
 
 /**
  * Makes the sample fit the given number of cycles and cps value, by
