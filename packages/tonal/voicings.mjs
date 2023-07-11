@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { stack, register } from '@strudel.cycles/core';
-import { voiceBelow, note2midi } from './tonleiter.mjs';
+import { voiceBelow, note2midi, x2midi } from './tonleiter.mjs';
 import _voicings from 'chord-voicings';
 const { dictionaryVoicing, minTopNoteDiff } = _voicings.default || _voicings; // parcel module resolution fuckup
 
@@ -136,18 +136,18 @@ export const rootNotes = register('rootNotes', function (octave, pat) {
   });
 });
 
-export const voicing = register('voicing', function (dictionary, pat) {
+export const voicing = register('voicing', function (pat) {
   return pat
     .fmap((value) => {
-      let { voiceMax: max, voiceBelow: below, voiceOffset: offset, chord, n, ...rest } = value;
-      let top = max || below;
-      top = top?.note || top || 'c5';
+      // TODO: default dictionary?
+      let { anchor, mode, offset, chord, n, dictionary, ...rest } = value;
+      anchor = anchor?.note || anchor || 'c5';
       if (typeof dictionary === 'string') {
         dictionary = voicingRegistry[dictionary]?.dictionary;
       }
-      let notes = voiceBelow(top, chord, dictionary, offset, n);
-      if (below) {
-        notes = notes.filter((n) => note2midi(n) !== note2midi(top));
+      let notes = voiceBelow(anchor, chord, dictionary, offset, n);
+      if (mode === 'below') {
+        notes = notes.filter((n) => x2midi(n) !== note2midi(anchor));
       }
       return stack(...notes)
         .note()

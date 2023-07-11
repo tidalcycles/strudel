@@ -54,6 +54,15 @@ export const x2chroma = (x) => {
   }
 };
 
+export const x2midi = (x) => {
+  if (typeof x === 'number') {
+    return x;
+  }
+  if (typeof x === 'string') {
+    return note2midi(x);
+  }
+};
+
 // duplicate: util.mjs (does not support sharp flag)
 export const midi2note = (midi, sharp = false) => {
   const oct = Math.floor(midi / 12) - 1;

@@ -509,7 +509,7 @@ const generic_params = [
    * @superDirtOnly
    */
   ['octave'],
-  ['offset'], // TODO: what is this? not found in tidal doc
+
   // ['ophatdecay'],
   // TODO: example
   /**
@@ -574,11 +574,12 @@ const generic_params = [
   // ['velocity'],
   ['voice'], // TODO: synth param
 
-  // voicings
-  ['chord'], // https://github.com/tidalcycles/strudel/issues/506
-  ['voiceBelow', 'voicebelow'], // https://github.com/tidalcycles/strudel/issues/506
-  ['voiceMax', 'voicemax'], // https://github.com/tidalcycles/strudel/issues/506
-  ['voiceOffset', 'voiceoffset'], // https://github.com/tidalcycles/strudel/issues/506
+  // voicings // https://github.com/tidalcycles/strudel/issues/506
+  ['chord'], // chord to voice, like C Eb Fm7 G7. the symbols can be defined via addVoicings
+  ['dictionary', 'dict'], // which dictionary to use for the voicings
+  ['anchor'], // the top note to align the voicing to, defaults to c5
+  ['offset'], // how the voicing is offset from the anchored position
+  ['mode'], // below = anchor note will be removed from the voicing, useful for melody harmonization
 
   /**
    * Sets the level of reverb.
