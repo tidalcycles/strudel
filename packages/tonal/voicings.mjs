@@ -51,9 +51,9 @@ const triads = {
 };
 
 export const voicingRegistry = {
-  lefthand: { dictionary: lefthand, range: ['F3', 'A4'], mode: 'below', anchor: 'c5' },
-  triads: { dictionary: triads, mode: 'below', anchor: 'c5' },
-  guidetones: { dictionary: guidetones, mode: 'above', anchor: 'g4' },
+  lefthand: { dictionary: lefthand, range: ['F3', 'A4'], mode: 'below', anchor: 'a4' },
+  triads: { dictionary: triads, mode: 'below', anchor: 'a4' },
+  guidetones: { dictionary: guidetones, mode: 'above', anchor: 'a4' },
 };
 export const setVoicingRange = (name, range) => addVoicings(name, voicingRegistry[name].dictionary, range);
 
