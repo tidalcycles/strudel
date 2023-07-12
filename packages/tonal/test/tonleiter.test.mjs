@@ -17,7 +17,7 @@ import {
   note2oct,
   note2midi,
   midi2note,
-  voiceBelow,
+  renderVoicing,
   scaleStep,
 } from '../tonleiter.mjs';
 
@@ -56,8 +56,9 @@ describe('tonleiter', () => {
     expect(pc2chroma('D')).toBe(2);
     expect(pc2chroma('Db')).toBe(1);
     expect(pc2chroma('Dbb')).toBe(0);
-    //lowercase
-    // expect(pc2chroma('c')).toBe(0); // TODO
+    expect(pc2chroma('bb')).toBe(10);
+    expect(pc2chroma('f')).toBe(5);
+    expect(pc2chroma('c')).toBe(0);
   });
   test('rotateChroma', () => {
     expect(rotateChroma(0, 1)).toBe(1);
@@ -114,16 +115,17 @@ describe('tonleiter', () => {
     expect(scaleStep([60, 63, 67], -3)).toBe(48);
     expect(scaleStep([60, 63, 67], -4)).toBe(43);
   });
-  test('voiceBelow', () => {
+  test('renderVoicing', () => {
     const voicingDictionary = {
       m7: [
         '3 7 10 14', // b3 5 b7 9
         '10 14 15 19', // b7 9 b3 5
       ],
     };
-    expect(voiceBelow('Bb4', 'Em7', voicingDictionary)).toEqual(['G3', 'B3', 'D4', 'Gb4']);
-    expect(voiceBelow('D5', 'Cm7', voicingDictionary)).toEqual(['Eb4', 'G4', 'Bb4', 'D5']);
-    expect(voiceBelow('G5', 'Cm7', voicingDictionary)).toEqual(['Bb4', 'D5', 'Eb5', 'G5']);
+    expect(renderVoicing('Em7', 'Bb4', voicingDictionary)).toEqual(['G3', 'B3', 'D4', 'Gb4']);
+    expect(renderVoicing('Cm7', 'D5', voicingDictionary)).toEqual(['Eb4', 'G4', 'Bb4', 'D5']);
+    expect(renderVoicing('Cm7', 'G5', voicingDictionary)).toEqual(['Bb4', 'D5', 'Eb5', 'G5']);
+    expect(renderVoicing('Cm7', 'g5', voicingDictionary)).toEqual(['Bb4', 'D5', 'Eb5', 'G5']);
     // expect(voiceBelow('G4', 'Cm7', voicingDictionary)).toEqual(['Bb3', 'D4', 'Eb4', 'G4']);
     // TODO: test with offset
   });

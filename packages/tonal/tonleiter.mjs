@@ -1,14 +1,16 @@
 import { isNote, isNoteWithOctave, _mod } from '@strudel.cycles/core';
+import { Interval } from '@tonaljs/tonal';
 
 // https://codesandbox.io/s/stateless-voicings-g2tmz0?file=/src/lib.js:0-2515
 
 const flats = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+const pcs = ['c', 'db', 'd', 'eb', 'e', 'f', 'gb', 'g', 'ab', 'a', 'bb', 'b'];
 const sharps = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const accs = { b: -1, '#': 1 };
 
 export const pc2chroma = (pc) => {
   const [letter, ...rest] = pc.split('');
-  return flats.indexOf(letter) + rest.reduce((sum, sign) => sum + accs[sign], 0);
+  return pcs.indexOf(letter.toLowerCase()) + rest.reduce((sum, sign) => sum + accs[sign], 0);
 };
 
 export const rotateChroma = (chroma, steps) => (chroma + steps) % 12;
@@ -54,6 +56,14 @@ export const x2chroma = (x) => {
   }
 };
 
+export const step2semitones = (x) => {
+  let num = Number(x);
+  if (!isNaN(num)) {
+    return num;
+  }
+  return Interval.semitones(x);
+};
+
 export const x2midi = (x) => {
   if (typeof x === 'number') {
     return x;
@@ -77,13 +87,13 @@ export function scaleStep(notes, offset) {
   return notes[offset % notes.length] + octOffset;
 }
 
-export function voiceBelow(maxNote, chord, voicingDictionary, offset = 0, n) {
+export function renderVoicing(chord, anchor, voicingDictionary, offset = 0, n) {
   const [root, symbol] = tokenizeChord(chord);
-  const maxPc = note2pc(maxNote);
+  const maxPc = note2pc(anchor);
   const maxChroma = pc2chroma(maxPc);
   const rootChroma = pc2chroma(root);
   const voicings = voicingDictionary[symbol].map((voicing) =>
-    typeof voicing === 'string' ? voicing.split(' ').map((n) => parseInt(n, 10)) : voicing,
+    (typeof voicing === 'string' ? voicing.split(' ') : voicing).map(step2semitones),
   );
 
   let minDistance, bestIndex;
@@ -100,7 +110,7 @@ export function voiceBelow(maxNote, chord, voicingDictionary, offset = 0, n) {
   const octDiff = Math.ceil(offset / voicings.length) * 12;
   const indexWithOffset = _mod(bestIndex + offset, voicings.length);
   const voicing = voicings[indexWithOffset];
-  const maxMidi = note2midi(maxNote);
+  const maxMidi = note2midi(anchor);
   const topMidi = maxMidi - chromaDiffs[indexWithOffset] + octDiff;
 
   const voicingMidi = voicing.map((v) => topMidi - voicing[voicing.length - 1] + v);
