@@ -78,7 +78,12 @@ export const setVoicingRange = (name, range) => addVoicings(name, voicingRegistr
  * }, ['C3', 'C6'])
  * "<C^7 A7 Dm7 G7>".voicings('cookie').note()
  */
-export const addVoicings = (name, dictionary, options = {}) => {
+export const addVoicings = (name, dictionary, range = ['F3', 'A4']) => {
+  Object.assign(voicingRegistry, { [name]: { dictionary, range } });
+};
+
+// new call signature
+export const registerVoicings = (name, dictionary, options = {}) => {
   Object.assign(voicingRegistry, { [name]: { dictionary, ...options } });
 };
 
