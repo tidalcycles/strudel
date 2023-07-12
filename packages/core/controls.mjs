@@ -579,7 +579,7 @@ const generic_params = [
   ['dictionary', 'dict'], // which dictionary to use for the voicings
   ['anchor'], // the top note to align the voicing to, defaults to c5
   ['offset'], // how the voicing is offset from the anchored position
-  ['mode'], // below = anchor note will be removed from the voicing, useful for melody harmonization
+  [['mode', 'anchor']], // below = anchor note will be removed from the voicing, useful for melody harmonization
 
   /**
    * Sets the level of reverb.

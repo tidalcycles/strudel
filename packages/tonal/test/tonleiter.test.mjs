@@ -15,7 +15,6 @@ import {
   tokenizeChord,
   note2pc,
   note2oct,
-  note2midi,
   midi2note,
   renderVoicing,
   scaleStep,
@@ -92,13 +91,6 @@ describe('tonleiter', () => {
     expect(note2oct('C7')).toBe(7);
     //expect(note2oct('C10')).toBe(10); // <- 2 digits fail
   });
-  test('note2midi', () => {
-    expect(note2midi('C4')).toBe(60);
-    expect(note2midi('C#4')).toBe(61);
-    expect(note2midi('Cb4')).toBe(59);
-    expect(note2midi('Bb3')).toBe(58);
-    // expect(note2midi('C10')).toBe(58); // <- 2 digits fail
-  });
   test('midi2note', () => {
     expect(midi2note(60)).toBe('C4');
     expect(midi2note(61)).toBe('Db4');
@@ -122,14 +114,39 @@ describe('tonleiter', () => {
         '10 14 15 19', // b7 9 b3 5
       ],
     };
-    expect(renderVoicing({ chord: 'Em7', anchor: 'Bb4', dictionary })).toEqual(['G3', 'B3', 'D4', 'Gb4']);
-    expect(renderVoicing({ chord: 'Cm7', anchor: 'D5', dictionary })).toEqual(['Eb4', 'G4', 'Bb4', 'D5']);
-    expect(renderVoicing({ chord: 'Cm7', anchor: 'G5', dictionary })).toEqual(['Bb4', 'D5', 'Eb5', 'G5']);
-    expect(renderVoicing({ chord: 'Cm7', anchor: 'g5', dictionary })).toEqual(['Bb4', 'D5', 'Eb5', 'G5']);
-    expect(renderVoicing({ chord: 'Cm7', anchor: 'g5', dictionary, n: 0 })).toEqual([70]); // Bb4
-    expect(renderVoicing({ chord: 'Cm7', anchor: 'g5', dictionary, n: 1 })).toEqual([74]); // D5
-    expect(renderVoicing({ chord: 'Cm7', anchor: 'g5', dictionary, n: 4 })).toEqual([82]); // Bb5
-    expect(renderVoicing({ chord: 'Cm7', anchor: 'g5', dictionary, offset: 1 })).toEqual(['Eb5', 'G5', 'Bb5', 'D6']);
+    expect(renderVoicing({ chord: 'Em7', anchor: 'Bb4', dictionary, mode: 'below' })).toEqual([
+      'G3',
+      'B3',
+      'D4',
+      'Gb4',
+    ]);
+    expect(renderVoicing({ chord: 'Cm7', anchor: 'D5', dictionary, mode: 'below' })).toEqual([
+      'Eb4',
+      'G4',
+      'Bb4',
+      'D5',
+    ]);
+    expect(renderVoicing({ chord: 'Cm7', anchor: 'G5', dictionary, mode: 'below' })).toEqual([
+      'Bb4',
+      'D5',
+      'Eb5',
+      'G5',
+    ]);
+    expect(renderVoicing({ chord: 'Cm7', anchor: 'g5', dictionary, mode: 'below' })).toEqual([
+      'Bb4',
+      'D5',
+      'Eb5',
+      'G5',
+    ]);
+    expect(renderVoicing({ chord: 'Cm7', anchor: 'g5', dictionary, mode: 'below', n: 0 })).toEqual([70]); // Bb4
+    expect(renderVoicing({ chord: 'Cm7', anchor: 'g5', dictionary, mode: 'below', n: 1 })).toEqual([74]); // D5
+    expect(renderVoicing({ chord: 'Cm7', anchor: 'g5', dictionary, mode: 'below', n: 4 })).toEqual([82]); // Bb5
+    expect(renderVoicing({ chord: 'Cm7', anchor: 'g5', dictionary, mode: 'below', offset: 1 })).toEqual([
+      'Eb5',
+      'G5',
+      'Bb5',
+      'D6',
+    ]);
     // expect(voiceBelow('G4', 'Cm7', voicingDictionary)).toEqual(['Bb3', 'D4', 'Eb4', 'G4']);
     // TODO: test with offset
   });

@@ -1,4 +1,4 @@
-import { isNote, isNoteWithOctave, _mod } from '@strudel.cycles/core';
+import { isNote, isNoteWithOctave, _mod, noteToMidi } from '@strudel.cycles/core';
 import { Interval } from '@tonaljs/tonal';
 
 // https://codesandbox.io/s/stateless-voicings-g2tmz0?file=/src/lib.js:0-2515
@@ -30,10 +30,6 @@ export function tokenizeChord(chord) {
 export const note2pc = (note) => note.slice(0, -1);
 export const note2oct = (note) => Number(note.slice(-1));
 
-export const note2midi = (note) => {
-  const [pc, oct] = [note2pc(note), note2oct(note)];
-  return pc2chroma(pc) + oct * 12 + 12;
-};
 export const note2chroma = (note) => {
   return pc2chroma(note2pc(note));
 };
@@ -42,13 +38,13 @@ export const note2chroma = (note) => {
 export const midi2chroma = (midi) => midi % 12;
 
 // TODO: test and use in voicing function
-export const pitch2chroma = (x) => {
+export const pitch2chroma = (x, defaultOctave) => {
   if (isNoteWithOctave(x)) {
     return note2chroma(x);
   }
   if (isNote(x)) {
     //pc
-    return pc2chroma(x);
+    return pc2chroma(x, defaultOctave);
   }
   if (typeof x === 'number') {
     // expect midi
@@ -69,7 +65,7 @@ export const x2midi = (x) => {
     return x;
   }
   if (typeof x === 'string') {
-    return note2midi(x);
+    return noteToMidi(x);
   }
 };
 
@@ -81,17 +77,24 @@ export const midi2note = (midi, sharp = false) => {
 };
 
 export function scaleStep(notes, offset) {
-  notes = notes.map((note) => (typeof note === 'string' ? note2midi(note) : note));
+  notes = notes.map((note) => (typeof note === 'string' ? noteToMidi(note) : note));
   const octOffset = Math.floor(offset / notes.length) * 12;
   offset = _mod(offset, 12);
   return notes[offset % notes.length] + octOffset;
 }
 
-export function renderVoicing({ chord, anchor, dictionary, offset = 0, n, mode }) {
-  anchor = anchor?.note || anchor || 'c5';
+// different ways to resolve the note to compare the anchor to (see renderVoicing)
+let modeTarget = {
+  below: (v) => v.slice(-1)[0],
+  under: (v) => v.slice(-1)[0],
+  above: (v) => v[0],
+};
+
+export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'above', anchor = 'c4' }) {
   const [root, symbol] = tokenizeChord(chord);
-  const anchorChroma = pitch2chroma(anchor);
   const rootChroma = pc2chroma(root);
+  anchor = anchor?.note || anchor;
+  const anchorChroma = pitch2chroma(anchor);
   const voicings = dictionary[symbol].map((voicing) =>
     (typeof voicing === 'string' ? voicing.split(' ') : voicing).map(step2semitones),
   );
@@ -99,7 +102,8 @@ export function renderVoicing({ chord, anchor, dictionary, offset = 0, n, mode }
   let minDistance, bestIndex;
   // calculate distances up from voicing top notes
   let chromaDiffs = voicings.map((v, i) => {
-    const diff = _mod(anchorChroma - v.slice(-1)[0] - rootChroma, 12);
+    const targetStep = modeTarget[mode](v);
+    const diff = _mod(anchorChroma - targetStep - rootChroma, 12);
     if (minDistance === undefined || diff < minDistance) {
       minDistance = diff;
       bestIndex = i;
@@ -110,16 +114,16 @@ export function renderVoicing({ chord, anchor, dictionary, offset = 0, n, mode }
   const octDiff = Math.ceil(offset / voicings.length) * 12;
   const indexWithOffset = _mod(bestIndex + offset, voicings.length);
   const voicing = voicings[indexWithOffset];
-  const maxMidi = note2midi(anchor);
-  const topMidi = maxMidi - chromaDiffs[indexWithOffset] + octDiff;
+  const targetStep = modeTarget[mode](voicing);
+  const anchorMidi = noteToMidi(anchor, 4) - chromaDiffs[indexWithOffset] + octDiff;
 
-  const voicingMidi = voicing.map((v) => topMidi - voicing[voicing.length - 1] + v);
+  const voicingMidi = voicing.map((v) => anchorMidi - targetStep + v);
   let notes = voicingMidi.map((n) => midi2note(n));
   if (n !== undefined) {
     return [scaleStep(notes, n)];
   }
-  if (mode === 'below') {
-    notes = notes.filter((n) => x2midi(n) !== note2midi(anchor));
+  if (mode === 'under') {
+    notes = notes.filter((n) => x2midi(n) !== noteToMidi(anchor));
   }
   return notes;
 }
