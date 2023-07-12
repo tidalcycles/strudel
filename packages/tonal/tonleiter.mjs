@@ -90,7 +90,7 @@ let modeTarget = {
   above: (v) => v[0],
 };
 
-export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'above', anchor = 'c4' }) {
+export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'below', anchor = 'c5' }) {
   const [root, symbol] = tokenizeChord(chord);
   const rootChroma = pc2chroma(root);
   anchor = anchor?.note || anchor;

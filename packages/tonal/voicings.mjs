@@ -51,9 +51,9 @@ const triads = {
 };
 
 export const voicingRegistry = {
-  lefthand: { dictionary: lefthand, range: ['F3', 'A4'] },
-  triads: { dictionary: triads },
-  guidetones: { dictionary: guidetones },
+  lefthand: { dictionary: lefthand, range: ['F3', 'A4'], mode: 'below', anchor: 'c5' },
+  triads: { dictionary: triads, mode: 'below', anchor: 'c5' },
+  guidetones: { dictionary: guidetones, mode: 'above', anchor: 'g4' },
 };
 export const setVoicingRange = (name, range) => addVoicings(name, voicingRegistry[name].dictionary, range);
 
@@ -78,8 +78,8 @@ export const setVoicingRange = (name, range) => addVoicings(name, voicingRegistr
  * }, ['C3', 'C6'])
  * "<C^7 A7 Dm7 G7>".voicings('cookie').note()
  */
-export const addVoicings = (name, dictionary, range = ['F3', 'A4']) => {
-  Object.assign(voicingRegistry, { [name]: { dictionary, range } });
+export const addVoicings = (name, dictionary, options = {}) => {
+  Object.assign(voicingRegistry, { [name]: { dictionary, ...options } });
 };
 
 const getVoicing = (chord, dictionaryName, lastVoicing) => {
@@ -141,9 +141,9 @@ export const voicing = register('voicing', function (pat) {
     .fmap((value) => {
       let { dictionary, ...rest } = value;
       if (typeof dictionary === 'string') {
-        dictionary = voicingRegistry[dictionary]?.dictionary;
+        dictionary = voicingRegistry[dictionary];
       }
-      let notes = renderVoicing({ ...value, dictionary });
+      let notes = renderVoicing({ ...dictionary, ...rest });
 
       return stack(...notes)
         .note()
