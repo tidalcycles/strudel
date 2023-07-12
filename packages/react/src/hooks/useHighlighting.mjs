@@ -38,7 +38,6 @@ function useHighlighting({ view, pattern, active, getTime }) {
           cancelAnimationFrame(frame);
         };
       } else {
-        console.log('not active');
         highlights.current = [];
         highlightMiniLocations(view, 0, highlights.current);
       }
