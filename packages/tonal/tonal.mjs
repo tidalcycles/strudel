@@ -127,18 +127,18 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
  *
  * The root note defaults to octave 3, if no octave number is given.
  *
- * @memberof Pattern
  * @name scale
  * @param {string} scale Name of scale
  * @returns Pattern
  * @example
- * "0 2 4 6 4 2".scale("C2:major").note()
+ * n("0 2 4 6 4 2").scale("C:major")
  * @example
- * "0 2 4 6 4 2"
- * .scale("C2:<major minor>")
- * .note()
+ * n("[0,7] 4 [2,7] 4")
+ * .scale("C:<major minor>/2")
+ * .s("piano")
  * @example
- * "0 1 2 3 4 5 6 7".rev().scale("C2:<major minor>").note()
+ * n(rand.range(0,12).segment(8).round())
+ * .scale("C:ritusen")
  * .s("folkharp")
  */
 

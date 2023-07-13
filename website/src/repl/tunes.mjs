@@ -86,7 +86,7 @@ stack(
     "Eb^7 [Am7 D7] G^7 [C#m7 F#7]",
     "B^7 [Fm7 Bb7] Eb^7 [C#m7 F#7]"
   ).dict('lefthand')
-  .anchor(melody).mode('under')
+  .anchor(melody).mode('duck')
   .voicing().color('#7ED321'),
   // bass
   note(

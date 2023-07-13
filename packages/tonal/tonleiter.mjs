@@ -86,7 +86,7 @@ export function scaleStep(notes, offset) {
 // different ways to resolve the note to compare the anchor to (see renderVoicing)
 let modeTarget = {
   below: (v) => v.slice(-1)[0],
-  under: (v) => v.slice(-1)[0],
+  duck: (v) => v.slice(-1)[0],
   above: (v) => v[0],
 };
 
@@ -122,7 +122,7 @@ export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'below'
   if (n !== undefined) {
     return [scaleStep(notes, n)];
   }
-  if (mode === 'under') {
+  if (mode === 'duck') {
     notes = notes.filter((n) => x2midi(n) !== noteToMidi(anchor));
   }
   return notes;
