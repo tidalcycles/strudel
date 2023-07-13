@@ -191,14 +191,15 @@ export const rootNotes = register('rootNotes', function (octave, pat) {
 export const voicing = register('voicing', function (pat) {
   return pat
     .fmap((value) => {
-      let { dictionary = 'default', ...rest } = value;
+      // destructure voicing controls out
+      let { dictionary = 'default', chord, anchor, offset, mode, n, ...rest } = value;
       dictionary =
         typeof dictionary === 'string' ? voicingRegistry[dictionary] : { dictionary, mode: 'below', anchor: 'c5' };
-      let notes = renderVoicing({ ...dictionary, ...rest });
+      let notes = renderVoicing({ ...dictionary, chord, anchor, offset, mode, n });
 
       return stack(...notes)
         .note()
-        .set(rest);
+        .set(rest); // rest does not include voicing controls anymore!
     })
     .outerJoin();
 });
