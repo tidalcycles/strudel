@@ -119,11 +119,12 @@ export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'below'
 
   const voicingMidi = voicing.map((v) => anchorMidi - targetStep + v);
   let notes = voicingMidi.map((n) => midi2note(n));
+
+  if (mode === 'duck') {
+    notes = notes.filter((_, i) => voicingMidi[i] !== noteToMidi(anchor));
+  }
   if (n !== undefined) {
     return [scaleStep(notes, n)];
-  }
-  if (mode === 'duck') {
-    notes = notes.filter((n) => x2midi(n) !== noteToMidi(anchor));
   }
   return notes;
 }

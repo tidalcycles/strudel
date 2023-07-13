@@ -159,9 +159,10 @@ export const voicings = register('voicings', function (dictionary, pat) {
  */
 export const rootNotes = register('rootNotes', function (octave, pat) {
   return pat.fmap((value) => {
-    value = value.chord || value;
-    const root = value.match(/^([a-gA-G][b#]?).*$/)[1];
-    return root + octave;
+    const chord = value.chord || value;
+    const root = chord.match(/^([a-gA-G][b#]?).*$/)[1];
+    const note = root + octave;
+    return value.chord ? { note } : note;
   });
 });
 
