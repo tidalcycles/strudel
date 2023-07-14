@@ -27,7 +27,7 @@ export function tokenizeChord(chord) {
   }
   return match.slice(1);
 }
-export const note2pc = (note) => note.slice(0, -1);
+export const note2pc = (note) => note.match(/^[A-G][#b]?/i)[0];
 export const note2oct = (note) => Number(note.slice(-1));
 
 export const note2chroma = (note) => {
