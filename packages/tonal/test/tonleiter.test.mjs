@@ -61,8 +61,7 @@ describe('tonleiter', () => {
   });
   test('rotateChroma', () => {
     expect(rotateChroma(0, 1)).toBe(1);
-    expect(rotateChroma(0, -1)).toBe(-1); // this is wrong...
-    //expect(rotateChroma(0, -1)).toBe(11); // <-- TODO
+    expect(rotateChroma(0, -1)).toBe(11);
     expect(rotateChroma(11, 1)).toBe(0);
     expect(rotateChroma(11, 13)).toBe(0);
   });

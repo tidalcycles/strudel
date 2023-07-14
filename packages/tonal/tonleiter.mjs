@@ -13,7 +13,8 @@ export const pc2chroma = (pc) => {
   return pcs.indexOf(letter.toLowerCase()) + rest.reduce((sum, sign) => sum + accs[sign], 0);
 };
 
-export const rotateChroma = (chroma, steps) => (chroma + steps) % 12;
+export const rotateChroma = (chroma, steps) => ((chroma + steps % 12) + 12) % 12;
+
 
 export const chroma2pc = (chroma, sharp = false) => {
   return (sharp ? sharps : flats)[chroma];
