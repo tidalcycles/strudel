@@ -38,6 +38,6 @@
   },
   "devDependencies": {
     "vite": "^4.3.3",
-    "vitest": "^0.28.0"
+    "vitest": "^0.33.0"
   }
 }
