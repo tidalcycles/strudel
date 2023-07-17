@@ -246,7 +246,7 @@ export function pianoroll({
   haps
     // .filter(inFrame)
     .forEach((event) => {
-      const isActive = event.whole.begin <= time && event.whole.end > time;
+      const isActive = event.whole.begin <= time && event.endClipped > time;
       const color = event.value?.color || event.context?.color;
       ctx.fillStyle = color || inactive;
       ctx.strokeStyle = color || active;

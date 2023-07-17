@@ -10,20 +10,13 @@ import { JsDoc } from '../../docs/JsDoc';
 
 These functions use [tonaljs](https://github.com/tonaljs/tonal) to provide helpers for musical operations.
 
+### voicing()
+
+<JsDoc client:idle name="voicing" h={0} />
+
 ### scale(name)
 
-Turns numbers into notes in the scale (zero indexed). Also sets scale for other scale operations, like scaleTranspose.
-
-<MiniRepl
-  client:idle
-  tune={`"0 2 4 6 4 2"
-.scale("C2:major C2:minor").slow(2))
-.note().s("piano")`}
-/>
-
-Note that the scale root is octaved here. You can also omit the octave, then index zero will default to octave 3.
-
-All the available scale names can be found [here](https://github.com/tonaljs/tonal/blob/main/packages/scale-type/data.ts).
+<JsDoc client:idle name="scale" h={0} />
 
 ### transpose(semitones)
 

@@ -509,7 +509,7 @@ const generic_params = [
    * @superDirtOnly
    */
   ['octave'],
-  ['offset'], // TODO: what is this? not found in tidal doc
+
   // ['ophatdecay'],
   // TODO: example
   /**
@@ -573,6 +573,14 @@ const generic_params = [
   // TODO: dedup with synth param, see https://tidalcycles.org/docs/reference/synthesizers/#superpiano
   // ['velocity'],
   ['voice'], // TODO: synth param
+
+  // voicings // https://github.com/tidalcycles/strudel/issues/506
+  ['chord'], // chord to voice, like C Eb Fm7 G7. the symbols can be defined via addVoicings
+  ['dictionary', 'dict'], // which dictionary to use for the voicings
+  ['anchor'], // the top note to align the voicing to, defaults to c5
+  ['offset'], // how the voicing is offset from the anchored position
+  [['mode', 'anchor']], // below = anchor note will be removed from the voicing, useful for melody harmonization
+
   /**
    * Sets the level of reverb.
    *
