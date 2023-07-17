@@ -61,8 +61,7 @@ describe('tonleiter', () => {
   });
   test('rotateChroma', () => {
     expect(rotateChroma(0, 1)).toBe(1);
-    expect(rotateChroma(0, -1)).toBe(-1); // this is wrong...
-    //expect(rotateChroma(0, -1)).toBe(11); // <-- TODO
+    expect(rotateChroma(0, -1)).toBe(11);
     expect(rotateChroma(11, 1)).toBe(0);
     expect(rotateChroma(11, 13)).toBe(0);
   });
@@ -81,9 +80,9 @@ describe('tonleiter', () => {
   });
   test('note2pc', () => {
     expect(note2pc('C5')).toBe('C');
-    // expect(note2pc('C52')).toBe('C'); // <- 2 digits fail
+    expect(note2pc('C52')).toBe('C');
     expect(note2pc('Bb3')).toBe('Bb');
-    //expect(note2pc('F')).toBe('F'); // <- fails
+    expect(note2pc('F')).toBe('F');
   });
   test('note2oct', () => {
     expect(note2oct('C5')).toBe(5);
