@@ -88,7 +88,7 @@ describe('tonleiter', () => {
     expect(note2oct('C5')).toBe(5);
     expect(note2oct('Bb3')).toBe(3);
     expect(note2oct('C7')).toBe(7);
-    //expect(note2oct('C10')).toBe(10); // <- 2 digits fail
+    expect(note2oct('C10')).toBe(10);
   });
   test('midi2note', () => {
     expect(midi2note(60)).toBe('C4');

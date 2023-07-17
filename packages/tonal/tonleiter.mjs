@@ -1,4 +1,4 @@
-import { isNote, isNoteWithOctave, _mod, noteToMidi } from '@strudel.cycles/core';
+import { isNote, isNoteWithOctave, _mod, noteToMidi, tokenizeNote } from '@strudel.cycles/core';
 import { Interval } from '@tonaljs/tonal';
 
 // https://codesandbox.io/s/stateless-voicings-g2tmz0?file=/src/lib.js:0-2515
@@ -28,7 +28,7 @@ export function tokenizeChord(chord) {
   return match.slice(1);
 }
 export const note2pc = (note) => note.match(/^[A-G][#b]?/i)[0];
-export const note2oct = (note) => Number(note.slice(-1));
+export const note2oct = (note) => tokenizeNote(note)[2];
 
 export const note2chroma = (note) => {
   return pc2chroma(note2pc(note));

@@ -11,7 +11,7 @@ export const tokenizeNote = (note) => {
   if (typeof note !== 'string') {
     return [];
   }
-  const [pc, acc = '', oct] = note.match(/^([a-gA-G])([#bsf]*)([0-9])?$/)?.slice(1) || [];
+  const [pc, acc = '', oct] = note.match(/^([a-gA-G])([#bsf]*)([0-9]*)$/)?.slice(1) || [];
   if (!pc) {
     return [];
   }
