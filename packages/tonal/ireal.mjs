@@ -1,3 +1,6 @@
+// explore them here: https://codesandbox.io/s/voicing-explorer-ireal-47tkx5?file=/src/ireal.js:0-16036
+// scraped via: https://codesandbox.io/s/ireal-midi-scraper-forked-kpqnzf?file=/src/index.js
+
 export const simple = {
   2: ['5P 8P 9M 12P', '1P 5P 8P 9M', '1P 5P 8P 9M 12P'],
   5: ['5P 8P 12P 15P', '1P 5P 8P 12P'],
