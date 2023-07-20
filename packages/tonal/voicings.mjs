@@ -7,6 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import { stack, register } from '@strudel.cycles/core';
 import { renderVoicing } from './tonleiter.mjs';
 import _voicings from 'chord-voicings';
+import { complex, simple } from './ireal.mjs';
 const { dictionaryVoicing, minTopNoteDiff } = _voicings.default || _voicings; // parcel module resolution fuckup
 
 const lefthand = {
@@ -206,3 +207,6 @@ export const voicing = register('voicing', function (pat) {
     })
     .outerJoin();
 });
+
+registerVoicings('ireal', simple);
+registerVoicings('ireal-ext', complex);
