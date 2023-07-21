@@ -8,64 +8,63 @@ import { PitchSlider } from '../../components/PitchSlider';
 
 # Understanding Pitch
 
-Let's learn how pitch works! But first, let's experience pitch in its rawest form:
+Let's learn how pitch works! The slider below controls the <span style="color:#3b82f6;">frequency</span> of an oscillator, producing a pitch:
 
-<PitchSlider client:load />
+{/* <PitchSlider client:load showFrequencySlider plot /> */}
+
+<PitchSlider client:load showFrequencySlider />
 
 - Drag the slider to hear a pitch
 - Move the slider to change the pitch
-- Observe how the number on the right changes
+- Observe how the Hz number changes
 
-The number on the right is the **frequency** of the pitch you're hearing.
+The Hz number is the frequency of the pitch you're hearing.
 The higher the frequency, the higher the pitch and vice versa.
 A pitch occurs whenever something is vibrating / oscillating at a frequency, in this case it's your speaker.
 The unit **Hz** describes how many times that oscillation happens per second.
 Our eyes are too slow to actually see the oscillation on the speaker, but we can [see it in slow motion](https://www.youtube.com/watch?v=CDMBWw7OuJQ&t=5s).
 
-## Pitch Perception
+## Frequency vs Pitch Perception
 
-Maybe you have already noticed that the pitch slider is "lopsided". To make that more obvious, let's automate the slider!
-Below are 2 buttons for automation, try them out:
+Maybe you have already noticed that the <span style="color:#3b82f6;">frequency slider</span> is "lopsided",
+meaning the pitch changes more in the left region and less in the right region.
+To make that more obvious, let's add a <span style="color:#eab308">pitch slider</span>
+that controls the frequency on a different scale:
 
-<PitchSlider animatable plot client:load />
+<PitchSlider animatable plot showFrequencySlider showPitchSlider client:load />
 
-There are 2 different colored lines:
+Try out the buttons above to sweep through the frequency range in 2 different ways:
 
-- <span style="color:#3b82f6;">blue</span>: the frequency value
-- <span style="color:#eab308">yellow</span>: the pitch value or how you perceive the frequency
-
-Depending on the type of sweep, the lines behave differently:
-
-- Frequency Sweep: <span style="color:#3b82f6;">frequency is linear</span> , <span style="color:#eab308">pitch is logarithmic</span>
-- Pitch Sweep: <span style="color:#3b82f6;">frequency is exponential</span> , <span style="color:#eab308">pitch is linear</span>
+- Frequency Sweep: <span style="color:#3b82f6;">frequency rises linear</span> , <span style="color:#eab308">pitch rises logarithmic</span>
+- Pitch Sweep: <span style="color:#3b82f6;">frequency rises exponential</span> , <span style="color:#eab308">pitch rises linear</span>
 
 Don't be scared of these mathematical terms:
 
 - "logarithmic" is just a fancy way of saying "it starts fast and slows down"
 - "exponential" is just a fancy way of saying "it starts slow and gets faster"
 
-## A Pitch Slider
+Most of the time, we might want to control pitch in a way that matches our perception,
+which is what the <span style="color:#eab308">pitch slider</span> does.
 
-Most of the time, we might want to control pitch in a way that matches our perception.
-Now that we know that frequency in Hz does not match our perception,
-let's make the slider exponential (and yellow):
+## From Hz to Semitones
 
-<PitchSlider logarithmic plot animatable client:load />
-
-- Do you see how the slider is now linked to the yellow line?
-- Try out the buttons again and compare it to the frequency slider above
-
-## A unit for Pitch
-
-Let's try to find a linear unit for pitch, as frequency won't cut it.
+Because Hz does not match our perception, let's try to find a unit for pitch that matches.
 To approach that unit of pitch, let's look at how frequency behaves when it is doubled:
 
-<PitchSlider logarithmic client:load buttons={[50, 100, 200, 400, 800, 1600]} />
+<PitchSlider client:load showPitchSlider showFrequencySlider pitchStep={1 / 7} />
 
+- Use the now stepped pitch slider above
 - Can you hear how these pitches seem related to each other?
 
-<PitchSlider logarithmic client:load buttons={[50, 100, 200, 400, 800, 1600]} />
+In mathematical terms, the frequency of button `n` would be `50Hz * 2^n` (n starting from 0).
+We could already use that `n` as a pitch unit! So a value of 0 would relate to a certain base frequency (50Hz),
+and each whole number step would be an additional doubling of 2.
 
+In musical terms, a pitch with double the frequency of another is an `octave` higher.
+
+Because octaves are pretty far apart, octaves are typically divided into 12 equal parts:
+
+<PitchSlider client:load showPitchSlider showFrequencySlider pitchStep={1 / 12} min={440} max={880} />
 
 ## Definition
 

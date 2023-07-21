@@ -89,6 +89,9 @@ export const SIDEBAR: Sidebar = {
       { text: 'Accumulation', link: 'learn/accumulation' },
       { text: 'Tonal Functions', link: 'learn/tonal' },
     ],
+    Understand: [
+      { text: 'Pitch', link: 'understand/pitch' },
+    ],
     Development: [
       { text: 'REPL', link: 'technical-manual/repl' },
       { text: 'Sounds', link: 'technical-manual/sounds' },
