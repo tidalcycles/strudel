@@ -48,10 +48,11 @@ export function PitchSlider({
   pitchStep = '0.001',
   min = 55,
   max = 7040,
+  initial = 220,
 }) {
   const oscRef = useRef();
   const activeRef = useRef();
-  const freqRef = useRef(220);
+  const freqRef = useRef(initial);
   const historyRef = useRef([freqRef.current]);
   const frameRef = useRef();
   const canvasRef = useRef();
@@ -139,6 +140,15 @@ export function PitchSlider({
     startOsc(hz);
   };
 
+  let exponent = freq2pitchSlider(hz) * Math.log2(max / min);
+  const semitones = parseFloat((exponent * 12).toFixed(2));
+  if (semitones % 12 === 0) {
+    exponent = semitones / 12;
+  } else if (semitones % 1 === 0) {
+    exponent = `${semitones}/12`;
+  } else {
+    exponent = exponent.toFixed(2);
+  }
   return (
     <>
       <span className="font-mono">
@@ -148,7 +158,7 @@ export function PitchSlider({
           <>
             {min}Hz * 2
             <sup>
-              <span className="text-yellow-500">{(freq2pitchSlider(hz) * Math.log2(max / min)).toFixed(2)}</span>
+              <span className="text-yellow-500">{exponent}</span>
             </sup>
           </>
         )}
