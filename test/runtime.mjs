@@ -60,6 +60,7 @@ const toneHelpersMocked = {
   vol: mockNode,
   out: id,
   osc: id,
+  samples: id,
   adsr: id,
   getDestination: id,
   players: mockNode,
