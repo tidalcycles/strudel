@@ -1,7 +1,9 @@
 import useEvent from '@strudel.cycles/react/src/hooks/useEvent.mjs';
 import useFrame from '@strudel.cycles/react/src/hooks/useFrame.mjs';
 import { getAudioContext } from '@strudel.cycles/webaudio';
+import { midi2note } from '@strudel.cycles/core';
 import { useState, useRef, useEffect } from 'react';
+import Claviature from '@components/Claviature';
 
 let Button = (props) => <button {...props} className="bg-lineHighlight p-2 rounded-md color-foreground" />;
 
@@ -44,11 +46,14 @@ export function PitchSlider({
   animatable = false,
   plot = false,
   showPitchSlider = false,
-  showFrequencySlider = true,
+  showFrequencySlider = false,
   pitchStep = '0.001',
   min = 55,
   max = 7040,
   initial = 220,
+  baseFrequency = min,
+  zeroOffset = 0,
+  claviature,
 }) {
   const oscRef = useRef();
   const activeRef = useRef();
@@ -94,7 +99,6 @@ export function PitchSlider({
     let f = min;
     startOsc(f);
     const frame = () => {
-      console.log('sweep');
       if (f < max) {
         if (!exp) {
           f += 10;
@@ -140,14 +144,33 @@ export function PitchSlider({
     startOsc(hz);
   };
 
-  let exponent = freq2pitchSlider(hz) * Math.log2(max / min);
-  const semitones = parseFloat((exponent * 12).toFixed(2));
-  if (semitones % 12 === 0) {
-    exponent = semitones / 12;
-  } else if (semitones % 1 === 0) {
-    exponent = `${semitones}/12`;
-  } else {
-    exponent = exponent.toFixed(2);
+  let exponent, activeNote, activeNoteLabel;
+  if (showPitchSlider) {
+    const expOffset = baseFrequency ? Math.log2(baseFrequency / min) : 0;
+    exponent = freq2pitchSlider(hz) * Math.log2(max / min) - expOffset;
+    let semitones = parseFloat((exponent * 12).toFixed(2));
+    if (zeroOffset) {
+      semitones = semitones + zeroOffset;
+      const isWhole = Math.round(semitones) === semitones;
+      activeNote = midi2note(Math.round(semitones));
+      activeNoteLabel = (!isWhole ? '~' : '') + activeNote;
+      semitones = !isWhole ? semitones.toFixed(2) : semitones;
+      exponent = (
+        <>
+          ({zeroOffset} - <span className="text-yellow-500">{semitones}</span>)/12
+        </>
+      );
+    } else if (semitones % 12 === 0) {
+      exponent = <span className="text-yellow-500">{semitones / 12}</span>;
+    } else if (semitones % 1 === 0) {
+      exponent = (
+        <>
+          <span className="text-yellow-500">{semitones}</span>/12
+        </>
+      );
+    } else {
+      exponent = <span className="text-yellow-500">{exponent.toFixed(2)}</span>;
+    }
   }
   return (
     <>
@@ -156,14 +179,16 @@ export function PitchSlider({
         {showFrequencySlider && showPitchSlider && <> = </>}
         {showPitchSlider && (
           <>
-            {min}Hz * 2
-            <sup>
-              <span className="text-yellow-500">{exponent}</span>
-            </sup>
+            {baseFrequency || min}Hz * 2<sup>{exponent}</sup>
           </>
         )}
       </span>
-      <span></span>
+      {claviature && (
+        <>
+          {' '}
+          = <span className="text-yellow-500">{activeNoteLabel}</span>
+        </>
+      )}
       <div>
         {showFrequencySlider && (
           <div className="flex space-x-1 items-center">
@@ -221,6 +246,23 @@ export function PitchSlider({
           </Button>
         ))}
       </div>
+      {claviature && (
+        <Claviature
+          onMouseDown={(note) => {
+            const f = 440 * 2 ** ((note - 69) / 12);
+            handleChangeFrequency(f);
+            cancelAnimationFrame(frameRef.current);
+            startOsc(f);
+          }}
+          options={{
+            range: ['A1', 'A5'],
+            scaleY: 0.75,
+            scaleX: 0.86,
+            colorize: activeNote ? [{ keys: [activeNote], color: '#eab308' }] : [],
+            labels: activeNote ? { [activeNote]: activeNote } : {},
+          }}
+        />
+      )}
     </>
   );
 }
