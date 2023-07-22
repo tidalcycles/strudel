@@ -24,7 +24,7 @@ The Hz number is the frequency of the pitch you're hearing.
 The higher the frequency, the higher the pitch and vice versa.
 A pitch occurs whenever something is vibrating / oscillating at a frequency, in this case it's your speaker.
 The unit **Hz** describes how many times that oscillation happens per second.
-Our eyes are too slow to actually see the oscillation on the speaker, but we can [see it in slow motion](https://www.youtube.com/watch?v=CDMBWw7OuJQ&t=5s).
+Our eyes are too slow to actually see the oscillation on the speaker, but we can <a href="https://www.youtube.com/watch?v=CDMBWw7OuJQ" target="_blank">see it in slow motion</a>.
 
 <Box>
 
@@ -40,7 +40,7 @@ In Strudel, we can play frequencies directly with the `freq` control:
 ## Frequency vs Pitch Perception
 
 Maybe you have already noticed that the <span style="color:#3b82f6;">frequency slider</span> is "lopsided",
-meaning the pitch changes more in the left region and less in the right region.
+meaning the pitch changes more in the left region and less in the right region.<br/>
 To make that more obvious, let's add a <span style="color:#eab308">pitch slider</span>
 that controls the frequency on a different scale:
 
@@ -93,7 +93,7 @@ In Strudel, we could do that with `freq` like this:
   tune={`freq(
   "0 4 7 12"
   .fmap(n => 440 * 2**(n/12))
-).piano()`}
+)`}
 />
 
 Of course, this can be written shorter with note, as we will see below.
@@ -119,7 +119,7 @@ Typically, 440Hz is standardized to the number 69, which leads to this calculati
 The yellow number is now a MIDI number, covering more than the whole human hearing range with numbers from 0 to 127.
 In Strudel, we can use MIDI numbers inside `note`:
 
-<MiniRepl client:visible tune={`note("69 73 76 81").piano()`} />
+<MiniRepl client:visible tune={`note("69 73 76 81")`} />
 
 ## From MIDI numbers to notes
 
