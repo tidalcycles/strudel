@@ -157,7 +157,7 @@ export function PitchSlider({
       semitones = !isWhole ? semitones.toFixed(2) : semitones;
       exponent = (
         <>
-          ({zeroOffset} - <span className="text-yellow-500">{semitones}</span>)/12
+          (<span className="text-yellow-500">{semitones}</span> - {zeroOffset})/12
         </>
       );
     } else if (semitones % 12 === 0) {
