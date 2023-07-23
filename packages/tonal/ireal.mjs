@@ -1,5 +1,5 @@
 // explore them here: https://codesandbox.io/s/voicing-explorer-ireal-47tkx5?file=/src/ireal.js:0-16036
-// scraped via: https://codesandbox.io/s/ireal-midi-scraper-forked-kpqnzf?file=/src/index.js
+// scraped via: https://codesandbox.io/s/ireal-midi-scraper-2-gjz2mr?file=/src/index.js
 
 export const simple = {
   2: ['1P 5P 8P 9M', '1P 5P 8P 9M 12P', '5P 8P 9M 12P'],
@@ -37,16 +37,32 @@ export const simple = {
   o: ['1P 5d 8P 10m 12d', '3m 8P 10m 12d 15P', '5d 8P 10m 12d 15P'],
   h: [
     '3m 5d 7m 8P 10m',
+    '1P 5d 7m 10m 12d',
     '3m 7m 8P 10m 12d',
     '3m 7m 8P 12d 14m',
     '5d 7m 8P 10m 14m',
+    '5d 8P 10m 12d 14m',
     '7m 10m 12d 14m 15P',
     '5d 8P 10m 14m 17m',
   ],
   sus: ['1P 4P 5P 8P', '1P 4P 5P 8P 11P', '5P 8P 11P 12P', '5P 8P 11P 12P 15P'],
   '^': ['1P 5P 8P 10M', '1P 5P 8P 10M 12P', '3M 5P 8P 10M 12P', '3M 8P 10M 12P 15P', '5P 8P 10M 12P 15P'],
   '-': ['1P 3m 5P 8P 10m', '1P 5P 8P 10m 12P', '3m 5P 8P 10m 12P', '5P 8P 10m 12P 15P'],
-  '^7': ['1P 5P 7M 10M 12P', '1P 10M 12P 14M', '3M 8P 10M 12P 14M', '5P 8P 10M 12P 14M', '5P 8P 10M 14M 17M'],
+  '^7': [
+    '1P 3m 5P 7m 10m',
+    '1P 5P 7M 10M 12P',
+    '1P 5P 7m 10m 12P',
+    '3m 7m 8P 10m 12P',
+    '3m 7m 8P 10m 14m',
+    '5P 7m 8P 10m 14m',
+    '1P 10M 12P 14M',
+    '3M 8P 10M 12P 14M',
+    '5P 8P 10M 12P 14M',
+    '7m 10m 12P 14m 15P',
+    '5P 8P 10m 14m 17m',
+    '7m 10m 12P 15P 17m',
+    '5P 8P 10M 14M 17M',
+  ],
   '-7': [
     '1P 3m 5P 7m 10m',
     '1P 5P 7m 10m 12P',
@@ -88,7 +104,7 @@ export const simple = {
     '7M 8P 10M 12P 16M',
   ],
   '^13': ['1P 6M 7M 9M 10M', '1P 7M 9M 10M 13M', '3M 7M 8P 9M 13M', '3M 7M 8P 13M 16M', '7M 8P 10M 13M 16M'],
-  '^7#11': ['1P 5P 7M 10M 12d', '3M 7M 8P 10M 12d', '3M 7M 8P 12d 14M', '5P 8P 10M 12d 14M'],
+  '^7#11': ['1P 5P 7M 10M 12d', '3M 7M 8P 10M 12d', '1P 7M 10M 12d 14M', '3M 7M 8P 12d 14M', '5P 8P 10M 12d 14M'],
   '^9#11': ['1P 3M 5d 7M 9M', '1P 7M 9M 10M 12d', '3M 7M 8P 9M 12d', '3M 8P 9M 12d 14M'],
   '^7#5': ['1P 6m 7M 10M 13m', '3M 7M 8P 10M 13m', '6m 7M 8P 10M 13m'],
   '-6': [
@@ -306,6 +322,7 @@ export const complex = {
     '7m 10m 11P 14m 15P',
     '7m 10m 12P 15P 16M',
     '5P 8P 11P 14m 17m',
+    '7m 10m 12P 15P 17m',
   ],
   '7sus': [
     '1P 4P 6M 7m 9M',
@@ -342,6 +359,7 @@ export const complex = {
     '1P 7M 9M 10M 13M',
     '3M 7M 9M 10M 13M',
     '3M 7M 9M 12P 13M',
+    '3M 7M 8P 9M 13M',
     '3M 7M 9M 13M 14M',
     '3M 7M 10M 13M 16M',
     '7M 10M 13M 14M 16M',
@@ -418,6 +436,7 @@ export const complex = {
     '7M 10m 12P 14M 16M',
   ],
   '-9': [
+    '1P 3m 5P 7m 9M',
     '1P 3m 7m 9M 11P',
     '3m 7m 9M 10m 11P',
     '3m 7m 9M 10m 12P',
@@ -482,12 +501,15 @@ export const complex = {
   '7alt': [
     '3M 7m 8P 10m 13m',
     '3M 7m 9m 12d 13m',
+    '3M 7m 9m 10m 13m',
     '3M 7m 10m 13m 14m',
     '3M 7m 9m 12d 14m',
     '3M 7m 10m 13m 15P',
+    '3M 7m 10m 13m 16m',
     '7m 10M 12d 14m 16m',
     '7m 10M 12d 13m 16m',
     '7m 10M 13m 15P 17m',
+    '7m 10M 13m 16m 17m',
     '7m 10M 13m 16m 19d',
   ],
   '13#11': ['3M 7m 9M 12d 13M', '7m 10M 12d 13M 16M'],
