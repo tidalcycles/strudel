@@ -208,5 +208,7 @@ export const voicing = register('voicing', function (pat) {
     .outerJoin();
 });
 
-registerVoicings('ireal', simple);
-registerVoicings('ireal-ext', complex);
+const withEmptyAsMajor = (set) => ({ ...set, '': set['^'] });
+
+registerVoicings('ireal', withEmptyAsMajor(simple));
+registerVoicings('ireal-ext', withEmptyAsMajor(complex));
