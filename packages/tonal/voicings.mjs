@@ -7,6 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import { stack, register } from '@strudel.cycles/core';
 import { renderVoicing } from './tonleiter.mjs';
 import _voicings from 'chord-voicings';
+import { complex, simple } from './ireal.mjs';
 const { dictionaryVoicing, minTopNoteDiff } = _voicings.default || _voicings; // parcel module resolution fuckup
 
 const lefthand = {
@@ -195,10 +196,10 @@ export const voicing = register('voicing', function (pat) {
     .fmap((value) => {
       // destructure voicing controls out
       value = typeof value === 'string' ? { chord: value } : value;
-      let { dictionary = 'default', chord, anchor, offset, mode, n, ...rest } = value;
+      let { dictionary = 'default', chord, anchor, offset, mode, n, octaves, ...rest } = value;
       dictionary =
         typeof dictionary === 'string' ? voicingRegistry[dictionary] : { dictionary, mode: 'below', anchor: 'c5' };
-      let notes = renderVoicing({ ...dictionary, chord, anchor, offset, mode, n });
+      let notes = renderVoicing({ ...dictionary, chord, anchor, offset, mode, n, octaves });
 
       return stack(...notes)
         .note()
@@ -206,3 +207,29 @@ export const voicing = register('voicing', function (pat) {
     })
     .outerJoin();
 });
+
+export function voicingAlias(symbol, alias, setOrSets) {
+  setOrSets = !Array.isArray(setOrSets) ? [setOrSets] : setOrSets;
+  setOrSets.forEach((set) => {
+    set[alias] = set[symbol];
+  });
+}
+
+// no symbol = major chord
+voicingAlias('^', '', [simple, complex]);
+
+Object.keys(simple).forEach((symbol) => {
+  // add aliases for "-" === "m"
+  if (symbol.includes('-')) {
+    let alias = symbol.replace('-', 'm');
+    voicingAlias(symbol, alias, [complex, simple]);
+  }
+  // add aliases for "^" === "M"
+  if (symbol.includes('^')) {
+    let alias = symbol.replace('^', 'M');
+    voicingAlias(symbol, alias, [complex, simple]);
+  }
+});
+
+registerVoicings('ireal', simple);
+registerVoicings('ireal-ext', complex);
