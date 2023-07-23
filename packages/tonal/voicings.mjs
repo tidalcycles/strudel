@@ -196,10 +196,10 @@ export const voicing = register('voicing', function (pat) {
     .fmap((value) => {
       // destructure voicing controls out
       value = typeof value === 'string' ? { chord: value } : value;
-      let { dictionary = 'default', chord, anchor, offset, mode, n, ...rest } = value;
+      let { dictionary = 'default', chord, anchor, offset, mode, n, octaves, ...rest } = value;
       dictionary =
         typeof dictionary === 'string' ? voicingRegistry[dictionary] : { dictionary, mode: 'below', anchor: 'c5' };
-      let notes = renderVoicing({ ...dictionary, chord, anchor, offset, mode, n });
+      let notes = renderVoicing({ ...dictionary, chord, anchor, offset, mode, n, octaves });
 
       return stack(...notes)
         .note()

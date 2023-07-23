@@ -76,11 +76,11 @@ export const midi2note = (midi, sharp = false) => {
   return pc + oct;
 };
 
-export function scaleStep(notes, offset) {
+export function scaleStep(notes, offset, octaves = 1) {
   notes = notes.map((note) => (typeof note === 'string' ? noteToMidi(note) : note));
-  const octOffset = Math.floor(offset / notes.length) * 12;
-  offset = _mod(offset, 12);
-  return notes[offset % notes.length] + octOffset;
+  const octOffset = Math.floor(offset / notes.length) * octaves * 12;
+  offset = _mod(offset, notes.length);
+  return notes[offset] + octOffset;
 }
 
 // different ways to resolve the note to compare the anchor to (see renderVoicing)
@@ -90,7 +90,7 @@ let modeTarget = {
   above: (v) => v[0],
 };
 
-export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'below', anchor = 'c5' }) {
+export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'below', anchor = 'c5', octaves = 1 }) {
   const [root, symbol] = tokenizeChord(chord);
   const rootChroma = pc2chroma(root);
   anchor = anchor?.note || anchor;
@@ -124,7 +124,7 @@ export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'below'
     notes = notes.filter((_, i) => voicingMidi[i] !== noteToMidi(anchor));
   }
   if (n !== undefined) {
-    return [scaleStep(notes, n)];
+    return [scaleStep(notes, n, octaves)];
   }
   return notes;
 }
