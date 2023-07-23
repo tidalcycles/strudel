@@ -208,7 +208,28 @@ export const voicing = register('voicing', function (pat) {
     .outerJoin();
 });
 
-const withEmptyAsMajor = (set) => ({ ...set, '': set['^'] });
+export function voicingAlias(symbol, alias, setOrSets) {
+  setOrSets = !Array.isArray(setOrSets) ? [setOrSets] : setOrSets;
+  setOrSets.forEach((set) => {
+    set[alias] = set[symbol];
+  });
+}
 
-registerVoicings('ireal', withEmptyAsMajor(simple));
-registerVoicings('ireal-ext', withEmptyAsMajor(complex));
+// no symbol = major chord
+voicingAlias('^', '', [simple, complex]);
+
+Object.keys(simple).forEach((symbol) => {
+  // add aliases for "-" === "m"
+  if (symbol.includes('-')) {
+    let alias = symbol.replace('-', 'm');
+    voicingAlias(symbol, alias, [complex, simple]);
+  }
+  // add aliases for "^" === "M"
+  if (symbol.includes('^')) {
+    let alias = symbol.replace('^', 'M');
+    voicingAlias(symbol, alias, [complex, simple]);
+  }
+});
+
+registerVoicings('ireal', simple);
+registerVoicings('ireal-ext', complex);
