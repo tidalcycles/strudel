@@ -114,7 +114,7 @@ Pattern.prototype.midi = function (output) {
     const duration = hap.duration.valueOf() * 1000 - 5;
 
     if (note) {
-      const midiNumber = noteToMidi(note);
+      const midiNumber = typeof note === 'number' ? note : noteToMidi(note);
       device.playNote(midiNumber, midichan, {
         time,
         duration,
