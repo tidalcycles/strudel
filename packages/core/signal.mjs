@@ -191,13 +191,6 @@ export const chooseInWith = (pat, xs) => {
  */
 export const choose = (...xs) => chooseWith(rand, xs);
 
-/**
- * Chooses from the given list of values (or patterns of values), according
- * to the pattern that the method is called on. The pattern should be in
- * the range 0 .. 1.
- * @param  {...any} xs
- * @returns {Pattern}
- */
 Pattern.prototype.choose = function (...xs) {
   return chooseWith(this, xs);
 };
