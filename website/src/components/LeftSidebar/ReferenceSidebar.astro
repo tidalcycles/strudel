@@ -24,7 +24,10 @@ let currentPageMatch = currentPage.slice(BASE_URL.length, currentPage.endsWith('
         <ul>
           {
             docs
-              .filter(({ tags }) => !tags?.find((t) => t.title === 'noautocomplete'))
+              .filter(
+                ({ tags }) =>
+                  !tags?.find((t) => t.title === 'noautocomplete') && !tags?.find((t) => t.title === 'superdirtonly'),
+              )
               .filter(({ name, description }) => name && !name.startsWith('_') && !!description)
               // @ts-ignore
               .sort((a, b) => a.name.localeCompare(b.name))
