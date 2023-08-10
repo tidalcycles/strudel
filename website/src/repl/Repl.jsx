@@ -151,13 +151,18 @@ export function Repl({ embedded = false }) {
   // init code
   useEffect(() => {
     initCode().then((decoded) => {
-      logger(
-        `Welcome to Strudel! ${
-          decoded ? `I have loaded the code from the URL.` : `A random code snippet named "${name}" has been loaded!`
-        } Press play or hit ctrl+enter to run it!`,
-        'highlight',
-      );
-      setCode(decoded || latestCode || randomTune);
+      let msg;
+      if (decoded) {
+        setCode(decoded);
+        msg = `I have loaded the code from the URL.`;
+      } else if (latestCode) {
+        setCode(latestCode);
+        msg = `Your last session has been loaded!`;
+      } /*  if(randomTune) */ else {
+        setCode(randomTune);
+        msg = `A random code snippet named "${name}" has been loaded!`;
+      }
+      logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
       setPending(false);
     });
   }, []);
