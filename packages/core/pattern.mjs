@@ -783,13 +783,14 @@ export class Pattern {
       hap.setContext({
         ...hap.context,
         onTrigger: (...args) => {
-          if (!dominant && hap.context.onTrigger) {
-            hap.context.onTrigger(...args);
-          }
+          // run previously set trigger, if it exists
+          hap.context.onTrigger?.(...args);
           onTrigger(...args);
         },
-        // we need this to know later if the default trigger should still fire
-        dominantTrigger: dominant,
+        // if dominantTrigger is set to true, the default output (webaudio) will be disabled
+        // when using multiple triggers, you cannot flip this flag to false again!
+        // example: x.csound('CooLSynth').log() as well as x.log().csound('CooLSynth') should work the same
+        dominantTrigger: hap.context.dominantTrigger || dominant,
       }),
     );
   }
