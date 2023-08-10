@@ -1,6 +1,5 @@
 ---
-import { getLanguageFromURL } from '../../languages';
-import { SIDEBAR } from '../../config';
+import { docs } from '../../../../doc.json';
 
 type Props = {
   currentPage: string;
@@ -9,42 +8,43 @@ type Props = {
 const { currentPage } = Astro.props as Props;
 const { BASE_URL } = import.meta.env;
 let currentPageMatch = currentPage.slice(BASE_URL.length, currentPage.endsWith('/') ? -1 : undefined);
-
-const langCode = getLanguageFromURL(currentPage) || 'en';
-const sidebar = SIDEBAR[langCode];
 ---
 
 <nav aria-labelledby="grid-left" class="max-h-full overflow-auto pb-20 text-foreground">
   <ul>
-    {
-      Object.entries(sidebar).map(([header, children]) => (
-        <li>
-          <div class="nav-group pb-4">
-            <h2>{header}</h2>
-            <ul>
-              {children.map((child) => {
-                const url = Astro.site?.pathname + child.link;
+    <li>
+      <a
+        class={`py-0.5 mb-4 w-full hover:bg-lineHighlight block`}
+        href={`${Astro.site?.pathname}workshop/getting-started`}>Back to Docs</a
+      >
+    </li>
+    <li>
+      <div class="nav-group pb-4">
+        <h2>Reference</h2>
+        <ul>
+          {
+            docs
+              .filter(({ tags }) => !tags?.find((t) => t.title === 'noautocomplete'))
+              .map(({ longname, name }) => {
+                const link = 'ref/' + longname;
+                const url = Astro.site?.pathname + link;
                 return (
                   <li class="">
                     <a
                       class={`pl-4 py-0.5 w-full hover:bg-lineHighlight block${
-                        currentPageMatch === child.link ? ' bg-lineHighlight' : ''
+                        currentPageMatch === link ? ' bg-lineHighlight' : ''
                       }`}
                       href={url}
-                      aria-current={currentPageMatch === child.link ? 'page' : false}
+                      aria-current={currentPageMatch === link ? 'page' : false}
                     >
-                      {child.text}
+                      {name}
                     </a>
                   </li>
                 );
-              })}
-            </ul>
-          </div>
-        </li>
-      ))
-    }
-    <li>
-      <a class={`py-0.5 mb-4 w-full hover:bg-lineHighlight block`} href={`${Astro.site?.pathname}ref`}> Reference</a>
+              })
+          }
+        </ul>
+      </div>
     </li>
   </ul>
 </nav>

@@ -1,0 +1,20 @@
+---
+import ReferenceLayout from '../../layouts/ReferenceLayout.astro';
+import { docs } from '../../../../doc.json';
+import JsDoc from '../../docs/JsDoc.astro';
+
+export function getStaticPaths() {
+  return docs.map((doc) => [{ params: { ref: doc.longname } }]);
+}
+
+const { ref } = Astro.params;
+const entry = docs.find((d) => d.longname === ref);
+if (!entry) {
+  return;
+}
+---
+
+<ReferenceLayout frontmatter={{ title: entry.name || 'Reference', description: '' }} headings={[]}>
+  <h1>{entry!.name}</h1>
+  <JsDoc name={ref} />
+</ReferenceLayout>
