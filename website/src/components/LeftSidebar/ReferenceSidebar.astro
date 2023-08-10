@@ -25,8 +25,11 @@ let currentPageMatch = currentPage.slice(BASE_URL.length, currentPage.endsWith('
           {
             docs
               .filter(({ tags }) => !tags?.find((t) => t.title === 'noautocomplete'))
-              .map(({ longname, name }) => {
-                const link = 'ref/' + longname;
+              .filter(({ name, description }) => name && !name.startsWith('_') && !!description)
+              // @ts-ignore
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map(({ name }) => {
+                const link = 'ref/' + name;
                 const url = Astro.site?.pathname + link;
                 return (
                   <li class="">
