@@ -20,7 +20,7 @@ let currentPageMatch = currentPage.slice(BASE_URL.length, currentPage.endsWith('
     </li>
     <li>
       <div class="nav-group pb-4">
-        <h2>Reference</h2>
+        <a class="hover:bg-lineHighlight w-full block" href={Astro.site?.pathname + 'ref'}><h2>Reference</h2></a>
         <ul>
           {
             docs
