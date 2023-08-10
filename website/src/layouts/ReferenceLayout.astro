@@ -40,7 +40,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
           <aside title="Site Navigation" class="w-[300px] px-6 left-0 hidden md:block fixed h-full">
             <ReferenceSidebar currentPage={currentPage} />
           </aside>
-          <PageContent frontmatter={frontmatter} headings={headings} githubEditUrl={githubEditUrl}>
+          <PageContent hideMoreMenu={true} frontmatter={frontmatter} headings={headings} githubEditUrl={githubEditUrl}>
             <slot />
           </PageContent>
         </div>
