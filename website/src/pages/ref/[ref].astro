@@ -3,12 +3,30 @@ import ReferenceLayout from '../../layouts/ReferenceLayout.astro';
 import { docs } from '../../../../doc.json';
 import JsDoc from '../../docs/JsDoc.astro';
 
+export const getSynonyms = (doc) => {
+  const synonyms = doc.tags?.find((t) => t.title === 'synonyms');
+  if (synonyms) {
+    return synonyms.text?.split(', ');
+  }
+  return [];
+};
+
 export function getStaticPaths() {
-  return docs.map((doc) => [{ params: { ref: doc.name } }]);
+  let paths: any = [];
+  docs.forEach((doc) => {
+    paths.push({ params: { ref: doc.name } });
+    const synonyms = getSynonyms(doc);
+    if (synonyms) {
+      synonyms.forEach((synonym) => {
+        paths.push({ params: { ref: synonym } });
+      });
+    }
+  });
+  return paths;
 }
 
 const { ref } = Astro.params;
-const entry = docs.find((d) => d.name === ref);
+const entry = docs.find((d) => d.name === ref || getSynonyms(d).includes(ref));
 if (!entry) {
   return;
 }
