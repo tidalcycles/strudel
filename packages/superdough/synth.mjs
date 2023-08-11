@@ -1,5 +1,5 @@
 import { midiToFreq, noteToMidi } from './util.mjs';
-import { registerSound } from './superdough.mjs';
+import { registerSound } from './webaudio.mjs';
 import { getOscillator, gainNode, getEnvelope } from './helpers.mjs';
 
 export function registerSynthSounds() {
