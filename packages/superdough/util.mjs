@@ -27,3 +27,27 @@ export const midiToFreq = (n) => {
   return Math.pow(2, (n - 69) / 12) * 440;
 };
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+export const freqToMidi = (freq) => {
+  return (12 * Math.log(freq / 440)) / Math.LN2 + 69;
+};
+
+export const valueToMidi = (value, fallbackValue) => {
+  if (typeof value !== 'object') {
+    throw new Error('valueToMidi: expected object value');
+  }
+  let { freq, note } = value;
+  if (typeof freq === 'number') {
+    return freqToMidi(freq);
+  }
+  if (typeof note === 'string') {
+    return noteToMidi(note);
+  }
+  if (typeof note === 'number') {
+    return note;
+  }
+  if (!fallbackValue) {
+    throw new Error('valueToMidi: expected freq or note to be set');
+  }
+  return fallbackValue;
+};

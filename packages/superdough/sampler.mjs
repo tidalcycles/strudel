@@ -1,4 +1,4 @@
-import { logger, noteToMidi, valueToMidi } from '@strudel.cycles/core';
+import { noteToMidi, valueToMidi } from './util.mjs';
 import { getAudioContext, registerSound } from './index.mjs';
 import { getEnvelope } from './helpers.mjs';
 
@@ -24,7 +24,7 @@ function humanFileSize(bytes, si) {
 export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resolveUrl) => {
   let transpose = 0;
   if (freq !== undefined && note !== undefined) {
-    logger('[sampler] hap has note and freq. ignoring note', 'warning');
+    // logger('[sampler] hap has note and freq. ignoring note', 'warning');
   }
   let midi = valueToMidi({ freq, note }, 36);
   transpose = midi - 36; // C3 is middle C
@@ -64,7 +64,7 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resol
 export const loadBuffer = (url, ac, s, n = 0) => {
   const label = s ? `sound "${s}:${n}"` : 'sample';
   if (!loadCache[url]) {
-    logger(`[sampler] load ${label}..`, 'load-sample', { url });
+    //logger(`[sampler] load ${label}..`, 'load-sample', { url });
     const timestamp = Date.now();
     loadCache[url] = fetch(url)
       .then((res) => res.arrayBuffer())
@@ -72,7 +72,7 @@ export const loadBuffer = (url, ac, s, n = 0) => {
         const took = Date.now() - timestamp;
         const size = humanFileSize(res.byteLength);
         // const downSpeed = humanFileSize(res.byteLength / took);
-        logger(`[sampler] load ${label}... done! loaded ${size} in ${took}ms`, 'loaded-sample', { url });
+        //logger(`[sampler] load ${label}... done! loaded ${size} in ${took}ms`, 'loaded-sample', { url });
         const decoded = await ac.decodeAudioData(res);
         bufferCache[url] = decoded;
         return decoded;
@@ -224,12 +224,12 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
 
   // asny stuff above took too long?
   if (ac.currentTime > t) {
-    logger(`[sampler] still loading sound "${s}:${n}"`, 'highlight');
+    //logger(`[sampler] still loading sound "${s}:${n}"`, 'highlight');
     // console.warn('sample still loading:', s, n);
     return;
   }
   if (!bufferSource) {
-    logger(`[sampler] could not load "${s}:${n}"`, 'error');
+    //logger(`[sampler] could not load "${s}:${n}"`, 'error');
     return;
   }
   bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;

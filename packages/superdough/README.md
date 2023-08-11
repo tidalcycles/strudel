@@ -17,10 +17,11 @@ npm i superdough --save
 ```js
 import { superdough, samples } from 'superdough';
 // load samples from github
-const loadSamples = samples('github:tidalcycles/Dirt-Samples/master');
+const init = samples('github:tidalcycles/Dirt-Samples/master');
 
 // play some sounds when a button is clicked 
-document.getElementById('play').addEventListener('click', () => {
+document.getElementById('play').addEventListener('click', async () => {
+  await init;
   superdough({ s: "bd", delay: .5 }, 0);
   superdough({ s: "sawtooth", cutoff: 600, resonance: 8 }, 0);
   superdough({ s: "hh" }, 0.25);
