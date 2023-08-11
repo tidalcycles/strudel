@@ -1,6 +1,6 @@
 {
   "name": "superdough",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "simple web audio synth and sampler intended for live coding. inspired by superdirt and webdirt.",
   "main": "index.mjs",
   "type": "module",
