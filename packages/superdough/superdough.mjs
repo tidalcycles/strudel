@@ -62,21 +62,24 @@ function getWorklet(ac, processor, params) {
 }
 
 // this function should be called on first user interaction (to avoid console warning)
-export async function initAudio() {
+export async function initAudio(options = {}) {
+  const { disableWorklets = false } = options;
   if (typeof window !== 'undefined') {
-    try {
-      await getAudioContext().resume();
-      await loadWorklets();
-    } catch (err) {
-      console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+    await getAudioContext().resume();
+    if (!disableWorklets) {
+      await loadWorklets().catch((err) => {
+        console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
+      });
+    } else {
+      console.log('disableWorklets: AudioWorklet effects coarse, crush and shape are skipped!');
     }
   }
 }
 
-export async function initAudioOnFirstClick() {
+export async function initAudioOnFirstClick(options) {
   return new Promise((resolve) => {
     document.addEventListener('click', async function listener() {
-      await initAudio();
+      await initAudio(options);
       resolve();
       document.removeEventListener('click', listener);
     });
