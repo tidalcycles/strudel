@@ -42,6 +42,8 @@ document.getElementById('play').addEventListener('click', async () => {
 });
 ```
 
+[Open this in Codesandbox](https://codesandbox.io/s/superdough-demo-forked-sf8djh?file=/src/index.js)
+
 ## Credits
 
 - [SuperDirt](https://github.com/musikinformatik/SuperDirt)
