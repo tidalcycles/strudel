@@ -7,9 +7,9 @@ export default defineConfig({
   plugins: [],
   build: {
     lib: {
-      entry: resolve(__dirname, 'superdough.mjs'),
+      entry: resolve(__dirname, 'index.mjs'),
       formats: ['es', 'cjs'],
-      fileName: (ext) => ({ es: 'superdough.mjs', cjs: 'superdough.cjs' }[ext]),
+      fileName: (ext) => ({ es: 'index.mjs', cjs: 'index.cjs' }[ext]),
     },
     rollupOptions: {
       external: [...Object.keys(dependencies)],
