@@ -1,6 +1,7 @@
 # @strudel.cycles/webaudio
 
 This package contains helpers to make music with strudel and the Web Audio API.
+It is a thin binding to [superdough](https://www.npmjs.com/package/superdough).
 
 ## Install
 

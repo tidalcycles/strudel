@@ -490,9 +490,9 @@ importers:
       '@strudel.cycles/core':
         specifier: workspace:*
         version: link:../core
-      nanostores:
-        specifier: ^0.8.1
-        version: 0.8.1
+      superdough:
+        specifier: workspace:*
+        version: link:../superdough
     devDependencies:
       vite:
         specifier: ^4.3.3

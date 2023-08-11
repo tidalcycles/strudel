@@ -124,7 +124,7 @@ function effectSend(input, effect, wet) {
   return send;
 }
 
-export const superdough = async (value, deadline, hapDuration, cps) => {
+export const superdough = async (value, deadline, hapDuration) => {
   const ac = getAudioContext();
   if (typeof value !== 'object') {
     throw new Error(
@@ -164,7 +164,6 @@ export const superdough = async (value, deadline, hapDuration, cps) => {
     size = 2,
     velocity = 1,
   } = value;
-  // const { velocity = 1 } = hap.context;
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
   const onended = () => {

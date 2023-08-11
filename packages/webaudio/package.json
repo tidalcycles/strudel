@@ -35,7 +35,7 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@strudel.cycles/core": "workspace:*",
-    "nanostores": "^0.8.1"
+    "superdough": "workspace:*"
   },
   "devDependencies": {
     "vite": "^4.3.3"
