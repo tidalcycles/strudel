@@ -1,18 +1,17 @@
 {
-  "name": "@strudel.cycles/webaudio",
-  "version": "0.8.2",
-  "description": "Web Audio helpers for Strudel",
+  "name": "superdough",
+  "version": "0.9.3",
+  "description": "simple web audio synth and sampler intended for live coding. inspired by superdirt and webdirt.",
   "main": "index.mjs",
   "type": "module",
+  "publishConfig": {
+    "main": "dist/index.cjs",
+    "module": "dist/index.mjs"
+  },
   "directories": {
     "example": "examples"
   },
-  "publishConfig": {
-    "main": "dist/index.js",
-    "module": "dist/index.mjs"
-  },
   "scripts": {
-    "example": "npx parcel examples/repl.html",
     "build": "vite build",
     "prepublishOnly": "npm run build"
   },
@@ -33,11 +32,10 @@
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
-  "dependencies": {
-    "@strudel.cycles/core": "workspace:*",
-    "superdough": "workspace:*"
-  },
   "devDependencies": {
     "vite": "^4.3.3"
+  },
+  "dependencies": {
+    "nanostores": "^0.8.1"
   }
 }

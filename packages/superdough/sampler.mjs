@@ -1,6 +1,7 @@
-import { logger, noteToMidi, valueToMidi } from '@strudel.cycles/core';
+import { noteToMidi, valueToMidi } from './util.mjs';
 import { getAudioContext, registerSound } from './index.mjs';
 import { getEnvelope } from './helpers.mjs';
+import { logger } from './logger.mjs';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
 const loadCache = {}; // string: Promise<ArrayBuffer>
