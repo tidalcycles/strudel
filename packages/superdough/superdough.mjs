@@ -11,6 +11,7 @@ import { clamp } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
 import { getFilter, gainNode } from './helpers.mjs';
 import { map } from 'nanostores';
+import { logger } from './logger.mjs';
 
 export const soundMap = map();
 export function registerSound(key, onTrigger, data = {}) {
@@ -195,7 +196,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     return;
   }
   if (ac.currentTime > t) {
-    // logger('[webaudio] skip hap: still loading', ac.currentTime - t);
+    logger('[webaudio] skip hap: still loading', ac.currentTime - t);
     return;
   }
   const chain = []; // audio nodes that will be connected to each other sequentially

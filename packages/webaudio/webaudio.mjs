@@ -5,8 +5,10 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as strudel from '@strudel.cycles/core';
-import { superdough, getAudioContext } from 'superdough';
+import { superdough, getAudioContext, setLogger } from 'superdough';
 const { Pattern, logger } = strudel;
+
+setLogger(logger);
 
 const hap2value = (hap) => {
   hap.ensureObjectValue();

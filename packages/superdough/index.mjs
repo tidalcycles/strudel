@@ -8,3 +8,4 @@ export * from './superdough.mjs';
 export * from './sampler.mjs';
 export * from './helpers.mjs';
 export * from './synth.mjs';
+export * from './logger.mjs';
