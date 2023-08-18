@@ -16,7 +16,7 @@ const TAURI = window.__TAURI__;
 export function Footer({ context }) {
   const footerContent = useRef();
   const [log, setLog] = useState([]);
-  const{ activeFooter, isZen, panelPosition } = useSettings();
+  const { activeFooter, isZen, panelPosition } = useSettings();
 
   useLayoutEffect(() => {
     if (footerContent.current && activeFooter === 'console') {
