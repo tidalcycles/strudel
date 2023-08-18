@@ -437,7 +437,7 @@ function SettingsTab({ scheduler }) {
           items={{ codemirror: 'Codemirror', vim: 'Vim', emacs: 'Emacs' }}
         ></ButtonGroup>
       </FormItem>
-      <FormItem label="Footer Position">
+      <FormItem label="Panel Position">
         <ButtonGroup
           value={panelPosition}
           onChange={(value) => settingsMap.setKey('panelPosition', value)}
@@ -461,6 +461,7 @@ function SettingsTab({ scheduler }) {
           value={isLineWrappingEnabled}
         />
       </FormItem>
+      <FormItem label="Zen Mode">Try clicking the logo in the top left!</FormItem>
       <FormItem label="Reset Settings">
         <button
           className="bg-background p-2 max-w-[300px] rounded-md hover:opacity-50"
