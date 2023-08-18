@@ -122,6 +122,7 @@ export function Repl({ embedded = false }) {
     isLineNumbersDisplayed,
     isAutoCompletionEnabled,
     isLineWrappingEnabled,
+    panelPosition,
   } = useSettings();
 
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
@@ -289,30 +290,12 @@ export function Repl({ embedded = false }) {
     <ReplContext.Provider value={context}>
       <div
         className={cx(
-          'h-full flex flex-col',
-          //        'bg-gradient-to-t from-green-900 to-slate-900', //
+          'h-full flex flex-col relative',
+          // overflow-hidden
         )}
       >
         <Loader active={pending} />
         <Header context={context} />
-        <section className="grow flex text-gray-100 relative overflow-auto cursor-text pb-0" id="code">
-          <CodeMirror
-            theme={currentTheme}
-            value={code}
-            keybindings={keybindings}
-            isLineNumbersDisplayed={isLineNumbersDisplayed}
-            isAutoCompletionEnabled={isAutoCompletionEnabled}
-            isLineWrappingEnabled={isLineWrappingEnabled}
-            fontSize={fontSize}
-            fontFamily={fontFamily}
-            onChange={handleChangeCode}
-            onViewChanged={handleViewChanged}
-            onSelectionChange={handleSelectionChange}
-          />
-        </section>
-        {error && (
-          <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>
-        )}
         {isEmbedded && !started && (
           <button
             onClick={() => handleTogglePlay()}
@@ -322,7 +305,28 @@ export function Repl({ embedded = false }) {
             <span>play</span>
           </button>
         )}
-        {!isEmbedded && <Footer context={context} />}
+        <div className="grow flex relative overflow-hidden">
+          <section className="text-gray-100 cursor-text pb-0 overflow-auto grow" id="code">
+            <CodeMirror
+              theme={currentTheme}
+              value={code}
+              keybindings={keybindings}
+              isLineNumbersDisplayed={isLineNumbersDisplayed}
+              isAutoCompletionEnabled={isAutoCompletionEnabled}
+              isLineWrappingEnabled={isLineWrappingEnabled}
+              fontSize={fontSize}
+              fontFamily={fontFamily}
+              onChange={handleChangeCode}
+              onViewChanged={handleViewChanged}
+              onSelectionChange={handleSelectionChange}
+            />
+          </section>
+          {panelPosition === 'right' && !isEmbedded && <Footer context={context} />}
+        </div>
+        {error && (
+          <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>
+        )}
+        {panelPosition === 'bottom' && !isEmbedded && <Footer context={context} />}
       </div>
     </ReplContext.Provider>
   );

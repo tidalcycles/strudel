@@ -5,7 +5,7 @@ const visibleFunctions = jsdocJson.docs
 
 export function Reference() {
   return (
-    <div className="flex h-full w-full pt-2 text-foreground">
+    <div className="flex h-full w-full pt-2 text-foreground overflow-hidden">
       <div className="w-42 flex-none h-full overflow-y-auto overflow-x-hidden pr-4">
         {visibleFunctions.map((entry, i) => (
           <a key={i} className="cursor-pointer block hover:bg-lineHighlight py-1 px-4" href={`#doc-${i}`}>
@@ -14,7 +14,7 @@ export function Reference() {
         ))}
       </div>
       <div className="break-normal w-full h-full overflow-auto pl-4 flex relative">
-        <div className="prose dark:prose-invert">
+        <div className="prose dark:prose-invert max-w-full pr-4">
           <h2>API Reference</h2>
           <p>
             This is the long list functions you can use! Remember that you don't need to remember all of those and that

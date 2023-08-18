@@ -16,7 +16,7 @@ const TAURI = window.__TAURI__;
 export function Footer({ context }) {
   const footerContent = useRef();
   const [log, setLog] = useState([]);
-  const { activeFooter, isZen } = useSettings();
+  const { activeFooter, isZen, panelPosition } = useSettings();
 
   useLayoutEffect(() => {
     if (footerContent.current && activeFooter === 'console') {
@@ -71,8 +71,15 @@ export function Footer({ context }) {
   if (isZen) {
     return null;
   }
+
+  const isActive = activeFooter !== '';
+
+  let positions = {
+    right: cx('max-w-full flex-grow-0 flex-none overflow-hidden', isActive ? 'w-[600px] h-full' : 'absolute right-0'),
+    bottom: cx('relative', isActive ? 'h-[360px] min-h-[360px]' : ''),
+  };
   return (
-    <footer className="bg-lineHighlight z-[20]">
+    <nav className={cx('bg-lineHighlight z-[1000] flex flex-col', positions[panelPosition])}>
       <div className="flex justify-between px-2">
         <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
           <FooterTab name="intro" label="welcome" />
@@ -83,22 +90,24 @@ export function Footer({ context }) {
           {TAURI && <FooterTab name="files" />}
         </div>
         {activeFooter !== '' && (
-          <button onClick={() => setActiveFooter('')} className="text-foreground" aria-label="Close Panel">
+          <button onClick={() => setActiveFooter('')} className="text-foreground px-2" aria-label="Close Panel">
             <XMarkIcon className="w-5 h-5" />
           </button>
         )}
       </div>
       {activeFooter !== '' && (
-        <div className="text-white flex-none h-[360px] overflow-auto max-w-full relative" ref={footerContent}>
-          {activeFooter === 'intro' && <WelcomeTab />}
-          {activeFooter === 'console' && <ConsoleTab log={log} />}
-          {activeFooter === 'sounds' && <SoundsTab />}
-          {activeFooter === 'reference' && <Reference />}
-          {activeFooter === 'settings' && <SettingsTab scheduler={context.scheduler} />}
-          {activeFooter === 'files' && <FilesTab />}
+        <div className="relative overflow-hidden">
+          <div className="text-white overflow-auto h-full max-w-full" ref={footerContent}>
+            {activeFooter === 'intro' && <WelcomeTab />}
+            {activeFooter === 'console' && <ConsoleTab log={log} />}
+            {activeFooter === 'sounds' && <SoundsTab />}
+            {activeFooter === 'reference' && <Reference />}
+            {activeFooter === 'settings' && <SettingsTab scheduler={context.scheduler} />}
+            {activeFooter === 'files' && <FilesTab />}
+          </div>
         </div>
       )}
-    </footer>
+    </nav>
   );
 }
 
@@ -377,6 +386,7 @@ function SettingsTab({ scheduler }) {
     isLineWrappingEnabled,
     fontSize,
     fontFamily,
+    panelPosition,
   } = useSettings();
 
   return (
@@ -420,14 +430,21 @@ function SettingsTab({ scheduler }) {
           />
         </FormItem>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <FormItem label="Keybindings">
-          <ButtonGroup
-            value={keybindings}
-            onChange={(keybindings) => settingsMap.setKey('keybindings', keybindings)}
-            items={{ codemirror: 'Codemirror', vim: 'Vim', emacs: 'Emacs' }}
-          ></ButtonGroup>
-        </FormItem>
+      <FormItem label="Keybindings">
+        <ButtonGroup
+          value={keybindings}
+          onChange={(keybindings) => settingsMap.setKey('keybindings', keybindings)}
+          items={{ codemirror: 'Codemirror', vim: 'Vim', emacs: 'Emacs' }}
+        ></ButtonGroup>
+      </FormItem>
+      <FormItem label="Panel Position">
+        <ButtonGroup
+          value={panelPosition}
+          onChange={(value) => settingsMap.setKey('panelPosition', value)}
+          items={{ bottom: 'Bottom', right: 'Right' }}
+        ></ButtonGroup>
+      </FormItem>
+      <FormItem label="Code Settings">
         <Checkbox
           label="Display line numbers"
           onChange={(cbEvent) => settingsMap.setKey('isLineNumbersDisplayed', cbEvent.target.checked)}
@@ -443,7 +460,8 @@ function SettingsTab({ scheduler }) {
           onChange={(cbEvent) => settingsMap.setKey('isLineWrappingEnabled', cbEvent.target.checked)}
           value={isLineWrappingEnabled}
         />
-      </div>
+      </FormItem>
+      <FormItem label="Zen Mode">Try clicking the logo in the top left!</FormItem>
       <FormItem label="Reset Settings">
         <button
           className="bg-background p-2 max-w-[300px] rounded-md hover:opacity-50"

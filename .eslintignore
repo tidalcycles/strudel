@@ -18,3 +18,4 @@ vite.config.js
 **/*.json
 **/dev-dist
 **/dist
+/src-tauri/target/**/*
