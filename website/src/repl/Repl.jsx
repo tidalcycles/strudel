@@ -114,7 +114,7 @@ export function Repl({ embedded = false }) {
   const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
   const [pending, setPending] = useState(true);
-  const {
+  let {
     theme,
     keybindings,
     fontSize,

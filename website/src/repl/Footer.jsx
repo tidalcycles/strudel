@@ -16,7 +16,7 @@ const TAURI = window.__TAURI__;
 export function Footer({ context }) {
   const footerContent = useRef();
   const [log, setLog] = useState([]);
-  const { activeFooter, isZen, panelPosition: position } = useSettings();
+  const{ activeFooter, isZen, panelPosition } = useSettings();
 
   useLayoutEffect(() => {
     if (footerContent.current && activeFooter === 'console') {
@@ -76,10 +76,10 @@ export function Footer({ context }) {
 
   let positions = {
     right: cx('max-w-full flex-grow-0 flex-none overflow-hidden', isActive ? 'w-[600px] h-full' : 'absolute right-0'),
-    bottom: 'h-[360px] min-h-[360px] relative',
+    bottom: cx('relative', isActive ? 'h-[360px] min-h-[360px]' : ''),
   };
   return (
-    <nav className={cx('bg-lineHighlight z-[1000] flex flex-col', positions[position])}>
+    <nav className={cx('bg-lineHighlight z-[1000] flex flex-col', positions[panelPosition])}>
       <div className="flex justify-between px-2">
         <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
           <FooterTab name="intro" label="welcome" />

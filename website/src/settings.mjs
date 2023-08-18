@@ -28,6 +28,7 @@ export function useSettings() {
     isAutoCompletionEnabled: [true, 'true'].includes(state.isAutoCompletionEnabled) ? true : false,
     isLineWrappingEnabled: [true, 'true'].includes(state.isLineWrappingEnabled) ? true : false,
     fontSize: Number(state.fontSize),
+    panelPosition: state.activeFooter !== '' ? state.panelPosition : 'bottom',
   };
 }
 
