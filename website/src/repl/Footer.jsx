@@ -79,7 +79,7 @@ export function Footer({ context }) {
     bottom: cx('relative', isActive ? 'h-[360px] min-h-[360px]' : ''),
   };
   return (
-    <nav className={cx('bg-lineHighlight z-[1000] flex flex-col', positions[panelPosition])}>
+    <nav className={cx('bg-lineHighlight z-[10] flex flex-col', positions[panelPosition])}>
       <div className="flex justify-between px-2">
         <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
           <FooterTab name="intro" label="welcome" />
