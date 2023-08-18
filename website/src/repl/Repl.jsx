@@ -291,7 +291,7 @@ export function Repl({ embedded = false }) {
       <div
         className={cx(
           'h-full flex flex-col relative',
-          //        'bg-gradient-to-t from-green-900 to-slate-900', //
+          // overflow-hidden
         )}
       >
         <Loader active={pending} />

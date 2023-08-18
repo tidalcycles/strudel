@@ -76,10 +76,10 @@ export function Footer({ context }) {
 
   let positions = {
     right: cx('max-w-full flex-grow-0 flex-none overflow-hidden', isActive ? 'w-[600px] h-full' : 'absolute right-0'),
-    bottom: '',
+    bottom: 'h-[360px] min-h-[360px] relative',
   };
   return (
-    <nav className={cx('bg-lineHighlight z-[1000]', positions[position])}>
+    <nav className={cx('bg-lineHighlight z-[1000] flex flex-col', positions[position])}>
       <div className="flex justify-between px-2">
         <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
           <FooterTab name="intro" label="welcome" />
@@ -96,13 +96,15 @@ export function Footer({ context }) {
         )}
       </div>
       {activeFooter !== '' && (
-        <div className="text-white flex-none h-full overflow-auto max-w-full relative" ref={footerContent}>
-          {activeFooter === 'intro' && <WelcomeTab />}
-          {activeFooter === 'console' && <ConsoleTab log={log} />}
-          {activeFooter === 'sounds' && <SoundsTab />}
-          {activeFooter === 'reference' && <Reference />}
-          {activeFooter === 'settings' && <SettingsTab scheduler={context.scheduler} />}
-          {activeFooter === 'files' && <FilesTab />}
+        <div className="relative overflow-hidden">
+          <div className="text-white overflow-auto h-full max-w-full" ref={footerContent}>
+            {activeFooter === 'intro' && <WelcomeTab />}
+            {activeFooter === 'console' && <ConsoleTab log={log} />}
+            {activeFooter === 'sounds' && <SoundsTab />}
+            {activeFooter === 'reference' && <Reference />}
+            {activeFooter === 'settings' && <SettingsTab scheduler={context.scheduler} />}
+            {activeFooter === 'files' && <FilesTab />}
+          </div>
         </div>
       )}
     </nav>
