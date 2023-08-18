@@ -1,4 +1,4 @@
-import jsdocJson from '../../../doc.json';
+import jsdocJson from '../../../../doc.json';
 const visibleFunctions = jsdocJson.docs
   .filter(({ name, description }) => name && !name.startsWith('_') && !!description)
   .sort((a, b) => /* a.meta.filename.localeCompare(b.meta.filename) +  */ a.name.localeCompare(b.name));

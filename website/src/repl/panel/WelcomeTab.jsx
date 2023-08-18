@@ -1,0 +1,49 @@
+import { cx } from '@strudel.cycles/react';
+import React from 'react';
+
+export function WelcomeTab() {
+  return (
+    <div className="prose dark:prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
+      <h3>
+        <span className={cx('animate-spin inline-block select-none')}>🌀</span> welcome
+      </h3>
+      <p>
+        You have found <span className="underline">strudel</span>, a new live coding platform to write dynamic music
+        pieces in the browser! It is free and open-source and made for beginners and experts alike. To get started:
+        <br />
+        <br />
+        <span className="underline">1. hit play</span> - <span className="underline">2. change something</span> -{' '}
+        <span className="underline">3. hit update</span>
+        <br />
+        If you don't like what you hear, try <span className="underline">shuffle</span>!
+      </p>
+      <p>
+        To learn more about what this all means, check out the{' '}
+        <a href="./workshop/getting-started" target="_blank">
+          interactive tutorial
+        </a>
+        . Also feel free to join the{' '}
+        <a href="https://discord.com/invite/HGEdXmRkzT" target="_blank">
+          tidalcycles discord channel
+        </a>{' '}
+        to ask any questions, give feedback or just say hello.
+      </p>
+      <h3>about</h3>
+      <p>
+        strudel is a JavaScript version of{' '}
+        <a href="https://tidalcycles.org/" target="_blank">
+          tidalcycles
+        </a>
+        , which is a popular live coding language for music, written in Haskell. You can find the source code at{' '}
+        <a href="https://github.com/tidalcycles/strudel" target="_blank">
+          github
+        </a>
+        . Please consider to{' '}
+        <a href="https://opencollective.com/tidalcycles" target="_blank">
+          support this project
+        </a>{' '}
+        to ensure ongoing development 💖
+      </p>
+    </div>
+  );
+}
