@@ -16,7 +16,7 @@ const TAURI = window.__TAURI__;
 export function Footer({ context }) {
   const footerContent = useRef();
   const [log, setLog] = useState([]);
-  const { activeFooter, isZen } = useSettings();
+  const { activeFooter, isZen, panelPosition: position } = useSettings();
 
   useLayoutEffect(() => {
     if (footerContent.current && activeFooter === 'console') {
@@ -71,8 +71,15 @@ export function Footer({ context }) {
   if (isZen) {
     return null;
   }
+
+  const isActive = activeFooter !== '';
+
+  let positions = {
+    right: cx('max-w-full flex-grow-0 flex-none overflow-hidden', isActive ? 'w-[600px] h-full' : 'absolute right-0'),
+    bottom: '',
+  };
   return (
-    <footer className="bg-lineHighlight z-[20]">
+    <nav className={cx('bg-lineHighlight z-[1000]', positions[position])}>
       <div className="flex justify-between px-2">
         <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
           <FooterTab name="intro" label="welcome" />
@@ -83,13 +90,13 @@ export function Footer({ context }) {
           {TAURI && <FooterTab name="files" />}
         </div>
         {activeFooter !== '' && (
-          <button onClick={() => setActiveFooter('')} className="text-foreground" aria-label="Close Panel">
+          <button onClick={() => setActiveFooter('')} className="text-foreground px-2" aria-label="Close Panel">
             <XMarkIcon className="w-5 h-5" />
           </button>
         )}
       </div>
       {activeFooter !== '' && (
-        <div className="text-white flex-none h-[360px] overflow-auto max-w-full relative" ref={footerContent}>
+        <div className="text-white flex-none h-full overflow-auto max-w-full relative" ref={footerContent}>
           {activeFooter === 'intro' && <WelcomeTab />}
           {activeFooter === 'console' && <ConsoleTab log={log} />}
           {activeFooter === 'sounds' && <SoundsTab />}
@@ -98,7 +105,7 @@ export function Footer({ context }) {
           {activeFooter === 'files' && <FilesTab />}
         </div>
       )}
-    </footer>
+    </nav>
   );
 }
 
@@ -377,6 +384,7 @@ function SettingsTab({ scheduler }) {
     isLineWrappingEnabled,
     fontSize,
     fontFamily,
+    panelPosition,
   } = useSettings();
 
   return (
@@ -443,6 +451,13 @@ function SettingsTab({ scheduler }) {
           onChange={(cbEvent) => settingsMap.setKey('isLineWrappingEnabled', cbEvent.target.checked)}
           value={isLineWrappingEnabled}
         />
+        <FormItem label="Footer Position">
+          <ButtonGroup
+            value={panelPosition}
+            onChange={(value) => settingsMap.setKey('panelPosition', value)}
+            items={{ bottom: 'Bottom', right: 'Right' }}
+          ></ButtonGroup>
+        </FormItem>
       </div>
       <FormItem label="Reset Settings">
         <button

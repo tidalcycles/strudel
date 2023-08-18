@@ -14,6 +14,7 @@ export const defaultSettings = {
   latestCode: '',
   isZen: false,
   soundsFilter: 'all',
+  panelPosition: 'bottom',
 };
 
 export const settingsMap = persistentMap('strudel-settings', defaultSettings);
