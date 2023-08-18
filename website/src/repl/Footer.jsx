@@ -430,14 +430,21 @@ function SettingsTab({ scheduler }) {
           />
         </FormItem>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <FormItem label="Keybindings">
-          <ButtonGroup
-            value={keybindings}
-            onChange={(keybindings) => settingsMap.setKey('keybindings', keybindings)}
-            items={{ codemirror: 'Codemirror', vim: 'Vim', emacs: 'Emacs' }}
-          ></ButtonGroup>
-        </FormItem>
+      <FormItem label="Keybindings">
+        <ButtonGroup
+          value={keybindings}
+          onChange={(keybindings) => settingsMap.setKey('keybindings', keybindings)}
+          items={{ codemirror: 'Codemirror', vim: 'Vim', emacs: 'Emacs' }}
+        ></ButtonGroup>
+      </FormItem>
+      <FormItem label="Footer Position">
+        <ButtonGroup
+          value={panelPosition}
+          onChange={(value) => settingsMap.setKey('panelPosition', value)}
+          items={{ bottom: 'Bottom', right: 'Right' }}
+        ></ButtonGroup>
+      </FormItem>
+      <FormItem label="Code Settings">
         <Checkbox
           label="Display line numbers"
           onChange={(cbEvent) => settingsMap.setKey('isLineNumbersDisplayed', cbEvent.target.checked)}
@@ -453,14 +460,7 @@ function SettingsTab({ scheduler }) {
           onChange={(cbEvent) => settingsMap.setKey('isLineWrappingEnabled', cbEvent.target.checked)}
           value={isLineWrappingEnabled}
         />
-        <FormItem label="Footer Position">
-          <ButtonGroup
-            value={panelPosition}
-            onChange={(value) => settingsMap.setKey('panelPosition', value)}
-            items={{ bottom: 'Bottom', right: 'Right' }}
-          ></ButtonGroup>
-        </FormItem>
-      </div>
+      </FormItem>
       <FormItem label="Reset Settings">
         <button
           className="bg-background p-2 max-w-[300px] rounded-md hover:opacity-50"
