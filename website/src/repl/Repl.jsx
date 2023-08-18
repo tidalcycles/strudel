@@ -19,7 +19,7 @@ import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import React, { createContext, useCallback, useEffect, useState, useMemo } from 'react';
 import './Repl.css';
-import { Footer } from './Footer';
+import { Panel } from './panel/Panel';
 import { Header } from './Header';
 import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
@@ -321,12 +321,12 @@ export function Repl({ embedded = false }) {
               onSelectionChange={handleSelectionChange}
             />
           </section>
-          {panelPosition === 'right' && !isEmbedded && <Footer context={context} />}
+          {panelPosition === 'right' && !isEmbedded && <Panel context={context} />}
         </div>
         {error && (
           <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>
         )}
-        {panelPosition === 'bottom' && !isEmbedded && <Footer context={context} />}
+        {panelPosition === 'bottom' && !isEmbedded && <Panel context={context} />}
       </div>
     </ReplContext.Provider>
   );

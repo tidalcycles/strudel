@@ -3,17 +3,17 @@ import { logger } from '@strudel.cycles/core';
 import { cx, useEvent } from '@strudel.cycles/react';
 import { nanoid } from 'nanoid';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { setActiveFooter, useSettings } from '../settings.mjs';
-import { ConsoleTab } from './panel/ConsoleTab';
-import { FilesTab } from './panel/FilesTab';
-import { Reference } from './panel/Reference';
-import { SettingsTab } from './panel/SettingsTab';
-import { SoundsTab } from './panel/SoundsTab';
-import { WelcomeTab } from './panel/WelcomeTab';
+import { setActiveFooter, useSettings } from '../../settings.mjs';
+import { ConsoleTab } from './ConsoleTab';
+import { FilesTab } from './FilesTab';
+import { Reference } from './Reference';
+import { SettingsTab } from './SettingsTab';
+import { SoundsTab } from './SoundsTab';
+import { WelcomeTab } from './WelcomeTab';
 
 const TAURI = window.__TAURI__;
 
-export function Footer({ context }) {
+export function Panel({ context }) {
   const footerContent = useRef();
   const [log, setLog] = useState([]);
   const { activeFooter, isZen, panelPosition } = useSettings();
