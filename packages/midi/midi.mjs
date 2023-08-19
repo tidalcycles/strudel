@@ -8,7 +8,6 @@ import * as _WebMidi from 'webmidi';
 import { Pattern, isPattern, logger } from '@strudel.cycles/core';
 import { noteToMidi } from '@strudel.cycles/core';
 import { Note } from 'webmidi';
-
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
 
@@ -16,12 +15,28 @@ function supportsMidi() {
   return typeof navigator.requestMIDIAccess === 'function';
 }
 
-export function enableWebMidi(options = {}) {
-  const { onReady, onConnected, onDisconnected } = options;
+function getMidiDeviceNamesString(outputs) {
+  return outputs.map((o) => `'${o.name}'`).join(' | ');
+}
 
+export function enableWebMidi(options = {}) {
+  const { onReady, onConnected, onDisconnected, onEnabled } = options;
+  if (WebMidi.enabled) {
+    return;
+  }
   if (!supportsMidi()) {
     throw new Error('Your Browser does not support WebMIDI.');
   }
+  WebMidi.addListener('connected', () => {
+    onConnected?.(WebMidi);
+  });
+  WebMidi.addListener('enabled', () => {
+    onEnabled?.(WebMidi);
+  });
+  // Reacting when a device becomes unavailable
+  WebMidi.addListener('disconnected', (e) => {
+    onDisconnected?.(WebMidi, e);
+  });
   return new Promise((resolve, reject) => {
     if (WebMidi.enabled) {
       // if already enabled, just resolve WebMidi
@@ -32,13 +47,6 @@ export function enableWebMidi(options = {}) {
       if (err) {
         reject(err);
       }
-      WebMidi.addListener('connected', (e) => {
-        onConnected?.(WebMidi);
-      });
-      // Reacting when a device becomes unavailable
-      WebMidi.addListener('disconnected', (e) => {
-        onDisconnected?.(WebMidi, e);
-      });
       onReady?.(WebMidi);
       resolve(WebMidi);
     });
@@ -46,9 +54,6 @@ export function enableWebMidi(options = {}) {
 }
 // const outputByName = (name: string) => WebMidi.getOutputByName(name);
 const outputByName = (name) => WebMidi.getOutputByName(name);
-
-let midiReady = false;
-let prevTime = 0;
 
 // output?: string | number, outputs: typeof WebMidi.outputs
 function getDevice(output, outputs) {
@@ -61,16 +66,20 @@ function getDevice(output, outputs) {
   if (typeof output === 'string') {
     return outputByName(output);
   }
-  // attempt to default to IAC device if none is specified
+  // attempt to default to first IAC device if none is specified
   const IACOutput = outputs.find((output) => output.name.includes('IAC'));
+  const device = IACOutput ?? outputs[0];
+  if (!device) {
+    throw new Error(
+      `🔌 MIDI device '${output ? output : ''}' not found. Use one of ${getMidiDeviceNamesString(WebMidi.outputs)}`,
+    );
+  }
+
   return IACOutput ?? outputs[0];
 }
 
 // Pattern.prototype.midi = function (output: string | number, channel = 1) {
 Pattern.prototype.midi = function (output) {
-  if (!supportsMidi()) {
-    throw new Error(`🎹 WebMidi is not enabled. Supported Browsers: https://caniuse.com/?search=webmidi`);
-  }
   if (isPattern(output)) {
     throw new Error(
       `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
@@ -79,52 +88,37 @@ Pattern.prototype.midi = function (output) {
     );
   }
 
-  if (midiReady === false) {
-    enableWebMidi({
-      onConnected: ({ outputs }) => {
-        const device = getDevice(output, outputs);
-        const otherOutputs = outputs
-          .filter((o) => o.name !== device.name)
-          .map((o) => `'${o.name}'`)
-          .join(' | ');
+  enableWebMidi({
+    onEnabled: ({ outputs }) => {
+      const device = getDevice(output, outputs);
+      const otherOutputs = outputs.filter((o) => o.name !== device.name);
+      logger(
+        `Midi enabled! Using "${device.name}". ${
+          otherOutputs?.length ? `Also available: ${getMidiDeviceNamesString(otherOutputs)}` : ''
+        }`,
+      );
+    },
+    onDisconnected: ({ outputs }) =>
+      logger(`Midi device disconnected! Available: ${getMidiDeviceNamesString(outputs)}`),
+  });
 
-        midiReady = true;
-        logger(`Midi connected! Using "${device.name}". ${otherOutputs ? `Also available: ${otherOutputs}` : ''}`);
-      },
-      onDisconnected: ({ outputs }) =>
-        logger(`Midi device disconnected! Available: ${outputs.map((o) => `'${o.name}'`).join(', ')}`),
-    });
-  }
-
-  return this.onTrigger((time, hap, currentTime, cps = 1) => {
-    if (!midiReady) {
+  return this.onTrigger((time, hap, currentTime, cps) => {
+    if (!WebMidi.enabled) {
       return;
     }
-
     const device = getDevice(output, WebMidi.outputs);
-    const current = performance.now();
-    // console.log(current - prevTime);
-    prevTime = current;
-
-    if (!device) {
-      throw new Error(
-        `🔌 MIDI device '${output ? output : ''}' not found. Use one of ${WebMidi.outputs
-          .map((o) => `'${o.name}'`)
-          .join(' | ')}`,
-      );
-    }
     hap.ensureObjectValue();
 
     const offset = (time - currentTime) * 1000;
-
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
     const timeOffsetString = `+${offset}`;
 
     // destructure value
     const { note, nrpnn, nrpv, ccn, ccv, midichan = 1 } = hap.value;
     const velocity = hap.context?.velocity ?? 0.9; // TODO: refactor velocity
-    const duration = Math.round(hap.duration.valueOf() * 1000 - 5);
 
+    // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
+    const duration = Math.round(hap.duration.valueOf() * 1000 - 10);
     if (note != null) {
       const midiNumber = typeof note === 'number' ? note : noteToMidi(note);
       const midiNote = new Note(midiNumber, { attack: velocity, duration });
