@@ -17,8 +17,7 @@ const fm = (osc, harmonicityRatio, modulationIndex, wave = 'sine') => {
   const carrfreq = osc.frequency.value;
   const modfreq = carrfreq * harmonicityRatio;
   const modgain = modfreq * modulationIndex;
-  const { node: modulator, stop } = mod(modfreq, modgain, wave);
-  return { node: modulator, stop };
+  return mod(modfreq, modgain, wave);
 };
 
 export function registerSynthSounds() {
