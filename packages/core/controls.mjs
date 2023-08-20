@@ -110,6 +110,32 @@ const generic_params = [
   ['attack', 'att'],
 
   /**
+   * Sets the Frequency Modulation Harmonicity Ratio.
+   * Controls the timbre of the sound.
+   * Whole numbers and simple ratios sound more natural,
+   * while decimal numbers and complex ratios sound metallic.
+   *
+   * @name fmh
+   * @param {number | Pattern} harmonicity
+   * @example
+   * note("c e g b").fm(4).fmh("<1 2 1.5 1.61>")
+   *
+   */
+  [['fmh', 'fmi'], 'fmh'],
+  /**
+   * Sets the Frequency Modulation of the synth.
+   * Controls the modulation index, which defines the brightness of the sound.
+   *
+   * @name fm
+   * @param {number | Pattern} brightness modulation index
+   * @synonyms fmi
+   * @example
+   * note("c e g b").fm("<0 1 2 8 32>")
+   *
+   */
+  [['fmi', 'fmh'], 'fm'],
+
+  /**
    * Select the sound bank to use. To be used together with `s`. The bank name (+ "_") will be prepended to the value of `s`.
    *
    * @name bank
