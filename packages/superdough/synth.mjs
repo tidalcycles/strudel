@@ -2,13 +2,39 @@ import { midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound } from './superdough.mjs';
 import { getOscillator, gainNode, getEnvelope } from './helpers.mjs';
 
+const mod = (freq, range = 1, type = 'sine') => {
+  const ctx = getAudioContext();
+  const osc = ctx.createOscillator();
+  osc.type = type;
+  osc.frequency.value = freq;
+  osc.start();
+  const g = new GainNode(ctx, { gain: range });
+  osc.connect(g); // -range, range
+  return { node: g, stop: (t) => osc.stop(t) };
+};
+
+const fm = (osc, harmonicityRatio, modulationIndex, wave = 'sine') => {
+  const carrfreq = osc.frequency.value;
+  const modfreq = carrfreq * harmonicityRatio;
+  const modgain = modfreq * modulationIndex;
+  const { node: modulator, stop } = mod(modfreq, modgain, wave);
+  return { node: modulator, stop };
+};
+
 export function registerSynthSounds() {
   ['sine', 'square', 'triangle', 'sawtooth'].forEach((wave) => {
     registerSound(
       wave,
       (t, value, onended) => {
         // destructure adsr here, because the default should be different for synths and samples
-        const { attack = 0.001, decay = 0.05, sustain = 0.6, release = 0.01 } = value;
+        const {
+          attack = 0.001,
+          decay = 0.05,
+          sustain = 0.6,
+          release = 0.01,
+          fmh: fmHarmonicity = 1,
+          fmi: fmModulationIndex,
+        } = value;
         let { n, note, freq } = value;
         // with synths, n and note are the same thing
         n = note || n || 36;
@@ -22,6 +48,13 @@ export function registerSynthSounds() {
         // maybe pull out the above frequency resolution?? (there is also getFrequency but it has no default)
         // make oscillator
         const { node: o, stop } = getOscillator({ t, s: wave, freq });
+
+        let stopFm;
+        if (fmModulationIndex) {
+          const { node: modulator, stop } = fm(o, fmHarmonicity, fmModulationIndex);
+          modulator.connect(o.frequency);
+          stopFm = stop;
+        }
         const g = gainNode(0.3);
         // envelope
         const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
@@ -34,7 +67,9 @@ export function registerSynthSounds() {
           node: o.connect(g).connect(envelope),
           stop: (releaseTime) => {
             releaseEnvelope(releaseTime);
-            stop(releaseTime + release);
+            let end = releaseTime + release;
+            stop(end);
+            stopFm?.(end);
           },
         };
       },
