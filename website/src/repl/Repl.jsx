@@ -225,8 +225,8 @@ export function Repl({ embedded = false }) {
       stop();
     }
   };
-  const handleUpdate = () => {
-    isDirty && activateCode();
+  const handleUpdate = (newCode) => {
+    (newCode || isDirty) && activateCode(newCode);
     logger('[repl] code updated! tip: you can also update the code by pressing ctrl+enter', 'highlight');
   };
 

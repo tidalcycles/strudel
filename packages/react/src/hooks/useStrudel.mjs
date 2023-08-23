@@ -73,8 +73,11 @@ function useStrudel({
     }
   });
   const activateCode = useCallback(
-    async (autostart = true) => {
-      const res = await evaluate(code, autostart);
+    async (newCode, autostart = true) => {
+      if (newCode) {
+        setCode(code);
+      }
+      const res = await evaluate(newCode || code, autostart);
       broadcast({ type: 'start', from: id });
       return res;
     },

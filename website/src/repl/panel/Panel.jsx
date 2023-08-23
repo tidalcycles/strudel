@@ -10,6 +10,7 @@ import { Reference } from './Reference';
 import { SettingsTab } from './SettingsTab';
 import { SoundsTab } from './SoundsTab';
 import { WelcomeTab } from './WelcomeTab';
+import { PatternsTab } from './PatternsTab';
 
 const TAURI = window.__TAURI__;
 
@@ -54,7 +55,7 @@ export function Panel({ context }) {
     }, []),
   );
 
-  const FooterTab = ({ children, name, label }) => (
+  const PanelTab = ({ children, name, label }) => (
     <>
       <div
         onClick={() => setActiveFooter(name)}
@@ -82,12 +83,13 @@ export function Panel({ context }) {
     <nav className={cx('bg-lineHighlight z-[10] flex flex-col', positions[panelPosition])}>
       <div className="flex justify-between px-2">
         <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
-          <FooterTab name="intro" label="welcome" />
-          <FooterTab name="sounds" />
-          <FooterTab name="console" />
-          <FooterTab name="reference" />
-          <FooterTab name="settings" />
-          {TAURI && <FooterTab name="files" />}
+          <PanelTab name="intro" label="welcome" />
+          <PanelTab name="sounds" />
+          <PanelTab name="console" />
+          <PanelTab name="patterns" />
+          <PanelTab name="reference" />
+          <PanelTab name="settings" />
+          {TAURI && <PanelTab name="files" />}
         </div>
         {activeFooter !== '' && (
           <button onClick={() => setActiveFooter('')} className="text-foreground px-2" aria-label="Close Panel">
@@ -99,6 +101,7 @@ export function Panel({ context }) {
         <div className="relative overflow-hidden">
           <div className="text-white overflow-auto h-full max-w-full" ref={footerContent}>
             {activeFooter === 'intro' && <WelcomeTab />}
+            {activeFooter === 'patterns' && <PatternsTab context={context} />}
             {activeFooter === 'console' && <ConsoleTab log={log} />}
             {activeFooter === 'sounds' && <SoundsTab />}
             {activeFooter === 'reference' && <Reference />}
