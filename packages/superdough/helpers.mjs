@@ -68,3 +68,17 @@ export const getFilter = (type, frequency, Q) => {
   filter.Q.value = Q;
   return filter;
 };
+
+export const getAM = (freq, harmonicityRatio, amount, wave = 'sine') => {
+  const carrfreq = freq;
+  const modfreq = carrfreq * harmonicityRatio;
+  const { node: modulator, stop } = mod(modfreq, amount, wave);
+  const g = gainNode(1);
+  modulator.connect(g.gain);
+  return g;/* 
+  const c = 1 / 1 ** amount;
+  console.log('c', c);
+  const compensate = gainNode(1/amount);
+  g.connect(compensate);
+  return compensate; */
+};

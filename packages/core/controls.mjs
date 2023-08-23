@@ -134,7 +134,8 @@ const generic_params = [
    *
    */
   [['fmi', 'fmh'], 'fm'],
-
+  ['amh'],
+  ['ami'],
   /**
    * Select the sound bank to use. To be used together with `s`. The bank name (+ "_") will be prepended to the value of `s`.
    *

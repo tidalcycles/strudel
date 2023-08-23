@@ -2,7 +2,7 @@ import { midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext } from './superdough.mjs';
 import { getOscillator, gainNode, getEnvelope } from './helpers.mjs';
 
-const mod = (freq, range = 1, type = 'sine') => {
+export const mod = (freq, range = 1, type = 'sine') => {
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
   osc.type = type;

@@ -51,3 +51,21 @@ export const valueToMidi = (value, fallbackValue) => {
   }
   return fallbackValue;
 };
+
+export const getFrequency = (value) => {
+  // if value is number => interpret as midi number as long as its not marked as frequency
+  if (typeof value === 'object') {
+    if (value.freq) {
+      return value.freq;
+    }
+    return getFreq(value.note || value.n || value.value || 36);
+  }
+  if (typeof value === 'number' && context.type !== 'frequency') {
+    value = midiToFreq(hap.value);
+  } else if (typeof value === 'string' && isNote(value)) {
+    value = midiToFreq(noteToMidi(hap.value));
+  } else if (typeof value !== 'number') {
+    throw new Error('not a note or frequency: ' + value);
+  }
+  return value;
+};

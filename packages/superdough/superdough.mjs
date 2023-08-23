@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
-import { clamp } from './util.mjs';
+import { clamp, getFrequency } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
 import { getFilter, gainNode } from './helpers.mjs';
 import { map } from 'nanostores';
@@ -167,6 +167,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     room,
     size = 2,
     velocity = 1,
+    amh, // amplitude modulation harmonicity
+    ami = 4, // amplitude modulation index
   } = value;
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
@@ -205,6 +207,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   // gain stage
   chain.push(gainNode(gain));
 
+  amh !== undefined && chain.push(getAM(getFrequency(value), amh, ami));
   // filters
   cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
   hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
