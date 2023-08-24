@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
-import { clamp } from './util.mjs';
+import { clamp, nanFallback } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
 import { getFilter, gainNode } from './helpers.mjs';
 import { map } from 'nanostores';
@@ -168,6 +168,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     size = 2,
     velocity = 1,
   } = value;
+  gain = nanFallback(gain, 1);
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
   const onended = () => {
