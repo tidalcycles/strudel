@@ -36,7 +36,7 @@ export function repl({
     try {
       await beforeEval?.({ code });
       let { pattern, meta } = await _evaluate(code, transpiler);
-      logger(`[eval] code updated`);
+      // logger(`[eval] code updated`);
       setPattern(pattern, autostart);
       afterEval?.({ code, pattern, meta });
       return pattern;

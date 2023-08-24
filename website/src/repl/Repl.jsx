@@ -206,7 +206,7 @@ export function Repl({ embedded = false }) {
   const handleChangeCode = useCallback(
     (c) => {
       setCode(c);
-      started && logger('[edit] code changed. hit ctrl+enter to update');
+      // started && logger('[edit] code changed. hit ctrl+enter to update');
     },
     [started],
   );
