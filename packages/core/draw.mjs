@@ -9,18 +9,19 @@ import { Pattern, getTime, State, TimeSpan } from './index.mjs';
 export const getDrawContext = (id = 'test-canvas') => {
   let canvas = document.querySelector('#' + id);
   if (!canvas) {
+    const scale = 2; // 2 = crisp on retina screens
     canvas = document.createElement('canvas');
     canvas.id = id;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth * scale;
+    canvas.height = window.innerHeight * scale;
     canvas.style = 'pointer-events:none;width:100%;height:100%;position:fixed;top:0;left:0';
     document.body.prepend(canvas);
     let timeout;
     window.addEventListener('resize', () => {
       timeout && clearTimeout(timeout);
       timeout = setTimeout(() => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth * scale;
+        canvas.height = window.innerHeight * scale;
       }, 200);
     });
   }
@@ -59,7 +60,7 @@ Pattern.prototype.draw = function (callback, { from, to, onQuery } = {}) {
 
 export const cleanupDraw = (clearScreen = true) => {
   const ctx = getDrawContext();
-  clearScreen && ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  clearScreen && ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.width);
   if (window.strudelAnimation) {
     cancelAnimationFrame(window.strudelAnimation);
   }
