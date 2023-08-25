@@ -6,14 +6,14 @@ export function drawTimeScope(
   analyser,
   { align = true, color = 'white', thickness = 3, scale = 1, pos = 0.75, next = 1 } = {},
 ) {
-  const canvasCtx = getDrawContext();
+  const ctx = getDrawContext();
   const dataArray = getAnalyzerData('time');
 
-  canvasCtx.lineWidth = thickness;
-  canvasCtx.strokeStyle = color;
+  ctx.lineWidth = thickness;
+  ctx.strokeStyle = color;
 
-  canvasCtx.beginPath();
-  let canvas = canvasCtx.canvas;
+  ctx.beginPath();
+  let canvas = ctx.canvas;
 
   const bufferSize = analyser.frequencyBinCount;
   const triggerValue = 256 / 2;
@@ -30,21 +30,21 @@ export function drawTimeScope(
     const y = (scale * (v - 1) + pos) * canvas.height;
 
     if (i === 0) {
-      canvasCtx.moveTo(x, y);
+      ctx.moveTo(x, y);
     } else {
-      canvasCtx.lineTo(x, y);
+      ctx.lineTo(x, y);
     }
     x += sliceWidth;
   }
-  canvasCtx.stroke();
+  ctx.stroke();
 }
 
 export function drawFrequencyScope(analyser, { color = 'white', scale = 1, pos = 0.75, lean = 0.5 } = {}) {
   const dataArray = getAnalyzerData('frequency');
-  const canvasCtx = getDrawContext();
-  const canvas = canvasCtx.canvas;
+  const ctx = getDrawContext();
+  const canvas = ctx.canvas;
 
-  canvasCtx.fillStyle = color;
+  ctx.fillStyle = color;
   const bufferSize = analyser.frequencyBinCount;
   const sliceWidth = (canvas.width * 1.0) / bufferSize;
 
@@ -54,18 +54,18 @@ export function drawFrequencyScope(analyser, { color = 'white', scale = 1, pos =
     const h = v * canvas.height;
     const y = (pos - v * lean) * canvas.height;
 
-    canvasCtx.fillRect(x, y, Math.max(sliceWidth, 1), h);
+    ctx.fillRect(x, y, Math.max(sliceWidth, 1), h);
     x += sliceWidth;
   }
 }
 
 function clearScreen(smear = 0, smearRGB = `0,0,0`) {
-  const canvasCtx = getDrawContext();
+  const ctx = getDrawContext();
   if (!smear) {
-    canvasCtx.clearRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   } else {
-    canvasCtx.fillStyle = `rgba(${smearRGB},${1 - smear})`;
-    canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
+    ctx.fillStyle = `rgba(${smearRGB},${1 - smear})`;
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   }
 }
 
