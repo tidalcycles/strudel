@@ -128,19 +128,21 @@ export function getAnalyser(/* orbit,  */ fftSize = 2048) {
     analyserNode.fftSize = fftSize;
     // getDestination().connect(analyserNode);
     analyser /* s[orbit] */ = analyserNode;
-    analyserData = new Uint8Array(analyser.frequencyBinCount);
+    //analyserData = new Uint8Array(analyser.frequencyBinCount);
+    analyserData = new Float32Array(analyser.frequencyBinCount);
   }
   if (analyser /* s[orbit] */.fftSize !== fftSize) {
     analyser /* s[orbit] */.fftSize = fftSize;
-    analyserData = new Uint8Array(analyser.frequencyBinCount);
+    //analyserData = new Uint8Array(analyser.frequencyBinCount);
+    analyserData = new Float32Array(analyser.frequencyBinCount);
   }
   return analyser /* s[orbit] */;
 }
 
 export function getAnalyzerData(type = 'time') {
   const getter = {
-    time: () => analyser?.getByteTimeDomainData(analyserData),
-    frequency: () => analyser?.getByteFrequencyData(analyserData),
+    time: () => analyser?.getFloatTimeDomainData(analyserData),
+    frequency: () => analyser?.getFloatFrequencyData(analyserData),
   }[type];
   if (!getter) {
     throw new Error(`getAnalyzerData: ${type} not supported. use one of ${Object.keys(getter).join(', ')}`);

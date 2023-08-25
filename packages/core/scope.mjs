@@ -1,10 +1,11 @@
 import { Pattern } from './pattern.mjs';
 import { getDrawContext } from './draw.mjs';
 import { analyser } from '@strudel.cycles/webaudio';
+import { clamp } from './util.mjs';
 
 export function drawTimeScope(
   analyser,
-  { align = true, color = 'white', thickness = 3, scale = 1, pos = 0.75, next = 1 } = {},
+  { align = true, color = 'white', thickness = 3, scale = 0.25, pos = 0.75, next = 1 } = {},
 ) {
   const ctx = getDrawContext();
   const dataArray = getAnalyzerData('time');
@@ -16,7 +17,7 @@ export function drawTimeScope(
   let canvas = ctx.canvas;
 
   const bufferSize = analyser.frequencyBinCount;
-  const triggerValue = 256 / 2;
+  const triggerValue = 0;
   let triggerIndex = align
     ? Array.from(dataArray).findIndex((v, i, arr) => i && arr[i - 1] < triggerValue && v >= triggerValue)
     : 0;
@@ -26,7 +27,7 @@ export function drawTimeScope(
   let x = 0;
 
   for (let i = triggerIndex; i < bufferSize; i++) {
-    const v = dataArray[i] / 128.0;
+    const v = dataArray[i] + 1;
     const y = (scale * (v - 1) + pos) * canvas.height;
 
     if (i === 0) {
@@ -39,7 +40,10 @@ export function drawTimeScope(
   ctx.stroke();
 }
 
-export function drawFrequencyScope(analyser, { color = 'white', scale = 1, pos = 0.75, lean = 0.5 } = {}) {
+export function drawFrequencyScope(
+  analyser,
+  { color = 'white', scale = 0.25, pos = 0.75, lean = 0.5, min = -150, max = 0 } = {},
+) {
   const dataArray = getAnalyzerData('frequency');
   const ctx = getDrawContext();
   const canvas = ctx.canvas;
@@ -50,7 +54,8 @@ export function drawFrequencyScope(analyser, { color = 'white', scale = 1, pos =
 
   let x = 0;
   for (let i = 0; i < bufferSize; i++) {
-    const v = (dataArray[i] / 256.0) * scale;
+    const normalized = clamp((dataArray[i] - min) / (max - min), 0, 1);
+    const v = normalized * scale;
     const h = v * canvas.height;
     const y = (pos - v * lean) * canvas.height;
 
