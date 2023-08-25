@@ -121,6 +121,34 @@ function getReverb(orbit, duration = 2) {
   return reverbs[orbit];
 }
 
+export let analyser, analyserData /* s = {} */;
+export function getAnalyser(/* orbit,  */ fftSize = 2048) {
+  if (!analyser /*s [orbit] */) {
+    const analyserNode = getAudioContext().createAnalyser();
+    analyserNode.fftSize = fftSize;
+    // getDestination().connect(analyserNode);
+    analyser /* s[orbit] */ = analyserNode;
+    analyserData = new Uint8Array(analyser.frequencyBinCount);
+  }
+  if (analyser /* s[orbit] */.fftSize !== fftSize) {
+    analyser /* s[orbit] */.fftSize = fftSize;
+    analyserData = new Uint8Array(analyser.frequencyBinCount);
+  }
+  return analyser /* s[orbit] */;
+}
+
+export function getAnalyzerData(type = 'time') {
+  const getter = {
+    time: () => analyser?.getByteTimeDomainData(analyserData),
+    frequency: () => analyser?.getByteFrequencyData(analyserData),
+  }[type];
+  if (!getter) {
+    throw new Error(`getAnalyzerData: ${type} not supported. use one of ${Object.keys(getter).join(', ')}`);
+  }
+  getter();
+  return analyserData;
+}
+
 function effectSend(input, effect, wet) {
   const send = gainNode(wet);
   input.connect(send);
@@ -167,6 +195,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     room,
     size = 2,
     velocity = 1,
+    analyze, // analyser wet
+    fft = 8, // fftSize 0 - 10
   } = value;
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
@@ -241,12 +271,19 @@ export const superdough = async (value, deadline, hapDuration) => {
     reverbSend = effectSend(post, reverbNode, room);
   }
 
+  // analyser
+  let analyserSend;
+  if (analyze) {
+    const analyserNode = getAnalyser(/* orbit,  */ 2 ** (fft + 5));
+    analyserSend = effectSend(post, analyserNode, analyze);
+  }
+
   // connect chain elements together
   chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
 
   // toDisconnect = all the node that should be disconnected in onended callback
   // this is crucial for performance
-  toDisconnect = chain.concat([delaySend, reverbSend]);
+  toDisconnect = chain.concat([delaySend, reverbSend, analyserSend]);
 };
 
 export const superdoughTrigger = (t, hap, ct, cps) => superdough(hap, t - ct, hap.duration / cps, cps);
