@@ -1,11 +1,9 @@
-import { Pattern } from './pattern.mjs';
-import { getDrawContext } from './draw.mjs';
-import { analyser } from '@strudel.cycles/webaudio';
-import { clamp } from './util.mjs';
+import { Pattern, getDrawContext, clamp } from '@strudel.cycles/core';
+import { analyser } from 'superdough';
 
 export function drawTimeScope(
   analyser,
-  { align = true, color = 'white', thickness = 3, scale = 0.25, pos = 0.75, next = 1 } = {},
+  { align = true, color = 'white', thickness = 3, scale = 0.25, pos = 0.75, next = 1, trigger = 0 } = {},
 ) {
   const ctx = getDrawContext();
   const dataArray = getAnalyzerData('time');
@@ -17,9 +15,8 @@ export function drawTimeScope(
   let canvas = ctx.canvas;
 
   const bufferSize = analyser.frequencyBinCount;
-  const triggerValue = 0;
   let triggerIndex = align
-    ? Array.from(dataArray).findIndex((v, i, arr) => i && arr[i - 1] < triggerValue && v >= triggerValue)
+    ? Array.from(dataArray).findIndex((v, i, arr) => i && arr[i - 1] > -trigger && v <= -trigger)
     : 0;
   triggerIndex = Math.max(triggerIndex, 0); // fallback to 0 when no trigger is found
 
