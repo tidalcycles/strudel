@@ -146,8 +146,8 @@ const generic_params = [
    */
   ['bank'],
 
-  ['analyze'], // sends
-  ['fft'],
+  ['analyze'], // analyser node send amount 0 - 1 (used by scope)
+  ['fft'], // fftSize of analyser
 
   /**
    * Amplitude envelope decay time: the time it takes after the attack time to reach the sustain level.
