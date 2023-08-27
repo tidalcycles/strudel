@@ -53,3 +53,7 @@
 #code .cm-cursor {
   border-left: 2px solid currentcolor !important;
 }
+
+#code .cm-foldGutter {
+  display: none !important;
+}

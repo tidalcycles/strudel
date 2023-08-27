@@ -506,6 +506,9 @@ const generic_params = [
    *
    */
   ['lsize'],
+  // label for pianoroll
+  ['activeLabel'],
+  [['label', 'activeLabel']],
   // ['lfo'],
   // ['lfocutoffint'],
   // ['lfodelay'],

@@ -191,6 +191,13 @@ export function pianoroll({
   fold = 0,
   vertical = 0,
   labels = false,
+  fill,
+  fillActive = false,
+  strokeActive = true,
+  stroke,
+  hideInactive = 0,
+  colorizeInactive = 1,
+  fontFamily,
   ctx,
 } = {}) {
   const w = ctx.canvas.width;
@@ -241,51 +248,77 @@ export function pianoroll({
     ctx.clearRect(0, 0, w, h);
     ctx.fillRect(0, 0, w, h);
   }
-  /*   const inFrame = (event) =>
-    (!hideNegative || event.whole.begin >= 0) && event.whole.begin <= time + to && event.whole.end >= time + from; */
-  haps
-    // .filter(inFrame)
-    .forEach((event) => {
-      const isActive = event.whole.begin <= time && event.endClipped > time;
-      const color = event.value?.color || event.context?.color;
-      ctx.fillStyle = color || inactive;
-      ctx.strokeStyle = color || active;
-      ctx.globalAlpha = event.context.velocity ?? event.value?.gain ?? 1;
-      const timePx = scale((event.whole.begin - (flipTime ? to : from)) / timeExtent, ...timeRange);
-      let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
-      const value = getValue(event);
-      const valuePx = scale(
-        fold ? foldValues.indexOf(value) / foldValues.length : (Number(value) - minMidi) / valueExtent,
-        ...valueRange,
-      );
-      let margin = 0;
-      const offset = scale(time / timeExtent, ...timeRange);
-      let coords;
-      if (vertical) {
-        coords = [
-          valuePx + 1 - (flipValues ? barThickness : 0), // x
-          timeAxis - offset + timePx + margin + 1 - (flipTime ? 0 : durationPx), // y
-          barThickness - 2, // width
-          durationPx - 2, // height
-        ];
-      } else {
-        coords = [
-          timePx - offset + margin + 1 - (flipTime ? durationPx : 0), // x
-          valuePx + 1 - (flipValues ? 0 : barThickness), // y
-          durationPx - 2, // widith
-          barThickness - 2, // height
-        ];
-      }
-      isActive ? ctx.strokeRect(...coords) : ctx.fillRect(...coords);
-      if (labels) {
-        const label = event.value.note ?? event.value.s + (event.value.n ? `:${event.value.n}` : '');
-        ctx.font = `${barThickness * 0.75}px monospace`;
-        ctx.strokeStyle = 'black';
-        ctx.fillStyle = isActive ? 'white' : 'black';
-        ctx.textBaseline = 'top';
-        ctx.fillText(label, ...coords);
-      }
-    });
+  haps.forEach((event) => {
+    const isActive = event.whole.begin <= time && event.endClipped > time;
+    let strokeCurrent = stroke ?? (strokeActive && isActive);
+    let fillCurrent = fill ?? (fillActive && isActive);
+    if (hideInactive && !isActive) {
+      return;
+    }
+    let color = event.value?.color || event.context?.color;
+    active = color || active;
+    inactive = colorizeInactive ? color || inactive : inactive;
+    color = isActive ? active : inactive;
+    ctx.fillStyle = fillCurrent ? color : 'transparent';
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = event.context.velocity ?? event.value?.gain ?? 1;
+    const timeProgress = (event.whole.begin - (flipTime ? to : from)) / timeExtent;
+    const timePx = scale(timeProgress, ...timeRange);
+    let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
+    const value = getValue(event);
+    const valueProgress = fold
+      ? foldValues.indexOf(value) / foldValues.length
+      : (Number(value) - minMidi) / valueExtent;
+    const valuePx = scale(valueProgress, ...valueRange);
+    let margin = 0;
+    const offset = scale(time / timeExtent, ...timeRange);
+    let coords;
+    if (vertical) {
+      coords = [
+        valuePx + 1 - (flipValues ? barThickness : 0), // x
+        timeAxis - offset + timePx + margin + 1 - (flipTime ? 0 : durationPx), // y
+        barThickness - 2, // width
+        durationPx - 2, // height
+      ];
+    } else {
+      coords = [
+        timePx - offset + margin + 1 - (flipTime ? durationPx : 0), // x
+        valuePx + 1 - (flipValues ? 0 : barThickness), // y
+        durationPx - 2, // widith
+        barThickness - 2, // height
+      ];
+    }
+    /* const xFactor = Math.sin(performance.now() / 500) + 1;
+      coords[0] *= xFactor; */
+
+    if (strokeCurrent) {
+      ctx.strokeRect(...coords);
+    }
+    if (fillCurrent) {
+      ctx.fillRect(...coords);
+    }
+    //ctx.ellipse(...ellipseFromRect(...coords))
+    if (labels) {
+      const defaultLabel = event.value.note ?? event.value.s + (event.value.n ? `:${event.value.n}` : '');
+      const { label: inactiveLabel, activeLabel } = event.value;
+      const customLabel = isActive ? activeLabel || inactiveLabel : inactiveLabel;
+      const label = customLabel ?? defaultLabel;
+      let measure = vertical ? durationPx : barThickness * 0.75;
+      ctx.font = `${measure}px ${fontFamily}`;
+      //ctx.strokeStyle = 'white';
+      //ctx.lineWidth = 2;
+      // font color
+      ctx.fillStyle = /* isActive &&  */ !fillCurrent ? color : 'black';
+      ctx.textBaseline = 'top';
+      //ctx.strokeText(label, ...coords);
+
+      /* ctx.translate(coords[0], coords[1]);
+      ctx.rotate(Math.PI * 4); */
+
+      ctx.fillText(label, ...coords);
+      //ctx.setTransform(1, 0, 0, 1, 0, 0); // Sets the identity matrix
+    }
+  });
   ctx.globalAlpha = 1; // reset!
   const playheadPosition = scale(-from / timeExtent, ...timeRange);
   // draw playhead
@@ -311,9 +344,13 @@ export function getDrawOptions(drawTime, options = {}) {
 }
 
 Pattern.prototype.punchcard = function (options) {
-  return this.onPaint((ctx, time, haps, drawTime) =>
-    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, options) }),
+  return this.onPaint((ctx, time, haps, drawTime, paintOptions = {}) =>
+    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { ...paintOptions, ...options }) }),
   );
+};
+
+Pattern.prototype.wordfall = function (options) {
+  return this.punchcard({ vertical: 1, labels: 1, stroke: 0, fillActive: 1, active: 'white', ...options });
 };
 
 /* Pattern.prototype.pianoroll = function (options) {
