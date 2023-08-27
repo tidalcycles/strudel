@@ -50,7 +50,6 @@ const modules = [
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
   import('@strudel.cycles/csound'),
-  import('@strudel.cycles/emoji'),
 ];
 
 const modulesLoading = evalScope(
