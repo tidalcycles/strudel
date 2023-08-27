@@ -125,6 +125,8 @@ export function Repl({ embedded = false }) {
     panelPosition,
   } = useSettings();
 
+  const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
+
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
       initialCode: '// LOADING...',
@@ -147,6 +149,8 @@ export function Repl({ embedded = false }) {
       },
       onToggle: (play) => !play && cleanupDraw(false),
       drawContext,
+      // drawTime: [0, 6],
+      paintOptions,
     });
 
   // init code
