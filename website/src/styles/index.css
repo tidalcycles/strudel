@@ -30,6 +30,10 @@
   font-family: 'protracker3';
   src: url('/fonts/protracker/protracker3-font.ttf');
 }
+@font-face {
+  font-family: 'teletext';
+  src: url('/fonts/teletext/EuropeanTeletext.ttf');
+}
 
 .prose > h1:not(:first-child) {
   margin-top: 30px;
