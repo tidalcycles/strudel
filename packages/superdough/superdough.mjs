@@ -276,6 +276,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   // analyser
   let analyserSend;
   if (analyze) {
+    fft = clamp(fft, 1, 10);
     const analyserNode = getAnalyser(/* orbit,  */ 2 ** (fft + 5));
     analyserSend = effectSend(post, analyserNode, analyze);
   }
