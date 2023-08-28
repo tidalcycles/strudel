@@ -34,6 +34,10 @@
   font-family: 'teletext';
   src: url('/fonts/teletext/EuropeanTeletext.ttf');
 }
+@font-face {
+  font-family: 'mode7';
+  src: url('/fonts/mode7/MODE7GX3.TTF');
+}
 
 .prose > h1:not(:first-child) {
   margin-top: 30px;

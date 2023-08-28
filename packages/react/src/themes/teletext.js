@@ -8,7 +8,7 @@ let colorC = 'red';
 let colorD = '#f8fc55';
 
 export const settings = {
-  background: '#00000f',
+  background: '#000000',
   foreground: colorA, // whats that?
   caret: colorC,
   selection: colorD,
@@ -17,6 +17,7 @@ export const settings = {
   lineBackground: '#00000080',
   gutterBackground: 'transparent',
   gutterForeground: '#8a919966',
+  customStyle: '.cm-line { line-height: 1 }',
 };
 
 let punctuation = colorD;

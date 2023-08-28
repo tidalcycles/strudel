@@ -475,3 +475,11 @@ function getCircularReplacer() {
 function stringifySafe(json) {
   return JSON.stringify(json, getCircularReplacer());
 }
+
+export function injectStyle(rule) {
+  const newStyle = document.createElement('style');
+  document.head.appendChild(newStyle);
+  const styleSheet = newStyle.sheet;
+  const ruleIndex = styleSheet.insertRule(rule, 0);
+  return () => styleSheet.deleteRule(ruleIndex);
+}

@@ -377,6 +377,7 @@ const fontFamilyOptions = {
   'FiraCode-SemiBold': 'FiraCode SemiBold',
   protracker3: 'protracker3',
   teletext: 'teletext',
+  mode7: 'mode7',
 };
 
 function SettingsTab({ scheduler }) {
