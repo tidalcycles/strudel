@@ -26,6 +26,10 @@
   font-family: 'FiraCode-SemiBold';
   src: url('/fonts/FiraCode/FiraCode-SemiBold.ttf');
 }
+@font-face {
+  font-family: 'protracker3';
+  src: url('/fonts/protracker/protracker3-font.ttf');
+}
 
 .prose > h1:not(:first-child) {
   margin-top: 30px;
