@@ -35,5 +35,6 @@ export default createTheme({
     { tag: t.propertyName, color: '#0f380f' },
     { tag: t.className, color: '#0f380f' },
     { tag: t.invalid, color: '#0f380f' },
+    { tag: [t.unit, t.punctuation], color: '#0f380f' },
   ],
 });
