@@ -27,10 +27,6 @@
   src: url('/fonts/FiraCode/FiraCode-SemiBold.ttf');
 }
 @font-face {
-  font-family: 'protracker3';
-  src: url('/fonts/protracker/protracker3-font.ttf');
-}
-@font-face {
   font-family: 'teletext';
   src: url('/fonts/teletext/EuropeanTeletext.ttf');
 }

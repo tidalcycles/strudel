@@ -8,6 +8,5 @@ export { default as usePostMessage } from './hooks/usePostMessage';
 export { default as useKeydown } from './hooks/useKeydown';
 export { default as useEvent } from './hooks/useEvent';
 export { default as strudelTheme } from './themes/strudel-theme';
-export { default as protracker } from './themes/protracker';
 export { default as teletext } from './themes/teletext';
 export { default as cx } from './cx';

@@ -34,7 +34,6 @@ import strudelTheme from '@strudel.cycles/react/src/themes/strudel-theme';
 import bluescreen, { settings as bluescreenSettings } from '@strudel.cycles/react/src/themes/bluescreen';
 import blackscreen, { settings as blackscreenSettings } from '@strudel.cycles/react/src/themes/blackscreen';
 import whitescreen, { settings as whitescreenSettings } from '@strudel.cycles/react/src/themes/whitescreen';
-import protracker, { settings as protrackerSettings } from '@strudel.cycles/react/src/themes/protracker';
 import teletext, { settings as teletextSettings } from '@strudel.cycles/react/src/themes/teletext';
 import algoboy, { settings as algoboySettings } from '@strudel.cycles/react/src/themes/algoboy';
 import terminal, { settings as terminalSettings } from '@strudel.cycles/react/src/themes/terminal';
@@ -44,7 +43,6 @@ export const themes = {
   bluescreen,
   blackscreen,
   whitescreen,
-  protracker,
   teletext,
   algoboy,
   terminal,
@@ -99,7 +97,6 @@ export const settings = {
   bluescreen: bluescreenSettings,
   blackscreen: blackscreenSettings,
   whitescreen: whitescreenSettings,
-  protracker: protrackerSettings,
   teletext: teletextSettings,
   algoboy: algoboySettings,
   terminal: terminalSettings,
