@@ -13,8 +13,8 @@ export const settings = {
   caret: colorC,
   selection: colorD,
   selectionMatch: colorA,
-  lineHighlight: '#00000090', // panel bg
-  lineBackground: '#00000080',
+  lineHighlight: '#6edee440', // panel bg
+  lineBackground: '#00000040',
   gutterBackground: 'transparent',
   gutterForeground: '#8a919966',
   customStyle: '.cm-line { line-height: 1 }',
