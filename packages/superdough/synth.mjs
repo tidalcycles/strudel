@@ -3,10 +3,6 @@ import { registerSound, getAudioContext } from './superdough.mjs';
 import { getOscillator, gainNode, getEnvelope, getExpEnvelope } from './helpers.mjs';
 
 const fm = (osc, harmonicityRatio, modulationIndex, wave) => {
-	/*
-	 * This function helps to setup a modulator for FM Synthesis
-	 * @returns a modulator
-	 */
   const carrfreq = osc.frequency.value;
   const modfreq = carrfreq * harmonicityRatio;
   const modgain = modfreq * modulationIndex;
@@ -14,9 +10,6 @@ const fm = (osc, harmonicityRatio, modulationIndex, wave) => {
 };
 
 const mod = (freq, range = 1, type) => {
-	/*
-	 * This function creates an oscillator
-	 */
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
   osc.type = type;
