@@ -1,6 +1,6 @@
 import { midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext } from './superdough.mjs';
-import { getOscillator, gainNode, getEnvelope } from './helpers.mjs';
+import { getOscillator, gainNode, getEnvelope, getExpEnvelope } from './helpers.mjs';
 
 const mod = (freq, range = 1, type) => {
   const ctx = getAudioContext();
@@ -13,10 +13,38 @@ const mod = (freq, range = 1, type) => {
   return { node: g, stop: (t) => osc.stop(t) };
 };
 
-const fm = (osc, harmonicityRatio, modulationIndex, wave) => {
+const fm = (t, 
+	osc, 
+	harmonicityRatio, 
+	harmonicityAttack,
+	harmonicityDecay,
+	modulationIndex, 
+	modulationAttack,
+	modulationDecay,
+	wave, ) => {
+
   const carrfreq = osc.frequency.value;
-  const modfreq = carrfreq * harmonicityRatio;
-  const modgain = modfreq * modulationIndex;
+	let modfreq;
+	let modgain;
+
+	// Setting up envelopes if needed
+	if ((harmonicityAttack !== null) || (harmonicityDecay !== null)) {
+		let hattack = harmonicityAttack || 0.01;
+		let hdecay = harmonicityDecay || 0.5;
+		const harmonicEnv = getExpEnvelope(hattack, hdecay, 1, t);
+		modfreq = carrfreq * (harmonicityRatio * harmonicEnv);
+	} else {
+		modfreq = carrfreq * harmonicityRatio;
+	}
+	if ((modulationAttack !== null) || (modulationDecay !== null)) {
+		let mattack = modulationAttack || 0.01;
+		let mdecay = modulationDecay || 0.5;
+		const modulationEnv = getExpEnvelope(mattack, mdecay, 1, t);
+		modgain = modfreq * (modulationIndex * modulationEnv);
+	} else {
+		modgain = modfreq * modulationIndex;
+	}
+
   return mod(modfreq, modgain, wave);
 };
 
@@ -32,8 +60,12 @@ export function registerSynthSounds() {
           sustain = 0.6,
           release = 0.01,
           fmh: fmHarmonicity = 1,
+					fmhattack: fmHarmonicityAttack = null,
+					fmhdecay: fmHarmonicityDecay = null,
           fmi: fmModulationIndex,
-					fmwave: fmWaveform = 'sine'
+					fmiattack: fmModulationAttack = null,
+					fmidecay: fmModulationDecay = null,
+					fmwave: fmWaveform = 'sine',
         } = value;
         let { n, note, freq } = value;
         // with synths, n and note are the same thing
@@ -52,9 +84,15 @@ export function registerSynthSounds() {
         let stopFm;
         if (fmModulationIndex) {
           const { node: modulator, stop } = fm(
-						o, fmHarmonicity, 
+						t, 
+						o, 
+						fmHarmonicity, 
+						fmHarmonicityAttack,
+						fmHarmonicityDecay,
 						fmModulationIndex, 
-						fmWaveform
+						fmModulationAttack,
+						fmModulationDecay,
+						fmWaveform,
 					);
           modulator.connect(o.frequency);
           stopFm = stop;

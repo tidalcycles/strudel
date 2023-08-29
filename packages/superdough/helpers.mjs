@@ -39,6 +39,19 @@ export const getEnvelope = (attack, decay, sustain, release, velocity, begin) =>
   };
 };
 
+export const getExpEnvelope = (attack, decay, velocity, begin) => {
+  const gainNode = getAudioContext().createGain();
+  gainNode.gain.setValueAtTime(0.0001, begin);
+  gainNode.gain.exponentialRampToValueAtTime(velocity, begin + attack);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, begin + attack + decay);
+  return {
+    node: gainNode,
+    stop: (t) => {
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+    },
+  };
+};
+
 export const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {
   const gainNode = getAudioContext().createGain();
   gainNode.gain.setValueAtTime(0, begin);
