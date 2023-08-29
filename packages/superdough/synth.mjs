@@ -2,7 +2,8 @@ import { midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext } from './superdough.mjs';
 import { getOscillator, gainNode, getEnvelope } from './helpers.mjs';
 
-const mod = (freq, range = 1, type = 'sine') => {
+const mod = (freq, range = 1, type) => {
+	console.log(type)
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
   osc.type = type;
@@ -13,7 +14,7 @@ const mod = (freq, range = 1, type = 'sine') => {
   return { node: g, stop: (t) => osc.stop(t) };
 };
 
-const fm = (osc, harmonicityRatio, modulationIndex, wave = 'sine') => {
+const fm = (osc, harmonicityRatio, modulationIndex, wave) => {
   const carrfreq = osc.frequency.value;
   const modfreq = carrfreq * harmonicityRatio;
   const modgain = modfreq * modulationIndex;
@@ -33,6 +34,7 @@ export function registerSynthSounds() {
           release = 0.01,
           fmh: fmHarmonicity = 1,
           fmi: fmModulationIndex,
+					fmwave: fmWaveform = 'sine'
         } = value;
         let { n, note, freq } = value;
         // with synths, n and note are the same thing
@@ -50,7 +52,11 @@ export function registerSynthSounds() {
 
         let stopFm;
         if (fmModulationIndex) {
-          const { node: modulator, stop } = fm(o, fmHarmonicity, fmModulationIndex);
+          const { node: modulator, stop } = fm(
+						o, fmHarmonicity, 
+						fmModulationIndex, 
+						fmWaveform
+					);
           modulator.connect(o.frequency);
           stopFm = stop;
         }
