@@ -1,8 +1,22 @@
 import { midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext } from './superdough.mjs';
-import { getOscillator, gainNode, getEnvelope } from './helpers.mjs';
+import { getOscillator, gainNode, getEnvelope, getExpEnvelope } from './helpers.mjs';
+
+const fm = (osc, harmonicityRatio, modulationIndex, wave) => {
+	/*
+	 * This function helps to setup a modulator for FM Synthesis
+	 * @returns a modulator
+	 */
+  const carrfreq = osc.frequency.value;
+  const modfreq = carrfreq * harmonicityRatio;
+  const modgain = modfreq * modulationIndex;
+  return mod(modfreq, modgain, wave);
+};
 
 const mod = (freq, range = 1, type) => {
+	/*
+	 * This function creates an oscillator
+	 */
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
   osc.type = type;
@@ -13,12 +27,6 @@ const mod = (freq, range = 1, type) => {
   return { node: g, stop: (t) => osc.stop(t) };
 };
 
-const fm = (osc, harmonicityRatio, modulationIndex, wave) => {
-  const carrfreq = osc.frequency.value;
-  const modfreq = carrfreq * harmonicityRatio;
-  const modgain = modfreq * modulationIndex;
-  return mod(modfreq, modgain, wave);
-};
 
 export function registerSynthSounds() {
   ['sine', 'square', 'triangle', 'sawtooth'].forEach((wave) => {
@@ -33,6 +41,12 @@ export function registerSynthSounds() {
           release = 0.01,
           fmh: fmHarmonicity = 1,
           fmi: fmModulationIndex,
+					fmenv: fmEnvelopeType = 'linear',
+					fmattack: fmAttack = 0.001,
+					fmdecay: fmDecay = 0.2,
+					fmsustain: fmSustain = 0.001,
+					fmrelease: fmRelease = 0.1,
+					fmvelocity: fmVelocity = 1,
 					fmwave: fmWaveform = 'sine'
         } = value;
         let { n, note, freq } = value;
@@ -49,14 +63,17 @@ export function registerSynthSounds() {
         // make oscillator
         const { node: o, stop } = getOscillator({ t, s: wave, freq });
 
-        let stopFm;
+        let stopFm, fmEnvelope;
         if (fmModulationIndex) {
-          const { node: modulator, stop } = fm(
-						o, fmHarmonicity, 
-						fmModulationIndex, 
-						fmWaveform
-					);
-          modulator.connect(o.frequency);
+          const { node: modulator, stop } = fm( o, fmHarmonicity, fmModulationIndex, fmWaveform);
+					fmEnvelope = getEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
+					if (fmEnvelopeType === "exp") {
+						fmEnvelope = getExpEnvelope(fmAttack, fmDecay, fmVelocity, t);
+						fmEnvelope.node.maxValue = fmModulationIndex * 2;
+						fmEnvelope.node.minValue = 0.00001;
+					}
+					modulator.connect(fmEnvelope.node);
+          fmEnvelope.node.connect(o.frequency);
           stopFm = stop;
         }
         const g = gainNode(0.3);
