@@ -3,7 +3,6 @@ import { registerSound, getAudioContext } from './superdough.mjs';
 import { getOscillator, gainNode, getEnvelope } from './helpers.mjs';
 
 const mod = (freq, range = 1, type) => {
-	console.log(type)
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
   osc.type = type;
