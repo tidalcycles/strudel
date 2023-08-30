@@ -802,8 +802,29 @@ const generic_params = [
    *
    */
   ['clip'],
-];
 
+  // ZZFX
+  //['volume'],
+  ['randomness'],
+  // ['frequency'], => freq
+  /* ['attack'],
+  ['decay'],
+  ['sustain'],
+  ['release'], */
+  // ['shape'], // duplicate
+  ['shapeCurve'],
+  // ['slide'], // superdirt duplicate
+  ['deltaSlide'],
+  ['pitchJump'],
+  ['pitchJumpTime'],
+  ['repeatTime'],
+  ['noise'],
+  ['modulation'],
+  ['bitCrush'], // like crush..
+  //['delay'], // duplicate
+  // ['sustainVolume'], // not needed?
+  ['tremolo'],
+];
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 
 controls.createParam = function (names) {

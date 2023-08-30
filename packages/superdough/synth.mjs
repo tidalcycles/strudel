@@ -22,45 +22,18 @@ const fm = (osc, harmonicityRatio, modulationIndex, wave = 'sine') => {
 
 export function registerSynthSounds() {
   ['zsine', 'zsaw', 'ztri', 'ztan', 'znoise'].forEach((wave) => {
-    registerSound(
-    wave,
-    (t, value, onended) => {
-        const {
-          attack = 0.001,
-          decay = 0.05,
-          sustain = 0.6,
-          release = 0.01,
-        } = value;
-        let { n, note, freq } = value;
-        n = note || n || 36;
-        if (typeof n === 'string') {
-          n = noteToMidi(n); // e.g. c3 => 48
-        }
-        // get frequency
-        if (!freq && typeof n === 'number') {
-          freq = midiToFreq(n); // + 48);
-        }
-        const params = {};
-        const { node: o, stop } = getZZFX({ wave, freq, t, params });
-        const g = gainNode(0.3);
-        // envelope
-        const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
-        o.onended = () => {
-          o.disconnect();
-          g.disconnect();
-          onended();
-        };
-        console.log(o)
-        return {
-          node: o.connect(g).connect(envelope),
-          stop: (releaseTime) => {
-            releaseEnvelope(releaseTime);
-            let end = releaseTime + release;
-            stop(end);
-          },
-        };
-    }
-    )
+    registerSound(wave, (t, value, onended) => {
+      const duration = 0.2;
+      const { node: o } = getZZFX({ s: wave, ...value }, t, duration);
+      o.onended = () => {
+        o.disconnect();
+        onended();
+      };
+      return {
+        node: o,
+        stop: () => {},
+      };
+    });
   });
 
   ['sine', 'square', 'triangle', 'sawtooth'].forEach((wave) => {
