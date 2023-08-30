@@ -21,21 +21,6 @@ const fm = (osc, harmonicityRatio, modulationIndex, wave = 'sine') => {
 };
 
 export function registerSynthSounds() {
-  ['zsine', 'zsaw', 'ztri', 'ztan', 'znoise'].forEach((wave) => {
-    registerSound(wave, (t, value, onended) => {
-      const duration = 0.2;
-      const { node: o } = getZZFX({ s: wave, ...value }, t, duration);
-      o.onended = () => {
-        o.disconnect();
-        onended();
-      };
-      return {
-        node: o,
-        stop: () => {},
-      };
-    });
-  });
-
   ['sine', 'square', 'triangle', 'sawtooth'].forEach((wave) => {
     registerSound(
       wave,

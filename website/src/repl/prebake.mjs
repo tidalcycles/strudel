@@ -1,5 +1,5 @@
 import { Pattern, noteToMidi, valueToMidi } from '@strudel.cycles/core';
-import { registerSynthSounds, samples } from '@strudel.cycles/webaudio';
+import { registerSynthSounds, registerZZFXSounds, samples } from '@strudel.cycles/webaudio';
 import './piano.mjs';
 import './files.mjs';
 
@@ -8,6 +8,7 @@ export async function prebake() {
   // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
   await Promise.all([
     registerSynthSounds(),
+    registerZZFXSounds(),
     //registerSoundfonts(),
     // need dynamic import here, because importing @strudel.cycles/soundfonts fails on server:
     // => getting "window is not defined", as soon as "@strudel.cycles/soundfonts" is imported statically

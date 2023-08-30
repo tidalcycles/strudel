@@ -1,4 +1,6 @@
 import { ZZFX } from 'zzfx';
+import { midiToFreq, noteToMidi } from './util.mjs';
+import { registerSound, getAudioContext } from './superdough.mjs';
 
 export const getZZFX = (value, t, duration) => {
   let {
@@ -27,8 +29,8 @@ export const getZZFX = (value, t, duration) => {
     note = noteToMidi(note); // e.g. c3 => 48
   }
   // get frequency
-  if (!freq && typeof n === 'number') {
-    freq = midiToFreq(n);
+  if (!freq && typeof note === 'number') {
+    freq = midiToFreq(note);
   }
   const shape = ['zsine', 'ztri', 'zsaw', 'ztan', 'znoise'].indexOf(s) || 0;
 
@@ -93,6 +95,7 @@ export const getZZFX = (value, t, duration) => {
 };
 
 export function registerZZFXSounds() {
+  console.log('registerZZFXSounds');
   ['zsine', 'zsaw', 'ztri', 'ztan', 'znoise'].forEach((wave) => {
     registerSound(wave, (t, value, onended) => {
       const duration = 0.2;
