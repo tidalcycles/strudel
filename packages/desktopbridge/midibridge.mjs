@@ -6,7 +6,6 @@ const OFF_MESSAGE = 0x80;
 
 export function processMidi(output) {
   return this.onTrigger((time, hap, currentTime) => {
-    console.log('here');
     const { note, nrpnn, nrpv, ccn, ccv } = hap.value;
     const offset = (time - currentTime) * 1000;
     const velocity = Math.floor((hap.context?.velocity ?? 0.9) * 100); // TODO: refactor velocity
