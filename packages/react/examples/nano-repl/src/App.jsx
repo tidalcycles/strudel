@@ -6,6 +6,7 @@ import {
   panic,
   webaudioOutput,
   registerSynthSounds,
+  registerZZFXSounds,
 } from '@strudel.cycles/webaudio';
 import { registerSoundfonts } from '@strudel.cycles/soundfonts';
 import { useCallback, useState } from 'react';
@@ -26,7 +27,7 @@ async function init() {
     import('@strudel.cycles/osc'),
   );
 
-  await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
+  await Promise.all([loadModules, registerSynthSounds(), registerZZFXSounds(), registerSoundfonts()]);
 }
 init();
 
