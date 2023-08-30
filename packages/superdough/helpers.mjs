@@ -1,9 +1,32 @@
 import { getAudioContext } from './superdough.mjs';
+import * as zzfx from 'zzfx';
 
 export function gainNode(value) {
   const node = getAudioContext().createGain();
   node.gain.value = value;
   return node;
+}
+
+export const getZZFX = ({ wave, freq, t, params}) => {
+  params.frequency = freq;
+  params.shape = {
+    'zsine': 0,
+    'ztri': 1,
+    'zsaw': 2,
+    'ztan': 3,
+    'znoise': 4,
+  }[wave];
+  const samples = zzfx.buildSamples(...params);
+  const context = getAudioContext();
+  const buffer = context.createBuffer(
+    samples.length, 
+    samples[0].length, 
+    context.sampleRate
+  );
+  const source = context.createBufferSource();
+  return {
+    node: source, 
+    stop: (time) => source.stop(time), buffer}
 }
 
 export const getOscillator = ({ s, freq, t }) => {
