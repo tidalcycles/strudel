@@ -38,13 +38,15 @@ export const setLatestCode = (code) => settingsMap.setKey('latestCode', code);
 export const setIsZen = (active) => settingsMap.setKey('isZen', !!active);
 
 const patternSetting = (key) =>
-  register(key, (value, pat) => {
-    value = Array.isArray(value) ? value.join(' ') : value;
-    if (value !== settingsMap.get()[key]) {
-      settingsMap.setKey(key, value);
-    }
-    return pat;
-  });
+  register(key, (value, pat) =>
+    pat.onTrigger(() => {
+      value = Array.isArray(value) ? value.join(' ') : value;
+      if (value !== settingsMap.get()[key]) {
+        settingsMap.setKey(key, value);
+      }
+      return pat;
+    }, false),
+  );
 
 export const theme = patternSetting('theme');
 export const fontFamily = patternSetting('fontFamily');

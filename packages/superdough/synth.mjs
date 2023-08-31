@@ -43,17 +43,17 @@ export function registerSynthSounds() {
         } = value;
         let { n, note, freq } = value;
         // with synths, n and note are the same thing
-        n = note || n || 36;
-        if (typeof n === 'string') {
-          n = noteToMidi(n); // e.g. c3 => 48
+        note = note || 36;
+        if (typeof note === 'string') {
+          note = noteToMidi(note); // e.g. c3 => 48
         }
         // get frequency
-        if (!freq && typeof n === 'number') {
-          freq = midiToFreq(n); // + 48);
+        if (!freq && typeof note === 'number') {
+          freq = midiToFreq(note); // + 48);
         }
         // maybe pull out the above frequency resolution?? (there is also getFrequency but it has no default)
         // make oscillator
-        const { node: o, stop } = getOscillator({ t, s: wave, freq });
+        const { node: o, stop } = getOscillator({ t, s: wave, freq, partials: n });
 
         // FM + FM envelope
         let stopFm, fmEnvelope;
@@ -105,4 +105,50 @@ export function registerSynthSounds() {
       { type: 'synth', prebake: true },
     );
   });
+}
+
+export function waveformN(partials, type) {
+  const real = new Float32Array(partials + 1);
+  const imag = new Float32Array(partials + 1);
+  const ac = getAudioContext();
+  const osc = ac.createOscillator();
+
+  const amplitudes = {
+    sawtooth: (n) => 1 / n,
+    square: (n) => (n % 2 === 0 ? 0 : 1 / n),
+    triangle: (n) => (n % 2 === 0 ? 0 : 1 / (n * n)),
+  };
+
+  if (!amplitudes[type]) {
+    throw new Error(`unknown wave type ${type}`);
+  }
+
+  real[0] = 0; // dc offset
+  imag[0] = 0;
+  let n = 1;
+  while (n <= partials) {
+    real[n] = amplitudes[type](n);
+    imag[n] = 0;
+    n++;
+  }
+
+  const wave = ac.createPeriodicWave(real, imag);
+  osc.setPeriodicWave(wave);
+  return osc;
+}
+
+export function getOscillator({ s, freq, t, partials }) {
+  // make oscillator
+  let o;
+  if (!partials || s === 'sine') {
+    o = getAudioContext().createOscillator();
+    o.type = s || 'triangle';
+  } else {
+    o = waveformN(partials, s);
+  }
+  o.frequency.value = Number(freq);
+  o.start(t);
+  //o.stop(t + duration + release);
+  const stop = (time) => o.stop(time);
+  return { node: o, stop };
 }
