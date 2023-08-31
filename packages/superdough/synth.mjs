@@ -20,7 +20,6 @@ const mod = (freq, range = 1, type) => {
   return { node: g, stop: (t) => osc.stop(t) };
 };
 
-
 export function registerSynthSounds() {
   ['sine', 'square', 'triangle', 'sawtooth'].forEach((wave) => {
     registerSound(
@@ -34,13 +33,13 @@ export function registerSynthSounds() {
           release = 0.01,
           fmh: fmHarmonicity = 1,
           fmi: fmModulationIndex,
-					fmenv: fmEnvelopeType = 'linear',
-					fmattack: fmAttack = 0.001,
-					fmdecay: fmDecay = 0.2,
-					fmsustain: fmSustain = 0.001,
-					fmrelease: fmRelease = 0.1,
-					fmvelocity: fmVelocity = 1,
-					fmwave: fmWaveform = 'sine'
+          fmenv: fmEnvelopeType = 'linear',
+          fmattack: fmAttack = 0.001,
+          fmdecay: fmDecay = 0.2,
+          fmsustain: fmSustain = 0.001,
+          fmrelease: fmRelease = 0.1,
+          fmvelocity: fmVelocity = 1,
+          fmwave: fmWaveform = 'sine',
         } = value;
         let { n, note, freq } = value;
         // with synths, n and note are the same thing
@@ -58,14 +57,14 @@ export function registerSynthSounds() {
 
         let stopFm, fmEnvelope;
         if (fmModulationIndex) {
-          const { node: modulator, stop } = fm( o, fmHarmonicity, fmModulationIndex, fmWaveform);
-					fmEnvelope = getEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
-					if (fmEnvelopeType === "exp") {
-						fmEnvelope = getExpEnvelope(fmAttack, fmDecay, fmVelocity, t);
-						fmEnvelope.node.maxValue = fmModulationIndex * 2;
-						fmEnvelope.node.minValue = 0.00001;
-					}
-					modulator.connect(fmEnvelope.node);
+          const { node: modulator, stop } = fm(o, fmHarmonicity, fmModulationIndex, fmWaveform);
+          fmEnvelope = getEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
+          if (fmEnvelopeType === 'exp') {
+            fmEnvelope = getExpEnvelope(fmAttack, fmDecay, fmVelocity, t);
+            fmEnvelope.node.maxValue = fmModulationIndex * 2;
+            fmEnvelope.node.minValue = 0.00001;
+          }
+          modulator.connect(fmEnvelope.node);
           fmEnvelope.node.connect(o.frequency);
           stopFm = stop;
         }
