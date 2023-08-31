@@ -810,7 +810,7 @@ const generic_params = [
   ['deltaSlide'],
   ['pitchJump'],
   ['pitchJumpTime'],
-  ['repeatTime'],
+  ['lfo', 'repeatTime'],
   ['noise'],
   ['zmod'],
   ['zcrush'], // like crush but scaled differently
