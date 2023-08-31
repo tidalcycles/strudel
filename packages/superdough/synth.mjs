@@ -70,7 +70,7 @@ export function registerSynthSounds() {
             fmVelocity = fmVelocity ?? 1;
             fmEnvelope = getEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
             if (fmEnvelopeType === 'exp') {
-              fmEnvelope = getExpEnvelope(fmAttack, fmDecay, fmVelocity, t);
+              fmEnvelope = getExpEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
               fmEnvelope.node.maxValue = fmModulationIndex * 2;
               fmEnvelope.node.minValue = 0.00001;
             }
