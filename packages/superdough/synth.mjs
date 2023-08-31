@@ -33,7 +33,7 @@ export function registerSynthSounds() {
           release = 0.01,
           fmh: fmHarmonicity = 1,
           fmi: fmModulationIndex,
-          fmenv: fmEnvelopeType = 'linear',
+          fmenv: fmEnvelopeType = 'lin',
           fmattack: fmAttack,
           fmdecay: fmDecay,
           fmsustain: fmSustain,
