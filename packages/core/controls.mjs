@@ -147,7 +147,7 @@ const generic_params = [
    * note("c e g b")
    * .fm(4)
    * .fmdecay(.2)
-   * .fmsustain(.4)
+   * .fmsustain(0)
    * .fmenv("<exp lin>")
    *
    */
