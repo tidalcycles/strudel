@@ -804,25 +804,17 @@ const generic_params = [
   ['clip'],
 
   // ZZFX
-  //['volume'],
-  ['randomness'],
-  // ['frequency'], => freq
-  /* ['attack'],
-  ['decay'],
-  ['sustain'],
-  ['release'], */
-  // ['shape'], // duplicate
+  ['zrand'],
   ['shapeCurve'],
-  // ['slide'], // superdirt duplicate
+  ['slide'], // superdirt duplicate
   ['deltaSlide'],
   ['pitchJump'],
   ['pitchJumpTime'],
   ['repeatTime'],
   ['noise'],
-  ['modulation'],
-  ['bitCrush'], // like crush..
-  //['delay'], // duplicate
-  // ['sustainVolume'], // not needed?
+  ['zmod'],
+  ['zcrush'], // like crush..
+  ['zdelay'], // duplicate
   ['tremolo'],
 ];
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13

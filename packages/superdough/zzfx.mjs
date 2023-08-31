@@ -2,13 +2,13 @@
 import { midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext } from './superdough.mjs';
 
-export const getZZFX = (value, t, duration) => {
+export const getZZFX = (value, t) => {
   let {
     s,
     note = 36,
     freq,
     //
-    randomness = 0,
+    zrand = 0,
     attack = 0,
     decay = 0,
     sustain = 0.8,
@@ -21,10 +21,12 @@ export const getZZFX = (value, t, duration) => {
     repeatTime = 0,
     noise = 0,
     modulation = 0,
-    bitCrush = 0,
-    delay = 0,
+    zcrush = 0,
+    zdelay = 0,
     tremolo = 0,
+    duration = 0.2,
   } = value;
+  const sustainTime = Math.max(duration - attack - decay, 0);
   if (typeof note === 'string') {
     note = noteToMidi(note); // e.g. c3 => 48
   }
@@ -32,14 +34,16 @@ export const getZZFX = (value, t, duration) => {
   if (!freq && typeof note === 'number') {
     freq = midiToFreq(note);
   }
-  const shape = ['zsine', 'ztri', 'zsaw', 'ztan', 'znoise'].indexOf(s) || 0;
+  s = s.replace('z_', '');
+  const shape = ['sine', 'triangle', 'sawtooth', 'tan', 'noise'].indexOf(s) || 0;
+  shapeCurve = s === 'square' ? 0 : shapeCurve;
 
   const params = [
-    1, // volume
-    randomness, // randomness
+    0.25, // volume
+    zrand,
     freq,
     attack,
-    duration, // sustain time
+    sustainTime,
     release,
     shape,
     shapeCurve,
@@ -50,8 +54,8 @@ export const getZZFX = (value, t, duration) => {
     repeatTime,
     noise,
     modulation,
-    bitCrush,
-    delay,
+    zcrush,
+    zdelay,
     sustain, // sustain volume!
     decay,
     tremolo,
@@ -71,20 +75,22 @@ export const getZZFX = (value, t, duration) => {
 };
 
 export function registerZZFXSounds() {
-  console.log('registerZZFXSounds');
-  ['zsine', 'zsaw', 'ztri', 'ztan', 'znoise'].forEach((wave) => {
-    registerSound(wave, (t, value, onended) => {
-      const duration = 0.3;
-      const { node: o } = getZZFX({ s: wave, ...value }, t, duration);
-      o.onended = () => {
-        o.disconnect();
-        onended();
-      };
-      return {
-        node: o,
-        stop: () => {},
-      };
-    });
+  ['z_sine', 'z_sawtooth', 'z_triangle', 'z_square', 'z_tan', 'z_noise'].forEach((wave) => {
+    registerSound(
+      wave,
+      (t, value, onended) => {
+        const { node: o } = getZZFX({ s: wave, ...value }, t);
+        o.onended = () => {
+          o.disconnect();
+          onended();
+        };
+        return {
+          node: o,
+          stop: () => {},
+        };
+      },
+      { type: 'synth', prebake: true },
+    );
   });
 }
 
@@ -92,7 +98,7 @@ export function registerZZFXSounds() {
 function redableZZFX(params) {
   const paramOrder = [
     'volume',
-    'randomness',
+    'zrand',
     'frequency',
     'attack',
     'sustain',
@@ -106,8 +112,8 @@ function redableZZFX(params) {
     'repeatTime',
     'noise',
     'modulation',
-    'bitCrush',
-    'delay',
+    'zcrush',
+    'zdelay',
     'sustainVolume',
     'decay',
     'tremolo',
