@@ -1869,22 +1869,22 @@ exports[`runs examples > example "fmdecay" example index 0 1`] = `
 
 exports[`runs examples > example "fmenv" example index 0 1`] = `
 [
-  "[ 0/1 → 1/4 | note:c fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:exp ]",
-  "[ 1/4 → 1/2 | note:e fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:exp ]",
-  "[ 1/2 → 3/4 | note:g fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:exp ]",
-  "[ 3/4 → 1/1 | note:b fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:exp ]",
-  "[ 1/1 → 5/4 | note:c fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:lin ]",
-  "[ 5/4 → 3/2 | note:e fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:lin ]",
-  "[ 3/2 → 7/4 | note:g fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:lin ]",
-  "[ 7/4 → 2/1 | note:b fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:lin ]",
-  "[ 2/1 → 9/4 | note:c fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:exp ]",
-  "[ 9/4 → 5/2 | note:e fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:exp ]",
-  "[ 5/2 → 11/4 | note:g fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:exp ]",
-  "[ 11/4 → 3/1 | note:b fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:exp ]",
-  "[ 3/1 → 13/4 | note:c fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:lin ]",
-  "[ 13/4 → 7/2 | note:e fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:lin ]",
-  "[ 7/2 → 15/4 | note:g fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:lin ]",
-  "[ 15/4 → 4/1 | note:b fmi:4 fmdecay:0.2 fmsustain:0.4 fmenv:lin ]",
+  "[ 0/1 → 1/4 | note:c fmi:4 fmdecay:0.2 fmsustain:0 fmenv:exp ]",
+  "[ 1/4 → 1/2 | note:e fmi:4 fmdecay:0.2 fmsustain:0 fmenv:exp ]",
+  "[ 1/2 → 3/4 | note:g fmi:4 fmdecay:0.2 fmsustain:0 fmenv:exp ]",
+  "[ 3/4 → 1/1 | note:b fmi:4 fmdecay:0.2 fmsustain:0 fmenv:exp ]",
+  "[ 1/1 → 5/4 | note:c fmi:4 fmdecay:0.2 fmsustain:0 fmenv:lin ]",
+  "[ 5/4 → 3/2 | note:e fmi:4 fmdecay:0.2 fmsustain:0 fmenv:lin ]",
+  "[ 3/2 → 7/4 | note:g fmi:4 fmdecay:0.2 fmsustain:0 fmenv:lin ]",
+  "[ 7/4 → 2/1 | note:b fmi:4 fmdecay:0.2 fmsustain:0 fmenv:lin ]",
+  "[ 2/1 → 9/4 | note:c fmi:4 fmdecay:0.2 fmsustain:0 fmenv:exp ]",
+  "[ 9/4 → 5/2 | note:e fmi:4 fmdecay:0.2 fmsustain:0 fmenv:exp ]",
+  "[ 5/2 → 11/4 | note:g fmi:4 fmdecay:0.2 fmsustain:0 fmenv:exp ]",
+  "[ 11/4 → 3/1 | note:b fmi:4 fmdecay:0.2 fmsustain:0 fmenv:exp ]",
+  "[ 3/1 → 13/4 | note:c fmi:4 fmdecay:0.2 fmsustain:0 fmenv:lin ]",
+  "[ 13/4 → 7/2 | note:e fmi:4 fmdecay:0.2 fmsustain:0 fmenv:lin ]",
+  "[ 7/2 → 15/4 | note:g fmi:4 fmdecay:0.2 fmsustain:0 fmenv:lin ]",
+  "[ 15/4 → 4/1 | note:b fmi:4 fmdecay:0.2 fmsustain:0 fmenv:lin ]",
 ]
 `;
 
