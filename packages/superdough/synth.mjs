@@ -34,11 +34,11 @@ export function registerSynthSounds() {
           fmh: fmHarmonicity = 1,
           fmi: fmModulationIndex,
           fmenv: fmEnvelopeType = 'linear',
-          fmattack: fmAttack, // = 0.001,
-          fmdecay: fmDecay, // = 0.2,
-          fmsustain: fmSustain, // = 0.001,
-          fmrelease: fmRelease, // = 0.1
-          fmvelocity: fmVelocity, // = 1,
+          fmattack: fmAttack,
+          fmdecay: fmDecay,
+          fmsustain: fmSustain,
+          fmrelease: fmRelease,
+          fmvelocity: fmVelocity,
           fmwave: fmWaveform = 'sine',
         } = value;
         let { n, note, freq } = value;
