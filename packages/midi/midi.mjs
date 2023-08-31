@@ -78,7 +78,6 @@ function getDevice(output, outputs) {
   return IACOutput ?? outputs[0];
 }
 
-// Pattern.prototype.midi = function (output: string | number, channel = 1) {
 Pattern.prototype.midi = function (output) {
   if (isPattern(output)) {
     throw new Error(
