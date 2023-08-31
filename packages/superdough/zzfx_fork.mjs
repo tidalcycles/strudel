@@ -1,3 +1,5 @@
+import { getAudioContext } from './superdough.mjs';
+
 // https://github.com/KilledByAPixel/ZzFX/blob/master/ZzFX.js#L85C5-L180C6
 // changes: replaced this.volume with 1 + using sampleRate from getAudioContext()
 export function buildSamples(
