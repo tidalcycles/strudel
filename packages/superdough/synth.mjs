@@ -26,7 +26,7 @@ export function registerSynthSounds() {
       wave,
       (t, value, onended) => {
         // destructure adsr here, because the default should be different for synths and samples
-        const {
+        let {
           attack = 0.001,
           decay = 0.05,
           sustain = 0.6,
@@ -34,11 +34,11 @@ export function registerSynthSounds() {
           fmh: fmHarmonicity = 1,
           fmi: fmModulationIndex,
           fmenv: fmEnvelopeType = 'linear',
-          fmattack: fmAttack = 0.001,
-          fmdecay: fmDecay = 0.2,
-          fmsustain: fmSustain = 0.001,
-          fmrelease: fmRelease = 0.1,
-          fmvelocity: fmVelocity = 1,
+          fmattack: fmAttack, // = 0.001,
+          fmdecay: fmDecay, // = 0.2,
+          fmsustain: fmSustain, // = 0.001,
+          fmrelease: fmRelease, // = 0.1
+          fmvelocity: fmVelocity, // = 1,
           fmwave: fmWaveform = 'sine',
         } = value;
         let { n, note, freq } = value;
@@ -55,22 +55,37 @@ export function registerSynthSounds() {
         // make oscillator
         const { node: o, stop } = getOscillator({ t, s: wave, freq });
 
+        // FM + FM envelope
         let stopFm, fmEnvelope;
         if (fmModulationIndex) {
           const { node: modulator, stop } = fm(o, fmHarmonicity, fmModulationIndex, fmWaveform);
-          fmEnvelope = getEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
-          if (fmEnvelopeType === 'exp') {
-            fmEnvelope = getExpEnvelope(fmAttack, fmDecay, fmVelocity, t);
-            fmEnvelope.node.maxValue = fmModulationIndex * 2;
-            fmEnvelope.node.minValue = 0.00001;
+          if ([fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
+            // no envelope by default
+            modulator.connect(o.frequency);
+          } else {
+            fmAttack = fmAttack ?? 0.001;
+            fmDecay = fmDecay ?? 0.001;
+            fmSustain = fmSustain ?? 1;
+            fmRelease = fmRelease ?? 0.001;
+            fmVelocity = fmVelocity ?? 1;
+            fmEnvelope = getEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
+            if (fmEnvelopeType === 'exp') {
+              fmEnvelope = getExpEnvelope(fmAttack, fmDecay, fmVelocity, t);
+              fmEnvelope.node.maxValue = fmModulationIndex * 2;
+              fmEnvelope.node.minValue = 0.00001;
+            }
+            modulator.connect(fmEnvelope.node);
+            fmEnvelope.node.connect(o.frequency);
           }
-          modulator.connect(fmEnvelope.node);
-          fmEnvelope.node.connect(o.frequency);
           stopFm = stop;
         }
+
+        // turn down
         const g = gainNode(0.3);
-        // envelope
+
+        // gain envelope
         const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
+
         o.onended = () => {
           o.disconnect();
           g.disconnect();
@@ -80,6 +95,7 @@ export function registerSynthSounds() {
           node: o.connect(g).connect(envelope),
           stop: (releaseTime) => {
             releaseEnvelope(releaseTime);
+            fmEnvelope?.stop(releaseTime);
             let end = releaseTime + release;
             stop(end);
             stopFm?.(end);
