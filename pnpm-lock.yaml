@@ -588,6 +588,9 @@ importers:
       '@strudel.cycles/xen':
         specifier: workspace:*
         version: link:../packages/xen
+      '@strudel/desktopbridge':
+        specifier: workspace:*
+        version: link:../packages/desktopbridge
       '@supabase/supabase-js':
         specifier: ^2.21.0
         version: 2.21.0
@@ -597,6 +600,9 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.8
         version: 0.5.9(tailwindcss@3.3.2)
+      '@tauri-apps/api':
+        specifier: ^1.4.0
+        version: 1.4.0
       '@types/node':
         specifier: ^18.16.3
         version: 18.16.3

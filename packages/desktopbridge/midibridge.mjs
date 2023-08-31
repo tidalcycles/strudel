@@ -1,10 +1,10 @@
 import { Invoke } from './utils.mjs';
-import { noteToMidi } from '@strudel.cycles/core';
+import { Pattern, noteToMidi } from '@strudel.cycles/core';
 
 const ON_MESSAGE = 0x90;
 const OFF_MESSAGE = 0x80;
 
-export function processMidi(output) {
+Pattern.prototype.midi = function (output) {
   return this.onTrigger((time, hap, currentTime) => {
     const { note, nrpnn, nrpv, ccn, ccv } = hap.value;
     const offset = (time - currentTime) * 1000;
@@ -53,4 +53,4 @@ export function processMidi(output) {
       });
     }
   });
-}
+};

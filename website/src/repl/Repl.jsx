@@ -21,6 +21,7 @@ import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
 import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
+import { isTauri } from '../tauri.mjs';
 
 const { latestCode } = settingsMap.get();
 
@@ -36,7 +37,7 @@ const modules = [
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
-  import('@strudel.cycles/midi'),
+  isTauri() ? import('@strudel/desktopbridge') : import('@strudel.cycles/midi'),
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
   import('@strudel.cycles/osc'),
