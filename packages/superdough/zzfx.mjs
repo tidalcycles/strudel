@@ -26,6 +26,7 @@ export const getZZFX = (value, t) => {
     zdelay = 0,
     tremolo = 0,
     duration = 0.2,
+    zzfx,
   } = value;
   const sustainTime = Math.max(duration - attack - decay, 0);
   if (typeof note === 'string') {
@@ -39,7 +40,7 @@ export const getZZFX = (value, t) => {
   const shape = ['sine', 'triangle', 'sawtooth', 'tan', 'noise'].indexOf(s) || 0;
   curve = s === 'square' ? 0 : curve;
 
-  const params = [
+  const params = zzfx || [
     0.25, // volume
     zrand,
     freq,
@@ -76,7 +77,7 @@ export const getZZFX = (value, t) => {
 };
 
 export function registerZZFXSounds() {
-  ['z_sine', 'z_sawtooth', 'z_triangle', 'z_square', 'z_tan', 'z_noise'].forEach((wave) => {
+  ['zzfx', 'z_sine', 'z_sawtooth', 'z_triangle', 'z_square', 'z_tan', 'z_noise'].forEach((wave) => {
     registerSound(
       wave,
       (t, value, onended) => {

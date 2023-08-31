@@ -816,6 +816,7 @@ const generic_params = [
   ['zcrush'], // like crush but scaled differently
   ['zdelay'],
   ['tremolo'],
+  ['zzfx'],
 ];
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 
