@@ -167,6 +167,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     );
   }
 
+  // duration is passed as value too..
+  value.duration = hapDuration;
   // calculate absolute time
   let t = ac.currentTime + deadline;
   // destructure

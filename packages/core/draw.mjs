@@ -29,6 +29,9 @@ export const getDrawContext = (id = 'test-canvas') => {
 };
 
 Pattern.prototype.draw = function (callback, { from, to, onQuery } = {}) {
+  if (typeof window === 'undefined') {
+    return this;
+  }
   if (window.strudelAnimation) {
     cancelAnimationFrame(window.strudelAnimation);
   }

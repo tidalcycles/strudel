@@ -121,6 +121,7 @@ const generic_params = [
    * note("c e g b")
    * .fm(4)
    * .fmh("<1 2 1.5 1.61>")
+   * .scope()
    *
    */
   [['fmh', 'fmi'], 'fmh'],
@@ -134,6 +135,7 @@ const generic_params = [
    * @example
    * note("c e g b")
    * .fm("<0 1 2 8 32>")
+   * .scope()
    *
    */
   [['fmi', 'fmh'], 'fm'],
@@ -149,6 +151,7 @@ const generic_params = [
    * .fmdecay(.2)
    * .fmsustain(0)
    * .fmenv("<exp lin>")
+   * .scope()
    *
    */
   ['fmenv'],
@@ -161,6 +164,7 @@ const generic_params = [
    * note("c e g b")
    * .fm(4)
    * .fmattack("<0 .05 .1 .2>")
+   * .scope()
    *
    */
   ['fmattack'],
@@ -174,6 +178,7 @@ const generic_params = [
    * .fm(4)
    * .fmdecay("<.01 .05 .1 .2>")
    * .fmsustain(.4)
+   * .scope()
    *
    */
   ['fmdecay'],
@@ -187,6 +192,7 @@ const generic_params = [
    * .fm(4)
    * .fmdecay(.1)
    * .fmsustain("<1 .75 .5 0>")
+   * .scope()
    *
    */
   ['fmsustain'],
@@ -861,8 +867,22 @@ const generic_params = [
    *
    */
   ['clip'],
-];
 
+  // ZZFX
+  ['zrand'],
+  ['curve'],
+  ['slide'], // superdirt duplicate
+  ['deltaSlide'],
+  ['pitchJump'],
+  ['pitchJumpTime'],
+  ['lfo', 'repeatTime'],
+  ['noise'],
+  ['zmod'],
+  ['zcrush'], // like crush but scaled differently
+  ['zdelay'],
+  ['tremolo'],
+  ['zzfx'],
+];
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 
 controls.createParam = function (names) {

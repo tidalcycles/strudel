@@ -8,27 +8,51 @@ import { JsDoc } from '../../docs/JsDoc';
 
 # Synths
 
-For now, [samples](/learn/samples) are the main way to play with Strudel.
-In the future, more powerful synthesis capabilities will be added.
-If in the meantime you want to dive deeper into audio synthesis with Tidal, you will need to [install SuperCollider and SuperDirt](https://tidalcycles.org/docs/).
+In addition to the sampling engine, strudel comes with a synthesizer to create sounds on the fly.
 
-## Playing synths with `s`
+## Basic Waveforms
 
-We can change the sound, using the `s` function:
+The basic waveforms are `sine`, `sawtooth`, `square` and `triangle`, which can be selected via `sound` (or `s`):
 
-<MiniRepl client:idle tune={`note("c2 <eb2 <g2 g1>>").s('sawtooth')`} />
+<MiniRepl
+  client:idle
+  tune={`note("c2 <eb2 <g2 g1>>")
+.sound("<sawtooth square triangle sine>")
+.scope()`}
+/>
 
-Here, we are wrapping our notes inside `note` and set the sound using `s`, connected by a dot.
+If you don't set a `sound` but a `note` the default value for `sound` is `triangle`!
 
-Those functions are only 2 of many ways to alter the properties, or _params_ of a sound.
-The power of patterns allows us to sequence any _param_ independently:
+### Additive Synthesis
 
-<MiniRepl client:idle tune={`note("c2 <eb2 <g2 g1>>").s("<sawtooth square triangle>")`} />
+To tame the harsh sound of the basic waveforms, we can set the `n` control to limit the overtones of the waveform:
 
-Now we not only pattern the notes, but the sound as well!
-`sawtooth` `square` and `triangle` are the basic waveforms available in `s`.
+<MiniRepl
+  client:idle
+  tune={`note("c2 <eb2 <g2 g1>>")
+.sound("sawtooth")
+.n("<32 16 8 4>")
+.scope()`}
+/>
+
+When the `n` control is used on a basic waveform, it defines the number of harmonic partials the sound is getting.
+You can also set `n` directly in mini notation with `sound`:
+
+<MiniRepl
+  client:idle
+  tune={`note("c2 <eb2 <g2 g1>>")
+.sound("sawtooth:<32 16 8 4>")
+.scope()`}
+/>
+
+Note for tidal users: `n` in tidal is synonymous to `note` for synths only.
+In strudel, this is not the case, where `n` will always change timbre, be it though different samples or different waveforms.
 
 ## FM Synthesis
+
+FM Synthesis is a technique that changes the frequency of a basic waveform rapidly to alter the timbre.
+
+You can use fm with any of the above waveforms, although the below examples all use the default triangle wave.
 
 ### fm
 
@@ -53,5 +77,42 @@ Now we not only pattern the notes, but the sound as well!
 ### fmenv
 
 <JsDoc client:idle name="fmenv" h={0} />
+
+## ZZFX
+
+The "Zuper Zmall Zound Zynth" [ZZFX](https://github.com/KilledByAPixel/ZzFX) is also integrated in strudel.
+Developed by [Frank Force](https://frankforce.com/), it is a synth and FX engine originally intended to be used for size coding games.
+
+It has 20 parameters in total, here is a snippet that uses all:
+
+<MiniRepl
+  client:idle
+  tune={`note("<c2 eb2 f2 g2>") // also supports freq
+  .s("<z_sawtooth z_tan z_noise z_sine z_square>")
+  .zrand(0) // randomization
+  // zzfx envelope
+  .attack(0.001)
+  .decay(0.1)
+  .sustain(.8)
+  .release(.1)
+  // special zzfx params
+  .curve(1) // waveshape 1-3
+  .slide(0) // +/- pitch slide
+  .deltaSlide(0) // +/- pitch slide (?)
+  .noise(0) // make it dirty
+  .zmod(0) // fm speed
+  .zcrush(0) // bit crush 0 - 1
+  .zdelay(0) // simple delay
+  .pitchJump(0) // +/- pitch change after pitchJumpTime
+  .pitchJumpTime(0) // >0 time after pitchJump is applied
+  .lfo(0) // >0 resets slide + pitchJump + sets tremolo speed
+  .tremolo(0) // 0-1 lfo volume modulation amount
+  //.duration(.2) // overwrite strudel event duration
+  //.gain(1) // change volume
+  .scope() // vizualise waveform (not zzfx related)
+`}
+/>
+
+Note that you can also combine zzfx with all the other audio fx (next chapter).
 
 Next up: [Audio Effects](/learn/effects)...
