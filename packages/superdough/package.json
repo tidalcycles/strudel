@@ -36,7 +36,6 @@
     "vite": "^4.3.3"
   },
   "dependencies": {
-    "nanostores": "^0.8.1",
-    "zzfx": "^1.2.0"
+    "nanostores": "^0.8.1"
   }
 }
