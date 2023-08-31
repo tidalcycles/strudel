@@ -375,6 +375,8 @@ const fontFamilyOptions = {
   'we-come-in-peace': 'we-come-in-peace',
   FiraCode: 'FiraCode',
   'FiraCode-SemiBold': 'FiraCode SemiBold',
+  teletext: 'teletext',
+  mode7: 'mode7',
 };
 
 function SettingsTab({ scheduler }) {
