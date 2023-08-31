@@ -813,8 +813,8 @@ const generic_params = [
   ['repeatTime'],
   ['noise'],
   ['zmod'],
-  ['zcrush'], // like crush..
-  ['zdelay'], // duplicate
+  ['zcrush'], // like crush but scaled differently
+  ['zdelay'],
   ['tremolo'],
 ];
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
