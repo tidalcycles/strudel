@@ -118,7 +118,9 @@ const generic_params = [
    * @name fmh
    * @param {number | Pattern} harmonicity
    * @example
-   * note("c e g b").fm(4).fmh("<1 2 1.5 1.61>")
+   * note("c e g b")
+   * .fm(4)
+   * .fmh("<1 2 1.5 1.61>")
    *
    */
   [['fmh', 'fmi'], 'fmh'],
@@ -130,10 +132,67 @@ const generic_params = [
    * @param {number | Pattern} brightness modulation index
    * @synonyms fmi
    * @example
-   * note("c e g b").fm("<0 1 2 8 32>")
+   * note("c e g b")
+   * .fm("<0 1 2 8 32>")
    *
    */
   [['fmi', 'fmh'], 'fm'],
+  // fm envelope
+  /**
+   * Ramp type of fm envelope. Exp might be a bit broken..
+   *
+   * @name fmenv
+   * @param {number | Pattern} type lin | exp
+   * @example
+   * note("c e g b")
+   * .fm(4)
+   * .fmdecay(.2)
+   * .fmsustain(0)
+   * .fmenv("<exp lin>")
+   *
+   */
+  ['fmenv'],
+  /**
+   * Attack time for the FM envelope: time it takes to reach maximum modulation
+   *
+   * @name fmattack
+   * @param {number | Pattern} time attack time
+   * @example
+   * note("c e g b")
+   * .fm(4)
+   * .fmattack("<0 .05 .1 .2>")
+   *
+   */
+  ['fmattack'],
+  /**
+   * Decay time for the FM envelope: seconds until the sustain level is reached after the attack phase.
+   *
+   * @name fmdecay
+   * @param {number | Pattern} time decay time
+   * @example
+   * note("c e g b")
+   * .fm(4)
+   * .fmdecay("<.01 .05 .1 .2>")
+   * .fmsustain(.4)
+   *
+   */
+  ['fmdecay'],
+  /**
+   * Sustain level for the FM envelope: how much modulation is applied after the decay phase
+   *
+   * @name fmsustain
+   * @param {number | Pattern} level sustain level
+   * @example
+   * note("c e g b")
+   * .fm(4)
+   * .fmdecay(.1)
+   * .fmsustain("<1 .75 .5 0>")
+   *
+   */
+  ['fmsustain'],
+  // these are not really useful... skipping for now
+  ['fmrelease'],
+  ['fmvelocity'],
 
   /**
    * Select the sound bank to use. To be used together with `s`. The bank name (+ "_") will be prepended to the value of `s`.

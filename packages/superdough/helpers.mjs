@@ -28,6 +28,22 @@ export const getEnvelope = (attack, decay, sustain, release, velocity, begin) =>
   };
 };
 
+export const getExpEnvelope = (attack, decay, sustain, release, velocity, begin) => {
+  sustain = Math.max(0.001, sustain);
+  velocity = Math.max(0.001, velocity);
+  const gainNode = getAudioContext().createGain();
+  gainNode.gain.setValueAtTime(0.0001, begin);
+  gainNode.gain.exponentialRampToValueAtTime(velocity, begin + attack);
+  gainNode.gain.exponentialRampToValueAtTime(sustain * velocity, begin + attack + decay);
+  return {
+    node: gainNode,
+    stop: (t) => {
+      // similar to getEnvelope, this will glitch if sustain level has not been reached
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, t + release);
+    },
+  };
+};
+
 export const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {
   const gainNode = getAudioContext().createGain();
   gainNode.gain.setValueAtTime(0, begin);
