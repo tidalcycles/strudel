@@ -4,9 +4,8 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern } from '@strudel.cycles/core';
 import * as _WebMidi from 'webmidi';
-import { isPattern, logger } from '@strudel.cycles/core';
+import { Pattern, isPattern, logger } from '@strudel.cycles/core';
 import { noteToMidi } from '@strudel.cycles/core';
 import { Note } from 'webmidi';
 // if you use WebMidi from outside of this package, make sure to import that instance:
@@ -20,7 +19,7 @@ function getMidiDeviceNamesString(outputs) {
   return outputs.map((o) => `'${o.name}'`).join(' | ');
 }
 
-function enableWebMidi(options = {}) {
+export function enableWebMidi(options = {}) {
   const { onReady, onConnected, onDisconnected, onEnabled } = options;
   if (WebMidi.enabled) {
     return;
