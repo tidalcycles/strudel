@@ -56,31 +56,7 @@ export const getZZFX = (value, t, duration) => {
     decay,
     tremolo,
   ];
-  const paramOrder = [
-    'volume',
-    'randomness',
-    'frequency',
-    'attack',
-    'sustain',
-    'release',
-    'shape',
-    'shapeCurve',
-    'slide',
-    'deltaSlide',
-    'pitchJump',
-    'pitchJumpTime',
-    'repeatTime',
-    'noise',
-    'modulation',
-    'bitCrush',
-    'delay',
-    'sustainVolume',
-    'decay',
-    'tremolo',
-  ];
-
-  const readableParams = Object.fromEntries(paramOrder.map((param, i) => [param, params[i]]));
-  console.log(readableParams);
+  // console.log(redableZZFX(params));
 
   const samples = /* ZZFX. */ buildSamples(...params);
   const context = getAudioContext();
@@ -110,6 +86,33 @@ export function registerZZFXSounds() {
       };
     });
   });
+}
+
+// just for debugging
+function redableZZFX(params) {
+  const paramOrder = [
+    'volume',
+    'randomness',
+    'frequency',
+    'attack',
+    'sustain',
+    'release',
+    'shape',
+    'shapeCurve',
+    'slide',
+    'deltaSlide',
+    'pitchJump',
+    'pitchJumpTime',
+    'repeatTime',
+    'noise',
+    'modulation',
+    'bitCrush',
+    'delay',
+    'sustainVolume',
+    'decay',
+    'tremolo',
+  ];
+  return Object.fromEntries(paramOrder.map((param, i) => [param, params[i]]));
 }
 
 // https://github.com/KilledByAPixel/ZzFX/blob/master/ZzFX.js#L85C5-L180C6
