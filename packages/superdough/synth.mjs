@@ -13,7 +13,7 @@ const mod = (freq, range = 1, type = 'sine') => {
   return { node: g, stop: (t) => osc.stop(t) };
 };
 
-const fm = (osc, harmonicityRatio, modulationIndex, wave) => {
+const fm = (osc, harmonicityRatio, modulationIndex, wave = 'sine') => {
   const carrfreq = osc.frequency.value;
   const modfreq = carrfreq * harmonicityRatio;
   const modgain = modfreq * modulationIndex;
