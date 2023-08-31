@@ -59,7 +59,7 @@ export function registerSynthSounds() {
         let stopFm, fmEnvelope;
         if (fmModulationIndex) {
           const { node: modulator, stop } = fm(o, fmHarmonicity, fmModulationIndex, fmWaveform);
-          if ([fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
+          if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
             // no envelope by default
             modulator.connect(o.frequency);
           } else {
