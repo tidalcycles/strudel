@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use std::sync::Arc;
+use std::time::Duration;
 use midir::MidiOutput;
-use tokio::sync::mpsc;
-use tokio::sync::Mutex;
+use tokio::sync::{ mpsc, Mutex };
 use tokio::time::Instant;
 use serde::Deserialize;
-
+use std::thread::sleep;
 pub struct MidiMessage {
   pub message: Vec<u8>,
   pub instant: Instant,
@@ -24,7 +24,6 @@ pub fn init(
 ) {
   tauri::async_runtime::spawn(async move { async_process_model(async_input_receiver, async_output_transmitter).await });
   let message_queue: Arc<Mutex<Vec<MidiMessage>>> = Arc::new(Mutex::new(Vec::new()));
-
   /* ...........................................................
          Listen For incoming messages and add to queue
   ............................................................*/
@@ -72,19 +71,14 @@ pub fn init(
     /* ...........................................................
                         Process queued messages 
     ............................................................*/
+
     loop {
       let mut message_queue = message_queue_clone.lock().await;
 
-      for i in 0..=message_queue.len().saturating_sub(1) {
-        let m = message_queue.get(i);
-        if m.is_none() {
-          continue;
-        }
-        let message = m.unwrap();
-
-        // dont play the message if its offset time has not elapsed
+      //iterate over each message, play and remove messages when they are ready
+      message_queue.retain(|message| {
         if message.instant.elapsed().as_millis() < message.offset.into() {
-          continue;
+          return true;
         }
         let mut out_con = output_connections.get_mut(&message.requestedport);
 
@@ -107,10 +101,10 @@ pub fn init(
         } else {
           println!("failed to find midi device: {}", message.requestedport);
         }
+        return false;
+      });
 
-        // the message has been processed, so remove it from the queue
-        message_queue.remove(i);
-      }
+      sleep(Duration::from_millis(1));
     }
   });
 }
