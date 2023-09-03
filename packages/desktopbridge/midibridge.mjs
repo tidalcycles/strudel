@@ -3,6 +3,7 @@ import { Pattern, noteToMidi } from '@strudel.cycles/core';
 
 const ON_MESSAGE = 0x90;
 const OFF_MESSAGE = 0x80;
+const CC_MESSAGE = 0xb0;
 
 Pattern.prototype.midi = function (output) {
   return this.onTrigger((time, hap, currentTime) => {
@@ -37,13 +38,8 @@ Pattern.prototype.midi = function (output) {
       const scaled = Math.round(ccv * 127);
       messagesfromjs.push({
         requestedport,
-        message: [ON_MESSAGE + midichan, ccn, scaled],
+        message: [CC_MESSAGE + midichan, ccn, scaled],
         offset: roundedOffset,
-      });
-      messagesfromjs.push({
-        requestedport,
-        message: [OFF_MESSAGE + midichan, ccn, scaled],
-        offset: roundedOffset + duration,
       });
     }
     // invoke is temporarily blocking, run in an async process
