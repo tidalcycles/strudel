@@ -1,7 +1,8 @@
 use rosc::encoder;
 use rosc::{ OscMessage, OscPacket, OscType };
 use std::net::UdpSocket;
-use std::time::Duration;
+
+use std::time::{ Duration, SystemTime, UNIX_EPOCH };
 use std::sync::Arc;
 use tokio::sync::{ mpsc, Mutex };
 use tokio::time::Instant;
@@ -9,8 +10,7 @@ use serde::Deserialize;
 use std::thread::sleep;
 pub struct OscMsg {
   pub msg_buf: Vec<u8>,
-  pub instant: Instant,
-  pub offset: u64,
+  pub timestamp: u128,
 }
 
 pub struct AsyncInputTransmit {
@@ -51,13 +51,15 @@ pub fn init(
     /* ...........................................................
                         Process queued messages 
     ............................................................*/
+
     loop {
       let mut message_queue = message_queue_clone.lock().await;
-      println!("num messages {}", message_queue.len());
+      let current_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
       //iterate over each message, play and remove messages when they are ready
       message_queue.retain(|message| {
-        if message.instant.elapsed().as_millis() < message.offset.into() {
+        println!("current_time {} message time {}", current_time, message.timestamp);
+        if current_time < message.timestamp {
           return true;
         }
         sock.send_to(&message.msg_buf, to_addr.clone()).unwrap();
@@ -89,7 +91,7 @@ pub struct Param {
 #[derive(Deserialize)]
 pub struct MessageFromJS {
   params: Vec<Param>,
-  offset: u64,
+  timestamp: u128,
   target: String,
 }
 // Called from JS
@@ -121,9 +123,8 @@ pub async fn sendosc(
       .unwrap();
 
     let message_to_process = OscMsg {
-      instant: Instant::now(),
       msg_buf,
-      offset: m.offset,
+      timestamp: m.timestamp,
     };
     messages_to_process.push(message_to_process);
   }
