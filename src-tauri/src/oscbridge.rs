@@ -1,9 +1,7 @@
 use rosc::encoder;
 use rosc::{ OscMessage, OscPacket, OscType };
-use std::net::{ SocketAddrV4, UdpSocket };
-use std::str::FromStr;
+use std::net::UdpSocket;
 use std::time::Duration;
-use std::{ env, f32 };
 use std::sync::Arc;
 use tokio::sync::{ mpsc, Mutex };
 use tokio::time::Instant;
@@ -18,9 +16,7 @@ pub struct OscMsg {
 pub struct AsyncInputTransmit {
   pub inner: Mutex<mpsc::Sender<Vec<OscMsg>>>,
 }
-fn get_addr_from_arg(arg: &str) -> SocketAddrV4 {
-  SocketAddrV4::from_str(arg).unwrap()
-}
+
 pub fn init(
   async_input_receiver: mpsc::Receiver<Vec<OscMsg>>,
   mut async_output_receiver: mpsc::Receiver<Vec<OscMsg>>,
@@ -44,22 +40,17 @@ pub fn init(
       }
     }
   });
-  println!("cloning message queue");
 
   let message_queue_clone = Arc::clone(&message_queue);
   tauri::async_runtime::spawn(async move {
-    println!("opening osc port");
     /* ...........................................................
                         Open OSC Ports
     ............................................................*/
-
-    let sock = UdpSocket::bind("localhost:57121").unwrap();
-    let to_addr = String::from("localhost:57120");
-
+    let sock = UdpSocket::bind("127.0.0.1:57121").unwrap();
+    let to_addr = String::from("127.0.0.1:57120");
     /* ...........................................................
                         Process queued messages 
     ............................................................*/
-
     loop {
       let mut message_queue = message_queue_clone.lock().await;
       println!("num messages {}", message_queue.len());
@@ -109,12 +100,10 @@ pub async fn sendosc(
 ) -> Result<(), String> {
   let async_proc_input_tx = state.inner.lock().await;
   let mut messages_to_process: Vec<OscMsg> = Vec::new();
-
   for m in messagesfromjs {
     let mut args = Vec::new();
     for p in m.params {
       args.push(OscType::String(p.name));
-
       if p.valueisnumber {
         args.push(OscType::Float(p.value.parse().unwrap()));
       } else {
