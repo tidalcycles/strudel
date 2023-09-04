@@ -21,6 +21,7 @@
       "url": "https://github.com/tidalcycles/strudel/issues"
     },
     "dependencies": {
+        "@strudel.cycles/webaudio": "^0.8.2",
         "@strudel.cycles/core": "workspace:*",
         "@tauri-apps/api": "^1.4.0"
       },
