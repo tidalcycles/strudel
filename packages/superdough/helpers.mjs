@@ -66,10 +66,18 @@ export const getADSR = (attack, decay, sustain, release, velocity, begin, end) =
   return gainNode;
 };
 
-export const getFilter = (type, frequency, Q) => {
-  const filter = getAudioContext().createBiquadFilter();
+export function createFilter(context, type, frequency, Q, curve, to, over, t) {
+  const filter = context.createBiquadFilter();
   filter.type = type;
   filter.frequency.value = frequency;
   filter.Q.value = Q;
+
+  if (to !== null && over !== null) {
+    if (curve === 'lin') {
+      filter.frequency.linearRampToValueAtTime(to, t + over);
+    } else {
+      filter.frequency.exponentialRampToValueAtTime(to, t + over);
+    }
+  }
   return filter;
-};
+}

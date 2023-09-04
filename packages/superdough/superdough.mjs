@@ -9,7 +9,7 @@ import './reverb.mjs';
 import './vowel.mjs';
 import { clamp } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
-import { getFilter, gainNode } from './helpers.mjs';
+import { createFilter, gainNode } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 
@@ -177,6 +177,11 @@ export const superdough = async (value, deadline, hapDuration) => {
     bank,
     source,
     gain = 0.8,
+    // filters
+    order = 12,
+    to,
+    filtenv = 'lin',
+    over,
     // low pass
     cutoff,
     resonance = 1,
@@ -239,11 +244,37 @@ export const superdough = async (value, deadline, hapDuration) => {
   // gain stage
   chain.push(gainNode(gain));
 
-  // filters
-  cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
-  hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
-  bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
-  vowel !== undefined && chain.push(ac.createVowelFilter(vowel));
+  if (cutoff !== undefined) {
+    const filter1 = createFilter(ac, 'lowpass', cutoff, resonance, filtenv, to || cutoff, over || hapDuration, t);
+    chain.push(filter1);
+    if (order === 24) {
+      const filter2 = createFilter(ac, 'lowpass', cutoff, resonance, filtenv, to || cutoff, over || hapDuration, t);
+      chain.push(filter2);
+    }
+  }
+
+  if (hcutoff !== undefined) {
+    const filter1 = createFilter(ac, 'highpass', hcutoff, hresonance, filtenv, to || hcutoff, over || hapDuration, t);
+    chain.push(filter1);
+    if (order === 24) {
+      const filter2 = createFilter(ac, 'highpass', hcutoff, hresonance, filtenv, to || hcutoff, over || hapDuration, t);
+      chain.push(filter2);
+    }
+  }
+
+  if (bandf !== undefined) {
+    const filter1 = createFilter(ac, 'bandpass', bandf, bandq, filtenv, to || bandf, over || hapDuration, t);
+    chain.push(filter1);
+    if (order === 24) {
+      const filter2 = createFilter(ac, 'bandpass', bandf, bandq, filtenv, to || bandf, over || hapDuration, t);
+      chain.push(filter2);
+    }
+  }
+
+  if (vowel !== undefined) {
+    const vowelFilter = ac.createVowelFilter(vowel);
+    chain.push(vowelFilter);
+  }
 
   // effects
   coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
@@ -282,6 +313,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     analyserSend = effectSend(post, analyserNode, analyze);
   }
 
+  console.log(chain);
   // connect chain elements together
   chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
 
