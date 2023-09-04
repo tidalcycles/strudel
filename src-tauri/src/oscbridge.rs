@@ -1,4 +1,4 @@
-use rosc::{ encoder, OscTime };
+use rosc::{ encoder, OscTime, OscTimeError };
 use rosc::{ OscMessage, OscPacket, OscType, OscBundle };
 use std::net::UdpSocket;
 
@@ -17,7 +17,13 @@ pub struct AsyncInputTransmit {
   pub inner: Mutex<mpsc::Sender<Vec<OscMsg>>>,
 }
 
-const SECONDS_70_YEARS: u64 = 2208988800;
+// const SECONDS_70_YEARS: u64 = 2208988800;
+// 70 years in seconds
+const UNIX_OFFSET: u64 = 2_208_988_800; // From RFC 5905
+const TWO_POW_32: f64 = (u32::MAX as f64) + 1.0; // Number of bits in a `u32`
+const ONE_OVER_TWO_POW_32: f64 = 1.0 / TWO_POW_32;
+const NANOS_PER_SECOND: f64 = 1.0e9;
+const SECONDS_PER_NANO: f64 = 1.0 / NANOS_PER_SECOND;
 
 pub fn init(
   async_input_receiver: mpsc::Receiver<Vec<OscMsg>>,
@@ -60,14 +66,9 @@ pub fn init(
 
     loop {
       let mut message_queue = message_queue_clone.lock().await;
-      let current_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
-      //iterate over each message, play and remove messages when they are ready
       message_queue.retain(|message| {
-        // println!("current_time {} message time {}", current_time, message.timestamp);
-
         sock.send(&message.msg_buf).unwrap();
-        println!("func delay {}", prev_time.elapsed().as_millis());
         prev_time = Instant::now();
         return false;
       });
@@ -99,8 +100,7 @@ pub struct MessageFromJS {
   params: Vec<Param>,
   timestamp: u64,
   target: String,
-  seconds: u64,
-  fractional: u64,
+
   offset: u64,
 }
 // Called from JS
@@ -121,25 +121,22 @@ pub async fn sendosc(
         args.push(OscType::String(p.value));
       }
     }
-    // let o = Duration::from_millis(m.offset);
-    // let t: Duration = Duration::from_millis(m.timestamp);
 
-    let t = Duration::from_secs(SECONDS_70_YEARS) + Duration::from_millis(m.timestamp);
-    //let offset = SystemTime::now().duration_since(UNIX_EPOCH).unwrap() + Duration::from_secs(SECONDS_70_YEARS);
-    //  Duration::from_millis(m.offset);
-    // let offsetsecs = offset.as_secs() as u32;
-    let timetag = OscTime::from((t.as_secs() as u32, t.subsec_millis()));
-    // let timetag = OscTime::from((offset.as_secs() as u32, offset.subsec_nanos()));
+    // let duration_since_epoch =
+    //   SystemTime::now()
+    //     .duration_since(UNIX_EPOCH)
+    //     .map_err(|_| "incorrect calc")? +
+    //   Duration::new(UNIX_OFFSET, 0) +
+    //   Duration::from_millis(m.offset);
 
-    // let timetag = OscTime::from((m.seconds as u32, m.fractional as u32));
+    let duration_since_epoch = Duration::from_millis(m.timestamp) + Duration::new(UNIX_OFFSET, 0);
 
-    //let timetag = OscTime::from((0, 0));
+    let seconds = u32::try_from(duration_since_epoch.as_secs()).map_err(|_| "process sec error")?;
+    let nanos = duration_since_epoch.subsec_nanos() as f64;
+    let fractional = (nanos * SECONDS_PER_NANO * TWO_POW_32).round() as u32;
 
-    //timetag.seconds;
-    println!("secs timetag {} ns {}", timetag.seconds, timetag.fractional);
+    let timetag = OscTime::from((seconds, fractional));
 
-    // args.push(OscType::String("timetag".to_string()));
-    // args.push(OscType::Long(m.timestamp as i64));
     let packet = OscPacket::Message(OscMessage {
       addr: m.target,
       args,
@@ -151,12 +148,7 @@ pub async fn sendosc(
     };
 
     let msg_buf = encoder::encode(&OscPacket::Bundle(x)).unwrap();
-    // let msg_buf = encoder::encode(&packet).unwrap();
-    println!("message");
-    // for p in msg_buf {
-    //   print!("{}, ", p);
-    // }
-    //let msg_buf = encoder::encode(&packet).unwrap();
+
     let message_to_process = OscMsg {
       msg_buf,
       timestamp: m.timestamp,
