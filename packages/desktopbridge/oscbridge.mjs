@@ -1,4 +1,4 @@
-import { logger, parseNumeral, Pattern } from '@strudel.cycles/core';
+import { parseNumeral, Pattern } from '@strudel.cycles/core';
 import { Invoke } from './utils.mjs';
 
 Pattern.prototype.osc = function () {
@@ -11,9 +11,9 @@ Pattern.prototype.osc = function () {
     controls.n && (controls.n = parseNumeral(controls.n));
     controls.note && (controls.note = parseNumeral(controls.note));
 
-    const messagesfromjs = [];
     const params = [];
-    const offset = Math.round((time - currentTime) * 1000 - 48);
+
+    const timestamp = Math.round(Date.now() + (time - currentTime) * 1000);
 
     Object.keys(controls).forEach((key) => {
       const val = controls[key];
@@ -29,10 +29,10 @@ Pattern.prototype.osc = function () {
       });
     });
 
+    const messagesfromjs = [];
     if (params.length) {
-      messagesfromjs.push({ target: '/dirt/play', offset, params });
+      messagesfromjs.push({ target: '/dirt/play', timestamp, params });
     }
-    console.log(messagesfromjs);
 
     if (messagesfromjs.length) {
       setTimeout(() => {
