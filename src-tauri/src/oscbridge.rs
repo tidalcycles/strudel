@@ -1,8 +1,8 @@
-use rosc::{ encoder, OscTime, OscTimeError };
+use rosc::{ encoder, OscTime };
 use rosc::{ OscMessage, OscPacket, OscType, OscBundle };
 use std::net::UdpSocket;
 
-use std::time::{ Duration, SystemTime, UNIX_EPOCH };
+use std::time::Duration;
 use std::sync::Arc;
 use tokio::sync::{ mpsc, Mutex };
 use tokio::time::Instant;
@@ -17,11 +17,8 @@ pub struct AsyncInputTransmit {
   pub inner: Mutex<mpsc::Sender<Vec<OscMsg>>>,
 }
 
-// const SECONDS_70_YEARS: u64 = 2208988800;
-// 70 years in seconds
-const UNIX_OFFSET: u64 = 2_208_988_800; // From RFC 5905
+const UNIX_OFFSET: u64 = 2_208_988_800; // 70 years in seconds
 const TWO_POW_32: f64 = (u32::MAX as f64) + 1.0; // Number of bits in a `u32`
-const ONE_OVER_TWO_POW_32: f64 = 1.0 / TWO_POW_32;
 const NANOS_PER_SECOND: f64 = 1.0e9;
 const SECONDS_PER_NANO: f64 = 1.0 / NANOS_PER_SECOND;
 
@@ -41,7 +38,6 @@ pub fn init(
       if let Some(package) = async_output_receiver.recv().await {
         let mut message_queue = message_queue_clone.lock().await;
         let messages = package;
-        //println!("received message");
         for message in messages {
           (*message_queue).push(message);
         }
@@ -100,8 +96,6 @@ pub struct MessageFromJS {
   params: Vec<Param>,
   timestamp: u64,
   target: String,
-
-  offset: u64,
 }
 // Called from JS
 #[tauri::command]
@@ -122,16 +116,12 @@ pub async fn sendosc(
       }
     }
 
-    // let duration_since_epoch =
-    //   SystemTime::now()
-    //     .duration_since(UNIX_EPOCH)
-    //     .map_err(|_| "incorrect calc")? +
-    //   Duration::new(UNIX_OFFSET, 0) +
-    //   Duration::from_millis(m.offset);
-
     let duration_since_epoch = Duration::from_millis(m.timestamp) + Duration::new(UNIX_OFFSET, 0);
 
-    let seconds = u32::try_from(duration_since_epoch.as_secs()).map_err(|_| "process sec error")?;
+    let seconds = u32
+      ::try_from(duration_since_epoch.as_secs())
+      .map_err(|_| "bit conversion failed for osc message timetag")?;
+
     let nanos = duration_since_epoch.subsec_nanos() as f64;
     let fractional = (nanos * SECONDS_PER_NANO * TWO_POW_32).round() as u32;
 
@@ -142,12 +132,12 @@ pub async fn sendosc(
       args,
     });
 
-    let x = OscBundle {
+    let bundle = OscBundle {
       content: vec![packet],
       timetag,
     };
 
-    let msg_buf = encoder::encode(&OscPacket::Bundle(x)).unwrap();
+    let msg_buf = encoder::encode(&OscPacket::Bundle(bundle)).unwrap();
 
     let message_to_process = OscMsg {
       msg_buf,
