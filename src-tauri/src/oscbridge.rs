@@ -58,14 +58,15 @@ pub fn init(
     /* ...........................................................
                         Process queued messages 
     ............................................................*/
-    let mut prev_time = Instant::now();
 
     loop {
       let mut message_queue = message_queue_clone.lock().await;
 
       message_queue.retain(|message| {
-        sock.send(&message.msg_buf).unwrap();
-        prev_time = Instant::now();
+        let result = sock.send(&message.msg_buf);
+        if result.is_err() {
+          println!("OSC Message failed to send, the server might no longer be available");
+        }
         return false;
       });
 
