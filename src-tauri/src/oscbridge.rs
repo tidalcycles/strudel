@@ -1,5 +1,5 @@
-use rosc::encoder;
-use rosc::{ OscMessage, OscPacket, OscType };
+use rosc::{ encoder, OscTime };
+use rosc::{ OscMessage, OscPacket, OscType, OscBundle };
 use std::net::UdpSocket;
 
 use std::time::{ Duration, SystemTime, UNIX_EPOCH };
@@ -10,12 +10,14 @@ use serde::Deserialize;
 use std::thread::sleep;
 pub struct OscMsg {
   pub msg_buf: Vec<u8>,
-  pub timestamp: u128,
+  pub timestamp: u64,
 }
 
 pub struct AsyncInputTransmit {
   pub inner: Mutex<mpsc::Sender<Vec<OscMsg>>>,
 }
+
+const SECONDS_70_YEARS: u64 = 2208988800;
 
 pub fn init(
   async_input_receiver: mpsc::Receiver<Vec<OscMsg>>,
@@ -46,11 +48,15 @@ pub fn init(
     /* ...........................................................
                         Open OSC Ports
     ............................................................*/
-    let sock = UdpSocket::bind("127.0.0.1:57121").unwrap();
+    let sock = UdpSocket::bind("127.0.0.1:57122").unwrap();
     let to_addr = String::from("127.0.0.1:57120");
+    sock.set_nonblocking(true).unwrap();
+    sock.connect(to_addr).expect("could not connect to OSC address");
+
     /* ...........................................................
                         Process queued messages 
     ............................................................*/
+    let mut prev_time = Instant::now();
 
     loop {
       let mut message_queue = message_queue_clone.lock().await;
@@ -58,11 +64,11 @@ pub fn init(
 
       //iterate over each message, play and remove messages when they are ready
       message_queue.retain(|message| {
-        println!("current_time {} message time {}", current_time, message.timestamp);
-        if current_time < message.timestamp {
-          return true;
-        }
-        sock.send_to(&message.msg_buf, to_addr.clone()).unwrap();
+        // println!("current_time {} message time {}", current_time, message.timestamp);
+
+        sock.send(&message.msg_buf).unwrap();
+        println!("func delay {}", prev_time.elapsed().as_millis());
+        prev_time = Instant::now();
         return false;
       });
 
@@ -91,8 +97,11 @@ pub struct Param {
 #[derive(Deserialize)]
 pub struct MessageFromJS {
   params: Vec<Param>,
-  timestamp: u128,
+  timestamp: u64,
   target: String,
+  seconds: u64,
+  fractional: u64,
+  offset: u64,
 }
 // Called from JS
 #[tauri::command]
@@ -112,16 +121,42 @@ pub async fn sendosc(
         args.push(OscType::String(p.value));
       }
     }
+    // let o = Duration::from_millis(m.offset);
+    // let t: Duration = Duration::from_millis(m.timestamp);
 
-    let msg_buf = encoder
-      ::encode(
-        &OscPacket::Message(OscMessage {
-          addr: m.target,
-          args,
-        })
-      )
-      .unwrap();
+    let t = Duration::from_secs(SECONDS_70_YEARS) + Duration::from_millis(m.timestamp);
+    //let offset = SystemTime::now().duration_since(UNIX_EPOCH).unwrap() + Duration::from_secs(SECONDS_70_YEARS);
+    //  Duration::from_millis(m.offset);
+    // let offsetsecs = offset.as_secs() as u32;
+    let timetag = OscTime::from((t.as_secs() as u32, t.subsec_millis()));
+    // let timetag = OscTime::from((offset.as_secs() as u32, offset.subsec_nanos()));
 
+    // let timetag = OscTime::from((m.seconds as u32, m.fractional as u32));
+
+    //let timetag = OscTime::from((0, 0));
+
+    //timetag.seconds;
+    println!("secs timetag {} ns {}", timetag.seconds, timetag.fractional);
+
+    // args.push(OscType::String("timetag".to_string()));
+    // args.push(OscType::Long(m.timestamp as i64));
+    let packet = OscPacket::Message(OscMessage {
+      addr: m.target,
+      args,
+    });
+
+    let x = OscBundle {
+      content: vec![packet],
+      timetag,
+    };
+
+    let msg_buf = encoder::encode(&OscPacket::Bundle(x)).unwrap();
+    // let msg_buf = encoder::encode(&packet).unwrap();
+    println!("message");
+    // for p in msg_buf {
+    //   print!("{}, ", p);
+    // }
+    //let msg_buf = encoder::encode(&packet).unwrap();
     let message_to_process = OscMsg {
       msg_buf,
       timestamp: m.timestamp,
