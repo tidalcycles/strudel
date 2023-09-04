@@ -40,6 +40,8 @@ export function registerSynthSounds() {
           fmrelease: fmRelease,
           fmvelocity: fmVelocity,
           fmwave: fmWaveform = 'sine',
+          vibrato = 0,
+          vdepth = 100,
         } = value;
         let { n, note, freq } = value;
         // with synths, n and note are the same thing
@@ -53,7 +55,7 @@ export function registerSynthSounds() {
         }
         // maybe pull out the above frequency resolution?? (there is also getFrequency but it has no default)
         // make oscillator
-        const { node: o, stop } = getOscillator({ t, s: wave, freq, partials: n });
+        const { node: o, stop } = getOscillator({ t, s: wave, freq, vibrato, vdepth, partials: n });
 
         // FM + FM envelope
         let stopFm, fmEnvelope;
@@ -137,8 +139,14 @@ export function waveformN(partials, type) {
   return osc;
 }
 
-export function getOscillator({ s, freq, t, partials }) {
-  // make oscillator
+export function getOscillator({ s, freq, t, vibrato, vdepth, partials }) {
+  // Additional oscillator for vibrato effect
+  if (vibrato > 0) {
+    var vibrato_oscillator = getAudioContext().createOscillator();
+    vibrato_oscillator.frequency.value = vibrato;
+  }
+
+  // Make oscillator with partial count
   let o;
   if (!partials || s === 'sine') {
     o = getAudioContext().createOscillator();
@@ -146,9 +154,28 @@ export function getOscillator({ s, freq, t, partials }) {
   } else {
     o = waveformN(partials, s);
   }
-  o.frequency.value = Number(freq);
-  o.start(t);
-  //o.stop(t + duration + release);
-  const stop = (time) => o.stop(time);
-  return { node: o, stop };
+
+  if (vibrato > 0) {
+    // Vibrato by creating a gain node
+    o.frequency.value = Number(freq);
+    var gain = getAudioContext().createGain();
+    gain.gain.value = vdepth * 100;
+    vibrato_oscillator.connect(gain);
+    gain.connect(o.detune);
+    vibrato_oscillator.start(t);
+    o.start(t);
+    return {
+      node: o,
+      stop: (time) => {
+        vibrato_oscillator.stop(time);
+        o.stop(time);
+      },
+    };
+  } else {
+    // Normal operation, without vibrato
+    o.frequency.value = Number(freq);
+    o.start(t);
+    const stop = (time) => o.stop(time);
+    return { node: o, stop };
+  }
 }
