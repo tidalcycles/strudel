@@ -42,6 +42,8 @@ export function registerSynthSounds() {
           fmwave: fmWaveform = 'sine',
           vibrato = 0,
           vdepth = 100,
+          slide,
+          slide_speed = 1,
         } = value;
         let { n, note, freq } = value;
         // with synths, n and note are the same thing
@@ -55,7 +57,16 @@ export function registerSynthSounds() {
         }
         // maybe pull out the above frequency resolution?? (there is also getFrequency but it has no default)
         // make oscillator
-        const { node: o, stop } = getOscillator({ t, s: wave, freq, vibrato, vdepth, partials: n });
+        const { node: o, stop } = getOscillator({
+          t,
+          s: wave,
+          freq,
+          vibrato,
+          vdepth,
+          slide: slide * freq,
+          slide_speed: sustain / slide_speed,
+          partials: n,
+        });
 
         // FM + FM envelope
         let stopFm, fmEnvelope;
@@ -139,7 +150,7 @@ export function waveformN(partials, type) {
   return osc;
 }
 
-export function getOscillator({ s, freq, t, vibrato, vdepth, partials }) {
+export function getOscillator({ s, freq, t, vibrato, vdepth, slide, slide_speed, partials }) {
   // Additional oscillator for vibrato effect
   if (vibrato > 0) {
     var vibrato_oscillator = getAudioContext().createOscillator();
@@ -156,8 +167,8 @@ export function getOscillator({ s, freq, t, vibrato, vdepth, partials }) {
   }
 
   if (vibrato > 0) {
-    // Vibrato by creating a gain node
     o.frequency.value = Number(freq);
+    slide > 0 && o.frequency.linearRampToValueAtTime(freq + slide, t + slide_speed);
     var gain = getAudioContext().createGain();
     gain.gain.value = vdepth * 100;
     vibrato_oscillator.connect(gain);
@@ -174,6 +185,7 @@ export function getOscillator({ s, freq, t, vibrato, vdepth, partials }) {
   } else {
     // Normal operation, without vibrato
     o.frequency.value = Number(freq);
+    slide > 0 && o.frequency.linearRampToValueAtTime(freq + slide, t + slide_speed);
     o.start(t);
     const stop = (time) => o.stop(time);
     return { node: o, stop };
