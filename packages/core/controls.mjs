@@ -664,7 +664,10 @@ const generic_params = [
   // TODO: LFO rate see https://tidalcycles.org/docs/patternlib/tutorials/synthesizers/#supersquare
   ['rate'],
   // TODO: slide param for certain synths
+  ['vibrato'],
+  ['vdepth'],
   ['slide'],
+  ['slidespeed'],
   // TODO: detune? https://tidalcycles.org/docs/patternlib/tutorials/synthesizers/#supersquare
   ['semitone'],
   // TODO: dedup with synth param, see https://tidalcycles.org/docs/reference/synthesizers/#superpiano
