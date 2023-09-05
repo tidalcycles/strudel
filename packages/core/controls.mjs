@@ -393,6 +393,8 @@ const generic_params = [
    */
   // currently an alias of 'hcutoff' https://github.com/tidalcycles/strudel/issues/496
   // ['hpf'],
+  [['vib'], 'vib'],
+  [['vibmod'], 'vibmod'],
   [['hcutoff', 'hresonance'], 'hpf', 'hp'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.

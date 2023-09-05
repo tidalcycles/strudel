@@ -40,10 +40,10 @@ export function registerSynthSounds() {
           fmrelease: fmRelease,
           fmvelocity: fmVelocity,
           fmwave: fmWaveform = 'sine',
-          vibrato = 0,
-          vdepth = 100,
+          vib = 0,
+          vibmod = 1,
           slide,
-          slidespeed = 1,
+          slide_speed = 1,
         } = value;
         let { n, note, freq } = value;
         // with synths, n and note are the same thing
@@ -61,10 +61,10 @@ export function registerSynthSounds() {
           t,
           s: wave,
           freq,
-          vibrato,
-          vdepth,
+          vib,
+          vibmod,
           slide: slide * freq,
-          slidespeed: sustain / slidespeed,
+          slide_speed: sustain / slide_speed,
           partials: n,
         });
 
@@ -150,11 +150,11 @@ export function waveformN(partials, type) {
   return osc;
 }
 
-export function getOscillator({ s, freq, t, vibrato, vdepth, slide, slidespeed, partials }) {
+export function getOscillator({ s, freq, t, vib, vibmod, slide, slide_speed, partials }) {
   // Additional oscillator for vibrato effect
-  if (vibrato > 0) {
+  if (vib > 0) {
     var vibrato_oscillator = getAudioContext().createOscillator();
-    vibrato_oscillator.frequency.value = vibrato;
+    vibrato_oscillator.frequency.value = vib;
   }
 
   // Make oscillator with partial count
@@ -166,11 +166,12 @@ export function getOscillator({ s, freq, t, vibrato, vdepth, slide, slidespeed, 
     o = waveformN(partials, s);
   }
 
-  if (vibrato > 0) {
+  if (vib > 0) {
     o.frequency.value = Number(freq);
-    slide > 0 && o.frequency.linearRampToValueAtTime(freq + slide, t + slidespeed);
+    slide > 0 && o.frequency.linearRampToValueAtTime(freq + slide, t + slide_speed);
     var gain = getAudioContext().createGain();
-    gain.gain.value = vdepth * 100;
+    // Vibmod is the amount of vibrato, in semitones
+    gain.gain.value = vibmod * freq;
     vibrato_oscillator.connect(gain);
     gain.connect(o.detune);
     vibrato_oscillator.start(t);
@@ -185,7 +186,7 @@ export function getOscillator({ s, freq, t, vibrato, vdepth, slide, slidespeed, 
   } else {
     // Normal operation, without vibrato
     o.frequency.value = Number(freq);
-    slide > 0 && o.frequency.linearRampToValueAtTime(freq + slide, t + slidespeed);
+    slide > 0 && o.frequency.linearRampToValueAtTime(freq + slide, t + slide_speed);
     o.start(t);
     const stop = (time) => o.stop(time);
     return { node: o, stop };
