@@ -74,8 +74,11 @@ export function createFilter(context, type, frequency, Q, attack, decay, sustain
 
   // Apply ADSR to filter frequency
   if (fenvmod > 0) {
-    const gainNode = getADSR(attack, decay, sustain, release, fenvmod, t, t + attack + decay + release);
-    gainNode.connect(filter.frequency);
+    const sustainFreq = sustain * frequency;
+    filter.frequency.linearRampToValueAtTime(frequency * fenvmod, t + attack);
+    filter.frequency.linearRampToValueAtTime(sustainFreq, t + attack + decay);
+    filter.frequency.setValueAtTime(sustainFreq, end);
+    filter.frequency.linearRampToValueAtTime(frequency, end + release);
   }
 
   return filter;
