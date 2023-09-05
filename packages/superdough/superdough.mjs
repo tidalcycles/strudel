@@ -179,32 +179,32 @@ export const superdough = async (value, deadline, hapDuration) => {
     gain = 0.8,
     // filters
     order = '12db',
-    fenvmod = 2,
+    fenv,
     // low pass
-    lpattack,
-    lpdecay,
-    lpsustain,
-    lprelease,
     cutoff,
+    lpattack = 0.01,
+    lpdecay = 0.5,
+    lpsustain = 0.6,
+    lprelease = 0.01,
     resonance = 1,
     // high pass
-    hpattack,
-    hpdecay,
-    hpsustain,
-    hprelease,
     hcutoff,
+    hpattack = 0.01,
+    hpdecay = 0.5,
+    hpsustain = 0.6,
+    hprelease = 0.01,
     hresonance = 1,
+    // band pass
+    bandf,
+    bpattack = 0.01,
+    bpdecay = 0.5,
+    bpsustain = 0.6,
+    bprelease = 0.01,
+    bandq = 1,
     // full adsr for filter
     lpadsr,
     hpadsr,
     bpadsr,
-    // band pass
-    bandf,
-    bpattack,
-    bpdecay,
-    bpsustain,
-    bprelease,
-    bandq = 1,
     //
     coarse,
     crush,
@@ -230,8 +230,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     s = `${bank}_${s}`;
   }
   lpadsr && (lpattack = lpadsr[0]) && (lpdecay = lpadsr[1]) && (lpsustain = lpadsr[2]) && (lprelease = lpadsr[3]);
-  bpadsr && (bpattack = bpadsr[0]) && (bpdecay = bpadsr[1]) && (bpsustain = bpadsr[2]) && (bprelease = bpadsr[3]);
   hpadsr && (hpattack = hpadsr[0]) && (hpdecay = hpadsr[1]) && (hpsustain = hpadsr[2]) && (hprelease = hpadsr[3]);
+  bpadsr && (bpattack = bpadsr[0]) && (bpdecay = bpadsr[1]) && (bpsustain = bpadsr[2]) && (bprelease = bpadsr[3]);
   // get source AudioNode
   let sourceNode;
   if (source) {
@@ -262,38 +262,16 @@ export const superdough = async (value, deadline, hapDuration) => {
   chain.push(gainNode(gain));
 
   if (cutoff !== undefined) {
-    const filter1 = createFilter(ac, 'lowpass', cutoff, resonance, lpattack, lpdecay, lpsustain, lprelease, fmodenv, t);
+    const filter1 = createFilter(ac, 'lowpass', cutoff, resonance, lpattack, lpdecay, lpsustain, lprelease, fenv, t);
     chain.push(filter1);
     if (order === '24db') {
-      const filter2 = createFilter(
-        ac,
-        'lowpass',
-        cutoff,
-        resonance,
-        lpattack,
-        lpdecay,
-        lpsustain,
-        lprelease,
-        fmodenv,
-        t,
-      );
+      const filter2 = createFilter(ac, 'lowpass', cutoff, resonance, lpattack, lpdecay, lpsustain, lprelease, fenv, t);
       chain.push(filter2);
     }
   }
 
   if (hcutoff !== undefined) {
-    const filter1 = createFilter(
-      ac,
-      'highpass',
-      hcutoff,
-      hresonance,
-      hpattack,
-      hpdecay,
-      hpsustain,
-      hprelease,
-      fenvmod,
-      t,
-    );
+    const filter1 = createFilter(ac, 'highpass', hcutoff, hresonance, hpattack, hpdecay, hpsustain, hprelease, fenv, t);
     chain.push(filter1);
     if (order === '24db') {
       const filter2 = createFilter(
@@ -305,7 +283,7 @@ export const superdough = async (value, deadline, hapDuration) => {
         hpdecay,
         hpsustain,
         hprelease,
-        fenvmod,
+        fenv,
         t,
       );
       chain.push(filter2);
@@ -313,10 +291,10 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
 
   if (bandf !== undefined) {
-    const filter1 = createFilter(ac, 'bandpass', bandf, bandq, bpattack, bpdecay, bpsustain, bprelease, fenvmod, t);
+    const filter1 = createFilter(ac, 'bandpass', bandf, bandq, bpattack, bpdecay, bpsustain, bprelease, fenv, t);
     chain.push(filter1);
     if (order === '24db') {
-      const filter2 = createFilter(ac, 'bandpass', bandf, bandq, bpattack, bpdecay, bpsustain, bprelease, fenvmod, t);
+      const filter2 = createFilter(ac, 'bandpass', bandf, bandq, bpattack, bpdecay, bpsustain, bprelease, fenv, t);
       chain.push(filter2);
     }
   }

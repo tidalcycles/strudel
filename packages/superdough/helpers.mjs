@@ -66,19 +66,33 @@ export const getADSR = (attack, decay, sustain, release, velocity, begin, end) =
   return gainNode;
 };
 
-export function createFilter(context, type, frequency, Q, attack, decay, sustain, release, fenvmod, t) {
+export const getParamADSR = (param, attack, decay, sustain, release, velocity, begin, end) => {
+  param.setValueAtTime(0, begin);
+  param.linearRampToValueAtTime(velocity, begin + attack);
+  param.linearRampToValueAtTime(sustain * velocity, begin + attack + decay);
+  param.setValueAtTime(sustain * velocity, end);
+  param.linearRampToValueAtTime(0, end + release - 0.1);
+};
+
+export function createFilter(context, type, frequency, Q, attack, decay, sustain, release, fenv, t) {
   const filter = context.createBiquadFilter();
   filter.type = type;
   filter.frequency.value = frequency;
   filter.Q.value = Q;
 
   // Apply ADSR to filter frequency
-  if (fenvmod > 0) {
-    const sustainFreq = sustain * frequency;
-    filter.frequency.linearRampToValueAtTime(frequency * fenvmod, t + attack);
-    filter.frequency.linearRampToValueAtTime(sustainFreq, t + attack + decay);
-    filter.frequency.setValueAtTime(sustainFreq, end);
-    filter.frequency.linearRampToValueAtTime(frequency, end + release);
+  if (fenv > 0) {
+    const envelope = getParamADSR(
+      filter.frequency,
+      attack,
+      decay,
+      sustain,
+      release,
+      frequency * fenv > 22000 ? 22000 : frequency * fenv,
+      t,
+      t + attack + decay + release,
+    );
+    return filter;
   }
 
   return filter;
