@@ -341,7 +341,6 @@ export const superdough = async (value, deadline, hapDuration) => {
     analyserSend = effectSend(post, analyserNode, analyze);
   }
 
-  console.log(chain);
   // connect chain elements together
   chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
 
