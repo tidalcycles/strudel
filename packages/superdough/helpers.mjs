@@ -66,15 +66,15 @@ export const getADSR = (attack, decay, sustain, release, velocity, begin, end) =
   return gainNode;
 };
 
-export const getParamADSR = (param, attack, decay, sustain, release, velocity, begin, end) => {
+export const getParamADSR = (param, attack, decay, sustain, release, max, begin, end) => {
   param.setValueAtTime(0, begin);
-  param.linearRampToValueAtTime(velocity, begin + attack);
-  param.linearRampToValueAtTime(sustain * velocity, begin + attack + decay);
-  param.setValueAtTime(sustain * velocity, end);
-  param.linearRampToValueAtTime(0, end + release - 0.1);
+  param.linearRampToValueAtTime(max, begin + attack);
+  param.linearRampToValueAtTime(sustain * max, begin + attack + decay);
+  param.setValueAtTime(sustain * max, end);
+  param.linearRampToValueAtTime(0, end + release);
 };
 
-export function createFilter(context, type, frequency, Q, attack, decay, sustain, release, fenv, t) {
+export function createFilter(context, type, frequency, Q, attack, decay, sustain, release, fenv, start, end) {
   const filter = context.createBiquadFilter();
   filter.type = type;
   filter.frequency.value = frequency;
@@ -89,8 +89,8 @@ export function createFilter(context, type, frequency, Q, attack, decay, sustain
       sustain,
       release,
       frequency * fenv > 22000 ? 22000 : frequency * fenv,
-      t,
-      t + attack + decay + release,
+      start,
+      end + release,
     );
     return filter;
   }
