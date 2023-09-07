@@ -377,6 +377,19 @@ const generic_params = [
    *
    */
   [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
+  ['fenv'],
+  ['lpattack', 'lpa'],
+  ['lpdecay', 'lpd'],
+  ['lpsustain', 'lps'],
+  ['lprelease', 'lpr'],
+  ['hpattack', 'hpa'],
+  ['hpdecay', 'hpd'],
+  ['hpsustain', 'hps'],
+  ['hprelease', 'hpr'],
+  ['bpattack', 'bpa'],
+  ['bpdecay', 'bpd'],
+  ['bpsustain', 'bps'],
+  ['bprelease', 'bpr'],
   /**
    * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
    *

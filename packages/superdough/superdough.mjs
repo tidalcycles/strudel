@@ -255,7 +255,6 @@ export const superdough = async (value, deadline, hapDuration) => {
   chain.push(gainNode(gain));
 
   if (cutoff !== undefined) {
-    console.log('lpattack', lpattack);
     let lp = () =>
       createFilter(ac, 'lowpass', cutoff, resonance, lpattack, lpdecay, lpsustain, lprelease, fenv, t, t + hapDuration);
     chain.push(lp());
