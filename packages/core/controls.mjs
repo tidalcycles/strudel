@@ -390,6 +390,7 @@ const generic_params = [
   ['bpdecay', 'bpd'],
   ['bpsustain', 'bps'],
   ['bprelease', 'bpr'],
+  ['order'],
   /**
    * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
    *

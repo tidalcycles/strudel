@@ -74,7 +74,7 @@ export const getParamADSR = (param, attack, decay, sustain, release, min, max, b
   param.linearRampToValueAtTime(peak, begin + attack);
   param.linearRampToValueAtTime(sustainLevel, begin + attack + decay);
   param.setValueAtTime(sustainLevel, end);
-  param.linearRampToValueAtTime(min, end + release);
+  param.linearRampToValueAtTime(min, end + Math.max(release, 0.1));
 };
 
 export function createFilter(context, type, frequency, Q, attack, decay, sustain, release, fenv, start, end) {
