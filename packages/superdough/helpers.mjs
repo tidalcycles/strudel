@@ -77,7 +77,6 @@ export const getParamADSR = (param, attack, decay, sustain, release, max, begin,
 export function createFilter(context, type, frequency, Q, attack, decay, sustain, release, fenv, start, end) {
   const filter = context.createBiquadFilter();
   filter.type = type;
-  filter.frequency.value = frequency;
   filter.Q.value = Q;
 
   // Apply ADSR to filter frequency
@@ -88,11 +87,13 @@ export function createFilter(context, type, frequency, Q, attack, decay, sustain
       decay,
       sustain,
       release,
-      frequency * fenv > 22000 ? 22000 : frequency * fenv,
+      Math.min(frequency * fenv, 20000),
       start,
       end + release,
     );
     return filter;
+  } else {
+    filter.frequency.value = frequency;
   }
 
   return filter;
