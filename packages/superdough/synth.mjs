@@ -42,8 +42,6 @@ export function registerSynthSounds() {
           fmwave: fmWaveform = 'sine',
           vib = 0,
           vibmod = 1,
-          pitchJump,
-          pitchJumpSpeed = 1,
         } = value;
         let { n, note, freq } = value;
         // with synths, n and note are the same thing
@@ -63,8 +61,6 @@ export function registerSynthSounds() {
           freq,
           vib,
           vibmod,
-          pitchJump: pitchJump * freq,
-          pitchJumpSpeed: sustain / pitchJumpSpeed,
           partials: n,
         });
 
@@ -150,7 +146,7 @@ export function waveformN(partials, type) {
   return osc;
 }
 
-export function getOscillator({ s, freq, t, vib, vibmod, pitchJump, pitchJumpSpeed, partials }) {
+export function getOscillator({ s, freq, t, vib, vibmod, partials }) {
   // Additional oscillator for vibrato effect
   if (vib > 0) {
     var vibrato_oscillator = getAudioContext().createOscillator();
@@ -168,7 +164,6 @@ export function getOscillator({ s, freq, t, vib, vibmod, pitchJump, pitchJumpSpe
 
   if (vib > 0) {
     o.frequency.value = Number(freq);
-    slide > 0 && o.frequency.linearRampToValueAtTime(freq + pitchJump, t + pitchJumpSpeed);
     var gain = getAudioContext().createGain();
     // Vibmod is the amount of vibrato, in semitones
     gain.gain.value = vibmod * freq;
@@ -186,7 +181,6 @@ export function getOscillator({ s, freq, t, vib, vibmod, pitchJump, pitchJumpSpe
   } else {
     // Normal operation, without vibrato
     o.frequency.value = Number(freq);
-    slide > 0 && o.frequency.linearRampToValueAtTime(freq + slide, t + slide_speed);
     o.start(t);
     const stop = (time) => o.stop(time);
     return { node: o, stop };

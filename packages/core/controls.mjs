@@ -686,6 +686,7 @@ const generic_params = [
   ['rate'],
   // TODO: slide param for certain synths
   ['slide'],
+
   ['slidespeed'],
   // TODO: detune? https://tidalcycles.org/docs/patternlib/tutorials/synthesizers/#supersquare
   ['semitone'],
@@ -893,10 +894,13 @@ const generic_params = [
   // ZZFX
   ['zrand'],
   ['curve'],
-  ['slide'], // superdirt duplicate
-  ['deltaSlide'],
   ['pitchJump'],
   ['pitchJumpTime'],
+  ['slide'], // superdirt duplicate
+  ['deltaSlide'],
+  /**
+   *
+   */
   ['lfo', 'repeatTime'],
   ['noise'],
   ['zmod'],
