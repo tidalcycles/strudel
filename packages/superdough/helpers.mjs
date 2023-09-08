@@ -68,10 +68,12 @@ export const getADSR = (attack, decay, sustain, release, velocity, begin, end) =
 
 export const getParamADSR = (param, attack, decay, sustain, release, min, max, begin, end) => {
   const range = max - min;
+  const peak = min + range;
+  const sustainLevel = min + sustain * range;
   param.setValueAtTime(min, begin);
-  param.linearRampToValueAtTime(min + range, begin + attack);
-  param.linearRampToValueAtTime(min + sustain * range, begin + attack + decay);
-  param.setValueAtTime(min + sustain * range, end);
+  param.linearRampToValueAtTime(peak, begin + attack);
+  param.linearRampToValueAtTime(sustainLevel, begin + attack + decay);
+  param.setValueAtTime(sustainLevel, end);
   param.linearRampToValueAtTime(min, end + release);
 };
 
@@ -79,23 +81,15 @@ export function createFilter(context, type, frequency, Q, attack, decay, sustain
   const filter = context.createBiquadFilter();
   filter.type = type;
   filter.Q.value = Q;
+  frequency = Math.max(frequency, 20);
+  filter.frequency.value = frequency;
 
   // Apply ADSR to filter frequency
   if (fenv > 0) {
-    const envelope = getParamADSR(
-      filter.frequency,
-      attack,
-      decay,
-      sustain,
-      release,
-      frequency,
-      Math.min(frequency + 200 * 2 ** fenv, 20000),
-      start,
-      end + release,
-    );
+    const min = frequency;
+    const max = Math.min(frequency + 200 * 2 ** fenv, 20000);
+    getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end);
     return filter;
-  } else {
-    filter.frequency.value = frequency;
   }
 
   return filter;
