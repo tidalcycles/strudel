@@ -393,9 +393,28 @@ const generic_params = [
    */
   // currently an alias of 'hcutoff' https://github.com/tidalcycles/strudel/issues/496
   // ['hpf'],
-  [['vib'], 'vib'],
+  /**
+   * Applies a vibrato to the frequency of the oscillator.
+   *
+   * @name vib
+   * @param {number | Pattern} frequency of the vibrato in hertz
+   * @synonyms vibrato
+   * @example
+   * sound("triangle").freq(300).vib("<1 2 4 8 16>")
+   */
+  [['vibrato'], 'vib'],
+  /**
+   * Sets the vibrato depth as a multiple of base frequency (not vibrato speed!).
+   *
+   * @name vibmod
+   * @param {number | Pattern} depth of vibrato (multiple of base frequency)
+   * @example
+   * sound("triangle").freq(300).vib("<8 16>").vibmod("<0.25 0.5 0.75 1 2 4>")
+   */
   [['vibmod'], 'vibmod'],
   [['hcutoff', 'hresonance'], 'hpf', 'hp'],
+  ['vib'],
+  ['vibmod'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
    *
@@ -666,8 +685,6 @@ const generic_params = [
   // TODO: LFO rate see https://tidalcycles.org/docs/patternlib/tutorials/synthesizers/#supersquare
   ['rate'],
   // TODO: slide param for certain synths
-  ['vibrato'],
-  ['vdepth'],
   ['slide'],
   ['slidespeed'],
   // TODO: detune? https://tidalcycles.org/docs/patternlib/tutorials/synthesizers/#supersquare
