@@ -66,12 +66,13 @@ export const getADSR = (attack, decay, sustain, release, velocity, begin, end) =
   return gainNode;
 };
 
-export const getParamADSR = (param, attack, decay, sustain, release, max, begin, end) => {
-  param.setValueAtTime(0, begin);
-  param.linearRampToValueAtTime(max, begin + attack);
-  param.linearRampToValueAtTime(sustain * max, begin + attack + decay);
-  param.setValueAtTime(sustain * max, end);
-  param.linearRampToValueAtTime(0, end + release);
+export const getParamADSR = (param, attack, decay, sustain, release, min, max, begin, end) => {
+  const range = max - min;
+  param.setValueAtTime(min, begin);
+  param.linearRampToValueAtTime(min + range, begin + attack);
+  param.linearRampToValueAtTime(min + sustain * range, begin + attack + decay);
+  param.setValueAtTime(min + sustain * range, end);
+  param.linearRampToValueAtTime(min, end + release);
 };
 
 export function createFilter(context, type, frequency, Q, attack, decay, sustain, release, fenv, start, end) {
@@ -87,7 +88,8 @@ export function createFilter(context, type, frequency, Q, attack, decay, sustain
       decay,
       sustain,
       release,
-      Math.min(frequency * fenv, 20000),
+      frequency,
+      Math.min(frequency + 200 * 2 ** fenv, 20000),
       start,
       end + release,
     );
