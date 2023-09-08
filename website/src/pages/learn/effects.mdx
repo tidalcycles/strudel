@@ -78,6 +78,47 @@ Strudel uses ADSR envelopes, which are probably the most common way to describe 
 
 <JsDoc client:idle name="release" h={0} />
 
+# Filter Envelope
+
+Each filter can receive an additional filter envelope controlling the cutoff value dynamically. It uses an ADSR envelope similar to the one used for amplitude. There is an additional parameter to control the depth of the filter modulation: `fenv`. This allows you to play subtle or huge filter modulations just the same by only increasing or decreasing the depth.
+
+There is one filter envelope for each filter type and thus one set of envelope filter parameters preceded either by `lp`, `hp` or `bp`:
+
+- `lpattack`, `lpdecay`, `lpsustain`, `lprelease`: filter envelope for the lowpass filter.
+  - alternatively: `lpa`, `lpd`, `lps` and `lpr`.
+- `hpattack`, `hpdecay`, `hpsustain`, `hprelease`: filter envelope for the highpass filter.
+  - alternatively: `hpa`, `hpd`, `hps` and `hpr`.
+- `bpattack`, `bpdecay`, `bpsustain`, `bprelease`: filter envelope for the bandpass filter.
+  - alternatively: `bpa`, `bpd`, `bps` and `bpr`.
+
+## lpattack
+
+- Also `hpattack` and `bpattack`.
+
+<JsDoc client:idle name="lpattack" h={0} />
+
+## lpdecay
+
+- Also `hpdecay` and `bpdecay`.
+
+<JsDoc client:idle name="lpdecay" h={0} />
+
+## lpsustain
+
+- Also `hpsustain` and `bpsustain`.
+
+<JsDoc client:idle name="lpsustain" h={0} />
+
+## lprelease
+
+- Also `hprelease` and `bprelease`.
+
+<JsDoc client:idle name="lprelease" h={0} />
+
+## fenv
+
+<JsDoc client:idle name="fenv" h={0} />
+
 # Dynamics
 
 ## gain

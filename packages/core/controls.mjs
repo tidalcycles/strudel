@@ -377,10 +377,61 @@ const generic_params = [
    *
    */
   [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
+
+  /**
+   * Sets the filter envelope modulation depth.
+   * @name fenv
+   * @param {number | Pattern} modulation depth of the filter envelope between 0 and _n_
+   * @example
+   * note("c2 c3").fast(2).sound("sawtooth")
+   *  .cutoff(500).fenv("<1 2 3 4 5 6 7 8>")
+   */
   ['fenv'],
+  /**
+   * Sets the attack duration for the lowpass filter envelope.
+   * @name lpattack
+   * @param {number | Pattern} attack time of the filter envelope
+   * @synonyms lpa
+   * @example
+   * note("c3 e3 f3 g3 ab3 bb3")
+   *  .sound('square').cutoff(1000)
+   *  .lpattack("<0.05 0.1 0.25 0.5>/2").fenv(1)
+   *  .release(0.2).attack(0)
+   */
   ['lpattack', 'lpa'],
+  /**
+   * Sets the decay duration for the lowpass filter envelope.
+   * @name lpdecay
+   * @param {number | Pattern} decay time of the filter envelope
+   * @synonyms lpd
+   * @example
+   * "baba"
+   * note("c3 e3 f3 g3 ab3 bb3")
+   *  .sound('square').cutoff(1000)
+   *  .lpdecay("<0.05 0.1 0.125>/2")
+   *  .fenv("4").lps(0).lpr(0)
+   */
   ['lpdecay', 'lpd'],
+  /**
+   * Sets the sustain amplitude for the lowpass filter envelope.
+   * @name lpsustain
+   * @param {number | Pattern} sustain amplitude of the filter envelope
+   * @synonyms lps
+   * @example
+   * note("c3 e3 f3 g3 ab3 bb3")
+   *  .sound('square').cutoff(200)
+   *  .lpd(0.1).lpsustain("<0.1 0.5 0.75 1>")
+   *  .fenv("2")
+   */
   ['lpsustain', 'lps'],
+  /**
+   * Sets the release time for the lowpass filter envelope.
+   * @name lprelease
+   * @param {number | Pattern} release time of the filter envelope
+   * @synonyms lpr
+   * @example
+   * note("c3 e3 g3 c4").lpr("<0.1 0.25 0.5>").fenv(0.5)
+   */
   ['lprelease', 'lpr'],
   ['hpattack', 'hpa'],
   ['hpdecay', 'hpd'],
