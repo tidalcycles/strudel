@@ -1,5 +1,6 @@
 use rosc::{ encoder, OscTime };
 use rosc::{ OscMessage, OscPacket, OscType, OscBundle };
+
 use std::net::UdpSocket;
 
 use std::time::Duration;
@@ -7,6 +8,8 @@ use std::sync::Arc;
 use tokio::sync::{ mpsc, Mutex };
 use serde::Deserialize;
 use std::thread::sleep;
+
+use crate::loggerbridge::Logger;
 pub struct OscMsg {
   pub msg_buf: Vec<u8>,
   pub timestamp: u64,
@@ -22,6 +25,7 @@ const NANOS_PER_SECOND: f64 = 1.0e9;
 const SECONDS_PER_NANO: f64 = 1.0 / NANOS_PER_SECOND;
 
 pub fn init(
+  logger: Logger,
   async_input_receiver: mpsc::Receiver<Vec<OscMsg>>,
   mut async_output_receiver: mpsc::Receiver<Vec<OscMsg>>,
   async_output_transmitter: mpsc::Sender<Vec<OscMsg>>
@@ -64,7 +68,10 @@ pub fn init(
       message_queue.retain(|message| {
         let result = sock.send(&message.msg_buf);
         if result.is_err() {
-          println!("OSC Message failed to send, the server might no longer be available");
+          logger.log(
+            format!("OSC Message failed to send, the server might no longer be available"),
+            "error".to_string()
+          );
         }
         return false;
       });
