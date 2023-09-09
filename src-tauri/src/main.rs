@@ -5,8 +5,6 @@ mod midibridge;
 mod oscbridge;
 mod loggerbridge;
 use std::sync::Arc;
-use std::thread::sleep;
-use std::time::Duration;
 
 use loggerbridge::Logger;
 use tauri::Manager;
