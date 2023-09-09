@@ -54,7 +54,10 @@ pub fn init(
     let mut port_names = Vec::new();
     //TODO: Send these print messages to the UI logger instead of the rust console so the user can see them
     if out_ports.len() == 0 {
-      logger.log(" No MIDI devices found. Connect a device or enable IAC Driver.".to_string(), "".to_string());
+      logger.log(
+        " No MIDI devices found. Connect a device or enable IAC Driver to enable midi.".to_string(),
+        "".to_string()
+      );
       // logger(window, " No MIDI devices found. Connect a device or enable IAC Driver.".to_string(), None);
       return;
     }
@@ -103,10 +106,10 @@ pub fn init(
         if out_con.is_some() {
           // process the message
           if let Err(err) = (&mut out_con.unwrap()).send(&message.message) {
-            logger.log(format!("Midi message send error: {}", err), "warning".to_string());
+            logger.log(format!("Midi message send error: {}", err), "error".to_string());
           }
         } else {
-          logger.log(format!("failed to find midi device: {}", message.requestedport), "warning".to_string());
+          logger.log(format!("failed to find midi device: {}", message.requestedport), "error".to_string());
         }
         return false;
       });

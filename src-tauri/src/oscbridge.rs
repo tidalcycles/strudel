@@ -70,7 +70,7 @@ pub fn init(
         if result.is_err() {
           logger.log(
             format!("OSC Message failed to send, the server might no longer be available"),
-            "warning".to_string()
+            "error".to_string()
           );
         }
         return false;
