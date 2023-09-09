@@ -3,9 +3,21 @@
 
 mod midibridge;
 mod oscbridge;
+mod loggerbridge;
+use std::sync::Arc;
+use std::thread::sleep;
+use std::time::Duration;
+
+use loggerbridge::Logger;
+use tauri::Manager;
 use tokio::sync::mpsc;
 use tokio::sync::Mutex;
-
+// the payload type must implement `Serialize` and `Clone`.
+#[derive(Clone, serde::Serialize)]
+struct Payload {
+  message: String,
+  message_type: String,
+}
 fn main() {
   let (async_input_transmitter_midi, async_input_receiver_midi) = mpsc::channel(1);
   let (async_output_transmitter_midi, async_output_receiver_midi) = mpsc::channel(1);
@@ -20,9 +32,16 @@ fn main() {
       inner: Mutex::new(async_input_transmitter_osc),
     })
     .invoke_handler(tauri::generate_handler![midibridge::sendmidi, oscbridge::sendosc])
-    .setup(|_app| {
-      midibridge::init(async_input_receiver_midi, async_output_receiver_midi, async_output_transmitter_midi);
-      oscbridge::init(async_input_receiver_osc, async_output_receiver_osc, async_output_transmitter_osc);
+    .setup(|app| {
+      let window = Arc::new(app.get_window("main").unwrap());
+      let logger = Logger { window };
+      midibridge::init(
+        logger.clone(),
+        async_input_receiver_midi,
+        async_output_receiver_midi,
+        async_output_transmitter_midi
+      );
+      oscbridge::init(logger, async_input_receiver_osc, async_output_receiver_osc, async_output_transmitter_osc);
       Ok(())
     })
     .run(tauri::generate_context!())
