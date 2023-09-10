@@ -249,7 +249,6 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     bufferSource.loop = true;
     bufferSource.loopStart = loopBegin * bufferSource.buffer.duration - offset;
     bufferSource.loopEnd = loopEnd * bufferSource.buffer.duration - offset;
-    duration = loop * duration;
   }
   bufferSource.start(time, offset);
   const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);

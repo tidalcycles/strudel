@@ -310,6 +310,9 @@ const generic_params = [
    */
   ['loop'],
   /**
+   * Begin to loop at a specific point in the sample (inbetween `begin` and `end`).
+   * Note that the loop point must be inbetween `begin` and `end`, and before `loopEnd`!
+   *
    * @name loopBegin
    * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
    * @synonyms loopb
@@ -321,6 +324,10 @@ const generic_params = [
    */
   ['loopBegin', 'loopb'],
   /**
+   *
+   * End the looping section at a specific point in the sample (inbetween `begin` and `end`).
+   * Note that the loop point must be inbetween `begin` and `end`, and after `loopBegin`!
+   *
    * @name loopEnd
    * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
    * @synonyms loope
