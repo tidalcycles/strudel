@@ -314,8 +314,10 @@ const generic_params = [
    * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
    * @synonyms loopb
    * @example
-   * s("numbers").loopBegin("<0 .25 .5 .75>").loop(1)
-   *
+   * s("numbers")
+   *  .loop(1)
+   *  .begin(0).end(1)
+   *  .loopBegin("<0 .25 .5 .75>")
    */
   ['loopBegin', 'loopb'],
   /**
@@ -323,8 +325,11 @@ const generic_params = [
    * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
    * @synonyms loope
    * @example
-   * s("numbers").loopEnd("<0 .25 .5 .75>").loop(1)
-   *
+   * s("numbers")
+   *  .loop(1)
+   *  .begin(0).end(1)
+   *  .loopBegin("<0 .25 .5 .75>")
+   *  .loopEnd("<0.1 .35 .6 .85>")
    */
   ['loopEnd', 'loope'],
   /**
