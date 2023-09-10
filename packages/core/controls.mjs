@@ -416,7 +416,7 @@ const generic_params = [
    * @example
    * note("c3 e3 f3 g3 ab3 bb3")
    *  .sound('square').cutoff(1000)
-   *  .lpattack("<0.05 0.1 0.25 0.5>/2").ftype('12db')
+   *  .lpattack("<0.05 0.1 0.25 0.5>/2").ftype("12db")
    *  .release(0.2).attack(0)
    */
   ['lpattack', 'lpa'],
@@ -428,7 +428,7 @@ const generic_params = [
    * @example
    * note("c3 e3 f3 g3 ab3 bb3")
    *  .sound('square').hcutoff(1000)
-   *  .hpattack("<0.05 0.1 0.25 0.5>/2").ftype('12db')
+   *  .hpattack("<0.05 0.1 0.25 0.5>/2").ftype("12db")
    *  .release(0.2).attack(0)
    */
   ['hpattack', 'hpa'],
@@ -440,7 +440,7 @@ const generic_params = [
    * @example
    * note("c3 e3 f3 g3 ab3 bb3")
    *  .sound('square').bandf(1000)
-   *  .bpattack("<0.05 0.1 0.25 0.5>/2").ftype('12db')
+   *  .bpattack("<0.05 0.1 0.25 0.5>/2").ftype("12db")
    *  .release(0.2).attack(0)
    */
   ['bpattack', 'bpa'],
@@ -525,7 +525,7 @@ const generic_params = [
    * @param {number | Pattern} release time of the filter envelope
    * @synonyms lpr
    * @example
-   * note("c3 e3 g3 c4").lpr("<0.1 0.25 0.5>").ftype('12db')
+   * note("c3 e3 g3 c4").lpr("<0.1 0.25 0.5>").ftype("12db")
    */
   ['lprelease', 'lpr'],
   /**
@@ -534,7 +534,7 @@ const generic_params = [
    * @param {number | Pattern} release time of the highpass filter envelope
    * @synonyms hpr
    * @example
-   * note("c3 e3 g3 c4").hpr("<0.1 0.25 0.5>").ftype('12db')
+   * note("c3 e3 g3 c4").hpr("<0.1 0.25 0.5>").ftype("12db")
    */
   ['hprelease', 'hpr'],
   /**
@@ -543,7 +543,7 @@ const generic_params = [
    * @param {number | Pattern} release time of the bandpass filter envelope
    * @synonyms bpr
    * @example
-   * note("c3 e3 g3 c4").bpr("<0.1 0.25 0.5>").ftype('12db')
+   * note("c3 e3 g3 c4").bpr("<0.1 0.25 0.5>").ftype("12db")
    */
   ['bprelease', 'bpr'],
   ['ftype'],

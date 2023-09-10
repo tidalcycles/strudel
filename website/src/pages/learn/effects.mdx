@@ -80,16 +80,16 @@ Strudel uses ADSR envelopes, which are probably the most common way to describe 
 
 # Filter Envelope
 
-Each filter can receive an additional filter envelope controlling the cutoff value dynamically. It uses an ADSR envelope similar to the one used for amplitude. There is an additional parameter to control the depth of the filter modulation: `fenv`. This allows you to play subtle or huge filter modulations just the same by only increasing or decreasing the depth.
+Each filter can receive an additional filter envelope controlling the cutoff value dynamically. It uses an ADSR envelope similar to the one used for amplitude. There is an additional parameter to control the depth of the filter modulation: `lpenv`|`hpenv`|`bpenv`. This allows you to play subtle or huge filter modulations just the same by only increasing or decreasing the depth.
 
 There is one filter envelope for each filter type and thus one set of envelope filter parameters preceded either by `lp`, `hp` or `bp`:
 
-- `lpattack`, `lpdecay`, `lpsustain`, `lprelease`: filter envelope for the lowpass filter.
-  - alternatively: `lpa`, `lpd`, `lps` and `lpr`.
-- `hpattack`, `hpdecay`, `hpsustain`, `hprelease`: filter envelope for the highpass filter.
-  - alternatively: `hpa`, `hpd`, `hps` and `hpr`.
-- `bpattack`, `bpdecay`, `bpsustain`, `bprelease`: filter envelope for the bandpass filter.
-  - alternatively: `bpa`, `bpd`, `bps` and `bpr`.
+- `lpattack`, `lpdecay`, `lpsustain`, `lprelease`, `lpenv`: filter envelope for the lowpass filter.
+  - alternatively: `lpa`, `lpd`, `lps`, `lpr` and `lpe`.
+- `hpattack`, `hpdecay`, `hpsustain`, `hprelease`, `hpenv`: filter envelope for the highpass filter.
+  - alternatively: `hpa`, `hpd`, `hps`, `hpr` and `hpe`.
+- `bpattack`, `bpdecay`, `bpsustain`, `bprelease`, `bpenv`: filter envelope for the bandpass filter.
+  - alternatively: `bpa`, `bpd`, `bps`, `bpr` and `bpe`.
 
 ## lpattack
 
@@ -115,9 +115,9 @@ There is one filter envelope for each filter type and thus one set of envelope f
 
 <JsDoc client:idle name="lprelease" h={0} />
 
-## fenv
+## lpenv
 
-<JsDoc client:idle name="fenv" h={0} />
+<JsDoc client:idle name="lpenv" h={0} />
 
 # Dynamics
 
