@@ -80,14 +80,20 @@ You can use fm with any of the above waveforms, although the below examples all 
 
 ## Wavetable Synthesis
 
-Strudel can also use wavetables to create custom waveforms instead of the default ones used by WebAudio. There is a default set of wavetables accessible by default (approximatively 1000 coming from the [AKWF](https://www.adventurekid.se/akrt/waveforms/adventure-kid-waveforms/) set) but you can also import/use your own. A wavetable is a one-cycle waveform, which is then repeated to create a sound at the desired frequency. It is a classic but very effective synthesis technique. Wavetable synthesis is based on sample looping, using the `loop`, `loopBegin` and `loopEnd` properties of the sampler:
+Strudel can also use the sampler to load custom waveforms as a replacement of the default waveforms used by WebAudio for the base synth. A default set of more than 1000 wavetables is accessible by default (coming from the [AKWF](https://www.adventurekid.se/akrt/waveforms/adventure-kid-waveforms/) set). You can also import/use your own. A wavetable is a one-cycle waveform, which is then repeated to create a sound at the desired frequency. It is a classic but very effective synthesis technique.
 
-- `loop`: either `0` (no loop) or `1` (loop)
-- `loopBegin`: start of the loop (between 0 and 1)
-- `loopEnd`: end of the loop (between 0 and 1)
+Any sample preceded by the `wt_` prefix will be loaded as a wavetable. This means that the `loop` argument will be set to `1` by defalt. You can scan over the wavetable by using `loopBegin` and `loopEnd` as well.
 
-<JsDoc client:idle name="loopBegin" h={0} />
-<JsDoc client:idle name="loopEnd" h={0} />
+<MiniRepl
+  client:idle
+  tune={`samples('github:Bubobubobubobubo/Dough-Waveforms/main/');
+
+note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>")
+.n("<1 2 3 4 5 6 7 8 9 10>/2").room(0.5).size(0.9)
+.s('wt_flute').velocity(0.25).often(n => n.ply(2))
+.release(0.125).decay("<0.1 0.25 0.3 0.4>").sustain(0)
+.cutoff(2000).scope({}).cutoff("<1000 2000 4000>").fast(2)`}
+/>
 
 ## ZZFX
 
