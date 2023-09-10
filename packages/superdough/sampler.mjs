@@ -244,11 +244,10 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
   // the midway point through a 10-second audio buffer is still 5."
   const offset = begin * bufferSource.buffer.duration;
-  const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
   if (loop) {
     bufferSource.loop = true;
-    bufferSource.loopStart = loopBegin * bufferDuration - offset;
-    bufferSource.loopEnd = loopEnd * bufferDuration - offset;
+    bufferSource.loopStart = loopBegin * bufferSource.buffer.duration - offset;
+    bufferSource.loopEnd = loopEnd * bufferSource.buffer.duration - offset;
     duration = loop * duration;
   }
   bufferSource.start(time, offset);
@@ -265,6 +264,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   const stop = (endTime, playWholeBuffer = clip === undefined && loop === undefined) => {
     let releaseTime = endTime;
     if (playWholeBuffer) {
+      const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
       releaseTime = t + (end - begin) * bufferDuration;
     }
     bufferSource.stop(releaseTime + release);
