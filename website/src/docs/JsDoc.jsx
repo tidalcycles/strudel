@@ -12,10 +12,11 @@ export function JsDoc({ name, h = 3, hideDescription, punchcard, canvasHeight })
   }
   const synonyms = getTag('synonyms', item)?.split(', ') || [];
   const CustomHeading = `h${h}`;
-  const description = item.description.replaceAll(/\{@link ([a-zA-Z\.]+)?#?([a-zA-Z]*)\}/g, (_, a, b) => {
-    // console.log(_, 'a', a, 'b', b);
-    return `<a href="#${a.replaceAll('.', '').toLowerCase()}${b ? `-${b}` : ''}">${a}${b ? `#${b}` : ''}</a>`;
-  });
+  const description =
+    item.description?.replaceAll(/\{@link ([a-zA-Z\.]+)?#?([a-zA-Z]*)\}/g, (_, a, b) => {
+      // console.log(_, 'a', a, 'b', b);
+      return `<a href="#${a.replaceAll('.', '').toLowerCase()}${b ? `-${b}` : ''}">${a}${b ? `#${b}` : ''}</a>`;
+    }) || '';
   return (
     <>
       {!!h && <CustomHeading>{item.longname}</CustomHeading>}
