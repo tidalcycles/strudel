@@ -309,6 +309,33 @@ const generic_params = [
    *
    */
   ['loop'],
+  /**
+   * @name loopBegin
+   * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
+   * @synonyms loopb
+   * @example
+   * s("numbers").loopBegin("<0 .25 .5 .75>").loop(1)
+   *
+   */
+  ['loopBegin', 'loopb'],
+  /**
+   * @name loopEnd
+   * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
+   * @synonyms loope
+   * @example
+   * s("numbers").loopEnd("<0 .25 .5 .75>").loop(1)
+   *
+   */
+  ['loopEnd', 'loope'],
+  /**
+   * bit crusher effect.
+   *
+   * @name crush
+   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
+   * @example
+   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
+   *
+   */
   // TODO: currently duplicated with "native" legato
   // TODO: superdirt legato will do more: https://youtu.be/dQPmE1WaD1k?t=419
   /**
@@ -323,15 +350,6 @@ const generic_params = [
    */
   // ['legato'],
   // ['clhatdecay'],
-  /**
-   * bit crusher effect.
-   *
-   * @name crush
-   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
-   * @example
-   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
-   *
-   */
   ['crush'],
   /**
    * fake-resampling for lowering the sample rate. Caution: This effect seems to only work in chromium based browsers
@@ -343,7 +361,6 @@ const generic_params = [
    *
    */
   ['coarse'],
-
   /**
    * choose the channel the pattern is sent to in superdirt
    *
@@ -882,8 +899,6 @@ const generic_params = [
   ['zdelay'],
   ['tremolo'],
   ['zzfx'],
-  ['loopBegin'],
-  ['loopEnd'],
 ];
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 

@@ -78,6 +78,17 @@ You can use fm with any of the above waveforms, although the below examples all 
 
 <JsDoc client:idle name="fmenv" h={0} />
 
+## Wavetable Synthesis
+
+Strudel can also use wavetables to create custom waveforms instead of the default ones used by WebAudio. There is a default set of wavetables accessible by default (approximatively 1000 coming from the [AKWF](https://www.adventurekid.se/akrt/waveforms/adventure-kid-waveforms/) set) but you can also import/use your own. A wavetable is a one-cycle waveform, which is then repeated to create a sound at the desired frequency. It is a classic but very effective synthesis technique. Wavetable synthesis is based on sample looping, using the `loop`, `loopBegin` and `loopEnd` properties of the sampler:
+
+- `loop`: either `0` (no loop) or `1` (loop)
+- `loopBegin`: start of the loop (between 0 and 1)
+- `loopEnd`: end of the loop (between 0 and 1)
+
+<JsDoc client:idle name="loopBegin" h={0} />
+<JsDoc client:idle name="loopEnd" h={0} />
+
 ## ZZFX
 
 The "Zuper Zmall Zound Zynth" [ZZFX](https://github.com/KilledByAPixel/ZzFX) is also integrated in strudel.
