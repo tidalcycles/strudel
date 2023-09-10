@@ -262,7 +262,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     out.disconnect();
     onended();
   };
-  const stop = (endTime, playWholeBuffer = clip === undefined) => {
+  const stop = (endTime, playWholeBuffer = clip === undefined && loop === undefined) => {
     let releaseTime = endTime;
     if (playWholeBuffer) {
       releaseTime = t + (end - begin) * bufferDuration;
