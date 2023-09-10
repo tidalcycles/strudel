@@ -882,6 +882,8 @@ const generic_params = [
   ['zdelay'],
   ['tremolo'],
   ['zzfx'],
+  ['loopBegin'],
+  ['loopEnd'],
 ];
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 

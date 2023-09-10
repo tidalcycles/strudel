@@ -207,7 +207,9 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     n = 0,
     note,
     speed = 1, // sample playback speed
+    loopBegin = 0,
     begin = 0,
+    loopEnd = 1,
     end = 1,
   } = value;
   // load sample
@@ -242,19 +244,14 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
   // the midway point through a 10-second audio buffer is still 5."
   const offset = begin * bufferSource.buffer.duration;
-  bufferSource.start(time, offset);
   const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
-  /*if (loop) {
-    // TODO: idea for loopBegin / loopEnd
-    // if one of [loopBegin,loopEnd] is <= 1, interpret it as normlized
-    // if [loopBegin,loopEnd] is bigger >= 1, interpret it as sample number
-    // this will simplify perfectly looping things, while still keeping the normalized option
-    // the only drawback is that looping between samples 0 and 1 is not possible (which is not real use case)
+  if (loop) {
     bufferSource.loop = true;
-    bufferSource.loopStart = offset;
-    bufferSource.loopEnd = offset + duration;
+    bufferSource.loopStart = loopBegin * bufferDuration - offset;
+    bufferSource.loopEnd = loopEnd * bufferDuration - offset;
     duration = loop * duration;
-  }*/
+  }
+  bufferSource.start(time, offset);
   const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
   bufferSource.connect(envelope);
   const out = ac.createGain(); // we need a separate gain for the cutgroups because firefox...
