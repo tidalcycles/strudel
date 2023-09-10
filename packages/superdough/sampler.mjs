@@ -196,7 +196,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
 const cutGroups = [];
 
 export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
-  const {
+  let {
     s,
     freq,
     unit,
@@ -217,6 +217,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     // no playback
     return;
   }
+  loop = s.startsWith('wt_') ? 1 : value.loop;
   const ac = getAudioContext();
   // destructure adsr here, because the default should be different for synths and samples
   const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
