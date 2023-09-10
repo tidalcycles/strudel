@@ -178,7 +178,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     source,
     gain = 0.8,
     // filters
-    order = '12db',
+    ftype = '12db',
     // low pass
     cutoff,
     lpenv,
@@ -258,9 +258,21 @@ export const superdough = async (value, deadline, hapDuration) => {
 
   if (cutoff !== undefined) {
     let lp = () =>
-      createFilter(ac, 'lowpass', cutoff, resonance, lpattack, lpdecay, lpsustain, lprelease, lpenv, t, t + hapDuration);
+      createFilter(
+        ac,
+        'lowpass',
+        cutoff,
+        resonance,
+        lpattack,
+        lpdecay,
+        lpsustain,
+        lprelease,
+        lpenv,
+        t,
+        t + hapDuration,
+      );
     chain.push(lp());
-    if (order === '24db') {
+    if (ftype === '24db') {
       chain.push(lp());
     }
   }
@@ -281,7 +293,7 @@ export const superdough = async (value, deadline, hapDuration) => {
         t + hapDuration,
       );
     chain.push(hp());
-    if (order === '24db') {
+    if (ftype === '24db') {
       chain.push(hp());
     }
   }
@@ -290,7 +302,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     let bp = () =>
       createFilter(ac, 'bandpass', bandf, bandq, bpattack, bpdecay, bpsustain, bprelease, bpenv, t, t + hapDuration);
     chain.push(bp());
-    if (order === '24db') {
+    if (ftype === '24db') {
       chain.push(bp());
     }
   }

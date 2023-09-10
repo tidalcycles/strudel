@@ -379,14 +379,35 @@ const generic_params = [
   [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
 
   /**
-   * Sets the filter envelope modulation depth.
-   * @name fenv
-   * @param {number | Pattern} modulation depth of the filter envelope between 0 and _n_
+   * Sets the lowpass filter envelope modulation depth.
+   * @name lpenv
+   * @param {number | Pattern} modulation depth of the lowpass filter envelope between 0 and _n_
+   * @synonyms lpe
    * @example
    * note("c2 c3").fast(2).sound("sawtooth")
-   *  .cutoff(500).fenv("<1 2 3 4 5 6 7 8>")
+   *  .cutoff(500).lpenv("<1 2 3 4 5 6 7 8>")
    */
-  ['fenv'],
+  ['lpenv', 'lpe'],
+  /**
+   * Sets the highpass filter envelope modulation depth.
+   * @name hpenv
+   * @param {number | Pattern} modulation depth of the highpass filter envelope between 0 and _n_
+   * @synonyms hpe
+   * @example
+   * note("c2 c3").fast(2).sound("sawtooth")
+   *  .hcutoff(500).hpenv("<1 2 3 4 5 6 7 8>")
+   */
+  ['hpenv', 'hpe'],
+  /**
+   * Sets the bandpass filter envelope modulation depth.
+   * @name bpenv
+   * @param {number | Pattern} modulation depth of the bandpass filter envelope between 0 and _n_
+   * @synonyms bpe
+   * @example
+   * note("c2 c3").fast(2).sound("sawtooth")
+   *  .bandf(500).bpenv("<1 2 3 4 5 6 7 8>")
+   */
+  ['bpenv', 'bpe'],
   /**
    * Sets the attack duration for the lowpass filter envelope.
    * @name lpattack
@@ -395,10 +416,34 @@ const generic_params = [
    * @example
    * note("c3 e3 f3 g3 ab3 bb3")
    *  .sound('square').cutoff(1000)
-   *  .lpattack("<0.05 0.1 0.25 0.5>/2").fenv(1)
+   *  .lpattack("<0.05 0.1 0.25 0.5>/2").ftype('12db')
    *  .release(0.2).attack(0)
    */
   ['lpattack', 'lpa'],
+  /**
+   * Sets the attack duration for the highpass filter envelope.
+   * @name hpattack
+   * @param {number | Pattern} attack time of the highpass filter envelope
+   * @synonyms hpa
+   * @example
+   * note("c3 e3 f3 g3 ab3 bb3")
+   *  .sound('square').hcutoff(1000)
+   *  .hpattack("<0.05 0.1 0.25 0.5>/2").ftype('12db')
+   *  .release(0.2).attack(0)
+   */
+  ['hpattack', 'hpa'],
+  /**
+   * Sets the attack duration for the bandpass filter envelope.
+   * @name hpattack
+   * @param {number | Pattern} attack time of the bandpass filter envelope
+   * @synonyms bpa
+   * @example
+   * note("c3 e3 f3 g3 ab3 bb3")
+   *  .sound('square').bandf(1000)
+   *  .bpattack("<0.05 0.1 0.25 0.5>/2").ftype('12db')
+   *  .release(0.2).attack(0)
+   */
+  ['bpattack', 'bpa'],
   /**
    * Sets the decay duration for the lowpass filter envelope.
    * @name lpdecay
@@ -409,39 +454,99 @@ const generic_params = [
    * note("c3 e3 f3 g3 ab3 bb3")
    *  .sound('square').cutoff(1000)
    *  .lpdecay("<0.05 0.1 0.125>/2")
-   *  .fenv("4").lps(0).lpr(0)
+   *  .ftype("12db").lps(0).lpr(0)
    */
   ['lpdecay', 'lpd'],
   /**
+   * Sets the decay duration for the highpass filter envelope.
+   * @name hpdecay
+   * @param {number | Pattern} decay time of the highpass filter envelope
+   * @synonyms hpd
+   * @example
+   * "baba"
+   * note("c3 e3 f3 g3 ab3 bb3")
+   *  .sound('square').hcutoff(1000)
+   *  .hpdecay("<0.05 0.1 0.125>/2")
+   *  .ftype("12db").hps(0).hpr(0)
+   */
+  ['hpdecay', 'hpd'],
+  /**
+   * Sets the decay duration for the bandpass filter envelope.
+   * @name bpdecay
+   * @param {number | Pattern} decay time of the bandpass filter envelope
+   * @synonyms bpd
+   * @example
+   * "baba"
+   * note("c3 e3 f3 g3 ab3 bb3")
+   *  .sound('square').bandf(1000)
+   *  .bpdecay("<0.05 0.1 0.125>/2")
+   *  .ftype("12db").bps(0).bpr(0)
+   */
+  ['bpdecay', 'bpd'],
+  /**
    * Sets the sustain amplitude for the lowpass filter envelope.
    * @name lpsustain
-   * @param {number | Pattern} sustain amplitude of the filter envelope
+   * @param {number | Pattern} sustain amplitude of the lowpass filter envelope
    * @synonyms lps
    * @example
    * note("c3 e3 f3 g3 ab3 bb3")
    *  .sound('square').cutoff(200)
    *  .lpd(0.1).lpsustain("<0.1 0.5 0.75 1>")
-   *  .fenv("2")
+   *  .ftype("12db")
    */
   ['lpsustain', 'lps'],
+  /**
+   * Sets the sustain amplitude for the highpass filter envelope.
+   * @name lpsustain
+   * @param {number | Pattern} sustain amplitude of the highpass filter envelope
+   * @synonyms hps
+   * @example
+   * note("c3 e3 f3 g3 ab3 bb3")
+   *  .sound('square').hcutoff(200)
+   *  .hpd(0.1).hpsustain("<0.1 0.5 0.75 1>")
+   *  .ftype("12db")
+   */
+  ['hpsustain', 'hps'],
+  /**
+   * Sets the sustain amplitude for the bandpass filter envelope.
+   * @name lpsustain
+   * @param {number | Pattern} sustain amplitude of the bandpass filter envelope
+   * @synonyms bps
+   * @example
+   * note("c3 e3 f3 g3 ab3 bb3")
+   *  .sound('square').bandf(200)
+   *  .bpd(0.1).bpsustain("<0.1 0.5 0.75 1>")
+   *  .ftype("12db")
+   */
+  ['bpsustain', 'bps'],
   /**
    * Sets the release time for the lowpass filter envelope.
    * @name lprelease
    * @param {number | Pattern} release time of the filter envelope
    * @synonyms lpr
    * @example
-   * note("c3 e3 g3 c4").lpr("<0.1 0.25 0.5>").fenv(0.5)
+   * note("c3 e3 g3 c4").lpr("<0.1 0.25 0.5>").ftype('12db')
    */
   ['lprelease', 'lpr'],
-  ['hpattack', 'hpa'],
-  ['hpdecay', 'hpd'],
-  ['hpsustain', 'hps'],
+  /**
+   * Sets the release time for the highpass filter envelope.
+   * @name lprelease
+   * @param {number | Pattern} release time of the highpass filter envelope
+   * @synonyms hpr
+   * @example
+   * note("c3 e3 g3 c4").hpr("<0.1 0.25 0.5>").ftype('12db')
+   */
   ['hprelease', 'hpr'],
-  ['bpattack', 'bpa'],
-  ['bpdecay', 'bpd'],
-  ['bpsustain', 'bps'],
+  /**
+   * Sets the release time for the bandpass filter envelope.
+   * @name lprelease
+   * @param {number | Pattern} release time of the bandpass filter envelope
+   * @synonyms bpr
+   * @example
+   * note("c3 e3 g3 c4").bpr("<0.1 0.25 0.5>").ftype('12db')
+   */
   ['bprelease', 'bpr'],
-  ['order'],
+  ['ftype'],
   /**
    * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
    *
