@@ -8,6 +8,7 @@ import * as _WebMidi from 'webmidi';
 import { Pattern, isPattern, logger } from '@strudel.cycles/core';
 import { noteToMidi } from '@strudel.cycles/core';
 import { Note } from 'webmidi';
+import EventEmitter from 'events';
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
 
@@ -15,8 +16,8 @@ function supportsMidi() {
   return typeof navigator.requestMIDIAccess === 'function';
 }
 
-function getMidiDeviceNamesString(outputs) {
-  return outputs.map((o) => `'${o.name}'`).join(' | ');
+function getMidiDeviceNamesString(devices) {
+  return devices.map((o) => `'${o.name}'`).join(' | ');
 }
 
 export function enableWebMidi(options = {}) {
@@ -52,26 +53,24 @@ export function enableWebMidi(options = {}) {
     });
   });
 }
-// const outputByName = (name: string) => WebMidi.getOutputByName(name);
-const outputByName = (name) => WebMidi.getOutputByName(name);
 
-// output?: string | number, outputs: typeof WebMidi.outputs
-function getDevice(output, outputs) {
-  if (!outputs.length) {
+function getDevice(indexOrName, devices) {
+  if (!devices.length) {
     throw new Error(`🔌 No MIDI devices found. Connect a device or enable IAC Driver.`);
   }
-  if (typeof output === 'number') {
-    return outputs[output];
+  if (typeof indexOrName === 'number') {
+    return devices[indexOrName];
   }
-  if (typeof output === 'string') {
-    return outputByName(output);
+  const byName = (name) => devices.find((output) => output.name.includes(name));
+  if (typeof indexOrName === 'string') {
+    return byName(indexOrName);
   }
   // attempt to default to first IAC device if none is specified
-  const IACOutput = outputs.find((output) => output.name.includes('IAC'));
-  const device = IACOutput ?? outputs[0];
+  const IACOutput = byName('IAC');
+  const device = IACOutput ?? devices[0];
   if (!device) {
     throw new Error(
-      `🔌 MIDI device '${output ? output : ''}' not found. Use one of ${getMidiDeviceNamesString(WebMidi.outputs)}`,
+      `🔌 MIDI device '${device ? device : ''}' not found. Use one of ${getMidiDeviceNamesString(devices)}`,
     );
   }
 
@@ -137,3 +136,25 @@ Pattern.prototype.midi = function (output) {
     }
   });
 };
+
+export async function midiIn(input) {
+  console.log('midi in...');
+  const initial = await enableWebMidi(); // only returns on first init
+  const device = getDevice(input, WebMidi.inputs);
+
+  if (initial) {
+    const otherInputs = WebMidi.inputs.filter((o) => o.name !== device.name);
+    logger(
+      `Midi enabled! Using "${device.name}". ${
+        otherInputs?.length ? `Also available: ${getMidiDeviceNamesString(otherInputs)}` : ''
+      }`,
+    );
+  }
+  return (fn) => {
+    device.addListener(EventEmitter.ANY_EVENT, (...args) => {
+      console.log('event!', args);
+      fn(args);
+    });
+    return;
+  };
+}
