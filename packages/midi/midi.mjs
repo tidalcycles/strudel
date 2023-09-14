@@ -159,7 +159,6 @@ export async function midin(input) {
   listeners[input] = (e) => {
     const cc = e.dataBytes[0];
     const v = e.dataBytes[1];
-    console.log(cc, v);
     refs[input][cc] = v / 127;
   };
   device.addListener('midimessage', listeners[input]);
