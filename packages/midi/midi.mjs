@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as _WebMidi from 'webmidi';
-import { Pattern, isPattern, logger } from '@strudel.cycles/core';
+import { Pattern, isPattern, logger, ref } from '@strudel.cycles/core';
 import { noteToMidi } from '@strudel.cycles/core';
 import { Note } from 'webmidi';
 // if you use WebMidi from outside of this package, make sure to import that instance:
@@ -73,7 +73,7 @@ function getDevice(indexOrName, devices) {
     );
   }
 
-  return IACOutput ?? outputs[0];
+  return IACOutput ?? devices[0];
 }
 
 Pattern.prototype.midi = function (output) {
