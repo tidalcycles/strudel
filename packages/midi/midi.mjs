@@ -8,7 +8,6 @@ import * as _WebMidi from 'webmidi';
 import { Pattern, isPattern, logger } from '@strudel.cycles/core';
 import { noteToMidi } from '@strudel.cycles/core';
 import { Note } from 'webmidi';
-import EventEmitter from 'events';
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
 
@@ -137,7 +136,10 @@ Pattern.prototype.midi = function (output) {
   });
 };
 
-export async function midiIn(input) {
+let listeners = {};
+const refs = {};
+
+export async function midin(input) {
   console.log('midi in...');
   const initial = await enableWebMidi(); // only returns on first init
   const device = getDevice(input, WebMidi.inputs);
@@ -149,12 +151,18 @@ export async function midiIn(input) {
         otherInputs?.length ? `Also available: ${getMidiDeviceNamesString(otherInputs)}` : ''
       }`,
     );
+    refs[input] = {};
   }
-  return (fn) => {
-    device.addListener(EventEmitter.ANY_EVENT, (...args) => {
-      console.log('event!', args);
-      fn(args);
-    });
-    return;
+  const cc = (cc) => ref(() => refs[input][cc] || 0);
+
+  listeners[input] && device.removeListener('midimessage', listeners[input]);
+  listeners[input] = (e) => {
+    const cc = e.dataBytes[0];
+    const v = e.dataBytes[1];
+    console.log(cc, v);
+    refs[input][cc] = v / 127;
   };
+  device.addListener('midimessage', listeners[input]);
+  //return { cc };
+  return cc;
 }
