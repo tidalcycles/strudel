@@ -87,18 +87,16 @@ export function createFilter(context, type, frequency, Q, attack, decay, sustain
 
   // Apply ADSR to filter frequency
   if (fenv !== 0) {
-    let min = 0;
-    let max = Math.sign(fenv) * 200 * 2 ** Math.abs(fenv);
-    if (max < min) {
-      // offset by max: keep range when *penv sign is flipped
-      // comment those lines out to center around cutoff instead peak
-      min += Math.abs(max);
-      max += Math.abs(max);
+    let min = frequency;
+    let max = frequency * 2 ** Math.abs(fenv);
+    if (fenv < 0) {
+      // flip min max to keep range the same for negative envelope
+      // comment this out to flip the range as well...
+      [min, max] = [max, min];
     }
-
+    // console.log('min', min, 'max', max);
     min = clamp(min + frequency, 0, 20000);
     max = clamp(max + frequency, 0, 20000);
-    // console.log('min', min, 'max', max);
     getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end);
     return filter;
   }
