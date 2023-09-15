@@ -384,8 +384,11 @@ const generic_params = [
    * @param {number | Pattern} modulation depth of the lowpass filter envelope between 0 and _n_
    * @synonyms lpe
    * @example
-   * note("c2 c3").fast(2).sound("sawtooth")
-   *  .cutoff(500).lpenv("<1 2 3 4 5 6 7 8>")
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpa(.1).lpd(.1).lps(.5)
+   * .lpenv("<8 4 2 0>/4")
    */
   ['lpenv', 'lpe'],
   /**
@@ -414,10 +417,11 @@ const generic_params = [
    * @param {number | Pattern} attack time of the filter envelope
    * @synonyms lpa
    * @example
-   * note("c3 e3 f3 g3 ab3 bb3")
-   *  .sound('square').cutoff(1000)
-   *  .lpattack("<0.05 0.1 0.25 0.5>/2").ftype("12db")
-   *  .release(0.2).attack(0)
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpa("<.5 .25 .1 .01>/4")
+   * .lpenv(4)
    */
   ['lpattack', 'lpa'],
   /**
@@ -428,7 +432,7 @@ const generic_params = [
    * @example
    * note("c3 e3 f3 g3 ab3 bb3")
    *  .sound('square').hcutoff(1000)
-   *  .hpattack("<0.05 0.1 0.25 0.5>/2").ftype("12db")
+   *  .hpattack("<0.5 0.25 0.1 0.01>/2").ftype("12db")
    *  .release(0.2).attack(0)
    */
   ['hpattack', 'hpa'],
@@ -450,11 +454,12 @@ const generic_params = [
    * @param {number | Pattern} decay time of the filter envelope
    * @synonyms lpd
    * @example
-   * "baba"
-   * note("c3 e3 f3 g3 ab3 bb3")
-   *  .sound('square').cutoff(1000)
-   *  .lpdecay("<0.05 0.1 0.125>/2")
-   *  .ftype("12db").lps(0).lpr(0)
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpd("<.5 .25 .1 0>/4")
+   * .lps(0.2)
+   * .lpenv(4)
    */
   ['lpdecay', 'lpd'],
   /**
@@ -489,15 +494,17 @@ const generic_params = [
    * @param {number | Pattern} sustain amplitude of the lowpass filter envelope
    * @synonyms lps
    * @example
-   * note("c3 e3 f3 g3 ab3 bb3")
-   *  .sound('square').cutoff(200)
-   *  .lpd(0.1).lpsustain("<0.1 0.5 0.75 1>")
-   *  .ftype("12db")
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(0)
+   * .lpd(.5)
+   * .lps("<0 .25 .5 1>/4")
+   * .lpenv(4)
    */
   ['lpsustain', 'lps'],
   /**
    * Sets the sustain amplitude for the highpass filter envelope.
-   * @name lpsustain
+   * @name hpsustain
    * @param {number | Pattern} sustain amplitude of the highpass filter envelope
    * @synonyms hps
    * @example
@@ -509,7 +516,7 @@ const generic_params = [
   ['hpsustain', 'hps'],
   /**
    * Sets the sustain amplitude for the bandpass filter envelope.
-   * @name lpsustain
+   * @name hpsustain
    * @param {number | Pattern} sustain amplitude of the bandpass filter envelope
    * @synonyms bps
    * @example
@@ -525,12 +532,18 @@ const generic_params = [
    * @param {number | Pattern} release time of the filter envelope
    * @synonyms lpr
    * @example
-   * note("c3 e3 g3 c4").lpr("<0.1 0.25 0.5>").ftype("12db")
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .lpf(0)
+   * .lpenv(4)
+   * .lpr("<.5 .25 .1 0>/4")
+   * .release(.5)
    */
   ['lprelease', 'lpr'],
   /**
    * Sets the release time for the highpass filter envelope.
-   * @name lprelease
+   * @name hprelease
    * @param {number | Pattern} release time of the highpass filter envelope
    * @synonyms hpr
    * @example
@@ -539,7 +552,7 @@ const generic_params = [
   ['hprelease', 'hpr'],
   /**
    * Sets the release time for the bandpass filter envelope.
-   * @name lprelease
+   * @name bprelease
    * @param {number | Pattern} release time of the bandpass filter envelope
    * @synonyms bpr
    * @example
