@@ -82,22 +82,17 @@ export function createFilter(context, type, frequency, Q, attack, decay, sustain
   const filter = context.createBiquadFilter();
   filter.type = type;
   filter.Q.value = Q;
-  frequency = Math.max(frequency, 20);
   filter.frequency.value = frequency;
 
   // Apply ADSR to filter frequency
   if (fenv !== 0) {
-    let anchor = 0.5;
-    let offset = fenv * anchor;
-    let min = 2 ** -offset;
-    let max = 2 ** (fenv - offset);
-    min *= frequency;
-    max *= frequency;
+    const anchor = 0.5;
+    const offset = fenv * anchor;
 
-    min = clamp(min, 0, 20000);
-    max = clamp(max, 0, 20000);
+    const min = clamp(2 ** -offset * frequency, 0, 20000);
+    const max = clamp(2 ** (fenv - offset) * frequency, 0, 20000);
 
-    console.log('min', min, 'max', max);
+    // console.log('min', min, 'max', max);
 
     getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end);
     return filter;
