@@ -397,8 +397,17 @@ const generic_params = [
    * @param {number | Pattern} modulation depth of the highpass filter envelope between 0 and _n_
    * @synonyms hpe
    * @example
-   * note("c2 c3").fast(2).sound("sawtooth")
-   *  .hcutoff(500).hpenv("<1 2 3 4 5 6 7 8>")
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpa(.1).hpd(.1).hps(.5)
+   * .hpenv("<8 4 2 0>/4")
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpa(.5)
+   * .hpenv("<2 -2>/4")
    */
   ['hpenv', 'hpe'],
   /**
@@ -407,8 +416,11 @@ const generic_params = [
    * @param {number | Pattern} modulation depth of the bandpass filter envelope between 0 and _n_
    * @synonyms bpe
    * @example
-   * note("c2 c3").fast(2).sound("sawtooth")
-   *  .bandf(500).bpenv("<1 2 3 4 5 6 7 8>")
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpa(.1).bpd(.1).bps(.5)
+   * .bpenv("<8 4 2 0>/4")
    */
   ['bpenv', 'bpe'],
   /**
@@ -430,22 +442,24 @@ const generic_params = [
    * @param {number | Pattern} attack time of the highpass filter envelope
    * @synonyms hpa
    * @example
-   * note("c3 e3 f3 g3 ab3 bb3")
-   *  .sound('square').hcutoff(1000)
-   *  .hpattack("<0.5 0.25 0.1 0.01>/2").ftype("12db")
-   *  .release(0.2).attack(0)
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpa("<.5 .25 .1 .01>/4")
+   * .hpenv(4)
    */
   ['hpattack', 'hpa'],
   /**
    * Sets the attack duration for the bandpass filter envelope.
-   * @name hpattack
+   * @name bpattack
    * @param {number | Pattern} attack time of the bandpass filter envelope
    * @synonyms bpa
    * @example
-   * note("c3 e3 f3 g3 ab3 bb3")
-   *  .sound('square').bandf(1000)
-   *  .bpattack("<0.05 0.1 0.25 0.5>/2").ftype("12db")
-   *  .release(0.2).attack(0)
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpa("<.5 .25 .1 .01>/4")
+   * .bpenv(4)
    */
   ['bpattack', 'bpa'],
   /**
@@ -468,11 +482,12 @@ const generic_params = [
    * @param {number | Pattern} decay time of the highpass filter envelope
    * @synonyms hpd
    * @example
-   * "baba"
-   * note("c3 e3 f3 g3 ab3 bb3")
-   *  .sound('square').hcutoff(1000)
-   *  .hpdecay("<0.05 0.1 0.125>/2")
-   *  .ftype("12db").hps(0).hpr(0)
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpd("<.5 .25 .1 0>/4")
+   * .hps(0.2)
+   * .hpenv(4)
    */
   ['hpdecay', 'hpd'],
   /**
@@ -481,11 +496,12 @@ const generic_params = [
    * @param {number | Pattern} decay time of the bandpass filter envelope
    * @synonyms bpd
    * @example
-   * "baba"
-   * note("c3 e3 f3 g3 ab3 bb3")
-   *  .sound('square').bandf(1000)
-   *  .bpdecay("<0.05 0.1 0.125>/2")
-   *  .ftype("12db").bps(0).bpr(0)
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpd("<.5 .25 .1 0>/4")
+   * .bps(0.2)
+   * .bpenv(4)
    */
   ['bpdecay', 'bpd'],
   /**
@@ -508,22 +524,26 @@ const generic_params = [
    * @param {number | Pattern} sustain amplitude of the highpass filter envelope
    * @synonyms hps
    * @example
-   * note("c3 e3 f3 g3 ab3 bb3")
-   *  .sound('square').hcutoff(200)
-   *  .hpd(0.1).hpsustain("<0.1 0.5 0.75 1>")
-   *  .ftype("12db")
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(0)
+   * .hpd(.5)
+   * .hps("<0 .25 .5 1>/4")
+   * .hpenv(4)
    */
   ['hpsustain', 'hps'],
   /**
    * Sets the sustain amplitude for the bandpass filter envelope.
-   * @name hpsustain
+   * @name bpsustain
    * @param {number | Pattern} sustain amplitude of the bandpass filter envelope
    * @synonyms bps
    * @example
-   * note("c3 e3 f3 g3 ab3 bb3")
-   *  .sound('square').bandf(200)
-   *  .bpd(0.1).bpsustain("<0.1 0.5 0.75 1>")
-   *  .ftype("12db")
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(0)
+   * .bpd(.5)
+   * .bps("<0 .25 .5 1>/4")
+   * .bpenv(4)
    */
   ['bpsustain', 'bps'],
   /**
@@ -547,7 +567,13 @@ const generic_params = [
    * @param {number | Pattern} release time of the highpass filter envelope
    * @synonyms hpr
    * @example
-   * note("c3 e3 g3 c4").hpr("<0.1 0.25 0.5>").ftype("12db")
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .hpf(0)
+   * .hpenv(4)
+   * .hpr("<.5 .25 .1 0>/4")
+   * .release(.5)
    */
   ['hprelease', 'hpr'],
   /**
@@ -556,7 +582,13 @@ const generic_params = [
    * @param {number | Pattern} release time of the bandpass filter envelope
    * @synonyms bpr
    * @example
-   * note("c3 e3 g3 c4").bpr("<0.1 0.25 0.5>").ftype("12db")
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .bpf(0)
+   * .bpenv(4)
+   * .bpr("<.5 .25 .1 0>/4")
+   * .release(.5)
    */
   ['bprelease', 'bpr'],
   ['ftype'],
