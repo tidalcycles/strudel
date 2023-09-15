@@ -988,6 +988,27 @@ exports[`runs examples > example "bpq" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "bprelease" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:c3 bprelease:0.1 ftype:12db ]",
+  "[ 1/4 → 1/2 | note:e3 bprelease:0.1 ftype:12db ]",
+  "[ 1/2 → 3/4 | note:g3 bprelease:0.1 ftype:12db ]",
+  "[ 3/4 → 1/1 | note:c4 bprelease:0.1 ftype:12db ]",
+  "[ 1/1 → 5/4 | note:c3 bprelease:0.25 ftype:12db ]",
+  "[ 5/4 → 3/2 | note:e3 bprelease:0.25 ftype:12db ]",
+  "[ 3/2 → 7/4 | note:g3 bprelease:0.25 ftype:12db ]",
+  "[ 7/4 → 2/1 | note:c4 bprelease:0.25 ftype:12db ]",
+  "[ 2/1 → 9/4 | note:c3 bprelease:0.5 ftype:12db ]",
+  "[ 9/4 → 5/2 | note:e3 bprelease:0.5 ftype:12db ]",
+  "[ 5/2 → 11/4 | note:g3 bprelease:0.5 ftype:12db ]",
+  "[ 11/4 → 3/1 | note:c4 bprelease:0.5 ftype:12db ]",
+  "[ 3/1 → 13/4 | note:c3 bprelease:0.1 ftype:12db ]",
+  "[ 13/4 → 7/2 | note:e3 bprelease:0.1 ftype:12db ]",
+  "[ 7/2 → 15/4 | note:g3 bprelease:0.1 ftype:12db ]",
+  "[ 15/4 → 4/1 | note:c4 bprelease:0.1 ftype:12db ]",
+]
+`;
+
 exports[`runs examples > example "cat" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | s:hh ]",
@@ -2102,30 +2123,30 @@ exports[`runs examples > example "gain" example index 0 1`] = `
 
 exports[`runs examples > example "hpattack" example index 0 1`] = `
 [
-  "[ 0/1 → 1/6 | note:c3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 1/6 → 1/3 | note:e3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 1/3 → 1/2 | note:f3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 1/2 → 2/3 | note:g3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 2/3 → 5/6 | note:ab3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 5/6 → 1/1 | note:bb3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 1/1 → 7/6 | note:c3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 7/6 → 4/3 | note:e3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 4/3 → 3/2 | note:f3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 3/2 → 5/3 | note:g3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 5/3 → 11/6 | note:ab3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 11/6 → 2/1 | note:bb3 s:square hcutoff:1000 hpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 2/1 → 13/6 | note:c3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 13/6 → 7/3 | note:e3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 7/3 → 5/2 | note:f3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 5/2 → 8/3 | note:g3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 8/3 → 17/6 | note:ab3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 17/6 → 3/1 | note:bb3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 3/1 → 19/6 | note:c3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 19/6 → 10/3 | note:e3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 10/3 → 7/2 | note:f3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 7/2 → 11/3 | note:g3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 11/3 → 23/6 | note:ab3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 23/6 → 4/1 | note:bb3 s:square hcutoff:1000 hpattack:0.1 ftype:12db release:0.2 attack:0 ]",
+  "[ 0/1 → 1/6 | note:c3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 1/6 → 1/3 | note:e3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 1/3 → 1/2 | note:f3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 1/2 → 2/3 | note:g3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 2/3 → 5/6 | note:ab3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 5/6 → 1/1 | note:bb3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 1/1 → 7/6 | note:c3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 7/6 → 4/3 | note:e3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 4/3 → 3/2 | note:f3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 3/2 → 5/3 | note:g3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 5/3 → 11/6 | note:ab3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 11/6 → 2/1 | note:bb3 s:square hcutoff:1000 hpattack:0.5 ftype:12db release:0.2 attack:0 ]",
+  "[ 2/1 → 13/6 | note:c3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
+  "[ 13/6 → 7/3 | note:e3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
+  "[ 7/3 → 5/2 | note:f3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
+  "[ 5/2 → 8/3 | note:g3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
+  "[ 8/3 → 17/6 | note:ab3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
+  "[ 17/6 → 3/1 | note:bb3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
+  "[ 3/1 → 19/6 | note:c3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
+  "[ 19/6 → 10/3 | note:e3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
+  "[ 10/3 → 7/2 | note:f3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
+  "[ 7/2 → 11/3 | note:g3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
+  "[ 11/3 → 23/6 | note:ab3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
+  "[ 23/6 → 4/1 | note:bb3 s:square hcutoff:1000 hpattack:0.25 ftype:12db release:0.2 attack:0 ]",
 ]
 `;
 
@@ -2292,6 +2313,85 @@ exports[`runs examples > example "hpq" example index 0 1`] = `
   "[ 7/2 → 15/4 | s:hh hcutoff:2000 hresonance:30 ]",
   "[ 7/2 → 4/1 | s:sd hcutoff:2000 hresonance:30 ]",
   "[ 15/4 → 4/1 | s:hh hcutoff:2000 hresonance:30 ]",
+]
+`;
+
+exports[`runs examples > example "hprelease" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:c3 hprelease:0.1 ftype:12db ]",
+  "[ 1/4 → 1/2 | note:e3 hprelease:0.1 ftype:12db ]",
+  "[ 1/2 → 3/4 | note:g3 hprelease:0.1 ftype:12db ]",
+  "[ 3/4 → 1/1 | note:c4 hprelease:0.1 ftype:12db ]",
+  "[ 1/1 → 5/4 | note:c3 hprelease:0.25 ftype:12db ]",
+  "[ 5/4 → 3/2 | note:e3 hprelease:0.25 ftype:12db ]",
+  "[ 3/2 → 7/4 | note:g3 hprelease:0.25 ftype:12db ]",
+  "[ 7/4 → 2/1 | note:c4 hprelease:0.25 ftype:12db ]",
+  "[ 2/1 → 9/4 | note:c3 hprelease:0.5 ftype:12db ]",
+  "[ 9/4 → 5/2 | note:e3 hprelease:0.5 ftype:12db ]",
+  "[ 5/2 → 11/4 | note:g3 hprelease:0.5 ftype:12db ]",
+  "[ 11/4 → 3/1 | note:c4 hprelease:0.5 ftype:12db ]",
+  "[ 3/1 → 13/4 | note:c3 hprelease:0.1 ftype:12db ]",
+  "[ 13/4 → 7/2 | note:e3 hprelease:0.1 ftype:12db ]",
+  "[ 7/2 → 15/4 | note:g3 hprelease:0.1 ftype:12db ]",
+  "[ 15/4 → 4/1 | note:c4 hprelease:0.1 ftype:12db ]",
+]
+`;
+
+exports[`runs examples > example "hpsustain" example index 0 1`] = `
+[
+  "[ 0/1 → 1/6 | note:c3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
+  "[ 1/6 → 1/3 | note:e3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
+  "[ 1/3 → 1/2 | note:f3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
+  "[ 1/2 → 2/3 | note:g3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
+  "[ 2/3 → 5/6 | note:ab3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
+  "[ 5/6 → 1/1 | note:bb3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
+  "[ 1/1 → 7/6 | note:c3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
+  "[ 7/6 → 4/3 | note:e3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
+  "[ 4/3 → 3/2 | note:f3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
+  "[ 3/2 → 5/3 | note:g3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
+  "[ 5/3 → 11/6 | note:ab3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
+  "[ 11/6 → 2/1 | note:bb3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
+  "[ 2/1 → 13/6 | note:c3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
+  "[ 13/6 → 7/3 | note:e3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
+  "[ 7/3 → 5/2 | note:f3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
+  "[ 5/2 → 8/3 | note:g3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
+  "[ 8/3 → 17/6 | note:ab3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
+  "[ 17/6 → 3/1 | note:bb3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
+  "[ 3/1 → 19/6 | note:c3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
+  "[ 19/6 → 10/3 | note:e3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
+  "[ 10/3 → 7/2 | note:f3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
+  "[ 7/2 → 11/3 | note:g3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
+  "[ 11/3 → 23/6 | note:ab3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
+  "[ 23/6 → 4/1 | note:bb3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
+]
+`;
+
+exports[`runs examples > example "hpsustain" example index 0 2`] = `
+[
+  "[ 0/1 → 1/6 | note:c3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
+  "[ 1/6 → 1/3 | note:e3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
+  "[ 1/3 → 1/2 | note:f3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
+  "[ 1/2 → 2/3 | note:g3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
+  "[ 2/3 → 5/6 | note:ab3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
+  "[ 5/6 → 1/1 | note:bb3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
+  "[ 1/1 → 7/6 | note:c3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
+  "[ 7/6 → 4/3 | note:e3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
+  "[ 4/3 → 3/2 | note:f3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
+  "[ 3/2 → 5/3 | note:g3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
+  "[ 5/3 → 11/6 | note:ab3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
+  "[ 11/6 → 2/1 | note:bb3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
+  "[ 2/1 → 13/6 | note:c3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
+  "[ 13/6 → 7/3 | note:e3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
+  "[ 7/3 → 5/2 | note:f3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
+  "[ 5/2 → 8/3 | note:g3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
+  "[ 8/3 → 17/6 | note:ab3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
+  "[ 17/6 → 3/1 | note:bb3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
+  "[ 3/1 → 19/6 | note:c3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
+  "[ 19/6 → 10/3 | note:e3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
+  "[ 10/3 → 7/2 | note:f3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
+  "[ 7/2 → 11/3 | note:g3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
+  "[ 11/3 → 23/6 | note:ab3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
+  "[ 23/6 → 4/1 | note:bb3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
 ]
 `;
 
@@ -2726,80 +2826,28 @@ exports[`runs examples > example "loopAtCps" example index 0 1`] = `
 
 exports[`runs examples > example "lpattack" example index 0 1`] = `
 [
-  "[ 0/1 → 1/6 | note:c3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 1/6 → 1/3 | note:e3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 1/3 → 1/2 | note:f3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 1/2 → 2/3 | note:g3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 2/3 → 5/6 | note:ab3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 5/6 → 1/1 | note:bb3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 1/1 → 7/6 | note:c3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 7/6 → 4/3 | note:e3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 4/3 → 3/2 | note:f3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 3/2 → 5/3 | note:g3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 5/3 → 11/6 | note:ab3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 11/6 → 2/1 | note:bb3 s:square cutoff:1000 lpattack:0.05 ftype:12db release:0.2 attack:0 ]",
-  "[ 2/1 → 13/6 | note:c3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 13/6 → 7/3 | note:e3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 7/3 → 5/2 | note:f3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 5/2 → 8/3 | note:g3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 8/3 → 17/6 | note:ab3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 17/6 → 3/1 | note:bb3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 3/1 → 19/6 | note:c3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 19/6 → 10/3 | note:e3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 10/3 → 7/2 | note:f3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 7/2 → 11/3 | note:g3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 11/3 → 23/6 | note:ab3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
-  "[ 23/6 → 4/1 | note:bb3 s:square cutoff:1000 lpattack:0.1 ftype:12db release:0.2 attack:0 ]",
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
 ]
 `;
 
 exports[`runs examples > example "lpdecay" example index 0 1`] = `
 [
-  "[ 0/1 → 1/6 | note:c3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 1/6 → 1/3 | note:e3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 1/3 → 1/2 | note:f3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 1/2 → 2/3 | note:g3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 2/3 → 5/6 | note:ab3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 5/6 → 1/1 | note:bb3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 1/1 → 7/6 | note:c3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 7/6 → 4/3 | note:e3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 4/3 → 3/2 | note:f3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 3/2 → 5/3 | note:g3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 5/3 → 11/6 | note:ab3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 11/6 → 2/1 | note:bb3 s:square cutoff:1000 lpdecay:0.05 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 2/1 → 13/6 | note:c3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 13/6 → 7/3 | note:e3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 7/3 → 5/2 | note:f3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 5/2 → 8/3 | note:g3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 8/3 → 17/6 | note:ab3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 17/6 → 3/1 | note:bb3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 3/1 → 19/6 | note:c3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 19/6 → 10/3 | note:e3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 10/3 → 7/2 | note:f3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 7/2 → 11/3 | note:g3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 11/3 → 23/6 | note:ab3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
-  "[ 23/6 → 4/1 | note:bb3 s:square cutoff:1000 lpdecay:0.1 ftype:12db lpsustain:0 lprelease:0 ]",
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0.2 lpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0.2 lpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0.2 lpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0.2 lpenv:4 ]",
 ]
 `;
 
 exports[`runs examples > example "lpenv" example index 0 1`] = `
 [
-  "[ 0/1 → 1/4 | note:c2 s:sawtooth cutoff:500 lpenv:1 ]",
-  "[ 1/4 → 1/2 | note:c3 s:sawtooth cutoff:500 lpenv:1 ]",
-  "[ 1/2 → 3/4 | note:c2 s:sawtooth cutoff:500 lpenv:1 ]",
-  "[ 3/4 → 1/1 | note:c3 s:sawtooth cutoff:500 lpenv:1 ]",
-  "[ 1/1 → 5/4 | note:c2 s:sawtooth cutoff:500 lpenv:2 ]",
-  "[ 5/4 → 3/2 | note:c3 s:sawtooth cutoff:500 lpenv:2 ]",
-  "[ 3/2 → 7/4 | note:c2 s:sawtooth cutoff:500 lpenv:2 ]",
-  "[ 7/4 → 2/1 | note:c3 s:sawtooth cutoff:500 lpenv:2 ]",
-  "[ 2/1 → 9/4 | note:c2 s:sawtooth cutoff:500 lpenv:3 ]",
-  "[ 9/4 → 5/2 | note:c3 s:sawtooth cutoff:500 lpenv:3 ]",
-  "[ 5/2 → 11/4 | note:c2 s:sawtooth cutoff:500 lpenv:3 ]",
-  "[ 11/4 → 3/1 | note:c3 s:sawtooth cutoff:500 lpenv:3 ]",
-  "[ 3/1 → 13/4 | note:c2 s:sawtooth cutoff:500 lpenv:4 ]",
-  "[ 13/4 → 7/2 | note:c3 s:sawtooth cutoff:500 lpenv:4 ]",
-  "[ 7/2 → 15/4 | note:c2 s:sawtooth cutoff:500 lpenv:4 ]",
-  "[ 15/4 → 4/1 | note:c3 s:sawtooth cutoff:500 lpenv:4 ]",
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:500 lpattack:0.1 lpdecay:0.1 lpsustain:0.5 lpenv:8 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth cutoff:500 lpattack:0.1 lpdecay:0.1 lpsustain:0.5 lpenv:8 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth cutoff:500 lpattack:0.1 lpdecay:0.1 lpsustain:0.5 lpenv:8 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth cutoff:500 lpattack:0.1 lpdecay:0.1 lpsustain:0.5 lpenv:8 ]",
 ]
 `;
 
@@ -2896,151 +2944,19 @@ exports[`runs examples > example "lpq" example index 0 1`] = `
 
 exports[`runs examples > example "lprelease" example index 0 1`] = `
 [
-  "[ 0/1 → 1/4 | note:c3 lprelease:0.1 ftype:12db ]",
-  "[ 1/4 → 1/2 | note:e3 lprelease:0.1 ftype:12db ]",
-  "[ 1/2 → 3/4 | note:g3 lprelease:0.1 ftype:12db ]",
-  "[ 3/4 → 1/1 | note:c4 lprelease:0.1 ftype:12db ]",
-  "[ 1/1 → 5/4 | note:c3 lprelease:0.25 ftype:12db ]",
-  "[ 5/4 → 3/2 | note:e3 lprelease:0.25 ftype:12db ]",
-  "[ 3/2 → 7/4 | note:g3 lprelease:0.25 ftype:12db ]",
-  "[ 7/4 → 2/1 | note:c4 lprelease:0.25 ftype:12db ]",
-  "[ 2/1 → 9/4 | note:c3 lprelease:0.5 ftype:12db ]",
-  "[ 9/4 → 5/2 | note:e3 lprelease:0.5 ftype:12db ]",
-  "[ 5/2 → 11/4 | note:g3 lprelease:0.5 ftype:12db ]",
-  "[ 11/4 → 3/1 | note:c4 lprelease:0.5 ftype:12db ]",
-  "[ 3/1 → 13/4 | note:c3 lprelease:0.1 ftype:12db ]",
-  "[ 13/4 → 7/2 | note:e3 lprelease:0.1 ftype:12db ]",
-  "[ 7/2 → 15/4 | note:g3 lprelease:0.1 ftype:12db ]",
-  "[ 15/4 → 4/1 | note:c4 lprelease:0.1 ftype:12db ]",
-]
-`;
-
-exports[`runs examples > example "lprelease" example index 0 2`] = `
-[
-  "[ 0/1 → 1/4 | note:c3 hprelease:0.1 ftype:12db ]",
-  "[ 1/4 → 1/2 | note:e3 hprelease:0.1 ftype:12db ]",
-  "[ 1/2 → 3/4 | note:g3 hprelease:0.1 ftype:12db ]",
-  "[ 3/4 → 1/1 | note:c4 hprelease:0.1 ftype:12db ]",
-  "[ 1/1 → 5/4 | note:c3 hprelease:0.25 ftype:12db ]",
-  "[ 5/4 → 3/2 | note:e3 hprelease:0.25 ftype:12db ]",
-  "[ 3/2 → 7/4 | note:g3 hprelease:0.25 ftype:12db ]",
-  "[ 7/4 → 2/1 | note:c4 hprelease:0.25 ftype:12db ]",
-  "[ 2/1 → 9/4 | note:c3 hprelease:0.5 ftype:12db ]",
-  "[ 9/4 → 5/2 | note:e3 hprelease:0.5 ftype:12db ]",
-  "[ 5/2 → 11/4 | note:g3 hprelease:0.5 ftype:12db ]",
-  "[ 11/4 → 3/1 | note:c4 hprelease:0.5 ftype:12db ]",
-  "[ 3/1 → 13/4 | note:c3 hprelease:0.1 ftype:12db ]",
-  "[ 13/4 → 7/2 | note:e3 hprelease:0.1 ftype:12db ]",
-  "[ 7/2 → 15/4 | note:g3 hprelease:0.1 ftype:12db ]",
-  "[ 15/4 → 4/1 | note:c4 hprelease:0.1 ftype:12db ]",
-]
-`;
-
-exports[`runs examples > example "lprelease" example index 0 3`] = `
-[
-  "[ 0/1 → 1/4 | note:c3 bprelease:0.1 ftype:12db ]",
-  "[ 1/4 → 1/2 | note:e3 bprelease:0.1 ftype:12db ]",
-  "[ 1/2 → 3/4 | note:g3 bprelease:0.1 ftype:12db ]",
-  "[ 3/4 → 1/1 | note:c4 bprelease:0.1 ftype:12db ]",
-  "[ 1/1 → 5/4 | note:c3 bprelease:0.25 ftype:12db ]",
-  "[ 5/4 → 3/2 | note:e3 bprelease:0.25 ftype:12db ]",
-  "[ 3/2 → 7/4 | note:g3 bprelease:0.25 ftype:12db ]",
-  "[ 7/4 → 2/1 | note:c4 bprelease:0.25 ftype:12db ]",
-  "[ 2/1 → 9/4 | note:c3 bprelease:0.5 ftype:12db ]",
-  "[ 9/4 → 5/2 | note:e3 bprelease:0.5 ftype:12db ]",
-  "[ 5/2 → 11/4 | note:g3 bprelease:0.5 ftype:12db ]",
-  "[ 11/4 → 3/1 | note:c4 bprelease:0.5 ftype:12db ]",
-  "[ 3/1 → 13/4 | note:c3 bprelease:0.1 ftype:12db ]",
-  "[ 13/4 → 7/2 | note:e3 bprelease:0.1 ftype:12db ]",
-  "[ 7/2 → 15/4 | note:g3 bprelease:0.1 ftype:12db ]",
-  "[ 15/4 → 4/1 | note:c4 bprelease:0.1 ftype:12db ]",
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth clip:0.5 cutoff:0 lpenv:4 lprelease:0.5 release:0.5 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth clip:0.5 cutoff:0 lpenv:4 lprelease:0.5 release:0.5 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth clip:0.5 cutoff:0 lpenv:4 lprelease:0.5 release:0.5 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth clip:0.5 cutoff:0 lpenv:4 lprelease:0.5 release:0.5 ]",
 ]
 `;
 
 exports[`runs examples > example "lpsustain" example index 0 1`] = `
 [
-  "[ 0/1 → 1/6 | note:c3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.1 ftype:12db ]",
-  "[ 1/6 → 1/3 | note:e3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.1 ftype:12db ]",
-  "[ 1/3 → 1/2 | note:f3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.1 ftype:12db ]",
-  "[ 1/2 → 2/3 | note:g3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.1 ftype:12db ]",
-  "[ 2/3 → 5/6 | note:ab3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.1 ftype:12db ]",
-  "[ 5/6 → 1/1 | note:bb3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.1 ftype:12db ]",
-  "[ 1/1 → 7/6 | note:c3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.5 ftype:12db ]",
-  "[ 7/6 → 4/3 | note:e3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.5 ftype:12db ]",
-  "[ 4/3 → 3/2 | note:f3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.5 ftype:12db ]",
-  "[ 3/2 → 5/3 | note:g3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.5 ftype:12db ]",
-  "[ 5/3 → 11/6 | note:ab3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.5 ftype:12db ]",
-  "[ 11/6 → 2/1 | note:bb3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.5 ftype:12db ]",
-  "[ 2/1 → 13/6 | note:c3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.75 ftype:12db ]",
-  "[ 13/6 → 7/3 | note:e3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.75 ftype:12db ]",
-  "[ 7/3 → 5/2 | note:f3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.75 ftype:12db ]",
-  "[ 5/2 → 8/3 | note:g3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.75 ftype:12db ]",
-  "[ 8/3 → 17/6 | note:ab3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.75 ftype:12db ]",
-  "[ 17/6 → 3/1 | note:bb3 s:square cutoff:200 lpdecay:0.1 lpsustain:0.75 ftype:12db ]",
-  "[ 3/1 → 19/6 | note:c3 s:square cutoff:200 lpdecay:0.1 lpsustain:1 ftype:12db ]",
-  "[ 19/6 → 10/3 | note:e3 s:square cutoff:200 lpdecay:0.1 lpsustain:1 ftype:12db ]",
-  "[ 10/3 → 7/2 | note:f3 s:square cutoff:200 lpdecay:0.1 lpsustain:1 ftype:12db ]",
-  "[ 7/2 → 11/3 | note:g3 s:square cutoff:200 lpdecay:0.1 lpsustain:1 ftype:12db ]",
-  "[ 11/3 → 23/6 | note:ab3 s:square cutoff:200 lpdecay:0.1 lpsustain:1 ftype:12db ]",
-  "[ 23/6 → 4/1 | note:bb3 s:square cutoff:200 lpdecay:0.1 lpsustain:1 ftype:12db ]",
-]
-`;
-
-exports[`runs examples > example "lpsustain" example index 0 2`] = `
-[
-  "[ 0/1 → 1/6 | note:c3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
-  "[ 1/6 → 1/3 | note:e3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
-  "[ 1/3 → 1/2 | note:f3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
-  "[ 1/2 → 2/3 | note:g3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
-  "[ 2/3 → 5/6 | note:ab3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
-  "[ 5/6 → 1/1 | note:bb3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.1 ftype:12db ]",
-  "[ 1/1 → 7/6 | note:c3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
-  "[ 7/6 → 4/3 | note:e3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
-  "[ 4/3 → 3/2 | note:f3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
-  "[ 3/2 → 5/3 | note:g3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
-  "[ 5/3 → 11/6 | note:ab3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
-  "[ 11/6 → 2/1 | note:bb3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.5 ftype:12db ]",
-  "[ 2/1 → 13/6 | note:c3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
-  "[ 13/6 → 7/3 | note:e3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
-  "[ 7/3 → 5/2 | note:f3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
-  "[ 5/2 → 8/3 | note:g3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
-  "[ 8/3 → 17/6 | note:ab3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
-  "[ 17/6 → 3/1 | note:bb3 s:square hcutoff:200 hpdecay:0.1 hpsustain:0.75 ftype:12db ]",
-  "[ 3/1 → 19/6 | note:c3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
-  "[ 19/6 → 10/3 | note:e3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
-  "[ 10/3 → 7/2 | note:f3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
-  "[ 7/2 → 11/3 | note:g3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
-  "[ 11/3 → 23/6 | note:ab3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
-  "[ 23/6 → 4/1 | note:bb3 s:square hcutoff:200 hpdecay:0.1 hpsustain:1 ftype:12db ]",
-]
-`;
-
-exports[`runs examples > example "lpsustain" example index 0 3`] = `
-[
-  "[ 0/1 → 1/6 | note:c3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
-  "[ 1/6 → 1/3 | note:e3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
-  "[ 1/3 → 1/2 | note:f3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
-  "[ 1/2 → 2/3 | note:g3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
-  "[ 2/3 → 5/6 | note:ab3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
-  "[ 5/6 → 1/1 | note:bb3 s:square bandf:200 bpdecay:0.1 bpsustain:0.1 ftype:12db ]",
-  "[ 1/1 → 7/6 | note:c3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
-  "[ 7/6 → 4/3 | note:e3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
-  "[ 4/3 → 3/2 | note:f3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
-  "[ 3/2 → 5/3 | note:g3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
-  "[ 5/3 → 11/6 | note:ab3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
-  "[ 11/6 → 2/1 | note:bb3 s:square bandf:200 bpdecay:0.1 bpsustain:0.5 ftype:12db ]",
-  "[ 2/1 → 13/6 | note:c3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
-  "[ 13/6 → 7/3 | note:e3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
-  "[ 7/3 → 5/2 | note:f3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
-  "[ 5/2 → 8/3 | note:g3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
-  "[ 8/3 → 17/6 | note:ab3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
-  "[ 17/6 → 3/1 | note:bb3 s:square bandf:200 bpdecay:0.1 bpsustain:0.75 ftype:12db ]",
-  "[ 3/1 → 19/6 | note:c3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
-  "[ 19/6 → 10/3 | note:e3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
-  "[ 10/3 → 7/2 | note:f3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
-  "[ 7/2 → 11/3 | note:g3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
-  "[ 11/3 → 23/6 | note:ab3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
-  "[ 23/6 → 4/1 | note:bb3 s:square bandf:200 bpdecay:0.1 bpsustain:1 ftype:12db ]",
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:0 lpdecay:0.5 lpsustain:0 lpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth cutoff:0 lpdecay:0.5 lpsustain:0 lpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth cutoff:0 lpdecay:0.5 lpsustain:0 lpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth cutoff:0 lpdecay:0.5 lpsustain:0 lpenv:4 ]",
 ]
 `;
 
