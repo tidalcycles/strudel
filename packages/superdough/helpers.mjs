@@ -1,4 +1,5 @@
 import { getAudioContext } from './superdough.mjs';
+import { clamp } from './util.mjs';
 
 export function gainNode(value) {
   const node = getAudioContext().createGain();
@@ -85,9 +86,19 @@ export function createFilter(context, type, frequency, Q, attack, decay, sustain
   filter.frequency.value = frequency;
 
   // Apply ADSR to filter frequency
-  if (fenv > 0) {
-    const min = frequency;
-    const max = Math.min(frequency + 200 * 2 ** fenv, 20000);
+  if (fenv !== 0) {
+    let min = 0;
+    let max = Math.sign(fenv) * 200 * 2 ** Math.abs(fenv);
+    if (max < min) {
+      // offset by max: keep range when *penv sign is flipped
+      // comment those lines out to center around cutoff instead peak
+      min += Math.abs(max);
+      max += Math.abs(max);
+    }
+
+    min = clamp(min + frequency, 0, 20000);
+    max = clamp(max + frequency, 0, 20000);
+    // console.log('min', min, 'max', max);
     getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end);
     return filter;
   }
