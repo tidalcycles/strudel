@@ -98,7 +98,7 @@ export function createFilter(
   filter.frequency.value = frequency;
 
   // Apply ADSR to filter frequency
-  if (fenv !== 0) {
+  if (!isNaN(fenv) && fenv !== 0) {
     const offset = fenv * fanchor;
 
     const min = clamp(2 ** -offset * frequency, 0, 20000);
