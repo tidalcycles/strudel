@@ -920,10 +920,10 @@ exports[`runs examples > example "bpdecay" example index 0 1`] = `
 
 exports[`runs examples > example "bpenv" example index 0 1`] = `
 [
-  "[ 0/1 → 1/1 | note:c2 s:sawtooth bandf:500 bpattack:0.1 bpdecay:0.1 bpsustain:0.5 bpenv:8 ]",
-  "[ 1/1 → 2/1 | note:e2 s:sawtooth bandf:500 bpattack:0.1 bpdecay:0.1 bpsustain:0.5 bpenv:8 ]",
-  "[ 2/1 → 3/1 | note:f2 s:sawtooth bandf:500 bpattack:0.1 bpdecay:0.1 bpsustain:0.5 bpenv:8 ]",
-  "[ 3/1 → 4/1 | note:g2 s:sawtooth bandf:500 bpattack:0.1 bpdecay:0.1 bpsustain:0.5 bpenv:8 ]",
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
 ]
 `;
 
@@ -2115,10 +2115,10 @@ exports[`runs examples > example "hpdecay" example index 0 1`] = `
 
 exports[`runs examples > example "hpenv" example index 0 1`] = `
 [
-  "[ 0/1 → 1/1 | note:c2 s:sawtooth hcutoff:500 hpattack:0.1 hpdecay:0.1 hpsustain:0.5 hpenv:8 ]",
-  "[ 1/1 → 2/1 | note:e2 s:sawtooth hcutoff:500 hpattack:0.1 hpdecay:0.1 hpsustain:0.5 hpenv:8 ]",
-  "[ 2/1 → 3/1 | note:f2 s:sawtooth hcutoff:500 hpattack:0.1 hpdecay:0.1 hpsustain:0.5 hpenv:8 ]",
-  "[ 3/1 → 4/1 | note:g2 s:sawtooth hcutoff:500 hpattack:0.1 hpdecay:0.1 hpsustain:0.5 hpenv:8 ]",
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
 ]
 `;
 
@@ -2685,10 +2685,10 @@ exports[`runs examples > example "lpdecay" example index 0 1`] = `
 
 exports[`runs examples > example "lpenv" example index 0 1`] = `
 [
-  "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:500 lpattack:0.1 lpdecay:0.1 lpsustain:0.5 lpenv:8 ]",
-  "[ 1/1 → 2/1 | note:e2 s:sawtooth cutoff:500 lpattack:0.1 lpdecay:0.1 lpsustain:0.5 lpenv:8 ]",
-  "[ 2/1 → 3/1 | note:f2 s:sawtooth cutoff:500 lpattack:0.1 lpdecay:0.1 lpsustain:0.5 lpenv:8 ]",
-  "[ 3/1 → 4/1 | note:g2 s:sawtooth cutoff:500 lpattack:0.1 lpdecay:0.1 lpsustain:0.5 lpenv:8 ]",
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
 ]
 `;
 
