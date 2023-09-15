@@ -387,8 +387,8 @@ const generic_params = [
    * note("<c2 e2 f2 g2>")
    * .sound('sawtooth')
    * .lpf(500)
-   * .lpa(.1).lpd(.1).lps(.5)
-   * .lpenv("<8 4 2 0>/4")
+   * .lpa(.5)
+   * .lpenv("<4 2 1 0>/4")
    */
   ['lpenv', 'lpe'],
   /**
@@ -400,8 +400,8 @@ const generic_params = [
    * note("<c2 e2 f2 g2>")
    * .sound('sawtooth')
    * .hpf(500)
-   * .hpa(.1).hpd(.1).hps(.5)
-   * .hpenv("<8 4 2 0>/4")
+   * .hpa(.5)
+   * .hpenv("<4 2 1 0>/4")
    * @example
    * note("<c2 e2 f2 g2>")
    * .sound('sawtooth')
@@ -419,8 +419,8 @@ const generic_params = [
    * note("<c2 e2 f2 g2>")
    * .sound('sawtooth')
    * .bpf(500)
-   * .bpa(.1).bpd(.1).bps(.5)
-   * .bpenv("<8 4 2 0>/4")
+   * .bpa(.5)
+   * .bpenv("<4 2 1 0>/4")
    */
   ['bpenv', 'bpe'],
   /**
