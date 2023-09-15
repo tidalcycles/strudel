@@ -388,7 +388,7 @@ const generic_params = [
    * .sound('sawtooth')
    * .lpf(500)
    * .lpa(.5)
-   * .lpenv("<4 2 1 0>/4")
+   * .lpenv("<4 2 1 0 -1 -2 -4>/4")
    */
   ['lpenv', 'lpe'],
   /**
@@ -401,13 +401,7 @@ const generic_params = [
    * .sound('sawtooth')
    * .hpf(500)
    * .hpa(.5)
-   * .hpenv("<4 2 1 0>/4")
-   * @example
-   * note("<c2 e2 f2 g2>")
-   * .sound('sawtooth')
-   * .hpf(500)
-   * .hpa(.5)
-   * .hpenv("<2 -2>/4")
+   * .hpenv("<4 2 1 0 -1 -2 -4>/4")
    */
   ['hpenv', 'hpe'],
   /**
@@ -420,7 +414,7 @@ const generic_params = [
    * .sound('sawtooth')
    * .bpf(500)
    * .bpa(.5)
-   * .bpenv("<4 2 1 0>/4")
+   * .bpenv("<4 2 1 0 -1 -2 -4>/4")
    */
   ['bpenv', 'bpe'],
   /**
@@ -512,7 +506,7 @@ const generic_params = [
    * @example
    * note("<c2 e2 f2 g2>")
    * .sound('sawtooth')
-   * .lpf(0)
+   * .lpf(500)
    * .lpd(.5)
    * .lps("<0 .25 .5 1>/4")
    * .lpenv(4)
@@ -526,7 +520,7 @@ const generic_params = [
    * @example
    * note("<c2 e2 f2 g2>")
    * .sound('sawtooth')
-   * .hpf(0)
+   * .hpf(500)
    * .hpd(.5)
    * .hps("<0 .25 .5 1>/4")
    * .hpenv(4)
@@ -540,7 +534,7 @@ const generic_params = [
    * @example
    * note("<c2 e2 f2 g2>")
    * .sound('sawtooth')
-   * .bpf(0)
+   * .bpf(500)
    * .bpd(.5)
    * .bps("<0 .25 .5 1>/4")
    * .bpenv(4)
@@ -555,7 +549,7 @@ const generic_params = [
    * note("<c2 e2 f2 g2>")
    * .sound('sawtooth')
    * .clip(.5)
-   * .lpf(0)
+   * .lpf(500)
    * .lpenv(4)
    * .lpr("<.5 .25 .1 0>/4")
    * .release(.5)
@@ -570,7 +564,7 @@ const generic_params = [
    * note("<c2 e2 f2 g2>")
    * .sound('sawtooth')
    * .clip(.5)
-   * .hpf(0)
+   * .hpf(500)
    * .hpenv(4)
    * .hpr("<.5 .25 .1 0>/4")
    * .release(.5)
@@ -585,7 +579,7 @@ const generic_params = [
    * note("<c2 e2 f2 g2>")
    * .sound('sawtooth')
    * .clip(.5)
-   * .bpf(0)
+   * .bpf(500)
    * .bpenv(4)
    * .bpr("<.5 .25 .1 0>/4")
    * .release(.5)
