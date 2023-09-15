@@ -586,6 +586,7 @@ const generic_params = [
    */
   ['bprelease', 'bpr'],
   ['ftype'],
+  ['fanchor'],
   /**
    * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
    *
