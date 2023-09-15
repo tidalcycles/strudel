@@ -94,10 +94,11 @@ export function createFilter(context, type, frequency, Q, attack, decay, sustain
     min *= frequency;
     max *= frequency;
 
-    //console.log('min', min, 'max', max);
+    min = clamp(min, 0, 20000);
+    max = clamp(max, 0, 20000);
 
-    min = clamp(min + frequency, 0, 20000);
-    max = clamp(max + frequency, 0, 20000);
+    console.log('min', min, 'max', max);
+
     getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end);
     return filter;
   }
