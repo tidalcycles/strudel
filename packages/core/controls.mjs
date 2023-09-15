@@ -585,6 +585,17 @@ const generic_params = [
    * .release(.5)
    */
   ['bprelease', 'bpr'],
+  /**
+   * Sets the filter type. The 24db filter is more aggressive. More types might be added in the future.
+   * @name ftype
+   * @param {number | Pattern} type 12db (default) or 24db
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .bpenv(4)
+   * .ftype("<12db 24db>")
+   */
   ['ftype'],
   ['fanchor'],
   /**
