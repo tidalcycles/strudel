@@ -86,6 +86,25 @@ Strudel uses ADSR envelopes, which are probably the most common way to describe 
 
 Each filter can receive an additional filter envelope controlling the cutoff value dynamically. It uses an ADSR envelope similar to the one used for amplitude. There is an additional parameter to control the depth of the filter modulation: `lpenv`|`hpenv`|`bpenv`. This allows you to play subtle or huge filter modulations just the same by only increasing or decreasing the depth.
 
+<MiniRepl
+  client:idle
+  tune={`note("[c eb g <f bb>](3,8,<0 1>)".sub(12))
+  .s("<sawtooth>/64")
+  .lpf(sine.range(500,3000).slow(16))
+  .lpa(0.005)
+  .lpd(perlin.range(.02,.2))
+  .lps(perlin.range(0,.5).slow(3))
+  .lpq(sine.range(2,10).slow(32))
+  .release(.5)
+  .lpenv(perlin.range(1,8).slow(2))
+  .ftype('24db')
+  .room(1)
+  .juxBy(.5,rev)
+  .sometimes(add(note(12)))
+  .stack(s("bd*2").bank('RolandTR909'))
+  .gain(.5)`}
+/>
+
 There is one filter envelope for each filter type and thus one set of envelope filter parameters preceded either by `lp`, `hp` or `bp`:
 
 - `lpattack`, `lpdecay`, `lpsustain`, `lprelease`, `lpenv`: filter envelope for the lowpass filter.
