@@ -229,7 +229,9 @@ stack(
   .add("0,.02")
   .note().gain(.3)
   .clip("<1@3 [.3 1]>/2")
-  .s('sawtooth').cutoff(600).color('#F8E71C'),
+  .cutoff(600)
+  .lpa(.2).lpenv(-4)
+  .s('sawtooth').color('#F8E71C'),
 ).fast(3/2)
 //.pianoroll({fold:1})`;
 
@@ -468,7 +470,9 @@ stack(
   .note()
   .s("sawtooth,square")
   .gain(.3).attack(0.01).decay(0.1).sustain(.5)
-  .apply(filter1),
+  .apply(filter1)
+  .lpa(.1).lpenv(2).ftype('24db')
+  ,
   "~@3 [<2 3>,<4 5>]"
   .echo(4,1/16,.7)
   .scale(scales)
@@ -803,14 +807,14 @@ stack(
   sine.add(saw.slow(4)).range(0,7).segment(8)
   .superimpose(x=>x.add(.1))
   .scale('G0 minor').note()
-  .s("sawtooth").decay(.1).sustain(0)
+  .s("sawtooth").decay(.1).sustain(0).lpa(.1).lpenv(4)
   .gain(.4).cutoff(perlin.range(300,3000).slow(8)).resonance(10)
   .degradeBy("0 0.1 .5 .1")
   .rarely(add(note("12")))
   ,
   // chord
   note("Bb3,D4".superimpose(x=>x.add(.2)))
-  .s('sawtooth').cutoff(1000).struct("<~@3 [~ x]>")
+  .s('sawtooth').lpf(1000).struct("<~@3 [~ x]>")
   .decay(.05).sustain(.0).delay(.8).delaytime(.125).room(.8)
   ,
   // alien
