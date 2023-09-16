@@ -8484,7 +8484,7 @@ exports[`renders tunes > tune: orbit 1`] = `
 exports[`renders tunes > tune: outroMusic 1`] = `
 [
   "[ 0/1 → 1/2 | s:hh speed:0.9036881079621337 n:3 ]",
-  "[ 0/1 → 3/4 | n:-7 note:C2 s:sawtooth attack:0.05 decay:0.1 sustain:0.7 cutoff:864.536878321087 gain:0.3 ]",
+  "[ 0/1 → 3/4 | note:C2 s:sawtooth attack:0.05 decay:0.1 sustain:0.7 cutoff:864.536878321087 gain:0.3 ]",
   "[ 0/1 → 3/4 | s:bd speed:0.9107561463868479 n:3 ]",
   "[ (0/1 → 1/1) ⇝ 3/1 | note:B3 s:gm_epiano1 n:1 attack:0.05 decay:0.1 sustain:0.7 cutoff:1111.7252990603447 gain:0.3 ]",
   "[ (0/1 → 1/1) ⇝ 3/1 | note:D4 s:gm_epiano1 n:1 attack:0.05 decay:0.1 sustain:0.7 cutoff:1111.7252990603447 gain:0.3 ]",
