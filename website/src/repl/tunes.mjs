@@ -580,8 +580,8 @@ chord("<C^7 Am7 Dm7 G7>*2").dict('lefthand').anchor("G4").voicing()
   .s("gm_epiano1:1")
   .color('steelblue')
   .stack(
-   n("<-7 ~@2 [~@2 -7] -9 ~@2 [~@2 -9] -10!2 ~ [~@2 -10] -5 ~ [-3 -2 -10]@2>*2")
-    .scale('C3 major')
+   "<-7 ~@2 [~@2 -7] -9 ~@2 [~@2 -9] -10!2 ~ [~@2 -10] -5 ~ [-3 -2 -10]@2>*2"
+    .scale('C3 major').note()
     .s('sawtooth').color('brown')
   )
   .attack(0.05).decay(.1).sustain(.7)
