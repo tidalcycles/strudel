@@ -4758,6 +4758,42 @@ exports[`runs examples > example "velocity" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "vib" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:a vib:0.5 ]",
+  "[ 1/1 → 2/1 | note:a vib:1 ]",
+  "[ 2/1 → 3/1 | note:a vib:2 ]",
+  "[ 3/1 → 4/1 | note:a vib:4 ]",
+]
+`;
+
+exports[`runs examples > example "vib" example index 1 1`] = `
+[
+  "[ 0/1 → 1/1 | note:a vib:0.5 vibmod:12 ]",
+  "[ 1/1 → 2/1 | note:a vib:1 vibmod:12 ]",
+  "[ 2/1 → 3/1 | note:a vib:2 vibmod:12 ]",
+  "[ 3/1 → 4/1 | note:a vib:4 vibmod:12 ]",
+]
+`;
+
+exports[`runs examples > example "vibmod" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:a vib:4 vibmod:0.25 ]",
+  "[ 1/1 → 2/1 | note:a vib:4 vibmod:0.5 ]",
+  "[ 2/1 → 3/1 | note:a vib:4 vibmod:1 ]",
+  "[ 3/1 → 4/1 | note:a vib:4 vibmod:2 ]",
+]
+`;
+
+exports[`runs examples > example "vibmod" example index 1 1`] = `
+[
+  "[ 0/1 → 1/1 | note:a vibmod:0.25 vib:8 ]",
+  "[ 1/1 → 2/1 | note:a vibmod:0.5 vib:8 ]",
+  "[ 2/1 → 3/1 | note:a vibmod:1 vib:8 ]",
+  "[ 3/1 → 4/1 | note:a vibmod:2 vib:8 ]",
+]
+`;
+
 exports[`runs examples > example "voicing" example index 0 1`] = `
 [
   "[ 0/1 → 1/1 | note:E4 ]",

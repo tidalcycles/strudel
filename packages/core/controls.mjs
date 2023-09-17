@@ -640,6 +640,36 @@ const generic_params = [
    */
   // currently an alias of 'hcutoff' https://github.com/tidalcycles/strudel/issues/496
   // ['hpf'],
+  /**
+   * Applies a vibrato to the frequency of the oscillator.
+   *
+   * @name vib
+   * @synonyms vibrato, v
+   * @param {number | Pattern} frequency of the vibrato in hertz
+   * @example
+   * note("a")
+   * .vib("<.5 1 2 4 8 16>")
+   * @example
+   * // change the modulation depth with ":"
+   * note("a")
+   * .vib("<.5 1 2 4 8 16>:12")
+   */
+  [['vib', 'vibmod'], 'vibrato', 'v'],
+  /**
+   * Sets the vibrato depth in semitones. Only has an effect if `vibrato` | `vib` | `v` is is also set
+   *
+   * @name vibmod
+   * @synonyms vmod
+   * @param {number | Pattern} depth of vibrato (in semitones)
+   * @example
+   * note("a").vib(4)
+   * .vibmod("<.25 .5 1 2 12>")
+   * @example
+   * // change the vibrato frequency with ":"
+   * note("a")
+   * .vibmod("<.25 .5 1 2 12>:8")
+   */
+  [['vibmod', 'vib'], 'vmod'],
   [['hcutoff', 'hresonance'], 'hpf', 'hp'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
