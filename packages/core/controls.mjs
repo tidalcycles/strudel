@@ -299,16 +299,52 @@ const generic_params = [
    */
   ['end'],
   /**
-   * Loops the sample (from `begin` to `end`) the specified number of times.
+   * Loops the sample.
    * Note that the tempo of the loop is not synced with the cycle tempo.
+   * To change the loop region, use loopBegin / loopEnd.
    *
    * @name loop
-   * @param {number | Pattern} times How often the sample is looped
+   * @param {number | Pattern} on If 1, the sample is looped
    * @example
-   * s("bd").loop("<1 2 3 4>").osc()
+   * s("casio").loop(1)
    *
    */
   ['loop'],
+  /**
+   * Begin to loop at a specific point in the sample (inbetween `begin` and `end`).
+   * Note that the loop point must be inbetween `begin` and `end`, and before `loopEnd`!
+   * Note: Samples starting with wt_ will automatically loop! (wt = wavetable)
+   *
+   * @name loopBegin
+   * @param {number | Pattern} time between 0 and 1, where 1 is the length of the sample
+   * @synonyms loopb
+   * @example
+   * s("space").loop(1)
+   * .loopBegin("<0 .125 .25>").scope()
+   */
+  ['loopBegin', 'loopb'],
+  /**
+   *
+   * End the looping section at a specific point in the sample (inbetween `begin` and `end`).
+   * Note that the loop point must be inbetween `begin` and `end`, and after `loopBegin`!
+   *
+   * @name loopEnd
+   * @param {number | Pattern} time between 0 and 1, where 1 is the length of the sample
+   * @synonyms loope
+   * @example
+   * s("space").loop(1)
+   * .loopEnd("<1 .75 .5 .25>").scope()
+   */
+  ['loopEnd', 'loope'],
+  /**
+   * bit crusher effect.
+   *
+   * @name crush
+   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
+   * @example
+   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
+   *
+   */
   // TODO: currently duplicated with "native" legato
   // TODO: superdirt legato will do more: https://youtu.be/dQPmE1WaD1k?t=419
   /**
@@ -323,15 +359,6 @@ const generic_params = [
    */
   // ['legato'],
   // ['clhatdecay'],
-  /**
-   * bit crusher effect.
-   *
-   * @name crush
-   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
-   * @example
-   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
-   *
-   */
   ['crush'],
   /**
    * fake-resampling for lowering the sample rate. Caution: This effect seems to only work in chromium based browsers
@@ -343,7 +370,6 @@ const generic_params = [
    *
    */
   ['coarse'],
-
   /**
    * choose the channel the pattern is sent to in superdirt
    *
