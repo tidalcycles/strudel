@@ -432,7 +432,7 @@ export const waa2 = `// "Waa2"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
-n(
+note(
   "a4 [a3 c3] a3 c3"
   .sub("<7 12 5 12>".slow(2))
   .off(1/4,x=>x.add(7))
