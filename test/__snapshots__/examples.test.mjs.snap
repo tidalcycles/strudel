@@ -1828,6 +1828,15 @@ exports[`runs examples > example "firstOf" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "fit" example index 0 1`] = `
+[
+  "[ (0/1 → 1/1) ⇝ 4/1 | s:rhodes speed:0.25 unit:c ]",
+  "[ 0/1 ⇜ (1/1 → 2/1) ⇝ 4/1 | s:rhodes speed:0.25 unit:c ]",
+  "[ 0/1 ⇜ (2/1 → 3/1) ⇝ 4/1 | s:rhodes speed:0.25 unit:c ]",
+  "[ 0/1 ⇜ (3/1 → 4/1) | s:rhodes speed:0.25 unit:c ]",
+]
+`;
+
 exports[`runs examples > example "floor" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:42 ]",
@@ -2640,10 +2649,10 @@ exports[`runs examples > example "linger" example index 0 1`] = `
 
 exports[`runs examples > example "loop" example index 0 1`] = `
 [
-  "[ 0/1 → 1/1 | s:bd loop:1 ]",
-  "[ 1/1 → 2/1 | s:bd loop:2 ]",
-  "[ 2/1 → 3/1 | s:bd loop:3 ]",
-  "[ 3/1 → 4/1 | s:bd loop:4 ]",
+  "[ 0/1 → 1/1 | s:casio loop:1 ]",
+  "[ 1/1 → 2/1 | s:casio loop:1 ]",
+  "[ 2/1 → 3/1 | s:casio loop:1 ]",
+  "[ 3/1 → 4/1 | s:casio loop:1 ]",
 ]
 `;
 
@@ -2667,19 +2676,19 @@ exports[`runs examples > example "loopAtCps" example index 0 1`] = `
 
 exports[`runs examples > example "loopBegin" example index 0 1`] = `
 [
-  "[ 0/1 → 1/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0 ]",
-  "[ 1/1 → 2/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.25 ]",
-  "[ 2/1 → 3/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.5 ]",
-  "[ 3/1 → 4/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.75 ]",
+  "[ 0/1 → 1/1 | s:space loop:1 loopBegin:0 analyze:1 ]",
+  "[ 1/1 → 2/1 | s:space loop:1 loopBegin:0.125 analyze:1 ]",
+  "[ 2/1 → 3/1 | s:space loop:1 loopBegin:0.25 analyze:1 ]",
+  "[ 3/1 → 4/1 | s:space loop:1 loopBegin:0 analyze:1 ]",
 ]
 `;
 
 exports[`runs examples > example "loopEnd" example index 0 1`] = `
 [
-  "[ 0/1 → 1/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0 loopEnd:0.1 ]",
-  "[ 1/1 → 2/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.25 loopEnd:0.35 ]",
-  "[ 2/1 → 3/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.5 loopEnd:0.6 ]",
-  "[ 3/1 → 4/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.75 loopEnd:0.85 ]",
+  "[ 0/1 → 1/1 | s:space loop:1 loopEnd:1 analyze:1 ]",
+  "[ 1/1 → 2/1 | s:space loop:1 loopEnd:0.75 analyze:1 ]",
+  "[ 2/1 → 3/1 | s:space loop:1 loopEnd:0.5 analyze:1 ]",
+  "[ 3/1 → 4/1 | s:space loop:1 loopEnd:0.25 analyze:1 ]",
 ]
 `;
 
@@ -4338,6 +4347,36 @@ exports[`runs examples > example "speed" example index 1 1`] = `
   "[ 7/2 → 11/3 | speed:1.5 s:piano clip:1 ]",
   "[ 11/3 → 23/6 | speed:2 s:piano clip:1 ]",
   "[ 23/6 → 4/1 | speed:1.1 s:piano clip:1 ]",
+]
+`;
+
+exports[`runs examples > example "splice" example index 0 1`] = `
+[
+  "[ 0/1 → 5/26 | speed:0.65 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 5/26 → 5/13 | speed:0.65 unit:c begin:0.125 end:0.25 _slices:8 s:breaks165 ]",
+  "[ 5/13 → 20/39 | speed:0.9750000000000001 unit:c begin:0.25 end:0.375 _slices:8 s:breaks165 ]",
+  "[ 20/39 → 25/39 | speed:0.9750000000000001 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
+  "[ 25/39 → 10/13 | speed:0.9750000000000001 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 10/13 → 25/26 | speed:0.65 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
+  "[ (25/26 → 1/1) ⇝ 35/26 | speed:0.325 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 25/26 ⇜ (1/1 → 35/26) | speed:0.325 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 35/26 → 20/13 | speed:0.65 unit:c begin:0.875 end:1 _slices:8 s:breaks165 ]",
+  "[ 20/13 → 45/26 | speed:0.65 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 45/26 → 25/13 | speed:0.65 unit:c begin:0.125 end:0.25 _slices:8 s:breaks165 ]",
+  "[ (25/13 → 2/1) ⇝ 80/39 | speed:0.9750000000000001 unit:c begin:0.25 end:0.375 _slices:8 s:breaks165 ]",
+  "[ 25/13 ⇜ (2/1 → 80/39) | speed:0.9750000000000001 unit:c begin:0.25 end:0.375 _slices:8 s:breaks165 ]",
+  "[ 80/39 → 85/39 | speed:0.9750000000000001 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
+  "[ 85/39 → 30/13 | speed:0.9750000000000001 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 30/13 → 5/2 | speed:0.65 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
+  "[ 5/2 → 75/26 | speed:0.325 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ (75/26 → 3/1) ⇝ 40/13 | speed:0.65 unit:c begin:0.875 end:1 _slices:8 s:breaks165 ]",
+  "[ 75/26 ⇜ (3/1 → 40/13) | speed:0.65 unit:c begin:0.875 end:1 _slices:8 s:breaks165 ]",
+  "[ 40/13 → 85/26 | speed:0.65 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 85/26 → 45/13 | speed:0.65 unit:c begin:0.125 end:0.25 _slices:8 s:breaks165 ]",
+  "[ 45/13 → 140/39 | speed:0.9750000000000001 unit:c begin:0.25 end:0.375 _slices:8 s:breaks165 ]",
+  "[ 140/39 → 145/39 | speed:0.9750000000000001 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
+  "[ 145/39 → 50/13 | speed:0.9750000000000001 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ (50/13 → 4/1) ⇝ 105/26 | speed:0.65 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
 ]
 `;
 
