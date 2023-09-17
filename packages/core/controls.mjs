@@ -1140,13 +1140,10 @@ const generic_params = [
   // ZZFX
   ['zrand'],
   ['curve'],
-  ['pitchJump'],
-  ['pitchJumpTime'],
   ['slide'], // superdirt duplicate
   ['deltaSlide'],
-  /**
-   *
-   */
+  ['pitchJump'],
+  ['pitchJumpTime'],
   ['lfo', 'repeatTime'],
   ['noise'],
   ['zmod'],
