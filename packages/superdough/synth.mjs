@@ -41,7 +41,7 @@ export function registerSynthSounds() {
           fmvelocity: fmVelocity,
           fmwave: fmWaveform = 'sine',
           vib = 0,
-          vibmod = 1,
+          vibmod = .5,
         } = value;
         let { n, note, freq } = value;
         // with synths, n and note are the same thing
