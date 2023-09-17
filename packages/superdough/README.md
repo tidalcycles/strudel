@@ -161,5 +161,6 @@ Then just make sure your first call of `superdough` happens after a click of som
 
 ## Credits
 
+- [ZZFX](https://github.com/KilledByAPixel/ZzFX) used for synths starting with z
 - [SuperDirt](https://github.com/musikinformatik/SuperDirt)
 - [WebDirt](https://github.com/dktr0/WebDirt)

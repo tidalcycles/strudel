@@ -1,21 +1,11 @@
 import { getAudioContext } from './superdough.mjs';
+import { clamp } from './util.mjs';
 
 export function gainNode(value) {
   const node = getAudioContext().createGain();
   node.gain.value = value;
   return node;
 }
-
-export const getOscillator = ({ s, freq, t }) => {
-  // make oscillator
-  const o = getAudioContext().createOscillator();
-  o.type = s || 'triangle';
-  o.frequency.value = Number(freq);
-  o.start(t);
-  //o.stop(t + duration + release);
-  const stop = (time) => o.stop(time);
-  return { node: o, stop };
-};
 
 // alternative to getADSR returning the gain node and a stop handle to trigger the release anytime in the future
 export const getEnvelope = (attack, decay, sustain, release, velocity, begin) => {
@@ -35,6 +25,22 @@ export const getEnvelope = (attack, decay, sustain, release, velocity, begin) =>
       gainNode.gain.setValueAtTime(sustain * velocity, t);
       //}
       gainNode.gain.linearRampToValueAtTime(0, t + release);
+    },
+  };
+};
+
+export const getExpEnvelope = (attack, decay, sustain, release, velocity, begin) => {
+  sustain = Math.max(0.001, sustain);
+  velocity = Math.max(0.001, velocity);
+  const gainNode = getAudioContext().createGain();
+  gainNode.gain.setValueAtTime(0.0001, begin);
+  gainNode.gain.exponentialRampToValueAtTime(velocity, begin + attack);
+  gainNode.gain.exponentialRampToValueAtTime(sustain * velocity, begin + attack + decay);
+  return {
+    node: gainNode,
+    stop: (t) => {
+      // similar to getEnvelope, this will glitch if sustain level has not been reached
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, t + release);
     },
   };
 };
@@ -61,12 +67,15 @@ export const getADSR = (attack, decay, sustain, release, velocity, begin, end) =
   return gainNode;
 };
 
-export const getFilter = (type, frequency, Q) => {
-  const filter = getAudioContext().createBiquadFilter();
-  filter.type = type;
-  filter.frequency.value = frequency;
-  filter.Q.value = Q;
-  return filter;
+export const getParamADSR = (param, attack, decay, sustain, release, min, max, begin, end) => {
+  const range = max - min;
+  const peak = min + range;
+  const sustainLevel = min + sustain * range;
+  param.setValueAtTime(min, begin);
+  param.linearRampToValueAtTime(peak, begin + attack);
+  param.linearRampToValueAtTime(sustainLevel, begin + attack + decay);
+  param.setValueAtTime(sustainLevel, end);
+  param.linearRampToValueAtTime(min, end + Math.max(release, 0.1));
 };
 
 export const getAM = (freq, harmonicityRatio, amount, wave = 'sine') => {
@@ -75,10 +84,44 @@ export const getAM = (freq, harmonicityRatio, amount, wave = 'sine') => {
   const { node: modulator, stop } = mod(modfreq, amount, wave);
   const g = gainNode(1);
   modulator.connect(g.gain);
-  return g;/* 
+  return g; /* 
   const c = 1 / 1 ** amount;
   console.log('c', c);
   const compensate = gainNode(1/amount);
   g.connect(compensate);
   return compensate; */
 };
+export function createFilter(
+  context,
+  type,
+  frequency,
+  Q,
+  attack,
+  decay,
+  sustain,
+  release,
+  fenv,
+  start,
+  end,
+  fanchor = 0.5,
+) {
+  const filter = context.createBiquadFilter();
+  filter.type = type;
+  filter.Q.value = Q;
+  filter.frequency.value = frequency;
+
+  // Apply ADSR to filter frequency
+  if (!isNaN(fenv) && fenv !== 0) {
+    const offset = fenv * fanchor;
+
+    const min = clamp(2 ** -offset * frequency, 0, 20000);
+    const max = clamp(2 ** (fenv - offset) * frequency, 0, 20000);
+
+    // console.log('min', min, 'max', max);
+
+    getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end);
+    return filter;
+  }
+
+  return filter;
+}

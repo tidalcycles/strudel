@@ -9,7 +9,7 @@ import './reverb.mjs';
 import './vowel.mjs';
 import { clamp, getFrequency } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
-import { getFilter, gainNode } from './helpers.mjs';
+import { createFilter, gainNode } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 
@@ -121,6 +121,36 @@ function getReverb(orbit, duration = 2) {
   return reverbs[orbit];
 }
 
+export let analyser, analyserData /* s = {} */;
+export function getAnalyser(/* orbit,  */ fftSize = 2048) {
+  if (!analyser /*s [orbit] */) {
+    const analyserNode = getAudioContext().createAnalyser();
+    analyserNode.fftSize = fftSize;
+    // getDestination().connect(analyserNode);
+    analyser /* s[orbit] */ = analyserNode;
+    //analyserData = new Uint8Array(analyser.frequencyBinCount);
+    analyserData = new Float32Array(analyser.frequencyBinCount);
+  }
+  if (analyser /* s[orbit] */.fftSize !== fftSize) {
+    analyser /* s[orbit] */.fftSize = fftSize;
+    //analyserData = new Uint8Array(analyser.frequencyBinCount);
+    analyserData = new Float32Array(analyser.frequencyBinCount);
+  }
+  return analyser /* s[orbit] */;
+}
+
+export function getAnalyzerData(type = 'time') {
+  const getter = {
+    time: () => analyser?.getFloatTimeDomainData(analyserData),
+    frequency: () => analyser?.getFloatFrequencyData(analyserData),
+  }[type];
+  if (!getter) {
+    throw new Error(`getAnalyzerData: ${type} not supported. use one of ${Object.keys(getter).join(', ')}`);
+  }
+  getter();
+  return analyserData;
+}
+
 function effectSend(input, effect, wet) {
   const send = gainNode(wet);
   input.connect(send);
@@ -137,6 +167,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     );
   }
 
+  // duration is passed as value too..
+  value.duration = hapDuration;
   // calculate absolute time
   let t = ac.currentTime + deadline;
   // destructure
@@ -145,14 +177,32 @@ export const superdough = async (value, deadline, hapDuration) => {
     bank,
     source,
     gain = 0.8,
+    // filters
+    ftype = '12db',
+    fanchor = 0.5,
     // low pass
     cutoff,
+    lpenv,
+    lpattack = 0.01,
+    lpdecay = 0.01,
+    lpsustain = 1,
+    lprelease = 0.01,
     resonance = 1,
     // high pass
+    hpenv,
     hcutoff,
+    hpattack = 0.01,
+    hpdecay = 0.01,
+    hpsustain = 1,
+    hprelease = 0.01,
     hresonance = 1,
     // band pass
+    bpenv,
     bandf,
+    bpattack = 0.01,
+    bpdecay = 0.01,
+    bpsustain = 1,
+    bprelease = 0.01,
     bandq = 1,
     //
     coarse,
@@ -169,6 +219,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     velocity = 1,
     amh, // amplitude modulation harmonicity
     ami = 4, // amplitude modulation index
+    analyze, // analyser wet
+    fft = 8, // fftSize 0 - 10
   } = value;
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
@@ -208,11 +260,78 @@ export const superdough = async (value, deadline, hapDuration) => {
   chain.push(gainNode(gain));
 
   amh !== undefined && chain.push(getAM(getFrequency(value), amh, ami));
+
   // filters
-  cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
-  hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
-  bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
-  vowel !== undefined && chain.push(ac.createVowelFilter(vowel));
+  if (cutoff !== undefined) {
+    let lp = () =>
+      createFilter(
+        ac,
+        'lowpass',
+        cutoff,
+        resonance,
+        lpattack,
+        lpdecay,
+        lpsustain,
+        lprelease,
+        lpenv,
+        t,
+        t + hapDuration,
+        fanchor,
+      );
+    chain.push(lp());
+    if (ftype === '24db') {
+      chain.push(lp());
+    }
+  }
+
+  if (hcutoff !== undefined) {
+    let hp = () =>
+      createFilter(
+        ac,
+        'highpass',
+        hcutoff,
+        hresonance,
+        hpattack,
+        hpdecay,
+        hpsustain,
+        hprelease,
+        hpenv,
+        t,
+        t + hapDuration,
+        fanchor,
+      );
+    chain.push(hp());
+    if (ftype === '24db') {
+      chain.push(hp());
+    }
+  }
+
+  if (bandf !== undefined) {
+    let bp = () =>
+      createFilter(
+        ac,
+        'bandpass',
+        bandf,
+        bandq,
+        bpattack,
+        bpdecay,
+        bpsustain,
+        bprelease,
+        bpenv,
+        t,
+        t + hapDuration,
+        fanchor,
+      );
+    chain.push(bp());
+    if (ftype === '24db') {
+      chain.push(bp());
+    }
+  }
+
+  if (vowel !== undefined) {
+    const vowelFilter = ac.createVowelFilter(vowel);
+    chain.push(vowelFilter);
+  }
 
   // effects
   coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
@@ -244,12 +363,19 @@ export const superdough = async (value, deadline, hapDuration) => {
     reverbSend = effectSend(post, reverbNode, room);
   }
 
+  // analyser
+  let analyserSend;
+  if (analyze) {
+    const analyserNode = getAnalyser(/* orbit,  */ 2 ** (fft + 5));
+    analyserSend = effectSend(post, analyserNode, analyze);
+  }
+
   // connect chain elements together
   chain.slice(1).reduce((last, current) => last.connect(current), chain[0]);
 
   // toDisconnect = all the node that should be disconnected in onended callback
   // this is crucial for performance
-  toDisconnect = chain.concat([delaySend, reverbSend]);
+  toDisconnect = chain.concat([delaySend, reverbSend, analyserSend]);
 };
 
 export const superdoughTrigger = (t, hap, ct, cps) => superdough(hap, t - ct, hap.duration / cps, cps);

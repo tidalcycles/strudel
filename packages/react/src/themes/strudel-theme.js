@@ -40,5 +40,6 @@ export default createTheme({
 
     { tag: t.className, color: '#decb6b' },
     { tag: t.invalid, color: '#ffffff' },
+    { tag: [t.unit, t.punctuation], color: '#82aaff' },
   ],
 });

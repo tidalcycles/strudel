@@ -2,6 +2,7 @@
 export * from './packages/core/index.mjs';
 export * from './packages/csound/index.mjs';
 export * from './packages/embed/index.mjs';
+export * from './packages/desktopbridge/index.mjs';
 export * from './packages/midi/index.mjs';
 export * from './packages/mini/index.mjs';
 export * from './packages/osc/index.mjs';
