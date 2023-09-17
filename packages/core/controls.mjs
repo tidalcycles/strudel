@@ -644,21 +644,24 @@ const generic_params = [
    * Applies a vibrato to the frequency of the oscillator.
    *
    * @name vib
+   * @synonyms vibrato, v
    * @param {number | Pattern} frequency of the vibrato in hertz
-   * @synonyms vibrato
    * @example
-   * sound("triangle").freq(300).vib("<1 2 4 8 16>")
+   * note("a")
+   * .vib("<.5 1 2 4 8 16>")
    */
-  ['vib', 'vibrato'],
+  [['vib', 'vibmod'], 'vibrato', 'v'],
   /**
-   * Sets the vibrato depth as a multiple of base frequency (not vibrato speed!).
+   * Sets the vibrato depth in semitones.
    *
    * @name vibmod
-   * @param {number | Pattern} depth of vibrato (multiple of base frequency)
+   * @synonyms vmod
+   * @param {number | Pattern} depth of vibrato (in semitones)
    * @example
-   * sound("triangle").freq(300).vib("<8 16>").vibmod("<0.25 0.5 0.75 1 2 4>")
+   * note("a").vib(4)
+   * .vibmod("<.25 .5 1 2 12>")
    */
-  ['vibmod'],
+  [['vibmod', 'vib'], 'vmod'],
   [['hcutoff', 'hresonance'], 'hpf', 'hp'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
