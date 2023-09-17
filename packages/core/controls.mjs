@@ -313,6 +313,7 @@ const generic_params = [
   /**
    * Begin to loop at a specific point in the sample (inbetween `begin` and `end`).
    * Note that the loop point must be inbetween `begin` and `end`, and before `loopEnd`!
+   * Note: Samples starting with wt_ will automatically loop! (wt = wavetable)
    *
    * @name loopBegin
    * @param {number | Pattern} time between 0 and 1, where 1 is the length of the sample
