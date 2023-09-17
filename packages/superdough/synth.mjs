@@ -147,12 +147,6 @@ export function waveformN(partials, type) {
 }
 
 export function getOscillator({ s, freq, t, vib, vibmod, partials }) {
-  // Additional oscillator for vibrato effect
-  if (vib > 0) {
-    var vibrato_oscillator = getAudioContext().createOscillator();
-    vibrato_oscillator.frequency.value = vib;
-  }
-
   // Make oscillator with partial count
   let o;
   if (!partials || s === 'sine') {
@@ -161,28 +155,27 @@ export function getOscillator({ s, freq, t, vib, vibmod, partials }) {
   } else {
     o = waveformN(partials, s);
   }
+  o.frequency.value = Number(freq);
+  o.start(t);
 
+  // Additional oscillator for vibrato effect
+  let vibrato_oscillator;
   if (vib > 0) {
-    o.frequency.value = Number(freq);
-    var gain = getAudioContext().createGain();
+    vibrato_oscillator = getAudioContext().createOscillator();
+    vibrato_oscillator.frequency.value = vib;
+    const gain = getAudioContext().createGain();
     // Vibmod is the amount of vibrato, in semitones
-    gain.gain.value = vibmod * freq;
+    gain.gain.value = vibmod * 100;
     vibrato_oscillator.connect(gain);
     gain.connect(o.detune);
     vibrato_oscillator.start(t);
-    o.start(t);
-    return {
-      node: o,
-      stop: (time) => {
-        vibrato_oscillator.stop(time);
-        o.stop(time);
-      },
-    };
-  } else {
-    // Normal operation, without vibrato
-    o.frequency.value = Number(freq);
-    o.start(t);
-    const stop = (time) => o.stop(time);
-    return { node: o, stop };
   }
+
+  return {
+    node: o,
+    stop: (time) => {
+      vibrato_oscillator?.stop(time);
+      o.stop(time);
+    },
+  };
 }
