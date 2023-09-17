@@ -649,10 +649,14 @@ const generic_params = [
    * @example
    * note("a")
    * .vib("<.5 1 2 4 8 16>")
+   * @example
+   * // change the modulation depth with ":"
+   * note("a")
+   * .vib("<.5 1 2 4 8 16>:12")
    */
   [['vib', 'vibmod'], 'vibrato', 'v'],
   /**
-   * Sets the vibrato depth in semitones.
+   * Sets the vibrato depth in semitones. Only has an effect if `vibrato` | `vib` | `v` is is also set
    *
    * @name vibmod
    * @synonyms vmod
@@ -660,6 +664,10 @@ const generic_params = [
    * @example
    * note("a").vib(4)
    * .vibmod("<.25 .5 1 2 12>")
+   * @example
+   * // change the vibrato frequency with ":"
+   * note("a")
+   * .vibmod("<.25 .5 1 2 12>:8")
    */
   [['vibmod', 'vib'], 'vmod'],
   [['hcutoff', 'hresonance'], 'hpf', 'hp'],
