@@ -10180,22 +10180,22 @@ exports[`renders tunes > tune: undergroundPlumber 1`] = `
 
 exports[`renders tunes > tune: waa2 1`] = `
 [
-  "[ -1/4 ⇜ (0/1 → 1/4) | n:48 clip:1.1738393178344886 s:sawtooth cutoff:3997.892048359052 gain:0.5 room:0.5 ]",
-  "[ -1/4 ⇜ (0/1 → 1/4) | n:64 clip:1.1738393178344886 s:sawtooth cutoff:3997.892048359052 gain:0.5 room:0.5 ]",
-  "[ (0/1 → 1/4) ⇝ 1/2 | n:62 clip:1.197659880151613 s:sawtooth cutoff:3991.5732716763446 gain:0.5 room:0.5 ]",
-  "[ (0/1 → 1/4) ⇝ 1/2 | n:43 clip:1.197659880151613 s:sawtooth cutoff:3991.5732716763446 gain:0.5 room:0.5 ]",
-  "[ 0/1 ⇜ (1/4 → 1/2) | n:62 clip:1.197659880151613 s:square cutoff:3991.5732716763446 gain:0.5 room:0.5 ]",
-  "[ 0/1 ⇜ (1/4 → 1/2) | n:43 clip:1.197659880151613 s:square cutoff:3991.5732716763446 gain:0.5 room:0.5 ]",
-  "[ (1/4 → 1/2) ⇝ 3/4 | n:74 clip:1.2451698046878117 s:square cutoff:3966.3742407056534 gain:0.5 room:0.5 ]",
-  "[ (1/4 → 1/2) ⇝ 3/4 | n:55 clip:1.2451698046878117 s:square cutoff:3966.3742407056534 gain:0.5 room:0.5 ]",
-  "[ 1/4 ⇜ (1/2 → 3/4) | n:74 clip:1.2451698046878117 s:sawtooth cutoff:3966.3742407056534 gain:0.5 room:0.5 ]",
-  "[ 1/4 ⇜ (1/2 → 3/4) | n:55 clip:1.2451698046878117 s:sawtooth cutoff:3966.3742407056534 gain:0.5 room:0.5 ]",
-  "[ 1/2 → 3/4 | n:50 clip:1.2688217886051745 s:sawtooth cutoff:3947.554693090452 gain:0.5 room:0.5 ]",
-  "[ (1/2 → 3/4) ⇝ 1/1 | n:69 clip:1.292380289809026 s:sawtooth cutoff:3924.645587531366 gain:0.5 room:0.5 ]",
-  "[ 1/2 ⇜ (3/4 → 1/1) | n:69 clip:1.292380289809026 s:square cutoff:3924.645587531366 gain:0.5 room:0.5 ]",
-  "[ 3/4 → 1/1 | n:41 clip:1.315826773713709 s:square cutoff:3897.7021140702864 gain:0.5 room:0.5 ]",
-  "[ 3/4 → 1/1 | n:62 clip:1.315826773713709 s:square cutoff:3897.7021140702864 gain:0.5 room:0.5 ]",
-  "[ (3/4 → 1/1) ⇝ 5/4 | n:81 clip:1.315826773713709 s:square cutoff:3897.7021140702864 gain:0.5 room:0.5 ]",
+  "[ -1/4 ⇜ (0/1 → 1/4) | note:48 clip:1.1738393178344886 s:sawtooth cutoff:3997.892048359052 gain:0.5 room:0.5 ]",
+  "[ -1/4 ⇜ (0/1 → 1/4) | note:64 clip:1.1738393178344886 s:sawtooth cutoff:3997.892048359052 gain:0.5 room:0.5 ]",
+  "[ (0/1 → 1/4) ⇝ 1/2 | note:62 clip:1.197659880151613 s:sawtooth cutoff:3991.5732716763446 gain:0.5 room:0.5 ]",
+  "[ (0/1 → 1/4) ⇝ 1/2 | note:43 clip:1.197659880151613 s:sawtooth cutoff:3991.5732716763446 gain:0.5 room:0.5 ]",
+  "[ 0/1 ⇜ (1/4 → 1/2) | note:62 clip:1.197659880151613 s:square cutoff:3991.5732716763446 gain:0.5 room:0.5 ]",
+  "[ 0/1 ⇜ (1/4 → 1/2) | note:43 clip:1.197659880151613 s:square cutoff:3991.5732716763446 gain:0.5 room:0.5 ]",
+  "[ (1/4 → 1/2) ⇝ 3/4 | note:74 clip:1.2451698046878117 s:square cutoff:3966.3742407056534 gain:0.5 room:0.5 ]",
+  "[ (1/4 → 1/2) ⇝ 3/4 | note:55 clip:1.2451698046878117 s:square cutoff:3966.3742407056534 gain:0.5 room:0.5 ]",
+  "[ 1/4 ⇜ (1/2 → 3/4) | note:74 clip:1.2451698046878117 s:sawtooth cutoff:3966.3742407056534 gain:0.5 room:0.5 ]",
+  "[ 1/4 ⇜ (1/2 → 3/4) | note:55 clip:1.2451698046878117 s:sawtooth cutoff:3966.3742407056534 gain:0.5 room:0.5 ]",
+  "[ 1/2 → 3/4 | note:50 clip:1.2688217886051745 s:sawtooth cutoff:3947.554693090452 gain:0.5 room:0.5 ]",
+  "[ (1/2 → 3/4) ⇝ 1/1 | note:69 clip:1.292380289809026 s:sawtooth cutoff:3924.645587531366 gain:0.5 room:0.5 ]",
+  "[ 1/2 ⇜ (3/4 → 1/1) | note:69 clip:1.292380289809026 s:square cutoff:3924.645587531366 gain:0.5 room:0.5 ]",
+  "[ 3/4 → 1/1 | note:41 clip:1.315826773713709 s:square cutoff:3897.7021140702864 gain:0.5 room:0.5 ]",
+  "[ 3/4 → 1/1 | note:62 clip:1.315826773713709 s:square cutoff:3897.7021140702864 gain:0.5 room:0.5 ]",
+  "[ (3/4 → 1/1) ⇝ 5/4 | note:81 clip:1.315826773713709 s:square cutoff:3897.7021140702864 gain:0.5 room:0.5 ]",
 ]
 `;
 
