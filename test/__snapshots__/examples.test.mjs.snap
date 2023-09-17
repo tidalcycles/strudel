@@ -900,6 +900,33 @@ exports[`runs examples > example "begin" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "bpattack" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
+]
+`;
+
+exports[`runs examples > example "bpdecay" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth bandf:500 bpdecay:0.5 bpsustain:0.2 bpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth bandf:500 bpdecay:0.5 bpsustain:0.2 bpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth bandf:500 bpdecay:0.5 bpsustain:0.2 bpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth bandf:500 bpdecay:0.5 bpsustain:0.2 bpenv:4 ]",
+]
+`;
+
+exports[`runs examples > example "bpenv" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth bandf:500 bpattack:0.5 bpenv:4 ]",
+]
+`;
+
 exports[`runs examples > example "bpf" example index 0 1`] = `
 [
   "[ 0/1 → 1/3 | s:hh bandf:1000 ]",
@@ -935,6 +962,24 @@ exports[`runs examples > example "bpq" example index 0 1`] = `
   "[ 5/2 → 3/1 | s:sd bandf:500 bandq:2 ]",
   "[ 3/1 → 7/2 | s:bd bandf:500 bandq:3 ]",
   "[ 7/2 → 4/1 | s:sd bandf:500 bandq:3 ]",
+]
+`;
+
+exports[`runs examples > example "bprelease" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth clip:0.5 bandf:500 bpenv:4 bprelease:0.5 release:0.5 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth clip:0.5 bandf:500 bpenv:4 bprelease:0.5 release:0.5 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth clip:0.5 bandf:500 bpenv:4 bprelease:0.5 release:0.5 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth clip:0.5 bandf:500 bpenv:4 bprelease:0.5 release:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "bpsustain" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth bandf:500 bpdecay:0.5 bpsustain:0 bpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth bandf:500 bpdecay:0.5 bpsustain:0 bpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth bandf:500 bpdecay:0.5 bpsustain:0 bpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth bandf:500 bpdecay:0.5 bpsustain:0 bpenv:4 ]",
 ]
 `;
 
@@ -2013,6 +2058,15 @@ exports[`runs examples > example "freq" example index 1 1`] = `
 ]
 `;
 
+exports[`runs examples > example "ftype" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:500 bpenv:4 ftype:12db ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth cutoff:500 bpenv:4 ftype:24db ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth cutoff:500 bpenv:4 ftype:12db ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth cutoff:500 bpenv:4 ftype:24db ]",
+]
+`;
+
 exports[`runs examples > example "gain" example index 0 1`] = `
 [
   "[ 0/1 → 1/8 | s:hh gain:0.4 ]",
@@ -2047,6 +2101,33 @@ exports[`runs examples > example "gain" example index 0 1`] = `
   "[ 29/8 → 15/4 | s:hh gain:1 ]",
   "[ 15/4 → 31/8 | s:hh gain:0.4 ]",
   "[ 31/8 → 4/1 | s:hh gain:1 ]",
+]
+`;
+
+exports[`runs examples > example "hpattack" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
+]
+`;
+
+exports[`runs examples > example "hpdecay" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth hcutoff:500 hpdecay:0.5 hpsustain:0.2 hpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth hcutoff:500 hpdecay:0.5 hpsustain:0.2 hpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth hcutoff:500 hpdecay:0.5 hpsustain:0.2 hpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth hcutoff:500 hpdecay:0.5 hpsustain:0.2 hpenv:4 ]",
+]
+`;
+
+exports[`runs examples > example "hpenv" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",
 ]
 `;
 
@@ -2134,6 +2215,24 @@ exports[`runs examples > example "hpq" example index 0 1`] = `
   "[ 7/2 → 15/4 | s:hh hcutoff:2000 hresonance:30 ]",
   "[ 7/2 → 4/1 | s:sd hcutoff:2000 hresonance:30 ]",
   "[ 15/4 → 4/1 | s:hh hcutoff:2000 hresonance:30 ]",
+]
+`;
+
+exports[`runs examples > example "hprelease" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth clip:0.5 hcutoff:500 hpenv:4 hprelease:0.5 release:0.5 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth clip:0.5 hcutoff:500 hpenv:4 hprelease:0.5 release:0.5 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth clip:0.5 hcutoff:500 hpenv:4 hprelease:0.5 release:0.5 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth clip:0.5 hcutoff:500 hpenv:4 hprelease:0.5 release:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "hpsustain" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth hcutoff:500 hpdecay:0.5 hpsustain:0 hpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth hcutoff:500 hpdecay:0.5 hpsustain:0 hpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth hcutoff:500 hpdecay:0.5 hpsustain:0 hpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth hcutoff:500 hpdecay:0.5 hpsustain:0 hpenv:4 ]",
 ]
 `;
 
@@ -2568,19 +2667,46 @@ exports[`runs examples > example "loopAtCps" example index 0 1`] = `
 
 exports[`runs examples > example "loopBegin" example index 0 1`] = `
 [
-  "[ 0/1 → 1/1 | s:numbers loopBegin:0 loop:1 ]",
-  "[ 1/1 → 2/1 | s:numbers loopBegin:0.25 loop:1 ]",
-  "[ 2/1 → 3/1 | s:numbers loopBegin:0.5 loop:1 ]",
-  "[ 3/1 → 4/1 | s:numbers loopBegin:0.75 loop:1 ]",
+  "[ 0/1 → 1/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0 ]",
+  "[ 1/1 → 2/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.25 ]",
+  "[ 2/1 → 3/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.5 ]",
+  "[ 3/1 → 4/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.75 ]",
 ]
 `;
 
 exports[`runs examples > example "loopEnd" example index 0 1`] = `
 [
-  "[ 0/1 → 1/1 | s:numbers loopEnd:0 loop:1 ]",
-  "[ 1/1 → 2/1 | s:numbers loopEnd:0.25 loop:1 ]",
-  "[ 2/1 → 3/1 | s:numbers loopEnd:0.5 loop:1 ]",
-  "[ 3/1 → 4/1 | s:numbers loopEnd:0.75 loop:1 ]",
+  "[ 0/1 → 1/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0 loopEnd:0.1 ]",
+  "[ 1/1 → 2/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.25 loopEnd:0.35 ]",
+  "[ 2/1 → 3/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.5 loopEnd:0.6 ]",
+  "[ 3/1 → 4/1 | s:numbers loop:1 begin:0 end:1 loopBegin:0.75 loopEnd:0.85 ]",
+]
+`;
+
+exports[`runs examples > example "lpattack" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+]
+`;
+
+exports[`runs examples > example "lpdecay" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0.2 lpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0.2 lpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0.2 lpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0.2 lpenv:4 ]",
+]
+`;
+
+exports[`runs examples > example "lpenv" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth cutoff:500 lpattack:0.5 lpenv:4 ]",
 ]
 `;
 
@@ -2672,6 +2798,24 @@ exports[`runs examples > example "lpq" example index 0 1`] = `
   "[ 7/2 → 15/4 | s:hh cutoff:2000 resonance:30 ]",
   "[ 7/2 → 4/1 | s:sd cutoff:2000 resonance:30 ]",
   "[ 15/4 → 4/1 | s:hh cutoff:2000 resonance:30 ]",
+]
+`;
+
+exports[`runs examples > example "lprelease" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth clip:0.5 cutoff:500 lpenv:4 lprelease:0.5 release:0.5 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth clip:0.5 cutoff:500 lpenv:4 lprelease:0.5 release:0.5 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth clip:0.5 cutoff:500 lpenv:4 lprelease:0.5 release:0.5 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth clip:0.5 cutoff:500 lpenv:4 lprelease:0.5 release:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "lpsustain" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0 lpenv:4 ]",
+  "[ 1/1 → 2/1 | note:e2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0 lpenv:4 ]",
+  "[ 2/1 → 3/1 | note:f2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0 lpenv:4 ]",
+  "[ 3/1 → 4/1 | note:g2 s:sawtooth cutoff:500 lpdecay:0.5 lpsustain:0 lpenv:4 ]",
 ]
 `;
 

@@ -406,6 +406,227 @@ const generic_params = [
    *
    */
   [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
+
+  /**
+   * Sets the lowpass filter envelope modulation depth.
+   * @name lpenv
+   * @param {number | Pattern} modulation depth of the lowpass filter envelope between 0 and _n_
+   * @synonyms lpe
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpa(.5)
+   * .lpenv("<4 2 1 0 -1 -2 -4>/4")
+   */
+  ['lpenv', 'lpe'],
+  /**
+   * Sets the highpass filter envelope modulation depth.
+   * @name hpenv
+   * @param {number | Pattern} modulation depth of the highpass filter envelope between 0 and _n_
+   * @synonyms hpe
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpa(.5)
+   * .hpenv("<4 2 1 0 -1 -2 -4>/4")
+   */
+  ['hpenv', 'hpe'],
+  /**
+   * Sets the bandpass filter envelope modulation depth.
+   * @name bpenv
+   * @param {number | Pattern} modulation depth of the bandpass filter envelope between 0 and _n_
+   * @synonyms bpe
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpa(.5)
+   * .bpenv("<4 2 1 0 -1 -2 -4>/4")
+   */
+  ['bpenv', 'bpe'],
+  /**
+   * Sets the attack duration for the lowpass filter envelope.
+   * @name lpattack
+   * @param {number | Pattern} attack time of the filter envelope
+   * @synonyms lpa
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpa("<.5 .25 .1 .01>/4")
+   * .lpenv(4)
+   */
+  ['lpattack', 'lpa'],
+  /**
+   * Sets the attack duration for the highpass filter envelope.
+   * @name hpattack
+   * @param {number | Pattern} attack time of the highpass filter envelope
+   * @synonyms hpa
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpa("<.5 .25 .1 .01>/4")
+   * .hpenv(4)
+   */
+  ['hpattack', 'hpa'],
+  /**
+   * Sets the attack duration for the bandpass filter envelope.
+   * @name bpattack
+   * @param {number | Pattern} attack time of the bandpass filter envelope
+   * @synonyms bpa
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpa("<.5 .25 .1 .01>/4")
+   * .bpenv(4)
+   */
+  ['bpattack', 'bpa'],
+  /**
+   * Sets the decay duration for the lowpass filter envelope.
+   * @name lpdecay
+   * @param {number | Pattern} decay time of the filter envelope
+   * @synonyms lpd
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpd("<.5 .25 .1 0>/4")
+   * .lps(0.2)
+   * .lpenv(4)
+   */
+  ['lpdecay', 'lpd'],
+  /**
+   * Sets the decay duration for the highpass filter envelope.
+   * @name hpdecay
+   * @param {number | Pattern} decay time of the highpass filter envelope
+   * @synonyms hpd
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpd("<.5 .25 .1 0>/4")
+   * .hps(0.2)
+   * .hpenv(4)
+   */
+  ['hpdecay', 'hpd'],
+  /**
+   * Sets the decay duration for the bandpass filter envelope.
+   * @name bpdecay
+   * @param {number | Pattern} decay time of the bandpass filter envelope
+   * @synonyms bpd
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpd("<.5 .25 .1 0>/4")
+   * .bps(0.2)
+   * .bpenv(4)
+   */
+  ['bpdecay', 'bpd'],
+  /**
+   * Sets the sustain amplitude for the lowpass filter envelope.
+   * @name lpsustain
+   * @param {number | Pattern} sustain amplitude of the lowpass filter envelope
+   * @synonyms lps
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpd(.5)
+   * .lps("<0 .25 .5 1>/4")
+   * .lpenv(4)
+   */
+  ['lpsustain', 'lps'],
+  /**
+   * Sets the sustain amplitude for the highpass filter envelope.
+   * @name hpsustain
+   * @param {number | Pattern} sustain amplitude of the highpass filter envelope
+   * @synonyms hps
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpd(.5)
+   * .hps("<0 .25 .5 1>/4")
+   * .hpenv(4)
+   */
+  ['hpsustain', 'hps'],
+  /**
+   * Sets the sustain amplitude for the bandpass filter envelope.
+   * @name bpsustain
+   * @param {number | Pattern} sustain amplitude of the bandpass filter envelope
+   * @synonyms bps
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpd(.5)
+   * .bps("<0 .25 .5 1>/4")
+   * .bpenv(4)
+   */
+  ['bpsustain', 'bps'],
+  /**
+   * Sets the release time for the lowpass filter envelope.
+   * @name lprelease
+   * @param {number | Pattern} release time of the filter envelope
+   * @synonyms lpr
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .lpf(500)
+   * .lpenv(4)
+   * .lpr("<.5 .25 .1 0>/4")
+   * .release(.5)
+   */
+  ['lprelease', 'lpr'],
+  /**
+   * Sets the release time for the highpass filter envelope.
+   * @name hprelease
+   * @param {number | Pattern} release time of the highpass filter envelope
+   * @synonyms hpr
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .hpf(500)
+   * .hpenv(4)
+   * .hpr("<.5 .25 .1 0>/4")
+   * .release(.5)
+   */
+  ['hprelease', 'hpr'],
+  /**
+   * Sets the release time for the bandpass filter envelope.
+   * @name bprelease
+   * @param {number | Pattern} release time of the bandpass filter envelope
+   * @synonyms bpr
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .bpf(500)
+   * .bpenv(4)
+   * .bpr("<.5 .25 .1 0>/4")
+   * .release(.5)
+   */
+  ['bprelease', 'bpr'],
+  /**
+   * Sets the filter type. The 24db filter is more aggressive. More types might be added in the future.
+   * @name ftype
+   * @param {number | Pattern} type 12db (default) or 24db
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .bpenv(4)
+   * .ftype("<12db 24db>")
+   */
+  ['ftype'],
+  ['fanchor'],
   /**
    * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
    *
