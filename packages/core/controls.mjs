@@ -299,13 +299,14 @@ const generic_params = [
    */
   ['end'],
   /**
-   * Loops the sample (from `begin` to `end`) the specified number of times.
+   * Loops the sample.
    * Note that the tempo of the loop is not synced with the cycle tempo.
+   * To change the loop region, use loopBegin / loopEnd.
    *
    * @name loop
-   * @param {number | Pattern} times How often the sample is looped
+   * @param {number | Pattern} on If 1, the sample is looped
    * @example
-   * s("bd").loop("<1 2 3 4>").osc()
+   * s("casio").loop(1)
    *
    */
   ['loop'],
@@ -314,13 +315,11 @@ const generic_params = [
    * Note that the loop point must be inbetween `begin` and `end`, and before `loopEnd`!
    *
    * @name loopBegin
-   * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
+   * @param {number | Pattern} time between 0 and 1, where 1 is the length of the sample
    * @synonyms loopb
    * @example
-   * s("numbers")
-   *  .loop(1)
-   *  .begin(0).end(1)
-   *  .loopBegin("<0 .25 .5 .75>")
+   * s("space").loop(1)
+   * .loopBegin("<0 .125 .25>").scope()
    */
   ['loopBegin', 'loopb'],
   /**
@@ -329,14 +328,11 @@ const generic_params = [
    * Note that the loop point must be inbetween `begin` and `end`, and after `loopBegin`!
    *
    * @name loopEnd
-   * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
+   * @param {number | Pattern} time between 0 and 1, where 1 is the length of the sample
    * @synonyms loope
    * @example
-   * s("numbers")
-   *  .loop(1)
-   *  .begin(0).end(1)
-   *  .loopBegin("<0 .25 .5 .75>")
-   *  .loopEnd("<0.1 .35 .6 .85>")
+   * s("space").loop(1)
+   * .loopEnd("<1 .75 .5 .25>").scope()
    */
   ['loopEnd', 'loope'],
   /**
