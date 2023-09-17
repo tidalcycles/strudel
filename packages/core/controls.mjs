@@ -649,7 +649,7 @@ const generic_params = [
    * @example
    * sound("triangle").freq(300).vib("<1 2 4 8 16>")
    */
-  [['vibrato'], 'vib'],
+  ['vib', 'vibrato'],
   /**
    * Sets the vibrato depth as a multiple of base frequency (not vibrato speed!).
    *
@@ -658,10 +658,8 @@ const generic_params = [
    * @example
    * sound("triangle").freq(300).vib("<8 16>").vibmod("<0.25 0.5 0.75 1 2 4>")
    */
-  [['vibmod'], 'vibmod'],
-  [['hcutoff', 'hresonance'], 'hpf', 'hp'],
-  ['vib'],
   ['vibmod'],
+  [['hcutoff', 'hresonance'], 'hpf', 'hp'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
    *
@@ -933,8 +931,6 @@ const generic_params = [
   ['rate'],
   // TODO: slide param for certain synths
   ['slide'],
-
-  ['slidespeed'],
   // TODO: detune? https://tidalcycles.org/docs/patternlib/tutorials/synthesizers/#supersquare
   ['semitone'],
   // TODO: dedup with synth param, see https://tidalcycles.org/docs/reference/synthesizers/#superpiano
