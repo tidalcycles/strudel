@@ -34,6 +34,7 @@ import strudelTheme from '@strudel.cycles/react/src/themes/strudel-theme';
 import bluescreen, { settings as bluescreenSettings } from '@strudel.cycles/react/src/themes/bluescreen';
 import blackscreen, { settings as blackscreenSettings } from '@strudel.cycles/react/src/themes/blackscreen';
 import whitescreen, { settings as whitescreenSettings } from '@strudel.cycles/react/src/themes/whitescreen';
+import teletext, { settings as teletextSettings } from '@strudel.cycles/react/src/themes/teletext';
 import algoboy, { settings as algoboySettings } from '@strudel.cycles/react/src/themes/algoboy';
 import terminal, { settings as terminalSettings } from '@strudel.cycles/react/src/themes/terminal';
 
@@ -42,6 +43,7 @@ export const themes = {
   bluescreen,
   blackscreen,
   whitescreen,
+  teletext,
   algoboy,
   terminal,
   abcdef,
@@ -95,6 +97,7 @@ export const settings = {
   bluescreen: bluescreenSettings,
   blackscreen: blackscreenSettings,
   whitescreen: whitescreenSettings,
+  teletext: teletextSettings,
   algoboy: algoboySettings,
   terminal: terminalSettings,
   abcdef: {
@@ -468,4 +471,12 @@ function getCircularReplacer() {
 
 function stringifySafe(json) {
   return JSON.stringify(json, getCircularReplacer());
+}
+
+export function injectStyle(rule) {
+  const newStyle = document.createElement('style');
+  document.head.appendChild(newStyle);
+  const styleSheet = newStyle.sheet;
+  const ruleIndex = styleSheet.insertRule(rule, 0);
+  return () => styleSheet.deleteRule(ruleIndex);
 }

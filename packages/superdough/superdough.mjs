@@ -9,7 +9,7 @@ import './reverb.mjs';
 import './vowel.mjs';
 import { clamp } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
-import { getFilter, gainNode } from './helpers.mjs';
+import { createFilter, gainNode } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 
@@ -167,6 +167,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     );
   }
 
+  // duration is passed as value too..
+  value.duration = hapDuration;
   // calculate absolute time
   let t = ac.currentTime + deadline;
   // destructure
@@ -175,14 +177,32 @@ export const superdough = async (value, deadline, hapDuration) => {
     bank,
     source,
     gain = 0.8,
+    // filters
+    ftype = '12db',
+    fanchor = 0.5,
     // low pass
     cutoff,
+    lpenv,
+    lpattack = 0.01,
+    lpdecay = 0.01,
+    lpsustain = 1,
+    lprelease = 0.01,
     resonance = 1,
     // high pass
+    hpenv,
     hcutoff,
+    hpattack = 0.01,
+    hpdecay = 0.01,
+    hpsustain = 1,
+    hprelease = 0.01,
     hresonance = 1,
     // band pass
+    bpenv,
     bandf,
+    bpattack = 0.01,
+    bpdecay = 0.01,
+    bpsustain = 1,
+    bprelease = 0.01,
     bandq = 1,
     //
     coarse,
@@ -237,11 +257,76 @@ export const superdough = async (value, deadline, hapDuration) => {
   // gain stage
   chain.push(gainNode(gain));
 
-  // filters
-  cutoff !== undefined && chain.push(getFilter('lowpass', cutoff, resonance));
-  hcutoff !== undefined && chain.push(getFilter('highpass', hcutoff, hresonance));
-  bandf !== undefined && chain.push(getFilter('bandpass', bandf, bandq));
-  vowel !== undefined && chain.push(ac.createVowelFilter(vowel));
+  if (cutoff !== undefined) {
+    let lp = () =>
+      createFilter(
+        ac,
+        'lowpass',
+        cutoff,
+        resonance,
+        lpattack,
+        lpdecay,
+        lpsustain,
+        lprelease,
+        lpenv,
+        t,
+        t + hapDuration,
+        fanchor,
+      );
+    chain.push(lp());
+    if (ftype === '24db') {
+      chain.push(lp());
+    }
+  }
+
+  if (hcutoff !== undefined) {
+    let hp = () =>
+      createFilter(
+        ac,
+        'highpass',
+        hcutoff,
+        hresonance,
+        hpattack,
+        hpdecay,
+        hpsustain,
+        hprelease,
+        hpenv,
+        t,
+        t + hapDuration,
+        fanchor,
+      );
+    chain.push(hp());
+    if (ftype === '24db') {
+      chain.push(hp());
+    }
+  }
+
+  if (bandf !== undefined) {
+    let bp = () =>
+      createFilter(
+        ac,
+        'bandpass',
+        bandf,
+        bandq,
+        bpattack,
+        bpdecay,
+        bpsustain,
+        bprelease,
+        bpenv,
+        t,
+        t + hapDuration,
+        fanchor,
+      );
+    chain.push(bp());
+    if (ftype === '24db') {
+      chain.push(bp());
+    }
+  }
+
+  if (vowel !== undefined) {
+    const vowelFilter = ac.createVowelFilter(vowel);
+    chain.push(vowelFilter);
+  }
 
   // effects
   coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));

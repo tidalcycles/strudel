@@ -12,6 +12,7 @@ export const settings = {
   gutterBackground: 'transparent',
   gutterForeground: '#0f380f',
   light: true,
+  customStyle: '.cm-line { line-height: 1 }',
 };
 export default createTheme({
   theme: 'light',
@@ -35,5 +36,6 @@ export default createTheme({
     { tag: t.propertyName, color: '#0f380f' },
     { tag: t.className, color: '#0f380f' },
     { tag: t.invalid, color: '#0f380f' },
+    { tag: [t.unit, t.punctuation], color: '#0f380f' },
   ],
 });

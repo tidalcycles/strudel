@@ -118,7 +118,10 @@ const generic_params = [
    * @name fmh
    * @param {number | Pattern} harmonicity
    * @example
-   * note("c e g b").fm(4).fmh("<1 2 1.5 1.61>")
+   * note("c e g b")
+   * .fm(4)
+   * .fmh("<1 2 1.5 1.61>")
+   * .scope()
    *
    */
   [['fmh', 'fmi'], 'fmh'],
@@ -130,10 +133,72 @@ const generic_params = [
    * @param {number | Pattern} brightness modulation index
    * @synonyms fmi
    * @example
-   * note("c e g b").fm("<0 1 2 8 32>")
+   * note("c e g b")
+   * .fm("<0 1 2 8 32>")
+   * .scope()
    *
    */
   [['fmi', 'fmh'], 'fm'],
+  // fm envelope
+  /**
+   * Ramp type of fm envelope. Exp might be a bit broken..
+   *
+   * @name fmenv
+   * @param {number | Pattern} type lin | exp
+   * @example
+   * note("c e g b")
+   * .fm(4)
+   * .fmdecay(.2)
+   * .fmsustain(0)
+   * .fmenv("<exp lin>")
+   * .scope()
+   *
+   */
+  ['fmenv'],
+  /**
+   * Attack time for the FM envelope: time it takes to reach maximum modulation
+   *
+   * @name fmattack
+   * @param {number | Pattern} time attack time
+   * @example
+   * note("c e g b")
+   * .fm(4)
+   * .fmattack("<0 .05 .1 .2>")
+   * .scope()
+   *
+   */
+  ['fmattack'],
+  /**
+   * Decay time for the FM envelope: seconds until the sustain level is reached after the attack phase.
+   *
+   * @name fmdecay
+   * @param {number | Pattern} time decay time
+   * @example
+   * note("c e g b")
+   * .fm(4)
+   * .fmdecay("<.01 .05 .1 .2>")
+   * .fmsustain(.4)
+   * .scope()
+   *
+   */
+  ['fmdecay'],
+  /**
+   * Sustain level for the FM envelope: how much modulation is applied after the decay phase
+   *
+   * @name fmsustain
+   * @param {number | Pattern} level sustain level
+   * @example
+   * note("c e g b")
+   * .fm(4)
+   * .fmdecay(.1)
+   * .fmsustain("<1 .75 .5 0>")
+   * .scope()
+   *
+   */
+  ['fmsustain'],
+  // these are not really useful... skipping for now
+  ['fmrelease'],
+  ['fmvelocity'],
 
   /**
    * Select the sound bank to use. To be used together with `s`. The bank name (+ "_") will be prepended to the value of `s`.
@@ -234,16 +299,52 @@ const generic_params = [
    */
   ['end'],
   /**
-   * Loops the sample (from `begin` to `end`) the specified number of times.
+   * Loops the sample.
    * Note that the tempo of the loop is not synced with the cycle tempo.
+   * To change the loop region, use loopBegin / loopEnd.
    *
    * @name loop
-   * @param {number | Pattern} times How often the sample is looped
+   * @param {number | Pattern} on If 1, the sample is looped
    * @example
-   * s("bd").loop("<1 2 3 4>").osc()
+   * s("casio").loop(1)
    *
    */
   ['loop'],
+  /**
+   * Begin to loop at a specific point in the sample (inbetween `begin` and `end`).
+   * Note that the loop point must be inbetween `begin` and `end`, and before `loopEnd`!
+   * Note: Samples starting with wt_ will automatically loop! (wt = wavetable)
+   *
+   * @name loopBegin
+   * @param {number | Pattern} time between 0 and 1, where 1 is the length of the sample
+   * @synonyms loopb
+   * @example
+   * s("space").loop(1)
+   * .loopBegin("<0 .125 .25>").scope()
+   */
+  ['loopBegin', 'loopb'],
+  /**
+   *
+   * End the looping section at a specific point in the sample (inbetween `begin` and `end`).
+   * Note that the loop point must be inbetween `begin` and `end`, and after `loopBegin`!
+   *
+   * @name loopEnd
+   * @param {number | Pattern} time between 0 and 1, where 1 is the length of the sample
+   * @synonyms loope
+   * @example
+   * s("space").loop(1)
+   * .loopEnd("<1 .75 .5 .25>").scope()
+   */
+  ['loopEnd', 'loope'],
+  /**
+   * bit crusher effect.
+   *
+   * @name crush
+   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
+   * @example
+   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
+   *
+   */
   // TODO: currently duplicated with "native" legato
   // TODO: superdirt legato will do more: https://youtu.be/dQPmE1WaD1k?t=419
   /**
@@ -258,15 +359,6 @@ const generic_params = [
    */
   // ['legato'],
   // ['clhatdecay'],
-  /**
-   * bit crusher effect.
-   *
-   * @name crush
-   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
-   * @example
-   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
-   *
-   */
   ['crush'],
   /**
    * fake-resampling for lowering the sample rate. Caution: This effect seems to only work in chromium based browsers
@@ -278,7 +370,6 @@ const generic_params = [
    *
    */
   ['coarse'],
-
   /**
    * choose the channel the pattern is sent to in superdirt
    *
@@ -312,6 +403,227 @@ const generic_params = [
    *
    */
   [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
+
+  /**
+   * Sets the lowpass filter envelope modulation depth.
+   * @name lpenv
+   * @param {number | Pattern} modulation depth of the lowpass filter envelope between 0 and _n_
+   * @synonyms lpe
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpa(.5)
+   * .lpenv("<4 2 1 0 -1 -2 -4>/4")
+   */
+  ['lpenv', 'lpe'],
+  /**
+   * Sets the highpass filter envelope modulation depth.
+   * @name hpenv
+   * @param {number | Pattern} modulation depth of the highpass filter envelope between 0 and _n_
+   * @synonyms hpe
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpa(.5)
+   * .hpenv("<4 2 1 0 -1 -2 -4>/4")
+   */
+  ['hpenv', 'hpe'],
+  /**
+   * Sets the bandpass filter envelope modulation depth.
+   * @name bpenv
+   * @param {number | Pattern} modulation depth of the bandpass filter envelope between 0 and _n_
+   * @synonyms bpe
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpa(.5)
+   * .bpenv("<4 2 1 0 -1 -2 -4>/4")
+   */
+  ['bpenv', 'bpe'],
+  /**
+   * Sets the attack duration for the lowpass filter envelope.
+   * @name lpattack
+   * @param {number | Pattern} attack time of the filter envelope
+   * @synonyms lpa
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpa("<.5 .25 .1 .01>/4")
+   * .lpenv(4)
+   */
+  ['lpattack', 'lpa'],
+  /**
+   * Sets the attack duration for the highpass filter envelope.
+   * @name hpattack
+   * @param {number | Pattern} attack time of the highpass filter envelope
+   * @synonyms hpa
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpa("<.5 .25 .1 .01>/4")
+   * .hpenv(4)
+   */
+  ['hpattack', 'hpa'],
+  /**
+   * Sets the attack duration for the bandpass filter envelope.
+   * @name bpattack
+   * @param {number | Pattern} attack time of the bandpass filter envelope
+   * @synonyms bpa
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpa("<.5 .25 .1 .01>/4")
+   * .bpenv(4)
+   */
+  ['bpattack', 'bpa'],
+  /**
+   * Sets the decay duration for the lowpass filter envelope.
+   * @name lpdecay
+   * @param {number | Pattern} decay time of the filter envelope
+   * @synonyms lpd
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpd("<.5 .25 .1 0>/4")
+   * .lps(0.2)
+   * .lpenv(4)
+   */
+  ['lpdecay', 'lpd'],
+  /**
+   * Sets the decay duration for the highpass filter envelope.
+   * @name hpdecay
+   * @param {number | Pattern} decay time of the highpass filter envelope
+   * @synonyms hpd
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpd("<.5 .25 .1 0>/4")
+   * .hps(0.2)
+   * .hpenv(4)
+   */
+  ['hpdecay', 'hpd'],
+  /**
+   * Sets the decay duration for the bandpass filter envelope.
+   * @name bpdecay
+   * @param {number | Pattern} decay time of the bandpass filter envelope
+   * @synonyms bpd
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpd("<.5 .25 .1 0>/4")
+   * .bps(0.2)
+   * .bpenv(4)
+   */
+  ['bpdecay', 'bpd'],
+  /**
+   * Sets the sustain amplitude for the lowpass filter envelope.
+   * @name lpsustain
+   * @param {number | Pattern} sustain amplitude of the lowpass filter envelope
+   * @synonyms lps
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpd(.5)
+   * .lps("<0 .25 .5 1>/4")
+   * .lpenv(4)
+   */
+  ['lpsustain', 'lps'],
+  /**
+   * Sets the sustain amplitude for the highpass filter envelope.
+   * @name hpsustain
+   * @param {number | Pattern} sustain amplitude of the highpass filter envelope
+   * @synonyms hps
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpd(.5)
+   * .hps("<0 .25 .5 1>/4")
+   * .hpenv(4)
+   */
+  ['hpsustain', 'hps'],
+  /**
+   * Sets the sustain amplitude for the bandpass filter envelope.
+   * @name bpsustain
+   * @param {number | Pattern} sustain amplitude of the bandpass filter envelope
+   * @synonyms bps
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpd(.5)
+   * .bps("<0 .25 .5 1>/4")
+   * .bpenv(4)
+   */
+  ['bpsustain', 'bps'],
+  /**
+   * Sets the release time for the lowpass filter envelope.
+   * @name lprelease
+   * @param {number | Pattern} release time of the filter envelope
+   * @synonyms lpr
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .lpf(500)
+   * .lpenv(4)
+   * .lpr("<.5 .25 .1 0>/4")
+   * .release(.5)
+   */
+  ['lprelease', 'lpr'],
+  /**
+   * Sets the release time for the highpass filter envelope.
+   * @name hprelease
+   * @param {number | Pattern} release time of the highpass filter envelope
+   * @synonyms hpr
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .hpf(500)
+   * .hpenv(4)
+   * .hpr("<.5 .25 .1 0>/4")
+   * .release(.5)
+   */
+  ['hprelease', 'hpr'],
+  /**
+   * Sets the release time for the bandpass filter envelope.
+   * @name bprelease
+   * @param {number | Pattern} release time of the bandpass filter envelope
+   * @synonyms bpr
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .bpf(500)
+   * .bpenv(4)
+   * .bpr("<.5 .25 .1 0>/4")
+   * .release(.5)
+   */
+  ['bprelease', 'bpr'],
+  /**
+   * Sets the filter type. The 24db filter is more aggressive. More types might be added in the future.
+   * @name ftype
+   * @param {number | Pattern} type 12db (default) or 24db
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .bpenv(4)
+   * .ftype("<12db 24db>")
+   */
+  ['ftype'],
+  ['fanchor'],
   /**
    * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
    *
@@ -328,6 +640,36 @@ const generic_params = [
    */
   // currently an alias of 'hcutoff' https://github.com/tidalcycles/strudel/issues/496
   // ['hpf'],
+  /**
+   * Applies a vibrato to the frequency of the oscillator.
+   *
+   * @name vib
+   * @synonyms vibrato, v
+   * @param {number | Pattern} frequency of the vibrato in hertz
+   * @example
+   * note("a")
+   * .vib("<.5 1 2 4 8 16>")
+   * @example
+   * // change the modulation depth with ":"
+   * note("a")
+   * .vib("<.5 1 2 4 8 16>:12")
+   */
+  [['vib', 'vibmod'], 'vibrato', 'v'],
+  /**
+   * Sets the vibrato depth in semitones. Only has an effect if `vibrato` | `vib` | `v` is is also set
+   *
+   * @name vibmod
+   * @synonyms vmod
+   * @param {number | Pattern} depth of vibrato (in semitones)
+   * @example
+   * note("a").vib(4)
+   * .vibmod("<.25 .5 1 2 12>")
+   * @example
+   * // change the vibrato frequency with ":"
+   * note("a")
+   * .vibmod("<.25 .5 1 2 12>:8")
+   */
+  [['vibmod', 'vib'], 'vmod'],
   [['hcutoff', 'hresonance'], 'hpf', 'hp'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
@@ -802,8 +1144,22 @@ const generic_params = [
    *
    */
   ['clip'],
-];
 
+  // ZZFX
+  ['zrand'],
+  ['curve'],
+  ['slide'], // superdirt duplicate
+  ['deltaSlide'],
+  ['pitchJump'],
+  ['pitchJumpTime'],
+  ['lfo', 'repeatTime'],
+  ['noise'],
+  ['zmod'],
+  ['zcrush'], // like crush but scaled differently
+  ['zdelay'],
+  ['tremolo'],
+  ['zzfx'],
+];
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 
 controls.createParam = function (names) {
