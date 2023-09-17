@@ -2273,14 +2273,14 @@ export const slice = register(
   false, // turns off auto-patternification
 );
 
-/*
+/**
  * Works the same as slice, but changes the playback speed of each slice to match the duration of its step.
  * @name splice
- * @memberof Pattern
- * @returns Pattern
  * @example
  * await samples('github:tidalcycles/Dirt-Samples/master')
- * s("breaks165").splice(8,  "0 1 [2 3 0]@2 3 0@2 7").hurry(0.65)
+ * s("breaks165")
+ * .splice(8,  "0 1 [2 3 0]@2 3 0@2 7")
+ * .hurry(0.65)
  */
 
 export const splice = register(
@@ -2307,9 +2307,16 @@ export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (facto
   return _loopAt(factor, pat, 1);
 });
 
-// this function will be redefined in repl.mjs to use the correct cps value.
+// the fit function will be redefined in repl.mjs to use the correct cps value.
 // It is still here to work in cases where repl.mjs is not used
-
+/**
+ * Makes the sample fit its event duration. Good for rhythmical loops like drum breaks.
+ * Similar to loopAt.
+ * @name fit
+ * @example
+ * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
+ * s("rhodes/4").fit()
+ */
 export const fit = register('fit', (pat) =>
   pat.withHap((hap) =>
     hap.withValue((v) => ({
