@@ -18,6 +18,7 @@ function useStrudel({
   canvasId,
   drawContext,
   drawTime = [-2, 2],
+  paintOptions = {},
 }) {
   const id = useMemo(() => s4(), []);
   canvasId = canvasId || `canvas-${id}`;
@@ -88,9 +89,9 @@ function useStrudel({
     (pattern, time, haps, drawTime) => {
       const { onPaint } = pattern.context || {};
       const ctx = typeof drawContext === 'function' ? drawContext(canvasId) : drawContext;
-      onPaint?.(ctx, time, haps, drawTime);
+      onPaint?.(ctx, time, haps, drawTime, paintOptions);
     },
-    [drawContext, canvasId],
+    [drawContext, canvasId, paintOptions],
   );
 
   const drawFirstFrame = useCallback(

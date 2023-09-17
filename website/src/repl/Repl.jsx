@@ -5,15 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { cleanupDraw, cleanupUi, controls, evalScope, getDrawContext, logger } from '@strudel.cycles/core';
-import {
-  CodeMirror,
-  cx,
-  flash,
-  useHighlighting,
-  useStrudel,
-  useKeydown,
-  updateMiniLocations,
-} from '@strudel.cycles/react';
+import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
 import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
@@ -28,6 +20,8 @@ import { themes } from './themes.mjs';
 import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
 import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
+import { code2hash, hash2code } from './helpers.mjs';
+import { isTauri } from '../tauri.mjs';
 
 const { latestCode } = settingsMap.get();
 
@@ -43,14 +37,22 @@ const modules = [
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
-  import('@strudel.cycles/midi'),
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
-  import('@strudel.cycles/osc'),
+
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
   import('@strudel.cycles/csound'),
 ];
+if (isTauri()) {
+  modules.concat([
+    import('@strudel/desktopbridge/loggerbridge.mjs'),
+    import('@strudel/desktopbridge/midibridge.mjs'),
+    import('@strudel/desktopbridge/oscbridge.mjs'),
+  ]);
+} else {
+  modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
+}
 
 const modulesLoading = evalScope(
   controls, // sadly, this cannot be exported from core direclty
@@ -73,11 +75,11 @@ async function initCode() {
   try {
     const initialUrl = window.location.href;
     const hash = initialUrl.split('?')[1]?.split('#')?.[0];
-    const codeParam = window.location.href.split('#')[1];
+    const codeParam = window.location.href.split('#')[1] || '';
     // looking like https://strudel.tidalcycles.org/?J01s5i1J0200 (fixed hash length)
     if (codeParam) {
       // looking like https://strudel.tidalcycles.org/#ImMzIGUzIg%3D%3D (hash length depends on code length)
-      return atob(decodeURIComponent(codeParam || ''));
+      return hash2code(codeParam);
     } else if (hash) {
       return supabase
         .from('code')
@@ -125,6 +127,8 @@ export function Repl({ embedded = false }) {
     panelPosition,
   } = useSettings();
 
+  const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
+
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
       initialCode: '// LOADING...',
@@ -140,13 +144,15 @@ export function Repl({ embedded = false }) {
         setMiniLocations(meta.miniLocations);
         setPending(false);
         setLatestCode(code);
-        window.location.hash = '#' + encodeURIComponent(btoa(code));
+        window.location.hash = '#' + code2hash(code);
       },
       onEvalError: (err) => {
         setPending(false);
       },
       onToggle: (play) => !play && cleanupDraw(false),
       drawContext,
+      // drawTime: [0, 6],
+      paintOptions,
     });
 
   // init code
