@@ -1,4 +1,5 @@
 import { getAudioContext } from './superdough.mjs';
+import { clamp } from './util.mjs';
 
 export function gainNode(value) {
   const node = getAudioContext().createGain();
@@ -66,10 +67,48 @@ export const getADSR = (attack, decay, sustain, release, velocity, begin, end) =
   return gainNode;
 };
 
-export const getFilter = (type, frequency, Q) => {
-  const filter = getAudioContext().createBiquadFilter();
-  filter.type = type;
-  filter.frequency.value = frequency;
-  filter.Q.value = Q;
-  return filter;
+export const getParamADSR = (param, attack, decay, sustain, release, min, max, begin, end) => {
+  const range = max - min;
+  const peak = min + range;
+  const sustainLevel = min + sustain * range;
+  param.setValueAtTime(min, begin);
+  param.linearRampToValueAtTime(peak, begin + attack);
+  param.linearRampToValueAtTime(sustainLevel, begin + attack + decay);
+  param.setValueAtTime(sustainLevel, end);
+  param.linearRampToValueAtTime(min, end + Math.max(release, 0.1));
 };
+
+export function createFilter(
+  context,
+  type,
+  frequency,
+  Q,
+  attack,
+  decay,
+  sustain,
+  release,
+  fenv,
+  start,
+  end,
+  fanchor = 0.5,
+) {
+  const filter = context.createBiquadFilter();
+  filter.type = type;
+  filter.Q.value = Q;
+  filter.frequency.value = frequency;
+
+  // Apply ADSR to filter frequency
+  if (!isNaN(fenv) && fenv !== 0) {
+    const offset = fenv * fanchor;
+
+    const min = clamp(2 ** -offset * frequency, 0, 20000);
+    const max = clamp(2 ** (fenv - offset) * frequency, 0, 20000);
+
+    // console.log('min', min, 'max', max);
+
+    getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end);
+    return filter;
+  }
+
+  return filter;
+}

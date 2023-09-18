@@ -98,6 +98,7 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "midir",
+ "rosc",
  "serde",
  "serde_json",
  "tauri",
@@ -585,9 +586,9 @@ dependencies = [
 
 [[package]]
 name = "creek"
-version = "1.1.0"
+version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9211649d708e89bfd3e41e2163df33fa01a62e46b5d8fd0679e826f4d003d958"
+checksum = "b01a32e142cd462c493f706a208780b3f90bed74b55c4ee9f6a67d3f4fe292bd"
 dependencies = [
  "creek-core",
  "creek-decode-symphonia",
@@ -596,18 +597,18 @@ dependencies = [
 
 [[package]]
 name = "creek-core"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ee99446d0b490e7b6bd094772ec2067cfa0a94bb2a2ed97b141cacf7a533551"
+checksum = "324fdebf340780c68b62d526f524a4cad41495db651d9c1333d2930ba189d6e4"
 dependencies = [
  "rtrb",
 ]
 
 [[package]]
 name = "creek-decode-symphonia"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a3aaf049f5ccf2f8e7a18e74f6226ff0ddd13d5bf08fc495010ee00bad162cf"
+checksum = "8371cf1deee7e3df88125c6c54e95e7966ba62e508b041db238f48a383119706"
 dependencies = [
  "creek-core",
  "log",
@@ -616,9 +617,9 @@ dependencies = [
 
 [[package]]
 name = "creek-encode-wav"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5d86aa83b7e6ff8d7bcf452a7ea821ad3dc01b6fd932817f0d469da820037a4b"
+checksum = "063e2422d455bb48879d04b0787b1e697e24c6fd3f3a3fa54554636e1595f316"
 dependencies = [
  "byte-slice-cast",
  "creek-core",
@@ -2538,6 +2539,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "436b050e76ed2903236f032a59761c1eb99e1b0aead2c257922771dab1fc8c78"
 
 [[package]]
+name = "rosc"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b2e63d9e6b0d090be1485cf159b1e04c3973d2d3e1614963544ea2ff47a4a981"
+dependencies = [
+ "byteorder",
+ "nom",
+]
+
+[[package]]
 name = "rtrb"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2822,9 +2833,9 @@ dependencies = [
 
 [[package]]
 name = "shlex"
-version = "1.1.0"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43b2853a4d09f215c24cc5489c992ce46052d359b5109343cbafbf26bc62f8a3"
+checksum = "a7cee0529a6d40f580e7a5e6c495c8fbfe21b7b52795ed4bb5e62cdf92bc6380"
 
 [[package]]
 name = "signal-hook-registry"

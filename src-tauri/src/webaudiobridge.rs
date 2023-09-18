@@ -1,19 +1,41 @@
-use std::collections::HashMap;
+use std::fs::File;
 use std::sync::Arc;
 use std::time::Duration;
-use midir::MidiOutput;
 use tokio::sync::{ mpsc, Mutex };
 use tokio::time::Instant;
 use serde::Deserialize;
 use std::thread::sleep;
 use web_audio_api::context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions, BaseAudioContext};
-use web_audio_api::node::{AudioNode, AudioScheduledSourceNode, OscillatorType};
+use web_audio_api::node::{AudioNode, AudioScheduledSourceNode, BiquadFilterNode, GainNode, OscillatorType};
+use web_audio_api::node::BiquadFilterType::{Bandpass, Highpass, Lowpass};
 
+#[derive(Clone, Copy, Debug)]
+pub struct Delay {
+    pub wet: f64,
+    pub delay_time: f64,
+    pub feedback: f64,
+}
+
+#[derive(Debug)]
 pub struct WebAudioMessage {
     pub note: f32,
     pub instant: Instant,
     pub offset: f64,
     pub waveform: String,
+    pub bank: String,
+    pub cutoff: f32,
+    pub resonance: f32,
+    pub hcutoff: f32,
+    pub hresonance: f32,
+    pub bandf: f32,
+    pub bandq: f32,
+    pub duration: f64,
+    pub velocity: f32,
+    pub delay: Delay,
+    pub speed: f32,
+    pub begin: f64,
+    pub end: f64,
+    pub loop_packaged: (u8, f64, f64),
 }
 
 pub struct AsyncInputTransmitWebAudio {
@@ -53,7 +75,7 @@ pub fn init(
             _ => AudioContextLatencyCategory::default(),
         };
 
-        let audio_context = AudioContext::new(AudioContextOptions {
+        let mut audio_context = AudioContext::new(AudioContextOptions {
             latency_hint,
             ..AudioContextOptions::default()
         });
@@ -61,21 +83,19 @@ pub fn init(
         /* ...........................................................
                             Process queued messages
         ............................................................*/
-
         loop {
             let mut message_queue = message_queue_clone.lock().await;
 
-            //iterate over each message, play and remove messages when they are ready
+            // Iterate over each message, play and remove messages when they are ready
             message_queue.retain(|message| {
                 if message.instant.elapsed().as_millis() < message.offset as u128 {
                     return true;
                 };
 
-                trigger_osc(&audio_context, message.note, message.waveform.clone());
+                superdough(message.clone(), &mut audio_context);
 
                 return false;
             });
-
             sleep(Duration::from_millis(1));
         }
     });
@@ -96,6 +116,20 @@ pub struct MessageFromJS {
     note: f32,
     offset: f64,
     waveform: String,
+    bank: String,
+    cutoff: f32,
+    resonance: f32,
+    hcutoff: f32,
+    hresonance: f32,
+    bandf: f32,
+    bandq: f32,
+    duration: f64,
+    velocity: f32,
+    delay: Vec<f64>,
+    speed: f32,
+    begin: f64,
+    end: f64,
+    loop_packaged: (u8, f64, f64),
 }
 // Called from JS
 #[tauri::command]
@@ -112,6 +146,24 @@ pub async fn sendwebaudio(
             instant: Instant::now(),
             offset: m.offset,
             waveform: m.waveform,
+            bank: m.bank,
+            cutoff: m.cutoff,
+            resonance: m.resonance,
+            hcutoff: m.hcutoff,
+            hresonance: m.hresonance,
+            bandf: m.bandf,
+            bandq: m.bandq,
+            duration: m.duration,
+            velocity: m.velocity,
+            delay: Delay {
+                wet: m.delay[0],
+                delay_time: m.delay[1],
+                feedback: m.delay[2],
+            },
+            speed: m.speed,
+            begin: m.begin,
+            end: m.end,
+            loop_packaged: m.loop_packaged,
         };
         messages_to_process.push(message_to_process);
     }
@@ -119,33 +171,94 @@ pub async fn sendwebaudio(
     async_proc_input_tx.send(messages_to_process).await.map_err(|e| e.to_string())
 }
 
-fn trigger_osc(audio_context: &AudioContext, freq: f32, osc_type: String) {
-    let env = audio_context.create_gain();
+
+fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
+    let now = context.current_time();
+    let env = context.create_gain();
     env.gain().set_value(0.);
-    env.connect(&audio_context.destination());
+    env.connect(&context.destination());
+    let (lpf, hpf, bandpass) = create_filters(context, message);
 
-    let osc = audio_context.create_oscillator();
+    match message.waveform.as_str() {
+        "sine" | "square" | "triangle" | "saw" => {
+            let osc = context.create_oscillator();
+            osc.set_type(create_osc_type(&message));
+            osc.frequency().set_value(message.note);
 
-    match osc_type.as_str() {
-        "sine" => osc.set_type(OscillatorType::Sine),
-        "square" => osc.set_type(OscillatorType::Square),
-        "triangle" => osc.set_type(OscillatorType::Triangle),
-        "saw" => osc.set_type(OscillatorType::Sawtooth),
-        _ => osc.set_type(OscillatorType::Sine),
+            osc.connect(&lpf);
+            connect_filters_to_envelope(&env, message, &hpf, &bandpass, now);
+            osc.start_at(now);
+            osc.stop_at(now + 2.0);
+        }
+        _ => {
+            match File::open(format!("samples/{}/{}.wav", message.bank, message.waveform)) {
+                Ok(file) => {
+                    let audio_buffer = context.decode_audio_data_sync(file).unwrap();
+                    let audio_buffer_duration = audio_buffer.duration();
+                    let src = context.create_buffer_source();
+                    src.set_buffer(audio_buffer);
+                    src.connect(&lpf);
+                    connect_filters_to_envelope(&env, message, &hpf, &bandpass, now);
+                    src.playback_rate().set_value(message.speed);
+                    if message.loop_packaged.0 == 1 {
+                        src.set_loop(true);
+                        src.set_loop_start(message.loop_packaged.1);
+                        src.set_loop_end(message.loop_packaged.2);
+                        src.start_at_with_offset_and_duration(now, src.loop_start(), audio_buffer_duration / message.speed as f64);
+                    };
+                    // println!("{}", message.is_loop);
+                    // src.start_at_with_offset_and_duration(now, message.begin * audio_buffer_duration, audio_buffer_duration / message.speed as f64);
+                    src.stop_at(now + 2.0);
+                },
+                Err(e) => eprintln!("Failed to open file: {:?}", e),
+            }
+        }
+    }
+}
+
+fn create_osc_type(message: &WebAudioMessage) -> OscillatorType {
+    match message.waveform.as_str() {
+        "sine" => OscillatorType::Sine,
+        "square" => OscillatorType::Square,
+        "triangle" => OscillatorType::Triangle,
+        "saw" => OscillatorType::Sawtooth,
+        _ => panic!("Invalid oscillator type"),
+    }
+}
+
+fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> (BiquadFilterNode, BiquadFilterNode, BiquadFilterNode) {
+    let lpf = context.create_biquad_filter();
+    lpf.set_type(Lowpass);
+    lpf.frequency().set_value(message.cutoff);
+    lpf.q().set_value(message.resonance);
+
+    let hpf = context.create_biquad_filter();
+    hpf.set_type(Highpass);
+    hpf.frequency().set_value(message.hcutoff);
+    hpf.q().set_value(message.hresonance);
+
+    let bandpass = context.create_biquad_filter();
+    bandpass.set_type(Bandpass);
+
+    lpf.connect(&hpf);
+
+    (lpf, hpf, bandpass)
+}
+
+fn connect_filters_to_envelope(envelope: &GainNode, message: &WebAudioMessage, hpf: &BiquadFilterNode, bandpass: &BiquadFilterNode, now: f64) {
+    if message.bandf > 0.0 {
+        bandpass.frequency().set_value(message.bandf);
+        bandpass.q().set_value(message.bandq);
+        hpf.connect(bandpass);
+        bandpass.connect(envelope);
+    } else {
+        hpf.connect(envelope);
     }
 
-    osc.connect(&env);
-
-    let now = audio_context.current_time();
-
-    let freq = freq;
-    osc.frequency().set_value(freq);
-
-    env.gain()
+    envelope.gain()
         .set_value_at_time(0., now)
-        .linear_ramp_to_value_at_time(0.1, now + 0.01)
-        .exponential_ramp_to_value_at_time(0.0001, now + 2.);
-
-    osc.start_at(now);
-    osc.stop_at(now + 2.);
+        .linear_ramp_to_value_at_time(message.velocity, now + 0.001)
+        .exponential_ramp_to_value_at_time(0.0001, now + message.duration * 2.0);
 }
+
+

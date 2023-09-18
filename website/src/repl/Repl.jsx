@@ -23,6 +23,7 @@ import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
 import { isTauri } from '../tauri.mjs';
+import {webaudioDesktopOutput} from "@strudel/desktopbridge";
 
 const { latestCode } = settingsMap.get();
 
@@ -38,14 +39,22 @@ const modules = [
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
-  isTauri() ? import('@strudel/desktopbridge') : import('@strudel.cycles/midi'),
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
-  import('@strudel.cycles/osc'),
+
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
   import('@strudel.cycles/csound'),
 ];
+if (isTauri()) {
+  modules.concat([
+    import('@strudel/desktopbridge/loggerbridge.mjs'),
+    import('@strudel/desktopbridge/midibridge.mjs'),
+    import('@strudel/desktopbridge/oscbridge.mjs'),
+  ]);
+} else {
+  modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
+}
 
 const modulesLoading = evalScope(
   controls, // sadly, this cannot be exported from core direclty
