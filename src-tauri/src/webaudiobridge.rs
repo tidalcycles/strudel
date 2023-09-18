@@ -16,6 +16,13 @@ pub struct Delay {
     pub feedback: f64,
 }
 
+#[derive(Clone, Copy, Debug)]
+pub struct Loop {
+    pub is_loop: u8,
+    pub loop_start: f64,
+    pub loop_end: f64,
+}
+
 #[derive(Debug)]
 pub struct WebAudioMessage {
     pub note: f32,
@@ -35,7 +42,7 @@ pub struct WebAudioMessage {
     pub speed: f32,
     pub begin: f64,
     pub end: f64,
-    pub loop_packaged: (u8, f64, f64),
+    pub loop_packaged: Loop,
 }
 
 pub struct AsyncInputTransmitWebAudio {
@@ -125,7 +132,7 @@ pub struct MessageFromJS {
     bandq: f32,
     duration: f64,
     velocity: f32,
-    delay: Vec<f64>,
+    delay: (f64, f64, f64),
     speed: f32,
     begin: f64,
     end: f64,
@@ -156,14 +163,18 @@ pub async fn sendwebaudio(
             duration: m.duration,
             velocity: m.velocity,
             delay: Delay {
-                wet: m.delay[0],
-                delay_time: m.delay[1],
-                feedback: m.delay[2],
+                wet: m.delay.0,
+                delay_time: m.delay.1,
+                feedback: m.delay.2,
             },
             speed: m.speed,
             begin: m.begin,
             end: m.end,
-            loop_packaged: m.loop_packaged,
+            loop_packaged: Loop {
+                is_loop: m.loop_packaged.0,
+                loop_start: m.loop_packaged.1,
+                loop_end: m.loop_packaged.2,
+            },
         };
         messages_to_process.push(message_to_process);
     }
@@ -200,15 +211,15 @@ fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                     src.connect(&lpf);
                     connect_filters_to_envelope(&env, message, &hpf, &bandpass, now);
                     src.playback_rate().set_value(message.speed);
-                    if message.loop_packaged.0 == 1 {
+                    if message.loop_packaged.is_loop > 0 {
                         src.set_loop(true);
-                        src.set_loop_start(message.loop_packaged.1);
-                        src.set_loop_end(message.loop_packaged.2);
+                        src.set_loop_start(message.loop_packaged.loop_start);
+                        src.set_loop_end(message.loop_packaged.loop_end);
                         src.start_at_with_offset_and_duration(now, src.loop_start(), audio_buffer_duration / message.speed as f64);
-                    };
-                    // println!("{}", message.is_loop);
-                    // src.start_at_with_offset_and_duration(now, message.begin * audio_buffer_duration, audio_buffer_duration / message.speed as f64);
-                    src.stop_at(now + 2.0);
+                    } else {
+                        src.start_at_with_offset_and_duration(now, message.begin * audio_buffer_duration, audio_buffer_duration / message.speed as f64);
+                    }
+                    // src.stop_at(now + 2.0);
                 },
                 Err(e) => eprintln!("Failed to open file: {:?}", e),
             }

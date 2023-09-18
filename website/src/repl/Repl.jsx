@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import { cleanupDraw, cleanupUi, controls, evalScope, getDrawContext, logger } from '@strudel.cycles/core';
 import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
 import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
-import { webaudioDesktopOutput } from "@strudel/desktopbridge";
+import { webaudioDesktopOutput } from '@strudel/desktopbridge';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import React, { createContext, useCallback, useEffect, useState, useMemo } from 'react';
@@ -23,7 +23,6 @@ import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
 import { isTauri } from '../tauri.mjs';
-import {webaudioDesktopOutput} from "@strudel/desktopbridge";
 
 const { latestCode } = settingsMap.get();
 

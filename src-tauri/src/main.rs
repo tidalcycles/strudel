@@ -10,8 +10,11 @@ use std::sync::Arc;
 
 use loggerbridge::Logger;
 use tauri::Manager;
-use tokio::sync::mpsc;
-use tokio::sync::Mutex;
+use tokio::{
+  sync::mpsc,
+  sync::Mutex
+};
+
 // the payload type must implement `Serialize` and `Clone`.
 #[derive(Clone, serde::Serialize)]
 struct Payload {
