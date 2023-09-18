@@ -49,9 +49,27 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     loop = 0,
     loopBegin = 0,
     loopEnd = 1,
+    attack = 0.0001,
+    decay = 0.2,
+    sustain = 0.6,
+    release = 0.2,
+    lpattack = 0.0001,
+    lpdecay = 0.2,
+    lpsustain = 0.6,
+    lprelease = 0.2,
+    lpenv = 1,
+    hpattack = 0.0001,
+    hpdecay = 0.2,
+    hpsustain = 0.6,
+    hprelease = 0.2,
+    hpenv = 1,
+    bpattack = 0.0001,
+    bpdecay = 0.2,
+    bpsustain = 0.6,
+    bprelease = 0.2,
+    bpenv = 1,
   } = value;
 
-  console.log(value);
   value.duration = hapDuration;
   if (isNote(note)) {
     note = noteToMidi(note);
@@ -68,6 +86,10 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
   const lpf_packaged = [cutoff, resonance];
   const hpf_packaged = [hcutoff, hresonance];
   const band_packaged = [bandf, bandq];
+  const adsr_packaged = [attack, decay, sustain, release];
+  const lpenv_packaged = [lpattack, lpdecay, lpsustain, lprelease, lpenv];
+  const hpenv_packaged = [hpattack, hpdecay, hpsustain, hprelease, hpenv];
+  const bpenv_packaged = [bpattack, bpdecay, bpsustain, bprelease, bpenv];
 
   const offset = (t - getAudioContext().currentTime) * 1000;
   const roundedOffset = Math.round(offset);
@@ -87,7 +109,11 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     speed: speed,
     begin: begin,
     end: end,
-    loop_packaged: loop_packaged,
+    looper: loop_packaged,
+    adsr: adsr_packaged,
+    lpenv: lpenv_packaged,
+    hpenv: hpenv_packaged,
+    bpenv: bpenv_packaged,
   });
 
   if (messagesfromjs.length) {

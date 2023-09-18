@@ -6,7 +6,7 @@ use tokio::time::Instant;
 use serde::Deserialize;
 use std::thread::sleep;
 use web_audio_api::context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions, BaseAudioContext};
-use web_audio_api::node::{AudioNode, AudioScheduledSourceNode, BiquadFilterNode, GainNode, OscillatorType};
+use web_audio_api::node::{AudioNode, AudioScheduledSourceNode, BiquadFilterNode, BiquadFilterType, GainNode, OscillatorType};
 use web_audio_api::node::BiquadFilterType::{Bandpass, Highpass, Lowpass};
 
 #[derive(Clone, Copy, Debug)]
@@ -41,6 +41,23 @@ pub struct BPF {
     pub resonance: f32,
 }
 
+#[derive(Debug, Copy, Clone)]
+pub struct ADSR {
+    pub attack: f64,
+    pub decay: f64,
+    pub sustain: f32,
+    pub release: f64,
+}
+
+#[derive(Debug, Copy, Clone)]
+pub struct FilterADSR {
+    pub attack: f64,
+    pub decay: f64,
+    pub sustain: f64,
+    pub release: f64,
+    pub env: f64,
+}
+
 #[derive(Debug)]
 pub struct WebAudioMessage {
     pub note: f32,
@@ -57,7 +74,11 @@ pub struct WebAudioMessage {
     pub speed: f32,
     pub begin: f64,
     pub end: f64,
-    pub loop_packaged: Loop,
+    pub looper: Loop,
+    pub adsr: ADSR,
+    pub lpenv: FilterADSR,
+    pub hpenv: FilterADSR,
+    pub bpenv: FilterADSR,
 }
 
 pub struct AsyncInputTransmitWebAudio {
@@ -148,7 +169,11 @@ pub struct MessageFromJS {
     speed: f32,
     begin: f64,
     end: f64,
-    loop_packaged: (u8, f64, f64),
+    looper: (u8, f64, f64),
+    adsr: (f64, f64, f32, f64),
+    lpenv: (f64, f64, f64, f64, f64),
+    hpenv: (f64, f64, f64, f64, f64),
+    bpenv: (f64, f64, f64, f64, f64),
 }
 // Called from JS
 #[tauri::command]
@@ -188,10 +213,37 @@ pub async fn sendwebaudio(
             speed: m.speed,
             begin: m.begin,
             end: m.end,
-            loop_packaged: Loop {
-                is_loop: m.loop_packaged.0,
-                loop_start: m.loop_packaged.1,
-                loop_end: m.loop_packaged.2,
+            looper: Loop {
+                is_loop: m.looper.0,
+                loop_start: m.looper.1,
+                loop_end: m.looper.2,
+            },
+            adsr: ADSR {
+                attack: m.adsr.0,
+                decay: m.adsr.1,
+                sustain: m.adsr.2,
+                release: m.adsr.3,
+            },
+            lpenv: FilterADSR {
+                attack: m.lpenv.0,
+                decay: m.lpenv.1,
+                sustain: m.lpenv.2,
+                release: m.lpenv.3,
+                env: m.lpenv.4,
+            },
+            hpenv: FilterADSR {
+                attack: m.hpenv.0,
+                decay: m.hpenv.1,
+                sustain: m.hpenv.2,
+                release: m.hpenv.3,
+                env: m.hpenv.4,
+            },
+            bpenv: FilterADSR {
+                attack: m.bpenv.0,
+                decay: m.bpenv.1,
+                sustain: m.bpenv.2,
+                release: m.bpenv.3,
+                env: m.bpenv.4,
             },
         };
         messages_to_process.push(message_to_process);
@@ -200,24 +252,27 @@ pub async fn sendwebaudio(
     async_proc_input_tx.send(messages_to_process).await.map_err(|e| e.to_string())
 }
 
-
 fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
     let now = context.current_time();
     let env = context.create_gain();
     env.gain().set_value(0.);
     env.connect(&context.destination());
-    let (lpf, hpf, bandpass) = create_filters(context, message);
+    // let (lpf, hpf, bandpass) = create_filters(context, message);
+    let filters = create_filters(context, message);
 
     match message.waveform.as_str() {
         "sine" | "square" | "triangle" | "saw" => {
             let osc = context.create_oscillator();
             osc.set_type(create_osc_type(&message));
             osc.frequency().set_value(message.note);
-
-            osc.connect(&lpf);
-            connect_filters_to_envelope(&env, message, &hpf, &bandpass, now);
+            osc.connect(filters.get(0).unwrap());
+            connect_filters_to_envelope(&env, message, filters.get(1).unwrap(), filters.get(2).unwrap());
             osc.start_at(now);
-            osc.stop_at(now + 2.0);
+            apply_adsr(&env, message, now);
+            for f in filters {
+                apply_filter_adsr(&f, message, &f.type_(), now);
+            }
+            osc.stop_at(now + message.duration + message.adsr.release);
         }
         _ => {
             match File::open(format!("samples/{}/{}.wav", message.bank, message.waveform)) {
@@ -226,16 +281,27 @@ fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                     let audio_buffer_duration = audio_buffer.duration();
                     let src = context.create_buffer_source();
                     src.set_buffer(audio_buffer);
-                    src.connect(&lpf);
-                    connect_filters_to_envelope(&env, message, &hpf, &bandpass, now);
+                    src.connect(filters.get(0).unwrap());
+                    connect_filters_to_envelope(&env, message, filters.get(1).unwrap(), filters.get(2).unwrap());
                     src.playback_rate().set_value(message.speed);
-                    if message.loop_packaged.is_loop > 0 {
+
+                    if message.looper.is_loop > 0 {
                         src.set_loop(true);
-                        src.set_loop_start(message.loop_packaged.loop_start);
-                        src.set_loop_end(message.loop_packaged.loop_end);
+                        src.set_loop_start(message.looper.loop_start);
+                        src.set_loop_end(message.looper.loop_end);
                         src.start_at_with_offset_and_duration(now, src.loop_start(), audio_buffer_duration / message.speed as f64);
+                        apply_adsr(&env, message, now);
+                        for f in filters {
+                            apply_filter_adsr(&f, message, &f.type_(), now);
+                        }
+                        src.stop_at(now + message.duration + message.adsr.release);
                     } else {
                         src.start_at_with_offset_and_duration(now, message.begin * audio_buffer_duration, audio_buffer_duration / message.speed as f64);
+                    apply_adsr(&env, message, now);
+                        for f in filters {
+                        apply_filter_adsr(&f, message, &f.type_(), now);
+                    }
+                        src.stop_at(now + message.duration + 0.2);
                     }
                 },
                 Err(e) => eprintln!("Failed to open file: {:?}", e),
@@ -254,10 +320,10 @@ fn create_osc_type(message: &WebAudioMessage) -> OscillatorType {
     }
 }
 
-fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> (BiquadFilterNode, BiquadFilterNode, BiquadFilterNode) {
+fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> [BiquadFilterNode; 3] {
     let lpf = context.create_biquad_filter();
     lpf.set_type(Lowpass);
-    lpf.frequency().set_value(message.lpf.frequency);
+
     lpf.q().set_value(message.lpf.resonance);
 
     let hpf = context.create_biquad_filter();
@@ -265,28 +331,58 @@ fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> (Biq
     hpf.frequency().set_value(message.hpf.frequency);
     hpf.q().set_value(message.hpf.resonance);
 
-    let bandpass = context.create_biquad_filter();
-    bandpass.set_type(Bandpass);
+    let bpf = context.create_biquad_filter();
+    bpf.set_type(Bandpass);
 
     lpf.connect(&hpf);
 
-    (lpf, hpf, bandpass)
+    [lpf, hpf, bpf]
 }
 
-fn connect_filters_to_envelope(envelope: &GainNode, message: &WebAudioMessage, hpf: &BiquadFilterNode, bandpass: &BiquadFilterNode, now: f64) {
+fn connect_filters_to_envelope(envelope: &GainNode, message: &WebAudioMessage, hpf: &BiquadFilterNode, bpf: &BiquadFilterNode) {
     if message.bpf.frequency > 0.0 {
-        bandpass.frequency().set_value(message.bpf.frequency);
-        bandpass.q().set_value(message.bpf.resonance);
-        hpf.connect(bandpass);
-        bandpass.connect(envelope);
+        bpf.frequency().set_value(message.bpf.frequency);
+        bpf.q().set_value(message.bpf.resonance);
+        hpf.connect(bpf);
+        bpf.connect(envelope);
     } else {
         hpf.connect(envelope);
     }
-
-    envelope.gain()
-        .set_value_at_time(0., now)
-        .linear_ramp_to_value_at_time(message.velocity, now + 0.001)
-        .exponential_ramp_to_value_at_time(0.0001, now + message.duration * 2.0);
 }
 
+fn apply_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
+    envelope.gain()
+        .set_value_at_time(0., now)
+        .linear_ramp_to_value_at_time(message.velocity, now + message.adsr.attack)
+        .linear_ramp_to_value_at_time(message.adsr.sustain, now + message.adsr.attack + message.adsr.decay)
+        .exponential_ramp_to_value_at_time(0.0001, now + message.duration + message.adsr.release);
+}
 
+fn apply_filter_adsr(filter_node: &BiquadFilterNode, message: &WebAudioMessage, filter: &BiquadFilterType, now: f64) {
+    let env = match filter {
+        Lowpass => message.lpenv,
+        Highpass => message.hpenv,
+        Bandpass => message.bpenv,
+        _ => message.lpenv,
+    };
+
+    let freq = match filter {
+        Lowpass => message.lpf.frequency,
+        Highpass => message.hpf.frequency,
+        Bandpass => message.bpf.frequency,
+        _ => 8000.0,
+    };
+
+    let offset = env.env * 0.5;
+    let min = (2f32.powf(-offset as f32) * freq).clamp(0.0, 20000.0);
+    let max = (2f32.powf((env.env - offset) as f32) * freq).clamp(0.0, 20000.0);
+    let range = max - min;
+    let peak = min + range;
+    let sustain_level = min + env.sustain as f32 * range;
+
+    filter_node.frequency().set_value_at_time(min as f32, now);
+    filter_node.frequency().linear_ramp_to_value_at_time(peak as f32, now + env.attack);
+    filter_node.frequency().linear_ramp_to_value_at_time(sustain_level as f32, now + env.attack + env.decay);
+    filter_node.frequency().set_value_at_time(sustain_level as f32, now + message.duration);
+    filter_node.frequency().linear_ramp_to_value_at_time(min as f32, now + message.duration + env.release.max(0.1));
+}
