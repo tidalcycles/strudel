@@ -1,5 +1,5 @@
 import { Invoke } from './utils.mjs';
-import { duration, isNote, midiToFreq, noteToMidi, Pattern } from '@strudel.cycles/core';
+import { isNote, midiToFreq, noteToMidi, Pattern } from '@strudel.cycles/core';
 import { getAudioContext } from '@strudel.cycles/webaudio';
 
 export const desktopAudio = async (value, deadline, hapDuration) => {
@@ -65,6 +65,9 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
 
   const loop_packaged = [loop, loopBegin, loopEnd];
   const delay_packaged = [delay, delayfeedback, delaytime];
+  const lpf_packaged = [cutoff, resonance];
+  const hpf_packaged = [hcutoff, hresonance];
+  const band_packaged = [bandf, bandq];
 
   const offset = (t - getAudioContext().currentTime) * 1000;
   const roundedOffset = Math.round(offset);
@@ -75,12 +78,9 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     offset: roundedOffset,
     waveform: s,
     bank: bank,
-    cutoff: cutoff,
-    resonance: resonance,
-    hcutoff: hcutoff,
-    hresonance: hresonance,
-    bandf: bandf,
-    bandq: bandq,
+    lpf: lpf_packaged,
+    hpf: hpf_packaged,
+    bpf: band_packaged,
     duration: hapDuration,
     velocity: velocity,
     delay: delay_packaged,

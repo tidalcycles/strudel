@@ -23,6 +23,24 @@ pub struct Loop {
     pub loop_end: f64,
 }
 
+#[derive(Clone, Copy, Debug)]
+pub struct LPF {
+    pub frequency: f32,
+    pub resonance: f32,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct HPF {
+    pub frequency: f32,
+    pub resonance: f32,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct BPF {
+    pub frequency: f32,
+    pub resonance: f32,
+}
+
 #[derive(Debug)]
 pub struct WebAudioMessage {
     pub note: f32,
@@ -30,12 +48,9 @@ pub struct WebAudioMessage {
     pub offset: f64,
     pub waveform: String,
     pub bank: String,
-    pub cutoff: f32,
-    pub resonance: f32,
-    pub hcutoff: f32,
-    pub hresonance: f32,
-    pub bandf: f32,
-    pub bandq: f32,
+    pub lpf: LPF,
+    pub hpf: HPF,
+    pub bpf: BPF,
     pub duration: f64,
     pub velocity: f32,
     pub delay: Delay,
@@ -109,10 +124,10 @@ pub fn init(
 }
 
 pub async fn async_process_model(
-    mut input_reciever: mpsc::Receiver<Vec<WebAudioMessage>>,
+    mut input_receiver: mpsc::Receiver<Vec<WebAudioMessage>>,
     output_transmitter: mpsc::Sender<Vec<WebAudioMessage>>
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    while let Some(input) = input_reciever.recv().await {
+    while let Some(input) = input_receiver.recv().await {
         let output = input;
         output_transmitter.send(output).await?;
     }
@@ -124,12 +139,9 @@ pub struct MessageFromJS {
     offset: f64,
     waveform: String,
     bank: String,
-    cutoff: f32,
-    resonance: f32,
-    hcutoff: f32,
-    hresonance: f32,
-    bandf: f32,
-    bandq: f32,
+    lpf: (f32, f32),
+    hpf: (f32, f32),
+    bpf: (f32, f32),
     duration: f64,
     velocity: f32,
     delay: (f64, f64, f64),
@@ -154,12 +166,18 @@ pub async fn sendwebaudio(
             offset: m.offset,
             waveform: m.waveform,
             bank: m.bank,
-            cutoff: m.cutoff,
-            resonance: m.resonance,
-            hcutoff: m.hcutoff,
-            hresonance: m.hresonance,
-            bandf: m.bandf,
-            bandq: m.bandq,
+            lpf: LPF {
+                frequency: m.lpf.0,
+                resonance: m.lpf.1,
+            },
+            hpf: HPF {
+                frequency: m.hpf.0,
+                resonance: m.hpf.1,
+            },
+            bpf: BPF {
+                frequency: m.bpf.0,
+                resonance: m.bpf.1,
+            },
             duration: m.duration,
             velocity: m.velocity,
             delay: Delay {
@@ -219,7 +237,6 @@ fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                     } else {
                         src.start_at_with_offset_and_duration(now, message.begin * audio_buffer_duration, audio_buffer_duration / message.speed as f64);
                     }
-                    // src.stop_at(now + 2.0);
                 },
                 Err(e) => eprintln!("Failed to open file: {:?}", e),
             }
@@ -240,13 +257,13 @@ fn create_osc_type(message: &WebAudioMessage) -> OscillatorType {
 fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> (BiquadFilterNode, BiquadFilterNode, BiquadFilterNode) {
     let lpf = context.create_biquad_filter();
     lpf.set_type(Lowpass);
-    lpf.frequency().set_value(message.cutoff);
-    lpf.q().set_value(message.resonance);
+    lpf.frequency().set_value(message.lpf.frequency);
+    lpf.q().set_value(message.lpf.resonance);
 
     let hpf = context.create_biquad_filter();
     hpf.set_type(Highpass);
-    hpf.frequency().set_value(message.hcutoff);
-    hpf.q().set_value(message.hresonance);
+    hpf.frequency().set_value(message.hpf.frequency);
+    hpf.q().set_value(message.hpf.resonance);
 
     let bandpass = context.create_biquad_filter();
     bandpass.set_type(Bandpass);
@@ -257,9 +274,9 @@ fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> (Biq
 }
 
 fn connect_filters_to_envelope(envelope: &GainNode, message: &WebAudioMessage, hpf: &BiquadFilterNode, bandpass: &BiquadFilterNode, now: f64) {
-    if message.bandf > 0.0 {
-        bandpass.frequency().set_value(message.bandf);
-        bandpass.q().set_value(message.bandq);
+    if message.bpf.frequency > 0.0 {
+        bandpass.frequency().set_value(message.bpf.frequency);
+        bandpass.q().set_value(message.bpf.resonance);
         hpf.connect(bandpass);
         bandpass.connect(envelope);
     } else {
