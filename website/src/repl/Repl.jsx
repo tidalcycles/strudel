@@ -22,6 +22,7 @@ import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
 import { isTauri } from '../tauri.mjs';
+import {webaudioDesktopOutput} from "@strudel/desktopbridge";
 
 const { latestCode } = settingsMap.get();
 
@@ -132,7 +133,7 @@ export function Repl({ embedded = false }) {
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
       initialCode: '// LOADING...',
-      defaultOutput: webaudioOutput,
+      defaultOutput: isTauri() ? webaudioDesktopOutput : webaudioOutput,
       getTime,
       beforeEval: async () => {
         setPending(true);
