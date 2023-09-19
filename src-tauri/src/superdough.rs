@@ -58,16 +58,25 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
     let env = context.create_gain();
     env.gain().set_value(0.);
     env.connect(&context.destination());
-    // let (lpf, hpf, bandpass) = create_filters(context, message);
     let filters = create_filters(context, message);
+
+    let connect_filter_nodes = |node: &dyn AudioNode, filters: &Vec<BiquadFilterNode>, env: &GainNode| {
+        if let Some(first_filter) = filters.first() {
+            if let Some(last_filter) = filters.last() {
+                node.connect(first_filter);
+                last_filter.connect(env);
+            }
+        } else {
+            node.connect(env);
+        }
+    };
 
     match message.waveform.as_str() {
         "sine" | "square" | "triangle" | "saw" => {
             let osc = context.create_oscillator();
             osc.set_type(create_osc_type(&message));
             osc.frequency().set_value(message.note);
-            osc.connect(filters.get(0).unwrap());
-            connect_filters_to_envelope(&env, message, filters.get(1).unwrap(), filters.get(2).unwrap());
+            connect_filter_nodes(&osc, &filters, &env);
             osc.start_at(now);
             apply_adsr(&env, message, now);
             for f in filters {
@@ -82,13 +91,7 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                     let audio_buffer_duration = audio_buffer.duration();
                     let src = context.create_buffer_source();
                     src.set_buffer(audio_buffer);
-                    src.connect(filters.get(0).unwrap());
-                    connect_filters_to_envelope(
-                        &env,
-                        message,
-                        filters.get(1).unwrap(),
-                        filters.get(2).unwrap(),
-                    );
+                    connect_filter_nodes(&src, &filters, &env);
                     src.playback_rate().set_value(message.speed);
 
                     if message.looper.is_loop > 0 {
@@ -134,34 +137,42 @@ fn create_osc_type(message: &WebAudioMessage) -> OscillatorType {
     }
 }
 
-fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> [BiquadFilterNode; 3] {
-    let lpf = context.create_biquad_filter();
-    lpf.set_type(Lowpass);
+fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> Vec<BiquadFilterNode> {
+    let mut filters = Vec::new();
 
-    lpf.q().set_value(message.lpf.resonance);
-
-    let hpf = context.create_biquad_filter();
-    hpf.set_type(Highpass);
-    hpf.frequency().set_value(message.hpf.frequency);
-    hpf.q().set_value(message.hpf.resonance);
-
-    let bpf = context.create_biquad_filter();
-    bpf.set_type(Bandpass);
-
-    lpf.connect(&hpf);
-
-    [lpf, hpf, bpf]
-}
-
-fn connect_filters_to_envelope(envelope: &GainNode, message: &WebAudioMessage, hpf: &BiquadFilterNode, bpf: &BiquadFilterNode) {
     if message.bpf.frequency > 0.0 {
+        let bpf = context.create_biquad_filter();
+        bpf.set_type(Bandpass);
         bpf.frequency().set_value(message.bpf.frequency);
         bpf.q().set_value(message.bpf.resonance);
-        hpf.connect(bpf);
-        bpf.connect(envelope);
-    } else {
-        hpf.connect(envelope);
+        filters.push(bpf);
+    } else if message.lpf.frequency > 0.0 && message.hpf.frequency > 0.0 {
+        let lpf = context.create_biquad_filter();
+        let hpf = context.create_biquad_filter();
+        lpf.set_type(Lowpass);
+        lpf.frequency().set_value(message.lpf.frequency);
+        lpf.q().set_value(message.lpf.resonance);
+        hpf.set_type(Highpass);
+        hpf.frequency().set_value(message.hpf.frequency);
+        hpf.q().set_value(message.hpf.resonance);
+        lpf.connect(&hpf);
+        filters.push(lpf);
+        filters.push(hpf);
+    } else if message.lpf.frequency > 0.0 {
+        let lpf = context.create_biquad_filter();
+        lpf.set_type(Lowpass);
+        lpf.frequency().set_value(message.lpf.frequency);
+        lpf.q().set_value(message.lpf.resonance);
+        filters.push(lpf);
+    } else if message.hpf.frequency > 0.0 {
+        let hpf = context.create_biquad_filter();
+        hpf.set_type(Highpass);
+        hpf.frequency().set_value(message.hpf.frequency);
+        hpf.q().set_value(message.hpf.resonance);
+        filters.push(hpf);
     }
+
+    filters
 }
 
 fn apply_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
