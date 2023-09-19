@@ -83,28 +83,41 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                     let src = context.create_buffer_source();
                     src.set_buffer(audio_buffer);
                     src.connect(filters.get(0).unwrap());
-                    connect_filters_to_envelope(&env, message, filters.get(1).unwrap(), filters.get(2).unwrap());
+                    connect_filters_to_envelope(
+                        &env,
+                        message,
+                        filters.get(1).unwrap(),
+                        filters.get(2).unwrap(),
+                    );
                     src.playback_rate().set_value(message.speed);
 
                     if message.looper.is_loop > 0 {
                         src.set_loop(true);
                         src.set_loop_start(message.looper.loop_start);
                         src.set_loop_end(message.looper.loop_end);
-                        src.start_at_with_offset_and_duration(now, src.loop_start(), audio_buffer_duration / message.speed as f64);
+                        src.start_at_with_offset_and_duration(
+                            now,
+                            src.loop_start(),
+                            audio_buffer_duration / message.speed as f64,
+                        );
                         apply_adsr(&env, message, now);
                         for f in filters {
                             apply_filter_adsr(&f, message, &f.type_(), now);
                         }
                         src.stop_at(now + message.duration + message.adsr.release);
                     } else {
-                        src.start_at_with_offset_and_duration(now, message.begin * audio_buffer_duration, audio_buffer_duration / message.speed as f64);
+                        src.start_at_with_offset_and_duration(
+                            now,
+                            message.begin * audio_buffer_duration,
+                            audio_buffer_duration / message.speed as f64,
+                        );
                         apply_adsr(&env, message, now);
                         for f in filters {
                             apply_filter_adsr(&f, message, &f.type_(), now);
                         }
                         src.stop_at(now + message.duration + 0.2);
                     }
-                },
+                }
                 Err(e) => eprintln!("Failed to open file: {:?}", e),
             }
         }
@@ -155,8 +168,11 @@ fn apply_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
     envelope.gain()
         .set_value_at_time(0., now)
         .linear_ramp_to_value_at_time(message.velocity, now + message.adsr.attack)
-        .linear_ramp_to_value_at_time(message.adsr.sustain, now + message.adsr.attack + message.adsr.decay)
-        .exponential_ramp_to_value_at_time(0.0001, now + message.duration + message.adsr.release);
+        .linear_ramp_to_value_at_time(
+            message.adsr.sustain * message.velocity,
+            now + message.adsr.attack + message.adsr.decay
+        )
+        .linear_ramp_to_value_at_time(0.0, now + message.duration + message.adsr.release);
 }
 
 fn apply_filter_adsr(filter_node: &BiquadFilterNode, message: &WebAudioMessage, filter: &BiquadFilterType, now: f64) {
