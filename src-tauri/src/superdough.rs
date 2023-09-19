@@ -109,29 +109,21 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                         }
                         src.stop_at(now + message.duration + message.adsr.release);
                     } else {
-                        if message.speed < 0.0 {
-                            src.start_at_with_offset_and_duration(
-                                now,
-                                (message.begin + 0.5) * audio_buffer_duration,
-                                audio_buffer_duration,
-                            );
-                            apply_adsr(&env, message, now);
-                            for f in filters {
-                                apply_filter_adsr(&f, message, &f.type_(), now);
-                            }
-                            src.stop_at(now + message.duration + 0.2);
+                        let (start_at, stop_at) = if message.speed < 0.0 {
+                            ((message.begin + 0.5) * audio_buffer_duration, now + message.duration + 0.2)
                         } else {
-                            src.start_at_with_offset_and_duration(
-                                now,
-                                message.begin * audio_buffer_duration ,
-                                audio_buffer_duration,
-                            );
-                            apply_adsr(&env, message, now);
-                            for f in filters {
-                                apply_filter_adsr(&f, message, &f.type_(), now);
-                            }
-                            src.stop_at(now + message.duration + message.adsr.release);
-                        }
+                            (message.begin * audio_buffer_duration, now + message.duration + message.adsr.release)
+                        };
+                        src.start_at_with_offset_and_duration(
+                            now,
+                            start_at,
+                            audio_buffer_duration,
+                        );
+                        apply_adsr(&env, message, now);
+                        for f in filters {
+                            apply_filter_adsr(&f, message, &f.type_(), now);
+                        };
+                        src.stop_at(stop_at);
                     }
                 }
                 Err(e) => eprintln!("Failed to open file: {:?}", e),
