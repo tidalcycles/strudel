@@ -109,16 +109,29 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                         }
                         src.stop_at(now + message.duration + message.adsr.release);
                     } else {
-                        src.start_at_with_offset_and_duration(
-                            now,
-                            message.begin * audio_buffer_duration,
-                            audio_buffer_duration / message.speed as f64,
-                        );
-                        apply_adsr(&env, message, now);
-                        for f in filters {
-                            apply_filter_adsr(&f, message, &f.type_(), now);
+                        if message.speed < 0.0 {
+                            src.start_at_with_offset_and_duration(
+                                now,
+                                (message.begin + 0.5) * audio_buffer_duration,
+                                audio_buffer_duration,
+                            );
+                            apply_adsr(&env, message, now);
+                            for f in filters {
+                                apply_filter_adsr(&f, message, &f.type_(), now);
+                            }
+                            src.stop_at(now + message.duration + 0.2);
+                        } else {
+                            src.start_at_with_offset_and_duration(
+                                now,
+                                message.begin * audio_buffer_duration ,
+                                audio_buffer_duration,
+                            );
+                            apply_adsr(&env, message, now);
+                            for f in filters {
+                                apply_filter_adsr(&f, message, &f.type_(), now);
+                            }
+                            src.stop_at(now + message.duration + message.adsr.release);
                         }
-                        src.stop_at(now + message.duration + 0.2);
                     }
                 }
                 Err(e) => eprintln!("Failed to open file: {:?}", e),

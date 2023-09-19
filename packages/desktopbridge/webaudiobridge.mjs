@@ -70,6 +70,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     bpenv = 1,
   } = value;
 
+  console.log(begin);
   value.duration = hapDuration;
   if (isNote(note)) {
     note = noteToMidi(note);
