@@ -1,6 +1,6 @@
 import {Invoke} from './utils.mjs';
 import {duration, isNote, midiToFreq, noteToMidi, Pattern} from '@strudel.cycles/core';
-import {getAudioContext} from '@strudel.cycles/webaudio';
+import {getAudioContext, getEnvelope} from '@strudel.cycles/webaudio';
 
 export const desktopAudio = async (value, deadline, hapDuration) => {
     const ac = getAudioContext();
@@ -49,10 +49,10 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
         loop = 0,
         loopBegin = 0,
         loopEnd = 1,
-        attack,
-        decay,
-        sustain,
-        release,
+        attack = 0.001,
+        decay = 0.05,
+        sustain = 1,
+        release = 0.001,
         lpattack = 0.0001,
         lpdecay = 0.2,
         lpsustain = 0.6,
@@ -71,8 +71,6 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     } = value;
 
     value.duration = hapDuration;
-    console.log(value.duration);
-    console.log(t);
     if (isNote(note)) {
         note = noteToMidi(note);
     }
@@ -83,49 +81,44 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
         delaytime = Math.abs(delaytime);
     }
 
-    let adsr_on = 1;
+    let adsr_on = attack !== 0.001 || decay !== 0.05 || sustain !== 1 || release !== 0.001 ? 1 : 0;
 
-    if (attack === undefined || decay === undefined || sustain === undefined || release === undefined) {
-        adsr_on = 0;
-        attack = 0.001;
-        decay = 0.001;
-        sustain = 1;
-        release = 2;
-    }
-
-    const loop_packaged = [loop, loopBegin, loopEnd];
-    const delay_packaged = [delay, delayfeedback, delaytime];
-    const lpf_packaged = [cutoff, resonance];
-    const hpf_packaged = [hcutoff, hresonance];
-    const band_packaged = [bandf, bandq];
-    const adsr_packaged = [attack, decay, sustain, release, adsr_on];
-    const lpenv_packaged = [lpattack, lpdecay, lpsustain, lprelease, lpenv];
-    const hpenv_packaged = [hpattack, hpdecay, hpsustain, hprelease, hpenv];
-    const bpenv_packaged = [bpattack, bpdecay, bpsustain, bprelease, bpenv];
+    const packages = {
+        loop: [loop, loopBegin, loopEnd],
+        delay: [delay, delayfeedback, delaytime],
+        lpf: [cutoff, resonance],
+        hpf: [hcutoff, hresonance],
+        bpf: [bandf, bandq],
+        adsr: [attack, decay, sustain, release, adsr_on],
+        lpenv: [lpattack, lpdecay, lpsustain, lprelease, lpenv],
+        hpenv: [hpattack, hpdecay, hpsustain, hprelease, hpenv],
+        bpenv: [bpattack, bpdecay, bpsustain, bprelease, bpenv]
+    };
 
     const offset = (t - getAudioContext().currentTime) * 1000;
     const roundedOffset = Math.round(offset);
     const messagesfromjs = [];
+
 
     messagesfromjs.push({
         note: midiToFreq(note),
         offset: roundedOffset,
         waveform: s,
         bank: bank,
-        lpf: lpf_packaged,
-        hpf: hpf_packaged,
-        bpf: band_packaged,
+        lpf: packages.lpf,
+        hpf: packages.hpf,
+        bpf: packages.bpf,
         duration: hapDuration,
         velocity: velocity,
-        delay: delay_packaged,
+        delay: packages.delay,
         speed: speed,
         begin: begin,
         end: end,
-        looper: loop_packaged,
-        adsr: adsr_packaged,
-        lpenv: lpenv_packaged,
-        hpenv: hpenv_packaged,
-        bpenv: bpenv_packaged,
+        looper: packages.loop,
+        adsr: packages.adsr,
+        lpenv: packages.lpenv,
+        hpenv: packages.hpenv,
+        bpenv: packages.bpenv,
     });
 
     if (messagesfromjs.length) {
