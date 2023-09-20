@@ -42,6 +42,7 @@ pub struct ADSR {
     pub decay: f64,
     pub sustain: f32,
     pub release: f64,
+    pub adsr_on: u8,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -70,7 +71,7 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
             node.connect(env);
         }
     };
-
+println!("{}", now);
     match message.waveform.as_str() {
         "sine" | "square" | "triangle" | "saw" => {
             let osc = context.create_oscillator();
@@ -78,7 +79,12 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
             osc.frequency().set_value(message.note);
             connect_filter_nodes(&osc, &filters, &env);
             osc.start_at(now);
-            apply_adsr(&env, message, now);
+            if message.adsr.adsr_on == 1 {
+                apply_synth_adsr(&env, message, now);
+            } else {
+                apply_default_synth_adsr(&env, message, now);
+            }
+            // apply_synth_adsr(&env, message, now);
             for f in filters {
                 apply_filter_adsr(&f, message, &f.type_(), now);
             }
@@ -103,7 +109,11 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                             src.loop_start(),
                             audio_buffer_duration / message.speed as f64,
                         );
-                        apply_adsr(&env, message, now);
+                        if message.adsr.adsr_on == 1 {
+                            apply_drum_adsr(&env, message, now);
+                        } else {
+                            apply_default_drum_adsr(&env, message, now);
+                        }
                         for f in filters {
                             apply_filter_adsr(&f, message, &f.type_(), now);
                         }
@@ -119,7 +129,11 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                             start_at,
                             audio_buffer_duration,
                         );
-                        apply_adsr(&env, message, now);
+                        if message.adsr.adsr_on == 1 {
+                            apply_drum_adsr(&env, message, now);
+                        } else {
+                            apply_default_drum_adsr(&env, message, now);
+                        }
                         for f in filters {
                             apply_filter_adsr(&f, message, &f.type_(), now);
                         };
@@ -180,15 +194,48 @@ fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> Vec<
     filters
 }
 
-fn apply_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
+fn apply_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
     envelope.gain()
         .set_value_at_time(0., now)
         .linear_ramp_to_value_at_time(message.velocity, now + message.adsr.attack)
         .linear_ramp_to_value_at_time(
             message.adsr.sustain * message.velocity,
-            now + message.adsr.attack + message.adsr.decay
+            now + message.adsr.attack + message.adsr.decay,
         )
         .linear_ramp_to_value_at_time(0.0, now + message.duration + message.adsr.release);
+}
+
+fn apply_default_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
+    envelope.gain()
+        .set_value_at_time(0., now)
+        .linear_ramp_to_value_at_time(message.velocity, now + 0.001)
+        .linear_ramp_to_value_at_time(
+            message.velocity,
+            now + 0.001 + 0.05,
+        )
+        .linear_ramp_to_value_at_time(0.0, now + message.duration + 0.001);
+}
+
+fn apply_drum_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
+    envelope.gain()
+        .set_value_at_time(0., now)
+        .linear_ramp_to_value_at_time(message.velocity, now + message.adsr.attack)
+        .linear_ramp_to_value_at_time(
+            message.adsr.sustain * message.velocity,
+            now + message.adsr.attack + message.adsr.decay,
+        )
+        .linear_ramp_to_value_at_time(0.0, now + message.duration + message.adsr.release);
+}
+
+fn apply_default_drum_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
+    envelope.gain()
+        .set_value_at_time(0., now)
+        .linear_ramp_to_value_at_time(message.velocity, now + 0.001)
+        .linear_ramp_to_value_at_time(
+            1.0 * message.velocity,
+            now + 0.001 + 0.001,
+        )
+        .linear_ramp_to_value_at_time(0.0, now + message.duration + 0.001);
 }
 
 fn apply_filter_adsr(filter_node: &BiquadFilterNode, message: &WebAudioMessage, filter: &BiquadFilterType, now: f64) {

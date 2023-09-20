@@ -128,7 +128,7 @@ pub struct MessageFromJS {
     begin: f64,
     end: f64,
     looper: (u8, f64, f64),
-    adsr: (f64, f64, f32, f64),
+    adsr: (f64, f64, f32, f64, u8),
     lpenv: (f64, f64, f64, f64, f64),
     hpenv: (f64, f64, f64, f64, f64),
     bpenv: (f64, f64, f64, f64, f64),
@@ -182,6 +182,7 @@ pub async fn sendwebaudio(
                 decay: m.adsr.1,
                 sustain: m.adsr.2,
                 release: m.adsr.3,
+                adsr_on: m.adsr.4,
             },
             lpenv: FilterADSR {
                 attack: m.lpenv.0,
