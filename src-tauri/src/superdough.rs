@@ -71,7 +71,7 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
             node.connect(env);
         }
     };
-println!("{}", now);
+
     match message.waveform.as_str() {
         "sine" | "square" | "triangle" | "saw" => {
             let osc = context.create_oscillator();
@@ -100,14 +100,22 @@ println!("{}", now);
                     connect_filter_nodes(&src, &filters, &env);
                     src.playback_rate().set_value(message.speed);
 
+
+                    //TODO
+                    let (start_at, stop_at) = if message.speed < 0.0 {
+                        (audio_buffer_duration, now + message.duration + 0.2)
+                    } else {
+                        (message.begin * audio_buffer_duration, now + message.duration + message.adsr.release)
+                    };
+
                     if message.looper.is_loop > 0 {
                         src.set_loop(true);
                         src.set_loop_start(message.looper.loop_start);
+                        println!("{}", src.loop_start());
                         src.set_loop_end(message.looper.loop_end);
-                        src.start_at_with_offset_and_duration(
+                        src.start_at_with_offset(
                             now,
-                            src.loop_start(),
-                            audio_buffer_duration / message.speed as f64,
+                            src.loop_start() * start_at,
                         );
                         if message.adsr.adsr_on == 1 {
                             apply_drum_adsr(&env, message, now);
@@ -119,11 +127,6 @@ println!("{}", now);
                         }
                         src.stop_at(now + message.duration + message.adsr.release);
                     } else {
-                        let (start_at, stop_at) = if message.speed < 0.0 {
-                            ((message.begin + 0.5) * audio_buffer_duration, now + message.duration + 0.2)
-                        } else {
-                            (message.begin * audio_buffer_duration, now + message.duration + message.adsr.release)
-                        };
                         src.start_at_with_offset_and_duration(
                             now,
                             start_at,
