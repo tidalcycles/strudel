@@ -100,8 +100,6 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                     connect_filter_nodes(&src, &filters, &env);
                     src.playback_rate().set_value(message.speed);
 
-
-                    //TODO
                     let (start_at, stop_at) = if message.speed < 0.0 {
                         (audio_buffer_duration, now + message.duration + 0.2)
                     } else {
@@ -111,11 +109,10 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                     if message.looper.is_loop > 0 {
                         src.set_loop(true);
                         src.set_loop_start(message.looper.loop_start);
-                        println!("{}", src.loop_start());
                         src.set_loop_end(message.looper.loop_end);
                         src.start_at_with_offset(
                             now,
-                            src.loop_start() * start_at,
+                            src.loop_start(),
                         );
                         if message.adsr.adsr_on == 1 {
                             apply_drum_adsr(&env, message, now);
@@ -127,10 +124,9 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                         }
                         src.stop_at(now + message.duration + message.adsr.release);
                     } else {
-                        src.start_at_with_offset_and_duration(
+                        src.start_at_with_offset(
                             now,
                             start_at,
-                            audio_buffer_duration,
                         );
                         if message.adsr.adsr_on == 1 {
                             apply_drum_adsr(&env, message, now);
