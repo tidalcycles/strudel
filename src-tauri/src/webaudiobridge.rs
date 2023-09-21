@@ -12,6 +12,7 @@ use web_audio_api::{
     context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions},
     node::AudioNode
 };
+use web_audio_api::context::BaseAudioContext;
 use crate::superdough::{ADSR, BPF, Delay, FilterADSR, HPF, Loop, LPF, superdough};
 
 
@@ -28,6 +29,7 @@ pub struct WebAudioMessage {
     pub duration: f64,
     pub velocity: f32,
     pub delay: Delay,
+    pub orbit: usize,
     pub speed: f32,
     pub begin: f64,
     pub end: f64,
@@ -92,7 +94,7 @@ pub fn init(
                     return true;
                 };
 
-                superdough(message.clone(), &mut audio_context);
+               superdough(message.clone(), &mut audio_context);
 
                 return false;
             });
@@ -123,7 +125,8 @@ pub struct MessageFromJS {
     bpf: (f32, f32),
     duration: f64,
     velocity: f32,
-    delay: (f64, f64, f64),
+    delay: (f32, f32, f32),
+    orbit: usize,
     speed: f32,
     begin: f64,
     end: f64,
@@ -169,6 +172,7 @@ pub async fn sendwebaudio(
                 delay_time: m.delay.1,
                 feedback: m.delay.2,
             },
+            orbit: m.orbit,
             speed: m.speed,
             begin: m.begin,
             end: m.end,

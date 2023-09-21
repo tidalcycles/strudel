@@ -85,7 +85,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
 
   const packages = {
     loop: [loop, loopBegin, loopEnd],
-    delay: [delay, delayfeedback, delaytime],
+    delay: [delay, delaytime, delayfeedback],
     lpf: [cutoff, resonance],
     hpf: [hcutoff, hresonance],
     bpf: [bandf, bandq],
@@ -110,6 +110,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     duration: hapDuration,
     velocity: velocity,
     delay: packages.delay,
+    orbit: orbit,
     speed: speed,
     begin: begin,
     end: end,

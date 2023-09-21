@@ -1,14 +1,14 @@
 use std::fs::File;
 use web_audio_api::context::{AudioContext, BaseAudioContext};
-use web_audio_api::node::{AudioBufferSourceNode, AudioNode, AudioScheduledSourceNode, BiquadFilterNode, BiquadFilterType, GainNode, OscillatorNode, OscillatorType};
+use web_audio_api::node::{AudioBufferSourceNode, AudioNode, AudioScheduledSourceNode, BiquadFilterNode, BiquadFilterType, DelayNode, GainNode, OscillatorNode, OscillatorType};
 use web_audio_api::node::BiquadFilterType::{Bandpass, Highpass, Lowpass};
 use crate::webaudiobridge::WebAudioMessage;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Delay {
-    pub wet: f64,
-    pub delay_time: f64,
-    pub feedback: f64,
+    pub wet: f32,
+    pub delay_time: f32,
+    pub feedback: f32,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -57,6 +57,7 @@ pub struct FilterADSR {
 pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
     let now = context.current_time();
     let mut chain: Vec<&dyn AudioNode> = Vec::new();
+    let env = context.create_gain();
 
     // Play synth or sample
     match message.waveform.as_str() {
@@ -69,12 +70,46 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
             for f in &filters {
                 chain.push(f);
             }
-            let env = context.create_gain();
             chain.push(&env);
+
+            let mut delays = Vec::new();
+            for _ in 0..=message.orbit {
+                delays.push(context.create_delay(1.));
+            }
+
+            if message.delay.wet > 0.0 {
+                let output = context.create_gain();
+                output.connect(&context.destination());
+
+                let delay = delays.get(message.orbit).unwrap();
+                delay.delay_time().set_value(message.delay.delay_time);
+                delay.connect(&output);
+
+                let feedback = context.create_gain();
+                feedback.gain().set_value(message.delay.feedback);
+                feedback.connect(delay);
+                delay.connect(&feedback);
+
+                let pre_gain = context.create_gain();
+                pre_gain.gain().set_value(message.delay.wet);
+                pre_gain.connect(&feedback);
+
+                let input = context.create_gain();
+                input.connect(&pre_gain);
+                input.connect(&context.destination()); // direct sound
+                env.connect(&input);
+            }
 
             // Connect nodes and play synth
             connect_nodes(chain, context);
-            play_synth(&message, now, osc, filters, &env);
+            let osc= play_synth(&message, now, osc, filters, &env);
+
+            osc.set_onended(move |_| {
+                for d in &delays {
+                    d.disconnect();
+                }
+            });
+
         }
         _ => {
             match File::open(format!("samples/{}/{}.wav", message.bank, message.waveform)) {
@@ -104,7 +139,7 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
     }
 }
 
-fn play_synth(message: &&WebAudioMessage, now: f64, osc: OscillatorNode, filters: Vec<BiquadFilterNode> ,env: &GainNode) {
+fn play_synth(message: &&WebAudioMessage, now: f64, osc: OscillatorNode, filters: Vec<BiquadFilterNode>, env: &GainNode) -> OscillatorNode {
     osc.set_type(create_osc_type(&message));
     osc.frequency().set_value(message.note);
     osc.start();
@@ -116,6 +151,8 @@ fn play_synth(message: &&WebAudioMessage, now: f64, osc: OscillatorNode, filters
         apply_filter_adsr(&f, message, &f.type_(), now);
     }
     osc.stop_at(now + message.duration + message.adsr.release);
+
+    osc
 }
 
 fn create_osc_type(message: &WebAudioMessage) -> OscillatorType {
@@ -251,8 +288,8 @@ fn apply_adsr(
             sustain * message.velocity,
             now + attack + decay,
         )
-        .set_value_at_time(sustain * message.velocity, now + message.duration)
-        .linear_ramp_to_value_at_time(0.0, now + message.duration + release);
+        .set_value_at_time(sustain * message.velocity, now + attack + decay)
+        .linear_ramp_to_value_at_time(0.0, now + attack + decay + release);
 }
 
 fn apply_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
@@ -268,7 +305,7 @@ fn apply_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
 }
 
 fn apply_default_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
-    apply_adsr(envelope, message, now, 0.001, message.velocity, 0.05, 0.001);
+    apply_adsr(envelope, message, now, 0.001, message.velocity, 0.5, 0.1);
 }
 
 fn apply_drum_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
