@@ -3,6 +3,7 @@ use std::{
     time::Duration,
     thread::sleep
 };
+
 use tokio::{
     sync::{mpsc, Mutex},
     time::Instant
@@ -12,10 +13,9 @@ use web_audio_api::{
     context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions},
     node::AudioNode
 };
-use web_audio_api::context::BaseAudioContext;
 use crate::superdough::{ADSR, BPF, Delay, FilterADSR, HPF, Loop, LPF, superdough};
 
-
+const BLOCK_SIZE: usize = 128;
 #[derive(Debug)]
 pub struct WebAudioMessage {
     pub note: f32,
@@ -56,6 +56,8 @@ pub fn init(
     ............................................................*/
     let message_queue_clone = Arc::clone(&message_queue);
     tauri::async_runtime::spawn(async move {
+
+
         loop {
             if let Some(package) = async_output_receiver.recv().await {
                 let mut message_queue = message_queue_clone.lock().await;
@@ -72,6 +74,7 @@ pub fn init(
         /* ...........................................................
                             Prepare audio context
         ............................................................*/
+
         let latency_hint = match std::env::var("WEB_AUDIO_LATENCY").as_deref() {
             Ok("playback") => AudioContextLatencyCategory::Playback,
             _ => AudioContextLatencyCategory::default(),
@@ -98,7 +101,7 @@ pub fn init(
 
                 return false;
             });
-            sleep(Duration::from_millis(1));
+            tokio::time::sleep(Duration::from_millis(1)).await;
         }
     });
 }
