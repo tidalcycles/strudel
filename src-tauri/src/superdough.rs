@@ -1,6 +1,6 @@
 use std::fs::File;
 use web_audio_api::context::{AudioContext, BaseAudioContext};
-use web_audio_api::node::{AudioBufferSourceNode, AudioNode, AudioScheduledSourceNode, BiquadFilterNode, BiquadFilterType, DelayNode, GainNode, OscillatorNode, OscillatorType};
+use web_audio_api::node::{AudioBufferSourceNode, AudioNode, AudioScheduledSourceNode, BiquadFilterNode, BiquadFilterType, DelayNode, DynamicsCompressorNode, GainNode, OscillatorNode, OscillatorType};
 use web_audio_api::node::BiquadFilterType::{Bandpass, Highpass, Lowpass};
 use crate::webaudiobridge::WebAudioMessage;
 
@@ -57,8 +57,9 @@ pub struct FilterADSR {
 pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
     let now = context.current_time();
     let mut chain: Vec<&dyn AudioNode> = Vec::new();
-
-    let env = context.create_gain();
+    let compressor = context.create_dynamics_compressor();
+    compressor.connect(&context.destination());
+    compressor.threshold().set_value(-50.0);
     // Play synth or sample
     match message.waveform.as_str() {
         "sine" | "square" | "triangle" | "saw" => {
@@ -70,6 +71,7 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
             for f in &filters {
                 chain.push(f);
             }
+            let env = context.create_gain();
             chain.push(&env);
 
             let mut delays = Vec::new();
@@ -81,8 +83,9 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                 create_delay(message, &context, &env, &mut delays, now);
             }
 
+
             // Connect nodes and play synth
-            connect_nodes(chain, context);
+            connect_nodes(chain, context, &compressor);
             let osc = play_synth(&message, now, osc, filters, &env);
 
             osc.set_onended(move |_| {
@@ -119,7 +122,7 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                         create_delay(message, &context, &env, &mut delays, now);
                     }
                     // Connect nodes and play sample
-                    connect_nodes(chain, context);
+                    connect_nodes(chain, context, &compressor);
                     src.playback_rate().set_value(message.speed);
                     let src = play_sample(message, now, audio_buffer_duration, src, filters, &env);
                     src.set_onended(move |_| {
@@ -308,7 +311,7 @@ fn apply_adsr(
             sustain * message.velocity,
             now + attack + decay,
         )
-        .set_value_at_time(sustain * message.velocity, message.duration)
+        // .set_value_at_time(sustain * message.velocity, message.duration)
         .linear_ramp_to_value_at_time(0.00, now + message.duration);
 }
 
@@ -344,12 +347,12 @@ fn apply_default_drum_adsr(envelope: &GainNode, message: &WebAudioMessage, now: 
     apply_adsr(envelope, message, now, 0.001, message.velocity, 0.5, 0.5);
 }
 
-fn connect_nodes<'a>(nodes: Vec<&'a (dyn AudioNode + 'a)>, context: &'a mut AudioContext) -> Vec<&'a (dyn AudioNode)> {
+fn connect_nodes<'a>(nodes: Vec<&'a (dyn AudioNode + 'a)>, context: &'a mut AudioContext, compressor: &DynamicsCompressorNode) -> Vec<&'a (dyn AudioNode)> {
     for i in 0..nodes.len() - 1 {
         nodes[i].connect(nodes[i + 1]);
     }
     if let Some(last_node) = nodes.last() {
-        last_node.connect(&context.destination());
+        last_node.connect(compressor);
     }
     nodes
 }
