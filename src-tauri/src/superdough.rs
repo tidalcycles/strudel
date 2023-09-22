@@ -60,40 +60,32 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
     let compressor = context.create_dynamics_compressor();
     compressor.connect(&context.destination());
     compressor.threshold().set_value(-50.0);
+    let env = context.create_gain();
+    let delay = context.create_delay(1.);
     // Play synth or sample
     match message.waveform.as_str() {
         "sine" | "square" | "triangle" | "saw" => {
-
-            // Create nodes for synth playback
             let osc = context.create_oscillator();
+            // Create nodes for synth playback
             chain.push(&osc);
             let filters = create_filters(context, message);
             for f in &filters {
                 chain.push(f);
             }
-            let env = context.create_gain();
             chain.push(&env);
 
-            let mut delays = Vec::new();
-            for _ in 0..=message.orbit {
-                delays.push(context.create_delay(1.));
-            }
 
             if message.delay.wet > 0.0 {
-                create_delay(message, &context, &env, &mut delays, now);
-            }
-
+                create_delay(message, context, &env, &delay, now, &compressor);
+            };
 
             // Connect nodes and play synth
             connect_nodes(chain, context, &compressor);
             let osc = play_synth(&message, now, osc, filters, &env);
 
+
             osc.set_onended(move |_| {
-                for d in &delays {
-                    // env.gain().set_value_at_time(velocity * sustain, now);
-                    // env.gain().exponential_ramp_to_value_at_time(0.0001, now + release);
-                    d.disconnect();
-                }
+               delay.disconnect();
             });
         }
         _ => {
@@ -113,22 +105,16 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                     let env = context.create_gain();
                     chain.push(&env);
 
-                    let mut delays = Vec::new();
-                    for _ in 0..=message.orbit {
-                        delays.push(context.create_delay(1.));
-                    }
 
                     if message.delay.wet > 0.0 {
-                        create_delay(message, &context, &env, &mut delays, now);
+                        create_delay(message, context, &env, &delay, now, &compressor);
                     }
                     // Connect nodes and play sample
                     connect_nodes(chain, context, &compressor);
                     src.playback_rate().set_value(message.speed);
                     let src = play_sample(message, now, audio_buffer_duration, src, filters, &env);
                     src.set_onended(move |_| {
-                        for d in &delays {
-                            d.disconnect();
-                        }
+                        delay.disconnect();
                     });
                 }
                 Err(e) => eprintln!("Failed to open file: {:?}", e),
@@ -137,12 +123,10 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
     }
 }
 
-fn create_delay(message: &WebAudioMessage, context: &&mut AudioContext, env: &GainNode, delays: &mut Vec<DelayNode>, now: f64) {
-
+fn create_delay(message: &WebAudioMessage, context: &mut AudioContext, env: &GainNode, delay: &DelayNode, now: f64, compressor: &DynamicsCompressorNode) {
     let output = context.create_gain();
-    output.connect(&context.destination());
+    output.connect(compressor);
 
-    let delay = delays.get(message.orbit).unwrap();
     delay.delay_time().set_value(message.delay.delay_time);
     delay.connect(&output);
 
@@ -172,7 +156,7 @@ fn play_synth(message: &&WebAudioMessage, now: f64, mut osc: OscillatorNode, fil
     for f in filters {
         apply_filter_adsr(&f, message, &f.type_(), now);
     }
-    osc.stop_at(now + message.duration + message.adsr.release);
+    osc.stop_at(now + message.duration + message.adsr.release + 2.);
 
     osc
 }
@@ -305,14 +289,14 @@ fn apply_adsr(
 ) {
     envelope
         .gain()
-        .set_value_at_time(0., now)
+        .set_value_at_time(0.0, now)
         .linear_ramp_to_value_at_time(message.velocity, now + attack)
-        .linear_ramp_to_value_at_time(
+        .exponential_ramp_to_value_at_time(
             sustain * message.velocity,
             now + attack + decay,
         )
-        // .set_value_at_time(sustain * message.velocity, message.duration)
-        .linear_ramp_to_value_at_time(0.00, now + message.duration);
+        .set_value_at_time(sustain * message.velocity, now + message.duration)
+        .linear_ramp_to_value_at_time(0.00001, now + message.duration + release);
 }
 
 fn apply_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
@@ -328,7 +312,7 @@ fn apply_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
 }
 
 fn apply_default_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
-    apply_adsr(envelope, message, now, 0.001, message.velocity, 0.05, 0.1);
+    apply_adsr(envelope, message, now, 0.001, message.velocity, 0.05, 0.07);
 }
 
 fn apply_drum_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {

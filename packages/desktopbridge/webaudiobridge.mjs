@@ -52,7 +52,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     attack = 0.001,
     decay = 0.05,
     sustain = 1,
-    release = 0.001,
+    release = 0.1,
     lpattack = 0.0001,
     lpdecay = 0.2,
     lpsustain = 0.6,
@@ -81,7 +81,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     delaytime = Math.abs(delaytime);
   }
 
-  let adsr_on = attack !== 0.001 || decay !== 0.05 || sustain !== 1 || release !== 0.001 ? 1 : 0;
+  let adsr_on = attack !== 0.001 || decay !== 0.05 || sustain !== 1 || release !== 0.01 ? 1 : 0;
 
   const packages = {
     loop: [loop, loopBegin, loopEnd],
