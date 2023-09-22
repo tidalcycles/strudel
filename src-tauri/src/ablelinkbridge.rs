@@ -28,15 +28,16 @@ impl AbeLinkToJs {
 
 pub struct AsyncInputTransmit {
   pub inner: Mutex<mpsc::Sender<LinkMsg>>,
+  pub abelink: Arc<Mutex<AbeLinkState>>,
 }
-pub struct State {
+pub struct AbeLinkState {
   pub link: AblLink,
   pub session_state: SessionState,
   pub running: bool,
   pub quantum: f64,
 }
 
-impl State {
+impl AbeLinkState {
   pub fn new() -> Self {
     Self {
       link: AblLink::new(120.0),
@@ -58,6 +59,7 @@ impl State {
 pub fn init(
   _logger: Logger,
   abelink_to_js: AbeLinkToJs,
+  abelink: Arc<Mutex<AbeLinkState>>,
   async_input_receiver: mpsc::Receiver<LinkMsg>,
   mut async_output_receiver: mpsc::Receiver<LinkMsg>,
   async_output_transmitter: mpsc::Sender<LinkMsg>
@@ -82,24 +84,28 @@ pub fn init(
     /* ...........................................................
                         Initialize Ableton link
     ............................................................*/
-    let mut state = State::new();
-    state.link.enable(true);
-    state.link.enable_start_stop_sync(true);
+    //let mut state = AbeLinkState::new();
 
-    let mut prev_is_playing = state.session_state.is_playing();
-    let mut prev_bpm = state.session_state.tempo();
+    let mut prev_is_playing = false;
+    let mut prev_bpm = 120.0;
 
     /* ...........................................................
                         Process queued messages 
     ............................................................*/
 
     loop {
-      let mut message_queue = message_queue_clone.lock().await;
+      let mut state = abelink.lock().await;
+      if state.link.is_enabled() == false {
+        state.link.enable(true);
+        state.link.enable_start_stop_sync(true);
+      }
 
-      state.capture_app_state();
+      let mut message_queue = message_queue_clone.lock().await;
       let time_stamp = state.link.clock_micros();
       let bpm = state.session_state.tempo();
       let play = state.session_state.is_playing();
+      let quantum = state.quantum;
+      state.capture_app_state();
 
       if bpm != prev_bpm || play != prev_is_playing {
         //let cycle = state.session_state.time_at_beat(beat, quantum)
@@ -119,13 +125,13 @@ pub fn init(
           if is_playing == false {
             state.session_state.set_is_playing(false, time_stamp as u64);
           } else {
-            state.session_state.set_is_playing_and_request_beat_at_time(true, time_stamp as u64, 0.0, state.quantum);
+            state.session_state.set_is_playing_and_request_beat_at_time(true, time_stamp as u64, 0.0, quantum);
           }
           state.commit_app_state();
         }
         return false;
       });
-
+      drop(state);
       sleep(Duration::from_millis(10));
     }
   });
@@ -147,5 +153,8 @@ pub async fn async_process_model(
 pub async fn sendabelinkmsg(linkmsg: LinkMsg, state: tauri::State<'_, AsyncInputTransmit>) -> Result<(), String> {
   println!("bpm {} play {}", linkmsg.bpm, linkmsg.play);
   let async_proc_input_tx = state.inner.lock().await;
+  // let abelink = state.abelink.lock().await;
+  // drop(abelink);
+
   async_proc_input_tx.send(linkmsg).await.map_err(|e| e.to_string())
 }

@@ -7,6 +7,7 @@ mod loggerbridge;
 mod ablelinkbridge;
 use std::sync::Arc;
 
+use ablelinkbridge::AbeLinkState;
 use ablelinkbridge::AbeLinkToJs;
 use loggerbridge::Logger;
 use tauri::Manager;
@@ -33,13 +34,16 @@ fn main() {
     .manage(oscbridge::AsyncInputTransmit {
       inner: Mutex::new(async_input_transmitter_osc),
     })
-    .manage(ablelinkbridge::AsyncInputTransmit {
-      inner: Mutex::new(async_input_transmitter_abelink),
-    })
     .invoke_handler(tauri::generate_handler![midibridge::sendmidi, oscbridge::sendosc, ablelinkbridge::sendabelinkmsg])
     .setup(|app| {
       let window = Arc::new(app.get_window("main").unwrap());
       let logger = Logger { window: window.clone() };
+
+      let abelink = Arc::new(Mutex::new(AbeLinkState::new()));
+      app.manage(ablelinkbridge::AsyncInputTransmit {
+        inner: Mutex::new(async_input_transmitter_abelink),
+        abelink: abelink.clone(),
+      });
 
       midibridge::init(
         logger.clone(),
@@ -57,6 +61,7 @@ fn main() {
       ablelinkbridge::init(
         logger.clone(),
         AbeLinkToJs { window },
+        abelink,
         async_input_receiver_abelink,
         async_output_receiver_abelink,
         async_output_transmitter_abelink
