@@ -3912,8 +3912,7 @@ checksum = "ca6ad05a4870b2bf5fe995117d3728437bd27d7cd5f06f13c17443ef369775a1"
 [[package]]
 name = "web-audio-api"
 version = "0.33.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b600725f86c3caa0f8823ff5e3c42aecbdfcd4a390db2be9278eb06d16a98c1a"
+source = "git+https://github.com/orottier/web-audio-api-rs.git?branch=main#ed2e8712a00a36a9481510ce757858d633d20e85"
 dependencies = [
  "arc-swap",
  "arrayvec",

@@ -57,8 +57,8 @@ pub struct FilterADSR {
 pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
     let now = context.current_time();
     let mut chain: Vec<&dyn AudioNode> = Vec::new();
-    let env = context.create_gain();
 
+    let env = context.create_gain();
     // Play synth or sample
     match message.waveform.as_str() {
         "sine" | "square" | "triangle" | "saw" => {
@@ -81,7 +81,6 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                 create_delay(message, &context, &env, &mut delays, now);
             }
 
-            let (sustain, velocity, release) = (message.adsr.sustain, message.velocity, message.adsr.release);
             // Connect nodes and play synth
             connect_nodes(chain, context);
             let osc = play_synth(&message, now, osc, filters, &env);
@@ -101,7 +100,7 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
                     // Create nodes for sample playback
                     let audio_buffer = context.decode_audio_data_sync(file).unwrap();
                     let audio_buffer_duration = audio_buffer.duration();
-                    let src = context.create_buffer_source();
+                    let mut src = context.create_buffer_source();
                     src.set_buffer(audio_buffer);
                     chain.push(&src);
                     let filters = create_filters(context, message);
@@ -159,7 +158,7 @@ fn create_delay(message: &WebAudioMessage, context: &&mut AudioContext, env: &Ga
     env.connect(&input);
 }
 
-fn play_synth(message: &&WebAudioMessage, now: f64, osc: OscillatorNode, filters: Vec<BiquadFilterNode>, env: &GainNode) -> OscillatorNode {
+fn play_synth(message: &&WebAudioMessage, now: f64, mut osc: OscillatorNode, filters: Vec<BiquadFilterNode>, env: &GainNode) -> OscillatorNode {
     osc.set_type(create_osc_type(&message));
     osc.frequency().set_value(message.note);
     osc.start();
@@ -185,7 +184,7 @@ fn create_osc_type(message: &WebAudioMessage) -> OscillatorType {
     }
 }
 
-fn play_sample(message: &WebAudioMessage, now: f64, audio_buffer_duration: f64, src: AudioBufferSourceNode, filters: Vec<BiquadFilterNode>, env: &GainNode) -> AudioBufferSourceNode {
+fn play_sample(message: &WebAudioMessage, now: f64, audio_buffer_duration: f64, mut src: AudioBufferSourceNode, filters: Vec<BiquadFilterNode>, env: &GainNode) -> AudioBufferSourceNode {
     let (start_at, stop_at) = if message.speed < 0.0 {
         (audio_buffer_duration, now + message.duration + 0.2)
     } else {
@@ -228,14 +227,14 @@ fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> Vec<
     let mut filters = Vec::new();
 
     if message.bpf.frequency > 0.0 {
-        let bpf = context.create_biquad_filter();
+        let mut bpf = context.create_biquad_filter();
         bpf.set_type(Bandpass);
         bpf.frequency().set_value(message.bpf.frequency);
         bpf.q().set_value(message.bpf.resonance);
         filters.push(bpf);
     } else if message.lpf.frequency > 0.0 && message.hpf.frequency > 0.0 {
-        let lpf = context.create_biquad_filter();
-        let hpf = context.create_biquad_filter();
+        let mut lpf = context.create_biquad_filter();
+        let mut hpf = context.create_biquad_filter();
         lpf.set_type(Lowpass);
         lpf.frequency().set_value(message.lpf.frequency);
         lpf.q().set_value(message.lpf.resonance);
@@ -246,13 +245,13 @@ fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> Vec<
         filters.push(lpf);
         filters.push(hpf);
     } else if message.lpf.frequency > 0.0 {
-        let lpf = context.create_biquad_filter();
+        let mut lpf = context.create_biquad_filter();
         lpf.set_type(Lowpass);
         lpf.frequency().set_value(message.lpf.frequency);
         lpf.q().set_value(message.lpf.resonance);
         filters.push(lpf);
     } else if message.hpf.frequency > 0.0 {
-        let hpf = context.create_biquad_filter();
+        let mut hpf = context.create_biquad_filter();
         hpf.set_type(Highpass);
         hpf.frequency().set_value(message.hpf.frequency);
         hpf.q().set_value(message.hpf.resonance);
@@ -310,7 +309,7 @@ fn apply_adsr(
             now + attack + decay,
         )
         .set_value_at_time(sustain * message.velocity, message.duration)
-        .linear_ramp_to_value_at_time(0.001, message.duration + release);
+        .linear_ramp_to_value_at_time(0.00, now + message.duration);
 }
 
 fn apply_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
@@ -326,7 +325,7 @@ fn apply_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
 }
 
 fn apply_default_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
-    apply_adsr(envelope, message, now, 0.001, message.velocity, 0.5, 0.1);
+    apply_adsr(envelope, message, now, 0.001, message.velocity, 0.05, 0.1);
 }
 
 fn apply_drum_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
