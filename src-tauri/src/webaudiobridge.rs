@@ -3,6 +3,7 @@ use std::{
     time::Duration,
     thread::sleep
 };
+use mini_moka::sync::Cache;
 
 use tokio::{
     sync::{mpsc, Mutex},
@@ -38,6 +39,8 @@ pub struct WebAudioMessage {
     pub lpenv: FilterADSR,
     pub hpenv: FilterADSR,
     pub bpenv: FilterADSR,
+    pub n: usize,
+    pub sampleurl: String,
 }
 
 pub struct AsyncInputTransmitWebAudio {
@@ -70,21 +73,24 @@ pub fn init(
     });
 
     let message_queue_clone = Arc::clone(&message_queue);
-    tauri::async_runtime::spawn(async move {
-        /* ...........................................................
-                            Prepare audio context
-        ............................................................*/
 
+    // Create audio context
         let latency_hint = match std::env::var("WEB_AUDIO_LATENCY").as_deref() {
             Ok("playback") => AudioContextLatencyCategory::Playback,
             _ => AudioContextLatencyCategory::default(),
         };
-
         let mut audio_context = AudioContext::new(AudioContextOptions {
             latency_hint,
             ..AudioContextOptions::default()
         });
+    // Create audio context
 
+    tauri::async_runtime::spawn(async move {
+        /* ...........................................................
+                            Prepare audio context
+        ............................................................*/
+// let cache = Cache::new(10_000);
+// let cache_clone_1 = cache.clone();
         /* ...........................................................
                             Process queued messages
         ............................................................*/
@@ -97,7 +103,17 @@ pub fn init(
                     return true;
                 };
 
-               superdough(message.clone(), &mut audio_context);
+                let file_path = message.sampleurl.clone();
+
+
+
+               // superdough(message.clone(), &mut audio_context);
+
+
+                tokio::spawn(async move {
+
+                });
+
 
                 return false;
             });
@@ -138,6 +154,8 @@ pub struct MessageFromJS {
     lpenv: (f64, f64, f64, f64, f64),
     hpenv: (f64, f64, f64, f64, f64),
     bpenv: (f64, f64, f64, f64, f64),
+    n: usize,
+    sampleurl: String,
 }
 
 // Called from JS
@@ -212,6 +230,8 @@ pub async fn sendwebaudio(
                 release: m.bpenv.3,
                 env: m.bpenv.4,
             },
+            n: m.n,
+            sampleurl: m.sampleurl,
         };
         messages_to_process.push(message_to_process);
     }
