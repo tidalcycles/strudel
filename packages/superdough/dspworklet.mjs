@@ -1,4 +1,3 @@
-import { Pattern } from '@strudel.cycles/core';
 import { getAudioContext } from './superdough.mjs';
 
 let worklet;
@@ -73,8 +72,6 @@ export const dough = async (code) => {
   worklet.node.connect(ac.destination);
 };
 
-Pattern.prototype.dough = function () {
-  return this.onTrigger((t, hap) => {
-    window.postMessage({ time: t, dough: hap.value });
-  }, 1);
-};
+export function doughTrigger(t, hap, currentTime, duration, cps) {
+  window.postMessage({ time: t, dough: hap.value, currentTime, duration, cps });
+}
