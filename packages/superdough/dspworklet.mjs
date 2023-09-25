@@ -1,0 +1,80 @@
+import { Pattern } from '@strudel.cycles/core';
+import { getAudioContext } from './superdough.mjs';
+
+let worklet;
+export async function dspWorklet(ac, code) {
+  const name = `dsp-worklet-${Date.now()}`;
+  const workletCode = `${code}
+let __q = []; // trigger queue
+class MyProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.t = 0;
+    this.stopped = false;
+    this.port.onmessage = (e) => {
+      if(e.data==='stop') {
+        this.stopped = true;
+      } else if(e.data?.dough) {
+        const deadline = e.data.time-currentTime;
+        __q.push(e.data)
+      } else {
+        msg?.(e.data)
+      }
+    };
+  }
+  process(inputs, outputs, parameters) {
+    const output = outputs[0];
+    if(__q.length) {
+      __q = __q.filter((el) => {
+        const deadline = el.time-currentTime;
+        return deadline>0 ? true : trigger(el.dough)
+      })
+    }
+    for (let i = 0; i < output[0].length; i++) {
+      const out = dsp(this.t / sampleRate);
+      output.forEach((channel) => {
+        channel[i] = out;
+      });
+      this.t++;
+    }
+  return !this.stopped;
+  }
+}
+registerProcessor('${name}', MyProcessor);
+`;
+  const base64String = btoa(workletCode);
+  const dataURL = `data:text/javascript;base64,${base64String}`;
+  await ac.audioWorklet.addModule(dataURL);
+  const node = new AudioWorkletNode(ac, name);
+  const stop = () => node.port.postMessage('stop');
+  return { node, stop };
+}
+const stop = () => {
+  if (worklet) {
+    worklet?.stop();
+    worklet?.node?.disconnect();
+  }
+};
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('message', (e) => {
+    if (e.data === 'strudel-stop') {
+      stop();
+    } else if (e.data?.dough) {
+      worklet?.node.port.postMessage(e.data);
+    }
+  });
+}
+
+export const dough = async (code) => {
+  const ac = getAudioContext();
+  stop();
+  worklet = await dspWorklet(ac, code);
+  worklet.node.connect(ac.destination);
+};
+
+Pattern.prototype.dough = function () {
+  return this.onTrigger((t, hap) => {
+    window.postMessage({ time: t, dough: hap.value });
+  }, 1);
+};
