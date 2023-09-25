@@ -24,10 +24,13 @@ class MyProcessor extends AudioWorkletProcessor {
   process(inputs, outputs, parameters) {
     const output = outputs[0];
     if(__q.length) {
-      __q = __q.filter((el) => {
-        const deadline = el.time-currentTime;
-        return deadline>0 ? true : trigger(el.dough)
-      })
+      for(let i=0;i<__q.length;++i) {
+        const deadline = __q[i].time-currentTime;
+        if(deadline<=0) {
+          trigger(__q[i].dough)
+          __q.splice(i,1)
+        }
+      }
     }
     for (let i = 0; i < output[0].length; i++) {
       const out = dsp(this.t / sampleRate);
