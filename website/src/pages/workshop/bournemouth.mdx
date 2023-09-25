@@ -9,46 +9,43 @@ import QA from '@components/QA';
 
 ## Getting started
 
-This is how we write a basic pattern in strudel
+This is how we write a basic pattern in Strudel.
+* You play the sound by pressing the play button or hitting `ctrl` and `enter`
+* You can stop the sound by hitting `ctrl` and `.`
 
 <MiniRepl client:visible tune={`sound("bd hh sd oh")`} dirt />
 
-you play the sound by pressing the play button or hitting ctrl and enter
-
-you can stop the sound by hitting ctrl + .
-
-what happens if we put more sounds in the pattern?
+What happens if we put more sounds in the pattern?
 <MiniRepl client:visible tune={`sound("bd hh sd oh hh bd oh sd")`} dirt />
 
-even more?
+Even more?
 <MiniRepl client:visible tune={`sound("bd hh sd oh hh bd oh sd hh sn oh bd")`} dirt />
 
-(etc etc)
+The pattern becomes much faster and denser - this is because Strudel has a consistent 'cycle' running in the background.
+Any sounds in the pattern will run within that cycle, and Strudel will try to space them evenly in time.
+(unless we give explicit instructions for them not to - we'll learn how to do that later).
 
-this is because strudel has a consistent 'cycle' running in the background
-any sounds in the pattern will run within that cycle
-and strudel will try to space them evenly in time
-unless we give explicit instructions for them not to
-we'll learn how to do that later
+This means that the pulse of the pattern is dictated by the number of elements
 
-this means that the pulse of the pattern is dictated by the number of elements
+<MiniRepl client:visible tune={`sound("hh bd sd")`} dirt />
 
-<MiniRepl client:visible tune={`sound("hh bd sn")`} dirt />
-
-//vs
+vs.
 
 <MiniRepl client:visible tune={`sound("hh bd hh cp")`} dirt />
 
-later on when we learn how to play multiple patterns at once
-this gives us some fun opportunities to play with rhythm
+Later on when we learn how to play multiple patterns at once this gives us some fun opportunities to play with rhythm.
 
-try some other sounds
-insect wind jazz metal east crow casio space numbers
+Why don't you try writing a pattern with some of these other sounds:
 
-the green writing inside the speech marks has its own set of rules
-we call this the 'mininotation' and it's the core of how strudel generates patterns
+`insect wind jazz metal east crow casio space numbers`
 
-we can speed things up with *
+<MiniRepl client:visible tune={``} dirt />
+
+## Mininotation
+
+The green writing inside the speech marks has its own set of rules. We call this the 'mininotation' and it's the core of how Strudel generates patterns.
+
+We can speed things up with `*`
 
 <MiniRepl client:visible tune={`sound("hh")`} dirt />
 
@@ -56,113 +53,243 @@ we can speed things up with *
 
 <MiniRepl client:visible tune={`sound("hh*32")`} dirt />
 
-or slow them down with /
+Or slow them down with `/` - the snare only sounds every other cycle:
 
 <MiniRepl client:visible tune={`sound("bd sd/2") `} dirt />
 
-the snare only sounds every other cycle
-
-we can choose different sounds from a set using :
+We can choose different sounds from a set using `:`. The computer starts counting at `0`, so `casio:0` is the same as `casio`.
 
 <MiniRepl client:visible tune={`sound("casio casio casio casio")`} dirt />
 
 <MiniRepl client:visible tune={`sound("casio casio:1 casio casio:5")`} dirt />
 
-the computer starts counting at 0, so casio:0 is the same as casio
-
-we can add a rest using ~
+We can add a rest using `~`
 
 <MiniRepl client:visible tune={`sound("casio casio:1 ~ casio:5")`} dirt />
 
-we can create more variation with sub-sequences
-we do this by breaking our steps down into mini patterns using []
+We can create more variation with sub-sequences.
+We do this by breaking our steps down into mini patterns using `[]`
 
 <MiniRepl client:visible tune={`sound("bd sd bd hh")`} dirt />
 
 <MiniRepl client:visible tune={`sound("bd sd [bd cp] [hh oh/2]")`} dirt />
 
-you can nest sequences within sequences for dense patterns
+You can nest sequences within sequences for dense patterns
 
 <MiniRepl client:visible tune={`sound("[[bd [bd bd bd bd]] bd sd] [bd cp]")`} dirt />
 
-we can also schedule events across multiple cycles using &lt;&gt;
+We can also schedule events across multiple cycles using `<>`
 
 <MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5")`} dirt />
 
-we can add some easy randomness using ?
-? means the following sound will play with 50% probability
+Let's add some easy randomness using `?`. 
+Putting `?` after a sound means there is a 50% probability that the sound will play.
 
 <MiniRepl client:visible tune={`sound("hh*8")`} dirt />
 
 <MiniRepl client:visible tune={`sound("hh*8?")`} dirt />
 
-## chaining functions (and making it sound more interesting)
+## Chaining functions (and making it sound more interesting)
 
-there's also a shorthand for selecting the sample or the note of a synth
-note that we chain functions together with .
+Let's learn about chaining functions together. This is how we start to make more complex patterns.
+
+There's another way of selecting samples, using a function called `n` - this gives us a bit more flexibility in writing patterns.
 
 <MiniRepl client:visible tune={`sound("casio casio:1 casio casio:5")`} dirt />
 
-we use a function called n and some mininotation to create a pattern of numbers
+We connect the functions together using `.`. The `n` function also uses the mininotation to create a pattern of numbers
 
-<MiniRepl client:visible tune={`sound("casio casio casio casio").n("0 1 0 5")`} dirt />
+<MiniRepl client:visible tune={`n("0 1 0 5").sound("casio casio casio casio")`} dirt />
 
-this next part is a bit confusing, don't worry too much if it doesn't make sense right now
+So far this isn't saving us much time... but we can do better!
 
-because strudel always takes the rhythm from the first pattern
-we can't do this
+(This next part is a bit confusing, don't worry too much if it doesn't make sense right now)
 
-<MiniRepl client:visible tune={`sound("casio").n("0 1 0 5")`} dirt />
-
-because strudel thinks there's only one event in the pattern
-
-but if we write the n pattern first then that gives us what we want
+We can reduce the amount of typing by specifying a pattern of `n`, and just specifying the `sound` once:
 
 <MiniRepl client:visible tune={`n("0 1 0 5").sound("casio")`} dirt />
 
-we can use note to do the same thing with pitch
+However, because Strudel always takes the rhythm from the first pattern, this doesn't work quite as we'd like, because Strudel thinks there's only one event in the pattern:
+
+<MiniRepl client:visible tune={`sound("casio").n("0 1 0 5")`} dirt />
+
+So far we've been looking at choosing different sounds from the folder with `n`. 
+We can also choose different pitches with `note`.
+
+This works in the same way as `n`:
 
 <MiniRepl client:visible tune={`note("0 1 0 5").sound("casio")`} dirt />
 
-or we can combine the two
+Or we can combine the two:
 
-<MiniRepl client:visible tune={`note("0 1 0 5").sound("casio").n("<0 1>")`} dirt />
+<MiniRepl client:visible tune={`note("0 1 0 5").sound("casio").n("<0 2>")`} dirt />
 
-and we can make use of the mininotation we learned above in the note or n pattern
+And we can make use of all the mininotation we learned above in the `note` or `n` pattern
 
 <MiniRepl client:visible tune={`n("0 1*3 <0 [~ 7]> 5").sound("casio <space jazz>")`} dirt />
 
-strudel does its best to map the two patterns together
-based on when each event in the pattern starts
+Strudel does its best to map the two patterns together, based on when each event in the pattern starts.
 
 
 ## Effects
-ok, let's try some effects
+Ok, let's try adding some effects.
 
 <MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5")`} dirt />
 
-the vowel effect is a kind of filter
-note that we chain functions together using .
+The `vowel` effect is a kind of filter.
+
+Notice again that we chain functions together using `.`
 
 <MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5").vowel("a")`} dirt />
 
-we can use mini-notation to create a pattern in the effect
+We can use mini-notation to create a pattern in the effect:
 
 <MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5").vowel("<a e>")`} dirt />
 
 <MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5").vowel("a e i")`} dirt />
 
-most effects take a pattern of numbers
+Most effects take a pattern of numbers. `pan` moves the signal left and right:
 
 <MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5").pan("0 1")`} dirt />
 
-pan moves the signal left and right
-
-
-room is reverb
+`room` adds reverb:
 
 <MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5").room("<0 0 1 2>")`} dirt />
 
-we can chain effects together
+We can chain effects together:
 
 <MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5").room("<0 0 1 2>").pan("0 1").vowel("<a o p>")`} dirt />
+
+## Stacking patterns
+There's an important function in Strudel called `stack` - it allows us to play multiple patterns at the same time
+
+Let's start with our drum pattern:
+<MiniRepl client:visible tune={`sound("bd hh*2 bd <~ sd>")`} dirt />
+
+And our synth line from above:
+<MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5").room("<0 0 1 2>").pan("0 1").vowel("<a o p>")`} dirt />
+
+And play them both at the same time:
+<MiniRepl client:visible tune={`stack(
+  //drums:
+  sound("bd hh*2 bd <~ sd>"),
+  //synth:
+  sound("casio <[hh cp] casio:1> ~ casio:5").room("<0 0 1 2>").pan("0 1").vowel("<a o p>")
+  )`} dirt />
+
+Note that each line of code in the `stack` should be separated with a comma. If we separate out the lines we can add comments in, this can help us keep track of what's going on.
+If our code is getting a bit messy we can break it out onto separate lines within the stack.
+
+<MiniRepl client:visible tune={`stack(
+  //drums:
+  sound("bd hh*2 bd <~ sd>"),
+  //synth:
+  sound("casio <[hh cp] casio:1> ~ casio:5")
+  .room("<0 0 1 2>")
+  .pan("0 1")
+  .vowel("<a o p>")
+  )`} dirt />
+
+## Pattern transformation
+Ok, so things are starting to sound a bit better. Let's explore some ways of creating more complex patterns.
+
+Let's start with a simple drum beat:
+<MiniRepl client:visible tune={`sound("bd hh*2 bd [~ sd]")`} dirt />
+
+We can slow that down with `slow()`:
+<MiniRepl client:visible tune={`sound("bd hh*2 bd [~ sd]").slow(2)`} dirt />
+
+Or speed it up with `fast()`:
+<MiniRepl client:visible tune={`sound("bd hh*2 bd [~ sd]").fast(2)`} dirt />
+
+You can change the number in brackets after `fast` or `slow` to change how much we speed up or slow down by.
+You can even pattern that number using the mininotation!
+
+<MiniRepl client:visible tune={`sound("bd hh*2 bd [~ sd]").slow("1 2")`} dirt />
+
+It might seem like something a bit weird is happening here - basically Strudel is switching between two versions of the pattern, the normal version and the slow version.
+It can be a bit hard to get your head round exactly what's happening sometimes, but as long as you're happy with the sound I don't think it matters too much.
+
+Let's think about some other kinds of patterns - `rev()` lets us play a pattern backwards:
+
+<MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5")`} dirt />
+
+<MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5").rev()`} dirt />
+
+Or we can use `every()` to apply a transformation every so many cycles:
+
+<MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5").every(4, rev())`} dirt />
+
+We can put other transformations inside the `every()` function:
+
+<MiniRepl client:visible tune={`sound("casio <[hh cp] casio:1> ~ casio:5").every(4, slow(2))`} dirt />
+
+Or we can do something similar with `sometimes` which will apply a transformation with 50% likelihood:
+
+<MiniRepl client:visible tune={`sound("bd hh*2 bd <~ sd>").sometimes(rev)`} dirt />
+
+`Iter` starts the pattern at a different point each cycle, giving us a rotational pattern:
+
+<MiniRepl client:visible tune={`n("1 2 3 4").sound("numbers").iter(4).slow(4)`} dirt />
+
+This can lead to some nice variation across time:
+
+<MiniRepl client:visible tune={`stack(
+  //drums:
+  sound("bd hh*2 bd <~ sd>"),
+  //synth:
+  sound("casio <[hh cp] casio:1> ~ casio:5").room("<0 0 1 2>").pan("0 1").vowel("<a o p>").iter(4)
+  )`} dirt />
+
+Finally, we can apply a transformation in one speaker only using `jux`:
+
+<MiniRepl client:visible tune={`stack(
+  //drums:
+  sound("bd hh*2 bd <~ sd>").jux(rev()),
+  //synth:
+  sound("casio <[hh cp] casio:1> ~ casio:5").room("<0 0 1 2>").pan("0 1").vowel("<a o p>").iter(4)
+  )`} dirt />
+
+## Bonus content:
+
+### Polyrhythm/polymeter
+Health warning: I may have got these mixed up...
+
+We can use `stack` or `[,]` to create polyrhythmic structures - in this case patterns of three over four
+
+<MiniRepl client:visible tune={`stack(
+  sound("bd sd bd hh"),
+  note("0 2 4").sound("casio")
+  )`} dirt />
+
+<MiniRepl client:visible tune={`sound("[bd sn hh, ~ cp ~ cp]")`} dirt />
+
+We can use `{,}` to create polymetrical structures - the elements of the pattern _after_ the comma will follow the same pulse as those _before_ the comma
+This can give us a sense of rotation over time.
+<MiniRepl client:visible tune={`sound("{hh cp hh cp, bd sd ~ ~ bd}")`} dirt />
+
+### Euclidian rhythm
+
+We can use brackets after the name of a sound to define a Euclidian rhythm - Strudel will try to space the first number of events over the second number of steps:
+
+<MiniRepl client:visible tune={`sound("cp(3,8)")`} dirt />
+
+We can rotate the pattern so it starts on a different step by using a third argument:
+
+<MiniRepl client:visible tune={`sound("cp(3,8,<0 2>)")`} dirt />
+
+Try experimenting with different values.
+
+### Long samples
+
+Here are a few functions to help you work with longer sounds.
+
+If we play a long sample it will be triggered every cycle and so we will end up with an overlapping effect
+
+<MiniRepl client:visible tune={``} dirt />
+
+<MiniRepl client:visible tune={``} dirt />
+
+<MiniRepl client:visible tune={``} dirt />
+
+<MiniRepl client:visible tune={``} dirt />
