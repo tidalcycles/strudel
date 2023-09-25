@@ -149,7 +149,12 @@ export function Repl({ embedded = false }) {
       onEvalError: (err) => {
         setPending(false);
       },
-      onToggle: (play) => !play && cleanupDraw(false),
+      onToggle: (play) => {
+        if (!play) {
+          cleanupDraw(false);
+          window.postMessage('strudel-stop');
+        }
+      },
       drawContext,
       // drawTime: [0, 6],
       paintOptions,
