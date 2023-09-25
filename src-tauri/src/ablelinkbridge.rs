@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::time::{ Duration, SystemTime, UNIX_EPOCH };
 use rusty_link::{ AblLink, SessionState };
 use std::sync::Arc;
 use tokio::sync::{ mpsc, Mutex };
@@ -13,6 +13,7 @@ use tauri::Window;
 pub struct LinkMsg {
   pub play: bool,
   pub bpm: f64,
+  pub timestamp: u64,
 }
 
 #[derive(Clone)]
@@ -112,6 +113,7 @@ pub fn init(
         let payload = LinkMsg {
           bpm,
           play,
+          timestamp: 1,
         };
         abelink_to_js.send(payload);
         prev_is_playing = play;
@@ -150,11 +152,44 @@ pub async fn async_process_model(
 
 // Called from JS
 #[tauri::command]
-pub async fn sendabelinkmsg(linkmsg: LinkMsg, state: tauri::State<'_, AsyncInputTransmit>) -> Result<(), String> {
+pub async fn sendabelinkmsg(linkmsg: LinkMsg, state: tauri::State<'_, AsyncInputTransmit>) -> Result<LinkMsg, String> {
   println!("bpm {} play {}", linkmsg.bpm, linkmsg.play);
   let async_proc_input_tx = state.inner.lock().await;
-  // let abelink = state.abelink.lock().await;
-  // drop(abelink);
+  let mut abelink = state.abelink.lock().await;
+  let quantum = abelink.quantum;
+  let current_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
+  // abelink.session_state.phase_at_time(time, quantum)
+  //let x = abelink.session_state.request_beat_at_start_playing_time(1.0, quantum);
 
-  async_proc_input_tx.send(linkmsg).await.map_err(|e| e.to_string())
+  let x = Duration::from_millis(abelink.session_state.time_at_beat(0.0, quantum) as u64);
+  let link_clock = Duration::from_millis(abelink.link.clock_micros() as u64);
+
+  let timestamp = current_time.as_millis();
+  let phase = abelink.session_state.phase_at_time(abelink.link.clock_micros(), quantum);
+  let bpm = abelink.session_state.tempo();
+  let beat = abelink.session_state.beat_at_time(abelink.link.clock_micros(), quantum);
+
+  let bps = 60.0 / bpm;
+  let phase_offset = quantum - phase;
+  let seconds_offset = phase_offset * bps;
+  let milliseconds_offset = seconds_offset * 1000.0;
+  let transport_offset = (milliseconds_offset as u64) + (current_time.as_millis() as u64);
+
+  // let d = Duration::from_millis(x as u64);
+  // let d2 = Duration::from_secs(0);
+  // let d3 = d + d2;
+
+  let x2 = Duration::from_millis(abelink.session_state.time_for_is_playing());
+
+  println!("quantum {}, phase {}, bpm {}, beat {}, seconds offset {}", quantum, phase, bpm, beat, seconds_offset);
+  let ret_message = LinkMsg {
+    bpm: linkmsg.bpm.clone(),
+    play: linkmsg.play.clone(),
+    timestamp: transport_offset,
+  };
+
+  async_proc_input_tx.send(linkmsg).await.unwrap();
+
+  drop(abelink);
+  Ok(ret_message)
 }
