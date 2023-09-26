@@ -1,22 +1,23 @@
 use std::{
     sync::Arc,
     time::Duration,
-    thread::sleep
+    thread::sleep,
 };
 use mini_moka::sync::Cache;
 
 use tokio::{
     sync::{mpsc, Mutex},
-    time::Instant
+    time::Instant,
 };
 use serde::Deserialize;
 use web_audio_api::{
     context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions},
-    node::AudioNode
+    node::AudioNode,
 };
 use crate::superdough::{ADSR, BPF, Delay, FilterADSR, HPF, Loop, LPF, superdough};
 
 const BLOCK_SIZE: usize = 128;
+
 #[derive(Debug)]
 pub struct WebAudioMessage {
     pub note: f32,
@@ -50,7 +51,7 @@ pub struct AsyncInputTransmitWebAudio {
 pub fn init(
     async_input_receiver: mpsc::Receiver<Vec<WebAudioMessage>>,
     mut async_output_receiver: mpsc::Receiver<Vec<WebAudioMessage>>,
-    async_output_transmitter: mpsc::Sender<Vec<WebAudioMessage>>
+    async_output_transmitter: mpsc::Sender<Vec<WebAudioMessage>>,
 ) {
     tauri::async_runtime::spawn(async move { async_process_model(async_input_receiver, async_output_transmitter).await });
     let message_queue: Arc<Mutex<Vec<WebAudioMessage>>> = Arc::new(Mutex::new(Vec::new()));
@@ -59,8 +60,6 @@ pub fn init(
     ............................................................*/
     let message_queue_clone = Arc::clone(&message_queue);
     tauri::async_runtime::spawn(async move {
-
-
         loop {
             if let Some(package) = async_output_receiver.recv().await {
                 let mut message_queue = message_queue_clone.lock().await;
@@ -75,14 +74,14 @@ pub fn init(
     let message_queue_clone = Arc::clone(&message_queue);
 
     // Create audio context
-        let latency_hint = match std::env::var("WEB_AUDIO_LATENCY").as_deref() {
-            Ok("playback") => AudioContextLatencyCategory::Playback,
-            _ => AudioContextLatencyCategory::default(),
-        };
-        let mut audio_context = AudioContext::new(AudioContextOptions {
-            latency_hint,
-            ..AudioContextOptions::default()
-        });
+    let latency_hint = match std::env::var("WEB_AUDIO_LATENCY").as_deref() {
+        Ok("playback") => AudioContextLatencyCategory::Playback,
+        _ => AudioContextLatencyCategory::default(),
+    };
+    let mut audio_context = AudioContext::new(AudioContextOptions {
+        latency_hint,
+        ..AudioContextOptions::default()
+    });
     // Create audio context
 
     tauri::async_runtime::spawn(async move {
@@ -106,12 +105,18 @@ pub fn init(
                 let file_path = message.sampleurl.clone();
 
 
-
-               // superdough(message.clone(), &mut audio_context);
+                // superdough(message.clone(), &mut audio_context);
 
 
                 tokio::spawn(async move {
+                    match tokio::fs::metadata(&file_path).await {
+                        Ok(_) => {
 
+                        }
+                        Err(_) => {
+                            let resp = reqwest::get(url_copy).await.unwrap().text().await.unwrap();
+                        }
+                    }
                 });
 
 
@@ -124,7 +129,7 @@ pub fn init(
 
 pub async fn async_process_model(
     mut input_receiver: mpsc::Receiver<Vec<WebAudioMessage>>,
-    output_transmitter: mpsc::Sender<Vec<WebAudioMessage>>
+    output_transmitter: mpsc::Sender<Vec<WebAudioMessage>>,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     while let Some(input) = input_receiver.recv().await {
         let output = input;
@@ -162,7 +167,7 @@ pub struct MessageFromJS {
 #[tauri::command]
 pub async fn sendwebaudio(
     messagesfromjs: Vec<MessageFromJS>,
-    state: tauri::State<'_, AsyncInputTransmitWebAudio>
+    state: tauri::State<'_, AsyncInputTransmitWebAudio>,
 ) -> Result<(), String> {
     let async_proc_input_tx = state.inner.lock().await;
     let mut messages_to_process: Vec<WebAudioMessage> = Vec::new();
