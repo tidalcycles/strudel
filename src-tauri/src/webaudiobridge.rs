@@ -3,6 +3,7 @@ use std::{
     time::Duration,
     thread::sleep,
 };
+use std::fs::File;
 use mini_moka::sync::Cache;
 use reqwest::Url;
 
@@ -11,14 +12,12 @@ use tokio::{
     time::Instant,
 };
 use serde::Deserialize;
+// use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
-use web_audio_api::{
-    context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions},
-    node::AudioNode,
-};
-use crate::superdough::{ADSR, BPF, Delay, FilterADSR, HPF, Loop, LPF, superdough};
+use web_audio_api::{AudioBuffer, context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions}, node::AudioNode};
+use web_audio_api::context::BaseAudioContext;
+use crate::superdough::{ADSR, BPF, Delay, FilterADSR, HPF, Loop, LPF, sample, superdough, superdough_synth};
 
-const BLOCK_SIZE: usize = 128;
 
 #[derive(Debug)]
 pub struct WebAudioMessage {
@@ -26,7 +25,6 @@ pub struct WebAudioMessage {
     pub instant: Instant,
     pub offset: f64,
     pub waveform: String,
-    pub bank: String,
     pub lpf: LPF,
     pub hpf: HPF,
     pub bpf: BPF,
@@ -90,8 +88,7 @@ pub fn init(
         /* ...........................................................
                             Prepare audio context
         ............................................................*/
-// let cache = Cache::new(10_000);
-// let cache_clone_1 = cache.clone();
+        let cache:Cache<String, AudioBuffer>  = Cache::new(10_000);
         /* ...........................................................
                             Process queued messages
         ............................................................*/
@@ -104,30 +101,47 @@ pub fn init(
                     return true;
                 };
 
-                let url = Url::parse(&*message.sampleurl).unwrap();
-                let fname = url.path_segments().and_then(Iterator::last).and_then(|name| if name.is_empty() { None } else { Some(name) }).unwrap_or("tmp.ben");
-                let file_path = "/Users/vasiliymilovidov/samples/".to_owned() + fname;
-                let url_copy = url.clone();
-
-                // superdough(message.clone(), &mut audio_context);
-
-
-                tokio::spawn(async move {
-                    match tokio::fs::metadata(&file_path).await {
-                        Ok(_) => {
-                            println!("File exists");
-                        }
-                        Err(_) => {
-                            println!("File does not exist, downloading");
-                            let resp = reqwest::get(url_copy).await.unwrap().text().await.unwrap();
-                            let bytes = resp.bytes().await.unwrap();
-                            let mut out = tokio::fs::File::create(file_path).await.unwrap();
-                            out.write_all(&bytes).await.unwrap();
-                        }
+                match message.waveform.as_str() {
+                    "sine" | "square" | "triangle" | "saw" => {
+                        // superdough(message.clone(), &mut audio_context);
+                        superdough_synth(message.clone(), &mut audio_context);
                     }
-                });
+                    _ => {
+                        let url = Url::parse(&*message.sampleurl).unwrap();
+                        let fname = url.path_segments().and_then(Iterator::last).and_then(|name| if name.is_empty() { None } else { Some(name) }).unwrap_or("tmp.ben");
+                        let file_path = "/Users/vasiliymilovidov/samples/".to_owned() + fname;
+                        let url_copy = url.clone();
+                        let file_path_copy = file_path.clone();
 
+                        match cache.get(&file_path_copy) {
+                            Some(buff) => {
+                                sample(message.clone(), &mut audio_context, buff.clone());
+                                return false;
+                            }
+                            None => {
+                                match File::open(file_path_copy.clone()) {
+                                    Ok(file) => {
+                                        let buff = audio_context.decode_audio_data_sync(file).unwrap();
+                                        cache.insert(file_path_copy.clone(), buff.clone());
+                                    }
+                                    Err(_) => {}
+                                }
+                            }
+                        }
+                        tokio::spawn(async move {
+                            match tokio::fs::metadata(&file_path).await {
+                                Ok(_) => {}
+                                Err(_) => {
+                                    let resp = reqwest::get(url_copy).await.unwrap();
+                                    let bytes = resp.bytes().await.unwrap();
+                                    let mut out = tokio::fs::File::create(file_path).await.unwrap();
+                                    out.write_all(&bytes).await.unwrap();
+                                }
+                            }
+                        });
 
+                    }
+                }
                 return false;
             });
             tokio::time::sleep(Duration::from_millis(1)).await;
@@ -151,7 +165,6 @@ pub struct MessageFromJS {
     note: f32,
     offset: f64,
     waveform: String,
-    bank: String,
     lpf: (f32, f32),
     hpf: (f32, f32),
     bpf: (f32, f32),
@@ -186,7 +199,6 @@ pub async fn sendwebaudio(
             instant: Instant::now(),
             offset: m.offset,
             waveform: m.waveform,
-            bank: m.bank,
             lpf: LPF {
                 frequency: m.lpf.0,
                 resonance: m.lpf.1,

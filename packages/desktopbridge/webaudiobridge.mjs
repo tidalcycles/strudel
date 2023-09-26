@@ -15,7 +15,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
 
     let {
         note = 'C3',
-        s = 'triangle',
+        s,
         bank = '',
         source,
         gain = 0.8,
@@ -70,44 +70,52 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
         bpenv = 1,
         n = 0,
     } = value;
-    bank = getSound(s).data.samples;
 
-    // SAMPLES
-    value.duration = hapDuration;
     if (isNote(note)) {
         note = noteToMidi(note);
     }
-    const baseUrl = getSound(s).data.baseUrl;
-    let path;
-    if (baseUrl === './piano/') {
-        path = 'https://strudel.tidalcycles.org/';
-    } else if (baseUrl === './EmuSP12/') {
-        path = 'https://strudel.tidalcycles.org/';
-    }
-
+    value.duration = hapDuration;
     let transpose = 0;
     transpose = note - 36;
     let sampleUrl;
-    let key;
-    if (Array.isArray(bank)) {
-        sampleUrl = path !== undefined ? path + bank[n % bank.length].replace('./', '') : bank[n % bank.length].replace('./', '');
+    if (s === 'sine' || s === 'square' || s === 'saw' || s === 'triangle') {
+        sampleUrl = 'none';
     } else {
-        const midiDiff = (noteA) => noteToMidi(noteA) - note;
-        // object format will expect keys as notes
-        const closest = Object.keys(bank)
-            .filter((k) => !k.startsWith('_'))
-            .reduce(
-                (closest, key, j) => (!closest || Math.abs(midiDiff(key)) < Math.abs(midiDiff(closest)) ? key : closest),
-                null,
-            );
-        transpose = -midiDiff(closest); // semitones to repitch
-        sampleUrl = path !== undefined ? path + bank[closest][n % bank[closest].length].replace('./', '') : bank[closest][n % bank[closest].length].replace('./', '');
+        bank = getSound(s).data.samples;
+        console.log('bank', bank)
+
+        // if (bank && s) {
+        //     s = `${bank}_${s}`;
+        // }
+
+        let path = '';
+        if (getSound(s).data.baseUrl !== undefined) {
+            const baseUrl = getSound(s).data.baseUrl;
+            if (baseUrl === './piano/') {
+                path = 'https://strudel.tidalcycles.org/';
+            } else if (baseUrl === './EmuSP12/') {
+                path = 'https://strudel.tidalcycles.org/';
+            }
+        }
+
+        if (Array.isArray(bank)) {
+            sampleUrl = path !== undefined ? path + bank[n % bank.length].replace('./', '') : bank[n % bank.length].replace('./', '');
+        } else {
+            const midiDiff = (noteA) => noteToMidi(noteA) - note;
+            // object format will expect keys as notes
+            const closest = Object.keys(bank)
+                .filter((k) => !k.startsWith('_'))
+                .reduce(
+                    (closest, key, j) => (!closest || Math.abs(midiDiff(key)) < Math.abs(midiDiff(closest)) ? key : closest),
+                    null,
+                );
+            transpose = -midiDiff(closest); // semitones to repitch
+            sampleUrl = path !== undefined ? path + bank[closest][n % bank[closest].length].replace('./', '') : bank[closest][n % bank[closest].length].replace('./', '');
+        }
     }
-
+    console.log('sampleUrl', sampleUrl)
     const playbackRate = 1.0 * Math.pow(2, transpose / 12);
-    // const sound = getSoundData(s);
 
-    // SYNTHS
     if (delay !== 0) {
         delay = Math.abs(delay);
         delayfeedback = Math.abs(delayfeedback);
@@ -127,16 +135,13 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
         hpenv: [hpattack, hpdecay, hpsustain, hprelease, hpenv],
         bpenv: [bpattack, bpdecay, bpsustain, bprelease, bpenv],
     };
-
     const offset = (t - getAudioContext().currentTime) * 1000;
     const roundedOffset = Math.round(offset);
     const messagesfromjs = [];
-
     messagesfromjs.push({
         note: midiToFreq(note),
         offset: roundedOffset,
         waveform: s,
-        bank: bank,
         lpf: packages.lpf,
         hpf: packages.hpf,
         bpf: packages.bpf,
@@ -144,7 +149,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
         velocity: velocity,
         delay: packages.delay,
         orbit: orbit,
-        speed: speed,
+        speed: speed * playbackRate,
         begin: begin,
         end: end,
         looper: packages.loop,

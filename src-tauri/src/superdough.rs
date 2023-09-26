@@ -1,4 +1,5 @@
 use std::fs::File;
+use web_audio_api::AudioBuffer;
 use web_audio_api::context::{AudioContext, BaseAudioContext};
 use web_audio_api::node::{AudioBufferSourceNode, AudioNode, AudioScheduledSourceNode, BiquadFilterNode, BiquadFilterType, DelayNode, DynamicsCompressorNode, GainNode, OscillatorNode, OscillatorType};
 use web_audio_api::node::BiquadFilterType::{Bandpass, Highpass, Lowpass};
@@ -54,6 +55,80 @@ pub struct FilterADSR {
     pub env: f64,
 }
 
+
+pub fn sample(message: &WebAudioMessage, context: &mut AudioContext, audio_buffer: AudioBuffer) {
+    let now = context.current_time();
+    let mut chain: Vec<&dyn AudioNode> = Vec::new();
+    let compressor = context.create_dynamics_compressor();
+    compressor.connect(&context.destination());
+    compressor.threshold().set_value(-50.0);
+    let env = context.create_gain();
+    let delay = context.create_delay(1.);
+    // Play synth or sample
+
+
+    // Create nodes for sample playback
+    // let audio_buffer = context.decode_audio_data_sync(file).unwrap();
+    let audio_buffer_duration = audio_buffer.duration();
+    let mut src = context.create_buffer_source();
+    src.set_buffer(audio_buffer);
+    chain.push(&src);
+    let filters = create_filters(context, message);
+    for f in &filters {
+        chain.push(f);
+    }
+    let env = context.create_gain();
+    chain.push(&env);
+
+
+    if message.delay.wet > 0.0 {
+        create_delay(message, context, &env, &delay, now, &compressor);
+    }
+    // Connect nodes and play sample
+    connect_nodes(chain, context, &compressor);
+    src.playback_rate().set_value(message.speed);
+    let src = play_sample(message, now, audio_buffer_duration, src, filters, &env);
+    src.set_onended(move |_| {
+        delay.disconnect();
+    });
+}
+
+
+pub fn superdough_synth(message: &WebAudioMessage, context: &mut AudioContext) {
+    let now = context.current_time();
+    let mut chain: Vec<&dyn AudioNode> = Vec::new();
+    let compressor = context.create_dynamics_compressor();
+    compressor.connect(&context.destination());
+    compressor.threshold().set_value(-50.0);
+    let env = context.create_gain();
+    let delay = context.create_delay(1.);
+    // Play synth or sample
+
+    let osc = context.create_oscillator();
+    // Create nodes for synth playback
+    chain.push(&osc);
+    let filters = create_filters(context, message);
+    for f in &filters {
+        chain.push(f);
+    }
+    chain.push(&env);
+
+
+    if message.delay.wet > 0.0 {
+        create_delay(message, context, &env, &delay, now, &compressor);
+    };
+
+    // Connect nodes and play synth
+    connect_nodes(chain, context, &compressor);
+    let osc = play_synth(&message, now, osc, filters, &env);
+
+
+    osc.set_onended(move |_| {
+        delay.disconnect();
+    });
+}
+
+
 pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
     let now = context.current_time();
     let mut chain: Vec<&dyn AudioNode> = Vec::new();
@@ -85,11 +160,11 @@ pub fn superdough(message: &WebAudioMessage, context: &mut AudioContext) {
 
 
             osc.set_onended(move |_| {
-               delay.disconnect();
+                delay.disconnect();
             });
         }
         _ => {
-            match File::open(format!("samples/{}/{}.wav", message.bank, message.waveform)) {
+            match File::open(format!("samples/{}.wav", message.waveform)) {
                 Ok(file) => {
 
                     // Create nodes for sample playback
