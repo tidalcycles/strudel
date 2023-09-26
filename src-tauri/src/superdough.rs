@@ -54,19 +54,18 @@ pub struct FilterADSR {
     pub env: f64,
 }
 
-
-pub fn superdough_sample(message: &WebAudioMessage, context: &mut AudioContext, audio_buffer: AudioBuffer) {
+pub fn superdough_sample(
+    message: &WebAudioMessage,
+    context: &mut AudioContext,
+    audio_buffer: AudioBuffer,
+) {
     let now = context.current_time();
     let mut chain: Vec<&dyn AudioNode> = Vec::new();
     let compressor = context.create_dynamics_compressor();
     compressor.connect(&context.destination());
     compressor.threshold().set_value(-50.0);
     let delay = context.create_delay(1.);
-    // Play synth or sample
 
-
-    // Create nodes for sample playback
-    // let audio_buffer = context.decode_audio_data_sync(file).unwrap();
     let audio_buffer_duration = audio_buffer.duration();
     let mut src = context.create_buffer_source();
     src.set_buffer(audio_buffer);
@@ -92,7 +91,11 @@ pub fn superdough_sample(message: &WebAudioMessage, context: &mut AudioContext, 
 }
 
 
-pub fn superdough_synth(message: &WebAudioMessage, context: &mut AudioContext) {
+pub fn superdough_synth(
+    message: &WebAudioMessage,
+    context: &mut AudioContext,
+
+) {
     let now = context.current_time();
     let mut chain: Vec<&dyn AudioNode> = Vec::new();
     let compressor = context.create_dynamics_compressor();
@@ -100,7 +103,6 @@ pub fn superdough_synth(message: &WebAudioMessage, context: &mut AudioContext) {
     compressor.threshold().set_value(-50.0);
     let env = context.create_gain();
     let delay = context.create_delay(1.);
-    // Play synth or sample
 
     let osc = context.create_oscillator();
     // Create nodes for synth playback
@@ -139,7 +141,6 @@ fn create_delay(message: &WebAudioMessage, context: &mut AudioContext, env: &Gai
     delay.connect(&feedback);
 
     let pre_gain = context.create_gain();
-    // pre_gain.gain().set_value_at_time(0.0, now);
     pre_gain.gain().set_value_at_time(message.delay.wet, now + message.delay.delay_time as f64);
     pre_gain.connect(&feedback);
 
@@ -170,6 +171,7 @@ fn create_osc_type(message: &WebAudioMessage) -> OscillatorType {
         "square" => OscillatorType::Square,
         "triangle" => OscillatorType::Triangle,
         "saw" => OscillatorType::Sawtooth,
+        "sawtooth" => OscillatorType::Sawtooth,
         _ => panic!("Invalid oscillator type"),
     }
 }
@@ -295,7 +297,7 @@ fn apply_adsr(
         .set_value_at_time(0.0, now)
         .linear_ramp_to_value_at_time(message.velocity, now + attack)
         .exponential_ramp_to_value_at_time(
-            sustain * message.velocity,
+            (sustain + 0.00001) * message.velocity,
             now + attack + decay,
         )
         .set_value_at_time(sustain * message.velocity, now + message.duration)

@@ -75,8 +75,6 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
   if (bank && s) {
     s = `${bank}_${s}`;
   }
-  let map = getSound(s).data.samples;
-
   if (freq !== undefined && note !== undefined) {
     logger('[sampler] hap has note and freq. ignoring note', 'warning');
   }
@@ -86,13 +84,12 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
   transpose = midi - 36;
   let sampleUrl;
   let baseUrl;
-  if (s === 'sine' || s === 'square' || s === 'saw' || s === 'triangle') {
+  if (s === 'sine' || s === 'square' || s === 'saw' || s === 'sawtooth' || s === 'triangle') {
     sampleUrl = 'none';
   } else {
     let path;
     if (getSound(s).data.baseUrl !== undefined) {
       baseUrl = getSound(s).data.baseUrl;
-      console.log('baseUrl', baseUrl);
       if (baseUrl === './piano/') {
         path = 'https://strudel.tidalcycles.org/';
       } else if (baseUrl === './EmuSP12/') {
@@ -101,7 +98,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
         path = '';
       }
     }
-
+    let map = getSound(s).data.samples;
     if (Array.isArray(map)) {
       sampleUrl =
         path !== undefined ? path + map[n % map.length].replace('./', '') : map[n % map.length].replace('./', '');
@@ -114,7 +111,6 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
           (closest, key, j) => (!closest || Math.abs(midiDiff(key)) < Math.abs(midiDiff(closest)) ? key : closest),
           null,
         );
-      console.log('closest', closest);
       transpose = -midiDiff(closest); // semitones to repitch
       sampleUrl =
         path !== undefined

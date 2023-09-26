@@ -4,7 +4,8 @@ use std::{
 };
 use std::fs::File;
 use std::path::Path;
-use mini_moka::sync::Cache;
+use quick_cache::sync::Cache;
+// use mini_moka::sync::Cache;
 use reqwest::Url;
 
 use tokio::{fs, sync::{mpsc, Mutex}, time::Instant};
@@ -70,9 +71,9 @@ pub fn init(
 
     let message_queue_clone = Arc::clone(&message_queue);
 
-        /* ...........................................................
-                            Prepare audio context
-        ............................................................*/
+    /* ...........................................................
+                        Prepare audio context
+    ............................................................*/
     let latency_hint = match std::env::var("WEB_AUDIO_LATENCY").as_deref() {
         Ok("playback") => AudioContextLatencyCategory::Playback,
         _ => AudioContextLatencyCategory::default(),
@@ -81,7 +82,6 @@ pub fn init(
         latency_hint,
         ..AudioContextOptions::default()
     });
-
     tauri::async_runtime::spawn(async move {
         let cache: Cache<String, AudioBuffer> = Cache::new(10_000);
         /* ...........................................................
@@ -97,7 +97,7 @@ pub fn init(
                 };
 
                 match message.waveform.as_str() {
-                    "sine" | "square" | "triangle" | "saw" => {
+                    "sine" | "square" | "triangle" | "saw" | "sawtooth" => {
                         superdough_synth(message.clone(), &mut audio_context);
                     }
                     _ => {
@@ -109,7 +109,11 @@ pub fn init(
                         let file_path = format!("samples/{}{}", message.dirname, filename);
 
                         if let Some(audio_buffer) = cache.get(&file_path) {
-                            superdough_sample(message.clone(), &mut audio_context, audio_buffer.clone());
+                            superdough_sample(
+                                message.clone(),
+                                &mut audio_context,
+                                audio_buffer.clone(),
+                            );
                         } else if let Ok(file) = File::open(&file_path) {
                             let audio_buffer = audio_context.decode_audio_data_sync(file)
                                 .unwrap_or_else(|_| panic!("Failed to decode audio data"));
@@ -125,10 +129,6 @@ pub fn init(
                                 let bytes = response.bytes().await.unwrap();
                                 let path = Path::new(&file_path);
                                 let mut file = create_file_and_dirs(path).await;
-                                // let mut file = tokio::fs::File::create(&file_path)
-                                //     .await
-                                //     .unwrap_or_else(|_| panic!("Failed to create file"));
-
                                 file.write_all(&bytes)
                                     .await
                                     .unwrap_or_else(|_| panic!("Failed to write to file"));
