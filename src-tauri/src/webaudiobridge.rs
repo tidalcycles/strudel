@@ -1,22 +1,18 @@
 use std::{
     sync::Arc,
     time::Duration,
-    thread::sleep,
 };
 use std::fs::File;
+use std::path::Path;
 use mini_moka::sync::Cache;
 use reqwest::Url;
 
-use tokio::{
-    sync::{mpsc, Mutex},
-    time::Instant,
-};
+use tokio::{fs, sync::{mpsc, Mutex}, time::Instant};
 use serde::Deserialize;
-// use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
-use web_audio_api::{AudioBuffer, context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions}, node::AudioNode};
+use web_audio_api::{AudioBuffer, context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions}};
 use web_audio_api::context::BaseAudioContext;
-use crate::superdough::{ADSR, BPF, Delay, FilterADSR, HPF, Loop, LPF, sample, superdough, superdough_synth};
+use crate::superdough::{ADSR, BPF, Delay, FilterADSR, HPF, Loop, LPF, superdough_sample, superdough_synth};
 
 
 #[derive(Debug)]
@@ -42,6 +38,7 @@ pub struct WebAudioMessage {
     pub bpenv: FilterADSR,
     pub n: usize,
     pub sampleurl: String,
+    pub dirname: String,
 }
 
 pub struct AsyncInputTransmitWebAudio {
@@ -73,7 +70,9 @@ pub fn init(
 
     let message_queue_clone = Arc::clone(&message_queue);
 
-    // Create audio context
+        /* ...........................................................
+                            Prepare audio context
+        ............................................................*/
     let latency_hint = match std::env::var("WEB_AUDIO_LATENCY").as_deref() {
         Ok("playback") => AudioContextLatencyCategory::Playback,
         _ => AudioContextLatencyCategory::default(),
@@ -82,13 +81,9 @@ pub fn init(
         latency_hint,
         ..AudioContextOptions::default()
     });
-    // Create audio context
 
     tauri::async_runtime::spawn(async move {
-        /* ...........................................................
-                            Prepare audio context
-        ............................................................*/
-        let cache:Cache<String, AudioBuffer>  = Cache::new(10_000);
+        let cache: Cache<String, AudioBuffer> = Cache::new(10_000);
         /* ...........................................................
                             Process queued messages
         ............................................................*/
@@ -103,43 +98,42 @@ pub fn init(
 
                 match message.waveform.as_str() {
                     "sine" | "square" | "triangle" | "saw" => {
-                        // superdough(message.clone(), &mut audio_context);
                         superdough_synth(message.clone(), &mut audio_context);
                     }
                     _ => {
-                        let url = Url::parse(&*message.sampleurl).unwrap();
-                        let fname = url.path_segments().and_then(Iterator::last).and_then(|name| if name.is_empty() { None } else { Some(name) }).unwrap_or("tmp.ben");
-                        let file_path = "/Users/vasiliymilovidov/samples/".to_owned() + fname;
-                        let url_copy = url.clone();
-                        let file_path_copy = file_path.clone();
+                        let url = Url::parse(&*message.sampleurl).expect("failed to parse url");
+                        let filename = url.path_segments()
+                            .and_then(Iterator::last)
+                            .and_then(|name| if name.is_empty() { None } else { Some(name) })
+                            .unwrap_or("tmp.ben");
+                        let file_path = format!("samples/{}{}", message.dirname, filename);
 
-                        match cache.get(&file_path_copy) {
-                            Some(buff) => {
-                                sample(message.clone(), &mut audio_context, buff.clone());
-                                return false;
-                            }
-                            None => {
-                                match File::open(file_path_copy.clone()) {
-                                    Ok(file) => {
-                                        let buff = audio_context.decode_audio_data_sync(file).unwrap();
-                                        cache.insert(file_path_copy.clone(), buff.clone());
-                                    }
-                                    Err(_) => {}
-                                }
-                            }
+                        if let Some(audio_buffer) = cache.get(&file_path) {
+                            superdough_sample(message.clone(), &mut audio_context, audio_buffer.clone());
+                        } else if let Ok(file) = File::open(&file_path) {
+                            let audio_buffer = audio_context.decode_audio_data_sync(file)
+                                .unwrap_or_else(|_| panic!("Failed to decode audio data"));
+                            cache.insert(file_path.clone(), audio_buffer.clone());
                         }
+
                         tokio::spawn(async move {
-                            match tokio::fs::metadata(&file_path).await {
-                                Ok(_) => {}
-                                Err(_) => {
-                                    let resp = reqwest::get(url_copy).await.unwrap();
-                                    let bytes = resp.bytes().await.unwrap();
-                                    let mut out = tokio::fs::File::create(file_path).await.unwrap();
-                                    out.write_all(&bytes).await.unwrap();
-                                }
+                            if tokio::fs::metadata(&file_path).await.is_err() {
+                                let response = reqwest::get(url)
+                                    .await
+                                    .unwrap_or_else(|_| panic!("Failed to send GET request"));
+
+                                let bytes = response.bytes().await.unwrap();
+                                let path = Path::new(&file_path);
+                                let mut file = create_file_and_dirs(path).await;
+                                // let mut file = tokio::fs::File::create(&file_path)
+                                //     .await
+                                //     .unwrap_or_else(|_| panic!("Failed to create file"));
+
+                                file.write_all(&bytes)
+                                    .await
+                                    .unwrap_or_else(|_| panic!("Failed to write to file"));
                             }
                         });
-
                     }
                 }
                 return false;
@@ -182,6 +176,7 @@ pub struct MessageFromJS {
     bpenv: (f64, f64, f64, f64, f64),
     n: usize,
     sampleurl: String,
+    dirname: String,
 }
 
 // Called from JS
@@ -257,9 +252,18 @@ pub async fn sendwebaudio(
             },
             n: m.n,
             sampleurl: m.sampleurl,
+            dirname: m.dirname,
         };
         messages_to_process.push(message_to_process);
     }
 
     async_proc_input_tx.send(messages_to_process).await.map_err(|e| e.to_string())
+}
+
+async fn create_file_and_dirs(path: &Path) -> fs::File {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).await.unwrap();
+    }
+    let file = fs::File::create(path).await.unwrap();
+    file
 }
