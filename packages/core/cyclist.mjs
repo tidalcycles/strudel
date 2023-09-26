@@ -6,6 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import createClock from './zyklus.mjs';
 import { logger } from './logger.mjs';
+import { Invoke } from '../../website/src/tauri.mjs';
 
 export class Cyclist {
   constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
@@ -62,9 +63,22 @@ export class Cyclist {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
-    logger('[cyclist] start');
-    this.clock.start();
-    this.setStarted(true);
+
+    const linkmsg = {
+      bpm: this.cps * 60,
+      play: true,
+      timestamp: Date.now(),
+    };
+    Invoke('sendabelinkmsg', { linkmsg }).then((res) => {
+      const timeoffset = res.timestamp - Date.now();
+
+      console.log({ res, timeoffset });
+      window.setTimeout(() => {
+        logger('[cyclist] start');
+        this.clock.start();
+        this.setStarted(true);
+      }, timeoffset);
+    });
   }
   pause() {
     logger('[cyclist] pause');
@@ -76,6 +90,12 @@ export class Cyclist {
     this.clock.stop();
     this.lastEnd = 0;
     this.setStarted(false);
+    const linkmsg = {
+      bpm: this.clock.interval,
+      play: false,
+      timestamp: Date.now(),
+    };
+    Invoke('sendabelinkmsg', { linkmsg });
   }
   setPattern(pat, autostart = false) {
     this.pattern = pat;
