@@ -4,12 +4,14 @@ use std::{
     thread::sleep,
 };
 use mini_moka::sync::Cache;
+use reqwest::Url;
 
 use tokio::{
     sync::{mpsc, Mutex},
     time::Instant,
 };
 use serde::Deserialize;
+use tokio::io::AsyncWriteExt;
 use web_audio_api::{
     context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions},
     node::AudioNode,
@@ -102,8 +104,10 @@ pub fn init(
                     return true;
                 };
 
-                let file_path = message.sampleurl.clone();
-
+                let url = Url::parse(&*message.sampleurl).unwrap();
+                let fname = url.path_segments().and_then(Iterator::last).and_then(|name| if name.is_empty() { None } else { Some(name) }).unwrap_or("tmp.ben");
+                let file_path = "/Users/vasiliymilovidov/samples/".to_owned() + fname;
+                let url_copy = url.clone();
 
                 // superdough(message.clone(), &mut audio_context);
 
@@ -111,10 +115,14 @@ pub fn init(
                 tokio::spawn(async move {
                     match tokio::fs::metadata(&file_path).await {
                         Ok(_) => {
-
+                            println!("File exists");
                         }
                         Err(_) => {
+                            println!("File does not exist, downloading");
                             let resp = reqwest::get(url_copy).await.unwrap().text().await.unwrap();
+                            let bytes = resp.bytes().await.unwrap();
+                            let mut out = tokio::fs::File::create(file_path).await.unwrap();
+                            out.write_all(&bytes).await.unwrap();
                         }
                     }
                 });
