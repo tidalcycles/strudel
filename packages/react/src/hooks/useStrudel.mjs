@@ -128,26 +128,6 @@ function useStrudel({
     }
   };
 
-  // useEffect(() => {
-  //   async function listenForAbelinkMessage() {
-  //     await listen('abelink-event', async (e) => {
-  //       const payload = e?.payload;
-  //       if (payload == null) {
-  //         return;
-  //       }
-  //       const { play, bpm, timestamp } = payload;
-  //       console.log(scheduler.started);
-
-  //       if (scheduler.started !== play && play != null) {
-  //         togglePlay();
-  //       }
-
-  //       const { message, message_type } = e.payload;
-  //     });
-  //   }
-  //   listenForAbelinkMessage();
-  // }, []);
-
   listen('abelink-event', async (e) => {
     const payload = e?.payload;
     if (payload == null) {
@@ -157,6 +137,7 @@ function useStrudel({
 
     if (started !== play && play != null) {
       if (play) {
+        // activateCode();
         start();
       } else {
         stop();
