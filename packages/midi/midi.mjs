@@ -90,6 +90,13 @@ Pattern.prototype.midi = function (output) {
   enableWebMidi({
     onEnabled: ({ outputs }) => {
       const device = getDevice(output, outputs);
+      if (typeof window !== 'undefined') {
+        window.addEventListener('message', (e) => {
+          if (e.data === 'strudel-stop') {
+            device.sendStop();
+          }
+        });
+      }
       const otherOutputs = outputs.filter((o) => o.name !== device.name);
       logger(
         `Midi enabled! Using "${device.name}". ${
@@ -103,6 +110,7 @@ Pattern.prototype.midi = function (output) {
 
   return this.onTrigger((time, hap, currentTime, cps) => {
     if (!WebMidi.enabled) {
+      console.log('not enabled');
       return;
     }
     const device = getDevice(output, WebMidi.outputs);
@@ -113,7 +121,7 @@ Pattern.prototype.midi = function (output) {
     const timeOffsetString = `+${offset}`;
 
     // destructure value
-    const { note, nrpnn, nrpv, ccn, ccv, midichan = 1 } = hap.value;
+    const { note, nrpnn, nrpv, ccn, ccv, midichan = 1, clock } = hap.value;
     const velocity = hap.context?.velocity ?? 0.9; // TODO: refactor velocity
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
@@ -125,7 +133,7 @@ Pattern.prototype.midi = function (output) {
         time: timeOffsetString,
       });
     }
-    if (ccv && ccn) {
+    if (ccv !== undefined && ccn !== undefined) {
       if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
         throw new Error('expected ccv to be a number between 0 and 1');
       }
@@ -134,6 +142,13 @@ Pattern.prototype.midi = function (output) {
       }
       const scaled = Math.round(ccv * 127);
       device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
+    }
+    const begin = hap.whole.begin + 0;
+    if (begin === 0) {
+      device.sendStart({ time: timeOffsetString });
+    }
+    if (clock) {
+      device.sendClock({ time: timeOffsetString });
     }
   });
 };
