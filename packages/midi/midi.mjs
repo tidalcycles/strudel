@@ -78,6 +78,20 @@ function getDevice(output, outputs) {
   return IACOutput ?? outputs[0];
 }
 
+// send start/stop messages to outputs when repl starts/stops
+if (typeof window !== 'undefined') {
+  window.addEventListener('message', (e) => {
+    if (!WebMidi?.enabled) {
+      return;
+    }
+    if (e.data === 'strudel-stop') {
+      WebMidi.outputs.forEach((output) => output.sendStop());
+    } else if (e.data === 'strudel-start') {
+      WebMidi.outputs.forEach((output) => output.sendStart());
+    }
+  });
+}
+
 Pattern.prototype.midi = function (output) {
   if (isPattern(output)) {
     throw new Error(
