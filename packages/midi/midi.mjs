@@ -90,13 +90,6 @@ Pattern.prototype.midi = function (output) {
   enableWebMidi({
     onEnabled: ({ outputs }) => {
       const device = getDevice(output, outputs);
-      if (typeof window !== 'undefined') {
-        window.addEventListener('message', (e) => {
-          if (e.data === 'strudel-stop') {
-            device.sendStop();
-          }
-        });
-      }
       const otherOutputs = outputs.filter((o) => o.name !== device.name);
       logger(
         `Midi enabled! Using "${device.name}". ${
@@ -121,7 +114,7 @@ Pattern.prototype.midi = function (output) {
     const timeOffsetString = `+${offset}`;
 
     // destructure value
-    const { note, nrpnn, nrpv, ccn, ccv, midichan = 1, clock } = hap.value;
+    const { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd } = hap.value;
     const velocity = hap.context?.velocity ?? 0.9; // TODO: refactor velocity
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
@@ -143,12 +136,14 @@ Pattern.prototype.midi = function (output) {
       const scaled = Math.round(ccv * 127);
       device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
     }
-    const begin = hap.whole.begin + 0;
-    if (begin === 0) {
-      device.sendStart({ time: timeOffsetString });
-    }
-    if (clock) {
+    if (['clock', 'midiClock'].includes(midicmd)) {
       device.sendClock({ time: timeOffsetString });
+    } else if (['start'].includes(midicmd)) {
+      device.sendStart({ time: timeOffsetString });
+    } else if (['stop'].includes(midicmd)) {
+      device.sendStop({ time: timeOffsetString });
+    } else if (['continue'].includes(midicmd)) {
+      device.sendContinue({ time: timeOffsetString });
     }
   });
 };
