@@ -78,6 +78,19 @@ function getDevice(output, outputs) {
   return IACOutput ?? outputs[0];
 }
 
+// send start/stop messages to outputs when repl starts/stops
+if (typeof window !== 'undefined') {
+  window.addEventListener('message', (e) => {
+    if (!WebMidi?.enabled) {
+      return;
+    }
+    if (e.data === 'strudel-stop') {
+      WebMidi.outputs.forEach((output) => output.sendStop());
+    }
+    // cannot start here, since we have no timing info, see sendStart below
+  });
+}
+
 Pattern.prototype.midi = function (output) {
   if (isPattern(output)) {
     throw new Error(
@@ -103,6 +116,7 @@ Pattern.prototype.midi = function (output) {
 
   return this.onTrigger((time, hap, currentTime, cps) => {
     if (!WebMidi.enabled) {
+      console.log('not enabled');
       return;
     }
     const device = getDevice(output, WebMidi.outputs);
@@ -113,7 +127,7 @@ Pattern.prototype.midi = function (output) {
     const timeOffsetString = `+${offset}`;
 
     // destructure value
-    const { note, nrpnn, nrpv, ccn, ccv, midichan = 1 } = hap.value;
+    const { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd } = hap.value;
     const velocity = hap.context?.velocity ?? 0.9; // TODO: refactor velocity
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
@@ -125,7 +139,7 @@ Pattern.prototype.midi = function (output) {
         time: timeOffsetString,
       });
     }
-    if (ccv && ccn) {
+    if (ccv !== undefined && ccn !== undefined) {
       if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
         throw new Error('expected ccv to be a number between 0 and 1');
       }
@@ -134,6 +148,19 @@ Pattern.prototype.midi = function (output) {
       }
       const scaled = Math.round(ccv * 127);
       device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
+    }
+    if (hap.whole.begin + 0 === 0) {
+      // we need to start here because we have the timing info
+      device.sendStart({ time: timeOffsetString });
+    }
+    if (['clock', 'midiClock'].includes(midicmd)) {
+      device.sendClock({ time: timeOffsetString });
+    } else if (['start'].includes(midicmd)) {
+      device.sendStart({ time: timeOffsetString });
+    } else if (['stop'].includes(midicmd)) {
+      device.sendStop({ time: timeOffsetString });
+    } else if (['continue'].includes(midicmd)) {
+      device.sendContinue({ time: timeOffsetString });
     }
   });
 };

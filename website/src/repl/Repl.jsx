@@ -33,7 +33,7 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
 );
 
-const modules = [
+let modules = [
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
@@ -45,13 +45,13 @@ const modules = [
   import('@strudel.cycles/csound'),
 ];
 if (isTauri()) {
-  modules.concat([
+  modules = modules.concat([
     import('@strudel/desktopbridge/loggerbridge.mjs'),
     import('@strudel/desktopbridge/midibridge.mjs'),
     import('@strudel/desktopbridge/oscbridge.mjs'),
   ]);
 } else {
-  modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
+  modules = modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
 }
 
 const modulesLoading = evalScope(
@@ -153,6 +153,8 @@ export function Repl({ embedded = false }) {
         if (!play) {
           cleanupDraw(false);
           window.postMessage('strudel-stop');
+        } else {
+          window.postMessage('strudel-start');
         }
       },
       drawContext,

@@ -14,7 +14,6 @@ class MyProcessor extends AudioWorkletProcessor {
       if(e.data==='stop') {
         this.stopped = true;
       } else if(e.data?.dough) {
-        const deadline = e.data.time-currentTime;
         __q.push(e.data)
       } else {
         msg?.(e.data)
