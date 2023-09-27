@@ -86,9 +86,8 @@ if (typeof window !== 'undefined') {
     }
     if (e.data === 'strudel-stop') {
       WebMidi.outputs.forEach((output) => output.sendStop());
-    } else if (e.data === 'strudel-start') {
-      WebMidi.outputs.forEach((output) => output.sendStart());
     }
+    // cannot start here, since we have no timing info, see sendStart below
   });
 }
 
@@ -149,6 +148,10 @@ Pattern.prototype.midi = function (output) {
       }
       const scaled = Math.round(ccv * 127);
       device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
+    }
+    if (hap.whole.begin + 0 === 0) {
+      // we need to start here because we have the timing info
+      device.sendStart({ time: timeOffsetString });
     }
     if (['clock', 'midiClock'].includes(midicmd)) {
       device.sendClock({ time: timeOffsetString });
