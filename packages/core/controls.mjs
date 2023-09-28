@@ -1066,6 +1066,7 @@ const generic_params = [
    */
   ['waveloss'],
   // TODO: midi effects?
+  ['midicmd'],
   ['dur'],
   // ['modwheel'],
   ['expression'],
