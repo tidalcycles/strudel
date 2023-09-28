@@ -2343,3 +2343,9 @@ export const fit = register('fit', (pat) =>
 export const { loopAtCps, loopatcps } = register(['loopAtCps', 'loopatcps'], function (factor, cps, pat) {
   return _loopAt(factor, pat, cps);
 });
+
+/** exposes a custom value at query time. basically allows mutating state without evaluation */
+export const ref = (accessor) =>
+  pure(1)
+    .withValue(() => reify(accessor()))
+    .innerJoin();
