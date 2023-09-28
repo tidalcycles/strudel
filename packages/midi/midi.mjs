@@ -167,7 +167,6 @@ let listeners = {};
 const refs = {};
 
 export async function midin(input) {
-  console.log('midi in...');
   const initial = await enableWebMidi(); // only returns on first init
   const device = getDevice(input, WebMidi.inputs);
 
@@ -186,9 +185,8 @@ export async function midin(input) {
   listeners[input] = (e) => {
     const cc = e.dataBytes[0];
     const v = e.dataBytes[1];
-    refs[input][cc] = v / 127;
+    refs[input] && (refs[input][cc] = v / 127);
   };
   device.addListener('midimessage', listeners[input]);
-  //return { cc };
   return cc;
 }
