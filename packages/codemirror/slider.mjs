@@ -38,6 +38,43 @@ export class SliderWidget extends WidgetType {
   }
 }
 
+let nodeValue = (node, view) => view.state.doc.sliceString(node.from, node.to);
+
+// matches a number and returns slider widget
+/* let matchNumber = (node, view) => {
+  if (node.name == 'Number') {
+    const value = view.state.doc.sliceString(node.from, node.to);
+    let min = 0;
+    let max = 10;
+    return Decoration.widget({
+      widget: new SliderWidget(Number(value), min, max, node.from, node.to),
+      side: 0,
+    });
+  }
+}; */
+// matches something like 123.xxx and returns slider widget
+let matchNumberSlider = (node, view) => {
+  if (
+    node.name === 'MemberExpression' &&
+    node.node.firstChild.name === 'Number' &&
+    node.node.lastChild.name === 'PropertyName'
+  ) {
+    // node is sth like 123.xxx
+    let prop = nodeValue(node.node.lastChild, view); // get prop name (e.g. xxx)
+    if (prop === 'slider') {
+      let value = nodeValue(node.node.firstChild, view); // get number (e.g. 123)
+      // console.log('slider value', value);
+      let { from, to } = node.node.firstChild;
+      let min = 0;
+      let max = 10;
+      return Decoration.widget({
+        widget: new SliderWidget(Number(value), min, max, from, to),
+        side: 0,
+      });
+    }
+  }
+};
+
 // EditorView
 export function sliders(view) {
   let widgets = [];
@@ -46,20 +83,14 @@ export function sliders(view) {
       from,
       to,
       enter: (node) => {
-        if (node.name == 'Number') {
-          let value = view.state.doc.sliceString(node.from, node.to);
-          value = Number(value);
-          /* let min = Math.min(0, value);
-          let max = Math.max(value, 1); */
-          let min = 0;
-          let max = 10;
-          //console.log('from', node.from, 'to', node.to);
-          let deco = Decoration.widget({
-            widget: new SliderWidget(value, min, max, node.from, node.to),
-            side: 1,
-          });
-          widgets.push(deco.range(node.from));
+        let numberSlider = matchNumberSlider(node, view);
+        if (numberSlider) {
+          widgets.push(numberSlider.range(node.from));
         }
+        /* let number = matchNumber(node, view);
+        if (number) {
+          widgets.push(number.range(node.from));
+        } */
       },
     });
   }
