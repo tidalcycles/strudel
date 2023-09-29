@@ -15,10 +15,12 @@ import {
   updateMiniLocations,
 } from '@strudel/codemirror';
 import './style.css';
+import { checkboxPlugin } from '@strudel/codemirror/checkbox.mjs';
+import { sliderPlugin } from '@strudel/codemirror/slider.mjs';
 
 export { flash, highlightMiniLocations, updateMiniLocations };
 
-const staticExtensions = [javascript(), flashField, highlightExtension];
+const staticExtensions = [javascript(), flashField, highlightExtension, checkboxPlugin, sliderPlugin];
 
 export default function CodeMirror({
   value,
