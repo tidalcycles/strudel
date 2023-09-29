@@ -2110,7 +2110,7 @@ export const { iterBack, iterback } = register(['iterBack', 'iterback'], functio
  */
 const _repeatCycles = function (n, pat) {
   return slowcat(...Array(n).fill(pat));
-}
+};
 
 const { repeatCycles } = register('repeatCycles', _repeatCycles);
 
@@ -2135,14 +2135,9 @@ const _chunk = function (n, func, pat, back = false, fast = false) {
   return pat.when(binary_pat, func);
 };
 
-const {chunk, slowchunk, slowChunk} = register(['chunk', 'slowchunk', 'slowChunk'], function (n, func, pat) {
+const { chunk, slowchunk, slowChunk } = register(['chunk', 'slowchunk', 'slowChunk'], function (n, func, pat) {
   return _chunk(n, func, pat, false, false);
 });
-
-const {fastchunk, fastChunk} = register(['fastchunk', 'fastChunk'], function (n, func, pat) {
-  return _chunk(n, func, pat, false, true);
-});
-
 
 /**
  * Like `chunk`, but cycles through the parts in reverse order. Known as chunk' in tidalcycles
@@ -2155,6 +2150,21 @@ const {fastchunk, fastChunk} = register(['fastchunk', 'fastChunk'], function (n,
  */
 export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], function (n, func, pat) {
   return _chunk(n, func, pat, true);
+});
+
+/**
+ * Like `chunk`, but the cycles of the source pattern aren't repeated
+ * for each set of chunks.
+ * @name fastChunk
+ * @synonyms fastchunk
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * "<0 8> 1 2 3 4 5 6 7".fastChunk(4, x => x.color('red')).slow(4).scale("C2:major").note()
+  .s("folkharp")
+ */
+const { fastchunk, fastChunk } = register(['fastchunk', 'fastChunk'], function (n, func, pat) {
+  return _chunk(n, func, pat, false, true);
 });
 
 // TODO - redefine elsewhere in terms of mask
