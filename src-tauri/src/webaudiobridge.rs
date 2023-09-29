@@ -1,22 +1,25 @@
 use std::{
     sync::Arc,
     time::Duration,
+    fs::File,
+    path::Path,
+    time::Instant,
 };
-use std::fs::File;
-use std::path::Path;
-use std::sync::mpsc::{RecvError, SendError};
-use std::time::{Instant, SystemTime};
 use mini_moka::sync::Cache;
 use reqwest::Url;
-
-use tokio::{fs, sync::{mpsc, Mutex}};
+use tokio::{
+    fs,
+    sync::{mpsc, Mutex},
+    io::AsyncWriteExt,
+};
 use serde::Deserialize;
-use tokio::io::AsyncWriteExt;
-use web_audio_api::{AudioBuffer, context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions}};
-use web_audio_api::context::BaseAudioContext;
-use web_audio_api::node::{AudioBufferSourceNode, AudioNode, AudioScheduledSourceNode, BiquadFilterNode, DelayNode, DynamicsCompressorNode, GainNode, OscillatorNode, OscillatorType};
-use web_audio_api::node::BiquadFilterType::{Bandpass, Highpass, Lowpass};
-use crate::superdough::{ADSR, apply_filter_adsr, BPF, Delay, FilterADSR, HPF, Loop, LPF, Sampler, Synth, WebAudioPlayer};
+use web_audio_api::{
+    context::BaseAudioContext,
+    AudioBuffer,
+    context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions},
+    node::AudioNode,
+};
+use crate::superdough::{ADSR, apply_filter_adsr, BPF, Delay, FilterADSR, HPF, Loop, LPF, Sampler, Synth, WebAudioInstrument};
 
 
 #[derive(Debug, Clone)]
@@ -43,6 +46,8 @@ pub struct WebAudioMessage {
     pub n: usize,
     pub sampleurl: String,
     pub dirname: String,
+    pub unit: Option<String>,
+    pub playbackrate: f32,
 }
 
 pub struct AsyncInputTransmitWebAudio {
@@ -111,7 +116,7 @@ pub fn init(
             latency_hint,
             ..AudioContextOptions::default()
         });
-        let mut temp_src = audio_context.create_buffer_source();
+        let _ = audio_context.create_buffer_source();
         let compressor = audio_context.create_dynamics_compressor();
         compressor.threshold().set_value(-50.0);
         compressor.connect(&audio_context.destination());
@@ -140,7 +145,7 @@ pub fn init(
                             feedback.gain().set_value(message.delay.feedback);
                             pre_gain.gain().set_value_at_time(message.delay.wet, t + message.delay.delay_time as f64);
 
-                            let mut synth = Synth::new(&mut audio_context, &message);
+                            let mut synth = Synth::new(&mut audio_context);
                             synth.set_frequency(&message.note);
                             synth.set_waveform(&message.waveform);
                             let filters = synth.set_filters(&mut audio_context, &message);
@@ -148,11 +153,11 @@ pub fn init(
                                 synth.envelope.connect(&input);
                             }
                             synth.envelope.connect(&compressor);
-                            synth.play(t, &message, message.adsr.release);
+                            synth.play(t, &message, message.adsr.release.unwrap_or(0.001));
                             synth.set_adsr(t, &message.adsr, message.velocity, message.duration);
-                            if message.lpenv.env > 0.0 || message.hpenv.env > 0.0 || message.bpenv.env > 0.0 {
-                                for f in filters {
-                                    apply_filter_adsr(&f, &message, &f.type_(), t);
+                            if is_filter_envelope_on(&message.lpenv) || is_filter_envelope_on(&message.hpenv) || is_filter_envelope_on(&message.bpenv) {
+                                for f in &filters {
+                                    apply_filter_adsr(f, &message, &f.type_(), t);
                                 }
                             }
                         }
@@ -162,7 +167,7 @@ pub fn init(
                                 .and_then(Iterator::last)
                                 .and_then(|name| if name.is_empty() { None } else { Some(name) })
                                 .unwrap_or("tmp.ben");
-                            let file_path = format!("/Users/vasiliymilovidov/samples/{}{}", message.dirname, filename);
+                            let file_path = format!("samples/{}{}", message.dirname, filename);
                             let file_path_clone = file_path.clone();
 
                             tokio::spawn(async move {
@@ -186,13 +191,20 @@ pub fn init(
                                 feedback.gain().set_value(message.delay.feedback);
                                 pre_gain.gain().set_value_at_time(message.delay.wet, t + message.delay.delay_time as f64);
                                 let audio_buffer_duration = audio_buffer.duration();
-                                let mut sampler = Sampler::new(&mut audio_context, &message, audio_buffer);
-                                sampler.sample.playback_rate().set_value(message.speed);
+                                let mut sampler = Sampler::new(&mut audio_context, audio_buffer);
+                                match message.unit {
+                                    Some(_) => {
+                                        sampler.sample.playback_rate().set_value(message.speed * audio_buffer_duration as f32 * 1.0);
+                                    }
+                                    _ => {
+                                        sampler.sample.playback_rate().set_value(message.speed * message.playbackrate);
+                                    }
+                                }
                                 sampler.set_adsr(t, &message.adsr, message.velocity, message.duration);
                                 let filters = sampler.set_filters(&mut audio_context, &message);
-                                if message.lpenv.env > 0.0 || message.hpenv.env > 0.0 || message.bpenv.env > 0.0 {
-                                    for f in filters {
-                                        apply_filter_adsr(&f, &message, &f.type_(), t);
+                                if is_filter_envelope_on(&message.lpenv) || is_filter_envelope_on(&message.hpenv) || is_filter_envelope_on(&message.bpenv) {
+                                    for f in &filters {
+                                        apply_filter_adsr(f, &message, &f.type_(), t);
                                     }
                                 }
                                 if message.delay.wet > 0.0 {
@@ -241,13 +253,15 @@ pub struct MessageFromJS {
     begin: f64,
     end: f64,
     looper: (u8, f64, f64),
-    adsr: (f64, f64, f32, f64, u8),
-    lpenv: (f64, f64, f64, f64, f64),
-    hpenv: (f64, f64, f64, f64, f64),
-    bpenv: (f64, f64, f64, f64, f64),
+    adsr: (Option<f64>, Option<f64>, Option<f32>, Option<f64>),
+    lpenv: (Option<f64>, Option<f64>, Option<f64>, Option<f64>, Option<f64>),
+    hpenv: (Option<f64>, Option<f64>, Option<f64>, Option<f64>, Option<f64>),
+    bpenv: (Option<f64>, Option<f64>, Option<f64>, Option<f64>, Option<f64>),
     n: usize,
     sampleurl: String,
     dirname: String,
+    unit: Option<String>,
+    playbackrate: f32,
 }
 
 // Called from JS
@@ -298,7 +312,6 @@ pub async fn sendwebaudio(
                 decay: m.adsr.1,
                 sustain: m.adsr.2,
                 release: m.adsr.3,
-                adsr_on: m.adsr.4,
             },
             lpenv: FilterADSR {
                 attack: m.lpenv.0,
@@ -324,6 +337,8 @@ pub async fn sendwebaudio(
             n: m.n,
             sampleurl: m.sampleurl,
             dirname: m.dirname,
+            unit: m.unit,
+            playbackrate: m.playbackrate,
         };
         messages_to_process.push(message_to_process);
     }
@@ -337,4 +352,8 @@ async fn create_file_and_dirs(path: &Path) -> fs::File {
     }
     let file = fs::File::create(path).await.unwrap();
     file
+}
+
+fn is_filter_envelope_on(adsr: &FilterADSR) -> bool {
+    adsr.env.is_some() || adsr.attack.is_some() || adsr.decay.is_some() || adsr.sustain.is_some() || adsr.release.is_some()
 }

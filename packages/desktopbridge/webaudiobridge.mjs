@@ -6,8 +6,8 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
   const ac = getAudioContext();
   if (typeof value !== 'object') {
     throw new Error(
-        `expected hap.value to be an object, but got "${value}". Hint: append .note() or .s() to the end`,
-        'error',
+      `expected hap.value to be an object, but got "${value}". Hint: append .note() or .s() to the end`,
+      'error',
     );
   }
 
@@ -49,29 +49,31 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     loop = 0,
     loopBegin = 0,
     loopEnd = 1,
-    attack = 0.001,
-    decay = 0.005,
-    sustain = 1,
-    release = 0.001,
-    lpattack = 0.0001,
-    lpdecay = 0.2,
-    lpsustain = 0.6,
-    lprelease = 0.2,
-    lpenv = 0,
-    hpattack = 0.0001,
-    hpdecay = 0.2,
-    hpsustain = 0.6,
-    hprelease = 0.2,
-    hpenv = 0,
-    bpattack = 0.0001,
-    bpdecay = 0.2,
-    bpsustain = 0.6,
-    bprelease = 0.2,
-    bpenv = 0,
+    attack,
+    decay,
+    sustain,
+    release,
+    lpattack,
+    lpdecay,
+    lpsustain,
+    lprelease,
+    lpenv,
+    hpattack,
+    hpdecay,
+    hpsustain,
+    hprelease,
+    hpenv,
+    bpattack,
+    bpdecay,
+    bpsustain,
+    bprelease,
+    bpenv,
     n = 0,
     freq,
+    unit,
   } = value;
 
+  value.duration = hapDuration;
   if (bank && s) {
     s = `${bank}_${s}`;
   }
@@ -79,15 +81,15 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     logger('[sampler] hap has note and freq. ignoring note', 'warning');
   }
   let midi = valueToMidi({ freq, note }, 36);
-  value.duration = hapDuration;
-  let transpose;
-  transpose = midi - 36;
+  let transpose = midi - 36;
+
   let sampleUrl;
   let baseUrl;
-  if (s === 'sine' || s === 'square' || s === 'saw' || s === 'sawtooth' || s === 'triangle') {
+  let path;
+  const waveForms = new Set(['sine', 'square', 'saw', 'sawtooth', 'triangle']);
+  if (waveForms.has(s)) {
     sampleUrl = 'none';
   } else {
-    let path;
     if (getSound(s).data.baseUrl !== undefined) {
       baseUrl = getSound(s).data.baseUrl;
       if (baseUrl === './piano/') {
@@ -101,26 +103,28 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     let map = getSound(s).data.samples;
     if (Array.isArray(map)) {
       sampleUrl =
-          path !== undefined ? path + map[n % map.length].replace('./', '') : map[n % map.length].replace('./', '');
+        path !== undefined ? path + map[n % map.length].replace('./', '') : map[n % map.length].replace('./', '');
     } else {
       const midiDiff = (noteA) => noteToMidi(noteA) - midi;
       // object format will expect keys as notes
       const closest = Object.keys(map)
-          .filter((k) => !k.startsWith('_'))
-          .reduce(
-              (closest, key, j) => (!closest || Math.abs(midiDiff(key)) < Math.abs(midiDiff(closest)) ? key : closest),
-              null,
-          );
+        .filter((k) => !k.startsWith('_'))
+        .reduce(
+          (closest, key, j) => (!closest || Math.abs(midiDiff(key)) < Math.abs(midiDiff(closest)) ? key : closest),
+          null,
+        );
       transpose = -midiDiff(closest); // semitones to repitch
       sampleUrl =
-          path !== undefined
-              ? path + map[closest][n % map[closest].length].replace('./', '')
-              : map[closest][n % map[closest].length].replace('./', '');
+        path !== undefined
+          ? path + map[closest][n % map[closest].length].replace('./', '')
+          : map[closest][n % map[closest].length].replace('./', '');
     }
   }
+
   if (isNote(note)) {
     note = noteToMidi(note);
   }
+
   const playbackRate = 1.0 * Math.pow(2, transpose / 12);
 
   if (delay !== 0) {
@@ -129,22 +133,26 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     delaytime = Math.abs(delaytime);
   }
 
-  let adsr_on = attack !== 0.001 || decay !== 0.05 || sustain !== 1 || release !== 0.01 ? 1 : 0;
-
   const packages = {
     loop: [loop, loopBegin, loopEnd],
     delay: [delay, delaytime, delayfeedback],
     lpf: [cutoff, resonance],
     hpf: [hcutoff, hresonance],
     bpf: [bandf, bandq],
-    adsr: [attack, decay, sustain, release, adsr_on],
+    adsr: [attack, decay, sustain, release],
     lpenv: [lpattack, lpdecay, lpsustain, lprelease, lpenv],
     hpenv: [hpattack, hpdecay, hpsustain, hprelease, hpenv],
     bpenv: [bpattack, bpdecay, bpsustain, bprelease, bpenv],
   };
 
-  const dirname = bank + '/' + s + '/';
-
+  console.log('unit', unit);
+  let folder;
+  if (baseUrl !== undefined) {
+    folder = baseUrl.replace('./', '') + '/' + s + '/';
+  } else {
+    folder = 'misc';
+  }
+  const dirname = folder + '/' + s + '/';
   const offset = (t - getAudioContext().currentTime) * 1000;
   const roundedOffset = Math.round(offset);
   const messagesfromjs = [];
@@ -159,7 +167,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     velocity: velocity,
     delay: packages.delay,
     orbit: orbit,
-    speed: speed * playbackRate,
+    speed: speed,
     begin: begin,
     end: end,
     looper: packages.loop,
@@ -170,6 +178,8 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     n: n,
     sampleurl: sampleUrl,
     dirname: dirname,
+    unit: unit,
+    playbackrate: playbackRate,
   });
 
   if (messagesfromjs.length) {
@@ -178,14 +188,15 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     });
   }
 };
+
 const hap2value = (hap) => {
   hap.ensureObjectValue();
   return { ...hap.value, velocity: hap.context.velocity };
 };
 export const webaudioDesktopOutputTrigger = (t, hap, ct, cps) =>
-    desktopAudio(hap2value(hap), t - ct, hap.duration / cps, cps);
+  desktopAudio(hap2value(hap), t - ct, hap.duration / cps, cps);
 export const webaudioDesktopOutput = (hap, deadline, hapDuration) =>
-    desktopAudio(hap2value(hap), deadline, hapDuration);
+  desktopAudio(hap2value(hap), deadline, hapDuration);
 
 Pattern.prototype.webaudio = function () {
   return this.onTrigger(webaudioDesktopOutputTrigger);
