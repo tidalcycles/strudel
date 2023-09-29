@@ -54,206 +54,170 @@ pub struct FilterADSR {
     pub env: f64,
 }
 
-pub fn superdough_sample(
-    message: &WebAudioMessage,
-    context: &mut AudioContext,
-    audio_buffer: AudioBuffer,
-) {
-    let now = context.current_time();
-    let mut chain: Vec<&dyn AudioNode> = Vec::new();
-    let compressor = context.create_dynamics_compressor();
-    compressor.connect(&context.destination());
-    compressor.threshold().set_value(-50.0);
-    let delay = context.create_delay(1.);
 
-    let audio_buffer_duration = audio_buffer.duration();
-    let mut src = context.create_buffer_source();
-    src.set_buffer(audio_buffer);
-    chain.push(&src);
-    let filters = create_filters(context, message);
-    for f in &filters {
-        chain.push(f);
-    }
-    let env = context.create_gain();
-    chain.push(&env);
-
-
-    if message.delay.wet > 0.0 {
-        create_delay(message, context, &env, &delay, now, &compressor);
-    }
-    // Connect nodes and play sample
-    connect_nodes(chain, &compressor);
-    src.playback_rate().set_value(message.speed);
-    let src = play_sample(message, now, audio_buffer_duration, src, filters, &env);
-    src.set_onended(move |_| {
-        delay.disconnect();
-    });
+pub trait WebAudioPlayer {
+    fn set_adsr(&mut self, t: f64, adsr: &ADSR, velocity: f32, duration: f64);
+    fn play(&mut self, t: f64, message: &WebAudioMessage, duration: f64,);
+    fn set_filters(&mut self, context: &mut AudioContext, message: &WebAudioMessage) -> Vec<BiquadFilterNode>;
 }
 
+pub struct Synth {
+    pub oscillator: OscillatorNode,
+    pub envelope: GainNode,
+}
 
-pub fn superdough_synth(
-    message: &WebAudioMessage,
-    context: &mut AudioContext,
-
-) {
-    let now = context.current_time();
-    let mut chain: Vec<&dyn AudioNode> = Vec::new();
-    let compressor = context.create_dynamics_compressor();
-    compressor.connect(&context.destination());
-    compressor.threshold().set_value(-50.0);
-    let env = context.create_gain();
-    let delay = context.create_delay(1.);
-
-    let osc = context.create_oscillator();
-    // Create nodes for synth playback
-    chain.push(&osc);
-    let filters = create_filters(context, message);
-    for f in &filters {
-        chain.push(f);
+impl Synth {
+    pub fn new(context: &mut AudioContext, message: &WebAudioMessage) -> Self {
+        let oscillator = context.create_oscillator();
+        let envelope = context.create_gain();
+        Self { oscillator, envelope }
     }
-    chain.push(&env);
 
-
-    if message.delay.wet > 0.0 {
-        create_delay(message, context, &env, &delay, now, &compressor);
-    };
-
-    // Connect nodes and play synth
-    connect_nodes(chain, &compressor);
-    let osc = play_synth(&message, now, osc, filters, &env);
-
-
-    osc.set_onended(move |_| {
-        delay.disconnect();
-    });
-}
-
-fn create_delay(message: &WebAudioMessage, context: &mut AudioContext, env: &GainNode, delay: &DelayNode, now: f64, compressor: &DynamicsCompressorNode) {
-    let output = context.create_gain();
-    output.connect(compressor);
-
-    delay.delay_time().set_value(message.delay.delay_time);
-    delay.connect(&output);
-
-    let feedback = context.create_gain();
-    feedback.gain().set_value(message.delay.feedback);
-    feedback.connect(delay);
-    delay.connect(&feedback);
-
-    let pre_gain = context.create_gain();
-    pre_gain.gain().set_value_at_time(message.delay.wet, now + message.delay.delay_time as f64);
-    pre_gain.connect(&feedback);
-
-    let input = context.create_gain();
-    input.connect(&pre_gain);
-    env.connect(&input);
-}
-
-fn play_synth(message: &&WebAudioMessage, now: f64, mut osc: OscillatorNode, filters: Vec<BiquadFilterNode>, env: &GainNode) -> OscillatorNode {
-    osc.set_type(create_osc_type(&message));
-    osc.frequency().set_value(message.note);
-    osc.start();
-    match message.adsr.adsr_on {
-        1 => apply_synth_adsr(&env, message, now),
-        _ => apply_default_synth_adsr(&env, message, now),
-    };
-    for f in filters {
-        apply_filter_adsr(&f, message, &f.type_(), now);
+    pub fn set_frequency(&mut self, frequency: &f32) {
+        self.oscillator.frequency().set_value(*frequency);
     }
-    osc.stop_at(now + message.duration + message.adsr.release + 2.);
 
-    osc
-}
-
-fn create_osc_type(message: &WebAudioMessage) -> OscillatorType {
-    match message.waveform.as_str() {
-        "sine" => OscillatorType::Sine,
-        "square" => OscillatorType::Square,
-        "triangle" => OscillatorType::Triangle,
-        "saw" => OscillatorType::Sawtooth,
-        "sawtooth" => OscillatorType::Sawtooth,
-        _ => panic!("Invalid oscillator type"),
-    }
-}
-
-fn play_sample(message: &WebAudioMessage, now: f64, audio_buffer_duration: f64, mut src: AudioBufferSourceNode, filters: Vec<BiquadFilterNode>, env: &GainNode) -> AudioBufferSourceNode {
-    let (start_at, stop_at) = if message.speed < 0.0 {
-        (audio_buffer_duration, now + message.duration + 0.2)
-    } else {
-        (message.begin * audio_buffer_duration, now + message.duration + message.adsr.release)
-    };
-    if message.looper.is_loop > 0 {
-        src.set_loop(true);
-        src.set_loop_start(message.looper.loop_start);
-        src.set_loop_end(message.looper.loop_end);
-        src.start_at_with_offset(
-            now,
-            src.loop_start(),
-        );
-        match message.adsr.adsr_on {
-            1 => apply_drum_adsr(&env, message, now),
-            _ => apply_default_drum_adsr(&env, message, now),
+    pub fn set_waveform(&mut self, waveform: &str) {
+        match waveform {
+            "sine" => self.oscillator.set_type(OscillatorType::Sine),
+            "square" => self.oscillator.set_type(OscillatorType::Square),
+            "triangle" => self.oscillator.set_type(OscillatorType::Triangle),
+            "saw" | "sawtooth" => self.oscillator.set_type(OscillatorType::Sawtooth),
+            _ => {}
         }
-        for f in filters {
-            apply_filter_adsr(&f, message, &f.type_(), now);
+    }
+}
+
+impl WebAudioPlayer for Synth {
+    fn set_adsr(&mut self, t: f64, adsr: &ADSR, velocity: f32, duration: f64) {
+        self.envelope.gain()
+            .set_value_at_time(0.0, t)
+            .linear_ramp_to_value_at_time(velocity, t + adsr.attack)
+            .linear_ramp_to_value_at_time((adsr.sustain + 0.001) * velocity, t + adsr.attack + adsr.decay)
+            .set_value_at_time(adsr.sustain * velocity, t + duration)
+            .linear_ramp_to_value_at_time(0.0, t + duration + adsr.release);
+    }
+
+    fn play(&mut self, t: f64, message: &WebAudioMessage, release: f64) {
+        self.oscillator.start();
+        self.oscillator.stop_at(t + message.duration + release);
+    }
+
+    fn set_filters(&mut self, context: &mut AudioContext, message: &WebAudioMessage) -> Vec<BiquadFilterNode> {
+        let mut filters = Vec::new();
+        if message.bpf.frequency > 0.0 {
+            let mut bpf = context.create_biquad_filter();
+            bpf.set_type(Bandpass);
+            bpf.frequency().set_value(message.bpf.frequency);
+            bpf.q().set_value(message.bpf.resonance);
+            filters.push(bpf);
+        } else if message.lpf.frequency > 0.0 {
+            let mut lpf = context.create_biquad_filter();
+            lpf.set_type(Lowpass);
+            lpf.frequency().set_value(message.lpf.frequency);
+            lpf.q().set_value(message.lpf.resonance);
+            filters.push(lpf);
+        } else if message.hpf.frequency > 0.0 {
+            let mut hpf = context.create_biquad_filter();
+            hpf.set_type(Highpass);
+            hpf.frequency().set_value(message.hpf.frequency);
+            hpf.q().set_value(message.hpf.resonance);
+            filters.push(hpf);
         }
-        src.stop_at(now + message.duration + message.adsr.release);
-    } else {
-        src.start_at_with_offset(
-            now,
-            start_at,
-        );
-        match message.adsr.adsr_on {
-            1 => apply_drum_adsr(&env, message, now),
-            _ => apply_default_drum_adsr(&env, message, now),
-        }
-        for f in filters {
-            apply_filter_adsr(&f, message, &f.type_(), now);
+
+        if !filters.is_empty() {
+            self.oscillator.connect(filters.first().unwrap());
+            filters.last().unwrap().connect(&self.envelope);
+        } else {
+            self.oscillator.connect(&self.envelope);
         };
-        src.stop_at(stop_at);
+
+        filters
     }
-    src
 }
 
-fn create_filters(context: &mut AudioContext, message: &WebAudioMessage) -> Vec<BiquadFilterNode> {
-    let mut filters = Vec::new();
-
-    if message.bpf.frequency > 0.0 {
-        let mut bpf = context.create_biquad_filter();
-        bpf.set_type(Bandpass);
-        bpf.frequency().set_value(message.bpf.frequency);
-        bpf.q().set_value(message.bpf.resonance);
-        filters.push(bpf);
-    } else if message.lpf.frequency > 0.0 && message.hpf.frequency > 0.0 {
-        let mut lpf = context.create_biquad_filter();
-        let mut hpf = context.create_biquad_filter();
-        lpf.set_type(Lowpass);
-        lpf.frequency().set_value(message.lpf.frequency);
-        lpf.q().set_value(message.lpf.resonance);
-        hpf.set_type(Highpass);
-        hpf.frequency().set_value(message.hpf.frequency);
-        hpf.q().set_value(message.hpf.resonance);
-        lpf.connect(&hpf);
-        filters.push(lpf);
-        filters.push(hpf);
-    } else if message.lpf.frequency > 0.0 {
-        let mut lpf = context.create_biquad_filter();
-        lpf.set_type(Lowpass);
-        lpf.frequency().set_value(message.lpf.frequency);
-        lpf.q().set_value(message.lpf.resonance);
-        filters.push(lpf);
-    } else if message.hpf.frequency > 0.0 {
-        let mut hpf = context.create_biquad_filter();
-        hpf.set_type(Highpass);
-        hpf.frequency().set_value(message.hpf.frequency);
-        hpf.q().set_value(message.hpf.resonance);
-        filters.push(hpf);
-    }
-
-    filters
+pub struct Sampler {
+    pub sample: AudioBufferSourceNode,
+    pub envelope: GainNode,
 }
 
-fn apply_filter_adsr(filter_node: &BiquadFilterNode, message: &WebAudioMessage, filter: &BiquadFilterType, now: f64) {
+impl Sampler {
+    pub fn new(context: &mut AudioContext, message: &WebAudioMessage, audio_buffer: AudioBuffer) -> Self {
+        let mut sample = context.create_buffer_source();
+        sample.set_buffer(audio_buffer);
+        let envelope = context.create_gain();
+        Self { sample, envelope }
+    }
+}
+
+impl WebAudioPlayer for Sampler {
+    fn set_adsr(&mut self, t: f64, adsr: &ADSR, velocity: f32, duration: f64) {
+        self.envelope.gain()
+            .set_value_at_time(0.0, t)
+            .linear_ramp_to_value_at_time(velocity, t + adsr.attack)
+            .linear_ramp_to_value_at_time((adsr.sustain + 0.00001) * velocity, t + adsr.attack + adsr.decay)
+            .set_value_at_time(adsr.sustain * velocity, t + duration)
+            .linear_ramp_to_value_at_time(0.0, t + duration + adsr.release);
+    }
+
+    fn play(&mut self, t: f64, message: &WebAudioMessage, release: f64) {
+        let buffer_duration = release;
+        let (start_at, stop_at) = if message.speed < 0.0 {
+            (buffer_duration, t + message.duration + 0.2)
+        } else {
+            (message.begin * buffer_duration, t + message.duration + message.adsr.release)
+        };
+        if message.looper.is_loop > 0 {
+            self.sample.set_loop(true);
+            self.sample.set_loop_start(message.looper.loop_start);
+            self.sample.set_loop_end(message.looper.loop_end);
+            self.sample.start_at_with_offset(
+                t,
+                self.sample.loop_start(),
+            );
+            self.sample.stop_at(t + message.duration + message.adsr.release);
+        } else {
+            self.sample.start_at_with_offset(
+                t,
+                start_at,
+            );
+            self.sample.stop_at(stop_at);
+        }
+    }
+
+    fn set_filters(&mut self, context: &mut AudioContext, message: &WebAudioMessage) -> Vec<BiquadFilterNode> {
+        let mut filters = Vec::new();
+        if message.bpf.frequency > 0.0 {
+            let mut bpf = context.create_biquad_filter();
+            bpf.set_type(Bandpass);
+            bpf.frequency().set_value(message.bpf.frequency);
+            bpf.q().set_value(message.bpf.resonance);
+            filters.push(bpf);
+        } else if message.lpf.frequency > 0.0 {
+            let mut lpf = context.create_biquad_filter();
+            lpf.set_type(Lowpass);
+            lpf.frequency().set_value(message.lpf.frequency);
+            lpf.q().set_value(message.lpf.resonance);
+            filters.push(lpf);
+        } else if message.hpf.frequency > 0.0 {
+            let mut hpf = context.create_biquad_filter();
+            hpf.set_type(Highpass);
+            hpf.frequency().set_value(message.hpf.frequency);
+            hpf.q().set_value(message.hpf.resonance);
+            filters.push(hpf);
+        }
+
+        if !filters.is_empty() {
+            self.sample.connect(filters.first().unwrap());
+            filters.last().unwrap().connect(&self.envelope);
+        } else {
+            self.sample.connect(&self.envelope);
+        };
+        filters
+    }
+}
+
+pub fn apply_filter_adsr(filter_node: &BiquadFilterNode, message: &WebAudioMessage, filter: &BiquadFilterType, now: f64) {
     let env = match filter {
         Lowpass => message.lpenv,
         Highpass => message.hpenv,
@@ -280,68 +244,4 @@ fn apply_filter_adsr(filter_node: &BiquadFilterNode, message: &WebAudioMessage, 
     filter_node.frequency().linear_ramp_to_value_at_time(sustain_level, now + env.attack + env.decay);
     filter_node.frequency().set_value_at_time(sustain_level, now + message.duration);
     filter_node.frequency().linear_ramp_to_value_at_time(min, now + message.duration + env.release.max(0.1));
-}
-
-//TODO fix envelopes
-fn apply_adsr(
-    envelope: &GainNode,
-    message: &WebAudioMessage,
-    now: f64,
-    attack: f64,
-    sustain: f32,
-    decay: f64,
-    release: f64,
-) {
-    envelope
-        .gain()
-        .set_value_at_time(0.0, now)
-        .linear_ramp_to_value_at_time(message.velocity, now + attack)
-        .exponential_ramp_to_value_at_time(
-            (sustain + 0.00001) * message.velocity,
-            now + attack + decay,
-        )
-        .set_value_at_time(sustain * message.velocity, now + message.duration)
-        .linear_ramp_to_value_at_time(0.00001, now + message.duration + release);
-}
-
-fn apply_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
-    apply_adsr(
-        envelope,
-        message,
-        now,
-        message.adsr.attack,
-        message.adsr.sustain,
-        message.adsr.decay,
-        message.adsr.release,
-    );
-}
-
-fn apply_default_synth_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
-    apply_adsr(envelope, message, now, 0.001, message.velocity, 0.05, 0.07);
-}
-
-fn apply_drum_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
-    apply_adsr(
-        envelope,
-        message,
-        now,
-        message.adsr.attack,
-        message.adsr.sustain,
-        message.adsr.decay,
-        message.adsr.release,
-    );
-}
-
-fn apply_default_drum_adsr(envelope: &GainNode, message: &WebAudioMessage, now: f64) {
-    apply_adsr(envelope, message, now, 0.001, message.velocity, 0.5, 0.5);
-}
-
-fn connect_nodes<'a>(nodes: Vec<&'a (dyn AudioNode + 'a)>, compressor: &DynamicsCompressorNode) -> Vec<&'a (dyn AudioNode)> {
-    for i in 0..nodes.len() - 1 {
-        nodes[i].connect(nodes[i + 1]);
-    }
-    if let Some(last_node) = nodes.last() {
-        last_node.connect(compressor);
-    }
-    nodes
 }

@@ -4,19 +4,22 @@ use std::{
 };
 use std::fs::File;
 use std::path::Path;
-use quick_cache::sync::Cache;
-// use mini_moka::sync::Cache;
+use std::sync::mpsc::{RecvError, SendError};
+use std::time::{Instant, SystemTime};
+use mini_moka::sync::Cache;
 use reqwest::Url;
 
-use tokio::{fs, sync::{mpsc, Mutex}, time::Instant};
+use tokio::{fs, sync::{mpsc, Mutex}};
 use serde::Deserialize;
 use tokio::io::AsyncWriteExt;
 use web_audio_api::{AudioBuffer, context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions}};
 use web_audio_api::context::BaseAudioContext;
-use crate::superdough::{ADSR, BPF, Delay, FilterADSR, HPF, Loop, LPF, superdough_sample, superdough_synth};
+use web_audio_api::node::{AudioBufferSourceNode, AudioNode, AudioScheduledSourceNode, BiquadFilterNode, DelayNode, DynamicsCompressorNode, GainNode, OscillatorNode, OscillatorType};
+use web_audio_api::node::BiquadFilterType::{Bandpass, Highpass, Lowpass};
+use crate::superdough::{ADSR, apply_filter_adsr, BPF, Delay, FilterADSR, HPF, Loop, LPF, Sampler, Synth, WebAudioPlayer};
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct WebAudioMessage {
     pub note: f32,
     pub instant: Instant,
@@ -52,6 +55,8 @@ pub fn init(
     async_output_transmitter: mpsc::Sender<Vec<WebAudioMessage>>,
 ) {
     tauri::async_runtime::spawn(async move { async_process_model(async_input_receiver, async_output_transmitter).await });
+    let (sender, receiver) = std::sync::mpsc::channel();
+
     let message_queue: Arc<Mutex<Vec<WebAudioMessage>>> = Arc::new(Mutex::new(Vec::new()));
     /* ...........................................................
            Listen For incoming messages and add to queue
@@ -70,20 +75,7 @@ pub fn init(
     });
 
     let message_queue_clone = Arc::clone(&message_queue);
-
-    /* ...........................................................
-                        Prepare audio context
-    ............................................................*/
-    let latency_hint = match std::env::var("WEB_AUDIO_LATENCY").as_deref() {
-        Ok("playback") => AudioContextLatencyCategory::Playback,
-        _ => AudioContextLatencyCategory::default(),
-    };
-    let mut audio_context = AudioContext::new(AudioContextOptions {
-        latency_hint,
-        ..AudioContextOptions::default()
-    });
     tauri::async_runtime::spawn(async move {
-        let cache: Cache<String, AudioBuffer> = Cache::new(10_000);
         /* ...........................................................
                             Process queued messages
         ............................................................*/
@@ -96,49 +88,128 @@ pub fn init(
                     return true;
                 };
 
-                match message.waveform.as_str() {
-                    "sine" | "square" | "triangle" | "saw" | "sawtooth" => {
-                        superdough_synth(message.clone(), &mut audio_context);
-                    }
-                    _ => {
-                        let url = Url::parse(&*message.sampleurl).expect("failed to parse url");
-                        let filename = url.path_segments()
-                            .and_then(Iterator::last)
-                            .and_then(|name| if name.is_empty() { None } else { Some(name) })
-                            .unwrap_or("tmp.ben");
-                        let file_path = format!("samples/{}{}", message.dirname, filename);
+                match sender.send(message.clone()) {
+                    Ok(_) => {}
+                    Err(_) => {}
+                };
 
-                        if let Some(audio_buffer) = cache.get(&file_path) {
-                            superdough_sample(
-                                message.clone(),
-                                &mut audio_context,
-                                audio_buffer.clone(),
-                            );
-                        } else if let Ok(file) = File::open(&file_path) {
-                            let audio_buffer = audio_context.decode_audio_data_sync(file)
-                                .unwrap_or_else(|_| panic!("Failed to decode audio data"));
-                            cache.insert(file_path.clone(), audio_buffer.clone());
-                        }
-
-                        tokio::spawn(async move {
-                            if tokio::fs::metadata(&file_path).await.is_err() {
-                                let response = reqwest::get(url)
-                                    .await
-                                    .unwrap_or_else(|_| panic!("Failed to send GET request"));
-
-                                let bytes = response.bytes().await.unwrap();
-                                let path = Path::new(&file_path);
-                                let mut file = create_file_and_dirs(path).await;
-                                file.write_all(&bytes)
-                                    .await
-                                    .unwrap_or_else(|_| panic!("Failed to write to file"));
-                            }
-                        });
-                    }
-                }
                 return false;
             });
             tokio::time::sleep(Duration::from_millis(1)).await;
+        }
+    });
+
+    /* ...........................................................
+                          Create and setup WebAudio
+       ............................................................*/
+    tauri::async_runtime::spawn(async move {
+        let latency_hint = match std::env::var("WEB_AUDIO_LATENCY").as_deref() {
+            Ok("playback") => AudioContextLatencyCategory::Playback,
+            _ => AudioContextLatencyCategory::default(),
+        };
+        let mut audio_context = AudioContext::new(AudioContextOptions {
+            latency_hint,
+            ..AudioContextOptions::default()
+        });
+        let mut temp_src = audio_context.create_buffer_source();
+        let compressor = audio_context.create_dynamics_compressor();
+        compressor.threshold().set_value(-50.0);
+        compressor.connect(&audio_context.destination());
+        let delay = audio_context.create_delay(1.);
+        let output = audio_context.create_gain();
+        output.connect(&compressor);
+        delay.connect(&output);
+        let feedback = audio_context.create_gain();
+        feedback.connect(&delay);
+        delay.connect(&feedback);
+        let pre_gain = audio_context.create_gain();
+        pre_gain.connect(&feedback);
+        let input = audio_context.create_gain();
+        input.connect(&pre_gain);
+        let cache: Cache<String, AudioBuffer> = Cache::builder()
+            .max_capacity(31 * 1024 * 1024)
+            .time_to_idle(Duration::from_secs(40))
+            .build();
+        loop {
+            match receiver.recv() {
+                Ok(message) => {
+                    match message.waveform.as_str() {
+                        "sine" | "square" | "triangle" | "saw" | "sawtooth" => {
+                            let t = audio_context.current_time();
+                            delay.delay_time().set_value(message.delay.delay_time);
+                            feedback.gain().set_value(message.delay.feedback);
+                            pre_gain.gain().set_value_at_time(message.delay.wet, t + message.delay.delay_time as f64);
+
+                            let mut synth = Synth::new(&mut audio_context, &message);
+                            synth.set_frequency(&message.note);
+                            synth.set_waveform(&message.waveform);
+                            let filters = synth.set_filters(&mut audio_context, &message);
+                            if message.delay.wet > 0.0 {
+                                synth.envelope.connect(&input);
+                            }
+                            synth.envelope.connect(&compressor);
+                            synth.play(t, &message, message.adsr.release);
+                            synth.set_adsr(t, &message.adsr, message.velocity, message.duration);
+                            if message.lpenv.env > 0.0 || message.hpenv.env > 0.0 || message.bpenv.env > 0.0 {
+                                for f in filters {
+                                    apply_filter_adsr(&f, &message, &f.type_(), t);
+                                }
+                            }
+                        }
+                        _ => {
+                            let url = Url::parse(&*message.sampleurl).expect("failed to parse url");
+                            let filename = url.path_segments()
+                                .and_then(Iterator::last)
+                                .and_then(|name| if name.is_empty() { None } else { Some(name) })
+                                .unwrap_or("tmp.ben");
+                            let file_path = format!("/Users/vasiliymilovidov/samples/{}{}", message.dirname, filename);
+                            let file_path_clone = file_path.clone();
+
+                            tokio::spawn(async move {
+                                if tokio::fs::metadata(&file_path.clone()).await.is_err() {
+                                    let response = reqwest::get(url)
+                                        .await
+                                        .unwrap_or_else(|_| panic!("Failed to send GET request"));
+
+                                    let bytes = response.bytes().await.unwrap();
+                                    let path = Path::new(&file_path);
+                                    let mut file = create_file_and_dirs(path).await;
+                                    file.write_all(&bytes)
+                                        .await
+                                        .unwrap_or_else(|_| panic!("Failed to write to file"));
+                                }
+                            });
+
+                            if let Some(audio_buffer) = cache.get(&file_path_clone) {
+                                let t = audio_context.current_time();
+                                delay.delay_time().set_value(message.delay.delay_time);
+                                feedback.gain().set_value(message.delay.feedback);
+                                pre_gain.gain().set_value_at_time(message.delay.wet, t + message.delay.delay_time as f64);
+                                let audio_buffer_duration = audio_buffer.duration();
+                                let mut sampler = Sampler::new(&mut audio_context, &message, audio_buffer);
+                                sampler.sample.playback_rate().set_value(message.speed);
+                                sampler.set_adsr(t, &message.adsr, message.velocity, message.duration);
+                                let filters = sampler.set_filters(&mut audio_context, &message);
+                                if message.lpenv.env > 0.0 || message.hpenv.env > 0.0 || message.bpenv.env > 0.0 {
+                                    for f in filters {
+                                        apply_filter_adsr(&f, &message, &f.type_(), t);
+                                    }
+                                }
+                                if message.delay.wet > 0.0 {
+                                    sampler.envelope.connect(&input);
+                                };
+                                sampler.envelope.connect(&compressor);
+                                sampler.play(t, &message, audio_buffer_duration);
+                            } else if let Ok(file) = File::open(&file_path_clone) {
+                                let audio_buffer = audio_context.decode_audio_data_sync(file)
+                                    .unwrap_or_else(|_| panic!("Failed to decode audio data"));
+                                cache.insert(file_path_clone.clone(), audio_buffer);
+                            }
+                        }
+                    }
+                }
+                Err(_) => {}
+            }
         }
     });
 }

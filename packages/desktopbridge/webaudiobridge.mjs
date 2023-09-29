@@ -6,8 +6,8 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
   const ac = getAudioContext();
   if (typeof value !== 'object') {
     throw new Error(
-      `expected hap.value to be an object, but got "${value}". Hint: append .note() or .s() to the end`,
-      'error',
+        `expected hap.value to be an object, but got "${value}". Hint: append .note() or .s() to the end`,
+        'error',
     );
   }
 
@@ -15,7 +15,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
 
   let {
     note = 'C2',
-    s,
+    s = 'triangle',
     bank,
     source,
     gain = 0.8,
@@ -50,24 +50,24 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     loopBegin = 0,
     loopEnd = 1,
     attack = 0.001,
-    decay = 0.05,
+    decay = 0.005,
     sustain = 1,
-    release = 0.1,
+    release = 0.001,
     lpattack = 0.0001,
     lpdecay = 0.2,
     lpsustain = 0.6,
     lprelease = 0.2,
-    lpenv = 1,
+    lpenv = 0,
     hpattack = 0.0001,
     hpdecay = 0.2,
     hpsustain = 0.6,
     hprelease = 0.2,
-    hpenv = 1,
+    hpenv = 0,
     bpattack = 0.0001,
     bpdecay = 0.2,
     bpsustain = 0.6,
     bprelease = 0.2,
-    bpenv = 1,
+    bpenv = 0,
     n = 0,
     freq,
   } = value;
@@ -101,21 +101,21 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     let map = getSound(s).data.samples;
     if (Array.isArray(map)) {
       sampleUrl =
-        path !== undefined ? path + map[n % map.length].replace('./', '') : map[n % map.length].replace('./', '');
+          path !== undefined ? path + map[n % map.length].replace('./', '') : map[n % map.length].replace('./', '');
     } else {
       const midiDiff = (noteA) => noteToMidi(noteA) - midi;
       // object format will expect keys as notes
       const closest = Object.keys(map)
-        .filter((k) => !k.startsWith('_'))
-        .reduce(
-          (closest, key, j) => (!closest || Math.abs(midiDiff(key)) < Math.abs(midiDiff(closest)) ? key : closest),
-          null,
-        );
+          .filter((k) => !k.startsWith('_'))
+          .reduce(
+              (closest, key, j) => (!closest || Math.abs(midiDiff(key)) < Math.abs(midiDiff(closest)) ? key : closest),
+              null,
+          );
       transpose = -midiDiff(closest); // semitones to repitch
       sampleUrl =
-        path !== undefined
-          ? path + map[closest][n % map[closest].length].replace('./', '')
-          : map[closest][n % map[closest].length].replace('./', '');
+          path !== undefined
+              ? path + map[closest][n % map[closest].length].replace('./', '')
+              : map[closest][n % map[closest].length].replace('./', '');
     }
   }
   if (isNote(note)) {
@@ -183,9 +183,9 @@ const hap2value = (hap) => {
   return { ...hap.value, velocity: hap.context.velocity };
 };
 export const webaudioDesktopOutputTrigger = (t, hap, ct, cps) =>
-  desktopAudio(hap2value(hap), t - ct, hap.duration / cps, cps);
+    desktopAudio(hap2value(hap), t - ct, hap.duration / cps, cps);
 export const webaudioDesktopOutput = (hap, deadline, hapDuration) =>
-  desktopAudio(hap2value(hap), deadline, hapDuration);
+    desktopAudio(hap2value(hap), deadline, hapDuration);
 
 Pattern.prototype.webaudio = function () {
   return this.onTrigger(webaudioDesktopOutputTrigger);
