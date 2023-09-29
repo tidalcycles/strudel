@@ -1087,27 +1087,6 @@ exports[`runs examples > example "chunk" example index 0 1`] = `
   "[ 1/2 → 3/4 | note:C4 ]",
   "[ 3/4 → 1/1 | note:D4 ]",
   "[ 1/1 → 5/4 | note:A3 ]",
-  "[ 5/4 → 3/2 | note:B3 ]",
-  "[ 3/2 → 7/4 | note:C4 ]",
-  "[ 7/4 → 2/1 | note:D5 ]",
-  "[ 2/1 → 9/4 | note:A3 ]",
-  "[ 9/4 → 5/2 | note:B3 ]",
-  "[ 5/2 → 11/4 | note:C5 ]",
-  "[ 11/4 → 3/1 | note:D4 ]",
-  "[ 3/1 → 13/4 | note:A3 ]",
-  "[ 13/4 → 7/2 | note:B4 ]",
-  "[ 7/2 → 15/4 | note:C4 ]",
-  "[ 15/4 → 4/1 | note:D4 ]",
-]
-`;
-
-exports[`runs examples > example "chunkBack" example index 0 1`] = `
-[
-  "[ 0/1 → 1/4 | note:A4 ]",
-  "[ 1/4 → 1/2 | note:B3 ]",
-  "[ 1/2 → 3/4 | note:C4 ]",
-  "[ 3/4 → 1/1 | note:D4 ]",
-  "[ 1/1 → 5/4 | note:A3 ]",
   "[ 5/4 → 3/2 | note:B4 ]",
   "[ 3/2 → 7/4 | note:C4 ]",
   "[ 7/4 → 2/1 | note:D4 ]",
@@ -1119,6 +1098,27 @@ exports[`runs examples > example "chunkBack" example index 0 1`] = `
   "[ 13/4 → 7/2 | note:B3 ]",
   "[ 7/2 → 15/4 | note:C4 ]",
   "[ 15/4 → 4/1 | note:D5 ]",
+]
+`;
+
+exports[`runs examples > example "chunkBack" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:A4 ]",
+  "[ 1/4 → 1/2 | note:B3 ]",
+  "[ 1/2 → 3/4 | note:C4 ]",
+  "[ 3/4 → 1/1 | note:D4 ]",
+  "[ 1/1 → 5/4 | note:A3 ]",
+  "[ 5/4 → 3/2 | note:B3 ]",
+  "[ 3/2 → 7/4 | note:C4 ]",
+  "[ 7/4 → 2/1 | note:D5 ]",
+  "[ 2/1 → 9/4 | note:A3 ]",
+  "[ 9/4 → 5/2 | note:B3 ]",
+  "[ 5/2 → 11/4 | note:C5 ]",
+  "[ 11/4 → 3/1 | note:D4 ]",
+  "[ 3/1 → 13/4 | note:A3 ]",
+  "[ 13/4 → 7/2 | note:B4 ]",
+  "[ 7/2 → 15/4 | note:C4 ]",
+  "[ 15/4 → 4/1 | note:D4 ]",
 ]
 `;
 
@@ -3525,6 +3525,27 @@ exports[`runs examples > example "release" example index 0 1`] = `
   "[ 13/4 → 7/2 | note:e3 release:0.1 ]",
   "[ 7/2 → 15/4 | note:g3 release:0.1 ]",
   "[ 15/4 → 4/1 | note:c4 release:0.1 ]",
+]
+`;
+
+exports[`runs examples > example "repeatCycles" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:42 s:gm_acoustic_guitar_nylon ]",
+  "[ 1/4 → 1/2 | note:38 s:gm_acoustic_guitar_nylon ]",
+  "[ 1/2 → 3/4 | note:35 s:gm_acoustic_guitar_nylon ]",
+  "[ 3/4 → 1/1 | note:38 s:gm_acoustic_guitar_nylon ]",
+  "[ 1/1 → 5/4 | note:42 s:gm_acoustic_guitar_nylon ]",
+  "[ 5/4 → 3/2 | note:38 s:gm_acoustic_guitar_nylon ]",
+  "[ 3/2 → 7/4 | note:35 s:gm_acoustic_guitar_nylon ]",
+  "[ 7/4 → 2/1 | note:38 s:gm_acoustic_guitar_nylon ]",
+  "[ 2/1 → 9/4 | note:42 s:gm_acoustic_guitar_nylon ]",
+  "[ 9/4 → 5/2 | note:36 s:gm_acoustic_guitar_nylon ]",
+  "[ 5/2 → 11/4 | note:39 s:gm_acoustic_guitar_nylon ]",
+  "[ 11/4 → 3/1 | note:41 s:gm_acoustic_guitar_nylon ]",
+  "[ 3/1 → 13/4 | note:42 s:gm_acoustic_guitar_nylon ]",
+  "[ 13/4 → 7/2 | note:36 s:gm_acoustic_guitar_nylon ]",
+  "[ 7/2 → 15/4 | note:39 s:gm_acoustic_guitar_nylon ]",
+  "[ 15/4 → 4/1 | note:41 s:gm_acoustic_guitar_nylon ]",
 ]
 `;
 
