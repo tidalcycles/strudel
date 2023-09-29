@@ -18,24 +18,30 @@ export class Cyclist {
     this.lastEnd = 0; // query end of last tick
     this.getTime = getTime; // get absolute time
     this.onToggle = onToggle;
-    // this.abeLinkListener = listen('abelink-event', async (e) => {
-    //   const payload = e?.payload;
-    //   if (payload == null) {
-    //     return;
-    //   }
-    //   const { play, bpm, timestamp } = payload;
-    //   console.log('play');
+    this.start_timer;
+    this.abeLinkListener = listen('abelink-event', async (e) => {
+      const payload = e?.payload;
+      if (payload == null) {
+        return;
+      }
+      const { play, bpm, timestamp } = payload;
+      // (if bpm !== prev_bpm) {
+      //update the clock
+      // }
+      if (this.started !== play && play != null) {
+        if (play) {
+          this.start_timer = window.setTimeout(() => {
+            logger('[cyclist] start');
+            this.clock.start();
+            this.setStarted(true);
+          }, timestamp - Date.now());
+        } else {
+          this.stop();
+        }
+      }
 
-    //   if (this.started !== play && play != null) {
-    //     if (play) {
-    //       this.start();
-    //     } else {
-    //       this.stop();
-    //     }
-    //   }
-
-    //   const { message, message_type } = e.payload;
-    // });
+      const { message, message_type } = e.payload;
+    });
     this.latency = latency; // fixed trigger time offset
     const round = (x) => Math.round(x * 1000) / 1000;
     this.clock = createClock(
@@ -78,26 +84,18 @@ export class Cyclist {
     this.started = v;
     this.onToggle?.(v);
   }
+  startClock() {}
   start() {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
 
     const linkmsg = {
-      bpm: this.cps * 60,
+      bpm: 110,
       play: true,
       timestamp: Date.now(),
     };
-    Invoke('sendabelinkmsg', { linkmsg }).then((res) => {
-      const timeoffset = res.timestamp - Date.now();
-
-      console.log({ res, timeoffset });
-      window.setTimeout(() => {
-        logger('[cyclist] start');
-        this.clock.start();
-        this.setStarted(true);
-      }, timeoffset);
-    });
+    Invoke('sendabelinkmsg', { linkmsg });
   }
   pause() {
     logger('[cyclist] pause');
@@ -110,7 +108,7 @@ export class Cyclist {
     this.lastEnd = 0;
     this.setStarted(false);
     const linkmsg = {
-      bpm: this.clock.interval,
+      bpm: 110,
       play: false,
       timestamp: Date.now(),
     };

@@ -24,8 +24,7 @@ fn main() {
   let (async_output_transmitter_midi, async_output_receiver_midi) = mpsc::channel(1);
   let (async_input_transmitter_osc, async_input_receiver_osc) = mpsc::channel(1);
   let (async_output_transmitter_osc, async_output_receiver_osc) = mpsc::channel(1);
-  let (async_input_transmitter_abelink, async_input_receiver_abelink) = mpsc::channel(1);
-  let (async_output_transmitter_abelink, async_output_receiver_abelink) = mpsc::channel(1);
+
   tauri::Builder
     ::default()
     .manage(midibridge::AsyncInputTransmit {
@@ -41,7 +40,6 @@ fn main() {
 
       let abelink = Arc::new(Mutex::new(AbeLinkState::new()));
       app.manage(ablelinkbridge::AsyncInputTransmit {
-        inner: Mutex::new(async_input_transmitter_abelink),
         abelink: abelink.clone(),
       });
 
@@ -58,14 +56,7 @@ fn main() {
         async_output_transmitter_osc
       );
 
-      ablelinkbridge::init(
-        logger.clone(),
-        AbeLinkToJs { window },
-        abelink,
-        async_input_receiver_abelink,
-        async_output_receiver_abelink,
-        async_output_transmitter_abelink
-      );
+      ablelinkbridge::init(logger.clone(), AbeLinkToJs { window }, abelink);
 
       Ok(())
     })

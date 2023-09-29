@@ -128,24 +128,24 @@ function useStrudel({
     }
   };
 
-  listen('abelink-event', async (e) => {
-    const payload = e?.payload;
-    if (payload == null) {
-      return;
-    }
-    const { play, bpm, timestamp } = payload;
+  // listen('abelink-event', async (e) => {
+  //   const payload = e?.payload;
+  //   if (payload == null) {
+  //     return;
+  //   }
+  //   const { play, bpm, timestamp } = payload;
 
-    if (started !== play && play != null) {
-      if (play) {
-        // activateCode();
-        start();
-      } else {
-        stop();
-      }
-    }
+  //   if (started !== play && play != null) {
+  //     if (play) {
+  //       // activateCode();
+  //       start();
+  //     } else {
+  //       stop();
+  //     }
+  //   }
 
-    const { message, message_type } = e.payload;
-  });
+  //   const { message, message_type } = e.payload;
+  // });
 
   const error = schedulerError || evalError;
 
