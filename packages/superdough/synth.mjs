@@ -45,6 +45,7 @@ export function registerSynthSounds() {
             fmwave: fmWaveform = 'sine',
             vib = 0,
             vibmod = 0.5,
+            noise = 0,
           } = value;
           let { n, note, freq } = value;
           // with synths, n and note are the same thing
@@ -65,6 +66,7 @@ export function registerSynthSounds() {
             vib,
             vibmod,
             partials: n,
+            noise: noise,
           });
           // FM + FM envelope
           let stopFm, fmEnvelope;
@@ -188,8 +190,9 @@ export function getNoiseOscillator({ t, ac, type = 'white' }) {
   };
 }
 
-export function getOscillator({ s, freq, t, vib, vibmod, partials }) {
+export function getOscillator({ s, freq, t, vib, vibmod, partials, noise }) {
   // Make oscillator with partial count
+  let ac = getAudioContext();
   let o;
 
   if (['pink', 'white', 'brown'].includes(s)) {
@@ -219,6 +222,33 @@ export function getOscillator({ s, freq, t, vib, vibmod, partials }) {
       vibrato_oscillator.connect(gain);
       gain.connect(o.detune);
       vibrato_oscillator.start(t);
+    }
+
+    if (noise > 0) {
+      // Two gain nodes to set the oscillators to their respective levels
+      let o_gain = ac.createGain();
+      let n_gain = ac.createGain();
+      o_gain.gain.setValueAtTime(1 - noise, ac.currentTime);
+      n_gain.gain.setValueAtTime(noise, ac.currentTime);
+
+      // Instanciating a mixer to blend sources together
+      let mix_gain = ac.createGain();
+
+      // Connecting the main oscillator to the gain node
+      o.connect(o_gain).connect(mix_gain);
+
+      // Instanciating a noise oscillator and connecting 
+      const noiseOscillator = getNoiseOscillator({ t: t, ac: ac, type: 'pink' });
+      noiseOscillator.node.connect(n_gain).connect(mix_gain);
+
+      return {
+        node: mix_gain,
+        stop: (time) => {
+          vibrato_oscillator?.stop(time);
+          o.stop(time);
+          noiseOscillator.stop(time);
+        }
+      }
     }
 
     return {
