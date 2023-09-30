@@ -226,6 +226,7 @@ export function getOscillator({ s, freq, t, vib, vibmod, partials, noise }) {
 
     if (noise > 0) {
       // Two gain nodes to set the oscillators to their respective levels
+      noise = noise > 1 ? 1 : noise;
       let o_gain = ac.createGain();
       let n_gain = ac.createGain();
       o_gain.gain.setValueAtTime(1 - noise, ac.currentTime);
