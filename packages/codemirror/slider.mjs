@@ -13,7 +13,7 @@ export class SliderWidget extends WidgetType {
   }
 
   eq(other) {
-    const isSame = other.value.toFixed(4) == this.value.toFixed(4);
+    const isSame = other.value.toFixed(4) == this.value.toFixed(4) && other.min == this.min && other.max == this.max;
     return isSame;
   }
 
@@ -29,7 +29,7 @@ export class SliderWidget extends WidgetType {
     slider.value = this.value;
     slider.from = this.from;
     slider.to = this.to;
-    slider.className = 'w-16';
+    slider.className = 'w-16 translate-y-1.5';
     return wrap;
   }
 
@@ -52,26 +52,28 @@ let nodeValue = (node, view) => view.state.doc.sliceString(node.from, node.to);
     });
   }
 }; */
-// matches something like 123.xxx and returns slider widget
-let matchNumberSlider = (node, view) => {
-  if (
-    node.name === 'MemberExpression' &&
-    node.node.firstChild.name === 'Number' &&
-    node.node.lastChild.name === 'PropertyName'
-  ) {
-    // node is sth like 123.xxx
-    let prop = nodeValue(node.node.lastChild, view); // get prop name (e.g. xxx)
-    if (prop === 'slider') {
-      let value = nodeValue(node.node.firstChild, view); // get number (e.g. 123)
-      // console.log('slider value', value);
-      let { from, to } = node.node.firstChild;
-      let min = 0;
-      let max = 10;
-      return Decoration.widget({
+
+// matches something like slider(123) and returns slider widget
+let matchSliderFunction = (node, view) => {
+  if (node.name === 'CallExpression' /* && node.node.firstChild.name === 'ArgList' */) {
+    let name = nodeValue(node.node.firstChild, view); // slider ?
+    if (name === 'slider') {
+      const args = node.node.lastChild.getChildren('Number');
+      if (!args.length) {
+        return;
+      }
+      const [value, min = 0, max = 1] = args.map((node) => nodeValue(node, view));
+      //console.log('slider value', value, min, max);
+      let { from, to } = args[0];
+      let widget = Decoration.widget({
         widget: new SliderWidget(Number(value), min, max, from, to),
         side: 0,
       });
+      //widget._range = widget.range(from);
+      widget._range = widget.range(node.from);
+      return widget;
     }
+    // node is sth like 123.xxx
   }
 };
 
@@ -83,14 +85,11 @@ export function sliders(view) {
       from,
       to,
       enter: (node) => {
-        let numberSlider = matchNumberSlider(node, view);
-        if (numberSlider) {
-          widgets.push(numberSlider.range(node.from));
+        let widget = matchSliderFunction(node, view);
+        // let widget = matchNumber(node, view);
+        if (widget) {
+          widgets.push(widget._range || widget.range(node.from));
         }
-        /* let number = matchNumber(node, view);
-        if (number) {
-          widgets.push(number.range(node.from));
-        } */
       },
     });
   }
@@ -150,11 +149,9 @@ function updateSliderValue(view, e) {
   if (before === next) {
     return false;
   }
-  //console.log('before', before, '->', insert);
   let change = { from: draggedSlider.from, to: draggedSlider.to, insert };
   draggedSlider.to = draggedSlider.from + insert.length;
-  //console.log('change', change);
   view.dispatch({ changes: change });
-
+  window.postMessage({ type: 'slider-change', value: next });
   return true;
 }
