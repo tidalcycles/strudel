@@ -5,7 +5,7 @@ import { isNoteWithOctave } from '@strudel.cycles/core';
 import { getLeafLocations } from '@strudel.cycles/mini';
 
 export function transpiler(input, options = {}) {
-  const { wrapAsync = false, addReturn = true, emitMiniLocations = true } = options;
+  const { wrapAsync = false, addReturn = true, emitMiniLocations = true, emitWidgets = true } = options;
 
   let ast = parse(input, {
     ecmaVersion: 2022,
@@ -16,9 +16,9 @@ export function transpiler(input, options = {}) {
   let miniLocations = [];
   const collectMiniLocations = (value, node) => {
     const leafLocs = getLeafLocations(`"${value}"`, node.start); // stimmt!
-    //const withOffset = leafLocs.map((offsets) => offsets.map((o) => o + node.start));
     miniLocations = miniLocations.concat(leafLocs);
   };
+  let widgets = [];
 
   walk(ast, {
     enter(node, parent /* , prop, index */) {
@@ -37,6 +37,14 @@ export function transpiler(input, options = {}) {
       }
       if (isWidgetFunction(node)) {
         // collectSliderLocations?
+        emitWidgets &&
+          widgets.push({
+            from: node.arguments[0].start,
+            to: node.arguments[0].end,
+            value: node.arguments[0].value,
+            min: node.arguments[1]?.value ?? 0,
+            max: node.arguments[2]?.value ?? 1,
+          });
         return this.replace(widgetWithLocation(node));
       }
       // TODO: remove pseudo note variables?
@@ -68,7 +76,7 @@ export function transpiler(input, options = {}) {
   if (!emitMiniLocations) {
     return { output };
   }
-  return { output, miniLocations };
+  return { output, miniLocations, widgets };
 }
 
 function isStringWithDoubleQuotes(node, locations, code) {

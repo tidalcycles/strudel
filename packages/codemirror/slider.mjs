@@ -1,6 +1,8 @@
-import { WidgetType } from '@codemirror/view';
-import { ViewPlugin, Decoration } from '@codemirror/view';
-import { syntaxTree } from '@codemirror/language';
+import { WidgetType, ViewPlugin, Decoration } from '@codemirror/view';
+import { StateEffect, StateField } from '@codemirror/state';
+
+export let sliderValues = {};
+const getSliderID = (from) => `slider_${from}`;
 
 export class SliderWidget extends WidgetType {
   constructor(value, min, max, from, to) {
@@ -9,17 +11,12 @@ export class SliderWidget extends WidgetType {
     this.min = min;
     this.max = max;
     this.from = from;
+    this.originalFrom = from;
     this.to = to;
   }
 
-  eq(other) {
-    const isSame =
-      other.value.toFixed(4) == this.value.toFixed(4) &&
-      other.min == this.min &&
-      other.max == this.max &&
-      other.from === this.from &&
-      other.to === this.to;
-    return isSame;
+  eq() {
+    return false;
   }
 
   toDOM() {
@@ -31,10 +28,15 @@ export class SliderWidget extends WidgetType {
     slider.min = this.min;
     slider.max = this.max;
     slider.step = (this.max - this.min) / 1000;
-    slider.value = this.value;
+    slider.originalValue = this.value.toFixed(2);
+    // to make sure the code stays in sync, let's save the original value
+    // becuase .value automatically clamps values so it'll desync with the code
+    slider.value = slider.originalValue;
     slider.from = this.from;
+    slider.originalFrom = this.originalFrom;
     slider.to = this.to;
-    slider.className = 'w-16 translate-y-1.5';
+    slider.className = 'w-16 translate-y-1.5 mx-2';
+    this.slider = slider;
     return wrap;
   }
 
@@ -43,78 +45,50 @@ export class SliderWidget extends WidgetType {
   }
 }
 
-let nodeValue = (node, view) => view.state.doc.sliceString(node.from, node.to);
+export const setWidgets = StateEffect.define();
 
-// matches a number and returns slider widget
-/* let matchNumber = (node, view) => {
-  if (node.name == 'Number') {
-    const value = view.state.doc.sliceString(node.from, node.to);
-    let min = 0;
-    let max = 10;
-    return Decoration.widget({
-      widget: new SliderWidget(Number(value), min, max, node.from, node.to),
-      side: 0,
-    });
-  }
-}; */
-
-// matches something like slider(123) and returns slider widget
-let matchSliderFunction = (node, view) => {
-  if (node.name === 'CallExpression' /* && node.node.firstChild.name === 'ArgList' */) {
-    let name = nodeValue(node.node.firstChild, view); // slider ?
-    if (name === 'slider') {
-      const args = node.node.lastChild.getChildren('Number');
-      if (!args.length) {
-        return;
-      }
-      const [value, min = 0, max = 1] = args.map((node) => nodeValue(node, view));
-      //console.log('slider value', value, min, max);
-      let { from, to } = args[0];
-      let widget = Decoration.widget({
-        widget: new SliderWidget(Number(value), min, max, from, to),
-        side: 0,
-      });
-      //widget._range = widget.range(from);
-      widget._range = widget.range(node.from);
-      return widget;
-    }
-    // node is sth like 123.xxx
-  }
+export const updateWidgets = (view, widgets) => {
+  view.dispatch({ effects: setWidgets.of(widgets) });
 };
 
-// EditorView
-export function sliders(view) {
-  let widgets = [];
-  for (let { from, to } of view.visibleRanges) {
-    syntaxTree(view.state).iterate({
-      from,
-      to,
-      enter: (node) => {
-        let widget = matchSliderFunction(node, view);
-        // let widget = matchNumber(node, view);
-        if (widget) {
-          widgets.push(widget._range || widget.range(node.from));
-        }
-      },
-    });
-  }
-  return Decoration.set(widgets);
+let draggedSlider;
+
+function getWidgets(widgetConfigs) {
+  return widgetConfigs.map(({ from, to, value, min, max }) => {
+    return Decoration.widget({
+      widget: new SliderWidget(Number(value), min, max, from, to),
+      side: 0,
+    }).range(from /* , to */);
+  });
 }
 
-let draggedSlider, init;
 export const sliderPlugin = ViewPlugin.fromClass(
   class {
     decorations; //: DecorationSet
 
     constructor(view /* : EditorView */) {
-      this.decorations = sliders(view);
+      this.decorations = Decoration.set([]);
     }
 
     update(update /* : ViewUpdate */) {
-      if (update.docChanged || update.viewportChanged) {
-        !init && (this.decorations = sliders(update.view));
-        //init = true;
-      }
+      update.transactions.forEach((tr) => {
+        if (tr.docChanged) {
+          this.decorations = this.decorations.map(tr.changes);
+          const iterator = this.decorations.iter();
+          while (iterator.value) {
+            // when the widgets are moved, we need to tell the dom node the current position
+            // this is important because the updateSliderValue function has to work with the dom node
+            iterator.value.widget.slider.from = iterator.from;
+            iterator.value.widget.slider.to = iterator.to;
+            iterator.next();
+          }
+        }
+        for (let e of tr.effects) {
+          if (e.is(setWidgets)) {
+            this.decorations = Decoration.set(getWidgets(e.value));
+          }
+        }
+      });
     }
   },
   {
@@ -124,6 +98,8 @@ export const sliderPlugin = ViewPlugin.fromClass(
       mousedown: (e, view) => {
         let target = e.target; /* as HTMLElement */
         if (target.nodeName == 'INPUT' && target.parentElement.classList.contains('cm-slider')) {
+          e.preventDefault();
+          e.stopPropagation();
           draggedSlider = target;
           // remember offsetLeft / clientWidth, as they will vanish inside mousemove events for some reason
           draggedSlider._offsetLeft = draggedSlider.offsetLeft;
@@ -141,6 +117,7 @@ export const sliderPlugin = ViewPlugin.fromClass(
   },
 );
 
+// moves slider on mouse event
 function updateSliderValue(view, e) {
   const mouseX = e.clientX;
   let progress = (mouseX - draggedSlider._offsetLeft) / draggedSlider._clientWidth;
@@ -149,30 +126,38 @@ function updateSliderValue(view, e) {
   let max = Number(draggedSlider.max);
   const next = Number(progress * (max - min) + min);
   let insert = next.toFixed(2);
-  let before = view.state.doc.sliceString(draggedSlider.from, draggedSlider.to).trim();
-  before = Number(before).toFixed(4);
-  if (before === next) {
+  //let before = view.state.doc.sliceString(draggedSlider.from, draggedSlider.to).trim();
+  let before = draggedSlider.originalValue;
+  before = Number(before).toFixed(2);
+  // console.log('before', before, 'insert', insert, 'v');
+  if (before === insert) {
     return false;
   }
-  let change = { from: draggedSlider.from, to: draggedSlider.to, insert };
-  draggedSlider.to = draggedSlider.from + insert.length;
+  const to = draggedSlider.from + before.length;
+  let change = { from: draggedSlider.from, to, insert };
+  draggedSlider.originalValue = insert;
+  draggedSlider.value = insert;
   view.dispatch({ changes: change });
-  const id = 'slider_' + draggedSlider.from; // matches id generated in transpiler
+  const id = getSliderID(draggedSlider.originalFrom); // matches id generated in transpiler
   window.postMessage({ type: 'cm-slider', value: next, id });
   return true;
 }
 
-export let sliderValues = {};
-
+// user api
 export let slider = (id, value, min, max) => {
   sliderValues[id] = value; // sync state at eval time (code -> state)
   return ref(() => sliderValues[id]); // use state at query time
 };
+// update state when sliders are moved
 if (typeof window !== 'undefined') {
   window.addEventListener('message', (e) => {
     if (e.data.type === 'cm-slider') {
-      // update state when slider is moved
-      sliderValues[e.data.id] = e.data.value;
+      if (sliderValues[e.data.id] !== undefined) {
+        // update state when slider is moved
+        sliderValues[e.data.id] = e.data.value;
+      } else {
+        console.warn(`slider with id "${e.data.id}" is not registered. Only ${Object.keys(sliderValues)}`);
+      }
     }
   });
 }
