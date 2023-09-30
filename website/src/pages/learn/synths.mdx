@@ -23,6 +23,23 @@ The basic waveforms are `sine`, `sawtooth`, `square` and `triangle`, which can b
 
 If you don't set a `sound` but a `note` the default value for `sound` is `triangle`!
 
+You can also use noise as a source by setting the waveform to: `white`, `pink` or `brown`. These are different
+flavours of noise, here written from hard to soft.
+
+<MiniRepl
+  client:idle
+  tune={`note("c2 <eb2 <g2 g1>>")
+.sound("<white pink brown>/2")
+.scope()`}
+/>
+
+Some amount of pink noise can also be added to any oscillator by using the `noise` paremeter:
+
+<MiniRepl
+  client:idle
+  tune={`note("c3").noise("<0.1 0.25 0.5>").scope()`}
+/>
+
 ### Additive Synthesis
 
 To tame the harsh sound of the basic waveforms, we can set the `n` control to limit the overtones of the waveform:
