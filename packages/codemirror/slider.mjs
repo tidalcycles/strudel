@@ -13,7 +13,12 @@ export class SliderWidget extends WidgetType {
   }
 
   eq(other) {
-    const isSame = other.value.toFixed(4) == this.value.toFixed(4) && other.min == this.min && other.max == this.max;
+    const isSame =
+      other.value.toFixed(4) == this.value.toFixed(4) &&
+      other.min == this.min &&
+      other.max == this.max &&
+      other.from === this.from &&
+      other.to === this.to;
     return isSame;
   }
 
@@ -152,6 +157,22 @@ function updateSliderValue(view, e) {
   let change = { from: draggedSlider.from, to: draggedSlider.to, insert };
   draggedSlider.to = draggedSlider.from + insert.length;
   view.dispatch({ changes: change });
-  window.postMessage({ type: 'cm-slider', value: next, loc: draggedSlider.from });
+  const id = 'slider_' + draggedSlider.from; // matches id generated in transpiler
+  window.postMessage({ type: 'cm-slider', value: next, id });
   return true;
+}
+
+export let sliderValues = {};
+
+export let slider = (id, value, min, max) => {
+  sliderValues[id] = value; // sync state at eval time (code -> state)
+  return ref(() => sliderValues[id]); // use state at query time
+};
+if (typeof window !== 'undefined') {
+  window.addEventListener('message', (e) => {
+    if (e.data.type === 'cm-slider') {
+      // update state when slider is moved
+      sliderValues[e.data.id] = e.data.value;
+    }
+  });
 }

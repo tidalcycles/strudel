@@ -98,18 +98,20 @@ function miniWithLocation(value, node) {
   };
 }
 
+// these functions are connected to @strudel/codemirror -> slider.mjs
+// maybe someday there will be pluggable transpiler functions, then move this there
 function isWidgetFunction(node) {
   return node.type === 'CallExpression' && node.callee.name === 'slider';
 }
 
 function widgetWithLocation(node) {
-  const loc = node.arguments[0].start;
+  const id = 'slider_' + node.arguments[0].start; // use loc of first arg for id
   // add loc as identifier to first argument
-  // the slider function is assumed to be slider(loc, value, min?, max?)
+  // the slider function is assumed to be slider(id, value, min?, max?)
   node.arguments.unshift({
     type: 'Literal',
-    value: loc,
-    raw: loc + '',
+    value: id,
+    raw: id,
   });
   return node;
 }

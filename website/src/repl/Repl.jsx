@@ -39,6 +39,7 @@ let modules = [
   import('@strudel.cycles/mini'),
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
+  import('@strudel/codemirror'),
 
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
