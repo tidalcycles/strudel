@@ -28,7 +28,7 @@ export class SliderWidget extends WidgetType {
     slider.min = this.min;
     slider.max = this.max;
     slider.step = (this.max - this.min) / 1000;
-    slider.originalValue = this.value.toFixed(2);
+    slider.originalValue = this.value;
     // to make sure the code stays in sync, let's save the original value
     // becuase .value automatically clamps values so it'll desync with the code
     slider.value = slider.originalValue;
@@ -56,7 +56,7 @@ let draggedSlider;
 function getWidgets(widgetConfigs) {
   return widgetConfigs.map(({ from, to, value, min, max }) => {
     return Decoration.widget({
-      widget: new SliderWidget(Number(value), min, max, from, to),
+      widget: new SliderWidget(value, min, max, from, to),
       side: 0,
     }).range(from /* , to */);
   });
@@ -133,7 +133,7 @@ function updateSliderValue(view, e) {
   if (before === insert) {
     return false;
   }
-  const to = draggedSlider.from + before.length;
+  const to = draggedSlider.from + draggedSlider.originalValue.length;
   let change = { from: draggedSlider.from, to, insert };
   draggedSlider.originalValue = insert;
   draggedSlider.value = insert;

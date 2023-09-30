@@ -41,7 +41,7 @@ export function transpiler(input, options = {}) {
           widgets.push({
             from: node.arguments[0].start,
             to: node.arguments[0].end,
-            value: node.arguments[0].value,
+            value: node.arguments[0].raw, // don't use value!
             min: node.arguments[1]?.value ?? 0,
             max: node.arguments[2]?.value ?? 1,
           });
