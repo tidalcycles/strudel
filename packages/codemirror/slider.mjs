@@ -152,6 +152,6 @@ function updateSliderValue(view, e) {
   let change = { from: draggedSlider.from, to: draggedSlider.to, insert };
   draggedSlider.to = draggedSlider.from + insert.length;
   view.dispatch({ changes: change });
-  window.postMessage({ type: 'slider-change', value: next });
+  window.postMessage({ type: 'cm-slider', value: next, loc: draggedSlider.from });
   return true;
 }

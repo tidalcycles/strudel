@@ -35,6 +35,10 @@ export function transpiler(input, options = {}) {
         emitMiniLocations && collectMiniLocations(value, node);
         return this.replace(miniWithLocation(value, node));
       }
+      if (isWidgetFunction(node)) {
+        // collectSliderLocations?
+        return this.replace(widgetWithLocation(node));
+      }
       // TODO: remove pseudo note variables?
       if (node.type === 'Identifier' && isNoteWithOctave(node.name)) {
         this.skip();
@@ -68,11 +72,10 @@ export function transpiler(input, options = {}) {
 }
 
 function isStringWithDoubleQuotes(node, locations, code) {
-  const { raw, type } = node;
-  if (type !== 'Literal') {
+  if (node.type !== 'Literal') {
     return false;
   }
-  return raw[0] === '"';
+  return node.raw[0] === '"';
 }
 
 function isBackTickString(node, parent) {
@@ -93,4 +96,20 @@ function miniWithLocation(value, node) {
     ],
     optional: false,
   };
+}
+
+function isWidgetFunction(node) {
+  return node.type === 'CallExpression' && node.callee.name === 'slider';
+}
+
+function widgetWithLocation(node) {
+  const loc = node.arguments[0].start;
+  // add loc as identifier to first argument
+  // the slider function is assumed to be slider(loc, value, min?, max?)
+  node.arguments.unshift({
+    type: 'Literal',
+    value: loc,
+    raw: loc + '',
+  });
+  return node;
 }
