@@ -6,8 +6,6 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import createClock from './zyklus.mjs';
 import { logger } from './logger.mjs';
-import { Invoke } from '../../website/src/tauri.mjs';
-import { listen } from '@tauri-apps/api/event';
 
 export class Cyclist {
   constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
@@ -18,30 +16,6 @@ export class Cyclist {
     this.lastEnd = 0; // query end of last tick
     this.getTime = getTime; // get absolute time
     this.onToggle = onToggle;
-    this.start_timer;
-    this.abeLinkListener = listen('abelink-event', async (e) => {
-      const payload = e?.payload;
-      if (payload == null) {
-        return;
-      }
-      const { play, bpm, timestamp } = payload;
-      // (if bpm !== prev_bpm) {
-      //update the clock
-      // }
-      if (this.started !== play && play != null) {
-        if (play) {
-          this.start_timer = window.setTimeout(() => {
-            logger('[cyclist] start');
-            this.clock.start();
-            this.setStarted(true);
-          }, timestamp - Date.now());
-        } else {
-          this.stop();
-        }
-      }
-
-      const { message, message_type } = e.payload;
-    });
     this.latency = latency; // fixed trigger time offset
     const round = (x) => Math.round(x * 1000) / 1000;
     this.clock = createClock(
@@ -84,18 +58,13 @@ export class Cyclist {
     this.started = v;
     this.onToggle?.(v);
   }
-  startClock() {}
   start() {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
-
-    const linkmsg = {
-      bpm: 110,
-      play: true,
-      timestamp: Date.now(),
-    };
-    Invoke('sendabelinkmsg', { linkmsg });
+    logger('[cyclist] start');
+    this.clock.start();
+    this.setStarted(true);
   }
   pause() {
     logger('[cyclist] pause');
@@ -107,12 +76,6 @@ export class Cyclist {
     this.clock.stop();
     this.lastEnd = 0;
     this.setStarted(false);
-    const linkmsg = {
-      bpm: 110,
-      play: false,
-      timestamp: Date.now(),
-    };
-    Invoke('sendabelinkmsg', { linkmsg });
   }
   setPattern(pat, autostart = false) {
     this.pattern = pat;

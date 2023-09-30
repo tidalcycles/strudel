@@ -4,6 +4,8 @@ import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
 import { register } from './pattern.mjs';
+import { isTauri } from '../../website/src/tauri.mjs';
+import { CyclistBridge } from '../desktopbridge/cyclistbridge.mjs';
 
 export function repl({
   interval,
@@ -17,13 +19,16 @@ export function repl({
   onToggle,
   editPattern,
 }) {
-  const scheduler = new Cyclist({
+  const abelinkEnabled = isTauri();
+  const cyclistParams = {
     interval,
     onTrigger: getTrigger({ defaultOutput, getTime }),
     onError: onSchedulerError,
     getTime,
     onToggle,
-  });
+  };
+  const scheduler = abelinkEnabled ? new CyclistBridge(cyclistParams) : new Cyclist(cyclistParams);
+
   const setPattern = (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
     scheduler.setPattern(pattern, autostart);

@@ -49,6 +49,7 @@ if (isTauri()) {
     import('@strudel/desktopbridge/loggerbridge.mjs'),
     import('@strudel/desktopbridge/midibridge.mjs'),
     import('@strudel/desktopbridge/oscbridge.mjs'),
+    import('@strudel/desktopbridge/cyclistbridge.mjs'),
   ]);
 } else {
   modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
