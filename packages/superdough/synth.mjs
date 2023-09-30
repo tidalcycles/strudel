@@ -59,7 +59,7 @@ export function registerSynthSounds() {
           }
           // maybe pull out the above frequency resolution?? (there is also getFrequency but it has no default)
           // make oscillator
-          const { node: o, stop } = getOscillator({
+          const { node: o, stop, dry_node = null } = getOscillator({
             t,
             s: wave,
             freq,
@@ -71,10 +71,10 @@ export function registerSynthSounds() {
           // FM + FM envelope
           let stopFm, fmEnvelope;
           if (fmModulationIndex) {
-            const { node: modulator, stop } = fm(o, fmHarmonicity, fmModulationIndex, fmWaveform);
+            const { node: modulator, stop } = fm(dry_node !== null ? dry_node : o, fmHarmonicity, fmModulationIndex, fmWaveform);
             if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
               // no envelope by default
-              modulator.connect(o.frequency);
+              modulator.connect(dry_node !== null ? dry_node.frequency : o.frequency);
             } else {
               fmAttack = fmAttack ?? 0.001;
               fmDecay = fmDecay ?? 0.001;
@@ -88,7 +88,7 @@ export function registerSynthSounds() {
                 fmEnvelope.node.minValue = 0.00001;
               }
               modulator.connect(fmEnvelope.node);
-              fmEnvelope.node.connect(o.frequency);
+              fmEnvelope.node.connect(dry_node !== null ? dry_node.frequency : o.frequency);
             }
             stopFm = stop;
           }
@@ -243,6 +243,7 @@ export function getOscillator({ s, freq, t, vib, vibmod, partials, noise }) {
 
       return {
         node: mix_gain,
+        dry_node: o,
         stop: (time) => {
           vibrato_oscillator?.stop(time);
           o.stop(time);
