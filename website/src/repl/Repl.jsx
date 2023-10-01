@@ -22,6 +22,7 @@ import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
 import { isTauri } from '../tauri.mjs';
+import { useWidgets } from '@strudel.cycles/react/src/hooks/useWidgets.mjs';
 
 const { latestCode } = settingsMap.get();
 
@@ -39,6 +40,7 @@ let modules = [
   import('@strudel.cycles/mini'),
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
+  import('@strudel/codemirror'),
 
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
@@ -128,7 +130,7 @@ export function Repl({ embedded = false }) {
   } = useSettings();
 
   const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
-
+  const { setWidgets } = useWidgets(view);
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
       initialCode: '// LOADING...',
@@ -142,6 +144,7 @@ export function Repl({ embedded = false }) {
       },
       afterEval: ({ code, meta }) => {
         setMiniLocations(meta.miniLocations);
+        setWidgets(meta.widgets);
         setPending(false);
         setLatestCode(code);
         window.location.hash = '#' + code2hash(code);
@@ -219,7 +222,7 @@ export function Repl({ embedded = false }) {
   const handleChangeCode = useCallback(
     (c) => {
       setCode(c);
-      started && logger('[edit] code changed. hit ctrl+enter to update');
+      //started && logger('[edit] code changed. hit ctrl+enter to update');
     },
     [started],
   );

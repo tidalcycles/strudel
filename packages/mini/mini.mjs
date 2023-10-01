@@ -45,6 +45,17 @@ const applyOptions = (parent, enter) => (pat, i) => {
           pat = pat.fmap((a) => (b) => Array.isArray(a) ? [...a, b] : [a, b]).appLeft(friend);
           break;
         }
+        case 'range': {
+          const friend = enter(op.arguments_.element);
+          pat = strudel.reify(pat);
+          const arrayRange = (start, stop, step = 1) =>
+            Array.from({ length: Math.abs(stop - start) / step + 1 }, (value, index) =>
+              start < stop ? start + index * step : start - index * step,
+            );
+          let range = (apat, bpat) => apat.squeezeBind((a) => bpat.bind((b) => strudel.fastcat(...arrayRange(a, b))));
+          pat = range(pat, friend);
+          break;
+        }
         default: {
           console.warn(`operator "${op.type_}" not implemented`);
         }
