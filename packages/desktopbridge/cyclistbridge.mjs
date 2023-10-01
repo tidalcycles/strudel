@@ -27,6 +27,9 @@ export class CyclistBridge extends Cyclist {
 
       if (this.started !== started && started != null) {
         if (started) {
+          // the time delay in ms that seems to occur when starting the clock. Unsure if this is standard across all clients
+          const evaluationTime = 140;
+
           // when start message comes from abelink, delay starting cyclist clock until the start of the next abelink phase
           this.start_timer = window.setTimeout(() => {
             // TODO: evaluate the code so if another source triggers the play there will not be an error
@@ -34,7 +37,7 @@ export class CyclistBridge extends Cyclist {
             logger('[cyclist] start');
             this.clock.start();
             this.setStarted(true);
-          }, timestamp - Date.now());
+          }, timestamp - Date.now() - evaluationTime);
         } else {
           this.stop();
         }
@@ -46,6 +49,7 @@ export class CyclistBridge extends Cyclist {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
+    let x = Date.now();
     const linkmsg = {
       // TODO: change this to value of "main" clock cps
       cps: 0.5,
@@ -53,7 +57,9 @@ export class CyclistBridge extends Cyclist {
       timestamp: Date.now(),
       phase: this.clock.getPhase(),
     };
-    Invoke('sendabelinkmsg', { linkmsg });
+    Invoke('sendabelinkmsg', { linkmsg }).then(() => {
+      logger(`${Date.now() - x}`);
+    });
   }
 
   stop() {

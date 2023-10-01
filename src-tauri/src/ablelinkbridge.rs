@@ -62,7 +62,7 @@ impl AbeLinkState {
     let internal_time_at_next_phase = self.session_state.time_at_beat(beat + (quantum - phase), quantum);
     let time_offset = Duration::from_micros((internal_time_at_next_phase - link_time_stamp) as u64);
     let current_unix_time = current_unix_time();
-    let unix_time_at_next_phase = (current_unix_time + time_offset).as_millis() - 140;
+    let unix_time_at_next_phase = (current_unix_time + time_offset).as_millis();
     return unix_time_at_next_phase as u64;
   }
 
@@ -117,7 +117,7 @@ impl AbeLinkState {
 pub fn init(_logger: Logger, abelink: Arc<Mutex<AbeLinkState>>) {
   tauri::async_runtime::spawn(async move {
     let mut prev_is_started = false;
-    let mut prev_cps = 0.5;
+    let mut prev_cps = 0.0;
 
     let mut time_since_last_phase_send = 0;
     let sleep_time = 10;
@@ -126,14 +126,13 @@ pub fn init(_logger: Logger, abelink: Arc<Mutex<AbeLinkState>>) {
     ........................................................................*/
     loop {
       let mut state = abelink.lock().await;
+      state.capture_app_state();
       if state.link.is_enabled() == false {
         state.link.enable(true);
         state.link.enable_start_stop_sync(true);
       }
 
       let started = state.session_state.is_playing();
-
-      state.capture_app_state();
 
       if started != prev_is_started {
         state.send_started();
@@ -158,6 +157,7 @@ pub fn init(_logger: Logger, abelink: Arc<Mutex<AbeLinkState>>) {
 #[tauri::command]
 pub async fn sendabelinkmsg(linkmsg: LinkMsg, state: tauri::State<'_, AbeLinkStateContainer>) -> Result<(), String> {
   let mut abelink = state.abelink.lock().await;
+  abelink.capture_app_state();
   let started = abelink.session_state.is_playing();
   let time_stamp = abelink.link.clock_micros();
   let quantum = abelink.quantum;
