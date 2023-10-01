@@ -108,29 +108,27 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
 
 let reverbs = {};
 
-function getReverb(orbit, duration = 2) {
+function getReverb(orbit, duration = 2, fade, revlp, revdim) {
 
   // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
     const reverb = ac.createReverb(
-      duration,
       getAudioContext(),
+      duration,
       fade,
       revlp,
-      revdim,
     );
     reverb.connect(getDestination());
     console.log(reverb)
     reverbs[orbit] = reverb;
   }
-
   // Update the reverb duration if needed after instanciation
   if (reverbs[orbit].duration !== duration) {
-    reverbs[orbit] = reverbs[orbit].setDuration(duration);
+    reverbs[orbit] = reverbs[orbit].setDuration(
+      duration, fade, revlp, revdim);
     reverbs[orbit].duration = duration;
   }
-
   return reverbs[orbit];
 }
 
@@ -370,7 +368,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   // reverb
   let reverbSend;
   if (room > 0 && size > 0) {
-    const reverbNode = getReverb(orbit, size);
+    const reverbNode = getReverb(orbit, size, fade, revlp, revdim);
     reverbSend = effectSend(post, reverbNode, room);
   }
 
