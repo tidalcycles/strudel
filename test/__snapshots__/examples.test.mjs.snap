@@ -1773,6 +1773,32 @@ exports[`runs examples > example "every" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "fade" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 revlp:10000 fade:0.5 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 revlp:10000 fade:0.5 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 revlp:10000 fade:0.5 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 revlp:10000 fade:0.5 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 revlp:10000 fade:0.5 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 revlp:10000 fade:0.5 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 revlp:10000 fade:0.5 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 revlp:10000 fade:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "fade" example index 1 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 revlp:5000 fade:4 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 revlp:5000 fade:4 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 revlp:5000 fade:4 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 revlp:5000 fade:4 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 revlp:5000 fade:4 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 revlp:5000 fade:4 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 revlp:5000 fade:4 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 revlp:5000 fade:4 ]",
+]
+`;
+
 exports[`runs examples > example "fast" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | s:bd ]",
@@ -3604,6 +3630,58 @@ exports[`runs examples > example "rev" example index 0 1`] = `
   "[ 13/4 → 7/2 | note:e3 ]",
   "[ 7/2 → 15/4 | note:d3 ]",
   "[ 15/4 → 4/1 | note:c3 ]",
+]
+`;
+
+exports[`runs examples > example "revdim" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 revlp:10000 revdim:8000 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 revlp:10000 revdim:8000 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 revlp:10000 revdim:8000 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 revlp:10000 revdim:8000 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 revlp:10000 revdim:8000 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 revlp:10000 revdim:8000 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 revlp:10000 revdim:8000 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 revlp:10000 revdim:8000 ]",
+]
+`;
+
+exports[`runs examples > example "revdim" example index 1 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 revlp:5000 revdim:400 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 revlp:5000 revdim:400 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 revlp:5000 revdim:400 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 revlp:5000 revdim:400 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 revlp:5000 revdim:400 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 revlp:5000 revdim:400 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 revlp:5000 revdim:400 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 revlp:5000 revdim:400 ]",
+]
+`;
+
+exports[`runs examples > example "revlp" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 revlp:10000 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 revlp:10000 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 revlp:10000 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 revlp:10000 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 revlp:10000 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 revlp:10000 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 revlp:10000 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 revlp:10000 ]",
+]
+`;
+
+exports[`runs examples > example "revlp" example index 1 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 revlp:5000 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 revlp:5000 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 revlp:5000 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 revlp:5000 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 revlp:5000 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 revlp:5000 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 revlp:5000 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 revlp:5000 ]",
 ]
 `;
 

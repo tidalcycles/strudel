@@ -19,3 +19,4 @@ vite.config.js
 **/dev-dist
 **/dist
 /src-tauri/target/**/*
+reverbGen.mjs
