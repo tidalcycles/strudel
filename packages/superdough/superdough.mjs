@@ -113,7 +113,13 @@ function getReverb(orbit, duration = 2) {
   // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
-    const reverb = ac.createReverb(duration, getAudioContext());
+    const reverb = ac.createReverb(
+      duration,
+      getAudioContext(),
+      fade,
+      revlp,
+      revdim,
+    );
     reverb.connect(getDestination());
     console.log(reverb)
     reverbs[orbit] = reverb;
@@ -222,6 +228,9 @@ export const superdough = async (value, deadline, hapDuration) => {
     delaytime = 0.25,
     orbit = 1,
     room,
+    fade = 0.1,
+    revlp = 15000,
+    revdim = 1000,
     size = 2,
     velocity = 1,
     analyze, // analyser wet

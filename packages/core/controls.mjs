@@ -971,6 +971,41 @@ const generic_params = [
    */
   [['room', 'size']],
   /**
+   * Reverb lowpass starting frequency (in hertz).
+   *
+   * @name revlp
+   * @param {number} level between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).revlp(10000)
+   * @example
+   * s("bd sd").room(0.5).revlp(5000)
+   */
+  ['revlp'],
+  /**
+   * Reverb lowpass frequency at -60dB (in hertz).
+   *
+   * @name revdim
+   * @param {number} level between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).revlp(10000).revdim(8000)
+   * @example
+   * s("bd sd").room(0.5).revlp(5000).revdim(400)
+   *
+   */
+  ['revdim'],
+  /**
+   * Reverb fade time (in seconds).
+   *
+   * @name fade
+   * @param {number} seconds for the reverb to fade
+   * @example
+   * s("bd sd").room(0.5).revlp(10000).fade(0.5)
+   * @example
+   * s("bd sd").room(0.5).revlp(5000).fade(4)
+   *
+   */
+  ['fade'],
+  /**
    * Sets the room size of the reverb, see {@link room}.
    *
    * @name roomsize
@@ -1162,7 +1197,7 @@ const generic_params = [
 ];
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 
-controls.createParam = function (names) {
+controls.createParam = function(names) {
   const name = Array.isArray(names) ? names[0] : names;
 
   var withVal;
@@ -1186,7 +1221,7 @@ controls.createParam = function (names) {
 
   const func = (...pats) => sequence(...pats).withValue(withVal);
 
-  const setter = function (...pats) {
+  const setter = function(...pats) {
     if (!pats.length) {
       return this.fmap(withVal);
     }
