@@ -7,14 +7,22 @@ if (typeof AudioContext !== 'undefined') {
     return impulse;
   };
 
-  AudioContext.prototype.createReverb = function (duration) {
+  AudioContext.prototype.createReverb = function (duration, buffer) {
     const convolver = this.createConvolver();
-    convolver.setDuration = (d) => {
-      convolver.buffer = this.impulseResponse(d);
-      convolver.duration = duration;
+    convolver.setDuration = (d, i) => {
+      convolver.buffer = i !== undefined ? buffer : this.impulseResponse(d);
+      convolver.duration = d;
       return convolver;
     };
-    convolver.setDuration(duration);
+    convolver.setIR = (i) => {
+      convolver.buffer = i;
+      return convolver;
+    };
+    if (buffer !== undefined) {
+      convolver.setIR(buffer);
+    } else {
+      convolver.setDuration(duration);
+    }
     return convolver;
   };
 }

@@ -12,14 +12,18 @@ import workletsUrl from './worklets.mjs?url';
 import { createFilter, gainNode } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
+import { loadBuffer } from './sampler.mjs';
 
 export const soundMap = map();
+
 export function registerSound(key, onTrigger, data = {}) {
   soundMap.setKey(key, { onTrigger, data });
 }
+
 export function getSound(s) {
   return soundMap.get()[s];
 }
+
 export const resetLoadedSounds = () => soundMap.set({});
 
 let audioContext;
@@ -46,6 +50,7 @@ export const panic = () => {
 };
 
 let workletsLoading;
+
 function loadWorklets() {
   if (workletsLoading) {
     return workletsLoading;
@@ -89,6 +94,7 @@ export async function initAudioOnFirstClick(options) {
 
 let delays = {};
 const maxfeedback = 0.98;
+
 function getDelay(orbit, delaytime, delayfeedback, t) {
   if (delayfeedback > maxfeedback) {
     //logger(`delayfeedback was clamped to ${maxfeedback} to save your ears`);
@@ -107,10 +113,11 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
 }
 
 let reverbs = {};
-function getReverb(orbit, duration = 2) {
+
+function getReverb(orbit, duration = 2, ir) {
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
-    const reverb = ac.createReverb(duration);
+    const reverb = ac.createReverb(duration, ir);
     reverb.connect(getDestination());
     reverbs[orbit] = reverb;
   }
@@ -118,10 +125,15 @@ function getReverb(orbit, duration = 2) {
     reverbs[orbit] = reverbs[orbit].setDuration(duration);
     reverbs[orbit].duration = duration;
   }
+  if (reverbs[orbit].ir !== ir) {
+    reverbs[orbit] = reverbs[orbit].setIR(ir);
+    reverbs[orbit].ir = ir;
+  }
   return reverbs[orbit];
 }
 
 export let analyser, analyserData /* s = {} */;
+
 export function getAnalyser(/* orbit,  */ fftSize = 2048) {
   if (!analyser /*s [orbit] */) {
     const analyserNode = getAudioContext().createAnalyser();
@@ -151,7 +163,7 @@ export function getAnalyzerData(type = 'time') {
   return analyserData;
 }
 
-function effectSend(input, effect, wet) {
+function effectSend(input, effect, wet, size) {
   const send = gainNode(wet);
   input.connect(send);
   send.connect(effect);
@@ -219,6 +231,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     velocity = 1,
     analyze, // analyser wet
     fft = 8, // fftSize 0 - 10
+    ir,
+    i = 0,
   } = value;
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
@@ -247,6 +261,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     // this can be used for things like speed(0) in the sampler
     return;
   }
+
   if (ac.currentTime > t) {
     logger('[webaudio] skip hap: still loading', ac.currentTime - t);
     return;
@@ -352,10 +367,16 @@ export const superdough = async (value, deadline, hapDuration) => {
     delaySend = effectSend(post, delyNode, delay);
   }
   // reverb
+  let buffer;
+  if (ir !== undefined) {
+    let sample = getSound(ir);
+    let url = sample.data.samples[i % sample.data.samples.length];
+    buffer = await loadBuffer(url, ac, ir, 0);
+  }
   let reverbSend;
   if (room > 0 && size > 0) {
-    const reverbNode = getReverb(orbit, size);
-    reverbSend = effectSend(post, reverbNode, room);
+    const reverbNode = getReverb(orbit, size, buffer);
+    reverbSend = effectSend(post, reverbNode, room, size);
   }
 
   // analyser
