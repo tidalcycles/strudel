@@ -13,12 +13,12 @@ export class CyclistBridge extends Cyclist {
       if (payload == null) {
         return;
       }
-      const { play, bpm, timestamp } = payload;
+      const { started, cps, timestamp } = payload;
       // (if bpm !== prev_bpm) {
       //update the clock
       // }
-      if (this.started !== play && play != null) {
-        if (play) {
+      if (this.started !== started && started != null) {
+        if (started) {
           this.start_timer = window.setTimeout(() => {
             logger('[cyclist] start');
             this.clock.start();
@@ -39,8 +39,8 @@ export class CyclistBridge extends Cyclist {
     }
 
     const linkmsg = {
-      bpm: 110,
-      play: true,
+      cps: 0.5,
+      started: true,
       timestamp: Date.now(),
     };
     Invoke('sendabelinkmsg', { linkmsg });
@@ -52,8 +52,8 @@ export class CyclistBridge extends Cyclist {
     this.lastEnd = 0;
     this.setStarted(false);
     const linkmsg = {
-      bpm: 110,
-      play: false,
+      cps: 0.5,
+      started: false,
       timestamp: Date.now(),
     };
     Invoke('sendabelinkmsg', { linkmsg });

@@ -11,8 +11,8 @@ use tauri::Window;
 
 #[derive(Deserialize, Clone, serde::Serialize)]
 pub struct LinkMsg {
-  pub play: bool,
-  pub bpm: f64,
+  pub started: bool,
+  pub cps: f64,
   pub timestamp: u64,
 }
 
@@ -56,6 +56,16 @@ impl AbeLinkState {
   }
 }
 
+fn bpm_to_cps(bpm: f64) -> f64 {
+  let cpm = bpm / 4.0;
+  return cpm / 60.0;
+}
+
+fn cps_to_bpm(cps: f64) -> f64 {
+  let cpm = cps * 60.0;
+  return cpm * 4.0;
+}
+
 pub fn init(_logger: Logger, abelink_to_js: AbeLinkToJs, abelink: Arc<Mutex<AbeLinkState>>) {
   tauri::async_runtime::spawn(async move {
     /* ...........................................................
@@ -74,6 +84,7 @@ pub fn init(_logger: Logger, abelink_to_js: AbeLinkToJs, abelink: Arc<Mutex<AbeL
 
       let link_time_stamp = state.link.clock_micros();
       let bpm = state.session_state.tempo();
+      let cps = bpm_to_cps(bpm);
       let started = state.session_state.is_playing();
       let quantum = state.quantum;
       let beat = state.session_state.beat_at_time(link_time_stamp, quantum);
@@ -89,8 +100,8 @@ pub fn init(_logger: Logger, abelink_to_js: AbeLinkToJs, abelink: Arc<Mutex<AbeL
 
       if bpm != prev_bpm || started != prev_is_playing {
         let payload = LinkMsg {
-          bpm,
-          play: started,
+          cps,
+          started,
           timestamp: message_timestamp as u64,
         };
         abelink_to_js.send(payload);
@@ -107,17 +118,17 @@ pub fn init(_logger: Logger, abelink_to_js: AbeLinkToJs, abelink: Arc<Mutex<AbeL
 // Called from JS
 #[tauri::command]
 pub async fn sendabelinkmsg(linkmsg: LinkMsg, state: tauri::State<'_, AsyncInputTransmit>) -> Result<(), String> {
-  println!("bpm {} play {}", linkmsg.bpm, linkmsg.play);
   let mut abelink = state.abelink.lock().await;
   let started = abelink.session_state.is_playing();
   let time_stamp = abelink.link.clock_micros();
   let quantum = abelink.quantum;
+  let linkmsg_bpm = cps_to_bpm(linkmsg.cps);
 
-  if linkmsg.play != started {
-    abelink.session_state.set_is_playing_and_request_beat_at_time(linkmsg.play, time_stamp as u64, 0.0, quantum);
+  if linkmsg.started != started {
+    abelink.session_state.set_is_playing_and_request_beat_at_time(linkmsg.started, time_stamp as u64, 0.0, quantum);
   }
-  if linkmsg.bpm != abelink.session_state.tempo() {
-    abelink.session_state.set_tempo(linkmsg.bpm, time_stamp);
+  if linkmsg_bpm != abelink.session_state.tempo() {
+    abelink.session_state.set_tempo(linkmsg_bpm, time_stamp);
   }
   abelink.commit_app_state();
   drop(abelink);
