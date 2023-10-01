@@ -123,7 +123,7 @@ function getReverb(orbit, duration = 2, fade, revlp, revdim) {
     reverbs[orbit].revlp !== revlp ||
     reverbs[orbit].revdim !== revdim
   ) {
-    reverbs[orbit] = reverbs[orbit].setDuration(duration, fade, revlp, revdim);
+    reverbs[orbit].setDuration(duration, fade, revlp, revdim);
     reverbs[orbit].duration = duration;
     reverbs[orbit].fade = fade;
     reverbs[orbit].revlp = revlp;
