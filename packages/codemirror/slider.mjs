@@ -36,7 +36,7 @@ export class SliderWidget extends WidgetType {
     slider.from = this.from;
     slider.originalFrom = this.originalFrom;
     slider.to = this.to;
-    slider.className = 'w-16 translate-y-1.5 mx-2';
+    slider.className = 'w-16 translate-y-1';
     this.slider = slider;
     return wrap;
   }
@@ -97,7 +97,7 @@ export const sliderPlugin = ViewPlugin.fromClass(
 
     eventHandlers: {
       mousedown: (e, view) => {
-        let target = e.target; /* as HTMLElement */
+        let target = e.target;
         if (target.nodeName == 'INPUT' && target.parentElement.classList.contains('cm-slider')) {
           e.preventDefault();
           e.stopPropagation();
@@ -121,7 +121,8 @@ export const sliderPlugin = ViewPlugin.fromClass(
 // moves slider on mouse event
 function updateSliderValue(view, e) {
   const mouseX = e.clientX;
-  let progress = (mouseX - draggedSlider._offsetLeft) / draggedSlider._clientWidth;
+  let mx = 10;
+  let progress = (mouseX - draggedSlider._offsetLeft - mx) / (draggedSlider._clientWidth - mx * 2);
   progress = Math.max(Math.min(1, progress), 0);
   let min = Number(draggedSlider.min);
   let max = Number(draggedSlider.max);
