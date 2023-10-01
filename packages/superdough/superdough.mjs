@@ -163,7 +163,7 @@ export function getAnalyzerData(type = 'time') {
   return analyserData;
 }
 
-function effectSend(input, effect, wet, size) {
+function effectSend(input, effect, wet) {
   const send = gainNode(wet);
   input.connect(send);
   send.connect(effect);
@@ -381,7 +381,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   let reverbSend;
   if (room > 0 && size > 0) {
     const reverbNode = getReverb(orbit, size, buffer);
-    reverbSend = effectSend(post, reverbNode, room, size);
+    reverbSend = effectSend(post, reverbNode, room);
   }
 
   // analyser
