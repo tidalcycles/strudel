@@ -118,17 +118,29 @@ function getReverb(orbit, duration = 2, fade, revlp, revdim) {
       duration,
       fade,
       revlp,
+      revdim,
     );
     reverb.connect(getDestination());
-    console.log(reverb)
     reverbs[orbit] = reverb;
+    console.log(reverbs[orbit]);
   }
-  // Update the reverb duration if needed after instanciation
-  if (reverbs[orbit].duration !== duration) {
+
+  if (
+    reverbs[orbit].duration !== duration ||
+    reverbs[orbit].fade !== fade ||
+    reverbs[orbit].revlp !== revlp ||
+    reverbs[orbit].revdim !== revdim
+  ) {
     reverbs[orbit] = reverbs[orbit].setDuration(
-      duration, fade, revlp, revdim);
+      duration, fade, revlp, revdim
+    );
     reverbs[orbit].duration = duration;
+    reverbs[orbit].fade = fade;
+    reverbs[orbit].revlp = revlp;
+    reverbs[orbit].revdim = revdim;
+
   }
+
   return reverbs[orbit];
 }
 

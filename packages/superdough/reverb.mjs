@@ -26,8 +26,11 @@ if (typeof AudioContext !== 'undefined') {
         }
       );
       convolver.duration = d;
+      convolver.fade = fade;
+      convolver.revlp = revlp;
+      convolver.revdim = revdim;
     };
-    convolver.setDuration(duration);
+    convolver.setDuration(duration, fade, revlp, revdim);
     return convolver;
   };
 }
