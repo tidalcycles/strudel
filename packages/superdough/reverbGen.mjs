@@ -12,9 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-"use strict";
-
-
 var reverbGen = {};
 
 /** Generates a reverb impulse response.
@@ -24,7 +21,7 @@ var reverbGen = {};
       the impulse response has been generated. The impulse response
       is passed to this function as its parameter. May be called
       immediately within the current execution context, or later. */
-reverbGen.generateReverb = function(params, callback) {
+reverbGen.generateReverb = function (params, callback) {
   var audioContext = params.audioContext || new AudioContext();
   var sampleRate = params.sampleRate || 44100;
   var numChannels = params.numChannels || 2;
@@ -42,7 +39,7 @@ reverbGen.generateReverb = function(params, callback) {
       chan[j] = randomSample() * Math.pow(decayBase, j);
     }
     for (var j = 0; j < fadeInSampleFrames; j++) {
-      chan[j] *= (j / fadeInSampleFrames);
+      chan[j] *= j / fadeInSampleFrames;
     }
   }
 
@@ -57,7 +54,7 @@ reverbGen.generateReverb = function(params, callback) {
     @param {number} min Minimum value of data for the graph (lower edge).
     @param {number} max Maximum value of data in the graph (upper edge).
     @return {!CanvasElement} The generated canvas element. */
-reverbGen.generateGraph = function(data, width, height, min, max) {
+reverbGen.generateGraph = function (data, width, height, min, max) {
   var canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -71,7 +68,7 @@ reverbGen.generateGraph = function(data, width, height, min, max) {
     gc.fillRect(i * xscale, height - (data[i] - min) * yscale, 1, 1);
   }
   return canvas;
-}
+};
 
 /** Saves an AudioBuffer as a 16-bit WAV file on the client's host
     file system. Normalizes it to peak at +-32767, and optionally
@@ -85,7 +82,7 @@ reverbGen.generateGraph = function(data, width, height, min, max) {
     is truncated at that point. This is expressed as an integer,
     applying to the post-normalized and integer-converted
     buffer. The default is 0, meaning don't truncate. */
-reverbGen.saveWavFile = function(buffer, name, opt_minTail) {
+reverbGen.saveWavFile = function (buffer, name, opt_minTail) {
   var bitsPerSample = 16;
   var bytesPerSample = 2;
   var sampleRate = buffer.sampleRate;
@@ -124,23 +121,22 @@ reverbGen.saveWavFile = function(buffer, name, opt_minTail) {
   dataView.setUint32(4, fileBytes - 8, true); // file length
   dataView.setUint32(8, 1163280727, true); // "WAVE"
   dataView.setUint32(12, 544501094, true); // "fmt "
-  dataView.setUint32(16, 16, true)         // fmt chunk length
-  dataView.setUint16(20, 1, true);         // PCM format
+  dataView.setUint32(16, 16, true); // fmt chunk length
+  dataView.setUint16(20, 1, true); // PCM format
   dataView.setUint16(22, numChannels, true); // NumChannels
-  dataView.setUint32(24, sampleRate, true);  // SampleRate
+  dataView.setUint32(24, sampleRate, true); // SampleRate
   var bytesPerSampleFrame = numChannels * bytesPerSample;
   dataView.setUint32(28, sampleRate * bytesPerSampleFrame, true); // ByteRate
-  dataView.setUint16(32, bytesPerSampleFrame, true);              // BlockAlign
-  dataView.setUint16(34, bitsPerSample, true);                           // BitsPerSample
-  dataView.setUint32(36, 1635017060, true);                   // "data"
+  dataView.setUint16(32, bytesPerSampleFrame, true); // BlockAlign
+  dataView.setUint16(34, bitsPerSample, true); // BitsPerSample
+  dataView.setUint32(36, 1635017060, true); // "data"
   dataView.setUint32(40, sampleDataBytes, true);
   for (var j = 0; j < numSampleFrames; j++) {
     for (var i = 0; i < numChannels; i++) {
-      dataView.setInt16(44 + j * bytesPerSampleFrame + i * bytesPerSample,
-        Math.round(scale * channels[i][j]), true);
+      dataView.setInt16(44 + j * bytesPerSampleFrame + i * bytesPerSample, Math.round(scale * channels[i][j]), true);
     }
   }
-  var blob = new Blob([arrayBuffer], { 'type': 'audio/wav' });
+  var blob = new Blob([arrayBuffer], { type: 'audio/wav' });
   var url = window.URL.createObjectURL(blob);
   var linkEl = document.createElement('a');
   linkEl.href = url;
@@ -159,7 +155,7 @@ reverbGen.saveWavFile = function(buffer, name, opt_minTail) {
     @param {number} lpFreqEndAt
     @param {!function(!AudioBuffer)} callback May be called
     immediately within the current execution context, or later.*/
-var applyGradualLowpass = function(input, lpFreqStart, lpFreqEnd, lpFreqEndAt, callback) {
+var applyGradualLowpass = function (input, lpFreqStart, lpFreqEnd, lpFreqEndAt, callback) {
   if (lpFreqStart == 0) {
     callback(input);
     return;
@@ -173,7 +169,7 @@ var applyGradualLowpass = function(input, lpFreqStart, lpFreqEnd, lpFreqEndAt, c
   lpFreqStart = Math.min(lpFreqStart, input.sampleRate / 2);
   lpFreqEnd = Math.min(lpFreqEnd, input.sampleRate / 2);
 
-  filter.type = "lowpass";
+  filter.type = 'lowpass';
   filter.Q.value = 0.0001;
   filter.frequency.setValueAtTime(lpFreqStart, 0);
   filter.frequency.linearRampToValueAtTime(lpFreqEnd, lpFreqEndAt);
@@ -181,7 +177,7 @@ var applyGradualLowpass = function(input, lpFreqStart, lpFreqEnd, lpFreqEndAt, c
   player.connect(filter);
   filter.connect(context.destination);
   player.start();
-  context.oncomplete = function(event) {
+  context.oncomplete = function (event) {
     callback(event.renderedBuffer);
   };
   context.startRendering();
@@ -192,7 +188,7 @@ var applyGradualLowpass = function(input, lpFreqStart, lpFreqEnd, lpFreqEndAt, c
 /** @private
     @param {!AudioBuffer} buffer
     @return {!Array.<!Float32Array>} An array containing the Float32Array of each channel's samples. */
-var getAllChannelData = function(buffer) {
+var getAllChannelData = function (buffer) {
   var channels = [];
   for (var i = 0; i < buffer.numberOfChannels; i++) {
     channels[i] = buffer.getChannelData(i);
@@ -202,7 +198,7 @@ var getAllChannelData = function(buffer) {
 
 /** @private
     @return {number} A random number from -1 to 1. */
-var randomSample = function() {
+var randomSample = function () {
   return Math.random() * 2 - 1;
 };
 
