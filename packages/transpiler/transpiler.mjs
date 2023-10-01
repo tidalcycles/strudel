@@ -114,7 +114,7 @@ function isWidgetFunction(node) {
 function widgetWithLocation(node) {
   const id = 'slider_' + node.arguments[0].start; // use loc of first arg for id
   // add loc as identifier to first argument
-  // the slider function is assumed to be slider(id, value, min?, max?)
+  // the sliderWithID function is assumed to be sliderWithID(id, value, min?, max?)
   node.arguments.unshift({
     type: 'Literal',
     value: id,
