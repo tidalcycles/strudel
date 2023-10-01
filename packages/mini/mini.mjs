@@ -48,8 +48,6 @@ const applyOptions = (parent, enter) => (pat, i) => {
         case 'range': {
           const friend = enter(op.arguments_.element);
           pat = strudel.reify(pat);
-          console.log(pat.firstCycleValues);
-          console.log(friend.firstCycleValues);
           const arrayRange = (start, stop, step = 1) =>
             Array.from({ length: Math.abs(stop - start) / step + 1 }, (value, index) =>
               start < stop ? start + index * step : start - index * step,
