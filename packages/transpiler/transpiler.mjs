@@ -36,7 +36,6 @@ export function transpiler(input, options = {}) {
         return this.replace(miniWithLocation(value, node));
       }
       if (isWidgetFunction(node)) {
-        // collectSliderLocations?
         emitWidgets &&
           widgets.push({
             from: node.arguments[0].start,
