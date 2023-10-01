@@ -7,22 +7,31 @@ if (typeof AudioContext !== 'undefined') {
     return impulse;
   };
 
+  AudioContext.prototype.adjustLength = function (duration, buffer) {
+    const newLength = buffer.sampleRate * duration;
+    const newBuffer = this.createBuffer(buffer.numberOfChannels, buffer.length, buffer.sampleRate);
+    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+      let oldData = buffer.getChannelData(channel);
+      let newData = newBuffer.getChannelData(channel);
+
+      for (let i = 0; i < newLength; i++) {
+        newData[i] = oldData[i] || 0;
+      }
+    }
+    return newBuffer;
+  };
+
   AudioContext.prototype.createReverb = function (duration, buffer) {
     const convolver = this.createConvolver();
-    convolver.setDuration = (d, i) => {
-      convolver.buffer = i !== undefined ? buffer : this.impulseResponse(d);
-      convolver.duration = d;
+    convolver.setDuration = (dur, imp) => {
+      convolver.buffer = imp ? this.adjustLength(dur, imp) : this.impulseResponse(dur);
       return convolver;
     };
-    convolver.setIR = (i) => {
-      convolver.buffer = i;
+    convolver.setIR = (dur, imp) => {
+      convolver.buffer = imp ? this.adjustLength(dur, imp) : this.impulseResponse(dur);
       return convolver;
     };
-    if (buffer !== undefined) {
-      convolver.setIR(buffer);
-    } else {
-      convolver.setDuration(duration);
-    }
+    convolver.setDuration(duration, buffer);
     return convolver;
   };
 }

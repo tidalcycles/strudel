@@ -122,11 +122,11 @@ function getReverb(orbit, duration = 2, ir) {
     reverbs[orbit] = reverb;
   }
   if (reverbs[orbit].duration !== duration) {
-    reverbs[orbit] = reverbs[orbit].setDuration(duration);
+    reverbs[orbit] = reverbs[orbit].setDuration(duration, ir);
     reverbs[orbit].duration = duration;
   }
   if (reverbs[orbit].ir !== ir) {
-    reverbs[orbit] = reverbs[orbit].setIR(ir);
+    reverbs[orbit] = reverbs[orbit].setIR(duration, ir);
     reverbs[orbit].ir = ir;
   }
   return reverbs[orbit];
@@ -368,9 +368,14 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
   // reverb
   let buffer;
+  let url;
   if (ir !== undefined) {
     let sample = getSound(ir);
-    let url = sample.data.samples[i % sample.data.samples.length];
+    if (Array.isArray(sample)) {
+      url = sample.data.samples[i % sample.data.samples.length];
+    } else if (typeof sample === 'object') {
+      url = Object.values(sample.data.samples)[i & Object.values(sample.data.samples).length];
+    }
     buffer = await loadBuffer(url, ac, ir, 0);
   }
   let reverbSend;
