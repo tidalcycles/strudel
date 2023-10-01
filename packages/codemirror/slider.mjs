@@ -37,7 +37,7 @@ export class SliderWidget extends WidgetType {
     slider.from = this.from;
     slider.originalFrom = this.originalFrom;
     slider.to = this.to;
-    slider.className = 'w-16 translate-y-1';
+    slider.className = 'w-16 translate-y-1 mr-1';
     this.slider = slider;
     slider.addEventListener('input', (e) => {
       const next = e.target.value;
