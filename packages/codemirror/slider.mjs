@@ -6,7 +6,7 @@ export let sliderValues = {};
 const getSliderID = (from) => `slider_${from}`;
 
 export class SliderWidget extends WidgetType {
-  constructor(value, min, max, from, to) {
+  constructor(value, min, max, from, to, view) {
     super();
     this.value = value;
     this.min = min;
@@ -14,6 +14,7 @@ export class SliderWidget extends WidgetType {
     this.from = from;
     this.originalFrom = from;
     this.to = to;
+    this.view = view;
   }
 
   eq() {
@@ -38,11 +39,23 @@ export class SliderWidget extends WidgetType {
     slider.to = this.to;
     slider.className = 'w-16 translate-y-1';
     this.slider = slider;
+    slider.addEventListener('input', (e) => {
+      const next = e.target.value;
+      let insert = next;
+      //let insert = next.toFixed(2);
+      const to = slider.from + slider.originalValue.length;
+      let change = { from: slider.from, to, insert };
+      slider.originalValue = insert;
+      slider.value = insert;
+      this.view.dispatch({ changes: change });
+      const id = getSliderID(slider.originalFrom); // matches id generated in transpiler
+      window.postMessage({ type: 'cm-slider', value: Number(next), id });
+    });
     return wrap;
   }
 
-  ignoreEvent() {
-    return false;
+  ignoreEvent(e) {
+    return true;
   }
 }
 
@@ -52,12 +65,10 @@ export const updateWidgets = (view, widgets) => {
   view.dispatch({ effects: setWidgets.of(widgets) });
 };
 
-let draggedSlider;
-
-function getWidgets(widgetConfigs) {
+function getWidgets(widgetConfigs, view) {
   return widgetConfigs.map(({ from, to, value, min, max }) => {
     return Decoration.widget({
-      widget: new SliderWidget(value, min, max, from, to),
+      widget: new SliderWidget(value, min, max, from, to, view),
       side: 0,
     }).range(from /* , to */);
   });
@@ -86,7 +97,7 @@ export const sliderPlugin = ViewPlugin.fromClass(
         }
         for (let e of tr.effects) {
           if (e.is(setWidgets)) {
-            this.decorations = Decoration.set(getWidgets(e.value));
+            this.decorations = Decoration.set(getWidgets(e.value, update.view));
           }
         }
       });
@@ -94,56 +105,8 @@ export const sliderPlugin = ViewPlugin.fromClass(
   },
   {
     decorations: (v) => v.decorations,
-
-    eventHandlers: {
-      mousedown: (e, view) => {
-        let target = e.target;
-        if (target.nodeName == 'INPUT' && target.parentElement.classList.contains('cm-slider')) {
-          e.preventDefault();
-          e.stopPropagation();
-          draggedSlider = target;
-          // remember offsetLeft / clientWidth, as they will vanish inside mousemove events for some reason
-          draggedSlider._offsetLeft = draggedSlider.offsetLeft;
-          draggedSlider._clientWidth = draggedSlider.clientWidth;
-          return updateSliderValue(view, e);
-        }
-      },
-      mouseup: () => {
-        draggedSlider = undefined;
-      },
-      mousemove: (e, view) => {
-        draggedSlider && updateSliderValue(view, e);
-      },
-    },
   },
 );
-
-// moves slider on mouse event
-function updateSliderValue(view, e) {
-  const mouseX = e.clientX;
-  let mx = 10;
-  let progress = (mouseX - draggedSlider._offsetLeft - mx) / (draggedSlider._clientWidth - mx * 2);
-  progress = Math.max(Math.min(1, progress), 0);
-  let min = Number(draggedSlider.min);
-  let max = Number(draggedSlider.max);
-  const next = Number(progress * (max - min) + min);
-  let insert = next.toFixed(2);
-  //let before = view.state.doc.sliceString(draggedSlider.from, draggedSlider.to).trim();
-  let before = draggedSlider.originalValue;
-  before = Number(before).toFixed(2);
-  // console.log('before', before, 'insert', insert, 'v');
-  if (before === insert) {
-    return false;
-  }
-  const to = draggedSlider.from + draggedSlider.originalValue.length;
-  let change = { from: draggedSlider.from, to, insert };
-  draggedSlider.originalValue = insert;
-  draggedSlider.value = insert;
-  view.dispatch({ changes: change });
-  const id = getSliderID(draggedSlider.originalFrom); // matches id generated in transpiler
-  window.postMessage({ type: 'cm-slider', value: next, id });
-  return true;
-}
 
 // user api
 export let slider = (id, value, min, max) => {
