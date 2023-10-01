@@ -36,7 +36,9 @@ export class CyclistBridge extends Cyclist {
 
             logger('[cyclist] start');
             this.clock.start();
+
             this.setStarted(true);
+            console.log('clock duration: ', this.clock.interval);
           }, timestamp - Date.now() - evaluationTime);
         } else {
           this.stop();
@@ -52,13 +54,13 @@ export class CyclistBridge extends Cyclist {
     let x = Date.now();
     const linkmsg = {
       // TODO: change this to value of "main" clock cps
-      cps: 0.5,
+      cps: 0,
       started: true,
       timestamp: Date.now(),
       phase: this.clock.getPhase(),
     };
     Invoke('sendabelinkmsg', { linkmsg }).then(() => {
-      logger(`${Date.now() - x}`);
+      logger(`invoke delay: ${Date.now() - x}`);
     });
   }
 
@@ -69,7 +71,7 @@ export class CyclistBridge extends Cyclist {
     this.setStarted(false);
     const linkmsg = {
       // TODO: change this to value of "main" clock cps
-      cps: 0.5,
+      cps: 0,
       started: false,
       timestamp: Date.now(),
       phase: this.clock.getPhase(),

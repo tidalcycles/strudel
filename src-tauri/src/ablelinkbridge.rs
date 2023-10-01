@@ -137,7 +137,7 @@ pub fn init(_logger: Logger, abelink: Arc<Mutex<AbeLinkState>>) {
       if started != prev_is_started {
         state.send_started();
         prev_is_started = started;
-      } else if state.cps() != prev_cps {
+      } else if state.cps() != prev_cps && state.cps() != 0.0 {
         state.send_cps();
         prev_cps = state.cps();
         // a phase sync message needs to be sent to strudel every 30 seconds to keep clock drift at bay
@@ -166,7 +166,7 @@ pub async fn sendabelinkmsg(linkmsg: LinkMsg, state: tauri::State<'_, AbeLinkSta
   if linkmsg.started != started {
     abelink.session_state.set_is_playing_and_request_beat_at_time(linkmsg.started, time_stamp as u64, 0.0, quantum);
   }
-  if linkmsg_bpm != abelink.session_state.tempo() {
+  if linkmsg_bpm != abelink.session_state.tempo() && linkmsg_bpm != 0.0 {
     abelink.session_state.set_tempo(linkmsg_bpm, time_stamp);
   }
   abelink.commit_app_state();
