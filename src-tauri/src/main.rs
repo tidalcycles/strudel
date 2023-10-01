@@ -8,7 +8,6 @@ mod ablelinkbridge;
 use std::sync::Arc;
 
 use ablelinkbridge::AbeLinkState;
-use ablelinkbridge::AbeLinkToJs;
 use loggerbridge::Logger;
 use tauri::Manager;
 use tokio::sync::mpsc;
@@ -38,11 +37,6 @@ fn main() {
       let window = Arc::new(app.get_window("main").unwrap());
       let logger = Logger { window: window.clone() };
 
-      let abelink = Arc::new(Mutex::new(AbeLinkState::new()));
-      app.manage(ablelinkbridge::AsyncInputTransmit {
-        abelink: abelink.clone(),
-      });
-
       midibridge::init(
         logger.clone(),
         async_input_receiver_midi,
@@ -56,7 +50,12 @@ fn main() {
         async_output_transmitter_osc
       );
 
-      ablelinkbridge::init(logger.clone(), AbeLinkToJs { window }, abelink);
+      // This state must be declared in the setup so it can be shared between invoked commands and the initialized function
+      let abelink = Arc::new(Mutex::new(AbeLinkState::new(window)));
+      app.manage(ablelinkbridge::AbeLinkStateContainer {
+        abelink: abelink.clone(),
+      });
+      ablelinkbridge::init(logger.clone(), abelink);
 
       Ok(())
     })

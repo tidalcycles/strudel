@@ -3,7 +3,7 @@ import { repl } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
 import usePatternFrame from './usePatternFrame';
 import usePostMessage from './usePostMessage.mjs';
-import { listen } from '@tauri-apps/api/event';
+
 function useStrudel({
   defaultOutput,
   interval,
@@ -67,7 +67,6 @@ function useStrudel({
       }),
     [defaultOutput, interval, getTime],
   );
-
   const broadcast = usePostMessage(({ data: { from, type } }) => {
     if (type === 'start' && from !== id) {
       // console.log('message', from, type);
@@ -127,26 +126,6 @@ function useStrudel({
       await activateCode();
     }
   };
-
-  // listen('abelink-event', async (e) => {
-  //   const payload = e?.payload;
-  //   if (payload == null) {
-  //     return;
-  //   }
-  //   const { play, bpm, timestamp } = payload;
-
-  //   if (started !== play && play != null) {
-  //     if (play) {
-  //       // activateCode();
-  //       start();
-  //     } else {
-  //       stop();
-  //     }
-  //   }
-
-  //   const { message, message_type } = e.payload;
-  // });
-
   const error = schedulerError || evalError;
 
   usePatternFrame({
