@@ -108,8 +108,12 @@ export const sliderPlugin = ViewPlugin.fromClass(
   },
 );
 
-// user api
-export let slider = (id, value, min, max) => {
+export let slider = (value) => {
+  console.warn('slider will only work when the transpiler is used... passing value as is');
+  return pure(value);
+};
+// function transpiled from slider = (value, min, max)
+export let sliderWithID = (id, value, min, max) => {
   sliderValues[id] = value; // sync state at eval time (code -> state)
   return ref(() => sliderValues[id]); // use state at query time
 };

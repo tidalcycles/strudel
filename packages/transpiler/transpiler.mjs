@@ -121,5 +121,6 @@ function widgetWithLocation(node) {
     value: id,
     raw: id,
   });
+  node.callee.name = 'sliderWithID';
   return node;
 }
