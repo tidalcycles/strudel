@@ -114,20 +114,31 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
 
 let reverbs = {};
 
-function getReverb(orbit, duration = 2, ir) {
+function getReverb(orbit, duration = 2, fade, revlp, revdim, imp) {
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
-    const reverb = ac.createReverb(duration, ir);
+    const reverb = ac.createReverb(getAudioContext(), duration, fade, revlp, revdim, imp);
     reverb.connect(getDestination());
     reverbs[orbit] = reverb;
   }
-  if (reverbs[orbit].duration !== duration) {
-    reverbs[orbit] = reverbs[orbit].setDuration(duration, ir);
+
+  const reverbOrbit = reverbs[orbit];
+
+  if (
+    reverbs[orbit].duration !== duration ||
+    reverbs[orbit].fade !== fade ||
+    reverbs[orbit].revlp !== revlp ||
+    reverbs[orbit].revdim !== revdim
+  ) {
+    reverbs[orbit].setDuration(duration, fade, revlp, revdim);
     reverbs[orbit].duration = duration;
+    reverbs[orbit].fade = fade;
+    reverbs[orbit].revlp = revlp;
+    reverbs[orbit].revdim = revdim;
   }
-  if (reverbs[orbit].ir !== ir) {
-    reverbs[orbit] = reverbs[orbit].setIR(duration, ir);
-    reverbs[orbit].ir = ir;
+  if (reverbs[orbit].ir !== imp) {
+    reverbs[orbit] = reverbs[orbit].setIR(duration, fade, revlp, revdim, imp);
+    reverbs[orbit].ir = imp;
   }
   return reverbs[orbit];
 }
@@ -227,12 +238,15 @@ export const superdough = async (value, deadline, hapDuration) => {
     delaytime = 0.25,
     orbit = 1,
     room,
+    fade = 0.1,
+    revlp = 15000,
+    revdim = 1000,
     size = 2,
+    ir,
+    i = 0,
     velocity = 1,
     analyze, // analyser wet
     fft = 8, // fftSize 0 - 10
-    ir,
-    i = 0,
   } = value;
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
@@ -380,7 +394,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
   let reverbSend;
   if (room > 0 && size > 0) {
-    const reverbNode = getReverb(orbit, size, buffer);
+    const reverbNode = getReverb(orbit, size, fade, revlp, revdim, buffer);
     reverbSend = effectSend(post, reverbNode, room);
   }
 

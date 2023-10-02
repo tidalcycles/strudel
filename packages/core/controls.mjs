@@ -980,7 +980,62 @@ const generic_params = [
    * s("bd sd").room(.8).roomsize("<0 1 2 4 8>")
    *
    */
-
+  /**
+   * Reverb lowpass starting frequency (in hertz).
+   *
+   * @name revlp
+   * @param {number} level between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).revlp(10000)
+   * @example
+   * s("bd sd").room(0.5).revlp(5000)
+   */
+  ['revlp'],
+  /**
+   * Reverb lowpass frequency at -60dB (in hertz).
+   *
+   * @name revdim
+   * @param {number} level between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).revlp(10000).revdim(8000)
+   * @example
+   * s("bd sd").room(0.5).revlp(5000).revdim(400)
+   *
+   */
+  ['revdim'],
+  /**
+   * Reverb fade time (in seconds).
+   *
+   * @name fade
+   * @param {number} seconds for the reverb to fade
+   * @example
+   * s("bd sd").room(0.5).revlp(10000).fade(0.5)
+   * @example
+   * s("bd sd").room(0.5).revlp(5000).fade(4)
+   *
+   */
+  ['fade'],
+  /**
+   * Sets the sample to use as an impulse response for the reverb.
+   *
+   * @name iresponse
+   * @param {string | Pattern} sample sample to pick as an impulse response
+   * @synonyms ir
+   * @example
+   * s("bd sd").room(.8).ir("<shaker_large:0 shaker_large:2>")
+   *
+   */
+  [['ir', 'i'], 'iresponse'],
+  /**
+   * Sets the room size of the reverb, see {@link room}.
+   *
+   * @name roomsize
+   * @param {number | Pattern} size between 0 and 10
+   * @synonyms size, sz
+   * @example
+   * s("bd sd").room(.8).roomsize("<0 1 2 4 8>")
+   *
+   */
   // TODO: find out why :
   // s("bd sd").room(.8).roomsize("<0 .2 .4 .6 .8 [1,0]>").osc()
   // .. does not work. Is it because room is only one effect?
@@ -989,17 +1044,6 @@ const generic_params = [
   // ['sclap'],
   // ['sclaves'],
   // ['scrash'],
-
-  /**
-   * Sets the sample to use as an impulse response for the reverb.
-   *
-   * @name iresponse
-   * @param {string | Pattern} Sets the impulse response
-   * @example
-   * s("bd sd").room(.8).ir("<shaker_large:0 shaker_large:2>")
-   *
-   */
-  [['ir', 'i'], 'iresponse'],
 
   /**
    * Wave shaping distortion. CAUTION: it might get loud

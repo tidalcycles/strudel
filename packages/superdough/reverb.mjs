@@ -1,11 +1,7 @@
+import reverbGen from './reverbGen.mjs';
+
 if (typeof AudioContext !== 'undefined') {
-  AudioContext.prototype.impulseResponse = function (duration, channels = 1) {
-    const length = this.sampleRate * duration;
-    const impulse = this.createBuffer(channels, length, this.sampleRate);
-    const IR = impulse.getChannelData(0);
-    for (let i = 0; i < length; i++) IR[i] = (2 * Math.random() - 1) * Math.pow(1 - i / length, duration);
-    return impulse;
-  };
+  AudioContext.prototype.generateReverb = reverbGen.generateReverb;
 
   AudioContext.prototype.adjustLength = function (duration, buffer) {
     const newLength = buffer.sampleRate * duration;
@@ -21,17 +17,44 @@ if (typeof AudioContext !== 'undefined') {
     return newBuffer;
   };
 
-  AudioContext.prototype.createReverb = function (duration, buffer) {
+  AudioContext.prototype.createReverb = function (audioContext, duration, fade, revlp, revdim, imp) {
     const convolver = this.createConvolver();
-    convolver.setDuration = (dur, imp) => {
-      convolver.buffer = imp ? this.adjustLength(dur, imp) : this.impulseResponse(dur);
+
+    convolver.setDuration = (d, fade, revlp, revdim, imp) => {
+      if (imp) {
+        convolver.buffer = this.adjustLength(d, imp);
+        return convolver;
+      } else {
+        this.generateReverb(
+          {
+            audioContext,
+            sampleRate: 44100,
+            numChannels: 2,
+            decayTime: d,
+            fadeInTime: fade,
+            lpFreqStart: revlp,
+            lpFreqEnd: revdim,
+          },
+          (buffer) => {
+            convolver.buffer = buffer;
+          },
+        );
+        convolver.duration = duration;
+        convolver.fade = fade;
+        convolver.revlp = revlp;
+        convolver.revdim = revdim;
+        return convolver;
+      }
+    };
+    convolver.setIR = (d, fade, revlp, revdim, imp) => {
+      if (imp) {
+        convolver.buffer = this.adjustLength(d, imp);
+      } else {
+        convolver.setDuration(d, fade, revlp, revdim, imp);
+      }
       return convolver;
     };
-    convolver.setIR = (dur, imp) => {
-      convolver.buffer = imp ? this.adjustLength(dur, imp) : this.impulseResponse(dur);
-      return convolver;
-    };
-    convolver.setDuration(duration, buffer);
+    convolver.setDuration(duration, fade, revlp, revdim, imp);
     return convolver;
   };
 }
