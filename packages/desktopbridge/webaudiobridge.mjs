@@ -136,6 +136,9 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
   }
 
   let ir_path;
+
+  let url;
+  if (ir !== undefined) {
   if (getSound(ir).data.baseUrl !== undefined) {
     baseUrl = getSound(ir).data.baseUrl;
     if (baseUrl === './piano/') {
@@ -146,17 +149,14 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
       ir_path = '';
     }
   }
-
-  let url;
-  if (ir !== undefined) {
     let ir_samples = getSound(ir);
     if (Array.isArray(ir_samples)) {
       url =
         ir_path !== undefined
           ? ir_path + ir_samples[n % ir_samples.length].replace('./', '')
           : ir_samples[n % ir_samples.length].replace('./', '');
-      // url = ir_samples.data.samples[i % ir_samples.data.samples.length];
     } else if (typeof ir_samples === 'object') {
+  console.log('obk', Object.values(ir_samples.data.samples)[i & Object.values(ir_samples.data.samples).length].replace('./', ''))
       url =
         ir_path !== undefined
           ? ir_path +
@@ -164,6 +164,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
           : Object.values(ir_samples.data.samples)[i & Object.values(ir_samples.data.samples).length].replace('./', '');
     }
   }
+
   console.log('url', url);
 
   let folder;
