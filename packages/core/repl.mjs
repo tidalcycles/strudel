@@ -18,7 +18,6 @@ export function repl({
   editPattern,
   createCyclist,
 }) {
-  //TODO: could maybe be enabled with a command or a switch in settings?
   const cyclistParams = {
     interval,
     onTrigger: getTrigger({ defaultOutput, getTime }),
