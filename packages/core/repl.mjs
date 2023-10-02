@@ -19,6 +19,7 @@ export function repl({
   onToggle,
   editPattern,
 }) {
+  //TODO: could maybe be enabled with a command or a switch in settings?
   const abelinkEnabled = isTauri();
   const cyclistParams = {
     interval,
