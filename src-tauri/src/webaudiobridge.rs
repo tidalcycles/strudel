@@ -20,8 +20,9 @@ use web_audio_api::{
     context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions},
     node::AudioNode,
 };
+use web_audio_api::context::OfflineAudioContext;
 use web_audio_api::node::{ConvolverNode, DelayNode};
-use crate::superdough::{ADSRMessage, apply_filter_adsr, BPFMessage, DelayMessage, Delay, FilterADSRMessage, HPFMessage, LoopMessage, LPFMessage, Sampler, Synth, WebAudioInstrument, ReverbMessage};
+use crate::superdough::{ADSRMessage, apply_filter_adsr, BPFMessage, DelayMessage, Delay, FilterADSRMessage, HPFMessage, LoopMessage, LPFMessage, Sampler, Synth, WebAudioInstrument, ReverbMessage, Reverb};
 
 
 #[derive(Debug, Clone)]
@@ -121,10 +122,11 @@ pub fn init(
         });
         let _ = audio_context.create_buffer_source();
         let mut delays: HashMap<usize, Delay> = HashMap::new();
-        let mut reverbs: HashMap<usize, ConvolverNode> = HashMap::new();
+        let mut reverbs: HashMap<usize, Reverb> = HashMap::new();
         let compressor = audio_context.create_dynamics_compressor();
         compressor.threshold().set_value(-50.0);
         compressor.connect(&audio_context.destination());
+
 
         let cache: Cache<String, AudioBuffer> = Cache::builder()
             .max_capacity(31 * 1024 * 1024)
@@ -219,58 +221,19 @@ pub fn init(
                                     delay.pre_gain.gain().set_value_at_time(message.delay.wet.unwrap_or(0.25), t + message.delay.delay_time.unwrap_or(0.5) as f64);
                                 };
 
-                                // REVERB
-                                if message.reverb.ir.is_some() {
-
-                                    // CREATE FILEPATHS
-                                    let (ir_url, ir_file_path, ir_file_path_clone) = create_ir_filepath(&message);
-
-                                    // DOWNLOAD FILE IS IT DOESN'T EXIST
-                                    tokio::spawn(async move {
-                                        if tokio::fs::metadata(&ir_file_path.clone()).await.is_err() {
-                                            let response = reqwest::get(ir_url)
-                                                .await
-                                                .unwrap_or_else(|_| panic!("Failed to send GET request"));
-
-                                            let bytes = response.bytes().await.unwrap();
-                                            let path = Path::new(&ir_file_path);
-                                            let mut file = create_file_and_dirs(path).await;
-                                            file.write_all(&bytes)
-                                                .await
-                                                .unwrap_or_else(|_| panic!("Failed to write to file"));
-                                        }
-                                    });
-
-                                    // IF BUFFER IS CACHED - PLAY IT
-                                    if let Some(ir_buffer) = cache.get(&ir_file_path_clone) {
-
-                                        // IF REVERB IS NOT CREATED - CREATE IT
-                                        reverbs.entry(message.orbit).or_insert({
-                                            let mut reverb = audio_context.create_convolver();
-                                            reverb.connect(&compressor);
-                                            reverb.set_buffer(ir_buffer.clone());
-                                            reverb
-                                        });
-
-                                        // GET AND CONNECT REVERB
-                                        let reverb = reverbs.get(&message.orbit).unwrap();
-                                        sampler.envelope.connect(reverb);
-                                    } else if let Ok(file) = File::open(&ir_file_path_clone) {
-                                        println!("Loading IR file {}", &ir_file_path_clone);
-                                        let ir_buffer = audio_context.decode_audio_data_sync(file).unwrap_or_else(|_| panic!("Failed to decode audio data"));
-                                        cache.insert(ir_file_path_clone.clone(), ir_buffer);
-                                    }
-                                }
-
                                 // CONNECT SAMPLER TO OUTPUT AND PLAY
                                 sampler.envelope.connect(&compressor);
                                 sampler.play(t, &message, audio_buffer_duration);
 
                                 // IF FILE EXIST - DECODE IT
                             } else if let Ok(file) = File::open(&file_path_clone) {
-                                let audio_buffer = audio_context.decode_audio_data_sync(file)
-                                    .unwrap_or_else(|_| panic!("Failed to decode audio data"));
-                                cache.insert(file_path_clone.clone(), audio_buffer);
+                                let cache_clone = cache.clone();
+                                println!("{:?}", file);
+                                tokio::spawn(async move {
+                                    let context = OfflineAudioContext::new(2, 88200, 44100.0);
+                                    let audio_buffer = context.decode_audio_data_sync(file).expect("OOOPS!");
+                                    cache_clone.insert(file_path_clone.clone(), audio_buffer);
+                                });
                             }
                         }
                     }

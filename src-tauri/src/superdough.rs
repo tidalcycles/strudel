@@ -74,7 +74,6 @@ pub trait WebAudioInstrument {
 }
 
 
-
 pub struct Delay {
     pub delay: DelayNode,
     pub input: GainNode,
@@ -96,6 +95,25 @@ impl Delay {
         pre_gain.connect(&feedback);
         input.connect(&pre_gain);
         Self { delay, input, output, feedback, pre_gain }
+    }
+}
+
+
+pub struct Reverb {
+    pub reverb: ConvolverNode,
+    pub room: f32,
+    pub size: f32,
+}
+
+impl Reverb {
+    pub fn new(context: &AudioContext, compressor: &DynamicsCompressorNode, room: f32, size: f32) -> Self {
+        let reverb = context.create_convolver();
+        reverb.connect(compressor);
+        Self { reverb, room, size }
+    }
+
+    pub fn asign_buffer(&mut self, buffer: AudioBuffer) {
+        self.reverb.set_buffer(buffer.clone());
     }
 }
 
