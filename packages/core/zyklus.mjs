@@ -43,7 +43,8 @@ function createClock(
     clear();
   };
   const getPhase = () => phase;
+  const setPhase = (_phase) => (phase = _phase);
   // setCallback
-  return { setDuration, start, stop, pause, duration, interval, getPhase, minLatency };
+  return { setDuration, start, stop, pause, duration, interval, getPhase, setPhase, minLatency };
 }
 export default createClock;

@@ -14,16 +14,18 @@ export class CyclistBridge extends Cyclist {
       }
       const { started, cps, phase, timestamp } = payload;
 
-      // TODO: I'm not sure how to hook this up this cps adjustment in Strudel
-      // (if cps !== clock_cps) {
-      //    updateClock(cps)
-      // }
+      if (cps !== this.cps) {
+        this.setCps(cps);
+      }
 
       // TODO: I'm not sure how to hook this up this phase adjustment in Strudel
       // a phase adjustment message is sent every 30 seconds from backend to keep clocks in sync
-      //   if (Math.abs(phase - this.clock.getPhase()) > someDelta) {
-      //     setCyclistPhase(phase)
-      //   }
+      const phaseDiff = Math.abs(phase - this.clock.getPhase());
+      if (phaseDiff > 0.1) {
+        console.log('set phase from', this.clock.getPhase(), 'to', phase);
+        // hmmm this seems wrong...
+        //this.clock.setPhase(phase);
+      }
 
       if (this.started !== started && started != null) {
         if (started) {
@@ -49,10 +51,8 @@ export class CyclistBridge extends Cyclist {
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
-    let x = Date.now();
     const linkmsg = {
-      // TODO: change this to value of "main" clock cps
-      cps: 0,
+      cps: this.cps,
       started: true,
       timestamp: Date.now(),
       phase: this.clock.getPhase(),
