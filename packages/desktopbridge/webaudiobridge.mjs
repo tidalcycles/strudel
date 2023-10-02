@@ -39,7 +39,9 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     delaytime,
     orbit = 1,
     room,
-    size = 2,
+    size,
+    ir,
+    i = 0,
     velocity = 1,
     analyze, // analyser wet
     fft = 8, // fftSize 0 - 10
@@ -133,19 +135,37 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     delaytime = Math.abs(delaytime);
   }
 
-  const packages = {
-    loop: [loop, loopBegin, loopEnd],
-    delay: [delay, delaytime, delayfeedback],
-    lpf: [cutoff, resonance],
-    hpf: [hcutoff, hresonance],
-    bpf: [bandf, bandq],
-    adsr: [attack, decay, sustain, release],
-    lpenv: [lpattack, lpdecay, lpsustain, lprelease, lpenv],
-    hpenv: [hpattack, hpdecay, hpsustain, hprelease, hpenv],
-    bpenv: [bpattack, bpdecay, bpsustain, bprelease, bpenv],
-  };
+  let ir_path;
+  if (getSound(ir).data.baseUrl !== undefined) {
+    baseUrl = getSound(ir).data.baseUrl;
+    if (baseUrl === './piano/') {
+      ir_path = 'https://strudel.tidalcycles.org/';
+    } else if (baseUrl === './EmuSP12/') {
+      ir_path = 'https://strudel.tidalcycles.org/';
+    } else {
+      ir_path = '';
+    }
+  }
 
-  console.log('unit', unit);
+  let url;
+  if (ir !== undefined) {
+    let ir_samples = getSound(ir);
+    if (Array.isArray(ir_samples)) {
+      url =
+        ir_path !== undefined
+          ? ir_path + ir_samples[n % ir_samples.length].replace('./', '')
+          : ir_samples[n % ir_samples.length].replace('./', '');
+      // url = ir_samples.data.samples[i % ir_samples.data.samples.length];
+    } else if (typeof ir_samples === 'object') {
+      url =
+        ir_path !== undefined
+          ? ir_path +
+            Object.values(ir_samples.data.samples)[i & Object.values(ir_samples.data.samples).length].replace('./', '')
+          : Object.values(ir_samples.data.samples)[i & Object.values(ir_samples.data.samples).length].replace('./', '');
+    }
+  }
+  console.log('url', url);
+
   let folder;
   if (baseUrl !== undefined) {
     folder = baseUrl.replace('./', '') + '/' + s + '/';
@@ -156,6 +176,19 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
   const offset = (t - getAudioContext().currentTime) * 1000;
   const roundedOffset = Math.round(offset);
   const messagesfromjs = [];
+  const packages = {
+    loop: [loop, loopBegin, loopEnd],
+    delay: [delay, delaytime, delayfeedback],
+    reverb: [room, size, ir, url],
+    lpf: [cutoff, resonance],
+    hpf: [hcutoff, hresonance],
+    bpf: [bandf, bandq],
+    adsr: [attack, decay, sustain, release],
+    lpenv: [lpattack, lpdecay, lpsustain, lprelease, lpenv],
+    hpenv: [hpattack, hpdecay, hpsustain, hprelease, hpenv],
+    bpenv: [bpattack, bpdecay, bpsustain, bprelease, bpenv],
+  };
+
   messagesfromjs.push({
     note: midiToFreq(note),
     offset: roundedOffset,
@@ -166,6 +199,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     duration: hapDuration,
     velocity: velocity,
     delay: packages.delay,
+    reverb: packages.reverb,
     orbit: orbit,
     speed: speed,
     begin: begin,

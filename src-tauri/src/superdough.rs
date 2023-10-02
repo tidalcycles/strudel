@@ -16,6 +16,14 @@ pub struct DelayMessage {
     pub feedback: Option<f32>,
 }
 
+#[derive(Clone, Debug)]
+pub struct ReverbMessage {
+    pub room: Option<f32>,
+    pub size: Option<f32>,
+    pub ir: Option<String>,
+    pub url: Option<String>,
+}
+
 #[derive(Clone, Copy, Debug)]
 pub struct LoopMessage {
     pub is_loop: u8,

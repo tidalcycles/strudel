@@ -971,6 +971,16 @@ const generic_params = [
    */
   [['room', 'size']],
   /**
+   * Sets the sample to use as an impulse response for the reverb.
+   *
+   * @name iresponse
+   * @param {string | Pattern} sample sample to set as the impulse response
+   * @example
+   * s("bd sd").room(.8).ir("<shaker_large:0 shaker_large:2>")
+   *
+   */
+  [['ir', 'i'], 'iresponse'],
+  /**
    * Sets the room size of the reverb, see {@link room}.
    *
    * @name roomsize

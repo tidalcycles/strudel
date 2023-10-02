@@ -20,8 +20,8 @@ use web_audio_api::{
     context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions},
     node::AudioNode,
 };
-use web_audio_api::node::DelayNode;
-use crate::superdough::{ADSRMessage, apply_filter_adsr, BPFMessage, DelayMessage, Delay, EffectsBus, FilterADSRMessage, HPFMessage, LoopMessage, LPFMessage, make_delay, Sampler, Synth, WebAudioInstrument};
+use web_audio_api::node::{ConvolverNode, DelayNode};
+use crate::superdough::{ADSRMessage, apply_filter_adsr, BPFMessage, DelayMessage, Delay, FilterADSRMessage, HPFMessage, LoopMessage, LPFMessage, Sampler, Synth, WebAudioInstrument, ReverbMessage};
 
 
 #[derive(Debug, Clone)]
@@ -36,6 +36,7 @@ pub struct WebAudioMessage {
     pub duration: f64,
     pub velocity: f32,
     pub delay: DelayMessage,
+    pub reverb: ReverbMessage,
     pub orbit: usize,
     pub speed: f32,
     pub begin: f64,
@@ -119,7 +120,8 @@ pub fn init(
             ..AudioContextOptions::default()
         });
         let _ = audio_context.create_buffer_source();
-        let mut delays:HashMap<usize, Delay>  = HashMap::new();
+        let mut delays: HashMap<usize, Delay>  = HashMap::new();
+        let mut reverbs: HashMap<usize, ConvolverNode>  = HashMap::new();
         let compressor = audio_context.create_dynamics_compressor();
         compressor.threshold().set_value(-50.0);
         compressor.connect(&audio_context.destination());
@@ -158,13 +160,7 @@ pub fn init(
                             }
                         }
                         _ => {
-                            let url = Url::parse(&*message.sampleurl).expect("failed to parse url");
-                            let filename = url.path_segments()
-                                .and_then(Iterator::last)
-                                .and_then(|name| if name.is_empty() { None } else { Some(name) })
-                                .unwrap_or("tmp.ben");
-                            let file_path = format!("samples/{}{}", message.dirname, filename);
-                            let file_path_clone = file_path.clone();
+                            let (url, file_path, file_path_clone) = create_filepath(&message);
 
                             tokio::spawn(async move {
                                 if tokio::fs::metadata(&file_path.clone()).await.is_err() {
@@ -210,6 +206,38 @@ pub fn init(
                                     delay.feedback.gain().set_value(message.delay.feedback.unwrap_or(0.5));
                                     delay.pre_gain.gain().set_value_at_time(message.delay.wet.unwrap_or(0.25), t + message.delay.delay_time.unwrap_or(0.5) as f64);
                                 };
+
+                                if message.reverb.ir.is_some() {
+                                    let (ir_url, ir_file_path, ir_file_path_clone) = create_ir_filepath(&message);
+                                    tokio::spawn(async move {
+                                        if tokio::fs::metadata(&ir_file_path.clone()).await.is_err() {
+                                            let response = reqwest::get(ir_url)
+                                                .await
+                                                .unwrap_or_else(|_| panic!("Failed to send GET request"));
+
+                                            let bytes = response.bytes().await.unwrap();
+                                            let path = Path::new(&ir_file_path);
+                                            let mut file = create_file_and_dirs(path).await;
+                                            file.write_all(&bytes)
+                                                .await
+                                                .unwrap_or_else(|_| panic!("Failed to write to file"));
+                                        }
+                                    });
+
+                                    if let Some(ir_buffer) = cache.get(&ir_file_path_clone) {
+                                    reverbs.entry(message.orbit).or_insert({
+                                        let mut reverb = audio_context.create_convolver();
+                                        reverb.set_buffer(ir_buffer.clone());
+                                        reverb
+                                    });
+                                        let reverb = reverbs.get(&message.orbit).unwrap();
+                                        sampler.envelope.connect(reverb);
+                                    } else if let Ok(file) = File::open(&ir_file_path_clone) {
+                                        let ir_buffer = audio_context.decode_audio_data_sync(file).unwrap_or_else(|_| panic!("Failed to decode audio data"));
+                                        cache.insert(ir_file_path_clone.clone(), ir_buffer);
+                                    }
+                                }
+
                                 sampler.envelope.connect(&compressor);
                                 sampler.play(t, &message, audio_buffer_duration);
                             } else if let Ok(file) = File::open(&file_path_clone) {
@@ -224,6 +252,28 @@ pub fn init(
             }
         }
     });
+}
+
+fn create_filepath(message: &WebAudioMessage) -> (Url, String, String) {
+    let url = Url::parse(&*message.sampleurl).expect("failed to parse url");
+    let filename = url.path_segments()
+        .and_then(Iterator::last)
+        .and_then(|name| if name.is_empty() { None } else { Some(name) })
+        .unwrap_or("tmp.ben");
+    let file_path = format!("/Users/vasiliymilovidov/samples/{}{}", message.dirname, filename);
+    let file_path_clone = file_path.clone();
+    (url, file_path, file_path_clone)
+}
+
+fn create_ir_filepath(message: &WebAudioMessage) -> (Url, String, String) {
+    let url = Url::parse(&message.reverb.url.clone().unwrap()).expect("failed to parse url");
+    let filename = url.path_segments()
+        .and_then(Iterator::last)
+        .and_then(|name| if name.is_empty() { None } else { Some(name) })
+        .unwrap_or("tmp.ben");
+    let file_path = format!("/Users/vasiliymilovidov/samples/{}", filename);
+    let file_path_clone = file_path.clone();
+    (url, file_path, file_path_clone)
 }
 
 pub async fn async_process_model(
@@ -248,6 +298,7 @@ pub struct MessageFromJS {
     duration: f64,
     velocity: f32,
     delay: (Option<f32>, Option<f32>, Option<f32>),
+    reverb: (Option<f32>, Option<f32>, Option<String>, Option<String>),
     orbit: usize,
     speed: f32,
     begin: f64,
@@ -297,6 +348,12 @@ pub async fn sendwebaudio(
                 wet: m.delay.0,
                 delay_time: m.delay.1,
                 feedback: m.delay.2,
+            },
+            reverb: ReverbMessage {
+                room: m.reverb.0,
+                size: m.reverb.1,
+                ir: m.reverb.2,
+                url: m.reverb.3,
             },
             orbit: m.orbit,
             speed: m.speed,
