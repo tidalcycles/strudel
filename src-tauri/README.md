@@ -4,7 +4,8 @@ Rust source files for building native desktop apps using Tauri
 
 ## Usage
 
-Install [Rust](https://rustup.rs/) on your system.
+- Install [Rust](https://rustup.rs/) on your system.
+- Install `cmake` on your system. OSX: `brew install cmake`, Linux: `sudo apt-get install cmake`
 
 From the project root:
 
