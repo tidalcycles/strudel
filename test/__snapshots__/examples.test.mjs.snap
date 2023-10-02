@@ -1828,6 +1828,15 @@ exports[`runs examples > example "firstOf" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "fit" example index 0 1`] = `
+[
+  "[ (0/1 → 1/1) ⇝ 4/1 | s:rhodes speed:0.25 unit:c ]",
+  "[ 0/1 ⇜ (1/1 → 2/1) ⇝ 4/1 | s:rhodes speed:0.25 unit:c ]",
+  "[ 0/1 ⇜ (2/1 → 3/1) ⇝ 4/1 | s:rhodes speed:0.25 unit:c ]",
+  "[ 0/1 ⇜ (3/1 → 4/1) | s:rhodes speed:0.25 unit:c ]",
+]
+`;
+
 exports[`runs examples > example "floor" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:42 ]",
@@ -2640,10 +2649,10 @@ exports[`runs examples > example "linger" example index 0 1`] = `
 
 exports[`runs examples > example "loop" example index 0 1`] = `
 [
-  "[ 0/1 → 1/1 | s:bd loop:1 ]",
-  "[ 1/1 → 2/1 | s:bd loop:2 ]",
-  "[ 2/1 → 3/1 | s:bd loop:3 ]",
-  "[ 3/1 → 4/1 | s:bd loop:4 ]",
+  "[ 0/1 → 1/1 | s:casio loop:1 ]",
+  "[ 1/1 → 2/1 | s:casio loop:1 ]",
+  "[ 2/1 → 3/1 | s:casio loop:1 ]",
+  "[ 3/1 → 4/1 | s:casio loop:1 ]",
 ]
 `;
 
@@ -2662,6 +2671,24 @@ exports[`runs examples > example "loopAtCps" example index 0 1`] = `
   "[ 0/1 ⇜ (1/1 → 2/1) ⇝ 4/1 | s:rhodes speed:0.375 unit:c cps:1.5 ]",
   "[ 0/1 ⇜ (2/1 → 3/1) ⇝ 4/1 | s:rhodes speed:0.375 unit:c cps:1.5 ]",
   "[ 0/1 ⇜ (3/1 → 4/1) | s:rhodes speed:0.375 unit:c cps:1.5 ]",
+]
+`;
+
+exports[`runs examples > example "loopBegin" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | s:space loop:1 loopBegin:0 analyze:1 ]",
+  "[ 1/1 → 2/1 | s:space loop:1 loopBegin:0.125 analyze:1 ]",
+  "[ 2/1 → 3/1 | s:space loop:1 loopBegin:0.25 analyze:1 ]",
+  "[ 3/1 → 4/1 | s:space loop:1 loopBegin:0 analyze:1 ]",
+]
+`;
+
+exports[`runs examples > example "loopEnd" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | s:space loop:1 loopEnd:1 analyze:1 ]",
+  "[ 1/1 → 2/1 | s:space loop:1 loopEnd:0.75 analyze:1 ]",
+  "[ 2/1 → 3/1 | s:space loop:1 loopEnd:0.5 analyze:1 ]",
+  "[ 3/1 → 4/1 | s:space loop:1 loopEnd:0.25 analyze:1 ]",
 ]
 `;
 
@@ -4323,6 +4350,36 @@ exports[`runs examples > example "speed" example index 1 1`] = `
 ]
 `;
 
+exports[`runs examples > example "splice" example index 0 1`] = `
+[
+  "[ 0/1 → 5/26 | speed:0.65 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 5/26 → 5/13 | speed:0.65 unit:c begin:0.125 end:0.25 _slices:8 s:breaks165 ]",
+  "[ 5/13 → 20/39 | speed:0.9750000000000001 unit:c begin:0.25 end:0.375 _slices:8 s:breaks165 ]",
+  "[ 20/39 → 25/39 | speed:0.9750000000000001 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
+  "[ 25/39 → 10/13 | speed:0.9750000000000001 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 10/13 → 25/26 | speed:0.65 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
+  "[ (25/26 → 1/1) ⇝ 35/26 | speed:0.325 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 25/26 ⇜ (1/1 → 35/26) | speed:0.325 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 35/26 → 20/13 | speed:0.65 unit:c begin:0.875 end:1 _slices:8 s:breaks165 ]",
+  "[ 20/13 → 45/26 | speed:0.65 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 45/26 → 25/13 | speed:0.65 unit:c begin:0.125 end:0.25 _slices:8 s:breaks165 ]",
+  "[ (25/13 → 2/1) ⇝ 80/39 | speed:0.9750000000000001 unit:c begin:0.25 end:0.375 _slices:8 s:breaks165 ]",
+  "[ 25/13 ⇜ (2/1 → 80/39) | speed:0.9750000000000001 unit:c begin:0.25 end:0.375 _slices:8 s:breaks165 ]",
+  "[ 80/39 → 85/39 | speed:0.9750000000000001 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
+  "[ 85/39 → 30/13 | speed:0.9750000000000001 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 30/13 → 5/2 | speed:0.65 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
+  "[ 5/2 → 75/26 | speed:0.325 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ (75/26 → 3/1) ⇝ 40/13 | speed:0.65 unit:c begin:0.875 end:1 _slices:8 s:breaks165 ]",
+  "[ 75/26 ⇜ (3/1 → 40/13) | speed:0.65 unit:c begin:0.875 end:1 _slices:8 s:breaks165 ]",
+  "[ 40/13 → 85/26 | speed:0.65 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ 85/26 → 45/13 | speed:0.65 unit:c begin:0.125 end:0.25 _slices:8 s:breaks165 ]",
+  "[ 45/13 → 140/39 | speed:0.9750000000000001 unit:c begin:0.25 end:0.375 _slices:8 s:breaks165 ]",
+  "[ 140/39 → 145/39 | speed:0.9750000000000001 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
+  "[ 145/39 → 50/13 | speed:0.9750000000000001 unit:c begin:0 end:0.125 _slices:8 s:breaks165 ]",
+  "[ (50/13 → 4/1) ⇝ 105/26 | speed:0.65 unit:c begin:0.375 end:0.5 _slices:8 s:breaks165 ]",
+]
+`;
+
 exports[`runs examples > example "square" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | note:C3 ]",
@@ -4698,6 +4755,42 @@ exports[`runs examples > example "velocity" example index 0 1`] = `
   "[ 29/8 → 15/4 | s:hh gain:1 ]",
   "[ 15/4 → 31/8 | s:hh gain:0.4 ]",
   "[ 31/8 → 4/1 | s:hh gain:1 ]",
+]
+`;
+
+exports[`runs examples > example "vib" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:a vib:0.5 ]",
+  "[ 1/1 → 2/1 | note:a vib:1 ]",
+  "[ 2/1 → 3/1 | note:a vib:2 ]",
+  "[ 3/1 → 4/1 | note:a vib:4 ]",
+]
+`;
+
+exports[`runs examples > example "vib" example index 1 1`] = `
+[
+  "[ 0/1 → 1/1 | note:a vib:0.5 vibmod:12 ]",
+  "[ 1/1 → 2/1 | note:a vib:1 vibmod:12 ]",
+  "[ 2/1 → 3/1 | note:a vib:2 vibmod:12 ]",
+  "[ 3/1 → 4/1 | note:a vib:4 vibmod:12 ]",
+]
+`;
+
+exports[`runs examples > example "vibmod" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:a vib:4 vibmod:0.25 ]",
+  "[ 1/1 → 2/1 | note:a vib:4 vibmod:0.5 ]",
+  "[ 2/1 → 3/1 | note:a vib:4 vibmod:1 ]",
+  "[ 3/1 → 4/1 | note:a vib:4 vibmod:2 ]",
+]
+`;
+
+exports[`runs examples > example "vibmod" example index 1 1`] = `
+[
+  "[ 0/1 → 1/1 | note:a vibmod:0.25 vib:8 ]",
+  "[ 1/1 → 2/1 | note:a vibmod:0.5 vib:8 ]",
+  "[ 2/1 → 3/1 | note:a vibmod:1 vib:8 ]",
+  "[ 3/1 → 4/1 | note:a vibmod:2 vib:8 ]",
 ]
 `;
 

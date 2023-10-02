@@ -184,6 +184,12 @@ describe('mini', () => {
   it('supports lists', () => {
     expect(minV('a:b c:d:[e:f] g')).toEqual([['a', 'b'], ['c', 'd', ['e', 'f']], 'g']);
   });
+  it('supports ranges', () => {
+    expect(minV('0 .. 4')).toEqual([0, 1, 2, 3, 4]);
+  });
+  it('supports patterned ranges', () => {
+    expect(minS('[<0 1> .. <2 4>]*2')).toEqual(minS('[0 1 2] [1 2 3 4]'));
+  });
 });
 
 describe('getLeafLocation', () => {

@@ -432,7 +432,7 @@ export const waa2 = `// "Waa2"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
-n(
+note(
   "a4 [a3 c3] a3 c3"
   .sub("<7 12 5 12>".slow(2))
   .off(1/4,x=>x.add(7))
@@ -444,7 +444,7 @@ n(
   .cutoff(cosine.range(500,4000).slow(16))
   .gain(.5)
   .room(.5)
-  `;
+  .lpa(.125).lpenv(-2).v("8:.125").fanchor(.25)`;
 
 export const hyperpop = `// "Hyperpop"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
@@ -541,6 +541,7 @@ stack(
   .s('sawtooth') // waveform
   .gain(.4) // turn down
   .cutoff(sine.slow(7).range(300,5000)) // automate cutoff
+  .lpa(.1).lpenv(-2)
   //.hush()
   ,chord("<Am7!3 <Em7 E7b13 Em7 Ebm7b5>>")
   .dict('lefthand').voicing() // chords
@@ -563,6 +564,7 @@ stack(
 )
   .slow(3/2)`;
 
+/* 
 export const outroMusic = `// "Outro music"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
@@ -593,7 +595,8 @@ chord("<C^7 Am7 Dm7 G7>*2").dict('lefthand').anchor("G4").voicing()
     .n(3).color('gray')
   ).slow(3/2)
   //.pianoroll({autorange:1,vertical:1,fold:0})
-  `;
+  `; 
+*/
 
 export const bassFuge = `// "Bass fuge"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
@@ -776,7 +779,8 @@ stack(
   .gain("0.4,0.4(5,8,-1)"),
   
   note("<0 2 5 3>".scale('G1 minor')).struct("x(5,8,-1)")
-  .s('sawtooth').decay(.1).sustain(0),
+  .s('sawtooth').decay(.1).sustain(0)
+  .lpa(.1).lpenv(-4).lpf(800).lpq(8),
   
   note("<G4 A4 Bb4 A4>,Bb3,D3").struct("~ x*2").s('square').clip(1)
   .cutoff(sine.range(500,4000).slow(16)).resonance(10)
@@ -807,8 +811,10 @@ stack(
   sine.add(saw.slow(4)).range(0,7).segment(8)
   .superimpose(x=>x.add(.1))
   .scale('G0 minor').note()
-  .s("sawtooth").decay(.1).sustain(0).lpa(.1).lpenv(4)
-  .gain(.4).cutoff(perlin.range(300,3000).slow(8)).resonance(10)
+  .s("sawtooth")
+  .gain(.4).decay(.1).sustain(0)
+  .lpa(.1).lpenv(-4).lpq(10)
+  .cutoff(perlin.range(300,3000).slow(8))
   .degradeBy("0 0.1 .5 .1")
   .rarely(add(note("12")))
   ,
@@ -831,8 +837,8 @@ note("c3 eb3 g3 bb3").palindrome()
 .s('sawtooth')
 .jux(x=>x.rev().color('green').s('sawtooth'))
 .off(1/4, x=>x.add(note("<7 12>/2")).slow(2).late(.005).s('triangle'))
-//.delay(.5)
-.fast(1).cutoff(sine.range(200,2000).slow(8))
+.lpf(sine.range(200,2000).slow(8))
+.lpa(.2).lpenv(-2)
 .decay(.05).sustain(0)
 .room(.6)
 .delay(.5).delaytime(.1).delayfeedback(.4)
@@ -911,7 +917,13 @@ n("[0,3] 2 [1,3] 2".fast(3).lastOf(4, fast(2))).clip(2)
   .delay(.2)
   .room(.5).pan(sine.range(.3,.6))
   .s('piano')
-  .stack("<<A1 C2>!2 F2 [F2 E2]>".add.out("0 -5".fast(2)).add("0,.12").note().s('sawtooth').clip(1).cutoff(300))
+  .stack(
+    "<<A1 C2>!2 F2 F2>"
+    .add.out("0 -5".fast(2))
+    .add("0,.12").note()
+    .s('sawtooth').cutoff(180)
+    .lpa(.1).lpenv(2)
+  )
   .slow(4)
   .stack(s("bd*4, [~ [hh hh? hh?]]*2,~ [sd ~ [sd:2? bd?]]").bank('RolandTR909').gain(.5).slow(2))
 `;

@@ -22,6 +22,7 @@ import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
 import { isTauri } from '../tauri.mjs';
+import { useWidgets } from '@strudel.cycles/react/src/hooks/useWidgets.mjs';
 
 const { latestCode } = settingsMap.get();
 
@@ -33,26 +34,27 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
 );
 
-const modules = [
+let modules = [
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
+  import('@strudel/codemirror'),
 
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
   import('@strudel.cycles/csound'),
 ];
 if (isTauri()) {
-  modules.concat([
+  modules = modules.concat([
     import('@strudel/desktopbridge/loggerbridge.mjs'),
     import('@strudel/desktopbridge/midibridge.mjs'),
     import('@strudel/desktopbridge/oscbridge.mjs'),
     import('@strudel/desktopbridge/cyclistbridge.mjs'),
   ]);
 } else {
-  modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
+  modules = modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
 }
 
 const modulesLoading = evalScope(
@@ -129,7 +131,7 @@ export function Repl({ embedded = false }) {
   } = useSettings();
 
   const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
-
+  const { setWidgets } = useWidgets(view);
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
       initialCode: '// LOADING...',
@@ -143,6 +145,7 @@ export function Repl({ embedded = false }) {
       },
       afterEval: ({ code, meta }) => {
         setMiniLocations(meta.miniLocations);
+        setWidgets(meta.widgets);
         setPending(false);
         setLatestCode(code);
         window.location.hash = '#' + code2hash(code);
@@ -150,7 +153,14 @@ export function Repl({ embedded = false }) {
       onEvalError: (err) => {
         setPending(false);
       },
-      onToggle: (play) => !play && cleanupDraw(false),
+      onToggle: (play) => {
+        if (!play) {
+          cleanupDraw(false);
+          window.postMessage('strudel-stop');
+        } else {
+          window.postMessage('strudel-start');
+        }
+      },
       drawContext,
       // drawTime: [0, 6],
       paintOptions,
@@ -213,7 +223,7 @@ export function Repl({ embedded = false }) {
   const handleChangeCode = useCallback(
     (c) => {
       setCode(c);
-      started && logger('[edit] code changed. hit ctrl+enter to update');
+      //started && logger('[edit] code changed. hit ctrl+enter to update');
     },
     [started],
   );
