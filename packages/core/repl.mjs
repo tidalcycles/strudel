@@ -5,7 +5,6 @@ import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
 import { register } from './pattern.mjs';
 import { isTauri } from '../../website/src/tauri.mjs';
-import { CyclistBridge } from '../desktopbridge/cyclistbridge.mjs';
 
 export function repl({
   interval,
@@ -18,6 +17,7 @@ export function repl({
   transpiler,
   onToggle,
   editPattern,
+  createCyclist,
 }) {
   //TODO: could maybe be enabled with a command or a switch in settings?
   const abelinkEnabled = isTauri();
@@ -28,7 +28,7 @@ export function repl({
     getTime,
     onToggle,
   };
-  const scheduler = abelinkEnabled ? new CyclistBridge(cyclistParams) : new Cyclist(cyclistParams);
+  const scheduler = createCyclist?.(cyclistParams) || new Cyclist(p);
 
   const setPattern = (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
