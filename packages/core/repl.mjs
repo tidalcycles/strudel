@@ -4,7 +4,6 @@ import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
 import { register } from './pattern.mjs';
-import { isTauri } from '../../website/src/tauri.mjs';
 
 export function repl({
   interval,
@@ -20,7 +19,6 @@ export function repl({
   createCyclist,
 }) {
   //TODO: could maybe be enabled with a command or a switch in settings?
-  const abelinkEnabled = isTauri();
   const cyclistParams = {
     interval,
     onTrigger: getTrigger({ defaultOutput, getTime }),
