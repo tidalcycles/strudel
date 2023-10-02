@@ -5,6 +5,7 @@ use std::{
     path::Path,
     time::Instant,
 };
+use std::collections::HashMap;
 use mini_moka::sync::Cache;
 use reqwest::Url;
 use tokio::{
@@ -19,7 +20,8 @@ use web_audio_api::{
     context::{AudioContext, AudioContextLatencyCategory, AudioContextOptions},
     node::AudioNode,
 };
-use crate::superdough::{ADSR, apply_filter_adsr, BPF, Delay, FilterADSR, HPF, Loop, LPF, Sampler, Synth, WebAudioInstrument};
+use web_audio_api::node::DelayNode;
+use crate::superdough::{ADSRMessage, apply_filter_adsr, BPFMessage, DelayMessage, Delay, EffectsBus, FilterADSRMessage, HPFMessage, LoopMessage, LPFMessage, make_delay, Sampler, Synth, WebAudioInstrument};
 
 
 #[derive(Debug, Clone)]
@@ -28,21 +30,21 @@ pub struct WebAudioMessage {
     pub instant: Instant,
     pub offset: f64,
     pub waveform: String,
-    pub lpf: LPF,
-    pub hpf: HPF,
-    pub bpf: BPF,
+    pub lpf: LPFMessage,
+    pub hpf: HPFMessage,
+    pub bpf: BPFMessage,
     pub duration: f64,
     pub velocity: f32,
-    pub delay: Delay,
+    pub delay: DelayMessage,
     pub orbit: usize,
     pub speed: f32,
     pub begin: f64,
     pub end: f64,
-    pub looper: Loop,
-    pub adsr: ADSR,
-    pub lpenv: FilterADSR,
-    pub hpenv: FilterADSR,
-    pub bpenv: FilterADSR,
+    pub looper: LoopMessage,
+    pub adsr: ADSRMessage,
+    pub lpenv: FilterADSRMessage,
+    pub hpenv: FilterADSRMessage,
+    pub bpenv: FilterADSRMessage,
     pub n: usize,
     pub sampleurl: String,
     pub dirname: String,
@@ -117,20 +119,11 @@ pub fn init(
             ..AudioContextOptions::default()
         });
         let _ = audio_context.create_buffer_source();
+        let mut delays:HashMap<usize, Delay>  = HashMap::new();
         let compressor = audio_context.create_dynamics_compressor();
         compressor.threshold().set_value(-50.0);
         compressor.connect(&audio_context.destination());
-        let delay = audio_context.create_delay(1.);
-        let output = audio_context.create_gain();
-        output.connect(&compressor);
-        delay.connect(&output);
-        let feedback = audio_context.create_gain();
-        feedback.connect(&delay);
-        delay.connect(&feedback);
-        let pre_gain = audio_context.create_gain();
-        pre_gain.connect(&feedback);
-        let input = audio_context.create_gain();
-        input.connect(&pre_gain);
+
         let cache: Cache<String, AudioBuffer> = Cache::builder()
             .max_capacity(31 * 1024 * 1024)
             .time_to_idle(Duration::from_secs(40))
@@ -141,16 +134,19 @@ pub fn init(
                     match message.waveform.as_str() {
                         "sine" | "square" | "triangle" | "saw" | "sawtooth" => {
                             let t = audio_context.current_time();
-                            delay.delay_time().set_value(message.delay.delay_time);
-                            feedback.gain().set_value(message.delay.feedback);
-                            pre_gain.gain().set_value_at_time(message.delay.wet, t + message.delay.delay_time as f64);
-
                             let mut synth = Synth::new(&mut audio_context);
                             synth.set_frequency(&message.note);
                             synth.set_waveform(&message.waveform);
                             let filters = synth.set_filters(&mut audio_context, &message);
-                            if message.delay.wet > 0.0 {
-                                synth.envelope.connect(&input);
+                            if message.delay.wet.is_some() {
+                               delays.entry(message.orbit).or_insert({
+                                   Delay::new(&audio_context, &compressor)
+                               });
+                                let delay = delays.get(&message.orbit).unwrap();
+                                synth.envelope.connect(&delay.input);
+                                delay.delay.delay_time().set_value(message.delay.delay_time.unwrap_or(0.25));
+                                delay.feedback.gain().set_value(message.delay.feedback.unwrap_or(0.5));
+                                delay.pre_gain.gain().set_value_at_time(message.delay.wet.unwrap_or(0.25), t + message.delay.delay_time.unwrap_or(0.5) as f64);
                             }
                             synth.envelope.connect(&compressor);
                             synth.play(t, &message, message.adsr.release.unwrap_or(0.001));
@@ -187,9 +183,6 @@ pub fn init(
 
                             if let Some(audio_buffer) = cache.get(&file_path_clone) {
                                 let t = audio_context.current_time();
-                                delay.delay_time().set_value(message.delay.delay_time);
-                                feedback.gain().set_value(message.delay.feedback);
-                                pre_gain.gain().set_value_at_time(message.delay.wet, t + message.delay.delay_time as f64);
                                 let audio_buffer_duration = audio_buffer.duration();
                                 let mut sampler = Sampler::new(&mut audio_context, audio_buffer);
                                 match message.unit {
@@ -207,8 +200,15 @@ pub fn init(
                                         apply_filter_adsr(f, &message, &f.type_(), t);
                                     }
                                 }
-                                if message.delay.wet > 0.0 {
-                                    sampler.envelope.connect(&input);
+                                if message.delay.wet.is_some() {
+                                    delays.entry(message.orbit).or_insert({
+                                        Delay::new(&audio_context, &compressor)
+                                    });
+                                    let delay = delays.get(&message.orbit).unwrap();
+                                    sampler.envelope.connect(&delay.input);
+                                    delay.delay.delay_time().set_value(message.delay.delay_time.unwrap_or(0.25));
+                                    delay.feedback.gain().set_value(message.delay.feedback.unwrap_or(0.5));
+                                    delay.pre_gain.gain().set_value_at_time(message.delay.wet.unwrap_or(0.25), t + message.delay.delay_time.unwrap_or(0.5) as f64);
                                 };
                                 sampler.envelope.connect(&compressor);
                                 sampler.play(t, &message, audio_buffer_duration);
@@ -247,7 +247,7 @@ pub struct MessageFromJS {
     bpf: (f32, f32),
     duration: f64,
     velocity: f32,
-    delay: (f32, f32, f32),
+    delay: (Option<f32>, Option<f32>, Option<f32>),
     orbit: usize,
     speed: f32,
     begin: f64,
@@ -279,21 +279,21 @@ pub async fn sendwebaudio(
             instant: Instant::now(),
             offset: m.offset,
             waveform: m.waveform,
-            lpf: LPF {
+            lpf: LPFMessage {
                 frequency: m.lpf.0,
                 resonance: m.lpf.1,
             },
-            hpf: HPF {
+            hpf: HPFMessage {
                 frequency: m.hpf.0,
                 resonance: m.hpf.1,
             },
-            bpf: BPF {
+            bpf: BPFMessage {
                 frequency: m.bpf.0,
                 resonance: m.bpf.1,
             },
             duration: m.duration,
             velocity: m.velocity,
-            delay: Delay {
+            delay: DelayMessage {
                 wet: m.delay.0,
                 delay_time: m.delay.1,
                 feedback: m.delay.2,
@@ -302,32 +302,32 @@ pub async fn sendwebaudio(
             speed: m.speed,
             begin: m.begin,
             end: m.end,
-            looper: Loop {
+            looper: LoopMessage {
                 is_loop: m.looper.0,
                 loop_start: m.looper.1,
                 loop_end: m.looper.2,
             },
-            adsr: ADSR {
+            adsr: ADSRMessage {
                 attack: m.adsr.0,
                 decay: m.adsr.1,
                 sustain: m.adsr.2,
                 release: m.adsr.3,
             },
-            lpenv: FilterADSR {
+            lpenv: FilterADSRMessage {
                 attack: m.lpenv.0,
                 decay: m.lpenv.1,
                 sustain: m.lpenv.2,
                 release: m.lpenv.3,
                 env: m.lpenv.4,
             },
-            hpenv: FilterADSR {
+            hpenv: FilterADSRMessage {
                 attack: m.hpenv.0,
                 decay: m.hpenv.1,
                 sustain: m.hpenv.2,
                 release: m.hpenv.3,
                 env: m.hpenv.4,
             },
-            bpenv: FilterADSR {
+            bpenv: FilterADSRMessage {
                 attack: m.bpenv.0,
                 decay: m.bpenv.1,
                 sustain: m.bpenv.2,
@@ -354,6 +354,6 @@ async fn create_file_and_dirs(path: &Path) -> fs::File {
     file
 }
 
-fn is_filter_envelope_on(adsr: &FilterADSR) -> bool {
+fn is_filter_envelope_on(adsr: &FilterADSRMessage) -> bool {
     adsr.env.is_some() || adsr.attack.is_some() || adsr.decay.is_some() || adsr.sustain.is_some() || adsr.release.is_some()
 }

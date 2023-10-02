@@ -1,45 +1,48 @@
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 use web_audio_api::{
     context::{AudioContext, BaseAudioContext},
     AudioBuffer,
     node::{AudioBufferSourceNode, AudioNode, AudioScheduledSourceNode, BiquadFilterNode, BiquadFilterType, GainNode, OscillatorNode, OscillatorType},
-    node::BiquadFilterType::{Bandpass, Highpass, Lowpass}
+    node::BiquadFilterType::{Bandpass, Highpass, Lowpass},
 };
+use web_audio_api::node::{ConvolverNode, DelayNode, DynamicsCompressorNode};
 use crate::webaudiobridge::WebAudioMessage;
 
 #[derive(Clone, Copy, Debug)]
-pub struct Delay {
-    pub wet: f32,
-    pub delay_time: f32,
-    pub feedback: f32,
+pub struct DelayMessage {
+    pub wet: Option<f32>,
+    pub delay_time: Option<f32>,
+    pub feedback: Option<f32>,
 }
 
 #[derive(Clone, Copy, Debug)]
-pub struct Loop {
+pub struct LoopMessage {
     pub is_loop: u8,
     pub loop_start: f64,
     pub loop_end: f64,
 }
 
 #[derive(Clone, Copy, Debug)]
-pub struct LPF {
+pub struct LPFMessage {
     pub frequency: f32,
     pub resonance: f32,
 }
 
 #[derive(Clone, Copy, Debug)]
-pub struct HPF {
+pub struct HPFMessage {
     pub frequency: f32,
     pub resonance: f32,
 }
 
 #[derive(Clone, Copy, Debug)]
-pub struct BPF {
+pub struct BPFMessage {
     pub frequency: f32,
     pub resonance: f32,
 }
 
 #[derive(Debug, Copy, Clone)]
-pub struct ADSR {
+pub struct ADSRMessage {
     pub attack: Option<f64>,
     pub decay: Option<f64>,
     pub sustain: Option<f32>,
@@ -47,7 +50,7 @@ pub struct ADSR {
 }
 
 #[derive(Debug, Copy, Clone)]
-pub struct FilterADSR {
+pub struct FilterADSRMessage {
     pub attack: Option<f64>,
     pub decay: Option<f64>,
     pub sustain: Option<f64>,
@@ -57,9 +60,35 @@ pub struct FilterADSR {
 
 
 pub trait WebAudioInstrument {
-    fn set_adsr(&mut self, t: f64, adsr: &ADSR, velocity: f32, duration: f64);
+    fn set_adsr(&mut self, t: f64, adsr: &ADSRMessage, velocity: f32, duration: f64);
     fn play(&mut self, t: f64, message: &WebAudioMessage, duration: f64);
     fn set_filters(&mut self, context: &mut AudioContext, message: &WebAudioMessage) -> Vec<BiquadFilterNode>;
+}
+
+
+
+pub struct Delay {
+    pub delay: DelayNode,
+    pub input: GainNode,
+    pub output: GainNode,
+    pub feedback: GainNode,
+    pub pre_gain: GainNode,
+}
+
+impl Delay {
+    pub fn new(context: &AudioContext, compressor: &DynamicsCompressorNode) -> Self {
+        let delay = context.create_delay(1.);
+        let input = context.create_gain();
+        let output = context.create_gain();
+        let feedback = context.create_gain();
+        let pre_gain = context.create_gain();
+        output.connect(compressor);
+        delay.connect(&output);
+        feedback.connect(&delay);
+        pre_gain.connect(&feedback);
+        input.connect(&pre_gain);
+        Self { delay, input, output, feedback, pre_gain }
+    }
 }
 
 pub struct Synth {
@@ -90,7 +119,7 @@ impl Synth {
 }
 
 impl WebAudioInstrument for Synth {
-    fn set_adsr(&mut self, t: f64, adsr: &ADSR, velocity: f32, duration: f64) {
+    fn set_adsr(&mut self, t: f64, adsr: &ADSRMessage, velocity: f32, duration: f64) {
         let attack = adsr.attack.unwrap_or(0.001);
         let decay = adsr.decay.unwrap_or(0.05);
         let sustain = adsr.sustain.unwrap_or(0.6);
@@ -157,7 +186,7 @@ impl Sampler {
 }
 
 impl WebAudioInstrument for Sampler {
-    fn set_adsr(&mut self, t: f64, adsr: &ADSR, velocity: f32, duration: f64) {
+    fn set_adsr(&mut self, t: f64, adsr: &ADSRMessage, velocity: f32, duration: f64) {
         let attack = adsr.attack.unwrap_or(0.001);
         let decay = adsr.decay.unwrap_or(0.001);
         let sustain = adsr.sustain.unwrap_or(1.0);
