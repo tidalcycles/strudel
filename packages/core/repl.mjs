@@ -28,7 +28,7 @@ export function repl({
     getTime,
     onToggle,
   };
-  const scheduler = createCyclist?.(cyclistParams) || new Cyclist(p);
+  const scheduler = createCyclist?.(cyclistParams) || new Cyclist(cyclistParams);
 
   const setPattern = (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
