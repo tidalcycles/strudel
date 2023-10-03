@@ -79,6 +79,9 @@ frac
 int
   = zero / (digit1_9 DIGIT*)
 
+intneg
+  = minus? int { return parseInt(text()); }
+
 minus
   = "-"
 
@@ -123,7 +126,7 @@ slice = step / sub_cycle / polymeter / slow_sequence
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
-slice_op = op_weight / op_bjorklund / op_slow / op_fast / op_replicate / op_degrade / op_tail
+slice_op = op_weight / op_bjorklund / op_slow / op_fast / op_replicate / op_degrade / op_tail / op_range
 
 op_weight =  "@" a:number
   { return x => x.options_['weight'] = a }
@@ -145,6 +148,9 @@ op_degrade = "?"a:number?
 
 op_tail = ":" s:slice
   { return x => x.options_['ops'].push({ type_: "tail", arguments_ :{ element:s } }) }
+
+op_range = ".." s:slice
+  { return x => x.options_['ops'].push({ type_: "range", arguments_ :{ element:s } }) }
 
 // a slice with an modifier applied i.e [bd@4 sd@3]@2 hh]
 slice_with_ops = s:slice ops:slice_op*
