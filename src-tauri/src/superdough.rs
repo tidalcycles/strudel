@@ -7,6 +7,7 @@ use web_audio_api::{
     node::BiquadFilterType::{Bandpass, Highpass, Lowpass},
 };
 use web_audio_api::node::{ConvolverNode, DelayNode, DynamicsCompressorNode};
+use crate::reverbgen::generate_reverb;
 use crate::webaudiobridge::WebAudioMessage;
 
 #[derive(Clone, Copy, Debug)]
@@ -106,15 +107,26 @@ pub struct Reverb {
 }
 
 impl Reverb {
-    pub fn new(context: &AudioContext, compressor: &DynamicsCompressorNode, room: f32, size: f32) -> Self {
+    pub fn new(context: &AudioContext, compressor: &DynamicsCompressorNode, room: f32, size: f32, buffer: AudioBuffer) -> Self {
+        let new_length = buffer.sample_rate() * size;
+        let mut new_buffer = context.create_buffer(buffer.number_of_channels(), buffer.length(), buffer.sample_rate());
+
+        for ch in 0..buffer.number_of_channels() {
+            let old_data = buffer.get_channel_data(ch);
+            let new_data = new_buffer.get_channel_data_mut(ch);
+
+            for i in 0..new_length as usize {
+                new_data[i] = old_data[i];
+            }
+        }
+
         let reverb = context.create_convolver();
         reverb.connect(compressor);
+
         Self { reverb, room, size }
     }
 
-    pub fn asign_buffer(&mut self, buffer: AudioBuffer) {
-        self.reverb.set_buffer(buffer.clone());
-    }
+
 }
 
 pub struct Synth {

@@ -6,6 +6,7 @@ mod oscbridge;
 mod loggerbridge;
 mod webaudiobridge;
 mod superdough;
+mod reverbgen;
 
 use std::sync::Arc;
 

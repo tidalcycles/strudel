@@ -126,17 +126,18 @@ pub fn init(
         let compressor = audio_context.create_dynamics_compressor();
         compressor.threshold().set_value(-50.0);
         compressor.connect(&audio_context.destination());
-        let mut reverb = ConvolverNode::new(&audio_context, ConvolverOptions::default());
-        let impulse_file1 = File::open("/Users/vasiliymilovidov/samples/ir1.wav").unwrap();
-        let impulse_buffer1 = audio_context.decode_audio_data_sync(impulse_file1).unwrap();
-        reverb.set_buffer(impulse_buffer1);
-        reverb.connect(&audio_context.destination());
+        // let mut reverb = ConvolverNode::new(&audio_context, ConvolverOptions::default());
+        // let impulse_file1 = File::open("/Users/vasiliymilovidov/samples/ir1.wav").unwrap();
+        // let impulse_buffer1 = audio_context.decode_audio_data_sync(impulse_file1).unwrap();
+        // reverb.set_buffer(impulse_buffer1);
+        // reverb.connect(&audio_context.destination());
 
 
         let cache: Cache<String, AudioBuffer> = Cache::builder()
             .max_capacity(31 * 1024 * 1024)
             .time_to_idle(Duration::from_secs(40))
             .build();
+        let ir_cache: Cache<String, AudioBuffer> = Cache::builder().max_capacity(31 * 1024 * 1024).build();
         loop {
             match receiver.recv() {
                 Ok(message) => {
@@ -226,12 +227,60 @@ pub fn init(
                                     delay.pre_gain.gain().set_value_at_time(message.delay.wet.unwrap_or(0.25), t + message.delay.delay_time.unwrap_or(0.5) as f64);
                                 };
 
+                                // REVERB
+                                if message.reverb.ir.is_some() {
+                                    let (ir_url, ir_file_path, ir_file_path_clone) = create_ir_filepath(&message);
 
-                                // sampler.envelope.connect(&reverb);
-                                // CONNECT SAMPLER TO OUTPUT AND PLAY
+                                    tokio::spawn(async move {
+                                        if tokio::fs::metadata(&ir_file_path.clone()).await.is_err() {
+                                            let response = reqwest::get(ir_url)
+                                                .await
+                                                .unwrap_or_else(|_| panic!("Failed to send GET request"));
+
+                                            let bytes = response.bytes().await.unwrap();
+                                            let path = Path::new(&ir_file_path);
+                                            let mut file = create_file_and_dirs(path).await;
+                                            file.write_all(&bytes)
+                                                .await
+                                                .unwrap_or_else(|_| panic!("Failed to write to file"));
+                                        }
+                                    });
+
+                                    let requested_size = message.reverb.size.unwrap_or(2.0).clone();
+                                    if let Some(ir_buffer) = ir_cache.get(&ir_file_path_clone) {
+                                        let t = audio_context.current_time();
+                                        let ir_buffer_duration = ir_buffer.duration();
+                                        let mut reverb = audio_context.create_convolver();
+                                        reverb.set_buffer(ir_buffer);
+                                        reverb.connect(&compressor);
+                                        sampler.envelope.connect(&reverb);
+                                    } else if let Ok(file) = File::open(&ir_file_path_clone) {
+                                        let ir_cache_clone = ir_cache.clone();
+                                        tokio::spawn(async move {
+                                            let context = OfflineAudioContext::new(2, 400, 44100.0);
+                                            let ir_buffer = context.decode_audio_data_sync(file).expect("IR OOOOPS");
+                                            let new_length = ir_buffer.sample_rate() * requested_size;
+                                            let mut new_buffer = context.create_buffer(ir_buffer.number_of_channels(), new_length as usize, ir_buffer.sample_rate());
+                                            for ch in 0..ir_buffer.number_of_channels() {
+                                                let old_data = ir_buffer.get_channel_data(ch);
+                                                let new_data = new_buffer.get_channel_data_mut(ch);
+
+                                                for i in 0..new_length as usize {
+                                                    if i < old_data.len() {
+                                                        new_data[i] = old_data[i];
+                                                    } else {
+                                                        new_data[i] = 0.0;
+                                                    }
+                                                }
+                                            }
+                                            ir_cache_clone.insert(ir_file_path_clone.clone(), new_buffer);
+                                        });
+                                    }
+                                }
+
                                 sampler.envelope.connect(&compressor);
-                                sampler.play(t, &message, audio_buffer_duration);
-                                sampler.envelope.connect(&reverb);
+                                sampler.play(t, &message, message.adsr.release.unwrap_or(0.001));
+                                // CONNECT SAMPLER TO OUTPUT AND PLAY
                                 // IF FILE EXIST - DECODE IT
                             } else if let Ok(file) = File::open(&file_path_clone) {
                                 let cache_clone = cache.clone();
