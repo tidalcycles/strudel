@@ -1,6 +1,7 @@
 import { midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext } from './superdough.mjs';
 import { gainNode, getEnvelope, getExpEnvelope } from './helpers.mjs';
+import { getNoiseMix } from './noise.mjs';
 
 const mod = (freq, range = 1, type = 'sine') => {
   const ctx = getAudioContext();
@@ -35,7 +36,7 @@ export function registerSynthSounds() {
         if (waveforms.includes(s)) {
           sound = getOscillator(s, t, value);
         } else {
-          sound = getNoiseOscillator(t, s);
+          sound = getNoiseOscillator(s, t);
         }
 
         let { node: o, stop, triggerRelease } = sound;
@@ -94,47 +95,6 @@ export function waveformN(partials, type) {
   const wave = ac.createPeriodicWave(real, imag);
   osc.setPeriodicWave(wave);
   return osc;
-}
-
-// expects one of noises as type
-export function getNoiseOscillator(t, type = 'white') {
-  const ac = getAudioContext();
-  const bufferSize = 2 * ac.sampleRate;
-  const noiseBuffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
-  const output = noiseBuffer.getChannelData(0);
-  let lastOut = 0;
-  let b0, b1, b2, b3, b4, b5, b6;
-  b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
-
-  for (let i = 0; i < bufferSize; i++) {
-    if (type === 'white') {
-      output[i] = Math.random() * 2 - 1;
-    } else if (type === 'brown') {
-      let white = Math.random() * 2 - 1;
-      output[i] = (lastOut + 0.02 * white) / 1.02;
-      lastOut = output[i];
-    } else if (type === 'pink') {
-      let white = Math.random() * 2 - 1;
-      b0 = 0.99886 * b0 + white * 0.0555179;
-      b1 = 0.99332 * b1 + white * 0.0750759;
-      b2 = 0.969 * b2 + white * 0.153852;
-      b3 = 0.8665 * b3 + white * 0.3104856;
-      b4 = 0.55 * b4 + white * 0.5329522;
-      b5 = -0.7616 * b5 - white * 0.016898;
-      output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-      output[i] *= 0.11;
-      b6 = white * 0.115926;
-    }
-  }
-
-  const o = ac.createBufferSource();
-  o.buffer = noiseBuffer;
-  o.loop = true;
-  o.start(t);
-  return {
-    node: o,
-    stop: (time) => o.stop(time),
-  };
 }
 
 // expects one of waveforms as s
@@ -224,32 +184,16 @@ export function getOscillator(
     vibratoOscillator.start(t);
   }
 
-  let noiseOscillator, noiseMix;
-  // noise mix
-  if (noise > 0) {
-    // Two gain nodes to set the oscillators to their respective levels
-    noise = noise > 1 ? 1 : noise;
-    let o_gain = ac.createGain();
-    let n_gain = ac.createGain();
-    o_gain.gain.setValueAtTime(1 - noise, ac.currentTime);
-    n_gain.gain.setValueAtTime(noise, ac.currentTime);
-
-    // Instanciating a mixer to blend sources together
-    noiseMix = ac.createGain();
-
-    // Connecting the main oscillator to the gain node
-    o.connect(o_gain).connect(noiseMix);
-
-    // Instanciating a noise oscillator and connecting
-    noiseOscillator = getNoiseOscillator(t, 'pink');
-    noiseOscillator.node.connect(n_gain).connect(noiseMix);
+  let noiseMix;
+  if (noise) {
+    noiseMix = getNoiseMix(o, noise, t);
   }
 
   return {
-    node: noiseMix || o,
+    node: noiseMix?.node || o,
     stop: (time) => {
       vibratoOscillator?.stop(time);
-      noiseOscillator?.stop(time);
+      noiseMix?.stop(time);
       stopFm?.(time);
       o.stop(time);
     },
