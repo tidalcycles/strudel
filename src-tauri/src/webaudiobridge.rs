@@ -22,6 +22,7 @@ use web_audio_api::{
 };
 use web_audio_api::context::OfflineAudioContext;
 use web_audio_api::node::{ConvolverNode, ConvolverOptions, DelayNode};
+use crate::reverbgen::{create_impulse_response, generate_coefficients_lp, write_to_wav};
 use crate::superdough::{ADSRMessage, apply_filter_adsr, BPFMessage, DelayMessage, Delay, FilterADSRMessage, HPFMessage, LoopMessage, LPFMessage, Sampler, Synth, WebAudioInstrument, ReverbMessage, Reverb};
 
 
@@ -228,6 +229,31 @@ pub fn init(
                                 };
 
                                 // REVERB
+                                if message.reverb.room.is_some() {
+                                    let file_path = "/Users/vasiliymilovidov/samples/ir3.wav".to_string();
+                                    if let Some(ir) = cache.get(&file_path) {
+                                        let mut reverb = audio_context.create_convolver();
+                                        reverb.set_buffer(ir);
+                                        reverb.connect(&compressor);
+                                        sampler.envelope.connect(&reverb);
+                                    } else {
+                                        let len = (audio_context.sample_rate() * message.reverb.size.unwrap_or(0.5)) as usize;
+                                        let decay = 5.0;
+                                        let num_coeffs = 101;
+                                        let fade = 0.1;
+                                        let cutoff = 4000.0 / audio_context.sample_rate();
+                                        let cache_cache = cache.clone();
+                                        tokio::spawn(async move {
+                                            let fir = generate_coefficients_lp(num_coeffs, cutoff);
+                                            let ir = create_impulse_response(len, decay, &fir, 44100.0, fade);
+                                            write_to_wav("/Users/vasiliymilovidov/samples/ir3.wav", &ir);
+                                            let context = OfflineAudioContext::new(2, 400, 44100.0);
+                                            let file = File::open("/Users/vasiliymilovidov/samples/ir3.wav").expect("File booom!");
+                                            let buf = context.decode_audio_data_sync(file).unwrap();
+                                            cache_cache.insert("/Users/vasiliymilovidov/samples/ir3.wav".to_string(), buf);
+                                        });
+                                    }
+                                }
                                 if message.reverb.ir.is_some() {
                                     let (ir_url, ir_file_path, ir_file_path_clone) = create_ir_filepath(&message);
 
@@ -248,8 +274,6 @@ pub fn init(
 
                                     let requested_size = message.reverb.size.unwrap_or(2.0).clone();
                                     if let Some(ir_buffer) = ir_cache.get(&ir_file_path_clone) {
-                                        let t = audio_context.current_time();
-                                        let ir_buffer_duration = ir_buffer.duration();
                                         let mut reverb = audio_context.create_convolver();
                                         reverb.set_buffer(ir_buffer);
                                         reverb.connect(&compressor);
@@ -278,9 +302,9 @@ pub fn init(
                                     }
                                 }
 
+                                // CONNECT SAMPLER TO OUTPUT AND PLAY
                                 sampler.envelope.connect(&compressor);
                                 sampler.play(t, &message, message.adsr.release.unwrap_or(0.001));
-                                // CONNECT SAMPLER TO OUTPUT AND PLAY
                                 // IF FILE EXIST - DECODE IT
                             } else if let Ok(file) = File::open(&file_path_clone) {
                                 let cache_clone = cache.clone();

@@ -25,6 +25,9 @@ web-audio-api = { git = "https://github.com/orottier/web-audio-api-rs.git", bran
 reqwest = "0.11.20"
 quick_cache = "0.4.0"
 mini-moka = "0.10.2"
+hound = "3.4.0"
+rand = "0.8.5"
+rand_distr = "0.4.3"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
@@ -35,5 +38,5 @@ custom-protocol = ["tauri/custom-protocol"]
 [profile.release]
 panic = "abort"
 codegen-units = 1
-lto = true
+lto = "thin"
 opt-level = "s"

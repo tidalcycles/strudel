@@ -7,7 +7,6 @@ use web_audio_api::{
     node::BiquadFilterType::{Bandpass, Highpass, Lowpass},
 };
 use web_audio_api::node::{ConvolverNode, DelayNode, DynamicsCompressorNode};
-use crate::reverbgen::generate_reverb;
 use crate::webaudiobridge::WebAudioMessage;
 
 #[derive(Clone, Copy, Debug)]
