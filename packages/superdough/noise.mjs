@@ -1,9 +1,14 @@
 import { drywet } from './helpers.mjs';
 import { getAudioContext } from './superdough.mjs';
 
-// expects one of noises as type
-export function getNoiseOscillator(type = 'white', t) {
+let noiseCache = {};
+
+// lazy generates noise buffers and keeps them forever
+function getNoiseBuffer(type) {
   const ac = getAudioContext();
+  if (noiseCache[type]) {
+    return noiseCache[type];
+  }
   const bufferSize = 2 * ac.sampleRate;
   const noiseBuffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
   const output = noiseBuffer.getChannelData(0);
@@ -31,9 +36,15 @@ export function getNoiseOscillator(type = 'white', t) {
       b6 = white * 0.115926;
     }
   }
+  noiseCache[type] = noiseBuffer;
+  return noiseBuffer;
+}
 
+// expects one of noises as type
+export function getNoiseOscillator(type = 'white', t) {
+  const ac = getAudioContext();
   const o = ac.createBufferSource();
-  o.buffer = noiseBuffer;
+  o.buffer = getNoiseBuffer(type);
   o.loop = true;
   o.start(t);
   return {
