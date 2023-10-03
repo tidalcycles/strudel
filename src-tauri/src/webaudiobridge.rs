@@ -21,7 +21,7 @@ use web_audio_api::{
     node::AudioNode,
 };
 use web_audio_api::context::OfflineAudioContext;
-use web_audio_api::node::{ConvolverNode, DelayNode};
+use web_audio_api::node::{ConvolverNode, ConvolverOptions, DelayNode};
 use crate::superdough::{ADSRMessage, apply_filter_adsr, BPFMessage, DelayMessage, Delay, FilterADSRMessage, HPFMessage, LoopMessage, LPFMessage, Sampler, Synth, WebAudioInstrument, ReverbMessage, Reverb};
 
 
@@ -126,6 +126,11 @@ pub fn init(
         let compressor = audio_context.create_dynamics_compressor();
         compressor.threshold().set_value(-50.0);
         compressor.connect(&audio_context.destination());
+        let mut reverb = ConvolverNode::new(&audio_context, ConvolverOptions::default());
+        let impulse_file1 = File::open("/Users/vasiliymilovidov/samples/ir1.wav").unwrap();
+        let impulse_buffer1 = audio_context.decode_audio_data_sync(impulse_file1).unwrap();
+        reverb.set_buffer(impulse_buffer1);
+        reverb.connect(&audio_context.destination());
 
 
         let cache: Cache<String, AudioBuffer> = Cache::builder()
@@ -221,14 +226,15 @@ pub fn init(
                                     delay.pre_gain.gain().set_value_at_time(message.delay.wet.unwrap_or(0.25), t + message.delay.delay_time.unwrap_or(0.5) as f64);
                                 };
 
+
+                                // sampler.envelope.connect(&reverb);
                                 // CONNECT SAMPLER TO OUTPUT AND PLAY
                                 sampler.envelope.connect(&compressor);
                                 sampler.play(t, &message, audio_buffer_duration);
-
+                                sampler.envelope.connect(&reverb);
                                 // IF FILE EXIST - DECODE IT
                             } else if let Ok(file) = File::open(&file_path_clone) {
                                 let cache_clone = cache.clone();
-                                println!("{:?}", file);
                                 tokio::spawn(async move {
                                     let context = OfflineAudioContext::new(2, 88200, 44100.0);
                                     let audio_buffer = context.decode_audio_data_sync(file).expect("OOOPS!");
