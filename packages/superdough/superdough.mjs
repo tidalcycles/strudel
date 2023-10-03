@@ -227,10 +227,10 @@ export const superdough = async (value, deadline, hapDuration) => {
     delaytime = 0.25,
     orbit = 1,
     room,
-    fade = 0.1,
-    revlp = 15000,
-    revdim = 1000,
-    size = 2,
+    roomfade = 0.1,
+    roomlp = 15000,
+    roomdim = 1000,
+    roomsize = 2,
     velocity = 1,
     analyze, // analyser wet
     fft = 8, // fftSize 0 - 10
@@ -368,8 +368,8 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
   // reverb
   let reverbSend;
-  if (room > 0 && size > 0) {
-    const reverbNode = getReverb(orbit, size, fade, revlp, revdim);
+  if (room > 0 && roomsize > 0) {
+    const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim);
     reverbSend = effectSend(post, reverbNode, room);
   }
 
