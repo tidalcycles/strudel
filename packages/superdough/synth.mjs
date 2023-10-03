@@ -20,104 +20,110 @@ const fm = (osc, harmonicityRatio, modulationIndex, wave = 'sine') => {
   return mod(modfreq, modgain, wave);
 };
 
-
 export function registerSynthSounds() {
-  ['sine', 'square', 'triangle',
-    'sawtooth', 'pink', 'white',
-    'brown'].forEach((wave) => {
-      registerSound(
-        wave,
-        (t, value, onended) => {
-          // destructure adsr here, because the default should be different for synths and samples
-          let {
-            attack = 0.001,
-            decay = 0.05,
-            sustain = 0.6,
-            release = 0.01,
-            fmh: fmHarmonicity = 1,
-            fmi: fmModulationIndex,
-            fmenv: fmEnvelopeType = 'lin',
-            fmattack: fmAttack,
-            fmdecay: fmDecay,
-            fmsustain: fmSustain,
-            fmrelease: fmRelease,
-            fmvelocity: fmVelocity,
-            fmwave: fmWaveform = 'sine',
-            vib = 0,
-            vibmod = 0.5,
-            noise = 0,
-          } = value;
-          let { n, note, freq } = value;
-          // with synths, n and note are the same thing
-          note = note || 36;
-          if (typeof note === 'string') {
-            note = noteToMidi(note); // e.g. c3 => 48
-          }
-          // get frequency
-          if (!freq && typeof note === 'number') {
-            freq = midiToFreq(note); // + 48);
-          }
-          // maybe pull out the above frequency resolution?? (there is also getFrequency but it has no default)
-          // make oscillator
-          const { node: o, stop, dry_node = null } = getOscillator({
-            t,
-            s: wave,
-            freq,
-            vib,
-            vibmod,
-            partials: n,
-            noise: noise,
-          });
-          // FM + FM envelope
-          let stopFm, fmEnvelope;
-          if (fmModulationIndex) {
-            const { node: modulator, stop } = fm(dry_node !== null ? dry_node : o, fmHarmonicity, fmModulationIndex, fmWaveform);
-            if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
-              // no envelope by default
-              modulator.connect(dry_node !== null ? dry_node.frequency : o.frequency);
-            } else {
-              fmAttack = fmAttack ?? 0.001;
-              fmDecay = fmDecay ?? 0.001;
-              fmSustain = fmSustain ?? 1;
-              fmRelease = fmRelease ?? 0.001;
-              fmVelocity = fmVelocity ?? 1;
-              fmEnvelope = getEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
-              if (fmEnvelopeType === 'exp') {
-                fmEnvelope = getExpEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
-                fmEnvelope.node.maxValue = fmModulationIndex * 2;
-                fmEnvelope.node.minValue = 0.00001;
-              }
-              modulator.connect(fmEnvelope.node);
-              fmEnvelope.node.connect(dry_node !== null ? dry_node.frequency : o.frequency);
+  ['sine', 'square', 'triangle', 'sawtooth', 'pink', 'white', 'brown'].forEach((wave) => {
+    registerSound(
+      wave,
+      (t, value, onended) => {
+        // destructure adsr here, because the default should be different for synths and samples
+        let {
+          attack = 0.001,
+          decay = 0.05,
+          sustain = 0.6,
+          release = 0.01,
+          fmh: fmHarmonicity = 1,
+          fmi: fmModulationIndex,
+          fmenv: fmEnvelopeType = 'lin',
+          fmattack: fmAttack,
+          fmdecay: fmDecay,
+          fmsustain: fmSustain,
+          fmrelease: fmRelease,
+          fmvelocity: fmVelocity,
+          fmwave: fmWaveform = 'sine',
+          vib = 0,
+          vibmod = 0.5,
+          noise = 0,
+        } = value;
+        let { n, note, freq } = value;
+        // with synths, n and note are the same thing
+        note = note || 36;
+        if (typeof note === 'string') {
+          note = noteToMidi(note); // e.g. c3 => 48
+        }
+        // get frequency
+        if (!freq && typeof note === 'number') {
+          freq = midiToFreq(note); // + 48);
+        }
+        // maybe pull out the above frequency resolution?? (there is also getFrequency but it has no default)
+        // make oscillator
+        const {
+          node: o,
+          stop,
+          dry_node = null,
+        } = getOscillator({
+          t,
+          s: wave,
+          freq,
+          vib,
+          vibmod,
+          partials: n,
+          noise: noise,
+        });
+        // FM + FM envelope
+        let stopFm, fmEnvelope;
+        if (fmModulationIndex) {
+          const { node: modulator, stop } = fm(
+            dry_node !== null ? dry_node : o,
+            fmHarmonicity,
+            fmModulationIndex,
+            fmWaveform,
+          );
+          if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
+            // no envelope by default
+            modulator.connect(dry_node !== null ? dry_node.frequency : o.frequency);
+          } else {
+            fmAttack = fmAttack ?? 0.001;
+            fmDecay = fmDecay ?? 0.001;
+            fmSustain = fmSustain ?? 1;
+            fmRelease = fmRelease ?? 0.001;
+            fmVelocity = fmVelocity ?? 1;
+            fmEnvelope = getEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
+            if (fmEnvelopeType === 'exp') {
+              fmEnvelope = getExpEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
+              fmEnvelope.node.maxValue = fmModulationIndex * 2;
+              fmEnvelope.node.minValue = 0.00001;
             }
-            stopFm = stop;
+            modulator.connect(fmEnvelope.node);
+            fmEnvelope.node.connect(dry_node !== null ? dry_node.frequency : o.frequency);
           }
+          stopFm = stop;
+        }
 
-          // turn down
-          const g = gainNode(0.3);
+        // turn down
+        const g = gainNode(0.3);
 
-          // gain envelope
-          const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
+        // gain envelope
+        const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
 
-          o.onended = () => {
-            o.disconnect();
-            g.disconnect();
-            onended();
-          };
-          return {
-            node: o.connect(g).connect(envelope),
-            stop: (releaseTime) => {
-              releaseEnvelope(releaseTime);
-              fmEnvelope?.stop(releaseTime);
-              let end = releaseTime + release;
-              stop(end);
-              stopFm?.(end);
-            },
-          };
-        },
-        { type: 'synth', prebake: true },
-      );
-    });
+        o.onended = () => {
+          o.disconnect();
+          g.disconnect();
+          onended();
+        };
+        return {
+          node: o.connect(g).connect(envelope),
+          stop: (releaseTime) => {
+            releaseEnvelope(releaseTime);
+            fmEnvelope?.stop(releaseTime);
+            let end = releaseTime + release;
+            stop(end);
+            stopFm?.(end);
+          },
+        };
+      },
+      { type: 'synth', prebake: true },
+    );
+  });
 }
 
 export function waveformN(partials, type) {
@@ -163,16 +169,16 @@ export function getNoiseOscillator({ t, ac, type = 'white' }) {
       output[i] = Math.random() * 2 - 1;
     } else if (type === 'brown') {
       let white = Math.random() * 2 - 1;
-      output[i] = (lastOut + (0.02 * white)) / 1.02;
+      output[i] = (lastOut + 0.02 * white) / 1.02;
       lastOut = output[i];
     } else if (type === 'pink') {
       let white = Math.random() * 2 - 1;
       b0 = 0.99886 * b0 + white * 0.0555179;
       b1 = 0.99332 * b1 + white * 0.0750759;
-      b2 = 0.96900 * b2 + white * 0.1538520;
-      b3 = 0.86650 * b3 + white * 0.3104856;
-      b4 = 0.55000 * b4 + white * 0.5329522;
-      b5 = -0.7616 * b5 - white * 0.0168980;
+      b2 = 0.969 * b2 + white * 0.153852;
+      b3 = 0.8665 * b3 + white * 0.3104856;
+      b4 = 0.55 * b4 + white * 0.5329522;
+      b5 = -0.7616 * b5 - white * 0.016898;
       output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
       output[i] *= 0.11;
       b6 = white * 0.115926;
@@ -186,7 +192,7 @@ export function getNoiseOscillator({ t, ac, type = 'white' }) {
 
   return {
     node: o,
-    stop: (time) => o.stop(time)
+    stop: (time) => o.stop(time),
   };
 }
 
@@ -196,11 +202,11 @@ export function getOscillator({ s, freq, t, vib, vibmod, partials, noise }) {
   let o;
 
   if (['pink', 'white', 'brown'].includes(s)) {
-    let noiseOscillator = getNoiseOscillator({ t: t, ac: getAudioContext(), type: s })
+    let noiseOscillator = getNoiseOscillator({ t: t, ac: getAudioContext(), type: s });
     return {
       node: noiseOscillator.node,
-      stop: noiseOscillator.stop
-    }
+      stop: noiseOscillator.stop,
+    };
   } else {
     if (!partials || s === 'sine') {
       o = getAudioContext().createOscillator();
@@ -238,7 +244,7 @@ export function getOscillator({ s, freq, t, vib, vibmod, partials, noise }) {
       // Connecting the main oscillator to the gain node
       o.connect(o_gain).connect(mix_gain);
 
-      // Instanciating a noise oscillator and connecting 
+      // Instanciating a noise oscillator and connecting
       const noiseOscillator = getNoiseOscillator({ t: t, ac: ac, type: 'pink' });
       noiseOscillator.node.connect(n_gain).connect(mix_gain);
 
@@ -249,8 +255,8 @@ export function getOscillator({ s, freq, t, vib, vibmod, partials, noise }) {
           vibrato_oscillator?.stop(time);
           o.stop(time);
           noiseOscillator.stop(time);
-        }
-      }
+        },
+      };
     }
 
     return {
@@ -262,4 +268,3 @@ export function getOscillator({ s, freq, t, vib, vibmod, partials, noise }) {
     };
   }
 }
-
