@@ -112,7 +112,7 @@ function getReverb(orbit, duration = 2, fade, lp, dim) {
   // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
-    const reverb = ac.createReverb(getAudioContext(), duration, fade, lp, dim);
+    const reverb = ac.createReverb(duration, fade, lp, dim);
     reverb.connect(getDestination());
     reverbs[orbit] = reverb;
   }
