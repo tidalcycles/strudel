@@ -108,11 +108,11 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
 
 let reverbs = {};
 
-function getReverb(orbit, duration = 2, fade, revlp, revdim) {
+function getReverb(orbit, duration = 2, fade, lp, dim) {
   // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
-    const reverb = ac.createReverb(getAudioContext(), duration, fade, revlp, revdim);
+    const reverb = ac.createReverb(getAudioContext(), duration, fade, lp, dim);
     reverb.connect(getDestination());
     reverbs[orbit] = reverb;
   }
@@ -120,14 +120,14 @@ function getReverb(orbit, duration = 2, fade, revlp, revdim) {
   if (
     reverbs[orbit].duration !== duration ||
     reverbs[orbit].fade !== fade ||
-    reverbs[orbit].revlp !== revlp ||
-    reverbs[orbit].revdim !== revdim
+    reverbs[orbit].lp !== lp ||
+    reverbs[orbit].dim !== dim
   ) {
-    reverbs[orbit].setDuration(duration, fade, revlp, revdim);
+    reverbs[orbit].setDuration(duration, fade, lp, dim);
     reverbs[orbit].duration = duration;
     reverbs[orbit].fade = fade;
-    reverbs[orbit].revlp = revlp;
-    reverbs[orbit].revdim = revdim;
+    reverbs[orbit].lp = lp;
+    reverbs[orbit].dim = dim;
   }
 
   return reverbs[orbit];
