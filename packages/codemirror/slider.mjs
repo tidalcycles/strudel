@@ -91,8 +91,10 @@ export const sliderPlugin = ViewPlugin.fromClass(
           while (iterator.value) {
             // when the widgets are moved, we need to tell the dom node the current position
             // this is important because the updateSliderValue function has to work with the dom node
-            iterator.value.widget.slider.from = iterator.from;
-            iterator.value.widget.slider.to = iterator.to;
+            if (iterator.value?.widget?.slider) {
+              iterator.value.widget.slider.from = iterator.from;
+              iterator.value.widget.slider.to = iterator.to;
+            }
             iterator.next();
           }
         }
