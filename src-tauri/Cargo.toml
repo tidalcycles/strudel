@@ -38,5 +38,5 @@ custom-protocol = ["tauri/custom-protocol"]
 [profile.release]
 panic = "abort"
 codegen-units = 1
-lto = "thin"
+lto = "fat"
 opt-level = "s"

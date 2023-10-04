@@ -229,31 +229,39 @@ pub fn init(
                                 };
 
                                 // REVERB
+
+                                // SAMPLES AS IRs
                                 if message.reverb.room.is_some() {
-                                    let file_path = "/Users/vasiliymilovidov/samples/ir3.wav".to_string();
+                                    let file_path = "/Users/vasiliymilovidov/TEMP/filters/filters/impulse94.wav/impulse101.wav".to_string();
                                     if let Some(ir) = cache.get(&file_path) {
                                         let mut reverb = audio_context.create_convolver();
                                         reverb.set_buffer(ir);
                                         reverb.connect(&compressor);
                                         sampler.envelope.connect(&reverb);
                                     } else {
-                                        let len = (audio_context.sample_rate() * message.reverb.size.unwrap_or(0.5)) as usize;
-                                        let decay = 5.0;
+
+                                        // PREPARE IR GENERATION
+                                        let len = (audio_context.sample_rate() * message.reverb.size.unwrap_or(1.0)) as usize;
+                                        let decay = 4.0;
                                         let num_coeffs = 101;
-                                        let fade = 0.1;
-                                        let cutoff = 4000.0 / audio_context.sample_rate();
+                                        let fade = 2.4;
+                                        let cutoff = 500.0 / audio_context.sample_rate();
                                         let cache_cache = cache.clone();
+
                                         tokio::spawn(async move {
+                                            // GENERATE IR
                                             let fir = generate_coefficients_lp(num_coeffs, cutoff);
                                             let ir = create_impulse_response(len, decay, &fir, 44100.0, fade);
-                                            write_to_wav("/Users/vasiliymilovidov/samples/ir3.wav", &ir);
+                                            write_to_wav("/Users/vasiliymilovidov/TEMP/filters/filters/impulse101.wav", &ir);
                                             let context = OfflineAudioContext::new(2, 400, 44100.0);
-                                            let file = File::open("/Users/vasiliymilovidov/samples/ir3.wav").expect("File booom!");
+                                            let file = File::open("/Users/vasiliymilovidov/TEMP/filters/filters/impulse101.wav").expect("File booom!");
                                             let buf = context.decode_audio_data_sync(file).unwrap();
                                             cache_cache.insert("/Users/vasiliymilovidov/samples/ir3.wav".to_string(), buf);
                                         });
                                     }
                                 }
+
+                                // IR GENERATION
                                 if message.reverb.ir.is_some() {
                                     let (ir_url, ir_file_path, ir_file_path_clone) = create_ir_filepath(&message);
 
@@ -305,6 +313,7 @@ pub fn init(
                                 // CONNECT SAMPLER TO OUTPUT AND PLAY
                                 sampler.envelope.connect(&compressor);
                                 sampler.play(t, &message, message.adsr.release.unwrap_or(0.001));
+
                                 // IF FILE EXIST - DECODE IT
                             } else if let Ok(file) = File::open(&file_path_clone) {
                                 let cache_clone = cache.clone();
