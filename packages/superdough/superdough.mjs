@@ -107,17 +107,25 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
 }
 
 let reverbs = {};
-function getReverb(orbit, duration = 2) {
+
+function getReverb(orbit, duration = 2, fade, lp, dim) {
+  // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
-    const reverb = ac.createReverb(duration);
+    const reverb = ac.createReverb(duration, fade, lp, dim);
     reverb.connect(getDestination());
     reverbs[orbit] = reverb;
   }
-  if (reverbs[orbit].duration !== duration) {
-    reverbs[orbit] = reverbs[orbit].setDuration(duration);
-    reverbs[orbit].duration = duration;
+
+  if (
+    reverbs[orbit].duration !== duration ||
+    reverbs[orbit].fade !== fade ||
+    reverbs[orbit].lp !== lp ||
+    reverbs[orbit].dim !== dim
+  ) {
+    reverbs[orbit].generate(duration, fade, lp, dim);
   }
+
   return reverbs[orbit];
 }
 
@@ -215,7 +223,10 @@ export const superdough = async (value, deadline, hapDuration) => {
     delaytime = 0.25,
     orbit = 1,
     room,
-    size = 2,
+    roomfade = 0.1,
+    roomlp = 15000,
+    roomdim = 1000,
+    roomsize = 2,
     velocity = 1,
     analyze, // analyser wet
     fft = 8, // fftSize 0 - 10
@@ -353,8 +364,8 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
   // reverb
   let reverbSend;
-  if (room > 0 && size > 0) {
-    const reverbNode = getReverb(orbit, size);
+  if (room > 0 && roomsize > 0) {
+    const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim);
     reverbSend = effectSend(post, reverbNode, room);
   }
 

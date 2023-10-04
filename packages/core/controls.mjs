@@ -980,19 +980,63 @@ const generic_params = [
    */
   [['room', 'size']],
   /**
+   * Reverb lowpass starting frequency (in hertz).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomlp
+   * @synonyms rlp
+   * @param {number} frequency between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).rlp(10000)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000)
+   */
+  ['roomlp', 'rlp'],
+  /**
+   * Reverb lowpass frequency at -60dB (in hertz).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomdim
+   * @synonyms rdim
+   * @param {number} frequency between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).rlp(10000).rdim(8000)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000).rdim(400)
+   *
+   */
+  ['roomdim', 'rdim'],
+  /**
+   * Reverb fade time (in seconds).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomfade
+   * @synonyms rfade
+   * @param {number} seconds for the reverb to fade
+   * @example
+   * s("bd sd").room(0.5).rlp(10000).rfade(0.5)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000).rfade(4)
+   *
+   */
+  ['roomfade', 'rfade'],
+  /**
    * Sets the room size of the reverb, see {@link room}.
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
    *
    * @name roomsize
    * @param {number | Pattern} size between 0 and 10
-   * @synonyms size, sz
+   * @synonyms rsize, sz, size
    * @example
-   * s("bd sd").room(.8).roomsize("<0 1 2 4 8>")
+   * s("bd sd").room(.8).rsize(1)
+   * @example
+   * s("bd sd").room(.8).rsize(4)
    *
    */
   // TODO: find out why :
   // s("bd sd").room(.8).roomsize("<0 .2 .4 .6 .8 [1,0]>").osc()
   // .. does not work. Is it because room is only one effect?
-  ['size', 'sz', 'roomsize'],
+  ['roomsize', 'size', 'sz', 'rsize'],
   // ['sagogo'],
   // ['sclap'],
   // ['sclaves'],
