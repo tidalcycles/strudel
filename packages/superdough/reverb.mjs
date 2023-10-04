@@ -17,47 +17,43 @@ if (typeof AudioContext !== 'undefined') {
     return newBuffer;
   };
 
-  AudioContext.prototype.createReverb = function (audioContext, duration, fade, revlp, revdim, imp) {
+  AudioContext.prototype.createReverb = function (duration, fade, lp, dim, ir) {
     const convolver = this.createConvolver();
-
-    convolver.setDuration = (d, fade, revlp, revdim, imp) => {
-      if (imp) {
-        convolver.buffer = this.adjustLength(d, imp);
+    convolver.generate = (d, fade, lp, dim, buf) => {
+      if (buf) {
+        convolver.buffer = this.adjustLength(d, buf);
         return convolver;
       } else {
         this.generateReverb(
           {
-            audioContext,
+            audioContext: this,
             sampleRate: 44100,
             numChannels: 2,
             decayTime: d,
             fadeInTime: fade,
-            lpFreqStart: revlp,
-            lpFreqEnd: revdim,
+            lpFreqStart: lp,
+            lpFreqEnd: dim,
           },
           (buffer) => {
             convolver.buffer = buffer;
           },
         );
-        convolver.duration = duration;
+        convolver.duration = d;
         convolver.fade = fade;
-        convolver.revlp = revlp;
-        convolver.revdim = revdim;
+        convolver.lp = lp;
+        convolver.dim = dim;
         return convolver;
       }
     };
-    convolver.setIR = (d, fade, revlp, revdim, imp) => {
-      if (imp) {
-        convolver.buffer = this.adjustLength(d, imp);
+    convolver.setIR = (d, fade, lp, dim, buf) => {
+      if (buf) {
+        convolver.buffer = this.adjustLength(d, buf);
       } else {
-        convolver.setDuration(d, fade, revlp, revdim, imp);
+        convolver.generate(d, fade, lp, dim, buf);
       }
       return convolver;
     };
-    convolver.setDuration(duration, fade, revlp, revdim, imp);
+    convolver.generate(duration, fade, lp, dim, ir);
     return convolver;
   };
 }
-
-// TODO: make the reverb more exciting
-// check out https://blog.gskinner.com/archives/2019/02/reverb-web-audio-api.html

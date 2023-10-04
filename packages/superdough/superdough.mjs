@@ -114,32 +114,29 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
 
 let reverbs = {};
 
-function getReverb(orbit, duration = 2, fade, revlp, revdim, imp) {
+function getReverb(orbit, duration = 2, fade, lp, dim, ir) {
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
-    const reverb = ac.createReverb(getAudioContext(), duration, fade, revlp, revdim, imp);
+    const reverb = ac.createReverb(duration, fade, lp, dim, ir);
     reverb.connect(getDestination());
     reverbs[orbit] = reverb;
   }
 
-  const reverbOrbit = reverbs[orbit];
-
   if (
     reverbs[orbit].duration !== duration ||
     reverbs[orbit].fade !== fade ||
-    reverbs[orbit].revlp !== revlp ||
-    reverbs[orbit].revdim !== revdim
+    reverbs[orbit].ir !== lp ||
+    reverbs[orbit].dim !== dim ||
+    reverbs[orbit].ir !== ir
   ) {
-    reverbs[orbit].setDuration(duration, fade, revlp, revdim);
-    reverbs[orbit].duration = duration;
-    reverbs[orbit].fade = fade;
-    reverbs[orbit].revlp = revlp;
-    reverbs[orbit].revdim = revdim;
+    reverbs[orbit].generate(duration, fade, lp, dim, ir);
   }
-  if (reverbs[orbit].ir !== imp) {
-    reverbs[orbit] = reverbs[orbit].setIR(duration, fade, revlp, revdim, imp);
-    reverbs[orbit].ir = imp;
+
+  if (reverbs[orbit].ir !== ir) {
+    reverbs[orbit] = reverbs[orbit].setIR(duration, fade, lp, dim, ir);
+    reverbs[orbit].ir = ir;
   }
+
   return reverbs[orbit];
 }
 
@@ -238,10 +235,10 @@ export const superdough = async (value, deadline, hapDuration) => {
     delaytime = 0.25,
     orbit = 1,
     room,
-    fade = 0.1,
-    revlp = 15000,
-    revdim = 1000,
-    size = 2,
+    roomfade = 0.1,
+    roomlp = 15000,
+    roomdim = 1000,
+    roomsize = 2,
     ir,
     i = 0,
     velocity = 1,
@@ -393,8 +390,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     buffer = await loadBuffer(url, ac, ir, 0);
   }
   let reverbSend;
-  if (room > 0 && size > 0) {
-    const reverbNode = getReverb(orbit, size, fade, revlp, revdim, buffer);
+  if (room > 0 && roomsize > 0) {
+    const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim, buffer);
     reverbSend = effectSend(post, reverbNode, room);
   }
 

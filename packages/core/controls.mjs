@@ -656,6 +656,15 @@ const generic_params = [
    */
   [['vib', 'vibmod'], 'vibrato', 'v'],
   /**
+   * Adds pink noise to the mix
+   *
+   * @name noise
+   * @param {number | Pattern} wet wet amount
+   * @example
+   * sound("<white pink brown>/2")
+   */
+  ['noise'],
+  /**
    * Sets the vibrato depth in semitones. Only has an effect if `vibrato` | `vib` | `v` is is also set
    *
    * @name vibmod
@@ -971,55 +980,49 @@ const generic_params = [
    */
   [['room', 'size']],
   /**
-   * Sets the room size of the reverb, see {@link room}.
-   *
-   * @name roomsize
-   * @param {number | Pattern} size between 0 and 10
-   * @synonyms size, sz
-   * @example
-   * s("bd sd").room(.8).roomsize("<0 1 2 4 8>")
-   *
-   */
-  /**
    * Reverb lowpass starting frequency (in hertz).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
    *
-   * @name revlp
-   * @param {number} level between 0 and 20000hz
+   * @name roomlp
+   * @synonyms rlp
+   * @param {number} frequency between 0 and 20000hz
    * @example
-   * s("bd sd").room(0.5).revlp(10000)
+   * s("bd sd").room(0.5).rlp(10000)
    * @example
-   * s("bd sd").room(0.5).revlp(5000)
+   * s("bd sd").room(0.5).rlp(5000)
    */
-  ['revlp'],
+  ['roomlp', 'rlp'],
   /**
    * Reverb lowpass frequency at -60dB (in hertz).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
    *
-   * @name revdim
-   * @param {number} level between 0 and 20000hz
+   * @name roomdim
+   * @synonyms rdim
+   * @param {number} frequency between 0 and 20000hz
    * @example
-   * s("bd sd").room(0.5).revlp(10000).revdim(8000)
+   * s("bd sd").room(0.5).rlp(10000).rdim(8000)
    * @example
-   * s("bd sd").room(0.5).revlp(5000).revdim(400)
+   * s("bd sd").room(0.5).rlp(5000).rdim(400)
    *
    */
-  ['revdim'],
+  ['roomdim', 'rdim'],
   /**
    * Reverb fade time (in seconds).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
    *
-   * @name fade
+   * @name roomfade
+   * @synonyms rfade
    * @param {number} seconds for the reverb to fade
    * @example
-   * s("bd sd").room(0.5).revlp(10000).fade(0.5)
+   * s("bd sd").room(0.5).rlp(10000).rfade(0.5)
    * @example
-   * s("bd sd").room(0.5).revlp(5000).fade(4)
+   * s("bd sd").room(0.5).rlp(5000).rfade(4)
    *
    */
-  ['fade'],
+  ['roomfade', 'rfade'],
   /**
-   * Sets the sample to use as an impulse response for the reverb.
-   *
-   * @name iresponse
-   * @param {string | Pattern} sample sample to pick as an impulse response
+   * Sets the sample to use as an impulse response for the reverb. * * @name iresponse
+   * @param {string | Pattern} sample to use as an impulse response
    * @synonyms ir
    * @example
    * s("bd sd").room(.8).ir("<shaker_large:0 shaker_large:2>")
@@ -1028,23 +1031,25 @@ const generic_params = [
   [['ir', 'i'], 'iresponse'],
   /**
    * Sets the room size of the reverb, see {@link room}.
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
    *
    * @name roomsize
    * @param {number | Pattern} size between 0 and 10
-   * @synonyms size, sz
+   * @synonyms rsize, sz, size
    * @example
-   * s("bd sd").room(.8).roomsize("<0 1 2 4 8>")
+   * s("bd sd").room(.8).rsize(1)
+   * @example
+   * s("bd sd").room(.8).rsize(4)
    *
    */
   // TODO: find out why :
   // s("bd sd").room(.8).roomsize("<0 .2 .4 .6 .8 [1,0]>").osc()
   // .. does not work. Is it because room is only one effect?
-  ['size', 'sz', 'roomsize'],
+  ['roomsize', 'size', 'sz', 'rsize'],
   // ['sagogo'],
   // ['sclap'],
   // ['sclaves'],
   // ['scrash'],
-
   /**
    * Wave shaping distortion. CAUTION: it might get loud
    *
@@ -1210,7 +1215,7 @@ const generic_params = [
   ['pitchJump'],
   ['pitchJumpTime'],
   ['lfo', 'repeatTime'],
-  ['noise'],
+  ['znoise'], // noise on the frequency or as bubo calls it "frequency fog" :)
   ['zmod'],
   ['zcrush'], // like crush but scaled differently
   ['zdelay'],
