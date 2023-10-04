@@ -2959,6 +2959,15 @@ exports[`runs examples > example "never" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "noise" example index 0 1`] = `
+[
+  "[ (0/1 → 1/1) ⇝ 2/1 | s:white ]",
+  "[ 0/1 ⇜ (1/1 → 2/1) | s:white ]",
+  "[ (2/1 → 3/1) ⇝ 4/1 | s:pink ]",
+  "[ 2/1 ⇜ (3/1 → 4/1) | s:pink ]",
+]
+`;
+
 exports[`runs examples > example "note" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:c ]",

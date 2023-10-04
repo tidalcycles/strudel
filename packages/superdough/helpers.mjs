@@ -112,3 +112,25 @@ export function createFilter(
 
   return filter;
 }
+
+// stays 1 until .5, then fades out
+let wetfade = (d) => (d < 0.5 ? 1 : 1 - (d - 0.5) / 0.5);
+
+// mix together dry and wet nodes. 0 = only dry 1 = only wet
+// still not too sure about how this could be used more generally...
+export function drywet(dry, wet, wetAmount = 0) {
+  const ac = getAudioContext();
+  if (!wetAmount) {
+    return dry;
+  }
+  let dry_gain = ac.createGain();
+  let wet_gain = ac.createGain();
+  dry.connect(dry_gain);
+  wet.connect(wet_gain);
+  dry_gain.gain.value = wetfade(wetAmount);
+  wet_gain.gain.value = wetfade(1 - wetAmount);
+  let mix = ac.createGain();
+  dry_gain.connect(mix);
+  wet_gain.connect(mix);
+  return mix;
+}

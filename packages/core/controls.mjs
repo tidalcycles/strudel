@@ -656,6 +656,15 @@ const generic_params = [
    */
   [['vib', 'vibmod'], 'vibrato', 'v'],
   /**
+   * Adds pink noise to the mix
+   *
+   * @name noise
+   * @param {number | Pattern} wet wet amount
+   * @example
+   * sound("<white pink brown>/2")
+   */
+  ['noise'],
+  /**
    * Sets the vibrato depth in semitones. Only has an effect if `vibrato` | `vib` | `v` is is also set
    *
    * @name vibmod
@@ -1197,7 +1206,7 @@ const generic_params = [
   ['pitchJump'],
   ['pitchJumpTime'],
   ['lfo', 'repeatTime'],
-  ['noise'],
+  ['znoise'], // noise on the frequency or as bubo calls it "frequency fog" :)
   ['zmod'],
   ['zcrush'], // like crush but scaled differently
   ['zdelay'],

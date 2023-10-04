@@ -6,7 +6,7 @@ export let sliderValues = {};
 const getSliderID = (from) => `slider_${from}`;
 
 export class SliderWidget extends WidgetType {
-  constructor(value, min, max, from, to, view) {
+  constructor(value, min, max, from, to, step, view) {
     super();
     this.value = value;
     this.min = min;
@@ -14,6 +14,7 @@ export class SliderWidget extends WidgetType {
     this.from = from;
     this.originalFrom = from;
     this.to = to;
+    this.step = step;
     this.view = view;
   }
 
@@ -29,7 +30,7 @@ export class SliderWidget extends WidgetType {
     slider.type = 'range';
     slider.min = this.min;
     slider.max = this.max;
-    slider.step = (this.max - this.min) / 1000;
+    slider.step = this.step ?? (this.max - this.min) / 1000;
     slider.originalValue = this.value;
     // to make sure the code stays in sync, let's save the original value
     // becuase .value automatically clamps values so it'll desync with the code
@@ -66,9 +67,9 @@ export const updateWidgets = (view, widgets) => {
 };
 
 function getWidgets(widgetConfigs, view) {
-  return widgetConfigs.map(({ from, to, value, min, max }) => {
+  return widgetConfigs.map(({ from, to, value, min, max, step }) => {
     return Decoration.widget({
-      widget: new SliderWidget(value, min, max, from, to, view),
+      widget: new SliderWidget(value, min, max, from, to, step, view),
       side: 0,
     }).range(from /* , to */);
   });
@@ -90,8 +91,10 @@ export const sliderPlugin = ViewPlugin.fromClass(
           while (iterator.value) {
             // when the widgets are moved, we need to tell the dom node the current position
             // this is important because the updateSliderValue function has to work with the dom node
-            iterator.value.widget.slider.from = iterator.from;
-            iterator.value.widget.slider.to = iterator.to;
+            if (iterator.value?.widget?.slider) {
+              iterator.value.widget.slider.from = iterator.from;
+              iterator.value.widget.slider.to = iterator.to;
+            }
             iterator.next();
           }
         }
