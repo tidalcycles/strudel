@@ -2,9 +2,9 @@ import reverbGen from './reverbGen.mjs';
 
 if (typeof AudioContext !== 'undefined') {
   AudioContext.prototype.generateReverb = reverbGen.generateReverb;
-  AudioContext.prototype.createReverb = function (duration, fade, revlp, revdim) {
+  AudioContext.prototype.createReverb = function (duration, fade, lp, dim) {
     const convolver = this.createConvolver();
-    convolver.setDuration = (d, fade, revlp, revdim) => {
+    convolver.generate = (d, fade, lp, dim) => {
       this.generateReverb(
         {
           audioContext: this,
@@ -12,8 +12,8 @@ if (typeof AudioContext !== 'undefined') {
           numChannels: 2,
           decayTime: d,
           fadeInTime: fade,
-          lpFreqStart: revlp,
-          lpFreqEnd: revdim,
+          lpFreqStart: lp,
+          lpFreqEnd: dim,
         },
         (buffer) => {
           convolver.buffer = buffer;
@@ -21,10 +21,10 @@ if (typeof AudioContext !== 'undefined') {
       );
       convolver.duration = d;
       convolver.fade = fade;
-      convolver.revlp = revlp;
-      convolver.revdim = revdim;
+      convolver.lp = lp;
+      convolver.dim = dim;
     };
-    convolver.setDuration(duration, fade, revlp, revdim);
+    convolver.generate(duration, fade, lp, dim);
     return convolver;
   };
 }
