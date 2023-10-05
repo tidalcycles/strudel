@@ -124,21 +124,17 @@ pub fn init(
         let _ = audio_context.create_buffer_source();
         let mut delays: HashMap<usize, Delay> = HashMap::new();
         let mut reverbs: HashMap<usize, Reverb> = HashMap::new();
+
         let compressor = audio_context.create_dynamics_compressor();
         compressor.threshold().set_value(-50.0);
         compressor.connect(&audio_context.destination());
-        // let mut reverb = ConvolverNode::new(&audio_context, ConvolverOptions::default());
-        // let impulse_file1 = File::open("/Users/vasiliymilovidov/samples/ir1.wav").unwrap();
-        // let impulse_buffer1 = audio_context.decode_audio_data_sync(impulse_file1).unwrap();
-        // reverb.set_buffer(impulse_buffer1);
-        // reverb.connect(&audio_context.destination());
-
 
         let cache: Cache<String, AudioBuffer> = Cache::builder()
             .max_capacity(31 * 1024 * 1024)
             .time_to_idle(Duration::from_secs(40))
             .build();
         let ir_cache: Cache<String, AudioBuffer> = Cache::builder().max_capacity(31 * 1024 * 1024).build();
+
         loop {
             match receiver.recv() {
                 Ok(message) => {
@@ -170,8 +166,8 @@ pub fn init(
                         }
                         _ => {
 
-                            // CREATE FILEPATHS
                             let t = audio_context.current_time();
+                            // CREATE FILEPATHS
                             let (url, file_path, file_path_clone) = create_filepath(&message);
 
                             // DOWNLOAD FILE IS IT DOESN'T EXIST
@@ -231,8 +227,6 @@ pub fn init(
                                 if message.reverb.room.is_some() && message.reverb.room.unwrap() > 0.0 {
                                     apply_reverb(&audio_context, &compressor, &ir_cache, &message, &mut sampler, &mut reverbs);
                                 }
-                                // REVERB
-                                // apply_reverb(&audio_context, &compressor, &cache, &message, &mut sampler, &mut reverbs);
 
                                 // CONNECT SAMPLER TO OUTPUT AND PLAY
                                 sampler.envelope.connect(&compressor);
