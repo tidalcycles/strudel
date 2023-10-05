@@ -120,6 +120,69 @@ impl Reverb {
     }
 }
 
+pub struct ReverbGen {
+    pub generated_ir: Option<GeneratedIR>,
+    pub sample_ir: Option<SampleIR>,
+}
+
+pub struct SampleIR {
+    pub buffer: AudioBuffer,
+    pub convolver: ConvolverNode,
+    pub room: Option<f32>,
+    pub roomsize: Option<f32>,
+}
+
+pub struct GeneratedIR {
+    pub buffer: AudioBuffer,
+    pub convolver: ConvolverNode,
+    pub room: Option<f32>,
+    pub roomsize: Option<f32>,
+    pub roomfade: Option<f32>,
+    pub roomlp: Option<f32>,
+    pub roomdim: Option<f32>,
+}
+
+impl GeneratedIR {
+    pub fn new(context: &AudioContext, room: Option<f32>, roomsize: Option<f32>, roomfade: Option<f32>, roomlp: Option<f32>, roomdim: Option<f32>, compressor: &DynamicsCompressorNode) -> Self {
+        let mut convolver = context.create_convolver();
+        let buffer = context.create_buffer(2, 44100, 44100.0);
+        convolver.set_buffer(buffer.clone());
+        convolver.connect(compressor);
+        Self { buffer, convolver, room, roomsize, roomfade, roomlp, roomdim }
+    }
+}
+
+pub trait IR {
+    fn set_ir(&mut self, context: &AudioContext, ir: &AudioBuffer);
+
+    fn set_params(&mut self, room: Option<f32>, roomsize: Option<f32>, roomfade: Option<f32>, roomlp: Option<f32>, roomdim: Option<f32>);
+
+    fn set_convolver(&mut self, context: &AudioContext, compressor: &DynamicsCompressorNode);
+
+    fn set_convolver_buffer(&mut self, context: &AudioContext, compressor: &DynamicsCompressorNode, ir: &AudioBuffer);
+}
+
+impl IR for SampleIR {
+    fn set_ir(&mut self, context: &AudioContext, ir: &AudioBuffer) {
+        self.buffer = ir.clone();
+        self.convolver.set_buffer(ir.clone());
+    }
+
+    fn set_params(&mut self, room: Option<f32>, roomsize: Option<f32>, roomfade: Option<f32>, roomlp: Option<f32>, roomdim: Option<f32>) {
+        self.room = room;
+        self.roomsize = roomsize;
+    }
+
+    fn set_convolver(&mut self, context: &AudioContext, compressor: &DynamicsCompressorNode) {
+        self.convolver.connect(compressor);
+    }
+
+    fn set_convolver_buffer(&mut self, context: &AudioContext, compressor: &DynamicsCompressorNode, ir: &AudioBuffer) {
+        self.convolver.set_buffer(ir.clone());
+        self.convolver.connect(compressor);
+    }
+}
+
 pub struct Synth {
     pub oscillator: OscillatorNode,
     pub envelope: GainNode,
