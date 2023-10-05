@@ -971,6 +971,47 @@ const generic_params = [
    */
   [['room', 'size']],
   /**
+   * Reverb lowpass starting frequency (in hertz).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomlp
+   * @synonyms rlp
+   * @param {number} frequency between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).rlp(10000)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000)
+   */
+  ['roomlp', 'rlp'],
+  /**
+   * Reverb lowpass frequency at -60dB (in hertz).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomdim
+   * @synonyms rdim
+   * @param {number} frequency between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).rlp(10000).rdim(8000)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000).rdim(400)
+   *
+   */
+  ['roomdim', 'rdim'],
+  /**
+   * Reverb fade time (in seconds).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomfade
+   * @synonyms rfade
+   * @param {number} seconds for the reverb to fade
+   * @example
+   * s("bd sd").room(0.5).rlp(10000).rfade(0.5)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000).rfade(4)
+   *
+   */
+  ['roomfade', 'rfade'],
+  /**
    * Sets the sample to use as an impulse response for the reverb.
    *
    * @name iresponse

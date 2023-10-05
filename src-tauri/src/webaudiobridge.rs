@@ -22,7 +22,7 @@ use web_audio_api::{
 };
 use web_audio_api::context::OfflineAudioContext;
 use web_audio_api::node::{ConvolverNode, ConvolverOptions, DelayNode};
-use crate::reverbgen::{create_impulse_response, generate_coefficients_lp, write_to_wav};
+use crate::reverbgen::{create_impulse_response, generate_coefficients_lp, write_to_buffer, write_to_wav};
 use crate::superdough::{ADSRMessage, apply_filter_adsr, BPFMessage, DelayMessage, Delay, FilterADSRMessage, HPFMessage, LoopMessage, LPFMessage, Sampler, Synth, WebAudioInstrument, ReverbMessage, Reverb};
 
 
@@ -171,6 +171,7 @@ pub fn init(
                         _ => {
 
                             // CREATE FILEPATHS
+                            let t = audio_context.current_time();
                             let (url, file_path, file_path_clone) = create_filepath(&message);
 
                             // DOWNLOAD FILE IS IT DOESN'T EXIST
@@ -191,7 +192,6 @@ pub fn init(
 
                             // IF BUFFER IS CACHED - PLAY IT
                             if let Some(audio_buffer) = cache.get(&file_path_clone) {
-                                let t = audio_context.current_time();
                                 let audio_buffer_duration = audio_buffer.duration();
                                 let mut sampler = Sampler::new(&mut audio_context, audio_buffer);
 
@@ -229,40 +229,30 @@ pub fn init(
                                 };
 
                                 // REVERB
-
-                                // SAMPLES AS IRs
-                                if message.reverb.room.is_some() {
-                                    let file_path = "/Users/vasiliymilovidov/TEMP/filters/filters/impulse94.wav/impulse101.wav".to_string();
-                                    if let Some(ir) = cache.get(&file_path) {
+                                if message.reverb.ir.is_none() && message.reverb.room.unwrap_or(0.0) > 0.0 {
+                                    let key = format!("reverb: {}{}{}{}{}", message.reverb.room.unwrap_or(0.0), message.reverb.roomsize.unwrap_or(1.0), message.reverb.roomlp.unwrap_or(0.0), message.reverb.roomfade.unwrap_or(0.0), message.reverb.roomdim.unwrap_or(0.0));
+                                    if let Some(ir) = cache.get(&key) {
                                         let mut reverb = audio_context.create_convolver();
                                         reverb.set_buffer(ir);
                                         reverb.connect(&compressor);
                                         sampler.envelope.connect(&reverb);
                                     } else {
-
-                                        // PREPARE IR GENERATION
-                                        let len = (audio_context.sample_rate() * message.reverb.size.unwrap_or(1.0)) as usize;
+                                        let len = (audio_context.sample_rate() * message.reverb.roomsize.unwrap_or(1.0)) as usize;
                                         let decay = 4.0;
                                         let num_coeffs = 101;
                                         let fade = 2.4;
                                         let cutoff = 500.0 / audio_context.sample_rate();
                                         let cache_cache = cache.clone();
-
+                                        let mut buffer = audio_context.create_buffer(2, len, 44100.0);
                                         tokio::spawn(async move {
                                             // GENERATE IR
                                             let fir = generate_coefficients_lp(num_coeffs, cutoff);
                                             let ir = create_impulse_response(len, decay, &fir, 44100.0, fade);
-                                            write_to_wav("/Users/vasiliymilovidov/TEMP/filters/filters/impulse101.wav", &ir);
-                                            let context = OfflineAudioContext::new(2, 400, 44100.0);
-                                            let file = File::open("/Users/vasiliymilovidov/TEMP/filters/filters/impulse101.wav").expect("File booom!");
-                                            let buf = context.decode_audio_data_sync(file).unwrap();
-                                            cache_cache.insert("/Users/vasiliymilovidov/samples/ir3.wav".to_string(), buf);
+                                            write_to_buffer(&mut buffer, &ir);
+                                            cache_cache.insert(key, buffer);
                                         });
                                     }
-                                }
-
-                                // IR GENERATION
-                                if message.reverb.ir.is_some() {
+                                } else if message.reverb.ir.is_some() && message.reverb.room.unwrap() > 0.0 {
                                     let (ir_url, ir_file_path, ir_file_path_clone) = create_ir_filepath(&message);
 
                                     tokio::spawn(async move {
@@ -280,14 +270,14 @@ pub fn init(
                                         }
                                     });
 
-                                    let requested_size = message.reverb.size.unwrap_or(2.0).clone();
-                                    if let Some(ir_buffer) = ir_cache.get(&ir_file_path_clone) {
+                                    let requested_size = message.reverb.roomsize.unwrap_or(2.0).clone();
+                                    if let Some(ir_buffer) = cache.get(&ir_file_path_clone) {
                                         let mut reverb = audio_context.create_convolver();
                                         reverb.set_buffer(ir_buffer);
                                         reverb.connect(&compressor);
                                         sampler.envelope.connect(&reverb);
                                     } else if let Ok(file) = File::open(&ir_file_path_clone) {
-                                        let ir_cache_clone = ir_cache.clone();
+                                        let ir_cache_clone = cache.clone();
                                         tokio::spawn(async move {
                                             let context = OfflineAudioContext::new(2, 400, 44100.0);
                                             let ir_buffer = context.decode_audio_data_sync(file).expect("IR OOOOPS");
@@ -349,7 +339,7 @@ fn create_ir_filepath(message: &WebAudioMessage) -> (Url, String, String) {
         .and_then(Iterator::last)
         .and_then(|name| if name.is_empty() { None } else { Some(name) })
         .unwrap_or("tmp.ben");
-    let file_path = format!("/Users/vasiliymilovidov/samples/{}", filename);
+    let file_path = format!("/Users/vasiliymilovidov/samples/{}{}", message.dirname,filename);
     let file_path_clone = file_path.clone();
     (url, file_path, file_path_clone)
 }
@@ -376,7 +366,7 @@ pub struct MessageFromJS {
     duration: f64,
     velocity: f32,
     delay: (Option<f32>, Option<f32>, Option<f32>),
-    reverb: (Option<f32>, Option<f32>, Option<String>, Option<String>),
+    reverb: (Option<f32>, Option<f32>, Option<f32>, Option<f32>, Option<f32>,Option<String>, Option<String>),
     orbit: usize,
     speed: f32,
     begin: f64,
@@ -429,9 +419,12 @@ pub async fn sendwebaudio(
             },
             reverb: ReverbMessage {
                 room: m.reverb.0,
-                size: m.reverb.1,
-                ir: m.reverb.2,
-                url: m.reverb.3,
+                roomsize: m.reverb.1,
+                roomfade: m.reverb.2,
+                roomlp: m.reverb.3,
+                roomdim: m.reverb.4,
+                ir: m.reverb.5,
+                url: m.reverb.6,
             },
             orbit: m.orbit,
             speed: m.speed,

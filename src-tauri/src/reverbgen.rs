@@ -1,4 +1,5 @@
 use rand_distr::{Distribution, Normal};
+use web_audio_api::AudioBuffer;
 
 fn apply_decay(input: &mut [f32], decay_factor: f32) {
     let len = input.len();
@@ -99,6 +100,17 @@ pub fn write_to_wav(filename: &str, data: &[f32]) {
         writer.write_sample(sample).unwrap();
     }
     writer.finalize().unwrap();
+}
+
+pub fn write_to_buffer(buffer: &mut AudioBuffer, data: &[f32]) {
+    let num_chans = buffer.number_of_channels();
+
+    for i in 0..num_chans {
+        let chan = buffer.get_channel_data_mut(i);
+        for j in 0..chan.len() {
+            chan[j] = data[j];
+        }
+    }
 }
 
 

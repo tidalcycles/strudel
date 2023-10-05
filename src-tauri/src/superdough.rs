@@ -19,7 +19,10 @@ pub struct DelayMessage {
 #[derive(Clone, Debug)]
 pub struct ReverbMessage {
     pub room: Option<f32>,
-    pub size: Option<f32>,
+    pub roomsize: Option<f32>,
+    pub roomfade: Option<f32>,
+    pub roomlp: Option<f32>,
+    pub roomdim: Option<f32>,
     pub ir: Option<String>,
     pub url: Option<String>,
 }

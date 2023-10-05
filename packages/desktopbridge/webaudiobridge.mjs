@@ -39,7 +39,10 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     delaytime,
     orbit = 1,
     room,
-    size,
+    roomfade,
+    roomlp,
+    roomdim,
+    roomsize,
     ir,
     i = 0,
     velocity = 1,
@@ -139,16 +142,16 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
 
   let url;
   if (ir !== undefined) {
-  if (getSound(ir).data.baseUrl !== undefined) {
-    baseUrl = getSound(ir).data.baseUrl;
-    if (baseUrl === './piano/') {
-      ir_path = 'https://strudel.tidalcycles.org/';
-    } else if (baseUrl === './EmuSP12/') {
-      ir_path = 'https://strudel.tidalcycles.org/';
-    } else {
-      ir_path = '';
+    if (getSound(ir).data.baseUrl !== undefined) {
+      baseUrl = getSound(ir).data.baseUrl;
+      if (baseUrl === './piano/') {
+        ir_path = 'https://strudel.tidalcycles.org/';
+      } else if (baseUrl === './EmuSP12/') {
+        ir_path = 'https://strudel.tidalcycles.org/';
+      } else {
+        ir_path = '';
+      }
     }
-  }
     let ir_samples = getSound(ir);
     if (Array.isArray(ir_samples)) {
       url =
@@ -156,7 +159,10 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
           ? ir_path + ir_samples[n % ir_samples.length].replace('./', '')
           : ir_samples[n % ir_samples.length].replace('./', '');
     } else if (typeof ir_samples === 'object') {
-  console.log('obk', Object.values(ir_samples.data.samples)[i & Object.values(ir_samples.data.samples).length].replace('./', ''))
+      console.log(
+        'obk',
+        Object.values(ir_samples.data.samples)[i & Object.values(ir_samples.data.samples).length].replace('./', ''),
+      );
       url =
         ir_path !== undefined
           ? ir_path +
@@ -180,7 +186,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
   const packages = {
     loop: [loop, loopBegin, loopEnd],
     delay: [delay, delaytime, delayfeedback],
-    reverb: [room, size, ir, url],
+    reverb: [room, roomsize, roomfade, roomlp, roomdim,ir, url],
     lpf: [cutoff, resonance],
     hpf: [hcutoff, hresonance],
     bpf: [bandf, bandq],
