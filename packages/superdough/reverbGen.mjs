@@ -48,6 +48,7 @@ reverbGen.generateReverb = function (params, callback) {
 
 /** Creates a canvas element showing a graph of the given data.
 
+
  @param {!Float32Array} data An array of numbers, or a Float32Array.
  @param {number} width Width in pixels of the canvas.
  @param {number} height Height in pixels of the canvas.
