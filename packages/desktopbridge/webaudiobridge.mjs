@@ -42,7 +42,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
     roomfade,
     roomlp,
     roomdim,
-    roomsize,
+    size,
     ir,
     i = 0,
     velocity = 1,
@@ -186,7 +186,7 @@ export const desktopAudio = async (value, deadline, hapDuration) => {
   const packages = {
     loop: [loop, loopBegin, loopEnd],
     delay: [delay, delaytime, delayfeedback],
-    reverb: [room, roomsize, roomfade, roomlp, roomdim,ir, url],
+    reverb: [room, size, roomfade, roomlp, roomdim,ir, url],
     lpf: [cutoff, resonance],
     hpf: [hcutoff, hresonance],
     bpf: [bandf, bandq],

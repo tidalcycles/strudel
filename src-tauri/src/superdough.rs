@@ -19,7 +19,7 @@ pub struct DelayMessage {
 #[derive(Clone, Debug)]
 pub struct ReverbMessage {
     pub room: Option<f32>,
-    pub roomsize: Option<f32>,
+    pub size: Option<f32>,
     pub roomfade: Option<f32>,
     pub roomlp: Option<f32>,
     pub roomdim: Option<f32>,
@@ -103,32 +103,21 @@ impl Delay {
 
 
 pub struct Reverb {
-    pub reverb: ConvolverNode,
-    pub room: f32,
-    pub size: f32,
+    pub convolver: ConvolverNode,
+    pub room: Option<f32>,
+    pub roomsize: Option<f32>,
+    pub roomfade: Option<f32>,
+    pub roomlp: Option<f32>,
+    pub roomdim: Option<f32>,
 }
 
 impl Reverb {
-    pub fn new(context: &AudioContext, compressor: &DynamicsCompressorNode, room: f32, size: f32, buffer: AudioBuffer) -> Self {
-        let new_length = buffer.sample_rate() * size;
-        let mut new_buffer = context.create_buffer(buffer.number_of_channels(), buffer.length(), buffer.sample_rate());
-
-        for ch in 0..buffer.number_of_channels() {
-            let old_data = buffer.get_channel_data(ch);
-            let new_data = new_buffer.get_channel_data_mut(ch);
-
-            for i in 0..new_length as usize {
-                new_data[i] = old_data[i];
-            }
-        }
-
-        let reverb = context.create_convolver();
-        reverb.connect(compressor);
-
-        Self { reverb, room, size }
+    pub(crate) fn new(context: &AudioContext, room: Option<f32>, roomsize: Option<f32>, roomfade: Option<f32>, roomlp: Option<f32>, roomdim: Option<f32>, compressor: &DynamicsCompressorNode) -> Self {
+        let mut convolver = context.create_convolver();
+        // convolver.set_buffer(ir.clone());
+        convolver.connect(compressor);
+        Self { convolver, room, roomsize, roomfade, roomlp, roomdim }
     }
-
-
 }
 
 pub struct Synth {
