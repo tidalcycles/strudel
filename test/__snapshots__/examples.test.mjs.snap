@@ -2959,6 +2959,15 @@ exports[`runs examples > example "never" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "noise" example index 0 1`] = `
+[
+  "[ (0/1 → 1/1) ⇝ 2/1 | s:white ]",
+  "[ 0/1 ⇜ (1/1 → 2/1) | s:white ]",
+  "[ (2/1 → 3/1) ⇝ 4/1 | s:pink ]",
+  "[ 2/1 ⇜ (3/1 → 4/1) | s:pink ]",
+]
+`;
+
 exports[`runs examples > example "note" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:c ]",
@@ -3654,16 +3663,107 @@ exports[`runs examples > example "room" example index 1 1`] = `
 ]
 `;
 
+exports[`runs examples > example "roomdim" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 roomlp:10000 roomdim:8000 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 roomlp:10000 roomdim:8000 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 roomlp:10000 roomdim:8000 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 roomlp:10000 roomdim:8000 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 roomlp:10000 roomdim:8000 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 roomlp:10000 roomdim:8000 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 roomlp:10000 roomdim:8000 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 roomlp:10000 roomdim:8000 ]",
+]
+`;
+
+exports[`runs examples > example "roomdim" example index 1 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 roomlp:5000 roomdim:400 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 roomlp:5000 roomdim:400 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 roomlp:5000 roomdim:400 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 roomlp:5000 roomdim:400 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 roomlp:5000 roomdim:400 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 roomlp:5000 roomdim:400 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 roomlp:5000 roomdim:400 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 roomlp:5000 roomdim:400 ]",
+]
+`;
+
+exports[`runs examples > example "roomfade" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 roomlp:10000 roomfade:0.5 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 roomlp:10000 roomfade:0.5 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 roomlp:10000 roomfade:0.5 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 roomlp:10000 roomfade:0.5 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 roomlp:10000 roomfade:0.5 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 roomlp:10000 roomfade:0.5 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 roomlp:10000 roomfade:0.5 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 roomlp:10000 roomfade:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "roomfade" example index 1 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 roomlp:5000 roomfade:4 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 roomlp:5000 roomfade:4 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 roomlp:5000 roomfade:4 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 roomlp:5000 roomfade:4 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 roomlp:5000 roomfade:4 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 roomlp:5000 roomfade:4 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 roomlp:5000 roomfade:4 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 roomlp:5000 roomfade:4 ]",
+]
+`;
+
+exports[`runs examples > example "roomlp" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 roomlp:10000 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 roomlp:10000 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 roomlp:10000 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 roomlp:10000 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 roomlp:10000 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 roomlp:10000 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 roomlp:10000 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 roomlp:10000 ]",
+]
+`;
+
+exports[`runs examples > example "roomlp" example index 1 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.5 roomlp:5000 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.5 roomlp:5000 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.5 roomlp:5000 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.5 roomlp:5000 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.5 roomlp:5000 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.5 roomlp:5000 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.5 roomlp:5000 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.5 roomlp:5000 ]",
+]
+`;
+
 exports[`runs examples > example "roomsize" example index 0 1`] = `
 [
-  "[ 0/1 → 1/2 | s:bd room:0.8 size:0 ]",
-  "[ 1/2 → 1/1 | s:sd room:0.8 size:0 ]",
-  "[ 1/1 → 3/2 | s:bd room:0.8 size:1 ]",
-  "[ 3/2 → 2/1 | s:sd room:0.8 size:1 ]",
-  "[ 2/1 → 5/2 | s:bd room:0.8 size:2 ]",
-  "[ 5/2 → 3/1 | s:sd room:0.8 size:2 ]",
-  "[ 3/1 → 7/2 | s:bd room:0.8 size:4 ]",
-  "[ 7/2 → 4/1 | s:sd room:0.8 size:4 ]",
+  "[ 0/1 → 1/2 | s:bd room:0.8 roomsize:1 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.8 roomsize:1 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.8 roomsize:1 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.8 roomsize:1 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.8 roomsize:1 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.8 roomsize:1 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.8 roomsize:1 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.8 roomsize:1 ]",
+]
+`;
+
+exports[`runs examples > example "roomsize" example index 1 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.8 roomsize:4 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.8 roomsize:4 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.8 roomsize:4 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.8 roomsize:4 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.8 roomsize:4 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.8 roomsize:4 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.8 roomsize:4 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.8 roomsize:4 ]",
 ]
 `;
 

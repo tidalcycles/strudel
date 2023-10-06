@@ -1,23 +1,30 @@
-if (typeof AudioContext !== 'undefined') {
-  AudioContext.prototype.impulseResponse = function (duration, channels = 1) {
-    const length = this.sampleRate * duration;
-    const impulse = this.createBuffer(channels, length, this.sampleRate);
-    const IR = impulse.getChannelData(0);
-    for (let i = 0; i < length; i++) IR[i] = (2 * Math.random() - 1) * Math.pow(1 - i / length, duration);
-    return impulse;
-  };
+import reverbGen from './reverbGen.mjs';
 
-  AudioContext.prototype.createReverb = function (duration) {
+if (typeof AudioContext !== 'undefined') {
+  AudioContext.prototype.generateReverb = reverbGen.generateReverb;
+  AudioContext.prototype.createReverb = function (duration, fade, lp, dim) {
     const convolver = this.createConvolver();
-    convolver.setDuration = (d) => {
-      convolver.buffer = this.impulseResponse(d);
-      convolver.duration = duration;
-      return convolver;
+    convolver.generate = (d, fade, lp, dim) => {
+      this.generateReverb(
+        {
+          audioContext: this,
+          sampleRate: 44100,
+          numChannels: 2,
+          decayTime: d,
+          fadeInTime: fade,
+          lpFreqStart: lp,
+          lpFreqEnd: dim,
+        },
+        (buffer) => {
+          convolver.buffer = buffer;
+        },
+      );
+      convolver.duration = d;
+      convolver.fade = fade;
+      convolver.lp = lp;
+      convolver.dim = dim;
     };
-    convolver.setDuration(duration);
+    convolver.generate(duration, fade, lp, dim);
     return convolver;
   };
 }
-
-// TODO: make the reverb more exciting
-// check out https://blog.gskinner.com/archives/2019/02/reverb-web-audio-api.html

@@ -43,6 +43,7 @@ export function transpiler(input, options = {}) {
             value: node.arguments[0].raw, // don't use value!
             min: node.arguments[1]?.value ?? 0,
             max: node.arguments[2]?.value ?? 1,
+            step: node.arguments[3]?.value,
           });
         return this.replace(widgetWithLocation(node));
       }
