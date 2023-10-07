@@ -116,7 +116,8 @@ let reverbs = {};
 
 let hasChanged = (now, before) => now !== undefined && now !== before;
 
-function getReverb(orbit, duration = 2, fade, lp, dim, ir) {
+function getReverb(orbit, duration, fade, lp, dim, ir) {
+  // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
     const reverb = ac.createReverb(duration, fade, lp, dim, ir);
