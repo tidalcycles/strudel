@@ -114,6 +114,8 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
 
 let reverbs = {};
 
+let hasChanged = (now, before) => now !== undefined && now !== before;
+
 function getReverb(orbit, duration = 2, fade, lp, dim, ir) {
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
@@ -123,13 +125,17 @@ function getReverb(orbit, duration = 2, fade, lp, dim, ir) {
   }
 
   if (
-    reverbs[orbit].duration !== duration ||
-    reverbs[orbit].fade !== fade ||
-    reverbs[orbit].ir !== lp ||
-    reverbs[orbit].dim !== dim ||
-    reverbs[orbit].ir !== ir
+    hasChanged(duration, reverbs[orbit].duration) ||
+    hasChanged(fade, reverbs[orbit].fade) ||
+    hasChanged(lp, reverbs[orbit].lp) ||
+    hasChanged(dim, reverbs[orbit].dim)
   ) {
-    reverbs[orbit].generate(duration, fade, lp, dim, ir);
+    // only regenerate when something has changed
+    // avoids endless regeneration on things like
+    // stack(s("a"), s("b").rsize(8)).room(.5)
+    // this only works when args may stay undefined until here
+    // setting default values breaks this
+    reverbs[orbit].generate(duration, fade, lp, dim);
   }
 
   if (reverbs[orbit].ir !== ir) {
@@ -235,10 +241,10 @@ export const superdough = async (value, deadline, hapDuration) => {
     delaytime = 0.25,
     orbit = 1,
     room,
-    roomfade = 0.1,
-    roomlp = 15000,
-    roomdim = 1000,
-    roomsize = 2,
+    roomfade,
+    roomlp,
+    roomdim,
+    roomsize,
     ir,
     i = 0,
     velocity = 1,

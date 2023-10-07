@@ -19,10 +19,9 @@ if (typeof AudioContext !== 'undefined') {
 
   AudioContext.prototype.createReverb = function (duration, fade, lp, dim, ir) {
     const convolver = this.createConvolver();
-    convolver.generate = (d, fade, lp, dim, buf) => {
+    convolver.generate = (d = 2, fade = 0.1, lp = 15000, dim = 1000, buf) => {
       if (buf) {
         convolver.buffer = this.adjustLength(d, buf);
-        return convolver;
       } else {
         this.generateReverb(
           {
@@ -42,7 +41,6 @@ if (typeof AudioContext !== 'undefined') {
         convolver.fade = fade;
         convolver.lp = lp;
         convolver.dim = dim;
-        return convolver;
       }
     };
     convolver.setIR = (d, fade, lp, dim, buf) => {
