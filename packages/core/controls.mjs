@@ -86,6 +86,7 @@ const generic_params = [
    *
    */
   ['gain'],
+  ['postgain'],
   /**
    * Like {@link gain}, but linear.
    *
@@ -1051,6 +1052,11 @@ const generic_params = [
    *
    */
   ['shape'],
+  [['compressor', 'compressorRatio', 'compressorKnee', 'compressorAttack', 'compressorRelease']],
+  ['compressorKnee'],
+  ['compressorRatio'],
+  ['compressorAttack'],
+  ['compressorRelease'],
   /**
    * Changes the speed of sample playback, i.e. a cheap way of changing pitch.
    *
