@@ -150,6 +150,9 @@ export const scale = register('scale', function (scale, pat) {
   return pat.withHap((hap) => {
     const isObject = typeof hap.value === 'object';
     let note = isObject ? hap.value.n : hap.value;
+    if (isObject) {
+      delete hap.value.n; // remove n so it won't cause trouble
+    }
     const asNumber = Number(note);
     if (!isNaN(asNumber)) {
       // TODO: worth keeping for supporting ':' in (non-mininotation) strings?
