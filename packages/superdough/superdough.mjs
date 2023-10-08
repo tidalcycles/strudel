@@ -9,7 +9,7 @@ import './reverb.mjs';
 import './vowel.mjs';
 import { clamp } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
-import { createFilter, gainNode } from './helpers.mjs';
+import { createFilter, gainNode, getCompressor } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 
@@ -192,6 +192,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     bank,
     source,
     gain = 0.8,
+    postgain = 1,
     // filters
     ftype = '12db',
     fanchor = 0.5,
@@ -237,6 +238,11 @@ export const superdough = async (value, deadline, hapDuration) => {
     velocity = 1,
     analyze, // analyser wet
     fft = 8, // fftSize 0 - 10
+    compressor: compressorThreshold,
+    compressorRatio,
+    compressorKnee,
+    compressorAttack,
+    compressorRelease,
   } = value;
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
@@ -351,6 +357,11 @@ export const superdough = async (value, deadline, hapDuration) => {
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
   shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
 
+  compressorThreshold !== undefined &&
+    chain.push(
+      getCompressor(ac, compressorThreshold, compressorRatio, compressorKnee, compressorAttack, compressorRelease),
+    );
+
   // panning
   if (pan !== undefined) {
     const panner = ac.createStereoPanner();
@@ -359,7 +370,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
 
   // last gain
-  const post = gainNode(1);
+  const post = gainNode(postgain);
   chain.push(post);
   post.connect(getDestination());
 
