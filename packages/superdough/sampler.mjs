@@ -64,6 +64,7 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resol
 
 export const loadBuffer = (url, ac, s, n = 0) => {
   const label = s ? `sound "${s}:${n}"` : 'sample';
+  url = url.replace('#', '%23');
   if (!loadCache[url]) {
     logger(`[sampler] load ${label}..`, 'load-sample', { url });
     const timestamp = Date.now();
