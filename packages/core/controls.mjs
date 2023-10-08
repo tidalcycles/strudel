@@ -86,6 +86,15 @@ const generic_params = [
    *
    */
   ['gain'],
+  /**
+   * Gain applied after all effects have been processed.
+   *
+   * @name postgain
+   * @example
+   * s("bd sd,hh*4")
+   * .compressor("-20:20:10:.002:.02").postgain(1.5)
+   *
+   */
   ['postgain'],
   /**
    * Like {@link gain}, but linear.
@@ -1052,6 +1061,16 @@ const generic_params = [
    *
    */
   ['shape'],
+  /**
+   * Dynamics Compressor. The params are `compressor("threshold:ratio:knee:attack:release")`
+   * More info [here](https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode?retiredLocale=de#instance_properties)
+   *
+   * @name compressor
+   * @example
+   * s("bd sd,hh*4")
+   * .compressor("-20:20:10:.002:.02")
+   *
+   */
   [['compressor', 'compressorRatio', 'compressorKnee', 'compressorAttack', 'compressorRelease']],
   ['compressorKnee'],
   ['compressorRatio'],
