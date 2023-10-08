@@ -1,4 +1,5 @@
 import reverbGen from './reverbGen.mjs';
+import { getAudioContext } from './superdough.mjs';
 
 if (typeof AudioContext !== 'undefined') {
   AudioContext.prototype.generateReverb = reverbGen.generateReverb;
@@ -8,7 +9,7 @@ if (typeof AudioContext !== 'undefined') {
       this.generateReverb(
         {
           audioContext: this,
-          sampleRate: 44100,
+          sampleRate: getAudioContext().sampleRate,
           numChannels: 2,
           decayTime: d,
           fadeInTime: fade,
