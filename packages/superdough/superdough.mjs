@@ -9,7 +9,7 @@ import './reverb.mjs';
 import './vowel.mjs';
 import { clamp } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
-import { createFilter, gainNode } from './helpers.mjs';
+import { createFilter, gainNode, getCompressor } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
@@ -124,26 +124,20 @@ function getReverb(orbit, duration, fade, lp, dim, ir) {
     reverb.connect(getDestination());
     reverbs[orbit] = reverb;
   }
-
   if (
     hasChanged(duration, reverbs[orbit].duration) ||
     hasChanged(fade, reverbs[orbit].fade) ||
     hasChanged(lp, reverbs[orbit].lp) ||
-    hasChanged(dim, reverbs[orbit].dim)
+    hasChanged(dim, reverbs[orbit].dim) ||
+    reverbs[orbit].ir !== ir
   ) {
     // only regenerate when something has changed
     // avoids endless regeneration on things like
     // stack(s("a"), s("b").rsize(8)).room(.5)
     // this only works when args may stay undefined until here
     // setting default values breaks this
-    reverbs[orbit].generate(duration, fade, lp, dim);
+    reverbs[orbit].generate(duration, fade, lp, dim, ir);
   }
-
-  if (reverbs[orbit].ir !== ir) {
-    reverbs[orbit] = reverbs[orbit].setIR(duration, fade, lp, dim, ir);
-    reverbs[orbit].ir = ir;
-  }
-
   return reverbs[orbit];
 }
 
@@ -204,6 +198,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     bank,
     source,
     gain = 0.8,
+    postgain = 1,
     // filters
     ftype = '12db',
     fanchor = 0.5,
@@ -251,6 +246,11 @@ export const superdough = async (value, deadline, hapDuration) => {
     velocity = 1,
     analyze, // analyser wet
     fft = 8, // fftSize 0 - 10
+    compressor: compressorThreshold,
+    compressorRatio,
+    compressorKnee,
+    compressorAttack,
+    compressorRelease,
   } = value;
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
@@ -366,6 +366,11 @@ export const superdough = async (value, deadline, hapDuration) => {
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
   shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
 
+  compressorThreshold !== undefined &&
+    chain.push(
+      getCompressor(ac, compressorThreshold, compressorRatio, compressorKnee, compressorAttack, compressorRelease),
+    );
+
   // panning
   if (pan !== undefined) {
     const panner = ac.createStereoPanner();
@@ -374,7 +379,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
 
   // last gain
-  const post = gainNode(1);
+  const post = gainNode(postgain);
   chain.push(post);
   post.connect(getDestination());
 
@@ -385,20 +390,20 @@ export const superdough = async (value, deadline, hapDuration) => {
     delaySend = effectSend(post, delyNode, delay);
   }
   // reverb
-  let buffer;
-  let url;
-  if (ir !== undefined) {
-    let sample = getSound(ir);
-    if (Array.isArray(sample)) {
-      url = sample.data.samples[i % sample.data.samples.length];
-    } else if (typeof sample === 'object') {
-      url = Object.values(sample.data.samples)[i & Object.values(sample.data.samples).length];
-    }
-    buffer = await loadBuffer(url, ac, ir, 0);
-  }
   let reverbSend;
-  if (room > 0 && roomsize > 0) {
-    const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim, buffer);
+  if (room > 0) {
+    let roomIR;
+    if (ir !== undefined) {
+      let url;
+      let sample = getSound(ir);
+      if (Array.isArray(sample)) {
+        url = sample.data.samples[i % sample.data.samples.length];
+      } else if (typeof sample === 'object') {
+        url = Object.values(sample.data.samples)[i & Object.values(sample.data.samples).length];
+      }
+      roomIR = await loadBuffer(url, ac, ir, 0);
+    }
+    const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim, roomIR);
     reverbSend = effectSend(post, reverbNode, room);
   }
 

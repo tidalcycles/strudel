@@ -78,6 +78,17 @@ export const getParamADSR = (param, attack, decay, sustain, release, min, max, b
   param.linearRampToValueAtTime(min, end + Math.max(release, 0.1));
 };
 
+export function getCompressor(ac, threshold, ratio, knee, attack, release) {
+  const options = {
+    threshold: threshold ?? -3,
+    ratio: ratio ?? 10,
+    knee: knee ?? 10,
+    attack: attack ?? 0.005,
+    release: release ?? 0.05,
+  };
+  return new DynamicsCompressorNode(ac, options);
+}
+
 export function createFilter(
   context,
   type,

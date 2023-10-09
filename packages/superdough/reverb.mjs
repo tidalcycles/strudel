@@ -1,8 +1,6 @@
 import reverbGen from './reverbGen.mjs';
 
 if (typeof AudioContext !== 'undefined') {
-  AudioContext.prototype.generateReverb = reverbGen.generateReverb;
-
   AudioContext.prototype.adjustLength = function (duration, buffer) {
     const newLength = buffer.sampleRate * duration;
     const newBuffer = this.createBuffer(buffer.numberOfChannels, buffer.length, buffer.sampleRate);
@@ -19,14 +17,18 @@ if (typeof AudioContext !== 'undefined') {
 
   AudioContext.prototype.createReverb = function (duration, fade, lp, dim, ir) {
     const convolver = this.createConvolver();
-    convolver.generate = (d = 2, fade = 0.1, lp = 15000, dim = 1000, buf) => {
-      if (buf) {
-        convolver.buffer = this.adjustLength(d, buf);
+    convolver.generate = (d = 2, fade = 0.1, lp = 15000, dim = 1000, ir) => {
+      convolver.duration = d;
+      convolver.fade = fade;
+      convolver.lp = lp;
+      convolver.dim = dim;
+      convolver.ir = ir;
+      if (ir) {
+        convolver.buffer = this.adjustLength(d, ir);
       } else {
-        this.generateReverb(
+        reverbGen.generateReverb(
           {
             audioContext: this,
-            sampleRate: 44100,
             numChannels: 2,
             decayTime: d,
             fadeInTime: fade,
@@ -37,19 +39,7 @@ if (typeof AudioContext !== 'undefined') {
             convolver.buffer = buffer;
           },
         );
-        convolver.duration = d;
-        convolver.fade = fade;
-        convolver.lp = lp;
-        convolver.dim = dim;
       }
-    };
-    convolver.setIR = (d, fade, lp, dim, buf) => {
-      if (buf) {
-        convolver.buffer = this.adjustLength(d, buf);
-      } else {
-        convolver.generate(d, fade, lp, dim, buf);
-      }
-      return convolver;
     };
     convolver.generate(duration, fade, lp, dim, ir);
     return convolver;
