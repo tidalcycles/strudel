@@ -399,7 +399,7 @@ export const superdough = async (value, deadline, hapDuration) => {
       if (Array.isArray(sample)) {
         url = sample.data.samples[i % sample.data.samples.length];
       } else if (typeof sample === 'object') {
-        url = Object.values(sample.data.samples)[i & Object.values(sample.data.samples).length];
+        url = Object.values(sample.data.samples).flat()[i % Object.values(sample.data.samples).length];
       }
       roomIR = await loadBuffer(url, ac, ir, 0);
     }
