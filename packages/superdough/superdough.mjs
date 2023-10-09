@@ -382,7 +382,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
   // reverb
   let reverbSend;
-  if (room > 0 && roomsize > 0) {
+  if (room > 0) {
     const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim);
     reverbSend = effectSend(post, reverbNode, room);
   }
