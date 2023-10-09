@@ -1031,6 +1031,15 @@ const generic_params = [
    */
   ['roomfade', 'rfade'],
   /**
+   * Sets the sample to use as an impulse response for the reverb. * * @name iresponse
+   * @param {string | Pattern} sample to use as an impulse response
+   * @synonyms ir
+   * @example
+   * s("bd sd").room(.8).ir("<shaker_large:0 shaker_large:2>")
+   *
+   */
+  [['ir', 'i'], 'iresponse'],
+  /**
    * Sets the room size of the reverb, see {@link room}.
    * When this property is changed, the reverb will be recaculated, so only change this sparsely..
    *

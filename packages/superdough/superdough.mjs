@@ -12,14 +12,18 @@ import workletsUrl from './worklets.mjs?url';
 import { createFilter, gainNode, getCompressor } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
+import { loadBuffer } from './sampler.mjs';
 
 export const soundMap = map();
+
 export function registerSound(key, onTrigger, data = {}) {
   soundMap.setKey(key, { onTrigger, data });
 }
+
 export function getSound(s) {
   return soundMap.get()[s];
 }
+
 export const resetLoadedSounds = () => soundMap.set({});
 
 let audioContext;
@@ -46,6 +50,7 @@ export const panic = () => {
 };
 
 let workletsLoading;
+
 function loadWorklets() {
   if (workletsLoading) {
     return workletsLoading;
@@ -89,6 +94,7 @@ export async function initAudioOnFirstClick(options) {
 
 let delays = {};
 const maxfeedback = 0.98;
+
 function getDelay(orbit, delaytime, delayfeedback, t) {
   if (delayfeedback > maxfeedback) {
     //logger(`delayfeedback was clamped to ${maxfeedback} to save your ears`);
@@ -110,33 +116,33 @@ let reverbs = {};
 
 let hasChanged = (now, before) => now !== undefined && now !== before;
 
-function getReverb(orbit, duration, fade, lp, dim) {
+function getReverb(orbit, duration, fade, lp, dim, ir) {
   // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
-    const reverb = ac.createReverb(duration, fade, lp, dim);
+    const reverb = ac.createReverb(duration, fade, lp, dim, ir);
     reverb.connect(getDestination());
     reverbs[orbit] = reverb;
   }
-
   if (
     hasChanged(duration, reverbs[orbit].duration) ||
     hasChanged(fade, reverbs[orbit].fade) ||
     hasChanged(lp, reverbs[orbit].lp) ||
-    hasChanged(dim, reverbs[orbit].dim)
+    hasChanged(dim, reverbs[orbit].dim) ||
+    reverbs[orbit].ir !== ir
   ) {
     // only regenerate when something has changed
     // avoids endless regeneration on things like
     // stack(s("a"), s("b").rsize(8)).room(.5)
     // this only works when args may stay undefined until here
     // setting default values breaks this
-    reverbs[orbit].generate(duration, fade, lp, dim);
+    reverbs[orbit].generate(duration, fade, lp, dim, ir);
   }
-
   return reverbs[orbit];
 }
 
 export let analyser, analyserData /* s = {} */;
+
 export function getAnalyser(/* orbit,  */ fftSize = 2048) {
   if (!analyser /*s [orbit] */) {
     const analyserNode = getAudioContext().createAnalyser();
@@ -235,6 +241,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     roomlp,
     roomdim,
     roomsize,
+    ir,
+    i = 0,
     velocity = 1,
     analyze, // analyser wet
     fft = 8, // fftSize 0 - 10
@@ -271,6 +279,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     // this can be used for things like speed(0) in the sampler
     return;
   }
+
   if (ac.currentTime > t) {
     logger('[webaudio] skip hap: still loading', ac.currentTime - t);
     return;
@@ -383,7 +392,18 @@ export const superdough = async (value, deadline, hapDuration) => {
   // reverb
   let reverbSend;
   if (room > 0) {
-    const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim);
+    let roomIR;
+    if (ir !== undefined) {
+      let url;
+      let sample = getSound(ir);
+      if (Array.isArray(sample)) {
+        url = sample.data.samples[i % sample.data.samples.length];
+      } else if (typeof sample === 'object') {
+        url = Object.values(sample.data.samples).flat()[i % Object.values(sample.data.samples).length];
+      }
+      roomIR = await loadBuffer(url, ac, ir, 0);
+    }
+    const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim, roomIR);
     reverbSend = effectSend(post, reverbNode, room);
   }
 

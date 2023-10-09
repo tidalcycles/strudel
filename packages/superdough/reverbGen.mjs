@@ -16,11 +16,11 @@ var reverbGen = {};
 
 /** Generates a reverb impulse response.
 
-    @param {!Object} params TODO: Document the properties.
-    @param {!function(!AudioBuffer)} callback Function to call when
-      the impulse response has been generated. The impulse response
-      is passed to this function as its parameter. May be called
-      immediately within the current execution context, or later. */
+ @param {!Object} params TODO: Document the properties.
+ @param {!function(!AudioBuffer)} callback Function to call when
+  the impulse response has been generated. The impulse response
+  is passed to this function as its parameter. May be called
+  immediately within the current execution context, or later. */
 reverbGen.generateReverb = function (params, callback) {
   var audioContext = params.audioContext || new AudioContext();
   var sampleRate = audioContext.sampleRate;
@@ -48,12 +48,13 @@ reverbGen.generateReverb = function (params, callback) {
 
 /** Creates a canvas element showing a graph of the given data.
 
-    @param {!Float32Array} data An array of numbers, or a Float32Array.
-    @param {number} width Width in pixels of the canvas.
-    @param {number} height Height in pixels of the canvas.
-    @param {number} min Minimum value of data for the graph (lower edge).
-    @param {number} max Maximum value of data in the graph (upper edge).
-    @return {!CanvasElement} The generated canvas element. */
+
+ @param {!Float32Array} data An array of numbers, or a Float32Array.
+ @param {number} width Width in pixels of the canvas.
+ @param {number} height Height in pixels of the canvas.
+ @param {number} min Minimum value of data for the graph (lower edge).
+ @param {number} max Maximum value of data in the graph (upper edge).
+ @return {!CanvasElement} The generated canvas element. */
 reverbGen.generateGraph = function (data, width, height, min, max) {
   var canvas = document.createElement('canvas');
   canvas.width = width;
@@ -72,13 +73,13 @@ reverbGen.generateGraph = function (data, width, height, min, max) {
 
 /** Applies a constantly changing lowpass filter to the given sound.
 
-    @private
-    @param {!AudioBuffer} input
-    @param {number} lpFreqStart
-    @param {number} lpFreqEnd
-    @param {number} lpFreqEndAt
-    @param {!function(!AudioBuffer)} callback May be called
-    immediately within the current execution context, or later.*/
+ @private
+ @param {!AudioBuffer} input
+ @param {number} lpFreqStart
+ @param {number} lpFreqEnd
+ @param {number} lpFreqEndAt
+ @param {!function(!AudioBuffer)} callback May be called
+  immediately within the current execution context, or later.*/
 var applyGradualLowpass = function (input, lpFreqStart, lpFreqEnd, lpFreqEndAt, callback) {
   if (lpFreqStart == 0) {
     callback(input);
@@ -110,8 +111,8 @@ var applyGradualLowpass = function (input, lpFreqStart, lpFreqEnd, lpFreqEndAt, 
 };
 
 /** @private
-    @param {!AudioBuffer} buffer
-    @return {!Array.<!Float32Array>} An array containing the Float32Array of each channel's samples. */
+ @param {!AudioBuffer} buffer
+ @return {!Array.<!Float32Array>} An array containing the Float32Array of each channel's samples. */
 var getAllChannelData = function (buffer) {
   var channels = [];
   for (var i = 0; i < buffer.numberOfChannels; i++) {
@@ -121,7 +122,7 @@ var getAllChannelData = function (buffer) {
 };
 
 /** @private
-    @return {number} A random number from -1 to 1. */
+ @return {number} A random number from -1 to 1. */
 var randomSample = function () {
   return Math.random() * 2 - 1;
 };
