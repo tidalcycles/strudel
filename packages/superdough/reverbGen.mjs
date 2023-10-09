@@ -23,7 +23,7 @@ var reverbGen = {};
       immediately within the current execution context, or later. */
 reverbGen.generateReverb = function (params, callback) {
   var audioContext = params.audioContext || new AudioContext();
-  var sampleRate = params.sampleRate || 44100;
+  var sampleRate = audioContext.sampleRate;
   var numChannels = params.numChannels || 2;
   // params.decayTime is the -60dB fade time. We let it go 50% longer to get to -90dB.
   var totalTime = params.decayTime * 1.5;
