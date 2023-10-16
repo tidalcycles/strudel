@@ -7,6 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import { cleanupDraw, cleanupUi, controls, evalScope, getDrawContext, logger } from '@strudel.cycles/core';
 import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
 import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
+import { webaudioDesktopOutput } from '@strudel/desktopbridge';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import React, { createContext, useCallback, useEffect, useState, useMemo } from 'react';
@@ -134,7 +135,7 @@ export function Repl({ embedded = false }) {
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
       initialCode: '// LOADING...',
-      defaultOutput: webaudioOutput,
+      defaultOutput: isTauri() ? webaudioDesktopOutput : webaudioOutput,
       getTime,
       beforeEval: async () => {
         setPending(true);
