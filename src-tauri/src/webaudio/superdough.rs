@@ -1,5 +1,8 @@
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
+use std::path::Path;
+use reqwest::Url;
+use tokio::fs;
+use tokio::io::AsyncWriteExt;
 use web_audio_api::{
     context::{AudioContext, BaseAudioContext},
     AudioBuffer,
@@ -74,6 +77,8 @@ pub trait WebAudioInstrument {
     fn set_adsr(&mut self, t: f64, adsr: &ADSRMessage, velocity: f32, duration: f64);
     fn play(&mut self, t: f64, message: &WebAudioMessage, duration: f64);
     fn set_filters(&mut self, context: &mut AudioContext, message: &WebAudioMessage) -> Vec<BiquadFilterNode>;
+    fn connect_delay(&mut self, delay: &DelayNode);
+    fn connect_reverb(&mut self, reverb: &ConvolverNode);
 }
 
 
@@ -114,7 +119,6 @@ pub struct Reverb {
 impl Reverb {
     pub(crate) fn new(context: &AudioContext, room: Option<f32>, roomsize: Option<f32>, roomfade: Option<f32>, roomlp: Option<f32>, roomdim: Option<f32>, compressor: &DynamicsCompressorNode) -> Self {
         let mut convolver = context.create_convolver();
-        // convolver.set_buffer(ir.clone());
         convolver.connect(compressor);
         Self { convolver, room, roomsize, roomfade, roomlp, roomdim }
     }
@@ -197,6 +201,14 @@ impl WebAudioInstrument for Synth {
         };
 
         filters
+    }
+
+    fn connect_delay(&mut self, delay: &DelayNode) {
+        self.envelope.connect(delay);
+    }
+
+    fn connect_reverb(&mut self, reverb: &ConvolverNode) {
+        self.envelope.connect(reverb);
     }
 }
 
@@ -283,6 +295,18 @@ impl WebAudioInstrument for Sampler {
         };
         filters
     }
+
+    fn connect_delay(&mut self, delay: &DelayNode) {
+        self.envelope.connect(delay);
+    }
+
+    fn connect_reverb(&mut self, reverb: &ConvolverNode) {
+        self.envelope.connect(reverb);
+    }
+}
+
+pub fn is_filter_envelope_on(adsr: &FilterADSRMessage) -> bool {
+    adsr.env.is_some() || adsr.attack.is_some() || adsr.decay.is_some() || adsr.sustain.is_some() || adsr.release.is_some()
 }
 
 pub fn apply_filter_adsr(filter_node: &BiquadFilterNode, message: &WebAudioMessage, filter: &BiquadFilterType, now: f64) {
@@ -312,4 +336,58 @@ pub fn apply_filter_adsr(filter_node: &BiquadFilterNode, message: &WebAudioMessa
         .linear_ramp_to_value_at_time(sustain_level, now + env.attack.unwrap_or(0.01) + env.decay.unwrap_or(0.01))
         // .set_value_at_time(sustain_level, now + message.duration)
         .linear_ramp_to_value_at_time(min, now + message.duration + env.release.unwrap_or(0.01));
+}
+
+pub fn apply_delay<T: WebAudioInstrument>(audio_context: &mut AudioContext, delays: &mut HashMap<usize, Delay>, compressor: &DynamicsCompressorNode, message: &WebAudioMessage, t: f64, instrument: &mut T) {
+    delays.entry(message.orbit).or_insert({
+        Delay::new(&audio_context, &compressor)
+    });
+    let delay = delays.get(&message.orbit).unwrap();
+    instrument.connect_delay(&delay.delay);
+    delay.delay.delay_time().set_value(message.delay.delay_time.unwrap_or(0.25));
+    delay.feedback.gain().set_value(message.delay.feedback.unwrap_or(0.5));
+    delay.pre_gain.gain().set_value_at_time(message.delay.wet.unwrap_or(0.25), t + message.delay.delay_time.unwrap_or(0.5) as f64);
+}
+
+pub fn apply_delay_synth(audio_context: &mut AudioContext, delays: &mut HashMap<usize, Delay>, compressor: &DynamicsCompressorNode, message: &WebAudioMessage, t: f64, synth: &mut Synth) {
+    delays.entry(message.orbit).or_insert({
+        Delay::new(&audio_context, &compressor)
+    });
+    let delay = delays.get(&message.orbit).unwrap();
+    synth.envelope.connect(&delay.input);
+    delay.delay.delay_time().set_value(message.delay.delay_time.unwrap_or(0.25));
+    delay.feedback.gain().set_value(message.delay.feedback.unwrap_or(0.5));
+    delay.pre_gain.gain().set_value_at_time(message.delay.wet.unwrap_or(0.25), t + message.delay.delay_time.unwrap_or(0.5) as f64);
+}
+
+pub async fn download_file(ir_url: Url, ir_file_path: &String) {
+    let response = reqwest::get(ir_url)
+        .await
+        .unwrap_or_else(|_| panic!("Failed to send GET request"));
+    let bytes = response.bytes().await.unwrap();
+    let path = Path::new(&ir_file_path);
+    let mut file = create_file_and_dirs(path).await;
+    file.write_all(&bytes)
+        .await
+        .unwrap_or_else(|_| panic!("Failed to write to file"));
+}
+
+pub fn create_filepath_generic(url_string: &str, dirname: &str) -> (Url, String, String) {
+    let url = Url::parse(url_string).expect("failed to parse url");
+    let filename = url.path_segments()
+        .and_then(Iterator::last)
+        .and_then(|name| if name.is_empty() { None } else { Some(name) })
+        .unwrap_or("tmp.ben");
+    let file_path = format!("/Users/vasiliymilovidov/samples/{}{}", dirname, filename);
+    let file_path_clone = file_path.clone();
+
+    (url, file_path, file_path_clone)
+}
+
+pub async fn create_file_and_dirs(path: &Path) -> fs::File {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).await.unwrap();
+    }
+    let file = fs::File::create(path).await.unwrap();
+    file
 }

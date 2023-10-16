@@ -7,9 +7,7 @@ use std::{
 };
 use std::collections::HashMap;
 use mini_moka::sync::Cache;
-use reqwest::Url;
 use tokio::{
-    fs,
     sync::{mpsc, Mutex},
     io::AsyncWriteExt,
 };
@@ -21,9 +19,7 @@ use web_audio_api::{
     node::AudioNode,
 };
 use web_audio_api::context::OfflineAudioContext;
-use web_audio_api::node::{DynamicsCompressorNode};
-use crate::reverbgen::{create_impulse_response, generate_coefficients_lp, write_to_buffer};
-use crate::superdough::{ADSRMessage, apply_filter_adsr, BPFMessage, DelayMessage, Delay, FilterADSRMessage, HPFMessage, LoopMessage, LPFMessage, Sampler, Synth, WebAudioInstrument, ReverbMessage, Reverb};
+use crate::webaudio::*;
 
 #[derive(Debug, Clone)]
 pub struct WebAudioMessage {
@@ -145,14 +141,10 @@ pub fn init(
                             synth.set_waveform(&message.waveform);
                             let filters = synth.set_filters(&mut audio_context, &message);
                             if message.delay.wet.is_some() {
-                                delays.entry(message.orbit).or_insert({
-                                    Delay::new(&audio_context, &compressor)
-                                });
-                                let delay = delays.get(&message.orbit).unwrap();
-                                synth.envelope.connect(&delay.input);
-                                delay.delay.delay_time().set_value(message.delay.delay_time.unwrap_or(0.25));
-                                delay.feedback.gain().set_value(message.delay.feedback.unwrap_or(0.5));
-                                delay.pre_gain.gain().set_value_at_time(message.delay.wet.unwrap_or(0.25), t + message.delay.delay_time.unwrap_or(0.5) as f64);
+                                apply_delay(&mut audio_context, &mut delays, &compressor, &message, t, &mut synth);
+                            }
+                            if message.reverb.room.is_some() && message.reverb.room.unwrap() > 0.0 {
+                                apply_reverb(&audio_context, &compressor, &ir_cache, &message, &mut synth, &mut reverbs);
                             }
                             synth.envelope.connect(&compressor);
                             synth.play(t, &message, message.adsr.release.unwrap_or(0.001));
@@ -165,10 +157,12 @@ pub fn init(
                         }
                         _ => {
                             let t = audio_context.current_time();
-                            // CREATE FILEPATHS
-                            let (url, file_path, file_path_clone) = create_filepath(&message);
 
-                            // DOWNLOAD FILE IS IT DOESN'T EXIST
+                            // Create filepaths
+                            let message_url = &message.sampleurl.clone();
+                            let (url, file_path, file_path_clone) = create_filepath_generic(message_url, &message.dirname);
+
+                            // Download file if it doesn't exist
                             tokio::spawn(async move {
                                 if tokio::fs::metadata(&file_path.clone()).await.is_err() {
                                     let response = reqwest::get(url)
@@ -184,12 +178,12 @@ pub fn init(
                                 }
                             });
 
-                            // IF BUFFER IS CACHED - PLAY IT
+                            // Play the buffer, if exists
                             if let Some(audio_buffer) = cache.get(&file_path_clone) {
                                 let audio_buffer_duration = audio_buffer.duration();
                                 let mut sampler = Sampler::new(&mut audio_context, audio_buffer);
 
-                                // PLAYBACK SPEED
+                                // Playback speed
                                 match message.unit {
                                     Some(_) => {
                                         sampler.sample.playback_rate().set_value(message.speed * audio_buffer_duration as f32 * 1.0);
@@ -202,7 +196,7 @@ pub fn init(
                                 // ADSR
                                 sampler.set_adsr(t, &message.adsr, message.velocity, message.duration);
 
-                                // FILTERS
+                                // Filters
                                 let filters = sampler.set_filters(&mut audio_context, &message);
                                 if is_filter_envelope_on(&message.lpenv) || is_filter_envelope_on(&message.hpenv) || is_filter_envelope_on(&message.bpenv) {
                                     for f in &filters {
@@ -210,25 +204,26 @@ pub fn init(
                                     }
                                 }
 
-                                // DELAY
+                                // Delay
                                 if message.delay.wet.is_some() {
                                     apply_delay(&mut audio_context, &mut delays, &compressor, &message, t, &mut sampler);
                                 };
 
+                                // Reverb
                                 if message.reverb.room.is_some() && message.reverb.room.unwrap() > 0.0 {
                                     apply_reverb(&audio_context, &compressor, &ir_cache, &message, &mut sampler, &mut reverbs);
                                 }
 
-                                // CONNECT SAMPLER TO OUTPUT AND PLAY
+                                // Connect to output
                                 sampler.envelope.connect(&compressor);
                                 sampler.play(t, &message, message.adsr.release.unwrap_or(0.001));
 
-                                // IF FILE EXIST - DECODE IT
+                                // Decode file, if it exists
                             } else if let Ok(file) = File::open(&file_path_clone) {
                                 let cache_clone = cache.clone();
                                 tokio::spawn(async move {
                                     let context = OfflineAudioContext::new(2, 88200, 44100.0);
-                                    let audio_buffer = context.decode_audio_data_sync(file).expect("OOOPS!");
+                                    let audio_buffer = context.decode_audio_data_sync(file).expect("Failed to decode file");
                                     cache_clone.insert(file_path_clone.clone(), audio_buffer);
                                 });
                             }
@@ -239,200 +234,6 @@ pub fn init(
             }
         }
     });
-}
-
-fn apply_delay(audio_context: &mut AudioContext, delays: &mut HashMap<usize, Delay>, compressor: &DynamicsCompressorNode, message: &WebAudioMessage, t: f64, mut sampler: &mut Sampler) {
-    delays.entry(message.orbit).or_insert({
-        Delay::new(&audio_context, &compressor)
-    });
-    let delay = delays.get(&message.orbit).unwrap();
-    sampler.envelope.connect(&delay.input);
-    delay.delay.delay_time().set_value(message.delay.delay_time.unwrap_or(0.25));
-    delay.feedback.gain().set_value(message.delay.feedback.unwrap_or(0.5));
-    delay.pre_gain.gain().set_value_at_time(message.delay.wet.unwrap_or(0.25), t + message.delay.delay_time.unwrap_or(0.5) as f64);
-}
-
-fn apply_reverb(mut audio_context: &AudioContext, compressor: &DynamicsCompressorNode, cache: &Cache<String, AudioBuffer>, message: &WebAudioMessage, mut sampler: &mut Sampler, reverbs: &mut HashMap<usize, Reverb>) {
-    if message.reverb.ir.is_none() {
-        let key = format!("reverb: {}{}{}{}{}", message.reverb.room.unwrap_or(0.0), message.reverb.size.unwrap_or(1.0), message.reverb.roomlp.unwrap_or(0.0), message.reverb.roomfade.unwrap_or(0.0), message.reverb.roomdim.unwrap_or(0.0));
-        if let Some(ir) = cache.get(&key) {
-            let reverb = reverbs.entry(message.orbit).or_insert({
-                let mut reverb = Reverb::new(&audio_context, message.reverb.room, message.reverb.size, message.reverb.roomlp, message.reverb.roomfade, message.reverb.roomdim, &compressor);
-                reverb.convolver.set_buffer(ir.clone());
-                sampler.envelope.connect(&reverb.convolver);
-                reverb
-            });
-
-            if reverb.room.unwrap_or(0.0) != message.reverb.room.unwrap_or(0.0)
-                || reverb.roomlp.unwrap_or(0.0) != message.reverb.roomlp.unwrap_or(0.0)
-                || reverb.roomfade.unwrap_or(0.0) != message.reverb.roomfade.unwrap_or(0.0)
-                || reverb.roomdim.unwrap_or(0.3) != message.reverb.roomdim.unwrap_or(0.0)
-                || reverb.roomsize.unwrap_or(0.0) != message.reverb.size.unwrap_or(0.0)
-                || reverb.roomfade.unwrap_or(0.0) != message.reverb.roomfade.unwrap_or(0.0) {
-                reverb.room = message.reverb.room;
-                reverb.roomlp = message.reverb.roomlp;
-                reverb.roomfade = message.reverb.roomfade;
-                reverb.roomdim = message.reverb.roomdim;
-                reverb.roomsize = message.reverb.size;
-
-                let len = (audio_context.sample_rate() * message.reverb.size.unwrap_or(1.0)) as usize;
-                let decay = 4.0;
-                let num_coeffs = 101;
-                let fade = 2.4;
-                let cutoff = 500.0 / audio_context.sample_rate();
-                let cache_cache = cache.clone();
-                let mut buffer = audio_context.create_buffer(2, len, 44100.0);
-                tokio::spawn(async move {
-                    // GENERATE IR
-                    let fir = generate_coefficients_lp(num_coeffs, cutoff);
-                    let ir = create_impulse_response(len, decay, &fir, 44100.0, fade);
-                    write_to_buffer(&mut buffer, &ir);
-                    cache_cache.insert(key, buffer);
-                });
-            }
-            reverb.convolver.set_buffer(ir);
-            sampler.envelope.connect(&reverb.convolver);
-
-            // IF BUFFER IS NOT CACHED - GENERATE NEW BUFFER
-        } else {
-            let len = (audio_context.sample_rate() * message.reverb.size.unwrap_or(1.0)) as usize;
-            let decay = 4.0;
-            let num_coeffs = 101;
-            let fade = 2.4;
-            let cutoff = 500.0 / audio_context.sample_rate();
-            let cache_cache = cache.clone();
-            let mut buffer = audio_context.create_buffer(2, len, 44100.0);
-            tokio::spawn(async move {
-                // GENERATE IR
-                let fir = generate_coefficients_lp(num_coeffs, cutoff);
-                let ir = create_impulse_response(len, decay, &fir, 44100.0, fade);
-                write_to_buffer(&mut buffer, &ir);
-                cache_cache.insert(key, buffer);
-            });
-        }
-    } else if message.reverb.ir.is_some() {
-        let (ir_url, ir_file_path, ir_file_path_clone) = create_ir_filepath(&message);
-        let ir_cache_clone = cache.clone();
-        let requested_size = message.reverb.size.unwrap_or(2.0).clone();
-        if let Some(ir_buffer) = cache.get(&ir_file_path_clone) {
-            let reverb = reverbs.entry(message.orbit).or_insert({
-                let mut reverb = Reverb::new(&audio_context, message.reverb.room, message.reverb.size, message.reverb.roomlp, message.reverb.roomfade, message.reverb.roomdim, &compressor);
-                reverb.convolver.set_buffer(ir_buffer.clone());
-                sampler.envelope.connect(&reverb.convolver);
-                reverb
-            });
-
-            if reverb.roomsize.unwrap_or(0.0) != message.reverb.size.unwrap_or(0.0) {
-                adjust_length(&mut audio_context, cache, message, ir_file_path_clone, requested_size, reverb);
-            }
-
-            reverb.convolver.set_buffer(ir_buffer);
-            sampler.envelope.connect(&reverb.convolver);
-        } else {
-            tokio::spawn(async move {
-                if let Ok(file1) = File::open(&ir_file_path) {
-                    create_new_ir_buffer_from_file(&ir_file_path, ir_cache_clone, requested_size, file1);
-                } else if tokio::fs::metadata(&ir_file_path.clone()).await.is_err() {
-                    download_file(ir_url, &ir_file_path).await;
-                }
-            });
-        }
-    }
-}
-
-async fn download_file(ir_url: Url, ir_file_path: &String) {
-    let response = reqwest::get(ir_url)
-        .await
-        .unwrap_or_else(|_| panic!("Failed to send GET request"));
-    let bytes = response.bytes().await.unwrap();
-    let path = Path::new(&ir_file_path);
-    let mut file = create_file_and_dirs(path).await;
-    file.write_all(&bytes)
-        .await
-        .unwrap_or_else(|_| panic!("Failed to write to file"));
-}
-
-fn create_new_ir_buffer_from_file(ir_file_path: &String, ir_cache_clone: Cache<String, AudioBuffer>, requested_size: f32, file1: File) {
-    let context = OfflineAudioContext::new(2, 400, 44100.0);
-    let ir_buffer = context.decode_audio_data_sync(file1).expect("IR OOOOPS");
-    let new_length = ir_buffer.sample_rate() * requested_size;
-    let mut new_buffer = context.create_buffer(ir_buffer.number_of_channels(), new_length as usize, ir_buffer.sample_rate());
-    for ch in 0..ir_buffer.number_of_channels() {
-        let old_data = ir_buffer.get_channel_data(ch);
-        let new_data = new_buffer.get_channel_data_mut(ch);
-
-        for i in 0..new_length as usize {
-            if i < old_data.len() {
-                new_data[i] = old_data[i];
-            } else {
-                new_data[i] = 0.0;
-            }
-        }
-    }
-    ir_cache_clone.insert(ir_file_path.clone(), new_buffer);
-}
-
-fn adjust_length(audio_context: &mut &AudioContext, cache: &Cache<String, AudioBuffer>, message: &WebAudioMessage, ir_file_path_clone: String, requested_size: f32, reverb: &mut Reverb) {
-    let buf = reverb.convolver.buffer().unwrap();
-    reverb.roomsize = message.reverb.size;
-    let new_length = buf.sample_rate() * requested_size;
-    let mut new_buffer = audio_context.create_buffer(buf.number_of_channels(), new_length as usize, buf.sample_rate());
-
-    for ch in 0..buf.number_of_channels() {
-        let old_data = buf.get_channel_data(ch);
-        let new_data = new_buffer.get_channel_data_mut(ch);
-
-        for i in 0..new_length as usize {
-            if i < old_data.len() {
-                new_data[i] = old_data[i];
-            } else {
-                new_data[i] = 0.0;
-            }
-        }
-    }
-
-    reverb.convolver.set_buffer(new_buffer.clone());
-    cache.insert(ir_file_path_clone.clone(), new_buffer);
-}
-
-
-async fn generate_buffer_and_update_cache(audio_context: &AudioContext, size: f32, key: String, cache: Cache<String, AudioBuffer>) {
-    let len = (audio_context.sample_rate() * size) as usize;
-    let decay = 4.0;
-    let num_coeffs = 101;
-    let fade = 2.4;
-    let cutoff = 500.0 / audio_context.sample_rate();
-
-    let mut buffer = audio_context.create_buffer(2, len, 44100.0);
-
-    let fir = generate_coefficients_lp(num_coeffs, cutoff);
-    let ir = create_impulse_response(len, decay, &fir, 44100.0, fade);
-    write_to_buffer(&mut buffer, &ir);
-
-    cache.insert(key, buffer);
-}
-
-
-fn create_filepath(message: &WebAudioMessage) -> (Url, String, String) {
-    let url = Url::parse(&*message.sampleurl).expect("failed to parse url");
-    let filename = url.path_segments()
-        .and_then(Iterator::last)
-        .and_then(|name| if name.is_empty() { None } else { Some(name) })
-        .unwrap_or("tmp.ben");
-    let file_path = format!("/Users/vasiliymilovidov/samples/{}{}", message.dirname, filename);
-    let file_path_clone = file_path.clone();
-    (url, file_path, file_path_clone)
-}
-
-fn create_ir_filepath(message: &WebAudioMessage) -> (Url, String, String) {
-    let url = Url::parse(&message.reverb.url.clone().unwrap()).expect("failed to parse url");
-    let filename = url.path_segments()
-        .and_then(Iterator::last)
-        .and_then(|name| if name.is_empty() { None } else { Some(name) })
-        .unwrap_or("tmp.ben");
-    let file_path = format!("/Users/vasiliymilovidov/samples/{}{}", message.dirname, filename);
-    let file_path_clone = file_path.clone();
-    (url, file_path, file_path_clone)
 }
 
 pub async fn async_process_model(
@@ -565,14 +366,3 @@ pub async fn sendwebaudio(
     async_proc_input_tx.send(messages_to_process).await.map_err(|e| e.to_string())
 }
 
-async fn create_file_and_dirs(path: &Path) -> fs::File {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).await.unwrap();
-    }
-    let file = fs::File::create(path).await.unwrap();
-    file
-}
-
-fn is_filter_envelope_on(adsr: &FilterADSRMessage) -> bool {
-    adsr.env.is_some() || adsr.attack.is_some() || adsr.decay.is_some() || adsr.sustain.is_some() || adsr.release.is_some()
-}
