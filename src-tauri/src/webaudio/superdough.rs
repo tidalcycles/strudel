@@ -378,7 +378,7 @@ pub fn create_filepath_generic(url_string: &str, dirname: &str) -> (Url, String,
         .and_then(Iterator::last)
         .and_then(|name| if name.is_empty() { None } else { Some(name) })
         .unwrap_or("tmp.ben");
-    let file_path = format!("/Users/vasiliymilovidov/samples/{}{}", dirname, filename);
+    let file_path = format!("samples/{}{}", dirname, filename);
     let file_path_clone = file_path.clone();
 
     (url, file_path, file_path_clone)
