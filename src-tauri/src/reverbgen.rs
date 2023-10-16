@@ -65,7 +65,7 @@ pub fn create_impulse_response(
     fade: f32,
 ) -> Vec<f32> {
     let mut rng = rand::thread_rng();
-    let mut normal = Normal::new(0.0, 1.0).unwrap();
+    let normal = Normal::new(0.0, 1.0).unwrap();
     let fade_in_samples = (fade * sample_rate) as usize; // Compute the number of samples for the fade-in duration
 
     let mut impulse_response: Vec<f32> = (0..len)
@@ -82,24 +82,6 @@ pub fn create_impulse_response(
     apply_fir_filter(&mut impulse_response, fir_coeffs);
 
     impulse_response
-}
-
-pub fn write_to_wav(filename: &str, data: &[f32]) {
-    let spec = hound::WavSpec {
-        channels: 1,
-        sample_rate: 44100,
-        bits_per_sample: 16,
-        sample_format: hound::SampleFormat::Int,
-    };
-
-    let mut writer = hound::WavWriter::create(filename, spec).unwrap();
-    for &sample_float in data {
-        // Assuming 16-bit audio
-        let amplitude_scale = i16::MAX as f32;
-        let sample = (sample_float * amplitude_scale).round() as i16;
-        writer.write_sample(sample).unwrap();
-    }
-    writer.finalize().unwrap();
 }
 
 pub fn write_to_buffer(buffer: &mut AudioBuffer, data: &[f32]) {

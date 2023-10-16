@@ -253,14 +253,9 @@ fn apply_delay(audio_context: &mut AudioContext, delays: &mut HashMap<usize, Del
 }
 
 fn apply_reverb(mut audio_context: &AudioContext, compressor: &DynamicsCompressorNode, cache: &Cache<String, AudioBuffer>, message: &WebAudioMessage, mut sampler: &mut Sampler, reverbs: &mut HashMap<usize, Reverb>) {
-
-
     if message.reverb.ir.is_none() {
-
         let key = format!("reverb: {}{}{}{}{}", message.reverb.room.unwrap_or(0.0), message.reverb.size.unwrap_or(1.0), message.reverb.roomlp.unwrap_or(0.0), message.reverb.roomfade.unwrap_or(0.0), message.reverb.roomdim.unwrap_or(0.0));
-
         if let Some(ir) = cache.get(&key) {
-
             let reverb = reverbs.entry(message.orbit).or_insert({
                 let mut reverb = Reverb::new(&audio_context, message.reverb.room, message.reverb.size, message.reverb.roomlp, message.reverb.roomfade, message.reverb.roomdim, &compressor);
                 reverb.convolver.set_buffer(ir.clone());
