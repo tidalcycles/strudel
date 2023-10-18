@@ -173,7 +173,7 @@ export const __chooseWith = (pat, xs) => {
  * @param {*} xs
  * @returns {Pattern}
  * @example
- * note("c g g d f").s(chooseWith(slider(0, 0, 1), ["sawtooth", "triangle", "bd hh sd hh"]))
+ * note("c2 g2!2 d2 f1").s(chooseWith(sine.fast(2), ["sawtooth", "triangle", "bd:6"]))
  */
 export const chooseWith = (pat, xs) => {
   return __chooseWith(pat, xs).outerJoin();
