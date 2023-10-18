@@ -163,7 +163,6 @@ export const __chooseWith = (pat, xs) => {
 
   return pat.range(0, xs.length).fmap((i) => {
     const key = Math.min(Math.max(Math.floor(i), 0), xs.length - 1);
-    console.log({ key });
     return xs[key];
   });
 };
@@ -173,6 +172,8 @@ export const __chooseWith = (pat, xs) => {
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
+ * @example
+ * note("c g g d f").s(chooseWith(slider(0, 0, 1), ["sawtooth", "triangle", "bd hh sd hh"]))
  */
 export const chooseWith = (pat, xs) => {
   return __chooseWith(pat, xs).outerJoin();
@@ -184,8 +185,6 @@ export const chooseWith = (pat, xs) => {
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
- * @example
- * note("c g g d f").s(chooseInWith(slider(1, 0, 1), ["sawtooth", "triangle", "bd hh sd hh"]))
  */
 export const chooseInWith = (pat, xs) => {
   return __chooseWith(pat, xs).innerJoin();
