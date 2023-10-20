@@ -160,7 +160,11 @@ export const __chooseWith = (pat, xs) => {
   if (xs.length == 0) {
     return silence;
   }
-  return pat.range(0, xs.length).fmap((i) => xs[Math.floor(i)]);
+
+  return pat.range(0, xs.length).fmap((i) => {
+    const key = Math.min(Math.max(Math.floor(i), 0), xs.length - 1);
+    return xs[key];
+  });
 };
 /**
  * Choose from the list of values (or patterns of values) using the given
@@ -168,6 +172,8 @@ export const __chooseWith = (pat, xs) => {
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
+ * @example
+ * note("c2 g2!2 d2 f1").s(chooseWith(sine.fast(2), ["sawtooth", "triangle", "bd:6"]))
  */
 export const chooseWith = (pat, xs) => {
   return __chooseWith(pat, xs).outerJoin();
