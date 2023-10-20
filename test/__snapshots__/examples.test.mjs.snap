@@ -3956,6 +3956,42 @@ exports[`runs examples > example "samples" example index 1 1`] = `
 ]
 `;
 
+exports[`runs examples > example "samples" example index 2 1`] = `
+[
+  "[ 0/1 → 1/2 | s:noise ]",
+  "[ 1/2 → 3/4 | s:chimp n:0 ]",
+  "[ 3/4 → 1/1 | s:chimp n:0 ]",
+  "[ 1/1 → 3/2 | s:noise ]",
+  "[ 3/2 → 2/1 | s:chimp n:1 ]",
+  "[ 2/1 → 5/2 | s:noise ]",
+  "[ 5/2 → 11/4 | s:chimp n:0 ]",
+  "[ 11/4 → 3/1 | s:chimp n:0 ]",
+  "[ 3/1 → 7/2 | s:noise ]",
+  "[ 7/2 → 4/1 | s:chimp n:1 ]",
+]
+`;
+
+exports[`runs examples > example "samples" example index 3 1`] = `
+[
+  "[ 0/1 → 1/4 | s:chocolat ]",
+  "[ 1/4 → 1/2 | s:chocolat ]",
+  "[ 1/2 → 3/4 | s:chocolat ]",
+  "[ 3/4 → 1/1 | s:chocolat ]",
+  "[ 1/1 → 5/4 | s:chocolat ]",
+  "[ 5/4 → 3/2 | s:chocolat ]",
+  "[ 3/2 → 7/4 | s:chocolat ]",
+  "[ 7/4 → 2/1 | s:chocolat ]",
+  "[ 2/1 → 9/4 | s:chocolat ]",
+  "[ 9/4 → 5/2 | s:chocolat ]",
+  "[ 5/2 → 11/4 | s:chocolat ]",
+  "[ 11/4 → 3/1 | s:chocolat ]",
+  "[ 3/1 → 13/4 | s:chocolat ]",
+  "[ 13/4 → 7/2 | s:chocolat ]",
+  "[ 7/2 → 15/4 | s:chocolat ]",
+  "[ 15/4 → 4/1 | s:chocolat ]",
+]
+`;
+
 exports[`runs examples > example "saw" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:c3 clip:0.03125 ]",
