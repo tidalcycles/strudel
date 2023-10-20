@@ -70,12 +70,10 @@ export const SIDEBAR: Sidebar = {
       { text: 'MIDI & OSC', link: 'learn/input-output' },
     ],
     More: [
+      { text: 'Recipes', link: 'recipes/recipes' },
       { text: 'Mini-Notation', link: 'learn/mini-notation' },
-      { text: 'Coding syntax', link: 'learn/code' },
       { text: 'Offline', link: 'learn/pwa' },
       { text: 'Patterns', link: 'technical-manual/patterns' },
-      { text: 'Pattern Alignment', link: 'technical-manual/alignment' },
-      { text: 'Strudel vs Tidal', link: 'learn/strudel-vs-tidal' },
       { text: 'Music metadata', link: 'learn/metadata' },
       { text: 'CSound', link: 'learn/csound' },
     ],
@@ -89,7 +87,13 @@ export const SIDEBAR: Sidebar = {
       { text: 'Accumulation', link: 'learn/accumulation' },
       { text: 'Tonal Functions', link: 'learn/tonal' },
     ],
-    Understand: [{ text: 'Pitch', link: 'understand/pitch' }],
+    Understand: [
+      { text: 'Coding syntax', link: 'learn/code' },
+      { text: 'Pitch', link: 'understand/pitch' },
+      { text: 'Cycles', link: 'understand/cycles' },
+      { text: 'Pattern Alignment', link: 'technical-manual/alignment' },
+      { text: 'Strudel vs Tidal', link: 'learn/strudel-vs-tidal' },
+    ],
     Development: [
       { text: 'REPL', link: 'technical-manual/repl' },
       { text: 'Sounds', link: 'technical-manual/sounds' },
