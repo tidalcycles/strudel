@@ -45,9 +45,9 @@ const options = {
 
 // https://astro.build/config
 export default defineConfig({
-  trailingSlash: 'always',
+  trailingSlash: 'never',
   build: {
-    format: 'directory',
+    format: 'file',
   },
   integrations: [
     react(),
