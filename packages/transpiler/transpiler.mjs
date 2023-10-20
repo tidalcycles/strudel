@@ -5,7 +5,7 @@ import { isNoteWithOctave } from '@strudel.cycles/core';
 import { getLeafLocations } from '@strudel.cycles/mini';
 
 export function transpiler(input, options = {}) {
-  const { wrapAsync = false, addReturn = true, emitMiniLocations = true } = options;
+  const { wrapAsync = false, addReturn = true, emitMiniLocations = true, emitWidgets = true } = options;
 
   let ast = parse(input, {
     ecmaVersion: 2022,
@@ -16,9 +16,9 @@ export function transpiler(input, options = {}) {
   let miniLocations = [];
   const collectMiniLocations = (value, node) => {
     const leafLocs = getLeafLocations(`"${value}"`, node.start); // stimmt!
-    //const withOffset = leafLocs.map((offsets) => offsets.map((o) => o + node.start));
     miniLocations = miniLocations.concat(leafLocs);
   };
+  let widgets = [];
 
   walk(ast, {
     enter(node, parent /* , prop, index */) {
@@ -34,6 +34,18 @@ export function transpiler(input, options = {}) {
         this.skip();
         emitMiniLocations && collectMiniLocations(value, node);
         return this.replace(miniWithLocation(value, node));
+      }
+      if (isWidgetFunction(node)) {
+        emitWidgets &&
+          widgets.push({
+            from: node.arguments[0].start,
+            to: node.arguments[0].end,
+            value: node.arguments[0].raw, // don't use value!
+            min: node.arguments[1]?.value ?? 0,
+            max: node.arguments[2]?.value ?? 1,
+            step: node.arguments[3]?.value,
+          });
+        return this.replace(widgetWithLocation(node));
       }
       // TODO: remove pseudo note variables?
       if (node.type === 'Identifier' && isNoteWithOctave(node.name)) {
@@ -64,15 +76,14 @@ export function transpiler(input, options = {}) {
   if (!emitMiniLocations) {
     return { output };
   }
-  return { output, miniLocations };
+  return { output, miniLocations, widgets };
 }
 
 function isStringWithDoubleQuotes(node, locations, code) {
-  const { raw, type } = node;
-  if (type !== 'Literal') {
+  if (node.type !== 'Literal') {
     return false;
   }
-  return raw[0] === '"';
+  return node.raw[0] === '"';
 }
 
 function isBackTickString(node, parent) {
@@ -93,4 +104,23 @@ function miniWithLocation(value, node) {
     ],
     optional: false,
   };
+}
+
+// these functions are connected to @strudel/codemirror -> slider.mjs
+// maybe someday there will be pluggable transpiler functions, then move this there
+function isWidgetFunction(node) {
+  return node.type === 'CallExpression' && node.callee.name === 'slider';
+}
+
+function widgetWithLocation(node) {
+  const id = 'slider_' + node.arguments[0].start; // use loc of first arg for id
+  // add loc as identifier to first argument
+  // the sliderWithID function is assumed to be sliderWithID(id, value, min?, max?)
+  node.arguments.unshift({
+    type: 'Literal',
+    value: id,
+    raw: id,
+  });
+  node.callee.name = 'sliderWithID';
+  return node;
 }

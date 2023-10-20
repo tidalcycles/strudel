@@ -87,6 +87,16 @@ const generic_params = [
    */
   ['gain'],
   /**
+   * Gain applied after all effects have been processed.
+   *
+   * @name postgain
+   * @example
+   * s("bd sd,hh*4")
+   * .compressor("-20:20:10:.002:.02").postgain(1.5)
+   *
+   */
+  ['postgain'],
+  /**
    * Like {@link gain}, but linear.
    *
    * @name amp
@@ -299,16 +309,52 @@ const generic_params = [
    */
   ['end'],
   /**
-   * Loops the sample (from `begin` to `end`) the specified number of times.
+   * Loops the sample.
    * Note that the tempo of the loop is not synced with the cycle tempo.
+   * To change the loop region, use loopBegin / loopEnd.
    *
    * @name loop
-   * @param {number | Pattern} times How often the sample is looped
+   * @param {number | Pattern} on If 1, the sample is looped
    * @example
-   * s("bd").loop("<1 2 3 4>").osc()
+   * s("casio").loop(1)
    *
    */
   ['loop'],
+  /**
+   * Begin to loop at a specific point in the sample (inbetween `begin` and `end`).
+   * Note that the loop point must be inbetween `begin` and `end`, and before `loopEnd`!
+   * Note: Samples starting with wt_ will automatically loop! (wt = wavetable)
+   *
+   * @name loopBegin
+   * @param {number | Pattern} time between 0 and 1, where 1 is the length of the sample
+   * @synonyms loopb
+   * @example
+   * s("space").loop(1)
+   * .loopBegin("<0 .125 .25>").scope()
+   */
+  ['loopBegin', 'loopb'],
+  /**
+   *
+   * End the looping section at a specific point in the sample (inbetween `begin` and `end`).
+   * Note that the loop point must be inbetween `begin` and `end`, and after `loopBegin`!
+   *
+   * @name loopEnd
+   * @param {number | Pattern} time between 0 and 1, where 1 is the length of the sample
+   * @synonyms loope
+   * @example
+   * s("space").loop(1)
+   * .loopEnd("<1 .75 .5 .25>").scope()
+   */
+  ['loopEnd', 'loope'],
+  /**
+   * bit crusher effect.
+   *
+   * @name crush
+   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
+   * @example
+   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
+   *
+   */
   // TODO: currently duplicated with "native" legato
   // TODO: superdirt legato will do more: https://youtu.be/dQPmE1WaD1k?t=419
   /**
@@ -323,15 +369,6 @@ const generic_params = [
    */
   // ['legato'],
   // ['clhatdecay'],
-  /**
-   * bit crusher effect.
-   *
-   * @name crush
-   * @param {number | Pattern} depth between 1 (for drastic reduction in bit-depth) to 16 (for barely no reduction).
-   * @example
-   * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
-   *
-   */
   ['crush'],
   /**
    * fake-resampling for lowering the sample rate. Caution: This effect seems to only work in chromium based browsers
@@ -343,7 +380,6 @@ const generic_params = [
    *
    */
   ['coarse'],
-
   /**
    * choose the channel the pattern is sent to in superdirt
    *
@@ -377,6 +413,227 @@ const generic_params = [
    *
    */
   [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
+
+  /**
+   * Sets the lowpass filter envelope modulation depth.
+   * @name lpenv
+   * @param {number | Pattern} modulation depth of the lowpass filter envelope between 0 and _n_
+   * @synonyms lpe
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpa(.5)
+   * .lpenv("<4 2 1 0 -1 -2 -4>/4")
+   */
+  ['lpenv', 'lpe'],
+  /**
+   * Sets the highpass filter envelope modulation depth.
+   * @name hpenv
+   * @param {number | Pattern} modulation depth of the highpass filter envelope between 0 and _n_
+   * @synonyms hpe
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpa(.5)
+   * .hpenv("<4 2 1 0 -1 -2 -4>/4")
+   */
+  ['hpenv', 'hpe'],
+  /**
+   * Sets the bandpass filter envelope modulation depth.
+   * @name bpenv
+   * @param {number | Pattern} modulation depth of the bandpass filter envelope between 0 and _n_
+   * @synonyms bpe
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpa(.5)
+   * .bpenv("<4 2 1 0 -1 -2 -4>/4")
+   */
+  ['bpenv', 'bpe'],
+  /**
+   * Sets the attack duration for the lowpass filter envelope.
+   * @name lpattack
+   * @param {number | Pattern} attack time of the filter envelope
+   * @synonyms lpa
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpa("<.5 .25 .1 .01>/4")
+   * .lpenv(4)
+   */
+  ['lpattack', 'lpa'],
+  /**
+   * Sets the attack duration for the highpass filter envelope.
+   * @name hpattack
+   * @param {number | Pattern} attack time of the highpass filter envelope
+   * @synonyms hpa
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpa("<.5 .25 .1 .01>/4")
+   * .hpenv(4)
+   */
+  ['hpattack', 'hpa'],
+  /**
+   * Sets the attack duration for the bandpass filter envelope.
+   * @name bpattack
+   * @param {number | Pattern} attack time of the bandpass filter envelope
+   * @synonyms bpa
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpa("<.5 .25 .1 .01>/4")
+   * .bpenv(4)
+   */
+  ['bpattack', 'bpa'],
+  /**
+   * Sets the decay duration for the lowpass filter envelope.
+   * @name lpdecay
+   * @param {number | Pattern} decay time of the filter envelope
+   * @synonyms lpd
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpd("<.5 .25 .1 0>/4")
+   * .lps(0.2)
+   * .lpenv(4)
+   */
+  ['lpdecay', 'lpd'],
+  /**
+   * Sets the decay duration for the highpass filter envelope.
+   * @name hpdecay
+   * @param {number | Pattern} decay time of the highpass filter envelope
+   * @synonyms hpd
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpd("<.5 .25 .1 0>/4")
+   * .hps(0.2)
+   * .hpenv(4)
+   */
+  ['hpdecay', 'hpd'],
+  /**
+   * Sets the decay duration for the bandpass filter envelope.
+   * @name bpdecay
+   * @param {number | Pattern} decay time of the bandpass filter envelope
+   * @synonyms bpd
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpd("<.5 .25 .1 0>/4")
+   * .bps(0.2)
+   * .bpenv(4)
+   */
+  ['bpdecay', 'bpd'],
+  /**
+   * Sets the sustain amplitude for the lowpass filter envelope.
+   * @name lpsustain
+   * @param {number | Pattern} sustain amplitude of the lowpass filter envelope
+   * @synonyms lps
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .lpd(.5)
+   * .lps("<0 .25 .5 1>/4")
+   * .lpenv(4)
+   */
+  ['lpsustain', 'lps'],
+  /**
+   * Sets the sustain amplitude for the highpass filter envelope.
+   * @name hpsustain
+   * @param {number | Pattern} sustain amplitude of the highpass filter envelope
+   * @synonyms hps
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .hpf(500)
+   * .hpd(.5)
+   * .hps("<0 .25 .5 1>/4")
+   * .hpenv(4)
+   */
+  ['hpsustain', 'hps'],
+  /**
+   * Sets the sustain amplitude for the bandpass filter envelope.
+   * @name bpsustain
+   * @param {number | Pattern} sustain amplitude of the bandpass filter envelope
+   * @synonyms bps
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .bpf(500)
+   * .bpd(.5)
+   * .bps("<0 .25 .5 1>/4")
+   * .bpenv(4)
+   */
+  ['bpsustain', 'bps'],
+  /**
+   * Sets the release time for the lowpass filter envelope.
+   * @name lprelease
+   * @param {number | Pattern} release time of the filter envelope
+   * @synonyms lpr
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .lpf(500)
+   * .lpenv(4)
+   * .lpr("<.5 .25 .1 0>/4")
+   * .release(.5)
+   */
+  ['lprelease', 'lpr'],
+  /**
+   * Sets the release time for the highpass filter envelope.
+   * @name hprelease
+   * @param {number | Pattern} release time of the highpass filter envelope
+   * @synonyms hpr
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .hpf(500)
+   * .hpenv(4)
+   * .hpr("<.5 .25 .1 0>/4")
+   * .release(.5)
+   */
+  ['hprelease', 'hpr'],
+  /**
+   * Sets the release time for the bandpass filter envelope.
+   * @name bprelease
+   * @param {number | Pattern} release time of the bandpass filter envelope
+   * @synonyms bpr
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .clip(.5)
+   * .bpf(500)
+   * .bpenv(4)
+   * .bpr("<.5 .25 .1 0>/4")
+   * .release(.5)
+   */
+  ['bprelease', 'bpr'],
+  /**
+   * Sets the filter type. The 24db filter is more aggressive. More types might be added in the future.
+   * @name ftype
+   * @param {number | Pattern} type 12db (default) or 24db
+   * @example
+   * note("<c2 e2 f2 g2>")
+   * .sound('sawtooth')
+   * .lpf(500)
+   * .bpenv(4)
+   * .ftype("<12db 24db>")
+   */
+  ['ftype'],
+  ['fanchor'],
   /**
    * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
    *
@@ -393,6 +650,45 @@ const generic_params = [
    */
   // currently an alias of 'hcutoff' https://github.com/tidalcycles/strudel/issues/496
   // ['hpf'],
+  /**
+   * Applies a vibrato to the frequency of the oscillator.
+   *
+   * @name vib
+   * @synonyms vibrato, v
+   * @param {number | Pattern} frequency of the vibrato in hertz
+   * @example
+   * note("a")
+   * .vib("<.5 1 2 4 8 16>")
+   * @example
+   * // change the modulation depth with ":"
+   * note("a")
+   * .vib("<.5 1 2 4 8 16>:12")
+   */
+  [['vib', 'vibmod'], 'vibrato', 'v'],
+  /**
+   * Adds pink noise to the mix
+   *
+   * @name noise
+   * @param {number | Pattern} wet wet amount
+   * @example
+   * sound("<white pink brown>/2")
+   */
+  ['noise'],
+  /**
+   * Sets the vibrato depth in semitones. Only has an effect if `vibrato` | `vib` | `v` is is also set
+   *
+   * @name vibmod
+   * @synonyms vmod
+   * @param {number | Pattern} depth of vibrato (in semitones)
+   * @example
+   * note("a").vib(4)
+   * .vibmod("<.25 .5 1 2 12>")
+   * @example
+   * // change the vibrato frequency with ":"
+   * note("a")
+   * .vibmod("<.25 .5 1 2 12>:8")
+   */
+  [['vibmod', 'vib'], 'vmod'],
   [['hcutoff', 'hresonance'], 'hpf', 'hp'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
@@ -694,19 +990,72 @@ const generic_params = [
    */
   [['room', 'size']],
   /**
+   * Reverb lowpass starting frequency (in hertz).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomlp
+   * @synonyms rlp
+   * @param {number} frequency between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).rlp(10000)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000)
+   */
+  ['roomlp', 'rlp'],
+  /**
+   * Reverb lowpass frequency at -60dB (in hertz).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomdim
+   * @synonyms rdim
+   * @param {number} frequency between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).rlp(10000).rdim(8000)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000).rdim(400)
+   *
+   */
+  ['roomdim', 'rdim'],
+  /**
+   * Reverb fade time (in seconds).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomfade
+   * @synonyms rfade
+   * @param {number} seconds for the reverb to fade
+   * @example
+   * s("bd sd").room(0.5).rlp(10000).rfade(0.5)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000).rfade(4)
+   *
+   */
+  ['roomfade', 'rfade'],
+  /**
+   * Sets the sample to use as an impulse response for the reverb. * * @name iresponse
+   * @param {string | Pattern} sample to use as an impulse response
+   * @synonyms ir
+   * @example
+   * s("bd sd").room(.8).ir("<shaker_large:0 shaker_large:2>")
+   *
+   */
+  [['ir', 'i'], 'iresponse'],
+  /**
    * Sets the room size of the reverb, see {@link room}.
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
    *
    * @name roomsize
    * @param {number | Pattern} size between 0 and 10
-   * @synonyms size, sz
+   * @synonyms rsize, sz, size
    * @example
-   * s("bd sd").room(.8).roomsize("<0 1 2 4 8>")
+   * s("bd sd").room(.8).rsize(1)
+   * @example
+   * s("bd sd").room(.8).rsize(4)
    *
    */
   // TODO: find out why :
   // s("bd sd").room(.8).roomsize("<0 .2 .4 .6 .8 [1,0]>").osc()
   // .. does not work. Is it because room is only one effect?
-  ['size', 'sz', 'roomsize'],
+  ['roomsize', 'size', 'sz', 'rsize'],
   // ['sagogo'],
   // ['sclap'],
   // ['sclaves'],
@@ -721,6 +1070,21 @@ const generic_params = [
    *
    */
   ['shape'],
+  /**
+   * Dynamics Compressor. The params are `compressor("threshold:ratio:knee:attack:release")`
+   * More info [here](https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode?retiredLocale=de#instance_properties)
+   *
+   * @name compressor
+   * @example
+   * s("bd sd,hh*4")
+   * .compressor("-20:20:10:.002:.02")
+   *
+   */
+  [['compressor', 'compressorRatio', 'compressorKnee', 'compressorAttack', 'compressorRelease']],
+  ['compressorKnee'],
+  ['compressorRatio'],
+  ['compressorAttack'],
+  ['compressorRelease'],
   /**
    * Changes the speed of sample playback, i.e. a cheap way of changing pitch.
    *
@@ -876,7 +1240,7 @@ const generic_params = [
   ['pitchJump'],
   ['pitchJumpTime'],
   ['lfo', 'repeatTime'],
-  ['noise'],
+  ['znoise'], // noise on the frequency or as bubo calls it "frequency fog" :)
   ['zmod'],
   ['zcrush'], // like crush but scaled differently
   ['zdelay'],

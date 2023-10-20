@@ -49,6 +49,10 @@ Each filter has 2 parameters:
 
 <JsDoc client:idle name="bpq" h={0} />
 
+## ftype
+
+<JsDoc client:idle name="ftype" h={0} />
+
 ## vowel
 
 <JsDoc client:idle name="vowel" h={0} />
@@ -78,6 +82,58 @@ Strudel uses ADSR envelopes, which are probably the most common way to describe 
 
 <JsDoc client:idle name="release" h={0} />
 
+# Filter Envelope
+
+Each filter can receive an additional filter envelope controlling the cutoff value dynamically. It uses an ADSR envelope similar to the one used for amplitude. There is an additional parameter to control the depth of the filter modulation: `lpenv`|`hpenv`|`bpenv`. This allows you to play subtle or huge filter modulations just the same by only increasing or decreasing the depth.
+
+<MiniRepl
+  client:idle
+  tune={`note("[c eb g <f bb>](3,8,<0 1>)".sub(12))
+  .s("<sawtooth>/64")
+  .lpf(sine.range(500,3000).slow(16))
+  .lpa(0.005)
+  .lpd(perlin.range(.02,.2))
+  .lps(perlin.range(0,.5).slow(3))
+  .lpq(sine.range(2,10).slow(32))
+  .release(.5)
+  .lpenv(perlin.range(1,8).slow(2))
+  .ftype('24db')
+  .room(1)
+  .juxBy(.5,rev)
+  .sometimes(add(note(12)))
+  .stack(s("bd*2").bank('RolandTR909'))
+  .gain(.5)`}
+/>
+
+There is one filter envelope for each filter type and thus one set of envelope filter parameters preceded either by `lp`, `hp` or `bp`:
+
+- `lpattack`, `lpdecay`, `lpsustain`, `lprelease`, `lpenv`: filter envelope for the lowpass filter.
+  - alternatively: `lpa`, `lpd`, `lps`, `lpr` and `lpe`.
+- `hpattack`, `hpdecay`, `hpsustain`, `hprelease`, `hpenv`: filter envelope for the highpass filter.
+  - alternatively: `hpa`, `hpd`, `hps`, `hpr` and `hpe`.
+- `bpattack`, `bpdecay`, `bpsustain`, `bprelease`, `bpenv`: filter envelope for the bandpass filter.
+  - alternatively: `bpa`, `bpd`, `bps`, `bpr` and `bpe`.
+
+## lpattack
+
+<JsDoc client:idle name="lpattack" h={0} />
+
+## lpdecay
+
+<JsDoc client:idle name="lpdecay" h={0} />
+
+## lpsustain
+
+<JsDoc client:idle name="lpsustain" h={0} />
+
+## lprelease
+
+<JsDoc client:idle name="lprelease" h={0} />
+
+## lpenv
+
+<JsDoc client:idle name="lpenv" h={0} />
+
 # Dynamics
 
 ## gain
@@ -87,6 +143,14 @@ Strudel uses ADSR envelopes, which are probably the most common way to describe 
 ## velocity
 
 <JsDoc client:idle name="velocity" h={0} />
+
+## compressor
+
+<JsDoc client:idle name="compressor" h={0} />
+
+## postgain
+
+<JsDoc client:idle name="postgain" h={0} />
 
 # Panning
 
@@ -127,24 +191,44 @@ global effects use the same chain for all events of the same orbit:
 
 <JsDoc client:idle name="orbit" h={0} />
 
-## delay
+## Delay
+
+### delay
 
 <JsDoc client:idle name="delay" h={0} />
 
-## delaytime
+### delaytime
 
 <JsDoc client:idle name="delaytime" h={0} />
 
-## delayfeedback
+### delayfeedback
 
 <JsDoc client:idle name="delayfeedback" h={0} />
 
-## room
+## Reverb
+
+### room
 
 <JsDoc client:idle name="room" h={0} />
 
-## roomsize
+### roomsize
 
 <JsDoc client:idle name="roomsize" h={0} />
+
+### roomfade
+
+<JsDoc client:idle name="roomfade" h={0} />
+
+### roomlp
+
+<JsDoc client:idle name="roomlp" h={0} />
+
+### roomdim
+
+<JsDoc client:idle name="roomdim" h={0} />
+
+### iresponse
+
+<JsDoc client:idle name="iresponse" h={0} />
 
 Next, we'll look at strudel's support for [Csound](/learn/csound).

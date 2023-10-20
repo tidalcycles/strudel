@@ -64,6 +64,7 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resol
 
 export const loadBuffer = (url, ac, s, n = 0) => {
   const label = s ? `sound "${s}:${n}"` : 'sample';
+  url = url.replace('#', '%23');
   if (!loadCache[url]) {
     logger(`[sampler] load ${label}..`, 'load-sample', { url });
     const timestamp = Date.now();
@@ -196,7 +197,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
 const cutGroups = [];
 
 export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
-  const {
+  let {
     s,
     freq,
     unit,
@@ -207,7 +208,9 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     n = 0,
     note,
     speed = 1, // sample playback speed
+    loopBegin = 0,
     begin = 0,
+    loopEnd = 1,
     end = 1,
   } = value;
   // load sample
@@ -215,6 +218,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     // no playback
     return;
   }
+  loop = s.startsWith('wt_') ? 1 : value.loop;
   const ac = getAudioContext();
   // destructure adsr here, because the default should be different for synths and samples
   const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
@@ -242,19 +246,12 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
   // the midway point through a 10-second audio buffer is still 5."
   const offset = begin * bufferSource.buffer.duration;
-  bufferSource.start(time, offset);
-  const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
-  /*if (loop) {
-    // TODO: idea for loopBegin / loopEnd
-    // if one of [loopBegin,loopEnd] is <= 1, interpret it as normlized
-    // if [loopBegin,loopEnd] is bigger >= 1, interpret it as sample number
-    // this will simplify perfectly looping things, while still keeping the normalized option
-    // the only drawback is that looping between samples 0 and 1 is not possible (which is not real use case)
+  if (loop) {
     bufferSource.loop = true;
-    bufferSource.loopStart = offset;
-    bufferSource.loopEnd = offset + duration;
-    duration = loop * duration;
-  }*/
+    bufferSource.loopStart = loopBegin * bufferSource.buffer.duration - offset;
+    bufferSource.loopEnd = loopEnd * bufferSource.buffer.duration - offset;
+  }
+  bufferSource.start(time, offset);
   const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
   bufferSource.connect(envelope);
   const out = ac.createGain(); // we need a separate gain for the cutgroups because firefox...
@@ -265,9 +262,10 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     out.disconnect();
     onended();
   };
-  const stop = (endTime, playWholeBuffer = clip === undefined) => {
+  const stop = (endTime, playWholeBuffer = clip === undefined && loop === undefined) => {
     let releaseTime = endTime;
     if (playWholeBuffer) {
+      const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
       releaseTime = t + (end - begin) * bufferDuration;
     }
     bufferSource.stop(releaseTime + release);
