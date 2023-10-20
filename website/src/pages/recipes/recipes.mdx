@@ -282,7 +282,7 @@ or decay / sustain
 
 You can loop a sample with `loop` / `loopEnd`:
 
-<MiniRepl client:visible tune={`note("<c eb g f>").s("bd").loop(1).loopEnd(.05)`} />
+<MiniRepl client:visible tune={`note("<c eb g f>").s("bd").loop(1).loopEnd(.05).gain(.2)`} />
 
 This allows us to play the first 5% of the bass drum as a synth!
 To simplify loading wavetables, any sample that starts with `wt_` will be looped automatically:
