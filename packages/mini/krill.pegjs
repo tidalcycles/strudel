@@ -103,7 +103,8 @@ quote = '"' / "'"
 // ------------------ steps and cycles ---------------------------
 
 // single step definition (e.g bd)
-step_char =  unicode_letter / [0-9~] / "-" / "#" / "." / "^" / "_"
+step_char "a letter, a number, \"-\", \"#\", \".\", \"^\", \"_\"" = 
+  unicode_letter / [0-9~] / "-" / "#" / "." / "^" / "_"
 step = ws chars:step_char+ ws { return new AtomStub(chars.join("")) }
 
 // define a sub cycle e.g. [1 2, 3 [4]]
