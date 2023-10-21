@@ -339,13 +339,9 @@ export function Repl({ embedded = false }) {
           </section>
           {panelPosition === 'right' && !isEmbedded && <Footer context={context} />}
         </div>
-        {error &&
-          (error.message.length < 180 ||
-            (error.message = error.message.slice(0, 150) + ' [...] ' + error.message.slice(-30))) && (
-            <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">
-              {error.message || 'Unknown Error :-/'}
-            </div>
-          )}
+        {error && (
+          <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>
+        )}
         {panelPosition === 'bottom' && !isEmbedded && <Footer context={context} />}
       </div>
     </ReplContext.Provider>
