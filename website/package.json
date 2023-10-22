@@ -28,13 +28,13 @@
     "@strudel.cycles/mini": "workspace:*",
     "@strudel.cycles/osc": "workspace:*",
     "@strudel.cycles/react": "workspace:*",
-    "@strudel/codemirror": "workspace:*",
     "@strudel.cycles/serial": "workspace:*",
     "@strudel.cycles/soundfonts": "workspace:*",
     "@strudel.cycles/tonal": "workspace:*",
     "@strudel.cycles/transpiler": "workspace:*",
     "@strudel.cycles/webaudio": "workspace:*",
     "@strudel.cycles/xen": "workspace:*",
+    "@strudel/codemirror": "workspace:*",
     "@strudel/desktopbridge": "workspace:*",
     "@supabase/supabase-js": "^2.21.0",
     "@tailwindcss/forms": "^0.5.3",
@@ -59,9 +59,9 @@
     "tailwindcss": "^3.3.2"
   },
   "devDependencies": {
-    "@vite-pwa/astro": "^0.0.5",
+    "@vite-pwa/astro": "file:vite-pwa-astro-0.1.3.tgz",
     "html-escaper": "^3.0.3",
-    "vite-plugin-pwa": "^0.14.7",
-    "workbox-window": "^6.5.4"
+    "vite-plugin-pwa": "^0.16.5",
+    "workbox-window": "^7.0.0"
   }
 }
