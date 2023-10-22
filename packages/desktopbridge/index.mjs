@@ -7,3 +7,4 @@ This program is free software: you can redistribute it and/or modify it under th
 export * from './midibridge.mjs';
 export * from './utils.mjs';
 export * from './oscbridge.mjs';
+export * from './cyclistbridge.mjs';

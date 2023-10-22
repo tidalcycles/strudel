@@ -16,14 +16,17 @@ export function repl({
   transpiler,
   onToggle,
   editPattern,
+  createCyclist,
 }) {
-  const scheduler = new Cyclist({
+  const cyclistParams = {
     interval,
     onTrigger: getTrigger({ defaultOutput, getTime }),
     onError: onSchedulerError,
     getTime,
     onToggle,
-  });
+  };
+  const scheduler = createCyclist?.(cyclistParams) || new Cyclist(cyclistParams);
+
   const setPattern = (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
     scheduler.setPattern(pattern, autostart);

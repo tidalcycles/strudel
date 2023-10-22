@@ -4,8 +4,10 @@
 mod midibridge;
 mod oscbridge;
 mod loggerbridge;
+mod ablelinkbridge;
 use std::sync::Arc;
 
+use ablelinkbridge::AbeLinkState;
 use loggerbridge::Logger;
 use tauri::Manager;
 use tokio::sync::mpsc;
@@ -21,6 +23,7 @@ fn main() {
   let (async_output_transmitter_midi, async_output_receiver_midi) = mpsc::channel(1);
   let (async_input_transmitter_osc, async_input_receiver_osc) = mpsc::channel(1);
   let (async_output_transmitter_osc, async_output_receiver_osc) = mpsc::channel(1);
+
   tauri::Builder
     ::default()
     .manage(midibridge::AsyncInputTransmit {
@@ -29,17 +32,31 @@ fn main() {
     .manage(oscbridge::AsyncInputTransmit {
       inner: Mutex::new(async_input_transmitter_osc),
     })
-    .invoke_handler(tauri::generate_handler![midibridge::sendmidi, oscbridge::sendosc])
+    .invoke_handler(tauri::generate_handler![midibridge::sendmidi, oscbridge::sendosc, ablelinkbridge::sendabelinkmsg])
     .setup(|app| {
       let window = Arc::new(app.get_window("main").unwrap());
-      let logger = Logger { window };
+      let logger = Logger { window: window.clone() };
+
       midibridge::init(
         logger.clone(),
         async_input_receiver_midi,
         async_output_receiver_midi,
         async_output_transmitter_midi
       );
-      oscbridge::init(logger, async_input_receiver_osc, async_output_receiver_osc, async_output_transmitter_osc);
+      oscbridge::init(
+        logger.clone(),
+        async_input_receiver_osc,
+        async_output_receiver_osc,
+        async_output_transmitter_osc
+      );
+
+      // This state must be declared in the setup so it can be shared between invoked commands and the initialized function
+      let abelink = Arc::new(Mutex::new(AbeLinkState::new(window)));
+      app.manage(ablelinkbridge::AbeLinkStateContainer {
+        abelink: abelink.clone(),
+      });
+      ablelinkbridge::init(logger.clone(), abelink);
+
       Ok(())
     })
     .run(tauri::generate_context!())

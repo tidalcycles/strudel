@@ -19,6 +19,7 @@ function useStrudel({
   drawContext,
   drawTime = [-2, 2],
   paintOptions = {},
+  createCyclist, // (params) => Cyclist
 }) {
   const id = useMemo(() => s4(), []);
   canvasId = canvasId || `canvas-${id}`;
@@ -45,6 +46,7 @@ function useStrudel({
           onEvalError?.(err);
         },
         getTime,
+        createCyclist,
         drawContext,
         transpiler,
         editPattern,
