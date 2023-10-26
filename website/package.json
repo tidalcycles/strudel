@@ -34,6 +34,7 @@
     "@strudel.cycles/transpiler": "workspace:*",
     "@strudel.cycles/webaudio": "workspace:*",
     "@strudel.cycles/xen": "workspace:*",
+    "@strudel/hydra": "workspace:*",
     "@strudel/codemirror": "workspace:*",
     "@strudel/desktopbridge": "workspace:*",
     "@supabase/supabase-js": "^2.21.0",

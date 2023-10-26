@@ -20,6 +20,7 @@ if (typeof window !== 'undefined') {
     import('@strudel.cycles/osc'),
     import('@strudel.cycles/csound'),
     import('@strudel.cycles/soundfonts'),
+    import('@strudel/hydra'),
   );
 }
 
