@@ -24,6 +24,7 @@ export function repl({
     getTime,
     onToggle,
   });
+  let playPatterns = [];
   const setPattern = (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
     scheduler.setPattern(pattern, autostart);
@@ -35,7 +36,11 @@ export function repl({
     }
     try {
       await beforeEval?.({ code });
+      playPatterns = [];
       let { pattern, meta } = await _evaluate(code, transpiler);
+      if (playPatterns.length) {
+        pattern = pattern.stack(...playPatterns);
+      }
       logger(`[eval] code updated`);
       setPattern(pattern, autostart);
       afterEval?.({ code, pattern, meta });
@@ -57,6 +62,10 @@ export function repl({
     return pat.loopAtCps(cycles, scheduler.cps);
   });
 
+  const play = register('play', (pat) => {
+    playPatterns.push(pat);
+  });
+
   const fit = register('fit', (pat) =>
     pat.withHap((hap) =>
       hap.withValue((v) => ({
@@ -70,6 +79,7 @@ export function repl({
   evalScope({
     loopAt,
     fit,
+    play,
     setCps,
     setcps: setCps,
     setCpm,
