@@ -76,6 +76,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Patterns', link: 'technical-manual/patterns' },
       { text: 'Music metadata', link: 'learn/metadata' },
       { text: 'CSound', link: 'learn/csound' },
+      { text: 'Hydra', link: 'learn/hydra' },
     ],
     'Pattern Functions': [
       { text: 'Introduction', link: 'functions/intro' },

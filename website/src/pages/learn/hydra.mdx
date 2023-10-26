@@ -1,0 +1,42 @@
+---
+title: Hydra
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+
+# Using Hydra inside Strudel
+
+You can write [hydra](https://hydra.ojack.xyz/) code in strudel! All you have to do is to call `await initHydra()` at the top:
+
+<MiniRepl
+  client:only="react"
+  tune={`await initHydra()
+// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
+// by Zach Krall
+// http://zachkrall.online/
+
+osc(10, 0.9, 300)
+.color(0.9, 0.7, 0.8)
+.diff(
+osc(45, 0.3, 100)
+.color(0.9, 0.9, 0.9)
+.rotate(0.18)
+.pixelate(12)
+.kaleid()
+)
+.scrollX(10)
+.colorama()
+.luma()
+.repeatX(4)
+.repeatY(4)
+.modulate(
+osc(1, -0.9, 300)
+)
+.scale(2)
+.out()
+
+note("[a,c,e,<a4 ab4 g4 gb4>,b4]/4").s("sawtooth").vib(2)
+.lpf(600).lpa(2).lpenv(6)
+`}
+/>
