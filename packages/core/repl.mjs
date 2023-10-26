@@ -64,6 +64,7 @@ export function repl({
 
   const play = register('play', (pat) => {
     playPatterns.push(pat);
+    return pat;
   });
 
   const fit = register('fit', (pat) =>
