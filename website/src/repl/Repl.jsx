@@ -41,7 +41,7 @@ let modules = [
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
   import('@strudel/codemirror'),
-
+  import('@strudel/hydra'),
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
   import('@strudel.cycles/csound'),
