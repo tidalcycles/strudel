@@ -40,3 +40,16 @@ note("[a,c,e,<a4 ab4 g4 gb4>,b4]/4").s("sawtooth").vib(2)
 .lpf(600).lpa(2).lpenv(6)
 `}
 />
+
+There is a special function `H` that allows you to use a pattern as an input to hydra:
+
+<MiniRepl
+  client:only="react"
+  tune={`await initHydra()
+let pattern = "3 4 5 [6 7]*2"
+shape(H(pattern)).out(o0)
+n(pattern).scale("A:minor").piano().room(1) 
+`}
+/>
+
+You might now be able to see this properly here: [open in REPL](/#YXdhaXQgaW5pdEh5ZHJhKCkKbGV0IHBhdHRlcm4gPSAiMyA0IDUgWzYgN10qMiIKc2hhcGUoSChwYXR0ZXJuKSkub3V0KG8wKQpuKHBhdHRlcm4pLnNjYWxlKCJBOm1pbm9yIikucGlhbm8oKS5yb29tKDEpIA%3D%3D)
