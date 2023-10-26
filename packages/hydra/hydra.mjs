@@ -11,3 +11,5 @@ export async function initHydra() {
     s0.init({ src: testCanvas });
   }
 }
+
+export const H = (p) => () => p.queryArc(getTime(), getTime())[0].value;
