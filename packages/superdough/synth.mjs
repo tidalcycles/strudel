@@ -73,13 +73,13 @@ export function waveformN(partials, type) {
   const ac = getAudioContext();
   const osc = ac.createOscillator();
 
-  const amplitudes = {
-    sawtooth: (n) => 1 / n,
-    square: (n) => (n % 2 === 0 ? 0 : 1 / n),
-    triangle: (n) => (n % 2 === 0 ? 0 : 1 / (n * n)),
+  const terms = {
+    sawtooth: (n) => [0, -1 / n],
+    square: (n) => [0, n % 2 === 0 ? 0 : 1 / n],
+    triangle: (n) => [n % 2 === 0 ? 0 : 1 / (n * n), 0],
   };
 
-  if (!amplitudes[type]) {
+  if (!terms[type]) {
     throw new Error(`unknown wave type ${type}`);
   }
 
@@ -87,8 +87,9 @@ export function waveformN(partials, type) {
   imag[0] = 0;
   let n = 1;
   while (n <= partials) {
-    real[n] = amplitudes[type](n);
-    imag[n] = 0;
+    const [r, i] = terms[type](n);
+    real[n] = r;
+    imag[n] = i;
     n++;
   }
 

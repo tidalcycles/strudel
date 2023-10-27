@@ -25,7 +25,7 @@ export function drawTimeScope(
 
   for (let i = triggerIndex; i < bufferSize; i++) {
     const v = dataArray[i] + 1;
-    const y = (scale * (v - 1) + pos) * canvas.height;
+    const y = (1 - (scale * (v - 1) + pos)) * canvas.height;
 
     if (i === 0) {
       ctx.moveTo(x, y);
