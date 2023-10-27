@@ -127,6 +127,7 @@ export function Repl({ embedded = false }) {
     isAutoCompletionEnabled,
     isLineWrappingEnabled,
     panelPosition,
+    isZen,
   } = useSettings();
 
   const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
@@ -322,7 +323,7 @@ export function Repl({ embedded = false }) {
           </button>
         )}
         <div className="grow flex relative overflow-hidden">
-          <section className="text-gray-100 cursor-text pb-0 overflow-auto grow" id="code">
+          <section className={'text-gray-100 cursor-text pb-0 overflow-auto grow' + (isZen ? ' px-10' : '')} id="code">
             <CodeMirror
               theme={currentTheme}
               value={code}
