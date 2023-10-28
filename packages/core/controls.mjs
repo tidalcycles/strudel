@@ -1296,6 +1296,17 @@ generic_params.forEach(([names, ...aliases]) => {
 controls.createParams = (...names) =>
   names.reduce((acc, name) => Object.assign(acc, { [name]: controls.createParam(name) }), {});
 
+/**
+ * ADSR envelope: Combination of Attack, Decay, Sustain, and Release.
+ *
+ * @name adsr
+ * @param {number | Pattern} time attack time in seconds
+ * @param {number | Pattern} time decay time in seconds
+ * @param {number | Pattern} gain sustain level (0 to 1)
+ * @param {number | Pattern} time release time in seconds
+ * @example
+ * note("<c3 bb2 f3 eb3>").sound("sawtooth").lpf(600).adsr(".1:.1:.5:.2")
+ */
 controls.adsr = register('adsr', (adsr, pat) => {
   adsr = !Array.isArray(adsr) ? [adsr] : adsr;
   const [attack, decay, sustain, release] = adsr;
