@@ -43,7 +43,7 @@
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
-  "homepage": "https://strudel.tidalcycles.org",
+  "homepage": "https://strudel.cc",
   "dependencies": {
     "@strudel.cycles/core": "workspace:*",
     "@strudel.cycles/mini": "workspace:*",

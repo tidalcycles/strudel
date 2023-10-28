@@ -6,7 +6,7 @@ export const SITE = {
 
 export const OPEN_GRAPH = {
   image: {
-    src: 'https://strudel.tidalcycles.org/icon.png',
+    src: 'https://strudel.cc/icon.png',
     alt: 'Strudel Logo',
   },
 };

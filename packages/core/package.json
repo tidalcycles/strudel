@@ -29,7 +29,7 @@
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
-  "homepage": "https://strudel.tidalcycles.org",
+  "homepage": "https://strudel.cc",
   "dependencies": {
     "fraction.js": "^4.2.0"
   },

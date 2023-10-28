@@ -127,7 +127,7 @@ For the future, it is planned to integrate alternative sound engines such as Gli
 
 # Links
 
-The Strudel REPL is available at <https://strudel.tidalcycles.org>, including an interactive tutorial.
+The Strudel REPL is available at <https://strudel.cc>, including an interactive tutorial.
 The repository is at <https://github.com/tidalcycles/strudel>, all the code is open source under the GPL-3.0 License.
 
 # Acknowledgments

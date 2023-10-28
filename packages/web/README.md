@@ -51,7 +51,7 @@ document.getElementById('play').addEventListener('click',
 )
 ```
 
-You can learn [more about the `samples` function here](https://strudel.tidalcycles.org/learn/samples#loading-custom-samples).
+You can learn [more about the `samples` function here](https://strudel.cc/learn/samples#loading-custom-samples).
 
 ### Evaluating Code
 
@@ -72,7 +72,7 @@ document.getElementById('play').addEventListener('stop',
 
 ### Double vs Single Quotes
 
-There is a tiny difference between the [Strudel REPL](https://strudel.tidalcycles.org/) and `@strudel/web`.
+There is a tiny difference between the [Strudel REPL](https://strudel.cc/) and `@strudel/web`.
 In the REPL you can use 'single quotes' for regular JS strings and "double quotes" for mini notation patterns.
 In `@strudel/web`, it does not matter which types of quotes you're using.
 There will probably be an escapte hatch for that in the future.

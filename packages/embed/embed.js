@@ -6,7 +6,7 @@ class Strudel extends HTMLElement {
     setTimeout(() => {
       const code = (this.innerHTML + '').replace('<!--', '').replace('-->', '').trim();
       const iframe = document.createElement('iframe');
-      const src = `https://strudel.tidalcycles.org/#${encodeURIComponent(btoa(code))}`;
+      const src = `https://strudel.cc/#${encodeURIComponent(btoa(code))}`;
       // const src = `http://localhost:3000/#${encodeURIComponent(btoa(code))}`;
       iframe.setAttribute('src', src);
       iframe.setAttribute('width', '600');

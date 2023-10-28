@@ -199,7 +199,7 @@ interfaces.
 
 # Links
 
-The Strudel REPL is available at <https://strudel.tidalcycles.org>,
+The Strudel REPL is available at <https://strudel.cc>,
 including an interactive tutorial. The repository is at
 <https://github.com/tidalcycles/strudel>, all the code is open source
 under the GPL-3.0 License.

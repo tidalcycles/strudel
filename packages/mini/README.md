@@ -32,7 +32,7 @@ yields:
 
 ## Mini Notation API
 
-See "Mini Notation" in the [Strudel Tutorial](https://strudel.tidalcycles.org/learn/mini-notation)
+See "Mini Notation" in the [Strudel Tutorial](https://strudel.cc/learn/mini-notation)
 
 ## Building the Parser
 
