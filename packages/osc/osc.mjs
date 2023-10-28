@@ -37,7 +37,7 @@ function connect() {
 /**
  *
  * Sends each hap as an OSC message, which can be picked up by SuperCollider or any other OSC-enabled software.
- * For more info, read [MIDI & OSC in the docs](https://strudel.tidalcycles.org/learn/input-output)
+ * For more info, read [MIDI & OSC in the docs](https://strudel.cc/learn/input-output)
  *
  * @name osc
  * @memberof Pattern

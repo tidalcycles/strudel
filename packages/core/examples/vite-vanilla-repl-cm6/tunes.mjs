@@ -1,6 +1,6 @@
 export const bumpStreet = `// froos - "22 bump street", licensed with CC BY-NC-SA 4.0
 await samples('github:felixroos/samples/main')
-await samples('https://strudel.tidalcycles.org/tidal-drum-machines.json', 'github:ritchse/tidal-drum-machines/main/machines/')
+await samples('https://strudel.cc/tidal-drum-machines.json', 'github:ritchse/tidal-drum-machines/main/machines/')
 
 "<[0,<6 7 9>,13,<17 20 22 26>]!2>/2"
   // make it 22 edo
@@ -34,7 +34,7 @@ await samples('https://strudel.tidalcycles.org/tidal-drum-machines.json', 'githu
 export const trafficFlam = `// froos - "traffic flam", licensed with CC BY-NC-SA 4.0
 
 await samples('github:felixroos/samples/main')
-await samples('https://strudel.tidalcycles.org/tidal-drum-machines.json', 'github:ritchse/tidal-drum-machines/main/machines/')
+await samples('https://strudel.cc/tidal-drum-machines.json', 'github:ritchse/tidal-drum-machines/main/machines/')
 
 addVoicings('hip', {
   m11: ['2M 3m 4P 7m'],
@@ -70,7 +70,7 @@ export const funk42 = `// froos - how to funk in 42 lines of code
 // thanks to peach for the transcription: https://www.youtube.com/watch?v=8eiPXvIgda4
 
 await samples('github:felixroos/samples/main')
-await samples('https://strudel.tidalcycles.org/tidal-drum-machines.json', 'github:ritchse/tidal-drum-machines/main/machines/')
+await samples('https://strudel.cc/tidal-drum-machines.json', 'github:ritchse/tidal-drum-machines/main/machines/')
 
 setcps(.5)
 
