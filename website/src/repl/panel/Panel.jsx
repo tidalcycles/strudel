@@ -86,7 +86,7 @@ export function Panel({ context }) {
           <PanelTab name="intro" label="welcome" />
           <PanelTab name="sounds" />
           <PanelTab name="console" />
-          {/* <PanelTab name="patterns" /> */}
+          <PanelTab name="patterns" />
           <PanelTab name="reference" />
           <PanelTab name="settings" />
           {TAURI && <PanelTab name="files" />}
@@ -101,7 +101,7 @@ export function Panel({ context }) {
         <div className="relative overflow-hidden">
           <div className="text-white overflow-auto h-full max-w-full" ref={footerContent}>
             {activeFooter === 'intro' && <WelcomeTab context={context} />}
-            {/* {activeFooter === 'patterns' && <PatternsTab context={context} />} */}
+            {activeFooter === 'patterns' && <PatternsTab context={context} />}
             {activeFooter === 'console' && <ConsoleTab log={log} />}
             {activeFooter === 'sounds' && <SoundsTab />}
             {activeFooter === 'reference' && <Reference />}

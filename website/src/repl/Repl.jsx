@@ -17,7 +17,7 @@ import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
-import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
+import { settingsMap, useSettings, setLatestCode, updateUserPattern } from '../settings.mjs';
 import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
@@ -128,6 +128,7 @@ export function Repl({ embedded = false }) {
     isLineWrappingEnabled,
     panelPosition,
     isZen,
+    activePattern,
   } = useSettings();
 
   const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
@@ -144,6 +145,7 @@ export function Repl({ embedded = false }) {
         cleanupDraw();
       },
       afterEval: ({ code, meta }) => {
+        updateUserPattern(code);
         setMiniLocations(meta.miniLocations);
         setWidgets(meta.widgets);
         setPending(false);

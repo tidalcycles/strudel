@@ -1,24 +1,57 @@
 import React from 'react';
 import * as tunes from '../tunes.mjs';
-import { useSettings, clearUserPatterns, newUserPattern } from '../../settings.mjs';
+import {
+  useSettings,
+  clearUserPatterns,
+  newUserPattern,
+  setActivePattern,
+  deleteActivePattern,
+  duplicateActivePattern,
+  getUserPattern,
+} from '../../settings.mjs';
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
 
 export function PatternsTab({ context }) {
-  const { userPatterns } = useSettings();
+  const { userPatterns, activePattern } = useSettings();
   return (
     <div className="px-4 w-full text-foreground">
       <h2 className="text-xl mb-2">My Patterns</h2>
       <div className="space-x-1">
-        <button onClick={() => newUserPattern()}>add user pattern</button>
-        <button onClick={() => clearUserPatterns()}>clear user patterns</button>
+        <button
+          className="underline"
+          onClick={() => {
+            const name = newUserPattern();
+            const { code } = getUserPattern(name);
+            console.log('code', code);
+            context.handleUpdate(code);
+          }}
+        >
+          new
+        </button>
+        <button className="underline" onClick={() => duplicateActivePattern()}>
+          duplicate
+        </button>
+        <button className="underline" onClick={() => deleteActivePattern()}>
+          delete
+        </button>
+        <button className="underline" onClick={() => clearUserPatterns()}>
+          clear
+        </button>
       </div>
       {Object.entries(userPatterns).map(([key, up]) => (
         <a
           key={key}
-          className="mr-4 hover:opacity-50 cursor-pointer inline-block"
+          className={classNames(
+            'mr-4 hover:opacity-50 cursor-pointer inline-block',
+            key === activePattern ? 'underline' : '',
+          )}
           onClick={() => {
             const { code } = up;
-            console.log('clikkk', code);
             context.handleUpdate(code);
+            setActivePattern(key);
           }}
         >
           {key}
@@ -28,9 +61,12 @@ export function PatternsTab({ context }) {
       {Object.entries(tunes).map(([key, tune]) => (
         <a
           key={key}
-          className="mr-4 hover:opacity-50 cursor-pointer inline-block"
+          className={classNames(
+            'mr-4 hover:opacity-50 cursor-pointer inline-block',
+            key === activePattern ? 'underline' : '',
+          )}
           onClick={() => {
-            console.log('clikkk', tune);
+            setActivePattern(key);
             context.handleUpdate(tune);
           }}
         >
