@@ -1,7 +1,8 @@
 import { cx } from '@strudel.cycles/react';
 import React from 'react';
+import * as tunes from '../tunes.mjs';
 
-export function WelcomeTab() {
+export function WelcomeTab({ context }) {
   return (
     <div className="prose dark:prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
       <h3>
@@ -44,6 +45,19 @@ export function WelcomeTab() {
         </a>{' '}
         to ensure ongoing development 💖
       </p>
+      <h2 className="text-xl mb-2">examples</h2>
+      {Object.entries(tunes).map(([key, tune]) => (
+        <a
+          key={key}
+          className="mr-4 hover:opacity-50 cursor-pointer inline-block"
+          onClick={() => {
+            console.log('clikkk', tune);
+            context.handleUpdate(tune);
+          }}
+        >
+          {key}
+        </a>
+      ))}
     </div>
   );
 }
