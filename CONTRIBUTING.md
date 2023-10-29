@@ -13,7 +13,7 @@ To get in touch with the contributors, either
 ## Ask a Question
 
 If you have any questions about strudel, make sure you've glanced through the
-[docs](https://strudel.tidalcycles.org/learn/) to find out if it answers your question.
+[docs](https://strudel.cc/learn/) to find out if it answers your question.
 If not, use one of the Communication Channels above!
 
 Don't be afraid to ask! Your question might be of great value for other people too.
@@ -31,7 +31,7 @@ Use one of the Communication Channels listed above.
 
 ## Improve the Docs
 
-If you find some weak spots in the [docs](https://strudel.tidalcycles.org/workshop/getting-started/),
+If you find some weak spots in the [docs](https://strudel.cc/workshop/getting-started/),
 you can edit each file directly on github via the "Edit this page" link located in the right sidebar.
 
 ## Propose a Feature

@@ -1,23 +1,47 @@
+import reverbGen from './reverbGen.mjs';
+
 if (typeof AudioContext !== 'undefined') {
-  AudioContext.prototype.impulseResponse = function (duration, channels = 1) {
-    const length = this.sampleRate * duration;
-    const impulse = this.createBuffer(channels, length, this.sampleRate);
-    const IR = impulse.getChannelData(0);
-    for (let i = 0; i < length; i++) IR[i] = (2 * Math.random() - 1) * Math.pow(1 - i / length, duration);
-    return impulse;
+  AudioContext.prototype.adjustLength = function (duration, buffer) {
+    const newLength = buffer.sampleRate * duration;
+    const newBuffer = this.createBuffer(buffer.numberOfChannels, buffer.length, buffer.sampleRate);
+    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+      let oldData = buffer.getChannelData(channel);
+      let newData = newBuffer.getChannelData(channel);
+
+      for (let i = 0; i < newLength; i++) {
+        newData[i] = oldData[i] || 0;
+      }
+    }
+    return newBuffer;
   };
 
-  AudioContext.prototype.createReverb = function (duration) {
+  AudioContext.prototype.createReverb = function (duration, fade, lp, dim, ir) {
     const convolver = this.createConvolver();
-    convolver.setDuration = (d) => {
-      convolver.buffer = this.impulseResponse(d);
-      convolver.duration = duration;
-      return convolver;
+    convolver.generate = (d = 2, fade = 0.1, lp = 15000, dim = 1000, ir) => {
+      convolver.duration = d;
+      convolver.fade = fade;
+      convolver.lp = lp;
+      convolver.dim = dim;
+      convolver.ir = ir;
+      if (ir) {
+        convolver.buffer = this.adjustLength(d, ir);
+      } else {
+        reverbGen.generateReverb(
+          {
+            audioContext: this,
+            numChannels: 2,
+            decayTime: d,
+            fadeInTime: fade,
+            lpFreqStart: lp,
+            lpFreqEnd: dim,
+          },
+          (buffer) => {
+            convolver.buffer = buffer;
+          },
+        );
+      }
     };
-    convolver.setDuration(duration);
+    convolver.generate(duration, fade, lp, dim, ir);
     return convolver;
   };
 }
-
-// TODO: make the reverb more exciting
-// check out https://blog.gskinner.com/archives/2019/02/reverb-web-audio-api.html

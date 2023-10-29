@@ -2217,6 +2217,14 @@ export const chop = register('chop', function (n, pat) {
   return pat.squeezeBind(func);
 });
 
+/**
+ * Cuts each sample into the given number of parts, triggering progressive portions of each sample at each loop.
+ * @name striate
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * s("numbers:0 numbers:1 numbers:2").striate(6).slow(6)
+ */
 export const striate = register('striate', function (n, pat) {
   const slices = Array.from({ length: n }, (x, i) => i);
   const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
@@ -2343,3 +2351,9 @@ export const fit = register('fit', (pat) =>
 export const { loopAtCps, loopatcps } = register(['loopAtCps', 'loopatcps'], function (factor, cps, pat) {
   return _loopAt(factor, pat, cps);
 });
+
+/** exposes a custom value at query time. basically allows mutating state without evaluation */
+export const ref = (accessor) =>
+  pure(1)
+    .withValue(() => reify(accessor()))
+    .innerJoin();

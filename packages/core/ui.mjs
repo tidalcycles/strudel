@@ -46,7 +46,5 @@ export const cleanupUi = () => {
   const container = document.getElementById('code');
   if (container) {
     container.style = '';
-    // TODO: find a way to remove that duplication..
-    container.className = 'grow flex text-gray-100 relative overflow-auto cursor-text pb-0'; // has to match App.tsx
   }
 };

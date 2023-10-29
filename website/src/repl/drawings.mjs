@@ -23,7 +23,7 @@ angle(saw)
   .animate({smear:0})
 `;
 
-// https://strudel.tidalcycles.org/?C31_NrcMfZEO
+// https://strudel.cc/?C31_NrcMfZEO
 export const spiralflower = `const {innerWidth:ww,innerHeight:wh} = window;
 const ctx = getDrawContext()
 const piDiv180 = Math.PI / 180;

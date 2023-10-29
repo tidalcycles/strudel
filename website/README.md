@@ -1,6 +1,6 @@
 # Strudel Website
 
-This is the website for Strudel, deployed at [strudel.tidalcycles.org](https://strudel.tidalcycles.org/).
+This is the website for Strudel, deployed at [strudel.cc](https://strudel.cc).
 It includes the REPL live coding editor and the documentation site.
 
 ## Run locally

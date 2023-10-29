@@ -228,5 +228,5 @@ export const testCycles = {
   festivalOfFingers3: 16,
 };
 
-// fixed: https://strudel.tidalcycles.org/?DBp75NUfSxIn (missing .note())
-// bug: https://strudel.tidalcycles.org/?xHaKTd1kTpCn + https://strudel.tidalcycles.org/?o5LLePbx8kiQ
+// fixed: https://strudel.cc/?DBp75NUfSxIn (missing .note())
+// bug: https://strudel.cc/?xHaKTd1kTpCn + https://strudel.cc/?o5LLePbx8kiQ

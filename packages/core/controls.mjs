@@ -87,6 +87,16 @@ const generic_params = [
    */
   ['gain'],
   /**
+   * Gain applied after all effects have been processed.
+   *
+   * @name postgain
+   * @example
+   * s("bd sd,hh*4")
+   * .compressor("-20:20:10:.002:.02").postgain(1.5)
+   *
+   */
+  ['postgain'],
+  /**
    * Like {@link gain}, but linear.
    *
    * @name amp
@@ -656,6 +666,15 @@ const generic_params = [
    */
   [['vib', 'vibmod'], 'vibrato', 'v'],
   /**
+   * Adds pink noise to the mix
+   *
+   * @name noise
+   * @param {number | Pattern} wet wet amount
+   * @example
+   * sound("<white pink brown>/2")
+   */
+  ['noise'],
+  /**
    * Sets the vibrato depth in semitones. Only has an effect if `vibrato` | `vib` | `v` is is also set
    *
    * @name vibmod
@@ -971,19 +990,72 @@ const generic_params = [
    */
   [['room', 'size']],
   /**
+   * Reverb lowpass starting frequency (in hertz).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomlp
+   * @synonyms rlp
+   * @param {number} frequency between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).rlp(10000)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000)
+   */
+  ['roomlp', 'rlp'],
+  /**
+   * Reverb lowpass frequency at -60dB (in hertz).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomdim
+   * @synonyms rdim
+   * @param {number} frequency between 0 and 20000hz
+   * @example
+   * s("bd sd").room(0.5).rlp(10000).rdim(8000)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000).rdim(400)
+   *
+   */
+  ['roomdim', 'rdim'],
+  /**
+   * Reverb fade time (in seconds).
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
+   *
+   * @name roomfade
+   * @synonyms rfade
+   * @param {number} seconds for the reverb to fade
+   * @example
+   * s("bd sd").room(0.5).rlp(10000).rfade(0.5)
+   * @example
+   * s("bd sd").room(0.5).rlp(5000).rfade(4)
+   *
+   */
+  ['roomfade', 'rfade'],
+  /**
+   * Sets the sample to use as an impulse response for the reverb. * * @name iresponse
+   * @param {string | Pattern} sample to use as an impulse response
+   * @synonyms ir
+   * @example
+   * s("bd sd").room(.8).ir("<shaker_large:0 shaker_large:2>")
+   *
+   */
+  [['ir', 'i'], 'iresponse'],
+  /**
    * Sets the room size of the reverb, see {@link room}.
+   * When this property is changed, the reverb will be recaculated, so only change this sparsely..
    *
    * @name roomsize
    * @param {number | Pattern} size between 0 and 10
-   * @synonyms size, sz
+   * @synonyms rsize, sz, size
    * @example
-   * s("bd sd").room(.8).roomsize("<0 1 2 4 8>")
+   * s("bd sd").room(.8).rsize(1)
+   * @example
+   * s("bd sd").room(.8).rsize(4)
    *
    */
   // TODO: find out why :
   // s("bd sd").room(.8).roomsize("<0 .2 .4 .6 .8 [1,0]>").osc()
   // .. does not work. Is it because room is only one effect?
-  ['size', 'sz', 'roomsize'],
+  ['roomsize', 'size', 'sz', 'rsize'],
   // ['sagogo'],
   // ['sclap'],
   // ['sclaves'],
@@ -998,6 +1070,21 @@ const generic_params = [
    *
    */
   ['shape'],
+  /**
+   * Dynamics Compressor. The params are `compressor("threshold:ratio:knee:attack:release")`
+   * More info [here](https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode?retiredLocale=de#instance_properties)
+   *
+   * @name compressor
+   * @example
+   * s("bd sd,hh*4")
+   * .compressor("-20:20:10:.002:.02")
+   *
+   */
+  [['compressor', 'compressorRatio', 'compressorKnee', 'compressorAttack', 'compressorRelease']],
+  ['compressorKnee'],
+  ['compressorRatio'],
+  ['compressorAttack'],
+  ['compressorRelease'],
   /**
    * Changes the speed of sample playback, i.e. a cheap way of changing pitch.
    *
@@ -1153,7 +1240,7 @@ const generic_params = [
   ['pitchJump'],
   ['pitchJumpTime'],
   ['lfo', 'repeatTime'],
-  ['noise'],
+  ['znoise'], // noise on the frequency or as bubo calls it "frequency fog" :)
   ['zmod'],
   ['zcrush'], // like crush but scaled differently
   ['zdelay'],
