@@ -1,3 +1,5 @@
+import { logger } from './logger.mjs';
+
 // currently duplicate with core util.mjs to skip dependency
 // TODO: add separate util module?
 
