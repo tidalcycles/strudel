@@ -9,8 +9,7 @@ import Fraction from './fraction.mjs';
 import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
-
-import { compose, removeUndefineds, flatten, id, listRange, curry, _mod, numeralArgs, parseNumeral } from './util.mjs';
+import { clamp, removeUndefineds, flatten, id, listRange, curry, _mod, numeralArgs, parseNumeral } from './util.mjs';
 import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
 
@@ -2063,6 +2062,53 @@ export const echo = register('echo', function (times, time, feedback, pat) {
  */
 export const stut = register('stut', function (times, feedback, time, pat) {
   return pat._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+});
+
+/**
+ * pick from the list of values (or patterns of values) via the index using the given
+ * pattern of integers
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ * @example
+ * note(pick(["g a", "e f", "f g f g" , "g a c d"], "<0 1 [2!2] 3>"))
+ */
+
+export const pick = register('pick', (xs, pat) => {
+  xs = xs.map(reify);
+  if (xs.length == 0) {
+    return silence;
+  }
+  return pat
+    .fmap((i) => {
+      const key = clamp(i, 0, xs.length - 1);
+      return xs[key];
+    })
+    .innerJoin();
+});
+
+/**
+ * pick from the list of values (or patterns of values) via the index using the given
+ * pattern of integers. The selected pattern will be compressed to fit the duration of the selecting event
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ * @example
+ * note(squeeze(["g a", "f g f g" , "g a c d"], "<0@2 [1!2] 2>"))
+ */
+
+export const squeeze = register('squeeze', (xs, pat) => {
+  xs = xs.map(reify);
+  if (xs.length == 0) {
+    return silence;
+  }
+  return pat
+    .fmap((i) => {
+      const key = Math.floor(_mod(i, xs.length));
+      console.log(key);
+      return xs[key];
+    })
+    .squeezeJoin();
 });
 
 /**
