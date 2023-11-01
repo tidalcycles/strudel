@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`renders shared tunes > shared tune 10 https://strudel.tidalcycles.org/?nLsPXvEPTcQF 1`] = `
+exports[`renders shared tunes > shared tune 10 https://strudel.cc/?nLsPXvEPTcQF 1`] = `
 [
   "0/1 -> 3/2: {\\"s\\":\\"bd\\",\\"speed\\":0.7519542165100574}",
   "3/4 -> 3/2: {\\"s\\":\\"sd\\",\\"speed\\":0.7931522866332671}",
@@ -57,7 +57,7 @@ exports[`renders shared tunes > shared tune 10 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 11 https://strudel.tidalcycles.org/?ac7iGrXwBA_D 1`] = `
+exports[`renders shared tunes > shared tune 11 https://strudel.cc/?ac7iGrXwBA_D 1`] = `
 [
   "0/1 -> 3/2: {\\"s\\":\\"bd\\",\\"speed\\":0.7519542165100574}",
   "3/4 -> 3/2: {\\"s\\":\\"sd\\",\\"speed\\":0.7931522866332671}",
@@ -114,7 +114,7 @@ exports[`renders shared tunes > shared tune 11 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 12 https://strudel.tidalcycles.org/?0l5OmIwd4Xhc 1`] = `
+exports[`renders shared tunes > shared tune 12 https://strudel.cc/?0l5OmIwd4Xhc 1`] = `
 [
   "0/1 -> 3/1: {\\"n\\":\\"B3\\",\\"s\\":\\"0040_FluidR3_GM_sf2_file\\",\\"attack\\":0.05,\\"decay\\":0.1,\\"sustain\\":0.7,\\"cutoff\\":1111.7252990603447,\\"gain\\":0.3}",
   "0/1 -> 3/1: {\\"n\\":\\"D4\\",\\"s\\":\\"0040_FluidR3_GM_sf2_file\\",\\"attack\\":0.05,\\"decay\\":0.1,\\"sustain\\":0.7,\\"cutoff\\":1111.7252990603447,\\"gain\\":0.3}",
@@ -129,13 +129,13 @@ exports[`renders shared tunes > shared tune 12 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 13 https://strudel.tidalcycles.org/?a5zB31-92Q7M 1`] = `
+exports[`renders shared tunes > shared tune 13 https://strudel.cc/?a5zB31-92Q7M 1`] = `
 [
   "0/1 -> 1/1: {\\"s\\":\\"bd\\"}",
 ]
 `;
 
-exports[`renders shared tunes > shared tune 14 https://strudel.tidalcycles.org/?ZNO6a_vBjz65 1`] = `
+exports[`renders shared tunes > shared tune 14 https://strudel.cc/?ZNO6a_vBjz65 1`] = `
 [
   "0/1 -> 2/3: F3",
   "2/3 -> 1/1: Ab3",
@@ -155,7 +155,7 @@ exports[`renders shared tunes > shared tune 14 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 15 https://strudel.tidalcycles.org/?8sxdCCcYKcvp 1`] = `
+exports[`renders shared tunes > shared tune 15 https://strudel.cc/?8sxdCCcYKcvp 1`] = `
 [
   "0/1 -> 1/8: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2206.5338497506646,\\"resonance\\":10,\\"clip\\":1}",
   "3/8 -> 1/2: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2827.098521493671,\\"resonance\\":10,\\"clip\\":1}",
@@ -193,7 +193,7 @@ exports[`renders shared tunes > shared tune 15 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 16 https://strudel.tidalcycles.org/?PIG8q54uhQ5h 1`] = `
+exports[`renders shared tunes > shared tune 16 https://strudel.cc/?PIG8q54uhQ5h 1`] = `
 [
   "0/1 -> 3/1: {\\"n\\":\\"B3\\",\\"s\\":\\"0040_FluidR3_GM_sf2_file\\",\\"attack\\":0.05,\\"decay\\":0.1,\\"sustain\\":0.7,\\"cutoff\\":1111.7252990603447,\\"gain\\":0.3}",
   "0/1 -> 3/1: {\\"n\\":\\"D4\\",\\"s\\":\\"0040_FluidR3_GM_sf2_file\\",\\"attack\\":0.05,\\"decay\\":0.1,\\"sustain\\":0.7,\\"cutoff\\":1111.7252990603447,\\"gain\\":0.3}",
@@ -208,7 +208,7 @@ exports[`renders shared tunes > shared tune 16 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 18 https://strudel.tidalcycles.org/?RyZi9bqqcQku 1`] = `
+exports[`renders shared tunes > shared tune 18 https://strudel.cc/?RyZi9bqqcQku 1`] = `
 [
   "0/1 -> 4/3: B4",
   "0/1 -> 1/3: C3",
@@ -217,7 +217,7 @@ exports[`renders shared tunes > shared tune 18 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 19 https://strudel.tidalcycles.org/?83h9X6BCipLc 1`] = `
+exports[`renders shared tunes > shared tune 19 https://strudel.cc/?83h9X6BCipLc 1`] = `
 [
   "0/1 -> 3/4: F4",
   "0/1 -> 3/4: Bb4",
@@ -230,7 +230,7 @@ exports[`renders shared tunes > shared tune 19 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 20 https://strudel.tidalcycles.org/?Ii6-cLJkxdw9 1`] = `
+exports[`renders shared tunes > shared tune 20 https://strudel.cc/?Ii6-cLJkxdw9 1`] = `
 [
   "0/1 -> 1/10: C3",
   "0/1 -> 1/10: E3",
@@ -249,7 +249,7 @@ exports[`renders shared tunes > shared tune 20 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 21 https://strudel.tidalcycles.org/?-QCLFGNo4Q3J 1`] = `
+exports[`renders shared tunes > shared tune 21 https://strudel.cc/?-QCLFGNo4Q3J 1`] = `
 [
   "0/1 -> 1/4: {\\"n\\":62,\\"s\\":\\"sawtooth\\",\\"cutoff\\":2000}",
   "1/2 -> 5/8: {\\"n\\":50,\\"s\\":\\"square\\",\\"cutoff\\":2000}",
@@ -263,7 +263,7 @@ exports[`renders shared tunes > shared tune 21 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 22 https://strudel.tidalcycles.org/?vwau_1P_anLs 1`] = `
+exports[`renders shared tunes > shared tune 22 https://strudel.cc/?vwau_1P_anLs 1`] = `
 [
   "1/8 -> 1/4: {\\"n\\":\\"D1\\",\\"s\\":\\"sawtooth\\",\\"gain\\":0.3,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.5,\\"cutoff\\":1699.6897509708342}",
   "1/8 -> 1/4: {\\"n\\":\\"D1\\",\\"s\\":\\"square\\",\\"gain\\":0.3,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.5,\\"cutoff\\":1699.6897509708342}",
@@ -333,7 +333,7 @@ exports[`renders shared tunes > shared tune 22 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 23 https://strudel.tidalcycles.org/?wVExAEFBUPQB 1`] = `
+exports[`renders shared tunes > shared tune 23 https://strudel.cc/?wVExAEFBUPQB 1`] = `
 [
   "0/1 -> 1/4: {\\"note\\":\\"F3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.49537037037037035}",
   "0/1 -> 1/4: {\\"note\\":\\"A3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5138888888888888}",
@@ -347,7 +347,7 @@ exports[`renders shared tunes > shared tune 23 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 24 https://strudel.tidalcycles.org/?C8mMgTmvsnue 1`] = `
+exports[`renders shared tunes > shared tune 24 https://strudel.cc/?C8mMgTmvsnue 1`] = `
 [
   "0/1 -> 1/10: C3",
   "0/1 -> 1/10: E3",
@@ -366,7 +366,7 @@ exports[`renders shared tunes > shared tune 24 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 25 https://strudel.tidalcycles.org/?EeNsQ8hdNZwN 1`] = `
+exports[`renders shared tunes > shared tune 25 https://strudel.cc/?EeNsQ8hdNZwN 1`] = `
 [
   "0/1 -> 1/10: C3",
   "0/1 -> 1/10: E3",
@@ -385,7 +385,7 @@ exports[`renders shared tunes > shared tune 25 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 26 https://strudel.tidalcycles.org/?AoWRw1oZkytb 1`] = `
+exports[`renders shared tunes > shared tune 26 https://strudel.cc/?AoWRw1oZkytb 1`] = `
 [
   "0/1 -> 1/2: e5",
   "1/2 -> 3/4: b4",
@@ -397,7 +397,7 @@ exports[`renders shared tunes > shared tune 26 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 27 https://strudel.tidalcycles.org/?UaTcY5YrOahl 1`] = `
+exports[`renders shared tunes > shared tune 27 https://strudel.cc/?UaTcY5YrOahl 1`] = `
 [
   "-1666666666666667/7500000000000000 -> 2/9: G3",
   "0/1 -> 4/3: E3",
@@ -420,7 +420,7 @@ exports[`renders shared tunes > shared tune 27 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 28 https://strudel.tidalcycles.org/?YPLI4xhBDMpV 1`] = `
+exports[`renders shared tunes > shared tune 28 https://strudel.cc/?YPLI4xhBDMpV 1`] = `
 [
   "0/1 -> 1/1: bd",
   "0/1 -> 1/4: hh",
@@ -431,7 +431,7 @@ exports[`renders shared tunes > shared tune 28 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 29 https://strudel.tidalcycles.org/?amB31Tm55hnv 1`] = `
+exports[`renders shared tunes > shared tune 29 https://strudel.cc/?amB31Tm55hnv 1`] = `
 [
   "0/1 -> 1/4: B3",
   "0/1 -> 1/4: D4",
@@ -454,7 +454,7 @@ exports[`renders shared tunes > shared tune 29 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 30 https://strudel.tidalcycles.org/?8OyCVeBYuqru 1`] = `
+exports[`renders shared tunes > shared tune 30 https://strudel.cc/?8OyCVeBYuqru 1`] = `
 [
   "0/1 -> 4/3: B4",
   "0/1 -> 1/3: C3",
@@ -463,7 +463,7 @@ exports[`renders shared tunes > shared tune 30 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 31 https://strudel.tidalcycles.org/?lzjNrzv5qXL2 1`] = `
+exports[`renders shared tunes > shared tune 31 https://strudel.cc/?lzjNrzv5qXL2 1`] = `
 [
   "0/1 -> 1/3: bd",
   "1/3 -> 2/3: hh",
@@ -481,7 +481,7 @@ exports[`renders shared tunes > shared tune 31 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 32 https://strudel.tidalcycles.org/?b5ZZnwaI-UuT 1`] = `
+exports[`renders shared tunes > shared tune 32 https://strudel.cc/?b5ZZnwaI-UuT 1`] = `
 [
   "0/1 -> 7/5: {\\"s\\":\\"bd\\",\\"speed\\":0.7779313247650861}",
   "7/10 -> 7/5: {\\"s\\":\\"sd\\",\\"speed\\":0.8397284299499006}",
@@ -543,7 +543,7 @@ exports[`renders shared tunes > shared tune 32 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 33 https://strudel.tidalcycles.org/?YZksJ_k4TsrS 1`] = `
+exports[`renders shared tunes > shared tune 33 https://strudel.cc/?YZksJ_k4TsrS 1`] = `
 [
   "0/1 -> 5/8: F#5",
   "5/8 -> 5/4: D5",
@@ -560,7 +560,7 @@ exports[`renders shared tunes > shared tune 33 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 34 https://strudel.tidalcycles.org/?e9-pyQN6vY8E 1`] = `
+exports[`renders shared tunes > shared tune 34 https://strudel.cc/?e9-pyQN6vY8E 1`] = `
 [
   "0/1 -> 2/1: {\\"note\\":\\"D3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4814814814814815}",
   "0/1 -> 2/1: {\\"note\\":\\"D3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4814814814814815}",
@@ -578,7 +578,7 @@ exports[`renders shared tunes > shared tune 34 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 35 https://strudel.tidalcycles.org/?ar2sdYnjIBLm 1`] = `
+exports[`renders shared tunes > shared tune 35 https://strudel.cc/?ar2sdYnjIBLm 1`] = `
 [
   "0/1 -> 5/8: F#5",
   "5/8 -> 5/4: D5",
@@ -595,9 +595,9 @@ exports[`renders shared tunes > shared tune 35 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 38 https://strudel.tidalcycles.org/?RDyvc3SOo6kX 1`] = `[]`;
+exports[`renders shared tunes > shared tune 38 https://strudel.cc/?RDyvc3SOo6kX 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 39 https://strudel.tidalcycles.org/?E9HzjWmePz3x 1`] = `
+exports[`renders shared tunes > shared tune 39 https://strudel.cc/?E9HzjWmePz3x 1`] = `
 [
   "0/1 -> 1/2: c1",
   "1/2 -> 1/1: c1",
@@ -613,7 +613,7 @@ exports[`renders shared tunes > shared tune 39 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 40 https://strudel.tidalcycles.org/?qk6JW1Bmi26s 1`] = `
+exports[`renders shared tunes > shared tune 40 https://strudel.cc/?qk6JW1Bmi26s 1`] = `
 [
   "0/1 -> 1/1: {\\"n\\":\\"C2\\",\\"s\\":\\"sawtooth\\",\\"cutoff\\":500}",
   "1/2 -> 3/5: {\\"note\\":\\"Bb3\\",\\"s\\":\\"sawtooth\\",\\"cutoff\\":2000,\\"gain\\":0.6}",
@@ -647,7 +647,7 @@ exports[`renders shared tunes > shared tune 40 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 41 https://strudel.tidalcycles.org/?c59geCmbANy8 1`] = `
+exports[`renders shared tunes > shared tune 41 https://strudel.cc/?c59geCmbANy8 1`] = `
 [
   "0/1 -> 1/3: C3",
   "1/3 -> 2/3: E3",
@@ -655,27 +655,7 @@ exports[`renders shared tunes > shared tune 41 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 42 https://strudel.tidalcycles.org/?WD53HbM4B3Xf 1`] = `
-[
-  "0/1 -> 1/3: C3",
-  "1/3 -> 2/3: E3",
-  "2/3 -> 1/1: G3",
-  "-1/12 -> 1/4: F6",
-  "1/4 -> 7/12: C3",
-  "7/12 -> 11/12: E3",
-  "11/12 -> 5/4: G3",
-  "-1/6 -> 1/6: C6",
-  "1/6 -> 1/2: F6",
-  "1/2 -> 5/6: C3",
-  "5/6 -> 7/6: E3",
-  "-1/4 -> 1/12: A5",
-  "1/12 -> 5/12: C6",
-  "5/12 -> 3/4: F6",
-  "3/4 -> 13/12: C3",
-]
-`;
-
-exports[`renders shared tunes > shared tune 43 https://strudel.tidalcycles.org/?g7c_nZZ1fVJS 1`] = `
+exports[`renders shared tunes > shared tune 42 https://strudel.cc/?WD53HbM4B3Xf 1`] = `
 [
   "0/1 -> 1/3: C3",
   "1/3 -> 2/3: E3",
@@ -695,7 +675,27 @@ exports[`renders shared tunes > shared tune 43 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 44 https://strudel.tidalcycles.org/?Don6HOPD2Wwc 1`] = `
+exports[`renders shared tunes > shared tune 43 https://strudel.cc/?g7c_nZZ1fVJS 1`] = `
+[
+  "0/1 -> 1/3: C3",
+  "1/3 -> 2/3: E3",
+  "2/3 -> 1/1: G3",
+  "-1/12 -> 1/4: F6",
+  "1/4 -> 7/12: C3",
+  "7/12 -> 11/12: E3",
+  "11/12 -> 5/4: G3",
+  "-1/6 -> 1/6: C6",
+  "1/6 -> 1/2: F6",
+  "1/2 -> 5/6: C3",
+  "5/6 -> 7/6: E3",
+  "-1/4 -> 1/12: A5",
+  "1/12 -> 5/12: C6",
+  "5/12 -> 3/4: F6",
+  "3/4 -> 13/12: C3",
+]
+`;
+
+exports[`renders shared tunes > shared tune 44 https://strudel.cc/?Don6HOPD2Wwc 1`] = `
 [
   "0/1 -> 1/3: C3",
   "1/3 -> 2/3: E3",
@@ -750,7 +750,7 @@ exports[`renders shared tunes > shared tune 44 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 45 https://strudel.tidalcycles.org/?T8n8F1Fvew9g 1`] = `
+exports[`renders shared tunes > shared tune 45 https://strudel.cc/?T8n8F1Fvew9g 1`] = `
 [
   "0/1 -> 1/3: C3",
   "1/3 -> 2/3: E3",
@@ -805,7 +805,7 @@ exports[`renders shared tunes > shared tune 45 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 46 https://strudel.tidalcycles.org/?wj1_oPJEGjUu 1`] = `
+exports[`renders shared tunes > shared tune 46 https://strudel.cc/?wj1_oPJEGjUu 1`] = `
 [
   "1/2 -> 1/1: a4",
   "3/4 -> 1/1: a1",
@@ -815,7 +815,7 @@ exports[`renders shared tunes > shared tune 46 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 47 https://strudel.tidalcycles.org/?0KNPD8AmV-ms 1`] = `
+exports[`renders shared tunes > shared tune 47 https://strudel.cc/?0KNPD8AmV-ms 1`] = `
 [
   "0/1 -> 1/3: {\\"note\\":\\"c2\\"}",
   "0/1 -> 1/3: {\\"note\\":\\"d2\\"}",
@@ -827,7 +827,7 @@ exports[`renders shared tunes > shared tune 47 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 48 https://strudel.tidalcycles.org/?Y5DZt5A66Jj- 1`] = `
+exports[`renders shared tunes > shared tune 48 https://strudel.cc/?Y5DZt5A66Jj- 1`] = `
 [
   "0/1 -> 1/1: F2",
   "0/1 -> 1/1: F3",
@@ -836,7 +836,7 @@ exports[`renders shared tunes > shared tune 48 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 49 https://strudel.tidalcycles.org/?RnD3yO0e31p- 1`] = `
+exports[`renders shared tunes > shared tune 49 https://strudel.cc/?RnD3yO0e31p- 1`] = `
 [
   "0/1 -> 1/1: F2",
   "0/1 -> 1/1: F3",
@@ -845,7 +845,7 @@ exports[`renders shared tunes > shared tune 49 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 50 https://strudel.tidalcycles.org/?PQfKr5ac-4x0 1`] = `
+exports[`renders shared tunes > shared tune 50 https://strudel.cc/?PQfKr5ac-4x0 1`] = `
 [
   "0/1 -> 1/2: c1",
   "1/2 -> 1/1: c1",
@@ -861,7 +861,7 @@ exports[`renders shared tunes > shared tune 50 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 51 https://strudel.tidalcycles.org/?qbyqK2VN_6if 1`] = `
+exports[`renders shared tunes > shared tune 51 https://strudel.cc/?qbyqK2VN_6if 1`] = `
 [
   "0/1 -> 2/1: {\\"note\\":\\"C3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4722222222222222}",
   "0/1 -> 2/1: {\\"note\\":\\"E3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4907407407407407}",
@@ -869,7 +869,7 @@ exports[`renders shared tunes > shared tune 51 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 52 https://strudel.tidalcycles.org/?0H0ym5HypMyj 1`] = `
+exports[`renders shared tunes > shared tune 52 https://strudel.cc/?0H0ym5HypMyj 1`] = `
 [
   "0/1 -> 1/2: {\\"note\\":\\"D3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4814814814814815}",
   "1/4 -> 3/4: {\\"note\\":\\"F3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.49537037037037035}",
@@ -904,7 +904,7 @@ exports[`renders shared tunes > shared tune 52 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 53 https://strudel.tidalcycles.org/?YAB9YoUpJwaj 1`] = `
+exports[`renders shared tunes > shared tune 53 https://strudel.cc/?YAB9YoUpJwaj 1`] = `
 [
   "0/1 -> 1/2: c2",
   "1/2 -> 1/1: g2",
@@ -923,7 +923,7 @@ exports[`renders shared tunes > shared tune 53 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 54 https://strudel.tidalcycles.org/?-fdVyijf3Fk0 1`] = `
+exports[`renders shared tunes > shared tune 54 https://strudel.cc/?-fdVyijf3Fk0 1`] = `
 [
   "0/1 -> 1/2: {\\"note\\":\\"c2\\"}",
   "1/2 -> 1/1: {\\"note\\":\\"g2\\"}",
@@ -942,7 +942,7 @@ exports[`renders shared tunes > shared tune 54 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 55 https://strudel.tidalcycles.org/?ODAzfGV0ZcbI 1`] = `
+exports[`renders shared tunes > shared tune 55 https://strudel.cc/?ODAzfGV0ZcbI 1`] = `
 [
   "0/1 -> 1/2: Bb2",
   "0/1 -> 1/2: F3",
@@ -966,7 +966,7 @@ exports[`renders shared tunes > shared tune 55 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 56 https://strudel.tidalcycles.org/?86BPLjJUsUlY 1`] = `
+exports[`renders shared tunes > shared tune 56 https://strudel.cc/?86BPLjJUsUlY 1`] = `
 [
   "0/1 -> 1/2: Bb2",
   "0/1 -> 1/2: F3",
@@ -990,7 +990,7 @@ exports[`renders shared tunes > shared tune 56 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 57 https://strudel.tidalcycles.org/?a6p9WTalyHea 1`] = `
+exports[`renders shared tunes > shared tune 57 https://strudel.cc/?a6p9WTalyHea 1`] = `
 [
   "0/1 -> 1/2: c1",
   "1/2 -> 1/1: c1",
@@ -1000,7 +1000,7 @@ exports[`renders shared tunes > shared tune 57 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 58 https://strudel.tidalcycles.org/?ciNbEjRKpC5T 1`] = `
+exports[`renders shared tunes > shared tune 58 https://strudel.cc/?ciNbEjRKpC5T 1`] = `
 [
   "0/1 -> 1/2: c1",
   "1/2 -> 1/1: c1",
@@ -1010,7 +1010,7 @@ exports[`renders shared tunes > shared tune 58 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 59 https://strudel.tidalcycles.org/?pLhCIXogckDD 1`] = `
+exports[`renders shared tunes > shared tune 59 https://strudel.cc/?pLhCIXogckDD 1`] = `
 [
   "0/1 -> 1/4: B3",
   "0/1 -> 1/4: D4",
@@ -1033,7 +1033,7 @@ exports[`renders shared tunes > shared tune 59 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 60 https://strudel.tidalcycles.org/?hJFGyCmtF36W 1`] = `
+exports[`renders shared tunes > shared tune 60 https://strudel.cc/?hJFGyCmtF36W 1`] = `
 [
   "0/1 -> 1/4: B3",
   "0/1 -> 1/4: D4",
@@ -1056,7 +1056,7 @@ exports[`renders shared tunes > shared tune 60 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 61 https://strudel.tidalcycles.org/?4HtBUNn4xAAA 1`] = `
+exports[`renders shared tunes > shared tune 61 https://strudel.cc/?4HtBUNn4xAAA 1`] = `
 [
   "0/1 -> 3053185/4904046: {\\"n\\":62,\\"s\\":\\"sawtooth\\",\\"cutoff\\":3986.9405734726183}",
   "0/1 -> 3053185/4904046: {\\"n\\":62,\\"s\\":\\"square\\",\\"cutoff\\":3986.9405734726183}",
@@ -1088,7 +1088,7 @@ exports[`renders shared tunes > shared tune 61 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 62 https://strudel.tidalcycles.org/?o6VENTMBn_Fo 1`] = `
+exports[`renders shared tunes > shared tune 62 https://strudel.cc/?o6VENTMBn_Fo 1`] = `
 [
   "0/1 -> 1/5: F#1",
   "1/5 -> 2/5: F#1",
@@ -1099,7 +1099,7 @@ exports[`renders shared tunes > shared tune 62 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 63 https://strudel.tidalcycles.org/?2MtjoYELsyy6 1`] = `
+exports[`renders shared tunes > shared tune 63 https://strudel.cc/?2MtjoYELsyy6 1`] = `
 [
   "0/1 -> 2867650/6103323: {\\"note\\":\\"B1\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.41203703703703703}",
   "0/1 -> 2681020/6741463: {\\"note\\":\\"B1\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.41203703703703703}",
@@ -1284,7 +1284,7 @@ exports[`renders shared tunes > shared tune 63 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 64 https://strudel.tidalcycles.org/?vJ2KTtZo20cu 1`] = `
+exports[`renders shared tunes > shared tune 64 https://strudel.cc/?vJ2KTtZo20cu 1`] = `
 [
   "0/1 -> 1/2: Bb2",
   "0/1 -> 1/2: F3",
@@ -1308,7 +1308,7 @@ exports[`renders shared tunes > shared tune 64 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 65 https://strudel.tidalcycles.org/?DhWsebFhaaI9 1`] = `
+exports[`renders shared tunes > shared tune 65 https://strudel.cc/?DhWsebFhaaI9 1`] = `
 [
   "0/1 -> 1/2: Bb2",
   "0/1 -> 1/2: F3",
@@ -1332,7 +1332,7 @@ exports[`renders shared tunes > shared tune 65 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 66 https://strudel.tidalcycles.org/?TpZLuyJCkYlW 1`] = `
+exports[`renders shared tunes > shared tune 66 https://strudel.cc/?TpZLuyJCkYlW 1`] = `
 [
   "0/1 -> 1/4: c4",
   "1/4 -> 1/2: e3",
@@ -1341,7 +1341,7 @@ exports[`renders shared tunes > shared tune 66 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 67 https://strudel.tidalcycles.org/?pQKoHsxS2h84 1`] = `
+exports[`renders shared tunes > shared tune 67 https://strudel.cc/?pQKoHsxS2h84 1`] = `
 [
   "0/1 -> 1/4: {\\"n\\":62,\\"s\\":\\"sawtooth\\",\\"cutoff\\":2000}",
   "1/2 -> 5/8: {\\"n\\":50,\\"s\\":\\"square\\",\\"cutoff\\":2000}",
@@ -1355,7 +1355,7 @@ exports[`renders shared tunes > shared tune 67 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 68 https://strudel.tidalcycles.org/?gL4HMl9q43o6 1`] = `
+exports[`renders shared tunes > shared tune 68 https://strudel.cc/?gL4HMl9q43o6 1`] = `
 [
   "0/1 -> 1/4: c4",
   "1/4 -> 1/2: e3",
@@ -1364,7 +1364,7 @@ exports[`renders shared tunes > shared tune 68 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 69 https://strudel.tidalcycles.org/?QoKBBsdDBQro 1`] = `
+exports[`renders shared tunes > shared tune 69 https://strudel.cc/?QoKBBsdDBQro 1`] = `
 [
   "0/1 -> 1/4: c4",
   "1/4 -> 1/2: e3",
@@ -1373,7 +1373,7 @@ exports[`renders shared tunes > shared tune 69 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 70 https://strudel.tidalcycles.org/?TGp3R_6-qmvY 1`] = `
+exports[`renders shared tunes > shared tune 70 https://strudel.cc/?TGp3R_6-qmvY 1`] = `
 [
   "0/1 -> 1/8: c3",
   "1/8 -> 1/4: e3",
@@ -1383,7 +1383,7 @@ exports[`renders shared tunes > shared tune 70 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 71 https://strudel.tidalcycles.org/?Oais65XPBeAV 1`] = `
+exports[`renders shared tunes > shared tune 71 https://strudel.cc/?Oais65XPBeAV 1`] = `
 [
   "0/1 -> 1/3: {\\"note\\":\\"c9\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.75}",
   "1/3 -> 2/3: {\\"note\\":\\"c9\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.75}",
@@ -1393,7 +1393,7 @@ exports[`renders shared tunes > shared tune 71 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 72 https://strudel.tidalcycles.org/?ldZPCC8_189H 1`] = `
+exports[`renders shared tunes > shared tune 72 https://strudel.cc/?ldZPCC8_189H 1`] = `
 [
   "0/1 -> 1/3: {\\"note\\":\\"c9\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.75}",
   "1/3 -> 2/3: {\\"note\\":\\"c9\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.75}",
@@ -1403,19 +1403,19 @@ exports[`renders shared tunes > shared tune 72 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 73 https://strudel.tidalcycles.org/?D--IwyHBNn0a 1`] = `[]`;
+exports[`renders shared tunes > shared tune 73 https://strudel.cc/?D--IwyHBNn0a 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 74 https://strudel.tidalcycles.org/?gRGnC9U7CLgh 1`] = `[]`;
+exports[`renders shared tunes > shared tune 74 https://strudel.cc/?gRGnC9U7CLgh 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 75 https://strudel.tidalcycles.org/?rr1DhAIFVsNf 1`] = `[]`;
+exports[`renders shared tunes > shared tune 75 https://strudel.cc/?rr1DhAIFVsNf 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 76 https://strudel.tidalcycles.org/?AnRyPR-aJRnM 1`] = `[]`;
+exports[`renders shared tunes > shared tune 76 https://strudel.cc/?AnRyPR-aJRnM 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 77 https://strudel.tidalcycles.org/?CpHjU1-jPeGv 1`] = `[]`;
+exports[`renders shared tunes > shared tune 77 https://strudel.cc/?CpHjU1-jPeGv 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 78 https://strudel.tidalcycles.org/?LgsIpYacgnRK 1`] = `[]`;
+exports[`renders shared tunes > shared tune 78 https://strudel.cc/?LgsIpYacgnRK 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 79 https://strudel.tidalcycles.org/?faC6ykfIhu1j 1`] = `
+exports[`renders shared tunes > shared tune 79 https://strudel.cc/?faC6ykfIhu1j 1`] = `
 [
   "0/1 -> 1/1: F2",
   "0/1 -> 1/1: F3",
@@ -1424,13 +1424,13 @@ exports[`renders shared tunes > shared tune 79 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 80 https://strudel.tidalcycles.org/?5_NKdDWsFCk1 1`] = `[]`;
+exports[`renders shared tunes > shared tune 80 https://strudel.cc/?5_NKdDWsFCk1 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 81 https://strudel.tidalcycles.org/?kH7LV63mXASH 1`] = `[]`;
+exports[`renders shared tunes > shared tune 81 https://strudel.cc/?kH7LV63mXASH 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 82 https://strudel.tidalcycles.org/?l7FO1TzD3yBA 1`] = `[]`;
+exports[`renders shared tunes > shared tune 82 https://strudel.cc/?l7FO1TzD3yBA 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 83 https://strudel.tidalcycles.org/?3hSnOnJz8aPZ 1`] = `
+exports[`renders shared tunes > shared tune 83 https://strudel.cc/?3hSnOnJz8aPZ 1`] = `
 [
   "0/1 -> 1/10: C3",
   "0/1 -> 1/10: E3",
@@ -1449,7 +1449,7 @@ exports[`renders shared tunes > shared tune 83 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 84 https://strudel.tidalcycles.org/?J3ClL0wQCBr_ 1`] = `
+exports[`renders shared tunes > shared tune 84 https://strudel.cc/?J3ClL0wQCBr_ 1`] = `
 [
   "0/1 -> 1/8: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2206.5338497506646,\\"resonance\\":10,\\"clip\\":1}",
   "3/8 -> 1/2: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2827.098521493671,\\"resonance\\":10,\\"clip\\":1}",
@@ -1492,7 +1492,7 @@ exports[`renders shared tunes > shared tune 84 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 85 https://strudel.tidalcycles.org/?YC1KlrX1fOyP 1`] = `
+exports[`renders shared tunes > shared tune 85 https://strudel.cc/?YC1KlrX1fOyP 1`] = `
 [
   "0/1 -> 1/3: {\\"note\\":\\"D3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4814814814814815}",
   "1/3 -> 1/2: {\\"note\\":\\"Eb3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4861111111111111}",
@@ -1501,7 +1501,7 @@ exports[`renders shared tunes > shared tune 85 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 86 https://strudel.tidalcycles.org/?YD2MRLffOCRV 1`] = `
+exports[`renders shared tunes > shared tune 86 https://strudel.cc/?YD2MRLffOCRV 1`] = `
 [
   "1/2 -> 1/1: e4",
   "1/4 -> 1/2: c3",
@@ -1509,7 +1509,7 @@ exports[`renders shared tunes > shared tune 86 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 87 https://strudel.tidalcycles.org/?XxvYG4XK-I5G 1`] = `
+exports[`renders shared tunes > shared tune 87 https://strudel.cc/?XxvYG4XK-I5G 1`] = `
 [
   "0/1 -> 1/4: {\\"note\\":\\"G4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5601851851851851}",
   "0/1 -> 1/4: {\\"note\\":\\"B4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5787037037037037}",
@@ -1524,7 +1524,7 @@ exports[`renders shared tunes > shared tune 87 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 88 https://strudel.tidalcycles.org/?FHXCltSQwouU 1`] = `
+exports[`renders shared tunes > shared tune 88 https://strudel.cc/?FHXCltSQwouU 1`] = `
 [
   "0/1 -> 3/4: c3",
   "3/4 -> 1/1: eb3",
@@ -1536,7 +1536,7 @@ exports[`renders shared tunes > shared tune 88 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 89 https://strudel.tidalcycles.org/?Hg6JP2F6ufl1 1`] = `
+exports[`renders shared tunes > shared tune 89 https://strudel.cc/?Hg6JP2F6ufl1 1`] = `
 [
   "0/1 -> 1/3: c3",
   "1/3 -> 2/3: e3",
@@ -1546,7 +1546,7 @@ exports[`renders shared tunes > shared tune 89 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 90 https://strudel.tidalcycles.org/?lNxLnMcpieR3 1`] = `
+exports[`renders shared tunes > shared tune 90 https://strudel.cc/?lNxLnMcpieR3 1`] = `
 [
   "0/1 -> 1/3: c3",
   "1/3 -> 2/3: e3",
@@ -1556,7 +1556,7 @@ exports[`renders shared tunes > shared tune 90 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 91 https://strudel.tidalcycles.org/?78PHBhVZovgo 1`] = `
+exports[`renders shared tunes > shared tune 91 https://strudel.cc/?78PHBhVZovgo 1`] = `
 [
   "0/1 -> 1/4: c3",
   "1/5 -> 9/20: c3",
@@ -1568,7 +1568,7 @@ exports[`renders shared tunes > shared tune 91 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 92 https://strudel.tidalcycles.org/?rXBp8MOz1iNw 1`] = `
+exports[`renders shared tunes > shared tune 92 https://strudel.cc/?rXBp8MOz1iNw 1`] = `
 [
   "0/1 -> 19/80: e5",
   "1/2 -> 79/120: d5",
@@ -1581,7 +1581,7 @@ exports[`renders shared tunes > shared tune 92 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 93 https://strudel.tidalcycles.org/?bbPVlOzXxAxn 1`] = `
+exports[`renders shared tunes > shared tune 93 https://strudel.cc/?bbPVlOzXxAxn 1`] = `
 [
   "-3761101961531/150000000000000 -> 2912966012823/50000000000000: F4",
   "2912966012823/50000000000000 -> 141592653589793/1000000000000000: G4",
@@ -1599,7 +1599,7 @@ exports[`renders shared tunes > shared tune 93 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 94 https://strudel.tidalcycles.org/?dZSKPnJiPMAz 1`] = `
+exports[`renders shared tunes > shared tune 94 https://strudel.cc/?dZSKPnJiPMAz 1`] = `
 [
   "-3761101961531/150000000000000 -> 2912966012823/50000000000000: E3",
   "2912966012823/50000000000000 -> 141592653589793/1000000000000000: A3",
@@ -1617,7 +1617,7 @@ exports[`renders shared tunes > shared tune 94 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 95 https://strudel.tidalcycles.org/?l-zyGmnM6g_q 1`] = `
+exports[`renders shared tunes > shared tune 95 https://strudel.cc/?l-zyGmnM6g_q 1`] = `
 [
   "0/1 -> 1/8: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2206.5338497506646,\\"resonance\\":10,\\"clip\\":1}",
   "3/8 -> 1/2: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2827.098521493671,\\"resonance\\":10,\\"clip\\":1}",
@@ -1660,7 +1660,7 @@ exports[`renders shared tunes > shared tune 95 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 96 https://strudel.tidalcycles.org/?vEpJhDLHycD8 1`] = `
+exports[`renders shared tunes > shared tune 96 https://strudel.cc/?vEpJhDLHycD8 1`] = `
 [
   "0/1 -> 3/20: 0",
   "0/1 -> 3/20: 3",
@@ -1679,7 +1679,7 @@ exports[`renders shared tunes > shared tune 96 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 97 https://strudel.tidalcycles.org/?DHUbrEloJxMd 1`] = `
+exports[`renders shared tunes > shared tune 97 https://strudel.cc/?DHUbrEloJxMd 1`] = `
 [
   "0/1 -> 19/80: {\\"note\\":\\"E4\\"}",
   "1/2 -> 79/120: {\\"note\\":\\"D4\\"}",
@@ -1692,7 +1692,7 @@ exports[`renders shared tunes > shared tune 97 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 98 https://strudel.tidalcycles.org/?-YW3kIKIGR8j 1`] = `
+exports[`renders shared tunes > shared tune 98 https://strudel.cc/?-YW3kIKIGR8j 1`] = `
 [
   "1/8 -> 1/4: {\\"n\\":\\"D1\\",\\"s\\":\\"sawtooth\\",\\"gain\\":0.3,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.5,\\"cutoff\\":1699.6897509708342}",
   "1/8 -> 1/4: {\\"n\\":\\"D1\\",\\"s\\":\\"square\\",\\"gain\\":0.3,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.5,\\"cutoff\\":1699.6897509708342}",
@@ -1762,7 +1762,7 @@ exports[`renders shared tunes > shared tune 98 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 99 https://strudel.tidalcycles.org/?iw5ossp4Sti1 1`] = `
+exports[`renders shared tunes > shared tune 99 https://strudel.cc/?iw5ossp4Sti1 1`] = `
 [
   "0/1 -> 3/20: 0",
   "0/1 -> 3/20: 3",
@@ -1781,7 +1781,7 @@ exports[`renders shared tunes > shared tune 99 https://strudel.tidalcycles.org/?
 ]
 `;
 
-exports[`renders shared tunes > shared tune 101 https://strudel.tidalcycles.org/?ISMZvMGByNst 1`] = `
+exports[`renders shared tunes > shared tune 101 https://strudel.cc/?ISMZvMGByNst 1`] = `
 [
   "0/1 -> 1/3: bd",
   "1/3 -> 2/3: hh",
@@ -1799,7 +1799,7 @@ exports[`renders shared tunes > shared tune 101 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 102 https://strudel.tidalcycles.org/?PDjOPOnV3JR6 1`] = `
+exports[`renders shared tunes > shared tune 102 https://strudel.cc/?PDjOPOnV3JR6 1`] = `
 [
   "0/1 -> 1/2: {\\"note\\":\\"G1\\",\\"s\\":\\"sawtooth\\",\\"cutoff\\":1500}",
   "1/2 -> 1/1: {\\"note\\":\\"G1\\",\\"s\\":\\"sawtooth\\",\\"cutoff\\":1500}",
@@ -1826,7 +1826,7 @@ exports[`renders shared tunes > shared tune 102 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 103 https://strudel.tidalcycles.org/?u7qAdlwp3Qig 1`] = `
+exports[`renders shared tunes > shared tune 103 https://strudel.cc/?u7qAdlwp3Qig 1`] = `
 [
   "1/2 -> 1/1: {\\"note\\":\\"F3\\"}",
   "1/2 -> 1/1: {\\"note\\":\\"C4\\"}",
@@ -1845,7 +1845,7 @@ exports[`renders shared tunes > shared tune 103 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 104 https://strudel.tidalcycles.org/?OhjceF8ZvYk8 1`] = `
+exports[`renders shared tunes > shared tune 104 https://strudel.cc/?OhjceF8ZvYk8 1`] = `
 [
   "1/8 -> 1/4: {\\"n\\":\\"D1\\",\\"s\\":\\"sawtooth\\",\\"gain\\":0.3,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.5,\\"cutoff\\":1699.6897509708342}",
   "1/8 -> 1/4: {\\"n\\":\\"D1\\",\\"s\\":\\"square\\",\\"gain\\":0.3,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.5,\\"cutoff\\":1699.6897509708342}",
@@ -1915,7 +1915,7 @@ exports[`renders shared tunes > shared tune 104 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 105 https://strudel.tidalcycles.org/?4yn-ch_d1hnA 1`] = `
+exports[`renders shared tunes > shared tune 105 https://strudel.cc/?4yn-ch_d1hnA 1`] = `
 [
   "0/1 -> 1/4: C3",
   "0/1 -> 1/4: G3",
@@ -1931,7 +1931,7 @@ exports[`renders shared tunes > shared tune 105 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 106 https://strudel.tidalcycles.org/?2M1kLwRf6d-Q 1`] = `
+exports[`renders shared tunes > shared tune 106 https://strudel.cc/?2M1kLwRf6d-Q 1`] = `
 [
   "0/1 -> 1/4: C3",
   "0/1 -> 1/4: G3",
@@ -1947,7 +1947,7 @@ exports[`renders shared tunes > shared tune 106 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 107 https://strudel.tidalcycles.org/?XggCKeAH5uLK 1`] = `
+exports[`renders shared tunes > shared tune 107 https://strudel.cc/?XggCKeAH5uLK 1`] = `
 [
   "0/1 -> 1/4: C3",
   "0/1 -> 1/4: G3",
@@ -1963,7 +1963,7 @@ exports[`renders shared tunes > shared tune 107 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 108 https://strudel.tidalcycles.org/?BH_o1f7vPxd3 1`] = `
+exports[`renders shared tunes > shared tune 108 https://strudel.cc/?BH_o1f7vPxd3 1`] = `
 [
   "0/1 -> 3/4: c3",
   "3/4 -> 1/1: eb3",
@@ -1975,7 +1975,7 @@ exports[`renders shared tunes > shared tune 108 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 109 https://strudel.tidalcycles.org/?OdgRkOYpGrgF 1`] = `
+exports[`renders shared tunes > shared tune 109 https://strudel.cc/?OdgRkOYpGrgF 1`] = `
 [
   "0/1 -> 3/20: 0",
   "0/1 -> 3/20: 3",
@@ -1994,9 +1994,9 @@ exports[`renders shared tunes > shared tune 109 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 110 https://strudel.tidalcycles.org/?Yizg74mNj_6L 1`] = `[]`;
+exports[`renders shared tunes > shared tune 110 https://strudel.cc/?Yizg74mNj_6L 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 113 https://strudel.tidalcycles.org/?X7Vln6QqABL2 1`] = `
+exports[`renders shared tunes > shared tune 113 https://strudel.cc/?X7Vln6QqABL2 1`] = `
 [
   "0/1 -> 1/3: {\\"value\\":0,\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":null}",
   "1/3 -> 2/3: {\\"value\\":5,\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":null}",
@@ -2004,7 +2004,7 @@ exports[`renders shared tunes > shared tune 113 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 114 https://strudel.tidalcycles.org/?ILwq_zKFMNN5 1`] = `
+exports[`renders shared tunes > shared tune 114 https://strudel.cc/?ILwq_zKFMNN5 1`] = `
 [
   "0/1 -> 1/3: bd",
   "1/3 -> 2/3: hh",
@@ -2022,7 +2022,7 @@ exports[`renders shared tunes > shared tune 114 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 115 https://strudel.tidalcycles.org/?CSzelQFTGerr 1`] = `
+exports[`renders shared tunes > shared tune 115 https://strudel.cc/?CSzelQFTGerr 1`] = `
 [
   "0/1 -> 63/220: f#6",
   "7/22 -> 133/220: f#6",
@@ -2040,7 +2040,7 @@ exports[`renders shared tunes > shared tune 115 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 116 https://strudel.tidalcycles.org/?j5oC-CSjk7Kq 1`] = `
+exports[`renders shared tunes > shared tune 116 https://strudel.cc/?j5oC-CSjk7Kq 1`] = `
 [
   "0/1 -> 1/4: {\\"note\\":\\"Bb3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5185185185185186}",
   "0/1 -> 1/4: {\\"note\\":\\"D4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.537037037037037}",
@@ -2055,7 +2055,7 @@ exports[`renders shared tunes > shared tune 116 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 117 https://strudel.tidalcycles.org/?waoDkqtNx0Xe 1`] = `
+exports[`renders shared tunes > shared tune 117 https://strudel.cc/?waoDkqtNx0Xe 1`] = `
 [
   "0/1 -> 1/2: c1",
   "1/2 -> 1/1: c1",
@@ -2071,7 +2071,7 @@ exports[`renders shared tunes > shared tune 117 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 118 https://strudel.tidalcycles.org/?hHssvZuQ9eU- 1`] = `
+exports[`renders shared tunes > shared tune 118 https://strudel.cc/?hHssvZuQ9eU- 1`] = `
 [
   "0/1 -> 1/4: {\\"note\\":\\"C2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.41666666666666663}",
   "0/1 -> 1/4: {\\"note\\":\\"C2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.41666666666666663}",
@@ -2348,9 +2348,9 @@ exports[`renders shared tunes > shared tune 118 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 119 https://strudel.tidalcycles.org/?YjCJ3DhT9u4M 1`] = `[]`;
+exports[`renders shared tunes > shared tune 119 https://strudel.cc/?YjCJ3DhT9u4M 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 121 https://strudel.tidalcycles.org/?wrcmJLYiesgF 1`] = `
+exports[`renders shared tunes > shared tune 121 https://strudel.cc/?wrcmJLYiesgF 1`] = `
 [
   "0/1 -> 19/80: e5",
   "1/2 -> 79/120: d5",
@@ -2363,7 +2363,7 @@ exports[`renders shared tunes > shared tune 121 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 122 https://strudel.tidalcycles.org/?tiYDzBGIFjYV 1`] = `
+exports[`renders shared tunes > shared tune 122 https://strudel.cc/?tiYDzBGIFjYV 1`] = `
 [
   "0/1 -> 2/1: {\\"note\\":\\"C3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4722222222222222}",
   "0/1 -> 2/1: {\\"note\\":\\"E3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4907407407407407}",
@@ -2371,7 +2371,7 @@ exports[`renders shared tunes > shared tune 122 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 123 https://strudel.tidalcycles.org/?Y1nz8H0a10CF 1`] = `
+exports[`renders shared tunes > shared tune 123 https://strudel.cc/?Y1nz8H0a10CF 1`] = `
 [
   "-1666666666666667/7500000000000000 -> 2/9: G3",
   "0/1 -> 4/3: E3",
@@ -2394,7 +2394,7 @@ exports[`renders shared tunes > shared tune 123 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 124 https://strudel.tidalcycles.org/?SZDwdxhme28o 1`] = `
+exports[`renders shared tunes > shared tune 124 https://strudel.cc/?SZDwdxhme28o 1`] = `
 [
   "11/32 -> 1/2: {\\"n\\":\\"Bb3\\",\\"cutoff\\":1625,\\"s\\":\\"square\\",\\"decay\\":0.1,\\"sustain\\":0,\\"resonance\\":16,\\"gain\\":0.2,\\"pan\\":0.931367192988896}",
   "11/32 -> 1/2: {\\"n\\":\\"D4\\",\\"cutoff\\":1625,\\"s\\":\\"square\\",\\"decay\\":0.1,\\"sustain\\":0,\\"resonance\\":16,\\"gain\\":0.2,\\"pan\\":0.931367192988896}",
@@ -2448,7 +2448,7 @@ exports[`renders shared tunes > shared tune 124 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 125 https://strudel.tidalcycles.org/?m7Uyh34tQwqi 1`] = `
+exports[`renders shared tunes > shared tune 125 https://strudel.cc/?m7Uyh34tQwqi 1`] = `
 [
   "11/32 -> 1/2: {\\"n\\":\\"Bb3\\",\\"cutoff\\":1625,\\"s\\":\\"square\\",\\"decay\\":0.1,\\"sustain\\":0,\\"resonance\\":16,\\"gain\\":0.2,\\"pan\\":0.931367192988896}",
   "11/32 -> 1/2: {\\"n\\":\\"D4\\",\\"cutoff\\":1625,\\"s\\":\\"square\\",\\"decay\\":0.1,\\"sustain\\":0,\\"resonance\\":16,\\"gain\\":0.2,\\"pan\\":0.931367192988896}",
@@ -2502,7 +2502,7 @@ exports[`renders shared tunes > shared tune 125 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 126 https://strudel.tidalcycles.org/?P9d8_AXWM7ef 1`] = `
+exports[`renders shared tunes > shared tune 126 https://strudel.cc/?P9d8_AXWM7ef 1`] = `
 [
   "0/1 -> 3/4: c3",
   "3/4 -> 1/1: eb3",
@@ -2514,7 +2514,7 @@ exports[`renders shared tunes > shared tune 126 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 127 https://strudel.tidalcycles.org/?FM1koCTLh1IM 1`] = `
+exports[`renders shared tunes > shared tune 127 https://strudel.cc/?FM1koCTLh1IM 1`] = `
 [
   "0/1 -> 1/10: C3",
   "0/1 -> 1/10: E3",
@@ -2533,7 +2533,7 @@ exports[`renders shared tunes > shared tune 127 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 128 https://strudel.tidalcycles.org/?1SAqiKiVI8r- 1`] = `
+exports[`renders shared tunes > shared tune 128 https://strudel.cc/?1SAqiKiVI8r- 1`] = `
 [
   "0/1 -> 3/20: 0",
   "0/1 -> 3/20: 3",
@@ -2552,7 +2552,7 @@ exports[`renders shared tunes > shared tune 128 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 129 https://strudel.tidalcycles.org/?Pds79yD4qQKJ 1`] = `
+exports[`renders shared tunes > shared tune 129 https://strudel.cc/?Pds79yD4qQKJ 1`] = `
 [
   "0/1 -> 1/5: e4",
   "2/5 -> 3/5: e3",
@@ -2560,7 +2560,7 @@ exports[`renders shared tunes > shared tune 129 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 130 https://strudel.tidalcycles.org/?DYJx5C-3NrV7 1`] = `
+exports[`renders shared tunes > shared tune 130 https://strudel.cc/?DYJx5C-3NrV7 1`] = `
 [
   "0/1 -> 5/26: {\\"note\\":\\"B2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.46759259259259256}",
   "5/13 -> 15/26: {\\"note\\":\\"B2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.46759259259259256}",
@@ -2588,7 +2588,7 @@ exports[`renders shared tunes > shared tune 130 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 131 https://strudel.tidalcycles.org/?9_BPqHIO4rPv 1`] = `
+exports[`renders shared tunes > shared tune 131 https://strudel.cc/?9_BPqHIO4rPv 1`] = `
 [
   "0/1 -> 27/40: {\\"note\\":\\"Db4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5324074074074074}",
   "0/1 -> 27/40: {\\"note\\":\\"Ab4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5648148148148149}",
@@ -2629,7 +2629,7 @@ exports[`renders shared tunes > shared tune 131 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 132 https://strudel.tidalcycles.org/?FwkQ0EG3Kkwm 1`] = `
+exports[`renders shared tunes > shared tune 132 https://strudel.cc/?FwkQ0EG3Kkwm 1`] = `
 [
   "0/1 -> 1/2: Bb2",
   "0/1 -> 1/2: F3",
@@ -2653,7 +2653,7 @@ exports[`renders shared tunes > shared tune 132 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 133 https://strudel.tidalcycles.org/?Cb_YrHpHKkJN 1`] = `
+exports[`renders shared tunes > shared tune 133 https://strudel.cc/?Cb_YrHpHKkJN 1`] = `
 [
   "0/1 -> 1/8: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2206.5338497506646,\\"resonance\\":10,\\"clip\\":1}",
   "3/8 -> 1/2: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2827.098521493671,\\"resonance\\":10,\\"clip\\":1}",
@@ -2696,7 +2696,7 @@ exports[`renders shared tunes > shared tune 133 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 134 https://strudel.tidalcycles.org/?SkqbkK705Olu 1`] = `
+exports[`renders shared tunes > shared tune 134 https://strudel.cc/?SkqbkK705Olu 1`] = `
 [
   "7/8 -> 1/1: {\\"s\\":\\"hi\\"}",
   "5/8 -> 3/4: {\\"s\\":\\"lo\\"}",
@@ -2706,7 +2706,7 @@ exports[`renders shared tunes > shared tune 134 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 135 https://strudel.tidalcycles.org/?-hyad472v8by 1`] = `
+exports[`renders shared tunes > shared tune 135 https://strudel.cc/?-hyad472v8by 1`] = `
 [
   "0/1 -> 3/8: {\\"gain\\":1,\\"s\\":\\"lo\\",\\"speed\\":2}",
   "3/8 -> 3/4: {\\"gain\\":0.5,\\"s\\":\\"lo\\",\\"speed\\":2}",
@@ -2715,7 +2715,7 @@ exports[`renders shared tunes > shared tune 135 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 136 https://strudel.tidalcycles.org/?BApYR1gphKJ7 1`] = `
+exports[`renders shared tunes > shared tune 136 https://strudel.cc/?BApYR1gphKJ7 1`] = `
 [
   "0/1 -> 3/8: {\\"gain\\":1,\\"s\\":\\"lo\\",\\"speed\\":2,\\"release\\":0.2,\\"clip\\":1}",
   "3/8 -> 3/4: {\\"gain\\":0.5,\\"s\\":\\"lo\\",\\"speed\\":2,\\"release\\":0.2,\\"clip\\":1}",
@@ -2724,7 +2724,7 @@ exports[`renders shared tunes > shared tune 136 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 137 https://strudel.tidalcycles.org/?wK1UQcYoYpoD 1`] = `
+exports[`renders shared tunes > shared tune 137 https://strudel.cc/?wK1UQcYoYpoD 1`] = `
 [
   "0/1 -> 3/16: {\\"gain\\":1,\\"s\\":\\"lo\\",\\"speed\\":1,\\"hcutoff\\":1000,\\"resonance\\":0.2}",
   "3/16 -> 3/8: {\\"gain\\":0.5,\\"s\\":\\"lo\\",\\"speed\\":1,\\"hcutoff\\":1000,\\"resonance\\":0.2}",
@@ -2742,7 +2742,7 @@ exports[`renders shared tunes > shared tune 137 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 138 https://strudel.tidalcycles.org/?lB2HuXEXyTex 1`] = `
+exports[`renders shared tunes > shared tune 138 https://strudel.cc/?lB2HuXEXyTex 1`] = `
 [
   "0/1 -> 6275565/1452119: A3",
   "-9/8 -> 20400609/11616952: G4",
@@ -2753,13 +2753,13 @@ exports[`renders shared tunes > shared tune 138 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 139 https://strudel.tidalcycles.org/?WUxQVJIu27Nz 1`] = `
+exports[`renders shared tunes > shared tune 139 https://strudel.cc/?WUxQVJIu27Nz 1`] = `
 [
   "0/1 -> 1/1: {\\"gain\\":1,\\"s\\":\\"lo\\",\\"cps\\":1.1}",
 ]
 `;
 
-exports[`renders shared tunes > shared tune 140 https://strudel.tidalcycles.org/?ZQ-ce-Qj-nuP 1`] = `
+exports[`renders shared tunes > shared tune 140 https://strudel.cc/?ZQ-ce-Qj-nuP 1`] = `
 [
   "0/1 -> 1/2: {\\"note\\":\\"F3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.49537037037037035}",
   "1/4 -> 3/4: {\\"note\\":\\"F2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4398148148148148}",
@@ -2770,7 +2770,7 @@ exports[`renders shared tunes > shared tune 140 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 141 https://strudel.tidalcycles.org/?tBPkuxuje0iY 1`] = `
+exports[`renders shared tunes > shared tune 141 https://strudel.cc/?tBPkuxuje0iY 1`] = `
 [
   "0/1 -> 1/3: bd",
   "1/3 -> 2/3: hh",
@@ -2788,7 +2788,7 @@ exports[`renders shared tunes > shared tune 141 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 142 https://strudel.tidalcycles.org/?ak6ZpErh0hl1 1`] = `
+exports[`renders shared tunes > shared tune 142 https://strudel.cc/?ak6ZpErh0hl1 1`] = `
 [
   "0/1 -> 1/8: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2206.5338497506646,\\"resonance\\":10,\\"clip\\":1}",
   "3/8 -> 1/2: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2827.098521493671,\\"resonance\\":10,\\"clip\\":1}",
@@ -2831,7 +2831,7 @@ exports[`renders shared tunes > shared tune 142 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 143 https://strudel.tidalcycles.org/?U9J_c-Insgbc 1`] = `
+exports[`renders shared tunes > shared tune 143 https://strudel.cc/?U9J_c-Insgbc 1`] = `
 [
   "0/1 -> 63/220: f#6",
   "7/22 -> 133/220: f#6",
@@ -2849,7 +2849,7 @@ exports[`renders shared tunes > shared tune 143 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 144 https://strudel.tidalcycles.org/?y2FS3Xvqv68d 1`] = `
+exports[`renders shared tunes > shared tune 144 https://strudel.cc/?y2FS3Xvqv68d 1`] = `
 [
   "0/1 -> 63/220: {\\"note\\":\\"f#6\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.6666666666666667}",
   "7/22 -> 133/220: {\\"note\\":\\"f#6\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.6666666666666667}",
@@ -2867,7 +2867,7 @@ exports[`renders shared tunes > shared tune 144 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 145 https://strudel.tidalcycles.org/?d7-gUjyRbKP9 1`] = `
+exports[`renders shared tunes > shared tune 145 https://strudel.cc/?d7-gUjyRbKP9 1`] = `
 [
   "0/1 -> 6/25: {\\"note\\":60,\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5277777777777778}",
   "0/1 -> 6/25: {\\"note\\":63,\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5416666666666667}",
@@ -2881,7 +2881,7 @@ exports[`renders shared tunes > shared tune 145 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 146 https://strudel.tidalcycles.org/?lqXKPxgm_j0a 1`] = `
+exports[`renders shared tunes > shared tune 146 https://strudel.cc/?lqXKPxgm_j0a 1`] = `
 [
   "-38/5 -> 2/5: db3",
   "-38/5 -> 2/5: eb3",
@@ -2905,7 +2905,7 @@ exports[`renders shared tunes > shared tune 146 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 147 https://strudel.tidalcycles.org/?5obY2LrCcbZI 1`] = `
+exports[`renders shared tunes > shared tune 147 https://strudel.cc/?5obY2LrCcbZI 1`] = `
 [
   "1/3 -> 59/120: {\\"n\\":\\"c5\\",\\"s\\":\\"Oboe: Reed\\"}",
   "1/2 -> 49/60: {\\"n\\":\\"d5\\",\\"s\\":\\"Oboe: Reed\\"}",
@@ -2919,7 +2919,7 @@ exports[`renders shared tunes > shared tune 147 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 148 https://strudel.tidalcycles.org/?8262D2qsUNtO 1`] = `
+exports[`renders shared tunes > shared tune 148 https://strudel.cc/?8262D2qsUNtO 1`] = `
 [
   "0/1 -> 1/4: {\\"n\\":\\"c3\\",\\"s\\":\\"Oboe: Reed\\",\\"gain\\":0.5,\\"cutoff\\":1275.5812898145155}",
   "1/4 -> 1/2: {\\"n\\":\\"eb3\\",\\"s\\":\\"Oboe: Reed\\",\\"gain\\":0.5,\\"cutoff\\":1600.013209717642}",
@@ -2943,7 +2943,7 @@ exports[`renders shared tunes > shared tune 148 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 149 https://strudel.tidalcycles.org/?9PUNz9fqWo2F 1`] = `
+exports[`renders shared tunes > shared tune 149 https://strudel.cc/?9PUNz9fqWo2F 1`] = `
 [
   "15/41 -> 177/328: {\\"n\\":\\"c5\\",\\"s\\":\\"Oboe: Reed\\",\\"gain\\":0.4}",
   "45/82 -> 147/164: {\\"n\\":\\"d5\\",\\"s\\":\\"Oboe: Reed\\",\\"gain\\":0.4}",
@@ -2963,7 +2963,7 @@ exports[`renders shared tunes > shared tune 149 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 150 https://strudel.tidalcycles.org/?wkDHhKIUtwY_ 1`] = `
+exports[`renders shared tunes > shared tune 150 https://strudel.cc/?wkDHhKIUtwY_ 1`] = `
 [
   "0/1 -> 65/12: {\\"n\\":\\"d#5\\",\\"s\\":\\"Piccolo: Pipe\\",\\"gain\\":0.35}",
   "0/1 -> 65/12: {\\"n\\":56,\\"s\\":\\"Choir Aahs: Ensemble\\",\\"gain\\":0.15}",
@@ -2983,7 +2983,7 @@ exports[`renders shared tunes > shared tune 150 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 151 https://strudel.tidalcycles.org/?Zj9qfA1PhcDS 1`] = `
+exports[`renders shared tunes > shared tune 151 https://strudel.cc/?Zj9qfA1PhcDS 1`] = `
 [
   "0/1 -> 65/12: {\\"n\\":\\"d#5\\",\\"s\\":\\"Piccolo: Pipe\\",\\"gain\\":0.35}",
   "0/1 -> 65/12: {\\"n\\":56,\\"s\\":\\"Choir Aahs: Ensemble\\",\\"gain\\":0.15}",
@@ -3003,7 +3003,7 @@ exports[`renders shared tunes > shared tune 151 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 152 https://strudel.tidalcycles.org/?p_G-4ZB295BP 1`] = `
+exports[`renders shared tunes > shared tune 152 https://strudel.cc/?p_G-4ZB295BP 1`] = `
 [
   "0/1 -> 1/8: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2206.5338497506646,\\"resonance\\":10,\\"clip\\":1}",
   "3/8 -> 1/2: {\\"note\\":\\"A2\\",\\"s\\":\\"flbass\\",\\"n\\":0,\\"gain\\":0.3,\\"cutoff\\":2827.098521493671,\\"resonance\\":10,\\"clip\\":1}",
@@ -3046,7 +3046,7 @@ exports[`renders shared tunes > shared tune 152 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 153 https://strudel.tidalcycles.org/?NWLKF4C7o4EX 1`] = `
+exports[`renders shared tunes > shared tune 153 https://strudel.cc/?NWLKF4C7o4EX 1`] = `
 [
   "0/1 -> 1/2: {\\"note\\":\\"G4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5601851851851851}",
   "0/1 -> 1/2: {\\"note\\":\\"B4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5787037037037037}",
@@ -3061,7 +3061,7 @@ exports[`renders shared tunes > shared tune 153 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 154 https://strudel.tidalcycles.org/?XhNBCyuzIVOD 1`] = `
+exports[`renders shared tunes > shared tune 154 https://strudel.cc/?XhNBCyuzIVOD 1`] = `
 [
   "0/1 -> 1457/3000: {\\"n\\":\\"c#6\\",\\"s\\":\\"Overdriven Guitar: Guitar\\",\\"gain\\":0.18}",
   "47/90 -> 13771/18000: {\\"n\\":\\"f5\\",\\"s\\":\\"Overdriven Guitar: Guitar\\",\\"gain\\":0.18}",
@@ -3084,7 +3084,7 @@ exports[`renders shared tunes > shared tune 154 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 155 https://strudel.tidalcycles.org/?AL73np8C7Fe7 1`] = `
+exports[`renders shared tunes > shared tune 155 https://strudel.cc/?AL73np8C7Fe7 1`] = `
 [
   "0/1 -> 589/1200: {\\"n\\":\\"C#5\\",\\"s\\":\\"Overdriven Guitar: Guitar\\",\\"gain\\":0.2}",
   "19/36 -> 5567/7200: {\\"n\\":\\"F4\\",\\"s\\":\\"Overdriven Guitar: Guitar\\",\\"gain\\":0.2}",
@@ -3110,7 +3110,7 @@ exports[`renders shared tunes > shared tune 155 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 156 https://strudel.tidalcycles.org/?89gJxIK34OPK 1`] = `
+exports[`renders shared tunes > shared tune 156 https://strudel.cc/?89gJxIK34OPK 1`] = `
 [
   "0/1 -> 3/2: {\\"s\\":\\"bd\\",\\"speed\\":0.7519542165100574}",
   "3/4 -> 3/2: {\\"s\\":\\"sd\\",\\"speed\\":0.7931522866332671}",
@@ -3167,7 +3167,7 @@ exports[`renders shared tunes > shared tune 156 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 157 https://strudel.tidalcycles.org/?8g4oMFkLYMXZ 1`] = `
+exports[`renders shared tunes > shared tune 157 https://strudel.cc/?8g4oMFkLYMXZ 1`] = `
 [
   "0/1 -> 1/10: C3",
   "0/1 -> 1/10: E3",
@@ -3186,7 +3186,7 @@ exports[`renders shared tunes > shared tune 157 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 158 https://strudel.tidalcycles.org/?NIQF-VGYdB83 1`] = `
+exports[`renders shared tunes > shared tune 158 https://strudel.cc/?NIQF-VGYdB83 1`] = `
 [
   "0/1 -> 1/2: c1",
   "1/2 -> 1/1: c1",
@@ -3202,7 +3202,7 @@ exports[`renders shared tunes > shared tune 158 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 159 https://strudel.tidalcycles.org/?KOAtvzaJcmmY 1`] = `
+exports[`renders shared tunes > shared tune 159 https://strudel.cc/?KOAtvzaJcmmY 1`] = `
 [
   "0/1 -> 1/4: {\\"note\\":\\"C2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.41666666666666663}",
   "0/1 -> 1/4: {\\"note\\":\\"C2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.41666666666666663}",
@@ -3479,7 +3479,7 @@ exports[`renders shared tunes > shared tune 159 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 160 https://strudel.tidalcycles.org/?pK517-FAktOc 1`] = `
+exports[`renders shared tunes > shared tune 160 https://strudel.cc/?pK517-FAktOc 1`] = `
 [
   "0/1 -> 4/3: B4",
   "0/1 -> 1/3: C3",
@@ -3488,7 +3488,7 @@ exports[`renders shared tunes > shared tune 160 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 161 https://strudel.tidalcycles.org/?H3BbA0AovtKs 1`] = `
+exports[`renders shared tunes > shared tune 161 https://strudel.cc/?H3BbA0AovtKs 1`] = `
 [
   "0/1 -> 5/26: {\\"note\\":\\"B2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.46759259259259256}",
   "5/13 -> 15/26: {\\"note\\":\\"B2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.46759259259259256}",
@@ -3516,7 +3516,7 @@ exports[`renders shared tunes > shared tune 161 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 162 https://strudel.tidalcycles.org/?Y9RZADkxt8UL 1`] = `
+exports[`renders shared tunes > shared tune 162 https://strudel.cc/?Y9RZADkxt8UL 1`] = `
 [
   "0/1 -> 65/12: {\\"n\\":\\"d#5\\",\\"s\\":\\"Piccolo: Pipe\\",\\"gain\\":0.35}",
   "0/1 -> 65/12: {\\"n\\":56,\\"s\\":\\"Choir Aahs: Ensemble\\",\\"gain\\":0.15}",
@@ -3536,7 +3536,7 @@ exports[`renders shared tunes > shared tune 162 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 163 https://strudel.tidalcycles.org/?bxwipc2kqreB 1`] = `
+exports[`renders shared tunes > shared tune 163 https://strudel.cc/?bxwipc2kqreB 1`] = `
 [
   "1/2 -> 1/1: a4",
   "3/4 -> 1/1: a1",
@@ -3546,7 +3546,7 @@ exports[`renders shared tunes > shared tune 163 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 164 https://strudel.tidalcycles.org/?qGimkQi_nszY 1`] = `
+exports[`renders shared tunes > shared tune 164 https://strudel.cc/?qGimkQi_nszY 1`] = `
 [
   "47/60 -> 6157/6000: {\\"n\\":\\"c#5\\",\\"s\\":\\"Overdriven Guitar: Guitar\\",\\"gain\\":0.18}",
   "47/90 -> 13771/18000: {\\"n\\":\\"d#5\\",\\"s\\":\\"Overdriven Guitar: Guitar\\",\\"gain\\":0.18}",
@@ -3570,7 +3570,7 @@ exports[`renders shared tunes > shared tune 164 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 165 https://strudel.tidalcycles.org/?DVESSaRggtn_ 1`] = `
+exports[`renders shared tunes > shared tune 165 https://strudel.cc/?DVESSaRggtn_ 1`] = `
 [
   "0/1 -> 6275565/1452119: A3",
   "-9/8 -> 20400609/11616952: G4",
@@ -3581,7 +3581,7 @@ exports[`renders shared tunes > shared tune 165 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 166 https://strudel.tidalcycles.org/?CHh9ZGJxiWnm 1`] = `
+exports[`renders shared tunes > shared tune 166 https://strudel.cc/?CHh9ZGJxiWnm 1`] = `
 [
   "1/8 -> 1/4: {\\"n\\":\\"D1\\",\\"s\\":\\"sawtooth\\",\\"gain\\":0.3,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.5,\\"cutoff\\":1699.6897509708342}",
   "1/8 -> 1/4: {\\"n\\":\\"D1\\",\\"s\\":\\"square\\",\\"gain\\":0.3,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.5,\\"cutoff\\":1699.6897509708342}",
@@ -3651,7 +3651,7 @@ exports[`renders shared tunes > shared tune 166 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 167 https://strudel.tidalcycles.org/?7C7fQJ7ENNd3 1`] = `
+exports[`renders shared tunes > shared tune 167 https://strudel.cc/?7C7fQJ7ENNd3 1`] = `
 [
   "0/1 -> 1/4: {\\"s\\":\\"hh\\"}",
   "1/4 -> 1/2: {\\"s\\":\\"hh\\"}",
@@ -3660,7 +3660,7 @@ exports[`renders shared tunes > shared tune 167 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 168 https://strudel.tidalcycles.org/?VGsjmHzmkMz0 1`] = `
+exports[`renders shared tunes > shared tune 168 https://strudel.cc/?VGsjmHzmkMz0 1`] = `
 [
   "1/4 -> 1/2: {\\"s\\":\\"bd\\"}",
   "0/1 -> 1/4: {\\"s\\":\\"hh\\"}",
@@ -3669,7 +3669,7 @@ exports[`renders shared tunes > shared tune 168 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 169 https://strudel.tidalcycles.org/?4QSBDxgdgAIr 1`] = `
+exports[`renders shared tunes > shared tune 169 https://strudel.cc/?4QSBDxgdgAIr 1`] = `
 [
   "1/4 -> 1/2: {\\"s\\":\\"bd\\"}",
   "0/1 -> 1/12: {\\"s\\":\\"hh\\"}",
@@ -3684,7 +3684,7 @@ exports[`renders shared tunes > shared tune 169 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 170 https://strudel.tidalcycles.org/?_1ClWbH9kSKC 1`] = `
+exports[`renders shared tunes > shared tune 170 https://strudel.cc/?_1ClWbH9kSKC 1`] = `
 [
   "0/1 -> 2/9: {\\"s\\":\\"hh\\"}",
   "2/9 -> 4/9: {\\"s\\":\\"hh\\"}",
@@ -3695,7 +3695,7 @@ exports[`renders shared tunes > shared tune 170 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 171 https://strudel.tidalcycles.org/?nmwsMPG16O1L 1`] = `
+exports[`renders shared tunes > shared tune 171 https://strudel.cc/?nmwsMPG16O1L 1`] = `
 [
   "0/1 -> 1/4: 83.8125",
   "3/4 -> 1/1: 82.6875",
@@ -3707,7 +3707,7 @@ exports[`renders shared tunes > shared tune 171 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 172 https://strudel.tidalcycles.org/?DBp75NUfSxIn 1`] = `
+exports[`renders shared tunes > shared tune 172 https://strudel.cc/?DBp75NUfSxIn 1`] = `
 [
   "0/1 -> 1/4: {\\"note\\":57}",
   "0/1 -> 1/4: {\\"note\\":61}",
@@ -3724,7 +3724,7 @@ exports[`renders shared tunes > shared tune 172 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 173 https://strudel.tidalcycles.org/?bdsxEcjr7fkg 1`] = `
+exports[`renders shared tunes > shared tune 173 https://strudel.cc/?bdsxEcjr7fkg 1`] = `
 [
   "0/1 -> 1/1: {\\"n\\":\\"a1\\",\\"decay\\":0.25,\\"sustain\\":0,\\"s\\":\\"sawtooth\\",\\"gain\\":0.4,\\"vowel\\":\\"a\\"}",
   "-3/8 -> 1/8: {\\"n\\":52,\\"decay\\":0.25,\\"sustain\\":0,\\"s\\":\\"sawtooth\\",\\"gain\\":0.4,\\"vowel\\":\\"a\\"}",
@@ -3733,7 +3733,7 @@ exports[`renders shared tunes > shared tune 173 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 174 https://strudel.tidalcycles.org/?IuUGlGkdiPX- 1`] = `
+exports[`renders shared tunes > shared tune 174 https://strudel.cc/?IuUGlGkdiPX- 1`] = `
 [
   "1/4 -> 1/2: {\\"s\\":\\"hh\\",\\"coarse\\":16,\\"speed\\":0.7285963821098448}",
   "3/4 -> 1/1: {\\"s\\":\\"hh\\",\\"coarse\\":16,\\"shape\\":0.8,\\"speed\\":0.80224046928206}",
@@ -3746,7 +3746,7 @@ exports[`renders shared tunes > shared tune 174 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 175 https://strudel.tidalcycles.org/?1QH3HPhZ1uad 1`] = `
+exports[`renders shared tunes > shared tune 175 https://strudel.cc/?1QH3HPhZ1uad 1`] = `
 [
   "0/1 -> 1/2: c1",
   "1/2 -> 1/1: c1",
@@ -3762,7 +3762,7 @@ exports[`renders shared tunes > shared tune 175 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 176 https://strudel.tidalcycles.org/?hxJZG7SS71HP 1`] = `
+exports[`renders shared tunes > shared tune 176 https://strudel.cc/?hxJZG7SS71HP 1`] = `
 [
   "0/1 -> 1/2: {\\"note\\":\\"F3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.49537037037037035}",
   "1/4 -> 3/4: {\\"note\\":\\"F2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4398148148148148}",
@@ -3773,7 +3773,7 @@ exports[`renders shared tunes > shared tune 176 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 177 https://strudel.tidalcycles.org/?EoVX7HjwHB8r 1`] = `
+exports[`renders shared tunes > shared tune 177 https://strudel.cc/?EoVX7HjwHB8r 1`] = `
 [
   "0/1 -> 1/2: Bb2",
   "0/1 -> 1/2: F3",
@@ -3797,7 +3797,7 @@ exports[`renders shared tunes > shared tune 177 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 178 https://strudel.tidalcycles.org/?tVIePZOlbUFE 1`] = `
+exports[`renders shared tunes > shared tune 178 https://strudel.cc/?tVIePZOlbUFE 1`] = `
 [
   "0/1 -> 1/4: {\\"note\\":\\"C2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.41666666666666663}",
   "0/1 -> 1/4: {\\"note\\":\\"C2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.41666666666666663}",
@@ -4074,7 +4074,7 @@ exports[`renders shared tunes > shared tune 178 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 179 https://strudel.tidalcycles.org/?P_Fi2yRHrXHj 1`] = `
+exports[`renders shared tunes > shared tune 179 https://strudel.cc/?P_Fi2yRHrXHj 1`] = `
 [
   "0/1 -> 1/8: {\\"freq\\":55.33,\\"s\\":\\"sawtooth\\"}",
   "0/1 -> 1/8: {\\"freq\\":54.725,\\"s\\":\\"sawtooth\\"}",
@@ -4102,7 +4102,7 @@ exports[`renders shared tunes > shared tune 179 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 180 https://strudel.tidalcycles.org/?brh8FpBbbH-- 1`] = `
+exports[`renders shared tunes > shared tune 180 https://strudel.cc/?brh8FpBbbH-- 1`] = `
 [
   "0/1 -> 1/1: {\\"s\\":\\"bd\\"}",
   "1/2 -> 1/1: {\\"s\\":\\"sd\\"}",
@@ -4115,7 +4115,7 @@ exports[`renders shared tunes > shared tune 180 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 181 https://strudel.tidalcycles.org/?Uw7K4l1pIVUt 1`] = `
+exports[`renders shared tunes > shared tune 181 https://strudel.cc/?Uw7K4l1pIVUt 1`] = `
 [
   "0/1 -> 1/3: bd",
   "1/3 -> 2/3: hh",
@@ -4133,7 +4133,7 @@ exports[`renders shared tunes > shared tune 181 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 182 https://strudel.tidalcycles.org/?dhBbMccpPgg8 1`] = `
+exports[`renders shared tunes > shared tune 182 https://strudel.cc/?dhBbMccpPgg8 1`] = `
 [
   "0/1 -> 1/2: A3",
   "1/2 -> 3/4: D4",
@@ -4144,7 +4144,7 @@ exports[`renders shared tunes > shared tune 182 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 183 https://strudel.tidalcycles.org/?U5sIL_DhqTip 1`] = `
+exports[`renders shared tunes > shared tune 183 https://strudel.cc/?U5sIL_DhqTip 1`] = `
 [
   "-1666666666666667/7500000000000000 -> 2/9: G3",
   "0/1 -> 4/3: E3",
@@ -4167,7 +4167,7 @@ exports[`renders shared tunes > shared tune 183 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 184 https://strudel.tidalcycles.org/?irMD_KH0ICbf 1`] = `
+exports[`renders shared tunes > shared tune 184 https://strudel.cc/?irMD_KH0ICbf 1`] = `
 [
   "0/1 -> 27/40: {\\"note\\":\\"Db4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5324074074074074}",
   "0/1 -> 27/40: {\\"note\\":\\"Ab4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5648148148148149}",
@@ -4208,13 +4208,13 @@ exports[`renders shared tunes > shared tune 184 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 185 https://strudel.tidalcycles.org/?A6Mqjuhn1Wpr 1`] = `[]`;
+exports[`renders shared tunes > shared tune 185 https://strudel.cc/?A6Mqjuhn1Wpr 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 186 https://strudel.tidalcycles.org/?2-JbRPIoRj7X 1`] = `[]`;
+exports[`renders shared tunes > shared tune 186 https://strudel.cc/?2-JbRPIoRj7X 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 187 https://strudel.tidalcycles.org/?wVDgPVVgbrSK 1`] = `[]`;
+exports[`renders shared tunes > shared tune 187 https://strudel.cc/?wVDgPVVgbrSK 1`] = `[]`;
 
-exports[`renders shared tunes > shared tune 188 https://strudel.tidalcycles.org/?z0OoCML7DPQb 1`] = `
+exports[`renders shared tunes > shared tune 188 https://strudel.cc/?z0OoCML7DPQb 1`] = `
 [
   "0/1 -> 1/1: bd",
   "0/1 -> 1/4: hh",
@@ -4225,7 +4225,7 @@ exports[`renders shared tunes > shared tune 188 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 189 https://strudel.tidalcycles.org/?SWekIFXDlrLE 1`] = `
+exports[`renders shared tunes > shared tune 189 https://strudel.cc/?SWekIFXDlrLE 1`] = `
 [
   "0/1 -> 1/4: {\\"note\\":\\"e4\\"}",
   "1/4 -> 1/2: {\\"note\\":\\"c4\\"}",
@@ -4244,20 +4244,20 @@ exports[`renders shared tunes > shared tune 189 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 190 https://strudel.tidalcycles.org/?70M98P_ZVSJe 1`] = `
+exports[`renders shared tunes > shared tune 190 https://strudel.cc/?70M98P_ZVSJe 1`] = `
 [
   "0/1 -> 1/2: {\\"s\\":\\"hh\\",\\"begin\\":0,\\"end\\":0.25}",
   "1/2 -> 1/1: {\\"s\\":\\"hh\\",\\"begin\\":0.25,\\"end\\":0.5}",
 ]
 `;
 
-exports[`renders shared tunes > shared tune 191 https://strudel.tidalcycles.org/?SB-hFm0uROHV 1`] = `
+exports[`renders shared tunes > shared tune 191 https://strudel.cc/?SB-hFm0uROHV 1`] = `
 [
   "0/1 -> 1/1: {\\"s\\":\\"hh\\"}",
 ]
 `;
 
-exports[`renders shared tunes > shared tune 192 https://strudel.tidalcycles.org/?t2KXoS_qssjD 1`] = `
+exports[`renders shared tunes > shared tune 192 https://strudel.cc/?t2KXoS_qssjD 1`] = `
 [
   "0/1 -> 1/4: {\\"s\\":\\"p\\",\\"begin\\":0,\\"end\\":0.0078125,\\"speed\\":0.03125,\\"unit\\":\\"c\\",\\"pan\\":0,\\"shape\\":0.5}",
   "1/4 -> 1/2: {\\"s\\":\\"p\\",\\"begin\\":0.0078125,\\"end\\":0.015625,\\"speed\\":0.03125,\\"unit\\":\\"c\\",\\"pan\\":0,\\"shape\\":0.5}",
@@ -4270,7 +4270,7 @@ exports[`renders shared tunes > shared tune 192 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 193 https://strudel.tidalcycles.org/?k0435I3IQEH4 1`] = `
+exports[`renders shared tunes > shared tune 193 https://strudel.cc/?k0435I3IQEH4 1`] = `
 [
   "0/1 -> 3/4: F3",
   "3/4 -> 9/8: Ab3",
@@ -4290,7 +4290,7 @@ exports[`renders shared tunes > shared tune 193 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 194 https://strudel.tidalcycles.org/?vDsUyH8IUJn6 1`] = `
+exports[`renders shared tunes > shared tune 194 https://strudel.cc/?vDsUyH8IUJn6 1`] = `
 [
   "0/1 -> 6/1: F3",
   "0/1 -> 6/1: Ab3",
@@ -4299,7 +4299,7 @@ exports[`renders shared tunes > shared tune 194 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 195 https://strudel.tidalcycles.org/?YJ2iESN49BD6 1`] = `
+exports[`renders shared tunes > shared tune 195 https://strudel.cc/?YJ2iESN49BD6 1`] = `
 [
   "0/1 -> 3/16: {\\"s\\":\\"bd\\",\\"gain\\":0.7}",
   "3/16 -> 3/8: {\\"s\\":\\"bd\\",\\"gain\\":0.7}",
@@ -4331,7 +4331,7 @@ exports[`renders shared tunes > shared tune 195 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 196 https://strudel.tidalcycles.org/?Z6fHLg-51AUc 1`] = `
+exports[`renders shared tunes > shared tune 196 https://strudel.cc/?Z6fHLg-51AUc 1`] = `
 [
   "0/1 -> 1/4: C3",
   "0/1 -> 1/4: G3",
@@ -4347,7 +4347,7 @@ exports[`renders shared tunes > shared tune 196 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 197 https://strudel.tidalcycles.org/?GW0d4wRtDmED 1`] = `
+exports[`renders shared tunes > shared tune 197 https://strudel.cc/?GW0d4wRtDmED 1`] = `
 [
   "0/1 -> 1/2: c1",
   "1/2 -> 1/1: c1",
@@ -4359,7 +4359,7 @@ exports[`renders shared tunes > shared tune 197 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 198 https://strudel.tidalcycles.org/?iliL_rgeboIg 1`] = `
+exports[`renders shared tunes > shared tune 198 https://strudel.cc/?iliL_rgeboIg 1`] = `
 [
   "0/1 -> 1/3: bd",
   "1/3 -> 2/3: hh",
@@ -4377,7 +4377,7 @@ exports[`renders shared tunes > shared tune 198 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 199 https://strudel.tidalcycles.org/?IVv5q7W4BDiN 1`] = `
+exports[`renders shared tunes > shared tune 199 https://strudel.cc/?IVv5q7W4BDiN 1`] = `
 [
   "0/1 -> 1/32: {\\"note\\":48.07362922971432,\\"attack\\":0,\\"release\\":0,\\"s\\":\\"triangle\\"}",
   "1/32 -> 1/16: {\\"note\\":48.220843337648155,\\"attack\\":0,\\"release\\":0,\\"s\\":\\"triangle\\"}",
@@ -4414,7 +4414,7 @@ exports[`renders shared tunes > shared tune 199 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 200 https://strudel.tidalcycles.org/?N6kOKngern0Y 1`] = `
+exports[`renders shared tunes > shared tune 200 https://strudel.cc/?N6kOKngern0Y 1`] = `
 [
   "0/1 -> 1/32: {\\"note\\":56.147247371137475,\\"attack\\":0,\\"release\\":0,\\"s\\":\\"triangle\\"}",
   "1/32 -> 1/16: {\\"note\\":56.441387381598005,\\"attack\\":0,\\"release\\":0,\\"s\\":\\"triangle\\"}",
@@ -4451,7 +4451,7 @@ exports[`renders shared tunes > shared tune 200 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 201 https://strudel.tidalcycles.org/?wIjKrvTVPfgZ 1`] = `
+exports[`renders shared tunes > shared tune 201 https://strudel.cc/?wIjKrvTVPfgZ 1`] = `
 [
   "0/1 -> 1/16: {\\"note\\":47.370882377028465,\\"attack\\":0,\\"release\\":0,\\"s\\":\\"triangle\\"}",
   "1/16 -> 1/8: {\\"note\\":47.10302542895079,\\"attack\\":0,\\"release\\":0,\\"s\\":\\"triangle\\"}",
@@ -4472,7 +4472,7 @@ exports[`renders shared tunes > shared tune 201 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 202 https://strudel.tidalcycles.org/?iqZ-ex573FFd 1`] = `
+exports[`renders shared tunes > shared tune 202 https://strudel.cc/?iqZ-ex573FFd 1`] = `
 [
   "0/1 -> 4/25: 52",
   "4/25 -> 8/25: 57",
@@ -4484,7 +4484,7 @@ exports[`renders shared tunes > shared tune 202 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 203 https://strudel.tidalcycles.org/?0nlMXAIzgsdw 1`] = `
+exports[`renders shared tunes > shared tune 203 https://strudel.cc/?0nlMXAIzgsdw 1`] = `
 [
   "4/5 -> 16/15: {\\"note\\":\\"a6\\",\\"s\\":\\"piano\\"}",
   "0/1 -> 4/5: {\\"note\\":\\"ab5\\",\\"s\\":\\"piano\\"}",
@@ -4495,7 +4495,7 @@ exports[`renders shared tunes > shared tune 203 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 204 https://strudel.tidalcycles.org/?-4PvWekokc4W 1`] = `
+exports[`renders shared tunes > shared tune 204 https://strudel.cc/?-4PvWekokc4W 1`] = `
 [
   "0/1 -> 1/8: {\\"s\\":\\"p\\",\\"speed\\":0.03125,\\"unit\\":\\"c\\",\\"begin\\":0,\\"end\\":0.0078125,\\"pan\\":0,\\"shape\\":0.4,\\"decay\\":0.1,\\"sustain\\":0.4}",
   "1/8 -> 1/4: {\\"s\\":\\"p\\",\\"speed\\":0.03125,\\"unit\\":\\"c\\",\\"begin\\":0,\\"end\\":0.0078125,\\"pan\\":0,\\"shape\\":0.4,\\"decay\\":0.1,\\"sustain\\":0.4}",
@@ -4516,14 +4516,14 @@ exports[`renders shared tunes > shared tune 204 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 205 https://strudel.tidalcycles.org/?norqcTA-uOs0 1`] = `
+exports[`renders shared tunes > shared tune 205 https://strudel.cc/?norqcTA-uOs0 1`] = `
 [
   "0/1 -> 44/75: {\\"note\\":78,\\"s\\":\\"piano\\"}",
   "44/75 -> 88/75: {\\"note\\":71,\\"s\\":\\"piano\\"}",
 ]
 `;
 
-exports[`renders shared tunes > shared tune 206 https://strudel.tidalcycles.org/?WrN_Cv-hQMo0 1`] = `
+exports[`renders shared tunes > shared tune 206 https://strudel.cc/?WrN_Cv-hQMo0 1`] = `
 [
   "0/1 -> 1/4: {\\"n\\":\\"c3\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0,\\"decay\\":0.1,\\"sustain\\":0.2,\\"release\\":0.9}",
   "1/4 -> 1/2: {\\"n\\":\\"eb3\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0,\\"decay\\":0.1,\\"sustain\\":0.2,\\"release\\":0.9}",
@@ -4532,13 +4532,13 @@ exports[`renders shared tunes > shared tune 206 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 207 https://strudel.tidalcycles.org/?YFbUtVxvA82E 1`] = `
+exports[`renders shared tunes > shared tune 207 https://strudel.cc/?YFbUtVxvA82E 1`] = `
 [
   "0/1 -> 1/1: {\\"n\\":\\"[object Object][object Object]\\",\\"s\\":\\"sawtooth\\"}",
 ]
 `;
 
-exports[`renders shared tunes > shared tune 208 https://strudel.tidalcycles.org/?SHdla152eDum 1`] = `
+exports[`renders shared tunes > shared tune 208 https://strudel.cc/?SHdla152eDum 1`] = `
 [
   "0/1 -> 3/13: {\\"n\\":\\"c3\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.1,\\"sustain\\":0.4,\\"release\\":1}",
   "3/13 -> 6/13: {\\"n\\":\\"eb3\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.1,\\"sustain\\":0.4,\\"release\\":1}",
@@ -4548,7 +4548,7 @@ exports[`renders shared tunes > shared tune 208 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 209 https://strudel.tidalcycles.org/?Jk_4KtRME5zL 1`] = `
+exports[`renders shared tunes > shared tune 209 https://strudel.cc/?Jk_4KtRME5zL 1`] = `
 [
   "0/1 -> 1/10: {\\"n\\":\\"c3\\",\\"s\\":\\"sawtooth\\"}",
   "1/10 -> 1/5: {\\"n\\":\\"eb3\\",\\"s\\":\\"sawtooth\\"}",
@@ -4563,7 +4563,7 @@ exports[`renders shared tunes > shared tune 209 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 210 https://strudel.tidalcycles.org/?xHaKTd1kTpCn 1`] = `
+exports[`renders shared tunes > shared tune 210 https://strudel.cc/?xHaKTd1kTpCn 1`] = `
 [
   "-1/8 -> 1/1: {\\"s\\":\\"bd\\",\\"note\\":44,\\"n\\":0,\\"cut\\":1,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.2,\\"release\\":2,\\"pan\\":0.5,\\"value\\":4}",
   "-1/8 -> 1/1: {\\"s\\":\\"bd\\",\\"note\\":44,\\"n\\":0,\\"cut\\":1,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.2,\\"release\\":2,\\"pan\\":1,\\"value\\":4}",
@@ -4685,7 +4685,7 @@ exports[`renders shared tunes > shared tune 210 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 211 https://strudel.tidalcycles.org/?o5LLePbx8kiQ 1`] = `
+exports[`renders shared tunes > shared tune 211 https://strudel.cc/?o5LLePbx8kiQ 1`] = `
 [
   "-1/8 -> 1/1: {\\"s\\":\\"bd\\",\\"note\\":44,\\"n\\":0,\\"cut\\":1,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.2,\\"release\\":2,\\"pan\\":0.5,\\"value\\":4}",
   "-1/8 -> 1/1: {\\"s\\":\\"bd\\",\\"note\\":44,\\"n\\":0,\\"cut\\":1,\\"attack\\":0.01,\\"decay\\":0.1,\\"sustain\\":0.2,\\"release\\":2,\\"pan\\":1,\\"value\\":4}",
@@ -4814,7 +4814,7 @@ exports[`renders shared tunes > shared tune 211 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 212 https://strudel.tidalcycles.org/?QJdSFHrNzFlO 1`] = `
+exports[`renders shared tunes > shared tune 212 https://strudel.cc/?QJdSFHrNzFlO 1`] = `
 [
   "0/1 -> 1/2: {\\"s\\":\\"bd\\",\\"delay\\":0.5,\\"delaytime\\":0.33,\\"delayfeedback\\":0.6}",
   "1/2 -> 1/1: {\\"s\\":\\"sd\\",\\"delay\\":0.5,\\"delaytime\\":0.33,\\"delayfeedback\\":0.6}",
@@ -4823,7 +4823,7 @@ exports[`renders shared tunes > shared tune 212 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 213 https://strudel.tidalcycles.org/?Nkv2L01eF62W 1`] = `
+exports[`renders shared tunes > shared tune 213 https://strudel.cc/?Nkv2L01eF62W 1`] = `
 [
   "0/1 -> 1/2: {\\"s\\":\\"bd\\",\\"delay\\":0.5,\\"delaytime\\":0.33,\\"delayfeedback\\":0.6,\\"speed\\":-1}",
   "1/2 -> 1/1: {\\"s\\":\\"sd\\",\\"delay\\":0.5,\\"delaytime\\":0.33,\\"delayfeedback\\":0.6,\\"speed\\":-1}",
@@ -4832,14 +4832,14 @@ exports[`renders shared tunes > shared tune 213 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 214 https://strudel.tidalcycles.org/?fWCYi76JTGuA 1`] = `
+exports[`renders shared tunes > shared tune 214 https://strudel.cc/?fWCYi76JTGuA 1`] = `
 [
   "0/1 -> 1/2: {\\"s\\":\\"bd\\",\\"delay\\":0,\\"delaytime\\":0.16,\\"delayfeedback\\":0.6,\\"speed\\":-1}",
   "1/2 -> 1/1: {\\"s\\":\\"sd\\",\\"delay\\":0,\\"delaytime\\":0.16,\\"delayfeedback\\":0.6,\\"speed\\":-1}",
 ]
 `;
 
-exports[`renders shared tunes > shared tune 215 https://strudel.tidalcycles.org/?yJ-qOjgrjkMk 1`] = `
+exports[`renders shared tunes > shared tune 215 https://strudel.cc/?yJ-qOjgrjkMk 1`] = `
 [
   "0/1 -> 1/2: c1",
   "1/2 -> 1/1: c1",
@@ -4851,7 +4851,7 @@ exports[`renders shared tunes > shared tune 215 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 216 https://strudel.tidalcycles.org/?UPVdAQhVNgbc 1`] = `
+exports[`renders shared tunes > shared tune 216 https://strudel.cc/?UPVdAQhVNgbc 1`] = `
 [
   "0/1 -> 1/6: {\\"note\\":\\"g3\\",\\"s\\":\\"sawtooth\\",\\"cutoff\\":4000,\\"crush\\":16}",
   "1/6 -> 1/3: {\\"note\\":\\"g3\\",\\"s\\":\\"sawtooth\\",\\"cutoff\\":4000,\\"crush\\":16}",
@@ -4874,7 +4874,7 @@ exports[`renders shared tunes > shared tune 216 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 217 https://strudel.tidalcycles.org/?WDuiXaMhRRx5 1`] = `
+exports[`renders shared tunes > shared tune 217 https://strudel.cc/?WDuiXaMhRRx5 1`] = `
 [
   "0/1 -> 8/5: {\\"note\\":85,\\"s\\":\\"piano\\",\\"cutoff\\":\\"500\\"}",
   "0/1 -> 8/5: {\\"note\\":81,\\"s\\":\\"piano\\",\\"cutoff\\":\\"500\\"}",
@@ -4886,7 +4886,7 @@ exports[`renders shared tunes > shared tune 217 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 218 https://strudel.tidalcycles.org/?sOP6EO9TO4HO 1`] = `
+exports[`renders shared tunes > shared tune 218 https://strudel.cc/?sOP6EO9TO4HO 1`] = `
 [
   "0/1 -> 1/1: B3",
   "0/1 -> 1/1: D4",
@@ -4896,7 +4896,7 @@ exports[`renders shared tunes > shared tune 218 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 219 https://strudel.tidalcycles.org/?ddiSv-lz2_cp 1`] = `
+exports[`renders shared tunes > shared tune 219 https://strudel.cc/?ddiSv-lz2_cp 1`] = `
 [
   "0/1 -> 1/6: {\\"note\\":53,\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.05,\\"sustain\\":0.2,\\"cutoff\\":507.8125,\\"gain\\":0.9166666666666666}",
   "0/1 -> 1/6: {\\"note\\":57,\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.05,\\"sustain\\":0.2,\\"cutoff\\":507.8125,\\"gain\\":0.9166666666666666}",
@@ -4949,7 +4949,7 @@ exports[`renders shared tunes > shared tune 219 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 220 https://strudel.tidalcycles.org/?cpVS2-bO1LzP 1`] = `
+exports[`renders shared tunes > shared tune 220 https://strudel.cc/?cpVS2-bO1LzP 1`] = `
 [
   "0/1 -> 1/6: {\\"note\\":53,\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.05,\\"sustain\\":0.2,\\"cutoff\\":507.8125,\\"gain\\":0.9166666666666666}",
   "0/1 -> 1/6: {\\"note\\":57,\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.05,\\"sustain\\":0.2,\\"cutoff\\":507.8125,\\"gain\\":0.9166666666666666}",
@@ -5002,7 +5002,7 @@ exports[`renders shared tunes > shared tune 220 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 221 https://strudel.tidalcycles.org/?IPOyuRRkZaNr 1`] = `
+exports[`renders shared tunes > shared tune 221 https://strudel.cc/?IPOyuRRkZaNr 1`] = `
 [
   "0/1 -> 3/20: 0",
   "0/1 -> 3/20: 3",
@@ -5021,7 +5021,7 @@ exports[`renders shared tunes > shared tune 221 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 222 https://strudel.tidalcycles.org/?fGbP7VOtCWWU 1`] = `
+exports[`renders shared tunes > shared tune 222 https://strudel.cc/?fGbP7VOtCWWU 1`] = `
 [
   "0/1 -> 1/8: {\\"note\\":\\"G4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5601851851851851}",
   "0/1 -> 1/8: {\\"note\\":\\"B4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5787037037037037}",
@@ -5056,7 +5056,7 @@ exports[`renders shared tunes > shared tune 222 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 223 https://strudel.tidalcycles.org/?4YKibw76FrRb 1`] = `
+exports[`renders shared tunes > shared tune 223 https://strudel.cc/?4YKibw76FrRb 1`] = `
 [
   "0/1 -> 1/2: {\\"note\\":\\"G3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5046296296296297}",
   "0/1 -> 1/2: {\\"note\\":\\"B3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5231481481481481}",
@@ -5069,7 +5069,7 @@ exports[`renders shared tunes > shared tune 223 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 224 https://strudel.tidalcycles.org/?7UmR7rJMSvWq 1`] = `
+exports[`renders shared tunes > shared tune 224 https://strudel.cc/?7UmR7rJMSvWq 1`] = `
 [
   "0/1 -> 1/2: {\\"note\\":\\"Bb3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5185185185185186}",
   "0/1 -> 1/2: {\\"note\\":\\"D4\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.537037037037037}",
@@ -5079,7 +5079,7 @@ exports[`renders shared tunes > shared tune 224 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 225 https://strudel.tidalcycles.org/?N0a4wkk96WWE 1`] = `
+exports[`renders shared tunes > shared tune 225 https://strudel.cc/?N0a4wkk96WWE 1`] = `
 [
   "0/1 -> 8/19: {\\"note\\":\\"C5\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.5833333333333333}",
   "8/19 -> 16/19: {\\"note\\":\\"f5\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.6064814814814814}",
@@ -5088,7 +5088,7 @@ exports[`renders shared tunes > shared tune 225 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 226 https://strudel.tidalcycles.org/?s8HiRvW_Rngj 1`] = `
+exports[`renders shared tunes > shared tune 226 https://strudel.cc/?s8HiRvW_Rngj 1`] = `
 [
   "0/1 -> 3053185/4904046: {\\"n\\":62,\\"s\\":\\"sawtooth\\",\\"cutoff\\":3986.9405734726183}",
   "0/1 -> 3053185/4904046: {\\"n\\":62,\\"s\\":\\"square\\",\\"cutoff\\":3986.9405734726183}",
@@ -5120,7 +5120,7 @@ exports[`renders shared tunes > shared tune 226 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 227 https://strudel.tidalcycles.org/?Z1ywkDoR6Tca 1`] = `
+exports[`renders shared tunes > shared tune 227 https://strudel.cc/?Z1ywkDoR6Tca 1`] = `
 [
   "5833/7200 -> 19/18: {\\"n\\":\\"C#4\\",\\"s\\":\\"Overdriven Guitar: Guitar\\",\\"gain\\":0.2}",
   "437/800 -> 19/24: {\\"n\\":\\"D#4\\",\\"s\\":\\"Overdriven Guitar: Guitar\\",\\"gain\\":0.2}",
@@ -5149,7 +5149,7 @@ exports[`renders shared tunes > shared tune 227 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 228 https://strudel.tidalcycles.org/?eXyJ5cvdMxIl 1`] = `
+exports[`renders shared tunes > shared tune 228 https://strudel.cc/?eXyJ5cvdMxIl 1`] = `
 [
   "0/1 -> 1/1: {\\"n\\":69,\\"s\\":\\"Church Organ: Organ\\",\\"gain\\":0.2}",
   "0/1 -> 1/1: {\\"n\\":72,\\"s\\":\\"Church Organ: Organ\\",\\"gain\\":0.2}",
@@ -5165,7 +5165,7 @@ exports[`renders shared tunes > shared tune 228 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 229 https://strudel.tidalcycles.org/?YSgSSFCioxs0 1`] = `
+exports[`renders shared tunes > shared tune 229 https://strudel.cc/?YSgSSFCioxs0 1`] = `
 [
   "0/1 -> 1/1: {\\"n\\":69,\\"s\\":\\"Church Organ: Organ\\",\\"gain\\":0.2}",
   "0/1 -> 1/1: {\\"n\\":72,\\"s\\":\\"Church Organ: Organ\\",\\"gain\\":0.2}",
@@ -5181,7 +5181,7 @@ exports[`renders shared tunes > shared tune 229 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 230 https://strudel.tidalcycles.org/?lAIAC1TOD3zB 1`] = `
+exports[`renders shared tunes > shared tune 230 https://strudel.cc/?lAIAC1TOD3zB 1`] = `
 [
   "0/1 -> 1/2: c1",
   "1/2 -> 1/1: c1",
@@ -5193,7 +5193,7 @@ exports[`renders shared tunes > shared tune 230 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 231 https://strudel.tidalcycles.org/?LZ-aTB2xiaZ8 1`] = `
+exports[`renders shared tunes > shared tune 231 https://strudel.cc/?LZ-aTB2xiaZ8 1`] = `
 [
   "0/1 -> 3053185/4904046: {\\"n\\":62,\\"s\\":\\"sawtooth\\",\\"cutoff\\":3986.9405734726183}",
   "0/1 -> 3053185/4904046: {\\"n\\":62,\\"s\\":\\"square\\",\\"cutoff\\":3986.9405734726183}",
@@ -5225,7 +5225,7 @@ exports[`renders shared tunes > shared tune 231 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 232 https://strudel.tidalcycles.org/?_zhepg-kT6fD 1`] = `
+exports[`renders shared tunes > shared tune 232 https://strudel.cc/?_zhepg-kT6fD 1`] = `
 [
   "0/1 -> 3/8: {\\"s\\":\\"bd\\",\\"gain\\":0.14}",
   "3/8 -> 3/4: {\\"s\\":\\"bd\\",\\"gain\\":0.14}",
@@ -5256,7 +5256,7 @@ exports[`renders shared tunes > shared tune 232 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 234 https://strudel.tidalcycles.org/?1moEu58ZjMF4 1`] = `
+exports[`renders shared tunes > shared tune 234 https://strudel.cc/?1moEu58ZjMF4 1`] = `
 [
   "0/1 -> 1/2: {\\"note\\":\\"c2\\",\\"s\\":\\"square\\",\\"attack\\":0.1,\\"decay\\":0.1,\\"sustain\\":0.2,\\"release\\":0.1}",
   "1/2 -> 1/1: {\\"note\\":\\"eb2\\",\\"s\\":\\"square\\",\\"attack\\":0.1,\\"decay\\":0.1,\\"sustain\\":0.2,\\"release\\":0.1}",
@@ -5271,7 +5271,7 @@ exports[`renders shared tunes > shared tune 234 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 235 https://strudel.tidalcycles.org/?1W8nlZAFzi5T 1`] = `
+exports[`renders shared tunes > shared tune 235 https://strudel.cc/?1W8nlZAFzi5T 1`] = `
 [
   "0/1 -> 1/1: {\\"note\\":\\"c2\\",\\"s\\":\\"square\\",\\"attack\\":0.1,\\"decay\\":0.1,\\"sustain\\":0.2,\\"release\\":0.1}",
   "0/1 -> 1/2: {\\"s\\":\\"bd\\",\\"crush\\":16}",
@@ -5285,7 +5285,7 @@ exports[`renders shared tunes > shared tune 235 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 236 https://strudel.tidalcycles.org/?exwhYw9VYVQz 1`] = `
+exports[`renders shared tunes > shared tune 236 https://strudel.cc/?exwhYw9VYVQz 1`] = `
 [
   "0/1 -> 1/1: {\\"note\\":\\"c2\\",\\"s\\":\\"square\\",\\"attack\\":0.1,\\"decay\\":0.1,\\"sustain\\":0.2,\\"release\\":0.1}",
   "0/1 -> 1/2: {\\"s\\":\\"bd\\",\\"crush\\":16}",
@@ -5299,7 +5299,7 @@ exports[`renders shared tunes > shared tune 236 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 237 https://strudel.tidalcycles.org/?z4zPoaRLF6Vs 1`] = `
+exports[`renders shared tunes > shared tune 237 https://strudel.cc/?z4zPoaRLF6Vs 1`] = `
 [
   "0/1 -> 2/5: {\\"note\\":\\"c3\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.2,\\"sustain\\":0.3,\\"release\\":0.1,\\"bandf\\":500,\\"bandq\\":1}",
   "2/5 -> 4/5: {\\"note\\":\\"c3\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.2,\\"sustain\\":0.3,\\"release\\":0.1,\\"bandf\\":500,\\"bandq\\":1}",
@@ -5308,7 +5308,7 @@ exports[`renders shared tunes > shared tune 237 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 238 https://strudel.tidalcycles.org/?VzJokumWaip_ 1`] = `
+exports[`renders shared tunes > shared tune 238 https://strudel.cc/?VzJokumWaip_ 1`] = `
 [
   "3/4 -> 1/1: {\\"s\\":\\"bd\\"}",
   "1/2 -> 3/4: {\\"s\\":\\"bd\\"}",
@@ -5324,7 +5324,7 @@ exports[`renders shared tunes > shared tune 238 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 239 https://strudel.tidalcycles.org/?gb4pffOZyATk 1`] = `
+exports[`renders shared tunes > shared tune 239 https://strudel.cc/?gb4pffOZyATk 1`] = `
 [
   "4/5 -> 1/1: {\\"s\\":\\"bd\\",\\"cutoff\\":200,\\"resonance\\":30}",
   "4/5 -> 1/1: {\\"s\\":\\"bd\\",\\"cutoff\\":100,\\"resonance\\":30}",
@@ -5351,7 +5351,7 @@ exports[`renders shared tunes > shared tune 239 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 240 https://strudel.tidalcycles.org/?C6vcsMx8UtjJ 1`] = `
+exports[`renders shared tunes > shared tune 240 https://strudel.cc/?C6vcsMx8UtjJ 1`] = `
 [
   "0/1 -> 1/8: C2",
   "1/8 -> 1/4: D2",
@@ -5364,7 +5364,7 @@ exports[`renders shared tunes > shared tune 240 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 241 https://strudel.tidalcycles.org/?jyNjgy-bZ0X7 1`] = `
+exports[`renders shared tunes > shared tune 241 https://strudel.cc/?jyNjgy-bZ0X7 1`] = `
 [
   "0/1 -> 3/16: {\\"s\\":\\"bd\\",\\"gain\\":0.7}",
   "3/16 -> 3/8: {\\"s\\":\\"bd\\",\\"gain\\":0.7}",
@@ -5396,7 +5396,7 @@ exports[`renders shared tunes > shared tune 241 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 242 https://strudel.tidalcycles.org/?MPVT_kG6Yni7 1`] = `
+exports[`renders shared tunes > shared tune 242 https://strudel.cc/?MPVT_kG6Yni7 1`] = `
 [
   "0/1 -> 2/1: {\\"note\\":\\"c1\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.2,\\"sustain\\":0.3,\\"release\\":0.1,\\"bandf\\":500,\\"bandq\\":1,\\"gain\\":3}",
   "1/3 -> 1/1: {\\"s\\":\\"bd\\"}",
@@ -5404,7 +5404,7 @@ exports[`renders shared tunes > shared tune 242 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 243 https://strudel.tidalcycles.org/?Ul_u7MyAGKXb 1`] = `
+exports[`renders shared tunes > shared tune 243 https://strudel.cc/?Ul_u7MyAGKXb 1`] = `
 [
   "0/1 -> 1/40: {\\"n\\":62,\\"s\\":\\"sawtooth\\",\\"cutoff\\":2000}",
   "1/4 -> 21/80: {\\"n\\":51,\\"s\\":\\"sawtooth\\",\\"cutoff\\":2000}",
@@ -5429,7 +5429,7 @@ exports[`renders shared tunes > shared tune 243 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 244 https://strudel.tidalcycles.org/?6geTqvPlUvv4 1`] = `
+exports[`renders shared tunes > shared tune 244 https://strudel.cc/?6geTqvPlUvv4 1`] = `
 [
   "0/1 -> 3/80: {\\"n\\":62,\\"s\\":\\"sine\\",\\"cutoff\\":1500}",
   "1/4 -> 43/160: {\\"n\\":51,\\"s\\":\\"sine\\",\\"cutoff\\":1500}",
@@ -5454,7 +5454,7 @@ exports[`renders shared tunes > shared tune 244 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 245 https://strudel.tidalcycles.org/?5-NpsIAJqGJX 1`] = `
+exports[`renders shared tunes > shared tune 245 https://strudel.cc/?5-NpsIAJqGJX 1`] = `
 [
   "0/1 -> 3/20: 0",
   "0/1 -> 3/20: 3",
@@ -5473,7 +5473,7 @@ exports[`renders shared tunes > shared tune 245 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 248 https://strudel.tidalcycles.org/?FavmsfMCEJh9 1`] = `
+exports[`renders shared tunes > shared tune 248 https://strudel.cc/?FavmsfMCEJh9 1`] = `
 [
   "0/1 -> 1/4: {\\"note\\":\\"C3\\"}",
   "1/4 -> 1/2: {\\"note\\":\\"Eb3\\"}",
@@ -5486,7 +5486,7 @@ exports[`renders shared tunes > shared tune 248 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 249 https://strudel.tidalcycles.org/?KEJD5r4Q7zZo 1`] = `
+exports[`renders shared tunes > shared tune 249 https://strudel.cc/?KEJD5r4Q7zZo 1`] = `
 [
   "0/1 -> 3/4: F4",
   "0/1 -> 3/4: Bb4",
@@ -5499,7 +5499,7 @@ exports[`renders shared tunes > shared tune 249 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 250 https://strudel.tidalcycles.org/?JzQ_9QyLrKhy 1`] = `
+exports[`renders shared tunes > shared tune 250 https://strudel.cc/?JzQ_9QyLrKhy 1`] = `
 [
   "0/1 -> 1/3: bd",
   "1/3 -> 2/3: hh",
@@ -5517,7 +5517,7 @@ exports[`renders shared tunes > shared tune 250 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 251 https://strudel.tidalcycles.org/?H9-8RjyncjzI 1`] = `
+exports[`renders shared tunes > shared tune 251 https://strudel.cc/?H9-8RjyncjzI 1`] = `
 [
   "0/1 -> 1/1: B3",
   "0/1 -> 1/1: D4",
@@ -5527,7 +5527,7 @@ exports[`renders shared tunes > shared tune 251 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 252 https://strudel.tidalcycles.org/?CG9iByv5zHY- 1`] = `
+exports[`renders shared tunes > shared tune 252 https://strudel.cc/?CG9iByv5zHY- 1`] = `
 [
   "0/1 -> 1/3: 48",
   "1/3 -> 2/3: 51",
@@ -5535,7 +5535,7 @@ exports[`renders shared tunes > shared tune 252 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 253 https://strudel.tidalcycles.org/?FgUTcaG_XKGK 1`] = `
+exports[`renders shared tunes > shared tune 253 https://strudel.cc/?FgUTcaG_XKGK 1`] = `
 [
   "0/1 -> 1/4: 48",
   "1/4 -> 1/2: 51",
@@ -5544,7 +5544,7 @@ exports[`renders shared tunes > shared tune 253 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 254 https://strudel.tidalcycles.org/?CmY3ebvIfYEG 1`] = `
+exports[`renders shared tunes > shared tune 254 https://strudel.cc/?CmY3ebvIfYEG 1`] = `
 [
   "0/1 -> 1/10: C3",
   "0/1 -> 1/10: E3",
@@ -5563,7 +5563,7 @@ exports[`renders shared tunes > shared tune 254 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 255 https://strudel.tidalcycles.org/?yNx4koGpPrSH 1`] = `
+exports[`renders shared tunes > shared tune 255 https://strudel.cc/?yNx4koGpPrSH 1`] = `
 [
   "0/1 -> 6275565/1452119: A3",
   "-9/8 -> 20400609/11616952: G4",
@@ -5574,7 +5574,7 @@ exports[`renders shared tunes > shared tune 255 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 256 https://strudel.tidalcycles.org/?oBtcxYrbZlNG 1`] = `
+exports[`renders shared tunes > shared tune 256 https://strudel.cc/?oBtcxYrbZlNG 1`] = `
 [
   "0/1 -> 1/2: {\\"note\\":\\"D3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4814814814814815}",
   "1/4 -> 3/4: {\\"note\\":\\"F3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.49537037037037035}",
@@ -5609,7 +5609,7 @@ exports[`renders shared tunes > shared tune 256 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 257 https://strudel.tidalcycles.org/?eCz4nyUk3TnN 1`] = `
+exports[`renders shared tunes > shared tune 257 https://strudel.cc/?eCz4nyUk3TnN 1`] = `
 [
   "0/1 -> 3/1: {\\"n\\":\\"B3\\",\\"s\\":\\"0040_FluidR3_GM_sf2_file\\",\\"attack\\":0.05,\\"decay\\":0.1,\\"sustain\\":0.7,\\"cutoff\\":1111.7252990603447,\\"gain\\":0.3}",
   "0/1 -> 3/1: {\\"n\\":\\"D4\\",\\"s\\":\\"0040_FluidR3_GM_sf2_file\\",\\"attack\\":0.05,\\"decay\\":0.1,\\"sustain\\":0.7,\\"cutoff\\":1111.7252990603447,\\"gain\\":0.3}",
@@ -5624,7 +5624,7 @@ exports[`renders shared tunes > shared tune 257 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 259 https://strudel.tidalcycles.org/?J3FcQgOeZ3cV 1`] = `
+exports[`renders shared tunes > shared tune 259 https://strudel.cc/?J3FcQgOeZ3cV 1`] = `
 [
   "0/1 -> 5/26: {\\"note\\":\\"B2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.46759259259259256}",
   "5/13 -> 15/26: {\\"note\\":\\"B2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.46759259259259256}",
@@ -5652,7 +5652,7 @@ exports[`renders shared tunes > shared tune 259 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 260 https://strudel.tidalcycles.org/?tTlyA1JzHklU 1`] = `
+exports[`renders shared tunes > shared tune 260 https://strudel.cc/?tTlyA1JzHklU 1`] = `
 [
   "0/1 -> 4/3: B4",
   "0/1 -> 1/3: C3",
@@ -5661,7 +5661,7 @@ exports[`renders shared tunes > shared tune 260 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 261 https://strudel.tidalcycles.org/?hIhmX2R9gtwL 1`] = `
+exports[`renders shared tunes > shared tune 261 https://strudel.cc/?hIhmX2R9gtwL 1`] = `
 [
   "0/1 -> 1/8: {\\"note\\":\\"c2\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"release\\":0.3,\\"vowel\\":\\"a\\"}",
   "1/2 -> 5/8: {\\"note\\":\\"c2\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"release\\":0.3,\\"vowel\\":\\"o\\"}",
@@ -5686,7 +5686,7 @@ exports[`renders shared tunes > shared tune 261 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 262 https://strudel.tidalcycles.org/?NIL21RJTmuAa 1`] = `
+exports[`renders shared tunes > shared tune 262 https://strudel.cc/?NIL21RJTmuAa 1`] = `
 [
   "0/1 -> 1/2: Bb2",
   "0/1 -> 1/2: F3",
@@ -5710,7 +5710,7 @@ exports[`renders shared tunes > shared tune 262 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 263 https://strudel.tidalcycles.org/?CGh4oLKu9tOp 1`] = `
+exports[`renders shared tunes > shared tune 263 https://strudel.cc/?CGh4oLKu9tOp 1`] = `
 [
   "0/1 -> 4/3: B4",
   "0/1 -> 1/3: C3",
@@ -5719,7 +5719,7 @@ exports[`renders shared tunes > shared tune 263 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 264 https://strudel.tidalcycles.org/?N486QfFJ2NvV 1`] = `
+exports[`renders shared tunes > shared tune 264 https://strudel.cc/?N486QfFJ2NvV 1`] = `
 [
   "0/1 -> 1/8: {\\"freq\\":55.33,\\"s\\":\\"sawtooth\\"}",
   "0/1 -> 1/8: {\\"freq\\":54.725,\\"s\\":\\"sawtooth\\"}",
@@ -5747,7 +5747,7 @@ exports[`renders shared tunes > shared tune 264 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 265 https://strudel.tidalcycles.org/?Njas64Vf03LO 1`] = `
+exports[`renders shared tunes > shared tune 265 https://strudel.cc/?Njas64Vf03LO 1`] = `
 [
   "0/1 -> 5/11: {\\"note\\":\\"c2\\",\\"s\\":\\"sawtooth\\",\\"vowel\\":\\"a\\",\\"gain\\":1.1882154262966047,\\"delay\\":0.1}",
   "5/11 -> 15/11: {\\"note\\":\\"eb2\\",\\"s\\":\\"sawtooth\\",\\"vowel\\":\\"a\\",\\"gain\\":1.361256209529016,\\"delay\\":0.1}",
@@ -5770,7 +5770,7 @@ exports[`renders shared tunes > shared tune 265 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 266 https://strudel.tidalcycles.org/?-qcqwVsJXv8J 1`] = `
+exports[`renders shared tunes > shared tune 266 https://strudel.cc/?-qcqwVsJXv8J 1`] = `
 [
   "0/1 -> 1/1: bd",
   "0/1 -> 1/4: hh",
@@ -5781,7 +5781,7 @@ exports[`renders shared tunes > shared tune 266 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 267 https://strudel.tidalcycles.org/?Q2WQMrJVFb46 1`] = `
+exports[`renders shared tunes > shared tune 267 https://strudel.cc/?Q2WQMrJVFb46 1`] = `
 [
   "0/1 -> 5/11: {\\"note\\":\\"c2\\",\\"s\\":\\"sawtooth\\",\\"vowel\\":\\"a\\",\\"gain\\":0.2000348432426738,\\"delay\\":0.1}",
   "5/11 -> 15/11: {\\"note\\":\\"eb2\\",\\"s\\":\\"sawtooth\\",\\"vowel\\":\\"a\\",\\"gain\\":0.20089674623394735,\\"delay\\":0.1}",
@@ -5805,7 +5805,7 @@ exports[`renders shared tunes > shared tune 267 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 268 https://strudel.tidalcycles.org/?IV4pDyaLUMB0 1`] = `
+exports[`renders shared tunes > shared tune 268 https://strudel.cc/?IV4pDyaLUMB0 1`] = `
 [
   "0/1 -> 1/2: c1",
   "1/2 -> 1/1: c1",
@@ -5817,7 +5817,7 @@ exports[`renders shared tunes > shared tune 268 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 269 https://strudel.tidalcycles.org/?XQ_uhshhjEYw 1`] = `
+exports[`renders shared tunes > shared tune 269 https://strudel.cc/?XQ_uhshhjEYw 1`] = `
 [
   "-18/5 -> 2/5: c3",
   "-18/5 -> 2/5: e3",
@@ -5829,7 +5829,7 @@ exports[`renders shared tunes > shared tune 269 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 270 https://strudel.tidalcycles.org/?XDCsI7uPtnav 1`] = `
+exports[`renders shared tunes > shared tune 270 https://strudel.cc/?XDCsI7uPtnav 1`] = `
 [
   "0/1 -> 2/1: {\\"note\\":\\"C3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4722222222222222}",
   "0/1 -> 2/1: {\\"note\\":\\"E3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4907407407407407}",
@@ -5837,7 +5837,7 @@ exports[`renders shared tunes > shared tune 270 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 271 https://strudel.tidalcycles.org/?2t_PSStoDUhV 1`] = `
+exports[`renders shared tunes > shared tune 271 https://strudel.cc/?2t_PSStoDUhV 1`] = `
 [
   "0/1 -> 5/11: {\\"note\\":\\"c2\\",\\"s\\":\\"sawtooth\\",\\"vowel\\":\\"a\\",\\"gain\\":0.2000348432426738,\\"delay\\":0.1}",
   "5/11 -> 15/11: {\\"note\\":\\"eb2\\",\\"s\\":\\"sawtooth\\",\\"vowel\\":\\"a\\",\\"gain\\":0.20089674623394735,\\"delay\\":0.1}",
@@ -5859,7 +5859,7 @@ exports[`renders shared tunes > shared tune 271 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 272 https://strudel.tidalcycles.org/?J4419vLymh08 1`] = `
+exports[`renders shared tunes > shared tune 272 https://strudel.cc/?J4419vLymh08 1`] = `
 [
   "5/6 -> 5/3: {\\"note\\":\\"eb4\\",\\"s\\":\\"piano\\",\\"cutoff\\":1275.348281040755,\\"resonance\\":0,\\"delay\\":0.1}",
   "0/1 -> 5/6: {\\"value\\":\\"\\",\\"s\\":\\"sawtooth\\",\\"vowel\\":\\"a\\",\\"gain\\":1.8000302424954437,\\"hcutoff\\":800,\\"cutoff\\":770.1250948828399,\\"resonance\\":0,\\"delay\\":0.1}",
@@ -5880,7 +5880,7 @@ exports[`renders shared tunes > shared tune 272 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 273 https://strudel.tidalcycles.org/?hGG0rEr1zC3A 1`] = `
+exports[`renders shared tunes > shared tune 273 https://strudel.cc/?hGG0rEr1zC3A 1`] = `
 [
   "0/1 -> 5/4: {\\"value\\":\\"\\",\\"s\\":\\"sawtooth\\",\\"vowel\\":\\"a\\",\\"gain\\":1.8000302424954437,\\"hcutoff\\":800,\\"cutoff\\":889.6566238254309,\\"resonance\\":0,\\"delay\\":0.1}",
   "0/1 -> 5/8: {\\"value\\":\\"\\",\\"s\\":\\"sine\\",\\"shape\\":0.31075614638684784,\\"gain\\":0.32689036596711957,\\"cutoff\\":640.2810816708566,\\"resonance\\":0,\\"delay\\":0.1}",
@@ -5896,7 +5896,7 @@ exports[`renders shared tunes > shared tune 273 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 274 https://strudel.tidalcycles.org/?ahkvgPdMeapI 1`] = `
+exports[`renders shared tunes > shared tune 274 https://strudel.cc/?ahkvgPdMeapI 1`] = `
 [
   "0/1 -> 1/2: {\\"note\\":\\"F3\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.49537037037037035}",
   "1/4 -> 3/4: {\\"note\\":\\"F2\\",\\"clip\\":1,\\"s\\":\\"piano\\",\\"release\\":0.1,\\"pan\\":0.4398148148148148}",
@@ -5907,7 +5907,7 @@ exports[`renders shared tunes > shared tune 274 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 275 https://strudel.tidalcycles.org/?um_AAxJMJr5U 1`] = `
+exports[`renders shared tunes > shared tune 275 https://strudel.cc/?um_AAxJMJr5U 1`] = `
 [
   "0/1 -> 1/1: {\\"note\\":\\"c4\\",\\"s\\":\\"piano\\",\\"gain\\":0.5}",
   "0/1 -> 1/1: {\\"note\\":\\"e4\\",\\"s\\":\\"piano\\",\\"gain\\":0.5}",
@@ -5925,7 +5925,7 @@ exports[`renders shared tunes > shared tune 275 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 276 https://strudel.tidalcycles.org/?UxSJbzL1d05O 1`] = `
+exports[`renders shared tunes > shared tune 276 https://strudel.cc/?UxSJbzL1d05O 1`] = `
 [
   "0/1 -> 5/4: {\\"note\\":\\"c4\\",\\"s\\":\\"piano\\",\\"gain\\":0.5}",
   "0/1 -> 5/4: {\\"note\\":\\"eb4\\",\\"s\\":\\"piano\\",\\"gain\\":0.5}",
@@ -5945,7 +5945,7 @@ exports[`renders shared tunes > shared tune 276 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 277 https://strudel.tidalcycles.org/?90drkbxdBr2- 1`] = `
+exports[`renders shared tunes > shared tune 277 https://strudel.cc/?90drkbxdBr2- 1`] = `
 [
   "0/1 -> 5/4: {\\"note\\":\\"c4\\",\\"s\\":\\"piano\\",\\"gain\\":0.5}",
   "0/1 -> 5/4: {\\"note\\":\\"eb4\\",\\"s\\":\\"piano\\",\\"gain\\":0.5}",
@@ -5967,7 +5967,7 @@ exports[`renders shared tunes > shared tune 277 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 278 https://strudel.tidalcycles.org/?aGtqNXDNRxdA 1`] = `
+exports[`renders shared tunes > shared tune 278 https://strudel.cc/?aGtqNXDNRxdA 1`] = `
 [
   "0/1 -> 3/2: {\\"s\\":\\"bd\\",\\"speed\\":0.7519542165100574}",
   "3/4 -> 3/2: {\\"s\\":\\"sd\\",\\"speed\\":0.7931522866332671}",
@@ -6024,7 +6024,7 @@ exports[`renders shared tunes > shared tune 278 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 279 https://strudel.tidalcycles.org/?N3UBBhj_uwxd 1`] = `
+exports[`renders shared tunes > shared tune 279 https://strudel.cc/?N3UBBhj_uwxd 1`] = `
 [
   "0/1 -> 1/10: C3",
   "0/1 -> 1/10: E3",
@@ -6043,7 +6043,7 @@ exports[`renders shared tunes > shared tune 279 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 280 https://strudel.tidalcycles.org/?wF7a24BViyqU 1`] = `
+exports[`renders shared tunes > shared tune 280 https://strudel.cc/?wF7a24BViyqU 1`] = `
 [
   "0/1 -> 3/4: F3",
   "3/4 -> 9/8: Ab3",
@@ -6063,7 +6063,7 @@ exports[`renders shared tunes > shared tune 280 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 281 https://strudel.tidalcycles.org/?h87w26zgMJ0L 1`] = `
+exports[`renders shared tunes > shared tune 281 https://strudel.cc/?h87w26zgMJ0L 1`] = `
 [
   "0/1 -> 5/6: {\\"note\\":\\"c4\\",\\"s\\":\\"piano\\",\\"gain\\":0.5}",
   "0/1 -> 5/6: {\\"note\\":\\"eb4\\",\\"s\\":\\"piano\\",\\"gain\\":0.5}",
@@ -6097,7 +6097,7 @@ exports[`renders shared tunes > shared tune 281 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 282 https://strudel.tidalcycles.org/?fwBxQjt9aVhx 1`] = `
+exports[`renders shared tunes > shared tune 282 https://strudel.cc/?fwBxQjt9aVhx 1`] = `
 [
   "5833/7200 -> 19/18: {\\"n\\":\\"C#4\\",\\"s\\":\\"Overdriven Guitar: Guitar\\",\\"gain\\":0.19}",
   "437/800 -> 19/24: {\\"n\\":\\"D#4\\",\\"s\\":\\"Overdriven Guitar: Guitar\\",\\"gain\\":0.19}",
@@ -6126,7 +6126,7 @@ exports[`renders shared tunes > shared tune 282 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 283 https://strudel.tidalcycles.org/?3rnmA7q0g2i- 1`] = `
+exports[`renders shared tunes > shared tune 283 https://strudel.cc/?3rnmA7q0g2i- 1`] = `
 [
   "0/1 -> 5/8: {\\"note\\":\\"G1\\",\\"s\\":\\"sawtooth\\",\\"cutoff\\":200,\\"resonance\\":20,\\"gain\\":0.15,\\"shape\\":0.6,\\"release\\":0.05}",
   "0/1 -> 5/8: {\\"note\\":31.02,\\"s\\":\\"sawtooth\\",\\"cutoff\\":200,\\"resonance\\":20,\\"gain\\":0.15,\\"shape\\":0.6,\\"release\\":0.05}",
@@ -6145,7 +6145,7 @@ exports[`renders shared tunes > shared tune 283 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 284 https://strudel.tidalcycles.org/?w1af5xWyhwNm 1`] = `
+exports[`renders shared tunes > shared tune 284 https://strudel.cc/?w1af5xWyhwNm 1`] = `
 [
   "0/1 -> 8/1: {\\"s\\":\\"bass\\",\\"speed\\":0.125,\\"unit\\":\\"c\\",\\"clip\\":1}",
   "0/1 -> 1/2: {\\"s\\":\\"bd\\"}",
@@ -6167,7 +6167,7 @@ exports[`renders shared tunes > shared tune 284 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 285 https://strudel.tidalcycles.org/?Ne_BJMKKDCO_ 1`] = `
+exports[`renders shared tunes > shared tune 285 https://strudel.cc/?Ne_BJMKKDCO_ 1`] = `
 [
   "0/1 -> 5/8: {\\"note\\":\\"G1\\",\\"s\\":\\"sawtooth\\",\\"cutoff\\":200,\\"resonance\\":20,\\"gain\\":0.15,\\"shape\\":0.6,\\"release\\":0.05}",
   "0/1 -> 5/8: {\\"note\\":31.02,\\"s\\":\\"sawtooth\\",\\"cutoff\\":200,\\"resonance\\":20,\\"gain\\":0.15,\\"shape\\":0.6,\\"release\\":0.05}",
@@ -6186,7 +6186,7 @@ exports[`renders shared tunes > shared tune 285 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 286 https://strudel.tidalcycles.org/?G2H5FM0Fc94a 1`] = `
+exports[`renders shared tunes > shared tune 286 https://strudel.cc/?G2H5FM0Fc94a 1`] = `
 [
   "0/1 -> 1/4: {\\"s\\":\\"woodblock:1\\"}",
   "1/4 -> 3/8: {\\"s\\":\\"woodblock:2\\"}",
@@ -6204,7 +6204,7 @@ exports[`renders shared tunes > shared tune 286 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 287 https://strudel.tidalcycles.org/?EPFzAz99hwZW 1`] = `
+exports[`renders shared tunes > shared tune 287 https://strudel.cc/?EPFzAz99hwZW 1`] = `
 [
   "0/1 -> 1/4: {\\"note\\":48,\\"s\\":\\"ocarina_vib\\",\\"clip\\":1,\\"release\\":0.1,\\"room\\":1,\\"gain\\":0.2}",
   "1/4 -> 9/32: {\\"note\\":51,\\"s\\":\\"ocarina_vib\\",\\"clip\\":1,\\"release\\":0.1,\\"room\\":1,\\"gain\\":0.2}",
@@ -6221,7 +6221,7 @@ exports[`renders shared tunes > shared tune 287 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 288 https://strudel.tidalcycles.org/?DSvgYUzEgx6n 1`] = `
+exports[`renders shared tunes > shared tune 288 https://strudel.cc/?DSvgYUzEgx6n 1`] = `
 [
   "0/1 -> 1/2: {\\"s\\":\\"bd\\",\\"bank\\":\\"RolandTR909\\"}",
   "1/2 -> 1/1: {\\"s\\":\\"bd\\",\\"bank\\":\\"RolandTR909\\"}",
@@ -6245,14 +6245,14 @@ exports[`renders shared tunes > shared tune 288 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 289 https://strudel.tidalcycles.org/?cRvfurHbl4jo 1`] = `
+exports[`renders shared tunes > shared tune 289 https://strudel.cc/?cRvfurHbl4jo 1`] = `
 [
   "0/1 -> 1/2: {\\"s\\":\\"bd\\",\\"delay\\":0,\\"delaytime\\":0.33,\\"delayfeedback\\":0.8,\\"speed\\":-1}",
   "1/2 -> 1/1: {\\"s\\":\\"sd\\",\\"delay\\":0,\\"delaytime\\":0.33,\\"delayfeedback\\":0.8,\\"speed\\":-1}",
 ]
 `;
 
-exports[`renders shared tunes > shared tune 290 https://strudel.tidalcycles.org/?DGHGUqRXr5pe 1`] = `
+exports[`renders shared tunes > shared tune 290 https://strudel.cc/?DGHGUqRXr5pe 1`] = `
 [
   "0/1 -> 1/4: {\\"s\\":\\"jvbass:7\\",\\"cutoff\\":1000,\\"gain\\":0.6740862280130386,\\"room\\":1}",
   "1/4 -> 1/2: {\\"s\\":\\"jvbass:2\\",\\"cutoff\\":1000,\\"gain\\":0.5605570062994958,\\"room\\":1}",
@@ -6274,7 +6274,7 @@ exports[`renders shared tunes > shared tune 290 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 291 https://strudel.tidalcycles.org/?RBaWr8-15Guk 1`] = `
+exports[`renders shared tunes > shared tune 291 https://strudel.cc/?RBaWr8-15Guk 1`] = `
 [
   "0/1 -> 1/6: {\\"s\\":\\"hh\\",\\"gain\\":0.6339596770703793,\\"room\\":0.6,\\"pan\\":0}",
   "8/9 -> 17/18: {\\"s\\":\\"jvbass:7\\",\\"cutoff\\":1000,\\"gain\\":0.7514234818518162,\\"room\\":0.6,\\"pan\\":0}",
@@ -6289,7 +6289,7 @@ exports[`renders shared tunes > shared tune 291 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 292 https://strudel.tidalcycles.org/?c41h3Z1fwqTB 1`] = `
+exports[`renders shared tunes > shared tune 292 https://strudel.cc/?c41h3Z1fwqTB 1`] = `
 [
   "0/1 -> 1/6: {\\"s\\":\\"hh\\",\\"gain\\":0.6339596770703793,\\"room\\":0.6,\\"pan\\":0}",
   "8/9 -> 17/18: {\\"s\\":\\"jvbass:7\\",\\"cutoff\\":1000,\\"gain\\":0.7514234818518162,\\"room\\":0.6,\\"pan\\":0}",
@@ -6304,7 +6304,7 @@ exports[`renders shared tunes > shared tune 292 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 293 https://strudel.tidalcycles.org/?lvF3fzHrDbyx 1`] = `
+exports[`renders shared tunes > shared tune 293 https://strudel.cc/?lvF3fzHrDbyx 1`] = `
 [
   "0/1 -> 1/2: {\\"s\\":\\"bev\\",\\"begin\\":0,\\"end\\":0.015625,\\"pan\\":0,\\"speed\\":0.5,\\"room\\":0.9}",
   "0/1 -> 1/2: {\\"s\\":\\"bev\\",\\"begin\\":0.046875,\\"end\\":0.0625,\\"pan\\":1,\\"speed\\":0.5,\\"room\\":0.9}",
@@ -6317,7 +6317,7 @@ exports[`renders shared tunes > shared tune 293 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 294 https://strudel.tidalcycles.org/?vqqfVtY-n1Z6 1`] = `
+exports[`renders shared tunes > shared tune 294 https://strudel.cc/?vqqfVtY-n1Z6 1`] = `
 [
   "0/1 -> 1/6: {\\"s\\":\\"hh\\",\\"gain\\":0.6339596770703793,\\"room\\":0.6,\\"pan\\":0}",
   "8/9 -> 17/18: {\\"s\\":\\"jvbass:7\\",\\"cutoff\\":1000,\\"gain\\":0.7514234818518162,\\"room\\":0.6,\\"pan\\":0}",
@@ -6332,7 +6332,7 @@ exports[`renders shared tunes > shared tune 294 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 295 https://strudel.tidalcycles.org/?C7PwKmsYAOJL 1`] = `
+exports[`renders shared tunes > shared tune 295 https://strudel.cc/?C7PwKmsYAOJL 1`] = `
 [
   "0/1 -> 1/64: {\\"s\\":\\"future:2\\",\\"begin\\":0,\\"end\\":0.0625,\\"speed\\":2,\\"pan\\":0,\\"room\\":0.6}",
   "1/64 -> 1/32: {\\"s\\":\\"future:2\\",\\"begin\\":0.0625,\\"end\\":0.125,\\"speed\\":2,\\"pan\\":0,\\"room\\":0.6}",
@@ -6433,7 +6433,7 @@ exports[`renders shared tunes > shared tune 295 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 296 https://strudel.tidalcycles.org/?Z1mqx-eU-KcX 1`] = `
+exports[`renders shared tunes > shared tune 296 https://strudel.cc/?Z1mqx-eU-KcX 1`] = `
 [
   "0/1 -> 831675/814544: {\\"note\\":\\"D0\\",\\"s\\":\\"bell\\",\\"gain\\":0.6,\\"delay\\":0.2,\\"delaytime\\":0.3333333333333333,\\"delayfeedback\\":0.8}",
   "3/4 -> 1442583/814544: {\\"note\\":\\"A-1\\",\\"s\\":\\"bell\\",\\"gain\\":0.6,\\"delay\\":0.2,\\"delaytime\\":0.3333333333333333,\\"delayfeedback\\":0.8}",
@@ -6448,7 +6448,7 @@ exports[`renders shared tunes > shared tune 296 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 297 https://strudel.tidalcycles.org/?Ypr_TlVFjVV5 1`] = `
+exports[`renders shared tunes > shared tune 297 https://strudel.cc/?Ypr_TlVFjVV5 1`] = `
 [
   "0/1 -> 1/4: {\\"s\\":\\"p\\",\\"speed\\":0.03125,\\"unit\\":\\"c\\",\\"begin\\":0,\\"end\\":0.0078125,\\"pan\\":0,\\"shape\\":0.4,\\"decay\\":0.1,\\"sustain\\":0.6}",
   "1/4 -> 1/2: {\\"s\\":\\"p\\",\\"speed\\":0.03125,\\"unit\\":\\"c\\",\\"begin\\":0.0078125,\\"end\\":0.015625,\\"pan\\":0,\\"shape\\":0.4,\\"decay\\":0.1,\\"sustain\\":0.6}",
@@ -6461,7 +6461,7 @@ exports[`renders shared tunes > shared tune 297 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 298 https://strudel.tidalcycles.org/?5pmvveRR-gKc 1`] = `
+exports[`renders shared tunes > shared tune 298 https://strudel.cc/?5pmvveRR-gKc 1`] = `
 [
   "0/1 -> 1/1: D3",
   "0/1 -> 2/1: E3",
@@ -6551,7 +6551,7 @@ exports[`renders shared tunes > shared tune 298 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 299 https://strudel.tidalcycles.org/?rGJ0heffHHl4 1`] = `
+exports[`renders shared tunes > shared tune 299 https://strudel.cc/?rGJ0heffHHl4 1`] = `
 [
   "0/1 -> 1/2: {\\"s\\":\\"bd\\",\\"gain\\":0.8}",
   "1/2 -> 1/1: {\\"s\\":\\"bd\\",\\"gain\\":0.8}",
@@ -6567,7 +6567,7 @@ exports[`renders shared tunes > shared tune 299 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 300 https://strudel.tidalcycles.org/?Z7Nxzf3lmgTN 1`] = `
+exports[`renders shared tunes > shared tune 300 https://strudel.cc/?Z7Nxzf3lmgTN 1`] = `
 [
   "0/1 -> 8/1: {\\"note\\":\\"e3\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.2,\\"sustain\\":0.3,\\"release\\":0.1,\\"bandf\\":100,\\"bandq\\":1,\\"gain\\":3}",
   "0/1 -> 8/1: {\\"note\\":\\"b4\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.2,\\"sustain\\":0.3,\\"release\\":0.1,\\"bandf\\":100,\\"bandq\\":1,\\"gain\\":3}",
@@ -6582,7 +6582,7 @@ exports[`renders shared tunes > shared tune 300 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 301 https://strudel.tidalcycles.org/?e63x61eOPPvl 1`] = `
+exports[`renders shared tunes > shared tune 301 https://strudel.cc/?e63x61eOPPvl 1`] = `
 [
   "0/1 -> 8/1: {\\"note\\":\\"e3\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.2,\\"sustain\\":0.3,\\"release\\":0.1,\\"bandf\\":100,\\"bandq\\":1,\\"gain\\":3}",
   "0/1 -> 8/1: {\\"note\\":\\"b4\\",\\"s\\":\\"sawtooth\\",\\"attack\\":0.1,\\"decay\\":0.2,\\"sustain\\":0.3,\\"release\\":0.1,\\"bandf\\":100,\\"bandq\\":1,\\"gain\\":3}",
@@ -6591,7 +6591,7 @@ exports[`renders shared tunes > shared tune 301 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 302 https://strudel.tidalcycles.org/?bUd8QxyN4kvJ 1`] = `
+exports[`renders shared tunes > shared tune 302 https://strudel.cc/?bUd8QxyN4kvJ 1`] = `
 [
   "0/1 -> 1/8: {\\"note\\":\\"g4\\",\\"s\\":\\"xx\\",\\"cutoff\\":2348.1232826650858,\\"room\\":0.8,\\"pan\\":0,\\"gain\\":0.5}",
   "3/8 -> 1/2: {\\"note\\":\\"g4\\",\\"s\\":\\"xx\\",\\"cutoff\\":2919.6960066389074,\\"room\\":0.8,\\"pan\\":0,\\"gain\\":0.5}",
@@ -6624,7 +6624,7 @@ exports[`renders shared tunes > shared tune 302 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 303 https://strudel.tidalcycles.org/?y5PdLktz5gnb 1`] = `
+exports[`renders shared tunes > shared tune 303 https://strudel.cc/?y5PdLktz5gnb 1`] = `
 [
   "0/1 -> 1/4: {\\"note\\":\\"e3\\",\\"s\\":\\"sawtooth\\",\\"decay\\":0.1,\\"sustain\\":0.1,\\"bandf\\":50,\\"bandq\\":0.5,\\"gain\\":3.8519497029047303}",
   "1/4 -> 1/2: {\\"note\\":\\"e3\\",\\"s\\":\\"sawtooth\\",\\"decay\\":0.1,\\"sustain\\":0.1,\\"bandf\\":50,\\"bandq\\":0.5,\\"gain\\":2.22836140246614}",
@@ -6650,7 +6650,7 @@ exports[`renders shared tunes > shared tune 303 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 304 https://strudel.tidalcycles.org/?BpChMc3nxrYv 1`] = `
+exports[`renders shared tunes > shared tune 304 https://strudel.cc/?BpChMc3nxrYv 1`] = `
 [
   "0/1 -> 3/2: {\\"s\\":\\"bd\\",\\"speed\\":0.7519542165100574}",
   "3/4 -> 3/2: {\\"s\\":\\"sd\\",\\"speed\\":0.7931522866332671}",
@@ -6707,7 +6707,7 @@ exports[`renders shared tunes > shared tune 304 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 305 https://strudel.tidalcycles.org/?Swuvt887AOe1 1`] = `
+exports[`renders shared tunes > shared tune 305 https://strudel.cc/?Swuvt887AOe1 1`] = `
 [
   "0/1 -> 3/2: {\\"s\\":\\"bd\\",\\"speed\\":0.7519542165100574}",
   "3/4 -> 3/2: {\\"s\\":\\"sd\\",\\"speed\\":0.7931522866332671}",
@@ -6764,7 +6764,7 @@ exports[`renders shared tunes > shared tune 305 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 306 https://strudel.tidalcycles.org/?UboMuFOnT0hy 1`] = `
+exports[`renders shared tunes > shared tune 306 https://strudel.cc/?UboMuFOnT0hy 1`] = `
 [
   "0/1 -> 1/3: {\\"s\\":\\"bd\\"}",
   "1/3 -> 2/3: {\\"s\\":\\"hh\\"}",
@@ -6784,7 +6784,7 @@ exports[`renders shared tunes > shared tune 306 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 307 https://strudel.tidalcycles.org/?vYFGpZ6XObVG 1`] = `
+exports[`renders shared tunes > shared tune 307 https://strudel.cc/?vYFGpZ6XObVG 1`] = `
 [
   "0/1 -> 1/3: {\\"s\\":\\"bd\\"}",
   "1/3 -> 2/3: {\\"s\\":\\"hh\\"}",
@@ -6804,7 +6804,7 @@ exports[`renders shared tunes > shared tune 307 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 308 https://strudel.tidalcycles.org/?TUw_9DfBSsiW 1`] = `
+exports[`renders shared tunes > shared tune 308 https://strudel.cc/?TUw_9DfBSsiW 1`] = `
 [
   "0/1 -> 2/3: {\\"s\\":\\"bd\\",\\"speed\\":0.7519542165100574}",
   "1/3 -> 2/3: {\\"s\\":\\"sd\\",\\"speed\\":0.7931522866332671}",
@@ -6918,7 +6918,7 @@ exports[`renders shared tunes > shared tune 308 https://strudel.tidalcycles.org/
 ]
 `;
 
-exports[`renders shared tunes > shared tune 309 https://strudel.tidalcycles.org/?ctHqwq-97t6X 1`] = `
+exports[`renders shared tunes > shared tune 309 https://strudel.cc/?ctHqwq-97t6X 1`] = `
 [
   "0/1 -> 1/2: {\\"s\\":\\"bd\\",\\"delay\\":0.5,\\"delaytime\\":0.33,\\"delayfeedback\\":0.6,\\"speed\\":-1}",
   "1/2 -> 1/1: {\\"s\\":\\"sd\\",\\"delay\\":0.5,\\"delaytime\\":0.33,\\"delayfeedback\\":0.6,\\"speed\\":-1}",

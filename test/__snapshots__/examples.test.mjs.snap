@@ -633,6 +633,15 @@ exports[`runs examples > example "addVoicings" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "adsr" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c3 s:sawtooth cutoff:600 ]",
+  "[ 1/1 → 2/1 | note:bb2 s:sawtooth cutoff:600 ]",
+  "[ 2/1 → 3/1 | note:f3 s:sawtooth cutoff:600 ]",
+  "[ 3/1 → 4/1 | note:eb3 s:sawtooth cutoff:600 ]",
+]
+`;
+
 exports[`runs examples > example "almostAlways" example index 0 1`] = `
 [
   "[ 0/1 → 1/8 | s:hh speed:0.5 ]",
@@ -1112,27 +1121,6 @@ exports[`runs examples > example "chunk" example index 0 1`] = `
   "[ 1/2 → 3/4 | note:C4 ]",
   "[ 3/4 → 1/1 | note:D4 ]",
   "[ 1/1 → 5/4 | note:A3 ]",
-  "[ 5/4 → 3/2 | note:B3 ]",
-  "[ 3/2 → 7/4 | note:C4 ]",
-  "[ 7/4 → 2/1 | note:D5 ]",
-  "[ 2/1 → 9/4 | note:A3 ]",
-  "[ 9/4 → 5/2 | note:B3 ]",
-  "[ 5/2 → 11/4 | note:C5 ]",
-  "[ 11/4 → 3/1 | note:D4 ]",
-  "[ 3/1 → 13/4 | note:A3 ]",
-  "[ 13/4 → 7/2 | note:B4 ]",
-  "[ 7/2 → 15/4 | note:C4 ]",
-  "[ 15/4 → 4/1 | note:D4 ]",
-]
-`;
-
-exports[`runs examples > example "chunkBack" example index 0 1`] = `
-[
-  "[ 0/1 → 1/4 | note:A4 ]",
-  "[ 1/4 → 1/2 | note:B3 ]",
-  "[ 1/2 → 3/4 | note:C4 ]",
-  "[ 3/4 → 1/1 | note:D4 ]",
-  "[ 1/1 → 5/4 | note:A3 ]",
   "[ 5/4 → 3/2 | note:B4 ]",
   "[ 3/2 → 7/4 | note:C4 ]",
   "[ 7/4 → 2/1 | note:D4 ]",
@@ -1144,6 +1132,27 @@ exports[`runs examples > example "chunkBack" example index 0 1`] = `
   "[ 13/4 → 7/2 | note:B3 ]",
   "[ 7/2 → 15/4 | note:C4 ]",
   "[ 15/4 → 4/1 | note:D5 ]",
+]
+`;
+
+exports[`runs examples > example "chunkBack" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:A4 ]",
+  "[ 1/4 → 1/2 | note:B3 ]",
+  "[ 1/2 → 3/4 | note:C4 ]",
+  "[ 3/4 → 1/1 | note:D4 ]",
+  "[ 1/1 → 5/4 | note:A3 ]",
+  "[ 5/4 → 3/2 | note:B3 ]",
+  "[ 3/2 → 7/4 | note:C4 ]",
+  "[ 7/4 → 2/1 | note:D5 ]",
+  "[ 2/1 → 9/4 | note:A3 ]",
+  "[ 9/4 → 5/2 | note:B3 ]",
+  "[ 5/2 → 11/4 | note:C5 ]",
+  "[ 11/4 → 3/1 | note:D4 ]",
+  "[ 3/1 → 13/4 | note:A3 ]",
+  "[ 13/4 → 7/2 | note:B4 ]",
+  "[ 7/2 → 15/4 | note:C4 ]",
+  "[ 15/4 → 4/1 | note:D4 ]",
 ]
 `;
 
@@ -1845,6 +1854,19 @@ exports[`runs examples > example "fast" example index 0 1`] = `
   "[ 13/4 → 7/2 | s:hh ]",
   "[ 7/2 → 15/4 | s:sd ]",
   "[ 15/4 → 4/1 | s:hh ]",
+]
+`;
+
+exports[`runs examples > example "fastChunk" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | note:C2 s:folkharp ]",
+  "[ 1/2 → 1/1 | note:D2 s:folkharp ]",
+  "[ 1/1 → 3/2 | note:E2 s:folkharp ]",
+  "[ 3/2 → 2/1 | note:F2 s:folkharp ]",
+  "[ 2/1 → 5/2 | note:G2 s:folkharp ]",
+  "[ 5/2 → 3/1 | note:A2 s:folkharp ]",
+  "[ 3/1 → 7/2 | note:B2 s:folkharp ]",
+  "[ 7/2 → 4/1 | note:C3 s:folkharp ]",
 ]
 `;
 
@@ -3275,6 +3297,23 @@ exports[`runs examples > example "perlin" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "pick" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | note:g ]",
+  "[ 1/2 → 1/1 | note:a ]",
+  "[ 1/1 → 3/2 | note:e ]",
+  "[ 3/2 → 2/1 | note:f ]",
+  "[ 2/1 → 9/4 | note:f ]",
+  "[ 9/4 → 5/2 | note:g ]",
+  "[ 5/2 → 11/4 | note:f ]",
+  "[ 11/4 → 3/1 | note:g ]",
+  "[ 3/1 → 13/4 | note:g ]",
+  "[ 13/4 → 7/2 | note:a ]",
+  "[ 7/2 → 15/4 | note:c ]",
+  "[ 15/4 → 4/1 | note:d ]",
+]
+`;
+
 exports[`runs examples > example "ply" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | s:bd ]",
@@ -3617,6 +3656,27 @@ exports[`runs examples > example "release" example index 0 1`] = `
   "[ 13/4 → 7/2 | note:e3 release:0.1 ]",
   "[ 7/2 → 15/4 | note:g3 release:0.1 ]",
   "[ 15/4 → 4/1 | note:c4 release:0.1 ]",
+]
+`;
+
+exports[`runs examples > example "repeatCycles" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:42 s:gm_acoustic_guitar_nylon ]",
+  "[ 1/4 → 1/2 | note:38 s:gm_acoustic_guitar_nylon ]",
+  "[ 1/2 → 3/4 | note:35 s:gm_acoustic_guitar_nylon ]",
+  "[ 3/4 → 1/1 | note:38 s:gm_acoustic_guitar_nylon ]",
+  "[ 1/1 → 5/4 | note:42 s:gm_acoustic_guitar_nylon ]",
+  "[ 5/4 → 3/2 | note:38 s:gm_acoustic_guitar_nylon ]",
+  "[ 3/2 → 7/4 | note:35 s:gm_acoustic_guitar_nylon ]",
+  "[ 7/4 → 2/1 | note:38 s:gm_acoustic_guitar_nylon ]",
+  "[ 2/1 → 9/4 | note:42 s:gm_acoustic_guitar_nylon ]",
+  "[ 9/4 → 5/2 | note:36 s:gm_acoustic_guitar_nylon ]",
+  "[ 5/2 → 11/4 | note:39 s:gm_acoustic_guitar_nylon ]",
+  "[ 11/4 → 3/1 | note:41 s:gm_acoustic_guitar_nylon ]",
+  "[ 3/1 → 13/4 | note:42 s:gm_acoustic_guitar_nylon ]",
+  "[ 13/4 → 7/2 | note:36 s:gm_acoustic_guitar_nylon ]",
+  "[ 7/2 → 15/4 | note:39 s:gm_acoustic_guitar_nylon ]",
+  "[ 15/4 → 4/1 | note:41 s:gm_acoustic_guitar_nylon ]",
 ]
 `;
 
@@ -4612,6 +4672,25 @@ exports[`runs examples > example "square" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "squeeze" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:g ]",
+  "[ 1/1 → 2/1 | note:a ]",
+  "[ 2/1 → 17/8 | note:f ]",
+  "[ 17/8 → 9/4 | note:g ]",
+  "[ 9/4 → 19/8 | note:f ]",
+  "[ 19/8 → 5/2 | note:g ]",
+  "[ 5/2 → 21/8 | note:f ]",
+  "[ 21/8 → 11/4 | note:g ]",
+  "[ 11/4 → 23/8 | note:f ]",
+  "[ 23/8 → 3/1 | note:g ]",
+  "[ 3/1 → 13/4 | note:g ]",
+  "[ 13/4 → 7/2 | note:a ]",
+  "[ 7/2 → 15/4 | note:c ]",
+  "[ 15/4 → 4/1 | note:d ]",
+]
+`;
+
 exports[`runs examples > example "squiz" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | squiz:2 s:bd ]",
@@ -4680,6 +4759,23 @@ exports[`runs examples > example "stack" example index 0 2`] = `
   "[ 3/1 → 4/1 | note:g3 ]",
   "[ 3/1 → 4/1 | note:b3 ]",
   "[ 7/2 → 4/1 | note:d4 ]",
+]
+`;
+
+exports[`runs examples > example "striate" example index 0 1`] = `
+[
+  "[ 0/1 → 1/3 | s:numbers n:0 begin:0 end:0.16666666666666666 ]",
+  "[ 1/3 → 2/3 | s:numbers n:1 begin:0 end:0.16666666666666666 ]",
+  "[ 2/3 → 1/1 | s:numbers n:2 begin:0 end:0.16666666666666666 ]",
+  "[ 1/1 → 4/3 | s:numbers n:0 begin:0.16666666666666666 end:0.3333333333333333 ]",
+  "[ 4/3 → 5/3 | s:numbers n:1 begin:0.16666666666666666 end:0.3333333333333333 ]",
+  "[ 5/3 → 2/1 | s:numbers n:2 begin:0.16666666666666666 end:0.3333333333333333 ]",
+  "[ 2/1 → 7/3 | s:numbers n:0 begin:0.3333333333333333 end:0.5 ]",
+  "[ 7/3 → 8/3 | s:numbers n:1 begin:0.3333333333333333 end:0.5 ]",
+  "[ 8/3 → 3/1 | s:numbers n:2 begin:0.3333333333333333 end:0.5 ]",
+  "[ 3/1 → 10/3 | s:numbers n:0 begin:0.5 end:0.6666666666666666 ]",
+  "[ 10/3 → 11/3 | s:numbers n:1 begin:0.5 end:0.6666666666666666 ]",
+  "[ 11/3 → 4/1 | s:numbers n:2 begin:0.5 end:0.6666666666666666 ]",
 ]
 `;
 

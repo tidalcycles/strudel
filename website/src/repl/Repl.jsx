@@ -78,9 +78,9 @@ async function initCode() {
     const initialUrl = window.location.href;
     const hash = initialUrl.split('?')[1]?.split('#')?.[0];
     const codeParam = window.location.href.split('#')[1] || '';
-    // looking like https://strudel.tidalcycles.org/?J01s5i1J0200 (fixed hash length)
+    // looking like https://strudel.cc/?J01s5i1J0200 (fixed hash length)
     if (codeParam) {
-      // looking like https://strudel.tidalcycles.org/#ImMzIGUzIg%3D%3D (hash length depends on code length)
+      // looking like https://strudel.cc/#ImMzIGUzIg%3D%3D (hash length depends on code length)
       return hash2code(codeParam);
     } else if (hash) {
       return supabase

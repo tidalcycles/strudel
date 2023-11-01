@@ -2101,22 +2101,42 @@ export const { iterBack, iterback } = register(['iterBack', 'iterback'], functio
 });
 
 /**
+ * Repeats each cycle the given number of times.
+ * @name repeatCycles
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * note(irand(12).add(34)).segment(4).repeatCycles(2).s("gm_acoustic_guitar_nylon")
+ */
+const _repeatCycles = function (n, pat) {
+  return slowcat(...Array(n).fill(pat));
+};
+
+const { repeatCycles } = register('repeatCycles', _repeatCycles);
+
+/**
  * Divides a pattern into a given number of parts, then cycles through those parts in turn, applying the given function to each part in turn (one part per cycle).
  * @name chunk
+ * @synonyms slowChunk, slowchunk
  * @memberof Pattern
  * @returns Pattern
  * @example
  * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note()
  */
-const _chunk = function (n, func, pat, back = false) {
+const _chunk = function (n, func, pat, back = false, fast = false) {
   const binary = Array(n - 1).fill(false);
   binary.unshift(true);
-  const binary_pat = _iter(n, sequence(...binary), back);
+  // Invert the 'back' because we want to shift the pattern forwards,
+  // and so time backwards
+  const binary_pat = _iter(n, sequence(...binary), !back);
+  if (!fast) {
+    pat = pat.repeatCycles(n);
+  }
   return pat.when(binary_pat, func);
 };
 
-export const chunk = register('chunk', function (n, func, pat) {
-  return _chunk(n, func, pat, false);
+const { chunk, slowchunk, slowChunk } = register(['chunk', 'slowchunk', 'slowChunk'], function (n, func, pat) {
+  return _chunk(n, func, pat, false, false);
 });
 
 /**
@@ -2130,6 +2150,21 @@ export const chunk = register('chunk', function (n, func, pat) {
  */
 export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], function (n, func, pat) {
   return _chunk(n, func, pat, true);
+});
+
+/**
+ * Like `chunk`, but the cycles of the source pattern aren't repeated
+ * for each set of chunks.
+ * @name fastChunk
+ * @synonyms fastchunk
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * "<0 8> 1 2 3 4 5 6 7".fastChunk(4, x => x.color('red')).slow(4).scale("C2:major").note()
+  .s("folkharp")
+ */
+const { fastchunk, fastChunk } = register(['fastchunk', 'fastChunk'], function (n, func, pat) {
+  return _chunk(n, func, pat, false, true);
 });
 
 // TODO - redefine elsewhere in terms of mask
@@ -2217,6 +2252,14 @@ export const chop = register('chop', function (n, pat) {
   return pat.squeezeBind(func);
 });
 
+/**
+ * Cuts each sample into the given number of parts, triggering progressive portions of each sample at each loop.
+ * @name striate
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * s("numbers:0 numbers:1 numbers:2").striate(6).slow(6)
+ */
 export const striate = register('striate', function (n, pat) {
   const slices = Array.from({ length: n }, (x, i) => i);
   const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));

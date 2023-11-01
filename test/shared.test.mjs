@@ -4,7 +4,7 @@ import data from './dbdump.json';
 
 describe('renders shared tunes', async () => {
   data.forEach(({ id, code, hash }) => {
-    const url = `https://strudel.tidalcycles.org/?${hash}`;
+    const url = `https://strudel.cc/?${hash}`;
     it(`shared tune ${id} ${url}`, async ({ expect }) => {
       if (code.includes('import(')) {
         console.log('skip', url);
