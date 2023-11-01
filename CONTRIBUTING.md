@@ -83,7 +83,7 @@ Please report any problems you've had with the setup instructions!
 
 To make sure the code changes only where it should, we are using prettier to unify the code style.
 
-- You can format all files at once by running `pnpm prettier` from the project root
+- You can format all files at once by running `pnpm codeformat` from the project root
 - Run `pnpm format-check` from the project root to check if all files are well formatted
 
 If you use VSCode, you can
