@@ -70,10 +70,7 @@ export default function CodeMirror({
     },
     {
       provide: (plugin) => {
-        return Prec.highest(keymap.of([
-          ...vscodeKeymap
-          ,
-        ]));
+        return Prec.highest(keymap.of([...vscodeKeymap]));
       },
     },
   );
