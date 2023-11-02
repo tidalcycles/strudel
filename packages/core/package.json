@@ -31,7 +31,8 @@
   },
   "homepage": "https://strudel.cc",
   "dependencies": {
-    "fraction.js": "^4.2.0"
+    "fraction.js": "^4.2.0",
+    "nanostores": "^0.8.1"
   },
   "gitHead": "0e26d4e741500f5bae35b023608f062a794905c2",
   "devDependencies": {

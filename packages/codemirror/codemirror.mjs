@@ -1,19 +1,21 @@
 import { defaultKeymap } from '@codemirror/commands';
 import { javascript } from '@codemirror/lang-javascript';
 import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
-import { EditorState } from '@codemirror/state';
+import { EditorState, Compartment } from '@codemirror/state';
 import { EditorView, highlightActiveLineGutter, keymap, lineNumbers } from '@codemirror/view';
 import { Drawer, repl } from '@strudel.cycles/core';
 import { flashField, flash } from './flash.mjs';
-import { highlightExtension, highlightMiniLocations } from './highlight.mjs';
+import { highlightExtension, highlightMiniLocations, updateMiniLocations } from './highlight.mjs';
 import { oneDark } from './themes/one-dark';
+
+const themeComparment = new Compartment();
 
 // https://codemirror.net/docs/guide/
 export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, theme = oneDark, root }) {
   let state = EditorState.create({
     doc: initialCode,
     extensions: [
-      theme,
+      themeComparment.of(theme),
       javascript(),
       lineNumbers(),
       highlightExtension,
@@ -43,7 +45,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, the
 
 export class StrudelMirror {
   constructor(options) {
-    const { root, initialCode = '', onDraw, drawTime = [-2, 2], prebake, ...replOptions } = options;
+    const { root, initialCode = '', onDraw, drawTime = [-2, 2], prebake, theme, ...replOptions } = options;
     this.code = initialCode;
 
     this.drawer = new Drawer((haps, time) => {
@@ -81,12 +83,14 @@ export class StrudelMirror {
         await prebaked;
       },
       afterEval: (options) => {
+        updateMiniLocations(this.editor, options.meta?.miniLocations);
         replOptions?.afterEval?.(options);
         this.drawer.invalidate();
       },
     });
     this.editor = initEditor({
       root,
+      theme,
       initialCode,
       onChange: (v) => {
         this.code = v.state.doc.toString();
@@ -108,6 +112,15 @@ export class StrudelMirror {
     flash(this.editor, ms);
   }
   highlight(haps, time) {
-    highlightMiniLocations(this.editor.view, time, haps);
+    highlightMiniLocations(this.editor, time, haps);
+  }
+  setTheme(theme) {
+    this.editor.dispatch({
+      effects: themeComparment.reconfigure(theme),
+    });
+  }
+  setCode(code) {
+    const changes = { from: 0, to: this.editor.state.doc.length, insert: code };
+    this.editor.dispatch({ changes });
   }
 }

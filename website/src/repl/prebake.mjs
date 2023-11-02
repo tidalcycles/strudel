@@ -150,7 +150,7 @@ export async function prebake() {
     ...modules,
   );
   // register sounds and samples
-  return Promise.all([initAudio, modulesLoading, registerStockSounds()]);
+  return Promise.all([/* initAudio,  */ modulesLoading, registerStockSounds()]);
   // await samples('github:tidalcycles/Dirt-Samples/master');
 }
 

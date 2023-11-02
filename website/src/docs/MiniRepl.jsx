@@ -28,7 +28,7 @@ export function MiniRepl({
   useEffect(() => {
     // we have to load this package on the client
     // because codemirror throws an error on the server
-    Promise.all([import('@strudel.cycles/react')])
+    Promise.all([import('@strudel.cycles/react'), init])
       .then(([res]) => setRepl(() => res.MiniRepl))
       .catch((err) => console.error(err));
   }, []);

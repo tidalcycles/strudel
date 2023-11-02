@@ -5,32 +5,20 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
-import { getDrawContext, logger } from '@strudel.cycles/core';
-import { CodeMirror, cx } from '@strudel.cycles/react';
-import { getAudioContext, resetLoadedSounds } from '@strudel.cycles/webaudio';
-import { createClient } from '@supabase/supabase-js';
+import { getDrawContext, logger, $replstate } from '@strudel.cycles/core';
+import { cx } from '@strudel.cycles/react';
+import { getAudioContext } from '@strudel.cycles/webaudio';
 import { writeText } from '@tauri-apps/api/clipboard';
 import { nanoid } from 'nanoid';
-import { createContext, useEffect, useMemo, useState } from 'react';
-import { settingsMap, useSettings } from '../settings.mjs';
+import { createContext, useState } from 'react';
+import { useSettings } from '../settings.mjs';
 import { isTauri } from '../tauri.mjs';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import Loader from './Loader';
 import './Repl.css';
-import { hash2code, code2hash } from './helpers.mjs';
-import * as tunes from './tunes.mjs';
-import { useRepl } from './useRepl';
-import { setLatestCode } from '../settings.mjs';
 import { resetSounds } from './prebake.mjs';
-
-const { latestCode } = settingsMap.get();
-
-// Create a single supabase client for interacting with your database
-const supabase = createClient(
-  'https://pidxdsxphlhzjnzmifth.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
-);
+import { useStore } from '@nanostores/react';
 
 let clearCanvas;
 if (typeof window !== 'undefined') {
@@ -38,106 +26,30 @@ if (typeof window !== 'undefined') {
   clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
 }
 
-async function initCode() {
-  // load code from url hash (either short hash from database or decode long hash)
-  try {
-    const initialUrl = window.location.href;
-    const hash = initialUrl.split('?')[1]?.split('#')?.[0];
-    const codeParam = window.location.href.split('#')[1] || '';
-    // looking like https://strudel.cc/?J01s5i1J0200 (fixed hash length)
-    if (codeParam) {
-      // looking like https://strudel.cc/#ImMzIGUzIg%3D%3D (hash length depends on code length)
-      return hash2code(codeParam);
-    } else if (hash) {
-      return supabase
-        .from('code')
-        .select('code')
-        .eq('hash', hash)
-        .then(({ data, error }) => {
-          if (error) {
-            console.warn('failed to load hash', err);
-          }
-          if (data.length) {
-            //console.log('load hash from database', hash);
-            return data[0].code;
-          }
-        });
-    }
-  } catch (err) {
-    console.warn('failed to decode', err);
-  }
-}
-
-function getRandomTune() {
-  const allTunes = Object.entries(tunes);
-  const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
-  const [name, code] = randomItem(allTunes);
-  return { name, code };
-}
-
-const { code: randomTune, name } = getRandomTune();
-
 export const ReplContext = createContext(null);
 
 export function Repl({ embedded = false }) {
-  const isEmbedded = embedded || window.location !== window.parent.location;
+  //const isEmbedded = embedded || window.location !== window.parent.location;
+  const isEmbedded = false;
   const [lastShared, setLastShared] = useState();
   const { panelPosition, isZen } = useSettings();
-
-  const {
-    codemirror,
-    code,
-    setCode,
-    scheduler,
-    evaluate,
-    activateCode,
-    isDirty,
-    activeCode,
-    pattern,
-    started,
-    stop,
-    error,
-    pending,
-    setPending,
-  } = useRepl({
-    afterEval: ({ code }) => {
-      setLatestCode(code);
-      window.location.hash = '#' + code2hash(code);
-    },
-  });
-
-  // init code
-  useEffect(() => {
-    initCode().then((decoded) => {
-      let msg;
-      if (decoded) {
-        setCode(decoded);
-        msg = `I have loaded the code from the URL.`;
-      } else if (latestCode) {
-        setCode(latestCode);
-        msg = `Your last session has been loaded!`;
-      } /*  if(randomTune) */ else {
-        setCode(randomTune);
-        msg = `A random code snippet named "${name}" has been loaded!`;
-      }
-      logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
-      setPending(false);
-    });
-  }, []);
+  const replState = useStore($replstate);
 
   //
   // UI Actions
   //
 
   const handleTogglePlay = async () => {
-    await getAudioContext().resume(); // fixes no sound in ios webkit
+    console.log('toggle.');
+    window.postMessage('strudel-toggle-play');
+    /* await getAudioContext().resume(); // fixes no sound in ios webkit
     if (!started) {
       logger('[repl] started. tip: you can also start by pressing ctrl+enter', 'highlight');
       activateCode();
     } else {
       logger('[repl] stopped. tip: you can also stop by pressing ctrl+dot', 'highlight');
       stop();
-    }
+    } */
   };
   const handleUpdate = () => {
     isDirty && activateCode();
@@ -149,7 +61,7 @@ export function Repl({ embedded = false }) {
     logger(`[repl] ✨ loading random tune "${name}"`);
     clearCanvas();
     await resetSounds();
-    scheduler.setCps(1);
+    // scheduler.setCps(1);
     await evaluate(code, false);
   };
 
@@ -182,15 +94,18 @@ export function Repl({ embedded = false }) {
       logger(message);
     }
   };
+  const pending = false;
+  const error = undefined;
+  const { started, activeCode } = replState;
   const context = {
-    scheduler,
+    // scheduler,
     embedded,
     started,
     pending,
-    isDirty,
+    isDirty: false,
     lastShared,
     activeCode,
-    handleChangeCode: codemirror.handleChangeCode,
+    // handleChangeCode: codemirror.handleChangeCode,
     handleTogglePlay,
     handleUpdate,
     handleShuffle,
@@ -209,7 +124,7 @@ export function Repl({ embedded = false }) {
       >
         <Loader active={pending} />
         <Header context={context} />
-        {isEmbedded && !started && (
+        {/* isEmbedded && !started && (
           <button
             onClick={() => handleTogglePlay()}
             className="text-white text-2xl fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-[1000] m-auto p-4 bg-black rounded-md flex items-center space-x-2"
@@ -217,10 +132,16 @@ export function Repl({ embedded = false }) {
             <PlayCircleIcon className="w-6 h-6" />
             <span>play</span>
           </button>
-        )}
+        ) */}
         <div className="grow flex relative overflow-hidden">
-          <section className={'text-gray-100 cursor-text pb-0 overflow-auto grow' + (isZen ? ' px-10' : '')} id="code">
-            <CodeMirror {...codemirror} />
+          <section
+            className={'text-gray-100 cursor-text pb-0 overflow-auto grow' + (isZen ? ' px-10' : '')}
+            id="code"
+            ref={() => {
+              window.postMessage('strudel-container');
+            }}
+          >
+            {/* <CodeMirror {...codemirror} /> */}
           </section>
           {panelPosition === 'right' && !isEmbedded && <Footer context={context} />}
         </div>

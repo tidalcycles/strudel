@@ -4,6 +4,19 @@ import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
 import { register } from './pattern.mjs';
+import { atom } from 'nanostores';
+
+export const $replstate = atom({
+  schedulerError: undefined,
+  evalError: undefined,
+  code: '// LOADING',
+  activeCode: '// LOADING',
+  pattern: undefined,
+  miniLocations: [],
+  widgets: [],
+  pending: true,
+});
+export const setReplState = (key, value) => $replstate.set({ ...$replstate.get(), [key]: value });
 
 export function repl({
   interval,
@@ -22,7 +35,10 @@ export function repl({
     onTrigger: getTrigger({ defaultOutput, getTime }),
     onError: onSchedulerError,
     getTime,
-    onToggle,
+    onToggle: (started) => {
+      setReplState('started', started);
+      onToggle?.(started);
+    },
   });
   let playPatterns = [];
   const setPattern = (pattern, autostart = true) => {
@@ -35,6 +51,8 @@ export function repl({
       throw new Error('no code to evaluate');
     }
     try {
+      setReplState('code', code);
+      setReplState('pending', true);
       await beforeEval?.({ code });
       playPatterns = [];
       let { pattern, meta } = await _evaluate(code, transpiler);
@@ -43,11 +61,20 @@ export function repl({
       }
       logger(`[eval] code updated`);
       setPattern(pattern, autostart);
+      setReplState('miniLocations', meta?.miniLocations || []);
+      setReplState('widgets', meta?.widgets || []);
+      setReplState('activeCode', code);
+      setReplState('pattern', pattern);
+      setReplState('evalError', undefined);
+      setReplState('schedulerError', undefined);
+      setReplState('pending', false);
       afterEval?.({ code, pattern, meta });
       return pattern;
     } catch (err) {
       // console.warn(`[repl] eval error: ${err.message}`);
       logger(`[eval] error: ${err.message}`, 'error');
+      setReplState('evalError', err);
+      setReplState('pending', false);
       onEvalError?.(err);
     }
   };

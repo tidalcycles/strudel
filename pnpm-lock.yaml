@@ -102,6 +102,9 @@ importers:
       fraction.js:
         specifier: ^4.2.0
         version: 4.2.0
+      nanostores:
+        specifier: ^0.8.1
+        version: 0.8.1
     devDependencies:
       vite:
         specifier: ^4.3.3
