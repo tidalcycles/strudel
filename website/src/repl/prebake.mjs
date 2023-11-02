@@ -1,12 +1,42 @@
-import { Pattern, noteToMidi, valueToMidi } from '@strudel.cycles/core';
+import { Pattern, noteToMidi, valueToMidi, controls, evalScope } from '@strudel.cycles/core';
 import { registerSynthSounds, registerZZFXSounds, samples } from '@strudel.cycles/webaudio';
 import './piano.mjs';
 import './files.mjs';
+import { isTauri } from '../tauri.mjs';
+import { settingPatterns } from '../settings.mjs';
 
 export async function prebake() {
-  // https://archive.org/details/SalamanderGrandPianoV3
-  // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
-  await Promise.all([
+  // lazy load modules
+  let modules = [
+    import('@strudel.cycles/core'),
+    import('@strudel.cycles/tonal'),
+    import('@strudel.cycles/mini'),
+    import('@strudel.cycles/xen'),
+    import('@strudel.cycles/webaudio'),
+    import('@strudel/codemirror'),
+    import('@strudel/hydra'),
+    import('@strudel.cycles/serial'),
+    import('@strudel.cycles/soundfonts'),
+    import('@strudel.cycles/csound'),
+  ];
+  if (isTauri()) {
+    modules = modules.concat([
+      import('@strudel/desktopbridge/loggerbridge.mjs'),
+      import('@strudel/desktopbridge/midibridge.mjs'),
+      import('@strudel/desktopbridge/oscbridge.mjs'),
+    ]);
+  } else {
+    modules = modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
+  }
+  // register modules in global scope
+  const modulesLoading = evalScope(
+    controls, // sadly, this cannot be exported from core direclty
+    settingPatterns,
+    ...modules,
+  );
+  // register sounds and samples
+  return Promise.all([
+    modulesLoading,
     registerSynthSounds(),
     registerZZFXSounds(),
     //registerSoundfonts(),
@@ -14,6 +44,8 @@ export async function prebake() {
     // => getting "window is not defined", as soon as "@strudel.cycles/soundfonts" is imported statically
     // seems to be a problem with soundfont2
     import('@strudel.cycles/soundfonts').then(({ registerSoundfonts }) => registerSoundfonts()),
+    // https://archive.org/details/SalamanderGrandPianoV3
+    // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
     samples(`./piano.json`, `./piano/`, { prebake: true }),
     // https://github.com/sgossner/VCSL/
     // https://api.github.com/repositories/126427031/contents/

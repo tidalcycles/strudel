@@ -7,26 +7,10 @@ import './MiniRepl.css';
 import { useSettings } from '../settings.mjs';
 import Claviature from '@components/Claviature';
 
-let modules;
-if (typeof window !== 'undefined') {
-  modules = evalScope(
-    controls,
-    import('@strudel.cycles/core'),
-    import('@strudel.cycles/tonal'),
-    import('@strudel.cycles/mini'),
-    import('@strudel.cycles/midi'),
-    import('@strudel.cycles/xen'),
-    import('@strudel.cycles/webaudio'),
-    import('@strudel.cycles/osc'),
-    import('@strudel.cycles/csound'),
-    import('@strudel.cycles/soundfonts'),
-    import('@strudel/hydra'),
-  );
-}
-
+let init;
 if (typeof window !== 'undefined') {
   initAudioOnFirstClick();
-  prebake();
+  init = prebake();
 }
 
 export function MiniRepl({
@@ -46,7 +30,7 @@ export function MiniRepl({
   useEffect(() => {
     // we have to load this package on the client
     // because codemirror throws an error on the server
-    Promise.all([import('@strudel.cycles/react'), modules])
+    Promise.all([import('@strudel.cycles/react'), init])
       .then(([res]) => setRepl(() => res.MiniRepl))
       .catch((err) => console.error(err));
   }, []);
