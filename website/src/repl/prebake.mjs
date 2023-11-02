@@ -4,41 +4,10 @@ import './piano.mjs';
 import './files.mjs';
 import { isTauri } from '../tauri.mjs';
 import { settingPatterns } from '../settings.mjs';
+import { soundMap } from '@strudel.cycles/webaudio';
 
-export async function prebake() {
-  const initAudio = initAudioOnFirstClick();
-  // lazy load modules
-  let modules = [
-    import('@strudel.cycles/core'),
-    import('@strudel.cycles/tonal'),
-    import('@strudel.cycles/mini'),
-    import('@strudel.cycles/xen'),
-    import('@strudel.cycles/webaudio'),
-    import('@strudel/codemirror'),
-    import('@strudel/hydra'),
-    import('@strudel.cycles/serial'),
-    import('@strudel.cycles/soundfonts'),
-    import('@strudel.cycles/csound'),
-  ];
-  if (isTauri()) {
-    modules = modules.concat([
-      import('@strudel/desktopbridge/loggerbridge.mjs'),
-      import('@strudel/desktopbridge/midibridge.mjs'),
-      import('@strudel/desktopbridge/oscbridge.mjs'),
-    ]);
-  } else {
-    modules = modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
-  }
-  // register modules in global scope
-  const modulesLoading = evalScope(
-    controls, // sadly, this cannot be exported from core direclty
-    settingPatterns,
-    ...modules,
-  );
-  // register sounds and samples
+export function registerStockSounds() {
   return Promise.all([
-    initAudio,
-    modulesLoading,
     registerSynthSounds(),
     registerZZFXSounds(),
     //registerSoundfonts(),
@@ -145,10 +114,50 @@ export async function prebake() {
         ],
       },
       'github:tidalcycles/Dirt-Samples/master/',
+      { prebake: true },
     ),
   ]);
+}
+
+export async function prebake() {
+  const initAudio = initAudioOnFirstClick();
+  // lazy load modules
+  let modules = [
+    import('@strudel.cycles/core'),
+    import('@strudel.cycles/tonal'),
+    import('@strudel.cycles/mini'),
+    import('@strudel.cycles/xen'),
+    import('@strudel.cycles/webaudio'),
+    import('@strudel/codemirror'),
+    import('@strudel/hydra'),
+    import('@strudel.cycles/serial'),
+    import('@strudel.cycles/soundfonts'),
+    import('@strudel.cycles/csound'),
+  ];
+  if (isTauri()) {
+    modules = modules.concat([
+      import('@strudel/desktopbridge/loggerbridge.mjs'),
+      import('@strudel/desktopbridge/midibridge.mjs'),
+      import('@strudel/desktopbridge/oscbridge.mjs'),
+    ]);
+  } else {
+    modules = modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
+  }
+  // register modules in global scope
+  const modulesLoading = evalScope(
+    controls, // sadly, this cannot be exported from core direclty
+    settingPatterns,
+    ...modules,
+  );
+  // register sounds and samples
+  return Promise.all([initAudio, modulesLoading, registerStockSounds()]);
   // await samples('github:tidalcycles/Dirt-Samples/master');
 }
+
+export const resetSounds = () => {
+  soundMap.set({});
+  registerStockSounds();
+};
 
 const maxPan = noteToMidi('C8');
 const panwidth = (pan, width) => pan * width + (1 - width) / 2;

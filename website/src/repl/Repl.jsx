@@ -4,25 +4,25 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { cleanupDraw, cleanupUi, getDrawContext, logger } from '@strudel.cycles/core';
-import { CodeMirror, cx, flash, useHighlighting, useStrudel } from '@strudel.cycles/react';
-import { getAudioContext, resetLoadedSounds, webaudioOutput, panic } from '@strudel.cycles/webaudio';
+import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
+import { getDrawContext, logger } from '@strudel.cycles/core';
+import { CodeMirror, cx } from '@strudel.cycles/react';
+import { getAudioContext, resetLoadedSounds } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
+import { writeText } from '@tauri-apps/api/clipboard';
 import { nanoid } from 'nanoid';
-import React, { createContext, useCallback, useEffect, useState, useMemo } from 'react';
-import './Repl.css';
+import { createContext, useEffect, useMemo, useState } from 'react';
+import { settingsMap, useSettings } from '../settings.mjs';
+import { isTauri } from '../tauri.mjs';
 import { Footer } from './Footer';
 import { Header } from './Header';
-import { prebake } from './prebake.mjs';
-import * as tunes from './tunes.mjs';
-import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
-import { themes } from './themes.mjs';
-import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
 import Loader from './Loader';
-import { code2hash, hash2code } from './helpers.mjs';
-import { isTauri } from '../tauri.mjs';
-import { useWidgets } from '@strudel.cycles/react/src/hooks/useWidgets.mjs';
-import { writeText } from '@tauri-apps/api/clipboard';
+import './Repl.css';
+import { hash2code, code2hash } from './helpers.mjs';
+import * as tunes from './tunes.mjs';
+import { useRepl } from './useRepl';
+import { setLatestCode } from '../settings.mjs';
+import { resetSounds } from './prebake.mjs';
 
 const { latestCode } = settingsMap.get();
 
@@ -32,15 +32,11 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
 );
 
-const init = prebake();
-
-let drawContext, clearCanvas;
+let clearCanvas;
 if (typeof window !== 'undefined') {
-  drawContext = getDrawContext();
+  const drawContext = getDrawContext();
   clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
 }
-
-const getTime = () => getAudioContext().currentTime;
 
 async function initCode() {
   // load code from url hash (either short hash from database or decode long hash)
@@ -85,56 +81,30 @@ export const ReplContext = createContext(null);
 
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
-  const [view, setView] = useState(); // codemirror view
   const [lastShared, setLastShared] = useState();
-  const [pending, setPending] = useState(true);
-  const {
-    theme,
-    keybindings,
-    fontSize,
-    fontFamily,
-    isLineNumbersDisplayed,
-    isAutoCompletionEnabled,
-    isLineWrappingEnabled,
-    panelPosition,
-    isZen,
-  } = useSettings();
+  const { panelPosition, isZen } = useSettings();
 
-  const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
-  const { setWidgets } = useWidgets(view);
-  const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
-    useStrudel({
-      initialCode: '// LOADING...',
-      defaultOutput: webaudioOutput,
-      getTime,
-      beforeEval: async () => {
-        setPending(true);
-        await init;
-        cleanupUi();
-        cleanupDraw();
-      },
-      afterEval: ({ code, meta }) => {
-        setMiniLocations(meta.miniLocations);
-        setWidgets(meta.widgets);
-        setPending(false);
-        setLatestCode(code);
-        window.location.hash = '#' + code2hash(code);
-      },
-      onEvalError: (err) => {
-        setPending(false);
-      },
-      onToggle: (play) => {
-        if (!play) {
-          cleanupDraw(false);
-          window.postMessage('strudel-stop');
-        } else {
-          window.postMessage('strudel-start');
-        }
-      },
-      drawContext,
-      // drawTime: [0, 6],
-      paintOptions,
-    });
+  const {
+    codemirror,
+    code,
+    setCode,
+    scheduler,
+    evaluate,
+    activateCode,
+    isDirty,
+    activeCode,
+    pattern,
+    started,
+    stop,
+    error,
+    pending,
+    setPending,
+  } = useRepl({
+    afterEval: ({ code }) => {
+      setLatestCode(code);
+      window.location.hash = '#' + code2hash(code);
+    },
+  });
 
   // init code
   useEffect(() => {
@@ -155,29 +125,9 @@ export function Repl({ embedded = false }) {
     });
   }, []);
 
-  // highlighting
-  const { setMiniLocations } = useHighlighting({
-    view,
-    pattern,
-    active: started && !activeCode?.includes('strudel disable-highlighting'),
-    getTime: () => scheduler.now(),
-  });
-
   //
   // UI Actions
   //
-
-  const handleChangeCode = useCallback(
-    (c) => {
-      setCode(c);
-      //started && logger('[edit] code changed. hit ctrl+enter to update');
-    },
-    [started],
-  );
-  const handleSelectionChange = useCallback((selection) => {
-    // TODO: scroll to selected function in reference
-    // console.log('selectino change', selection.ranges[0].from);
-  }, []);
 
   const handleTogglePlay = async () => {
     await getAudioContext().resume(); // fixes no sound in ios webkit
@@ -198,9 +148,8 @@ export function Repl({ embedded = false }) {
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
     clearCanvas();
-    resetLoadedSounds();
+    await resetSounds();
     scheduler.setCps(1);
-    await prebake(); // declare default samples
     await evaluate(code, false);
   };
 
@@ -241,16 +190,12 @@ export function Repl({ embedded = false }) {
     isDirty,
     lastShared,
     activeCode,
-    handleChangeCode,
+    handleChangeCode: codemirror.handleChangeCode,
     handleTogglePlay,
     handleUpdate,
     handleShuffle,
     handleShare,
   };
-  const currentTheme = useMemo(() => themes[theme] || themes.strudelTheme, [theme]);
-  const handleViewChanged = useCallback((v) => {
-    setView(v);
-  }, []);
 
   return (
     // bg-gradient-to-t from-blue-900 to-slate-900
@@ -275,37 +220,7 @@ export function Repl({ embedded = false }) {
         )}
         <div className="grow flex relative overflow-hidden">
           <section className={'text-gray-100 cursor-text pb-0 overflow-auto grow' + (isZen ? ' px-10' : '')} id="code">
-            <CodeMirror
-              theme={currentTheme}
-              value={code}
-              keybindings={keybindings}
-              isLineNumbersDisplayed={isLineNumbersDisplayed}
-              isAutoCompletionEnabled={isAutoCompletionEnabled}
-              isLineWrappingEnabled={isLineWrappingEnabled}
-              fontSize={fontSize}
-              fontFamily={fontFamily}
-              onChange={handleChangeCode}
-              onViewChanged={handleViewChanged}
-              onSelectionChange={handleSelectionChange}
-              onEvaluate={() => {
-                if (getAudioContext().state !== 'running') {
-                  alert('please click play to initialize the audio. you can use shortcuts after that!');
-                  return;
-                }
-                flash(view);
-                activateCode();
-              }}
-              onReEvaluate={() => {
-                stop();
-                panic();
-                activateCode();
-              }}
-              onPanic={() => {
-                stop();
-                panic();
-              }}
-              onStop={() => stop()}
-            />
+            <CodeMirror {...codemirror} />
           </section>
           {panelPosition === 'right' && !isEmbedded && <Footer context={context} />}
         </div>
