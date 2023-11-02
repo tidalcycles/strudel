@@ -1,4 +1,4 @@
-import { useStore } from '@nanostores/react';
+/* import { useStore } from '@nanostores/react';
 import { webrepl, $replstate, setReplState } from './webrepl.mjs';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useHighlighting, flash, usePatternFrame } from '@strudel.cycles/react';
@@ -172,3 +172,4 @@ function s4() {
     .toString(16)
     .substring(1);
 }
+ */
