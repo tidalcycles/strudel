@@ -1,4 +1,4 @@
-import { cleanupDraw, cleanupUi, repl, getDrawContext, silence } from '@strudel.cycles/core';
+/* import { cleanupDraw, cleanupUi, repl, getDrawContext, silence } from '@strudel.cycles/core';
 import { webaudioOutput, getAudioContext } from '@strudel.cycles/webaudio';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { prebake } from './prebake.mjs';
@@ -75,3 +75,4 @@ export function webrepl({ beforeEval, onEvalError, afterEval, editPattern } = {}
   });
   return instance;
 }
+ */

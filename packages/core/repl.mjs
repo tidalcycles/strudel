@@ -4,7 +4,7 @@ import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
 import { register } from './pattern.mjs';
-import { atom } from 'nanostores';
+import { atom, computed } from 'nanostores';
 
 export const $replstate = atom({
   schedulerError: undefined,
@@ -15,7 +15,10 @@ export const $replstate = atom({
   miniLocations: [],
   widgets: [],
   pending: true,
+  started: false,
 });
+export const $repldirty = computed($replstate, (s) => s.code !== s.activeCode);
+
 export const setReplState = (key, value) => $replstate.set({ ...$replstate.get(), [key]: value });
 
 export function repl({
@@ -81,6 +84,7 @@ export function repl({
   const stop = () => scheduler.stop();
   const start = () => scheduler.start();
   const pause = () => scheduler.pause();
+  const toggle = () => scheduler.toggle();
   const setCps = (cps) => scheduler.setCps(cps);
   const setCpm = (cpm) => scheduler.setCps(cpm / 60);
 
@@ -114,7 +118,8 @@ export function repl({
     setcpm: setCpm,
   });
 
-  return { scheduler, evaluate, start, stop, pause, setCps, setPattern };
+  const setCode = (c) => setReplState('code', c);
+  return { scheduler, evaluate, start, stop, pause, setCps, setPattern, setCode, toggle };
 }
 
 export const getTrigger =

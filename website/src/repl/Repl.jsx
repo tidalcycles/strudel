@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
-import { getDrawContext, logger, $replstate } from '@strudel.cycles/core';
+import { getDrawContext, logger, $replstate, $repldirty } from '@strudel.cycles/core';
 import { cx } from '@strudel.cycles/react';
 import { getAudioContext } from '@strudel.cycles/webaudio';
 import { writeText } from '@tauri-apps/api/clipboard';
@@ -34,13 +34,13 @@ export function Repl({ embedded = false }) {
   const [lastShared, setLastShared] = useState();
   const { panelPosition, isZen } = useSettings();
   const replState = useStore($replstate);
+  const isDirty = useStore($repldirty);
 
   //
   // UI Actions
   //
 
   const handleTogglePlay = async () => {
-    console.log('toggle.');
     window.postMessage('strudel-toggle-play');
     /* await getAudioContext().resume(); // fixes no sound in ios webkit
     if (!started) {
@@ -97,12 +97,13 @@ export function Repl({ embedded = false }) {
   const pending = false;
   const error = undefined;
   const { started, activeCode } = replState;
+
   const context = {
     // scheduler,
     embedded,
     started,
     pending,
-    isDirty: false,
+    isDirty,
     lastShared,
     activeCode,
     // handleChangeCode: codemirror.handleChangeCode,

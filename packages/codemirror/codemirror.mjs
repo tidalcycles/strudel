@@ -59,7 +59,7 @@ export class StrudelMirror {
       if (!onDraw) {
         return;
       }
-      const { scheduler, evaluate } = await this.repl;
+      const { scheduler, evaluate } = this.repl;
       // draw first frame instantly
       prebaked.then(async () => {
         await evaluate(this.code, false);
@@ -70,9 +70,9 @@ export class StrudelMirror {
 
     this.repl = repl({
       ...replOptions,
-      onToggle: async (started) => {
+      onToggle: (started) => {
         replOptions?.onToggle?.(started);
-        const { scheduler } = await this.repl;
+        const { scheduler } = this.repl;
         if (started) {
           this.drawer.start(scheduler);
         } else {
@@ -93,20 +93,31 @@ export class StrudelMirror {
       theme,
       initialCode,
       onChange: (v) => {
-        this.code = v.state.doc.toString();
+        if (v.docChanged) {
+          this.code = v.state.doc.toString();
+          this.repl.setCode(this.code);
+        }
       },
       onEvaluate: () => this.evaluate(),
       onStop: () => this.stop(),
     });
   }
   async evaluate() {
-    const { evaluate } = await this.repl;
+    const { evaluate } = this.repl;
     this.flash();
     await evaluate(this.code);
   }
   async stop() {
-    const { scheduler } = await this.repl;
+    const { scheduler } = this.repl;
     scheduler.stop();
+  }
+  async toggle() {
+    const { scheduler } = this.repl;
+    if (scheduler.started) {
+      scheduler.stop();
+    } else {
+      this.evaluate();
+    }
   }
   flash(ms) {
     flash(this.editor, ms);

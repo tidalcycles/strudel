@@ -138,10 +138,7 @@ const drawTime = [-2, 2]; */
     }
   });
 
-  onEvent('strudel-toggle-play', () => {
-    console.log('toggle-play');
-    editor.evaluate();
-  });
+  onEvent('strudel-toggle-play', () => editor.toggle());
 
   // const isEmbedded = embedded || window.location !== window.parent.location;
 }
