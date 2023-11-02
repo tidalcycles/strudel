@@ -1,0 +1,43 @@
+{
+  "name": "@strudel/hydra",
+  "version": "0.9.0",
+  "description": "Hydra integration for strudel",
+  "main": "hydra.mjs",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
+  "scripts": {
+    "server": "node server.js",
+    "tidal-sniffer": "node tidal-sniffer.js",
+    "client": "npx serve -p 4321",
+    "build-bin": "npx pkg server.js --targets node16-macos-x64,node16-win-x64,node16-linux-x64 --out-path bin",
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "@strudel.cycles/core": "workspace:*",
+    "hydra-synth": "^1.3.29"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1",
+    "vite": "^4.3.3"
+  }
+}

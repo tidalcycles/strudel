@@ -21,12 +21,12 @@ import { samples, initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 
 async function prebake() {
   await samples(
-    'https://strudel.tidalcycles.org/tidal-drum-machines.json',
+    'https://strudel.cc/tidal-drum-machines.json',
     'github:ritchse/tidal-drum-machines/main/machines/'
   );
   await samples(
-    'https://strudel.tidalcycles.org/EmuSP12.json',
-    'https://strudel.tidalcycles.org/EmuSP12/'
+    'https://strudel.cc/EmuSP12.json',
+    'https://strudel.cc/EmuSP12/'
   );
 }
 

@@ -1,8 +1,10 @@
 import { autocompletion } from '@codemirror/autocomplete';
+import { Prec } from '@codemirror/state';
 import { javascript, javascriptLanguage } from '@codemirror/lang-javascript';
-import { EditorView } from '@codemirror/view';
+import { ViewPlugin, EditorView, keymap } from '@codemirror/view';
 import { emacs } from '@replit/codemirror-emacs';
 import { vim } from '@replit/codemirror-vim';
+import { vscodeKeymap } from '@replit/codemirror-vscode-keymap';
 import _CodeMirror from '@uiw/react-codemirror';
 import React, { useCallback, useMemo } from 'react';
 import strudelTheme from '../themes/strudel-theme';
@@ -61,11 +63,25 @@ export default function CodeMirror({
     [onSelectionChange],
   );
 
+  const vscodePlugin = ViewPlugin.fromClass(
+    class {
+      constructor(view) {}
+    },
+    {
+      provide: (plugin) => {
+        return Prec.highest(keymap.of([...vscodeKeymap]));
+      },
+    },
+  );
+
+  const vscodeExtension = (options) => [vscodePlugin].concat(options ?? []);
+
   const extensions = useMemo(() => {
     let _extensions = [...staticExtensions];
     let bindings = {
       vim,
       emacs,
+      vscode: vscodeExtension,
     };
 
     if (bindings[keybindings]) {
@@ -77,6 +93,8 @@ export default function CodeMirror({
     } else {
       _extensions.push(autocompletion({ override: [] }));
     }
+
+    _extensions.push([keymap.of({})]);
 
     if (isLineWrappingEnabled) {
       _extensions.push(EditorView.lineWrapping);

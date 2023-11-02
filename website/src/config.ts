@@ -6,7 +6,7 @@ export const SITE = {
 
 export const OPEN_GRAPH = {
   image: {
-    src: 'https://strudel.tidalcycles.org/icon.png',
+    src: 'https://strudel.cc/icon.png',
     alt: 'Strudel Logo',
   },
 };
@@ -76,6 +76,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Patterns', link: 'technical-manual/patterns' },
       { text: 'Music metadata', link: 'learn/metadata' },
       { text: 'CSound', link: 'learn/csound' },
+      { text: 'Hydra', link: 'learn/hydra' },
     ],
     'Pattern Functions': [
       { text: 'Introduction', link: 'functions/intro' },

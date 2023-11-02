@@ -7,6 +7,19 @@ This program is free software: you can redistribute it and/or modify it under th
 import { Note, Interval, Scale } from '@tonaljs/tonal';
 import { register, _mod } from '@strudel.cycles/core';
 
+const octavesInterval = (octaves) => (octaves <= 0 ? -1 : 1) + octaves * 7 + 'P';
+
+function scaleStep(step, scale) {
+  scale = scale.replaceAll(':', ' ');
+  step = Math.ceil(step);
+  const { intervals, tonic } = Scale.get(scale);
+  const { pc, oct = 3 } = Note.get(tonic);
+  const octaveOffset = Math.floor(step / intervals.length);
+  const scaleStep = _mod(step, intervals.length);
+  const interval = Interval.add(intervals[scaleStep], octavesInterval(octaveOffset));
+  return Note.transpose(pc + oct, interval);
+}
+
 // transpose note inside scale by offset steps
 // function scaleOffset(scale: string, offset: number, note: string) {
 function scaleOffset(scale, offset, note) {
@@ -155,11 +168,7 @@ export const scale = register('scale', function (scale, pat) {
     }
     const asNumber = Number(note);
     if (!isNaN(asNumber)) {
-      // TODO: worth keeping for supporting ':' in (non-mininotation) strings?
-      scale = scale.replaceAll(':', ' ');
-      let [tonic, scaleName] = Scale.tokenize(scale);
-      const { pc, oct = 3 } = Note.get(tonic);
-      note = scaleOffset(pc + ' ' + scaleName, asNumber, pc + oct);
+      note = scaleStep(asNumber, scale);
     }
     return hap.withValue(() => (isObject ? { ...hap.value, note } : note)).setContext({ ...hap.context, scale });
   });

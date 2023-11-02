@@ -1,7 +1,7 @@
 /* 
 
 Strudel - javascript-based environment for live coding algorithmic (musical) patterns
-https://strudel.tidalcycles.org / https://github.com/tidalcycles/strudel/
+https://strudel.cc / https://github.com/tidalcycles/strudel/
 
 Copyright (C) Strudel contributors 
 https://github.com/tidalcycles/strudel/graphs/contributors

@@ -46,7 +46,7 @@ For drum sounds, strudel uses the comprehensive [tidal-drum-machines](https://gi
 
 Furthermore, strudel also loads instrument samples from [VCSL](https://github.com/sgossner/VCSL) by default.
 
-To see which sample names are available, open the `sounds` tab in the [REPL](https://strudel.tidalcycles.org/).
+To see which sample names are available, open the `sounds` tab in the [REPL](https://strudel.cc/).
 
 Note that only the sample maps (mapping names to URLs) are loaded initially, while the audio samples themselves are not loaded until they are actually played.
 This behaviour of loading things only when they are needed is also called `lazy loading`.
@@ -283,12 +283,25 @@ With it, you can enter any sample name(s) to query from [freesound.org](https://
 
 <MiniRepl
   client:idle
-  tune={`await samples('https://shabda.ndre.gr/bass:4,hihat:4,rimshot:2.json?strudel=1')
+  tune={`await samples('shabda:bass:4,hihat:4,rimshot:2')
 stack(
   n("0 1 2 3").s('bass').slow(2),
   n("0 1*2 2 3*2").s('hihat'),
   n("~ 0 ~ 1").s('rimshot')
 ).clip(1)`}
+/>
+
+You can also generate artificial voice samples with any text, in multiple languages.
+Note that the language code and the gender parameters are optional and default to `en-GB` and `f`
+
+<MiniRepl
+  client:idle
+  tune={`await samples('shabda/speech:the_drum,forever')
+await samples('shabda/speech/fr-FR/m:magnifique')
+stack(
+  s("the_drum").chop(16).speed(rand.range(0.85,1.1)),
+  s("forever magnifique").slow(8).late(0.25)
+)`}
 />
 
 # Sampler Effects
@@ -334,6 +347,10 @@ Sampler effects are functions that can be used to change the behaviour of sample
 ### chop
 
 <JsDoc client:idle name="Pattern.chop" h={0} />
+
+### striate
+
+<JsDoc client:idle name="Pattern.striate" h={0} />
 
 ### slice
 
