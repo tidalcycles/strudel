@@ -27,12 +27,31 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, the
       keymap.of([
         {
           key: 'Ctrl-Enter',
-          run: () => onEvaluate(),
+          run: () => onEvaluate?.(),
+        },
+        {
+          key: 'Alt-Enter',
+          run: () => onEvaluate?.(),
         },
         {
           key: 'Ctrl-.',
-          run: () => onStop(),
+          run: () => onStop?.(),
         },
+        {
+          key: 'Alt-.',
+          run: (_, e) => {
+            e.preventDefault();
+            onStop?.();
+          },
+        },
+        /* {
+          key: 'Ctrl-Shift-.',
+          run: () => (onPanic ? onPanic() : onStop?.()),
+        },
+        {
+          key: 'Ctrl-Shift-Enter',
+          run: () => (onReEvaluate ? onReEvaluate() : onEvaluate?.()),
+        }, */
       ]),
     ],
   });
