@@ -1,11 +1,12 @@
 import { Pattern, noteToMidi, valueToMidi, controls, evalScope } from '@strudel.cycles/core';
-import { registerSynthSounds, registerZZFXSounds, samples } from '@strudel.cycles/webaudio';
+import { initAudioOnFirstClick, registerSynthSounds, registerZZFXSounds, samples } from '@strudel.cycles/webaudio';
 import './piano.mjs';
 import './files.mjs';
 import { isTauri } from '../tauri.mjs';
 import { settingPatterns } from '../settings.mjs';
 
 export async function prebake() {
+  const initAudio = initAudioOnFirstClick();
   // lazy load modules
   let modules = [
     import('@strudel.cycles/core'),
@@ -36,6 +37,7 @@ export async function prebake() {
   );
   // register sounds and samples
   return Promise.all([
+    initAudio,
     modulesLoading,
     registerSynthSounds(),
     registerZZFXSounds(),

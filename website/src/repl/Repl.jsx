@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { cleanupDraw, cleanupUi, getDrawContext, logger } from '@strudel.cycles/core';
 import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
-import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
+import { getAudioContext, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import React, { createContext, useCallback, useEffect, useState, useMemo } from 'react';
@@ -25,8 +25,6 @@ import { useWidgets } from '@strudel.cycles/react/src/hooks/useWidgets.mjs';
 import { writeText } from '@tauri-apps/api/clipboard';
 
 const { latestCode } = settingsMap.get();
-
-initAudioOnFirstClick();
 
 // Create a single supabase client for interacting with your database
 const supabase = createClient(

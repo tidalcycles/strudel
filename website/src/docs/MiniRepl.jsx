@@ -1,15 +1,13 @@
-import { evalScope, controls, noteToMidi } from '@strudel.cycles/core';
-import { initAudioOnFirstClick } from '@strudel.cycles/webaudio';
+import { noteToMidi } from '@strudel.cycles/core';
 import { useEffect, useState } from 'react';
 import { prebake } from '../repl/prebake';
-import { themes, settings } from '../repl/themes.mjs';
+import { themes } from '../repl/themes.mjs';
 import './MiniRepl.css';
 import { useSettings } from '../settings.mjs';
 import Claviature from '@components/Claviature';
 
 let init;
 if (typeof window !== 'undefined') {
-  initAudioOnFirstClick();
   init = prebake();
 }
 
