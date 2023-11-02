@@ -5,8 +5,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { cleanupDraw, cleanupUi, getDrawContext, logger } from '@strudel.cycles/core';
-import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
-import { getAudioContext, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
+import { CodeMirror, cx, flash, useHighlighting, useStrudel } from '@strudel.cycles/react';
+import { getAudioContext, resetLoadedSounds, webaudioOutput, panic } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import React, { createContext, useCallback, useEffect, useState, useMemo } from 'react';
@@ -155,29 +155,6 @@ export function Repl({ embedded = false }) {
     });
   }, []);
 
-  // keyboard shortcuts
-  useKeydown(
-    useCallback(
-      async (e) => {
-        if (e.ctrlKey || e.altKey) {
-          if (e.code === 'Enter') {
-            if (getAudioContext().state !== 'running') {
-              alert('please click play to initialize the audio. you can use shortcuts after that!');
-              return;
-            }
-            e.preventDefault();
-            flash(view);
-            await activateCode();
-          } else if (e.key === '.' || e.code === 'Period') {
-            stop();
-            e.preventDefault();
-          }
-        }
-      },
-      [activateCode, stop, view],
-    ),
-  );
-
   // highlighting
   const { setMiniLocations } = useHighlighting({
     view,
@@ -310,6 +287,24 @@ export function Repl({ embedded = false }) {
               onChange={handleChangeCode}
               onViewChanged={handleViewChanged}
               onSelectionChange={handleSelectionChange}
+              onEvaluate={() => {
+                if (getAudioContext().state !== 'running') {
+                  alert('please click play to initialize the audio. you can use shortcuts after that!');
+                  return;
+                }
+                flash(view);
+                activateCode();
+              }}
+              onReEvaluate={() => {
+                stop();
+                panic();
+                activateCode();
+              }}
+              onPanic={() => {
+                stop();
+                panic();
+              }}
+              onStop={() => stop()}
             />
           </section>
           {panelPosition === 'right' && !isEmbedded && <Footer context={context} />}

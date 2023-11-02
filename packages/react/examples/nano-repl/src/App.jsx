@@ -1,5 +1,5 @@
 import { controls, evalScope } from '@strudel.cycles/core';
-import { CodeMirror, useHighlighting, useKeydown, useStrudel, flash } from '@strudel.cycles/react';
+import { CodeMirror, useHighlighting, useStrudel, flash } from '@strudel.cycles/react';
 import {
   getAudioContext,
   initAudioOnFirstClick,
@@ -93,32 +93,6 @@ function App() {
   });
 
   const error = evalError || schedulerError;
-  useKeydown(
-    useCallback(
-      async (e) => {
-        if (e.ctrlKey || e.altKey) {
-          if (e.code === 'Enter') {
-            e.preventDefault();
-            flash(view);
-            await evaluate(code);
-            if (e.shiftKey) {
-              panic();
-              scheduler.stop();
-              scheduler.start();
-            }
-            if (!scheduler.started) {
-              scheduler.start();
-            }
-          } else if (e.code === 'Period') {
-            scheduler.stop();
-            panic();
-            e.preventDefault();
-          }
-        }
-      },
-      [scheduler, evaluate, view, code],
-    ),
-  );
   return (
     <div>
       <nav className="z-[12] w-full flex justify-center fixed bottom-0">
@@ -136,7 +110,28 @@ function App() {
         </div>
         {error && <p>error {error.message}</p>}
       </nav>
-      <CodeMirror value={code} onChange={setCode} onViewChanged={setView} />
+      <CodeMirror
+        value={code}
+        onChange={setCode}
+        onViewChanged={setView}
+        onEvaluate={async () => {
+          flash(view);
+          await evaluate(code);
+          if (!scheduler.started) {
+            scheduler.start();
+          }
+        }}
+        onReEvaluate={async () => {
+          await evaluate(code);
+          panic();
+          scheduler.stop();
+          scheduler.start();
+        }}
+        onStop={() => {
+          scheduler.stop();
+          panic();
+        }}
+      />
     </div>
   );
 }

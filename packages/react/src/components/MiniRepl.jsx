@@ -10,7 +10,6 @@ import { Icon } from './Icon';
 import './style.css';
 import { logger } from '@strudel.cycles/core';
 import useEvent from '../hooks/useEvent.mjs';
-import useKeydown from '../hooks/useKeydown.mjs';
 
 const getTime = () => getAudioContext().currentTime;
 
@@ -92,27 +91,6 @@ export function MiniRepl({
     getTime: () => scheduler.now(),
   });
 
-  // keyboard shortcuts
-  useKeydown(
-    useCallback(
-      async (e) => {
-        if (view?.hasFocus) {
-          if (e.ctrlKey || e.altKey) {
-            if (e.code === 'Enter') {
-              e.preventDefault();
-              flash(view);
-              await activateCode();
-            } else if (e.key === '.' || e.code === 'Period') {
-              stop();
-              e.preventDefault();
-            }
-          }
-        }
-      },
-      [activateCode, stop, view],
-    ),
-  );
-
   const [log, setLog] = useState([]);
   useLogger(
     useCallback((e) => {
@@ -164,6 +142,11 @@ export function MiniRepl({
             fontSize={fontSize}
             keybindings={keybindings}
             isLineNumbersDisplayed={isLineNumbersDisplayed}
+            onEvaluate={() => {
+              flash(view);
+              activateCode();
+            }}
+            onStop={() => stop()}
           />
         )}
         {error && <div className="text-right p-1 text-md text-red-200">{error.message}</div>}

@@ -29,6 +29,10 @@ export default function CodeMirror({
   onViewChanged,
   onSelectionChange,
   onDocChange,
+  onEvaluate,
+  onReEvaluate,
+  onPanic,
+  onStop,
   theme,
   keybindings,
   isLineNumbersDisplayed,
@@ -94,14 +98,33 @@ export default function CodeMirror({
       _extensions.push(autocompletion({ override: [] }));
     }
 
-    _extensions.push([keymap.of({})]);
+    _extensions.push(
+      keymap.of([
+        {
+          key: 'Ctrl-Enter',
+          run: () => onEvaluate?.(),
+        },
+        {
+          key: 'Ctrl-.',
+          run: () => onStop?.(),
+        },
+        {
+          key: 'Ctrl-Shift-.',
+          run: () => (onPanic ? onPanic() : onStop?.()),
+        },
+        {
+          key: 'Ctrl-Shift-Enter',
+          run: () => (onReEvaluate ? onReEvaluate() : onEvaluate?.()),
+        },
+      ]),
+    );
 
     if (isLineWrappingEnabled) {
       _extensions.push(EditorView.lineWrapping);
     }
 
     return _extensions;
-  }, [keybindings, isAutoCompletionEnabled, isLineWrappingEnabled]);
+  }, [keybindings, isAutoCompletionEnabled, isLineWrappingEnabled, onEvaluate, onStop]);
 
   const basicSetup = useMemo(() => ({ lineNumbers: isLineNumbersDisplayed }), [isLineNumbersDisplayed]);
 
