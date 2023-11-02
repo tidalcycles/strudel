@@ -135,7 +135,7 @@ export default function CodeMirror({
     }
 
     return _extensions;
-  }, [keybindings, isAutoCompletionEnabled, isLineWrappingEnabled, onEvaluate, onReEvaluate, onStop]);
+  }, [keybindings, isAutoCompletionEnabled, isLineWrappingEnabled, onEvaluate, onReEvaluate, onStop, onPanic]);
 
   const basicSetup = useMemo(() => ({ lineNumbers: isLineNumbersDisplayed }), [isLineNumbersDisplayed]);
 

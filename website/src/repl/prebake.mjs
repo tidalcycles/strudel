@@ -156,7 +156,7 @@ export async function prebake() {
 
 export const resetSounds = () => {
   soundMap.set({});
-  registerStockSounds();
+  return registerStockSounds();
 };
 
 const maxPan = noteToMidi('C8');

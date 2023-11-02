@@ -4,22 +4,21 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { cleanupDraw, cleanupUi, controls, evalScope, getDrawContext, logger } from '@strudel.cycles/core';
-import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
-import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
+import { cleanupDraw, cleanupUi, getDrawContext, logger } from '@strudel.cycles/core';
+import { CodeMirror, cx, flash, useHighlighting, useStrudel } from '@strudel.cycles/react';
+import { getAudioContext, initAudioOnFirstClick, webaudioOutput } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import React, { createContext, useCallback, useEffect, useState, useMemo } from 'react';
 import './Repl.css';
 import { Footer } from './Footer';
 import { Header } from './Header';
-import { prebake } from './prebake.mjs';
+import { prebake, resetSounds } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
 import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
 import Loader from './Loader';
-import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
 import { isTauri } from '../tauri.mjs';
 import { useWidgets } from '@strudel.cycles/react/src/hooks/useWidgets.mjs';
@@ -35,35 +34,7 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
 );
 
-let modules = [
-  import('@strudel.cycles/core'),
-  import('@strudel.cycles/tonal'),
-  import('@strudel.cycles/mini'),
-  import('@strudel.cycles/xen'),
-  import('@strudel.cycles/webaudio'),
-  import('@strudel/codemirror'),
-  import('@strudel/hydra'),
-  import('@strudel.cycles/serial'),
-  import('@strudel.cycles/soundfonts'),
-  import('@strudel.cycles/csound'),
-];
-if (isTauri()) {
-  modules = modules.concat([
-    import('@strudel/desktopbridge/loggerbridge.mjs'),
-    import('@strudel/desktopbridge/midibridge.mjs'),
-    import('@strudel/desktopbridge/oscbridge.mjs'),
-  ]);
-} else {
-  modules = modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
-}
-
-const modulesLoading = evalScope(
-  controls, // sadly, this cannot be exported from core direclty
-  settingPatterns,
-  ...modules,
-);
-
-const presets = prebake();
+const init = prebake();
 
 let drawContext, clearCanvas;
 if (typeof window !== 'undefined') {
@@ -140,7 +111,7 @@ export function Repl({ embedded = false }) {
       getTime,
       beforeEval: async () => {
         setPending(true);
-        await modulesLoading;
+        await init;
         cleanupUi();
         cleanupDraw();
       },
@@ -186,29 +157,6 @@ export function Repl({ embedded = false }) {
     });
   }, []);
 
-  // keyboard shortcuts
-  useKeydown(
-    useCallback(
-      async (e) => {
-        if (e.ctrlKey || e.altKey) {
-          if (e.code === 'Enter') {
-            if (getAudioContext().state !== 'running') {
-              alert('please click play to initialize the audio. you can use shortcuts after that!');
-              return;
-            }
-            e.preventDefault();
-            flash(view);
-            await activateCode();
-          } else if (e.key === '.' || e.code === 'Period') {
-            stop();
-            e.preventDefault();
-          }
-        }
-      },
-      [activateCode, stop, view],
-    ),
-  );
-
   // highlighting
   const { setMiniLocations } = useHighlighting({
     view,
@@ -252,9 +200,8 @@ export function Repl({ embedded = false }) {
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
     clearCanvas();
-    resetLoadedSounds();
+    await resetSounds();
     scheduler.setCps(1);
-    await prebake(); // declare default samples
     await evaluate(code, false);
   };
 
@@ -306,6 +253,17 @@ export function Repl({ embedded = false }) {
     setView(v);
   }, []);
 
+  // Codemirror hooks
+  const onEvaluate = () => {
+    if (getAudioContext().state !== 'running') {
+      alert('please click play to initialize the audio. you can use shortcuts after that!');
+      return;
+    }
+    flash(view);
+    activateCode();
+  };
+  const onStop = () => stop();
+
   return (
     // bg-gradient-to-t from-blue-900 to-slate-900
     // bg-gradient-to-t from-green-900 to-slate-900
@@ -341,6 +299,8 @@ export function Repl({ embedded = false }) {
               onChange={handleChangeCode}
               onViewChanged={handleViewChanged}
               onSelectionChange={handleSelectionChange}
+              onEvaluate={onEvaluate}
+              onStop={onStop}
             />
           </section>
           {panelPosition === 'right' && !isEmbedded && <Footer context={context} />}
