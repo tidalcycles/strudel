@@ -13,6 +13,12 @@
   },
   "tauri": {
     "allowlist": {
+      "dialog": {
+        "all": true
+      },
+      "clipboard": {
+        "writeText": true
+      },
       "all": false,
       "fs": {
         "all": true,
