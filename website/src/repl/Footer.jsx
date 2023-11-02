@@ -436,7 +436,7 @@ function SettingsTab({ scheduler }) {
         <ButtonGroup
           value={keybindings}
           onChange={(keybindings) => settingsMap.setKey('keybindings', keybindings)}
-          items={{ codemirror: 'Codemirror', vim: 'Vim', emacs: 'Emacs', vscodeExtension: 'VSCode' }}
+          items={{ codemirror: 'Codemirror', vim: 'Vim', emacs: 'Emacs', vscode: 'VSCode' }}
         ></ButtonGroup>
       </FormItem>
       <FormItem label="Panel Position">

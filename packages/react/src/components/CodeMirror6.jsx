@@ -1,5 +1,4 @@
 import { autocompletion } from '@codemirror/autocomplete';
-import { selectAll } from '@codemirror/commands';
 import { Prec } from '@codemirror/state';
 import { javascript, javascriptLanguage } from '@codemirror/lang-javascript';
 import { ViewPlugin, EditorView, keymap } from '@codemirror/view';
@@ -82,7 +81,7 @@ export default function CodeMirror({
     let bindings = {
       vim,
       emacs,
-      vscodeExtension,
+      vscode: vscodeExtension,
     };
 
     if (bindings[keybindings]) {
