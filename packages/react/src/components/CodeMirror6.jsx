@@ -105,8 +105,19 @@ export default function CodeMirror({
           run: () => onEvaluate?.(),
         },
         {
+          key: 'Alt-Enter',
+          run: () => onEvaluate?.(),
+        },
+        {
           key: 'Ctrl-.',
           run: () => onStop?.(),
+        },
+        {
+          key: 'Alt-.',
+          run: (_, e) => {
+            e.preventDefault();
+            onStop?.();
+          },
         },
         {
           key: 'Ctrl-Shift-.',
