@@ -59,11 +59,10 @@ export class StrudelMirror {
       if (!onDraw) {
         return;
       }
-      const { scheduler, evaluate } = this.repl;
       // draw first frame instantly
       prebaked.then(async () => {
-        await evaluate(this.code, false);
-        this.drawer.invalidate(scheduler);
+        await this.repl.evaluate(this.code, false);
+        this.drawer.invalidate(this.repl.scheduler);
         onDraw?.(this.drawer.visibleHaps, 0, []);
       });
     });
@@ -72,9 +71,8 @@ export class StrudelMirror {
       ...replOptions,
       onToggle: (started) => {
         replOptions?.onToggle?.(started);
-        const { scheduler } = this.repl;
         if (started) {
-          this.drawer.start(scheduler);
+          this.drawer.start(this.repl.scheduler);
         } else {
           this.drawer.stop();
         }
@@ -103,18 +101,15 @@ export class StrudelMirror {
     });
   }
   async evaluate() {
-    const { evaluate } = this.repl;
     this.flash();
-    await evaluate(this.code);
+    await this.repl.evaluate(this.code);
   }
   async stop() {
-    const { scheduler } = this.repl;
-    scheduler.stop();
+    this.repl.scheduler.stop();
   }
   async toggle() {
-    const { scheduler } = this.repl;
-    if (scheduler.started) {
-      scheduler.stop();
+    if (this.repl.scheduler.started) {
+      this.repl.scheduler.stop();
     } else {
       this.evaluate();
     }
