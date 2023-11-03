@@ -1,4 +1,4 @@
-import { logger, getDrawContext } from '@strudel.cycles/core';
+import { logger, getDrawContext, silence } from '@strudel.cycles/core';
 import { StrudelMirror } from '@strudel/codemirror';
 import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
 import { transpiler } from '@strudel.cycles/transpiler';
@@ -15,6 +15,7 @@ const supabase = createClient(
 );
 
 async function initCodeFromUrl() {
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
   // load code from url hash (either short hash from database or decode long hash)
   try {
     const initialUrl = window.location.href;
@@ -64,10 +65,11 @@ async function run() {
     transpiler,
     root: container,
     initialCode: '// LOADING',
+    pattern: silence,
     settings,
     drawTime,
     onDraw: (haps, time, frame, painters) => {
-      drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
+      painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
       painters?.forEach((painter) => {
         // ctx time haps drawTime paintOptions
         painter(drawContext, time, haps, drawTime, { clear: false });
@@ -80,8 +82,6 @@ async function run() {
     },
   });
 
-  const { code: randomTune, name } = getRandomTune();
-
   // init settings
   editor.updateSettings(settings);
   const decoded = await initialCode;
@@ -92,13 +92,13 @@ async function run() {
   } else if (settings.latestCode) {
     editor.setCode(settings.latestCode);
     msg = `Your last session has been loaded!`;
-  } /*  if(randomTune) */ else {
+  } else {
+    const { code: randomTune, name } = getRandomTune();
     editor.setCode(randomTune);
     msg = `A random code snippet named "${name}" has been loaded!`;
   }
-  console.log('msg', msg);
-  /* logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
-    setPending(false); */
+  logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
+  // setPending(false);
 
   settingsMap.listen((settings, key) => editor.changeSetting(key, settings[key]));
 

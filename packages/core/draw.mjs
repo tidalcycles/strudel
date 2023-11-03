@@ -146,7 +146,7 @@ export class Drawer {
     );
   }
   invalidate(scheduler = this.scheduler) {
-    if (!scheduler) {
+    if (!scheduler || !scheduler.pattern) {
       return;
     }
     this.scheduler = scheduler;

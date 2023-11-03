@@ -28,7 +28,6 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, set
   const initialSettings = Object.keys(compartments).map((key) =>
     compartments[key].of(extensions[key](parseBooleans(settings[key]))),
   );
-  console.log('settings', settings);
   let state = EditorState.create({
     doc: initialCode,
     extensions: [
@@ -89,31 +88,23 @@ export class StrudelMirror {
     this.root = root;
     this.miniLocations = [];
     this.painters = [];
+    this.onDraw = onDraw;
     const self = this;
 
     this.drawer = new Drawer((haps, time) => {
       const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.endClipped);
       this.highlight(currentFrame, time);
-      onDraw?.(haps, time, currentFrame, this.painters);
+      this.onDraw?.(haps, time, currentFrame, this.painters);
     }, drawTime);
 
+    // this approach might not work with multiple repls on screen..
     Pattern.prototype.onPaint = function (onPaint) {
       self.painters.push(onPaint);
       return this;
     };
 
-    const prebaked = prebake();
-    prebaked.then(async () => {
-      if (!onDraw) {
-        return;
-      }
-      // draw first frame instantly
-      prebaked.then(async () => {
-        await this.repl.evaluate(this.code, false);
-        this.drawer.invalidate(this.repl.scheduler);
-        onDraw?.(this.drawer.visibleHaps, 0, []);
-      });
-    });
+    this.prebaked = prebake();
+    // this.drawFirstFrame();
 
     this.repl = repl({
       ...replOptions,
@@ -130,7 +121,7 @@ export class StrudelMirror {
       beforeEval: async () => {
         cleanupDraw();
         this.painters = [];
-        await prebaked;
+        await this.prebaked;
         await replOptions?.beforeEval?.();
       },
       afterEval: (options) => {
@@ -154,6 +145,20 @@ export class StrudelMirror {
       onEvaluate: () => this.evaluate(),
       onStop: () => this.stop(),
     });
+  }
+  async drawFirstFrame() {
+    if (!this.onDraw) {
+      return;
+    }
+    // draw first frame instantly
+    await this.prebaked;
+    try {
+      await this.repl.evaluate(this.code, false);
+      this.drawer.invalidate(this.repl.scheduler);
+      this.onDraw?.(this.drawer.visibleHaps, 0, []);
+    } catch (err) {
+      console.warn('first frame could not be painted');
+    }
   }
   async evaluate() {
     this.flash();
