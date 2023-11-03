@@ -86,6 +86,7 @@ export function pianoroll({
   hideInactive = 0,
   colorizeInactive = 1,
   fontFamily,
+  clear = true,
   ctx,
 } = {}) {
   const w = ctx.canvas.width;
@@ -131,7 +132,7 @@ export function pianoroll({
   barThickness = fold ? valueAxis / foldValues.length : valueAxis / valueExtent;
   ctx.fillStyle = background;
   ctx.globalAlpha = 1; // reset!
-  if (!smear) {
+  if (clear && !smear) {
     ctx.clearRect(0, 0, w, h);
     ctx.fillRect(0, 0, w, h);
   }

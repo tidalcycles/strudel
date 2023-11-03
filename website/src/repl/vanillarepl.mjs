@@ -1,4 +1,4 @@
-import { logger, cleanupDraw } from '@strudel.cycles/core';
+import { logger, getDrawContext } from '@strudel.cycles/core';
 import { StrudelMirror } from '@strudel/codemirror';
 import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
 import { transpiler } from '@strudel.cycles/transpiler';
@@ -56,8 +56,8 @@ async function run() {
 
   const settings = settingsMap.get();
 
-  /* const drawContext = getDrawContext()
-const drawTime = [-2, 2]; */
+  const drawContext = getDrawContext();
+  const drawTime = [-2, 2];
   const editor = new StrudelMirror({
     defaultOutput: webaudioOutput,
     getTime: () => getAudioContext().currentTime,
@@ -65,9 +65,14 @@ const drawTime = [-2, 2]; */
     root: container,
     initialCode: '// LOADING',
     settings,
-    /* drawTime,
-  onDraw: (haps, time) =>
-    drawPianoroll({ haps, time, ctx: drawContext, drawTime, fold: 1 }),  */
+    drawTime,
+    onDraw: (haps, time, frame, painters) => {
+      drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
+      painters?.forEach((painter) => {
+        // ctx time haps drawTime paintOptions
+        painter(drawContext, time, haps, drawTime, { clear: false });
+      });
+    },
     prebake: () => prebake(),
     afterEval: ({ code }) => {
       setLatestCode(code);

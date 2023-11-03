@@ -5,7 +5,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { Compartment, EditorState } from '@codemirror/state';
 import { EditorView, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view';
-import { Drawer, repl, cleanupDraw } from '@strudel.cycles/core';
+import { Pattern, Drawer, repl, cleanupDraw } from '@strudel.cycles/core';
 import { isAutoCompletionEnabled } from './Autocomplete';
 import { flash, isFlashEnabled } from './flash.mjs';
 import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
@@ -88,12 +88,19 @@ export class StrudelMirror {
     this.code = initialCode;
     this.root = root;
     this.miniLocations = [];
+    this.painters = [];
+    const self = this;
 
     this.drawer = new Drawer((haps, time) => {
       const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.endClipped);
       this.highlight(currentFrame, time);
-      onDraw?.(haps, time, currentFrame);
+      onDraw?.(haps, time, currentFrame, this.painters);
     }, drawTime);
+
+    Pattern.prototype.onPaint = function (onPaint) {
+      self.painters.push(onPaint);
+      return this;
+    };
 
     const prebaked = prebake();
     prebaked.then(async () => {
@@ -116,11 +123,13 @@ export class StrudelMirror {
           this.drawer.start(this.repl.scheduler);
         } else {
           this.drawer.stop();
+          updateMiniLocations(this.editor, []);
           cleanupDraw(false);
         }
       },
       beforeEval: async () => {
         cleanupDraw();
+        this.painters = [];
         await prebaked;
         await replOptions?.beforeEval?.();
       },

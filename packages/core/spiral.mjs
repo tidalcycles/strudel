@@ -67,9 +67,9 @@ Pattern.prototype.spiral = function (options = {}) {
     // logSpiral = true,
   } = options;
 
-  function spiral({ ctx, time, haps, drawTime }) {
+  function spiral({ ctx, time, haps, drawTime, clear }) {
     const [w, h] = [ctx.canvas.width, ctx.canvas.height];
-    ctx.clearRect(0, 0, w * 2, h * 2);
+    clear && ctx.clearRect(0, 0, w * 2, h * 2);
     const [cx, cy] = [w / 2, h / 2];
     const settings = {
       margin: size / stretch,
@@ -114,5 +114,5 @@ Pattern.prototype.spiral = function (options = {}) {
     });
   }
 
-  return this.onPaint((ctx, time, haps, drawTime) => spiral({ ctx, time, haps, drawTime }));
+  return this.onPaint((ctx, time, haps, drawTime, options) => spiral({ ctx, time, haps, drawTime, ...options }));
 };
