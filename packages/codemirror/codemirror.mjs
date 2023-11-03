@@ -1,14 +1,16 @@
+import { closeBrackets } from '@codemirror/autocomplete';
+// import { search, highlightSelectionMatches } from '@codemirror/search';
+import { history } from '@codemirror/commands';
 import { javascript } from '@codemirror/lang-javascript';
 import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
-import { EditorState, Compartment } from '@codemirror/state';
-import { history } from '@codemirror/commands';
-import { EditorView, highlightActiveLineGutter, keymap, lineNumbers } from '@codemirror/view';
+import { Compartment, EditorState } from '@codemirror/state';
+import { EditorView, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view';
 import { Drawer, repl } from '@strudel.cycles/core';
-import { isFlashEnabled, flash } from './flash.mjs';
-import { highlightMiniLocations, updateMiniLocations, isPatternHighlightingEnabled } from './highlight.mjs';
-import { theme } from './themes.mjs';
 import { isAutoCompletionEnabled } from './Autocomplete';
+import { flash, isFlashEnabled } from './flash.mjs';
+import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
 import { keybindings } from './keybindings.mjs';
+import { theme } from './themes.mjs';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
@@ -30,9 +32,15 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, set
   let state = EditorState.create({
     doc: initialCode,
     extensions: [
+      /* search(),
+      highlightSelectionMatches(), */
       ...initialSettings,
       javascript(),
+      // indentOnInput(), // works without. already brought with javascript extension?
+      // bracketMatching(), // does not do anything
+      closeBrackets(),
       highlightActiveLineGutter(),
+      highlightActiveLine(),
       syntaxHighlighting(defaultHighlightStyle),
       history(),
       EditorView.updateListener.of((v) => onChange(v)),

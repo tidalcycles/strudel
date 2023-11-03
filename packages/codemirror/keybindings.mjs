@@ -1,5 +1,6 @@
 import { Prec } from '@codemirror/state';
 import { keymap, ViewPlugin } from '@codemirror/view';
+// import { searchKeymap } from '@codemirror/search';
 import { emacs } from '@replit/codemirror-emacs';
 import { vim } from '@replit/codemirror-vim';
 import { vscodeKeymap } from '@replit/codemirror-vscode-keymap';
@@ -26,4 +27,5 @@ const keymaps = {
 export function keybindings(name) {
   const active = keymaps[name];
   return [keymap.of(defaultKeymap), keymap.of(historyKeymap), active ? active() : []];
+  // keymap.of(searchKeymap),
 }

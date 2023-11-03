@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import jsdoc from '../../doc.json';
-import { javascriptLanguage } from '@codemirror/lang-javascript';
+// import { javascriptLanguage } from '@codemirror/lang-javascript';
 import { autocompletion } from '@codemirror/autocomplete';
 
 const getDocLabel = (doc) => doc.name || doc.longname;
@@ -66,7 +66,6 @@ const jsdocCompletions = jsdoc.docs
 
 export const strudelAutocomplete = (context /* : CompletionContext */) => {
   let word = context.matchBefore(/\w*/);
-  console.log('word', word);
   if (word.from == word.to && !context.explicit) return null;
   return {
     from: word.from,
@@ -80,6 +79,10 @@ export const strudelAutocomplete = (context /* : CompletionContext */) => {
 };
 
 export function isAutoCompletionEnabled(on) {
-  console.log('autocomplete on', on);
-  return on ? javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }) : autocompletion({ override: [] });
+  return on
+    ? [
+        autocompletion({ override: [strudelAutocomplete] }),
+        //javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }),
+      ]
+    : []; // autocompletion({ override: [] })
 }
