@@ -1,7 +1,7 @@
-import { defaultKeymap } from '@codemirror/commands';
 import { javascript } from '@codemirror/lang-javascript';
 import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { EditorState, Compartment } from '@codemirror/state';
+import { history } from '@codemirror/commands';
 import { EditorView, highlightActiveLineGutter, keymap, lineNumbers } from '@codemirror/view';
 import { Drawer, repl } from '@strudel.cycles/core';
 import { isFlashEnabled, flash } from './flash.mjs';
@@ -12,7 +12,7 @@ import { keybindings } from './keybindings.mjs';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
-  isLineNumbersDisplayed: (on) => (on ? lineNumbers() : lineNumbers({ formatNumber: () => '' })),
+  isLineNumbersDisplayed: (on) => (on ? lineNumbers() : []),
   theme,
   isAutoCompletionEnabled,
   isPatternHighlightingEnabled,
@@ -34,7 +34,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, set
       javascript(),
       highlightActiveLineGutter(),
       syntaxHighlighting(defaultHighlightStyle),
-      keymap.of(defaultKeymap),
+      history(),
       EditorView.updateListener.of((v) => onChange(v)),
       keymap.of([
         {
