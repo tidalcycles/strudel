@@ -80,6 +80,6 @@ export const strudelAutocomplete = (context /* : CompletionContext */) => {
 };
 
 export function isAutoCompletionEnabled(on) {
-  console.log('autocomplete on',on);
+  console.log('autocomplete on', on);
   return on ? javascriptLanguage.data.of({ autocomplete: strudelAutocomplete }) : autocompletion({ override: [] });
 }
