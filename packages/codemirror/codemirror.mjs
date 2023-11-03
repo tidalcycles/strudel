@@ -11,6 +11,7 @@ import { flash, isFlashEnabled } from './flash.mjs';
 import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
 import { keybindings } from './keybindings.mjs';
 import { theme } from './themes.mjs';
+import { updateWidgets } from './slider.mjs';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
@@ -87,6 +88,7 @@ export class StrudelMirror {
     this.code = initialCode;
     this.root = root;
     this.miniLocations = [];
+    this.widgets = [];
     this.painters = [];
     this.onDraw = onDraw;
     const self = this;
@@ -127,6 +129,8 @@ export class StrudelMirror {
       afterEval: (options) => {
         // remember for when highlighting is toggled on
         this.miniLocations = options.meta?.miniLocations;
+        this.widgets = options.meta?.widgets;
+        updateWidgets(this.editor, this.widgets);
         updateMiniLocations(this.editor, this.miniLocations);
         replOptions?.afterEval?.(options);
         this.drawer.invalidate();
