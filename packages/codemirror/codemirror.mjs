@@ -11,7 +11,7 @@ import { flash, isFlashEnabled } from './flash.mjs';
 import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
 import { keybindings } from './keybindings.mjs';
 import { theme } from './themes.mjs';
-import { updateWidgets } from './slider.mjs';
+import { updateWidgets, sliderPlugin } from './slider.mjs';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
@@ -36,6 +36,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, set
       highlightSelectionMatches(), */
       ...initialSettings,
       javascript(),
+      sliderPlugin,
       // indentOnInput(), // works without. already brought with javascript extension?
       // bracketMatching(), // does not do anything
       closeBrackets(),
