@@ -1,3 +1,5 @@
+import * as tunes from './tunes.mjs';
+
 export function unicodeToBase64(text) {
   const utf8Bytes = new TextEncoder().encode(text);
   const base64String = btoa(String.fromCharCode(...utf8Bytes));
@@ -22,4 +24,11 @@ export function code2hash(code) {
 export function hash2code(hash) {
   return base64ToUnicode(decodeURIComponent(hash));
   //return atob(decodeURIComponent(codeParam || ''));
+}
+
+export function getRandomTune() {
+  const allTunes = Object.entries(tunes);
+  const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const [name, code] = randomItem(allTunes);
+  return { name, code };
 }

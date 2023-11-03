@@ -5,7 +5,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { Compartment, EditorState } from '@codemirror/state';
 import { EditorView, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view';
-import { Drawer, repl } from '@strudel.cycles/core';
+import { Drawer, repl, cleanupDraw } from '@strudel.cycles/core';
 import { isAutoCompletionEnabled } from './Autocomplete';
 import { flash, isFlashEnabled } from './flash.mjs';
 import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
@@ -116,10 +116,13 @@ export class StrudelMirror {
           this.drawer.start(this.repl.scheduler);
         } else {
           this.drawer.stop();
+          cleanupDraw(false);
         }
       },
       beforeEval: async () => {
+        cleanupDraw();
         await prebaked;
+        await replOptions?.beforeEval?.();
       },
       afterEval: (options) => {
         // remember for when highlighting is toggled on

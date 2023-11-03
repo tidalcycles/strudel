@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { cleanupDraw, cleanupUi, getDrawContext, logger } from '@strudel.cycles/core';
+import { cleanupDraw, cleanupUi, logger, getDrawContext } from '@strudel.cycles/core';
 import { CodeMirror, cx, flash, useHighlighting, useStrudel } from '@strudel.cycles/react';
 import { getAudioContext, initAudioOnFirstClick, webaudioOutput } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
@@ -35,12 +35,6 @@ const supabase = createClient(
 );
 
 const init = prebake();
-
-let drawContext, clearCanvas;
-if (typeof window !== 'undefined') {
-  drawContext = getDrawContext();
-  clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
-}
 
 const getTime = () => getAudioContext().currentTime;
 
@@ -133,7 +127,7 @@ export function Repl({ embedded = false }) {
           window.postMessage('strudel-start');
         }
       },
-      drawContext,
+      drawContext: getDrawContext(),
       // drawTime: [0, 6],
       paintOptions,
     });
@@ -199,7 +193,7 @@ export function Repl({ embedded = false }) {
   const handleShuffle = async () => {
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
-    clearCanvas();
+    cleanupDraw();
     await resetSounds();
     scheduler.setCps(1);
     await evaluate(code, false);

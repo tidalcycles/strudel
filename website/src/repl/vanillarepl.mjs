@@ -1,12 +1,13 @@
+import { logger, cleanupDraw } from '@strudel.cycles/core';
 import { StrudelMirror } from '@strudel/codemirror';
 import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
 import { transpiler } from '@strudel.cycles/transpiler';
-import { prebake } from './prebake.mjs';
+import { prebake, resetSounds } from './prebake.mjs';
 import { settingsMap } from '@src/settings.mjs';
 import { setLatestCode } from '../settings.mjs';
 import { hash2code, code2hash } from './helpers.mjs';
 import { createClient } from '@supabase/supabase-js';
-import * as tunes from './tunes.mjs';
+import { getRandomTune } from './helpers.mjs';
 
 const supabase = createClient(
   'https://pidxdsxphlhzjnzmifth.supabase.co',
@@ -50,12 +51,6 @@ async function run() {
     console.warn('could not init: no container found');
     return;
   }
-
-  /* let clearCanvas;
-if (typeof window !== 'undefined') {
-  const drawContext = getDrawContext();
-  clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
-} */
 
   // Create a single supabase client for interacting with your database
 
@@ -103,6 +98,15 @@ const drawTime = [-2, 2]; */
   settingsMap.listen((settings, key) => editor.changeSetting(key, settings[key]));
 
   onEvent('strudel-toggle-play', () => editor.toggle());
+  onEvent('strudel-shuffle', async () => {
+    const { code, name } = getRandomTune();
+    logger(`[repl] ✨ loading random tune "${name}"`);
+    console.log(code);
+    editor.setCode(code);
+    await resetSounds();
+    editor.repl.setCps(1);
+    editor.repl.evaluate(code, false);
+  });
 
   // const isEmbedded = embedded || window.location !== window.parent.location;
 }
@@ -123,11 +127,4 @@ function onEvent(key, callback) {
   };
   window.addEventListener('message', listener);
   return () => window.removeEventListener('message', listener);
-}
-
-function getRandomTune() {
-  const allTunes = Object.entries(tunes);
-  const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
-  const [name, code] = randomItem(allTunes);
-  return { name, code };
 }

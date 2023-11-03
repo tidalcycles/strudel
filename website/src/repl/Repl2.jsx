@@ -19,12 +19,7 @@ import Loader from './Loader';
 import './Repl.css';
 import { resetSounds } from './prebake.mjs';
 import { useStore } from '@nanostores/react';
-
-let clearCanvas;
-if (typeof window !== 'undefined') {
-  const drawContext = getDrawContext();
-  clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
-}
+import { getRandomTune } from './helpers.mjs';
 
 export const ReplContext = createContext(null);
 
@@ -57,12 +52,7 @@ export function Repl({ embedded = false }) {
   };
 
   const handleShuffle = async () => {
-    const { code, name } = getRandomTune();
-    logger(`[repl] ✨ loading random tune "${name}"`);
-    clearCanvas();
-    await resetSounds();
-    // scheduler.setCps(1);
-    await evaluate(code, false);
+    window.postMessage('strudel-shuffle');
   };
 
   const handleShare = async () => {
