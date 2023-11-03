@@ -385,6 +385,8 @@ function SettingsTab({ scheduler }) {
     keybindings,
     isLineNumbersDisplayed,
     isAutoCompletionEnabled,
+    isFlashEnabled,
+    isPatternHighlightingEnabled,
     isLineWrappingEnabled,
     fontSize,
     fontFamily,
@@ -461,6 +463,16 @@ function SettingsTab({ scheduler }) {
           label="Enable line wrapping"
           onChange={(cbEvent) => settingsMap.setKey('isLineWrappingEnabled', cbEvent.target.checked)}
           value={isLineWrappingEnabled}
+        />
+        <Checkbox
+          label="Enable pattern highlighting"
+          onChange={(cbEvent) => settingsMap.setKey('isPatternHighlightingEnabled', cbEvent.target.checked)}
+          value={isPatternHighlightingEnabled}
+        />
+        <Checkbox
+          label="Enable flashing on update"
+          onChange={(cbEvent) => settingsMap.setKey('isFlashEnabled', cbEvent.target.checked)}
+          value={isFlashEnabled}
         />
       </FormItem>
       <FormItem label="Zen Mode">Try clicking the logo in the top left!</FormItem>

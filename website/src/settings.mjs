@@ -7,6 +7,8 @@ export const defaultSettings = {
   keybindings: 'codemirror',
   isLineNumbersDisplayed: true,
   isAutoCompletionEnabled: false,
+  isPatternHighlightingEnabled: true,
+  isFlashEnabled: true,
   isLineWrappingEnabled: false,
   theme: 'strudelTheme',
   fontFamily: 'monospace',
@@ -27,6 +29,8 @@ export function useSettings() {
     isLineNumbersDisplayed: [true, 'true'].includes(state.isLineNumbersDisplayed) ? true : false,
     isAutoCompletionEnabled: [true, 'true'].includes(state.isAutoCompletionEnabled) ? true : false,
     isLineWrappingEnabled: [true, 'true'].includes(state.isLineWrappingEnabled) ? true : false,
+    isPatternHighlightingEnabled: [true, 'true'].includes(state.isPatternHighlightingEnabled) ? true : false,
+    isFlashEnabled: [true, 'true'].includes(state.isFlashEnabled) ? true : false,
     fontSize: Number(state.fontSize),
     panelPosition: state.activeFooter !== '' ? state.panelPosition : 'bottom',
   };

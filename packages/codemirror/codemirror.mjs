@@ -4,25 +4,37 @@ import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language'
 import { EditorState, Compartment } from '@codemirror/state';
 import { EditorView, highlightActiveLineGutter, keymap, lineNumbers } from '@codemirror/view';
 import { Drawer, repl } from '@strudel.cycles/core';
-import { flashField, flash } from './flash.mjs';
-import { highlightExtension, highlightMiniLocations, updateMiniLocations } from './highlight.mjs';
-import { oneDark } from './themes/one-dark';
+import { isFlashEnabled, flash } from './flash.mjs';
+import { highlightMiniLocations, updateMiniLocations, isPatternHighlightingEnabled } from './highlight.mjs';
+import { theme } from './themes.mjs';
+import { isAutoCompletionEnabled } from './Autocomplete';
+import { keybindings } from './keybindings.mjs';
 
-const themeComparment = new Compartment();
+const extensions = {
+  isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
+  isLineNumbersDisplayed: (on) => (on ? lineNumbers() : lineNumbers({ formatNumber: () => '' })),
+  theme,
+  isAutoCompletionEnabled,
+  isPatternHighlightingEnabled,
+  isFlashEnabled,
+  keybindings,
+};
+const compartments = Object.fromEntries(Object.keys(extensions).map((key) => [key, new Compartment()]));
 
 // https://codemirror.net/docs/guide/
-export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, theme = oneDark, root }) {
+export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, settings, root }) {
+  const initialSettings = Object.keys(compartments).map((key) =>
+    compartments[key].of(extensions[key](parseBooleans(settings[key]))),
+  );
+  console.log('settings', settings);
   let state = EditorState.create({
     doc: initialCode,
     extensions: [
-      themeComparment.of(theme),
+      ...initialSettings,
       javascript(),
-      lineNumbers(),
-      highlightExtension,
       highlightActiveLineGutter(),
       syntaxHighlighting(defaultHighlightStyle),
       keymap.of(defaultKeymap),
-      flashField,
       EditorView.updateListener.of((v) => onChange(v)),
       keymap.of([
         {
@@ -64,8 +76,10 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, the
 
 export class StrudelMirror {
   constructor(options) {
-    const { root, initialCode = '', onDraw, drawTime = [-2, 2], prebake, theme, ...replOptions } = options;
+    const { root, initialCode = '', onDraw, drawTime = [-2, 2], prebake, settings, ...replOptions } = options;
     this.code = initialCode;
+    this.root = root;
+    this.miniLocations = [];
 
     this.drawer = new Drawer((haps, time) => {
       const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.endClipped);
@@ -100,14 +114,16 @@ export class StrudelMirror {
         await prebaked;
       },
       afterEval: (options) => {
-        updateMiniLocations(this.editor, options.meta?.miniLocations);
+        // remember for when highlighting is toggled on
+        this.miniLocations = options.meta?.miniLocations;
+        updateMiniLocations(this.editor, this.miniLocations);
         replOptions?.afterEval?.(options);
         this.drawer.invalidate();
       },
     });
     this.editor = initEditor({
       root,
-      theme,
+      settings,
       initialCode,
       onChange: (v) => {
         if (v.docChanged) {
@@ -139,13 +155,58 @@ export class StrudelMirror {
   highlight(haps, time) {
     highlightMiniLocations(this.editor, time, haps);
   }
-  setTheme(theme) {
+  setFontSize(size) {
+    this.root.style.fontSize = size + 'px';
+  }
+  setFontFamily(family) {
+    this.root.style.fontFamily = family;
+  }
+  reconfigureExtension(key, value) {
+    if (!extensions[key]) {
+      console.warn(`extension ${key} is not known`);
+      return;
+    }
+    value = parseBooleans(value);
+    const newValue = extensions[key](value, this);
     this.editor.dispatch({
-      effects: themeComparment.reconfigure(theme),
+      effects: compartments[key].reconfigure(newValue),
     });
+  }
+  setLineWrappingEnabled(enabled) {
+    this.reconfigureExtension('isLineWrappingEnabled', enabled);
+  }
+  setLineNumbersDisplayed(enabled) {
+    this.reconfigureExtension('isLineNumbersDisplayed', enabled);
+  }
+  setTheme(theme) {
+    this.reconfigureExtension('theme', theme);
+  }
+  setAutocompletionEnabled(enabled) {
+    this.reconfigureExtension('isAutoCompletionEnabled', enabled);
+  }
+  updateSettings(settings) {
+    this.setFontSize(settings.fontSize);
+    this.setFontFamily(settings.fontFamily);
+    for (let key in extensions) {
+      this.reconfigureExtension(key, settings[key]);
+    }
+  }
+  changeSetting(key, value) {
+    if (extensions[key]) {
+      this.reconfigureExtension(key, value);
+      return;
+    } else if (key === 'fontFamily') {
+      this.setFontFamily(value);
+    } else if (key === 'fontSize') {
+      this.setFontSize(value);
+    }
   }
   setCode(code) {
     const changes = { from: 0, to: this.editor.state.doc.length, insert: code };
     this.editor.dispatch({ changes });
   }
+}
+
+function parseBooleans(value) {
+  return { true: true, false: false }[value] ?? value;
 }

@@ -71,6 +71,9 @@ importers:
 
   packages/codemirror:
     dependencies:
+      '@codemirror/autocomplete':
+        specifier: ^6.6.0
+        version: 6.6.0(@codemirror/language@6.6.0)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)(@lezer/common@1.0.2)
       '@codemirror/commands':
         specifier: ^6.2.4
         version: 6.2.4
@@ -89,9 +92,27 @@ importers:
       '@lezer/highlight':
         specifier: ^1.1.4
         version: 1.1.4
+      '@replit/codemirror-emacs':
+        specifier: ^6.0.1
+        version: 6.0.1(@codemirror/autocomplete@6.6.0)(@codemirror/commands@6.2.4)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)
+      '@replit/codemirror-vim':
+        specifier: ^6.0.14
+        version: 6.0.14(@codemirror/commands@6.2.4)(@codemirror/language@6.6.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)
+      '@replit/codemirror-vscode-keymap':
+        specifier: ^6.0.2
+        version: 6.0.2(@codemirror/autocomplete@6.6.0)(@codemirror/commands@6.2.4)(@codemirror/language@6.6.0)(@codemirror/lint@6.1.0)(@codemirror/search@6.2.3)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)
       '@strudel.cycles/core':
         specifier: workspace:*
         version: link:../core
+      '@uiw/codemirror-themes':
+        specifier: ^4.19.16
+        version: 4.19.16(@codemirror/language@6.6.0)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)
+      '@uiw/codemirror-themes-all':
+        specifier: ^4.19.16
+        version: 4.19.16(@codemirror/language@6.6.0)(@codemirror/state@6.2.0)(@codemirror/view@6.10.0)
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
     devDependencies:
       vite:
         specifier: ^4.3.3
