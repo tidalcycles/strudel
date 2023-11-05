@@ -3297,6 +3297,39 @@ exports[`runs examples > example "perlin" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "pianoroll" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | note:C2 s:piano clip:1 ]",
+  "[ (1/4 → 1/3) ⇝ 3/8 | note:C2 s:piano clip:1 ]",
+  "[ 1/4 ⇜ (1/3 → 3/8) | note:A2 s:piano clip:1 ]",
+  "[ 3/8 → 1/2 | note:A2 s:piano clip:1 ]",
+  "[ (5/8 → 2/3) ⇝ 3/4 | note:A2 s:piano clip:1 ]",
+  "[ 5/8 ⇜ (2/3 → 3/4) | note:G2 s:piano clip:1 ]",
+  "[ 3/4 → 7/8 | note:G2 s:piano clip:1 ]",
+  "[ 1/1 → 9/8 | note:C2 s:piano clip:1 ]",
+  "[ (5/4 → 4/3) ⇝ 11/8 | note:C2 s:piano clip:1 ]",
+  "[ 5/4 ⇜ (4/3 → 11/8) | note:A2 s:piano clip:1 ]",
+  "[ 11/8 → 3/2 | note:A2 s:piano clip:1 ]",
+  "[ (13/8 → 5/3) ⇝ 7/4 | note:A2 s:piano clip:1 ]",
+  "[ 13/8 ⇜ (5/3 → 7/4) | note:G2 s:piano clip:1 ]",
+  "[ 7/4 → 15/8 | note:G2 s:piano clip:1 ]",
+  "[ 2/1 → 17/8 | note:C2 s:piano clip:1 ]",
+  "[ (9/4 → 7/3) ⇝ 19/8 | note:C2 s:piano clip:1 ]",
+  "[ 9/4 ⇜ (7/3 → 19/8) | note:A2 s:piano clip:1 ]",
+  "[ 19/8 → 5/2 | note:A2 s:piano clip:1 ]",
+  "[ (21/8 → 8/3) ⇝ 11/4 | note:A2 s:piano clip:1 ]",
+  "[ 21/8 ⇜ (8/3 → 11/4) | note:G2 s:piano clip:1 ]",
+  "[ 11/4 → 23/8 | note:G2 s:piano clip:1 ]",
+  "[ 3/1 → 25/8 | note:C2 s:piano clip:1 ]",
+  "[ (13/4 → 10/3) ⇝ 27/8 | note:C2 s:piano clip:1 ]",
+  "[ 13/4 ⇜ (10/3 → 27/8) | note:A2 s:piano clip:1 ]",
+  "[ 27/8 → 7/2 | note:A2 s:piano clip:1 ]",
+  "[ (29/8 → 11/3) ⇝ 15/4 | note:A2 s:piano clip:1 ]",
+  "[ 29/8 ⇜ (11/3 → 15/4) | note:G2 s:piano clip:1 ]",
+  "[ 15/4 → 31/8 | note:G2 s:piano clip:1 ]",
+]
+`;
+
 exports[`runs examples > example "pick" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | note:g ]",
