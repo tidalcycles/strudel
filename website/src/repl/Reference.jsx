@@ -3,6 +3,12 @@ const visibleFunctions = jsdocJson.docs
   .filter(({ name, description }) => name && !name.startsWith('_') && !!description)
   .sort((a, b) => /* a.meta.filename.localeCompare(b.meta.filename) +  */ a.name.localeCompare(b.name));
 
+const getInnerText = (html) => {
+  var div = document.createElement('div');
+  div.innerHTML = html;
+  return div.textContent || div.innerText || '';
+};
+
 export function Reference() {
   return (
     <div className="flex h-full w-full pt-2 text-foreground overflow-hidden">
@@ -24,8 +30,14 @@ export function Reference() {
             <section key={i}>
               <h3 id={`doc-${i}`}>{entry.name}</h3>
               {/* <small>{entry.meta.filename}</small> */}
-
               <p dangerouslySetInnerHTML={{ __html: entry.description }}></p>
+              <ul>
+                {entry.params?.map(({ name, type, description }, i) => (
+                  <li key={i}>
+                    {name} : {type.names?.join(' | ')} {description ? <> - {getInnerText(description)}</> : ''}
+                  </li>
+                ))}
+              </ul>
               {entry.examples?.map((example, j) => (
                 <pre key={j}>{example}</pre>
               ))}
