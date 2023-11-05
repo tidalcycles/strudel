@@ -2392,3 +2392,29 @@ export const ref = (accessor) =>
   pure(1)
     .withValue(() => reify(accessor()))
     .innerJoin();
+
+let fadeGain = (p) => (p < 0.5 ? 1 : 1 - (p - 0.5) / 0.5);
+
+/**
+ * Cross-fades between left and right from 0 to 1:
+ * - 0 = (full left, no right)
+ * - .5 = (both equal)
+ * - 1 = (no left, full right)
+ *
+ * @name xfade
+ * @example
+ * xfade(s("bd*2"), "<0 .25 .5 .75 1>", s("hh*8"))
+ */
+export let xfade = (a, pos, b) => {
+  pos = reify(pos);
+  a = reify(a);
+  b = reify(b);
+  let gaina = pos.fmap((v) => ({ gain: fadeGain(v) }));
+  let gainb = pos.fmap((v) => ({ gain: fadeGain(1 - v) }));
+  return stack(a.mul(gaina), b.mul(gainb));
+};
+
+// the prototype version is actually flipped so left/right makes sense
+Pattern.prototype.xfade = function (pos, b) {
+  return xfade(this, pos, b);
+};
