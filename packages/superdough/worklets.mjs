@@ -106,3 +106,36 @@ class ShapeProcessor extends AudioWorkletProcessor {
 }
 
 registerProcessor('shape-processor', ShapeProcessor);
+
+// class PhaseProcessor extends AudioWorkletProcessor {
+//   static get parameterDescriptors() {
+//     return [{ name: 'phaser', defaultValue: 0 }];
+//   }
+
+//   constructor() {
+//     super();
+//     this.notStarted = true;
+//   }
+
+//   process(inputs, outputs, parameters) {
+//     const input = inputs[0];
+//     const output = outputs[0];
+//     const phaser0 = parameters.phaser[0];
+//     const phaser1 = phaser0 < 1 ? phaser0 : 1.0 - 4e-10;
+//     const phaser = (2.0 * phaser1) / (1.0 - phaser1);
+//     const blockSize = 128;
+//     const hasInput = !(input[0] === undefined);
+//     if (hasInput) {
+//       this.notStarted = false;
+//       for (let n = 0; n < blockSize; n++) {
+//         const value = ((1 + phaser) * input[0][n]) / (1 + phaser * Math.abs(input[0][n]));
+//         for (let o = 0; o < output.length; o++) {
+//           output[o][n] = value;
+//         }
+//       }
+//     }
+//     return this.notStarted || hasInput;
+//   }
+// }
+
+// registerProcessor('phaser-processor', PhaseProcessor);

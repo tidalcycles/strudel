@@ -380,6 +380,17 @@ const generic_params = [
    *
    */
   ['coarse'],
+
+  /**
+   * fake-resampling for lowering the sample rate. Caution: This effect seems to only work in chromium based browsers
+   *
+   * @name phaser
+   * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.
+   * @example
+   * s("bd sd,hh*4").coarse("<1 4 8 16 32>")
+   *
+   */
+  ['phaser'],
   /**
    * choose the channel the pattern is sent to in superdirt
    *

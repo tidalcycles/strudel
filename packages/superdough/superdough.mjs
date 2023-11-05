@@ -7,6 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
+import './phaser.mjs';
 import { clamp } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
 import { createFilter, gainNode, getCompressor } from './helpers.mjs';
@@ -226,6 +227,9 @@ export const superdough = async (value, deadline, hapDuration) => {
     bpsustain = 1,
     bprelease = 0.01,
     bandq = 1,
+
+    //phaser
+    phaser,
     //
     coarse,
     crush,
@@ -361,10 +365,16 @@ export const superdough = async (value, deadline, hapDuration) => {
     chain.push(vowelFilter);
   }
 
+  if (phaser !== undefined) {
+    const phaserFX = ac.createPhaser(phaser);
+    chain.push(phaserFX);
+  }
+
   // effects
   coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
   shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
+  // phaser !== undefined && chain.push(getWorklet(ac, 'phaser-processor', { phaser }));
 
   compressorThreshold !== undefined &&
     chain.push(
