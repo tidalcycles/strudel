@@ -366,7 +366,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
 
   if (phaser !== undefined) {
-    const phaserFX = ac.createPhaser(phaser);
+    const phaserFX = ac.createPhaser(phaser, hapDuration);
     chain.push(phaserFX);
   }
 
