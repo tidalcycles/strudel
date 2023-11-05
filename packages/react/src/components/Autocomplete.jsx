@@ -26,7 +26,6 @@ export function Autocomplete({ doc }) {
             <pre
               className="cursor-pointer"
               onMouseDown={(e) => {
-                console.log('ola!');
                 navigator.clipboard.writeText(example);
                 e.stopPropagation();
               }}

@@ -385,6 +385,7 @@ function SettingsTab({ scheduler }) {
     keybindings,
     isLineNumbersDisplayed,
     isAutoCompletionEnabled,
+    isTooltipEnabled,
     isLineWrappingEnabled,
     fontSize,
     fontFamily,
@@ -456,6 +457,11 @@ function SettingsTab({ scheduler }) {
           label="Enable auto-completion"
           onChange={(cbEvent) => settingsMap.setKey('isAutoCompletionEnabled', cbEvent.target.checked)}
           value={isAutoCompletionEnabled}
+        />
+        <Checkbox
+          label="Enable tooltips on Ctrl and hover"
+          onChange={(cbEvent) => settingsMap.setKey('isTooltipEnabled', cbEvent.target.checked)}
+          value={isTooltipEnabled}
         />
         <Checkbox
           label="Enable line wrapping"
