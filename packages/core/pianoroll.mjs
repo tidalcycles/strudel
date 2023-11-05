@@ -77,12 +77,12 @@ Pattern.prototype.pianoroll = function (options = {}) {
  * @param {string} background hexadecimal or CSS color (defaults to transparent) - color of the background
  * @param {string} playheadColor hexadecimal or CSS color (defaults to transparent) - color of the line representing the play head
  * @param {integer} fill 1 (default) or 0 - notes are filled with color (otherwise only the label is displayed)
- * @param {boolean} fillActive: false (default) or true - active notes are filled with color
+ * @param {boolean} fillActive false (default) or true - active notes are filled with color
  * @param {integer} stroke 0 (default) or 1 - notes are shown with colored borders
- * @param {boolean} strokeActive: false (default) or true - active notes are shown with colored borders
+ * @param {boolean} strokeActive false (default) or true - active notes are shown with colored borders
  * @param {integer} hideInactive 0 (default) or 1 - only active notes are shown
  * @param {integer} colorizeInactive 1 (default) or 0 - use note color for inactive notes
- * @param {string} fontFamily: defaults to 'monospace' - define the font used by notes labels
+ * @param {string} fontFamily defaults to 'monospace' - define the font used by notes labels
  * @param {integer} minMidi integer, defaults to 10 - minimum note value to display on the value axis
  * @param {integer} maxMidi integer, defaults to 90 - maximum note value to display on the value axis
  * @param {integer} autorange 0 (default) or 1 - automatically calculate the minMidi and maxMidi parameters
