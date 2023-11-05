@@ -2191,6 +2191,9 @@ export const duration = register('duration', function (value, pat) {
 
 /**
  * Sets the color of the hap in visualizations like pianoroll or highlighting.
+ * @name color
+ * @synonyms colour
+ * @param {string} color Hexadecimal or CSS color name
  */
 // TODO: move this to controls https://github.com/tidalcycles/strudel/issues/288
 export const { color, colour } = register(['color', 'colour'], function (color, pat) {
