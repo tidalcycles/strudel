@@ -14,12 +14,20 @@ export function Reference() {
     <div className="flex h-full w-full pt-2 text-foreground overflow-hidden">
       <div className="w-42 flex-none h-full overflow-y-auto overflow-x-hidden pr-4">
         {visibleFunctions.map((entry, i) => (
-          <a key={i} className="cursor-pointer block hover:bg-lineHighlight py-1 px-4" href={`#doc-${i}`}>
+          <a
+            key={i}
+            className="cursor-pointer block hover:bg-lineHighlight py-1 px-4"
+            onClick={() => {
+              const el = document.getElementById(`doc-${i}`);
+              const container = document.getElementById('reference-container');
+              container.scrollTo(0, el.offsetTop);
+            }}
+          >
             {entry.name} {/* <span className="text-gray-600">{entry.meta.filename}</span> */}
           </a>
         ))}
       </div>
-      <div className="break-normal w-full h-full overflow-auto pl-4 flex relative">
+      <div className="break-normal w-full h-full overflow-auto pl-4 flex relative" id="reference-container">
         <div className="prose dark:prose-invert max-w-full pr-4">
           <h2>API Reference</h2>
           <p>
