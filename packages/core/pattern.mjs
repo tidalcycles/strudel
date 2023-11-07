@@ -9,7 +9,7 @@ import Fraction from './fraction.mjs';
 import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
-
+import { char2fraction } from './util.mjs';
 import { compose, removeUndefineds, flatten, id, listRange, curry, _mod, numeralArgs, parseNumeral } from './util.mjs';
 import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
@@ -1903,6 +1903,7 @@ export const when = register('when', function (on, func, pat) {
  * "c3 eb3 g3".off(1/8, x=>x.add(7)).note()
  */
 export const off = register('off', function (time_pat, func, pat) {
+  time_pat = char2fraction(time_pat);
   return stack(pat, func(pat.late(time_pat)));
 });
 
