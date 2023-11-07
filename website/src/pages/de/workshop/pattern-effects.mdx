@@ -1,5 +1,5 @@
 ---
-title: Pattern Effekte
+title: Pattern-Effekte
 layout: ../../../layouts/MainLayout.astro
 ---
 
@@ -7,11 +7,11 @@ import { MiniRepl } from '@src/docs/MiniRepl';
 import Box from '@components/Box.astro';
 import QA from '@components/QA';
 
-# Pattern Effekte
+# Pattern-Effekte
 
-Bis jetzt sind die meisten Funktionen die wir kennengelernt haben ähnlich wie Funktionen in anderen Musik Programmen: Sequencing von Sounds, Noten und Effekten.
+Bis jetzt sind die meisten Funktionen, die wir kennengelernt haben, ähnlich wie Funktionen in anderen Musik Programmen: Sequencing von Sounds, Noten und Effekten.
 
-In diesem Kapitel beschäftigen wir uns mit Funktionen die weniger herkömmlich oder auch enzigartig sind.
+In diesem Kapitel beschäftigen wir uns mit Funktionen die weniger herkömmlich oder auch einzigartig sind.
 
 **rev = rückwärts abspielen**
 
@@ -21,7 +21,7 @@ In diesem Kapitel beschäftigen wir uns mit Funktionen die weniger herkömmlich 
 
 <MiniRepl hideHeader client:visible tune={`n("0 1 [4 3] 2").sound("jazz").jux(rev)`} />
 
-So würde man das ohne jux schreiben:
+So würde man das ohne `jux` schreiben:
 
 <MiniRepl
   hideHeader
@@ -32,7 +32,7 @@ So würde man das ohne jux schreiben:
 )`}
 />
 
-Lass uns visualisieren was hier passiert:
+Lass uns visualisieren, was hier passiert:
 
 <MiniRepl
   hideHeader
@@ -54,7 +54,7 @@ Schreibe `//` vor eine der beiden Zeilen im `stack`!
 
 <MiniRepl hideHeader client:visible tune={`note("c2, eb3 g3 [bb3 c4]").sound("piano").slow("1,2,3")`} />
 
-Das hat den gleichen Effekt wie:
+Das hat den gleichen Effekt, wie:
 
 <MiniRepl
   hideHeader
@@ -161,11 +161,11 @@ Probier `ply` mit einem pattern zu automatisieren, z.b. `"<1 2 1 3>"`
 
 <Box>
 
-In der notation `x=>x.`, das `x` ist das Pattern das wir bearbeiten.
+In der Notation `x=>x.`, ist `x` das Pattern, das wir bearbeiten.
 
 </Box>
 
-`off` ist auch nützlich für sounds:
+`off` ist auch nützlich für Sounds:
 
 <MiniRepl
   hideHeader
@@ -174,10 +174,10 @@ In der notation `x=>x.`, das `x` ist das Pattern das wir bearbeiten.
   .off(1/8, x=>x.speed(1.5).gain(.25))`}
 />
 
-| name | description                       | example                                                                                        |
-| ---- | --------------------------------- | ---------------------------------------------------------------------------------------------- |
-| rev  | rückwärts                         | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").rev()`} />            |
-| jux  | ein stereo-kanal modifizieren     | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").jux(rev)`} />         |
-| add  | addiert zahlen oder noten         | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6".add("<0 1 2 1>")).scale("C:minor")`} /> |
-| ply  | multipliziert jedes element x mal | <MiniRepl hideHeader client:visible tune={`s("bd sd").ply("<1 2 3>")`} />                      |
-| off  | verzögert eine modifizierte kopie | <MiniRepl hideHeader client:visible tune={`s("bd sd, hh*4").off(1/8, x=>x.speed(2))`} />       |
+| Name | Beschreibung                        | Beispiel                                                                                       |
+| ---- | ----------------------------------- | ---------------------------------------------------------------------------------------------- |
+| rev  | rückwärts                           | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").rev()`} />            |
+| jux  | einen Stereo-Kanal modifizieren     | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").jux(rev)`} />         |
+| add  | addiert Zahlen oder Noten           | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6".add("<0 1 2 1>")).scale("C:minor")`} /> |
+| ply  | multipliziert jedes Element x mal   | <MiniRepl hideHeader client:visible tune={`s("bd sd").ply("<1 2 3>")`} />                      |
+| off  | verzögert eine modifizierte Kopie   | <MiniRepl hideHeader client:visible tune={`s("bd sd, hh*4").off(1/8, x=>x.speed(2))`} />       |
