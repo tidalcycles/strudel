@@ -1,10 +1,10 @@
 const createFilter = (ctx, cutoff, Q) => {
-  const lowpassFilter = ctx.createBiquadFilter();
-  lowpassFilter.type = 'notch';
-  lowpassFilter.gain.value = 1;
-  lowpassFilter.frequency.value = cutoff;
-  lowpassFilter.Q.value = Q;
-  return lowpassFilter;
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'notch';
+  filter.gain.value = 1;
+  filter.frequency.value = cutoff;
+  filter.Q.value = Q;
+  return filter;
 };
 
 const createOscillator = (ctx, freq) => {
@@ -26,12 +26,15 @@ const createLFO = (ctx, freq, gain) => {
   osc.connect(gainNode);
   return gainNode;
 };
+
 if (typeof GainNode !== 'undefined') {
   class PhaserNode extends GainNode {
-    constructor(ac, speed, cps) {
+    constructor(ac, input) {
       super(ac);
       this.lfo;
-      console.log(cps);
+
+      const { speed, depth = 0.5 } = input;
+      console.log(depth);
 
       const makeupGain = ac.createGain();
 
@@ -43,7 +46,7 @@ if (typeof GainNode !== 'undefined') {
       for (let i = 0; i < numStages; i++) {
         const gain = ac.createGain();
         gain.gain.value = 1 / numStages;
-        const filter = createFilter(ac, 1000 + fOffset, 0.5);
+        const filter = createFilter(ac, 1000 + fOffset, 2 - Math.min(Math.max(depth * 2, 0), 1.9));
         this.connect(filter);
         this.lfo.connect(filter.detune);
         filter.connect(gain);

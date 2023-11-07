@@ -382,15 +382,25 @@ const generic_params = [
   ['coarse'],
 
   /**
-   * fake-resampling for lowering the sample rate. Caution: This effect seems to only work in chromium based browsers
+   * Phaser audio effect that approximates popular guitar pedals.
    *
    * @name phaser
-   * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.
+   * @param {number | Pattern} speed speed of modulation
    * @example
-   * s("bd sd,hh*4").coarse("<1 4 8 16 32>")
+   * run(8).scale("D:pentatonic").note().sound("sawtooth").phaser("2 8").release(0.5)
    *
    */
   ['phaser'],
+  /**
+   *
+   *
+   * @name phaserDepth
+   * @param {number | Pattern} depth number between 0 and 1
+   * @example
+   * run(8).scale("D:pentatonic").note().sound("sawtooth").phaser("2 8").phaserDepth(0.5).release(0.5)
+   *
+   */
+  ['phaserDepth'],
   /**
    * choose the channel the pattern is sent to in superdirt
    *
