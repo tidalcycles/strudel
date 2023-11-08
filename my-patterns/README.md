@@ -47,7 +47,7 @@ If you want to automatically deploy your site on push, go to `deploy.yml` and ch
 ## running locally
 
 - install dependencies with `npm run setup`
-- run dev server with `npm run repl` and open `http://localhost:3000/strudel/swatch/`
+- run dev server with `npm run repl` and open `http://localhost:4321/strudel/swatch/`
 
 ## tests fail?
 

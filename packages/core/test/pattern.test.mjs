@@ -1003,4 +1003,23 @@ describe('Pattern', () => {
       );
     });
   });
+  describe('chunk', () => {
+    it('Processes each cycle of the source pattern multiple times, once for each chunk', () => {
+      expect(sequence(0, 1, 2, 3).slow(2).chunk(2, add(10)).fast(4).firstCycleValues).toStrictEqual([
+        10, 1, 0, 11, 12, 3, 2, 13,
+      ]);
+    });
+  });
+  describe('fastChunk', () => {
+    it('Unlike chunk, cycles of the source pattern proceed cycle-by-cycle', () => {
+      expect(sequence(0, 1, 2, 3).slow(2).fastChunk(2, add(10)).fast(4).firstCycleValues).toStrictEqual([
+        10, 1, 2, 13, 10, 1, 2, 13,
+      ]);
+    });
+  });
+  describe('repeatCycles', () => {
+    it('Repeats each cycle of the source pattern the given number of times', () => {
+      expect(slowcat(0, 1).repeatCycles(2).fast(6).firstCycleValues).toStrictEqual([0, 0, 1, 1, 0, 0]);
+    });
+  });
 });

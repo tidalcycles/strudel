@@ -51,7 +51,7 @@ export function MiniRepl({
       .catch((err) => console.error(err));
   }, []);
   return Repl ? (
-    <div className="mb-4">
+    <div className="mb-4 mini-repl">
       <Repl
         tune={tune}
         hideOutsideView={true}

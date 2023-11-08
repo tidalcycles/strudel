@@ -162,9 +162,17 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
     if (handler) {
       return handler(sampleMap);
     }
+    if (sampleMap.startsWith('bubo:')) {
+      const [_, repo] = sampleMap.split(':');
+      sampleMap = `github:Bubobubobubobubo/dough-${repo}`;
+    }
     if (sampleMap.startsWith('github:')) {
       let [_, path] = sampleMap.split('github:');
       path = path.endsWith('/') ? path.slice(0, -1) : path;
+      if (path.split('/').length === 2) {
+        // assume main as default branch if none set
+        path += '/main';
+      }
       sampleMap = `https://raw.githubusercontent.com/${path}/strudel.json`;
     }
     if (sampleMap.startsWith('shabda:')) {

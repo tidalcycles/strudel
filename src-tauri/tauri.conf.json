@@ -3,7 +3,7 @@
   "build": {
     "beforeBuildCommand": "npm run build",
     "beforeDevCommand": "npm run dev",
-    "devPath": "http://localhost:3000",
+    "devPath": "http://localhost:4321",
     "distDir": "../website/dist",
     "withGlobalTauri": true
   },
@@ -13,6 +13,12 @@
   },
   "tauri": {
     "allowlist": {
+      "dialog": {
+        "all": true
+      },
+      "clipboard": {
+        "writeText": true
+      },
       "all": false,
       "fs": {
         "all": true,

@@ -23,6 +23,7 @@ import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
 import { isTauri } from '../tauri.mjs';
 import { useWidgets } from '@strudel.cycles/react/src/hooks/useWidgets.mjs';
+import { writeText } from '@tauri-apps/api/clipboard';
 
 const { latestCode } = settingsMap.get();
 
@@ -125,6 +126,7 @@ export function Repl({ embedded = false }) {
     fontFamily,
     isLineNumbersDisplayed,
     isAutoCompletionEnabled,
+    isTooltipEnabled,
     isLineWrappingEnabled,
     panelPosition,
     isZen,
@@ -270,7 +272,11 @@ export function Repl({ embedded = false }) {
     if (!error) {
       setLastShared(activeCode || code);
       // copy shareUrl to clipboard
-      await navigator.clipboard.writeText(shareUrl);
+      if (isTauri()) {
+        await writeText(shareUrl);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+      }
       const message = `Link copied to clipboard: ${shareUrl}`;
       alert(message);
       // alert(message);
@@ -330,6 +336,7 @@ export function Repl({ embedded = false }) {
               keybindings={keybindings}
               isLineNumbersDisplayed={isLineNumbersDisplayed}
               isAutoCompletionEnabled={isAutoCompletionEnabled}
+              isTooltipEnabled={isTooltipEnabled}
               isLineWrappingEnabled={isLineWrappingEnabled}
               fontSize={fontSize}
               fontFamily={fontFamily}

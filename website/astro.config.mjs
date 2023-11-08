@@ -50,6 +50,7 @@ export default defineConfig({
     mdx(options),
     tailwind(),
     AstroPWA({
+      experimental: { directoryAndTrailingSlashHandler: true },
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       workbox: {
