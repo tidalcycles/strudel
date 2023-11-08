@@ -263,7 +263,7 @@ export const superdough = async (value, deadline, hapDuration) => {
 
     //phaser
     phaser,
-    phaserdepth,
+    phaserdepth = 0.75,
     //
     coarse,
     crush,
@@ -418,7 +418,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     chain.push(panner);
   }
   // phaser
-  if (phaser !== undefined) {
+  if (phaser !== undefined && phaserdepth > 0) {
     const phaserFX = getPhaser(phaser, phaserdepth);
     chain.push(phaserFX);
   }
