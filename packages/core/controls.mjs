@@ -407,7 +407,7 @@ const generic_params = [
    *  The center frequency of the phaser in HZ
    *
    * @name phasercenter
-   * @param {number | Pattern} centerfrequency most useful values are between 0 and 1
+   * @param {number | Pattern} centerfrequency in HZ
    * @example
    * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8").phasercenter(2000)
    *
