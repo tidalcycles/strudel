@@ -112,18 +112,25 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
   return delays[orbit];
 }
 
-function getPhaser(speed = 1, depth = 0.5) {
+const phaserLFOs = {};
+function getPhaser(orbit, t, speed = 1, depth = 0.5) {
   //gain
   const ac = getAudioContext();
   const lfoGain = ac.createGain();
   lfoGain.gain.value = 2000;
 
-  //lfo TODO: set the lfo phase relative to current cycle to create "free running" effect
-  const lfo = ac.createOscillator();
-  lfo.frequency.value = speed;
-  lfo.type = 'sine';
-  lfo.start();
-  lfo.connect(lfoGain);
+  //LFO
+  if (phaserLFOs[orbit] == null) {
+    phaserLFOs[orbit] = ac.createOscillator();
+    phaserLFOs[orbit].frequency.value = speed;
+    phaserLFOs[orbit].type = 'sine';
+    phaserLFOs[orbit].start();
+  }
+
+  phaserLFOs[orbit].connect(lfoGain);
+  if (phaserLFOs[orbit].frequency.value != speed) {
+    phaserLFOs[orbit].frequency.setValueAtTime(speed, t);
+  }
 
   //filters
   const numStages = 2; //num of filters in series
@@ -419,7 +426,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
   // phaser
   if (phaser !== undefined && phaserdepth > 0) {
-    const phaserFX = getPhaser(phaser, phaserdepth);
+    const phaserFX = getPhaser(orbit, t, phaser, phaserdepth);
     chain.push(phaserFX);
   }
 
