@@ -113,69 +113,46 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
   return delays[orbit];
 }
 
-const createFilter2 = (ctx, cutoff, Q) => {
-  const filter = ctx.createBiquadFilter();
-  filter.type = 'notch';
-  filter.gain.value = 1;
-  filter.frequency.value = cutoff;
-  filter.Q.value = Q;
-  return filter;
-};
+let phaserLFOs = {};
 
-const createOscillator = (ctx, freq) => {
-  const osc = ctx.createOscillator();
-  osc.frequency.value = freq;
-  osc.type = 'sine';
-  return osc;
-};
-const createGain = (ctx, gain) => {
-  const gainNode = ctx.createGain();
-  gainNode.gain.value = gain;
-  return gainNode;
-};
+function getPhaser(orbit, speed = 1, depth = 0.5, t) {
+  //gain
+  const ac = getAudioContext();
+  const lfoGain = ac.createGain();
+  lfoGain.gain.value = 2000;
 
-const createLFO = (ctx, freq, gain) => {
-  const osc = createOscillator(ctx, freq);
-  const gainNode = createGain(ctx, gain);
-  osc.start();
-  osc.connect(gainNode);
-  return gainNode;
-};
-
-let phasers = {};
-
-function getPhaser(orbit, speed = 1, depth = 0.5) {
-  if (!delays[orbit]) {
-    const ac = getAudioContext();
-
-    let lfo;
-
-    const makeupGain = ac.createGain();
-
-    if (lfo == null) {
-      lfo = createLFO(ac, speed, 2000);
-    }
-    const numStages = 2;
-    let fOffset = 0;
-    for (let i = 0; i < numStages; i++) {
-      const gain = ac.createGain();
-      gain.gain.value = 1 / numStages;
-      const filter = createFilter2(ac, 1000 + fOffset, 2 - Math.min(Math.max(depth * 2, 0), 1.9));
-      makeupGain.connect(filter);
-      lfo.connect(filter.detune);
-      filter.connect(gain);
-      gain.connect(makeupGain);
-      fOffset += 200 + Math.pow(i, 2);
-    }
-    makeupGain.gain.value = 1; // how much makeup gain to add?
-
-    makeupGain.connect(getDestination());
-    phasers[orbit] = makeupGain;
+  //lfo
+  if (phaserLFOs[orbit] == null) {
+    const lfo = ac.createOscillator();
+    lfo.frequency.value = speed;
+    lfo.type = 'sine';
+    lfo.start();
+    phaserLFOs[orbit] = lfo;
   }
-  console.log(phasers);
-  // delays[orbit].delayTime.value !== delaytime && delays[orbit].delayTime.setValueAtTime(delaytime, t);
-  // delays[orbit].feedback.value !== delayfeedback && delays[orbit].feedback.setValueAtTime(delayfeedback, t);
-  return phasers[orbit];
+  if (phaserLFOs[orbit].frequency.value !== speed) {
+    phaserLFOs[orbit].frequency.setValueAtTime(speed, t);
+  }
+  phaserLFOs[orbit].connect(lfoGain);
+
+  //filters
+  const numStages = 2; //num of filters in series
+  let fOffset = 0;
+  const filterChain = [];
+  for (let i = 0; i < numStages; i++) {
+    const filter = ac.createBiquadFilter();
+    filter.type = 'notch';
+    filter.gain.value = 1;
+    filter.frequency.value = 1000 + fOffset;
+    filter.Q.value = 2 - Math.min(Math.max(depth * 2, 0), 1.9);
+
+    lfoGain.connect(filter.detune);
+    fOffset += 282;
+    if (i > 0) {
+      filterChain[i - 1].connect(filter);
+    }
+    filterChain.push(filter);
+  }
+  return filterChain[filterChain.length - 1];
 }
 
 let reverbs = {};
@@ -453,18 +430,17 @@ export const superdough = async (value, deadline, hapDuration) => {
     panner.pan.value = 2 * pan - 1;
     chain.push(panner);
   }
+  // phaser
+  if (phaser !== undefined) {
+    const phaserFX = getPhaser(orbit, phaser, phaserDepth, t);
+    chain.push(phaserFX);
+  }
 
   // last gain
   const post = gainNode(postgain);
   chain.push(post);
   post.connect(getDestination());
 
-  let phaserSend;
-  if (phaser != null) {
-    const phaserFX = getPhaser(orbit, phaser, phaserDepth);
-
-    phaserSend = effectSend(post, phaserFX, 0.99);
-  }
   // delay
   let delaySend;
   if (delay > 0 && delaytime > 0 && delayfeedback > 0) {
@@ -501,7 +477,7 @@ export const superdough = async (value, deadline, hapDuration) => {
 
   // toDisconnect = all the node that should be disconnected in onended callback
   // this is crucial for performance
-  toDisconnect = chain.concat([phaserSend, delaySend, reverbSend, analyserSend]);
+  toDisconnect = chain.concat([delaySend, reverbSend, analyserSend]);
 };
 
 export const superdoughTrigger = (t, hap, ct, cps) => superdough(hap, t - ct, hap.duration / cps, cps);
