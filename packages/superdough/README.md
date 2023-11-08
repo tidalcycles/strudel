@@ -67,6 +67,8 @@ superdough({ s: 'bd', delay: 0.5 }, 0, 1);
   - `crush`: amplitude bit crusher using given number of bits
   - `shape`: distortion effect from 0 (none) to 1 (full). might get loud!
   - `pan`: stereo panning from 0 (left) to 1 (right)
+  - `phaser`: sets the speed of the modulation
+  - `phaserdepth`
   - `vowel`: vowel filter. possible values: "a", "e", "i", "o", "u"
   - `delay`: delay mix
   - `delayfeedback`: delay feedback

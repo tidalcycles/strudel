@@ -387,20 +387,21 @@ const generic_params = [
    * @name phaser
    * @param {number | Pattern} speed speed of modulation
    * @example
-   * run(8).scale("D:pentatonic").note().sound("sawtooth").phaser("2 8").release(0.5)
+   * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8")
    *
    */
   ['phaser'],
   /**
+   * The depth of modulation for phaser
    *
-   *
-   * @name phaserDepth
+   * @name phaserdepth
    * @param {number | Pattern} depth number between 0 and 1
    * @example
-   * run(8).scale("D:pentatonic").note().sound("sawtooth").phaser("2 8").phaserDepth(0.5).release(0.5)
+   * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8").phaserdepth(0.5)
    *
    */
-  ['phaserDepth'],
+  ['phaserdepth'],
+
   /**
    * choose the channel the pattern is sent to in superdirt
    *
@@ -1191,7 +1192,7 @@ const generic_params = [
   ['tremolodepth', 'tremdp'],
   ['tremolorate', 'tremr'],
   // TODO: doesn't seem to do anything
-  ['phaserdepth', 'phasdp'],
+  ['phasdp'],
   ['phaserrate', 'phasr'],
 
   ['fshift'],

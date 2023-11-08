@@ -112,26 +112,18 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
   return delays[orbit];
 }
 
-let phaserLFOs = {};
-
-function getPhaser(orbit, speed = 1, depth = 0.5, t) {
+function getPhaser(speed = 1, depth = 0.5) {
   //gain
   const ac = getAudioContext();
   const lfoGain = ac.createGain();
   lfoGain.gain.value = 2000;
 
-  //lfo
-  if (phaserLFOs[orbit] == null) {
-    const lfo = ac.createOscillator();
-    lfo.frequency.value = speed;
-    lfo.type = 'sine';
-    lfo.start();
-    phaserLFOs[orbit] = lfo;
-  }
-  if (phaserLFOs[orbit].frequency.value !== speed) {
-    phaserLFOs[orbit].frequency.setValueAtTime(speed, t);
-  }
-  phaserLFOs[orbit].connect(lfoGain);
+  //lfo TODO: set the lfo phase relative to current cycle to create "free running" effect
+  const lfo = ac.createOscillator();
+  lfo.frequency.value = speed;
+  lfo.type = 'sine';
+  lfo.start();
+  lfo.connect(lfoGain);
 
   //filters
   const numStages = 2; //num of filters in series
@@ -271,7 +263,7 @@ export const superdough = async (value, deadline, hapDuration) => {
 
     //phaser
     phaser,
-    phaserDepth,
+    phaserdepth,
     //
     coarse,
     crush,
@@ -306,6 +298,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   if (bank && s) {
     s = `${bank}_${s}`;
   }
+
   // get source AudioNode
   let sourceNode;
   if (source) {
@@ -407,11 +400,6 @@ export const superdough = async (value, deadline, hapDuration) => {
     chain.push(vowelFilter);
   }
 
-  // if (phaser !== undefined) {
-  //   const phaserFX = ac.createPhaser({ speed: phaser, depth: phaserDepth });
-  //   chain.push(phaserFX);
-  // }
-
   // effects
   coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
@@ -431,7 +419,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
   // phaser
   if (phaser !== undefined) {
-    const phaserFX = getPhaser(orbit, phaser, phaserDepth, t);
+    const phaserFX = getPhaser(phaser, phaserdepth);
     chain.push(phaserFX);
   }
 
