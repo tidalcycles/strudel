@@ -7,7 +7,6 @@ This program is free software: you can redistribute it and/or modify it under th
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
-import './phaser.mjs';
 import { clamp } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
 import { createFilter, gainNode, getCompressor } from './helpers.mjs';
