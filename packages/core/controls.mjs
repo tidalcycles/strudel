@@ -391,13 +391,37 @@ const generic_params = [
    *
    */
   ['phaser'],
+
+  /**
+   * The frequency sweep range of the lfo for the phaser effect
+   *
+   * @name phasersweep
+   * @param {number | Pattern} phasersweep most useful values are between 0 and 4000
+   * @example
+   * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8").phasersweep(800)
+   *
+   */
+  ['phasersweep'],
+
+  /**
+   *  The center frequency of the phaser in HZ
+   *
+   * @name phasercenter
+   * @param {number | Pattern} centerfrequency most useful values are between 0 and 1
+   * @example
+   * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8").phasercenter(2000)
+   *
+   */
+
+  ['phasercenter'],
+
   /**
    * The amount the signal is affected by the phaser effect
    *
    * @name phaserdepth
    * @param {number | Pattern} depth number between 0 and 1
    * @example
-   * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8").phaserdepth(0.5)
+   * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8").phasercenter(200)
    *
    */
   ['phaserdepth'],

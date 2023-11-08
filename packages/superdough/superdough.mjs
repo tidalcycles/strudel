@@ -112,12 +112,13 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
   return delays[orbit];
 }
 
+// each orbit will have its own lfo
 const phaserLFOs = {};
-function getPhaser(orbit, t, speed = 1, depth = 0.5) {
+function getPhaser(orbit, t, speed = 1, depth = 0.5, centerFrequency = 1000, sweep = 2000) {
   //gain
   const ac = getAudioContext();
   const lfoGain = ac.createGain();
-  lfoGain.gain.value = 2000;
+  lfoGain.gain.value = sweep;
 
   //LFO
   if (phaserLFOs[orbit] == null) {
@@ -140,7 +141,7 @@ function getPhaser(orbit, t, speed = 1, depth = 0.5) {
     const filter = ac.createBiquadFilter();
     filter.type = 'notch';
     filter.gain.value = 1;
-    filter.frequency.value = 1000 + fOffset;
+    filter.frequency.value = centerFrequency + fOffset;
     filter.Q.value = 2 - Math.min(Math.max(depth * 2, 0), 1.9);
 
     lfoGain.connect(filter.detune);
@@ -271,6 +272,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     //phaser
     phaser,
     phaserdepth = 0.75,
+    phasersweep,
+    phasercenter,
     //
     coarse,
     crush,
@@ -411,7 +414,6 @@ export const superdough = async (value, deadline, hapDuration) => {
   coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
   shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
-  // phaser !== undefined && chain.push(getWorklet(ac, 'phaser-processor', { phaser }));
 
   compressorThreshold !== undefined &&
     chain.push(
@@ -426,7 +428,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
   // phaser
   if (phaser !== undefined && phaserdepth > 0) {
-    const phaserFX = getPhaser(orbit, t, phaser, phaserdepth);
+    const phaserFX = getPhaser(orbit, t, phaser, phaserdepth, phasercenter, phasersweep);
     chain.push(phaserFX);
   }
 
