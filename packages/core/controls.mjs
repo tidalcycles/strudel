@@ -392,7 +392,7 @@ const generic_params = [
    */
   ['phaser'],
   /**
-   * The depth of modulation for phaser
+   * The amount the signal is affected by the phaser effect
    *
    * @name phaserdepth
    * @param {number | Pattern} depth number between 0 and 1
