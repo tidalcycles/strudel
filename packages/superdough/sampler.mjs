@@ -57,19 +57,16 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, vib, vibmod
   const bufferSource = ac.createBufferSource();
   bufferSource.buffer = buffer;
   const playbackRate = 1.0 * Math.pow(2, transpose / 12);
+  bufferSource.playbackRate.value = playbackRate;
   if (vib > 0) {
     let vibrato_oscillator = getAudioContext().createOscillator();
     vibrato_oscillator.frequency.value = vib;
     const gain = getAudioContext().createGain();
     // Vibmod is the amount of vibrato, in semitones
-    bufferSource.playbackRate.value = Math.pow(2, transpose / 12);
     gain.gain.value = vibmod / 4;
     vibrato_oscillator.connect(gain);
     gain.connect(bufferSource.playbackRate);
     vibrato_oscillator.start(0);
-  } else {
-    bufferSource.playbackRate.value = Math.pow(2, transpose / 12);
-    bufferSource.playbackRate.value = playbackRate;
   }
   return bufferSource;
 };
