@@ -388,7 +388,8 @@ const generic_params = [
    * @synonyms ph
    * @param {number | Pattern} speed speed of modulation
    * @example
-   * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8")
+   * n(run(8)).scale("D:pentatonic").s("sawtooth").release(0.5)
+   * .phaser("<1 2 4 8>")
    *
    */
   [['phaser', 'phaserdepth', 'phasercenter', 'phasersweep'], 'ph'],
@@ -400,7 +401,8 @@ const generic_params = [
    * @synonyms phs
    * @param {number | Pattern} phasersweep most useful values are between 0 and 4000
    * @example
-   * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8").phasersweep(800)
+   * n(run(8)).scale("D:pentatonic").s("sawtooth").release(0.5)
+   * .phaser(2).phasersweep("<800 2000 4000>")
    *
    */
   ['phasersweep', 'phs'],
@@ -412,7 +414,8 @@ const generic_params = [
    * @synonyms phc
    * @param {number | Pattern} centerfrequency in HZ
    * @example
-   * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8").phasercenter(2000)
+   * n(run(8)).scale("D:pentatonic").s("sawtooth").release(0.5)
+   * .phaser(2).phasercenter("<800 2000 4000>")
    *
    */
 
@@ -425,7 +428,8 @@ const generic_params = [
    * @synonyms phd
    * @param {number | Pattern} depth number between 0 and 1
    * @example
-   * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8").phasercenter(200)
+   * n(run(8)).scale("D:pentatonic").s("sawtooth").release(0.5)
+   * .phaser(2).phaserdepth("<0 .5 .75 1>")
    *
    */
   ['phaserdepth', 'phd'],
@@ -1081,7 +1085,8 @@ const generic_params = [
    */
   ['roomfade', 'rfade'],
   /**
-   * Sets the sample to use as an impulse response for the reverb. * * @name iresponse
+   * Sets the sample to use as an impulse response for the reverb.
+   * @name iresponse
    * @param {string | Pattern} sample to use as an impulse response
    * @synonyms ir
    * @example
