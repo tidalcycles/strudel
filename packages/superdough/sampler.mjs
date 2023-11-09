@@ -300,7 +300,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   envelope.connect(out);
   bufferSource.onended = function () {
     bufferSource.disconnect();
-    vibratoOscillator.stop();
+    vibratoOscillator?.stop();
     envelope.disconnect();
     out.disconnect();
     onended();
