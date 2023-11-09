@@ -390,10 +390,10 @@ const generic_params = [
    * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8")
    *
    */
-  ['phaser'],
+  [['phaser', 'phaserdepth', 'phasercenter', 'phasersweep'], 'ph'],
 
   /**
-   * The frequency sweep range of the lfo for the phaser effect
+   * The frequency sweep range of the lfo for the phaser effect. Defaults to 2000
    *
    * @name phasersweep
    * @param {number | Pattern} phasersweep most useful values are between 0 and 4000
@@ -401,10 +401,10 @@ const generic_params = [
    * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8").phasersweep(800)
    *
    */
-  ['phasersweep'],
+  ['phasersweep', 'phs'],
 
   /**
-   *  The center frequency of the phaser in HZ
+   *  The center frequency of the phaser in HZ. Defaults to 1000
    *
    * @name phasercenter
    * @param {number | Pattern} centerfrequency in HZ
@@ -413,10 +413,10 @@ const generic_params = [
    *
    */
 
-  ['phasercenter'],
+  ['phasercenter', 'phc'],
 
   /**
-   * The amount the signal is affected by the phaser effect
+   * The amount the signal is affected by the phaser effect. Defaults to 0.75
    *
    * @name phaserdepth
    * @param {number | Pattern} depth number between 0 and 1
@@ -424,7 +424,7 @@ const generic_params = [
    * run(8).scale("D:pentatonic").note().sound("sawtooth").release(0.5).phaser("2 8").phasercenter(200)
    *
    */
-  ['phaserdepth'],
+  ['phaserdepth', 'phd'],
 
   /**
    * choose the channel the pattern is sent to in superdirt
