@@ -137,7 +137,7 @@ export async function loadOrc(url) {
 export const csoundm = register('csoundm', (instrument, pat) => {
   let p1 = instrument;
   if (typeof instrument === 'string') {
-    p1 = `"{instrument}"`;
+    p1 = `"${instrument}"`;
   }
   init(); // not async to support csound inside other patterns + to be able to call pattern methods after it
   return pat.onTrigger((tidal_time, hap) => {
