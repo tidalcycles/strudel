@@ -22,7 +22,7 @@ function humanFileSize(bytes, si) {
   return bytes.toFixed(1) + ' ' + units[u];
 }
 
-export const getSampleBufferSource = async (s, n, note, speed, freq, vib, vibmod, bank, resolveUrl) => {
+export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resolveUrl) => {
   let transpose = 0;
   if (freq !== undefined && note !== undefined) {
     logger('[sampler] hap has note and freq. ignoring note', 'warning');
@@ -58,16 +58,6 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, vib, vibmod
   bufferSource.buffer = buffer;
   const playbackRate = 1.0 * Math.pow(2, transpose / 12);
   bufferSource.playbackRate.value = playbackRate;
-  if (vib > 0) {
-    let vibrato_oscillator = getAudioContext().createOscillator();
-    vibrato_oscillator.frequency.value = vib;
-    const gain = getAudioContext().createGain();
-    // Vibmod is the amount of vibrato, in semitones
-    gain.gain.value = vibmod / 4;
-    vibrato_oscillator.connect(gain);
-    gain.connect(bufferSource.playbackRate);
-    vibrato_oscillator.start(0);
-  }
   return bufferSource;
 };
 
@@ -264,7 +254,20 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   //const soundfont = getSoundfontKey(s);
   const time = t + nudge;
 
-  const bufferSource = await getSampleBufferSource(s, n, note, speed, freq, vib, vibmod, bank, resolveUrl);
+  const bufferSource = await getSampleBufferSource(s, n, note, speed, freq, bank, resolveUrl);
+
+  // vibrato
+  let vibratoOscillator;
+  if (vib > 0) {
+    vibratoOscillator = getAudioContext().createOscillator();
+    vibratoOscillator.frequency.value = vib;
+    const gain = getAudioContext().createGain();
+    // Vibmod is the amount of vibrato, in semitones
+    gain.gain.value = vibmod * 100;
+    vibratoOscillator.connect(gain);
+    gain.connect(bufferSource.detune);
+    vibratoOscillator.start(0);
+  }
 
   // asny stuff above took too long?
   if (ac.currentTime > t) {
@@ -297,6 +300,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   envelope.connect(out);
   bufferSource.onended = function () {
     bufferSource.disconnect();
+    vibratoOscillator.stop();
     envelope.disconnect();
     out.disconnect();
     onended();
