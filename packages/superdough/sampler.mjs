@@ -57,7 +57,6 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resol
   const bufferSource = ac.createBufferSource();
   bufferSource.buffer = buffer;
   const playbackRate = 1.0 * Math.pow(2, transpose / 12);
-  // bufferSource.playbackRate.value = Math.pow(2, transpose / 12);
   bufferSource.playbackRate.value = playbackRate;
   return bufferSource;
 };
@@ -240,6 +239,8 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     begin = 0,
     loopEnd = 1,
     end = 1,
+    vib,
+    vibmod = 0.5,
   } = value;
   // load sample
   if (speed === 0) {
@@ -254,6 +255,19 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   const time = t + nudge;
 
   const bufferSource = await getSampleBufferSource(s, n, note, speed, freq, bank, resolveUrl);
+
+  // vibrato
+  let vibratoOscillator;
+  if (vib > 0) {
+    vibratoOscillator = getAudioContext().createOscillator();
+    vibratoOscillator.frequency.value = vib;
+    const gain = getAudioContext().createGain();
+    // Vibmod is the amount of vibrato, in semitones
+    gain.gain.value = vibmod * 100;
+    vibratoOscillator.connect(gain);
+    gain.connect(bufferSource.detune);
+    vibratoOscillator.start(0);
+  }
 
   // asny stuff above took too long?
   if (ac.currentTime > t) {
@@ -286,6 +300,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   envelope.connect(out);
   bufferSource.onended = function () {
     bufferSource.disconnect();
+    vibratoOscillator?.stop();
     envelope.disconnect();
     out.disconnect();
     onended();
