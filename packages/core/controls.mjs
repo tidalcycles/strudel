@@ -381,6 +381,8 @@ const generic_params = [
    */
   ['coarse'],
 
+  ['phaserrate', 'phasr'], // superdirt only
+
   /**
    * Phaser audio effect that approximates popular guitar pedals.
    *
@@ -432,7 +434,7 @@ const generic_params = [
    * .phaser(2).phaserdepth("<0 .5 .75 1>")
    *
    */
-  ['phaserdepth', 'phd'],
+  ['phaserdepth', 'phd', 'phasdp'], // also a superdirt control
 
   /**
    * choose the channel the pattern is sent to in superdirt
@@ -1224,9 +1226,6 @@ const generic_params = [
    */
   ['tremolodepth', 'tremdp'],
   ['tremolorate', 'tremr'],
-  // TODO: doesn't seem to do anything
-  ['phasdp'],
-  ['phaserrate', 'phasr'],
 
   ['fshift'],
   ['fshiftnote'],
