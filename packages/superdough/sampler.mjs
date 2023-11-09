@@ -298,7 +298,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   bufferSource.connect(envelope);
   const out = ac.createGain(); // we need a separate gain for the cutgroups because firefox...
   envelope.connect(out);
-  bufferSource.onended = function() {
+  bufferSource.onended = function () {
     bufferSource.disconnect();
     envelope.disconnect();
     out.disconnect();
