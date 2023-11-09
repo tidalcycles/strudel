@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as _WebMidi from 'webmidi';
-import { Pattern, isPattern, logger } from '@strudel.cycles/core';
+import { Pattern, isPattern, logger, ref } from '@strudel.cycles/core';
 import { noteToMidi } from '@strudel.cycles/core';
 import { Note } from 'webmidi';
 // if you use WebMidi from outside of this package, make sure to import that instance:
@@ -15,8 +15,8 @@ function supportsMidi() {
   return typeof navigator.requestMIDIAccess === 'function';
 }
 
-function getMidiDeviceNamesString(outputs) {
-  return outputs.map((o) => `'${o.name}'`).join(' | ');
+function getMidiDeviceNamesString(devices) {
+  return devices.map((o) => `'${o.name}'`).join(' | ');
 }
 
 export function enableWebMidi(options = {}) {
@@ -52,30 +52,41 @@ export function enableWebMidi(options = {}) {
     });
   });
 }
-// const outputByName = (name: string) => WebMidi.getOutputByName(name);
-const outputByName = (name) => WebMidi.getOutputByName(name);
 
-// output?: string | number, outputs: typeof WebMidi.outputs
-function getDevice(output, outputs) {
-  if (!outputs.length) {
+function getDevice(indexOrName, devices) {
+  if (!devices.length) {
     throw new Error(`🔌 No MIDI devices found. Connect a device or enable IAC Driver.`);
   }
-  if (typeof output === 'number') {
-    return outputs[output];
+  if (typeof indexOrName === 'number') {
+    return devices[indexOrName];
   }
-  if (typeof output === 'string') {
-    return outputByName(output);
+  const byName = (name) => devices.find((output) => output.name.includes(name));
+  if (typeof indexOrName === 'string') {
+    return byName(indexOrName);
   }
   // attempt to default to first IAC device if none is specified
-  const IACOutput = outputs.find((output) => output.name.includes('IAC'));
-  const device = IACOutput ?? outputs[0];
+  const IACOutput = byName('IAC');
+  const device = IACOutput ?? devices[0];
   if (!device) {
     throw new Error(
-      `🔌 MIDI device '${output ? output : ''}' not found. Use one of ${getMidiDeviceNamesString(WebMidi.outputs)}`,
+      `🔌 MIDI device '${device ? device : ''}' not found. Use one of ${getMidiDeviceNamesString(devices)}`,
     );
   }
 
-  return IACOutput ?? outputs[0];
+  return IACOutput ?? devices[0];
+}
+
+// send start/stop messages to outputs when repl starts/stops
+if (typeof window !== 'undefined') {
+  window.addEventListener('message', (e) => {
+    if (!WebMidi?.enabled) {
+      return;
+    }
+    if (e.data === 'strudel-stop') {
+      WebMidi.outputs.forEach((output) => output.sendStop());
+    }
+    // cannot start here, since we have no timing info, see sendStart below
+  });
 }
 
 Pattern.prototype.midi = function (output) {
@@ -103,6 +114,7 @@ Pattern.prototype.midi = function (output) {
 
   return this.onTrigger((time, hap, currentTime, cps) => {
     if (!WebMidi.enabled) {
+      console.log('not enabled');
       return;
     }
     const device = getDevice(output, WebMidi.outputs);
@@ -113,7 +125,7 @@ Pattern.prototype.midi = function (output) {
     const timeOffsetString = `+${offset}`;
 
     // destructure value
-    const { note, nrpnn, nrpv, ccn, ccv, midichan = 1 } = hap.value;
+    const { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd } = hap.value;
     const velocity = hap.context?.velocity ?? 0.9; // TODO: refactor velocity
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
@@ -125,7 +137,7 @@ Pattern.prototype.midi = function (output) {
         time: timeOffsetString,
       });
     }
-    if (ccv && ccn) {
+    if (ccv !== undefined && ccn !== undefined) {
       if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
         throw new Error('expected ccv to be a number between 0 and 1');
       }
@@ -135,5 +147,46 @@ Pattern.prototype.midi = function (output) {
       const scaled = Math.round(ccv * 127);
       device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
     }
+    if (hap.whole.begin + 0 === 0) {
+      // we need to start here because we have the timing info
+      device.sendStart({ time: timeOffsetString });
+    }
+    if (['clock', 'midiClock'].includes(midicmd)) {
+      device.sendClock({ time: timeOffsetString });
+    } else if (['start'].includes(midicmd)) {
+      device.sendStart({ time: timeOffsetString });
+    } else if (['stop'].includes(midicmd)) {
+      device.sendStop({ time: timeOffsetString });
+    } else if (['continue'].includes(midicmd)) {
+      device.sendContinue({ time: timeOffsetString });
+    }
   });
 };
+
+let listeners = {};
+const refs = {};
+
+export async function midin(input) {
+  const initial = await enableWebMidi(); // only returns on first init
+  const device = getDevice(input, WebMidi.inputs);
+
+  if (initial) {
+    const otherInputs = WebMidi.inputs.filter((o) => o.name !== device.name);
+    logger(
+      `Midi enabled! Using "${device.name}". ${
+        otherInputs?.length ? `Also available: ${getMidiDeviceNamesString(otherInputs)}` : ''
+      }`,
+    );
+    refs[input] = {};
+  }
+  const cc = (cc) => ref(() => refs[input][cc] || 0);
+
+  listeners[input] && device.removeListener('midimessage', listeners[input]);
+  listeners[input] = (e) => {
+    const cc = e.dataBytes[0];
+    const v = e.dataBytes[1];
+    refs[input] && (refs[input][cc] = v / 127);
+  };
+  device.addListener('midimessage', listeners[input]);
+  return cc;
+}

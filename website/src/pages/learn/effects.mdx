@@ -82,6 +82,10 @@ Strudel uses ADSR envelopes, which are probably the most common way to describe 
 
 <JsDoc client:idle name="release" h={0} />
 
+## adsr
+
+<JsDoc client:idle name="adsr" h={0} />
+
 # Filter Envelope
 
 Each filter can receive an additional filter envelope controlling the cutoff value dynamically. It uses an ADSR envelope similar to the one used for amplitude. There is an additional parameter to control the depth of the filter modulation: `lpenv`|`hpenv`|`bpenv`. This allows you to play subtle or huge filter modulations just the same by only increasing or decreasing the depth.
@@ -144,6 +148,18 @@ There is one filter envelope for each filter type and thus one set of envelope f
 
 <JsDoc client:idle name="velocity" h={0} />
 
+## compressor
+
+<JsDoc client:idle name="compressor" h={0} />
+
+## postgain
+
+<JsDoc client:idle name="postgain" h={0} />
+
+## xfade
+
+<JsDoc client:idle name="xfade" h={0} />
+
 # Panning
 
 ## jux
@@ -183,24 +199,44 @@ global effects use the same chain for all events of the same orbit:
 
 <JsDoc client:idle name="orbit" h={0} />
 
-## delay
+## Delay
+
+### delay
 
 <JsDoc client:idle name="delay" h={0} />
 
-## delaytime
+### delaytime
 
 <JsDoc client:idle name="delaytime" h={0} />
 
-## delayfeedback
+### delayfeedback
 
 <JsDoc client:idle name="delayfeedback" h={0} />
 
-## room
+## Reverb
+
+### room
 
 <JsDoc client:idle name="room" h={0} />
 
-## roomsize
+### roomsize
 
 <JsDoc client:idle name="roomsize" h={0} />
+
+### roomfade
+
+<JsDoc client:idle name="roomfade" h={0} />
+
+### roomlp
+
+<JsDoc client:idle name="roomlp" h={0} />
+
+### roomdim
+
+<JsDoc client:idle name="roomdim" h={0} />
+
+### iresponse
+
+<JsDoc client:idle name="iresponse" h={0} />
 
 Next, we'll look at strudel's support for [Csound](/learn/csound).

@@ -22,6 +22,8 @@ import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
 import { isTauri } from '../tauri.mjs';
+import { useWidgets } from '@strudel.cycles/react/src/hooks/useWidgets.mjs';
+import { writeText } from '@tauri-apps/api/clipboard';
 
 const { latestCode } = settingsMap.get();
 
@@ -33,25 +35,26 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
 );
 
-const modules = [
+let modules = [
   import('@strudel.cycles/core'),
   import('@strudel.cycles/tonal'),
   import('@strudel.cycles/mini'),
   import('@strudel.cycles/xen'),
   import('@strudel.cycles/webaudio'),
-
+  import('@strudel/codemirror'),
+  import('@strudel/hydra'),
   import('@strudel.cycles/serial'),
   import('@strudel.cycles/soundfonts'),
   import('@strudel.cycles/csound'),
 ];
 if (isTauri()) {
-  modules.concat([
+  modules = modules.concat([
     import('@strudel/desktopbridge/loggerbridge.mjs'),
     import('@strudel/desktopbridge/midibridge.mjs'),
     import('@strudel/desktopbridge/oscbridge.mjs'),
   ]);
 } else {
-  modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
+  modules = modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
 }
 
 const modulesLoading = evalScope(
@@ -76,9 +79,9 @@ async function initCode() {
     const initialUrl = window.location.href;
     const hash = initialUrl.split('?')[1]?.split('#')?.[0];
     const codeParam = window.location.href.split('#')[1] || '';
-    // looking like https://strudel.tidalcycles.org/?J01s5i1J0200 (fixed hash length)
+    // looking like https://strudel.cc/?J01s5i1J0200 (fixed hash length)
     if (codeParam) {
-      // looking like https://strudel.tidalcycles.org/#ImMzIGUzIg%3D%3D (hash length depends on code length)
+      // looking like https://strudel.cc/#ImMzIGUzIg%3D%3D (hash length depends on code length)
       return hash2code(codeParam);
     } else if (hash) {
       return supabase
@@ -123,12 +126,14 @@ export function Repl({ embedded = false }) {
     fontFamily,
     isLineNumbersDisplayed,
     isAutoCompletionEnabled,
+    isTooltipEnabled,
     isLineWrappingEnabled,
     panelPosition,
+    isZen,
   } = useSettings();
 
   const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
-
+  const { setWidgets } = useWidgets(view);
   const { code, setCode, scheduler, evaluate, activateCode, isDirty, activeCode, pattern, started, stop, error } =
     useStrudel({
       initialCode: '// LOADING...',
@@ -142,6 +147,7 @@ export function Repl({ embedded = false }) {
       },
       afterEval: ({ code, meta }) => {
         setMiniLocations(meta.miniLocations);
+        setWidgets(meta.widgets);
         setPending(false);
         setLatestCode(code);
         window.location.hash = '#' + code2hash(code);
@@ -149,7 +155,14 @@ export function Repl({ embedded = false }) {
       onEvalError: (err) => {
         setPending(false);
       },
-      onToggle: (play) => !play && cleanupDraw(false),
+      onToggle: (play) => {
+        if (!play) {
+          cleanupDraw(false);
+          window.postMessage('strudel-stop');
+        } else {
+          window.postMessage('strudel-start');
+        }
+      },
       drawContext,
       // drawTime: [0, 6],
       paintOptions,
@@ -212,7 +225,7 @@ export function Repl({ embedded = false }) {
   const handleChangeCode = useCallback(
     (c) => {
       setCode(c);
-      started && logger('[edit] code changed. hit ctrl+enter to update');
+      //started && logger('[edit] code changed. hit ctrl+enter to update');
     },
     [started],
   );
@@ -259,7 +272,11 @@ export function Repl({ embedded = false }) {
     if (!error) {
       setLastShared(activeCode || code);
       // copy shareUrl to clipboard
-      await navigator.clipboard.writeText(shareUrl);
+      if (isTauri()) {
+        await writeText(shareUrl);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+      }
       const message = `Link copied to clipboard: ${shareUrl}`;
       alert(message);
       // alert(message);
@@ -312,13 +329,14 @@ export function Repl({ embedded = false }) {
           </button>
         )}
         <div className="grow flex relative overflow-hidden">
-          <section className="text-gray-100 cursor-text pb-0 overflow-auto grow" id="code">
+          <section className={'text-gray-100 cursor-text pb-0 overflow-auto grow' + (isZen ? ' px-10' : '')} id="code">
             <CodeMirror
               theme={currentTheme}
               value={code}
               keybindings={keybindings}
               isLineNumbersDisplayed={isLineNumbersDisplayed}
               isAutoCompletionEnabled={isAutoCompletionEnabled}
+              isTooltipEnabled={isTooltipEnabled}
               isLineWrappingEnabled={isLineWrappingEnabled}
               fontSize={fontSize}
               fontFamily={fontFamily}

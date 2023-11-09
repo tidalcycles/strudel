@@ -34,6 +34,6 @@ Now open the REPL and type:
 s("<bd sd> hh").osc()
 ```
 
-or just [click here](https://strudel.tidalcycles.org/#cygiPGJkIHNkPiBoaCIpLm9zYygp)...
+or just [click here](https://strudel.cc/#cygiPGJkIHNkPiBoaCIpLm9zYygp)...
 
-You can read more about [how to use Superdirt with Strudel the Tutorial](https://strudel.tidalcycles.org/learn/input-output/#superdirt-api)
+You can read more about [how to use Superdirt with Strudel the Tutorial](https://strudel.cc/learn/input-output/#superdirt-api)

@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import { Hap } from './hap.mjs';
 import { Pattern, fastcat, reify, silence, stack, register } from './pattern.mjs';
 import Fraction from './fraction.mjs';
-import { id } from './util.mjs';
+import { id, _mod, clamp } from './util.mjs';
 
 export function steady(value) {
   // A continuous value
@@ -155,12 +155,62 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
  */
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
+/**
+ * pick from the list of values (or patterns of values) via the index using the given
+ * pattern of integers
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ * @example
+ * note(pick("<0 1 [2!2] 3>", ["g a", "e f", "f g f g" , "g a c d"]))
+ */
+
+export const pick = (pat, xs) => {
+  xs = xs.map(reify);
+  if (xs.length == 0) {
+    return silence;
+  }
+  return pat
+    .fmap((i) => {
+      const key = clamp(Math.round(i), 0, xs.length - 1);
+      return xs[key];
+    })
+    .innerJoin();
+};
+
+/**
+ * pick from the list of values (or patterns of values) via the index using the given
+ * pattern of integers. The selected pattern will be compressed to fit the duration of the selecting event
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ * @example
+ * note(squeeze("<0@2 [1!2] 2>", ["g a", "f g f g" , "g a c d"]))
+ */
+
+export const squeeze = (pat, xs) => {
+  xs = xs.map(reify);
+  if (xs.length == 0) {
+    return silence;
+  }
+  return pat
+    .fmap((i) => {
+      const key = _mod(Math.round(i), xs.length);
+      return xs[key];
+    })
+    .squeezeJoin();
+};
+
 export const __chooseWith = (pat, xs) => {
   xs = xs.map(reify);
   if (xs.length == 0) {
     return silence;
   }
-  return pat.range(0, xs.length).fmap((i) => xs[Math.floor(i)]);
+
+  return pat.range(0, xs.length).fmap((i) => {
+    const key = Math.min(Math.max(Math.floor(i), 0), xs.length - 1);
+    return xs[key];
+  });
 };
 /**
  * Choose from the list of values (or patterns of values) using the given
@@ -168,6 +218,8 @@ export const __chooseWith = (pat, xs) => {
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
+ * @example
+ * note("c2 g2!2 d2 f1").s(chooseWith(sine.fast(2), ["sawtooth", "triangle", "bd:6"]))
  */
 export const chooseWith = (pat, xs) => {
   return __chooseWith(pat, xs).outerJoin();

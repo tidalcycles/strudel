@@ -4,8 +4,8 @@
 
 An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using web technologies. This software is slowly stabilising, but please continue to tread carefully.
 
-- Try it here: <https://strudel.tidalcycles.org/>
-- Docs: <https://strudel.tidalcycles.org/learn/>
+- Try it here: <https://strudel.cc>
+- Docs: <https://strudel.cc/learn>
 - Technical Blog Post: <https://loophole-letters.vercel.app/strudel>
 - 1 Year of Strudel Blog Post: <https://loophole-letters.vercel.app/strudel1year>
 

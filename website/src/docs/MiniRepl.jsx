@@ -20,6 +20,7 @@ if (typeof window !== 'undefined') {
     import('@strudel.cycles/osc'),
     import('@strudel.cycles/csound'),
     import('@strudel.cycles/soundfonts'),
+    import('@strudel/hydra'),
   );
 }
 
@@ -50,7 +51,7 @@ export function MiniRepl({
       .catch((err) => console.error(err));
   }, []);
   return Repl ? (
-    <div className="mb-4">
+    <div className="mb-4 mini-repl">
       <Repl
         tune={tune}
         hideOutsideView={true}

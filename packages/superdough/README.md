@@ -1,7 +1,7 @@
 # superdough
 
 superdough is a simple web audio sampler and synth, intended for live coding.
-It is the default output of [strudel](https://strudel.tidalcycles.org/).
+It is the default output of [strudel](https://strudel.cc/).
 This package has no ties to strudel and can be used to quickly bake your own music system on the web.
 
 ## Install
