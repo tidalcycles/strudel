@@ -7,11 +7,11 @@ This program is free software: you can redistribute it and/or modify it under th
 function defineTags(dictionary) {
   dictionary.defineTag('synonyms', {
     mustHaveValue: true,
-    onTagged: function(doclet, tag) {
+    onTagged: function (doclet, tag) {
       doclet.synonyms_text = tag.value;
       doclet.synonyms = doclet.synonyms_text.split(/[ ,]+/);
-    }
-});
-};
+    },
+  });
+}
 
-module.exports = {defineTags: defineTags}
+module.exports = { defineTags: defineTags };
