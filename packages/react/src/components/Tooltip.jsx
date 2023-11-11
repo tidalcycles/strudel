@@ -31,6 +31,9 @@ window.addEventListener(
 export const strudelTooltip = hoverTooltip(
   (view, pos, side) => {
     // Word selection from CodeMirror Hover Tooltip example https://codemirror.net/examples/tooltip/#hover-tooltips
+    if (!ctrlDown) {
+      return null;
+    }
     let { from, to, text } = view.state.doc.lineAt(pos);
     let start = pos,
       end = pos;
@@ -47,11 +50,14 @@ export const strudelTooltip = hoverTooltip(
     // Get entry from Strudel documentation
     let entry = jsdoc.docs.filter((doc) => getDocLabel(doc) === word)[0];
     if (!entry) {
-      return null;
+      // Try for synonyms
+      entry = jsdoc.docs.filter((doc) => doc.synonyms && doc.synonyms.includes(word))[0];
+      if (!entry) {
+        return null;
+      }
+      entry.name = word;
     }
-    if (!ctrlDown) {
-      return null;
-    }
+
     return {
       pos: start,
       end,
