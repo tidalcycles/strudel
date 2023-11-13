@@ -923,7 +923,12 @@ const generic_params = [
    *
    */
   ['lsize'],
-  // label for pianoroll
+  /**
+   * Sets the displayed text for an event on the pianoroll
+   *
+   * @name label
+   * @param {string} label text to display
+   */
   ['activeLabel'],
   [['label', 'activeLabel']],
   // ['lfo'],
