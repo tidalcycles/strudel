@@ -13,7 +13,6 @@ export default createTheme({
     gutterBackground: 'transparent',
     // gutterForeground: '#8a919966',
     gutterForeground: '#8a919966',
-    customStyle: '.cm-focused { outline: none !important }',
   },
   styles: [
     { tag: t.keyword, color: '#c792ea' },
