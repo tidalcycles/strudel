@@ -6,23 +6,23 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { Pattern, isPattern } from '@strudel.cycles/core';
 
-var writeMessage;
+var writeMessagers = {};
 var choosing = false;
 
-export async function getWriter(br = 38400) {
+export async function getWriter(name, br) {
   if (choosing) {
     return;
   }
   choosing = true;
-  if (writeMessage) {
-    return writeMessage;
+  if (name in writeMessagers) {
+    return writeMessagers[name];
   }
   if ('serial' in navigator) {
     const port = await navigator.serial.requestPort();
     await port.open({ baudRate: br });
     const encoder = new TextEncoder();
     const writer = port.writable.getWriter();
-    writeMessage = function (message, chk) {
+    writeMessagers[name] = function (message, chk) {
       const encoded = encoder.encode(message);
       if (!chk) {
         writer.write(encoded);
@@ -63,10 +63,10 @@ function crc16(data) {
   return crc & 0xffff;
 }
 
-Pattern.prototype.serial = function (br = 38400, sendcrc = false, singlecharids = false) {
+Pattern.prototype.serial = function (br = 115200, sendcrc = false, singlecharids = false, name = 'default') {
   return this.withHap((hap) => {
-    if (!writeMessage) {
-      getWriter(br);
+    if (!(name in writeMessagers)) {
+      getWriter(name, br);
     }
     const onTrigger = (time, hap, currentTime) => {
       var message = '';
@@ -108,7 +108,7 @@ Pattern.prototype.serial = function (br = 38400, sendcrc = false, singlecharids 
       const offset = (time - currentTime + latency) * 1000;
 
       window.setTimeout(function () {
-        writeMessage(message, chk);
+        writeMessagers[name](message, chk);
       }, offset);
     };
     return hap.setContext({ ...hap.context, onTrigger, dominantTrigger: true });

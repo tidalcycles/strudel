@@ -2143,6 +2143,15 @@ exports[`runs examples > example "freq" example index 1 1`] = `
 ]
 `;
 
+exports[`runs examples > example "fscope" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | s:sawtooth analyze:1 ]",
+  "[ 1/1 → 2/1 | s:sawtooth analyze:1 ]",
+  "[ 2/1 → 3/1 | s:sawtooth analyze:1 ]",
+  "[ 3/1 → 4/1 | s:sawtooth analyze:1 ]",
+]
+`;
+
 exports[`runs examples > example "ftype" example index 0 1`] = `
 [
   "[ 0/1 → 1/1 | note:c2 s:sawtooth cutoff:500 bpenv:4 ftype:12db ]",
@@ -2427,6 +2436,19 @@ exports[`runs examples > example "irand" example index 0 1`] = `
   "[ 3/1 → 25/8 | note:C3 ]",
   "[ 27/8 → 7/2 | note:Bb3 ]",
   "[ 15/4 → 31/8 | note:C3 ]",
+]
+`;
+
+exports[`runs examples > example "iresponse" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd room:0.8 ir:shaker_large i:0 ]",
+  "[ 1/2 → 1/1 | s:sd room:0.8 ir:shaker_large i:0 ]",
+  "[ 1/1 → 3/2 | s:bd room:0.8 ir:shaker_large i:2 ]",
+  "[ 3/2 → 2/1 | s:sd room:0.8 ir:shaker_large i:2 ]",
+  "[ 2/1 → 5/2 | s:bd room:0.8 ir:shaker_large i:0 ]",
+  "[ 5/2 → 3/1 | s:sd room:0.8 ir:shaker_large i:0 ]",
+  "[ 3/1 → 7/2 | s:bd room:0.8 ir:shaker_large i:2 ]",
+  "[ 7/2 → 4/1 | s:sd room:0.8 ir:shaker_large i:2 ]",
 ]
 `;
 
@@ -3294,6 +3316,187 @@ exports[`runs examples > example "perlin" example index 0 1`] = `
   "[ 7/2 → 15/4 | s:hh cutoff:677.7027130163447 ]",
   "[ 7/2 → 4/1 | s:sd cutoff:642.5891407507152 ]",
   "[ 15/4 → 4/1 | s:hh cutoff:624.7015655439441 ]",
+]
+`;
+
+exports[`runs examples > example "phaser" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | note:D3 s:sawtooth release:0.5 phaser:1 ]",
+  "[ 1/8 → 1/4 | note:E3 s:sawtooth release:0.5 phaser:1 ]",
+  "[ 1/4 → 3/8 | note:F#3 s:sawtooth release:0.5 phaser:1 ]",
+  "[ 3/8 → 1/2 | note:A3 s:sawtooth release:0.5 phaser:1 ]",
+  "[ 1/2 → 5/8 | note:B3 s:sawtooth release:0.5 phaser:1 ]",
+  "[ 5/8 → 3/4 | note:D4 s:sawtooth release:0.5 phaser:1 ]",
+  "[ 3/4 → 7/8 | note:E4 s:sawtooth release:0.5 phaser:1 ]",
+  "[ 7/8 → 1/1 | note:F#4 s:sawtooth release:0.5 phaser:1 ]",
+  "[ 1/1 → 9/8 | note:D3 s:sawtooth release:0.5 phaser:2 ]",
+  "[ 9/8 → 5/4 | note:E3 s:sawtooth release:0.5 phaser:2 ]",
+  "[ 5/4 → 11/8 | note:F#3 s:sawtooth release:0.5 phaser:2 ]",
+  "[ 11/8 → 3/2 | note:A3 s:sawtooth release:0.5 phaser:2 ]",
+  "[ 3/2 → 13/8 | note:B3 s:sawtooth release:0.5 phaser:2 ]",
+  "[ 13/8 → 7/4 | note:D4 s:sawtooth release:0.5 phaser:2 ]",
+  "[ 7/4 → 15/8 | note:E4 s:sawtooth release:0.5 phaser:2 ]",
+  "[ 15/8 → 2/1 | note:F#4 s:sawtooth release:0.5 phaser:2 ]",
+  "[ 2/1 → 17/8 | note:D3 s:sawtooth release:0.5 phaser:4 ]",
+  "[ 17/8 → 9/4 | note:E3 s:sawtooth release:0.5 phaser:4 ]",
+  "[ 9/4 → 19/8 | note:F#3 s:sawtooth release:0.5 phaser:4 ]",
+  "[ 19/8 → 5/2 | note:A3 s:sawtooth release:0.5 phaser:4 ]",
+  "[ 5/2 → 21/8 | note:B3 s:sawtooth release:0.5 phaser:4 ]",
+  "[ 21/8 → 11/4 | note:D4 s:sawtooth release:0.5 phaser:4 ]",
+  "[ 11/4 → 23/8 | note:E4 s:sawtooth release:0.5 phaser:4 ]",
+  "[ 23/8 → 3/1 | note:F#4 s:sawtooth release:0.5 phaser:4 ]",
+  "[ 3/1 → 25/8 | note:D3 s:sawtooth release:0.5 phaser:8 ]",
+  "[ 25/8 → 13/4 | note:E3 s:sawtooth release:0.5 phaser:8 ]",
+  "[ 13/4 → 27/8 | note:F#3 s:sawtooth release:0.5 phaser:8 ]",
+  "[ 27/8 → 7/2 | note:A3 s:sawtooth release:0.5 phaser:8 ]",
+  "[ 7/2 → 29/8 | note:B3 s:sawtooth release:0.5 phaser:8 ]",
+  "[ 29/8 → 15/4 | note:D4 s:sawtooth release:0.5 phaser:8 ]",
+  "[ 15/4 → 31/8 | note:E4 s:sawtooth release:0.5 phaser:8 ]",
+  "[ 31/8 → 4/1 | note:F#4 s:sawtooth release:0.5 phaser:8 ]",
+]
+`;
+
+exports[`runs examples > example "phasercenter" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | note:D3 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 1/8 → 1/4 | note:E3 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 1/4 → 3/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 3/8 → 1/2 | note:A3 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 1/2 → 5/8 | note:B3 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 5/8 → 3/4 | note:D4 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 3/4 → 7/8 | note:E4 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 7/8 → 1/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 1/1 → 9/8 | note:D3 s:sawtooth release:0.5 phaser:2 phasercenter:2000 ]",
+  "[ 9/8 → 5/4 | note:E3 s:sawtooth release:0.5 phaser:2 phasercenter:2000 ]",
+  "[ 5/4 → 11/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phasercenter:2000 ]",
+  "[ 11/8 → 3/2 | note:A3 s:sawtooth release:0.5 phaser:2 phasercenter:2000 ]",
+  "[ 3/2 → 13/8 | note:B3 s:sawtooth release:0.5 phaser:2 phasercenter:2000 ]",
+  "[ 13/8 → 7/4 | note:D4 s:sawtooth release:0.5 phaser:2 phasercenter:2000 ]",
+  "[ 7/4 → 15/8 | note:E4 s:sawtooth release:0.5 phaser:2 phasercenter:2000 ]",
+  "[ 15/8 → 2/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phasercenter:2000 ]",
+  "[ 2/1 → 17/8 | note:D3 s:sawtooth release:0.5 phaser:2 phasercenter:4000 ]",
+  "[ 17/8 → 9/4 | note:E3 s:sawtooth release:0.5 phaser:2 phasercenter:4000 ]",
+  "[ 9/4 → 19/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phasercenter:4000 ]",
+  "[ 19/8 → 5/2 | note:A3 s:sawtooth release:0.5 phaser:2 phasercenter:4000 ]",
+  "[ 5/2 → 21/8 | note:B3 s:sawtooth release:0.5 phaser:2 phasercenter:4000 ]",
+  "[ 21/8 → 11/4 | note:D4 s:sawtooth release:0.5 phaser:2 phasercenter:4000 ]",
+  "[ 11/4 → 23/8 | note:E4 s:sawtooth release:0.5 phaser:2 phasercenter:4000 ]",
+  "[ 23/8 → 3/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phasercenter:4000 ]",
+  "[ 3/1 → 25/8 | note:D3 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 25/8 → 13/4 | note:E3 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 13/4 → 27/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 27/8 → 7/2 | note:A3 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 7/2 → 29/8 | note:B3 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 29/8 → 15/4 | note:D4 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 15/4 → 31/8 | note:E4 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+  "[ 31/8 → 4/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phasercenter:800 ]",
+]
+`;
+
+exports[`runs examples > example "phaserdepth" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | note:D3 s:sawtooth release:0.5 phaser:2 phaserdepth:0 ]",
+  "[ 1/8 → 1/4 | note:E3 s:sawtooth release:0.5 phaser:2 phaserdepth:0 ]",
+  "[ 1/4 → 3/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phaserdepth:0 ]",
+  "[ 3/8 → 1/2 | note:A3 s:sawtooth release:0.5 phaser:2 phaserdepth:0 ]",
+  "[ 1/2 → 5/8 | note:B3 s:sawtooth release:0.5 phaser:2 phaserdepth:0 ]",
+  "[ 5/8 → 3/4 | note:D4 s:sawtooth release:0.5 phaser:2 phaserdepth:0 ]",
+  "[ 3/4 → 7/8 | note:E4 s:sawtooth release:0.5 phaser:2 phaserdepth:0 ]",
+  "[ 7/8 → 1/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phaserdepth:0 ]",
+  "[ 1/1 → 9/8 | note:D3 s:sawtooth release:0.5 phaser:2 phaserdepth:0.5 ]",
+  "[ 9/8 → 5/4 | note:E3 s:sawtooth release:0.5 phaser:2 phaserdepth:0.5 ]",
+  "[ 5/4 → 11/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phaserdepth:0.5 ]",
+  "[ 11/8 → 3/2 | note:A3 s:sawtooth release:0.5 phaser:2 phaserdepth:0.5 ]",
+  "[ 3/2 → 13/8 | note:B3 s:sawtooth release:0.5 phaser:2 phaserdepth:0.5 ]",
+  "[ 13/8 → 7/4 | note:D4 s:sawtooth release:0.5 phaser:2 phaserdepth:0.5 ]",
+  "[ 7/4 → 15/8 | note:E4 s:sawtooth release:0.5 phaser:2 phaserdepth:0.5 ]",
+  "[ 15/8 → 2/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phaserdepth:0.5 ]",
+  "[ 2/1 → 17/8 | note:D3 s:sawtooth release:0.5 phaser:2 phaserdepth:0.75 ]",
+  "[ 17/8 → 9/4 | note:E3 s:sawtooth release:0.5 phaser:2 phaserdepth:0.75 ]",
+  "[ 9/4 → 19/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phaserdepth:0.75 ]",
+  "[ 19/8 → 5/2 | note:A3 s:sawtooth release:0.5 phaser:2 phaserdepth:0.75 ]",
+  "[ 5/2 → 21/8 | note:B3 s:sawtooth release:0.5 phaser:2 phaserdepth:0.75 ]",
+  "[ 21/8 → 11/4 | note:D4 s:sawtooth release:0.5 phaser:2 phaserdepth:0.75 ]",
+  "[ 11/4 → 23/8 | note:E4 s:sawtooth release:0.5 phaser:2 phaserdepth:0.75 ]",
+  "[ 23/8 → 3/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phaserdepth:0.75 ]",
+  "[ 3/1 → 25/8 | note:D3 s:sawtooth release:0.5 phaser:2 phaserdepth:1 ]",
+  "[ 25/8 → 13/4 | note:E3 s:sawtooth release:0.5 phaser:2 phaserdepth:1 ]",
+  "[ 13/4 → 27/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phaserdepth:1 ]",
+  "[ 27/8 → 7/2 | note:A3 s:sawtooth release:0.5 phaser:2 phaserdepth:1 ]",
+  "[ 7/2 → 29/8 | note:B3 s:sawtooth release:0.5 phaser:2 phaserdepth:1 ]",
+  "[ 29/8 → 15/4 | note:D4 s:sawtooth release:0.5 phaser:2 phaserdepth:1 ]",
+  "[ 15/4 → 31/8 | note:E4 s:sawtooth release:0.5 phaser:2 phaserdepth:1 ]",
+  "[ 31/8 → 4/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phaserdepth:1 ]",
+]
+`;
+
+exports[`runs examples > example "phasersweep" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | note:D3 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 1/8 → 1/4 | note:E3 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 1/4 → 3/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 3/8 → 1/2 | note:A3 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 1/2 → 5/8 | note:B3 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 5/8 → 3/4 | note:D4 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 3/4 → 7/8 | note:E4 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 7/8 → 1/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 1/1 → 9/8 | note:D3 s:sawtooth release:0.5 phaser:2 phasersweep:2000 ]",
+  "[ 9/8 → 5/4 | note:E3 s:sawtooth release:0.5 phaser:2 phasersweep:2000 ]",
+  "[ 5/4 → 11/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phasersweep:2000 ]",
+  "[ 11/8 → 3/2 | note:A3 s:sawtooth release:0.5 phaser:2 phasersweep:2000 ]",
+  "[ 3/2 → 13/8 | note:B3 s:sawtooth release:0.5 phaser:2 phasersweep:2000 ]",
+  "[ 13/8 → 7/4 | note:D4 s:sawtooth release:0.5 phaser:2 phasersweep:2000 ]",
+  "[ 7/4 → 15/8 | note:E4 s:sawtooth release:0.5 phaser:2 phasersweep:2000 ]",
+  "[ 15/8 → 2/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phasersweep:2000 ]",
+  "[ 2/1 → 17/8 | note:D3 s:sawtooth release:0.5 phaser:2 phasersweep:4000 ]",
+  "[ 17/8 → 9/4 | note:E3 s:sawtooth release:0.5 phaser:2 phasersweep:4000 ]",
+  "[ 9/4 → 19/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phasersweep:4000 ]",
+  "[ 19/8 → 5/2 | note:A3 s:sawtooth release:0.5 phaser:2 phasersweep:4000 ]",
+  "[ 5/2 → 21/8 | note:B3 s:sawtooth release:0.5 phaser:2 phasersweep:4000 ]",
+  "[ 21/8 → 11/4 | note:D4 s:sawtooth release:0.5 phaser:2 phasersweep:4000 ]",
+  "[ 11/4 → 23/8 | note:E4 s:sawtooth release:0.5 phaser:2 phasersweep:4000 ]",
+  "[ 23/8 → 3/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phasersweep:4000 ]",
+  "[ 3/1 → 25/8 | note:D3 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 25/8 → 13/4 | note:E3 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 13/4 → 27/8 | note:F#3 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 27/8 → 7/2 | note:A3 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 7/2 → 29/8 | note:B3 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 29/8 → 15/4 | note:D4 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 15/4 → 31/8 | note:E4 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+  "[ 31/8 → 4/1 | note:F#4 s:sawtooth release:0.5 phaser:2 phasersweep:800 ]",
+]
+`;
+
+exports[`runs examples > example "pianoroll" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | note:C2 s:piano clip:1 ]",
+  "[ (1/4 → 1/3) ⇝ 3/8 | note:C2 s:piano clip:1 ]",
+  "[ 1/4 ⇜ (1/3 → 3/8) | note:A2 s:piano clip:1 ]",
+  "[ 3/8 → 1/2 | note:A2 s:piano clip:1 ]",
+  "[ (5/8 → 2/3) ⇝ 3/4 | note:A2 s:piano clip:1 ]",
+  "[ 5/8 ⇜ (2/3 → 3/4) | note:G2 s:piano clip:1 ]",
+  "[ 3/4 → 7/8 | note:G2 s:piano clip:1 ]",
+  "[ 1/1 → 9/8 | note:C2 s:piano clip:1 ]",
+  "[ (5/4 → 4/3) ⇝ 11/8 | note:C2 s:piano clip:1 ]",
+  "[ 5/4 ⇜ (4/3 → 11/8) | note:A2 s:piano clip:1 ]",
+  "[ 11/8 → 3/2 | note:A2 s:piano clip:1 ]",
+  "[ (13/8 → 5/3) ⇝ 7/4 | note:A2 s:piano clip:1 ]",
+  "[ 13/8 ⇜ (5/3 → 7/4) | note:G2 s:piano clip:1 ]",
+  "[ 7/4 → 15/8 | note:G2 s:piano clip:1 ]",
+  "[ 2/1 → 17/8 | note:C2 s:piano clip:1 ]",
+  "[ (9/4 → 7/3) ⇝ 19/8 | note:C2 s:piano clip:1 ]",
+  "[ 9/4 ⇜ (7/3 → 19/8) | note:A2 s:piano clip:1 ]",
+  "[ 19/8 → 5/2 | note:A2 s:piano clip:1 ]",
+  "[ (21/8 → 8/3) ⇝ 11/4 | note:A2 s:piano clip:1 ]",
+  "[ 21/8 ⇜ (8/3 → 11/4) | note:G2 s:piano clip:1 ]",
+  "[ 11/4 → 23/8 | note:G2 s:piano clip:1 ]",
+  "[ 3/1 → 25/8 | note:C2 s:piano clip:1 ]",
+  "[ (13/4 → 10/3) ⇝ 27/8 | note:C2 s:piano clip:1 ]",
+  "[ 13/4 ⇜ (10/3 → 27/8) | note:A2 s:piano clip:1 ]",
+  "[ 27/8 → 7/2 | note:A2 s:piano clip:1 ]",
+  "[ (29/8 → 11/3) ⇝ 15/4 | note:A2 s:piano clip:1 ]",
+  "[ 29/8 ⇜ (11/3 → 15/4) | note:G2 s:piano clip:1 ]",
+  "[ 15/4 → 31/8 | note:G2 s:piano clip:1 ]",
 ]
 `;
 
@@ -4232,6 +4435,15 @@ exports[`runs examples > example "scaleTranspose" example index 0 1`] = `
   "[ 7/2 → 4/1 | note:B3 ]",
   "[ 7/2 → 4/1 | note:D4 ]",
   "[ 7/2 → 4/1 | note:F4 ]",
+]
+`;
+
+exports[`runs examples > example "scope" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | s:sawtooth analyze:1 ]",
+  "[ 1/1 → 2/1 | s:sawtooth analyze:1 ]",
+  "[ 2/1 → 3/1 | s:sawtooth analyze:1 ]",
+  "[ 3/1 → 4/1 | s:sawtooth analyze:1 ]",
 ]
 `;
 
@@ -5232,6 +5444,51 @@ exports[`runs examples > example "withValue" example index 0 1`] = `
   "[ 3/1 → 10/3 | 10 ]",
   "[ 10/3 → 11/3 | 11 ]",
   "[ 11/3 → 4/1 | 12 ]",
+]
+`;
+
+exports[`runs examples > example "xfade" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | s:hh gain:0 ]",
+  "[ 0/1 → 1/2 | s:bd gain:1 ]",
+  "[ 1/8 → 1/4 | s:hh gain:0 ]",
+  "[ 1/4 → 3/8 | s:hh gain:0 ]",
+  "[ 3/8 → 1/2 | s:hh gain:0 ]",
+  "[ 1/2 → 5/8 | s:hh gain:0 ]",
+  "[ 1/2 → 1/1 | s:bd gain:1 ]",
+  "[ 5/8 → 3/4 | s:hh gain:0 ]",
+  "[ 3/4 → 7/8 | s:hh gain:0 ]",
+  "[ 7/8 → 1/1 | s:hh gain:0 ]",
+  "[ 1/1 → 9/8 | s:hh gain:0.5 ]",
+  "[ 1/1 → 3/2 | s:bd gain:1 ]",
+  "[ 9/8 → 5/4 | s:hh gain:0.5 ]",
+  "[ 5/4 → 11/8 | s:hh gain:0.5 ]",
+  "[ 11/8 → 3/2 | s:hh gain:0.5 ]",
+  "[ 3/2 → 13/8 | s:hh gain:0.5 ]",
+  "[ 3/2 → 2/1 | s:bd gain:1 ]",
+  "[ 13/8 → 7/4 | s:hh gain:0.5 ]",
+  "[ 7/4 → 15/8 | s:hh gain:0.5 ]",
+  "[ 15/8 → 2/1 | s:hh gain:0.5 ]",
+  "[ 2/1 → 17/8 | s:hh gain:1 ]",
+  "[ 2/1 → 5/2 | s:bd gain:1 ]",
+  "[ 17/8 → 9/4 | s:hh gain:1 ]",
+  "[ 9/4 → 19/8 | s:hh gain:1 ]",
+  "[ 19/8 → 5/2 | s:hh gain:1 ]",
+  "[ 5/2 → 21/8 | s:hh gain:1 ]",
+  "[ 5/2 → 3/1 | s:bd gain:1 ]",
+  "[ 21/8 → 11/4 | s:hh gain:1 ]",
+  "[ 11/4 → 23/8 | s:hh gain:1 ]",
+  "[ 23/8 → 3/1 | s:hh gain:1 ]",
+  "[ 3/1 → 25/8 | s:hh gain:1 ]",
+  "[ 3/1 → 7/2 | s:bd gain:0.5 ]",
+  "[ 25/8 → 13/4 | s:hh gain:1 ]",
+  "[ 13/4 → 27/8 | s:hh gain:1 ]",
+  "[ 27/8 → 7/2 | s:hh gain:1 ]",
+  "[ 7/2 → 29/8 | s:hh gain:1 ]",
+  "[ 7/2 → 4/1 | s:bd gain:0.5 ]",
+  "[ 29/8 → 15/4 | s:hh gain:1 ]",
+  "[ 15/4 → 31/8 | s:hh gain:1 ]",
+  "[ 31/8 → 4/1 | s:hh gain:1 ]",
 ]
 `;
 

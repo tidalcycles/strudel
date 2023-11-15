@@ -91,6 +91,7 @@ export function Repl({ embedded = false }) {
     fontFamily,
     isLineNumbersDisplayed,
     isAutoCompletionEnabled,
+    isTooltipEnabled,
     isLineWrappingEnabled,
     panelPosition,
     isZen,
@@ -287,6 +288,7 @@ export function Repl({ embedded = false }) {
               keybindings={keybindings}
               isLineNumbersDisplayed={isLineNumbersDisplayed}
               isAutoCompletionEnabled={isAutoCompletionEnabled}
+              isTooltipEnabled={isTooltipEnabled}
               isLineWrappingEnabled={isLineWrappingEnabled}
               fontSize={fontSize}
               fontFamily={fontFamily}

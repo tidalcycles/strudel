@@ -112,6 +112,48 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
   return delays[orbit];
 }
 
+// each orbit will have its own lfo
+const phaserLFOs = {};
+function getPhaser(orbit, t, speed = 1, depth = 0.5, centerFrequency = 1000, sweep = 2000) {
+  //gain
+  const ac = getAudioContext();
+  const lfoGain = ac.createGain();
+  lfoGain.gain.value = sweep;
+
+  //LFO
+  if (phaserLFOs[orbit] == null) {
+    phaserLFOs[orbit] = ac.createOscillator();
+    phaserLFOs[orbit].frequency.value = speed;
+    phaserLFOs[orbit].type = 'sine';
+    phaserLFOs[orbit].start();
+  }
+
+  phaserLFOs[orbit].connect(lfoGain);
+  if (phaserLFOs[orbit].frequency.value != speed) {
+    phaserLFOs[orbit].frequency.setValueAtTime(speed, t);
+  }
+
+  //filters
+  const numStages = 2; //num of filters in series
+  let fOffset = 0;
+  const filterChain = [];
+  for (let i = 0; i < numStages; i++) {
+    const filter = ac.createBiquadFilter();
+    filter.type = 'notch';
+    filter.gain.value = 1;
+    filter.frequency.value = centerFrequency + fOffset;
+    filter.Q.value = 2 - Math.min(Math.max(depth * 2, 0), 1.9);
+
+    lfoGain.connect(filter.detune);
+    fOffset += 282;
+    if (i > 0) {
+      filterChain[i - 1].connect(filter);
+    }
+    filterChain.push(filter);
+  }
+  return filterChain[filterChain.length - 1];
+}
+
 let reverbs = {};
 
 let hasChanged = (now, before) => now !== undefined && now !== before;
@@ -226,6 +268,12 @@ export const superdough = async (value, deadline, hapDuration) => {
     bpsustain = 1,
     bprelease = 0.01,
     bandq = 1,
+
+    //phaser
+    phaser,
+    phaserdepth = 0.75,
+    phasersweep,
+    phasercenter,
     //
     coarse,
     crush,
@@ -260,6 +308,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   if (bank && s) {
     s = `${bank}_${s}`;
   }
+
   // get source AudioNode
   let sourceNode;
   if (source) {
@@ -376,6 +425,11 @@ export const superdough = async (value, deadline, hapDuration) => {
     const panner = ac.createStereoPanner();
     panner.pan.value = 2 * pan - 1;
     chain.push(panner);
+  }
+  // phaser
+  if (phaser !== undefined && phaserdepth > 0) {
+    const phaserFX = getPhaser(orbit, t, phaser, phaserdepth, phasercenter, phasersweep);
+    chain.push(phaserFX);
   }
 
   // last gain

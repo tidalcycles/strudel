@@ -380,6 +380,62 @@ const generic_params = [
    *
    */
   ['coarse'],
+
+  ['phaserrate', 'phasr'], // superdirt only
+
+  /**
+   * Phaser audio effect that approximates popular guitar pedals.
+   *
+   * @name phaser
+   * @synonyms ph
+   * @param {number | Pattern} speed speed of modulation
+   * @example
+   * n(run(8)).scale("D:pentatonic").s("sawtooth").release(0.5)
+   * .phaser("<1 2 4 8>")
+   *
+   */
+  [['phaser', 'phaserdepth', 'phasercenter', 'phasersweep'], 'ph'],
+
+  /**
+   * The frequency sweep range of the lfo for the phaser effect. Defaults to 2000
+   *
+   * @name phasersweep
+   * @synonyms phs
+   * @param {number | Pattern} phasersweep most useful values are between 0 and 4000
+   * @example
+   * n(run(8)).scale("D:pentatonic").s("sawtooth").release(0.5)
+   * .phaser(2).phasersweep("<800 2000 4000>")
+   *
+   */
+  ['phasersweep', 'phs'],
+
+  /**
+   *  The center frequency of the phaser in HZ. Defaults to 1000
+   *
+   * @name phasercenter
+   * @synonyms phc
+   * @param {number | Pattern} centerfrequency in HZ
+   * @example
+   * n(run(8)).scale("D:pentatonic").s("sawtooth").release(0.5)
+   * .phaser(2).phasercenter("<800 2000 4000>")
+   *
+   */
+
+  ['phasercenter', 'phc'],
+
+  /**
+   * The amount the signal is affected by the phaser effect. Defaults to 0.75
+   *
+   * @name phaserdepth
+   * @synonyms phd
+   * @param {number | Pattern} depth number between 0 and 1
+   * @example
+   * n(run(8)).scale("D:pentatonic").s("sawtooth").release(0.5)
+   * .phaser(2).phaserdepth("<0 .5 .75 1>")
+   *
+   */
+  ['phaserdepth', 'phd', 'phasdp'], // also a superdirt control
+
   /**
    * choose the channel the pattern is sent to in superdirt
    *
@@ -867,7 +923,12 @@ const generic_params = [
    *
    */
   ['lsize'],
-  // label for pianoroll
+  /**
+   * Sets the displayed text for an event on the pianoroll
+   *
+   * @name label
+   * @param {string} label text to display
+   */
   ['activeLabel'],
   [['label', 'activeLabel']],
   // ['lfo'],
@@ -1031,7 +1092,8 @@ const generic_params = [
    */
   ['roomfade', 'rfade'],
   /**
-   * Sets the sample to use as an impulse response for the reverb. * * @name iresponse
+   * Sets the sample to use as an impulse response for the reverb.
+   * @name iresponse
    * @param {string | Pattern} sample to use as an impulse response
    * @synonyms ir
    * @example
@@ -1169,9 +1231,6 @@ const generic_params = [
    */
   ['tremolodepth', 'tremdp'],
   ['tremolorate', 'tremr'],
-  // TODO: doesn't seem to do anything
-  ['phaserdepth', 'phasdp'],
-  ['phaserrate', 'phasr'],
 
   ['fshift'],
   ['fshiftnote'],

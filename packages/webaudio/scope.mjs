@@ -3,7 +3,7 @@ import { analyser, getAnalyzerData } from 'superdough';
 
 export function drawTimeScope(
   analyser,
-  { align = true, color = 'white', thickness = 3, scale = 0.25, pos = 0.75, next = 1, trigger = 0 } = {},
+  { align = true, color = 'white', thickness = 3, scale = 0.25, pos = 0.75, trigger = 0 } = {},
 ) {
   const ctx = getDrawContext();
   const dataArray = getAnalyzerData('time');
@@ -22,10 +22,9 @@ export function drawTimeScope(
 
   const sliceWidth = (canvas.width * 1.0) / bufferSize;
   let x = 0;
-
   for (let i = triggerIndex; i < bufferSize; i++) {
     const v = dataArray[i] + 1;
-    const y = (1 - (scale * (v - 1) + pos)) * canvas.height;
+    const y = (pos - scale * (v - 1)) * canvas.height;
 
     if (i === 0) {
       ctx.moveTo(x, y);
@@ -71,6 +70,18 @@ function clearScreen(smear = 0, smearRGB = `0,0,0`) {
   }
 }
 
+/**
+ * Renders an oscilloscope for the frequency domain of the audio signal.
+ * @name fscope
+ * @param {string} color line color as hex or color name. defaults to white.
+ * @param {number} scale scales the y-axis. Defaults to 0.25
+ * @param {number} pos y-position relative to screen height. 0 = top, 1 = bottom of screen
+ * @param {number} lean y-axis alignment where 0 = top and 1 = bottom
+ * @param {number} min min value
+ * @param {number} max max value
+ * @example
+ * s("sawtooth").fscope()
+ */
 Pattern.prototype.fscope = function (config = {}) {
   return this.analyze(1).draw(() => {
     clearScreen(config.smear);
@@ -78,6 +89,20 @@ Pattern.prototype.fscope = function (config = {}) {
   });
 };
 
+/**
+ * Renders an oscilloscope for the time domain of the audio signal.
+ * @name scope
+ * @synonyms tscope
+ * @param {object} config optional config with options:
+ * @param {boolean} align if 1, the scope will be aligned to the first zero crossing. defaults to 1
+ * @param {string} color line color as hex or color name. defaults to white.
+ * @param {number} thickness line thickness. defaults to 3
+ * @param {number} scale scales the y-axis. Defaults to 0.25
+ * @param {number} pos y-position relative to screen height. 0 = top, 1 = bottom of screen
+ * @param {number} trigger amplitude value that is used to align the scope. defaults to 0.
+ * @example
+ * s("sawtooth").scope()
+ */
 Pattern.prototype.tscope = function (config = {}) {
   return this.analyze(1).draw(() => {
     clearScreen(config.smear);

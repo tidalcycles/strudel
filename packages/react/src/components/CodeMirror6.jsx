@@ -9,6 +9,7 @@ import _CodeMirror from '@uiw/react-codemirror';
 import React, { useCallback, useMemo } from 'react';
 import strudelTheme from '../themes/strudel-theme';
 import { strudelAutocomplete } from './Autocomplete';
+import { strudelTooltip } from './Tooltip';
 import {
   highlightExtension,
   flashField,
@@ -37,6 +38,7 @@ export default function CodeMirror({
   keybindings,
   isLineNumbersDisplayed,
   isAutoCompletionEnabled,
+  isTooltipEnabled,
   isLineWrappingEnabled,
   fontSize = 18,
   fontFamily = 'monospace',
@@ -97,6 +99,14 @@ export default function CodeMirror({
     } else {
       _extensions.push(autocompletion({ override: [] }));
     }
+    if (isTooltipEnabled) {
+      _extensions.push(strudelTooltip);
+    }
+    //_extensions.push([keymap.of({})]);
+
+    if (isLineWrappingEnabled) {
+      _extensions.push(EditorView.lineWrapping);
+    }
 
     _extensions.push(
       keymap.of([
@@ -130,12 +140,17 @@ export default function CodeMirror({
       ]),
     );
 
-    if (isLineWrappingEnabled) {
-      _extensions.push(EditorView.lineWrapping);
-    }
-
     return _extensions;
-  }, [keybindings, isAutoCompletionEnabled, isLineWrappingEnabled, onEvaluate, onReEvaluate, onStop, onPanic]);
+  }, [
+    keybindings,
+    isAutoCompletionEnabled,
+    isTooltipEnabled,
+    isLineWrappingEnabled,
+    onEvaluate,
+    onReEvaluate,
+    onStop,
+    onPanic,
+  ]);
 
   const basicSetup = useMemo(() => ({ lineNumbers: isLineNumbersDisplayed }), [isLineNumbersDisplayed]);
 
