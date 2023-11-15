@@ -165,7 +165,7 @@ export function MiniRepl({
             fontSize={fontSize}
             keybindings={keybindings}
             isLineNumbersDisplayed={isLineNumbersDisplayed}
-            highlightActiveLineGutter={isActiveLineHighlighted}
+            isActiveLineHighlighted={isActiveLineHighlighted}
           />
         )}
         {error && <div className="text-right p-1 text-md text-red-200">{error.message}</div>}
