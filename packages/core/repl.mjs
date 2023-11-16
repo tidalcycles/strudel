@@ -3,7 +3,7 @@ import { evaluate as _evaluate } from './evaluate.mjs';
 import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
-import { register } from './pattern.mjs';
+import { register, Pattern, isPattern } from './pattern.mjs';
 
 export function repl({
   interval,
@@ -24,7 +24,8 @@ export function repl({
     getTime,
     onToggle,
   });
-  let playPatterns = [];
+  let pPatterns = {};
+  let allTransform;
   const setPattern = (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
     scheduler.setPattern(pattern, autostart);
@@ -36,10 +37,18 @@ export function repl({
     }
     try {
       await beforeEval?.({ code });
-      playPatterns = [];
+      pPatterns = {};
+      allTransform = undefined;
       let { pattern, meta } = await _evaluate(code, transpiler);
-      if (playPatterns.length) {
-        pattern = pattern.stack(...playPatterns);
+      if (Object.keys(pPatterns).length) {
+        pattern = stack(...Object.values(pPatterns));
+        if (allTransform) {
+          pattern = allTransform(pattern);
+        }
+      }
+      if (!isPattern(pattern)) {
+        const message = `got "${typeof evaluated}" instead of pattern`;
+        throw new Error(message + (typeof evaluated === 'function' ? ', did you forget to call a function?' : '.'));
       }
       logger(`[eval] code updated`);
       setPattern(pattern, autostart);
@@ -62,10 +71,25 @@ export function repl({
     return pat.loopAtCps(cycles, scheduler.cps);
   });
 
-  const play = register('play', (pat) => {
-    playPatterns.push(pat);
-    return pat;
-  });
+  Pattern.prototype.p = function (id) {
+    pPatterns[id] = this;
+    return this;
+  };
+  Pattern.prototype.q = function (id) {
+    return silence;
+  };
+
+  const all = function (transform) {
+    allTransform = transform;
+  };
+
+  for (let i = 1; i < 10; ++i) {
+    Object.defineProperty(Pattern.prototype, `d${i}`, {
+      get() {
+        return this.p(i);
+      },
+    });
+  }
 
   const fit = register('fit', (pat) =>
     pat.withHap((hap) =>
@@ -80,7 +104,7 @@ export function repl({
   evalScope({
     loopAt,
     fit,
-    play,
+    all,
     setCps,
     setcps: setCps,
     setCpm,

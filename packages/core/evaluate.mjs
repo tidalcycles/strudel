@@ -47,10 +47,5 @@ export const evaluate = async (code, transpiler) => {
   // if no transpiler is given, we expect a single instruction (!wrapExpression)
   const options = { wrapExpression: !!transpiler };
   let evaluated = await safeEval(code, options);
-  if (!isPattern(evaluated)) {
-    console.log('evaluated', evaluated);
-    const message = `got "${typeof evaluated}" instead of pattern`;
-    throw new Error(message + (typeof evaluated === 'function' ? ', did you forget to call a function?' : '.'));
-  }
   return { mode: 'javascript', pattern: evaluated, meta };
 };
