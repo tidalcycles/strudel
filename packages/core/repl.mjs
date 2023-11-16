@@ -26,25 +26,31 @@ export function repl({
   });
   let pPatterns = {};
   let allTransform;
+
+  const hush = function () {
+    pPatterns = {};
+    allTransform = undefined;
+    return silence;
+  };
+
   const setPattern = (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
     scheduler.setPattern(pattern, autostart);
   };
   setTime(() => scheduler.now()); // TODO: refactor?
-  const evaluate = async (code, autostart = true) => {
+  const evaluate = async (code, autostart = true, shouldHush = true) => {
     if (!code) {
       throw new Error('no code to evaluate');
     }
     try {
       await beforeEval?.({ code });
-      pPatterns = {};
-      allTransform = undefined;
+      shouldHush && hush();
       let { pattern, meta } = await _evaluate(code, transpiler);
       if (Object.keys(pPatterns).length) {
         pattern = stack(...Object.values(pPatterns));
-        if (allTransform) {
-          pattern = allTransform(pattern);
-        }
+      }
+      if (allTransform) {
+        pattern = allTransform(pattern);
       }
       if (!isPattern(pattern)) {
         const message = `got "${typeof evaluated}" instead of pattern`;
@@ -105,6 +111,7 @@ export function repl({
     loopAt,
     fit,
     all,
+    hush,
     setCps,
     setcps: setCps,
     setCpm,

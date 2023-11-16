@@ -1975,9 +1975,9 @@ export const press = register('press', function (pat) {
  *   s("hh*3")
  * )
  */
-export const hush = register('hush', function (pat) {
+Pattern.prototype.hush = function () {
   return silence;
-});
+};
 
 /**
  * Applies `rev` to a pattern every other cycle, so that the pattern alternates between forwards and backwards.
