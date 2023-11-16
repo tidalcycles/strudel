@@ -3,7 +3,7 @@ import { evaluate as _evaluate } from './evaluate.mjs';
 import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
-import { register, Pattern, isPattern } from './pattern.mjs';
+import { register, Pattern, isPattern, silence, stack } from './pattern.mjs';
 
 export function repl({
   interval,
