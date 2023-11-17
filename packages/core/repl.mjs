@@ -96,6 +96,11 @@ export function repl({
         return this.p(i);
       },
     });
+    Object.defineProperty(Pattern.prototype, `p${i}`, {
+      get() {
+        return this.p(i);
+      },
+    });
     Pattern.prototype[`q${i}`] = silence;
   }
 
