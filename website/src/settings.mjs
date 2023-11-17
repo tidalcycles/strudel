@@ -115,17 +115,15 @@ export function getUserPattern(key) {
 export function updateUserPattern(code) {
   const userPatterns = getUserPatterns();
   let activePattern = getSetting('activePattern');
-  console.log('update', activePattern, code);
   if (!activePattern) {
     activePattern = newUserPattern();
-    setUserPatterns({ ...userPatterns, [activePattern]: { code } });
     setActivePattern(activePattern);
   } else if (!!tunes[activePattern] && code !== tunes[activePattern]) {
     // is example / system pattern
     activePattern = getNextCloneName(activePattern);
-    setUserPatterns({ ...userPatterns, [activePattern]: { code } });
     setActivePattern(activePattern);
   }
+  setUserPatterns({ ...userPatterns, [activePattern]: { code } });
 }
 
 export function deleteActivePattern() {
@@ -148,7 +146,7 @@ export function duplicateActivePattern() {
   }
   const userPatterns = getUserPatterns();
   activePattern = getNextCloneName(activePattern);
-  setUserPatterns({ ...userPatterns, [activePattern]: { latestCode } });
+  setUserPatterns({ ...userPatterns, [activePattern]: { code: latestCode } });
   setActivePattern(activePattern);
 }
 
