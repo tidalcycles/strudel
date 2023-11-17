@@ -1318,7 +1318,7 @@ const generic_params = [
 ];
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 
-controls.createParam = function(names) {
+controls.createParam = function (names) {
   const name = Array.isArray(names) ? names[0] : names;
 
   var withVal;
@@ -1342,7 +1342,7 @@ controls.createParam = function(names) {
 
   const func = (...pats) => sequence(...pats).withValue(withVal);
 
-  const setter = function(...pats) {
+  const setter = function (...pats) {
     if (!pats.length) {
       return this.fmap(withVal);
     }

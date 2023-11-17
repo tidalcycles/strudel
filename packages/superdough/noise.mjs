@@ -35,7 +35,7 @@ function getNoiseBuffer(type, density) {
       output[i] *= 0.11;
       b6 = white * 0.115926;
     } else if (type === 'crackle') {
-      const probability = density * 0.01
+      const probability = density * 0.01;
       if (Math.random() < probability) {
         output[i] = Math.random() * 2 - 1;
       } else {
@@ -45,8 +45,7 @@ function getNoiseBuffer(type, density) {
   }
 
   // Prevent caching to randomize crackles
-  if (type !== "crackle")
-    noiseCache[type] = noiseBuffer;
+  if (type !== 'crackle') noiseCache[type] = noiseBuffer;
   return noiseBuffer;
 }
 
