@@ -145,6 +145,8 @@ export const { euclidrot, euclidRot } = register(['euclidrot', 'euclidRot'], fun
  * so there will be no gaps.
  * @name euclidLegato
  * @memberof Pattern
+ * @param {number} pulses the number of onsets / beats
+ * @param {number} steps the number of steps to fill
  * @example
  * n("g2").decay(.1).sustain(.3).euclidLegato(3,8)
  */
@@ -166,6 +168,18 @@ export const euclidLegato = register(['euclidLegato'], function (pulses, steps, 
   return _euclidLegato(pulses, steps, 0, pat);
 });
 
+/**
+ * Similar to `euclid`, but each pulse is held until the next pulse,
+ * so there will be no gaps, and has an additional parameter for 'rotating'
+ * the resulting sequence
+ * @name euclidLegatoRot
+ * @memberof Pattern
+ * @param {number} pulses the number of onsets / beats
+ * @param {number} steps the number of steps to fill
+ * @param {number} rotation offset in steps
+ * @example
+ * note("c3").euclidLegatoRot(3,5,2)
+ */
 export const euclidLegatoRot = register(['euclidLegatoRot'], function (pulses, steps, rotation, pat) {
   return _euclidLegato(pulses, steps, rotation, pat);
 });

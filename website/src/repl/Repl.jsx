@@ -125,6 +125,7 @@ export function Repl({ embedded = false }) {
     fontSize,
     fontFamily,
     isLineNumbersDisplayed,
+    isActiveLineHighlighted,
     isAutoCompletionEnabled,
     isTooltipEnabled,
     isLineWrappingEnabled,
@@ -335,6 +336,7 @@ export function Repl({ embedded = false }) {
               value={code}
               keybindings={keybindings}
               isLineNumbersDisplayed={isLineNumbersDisplayed}
+              isActiveLineHighlighted={isActiveLineHighlighted}
               isAutoCompletionEnabled={isAutoCompletionEnabled}
               isTooltipEnabled={isTooltipEnabled}
               isLineWrappingEnabled={isLineWrappingEnabled}

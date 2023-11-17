@@ -47,11 +47,6 @@ export function transpiler(input, options = {}) {
           });
         return this.replace(widgetWithLocation(node));
       }
-      // TODO: remove pseudo note variables?
-      if (node.type === 'Identifier' && isNoteWithOctave(node.name)) {
-        this.skip();
-        return this.replace({ type: 'Literal', value: node.name });
-      }
     },
     leave(node, parent, prop, index) {},
   });

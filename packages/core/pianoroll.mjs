@@ -262,6 +262,12 @@ Pattern.prototype.punchcard = function (options) {
   );
 };
 
+/**
+ * Displays a vertical pianoroll with event labels.
+ * Supports all the same options as pianoroll.
+ *
+ * @name wordfall
+ */
 Pattern.prototype.wordfall = function (options) {
   return this.punchcard({ vertical: 1, labels: 1, stroke: 0, fillActive: 1, active: 'white', ...options });
 };

@@ -1178,7 +1178,7 @@ export function reify(thing) {
  * @return {Pattern}
  * @synonyms polyrhythm, pr
  * @example
- * stack(g3, b3, [e4, d4]).note() // "g3,b3,[e4,d4]".note()
+ * stack("g3", "b3", ["e4", "d4"]).note() // "g3,b3,[e4,d4]".note()
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
@@ -1193,7 +1193,7 @@ export function stack(...pats) {
  *
  * @return {Pattern}
  * @example
- * slowcat(e5, b4, [d5, c5])
+ * slowcat("e5", "b4", ["d5", "c5"])
  *
  */
 export function slowcat(...pats) {
@@ -1237,7 +1237,7 @@ export function slowcatPrime(...pats) {
  * @synonyms slowcat
  * @return {Pattern}
  * @example
- * cat(e5, b4, [d5, c5]).note() // "<e5 b4 [d5 c5]>".note()
+ * cat("e5", "b4", ["d5", "c5"]).note() // "<e5 b4 [d5 c5]>".note()
  *
  */
 export function cat(...pats) {
@@ -1247,7 +1247,7 @@ export function cat(...pats) {
 /** Like {@link Pattern.seq}, but each step has a length, relative to the whole.
  * @return {Pattern}
  * @example
- * timeCat([3,e3],[1, g3]).note() // "e3@3 g3".note()
+ * timeCat([3,"e3"],[1, "g3"]).note() // "e3@3 g3".note()
  */
 export function timeCat(...timepats) {
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -1287,7 +1287,7 @@ export function sequence(...pats) {
 /** Like **cat**, but the items are crammed into one cycle.
  * @synonyms fastcat, sequence
  * @example
- * seq(e5, b4, [d5, c5]).note() // "e5 b4 [d5 c5]".note()
+ * seq("e5", "b4", ["d5", "c5"]).note() // "e5 b4 [d5 c5]".note()
  *
  */
 export function seq(...pats) {
@@ -1975,9 +1975,9 @@ export const press = register('press', function (pat) {
  *   s("hh*3")
  * )
  */
-export const hush = register('hush', function (pat) {
+Pattern.prototype.hush = function () {
   return silence;
-});
+};
 
 /**
  * Applies `rev` to a pattern every other cycle, so that the pattern alternates between forwards and backwards.

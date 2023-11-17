@@ -41,7 +41,7 @@ export function MiniRepl({
   claviatureLabels,
 }) {
   const [Repl, setRepl] = useState();
-  const { theme, keybindings, fontSize, fontFamily, isLineNumbersDisplayed } = useSettings();
+  const { theme, keybindings, fontSize, fontFamily, isLineNumbersDisplayed, isActiveLineHighlighted } = useSettings();
   const [activeNotes, setActiveNotes] = useState([]);
   useEffect(() => {
     // we have to load this package on the client
@@ -66,6 +66,7 @@ export function MiniRepl({
         fontFamily={fontFamily}
         fontSize={fontSize}
         isLineNumbersDisplayed={isLineNumbersDisplayed}
+        isActiveLineHighlighted={isActiveLineHighlighted}
         onPaint={
           claviature
             ? (ctx, time, haps, drawTime) => {
