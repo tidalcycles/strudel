@@ -89,19 +89,22 @@ export function repl({
     allTransform = transform;
     return silence;
   };
-
-  for (let i = 1; i < 10; ++i) {
-    Object.defineProperty(Pattern.prototype, `d${i}`, {
-      get() {
-        return this.p(i);
-      },
-    });
-    Object.defineProperty(Pattern.prototype, `p${i}`, {
-      get() {
-        return this.p(i);
-      },
-    });
-    Pattern.prototype[`q${i}`] = silence;
+  try {
+    for (let i = 1; i < 10; ++i) {
+      Object.defineProperty(Pattern.prototype, `d${i}`, {
+        get() {
+          return this.p(i);
+        },
+      });
+      Object.defineProperty(Pattern.prototype, `p${i}`, {
+        get() {
+          return this.p(i);
+        },
+      });
+      Pattern.prototype[`q${i}`] = silence;
+    }
+  } catch (err) {
+    // already defined..
   }
 
   const fit = register('fit', (pat) =>
