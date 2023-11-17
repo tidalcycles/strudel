@@ -22,7 +22,7 @@ const fm = (osc, harmonicityRatio, modulationIndex, wave = 'sine') => {
 };
 
 const waveforms = ['sine', 'square', 'triangle', 'sawtooth'];
-const noises = ['pink', 'white', 'brown'];
+const noises = ['pink', 'white', 'brown', 'crackle'];
 
 export function registerSynthSounds() {
   [...waveforms, ...noises].forEach((s) => {
@@ -36,7 +36,7 @@ export function registerSynthSounds() {
         if (waveforms.includes(s)) {
           sound = getOscillator(s, t, value);
         } else {
-          sound = getNoiseOscillator(s, t);
+          sound = getNoiseOscillator(s, t, 0.002);
         }
 
         let { node: o, stop, triggerRelease } = sound;

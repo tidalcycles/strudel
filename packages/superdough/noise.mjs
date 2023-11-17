@@ -4,7 +4,7 @@ import { getAudioContext } from './superdough.mjs';
 let noiseCache = {};
 
 // lazy generates noise buffers and keeps them forever
-function getNoiseBuffer(type) {
+function getNoiseBuffer(type, density) {
   const ac = getAudioContext();
   if (noiseCache[type]) {
     return noiseCache[type];
@@ -34,17 +34,26 @@ function getNoiseBuffer(type) {
       output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
       output[i] *= 0.11;
       b6 = white * 0.115926;
+    } else if (type === 'crackle') {
+      if (Math.random() < (Math.random() * (density - 0.001) + density).toFixed(4)) {
+        output[i] = Math.random() * 2 - 1;
+      } else {
+        output[i] = 0;
+      }
     }
   }
-  noiseCache[type] = noiseBuffer;
+
+  // Prevent caching to randomize crackles
+  if (type !== "crackle")
+    noiseCache[type] = noiseBuffer;
   return noiseBuffer;
 }
 
 // expects one of noises as type
-export function getNoiseOscillator(type = 'white', t) {
+export function getNoiseOscillator(type = 'white', t, density = 0.02) {
   const ac = getAudioContext();
   const o = ac.createBufferSource();
-  o.buffer = getNoiseBuffer(type);
+  o.buffer = getNoiseBuffer(type, density);
   o.loop = true;
   o.start(t);
   return {
