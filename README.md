@@ -30,7 +30,6 @@ There are multiple npm packages you can use to use strudel, or only parts of it,
 - [`midi`](./packages/midi): webmidi bindings
 - [`serial`](./packages/serial): webserial bindings
 - [`tonal`](./packages/tonal): tonal functions
-- [`xen`](./packages/xen): microtonal / xenharmonic functions
 - ... [and there are more](./packages/)
 
 Click on the package names to find out more about each one.
