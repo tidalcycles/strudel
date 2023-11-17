@@ -1215,7 +1215,6 @@ const generic_params = [
    */
   ['waveloss'],
   /*
-   *
    * Noise crackle density
    *
    * @name density
