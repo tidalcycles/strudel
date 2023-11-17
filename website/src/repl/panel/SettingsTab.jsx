@@ -154,11 +154,6 @@ export function SettingsTab() {
           value={isActiveLineHighlighted}
         />
         <Checkbox
-          label="Highlight active line"
-          onChange={(cbEvent) => settingsMap.setKey('isActiveLineHighlighted', cbEvent.target.checked)}
-          value={isActiveLineHighlighted}
-        />
-        <Checkbox
           label="Enable auto-completion"
           onChange={(cbEvent) => settingsMap.setKey('isAutoCompletionEnabled', cbEvent.target.checked)}
           value={isAutoCompletionEnabled}
