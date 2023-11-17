@@ -87,6 +87,7 @@ export function repl({
 
   const all = function (transform) {
     allTransform = transform;
+    return silence;
   };
 
   for (let i = 1; i < 10; ++i) {
@@ -95,6 +96,7 @@ export function repl({
         return this.p(i);
       },
     });
+    Pattern.prototype[`q${i}`] = silence;
   }
 
   const fit = register('fit', (pat) =>
