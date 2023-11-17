@@ -8,6 +8,7 @@ import {
   deleteActivePattern,
   duplicateActivePattern,
   getUserPattern,
+  renameActivePattern,
 } from '../../settings.mjs';
 
 function classNames(...classes) {
@@ -33,6 +34,9 @@ export function PatternsTab({ context }) {
           </button>
           <button className="underline" onClick={() => duplicateActivePattern()}>
             duplicate
+          </button>
+          <button className="underline" onClick={() => renameActivePattern()}>
+            rename
           </button>
           <button className="underline" onClick={() => deleteActivePattern()}>
             delete

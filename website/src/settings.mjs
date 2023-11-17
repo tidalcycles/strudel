@@ -112,6 +112,20 @@ export function getUserPattern(key) {
   return userPatterns[key];
 }
 
+export function renameActivePattern() {
+  const newName = prompt('Enter new name');
+  let userPatterns = getUserPatterns();
+  if (userPatterns[newName]) {
+    alert('Name already taken!');
+    return;
+  }
+  let activePattern = getSetting('activePattern');
+  userPatterns[newName] = userPatterns[activePattern]; // copy code
+  delete userPatterns[activePattern];
+  setUserPatterns({ ...userPatterns });
+  setActivePattern(newName);
+}
+
 export function updateUserPattern(code) {
   const userPatterns = getUserPatterns();
   let activePattern = getSetting('activePattern');
