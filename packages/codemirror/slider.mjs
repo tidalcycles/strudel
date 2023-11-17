@@ -116,9 +116,9 @@ export const sliderPlugin = ViewPlugin.fromClass(
  *
  * @name slider
  * @param {number} value Initial value
- * @param {number} min Minimum value
- * @param {number} max Maximum value
- * @param {number} step Step size
+ * @param {number} min Minimum value - optional, defaults to 0
+ * @param {number} max Maximum value - optional, defaults to 1
+ * @param {number} step Step size - optional
  */
 export let slider = (value) => {
   console.warn('slider will only work when the transpiler is used... passing value as is');
