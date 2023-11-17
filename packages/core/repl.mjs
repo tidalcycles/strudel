@@ -3,7 +3,7 @@ import { evaluate as _evaluate } from './evaluate.mjs';
 import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
-import { register } from './pattern.mjs';
+import { register, Pattern, isPattern, silence, stack } from './pattern.mjs';
 
 export function repl({
   interval,
@@ -24,22 +24,37 @@ export function repl({
     getTime,
     onToggle,
   });
-  let playPatterns = [];
+  let pPatterns = {};
+  let allTransform;
+
+  const hush = function () {
+    pPatterns = {};
+    allTransform = undefined;
+    return silence;
+  };
+
   const setPattern = (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
     scheduler.setPattern(pattern, autostart);
   };
   setTime(() => scheduler.now()); // TODO: refactor?
-  const evaluate = async (code, autostart = true) => {
+  const evaluate = async (code, autostart = true, shouldHush = true) => {
     if (!code) {
       throw new Error('no code to evaluate');
     }
     try {
       await beforeEval?.({ code });
-      playPatterns = [];
+      shouldHush && hush();
       let { pattern, meta } = await _evaluate(code, transpiler);
-      if (playPatterns.length) {
-        pattern = pattern.stack(...playPatterns);
+      if (Object.keys(pPatterns).length) {
+        pattern = stack(...Object.values(pPatterns));
+      }
+      if (allTransform) {
+        pattern = allTransform(pattern);
+      }
+      if (!isPattern(pattern)) {
+        const message = `got "${typeof evaluated}" instead of pattern`;
+        throw new Error(message + (typeof evaluated === 'function' ? ', did you forget to call a function?' : '.'));
       }
       logger(`[eval] code updated`);
       setPattern(pattern, autostart);
@@ -62,10 +77,32 @@ export function repl({
     return pat.loopAtCps(cycles, scheduler.cps);
   });
 
-  const play = register('play', (pat) => {
-    playPatterns.push(pat);
-    return pat;
-  });
+  Pattern.prototype.p = function (id) {
+    pPatterns[id] = this;
+    return this;
+  };
+  Pattern.prototype.q = function (id) {
+    return silence;
+  };
+
+  const all = function (transform) {
+    allTransform = transform;
+    return silence;
+  };
+
+  for (let i = 1; i < 10; ++i) {
+    Object.defineProperty(Pattern.prototype, `d${i}`, {
+      get() {
+        return this.p(i);
+      },
+    });
+    Object.defineProperty(Pattern.prototype, `p${i}`, {
+      get() {
+        return this.p(i);
+      },
+    });
+    Pattern.prototype[`q${i}`] = silence;
+  }
 
   const fit = register('fit', (pat) =>
     pat.withHap((hap) =>
@@ -80,7 +117,8 @@ export function repl({
   evalScope({
     loopAt,
     fit,
-    play,
+    all,
+    hush,
     setCps,
     setcps: setCps,
     setCpm,
