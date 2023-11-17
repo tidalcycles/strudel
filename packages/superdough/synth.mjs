@@ -36,7 +36,8 @@ export function registerSynthSounds() {
         if (waveforms.includes(s)) {
           sound = getOscillator(s, t, value);
         } else {
-          sound = getNoiseOscillator(s, t, 0.002);
+          let { density } = value;
+          sound = getNoiseOscillator(s, t, density);
         }
 
         let { node: o, stop, triggerRelease } = sound;

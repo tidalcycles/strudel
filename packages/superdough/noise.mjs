@@ -35,7 +35,8 @@ function getNoiseBuffer(type, density) {
       output[i] *= 0.11;
       b6 = white * 0.115926;
     } else if (type === 'crackle') {
-      if (Math.random() < (Math.random() * (density - 0.001) + density).toFixed(4)) {
+      const probability = density * 0.01
+      if (Math.random() < probability) {
         output[i] = Math.random() * 2 - 1;
       } else {
         output[i] = 0;
