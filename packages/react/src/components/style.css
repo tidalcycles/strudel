@@ -28,3 +28,7 @@
 footer {
   z-index: 0 !important;
 }
+
+.strudel-tooltip {
+  padding: 5px;
+}

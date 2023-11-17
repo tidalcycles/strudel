@@ -25,7 +25,7 @@ import Box from '@components/Box.astro';
 
 lpf = **l**ow **p**ass **f**ilter
 
-- Ändere `lpf` in 200. Hörst du wie der Bass dumpfer klingt? Es klingt so ähnlich als würde die Musik hinter einer geschlossenen Tür laufen 🚪
+- Ändere `lpf` in 200. Hörst du, wie der Bass dumpfer klingt? Es klingt so, als würde die Musik hinter einer geschlossenen Tür spielen 🚪
 - Lass uns nun die Tür öffnen: Ändere `lpf` in 5000. Der Klang wird dadurch viel heller und schärfer ✨🪩
 
 </Box>
@@ -42,9 +42,9 @@ lpf = **l**ow **p**ass **f**ilter
 <Box>
 
 - Füg noch mehr `lpf` Werte hinzu
-- Das pattern in `lpf` ändert nicht den Rhythmus der Bassline
+- Das Pattern in `lpf` ändert nicht den Rhythmus der Basslinie
 
-Später sehen wir wie man mit Wellenformen Dinge automatisieren kann.
+Später sehen wir, wie man mit Wellenformen Dinge automatisieren kann.
 
 </Box>
 
@@ -73,7 +73,7 @@ Später sehen wir wie man mit Wellenformen Dinge automatisieren kann.
 
 Bei Rhythmen ist die Dynamik (= Veränderungen der Lautstärke) sehr wichtig.
 
-- Entferne `.gain(...)` und achte darauf wie es viel flacher klingt.
+- Entferne `.gain(...)` und achte darauf, wie es viel flacher klingt.
 - Mach es rückgängig (strg+z dann strg+enter)
 
 </Box>
@@ -99,13 +99,13 @@ Lass uns die obigen Beispiele kombinieren:
 
 <Box>
 
-Versuche die einzelnen Teile innerhalb `stack` zu erkennen, schau dir an wie die Kommas gesetzt sind.
+Versuche die einzelnen Teile innerhalb von `stack` zu erkennen. Schau dir an wie die Kommas gesetzt sind.
 
-Die 3 Teile (Drums, Bass, Akkorde) sind genau wie vorher, nur in einem `stack`, getrennt durch Kommas
+Die 3 Teile (Drums, Bass, Akkorde) sind genau wie vorher, nur in einem `stack`, getrennt durch Kommas.
 
 </Box>
 
-**Den Sound formen mit ADSR Hüllkurve**
+**Den Sound formen mit ADSR-Hüllkurve**
 
 <MiniRepl
   hideHeader
@@ -120,14 +120,14 @@ Die 3 Teile (Drums, Bass, Akkorde) sind genau wie vorher, nur in einem `stack`, 
 
 <Box>
 
-Versuche herauszufinden was die Zahlen machen. Probier folgendes:
+Versuche herauszufinden, was die Zahlen machen. Probier folgendes:
 
 - attack: `.5` vs `0`
 - decay: `.5` vs `0`
 - sustain: `1` vs `.25` vs `0`
 - release: `0` vs `.5` vs `1`
 
-Kannst du erraten was die einzelnen Werte machen?
+Kannst du erraten, was die einzelnen Werte machen?
 
 </Box>
 
@@ -142,7 +142,7 @@ Kannst du erraten was die einzelnen Werte machen?
 
 </QA>
 
-**adsr Kurznotation**
+**adsr-Kurznotation**
 
 <MiniRepl
   hideHeader
@@ -169,9 +169,9 @@ Kannst du erraten was die einzelnen Werte machen?
 
 Probier verschiedene `delay` Werte zwischen 0 und 1. Übrigens: `.5` ist kurz für `0.5`.
 
-Was passiert wenn du `.delay(".8:.125")` schreibst? Kannst du erraten was die zweite Zahl macht?
+Was passiert, wenn du `.delay(".8:.125")` schreibst? Kannst du erraten, was die zweite Zahl macht?
 
-Was passiert wenn du `.delay(".8:.06:.8")` schreibst? Kannst du erraten was die dritte Zahl macht?
+Was passiert, wenn du `.delay(".8:.06:.8")` schreibst? Kannst du erraten, was die dritte Zahl macht?
 
 </Box>
 
@@ -181,7 +181,7 @@ Was passiert wenn du `.delay(".8:.06:.8")` schreibst? Kannst du erraten was die 
 
 - a: Lautstärke des Delays
 - b: Verzögerungszeit
-- c: Feedback (je kleiner desto schneller verschwindet das Delay)
+- c: Feedback (je kleiner, desto schneller verschwindet das Delay)
 
 </QA>
 
@@ -203,7 +203,7 @@ Füg auch ein Delay hinzu!
 
 </Box>
 
-**kleiner dub tune**
+**kleiner Dub-Tune**
 
 <MiniRepl
   hideHeader
@@ -238,7 +238,7 @@ Für echten Dub fehlt noch der Bass:
 
 <Box>
 
-Füg `.hush()` ans ende eines Patterns im stack...
+Füg `.hush()` ans Ende eines Patterns im stack...
 
 </Box>
 
@@ -258,25 +258,25 @@ Füg `.hush()` ans ende eines Patterns im stack...
 
 **fast and slow = schnell und langsam**
 
-Mit `fast` und `slow` kann man das tempo eines patterns außerhalb der Mini-Notation ändern:
+Mit `fast` und `slow` kann man das Tempo eines Patterns außerhalb der Mini-Notation ändern:
 
 <MiniRepl hideHeader client:visible tune={`sound("bd*2,~ rim").slow(2)`} />
 
 <Box>
 
-Ändere den `slow` Wert. Tausche `slow` durch `fast`.
+Ändere den `slow`-Wert. Ersetze `slow` durch `fast`.
 
-Was passiert wenn du den Wert automatisierst? z.b. `.fast("<1 [2 4]>")` ?
+Was passiert, wenn du den Wert automatisierst? z.b. `.fast("<1 [2 4]>")` ?
 
 </Box>
 
-Übrigens, innerhalb der Mini-Notation, `fast` ist `*` und `slow` ist `/`.
+Übrigens, innerhalb der Mini-Notation: `fast` ist `*` und `slow` ist `/`.
 
 <MiniRepl hideHeader client:visible tune={`sound("[bd*2,~ rim]*<1 [2 4]>")`} />
 
 ## Automation mit Signalen
 
-Anstatt Werte schrittweise zu automatisieren können wir auch sogenannte Signale benutzen:
+Anstatt Werte schrittweise zu automatisieren, können wir auch sogenannte Signale benutzen:
 
 <MiniRepl hideHeader client:visible tune={`sound("hh*16").gain(sine)`} punchcard punchcardLabels={false} />
 
@@ -296,7 +296,7 @@ Signale bewegen sich standardmäßig zwischen 0 und 1. Wir können das mit `rang
 
 <MiniRepl hideHeader client:visible tune={`sound("hh*8").lpf(saw.range(500, 2000))`} />
 
-`range` ist nützlich wenn wir Funktionen mit einem anderen Wertebereich als 0 und 1 automatisieren wollen (z.b. lpf)
+`range` ist nützlich wenn wir Funktionen mit einem anderen Wertebereich als 0 und 1 automatisieren wollen (z.b. `lpf`)
 
 <Box>
 
@@ -322,7 +322,7 @@ Die ganze Automation braucht nun 8 cycle bis sie sich wiederholt.
 
 ## Rückblick
 
-| name  | example                                                                                            |
+| Name  | Beispiel                                                                                           |
 | ----- | -------------------------------------------------------------------------------------------------- |
 | lpf   | <MiniRepl hideHeader client:visible tune={`note("c2 c3").s("sawtooth").lpf("<400 2000>")`} />      |
 | vowel | <MiniRepl hideHeader client:visible tune={`note("c3 eb3 g3").s("sawtooth").vowel("<a e i o>")`} /> |
@@ -333,4 +333,4 @@ Die ganze Automation braucht nun 8 cycle bis sie sich wiederholt.
 | speed | <MiniRepl hideHeader client:visible tune={`s("bd rim").speed("<1 2 -1 -2>")`} />                   |
 | range | <MiniRepl hideHeader client:visible tune={`s("hh*16").lpf(saw.range(200,4000))`} />                |
 
-Lass uns nun die für Tidal typischen [Pattern Effekte anschauen](/de/workshop/pattern-effects).
+Lass uns nun die für Tidal typischen [Pattern-Effekte anschauen](/de/workshop/pattern-effects).

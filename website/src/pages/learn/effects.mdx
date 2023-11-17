@@ -82,6 +82,10 @@ Strudel uses ADSR envelopes, which are probably the most common way to describe 
 
 <JsDoc client:idle name="release" h={0} />
 
+## adsr
+
+<JsDoc client:idle name="adsr" h={0} />
+
 # Filter Envelope
 
 Each filter can receive an additional filter envelope controlling the cutoff value dynamically. It uses an ADSR envelope similar to the one used for amplitude. There is an additional parameter to control the depth of the filter modulation: `lpenv`|`hpenv`|`bpenv`. This allows you to play subtle or huge filter modulations just the same by only increasing or decreasing the depth.
@@ -151,6 +155,10 @@ There is one filter envelope for each filter type and thus one set of envelope f
 ## postgain
 
 <JsDoc client:idle name="postgain" h={0} />
+
+## xfade
+
+<JsDoc client:idle name="xfade" h={0} />
 
 # Panning
 
@@ -232,3 +240,21 @@ global effects use the same chain for all events of the same orbit:
 <JsDoc client:idle name="iresponse" h={0} />
 
 Next, we'll look at strudel's support for [Csound](/learn/csound).
+
+## Phaser
+
+### phaser
+
+<JsDoc client:idle name="phaser" h={0} />
+
+### phaserdepth
+
+<JsDoc client:idle name="phaserdepth" h={0} />
+
+### phasercenter
+
+<JsDoc client:idle name="phasercenter" h={0} />
+
+### phasersweep
+
+<JsDoc client:idle name="phasersweep" h={0} />

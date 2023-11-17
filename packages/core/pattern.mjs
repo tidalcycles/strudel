@@ -1178,7 +1178,7 @@ export function reify(thing) {
  * @return {Pattern}
  * @synonyms polyrhythm, pr
  * @example
- * stack(g3, b3, [e4, d4]).note() // "g3,b3,[e4,d4]".note()
+ * stack("g3", "b3", ["e4", "d4"]).note() // "g3,b3,[e4,d4]".note()
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
@@ -1193,7 +1193,7 @@ export function stack(...pats) {
  *
  * @return {Pattern}
  * @example
- * slowcat(e5, b4, [d5, c5])
+ * slowcat("e5", "b4", ["d5", "c5"])
  *
  */
 export function slowcat(...pats) {
@@ -1237,7 +1237,7 @@ export function slowcatPrime(...pats) {
  * @synonyms slowcat
  * @return {Pattern}
  * @example
- * cat(e5, b4, [d5, c5]).note() // "<e5 b4 [d5 c5]>".note()
+ * cat("e5", "b4", ["d5", "c5"]).note() // "<e5 b4 [d5 c5]>".note()
  *
  */
 export function cat(...pats) {
@@ -1247,7 +1247,7 @@ export function cat(...pats) {
 /** Like {@link Pattern.seq}, but each step has a length, relative to the whole.
  * @return {Pattern}
  * @example
- * timeCat([3,e3],[1, g3]).note() // "e3@3 g3".note()
+ * timeCat([3,"e3"],[1, "g3"]).note() // "e3@3 g3".note()
  */
 export function timeCat(...timepats) {
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -1287,7 +1287,7 @@ export function sequence(...pats) {
 /** Like **cat**, but the items are crammed into one cycle.
  * @synonyms fastcat, sequence
  * @example
- * seq(e5, b4, [d5, c5]).note() // "e5 b4 [d5 c5]".note()
+ * seq("e5", "b4", ["d5", "c5"]).note() // "e5 b4 [d5 c5]".note()
  *
  */
 export function seq(...pats) {
@@ -1975,9 +1975,9 @@ export const press = register('press', function (pat) {
  *   s("hh*3")
  * )
  */
-export const hush = register('hush', function (pat) {
+Pattern.prototype.hush = function () {
   return silence;
-});
+};
 
 /**
  * Applies `rev` to a pattern every other cycle, so that the pattern alternates between forwards and backwards.
@@ -2101,22 +2101,42 @@ export const { iterBack, iterback } = register(['iterBack', 'iterback'], functio
 });
 
 /**
+ * Repeats each cycle the given number of times.
+ * @name repeatCycles
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * note(irand(12).add(34)).segment(4).repeatCycles(2).s("gm_acoustic_guitar_nylon")
+ */
+const _repeatCycles = function (n, pat) {
+  return slowcat(...Array(n).fill(pat));
+};
+
+const { repeatCycles } = register('repeatCycles', _repeatCycles);
+
+/**
  * Divides a pattern into a given number of parts, then cycles through those parts in turn, applying the given function to each part in turn (one part per cycle).
  * @name chunk
+ * @synonyms slowChunk, slowchunk
  * @memberof Pattern
  * @returns Pattern
  * @example
  * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note()
  */
-const _chunk = function (n, func, pat, back = false) {
+const _chunk = function (n, func, pat, back = false, fast = false) {
   const binary = Array(n - 1).fill(false);
   binary.unshift(true);
-  const binary_pat = _iter(n, sequence(...binary), back);
+  // Invert the 'back' because we want to shift the pattern forwards,
+  // and so time backwards
+  const binary_pat = _iter(n, sequence(...binary), !back);
+  if (!fast) {
+    pat = pat.repeatCycles(n);
+  }
   return pat.when(binary_pat, func);
 };
 
-export const chunk = register('chunk', function (n, func, pat) {
-  return _chunk(n, func, pat, false);
+const { chunk, slowchunk, slowChunk } = register(['chunk', 'slowchunk', 'slowChunk'], function (n, func, pat) {
+  return _chunk(n, func, pat, false, false);
 });
 
 /**
@@ -2130,6 +2150,21 @@ export const chunk = register('chunk', function (n, func, pat) {
  */
 export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], function (n, func, pat) {
   return _chunk(n, func, pat, true);
+});
+
+/**
+ * Like `chunk`, but the cycles of the source pattern aren't repeated
+ * for each set of chunks.
+ * @name fastChunk
+ * @synonyms fastchunk
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * "<0 8> 1 2 3 4 5 6 7".fastChunk(4, x => x.color('red')).slow(4).scale("C2:major").note()
+  .s("folkharp")
+ */
+const { fastchunk, fastChunk } = register(['fastchunk', 'fastChunk'], function (n, func, pat) {
+  return _chunk(n, func, pat, false, true);
 });
 
 // TODO - redefine elsewhere in terms of mask
@@ -2156,6 +2191,9 @@ export const duration = register('duration', function (value, pat) {
 
 /**
  * Sets the color of the hap in visualizations like pianoroll or highlighting.
+ * @name color
+ * @synonyms colour
+ * @param {string} color Hexadecimal or CSS color name
  */
 // TODO: move this to controls https://github.com/tidalcycles/strudel/issues/288
 export const { color, colour } = register(['color', 'colour'], function (color, pat) {
@@ -2357,3 +2395,29 @@ export const ref = (accessor) =>
   pure(1)
     .withValue(() => reify(accessor()))
     .innerJoin();
+
+let fadeGain = (p) => (p < 0.5 ? 1 : 1 - (p - 0.5) / 0.5);
+
+/**
+ * Cross-fades between left and right from 0 to 1:
+ * - 0 = (full left, no right)
+ * - .5 = (both equal)
+ * - 1 = (no left, full right)
+ *
+ * @name xfade
+ * @example
+ * xfade(s("bd*2"), "<0 .25 .5 .75 1>", s("hh*8"))
+ */
+export let xfade = (a, pos, b) => {
+  pos = reify(pos);
+  a = reify(a);
+  b = reify(b);
+  let gaina = pos.fmap((v) => ({ gain: fadeGain(v) }));
+  let gainb = pos.fmap((v) => ({ gain: fadeGain(1 - v) }));
+  return stack(a.mul(gaina), b.mul(gainb));
+};
+
+// the prototype version is actually flipped so left/right makes sense
+Pattern.prototype.xfade = function (pos, b) {
+  return xfade(this, pos, b);
+};

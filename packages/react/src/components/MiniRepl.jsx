@@ -30,6 +30,7 @@ export function MiniRepl({
   theme,
   keybindings,
   isLineNumbersDisplayed,
+  isActiveLineHighlighted,
 }) {
   drawTime = drawTime || (punchcard ? [0, 4] : undefined);
   const evalOnMount = !!drawTime;
@@ -164,6 +165,7 @@ export function MiniRepl({
             fontSize={fontSize}
             keybindings={keybindings}
             isLineNumbersDisplayed={isLineNumbersDisplayed}
+            isActiveLineHighlighted={isActiveLineHighlighted}
           />
         )}
         {error && <div className="text-right p-1 text-md text-red-200">{error.message}</div>}

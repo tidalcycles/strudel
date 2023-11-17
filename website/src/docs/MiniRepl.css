@@ -1,26 +1,26 @@
-.cm-activeLine,
-.cm-activeLineGutter {
+.mini-repl .cm-activeLine,
+.mini-repl .cm-activeLineGutter {
   background-color: transparent !important;
 }
 
-.cm-theme {
+.mini-repl .cm-theme {
   background-color: var(--background);
   border: 1px solid var(--lineHighlight);
   padding: 2px;
 }
 
-.cm-scroller {
+.mini-repl .cm-scroller {
   font-family: inherit !important;
 }
 
-.cm-gutters {
+.mini-repl .cm-gutters {
   display: none !important;
 }
 
-.cm-cursorLayer {
+.mini-repl .cm-cursorLayer {
   animation-name: inherit !important;
 }
 
-.cm-cursor {
+.mini-repl .cm-cursor {
   border-left: 2px solid currentcolor !important;
 }

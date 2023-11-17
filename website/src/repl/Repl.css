@@ -57,3 +57,7 @@
 #code .cm-foldGutter {
   display: none !important;
 }
+
+#code .cm-focused {
+  outline: none;
+}

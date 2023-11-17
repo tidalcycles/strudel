@@ -17,9 +17,6 @@ describe('transpiler', () => {
   it('wraps backtick string with mini and adds location', () => {
     expect(transpiler('`c3`', simple).output).toEqual("m('c3', 0);");
   });
-  it('replaces note variables with note strings', () => {
-    expect(transpiler('seq(c3, d3)', simple).output).toEqual("seq('c3', 'd3');");
-  });
   it('keeps tagged template literal as is', () => {
     expect(transpiler('xxx`c3`', simple).output).toEqual('xxx`c3`;');
   });
