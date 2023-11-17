@@ -33,6 +33,7 @@ export default function CodeMirror({
   theme,
   keybindings,
   isLineNumbersDisplayed,
+  isActiveLineHighlighted,
   isAutoCompletionEnabled,
   isTooltipEnabled,
   isLineWrappingEnabled,
@@ -109,7 +110,13 @@ export default function CodeMirror({
     return _extensions;
   }, [keybindings, isAutoCompletionEnabled, isTooltipEnabled, isLineWrappingEnabled]);
 
-  const basicSetup = useMemo(() => ({ lineNumbers: isLineNumbersDisplayed }), [isLineNumbersDisplayed]);
+  const basicSetup = useMemo(
+    () => ({
+      lineNumbers: isLineNumbersDisplayed,
+      highlightActiveLine: isActiveLineHighlighted,
+    }),
+    [isLineNumbersDisplayed, isActiveLineHighlighted],
+  );
 
   return (
     <div style={{ fontSize, fontFamily }} className="w-full">

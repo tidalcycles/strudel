@@ -384,6 +384,7 @@ function SettingsTab({ scheduler }) {
     theme,
     keybindings,
     isLineNumbersDisplayed,
+    isActiveLineHighlighted,
     isAutoCompletionEnabled,
     isTooltipEnabled,
     isLineWrappingEnabled,
@@ -452,6 +453,11 @@ function SettingsTab({ scheduler }) {
           label="Display line numbers"
           onChange={(cbEvent) => settingsMap.setKey('isLineNumbersDisplayed', cbEvent.target.checked)}
           value={isLineNumbersDisplayed}
+        />
+        <Checkbox
+          label="Highlight active line"
+          onChange={(cbEvent) => settingsMap.setKey('isActiveLineHighlighted', cbEvent.target.checked)}
+          value={isActiveLineHighlighted}
         />
         <Checkbox
           label="Enable auto-completion"
