@@ -165,7 +165,10 @@ export function pianoroll({
   barThickness = fold ? valueAxis / foldValues.length : valueAxis / valueExtent;
   ctx.fillStyle = background;
   ctx.globalAlpha = 1; // reset!
-  clearScreen(smear);
+  if (!smear) {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillRect(0, 0, w, h);
+  }
   haps.forEach((event) => {
     const isActive = event.whole.begin <= time && event.endClipped > time;
     let strokeCurrent = stroke ?? (strokeActive && isActive);
@@ -278,14 +281,4 @@ Pattern.prototype.wordfall = function (options) {
 export function drawPianoroll(options) {
   const { drawTime, ...rest } = options;
   pianoroll({ ...getDrawOptions(drawTime), ...rest });
-}
-
-function clearScreen(smear = 0, smearRGB = `0,0,0`) {
-  const ctx = getDrawContext();
-  if (!smear) {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  } else {
-    ctx.fillStyle = `rgba(${smearRGB},${1 - smear})`;
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  }
 }
