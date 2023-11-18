@@ -2189,6 +2189,14 @@ export const duration = register('duration', function (value, pat) {
   return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
 });
 
+export const hsla = register('hsla', (h, s, l, a, pat) => {
+  return pat.color(`hsla(${h}turn,${s * 100}%,${l * 100}%,${a})`);
+});
+
+export const hsl = register('hsl', (h, s, l, pat) => {
+  return pat.color(`hsl(${h}turn,${s * 100}%,${l * 100}%)`);
+});
+
 /**
  * Sets the color of the hap in visualizations like pianoroll or highlighting.
  * @name color
