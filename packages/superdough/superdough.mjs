@@ -30,7 +30,11 @@ let audioContext;
 export const getAudioContext = () => {
   if (!audioContext) {
     audioContext = new AudioContext();
+    var maxChannelCount = audioContext.destination.maxChannelCount;
+    audioContext.destination.channelCount = maxChannelCount;
   }
+  //console.log(audioContext.destination.maxChannelCount);
+
   return audioContext;
 };
 
@@ -39,7 +43,10 @@ const getDestination = () => {
   const ctx = getAudioContext();
   if (!destination) {
     destination = ctx.createGain();
-    destination.connect(ctx.destination);
+    var merger = ctx.createChannelMerger(ctx.destination.channelCount);
+    merger.connect(ctx.destination);
+    destination.connect(merger, 0, 4);
+    destination.connect(merger, 0, 5);
   }
   return destination;
 };
