@@ -48,7 +48,23 @@ There is a special function `H` that allows you to use a pattern as an input to 
   tune={`await initHydra()
 let pattern = "3 4 5 [6 7]*2"
 shape(H(pattern)).out(o0)
-n(pattern).scale("A:minor").piano().room(1) 
+n(pattern).scale("A:minor").piano().room(1)
+`}
+/>
+
+To use hydra audio capture, call `initHydra` with `{audio:true}` configuration param:
+
+<MiniRepl
+  client:only="react"
+  tune={`await initHydra({audio:true})
+let pattern = "<3 4 5 [6 7]*2>"
+shape(H(pattern)).repeat()
+  .scrollY(
+    ()=> a.fft[0]*.25
+  )
+  .add(src(o0).color(.71 ).scrollX(.005),.95)
+.out(o0)
+n(pattern).scale("A:minor").piano().room(1)
 `}
 />
 
