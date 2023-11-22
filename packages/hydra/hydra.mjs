@@ -1,27 +1,33 @@
 import { getDrawContext } from '@strudel.cycles/core';
 
-let options = '';
+let audio = false;
+let hydra;
+
+function appendCanvas(c){
+  const { canvas: testCanvas } = getDrawContext();
+  c.canvas.id = 'hydra-canvas';
+  c.canvas.style.position = 'absolute';
+  c.canvas.style.top = '0px';
+  testCanvas.after(c.canvas);
+}
 
 export async function initHydra(config) {
+  audio = config?.audio || false;
   //load and init hydra
   if (!document.getElementById('hydra-canvas')) {
-    const { canvas: testCanvas } = getDrawContext();
     await import('https://unpkg.com/hydra-synth');
-    h = new Hydra({ detectAudio: config?.audio });
-    h.canvas.id = 'hydra-canvas';
-    h.canvas.style.position = 'absolute';
-    h.canvas.style.top = '0px';
-    testCanvas.after(h.canvas);
+    hydra = new Hydra({ detectAudio: audio });
+    appendCanvas(hydra);
   }
 
-  // update options
-  if (options != JSON.stringify(config)) {
-    options = JSON.stringify(config);
-
-    new Hydra({
-      canvas: document.getElementById('hydra-canvas'),
-      detectAudio: config?.audio,
-    });
+  // if config.audio is true
+  // and current canvas des not detect audio
+  if (config?.audio && !hydra.detectAudio ){
+    //remove previous canvas without audio detection
+    document.getElementById('hydra-canvas').remove()
+    // create and append a new audio responsive canvas
+    hydra = new Hydra({ detectAudio: audio});
+    appendCanvas(hydra)
   }
 }
 
