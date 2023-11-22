@@ -4,11 +4,11 @@ export async function initHydra() {
   if (!document.getElementById('hydra-canvas')) {
     const { canvas: testCanvas } = getDrawContext();
     await import('https://unpkg.com/hydra-synth');
-    const hydraCanvas = testCanvas.cloneNode(true);
-    hydraCanvas.id = 'hydra-canvas';
-    testCanvas.after(hydraCanvas);
-    new Hydra({ canvas: hydraCanvas, detectAudio: false });
-    s0.init({ src: testCanvas });
+    h = new Hydra({detectAudio: false });
+    h.canvas.id = 'hydra-canvas';
+    h.canvas.style.position = 'absolute';
+    h.canvas.style.top = '0px';
+    testCanvas.after(h.canvas);
   }
 }
 
