@@ -65,7 +65,7 @@ async function getUndocumented(path, docs) {
 }
 
 // read doc.json file
-const { docs } = JSON.parse(await readFile(resolve(__dirname, 'doc.json'), 'utf8'));
+const { docs } = JSON.parse(await readFile(resolve(__dirname, '..', 'doc.json'), 'utf8'));
 
 const paths = dependencyTree.toList({
   filename: 'index.mjs',
@@ -76,7 +76,7 @@ const paths = dependencyTree.toList({
 // const paths = ['../packages/core/pattern.mjs', '../packages/core/hap.mjs'].map((rel) => resolve(__dirname, rel));
 
 const undocumented = Object.fromEntries(
-  await Promise.all(paths.map(async (path) => [path, await getUndocumented(path, docs)])),
+  await Promise.all(paths.map(async (path) => [path.replace(resolve(__dirname, '..'), ''), await getUndocumented(path, docs)])),
 );
 
 console.log(JSON.stringify(undocumented, null, 2));
