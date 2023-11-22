@@ -76,7 +76,9 @@ const paths = dependencyTree.toList({
 // const paths = ['../packages/core/pattern.mjs', '../packages/core/hap.mjs'].map((rel) => resolve(__dirname, rel));
 
 const undocumented = Object.fromEntries(
-  await Promise.all(paths.map(async (path) => [path.replace(resolve(__dirname, '..'), ''), await getUndocumented(path, docs)])),
+  await Promise.all(
+    paths.map(async (path) => [path.replace(resolve(__dirname, '..'), ''), await getUndocumented(path, docs)]),
+  ),
 );
 
 console.log(JSON.stringify(undocumented, null, 2));
