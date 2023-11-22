@@ -381,6 +381,19 @@ const generic_params = [
    */
   ['coarse'],
 
+  /**
+   * Allows you to set the output channels on the interface
+   *
+   * @name channels
+   * @synonyms ch
+   *
+   * @param {!Float32Array} channels Array<int>
+   * @example
+   * note("e a d b g").channels([2, 3]).room(1)
+   *
+   */
+  ['channels', 'ch'],
+
   ['phaserrate', 'phasr'], // superdirt only
 
   /**

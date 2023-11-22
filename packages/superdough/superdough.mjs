@@ -27,6 +27,7 @@ export function getSound(s) {
 export const resetLoadedSounds = () => soundMap.set({});
 
 let audioContext;
+
 export const getAudioContext = () => {
   if (!audioContext) {
     audioContext = new AudioContext();
@@ -37,23 +38,39 @@ export const getAudioContext = () => {
 
   return audioContext;
 };
-
-let destination;
-const getDestination = () => {
+// outputs: Map<int, audiGainNode>
+const outputs = new Map();
+let channelMerger;
+// channels: Array<int>
+const getDestinations = (channels) => {
   const ctx = getAudioContext();
-  if (!destination) {
-    destination = ctx.createGain();
-    var merger = ctx.createChannelMerger(ctx.destination.channelCount);
-    merger.connect(ctx.destination);
-    destination.connect(merger, 0, 4);
-    destination.connect(merger, 0, 5);
+  if (channelMerger == null) {
+    channelMerger = ctx.createChannelMerger(ctx.destination.channelCount);
+    channelMerger.connect(ctx.destination);
   }
-  return destination;
+  channels.forEach((ch) => {
+    if (!outputs.has(ch)) {
+      const gain = ctx.createGain();
+      gain.channelInterpretation = 'discrete';
+      gain.connect(channelMerger, 0, ch);
+      outputs.set(ch, gain);
+    }
+  });
+  // if (!destination) {
+  //   destination = ctx.createGain();
+  //   channelMerger = ctx.createChannelMerger(ctx.destination.channelCount);
+  //   channelMerger.connect(ctx.destination);
+  //   destination.connect(channelMerger, 0, 4);
+  //   destination.connect(channelMerger, 0, 5);
+  // }
+  return channels.map((ch) => outputs.get(ch));
 };
 
 export const panic = () => {
-  getDestination().gain.linearRampToValueAtTime(0, getAudioContext().currentTime + 0.01);
-  destination = null;
+  outputs.forEach((output) => {
+    return output.gain.linearRampToValueAtTime(0, getAudioContext().currentTime + 0.01);
+  });
+  outputs.clear();
 };
 
 let workletsLoading;
@@ -101,6 +118,15 @@ export async function initAudioOnFirstClick(options) {
 
 let delays = {};
 const maxfeedback = 0.98;
+//input: audioNode, channels: Array<int>
+const connectToOutputs = (input, channels = [0, 1]) => {
+  const outputs = getDestinations(channels);
+  console.log(input);
+
+  outputs.forEach((output, i) => {
+    input.connect(output, 0);
+  });
+};
 
 function getDelay(orbit, delaytime, delayfeedback, t) {
   if (delayfeedback > maxfeedback) {
@@ -111,7 +137,7 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
     const ac = getAudioContext();
     const dly = ac.createFeedbackDelay(1, delaytime, delayfeedback);
     dly.start?.(t); // for some reason, this throws when audion extension is installed..
-    dly.connect(getDestination());
+    connectToOutputs(dly, [0, 1]);
     delays[orbit] = dly;
   }
   delays[orbit].delayTime.value !== delaytime && delays[orbit].delayTime.setValueAtTime(delaytime, t);
@@ -170,7 +196,7 @@ function getReverb(orbit, duration, fade, lp, dim, ir) {
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
     const reverb = ac.createReverb(duration, fade, lp, dim, ir);
-    reverb.connect(getDestination());
+    connectToOutputs(reverb, [0, 1]);
     reverbs[orbit] = reverb;
   }
   if (
@@ -275,7 +301,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     bpsustain = 1,
     bprelease = 0.01,
     bandq = 1,
-
+    channels = [0, 1],
     //phaser
     phaser,
     phaserdepth = 0.75,
@@ -442,7 +468,9 @@ export const superdough = async (value, deadline, hapDuration) => {
   // last gain
   const post = gainNode(postgain);
   chain.push(post);
-  post.connect(getDestination());
+  console.log(channels);
+  // this should be an array but is getting interpreted as an int for some reason...
+  connectToOutputs(post, [channels]);
 
   // delay
   let delaySend;
