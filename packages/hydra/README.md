@@ -12,6 +12,13 @@ await initHydra();
 
 Then you can use hydra below!
 
+### Enable audio capture
+Use `{audio: true}` param to enable Hydra's audio capture:
+
+```js
+await initHydra({audio: true});
+```
+
 ## Usage via npm
 
 ```sh
