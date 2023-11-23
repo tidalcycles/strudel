@@ -71,8 +71,7 @@ export function waveformN(partials, type) {
   const real = new Float32Array(partials + 1);
   const imag = new Float32Array(partials + 1);
   const ac = getAudioContext();
-  const osc = ac.createOscillator();
-
+  const osc = new OscillatorNode(ac, { channelCount: 1, channelCountMode: 'explicit' });
   const terms = {
     sawtooth: (n) => [0, -1 / n],
     square: (n) => [0, n % 2 === 0 ? 0 : 1 / n],
@@ -125,7 +124,8 @@ export function getOscillator(
   let o;
   // If no partials are given, use stock waveforms
   if (!partials || s === 'sine') {
-    o = getAudioContext().createOscillator();
+    o = new OscillatorNode(ac, { channelCount: 1, channelCountMode: 'explicit' });
+    console.log(o);
     o.type = s || 'triangle';
   }
   // generate custom waveform if partials are given

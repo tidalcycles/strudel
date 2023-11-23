@@ -23,6 +23,13 @@ export function registerSound(key, onTrigger, data = {}) {
 export function getSound(s) {
   return soundMap.get()[s];
 }
+// sounds with only one active channel will get upmixed to two, stereo sounds should remain unaffected
+// There might be a better way to do this
+export const upMixToStereo = (ctx, node) => {
+  const stereo = new StereoPannerNode(ctx);
+  node.connect(stereo);
+  return stereo;
+};
 
 export const resetLoadedSounds = () => soundMap.set({});
 
@@ -117,14 +124,16 @@ const maxfeedback = 0.98;
 const connectToOutputs = (input, channels = [0, 1]) => {
   const outputs = getDestinations(channels);
   const ctx = getAudioContext();
-  const center = new StereoPannerNode(ctx);
-  input.connect(center);
+
+  //This upmix can be avoided if correct channel counts are set throughout the app,
+  //could theoretically support surround sound audio files if that work was done
+  const stereo = upMixToStereo(ctx, input);
   const splitter = new ChannelSplitterNode(ctx, {
-    numberOfOutputs: input.channelCount,
+    numberOfOutputs: stereo.channelCount,
   });
-  center.connect(splitter);
+  stereo.connect(splitter);
   outputs.forEach((output, i) => {
-    splitter.connect(output, i % input.channelCount, 0);
+    splitter.connect(output, i % stereo.channelCount, 0);
   });
 };
 
@@ -333,6 +342,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     compressorAttack,
     compressorRelease,
   } = value;
+
+  channels = Array.isArray(channels) ? channels : [channels];
 
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended

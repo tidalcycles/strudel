@@ -381,18 +381,18 @@ const generic_params = [
    */
   ['coarse'],
 
-  // /**
-  //  * Allows you to set the output channels on the interface
-  //  *
-  //  * @name channels
-  //  * @synonyms ch
-  //  *
-  //  * @param {!Float32Array} channels Array<int>
-  //  * @example
-  //  * note("e a d b g").channels([2, 3]).room(1)
-  //  *
-  //  */
-  // ['channels', 'ch'],
+  /**
+   * Allows you to set the output channels on the interface
+   *
+   * @name channels
+   * @synonyms ch
+   *
+   * @param {number | Pattern} channels pattern the output channels
+   * @example
+   * note("e a d b g").channels("2:3").room(1)
+   *
+   */
+  ['channels', 'ch'],
 
   ['phaserrate', 'phasr'], // superdirt only
 
@@ -1390,13 +1390,13 @@ controls.ds = register('ds', (ds, pat) => {
   return pat.set({ decay, sustain });
 });
 
-controls.ch = register(['channels', 'ch'], (channels, pat) => {
-  channels = !Array.isArray(channels) ? [channels] : channels;
+// controls.ch = register(['channels', 'ch'], (channels, pat) => {
+//   channels = !Array.isArray(channels) ? [channels] : channels;
 
-  // channels = channels.map(reify).map((channelPat) => {
-  //   // How do I return the current value of the channel pattern here?
-  // });
-  return pat.set({ channels });
-});
+//   // channels = channels.map(reify).map((channelPat) => {
+//   //   // How do I return the current value of the channel pattern here?
+//   // });
+//   return pat.set({ channels });
+// });
 
 export default controls;
