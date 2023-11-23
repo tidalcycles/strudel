@@ -23,13 +23,6 @@ export function registerSound(key, onTrigger, data = {}) {
 export function getSound(s) {
   return soundMap.get()[s];
 }
-// sounds with only one active channel will get upmixed to two, stereo sounds should remain unaffected
-// There might be a better way to do this
-export const upMixToStereo = (ctx, node) => {
-  const stereo = new StereoPannerNode(ctx);
-  node.connect(stereo);
-  return stereo;
-};
 
 export const resetLoadedSounds = () => soundMap.set({});
 
@@ -45,28 +38,6 @@ export const getAudioContext = () => {
 };
 // outputs: Map<int, GainNode>
 const outputs = new Map();
-let channelMerger;
-// channels: Array<int>
-const getDestinations = (channels) => {
-  const ctx = getAudioContext();
-  if (channelMerger == null) {
-    channelMerger = new ChannelMergerNode(ctx, { numberOfInputs: ctx.destination.channelCount });
-    channelMerger.connect(ctx.destination);
-  }
-  channels.forEach((ch) => {
-    if (!outputs.has(ch)) {
-      const gain = new GainNode(ctx, {
-        channelInterpretation: 'discrete',
-        channelCount: 1,
-        channelCountMode: 'explicit',
-      });
-      gain.connect(channelMerger, 0, ch);
-      outputs.set(ch, gain);
-    }
-  });
-
-  return channels.map((ch) => outputs.get(ch));
-};
 
 export const panic = () => {
   outputs.forEach((output) => {
@@ -120,20 +91,26 @@ export async function initAudioOnFirstClick(options) {
 
 let delays = {};
 const maxfeedback = 0.98;
-//input: audioNode, channels: Array<int>
-const connectToOutputs = (input, channels = [0, 1]) => {
-  const outputs = getDestinations(channels);
-  const ctx = getAudioContext();
 
-  //This upmix can be avoided if correct channel counts are set throughout the app,
-  //could theoretically support surround sound audio files if that work was done
-  const stereo = upMixToStereo(ctx, input);
+let channelMerger;
+// input: AudioNode, channels: ?Array<int>
+export const connectToDestination = (input, channels = [0, 1]) => {
+  const ctx = getAudioContext();
+  if (channelMerger == null) {
+    channelMerger = new ChannelMergerNode(ctx, { numberOfInputs: ctx.destination.channelCount });
+    channelMerger.connect(ctx.destination);
+  }
+  //This upmix can be removed if correct channel counts are set throughout the app,
+  // and then strudel could theoretically support surround sound audio files
+  const stereoMix = new StereoPannerNode(ctx);
+  input.connect(stereoMix);
+
   const splitter = new ChannelSplitterNode(ctx, {
-    numberOfOutputs: stereo.channelCount,
+    numberOfOutputs: stereoMix.channelCount,
   });
-  stereo.connect(splitter);
-  outputs.forEach((output, i) => {
-    splitter.connect(output, i % stereo.channelCount, 0);
+  stereoMix.connect(splitter);
+  channels.map((ch, i) => {
+    splitter.connect(channelMerger, i % stereoMix.channelCount, ch);
   });
 };
 
@@ -146,7 +123,7 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
     const ac = getAudioContext();
     const dly = ac.createFeedbackDelay(1, delaytime, delayfeedback);
     dly.start?.(t); // for some reason, this throws when audion extension is installed..
-    connectToOutputs(dly, [0, 1]);
+    connectToDestination(dly, [0, 1]);
     delays[orbit] = dly;
   }
   delays[orbit].delayTime.value !== delaytime && delays[orbit].delayTime.setValueAtTime(delaytime, t);
@@ -205,7 +182,7 @@ function getReverb(orbit, duration, fade, lp, dim, ir) {
   if (!reverbs[orbit]) {
     const ac = getAudioContext();
     const reverb = ac.createReverb(duration, fade, lp, dim, ir);
-    connectToOutputs(reverb, [0, 1]);
+    connectToDestination(reverb, [0, 1]);
     reverbs[orbit] = reverb;
   }
   if (
@@ -480,7 +457,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   // last gain
   const post = new GainNode(ac, { gain: postgain });
   chain.push(post);
-  connectToOutputs(post, channels);
+  connectToDestination(post, channels);
 
   // delay
   let delaySend;
