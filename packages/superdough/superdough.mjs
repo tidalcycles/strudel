@@ -36,15 +36,6 @@ export const getAudioContext = () => {
   }
   return audioContext;
 };
-// outputs: Map<int, GainNode>
-const outputs = new Map();
-
-export const panic = () => {
-  outputs.forEach((output) => {
-    return output.gain.linearRampToValueAtTime(0, getAudioContext().currentTime + 0.01);
-  });
-  outputs.clear();
-};
 
 let workletsLoading;
 
@@ -92,13 +83,16 @@ export async function initAudioOnFirstClick(options) {
 let delays = {};
 const maxfeedback = 0.98;
 
-let channelMerger;
+let channelMerger, destinationGain;
+
 // input: AudioNode, channels: ?Array<int>
 export const connectToDestination = (input, channels = [0, 1]) => {
   const ctx = getAudioContext();
   if (channelMerger == null) {
     channelMerger = new ChannelMergerNode(ctx, { numberOfInputs: ctx.destination.channelCount });
-    channelMerger.connect(ctx.destination);
+    destinationGain = new GainNode(ctx);
+    channelMerger.connect(destinationGain);
+    destinationGain.connect(ctx.destination);
   }
   //This upmix can be removed if correct channel counts are set throughout the app,
   // and then strudel could theoretically support surround sound audio files
@@ -112,6 +106,11 @@ export const connectToDestination = (input, channels = [0, 1]) => {
   channels.map((ch, i) => {
     splitter.connect(channelMerger, i % stereoMix.channelCount, ch);
   });
+};
+
+export const panic = () => {
+  destinationGain.gain.linearRampToValueAtTime(0, getAudioContext().currentTime + 0.01);
+  destinationGain = null;
 };
 
 function getDelay(orbit, delaytime, delayfeedback, t) {
