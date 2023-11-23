@@ -109,6 +109,9 @@ export const connectToDestination = (input, channels = [0, 1]) => {
 };
 
 export const panic = () => {
+  if (destinationGain == null) {
+    return;
+  }
   destinationGain.gain.linearRampToValueAtTime(0, getAudioContext().currentTime + 0.01);
   destinationGain = null;
 };
