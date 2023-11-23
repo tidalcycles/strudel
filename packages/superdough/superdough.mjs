@@ -31,38 +31,33 @@ let audioContext;
 export const getAudioContext = () => {
   if (!audioContext) {
     audioContext = new AudioContext();
-    var maxChannelCount = audioContext.destination.maxChannelCount;
+    const maxChannelCount = audioContext.destination.maxChannelCount;
     audioContext.destination.channelCount = maxChannelCount;
   }
-  //console.log(audioContext.destination.maxChannelCount);
-
   return audioContext;
 };
-// outputs: Map<int, audiGainNode>
+// outputs: Map<int, GainNode>
 const outputs = new Map();
 let channelMerger;
 // channels: Array<int>
 const getDestinations = (channels) => {
   const ctx = getAudioContext();
   if (channelMerger == null) {
-    channelMerger = ctx.createChannelMerger(ctx.destination.channelCount);
+    channelMerger = new ChannelMergerNode(ctx, { numberOfInputs: ctx.destination.channelCount });
     channelMerger.connect(ctx.destination);
   }
   channels.forEach((ch) => {
     if (!outputs.has(ch)) {
-      const gain = ctx.createGain();
-      gain.channelInterpretation = 'discrete';
+      const gain = new GainNode(ctx, {
+        channelInterpretation: 'discrete',
+        channelCount: 1,
+        channelCountMode: 'explicit',
+      });
       gain.connect(channelMerger, 0, ch);
       outputs.set(ch, gain);
     }
   });
-  // if (!destination) {
-  //   destination = ctx.createGain();
-  //   channelMerger = ctx.createChannelMerger(ctx.destination.channelCount);
-  //   channelMerger.connect(ctx.destination);
-  //   destination.connect(channelMerger, 0, 4);
-  //   destination.connect(channelMerger, 0, 5);
-  // }
+
   return channels.map((ch) => outputs.get(ch));
 };
 
@@ -121,10 +116,15 @@ const maxfeedback = 0.98;
 //input: audioNode, channels: Array<int>
 const connectToOutputs = (input, channels = [0, 1]) => {
   const outputs = getDestinations(channels);
-  console.log(input);
-
+  const ctx = getAudioContext();
+  const center = new StereoPannerNode(ctx);
+  input.connect(center);
+  const splitter = new ChannelSplitterNode(ctx, {
+    numberOfOutputs: input.channelCount,
+  });
+  center.connect(splitter);
   outputs.forEach((output, i) => {
-    input.connect(output, 0);
+    splitter.connect(output, i % input.channelCount, 0);
   });
 };
 
@@ -333,6 +333,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     compressorAttack,
     compressorRelease,
   } = value;
+
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
   const onended = () => {
@@ -466,11 +467,9 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
 
   // last gain
-  const post = gainNode(postgain);
+  const post = new GainNode(ac, { gain: postgain });
   chain.push(post);
-  console.log(channels);
-  // this should be an array but is getting interpreted as an int for some reason...
-  connectToOutputs(post, [channels]);
+  connectToOutputs(post, channels);
 
   // delay
   let delaySend;
