@@ -16,14 +16,12 @@ export async function initHydra(options = {}) {
   if (!document.getElementById('hydra-canvas')) {
     const { src = 'https://unpkg.com/hydra-synth', ...opts } = options;
     await import(src);
-
     hydra = new Hydra(opts);
     appendCanvas(hydra);
-    // s0.init({ src: hydraCanvas }); // whats that?
-  }
-  // if options.detectAudio is true
-  // and current canvas des not detect audio
-  else if (options?.detectAudio && !hydra?.detectAudio) {
+    // hydra.synth.s0.init({ src: testCanvas });  // is this needed?
+  } else if (options?.detectAudio && !hydra?.detectAudio) {
+    // if options.detectAudio is true
+    // and current canvas des not detect audio
     //remove previous canvas without audio detection
     document.getElementById('hydra-canvas').remove();
     return initHydra(options);
