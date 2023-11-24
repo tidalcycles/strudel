@@ -2,19 +2,21 @@ import { createRoot } from 'react-dom/client';
 import jsdoc from '../../../../doc.json';
 
 const getDocLabel = (doc) => doc.name || doc.longname;
+const getDocSynonyms = (doc) => [getDocLabel(doc), ...(doc.synonyms || [])];
 const getInnerText = (html) => {
   var div = document.createElement('div');
   div.innerHTML = html;
   return div.textContent || div.innerText || '';
 };
 
-export function Autocomplete({ doc, label }) {
+export function Autocomplete({ doc, label = getDocLabel(doc) }) {
+  const synonyms = getDocSynonyms(doc).filter((a) => a !== label);
   return (
     <div className="prose dark:prose-invert  max-h-[400px] overflow-auto">
-      <h3 className="pt-0 mt-0">{label || getDocLabel(doc)}</h3>{' '}
-      {!!doc.synonyms_text && (
+      <h3 className="pt-0 mt-0">{label}</h3>{' '}
+      {!!synonyms.length && (
         <span>
-          Synonyms: <code>{doc.synonyms_text}</code>
+          Synonyms: <code>{synonyms.join(', ')}</code>
         </span>
       )}
       <div dangerouslySetInnerHTML={{ __html: doc.description }} />
@@ -53,18 +55,24 @@ const jsdocCompletions = jsdoc.docs
       !['superdirtOnly', 'noAutocomplete'].some((tag) => doc.tags?.find((t) => t.originalTitle === tag)),
   )
   // https://codemirror.net/docs/ref/#autocomplete.Completion
-  .map((doc) /*: Completion */ => ({
-    label: getDocLabel(doc),
-    // detail: 'xxx', // An optional short piece of information to show (with a different style) after the label.
-    info: () => {
-      const node = document.createElement('div');
-      // if Autocomplete is non-interactive, it could also be rendered at build time..
-      // .. using renderToStaticMarkup
-      createRoot(node).render(<Autocomplete doc={doc} />);
-      return node;
-    },
-    type: 'function', // https://codemirror.net/docs/ref/#autocomplete.Completion.type
-  }));
+  .reduce(
+    (acc, doc) /*: Completion */ =>
+      acc.concat(
+        [getDocLabel(doc), ...(doc.synonyms || [])].map((label) => ({
+          label,
+          // detail: 'xxx', // An optional short piece of information to show (with a different style) after the label.
+          info: () => {
+            const node = document.createElement('div');
+            // if Autocomplete is non-interactive, it could also be rendered at build time..
+            // .. using renderToStaticMarkup
+            createRoot(node).render(<Autocomplete doc={doc} label={label} />);
+            return node;
+          },
+          type: 'function', // https://codemirror.net/docs/ref/#autocomplete.Completion.type
+        })),
+      ),
+    [],
+  );
 
 export const strudelAutocomplete = (context /* : CompletionContext */) => {
   let word = context.matchBefore(/\w*/);
