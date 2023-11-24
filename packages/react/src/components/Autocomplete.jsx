@@ -11,7 +11,12 @@ const getInnerText = (html) => {
 export function Autocomplete({ doc, label }) {
   return (
     <div className="prose dark:prose-invert  max-h-[400px] overflow-auto">
-      <h3 className="pt-0 mt-0">{label || getDocLabel(doc)}</h3>
+      <h3 className="pt-0 mt-0">{label || getDocLabel(doc)}</h3>{' '}
+      {!!doc.synonyms_text && (
+        <span>
+          Synonyms: <code>{doc.synonyms_text}</code>
+        </span>
+      )}
       <div dangerouslySetInnerHTML={{ __html: doc.description }} />
       <ul>
         {doc.params?.map(({ name, type, description }, i) => (
