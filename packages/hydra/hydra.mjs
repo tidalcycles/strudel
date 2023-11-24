@@ -3,7 +3,7 @@ import { getDrawContext } from '@strudel.cycles/core';
 let audio = false;
 let hydra;
 
-function appendCanvas(c){
+function appendCanvas(c) {
   const { canvas: testCanvas } = getDrawContext();
   c.canvas.id = 'hydra-canvas';
   c.canvas.style.position = 'absolute';
@@ -22,12 +22,12 @@ export async function initHydra(config) {
 
   // if config.audio is true
   // and current canvas des not detect audio
-  if (config?.audio && !hydra.detectAudio ){
+  if (config?.audio && !hydra.detectAudio) {
     //remove previous canvas without audio detection
-    document.getElementById('hydra-canvas').remove()
+    document.getElementById('hydra-canvas').remove();
     // create and append a new audio responsive canvas
-    hydra = new Hydra({ detectAudio: audio});
-    appendCanvas(hydra)
+    hydra = new Hydra({ detectAudio: audio });
+    appendCanvas(hydra);
   }
 }
 
