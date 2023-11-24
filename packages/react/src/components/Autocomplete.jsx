@@ -8,10 +8,10 @@ const getInnerText = (html) => {
   return div.textContent || div.innerText || '';
 };
 
-export function Autocomplete({ doc }) {
+export function Autocomplete({ doc, label }) {
   return (
     <div className="prose dark:prose-invert  max-h-[400px] overflow-auto">
-      <h3 className="pt-0 mt-0">{getDocLabel(doc)}</h3>
+      <h3 className="pt-0 mt-0">{label || getDocLabel(doc)}</h3>
       <div dangerouslySetInnerHTML={{ __html: doc.description }} />
       <ul>
         {doc.params?.map(({ name, type, description }, i) => (

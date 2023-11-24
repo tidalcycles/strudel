@@ -55,7 +55,6 @@ export const strudelTooltip = hoverTooltip(
       if (!entry) {
         return null;
       }
-      entry.name = word;
     }
 
     return {
@@ -66,7 +65,7 @@ export const strudelTooltip = hoverTooltip(
       create(view) {
         let dom = document.createElement('div');
         dom.className = 'strudel-tooltip';
-        createRoot(dom).render(<Autocomplete doc={entry} />);
+        createRoot(dom).render(<Autocomplete doc={entry} label={word} />);
         return { dom };
       },
     };
