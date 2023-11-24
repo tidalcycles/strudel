@@ -21,10 +21,9 @@ export async function initHydra(options = {}) {
     appendCanvas(hydra);
     // s0.init({ src: hydraCanvas }); // whats that?
   }
-
   // if options.detectAudio is true
   // and current canvas des not detect audio
-  if (options?.detectAudio && !hydra?.detectAudio) {
+  else if (options?.detectAudio && !hydra?.detectAudio) {
     //remove previous canvas without audio detection
     document.getElementById('hydra-canvas').remove();
     return initHydra(options);
