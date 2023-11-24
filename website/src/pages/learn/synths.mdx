@@ -42,6 +42,10 @@ Some amount of pink noise can also be added to any oscillator by using the `nois
 
 <MiniRepl client:idle tune={`note("c3").noise("<0.1 0.25 0.5>").scope()`} />
 
+You can also use the `crackle` type to play some subtle noise crackles. You can control noise amount by using the `density` parameter:
+
+<MiniRepl client:idle tune={`s("crackle*4").density("<0.01 0.04 0.2 0.5>".slow(4)).scope()`} />
+
 ### Additive Synthesis
 
 To tame the harsh sound of the basic waveforms, we can set the `n` control to limit the overtones of the waveform:
