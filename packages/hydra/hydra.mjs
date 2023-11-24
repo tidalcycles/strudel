@@ -11,7 +11,7 @@ function appendCanvas(c) {
   return testCanvas;
 }
 
-export async function initHydra(options = {}) {
+export async function initHydra(options = {detectAudio: false}) {
   //load and init hydra
   if (!document.getElementById('hydra-canvas')) {
     const { src = 'https://unpkg.com/hydra-synth', ...opts } = options;
