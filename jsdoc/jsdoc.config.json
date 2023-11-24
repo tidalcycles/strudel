@@ -3,7 +3,7 @@
     "includePattern": ".+\\.(js(doc|x)?|mjs)$",
     "excludePattern": "node_modules|shift-parser|shift-reducer|shift-traverser|dist"
   },
-  "plugins": ["plugins/markdown"],
+  "plugins": ["plugins/markdown", "jsdoc/jsdoc-synonyms"],
   "opts": {
     "destination": "./out/",
     "recurse": true

@@ -52,11 +52,11 @@ n(pattern).scale("A:minor").piano().room(1)
 `}
 />
 
-To use hydra audio capture, call `initHydra` with `{audio:true}` configuration param:
+To use hydra audio capture, call `initHydra` with `{detectAudio:true}` configuration param:
 
 <MiniRepl
   client:only="react"
-  tune={`await initHydra({audio:true})
+  tune={`await initHydra({detectAudio:true})
 let pattern = "<3 4 5 [6 7]*2>"
 shape(H(pattern)).repeat()
   .scrollY(

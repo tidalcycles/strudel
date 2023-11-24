@@ -21,3 +21,4 @@ vite.config.js
 /src-tauri/target/**/*
 reverbGen.mjs
 hydra.mjs
+jsdoc-synonyms.js
