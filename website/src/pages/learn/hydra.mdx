@@ -41,6 +41,8 @@ note("[a,c,e,<a4 ab4 g4 gb4>,b4]/4").s("sawtooth").vib(2)
 `}
 />
 
+## H patterns
+
 There is a special function `H` that allows you to use a pattern as an input to hydra:
 
 <MiniRepl
@@ -51,6 +53,8 @@ shape(H(pattern)).out(o0)
 n(pattern).scale("A:minor").piano().room(1)
 `}
 />
+
+## detectAudio
 
 To use hydra audio capture, call `initHydra` with `{detectAudio:true}` configuration param:
 
@@ -69,3 +73,27 @@ n(pattern).scale("A:minor").piano().room(1)
 />
 
 You might now be able to see this properly here: [open in REPL](/#YXdhaXQgaW5pdEh5ZHJhKCkKbGV0IHBhdHRlcm4gPSAiMyA0IDUgWzYgN10qMiIKc2hhcGUoSChwYXR0ZXJuKSkub3V0KG8wKQpuKHBhdHRlcm4pLnNjYWxlKCJBOm1pbm9yIikucGlhbm8oKS5yb29tKDEpIA%3D%3D)
+
+Similar to `detectAudio`, all the [available hydra options](https://github.com/hydra-synth/hydra-synth#api) can be passed to `initHydra`.
+
+## feedStrudel
+
+Using the `feedStrudel` option, you can transform strudel visualizations with hydra:
+
+<MiniRepl
+  client:only="react"
+  tune={`await initHydra({feedStrudel:1})
+//
+src(s0).kaleid(H("<4 5 6>"))
+  .diff(osc(1,0.5,5))
+  .modulateScale(osc(2,-0.25,1))
+  .out()
+//
+stack(
+  s("bd*2,[hh:0:<.5 1>]*4,~ rim").bank("RolandTR909").speed(.9),
+  note("[<g1!3 <bb1 <f1 d1>>>]*3").s("sawtooth")
+  .room(.75).sometimes(add(note(12))).clip(.3)
+  .lpa(.05).lpenv(-4).lpf(2000).lpq(8).ftype('24db')
+).fft(4)
+  .scope({pos:0,smear:.95})`}
+/>

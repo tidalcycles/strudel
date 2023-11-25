@@ -12,12 +12,11 @@ await initHydra();
 
 Then you can use hydra below!
 
-### Enable audio capture
-Use `{audio: true}` param to enable Hydra's audio capture:
+### options
 
-```js
-await initHydra({audio: true});
-```
+You can also pass options to the `initHydra` function. These can be used to set [hydra options](https://github.com/hydra-synth/hydra-synth#api) + these strudel specific options:
+
+- `feedStrudel`: sends the strudel canvas to `s0`. The strudel canvas is used to draw `pianoroll`, `spiral`, `scope` etc..
 
 ## Usage via npm
 
