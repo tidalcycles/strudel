@@ -1227,6 +1227,16 @@ const generic_params = [
    * @name waveloss
    */
   ['waveloss'],
+  /*
+   * Noise crackle density
+   *
+   * @name density
+   * @param {number | Pattern} density between 0 and x
+   * @example
+   * s("crackle*4").density("<0.01 0.04 0.2 0.5>".slow(4))
+   *
+   */
+  ['density'],
   // TODO: midi effects?
   ['dur'],
   // ['modwheel'],

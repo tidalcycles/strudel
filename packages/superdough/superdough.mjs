@@ -262,6 +262,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     source,
     gain = 0.8,
     postgain = 1,
+    density = 0.03,
     // filters
     ftype = '12db',
     fanchor = 0.5,
