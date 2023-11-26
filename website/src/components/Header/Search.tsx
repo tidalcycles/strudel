@@ -43,7 +43,7 @@ export default function Search() {
 
   return (
     <>
-      <button type="button" ref={searchButtonRef} onClick={onOpen} className="rounded-md bg-slate-900 w-full px-2">
+      <button type="button" ref={searchButtonRef} onClick={onOpen} className="rounded-md bg-slate-900 w-full px-2 search-button">
         <svg width="24" height="24" fill="none">
           <path
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
@@ -74,6 +74,9 @@ export default function Search() {
             indexName={ALGOLIA.indexName}
             appId={ALGOLIA.appId}
             apiKey={ALGOLIA.apiKey}
+            getMissingResultsUrl={({ query }) => {
+              return `https://github.com/tidalcycles/strudel/issues/new?title=Missing doc for ${query}`;
+            }}
             transformItems={(items) => {
               return items.map((item) => {
                 // We transform the absolute URL into a relative URL to
