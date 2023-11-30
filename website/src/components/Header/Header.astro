@@ -35,7 +35,7 @@ const sidebar = SIDEBAR[langCode];
   </div>
   {/* KNOWN_LANGUAGE_CODES.length > 1 && <LanguageSelect lang={lang} client:idle /> */}
   <div class="search-item h-10">
-    <!-- <Search client:idle /> -->
+    <Search client:idle />
   </div>
   <a href="./" class="hidden md:flex cursor-pointer items-center space-x-1"
     ><CommandLineIcon className="w-5 h-5" /><span>go to REPL</span>
@@ -48,8 +48,8 @@ const sidebar = SIDEBAR[langCode];
 <style>
   /** Style Algolia */
   :root {
-    --docsearch-primary-color: var(--theme-accent);
-    --docsearch-logo-color: var(--theme-text);
+    --docsearch-primary-color: var(--lineHighlight);
+    --docsearch-logo-color: var(--foreground);
   }
 
   .search-item {
