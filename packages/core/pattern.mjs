@@ -1985,7 +1985,7 @@ Pattern.prototype.hush = function () {
  * note("c d e g").palindrome()
  */
 export const palindrome = register('palindrome', function (pat) {
-  return pat.every(2, rev);
+  return pat.lastOf(2, rev);
 });
 
 /**
