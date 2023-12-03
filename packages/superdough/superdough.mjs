@@ -323,7 +323,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     compressorRelease,
   } = value;
 
-  //music programs/audio gear usually labels channels 0,1 as 1,2 so imitate that behavior
+  //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
   channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 
   gain *= velocity; // legacy fix for velocity
