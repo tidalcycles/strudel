@@ -5,7 +5,10 @@ import { Content } from '../../../../my-patterns/README.md';
 import HeadCommon from '../../components/HeadCommon.astro';
 
 const myPatterns = await getMyPatterns();
----
+
+const { BASE_URL } = import.meta.env;
+const base = BASE_URL;
+const baseNoTrailing = base.endsWith('/') ? base.slice(0, -1) : base;---
 
 <head>
   <HeadCommon />
@@ -23,12 +26,12 @@ const myPatterns = await getMyPatterns();
       Object.entries(myPatterns).map(([name, tune]) => (
         <a
           class="rounded-md bg-slate-900 hover:bg-slate-700 cursor-pointer relative"
-          href={`./#${btoa(tune as string)}`}
+          href={`${baseNoTrailing}/#${btoa(tune as string)}`}
         >
           <div class="absolute w-full h-full flex justify-center items-center">
             <span class="bg-slate-800 p-2 rounded-md text-white">{name}</span>
           </div>
-          <img src={`./swatch/${name}.png`} />
+          <img src={`${baseNoTrailing}/swatch/${name}.png`} />
         </a>
       ))
     }
