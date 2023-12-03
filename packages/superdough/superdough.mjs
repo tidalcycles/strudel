@@ -103,8 +103,8 @@ export const connectToDestination = (input, channels = [0, 1]) => {
     numberOfOutputs: stereoMix.channelCount,
   });
   stereoMix.connect(splitter);
-  channels.map((ch, i) => {
-    splitter.connect(channelMerger, i % stereoMix.channelCount, ch);
+  channels.forEach((ch, i) => {
+    splitter.connect(channelMerger, i % stereoMix.channelCount, clamp(ch, 0, ctx.destination.channelCount - 1));
   });
 };
 
@@ -290,7 +290,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     bpsustain = 1,
     bprelease = 0.01,
     bandq = 1,
-    channels = [0, 1],
+    channels = [1, 2],
     //phaser
     phaser,
     phaserdepth = 0.75,
@@ -323,7 +323,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     compressorRelease,
   } = value;
 
-  channels = Array.isArray(channels) ? channels : [channels];
+  //music programs/audio gear usually labels channels 0,1 as 1,2 so imitate that behavior
+  channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 
   gain *= velocity; // legacy fix for velocity
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended

@@ -389,7 +389,7 @@ const generic_params = [
    *
    * @param {number | Pattern} channels pattern the output channels
    * @example
-   * note("e a d b g").channels("2:3")
+   * note("e a d b g").channels("3:4")
    *
    */
   ['channels', 'ch'],
