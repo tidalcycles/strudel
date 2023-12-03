@@ -3267,22 +3267,22 @@ exports[`runs examples > example "outside" example index 0 1`] = `
 
 exports[`runs examples > example "palindrome" example index 0 1`] = `
 [
-  "[ 0/1 → 1/4 | note:g ]",
-  "[ 1/4 → 1/2 | note:e ]",
-  "[ 1/2 → 3/4 | note:d ]",
-  "[ 3/4 → 1/1 | note:c ]",
-  "[ 1/1 → 5/4 | note:c ]",
-  "[ 5/4 → 3/2 | note:d ]",
-  "[ 3/2 → 7/4 | note:e ]",
-  "[ 7/4 → 2/1 | note:g ]",
-  "[ 2/1 → 9/4 | note:g ]",
-  "[ 9/4 → 5/2 | note:e ]",
-  "[ 5/2 → 11/4 | note:d ]",
-  "[ 11/4 → 3/1 | note:c ]",
-  "[ 3/1 → 13/4 | note:c ]",
-  "[ 13/4 → 7/2 | note:d ]",
-  "[ 7/2 → 15/4 | note:e ]",
-  "[ 15/4 → 4/1 | note:g ]",
+  "[ 0/1 → 1/4 | note:c ]",
+  "[ 1/4 → 1/2 | note:d ]",
+  "[ 1/2 → 3/4 | note:e ]",
+  "[ 3/4 → 1/1 | note:g ]",
+  "[ 1/1 → 5/4 | note:g ]",
+  "[ 5/4 → 3/2 | note:e ]",
+  "[ 3/2 → 7/4 | note:d ]",
+  "[ 7/4 → 2/1 | note:c ]",
+  "[ 2/1 → 9/4 | note:c ]",
+  "[ 9/4 → 5/2 | note:d ]",
+  "[ 5/2 → 11/4 | note:e ]",
+  "[ 11/4 → 3/1 | note:g ]",
+  "[ 3/1 → 13/4 | note:g ]",
+  "[ 13/4 → 7/2 | note:e ]",
+  "[ 7/2 → 15/4 | note:d ]",
+  "[ 15/4 → 4/1 | note:c ]",
 ]
 `;
 
