@@ -10,6 +10,7 @@ import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../s
 import { getAudioContext, soundMap } from '@strudel.cycles/webaudio';
 import { useStore } from '@nanostores/react';
 import { FilesTab } from './FilesTab';
+import FileUpload from './FileUpload';
 
 const TAURI = window.__TAURI__;
 
@@ -424,6 +425,7 @@ function SettingsTab({ scheduler }) {
             onChange={(fontFamily) => settingsMap.setKey('fontFamily', fontFamily)}
           />
         </FormItem>
+        <FileUpload onUpload={(files) => console.log(files)} />
         <FormItem label="Font Size">
           <NumberSlider
             value={fontSize}
