@@ -7,7 +7,7 @@ import React, { useMemo, useCallback, useLayoutEffect, useRef, useState } from '
 import { Reference } from './Reference';
 import { themes } from './themes.mjs';
 import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../settings.mjs';
-import { getAudioContext, soundMap } from '@strudel.cycles/webaudio';
+import { getAudioContext, soundMap, connectToDestination } from '@strudel.cycles/webaudio';
 import { useStore } from '@nanostores/react';
 import { FilesTab } from './FilesTab';
 
@@ -271,7 +271,7 @@ function SoundsTab() {
               const onended = () => trigRef.current?.node?.disconnect();
               trigRef.current = Promise.resolve(onTrigger(time, params, onended));
               trigRef.current.then((ref) => {
-                ref?.node.connect(ctx.destination);
+                connectToDestination(ref?.node);
               });
             }}
           >
