@@ -209,15 +209,14 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
   const { prebake, tag } = options;
   processSampleMap(
     sampleMap,
-    (key, value) => {
-      return registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
+    (key, value) =>
+      registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
         type: 'sample',
         samples: value,
         baseUrl,
         prebake,
         tag,
-      });
-    },
+      }),
     baseUrl,
   );
 };
