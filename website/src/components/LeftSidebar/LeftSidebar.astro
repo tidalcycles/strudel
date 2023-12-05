@@ -9,6 +9,7 @@ type Props = {
 const { currentPage } = Astro.props as Props;
 const { BASE_URL } = import.meta.env;
 let currentPageMatch = currentPage.slice(BASE_URL.length, currentPage.endsWith('/') ? -1 : undefined);
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 
 const langCode = getLanguageFromURL(currentPage) || 'en';
 const sidebar = SIDEBAR[langCode];
@@ -23,7 +24,7 @@ const sidebar = SIDEBAR[langCode];
             <h2>{header}</h2>
             <ul>
               {children.map((child) => {
-                const url = Astro.site?.pathname + child.link;
+                const url = `${baseNoTrailing}/${child.link}${child.link.endsWith('/') ? '' : '/'}`;
                 return (
                   <li class="">
                     <a

@@ -13,6 +13,7 @@ import AstroPWA from '@vite-pwa/astro';
 
 const site = `https://strudel.cc/`; // root url without a path
 const base = '/'; // base path of the strudel site
+const baseNoTrailing = base.endsWith('/') ? base.slice(0, -1) : base;
 
 // this rehype plugin converts relative anchor links to absolute ones
 // it wokrs by prepending the absolute page path to anchor links
@@ -24,13 +25,16 @@ function absoluteAnchors() {
     const chunks = file.history[0].split('/src/pages/'); // file.history[0] is the file path
     const path = chunks[chunks.length - 1].slice(0, -4); // only path inside src/pages, without .mdx
     return rehypeUrls((url) => {
-      if (!url.href.startsWith('#')) {
-        return;
+      if (url.href.startsWith('/')) {
+        const hrefWithTrailingSlash = url.href.endsWith('/') ? url.href : url.href + '/';
+        return baseNoTrailing + hrefWithTrailingSlash;
       }
-      const baseWithSlash = base.endsWith('/') ? base : base + '/';
-      const absoluteUrl = baseWithSlash + path + url.href;
+      if (url.href.startsWith('#')) {
+        const absoluteUrl = `${baseNoTrailing}/${path}/${url.href}`;
+        return absoluteUrl;
+      }
       // console.log(url.href + ' -> ', absoluteUrl);
-      return absoluteUrl;
+      return;
     })(tree);
   };
 }
