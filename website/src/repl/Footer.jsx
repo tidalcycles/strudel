@@ -10,7 +10,7 @@ import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../s
 import { getAudioContext, soundMap } from '@strudel.cycles/webaudio';
 import { useStore } from '@nanostores/react';
 import { FilesTab } from './FilesTab';
-import FileUpload from './FileUpload';
+import ImportSoundsButton from './ImportSoundsButton';
 
 const TAURI = window.__TAURI__;
 
@@ -243,7 +243,7 @@ function SoundsTab() {
   });
   return (
     <div id="sounds-tab" className="flex flex-col w-full h-full dark:text-white text-stone-900">
-      <div className="px-2 pb-2 flex-none">
+      <div className="px-2 pb-2 flex">
         <ButtonGroup
           value={soundsFilter}
           onChange={(value) => settingsMap.setKey('soundsFilter', value)}
@@ -254,6 +254,7 @@ function SoundsTab() {
             user: 'User',
           }}
         ></ButtonGroup>
+        <ImportSoundsButton onComplete={() => settingsMap.setKey('soundsFilter', 'user')} />
       </div>
       <div className="p-2 min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal">
         {soundEntries.map(([name, { data, onTrigger }]) => (
@@ -425,7 +426,6 @@ function SettingsTab({ scheduler }) {
             onChange={(fontFamily) => settingsMap.setKey('fontFamily', fontFamily)}
           />
         </FormItem>
-        <FileUpload onUpload={(files) => console.log(files)} />
         <FormItem label="Font Size">
           <NumberSlider
             value={fontSize}
