@@ -31,7 +31,7 @@ const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL
           <div class="absolute w-full h-full flex justify-center items-center">
             <span class="bg-slate-800 p-2 rounded-md text-white">{name}</span>
           </div>
-          <img src={`${baseNoTrailing}/swatch/${name}.png/`} />
+          <img src={`${baseNoTrailing}/swatch/${name}.png`} />
         </a>
       ))
     }
