@@ -36,7 +36,7 @@ function relativeURLFix() {
           // special case: a relative anchor link to the current page
           newHref += `/${path}/${url.href}`;
         } else {
-          // any other relative link
+          // any other same origin link
           // NOTE: this does strip off serialized queries and fragments
           newHref += (url.pathname.endsWith('/') ? url.pathname : url.pathname + '/');
         }
