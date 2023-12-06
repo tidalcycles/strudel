@@ -73,7 +73,7 @@ const TableOfContents: FC<{ headings: MarkdownHeading[]; currentPage: string }> 
           .map((heading, i) => (
             <li className={`w-full`} key={i}>
               <a
-                href={`${currentPage}#${heading.slug}`}
+                href={`${currentPage}/#${heading.slug}`}
                 onClick={onLinkClick}
                 className={`py-0.5 block cursor-pointer w-full border-l-4 border-lineHighlight hover:bg-lineHighlight ${
                   ['pl-4', 'pl-9', 'pl-12'][heading.depth - minDepth]
