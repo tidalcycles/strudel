@@ -35,6 +35,7 @@ function relativeURLFix() {
         // any other relative url starting with /
         // NOTE: this does strip off serialized queries and fragments
         newHref += url.pathname.endsWith('/') ? url.pathname : url.pathname + '/';
+        newHref += url.hash || '';
       } else {
         // leave this URL alone
         return;
