@@ -18,8 +18,7 @@ const langCode = 'en'; // getLanguageFromURL(currentPage);
 const sidebar = SIDEBAR[langCode];
 
 const { BASE_URL } = import.meta.env;
-const base = BASE_URL;
-const baseNoTrailing = base.endsWith('/') ? base.slice(0, -1) : base;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 ---
 
 <nav
@@ -27,7 +26,7 @@ const baseNoTrailing = base.endsWith('/') ? base.slice(0, -1) : base;
   title="Top Navigation"
 >
   <div class="flex overflow-visible items-center grow" style="overflow:visible">
-    <a href="/" class="flex items-center text-2xl space-x-2">
+    <a href={`${baseNoTrailing}/`} class="flex items-center text-2xl space-x-2">
       <h1 class="font-bold flex space-x-2 items-baseline text-xl">
         <span>🌀</span>
         <div class="flex space-x-1 items-baseline">

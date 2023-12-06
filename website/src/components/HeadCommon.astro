@@ -3,8 +3,7 @@ import { pwaInfo } from 'virtual:pwa-info';
 import '../styles/index.css';
 
 const { BASE_URL } = import.meta.env;
-const base = BASE_URL;
-const baseNoTrailing = base.endsWith('/') ? base.slice(0, -1) : base;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 ---
 
 <!-- Global Metadata -->
@@ -22,7 +21,7 @@ const baseNoTrailing = base.endsWith('/') ? base.slice(0, -1) : base;
 <link rel="apple-touch-icon" href={`${baseNoTrailing}/icons/apple-icon-180.png`} sizes="180x180" />
 <meta name="theme-color" content="#222222" />
 
-<base href={base} />
+<base href={BASE_URL} />
 
 <!-- Scrollable a11y code helper -->
 <script src{`${baseNoTrailing}/make-scrollable-code-focusable.js`} is:inline></script>

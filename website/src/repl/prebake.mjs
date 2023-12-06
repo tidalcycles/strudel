@@ -4,8 +4,7 @@ import './piano.mjs';
 import './files.mjs';
 
 const { BASE_URL } = import.meta.env;
-const base = BASE_URL;
-const baseNoTrailing = base.endsWith('/') ? base.slice(0, -1) : base;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 
 export async function prebake() {
   // https://archive.org/details/SalamanderGrandPianoV3

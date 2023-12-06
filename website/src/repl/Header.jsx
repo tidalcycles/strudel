@@ -12,10 +12,6 @@ import './Repl.css';
 const { BASE_URL } = import.meta.env;
 const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 
-const { BASE_URL } = import.meta.env;
-const base = BASE_URL;
-const baseNoTrailing = base.endsWith('/') ? base.slice(0, -1) : base;
-
 export function Header({ context }) {
   const {
     embedded,
