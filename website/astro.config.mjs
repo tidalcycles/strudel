@@ -29,7 +29,7 @@ function relativeURLFix() {
     return rehypeUrls((url) => {
       // NOTE: the base argument to the URL constructor is ignored if the input is already
       //       absolute and used if not, which facilitates the comparison below
-      // true if url is relative
+      // true if origins are same, and relative urls are considered as origin equal to site var value
       if (new URL(site).origin === new URL(url.href, site).origin) {
         let newHref = baseNoTrailing;
         if (url.href.startsWith('#')) {
