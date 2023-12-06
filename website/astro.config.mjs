@@ -17,7 +17,7 @@ const baseNoTrailing = base.endsWith('/') ? base.slice(0, -1) : base;
 
 // this rehype plugin fixes relative links
 // it works by prepending the base + page path to anchor links
-// and by prepending the base path to all other relative links
+// and by prepending the base path to other relative links starting with /
 // this is necessary when using a base href like <base href={base} />
 // examples with base as "mybase":
 //   #gain -> /mybase/learn/effects/#gain
@@ -27,23 +27,20 @@ function relativeURLFix() {
     const chunks = file.history[0].split('/src/pages/'); // file.history[0] is the file path
     const path = chunks[chunks.length - 1].slice(0, -4); // only path inside src/pages, without .mdx
     return rehypeUrls((url) => {
-      // NOTE: the base argument to the URL constructor is ignored if the input is already
-      //       absolute and used if not, which facilitates the comparison below
-      // true if origins are same, and relative urls are considered as origin equal to site var value
-      if (new URL(site).origin === new URL(url.href, site).origin) {
-        let newHref = baseNoTrailing;
-        if (url.href.startsWith('#')) {
-          // special case: a relative anchor link to the current page
-          newHref += `/${path}/${url.href}`;
-        } else {
-          // any other same origin link
-          // NOTE: this does strip off serialized queries and fragments
-          newHref += (url.pathname.endsWith('/') ? url.pathname : url.pathname + '/');
-        }
-        // console.log(url.href + ' -> ', newHref);
-        return newHref;
+      let newHref = baseNoTrailing;
+      if (url.href.startsWith('#')) {
+        // special case: a relative anchor link to the current page
+        newHref += `/${path}/${url.href}`;
+      } else if (url.href.startsWith('/')) {
+        // any other relative url starting with /
+        // NOTE: this does strip off serialized queries and fragments
+        newHref += url.pathname.endsWith('/') ? url.pathname : url.pathname + '/';
+      } else {
+        // leave this URL alone
+        return;
       }
-      return;
+      // console.log(url.href + ' -> ', newHref);
+      return newHref;
     })(tree);
   };
 }
