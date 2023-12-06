@@ -13,6 +13,9 @@ import { FilesTab } from './FilesTab';
 
 const TAURI = window.__TAURI__;
 
+const { BASE_URL } = import.meta.env;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
+
 export function Footer({ context }) {
   const footerContent = useRef();
   const [log, setLog] = useState([]);
@@ -154,7 +157,7 @@ function WelcomeTab() {
       </p>
       <p>
         To learn more about what this all means, check out the{' '}
-        <a href="./workshop/getting-started" target="_blank">
+        <a href={`${baseNoTrailing}/workshop/getting-started/`} target="_blank">
           interactive tutorial
         </a>
         . Also feel free to join the{' '}
