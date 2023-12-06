@@ -38,6 +38,7 @@ function relativeURLFix() {
           // append trailing slash to resource only if there is no file extension
           newHref += url.pathname.endsWith('/') ? '' : '/';
         }
+        newHref += url.search || '';
         newHref += url.hash || '';
       } else {
         // leave this URL alone
