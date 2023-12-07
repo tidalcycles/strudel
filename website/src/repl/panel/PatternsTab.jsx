@@ -20,10 +20,10 @@ export function PatternsTab({ context }) {
   return (
     <div className="px-4 w-full text-foreground space-y-4">
       <section>
-        <h2 className="text-xl mb-2">My Patterns</h2>
-        <div className="space-x-1">
+        <h2 className="text-xl mb-2">Pattern Collection</h2>
+        <div className="space-x-4 border-b border-foreground mb-1">
           <button
-            className="underline"
+            className="hover:opacity-50"
             onClick={() => {
               const name = newUserPattern();
               const { code } = getUserPattern(name);
@@ -32,16 +32,16 @@ export function PatternsTab({ context }) {
           >
             new
           </button>
-          <button className="underline" onClick={() => duplicateActivePattern()}>
+          <button className="hover:opacity-50" onClick={() => duplicateActivePattern()}>
             duplicate
           </button>
-          <button className="underline" onClick={() => renameActivePattern()}>
+          <button className="hover:opacity-50" onClick={() => renameActivePattern()}>
             rename
           </button>
-          <button className="underline" onClick={() => deleteActivePattern()}>
+          <button className="hover:opacity-50" onClick={() => deleteActivePattern()}>
             delete
           </button>
-          <button className="underline" onClick={() => clearUserPatterns()}>
+          <button className="hover:opacity-50" onClick={() => clearUserPatterns()}>
             clear
           </button>
         </div>
