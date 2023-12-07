@@ -33,8 +33,12 @@ function relativeURLFix() {
         newHref += `/${path}/${url.href}`;
       } else if (url.href.startsWith('/')) {
         // any other relative url starting with /
-        // NOTE: this does strip off serialized queries and fragments
-        newHref += url.pathname.endsWith('/') ? url.pathname : url.pathname + '/';
+        newHref += url.pathname;
+        if (url.pathname.indexOf('.') == -1) {
+          // append trailing slash to resource only if there is no file extension
+          newHref += url.pathname.endsWith('/') ? '' : '/';
+        }
+        newHref += url.search || '';
         newHref += url.hash || '';
       } else {
         // leave this URL alone
