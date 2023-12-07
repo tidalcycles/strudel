@@ -97,6 +97,9 @@ export function newUserPattern() {
 }
 
 export function clearUserPatterns() {
+  if (!confirm(`This will delete all your patterns. Are you really sure?`)) {
+    return;
+  }
   setUserPatterns({});
 }
 
@@ -113,13 +116,17 @@ export function getUserPattern(key) {
 }
 
 export function renameActivePattern() {
-  const newName = prompt('Enter new name');
+  let activePattern = getSetting('activePattern');
   let userPatterns = getUserPatterns();
+  if (!userPatterns[activePattern]) {
+    alert('Cannot rename examples');
+    return;
+  }
+  const newName = prompt('Enter new name', activePattern);
   if (userPatterns[newName]) {
     alert('Name already taken!');
     return;
   }
-  let activePattern = getSetting('activePattern');
   userPatterns[newName] = userPatterns[activePattern]; // copy code
   delete userPatterns[activePattern];
   setUserPatterns({ ...userPatterns });
@@ -155,6 +162,13 @@ export function deleteActivePattern() {
     return;
   }
   const userPatterns = getUserPatterns();
+  if (!userPatterns[activePattern]) {
+    alert('Cannot delete examples');
+    return;
+  }
+  if (!confirm(`Really delete the selected pattern "${activePattern}"?`)) {
+    return;
+  }
   setUserPatterns(Object.fromEntries(Object.entries(userPatterns).filter(([key]) => key !== activePattern)));
   setActivePattern('');
 }
