@@ -126,14 +126,22 @@ export function renameActivePattern() {
   setActivePattern(newName);
 }
 
-export function updateUserPattern(code) {
+export function updateUserCode(code) {
   const userPatterns = getUserPatterns();
   let activePattern = getSetting('activePattern');
+  // check if code is that of an example tune
+  const [example] = Object.entries(tunes).find(([_, tune]) => tune === code) || [];
+  if (example) {
+    // select example
+    setActivePattern(example);
+    return;
+  }
   if (!activePattern) {
+    // create new user pattern
     activePattern = newUserPattern();
     setActivePattern(activePattern);
   } else if (!!tunes[activePattern] && code !== tunes[activePattern]) {
-    // is example / system pattern
+    // fork example
     activePattern = getNextCloneName(activePattern);
     setActivePattern(activePattern);
   }
