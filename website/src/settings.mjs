@@ -138,7 +138,7 @@ export function updateUserCode(code) {
   let activePattern = getSetting('activePattern');
   // check if code is that of an example tune
   const [example] = Object.entries(tunes).find(([_, tune]) => tune === code) || [];
-  if (example) {
+  if (example && (!activePattern || activePattern === example)) {
     // select example
     setActivePattern(example);
     return;
@@ -187,5 +187,6 @@ export function duplicateActivePattern() {
 }
 
 export function setActivePattern(key) {
+  console.log('set', key);
   settingsMap.setKey('activePattern', key);
 }
