@@ -66,8 +66,7 @@ To get the project up and running for development, make sure you have installed:
 
 - [git](https://git-scm.com/)
 - [node](https://nodejs.org/en/) >= 18
-- [pnpm](https://pnpm.io/) (`curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=8.3.1 sh -`)
-  tests failed to work correctly with newer pnpm versions, so we pin 8.3.1 for now. (see issue #833)
+- [pnpm](https://pnpm.io/) (`curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=8.11.0 sh -`)
 
 then, do the following:
 
