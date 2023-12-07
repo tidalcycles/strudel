@@ -1,7 +1,28 @@
 /** Style Algolia */
 :root {
-  --docsearch-primary-color: var(--theme-accent);
-  --docsearch-logo-color: var(--theme-text);
+  --docsearch-primary-color: var(--lineHighlight);
+  --docsearch-logo-color: var(--foreground);
+  --docsearch-container-background: rgba(110, 110, 110, 0.8);
+  --docsearch-modal-shadow: none;
+  --docsearch-text-color: var(--foreground);
+  --docsearch-highlight-color: var(--foreground);
+  --docsearch-searchbox-background: var(--lineBackground);
+  --docsearch-searchbox-focus-background: var(--lineBackground);
+  --docsearch-searchbox-shadow: inset 0 0 0 2px var(--lineHighlight);
+  --docsearch-hit-background: var(--background);
+  --docsearch-hit-active-color: var(--background);
+  --docsearch-hit-color: var(--foreground);
+  --docsearch-hit-shadow: 0 1px 3px 0 var(--foreground);
+  --docsearch-footer-shadow: none;
+  --docsearch-footer-background: var(--gutterBackground);
+  --docsearch-modal-background: var(--background);
+  --docsearch-muted-color: color-mix(in srgb, var(--foreground), #fff 30%);
+  --docsearch-key-gradient: var(--foreground);
+  --docsearch-key-shadow: inset 0 -2px 0 0 var(--gutterForeground), inset 0 0 1px 1px var(--foreground),
+    0 1px 2px 1px var(--gutterBackground);
+}
+.dark {
+  --docsearch-muted-color: color-mix(in srgb, var(--foreground), #000 30%);
 }
 .search-input {
   flex-grow: 1;
@@ -14,9 +35,9 @@
   font-size: 1rem;
   font-family: inherit;
   line-height: inherit;
-  background-color: var(--theme-divider);
-  border-color: var(--theme-divider);
-  color: var(--theme-text-light);
+  background-color: var(--lineBackground);
+  border-color: var(--lineBackground);
+  color: var(--foreground);
   border-style: solid;
   border-width: 1px;
   border-radius: 0.25rem;
@@ -29,15 +50,15 @@
 }
 .search-input:hover,
 .search-input:focus {
-  color: var(--theme-text);
-  border-color: var(--theme-text-light);
+  color: var(--foreground);
+  border-color: var(--foreground);
 }
 .search-input:hover::placeholder,
 .search-input:focus::placeholder {
-  color: var(--theme-text-light);
+  color: var(--foreground);
 }
 .search-input::placeholder {
-  color: var(--theme-text-light);
+  color: var(--foreground);
 }
 .search-hint {
   position: absolute;
@@ -48,11 +69,13 @@
   align-items: center;
   justify-content: center;
   letter-spacing: 0.125em;
-  font-size: 13px;
+  font-size: 12px;
   font-family: var(--font-mono);
   pointer-events: none;
-  border-color: var(--theme-text-lighter);
-  color: var(--theme-text-light);
+  border-color: transparent;
+  color: var(--background);
+  background-color: var(--foreground);
+  box-shadow: var(--docsearch-key-shadow);
   border-style: solid;
   border-width: 1px;
   border-radius: 0.25rem;
@@ -64,12 +87,40 @@
     display: flex;
   }
 }
+.search-button {
+  background-color: var(--lineBackground) !important;
+  color: var(--foreground);
+}
 
 /* ------------------------------------------------------------ *\
 	DocSearch (Algolia)
 \* ------------------------------------------------------------ */
-
+.DocSearch-Form {
+  padding: 3px var(--docsearch-spacing);
+}
 .DocSearch-Modal .DocSearch-Hit a {
   box-shadow: none;
-  border: 1px solid var(--theme-accent);
+  border: none;
+}
+#docsearch-input.DocSearch-Input {
+  background-color: var(--lineBackground);
+  border-top: 3px solid var(--docsearch-searchbox-shadow);
+  border-bottom: 3px solid var(--docsearch-searchbox-shadow);
+}
+.DocSearch-Commands-Key {
+  color: var(--background);
+  border-radius: 0.25rem;
+}
+.DocSearch-SearchBar {
+  padding-bottom: 1px;
+}
+#docsearch-input.DocSearch-Input:focus {
+  box-shadow: none;
+}
+.DocSearch-Footer {
+  color: var(--docsearch-muted-color) !important;
+}
+.DocSearch-Logo svg .cls-1,
+.DocSearch-Logo svg .cls-2 {
+  fill: var(--docsearch-logo-color);
 }

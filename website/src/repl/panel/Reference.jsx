@@ -37,6 +37,11 @@ export function Reference() {
           {visibleFunctions.map((entry, i) => (
             <section key={i}>
               <h3 id={`doc-${i}`}>{entry.name}</h3>
+              {!!entry.synonyms_text && (
+                <p>
+                  Synonyms: <code>{entry.synonyms_text}</code>
+                </p>
+              )}
               {/* <small>{entry.meta.filename}</small> */}
               <p dangerouslySetInnerHTML={{ __html: entry.description }}></p>
               <ul>

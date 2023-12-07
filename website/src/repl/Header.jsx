@@ -9,6 +9,8 @@ import React, { useContext } from 'react';
 import { useSettings, setIsZen } from '../settings.mjs';
 // import { ReplContext } from './Repl';
 import './Repl.css';
+const { BASE_URL } = import.meta.env;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 
 export function Header({ context }) {
   const {
@@ -123,7 +125,7 @@ export function Header({ context }) {
           {!isEmbedded && (
             <a
               title="learn"
-              href="./workshop/getting-started"
+              href={`${baseNoTrailing}/workshop/getting-started/`}
               className={cx('hover:opacity-50 flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
             >
               <AcademicCapIcon className="w-6 h-6" />

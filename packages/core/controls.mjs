@@ -381,6 +381,19 @@ const generic_params = [
    */
   ['coarse'],
 
+  /**
+   * Allows you to set the output channels on the interface
+   *
+   * @name channels
+   * @synonyms ch
+   *
+   * @param {number | Pattern} channels pattern the output channels
+   * @example
+   * note("e a d b g").channels("3:4")
+   *
+   */
+  ['channels', 'ch'],
+
   ['phaserrate', 'phasr'], // superdirt only
 
   /**
@@ -1214,6 +1227,16 @@ const generic_params = [
    * @name waveloss
    */
   ['waveloss'],
+  /*
+   * Noise crackle density
+   *
+   * @name density
+   * @param {number | Pattern} density between 0 and x
+   * @example
+   * s("crackle*4").density("<0.01 0.04 0.2 0.5>".slow(4))
+   *
+   */
+  ['density'],
   // TODO: midi effects?
   ['dur'],
   // ['modwheel'],

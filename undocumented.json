@@ -1,17 +1,17 @@
 {
-  "/home/felix/projects/strudel/packages/core/fraction.mjs": [
+  "/packages/core/fraction.mjs": [
     "gcd"
   ],
-  "/home/felix/projects/strudel/packages/core/timespan.mjs": [
+  "/packages/core/timespan.mjs": [
     "TimeSpan"
   ],
-  "/home/felix/projects/strudel/packages/core/hap.mjs": [
+  "/packages/core/hap.mjs": [
     "Hap"
   ],
-  "/home/felix/projects/strudel/packages/core/state.mjs": [
+  "/packages/core/state.mjs": [
     "State"
   ],
-  "/home/felix/projects/strudel/packages/core/util.mjs": [
+  "/packages/core/util.mjs": [
     "isNoteWithOctave",
     "isNote",
     "tokenizeNote",
@@ -34,23 +34,31 @@
     "mapArgs",
     "numeralArgs",
     "parseFractional",
-    "fractionalArgs"
+    "fractionalArgs",
+    "splitAt",
+    "zipWith",
+    "clamp",
+    "sol2note"
   ],
-  "/home/felix/projects/strudel/packages/core/value.mjs": [
+  "/packages/core/value.mjs": [
     "unionWithObj",
     "valued",
     "Value",
     "map"
   ],
-  "/home/felix/projects/strudel/packages/core/drawLine.mjs": [],
-  "/home/felix/projects/strudel/packages/core/logger.mjs": [
+  "/packages/core/drawLine.mjs": [],
+  "/packages/core/logger.mjs": [
     "logKey",
     "logger"
   ],
-  "/home/felix/projects/strudel/packages/core/pattern.mjs": [
+  "/packages/core/pattern.mjs": [
     "setStringParser",
+    "polyrhythm",
+    "pr",
+    "pm",
     "isPattern",
     "reify",
+    "fastcat",
     "set",
     "keep",
     "keepif",
@@ -74,22 +82,33 @@
     "func",
     "compressSpan",
     "compressspan",
+    "fastgap",
     "focusSpan",
     "focusspan",
+    "density",
+    "sparsity",
     "zoomArc",
     "zoomarc",
+    "inv",
+    "juxby",
+    "echowith",
+    "stutWith",
+    "stutwith",
+    "iterback",
+    "chunkback",
     "bypass",
     "duration",
-    "color",
     "colour",
-    "striate"
+    "loopat",
+    "loopatcps"
   ],
-  "/home/felix/projects/strudel/packages/core/controls.mjs": [],
-  "/home/felix/projects/strudel/packages/core/euclid.mjs": [
+  "/packages/core/controls.mjs": [],
+  "/packages/core/euclid.mjs": [
+    "bjork",
     "euclidrot",
     "euclidLegatoRot"
   ],
-  "/home/felix/projects/strudel/packages/core/signal.mjs": [
+  "/packages/core/signal.mjs": [
     "steady",
     "signal",
     "isaw",
@@ -112,34 +131,37 @@
     "degradeByWith",
     "undegrade"
   ],
-  "/home/felix/projects/strudel/packages/core/speak.mjs": [
+  "/packages/core/speak.mjs": [
     "speak"
   ],
-  "/home/felix/projects/strudel/packages/core/evaluate.mjs": [
+  "/packages/core/evaluate.mjs": [
     "evalScope",
     "evaluate"
   ],
-  "/home/felix/projects/strudel/packages/core/zyklus.mjs": [],
-  "/home/felix/projects/strudel/packages/core/cyclist.mjs": [
+  "/packages/core/zyklus.mjs": [],
+  "/packages/core/cyclist.mjs": [
     "Cyclist"
   ],
-  "/home/felix/projects/strudel/packages/core/time.mjs": [
+  "/packages/core/time.mjs": [
     "getTime",
     "setTime"
   ],
-  "/home/felix/projects/strudel/packages/core/repl.mjs": [
-    "repl"
+  "/packages/core/repl.mjs": [
+    "repl",
+    "getTrigger"
   ],
-  "/home/felix/projects/strudel/packages/core/draw.mjs": [
+  "/packages/core/draw.mjs": [
     "getDrawContext",
-    "cleanupDraw"
+    "cleanupDraw",
+    "Framer",
+    "Drawer"
   ],
-  "/home/felix/projects/strudel/packages/core/animate.mjs": [
+  "/packages/core/animate.mjs": [
     "x",
     "y",
     "w",
     "h",
-    "a",
+    "angle",
     "r",
     "fill",
     "smear",
@@ -147,85 +169,121 @@
     "moveXY",
     "zoomIn"
   ],
-  "/home/felix/projects/strudel/packages/core/pianoroll.mjs": [
-    "pianoroll"
+  "/packages/core/pianoroll.mjs": [
+    "getDrawOptions",
+    "drawPianoroll"
   ],
-  "/home/felix/projects/strudel/packages/core/ui.mjs": [
+  "/packages/core/spiral.mjs": [],
+  "/packages/core/ui.mjs": [
     "backgroundImage",
     "cleanupUi"
   ],
-  "/home/felix/projects/strudel/packages/core/gist.js": [],
-  "/home/felix/projects/strudel/packages/core/index.mjs": [],
-  "/home/felix/projects/strudel/packages/midi/midi.mjs": [
+  "/packages/core/gist.js": [],
+  "/packages/core/index.mjs": [],
+  "/packages/csound/index.mjs": [
+    "loadCSound",
+    "loadcsound",
+    "loadCsound",
+    "csound",
+    "loadOrc"
+  ],
+  "/packages/desktopbridge/utils.mjs": [
+    "Invoke",
+    "isTauri"
+  ],
+  "/packages/desktopbridge/midibridge.mjs": [],
+  "/packages/desktopbridge/oscbridge.mjs": [],
+  "/packages/desktopbridge/index.mjs": [],
+  "/packages/midi/midi.mjs": [
     "WebMidi",
-    "enableWebMidi"
+    "enableWebMidi",
+    "midin"
   ],
-  "/home/felix/projects/strudel/packages/midi/index.mjs": [],
-  "/home/felix/projects/strudel/packages/mini/krill-parser.js": [],
-  "/home/felix/projects/strudel/packages/mini/mini.mjs": [
+  "/packages/midi/index.mjs": [],
+  "/packages/mini/krill-parser.js": [],
+  "/packages/mini/mini.mjs": [
     "patternifyAST",
+    "getLeafLocation",
+    "mini2ast",
+    "getLeaves",
+    "getLeafLocations",
     "mini",
+    "m",
     "h",
-    "minify"
+    "minify",
+    "miniAllStrings"
   ],
-  "/home/felix/projects/strudel/packages/mini/index.mjs": [],
-  "/home/felix/projects/strudel/packages/soundfonts/fontloader.mjs": [
+  "/packages/mini/index.mjs": [],
+  "/packages/soundfonts/gm.mjs": [],
+  "/packages/soundfonts/fontloader.mjs": [
     "getFontBufferSource",
-    "getFontPitch"
+    "getFontPitch",
+    "registerSoundfonts"
   ],
-  "/home/felix/projects/strudel/packages/soundfonts/list.mjs": [
+  "/packages/soundfonts/list.mjs": [
     "instruments",
     "drums",
     "instrumentNames"
   ],
-  "/home/felix/projects/strudel/packages/soundfonts/sfumato.mjs": [
+  "/packages/soundfonts/sfumato.mjs": [
     "loadSoundfont"
   ],
-  "/home/felix/projects/strudel/packages/soundfonts/index.mjs": [],
-  "/home/felix/projects/strudel/packages/tonal/tonal.mjs": [],
-  "/home/felix/projects/strudel/packages/tonal/voicings.mjs": [
-    "voicingRegistry",
-    "setVoicingRange"
+  "/packages/soundfonts/index.mjs": [],
+  "/packages/tonal/tonal.mjs": [],
+  "/packages/tonal/tonleiter.mjs": [
+    "pc2chroma",
+    "rotateChroma",
+    "chroma2pc",
+    "tokenizeChord",
+    "note2pc",
+    "note2oct",
+    "note2chroma",
+    "midi2chroma",
+    "pitch2chroma",
+    "step2semitones",
+    "x2midi",
+    "scaleStep",
+    "renderVoicing",
+    "accidentalOffset",
+    "Step",
+    "Note"
   ],
-  "/home/felix/projects/strudel/packages/tonal/index.mjs": [],
-  "/home/felix/projects/strudel/packages/transpiler/transpiler.mjs": [
+  "/packages/tonal/ireal.mjs": [
+    "simple",
+    "complex"
+  ],
+  "/packages/tonal/voicings.mjs": [
+    "voicingRegistry",
+    "setVoicingRange",
+    "registerVoicings",
+    "voicingAlias"
+  ],
+  "/packages/tonal/index.mjs": [],
+  "/packages/transpiler/transpiler.mjs": [
     "transpiler"
   ],
-  "/home/felix/projects/strudel/packages/transpiler/index.mjs": [
+  "/packages/transpiler/index.mjs": [
     "evaluate"
   ],
-  "/home/felix/projects/strudel/packages/webaudio/feedbackdelay.mjs": [],
-  "/home/felix/projects/strudel/packages/webaudio/reverb.mjs": [],
-  "/home/felix/projects/strudel/packages/webaudio/sampler.mjs": [
-    "getCachedBuffer",
-    "getSampleBufferSource",
-    "loadBuffer",
-    "reverseBuffer",
-    "getLoadedBuffer",
-    "resetLoadedSamples",
-    "getLoadedSamples"
-  ],
-  "/home/felix/projects/strudel/packages/webaudio/vowel.mjs": [
-    "vowelFormant"
-  ],
-  "/home/felix/projects/strudel/packages/webaudio/webaudio.mjs": [
-    "getAudioContext",
-    "panic",
-    "initAudio",
-    "initAudioOnFirstClick",
+  "/packages/webaudio/webaudio.mjs": [
+    "webaudioOutputTrigger",
     "webaudioOutput",
-    "webaudioOutputTrigger"
+    "webaudioScheduler"
   ],
-  "/home/felix/projects/strudel/packages/webaudio/index.mjs": [],
-  "/home/felix/projects/strudel/packages/xen/xen.mjs": [
+  "/packages/webaudio/scope.mjs": [
+    "drawTimeScope",
+    "drawFrequencyScope"
+  ],
+  "/packages/webaudio/index.mjs": [],
+  "/packages/xen/xen.mjs": [
     "edo",
     "xen",
     "tuning"
   ],
-  "/home/felix/projects/strudel/packages/xen/tunejs.js": [],
-  "/home/felix/projects/strudel/packages/xen/tune.mjs": [
+  "/packages/xen/tunejs.js": [],
+  "/packages/xen/tune.mjs": [
     "tune"
   ],
-  "/home/felix/projects/strudel/packages/xen/index.mjs": [],
-  "/home/felix/projects/strudel/index.mjs": []
+  "/packages/xen/index.mjs": [],
+  "/index.mjs": []
 }

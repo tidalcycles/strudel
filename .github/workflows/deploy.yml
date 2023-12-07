@@ -21,10 +21,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
         with:
-          version: 7
+          version: 8.11.0
       - uses: actions/setup-node@v3
         with:
           node-version: 18
