@@ -84,9 +84,9 @@ export function Panel({ context }) {
       <div className="flex justify-between px-2">
         <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
           <PanelTab name="intro" label="welcome" />
+          <PanelTab name="patterns" />
           <PanelTab name="sounds" />
           <PanelTab name="console" />
-          <PanelTab name="patterns" />
           <PanelTab name="reference" />
           <PanelTab name="settings" />
           {TAURI && <PanelTab name="files" />}

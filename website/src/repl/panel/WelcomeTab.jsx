@@ -48,18 +48,6 @@ export function WelcomeTab({ context }) {
         </a>{' '}
         to ensure ongoing development 💖
       </p>
-      <h2 className="text-xl mb-2">examples</h2>
-      <div className="not-prose">
-        {Object.entries(tunes).map(([key, tune]) => (
-          <a
-            key={key}
-            className="mr-4 hover:opacity-50 cursor-pointer inline-block"
-            onClick={() => context.handleUpdate(tune)}
-          >
-            {key}
-          </a>
-        ))}
-      </div>
     </div>
   );
 }
