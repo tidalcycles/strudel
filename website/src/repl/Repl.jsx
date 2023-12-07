@@ -11,13 +11,13 @@ import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import React, { createContext, useCallback, useEffect, useState, useMemo } from 'react';
 import './Repl.css';
-import { Footer } from './Footer';
+import { Panel } from './panel/Panel';
 import { Header } from './Header';
 import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
-import { settingsMap, useSettings, setLatestCode } from '../settings.mjs';
+import { settingsMap, useSettings, setLatestCode, updateUserCode } from '../settings.mjs';
 import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
@@ -131,6 +131,7 @@ export function Repl({ embedded = false }) {
     isLineWrappingEnabled,
     panelPosition,
     isZen,
+    activePattern,
   } = useSettings();
 
   const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
@@ -147,6 +148,7 @@ export function Repl({ embedded = false }) {
         cleanupDraw();
       },
       afterEval: ({ code, meta }) => {
+        updateUserCode(code);
         setMiniLocations(meta.miniLocations);
         setWidgets(meta.widgets);
         setPending(false);
@@ -226,7 +228,7 @@ export function Repl({ embedded = false }) {
   const handleChangeCode = useCallback(
     (c) => {
       setCode(c);
-      //started && logger('[edit] code changed. hit ctrl+enter to update');
+      // started && logger('[edit] code changed. hit ctrl+enter to update');
     },
     [started],
   );
@@ -245,8 +247,8 @@ export function Repl({ embedded = false }) {
       stop();
     }
   };
-  const handleUpdate = () => {
-    isDirty && activateCode();
+  const handleUpdate = (newCode) => {
+    (newCode || isDirty) && activateCode(newCode);
     logger('[repl] code updated! tip: you can also update the code by pressing ctrl+enter', 'highlight');
   };
 
@@ -347,12 +349,12 @@ export function Repl({ embedded = false }) {
               onSelectionChange={handleSelectionChange}
             />
           </section>
-          {panelPosition === 'right' && !isEmbedded && <Footer context={context} />}
+          {panelPosition === 'right' && !isEmbedded && <Panel context={context} />}
         </div>
         {error && (
           <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>
         )}
-        {panelPosition === 'bottom' && !isEmbedded && <Footer context={context} />}
+        {panelPosition === 'bottom' && !isEmbedded && <Panel context={context} />}
       </div>
     </ReplContext.Provider>
   );

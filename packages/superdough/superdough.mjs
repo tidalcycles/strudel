@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
-import { clamp } from './util.mjs';
+import { clamp, nanFallback } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
 import { createFilter, gainNode, getCompressor } from './helpers.mjs';
 import { map } from 'nanostores';
@@ -322,6 +322,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     compressorAttack,
     compressorRelease,
   } = value;
+  gain = nanFallback(gain, 1);
 
   //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
   channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
