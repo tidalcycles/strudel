@@ -1,7 +1,7 @@
 import { useEvent } from '@strudel.cycles/react';
 // import { cx } from '@strudel.cycles/react';
 import { useStore } from '@nanostores/react';
-import { getAudioContext, soundMap } from '@strudel.cycles/webaudio';
+import { getAudioContext, soundMap, connectToDestination } from '@strudel.cycles/webaudio';
 import React, { useMemo, useRef } from 'react';
 import { settingsMap, useSettings } from '../../settings.mjs';
 import { ButtonGroup } from './Forms.jsx';
@@ -72,7 +72,7 @@ export function SoundsTab() {
               const onended = () => trigRef.current?.node?.disconnect();
               trigRef.current = Promise.resolve(onTrigger(time, params, onended));
               trigRef.current.then((ref) => {
-                ref?.node.connect(ctx.destination);
+                connectToDestination(ref?.node);
               });
             }}
           >

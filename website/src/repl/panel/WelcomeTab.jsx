@@ -2,6 +2,9 @@ import { cx } from '@strudel.cycles/react';
 import React from 'react';
 import * as tunes from '../tunes.mjs';
 
+const { BASE_URL } = import.meta.env;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
+
 export function WelcomeTab({ context }) {
   return (
     <div className="prose dark:prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
@@ -20,7 +23,7 @@ export function WelcomeTab({ context }) {
       </p>
       <p>
         To learn more about what this all means, check out the{' '}
-        <a href="./workshop/getting-started" target="_blank">
+        <a href={`${baseNoTrailing}/workshop/getting-started/`} target="_blank">
           interactive tutorial
         </a>
         . Also feel free to join the{' '}
