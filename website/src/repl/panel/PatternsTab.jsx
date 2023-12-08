@@ -8,8 +8,10 @@ import {
   deleteActivePattern,
   duplicateActivePattern,
   getUserPattern,
+  getUserPatterns,
   renameActivePattern,
   addUserPattern,
+  setUserPatterns,
 } from '../../settings.mjs';
 import { logger } from '@strudel.cycles/core';
 import { DocumentDuplicateIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
@@ -82,15 +84,19 @@ export function PatternsTab({ context }) {
               style={{ display: 'none' }}
               type="file"
               multiple
-              accept="text/plain"
+              accept="text/plain,application/json"
               onChange={async (e) => {
                 const files = Array.from(e.target.files);
                 await Promise.all(
                   files.map(async (file, i) => {
-                    const code = await file.text();
-                    const name = file.name.replace(/\.[^/.]+$/, '');
-                    console.log(i, name, code);
-                    addUserPattern(name, { code });
+                    const content = await file.text();
+                    if (file.type === 'application/json') {
+                      const userPatterns = getUserPatterns() || {};
+                      setUserPatterns({ ...userPatterns, ...JSON.parse(content) });
+                    } else if (file.type === 'text/plain') {
+                      const name = file.name.replace(/\.[^/.]+$/, '');
+                      addUserPattern(name, { code: content });
+                    }
                   }),
                 );
                 logger(`import done!`);
@@ -101,7 +107,14 @@ export function PatternsTab({ context }) {
           <button
             className="hover:opacity-50"
             onClick={() => {
-              console.log('export');
+              const blob = new Blob([JSON.stringify(userPatterns)], { type: 'application/json' });
+              const downloadLink = document.createElement('a');
+              downloadLink.href = window.URL.createObjectURL(blob);
+              const date = new Date().toISOString().split('T')[0];
+              downloadLink.download = `strudel_patterns_${date}.json`;
+              document.body.appendChild(downloadLink);
+              downloadLink.click();
+              document.body.removeChild(downloadLink);
             }}
           >
             export

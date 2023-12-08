@@ -62,14 +62,14 @@ export const fontSize = patternSetting('fontSize');
 
 export const settingPatterns = { theme, fontFamily, fontSize };
 
-function getUserPatterns() {
+export function getUserPatterns() {
   return JSON.parse(settingsMap.get().userPatterns);
 }
 function getSetting(key) {
   return settingsMap.get()[key];
 }
 
-function setUserPatterns(obj) {
+export function setUserPatterns(obj) {
   settingsMap.setKey('userPatterns', JSON.stringify(obj));
 }
 
@@ -193,3 +193,5 @@ export function duplicateActivePattern() {
 export function setActivePattern(key) {
   settingsMap.setKey('activePattern', key);
 }
+
+export function importUserPatternJSON(jsonString) {}
