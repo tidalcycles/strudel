@@ -1,4 +1,4 @@
-import React from 'react';
+import { useMemo } from 'react';
 import * as tunes from '../tunes.mjs';
 import {
   useSettings,
@@ -12,6 +12,7 @@ import {
   addUserPattern,
 } from '../../settings.mjs';
 import { logger } from '@strudel.cycles/core';
+import { DocumentDuplicateIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -19,10 +20,50 @@ function classNames(...classes) {
 
 export function PatternsTab({ context }) {
   const { userPatterns, activePattern } = useSettings();
+  const isExample = useMemo(() => activePattern && !!tunes[activePattern], [activePattern]);
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-4 pb-4">
       <section>
-        <div className="px-4 space-x-4 border-b border-foreground mb-2 h-8">
+        {activePattern && (
+          <div className="flex items-center mb-2 space-x-2 overflow-auto">
+            <h1 className="text-xl">{activePattern}</h1>
+            <div className="space-x-4 flex w-min">
+              <button className="hover:opacity-50" onClick={() => duplicateActivePattern()}>
+                <DocumentDuplicateIcon className="w-5 h-5" />
+              </button>
+              {!isExample && (
+                <button className="hover:opacity-50" onClick={() => renameActivePattern()}>
+                  <PencilSquareIcon className="w-5 h-5" />
+                  {/* <PencilIcon className="w-5 h-5" /> */}
+                </button>
+              )}
+              {!isExample && (
+                <button className="hover:opacity-50" onClick={() => deleteActivePattern()}>
+                  <TrashIcon className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+        <div className="font-mono text-sm">
+          {Object.entries(userPatterns).map(([key, up]) => (
+            <a
+              key={key}
+              className={classNames(
+                'mr-4 hover:opacity-50 cursor-pointer inline-block',
+                key === activePattern ? 'outline outline-1' : '',
+              )}
+              onClick={() => {
+                const { code } = up;
+                setActivePattern(key);
+                context.handleUpdate(code, true);
+              }}
+            >
+              {key}
+            </a>
+          ))}
+        </div>
+        <div className="pr-4 space-x-4 border-b border-foreground mb-2 h-8 flex overflow-auto max-w-full items-center">
           <button
             className="hover:opacity-50"
             onClick={() => {
@@ -32,15 +73,6 @@ export function PatternsTab({ context }) {
             }}
           >
             new
-          </button>
-          <button className="hover:opacity-50" onClick={() => duplicateActivePattern()}>
-            duplicate
-          </button>
-          <button className="hover:opacity-50" onClick={() => renameActivePattern()}>
-            rename
-          </button>
-          <button className="hover:opacity-50" onClick={() => deleteActivePattern()}>
-            delete
           </button>
           <button className="hover:opacity-50" onClick={() => clearUserPatterns()}>
             clear
@@ -66,24 +98,14 @@ export function PatternsTab({ context }) {
             />
             import
           </label>
-        </div>
-        <div className="font-mono text-sm">
-          {Object.entries(userPatterns).map(([key, up]) => (
-            <a
-              key={key}
-              className={classNames(
-                'mr-4 hover:opacity-50 cursor-pointer inline-block',
-                key === activePattern ? 'outline outline-1' : '',
-              )}
-              onClick={() => {
-                const { code } = up;
-                setActivePattern(key);
-                context.handleUpdate(code, true);
-              }}
-            >
-              {key}
-            </a>
-          ))}
+          <button
+            className="hover:opacity-50"
+            onClick={() => {
+              console.log('export');
+            }}
+          >
+            export
+          </button>
         </div>
       </section>
       <section>
