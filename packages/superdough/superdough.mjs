@@ -86,7 +86,6 @@ let channelMerger, destinationGain;
 export function initializeAudioOutput() {
   const audioContext = getAudioContext();
   const maxChannelCount = audioContext.destination.maxChannelCount;
-  console.log(maxChannelCount);
   audioContext.destination.channelCount = maxChannelCount;
   channelMerger = new ChannelMergerNode(audioContext, { numberOfInputs: audioContext.destination.channelCount });
   destinationGain = new GainNode(audioContext);

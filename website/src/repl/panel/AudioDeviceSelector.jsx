@@ -1,70 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getAudioContext, initializeAudioOutput } from '@strudel.cycles/webaudio';
 import { SelectInput } from './SelectInput';
 
-async function setAudioDevice(id) {
-  const audioCtx = getAudioContext();
-  await audioCtx.setSinkId(id);
-  await initializeAudioOutput();
-}
+const initdevices = new Map();
 export function AudioDeviceSelector({ audioDeviceName, onChange }) {
-  const [options, setOptions] = useState({});
-  const [optionsInitialized, setOptionsInitialized] = useState(false);
+  const [devices, setDevices] = useState(initdevices);
+  const devicesInitialized = devices.size > 0;
 
-  async function initializeOptions() {
+  const setAudioDevice = useCallback(async (id) => {
+    const audioCtx = getAudioContext();
+    await audioCtx.setSinkId(id);
+    initializeAudioOutput();
+  });
+  const initializedevices = useCallback(async () => {
     await navigator.mediaDevices.getUserMedia({ audio: true });
-    let devices = await navigator.mediaDevices.enumerateDevices();
-    devices = devices.filter((device) => device.kind === 'audiooutput' && device.deviceId !== 'default');
-    const optionsArray = [];
-    devices.forEach((device) => {
-      optionsArray.push([device.deviceId, device.label]);
+    let mediaDevices = await navigator.mediaDevices.enumerateDevices();
+    mediaDevices = mediaDevices.filter((device) => device.kind === 'audiooutput' && device.deviceId !== 'default');
+    const devicesMap = new Map();
+    mediaDevices.forEach((device) => {
+      devicesMap.set(device.label, device.deviceId);
     });
-    const options = Object.fromEntries(optionsArray);
-    setOptions(options);
-    setOptionsInitialized(true);
-    return options;
-  }
+    setDevices(devicesMap);
+    return devicesMap;
+  }, []);
 
   useEffect(() => {
-    if (!audioDeviceName.length || optionsInitialized) {
+    if (!audioDeviceName.length || devicesInitialized) {
       return;
     }
-
-    (async () => {
-      const options = await initializeOptions();
-
-      const deviceID = Object.keys(options).find((id) => options[id] === audioDeviceName);
-
+    initializedevices().then((devices) => {
+      const deviceID = devices.get(audioDeviceName);
       if (deviceID == null) {
         onChange('');
         return;
       }
-
-      await setAudioDevice(deviceID);
-    })();
+      setAudioDevice(deviceID);
+    });
   }, []);
 
   const onClick = () => {
-    if (optionsInitialized) {
+    if (devicesInitialized) {
       return;
     }
-    (async () => {
-      await initializeOptions();
-    })();
+    initializedevices();
   };
-  const onDeviceChange = (deviceID) => {
-    (async () => {
-      const deviceName = options[deviceID];
-      onChange(deviceName);
-      await setAudioDevice(deviceID);
-    })();
+  const onDeviceChange = (deviceName) => {
+    if (!devicesInitialized) {
+      return;
+    }
+    const deviceID = devices.get(deviceName);
+    onChange(deviceName);
+    deviceID && setAudioDevice(deviceID);
   };
-  return (
-    <SelectInput
-      options={options}
-      onClick={onClick}
-      value={Object.keys(options).find((id) => options[id] === audioDeviceName)}
-      onChange={onDeviceChange}
-    />
-  );
+  const options = new Set();
+
+  Array.from(devices.keys()).forEach((deviceName) => {
+    options.add({ id: deviceName, label: deviceName });
+  });
+  return <SelectInput options={options} onClick={onClick} value={audioDeviceName} onChange={onDeviceChange} />;
 }

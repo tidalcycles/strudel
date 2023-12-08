@@ -109,12 +109,14 @@ export function SettingsTab() {
           </button>
         </div>
       </FormItem> */}
-      <FormItem label="Audio Device">
-        <AudioDeviceSelector
-          audioDeviceName={audioDeviceName}
-          onChange={(audioDeviceName) => settingsMap.setKey('audioDeviceName', audioDeviceName)}
-        />
-      </FormItem>
+      {AudioContext.prototype.setSinkId != null && (
+        <FormItem label="Audio Device">
+          <AudioDeviceSelector
+            audioDeviceName={audioDeviceName}
+            onChange={(audioDeviceName) => settingsMap.setKey('audioDeviceName', audioDeviceName)}
+          />
+        </FormItem>
+      )}
       <FormItem label="Theme">
         <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>
