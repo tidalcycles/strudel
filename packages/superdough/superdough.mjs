@@ -31,8 +31,6 @@ let audioContext;
 export const getAudioContext = () => {
   if (!audioContext) {
     audioContext = new AudioContext();
-    const maxChannelCount = audioContext.destination.maxChannelCount;
-    audioContext.destination.channelCount = maxChannelCount;
   }
   return audioContext;
 };
@@ -85,14 +83,22 @@ const maxfeedback = 0.98;
 
 let channelMerger, destinationGain;
 
+export function initializeAudioOutput() {
+  const audioContext = getAudioContext();
+  const maxChannelCount = audioContext.destination.maxChannelCount;
+  console.log(maxChannelCount);
+  audioContext.destination.channelCount = maxChannelCount;
+  channelMerger = new ChannelMergerNode(audioContext, { numberOfInputs: audioContext.destination.channelCount });
+  destinationGain = new GainNode(audioContext);
+  channelMerger.connect(destinationGain);
+  destinationGain.connect(audioContext.destination);
+}
+
 // input: AudioNode, channels: ?Array<int>
 export const connectToDestination = (input, channels = [0, 1]) => {
   const ctx = getAudioContext();
   if (channelMerger == null) {
-    channelMerger = new ChannelMergerNode(ctx, { numberOfInputs: ctx.destination.channelCount });
-    destinationGain = new GainNode(ctx);
-    channelMerger.connect(destinationGain);
-    destinationGain.connect(ctx.destination);
+    initializeAudioOutput();
   }
   //This upmix can be removed if correct channel counts are set throughout the app,
   // and then strudel could theoretically support surround sound audio files
@@ -114,6 +120,7 @@ export const panic = () => {
   }
   destinationGain.gain.linearRampToValueAtTime(0, getAudioContext().currentTime + 0.01);
   destinationGain = null;
+  channelMerger == null;
 };
 
 function getDelay(orbit, delaytime, delayfeedback, t) {

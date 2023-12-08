@@ -2,6 +2,7 @@ import React from 'react';
 import { defaultSettings, settingsMap, useSettings } from '../../settings.mjs';
 import { themes } from '../themes.mjs';
 import { ButtonGroup } from './Forms.jsx';
+import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 
 function Checkbox({ label, value, onChange }) {
   return (
@@ -85,6 +86,7 @@ export function SettingsTab() {
     fontSize,
     fontFamily,
     panelPosition,
+    audioDeviceName,
   } = useSettings();
 
   return (
@@ -107,6 +109,12 @@ export function SettingsTab() {
           </button>
         </div>
       </FormItem> */}
+      <FormItem label="Audio Device">
+        <AudioDeviceSelector
+          audioDeviceName={audioDeviceName}
+          onChange={(audioDeviceName) => settingsMap.setKey('audioDeviceName', audioDeviceName)}
+        />
+      </FormItem>
       <FormItem label="Theme">
         <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>
