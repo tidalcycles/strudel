@@ -9,7 +9,9 @@ import {
   duplicateActivePattern,
   getUserPattern,
   renameActivePattern,
+  addUserPattern,
 } from '../../settings.mjs';
+import { logger } from '@strudel.cycles/core';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -18,16 +20,16 @@ function classNames(...classes) {
 export function PatternsTab({ context }) {
   const { userPatterns, activePattern } = useSettings();
   return (
-    <div className="px-4 w-full text-foreground space-y-4">
+    <div className="px-4 w-full dark:text-white text-stone-900 space-y-4">
       <section>
         <h2 className="text-xl mb-2">Pattern Collection</h2>
-        <div className="space-x-4 border-b border-foreground mb-1">
+        <div className="space-x-4 border-b border-foreground mb-2 pb-1">
           <button
             className="hover:opacity-50"
             onClick={() => {
               const name = newUserPattern();
               const { code } = getUserPattern(name);
-              context.handleUpdate(code);
+              context.handleUpdate(code, true);
             }}
           >
             new
@@ -48,51 +50,62 @@ export function PatternsTab({ context }) {
             <input
               style={{ display: 'none' }}
               type="file"
-              directory=""
-              webkitdirectory=""
               multiple
-              accept="audio/*"
-              onChange={(e) => {
-                console.log('change', e.target.files);
+              accept="text/plain"
+              onChange={async (e) => {
+                const files = Array.from(e.target.files);
+                await Promise.all(
+                  files.map(async (file, i) => {
+                    const code = await file.text();
+                    const name = file.name.replace(/\.[^/.]+$/, '');
+                    console.log(i, name, code);
+                    addUserPattern(name, { code });
+                  }),
+                );
+                logger(`import done!`);
               }}
             />
             import
           </label>
         </div>
-        {Object.entries(userPatterns).map(([key, up]) => (
-          <a
-            key={key}
-            className={classNames(
-              'mr-4 hover:opacity-50 cursor-pointer inline-block',
-              key === activePattern ? 'underline' : '',
-            )}
-            onClick={() => {
-              const { code } = up;
-              setActivePattern(key);
-              context.handleUpdate(code);
-            }}
-          >
-            {key}
-          </a>
-        ))}
+        <div className="font-mono text-sm">
+          {Object.entries(userPatterns).map(([key, up]) => (
+            <a
+              key={key}
+              className={classNames(
+                'mr-4 hover:opacity-50 cursor-pointer inline-block',
+                key === activePattern ? 'outline outline-1' : '',
+              )}
+              onClick={() => {
+                const { code } = up;
+                setActivePattern(key);
+                context.handleUpdate(code, true);
+              }}
+            >
+              {key}
+            </a>
+          ))}
+        </div>
       </section>
       <section>
         <h2 className="text-xl mb-2">Examples</h2>
-        {Object.entries(tunes).map(([key, tune]) => (
-          <a
-            key={key}
-            className={classNames(
-              'mr-4 hover:opacity-50 cursor-pointer inline-block',
-              key === activePattern ? 'underline' : '',
-            )}
-            onClick={() => {
-              setActivePattern(key);
-              context.handleUpdate(tune);
-            }}
-          >
-            {key}
-          </a>
-        ))}
+        <div className="font-mono text-sm">
+          {Object.entries(tunes).map(([key, tune]) => (
+            <a
+              key={key}
+              className={classNames(
+                'mr-4 hover:opacity-50 cursor-pointer inline-block',
+                key === activePattern ? 'outline outline-1' : '',
+              )}
+              onClick={() => {
+                setActivePattern(key);
+                context.handleUpdate(tune, true);
+              }}
+            >
+              {key}
+            </a>
+          ))}
+        </div>
       </section>
     </div>
   );
