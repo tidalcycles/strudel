@@ -3,6 +3,7 @@ import { getAudioContext, initializeAudioOutput } from '@strudel.cycles/webaudio
 import { SelectInput } from './SelectInput';
 
 const initdevices = new Map();
+// Allows the user to select an audio interface for Strudel to play through
 export function AudioDeviceSelector({ audioDeviceName, onChange }) {
   const [devices, setDevices] = useState(initdevices);
   const devicesInitialized = devices.size > 0;
@@ -24,6 +25,7 @@ export function AudioDeviceSelector({ audioDeviceName, onChange }) {
     return devicesMap;
   }, []);
 
+  // on first load, check if there is a cached audio device name in settings and initialize it
   useEffect(() => {
     if (!audioDeviceName.length || devicesInitialized) {
       return;

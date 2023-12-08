@@ -82,7 +82,7 @@ let delays = {};
 const maxfeedback = 0.98;
 
 let channelMerger, destinationGain;
-
+//update the output channel configuration to match user's audio device
 export function initializeAudioOutput() {
   const audioContext = getAudioContext();
   const maxChannelCount = audioContext.destination.maxChannelCount;
