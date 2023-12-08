@@ -42,8 +42,8 @@ export function SoundsTab() {
     });
   });
   return (
-    <div id="sounds-tab" className="flex flex-col w-full h-full dark:text-white text-stone-900">
-      <div className="px-2 pb-2 flex-none">
+    <div id="sounds-tab" className="px-4 flex flex-col w-full h-full dark:text-white text-stone-900">
+      <div className="pb-2 flex-none">
         <ButtonGroup
           value={soundsFilter}
           onChange={(value) => settingsMap.setKey('soundsFilter', value)}
@@ -55,7 +55,7 @@ export function SoundsTab() {
           }}
         ></ButtonGroup>
       </div>
-      <div className="p-2 min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal">
+      <div className="min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal">
         {soundEntries.map(([name, { data, onTrigger }]) => (
           <span
             key={name}
