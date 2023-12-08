@@ -123,6 +123,10 @@ export function renameActivePattern() {
     return;
   }
   const newName = prompt('Enter new name', activePattern);
+  if (newName === null) {
+    // canceled
+    return;
+  }
   if (userPatterns[newName]) {
     alert('Name already taken!');
     return;
