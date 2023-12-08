@@ -22,8 +22,7 @@ export function PatternsTab({ context }) {
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-4 pb-4">
       <section>
-        <h2 className="text-xl mb-2">Pattern Collection</h2>
-        <div className="space-x-4 border-b border-foreground mb-2 pb-1">
+        <div className="px-4 space-x-4 border-b border-foreground mb-2 h-8">
           <button
             className="hover:opacity-50"
             onClick={() => {
