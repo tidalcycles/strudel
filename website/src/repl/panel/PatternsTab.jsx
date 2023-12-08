@@ -31,16 +31,16 @@ export function PatternsTab({ context }) {
             <h1 className="text-xl">{activePattern}</h1>
             <div className="space-x-4 flex w-min">
               {!isExample && (
-                <button className="hover:opacity-50" onClick={() => renameActivePattern()}>
+                <button className="hover:opacity-50" onClick={() => renameActivePattern()} title="Rename">
                   <PencilSquareIcon className="w-5 h-5" />
                   {/* <PencilIcon className="w-5 h-5" /> */}
                 </button>
               )}
-              <button className="hover:opacity-50" onClick={() => duplicateActivePattern()}>
+              <button className="hover:opacity-50" onClick={() => duplicateActivePattern()} title="Duplicate">
                 <DocumentDuplicateIcon className="w-5 h-5" />
               </button>
               {!isExample && (
-                <button className="hover:opacity-50" onClick={() => deleteActivePattern()}>
+                <button className="hover:opacity-50" onClick={() => deleteActivePattern()} title="Delete">
                   <TrashIcon className="w-5 h-5" />
                 </button>
               )}
