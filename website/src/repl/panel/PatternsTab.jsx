@@ -28,15 +28,15 @@ export function PatternsTab({ context }) {
           <div className="flex items-center mb-2 space-x-2 overflow-auto">
             <h1 className="text-xl">{activePattern}</h1>
             <div className="space-x-4 flex w-min">
-              <button className="hover:opacity-50" onClick={() => duplicateActivePattern()}>
-                <DocumentDuplicateIcon className="w-5 h-5" />
-              </button>
               {!isExample && (
                 <button className="hover:opacity-50" onClick={() => renameActivePattern()}>
                   <PencilSquareIcon className="w-5 h-5" />
                   {/* <PencilIcon className="w-5 h-5" /> */}
                 </button>
               )}
+              <button className="hover:opacity-50" onClick={() => duplicateActivePattern()}>
+                <DocumentDuplicateIcon className="w-5 h-5" />
+              </button>
               {!isExample && (
                 <button className="hover:opacity-50" onClick={() => deleteActivePattern()}>
                   <TrashIcon className="w-5 h-5" />
