@@ -44,6 +44,20 @@ export function PatternsTab({ context }) {
           <button className="hover:opacity-50" onClick={() => clearUserPatterns()}>
             clear
           </button>
+          <label className="hover:opacity-50 cursor-pointer">
+            <input
+              style={{ display: 'none' }}
+              type="file"
+              directory=""
+              webkitdirectory=""
+              multiple
+              accept="audio/*"
+              onChange={(e) => {
+                console.log('change', e.target.files);
+              }}
+            />
+            import
+          </label>
         </div>
         {Object.entries(userPatterns).map(([key, up]) => (
           <a
@@ -83,11 +97,3 @@ export function PatternsTab({ context }) {
     </div>
   );
 }
-
-/*
-selectable examples
-if example selected
-  type character -> create new user pattern with exampleName_n
-  even if 
-clicking (+) opens the "new" example with same behavior as above
-*/
