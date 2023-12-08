@@ -52,10 +52,17 @@ export function AudioDeviceSelector({ audioDeviceName, onChange }) {
     onChange(deviceName);
     deviceID && setAudioDevice(deviceID);
   };
-  const options = new Set();
-
+  const options = new Map();
   Array.from(devices.keys()).forEach((deviceName) => {
-    options.add({ id: deviceName, label: deviceName });
+    options.set(deviceName, deviceName);
   });
-  return <SelectInput options={options} onClick={onClick} value={audioDeviceName} onChange={onDeviceChange} />;
+  return (
+    <SelectInput
+      options={options}
+      onClick={onClick}
+      placeholder="select device"
+      value={audioDeviceName}
+      onChange={onDeviceChange}
+    />
+  );
 }

@@ -1,16 +1,19 @@
 import React from 'react';
-//      value: ID, options: Set<{id: ID, label: string}>, onChange: ID => null, onClick: event => void
-export function SelectInput({ value, options, onChange, onClick }) {
+//      value: ?ID, options: Map<ID, any>, onChange: ID => null, onClick: event => void, placeholder?: string
+export function SelectInput({ value, options, onChange, onClick, placeholder }) {
   return (
     <select
       onClick={onClick}
       className="p-2 bg-background rounded-md text-foreground"
-      value={value}
+      value={value ?? ''}
       onChange={(e) => onChange(e.target.value)}
     >
-      {Array.from(options).map(({ id, label }) => (
+      <option disabled value="">
+        {`-- ${placeholder ?? 'select an option'} --`}
+      </option>
+      {Array.from(options.keys()).map((id) => (
         <option key={id} className="bg-background" value={id}>
-          {label}
+          {options.get(id)}
         </option>
       ))}
     </select>
