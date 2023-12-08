@@ -187,6 +187,5 @@ export function duplicateActivePattern() {
 }
 
 export function setActivePattern(key) {
-  console.log('set', key);
   settingsMap.setKey('activePattern', key);
 }
