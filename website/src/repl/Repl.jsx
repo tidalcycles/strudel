@@ -17,7 +17,7 @@ import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
-import { settingsMap, useSettings, setLatestCode, updateUserCode } from '../settings.mjs';
+import { settingsMap, useSettings, setLatestCode, updateUserCode, setActivePattern } from '../settings.mjs';
 import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
@@ -261,6 +261,7 @@ export function Repl({ embedded = false }) {
   const handleShuffle = async () => {
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
+    setActivePattern(name);
     clearCanvas();
     resetLoadedSounds();
     scheduler.setCps(1);
