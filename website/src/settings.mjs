@@ -62,14 +62,14 @@ export const fontSize = patternSetting('fontSize');
 
 export const settingPatterns = { theme, fontFamily, fontSize };
 
-function getUserPatterns() {
+export function getUserPatterns() {
   return JSON.parse(settingsMap.get().userPatterns);
 }
 function getSetting(key) {
   return settingsMap.get()[key];
 }
 
-function setUserPatterns(obj) {
+export function setUserPatterns(obj) {
   settingsMap.setKey('userPatterns', JSON.stringify(obj));
 }
 
@@ -81,7 +81,7 @@ export function addUserPattern(name, config) {
     throw new Error('addUserPattern expected code as property of second param');
   }
   const userPatterns = getUserPatterns();
-  setUserPatterns({ ...userPatterns, [name]: config });
+  setUserPatterns({ [name]: config, ...userPatterns });
 }
 
 export function newUserPattern() {
@@ -123,6 +123,10 @@ export function renameActivePattern() {
     return;
   }
   const newName = prompt('Enter new name', activePattern);
+  if (newName === null) {
+    // canceled
+    return;
+  }
   if (userPatterns[newName]) {
     alert('Name already taken!');
     return;
@@ -152,7 +156,7 @@ export function updateUserCode(code) {
     activePattern = getNextCloneName(activePattern);
     setActivePattern(activePattern);
   }
-  setUserPatterns({ ...userPatterns, [activePattern]: { code } });
+  setUserPatterns({ [activePattern]: { code }, ...userPatterns });
 }
 
 export function deleteActivePattern() {
@@ -182,10 +186,12 @@ export function duplicateActivePattern() {
   }
   const userPatterns = getUserPatterns();
   activePattern = getNextCloneName(activePattern);
-  setUserPatterns({ ...userPatterns, [activePattern]: { code: latestCode } });
+  setUserPatterns({ [activePattern]: { code: latestCode }, ...userPatterns });
   setActivePattern(activePattern);
 }
 
 export function setActivePattern(key) {
   settingsMap.setKey('activePattern', key);
 }
+
+export function importUserPatternJSON(jsonString) {}

@@ -87,7 +87,7 @@ export function Header({ context }) {
             )}
           </button>
           <button
-            onClick={handleUpdate}
+            onClick={() => handleUpdate()}
             title="update"
             className={cx(
               'flex items-center space-x-1',
