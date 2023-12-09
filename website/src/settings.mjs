@@ -81,7 +81,7 @@ export function addUserPattern(name, config) {
     throw new Error('addUserPattern expected code as property of second param');
   }
   const userPatterns = getUserPatterns();
-  setUserPatterns({ [name]: config, ...userPatterns });
+  setUserPatterns({ ...userPatterns, [name]: config });
 }
 
 export function newUserPattern() {
@@ -156,7 +156,7 @@ export function updateUserCode(code) {
     activePattern = getNextCloneName(activePattern);
     setActivePattern(activePattern);
   }
-  setUserPatterns({ [activePattern]: { code }, ...userPatterns });
+  setUserPatterns({ ...userPatterns, [activePattern]: { code } });
 }
 
 export function deleteActivePattern() {
@@ -186,7 +186,7 @@ export function duplicateActivePattern() {
   }
   const userPatterns = getUserPatterns();
   activePattern = getNextCloneName(activePattern);
-  setUserPatterns({ [activePattern]: { code: latestCode }, ...userPatterns });
+  setUserPatterns({ ...userPatterns, [activePattern]: { code: latestCode } });
   setActivePattern(activePattern);
 }
 
