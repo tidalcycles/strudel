@@ -63,14 +63,14 @@ export const fontSize = patternSetting('fontSize');
 
 export const settingPatterns = { theme, fontFamily, fontSize };
 
-function getUserPatterns() {
+export function getUserPatterns() {
   return JSON.parse(settingsMap.get().userPatterns);
 }
 function getSetting(key) {
   return settingsMap.get()[key];
 }
 
-function setUserPatterns(obj) {
+export function setUserPatterns(obj) {
   settingsMap.setKey('userPatterns', JSON.stringify(obj));
 }
 
@@ -124,6 +124,10 @@ export function renameActivePattern() {
     return;
   }
   const newName = prompt('Enter new name', activePattern);
+  if (newName === null) {
+    // canceled
+    return;
+  }
   if (userPatterns[newName]) {
     alert('Name already taken!');
     return;
@@ -188,6 +192,7 @@ export function duplicateActivePattern() {
 }
 
 export function setActivePattern(key) {
-  console.log('set', key);
   settingsMap.setKey('activePattern', key);
 }
+
+export function importUserPatternJSON(jsonString) {}

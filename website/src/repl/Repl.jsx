@@ -17,7 +17,7 @@ import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
-import { settingsMap, useSettings, setLatestCode, updateUserCode } from '../settings.mjs';
+import { settingsMap, useSettings, setLatestCode, updateUserCode, setActivePattern } from '../settings.mjs';
 import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
@@ -247,14 +247,21 @@ export function Repl({ embedded = false }) {
       stop();
     }
   };
-  const handleUpdate = (newCode) => {
+  const handleUpdate = async (newCode, reset = false) => {
+    if (reset) {
+      clearCanvas();
+      resetLoadedSounds();
+      scheduler.setCps(1);
+      await prebake(); // declare default samples
+    }
     (newCode || isDirty) && activateCode(newCode);
-    logger('[repl] code updated! tip: you can also update the code by pressing ctrl+enter', 'highlight');
+    logger('[repl] code updated!');
   };
 
   const handleShuffle = async () => {
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
+    setActivePattern(name);
     clearCanvas();
     resetLoadedSounds();
     scheduler.setCps(1);
