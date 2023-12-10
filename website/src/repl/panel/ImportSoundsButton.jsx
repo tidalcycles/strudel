@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { registerSamplesFromDB, uploadSamplesToDB, userSamplesDBConfig } from './idbutils.mjs';
+import { registerSamplesFromDB, uploadSamplesToDB, userSamplesDBConfig } from '../idbutils.mjs';
 
 //choose a directory to locally import samples
 export default function ImportSoundsButton({ onComplete }) {
