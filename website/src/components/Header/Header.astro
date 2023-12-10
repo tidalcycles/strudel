@@ -16,6 +16,9 @@ const { currentPage } = Astro.props as Props;
 // const lang = getLanguageFromURL(currentPage);
 const langCode = 'en'; // getLanguageFromURL(currentPage);
 const sidebar = SIDEBAR[langCode];
+
+const { BASE_URL } = import.meta.env;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 ---
 
 <nav
@@ -23,7 +26,7 @@ const sidebar = SIDEBAR[langCode];
   title="Top Navigation"
 >
   <div class="flex overflow-visible items-center grow" style="overflow:visible">
-    <a href="/" class="flex items-center text-2xl space-x-2">
+    <a href={`${baseNoTrailing}/`} class="flex items-center text-2xl space-x-2">
       <h1 class="font-bold flex space-x-2 items-baseline text-xl">
         <span>🌀</span>
         <div class="flex space-x-1 items-baseline">
@@ -37,7 +40,7 @@ const sidebar = SIDEBAR[langCode];
   <div class="search-item h-10">
     <Search client:idle />
   </div>
-  <a href="./" class="hidden md:flex cursor-pointer items-center space-x-1"
+  <a href={`${baseNoTrailing}/`} class="hidden md:flex cursor-pointer items-center space-x-1"
     ><CommandLineIcon className="w-5 h-5" /><span>go to REPL</span>
   </a>
   <div class="md:hidden">

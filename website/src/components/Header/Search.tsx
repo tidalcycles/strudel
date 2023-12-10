@@ -6,6 +6,8 @@ import './Search.css';
 
 import { createPortal } from 'react-dom';
 import * as docSearchReact from '@docsearch/react';
+const { BASE_URL } = import.meta.env;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 
 /** FIXME: This is still kinda nasty, but DocSearch is not ESM ready. */
 const DocSearchModal = docSearchReact.DocSearchModal || (docSearchReact as any).default.DocSearchModal;
@@ -89,9 +91,13 @@ export default function Search() {
                 const a = document.createElement('a');
                 a.href = item.url;
                 const hash = a.hash === '#overview' ? '' : a.hash;
+                let pathname = a.pathname;
+                pathname = pathname.startsWith('/') ? pathname.slice(1) : pathname;
+                pathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+                const url = `${baseNoTrailing}/${pathname}/${hash}`;
                 return {
                   ...item,
-                  url: `${a.pathname}${hash}`,
+                  url,
                 };
               });
             }}

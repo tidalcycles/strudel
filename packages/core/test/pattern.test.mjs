@@ -20,6 +20,7 @@ import {
   slowcat,
   cat,
   sequence,
+  palindrome,
   polymeter,
   polymeterSteps,
   polyrhythm,
@@ -569,6 +570,18 @@ describe('Pattern', () => {
   describe('sequence()', () => {
     it('Can work like fastcat', () => {
       expect(sequence(1, 2, 3).firstCycle()).toStrictEqual(fastcat(1, 2, 3).firstCycle());
+    });
+  });
+  describe('palindrome()', () => {
+    it('Can create palindrome', () => {
+      expect(
+        fastcat('a', 'b', 'c')
+          .palindrome()
+          .fast(2)
+          .firstCycle()
+          .sort((a, b) => a.part.begin.sub(b.part.begin))
+          .map((a) => a.value),
+      ).toStrictEqual(['a', 'b', 'c', 'c', 'b', 'a']);
     });
   });
   describe('polyrhythm()', () => {

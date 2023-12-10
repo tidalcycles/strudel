@@ -3,6 +3,9 @@ import { registerSynthSounds, registerZZFXSounds, samples } from '@strudel.cycle
 import './piano.mjs';
 import './files.mjs';
 
+const { BASE_URL } = import.meta.env;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
+
 export async function prebake() {
   // https://archive.org/details/SalamanderGrandPianoV3
   // License: CC-by http://creativecommons.org/licenses/by/3.0/ Author: Alexander Holm
@@ -14,16 +17,16 @@ export async function prebake() {
     // => getting "window is not defined", as soon as "@strudel.cycles/soundfonts" is imported statically
     // seems to be a problem with soundfont2
     import('@strudel.cycles/soundfonts').then(({ registerSoundfonts }) => registerSoundfonts()),
-    samples(`./piano.json`, `./piano/`, { prebake: true }),
+    samples(`${baseNoTrailing}/piano.json`, `${baseNoTrailing}/piano/`, { prebake: true }),
     // https://github.com/sgossner/VCSL/
     // https://api.github.com/repositories/126427031/contents/
     // LICENSE: CC0 general-purpose
-    samples(`./vcsl.json`, 'github:sgossner/VCSL/master/', { prebake: true }),
-    samples(`./tidal-drum-machines.json`, 'github:ritchse/tidal-drum-machines/main/machines/', {
+    samples(`${baseNoTrailing}/vcsl.json`, 'github:sgossner/VCSL/master/', { prebake: true }),
+    samples(`${baseNoTrailing}/tidal-drum-machines.json`, 'github:ritchse/tidal-drum-machines/main/machines/', {
       prebake: true,
       tag: 'drum-machines',
     }),
-    samples(`./EmuSP12.json`, `./EmuSP12/`, { prebake: true, tag: 'drum-machines' }),
+    samples(`${baseNoTrailing}/EmuSP12.json`, `${baseNoTrailing}/EmuSP12/`, { prebake: true, tag: 'drum-machines' }),
     samples(
       {
         casio: ['casio/high.wav', 'casio/low.wav', 'casio/noise.wav'],

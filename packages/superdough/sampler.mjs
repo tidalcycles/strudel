@@ -1,4 +1,4 @@
-import { noteToMidi, valueToMidi } from './util.mjs';
+import { noteToMidi, valueToMidi, nanFallback } from './util.mjs';
 import { getAudioContext, registerSound } from './index.mjs';
 import { getEnvelope } from './helpers.mjs';
 import { logger } from './logger.mjs';
@@ -33,6 +33,7 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resol
   const ac = getAudioContext();
   let sampleUrl;
   if (Array.isArray(bank)) {
+    n = nanFallback(n, 0);
     sampleUrl = bank[n % bank.length];
   } else {
     const midiDiff = (noteA) => noteToMidi(noteA) - midi;

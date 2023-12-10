@@ -1,3 +1,5 @@
+import { logger } from './logger.mjs';
+
 // currently duplicate with core util.mjs to skip dependency
 // TODO: add separate util module?
 
@@ -51,3 +53,11 @@ export const valueToMidi = (value, fallbackValue) => {
   }
   return fallbackValue;
 };
+
+export function nanFallback(value, fallback) {
+  if (isNaN(Number(value))) {
+    logger(`"${value}" is not a number, falling back to ${fallback}`, 'warning');
+    return fallback;
+  }
+  return value;
+}
