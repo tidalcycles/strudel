@@ -2,6 +2,7 @@ import { persistentMap } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel.cycles/core';
 import * as tunes from './repl/tunes.mjs';
+import { logger } from '@strudel.cycles/core';
 
 export const defaultSettings = {
   activeFooter: 'intro',
@@ -195,3 +196,32 @@ export function setActivePattern(key) {
 }
 
 export function importUserPatternJSON(jsonString) {}
+
+export async function importPatterns(fileList) {
+  const files = Array.from(fileList);
+  await Promise.all(
+    files.map(async (file, i) => {
+      const content = await file.text();
+      if (file.type === 'application/json') {
+        const userPatterns = getUserPatterns() || {};
+        setUserPatterns({ ...userPatterns, ...JSON.parse(content) });
+      } else if (file.type === 'text/plain') {
+        const name = file.name.replace(/\.[^/.]+$/, '');
+        addUserPattern(name, { code: content });
+      }
+    }),
+  );
+  logger(`import done!`);
+}
+
+export async function exportPatterns() {
+  const userPatterns = getUserPatterns() || {};
+  const blob = new Blob([JSON.stringify(userPatterns)], { type: 'application/json' });
+  const downloadLink = document.createElement('a');
+  downloadLink.href = window.URL.createObjectURL(blob);
+  const date = new Date().toISOString().split('T')[0];
+  downloadLink.download = `strudel_patterns_${date}.json`;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+}
