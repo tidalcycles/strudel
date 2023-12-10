@@ -24,6 +24,7 @@ import { code2hash, hash2code } from './helpers.mjs';
 import { isTauri } from '../tauri.mjs';
 import { useWidgets } from '@strudel.cycles/react/src/hooks/useWidgets.mjs';
 import { writeText } from '@tauri-apps/api/clipboard';
+import { registerSamplesFromDB, userSamplesDBConfig } from './idbutils.mjs';
 
 const { latestCode } = settingsMap.get();
 
@@ -183,6 +184,8 @@ export function Repl({ embedded = false }) {
         setCode(randomTune);
         msg = `A random code snippet named "${name}" has been loaded!`;
       }
+      //registers samples that have been saved to the index DB
+      registerSamplesFromDB(userSamplesDBConfig);
       logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
       setPending(false);
     });
