@@ -3,8 +3,13 @@ import { registerSound, onTriggerSample } from '@strudel.cycles/webaudio';
 import { isAudioFile } from './files.mjs';
 
 //choose a directory to locally import samples
-const userSamplesDB = 'testdb3';
-const sampleObject = 'testsamples';
+
+const userSamplesDBConfig = {
+  dbName: 'samples',
+  table: 'usersamples',
+  columns: ['blob', 'title'],
+  version: 1,
+};
 
 function clearData() {
   window.indexedDB
@@ -17,8 +22,8 @@ function clearData() {
     });
 }
 
-const registerSamples = () => {
-  openDB((objectStore) => {
+const registerSamplesFromDB = (config) => {
+  openDB(config, (objectStore) => {
     let query = objectStore.getAll();
     query.onsuccess = (event) => {
       const soundFiles = event.target.result;
@@ -63,20 +68,20 @@ async function bufferToDataUrl(buf) {
   });
 }
 
-const openDB = (onOpened) => {
-  if ('indexedDB' in window) {
-    // indexedDB supported
-  } else {
+const openDB = (config, onOpened) => {
+  const { dbName, version, table, columns } = config;
+  if (!('indexedDB' in window)) {
     console.log('IndexedDB is not supported.');
+    return;
   }
-  const dbOpen = indexedDB.open(userSamplesDB, 6);
+  const dbOpen = indexedDB.open(dbName, version);
 
   dbOpen.onupgradeneeded = (_event) => {
     const db = dbOpen.result;
-    const objectStore = db.createObjectStore(sampleObject, { keyPath: 'id', autoIncrement: false });
-    // objectStore.createIndex('name', 'name', { unique: false });
-    objectStore.createIndex('blob', 'blob', { unique: false });
-    objectStore.createIndex('title', 'title', { unique: false });
+    const objectStore = db.createObjectStore(table, { keyPath: 'id', autoIncrement: false });
+    columns.forEach((c) => {
+      objectStore.createIndex(c, c, { unique: false });
+    });
   };
   dbOpen.onerror = (err) => {
     console.error(`indexedDB error: ${err.errorCode}`);
@@ -86,42 +91,43 @@ const openDB = (onOpened) => {
     const db = dbOpen.result;
 
     const // lock store for writing
-      writeTransaction = db.transaction([sampleObject], 'readwrite'),
+      writeTransaction = db.transaction([table], 'readwrite'),
       // get object store
-      objectStore = writeTransaction.objectStore(sampleObject);
-    // objectStore.put({ title: 'test', blob: 'test' });
-
+      objectStore = writeTransaction.objectStore(table);
     onOpened(objectStore, db);
   };
 };
 
 const processFilesForIDB = async (files) => {
   return await Promise.all(
-    Array.from(files).map(async (s) => {
-      const title = s.name;
-      if (!isAudioFile(title)) {
-        return;
-      }
-      // const id = crypto.randomUUID();
-      const sUrl = URL.createObjectURL(s);
-      const buf = await fetch(sUrl).then((res) => res.arrayBuffer());
-      const base64 = await bufferToDataUrl(buf);
-      const f = {
-        title,
-        blob: base64,
-        id: s.webkitRelativePath,
-      };
-      return f;
-    }),
+    Array.from(files)
+      .map(async (s) => {
+        const title = s.name;
+        if (!isAudioFile(title)) {
+          return;
+        }
+        //create obscured url to file system that can be fetched
+        const sUrl = URL.createObjectURL(s);
+        //fetch the sound and turn it into a buffer array
+        const buf = await fetch(sUrl).then((res) => res.arrayBuffer());
+        //create a url blob containing all of the buffer data
+        const base64 = await bufferToDataUrl(buf);
+        return {
+          title,
+          blob: base64,
+          id: s.webkitRelativePath,
+        };
+      })
+      .filter(Boolean),
   ).catch((error) => {
     console.error(error);
   });
 };
 
-const setupUserSamplesDB = async (files, onComplete) => {
-  //clearData();
+const uploadSamplesToDB = async (config, files) => {
+  // clearData();
   await processFilesForIDB(files).then((files) => {
-    const onOpened = (objectStore, db) => {
+    const onOpened = (objectStore, _db) => {
       files.forEach((file) => {
         if (file == null) {
           return;
@@ -129,23 +135,22 @@ const setupUserSamplesDB = async (files, onComplete) => {
         const mutation = objectStore.put(file);
         mutation.onsuccess = () => {};
       });
-      onComplete(objectStore, db);
     };
-    openDB(onOpened);
+    openDB(config, onOpened);
   });
 };
 
 export default function ImportSoundsButton({ onComplete }) {
   let fileUploadRef = React.createRef();
   const onChange = useCallback(async () => {
-    await setupUserSamplesDB(fileUploadRef.current.files, (objectStore, db) => {}).then(async () => {
-      registerSamples();
+    await uploadSamplesToDB(userSamplesDBConfig, fileUploadRef.current.files).then(() => {
+      registerSamplesFromDB(userSamplesDBConfig);
       onComplete();
     });
   });
 
   useEffect(() => {
-    registerSamples();
+    registerSamplesFromDB(userSamplesDBConfig);
   }, []);
 
   return (
