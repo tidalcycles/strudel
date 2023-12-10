@@ -10,7 +10,6 @@ import { useSettings, settingsMap, setActiveFooter, defaultSettings } from '../s
 import { getAudioContext, soundMap } from '@strudel.cycles/webaudio';
 import { useStore } from '@nanostores/react';
 import { FilesTab } from './FilesTab';
-import ImportSoundsButton from './ImportSoundsButton';
 
 const TAURI = window.__TAURI__;
 
@@ -254,7 +253,6 @@ function SoundsTab() {
             user: 'User',
           }}
         ></ButtonGroup>
-        <ImportSoundsButton onComplete={() => settingsMap.setKey('soundsFilter', 'user')} />
       </div>
       <div className="p-2 min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal">
         {soundEntries.map(([name, { data, onTrigger }]) => (
