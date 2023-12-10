@@ -21,7 +21,7 @@ export default function ImportSoundsButton({ onComplete }) {
   return (
     <label
       style={{ alignItems: 'center' }}
-      className="flex bg-background ml-2 pl-2 pr-2 max-w-[300px] rounded-md hover:opacity-50"
+      className="flex bg-background ml-2 pl-2 pr-2 max-w-[300px] rounded-md hover:opacity-50 whitespace-nowrap cursor-pointer"
     >
       <input
         disabled={isUploading}

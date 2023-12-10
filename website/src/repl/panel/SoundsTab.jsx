@@ -44,7 +44,7 @@ export function SoundsTab() {
   });
   return (
     <div id="sounds-tab" className="px-4 flex flex-col w-full h-full dark:text-white text-stone-900">
-      <div className="pb-2 flex">
+      <div className="pb-2 flex shrink-0 overflow-auto">
         <ButtonGroup
           value={soundsFilter}
           onChange={(value) => settingsMap.setKey('soundsFilter', value)}
