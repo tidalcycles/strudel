@@ -177,6 +177,7 @@ export function Repl({ embedded = false }) {
       let msg;
       if (decoded) {
         setCode(decoded);
+        setActivePattern('');
         msg = `I have loaded the code from the URL.`;
       } else if (latestCode) {
         setCode(latestCode);
