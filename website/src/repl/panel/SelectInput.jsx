@@ -9,7 +9,7 @@ export function SelectInput({ value, options, onChange, onClick, placeholder }) 
       onChange={(e) => onChange(e.target.value)}
     >
       <option disabled value="">
-        {`-- ${placeholder ?? 'select an option'} --`}
+        {`${placeholder ?? 'select an option'}`}
       </option>
       {Array.from(options.keys()).map((id) => (
         <option key={id} className="bg-background" value={id}>

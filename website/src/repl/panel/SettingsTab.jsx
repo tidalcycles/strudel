@@ -110,7 +110,7 @@ export function SettingsTab() {
         </div>
       </FormItem> */}
       {AudioContext.prototype.setSinkId != null && (
-        <FormItem label="Audio Device">
+        <FormItem label="Audio Output Device">
           <AudioDeviceSelector
             audioDeviceName={audioDeviceName}
             onChange={(audioDeviceName) => settingsMap.setKey('audioDeviceName', audioDeviceName)}

@@ -62,7 +62,7 @@ export function AudioDeviceSelector({ audioDeviceName, onChange }) {
     <SelectInput
       options={options}
       onClick={onClick}
-      placeholder="select device"
+      placeholder="System Standard"
       value={audioDeviceName}
       onChange={onDeviceChange}
     />
