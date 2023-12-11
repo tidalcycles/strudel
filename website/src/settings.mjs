@@ -208,8 +208,6 @@ export function duplicateActivePattern() {
   setActivePattern(activePattern);
 }
 
-export function importUserPatternJSON(jsonString) {}
-
 export async function importPatterns(fileList) {
   const files = Array.from(fileList);
   await Promise.all(
