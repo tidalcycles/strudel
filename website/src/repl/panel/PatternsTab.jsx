@@ -10,6 +10,7 @@ import {
   newUserPattern,
   renameActivePattern,
   setActivePattern,
+  useActivePattern,
   useSettings,
 } from '../../settings.mjs';
 import * as tunes from '../tunes.mjs';
@@ -19,7 +20,8 @@ function classNames(...classes) {
 }
 
 export function PatternsTab({ context }) {
-  const { userPatterns, activePattern } = useSettings();
+  const { userPatterns } = useSettings();
+  const activePattern = useActivePattern();
   const isExample = useMemo(() => activePattern && !!tunes[activePattern], [activePattern]);
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-4 pb-4">

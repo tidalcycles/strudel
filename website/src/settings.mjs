@@ -1,4 +1,4 @@
-import { persistentMap } from '@nanostores/persistent';
+import { persistentMap, persistentAtom } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel.cycles/core';
 import * as tunes from './repl/tunes.mjs';
@@ -20,10 +20,22 @@ export const defaultSettings = {
   soundsFilter: 'all',
   panelPosition: 'bottom',
   userPatterns: '{}',
-  activePattern: '',
 };
 
 export const settingsMap = persistentMap('strudel-settings', defaultSettings);
+
+// active pattern is separate, because it shouldn't sync state across tabs
+// reason: https://github.com/tidalcycles/strudel/issues/857
+const $activePattern = persistentAtom('activePattern', '', { listen: false });
+export function setActivePattern(key) {
+  $activePattern.set(key);
+}
+export function getActivePattern() {
+  return $activePattern.get();
+}
+export function useActivePattern() {
+  return useStore($activePattern);
+}
 
 export function useSettings() {
   const state = useStore(settingsMap);
@@ -117,7 +129,7 @@ export function getUserPattern(key) {
 }
 
 export function renameActivePattern() {
-  let activePattern = getSetting('activePattern');
+  let activePattern = getActivePattern();
   let userPatterns = getUserPatterns();
   if (!userPatterns[activePattern]) {
     alert('Cannot rename examples');
@@ -140,7 +152,7 @@ export function renameActivePattern() {
 
 export function updateUserCode(code) {
   const userPatterns = getUserPatterns();
-  let activePattern = getSetting('activePattern');
+  let activePattern = getActivePattern();
   // check if code is that of an example tune
   const [example] = Object.entries(tunes).find(([_, tune]) => tune === code) || [];
   if (example && (!activePattern || activePattern === example)) {
@@ -161,7 +173,7 @@ export function updateUserCode(code) {
 }
 
 export function deleteActivePattern() {
-  let activePattern = getSetting('activePattern');
+  let activePattern = getActivePattern();
   if (!activePattern) {
     console.warn('cannot delete: no pattern selected');
     return;
@@ -179,7 +191,7 @@ export function deleteActivePattern() {
 }
 
 export function duplicateActivePattern() {
-  let activePattern = getSetting('activePattern');
+  let activePattern = getActivePattern();
   let latestCode = getSetting('latestCode');
   if (!activePattern) {
     console.warn('cannot duplicate: no pattern selected');
@@ -189,10 +201,6 @@ export function duplicateActivePattern() {
   activePattern = getNextCloneName(activePattern);
   setUserPatterns({ ...userPatterns, [activePattern]: { code: latestCode } });
   setActivePattern(activePattern);
-}
-
-export function setActivePattern(key) {
-  settingsMap.setKey('activePattern', key);
 }
 
 export function importUserPatternJSON(jsonString) {}
