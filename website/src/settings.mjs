@@ -36,6 +36,11 @@ export function getActivePattern() {
 export function useActivePattern() {
   return useStore($activePattern);
 }
+export function initUserCode(code) {
+  const userPatterns = getUserPatterns();
+  const match = Object.entries(userPatterns).find(([_, pat]) => pat.code === code);
+  setActivePattern(match?.[0] || '');
+}
 
 export function useSettings() {
   const state = useStore(settingsMap);

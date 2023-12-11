@@ -25,6 +25,7 @@ import {
   setActivePattern,
   getActivePattern,
   getUserPattern,
+  initUserCode,
 } from '../settings.mjs';
 import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
@@ -184,12 +185,7 @@ export function Repl({ embedded = false }) {
       let msg;
       if (decoded) {
         setCode(decoded);
-        const activePattern = getActivePattern();
-        if (getUserPattern(activePattern)?.code !== decoded) {
-          // code in url is not the last active patterns code => must be something else
-          // deselect last active pattern to not overwrite it on next evaluation
-          setActivePattern('');
-        }
+        initUserCode(decoded);
         msg = `I have loaded the code from the URL.`;
       } else if (latestCode) {
         setCode(latestCode);
