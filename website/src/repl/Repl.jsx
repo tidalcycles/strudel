@@ -17,7 +17,16 @@ import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
-import { settingsMap, useSettings, setLatestCode, updateUserCode, setActivePattern } from '../settings.mjs';
+import {
+  settingsMap,
+  useSettings,
+  setLatestCode,
+  updateUserCode,
+  setActivePattern,
+  getActivePattern,
+  getUserPattern,
+  initUserCode,
+} from '../settings.mjs';
 import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
 import { code2hash, hash2code } from './helpers.mjs';
@@ -131,7 +140,6 @@ export function Repl({ embedded = false }) {
     isLineWrappingEnabled,
     panelPosition,
     isZen,
-    activePattern,
   } = useSettings();
 
   const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
@@ -177,7 +185,7 @@ export function Repl({ embedded = false }) {
       let msg;
       if (decoded) {
         setCode(decoded);
-        setActivePattern('');
+        initUserCode(decoded);
         msg = `I have loaded the code from the URL.`;
       } else if (latestCode) {
         setCode(latestCode);
