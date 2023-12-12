@@ -312,8 +312,8 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
       const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
       releaseTime = t + (end - begin) * bufferDuration;
     }
-    bufferSource.stop(releaseTime + release);
-    releaseEnvelope(releaseTime);
+    const silentAt = releaseEnvelope(releaseTime);
+    bufferSource.stop(silentAt);
   };
   const handle = { node: out, bufferSource, stop };
 

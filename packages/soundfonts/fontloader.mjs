@@ -139,8 +139,8 @@ export function registerSoundfonts() {
         const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 0.3, time);
         bufferSource.connect(envelope);
         const stop = (releaseTime) => {
-          bufferSource.stop(releaseTime + release);
-          releaseEnvelope(releaseTime);
+          const silentAt = releaseEnvelope(releaseTime);
+          bufferSource.stop(silentAt);
         };
         bufferSource.onended = () => {
           bufferSource.disconnect();
