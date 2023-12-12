@@ -114,6 +114,9 @@ export async function prebake() {
         ],
       },
       'github:tidalcycles/Dirt-Samples/master/',
+      {
+        prebake: true,
+      },
     ),
   ]);
   // await samples('github:tidalcycles/Dirt-Samples/master');
