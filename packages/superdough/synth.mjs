@@ -56,10 +56,9 @@ export function registerSynthSounds() {
         return {
           node: o.connect(g).connect(envelope),
           stop: (releaseTime) => {
-            releaseEnvelope(releaseTime);
+            const silentAt = releaseEnvelope(releaseTime);
             triggerRelease?.(releaseTime);
-            let end = releaseTime + release;
-            stop(end);
+            stop(silentAt);
           },
         };
       },
