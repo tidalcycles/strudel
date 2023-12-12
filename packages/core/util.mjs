@@ -1,3 +1,5 @@
+import Fraction from './fraction.mjs';
+
 /*
 util.mjs - <short description TODO>
 Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/util.mjs>
@@ -273,4 +275,22 @@ export const sol2note = (n, notation = 'letters') => {
   const note = pc[n % 12]; /*calculating the midi value to the note*/
   const oct = Math.floor(n / 12) - 1;
   return note + oct;
+};
+
+const fractionCharacters = {
+  w: Fraction(1),
+  h: Fraction(0.5),
+  q: Fraction(0.25),
+  e: Fraction(0.125),
+  s: Fraction(0.0625),
+  t: Fraction(1 / 3),
+  f: Fraction(0.2),
+  x: Fraction(1 / 6),
+};
+const validFractionCharacters = Object.keys(fractionCharacters);
+export const char2fraction = (maybeChar) => {
+  if (typeof maybeChar === 'string' && validFractionCharacters.includes(maybeChar)) {
+    return fractionCharacters[maybeChar];
+  }
+  return maybeChar;
 };
