@@ -473,6 +473,9 @@ function stringifySafe(json) {
   return JSON.stringify(json, getCircularReplacer());
 }
 
+export const theme = (theme) => themes[theme] || themes.strudelTheme;
+
+// css style injection helpers
 export function injectStyle(rule) {
   const newStyle = document.createElement('style');
   document.head.appendChild(newStyle);
@@ -481,4 +484,38 @@ export function injectStyle(rule) {
   return () => styleSheet.deleteRule(ruleIndex);
 }
 
-export const theme = (theme) => themes[theme] || themes.strudelTheme;
+let currentTheme, resetThemeStyle, themeStyle;
+export function initTheme(theme) {
+  themeStyle = document.createElement('style');
+  themeStyle.id = 'strudel-theme';
+  document.head.append(themeStyle);
+  activateTheme(theme);
+}
+
+export function activateTheme(name) {
+  if (currentTheme === name) {
+    return;
+  }
+  if (!settings[name]) {
+    console.warn('theme', name, 'has no settings.. defaulting to strudelTheme settings');
+  }
+  const themeSettings = settings[name] || settings.strudelTheme;
+  // set css variables
+  themeStyle.innerHTML = `:root {
+      ${Object.entries(themeSettings)
+        // important to override fallback
+        .map(([key, value]) => `--${key}: ${value} !important;`)
+        .join('\n')}
+    }`;
+  // tailwind dark mode
+  if (themeSettings.light) {
+    document.documentElement.classList.remove('dark');
+  } else {
+    document.documentElement.classList.add('dark');
+  }
+  resetThemeStyle?.();
+  resetThemeStyle = undefined;
+  if (themeSettings.customStyle) {
+    resetThemeStyle = injectStyle(themeSettings.customStyle);
+  }
+}

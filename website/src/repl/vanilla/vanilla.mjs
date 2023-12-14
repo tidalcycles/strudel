@@ -1,5 +1,5 @@
 import { logger, getDrawContext, silence, controls, evalScope, hash2code, code2hash } from '@strudel.cycles/core';
-import { StrudelMirror } from '@strudel/codemirror';
+import { StrudelMirror, initTheme, activateTheme } from '@strudel/codemirror';
 import { transpiler } from '@strudel.cycles/transpiler';
 import {
   getAudioContext,
@@ -24,6 +24,7 @@ const initialSettings = {
   fontFamily: 'monospace',
   fontSize: 18,
 };
+initTheme(initialSettings.theme);
 
 async function run() {
   const container = document.getElementById('code');
@@ -196,4 +197,6 @@ form.addEventListener('change', () => {
   const values = getFormValues(form, initialSettings);
   // console.log('values', values);
   editor.updateSettings(values);
+  // TODO: only activateTheme when it changes
+  activateTheme(values.theme);
 });
