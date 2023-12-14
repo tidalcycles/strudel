@@ -124,3 +124,12 @@ const miniLocationHighlights = EditorView.decorations.compute([miniLocations, vi
 });
 
 export const highlightExtension = [miniLocations, visibleMiniLocations, miniLocationHighlights];
+
+export const isPatternHighlightingEnabled = (on, config) => {
+  on &&
+    config &&
+    setTimeout(() => {
+      updateMiniLocations(config.editor, config.miniLocations);
+    }, 100);
+  return on ? highlightExtension : [];
+};
