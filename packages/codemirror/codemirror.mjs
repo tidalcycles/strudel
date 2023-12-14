@@ -190,6 +190,10 @@ export class StrudelMirror {
   }
   setFontFamily(family) {
     this.root.style.fontFamily = family;
+    const scroller = this.root.querySelector('.cm-scroller');
+    if (scroller) {
+      scroller.style.fontFamily = family;
+    }
   }
   reconfigureExtension(key, value) {
     if (!extensions[key]) {
