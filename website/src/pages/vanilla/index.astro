@@ -1,13 +1,13 @@
 ---
-import HeadCommon from '../../components/HeadCommon.astro';
+import HeadCommonNew from '../../components/HeadCommonNew.astro';
 ---
 
 <html lang="en" class="dark">
   <head>
-    <HeadCommon />
+    <HeadCommonNew />
     <title>Strudel Vanilla REPL</title>
   </head>
-  <body class="h-app-height bg-background">
+  <body class="h-app-height">
     <div class="settings">
       <form name="settings" class="flex flex-col space-y-1 bg-[#00000080]">
         <label
@@ -60,10 +60,8 @@ import HeadCommon from '../../components/HeadCommon.astro';
             <option>vscode</option>
           </select> </label
         ><br />
-        <!-- <label>fontFamily
+        <label>fontFamily
           <select name="fontFamily">
-            <option>monospace</option>
-            <option>helvetica</option>
             <option value="monospace">monospace</option>
             <option value="BigBlueTerminal">BigBlueTerminal</option>
             <option value="x3270">x3270</option>
@@ -76,7 +74,7 @@ import HeadCommon from '../../components/HeadCommon.astro';
             <option value="mode7">mode7</option>
           </select>
         </label>
-        <br /> -->
+        <br /> 
         <label>fontSize <input type="number" name="fontSize" /></label>
         <br />
         <label><input type="checkbox" name="isLineNumbersDisplayed" />isLineNumbersDisplayed</label>
