@@ -1,36 +1,77 @@
-import { defaultKeymap } from '@codemirror/commands';
+import { closeBrackets } from '@codemirror/autocomplete';
+// import { search, highlightSelectionMatches } from '@codemirror/search';
+import { history } from '@codemirror/commands';
 import { javascript } from '@codemirror/lang-javascript';
 import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
-import { EditorState } from '@codemirror/state';
-import { EditorView, highlightActiveLineGutter, keymap, lineNumbers } from '@codemirror/view';
-import { Drawer, repl } from '@strudel.cycles/core';
-import { flashField, flash } from './flash.mjs';
-import { highlightExtension, highlightMiniLocations } from './highlight.mjs';
-import { oneDark } from './themes/one-dark';
+import { Compartment, EditorState } from '@codemirror/state';
+import { EditorView, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view';
+import { Pattern, Drawer, repl, cleanupDraw } from '@strudel.cycles/core';
+// import { isAutoCompletionEnabled } from './Autocomplete';
+import { flash, isFlashEnabled } from './flash.mjs';
+import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
+import { keybindings } from './keybindings.mjs';
+import { theme } from './themes.mjs';
+import { updateWidgets, sliderPlugin } from './slider.mjs';
+
+const extensions = {
+  isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
+  isLineNumbersDisplayed: (on) => (on ? lineNumbers() : []),
+  theme,
+  // isAutoCompletionEnabled,
+  isPatternHighlightingEnabled,
+  isActiveLineHighlighted: (on) => (on ? [highlightActiveLine(), highlightActiveLineGutter()] : []),
+  isFlashEnabled,
+  keybindings,
+};
+const compartments = Object.fromEntries(Object.keys(extensions).map((key) => [key, new Compartment()]));
 
 // https://codemirror.net/docs/guide/
-export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, theme = oneDark, root }) {
+export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, settings, root }) {
+  const initialSettings = Object.keys(compartments).map((key) =>
+    compartments[key].of(extensions[key](parseBooleans(settings[key]))),
+  );
   let state = EditorState.create({
     doc: initialCode,
     extensions: [
-      theme,
+      /* search(),
+      highlightSelectionMatches(), */
+      ...initialSettings,
       javascript(),
-      lineNumbers(),
-      highlightExtension,
-      highlightActiveLineGutter(),
+      sliderPlugin,
+      // indentOnInput(), // works without. already brought with javascript extension?
+      // bracketMatching(), // does not do anything
+      closeBrackets(),
       syntaxHighlighting(defaultHighlightStyle),
-      keymap.of(defaultKeymap),
-      flashField,
+      history(),
       EditorView.updateListener.of((v) => onChange(v)),
       keymap.of([
         {
           key: 'Ctrl-Enter',
-          run: () => onEvaluate(),
+          run: () => onEvaluate?.(),
+        },
+        {
+          key: 'Alt-Enter',
+          run: () => onEvaluate?.(),
         },
         {
           key: 'Ctrl-.',
-          run: () => onStop(),
+          run: () => onStop?.(),
         },
+        {
+          key: 'Alt-.',
+          run: (_, e) => {
+            e.preventDefault();
+            onStop?.();
+          },
+        },
+        /* {
+          key: 'Ctrl-Shift-.',
+          run: () => (onPanic ? onPanic() : onStop?.()),
+        },
+        {
+          key: 'Ctrl-Shift-Enter',
+          run: () => (onReEvaluate ? onReEvaluate() : onEvaluate?.()),
+        }, */
       ]),
     ],
   });
@@ -43,71 +84,159 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, the
 
 export class StrudelMirror {
   constructor(options) {
-    const { root, initialCode = '', onDraw, drawTime = [-2, 2], prebake, ...replOptions } = options;
+    const { root, initialCode = '', onDraw, drawTime = [-2, 2], prebake, settings, ...replOptions } = options;
     this.code = initialCode;
+    this.root = root;
+    this.miniLocations = [];
+    this.widgets = [];
+    this.painters = [];
+    this.onDraw = onDraw;
+    const self = this;
 
     this.drawer = new Drawer((haps, time) => {
       const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.endClipped);
       this.highlight(currentFrame, time);
-      onDraw?.(haps, time, currentFrame);
+      this.onDraw?.(haps, time, currentFrame, this.painters);
     }, drawTime);
 
-    const prebaked = prebake();
-    prebaked.then(async () => {
-      if (!onDraw) {
-        return;
-      }
-      const { scheduler, evaluate } = await this.repl;
-      // draw first frame instantly
-      prebaked.then(async () => {
-        await evaluate(this.code, false);
-        this.drawer.invalidate(scheduler);
-        onDraw?.(this.drawer.visibleHaps, 0, []);
-      });
-    });
+    // this approach might not work with multiple repls on screen..
+    Pattern.prototype.onPaint = function (onPaint) {
+      self.painters.push(onPaint);
+      return this;
+    };
+
+    this.prebaked = prebake();
+    // this.drawFirstFrame();
 
     this.repl = repl({
       ...replOptions,
-      onToggle: async (started) => {
+      onToggle: (started) => {
         replOptions?.onToggle?.(started);
-        const { scheduler } = await this.repl;
         if (started) {
-          this.drawer.start(scheduler);
+          this.drawer.start(this.repl.scheduler);
         } else {
           this.drawer.stop();
+          updateMiniLocations(this.editor, []);
+          cleanupDraw(false);
         }
       },
       beforeEval: async () => {
-        await prebaked;
+        cleanupDraw();
+        this.painters = [];
+        await this.prebaked;
+        await replOptions?.beforeEval?.();
       },
       afterEval: (options) => {
+        // remember for when highlighting is toggled on
+        this.miniLocations = options.meta?.miniLocations;
+        this.widgets = options.meta?.widgets;
+        updateWidgets(this.editor, this.widgets);
+        updateMiniLocations(this.editor, this.miniLocations);
         replOptions?.afterEval?.(options);
         this.drawer.invalidate();
       },
     });
     this.editor = initEditor({
       root,
+      settings,
       initialCode,
       onChange: (v) => {
-        this.code = v.state.doc.toString();
+        if (v.docChanged) {
+          this.code = v.state.doc.toString();
+          // TODO: repl is still untouched to make sure the old Repl.jsx stays untouched..
+          // this.repl.setCode(this.code);
+        }
       },
       onEvaluate: () => this.evaluate(),
       onStop: () => this.stop(),
     });
   }
+  async drawFirstFrame() {
+    if (!this.onDraw) {
+      return;
+    }
+    // draw first frame instantly
+    await this.prebaked;
+    try {
+      await this.repl.evaluate(this.code, false);
+      this.drawer.invalidate(this.repl.scheduler);
+      this.onDraw?.(this.drawer.visibleHaps, 0, []);
+    } catch (err) {
+      console.warn('first frame could not be painted');
+    }
+  }
   async evaluate() {
-    const { evaluate } = await this.repl;
     this.flash();
-    await evaluate(this.code);
+    await this.repl.evaluate(this.code);
   }
   async stop() {
-    const { scheduler } = await this.repl;
-    scheduler.stop();
+    this.repl.scheduler.stop();
+  }
+  async toggle() {
+    if (this.repl.scheduler.started) {
+      this.repl.scheduler.stop();
+    } else {
+      this.evaluate();
+    }
   }
   flash(ms) {
     flash(this.editor, ms);
   }
   highlight(haps, time) {
-    highlightMiniLocations(this.editor.view, time, haps);
+    highlightMiniLocations(this.editor, time, haps);
   }
+  setFontSize(size) {
+    this.root.style.fontSize = size + 'px';
+  }
+  setFontFamily(family) {
+    this.root.style.fontFamily = family;
+  }
+  reconfigureExtension(key, value) {
+    if (!extensions[key]) {
+      console.warn(`extension ${key} is not known`);
+      return;
+    }
+    value = parseBooleans(value);
+    const newValue = extensions[key](value, this);
+    this.editor.dispatch({
+      effects: compartments[key].reconfigure(newValue),
+    });
+  }
+  setLineWrappingEnabled(enabled) {
+    this.reconfigureExtension('isLineWrappingEnabled', enabled);
+  }
+  setLineNumbersDisplayed(enabled) {
+    this.reconfigureExtension('isLineNumbersDisplayed', enabled);
+  }
+  setTheme(theme) {
+    this.reconfigureExtension('theme', theme);
+  }
+  setAutocompletionEnabled(enabled) {
+    this.reconfigureExtension('isAutoCompletionEnabled', enabled);
+  }
+  updateSettings(settings) {
+    this.setFontSize(settings.fontSize);
+    this.setFontFamily(settings.fontFamily);
+    for (let key in extensions) {
+      this.reconfigureExtension(key, settings[key]);
+    }
+  }
+  changeSetting(key, value) {
+    if (extensions[key]) {
+      this.reconfigureExtension(key, value);
+      return;
+    } else if (key === 'fontFamily') {
+      this.setFontFamily(value);
+    } else if (key === 'fontSize') {
+      this.setFontSize(value);
+    }
+  }
+  setCode(code) {
+    const changes = { from: 0, to: this.editor.state.doc.length, insert: code };
+    this.editor.dispatch({ changes });
+  }
+}
+
+function parseBooleans(value) {
+  return { true: true, false: false }[value] ?? value;
 }
