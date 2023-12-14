@@ -150,6 +150,11 @@ export class StrudelMirror {
       onEvaluate: () => this.evaluate(),
       onStop: () => this.stop(),
     });
+    const cmEditor = this.root.querySelector('.cm-editor');
+    if (cmEditor) {
+      this.root.style.backgroundColor = 'var(--background)';
+      cmEditor.style.backgroundColor = 'transparent';
+    }
   }
   async drawFirstFrame() {
     if (!this.onDraw) {
