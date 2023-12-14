@@ -1,0 +1,13 @@
+:root {
+  --foreground: white;
+}
+
+html,
+body,
+#code,
+.cm-editor,
+.cm-scroller {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}

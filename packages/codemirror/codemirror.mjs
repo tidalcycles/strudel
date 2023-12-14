@@ -144,7 +144,8 @@ export class StrudelMirror {
       onChange: (v) => {
         if (v.docChanged) {
           this.code = v.state.doc.toString();
-          this.repl.setCode(this.code);
+          // TODO: repl is still untouched to make sure the old Repl.jsx stays untouched..
+          // this.repl.setCode(this.code);
         }
       },
       onEvaluate: () => this.evaluate(),
