@@ -14,6 +14,7 @@
   "dependencies": {
     "@strudel/codemirror": "workspace:*",
     "@strudel.cycles/core":"workspace:*",
+    "@strudel.cycles/transpiler":"workspace:*",
     "@strudel.cycles/tonal":"workspace:*",
     "@strudel.cycles/mini":"workspace:*",
     "@strudel.cycles/xen":"workspace:*",

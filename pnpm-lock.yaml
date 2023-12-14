@@ -151,6 +151,9 @@ importers:
       '@strudel.cycles/tonal':
         specifier: workspace:*
         version: link:../../../tonal
+      '@strudel.cycles/transpiler':
+        specifier: workspace:*
+        version: link:../../../transpiler
       '@strudel.cycles/webaudio':
         specifier: workspace:*
         version: link:../../../webaudio
