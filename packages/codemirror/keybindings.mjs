@@ -24,11 +24,8 @@ const keymaps = {
   vscode: vscodeExtension,
 };
 
-// filter out Mod-Enter to fix linux ctrl+enter
-const _defaultKeymap = defaultKeymap.filter((kb) => kb.key !== 'Mod-Enter');
-
 export function keybindings(name) {
   const active = keymaps[name];
-  return [keymap.of(_defaultKeymap), keymap.of(historyKeymap), active ? active() : []];
+  return [keymap.of(defaultKeymap), keymap.of(historyKeymap), active ? active() : []];
   // keymap.of(searchKeymap),
 }

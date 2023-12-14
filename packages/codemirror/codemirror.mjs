@@ -3,7 +3,7 @@ import { closeBrackets } from '@codemirror/autocomplete';
 import { history } from '@codemirror/commands';
 import { javascript } from '@codemirror/lang-javascript';
 import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
-import { Compartment, EditorState } from '@codemirror/state';
+import { Compartment, EditorState, Prec } from '@codemirror/state';
 import { EditorView, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view';
 import { Pattern, Drawer, repl, cleanupDraw } from '@strudel.cycles/core';
 // import { isAutoCompletionEnabled } from './Autocomplete';
@@ -44,27 +44,28 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, set
       syntaxHighlighting(defaultHighlightStyle),
       history(),
       EditorView.updateListener.of((v) => onChange(v)),
-      keymap.of([
-        {
-          key: 'Ctrl-Enter',
-          run: () => onEvaluate?.(),
-        },
-        {
-          key: 'Alt-Enter',
-          run: () => onEvaluate?.(),
-        },
-        {
-          key: 'Ctrl-.',
-          run: () => onStop?.(),
-        },
-        {
-          key: 'Alt-.',
-          run: (_, e) => {
-            e.preventDefault();
-            onStop?.();
+      Prec.highest(
+        keymap.of([
+          {
+            key: 'Ctrl-Enter',
+            run: () => onEvaluate?.(),
           },
-        },
-        /* {
+          {
+            key: 'Alt-Enter',
+            run: () => onEvaluate?.(),
+          },
+          {
+            key: 'Ctrl-.',
+            run: () => onStop?.(),
+          },
+          {
+            key: 'Alt-.',
+            run: (_, e) => {
+              e.preventDefault();
+              onStop?.();
+            },
+          },
+          /* {
           key: 'Ctrl-Shift-.',
           run: () => (onPanic ? onPanic() : onStop?.()),
         },
@@ -72,7 +73,8 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, set
           key: 'Ctrl-Shift-Enter',
           run: () => (onReEvaluate ? onReEvaluate() : onEvaluate?.()),
         }, */
-      ]),
+        ]),
+      ),
     ],
   });
 
