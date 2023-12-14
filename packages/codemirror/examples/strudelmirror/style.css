@@ -2,6 +2,13 @@
   --foreground: white;
 }
 
+body,
+input {
+  font-family: monospace;
+  background: black;
+  color: white;
+}
+
 html,
 body,
 #code,
@@ -10,4 +17,17 @@ body,
   padding: 0;
   margin: 0;
   height: 100%;
+}
+
+.settings {
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+  display: flex-col;
+  padding: 10px;
+}
+
+.settings > form > * + * {
+  margin-top: 10px;
 }

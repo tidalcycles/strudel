@@ -19,6 +19,7 @@ const extensions = {
   theme,
   isAutoCompletionEnabled,
   isPatternHighlightingEnabled,
+  isActiveLineHighlighted: (on) => (on ? [highlightActiveLine(), highlightActiveLineGutter()] : []),
   isFlashEnabled,
   keybindings,
 };
@@ -40,8 +41,6 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, set
       // indentOnInput(), // works without. already brought with javascript extension?
       // bracketMatching(), // does not do anything
       closeBrackets(),
-      highlightActiveLineGutter(),
-      highlightActiveLine(),
       syntaxHighlighting(defaultHighlightStyle),
       history(),
       EditorView.updateListener.of((v) => onChange(v)),

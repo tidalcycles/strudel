@@ -7,6 +7,80 @@
     <title>StrudelMirror Example</title>
   </head>
   <body>
+    <div class="settings">
+      <form name="settings">
+        <label
+          >theme
+          <select name="theme">
+            <option>strudelTheme</option>
+            <option>bluescreen</option>
+            <option>blackscreen</option>
+            <option>whitescreen</option>
+            <option>teletext</option>
+            <option>algoboy</option>
+            <option>terminal</option>
+            <option>abcdef</option>
+            <option>androidstudio</option>
+            <option>atomone</option>
+            <option>aura</option>
+            <option>bespin</option>
+            <option>darcula</option>
+            <option>dracula</option>
+            <option>duotoneDark</option>
+            <option>eclipse</option>
+            <option>githubDark</option>
+            <option>gruvboxDark</option>
+            <option>materialDark</option>
+            <option>nord</option>
+            <option>okaidia</option>
+            <option>solarizedDark</option>
+            <option>sublime</option>
+            <option>tokyoNight</option>
+            <option>tokyoNightStorm</option>
+            <option>vscodeDark</option>
+            <option>xcodeDark</option>
+            <option>bbedit</option>
+            <option>duotoneLight</option>
+            <option>githubLight</option>
+            <option>gruvboxLight</option>
+            <option>materialLight</option>
+            <option>noctisLilac</option>
+            <option>solarizedLight</option>
+            <option>tokyoNightDay</option>
+            <option>xcodeLight</option>
+          </select> </label
+        ><br />
+        <label
+          >keybindings
+          <select name="keybindings">
+            <option>codemirror</option>
+            <option>vim</option>
+            <option>emacs</option>
+            <option>vscode</option>
+          </select> </label
+        ><br />
+        <label
+          >fontFamily
+          <select name="fontFamily">
+            <option>monospace</option>
+            <option>helvetica</option>
+          </select> </label
+        ><br />
+        <label>fontSize <input type="number" name="fontSize" /></label>
+        <br />
+        <label><input type="checkbox" name="isLineNumbersDisplayed" />isLineNumbersDisplayed</label>
+        <br />
+        <label><input type="checkbox" name="isActiveLineHighlighted" />isActiveLineHighlighted</label>
+        <br />
+        <label><input type="checkbox" name="isPatternHighlightingEnabled" />isPatternHighlightingEnabled</label>
+        <br />
+        <label><input type="checkbox" name="isFlashEnabled" />isFlashEnabled</label>
+        <br />
+        <label><input type="checkbox" name="isLineWrappingEnabled" />isLineWrappingEnabled</label>
+        <!-- <label><input type="checkbox" name="isAutoCompletionEnabled" />isAutoCompletionEnabled</label> -->
+        <!-- <label><input type="checkbox" name="isTooltipEnabled" />isTooltipEnabled</label> -->
+      </form>
+    </div>
     <div id="code"></div>
     <script type="module" src="/main.js"></script>
   </body>

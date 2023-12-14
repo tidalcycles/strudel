@@ -10,42 +10,38 @@ import {
 } from '@strudel.cycles/webaudio';
 import './style.css';
 
+let editor;
+const initialSettings = {
+  keybindings: 'codemirror',
+  isLineNumbersDisplayed: true,
+  isActiveLineHighlighted: true,
+  isAutoCompletionEnabled: false,
+  isPatternHighlightingEnabled: true,
+  isFlashEnabled: true,
+  isTooltipEnabled: false,
+  isLineWrappingEnabled: false,
+  theme: 'teletext',
+  fontFamily: 'monospace',
+  fontSize: 18,
+};
+
 async function run() {
   const container = document.getElementById('code');
   if (!container) {
     console.warn('could not init: no container found');
     return;
   }
-  const settings = {
-    activeFooter: 'intro',
-    keybindings: 'codemirror',
-    isLineNumbersDisplayed: true,
-    isActiveLineHighlighted: true,
-    isAutoCompletionEnabled: false,
-    isPatternHighlightingEnabled: true,
-    isFlashEnabled: true,
-    isTooltipEnabled: false,
-    isLineWrappingEnabled: false,
-    theme: 'teletext',
-    fontFamily: 'monospace',
-    fontSize: 18,
-    latestCode: '',
-    isZen: false,
-    soundsFilter: 'all',
-    panelPosition: 'bottom',
-    userPatterns: '{}',
-  };
 
   const drawContext = getDrawContext();
   const drawTime = [-2, 2];
-  const editor = new StrudelMirror({
+  editor = new StrudelMirror({
     defaultOutput: webaudioOutput,
     getTime: () => getAudioContext().currentTime,
     transpiler,
     root: container,
     initialCode: '// LOADING',
     pattern: silence,
-    settings,
+    settings: initialSettings,
     drawTime,
     onDraw: (haps, time, frame, painters) => {
       painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
@@ -90,7 +86,7 @@ async function run() {
   });
 
   // init settings
-  editor.updateSettings(settings);
+  editor.updateSettings(initialSettings);
 
   logger(`Welcome to Strudel! Click into the editor and then hit ctrl+enter to run the code!`, 'highlight');
   const codeParam = window.location.href.split('#')[1] || '';
@@ -154,3 +150,50 @@ function onEvent(key, callback) {
   window.addEventListener('message', listener);
   return () => window.removeEventListener('message', listener);
 }
+
+// settings form
+function getInput(form, name) {
+  return form.querySelector(`input[name=${name}]`) || form.querySelector(`select[name=${name}]`);
+}
+function getFormValues(form, initial) {
+  const entries = Object.entries(initial).map(([key, initialValue]) => {
+    const input = getInput(form, key);
+    if (!input) {
+      return [key, initialValue]; // fallback
+    }
+    if (input.type === 'checkbox') {
+      return [key, input.checked];
+    }
+    if (input.type === 'number') {
+      return [key, Number(input.value)];
+    }
+    if (input.tagName === 'SELECT') {
+      return [key, input.value];
+    }
+    return [key, input.value];
+  });
+  return Object.fromEntries(entries);
+}
+function setFormValues(form, values) {
+  Object.entries(values).forEach(([key, value]) => {
+    const input = getInput(form, key);
+    if (!input) {
+      return;
+    }
+    if (input.type === 'checkbox') {
+      input.checked = !!value;
+    } else if (input.type === 'number') {
+      input.value = value;
+    } else if (input.tagName) {
+      input.value = value;
+    }
+  });
+}
+
+const form = document.querySelector('form[name=settings]');
+setFormValues(form, initialSettings);
+form.addEventListener('change', () => {
+  const values = getFormValues(form, initialSettings);
+  // console.log('values', values);
+  editor.updateSettings(values);
+});
