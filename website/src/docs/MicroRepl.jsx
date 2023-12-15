@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Icon } from './Icon';
+// import { useInView } from 'react-hook-inview';
 
 export function MicroRepl({ code, hideHeader = false }) {
   /* const [ref, isVisible] = useInView({
@@ -10,7 +11,7 @@ export function MicroRepl({ code, hideHeader = false }) {
   const wc = useRef();
   function togglePlay() {
     if (wc.current) {
-      wc.current?.editor.evaluate();
+      wc.current?.editor.toggle();
     }
   }
   const listener = useCallback((e) => setReplState({ ...e.detail }), []);

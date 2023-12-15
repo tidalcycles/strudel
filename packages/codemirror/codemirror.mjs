@@ -182,7 +182,7 @@ export class StrudelMirror {
   }
   async toggle() {
     if (this.repl.scheduler.started) {
-      this.repl.scheduler.stop();
+      this.repl.stop();
     } else {
       this.evaluate();
     }
