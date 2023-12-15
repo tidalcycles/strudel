@@ -1,5 +1,4 @@
 import { controls, evalScope } from '@strudel.cycles/core';
-import { registerSoundfonts } from '@strudel.cycles/soundfonts';
 import { registerSynthSounds, registerZZFXSounds, samples } from '@strudel.cycles/webaudio';
 import * as core from '@strudel.cycles/core';
 
@@ -26,7 +25,11 @@ export async function prebake() {
     modulesLoading,
     registerSynthSounds(),
     registerZZFXSounds(),
-    registerSoundfonts(),
+    //registerSoundfonts(),
+    // need dynamic import here, because importing @strudel.cycles/soundfonts fails on server:
+    // => getting "window is not defined", as soon as "@strudel.cycles/soundfonts" is imported statically
+    // seems to be a problem with soundfont2
+    import('@strudel.cycles/soundfonts').then(({ registerSoundfonts }) => registerSoundfonts()),
     samples(`${ds}/tidal-drum-machines.json`),
     samples(`${ds}/piano.json`),
     samples(`${ds}/Dirt-Samples.json`),
