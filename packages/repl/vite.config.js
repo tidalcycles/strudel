@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { dependencies } from './package.json';
 import { resolve } from 'path';
 // import { visualizer } from 'rollup-plugin-visualizer';
+import replace from '@rollup/plugin-replace';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,6 +16,12 @@ export default defineConfig({
     },
     rollupOptions: {
       // external: [...Object.keys(dependencies)],
+      plugins: [
+        replace({
+          'process.env.NODE_ENV': JSON.stringify('production'),
+          preventAssignment: true,
+        }),
+      ],
     },
     target: 'esnext',
   },

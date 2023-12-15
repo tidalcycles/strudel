@@ -33,6 +33,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
+    "@rollup/plugin-replace": "^5.0.5",
     "@strudel.cycles/core": "workspace:*",
     "@strudel.cycles/midi": "workspace:*",
     "@strudel.cycles/mini": "workspace:*",
