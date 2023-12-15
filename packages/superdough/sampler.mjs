@@ -1,6 +1,6 @@
 import { noteToMidi, valueToMidi, nanFallback } from './util.mjs';
 import { getAudioContext, registerSound } from './index.mjs';
-import { getEnvelope } from './helpers.mjs';
+import { getADSRDefaults, getEnvelope } from './helpers.mjs';
 import { logger } from './logger.mjs';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
@@ -251,7 +251,8 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   loop = s.startsWith('wt_') ? 1 : value.loop;
   const ac = getAudioContext();
   // destructure adsr here, because the default should be different for synths and samples
-  const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
+
+  const { attack, decay, sustain, release } = getADSRDefaults(value.attack, value.decay, value.sustain, value.release);
   //const soundfont = getSoundfontKey(s);
   const time = t + nudge;
 

@@ -1,6 +1,6 @@
 import { midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext } from './superdough.mjs';
-import { gainNode, getEnvelope, getExpEnvelope } from './helpers.mjs';
+import { gainNode, getADSRDefaults, getEnvelope, getExpEnvelope } from './helpers.mjs';
 import { getNoiseMix, getNoiseOscillator } from './noise.mjs';
 
 const mod = (freq, range = 1, type = 'sine') => {
@@ -30,7 +30,14 @@ export function registerSynthSounds() {
       s,
       (t, value, onended) => {
         // destructure adsr here, because the default should be different for synths and samples
-        let { attack = 0.001, decay = 0.05, sustain = 0.6, release = 0.01 } = value;
+        const { attack, decay, sustain, release } = getADSRDefaults(
+          value.attack,
+          value.decay,
+          value.sustain,
+          value.release,
+          { attack: 0.001, decay: 0.05, sustain: 0.6, release: 0.01 },
+        );
+        console.log({ attack, decay, sustain, release });
 
         let sound;
         if (waveforms.includes(s)) {

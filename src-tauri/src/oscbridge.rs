@@ -53,8 +53,8 @@ pub fn init(
     /* ...........................................................
                         Open OSC Ports
     ............................................................*/
-    let sock = UdpSocket::bind("127.0.0.1:57122").unwrap();
-    let to_addr = String::from("127.0.0.1:57120");
+    let sock = UdpSocket::bind("169.254.248.82:57122").unwrap();
+    let to_addr = String::from("169.254.180.239:57120");
     sock.set_nonblocking(true).unwrap();
     sock.connect(to_addr).expect("could not connect to OSC address");
 

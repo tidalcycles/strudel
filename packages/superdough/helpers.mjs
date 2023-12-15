@@ -89,6 +89,22 @@ export function getCompressor(ac, threshold, ratio, knee, attack, release) {
   return new DynamicsCompressorNode(ac, options);
 }
 
+const adsrmin = 0.001;
+export const getADSRDefaults = (
+  a,
+  d,
+  s,
+  r,
+  def = { attack: adsrmin, decay: adsrmin, sustain: 1, release: adsrmin },
+) => {
+  console.log(a, d, s, r);
+  if (a == null && d == null && s == null && r == null) {
+    return def;
+  }
+  const sustain = s ?? ((a != null && d == null) || (a == null && d == null)) ? def.sustain : adsrmin;
+  return { attack: a ?? adsrmin, decay: d ?? adsrmin, sustain, release: r ?? adsrmin };
+};
+
 export function createFilter(
   context,
   type,
