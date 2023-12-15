@@ -59,13 +59,24 @@ class StrudelRepl extends HTMLElement {
     }
   }
   connectedCallback() {
+    // setTimeout makes sure the dom is ready
+    setTimeout(() => {
+      const code = (this.innerHTML + '').replace('<!--', '').replace('-->', '').trim();
+      if (code) {
+        // use comment code in element body if present
+        this.setAttribute('code', code);
+      }
+    });
+    // use a separate container for the editor, to make sure the innerHTML stays as is
+    const container = document.createElement('div');
+    this.parentElement.insertBefore(container, this.nextSibling);
     const drawContext = getDrawContext();
     const drawTime = [-2, 2];
     this.editor = new StrudelMirror({
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       transpiler,
-      root: this,
+      root: container,
       initialCode: '// LOADING',
       pattern: silence,
       settings: this.settings,
