@@ -53,7 +53,7 @@ class StrudelRepl extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'code') {
       this.code = newValue;
-      this.editor?.setCode(initialCode);
+      this.editor?.setCode(newValue);
     } else if (settingAttributes.includes(name)) {
       const camel = kebabToCamel(name);
       this.settings[camel] = parseAttribute(name, newValue);
