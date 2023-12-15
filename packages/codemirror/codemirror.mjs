@@ -10,7 +10,7 @@ import { Pattern, Drawer, repl, cleanupDraw } from '@strudel.cycles/core';
 import { flash, isFlashEnabled } from './flash.mjs';
 import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
 import { keybindings } from './keybindings.mjs';
-import { theme } from './themes.mjs';
+import { initTheme, activateTheme, theme } from './themes.mjs';
 import { updateWidgets, sliderPlugin } from './slider.mjs';
 
 const extensions = {
@@ -30,6 +30,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, set
   const initialSettings = Object.keys(compartments).map((key) =>
     compartments[key].of(extensions[key](parseBooleans(settings[key]))),
   );
+  initTheme(settings.theme);
   let state = EditorState.create({
     doc: initialCode,
     extensions: [
@@ -213,6 +214,9 @@ export class StrudelMirror {
     this.editor.dispatch({
       effects: compartments[key].reconfigure(newValue),
     });
+    if (key === 'theme') {
+      activateTheme(value);
+    }
   }
   setLineWrappingEnabled(enabled) {
     this.reconfigureExtension('isLineWrappingEnabled', enabled);

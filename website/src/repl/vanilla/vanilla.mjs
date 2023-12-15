@@ -1,5 +1,4 @@
 import { hash2code, logger } from '@strudel.cycles/core';
-import { activateTheme, initTheme } from '@strudel/codemirror';
 import './vanilla.css';
 
 let editor;
@@ -16,7 +15,6 @@ const initialSettings = {
   fontFamily: 'monospace',
   fontSize: 18,
 };
-initTheme(initialSettings.theme);
 
 async function run() {
   const repl = document.getElementById('editor');
@@ -129,6 +127,4 @@ setFormValues(form, initialSettings);
 form.addEventListener('change', () => {
   const values = getFormValues(form, initialSettings);
   editor?.updateSettings(values);
-  // TODO: only activateTheme when it changes
-  activateTheme(values.theme);
 });
