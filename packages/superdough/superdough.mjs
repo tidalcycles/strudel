@@ -364,7 +364,6 @@ export const superdough = async (value, deadline, hapDuration) => {
       [value.lpattack, value.lpdecay, value.lpsustain, value.lprelease],
       filterEnvDefaults,
     );
-    console.log(lpattack, 'atta');
 
     let lp = () =>
       createFilter(

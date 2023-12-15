@@ -77,7 +77,7 @@ export const getParamADSR = (param, attack, decay, sustain, release, min, max, b
   param.setValueAtTime(min, begin);
   param.linearRampToValueAtTime(peak, begin + attack);
   param.linearRampToValueAtTime(sustainLevel, begin + attack + decay);
-  param.setValueAtTime(sustainLevel, end);
+  // param.setValueAtTime(sustainLevel, end);
   param.linearRampToValueAtTime(min, end + Math.max(release, 0.1));
 };
 
