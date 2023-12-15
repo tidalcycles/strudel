@@ -1,10 +1,12 @@
 import { controls, evalScope } from '@strudel.cycles/core';
 import { registerSoundfonts } from '@strudel.cycles/soundfonts';
 import { registerSynthSounds, registerZZFXSounds, samples } from '@strudel.cycles/webaudio';
+import * as core from '@strudel.cycles/core';
 
 export async function prebake() {
   const modulesLoading = evalScope(
-    import('@strudel.cycles/core'),
+    // import('@strudel.cycles/core'),
+    core,
     import('@strudel.cycles/mini'),
     import('@strudel.cycles/tonal'),
     import('@strudel.cycles/webaudio'),
