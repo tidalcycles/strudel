@@ -37,6 +37,7 @@
     "@strudel/hydra": "workspace:*",
     "@strudel/codemirror": "workspace:*",
     "@strudel/desktopbridge": "workspace:*",
+    "@strudel/repl": "workspace:*",
     "@supabase/supabase-js": "^2.21.0",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.8",

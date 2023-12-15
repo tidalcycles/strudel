@@ -2,13 +2,29 @@
 import HeadCommonNew from '../../components/HeadCommonNew.astro';
 ---
 
+
 <html lang="en" class="dark">
   <head>
-    <HeadCommonNew />
+    <!-- <HeadCommonNew /> -->
+    <style>
+      :root {
+        --background: #cd8b8b;
+        --lineBackground: #22222299;
+        --foreground: #fff;
+        --caret: #ffcc00;
+        --selection: rgba(128, 203, 196, 0.5);
+        --selectionMatch: #036dd626;
+        --lineHighlight: #00000050;
+        --gutterBackground: transparent;
+        --gutterForeground: #8a919966;
+      }
+    </style>
     <title>Strudel Vanilla REPL</title>
+    <script src="@strudel/repl"></script>
   </head>
   <body class="h-app-height">
     <h1>vanilli repl</h1>
+    <p>This is a REPL:</p>
     <strudel-editor 
     keybindings="emacs" 
     is-line-numbers-displayed="1" 
@@ -21,45 +37,9 @@ import HeadCommonNew from '../../components/HeadCommonNew.astro';
     theme="teletext"
     font-family="monospace"
     font-size="18"
-    code={`// @date 23-11-30
-      // "teigrührgerät" @by froos
-      
-      stack(
-        stack(
-          s("bd(<3!3 5>,6)/2").bank('RolandTR707')
-          ,
-          s("~ sd:<0 1>").bank('RolandTR707').room("<0 .5>")
-          .lastOf(8, x=>x.segment("12").end(.2).gain(isaw))
-          ,
-          s("[tb ~ tb]").bank('RolandTR707')
-          .clip(0).release(.08).room(.2)
-        ).off(-1/6, x=>x.speed(.7).gain(.2).degrade())
-        ,
-        stack(
-          note("<g1(<3 4>,6) ~!2 [f1?]*2>")
-          .s("sawtooth").lpf(perlin.range(400,1000))
-          .lpa(.1).lpenv(-3).room(.2)
-          .lpq(8).noise(.2)
-          .add(note("0,.1"))
-          ,
-          chord("<~ Gm9 ~!2>")
-          .dict('ireal').voicing()
-          .s("sawtooth").vib("2:.1")
-          .lpf(1000).lpa(.1).lpenv(-4)
-          .room(.5)
-          ,
-          n(run(3)).chord("<Gm9 Gm11>/8")
-          .dict('ireal-ext')
-          .off(1/2, add(n(4)))
-          .voicing()
-          .clip(.1).release(.05)
-          .s("sine").jux(rev)
-          .sometimesBy(sine.slow(16), add(note(12)))
-          .room(.75)
-          .lpf(sine.range(200,2000).slow(16))
-          .gain(saw.slow(4).div(2))
-        ).add(note(perlin.range(0,.5)))
-      )`}></strudel-editor>
-    <script src="../../repl/vanilla/strudel-editor.mjs"></script>
+    code={`s("bd")`}></strudel-editor>
+
+    <p>This is another REPL:</p>
+    <strudel-editor code={`s("hh*4")`}></strudel-editor>
   </body>
 </html>

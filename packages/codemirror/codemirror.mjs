@@ -154,6 +154,7 @@ export class StrudelMirror {
     });
     const cmEditor = this.root.querySelector('.cm-editor');
     if (cmEditor) {
+      this.root.style.display = 'block';
       this.root.style.backgroundColor = 'var(--background)';
       cmEditor.style.backgroundColor = 'transparent';
     }

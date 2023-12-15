@@ -468,6 +468,40 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3
 
+  packages/repl:
+    dependencies:
+      '@strudel.cycles/core':
+        specifier: workspace:*
+        version: link:../core
+      '@strudel.cycles/midi':
+        specifier: workspace:*
+        version: link:../midi
+      '@strudel.cycles/mini':
+        specifier: workspace:*
+        version: link:../mini
+      '@strudel.cycles/soundfonts':
+        specifier: workspace:*
+        version: link:../soundfonts
+      '@strudel.cycles/tonal':
+        specifier: workspace:*
+        version: link:../tonal
+      '@strudel.cycles/transpiler':
+        specifier: workspace:*
+        version: link:../transpiler
+      '@strudel.cycles/webaudio':
+        specifier: workspace:*
+        version: link:../webaudio
+      '@strudel/codemirror':
+        specifier: workspace:*
+        version: link:../codemirror
+      '@strudel/hydra':
+        specifier: workspace:*
+        version: link:../hydra
+    devDependencies:
+      vite:
+        specifier: ^4.3.3
+        version: 4.5.0
+
   packages/serial:
     dependencies:
       '@strudel.cycles/core':
@@ -702,6 +736,9 @@ importers:
       '@strudel/hydra':
         specifier: workspace:*
         version: link:../packages/hydra
+      '@strudel/repl':
+        specifier: workspace:*
+        version: link:../packages/repl
       '@supabase/supabase-js':
         specifier: ^2.21.0
         version: 2.21.0
@@ -14326,6 +14363,41 @@ packages:
       '@types/node': 18.16.3
       esbuild: 0.18.20
       postcss: 8.4.27
+      rollup: 3.28.0
+    optionalDependencies:
+      fsevents: 2.3.3
+    dev: true
+
+  /vite@4.5.0:
+    resolution: {integrity: sha512-ulr8rNLA6rkyFAlVWw2q5YJ91v098AFQ2R0PRFwPzREXOUJQPtFUG0t+/ZikhaOCDqFoDhN6/v8Sq0o4araFAw==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      lightningcss: ^1.21.0
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.18.20
+      postcss: 8.4.32
       rollup: 3.28.0
     optionalDependencies:
       fsevents: 2.3.3

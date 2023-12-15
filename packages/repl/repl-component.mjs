@@ -1,14 +1,8 @@
-import { getDrawContext, silence, controls, evalScope, hash2code, code2hash } from '@strudel.cycles/core';
-import { StrudelMirror } from '@strudel/codemirror';
+import { getDrawContext, silence } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
-import { registerSoundfonts } from '@strudel.cycles/soundfonts';
-import {
-  getAudioContext,
-  webaudioOutput,
-  registerSynthSounds,
-  registerZZFXSounds,
-  samples,
-} from '@strudel.cycles/webaudio';
+import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
+import { StrudelMirror } from '@strudel/codemirror';
+import { prebake } from './prebake.mjs';
 
 function camelToKebab(camelCaseString) {
   return camelCaseString.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
@@ -46,12 +40,15 @@ const parseAttribute = (name, value) => {
   return value;
 };
 // console.log('attributes', settingAttributes);
-
-class StrudelEditor extends HTMLElement {
+class StrudelRepl extends HTMLElement {
   static observedAttributes = ['code', ...settingAttributes];
   settings = initialSettings;
+  editor = null;
   constructor() {
     super();
+  }
+  onReady(listener) {
+    this.readyListener = listener;
   }
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'code') {
@@ -67,13 +64,11 @@ class StrudelEditor extends HTMLElement {
   connectedCallback() {
     const drawContext = getDrawContext();
     const drawTime = [-2, 2];
-    this.container = document.createElement('div');
-    this.appendChild(this.container);
     this.editor = new StrudelMirror({
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       transpiler,
-      root: this.container,
+      root: this,
       initialCode: '// LOADING',
       pattern: silence,
       settings: this.settings,
@@ -85,48 +80,19 @@ class StrudelEditor extends HTMLElement {
           painter(drawContext, time, haps, drawTime, { clear: false });
         });
       },
-      prebake: async () => {
-        // populate scope / lazy load modules
-        const modulesLoading = evalScope(
-          import('@strudel.cycles/core'),
-          import('@strudel.cycles/tonal'),
-          import('@strudel.cycles/mini'),
-          import('@strudel.cycles/webaudio'),
-          import('@strudel/codemirror'),
-          import('@strudel/hydra'),
-          import('@strudel.cycles/soundfonts'),
-          // import('@strudel.cycles/xen'),
-          // import('@strudel.cycles/serial'),
-          // import('@strudel.cycles/csound'),
-          /* import('@strudel.cycles/midi'), */
-          // import('@strudel.cycles/osc'),
-          controls, // sadly, this cannot be exported from core directly (yet)
-        );
-        // load samples
-        const ds = 'https://raw.githubusercontent.com/felixroos/dough-samples/main/';
-        await Promise.all([
-          modulesLoading,
-          registerSynthSounds(),
-          registerZZFXSounds(),
-          registerSoundfonts(),
-          samples(`${ds}/tidal-drum-machines.json`),
-          samples(`${ds}/piano.json`),
-          samples(`${ds}/Dirt-Samples.json`),
-          samples(`${ds}/EmuSP12.json`),
-          samples(`${ds}/vcsl.json`),
-        ]);
-      },
+      prebake,
       afterEval: ({ code }) => {
-        window.location.hash = '#' + code2hash(code);
+        // window.location.hash = '#' + code2hash(code);
       },
     });
     // init settings
     this.editor.updateSettings(this.settings);
     this.editor.setCode(this.code);
+    this.readyListener?.(this);
     // settingsMap.listen((settings, key) => editor.changeSetting(key, settings[key]));
     // onEvent('strudel-toggle-play', () => this.editor.toggle());
   }
   // Element functionality written in here
 }
 
-customElements.define('strudel-editor', StrudelEditor);
+customElements.define('strudel-editor', StrudelRepl);
