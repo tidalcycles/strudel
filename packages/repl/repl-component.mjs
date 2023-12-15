@@ -92,6 +92,12 @@ class StrudelRepl extends HTMLElement {
       afterEval: ({ code }) => {
         // window.location.hash = '#' + code2hash(code);
       },
+      onUpdateState: (state) => {
+        const event = new CustomEvent('update', {
+          detail: state,
+        });
+        this.dispatchEvent(event);
+      },
     });
     // init settings
     this.editor.updateSettings(this.settings);
