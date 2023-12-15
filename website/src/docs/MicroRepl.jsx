@@ -1,5 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Icon } from './Icon';
+import '@strudel/repl';
+
 // import { useInView } from 'react-hook-inview';
 
 export function MicroRepl({ code, hideHeader = false }) {
