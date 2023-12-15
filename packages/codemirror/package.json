@@ -33,13 +33,21 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
+    "@codemirror/autocomplete": "^6.6.0",
     "@codemirror/commands": "^6.2.4",
     "@codemirror/lang-javascript": "^6.1.7",
     "@codemirror/language": "^6.6.0",
+    "@codemirror/search": "^6.0.0",
     "@codemirror/state": "^6.2.0",
     "@codemirror/view": "^6.10.0",
     "@lezer/highlight": "^1.1.4",
-    "@strudel.cycles/core": "workspace:*"
+    "@replit/codemirror-emacs": "^6.0.1",
+    "@replit/codemirror-vim": "^6.0.14",
+    "@replit/codemirror-vscode-keymap": "^6.0.2",
+    "@strudel.cycles/core": "workspace:*",
+    "@uiw/codemirror-themes": "^4.19.16",
+    "@uiw/codemirror-themes-all": "^4.19.16",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "vite": "^4.3.3"

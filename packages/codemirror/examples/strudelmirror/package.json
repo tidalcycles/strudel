@@ -1,0 +1,29 @@
+{
+  "name": "strudelmirror",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "@strudel/codemirror": "workspace:*",
+    "@strudel.cycles/core":"workspace:*",
+    "@strudel.cycles/transpiler":"workspace:*",
+    "@strudel.cycles/tonal":"workspace:*",
+    "@strudel.cycles/mini":"workspace:*",
+    "@strudel.cycles/xen":"workspace:*",
+    "@strudel.cycles/webaudio":"workspace:*",
+    "@strudel/hydra":"workspace:*",
+    "@strudel.cycles/serial":"workspace:*",
+    "@strudel.cycles/soundfonts":"workspace:*",
+    "@strudel.cycles/csound":"workspace:*",
+    "@strudel.cycles/midi":"workspace:*",
+    "@strudel.cycles/osc":"workspace:*"
+  }
+}

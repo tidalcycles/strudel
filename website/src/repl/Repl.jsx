@@ -4,7 +4,16 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { cleanupDraw, cleanupUi, controls, evalScope, getDrawContext, logger } from '@strudel.cycles/core';
+import {
+  cleanupDraw,
+  cleanupUi,
+  controls,
+  evalScope,
+  getDrawContext,
+  logger,
+  code2hash,
+  hash2code,
+} from '@strudel.cycles/core';
 import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
 import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
 import { createClient } from '@supabase/supabase-js';
@@ -17,13 +26,22 @@ import { prebake } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import { themes } from './themes.mjs';
-import { settingsMap, useSettings, setLatestCode, updateUserCode } from '../settings.mjs';
+import {
+  settingsMap,
+  useSettings,
+  setLatestCode,
+  updateUserCode,
+  setActivePattern,
+  getActivePattern,
+  getUserPattern,
+  initUserCode,
+} from '../settings.mjs';
 import Loader from './Loader';
 import { settingPatterns } from '../settings.mjs';
-import { code2hash, hash2code } from './helpers.mjs';
 import { isTauri } from '../tauri.mjs';
 import { useWidgets } from '@strudel.cycles/react/src/hooks/useWidgets.mjs';
 import { writeText } from '@tauri-apps/api/clipboard';
+import { registerSamplesFromDB, userSamplesDBConfig } from './idbutils.mjs';
 
 const { latestCode } = settingsMap.get();
 
@@ -131,7 +149,6 @@ export function Repl({ embedded = false }) {
     isLineWrappingEnabled,
     panelPosition,
     isZen,
-    activePattern,
   } = useSettings();
 
   const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
@@ -177,6 +194,7 @@ export function Repl({ embedded = false }) {
       let msg;
       if (decoded) {
         setCode(decoded);
+        initUserCode(decoded);
         msg = `I have loaded the code from the URL.`;
       } else if (latestCode) {
         setCode(latestCode);
@@ -185,6 +203,8 @@ export function Repl({ embedded = false }) {
         setCode(randomTune);
         msg = `A random code snippet named "${name}" has been loaded!`;
       }
+      //registers samples that have been saved to the index DB
+      registerSamplesFromDB(userSamplesDBConfig);
       logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
       setPending(false);
     });
@@ -247,14 +267,21 @@ export function Repl({ embedded = false }) {
       stop();
     }
   };
-  const handleUpdate = (newCode) => {
+  const handleUpdate = async (newCode, reset = false) => {
+    if (reset) {
+      clearCanvas();
+      resetLoadedSounds();
+      scheduler.setCps(1);
+      await prebake(); // declare default samples
+    }
     (newCode || isDirty) && activateCode(newCode);
-    logger('[repl] code updated! tip: you can also update the code by pressing ctrl+enter', 'highlight');
+    logger('[repl] code updated!');
   };
 
   const handleShuffle = async () => {
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
+    setActivePattern(name);
     clearCanvas();
     resetLoadedSounds();
     scheduler.setCps(1);

@@ -33,3 +33,5 @@ export const flash = (view, ms = 200) => {
     view.dispatch({ effects: setFlash.of(false) });
   }, ms);
 };
+
+export const isFlashEnabled = (on) => (on ? flashField : []);

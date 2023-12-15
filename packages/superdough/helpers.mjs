@@ -10,21 +10,24 @@ export function gainNode(value) {
 // alternative to getADSR returning the gain node and a stop handle to trigger the release anytime in the future
 export const getEnvelope = (attack, decay, sustain, release, velocity, begin) => {
   const gainNode = getAudioContext().createGain();
+  let phase = begin;
   gainNode.gain.setValueAtTime(0, begin);
-  gainNode.gain.linearRampToValueAtTime(velocity, begin + attack); // attack
-  gainNode.gain.linearRampToValueAtTime(sustain * velocity, begin + attack + decay); // sustain start
+  phase += attack;
+  gainNode.gain.linearRampToValueAtTime(velocity, phase); // attack
+  phase += decay;
+  let sustainLevel = sustain * velocity;
+  gainNode.gain.linearRampToValueAtTime(sustainLevel, phase); // decay / sustain
   // sustain end
   return {
     node: gainNode,
     stop: (t) => {
-      //if (typeof gainNode.gain.cancelAndHoldAtTime === 'function') {
-      // gainNode.gain.cancelAndHoldAtTime(t); // this seems to release instantly....
-      // see https://discord.com/channels/779427371270275082/937365093082079272/1086053607360712735
-      //} else {
-      // firefox: this will glitch when the sustain has not been reached yet at the time of release
-      gainNode.gain.setValueAtTime(sustain * velocity, t);
-      //}
-      gainNode.gain.linearRampToValueAtTime(0, t + release);
+      // to make sure the release won't begin before sustain is reached
+      phase = Math.max(t, phase);
+      // see https://github.com/tidalcycles/strudel/issues/522
+      gainNode.gain.setValueAtTime(sustainLevel, phase);
+      phase += release;
+      gainNode.gain.linearRampToValueAtTime(0, phase); // release
+      return phase;
     },
   };
 };
