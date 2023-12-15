@@ -22,7 +22,7 @@ const initialSettings = {
   isFlashEnabled: true,
   isTooltipEnabled: false,
   isLineWrappingEnabled: false,
-  theme: 'teletext',
+  theme: 'strudelTheme',
   fontFamily: 'monospace',
   fontSize: 18,
 };
@@ -46,9 +46,6 @@ class StrudelRepl extends HTMLElement {
   editor = null;
   constructor() {
     super();
-  }
-  onReady(listener) {
-    this.readyListener = listener;
   }
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'code') {
@@ -88,7 +85,6 @@ class StrudelRepl extends HTMLElement {
     // init settings
     this.editor.updateSettings(this.settings);
     this.editor.setCode(this.code);
-    this.readyListener?.(this);
     // settingsMap.listen((settings, key) => editor.changeSetting(key, settings[key]));
     // onEvent('strudel-toggle-play', () => this.editor.toggle());
   }
