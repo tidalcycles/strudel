@@ -88,21 +88,16 @@ export function getCompressor(ac, threshold, ratio, knee, attack, release) {
   };
   return new DynamicsCompressorNode(ac, options);
 }
-
-const adsrmin = 0.001;
-export const getADSRDefaults = (
-  a,
-  d,
-  s,
-  r,
-  def = { attack: adsrmin, decay: adsrmin, sustain: 1, release: adsrmin },
-) => {
+const envmin = 0.001;
+export const getADSRValues = (params, defaultValues = [envmin, envmin, 1, envmin]) => {
+  const [a, d, s, r] = params;
+  const [defA, defD, defS, defR] = defaultValues;
   console.log(a, d, s, r);
   if (a == null && d == null && s == null && r == null) {
-    return def;
+    return defaultValues;
   }
-  const sustain = s ?? ((a != null && d == null) || (a == null && d == null)) ? def.sustain : adsrmin;
-  return { attack: a ?? adsrmin, decay: d ?? adsrmin, sustain, release: r ?? adsrmin };
+  const sustain = s != null ? s : (a != null && d == null) || (a == null && d == null) ? defS : envmin;
+  return [a ?? envmin, d ?? envmin, sustain, r ?? envmin];
 };
 
 export function createFilter(
