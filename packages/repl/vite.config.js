@@ -9,8 +9,9 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'index.mjs'),
-      formats: ['es', 'cjs'],
-      fileName: (ext) => ({ es: 'index.mjs', cjs: 'index.js' }[ext]),
+      name: 'strudel',
+      formats: ['es', 'iife'],
+      fileName: (ext) => ({ es: 'index.mjs', iife: 'index.js' }[ext]),
     },
     rollupOptions: {
       // external: [...Object.keys(dependencies)],
