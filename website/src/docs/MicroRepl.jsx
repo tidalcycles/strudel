@@ -54,6 +54,7 @@ export function MicroRepl({ code, hideHeader = false }) {
       <div className="overflow-auto relative">
         <strudel-editor
           is-line-numbers-displayed="0"
+          is-active-line-highlighted="0"
           code={code}
           ref={(el) => {
             if (wc.current) {
