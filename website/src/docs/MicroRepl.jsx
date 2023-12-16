@@ -1,32 +1,78 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Icon } from './Icon';
-import '@strudel/repl';
+import { getDrawContext, silence } from '@strudel.cycles/core';
+import { transpiler } from '@strudel.cycles/transpiler';
+import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
+import { StrudelMirror } from '@strudel/codemirror';
+import { prebake } from '@strudel/repl';
+import { useInView } from 'react-hook-inview';
 
-// import { useInView } from 'react-hook-inview';
+const initialSettings = {
+  keybindings: 'strudelTheme',
+  isLineNumbersDisplayed: false,
+  isActiveLineHighlighted: true,
+  isAutoCompletionEnabled: false,
+  isPatternHighlightingEnabled: true,
+  isFlashEnabled: true,
+  isTooltipEnabled: false,
+  isLineWrappingEnabled: false,
+  theme: 'strudelTheme',
+  fontFamily: 'monospace',
+  fontSize: 18,
+};
 
-export function MicroRepl({ code, hideHeader = false }) {
-  /* const [ref, isVisible] = useInView({
+export function MicroRepl({ code, hideHeader = false, canvasHeight = 200, punchcard, punchcardLabels }) {
+  const init = useCallback(({ code }) => {
+    const drawContext = getDrawContext();
+    const drawTime = [-2, 2];
+    const editor = new StrudelMirror({
+      defaultOutput: webaudioOutput,
+      getTime: () => getAudioContext().currentTime,
+      transpiler,
+      root: containerRef.current,
+      initialCode: '// LOADING',
+      pattern: silence,
+      settings: initialSettings,
+      drawTime,
+      onDraw: (haps, time, frame, painters) => {
+        painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
+        painters?.forEach((painter) => {
+          // ctx time haps drawTime paintOptions
+          painter(drawContext, time, haps, drawTime, { clear: false });
+        });
+      },
+      prebake,
+      onUpdateState: (state) => {
+        setReplState({ ...state });
+      },
+    });
+    // init settings
+    editor.updateSettings(initialSettings);
+    editor.setCode(code);
+    editorRef.current = editor;
+  }, []);
+
+  const [ref, isVisible] = useInView({
     threshold: 0.01,
-  }); */
+    onEnter: () => {
+      if (!editorRef.current) {
+        init({ code });
+      }
+    },
+  });
   const [replState, setReplState] = useState({});
   const { started, isDirty, error } = replState;
-  const wc = useRef();
-  function togglePlay() {
-    if (wc.current) {
-      wc.current?.editor.toggle();
-    }
-  }
-  const listener = useCallback((e) => setReplState({ ...e.detail }), []);
-  useEffect(() => {
-    return () => {
-      wc.current.removeEventListener('update', listener);
-    };
-  }, []);
+  const editorRef = useRef();
+  const containerRef = useRef();
+
+  const [canvasId] = useState(Date.now());
+  const drawContext = useCallback(
+    punchcard ? (canvasId) => document.querySelector('#' + canvasId)?.getContext('2d') : null,
+    [punchcard],
+  );
+
   return (
-    <div
-      className="overflow-hidden rounded-t-md bg-background border border-lineHighlight"
-      //ref={ref}
-    >
+    <div className="overflow-hidden rounded-t-md bg-background border border-lineHighlight" ref={ref}>
       {!hideHeader && (
         <div className="flex justify-between bg-lineHighlight">
           <div className="flex">
@@ -35,7 +81,7 @@ export function MicroRepl({ code, hideHeader = false }) {
                 'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background',
                 started ? 'animate-pulse' : '',
               )}
-              onClick={() => togglePlay()}
+              onClick={() => editorRef.current?.toggle()}
             >
               <Icon type={started ? 'stop' : 'play'} />
             </button>
@@ -44,40 +90,34 @@ export function MicroRepl({ code, hideHeader = false }) {
                 'w-16 flex items-center justify-center p-1 text-foreground border-lineHighlight bg-lineHighlight',
                 isDirty ? 'text-foreground hover:bg-background cursor-pointer' : 'opacity-50 cursor-not-allowed',
               )}
-              onClick={() => activateCode()}
+              onClick={() => editorRef.current?.evaluate()}
             >
               <Icon type="refresh" />
             </button>
           </div>
         </div>
       )}
-      <div className="overflow-auto relative">
-        <strudel-editor
-          is-line-numbers-displayed="0"
-          is-active-line-highlighted="0"
-          code={code}
-          ref={(el) => {
-            if (wc.current) {
-              return;
-            }
-            wc.current = el;
-            el.addEventListener('update', listener);
-          }}
-        ></strudel-editor>
+      <div className="overflow-auto relative p-1">
+        <div ref={containerRef}></div>
         {error && <div className="text-right p-1 text-md text-red-200">{error.message}</div>}
       </div>
       {/* punchcard && (
-      <canvas
-        id={canvasId}
-        className="w-full pointer-events-none"
-        height={canvasHeight}
-        ref={(el) => {
-          if (el && el.width !== el.clientWidth) {
-            el.width = el.clientWidth;
-          }
-        }}
-      ></canvas>
-    ) */}
+        <canvas
+          id={canvasId}
+          className="w-full pointer-events-none border-t border-lineHighlight"
+          height={canvasHeight}
+          ref={(el) => {
+            if (el && el.width !== el.clientWidth) {
+              el.width = el.clientWidth;
+            }
+            //const ratio = el.clientWidth / canvasHeight;
+            //const targetWidth = Math.round(el.width * ratio);
+            //if (el.width !== targetWidth) {
+            //  el.width = targetWidth;
+            //}
+          }}
+        ></canvas>
+      ) */}
       {/* !!log.length && (
       <div className="bg-gray-800 rounded-md p-2">
         {log.map(({ message }, i) => (

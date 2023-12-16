@@ -103,8 +103,6 @@ if (typeof HTMLElement !== 'undefined') {
       // init settings
       this.editor.updateSettings(this.settings);
       this.editor.setCode(this.code);
-      // settingsMap.listen((settings, key) => editor.changeSetting(key, settings[key]));
-      // onEvent('strudel-toggle-play', () => this.editor.toggle());
     }
     // Element functionality written in here
   }
