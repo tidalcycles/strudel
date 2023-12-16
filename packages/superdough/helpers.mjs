@@ -71,14 +71,17 @@ export const getADSR = (attack, decay, sustain, release, velocity, begin, end) =
 };
 
 export const getParamADSR = (param, attack, decay, sustain, release, min, max, begin, end) => {
+  // let phase = begin;
   const range = max - min;
   const peak = min + range;
   const sustainLevel = min + sustain * range;
   param.setValueAtTime(min, begin);
-  param.linearRampToValueAtTime(peak, begin + attack);
-  param.linearRampToValueAtTime(sustainLevel, begin + attack + decay);
-  // param.setValueAtTime(sustainLevel, end);
-  param.linearRampToValueAtTime(min, end + Math.max(release, 0.1));
+  param.exponentialRampToValueAtTime(peak, begin + attack);
+  param.exponentialRampToValueAtTime(sustainLevel, begin + attack + decay);
+  //stop current envelope ramp at event end, and begin release ramp
+  console.log(param);
+  param.cancelAndHoldAtTime(end);
+  param.exponentialRampToValueAtTime(min, end + Math.max(release, 0.1));
 };
 
 export function getCompressor(ac, threshold, ratio, knee, attack, release) {
@@ -91,11 +94,14 @@ export function getCompressor(ac, threshold, ratio, knee, attack, release) {
   };
   return new DynamicsCompressorNode(ac, options);
 }
+
+// changes the default values of the envelope based on what parameters the user has defined
+// so it behaves more like you would expect/familiar as other synthesis tools
+// ex: sound(val).decay(val) will behave as a decay only envelope. sound(val).attack(val).decay(val) will behave like an "ad" env, etc.
 const envmin = 0.001;
 export const getADSRValues = (params, defaultValues = [envmin, envmin, 1, envmin]) => {
   const [a, d, s, r] = params;
   const [defA, defD, defS, defR] = defaultValues;
-  console.log(a, d, s, r);
   if (a == null && d == null && s == null && r == null) {
     return defaultValues;
   }
@@ -103,20 +109,8 @@ export const getADSRValues = (params, defaultValues = [envmin, envmin, 1, envmin
   return [a ?? envmin, d ?? envmin, sustain, r ?? envmin];
 };
 
-export function createFilter(
-  context,
-  type,
-  frequency,
-  Q,
-  attack,
-  decay,
-  sustain,
-  release,
-  fenv,
-  start,
-  end,
-  fanchor = 0.5,
-) {
+export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor = 0.5) {
+  const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], [0.01, 0.01, 1, 0.01]);
   const filter = context.createBiquadFilter();
   filter.type = type;
   filter.Q.value = Q;
@@ -128,8 +122,6 @@ export function createFilter(
 
     const min = clamp(2 ** -offset * frequency, 0, 20000);
     const max = clamp(2 ** (fenv - offset) * frequency, 0, 20000);
-
-    // console.log('min', min, 'max', max);
 
     getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end);
     return filter;

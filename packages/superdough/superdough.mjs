@@ -9,7 +9,7 @@ import './reverb.mjs';
 import './vowel.mjs';
 import { clamp, nanFallback } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
-import { createFilter, gainNode, getADSRValues, getCompressor } from './helpers.mjs';
+import { createFilter, gainNode, getCompressor } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
@@ -269,16 +269,26 @@ export const superdough = async (value, deadline, hapDuration) => {
     // low pass
     cutoff,
     lpenv,
+    lpattack,
+    lpdecay,
+    lpsustain,
+    lprelease,
     resonance = 1,
     // high pass
     hpenv,
     hcutoff,
-
+    hpattack,
+    hpdecay,
+    hpsustain,
+    hprelease,
     hresonance = 1,
     // band pass
     bpenv,
     bandf,
-
+    bpattack,
+    bpdecay,
+    bpsustain,
+    bprelease,
     bandq = 1,
     channels = [1, 2],
     //phaser
@@ -357,14 +367,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   // gain stage
   chain.push(gainNode(gain));
 
-  const filterEnvDefaults = [0.01, 0.01, 1, 0.01];
-
   if (cutoff !== undefined) {
-    const [lpattack, lpdecay, lpsustain, lprelease] = getADSRValues(
-      [value.lpattack, value.lpdecay, value.lpsustain, value.lprelease],
-      filterEnvDefaults,
-    );
-
     let lp = () =>
       createFilter(
         ac,
@@ -387,10 +390,6 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
 
   if (hcutoff !== undefined) {
-    const [hpattack, hpdecay, hpsustain, hprelease] = getADSRValues(
-      [value.hpattack, value.hpdecay, value.hpsustain, value.hprelease],
-      filterEnvDefaults,
-    );
     let hp = () =>
       createFilter(
         ac,
@@ -413,10 +412,6 @@ export const superdough = async (value, deadline, hapDuration) => {
   }
 
   if (bandf !== undefined) {
-    const [bpattack, bpdecay, bpsustain, bprelease] = getADSRValues(
-      [value.bpattack, value.bpdecay, value.bpsustain, value.bprelease],
-      filterEnvDefaults,
-    );
     let bp = () =>
       createFilter(
         ac,
