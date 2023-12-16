@@ -70,18 +70,41 @@ export const getADSR = (attack, decay, sustain, release, velocity, begin, end) =
   return gainNode;
 };
 
-export const getParamADSR = (param, attack, decay, sustain, release, min, max, begin, end) => {
-  // let phase = begin;
+export const getParamADSR = (
+  context,
+  param,
+  attack,
+  decay,
+  sustain,
+  release,
+  min,
+  max,
+  begin,
+  end,
+  //exponential works better for frequency modulations (such as filter cutoff) due to human ear perception
+  curve = 'exponential',
+) => {
+  const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
+  let phase = begin;
   const range = max - min;
   const peak = min + range;
-  const sustainLevel = min + sustain * range;
+
   param.setValueAtTime(min, begin);
-  param.exponentialRampToValueAtTime(peak, begin + attack);
-  param.exponentialRampToValueAtTime(sustainLevel, begin + attack + decay);
-  //stop current envelope ramp at event end, and begin release ramp
-  console.log(param);
-  param.cancelAndHoldAtTime(end);
-  param.exponentialRampToValueAtTime(min, end + Math.max(release, 0.1));
+  phase += attack;
+  //attack
+  param[ramp](peak, phase);
+  phase += decay;
+  const sustainLevel = min + sustain * range;
+  //decay
+  param[ramp](sustainLevel, phase);
+  //this timeout can be replaced with cancelAndHoldAtTime once it is implemented in Firefox
+  setTimeout(() => {
+    //sustain at current value
+    param.cancelScheduledValues(0);
+    phase += Math.max(release, 0.1);
+    //release
+    param[ramp](min, phase);
+  }, (end - context.currentTime) * 1000);
 };
 
 export function getCompressor(ac, threshold, ratio, knee, attack, release) {
@@ -123,7 +146,7 @@ export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fe
     const min = clamp(2 ** -offset * frequency, 0, 20000);
     const max = clamp(2 ** (fenv - offset) * frequency, 0, 20000);
 
-    getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end);
+    getParamADSR(context, filter.frequency, attack, decay, sustain, release, min, max, start, end);
     return filter;
   }
 

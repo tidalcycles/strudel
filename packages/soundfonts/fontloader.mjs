@@ -1,5 +1,5 @@
 import { noteToMidi, freqToMidi } from '@strudel.cycles/core';
-import { getAudioContext, registerSound, getEnvelope } from '@strudel.cycles/webaudio';
+import { getAudioContext, registerSound, getEnvelope, getADSRValues } from '@strudel.cycles/webaudio';
 import gm from './gm.mjs';
 
 let loadCache = {};
@@ -131,7 +131,15 @@ export function registerSoundfonts() {
       name,
       async (time, value, onended) => {
         const { n = 0 } = value;
-        const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
+        const [attack, decay, sustain, release] = getADSRValues([
+          value.attack,
+          value.decay,
+          value.sustain,
+          value.release,
+        ]);
+
+        console.log(attack, decay, sustain, release);
+
         const font = fonts[n % fonts.length];
         const ctx = getAudioContext();
         const bufferSource = await getFontBufferSource(font, value, ctx);
