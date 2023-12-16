@@ -24,7 +24,7 @@ const initialSettings = {
 export function MicroRepl({
   code,
   hideHeader = false,
-  canvasHeight = 200,
+  canvasHeight = 100,
   onTrigger,
   onPaint,
   punchcard,
@@ -35,7 +35,7 @@ export function MicroRepl({
   const shouldDraw = !!punchcard;
 
   const init = useCallback(({ code, shouldDraw }) => {
-    const drawTime = [-2, 2];
+    const drawTime = [0, 4];
     const drawContext = shouldDraw ? document.querySelector('#' + canvasId)?.getContext('2d') : null;
     let onDraw;
     if (shouldDraw) {
