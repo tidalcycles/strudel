@@ -102,7 +102,8 @@ export class StrudelMirror {
       this.onDraw?.(haps, time, currentFrame, this.painters);
     }, drawTime);
 
-    // this approach might not work with multiple repls on screen..
+    // this approach does not work with multiple repls on screen
+    // TODO: refactor onPaint usages + find fix, maybe remove painters here?
     Pattern.prototype.onPaint = function (onPaint) {
       self.painters.push(onPaint);
       return this;

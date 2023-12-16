@@ -1,6 +1,6 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { Icon } from './Icon';
-import { getDrawContext, silence } from '@strudel.cycles/core';
+import { silence, getPunchcardPainter } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
 import { StrudelMirror } from '@strudel/codemirror';
@@ -9,8 +9,8 @@ import { useInView } from 'react-hook-inview';
 
 const initialSettings = {
   keybindings: 'strudelTheme',
-  isLineNumbersDisplayed: false,
-  isActiveLineHighlighted: true,
+  isLineNumbersDisplayed: true,
+  isActiveLineHighlighted: false,
   isAutoCompletionEnabled: false,
   isPatternHighlightingEnabled: true,
   isFlashEnabled: true,
@@ -21,10 +21,33 @@ const initialSettings = {
   fontSize: 18,
 };
 
-export function MicroRepl({ code, hideHeader = false, canvasHeight = 200, punchcard, punchcardLabels }) {
-  const init = useCallback(({ code }) => {
-    const drawContext = getDrawContext();
+export function MicroRepl({
+  code,
+  hideHeader = false,
+  canvasHeight = 200,
+  onTrigger,
+  onPaint,
+  punchcard,
+  punchcardLabels = true,
+}) {
+  const id = useMemo(() => s4(), []);
+  const canvasId = useMemo(() => `canvas-${id}`, [id]);
+  const shouldDraw = !!punchcard;
+
+  const init = useCallback(({ code, shouldDraw }) => {
     const drawTime = [-2, 2];
+    const drawContext = shouldDraw ? document.querySelector('#' + canvasId)?.getContext('2d') : null;
+    let onDraw;
+    if (shouldDraw) {
+      onDraw = (haps, time, frame, painters) => {
+        painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
+        painters?.forEach((painter) => {
+          // ctx time haps drawTime paintOptions
+          painter(drawContext, time, haps, drawTime, { clear: false });
+        });
+      };
+    }
+
     const editor = new StrudelMirror({
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
@@ -34,12 +57,17 @@ export function MicroRepl({ code, hideHeader = false, canvasHeight = 200, punchc
       pattern: silence,
       settings: initialSettings,
       drawTime,
-      onDraw: (haps, time, frame, painters) => {
-        painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
-        painters?.forEach((painter) => {
-          // ctx time haps drawTime paintOptions
-          painter(drawContext, time, haps, drawTime, { clear: false });
-        });
+      onDraw,
+      editPattern: (pat, id) => {
+        if (onTrigger) {
+          pat = pat.onTrigger(onTrigger, false);
+        }
+        if (onPaint) {
+          editor.painters.push(onPaint);
+        } else if (punchcard) {
+          editor.painters.push(getPunchcardPainter({ labels: !!punchcardLabels }));
+        }
+        return pat;
       },
       prebake,
       onUpdateState: (state) => {
@@ -56,7 +84,7 @@ export function MicroRepl({ code, hideHeader = false, canvasHeight = 200, punchc
     threshold: 0.01,
     onEnter: () => {
       if (!editorRef.current) {
-        init({ code });
+        init({ code, shouldDraw });
       }
     },
   });
@@ -64,12 +92,6 @@ export function MicroRepl({ code, hideHeader = false, canvasHeight = 200, punchc
   const { started, isDirty, error } = replState;
   const editorRef = useRef();
   const containerRef = useRef();
-
-  const [canvasId] = useState(Date.now());
-  const drawContext = useCallback(
-    punchcard ? (canvasId) => document.querySelector('#' + canvasId)?.getContext('2d') : null,
-    [punchcard],
-  );
 
   return (
     <div className="overflow-hidden rounded-t-md bg-background border border-lineHighlight" ref={ref}>
@@ -101,7 +123,7 @@ export function MicroRepl({ code, hideHeader = false, canvasHeight = 200, punchc
         <div ref={containerRef}></div>
         {error && <div className="text-right p-1 text-md text-red-200">{error.message}</div>}
       </div>
-      {/* punchcard && (
+      {shouldDraw && (
         <canvas
           id={canvasId}
           className="w-full pointer-events-none border-t border-lineHighlight"
@@ -117,7 +139,7 @@ export function MicroRepl({ code, hideHeader = false, canvasHeight = 200, punchc
             //}
           }}
         ></canvas>
-      ) */}
+      )}
       {/* !!log.length && (
       <div className="bg-gray-800 rounded-md p-2">
         {log.map(({ message }, i) => (
@@ -132,4 +154,10 @@ export function MicroRepl({ code, hideHeader = false, canvasHeight = 200, punchc
 function cx(...classes) {
   // : Array<string | undefined>
   return classes.filter(Boolean).join(' ');
+}
+
+function s4() {
+  return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
 }
