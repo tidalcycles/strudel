@@ -52,6 +52,7 @@ export function MicroRepl({
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       transpiler,
+      autodraw: !!shouldDraw,
       root: containerRef.current,
       initialCode: '// LOADING',
       pattern: silence,

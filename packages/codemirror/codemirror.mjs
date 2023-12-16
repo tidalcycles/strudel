@@ -87,7 +87,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, set
 
 export class StrudelMirror {
   constructor(options) {
-    const { root, initialCode = '', onDraw, drawTime = [-2, 2], prebake, settings, ...replOptions } = options;
+    const { root, initialCode = '', onDraw, drawTime = [-2, 2], autodraw, prebake, settings, ...replOptions } = options;
     this.code = initialCode;
     this.root = root;
     this.miniLocations = [];
@@ -110,7 +110,7 @@ export class StrudelMirror {
     };
 
     this.prebaked = prebake();
-    // this.drawFirstFrame();
+    autodraw && this.drawFirstFrame();
 
     this.repl = repl({
       ...replOptions,
@@ -169,7 +169,7 @@ export class StrudelMirror {
     try {
       await this.repl.evaluate(this.code, false);
       this.drawer.invalidate(this.repl.scheduler);
-      this.onDraw?.(this.drawer.visibleHaps, 0, []);
+      this.onDraw?.(this.drawer.visibleHaps, 0, [], this.painters);
     } catch (err) {
       console.warn('first frame could not be painted');
     }
