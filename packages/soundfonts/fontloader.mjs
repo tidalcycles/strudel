@@ -137,9 +137,6 @@ export function registerSoundfonts() {
           value.sustain,
           value.release,
         ]);
-
-        console.log(attack, decay, sustain, release);
-
         const font = fonts[n % fonts.length];
         const ctx = getAudioContext();
         const bufferSource = await getFontBufferSource(font, value, ctx);
