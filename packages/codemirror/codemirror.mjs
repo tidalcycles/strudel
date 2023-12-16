@@ -169,7 +169,8 @@ export class StrudelMirror {
     try {
       await this.repl.evaluate(this.code, false);
       this.drawer.invalidate(this.repl.scheduler);
-      this.onDraw?.(this.drawer.visibleHaps, 0, [], this.painters);
+      // draw at -0.001 to avoid haps at 0 to be visualized as active
+      this.onDraw?.(this.drawer.visibleHaps, -0.001, [], this.painters);
     } catch (err) {
       console.warn('first frame could not be painted');
     }
