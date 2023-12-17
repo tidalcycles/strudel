@@ -1,11 +1,10 @@
-import { useState, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Icon } from './Icon';
 import { silence, getPunchcardPainter } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
 import { StrudelMirror } from '@strudel/codemirror';
 import { prebake } from '@strudel/repl';
-import { useInView } from 'react-hook-inview';
 
 export function MicroRepl({
   code,
@@ -65,21 +64,26 @@ export function MicroRepl({
     editorRef.current = editor;
   }, []);
 
-  const [ref, isVisible] = useInView({
-    threshold: 0.01,
-    onEnter: () => {
-      if (!editorRef.current) {
-        init({ code, shouldDraw });
-      }
-    },
-  });
   const [replState, setReplState] = useState({});
   const { started, isDirty, error } = replState;
   const editorRef = useRef();
   const containerRef = useRef();
+  const [client, setClient] = useState(false);
+  useEffect(() => {
+    setClient(true);
+    if (!editorRef.current) {
+      setTimeout(() => {
+        init({ code, shouldDraw });
+      });
+    }
+  }, []);
+
+  if (!client) {
+    return <pre>{code}</pre>;
+  }
 
   return (
-    <div className="overflow-hidden rounded-t-md bg-background border border-lineHighlight" ref={ref}>
+    <div className="overflow-hidden rounded-t-md bg-background border border-lineHighlight">
       {!hideHeader && (
         <div className="flex justify-between bg-lineHighlight">
           <div className="flex">
@@ -117,11 +121,6 @@ export function MicroRepl({
             if (el && el.width !== el.clientWidth) {
               el.width = el.clientWidth;
             }
-            //const ratio = el.clientWidth / canvasHeight;
-            //const targetWidth = Math.round(el.width * ratio);
-            //if (el.width !== targetWidth) {
-            //  el.width = targetWidth;
-            //}
           }}
         ></canvas>
       )}
