@@ -1,5 +1,5 @@
 import { hash2code, logger } from '@strudel.cycles/core';
-import { codemirrorSettings } from '@strudel/codemirror';
+import { codemirrorSettings, defaultSettings } from '@strudel/codemirror';
 import './vanilla.css';
 
 let editor;
@@ -112,6 +112,6 @@ function setFormValues(form, values) {
 const form = document.querySelector('form[name=settings]');
 setFormValues(form, codemirrorSettings.get());
 form.addEventListener('change', () => {
-  const values = getFormValues(form, codemirrorSettings.get());
+  const values = getFormValues(form, defaultSettings);
   editor?.updateSettings(values);
 });

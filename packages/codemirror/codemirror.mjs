@@ -12,7 +12,7 @@ import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocatio
 import { keybindings } from './keybindings.mjs';
 import { initTheme, activateTheme, theme } from './themes.mjs';
 import { updateWidgets, sliderPlugin } from './slider.mjs';
-import { persistentMap } from '@nanostores/persistent';
+import { persistentAtom } from '@nanostores/persistent';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
@@ -40,7 +40,10 @@ export const defaultSettings = {
   fontSize: 18,
 };
 
-export const codemirrorSettings = persistentMap('codemirror-settings', defaultSettings);
+export const codemirrorSettings = persistentAtom('codemirror-settings', defaultSettings, {
+  encode: JSON.stringify,
+  decode: JSON.parse,
+});
 
 // https://codemirror.net/docs/guide/
 export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, root }) {
@@ -254,7 +257,8 @@ export class StrudelMirror {
     for (let key in extensions) {
       this.reconfigureExtension(key, settings[key]);
     }
-    codemirrorSettings.set({ ...codemirrorSettings.get(), ...settings });
+    const updated = { ...codemirrorSettings.get(), ...settings };
+    codemirrorSettings.set(updated);
   }
   changeSetting(key, value) {
     if (extensions[key]) {
