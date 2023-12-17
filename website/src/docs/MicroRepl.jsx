@@ -7,20 +7,6 @@ import { StrudelMirror } from '@strudel/codemirror';
 import { prebake } from '@strudel/repl';
 import { useInView } from 'react-hook-inview';
 
-const initialSettings = {
-  keybindings: 'strudelTheme',
-  isLineNumbersDisplayed: true,
-  isActiveLineHighlighted: false,
-  isAutoCompletionEnabled: false,
-  isPatternHighlightingEnabled: true,
-  isFlashEnabled: true,
-  isTooltipEnabled: false,
-  isLineWrappingEnabled: false,
-  theme: 'strudelTheme',
-  fontFamily: 'monospace',
-  fontSize: 18,
-};
-
 export function MicroRepl({
   code,
   hideHeader = false,
@@ -56,7 +42,6 @@ export function MicroRepl({
       root: containerRef.current,
       initialCode: '// LOADING',
       pattern: silence,
-      settings: initialSettings,
       drawTime,
       onDraw,
       editPattern: (pat, id) => {
@@ -76,7 +61,6 @@ export function MicroRepl({
       },
     });
     // init settings
-    editor.updateSettings(initialSettings);
     editor.setCode(code);
     editorRef.current = editor;
   }, []);

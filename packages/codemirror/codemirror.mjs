@@ -12,6 +12,7 @@ import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocatio
 import { keybindings } from './keybindings.mjs';
 import { initTheme, activateTheme, theme } from './themes.mjs';
 import { updateWidgets, sliderPlugin } from './slider.mjs';
+import { persistentMap } from '@nanostores/persistent';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
@@ -25,8 +26,25 @@ const extensions = {
 };
 const compartments = Object.fromEntries(Object.keys(extensions).map((key) => [key, new Compartment()]));
 
+export const defaultSettings = {
+  keybindings: 'codemirror',
+  isLineNumbersDisplayed: true,
+  isActiveLineHighlighted: false,
+  isAutoCompletionEnabled: false,
+  isPatternHighlightingEnabled: true,
+  isFlashEnabled: true,
+  isTooltipEnabled: false,
+  isLineWrappingEnabled: false,
+  theme: 'strudelTheme',
+  fontFamily: 'monospace',
+  fontSize: 18,
+};
+
+export const codemirrorSettings = persistentMap('codemirror-settings', defaultSettings);
+
 // https://codemirror.net/docs/guide/
-export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, settings, root }) {
+export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, root }) {
+  const settings = codemirrorSettings.get();
   const initialSettings = Object.keys(compartments).map((key) =>
     compartments[key].of(extensions[key](parseBooleans(settings[key]))),
   );
@@ -87,7 +105,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, set
 
 export class StrudelMirror {
   constructor(options) {
-    const { root, initialCode = '', onDraw, drawTime = [-2, 2], autodraw, prebake, settings, ...replOptions } = options;
+    const { root, initialCode = '', onDraw, drawTime = [-2, 2], autodraw, prebake, ...replOptions } = options;
     this.code = initialCode;
     this.root = root;
     this.miniLocations = [];
@@ -142,7 +160,6 @@ export class StrudelMirror {
     });
     this.editor = initEditor({
       root,
-      settings,
       initialCode,
       onChange: (v) => {
         if (v.docChanged) {
@@ -237,6 +254,7 @@ export class StrudelMirror {
     for (let key in extensions) {
       this.reconfigureExtension(key, settings[key]);
     }
+    codemirrorSettings.set({ ...codemirrorSettings.get(), ...settings });
   }
   changeSetting(key, value) {
     if (extensions[key]) {

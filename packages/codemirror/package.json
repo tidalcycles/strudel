@@ -47,7 +47,9 @@
     "@strudel.cycles/core": "workspace:*",
     "@uiw/codemirror-themes": "^4.19.16",
     "@uiw/codemirror-themes-all": "^4.19.16",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "nanostores": "^0.8.1",
+    "@nanostores/persistent": "^0.8.0"
   },
   "devDependencies": {
     "vite": "^4.3.3"

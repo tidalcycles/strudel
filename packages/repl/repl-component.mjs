@@ -1,7 +1,7 @@
 import { getDrawContext, silence } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
-import { StrudelMirror } from '@strudel/codemirror';
+import { StrudelMirror, defaultSettings, codemirrorSettings } from '@strudel/codemirror';
 import { prebake } from './prebake.mjs';
 
 function camelToKebab(camelCaseString) {
@@ -13,24 +13,10 @@ function kebabToCamel(kebabCaseString) {
   });
 }
 
-const initialSettings = {
-  keybindings: 'strudelTheme',
-  isLineNumbersDisplayed: true,
-  isActiveLineHighlighted: true,
-  isAutoCompletionEnabled: false,
-  isPatternHighlightingEnabled: true,
-  isFlashEnabled: true,
-  isTooltipEnabled: false,
-  isLineWrappingEnabled: false,
-  theme: 'strudelTheme',
-  fontFamily: 'monospace',
-  fontSize: 18,
-};
-const settingAttributes = Object.keys(initialSettings).map(camelToKebab);
+const settingAttributes = Object.keys(defaultSettings).map(camelToKebab);
 const parseAttribute = (name, value) => {
   const camel = kebabToCamel(name);
-  const type = typeof initialSettings[camel];
-  // console.log('type', type, name);
+  const type = typeof defaultSettings[camel];
   if (type === 'boolean') {
     return ['1', 'true'].includes(value);
   }
@@ -39,11 +25,10 @@ const parseAttribute = (name, value) => {
   }
   return value;
 };
-// console.log('attributes', settingAttributes);
 if (typeof HTMLElement !== 'undefined') {
   class StrudelRepl extends HTMLElement {
     static observedAttributes = ['code', ...settingAttributes];
-    settings = initialSettings;
+    settings = codemirrorSettings.get();
     editor = null;
     constructor() {
       super();
@@ -55,7 +40,6 @@ if (typeof HTMLElement !== 'undefined') {
       } else if (settingAttributes.includes(name)) {
         const camel = kebabToCamel(name);
         this.settings[camel] = parseAttribute(name, newValue);
-        // console.log('name', name, newValue, camel, this.settings[camel]);
         this.editor?.updateSettings(this.settings);
       }
     }

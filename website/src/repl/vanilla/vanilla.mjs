@@ -1,25 +1,12 @@
 import { hash2code, logger } from '@strudel.cycles/core';
+import { codemirrorSettings } from '@strudel/codemirror';
 import './vanilla.css';
 
 let editor;
-const initialSettings = {
-  keybindings: 'codemirror',
-  isLineNumbersDisplayed: true,
-  isActiveLineHighlighted: true,
-  isAutoCompletionEnabled: false,
-  isPatternHighlightingEnabled: true,
-  isFlashEnabled: true,
-  isTooltipEnabled: false,
-  isLineWrappingEnabled: false,
-  theme: 'teletext',
-  fontFamily: 'monospace',
-  fontSize: 18,
-};
 
 async function run() {
   const repl = document.getElementById('editor');
   editor = repl.editor;
-  editor.updateSettings(initialSettings);
   logger(`Welcome to Strudel! Click into the editor and then hit ctrl+enter to run the code!`, 'highlight');
   const codeParam = window.location.href.split('#')[1] || '';
 
@@ -123,8 +110,8 @@ function setFormValues(form, values) {
 }
 
 const form = document.querySelector('form[name=settings]');
-setFormValues(form, initialSettings);
+setFormValues(form, codemirrorSettings.get());
 form.addEventListener('change', () => {
-  const values = getFormValues(form, initialSettings);
+  const values = getFormValues(form, codemirrorSettings.get());
   editor?.updateSettings(values);
 });
