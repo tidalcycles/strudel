@@ -188,7 +188,7 @@ export class StrudelMirror {
     await this.prebaked;
     try {
       await this.repl.evaluate(this.code, false);
-      this.drawer.invalidate(this.repl.scheduler);
+      this.drawer.invalidate(this.repl.scheduler, -0.001);
       // draw at -0.001 to avoid haps at 0 to be visualized as active
       this.onDraw?.(this.drawer.visibleHaps, -0.001, [], this.painters);
     } catch (err) {

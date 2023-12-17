@@ -145,12 +145,13 @@ export class Drawer {
       },
     );
   }
-  invalidate(scheduler = this.scheduler) {
+  invalidate(scheduler = this.scheduler, t) {
     if (!scheduler) {
       return;
     }
+    // TODO: scheduler.now() seems to move even when it's stopped, this hints at a bug...
+    t = t ?? scheduler.now();
     this.scheduler = scheduler;
-    const t = scheduler.now();
     let [_, lookahead] = this.drawTime;
     const [begin, end] = [Math.max(t, 0), t + lookahead + 0.1];
     // remove all future haps
