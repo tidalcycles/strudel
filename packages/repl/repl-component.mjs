@@ -1,33 +1,12 @@
 import { getDrawContext, silence } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
-import { StrudelMirror, defaultSettings, codemirrorSettings } from '@strudel/codemirror';
+import { StrudelMirror, codemirrorSettings } from '@strudel/codemirror';
 import { prebake } from './prebake.mjs';
 
-function camelToKebab(camelCaseString) {
-  return camelCaseString.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-}
-function kebabToCamel(kebabCaseString) {
-  return kebabCaseString.replace(/-([a-z])/g, function (match, group) {
-    return group.toUpperCase();
-  });
-}
-
-const settingAttributes = Object.keys(defaultSettings).map(camelToKebab);
-const parseAttribute = (name, value) => {
-  const camel = kebabToCamel(name);
-  const type = typeof defaultSettings[camel];
-  if (type === 'boolean') {
-    return ['1', 'true'].includes(value);
-  }
-  if (type === 'number') {
-    return Number(value);
-  }
-  return value;
-};
 if (typeof HTMLElement !== 'undefined') {
   class StrudelRepl extends HTMLElement {
-    static observedAttributes = ['code', ...settingAttributes];
+    static observedAttributes = ['code'];
     settings = codemirrorSettings.get();
     editor = null;
     constructor() {
@@ -37,10 +16,6 @@ if (typeof HTMLElement !== 'undefined') {
       if (name === 'code') {
         this.code = newValue;
         this.editor?.setCode(newValue);
-      } else if (settingAttributes.includes(name)) {
-        const camel = kebabToCamel(name);
-        this.settings[camel] = parseAttribute(name, newValue);
-        this.editor?.updateSettings(this.settings);
       }
     }
     connectedCallback() {
@@ -64,7 +39,6 @@ if (typeof HTMLElement !== 'undefined') {
         root: container,
         initialCode: '// LOADING',
         pattern: silence,
-        settings: this.settings,
         drawTime,
         onDraw: (haps, time, frame, painters) => {
           painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
