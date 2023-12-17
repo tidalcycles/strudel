@@ -7,4 +7,3 @@ packages:
   - "packages/react/examples/nano-repl"
   - "packages/web/examples/repl-example"
   - "packages/superdough/example"
-  - "packages/codemirror/examples/strudelmirror"
