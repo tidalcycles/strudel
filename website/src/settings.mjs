@@ -7,7 +7,6 @@ import { defaultAudioDeviceName } from './repl/panel/AudioDeviceSelector';
 
 import { logger } from '@strudel.cycles/core';
 
-
 export const defaultSettings = {
   activeFooter: 'intro',
   keybindings: 'codemirror',

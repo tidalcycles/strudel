@@ -44,7 +44,6 @@ import { writeText } from '@tauri-apps/api/clipboard';
 import { defaultAudioDeviceName, getAudioDevices, setAudioDevice } from './panel/AudioDeviceSelector';
 import { registerSamplesFromDB, userSamplesDBConfig } from './idbutils.mjs';
 
-
 const { latestCode } = settingsMap.get();
 
 initAudioOnFirstClick();
