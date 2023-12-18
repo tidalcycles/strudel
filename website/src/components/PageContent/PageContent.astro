@@ -8,9 +8,10 @@ type Props = {
   frontmatter: Frontmatter;
   headings: MarkdownHeading[];
   githubEditUrl: string;
+  hideMoreMenu?: boolean;
 };
 
-const { frontmatter, headings, githubEditUrl } = Astro.props as Props;
+const { frontmatter, headings, githubEditUrl, hideMoreMenu } = Astro.props as Props;
 const title = frontmatter.title;
 const currentPage = Astro.url.pathname;
 ---
@@ -22,9 +23,13 @@ const currentPage = Astro.url.pathname;
       <slot />
     </div>
   </section>
-  <nav class="block sm:hidden">
-    <MoreMenu editHref={githubEditUrl} />
-  </nav>
+  {
+    !hideMoreMenu && (
+      <nav class="block sm:hidden">
+        <MoreMenu editHref={githubEditUrl} />
+      </nav>
+    )
+  }
 </article>
 <style>
   .content {

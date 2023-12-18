@@ -1,0 +1,66 @@
+---
+import { docs } from '../../../../doc.json';
+
+type Props = {
+  currentPage: string;
+};
+
+const { currentPage } = Astro.props as Props;
+const { BASE_URL } = import.meta.env;
+let currentPageMatch = currentPage.slice(BASE_URL.length, currentPage.endsWith('/') ? -1 : undefined);
+---
+
+<nav aria-labelledby="grid-left" class="max-h-full overflow-auto pb-20 text-foreground">
+  <ul>
+    <li>
+      <a
+        class={`py-0.5 mb-4 w-full hover:bg-lineHighlight block`}
+        href={`${Astro.site?.pathname}workshop/getting-started`}>Back to Docs</a
+      >
+    </li>
+    <li>
+      <div class="nav-group pb-4">
+        <a class="hover:bg-lineHighlight w-full block" href={Astro.site?.pathname + 'ref'}><h2>Reference</h2></a>
+        <ul>
+          {
+            docs
+              .filter(
+                ({ tags }) =>
+                  !tags?.find((t) => t.title === 'noautocomplete') && !tags?.find((t) => t.title === 'superdirtonly'),
+              )
+              .filter(({ name, description }) => name && !name.startsWith('_') && !!description)
+              // @ts-ignore
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map(({ name }) => {
+                const link = 'ref/' + name;
+                const url = Astro.site?.pathname + link;
+                return (
+                  <li class="">
+                    <a
+                      class={`pl-4 py-0.5 w-full hover:bg-lineHighlight block${
+                        currentPageMatch === link ? ' bg-lineHighlight' : ''
+                      }`}
+                      href={url}
+                      aria-current={currentPageMatch === link ? 'page' : false}
+                    >
+                      {name}
+                    </a>
+                  </li>
+                );
+              })
+          }
+        </ul>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<script is:inline>
+window.addEventListener('DOMContentLoaded', () => {
+  var target = document.querySelector('[aria-current="page"]');
+  const nav = document.querySelector('.nav-groups');
+  if (nav && target && target.offsetTop > window.innerHeight - 100) {
+    nav.scrollTop = target.offsetTop;
+  }
+});
+</script>
