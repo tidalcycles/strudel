@@ -28,8 +28,8 @@ export const resetLoadedSounds = () => soundMap.set({});
 
 let audioContext;
 
-export const getAudioContext = () => {
-  if (!audioContext) {
+export const getAudioContext = (reset) => {
+  if (!audioContext || reset) {
     audioContext = new AudioContext();
   }
   return audioContext;
