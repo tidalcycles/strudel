@@ -1,5 +1,5 @@
 import React from 'react';
-//      value: ?ID, options: Map<ID, any>, onChange: ID => null, onClick: event => void, placeholder?: string
+//      value: ?ID, options: Map<ID, any>, onChange: ID => null, onClick: event => void
 export function SelectInput({ value, options, onChange, onClick }) {
   return (
     <select
