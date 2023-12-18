@@ -8,6 +8,7 @@ export function SelectInput({ value, options, onChange, onClick }) {
       value={value ?? ''}
       onChange={(e) => onChange(e.target.value)}
     >
+      {options.size == 0 && <option value={value}>{`${value ?? 'select an option'}`}</option>}
       {Array.from(options.keys()).map((id) => (
         <option key={id} className="bg-background" value={id}>
           {options.get(id)}

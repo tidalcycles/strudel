@@ -24,6 +24,7 @@ import { code2hash, hash2code } from './helpers.mjs';
 import { isTauri } from '../tauri.mjs';
 import { useWidgets } from '@strudel.cycles/react/src/hooks/useWidgets.mjs';
 import { writeText } from '@tauri-apps/api/clipboard';
+import { defaultAudioDeviceName, getAudioDevices, setAudioDevice } from './panel/AudioDeviceSelector';
 
 const { latestCode } = settingsMap.get();
 
@@ -132,6 +133,7 @@ export function Repl({ embedded = false }) {
     panelPosition,
     isZen,
     activePattern,
+    audioDeviceName,
   } = useSettings();
 
   const paintOptions = useMemo(() => ({ fontFamily }), [fontFamily]);
@@ -171,8 +173,9 @@ export function Repl({ embedded = false }) {
       paintOptions,
     });
 
-  // init code
+  //on first load...
   useEffect(() => {
+    // init code
     initCode().then((decoded) => {
       let msg;
       if (decoded) {
@@ -188,6 +191,16 @@ export function Repl({ embedded = false }) {
       logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
       setPending(false);
     });
+    // Initialize user audio device if it has been saved to settings
+    if (audioDeviceName !== defaultAudioDeviceName) {
+      getAudioDevices().then((devices) => {
+        const deviceID = devices.get(audioDeviceName);
+        if (deviceID == null) {
+          return;
+        }
+        setAudioDevice(deviceID);
+      });
+    }
   }, []);
 
   // keyboard shortcuts

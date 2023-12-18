@@ -2,6 +2,7 @@ import { persistentMap } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel.cycles/core';
 import * as tunes from './repl/tunes.mjs';
+import { defaultAudioDeviceName } from './repl/panel/AudioDeviceSelector';
 
 export const defaultSettings = {
   activeFooter: 'intro',
@@ -20,7 +21,7 @@ export const defaultSettings = {
   panelPosition: 'bottom',
   userPatterns: '{}',
   activePattern: '',
-  audioDeviceName: '',
+  audioDeviceName: defaultAudioDeviceName,
 };
 
 export const settingsMap = persistentMap('strudel-settings', defaultSettings);
