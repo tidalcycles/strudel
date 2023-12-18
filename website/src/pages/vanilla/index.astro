@@ -1,0 +1,96 @@
+---
+import HeadCommonNew from '../../components/HeadCommonNew.astro';
+---
+
+<html lang="en" class="dark">
+  <head>
+    <HeadCommonNew />
+    <title>Strudel Vanilla REPL</title>
+  </head>
+  <body class="h-app-height">
+    <div class="settings">
+      <form name="settings" class="flex flex-col space-y-1 bg-[#00000080]">
+        <label
+          >theme
+          <select name="theme">
+            <option>strudelTheme</option>
+            <option>bluescreen</option>
+            <option>blackscreen</option>
+            <option>whitescreen</option>
+            <option>teletext</option>
+            <option>algoboy</option>
+            <option>terminal</option>
+            <option>abcdef</option>
+            <option>androidstudio</option>
+            <option>atomone</option>
+            <option>aura</option>
+            <option>bespin</option>
+            <option>darcula</option>
+            <option>dracula</option>
+            <option>duotoneDark</option>
+            <option>eclipse</option>
+            <option>githubDark</option>
+            <option>gruvboxDark</option>
+            <option>materialDark</option>
+            <option>nord</option>
+            <option>okaidia</option>
+            <option>solarizedDark</option>
+            <option>sublime</option>
+            <option>tokyoNight</option>
+            <option>tokyoNightStorm</option>
+            <option>vscodeDark</option>
+            <option>xcodeDark</option>
+            <option>bbedit</option>
+            <option>duotoneLight</option>
+            <option>githubLight</option>
+            <option>gruvboxLight</option>
+            <option>materialLight</option>
+            <option>noctisLilac</option>
+            <option>solarizedLight</option>
+            <option>tokyoNightDay</option>
+            <option>xcodeLight</option>
+          </select> </label
+        ><br />
+        <label
+          >keybindings
+          <select name="keybindings">
+            <option>codemirror</option>
+            <option>vim</option>
+            <option>emacs</option>
+            <option>vscode</option>
+          </select> </label
+        ><br />
+        <label>fontFamily
+          <select name="fontFamily">
+            <option value="monospace">monospace</option>
+            <option value="BigBlueTerminal">BigBlueTerminal</option>
+            <option value="x3270">x3270</option>
+            <option value="PressStart">PressStart2P</option>
+            <option value="galactico">galactico</option>
+            <option value="we-come-in-peace">we-come-in-peace</option>
+            <option value="FiraCode">FiraCode</option>
+            <option value="FiraCode-SemiBold">FiraCode-SemiBold</option>
+            <option value="teletext">teletext</option>
+            <option value="mode7">mode7</option>
+          </select>
+        </label>
+        <br /> 
+        <label>fontSize <input type="number" name="fontSize" /></label>
+        <br />
+        <label><input type="checkbox" name="isLineNumbersDisplayed" />isLineNumbersDisplayed</label>
+        <br />
+        <label><input type="checkbox" name="isActiveLineHighlighted" />isActiveLineHighlighted</label>
+        <br />
+        <label><input type="checkbox" name="isPatternHighlightingEnabled" />isPatternHighlightingEnabled</label>
+        <br />
+        <label><input type="checkbox" name="isFlashEnabled" />isFlashEnabled</label>
+        <br />
+        <label><input type="checkbox" name="isLineWrappingEnabled" />isLineWrappingEnabled</label>
+        <!-- <label><input type="checkbox" name="isAutoCompletionEnabled" />isAutoCompletionEnabled</label> -->
+        <!-- <label><input type="checkbox" name="isTooltipEnabled" />isTooltipEnabled</label> -->
+      </form>
+    </div>
+    <div id="code"></div>
+    <script src="../../repl/vanilla/vanilla.mjs"></script>
+  </body>
+</html>

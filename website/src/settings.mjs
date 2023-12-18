@@ -1,8 +1,12 @@
-import { persistentMap } from '@nanostores/persistent';
+import { persistentMap, persistentAtom } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel.cycles/core';
 import * as tunes from './repl/tunes.mjs';
+
 import { defaultAudioDeviceName } from './repl/panel/AudioDeviceSelector';
+
+import { logger } from '@strudel.cycles/core';
+
 
 export const defaultSettings = {
   activeFooter: 'intro',
@@ -25,6 +29,24 @@ export const defaultSettings = {
 };
 
 export const settingsMap = persistentMap('strudel-settings', defaultSettings);
+
+// active pattern is separate, because it shouldn't sync state across tabs
+// reason: https://github.com/tidalcycles/strudel/issues/857
+const $activePattern = persistentAtom('activePattern', '', { listen: false });
+export function setActivePattern(key) {
+  $activePattern.set(key);
+}
+export function getActivePattern() {
+  return $activePattern.get();
+}
+export function useActivePattern() {
+  return useStore($activePattern);
+}
+export function initUserCode(code) {
+  const userPatterns = getUserPatterns();
+  const match = Object.entries(userPatterns).find(([_, pat]) => pat.code === code);
+  setActivePattern(match?.[0] || '');
+}
 
 export function useSettings() {
   const state = useStore(settingsMap);
@@ -118,7 +140,7 @@ export function getUserPattern(key) {
 }
 
 export function renameActivePattern() {
-  let activePattern = getSetting('activePattern');
+  let activePattern = getActivePattern();
   let userPatterns = getUserPatterns();
   if (!userPatterns[activePattern]) {
     alert('Cannot rename examples');
@@ -141,7 +163,7 @@ export function renameActivePattern() {
 
 export function updateUserCode(code) {
   const userPatterns = getUserPatterns();
-  let activePattern = getSetting('activePattern');
+  let activePattern = getActivePattern();
   // check if code is that of an example tune
   const [example] = Object.entries(tunes).find(([_, tune]) => tune === code) || [];
   if (example && (!activePattern || activePattern === example)) {
@@ -162,7 +184,7 @@ export function updateUserCode(code) {
 }
 
 export function deleteActivePattern() {
-  let activePattern = getSetting('activePattern');
+  let activePattern = getActivePattern();
   if (!activePattern) {
     console.warn('cannot delete: no pattern selected');
     return;
@@ -180,7 +202,7 @@ export function deleteActivePattern() {
 }
 
 export function duplicateActivePattern() {
-  let activePattern = getSetting('activePattern');
+  let activePattern = getActivePattern();
   let latestCode = getSetting('latestCode');
   if (!activePattern) {
     console.warn('cannot duplicate: no pattern selected');
@@ -192,8 +214,31 @@ export function duplicateActivePattern() {
   setActivePattern(activePattern);
 }
 
-export function setActivePattern(key) {
-  settingsMap.setKey('activePattern', key);
+export async function importPatterns(fileList) {
+  const files = Array.from(fileList);
+  await Promise.all(
+    files.map(async (file, i) => {
+      const content = await file.text();
+      if (file.type === 'application/json') {
+        const userPatterns = getUserPatterns() || {};
+        setUserPatterns({ ...userPatterns, ...JSON.parse(content) });
+      } else if (file.type === 'text/plain') {
+        const name = file.name.replace(/\.[^/.]+$/, '');
+        addUserPattern(name, { code: content });
+      }
+    }),
+  );
+  logger(`import done!`);
 }
 
-export function importUserPatternJSON(jsonString) {}
+export async function exportPatterns() {
+  const userPatterns = getUserPatterns() || {};
+  const blob = new Blob([JSON.stringify(userPatterns)], { type: 'application/json' });
+  const downloadLink = document.createElement('a');
+  downloadLink.href = window.URL.createObjectURL(blob);
+  const date = new Date().toISOString().split('T')[0];
+  downloadLink.download = `strudel_patterns_${date}.json`;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+}

@@ -1,27 +1,27 @@
+import { DocumentDuplicateIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { useMemo } from 'react';
-import * as tunes from '../tunes.mjs';
 import {
-  useSettings,
   clearUserPatterns,
-  newUserPattern,
-  setActivePattern,
   deleteActivePattern,
   duplicateActivePattern,
+  exportPatterns,
   getUserPattern,
-  getUserPatterns,
+  importPatterns,
+  newUserPattern,
   renameActivePattern,
-  addUserPattern,
-  setUserPatterns,
+  setActivePattern,
+  useActivePattern,
+  useSettings,
 } from '../../settings.mjs';
-import { logger } from '@strudel.cycles/core';
-import { DocumentDuplicateIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
+import * as tunes from '../tunes.mjs';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 export function PatternsTab({ context }) {
-  const { userPatterns, activePattern } = useSettings();
+  const { userPatterns } = useSettings();
+  const activePattern = useActivePattern();
   const isExample = useMemo(() => activePattern && !!tunes[activePattern], [activePattern]);
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-4 pb-4">
@@ -85,38 +85,11 @@ export function PatternsTab({ context }) {
               type="file"
               multiple
               accept="text/plain,application/json"
-              onChange={async (e) => {
-                const files = Array.from(e.target.files);
-                await Promise.all(
-                  files.map(async (file, i) => {
-                    const content = await file.text();
-                    if (file.type === 'application/json') {
-                      const userPatterns = getUserPatterns() || {};
-                      setUserPatterns({ ...userPatterns, ...JSON.parse(content) });
-                    } else if (file.type === 'text/plain') {
-                      const name = file.name.replace(/\.[^/.]+$/, '');
-                      addUserPattern(name, { code: content });
-                    }
-                  }),
-                );
-                logger(`import done!`);
-              }}
+              onChange={(e) => importPatterns(e.target.files)}
             />
             import
           </label>
-          <button
-            className="hover:opacity-50"
-            onClick={() => {
-              const blob = new Blob([JSON.stringify(userPatterns)], { type: 'application/json' });
-              const downloadLink = document.createElement('a');
-              downloadLink.href = window.URL.createObjectURL(blob);
-              const date = new Date().toISOString().split('T')[0];
-              downloadLink.download = `strudel_patterns_${date}.json`;
-              document.body.appendChild(downloadLink);
-              downloadLink.click();
-              document.body.removeChild(downloadLink);
-            }}
-          >
+          <button className="hover:opacity-50" onClick={() => exportPatterns()}>
             export
           </button>
         </div>
