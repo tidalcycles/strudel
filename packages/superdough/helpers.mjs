@@ -67,30 +67,7 @@ export const getExpEnvelope = (attack, decay, sustain, release, velocity, begin)
   };
 };
 
-export const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {
-  const gainNode = getAudioContext().createGain();
-  gainNode.gain.setValueAtTime(0, begin);
-  gainNode.gain.linearRampToValueAtTime(velocity, begin + attack); // attack
-  gainNode.gain.linearRampToValueAtTime(sustain * velocity, begin + attack + decay); // sustain start
-  gainNode.gain.setValueAtTime(sustain * velocity, end); // sustain end
-  gainNode.gain.linearRampToValueAtTime(0, end + release); // release
-  // for some reason, using exponential ramping creates little cracklings
-  /* let t = begin;
-  gainNode.gain.setValueAtTime(0, t);
-  gainNode.gain.exponentialRampToValueAtTime(velocity, (t += attack));
-  const sustainGain = Math.max(sustain * velocity, 0.001);
-  gainNode.gain.exponentialRampToValueAtTime(sustainGain, (t += decay));
-  if (end - begin < attack + decay) {
-    gainNode.gain.cancelAndHoldAtTime(end);
-  } else {
-    gainNode.gain.setValueAtTime(sustainGain, end);
-  }
-  gainNode.gain.exponentialRampToValueAtTime(0.001, end + release); // release */
-  return gainNode;
-};
-
 export const getParamADSR = (
-  context,
   param,
   attack,
   decay,
@@ -118,7 +95,7 @@ export const getParamADSR = (
   //decay
   param[ramp](sustainLevel, phase);
 
-  setRelease(param, phase, sustain, end, end + release, min, curve);
+  setRelease(param, phase, sustainLevel, end, end + release, min, curve);
 };
 
 export function getCompressor(ac, threshold, ratio, knee, attack, release) {
@@ -135,19 +112,22 @@ export function getCompressor(ac, threshold, ratio, knee, attack, release) {
 // changes the default values of the envelope based on what parameters the user has defined
 // so it behaves more like you would expect/familiar as other synthesis tools
 // ex: sound(val).decay(val) will behave as a decay only envelope. sound(val).attack(val).decay(val) will behave like an "ad" env, etc.
-const envmin = 0.001;
-export const getADSRValues = (params, defaultValues = [envmin, envmin, 1, envmin]) => {
+
+export const getADSRValues = (params, curve = 'linear', defaultValues) => {
+  const envmin = curve === 'exponential' ? 0.001 : 0;
+  const releaseMin = 0.01;
+  const envmax = 1;
   const [a, d, s, r] = params;
-  const [defA, defD, defS, defR] = defaultValues;
   if (a == null && d == null && s == null && r == null) {
-    return defaultValues;
+    return defaultValues ?? [envmin, envmin, envmax, releaseMin];
   }
-  const sustain = s != null ? s : (a != null && d == null) || (a == null && d == null) ? defS : envmin;
-  return [a ?? envmin, d ?? envmin, sustain, r ?? envmin];
+  const sustain = s != null ? s : (a != null && d == null) || (a == null && d == null) ? envmax : envmin;
+  return [Math.max(a ?? 0, envmin), Math.max(d ?? 0, envmin), Math.min(sustain, envmax), Math.max(r ?? 0, releaseMin)];
 };
 
 export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor = 0.5) {
-  const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], [0.01, 0.01, 1, 0.01]);
+  const curve = 'exponential';
+  const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], curve, [0.005, 0.14, 0, 0.1]);
   const filter = context.createBiquadFilter();
 
   filter.type = type;
@@ -160,7 +140,7 @@ export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fe
 
     const max = clamp(2 ** (fenv - offset) * frequency, 0, 20000);
 
-    getParamADSR(context, filter.frequency, attack, decay, sustain, release, frequency, max, start, end);
+    getParamADSR(filter.frequency, attack, decay, sustain, release, frequency, max, start, end, curve);
     return filter;
   }
 
