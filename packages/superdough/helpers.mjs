@@ -1,26 +1,28 @@
 import { getAudioContext } from './superdough.mjs';
 import { clamp } from './util.mjs';
 
-AudioParam.prototype.setRelease = function (startTime, endTime, endValue, curve = 'linear') {
-  const ctx = getAudioContext();
-  const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
-  const param = this;
-  if (AudioParam.prototype.cancelAndHoldAtTime == null) {
-    //this replicates cancelAndHoldAtTime behavior for Firefox
-    setTimeout(() => {
-      //sustain at current value
-      const currValue = param.value;
-      param.cancelScheduledValues(0);
-      param.setValueAtTime(currValue, 0);
+if (AudioParam != null) {
+  AudioParam.prototype.setRelease = function (startTime, endTime, endValue, curve = 'linear') {
+    const ctx = getAudioContext();
+    const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
+    const param = this;
+    if (AudioParam.prototype.cancelAndHoldAtTime == null) {
+      //this replicates cancelAndHoldAtTime behavior for Firefox
+      setTimeout(() => {
+        //sustain at current value
+        const currValue = param.value;
+        param.cancelScheduledValues(0);
+        param.setValueAtTime(currValue, 0);
+        //release
+        param[ramp](endValue, endTime);
+      }, (startTime - ctx.currentTime) * 1000);
+    } else {
+      param.cancelAndHoldAtTime(startTime);
       //release
       param[ramp](endValue, endTime);
-    }, (startTime - ctx.currentTime) * 1000);
-  } else {
-    param.cancelAndHoldAtTime(startTime);
-    //release
-    param[ramp](endValue, endTime);
-  }
-};
+    }
+  };
+}
 
 export function gainNode(value) {
   const node = getAudioContext().createGain();
