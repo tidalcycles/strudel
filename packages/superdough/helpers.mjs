@@ -114,8 +114,8 @@ export const getParamADSR = (
   const sustainLevel = min + sustain * range;
   //decay
   param[ramp](sustainLevel, phase);
-  phase += release;
-  setRelease(param, end, phase, min, curve);
+
+  setRelease(param, end, end + release, min, curve);
 };
 
 export function getCompressor(ac, threshold, ratio, knee, attack, release) {
@@ -132,20 +132,19 @@ export function getCompressor(ac, threshold, ratio, knee, attack, release) {
 // changes the default values of the envelope based on what parameters the user has defined
 // so it behaves more like you would expect/familiar as other synthesis tools
 // ex: sound(val).decay(val) will behave as a decay only envelope. sound(val).attack(val).decay(val) will behave like an "ad" env, etc.
-
-export const getADSRValues = (params, defaultValues, min = 0, max = 1) => {
-  defaultValues = defaultValues ?? [min, min, max, min];
+const envmin = 0.001;
+export const getADSRValues = (params, defaultValues = [envmin, envmin, 1, envmin]) => {
   const [a, d, s, r] = params;
   const [defA, defD, defS, defR] = defaultValues;
   if (a == null && d == null && s == null && r == null) {
     return defaultValues;
   }
-  const sustain = s != null ? s : (a != null && d == null) || (a == null && d == null) ? max : min;
-  return [a ?? min, d ?? min, sustain, r ?? min];
+  const sustain = s != null ? s : (a != null && d == null) || (a == null && d == null) ? defS : envmin;
+  return [a ?? envmin, d ?? envmin, sustain, r ?? envmin];
 };
 
 export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor = 0.5) {
-  const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], [0.001, 0.1, 1, 0.01], 0.001, 1);
+  const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], [0.01, 0.01, 1, 0.01]);
   const filter = context.createBiquadFilter();
   filter.type = type;
   filter.Q.value = Q;
