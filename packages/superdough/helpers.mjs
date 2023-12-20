@@ -157,7 +157,7 @@ export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fe
     const min = clamp(2 ** -offset * frequency, 0, 20000);
     const max = clamp(2 ** (fenv - offset) * frequency, 0, 20000);
 
-    getParamADSR(context, filter.frequency, attack, decay, sustain, release, min, max, start, end);
+    getParamADSR(context, filter.frequency, attack, decay, sustain, release, frequency, max, start, end);
     return filter;
   }
 
