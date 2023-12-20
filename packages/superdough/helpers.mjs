@@ -46,7 +46,7 @@ export const getEnvelope = (attack, decay, sustain, release, velocity, begin) =>
     node: gainNode,
     stop: (t) => {
       const endTime = t + release;
-      setRelease(gainNode.gain, phase, sustain, t, endTime, 0);
+      setRelease(gainNode.gain, phase, sustainLevel, t, endTime, 0);
       // helps prevent pops from overlapping sounds
       return endTime;
     },
