@@ -1,6 +1,27 @@
 import { getAudioContext } from './superdough.mjs';
 import { clamp } from './util.mjs';
 
+AudioParam.prototype.setRelease = function (startTime, endTime, endValue, curve = 'linear') {
+  const ctx = getAudioContext();
+  const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
+  const param = this;
+  if (AudioParam.prototype.cancelAndHoldAtTime == null) {
+    //this replicates cancelAndHoldAtTime behavior for Firefox
+    setTimeout(() => {
+      //sustain at current value
+      const currValue = param.value;
+      param.cancelScheduledValues(0);
+      param.setValueAtTime(currValue, 0);
+      //release
+      param[ramp](endValue, endTime);
+    }, (startTime - ctx.currentTime) * 1000);
+  } else {
+    param.cancelAndHoldAtTime(startTime);
+    //release
+    param[ramp](endValue, endTime);
+  }
+};
+
 export function gainNode(value) {
   const node = getAudioContext().createGain();
   node.gain.value = value;
@@ -21,13 +42,10 @@ export const getEnvelope = (attack, decay, sustain, release, velocity, begin) =>
   return {
     node: gainNode,
     stop: (t) => {
-      // to make sure the release won't begin before sustain is reached
-      phase = Math.max(t, phase);
-      // see https://github.com/tidalcycles/strudel/issues/522
-      gainNode.gain.setValueAtTime(sustainLevel, phase);
-      phase += release;
-      gainNode.gain.linearRampToValueAtTime(0, phase); // release
-      return phase;
+      const endTime = t + release;
+      gainNode.gain.setRelease(t, endTime, 0);
+      // helps prevent pops from overlapping sounds
+      return endTime - 0.01;
     },
   };
 };
@@ -97,14 +115,8 @@ export const getParamADSR = (
   const sustainLevel = min + sustain * range;
   //decay
   param[ramp](sustainLevel, phase);
-  //this timeout can be replaced with cancelAndHoldAtTime once it is implemented in Firefox
-  setTimeout(() => {
-    //sustain at current value
-    param.cancelScheduledValues(0);
-    phase += Math.max(release, 0.1);
-    //release
-    param[ramp](min, phase);
-  }, (end - context.currentTime) * 1000);
+  phase += Math.max(release, 0.1);
+  param.setRelease(end, phase, min, curve);
 };
 
 export function getCompressor(ac, threshold, ratio, knee, attack, release) {

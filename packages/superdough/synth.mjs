@@ -42,7 +42,7 @@ export function registerSynthSounds() {
           let { density } = value;
           sound = getNoiseOscillator(s, t, density);
         }
-
+        console.log(sound);
         let { node: o, stop, triggerRelease } = sound;
 
         // turn down
