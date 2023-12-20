@@ -4,7 +4,11 @@ import { clamp } from './util.mjs';
 const setRelease = (param, phase, sustain, startTime, endTime, endValue, curve = 'linear') => {
   const ctx = getAudioContext();
   const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
-  if (param.cancelAndHoldAtTime == null) {
+  // if the decay stage is complete before the note event is done, we don't need to do anything special
+  if (phase < startTime) {
+    param.setValueAtTime(sustain, startTime);
+    param[ramp](endValue, endTime);
+  } else if (param.cancelAndHoldAtTime == null) {
     //this replicates cancelAndHoldAtTime behavior for Firefox
     setTimeout(() => {
       //sustain at current value
@@ -15,9 +19,7 @@ const setRelease = (param, phase, sustain, startTime, endTime, endValue, curve =
       param[ramp](endValue, endTime);
     }, (startTime - ctx.currentTime) * 1000);
   } else {
-    if (phase < startTime) {
-      param.setValueAtTime(sustain, startTime);
-    }
+    //stop the envelope, hold the value, and then set the release stage
     param.cancelAndHoldAtTime(startTime);
     param[ramp](endValue, endTime);
   }
