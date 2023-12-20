@@ -16,6 +16,7 @@ const setRelease = (param, startTime, endTime, endValue, curve = 'linear') => {
     }, (startTime - ctx.currentTime) * 1000);
   } else {
     param.cancelAndHoldAtTime(startTime);
+    param.setValueAtTime(param.value, startTime);
     //release
     param[ramp](endValue, endTime);
   }
@@ -146,6 +147,7 @@ export const getADSRValues = (params, defaultValues = [envmin, envmin, 1, envmin
 export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor = 0.5) {
   const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], [0.01, 0.01, 1, 0.01]);
   const filter = context.createBiquadFilter();
+
   filter.type = type;
   filter.Q.value = Q;
   filter.frequency.value = frequency;
