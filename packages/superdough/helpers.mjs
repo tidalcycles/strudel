@@ -1,7 +1,7 @@
 import { getAudioContext } from './superdough.mjs';
 import { clamp } from './util.mjs';
 
-const setRelease = (param, startTime, endTime, endValue, curve = 'linear') => {
+const setRelease = (param, phase, sustain, startTime, endTime, endValue, curve = 'linear') => {
   const ctx = getAudioContext();
   const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
   if (param.cancelAndHoldAtTime == null) {
@@ -15,9 +15,10 @@ const setRelease = (param, startTime, endTime, endValue, curve = 'linear') => {
       param[ramp](endValue, endTime);
     }, (startTime - ctx.currentTime) * 1000);
   } else {
+    if (phase < startTime) {
+      param.setValueAtTime(sustain, startTime);
+    }
     param.cancelAndHoldAtTime(startTime);
-    param.setValueAtTime(param.value, startTime);
-    //release
     param[ramp](endValue, endTime);
   }
 };
@@ -43,7 +44,7 @@ export const getEnvelope = (attack, decay, sustain, release, velocity, begin) =>
     node: gainNode,
     stop: (t) => {
       const endTime = t + release;
-      setRelease(gainNode.gain, t, endTime, 0);
+      setRelease(gainNode.gain, phase, sustain, t, endTime, 0);
       // helps prevent pops from overlapping sounds
       return endTime;
     },
@@ -113,10 +114,11 @@ export const getParamADSR = (
   param[ramp](peak, phase);
   phase += decay;
   const sustainLevel = min + sustain * range;
+
   //decay
   param[ramp](sustainLevel, phase);
 
-  setRelease(param, end, end + release, min, curve);
+  setRelease(param, phase, sustain, end, end + release, min, curve);
 };
 
 export function getCompressor(ac, threshold, ratio, knee, attack, release) {
