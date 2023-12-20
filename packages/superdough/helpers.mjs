@@ -1,28 +1,25 @@
 import { getAudioContext } from './superdough.mjs';
 import { clamp } from './util.mjs';
 
-if (AudioParam != null) {
-  AudioParam.prototype.setRelease = function (startTime, endTime, endValue, curve = 'linear') {
-    const ctx = getAudioContext();
-    const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
-    const param = this;
-    if (AudioParam.prototype.cancelAndHoldAtTime == null) {
-      //this replicates cancelAndHoldAtTime behavior for Firefox
-      setTimeout(() => {
-        //sustain at current value
-        const currValue = param.value;
-        param.cancelScheduledValues(0);
-        param.setValueAtTime(currValue, 0);
-        //release
-        param[ramp](endValue, endTime);
-      }, (startTime - ctx.currentTime) * 1000);
-    } else {
-      param.cancelAndHoldAtTime(startTime);
+const setRelease = (param, startTime, endTime, endValue, curve = 'linear') => {
+  const ctx = getAudioContext();
+  const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
+  if (param.cancelAndHoldAtTime == null) {
+    //this replicates cancelAndHoldAtTime behavior for Firefox
+    setTimeout(() => {
+      //sustain at current value
+      const currValue = param.value;
+      param.cancelScheduledValues(0);
+      param.setValueAtTime(currValue, 0);
       //release
       param[ramp](endValue, endTime);
-    }
-  };
-}
+    }, (startTime - ctx.currentTime) * 1000);
+  } else {
+    param.cancelAndHoldAtTime(startTime);
+    //release
+    param[ramp](endValue, endTime);
+  }
+};
 
 export function gainNode(value) {
   const node = getAudioContext().createGain();
@@ -45,9 +42,9 @@ export const getEnvelope = (attack, decay, sustain, release, velocity, begin) =>
     node: gainNode,
     stop: (t) => {
       const endTime = t + release;
-      gainNode.gain.setRelease(t, endTime, 0);
+      setRelease(gainNode.gain, t, endTime, 0);
       // helps prevent pops from overlapping sounds
-      return endTime - 0.01;
+      return endTime;
     },
   };
 };
@@ -117,8 +114,8 @@ export const getParamADSR = (
   const sustainLevel = min + sustain * range;
   //decay
   param[ramp](sustainLevel, phase);
-  phase += Math.max(release, 0.1);
-  param.setRelease(end, phase, min, curve);
+  phase += release;
+  setRelease(param, end, phase, min, curve);
 };
 
 export function getCompressor(ac, threshold, ratio, knee, attack, release) {
@@ -135,19 +132,20 @@ export function getCompressor(ac, threshold, ratio, knee, attack, release) {
 // changes the default values of the envelope based on what parameters the user has defined
 // so it behaves more like you would expect/familiar as other synthesis tools
 // ex: sound(val).decay(val) will behave as a decay only envelope. sound(val).attack(val).decay(val) will behave like an "ad" env, etc.
-const envmin = 0.001;
-export const getADSRValues = (params, defaultValues = [envmin, envmin, 1, envmin]) => {
+
+export const getADSRValues = (params, defaultValues, min = 0, max = 1) => {
+  defaultValues = defaultValues ?? [min, min, max, min];
   const [a, d, s, r] = params;
   const [defA, defD, defS, defR] = defaultValues;
   if (a == null && d == null && s == null && r == null) {
     return defaultValues;
   }
-  const sustain = s != null ? s : (a != null && d == null) || (a == null && d == null) ? defS : envmin;
-  return [a ?? envmin, d ?? envmin, sustain, r ?? envmin];
+  const sustain = s != null ? s : (a != null && d == null) || (a == null && d == null) ? max : min;
+  return [a ?? min, d ?? min, sustain, r ?? min];
 };
 
 export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor = 0.5) {
-  const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], [0.01, 0.01, 1, 0.01]);
+  const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], [0.001, 0.1, 1, 0.01], 0.001, 1);
   const filter = context.createBiquadFilter();
   filter.type = type;
   filter.Q.value = Q;
