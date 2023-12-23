@@ -1,4 +1,4 @@
-import { noteToMidi, valueToMidi, nanFallback } from './util.mjs';
+import { noteToMidi, valueToMidi, getSoundIndex } from './util.mjs';
 import { getAudioContext, registerSound } from './index.mjs';
 import { getEnvelope } from './helpers.mjs';
 import { logger } from './logger.mjs';
@@ -31,10 +31,11 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resol
   transpose = midi - 36; // C3 is middle C
 
   const ac = getAudioContext();
+
   let sampleUrl;
   if (Array.isArray(bank)) {
-    n = nanFallback(n, 0);
-    sampleUrl = bank[n % bank.length];
+    const index = getSoundIndex(n, bank.length);
+    sampleUrl = bank[index];
   } else {
     const midiDiff = (noteA) => noteToMidi(noteA) - midi;
     // object format will expect keys as notes
@@ -45,7 +46,8 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resol
         null,
       );
     transpose = -midiDiff(closest); // semitones to repitch
-    sampleUrl = bank[closest][n % bank[closest].length];
+    const index = getSoundIndex(n, bank[closest].length);
+    sampleUrl = bank[closest][index];
   }
   if (resolveUrl) {
     sampleUrl = await resolveUrl(sampleUrl);
