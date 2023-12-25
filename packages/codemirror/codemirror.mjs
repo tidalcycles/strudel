@@ -108,7 +108,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
 
 export class StrudelMirror {
   constructor(options) {
-    const { root, initialCode = '', onDraw, drawTime = [-2, 2], autodraw, prebake, ...replOptions } = options;
+    const { root, id, initialCode = '', onDraw, drawTime = [-2, 2], autodraw, prebake, ...replOptions } = options;
     this.code = initialCode;
     this.root = root;
     this.miniLocations = [];
@@ -116,6 +116,7 @@ export class StrudelMirror {
     this.painters = [];
     this.onDraw = onDraw;
     const self = this;
+    this.id = id || s4();
 
     this.drawer = new Drawer((haps, time) => {
       const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.endClipped);
@@ -139,6 +140,12 @@ export class StrudelMirror {
         replOptions?.onToggle?.(started);
         if (started) {
           this.drawer.start(this.repl.scheduler);
+          // stop other repls when this one is started
+          document.dispatchEvent(
+            new CustomEvent('start-repl', {
+              detail: this.id,
+            }),
+          );
         } else {
           this.drawer.stop();
           updateMiniLocations(this.editor, []);
@@ -179,6 +186,13 @@ export class StrudelMirror {
       this.root.style.backgroundColor = 'var(--background)';
       cmEditor.style.backgroundColor = 'transparent';
     }
+    // stop this repl when another repl is started
+    this.onStartRepl = (e) => {
+      if (e.detail !== this.id) {
+        this.stop();
+      }
+    };
+    document.addEventListener('start-repl', this.onStartRepl);
   }
   async drawFirstFrame() {
     if (!this.onDraw) {
@@ -274,8 +288,18 @@ export class StrudelMirror {
     const changes = { from: 0, to: this.editor.state.doc.length, insert: code };
     this.editor.dispatch({ changes });
   }
+  clear() {
+    this.onStartRepl && document.removeEventListener('start-repl', this.onStartRepl);
+  }
 }
 
 function parseBooleans(value) {
   return { true: true, false: false }[value] ?? value;
+}
+
+// helper function to generate repl ids
+function s4() {
+  return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
 }

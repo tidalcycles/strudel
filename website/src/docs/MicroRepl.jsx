@@ -34,6 +34,7 @@ export function MicroRepl({
     }
 
     const editor = new StrudelMirror({
+      id,
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       transpiler,
@@ -76,6 +77,9 @@ export function MicroRepl({
         init({ code, shouldDraw });
       });
     }
+    return () => {
+      editor.clear();
+    };
   }, []);
 
   if (!client) {
