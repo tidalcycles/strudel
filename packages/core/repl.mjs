@@ -16,13 +16,36 @@ export function repl({
   transpiler,
   onToggle,
   editPattern,
+  onUpdateState,
 }) {
+  const state = {
+    schedulerError: undefined,
+    evalError: undefined,
+    code: '// LOADING',
+    activeCode: '// LOADING',
+    pattern: undefined,
+    miniLocations: [],
+    widgets: [],
+    pending: true,
+    started: false,
+  };
+
+  const updateState = (update) => {
+    Object.assign(state, update);
+    state.isDirty = state.code !== state.activeCode;
+    state.error = state.evalError || state.schedulerError;
+    onUpdateState?.(state);
+  };
+
   const scheduler = new Cyclist({
     interval,
     onTrigger: getTrigger({ defaultOutput, getTime }),
     onError: onSchedulerError,
     getTime,
-    onToggle,
+    onToggle: (started) => {
+      updateState({ started });
+      onToggle?.(started);
+    },
   });
   let pPatterns = {};
   let allTransform;
@@ -43,6 +66,7 @@ export function repl({
       throw new Error('no code to evaluate');
     }
     try {
+      updateState({ code, pending: true });
       await beforeEval?.({ code });
       shouldHush && hush();
       let { pattern, meta } = await _evaluate(code, transpiler);
@@ -58,17 +82,28 @@ export function repl({
       }
       logger(`[eval] code updated`);
       setPattern(pattern, autostart);
+      updateState({
+        miniLocations: meta?.miniLocations || [],
+        widgets: meta?.widgets || [],
+        activeCode: code,
+        pattern,
+        evalError: undefined,
+        schedulerError: undefined,
+        pending: false,
+      });
       afterEval?.({ code, pattern, meta });
       return pattern;
     } catch (err) {
       // console.warn(`[repl] eval error: ${err.message}`);
       logger(`[eval] error: ${err.message}`, 'error');
+      updateState({ evalError: err, pending: false });
       onEvalError?.(err);
     }
   };
   const stop = () => scheduler.stop();
   const start = () => scheduler.start();
   const pause = () => scheduler.pause();
+  const toggle = () => scheduler.toggle();
   const setCps = (cps) => scheduler.setCps(cps);
   const setCpm = (cpm) => scheduler.setCps(cpm / 60);
 
@@ -127,8 +162,8 @@ export function repl({
     setCpm,
     setcpm: setCpm,
   });
-
-  return { scheduler, evaluate, start, stop, pause, setCps, setPattern };
+  const setCode = (code) => updateState({ code });
+  return { scheduler, evaluate, start, stop, pause, setCps, setPattern, setCode, toggle, state };
 }
 
 export const getTrigger =

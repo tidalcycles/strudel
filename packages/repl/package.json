@@ -1,7 +1,7 @@
 {
-  "name": "@strudel/codemirror",
-  "version": "0.9.0",
-  "description": "Codemirror Extensions for Strudel",
+  "name": "@strudel/repl",
+  "version": "0.9.4",
+  "description": "Strudel REPL as a Web Component",
   "main": "index.mjs",
   "publishConfig": {
     "main": "dist/index.js",
@@ -33,23 +33,17 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@codemirror/autocomplete": "^6.6.0",
-    "@codemirror/commands": "^6.2.4",
-    "@codemirror/lang-javascript": "^6.1.7",
-    "@codemirror/language": "^6.6.0",
-    "@codemirror/search": "^6.0.0",
-    "@codemirror/state": "^6.2.0",
-    "@codemirror/view": "^6.10.0",
-    "@lezer/highlight": "^1.1.4",
-    "@replit/codemirror-emacs": "^6.0.1",
-    "@replit/codemirror-vim": "^6.0.14",
-    "@replit/codemirror-vscode-keymap": "^6.0.2",
+    "@rollup/plugin-replace": "^5.0.5",
     "@strudel.cycles/core": "workspace:*",
-    "@uiw/codemirror-themes": "^4.19.16",
-    "@uiw/codemirror-themes-all": "^4.19.16",
-    "react-dom": "^18.2.0",
-    "nanostores": "^0.8.1",
-    "@nanostores/persistent": "^0.8.0"
+    "@strudel.cycles/midi": "workspace:*",
+    "@strudel.cycles/mini": "workspace:*",
+    "@strudel.cycles/soundfonts": "workspace:*",
+    "@strudel.cycles/tonal": "workspace:*",
+    "@strudel.cycles/transpiler": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
+    "@strudel/codemirror": "workspace:*",
+    "@strudel/hydra": "workspace:*",
+    "rollup-plugin-visualizer": "^5.8.1"
   },
   "devDependencies": {
     "vite": "^4.3.3"

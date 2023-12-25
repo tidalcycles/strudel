@@ -484,11 +484,16 @@ export function injectStyle(rule) {
   return () => styleSheet.deleteRule(ruleIndex);
 }
 
-let currentTheme, resetThemeStyle, themeStyle;
+let currentTheme,
+  resetThemeStyle,
+  themeStyle,
+  styleID = 'strudel-theme-vars';
 export function initTheme(theme) {
-  themeStyle = document.createElement('style');
-  themeStyle.id = 'strudel-theme';
-  document.head.append(themeStyle);
+  if (!document.getElementById(styleID)) {
+    themeStyle = document.createElement('style');
+    themeStyle.id = styleID;
+    document.head.append(themeStyle);
+  }
   activateTheme(theme);
 }
 
@@ -496,6 +501,7 @@ export function activateTheme(name) {
   if (currentTheme === name) {
     return;
   }
+  currentTheme = name;
   if (!settings[name]) {
     console.warn('theme', name, 'has no settings.. defaulting to strudelTheme settings');
   }

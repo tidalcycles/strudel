@@ -1,10 +1,5 @@
----
-import HeadCommonNew from '../../components/HeadCommonNew.astro';
----
-
 <html lang="en" class="dark">
   <head>
-    <HeadCommonNew />
     <title>Strudel Vanilla REPL</title>
   </head>
   <body class="h-app-height">
@@ -90,7 +85,8 @@ import HeadCommonNew from '../../components/HeadCommonNew.astro';
         <!-- <label><input type="checkbox" name="isTooltipEnabled" />isTooltipEnabled</label> -->
       </form>
     </div>
-    <div id="code"></div>
+    <strudel-editor id="editor"></strudel-editor>
     <script src="../../repl/vanilla/vanilla.mjs"></script>
+    <script src="@strudel/repl"></script>
   </body>
 </html>

@@ -12,7 +12,7 @@ select {
 
 html,
 body,
-#code,
+#editor,
 .cm-editor,
 .cm-scroller {
   padding: 0;

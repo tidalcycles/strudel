@@ -256,10 +256,13 @@ export function getDrawOptions(drawTime, options = {}) {
   return { fold: 1, ...options, cycles, playhead };
 }
 
+export const getPunchcardPainter =
+  (options = {}) =>
+  (ctx, time, haps, drawTime, paintOptions = {}) =>
+    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { ...paintOptions, ...options }) });
+
 Pattern.prototype.punchcard = function (options) {
-  return this.onPaint((ctx, time, haps, drawTime, paintOptions = {}) =>
-    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { ...paintOptions, ...options }) }),
-  );
+  return this.onPaint(getPunchcardPainter(options));
 };
 
 /**

@@ -1,94 +1,12 @@
-import { logger, getDrawContext, silence, controls, evalScope, hash2code, code2hash } from '@strudel.cycles/core';
-import { StrudelMirror, initTheme, activateTheme } from '@strudel/codemirror';
-import { transpiler } from '@strudel.cycles/transpiler';
-import {
-  getAudioContext,
-  webaudioOutput,
-  registerSynthSounds,
-  registerZZFXSounds,
-  samples,
-} from '@strudel.cycles/webaudio';
+import { hash2code, logger } from '@strudel.cycles/core';
+import { codemirrorSettings, defaultSettings } from '@strudel/codemirror';
 import './vanilla.css';
 
 let editor;
-const initialSettings = {
-  keybindings: 'codemirror',
-  isLineNumbersDisplayed: true,
-  isActiveLineHighlighted: true,
-  isAutoCompletionEnabled: false,
-  isPatternHighlightingEnabled: true,
-  isFlashEnabled: true,
-  isTooltipEnabled: false,
-  isLineWrappingEnabled: false,
-  theme: 'teletext',
-  fontFamily: 'monospace',
-  fontSize: 18,
-};
-initTheme(initialSettings.theme);
 
 async function run() {
-  const container = document.getElementById('code');
-  if (!container) {
-    console.warn('could not init: no container found');
-    return;
-  }
-
-  const drawContext = getDrawContext();
-  const drawTime = [-2, 2];
-  editor = new StrudelMirror({
-    defaultOutput: webaudioOutput,
-    getTime: () => getAudioContext().currentTime,
-    transpiler,
-    root: container,
-    initialCode: '// LOADING',
-    pattern: silence,
-    settings: initialSettings,
-    drawTime,
-    onDraw: (haps, time, frame, painters) => {
-      painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
-      painters?.forEach((painter) => {
-        // ctx time haps drawTime paintOptions
-        painter(drawContext, time, haps, drawTime, { clear: false });
-      });
-    },
-    prebake: async () => {
-      // populate scope / lazy load modules
-      const modulesLoading = evalScope(
-        import('@strudel.cycles/core'),
-        import('@strudel.cycles/tonal'),
-        import('@strudel.cycles/mini'),
-        // import('@strudel.cycles/xen'),
-        import('@strudel.cycles/webaudio'),
-        import('@strudel/codemirror'),
-        /* import('@strudel/hydra'), */
-        // import('@strudel.cycles/serial'),
-        /* import('@strudel.cycles/soundfonts'), */
-        // import('@strudel.cycles/csound'),
-        /* import('@strudel.cycles/midi'), */
-        // import('@strudel.cycles/osc'),
-        controls, // sadly, this cannot be exported from core directly (yet)
-      );
-      // load samples
-      const ds = 'https://raw.githubusercontent.com/felixroos/dough-samples/main/';
-      await Promise.all([
-        modulesLoading,
-        registerSynthSounds(),
-        registerZZFXSounds(),
-        samples(`${ds}/tidal-drum-machines.json`),
-        samples(`${ds}/piano.json`),
-        samples(`${ds}/Dirt-Samples.json`),
-        samples(`${ds}/EmuSP12.json`),
-        samples(`${ds}/vcsl.json`),
-      ]);
-    },
-    afterEval: ({ code }) => {
-      window.location.hash = '#' + code2hash(code);
-    },
-  });
-
-  // init settings
-  editor.updateSettings(initialSettings);
-
+  const repl = document.getElementById('editor');
+  editor = repl.editor;
   logger(`Welcome to Strudel! Click into the editor and then hit ctrl+enter to run the code!`, 'highlight');
   const codeParam = window.location.href.split('#')[1] || '';
 
@@ -192,11 +110,8 @@ function setFormValues(form, values) {
 }
 
 const form = document.querySelector('form[name=settings]');
-setFormValues(form, initialSettings);
+setFormValues(form, codemirrorSettings.get());
 form.addEventListener('change', () => {
-  const values = getFormValues(form, initialSettings);
-  // console.log('values', values);
-  editor.updateSettings(values);
-  // TODO: only activateTheme when it changes
-  activateTheme(values.theme);
+  const values = getFormValues(form, defaultSettings);
+  editor?.updateSettings(values);
 });
