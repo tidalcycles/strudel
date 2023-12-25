@@ -4,37 +4,30 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { logger, getDrawContext, silence, code2hash } from '@strudel.cycles/core';
+import { code2hash, getDrawContext, logger, silence } from '@strudel.cycles/core';
 import { cx } from '@strudel.cycles/react';
-import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 import { transpiler } from '@strudel.cycles/transpiler';
+import { getAudioContext, initAudioOnFirstClick, webaudioOutput } from '@strudel.cycles/webaudio';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
-import { createClient } from '@supabase/supabase-js';
 /* import { writeText } from '@tauri-apps/api/clipboard';
 import { nanoid } from 'nanoid'; */
-import { createContext, useState } from 'react';
+import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import {
-  useSettings,
-  settingsMap,
-  setLatestCode,
-  updateUserCode,
-  setActivePattern,
-  getActivePattern,
-  getUserPattern,
   initUserCode,
-  settingPatterns,
+  setActivePattern,
+  setLatestCode,
+  settingsMap,
+  updateUserCode,
+  useSettings,
 } from '../settings.mjs';
-import { isTauri } from '../tauri.mjs';
-import { Panel } from './panel/Panel';
 import { Header } from './Header';
 import Loader from './Loader';
 import './Repl.css';
-import { useCallback, useRef, useEffect } from 'react';
+import { Panel } from './panel/Panel';
 // import { prebake } from '@strudel/repl';
-import { prebake /* , resetSounds */ } from './prebake.mjs';
-import * as tunes from './tunes.mjs';
 import { useStore } from '@nanostores/react';
-import { getRandomTune, loadModules, initCode } from './util.mjs';
+import { prebake /* , resetSounds */ } from './prebake.mjs';
+import { getRandomTune, initCode, loadModules, shareCode } from './util.mjs';
 
 const { code: randomTune, name } = getRandomTune();
 export const ReplContext = createContext(null);
@@ -99,7 +92,6 @@ export function Repl2({ embedded = false }) {
     });
     // init settings
     initCode().then((decoded) => {
-      console.log('init code');
       let msg;
       if (decoded) {
         editor.setCode(decoded);
@@ -182,35 +174,7 @@ export function Repl2({ embedded = false }) {
     editorRef.current.repl.evaluate(code);
   };
 
-  /*  const handleShare = async () => {
-    const codeToShare = activeCode || code;
-    if (lastShared === codeToShare) {
-      logger(`Link already generated!`, 'error');
-      return;
-    }
-    // generate uuid in the browser
-    const hash = nanoid(12);
-    const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
-    const { data, error } = await supabase.from('code').insert([{ code: codeToShare, hash }]);
-    if (!error) {
-      setLastShared(activeCode || code);
-      // copy shareUrl to clipboard
-      if (isTauri()) {
-        await writeText(shareUrl);
-      } else {
-        await navigator.clipboard.writeText(shareUrl);
-      }
-      const message = `Link copied to clipboard: ${shareUrl}`;
-      alert(message);
-      // alert(message);
-      logger(message, 'highlight');
-    } else {
-      console.log('error', error);
-      const message = `Error: ${error.message}`;
-      // alert(message);
-      logger(message);
-    }
-  }; */
+  const handleShare = async () => shareCode(activeCode);
   const pending = false;
   //const error = undefined;
   // const { started, activeCode } = replState;
@@ -223,12 +187,10 @@ export function Repl2({ embedded = false }) {
     isDirty,
     lastShared,
     activeCode,
-    // handleChangeCode: codemirror.handleChangeCode,
     handleTogglePlay,
     handleUpdate,
     handleShuffle,
-    /* handleShare, */
-    handleShare: () => {},
+    handleShare,
   };
 
   return (

@@ -4,45 +4,28 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {
-  cleanupDraw,
-  cleanupUi,
-  controls,
-  evalScope,
-  getDrawContext,
-  logger,
-  code2hash,
-  hash2code,
-} from '@strudel.cycles/core';
-import { CodeMirror, cx, flash, useHighlighting, useStrudel, useKeydown } from '@strudel.cycles/react';
-import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
-import { createClient } from '@supabase/supabase-js';
-import { nanoid } from 'nanoid';
-import React, { createContext, useCallback, useEffect, useState, useMemo } from 'react';
-import './Repl.css';
-import { Panel } from './panel/Panel';
-import { Header } from './Header';
-import { prebake } from './prebake.mjs';
-import * as tunes from './tunes.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
-import { themes } from './themes.mjs';
-import {
-  settingsMap,
-  useSettings,
-  setLatestCode,
-  updateUserCode,
-  setActivePattern,
-  getActivePattern,
-  getUserPattern,
-  initUserCode,
-} from '../settings.mjs';
-import Loader from './Loader';
-import { settingPatterns } from '../settings.mjs';
-import { isTauri } from '../tauri.mjs';
+import { cleanupDraw, cleanupUi, code2hash, getDrawContext, logger } from '@strudel.cycles/core';
+import { CodeMirror, cx, flash, useHighlighting, useKeydown, useStrudel } from '@strudel.cycles/react';
 import { useWidgets } from '@strudel.cycles/react/src/hooks/useWidgets.mjs';
-import { writeText } from '@tauri-apps/api/clipboard';
+import { getAudioContext, initAudioOnFirstClick, resetLoadedSounds, webaudioOutput } from '@strudel.cycles/webaudio';
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  initUserCode,
+  setActivePattern,
+  setLatestCode,
+  settingsMap,
+  updateUserCode,
+  useSettings,
+} from '../settings.mjs';
+import { Header } from './Header';
+import Loader from './Loader';
+import './Repl.css';
 import { registerSamplesFromDB, userSamplesDBConfig } from './idbutils.mjs';
-import { getRandomTune, initCode, loadModules } from './util.mjs';
+import { Panel } from './panel/Panel';
+import { prebake } from './prebake.mjs';
+import { themes } from './themes.mjs';
+import { getRandomTune, initCode, loadModules, shareCode } from './util.mjs';
 
 const { latestCode } = settingsMap.get();
 
@@ -66,7 +49,6 @@ export const ReplContext = createContext(null);
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || window.location !== window.parent.location;
   const [view, setView] = useState(); // codemirror view
-  const [lastShared, setLastShared] = useState();
   const [pending, setPending] = useState(true);
   const {
     theme,

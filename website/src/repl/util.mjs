@@ -4,6 +4,8 @@ import { isTauri } from '../tauri.mjs';
 import './Repl.css';
 import * as tunes from './tunes.mjs';
 import { createClient } from '@supabase/supabase-js';
+import { nanoid } from 'nanoid';
+import { writeText } from '@tauri-apps/api/clipboard';
 
 // Create a single supabase client for interacting with your database
 const supabase = createClient(
@@ -78,6 +80,7 @@ export function loadModules() {
   );
 }
 
+let lastShared;
 export async function shareCode(codeToShare) {
   // const codeToShare = activeCode || code;
   if (lastShared === codeToShare) {
@@ -89,7 +92,7 @@ export async function shareCode(codeToShare) {
   const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
   const { data, error } = await supabase.from('code').insert([{ code: codeToShare, hash }]);
   if (!error) {
-    setLastShared(activeCode || code);
+    lastShared = codeToShare;
     // copy shareUrl to clipboard
     if (isTauri()) {
       await writeText(shareUrl);
