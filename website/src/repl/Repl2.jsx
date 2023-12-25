@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { logger, getDrawContext, silence, evalScope, controls } from '@strudel.cycles/core';
+import { logger, getDrawContext, silence, code2hash } from '@strudel.cycles/core';
 import { cx } from '@strudel.cycles/react';
 import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 import { transpiler } from '@strudel.cycles/transpiler';
@@ -34,47 +34,16 @@ import { useCallback, useRef, useEffect } from 'react';
 import { prebake /* , resetSounds */ } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
 import { useStore } from '@nanostores/react';
+import { getRandomTune, loadModules, initCode } from './util.mjs';
 
+const { code: randomTune, name } = getRandomTune();
 export const ReplContext = createContext(null);
 
 const { latestCode } = settingsMap.get();
 
 initAudioOnFirstClick();
 
-// Create a single supabase client for interacting with your database
-const supabase = createClient(
-  'https://pidxdsxphlhzjnzmifth.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
-);
-
-let modules = [
-  import('@strudel.cycles/core'),
-  import('@strudel.cycles/tonal'),
-  import('@strudel.cycles/mini'),
-  import('@strudel.cycles/xen'),
-  import('@strudel.cycles/webaudio'),
-  import('@strudel/codemirror'),
-  import('@strudel/hydra'),
-  import('@strudel.cycles/serial'),
-  import('@strudel.cycles/soundfonts'),
-  import('@strudel.cycles/csound'),
-];
-if (isTauri()) {
-  modules = modules.concat([
-    import('@strudel/desktopbridge/loggerbridge.mjs'),
-    import('@strudel/desktopbridge/midibridge.mjs'),
-    import('@strudel/desktopbridge/oscbridge.mjs'),
-  ]);
-} else {
-  modules = modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
-}
-
-const modulesLoading = evalScope(
-  controls, // sadly, this cannot be exported from core direclty
-  settingPatterns,
-  ...modules,
-);
-
+const modulesLoading = loadModules();
 const presets = prebake();
 
 let drawContext, clearCanvas;
@@ -94,7 +63,7 @@ export function Repl2({ embedded = false }) {
   const isDirty = useStore($repldirty); */
   const shouldDraw = true;
 
-  const init = useCallback(({ code, shouldDraw }) => {
+  const init = useCallback(({ shouldDraw }) => {
     const drawTime = [0, 4];
     const drawContext = shouldDraw ? getDrawContext() : null;
     let onDraw;
@@ -121,9 +90,34 @@ export function Repl2({ embedded = false }) {
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
+      afterEval: ({ code }) => {
+        updateUserCode(code);
+        // setPending(false);
+        setLatestCode(code);
+        window.location.hash = '#' + code2hash(code);
+      },
     });
     // init settings
-    editor.setCode(code);
+    initCode().then((decoded) => {
+      console.log('init code');
+      let msg;
+      if (decoded) {
+        editor.setCode(decoded);
+        initUserCode(decoded);
+        msg = `I have loaded the code from the URL.`;
+      } else if (latestCode) {
+        editor.setCode(latestCode);
+        msg = `Your last session has been loaded!`;
+      } /*  if(randomTune) */ else {
+        editor.setCode(randomTune);
+        msg = `A random code snippet named "${name}" has been loaded!`;
+      }
+      //registers samples that have been saved to the index DB
+      // registerSamplesFromDB(userSamplesDBConfig);
+      logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
+      // setPending(false);
+    });
+
     editorRef.current = editor;
   }, []);
 
@@ -136,7 +130,7 @@ export function Repl2({ embedded = false }) {
     setClient(true);
     if (!editorRef.current) {
       setTimeout(() => {
-        init({ code: 's("bd")', shouldDraw });
+        init({ shouldDraw });
       });
     }
     return () => {
@@ -162,7 +156,19 @@ export function Repl2({ embedded = false }) {
   //
 
   const handleTogglePlay = async () => editorRef.current?.toggle();
-  const handleUpdate = () => editorRef.current?.evaluate();
+  const handleUpdate = async (newCode, reset = false) => {
+    if (reset) {
+      clearCanvas();
+      resetLoadedSounds();
+      editorRef.current.repl.setCps(1);
+      await prebake(); // declare default samples
+    }
+    if (newCode || isDirty) {
+      editorRef.current.setCode(newCode);
+      editorRef.current.repl.evaluate(newCode);
+    }
+    logger('[repl] code updated!');
+  };
   const handleShuffle = async () => {
     // window.postMessage('strudel-shuffle');
     const { code, name } = getRandomTune();
@@ -261,11 +267,4 @@ export function Repl2({ embedded = false }) {
       </div>
     </ReplContext.Provider>
   );
-}
-
-function getRandomTune() {
-  const allTunes = Object.entries(tunes);
-  const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
-  const [name, code] = randomItem(allTunes);
-  return { name, code };
 }
