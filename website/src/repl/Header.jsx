@@ -18,7 +18,6 @@ export function Header({ context }) {
     started,
     pending,
     isDirty,
-    lastShared,
     activeCode,
     handleTogglePlay,
     handleUpdate,
@@ -119,7 +118,7 @@ export function Header({ context }) {
               onClick={handleShare}
             >
               <LinkIcon className="w-6 h-6" />
-              <span>share{lastShared && lastShared === (activeCode || code) ? 'd!' : ''}</span>
+              <span>share</span>
             </button>
           )}
           {!isEmbedded && (

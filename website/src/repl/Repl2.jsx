@@ -28,6 +28,7 @@ import { Panel } from './panel/Panel';
 import { useStore } from '@nanostores/react';
 import { prebake /* , resetSounds */ } from './prebake.mjs';
 import { getRandomTune, initCode, loadModules, shareCode } from './util.mjs';
+import './Repl.css';
 
 const { code: randomTune, name } = getRandomTune();
 export const ReplContext = createContext(null);
@@ -50,7 +51,6 @@ if (typeof window !== 'undefined') {
 export function Repl2({ embedded = false }) {
   //const isEmbedded = embedded || window.location !== window.parent.location;
   const isEmbedded = false;
-  const [lastShared, setLastShared] = useState();
   const { panelPosition, isZen } = useSettings();
   /* const replState = useStore($replstate);
   const isDirty = useStore($repldirty); */
@@ -89,6 +89,7 @@ export function Repl2({ embedded = false }) {
         setLatestCode(code);
         window.location.hash = '#' + code2hash(code);
       },
+      bgFill: false,
     });
     // init settings
     initCode().then((decoded) => {
@@ -185,7 +186,6 @@ export function Repl2({ embedded = false }) {
     started,
     pending,
     isDirty,
-    lastShared,
     activeCode,
     handleTogglePlay,
     handleUpdate,

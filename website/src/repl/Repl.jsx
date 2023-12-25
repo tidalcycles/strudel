@@ -209,7 +209,6 @@ export function Repl({ embedded = false }) {
     started,
     pending,
     isDirty,
-    lastShared,
     activeCode,
     handleChangeCode,
     handleTogglePlay,

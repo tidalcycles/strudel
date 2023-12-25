@@ -108,7 +108,17 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
 
 export class StrudelMirror {
   constructor(options) {
-    const { root, id, initialCode = '', onDraw, drawTime = [-2, 2], autodraw, prebake, ...replOptions } = options;
+    const {
+      root,
+      id,
+      initialCode = '',
+      onDraw,
+      drawTime = [-2, 2],
+      autodraw,
+      prebake,
+      bgFill = true,
+      ...replOptions
+    } = options;
     this.code = initialCode;
     this.root = root;
     this.miniLocations = [];
@@ -183,7 +193,9 @@ export class StrudelMirror {
     const cmEditor = this.root.querySelector('.cm-editor');
     if (cmEditor) {
       this.root.style.display = 'block';
-      this.root.style.backgroundColor = 'var(--background)';
+      if (bgFill) {
+        this.root.style.backgroundColor = 'var(--background)';
+      }
       cmEditor.style.backgroundColor = 'transparent';
     }
     const settings = codemirrorSettings.get();
