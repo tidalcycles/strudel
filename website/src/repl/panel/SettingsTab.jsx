@@ -78,6 +78,7 @@ export function SettingsTab() {
     theme,
     keybindings,
     isLineNumbersDisplayed,
+    isPatternHighlightingEnabled,
     isActiveLineHighlighted,
     isAutoCompletionEnabled,
     isTooltipEnabled,
@@ -152,6 +153,11 @@ export function SettingsTab() {
           label="Highlight active line"
           onChange={(cbEvent) => settingsMap.setKey('isActiveLineHighlighted', cbEvent.target.checked)}
           value={isActiveLineHighlighted}
+        />
+        <Checkbox
+          label="Highlight events in code"
+          onChange={(cbEvent) => settingsMap.setKey('isPatternHighlightingEnabled', cbEvent.target.checked)}
+          value={isPatternHighlightingEnabled}
         />
         <Checkbox
           label="Enable auto-completion"
