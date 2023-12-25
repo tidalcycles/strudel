@@ -1,4 +1,4 @@
-import { controls, evalScope, hash2code } from '@strudel.cycles/core';
+import { controls, evalScope, hash2code, logger } from '@strudel.cycles/core';
 import { settingPatterns } from '../settings.mjs';
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
@@ -30,7 +30,7 @@ export async function initCode() {
         .eq('hash', hash)
         .then(({ data, error }) => {
           if (error) {
-            console.warn('failed to load hash', err);
+            console.warn('failed to load hash', error);
           }
           if (data.length) {
             //console.log('load hash from database', hash);
