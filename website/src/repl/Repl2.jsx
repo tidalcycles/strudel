@@ -8,7 +8,7 @@ import { logger, getDrawContext, silence, evalScope, controls } from '@strudel.c
 import { cx } from '@strudel.cycles/react';
 import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 import { transpiler } from '@strudel.cycles/transpiler';
-import { StrudelMirror } from '@strudel/codemirror';
+import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { createClient } from '@supabase/supabase-js';
 /* import { writeText } from '@tauri-apps/api/clipboard';
 import { nanoid } from 'nanoid'; */
@@ -33,6 +33,7 @@ import { useCallback, useRef, useEffect } from 'react';
 // import { prebake } from '@strudel/repl';
 import { prebake /* , resetSounds */ } from './prebake.mjs';
 import * as tunes from './tunes.mjs';
+import { useStore } from '@nanostores/react';
 
 export const ReplContext = createContext(null);
 
@@ -139,9 +140,22 @@ export function Repl2({ embedded = false }) {
       });
     }
     return () => {
-      editor.clear();
+      editorRef.current?.clear();
     };
   }, []);
+
+  // this can be simplified once SettingsTab has been refactored to change codemirrorSettings directly!
+  // this will be the case when the main repl is being replaced
+  const _settings = useStore(settingsMap, { keys: Object.keys(defaultSettings) });
+  useEffect(() => {
+    let editorSettings = {};
+    Object.keys(defaultSettings).forEach((key) => {
+      if (_settings.hasOwnProperty(key)) {
+        editorSettings[key] = _settings[key];
+      }
+    });
+    editorRef.current?.updateSettings(editorSettings);
+  }, [_settings]);
 
   //
   // UI Actions

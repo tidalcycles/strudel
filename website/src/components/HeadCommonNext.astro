@@ -1,0 +1,58 @@
+---
+import { pwaInfo } from 'virtual:pwa-info';
+import '../styles/index.css';
+
+const { BASE_URL } = import.meta.env;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+<meta name="generator" content={Astro.generator} />
+
+<link rel="icon" type="image/svg+xml" href={`${baseNoTrailing}/favicon.ico`} />
+
+<meta
+  name="description"
+  content="Strudel is a music live coding environment for the browser, porting the TidalCycles pattern language to JavaScript."
+/>
+<link rel="icon" href={`${baseNoTrailing}/favicon.ico`} />
+<link rel="apple-touch-icon" href={`${baseNoTrailing}/icons/apple-icon-180.png`} sizes="180x180" />
+<meta name="theme-color" content="#222222" />
+
+<base href={BASE_URL} />
+
+<!-- Scrollable a11y code helper -->
+<script src{`${baseNoTrailing}/make-scrollable-code-focusable.js`} is:inline></script>
+
+<script src="/src/pwa.ts"></script>
+<!-- this does not work for some reason: -->
+<!-- <style is:global define:vars={strudelTheme}></style> -->
+<!-- the following variables are just a fallback to make sure everything is readable without JS -->
+<style is:global>
+  :root {
+    --background: #222;
+    --lineBackground: #22222299;
+    --foreground: #fff;
+    --caret: #ffcc00;
+    --selection: rgba(128, 203, 196, 0.5);
+    --selectionMatch: #036dd626;
+    --lineHighlight: #00000050;
+    --gutterBackground: transparent;
+    --gutterForeground: #8a919966;
+  }
+</style>
+{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+
+<script>
+  // https://medium.com/quick-code/100vh-problem-with-ios-safari-92ab23c852a8
+  const appHeight = () => {
+    const doc = document.documentElement;
+    doc.style.setProperty('--app-height', `${window.innerHeight - 1}px`);
+  };
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', appHeight);
+    appHeight();
+  }
+</script>

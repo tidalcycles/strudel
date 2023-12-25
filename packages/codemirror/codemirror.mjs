@@ -186,6 +186,10 @@ export class StrudelMirror {
       this.root.style.backgroundColor = 'var(--background)';
       cmEditor.style.backgroundColor = 'transparent';
     }
+    const settings = codemirrorSettings.get();
+    this.setFontSize(settings.fontSize);
+    this.setFontFamily(settings.fontFamily);
+
     // stop this repl when another repl is started
     this.onStartRepl = (e) => {
       if (e.detail !== this.id) {

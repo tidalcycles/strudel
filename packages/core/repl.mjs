@@ -62,10 +62,6 @@ export function repl({
   };
   setTime(() => scheduler.now()); // TODO: refactor?
   const evaluate = async (code, autostart = true, shouldHush = true) => {
-    if (code === state.activeCode && state.started) {
-      logger('[eval] skip: not dirty')
-      return;
-    }
     if (!code) {
       throw new Error('no code to evaluate');
     }
