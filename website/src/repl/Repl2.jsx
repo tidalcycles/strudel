@@ -6,13 +6,24 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { logger, getDrawContext, silence, evalScope, controls } from '@strudel.cycles/core';
 import { cx } from '@strudel.cycles/react';
-import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
+import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel.cycles/webaudio';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { StrudelMirror } from '@strudel/codemirror';
+import { createClient } from '@supabase/supabase-js';
 /* import { writeText } from '@tauri-apps/api/clipboard';
 import { nanoid } from 'nanoid'; */
 import { createContext, useState } from 'react';
-import { useSettings } from '../settings.mjs';
+import {
+  useSettings,
+  settingsMap,
+  setLatestCode,
+  updateUserCode,
+  setActivePattern,
+  getActivePattern,
+  getUserPattern,
+  initUserCode,
+  settingPatterns,
+} from '../settings.mjs';
 import { isTauri } from '../tauri.mjs';
 import { Panel } from './panel/Panel';
 import { Header } from './Header';
@@ -21,8 +32,57 @@ import './Repl.css';
 import { useCallback, useRef, useEffect } from 'react';
 // import { prebake } from '@strudel/repl';
 import { prebake /* , resetSounds */ } from './prebake.mjs';
+import * as tunes from './tunes.mjs';
 
 export const ReplContext = createContext(null);
+
+const { latestCode } = settingsMap.get();
+
+initAudioOnFirstClick();
+
+// Create a single supabase client for interacting with your database
+const supabase = createClient(
+  'https://pidxdsxphlhzjnzmifth.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
+);
+
+let modules = [
+  import('@strudel.cycles/core'),
+  import('@strudel.cycles/tonal'),
+  import('@strudel.cycles/mini'),
+  import('@strudel.cycles/xen'),
+  import('@strudel.cycles/webaudio'),
+  import('@strudel/codemirror'),
+  import('@strudel/hydra'),
+  import('@strudel.cycles/serial'),
+  import('@strudel.cycles/soundfonts'),
+  import('@strudel.cycles/csound'),
+];
+if (isTauri()) {
+  modules = modules.concat([
+    import('@strudel/desktopbridge/loggerbridge.mjs'),
+    import('@strudel/desktopbridge/midibridge.mjs'),
+    import('@strudel/desktopbridge/oscbridge.mjs'),
+  ]);
+} else {
+  modules = modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
+}
+
+const modulesLoading = evalScope(
+  controls, // sadly, this cannot be exported from core direclty
+  settingPatterns,
+  ...modules,
+);
+
+const presets = prebake();
+
+let drawContext, clearCanvas;
+if (typeof window !== 'undefined') {
+  drawContext = getDrawContext();
+  clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
+}
+
+// const getTime = () => getAudioContext().currentTime;
 
 export function Repl2({ embedded = false }) {
   //const isEmbedded = embedded || window.location !== window.parent.location;
@@ -56,36 +116,7 @@ export function Repl2({ embedded = false }) {
       pattern: silence,
       drawTime,
       onDraw,
-      prebake: async () => {
-        let modules = [
-          import('@strudel.cycles/core'),
-          import('@strudel.cycles/tonal'),
-          import('@strudel.cycles/mini'),
-          import('@strudel.cycles/xen'),
-          import('@strudel.cycles/webaudio'),
-          import('@strudel/codemirror'),
-          import('@strudel/hydra'),
-          import('@strudel.cycles/serial'),
-          import('@strudel.cycles/soundfonts'),
-          import('@strudel.cycles/csound'),
-        ];
-        if (isTauri()) {
-          modules = modules.concat([
-            import('@strudel/desktopbridge/loggerbridge.mjs'),
-            import('@strudel/desktopbridge/midibridge.mjs'),
-            import('@strudel/desktopbridge/oscbridge.mjs'),
-          ]);
-        } else {
-          modules = modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
-        }
-
-        const modulesLoading = evalScope(
-          controls, // sadly, this cannot be exported from core direclty
-          // settingPatterns,
-          ...modules,
-        );
-        await Promise.all([modulesLoading, prebake()]);
-      },
+      prebake: async () => Promise.all([modulesLoading, presets]),
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
@@ -116,24 +147,19 @@ export function Repl2({ embedded = false }) {
   // UI Actions
   //
 
-  const handleTogglePlay = async () => {
-    editorRef.current?.toggle();
-    /* await getAudioContext().resume(); // fixes no sound in ios webkit
-    if (!started) {
-      logger('[repl] started. tip: you can also start by pressing ctrl+enter', 'highlight');
-      activateCode();
-    } else {
-      logger('[repl] stopped. tip: you can also stop by pressing ctrl+dot', 'highlight');
-      stop();
-    } */
-  };
-  const handleUpdate = () => {
-    isDirty && activateCode();
-    logger('[repl] code updated! tip: you can also update the code by pressing ctrl+enter', 'highlight');
-  };
-
+  const handleTogglePlay = async () => editorRef.current?.toggle();
+  const handleUpdate = () => editorRef.current?.evaluate();
   const handleShuffle = async () => {
     // window.postMessage('strudel-shuffle');
+    const { code, name } = getRandomTune();
+    logger(`[repl] ✨ loading random tune "${name}"`);
+    setActivePattern(name);
+    clearCanvas();
+    resetLoadedSounds();
+    editorRef.current.repl.setCps(1);
+    await prebake(); // declare default samples
+    editorRef.current.setCode(code);
+    editorRef.current.repl.evaluate(code);
   };
 
   /*  const handleShare = async () => {
@@ -221,4 +247,11 @@ export function Repl2({ embedded = false }) {
       </div>
     </ReplContext.Provider>
   );
+}
+
+function getRandomTune() {
+  const allTunes = Object.entries(tunes);
+  const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const [name, code] = randomItem(allTunes);
+  return { name, code };
 }
