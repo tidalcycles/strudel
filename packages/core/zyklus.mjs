@@ -39,6 +39,7 @@ function createClock(
   const pause = () => clear();
   const stop = () => {
     tick = 0;
+    phase = 0;
     clear();
   };
   const getPhase = () => phase;
