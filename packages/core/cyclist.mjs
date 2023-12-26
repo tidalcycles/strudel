@@ -11,10 +11,14 @@ export class Cyclist {
   constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
     this.started = false;
     this.cps = 1;
+
+    // this.num_ticks_since_cps_change = 0;
     this.lastTick = 0; // absolute time when last tick (clock callback) happened
     this.lastBegin = 0; // query begin of last tick
     this.lastEnd = 0; // query end of last tick
     this.getTime = getTime; // get absolute time
+    this.num_cycles_since_last_cps_change = 0;
+    this.time_last_cps_change = 0;
     this.onToggle = onToggle;
     this.latency = latency; // fixed trigger time offset
     const round = (x) => Math.round(x * 1000) / 1000;
@@ -25,14 +29,20 @@ export class Cyclist {
         if (tick === 0) {
           this.origin = phase;
         }
+        if (this.num_ticks_since_cps_change === 0) {
+          this.num_cycles_since_last_cps_change = this.lastEnd;
+        }
+        this.num_ticks_since_cps_change++;
         try {
           const time = getTime();
           const begin = this.lastEnd;
           this.lastBegin = begin;
-          const end = round(begin + duration * this.cps);
+          const eventLength = duration * this.cps;
+          const end = this.num_cycles_since_last_cps_change + this.num_ticks_since_cps_change * eventLength;
+          // const end = round(begin + duration * this.cps);
           this.lastEnd = end;
           const haps = this.pattern.queryArc(begin, end);
-          const tickdeadline = phase - time; // time left till phase begins
+          const tickdeadline = phase - time; // time left till phase tick begins
           this.lastTick = time + tickdeadline;
 
           haps.forEach((hap) => {
@@ -59,6 +69,9 @@ export class Cyclist {
     this.onToggle?.(v);
   }
   start() {
+    // this.time_last_cps_change = 0;
+    this.num_ticks_since_cps_change = 0;
+    this.num_cycles_since_last_cps_change = 0;
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
@@ -84,7 +97,12 @@ export class Cyclist {
     }
   }
   setCps(cps = 1) {
+    if (this.cps === cps) {
+      return;
+    }
     this.cps = cps;
+    // this.time_last_cps_change = this.getTime();
+    this.num_ticks_since_cps_change = 0;
   }
   log(begin, end, haps) {
     const onsets = haps.filter((h) => h.hasOnset());
