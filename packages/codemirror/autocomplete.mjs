@@ -10,9 +10,9 @@ const getInnerText = (html) => {
   return div.textContent || div.innerText || '';
 };
 
-function Autocomplete({ doc }) {
+export function Autocomplete({ doc, label }) {
   return h`<div class="prose dark:prose-invert max-h-[400px] overflow-auto">
-<h1 class="pt-0 mt-0">${getDocLabel(doc)}</h1>
+<h1 class="pt-0 mt-0">${label || getDocLabel(doc)}</h1>
 ${doc.description}
 <ul>
   ${doc.params?.map(
@@ -50,12 +50,7 @@ const jsdocCompletions = jsdoc.docs
   .map((doc) /*: Completion */ => ({
     label: getDocLabel(doc),
     // detail: 'xxx', // An optional short piece of information to show (with a different style) after the label.
-    info: () => {
-      const node = document.createElement('div');
-      const ac = Autocomplete({ doc });
-      node.appendChild(ac);
-      return node;
-    },
+    info: () => Autocomplete({ doc }),
     type: 'function', // https://codemirror.net/docs/ref/#autocomplete.Completion.type
   }));
 

@@ -7,6 +7,7 @@ import { Compartment, EditorState, Prec } from '@codemirror/state';
 import { EditorView, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view';
 import { Pattern, Drawer, repl, cleanupDraw } from '@strudel.cycles/core';
 import { isAutoCompletionEnabled } from './autocomplete.mjs';
+import { isTooltipEnabled } from './tooltip.mjs';
 import { flash, isFlashEnabled } from './flash.mjs';
 import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
 import { keybindings } from './keybindings.mjs';
@@ -19,6 +20,7 @@ const extensions = {
   isLineNumbersDisplayed: (on) => (on ? lineNumbers() : []),
   theme,
   isAutoCompletionEnabled,
+  isTooltipEnabled,
   isPatternHighlightingEnabled,
   isActiveLineHighlighted: (on) => (on ? [highlightActiveLine(), highlightActiveLineGutter()] : []),
   isFlashEnabled,
