@@ -24,7 +24,7 @@ const clearIDB = () => {
 };
 
 // queries the DB, and registers the sounds so they can be played
-export const registerSamplesFromDB = (config, onComplete = () => {}) => {
+export const registerSamplesFromDB = (config = userSamplesDBConfig, onComplete = () => {}) => {
   openDB(config, (objectStore) => {
     let query = objectStore.getAll();
     query.onsuccess = (event) => {

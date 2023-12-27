@@ -6,7 +6,8 @@ import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language'
 import { Compartment, EditorState, Prec } from '@codemirror/state';
 import { EditorView, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view';
 import { Pattern, Drawer, repl, cleanupDraw } from '@strudel.cycles/core';
-// import { isAutoCompletionEnabled } from './Autocomplete';
+import { isAutoCompletionEnabled } from './autocomplete.mjs';
+import { isTooltipEnabled } from './tooltip.mjs';
 import { flash, isFlashEnabled } from './flash.mjs';
 import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
 import { keybindings } from './keybindings.mjs';
@@ -18,7 +19,8 @@ const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
   isLineNumbersDisplayed: (on) => (on ? lineNumbers() : []),
   theme,
-  // isAutoCompletionEnabled,
+  isAutoCompletionEnabled,
+  isTooltipEnabled,
   isPatternHighlightingEnabled,
   isActiveLineHighlighted: (on) => (on ? [highlightActiveLine(), highlightActiveLineGutter()] : []),
   isFlashEnabled,
@@ -108,7 +110,17 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
 
 export class StrudelMirror {
   constructor(options) {
-    const { root, id, initialCode = '', onDraw, drawTime = [-2, 2], autodraw, prebake, ...replOptions } = options;
+    const {
+      root,
+      id,
+      initialCode = '',
+      onDraw,
+      drawTime = [0, 0],
+      autodraw,
+      prebake,
+      bgFill = true,
+      ...replOptions
+    } = options;
     this.code = initialCode;
     this.root = root;
     this.miniLocations = [];
@@ -183,9 +195,15 @@ export class StrudelMirror {
     const cmEditor = this.root.querySelector('.cm-editor');
     if (cmEditor) {
       this.root.style.display = 'block';
-      this.root.style.backgroundColor = 'var(--background)';
+      if (bgFill) {
+        this.root.style.backgroundColor = 'var(--background)';
+      }
       cmEditor.style.backgroundColor = 'transparent';
     }
+    const settings = codemirrorSettings.get();
+    this.setFontSize(settings.fontSize);
+    this.setFontFamily(settings.fontFamily);
+
     // stop this repl when another repl is started
     this.onStartRepl = (e) => {
       if (e.detail !== this.id) {
