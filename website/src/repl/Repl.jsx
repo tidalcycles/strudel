@@ -21,7 +21,6 @@ import {
 import { Header } from './Header';
 import Loader from './Loader';
 import './Repl.css';
-import { registerSamplesFromDB, userSamplesDBConfig } from './idbutils.mjs';
 import { Panel } from './panel/Panel';
 import { prebake } from './prebake.mjs';
 import { themes } from './themes.mjs';
@@ -117,7 +116,6 @@ export function Repl({ embedded = false }) {
         msg = `A random code snippet named "${name}" has been loaded!`;
       }
       //registers samples that have been saved to the index DB
-      registerSamplesFromDB(userSamplesDBConfig);
       logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
       setPending(false);
     });
