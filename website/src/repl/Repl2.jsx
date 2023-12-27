@@ -128,6 +128,7 @@ export function Repl2({ embedded = false }) {
     }
     return () => {
       editorRef.current?.clear();
+      delete editorRef.current;
     };
   }, []);
 
