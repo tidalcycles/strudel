@@ -6,26 +6,28 @@ const getDocLabel = (doc) => doc.name || doc.longname;
 
 let ctrlDown = false;
 
-// Record Control key event to trigger or block the tooltip depending on the state
-window.addEventListener(
-  'keyup',
-  function (e) {
-    if (e.key == 'Control') {
-      ctrlDown = false;
-    }
-  },
-  true,
-);
+if (typeof window !== 'undefined') {
+  // Record Control key event to trigger or block the tooltip depending on the state
+  window.addEventListener(
+    'keyup',
+    function (e) {
+      if (e.key == 'Control') {
+        ctrlDown = false;
+      }
+    },
+    true,
+  );
 
-window.addEventListener(
-  'keydown',
-  function (e) {
-    if (e.key == 'Control') {
-      ctrlDown = true;
-    }
-  },
-  true,
-);
+  window.addEventListener(
+    'keydown',
+    function (e) {
+      if (e.key == 'Control') {
+        ctrlDown = true;
+      }
+    },
+    true,
+  );
+}
 
 export const strudelTooltip = hoverTooltip(
   (view, pos, side) => {
