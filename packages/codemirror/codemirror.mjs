@@ -115,7 +115,7 @@ export class StrudelMirror {
       id,
       initialCode = '',
       onDraw,
-      drawTime = [-2, 2],
+      drawTime = [0, 0],
       autodraw,
       prebake,
       bgFill = true,

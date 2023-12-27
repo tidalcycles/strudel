@@ -57,7 +57,10 @@ export function Repl2({ embedded = false }) {
   const shouldDraw = true;
 
   const init = useCallback(({ shouldDraw }) => {
-    const drawTime = [0, 4];
+    // TODO: find way to make spiral & punchcard work (if there's any)
+    // upping the 2nd value leads to slow eval times
+    // because Drawer.invalidate might query alot at one time
+    const drawTime = [0, 0];
     const drawContext = shouldDraw ? getDrawContext() : null;
     let onDraw;
     if (shouldDraw) {
@@ -105,8 +108,6 @@ export function Repl2({ embedded = false }) {
         editor.setCode(randomTune);
         msg = `A random code snippet named "${name}" has been loaded!`;
       }
-      //registers samples that have been saved to the index DB
-      // registerSamplesFromDB(userSamplesDBConfig);
       logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
       // setPending(false);
     });
