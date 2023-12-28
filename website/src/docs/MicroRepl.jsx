@@ -1,31 +1,35 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Icon } from './Icon';
-import { silence, getPunchcardPainter } from '@strudel.cycles/core';
+import { silence, getPunchcardPainter, noteToMidi } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
 import { StrudelMirror } from '@strudel/codemirror';
 import { prebake } from '@strudel/repl';
+import Claviature from '@components/Claviature';
 
 export function MicroRepl({
   code,
   hideHeader = false,
   canvasHeight = 100,
   onTrigger,
-  onPaint,
   punchcard,
   punchcardLabels = true,
+  claviature,
+  claviatureLabels,
 }) {
   const id = useMemo(() => s4(), []);
   const canvasId = useMemo(() => `canvas-${id}`, [id]);
-  const shouldDraw = !!punchcard;
+  const shouldDraw = !!punchcard || !!claviature;
+  const shouldShowCanvas = !!punchcard;
+  const drawTime = punchcard ? [0, 4] : [0, 0];
+  const [activeNotes, setActiveNotes] = useState([]);
 
   const init = useCallback(({ code, shouldDraw }) => {
-    const drawTime = [0, 4];
     const drawContext = shouldDraw ? document.querySelector('#' + canvasId)?.getContext('2d') : null;
     let onDraw;
     if (shouldDraw) {
       onDraw = (haps, time, frame, painters) => {
-        painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
+        painters.length && drawContext?.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
         painters?.forEach((painter) => {
           // ctx time haps drawTime paintOptions
           painter(drawContext, time, haps, drawTime, { clear: false });
@@ -48,10 +52,17 @@ export function MicroRepl({
         if (onTrigger) {
           pat = pat.onTrigger(onTrigger, false);
         }
-        if (onPaint) {
-          editor.painters.push(onPaint);
-        } else if (punchcard) {
-          editor.painters.push(getPunchcardPainter({ labels: !!punchcardLabels }));
+        if (claviature) {
+          editor?.painters.push((ctx, time, haps, drawTime) => {
+            const active = haps
+              .map((hap) => hap.value.note)
+              .filter(Boolean)
+              .map((n) => (typeof n === 'string' ? noteToMidi(n) : n));
+            setActiveNotes(active);
+          });
+        }
+        if (punchcard) {
+          editor?.painters.push(getPunchcardPainter({ labels: !!punchcardLabels }));
         }
         return pat;
       },
@@ -78,7 +89,7 @@ export function MicroRepl({
       });
     }
     return () => {
-      editor.clear();
+      editorRef.current?.clear();
     };
   }, []);
 
@@ -116,7 +127,7 @@ export function MicroRepl({
         <div ref={containerRef}></div>
         {error && <div className="text-right p-1 text-md text-red-200">{error.message}</div>}
       </div>
-      {shouldDraw && (
+      {shouldShowCanvas && (
         <canvas
           id={canvasId}
           className="w-full pointer-events-none border-t border-lineHighlight"
@@ -135,6 +146,16 @@ export function MicroRepl({
         ))}
       </div>
     ) */}
+      {claviature && (
+        <Claviature
+          options={{
+            range: ['C2', 'C6'],
+            scaleY: 0.75,
+            colorize: [{ keys: activeNotes, color: 'steelblue' }],
+            labels: claviatureLabels || {},
+          }}
+        />
+      )}
     </div>
   );
 }
