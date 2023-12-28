@@ -1,7 +1,6 @@
-import { noteToMidi, freqToMidi, _mod } from '@strudel.cycles/core';
+import { noteToMidi, freqToMidi, getSoundIndex } from '@strudel.cycles/core';
 import { getAudioContext, registerSound, getEnvelope } from '@strudel.cycles/webaudio';
 import gm from './gm.mjs';
-import { getSoundIndex } from '../superdough/util.mjs';
 
 let loadCache = {};
 async function loadFont(name) {

@@ -33,8 +33,9 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resol
   const ac = getAudioContext();
 
   let sampleUrl;
+  let index = 0;
   if (Array.isArray(bank)) {
-    const index = getSoundIndex(n, bank.length);
+    index = getSoundIndex(n, bank.length);
     sampleUrl = bank[index];
   } else {
     const midiDiff = (noteA) => noteToMidi(noteA) - midi;
@@ -46,13 +47,13 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resol
         null,
       );
     transpose = -midiDiff(closest); // semitones to repitch
-    const index = getSoundIndex(n, bank[closest].length);
+    index = getSoundIndex(n, bank[closest].length);
     sampleUrl = bank[closest][index];
   }
   if (resolveUrl) {
     sampleUrl = await resolveUrl(sampleUrl);
   }
-  let buffer = await loadBuffer(sampleUrl, ac, s, n);
+  let buffer = await loadBuffer(sampleUrl, ac, s, index);
   if (speed < 0) {
     // should this be cached?
     buffer = reverseBuffer(buffer);
