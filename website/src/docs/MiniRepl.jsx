@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect, useLayoutEffect } from 'react';
 import { Icon } from './Icon';
 import { silence, getPunchcardPainter, noteToMidi } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
@@ -8,6 +8,9 @@ import { StrudelMirror } from '@strudel/codemirror';
 import { prebake } from '../repl/prebake.mjs';
 import { loadModules } from '../repl/util.mjs';
 import Claviature from '@components/Claviature';
+
+// https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
+export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 let prebaked, modulesLoading;
 if (typeof window !== 'undefined') {
@@ -89,7 +92,8 @@ export function MiniRepl({
   const editorRef = useRef();
   const containerRef = useRef();
   const [client, setClient] = useState(false);
-  useEffect(() => {
+
+  useIsomorphicLayoutEffect(() => {
     setClient(true);
     if (!editorRef.current) {
       setTimeout(() => {
