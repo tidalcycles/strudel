@@ -145,6 +145,9 @@ export class Drawer {
       },
     );
   }
+  setDrawTime(drawTime) {
+    this.drawTime = drawTime;
+  }
   invalidate(scheduler = this.scheduler, t) {
     if (!scheduler) {
       return;

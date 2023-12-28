@@ -57,10 +57,7 @@ export function Repl2({ embedded = false }) {
   const shouldDraw = true;
 
   const init = useCallback(({ shouldDraw }) => {
-    // TODO: find way to make spiral & punchcard work (if there's any)
-    // upping the 2nd value leads to slow eval times
-    // because Drawer.invalidate might query alot at one time
-    const drawTime = [0, 0];
+    const drawTime = [-2, 2];
     const drawContext = shouldDraw ? getDrawContext() : null;
     let onDraw;
     if (shouldDraw) {
