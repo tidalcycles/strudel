@@ -23,7 +23,7 @@ export function Header({ context }) {
     handleShuffle,
     handleShare,
   } = context;
-  const isEmbedded = embedded || window.location !== window.parent.location;
+  const isEmbedded = typeof window !== 'undefined' && (embedded || window.location !== window.parent.location);
   const { isZen } = useSettings();
 
   return (

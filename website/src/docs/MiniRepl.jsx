@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo, useEffect, useLayoutEffect } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Icon } from './Icon';
 import { silence, getPunchcardPainter, noteToMidi } from '@strudel.cycles/core';
 import { transpiler } from '@strudel.cycles/transpiler';
@@ -8,9 +8,7 @@ import { StrudelMirror } from '@strudel/codemirror';
 import { prebake } from '../repl/prebake.mjs';
 import { loadModules } from '../repl/util.mjs';
 import Claviature from '@components/Claviature';
-
-// https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
-export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+import useClient from '@src/useClient.mjs';
 
 let prebaked, modulesLoading;
 if (typeof window !== 'undefined') {
@@ -91,19 +89,7 @@ export function MiniRepl({
   const { started, isDirty, error } = replState;
   const editorRef = useRef();
   const containerRef = useRef();
-  const [client, setClient] = useState(false);
-
-  useIsomorphicLayoutEffect(() => {
-    setClient(true);
-    if (!editorRef.current) {
-      setTimeout(() => {
-        init({ code, shouldDraw });
-      });
-    }
-    return () => {
-      editorRef.current?.clear();
-    };
-  }, []);
+  const client = useClient();
 
   if (!client) {
     return <pre>{code}</pre>;
@@ -136,7 +122,14 @@ export function MiniRepl({
         </div>
       )}
       <div className="overflow-auto relative p-1">
-        <div ref={containerRef}></div>
+        <div
+          ref={(el) => {
+            if (!editorRef.current) {
+              containerRef.current = el;
+              init({ code, shouldDraw });
+            }
+          }}
+        ></div>
         {error && <div className="text-right p-1 text-md text-red-200">{error.message}</div>}
       </div>
       {shouldShowCanvas && (

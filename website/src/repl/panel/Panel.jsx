@@ -3,7 +3,7 @@ import { logger } from '@strudel.cycles/core';
 import useEvent from '@src/useEvent.mjs';
 import cx from '@src/cx.mjs';
 import { nanoid } from 'nanoid';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useEffect, useRef, useState } from 'react';
 import { setActiveFooter, useSettings } from '../../settings.mjs';
 import { ConsoleTab } from './ConsoleTab';
 import { FilesTab } from './FilesTab';
@@ -12,21 +12,25 @@ import { SettingsTab } from './SettingsTab';
 import { SoundsTab } from './SoundsTab';
 import { WelcomeTab } from './WelcomeTab';
 import { PatternsTab } from './PatternsTab';
+import useClient from '@src/useClient.mjs';
 
-const TAURI = window.__TAURI__;
+// https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
+export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+const TAURI = typeof window !== 'undefined' && window.__TAURI__;
 
 export function Panel({ context }) {
   const footerContent = useRef();
   const [log, setLog] = useState([]);
   const { activeFooter, isZen, panelPosition } = useSettings();
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (footerContent.current && activeFooter === 'console') {
       // scroll log box to bottom when log changes
       footerContent.current.scrollTop = footerContent.current?.scrollHeight;
     }
   }, [log, activeFooter]);
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!footerContent.current) {
     } else if (activeFooter === 'console') {
       footerContent.current.scrollTop = footerContent.current?.scrollHeight;
@@ -80,6 +84,10 @@ export function Panel({ context }) {
     right: cx('max-w-full flex-grow-0 flex-none overflow-hidden', isActive ? 'w-[600px] h-full' : 'absolute right-0'),
     bottom: cx('relative', isActive ? 'h-[360px] min-h-[360px]' : ''),
   };
+  const client = useClient();
+  if (!client) {
+    return null;
+  }
   return (
     <nav className={cx('bg-lineHighlight z-[10] flex flex-col', positions[panelPosition])}>
       <div className="flex justify-between px-2">

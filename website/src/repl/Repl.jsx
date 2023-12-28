@@ -35,18 +35,14 @@ export const ReplContext = createContext(null);
 
 const { latestCode } = settingsMap.get();
 
-initAudioOnFirstClick();
-
-const modulesLoading = loadModules();
-const presets = prebake();
-
-let drawContext, clearCanvas;
+let modulesLoading, presets, drawContext, clearCanvas;
 if (typeof window !== 'undefined') {
+  initAudioOnFirstClick();
+  modulesLoading = loadModules();
+  presets = prebake();
   drawContext = getDrawContext();
   clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
 }
-
-// const getTime = () => getAudioContext().currentTime;
 
 export function Repl({ embedded = false }) {
   //const isEmbedded = embedded || window.location !== window.parent.location;
@@ -116,19 +112,6 @@ export function Repl({ embedded = false }) {
   const { started, isDirty, error, activeCode } = replState;
   const editorRef = useRef();
   const containerRef = useRef();
-  const [client, setClient] = useState(false);
-  useEffect(() => {
-    setClient(true);
-    if (!editorRef.current) {
-      setTimeout(() => {
-        init({ shouldDraw });
-      });
-    }
-    return () => {
-      editorRef.current?.clear();
-      delete editorRef.current;
-    };
-  }, []);
 
   // this can be simplified once SettingsTab has been refactored to change codemirrorSettings directly!
   // this will be the case when the main repl is being replaced
@@ -217,7 +200,12 @@ export function Repl({ embedded = false }) {
           <section
             className={'text-gray-100 cursor-text pb-0 overflow-auto grow' + (isZen ? ' px-10' : '')}
             id="code"
-            ref={containerRef}
+            ref={(el) => {
+              containerRef.current = el;
+              if (!editorRef.current) {
+                init({ shouldDraw });
+              }
+            }}
           ></section>
           {panelPosition === 'right' && !isEmbedded && <Panel context={context} />}
         </div>
