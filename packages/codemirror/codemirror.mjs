@@ -218,7 +218,7 @@ export class StrudelMirror {
   // adjusts draw time depending on if there are painters
   adjustDrawTime() {
     // when no painters are set, [0,0] is enough (just highlighting)
-    this.drawer.setDrawTime(!!this.painters.length ? this.drawTime : [0, 0]);
+    this.drawer.setDrawTime(this.painters.length ? this.drawTime : [0, 0]);
   }
   async drawFirstFrame() {
     if (!this.onDraw) {
