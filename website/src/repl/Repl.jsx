@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { code2hash, getDrawContext, logger, silence } from '@strudel.cycles/core';
-import { cx } from '@strudel.cycles/react';
+import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { getAudioContext, initAudioOnFirstClick, webaudioOutput } from '@strudel.cycles/webaudio';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';

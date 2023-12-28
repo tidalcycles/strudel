@@ -669,9 +669,6 @@ importers:
       '@strudel.cycles/osc':
         specifier: workspace:*
         version: link:../packages/osc
-      '@strudel.cycles/react':
-        specifier: workspace:*
-        version: link:../packages/react
       '@strudel.cycles/serial':
         specifier: workspace:*
         version: link:../packages/serial

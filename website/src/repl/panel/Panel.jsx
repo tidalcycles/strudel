@@ -1,6 +1,7 @@
 import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon';
 import { logger } from '@strudel.cycles/core';
-import { cx, useEvent } from '@strudel.cycles/react';
+import useEvent from '@src/useEvent.mjs';
+import cx from '@src/cx.mjs';
 import { nanoid } from 'nanoid';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { setActiveFooter, useSettings } from '../../settings.mjs';

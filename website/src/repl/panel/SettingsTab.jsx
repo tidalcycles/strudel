@@ -1,6 +1,5 @@
-import React from 'react';
 import { defaultSettings, settingsMap, useSettings } from '../../settings.mjs';
-import { themes } from '../themes.mjs';
+import { themes } from '@strudel/codemirror';
 import { ButtonGroup } from './Forms.jsx';
 
 function Checkbox({ label, value, onChange }) {

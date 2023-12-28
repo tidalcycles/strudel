@@ -1,5 +1,4 @@
-import { useEvent } from '@strudel.cycles/react';
-// import { cx } from '@strudel.cycles/react';
+import useEvent from '@src/useEvent.mjs';
 import { useStore } from '@nanostores/react';
 import { getAudioContext, soundMap, connectToDestination } from '@strudel.cycles/webaudio';
 import React, { useMemo, useRef } from 'react';

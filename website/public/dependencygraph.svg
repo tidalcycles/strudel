@@ -96,12 +96,6 @@
 </g>
 <!-- @strudel.cycles/osc@0.6.0&#45;&gt;osc&#45;js@2.4.0 -->
 
-<!-- @strudel.cycles/react@0.6.0 -->
-<g id="node7" class="node module-_strudel_cycles_react collapsed maintainer-yaxupaxo maintainer-felixroos license-agpl_3_0_or_later" data-module="@strudel.cycles/react@0.6.0">
-<title>@strudel.cycles/react@0.6.0</title>
-<path fill="none" stroke="black" d="M175.73,-499.3C175.73,-499.3 55.96,-499.3 55.96,-499.3 52.73,-499.3 49.49,-496.07 49.49,-492.83 49.49,-492.83 49.49,-486.37 49.49,-486.37 49.49,-483.13 52.73,-479.9 55.96,-479.9 55.96,-479.9 175.73,-479.9 175.73,-479.9 178.97,-479.9 182.2,-483.13 182.2,-486.37 182.2,-486.37 182.2,-492.83 182.2,-492.83 182.2,-496.07 178.97,-499.3 175.73,-499.3"></path>
-<text text-anchor="middle" x="115.85" y="-486.3" font-family="Roboto Condensed, sans-serif" font-size="11.00">@strudel.cycles/react@0.6.0</text>
-</g>
 <!-- @strudel.cycles/serial@0.6.0 -->
 <g id="node8" class="node module-_strudel_cycles_serial maintainer-yaxupaxo maintainer-felixroos license-agpl_3_0_or_later" data-module="@strudel.cycles/serial@0.6.0">
 <title>@strudel.cycles/serial@0.6.0</title>

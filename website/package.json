@@ -27,7 +27,6 @@
     "@strudel.cycles/midi": "workspace:*",
     "@strudel.cycles/mini": "workspace:*",
     "@strudel.cycles/osc": "workspace:*",
-    "@strudel.cycles/react": "workspace:*",
     "@strudel.cycles/serial": "workspace:*",
     "@strudel.cycles/soundfonts": "workspace:*",
     "@strudel.cycles/tonal": "workspace:*",
