@@ -73,49 +73,7 @@ importers:
         specifier: ^0.33.0
         version: 0.33.0(@vitest/ui@0.28.0)
 
-  examples/headless-repl:
-    dependencies:
-      '@strudel/web':
-        specifier: workspace:*
-        version: link:../../packages/web
-    devDependencies:
-      vite:
-        specifier: ^4.3.2
-        version: 4.5.0(@types/node@18.16.3)
-
-  examples/superdough:
-    dependencies:
-      superdough:
-        specifier: workspace:*
-        version: link:../../packages/superdough
-    devDependencies:
-      vite:
-        specifier: ^4.4.5
-        version: 4.5.0(@types/node@18.16.3)
-
-  examples/vite-vanilla-repl:
-    dependencies:
-      '@strudel.cycles/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@strudel.cycles/mini':
-        specifier: workspace:*
-        version: link:../../packages/mini
-      '@strudel.cycles/tonal':
-        specifier: workspace:*
-        version: link:../../packages/tonal
-      '@strudel.cycles/transpiler':
-        specifier: workspace:*
-        version: link:../../packages/transpiler
-      '@strudel.cycles/webaudio':
-        specifier: workspace:*
-        version: link:../../packages/webaudio
-    devDependencies:
-      vite:
-        specifier: ^4.3.3
-        version: 4.5.0(@types/node@18.16.3)
-
-  examples/vite-vanilla-repl-cm6:
+  examples/codemirror-repl:
     dependencies:
       '@strudel.cycles/core':
         specifier: workspace:*
@@ -141,6 +99,48 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.2
+        version: 4.5.0(@types/node@18.16.3)
+
+  examples/headless-repl:
+    dependencies:
+      '@strudel/web':
+        specifier: workspace:*
+        version: link:../../packages/web
+    devDependencies:
+      vite:
+        specifier: ^4.3.2
+        version: 4.5.0(@types/node@18.16.3)
+
+  examples/minimal-repl:
+    dependencies:
+      '@strudel.cycles/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@strudel.cycles/mini':
+        specifier: workspace:*
+        version: link:../../packages/mini
+      '@strudel.cycles/tonal':
+        specifier: workspace:*
+        version: link:../../packages/tonal
+      '@strudel.cycles/transpiler':
+        specifier: workspace:*
+        version: link:../../packages/transpiler
+      '@strudel.cycles/webaudio':
+        specifier: workspace:*
+        version: link:../../packages/webaudio
+    devDependencies:
+      vite:
+        specifier: ^4.3.3
+        version: 4.5.0(@types/node@18.16.3)
+
+  examples/superdough:
+    dependencies:
+      superdough:
+        specifier: workspace:*
+        version: link:../../packages/superdough
+    devDependencies:
+      vite:
+        specifier: ^4.4.5
         version: 4.5.0(@types/node@18.16.3)
 
   packages/codemirror:
@@ -10201,11 +10201,6 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  /nanoid@3.3.7:
-    resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
-    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
-
   /nanoid@4.0.2:
     resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
     engines: {node: ^14 || ^16 || >=18}
@@ -11354,7 +11349,6 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
-    dev: true
 
   /postcss@8.4.31:
     resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
@@ -11364,14 +11358,6 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: false
-
-  /postcss@8.4.32:
-    resolution: {integrity: sha512-D/kj5JNu6oo2EIy+XL/26JEDTlIbB8hw85G8StOE6L74RQAVVP5rej6wxCNqyMbR4RkPfqvezVbPw81Ngd6Kcw==}
-    engines: {node: ^10 || ^12 || >=14}
-    dependencies:
-      nanoid: 3.3.7
-      picocolors: 1.0.0
-      source-map-js: 1.0.2
 
   /prebuild-install@7.1.1:
     resolution: {integrity: sha512-jAXscXWMcCK8GgCoHOfIr0ODh5ai8mj63L2nWrjuAgXE6tDyYGnx4/8o/rCgU+B4JSyZBKbeZqzhtwtC3ovxjw==}
@@ -13836,7 +13822,7 @@ packages:
     dependencies:
       '@types/node': 18.16.3
       esbuild: 0.18.20
-      postcss: 8.4.32
+      postcss: 8.4.27
       rollup: 3.28.0
     optionalDependencies:
       fsevents: 2.3.3
