@@ -322,15 +322,6 @@
 <polyline fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1521.82,-378.7 1524.79,-379.1 "/>
 <ellipse fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" cx="1527.17" cy="-379.42" rx="2.4" ry="2.4"/>
 </g>
-<!-- packages/core/gist.js -->
-<g id="node8" class="node">
-<title>packages/core/gist.js</title>
-<g id="a_node8"><a xlink:href="packages/core/gist.js" xlink:title="gist.js">
-<path fill="#ffffcc" stroke="black" d="M1246,-466C1246,-466 1204,-466 1204,-466 1201,-466 1198,-463 1198,-460 1198,-460 1198,-454 1198,-454 1198,-451 1201,-448 1204,-448 1204,-448 1246,-448 1246,-448 1249,-448 1252,-451 1252,-454 1252,-454 1252,-460 1252,-460 1252,-463 1249,-466 1246,-466"/>
-<text text-anchor="start" x="1211.5" y="-454.8" font-family="Helvetica,sans-Serif" font-size="9.00">gist.js</text>
-</a>
-</g>
-</g>
 <!-- packages/core/index.mjs -->
 <g id="node10" class="node">
 <title>packages/core/index.mjs</title>
@@ -375,12 +366,6 @@
 <title>packages/core/index.mjs&#45;&gt;packages/core/timespan.mjs</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M1149.56,-603.02C1186.23,-605.39 1251.26,-609 1307,-609 1307,-609 1307,-609 1395,-609 1456.71,-609 1478.77,-589.6 1515.5,-540 1549.18,-494.51 1560.83,-425.9 1564.48,-395.47"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1566.6,-395.45 1565.18,-389.25 1562.43,-394.98 1566.6,-395.45"/>
-</g>
-<!-- packages/core/index.mjs&#45;&gt;packages/core/gist.js -->
-<g id="edge10" class="edge">
-<title>packages/core/index.mjs&#45;&gt;packages/core/gist.js</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M1123.07,-591.88C1130,-568.78 1151.22,-507.3 1189.5,-472 1190.51,-471.06 1191.6,-470.18 1192.73,-469.35"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="1194.03,-471.01 1197.95,-466.01 1191.76,-467.47 1194.03,-471.01"/>
 </g>
 <!-- packages/core/index.mjs&#45;&gt;packages/core/hap.mjs -->
 <g id="edge11" class="edge">
