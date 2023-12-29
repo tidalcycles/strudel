@@ -1,8 +1,6 @@
 # superdough demo
 
-This demo shows how to use strudel in "headless mode".
-Buttons A / B / C will switch between different patterns.
-It showcases the usage of the `@strudel/web` package, using [vite](https://vitejs.dev/) as the dev server.
+This demo shows how to use [superdough](https://www.npmjs.com/package/superdough) with [vite](https://vitejs.dev/).
 
 ## Running
 
