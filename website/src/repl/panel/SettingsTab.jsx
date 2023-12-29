@@ -81,6 +81,7 @@ export function SettingsTab() {
     isActiveLineHighlighted,
     isAutoCompletionEnabled,
     isTooltipEnabled,
+    isFlashEnabled,
     isLineWrappingEnabled,
     fontSize,
     fontFamily,
@@ -154,6 +155,11 @@ export function SettingsTab() {
           label="Enable line wrapping"
           onChange={(cbEvent) => settingsMap.setKey('isLineWrappingEnabled', cbEvent.target.checked)}
           value={isLineWrappingEnabled}
+        />
+        <Checkbox
+          label="Enable flashing on evaluation"
+          onChange={(cbEvent) => settingsMap.setKey('isFlashEnabled', cbEvent.target.checked)}
+          value={isFlashEnabled}
         />
       </FormItem>
       <FormItem label="Zen Mode">Try clicking the logo in the top left!</FormItem>
