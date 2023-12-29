@@ -9,8 +9,6 @@ import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { getAudioContext, initAudioOnFirstClick, webaudioOutput } from '@strudel.cycles/webaudio';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
-/* import { writeText } from '@tauri-apps/api/clipboard';
-import { nanoid } from 'nanoid'; */
 import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import {
   initUserCode,
@@ -24,10 +22,10 @@ import { Header } from './Header';
 import Loader from './Loader';
 import './Repl.css';
 import { Panel } from './panel/Panel';
-// import { prebake } from '@strudel/repl';
 import { useStore } from '@nanostores/react';
-import { prebake /* , resetSounds */ } from './prebake.mjs';
+import { prebake } from './prebake.mjs';
 import { getRandomTune, initCode, loadModules, shareCode } from './util.mjs';
+import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
 
 const { code: randomTune, name } = getRandomTune();
@@ -35,36 +33,30 @@ export const ReplContext = createContext(null);
 
 const { latestCode } = settingsMap.get();
 
-let modulesLoading, presets, drawContext, clearCanvas;
+let modulesLoading, presets, drawContext, clearCanvas, isIframe;
 if (typeof window !== 'undefined') {
   initAudioOnFirstClick();
   modulesLoading = loadModules();
   presets = prebake();
   drawContext = getDrawContext();
   clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
+  isIframe = window.location !== window.parent.location;
 }
 
 export function Repl({ embedded = false }) {
-  //const isEmbedded = embedded || window.location !== window.parent.location;
-  const isEmbedded = false;
+  const isEmbedded = embedded || isIframe;
   const { panelPosition, isZen } = useSettings();
-  /* const replState = useStore($replstate);
-  const isDirty = useStore($repldirty); */
-  const shouldDraw = true;
 
-  const init = useCallback(({ shouldDraw }) => {
+  const init = useCallback(() => {
     const drawTime = [-2, 2];
-    const drawContext = shouldDraw ? getDrawContext() : null;
-    let onDraw;
-    if (shouldDraw) {
-      onDraw = (haps, time, frame, painters) => {
-        painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
-        painters?.forEach((painter) => {
-          // ctx time haps drawTime paintOptions
-          painter(drawContext, time, haps, drawTime, { clear: false });
-        });
-      };
-    }
+    const drawContext = getDrawContext();
+    const onDraw = (haps, time, frame, painters) => {
+      painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
+      painters?.forEach((painter) => {
+        // ctx time haps drawTime paintOptions
+        painter(drawContext, time, haps, drawTime, { clear: false });
+      });
+    };
     const editor = new StrudelMirror({
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
@@ -97,7 +89,7 @@ export function Repl({ embedded = false }) {
       } else if (latestCode) {
         editor.setCode(latestCode);
         msg = `Your last session has been loaded!`;
-      } /*  if(randomTune) */ else {
+      } else {
         editor.setCode(randomTune);
         msg = `A random code snippet named "${name}" has been loaded!`;
       }
@@ -159,11 +151,8 @@ export function Repl({ embedded = false }) {
 
   const handleShare = async () => shareCode(activeCode);
   const pending = false;
-  //const error = undefined;
-  // const { started, activeCode } = replState;
 
   const context = {
-    // scheduler,
     embedded,
     started,
     pending,
@@ -176,18 +165,11 @@ export function Repl({ embedded = false }) {
   };
 
   return (
-    // bg-gradient-to-t from-blue-900 to-slate-900
-    // bg-gradient-to-t from-green-900 to-slate-900
     <ReplContext.Provider value={context}>
-      <div
-        className={cx(
-          'h-full flex flex-col relative',
-          // overflow-hidden
-        )}
-      >
+      <div className={cx('h-full flex flex-col relative')}>
         <Loader active={pending} />
         <Header context={context} />
-        {/* isEmbedded && !started && (
+        {isEmbedded && !started && (
           <button
             onClick={() => handleTogglePlay()}
             className="text-white text-2xl fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-[1000] m-auto p-4 bg-black rounded-md flex items-center space-x-2"
@@ -195,7 +177,7 @@ export function Repl({ embedded = false }) {
             <PlayCircleIcon className="w-6 h-6" />
             <span>play</span>
           </button>
-        ) */}
+        )}
         <div className="grow flex relative overflow-hidden">
           <section
             className={'text-gray-100 cursor-text pb-0 overflow-auto grow' + (isZen ? ' px-10' : '')}
@@ -203,7 +185,7 @@ export function Repl({ embedded = false }) {
             ref={(el) => {
               containerRef.current = el;
               if (!editorRef.current) {
-                init({ shouldDraw });
+                init();
               }
             }}
           ></section>

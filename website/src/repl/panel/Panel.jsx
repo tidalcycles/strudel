@@ -114,7 +114,7 @@ export function Panel({ context }) {
             {activeFooter === 'console' && <ConsoleTab log={log} />}
             {activeFooter === 'sounds' && <SoundsTab />}
             {activeFooter === 'reference' && <Reference />}
-            {activeFooter === 'settings' && <SettingsTab scheduler={context.scheduler} />}
+            {activeFooter === 'settings' && <SettingsTab />}
             {activeFooter === 'files' && <FilesTab />}
           </div>
         </div>
