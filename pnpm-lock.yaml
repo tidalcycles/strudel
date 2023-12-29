@@ -73,6 +73,76 @@ importers:
         specifier: ^0.33.0
         version: 0.33.0(@vitest/ui@0.28.0)
 
+  examples/headless-repl:
+    dependencies:
+      '@strudel/web':
+        specifier: workspace:*
+        version: link:../../packages/web
+    devDependencies:
+      vite:
+        specifier: ^4.3.2
+        version: 4.5.0(@types/node@18.16.3)
+
+  examples/superdough:
+    dependencies:
+      superdough:
+        specifier: workspace:*
+        version: link:../../packages/superdough
+    devDependencies:
+      vite:
+        specifier: ^4.4.5
+        version: 4.5.0(@types/node@18.16.3)
+
+  examples/vite-vanilla-repl:
+    dependencies:
+      '@strudel.cycles/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@strudel.cycles/mini':
+        specifier: workspace:*
+        version: link:../../packages/mini
+      '@strudel.cycles/tonal':
+        specifier: workspace:*
+        version: link:../../packages/tonal
+      '@strudel.cycles/transpiler':
+        specifier: workspace:*
+        version: link:../../packages/transpiler
+      '@strudel.cycles/webaudio':
+        specifier: workspace:*
+        version: link:../../packages/webaudio
+    devDependencies:
+      vite:
+        specifier: ^4.3.3
+        version: 4.5.0(@types/node@18.16.3)
+
+  examples/vite-vanilla-repl-cm6:
+    dependencies:
+      '@strudel.cycles/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@strudel.cycles/mini':
+        specifier: workspace:*
+        version: link:../../packages/mini
+      '@strudel.cycles/soundfonts':
+        specifier: workspace:*
+        version: link:../../packages/soundfonts
+      '@strudel.cycles/tonal':
+        specifier: workspace:*
+        version: link:../../packages/tonal
+      '@strudel.cycles/transpiler':
+        specifier: workspace:*
+        version: link:../../packages/transpiler
+      '@strudel.cycles/webaudio':
+        specifier: workspace:*
+        version: link:../../packages/webaudio
+      '@strudel/codemirror':
+        specifier: workspace:*
+        version: link:../../packages/codemirror
+    devDependencies:
+      vite:
+        specifier: ^4.3.2
+        version: 4.5.0(@types/node@18.16.3)
+
   packages/codemirror:
     dependencies:
       '@codemirror/autocomplete':
@@ -140,56 +210,6 @@ importers:
       vitest:
         specifier: ^0.33.0
         version: 0.33.0(@vitest/ui@0.28.0)
-
-  packages/core/examples/vite-vanilla-repl:
-    dependencies:
-      '@strudel.cycles/core':
-        specifier: workspace:*
-        version: link:../..
-      '@strudel.cycles/mini':
-        specifier: workspace:*
-        version: link:../../../mini
-      '@strudel.cycles/tonal':
-        specifier: workspace:*
-        version: link:../../../tonal
-      '@strudel.cycles/transpiler':
-        specifier: workspace:*
-        version: link:../../../transpiler
-      '@strudel.cycles/webaudio':
-        specifier: workspace:*
-        version: link:../../../webaudio
-    devDependencies:
-      vite:
-        specifier: ^4.3.3
-        version: 4.3.3
-
-  packages/core/examples/vite-vanilla-repl-cm6:
-    dependencies:
-      '@strudel.cycles/core':
-        specifier: workspace:*
-        version: link:../..
-      '@strudel.cycles/mini':
-        specifier: workspace:*
-        version: link:../../../mini
-      '@strudel.cycles/soundfonts':
-        specifier: workspace:*
-        version: link:../../../soundfonts
-      '@strudel.cycles/tonal':
-        specifier: workspace:*
-        version: link:../../../tonal
-      '@strudel.cycles/transpiler':
-        specifier: workspace:*
-        version: link:../../../transpiler
-      '@strudel.cycles/webaudio':
-        specifier: workspace:*
-        version: link:../../../webaudio
-      '@strudel/codemirror':
-        specifier: workspace:*
-        version: link:../../../codemirror
-    devDependencies:
-      vite:
-        specifier: ^4.3.2
-        version: 4.3.3
 
   packages/csound:
     dependencies:
@@ -320,7 +340,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.5.0
+        version: 4.5.0(@types/node@18.16.3)
 
   packages/serial:
     dependencies:
@@ -363,16 +383,6 @@ importers:
       vite:
         specifier: ^4.3.3
         version: 4.3.3
-
-  packages/superdough/example:
-    dependencies:
-      superdough:
-        specifier: workspace:*
-        version: link:..
-    devDependencies:
-      vite:
-        specifier: ^4.4.5
-        version: 4.4.5(@types/node@18.16.3)
 
   packages/tonal:
     dependencies:
@@ -441,16 +451,6 @@ importers:
     devDependencies:
       vite:
         specifier: ^4.3.3
-        version: 4.3.3
-
-  packages/web/examples/repl-example:
-    dependencies:
-      '@strudel/web':
-        specifier: workspace:*
-        version: link:../..
-    devDependencies:
-      vite:
-        specifier: ^4.3.2
         version: 4.3.3
 
   packages/webaudio:
@@ -10205,7 +10205,6 @@ packages:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
-    dev: true
 
   /nanoid@4.0.2:
     resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
@@ -11364,6 +11363,7 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: false
 
   /postcss@8.4.32:
     resolution: {integrity: sha512-D/kj5JNu6oo2EIy+XL/26JEDTlIbB8hw85G8StOE6L74RQAVVP5rej6wxCNqyMbR4RkPfqvezVbPw81Ngd6Kcw==}
@@ -11372,7 +11372,6 @@ packages:
       nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
-    dev: true
 
   /prebuild-install@7.1.1:
     resolution: {integrity: sha512-jAXscXWMcCK8GgCoHOfIr0ODh5ai8mj63L2nWrjuAgXE6tDyYGnx4/8o/rCgU+B4JSyZBKbeZqzhtwtC3ovxjw==}
@@ -13807,41 +13806,6 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vite@4.5.0:
-    resolution: {integrity: sha512-ulr8rNLA6rkyFAlVWw2q5YJ91v098AFQ2R0PRFwPzREXOUJQPtFUG0t+/ZikhaOCDqFoDhN6/v8Sq0o4araFAw==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      esbuild: 0.18.20
-      postcss: 8.4.32
-      rollup: 3.28.0
-    optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
-
   /vite@4.5.0(@types/node@18.16.3):
     resolution: {integrity: sha512-ulr8rNLA6rkyFAlVWw2q5YJ91v098AFQ2R0PRFwPzREXOUJQPtFUG0t+/ZikhaOCDqFoDhN6/v8Sq0o4araFAw==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -13872,7 +13836,7 @@ packages:
     dependencies:
       '@types/node': 18.16.3
       esbuild: 0.18.20
-      postcss: 8.4.31
+      postcss: 8.4.32
       rollup: 3.28.0
     optionalDependencies:
       fsevents: 2.3.3
