@@ -23,3 +23,9 @@ I've tried to generate it using <https://www.npmjs.com/package/tree-sitter-haske
 It seems a lot of work has gone into this package in <https://github.com/tree-sitter/tree-sitter-haskell/pull/29>, without a new npm package version being released, which is why I've written this comment: <https://github.com/tree-sitter/tree-sitter-haskell/pull/29#issuecomment-1865951565>.
 
 So either someone authorized releases a new version of the package or we might need to pull the changes and try to build it from the tree-sitter master branch.
+
+## Update 1
+
+I've managed to make it work by using [this tree-sitter-haskell.wasm](https://github.com/tree-sitter/tree-sitter-haskell/blob/master/tree-sitter-haskell.wasm), instead of using the version on npm! Make sure both `tree-sitter.wasm` and `tree-sitter-haskell.wasm` are in the public dir, then run `pnpm dev`. The console should log a tree sitter AST string.
+
+Next step: understand how the ast works to then transform it into JS function calls!
