@@ -126,6 +126,7 @@ export class StrudelMirror {
     this.miniLocations = [];
     this.widgets = [];
     this.painters = [];
+    this.drawTime = drawTime;
     this.onDraw = onDraw;
     const self = this;
     this.id = id || s4();
@@ -151,6 +152,7 @@ export class StrudelMirror {
       onToggle: (started) => {
         replOptions?.onToggle?.(started);
         if (started) {
+          this.adjustDrawTime();
           this.drawer.start(this.repl.scheduler);
           // stop other repls when this one is started
           document.dispatchEvent(
@@ -177,6 +179,7 @@ export class StrudelMirror {
         updateWidgets(this.editor, this.widgets);
         updateMiniLocations(this.editor, this.miniLocations);
         replOptions?.afterEval?.(options);
+        this.adjustDrawTime();
         this.drawer.invalidate();
       },
     });
@@ -211,6 +214,11 @@ export class StrudelMirror {
       }
     };
     document.addEventListener('start-repl', this.onStartRepl);
+  }
+  // adjusts draw time depending on if there are painters
+  adjustDrawTime() {
+    // when no painters are set, [0,0] is enough (just highlighting)
+    this.drawer.setDrawTime(this.painters.length ? this.drawTime : [0, 0]);
   }
   async drawFirstFrame() {
     if (!this.onDraw) {

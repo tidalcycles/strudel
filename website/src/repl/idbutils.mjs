@@ -77,6 +77,9 @@ async function bufferToDataUrl(buf) {
 //open db and initialize it if necessary
 const openDB = (config, onOpened) => {
   const { dbName, version, table, columns } = config;
+  if (typeof window === 'undefined') {
+    return;
+  }
   if (!('indexedDB' in window)) {
     console.log('IndexedDB is not supported.');
     return;

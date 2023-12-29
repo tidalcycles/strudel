@@ -111,8 +111,6 @@ export class Framer {
 // see vite-vanilla-repl-cm6 for an example
 export class Drawer {
   constructor(onDraw, drawTime) {
-    let [lookbehind, lookahead] = drawTime; // e.g. [-2, 2]
-    lookbehind = Math.abs(lookbehind);
     this.visibleHaps = [];
     this.lastFrame = null;
     this.drawTime = drawTime;
@@ -122,6 +120,8 @@ export class Drawer {
           console.warn('Drawer: no scheduler');
           return;
         }
+        const lookbehind = Math.abs(this.drawTime[0]);
+        const lookahead = this.drawTime[1];
         // calculate current frame time (think right side of screen for pianoroll)
         const phase = this.scheduler.now() + lookahead;
         // first frame just captures the phase
@@ -144,6 +144,9 @@ export class Drawer {
         console.warn('draw error', err);
       },
     );
+  }
+  setDrawTime(drawTime) {
+    this.drawTime = drawTime;
   }
   invalidate(scheduler = this.scheduler, t) {
     if (!scheduler) {
