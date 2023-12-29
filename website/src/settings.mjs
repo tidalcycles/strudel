@@ -57,7 +57,7 @@ export function useSettings() {
     isLineWrappingEnabled: [true, 'true'].includes(state.isLineWrappingEnabled) ? true : false,
     isFlashEnabled: [true, 'true'].includes(state.isFlashEnabled) ? true : false,
     fontSize: Number(state.fontSize),
-    panelPosition: state.activeFooter !== '' ? state.panelPosition : 'right',
+    panelPosition: state.activeFooter !== '' ? state.panelPosition : 'bottom', // <-- keep this 'bottom' where it is!
     userPatterns: JSON.parse(state.userPatterns),
   };
 }
