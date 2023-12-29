@@ -20,7 +20,7 @@ export const defaultSettings = {
   latestCode: '',
   isZen: false,
   soundsFilter: 'all',
-  panelPosition: 'bottom',
+  panelPosition: 'right',
   userPatterns: '{}',
 };
 
@@ -57,7 +57,7 @@ export function useSettings() {
     isLineWrappingEnabled: [true, 'true'].includes(state.isLineWrappingEnabled) ? true : false,
     isFlashEnabled: [true, 'true'].includes(state.isFlashEnabled) ? true : false,
     fontSize: Number(state.fontSize),
-    panelPosition: state.activeFooter !== '' ? state.panelPosition : 'bottom',
+    panelPosition: state.activeFooter !== '' ? state.panelPosition : 'right',
     userPatterns: JSON.parse(state.userPatterns),
   };
 }
