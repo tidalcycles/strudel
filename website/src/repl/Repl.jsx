@@ -101,7 +101,7 @@ export function Repl({ embedded = false }) {
   }, []);
 
   const [replState, setReplState] = useState({});
-  const { started, isDirty, error, activeCode } = replState;
+  const { started, isDirty, error, activeCode, pending } = replState;
   const editorRef = useRef();
   const containerRef = useRef();
 
@@ -150,8 +150,6 @@ export function Repl({ embedded = false }) {
   };
 
   const handleShare = async () => shareCode(activeCode);
-  const pending = false;
-
   const context = {
     embedded,
     started,

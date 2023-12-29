@@ -26,7 +26,7 @@ export function repl({
     pattern: undefined,
     miniLocations: [],
     widgets: [],
-    pending: true,
+    pending: false,
     started: false,
   };
 
