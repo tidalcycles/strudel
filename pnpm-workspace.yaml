@@ -1,10 +1,5 @@
 packages:
   # all packages in direct subdirs of packages/
   - "packages/*"
+  - "examples/*"
   - "website/"
-  - "packages/core/examples/vite-vanilla-repl"
-  - "packages/core/examples/vite-vanilla-repl-cm6"
-  - "packages/react/examples/nano-repl"
-  - "packages/web/examples/repl-example"
-  - "packages/superdough/example"
-  - "packages/codemirror/examples/strudelmirror"
