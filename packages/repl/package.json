@@ -46,6 +46,6 @@
     "rollup-plugin-visualizer": "^5.8.1"
   },
   "devDependencies": {
-    "vite": "^4.3.3"
+    "vite": "^5.0.10"
   }
 }

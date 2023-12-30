@@ -25,7 +25,8 @@ export async function initHydra(options = {}) {
       feedStrudel = false,
       ...hydraConfig
     } = { detectAudio: false, ...options };
-    await import(src);
+
+    await import(/* @vite-ignore */ src);
     const hydra = new Hydra(hydraConfig);
     if (feedStrudel) {
       const { canvas } = getDrawContext();

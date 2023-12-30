@@ -12,6 +12,6 @@
     "superdough": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^4.4.5"
+    "vite": "^5.0.10"
   }
 }

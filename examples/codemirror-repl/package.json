@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^4.3.2"
+    "vite": "^5.0.10"
   },
   "dependencies": {
     "@strudel/codemirror": "workspace:*",
