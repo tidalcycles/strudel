@@ -3,7 +3,7 @@ import { settingPatterns } from '../settings.mjs';
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
 import * as tunes from './tunes.mjs';
-import { createClient } from '@supabase/supabase-js';()
+import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { writeText } from '@tauri-apps/api/clipboard';
 
