@@ -48,7 +48,6 @@
     "astro": "^4.0.8",
     "canvas": "^2.11.2",
     "claviature": "^0.1.0",
-    "fraction.js": "^4.2.0",
     "nanoid": "^5.0.4",
     "nanostores": "^0.9.5",
     "react": "^18.2.0",
