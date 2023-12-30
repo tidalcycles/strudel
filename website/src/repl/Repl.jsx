@@ -8,6 +8,7 @@ import { code2hash, getDrawContext, logger, silence } from '@strudel.cycles/core
 import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { getAudioContext, initAudioOnFirstClick, webaudioOutput } from '@strudel.cycles/webaudio';
+import { defaultAudioDeviceName, getAudioDevices, setAudioDevice } from './panel/AudioDeviceSelector';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -44,7 +45,6 @@ if (typeof window !== 'undefined') {
 }
 
 export function Repl({ embedded = false }) {
-
   const isEmbedded = embedded || isIframe;
   const { panelPosition, isZen } = useSettings();
 
@@ -59,7 +59,6 @@ export function Repl({ embedded = false }) {
       });
     };
     const editor = new StrudelMirror({
-
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       transpiler,
@@ -121,6 +120,20 @@ export function Repl({ embedded = false }) {
     });
     editorRef.current?.updateSettings(editorSettings);
   }, [_settings]);
+
+  // on first load, set stored audio device if possible
+  useEffect(() => {
+    const { audioDeviceName } = _settings;
+    if (audioDeviceName !== defaultAudioDeviceName) {
+      getAudioDevices().then((devices) => {
+        const deviceID = devices.get(audioDeviceName);
+        if (deviceID == null) {
+          return;
+        }
+        setAudioDevice(deviceID);
+      });
+    }
+  }, []);
 
   //
   // UI Actions

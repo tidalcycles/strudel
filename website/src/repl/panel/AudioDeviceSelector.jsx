@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { getAudioContext, initializeAudioOutput } from '@strudel.cycles/webaudio';
 import { SelectInput } from './SelectInput';
+import { logger } from '@strudel.cycles/core';
 
 const initdevices = new Map();
 export const defaultAudioDeviceName = 'System Standard';
@@ -22,7 +23,11 @@ export const setAudioDevice = async (id) => {
   // reset the audio context and dont set the sink id if it is invalid AKA System Standard selection
   const audioCtx = getAudioContext(!isValidID);
   if (isValidID) {
-    await audioCtx.setSinkId(id);
+    try {
+      await audioCtx.setSinkId(id);
+    } catch {
+      logger('failed to set audio interface', 'warning');
+    }
   }
   initializeAudioOutput();
 };
