@@ -178,7 +178,6 @@
     "backgroundImage",
     "cleanupUi"
   ],
-  "/packages/core/gist.js": [],
   "/packages/core/index.mjs": [],
   "/packages/csound/index.mjs": [
     "loadCSound",

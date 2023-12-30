@@ -14,7 +14,7 @@ Example:
 
 <MiniRepl
   client:idle
-  tune={`const pattern = sequence(c3, [e3, g3])
+  tune={`const pattern = sequence("c3", ["e3", "g3"])
 const events = pattern.queryArc(0, 1)
 console.log(events.map((e) => e.show()))
 silence`}

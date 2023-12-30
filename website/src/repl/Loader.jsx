@@ -1,5 +1,4 @@
-import { cx } from '@strudel.cycles/react';
-import React from 'react';
+import cx from '@src/cx.mjs';
 
 function Loader({ active }) {
   return (

@@ -1,5 +1,4 @@
-import { cx } from '@strudel.cycles/react';
-import React from 'react';
+import cx from '@src/cx.mjs';
 
 export function ButtonGroup({ value, onChange, items }) {
   return (
