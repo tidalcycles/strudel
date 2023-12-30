@@ -262,14 +262,14 @@ export const sol2note = (n, notation = 'letters') => {
     notation === 'solfeggio'
       ? solfeggio /*check if its is any of the following*/
       : notation === 'indian'
-      ? indian
-      : notation === 'german'
-      ? german
-      : notation === 'byzantine'
-      ? byzantine
-      : notation === 'japanese'
-      ? japanese
-      : english; /*if not use standard version*/
+        ? indian
+        : notation === 'german'
+          ? german
+          : notation === 'byzantine'
+            ? byzantine
+            : notation === 'japanese'
+              ? japanese
+              : english; /*if not use standard version*/
   const note = pc[n % 12]; /*calculating the midi value to the note*/
   const oct = Math.floor(n / 12) - 1;
   return note + oct;

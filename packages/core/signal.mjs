@@ -101,6 +101,7 @@ const timeToRand = (x) => Math.abs(intSeedToRand(timeToIntSeed(x)));
 
 const timeToRandsPrime = (seed, n) => {
   const result = [];
+  // eslint-disable-next-line
   for (let i = 0; i < n; ++n) {
     result.push(intSeedToRand(seed));
     seed = xorwise(seed);

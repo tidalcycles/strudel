@@ -9,7 +9,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'index.mjs'),
       formats: ['es', 'cjs'],
-      fileName: (ext) => ({ es: 'index.mjs', cjs: 'index.cjs' }[ext]),
+      fileName: (ext) => ({ es: 'index.mjs', cjs: 'index.cjs' })[ext],
     },
     rollupOptions: {
       external: [...Object.keys(dependencies)],

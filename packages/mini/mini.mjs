@@ -42,7 +42,7 @@ const applyOptions = (parent, enter) => (pat, i) => {
         }
         case 'tail': {
           const friend = enter(op.arguments_.element);
-          pat = pat.fmap((a) => (b) => Array.isArray(a) ? [...a, b] : [a, b]).appLeft(friend);
+          pat = pat.fmap((a) => (b) => (Array.isArray(a) ? [...a, b] : [a, b])).appLeft(friend);
           break;
         }
         case 'range': {

@@ -12,7 +12,7 @@ export default defineConfig({
       entry: resolve(__dirname, 'index.mjs'),
       name: 'strudel',
       formats: ['es', 'iife'],
-      fileName: (ext) => ({ es: 'index.mjs', iife: 'index.js' }[ext]),
+      fileName: (ext) => ({ es: 'index.mjs', iife: 'index.js' })[ext],
     },
     rollupOptions: {
       // external: [...Object.keys(dependencies)],
