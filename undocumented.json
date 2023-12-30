@@ -38,7 +38,11 @@
     "splitAt",
     "zipWith",
     "clamp",
-    "sol2note"
+    "sol2note",
+    "unicodeToBase64",
+    "base64ToUnicode",
+    "code2hash",
+    "hash2code"
   ],
   "/packages/core/value.mjs": [
     "unionWithObj",
@@ -98,6 +102,8 @@
     "chunkback",
     "bypass",
     "duration",
+    "hsla",
+    "hsl",
     "colour",
     "loopat",
     "loopatcps"
@@ -105,8 +111,7 @@
   "/packages/core/controls.mjs": [],
   "/packages/core/euclid.mjs": [
     "bjork",
-    "euclidrot",
-    "euclidLegatoRot"
+    "euclidrot"
   ],
   "/packages/core/signal.mjs": [
     "steady",
@@ -171,6 +176,7 @@
   ],
   "/packages/core/pianoroll.mjs": [
     "getDrawOptions",
+    "getPunchcardPainter",
     "drawPianoroll"
   ],
   "/packages/core/spiral.mjs": [],
