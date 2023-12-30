@@ -36,6 +36,6 @@
     "vite": "^5.0.10"
   },
   "dependencies": {
-    "nanostores": "^0.8.1"
+    "nanostores": "^0.9.5"
   }
 }
