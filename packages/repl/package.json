@@ -1,0 +1,51 @@
+{
+  "name": "@strudel/repl",
+  "version": "0.9.4",
+  "description": "Strudel REPL as a Web Component",
+  "main": "index.mjs",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "contributors": [
+    "Alex McLean <alex@slab.org>"
+  ],
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "@rollup/plugin-replace": "^5.0.5",
+    "@strudel.cycles/core": "workspace:*",
+    "@strudel.cycles/midi": "workspace:*",
+    "@strudel.cycles/mini": "workspace:*",
+    "@strudel.cycles/soundfonts": "workspace:*",
+    "@strudel.cycles/tonal": "workspace:*",
+    "@strudel.cycles/transpiler": "workspace:*",
+    "@strudel.cycles/webaudio": "workspace:*",
+    "@strudel/codemirror": "workspace:*",
+    "@strudel/hydra": "workspace:*",
+    "rollup-plugin-visualizer": "^5.8.1"
+  },
+  "devDependencies": {
+    "vite": "^4.3.3"
+  }
+}

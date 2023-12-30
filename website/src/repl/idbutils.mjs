@@ -24,7 +24,7 @@ const clearIDB = () => {
 };
 
 // queries the DB, and registers the sounds so they can be played
-export const registerSamplesFromDB = (config, onComplete = () => {}) => {
+export const registerSamplesFromDB = (config = userSamplesDBConfig, onComplete = () => {}) => {
   openDB(config, (objectStore) => {
     let query = objectStore.getAll();
     query.onsuccess = (event) => {
@@ -77,6 +77,9 @@ async function bufferToDataUrl(buf) {
 //open db and initialize it if necessary
 const openDB = (config, onOpened) => {
   const { dbName, version, table, columns } = config;
+  if (typeof window === 'undefined') {
+    return;
+  }
   if (!('indexedDB' in window)) {
     console.log('IndexedDB is not supported.');
     return;

@@ -1,6 +1,4 @@
-import { cx } from '@strudel.cycles/react';
-import React from 'react';
-import * as tunes from '../tunes.mjs';
+import cx from '@src/cx.mjs';
 
 const { BASE_URL } = import.meta.env;
 const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;

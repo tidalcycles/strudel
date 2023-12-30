@@ -27,7 +27,6 @@ export * from './pianoroll.mjs';
 export * from './spiral.mjs';
 export * from './ui.mjs';
 export { default as drawLine } from './drawLine.mjs';
-export { default as gist } from './gist.js';
 // below won't work with runtime.mjs (json import fails)
 /* import * as p from './package.json';
 export const version = p.version; */

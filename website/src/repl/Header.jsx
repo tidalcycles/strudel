@@ -4,8 +4,7 @@ import LinkIcon from '@heroicons/react/20/solid/LinkIcon';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import SparklesIcon from '@heroicons/react/20/solid/SparklesIcon';
 import StopCircleIcon from '@heroicons/react/20/solid/StopCircleIcon';
-import { cx } from '@strudel.cycles/react';
-import React, { useContext } from 'react';
+import cx from '@src/cx.mjs';
 import { useSettings, setIsZen } from '../settings.mjs';
 // import { ReplContext } from './Repl';
 import './Repl.css';
@@ -18,14 +17,13 @@ export function Header({ context }) {
     started,
     pending,
     isDirty,
-    lastShared,
     activeCode,
     handleTogglePlay,
     handleUpdate,
     handleShuffle,
     handleShare,
   } = context;
-  const isEmbedded = embedded || window.location !== window.parent.location;
+  const isEmbedded = typeof window !== 'undefined' && (embedded || window.location !== window.parent.location);
   const { isZen } = useSettings();
 
   return (
@@ -119,7 +117,7 @@ export function Header({ context }) {
               onClick={handleShare}
             >
               <LinkIcon className="w-6 h-6" />
-              <span>share{lastShared && lastShared === (activeCode || code) ? 'd!' : ''}</span>
+              <span>share</span>
             </button>
           )}
           {!isEmbedded && (
