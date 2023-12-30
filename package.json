@@ -8,7 +8,7 @@
     "pretest": "npm run jsdoc-json",
     "prebuild": "npm run jsdoc-json",
     "prestart": "npm run jsdoc-json",
-    "test": "vitest run --version",
+    "test": "npm run pretest && vitest run --version",
     "test-ui": "npm run pretest && vitest --ui",
     "test-coverage": "npm run pretest && vitest --coverage",
     "snapshot": "npm run pretest && vitest run -u --silent",
