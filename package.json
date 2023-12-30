@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "dependency-tree": "^10.0.9",
-    "@tauri-apps/cli": "^1.4.0",
+    "@tauri-apps/cli": "^1.5.9",
     "@vitest/ui": "^1.1.0",
     "canvas": "^2.11.2",
     "eslint": "^8.56.0",
