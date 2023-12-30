@@ -32,8 +32,8 @@
   "dependencies": {
     "@strudel.cycles/core": "workspace:*",
     "@strudel.cycles/mini": "workspace:*",
-    "acorn": "^8.8.1",
-    "escodegen": "^2.0.0",
+    "acorn": "^8.11.3",
+    "escodegen": "^2.1.0",
     "estree-walker": "^3.0.1"
   },
   "devDependencies": {
