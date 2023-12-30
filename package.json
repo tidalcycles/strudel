@@ -50,8 +50,7 @@
     "@strudel.cycles/tonal": "workspace:*",
     "@strudel.cycles/transpiler": "workspace:*",
     "@strudel.cycles/webaudio": "workspace:*",
-    "@strudel.cycles/xen": "workspace:*",
-    "acorn": "^8.8.1"
+    "@strudel.cycles/xen": "workspace:*"
   },
   "devDependencies": {
     "dependency-tree": "^10.0.9",
