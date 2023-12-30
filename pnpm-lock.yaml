@@ -96,7 +96,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   examples/headless-repl:
     dependencies:
@@ -106,7 +106,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   examples/minimal-repl:
     dependencies:
@@ -128,7 +128,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   examples/superdough:
     dependencies:
@@ -138,7 +138,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/codemirror:
     dependencies:
@@ -193,7 +193,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/core:
     dependencies:
@@ -203,7 +203,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
       vitest:
         specifier: ^1.1.0
         version: 1.1.0(@vitest/ui@1.1.0)
@@ -222,7 +222,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/desktopbridge:
     dependencies:
@@ -249,7 +249,7 @@ importers:
         version: 5.8.1
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/midi:
     dependencies:
@@ -265,7 +265,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/mini:
     dependencies:
@@ -278,7 +278,7 @@ importers:
         version: 3.0.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
       vitest:
         specifier: ^1.1.0
         version: 1.1.0(@vitest/ui@1.1.0)
@@ -297,7 +297,7 @@ importers:
         version: 5.8.1
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/repl:
     dependencies:
@@ -337,7 +337,7 @@ importers:
         version: 5.12.0
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/serial:
     dependencies:
@@ -347,7 +347,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/soundfonts:
     dependencies:
@@ -369,7 +369,7 @@ importers:
         version: 3.3.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/superdough:
     dependencies:
@@ -379,7 +379,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/tonal:
     dependencies:
@@ -398,7 +398,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
       vitest:
         specifier: ^1.1.0
         version: 1.1.0(@vitest/ui@1.1.0)
@@ -423,7 +423,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
       vitest:
         specifier: ^1.1.0
         version: 1.1.0(@vitest/ui@1.1.0)
@@ -448,7 +448,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/webaudio:
     dependencies:
@@ -461,7 +461,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
 
   packages/xen:
     dependencies:
@@ -471,7 +471,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.16.3)
+        version: 5.0.10(@types/node@20.10.6)
       vitest:
         specifier: ^1.1.0
         version: 1.1.0(@vitest/ui@1.1.0)
@@ -566,8 +566,8 @@ importers:
         specifier: ^1.5.3
         version: 1.5.3
       '@types/node':
-        specifier: ^18.16.3
-        version: 18.16.3
+        specifier: ^20.10.6
+        version: 20.10.6
       '@types/react':
         specifier: ^18.2.46
         version: 18.2.46
@@ -576,7 +576,7 @@ importers:
         version: 18.2.18
       astro:
         specifier: ^4.0.8
-        version: 4.0.8(@types/node@18.16.3)(typescript@5.3.3)
+        version: 4.0.8(@types/node@20.10.6)(typescript@5.3.3)
       canvas:
         specifier: ^2.11.2
         version: 2.11.2
@@ -829,7 +829,7 @@ packages:
       '@astrojs/markdown-remark': 4.0.1
       '@mdx-js/mdx': 3.0.0
       acorn: 8.11.3
-      astro: 4.0.8(@types/node@18.16.3)(typescript@5.3.3)
+      astro: 4.0.8(@types/node@20.10.6)(typescript@5.3.3)
       es-module-lexer: 1.4.1
       estree-util-visit: 2.0.0
       github-slugger: 2.0.0
@@ -878,7 +878,7 @@ packages:
       astro: ^3.0.0 || ^4.0.0
       tailwindcss: ^3.0.24
     dependencies:
-      astro: 4.0.8(@types/node@18.16.3)(typescript@5.3.3)
+      astro: 4.0.8(@types/node@20.10.6)(typescript@5.3.3)
       autoprefixer: 10.4.16(postcss@8.4.32)
       postcss: 8.4.32
       postcss-load-config: 4.0.2(postcss@8.4.32)
@@ -4248,8 +4248,10 @@ packages:
     dependencies:
       '@types/unist': 3.0.1
 
-  /@types/node@18.16.3:
-    resolution: {integrity: sha512-OPs5WnnT1xkCBiuQrZA4+YAV4HEJejmHneyraIaxsbev5yCEr6KMwINNFP9wQeFIw8FWcoTqF3vQsa5CDaI+8Q==}
+  /@types/node@20.10.6:
+    resolution: {integrity: sha512-Vac8H+NlRNNlAmDfGUP7b5h/KA+AtWIzuXy0E6OyP8f1tCLYAtPvKRRDJjAPqhpCb0t6U2j7/xqAuLEebW2kiw==}
+    dependencies:
+      undici-types: 5.26.5
 
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
@@ -4280,7 +4282,7 @@ packages:
   /@types/resolve@1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
     dependencies:
-      '@types/node': 18.16.3
+      '@types/node': 20.10.6
     dev: true
 
   /@types/scheduler@0.16.2:
@@ -4744,7 +4746,7 @@ packages:
       astro: ^1.6.0 || ^2.0.0 || ^3.0.0 || ^4.0.0
       vite-plugin-pwa: '>=0.17.3 <1'
     dependencies:
-      astro: 4.0.8(@types/node@18.16.3)(typescript@5.3.3)
+      astro: 4.0.8(@types/node@20.10.6)(typescript@5.3.3)
       vite-plugin-pwa: 0.17.4(vite@5.0.10)(workbox-build@7.0.0)(workbox-window@7.0.0)
     dev: true
 
@@ -4759,7 +4761,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.7)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
-      vite: 5.0.10(@types/node@18.16.3)
+      vite: 5.0.10(@types/node@20.10.6)
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -5184,7 +5186,7 @@ packages:
     hasBin: true
     dev: false
 
-  /astro@4.0.8(@types/node@18.16.3)(typescript@5.3.3):
+  /astro@4.0.8(@types/node@20.10.6)(typescript@5.3.3):
     resolution: {integrity: sha512-LwbYUfdrfys5mtI6cA5V8UvPRUVVTRQ68uF1ylrEge6BkPcHHJ7qCYLNdjnNPxZDR9bWi1awILJESB6j+w0P4w==}
     engines: {node: '>=18.14.1', npm: '>=6.14.0'}
     hasBin: true
@@ -5245,7 +5247,7 @@ packages:
       tsconfck: 3.0.0(typescript@5.3.3)
       unist-util-visit: 5.0.0
       vfile: 6.0.1
-      vite: 5.0.10(@types/node@18.16.3)
+      vite: 5.0.10(@types/node@20.10.6)
       vitefu: 0.2.5(vite@5.0.10)
       which-pm: 2.1.1
       yargs-parser: 21.1.1
@@ -8548,7 +8550,7 @@ packages:
     resolution: {integrity: sha512-KWYVV1c4i+jbMpaBC+U++4Va0cp8OisU185o73T1vo99hqi7w8tSJfUXYswwqqrjzwxa6KpRK54WhPvwf5w6PQ==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 18.16.3
+      '@types/node': 20.10.6
       merge-stream: 2.0.0
       supports-color: 7.2.0
     dev: true
@@ -13034,6 +13036,9 @@ packages:
     resolution: {integrity: sha512-+A5Sja4HP1M08MaXya7p5LvjuM7K6q/2EaC0+iovj/wOcMsTzMvDFbasi/oSapiwOlt252IqsKqPjCl7huKS0A==}
     dev: true
 
+  /undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
   /unherit@3.0.1:
     resolution: {integrity: sha512-akOOQ/Yln8a2sgcLj4U0Jmx0R5jpIg2IUyRrWOzmEbjBtGzBdHtSeFKgoEcoH4KYIG/Pb8GQ/BwtYm0GCq1Sqg==}
 
@@ -13329,7 +13334,7 @@ packages:
       debug: 4.3.4
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: 5.0.10(@types/node@18.16.3)
+      vite: 5.0.10(@types/node@20.10.6)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -13352,14 +13357,14 @@ packages:
       debug: 4.3.4
       fast-glob: 3.3.2
       pretty-bytes: 6.1.1
-      vite: 5.0.10(@types/node@18.16.3)
+      vite: 5.0.10(@types/node@20.10.6)
       workbox-build: 7.0.0
       workbox-window: 7.0.0
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /vite@5.0.10(@types/node@18.16.3):
+  /vite@5.0.10(@types/node@20.10.6):
     resolution: {integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -13387,7 +13392,7 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 18.16.3
+      '@types/node': 20.10.6
       esbuild: 0.19.5
       postcss: 8.4.32
       rollup: 4.9.2
@@ -13402,7 +13407,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 5.0.10(@types/node@18.16.3)
+      vite: 5.0.10(@types/node@20.10.6)
 
   /vitest@1.1.0(@vitest/ui@1.1.0):
     resolution: {integrity: sha512-oDFiCrw7dd3Jf06HoMtSRARivvyjHJaTxikFxuqJjO76U436PqlVw1uLn7a8OSPrhSfMGVaRakKpA2lePdw79A==}
@@ -13448,7 +13453,7 @@ packages:
       strip-literal: 1.3.0
       tinybench: 2.5.1
       tinypool: 0.8.1
-      vite: 5.0.10(@types/node@18.16.3)
+      vite: 5.0.10(@types/node@20.10.6)
       vite-node: 1.1.0
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
