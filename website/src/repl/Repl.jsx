@@ -130,7 +130,7 @@ export function Repl({ embedded = false }) {
       editorRef.current.repl.setCps(1);
       await prebake(); // declare default samples
     }
-    if (newCode && isDirty) {
+    if (newCode) {
       editorRef.current.setCode(newCode);
       editorRef.current.repl.evaluate(newCode);
     } else if (isDirty) {
