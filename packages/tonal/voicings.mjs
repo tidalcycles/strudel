@@ -51,7 +51,7 @@ const triads = {
   aug: ['1P 3m 5A', '3m 5A 8P', '5A 8P 10m'],
 };
 
-const defaultDictionary = {
+const legacyDictionary = {
   // triads
   '': ['1P 3M 5P', '3M 5P 8P', '5P 8P 10M'],
   M: ['1P 3M 5P', '3M 5P 8P', '5P 8P 10M'],
@@ -77,7 +77,7 @@ export const voicingRegistry = {
   lefthand: { dictionary: lefthand, range: ['F3', 'A4'], mode: 'below', anchor: 'a4' },
   triads: { dictionary: triads, mode: 'below', anchor: 'a4' },
   guidetones: { dictionary: guidetones, mode: 'above', anchor: 'a4' },
-  default: { dictionary: defaultDictionary, mode: 'below', anchor: 'a4' },
+  legacy: { dictionary: legacyDictionary, mode: 'below', anchor: 'a4' },
 };
 export const setVoicingRange = (name, range) => addVoicings(name, voicingRegistry[name].dictionary, range);
 
