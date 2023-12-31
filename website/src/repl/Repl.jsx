@@ -21,7 +21,6 @@ import {
 } from '../settings.mjs';
 import { Header } from './Header';
 import Loader from './Loader';
-import './Repl.css';
 import { Panel } from './panel/Panel';
 import { useStore } from '@nanostores/react';
 import { prebake } from './prebake.mjs';
