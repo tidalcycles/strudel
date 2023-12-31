@@ -95,7 +95,7 @@ export function nanFallback(value, fallback) {
 }
 // round to nearest int, negative numbers will output a subtracted index
 export const getSoundIndex = (n, numSounds) => {
-  return _mod(Math.round(nanFallback(n, 0)), numSounds);
+  return _mod(Math.round(nanFallback(n ?? 0, 0)), numSounds);
 };
 
 export const getPlayableNoteValue = (hap) => {
