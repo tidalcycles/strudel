@@ -21,7 +21,6 @@ export const getAudioDevices = async () => {
 export const setAudioDevice = async (id) => {
   const audioCtx = getAudioContext();
   if (audioCtx.sinkId === id) {
-    console.log(audioCtx.sinkId, id);
     return;
   }
   const isValidID = (id ?? '').length > 0;
