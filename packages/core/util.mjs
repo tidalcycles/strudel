@@ -4,6 +4,8 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { logger } from './logger.mjs';
+
 // returns true if the given string is a note
 export const isNoteWithOctave = (name) => /^[a-gA-G][#bs]*[0-9]$/.test(name);
 export const isNote = (name) => /^[a-gA-G][#bsf]*[0-9]?$/.test(name);
@@ -83,6 +85,18 @@ export const midi2note = (n) => {
 
 // modulo that works with negative numbers e.g. _mod(-1, 3) = 2. Works on numbers (rather than patterns of numbers, as @mod@ from pattern.mjs does)
 export const _mod = (n, m) => ((n % m) + m) % m;
+
+export function nanFallback(value, fallback) {
+  if (isNaN(Number(value))) {
+    logger(`"${value}" is not a number, falling back to ${fallback}`, 'warning');
+    return fallback;
+  }
+  return value;
+}
+// round to nearest int, negative numbers will output a subtracted index
+export const getSoundIndex = (n, numSounds) => {
+  return _mod(Math.round(nanFallback(n, 0)), numSounds);
+};
 
 export const getPlayableNoteValue = (hap) => {
   let { value, context } = hap;
