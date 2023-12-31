@@ -73,7 +73,7 @@ const fontFamilyOptions = {
   mode7: 'mode7',
 };
 
-export function SettingsTab() {
+export function SettingsTab({ started }) {
   const {
     theme,
     keybindings,
@@ -95,6 +95,7 @@ export function SettingsTab() {
       {AudioContext.prototype.setSinkId != null && (
         <FormItem label="Audio Output Device">
           <AudioDeviceSelector
+            isDisabled={started}
             audioDeviceName={audioDeviceName}
             onChange={(audioDeviceName) => settingsMap.setKey('audioDeviceName', audioDeviceName)}
           />

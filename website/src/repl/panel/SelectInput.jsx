@@ -1,8 +1,9 @@
 import React from 'react';
-//      value: ?ID, options: Map<ID, any>, onChange: ID => null, onClick: event => void
-export function SelectInput({ value, options, onChange, onClick }) {
+//      value: ?ID, options: Map<ID, any>, onChange: ID => null, onClick: event => void, isDisabled: boolean
+export function SelectInput({ value, options, onChange, onClick, isDisabled }) {
   return (
     <select
+      disabled={isDisabled}
       onClick={onClick}
       className="p-2 bg-background rounded-md text-foreground"
       value={value ?? ''}

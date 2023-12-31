@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getAudioContext, initializeAudioOutput } from '@strudel.cycles/webaudio';
+import { getAudioContext, initializeAudioOutput, setDefaultAudioContext } from '@strudel.cycles/webaudio';
 import { SelectInput } from './SelectInput';
 import { logger } from '@strudel.cycles/core';
 
@@ -19,21 +19,27 @@ export const getAudioDevices = async () => {
 };
 
 export const setAudioDevice = async (id) => {
+  const audioCtx = getAudioContext();
+  if (audioCtx.sinkId === id) {
+    console.log(audioCtx.sinkId, id);
+    return;
+  }
   const isValidID = (id ?? '').length > 0;
-  // reset the audio context and dont set the sink id if it is invalid AKA System Standard selection
-  const audioCtx = getAudioContext(!isValidID);
   if (isValidID) {
     try {
       await audioCtx.setSinkId(id);
     } catch {
       logger('failed to set audio interface', 'warning');
     }
+  } else {
+    // reset the audio context and dont set the sink id if it is invalid AKA System Standard selection
+    setDefaultAudioContext();
   }
   initializeAudioOutput();
 };
 
 // Allows the user to select an audio interface for Strudel to play through
-export function AudioDeviceSelector({ audioDeviceName, onChange }) {
+export function AudioDeviceSelector({ audioDeviceName, onChange, isDisabled }) {
   const [devices, setDevices] = useState(initdevices);
   const devicesInitialized = devices.size > 0;
 
@@ -57,5 +63,13 @@ export function AudioDeviceSelector({ audioDeviceName, onChange }) {
   Array.from(devices.keys()).forEach((deviceName) => {
     options.set(deviceName, deviceName);
   });
-  return <SelectInput options={options} onClick={onClick} value={audioDeviceName} onChange={onDeviceChange} />;
+  return (
+    <SelectInput
+      isDisabled={isDisabled}
+      options={options}
+      onClick={onClick}
+      value={audioDeviceName}
+      onChange={onDeviceChange}
+    />
+  );
 }
