@@ -78,13 +78,13 @@ export function buildSamples(
         (i < attack
           ? i / attack // attack
           : i < attack + decay // decay
-          ? 1 - ((i - attack) / decay) * (1 - sustainVolume) // decay falloff
-          : i < attack + decay + sustain // sustain
-          ? sustainVolume // sustain volume
-          : i < length - delay // release
-          ? ((length - i - delay) / release) * // release falloff
-            sustainVolume // release volume
-          : 0); // post release
+            ? 1 - ((i - attack) / decay) * (1 - sustainVolume) // decay falloff
+            : i < attack + decay + sustain // sustain
+              ? sustainVolume // sustain volume
+              : i < length - delay // release
+                ? ((length - i - delay) / release) * // release falloff
+                  sustainVolume // release volume
+                : 0); // post release
 
       s = delay
         ? s / 2 +

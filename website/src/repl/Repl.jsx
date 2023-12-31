@@ -8,6 +8,7 @@ import { code2hash, getDrawContext, logger, silence } from '@strudel.cycles/core
 import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { getAudioContext, initAudioOnFirstClick, webaudioOutput } from '@strudel.cycles/webaudio';
+import { defaultAudioDeviceName, getAudioDevices, setAudioDevice } from './panel/AudioDeviceSelector';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -20,7 +21,6 @@ import {
 } from '../settings.mjs';
 import { Header } from './Header';
 import Loader from './Loader';
-import './Repl.css';
 import { Panel } from './panel/Panel';
 import { useStore } from '@nanostores/react';
 import { prebake } from './prebake.mjs';
@@ -79,7 +79,9 @@ export function Repl({ embedded = false }) {
       },
       bgFill: false,
     });
+
     // init settings
+
     initCode().then((decoded) => {
       let msg;
       if (decoded) {
@@ -118,6 +120,20 @@ export function Repl({ embedded = false }) {
     editorRef.current?.updateSettings(editorSettings);
   }, [_settings]);
 
+  // on first load, set stored audio device if possible
+  useEffect(() => {
+    const { audioDeviceName } = _settings;
+    if (audioDeviceName !== defaultAudioDeviceName) {
+      getAudioDevices().then((devices) => {
+        const deviceID = devices.get(audioDeviceName);
+        if (deviceID == null) {
+          return;
+        }
+        setAudioDevice(deviceID);
+      });
+    }
+  }, []);
+
   //
   // UI Actions
   //
@@ -130,11 +146,12 @@ export function Repl({ embedded = false }) {
       editorRef.current.repl.setCps(1);
       await prebake(); // declare default samples
     }
-    if (newCode || isDirty) {
+    if (newCode) {
       editorRef.current.setCode(newCode);
       editorRef.current.repl.evaluate(newCode);
+    } else if (isDirty) {
+      editorRef.current.evaluate();
     }
-    logger('[repl] code updated!');
   };
   const handleShuffle = async () => {
     // window.postMessage('strudel-shuffle');

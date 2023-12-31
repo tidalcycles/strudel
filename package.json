@@ -50,23 +50,22 @@
     "@strudel.cycles/tonal": "workspace:*",
     "@strudel.cycles/transpiler": "workspace:*",
     "@strudel.cycles/webaudio": "workspace:*",
-    "@strudel.cycles/xen": "workspace:*",
-    "acorn": "^8.8.1",
-    "dependency-tree": "^9.0.0"
+    "@strudel.cycles/xen": "workspace:*"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.4.0",
-    "@vitest/ui": "^0.28.0",
+    "dependency-tree": "^10.0.9",
+    "@tauri-apps/cli": "^1.5.9",
+    "@vitest/ui": "^1.1.0",
     "canvas": "^2.11.2",
-    "eslint": "^8.39.0",
-    "eslint-plugin-import": "^2.27.5",
+    "eslint": "^8.56.0",
+    "eslint-plugin-import": "^2.29.1",
     "events": "^3.3.0",
     "jsdoc": "^4.0.2",
     "jsdoc-json": "^2.0.2",
     "jsdoc-to-markdown": "^8.0.0",
-    "lerna": "^6.6.1",
-    "prettier": "^2.8.8",
-    "rollup-plugin-visualizer": "^5.8.1",
-    "vitest": "^0.33.0"
+    "lerna": "^8.0.1",
+    "prettier": "^3.1.1",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "vitest": "^1.1.0"
   }
 }

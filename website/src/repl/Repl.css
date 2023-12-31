@@ -24,8 +24,11 @@
 
 #code .cm-scroller {
   padding-top: 10px !important;
-  padding-bottom: 50vh;
+  height: 100%;
   font-family: inherit;
+}
+#code .cm-content {
+  padding-bottom: 50vh;
 }
 #code .cm-line > * {
   background: var(--lineBackground);

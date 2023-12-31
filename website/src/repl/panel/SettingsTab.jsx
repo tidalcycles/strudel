@@ -1,6 +1,7 @@
 import { defaultSettings, settingsMap, useSettings } from '../../settings.mjs';
 import { themes } from '@strudel/codemirror';
 import { ButtonGroup } from './Forms.jsx';
+import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 
 function Checkbox({ label, value, onChange }) {
   return (
@@ -72,7 +73,7 @@ const fontFamilyOptions = {
   mode7: 'mode7',
 };
 
-export function SettingsTab() {
+export function SettingsTab({ started }) {
   const {
     theme,
     keybindings,
@@ -86,10 +87,20 @@ export function SettingsTab() {
     fontSize,
     fontFamily,
     panelPosition,
+    audioDeviceName,
   } = useSettings();
 
   return (
     <div className="text-foreground p-4 space-y-4">
+      {AudioContext.prototype.setSinkId != null && (
+        <FormItem label="Audio Output Device">
+          <AudioDeviceSelector
+            isDisabled={started}
+            audioDeviceName={audioDeviceName}
+            onChange={(audioDeviceName) => settingsMap.setKey('audioDeviceName', audioDeviceName)}
+          />
+        </FormItem>
+      )}
       <FormItem label="Theme">
         <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>

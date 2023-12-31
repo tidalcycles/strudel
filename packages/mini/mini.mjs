@@ -42,7 +42,7 @@ const applyOptions = (parent, enter) => (pat, i) => {
         }
         case 'tail': {
           const friend = enter(op.arguments_.element);
-          pat = pat.fmap((a) => (b) => Array.isArray(a) ? [...a, b] : [a, b]).appLeft(friend);
+          pat = pat.fmap((a) => (b) => (Array.isArray(a) ? [...a, b] : [a, b])).appLeft(friend);
           break;
         }
         case 'range': {
@@ -160,11 +160,19 @@ export const getLeafLocation = (code, leaf, globalOffset = 0) => {
 };
 
 // takes quoted mini string, returns ast
-export const mini2ast = (code) => krill.parse(code);
+export const mini2ast = (code, start, userCode) => {
+  try {
+    return krill.parse(code);
+  } catch (error) {
+    const region = [error.location.start.offset + start, error.location.end.offset + start];
+    const line = userCode.slice(0, region[0]).split('\n').length;
+    throw new Error(`[mini] parse error at line ${line}: ${error.message}`);
+  }
+};
 
 // takes quoted mini string, returns all nodes that are leaves
-export const getLeaves = (code) => {
-  const ast = mini2ast(code);
+export const getLeaves = (code, start, userCode) => {
+  const ast = mini2ast(code, start, userCode);
   let leaves = [];
   patternifyAST(
     ast,
@@ -180,8 +188,8 @@ export const getLeaves = (code) => {
 };
 
 // takes quoted mini string, returns locations [fromCol,toCol] of all leaf nodes
-export const getLeafLocations = (code, offset = 0) => {
-  return getLeaves(code).map((l) => getLeafLocation(code, l, offset));
+export const getLeafLocations = (code, start = 0, userCode) => {
+  return getLeaves(code, start, userCode).map((l) => getLeafLocation(code, l, start));
 };
 
 // mini notation only (wraps in "")

@@ -5,14 +5,20 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Note, Interval, Scale } from '@tonaljs/tonal';
-import { register, _mod } from '@strudel.cycles/core';
+import { register, _mod, silence, logger, pure, isNote } from '@strudel.cycles/core';
 
 const octavesInterval = (octaves) => (octaves <= 0 ? -1 : 1) + octaves * 7 + 'P';
 
 function scaleStep(step, scale) {
   scale = scale.replaceAll(':', ' ');
   step = Math.ceil(step);
-  const { intervals, tonic } = Scale.get(scale);
+  let { intervals, tonic, empty } = Scale.get(scale);
+  if ((empty && isNote(scale)) || (!empty && !tonic)) {
+    throw new Error(`incomplete scale. Make sure to use ":" instead of spaces, example: .scale("C:major")`);
+  } else if (empty) {
+    throw new Error(`invalid scale "${scale}"`);
+  }
+  tonic = tonic || 'C';
   const { pc, oct = 3 } = Note.get(tonic);
   const octaveOffset = Math.floor(step / intervals.length);
   const scaleStep = _mod(step, intervals.length);
@@ -160,16 +166,34 @@ export const scale = register('scale', function (scale, pat) {
   if (Array.isArray(scale)) {
     scale = scale.flat().join(' ');
   }
-  return pat.withHap((hap) => {
-    const isObject = typeof hap.value === 'object';
-    let note = isObject ? hap.value.n : hap.value;
-    if (isObject) {
-      delete hap.value.n; // remove n so it won't cause trouble
-    }
-    const asNumber = Number(note);
-    if (!isNaN(asNumber)) {
-      note = scaleStep(asNumber, scale);
-    }
-    return hap.withValue(() => (isObject ? { ...hap.value, note } : note)).setContext({ ...hap.context, scale });
-  });
+  return (
+    pat
+      .fmap((value) => {
+        const isObject = typeof value === 'object';
+        let step = isObject ? value.n : value;
+        if (isObject) {
+          delete value.n; // remove n so it won't cause trouble
+        }
+        if (isNote(step)) {
+          // legacy..
+          return pure(step);
+        }
+        const asNumber = Number(step);
+        if (isNaN(asNumber)) {
+          logger(`[tonal] invalid scale step "${step}", expected number`, 'error');
+          return silence;
+        }
+        try {
+          const note = scaleStep(asNumber, scale);
+          value = pure(isObject ? { ...value, note } : note);
+        } catch (err) {
+          logger(`[tonal] ${err.message}`, 'error');
+          value = silence;
+        }
+        return value;
+      })
+      .outerJoin()
+      // legacy:
+      .withHap((hap) => hap.setContext({ ...hap.context, scale }))
+  );
 });

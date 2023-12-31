@@ -15,7 +15,7 @@ export function transpiler(input, options = {}) {
 
   let miniLocations = [];
   const collectMiniLocations = (value, node) => {
-    const leafLocs = getLeafLocations(`"${value}"`, node.start); // stimmt!
+    const leafLocs = getLeafLocations(`"${value}"`, node.start, input);
     miniLocations = miniLocations.concat(leafLocs);
   };
   let widgets = [];

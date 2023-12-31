@@ -31,9 +31,9 @@
   "dependencies": {
     "@strudel.cycles/core": "workspace:*",
     "@strudel.cycles/webaudio": "workspace:*",
-    "webmidi": "^3.1.5"
+    "webmidi": "^3.1.8"
   },
   "devDependencies": {
-    "vite": "^4.3.3"
+    "vite": "^5.0.10"
   }
 }
