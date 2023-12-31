@@ -95,7 +95,7 @@ DIGIT  = [0-9]
 
 // ------------------ delimiters ---------------------------
 
-ws "whitespace" = [ \n\r\t]*
+ws "whitespace" = [ \n\r\t\u00A0]*
 comma = ws "," ws
 pipe = ws "|" ws
 quote = '"' / "'"
