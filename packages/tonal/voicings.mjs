@@ -184,19 +184,16 @@ export const rootNotes = register('rootNotes', function (octave, pat) {
  * If you pass a pattern of strings to voicing, they will be interpreted as chords.
  *
  * @name voicing
- * @param {string} dictionary which voicing dictionary to use.
  * @returns Pattern
  * @example
- * voicing("<C Am F G>")
- * @example
- * n("0 1 2 3 4 5 6 7").chord("<C Am F G>").voicing()
+ * n("0 1 2 3").chord("<C Am F G>").voicing()
  */
 export const voicing = register('voicing', function (pat) {
   return pat
     .fmap((value) => {
       // destructure voicing controls out
       value = typeof value === 'string' ? { chord: value } : value;
-      let { dictionary = 'default', chord, anchor, offset, mode, n, octaves, ...rest } = value;
+      let { dictionary = 'ireal', chord, anchor, offset, mode, n, octaves, ...rest } = value;
       dictionary =
         typeof dictionary === 'string' ? voicingRegistry[dictionary] : { dictionary, mode: 'below', anchor: 'c5' };
       try {
