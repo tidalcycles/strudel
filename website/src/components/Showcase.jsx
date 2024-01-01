@@ -10,9 +10,10 @@ export function shuffleArray(array) {
   }
   return array;
 }
+let _shuffled;
 
 export function Showcase() {
-  const [videos, setVideos] = useState(_videos);
+  const [videos, setVideos] = useState(_shuffled);
   return (
     <>
       <div className="flex space-x-2">
@@ -34,7 +35,7 @@ export function Showcase() {
   );
 }
 
-const _videos = [
+let _videos = [
   // solstice 2023
   { title: 'Jade Rose @ solstice stream 2023', id: 'wg0vW5Ac7L0' },
   {
@@ -119,3 +120,5 @@ const _videos = [
   },
   { title: 'froos @ Algorave 10th Birthday stream', id: 'IcMSocdKwvw' },
 ];
+
+_shuffled = shuffleArray(_videos);
