@@ -15,6 +15,7 @@ const setRelease = (param, phase, sustain, startTime, endTime, endValue, curve =
       const currValue = param.value;
       param.cancelScheduledValues(0);
       param.setValueAtTime(currValue, 0);
+
       //release
       param[ramp](endValue, endTime);
     }, (startTime - ctx.currentTime) * 1000);
@@ -89,6 +90,7 @@ export const getParamADSR = (
 
   param.setValueAtTime(min, begin);
   phase += attack;
+
   //attack
   param[ramp](peak, phase);
   phase += decay;
@@ -139,13 +141,10 @@ export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fe
   // Apply ADSR to filter frequency
   if (!isNaN(fenv) && fenv !== 0) {
     const offset = fenv * fanchor;
-
     const max = clamp(2 ** (fenv - offset) * frequency, 0, 20000);
-
     getParamADSR(filter.frequency, attack, decay, sustain, release, frequency, max, start, end, curve);
     return filter;
   }
-
   return filter;
 }
 
