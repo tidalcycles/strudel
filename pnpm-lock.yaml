@@ -481,6 +481,9 @@ importers:
       '@algolia/client-search':
         specifier: ^4.22.0
         version: 4.22.0
+      '@astro-community/astro-embed-youtube':
+        specifier: ^0.4.3
+        version: 0.4.3(astro@4.0.8)
       '@astrojs/mdx':
         specifier: ^2.0.3
         version: 2.0.3(astro@4.0.8)
@@ -598,6 +601,9 @@ importers:
       react-hook-inview:
         specifier: ^4.5.0
         version: 4.5.0(react-dom@18.2.0)(react@18.2.0)
+      react-lite-youtube-embed:
+        specifier: ^2.4.0
+        version: 2.4.0(react-dom@18.2.0)(react@18.2.0)
       rehype-autolink-headings:
         specifier: ^7.1.0
         version: 7.1.0
@@ -793,6 +799,15 @@ packages:
       jsonpointer: 5.0.1
       leven: 3.1.0
     dev: true
+
+  /@astro-community/astro-embed-youtube@0.4.3(astro@4.0.8):
+    resolution: {integrity: sha512-zXtPmR9yxrTo6cuLhH8v+r62bsXbsLJgsU2FiZalPr4bXJxAUQEIlG46S/qK0AEXi9uNShKqy4+zBaJ98xTVEg==}
+    peerDependencies:
+      astro: ^2.0.0 || ^3.0.0-beta || ^4.0.0-beta
+    dependencies:
+      astro: 4.0.8(@types/node@20.10.6)(typescript@5.3.3)
+      lite-youtube-embed: 0.2.0
+    dev: false
 
   /@astrojs/compiler@2.3.4:
     resolution: {integrity: sha512-33/YtWoBCE0cBUNy1kh78FCDXBoBANX87ShgATlAHECYbG2+buNTAgq4Xgz4t5NgnEHPN21GIBC2Mvvwisoutw==}
@@ -8902,6 +8917,10 @@ packages:
       uc.micro: 1.0.6
     dev: true
 
+  /lite-youtube-embed@0.2.0:
+    resolution: {integrity: sha512-XXXAk5sbvtjjwbie3XG+6HppgTm1HTGL/Uk9z9NkJH53o7puZLur434heHzAjkS60hZB3vT4ls25zl5rMiX4EA==}
+    dev: false
+
   /load-json-file@4.0.0:
     resolution: {integrity: sha512-Kx8hMakjX03tiGTLAIdJ+lL0htKnXjEZN6hk/tozf/WOuYGdZBJrZ+rCJRbVCugsjB3jMLn9746NsQIf5VjBMw==}
     engines: {node: '>=4'}
@@ -11286,6 +11305,16 @@ packages:
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
     dev: true
+
+  /react-lite-youtube-embed@2.4.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Xo6cM1zPlROvvM97JkqQIoXstlQDaC4+DawmM7BB7Hh1cXrkBHEGq1iJlQxBTUWAUklmpcC7ph7qg7CztXtABQ==}
+    peerDependencies:
+      react: '>=18.2.0'
+      react-dom: '>=18.2.0'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
