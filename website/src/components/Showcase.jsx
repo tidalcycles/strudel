@@ -52,10 +52,10 @@ const _videos = [
   { title: 'totalgee (Glen F) @ solstice stream 2023', id: 'IvI6uaE3nLU' },
   { title: 'Dan Gorelick @ solstice stream 2023', id: 'qMJEljJyPi0' },
   //
-  {
+  /* { // not sure if this is copyrighted ...
     title: 'Creative Coding @ Chalmers University of Technology, video by svt.se',
     id: '4zgHeNpG4wU',
-  },
+  }, */
   { title: 'Switch Angel - Morrow', id: 'qiatPuJpxLs' },
   {
     title: 'Jade Rose - Into your spell',
