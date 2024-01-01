@@ -19,10 +19,14 @@ export const getAudioDevices = async () => {
 };
 
 export const setAudioDevice = async (id) => {
-  const audioCtx = getAudioContext();
+  let audioCtx = getAudioContext();
   if (audioCtx.sinkId === id) {
     return;
   }
+  await audioCtx.suspend();
+  await audioCtx.close();
+  audioCtx = setDefaultAudioContext();
+  await audioCtx.resume();
   const isValidID = (id ?? '').length > 0;
   if (isValidID) {
     try {
@@ -30,9 +34,6 @@ export const setAudioDevice = async (id) => {
     } catch {
       logger('failed to set audio interface', 'warning');
     }
-  } else {
-    // reset the audio context and dont set the sink id if it is invalid AKA System Standard selection
-    setDefaultAudioContext();
   }
   initializeAudioOutput();
 };

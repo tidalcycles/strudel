@@ -30,11 +30,12 @@ let audioContext;
 
 export const setDefaultAudioContext = () => {
   audioContext = new AudioContext();
+  return audioContext;
 };
 
 export const getAudioContext = () => {
   if (!audioContext) {
-    setDefaultAudioContext();
+    return setDefaultAudioContext();
   }
   return audioContext;
 };
