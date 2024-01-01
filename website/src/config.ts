@@ -54,8 +54,12 @@ export const SIDEBAR: Sidebar = {
     ],
   },
   en: {
+    Presentation: [
+      { text: 'What is Strudel?', link: 'workshop/getting-started' },
+      { text: 'Showcase', link: 'intro/showcase' },
+    ],
     Workshop: [
-      { text: 'Getting Started', link: 'workshop/getting-started' },
+      // { text: 'Getting Started', link: 'workshop/getting-started' },
       { text: 'First Sounds', link: 'workshop/first-sounds' },
       { text: 'First Notes', link: 'workshop/first-notes' },
       { text: 'First Effects', link: 'workshop/first-effects' },
