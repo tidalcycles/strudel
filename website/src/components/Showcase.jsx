@@ -71,7 +71,7 @@ let _videos = [
     params: 'start=1278',
   },
   {
-    title: 'Zach B @ (Algo|Afro) Futures 2023',
+    title: 'Zach B-B @ (Algo|Afro) Futures 2023',
     id: 'zUoZvkZ3J7Q',
     params: 'start=2547',
   },
