@@ -234,7 +234,7 @@ const generic_params = [
    * note("c3 e3").decay("<.1 .2 .3 .4>").sustain(0)
    *
    */
-  ['decay'],
+  ['decay', 'dec'],
   /**
    * Amplitude envelope sustain level: The level which is reached after attack / decay, being sustained until the offset.
    *
