@@ -1399,10 +1399,15 @@ controls.ad = register('ad', (t, pat) => {
   const [attack, decay = attack] = t;
   return pat.attack(attack).decay(decay);
 });
-controls.ds = register('ds', (ds, pat) => {
-  ds = !Array.isArray(ds) ? [ds] : ds;
-  const [decay, sustain] = ds;
+controls.ds = register('ds', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [decay, sustain = 0] = t;
   return pat.set({ decay, sustain });
+});
+controls.ds = register('ar', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [attack, release = attack] = t;
+  return pat.set({ attack, release });
 });
 
 export default controls;
