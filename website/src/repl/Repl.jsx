@@ -139,17 +139,19 @@ export function Repl({ embedded = false }) {
   //
 
   const handleTogglePlay = async () => editorRef.current?.toggle();
-  const handleUpdate = async (newCode, reset = false) => {
+
+  // payload = {reset: boolean, code: string, evaluate: boolean}
+  const handleUpdate = async ({ reset = false, code = null, evaluate = true }) => {
     if (reset) {
       clearCanvas();
       resetLoadedSounds();
       editorRef.current.repl.setCps(1);
       await prebake(); // declare default samples
     }
-    if (newCode) {
-      editorRef.current.setCode(newCode);
-      editorRef.current.repl.evaluate(newCode);
-    } else if (isDirty) {
+    if (code != null) {
+      editorRef.current.setCode(code);
+    }
+    if (evaluate && isDirty) {
       editorRef.current.evaluate();
     }
   };

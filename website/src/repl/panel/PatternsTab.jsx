@@ -19,10 +19,40 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
+function PatternButton({ isActive, onClick, label }) {
+  return (
+    <a
+      className={classNames('mr-4 hover:opacity-50 cursor-pointer inline-block', isActive ? 'outline outline-1' : '')}
+      onClick={onClick}
+    >
+      {label}
+    </a>
+  );
+}
+
+function PatternButtons({ patterns, activePattern, onClick }) {
+  return (
+    <div className="font-mono text-sm">
+      {Object.entries(patterns).map(([key, data]) => (
+        <PatternButton key={key} label={key} isActive={key === activePattern} onClick={() => onClick(key, data)} />
+      ))}
+    </div>
+  );
+}
+
 export function PatternsTab({ context }) {
   const { userPatterns } = useSettings();
   const activePattern = useActivePattern();
   const isExample = useMemo(() => activePattern && !!tunes[activePattern], [activePattern]);
+  const onPatternClick = (key, data) => {
+    const { code } = data;
+    setActivePattern(key);
+    context.handleUpdate({ code, evaluate: false });
+  };
+
+  const examplePatterns = {};
+  Object.entries(tunes).forEach(([key, code]) => (examplePatterns[key] = { code }));
+
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-4 pb-4">
       <section>
@@ -47,31 +77,14 @@ export function PatternsTab({ context }) {
             </div>
           </div>
         )}
-        <div className="font-mono text-sm">
-          {Object.entries(userPatterns).map(([key, up]) => (
-            <a
-              key={key}
-              className={classNames(
-                'mr-4 hover:opacity-50 cursor-pointer inline-block',
-                key === activePattern ? 'outline outline-1' : '',
-              )}
-              onClick={() => {
-                const { code } = up;
-                setActivePattern(key);
-                context.handleUpdate(code, true);
-              }}
-            >
-              {key}
-            </a>
-          ))}
-        </div>
+        <PatternButtons onClick={onPatternClick} patterns={userPatterns} activePattern={activePattern} />
         <div className="pr-4 space-x-4 border-b border-foreground mb-2 h-8 flex overflow-auto max-w-full items-center">
           <button
             className="hover:opacity-50"
             onClick={() => {
               const name = newUserPattern();
               const { code } = getUserPattern(name);
-              context.handleUpdate(code, true);
+              context.handleUpdate({ code, evaluate: false });
             }}
           >
             new
@@ -96,23 +109,7 @@ export function PatternsTab({ context }) {
       </section>
       <section>
         <h2 className="text-xl mb-2">Examples</h2>
-        <div className="font-mono text-sm">
-          {Object.entries(tunes).map(([key, tune]) => (
-            <a
-              key={key}
-              className={classNames(
-                'mr-4 hover:opacity-50 cursor-pointer inline-block',
-                key === activePattern ? 'outline outline-1' : '',
-              )}
-              onClick={() => {
-                setActivePattern(key);
-                context.handleUpdate(tune, true);
-              }}
-            >
-              {key}
-            </a>
-          ))}
-        </div>
+        <PatternButtons onClick={onPatternClick} patterns={examplePatterns} activePattern={activePattern} />
       </section>
     </div>
   );
