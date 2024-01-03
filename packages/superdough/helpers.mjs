@@ -10,15 +10,18 @@ const setRelease = (param, phase, sustain, startTime, endTime, endValue, curve =
     param[ramp](endValue, endTime);
   } else if (param.cancelAndHoldAtTime == null) {
     //this replicates cancelAndHoldAtTime behavior for Firefox
-    setTimeout(() => {
-      //sustain at current value
-      const currValue = param.value;
-      param.cancelScheduledValues(0);
-      param.setValueAtTime(currValue, 0);
+    setTimeout(
+      () => {
+        //sustain at current value
+        const currValue = param.value;
+        param.cancelScheduledValues(0);
+        param.setValueAtTime(currValue, 0);
 
-      //release
-      param[ramp](endValue, endTime);
-    }, (startTime - ctx.currentTime) * 1000);
+        //release
+        param[ramp](endValue, endTime);
+      },
+      (startTime - ctx.currentTime) * 1000,
+    );
   } else {
     //stop the envelope, hold the value, and then set the release stage
     param.cancelAndHoldAtTime(startTime);
