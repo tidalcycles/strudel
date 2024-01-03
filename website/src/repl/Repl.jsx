@@ -18,6 +18,7 @@ import {
   settingsMap,
   updateUserCode,
   useSettings,
+  useActivePattern,
 } from '../settings.mjs';
 import { Header } from './Header';
 import Loader from './Loader';
@@ -33,7 +34,7 @@ export const ReplContext = createContext(null);
 
 const { latestCode } = settingsMap.get();
 
-let modulesLoading, presets, drawContext, clearCanvas, isIframe;
+let modulesLoading, presets, drawContext, clearCanvas, isIframe, viewingPatternID;
 if (typeof window !== 'undefined') {
   initAudioOnFirstClick();
   modulesLoading = loadModules();
@@ -140,8 +141,10 @@ export function Repl({ embedded = false }) {
 
   const handleTogglePlay = async () => editorRef.current?.toggle();
 
-  // payload = {reset: boolean, code: string, evaluate: boolean}
-  const handleUpdate = async ({ reset = false, code = null, evaluate = true }) => {
+  // payload = {reset?: boolean, code?: string, evaluate?: boolean, patternID?: string }
+  const handleUpdate = async (payload) => {
+    const { reset = false, code = null, evaluate = true, patternID = null } = payload;
+    console.log(payload);
     if (reset) {
       clearCanvas();
       resetLoadedSounds();
@@ -150,9 +153,15 @@ export function Repl({ embedded = false }) {
     }
     if (code != null) {
       editorRef.current.setCode(code);
+      viewingPatternID = patternID;
     }
-    if (evaluate && isDirty) {
+    console.log(isDirty);
+    if (evaluate) {
       editorRef.current.evaluate();
+
+      if (viewingPatternID != null) {
+        setActivePattern(viewingPatternID);
+      }
     }
   };
   const handleShuffle = async () => {

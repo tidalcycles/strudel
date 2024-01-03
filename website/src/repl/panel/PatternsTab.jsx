@@ -46,8 +46,7 @@ export function PatternsTab({ context }) {
   const isExample = useMemo(() => activePattern && !!tunes[activePattern], [activePattern]);
   const onPatternClick = (key, data) => {
     const { code } = data;
-    setActivePattern(key);
-    context.handleUpdate({ code, evaluate: false });
+    context.handleUpdate({ patternID: key, code, evaluate: false });
   };
 
   const examplePatterns = {};
