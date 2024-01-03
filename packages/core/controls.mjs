@@ -1394,6 +1394,11 @@ controls.adsr = register('adsr', (adsr, pat) => {
   const [attack, decay, sustain, release] = adsr;
   return pat.set({ attack, decay, sustain, release });
 });
+controls.ad = register('ad', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [attack, decay = attack] = t;
+  return pat.attack(attack).decay(decay);
+});
 controls.ds = register('ds', (ds, pat) => {
   ds = !Array.isArray(ds) ? [ds] : ds;
   const [decay, sustain] = ds;
