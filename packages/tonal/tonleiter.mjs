@@ -60,12 +60,12 @@ export const step2semitones = (x) => {
   return Interval.semitones(x);
 };
 
-export const x2midi = (x) => {
+export const x2midi = (x, defaultOctave) => {
   if (typeof x === 'number') {
     return x;
   }
   if (typeof x === 'string') {
-    return noteToMidi(x);
+    return noteToMidi(x, defaultOctave);
   }
 };
 
@@ -88,13 +88,14 @@ let modeTarget = {
   below: (v) => v.slice(-1)[0],
   duck: (v) => v.slice(-1)[0],
   above: (v) => v[0],
+  root: (v) => v[0],
 };
 
 export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'below', anchor = 'c5', octaves = 1 }) {
   const [root, symbol] = tokenizeChord(chord);
   const rootChroma = pc2chroma(root);
-  anchor = anchor?.note || anchor;
-  const anchorChroma = pitch2chroma(anchor);
+  anchor = x2midi(anchor?.note || anchor, 4);
+  const anchorChroma = midi2chroma(anchor);
   const voicings = dictionary[symbol].map((voicing) =>
     (typeof voicing === 'string' ? voicing.split(' ') : voicing).map(step2semitones),
   );
@@ -110,18 +111,21 @@ export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'below'
     }
     return diff;
   });
+  if (mode === 'root') {
+    bestIndex = 0;
+  }
 
   const octDiff = Math.ceil(offset / voicings.length) * 12;
   const indexWithOffset = _mod(bestIndex + offset, voicings.length);
   const voicing = voicings[indexWithOffset];
   const targetStep = modeTarget[mode](voicing);
-  const anchorMidi = noteToMidi(anchor, 4) - chromaDiffs[indexWithOffset] + octDiff;
+  const anchorMidi = anchor - chromaDiffs[indexWithOffset] + octDiff;
 
   const voicingMidi = voicing.map((v) => anchorMidi - targetStep + v);
   let notes = voicingMidi.map((n) => midi2note(n));
 
   if (mode === 'duck') {
-    notes = notes.filter((_, i) => voicingMidi[i] !== noteToMidi(anchor));
+    notes = notes.filter((_, i) => voicingMidi[i] !== anchor);
   }
   if (n !== undefined) {
     return [scaleStep(notes, n, octaves)];
