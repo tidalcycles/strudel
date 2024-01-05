@@ -1,5 +1,5 @@
 import { isNote, isNoteWithOctave, _mod, noteToMidi, tokenizeNote } from '@strudel.cycles/core';
-import { Interval } from '@tonaljs/tonal';
+import { Interval, Scale } from '@tonaljs/tonal';
 
 // https://codesandbox.io/s/stateless-voicings-g2tmz0?file=/src/lib.js:0-2515
 
@@ -29,6 +29,7 @@ export function tokenizeChord(chord) {
 }
 export const note2pc = (note) => note.match(/^[A-G][#b]?/i)[0];
 export const note2oct = (note) => tokenizeNote(note)[2];
+export const note2midi = noteToMidi;
 
 export const note2chroma = (note) => {
   return pc2chroma(note2pc(note));
@@ -81,6 +82,50 @@ export function scaleStep(notes, offset, octaves = 1) {
   const octOffset = Math.floor(offset / notes.length) * octaves * 12;
   offset = _mod(offset, notes.length);
   return notes[offset] + octOffset;
+}
+
+export function nearestNumberIndex(target, numbers, preferHigher) {
+  let bestIndex = 0,
+    bestDiff = Infinity;
+  numbers.forEach((s, i) => {
+    const diff = Math.abs(s - target);
+    // preferHigher only works if numbers are sorted in ascending order!
+    if ((!preferHigher && diff < bestDiff) || (preferHigher && diff <= bestDiff)) {
+      bestIndex = i;
+      bestDiff = diff;
+    }
+  });
+  return bestIndex;
+}
+
+let scaleSteps = {}; // [scaleName]: semitones[]
+
+export function stepInNamedScale(step, scale, anchor, preferHigher) {
+  let [root, scaleName] = Scale.tokenize(scale);
+  const rootMidi = x2midi(root);
+  const rootChroma = midi2chroma(rootMidi);
+  if (!scaleSteps[scaleName]) {
+    let { intervals } = Scale.get(`C ${scaleName}`);
+    // cache result
+    scaleSteps[scaleName] = intervals.map(step2semitones);
+  }
+  const steps = scaleSteps[scaleName];
+  if (!steps) {
+    return null;
+  }
+  let transpose = rootMidi;
+  if (anchor) {
+    anchor = x2midi(anchor, 3);
+    const anchorChroma = midi2chroma(anchor);
+    const anchorDiff = _mod(anchorChroma - rootChroma, 12);
+    const zeroIndex = nearestNumberIndex(anchorDiff, steps, preferHigher);
+    step = step + zeroIndex;
+    transpose = anchor - anchorDiff;
+  }
+  const octOffset = Math.floor(step / steps.length) * 12;
+  step = _mod(step, steps.length);
+  const targetMidi = steps[step] + transpose;
+  return targetMidi + octOffset;
 }
 
 // different ways to resolve the note to compare the anchor to (see renderVoicing)
