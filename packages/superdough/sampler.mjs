@@ -302,7 +302,12 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   bufferSource.start(time, offset);
   const envGain = ac.createGain();
   const node = bufferSource.connect(envGain);
-  const holdEnd = t + duration;
+  let holdEnd = t + duration;
+  if (clip == null && loop == null && value.release == null) {
+    const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
+    holdEnd = t + bufferDuration;
+  }
+
   getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, t, holdEnd, 'linear');
 
   const out = ac.createGain(); // we need a separate gain for the cutgroups because firefox...
@@ -316,14 +321,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   };
   let envEnd = holdEnd + release + 0.01;
   bufferSource.stop(envEnd);
-  const stop = (endTime, playWholeBuffer = clip === undefined && loop === undefined) => {
-    // did not reimplement this behavior, because it mostly seems to confuse people...
-    // if (playWholeBuffer) {
-    //   const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
-    //   envEnd = t + (end - begin) * bufferDuration;
-    // }
-    // bufferSource.stop(envEnd);
-  };
+  const stop = (endTime, playWholeBuffer) => {};
   const handle = { node: out, bufferSource, stop };
 
   // cut groups
