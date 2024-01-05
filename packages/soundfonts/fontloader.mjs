@@ -1,5 +1,5 @@
 import { noteToMidi, freqToMidi, getSoundIndex } from '@strudel.cycles/core';
-import { getAudioContext, registerSound, getEnvelope, getADSRValues } from '@strudel.cycles/webaudio';
+import { getAudioContext, registerSound, getParamADSR, getADSRValues } from '@strudel.cycles/webaudio';
 import gm from './gm.mjs';
 
 let loadCache = {};
@@ -136,23 +136,27 @@ export function registerSoundfonts() {
           value.sustain,
           value.release,
         ]);
+
+        const { duration } = value;
         const n = getSoundIndex(value.n, fonts.length);
         const font = fonts[n];
         const ctx = getAudioContext();
         const bufferSource = await getFontBufferSource(font, value, ctx);
         bufferSource.start(time);
-        const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 0.3, time);
-        bufferSource.connect(envelope);
-        const stop = (releaseTime) => {
-          const silentAt = releaseEnvelope(releaseTime);
-          bufferSource.stop(silentAt);
-        };
+        const envGain = ctx.createGain();
+        const node = bufferSource.connect(envGain);
+        const holdEnd = time + duration;
+        getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, time, holdEnd, 'linear');
+        let envEnd = holdEnd + release + 0.01;
+
+        bufferSource.stop(envEnd);
+        const stop = (releaseTime) => {};
         bufferSource.onended = () => {
           bufferSource.disconnect();
-          envelope.disconnect();
+          node.disconnect();
           onended();
         };
-        return { node: envelope, stop };
+        return { node, stop };
       },
       { type: 'soundfont', prebake: true, fonts },
     );

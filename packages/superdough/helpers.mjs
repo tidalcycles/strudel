@@ -1,33 +1,5 @@
 import { getAudioContext } from './superdough.mjs';
-import { clamp } from './util.mjs';
-
-const setRelease = (param, phase, sustain, startTime, endTime, endValue, curve = 'linear') => {
-  const ctx = getAudioContext();
-  const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
-  // if the decay stage is complete before the note event is done, we don't need to do anything special
-  if (phase < startTime) {
-    param.setValueAtTime(sustain, startTime);
-    param[ramp](endValue, endTime);
-  } else if (param.cancelAndHoldAtTime == null) {
-    //this replicates cancelAndHoldAtTime behavior for Firefox
-    setTimeout(
-      () => {
-        //sustain at current value
-        const currValue = param.value;
-        param.cancelScheduledValues(0);
-        param.setValueAtTime(currValue, 0);
-
-        //release
-        param[ramp](endValue, endTime);
-      },
-      (startTime - ctx.currentTime) * 1000,
-    );
-  } else {
-    //stop the envelope, hold the value, and then set the release stage
-    param.cancelAndHoldAtTime(startTime);
-    param[ramp](endValue, endTime);
-  }
-};
+import { clamp, nanFallback } from './util.mjs';
 
 export function gainNode(value) {
   const node = getAudioContext().createGain();
@@ -35,44 +7,13 @@ export function gainNode(value) {
   return node;
 }
 
-// alternative to getADSR returning the gain node and a stop handle to trigger the release anytime in the future
-export const getEnvelope = (attack, decay, sustain, release, velocity, begin) => {
-  const gainNode = getAudioContext().createGain();
-  let phase = begin;
-  gainNode.gain.setValueAtTime(0, begin);
-  phase += attack;
-  gainNode.gain.linearRampToValueAtTime(velocity, phase); // attack
-  phase += decay;
-  let sustainLevel = sustain * velocity;
-  gainNode.gain.linearRampToValueAtTime(sustainLevel, phase); // decay / sustain
-  // sustain end
-  return {
-    node: gainNode,
-    stop: (t) => {
-      const endTime = t + release;
-      setRelease(gainNode.gain, phase, sustainLevel, t, endTime, 0);
-      // helps prevent pops from overlapping sounds
-      return endTime;
-    },
-  };
+const getSlope = (y1, y2, x1, x2) => {
+  const denom = x2 - x1;
+  if (denom === 0) {
+    return 0;
+  }
+  return (y2 - y1) / (x2 - x1);
 };
-
-export const getExpEnvelope = (attack, decay, sustain, release, velocity, begin) => {
-  sustain = Math.max(0.001, sustain);
-  velocity = Math.max(0.001, velocity);
-  const gainNode = getAudioContext().createGain();
-  gainNode.gain.setValueAtTime(0.0001, begin);
-  gainNode.gain.exponentialRampToValueAtTime(velocity, begin + attack);
-  gainNode.gain.exponentialRampToValueAtTime(sustain * velocity, begin + attack + decay);
-  return {
-    node: gainNode,
-    stop: (t) => {
-      // similar to getEnvelope, this will glitch if sustain level has not been reached
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, t + release);
-    },
-  };
-};
-
 export const getParamADSR = (
   param,
   attack,
@@ -86,23 +27,47 @@ export const getParamADSR = (
   //exponential works better for frequency modulations (such as filter cutoff) due to human ear perception
   curve = 'exponential',
 ) => {
+  attack = nanFallback(attack);
+  decay = nanFallback(decay);
+  sustain = nanFallback(sustain);
+  release = nanFallback(release);
+
   const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
-  let phase = begin;
+  if (curve === 'exponential') {
+    min = Math.max(0.0001, min);
+  }
   const range = max - min;
   const peak = min + range;
+  const sustainVal = min + sustain * range;
+  const duration = end - begin;
+
+  const envValAtTime = (time) => {
+    if (attack > time) {
+      return time * getSlope(min, peak, 0, attack) + 0;
+    } else {
+      return (time - attack) * getSlope(peak, sustainVal, 0, decay) + peak;
+    }
+  };
 
   param.setValueAtTime(min, begin);
-  phase += attack;
-
-  //attack
-  param[ramp](peak, phase);
-  phase += decay;
-  const sustainLevel = min + sustain * range;
-
-  //decay
-  param[ramp](sustainLevel, phase);
-
-  setRelease(param, phase, sustainLevel, end, end + release, min, curve);
+  if (attack > duration) {
+    //attack
+    param[ramp](envValAtTime(duration), end);
+  } else if (attack + decay > duration) {
+    //attack
+    param[ramp](envValAtTime(attack), begin + attack);
+    //decay
+    param[ramp](envValAtTime(duration), end);
+  } else {
+    //attack
+    param[ramp](envValAtTime(attack), begin + attack);
+    //decay
+    param[ramp](envValAtTime(attack + decay), begin + attack + decay);
+    //sustain
+    param.setValueAtTime(sustainVal, end);
+  }
+  //release
+  param[ramp](min, end + release);
 };
 
 export function getCompressor(ac, threshold, ratio, knee, attack, release) {

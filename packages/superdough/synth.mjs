@@ -1,6 +1,6 @@
 import { midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext } from './superdough.mjs';
-import { gainNode, getADSRValues, getEnvelope, getExpEnvelope } from './helpers.mjs';
+import { gainNode, getADSRValues, getParamADSR } from './helpers.mjs';
 import { getNoiseMix, getNoiseOscillator } from './noise.mjs';
 
 const mod = (freq, range = 1, type = 'sine') => {
@@ -43,26 +43,30 @@ export function registerSynthSounds() {
           let { density } = value;
           sound = getNoiseOscillator(s, t, density);
         }
+
         let { node: o, stop, triggerRelease } = sound;
 
         // turn down
         const g = gainNode(0.3);
 
-        // gain envelope
-        const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
+        const { duration } = value;
 
         o.onended = () => {
           o.disconnect();
           g.disconnect();
           onended();
         };
+
+        const envGain = gainNode(1);
+        let node = o.connect(g).connect(envGain);
+        const holdEnd = t + duration;
+        getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, t, holdEnd, 'linear');
+        const envEnd = holdEnd + release + 0.01;
+        triggerRelease?.(envEnd);
+        stop(envEnd);
         return {
-          node: o.connect(g).connect(envelope),
-          stop: (releaseTime) => {
-            const silentAt = releaseEnvelope(releaseTime);
-            triggerRelease?.(releaseTime);
-            stop(silentAt);
-          },
+          node,
+          stop: (releaseTime) => {},
         };
       },
       { type: 'synth', prebake: true },
@@ -122,6 +126,7 @@ export function getOscillator(
     fmrelease: fmRelease,
     fmvelocity: fmVelocity,
     fmwave: fmWaveform = 'sine',
+    duration,
   },
 ) {
   let ac = getAudioContext();
@@ -151,26 +156,38 @@ export function getOscillator(
   o.start(t);
 
   // FM
-  let stopFm, fmEnvelope;
+  let stopFm;
+  let envGain = ac.createGain();
   if (fmModulationIndex) {
     const { node: modulator, stop } = fm(o, fmHarmonicity, fmModulationIndex, fmWaveform);
     if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
       // no envelope by default
       modulator.connect(o.frequency);
     } else {
-      fmAttack = fmAttack ?? 0.001;
-      fmDecay = fmDecay ?? 0.001;
-      fmSustain = fmSustain ?? 1;
-      fmRelease = fmRelease ?? 0.001;
-      fmVelocity = fmVelocity ?? 1;
-      fmEnvelope = getEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
+      const [attack, decay, sustain, release] = getADSRValues([fmAttack, fmDecay, fmSustain, fmRelease]);
+
+      const holdEnd = t + duration;
+      // let envEnd = holdEnd + release + 0.01;
+
+      getParamADSR(
+        envGain.gain,
+        attack,
+        decay,
+        sustain,
+        release,
+        0,
+        1,
+        t,
+        holdEnd,
+        fmEnvelopeType === 'exp' ? 'exponential' : 'linear',
+      );
+
       if (fmEnvelopeType === 'exp') {
-        fmEnvelope = getExpEnvelope(fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity, t);
-        fmEnvelope.node.maxValue = fmModulationIndex * 2;
-        fmEnvelope.node.minValue = 0.00001;
+        envGain.maxValue = fmModulationIndex * 2;
+        envGain.minValue = 0.00001;
       }
-      modulator.connect(fmEnvelope.node);
-      fmEnvelope.node.connect(o.frequency);
+      modulator.connect(envGain);
+      envGain.connect(o.frequency);
     }
     stopFm = stop;
   }
@@ -202,7 +219,7 @@ export function getOscillator(
       o.stop(time);
     },
     triggerRelease: (time) => {
-      fmEnvelope?.stop(time);
+      // envGain?.stop(time);
     },
   };
 }

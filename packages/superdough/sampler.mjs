@@ -1,6 +1,6 @@
 import { noteToMidi, valueToMidi, getSoundIndex } from './util.mjs';
 import { getAudioContext, registerSound } from './index.mjs';
-import { getADSRValues, getEnvelope } from './helpers.mjs';
+import { getADSRValues, getParamADSR } from './helpers.mjs';
 import { logger } from './logger.mjs';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
@@ -243,6 +243,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     begin = 0,
     loopEnd = 1,
     end = 1,
+    duration,
     vib,
     vibmod = 0.5,
   } = value;
@@ -255,7 +256,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   const ac = getAudioContext();
   // destructure adsr here, because the default should be different for synths and samples
 
-  const [attack, decay, sustain, release] = getADSRValues([value.attack, value.decay, value.sustain, value.release]);
+  let [attack, decay, sustain, release] = getADSRValues([value.attack, value.decay, value.sustain, value.release]);
   //const soundfont = getSoundfontKey(s);
   const time = t + nudge;
 
@@ -299,25 +300,29 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     bufferSource.loopEnd = loopEnd * bufferSource.buffer.duration - offset;
   }
   bufferSource.start(time, offset);
-  const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
-  bufferSource.connect(envelope);
+  const envGain = ac.createGain();
+  const node = bufferSource.connect(envGain);
+  const holdEnd = t + duration;
+  getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, t, holdEnd, 'linear');
+
   const out = ac.createGain(); // we need a separate gain for the cutgroups because firefox...
-  envelope.connect(out);
+  node.connect(out);
   bufferSource.onended = function () {
     bufferSource.disconnect();
     vibratoOscillator?.stop();
-    envelope.disconnect();
+    node.disconnect();
     out.disconnect();
     onended();
   };
+  let envEnd = holdEnd + release + 0.01;
+  bufferSource.stop(envEnd);
   const stop = (endTime, playWholeBuffer = clip === undefined && loop === undefined) => {
-    let releaseTime = endTime;
-    if (playWholeBuffer) {
-      const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
-      releaseTime = t + (end - begin) * bufferDuration;
-    }
-    const silentAt = releaseEnvelope(releaseTime);
-    bufferSource.stop(silentAt);
+    // did not reimplement this behavior, because it mostly seems to confuse people...
+    // if (playWholeBuffer) {
+    //   const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
+    //   envEnd = t + (end - begin) * bufferDuration;
+    // }
+    // bufferSource.stop(envEnd);
   };
   const handle = { node: out, bufferSource, stop };
 

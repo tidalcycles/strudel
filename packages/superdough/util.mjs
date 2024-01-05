@@ -54,7 +54,7 @@ export const valueToMidi = (value, fallbackValue) => {
   return fallbackValue;
 };
 
-export function nanFallback(value, fallback) {
+export function nanFallback(value, fallback = 0) {
   if (isNaN(Number(value))) {
     logger(`"${value}" is not a number, falling back to ${fallback}`, 'warning');
     return fallback;
