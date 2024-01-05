@@ -119,7 +119,7 @@ export function getOscillator(
     // fm
     fmh: fmHarmonicity = 1,
     fmi: fmModulationIndex,
-    fmenv: fmEnvelopeType = 'lin',
+    fmenv: fmEnvelopeType = 'exp',
     fmattack: fmAttack,
     fmdecay: fmDecay,
     fmsustain: fmSustain,
@@ -165,10 +165,7 @@ export function getOscillator(
       modulator.connect(o.frequency);
     } else {
       const [attack, decay, sustain, release] = getADSRValues([fmAttack, fmDecay, fmSustain, fmRelease]);
-
       const holdEnd = t + duration;
-      // let envEnd = holdEnd + release + 0.01;
-
       getParamADSR(
         envGain.gain,
         attack,
@@ -181,11 +178,6 @@ export function getOscillator(
         holdEnd,
         fmEnvelopeType === 'exp' ? 'exponential' : 'linear',
       );
-
-      if (fmEnvelopeType === 'exp') {
-        envGain.maxValue = fmModulationIndex * 2;
-        envGain.minValue = 0.00001;
-      }
       modulator.connect(envGain);
       envGain.connect(o.frequency);
     }
