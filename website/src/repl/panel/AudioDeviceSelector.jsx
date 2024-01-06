@@ -1,42 +1,8 @@
 import React, { useState } from 'react';
-import { getAudioContext, initializeAudioOutput, setDefaultAudioContext } from '@strudel.cycles/webaudio';
+import { getAudioDevices, setAudioDevice } from '../util.mjs';
 import { SelectInput } from './SelectInput';
-import { logger } from '@strudel.cycles/core';
 
 const initdevices = new Map();
-export const defaultAudioDeviceName = 'System Standard';
-
-export const getAudioDevices = async () => {
-  await navigator.mediaDevices.getUserMedia({ audio: true });
-  let mediaDevices = await navigator.mediaDevices.enumerateDevices();
-  mediaDevices = mediaDevices.filter((device) => device.kind === 'audiooutput' && device.deviceId !== 'default');
-  const devicesMap = new Map();
-  devicesMap.set(defaultAudioDeviceName, '');
-  mediaDevices.forEach((device) => {
-    devicesMap.set(device.label, device.deviceId);
-  });
-  return devicesMap;
-};
-
-export const setAudioDevice = async (id) => {
-  let audioCtx = getAudioContext();
-  if (audioCtx.sinkId === id) {
-    return;
-  }
-  await audioCtx.suspend();
-  await audioCtx.close();
-  audioCtx = setDefaultAudioContext();
-  await audioCtx.resume();
-  const isValidID = (id ?? '').length > 0;
-  if (isValidID) {
-    try {
-      await audioCtx.setSinkId(id);
-    } catch {
-      logger('failed to set audio interface', 'warning');
-    }
-  }
-  initializeAudioOutput();
-};
 
 // Allows the user to select an audio interface for Strudel to play through
 export function AudioDeviceSelector({ audioDeviceName, onChange, isDisabled }) {
