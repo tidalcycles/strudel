@@ -15,16 +15,15 @@ In diesem Kapitel beschäftigen wir uns mit Funktionen die weniger herkömmlich 
 
 **rev = rückwärts abspielen**
 
-<MiniRepl hideHeader client:visible tune={`n("0 1 [4 3] 2").sound("jazz").rev()`} />
+<MiniRepl client:visible tune={`n("0 1 [4 3] 2").sound("jazz").rev()`} />
 
 **jux = einen stereo kanal modifizieren**
 
-<MiniRepl hideHeader client:visible tune={`n("0 1 [4 3] 2").sound("jazz").jux(rev)`} />
+<MiniRepl client:visible tune={`n("0 1 [4 3] 2").sound("jazz").jux(rev)`} />
 
 So würde man das ohne `jux` schreiben:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`stack(
   n("0 1 [4 3] 2").sound("jazz").pan(0),
@@ -35,7 +34,6 @@ So würde man das ohne `jux` schreiben:
 Lass uns visualisieren, was hier passiert:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`stack(
   n("0 1 [4 3] 2").sound("jazz").pan(0).color("cyan"),
@@ -52,12 +50,11 @@ Schreibe `//` vor eine der beiden Zeilen im `stack`!
 
 **mehrere tempos**
 
-<MiniRepl hideHeader client:visible tune={`note("c2, eb3 g3 [bb3 c4]").sound("piano").slow("1,2,3")`} />
+<MiniRepl client:visible tune={`note("c2, eb3 g3 [bb3 c4]").sound("piano").slow("1,2,3")`} />
 
 Das hat den gleichen Effekt, wie:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`stack(
   note("c2, eb3 g3 [bb3 c4]").s("piano").slow(1).color('cyan'),
@@ -76,7 +73,6 @@ Schreibe wieder `//` vor eine oder mehrere Zeilen im `stack`.
 **add = addieren**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("c2 [eb3,g3]".add("<0 <1 -1>>"))
 .color("<cyan <magenta yellow>>").adsr("[.1 0]:.2:[1 0]")
@@ -95,7 +91,6 @@ z.B. c4 = 60, also ist c4 + 2 = 62
 Man kann auch mehrmals addieren:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("c2 [eb3,g3]".add("<0 <1 -1>>").add("0,7"))
 .color("<cyan <magenta yellow>>").adsr("[.1 0]:.2:[1 0]")
@@ -106,7 +101,6 @@ Man kann auch mehrmals addieren:
 **add + scale**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`n("<0 [2 4] <3 5> [~ <4 1>]>*2".add("<0 [0,2,4]>/4"))
 .scale("C5:minor").release(.5)
@@ -117,7 +111,6 @@ Man kann auch mehrmals addieren:
 **Alles zusammen**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`stack(
   n("<0 [2 4] <3 5> [~ <4 1>]>*2".add("<0 [0,2,4]>/4"))
@@ -134,11 +127,11 @@ Man kann auch mehrmals addieren:
 
 **ply**
 
-<MiniRepl hideHeader client:visible tune={`sound("hh, bd rim").bank("RolandTR707").ply(2)`} punchcard />
+<MiniRepl client:visible tune={`sound("hh, bd rim").bank("RolandTR707").ply(2)`} punchcard />
 
 das ist wie:
 
-<MiniRepl hideHeader client:visible tune={`sound("hh*2, bd*2 rim*2").bank("RolandTR707")`} punchcard />
+<MiniRepl client:visible tune={`sound("hh*2, bd*2 rim*2").bank("RolandTR707")`} punchcard />
 
 <Box>
 
@@ -149,7 +142,6 @@ Probier `ply` mit einem pattern zu automatisieren, z.b. `"<1 2 1 3>"`
 **off**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`n("<0 [4 <3 2>] <2 3> [~ 1]>"
   .off(1/8, x=>x.add(4))
@@ -168,7 +160,6 @@ In der Notation `x=>x.`, ist `x` das Pattern, das wir bearbeiten.
 `off` ist auch nützlich für Sounds:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`s("bd sd,[~ hh]*2").bank("CasioRZ1")
   .off(1/8, x=>x.speed(1.5).gain(.25))`}
@@ -176,8 +167,8 @@ In der Notation `x=>x.`, ist `x` das Pattern, das wir bearbeiten.
 
 | Name | Beschreibung                      | Beispiel                                                                                       |
 | ---- | --------------------------------- | ---------------------------------------------------------------------------------------------- |
-| rev  | rückwärts                         | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").rev()`} />            |
-| jux  | einen Stereo-Kanal modifizieren   | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6").scale("C:minor").jux(rev)`} />         |
-| add  | addiert Zahlen oder Noten         | <MiniRepl hideHeader client:visible tune={`n("0 2 4 6".add("<0 1 2 1>")).scale("C:minor")`} /> |
-| ply  | multipliziert jedes Element x mal | <MiniRepl hideHeader client:visible tune={`s("bd sd").ply("<1 2 3>")`} />                      |
-| off  | verzögert eine modifizierte Kopie | <MiniRepl hideHeader client:visible tune={`s("bd sd, hh*4").off(1/8, x=>x.speed(2))`} />       |
+| rev  | rückwärts                         | <MiniRepl client:visible tune={`n("0 2 4 6").scale("C:minor").rev()`} />            |
+| jux  | einen Stereo-Kanal modifizieren   | <MiniRepl client:visible tune={`n("0 2 4 6").scale("C:minor").jux(rev)`} />         |
+| add  | addiert Zahlen oder Noten         | <MiniRepl client:visible tune={`n("0 2 4 6".add("<0 1 2 1>")).scale("C:minor")`} /> |
+| ply  | multipliziert jedes Element x mal | <MiniRepl client:visible tune={`s("bd sd").ply("<1 2 3>")`} />                      |
+| off  | verzögert eine modifizierte Kopie | <MiniRepl client:visible tune={`s("bd sd, hh*4").off(1/8, x=>x.speed(2))`} />       |

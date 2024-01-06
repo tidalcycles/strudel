@@ -15,7 +15,7 @@ Dies ist das erste Kapitel im Strudel Workshop, schön dich an Bord zu haben!
 
 Der Workshop ist voller interaktiver Textfelder. Lass uns lernen wie sie funktionieren. Hier ist eins:
 
-<MiniRepl hideHeader client:visible tune={`sound("casio")`} />
+<MiniRepl client:visible tune={`sound("casio")`} />
 
 <Box>
 
@@ -35,7 +35,7 @@ Glückwunsch, du kannst jetzt live coden!
 
 Gerade haben wir schon den ersten sound mit `sound` abgespielt:
 
-<MiniRepl hideHeader client:visible tune={`sound("casio")`} />
+<MiniRepl client:visible tune={`sound("casio")`} />
 
 <Box>
 
@@ -57,7 +57,7 @@ Ein Sound kann mehrere Samples (Audio Dateien) enthalten.
 
 Du kannst ein anderes Sample wählen, indem du `:` und eine Zahl an den Sound-Namen anhängst:
 
-<MiniRepl hideHeader client:visible tune={`sound("casio:1")`} hideHeader />
+<MiniRepl client:visible tune={`sound("casio:1")`} />
 
 <Box>
 
@@ -74,7 +74,7 @@ Vorerst bleiben wir bei den voreingestellten Sounds, später erfahren wir noch w
 
 Strudel kommt von Haus aus mit einer breiten Auswahl an Drum Sounds:
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh sd oh")`} hideHeader />
+<MiniRepl client:visible tune={`sound("bd hh sd oh")`} />
 
 <Box>
 
@@ -92,7 +92,7 @@ Probier verschiedene Sounds aus!
 
 Wir können den Charakter des Drum Sounds verändern, indem wir mit `bank` die Drum Machine auswählen:
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh sd oh").bank("RolandTR909")`} hideHeader />
+<MiniRepl client:visible tune={`sound("bd hh sd oh").bank("RolandTR909")`} />
 
 In diesem Beispiel ist `RolandTR909` der Name der Drum Machine, die eine prägende Rolle für House und Techno Musik spielte.
 
@@ -117,7 +117,7 @@ Dann kannst du ihn mit `Strg`+`C` kopieren und mit `Strg`+`V` einfügen.
 
 Im letzten Beispiel haben wir schon gesehen dass man mehrere Sounds hintereinander abspielen kann wenn man sie durch Leerzeichen trennt:
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh sd hh")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd hh sd hh")`} punchcard />
 
 Beachte wie der aktuell gespielte Sound im Code markiert und auch darunter visualisiert wird.
 
@@ -129,13 +129,13 @@ Versuch noch mehr Sounds hinzuzfügen!
 
 **Je länger die Sequence, desto schneller**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd rim bd hh bd")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd bd hh bd rim bd hh bd")`} punchcard />
 
 Der Inhalt einer Sequence wird in einen sogenannten Cycle (=Zyklus) zusammengequetscht.
 
 **Tempo ändern mit `cpm`**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd bd hh bd rim bd hh bd").cpm(40)`} punchcard />
+<MiniRepl client:visible tune={`sound("bd bd hh bd rim bd hh bd").cpm(40)`} punchcard />
 
 <Box>
 
@@ -151,7 +151,7 @@ Wir werden später noch mehr Möglichkeiten kennen lernen das Tempo zu veränder
 
 **Pausen mit '~'**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh ~ rim")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd hh ~ rim")`} punchcard />
 
 <Box>
 
@@ -164,7 +164,7 @@ Tilde tippen:
 
 **Unter-Sequenzen mit [Klammern]**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [hh hh] rim [hh hh]")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd [hh hh] rim [hh hh]")`} punchcard />
 
 <Box>
 
@@ -178,11 +178,11 @@ Genau wie bei der ganzen Sequence wird eine Unter-Sequence schneller je mehr dri
 
 **Multiplikation: Dinge schneller machen**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh*2 sd hh*3")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd hh*2 sd hh*3")`} punchcard />
 
 **Multiplikation: Vieeeeeeel schneller**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd hh*16 sd hh*8")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd hh*16 sd hh*8")`} punchcard />
 
 <Box>
 
@@ -192,12 +192,11 @@ Tonhöhe = sehr schneller Rhythmus
 
 **Multiplikation: Ganze Unter-Sequences schneller machen**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [sd hh]*2")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd [sd hh]*2")`} punchcard />
 
 Bolero:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`sound("sd sd*3 sd sd*3 sd sd sd sd*3 sd sd*3 sd*3 sd*3")
 .cpm(10)`}
@@ -206,7 +205,7 @@ Bolero:
 
 **Unter-Unter-Sequenzen mit [[Klammern]]**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd [[rim rim] hh]")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd [[rim rim] hh]")`} punchcard />
 
 <Box>
 
@@ -216,15 +215,15 @@ Du kannst so tief verschachteln wie du willst!
 
 **Parallele Sequenzen mit Komma**
 
-<MiniRepl hideHeader client:visible tune={`sound("hh hh hh, bd casio")`} punchcard />
+<MiniRepl client:visible tune={`sound("hh hh hh, bd casio")`} punchcard />
 
 Du kannst so viele Kommas benutzen wie du möchtest:
 
-<MiniRepl hideHeader client:visible tune={`sound("hh hh hh, bd bd, ~ casio")`} punchcard />
+<MiniRepl client:visible tune={`sound("hh hh hh, bd bd, ~ casio")`} punchcard />
 
 Kommas können auch in Unter-Sequenzen verwendet werden:
 
-<MiniRepl hideHeader client:visible tune={`sound("hh hh hh, bd [bd,casio]")`} punchcard />
+<MiniRepl client:visible tune={`sound("hh hh hh, bd [bd,casio]")`} punchcard />
 
 <Box>
 
@@ -237,7 +236,6 @@ Es kommt öfter vor, dass man die gleiche Idee auf verschiedene Arten ausdrücke
 **Mehrere Zeilen schreiben mit \` (backtick)**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`sound(\`bd*2, ~ cp, 
 ~ ~ ~ oh, hh*4,
@@ -255,11 +253,11 @@ Ob man " oder \` benutzt ist nur eine Frage der Übersichtlichkeit.
 
 Benutzt man nur einen Sound mit unterschiedlichen Sample Nummer sieht das so aus:
 
-<MiniRepl hideHeader client:visible tune={`sound("jazz:0 jazz:1 [jazz:4 jazz:2] jazz:3*2")`} punchcard />
+<MiniRepl client:visible tune={`sound("jazz:0 jazz:1 [jazz:4 jazz:2] jazz:3*2")`} punchcard />
 
 Das gleiche kann man auch so schreiben:
 
-<MiniRepl hideHeader client:visible tune={`n("0 1 [4 2] 3*2").sound("jazz")`} punchcard />
+<MiniRepl client:visible tune={`n("0 1 [4 2] 3*2").sound("jazz")`} punchcard />
 
 ## Rückblick
 
@@ -269,33 +267,33 @@ Das haben wir bisher gelernt:
 
 | Concept               | Syntax      | Example                                                                          |
 | --------------------- | ----------- | -------------------------------------------------------------------------------- |
-| Sequenz               | Leerzeichen | <MiniRepl hideHeader client:visible tune={`sound("bd bd sd hh")`} />             |
-| Sound Nummer          | :x          | <MiniRepl hideHeader client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
-| Pausen                | ~           | <MiniRepl hideHeader client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
-| Unter-Sequenzen       | \[\]        | <MiniRepl hideHeader client:visible tune={`sound("bd wind [metal jazz] hh")`} /> |
-| Unter-Unter-Sequenzen | \[\[\]\]    | <MiniRepl hideHeader client:visible tune={`sound("bd [metal [jazz sd]]")`} />    |
-| Schneller             | \*          | <MiniRepl hideHeader client:visible tune={`sound("bd sd*2 cp*3")`} />            |
-| Parallel              | ,           | <MiniRepl hideHeader client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />      |
+| Sequenz               | Leerzeichen | <MiniRepl client:visible tune={`sound("bd bd sd hh")`} />             |
+| Sound Nummer          | :x          | <MiniRepl client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
+| Pausen                | ~           | <MiniRepl client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
+| Unter-Sequenzen       | \[\]        | <MiniRepl client:visible tune={`sound("bd wind [metal jazz] hh")`} /> |
+| Unter-Unter-Sequenzen | \[\[\]\]    | <MiniRepl client:visible tune={`sound("bd [metal [jazz sd]]")`} />    |
+| Schneller             | \*          | <MiniRepl client:visible tune={`sound("bd sd*2 cp*3")`} />            |
+| Parallel              | ,           | <MiniRepl client:visible tune={`sound("bd*2, hh*2 [hh oh]")`} />      |
 
 Die mit Apostrophen umgebene Mini-Notation benutzt man normalerweise in einer sogenannten Funktion.
 Die folgenden Funktionen haben wir bereits gesehen:
 
 | Name  | Description                            | Example                                                                            |
 | ----- | -------------------------------------- | ---------------------------------------------------------------------------------- |
-| sound | Spielt den Sound mit dem Namen         | <MiniRepl hideHeader client:visible tune={`sound("bd sd")`} />                     |
-| bank  | Wählt die Soundbank / Drum Machine     | <MiniRepl hideHeader client:visible tune={`sound("bd sd").bank("RolandTR909")`} /> |
-| cpm   | Tempo in **C**ycles **p**ro **M**inute | <MiniRepl hideHeader client:visible tune={`sound("bd sd").cpm(90)`} />             |
-| n     | Sample Nummer                          | <MiniRepl hideHeader client:visible tune={`n("0 1 4 2").sound("jazz")`} />         |
+| sound | Spielt den Sound mit dem Namen         | <MiniRepl client:visible tune={`sound("bd sd")`} />                     |
+| bank  | Wählt die Soundbank / Drum Machine     | <MiniRepl client:visible tune={`sound("bd sd").bank("RolandTR909")`} /> |
+| cpm   | Tempo in **C**ycles **p**ro **M**inute | <MiniRepl client:visible tune={`sound("bd sd").cpm(90)`} />             |
+| n     | Sample Nummer                          | <MiniRepl client:visible tune={`n("0 1 4 2").sound("jazz")`} />         |
 
 ## Beispiele
 
 **Einfacher Rock Beat**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd sd, hh*4").bank("RolandTR505").cpm(100/2)`} punchcard />
+<MiniRepl client:visible tune={`sound("bd sd, hh*4").bank("RolandTR505").cpm(100/2)`} punchcard />
 
 **Klassischer House**
 
-<MiniRepl hideHeader client:visible tune={`sound("bd*2, ~ cp, [~ hh]*2").bank("RolandTR909")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd*2, ~ cp, [~ hh]*2").bank("RolandTR909")`} punchcard />
 
 <Box>
 
@@ -306,12 +304,11 @@ Bestimmte Drum Patterns werden oft genreübergreifend wiederverwendet.
 
 We Will Rock you
 
-<MiniRepl hideHeader client:visible tune={`sound("bd*2 cp").bank("RolandTR707").cpm(81/2)`} punchcard />
+<MiniRepl client:visible tune={`sound("bd*2 cp").bank("RolandTR707").cpm(81/2)`} punchcard />
 
 **Yellow Magic Orchestra - Firecracker**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`sound("bd sd, ~ ~ ~ hh ~ hh ~ ~, ~ perc ~ perc:1*2")
 .bank("RolandCompurhythm1000")`}
@@ -321,7 +318,6 @@ We Will Rock you
 **Nachahmung eines 16 step sequencers**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`sound(\`
 [~  ~  oh ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ],
@@ -335,7 +331,6 @@ We Will Rock you
 **Noch eins**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`sound(\`
 [~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  oh:1 ~ ],
@@ -349,7 +344,6 @@ We Will Rock you
 **Nicht so typische Drums**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`s(\`jazz*2, 
 insect [crow metal] ~ ~, 
