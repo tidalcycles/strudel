@@ -2,13 +2,13 @@ import { DocumentDuplicateIcon, PencilSquareIcon, TrashIcon } from '@heroicons/r
 import { useMemo } from 'react';
 import {
   clearUserPatterns,
-  deleteActivePattern,
-  duplicateActivePattern,
+  deletePattern,
+  duplicatePattern,
   exportPatterns,
   getUserPattern,
   importPatterns,
   newUserPattern,
-  renameActivePattern,
+  renamePattern,
   useActivePattern,
   useViewingPattern,
   useSettings,
@@ -66,21 +66,21 @@ export function PatternsTab({ context }) {
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-4 pb-4">
       <section>
-        {activePattern && (
+        {viewingPattern && (
           <div className="flex items-center mb-2 space-x-2 overflow-auto">
-            <h1 className="text-xl">{activePattern}</h1>
+            <h1 className="text-xl">{viewingPattern}</h1>
             <div className="space-x-4 flex w-min">
               {!isExample && (
-                <button className="hover:opacity-50" onClick={() => renameActivePattern()} title="Rename">
+                <button className="hover:opacity-50" onClick={() => renamePattern(viewingPattern)} title="Rename">
                   <PencilSquareIcon className="w-5 h-5" />
                   {/* <PencilIcon className="w-5 h-5" /> */}
                 </button>
               )}
-              <button className="hover:opacity-50" onClick={() => duplicateActivePattern()} title="Duplicate">
+              <button className="hover:opacity-50" onClick={() => duplicatePattern(viewingPattern)} title="Duplicate">
                 <DocumentDuplicateIcon className="w-5 h-5" />
               </button>
               {!isExample && (
-                <button className="hover:opacity-50" onClick={() => deleteActivePattern()} title="Delete">
+                <button className="hover:opacity-50" onClick={() => deletePattern(viewingPattern)} title="Delete">
                   <TrashIcon className="w-5 h-5" />
                 </button>
               )}

@@ -152,14 +152,13 @@ export function getUserPattern(key) {
   return userPatterns[key];
 }
 
-export function renameActivePattern() {
-  let activePattern = getActivePattern();
+export function renamePattern(pattern) {
   let userPatterns = getUserPatterns();
-  if (!userPatterns[activePattern]) {
+  if (!userPatterns[pattern]) {
     alert('Cannot rename examples');
     return;
   }
-  const newName = prompt('Enter new name', activePattern);
+  const newName = prompt('Enter new name', pattern);
   if (newName === null) {
     // canceled
     return;
@@ -168,10 +167,10 @@ export function renameActivePattern() {
     alert('Name already taken!');
     return;
   }
-  userPatterns[newName] = userPatterns[activePattern]; // copy code
-  delete userPatterns[activePattern];
+  userPatterns[newName] = userPatterns[pattern]; // copy code
+  delete userPatterns[pattern];
   setUserPatterns({ ...userPatterns });
-  setActivePattern(newName);
+  setViewingPattern(newName);
 }
 
 export function updateUserCode(code) {
@@ -196,35 +195,34 @@ export function updateUserCode(code) {
   setUserPatterns({ ...userPatterns, [activePattern]: { code } });
 }
 
-export function deleteActivePattern() {
-  let activePattern = getActivePattern();
-  if (!activePattern) {
+export function deletePattern(pattern) {
+
+  if (!pattern) {
     console.warn('cannot delete: no pattern selected');
     return;
   }
   const userPatterns = getUserPatterns();
-  if (!userPatterns[activePattern]) {
+  if (!userPatterns[pattern]) {
     alert('Cannot delete examples');
     return;
   }
-  if (!confirm(`Really delete the selected pattern "${activePattern}"?`)) {
+  if (!confirm(`Really delete the selected pattern "${pattern}"?`)) {
     return;
   }
-  setUserPatterns(Object.fromEntries(Object.entries(userPatterns).filter(([key]) => key !== activePattern)));
-  setActivePattern('');
+  setUserPatterns(Object.fromEntries(Object.entries(userPatterns).filter(([key]) => key !== pattern)));
+  setViewingPattern('');
 }
 
-export function duplicateActivePattern() {
-  let activePattern = getActivePattern();
+export function duplicatePattern(pattern) {
   let latestCode = getSetting('latestCode');
-  if (!activePattern) {
+  if (!pattern) {
     console.warn('cannot duplicate: no pattern selected');
     return;
   }
   const userPatterns = getUserPatterns();
-  activePattern = getNextCloneName(activePattern);
-  setUserPatterns({ ...userPatterns, [activePattern]: { code: latestCode } });
-  setActivePattern(activePattern);
+  const newPattern  = getNextCloneName(pattern);
+  setUserPatterns({ ...userPatterns, [newPattern]: { code: latestCode } });
+  setViewingPattern(newPattern);
 }
 
 export async function importPatterns(fileList) {
