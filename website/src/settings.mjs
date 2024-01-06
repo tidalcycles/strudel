@@ -172,7 +172,7 @@ export function updateUserCode(code) {
     setActivePattern(example);
     return;
   }
-  
+
   if (!activePattern) {
     // create new user pattern
     activePattern = newUserPattern();
