@@ -11,8 +11,8 @@ Diese Seite ist eine Auflistung aller im Workshop vorgestellten Funktionen.
 
 ## Mini Notation
 
-| Konzept               | Syntax   | Beispiel                                                                         |
-| --------------------- | -------- | -------------------------------------------------------------------------------- |
+| Konzept               | Syntax   | Beispiel                                                              |
+| --------------------- | -------- | --------------------------------------------------------------------- |
 | Sequenz               | space    | <MiniRepl client:visible tune={`sound("bd bd sn hh")`} />             |
 | Sample-Nummer         | :x       | <MiniRepl client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
 | Pausen                | ~        | <MiniRepl client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
@@ -27,24 +27,24 @@ Diese Seite ist eine Auflistung aller im Workshop vorgestellten Funktionen.
 
 ## Sounds
 
-| Name  | Beschreibung               | Beispiel                                                                           |
-| ----- | -------------------------- | ---------------------------------------------------------------------------------- |
+| Name  | Beschreibung               | Beispiel                                                                |
+| ----- | -------------------------- | ----------------------------------------------------------------------- |
 | sound | spielt den Sound mit Namen | <MiniRepl client:visible tune={`sound("bd sd")`} />                     |
 | bank  | wählt die Soundbank        | <MiniRepl client:visible tune={`sound("bd sd").bank("RolandTR909")`} /> |
 | n     | wählt Sample mit Nummer    | <MiniRepl client:visible tune={`n("0 1 4 2").sound("jazz")`} />         |
 
 ## Noten
 
-| Name      | Beschreibung                       | Beispiel                                                                                     |
-| --------- | ---------------------------------- | -------------------------------------------------------------------------------------------- |
+| Name      | Beschreibung                       | Beispiel                                                                          |
+| --------- | ---------------------------------- | --------------------------------------------------------------------------------- |
 | note      | wählt Note per Zahl oder Buchstabe | <MiniRepl client:visible tune={`note("b g e c").sound("piano")`} />               |
 | n + scale | wählt Note n in Skala              | <MiniRepl client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
 | stack     | spielt mehrere Patterns parallel   | <MiniRepl client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
 
 ## Audio-Effekte
 
-| Name  | Beispiele                                                                                          |
-| ----- | -------------------------------------------------------------------------------------------------- |
+| Name  | Beispiele                                                                               |
+| ----- | --------------------------------------------------------------------------------------- |
 | lpf   | <MiniRepl client:visible tune={`note("c2 c3").s("sawtooth").lpf("<400 2000>")`} />      |
 | vowel | <MiniRepl client:visible tune={`note("c3 eb3 g3").s("sawtooth").vowel("<a e i o>")`} /> |
 | gain  | <MiniRepl client:visible tune={`s("hh*8").gain("[.25 1]*2")`} />                        |
@@ -56,8 +56,8 @@ Diese Seite ist eine Auflistung aller im Workshop vorgestellten Funktionen.
 
 ## Pattern-Effekte
 
-| Name | Beschreibung                      | Beispiel                                                                                       |
-| ---- | --------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Name | Beschreibung                      | Beispiel                                                                            |
+| ---- | --------------------------------- | ----------------------------------------------------------------------------------- |
 | cpm  | Tempo in Cycles pro Minute        | <MiniRepl client:visible tune={`sound("bd sd").cpm(90)`} />                         |
 | fast | schneller                         | <MiniRepl client:visible tune={`sound("bd sd").fast(2)`} />                         |
 | slow | langsamer                         | <MiniRepl client:visible tune={`sound("bd sd").slow(2)`} />                         |

@@ -297,8 +297,8 @@ What's the difference?
 
 Let's recap what we've learned in this chapter:
 
-| Concept   | Syntax | Example                                                             |
-| --------- | ------ | ------------------------------------------------------------------- |
+| Concept   | Syntax | Example                                                  |
+| --------- | ------ | -------------------------------------------------------- |
 | Slow down | \/     | <MiniRepl client:visible tune={`note("[c a f e]/2")`} /> |
 | Alternate | \<\>   | <MiniRepl client:visible tune={`note("c <e g>")`} />     |
 | Elongate  | @      | <MiniRepl client:visible tune={`note("c@3 e")`} />       |
@@ -306,8 +306,8 @@ Let's recap what we've learned in this chapter:
 
 New functions:
 
-| Name  | Description                         | Example                                                                                      |
-| ----- | ----------------------------------- | -------------------------------------------------------------------------------------------- |
+| Name  | Description                         | Example                                                                           |
+| ----- | ----------------------------------- | --------------------------------------------------------------------------------- |
 | note  | set pitch as number or letter       | <MiniRepl client:visible tune={`note("b g e c").sound("piano")`} />               |
 | scale | interpret `n` as scale degree       | <MiniRepl client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
 | stack | play patterns in parallel (read on) | <MiniRepl client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
