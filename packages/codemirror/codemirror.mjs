@@ -21,6 +21,7 @@ import { keybindings } from './keybindings.mjs';
 import { initTheme, activateTheme, theme } from './themes.mjs';
 import { updateWidgets, sliderPlugin } from './slider.mjs';
 import { persistentAtom } from '@nanostores/persistent';
+import { backlayer } from './backlayer.mjs';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
@@ -76,6 +77,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
       history(),
       EditorView.updateListener.of((v) => onChange(v)),
       drawSelection({ cursorBlinkRate: 0 }),
+      backlayer,
       Prec.highest(
         keymap.of([
           {
