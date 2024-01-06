@@ -18,7 +18,8 @@ import {
   settingsMap,
   updateUserCode,
   useSettings,
-  useActivePattern,
+  getViewingPattern,
+  setViewingPattern,
 } from '../settings.mjs';
 import { Header } from './Header';
 import Loader from './Loader';
@@ -34,7 +35,7 @@ export const ReplContext = createContext(null);
 
 const { latestCode } = settingsMap.get();
 
-let modulesLoading, presets, drawContext, clearCanvas, isIframe, viewingPatternID;
+let modulesLoading, presets, drawContext, clearCanvas, isIframe;
 if (typeof window !== 'undefined') {
   initAudioOnFirstClick();
   modulesLoading = loadModules();
@@ -76,7 +77,11 @@ export function Repl({ embedded = false }) {
         updateUserCode(code);
         // setPending(false);
         setLatestCode(code);
+        const viewingPatternID = getViewingPattern();
         window.location.hash = '#' + code2hash(code);
+        if (viewingPatternID != null) {
+          setActivePattern(viewingPatternID);
+        }
       },
       bgFill: false,
     });
@@ -144,7 +149,6 @@ export function Repl({ embedded = false }) {
   // payload = {reset?: boolean, code?: string, evaluate?: boolean, patternID?: string }
   const handleUpdate = async (payload) => {
     const { reset = false, code = null, evaluate = true, patternID = null } = payload;
-    console.log(payload);
     if (reset) {
       clearCanvas();
       resetLoadedSounds();
@@ -153,15 +157,10 @@ export function Repl({ embedded = false }) {
     }
     if (code != null) {
       editorRef.current.setCode(code);
-      viewingPatternID = patternID;
+      setViewingPattern(patternID);
     }
-    console.log(isDirty);
     if (evaluate) {
       editorRef.current.evaluate();
-
-      if (viewingPatternID != null) {
-        setActivePattern(viewingPatternID);
-      }
     }
   };
   const handleShuffle = async () => {

@@ -28,6 +28,19 @@ export const defaultSettings = {
 
 export const settingsMap = persistentMap('strudel-settings', defaultSettings);
 
+
+//pattern that the use is currently viewing in the window
+const $viewingPattern = persistentAtom('viewingPattern', '', { listen: false });
+export function setViewingPattern(key) {
+  $viewingPattern.set(key);
+}
+export function getViewingPattern() {
+  return $viewingPattern.get();
+}
+
+export function useViewingPattern() {
+  return useStore($viewingPattern);
+}
 // active pattern is separate, because it shouldn't sync state across tabs
 // reason: https://github.com/tidalcycles/strudel/issues/857
 const $activePattern = persistentAtom('activePattern', '', { listen: false });

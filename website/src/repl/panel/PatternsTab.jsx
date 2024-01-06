@@ -9,8 +9,8 @@ import {
   importPatterns,
   newUserPattern,
   renameActivePattern,
-  setActivePattern,
   useActivePattern,
+  useViewingPattern,
   useSettings,
 } from '../../settings.mjs';
 import * as tunes from '../tunes.mjs';
@@ -19,10 +19,14 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-function PatternButton({ isActive, onClick, label }) {
+function PatternButton({ showOutline, onClick, label, showHiglight }) {
   return (
     <a
-      className={classNames('mr-4 hover:opacity-50 cursor-pointer inline-block', isActive ? 'outline outline-1' : '')}
+      className={classNames(
+        'mr-4 hover:opacity-50 cursor-pointer inline-block',
+        showOutline ? 'outline outline-1' : '',
+        showHiglight ? 'bg-red-500' : '',
+      )}
       onClick={onClick}
     >
       {label}
@@ -30,11 +34,17 @@ function PatternButton({ isActive, onClick, label }) {
   );
 }
 
-function PatternButtons({ patterns, activePattern, onClick }) {
+function PatternButtons({ patterns, activePattern, onClick, viewingPattern }) {
   return (
     <div className="font-mono text-sm">
       {Object.entries(patterns).map(([key, data]) => (
-        <PatternButton key={key} label={key} isActive={key === activePattern} onClick={() => onClick(key, data)} />
+        <PatternButton
+          key={key}
+          label={key}
+          showHiglight={key === viewingPattern}
+          showOutline={key === activePattern}
+          onClick={() => onClick(key, data)}
+        />
       ))}
     </div>
   );
@@ -43,6 +53,7 @@ function PatternButtons({ patterns, activePattern, onClick }) {
 export function PatternsTab({ context }) {
   const { userPatterns } = useSettings();
   const activePattern = useActivePattern();
+  const viewingPattern = useViewingPattern();
   const isExample = useMemo(() => activePattern && !!tunes[activePattern], [activePattern]);
   const onPatternClick = (key, data) => {
     const { code } = data;
@@ -76,7 +87,12 @@ export function PatternsTab({ context }) {
             </div>
           </div>
         )}
-        <PatternButtons onClick={onPatternClick} patterns={userPatterns} activePattern={activePattern} />
+        <PatternButtons
+          onClick={onPatternClick}
+          patterns={userPatterns}
+          activePattern={activePattern}
+          viewingPattern={viewingPattern}
+        />
         <div className="pr-4 space-x-4 border-b border-foreground mb-2 h-8 flex overflow-auto max-w-full items-center">
           <button
             className="hover:opacity-50"
