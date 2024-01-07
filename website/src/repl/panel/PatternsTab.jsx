@@ -1,13 +1,13 @@
 import { DocumentDuplicateIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
-import { useMemo } from 'react';
+
 import {
   clearUserPatterns,
   deletePattern,
-  duplicatePattern,
+  createDuplicatePattern,
   exportPatterns,
-  getUserPattern,
+  addUserPattern,
   importPatterns,
-  newUserPattern,
+  createNewUserPattern,
   renamePattern,
   useActivePattern,
   useViewingPattern,
@@ -55,9 +55,14 @@ export function PatternsTab({ context }) {
   const activePattern = useActivePattern();
   const viewingPattern = useViewingPattern();
   // const isExample = useMemo(() => activePattern && !!tunes[activePattern], [activePattern]);
-  const onPatternClick = (key, data) => {
+  const onPatternClick = (pattern, data) => {
     // display selected pattern code in the window
-    context.handleUpdate({ patternID: key, code: data.code, evaluate: false });
+    context.handleUpdate({ pattern, code: data.code, evaluate: false });
+  };
+
+  const addPattern = ({ pattern, code }) => {
+    addUserPattern(pattern, { code });
+    context.handleUpdate({ code, pattern, evaluate: false });
   };
 
   const examplePatterns = {};
@@ -76,7 +81,11 @@ export function PatternsTab({ context }) {
                   {/* <PencilIcon className="w-5 h-5" /> */}
                 </button>
               )}
-              <button className="hover:opacity-50" onClick={() => duplicatePattern(viewingPattern)} title="Duplicate">
+              <button
+                className="hover:opacity-50"
+                onClick={() => addPattern(createDuplicatePattern(viewingPattern))}
+                title="Duplicate"
+              >
                 <DocumentDuplicateIcon className="w-5 h-5" />
               </button>
               {!isExample && (
@@ -97,9 +106,7 @@ export function PatternsTab({ context }) {
           <button
             className="hover:opacity-50"
             onClick={() => {
-              const name = newUserPattern();
-              const { code } = getUserPattern(name);
-              context.handleUpdate({ code, evaluate: false });
+              addPattern(createNewUserPattern());
             }}
           >
             new

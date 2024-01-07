@@ -157,9 +157,9 @@ export function Repl({ embedded = false }) {
 
   const handleTogglePlay = async () => editorRef.current?.toggle();
 
-  // payload = {reset?: boolean, code?: string, evaluate?: boolean, patternID?: string }
+  // payload = {reset?: boolean, code?: string, evaluate?: boolean, pattern?: string }
   const handleUpdate = async (payload) => {
-    const { reset = false, code = null, evaluate = true, patternID = null } = payload;
+    const { reset = false, code = null, evaluate = true, pattern = null } = payload;
 
     if (reset) {
       clearCanvas();
@@ -167,9 +167,9 @@ export function Repl({ embedded = false }) {
       editorRef.current.repl.setCps(1);
       await prebake(); // declare default samples
     }
-    if (code != null) {
+    if (code != null && pattern != null) {
       editorRef.current.setCode(code);
-      setViewingPattern(patternID);
+      setViewingPattern(pattern);
     }
     if (evaluate) {
       editorRef.current.evaluate();

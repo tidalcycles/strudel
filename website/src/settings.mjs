@@ -120,15 +120,14 @@ export function addUserPattern(name, config) {
   setUserPatterns({ ...userPatterns, [name]: config });
 }
 
-export function newUserPattern() {
+export function createNewUserPattern() {
   const userPatterns = getUserPatterns();
   const date = new Date().toISOString().split('T')[0];
   const todays = Object.entries(userPatterns).filter(([name]) => name.startsWith(date));
   const num = String(todays.length + 1).padStart(3, '0');
-  const name = date + '_' + num;
+  const pattern = date + '_' + num;
   const code = 's("hh")';
-  setUserPatterns({ ...userPatterns, [name]: { code } });
-  setViewingPattern(name);
+  return {pattern, code}
 }
 
 export function clearUserPatterns() {
@@ -194,16 +193,14 @@ export function deletePattern(pattern) {
   setViewingPattern('');
 }
 
-export function duplicatePattern(pattern) {
+export function createDuplicatePattern(pattern) {
   let latestCode = getSetting('latestCode');
   if (!pattern) {
     console.warn('cannot duplicate: no pattern selected');
     return;
   }
-  const userPatterns = getUserPatterns();
   const newPattern  = getNextCloneName(pattern);
-  setUserPatterns({ ...userPatterns, [newPattern]: { code: latestCode } });
-  setViewingPattern(newPattern);
+  return {pattern: newPattern, code: latestCode}
 }
 
 export async function importPatterns(fileList) {
