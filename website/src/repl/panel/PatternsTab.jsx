@@ -54,7 +54,6 @@ export function PatternsTab({ context }) {
   const { userPatterns } = useSettings();
   const activePattern = useActivePattern();
   const viewingPattern = useViewingPattern();
-  // const isExample = useMemo(() => activePattern && !!tunes[activePattern], [activePattern]);
   const onPatternClick = (pattern, data) => {
     // display selected pattern code in the window
     context.handleUpdate({ pattern, code: data.code, evaluate: false });
@@ -89,7 +88,14 @@ export function PatternsTab({ context }) {
                 <DocumentDuplicateIcon className="w-5 h-5" />
               </button>
               {!isExample && (
-                <button className="hover:opacity-50" onClick={() => deletePattern(viewingPattern)} title="Delete">
+                <button
+                  className="hover:opacity-50"
+                  onClick={() => {
+                    const { code, pattern } = deletePattern(viewingPattern);
+                    context.handleUpdate({ code, pattern, evaluate: false });
+                  }}
+                  title="Delete"
+                >
                   <TrashIcon className="w-5 h-5" />
                 </button>
               )}

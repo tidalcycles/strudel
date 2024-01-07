@@ -27,7 +27,6 @@ export const defaultSettings = {
 
 export const settingsMap = persistentMap('strudel-settings', defaultSettings);
 
-
 //pattern that the use is currently viewing in the window
 const $viewingPattern = persistentAtom('viewingPattern', '', { listen: false });
 export function setViewingPattern(key) {
@@ -127,7 +126,7 @@ export function createNewUserPattern() {
   const num = String(todays.length + 1).padStart(3, '0');
   const pattern = date + '_' + num;
   const code = 's("hh")';
-  return {pattern, code}
+  return { pattern, code };
 }
 
 export function clearUserPatterns() {
@@ -170,13 +169,12 @@ export function renamePattern(pattern) {
   setViewingPattern(newName);
 }
 
-export function updateUserCode(pattern, code ) {
+export function updateUserCode(pattern, code) {
   const userPatterns = getUserPatterns();
   setUserPatterns({ ...userPatterns, [pattern]: { code } });
 }
 
 export function deletePattern(pattern) {
-
   if (!pattern) {
     console.warn('cannot delete: no pattern selected');
     return;
@@ -189,8 +187,35 @@ export function deletePattern(pattern) {
   if (!confirm(`Really delete the selected pattern "${pattern}"?`)) {
     return;
   }
-  setUserPatterns(Object.fromEntries(Object.entries(userPatterns).filter(([key]) => key !== pattern)));
-  setViewingPattern('');
+  // const updatedPatterns = Object.fromEntries(Object.entries(userPatterns).filter(([key]) => key !== pattern));
+  let patternsArray = Object.entries(userPatterns).sort((a, b) => a[0].localeCompare(b[0]));
+  const deleteIndex = patternsArray.findIndex(([key]) => key === pattern);
+  patternsArray.splice(deleteIndex, 1);
+  const updatedPatterns = Object.fromEntries(patternsArray);
+
+  setUserPatterns(updatedPatterns);
+
+  //create new pattern if no other patterns
+  if (!patternsArray.length) {
+    return createNewUserPattern();
+  }
+  // // or default to active pattern
+  // const activePatternID = getActivePattern();
+  // const activePatternData = updatedPatterns[activePatternID];
+  // if (activePatternData?.code != null) {
+  //   return { pattern: activePatternID, code: activePatternData.code };
+  // }
+  // or find pattern at next index
+
+  const next = patternsArray[deleteIndex];
+  if (next != null) {
+    const [pat, data] = next;
+    return { pattern: pat, code: data.code };
+  }
+  // or find pattern at previous index
+  const previous = patternsArray[deleteIndex - 1];
+  const [pat, data] = previous;
+  return { patttern: pat, code: data.code };
 }
 
 export function createDuplicatePattern(pattern) {
@@ -199,8 +224,8 @@ export function createDuplicatePattern(pattern) {
     console.warn('cannot duplicate: no pattern selected');
     return;
   }
-  const newPattern  = getNextCloneName(pattern);
-  return {pattern: newPattern, code: latestCode}
+  const newPattern = getNextCloneName(pattern);
+  return { pattern: newPattern, code: latestCode };
 }
 
 export async function importPatterns(fileList) {
