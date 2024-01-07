@@ -1,7 +1,6 @@
 import { persistentMap, persistentAtom } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel.cycles/core';
-import * as tunes from './repl/tunes.mjs';
 import { defaultAudioDeviceName } from './repl/panel/AudioDeviceSelector';
 import { logger } from '@strudel.cycles/core';
 
@@ -126,11 +125,10 @@ export function newUserPattern() {
   const date = new Date().toISOString().split('T')[0];
   const todays = Object.entries(userPatterns).filter(([name]) => name.startsWith(date));
   const num = String(todays.length + 1).padStart(3, '0');
-  const defaultNewPattern = 's("hh")';
   const name = date + '_' + num;
-  addUserPattern(name, { code: defaultNewPattern });
-  setActivePattern(name);
-  return name;
+  const code = 's("hh")';
+  setUserPatterns({ ...userPatterns, [name]: { code } });
+  setViewingPattern(name);
 }
 
 export function clearUserPatterns() {
@@ -173,26 +171,9 @@ export function renamePattern(pattern) {
   setViewingPattern(newName);
 }
 
-export function updateUserCode(code) {
+export function updateUserCode(pattern, code ) {
   const userPatterns = getUserPatterns();
-  let activePattern = getActivePattern();
-  // check if code is that of an example tune
-  const [example] = Object.entries(tunes).find(([_, tune]) => tune === code) || [];
-  if (example && (!activePattern || activePattern === example)) {
-    // select example
-    setActivePattern(example);
-    return;
-  }
-  if (!activePattern) {
-    // create new user pattern
-    activePattern = newUserPattern();
-    setActivePattern(activePattern);
-  } else if (!!tunes[activePattern] && code !== tunes[activePattern]) {
-    // fork example
-    activePattern = getNextCloneName(activePattern);
-    setActivePattern(activePattern);
-  }
-  setUserPatterns({ ...userPatterns, [activePattern]: { code } });
+  setUserPatterns({ ...userPatterns, [pattern]: { code } });
 }
 
 export function deletePattern(pattern) {

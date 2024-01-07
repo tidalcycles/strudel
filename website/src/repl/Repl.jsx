@@ -20,12 +20,14 @@ import {
   useSettings,
   getViewingPattern,
   setViewingPattern,
+  getNextCloneName,
 } from '../settings.mjs';
 import { Header } from './Header';
 import Loader from './Loader';
 import { Panel } from './panel/Panel';
 import { useStore } from '@nanostores/react';
 import { prebake } from './prebake.mjs';
+import * as tunes from './tunes.mjs';
 import { getRandomTune, initCode, loadModules, shareCode } from './util.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
@@ -44,7 +46,6 @@ if (typeof window !== 'undefined') {
   clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
   isIframe = window.location !== window.parent.location;
 }
-
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || isIframe;
   const { panelPosition, isZen } = useSettings();
@@ -74,13 +75,23 @@ export function Repl({ embedded = false }) {
         setReplState({ ...state });
       },
       afterEval: ({ code }) => {
-        updateUserCode(code);
-        // setPending(false);
         setLatestCode(code);
-        const viewingPatternID = getViewingPattern();
+        let pattern = getViewingPattern();
         window.location.hash = '#' + code2hash(code);
-        if (viewingPatternID != null) {
-          setActivePattern(viewingPatternID);
+        const isExamplePattern = !!tunes[pattern];
+
+        if (isExamplePattern) {
+          const codeHasChanged = code !== tunes[pattern];
+          if (codeHasChanged) {
+            // fork example
+            pattern = getNextCloneName(pattern);
+            setViewingPattern(pattern);
+            updateUserCode(pattern, code);
+          }
+          setActivePattern(pattern);
+        } else {
+          setActivePattern(pattern);
+          updateUserCode(pattern, code);
         }
       },
       bgFill: false,
@@ -149,6 +160,7 @@ export function Repl({ embedded = false }) {
   // payload = {reset?: boolean, code?: string, evaluate?: boolean, patternID?: string }
   const handleUpdate = async (payload) => {
     const { reset = false, code = null, evaluate = true, patternID = null } = payload;
+
     if (reset) {
       clearCanvas();
       resetLoadedSounds();

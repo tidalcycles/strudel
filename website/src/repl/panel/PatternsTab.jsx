@@ -24,8 +24,8 @@ function PatternButton({ showOutline, onClick, label, showHiglight }) {
     <a
       className={classNames(
         'mr-4 hover:opacity-50 cursor-pointer inline-block',
-        showOutline ? 'outline outline-1' : '',
-        showHiglight ? 'bg-red-500' : '',
+        showOutline && 'outline outline-1',
+        showHiglight && 'bg-selection',
       )}
       onClick={onClick}
     >
@@ -54,15 +54,15 @@ export function PatternsTab({ context }) {
   const { userPatterns } = useSettings();
   const activePattern = useActivePattern();
   const viewingPattern = useViewingPattern();
-  const isExample = useMemo(() => activePattern && !!tunes[activePattern], [activePattern]);
+  // const isExample = useMemo(() => activePattern && !!tunes[activePattern], [activePattern]);
   const onPatternClick = (key, data) => {
-    const { code } = data;
-    context.handleUpdate({ patternID: key, code, evaluate: false });
+    // display selected pattern code in the window
+    context.handleUpdate({ patternID: key, code: data.code, evaluate: false });
   };
 
   const examplePatterns = {};
   Object.entries(tunes).forEach(([key, code]) => (examplePatterns[key] = { code }));
-
+  const isExample = examplePatterns[viewingPattern] != null;
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-4 pb-4">
       <section>
@@ -124,7 +124,12 @@ export function PatternsTab({ context }) {
       </section>
       <section>
         <h2 className="text-xl mb-2">Examples</h2>
-        <PatternButtons onClick={onPatternClick} patterns={examplePatterns} activePattern={activePattern} />
+        <PatternButtons
+          onClick={onPatternClick}
+          patterns={examplePatterns}
+          activePattern={activePattern}
+          viewingPattern={viewingPattern}
+        />
       </section>
     </div>
   );
