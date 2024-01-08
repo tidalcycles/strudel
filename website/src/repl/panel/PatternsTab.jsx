@@ -1,19 +1,15 @@
 import { DocumentDuplicateIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
 
 import {
-  clearUserPatterns,
-  deletePattern,
-  createDuplicatePattern,
   exportPatterns,
-  addUserPattern,
   importPatterns,
-  createNewUserPattern,
-  renamePattern,
   useActivePattern,
   useViewingPattern,
   useSettings,
+  userPattern,
+  examplePattern,
 } from '../../settings.mjs';
-import * as tunes from '../tunes.mjs';
+import { useMemo } from 'react';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -34,16 +30,16 @@ function PatternButton({ showOutline, onClick, label, showHiglight }) {
   );
 }
 
-function PatternButtons({ patterns, activePattern, onClick, viewingPattern }) {
+function PatternButtons({ patterns, activePattern, onClick, viewingPattern, isExample = false }) {
   return (
     <div className="font-mono text-sm">
-      {Object.entries(patterns).map(([key, data]) => (
+      {Object.entries(patterns).map(([id]) => (
         <PatternButton
-          key={key}
-          label={key}
-          showHiglight={key === viewingPattern}
-          showOutline={key === activePattern}
-          onClick={() => onClick(key, data)}
+          key={id}
+          label={id}
+          showHiglight={id === viewingPattern}
+          showOutline={id === activePattern}
+          onClick={() => onClick(id, isExample)}
         />
       ))}
     </div>
@@ -52,20 +48,20 @@ function PatternButtons({ patterns, activePattern, onClick, viewingPattern }) {
 
 export function PatternsTab({ context }) {
   const { userPatterns } = useSettings();
+  const examplePatterns = useMemo(() => examplePattern.getAll(), []);
   const activePattern = useActivePattern();
   const viewingPattern = useViewingPattern();
-  const onPatternClick = (pattern, data) => {
+
+  const updateCodeWindow = (id, code) => {
+    context.handleUpdate({ code, id, evaluate: false });
+  };
+  const onPatternBtnClick = (id, isExample) => {
+    const code = isExample ? examplePatterns[id].code : userPatterns[id].code;
+
     // display selected pattern code in the window
-    context.handleUpdate({ pattern, code: data.code, evaluate: false });
+    updateCodeWindow(id, code);
   };
 
-  const addPattern = ({ pattern, code }) => {
-    addUserPattern(pattern, { code });
-    context.handleUpdate({ code, pattern, evaluate: false });
-  };
-
-  const examplePatterns = {};
-  Object.entries(tunes).forEach(([key, code]) => (examplePatterns[key] = { code }));
   const isExample = examplePatterns[viewingPattern] != null;
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-4 pb-4">
@@ -75,14 +71,27 @@ export function PatternsTab({ context }) {
             <h1 className="text-xl">{viewingPattern}</h1>
             <div className="space-x-4 flex w-min">
               {!isExample && (
-                <button className="hover:opacity-50" onClick={() => renamePattern(viewingPattern)} title="Rename">
+                <button
+                  className="hover:opacity-50"
+                  onClick={() => {
+                    const { id, data } = userPattern.rename(viewingPattern);
+                    updateCodeWindow(id, data.code);
+                  }}
+                  title="Rename"
+                >
                   <PencilSquareIcon className="w-5 h-5" />
                   {/* <PencilIcon className="w-5 h-5" /> */}
                 </button>
               )}
               <button
                 className="hover:opacity-50"
-                onClick={() => addPattern(createDuplicatePattern(viewingPattern))}
+                onClick={() => {
+                  const { id, data } = userPattern.duplicate(
+                    viewingPattern,
+                    userPatterns[viewingPattern]?.code ?? examplePatterns[viewingPattern]?.code,
+                  );
+                  updateCodeWindow(id, data.code);
+                }}
                 title="Duplicate"
               >
                 <DocumentDuplicateIcon className="w-5 h-5" />
@@ -91,8 +100,9 @@ export function PatternsTab({ context }) {
                 <button
                   className="hover:opacity-50"
                   onClick={() => {
-                    const { code, pattern } = deletePattern(viewingPattern);
-                    context.handleUpdate({ code, pattern, evaluate: false });
+                    const { id, data } = userPattern.delete(viewingPattern);
+                    console.log({ id, data });
+                    updateCodeWindow(id, data.code);
                   }}
                   title="Delete"
                 >
@@ -103,7 +113,7 @@ export function PatternsTab({ context }) {
           </div>
         )}
         <PatternButtons
-          onClick={onPatternClick}
+          onClick={onPatternBtnClick}
           patterns={userPatterns}
           activePattern={activePattern}
           viewingPattern={viewingPattern}
@@ -112,12 +122,19 @@ export function PatternsTab({ context }) {
           <button
             className="hover:opacity-50"
             onClick={() => {
-              addPattern(createNewUserPattern());
+              const { id, data } = userPattern.create();
+              updateCodeWindow(id, data.code);
             }}
           >
             new
           </button>
-          <button className="hover:opacity-50" onClick={() => clearUserPatterns()}>
+          <button
+            className="hover:opacity-50"
+            onClick={() => {
+              const { id, data } = userPattern.clearAll();
+              updateCodeWindow(id, data.code);
+            }}
+          >
             clear
           </button>
           <label className="hover:opacity-50 cursor-pointer">
@@ -138,7 +155,8 @@ export function PatternsTab({ context }) {
       <section>
         <h2 className="text-xl mb-2">Examples</h2>
         <PatternButtons
-          onClick={onPatternClick}
+          isExample={true}
+          onClick={onPatternBtnClick}
           patterns={examplePatterns}
           activePattern={activePattern}
           viewingPattern={viewingPattern}

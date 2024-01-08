@@ -16,18 +16,19 @@ import {
   setActivePattern,
   setLatestCode,
   settingsMap,
-  updateUserCode,
   useSettings,
   getViewingPattern,
   setViewingPattern,
-  getNextCloneName,
+  createPatternID,
+  userPattern,
+  examplePattern,
+  getNextCloneID,
 } from '../settings.mjs';
 import { Header } from './Header';
 import Loader from './Loader';
 import { Panel } from './panel/Panel';
 import { useStore } from '@nanostores/react';
 import { prebake } from './prebake.mjs';
-import * as tunes from './tunes.mjs';
 import { getRandomTune, initCode, loadModules, shareCode } from './util.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
@@ -76,22 +77,26 @@ export function Repl({ embedded = false }) {
       },
       afterEval: ({ code }) => {
         setLatestCode(code);
-        let pattern = getViewingPattern();
+        const data = { code };
+        let id = getViewingPattern();
         window.location.hash = '#' + code2hash(code);
-        const isExamplePattern = !!tunes[pattern];
+        const examplePatternData = examplePattern.getPatternData(id);
+        const isExamplePattern = examplePatternData != null;
 
         if (isExamplePattern) {
-          const codeHasChanged = code !== tunes[pattern];
+          const codeHasChanged = code !== examplePatternData.code;
           if (codeHasChanged) {
             // fork example
-            pattern = getNextCloneName(pattern);
-            setViewingPattern(pattern);
-            updateUserCode(pattern, code);
+            id = getNextCloneID(id);
+            setViewingPattern(id);
+            userPattern.update(id, data);
           }
-          setActivePattern(pattern);
+          setActivePattern(id);
         } else {
-          setActivePattern(pattern);
-          updateUserCode(pattern, code);
+          id = id == null ? createPatternID() : id;
+          setActivePattern(id);
+          setViewingPattern(id);
+          userPattern.update(id, data);
         }
       },
       bgFill: false,
@@ -159,21 +164,25 @@ export function Repl({ embedded = false }) {
 
   // payload = {reset?: boolean, code?: string, evaluate?: boolean, pattern?: string }
   const handleUpdate = async (payload) => {
-    const { reset = false, code = null, evaluate = true, pattern = null } = payload;
+    const { id, code } = payload;
+    setViewingPattern(id);
+    editorRef.current.setCode(code);
 
-    if (reset) {
-      clearCanvas();
-      resetLoadedSounds();
-      editorRef.current.repl.setCps(1);
-      await prebake(); // declare default samples
-    }
-    if (code != null && pattern != null) {
-      editorRef.current.setCode(code);
-      setViewingPattern(pattern);
-    }
-    if (evaluate) {
-      editorRef.current.evaluate();
-    }
+    // const { reset = false, code = null, evaluate = true, pattern = null } = payload;
+
+    // if (reset) {
+    //   clearCanvas();
+    //   resetLoadedSounds();
+    //   editorRef.current.repl.setCps(1);
+    //   await prebake(); // declare default samples
+    // }
+    // if (code != null && pattern != null) {
+    //   setViewingPattern(pattern);
+    //   editorRef.current.setCode(code);
+    // }
+    // if (evaluate) {
+    //   editorRef.current.evaluate();
+    // }
   };
   const handleShuffle = async () => {
     // window.postMessage('strudel-shuffle');

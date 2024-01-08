@@ -3,6 +3,7 @@ import { useStore } from '@nanostores/react';
 import { register } from '@strudel.cycles/core';
 import { defaultAudioDeviceName } from './repl/panel/AudioDeviceSelector';
 import { logger } from '@strudel.cycles/core';
+import * as tunes from './repl/tunes.mjs';
 
 export const defaultSettings = {
   activeFooter: 'intro',
@@ -27,6 +28,7 @@ export const defaultSettings = {
 
 export const settingsMap = persistentMap('strudel-settings', defaultSettings);
 
+const defaultCode = '';
 //pattern that the use is currently viewing in the window
 const $viewingPattern = persistentAtom('viewingPattern', '', { listen: false });
 export function setViewingPattern(key) {
@@ -54,7 +56,9 @@ export function useActivePattern() {
 export function initUserCode(code) {
   const userPatterns = getUserPatterns();
   const match = Object.entries(userPatterns).find(([_, pat]) => pat.code === code);
-  setActivePattern(match?.[0] || '');
+  const id = match?.[0] || '';
+  setActivePattern(id);
+  setViewingPattern(id);
 }
 
 export function useSettings() {
@@ -105,128 +109,116 @@ function getSetting(key) {
 }
 
 export function setUserPatterns(obj) {
-  settingsMap.setKey('userPatterns', JSON.stringify(obj));
+  return settingsMap.setKey('userPatterns', JSON.stringify(obj));
 }
 
-export function addUserPattern(name, config) {
-  if (typeof config !== 'object') {
-    throw new Error('addUserPattern expected object as second param');
-  }
-  if (!config.code) {
-    throw new Error('addUserPattern expected code as property of second param');
-  }
-  const userPatterns = getUserPatterns();
-  setUserPatterns({ ...userPatterns, [name]: config });
-}
-
-export function createNewUserPattern() {
+export const createPatternID = () => {
   const userPatterns = getUserPatterns();
   const date = new Date().toISOString().split('T')[0];
   const todays = Object.entries(userPatterns).filter(([name]) => name.startsWith(date));
   const num = String(todays.length + 1).padStart(3, '0');
-  const pattern = date + '_' + num;
-  const code = 's("hh")';
-  return { pattern, code };
-}
+  const id = date + '_' + num;
+  return id;
+};
 
-export function clearUserPatterns() {
-  if (!confirm(`This will delete all your patterns. Are you really sure?`)) {
-    return;
-  }
-  setUserPatterns({});
-}
-
-export function getNextCloneName(key) {
-  const userPatterns = getUserPatterns();
-  const clones = Object.entries(userPatterns).filter(([name]) => name.startsWith(key));
+export const getNextCloneID = (id) => {
+  const userPatterns = this.getAll();
+  const clones = Object.entries(userPatterns).filter(([patID]) => patID.startsWith(id));
   const num = String(clones.length + 1).padStart(3, '0');
-  return key + '_' + num;
-}
+  const newID = id + '_' + num;
+  return newID;
+};
 
-export function getUserPattern(key) {
-  const userPatterns = getUserPatterns();
-  return userPatterns[key];
-}
+export const examplePattern = {
+  getAll() {
+    const examplePatterns = {};
+    Object.entries(tunes).forEach(([key, code]) => (examplePatterns[key] = { code }));
+    return examplePatterns;
+  },
+  getPatternData(id) {
+    const userPatterns = this.getAll();
+    return userPatterns[id];
+  },
+};
 
-export function renamePattern(pattern) {
-  let userPatterns = getUserPatterns();
-  if (!userPatterns[pattern]) {
-    alert('Cannot rename examples');
-    return;
-  }
-  const newName = prompt('Enter new name', pattern);
-  if (newName === null) {
-    // canceled
-    return;
-  }
-  if (userPatterns[newName]) {
-    alert('Name already taken!');
-    return;
-  }
-  userPatterns[newName] = userPatterns[pattern]; // copy code
-  delete userPatterns[pattern];
-  setUserPatterns({ ...userPatterns });
-  setViewingPattern(newName);
-}
+export const userPattern = {
+  getAll() {
+    return JSON.parse(settingsMap.get().userPatterns);
+  },
+  getPatternData(id) {
+    const userPatterns = this.getAll();
+    return userPatterns[id];
+  },
+  exists(id) {
+    const userPatterns = this.getAll();
+    return userPatterns[id] != null;
+  },
+  create() {
+    const newID = createPatternID();
+    const code = defaultCode;
+    const data = { code };
+    this.update(newID, data);
+    return { id: newID, data };
+  },
+  update(id, data) {
+    const userPatterns = this.getAll();
+    setUserPatterns({ ...userPatterns, [id]: data });
+  },
+  duplicate(id, data) {
+    const newID = getNextCloneID(id);
+    this.update(newID, data);
+    return { id: newID, data };
+  },
+  clearAll() {
+    if (!confirm(`This will delete all your patterns. Are you really sure?`)) {
+      return;
+    }
+    const viewingPattern = getViewingPattern();
+    const examplePatternData = examplePattern.getPatternData(viewingPattern);
+    setUserPatterns({});
+    if (examplePatternData != null) {
+      return { id: viewingPattern, data: examplePatternData };
+    }
+    setViewingPattern(null);
+    setActivePattern(null);
+    return { id: null, data: { code: '' } };
+  },
+  delete(id) {
+    const userPatterns = this.getAll();
+    const updatedPatterns = Object.fromEntries(Object.entries(userPatterns).filter(([key]) => key !== id));
+    if (getActivePattern() === id) {
+      setActivePattern(null);
+    }
+    setUserPatterns(updatedPatterns);
+    const viewingPattern = getViewingPattern();
+    if (viewingPattern === id) {
+      return this.create();
+    }
+    return { id: viewingPattern, data: updatedPatterns[id] };
+  },
 
-export function updateUserCode(pattern, code) {
-  const userPatterns = getUserPatterns();
-  setUserPatterns({ ...userPatterns, [pattern]: { code } });
-}
+  rename(id) {
+    const userPatterns = this.getAll();
+    const newID = prompt('Enter new name', id);
+    if (newID === null) {
+      // canceled
+      return;
+    }
+    if (userPatterns[newID]) {
+      alert('Name already taken!');
+      return;
+    }
+    const data = userPatterns[id];
+    userPatterns[newID] = data; // copy code
+    delete userPatterns[id];
 
-export function deletePattern(pattern) {
-  if (!pattern) {
-    console.warn('cannot delete: no pattern selected');
-    return;
-  }
-  const userPatterns = getUserPatterns();
-  if (!userPatterns[pattern]) {
-    alert('Cannot delete examples');
-    return;
-  }
-  if (!confirm(`Really delete the selected pattern "${pattern}"?`)) {
-    return;
-  }
-  // const updatedPatterns = Object.fromEntries(Object.entries(userPatterns).filter(([key]) => key !== pattern));
-  let patternsArray = Object.entries(userPatterns).sort((a, b) => a[0].localeCompare(b[0]));
-  const deleteIndex = patternsArray.findIndex(([key]) => key === pattern);
-  patternsArray.splice(deleteIndex, 1);
-  const updatedPatterns = Object.fromEntries(patternsArray);
-
-  setUserPatterns(updatedPatterns);
-
-  //create new pattern if no other patterns
-  if (!patternsArray.length) {
-    return createNewUserPattern();
-  }
-  // // or default to active pattern
-  // const activePatternID = getActivePattern();
-  // const activePatternData = updatedPatterns[activePatternID];
-  // if (activePatternData?.code != null) {
-  //   return { pattern: activePatternID, code: activePatternData.code };
-  // }
-  // or find pattern at next index
-
-  const next = patternsArray[deleteIndex];
-  if (next != null) {
-    const [pat, data] = next;
-    return { pattern: pat, code: data.code };
-  }
-  // or find pattern at previous index
-  const previous = patternsArray[deleteIndex - 1];
-  const [pat, data] = previous;
-  return { patttern: pat, code: data.code };
-}
-
-export function createDuplicatePattern(pattern) {
-  let latestCode = getSetting('latestCode');
-  if (!pattern) {
-    console.warn('cannot duplicate: no pattern selected');
-    return;
-  }
-  const newPattern = getNextCloneName(pattern);
-  return { pattern: newPattern, code: latestCode };
-}
+    setUserPatterns({ ...userPatterns });
+    if (id === getActivePattern()) {
+      setActivePattern(newID);
+    }
+    return { id: newID, data };
+  },
+};
 
 export async function importPatterns(fileList) {
   const files = Array.from(fileList);
@@ -237,8 +229,8 @@ export async function importPatterns(fileList) {
         const userPatterns = getUserPatterns() || {};
         setUserPatterns({ ...userPatterns, ...JSON.parse(content) });
       } else if (file.type === 'text/plain') {
-        const name = file.name.replace(/\.[^/.]+$/, '');
-        addUserPattern(name, { code: content });
+        const id = file.name.replace(/\.[^/.]+$/, '');
+        userPattern.update(id, { code: content });
       }
     }),
   );
