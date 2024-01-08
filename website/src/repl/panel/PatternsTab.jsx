@@ -51,14 +51,14 @@ export function PatternsTab({ context }) {
   const examplePatterns = useMemo(() => examplePattern.getAll(), []);
   const activePattern = useActivePattern();
   const viewingPattern = useViewingPattern();
-  const updateCodeWindow = (id, code) => {
-    context.handleUpdate(id, code);
+  const updateCodeWindow = (id, code, reset = false) => {
+    context.handleUpdate(id, code, reset);
   };
   const onPatternBtnClick = (id, isExample = false) => {
     const code = isExample ? examplePatterns[id].code : userPatterns[id].code;
 
     // display selected pattern code in the window
-    updateCodeWindow(id, code);
+    updateCodeWindow(id, code, isExample);
   };
 
   const isExample = examplePatterns[viewingPattern] != null;

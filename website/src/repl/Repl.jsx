@@ -164,7 +164,17 @@ export function Repl({ embedded = false }) {
     editorRef.current?.toggle();
   };
 
-  const handleUpdate = (id, code) => {
+  const resetEditor = async () => {
+    clearCanvas();
+    resetLoadedSounds();
+    editorRef.current.repl.setCps(1);
+    await prebake(); // declare default samples
+  };
+
+  const handleUpdate = async (id, code, reset = false) => {
+    if (reset) {
+      await resetEditor();
+    }
     setViewingPattern(id);
     editorRef.current.setCode(code);
   };
