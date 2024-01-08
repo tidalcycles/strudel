@@ -30,7 +30,7 @@ function PatternButton({ showOutline, onClick, label, showHiglight }) {
   );
 }
 
-function PatternButtons({ patterns, activePattern, onClick, viewingPattern, isExample = false }) {
+function PatternButtons({ patterns, activePattern, onClick, viewingPattern, started }) {
   return (
     <div className="font-mono text-sm">
       {Object.entries(patterns).map(([id]) => (
@@ -38,8 +38,8 @@ function PatternButtons({ patterns, activePattern, onClick, viewingPattern, isEx
           key={id}
           label={id}
           showHiglight={id === viewingPattern}
-          showOutline={id === activePattern}
-          onClick={() => onClick(id, isExample)}
+          showOutline={id === activePattern && started}
+          onClick={() => onClick(id)}
         />
       ))}
     </div>
@@ -51,11 +51,10 @@ export function PatternsTab({ context }) {
   const examplePatterns = useMemo(() => examplePattern.getAll(), []);
   const activePattern = useActivePattern();
   const viewingPattern = useViewingPattern();
-
   const updateCodeWindow = (id, code) => {
-    context.handleUpdate({ code, id, evaluate: false });
+    context.handleUpdate(id, code);
   };
-  const onPatternBtnClick = (id, isExample) => {
+  const onPatternBtnClick = (id, isExample = false) => {
     const code = isExample ? examplePatterns[id].code : userPatterns[id].code;
 
     // display selected pattern code in the window
@@ -80,16 +79,12 @@ export function PatternsTab({ context }) {
                   title="Rename"
                 >
                   <PencilSquareIcon className="w-5 h-5" />
-                  {/* <PencilIcon className="w-5 h-5" /> */}
                 </button>
               )}
               <button
                 className="hover:opacity-50"
                 onClick={() => {
-                  const { id, data } = userPattern.duplicate(
-                    viewingPattern,
-                    userPatterns[viewingPattern]?.code ?? examplePatterns[viewingPattern]?.code,
-                  );
+                  const { id, data } = userPattern.duplicate(viewingPattern);
                   updateCodeWindow(id, data.code);
                 }}
                 title="Duplicate"
@@ -101,7 +96,6 @@ export function PatternsTab({ context }) {
                   className="hover:opacity-50"
                   onClick={() => {
                     const { id, data } = userPattern.delete(viewingPattern);
-                    console.log({ id, data });
                     updateCodeWindow(id, data.code);
                   }}
                   title="Delete"
@@ -115,6 +109,7 @@ export function PatternsTab({ context }) {
         <PatternButtons
           onClick={onPatternBtnClick}
           patterns={userPatterns}
+          started={context.started}
           activePattern={activePattern}
           viewingPattern={viewingPattern}
         />
@@ -155,8 +150,8 @@ export function PatternsTab({ context }) {
       <section>
         <h2 className="text-xl mb-2">Examples</h2>
         <PatternButtons
-          isExample={true}
-          onClick={onPatternBtnClick}
+          onClick={(id) => onPatternBtnClick(id, true)}
+          started={context.started}
           patterns={examplePatterns}
           activePattern={activePattern}
           viewingPattern={viewingPattern}

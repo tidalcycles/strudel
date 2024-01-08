@@ -160,38 +160,25 @@ export function Repl({ embedded = false }) {
   // UI Actions
   //
 
-  const handleTogglePlay = async () => editorRef.current?.toggle();
+  const handleTogglePlay = async () => {
+    editorRef.current?.toggle();
+  };
 
-  // payload = {reset?: boolean, code?: string, evaluate?: boolean, pattern?: string }
-  const handleUpdate = async (payload) => {
-    const { id, code } = payload;
+  const handleUpdate = (id, code) => {
     setViewingPattern(id);
     editorRef.current.setCode(code);
+  };
 
-    // const { reset = false, code = null, evaluate = true, pattern = null } = payload;
-
-    // if (reset) {
-    //   clearCanvas();
-    //   resetLoadedSounds();
-    //   editorRef.current.repl.setCps(1);
-    //   await prebake(); // declare default samples
-    // }
-    // if (code != null && pattern != null) {
-    //   setViewingPattern(pattern);
-    //   editorRef.current.setCode(code);
-    // }
-    // if (evaluate) {
-    //   editorRef.current.evaluate();
-    // }
+  const handleEvaluate = () => {
+    editorRef.current.evaluate();
   };
   const handleShuffle = async () => {
-    // window.postMessage('strudel-shuffle');
     const { code, name } = getRandomTune();
     logger(`[repl] ✨ loading random tune "${name}"`);
     setActivePattern(name);
+    setViewingPattern(name);
     clearCanvas();
     resetLoadedSounds();
-    editorRef.current.repl.setCps(1);
     await prebake(); // declare default samples
     editorRef.current.setCode(code);
     editorRef.current.repl.evaluate(code);
@@ -208,6 +195,7 @@ export function Repl({ embedded = false }) {
     handleUpdate,
     handleShuffle,
     handleShare,
+    handleEvaluate,
   };
 
   return (

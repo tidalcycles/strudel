@@ -54,11 +54,13 @@ export function useActivePattern() {
   return useStore($activePattern);
 }
 export function initUserCode(code) {
-  const userPatterns = getUserPatterns();
-  const match = Object.entries(userPatterns).find(([_, pat]) => pat.code === code);
-  const id = match?.[0] || '';
-  setActivePattern(id);
-  setViewingPattern(id);
+  const patterns = { ...userPattern.getAll(), ...examplePattern.getAll() };
+  const match = Object.entries(patterns).find(([_, pat]) => pat.code === code);
+  const id = match?.[0];
+  if (id != null) {
+    setActivePattern(id);
+    setViewingPattern(id);
+  }
 }
 
 export function useSettings() {
@@ -122,22 +124,25 @@ export const createPatternID = () => {
 };
 
 export const getNextCloneID = (id) => {
-  const userPatterns = this.getAll();
-  const clones = Object.entries(userPatterns).filter(([patID]) => patID.startsWith(id));
+  const patterns = { ...userPattern.getAll(), ...examplePattern.getAll() };
+  const clones = Object.entries(patterns).filter(([patID]) => patID.startsWith(id));
   const num = String(clones.length + 1).padStart(3, '0');
   const newID = id + '_' + num;
   return newID;
 };
 
+const examplePatterns = Object.fromEntries(Object.entries(tunes).map(([id, code]) => [id, { code }]));
+
 export const examplePattern = {
   getAll() {
-    const examplePatterns = {};
-    Object.entries(tunes).forEach(([key, code]) => (examplePatterns[key] = { code }));
     return examplePatterns;
   },
   getPatternData(id) {
-    const userPatterns = this.getAll();
-    return userPatterns[id];
+    const pats = this.getAll();
+    return pats[id];
+  },
+  exists(id) {
+    return this.getPatternData(id) != null;
   },
 };
 
@@ -150,8 +155,7 @@ export const userPattern = {
     return userPatterns[id];
   },
   exists(id) {
-    const userPatterns = this.getAll();
-    return userPatterns[id] != null;
+    return this.getPatternData(id) != null;
   },
   create() {
     const newID = createPatternID();
@@ -164,7 +168,9 @@ export const userPattern = {
     const userPatterns = this.getAll();
     setUserPatterns({ ...userPatterns, [id]: data });
   },
-  duplicate(id, data) {
+  duplicate(id) {
+    const examplePatternData = examplePattern.getPatternData(id);
+    const data = examplePatternData != null ? examplePatternData : this.getPatternData(id);
     const newID = getNextCloneID(id);
     this.update(newID, data);
     return { id: newID, data };
@@ -179,36 +185,37 @@ export const userPattern = {
     if (examplePatternData != null) {
       return { id: viewingPattern, data: examplePatternData };
     }
-    setViewingPattern(null);
+    // setViewingPattern(null);
     setActivePattern(null);
-    return { id: null, data: { code: '' } };
+    return { id: null, data: { code: defaultCode } };
   },
   delete(id) {
     const userPatterns = this.getAll();
-    const updatedPatterns = Object.fromEntries(Object.entries(userPatterns).filter(([key]) => key !== id));
+    delete userPatterns[id];
     if (getActivePattern() === id) {
       setActivePattern(null);
     }
-    setUserPatterns(updatedPatterns);
+    setUserPatterns(userPatterns);
     const viewingPattern = getViewingPattern();
     if (viewingPattern === id) {
-      return this.create();
+      return { id: null, data: { code: defaultCode } };
     }
-    return { id: viewingPattern, data: updatedPatterns[id] };
+    return { id: viewingPattern, data: userPatterns[viewingPattern] };
   },
 
   rename(id) {
     const userPatterns = this.getAll();
     const newID = prompt('Enter new name', id);
+    const data = userPatterns[id];
     if (newID === null) {
       // canceled
-      return;
+      return { id, data };
     }
     if (userPatterns[newID]) {
       alert('Name already taken!');
-      return;
+      return { id, data };
     }
-    const data = userPatterns[id];
+
     userPatterns[newID] = data; // copy code
     delete userPatterns[id];
 
