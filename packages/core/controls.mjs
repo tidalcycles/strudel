@@ -270,7 +270,7 @@ const generic_params = [
    * s("bd sd,hh*3").bpf("<1000 2000 4000 8000>")
    *
    */
-  [['bandf', 'bandq'], 'bpf', 'bp'],
+  [['bandf', 'bandq', 'bpenv'], 'bpf', 'bp'],
   // TODO: in tidal, it seems to be normalized
   /**
    * Sets the **b**and-**p**ass **q**-factor (resonance).
@@ -481,7 +481,7 @@ const generic_params = [
    * s("bd*8").lpf("1000:0 1000:10 1000:20 1000:30")
    *
    */
-  [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
+  [['cutoff', 'resonance', 'lpenv'], 'ctf', 'lpf', 'lp'],
 
   /**
    * Sets the lowpass filter envelope modulation depth.
@@ -758,7 +758,7 @@ const generic_params = [
    * .vibmod("<.25 .5 1 2 12>:8")
    */
   [['vibmod', 'vib'], 'vmod'],
-  [['hcutoff', 'hresonance'], 'hpf', 'hp'],
+  [['hcutoff', 'hresonance', 'hpenv'], 'hpf', 'hp'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
    *
