@@ -97,7 +97,7 @@ export const getADSRValues = (params, curve = 'linear', defaultValues) => {
   return [Math.max(a ?? 0, envmin), Math.max(d ?? 0, envmin), Math.min(sustain, envmax), Math.max(r ?? 0, releaseMin)];
 };
 
-export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor = 0.5) {
+export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor) {
   const curve = 'exponential';
   const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], curve, [0.005, 0.14, 0, 0.1]);
   const filter = context.createBiquadFilter();
@@ -105,12 +105,16 @@ export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fe
   filter.type = type;
   filter.Q.value = Q;
   filter.frequency.value = frequency;
-
+  // envelope is active when any of these values is set
+  const hasEnvelope = att ?? dec ?? sus ?? rel ?? fenv;
   // Apply ADSR to filter frequency
-  if (!isNaN(fenv) && fenv !== 0) {
+  if (hasEnvelope !== undefined) {
+    fenv = nanFallback(fenv, 1, true);
+    fanchor = nanFallback(fanchor, 0, true);
     const offset = fenv * fanchor;
+    const min = clamp(2 ** -offset * frequency, 0, 20000);
     const max = clamp(2 ** (fenv - offset) * frequency, 0, 20000);
-    getParamADSR(filter.frequency, attack, decay, sustain, release, frequency, max, start, end, curve);
+    getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end, curve);
     return filter;
   }
   return filter;
