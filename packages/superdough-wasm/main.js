@@ -6,7 +6,8 @@ document.getElementById('play').addEventListener('click', async () => {
   const node = new AudioWorkletNode(ac, 'saw-processor');
 
   //let res = await fetch('./zigsaw/zigsaw.wasm');
-  let res = await fetch('./csaw/csaw.wasm');
+  // let res = await fetch('./csaw/csaw.wasm');
+  let res = await fetch('./ascsaw/build/release.wasm');
   //let res = await fetch('./rustsaw/pkg/rustsaw_bg.wasm');
   const buffer = await res.arrayBuffer();
   node.port.onmessage = (e) => {

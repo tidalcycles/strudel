@@ -9,22 +9,27 @@ WASM can be compiled from several languages, which are tested here..
 
 ```sh
 # (re)compile dsp.zig
+brew install zig # prequisite
 cd zigsaw
-zig build-lib zigsaw.zig -target wasm32-freestanding -dynamic -rdynamic -O ReleaseSmall
-# run server
-npx http-server .. -o
+zig build-lib zigsaw.zig -target wasm32-freestanding -dynamic -rdynamic -O ReleaseSmall # build
+npx http-server .. -o # run 
 ```
+
+wasm file size: 690B
 
 ## rust
 
 <https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_Wasm>
 
 ```sh
-# cargo install wasm-pack
+# https://www.rust-lang.org/tools/install
+cargo install wasm-pack # prequisite
 cd rustsaw
-wasm-pack build --target bundler
-npx http-server .. -o
+wasm-pack build --target bundler # build
+npx http-server .. -o # run
 ```
+
+wasm file size: 653B
 
 ## c
 
@@ -33,6 +38,20 @@ npx http-server .. -o
 ```sh
 # brew install emscripten
 cd csaw
-emcc -O2 csaw.c -o csaw
+emcc -O2 csaw.c -o csaw # build
 npx http-server .. -o
 ```
+
+wasm file size: 680B
+
+## assemblyscript
+
+<https://www.assemblyscript.org/getting-started.html#setting-up-a-new-project>
+
+```sh
+cd ascsaw
+# npm i
+npm run asbuild # build
+```
+
+wasm file size: 122B !
