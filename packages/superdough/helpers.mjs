@@ -86,7 +86,7 @@ export function getCompressor(ac, threshold, ratio, knee, attack, release) {
 // ex: sound(val).decay(val) will behave as a decay only envelope. sound(val).attack(val).decay(val) will behave like an "ad" env, etc.
 
 export const getADSRValues = (params, curve = 'linear', defaultValues) => {
-  const envmin = curve === 'exponential' ? 0.001 : 0;
+  const envmin = curve === 'exponential' ? 0.001 : 0.001;
   const releaseMin = 0.01;
   const envmax = 1;
   const [a, d, s, r] = params;
