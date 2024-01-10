@@ -2,6 +2,7 @@ class SawProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
     this.t = 0; // samples passed
+    this.f = 110;
     this.port.onmessage = (e) => {
       const key = Object.keys(e.data)[0];
       const value = e.data[key];
@@ -12,6 +13,8 @@ class SawProcessor extends AudioWorkletProcessor {
             this.port.postMessage('OK');
           });
           break;
+        case 'frequency':
+          this.f = value;
       }
     };
   }
@@ -22,7 +25,7 @@ class SawProcessor extends AudioWorkletProcessor {
       for (let i = 0; i < output[0].length; i++) {
         let t = this.t;
         let out = 0;
-        out = this.api.saw(t / 44100, 220);
+        out = this.api.saw(t / 44100, this.f);
         output.forEach((channel) => {
           channel[i] = out;
         });

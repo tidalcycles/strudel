@@ -14,4 +14,8 @@ document.getElementById('play').addEventListener('click', async () => {
   };
   node.port.postMessage({ webassembly: buffer });
   node.connect(ac.destination);
+
+  document.getElementById('freq').addEventListener('input', async (e) => {
+    node.port.postMessage({ frequency: e.target.value });
+  });
 });
