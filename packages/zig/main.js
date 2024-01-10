@@ -1,11 +1,17 @@
-async function run() {
-  let res = await fetch('./add.wasm');
-  res = await res.arrayBuffer();
-  res = await WebAssembly.instantiate(res, {
-    env: {},
-  });
-  const { add } = res.instance.exports;
-  console.log(add(3, 5));
-}
+let ac;
+document.getElementById('play').addEventListener('click', async () => {
+  ac = ac || new AudioContext();
+  await ac.resume();
+  await ac.audioWorklet.addModule('./worklet.js');
+  const node = new AudioWorkletNode(ac, 'saw-processor');
 
-run();
+  let res = await fetch('./dsp.wasm');
+  const buffer = await res.arrayBuffer();
+  node.port.onmessage = (e) => {
+    if (e.data === 'OK') {
+      console.log('worklet ready');
+    }
+  };
+  node.port.postMessage({ webassembly: buffer });
+  node.connect(ac.destination);
+});
