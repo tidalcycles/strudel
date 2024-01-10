@@ -19,17 +19,8 @@ export class Cyclist {
     this.num_cycles_at_cps_change = 0;
     this.onToggle = onToggle;
     this.latency = latency; // fixed trigger time offset
-    this.broadcast = new BroadcastChannel('strudel_clock');
     this.nextCycleStartTime = 0;
-    this.broadcast.onmessage = (event) => {
-      const data = event.data;
-      const { cps, sendTime, phase, nextCycleStartTime, cycle } = data;
-      this.cps = cps;
-      const now = Date.now();
-      const messageLatency = now - sendTime;
-      console.log({ messageLatency });
-      this.nextCycleStartTime = now + nextCycleStartTime - messageLatency;
-    };
+
     this.clock = createClock(
       getTime,
       // called slightly before each cycle
@@ -66,16 +57,6 @@ export class Cyclist {
               onTrigger?.(hap, deadline, duration, this.cps);
             }
           });
-          console.log(1 - (num_cycles_since_cps_change % 1));
-          if (tick % 1 === 0) {
-            // this.broadcast.postMessage({
-            //   cps: this.cps,
-            //   sendTime: Date.now(),
-            //   phase,
-            //   nextCycleStartTime: (1 - (num_cycles_since_cps_change % 1)) * this.cps * 1000,
-            //   cycle: num_cycles_since_cps_change,
-            // });
-          }
         } catch (e) {
           logger(`[cyclist] error: ${e.message}`);
           onError?.(e);
@@ -93,27 +74,14 @@ export class Cyclist {
     this.onToggle?.(v);
   }
   start() {
-    const date = Date.now();
-    let wait = this.nextCycleStartTime - date;
-    wait = Math.max(0, wait);
-    console.log({ wait });
-
-    this.broadcast.postMessage({
-      type: 'request_start',
-    });
-
-    this.broadcast.onmessage;
-
-    setTimeout(() => {
-      this.num_ticks_since_cps_change = 0;
-      this.num_cycles_at_cps_change = 0;
-      if (!this.pattern) {
-        throw new Error('Scheduler: no pattern set! call .setPattern first.');
-      }
-      logger('[cyclist] start');
-      this.clock.start();
-      this.setStarted(true);
-    }, wait);
+    this.num_ticks_since_cps_change = 0;
+    this.num_cycles_at_cps_change = 0;
+    if (!this.pattern) {
+      throw new Error('Scheduler: no pattern set! call .setPattern first.');
+    }
+    logger('[cyclist] start');
+    this.clock.start();
+    this.setStarted(true);
   }
   pause() {
     logger('[cyclist] pause');
