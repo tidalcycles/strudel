@@ -302,11 +302,11 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   bufferSource.start(time, offset);
   const envGain = ac.createGain();
   const node = bufferSource.connect(envGain);
-  let holdEnd = t + duration;
   if (clip == null && loop == null && value.release == null) {
     const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
-    holdEnd = t + bufferDuration;
+    duration = (end - begin) * bufferDuration;
   }
+  let holdEnd = t + duration;
 
   getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, t, holdEnd, 'linear');
 
