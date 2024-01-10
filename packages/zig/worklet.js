@@ -8,9 +8,7 @@ class SawProcessor extends AudioWorkletProcessor {
       switch (key) {
         case 'webassembly':
           WebAssembly.instantiate(value, this.importObject).then((result) => {
-            const exports = result.instance.exports;
             this.api = result.instance.exports;
-            this.saw = exports.saw;
             this.port.postMessage('OK');
           });
           break;
