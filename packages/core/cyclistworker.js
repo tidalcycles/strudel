@@ -65,15 +65,21 @@ self.onconnect = function (e) {
   var port = e.ports[0];
   allPorts.push(port);
 
-  allPorts.forEach((port) => {
-    port.postMessage('yoooo');
+  sendMessage('yooooo');
+
+  port.addEventListener('message', function (e) {
+    // get the message sent to the worker
+
+    processMessage(e.data);
   });
 
   port.start(); // Required when using addEventListener. Otherwise called implicitly by onmessage setter.
 };
 
-self.onmessage = (message) => {
+const processMessage = (message) => {
+  console.log(message);
   const { type, payload } = message;
+
   switch (type) {
     case 'cpschange': {
       if (payload.cps !== cps) {

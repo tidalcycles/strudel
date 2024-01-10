@@ -39,12 +39,12 @@ export function repl({
     console.log(answer);
   };
 
-  const sharedworker = new SharedWorker(new URL('./cyclistworker.js', import.meta.url));
+  // const sharedworker = new SharedWorker(new URL('./cyclistworker.js', import.meta.url));
 
-  sharedworker.port.start();
-  sharedworker.port.addEventListener('message', (message) => {
-    console.log(message);
-  });
+  // sharedworker.port.start();
+  // sharedworker.port.addEventListener('message', (message) => {
+  //   console.log(message);
+  // });
 
   const updateState = (update) => {
     Object.assign(state, update);

@@ -1,7 +1,7 @@
 import { logger } from './logger.mjs';
 
-const sharedworker = new SharedWorker(new URL('./cyclistworker.js', import.meta.url));
-sharedworker.port.start();
+// const sharedworker = new SharedWorker(new URL('./cyclistworker.js', import.meta.url));
+// sharedworker.port.start();
 
 export class NeoCyclist {
   constructor({ onTrigger, onToggle, latency = 0.1, onError }) {
@@ -10,7 +10,9 @@ export class NeoCyclist {
     this.onToggle = onToggle;
     this.latency = latency;
     this.worker = new SharedWorker(new URL('./cyclistworker.js', import.meta.url));
+    this.worker.port.start();
     this.worker.port.addEventListener('message', (message) => {
+      console.log(message);
       const { payload, type } = message;
       switch (type) {
         case 'tick': {
@@ -42,7 +44,8 @@ export class NeoCyclist {
   }
 
   now() {
-    this.sendMessage('requestcycles', {});
+    return performance.now();
+    // this.sendMessage('requestcycles', {});
   }
   setCps(cps = 1) {
     this.sendMessage('cpschange', { cps });
