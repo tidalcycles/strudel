@@ -7,7 +7,6 @@ let lastEnd = 0; // query end of last tick
 // let getTime = getTime; // get absolute time
 let num_cycles_at_cps_change = 0;
 // let onToggle = onToggle;
-let latency = 0.1; // fixed trigger time offset
 let interval = 0.1;
 
 //incoming
@@ -18,7 +17,7 @@ let interval = 0.1;
 // {type: toggle, payload?: {started: boolean}}
 
 //sending
-//{type: 'tick', payload: {begin, end, phase, time }}
+//{type: 'tick', payload: {begin, end, deadline }}
 //{type: 'log', payload: {type, text}}
 
 const getTime = () => {
@@ -34,7 +33,7 @@ const log = (text, type) => {
   sendMessage({ type: 'log', payload: { text, type } });
 };
 
-createClock(
+let clock = createClock(
   getTime,
   // called slightly before each cycle
   (phase, duration, tick) => {
@@ -53,7 +52,7 @@ createClock(
       lastEnd = end;
       const tickdeadline = phase - time; // time left until the phase is a whole number
       lastTick = time + tickdeadline;
-      sendMessage({ type: 'tick', payload: { begin, end, phase, time } });
+      sendMessage({ type: 'tick', payload: { begin, end, tickdeadline } });
     } catch (e) {
       log(`[cyclist] error: ${e.message}`, 'error');
     }
@@ -73,6 +72,33 @@ self.onconnect = function (e) {
   port.start(); // Required when using addEventListener. Otherwise called implicitly by onmessage setter.
 };
 
+self.onmessage = (message) => {
+  const { type, payload } = message;
+  switch (type) {
+    case 'cpschange': {
+      if (payload.cps !== cps) {
+        cps = payload.cps;
+        num_ticks_since_cps_change = 0;
+      }
+      break;
+    }
+    case 'toggle': {
+      const { started } = payload;
+      if (started) {
+        clock.start();
+      } else {
+        clock.stop();
+      }
+      break;
+    }
+    case 'requestcycles': {
+      const secondsSinceLastTick = getTime() - lastTick - clock.duration;
+      const cycles = this.lastBegin + secondsSinceLastTick * this.cps; // + this.clock.minLatency;
+      sendMessage({ type: 'requestedcycles', payload: { cycles } });
+    }
+  }
+};
+
 function createClock(
   getTime,
   callback, // called slightly before each cycle
@@ -84,6 +110,7 @@ function createClock(
   let phase = 0; // next callback time
   let precision = 10 ** 4; // used to round phase
   let minLatency = 0.01;
+
   const setDuration = (setter) => (duration = setter(duration));
   overlap = overlap || interval / 2;
   const onTick = () => {
@@ -115,6 +142,7 @@ function createClock(
     clear();
   };
   const getPhase = () => phase;
+
   // setCallback
   return { setDuration, start, stop, pause, duration, interval, getPhase, minLatency };
 }

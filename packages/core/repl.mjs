@@ -4,6 +4,7 @@ import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
 import { register, Pattern, isPattern, silence, stack } from './pattern.mjs';
+import { NeoCyclist } from './neocyclist.mjs';
 
 export function repl({
   interval,
@@ -52,11 +53,21 @@ export function repl({
     onUpdateState?.(state);
   };
 
-  const scheduler = new Cyclist({
+  // const scheduler = new Cyclist({
+  //   interval,
+  //   onTrigger: getTrigger({ defaultOutput, getTime }),
+  //   onError: onSchedulerError,
+  //   getTime,
+  //   onToggle: (started) => {
+  //     updateState({ started });
+  //     onToggle?.(started);
+  //   },
+  // });
+
+  const scheduler = new NeoCyclist({
     interval,
     onTrigger: getTrigger({ defaultOutput, getTime }),
     onError: onSchedulerError,
-    getTime,
     onToggle: (started) => {
       updateState({ started });
       onToggle?.(started);
