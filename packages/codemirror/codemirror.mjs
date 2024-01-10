@@ -4,7 +4,14 @@ import { history } from '@codemirror/commands';
 import { javascript } from '@codemirror/lang-javascript';
 import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { Compartment, EditorState, Prec } from '@codemirror/state';
-import { EditorView, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view';
+import {
+  EditorView,
+  highlightActiveLineGutter,
+  highlightActiveLine,
+  keymap,
+  lineNumbers,
+  drawSelection,
+} from '@codemirror/view';
 import { Pattern, Drawer, repl, cleanupDraw } from '@strudel.cycles/core';
 import { isAutoCompletionEnabled } from './autocomplete.mjs';
 import { isTooltipEnabled } from './tooltip.mjs';
@@ -68,6 +75,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
       syntaxHighlighting(defaultHighlightStyle),
       history(),
       EditorView.updateListener.of((v) => onChange(v)),
+      drawSelection({ cursorBlinkRate: 0 }),
       Prec.highest(
         keymap.of([
           {
