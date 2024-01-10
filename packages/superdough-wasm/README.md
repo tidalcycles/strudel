@@ -33,6 +33,6 @@ npx http-server .. -o
 ```sh
 # brew install emscripten
 cd csaw
-emcc csaw.c -o csaw
+emcc -O2 csaw.c -o csaw
 npx http-server .. -o
 ```
