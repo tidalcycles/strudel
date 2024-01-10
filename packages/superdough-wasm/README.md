@@ -25,3 +25,14 @@ cd rustsaw
 wasm-pack build --target bundler
 npx http-server .. -o
 ```
+
+## c
+
+<https://emscripten.org/docs/getting_started/Tutorial.html>
+
+```sh
+# brew install emscripten
+cd csaw
+emcc csaw.c -o csaw
+npx http-server .. -o
+```
