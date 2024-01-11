@@ -36,7 +36,6 @@ export class Cyclist {
           const time = getTime();
           const begin = this.lastEnd;
           this.lastBegin = begin;
-          console.log();
           //convert ticks to cycles, so you can query the pattern for events
           const eventLength = duration * this.cps;
           const num_cycles_since_cps_change = this.num_ticks_since_cps_change * eventLength;

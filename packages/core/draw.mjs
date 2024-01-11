@@ -124,6 +124,7 @@ export class Drawer {
         const lookahead = this.drawTime[1];
         // calculate current frame time (think right side of screen for pianoroll)
         const phase = this.scheduler.now() + lookahead;
+
         // first frame just captures the phase
         if (this.lastFrame === null) {
           this.lastFrame = phase;

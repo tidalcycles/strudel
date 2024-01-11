@@ -31,21 +31,6 @@ export function repl({
     started: false,
   };
 
-  const worker = new Worker(new URL('./deep-thought.js', import.meta.url));
-  worker.postMessage({
-    question: 'The Answer to the Ultimate Question of Life, The Universe, and Everything.',
-  });
-  worker.onmessage = ({ data: { answer } }) => {
-    console.log(answer);
-  };
-
-  // const sharedworker = new SharedWorker(new URL('./cyclistworker.js', import.meta.url));
-
-  // sharedworker.port.start();
-  // sharedworker.port.addEventListener('message', (message) => {
-  //   console.log(message);
-  // });
-
   const updateState = (update) => {
     Object.assign(state, update);
     state.isDirty = state.code !== state.activeCode;
@@ -65,14 +50,16 @@ export function repl({
   // });
 
   const scheduler = new NeoCyclist({
-    interval,
+    // interval,
     onTrigger: getTrigger({ defaultOutput, getTime }),
     onError: onSchedulerError,
+    // latency: 0.22,
     onToggle: (started) => {
       updateState({ started });
       onToggle?.(started);
     },
   });
+
   let pPatterns = {};
   let allTransform;
 

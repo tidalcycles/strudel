@@ -4,10 +4,9 @@ let num_ticks_since_cps_change = 0;
 let lastTick = 0; // absolute time when last tick (clock callback) happened
 let lastBegin = 0; // query begin of last tick
 let lastEnd = 0; // query end of last tick
-// let getTime = getTime; // get absolute time
 let num_cycles_at_cps_change = 0;
-// let onToggle = onToggle;
 let interval = 0.1;
+let started = false;
 
 //incoming
 //cps message
@@ -17,22 +16,30 @@ let interval = 0.1;
 // {type: toggle, payload?: {started: boolean}}
 
 //sending
-//{type: 'tick', payload: {begin, end, deadline }}
+//{type: 'tick', payload: {begin, end, tickdeadline, cps, time }}
 //{type: 'log', payload: {type, text}}
 
 const getTime = () => {
   return performance.now() / 1000;
 };
 
-const sendMessage = (message) => {
+const sendMessage = (type, payload) => {
   allPorts.forEach((port) => {
-    port.postMessage(message);
+    port.postMessage({ type, payload });
   });
 };
 const log = (text, type) => {
-  sendMessage({ type: 'log', payload: { text, type } });
+  sendMessage('log', { text, type });
 };
 
+const numClientsConnected = () => allPorts.length;
+
+const getCycle = () => {
+  const secondsSinceLastTick = getTime() - lastTick - clock.duration;
+  const cycle = lastBegin + secondsSinceLastTick * cps;
+  return cycle;
+};
+// let prevtime = 0;
 let clock = createClock(
   getTime,
   // called slightly before each cycle
@@ -41,6 +48,9 @@ let clock = createClock(
       num_cycles_at_cps_change = lastEnd;
     }
     num_ticks_since_cps_change++;
+    // const now = Date.now();
+    // console.log('interval', now - prevtime);
+    // prevtime = now;
     try {
       const time = getTime();
       const begin = lastEnd;
@@ -52,7 +62,7 @@ let clock = createClock(
       lastEnd = end;
       const tickdeadline = phase - time; // time left until the phase is a whole number
       lastTick = time + tickdeadline;
-      sendMessage({ type: 'tick', payload: { begin, end, tickdeadline, cps, time: Date.now() } });
+      sendMessage('tick', { begin, end, tickdeadline, cps, time: Date.now(), cycle: getCycle() });
     } catch (e) {
       log(`[cyclist] error: ${e.message}`, 'error');
     }
@@ -62,17 +72,11 @@ let clock = createClock(
 
 self.onconnect = function (e) {
   // the incoming port
-  var port = e.ports[0];
+  const port = e.ports[0];
   allPorts.push(port);
-
-  sendMessage('yooooo');
-
   port.addEventListener('message', function (e) {
-    // get the message sent to the worker
-
     processMessage(e.data);
   });
-
   port.start(); // Required when using addEventListener. Otherwise called implicitly by onmessage setter.
 };
 
@@ -88,18 +92,15 @@ const processMessage = (message) => {
       break;
     }
     case 'toggle': {
-      const { started } = payload;
-      if (started) {
+      if (payload.started && !started) {
+        started = true;
         clock.start();
-      } else {
+        //dont stop the clock if others are using it...
+      } else if (numClientsConnected() === 1) {
+        started = false;
         clock.stop();
       }
       break;
-    }
-    case 'requestcycles': {
-      const secondsSinceLastTick = getTime() - lastTick - clock.duration;
-      const cycles = this.lastBegin + secondsSinceLastTick * this.cps; // + this.clock.minLatency;
-      sendMessage({ type: 'requestedcycles', payload: { cycles } });
     }
   }
 };
@@ -124,7 +125,7 @@ function createClock(
     if (phase === 0) {
       phase = t + minLatency;
     }
-    console.log({ t, phase, tick });
+    // console.log({ t, phase, tick });
     // callback as long as we're inside the lookahead
     while (phase < lookahead) {
       phase = Math.round(phase * precision) / precision;
@@ -149,6 +150,5 @@ function createClock(
   };
   const getPhase = () => phase;
 
-  // setCallback
   return { setDuration, start, stop, pause, duration, interval, getPhase, minLatency };
 }

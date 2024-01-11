@@ -30,7 +30,12 @@ export function webaudioScheduler(options = {}) {
     ...options,
   };
   const { defaultOutput, getTime } = options;
-  return new strudel.Cyclist({
+  // return new strudel.Cyclist({
+  //   ...options,
+  //   onTrigger: strudel.getTrigger({ defaultOutput, getTime }),
+  // });
+  console.log('here');
+  return new strudel.NeoCyclist({
     ...options,
     onTrigger: strudel.getTrigger({ defaultOutput, getTime }),
   });
