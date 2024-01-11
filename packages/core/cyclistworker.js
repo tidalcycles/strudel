@@ -21,7 +21,7 @@ let interval = 0.1;
 //{type: 'log', payload: {type, text}}
 
 const getTime = () => {
-  return performance.now();
+  return performance.now() / 1000;
 };
 
 const sendMessage = (message) => {
@@ -52,7 +52,7 @@ let clock = createClock(
       lastEnd = end;
       const tickdeadline = phase - time; // time left until the phase is a whole number
       lastTick = time + tickdeadline;
-      sendMessage({ type: 'tick', payload: { begin, end, tickdeadline } });
+      sendMessage({ type: 'tick', payload: { begin, end, tickdeadline, cps, time: Date.now() } });
     } catch (e) {
       log(`[cyclist] error: ${e.message}`, 'error');
     }
@@ -77,7 +77,6 @@ self.onconnect = function (e) {
 };
 
 const processMessage = (message) => {
-  console.log(message);
   const { type, payload } = message;
 
   switch (type) {
@@ -125,6 +124,7 @@ function createClock(
     if (phase === 0) {
       phase = t + minLatency;
     }
+    console.log({ t, phase, tick });
     // callback as long as we're inside the lookahead
     while (phase < lookahead) {
       phase = Math.round(phase * precision) / precision;

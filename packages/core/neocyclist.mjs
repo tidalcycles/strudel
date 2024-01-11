@@ -12,18 +12,20 @@ export class NeoCyclist {
     this.worker = new SharedWorker(new URL('./cyclistworker.js', import.meta.url));
     this.worker.port.start();
     this.worker.port.addEventListener('message', (message) => {
-      console.log(message);
-      const { payload, type } = message;
+      const { payload, type } = message.data;
+
       switch (type) {
         case 'tick': {
-          console.log('tick');
-          const { begin, end } = payload;
+          let { begin, end, cps, tickdeadline, time } = payload;
+          const messageLatency = (Date.now() - time) / 1000;
+          tickdeadline = tickdeadline - messageLatency;
+          console.log({ begin, end });
           const haps = this.pattern.queryArc(begin, end);
           haps.forEach((hap) => {
             if (hap.part.begin.equals(hap.whole.begin)) {
-              const deadline = (hap.whole.begin - begin) / this.cps + payload.deadline + latency;
-              const duration = hap.duration / this.cps;
-              onTrigger?.(hap, deadline, duration, this.cps);
+              const deadline = (hap.whole.begin - begin) / cps + tickdeadline + latency;
+              const duration = hap.duration / cps;
+              onTrigger?.(hap, deadline, duration, cps);
             }
           });
           break;
@@ -44,7 +46,7 @@ export class NeoCyclist {
   }
 
   now() {
-    return performance.now();
+    return performance.now() / 1000;
     // this.sendMessage('requestcycles', {});
   }
   setCps(cps = 1) {
