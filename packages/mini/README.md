@@ -1,5 +1,7 @@
 # @strudel.cycles/mini
 
+**DEPRECATION NOTE**: This package is old and won't get any updates! The newer version goes by the name of [@strudel/mini](https://www.npmjs.com/package/@strudel/mini).
+
 This package contains the mini notation parser and pattern generator.
 
 ## Install

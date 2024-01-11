@@ -1,5 +1,7 @@
 # @strudel.cycles/webaudio
 
+**DEPRECATION NOTE**: This package is old and won't get any updates! The newer version goes by the name of [@strudel/webaudio](https://www.npmjs.com/package/@strudel/webaudio).
+
 This package contains helpers to make music with strudel and the Web Audio API.
 It is a thin binding to [superdough](https://www.npmjs.com/package/superdough).
 

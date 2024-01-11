@@ -1,5 +1,7 @@
 # @strudel.cycles/transpiler
 
+**DEPRECATION NOTE**: This package is old and won't get any updates! The newer version goes by the name of [@strudel/transpiler](https://www.npmjs.com/package/@strudel/transpiler).
+
 This package contains a JS code transpiler with the following features:
 
 - add locations of mini notation strings (double quoted or backticked) for highlighting

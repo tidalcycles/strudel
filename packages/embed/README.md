@@ -1,5 +1,7 @@
 # @strudel.cycles/embed
 
+**DEPRECATION NOTE**: This package is old and won't get any updates! The newer version goes by the name of [@strudel/embed](https://www.npmjs.com/package/@strudel/embed).
+
 This package contains a embeddable web component for the Strudel REPL.
 
 ## Usage
