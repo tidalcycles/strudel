@@ -272,7 +272,8 @@ export const superdough = async (value, deadline, hapDuration) => {
     bank,
     source,
     gain = 0.8,
-    postgain = 1,
+    pregain = 1,
+    postgain,
     density = 0.03,
     // filters
     ftype = '12db',
@@ -470,16 +471,15 @@ export const superdough = async (value, deadline, hapDuration) => {
     chain.push(phaserFX);
   }
 
-  // last gain
-  const post = new GainNode(ac, { gain: postgain });
-  chain.push(post);
-  connectToDestination(post, channels);
+  // pre fx gain
+  const pre = new GainNode(ac, { gain: pregain });
+  chain.push(pre);
 
   // delay
   let delaySend;
   if (delay > 0 && delaytime > 0 && delayfeedback > 0) {
     const delyNode = getDelay(orbit, delaytime, delayfeedback, t);
-    delaySend = effectSend(post, delyNode, delay);
+    delaySend = effectSend(pre, delyNode, delay);
   }
   // reverb
   let reverbSend;
@@ -496,9 +496,16 @@ export const superdough = async (value, deadline, hapDuration) => {
       roomIR = await loadBuffer(url, ac, ir, 0);
     }
     const reverbNode = getReverb(orbit, roomsize, roomfade, roomlp, roomdim, roomIR);
-    reverbSend = effectSend(post, reverbNode, room);
+    reverbSend = effectSend(pre, reverbNode, room);
   }
 
+  let post = pre;
+  if (postgain !== undefined) {
+    // post fx gain
+    post = new GainNode(ac, { gain: postgain });
+    chain.push(post);
+  }
+  connectToDestination(post, channels);
   // analyser
   let analyserSend;
   if (analyze) {
