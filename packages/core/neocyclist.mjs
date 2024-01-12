@@ -1,8 +1,5 @@
 import { logger } from './logger.mjs';
 
-// const sharedworker = new SharedWorker(new URL('./cyclistworker.js', import.meta.url));
-// sharedworker.port.start();
-
 export class NeoCyclist {
   constructor({ onTrigger, onToggle, latency = 0.1, onError }) {
     this.started = false;
@@ -22,12 +19,15 @@ export class NeoCyclist {
 
       switch (type) {
         case 'tick': {
-          this.timeAtLastTickMessage = performance.now();
+          const now = performance.now();
+          // const interval = 0.1;
+          // const timeSinceLastMessage = now - this.timeAtLastTickMessage;
+          // const messageLag = (interval * 1000 - timeSinceLastMessage) / 1000;
+
+          this.timeAtLastTickMessage = now;
           let { begin, end, cps, tickdeadline, cycle } = payload;
           this.cps = cps;
           this.cycle = cycle + latency * cps;
-          //   const messageLatency = (Date.now() - time) / 1000;
-          //   latency = latency - messageLatency
 
           const haps = this.pattern.queryArc(begin, end);
           haps.forEach((hap) => {
@@ -55,10 +55,8 @@ export class NeoCyclist {
   }
 
   now() {
-    // console.log(this.cycle, 'cycle');
     const gap = ((performance.now() - this.timeAtLastTickMessage) / 1000) * this.cps;
     return this.cycle + gap;
-    // this.sendMessage('requestcycles', {});
   }
   setCps(cps = 1) {
     this.sendMessage('cpschange', { cps });
