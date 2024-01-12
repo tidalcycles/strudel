@@ -13,6 +13,7 @@ export class NeoCyclist {
     this.worker.port.start();
     this.cycle = 0;
     this.cps = 1;
+    this.timeAtLastTick = 0;
     this.worker.port.addEventListener('message', (message) => {
       if (!this.started) {
         return;
@@ -21,7 +22,8 @@ export class NeoCyclist {
 
       switch (type) {
         case 'tick': {
-          let { begin, end, cps, tickdeadline, time, cycle } = payload;
+          this.timeAtLastTickMessage = performance.now();
+          let { begin, end, cps, tickdeadline, cycle } = payload;
           this.cps = cps;
           this.cycle = cycle + latency * cps;
           //   const messageLatency = (Date.now() - time) / 1000;
@@ -54,7 +56,8 @@ export class NeoCyclist {
 
   now() {
     // console.log(this.cycle, 'cycle');
-    return this.cycle;
+    const gap = ((performance.now() - this.timeAtLastTickMessage) / 1000) * this.cps;
+    return this.cycle + gap;
     // this.sendMessage('requestcycles', {});
   }
   setCps(cps = 1) {

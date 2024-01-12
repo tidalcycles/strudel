@@ -62,7 +62,7 @@ let clock = createClock(
       lastEnd = end;
       const tickdeadline = phase - time; // time left until the phase is a whole number
       lastTick = time + tickdeadline;
-      sendMessage('tick', { begin, end, tickdeadline, cps, time: Date.now(), cycle: getCycle() });
+      sendMessage('tick', { begin, end, tickdeadline, cps, cycle: getCycle() });
     } catch (e) {
       log(`[cyclist] error: ${e.message}`, 'error');
     }
