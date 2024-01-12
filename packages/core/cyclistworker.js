@@ -125,7 +125,7 @@ function createClock(
     if (phase === 0) {
       phase = t + minLatency;
     }
-    // console.log({ t, phase, tick });
+
     // callback as long as we're inside the lookahead
     while (phase < lookahead) {
       phase = Math.round(phase * precision) / precision;
