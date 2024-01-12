@@ -1,11 +1,14 @@
 import { controls, evalScope, hash2code, logger } from '@strudel.cycles/core';
-import { settingPatterns } from '../settings.mjs';
+import { settingPatterns, defaultAudioDeviceName } from '../settings.mjs';
+import { getAudioContext, initializeAudioOutput, setDefaultAudioContext } from '@strudel.cycles/webaudio';
+
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
 import * as tunes from './tunes.mjs';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { writeText } from '@tauri-apps/api/clipboard';
+import { createContext } from 'react';
 
 // Create a single supabase client for interacting with your database
 const supabase = createClient(
@@ -110,3 +113,37 @@ export async function shareCode(codeToShare) {
     logger(message);
   }
 }
+
+export const ReplContext = createContext(null);
+
+export const getAudioDevices = async () => {
+  await navigator.mediaDevices.getUserMedia({ audio: true });
+  let mediaDevices = await navigator.mediaDevices.enumerateDevices();
+  mediaDevices = mediaDevices.filter((device) => device.kind === 'audiooutput' && device.deviceId !== 'default');
+  const devicesMap = new Map();
+  devicesMap.set(defaultAudioDeviceName, '');
+  mediaDevices.forEach((device) => {
+    devicesMap.set(device.label, device.deviceId);
+  });
+  return devicesMap;
+};
+
+export const setAudioDevice = async (id) => {
+  let audioCtx = getAudioContext();
+  if (audioCtx.sinkId === id) {
+    return;
+  }
+  await audioCtx.suspend();
+  await audioCtx.close();
+  audioCtx = setDefaultAudioContext();
+  await audioCtx.resume();
+  const isValidID = (id ?? '').length > 0;
+  if (isValidID) {
+    try {
+      await audioCtx.setSinkId(id);
+    } catch {
+      logger('failed to set audio interface', 'warning');
+    }
+  }
+  initializeAudioOutput();
+};

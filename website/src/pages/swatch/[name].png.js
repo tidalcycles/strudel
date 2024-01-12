@@ -2,9 +2,9 @@ import { createCanvas } from 'canvas';
 import { pianoroll } from '@strudel.cycles/core';
 import { evaluate } from '@strudel.cycles/transpiler';
 import '../../../../test/runtime.mjs';
-import { getMyPatterns } from './list.json';
+import { getMyPatterns } from '../../my_patterns';
 
-export async function get({ params, request }) {
+export async function GET({ params, request }) {
   const patterns = await getMyPatterns();
   const { name } = params;
   const tune = patterns[name];

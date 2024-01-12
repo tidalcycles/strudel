@@ -119,8 +119,8 @@ polymeter_steps = "%"a:slice
 
 // define a step-per-cycle timeline e.g <1 3 [3 5]>. We simply defer to a sequence and
 // change the alignment to slowcat
-slow_sequence = ws "<" ws s:sequence ws ">" ws
-  { s.arguments_.alignment = 'slowcat'; return s; }
+slow_sequence = ws "<" ws s:polymeter_stack ws ">" ws
+ { s.arguments_.alignment = 'polymeter_slowcat'; return s; }
 
 // a slice is either a single step or a sub cycle
 slice = step / sub_cycle / polymeter / slow_sequence
