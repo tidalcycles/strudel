@@ -190,6 +190,13 @@ describe('mini', () => {
   it('supports patterned ranges', () => {
     expect(minS('[<0 1> .. <2 4>]*2')).toEqual(minS('[0 1 2] [1 2 3 4]'));
   });
+  it('supports the . operator', () => {
+    expect(minS('a . b c')).toEqual(minS('a [b c]'));
+    expect(minS('a . b c . [d e f . g h]')).toEqual(minS('a [b c] [[d e f] [g h]]'));
+  });
+  it('supports the _ operator', () => {
+    expect(minS('a _ b _ _')).toEqual(minS('a@2 b@3'));
+  });
 });
 
 describe('getLeafLocation', () => {
