@@ -2,7 +2,7 @@
 import * as tunes from '../../../src/repl/tunes.mjs';
 import HeadCommon from '../../components/HeadCommon.astro';
 
-import { getMetadata } from '../metadata_parser';
+import { getMetadata } from '../../metadata_parser';
 
 const { BASE_URL } = import.meta.env;
 const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
@@ -25,3 +25,4 @@ const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL
     }
   </div>
 </body>
+../../metadata_parser
