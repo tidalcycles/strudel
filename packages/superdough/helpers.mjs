@@ -111,9 +111,11 @@ export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fe
   if (hasEnvelope !== undefined) {
     fenv = nanFallback(fenv, 1, true);
     fanchor = nanFallback(fanchor, 0, true);
-    const offset = fenv * fanchor;
-    const min = clamp(2 ** -offset * frequency, 0, 20000);
-    const max = clamp(2 ** (fenv - offset) * frequency, 0, 20000);
+    const fenvAbs = Math.abs(fenv);
+    const offset = fenvAbs * fanchor;
+    let min = clamp(2 ** -offset * frequency, 0, 20000);
+    let max = clamp(2 ** (fenvAbs - offset) * frequency, 0, 20000);
+    if (fenv < 0) [min, max] = [max, min];
     getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end, curve);
     return filter;
   }
