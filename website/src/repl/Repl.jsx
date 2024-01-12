@@ -100,6 +100,16 @@ export function Repl({ embedded = false }) {
     });
 
     editorRef.current = editor;
+
+    if (import.meta.hot) {
+      import.meta.hot.dispose(() => {
+        editorRef.current.clear();
+        setTimeout(() => {
+          delete editorRef.current;
+          delete containerRef.current;
+        });
+      });
+    }
   }, []);
 
   const [replState, setReplState] = useState({});
@@ -199,7 +209,7 @@ export function Repl({ embedded = false }) {
             id="code"
             ref={(el) => {
               containerRef.current = el;
-              if (!editorRef.current) {
+              if (!editorRef.current && containerRef.current) {
                 init();
               }
             }}
