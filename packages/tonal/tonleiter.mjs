@@ -1,5 +1,5 @@
 import { isNote, isNoteWithOctave, _mod, noteToMidi, tokenizeNote } from '@strudel.cycles/core';
-import { Interval } from '@tonaljs/tonal';
+import { Interval, Scale } from '@tonaljs/tonal';
 
 // https://codesandbox.io/s/stateless-voicings-g2tmz0?file=/src/lib.js:0-2515
 
@@ -29,6 +29,7 @@ export function tokenizeChord(chord) {
 }
 export const note2pc = (note) => note.match(/^[A-G][#b]?/i)[0];
 export const note2oct = (note) => tokenizeNote(note)[2];
+export const note2midi = noteToMidi;
 
 export const note2chroma = (note) => {
   return pc2chroma(note2pc(note));
@@ -60,12 +61,12 @@ export const step2semitones = (x) => {
   return Interval.semitones(x);
 };
 
-export const x2midi = (x) => {
+export const x2midi = (x, defaultOctave) => {
   if (typeof x === 'number') {
     return x;
   }
   if (typeof x === 'string') {
-    return noteToMidi(x);
+    return noteToMidi(x, defaultOctave);
   }
 };
 
@@ -83,18 +84,63 @@ export function scaleStep(notes, offset, octaves = 1) {
   return notes[offset] + octOffset;
 }
 
+export function nearestNumberIndex(target, numbers, preferHigher) {
+  let bestIndex = 0,
+    bestDiff = Infinity;
+  numbers.forEach((s, i) => {
+    const diff = Math.abs(s - target);
+    // preferHigher only works if numbers are sorted in ascending order!
+    if ((!preferHigher && diff < bestDiff) || (preferHigher && diff <= bestDiff)) {
+      bestIndex = i;
+      bestDiff = diff;
+    }
+  });
+  return bestIndex;
+}
+
+let scaleSteps = {}; // [scaleName]: semitones[]
+
+export function stepInNamedScale(step, scale, anchor, preferHigher) {
+  let [root, scaleName] = Scale.tokenize(scale);
+  const rootMidi = x2midi(root);
+  const rootChroma = midi2chroma(rootMidi);
+  if (!scaleSteps[scaleName]) {
+    let { intervals } = Scale.get(`C ${scaleName}`);
+    // cache result
+    scaleSteps[scaleName] = intervals.map(step2semitones);
+  }
+  const steps = scaleSteps[scaleName];
+  if (!steps) {
+    return null;
+  }
+  let transpose = rootMidi;
+  if (anchor) {
+    anchor = x2midi(anchor, 3);
+    const anchorChroma = midi2chroma(anchor);
+    const anchorDiff = _mod(anchorChroma - rootChroma, 12);
+    const zeroIndex = nearestNumberIndex(anchorDiff, steps, preferHigher);
+    step = step + zeroIndex;
+    transpose = anchor - anchorDiff;
+  }
+  const octOffset = Math.floor(step / steps.length) * 12;
+  step = _mod(step, steps.length);
+  const targetMidi = steps[step] + transpose;
+  return targetMidi + octOffset;
+}
+
 // different ways to resolve the note to compare the anchor to (see renderVoicing)
 let modeTarget = {
   below: (v) => v.slice(-1)[0],
   duck: (v) => v.slice(-1)[0],
   above: (v) => v[0],
+  root: (v) => v[0],
 };
 
 export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'below', anchor = 'c5', octaves = 1 }) {
   const [root, symbol] = tokenizeChord(chord);
   const rootChroma = pc2chroma(root);
-  anchor = anchor?.note || anchor;
-  const anchorChroma = pitch2chroma(anchor);
+  anchor = x2midi(anchor?.note || anchor, 4);
+  const anchorChroma = midi2chroma(anchor);
   const voicings = dictionary[symbol].map((voicing) =>
     (typeof voicing === 'string' ? voicing.split(' ') : voicing).map(step2semitones),
   );
@@ -110,18 +156,21 @@ export function renderVoicing({ chord, dictionary, offset = 0, n, mode = 'below'
     }
     return diff;
   });
+  if (mode === 'root') {
+    bestIndex = 0;
+  }
 
   const octDiff = Math.ceil(offset / voicings.length) * 12;
   const indexWithOffset = _mod(bestIndex + offset, voicings.length);
   const voicing = voicings[indexWithOffset];
   const targetStep = modeTarget[mode](voicing);
-  const anchorMidi = noteToMidi(anchor, 4) - chromaDiffs[indexWithOffset] + octDiff;
+  const anchorMidi = anchor - chromaDiffs[indexWithOffset] + octDiff;
 
   const voicingMidi = voicing.map((v) => anchorMidi - targetStep + v);
   let notes = voicingMidi.map((n) => midi2note(n));
 
   if (mode === 'duck') {
-    notes = notes.filter((_, i) => voicingMidi[i] !== noteToMidi(anchor));
+    notes = notes.filter((_, i) => voicingMidi[i] !== anchor);
   }
   if (n !== undefined) {
     return [scaleStep(notes, n, octaves)];

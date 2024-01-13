@@ -8,9 +8,10 @@ import { code2hash, getDrawContext, logger, silence } from '@strudel.cycles/core
 import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel.cycles/transpiler';
 import { getAudioContext, initAudioOnFirstClick, webaudioOutput } from '@strudel.cycles/webaudio';
-import { defaultAudioDeviceName, getAudioDevices, setAudioDevice } from './panel/AudioDeviceSelector';
+import { defaultAudioDeviceName } from '../settings.mjs';
+import { getAudioDevices, setAudioDevice } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
-import { createContext, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   initUserCode,
   setActivePattern,
@@ -29,12 +30,11 @@ import Loader from './Loader';
 import { Panel } from './panel/Panel';
 import { useStore } from '@nanostores/react';
 import { prebake } from './prebake.mjs';
-import { getRandomTune, initCode, loadModules, shareCode } from './util.mjs';
+import { getRandomTune, initCode, loadModules, shareCode, ReplContext } from './util.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
 
 const { code: randomTune, name } = getRandomTune();
-export const ReplContext = createContext(null);
 
 const { latestCode } = settingsMap.get();
 

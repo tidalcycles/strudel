@@ -91,6 +91,10 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
       if (alignment === 'stack') {
         return strudel.stack(...children);
       }
+      if (alignment === 'polymeter_slowcat') {
+        const aligned = children.map((child) => child._slow(strudel.Fraction(child.__weight ?? 1)));
+        return strudel.stack(...aligned);
+      }
       if (alignment === 'polymeter') {
         // polymeter
         const stepsPerCycle = ast.arguments_.stepsPerCycle
@@ -104,15 +108,9 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
         return strudel.chooseInWith(strudel.rand.early(randOffset * ast.arguments_.seed).segment(1), children);
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
-      if (!weightedChildren && alignment === 'slowcat') {
-        return strudel.slowcat(...children);
-      }
       if (weightedChildren) {
         const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
         const pat = strudel.timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
-        if (alignment === 'slowcat') {
-          return pat._slow(weightSum); // timecat + slow
-        }
         pat.__weight = weightSum;
         return pat;
       }
