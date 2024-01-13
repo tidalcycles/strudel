@@ -37,13 +37,14 @@ export const getParamADSR = (
     min = Math.max(0.0001, min);
   }
   const range = max - min;
-  const peak = min + range;
+  const peak = max;
   const sustainVal = min + sustain * range;
   const duration = end - begin;
 
   const envValAtTime = (time) => {
     if (attack > time) {
-      return time * getSlope(min, peak, 0, attack) + 0;
+      let slope = getSlope(min, peak, 0, attack);
+      return time * slope + (min > peak ? min : 0);
     } else {
       return (time - attack) * getSlope(peak, sustainVal, 0, decay) + peak;
     }
