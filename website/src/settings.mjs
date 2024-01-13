@@ -1,8 +1,22 @@
+import { atom } from 'nanostores';
 import { persistentMap, persistentAtom } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel.cycles/core';
 import * as tunes from './repl/tunes.mjs';
 import { logger } from '@strudel.cycles/core';
+import { loadPublicPatterns, loadFeaturedPatterns } from './repl/util.mjs';
+
+export let $publicPatterns = atom([]);
+export let $featuredPatterns = atom([]);
+
+async function loadDBPatterns() {
+  const { data: publicPatterns } = await loadPublicPatterns();
+  $publicPatterns.set(publicPatterns);
+  const { data: featuredPatterns } = await loadFeaturedPatterns();
+  $featuredPatterns.set(featuredPatterns);
+}
+
+loadDBPatterns();
 
 export const defaultAudioDeviceName = 'System Standard';
 
@@ -172,12 +186,25 @@ export function updateUserCode(code) {
     setActivePattern(example);
     return;
   }
-
+  const publicPattern = $publicPatterns.get().find((pat) => pat.code === code);
+  if (publicPattern) {
+    setActivePattern(publicPattern.hash);
+    return;
+  }
+  const featuredPattern = $featuredPatterns.get().find((pat) => pat.code === code);
+  if (featuredPattern) {
+    setActivePattern(featuredPattern.hash);
+    return;
+  }
   if (!activePattern) {
     // create new user pattern
     activePattern = newUserPattern();
     setActivePattern(activePattern);
-  } else if (!!tunes[activePattern] && code !== tunes[activePattern]) {
+  } else if (
+    (!!tunes[activePattern] && code !== tunes[activePattern]) || // fork example tune?
+    $publicPatterns.get().find((p) => p.hash === activePattern) || // fork public pattern?
+    $featuredPatterns.get().find((p) => p.hash === activePattern) // fork featured pattern?
+  ) {
     // fork example
     activePattern = getNextCloneName(activePattern);
     setActivePattern(activePattern);
