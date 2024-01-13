@@ -1,0 +1,14 @@
+---
+import HeadCommon from '../components/HeadCommon.astro';
+import { SharedPatterns } from '../components/SharedPatterns';
+---
+
+<head>
+  <HeadCommon />
+</head>
+<body class="bg-slate-800">
+  <div class="prose dark:prose-invert max-w-full pb-8 p-4">
+    <h1>Browse</h1>
+    <SharedPatterns client:only />
+  </div>
+</body>
