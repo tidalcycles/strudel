@@ -16,7 +16,9 @@ async function loadDBPatterns() {
   $featuredPatterns.set(featuredPatterns);
 }
 
-loadDBPatterns();
+if (typeof window !== 'undefined') {
+  loadDBPatterns();
+}
 
 export const defaultAudioDeviceName = 'System Standard';
 
