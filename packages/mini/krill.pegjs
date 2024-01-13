@@ -98,6 +98,7 @@ DIGIT  = [0-9]
 ws "whitespace" = [ \n\r\t\u00A0]*
 comma = ws "," ws
 pipe = ws "|" ws
+dot = ws "." ws
 quote = '"' / "'"
 
 // ------------------ steps and cycles ---------------------------
@@ -105,7 +106,8 @@ quote = '"' / "'"
 // single step definition (e.g bd)
 step_char "a letter, a number, \"-\", \"#\", \".\", \"^\", \"_\"" = 
   unicode_letter / [0-9~] / "-" / "#" / "." / "^" / "_"
-step = ws chars:step_char+ ws { return new AtomStub(chars.join("")) }
+
+step = ws chars:step_char+ ws !{ return chars.join("") === "." } { return new AtomStub(chars.join("")) }
 
 // define a sub cycle e.g. [1 2, 3 [4]]
 sub_cycle = ws  "[" ws s:stack_or_choose ws "]" ws { return s }
@@ -127,7 +129,7 @@ slice = step / sub_cycle / polymeter / slow_sequence
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
-slice_op = op_weight / op_bjorklund / op_slow / op_fast / op_replicate / op_degrade / op_tail / op_range
+slice_op = op_weight / op_bjorklund / op_slow / op_fast / op_replicate / op_tail / op_degrade / op_range
 
 op_weight =  "@" a:number
   { return x => x.options_['weight'] = a }
@@ -146,7 +148,6 @@ op_fast = "*"a:slice
 
 op_degrade = "?"a:number?
   { return x => x.options_['ops'].push({ type_: "degradeBy", arguments_ :{ amount:a, seed: seed++ } }) }
-
 op_tail = ":" s:slice
   { return x => x.options_['ops'].push({ type_: "tail", arguments_ :{ element:s } }) }
 
@@ -175,9 +176,13 @@ stack_tail = tail:(comma @sequence)+
 choose_tail = tail:(pipe @sequence)+
   { return { alignment: 'rand', list: tail, seed: seed++ }; }
 
+// a foot separates subsequences, as an alternative to wrapping them in []
+dot_tail = tail:(dot @sequence)+
+  { return { alignment: 'feet', list: tail, seed: seed++ }; }
+
 // if the stack contains only one element, we don't create a stack but return the
 // underlying element
-stack_or_choose = head:sequence tail:(stack_tail / choose_tail)?
+stack_or_choose = head:sequence tail:(stack_tail / choose_tail / dot_tail)?
   { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment, tail.seed); } else { return head; } }
 
 polymeter_stack = head:sequence tail:stack_tail?
