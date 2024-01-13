@@ -16,8 +16,8 @@ import {
   useSettings,
 } from '../../settings.mjs';
 import * as tunes from '../tunes.mjs';
-import { PatternLabel } from '../../components/SharedPatterns';
 import { useStore } from '@nanostores/react';
+import { getMetadata } from '../../metadata_parser';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -165,5 +165,14 @@ export function PatternsTab({ context }) {
         </div>
       </section>
     </div>
+  );
+}
+
+export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
+  const meta = useMemo(() => getMetadata(pattern.code), [pattern]);
+  return (
+    <>
+      {pattern.id}. {meta.title || pattern.hash} by {meta.by.join(',') || 'Anonymous'}
+    </>
   );
 }
