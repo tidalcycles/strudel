@@ -11,7 +11,7 @@ import { writeText } from '@tauri-apps/api/clipboard';
 import { createContext } from 'react';
 
 // Create a single supabase client for interacting with your database
-const supabase = createClient(
+export const supabase = createClient(
   'https://pidxdsxphlhzjnzmifth.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
 );
@@ -150,3 +150,11 @@ export const setAudioDevice = async (id) => {
   }
   initializeAudioOutput();
 };
+
+export function loadPublicPatterns() {
+  return supabase.from('code').select().eq('public', true).limit(20).order('id', { ascending: false });
+}
+
+export function loadFeaturedPatterns() {
+  return supabase.from('code').select().eq('featured', true).limit(20).order('id', { ascending: false });
+}
