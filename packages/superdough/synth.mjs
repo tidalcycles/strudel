@@ -29,12 +29,11 @@ export function registerSynthSounds() {
     registerSound(
       s,
       (t, value, onended) => {
-        const [attack, decay, sustain, release] = getADSRValues([
-          value.attack,
-          value.decay,
-          value.sustain,
-          value.release,
-        ]);
+        const [attack, decay, sustain, release] = getADSRValues(
+          [value.attack, value.decay, value.sustain, value.release],
+          'linear',
+          [0.001, 0.05, 0.6, 0.01],
+        );
 
         let sound;
         if (waveforms.includes(s)) {
