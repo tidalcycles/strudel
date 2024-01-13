@@ -1209,7 +1209,7 @@ const generic_params = [
    * Formant filter to make things sound like vowels.
    *
    * @name vowel
-   * @param {string | Pattern} vowel You can use a e i o u.
+   * @param {string | Pattern} vowel You can use a e i o u ae aa oe ue y uh un en an on, corresponding to [a] [e] [i] [o] [u] [æ] [ɑ] [ø] [y] [ɯ] [ʌ] [œ̃] [ɛ̃] [ɑ̃] [ɔ̃].
    * @example
    * note("c2 <eb2 <g2 g1>>").s('sawtooth')
    * .vowel("<a e i <o u>>")
