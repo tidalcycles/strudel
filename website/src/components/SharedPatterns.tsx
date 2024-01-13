@@ -8,7 +8,7 @@ function PatternLink({ pattern }: { pattern: Tables<'code'> }) {
   // console.log('meta', meta);
   return (
     <a href={`/?${pattern.hash}`} target="_blank">
-      {meta.title || pattern.hash} by {meta.by.join(',') || 'Anonymous'}
+      {pattern.id}. {meta.title || pattern.hash} by {meta.by.join(',') || 'Anonymous'}
     </a>
   );
 }
@@ -21,8 +21,18 @@ export function SharedPatterns() {
       'https://pidxdsxphlhzjnzmifth.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
     );
-    const { data: _publicPatterns } = await supabase.from('code').select().eq('public', true).limit(20);
-    const { data: _featuredPatterns } = await supabase.from('code').select().eq('featured', true).limit(20);
+    const { data: _publicPatterns } = await supabase
+      .from('code')
+      .select()
+      .eq('public', true)
+      .limit(20)
+      .order('id', { ascending: false });
+    const { data: _featuredPatterns } = await supabase
+      .from('code')
+      .select()
+      .eq('featured', true)
+      .limit(20)
+      .order('id', { ascending: false });
     setPublicPatterns(_publicPatterns);
     setFeaturedPatterns(_featuredPatterns);
     /* console.log('public', publicPatterns);

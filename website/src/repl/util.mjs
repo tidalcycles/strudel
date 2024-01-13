@@ -90,10 +90,13 @@ export async function shareCode(codeToShare) {
     logger(`Link already generated!`, 'error');
     return;
   }
+  const isPublic = confirm(
+    'Do you want your pattern to be public? If no, press cancel and you will get just a private link.',
+  );
   // generate uuid in the browser
   const hash = nanoid(12);
   const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
-  const { data, error } = await supabase.from('code').insert([{ code: codeToShare, hash }]);
+  const { error } = await supabase.from('code').insert([{ code: codeToShare, hash, ['public']: isPublic }]);
   if (!error) {
     lastShared = codeToShare;
     // copy shareUrl to clipboard
