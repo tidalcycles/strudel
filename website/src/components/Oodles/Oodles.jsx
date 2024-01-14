@@ -24,19 +24,25 @@ function NumberInput({ value, onChange, label = '', min, max }) {
   );
 }
 export function Oodles() {
-  const [numWindows, setNumWindows] = useState(2);
-  const codeMap = new Map();
+  const search = new URLSearchParams(window.location.search);
+
+  const [numWindows, updateNumWindows] = useState(parseInt(search.get('win') ?? '2'));
+  const setNumWindows = (num) => {
+    updateNumWindows(num);
+    search.set('win', num);
+    window.location.search = '?' + search.toString();
+  };
+
+  const hashMap = new Map();
   const onEvaluate = (key, code) => {
-    codeMap.set(key, code);
-    const hashes = [];
-    codeMap.forEach((code, key) => {
-      let hash = code2hash(code);
-      hashes.push(hash);
-    });
+    hashMap.set(key, code2hash(code));
+    const hashes = Array.from(hashMap.values());
     const newHash = '#' + hashes.join(',');
     window.location.hash = newHash;
   };
+  const defaultHash = 'c3RhY2soCiAgCik%3D';
   const hashes = window.location.hash?.slice(1).split(',');
+
   return (
     <div
       style={{
@@ -74,7 +80,7 @@ export function Oodles() {
               onEvaluate={(code) => {
                 onEvaluate(key, code);
               }}
-              hash={hashes[key]}
+              hash={hashes[key] ?? defaultHash}
               key={key}
             />
           );
