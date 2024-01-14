@@ -10,3 +10,4 @@ paper
 pnpm-lock.yaml
 pnpm-workspace.yaml
 **/dev-dist
+website/.astro
