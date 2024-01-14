@@ -234,7 +234,7 @@ const generic_params = [
    * note("c3 e3").decay("<.1 .2 .3 .4>").sustain(0)
    *
    */
-  ['decay'],
+  ['decay', 'dec'],
   /**
    * Amplitude envelope sustain level: The level which is reached after attack / decay, being sustained until the offset.
    *
@@ -270,7 +270,7 @@ const generic_params = [
    * s("bd sd,hh*3").bpf("<1000 2000 4000 8000>")
    *
    */
-  [['bandf', 'bandq'], 'bpf', 'bp'],
+  [['bandf', 'bandq', 'bpenv'], 'bpf', 'bp'],
   // TODO: in tidal, it seems to be normalized
   /**
    * Sets the **b**and-**p**ass **q**-factor (resonance).
@@ -481,7 +481,7 @@ const generic_params = [
    * s("bd*8").lpf("1000:0 1000:10 1000:20 1000:30")
    *
    */
-  [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
+  [['cutoff', 'resonance', 'lpenv'], 'ctf', 'lpf', 'lp'],
 
   /**
    * Sets the lowpass filter envelope modulation depth.
@@ -758,7 +758,7 @@ const generic_params = [
    * .vibmod("<.25 .5 1 2 12>:8")
    */
   [['vibmod', 'vib'], 'vmod'],
-  [['hcutoff', 'hresonance'], 'hpf', 'hp'],
+  [['hcutoff', 'hresonance', 'hpenv'], 'hpf', 'hp'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
    *
@@ -1394,10 +1394,20 @@ controls.adsr = register('adsr', (adsr, pat) => {
   const [attack, decay, sustain, release] = adsr;
   return pat.set({ attack, decay, sustain, release });
 });
-controls.ds = register('ds', (ds, pat) => {
-  ds = !Array.isArray(ds) ? [ds] : ds;
-  const [decay, sustain] = ds;
+controls.ad = register('ad', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [attack, decay = attack] = t;
+  return pat.attack(attack).decay(decay);
+});
+controls.ds = register('ds', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [decay, sustain = 0] = t;
   return pat.set({ decay, sustain });
+});
+controls.ds = register('ar', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [attack, release = attack] = t;
+  return pat.set({ attack, release });
 });
 
 export default controls;
