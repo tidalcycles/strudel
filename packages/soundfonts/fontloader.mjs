@@ -146,7 +146,7 @@ export function registerSoundfonts() {
         const envGain = ctx.createGain();
         const node = bufferSource.connect(envGain);
         const holdEnd = time + duration;
-        getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, time, holdEnd, 'linear');
+        getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3, time, holdEnd, 'linear');
         let envEnd = holdEnd + release + 0.01;
 
         bufferSource.stop(envEnd);
