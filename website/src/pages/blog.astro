@@ -36,7 +36,13 @@ const posts = (await getCollection('blog')).sort((a, b) => compareDesc(a.data.da
             {posts.map((post) => <BlogPost post={post} />)}
           </PageContent>
           <aside class="fixed right-0 h-full overflow-auto pr-4 pl-0 pb-16 hidden xl:block" title="Table of Contents">
-            <RightSidebar headings={[]} />
+            <RightSidebar
+              headings={posts.map((post) => ({
+                depth: 1,
+                slug: post.slug,
+                text: post.data.title,
+              }))}
+            />
           </aside>
         </div>
       </main>

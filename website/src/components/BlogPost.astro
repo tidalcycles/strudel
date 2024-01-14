@@ -12,7 +12,7 @@ const { Content } = await post.render();
 >
   <div class="pb-2">
     <div class="md:flex justify-between">
-      <h1 class="mb-4">{post.title}</h1>
+      <h1 class="mb-4" id={post.slug}>{post.title}</h1>
     </div>
   </div>
   <div>
