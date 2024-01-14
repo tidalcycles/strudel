@@ -1,13 +1,41 @@
 import { useRef } from 'react';
 
-export function StrudelFrame({}) {
+export function StrudelFrame({ onEvaluate, hash }) {
   const ref = useRef();
 
   //   setInterval(() => {
   //     console.log(ref?.current?.contentWindow?.location?.href);
   //   }, 1000);
 
-  const source = window.location.origin;
+  //   setInterval(() => {
+  //     console.log(ref?.current?.contentWindow);
+  //   }, 1000);
+
+  window.addEventListener('message', (message) => {
+    const childWindow = ref?.current?.contentWindow;
+
+    if (message == null || message.source !== childWindow) {
+      return; // Skip message in this event listener
+    }
+
+    onEvaluate(message.data);
+
+    // ...
+  });
+
+  //   contentWindow?.onmessage = (event) => {
+  //     console.log(event);
+  //   };
+  //   contentWindow?.addEventListener(
+  //     'message',
+  //     (event) => {
+  //       console.log(event);
+  //     },
+  //     false,
+  //   );
+
+  const source = window.location.origin + '/#' + hash;
+
   return (
     <iframe
       ref={ref}

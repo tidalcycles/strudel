@@ -38,6 +38,9 @@ function safeEval(str, options = {}) {
 
 export const evaluate = async (code, transpiler) => {
   let meta = {};
+  //post to iframe parent if it exists...
+  window.parent?.postMessage(code);
+
   if (transpiler) {
     // transform syntactically correct js code to semantically usable code
     const transpiled = transpiler(code);

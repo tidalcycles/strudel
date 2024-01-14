@@ -1,3 +1,5 @@
+import { code2hash } from '@strudel.cycles/core';
+
 import { Panel } from '@src/repl/panel/Panel';
 import { StrudelFrame } from './StrudelFrame';
 import { useState } from 'react';
@@ -23,7 +25,18 @@ function NumberInput({ value, onChange, label = '', min, max }) {
 }
 export function Oodles() {
   const [numWindows, setNumWindows] = useState(2);
-  console.log(numWindows);
+  const codeMap = new Map();
+  const onEvaluate = (key, code) => {
+    codeMap.set(key, code);
+    const hashes = [];
+    codeMap.forEach((code, key) => {
+      let hash = code2hash(code);
+      hashes.push(hash);
+    });
+    const newHash = '#' + hashes.join(',');
+    window.location.hash = newHash;
+  };
+  const hashes = window.location.hash?.slice(1).split(',');
   return (
     <div
       style={{
@@ -56,7 +69,15 @@ export function Oodles() {
         }}
       >
         {[...Array(Math.max(1, numWindows)).keys()].map((key) => {
-          return <StrudelFrame key={key} />;
+          return (
+            <StrudelFrame
+              onEvaluate={(code) => {
+                onEvaluate(key, code);
+              }}
+              hash={hashes[key]}
+              key={key}
+            />
+          );
         })}
       </div>
       <Panel />
