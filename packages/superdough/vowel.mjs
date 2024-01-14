@@ -15,14 +15,27 @@ export var vowelFormant = {
   en: { freqs: [600, 1480, 2450, 3200, 3300], gains: [1, 0.15, 0.0708, 0.0316, 0.02995], qs: [40, 60, 100, 120, 120] },
   an: { freqs: [700, 1050, 2500, 3000, 3300], gains: [1, 0.1, 0.0708, 0.0316, 0.02995], qs: [40, 60, 100, 120, 120] },
   on: { freqs: [500, 1080, 2350, 3000, 3300], gains: [1, 0.1, 0.0708, 0.0316, 0.02995], qs: [40, 60, 100, 120, 120] },
-  get æ() { return this.ae; },
-  get ø() { return this.oe; },
-  get ɑ() { return this.aa; },
-  get å() { return this.aa; },
-  get ö() { return this.oe; },
-  get ü() { return this.ue; },
-  get ı() { return this.y; },
-
+  get æ() {
+    return this.ae;
+  },
+  get ø() {
+    return this.oe;
+  },
+  get ɑ() {
+    return this.aa;
+  },
+  get å() {
+    return this.aa;
+  },
+  get ö() {
+    return this.oe;
+  },
+  get ü() {
+    return this.ue;
+  },
+  get ı() {
+    return this.y;
+  },
 };
 if (typeof GainNode !== 'undefined') {
   class VowelNode extends GainNode {
