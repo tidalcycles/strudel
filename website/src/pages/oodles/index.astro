@@ -1,0 +1,12 @@
+---
+import { Oodles } from '../../components/Oodles/Oodles.jsx';
+
+
+const { BASE_URL } = import.meta.env;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
+---
+
+
+<body class="m-0">
+  <Oodles client:only="react" />
+</body>

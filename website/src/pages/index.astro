@@ -3,12 +3,12 @@ import HeadCommon from '../components/HeadCommon.astro';
 import { Repl } from '../repl/Repl';
 ---
 
-<html lang="en" class="dark">
+<html class="m-0" lang="en" class="dark">
   <head>
     <HeadCommon />
     <title>Strudel REPL</title>
   </head>
-  <body class="h-app-height bg-background">
+  <body class="h-app-height bg-background m-0">
     <Repl client:only="react" />
     <a rel="me" href="https://social.toplap.org/@strudel" target="_blank" class="hidden">mastodon</a>
   </body>
