@@ -4,21 +4,9 @@ import { useStore } from '@nanostores/react';
 import { register } from '@strudel.cycles/core';
 import * as tunes from './repl/tunes.mjs';
 import { logger } from '@strudel.cycles/core';
-import { loadPublicPatterns, loadFeaturedPatterns } from './repl/util.mjs';
 
 export let $publicPatterns = atom([]);
 export let $featuredPatterns = atom([]);
-
-async function loadDBPatterns() {
-  const { data: publicPatterns } = await loadPublicPatterns();
-  $publicPatterns.set(publicPatterns);
-  const { data: featuredPatterns } = await loadFeaturedPatterns();
-  $featuredPatterns.set(featuredPatterns);
-}
-
-if (typeof window !== 'undefined') {
-  loadDBPatterns();
-}
 
 export const defaultAudioDeviceName = 'System Standard';
 
