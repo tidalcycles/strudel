@@ -172,7 +172,7 @@ export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
   const meta = useMemo(() => getMetadata(pattern.code), [pattern]);
   return (
     <>
-      {pattern.id}. {meta.title || pattern.hash} by {meta.by.join(',') || 'Anonymous'}
+      {pattern.id}. {meta.title || pattern.hash} by {Array.isArray(meta.by) ? meta.by.join(',') : 'Anonymous'}
     </>
   );
 }
