@@ -276,7 +276,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     density = 0.03,
     // filters
     ftype = '12db',
-    fanchor = 0,
+    fanchor = 0.5,
     // low pass
     cutoff,
     lpenv,
