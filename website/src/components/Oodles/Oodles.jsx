@@ -63,9 +63,9 @@ export function Oodles() {
     hashes[key] = code2hash(code);
     updateURLHashes(hashes);
   };
-  useEffect(() => {
-    prebake();
-  }, []);
+  //   useEffect(() => {
+  //     prebake();
+  //   }, []);
 
   return (
     <div
@@ -110,7 +110,7 @@ export function Oodles() {
           );
         })}
       </div>
-      <Panel />
+      {/* <Panel /> */}
     </div>
   );
 }
