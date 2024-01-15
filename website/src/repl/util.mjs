@@ -1,17 +1,44 @@
 import { controls, evalScope, hash2code, logger } from '@strudel.cycles/core';
-import { settingPatterns } from '../settings.mjs';
+import { settingPatterns, defaultAudioDeviceName } from '../settings.mjs';
+import { getAudioContext, initializeAudioOutput, setDefaultAudioContext } from '@strudel.cycles/webaudio';
+
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
 import * as tunes from './tunes.mjs';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { writeText } from '@tauri-apps/api/clipboard';
+import { createContext } from 'react';
+import { $publicPatterns, $featuredPatterns } from '../settings.mjs';
 
 // Create a single supabase client for interacting with your database
-const supabase = createClient(
+export const supabase = createClient(
   'https://pidxdsxphlhzjnzmifth.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
 );
+
+export function loadPublicPatterns() {
+  return supabase.from('code').select().eq('public', true).limit(20).order('id', { ascending: false });
+}
+
+export function loadFeaturedPatterns() {
+  return supabase.from('code').select().eq('featured', true).limit(20).order('id', { ascending: false });
+}
+
+async function loadDBPatterns() {
+  try {
+    const { data: publicPatterns } = await loadPublicPatterns();
+    const { data: featuredPatterns } = await loadFeaturedPatterns();
+    $publicPatterns.set(publicPatterns);
+    $featuredPatterns.set(featuredPatterns);
+  } catch (err) {
+    console.error('error loading patterns');
+  }
+}
+
+if (typeof window !== 'undefined') {
+  loadDBPatterns();
+}
 
 export async function initCode() {
   // load code from url hash (either short hash from database or decode long hash)
@@ -87,10 +114,13 @@ export async function shareCode(codeToShare) {
     logger(`Link already generated!`, 'error');
     return;
   }
+  const isPublic = confirm(
+    'Do you want your pattern to be public? If no, press cancel and you will get just a private link.',
+  );
   // generate uuid in the browser
   const hash = nanoid(12);
   const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
-  const { data, error } = await supabase.from('code').insert([{ code: codeToShare, hash }]);
+  const { error } = await supabase.from('code').insert([{ code: codeToShare, hash, ['public']: isPublic }]);
   if (!error) {
     lastShared = codeToShare;
     // copy shareUrl to clipboard
@@ -110,3 +140,37 @@ export async function shareCode(codeToShare) {
     logger(message);
   }
 }
+
+export const ReplContext = createContext(null);
+
+export const getAudioDevices = async () => {
+  await navigator.mediaDevices.getUserMedia({ audio: true });
+  let mediaDevices = await navigator.mediaDevices.enumerateDevices();
+  mediaDevices = mediaDevices.filter((device) => device.kind === 'audiooutput' && device.deviceId !== 'default');
+  const devicesMap = new Map();
+  devicesMap.set(defaultAudioDeviceName, '');
+  mediaDevices.forEach((device) => {
+    devicesMap.set(device.label, device.deviceId);
+  });
+  return devicesMap;
+};
+
+export const setAudioDevice = async (id) => {
+  let audioCtx = getAudioContext();
+  if (audioCtx.sinkId === id) {
+    return;
+  }
+  await audioCtx.suspend();
+  await audioCtx.close();
+  audioCtx = setDefaultAudioContext();
+  await audioCtx.resume();
+  const isValidID = (id ?? '').length > 0;
+  if (isValidID) {
+    try {
+      await audioCtx.setSinkId(id);
+    } catch {
+      logger('failed to set audio interface', 'warning');
+    }
+  }
+  initializeAudioOutput();
+};

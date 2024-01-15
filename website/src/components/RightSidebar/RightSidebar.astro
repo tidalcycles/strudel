@@ -6,7 +6,7 @@ import AvatarList from '../Footer/AvatarList.astro';
 
 type Props = {
   headings: MarkdownHeading[];
-  githubEditUrl: string;
+  githubEditUrl?: string;
 };
 
 const { headings, githubEditUrl } = Astro.props as Props;
