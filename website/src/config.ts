@@ -57,6 +57,7 @@ export const SIDEBAR: Sidebar = {
     Presentation: [
       { text: 'What is Strudel?', link: 'workshop/getting-started' },
       { text: 'Showcase', link: 'intro/showcase' },
+      { text: 'Blog', link: 'blog' },
     ],
     Workshop: [
       // { text: 'Getting Started', link: 'workshop/getting-started' },

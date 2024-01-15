@@ -1,8 +1,12 @@
+import { atom } from 'nanostores';
 import { persistentMap, persistentAtom } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel.cycles/core';
 import * as tunes from './repl/tunes.mjs';
 import { logger } from '@strudel.cycles/core';
+
+export let $publicPatterns = atom([]);
+export let $featuredPatterns = atom([]);
 
 export const defaultAudioDeviceName = 'System Standard';
 
@@ -147,6 +151,7 @@ export const examplePattern = {
   },
 };
 
+// break
 export const userPattern = {
   getAll() {
     return JSON.parse(settingsMap.get().userPatterns);
@@ -216,6 +221,43 @@ export const userPattern = {
       alert('Name already taken!');
       return { id, data };
     }
+// break
+export function updateUserCode(code) {
+  const userPatterns = getUserPatterns();
+  let activePattern = getActivePattern();
+  // check if code is that of an example tune
+  const [example] = Object.entries(tunes).find(([_, tune]) => tune === code) || [];
+  if (example && (!activePattern || activePattern === example)) {
+    // select example
+    setActivePattern(example);
+    return;
+  }
+  const publicPattern = $publicPatterns.get().find((pat) => pat.code === code);
+  if (publicPattern) {
+    setActivePattern(publicPattern.hash);
+    return;
+  }
+  const featuredPattern = $featuredPatterns.get().find((pat) => pat.code === code);
+  if (featuredPattern) {
+    setActivePattern(featuredPattern.hash);
+    return;
+  }
+  if (!activePattern) {
+    // create new user pattern
+    activePattern = newUserPattern();
+    setActivePattern(activePattern);
+  } else if (
+    (!!tunes[activePattern] && code !== tunes[activePattern]) || // fork example tune?
+    $publicPatterns.get().find((p) => p.hash === activePattern) || // fork public pattern?
+    $featuredPatterns.get().find((p) => p.hash === activePattern) // fork featured pattern?
+  ) {
+    // fork example
+    activePattern = getNextCloneName(activePattern);
+    setActivePattern(activePattern);
+  }
+  setUserPatterns({ ...userPatterns, [activePattern]: { code } });
+}
+// break
 
     userPatterns[newID] = data; // copy code
     delete userPatterns[id];

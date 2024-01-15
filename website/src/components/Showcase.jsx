@@ -36,6 +36,13 @@ export function Showcase() {
 }
 
 let _videos = [
+  { title: 'Coding Music With Strudel Workhop by Dan Gorelick and Viola He', id: 'oqyAJ4WeKoU' },
+  { title: 'Hexe - playing w strudel live coding music', id: '03m3F5xVOMg' },
+  { title: 'DJ_Dave - Array [Lil Data Edit]', id: 'KUujFuTcuKc' },
+  { title: 'DJ_Dave - Bitrot [v10101a Edit]', id: 'z_cJMdBp67Q' },
+  { title: 'you will not steve reich your way out of it', id: 'xpILnXcWyuo' },
+  { title: 'dough dream #1 - strudel jam 12/03/23', id: 'p0J7XrT9JEs' },
+  { title: 'eddyflux & superdirtspatz at the dough cathedral', id: 'GrkwKMQ7_Ys' },
   // solstice 2023
   { title: 'Jade Rose @ solstice stream 2023', id: 'wg0vW5Ac7L0' },
   {
