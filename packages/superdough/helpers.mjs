@@ -144,3 +144,16 @@ export function drywet(dry, wet, wetAmount = 0) {
   wet_gain.connect(mix);
   return mix;
 }
+
+export function getPitchEnvelope(param, value, t, holdEnd) {
+  if (value.penv) {
+    let [pattack, pdecay, psustain, prelease] = getADSRValues([
+      value.pattack,
+      value.pdecay,
+      value.psustain,
+      value.prelease,
+    ]);
+    const cents = value.penv * 100;
+    getParamADSR(param, pattack, pdecay, psustain, prelease, 0, cents, t, holdEnd, 'linear');
+  }
+}

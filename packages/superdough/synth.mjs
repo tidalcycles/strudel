@@ -1,6 +1,6 @@
 import { midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext } from './superdough.mjs';
-import { gainNode, getADSRValues, getParamADSR } from './helpers.mjs';
+import { gainNode, getADSRValues, getParamADSR, getPitchEnvelope } from './helpers.mjs';
 import { getNoiseMix, getNoiseOscillator } from './noise.mjs';
 
 const mod = (freq, range = 1, type = 'sine') => {
@@ -105,10 +105,8 @@ export function waveformN(partials, type) {
 }
 
 // expects one of waveforms as s
-export function getOscillator(
-  s,
-  t,
-  {
+export function getOscillator(s, t, value) {
+  let {
     n: partials,
     note,
     freq,
@@ -126,14 +124,7 @@ export function getOscillator(
     fmvelocity: fmVelocity,
     fmwave: fmWaveform = 'sine',
     duration,
-    penv,
-    // panchor = 0, // TODO
-    pattack,
-    pdecay,
-    psustain,
-    prelease,
-  },
-) {
+  } = value;
   let ac = getAudioContext();
   let o;
   // If no partials are given, use stock waveforms
@@ -203,9 +194,9 @@ export function getOscillator(
   }
 
   // pitch envelope
-  if (penv) {
+  if (value.penv) {
     const holdEnd = t + duration;
-    getParamADSR(o.detune, pattack, pdecay, psustain, prelease, 0, penv * 100, t, holdEnd, 'linear');
+    getPitchEnvelope(o.detune, value, t, holdEnd);
   }
 
   let noiseMix;

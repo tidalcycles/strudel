@@ -1,6 +1,6 @@
 import { noteToMidi, valueToMidi, getSoundIndex } from './util.mjs';
 import { getAudioContext, registerSound } from './index.mjs';
-import { getADSRValues, getParamADSR } from './helpers.mjs';
+import { getADSRValues, getParamADSR, getPitchEnvelope } from './helpers.mjs';
 import { logger } from './logger.mjs';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
@@ -309,6 +309,11 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   let holdEnd = t + duration;
 
   getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, t, holdEnd, 'linear');
+
+  // pitch envelope
+  if (value.penv) {
+    getPitchEnvelope(bufferSource.detune, value, t, holdEnd);
+  }
 
   const out = ac.createGain(); // we need a separate gain for the cutgroups because firefox...
   node.connect(out);
