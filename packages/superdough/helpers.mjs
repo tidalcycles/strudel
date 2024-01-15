@@ -157,3 +157,19 @@ export function getPitchEnvelope(param, value, t, holdEnd) {
     getParamADSR(param, pattack, pdecay, psustain, prelease, 0, cents, t, holdEnd, 'linear');
   }
 }
+
+export function getVibratoOscillator(param, value, t) {
+  const { vibmod = 0.5, vib } = value;
+  let vibratoOscillator;
+  if (vib > 0) {
+    vibratoOscillator = getAudioContext().createOscillator();
+    vibratoOscillator.frequency.value = vib;
+    const gain = getAudioContext().createGain();
+    // Vibmod is the amount of vibrato, in semitones
+    gain.gain.value = vibmod * 100;
+    vibratoOscillator.connect(gain);
+    gain.connect(param);
+    vibratoOscillator.start(t);
+    return vibratoOscillator;
+  }
+}

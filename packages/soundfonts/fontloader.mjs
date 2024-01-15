@@ -5,6 +5,7 @@ import {
   getParamADSR,
   getADSRValues,
   getPitchEnvelope,
+  getVibratoOscillator,
 } from '@strudel.cycles/webaudio';
 import gm from './gm.mjs';
 
@@ -155,6 +156,8 @@ export function registerSoundfonts() {
         getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3, time, holdEnd, 'linear');
         let envEnd = holdEnd + release + 0.01;
 
+        // vibrato
+        let vibratoOscillator = getVibratoOscillator(bufferSource.detune, value, time);
         // pitch envelope
         if (value.penv) {
           getPitchEnvelope(bufferSource.detune, value, time, holdEnd);
@@ -164,6 +167,7 @@ export function registerSoundfonts() {
         const stop = (releaseTime) => {};
         bufferSource.onended = () => {
           bufferSource.disconnect();
+          vibratoOscillator?.stop();
           node.disconnect();
           onended();
         };
