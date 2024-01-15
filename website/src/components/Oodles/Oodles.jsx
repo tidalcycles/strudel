@@ -5,6 +5,9 @@ import { StrudelFrame } from './StrudelFrame';
 import { useState } from 'react';
 
 function NumberInput({ value, onChange, label = '', min, max }) {
+  const [localState, setLocalState] = useState(value);
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <label>
       {label}
@@ -13,35 +16,52 @@ function NumberInput({ value, onChange, label = '', min, max }) {
         max={max}
         className="p-2 bg-background rounded-md text-foreground"
         type={'number'}
-        value={value ?? ''}
+        value={(isFocused ? localState : value) ?? ''}
+        onFocus={() => {
+          setLocalState(value);
+          setIsFocused(true);
+        }}
+        onBlur={() => {
+          onChange(Math.max(localState, min));
+          setIsFocused(false);
+        }}
         onChange={(e) => {
-          const val = e.target.value;
-
-          onChange(val.length ? Math.min(parseFloat(e.target.value), max) : null);
+          let val = e.target.value;
+          val = val.length ? Math.min(parseFloat(e.target.value), max) : null;
+          setLocalState(val);
         }}
       />
     </label>
   );
 }
+const defaultHash = 'c3RhY2soCiAgCik%3D';
+
+const getHashesFromUrl = () => {
+  return window.location.hash?.slice(1).split(',');
+};
+const updateURLHashes = (hashes) => {
+  const newHash = '#' + hashes.join(',');
+  window.location.hash = newHash;
+};
 export function Oodles() {
-  const search = new URLSearchParams(window.location.search);
+  const hashes = getHashesFromUrl();
 
-  const [numWindows, updateNumWindows] = useState(parseInt(search.get('win') ?? '2'));
-  const setNumWindows = (num) => {
-    updateNumWindows(num);
-    search.set('win', num);
-    window.location.search = '?' + search.toString();
+  const [numWindows, setNumWindows] = useState(hashes.length);
+  const numWindowsOnChange = (num) => {
+    setNumWindows(num);
+    const hashes = getHashesFromUrl();
+    const newHashes = [];
+    for (let i = 0; i < num; i++) {
+      newHashes[i] = hashes[i] ?? defaultHash;
+    }
+    updateURLHashes(newHashes);
   };
 
-  const hashMap = new Map();
   const onEvaluate = (key, code) => {
-    hashMap.set(key, code2hash(code));
-    const hashes = Array.from(hashMap.values());
-    const newHash = '#' + hashes.join(',');
-    window.location.hash = newHash;
+    const hashes = getHashesFromUrl();
+    hashes[key] = code2hash(code);
+    updateURLHashes(hashes);
   };
-  const defaultHash = 'c3RhY2soCiAgCik%3D';
-  const hashes = window.location.hash?.slice(1).split(',');
 
   return (
     <div
@@ -64,7 +84,7 @@ export function Oodles() {
           zIndex: 10,
         }}
       >
-        <NumberInput min={1} max={8} value={numWindows} onChange={(val) => setNumWindows(val)} />
+        <NumberInput min={1} max={8} value={numWindows} onChange={numWindowsOnChange} />
       </div>
       <div
         style={{
@@ -74,13 +94,13 @@ export function Oodles() {
           flexWrap: 'wrap',
         }}
       >
-        {[...Array(Math.max(1, numWindows)).keys()].map((key) => {
+        {hashes.map((hash, key) => {
           return (
             <StrudelFrame
               onEvaluate={(code) => {
                 onEvaluate(key, code);
               }}
-              hash={hashes[key] ?? defaultHash}
+              hash={hash}
               key={key}
             />
           );
