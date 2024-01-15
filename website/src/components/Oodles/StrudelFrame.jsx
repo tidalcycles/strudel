@@ -10,7 +10,6 @@ export function StrudelFrame({ onEvaluate, hash }) {
     }
     onEvaluate(message.data);
   });
-
   const source = window.location.origin + '/#' + hash;
 
   return (
