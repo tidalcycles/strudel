@@ -1,8 +1,9 @@
-import { code2hash } from '@strudel.cycles/core';
+import { code2hash, evalScope } from '@strudel.cycles/core';
 
 import { Panel } from '@src/repl/panel/Panel';
 import { StrudelFrame } from './StrudelFrame';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { prebake } from '../../../src/repl/prebake.mjs';
 
 function NumberInput({ value, onChange, label = '', min, max }) {
   const [localState, setLocalState] = useState(value);
@@ -62,6 +63,9 @@ export function Oodles() {
     hashes[key] = code2hash(code);
     updateURLHashes(hashes);
   };
+  useEffect(() => {
+    prebake();
+  }, []);
 
   return (
     <div
