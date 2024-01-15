@@ -891,6 +891,13 @@ const generic_params = [
    *
    */
   ['freq'],
+  // pitch envelope
+  ['pattack', 'patt'],
+  ['pdecay', 'pdec'],
+  ['psustain', 'psus'],
+  ['prelease', 'prel'],
+  ['penv'],
+  ['panchor'], // TODO
   // TODO: https://tidalcycles.org/docs/configuration/MIDIOSC/control-voltage/#gate
   ['gate', 'gat'],
   // ['hatgrain'],

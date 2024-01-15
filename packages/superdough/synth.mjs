@@ -126,6 +126,12 @@ export function getOscillator(
     fmvelocity: fmVelocity,
     fmwave: fmWaveform = 'sine',
     duration,
+    penv,
+    // panchor = 0, // TODO
+    pattack,
+    pdecay,
+    psustain,
+    prelease,
   },
 ) {
   let ac = getAudioContext();
@@ -194,6 +200,12 @@ export function getOscillator(
     vibratoOscillator.connect(gain);
     gain.connect(o.detune);
     vibratoOscillator.start(t);
+  }
+
+  // pitch envelope
+  if (penv) {
+    const holdEnd = t + duration;
+    getParamADSR(o.detune, pattack, pdecay, psustain, prelease, 0, penv * 100, t, holdEnd, 'linear');
   }
 
   let noiseMix;
