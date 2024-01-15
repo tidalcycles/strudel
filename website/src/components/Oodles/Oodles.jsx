@@ -101,6 +101,7 @@ export function Oodles() {
         {hashes.map((hash, key) => {
           return (
             <StrudelFrame
+              instance={key}
               onEvaluate={(code) => {
                 onEvaluate(key, code);
               }}

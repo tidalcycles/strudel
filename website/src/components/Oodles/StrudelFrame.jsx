@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-export function StrudelFrame({ onEvaluate, hash }) {
+export function StrudelFrame({ onEvaluate, hash, instance }) {
   const ref = useRef();
 
   window.addEventListener('message', (message) => {
@@ -10,7 +10,11 @@ export function StrudelFrame({ onEvaluate, hash }) {
     }
     onEvaluate(message.data);
   });
-  const source = window.location.origin + '/#' + hash;
+
+  const url = new URL(window.location.origin);
+  url.hash = hash;
+  url.searchParams.append('instance', instance);
+  const source = url.toString();
 
   return (
     <iframe
