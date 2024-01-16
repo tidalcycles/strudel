@@ -80,6 +80,7 @@ export function Repl({ embedded = false }) {
         const data = { code };
         let id = getViewingPattern();
         window.location.hash = '#' + code2hash(code);
+
         const examplePatternData = examplePattern.getPatternData(id);
         const isExamplePattern = examplePatternData != null;
 

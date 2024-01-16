@@ -4,7 +4,7 @@ import { useStore } from '@nanostores/react';
 import { register } from '@strudel.cycles/core';
 import * as tunes from './repl/tunes.mjs';
 import { logger } from '@strudel.cycles/core';
-
+import { nanoid } from 'nanoid';
 export let $publicPatterns = atom([]);
 export let $featuredPatterns = atom([]);
 
@@ -70,6 +70,14 @@ export function initUserCode(code) {
 
 export function useSettings() {
   const state = useStore(settingsMap);
+
+  const userPatterns = JSON.parse(state.userPatterns);
+  Object.keys(userPatterns).forEach((key) => {
+    const data = userPatterns[key];
+    data.id = data.id ?? key;
+    data.date = data.date ?? 0;
+    userPatterns[key] = data;
+  });
   return {
     ...state,
     isZen: [true, 'true'].includes(state.isZen) ? true : false,
@@ -82,7 +90,7 @@ export function useSettings() {
     isFlashEnabled: [true, 'true'].includes(state.isFlashEnabled) ? true : false,
     fontSize: Number(state.fontSize),
     panelPosition: state.activeFooter !== '' ? state.panelPosition : 'bottom', // <-- keep this 'bottom' where it is!
-    userPatterns: JSON.parse(state.userPatterns),
+    userPatterns: userPatterns,
   };
 }
 
@@ -108,35 +116,23 @@ export const fontSize = patternSetting('fontSize');
 
 export const settingPatterns = { theme, fontFamily, fontSize };
 
-export function getUserPatterns() {
+function getUserPatterns() {
   return JSON.parse(settingsMap.get().userPatterns);
 }
-function getSetting(key) {
-  return settingsMap.get()[key];
-}
 
-export function setUserPatterns(obj) {
+function setUserPatterns(obj) {
   return settingsMap.setKey('userPatterns', JSON.stringify(obj));
 }
 
 export const createPatternID = () => {
-  const userPatterns = getUserPatterns();
-  const date = new Date().toISOString().split('T')[0];
-  const todays = Object.entries(userPatterns).filter(([name]) => name.startsWith(date));
-  const num = String(todays.length + 1).padStart(3, '0');
-  const id = date + '_' + num;
-  return id;
+  return nanoid(12);
 };
 
 export const getNextCloneID = (id) => {
-  const patterns = { ...userPattern.getAll(), ...examplePattern.getAll() };
-  const clones = Object.entries(patterns).filter(([patID]) => patID.startsWith(id));
-  const num = String(clones.length + 1).padStart(3, '0');
-  const newID = id + '_' + num;
-  return newID;
+  return createPatternID();
 };
 
-const examplePatterns = Object.fromEntries(Object.entries(tunes).map(([id, code]) => [id, { code }]));
+const examplePatterns = Object.fromEntries(Object.entries(tunes).map(([key, code], i) => [i, { id: i, code }]));
 
 export const examplePattern = {
   getAll() {
@@ -154,7 +150,8 @@ export const examplePattern = {
 // break
 export const userPattern = {
   getAll() {
-    return JSON.parse(settingsMap.get().userPatterns);
+    const patterns = JSON.parse(settingsMap.get().userPatterns);
+    return patterns;
   },
   getPatternData(id) {
     const userPatterns = this.getAll();
@@ -163,10 +160,13 @@ export const userPattern = {
   exists(id) {
     return this.getPatternData(id) != null;
   },
+
   create() {
     const newID = createPatternID();
     const code = defaultCode;
-    const data = { code };
+
+    // const meta = getMetadata
+    const data = { code, created_at: Date.now(), id: newID };
     this.update(newID, data);
     return { id: newID, data };
   },
@@ -221,44 +221,6 @@ export const userPattern = {
       alert('Name already taken!');
       return { id, data };
     }
-// break
-export function updateUserCode(code) {
-  const userPatterns = getUserPatterns();
-  let activePattern = getActivePattern();
-  // check if code is that of an example tune
-  const [example] = Object.entries(tunes).find(([_, tune]) => tune === code) || [];
-  if (example && (!activePattern || activePattern === example)) {
-    // select example
-    setActivePattern(example);
-    return;
-  }
-  const publicPattern = $publicPatterns.get().find((pat) => pat.code === code);
-  if (publicPattern) {
-    setActivePattern(publicPattern.hash);
-    return;
-  }
-  const featuredPattern = $featuredPatterns.get().find((pat) => pat.code === code);
-  if (featuredPattern) {
-    setActivePattern(featuredPattern.hash);
-    return;
-  }
-  if (!activePattern) {
-    // create new user pattern
-    activePattern = newUserPattern();
-    setActivePattern(activePattern);
-  } else if (
-    (!!tunes[activePattern] && code !== tunes[activePattern]) || // fork example tune?
-    $publicPatterns.get().find((p) => p.hash === activePattern) || // fork public pattern?
-    $featuredPatterns.get().find((p) => p.hash === activePattern) // fork featured pattern?
-  ) {
-    // fork example
-    activePattern = getNextCloneName(activePattern);
-    setActivePattern(activePattern);
-  }
-  setUserPatterns({ ...userPatterns, [activePattern]: { code } });
-}
-// break
-
     userPatterns[newID] = data; // copy code
     delete userPatterns[id];
 
@@ -269,6 +231,42 @@ export function updateUserCode(code) {
     return { id: newID, data };
   },
 };
+
+// export function updateUserCode(code) {
+//   const userPatterns = getUserPatterns();
+//   let activePattern = getActivePattern();
+//   // check if code is that of an example tune
+//   const [example] = Object.entries(tunes).find(([_, tune]) => tune === code) || [];
+//   if (example && (!activePattern || activePattern === example)) {
+//     // select example
+//     setActivePattern(example);
+//     return;
+//   }
+//   const publicPattern = $publicPatterns.get().find((pat) => pat.code === code);
+//   if (publicPattern) {
+//     setActivePattern(publicPattern.hash);
+//     return;
+//   }
+//   const featuredPattern = $featuredPatterns.get().find((pat) => pat.code === code);
+//   if (featuredPattern) {
+//     setActivePattern(featuredPattern.hash);
+//     return;
+//   }
+//   if (!activePattern) {
+//     // create new user pattern
+//     activePattern = newUserPattern();
+//     setActivePattern(activePattern);
+//   } else if (
+//     (!!tunes[activePattern] && code !== tunes[activePattern]) || // fork example tune?
+//     $publicPatterns.get().find((p) => p.hash === activePattern) || // fork public pattern?
+//     $featuredPatterns.get().find((p) => p.hash === activePattern) // fork featured pattern?
+//   ) {
+//     // fork example
+//     activePattern = getNextCloneName(activePattern);
+//     setActivePattern(activePattern);
+//   }
+//   setUserPatterns({ ...userPatterns, [activePattern]: { code } });
+// }
 
 export async function importPatterns(fileList) {
   const files = Array.from(fileList);

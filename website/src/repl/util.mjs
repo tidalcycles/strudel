@@ -29,8 +29,12 @@ async function loadDBPatterns() {
   try {
     const { data: publicPatterns } = await loadPublicPatterns();
     const { data: featuredPatterns } = await loadFeaturedPatterns();
-    $publicPatterns.set(publicPatterns);
-    $featuredPatterns.set(featuredPatterns);
+    const featured = {};
+    const pub = {};
+    publicPatterns?.forEach((data, key) => (pub[data.id ?? key] = data));
+    featuredPatterns?.forEach((data, key) => (featured[data.id ?? key] = data));
+    $publicPatterns.set(pub);
+    $featuredPatterns.set(featured);
   } catch (err) {
     console.error('error loading patterns');
   }
