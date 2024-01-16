@@ -153,8 +153,11 @@ export function getPitchEnvelope(param, value, t, holdEnd) {
       value.psustain,
       value.prelease,
     ]);
-    const cents = value.penv * 100;
-    getParamADSR(param, pattack, pdecay, psustain, prelease, 0, cents, t, holdEnd, 'linear');
+    let panchor = value.panchor ?? psustain;
+    const cents = value.penv * 100; // penv is in semitones
+    const min = 0 - cents * panchor;
+    const max = cents - cents * panchor;
+    getParamADSR(param, pattack, pdecay, psustain, prelease, min, max, t, holdEnd, 'linear');
   }
 }
 
