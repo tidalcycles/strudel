@@ -14,9 +14,9 @@ import {
 
 import { useMemo } from 'react';
 
-import * as tunes from '../tunes.mjs';
 import { useStore } from '@nanostores/react';
 import { getMetadata } from '../../metadata_parser';
+import { useExamplePatterns } from '../useExamplePatterns';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -90,27 +90,21 @@ function PatternButtons({ patterns, activePattern, onClick, viewingPattern, star
 }
 
 export function PatternsTab({ context }) {
-  const { userPatterns } = useSettings();
   const activePattern = useActivePattern();
-
-  const featuredPatterns = useStore($featuredPatterns);
-  const publicPatterns = useStore($publicPatterns);
-
-  // const otherPatterns = [
-  //   {source: 'Stock Examples', patterns: examplePatterns }
-  // ]
-
-  const otherPatterns = useMemo(() => {
-    const pats = new Map();
-    pats.set('Featured', featuredPatterns);
-    pats.set('Last Creations', publicPatterns);
-    pats.set('Stock Examples', examplePattern.getAll());
-    return pats;
-  }, [featuredPatterns, publicPatterns]);
-
   const viewingPattern = useViewingPattern();
-  const updateCodeWindow = (id, code, reset = false) => {
-    context.handleUpdate(id, code, reset);
+  const { userPatterns } = useSettings();
+  const examplePatterns = useExamplePatterns();
+  const collections = examplePatterns.collections;
+  const examplesData = examplePatterns.patterns;
+
+  const updateCodeWindow = (id, data, reset = false) => {
+    context.handleUpdate(id, data, reset);
+    // if (patternSource === userPattern.source) {
+
+    // } else {
+    //   const source = otherPatterns.get(patternSource);
+    //   const data = source[id];
+    // }
   };
 
   const isUserPattern = userPatterns[viewingPattern] != null;
@@ -151,7 +145,7 @@ export function PatternsTab({ context }) {
                   className="hover:opacity-50"
                   onClick={() => {
                     const { id, data } = userPattern.delete(viewingPattern);
-                    updateCodeWindow(id, data.code);
+                    updateCodeWindow(id, { ...data, collection: userPattern.source });
                   }}
                   title="Delete"
                 >
@@ -162,7 +156,7 @@ export function PatternsTab({ context }) {
           </div>
         )}
         <PatternButtons
-          onClick={(id) => updateCodeWindow(id, userPatterns[id]?.code, false)}
+          onClick={(id) => updateCodeWindow(id, { ...userPatterns[id], collection: userPattern.source }, false)}
           patterns={userPatterns}
           started={context.started}
           activePattern={activePattern}
@@ -202,15 +196,15 @@ export function PatternsTab({ context }) {
           </button>
         </div>
       </section>
-      {Array.from(otherPatterns.keys()).map((key) => {
-        const patterns = otherPatterns.get(key);
+      {Array.from(collections.keys()).map((collection) => {
+        const patterns = collections.get(collection);
 
         return (
-          <section key={key}>
-            <h2 className="text-xl mb-2">{key}</h2>
+          <section key={collection}>
+            <h2 className="text-xl mb-2">{collection}</h2>
             <div className="font-mono text-sm">
               <PatternButtons
-                onClick={(id) => updateCodeWindow(id, patterns[id]?.code, true)}
+                onClick={(id) => updateCodeWindow(id, { ...patterns[id], collection }, true)}
                 started={context.started}
                 patterns={patterns}
                 activePattern={activePattern}

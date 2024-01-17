@@ -22,7 +22,6 @@ import {
   setViewingPattern,
   createPatternID,
   userPattern,
-  examplePattern,
   getNextCloneID,
 } from '../settings.mjs';
 import { Header } from './Header';
@@ -33,8 +32,11 @@ import { prebake } from './prebake.mjs';
 import { getRandomTune, initCode, loadModules, shareCode, ReplContext } from './util.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
+import { useExamplePatterns } from './useExamplePatterns';
 
 const { code: randomTune, name } = getRandomTune();
+
+//
 
 const { latestCode } = settingsMap.get();
 
@@ -47,10 +49,12 @@ if (typeof window !== 'undefined') {
   clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
   isIframe = window.location !== window.parent.location;
 }
+
+let viewingPatternData = { id: '', code: null, collection: userPattern.source };
+
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || isIframe;
   const { panelPosition, isZen } = useSettings();
-
   const init = useCallback(() => {
     const drawTime = [-2, 2];
     const drawContext = getDrawContext();
@@ -75,30 +79,29 @@ export function Repl({ embedded = false }) {
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
-      afterEval: ({ code }) => {
+      afterEval: (all) => {
+        const { code } = all;
         setLatestCode(code);
-        const data = { code };
-        let id = getViewingPattern();
         window.location.hash = '#' + code2hash(code);
 
-        const examplePatternData = examplePattern.getPatternData(id);
-        const isExamplePattern = examplePatternData != null;
+        const data = { ...viewingPatternData, code };
+        let id = getViewingPattern();
+        const isExamplePattern = viewingPatternData.collection != userPattern.source;
 
         if (isExamplePattern) {
-          const codeHasChanged = code !== examplePatternData.code;
+          const codeHasChanged = code !== viewingPatternData.code;
           if (codeHasChanged) {
             // fork example
             id = getNextCloneID(id);
             setViewingPattern(id);
-            userPattern.update(id, data);
+            viewingPatternData = userPattern.update(id, data).data;
           }
-          setActivePattern(id);
         } else {
           id = id == null ? createPatternID() : id;
-          setActivePattern(id);
           setViewingPattern(id);
-          userPattern.update(id, data);
+          viewingPatternData = userPattern.update(id, data).data;
         }
+        setActivePattern(id);
       },
       bgFill: false,
     });
@@ -172,12 +175,13 @@ export function Repl({ embedded = false }) {
     await prebake(); // declare default samples
   };
 
-  const handleUpdate = async (id, code, reset = false) => {
+  const handleUpdate = async (id, data, reset = false) => {
+    viewingPatternData = data;
     if (reset) {
       await resetEditor();
     }
     setViewingPattern(id);
-    editorRef.current.setCode(code);
+    editorRef.current.setCode(data.code);
   };
 
   const handleEvaluate = () => {

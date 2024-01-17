@@ -46,9 +46,22 @@ export function getViewingPattern() {
 export function useViewingPattern() {
   return useStore($viewingPattern);
 }
+
+// const $viewingCollection = persistentAtom('viewingCollection', '', { listen: false });
+// export function setViewingCollection(key) {
+//   $viewingCollection.set(key);
+// }
+// export function getViewingCollection() {
+//   return $viewingCollection.get();
+// }
+
+// export function useViewingCollection() {
+//   return useStore($viewingCollection);
+// }
 // active pattern is separate, because it shouldn't sync state across tabs
 // reason: https://github.com/tidalcycles/strudel/issues/857
 const $activePattern = persistentAtom('activePattern', '', { listen: false });
+
 export function setActivePattern(key) {
   $activePattern.set(key);
 }
@@ -135,6 +148,7 @@ export const getNextCloneID = (id) => {
 const examplePatterns = Object.fromEntries(Object.entries(tunes).map(([key, code], i) => [i, { id: i, code }]));
 
 export const examplePattern = {
+  source: 'Stock Examples',
   getAll() {
     return examplePatterns;
   },
@@ -149,6 +163,8 @@ export const examplePattern = {
 
 // break
 export const userPattern = {
+  source: 'user',
+  collection: 'user',
   getAll() {
     const patterns = JSON.parse(settingsMap.get().userPatterns);
     return patterns;
@@ -164,22 +180,20 @@ export const userPattern = {
   create() {
     const newID = createPatternID();
     const code = defaultCode;
-
-    // const meta = getMetadata
-    const data = { code, created_at: Date.now(), id: newID };
-    this.update(newID, data);
-    return { id: newID, data };
+    const data = { code, created_at: Date.now(), id: newID, collection: this.collection };
+    return this.update(newID, data);
   },
   update(id, data) {
     const userPatterns = this.getAll();
+    data = { ...data, id, collection: this.collection };
     setUserPatterns({ ...userPatterns, [id]: data });
+    return { id, data };
   },
   duplicate(id) {
     const examplePatternData = examplePattern.getPatternData(id);
     const data = examplePatternData != null ? examplePatternData : this.getPatternData(id);
     const newID = getNextCloneID(id);
-    this.update(newID, data);
-    return { id: newID, data };
+    return this.update(newID, data);
   },
   clearAll() {
     if (!confirm(`This will delete all your patterns. Are you really sure?`)) {
@@ -193,7 +207,8 @@ export const userPattern = {
     }
     // setViewingPattern(null);
     setActivePattern(null);
-    return { id: null, data: { code: defaultCode } };
+
+    return { id: null, data: { code: defaultCode, id: null, collection: this.collection } };
   },
   delete(id) {
     const userPatterns = this.getAll();
