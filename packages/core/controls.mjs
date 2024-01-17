@@ -897,6 +897,7 @@ const generic_params = [
   ['psustain', 'psus'],
   ['prelease', 'prel'],
   ['penv'],
+  ['pcurve'],
   ['panchor'],
   // TODO: https://tidalcycles.org/docs/configuration/MIDIOSC/control-voltage/#gate
   ['gate', 'gat'],

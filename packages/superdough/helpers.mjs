@@ -145,6 +145,7 @@ export function drywet(dry, wet, wetAmount = 0) {
   return mix;
 }
 
+let curves = ['linear', 'exponential'];
 export function getPitchEnvelope(param, value, t, holdEnd) {
   if (value.penv) {
     let [pattack, pdecay, psustain, prelease] = getADSRValues([
@@ -157,7 +158,8 @@ export function getPitchEnvelope(param, value, t, holdEnd) {
     const cents = value.penv * 100; // penv is in semitones
     const min = 0 - cents * panchor;
     const max = cents - cents * panchor;
-    getParamADSR(param, pattack, pdecay, psustain, prelease, min, max, t, holdEnd, 'linear');
+    const curve = curves[value.pcurve ?? 0];
+    getParamADSR(param, pattack, pdecay, psustain, prelease, min, max, t, holdEnd, curve);
   }
 }
 
