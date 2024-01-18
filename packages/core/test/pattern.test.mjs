@@ -183,13 +183,17 @@ describe('Pattern', () => {
     });
     it('can Trig() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).add.trig(20, 30).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .add.trig(20, 30)
+          .early(2),
         sequence(26, 27, 36, 37),
       );
     });
     it('can Trigzero() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).add.trigzero(20, 30).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .add.trigzero(20, 30)
+          .early(2),
         sequence(21, 22, 31, 32),
       );
     });
@@ -231,13 +235,17 @@ describe('Pattern', () => {
     });
     it('can Trig() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keep.trig(20, 30).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .keep.trig(20, 30)
+          .early(2),
         sequence(6, 7, 6, 7),
       );
     });
     it('can Trigzero() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keep.trigzero(20, 30).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .keep.trigzero(20, 30)
+          .early(2),
         sequence(1, 2, 1, 2),
       );
     });
@@ -273,13 +281,17 @@ describe('Pattern', () => {
     });
     it('can Trig() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepif.trig(false, true).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .keepif.trig(false, true)
+          .early(2),
         sequence(silence, silence, 6, 7),
       );
     });
     it('can Trigzero() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepif.trigzero(false, true).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .keepif.trigzero(false, true)
+          .early(2),
         sequence(silence, silence, 1, 2),
       );
     });
@@ -651,7 +663,11 @@ describe('Pattern', () => {
   });
   describe('struct()', () => {
     it('Can restructure a discrete pattern', () => {
-      expect(sequence('a', 'b').struct(sequence(true, true, true)).firstCycle()).toStrictEqual([
+      expect(
+        sequence('a', 'b')
+          .struct(sequence(true, true, true))
+          .firstCycle(),
+      ).toStrictEqual([
         hap(ts(0, third), ts(0, third), 'a'),
         hap(ts(third, twothirds), ts(third, 0.5), 'a'),
         hap(ts(third, twothirds), ts(0.5, twothirds), 'b'),
@@ -682,7 +698,11 @@ describe('Pattern', () => {
   });
   describe('mask()', () => {
     it('Can fragment a pattern', () => {
-      expect(sequence('a', 'b').mask(sequence(true, true, true)).firstCycle()).toStrictEqual([
+      expect(
+        sequence('a', 'b')
+          .mask(sequence(true, true, true))
+          .firstCycle(),
+      ).toStrictEqual([
         hap(ts(0, 0.5), ts(0, third), 'a'),
         hap(ts(0, 0.5), ts(third, 0.5), 'a'),
         hap(ts(0.5, 1), ts(0.5, twothirds), 'b'),
@@ -951,9 +971,11 @@ describe('Pattern', () => {
       expect(stack(pure('a').mask(1, 0), pure('a').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(1);
     });
     it('Doesnt merge two overlapping haps', () => {
-      expect(stack(pure('a').mask(1, 1, 0), pure('a').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(
-        2,
-      );
+      expect(
+        stack(pure('a').mask(1, 1, 0), pure('a').mask(0, 1))
+          .defragmentHaps()
+          .firstCycle().length,
+      ).toStrictEqual(2);
     });
     it('Doesnt merge two touching haps with different values', () => {
       expect(stack(pure('a').mask(1, 0), pure('b').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(2);
