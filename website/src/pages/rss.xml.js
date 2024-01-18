@@ -9,7 +9,7 @@ export async function GET(context) {
       'The Strudel Blog will keep you updated with the latest changes and things happening in the strudelsphere.',
     site: context.site,
     items: posts.map((post) => ({
-      link: `/${post.slug}/`,
+      link: `/blog/#${post.slug}`,
       title: post.data.title,
       pubDate: post.data.date,
       description: post.data.description,
