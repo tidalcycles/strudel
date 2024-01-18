@@ -14,10 +14,7 @@ export async function GET({ params, request }) {
   const ctx = canvas.getContext('2d');
   pianoroll({ time: 4, haps, ctx, playhead: 1, fold: 1, background: 'transparent', playheadColor: 'transparent' });
   const buffer = canvas.toBuffer('image/png');
-  return {
-    body: buffer,
-    encoding: 'binary',
-  };
+  return new Response(buffer);
 }
 export async function getStaticPaths() {
   const patterns = await getMyPatterns();
