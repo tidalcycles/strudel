@@ -1,6 +1,6 @@
 {
   "name": "@strudel.cycles/serial",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Webserial API for strudel",
   "main": "serial.mjs",
   "publishConfig": {

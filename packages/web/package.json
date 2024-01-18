@@ -1,6 +1,6 @@
 {
   "name": "@strudel/web",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Easy to setup, opiniated bundle of Strudel for the browser.",
   "main": "web.mjs",
   "publishConfig": {
