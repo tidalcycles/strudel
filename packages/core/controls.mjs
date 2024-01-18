@@ -97,7 +97,7 @@ const generic_params = [
    */
   ['postgain'],
   /**
-   * Like {@link gain}, but linear.
+   * Like `gain`, but linear.
    *
    * @name amp
    * @param {number | Pattern} amount gain.
@@ -856,7 +856,7 @@ const generic_params = [
    */
   ['detune', 'det'],
   /**
-   * Set dryness of reverb. See {@link room} and {@link size} for more information about reverb.
+   * Set dryness of reverb. See `room` and `size` for more information about reverb.
    *
    * @name dry
    * @param {number | Pattern} dry 0 = wet, 1 = dry
@@ -868,7 +868,7 @@ const generic_params = [
   ['dry'],
   // TODO: does not seem to do anything
   /*
-   * Used when using {@link begin}/{@link end} or {@link chop}/{@link striate} and friends, to change the fade out time of the 'grain' envelope.
+   * Used when using `begin`/`end` or `chop`/`striate` and friends, to change the fade out time of the 'grain' envelope.
    *
    * @name fadeTime
    * @param {number | Pattern} time between 0 and 1
@@ -1191,7 +1191,7 @@ const generic_params = [
    */
   [['ir', 'i'], 'iresponse'],
   /**
-   * Sets the room size of the reverb, see {@link room}.
+   * Sets the room size of the reverb, see `room`.
    * When this property is changed, the reverb will be recaculated, so only change this sparsely..
    *
    * @name roomsize
@@ -1249,7 +1249,7 @@ const generic_params = [
    */
   ['speed'],
   /**
-   * Used in conjunction with {@link speed}, accepts values of "r" (rate, default behavior), "c" (cycles), or "s" (seconds). Using `unit "c"` means `speed` will be interpreted in units of cycles, e.g. `speed "1"` means samples will be stretched to fill a cycle. Using `unit "s"` means the playback speed will be adjusted so that the duration is the number of seconds specified by `speed`.
+   * Used in conjunction with `speed`, accepts values of "r" (rate, default behavior), "c" (cycles), or "s" (seconds). Using `unit "c"` means `speed` will be interpreted in units of cycles, e.g. `speed "1"` means samples will be stretched to fill a cycle. Using `unit "s"` means the playback speed will be adjusted so that the duration is the number of seconds specified by `speed`.
    *
    * @name unit
    * @param {number | string | Pattern} unit see description above
