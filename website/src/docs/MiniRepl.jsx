@@ -1,8 +1,8 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Icon } from './Icon';
-import { silence, getPunchcardPainter, noteToMidi } from '@strudel.cycles/core';
-import { transpiler } from '@strudel.cycles/transpiler';
-import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
+import { silence, getPunchcardPainter, noteToMidi } from '@strudel/core';
+import { transpiler } from '@strudel/transpiler';
+import { getAudioContext, webaudioOutput } from '@strudel/webaudio';
 import { StrudelMirror } from '@strudel/codemirror';
 // import { prebake } from '@strudel/repl';
 import { prebake } from '../repl/prebake.mjs';

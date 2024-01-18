@@ -8,22 +8,22 @@ importers:
 
   .:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:packages/core
-      '@strudel.cycles/mini':
+      '@strudel/mini':
         specifier: workspace:*
         version: link:packages/mini
-      '@strudel.cycles/tonal':
+      '@strudel/tonal':
         specifier: workspace:*
         version: link:packages/tonal
-      '@strudel.cycles/transpiler':
+      '@strudel/transpiler':
         specifier: workspace:*
         version: link:packages/transpiler
-      '@strudel.cycles/webaudio':
+      '@strudel/webaudio':
         specifier: workspace:*
         version: link:packages/webaudio
-      '@strudel.cycles/xen':
+      '@strudel/xen':
         specifier: workspace:*
         version: link:packages/xen
     devDependencies:
@@ -72,27 +72,27 @@ importers:
 
   examples/codemirror-repl:
     dependencies:
-      '@strudel.cycles/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@strudel.cycles/mini':
-        specifier: workspace:*
-        version: link:../../packages/mini
-      '@strudel.cycles/soundfonts':
-        specifier: workspace:*
-        version: link:../../packages/soundfonts
-      '@strudel.cycles/tonal':
-        specifier: workspace:*
-        version: link:../../packages/tonal
-      '@strudel.cycles/transpiler':
-        specifier: workspace:*
-        version: link:../../packages/transpiler
-      '@strudel.cycles/webaudio':
-        specifier: workspace:*
-        version: link:../../packages/webaudio
       '@strudel/codemirror':
         specifier: workspace:*
         version: link:../../packages/codemirror
+      '@strudel/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@strudel/mini':
+        specifier: workspace:*
+        version: link:../../packages/mini
+      '@strudel/soundfonts':
+        specifier: workspace:*
+        version: link:../../packages/soundfonts
+      '@strudel/tonal':
+        specifier: workspace:*
+        version: link:../../packages/tonal
+      '@strudel/transpiler':
+        specifier: workspace:*
+        version: link:../../packages/transpiler
+      '@strudel/webaudio':
+        specifier: workspace:*
+        version: link:../../packages/webaudio
     devDependencies:
       vite:
         specifier: ^5.0.10
@@ -110,19 +110,19 @@ importers:
 
   examples/minimal-repl:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@strudel.cycles/mini':
+      '@strudel/mini':
         specifier: workspace:*
         version: link:../../packages/mini
-      '@strudel.cycles/tonal':
+      '@strudel/tonal':
         specifier: workspace:*
         version: link:../../packages/tonal
-      '@strudel.cycles/transpiler':
+      '@strudel/transpiler':
         specifier: workspace:*
         version: link:../../packages/transpiler
-      '@strudel.cycles/webaudio':
+      '@strudel/webaudio':
         specifier: workspace:*
         version: link:../../packages/webaudio
     devDependencies:
@@ -178,7 +178,7 @@ importers:
       '@replit/codemirror-vscode-keymap':
         specifier: ^6.0.2
         version: 6.0.2(@codemirror/autocomplete@6.11.1)(@codemirror/commands@6.3.3)(@codemirror/language@6.10.0)(@codemirror/lint@6.4.2)(@codemirror/search@6.5.5)(@codemirror/state@6.4.0)(@codemirror/view@6.23.0)
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
       '@uiw/codemirror-themes':
@@ -213,10 +213,10 @@ importers:
       '@csound/browser':
         specifier: 6.18.7
         version: 6.18.7(eslint@8.56.0)
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
-      '@strudel.cycles/webaudio':
+      '@strudel/webaudio':
         specifier: workspace:*
         version: link:../webaudio
     devDependencies:
@@ -226,7 +226,7 @@ importers:
 
   packages/desktopbridge:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
       '@tauri-apps/api':
@@ -237,7 +237,7 @@ importers:
 
   packages/hydra:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
       hydra-synth:
@@ -253,10 +253,10 @@ importers:
 
   packages/midi:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
-      '@strudel.cycles/webaudio':
+      '@strudel/webaudio':
         specifier: workspace:*
         version: link:../webaudio
       webmidi:
@@ -269,7 +269,7 @@ importers:
 
   packages/mini:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -285,7 +285,7 @@ importers:
 
   packages/osc:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
       osc-js:
@@ -301,33 +301,33 @@ importers:
 
   packages/repl:
     dependencies:
-      '@strudel.cycles/core':
-        specifier: workspace:*
-        version: link:../core
-      '@strudel.cycles/midi':
-        specifier: workspace:*
-        version: link:../midi
-      '@strudel.cycles/mini':
-        specifier: workspace:*
-        version: link:../mini
-      '@strudel.cycles/soundfonts':
-        specifier: workspace:*
-        version: link:../soundfonts
-      '@strudel.cycles/tonal':
-        specifier: workspace:*
-        version: link:../tonal
-      '@strudel.cycles/transpiler':
-        specifier: workspace:*
-        version: link:../transpiler
-      '@strudel.cycles/webaudio':
-        specifier: workspace:*
-        version: link:../webaudio
       '@strudel/codemirror':
         specifier: workspace:*
         version: link:../codemirror
+      '@strudel/core':
+        specifier: workspace:*
+        version: link:../core
       '@strudel/hydra':
         specifier: workspace:*
         version: link:../hydra
+      '@strudel/midi':
+        specifier: workspace:*
+        version: link:../midi
+      '@strudel/mini':
+        specifier: workspace:*
+        version: link:../mini
+      '@strudel/soundfonts':
+        specifier: workspace:*
+        version: link:../soundfonts
+      '@strudel/tonal':
+        specifier: workspace:*
+        version: link:../tonal
+      '@strudel/transpiler':
+        specifier: workspace:*
+        version: link:../transpiler
+      '@strudel/webaudio':
+        specifier: workspace:*
+        version: link:../webaudio
     devDependencies:
       '@rollup/plugin-replace':
         specifier: ^5.0.5
@@ -341,7 +341,7 @@ importers:
 
   packages/serial:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -351,10 +351,10 @@ importers:
 
   packages/soundfonts:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
-      '@strudel.cycles/webaudio':
+      '@strudel/webaudio':
         specifier: workspace:*
         version: link:../webaudio
       sfumato:
@@ -383,7 +383,7 @@ importers:
 
   packages/tonal:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
       '@tonaljs/tonal':
@@ -405,10 +405,10 @@ importers:
 
   packages/transpiler:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
-      '@strudel.cycles/mini':
+      '@strudel/mini':
         specifier: workspace:*
         version: link:../mini
       acorn:
@@ -430,19 +430,19 @@ importers:
 
   packages/web:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
-      '@strudel.cycles/mini':
+      '@strudel/mini':
         specifier: workspace:*
         version: link:../mini
-      '@strudel.cycles/tonal':
+      '@strudel/tonal':
         specifier: workspace:*
         version: link:../tonal
-      '@strudel.cycles/transpiler':
+      '@strudel/transpiler':
         specifier: workspace:*
         version: link:../transpiler
-      '@strudel.cycles/webaudio':
+      '@strudel/webaudio':
         specifier: workspace:*
         version: link:../webaudio
     devDependencies:
@@ -452,7 +452,7 @@ importers:
 
   packages/webaudio:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
       superdough:
@@ -465,7 +465,7 @@ importers:
 
   packages/xen:
     dependencies:
-      '@strudel.cycles/core':
+      '@strudel/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -511,51 +511,51 @@ importers:
       '@nanostores/react':
         specifier: ^0.7.1
         version: 0.7.1(nanostores@0.9.5)(react@18.2.0)
-      '@strudel.cycles/core':
-        specifier: workspace:*
-        version: link:../packages/core
-      '@strudel.cycles/csound':
-        specifier: workspace:*
-        version: link:../packages/csound
-      '@strudel.cycles/midi':
-        specifier: workspace:*
-        version: link:../packages/midi
-      '@strudel.cycles/mini':
-        specifier: workspace:*
-        version: link:../packages/mini
-      '@strudel.cycles/osc':
-        specifier: workspace:*
-        version: link:../packages/osc
-      '@strudel.cycles/serial':
-        specifier: workspace:*
-        version: link:../packages/serial
-      '@strudel.cycles/soundfonts':
-        specifier: workspace:*
-        version: link:../packages/soundfonts
-      '@strudel.cycles/tonal':
-        specifier: workspace:*
-        version: link:../packages/tonal
-      '@strudel.cycles/transpiler':
-        specifier: workspace:*
-        version: link:../packages/transpiler
-      '@strudel.cycles/webaudio':
-        specifier: workspace:*
-        version: link:../packages/webaudio
-      '@strudel.cycles/xen':
-        specifier: workspace:*
-        version: link:../packages/xen
       '@strudel/codemirror':
         specifier: workspace:*
         version: link:../packages/codemirror
+      '@strudel/core':
+        specifier: workspace:*
+        version: link:../packages/core
+      '@strudel/csound':
+        specifier: workspace:*
+        version: link:../packages/csound
       '@strudel/desktopbridge':
         specifier: workspace:*
         version: link:../packages/desktopbridge
       '@strudel/hydra':
         specifier: workspace:*
         version: link:../packages/hydra
+      '@strudel/midi':
+        specifier: workspace:*
+        version: link:../packages/midi
+      '@strudel/mini':
+        specifier: workspace:*
+        version: link:../packages/mini
+      '@strudel/osc':
+        specifier: workspace:*
+        version: link:../packages/osc
       '@strudel/repl':
         specifier: workspace:*
         version: link:../packages/repl
+      '@strudel/serial':
+        specifier: workspace:*
+        version: link:../packages/serial
+      '@strudel/soundfonts':
+        specifier: workspace:*
+        version: link:../packages/soundfonts
+      '@strudel/tonal':
+        specifier: workspace:*
+        version: link:../packages/tonal
+      '@strudel/transpiler':
+        specifier: workspace:*
+        version: link:../packages/transpiler
+      '@strudel/webaudio':
+        specifier: workspace:*
+        version: link:../packages/webaudio
+      '@strudel/xen':
+        specifier: workspace:*
+        version: link:../packages/xen
       '@supabase/supabase-js':
         specifier: ^2.39.1
         version: 2.39.1

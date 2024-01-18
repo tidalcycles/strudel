@@ -1,17 +1,17 @@
-# @strudel.cycles/core
+# @strudel/core
 
 This package contains the bare essence of strudel.
 
 ## Install
 
 ```sh
-npm i @strudel.cycles/core --save
+npm i @strudel/core --save
 ```
 
 ## Example
 
 ```js
-import { sequence } from '@strudel.cycles/core';
+import { sequence } from '@strudel/core';
 
 const pattern = sequence('a', ['b', 'c']);
 
@@ -33,7 +33,7 @@ b: 3/2 - 7/4
 c: 7/4 - 2
 ```
 
-- [play with @strudel.cycles/core on codesandbox](https://codesandbox.io/s/strudel-core-test-forked-9ywhv7?file=/src/index.js).
+- [play with @strudel/core on codesandbox](https://codesandbox.io/s/strudel-core-test-forked-9ywhv7?file=/src/index.js).
 - [open color pattern example](https://raw.githack.com/tidalcycles/strudel/main/packages/core/examples/canvas.html)
 - [open minimal repl example](https://raw.githack.com/tidalcycles/strudel/main/packages/core/examples/vanilla.html)
 - [open minimal vite example](./examples/vite-vanilla-repl/)

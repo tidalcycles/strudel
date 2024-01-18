@@ -22,7 +22,7 @@
       "url": "https://github.com/tidalcycles/strudel/issues"
     },
     "dependencies": {
-        "@strudel.cycles/core": "workspace:*",
+        "@strudel/core": "workspace:*",
         "@tauri-apps/api": "^1.5.3"
       },
     "homepage": "https://github.com/tidalcycles/strudel#readme"

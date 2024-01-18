@@ -1,6 +1,6 @@
 {
-  "name": "@strudel.cycles/core",
-  "version": "0.9.0",
+  "name": "@strudel/core",
+  "version": "0.11.0",
   "description": "Port of Tidal Cycles to JavaScript",
   "main": "index.mjs",
   "type": "module",

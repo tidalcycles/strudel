@@ -1,9 +1,9 @@
 import { atom } from 'nanostores';
 import { persistentMap, persistentAtom } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
-import { register } from '@strudel.cycles/core';
+import { register } from '@strudel/core';
 import * as tunes from './repl/tunes.mjs';
-import { logger } from '@strudel.cycles/core';
+import { logger } from '@strudel/core';
 
 export let $publicPatterns = atom([]);
 export let $featuredPatterns = atom([]);

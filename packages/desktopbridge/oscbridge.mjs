@@ -1,4 +1,4 @@
-import { parseNumeral, Pattern } from '@strudel.cycles/core';
+import { parseNumeral, Pattern } from '@strudel/core';
 import { Invoke } from './utils.mjs';
 
 Pattern.prototype.osc = function () {
