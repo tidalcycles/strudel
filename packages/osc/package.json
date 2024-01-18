@@ -1,6 +1,6 @@
 {
   "name": "@strudel/osc",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "OSC messaging for strudel",
   "main": "osc.mjs",
   "publishConfig": {
