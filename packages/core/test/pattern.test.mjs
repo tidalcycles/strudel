@@ -46,6 +46,7 @@ import {
   rev,
   time,
   run,
+  pick,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -1095,6 +1096,14 @@ describe('Pattern', () => {
     it('Clamps indexes', () => {
       expect(
         sameFirst(sequence(0, 1, 2, 3).pick([sequence(1, 2, 3, 4), sequence(10, 20, 30, 40)]), sequence(1, 20, 30, 40)),
+      );
+    });
+    it('Is backwards compatible', () => {
+      expect(
+        sameFirst(
+          pick([sequence('a', 'b'), sequence('c', 'd')], sequence(0, 1)),
+          pick(sequence(0, 1), [sequence('a', 'b'), sequence('c', 'd')]),
+        ),
       );
     });
   });

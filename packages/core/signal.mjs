@@ -189,7 +189,15 @@ const _pick = function (lookup, pat, modulo = true) {
  * s("<a!2 [a,b] b>".pick({a: "bd(3,8)", b: "sd sd"}))
  */
 
-export const pick = register('pick', function (lookup, pat) {
+export const pick = function (lookup, pat) {
+  // backward compatibility - the args used to be flipped
+  if (Array.isArray(pat)) {
+    [pat, lookup] = [lookup, pat];
+  }
+  return __pick(lookup, pat);
+};
+
+const __pick = register('pick', function (lookup, pat) {
   return _pick(lookup, pat, false).innerJoin();
 });
 
