@@ -156,22 +156,7 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
  */
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
-/** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
- * Similar to `inhabit`, but maintains the structure of the original patterns.
- * @param {Pattern} pat
- * @param {*} xs
- * @returns {Pattern}
- * @example
- * note("<0 1 [2!2] 3>".pick(["g a", "e f", "f g f g" , "g c d"]))
- * @example
- * sound("<0 1 [2,0]>".pick(["bd sd", "cp cp", "hh hh"]))
- * @example
- * sound("<0!2 [0,1] 1>".pick(["bd(3,8)", "sd sd"]))
- * @example
- * s("<a!2 [a,b] b>".pick({a: "bd(3,8)", b: "sd sd"}))
- */
-
-const _pick = function (lookup, pat) {
+const _pick = function (lookup, pat, modulo = true) {
   const array = Array.isArray(lookup);
   const len = Object.keys(lookup).length;
 
@@ -181,13 +166,44 @@ const _pick = function (lookup, pat) {
     return silence;
   }
   return pat.fmap((i) => {
-    const key = array ? Math.round(i) % len : i;
+    let key = i;
+    if (array) {
+      key = modulo ? Math.round(key) % len : clamp(Math.round(key), 0, lookup.length - 1);
+    }
     return lookup[key];
   });
 };
 
+/** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
+ * Similar to `inhabit`, but maintains the structure of the original patterns.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ * @example
+ * note("<0 1 2!2 3>".pick(["g a", "e f", "f g f g" , "g c d"]))
+ * @example
+ * sound("<0 1 [2,0]>".pick(["bd sd", "cp cp", "hh hh"]))
+ * @example
+ * sound("<0!2 [0,1] 1>".pick(["bd(3,8)", "sd sd"]))
+ * @example
+ * s("<a!2 [a,b] b>".pick({a: "bd(3,8)", b: "sd sd"}))
+ */
+
 export const pick = register('pick', function (lookup, pat) {
-  return _pick(lookup, pat).innerJoin();
+  return _pick(lookup, pat, false).innerJoin();
+});
+
+/** * The same as `pick`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * For example, if you pick the fifth pattern of a list of three, you'll get the
+ * second one.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+
+export const pickmod = register('pickmod', function (lookup, pat) {
+  return _pick(lookup, pat, true).innerJoin();
 });
 
 /**
@@ -204,7 +220,20 @@ export const pick = register('pick', function (lookup, pat) {
  * s("a@2 [a b] a".inhabit({a: "bd(3,8)", b: "sd sd"})).slow(4)
  */
 export const inhabit = register('inhabit', function (lookup, pat) {
-  return _pick(lookup, pat).squeezeJoin();
+  return _pick(lookup, pat, true).squeezeJoin();
+});
+
+/** * The same as `inhabit`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * For example, if you pick the fifth pattern of a list of three, you'll get the
+ * second one.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+
+export const inhabitmod = register('inhabit', function (lookup, pat) {
+  return _pick(lookup, pat, false).squeezeJoin();
 });
 
 /**
