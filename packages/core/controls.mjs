@@ -891,6 +891,82 @@ const generic_params = [
    *
    */
   ['freq'],
+  // pitch envelope
+  /**
+   * Attack time of pitch envelope.
+   *
+   * @name pattack
+   * @synonyms patt
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("<c eb g bb>").pattack("<0 .1 .25 .5>")
+   *
+   */
+  ['pattack', 'patt'],
+  /**
+   * Decay time of pitch envelope.
+   *
+   * @name pdecay
+   * @synonyms pdec
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("<c eb g bb>").pdecay("<0 .1 .25 .5>")
+   *
+   */
+  ['pdecay', 'pdec'],
+  // TODO: how to use psustain?!
+  ['psustain', 'psus'],
+  /**
+   * Release time of pitch envelope
+   *
+   * @name prelease
+   * @synonyms prel
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("<c eb g bb> ~")
+   * .release(.5) // to hear the pitch release
+   * .prelease("<0 .1 .25 .5>")
+   *
+   */
+  ['prelease', 'prel'],
+  /**
+   * Amount of pitch envelope. Negative values will flip the envelope.
+   * If you don't set other pitch envelope controls, `pattack:.2` will be the default.
+   *
+   * @name penv
+   * @param {number | Pattern} semitones change in semitones
+   * @example
+   * note("c")
+   * .penv("<12 7 1 .5 0 -1 -7 -12>")
+   *
+   */
+  ['penv'],
+  /**
+   * Curve of envelope. Defaults to linear. exponential is good for kicks
+   *
+   * @name pcurve
+   * @param {number | Pattern} type 0 = linear, 1 = exponential
+   * @example
+   * note("g1*2")
+   * .s("sine").pdec(.5)
+   * .penv(32)
+   * .pcurve("<0 1>")
+   *
+   */
+  ['pcurve'],
+  /**
+   * Sets the range anchor of the envelope:
+   * - anchor 0: range = [note, note + penv]
+   * - anchor 1: range = [note - penv, note]
+   * If you don't set an anchor, the value will default to the psustain value.
+   *
+   * @name panchor
+   * @param {number | Pattern} anchor anchor offset
+   * @example
+   * note("c").penv(12).panchor("<0 .5 1 .5>")
+   *
+   */
+  ['panchor'],
   // TODO: https://tidalcycles.org/docs/configuration/MIDIOSC/control-voltage/#gate
   ['gate', 'gat'],
   // ['hatgrain'],
