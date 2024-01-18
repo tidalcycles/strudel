@@ -1057,4 +1057,14 @@ describe('Pattern', () => {
       expect(slowcat(0, 1).repeatCycles(2).fast(6).firstCycleValues).toStrictEqual([0, 0, 1, 1, 0, 0]);
     });
   });
+  describe('inhabit', () => {
+    it('Can pattern named patterns', () => {
+      expect(
+        sameFirst(
+          sequence('a', 'b', stack('a', 'b')).inhabit({ a: sequence(1, 2), b: sequence(10, 20, 30) }),
+          sequence([1, 2], [10, 20, 30], stack([1, 2], [10, 20, 30])),
+        ),
+      );
+    });
+  });
 });

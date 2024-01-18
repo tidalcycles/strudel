@@ -194,7 +194,7 @@ export const inhabit = register('inhabit', function (lookup, pat) {
   for (const key of Object.keys(lookup)) {
     lookup[key] = reify(lookup[key]);
   }
-  return pat.fmap((x) => lookup[x] ?? silence).innerJoin();
+  return pat.fmap((x) => lookup[x] ?? silence).squeezeJoin();
 });
 
 /**
