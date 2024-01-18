@@ -316,3 +316,10 @@ export function hash2code(hash) {
   return base64ToUnicode(decodeURIComponent(hash));
   //return atob(decodeURIComponent(codeParam || ''));
 }
+
+export function objectMap(obj, fn) {
+  if (Array.isArray(obj)) {
+    return obj.map(fn);
+  }
+  return Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]));
+}
