@@ -162,9 +162,13 @@ export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
  * @param {*} xs
  * @returns {Pattern}
  * @example
- * note(pick(["g a", "e f", "f g f g" , "g  
-c d"], "<0 1 [2!2] 3>"))
+ * note("<0 1 [2!2] 3>".pick(["g a", "e f", "f g f g" , "g c d"]))
+ * @example
  * sound("<0 1 [2,0]>".pick(["bd sd", "cp cp", "hh hh"]))
+ * @example
+ * sound("<0!2 [0,1] 1>".pick(["bd(3,8)", "sd sd"]))
+ * @example
+ * s("<a!2 [a,b] b>".pick({a: "bd(3,8)", b: "sd sd"}))
  */
 
 const _pick = function (lookup, pat) {
@@ -196,6 +200,8 @@ export const pick = register('pick', function (lookup, pat) {
  * "<a b [a,b]>".inhabit({a: s("bd(3,8)"), 
                           b: s("cp sd")
                          })
+ * @example
+ * s("a@2 [a b] a".inhabit({a: "bd(3,8)", b: "sd sd"})).slow(4)
  */
 export const inhabit = register('inhabit', function (lookup, pat) {
   return _pick(lookup, pat).squeezeJoin();
