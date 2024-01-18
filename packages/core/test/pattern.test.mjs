@@ -1066,5 +1066,36 @@ describe('Pattern', () => {
         ),
       );
     });
+    it('Can pattern indexed patterns', () => {
+      expect(
+        sameFirst(
+          sequence('0', '1', stack('0', '1')).inhabit([sequence(1, 2), sequence(10, 20, 30)]),
+          sequence([1, 2], [10, 20, 30], stack([1, 2], [10, 20, 30])),
+        ),
+      );
+    });
+  });
+  describe('pick', () => {
+    it('Can pattern named patterns', () => {
+      expect(
+        sameFirst(
+          sequence('a', 'b', 'a', stack('a', 'b')).pick({ a: sequence(1, 2, 3, 4), b: sequence(10, 20, 30, 40) }),
+          sequence(1, 20, 3, stack(4, 40)),
+        ),
+      );
+    });
+    it('Can pattern indexed patterns', () => {
+      expect(
+        sameFirst(
+          sequence(0, 1, 0, stack(0, 1)).pick([sequence(1, 2, 3, 4), sequence(10, 20, 30, 40)]),
+          sequence(1, 20, 3, stack(4, 40)),
+        ),
+      );
+    });
+    it('Wraps indexes', () => {
+      expect(
+        sameFirst(sequence(0, 1, 2, 3).pick([sequence(1, 2, 3, 4), sequence(10, 20, 30, 40)]), sequence(1, 20, 3, 40)),
+      );
+    });
   });
 });

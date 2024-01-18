@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import { Hap } from './hap.mjs';
 import { Pattern, fastcat, reify, silence, stack, register } from './pattern.mjs';
 import Fraction from './fraction.mjs';
-import { id, _mod, clamp } from './util.mjs';
+import { id, _mod, clamp, objectMap } from './util.mjs';
 
 export function steady(value) {
   // A continuous value
@@ -156,32 +156,39 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
  */
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
-/**
- * pick from the list of values (or patterns of values) via the index using the given
- * pattern of integers. Similar to `inhabit`.
+/** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
+ * Similar to `inhabit`, but maintains the structure of the original patterns.
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
  * @example
- * note(pick("<0 1 [2!2] 3>", ["g a", "e f", "f g f g" , "g a c d"]))
+ * note(pick(["g a", "e f", "f g f g" , "g  
+c d"], "<0 1 [2!2] 3>"))
+ * sound("<0 1 [2,0]>".pick(["bd sd", "cp cp", "hh hh"]))
  */
 
-export const pick = (pat, xs) => {
-  xs = xs.map(reify);
-  if (xs.length == 0) {
+const _pick = function (lookup, pat) {
+  const array = Array.isArray(lookup);
+  const len = Object.keys(lookup).length;
+
+  lookup = objectMap(lookup, reify);
+
+  if (len === 0) {
     return silence;
   }
-  return pat
-    .fmap((i) => {
-      const key = clamp(Math.round(i), 0, xs.length - 1);
-      return xs[key];
-    })
-    .innerJoin();
+  return pat.fmap((i) => {
+    const key = array ? Math.round(i) % len : i;
+    return lookup[key];
+  });
 };
 
+export const pick = register('pick', function (lookup, pat) {
+  return _pick(lookup, pat).innerJoin();
+});
+
 /**
- * Picks patterns by name, using a lookup table. Similar to `pick`,
- * but uses names rather than numbers.
+/** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
+ * Similar to `pick`, but cycles are squeezed into the target ('inhabited') pattern.
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
@@ -191,10 +198,7 @@ export const pick = (pat, xs) => {
                          })
  */
 export const inhabit = register('inhabit', function (lookup, pat) {
-  for (const key of Object.keys(lookup)) {
-    lookup[key] = reify(lookup[key]);
-  }
-  return pat.fmap((x) => lookup[x] ?? silence).squeezeJoin();
+  return _pick(lookup, pat).squeezeJoin();
 });
 
 /**
