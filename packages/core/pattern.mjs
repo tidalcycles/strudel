@@ -26,7 +26,7 @@ export class Pattern {
   /**
    * Create a pattern. As an end user, you will most likely not create a Pattern directly.
    *
-   * @param {function} query - The function that maps a `State` to an array of `Hap`.
+   * @param {function} query - The function that maps a {@link State} to an array of {@link Hap}.
    * @noAutocomplete
    */
   constructor(query) {
@@ -39,7 +39,7 @@ export class Pattern {
 
   /**
    * Returns a new pattern, with the function applied to the value of
-   * each hap. It has the alias `fmap`.
+   * each hap. It has the alias {@link Pattern#fmap}.
    * @synonyms fmap
    * @param {Function} func to to apply to the value
    * @returns Pattern
@@ -51,7 +51,7 @@ export class Pattern {
   }
 
   /**
-   * see `withValue`
+   * see {@link Pattern#withValue}
    * @noAutocomplete
    */
   fmap(func) {
@@ -115,7 +115,7 @@ export class Pattern {
   }
 
   /**
-   * As with `appBoth`, but the `whole` timespan is not the intersection,
+   * As with {@link Pattern#appBoth}, but the `whole` timespan is not the intersection,
    * but the timespan from the function of patterns that this method is called
    * on. In practice, this means that the pattern structure, including onsets,
    * are preserved from the pattern of functions (often referred to as the left
@@ -148,7 +148,7 @@ export class Pattern {
   }
 
   /**
-   * As with `appLeft`, but `whole` timespans are instead taken from the
+   * As with {@link Pattern#appLeft}, but `whole` timespans are instead taken from the
    * pattern of values, i.e. structure is preserved from the right hand/outer
    * pattern.
    * @param {Pattern} pat_val
@@ -387,7 +387,7 @@ export class Pattern {
   }
 
   /**
-   * As with `withQuerySpan`, but the function is applied to both the
+   * As with {@link Pattern#withQuerySpan}, but the function is applied to both the
    * begin and end time of the query timespan.
    * @param {Function} func the function to apply
    * @returns Pattern
@@ -398,7 +398,7 @@ export class Pattern {
   }
 
   /**
-   * Similar to `withQuerySpan`, but the function is applied to the timespans
+   * Similar to {@link Pattern#withQuerySpan}, but the function is applied to the timespans
    * of all haps returned by pattern queries (both `part` timespans, and where
    * present, `whole` timespans).
    * @param {Function} func
@@ -410,7 +410,7 @@ export class Pattern {
   }
 
   /**
-   * As with `withHapSpan`, but the function is applied to both the
+   * As with {@link Pattern#withHapSpan}, but the function is applied to both the
    * begin and end time of the hap timespans.
    * @param {Function} func the function to apply
    * @returns Pattern
@@ -431,7 +431,7 @@ export class Pattern {
   }
 
   /**
-   * As with `withHaps`, but applies the function to every hap, rather than every list of haps.
+   * As with {@link Pattern#withHaps}, but applies the function to every hap, rather than every list of haps.
    * @param {Function} func
    * @returns Pattern
    * @noAutocomplete
@@ -499,7 +499,7 @@ export class Pattern {
   }
 
   /**
-   * As with `filterHaps`, but the function is applied to values
+   * As with {@link Pattern#filterHaps}, but the function is applied to values
    * inside haps.
    * @param {Function} value_test
    * @returns Pattern
@@ -621,7 +621,7 @@ export class Pattern {
   }
 
   /**
-   * More human-readable version of the `firstCycleValues` accessor.
+   * More human-readable version of the {@link Pattern#firstCycleValues} accessor.
    * @noAutocomplete
    */
   get showFirstCycle() {
@@ -691,7 +691,7 @@ export class Pattern {
   // Methods without corresponding toplevel functions
 
   /**
-   * Layers the result of the given function(s). Like `superimpose`, but without the original pattern:
+   * Layers the result of the given function(s). Like {@link Pattern.superimpose}, but without the original pattern:
    * @name layer
    * @memberof Pattern
    * @synonyms apply
@@ -1189,7 +1189,7 @@ export function stack(...pats) {
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle:
  *
- * synonyms: `cat`
+ * synonyms: {@link cat}
  *
  * @return {Pattern}
  * @example
@@ -1244,7 +1244,7 @@ export function cat(...pats) {
   return slowcat(...pats);
 }
 
-/** Like `seq`, but each step has a length, relative to the whole.
+/** Like {@link Pattern.seq}, but each step has a length, relative to the whole.
  * @return {Pattern}
  * @example
  * timeCat([3,"e3"],[1, "g3"]).note() // "e3@3 g3".note()
@@ -1279,7 +1279,7 @@ export function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);
 }
 
-/** See `fastcat` */
+/** See {@link fastcat} */
 export function sequence(...pats) {
   return fastcat(...pats);
 }
@@ -1636,7 +1636,7 @@ export const { fastGap, fastgap } = register(['fastGap', 'fastgap'], function (f
 });
 
 /**
- * Similar to `compress`, but doesn't leave gaps, and the 'focus' can be bigger than a cycle
+ * Similar to compress, but doesn't leave gaps, and the 'focus' can be bigger than a cycle
  * @example
  * s("bd hh sd hh").focus(1/4, 3/4)
  */
@@ -1753,7 +1753,7 @@ export const lastOf = register('lastOf', function (n, func, pat) {
  */
 
 /**
- * An alias for `firstOf`
+ * An alias for {@link firstOf}
  * @name every
  * @memberof Pattern
  * @param {number} n how many cycles
@@ -2365,7 +2365,7 @@ export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (facto
 // It is still here to work in cases where repl.mjs is not used
 /**
  * Makes the sample fit its event duration. Good for rhythmical loops like drum breaks.
- * Similar to `loopAt`.
+ * Similar to loopAt.
  * @name fit
  * @example
  * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })

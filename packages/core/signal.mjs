@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import { Hap } from './hap.mjs';
 import { Pattern, fastcat, reify, silence, stack, register } from './pattern.mjs';
 import Fraction from './fraction.mjs';
-import { id, _mod, clamp, objectMap } from './util.mjs';
+import { id, _mod, clamp } from './util.mjs';
 
 export function steady(value) {
   // A continuous value
@@ -156,88 +156,31 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
  */
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
-const _pick = function (lookup, pat, modulo = true) {
-  const array = Array.isArray(lookup);
-  const len = Object.keys(lookup).length;
+/**
+ * pick from the list of values (or patterns of values) via the index using the given
+ * pattern of integers
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ * @example
+ * note(pick("<0 1 [2!2] 3>", ["g a", "e f", "f g f g" , "g a c d"]))
+ */
 
-  lookup = objectMap(lookup, reify);
-
-  if (len === 0) {
+export const pick = (pat, xs) => {
+  xs = xs.map(reify);
+  if (xs.length == 0) {
     return silence;
   }
-  return pat.fmap((i) => {
-    let key = i;
-    if (array) {
-      key = modulo ? Math.round(key) % len : clamp(Math.round(key), 0, lookup.length - 1);
-    }
-    return lookup[key];
-  });
+  return pat
+    .fmap((i) => {
+      const key = clamp(Math.round(i), 0, xs.length - 1);
+      return xs[key];
+    })
+    .innerJoin();
 };
 
-/** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
- * Similar to `inhabit`, but maintains the structure of the original patterns.
- * @param {Pattern} pat
- * @param {*} xs
- * @returns {Pattern}
- * @example
- * note("<0 1 2!2 3>".pick(["g a", "e f", "f g f g" , "g c d"]))
- * @example
- * sound("<0 1 [2,0]>".pick(["bd sd", "cp cp", "hh hh"]))
- * @example
- * sound("<0!2 [0,1] 1>".pick(["bd(3,8)", "sd sd"]))
- * @example
- * s("<a!2 [a,b] b>".pick({a: "bd(3,8)", b: "sd sd"}))
- */
-
-export const pick = register('pick', function (lookup, pat) {
-  return _pick(lookup, pat, false).innerJoin();
-});
-
-/** * The same as `pick`, but if you pick a number greater than the size of the list,
- * it wraps around, rather than sticking at the maximum value.
- * For example, if you pick the fifth pattern of a list of three, you'll get the
- * second one.
- * @param {Pattern} pat
- * @param {*} xs
- * @returns {Pattern}
- */
-
-export const pickmod = register('pickmod', function (lookup, pat) {
-  return _pick(lookup, pat, true).innerJoin();
-});
-
 /**
-/** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
- * Similar to `pick`, but cycles are squeezed into the target ('inhabited') pattern.
- * @param {Pattern} pat
- * @param {*} xs
- * @returns {Pattern}
- * @example
- * "<a b [a,b]>".inhabit({a: s("bd(3,8)"), 
-                          b: s("cp sd")
-                         })
- * @example
- * s("a@2 [a b] a".inhabit({a: "bd(3,8)", b: "sd sd"})).slow(4)
- */
-export const inhabit = register('inhabit', function (lookup, pat) {
-  return _pick(lookup, pat, true).squeezeJoin();
-});
-
-/** * The same as `inhabit`, but if you pick a number greater than the size of the list,
- * it wraps around, rather than sticking at the maximum value.
- * For example, if you pick the fifth pattern of a list of three, you'll get the
- * second one.
- * @param {Pattern} pat
- * @param {*} xs
- * @returns {Pattern}
- */
-
-export const inhabitmod = register('inhabit', function (lookup, pat) {
-  return _pick(lookup, pat, false).squeezeJoin();
-});
-
-/**
- * Pick from the list of values (or patterns of values) via the index using the given
+ * pick from the list of values (or patterns of values) via the index using the given
  * pattern of integers. The selected pattern will be compressed to fit the duration of the selecting event
  * @param {Pattern} pat
  * @param {*} xs
@@ -413,7 +356,7 @@ export const degradeBy = register('degradeBy', function (x, pat) {
 export const degrade = register('degrade', (pat) => pat._degradeBy(0.5));
 
 /**
- * Inverse of `degradeBy`: Randomly removes events from the pattern by a given amount.
+ * Inverse of {@link Pattern#degradeBy}: Randomly removes events from the pattern by a given amount.
  * 0 = 100% chance of removal
  * 1 = 0% chance of removal
  * Events that would be removed by degradeBy are let through by undegradeBy and vice versa (see second example).
@@ -437,7 +380,7 @@ export const undegrade = register('undegrade', (pat) => pat._undegradeBy(0.5));
 /**
  *
  * Randomly applies the given function by the given probability.
- * Similar to `someCyclesBy`
+ * Similar to {@link Pattern#someCyclesBy}
  *
  * @name sometimesBy
  * @memberof Pattern
@@ -472,7 +415,7 @@ export const sometimes = register('sometimes', function (func, pat) {
 /**
  *
  * Randomly applies the given function by the given probability on a cycle by cycle basis.
- * Similar to `sometimesBy`
+ * Similar to {@link Pattern#sometimesBy}
  *
  * @name someCyclesBy
  * @memberof Pattern
