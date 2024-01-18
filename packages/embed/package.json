@@ -1,5 +1,5 @@
 {
-  "name": "@strudel.cycles/embed",
+  "name": "@strudel/embed",
   "version": "0.10.0",
   "description": "Embeddable Web Component to load a Strudel REPL into an iframe",
   "main": "embed.js",

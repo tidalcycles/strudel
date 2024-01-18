@@ -1,4 +1,4 @@
-import { noteToMidi, freqToMidi, getSoundIndex } from '@strudel.cycles/core';
+import { noteToMidi, freqToMidi, getSoundIndex } from '@strudel/core';
 import {
   getAudioContext,
   registerSound,
@@ -6,7 +6,7 @@ import {
   getADSRValues,
   getPitchEnvelope,
   getVibratoOscillator,
-} from '@strudel.cycles/webaudio';
+} from '@strudel/webaudio';
 import gm from './gm.mjs';
 
 let loadCache = {};

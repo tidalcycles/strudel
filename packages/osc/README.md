@@ -1,6 +1,4 @@
-# @strudel.cycles/osc
-
-**DEPRECATION NOTE**: This package is old and won't get any updates! The newer version goes by the name of [@strudel/osc](https://www.npmjs.com/package/@strudel/osc).
+# @strudel/osc
 
 OSC output for strudel patterns! Currently only tested with super collider / super dirt.
 

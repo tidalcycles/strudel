@@ -1,5 +1,5 @@
 {
-  "name": "@strudel.cycles/webaudio",
+  "name": "@strudel/webaudio",
   "version": "0.10.0",
   "description": "Web Audio helpers for Strudel",
   "main": "index.mjs",
@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "workspace:*",
+    "@strudel/core": "workspace:*",
     "superdough": "workspace:*"
   },
   "devDependencies": {

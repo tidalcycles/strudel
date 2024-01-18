@@ -1,6 +1,4 @@
-# @strudel.cycles/webaudio
-
-**DEPRECATION NOTE**: This package is old and won't get any updates! The newer version goes by the name of [@strudel/webaudio](https://www.npmjs.com/package/@strudel/webaudio).
+# @strudel/webaudio
 
 This package contains helpers to make music with strudel and the Web Audio API.
 It is a thin binding to [superdough](https://www.npmjs.com/package/superdough).
@@ -8,14 +6,14 @@ It is a thin binding to [superdough](https://www.npmjs.com/package/superdough).
 ## Install
 
 ```sh
-npm i @strudel.cycles/webaudio --save
+npm i @strudel/webaudio --save
 ```
 
 ## Example
 
 ```js
-import { repl, controls } from "@strudel.cycles/core";
-import { initAudioOnFirstClick, getAudioContext, webaudioOutput } from "@strudel.cycles/webaudio";
+import { repl, controls } from "@strudel/core";
+import { initAudioOnFirstClick, getAudioContext, webaudioOutput } from "@strudel/webaudio";
 const { note } = controls;
 
 initAudioOnFirstClick();

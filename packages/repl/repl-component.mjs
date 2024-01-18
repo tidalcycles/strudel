@@ -1,6 +1,6 @@
-import { getDrawContext, silence } from '@strudel.cycles/core';
-import { transpiler } from '@strudel.cycles/transpiler';
-import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
+import { getDrawContext, silence } from '@strudel/core';
+import { transpiler } from '@strudel/transpiler';
+import { getAudioContext, webaudioOutput } from '@strudel/webaudio';
 import { StrudelMirror, codemirrorSettings } from '@strudel/codemirror';
 import { prebake } from './prebake.mjs';
 

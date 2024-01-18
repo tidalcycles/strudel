@@ -1,4 +1,4 @@
-import { evaluate as _evaluate } from '@strudel.cycles/core';
+import { evaluate as _evaluate } from '@strudel/core';
 import { transpiler } from './transpiler.mjs';
 export * from './transpiler.mjs';
 

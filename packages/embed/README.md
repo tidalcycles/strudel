@@ -1,15 +1,13 @@
-# @strudel.cycles/embed
-
-**DEPRECATION NOTE**: This package is old and won't get any updates! The newer version goes by the name of [@strudel/embed](https://www.npmjs.com/package/@strudel/embed).
+# @strudel/embed
 
 This package contains a embeddable web component for the Strudel REPL.
 
 ## Usage
 
-Either install with `npm i @strudel.cycles/embed` or just use a cdn to import the script:
+Either install with `npm i @strudel/embed` or just use a cdn to import the script:
 
 ```html
-<script src="https://unpkg.com/@strudel.cycles/embed@latest"></script>
+<script src="https://unpkg.com/@strudel/embed@latest"></script>
 <strudel-repl>
   <!--
 note(`[[e5 [b4 c5] d5 [c5 b4]]

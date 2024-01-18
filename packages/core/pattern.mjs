@@ -1154,8 +1154,8 @@ export function isPattern(thing) {
   /* if (!thing instanceof Pattern) {
     console.warn(
       `Found Pattern that fails "instanceof Pattern" check.
-      This may happen if you are using multiple versions of @strudel.cycles/core. 
-      Please check by running "npm ls @strudel.cycles/core".`,
+      This may happen if you are using multiple versions of @strudel/core.
+      Please check by running "npm ls @strudel/core".`,
     );
     console.log(thing);
   } */

@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Note, Interval, Scale } from '@tonaljs/tonal';
-import { register, _mod, silence, logger, pure, isNote } from '@strudel.cycles/core';
+import { register, _mod, silence, logger, pure, isNote } from '@strudel/core';
 import { stepInNamedScale } from './tonleiter.mjs';
 
 const octavesInterval = (octaves) => (octaves <= 0 ? -1 : 1) + octaves * 7 + 'P';

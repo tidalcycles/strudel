@@ -27,7 +27,7 @@ npm i @strudel/hydra
 Then add the import to your evalScope:
 
 ```js
-import { evalScope } from '@strudel.cycles/core';
+import { evalScope } from '@strudel/core';
 
 evalScope(
   import('@strudel/hydra')
