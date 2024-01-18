@@ -159,9 +159,7 @@ export function registerSoundfonts() {
         // vibrato
         let vibratoOscillator = getVibratoOscillator(bufferSource.detune, value, time);
         // pitch envelope
-        if (value.penv) {
-          getPitchEnvelope(bufferSource.detune, value, time, holdEnd);
-        }
+        getPitchEnvelope(bufferSource.detune, value, time, holdEnd);
 
         bufferSource.stop(envEnd);
         const stop = (releaseTime) => {};

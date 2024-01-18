@@ -182,10 +182,7 @@ export function getOscillator(s, t, value) {
   let vibratoOscillator = getVibratoOscillator(o.detune, value, t);
 
   // pitch envelope
-  if (value.penv) {
-    const holdEnd = t + duration;
-    getPitchEnvelope(o.detune, value, t, holdEnd);
-  }
+  getPitchEnvelope(o.detune, value, t, t + duration);
 
   let noiseMix;
   if (noise) {

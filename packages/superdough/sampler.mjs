@@ -299,9 +299,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, t, holdEnd, 'linear');
 
   // pitch envelope
-  if (value.penv) {
-    getPitchEnvelope(bufferSource.detune, value, t, holdEnd);
-  }
+  getPitchEnvelope(bufferSource.detune, value, t, holdEnd);
 
   const out = ac.createGain(); // we need a separate gain for the cutgroups because firefox...
   node.connect(out);
