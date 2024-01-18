@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = { post: CollectionEntry<'blog'> };
 
 const { post } = Astro.props;
 const { Content } = await post.render();
@@ -9,7 +9,7 @@ import { format } from 'date-fns';
 ---
 
 <article
-  class="prose max-w-none prose-headings:font-sans prose-headings:font-black prose-headings:text-slate-900 dark:prose-headings:text-gray-200 dark:text-gray-400 dark:prose-strong:text-gray-400 dark:prose-code:text-slate-400 dark:prose-a:text-gray-300 prose-a:text-slate-900 prose-blockquote:text-slate-800 dark:prose-blockquote:text-slate-400"
+  class="prose max-w-none prose-headings:font-sans prose-headings:font-black prose-headings:text-slate-900 dark:prose-headings:text-gray-200 dark:text-gray-400 dark:prose-strong:text-gray-400 dark:prose-code:text-slate-400 dark:prose-a:text-gray-300 prose-a:text-slate-900 prose-blockquote:text-slate-800 dark:prose-blockquote:text-slate-400 border-b-4 border-lineHighlight pt-4"
 >
   <div class="pb-2">
     <div class="md:flex justify-between">
