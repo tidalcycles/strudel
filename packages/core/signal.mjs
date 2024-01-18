@@ -158,7 +158,7 @@ export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
 /**
  * pick from the list of values (or patterns of values) via the index using the given
- * pattern of integers
+ * pattern of integers. Similar to `inhabit`.
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
@@ -180,7 +180,25 @@ export const pick = (pat, xs) => {
 };
 
 /**
- * pick from the list of values (or patterns of values) via the index using the given
+ * Picks patterns by name, using a lookup table. Similar to `pick`,
+ * but uses names rather than numbers.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ * @example
+ * "<a b [a,b]>".inhabit({a: s("bd(3,8)"), 
+                          b: s("cp sd")
+                         })
+ */
+export const inhabit = register('inhabit', function (lookup, pat) {
+  for (const key of Object.keys(lookup)) {
+     lookup[key] = reify(lookup[key]);
+  }
+  return pat.fmap(x => lookup[x] ?? silence).innerJoin();
+});
+
+/**
+ * Pick from the list of values (or patterns of values) via the index using the given
  * pattern of integers. The selected pattern will be compressed to fit the duration of the selecting event
  * @param {Pattern} pat
  * @param {*} xs
@@ -356,7 +374,7 @@ export const degradeBy = register('degradeBy', function (x, pat) {
 export const degrade = register('degrade', (pat) => pat._degradeBy(0.5));
 
 /**
- * Inverse of {@link Pattern#degradeBy}: Randomly removes events from the pattern by a given amount.
+ * Inverse of `degradeBy`: Randomly removes events from the pattern by a given amount.
  * 0 = 100% chance of removal
  * 1 = 0% chance of removal
  * Events that would be removed by degradeBy are let through by undegradeBy and vice versa (see second example).
@@ -380,7 +398,7 @@ export const undegrade = register('undegrade', (pat) => pat._undegradeBy(0.5));
 /**
  *
  * Randomly applies the given function by the given probability.
- * Similar to {@link Pattern#someCyclesBy}
+ * Similar to `someCyclesBy`
  *
  * @name sometimesBy
  * @memberof Pattern
@@ -415,7 +433,7 @@ export const sometimes = register('sometimes', function (func, pat) {
 /**
  *
  * Randomly applies the given function by the given probability on a cycle by cycle basis.
- * Similar to {@link Pattern#sometimesBy}
+ * Similar to `sometimesBy`
  *
  * @name someCyclesBy
  * @memberof Pattern
