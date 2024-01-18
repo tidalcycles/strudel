@@ -1,5 +1,12 @@
 import { noteToMidi, freqToMidi, getSoundIndex } from '@strudel.cycles/core';
-import { getAudioContext, registerSound, getEnvelope } from '@strudel.cycles/webaudio';
+import {
+  getAudioContext,
+  registerSound,
+  getParamADSR,
+  getADSRValues,
+  getPitchEnvelope,
+  getVibratoOscillator,
+} from '@strudel.cycles/webaudio';
 import gm from './gm.mjs';
 
 let loadCache = {};
@@ -130,24 +137,39 @@ export function registerSoundfonts() {
     registerSound(
       name,
       async (time, value, onended) => {
+        const [attack, decay, sustain, release] = getADSRValues([
+          value.attack,
+          value.decay,
+          value.sustain,
+          value.release,
+        ]);
+
+        const { duration } = value;
         const n = getSoundIndex(value.n, fonts.length);
-        const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
         const font = fonts[n];
         const ctx = getAudioContext();
         const bufferSource = await getFontBufferSource(font, value, ctx);
         bufferSource.start(time);
-        const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 0.3, time);
-        bufferSource.connect(envelope);
-        const stop = (releaseTime) => {
-          const silentAt = releaseEnvelope(releaseTime);
-          bufferSource.stop(silentAt);
-        };
+        const envGain = ctx.createGain();
+        const node = bufferSource.connect(envGain);
+        const holdEnd = time + duration;
+        getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3, time, holdEnd, 'linear');
+        let envEnd = holdEnd + release + 0.01;
+
+        // vibrato
+        let vibratoOscillator = getVibratoOscillator(bufferSource.detune, value, time);
+        // pitch envelope
+        getPitchEnvelope(bufferSource.detune, value, time, holdEnd);
+
+        bufferSource.stop(envEnd);
+        const stop = (releaseTime) => {};
         bufferSource.onended = () => {
           bufferSource.disconnect();
-          envelope.disconnect();
+          vibratoOscillator?.stop();
+          node.disconnect();
           onended();
         };
-        return { node: envelope, stop };
+        return { node, stop };
       },
       { type: 'soundfont', prebake: true, fonts },
     );

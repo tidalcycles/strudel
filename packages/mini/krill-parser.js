@@ -292,7 +292,7 @@ function peg$parse(input, options) {
   var peg$f3 = function(s) { return s };
   var peg$f4 = function(s, stepsPerCycle) { s.arguments_.stepsPerCycle = stepsPerCycle ; return s; };
   var peg$f5 = function(a) { return a };
-  var peg$f6 = function(s) { s.arguments_.alignment = 'slowcat'; return s; };
+  var peg$f6 = function(s) { s.arguments_.alignment = 'polymeter_slowcat'; return s; };
   var peg$f7 = function(a) { return x => x.options_['weight'] = a };
   var peg$f8 = function(a) { return x => x.options_['reps'] = a };
   var peg$f9 = function(p, s, r) { return x => x.options_['ops'].push({ type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r }}) };
@@ -1073,7 +1073,7 @@ function peg$parse(input, options) {
     }
     if (s2 !== peg$FAILED) {
       s3 = peg$parsews();
-      s4 = peg$parsesequence();
+      s4 = peg$parsepolymeter_stack();
       if (s4 !== peg$FAILED) {
         s5 = peg$parsews();
         if (input.charCodeAt(peg$currPos) === 62) {

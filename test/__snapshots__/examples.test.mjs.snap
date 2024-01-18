@@ -3332,6 +3332,55 @@ exports[`runs examples > example "pan" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "panchor" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c penv:12 panchor:0 ]",
+  "[ 1/1 → 2/1 | note:c penv:12 panchor:0.5 ]",
+  "[ 2/1 → 3/1 | note:c penv:12 panchor:1 ]",
+  "[ 3/1 → 4/1 | note:c penv:12 panchor:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "pattack" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c pattack:0 ]",
+  "[ 1/1 → 2/1 | note:eb pattack:0.1 ]",
+  "[ 2/1 → 3/1 | note:g pattack:0.25 ]",
+  "[ 3/1 → 4/1 | note:bb pattack:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "pcurve" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:0 ]",
+  "[ 1/2 → 1/1 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:0 ]",
+  "[ 1/1 → 3/2 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:1 ]",
+  "[ 3/2 → 2/1 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:1 ]",
+  "[ 2/1 → 5/2 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:0 ]",
+  "[ 5/2 → 3/1 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:0 ]",
+  "[ 3/1 → 7/2 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:1 ]",
+  "[ 7/2 → 4/1 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:1 ]",
+]
+`;
+
+exports[`runs examples > example "pdecay" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c pdecay:0 ]",
+  "[ 1/1 → 2/1 | note:eb pdecay:0.1 ]",
+  "[ 2/1 → 3/1 | note:g pdecay:0.25 ]",
+  "[ 3/1 → 4/1 | note:bb pdecay:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "penv" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c penv:12 ]",
+  "[ 1/1 → 2/1 | note:c penv:7 ]",
+  "[ 2/1 → 3/1 | note:c penv:1 ]",
+  "[ 3/1 → 4/1 | note:c penv:0.5 ]",
+]
+`;
+
 exports[`runs examples > example "perlin" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | s:hh cutoff:512.5097280354112 ]",
@@ -3657,6 +3706,15 @@ exports[`runs examples > example "postgain" example index 0 1`] = `
   "[ 7/2 → 15/4 | s:hh compressor:-20 compressorRatio:20 compressorKnee:10 compressorAttack:0.002 compressorRelease:0.02 postgain:1.5 ]",
   "[ 7/2 → 4/1 | s:sd compressor:-20 compressorRatio:20 compressorKnee:10 compressorAttack:0.002 compressorRelease:0.02 postgain:1.5 ]",
   "[ 15/4 → 4/1 | s:hh compressor:-20 compressorRatio:20 compressorKnee:10 compressorAttack:0.002 compressorRelease:0.02 postgain:1.5 ]",
+]
+`;
+
+exports[`runs examples > example "prelease" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | note:c release:0.5 prelease:0 ]",
+  "[ 1/1 → 3/2 | note:eb release:0.5 prelease:0.1 ]",
+  "[ 2/1 → 5/2 | note:g release:0.5 prelease:0.25 ]",
+  "[ 3/1 → 7/2 | note:bb release:0.5 prelease:0.5 ]",
 ]
 `;
 

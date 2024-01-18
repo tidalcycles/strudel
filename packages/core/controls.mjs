@@ -234,7 +234,7 @@ const generic_params = [
    * note("c3 e3").decay("<.1 .2 .3 .4>").sustain(0)
    *
    */
-  ['decay'],
+  ['decay', 'dec'],
   /**
    * Amplitude envelope sustain level: The level which is reached after attack / decay, being sustained until the offset.
    *
@@ -270,7 +270,7 @@ const generic_params = [
    * s("bd sd,hh*3").bpf("<1000 2000 4000 8000>")
    *
    */
-  [['bandf', 'bandq'], 'bpf', 'bp'],
+  [['bandf', 'bandq', 'bpenv'], 'bpf', 'bp'],
   // TODO: in tidal, it seems to be normalized
   /**
    * Sets the **b**and-**p**ass **q**-factor (resonance).
@@ -481,7 +481,7 @@ const generic_params = [
    * s("bd*8").lpf("1000:0 1000:10 1000:20 1000:30")
    *
    */
-  [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
+  [['cutoff', 'resonance', 'lpenv'], 'ctf', 'lpf', 'lp'],
 
   /**
    * Sets the lowpass filter envelope modulation depth.
@@ -758,7 +758,7 @@ const generic_params = [
    * .vibmod("<.25 .5 1 2 12>:8")
    */
   [['vibmod', 'vib'], 'vmod'],
-  [['hcutoff', 'hresonance'], 'hpf', 'hp'],
+  [['hcutoff', 'hresonance', 'hpenv'], 'hpf', 'hp'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
    *
@@ -891,6 +891,82 @@ const generic_params = [
    *
    */
   ['freq'],
+  // pitch envelope
+  /**
+   * Attack time of pitch envelope.
+   *
+   * @name pattack
+   * @synonyms patt
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("<c eb g bb>").pattack("<0 .1 .25 .5>")
+   *
+   */
+  ['pattack', 'patt'],
+  /**
+   * Decay time of pitch envelope.
+   *
+   * @name pdecay
+   * @synonyms pdec
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("<c eb g bb>").pdecay("<0 .1 .25 .5>")
+   *
+   */
+  ['pdecay', 'pdec'],
+  // TODO: how to use psustain?!
+  ['psustain', 'psus'],
+  /**
+   * Release time of pitch envelope
+   *
+   * @name prelease
+   * @synonyms prel
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("<c eb g bb> ~")
+   * .release(.5) // to hear the pitch release
+   * .prelease("<0 .1 .25 .5>")
+   *
+   */
+  ['prelease', 'prel'],
+  /**
+   * Amount of pitch envelope. Negative values will flip the envelope.
+   * If you don't set other pitch envelope controls, `pattack:.2` will be the default.
+   *
+   * @name penv
+   * @param {number | Pattern} semitones change in semitones
+   * @example
+   * note("c")
+   * .penv("<12 7 1 .5 0 -1 -7 -12>")
+   *
+   */
+  ['penv'],
+  /**
+   * Curve of envelope. Defaults to linear. exponential is good for kicks
+   *
+   * @name pcurve
+   * @param {number | Pattern} type 0 = linear, 1 = exponential
+   * @example
+   * note("g1*2")
+   * .s("sine").pdec(.5)
+   * .penv(32)
+   * .pcurve("<0 1>")
+   *
+   */
+  ['pcurve'],
+  /**
+   * Sets the range anchor of the envelope:
+   * - anchor 0: range = [note, note + penv]
+   * - anchor 1: range = [note - penv, note]
+   * If you don't set an anchor, the value will default to the psustain value.
+   *
+   * @name panchor
+   * @param {number | Pattern} anchor anchor offset
+   * @example
+   * note("c").penv(12).panchor("<0 .5 1 .5>")
+   *
+   */
+  ['panchor'],
   // TODO: https://tidalcycles.org/docs/configuration/MIDIOSC/control-voltage/#gate
   ['gate', 'gat'],
   // ['hatgrain'],
@@ -1209,7 +1285,7 @@ const generic_params = [
    * Formant filter to make things sound like vowels.
    *
    * @name vowel
-   * @param {string | Pattern} vowel You can use a e i o u.
+   * @param {string | Pattern} vowel You can use a e i o u ae aa oe ue y uh un en an on, corresponding to [a] [e] [i] [o] [u] [æ] [ɑ] [ø] [y] [ɯ] [ʌ] [œ̃] [ɛ̃] [ɑ̃] [ɔ̃]. Aliases: aa = å = ɑ, oe = ø = ö, y = ı, ae = æ.
    * @example
    * note("c2 <eb2 <g2 g1>>").s('sawtooth')
    * .vowel("<a e i <o u>>")
@@ -1394,10 +1470,20 @@ controls.adsr = register('adsr', (adsr, pat) => {
   const [attack, decay, sustain, release] = adsr;
   return pat.set({ attack, decay, sustain, release });
 });
-controls.ds = register('ds', (ds, pat) => {
-  ds = !Array.isArray(ds) ? [ds] : ds;
-  const [decay, sustain] = ds;
+controls.ad = register('ad', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [attack, decay = attack] = t;
+  return pat.attack(attack).decay(decay);
+});
+controls.ds = register('ds', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [decay, sustain = 0] = t;
   return pat.set({ decay, sustain });
+});
+controls.ds = register('ar', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [attack, release = attack] = t;
+  return pat.set({ attack, release });
 });
 
 export default controls;

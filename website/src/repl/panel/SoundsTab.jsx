@@ -57,32 +57,36 @@ export function SoundsTab() {
         <ImportSoundsButton onComplete={() => settingsMap.setKey('soundsFilter', 'user')} />
       </div>
       <div className="min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal">
-        {soundEntries.map(([name, { data, onTrigger }]) => (
-          <span
-            key={name}
-            className="cursor-pointer hover:opacity-50"
-            onMouseDown={async () => {
-              const ctx = getAudioContext();
-              const params = {
-                note: ['synth', 'soundfont'].includes(data.type) ? 'a3' : undefined,
-                s: name,
-                clip: 1,
-                release: 0.5,
-              };
-              const time = ctx.currentTime + 0.05;
-              const onended = () => trigRef.current?.node?.disconnect();
-              trigRef.current = Promise.resolve(onTrigger(time, params, onended));
-              trigRef.current.then((ref) => {
-                connectToDestination(ref?.node);
-              });
-            }}
-          >
-            {' '}
-            {name}
-            {data?.type === 'sample' ? `(${getSamples(data.samples)})` : ''}
-            {data?.type === 'soundfont' ? `(${data.fonts.length})` : ''}
-          </span>
-        ))}
+        {soundEntries.map(([name, { data, onTrigger }]) => {
+          return (
+            <span
+              key={name}
+              className="cursor-pointer hover:opacity-50"
+              onMouseDown={async () => {
+                const ctx = getAudioContext();
+                const params = {
+                  note: ['synth', 'soundfont'].includes(data.type) ? 'a3' : undefined,
+                  s: name,
+                  clip: 1,
+                  release: 0.5,
+                  sustain: 1,
+                  duration: 0.5,
+                };
+                const time = ctx.currentTime + 0.05;
+                const onended = () => trigRef.current?.node?.disconnect();
+                trigRef.current = Promise.resolve(onTrigger(time, params, onended));
+                trigRef.current.then((ref) => {
+                  connectToDestination(ref?.node);
+                });
+              }}
+            >
+              {' '}
+              {name}
+              {data?.type === 'sample' ? `(${getSamples(data.samples)})` : ''}
+              {data?.type === 'soundfont' ? `(${data.fonts.length})` : ''}
+            </span>
+          );
+        })}
         {!soundEntries.length ? 'No custom sounds loaded in this pattern (yet).' : ''}
       </div>
     </div>

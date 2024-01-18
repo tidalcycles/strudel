@@ -1,6 +1,6 @@
 import { noteToMidi, valueToMidi, getSoundIndex } from './util.mjs';
 import { getAudioContext, registerSound } from './index.mjs';
-import { getEnvelope } from './helpers.mjs';
+import { getADSRValues, getParamADSR, getPitchEnvelope, getVibratoOscillator } from './helpers.mjs';
 import { logger } from './logger.mjs';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
@@ -243,8 +243,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     begin = 0,
     loopEnd = 1,
     end = 1,
-    vib,
-    vibmod = 0.5,
+    duration,
   } = value;
   // load sample
   if (speed === 0) {
@@ -254,24 +253,15 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   loop = s.startsWith('wt_') ? 1 : value.loop;
   const ac = getAudioContext();
   // destructure adsr here, because the default should be different for synths and samples
-  const { attack = 0.001, decay = 0.001, sustain = 1, release = 0.001 } = value;
+
+  let [attack, decay, sustain, release] = getADSRValues([value.attack, value.decay, value.sustain, value.release]);
   //const soundfont = getSoundfontKey(s);
   const time = t + nudge;
 
   const bufferSource = await getSampleBufferSource(s, n, note, speed, freq, bank, resolveUrl);
 
   // vibrato
-  let vibratoOscillator;
-  if (vib > 0) {
-    vibratoOscillator = getAudioContext().createOscillator();
-    vibratoOscillator.frequency.value = vib;
-    const gain = getAudioContext().createGain();
-    // Vibmod is the amount of vibrato, in semitones
-    gain.gain.value = vibmod * 100;
-    vibratoOscillator.connect(gain);
-    gain.connect(bufferSource.detune);
-    vibratoOscillator.start(0);
-  }
+  let vibratoOscillator = getVibratoOscillator(bufferSource.detune, value, t);
 
   // asny stuff above took too long?
   if (ac.currentTime > t) {
@@ -298,26 +288,31 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     bufferSource.loopEnd = loopEnd * bufferSource.buffer.duration - offset;
   }
   bufferSource.start(time, offset);
-  const { node: envelope, stop: releaseEnvelope } = getEnvelope(attack, decay, sustain, release, 1, t);
-  bufferSource.connect(envelope);
+  const envGain = ac.createGain();
+  const node = bufferSource.connect(envGain);
+  if (clip == null && loop == null && value.release == null) {
+    const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
+    duration = (end - begin) * bufferDuration;
+  }
+  let holdEnd = t + duration;
+
+  getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, t, holdEnd, 'linear');
+
+  // pitch envelope
+  getPitchEnvelope(bufferSource.detune, value, t, holdEnd);
+
   const out = ac.createGain(); // we need a separate gain for the cutgroups because firefox...
-  envelope.connect(out);
+  node.connect(out);
   bufferSource.onended = function () {
     bufferSource.disconnect();
     vibratoOscillator?.stop();
-    envelope.disconnect();
+    node.disconnect();
     out.disconnect();
     onended();
   };
-  const stop = (endTime, playWholeBuffer = clip === undefined && loop === undefined) => {
-    let releaseTime = endTime;
-    if (playWholeBuffer) {
-      const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
-      releaseTime = t + (end - begin) * bufferDuration;
-    }
-    const silentAt = releaseEnvelope(releaseTime);
-    bufferSource.stop(silentAt);
-  };
+  let envEnd = holdEnd + release + 0.01;
+  bufferSource.stop(envEnd);
+  const stop = (endTime, playWholeBuffer) => {};
   const handle = { node: out, bufferSource, stop };
 
   // cut groups
