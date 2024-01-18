@@ -31,10 +31,10 @@ export const getParamADSR = (
   decay = nanFallback(decay);
   sustain = nanFallback(sustain);
   release = nanFallback(release);
-
   const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
   if (curve === 'exponential') {
-    min = Math.max(0.0001, min);
+    min = min === 0 ? 0.001 : min;
+    max = max === 0 ? 0.001 : max;
   }
   const range = max - min;
   const peak = max;
@@ -42,12 +42,17 @@ export const getParamADSR = (
   const duration = end - begin;
 
   const envValAtTime = (time) => {
+    let val;
     if (attack > time) {
       let slope = getSlope(min, peak, 0, attack);
-      return time * slope + (min > peak ? min : 0);
+      val = time * slope + (min > peak ? min : 0);
     } else {
-      return (time - attack) * getSlope(peak, sustainVal, 0, decay) + peak;
+      val = (time - attack) * getSlope(peak, sustainVal, 0, decay) + peak;
     }
+    if (curve === 'exponential') {
+      val = val || 0.001;
+    }
+    return val;
   };
 
   param.setValueAtTime(min, begin);
@@ -147,20 +152,23 @@ export function drywet(dry, wet, wetAmount = 0) {
 
 let curves = ['linear', 'exponential'];
 export function getPitchEnvelope(param, value, t, holdEnd) {
-  if (value.penv) {
-    let [pattack, pdecay, psustain, prelease] = getADSRValues([
-      value.pattack,
-      value.pdecay,
-      value.psustain,
-      value.prelease,
-    ]);
-    let panchor = value.panchor ?? psustain;
-    const cents = value.penv * 100; // penv is in semitones
-    const min = 0 - cents * panchor;
-    const max = cents - cents * panchor;
-    const curve = curves[value.pcurve ?? 0];
-    getParamADSR(param, pattack, pdecay, psustain, prelease, min, max, t, holdEnd, curve);
+  // envelope is active when any of these values is set
+  const hasEnvelope = value.pattack ?? value.pdecay ?? value.psustain ?? value.prelease ?? value.penv;
+  if (!hasEnvelope) {
+    return;
   }
+  const penv = nanFallback(value.penv, 1, true);
+  const curve = curves[value.pcurve ?? 0];
+  let [pattack, pdecay, psustain, prelease] = getADSRValues(
+    [value.pattack, value.pdecay, value.psustain, value.prelease],
+    curve,
+    [0.2, 0.001, 1, 0.001],
+  );
+  let panchor = value.panchor ?? psustain;
+  const cents = penv * 100; // penv is in semitones
+  const min = 0 - cents * panchor;
+  const max = cents - cents * panchor;
+  getParamADSR(param, pattack, pdecay, psustain, prelease, min, max, t, holdEnd, curve);
 }
 
 export function getVibratoOscillator(param, value, t) {
