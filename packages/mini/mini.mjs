@@ -107,6 +107,9 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
       if (alignment === 'rand') {
         return strudel.chooseInWith(strudel.rand.early(randOffset * ast.arguments_.seed).segment(1), children);
       }
+      if (alignment === 'feet') {
+        return strudel.fastcat(...children);
+      }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
       if (weightedChildren) {
         const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
