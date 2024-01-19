@@ -10,14 +10,24 @@ import { supabase } from './repl/util.mjs';
 export let $publicPatterns = atom([]);
 export let $featuredPatterns = atom([]);
 const userPatternCollectionName = 'user';
-export let $viewingPatternData = atom({ id: null, code: null, collection: userPatternCollectionName });
+export let $viewingPatternData = persistentAtom(
+  'viewingPatternData',
+  {
+    id: '',
+    code: '',
+    collection: userPatternCollectionName,
+    created_at: Date.now(),
+  },
+  { listen: false },
+);
 
 export const getViewingPatternData = () => {
+  console.log(JSON.parse($viewingPatternData.get()));
   return $viewingPatternData.get();
 };
 
 export const setViewingPatternData = (data) => {
-  $viewingPatternData.set(data);
+  $viewingPatternData.set(JSON.stringify(data));
 };
 
 export function loadPublicPatterns() {
@@ -107,7 +117,7 @@ export const userPattern = {
   },
   createAndAddToDB() {
     const newPattern = this.create();
-    this.update(newPattern.id, newPattern.data);
+    return this.update(newPattern.id, newPattern.data);
   },
 
   update(id, data) {
