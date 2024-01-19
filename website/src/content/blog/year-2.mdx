@@ -85,7 +85,7 @@ Let's talk about some of the major features that landed since last year.
 
 The audio engine has gotten a lot of attention! Once integrated into Strudel itself, the engine has been pulled out and named [superdough](https://www.npmjs.com/package/superdough),
 the name being based on [SuperDirt](https://github.com/musikinformatik/SuperDirt), which is the audio engine of Tidal.
-superdough is now also used by [topos](https://topos.live/), a creation of [Bubo](https://github.com/Bubobubobubobubo/), who helped me implement a bunch of new features.
+superdough is now also used by [topos](https://topos.live/), a creation of [Raphaël Forment](https://github.com/Bubobubobubobubo/), who helped me implement a bunch of new features.
 Lately, [Jade Rowland](https://github.com/daslyfe) has also developed many synthesis features into superdough! Here is a non-exhaustive list of new features:
 
 - [filter envelopes](https://strudel.cc/learn/effects/#filter-envelope) + [24db filter option](https://strudel.cc/learn/effects/#ftype)
@@ -158,4 +158,56 @@ The pianoroll also got some more options, including the ability to set labels:
 
 ![scope](/img/strudel-monkeys.png)
 
-https://kidscodecs.com/strudel-music-language/
+### Sliders
+
+The `slider` is the first of a family of functions that render UI widgets inline:
+
+<MiniRepl
+  client:visible
+  tune={`note("c eb g bb")
+  .s("sawtooth").lpenv(2).lpq(8)
+  .lpf(slider(500, 100, 2000, 1))`}
+/>
+
+Sliders are especially useful for gradual changes like fading things in and out by hand,
+which is not very practical with just code. The fact that the slider is inside the code and also changes the code itself,
+makes it feel connected with the rest of the system + doesn't distract or obstruct from the code.
+Other widgets will come for sure.
+
+### More Voicings
+
+One of my personal goals that got me involved with live coding in the first place is to be able to generate good sounding chord voicings on the fly.
+Strudel now supports most chord symbols:
+
+<MiniRepl
+  client:visible
+  tune={`chord("<C^9 C7b9 Fm9 Db^7>/4")
+  .dict('ireal').voicing()
+  .s("sawtooth")
+  .lpf(400).lpa(.5).lpenv(4)
+  .phaser(4).room(.5)`}
+/>
+
+So far, this is only [documented briefly](https://strudel.cc/learn/tonal/#voicing), a more in-depth guide will follow!
+
+### More
+
+- pwa / offline support
+- experimental desktop app
+- most tidal functions ported + some new ones
+- better midi support: midi cc out, midi cc in, midi clock out
+- hydra
+- better docs: search, showcase, blog
+- vscode plugin: https://marketplace.visualstudio.com/items?itemName=roipoussiere.tidal-strudel
+- flok
+
+- solstice stream
+- dough dream
+
+- fiddle: https://cannerycoders.com/docs/fiddle/interface/strudel.html
+- topfenstrudel: https://addons.mozilla.org/de/firefox/addon/topfenstrudel/
+- jaffle: https://roipoussiere.frama.io/jaffle/ / https://club.tidalcycles.org/t/introducing-jaffle-a-node-editor-for-tidal-strudel/4774
+
+- alex / alpaca: https://algorithmicpattern.org/2023/05/15/strudel-live-coding-patterns-on-the-web/
+- https://kidscodecs.com/strudel-music-language/ (beanz kids magazine)
+- strudel is now on mastodon
