@@ -107,7 +107,7 @@ quote = '"' / "'"
 step_char "a letter, a number, \"-\", \"#\", \".\", \"^\", \"_\"" = 
   unicode_letter / [0-9~] / "-" / "#" / "." / "^" / "_"
 
-step = ws chars:step_char+ ws !{ return chars.join("") === "." } { return new AtomStub(chars.join("")) }
+step = ws chars:step_char+ ws !{ const s = chars.join(""); return (s === ".") || (s === "_") } { return new AtomStub(chars.join("")) }
 
 // define a sub cycle e.g. [1 2, 3 [4]]
 sub_cycle = ws  "[" ws s:stack_or_choose ws "]" ws { return s }
@@ -131,11 +131,14 @@ slice = step / sub_cycle / polymeter / slow_sequence
 // at this point, we assume we can represent them as regular sequence operators
 slice_op = op_weight / op_bjorklund / op_slow / op_fast / op_replicate / op_tail / op_degrade / op_range
 
-op_weight =  "@" a:number
-  { return x => x.options_['weight'] = a }
+// op_weight =  "@" a:number
+//  { return x => x.options_['weight'] = a }
+
+op_weight = ws ("@" / "_") a:number?
+  { return x => x.options_['weight'] = (x.options_['weight'] ?? 1) + (a ?? 2) - 1 }
   
-op_replicate = "!"a:number
-  { return x => x.options_['reps'] = a }
+op_replicate = ws "!" a:number?
+  { return x => x.options_['reps'] = (x.options_['reps'] ?? 1) + (a ?? 2) - 1 }
 
 op_bjorklund = "(" ws p:slice_with_ops ws comma ws s:slice_with_ops ws comma? ws r:slice_with_ops? ws ")"
   { return x => x.options_['ops'].push({ type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r }}) }
