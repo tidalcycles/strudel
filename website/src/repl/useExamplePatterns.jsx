@@ -1,34 +1,23 @@
-import { examplePattern, $featuredPatterns, $publicPatterns } from '../settings.mjs';
+import { $featuredPatterns, $publicPatterns } from '../user_pattern_utils.mjs';
 import { useStore } from '@nanostores/react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
+import * as tunes from '../repl/tunes.mjs';
 
 export const useExamplePatterns = () => {
   const featuredPatterns = useStore($featuredPatterns);
   const publicPatterns = useStore($publicPatterns);
   const collections = useMemo(() => {
+    const stockPatterns = Object.fromEntries(Object.entries(tunes).map(([key, code], i) => [i, { id: i, code }]));
     const pats = new Map();
     pats.set('Featured', featuredPatterns);
     pats.set('Last Creations', publicPatterns);
-    pats.set(examplePattern.source, examplePattern.getAll());
+    pats.set('Stock Examples', stockPatterns);
     return pats;
   }, [featuredPatterns, publicPatterns]);
 
   const patterns = useMemo(() => {
-    const allPatterns = Object.assign({}, ...collections.values());
-    return allPatterns;
+    return Object.assign({}, ...collections.values());
   }, [collections]);
-
-  //   const examplePatterns = examplePattern.getAll();
-
-  //   const collections = new Map();
-  //   collections.set('Featured', featuredPatterns);
-  //   collections.set('Last Creations', publicPatterns);
-  //   collections.set(examplePattern.source, examplePatterns);
-  //   const patterns = {
-  //     ...examplePatterns,
-  //     ...publicPatterns,
-  //     ...examplePatterns,
-  //   };
 
   return { patterns, collections };
 };

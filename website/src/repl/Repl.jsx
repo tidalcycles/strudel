@@ -12,18 +12,17 @@ import { defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { settingsMap, useSettings } from '../settings.mjs';
 import {
   initUserCode,
   setActivePattern,
   setLatestCode,
-  settingsMap,
-  useSettings,
-  getViewingPattern,
   setViewingPattern,
   createPatternID,
   userPattern,
-  getNextCloneID,
-} from '../settings.mjs';
+  getViewingPatternData,
+  setViewingPatternData,
+} from '../user_pattern_utils.mjs';
 import { Header } from './Header';
 import Loader from './Loader';
 import { Panel } from './panel/Panel';
@@ -32,12 +31,8 @@ import { prebake } from './prebake.mjs';
 import { getRandomTune, initCode, loadModules, shareCode, ReplContext } from './util.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
-import { useExamplePatterns } from './useExamplePatterns';
 
 const { code: randomTune, name } = getRandomTune();
-
-//
-
 const { latestCode } = settingsMap.get();
 
 let modulesLoading, presets, drawContext, clearCanvas, isIframe;
@@ -49,8 +44,6 @@ if (typeof window !== 'undefined') {
   clearCanvas = () => drawContext.clearRect(0, 0, drawContext.canvas.height, drawContext.canvas.width);
   isIframe = window.location !== window.parent.location;
 }
-
-let viewingPatternData = { id: '', code: null, collection: userPattern.source };
 
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || isIframe;
@@ -83,23 +76,24 @@ export function Repl({ embedded = false }) {
         const { code } = all;
         setLatestCode(code);
         window.location.hash = '#' + code2hash(code);
+        const viewingPatternData = getViewingPatternData();
 
         const data = { ...viewingPatternData, code };
-        let id = getViewingPattern();
-        const isExamplePattern = viewingPatternData.collection != userPattern.source;
+        let id = data.id;
+        const isExamplePattern = viewingPatternData.collection !== userPattern.collection;
 
         if (isExamplePattern) {
           const codeHasChanged = code !== viewingPatternData.code;
           if (codeHasChanged) {
             // fork example
-            id = getNextCloneID(id);
+            id = createPatternID();
             setViewingPattern(id);
-            viewingPatternData = userPattern.update(id, data).data;
+            setViewingPatternData(userPattern.update(id, data).data);
           }
         } else {
           id = id == null ? createPatternID() : id;
           setViewingPattern(id);
-          viewingPatternData = userPattern.update(id, data).data;
+          setViewingPatternData(userPattern.update(id, data).data);
         }
         setActivePattern(id);
       },
@@ -176,7 +170,7 @@ export function Repl({ embedded = false }) {
   };
 
   const handleUpdate = async (id, data, reset = false) => {
-    viewingPatternData = data;
+    setViewingPatternData(data);
     if (reset) {
       await resetEditor();
     }
