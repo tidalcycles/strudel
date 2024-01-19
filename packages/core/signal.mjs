@@ -231,10 +231,10 @@ export const pickF = register('pickF', function (lookup, funcs, pat) {
 
 /** * The same as `pickF`, but if you pick a number greater than the size of the functions list,
  * it wraps around, rather than sticking at the maximum value.
-* @param {Pattern} pat
-* @param {Pattern} lookup a pattern of indices
-* @param {function[]} funcs the array of functions from which to pull
-* @returns {Pattern}
+ * @param {Pattern} pat
+ * @param {Pattern} lookup a pattern of indices
+ * @param {function[]} funcs the array of functions from which to pull
+ * @returns {Pattern}
  */
 export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
   return pat.apply(pickmod(lookup, funcs));
@@ -247,7 +247,7 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
  * @param {*} xs
  * @returns {Pattern}
  * @example
- * "<a b [a,b]>".inhabit({a: s("bd(3,8)"), 
+ * "<a b [a,b]>".inhabit({a: s("bd(3,8)"),
                           b: s("cp sd")
                          })
  * @example
