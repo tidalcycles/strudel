@@ -14,7 +14,6 @@ import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { settingsMap, useSettings } from '../settings.mjs';
 import {
-  initUserCode,
   setActivePattern,
   setLatestCode,
   createPatternID,
@@ -103,7 +102,6 @@ export function Repl({ embedded = false }) {
       let msg;
       if (decoded) {
         editor.setCode(decoded);
-        initUserCode(decoded);
         msg = `I have loaded the code from the URL.`;
       } else if (latestCode) {
         editor.setCode(latestCode);
@@ -113,7 +111,6 @@ export function Repl({ embedded = false }) {
         msg = `A random code snippet named "${name}" has been loaded!`;
       }
       logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
-      // setPending(false);
     });
 
     editorRef.current = editor;

@@ -63,19 +63,6 @@ export async function loadDBPatterns() {
   }
 }
 
-//pattern that the use is currently viewing in the window
-// const $viewingPattern = persistentAtom('viewingPattern', '', { listen: false });
-// export function setViewingPattern(key) {
-//   $viewingPattern.set(key);
-// }
-// export function getViewingPattern() {
-//   return $viewingPattern.get();
-// }
-
-// export function useViewingPattern() {
-//   return useStore($viewingPattern);
-// }
-// active pattern is separate, because it shouldn't sync state across tabs
 // reason: https://github.com/tidalcycles/strudel/issues/857
 const $activePattern = persistentAtom('activePattern', '', { listen: false });
 
@@ -87,15 +74,6 @@ export function getActivePattern() {
 }
 export function useActivePattern() {
   return useStore($activePattern);
-}
-export function initUserCode(code) {
-  // const patterns = { ...userPattern.getAll() };
-  // const match = Object.entries(patterns).find(([_, pat]) => pat.code === code);
-  // const id = match?.[0];
-  // if (id != null) {
-  //   setActivePattern(id);
-  //   setViewingPattern(id);
-  // }
 }
 
 export const setLatestCode = (code) => settingsMap.setKey('latestCode', code);
