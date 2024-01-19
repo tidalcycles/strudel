@@ -1,8 +1,7 @@
 import { atom } from 'nanostores';
 import { persistentAtom } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
-
-import { logger } from '@strudel.cycles/core';
+import { logger } from '@strudel/core';
 import { nanoid } from 'nanoid';
 import { settingsMap } from './settings.mjs';
 import { supabase } from './repl/util.mjs';
