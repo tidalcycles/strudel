@@ -3693,6 +3693,56 @@ exports[`runs examples > example "pick" example index 3 1`] = `
 ]
 `;
 
+exports[`runs examples > example "pickF" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:hh ]",
+  "[ 1/4 → 1/2 | s:rim ]",
+  "[ 1/2 → 1/1 | s:bd ]",
+  "[ 1/1 → 5/4 | s:hh pan:1 ]",
+  "[ 1/1 → 3/2 | s:bd pan:0 ]",
+  "[ 5/4 → 3/2 | s:rim pan:1 ]",
+  "[ 3/2 → 7/4 | s:rim pan:0 ]",
+  "[ 3/2 → 2/1 | s:bd pan:1 ]",
+  "[ 7/4 → 2/1 | s:hh pan:0 ]",
+  "[ 2/1 → 9/4 | s:bd ]",
+  "[ 9/4 → 19/8 | s:rim ]",
+  "[ 19/8 → 5/2 | s:hh ]",
+  "[ 5/2 → 11/4 | s:bd ]",
+  "[ 11/4 → 23/8 | s:rim ]",
+  "[ 23/8 → 3/1 | s:hh ]",
+  "[ 3/1 → 13/4 | s:hh ]",
+  "[ 13/4 → 7/2 | s:rim ]",
+  "[ 7/2 → 4/1 | s:bd ]",
+]
+`;
+
+exports[`runs examples > example "pickF" example index 1 1`] = `
+[
+  "[ 0/1 → 1/8 | note:c2 s:square pan:0 ]",
+  "[ 1/8 → 1/4 | note:c2 s:square pan:1 ]",
+  "[ 3/8 → 1/2 | note:c2 s:square pan:0 ]",
+  "[ 1/2 → 9/16 | note:d2 s:square ]",
+  "[ 11/16 → 3/4 | note:d2 s:square ]",
+  "[ 7/8 → 15/16 | note:d2 s:square ]",
+  "[ 1/1 → 9/8 | note:d2 s:square cutoff:800 ]",
+  "[ 11/8 → 3/2 | note:d2 s:square cutoff:800 ]",
+  "[ 3/2 → 25/16 | note:d2 s:square ]",
+  "[ 27/16 → 7/4 | note:d2 s:square ]",
+  "[ 15/8 → 31/16 | note:d2 s:square ]",
+  "[ 2/1 → 17/8 | note:c2 s:square pan:0 ]",
+  "[ 17/8 → 9/4 | note:c2 s:square pan:1 ]",
+  "[ 19/8 → 5/2 | note:c2 s:square pan:0 ]",
+  "[ 5/2 → 41/16 | note:d2 s:square ]",
+  "[ 43/16 → 11/4 | note:d2 s:square ]",
+  "[ 23/8 → 47/16 | note:d2 s:square ]",
+  "[ 3/1 → 25/8 | note:d2 s:square cutoff:800 ]",
+  "[ 27/8 → 7/2 | note:d2 s:square cutoff:800 ]",
+  "[ 7/2 → 57/16 | note:d2 s:square ]",
+  "[ 59/16 → 15/4 | note:d2 s:square ]",
+  "[ 31/8 → 63/16 | note:d2 s:square ]",
+]
+`;
+
 exports[`runs examples > example "ply" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | s:bd ]",

@@ -214,6 +214,32 @@ export const pickmod = register('pickmod', function (lookup, pat) {
   return _pick(lookup, pat, true).innerJoin();
 });
 
+/** * pickF lets you use a pattern of numbers to pick which function to apply to another pattern.
+ * @param {Pattern} pat
+ * @param {Pattern} lookup a pattern of indices
+ * @param {function[]} funcs the array of functions from which to pull
+ * @returns {Pattern}
+ * @example
+ * s("bd [rim hh]").pickF("<0 1 2>", [rev,jux(rev),fast(2)])
+ * @example
+ * note("<c2 d2>(3,8)").s("square")
+ *     .pickF("<0 2> 1", [jux(rev),fast(2),x=>x.lpf(800)])
+ */
+export const pickF = register('pickF', function (lookup, funcs, pat) {
+  return pat.apply(pick(lookup, funcs));
+});
+
+/** * The same as `pickF`, but if you pick a number greater than the size of the functions list,
+ * it wraps around, rather than sticking at the maximum value.
+ * @param {Pattern} pat
+ * @param {Pattern} lookup a pattern of indices
+ * @param {function[]} funcs the array of functions from which to pull
+ * @returns {Pattern}
+ */
+export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
+  return pat.apply(pickmod(lookup, funcs));
+});
+
 /**
 /** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
  * Similar to `pick`, but cycles are squeezed into the target ('inhabited') pattern.
@@ -221,7 +247,7 @@ export const pickmod = register('pickmod', function (lookup, pat) {
  * @param {*} xs
  * @returns {Pattern}
  * @example
- * "<a b [a,b]>".inhabit({a: s("bd(3,8)"), 
+ * "<a b [a,b]>".inhabit({a: s("bd(3,8)"),
                           b: s("cp sd")
                          })
  * @example
