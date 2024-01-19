@@ -17,7 +17,6 @@ import {
   initUserCode,
   setActivePattern,
   setLatestCode,
-  setViewingPattern,
   createPatternID,
   userPattern,
   getViewingPatternData,
@@ -77,7 +76,6 @@ export function Repl({ embedded = false }) {
         setLatestCode(code);
         window.location.hash = '#' + code2hash(code);
         const viewingPatternData = getViewingPatternData();
-
         const data = { ...viewingPatternData, code };
         let id = data.id;
         const isExamplePattern = viewingPatternData.collection !== userPattern.collection;
@@ -86,13 +84,12 @@ export function Repl({ embedded = false }) {
           const codeHasChanged = code !== viewingPatternData.code;
           if (codeHasChanged) {
             // fork example
-            id = createPatternID();
-            setViewingPattern(id);
-            setViewingPatternData(userPattern.update(id, data).data);
+            const newPattern = userPattern.duplicate(data);
+            id = newPattern.id;
+            setViewingPatternData(newPattern.data);
           }
         } else {
-          id = id == null ? createPatternID() : id;
-          setViewingPattern(id);
+          id = userPattern.isValidID(id) ? id : createPatternID();
           setViewingPatternData(userPattern.update(id, data).data);
         }
         setActivePattern(id);
@@ -169,23 +166,23 @@ export function Repl({ embedded = false }) {
     await prebake(); // declare default samples
   };
 
-  const handleUpdate = async (id, data, reset = false) => {
-    setViewingPatternData(data);
+  const handleUpdate = async (patternData, reset = false) => {
     if (reset) {
       await resetEditor();
     }
-    setViewingPattern(id);
-    editorRef.current.setCode(data.code);
+    setViewingPatternData(patternData);
+    editorRef.current.setCode(patternData.code);
   };
 
   const handleEvaluate = () => {
     editorRef.current.evaluate();
   };
   const handleShuffle = async () => {
-    const { code, name } = getRandomTune();
-    logger(`[repl] ✨ loading random tune "${name}"`);
-    setActivePattern(name);
-    setViewingPattern(name);
+    const patternData = getRandomTune();
+    const code = patternData.code;
+    logger(`[repl] ✨ loading random tune "${patternData.id}"`);
+    setActivePattern(patternData.id);
+    setViewingPatternData(patternData);
     clearCanvas();
     resetLoadedSounds();
     await prebake(); // declare default samples

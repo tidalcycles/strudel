@@ -1,17 +1,20 @@
-import { $featuredPatterns, $publicPatterns } from '../user_pattern_utils.mjs';
+import { $featuredPatterns, $publicPatterns, collectionName } from '../user_pattern_utils.mjs';
 import { useStore } from '@nanostores/react';
 import { useMemo } from 'react';
 import * as tunes from '../repl/tunes.mjs';
+
+export const stockPatterns = Object.fromEntries(
+  Object.entries(tunes).map(([key, code], i) => [i, { id: i, code, collection: collectionName.stock }]),
+);
 
 export const useExamplePatterns = () => {
   const featuredPatterns = useStore($featuredPatterns);
   const publicPatterns = useStore($publicPatterns);
   const collections = useMemo(() => {
-    const stockPatterns = Object.fromEntries(Object.entries(tunes).map(([key, code], i) => [i, { id: i, code }]));
     const pats = new Map();
-    pats.set('Featured', featuredPatterns);
-    pats.set('Last Creations', publicPatterns);
-    pats.set('Stock Examples', stockPatterns);
+    pats.set(collectionName.featured, featuredPatterns);
+    pats.set(collectionName.public, publicPatterns);
+    pats.set(collectionName.stock, stockPatterns);
     return pats;
   }, [featuredPatterns, publicPatterns]);
 

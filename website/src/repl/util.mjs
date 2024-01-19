@@ -4,17 +4,23 @@ import { getAudioContext, initializeAudioOutput, setDefaultAudioContext } from '
 
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
-import * as tunes from './tunes.mjs';
+
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { writeText } from '@tauri-apps/api/clipboard';
 import { createContext } from 'react';
+import { stockPatterns } from './useExamplePatterns';
+import { loadDBPatterns } from '@src/user_pattern_utils.mjs';
 
 // Create a single supabase client for interacting with your database
 export const supabase = createClient(
   'https://pidxdsxphlhzjnzmifth.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
 );
+
+if (typeof window !== 'undefined') {
+  loadDBPatterns();
+}
 
 export async function initCode() {
   // load code from url hash (either short hash from database or decode long hash)
@@ -47,10 +53,10 @@ export async function initCode() {
 }
 
 export function getRandomTune() {
-  const allTunes = Object.entries(tunes);
+  const allTunes = Object.entries(stockPatterns);
   const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
-  const [name, code] = randomItem(allTunes);
-  return { name, code };
+  const [id, data] = randomItem(allTunes);
+  return data;
 }
 
 export function loadModules() {

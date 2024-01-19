@@ -9,21 +9,30 @@ import { supabase } from './repl/util.mjs';
 
 export let $publicPatterns = atom([]);
 export let $featuredPatterns = atom([]);
-const userPatternCollectionName = 'user';
+
+export const collectionName = {
+  user: 'user',
+  public: 'Last Creations',
+  stock: 'Stock Examples',
+  featured: 'Featured',
+};
+
 export let $viewingPatternData = persistentAtom(
   'viewingPatternData',
   {
     id: '',
     code: '',
-    collection: userPatternCollectionName,
+    collection: collectionName.user,
     created_at: Date.now(),
   },
   { listen: false },
 );
 
 export const getViewingPatternData = () => {
-  console.log(JSON.parse($viewingPatternData.get()));
-  return $viewingPatternData.get();
+  return JSON.parse($viewingPatternData.get());
+};
+export const useViewingPatternData = () => {
+  return useStore($viewingPatternData);
 };
 
 export const setViewingPatternData = (data) => {
@@ -38,37 +47,34 @@ export function loadFeaturedPatterns() {
   return supabase.from('code').select().eq('featured', true).limit(20).order('id', { ascending: false });
 }
 
-async function loadDBPatterns() {
+export async function loadDBPatterns() {
   try {
     const { data: publicPatterns } = await loadPublicPatterns();
     const { data: featuredPatterns } = await loadFeaturedPatterns();
     const featured = {};
     const pub = {};
+
     publicPatterns?.forEach((data, key) => (pub[data.id ?? key] = data));
     featuredPatterns?.forEach((data, key) => (featured[data.id ?? key] = data));
     $publicPatterns.set(pub);
     $featuredPatterns.set(featured);
   } catch (err) {
-    console.error('error loading patterns');
+    console.error('error loading patterns', err);
   }
 }
 
-if (typeof window !== 'undefined') {
-  loadDBPatterns();
-}
-
 //pattern that the use is currently viewing in the window
-const $viewingPattern = persistentAtom('viewingPattern', '', { listen: false });
-export function setViewingPattern(key) {
-  $viewingPattern.set(key);
-}
-export function getViewingPattern() {
-  return $viewingPattern.get();
-}
+// const $viewingPattern = persistentAtom('viewingPattern', '', { listen: false });
+// export function setViewingPattern(key) {
+//   $viewingPattern.set(key);
+// }
+// export function getViewingPattern() {
+//   return $viewingPattern.get();
+// }
 
-export function useViewingPattern() {
-  return useStore($viewingPattern);
-}
+// export function useViewingPattern() {
+//   return useStore($viewingPattern);
+// }
 // active pattern is separate, because it shouldn't sync state across tabs
 // reason: https://github.com/tidalcycles/strudel/issues/857
 const $activePattern = persistentAtom('activePattern', '', { listen: false });
@@ -83,20 +89,20 @@ export function useActivePattern() {
   return useStore($activePattern);
 }
 export function initUserCode(code) {
-  const patterns = { ...userPattern.getAll() };
-  const match = Object.entries(patterns).find(([_, pat]) => pat.code === code);
-  const id = match?.[0];
-  if (id != null) {
-    setActivePattern(id);
-    setViewingPattern(id);
-  }
+  // const patterns = { ...userPattern.getAll() };
+  // const match = Object.entries(patterns).find(([_, pat]) => pat.code === code);
+  // const id = match?.[0];
+  // if (id != null) {
+  //   setActivePattern(id);
+  //   setViewingPattern(id);
+  // }
 }
 
 export const setLatestCode = (code) => settingsMap.setKey('latestCode', code);
 
 const defaultCode = '';
 export const userPattern = {
-  collection: userPatternCollectionName,
+  collection: collectionName.user,
   getAll() {
     const patterns = JSON.parse(settingsMap.get().userPatterns);
     return patterns ?? {};
@@ -107,6 +113,9 @@ export const userPattern = {
   },
   exists(id) {
     return this.getPatternData(id) != null;
+  },
+  isValidID(id) {
+    return id != null && id.length > 0;
   },
 
   create() {
@@ -127,8 +136,8 @@ export const userPattern = {
     return { id, data };
   },
   duplicate(data) {
-    const newID = createPatternID();
-    return this.update(newID, data);
+    const newPattern = this.create();
+    return this.update(newPattern.id, { ...newPattern.data, code: data.code });
   },
   clearAll() {
     if (!confirm(`This will delete all your patterns. Are you really sure?`)) {
@@ -150,11 +159,12 @@ export const userPattern = {
       setActivePattern(null);
     }
     setUserPatterns(userPatterns);
-    const viewingPattern = getViewingPattern();
-    if (viewingPattern === id) {
+    const viewingPatternData = getViewingPatternData();
+    const viewingID = viewingPatternData?.id;
+    if (viewingID === id) {
       return { id: null, data: { code: defaultCode } };
     }
-    return { id: viewingPattern, data: userPatterns[viewingPattern] };
+    return { id: viewingID, data: userPatterns[viewingID] };
   },
 };
 
@@ -164,10 +174,6 @@ function setUserPatterns(obj) {
 
 export const createPatternID = () => {
   return nanoid(12);
-};
-
-export const getNextCloneID = (id) => {
-  return createPatternID();
 };
 
 export async function importPatterns(fileList) {

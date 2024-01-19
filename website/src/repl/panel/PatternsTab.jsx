@@ -4,7 +4,7 @@ import {
   exportPatterns,
   importPatterns,
   useActivePattern,
-  useViewingPattern,
+  useViewingPatternData,
   userPattern,
 } from '../../user_pattern_utils.mjs';
 import { useMemo } from 'react';
@@ -40,21 +40,26 @@ function PatternButton({ showOutline, onClick, pattern, showHiglight }) {
   );
 }
 
-function PatternButtons({ patterns, activePattern, onClick, viewingPattern, started }) {
+function PatternButtons({ patterns, activePattern, onClick, started }) {
+  const viewingPatternStore = useViewingPatternData();
+  const viewingPatternData = JSON.parse(viewingPatternStore);
+  const viewingPatternID = viewingPatternData.id;
   return (
     <div className="font-mono text-sm">
-      {Object.values(patterns).map((pattern) => {
-        const id = pattern.id;
-        return (
-          <PatternButton
-            pattern={pattern}
-            key={id}
-            showHiglight={id === viewingPattern}
-            showOutline={id === activePattern && started}
-            onClick={() => onClick(id)}
-          />
-        );
-      })}
+      {Object.values(patterns)
+        .reverse()
+        .map((pattern) => {
+          const id = pattern.id;
+          return (
+            <PatternButton
+              pattern={pattern}
+              key={id}
+              showHiglight={id === viewingPatternID}
+              showOutline={id === activePattern && started}
+              onClick={() => onClick(id)}
+            />
+          );
+        })}
     </div>
   );
 }
@@ -70,30 +75,32 @@ function ActionButton({ children, onClick, label, labelIsHidden }) {
 
 export function PatternsTab({ context }) {
   const activePattern = useActivePattern();
-  const viewingPattern = useViewingPattern();
+  const viewingPatternStore = useViewingPatternData();
+  const viewingPatternData = JSON.parse(viewingPatternStore);
+
   const { userPatterns } = useSettings();
   const examplePatterns = useExamplePatterns();
   const collections = examplePatterns.collections;
 
-  const updateCodeWindow = (id, data, reset = false) => {
-    context.handleUpdate(id, data, reset);
+  const updateCodeWindow = (patternData, reset = false) => {
+    context.handleUpdate(patternData, reset);
   };
-  const isUserPattern = userPatterns[viewingPattern] != null;
+  const viewingPatternID = viewingPatternData?.id;
+  const viewingIDIsValid = userPattern.isValidID(viewingPatternID);
+  const isUserPattern = userPatterns[viewingPatternID] != null;
 
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-4 pb-4">
       <section>
-        {viewingPattern && (
+        {viewingIDIsValid && (
           <div className="flex items-center mb-2 space-x-2 overflow-auto">
-            <h1 className="text-xl">{`${viewingPattern}`}</h1>
+            <h1 className="text-xl">{`${viewingPatternID}`}</h1>
             <div className="space-x-4 flex w-min">
               <ActionButton
                 label="Duplicate"
                 onClick={() => {
-                  const { id, data } = userPattern.duplicate(
-                    userPattern.getPatternData(id) ?? examplePatterns.patterns[id],
-                  );
-                  updateCodeWindow(id, data);
+                  const { data } = userPattern.duplicate(viewingPatternData);
+                  updateCodeWindow(data);
                 }}
                 labelIsHidden
               >
@@ -103,8 +110,8 @@ export function PatternsTab({ context }) {
                 <ActionButton
                   label="Delete"
                   onClick={() => {
-                    const { id, data } = userPattern.delete(viewingPattern);
-                    updateCodeWindow(id, { ...data, collection: userPattern.collection });
+                    const { data } = userPattern.delete(viewingPatternID);
+                    updateCodeWindow({ ...data, collection: userPattern.collection });
                   }}
                   labelIsHidden
                 >
@@ -115,25 +122,25 @@ export function PatternsTab({ context }) {
           </div>
         )}
         <PatternButtons
-          onClick={(id) => updateCodeWindow(id, { ...userPatterns[id], collection: userPattern.collection }, false)}
+          onClick={(id) => updateCodeWindow({ ...userPatterns[id], collection: userPattern.collection }, false)}
           patterns={userPatterns}
           started={context.started}
           activePattern={activePattern}
-          viewingPattern={viewingPattern}
+          viewingPatternID={viewingPatternID}
         />
         <div className="pr-4 space-x-4 border-b border-foreground mb-2 h-8 flex overflow-auto max-w-full items-center">
           <ActionButton
             label="new"
             onClick={() => {
-              const { id, data } = userPattern.createAndAddToDB();
-              updateCodeWindow(id, data);
+              const { data } = userPattern.createAndAddToDB();
+              updateCodeWindow(data);
             }}
           />
           <ActionButton
             label="clear"
             onClick={() => {
-              const { id, data } = userPattern.clearAll();
-              updateCodeWindow(id, data);
+              const { data } = userPattern.clearAll();
+              updateCodeWindow(data);
             }}
           />
 
@@ -157,11 +164,10 @@ export function PatternsTab({ context }) {
             <h2 className="text-xl mb-2">{collection}</h2>
             <div className="font-mono text-sm">
               <PatternButtons
-                onClick={(id) => updateCodeWindow(id, { ...patterns[id], collection }, true)}
+                onClick={(id) => updateCodeWindow({ ...patterns[id], collection }, true)}
                 started={context.started}
                 patterns={patterns}
                 activePattern={activePattern}
-                viewingPattern={viewingPattern}
               />
             </div>
           </section>
