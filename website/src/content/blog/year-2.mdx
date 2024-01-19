@@ -56,7 +56,7 @@ I was very delighted to see this video of the girls having fun with Strudel:
 The course was also encompassed by a study on female empowerement through Creative Coding, read more in [Jasmina Maric's paper "Singing Code"](https://www.academia.edu/106106710/Singing_Code).
 
 Another bigger installment was the [(Algo|Afro) Futures programme](https://algo-afro-futures.lurk.org/) led by Antonio Roberts, which is "a mentoring programme for early career Black artists who want to explore creative coding and live coding".
-For the final concert the recorded this amazing live stream:
+For the final concert they recorded this amazing live stream:
 
 <Youtube id="zUoZvkZ3J7Q" params="start=842" client:only="react" />
 
@@ -85,7 +85,7 @@ Let's talk about some of the major features that landed since last year.
 
 The audio engine has gotten a lot of attention! Once integrated into Strudel itself, the engine has been pulled out and named [superdough](https://www.npmjs.com/package/superdough),
 the name being based on [SuperDirt](https://github.com/musikinformatik/SuperDirt), which is the audio engine of Tidal.
-superdough is now also used by [topos](https://topos.live/), a creation of [Raphaël Forment](https://github.com/Bubobubobubobubo/), who helped me implement a bunch of new features.
+Superdough is now also used by [topos](https://topos.live/), a creation of [Raphaël Forment](https://github.com/Bubobubobubobubo/), who helped me implement a bunch of new features.
 Lately, [Jade Rowland](https://github.com/daslyfe) has also developed many synthesis features into superdough! Here is a non-exhaustive list of new features:
 
 - [filter envelopes](https://strudel.cc/learn/effects/#filter-envelope) + [24db filter option](https://strudel.cc/learn/effects/#ftype)
@@ -130,7 +130,7 @@ stack(
 `}
 />
 
-### Editor Quality of Life Improvements
+### Quality of Life Improvements
 
 You can now change the theme and font of the editor:
 
@@ -141,6 +141,8 @@ You can now enable autocompletion in the settings:
 ![autocomplete](/img/autocomplete.png)
 
 If you enable tooltips, you will get the same info by hovering the mouse over functions while holding the ctrl key!
+
+Another handy thing is that Strudel now has offline support! Even samples will work once you have played them once. [More info](http://localhost:4321/learn/pwa/)
 
 ### New Visualizations
 
@@ -171,7 +173,7 @@ The `slider` is the first of a family of functions that render UI widgets inline
 
 Sliders are especially useful for gradual changes like fading things in and out by hand,
 which is not very practical with just code. The fact that the slider is inside the code and also changes the code itself,
-makes it feel connected with the rest of the system + doesn't distract or obstruct from the code.
+makes it feel connected to the rest of the system + doesn't distract or obstruct from the code.
 Other widgets will come for sure.
 
 ### More Voicings
@@ -190,24 +192,33 @@ Strudel now supports most chord symbols:
 
 So far, this is only [documented briefly](https://strudel.cc/learn/tonal/#voicing), a more in-depth guide will follow!
 
-### More
+### Multiplayer / Collaborative Coding
 
-- pwa / offline support
-- experimental desktop app
-- most tidal functions ported + some new ones
-- better midi support: midi cc out, midi cc in, midi clock out
-- hydra
-- better docs: search, showcase, blog
-- vscode plugin: https://marketplace.visualstudio.com/items?itemName=roipoussiere.tidal-strudel
-- flok
+The collaborative live coding editor [flok](https://flok.cc) had strudel support early on, thanks to [Damián Silvani](https://github.com/munshkr).
+Later, I've added [support for multiple strudel instances](https://github.com/munshkr/flok/pull/181), which was merged to the official version [just a few days ago](https://social.toplap.org/@munshkr/111748783047032711).
+This photo shows a flok jam I did with my workshop participants in basel:
 
-- solstice stream
-- dough dream
+![collaborative coding](/img/strudel-collaborative-coding.png)
 
-- fiddle: https://cannerycoders.com/docs/fiddle/interface/strudel.html
-- topfenstrudel: https://addons.mozilla.org/de/firefox/addon/topfenstrudel/
-- jaffle: https://roipoussiere.frama.io/jaffle/ / https://club.tidalcycles.org/t/introducing-jaffle-a-node-editor-for-tidal-strudel/4774
+The cool thing about flok is that you can jam with people on the other side of the planet!
+Here is a recording of the first session we organized over the discord server:
 
-- alex / alpaca: https://algorithmicpattern.org/2023/05/15/strudel-live-coding-patterns-on-the-web/
-- https://kidscodecs.com/strudel-music-language/ (beanz kids magazine)
-- strudel is now on mastodon
+<Youtube id="p0J7XrT9JEs" params="start=2634" client:only="react" />
+
+### Better MIDI integration
+
+The midi integration has gotten a few new features:
+
+- [clock out](https://github.com/tidalcycles/strudel/pull/710) to sync your midi devices / DAW to the strudel clock (better doc coming soon)
+- [cc output](https://strudel.cc/learn/input-output/#ccn--ccv) to send cc values to your gear
+- [cc input](https://github.com/tidalcycles/strudel/pull/699) to control strudel via MIDI (better doc coming soon)
+
+Here is a little demo of me fiddling with a midi controller, changing a piano pattern:
+
+<Youtube id="e2-Sv_jjDQk" client:only="react" />
+
+### Experimental Features
+
+- You can now run [hydra inside strudel](https://strudel.cc/learn/hydra/) + you can even run strudel in [hydra](https://hydra.ojack.xyz), thanks to [Olivia Jack](https://ojack.xyz/) and [Ámbar Tenorio Fornés](https://atenor.io/)! Read more [here](https://alpaca.pubpub.org/pub/b7hwrjfk/release/2?readingCollection=1def0192)
+- There is now a [VSCode Plugin](https://marketplace.visualstudio.com/items?itemName=roipoussiere.tidal-strudel) thanks to [roipoussiere](https://github.com/roipoussiere)! It allows you run patterns from a `.strudel` file inside VSCode.
+- Strudel can now be downloaded as a desktop app, thanks to [vasilymilovidov](https://github.com/vasilymilovidov) who has wrapped the REPL with [tauri](https://tauri.app/). You can download it [on the releases page](https://github.com/tidalcycles/strudel/releases) (scroll down to Assets). The performance is not optimal on MacOS and Linux, which is why it is still considered experimental
