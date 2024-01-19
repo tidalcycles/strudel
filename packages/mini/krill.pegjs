@@ -129,10 +129,7 @@ slice = step / sub_cycle / polymeter / slow_sequence
 
 // slice modifier affects the timing/size of a slice (e.g. [a b c]@3)
 // at this point, we assume we can represent them as regular sequence operators
-slice_op = op_weight / op_bjorklund / op_slow / op_fast / op_replicate / op_tail / op_degrade / op_range
-
-// op_weight =  "@" a:number
-//  { return x => x.options_['weight'] = a }
+slice_op = op_weight / op_bjorklund / op_slow / op_fast / op_replicate / op_degrade / op_tail / op_range
 
 op_weight = ws ("@" / "_") a:number?
   { return x => x.options_['weight'] = (x.options_['weight'] ?? 1) + (a ?? 2) - 1 }
@@ -151,6 +148,7 @@ op_fast = "*"a:slice
 
 op_degrade = "?"a:number?
   { return x => x.options_['ops'].push({ type_: "degradeBy", arguments_ :{ amount:a, seed: seed++ } }) }
+
 op_tail = ":" s:slice
   { return x => x.options_['ops'].push({ type_: "tail", arguments_ :{ element:s } }) }
 

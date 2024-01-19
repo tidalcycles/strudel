@@ -1171,9 +1171,9 @@ function peg$parse(input, options) {
           if (s0 === peg$FAILED) {
             s0 = peg$parseop_replicate();
             if (s0 === peg$FAILED) {
-              s0 = peg$parseop_tail();
+              s0 = peg$parseop_degrade();
               if (s0 === peg$FAILED) {
-                s0 = peg$parseop_degrade();
+                s0 = peg$parseop_tail();
                 if (s0 === peg$FAILED) {
                   s0 = peg$parseop_range();
                 }
