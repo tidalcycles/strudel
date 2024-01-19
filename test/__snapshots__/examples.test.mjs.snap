@@ -2408,6 +2408,40 @@ exports[`runs examples > example "hush" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "inhabit" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | s:bd ]",
+  "[ 3/8 → 1/2 | s:bd ]",
+  "[ 3/4 → 7/8 | s:bd ]",
+  "[ 1/1 → 3/2 | s:cp ]",
+  "[ 3/2 → 2/1 | s:sd ]",
+  "[ 2/1 → 17/8 | s:bd ]",
+  "[ 2/1 → 5/2 | s:cp ]",
+  "[ 19/8 → 5/2 | s:bd ]",
+  "[ 5/2 → 3/1 | s:sd ]",
+  "[ 11/4 → 23/8 | s:bd ]",
+  "[ 3/1 → 25/8 | s:bd ]",
+  "[ 27/8 → 7/2 | s:bd ]",
+  "[ 15/4 → 31/8 | s:bd ]",
+]
+`;
+
+exports[`runs examples > example "inhabit" example index 1 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd ]",
+  "[ 3/4 → 1/1 | s:bd ]",
+  "[ 3/2 → 7/4 | s:bd ]",
+  "[ 2/1 → 33/16 | s:bd ]",
+  "[ 35/16 → 9/4 | s:bd ]",
+  "[ 19/8 → 39/16 | s:bd ]",
+  "[ 5/2 → 11/4 | s:sd ]",
+  "[ 11/4 → 3/1 | s:sd ]",
+  "[ 3/1 → 25/8 | s:bd ]",
+  "[ 27/8 → 7/2 | s:bd ]",
+  "[ 15/4 → 31/8 | s:bd ]",
+]
+`;
+
 exports[`runs examples > example "inside" example index 0 1`] = `
 [
   "[ 0/1 → 1/8 | note:D3 ]",
@@ -3332,6 +3366,55 @@ exports[`runs examples > example "pan" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "panchor" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c penv:12 panchor:0 ]",
+  "[ 1/1 → 2/1 | note:c penv:12 panchor:0.5 ]",
+  "[ 2/1 → 3/1 | note:c penv:12 panchor:1 ]",
+  "[ 3/1 → 4/1 | note:c penv:12 panchor:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "pattack" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c pattack:0 ]",
+  "[ 1/1 → 2/1 | note:eb pattack:0.1 ]",
+  "[ 2/1 → 3/1 | note:g pattack:0.25 ]",
+  "[ 3/1 → 4/1 | note:bb pattack:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "pcurve" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:0 ]",
+  "[ 1/2 → 1/1 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:0 ]",
+  "[ 1/1 → 3/2 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:1 ]",
+  "[ 3/2 → 2/1 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:1 ]",
+  "[ 2/1 → 5/2 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:0 ]",
+  "[ 5/2 → 3/1 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:0 ]",
+  "[ 3/1 → 7/2 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:1 ]",
+  "[ 7/2 → 4/1 | note:g1 s:sine pdecay:0.5 penv:32 pcurve:1 ]",
+]
+`;
+
+exports[`runs examples > example "pdecay" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c pdecay:0 ]",
+  "[ 1/1 → 2/1 | note:eb pdecay:0.1 ]",
+  "[ 2/1 → 3/1 | note:g pdecay:0.25 ]",
+  "[ 3/1 → 4/1 | note:bb pdecay:0.5 ]",
+]
+`;
+
+exports[`runs examples > example "penv" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c penv:12 ]",
+  "[ 1/1 → 2/1 | note:c penv:7 ]",
+  "[ 2/1 → 3/1 | note:c penv:1 ]",
+  "[ 3/1 → 4/1 | note:c penv:0.5 ]",
+]
+`;
+
 exports[`runs examples > example "perlin" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | s:hh cutoff:512.5097280354112 ]",
@@ -3552,10 +3635,61 @@ exports[`runs examples > example "pick" example index 0 1`] = `
   "[ 9/4 → 5/2 | note:g ]",
   "[ 5/2 → 11/4 | note:f ]",
   "[ 11/4 → 3/1 | note:g ]",
-  "[ 3/1 → 13/4 | note:g ]",
-  "[ 13/4 → 7/2 | note:a ]",
-  "[ 7/2 → 15/4 | note:c ]",
-  "[ 15/4 → 4/1 | note:d ]",
+  "[ 3/1 → 13/4 | note:f ]",
+  "[ 13/4 → 7/2 | note:g ]",
+  "[ 7/2 → 15/4 | note:f ]",
+  "[ 15/4 → 4/1 | note:g ]",
+]
+`;
+
+exports[`runs examples > example "pick" example index 1 1`] = `
+[
+  "[ 0/1 → 1/2 | s:bd ]",
+  "[ 1/2 → 1/1 | s:sd ]",
+  "[ 1/1 → 3/2 | s:cp ]",
+  "[ 3/2 → 2/1 | s:cp ]",
+  "[ 2/1 → 5/2 | s:hh ]",
+  "[ 2/1 → 5/2 | s:bd ]",
+  "[ 5/2 → 3/1 | s:hh ]",
+  "[ 5/2 → 3/1 | s:sd ]",
+  "[ 3/1 → 7/2 | s:bd ]",
+  "[ 7/2 → 4/1 | s:sd ]",
+]
+`;
+
+exports[`runs examples > example "pick" example index 2 1`] = `
+[
+  "[ 0/1 → 1/8 | s:bd ]",
+  "[ 3/8 → 1/2 | s:bd ]",
+  "[ 3/4 → 7/8 | s:bd ]",
+  "[ 1/1 → 9/8 | s:bd ]",
+  "[ 11/8 → 3/2 | s:bd ]",
+  "[ 7/4 → 15/8 | s:bd ]",
+  "[ 2/1 → 17/8 | s:bd ]",
+  "[ 2/1 → 5/2 | s:sd ]",
+  "[ 19/8 → 5/2 | s:bd ]",
+  "[ 5/2 → 3/1 | s:sd ]",
+  "[ 11/4 → 23/8 | s:bd ]",
+  "[ 3/1 → 7/2 | s:sd ]",
+  "[ 7/2 → 4/1 | s:sd ]",
+]
+`;
+
+exports[`runs examples > example "pick" example index 3 1`] = `
+[
+  "[ 0/1 → 1/8 | s:bd ]",
+  "[ 3/8 → 1/2 | s:bd ]",
+  "[ 3/4 → 7/8 | s:bd ]",
+  "[ 1/1 → 9/8 | s:bd ]",
+  "[ 11/8 → 3/2 | s:bd ]",
+  "[ 7/4 → 15/8 | s:bd ]",
+  "[ 2/1 → 17/8 | s:bd ]",
+  "[ 2/1 → 5/2 | s:sd ]",
+  "[ 19/8 → 5/2 | s:bd ]",
+  "[ 5/2 → 3/1 | s:sd ]",
+  "[ 11/4 → 23/8 | s:bd ]",
+  "[ 3/1 → 7/2 | s:sd ]",
+  "[ 7/2 → 4/1 | s:sd ]",
 ]
 `;
 
@@ -3657,6 +3791,15 @@ exports[`runs examples > example "postgain" example index 0 1`] = `
   "[ 7/2 → 15/4 | s:hh compressor:-20 compressorRatio:20 compressorKnee:10 compressorAttack:0.002 compressorRelease:0.02 postgain:1.5 ]",
   "[ 7/2 → 4/1 | s:sd compressor:-20 compressorRatio:20 compressorKnee:10 compressorAttack:0.002 compressorRelease:0.02 postgain:1.5 ]",
   "[ 15/4 → 4/1 | s:hh compressor:-20 compressorRatio:20 compressorKnee:10 compressorAttack:0.002 compressorRelease:0.02 postgain:1.5 ]",
+]
+`;
+
+exports[`runs examples > example "prelease" example index 0 1`] = `
+[
+  "[ 0/1 → 1/2 | note:c release:0.5 prelease:0 ]",
+  "[ 1/1 → 3/2 | note:eb release:0.5 prelease:0.1 ]",
+  "[ 2/1 → 5/2 | note:g release:0.5 prelease:0.25 ]",
+  "[ 3/1 → 7/2 | note:bb release:0.5 prelease:0.5 ]",
 ]
 `;
 

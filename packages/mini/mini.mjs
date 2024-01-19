@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as krill from './krill-parser.js';
-import * as strudel from '@strudel.cycles/core';
+import * as strudel from '@strudel/core';
 
 const randOffset = 0.0003;
 

@@ -16,16 +16,16 @@ The purpose of the multiple packages is to
 
 ## Overview
 
-[See the latest published packages on npm](https://www.npmjs.com/search?q=%40strudel.cycles).
+[See the latest published packages on npm](https://www.npmjs.com/search?q=%40strudel).
 Here is an overview of all the packages:
 
 ### Essential Packages
 
 These package are the most essential. You might want to use all of those if you're using strudel in your project:
 
-- [core](https://github.com/tidalcycles/strudel/tree/main/packages/core#strudelcyclescore): tidal pattern engine with core primitives
-- [mini](https://github.com/tidalcycles/strudel/tree/main/packages/mini#strudelcyclesmini): mini notation parser + core bindings
-- [transpiler](https://github.com/tidalcycles/strudel/tree/main/packages/transpiler#strudelcyclestranspiler): user code transpiler. syntax sugar + highlighting
+- [core](https://github.com/tidalcycles/strudel/tree/main/packages/core#strudelcore): tidal pattern engine with core primitives
+- [mini](https://github.com/tidalcycles/strudel/tree/main/packages/mini#strudelmini): mini notation parser + core bindings
+- [transpiler](https://github.com/tidalcycles/strudel/tree/main/packages/transpiler#strudeltranspiler): user code transpiler. syntax sugar + highlighting
 
 ### Language Extensions
 
@@ -38,23 +38,24 @@ These packages extend the pattern language by specific functions
 
 These packages provide bindings for different ways to output strudel patterns:
 
-- [webaudio](https://github.com/tidalcycles/strudel/tree/main/packages/webaudio#strudelcycleswebaudio): the default webaudio output
-- [osc](https://github.com/tidalcycles/strudel/tree/main/packages/osc#strudelcyclesosc): bindings to communicate via OSC
-- [midi](https://github.com/tidalcycles/strudel/tree/main/packages/midi#strudelcyclesmidi): webmidi bindings
-- [csound](https://github.com/tidalcycles/strudel/tree/main/packages/csound#strudelcyclescsound): csound bindings
-- [soundfonts](https://github.com/tidalcycles/strudel/tree/main/packages/serial#strudelcyclessoundfonts): Soundfont support
-- [serial](https://github.com/tidalcycles/strudel/tree/main/packages/serial#strudelcyclesserial): webserial bindings
+- [webaudio](https://github.com/tidalcycles/strudel/tree/main/packages/webaudio#strudelwebaudio): the default webaudio output
+- [osc](https://github.com/tidalcycles/strudel/tree/main/packages/osc#strudelosc): bindings to communicate via OSC
+- [midi](https://github.com/tidalcycles/strudel/tree/main/packages/midi#strudelmidi): webmidi bindings
+- [csound](https://github.com/tidalcycles/strudel/tree/main/packages/csound#strudelcsound): csound bindings
+- [soundfonts](https://github.com/tidalcycles/strudel/tree/main/packages/serial#strudelsoundfonts): Soundfont support
+- [serial](https://github.com/tidalcycles/strudel/tree/main/packages/serial#strudelserial): webserial bindings
 
 ### Others
 
-- [embed](https://github.com/tidalcycles/strudel/tree/main/packages/embed#strudelcyclesembed): embeddable REPL web component
-- [react](https://github.com/tidalcycles/strudel/tree/main/packages/react#strudelcyclesreact): react hooks and components for strudel
+- [embed](https://github.com/tidalcycles/strudel/tree/main/packages/embed#strudelembed): embeddable REPL web component
 
 ### No Longer Maintained
 
+- [react](https://www.npmjs.com/package/@strudel.cycles/react): react hooks and components for strudel
 - [eval](https://www.npmjs.com/package/@strudel.cycles/eval): old code transpiler
 - [tone](https://www.npmjs.com/package/@strudel.cycles/tone): bindings for Tone.js instruments and effects
 - [webdirt](https://www.npmjs.com/package/@strudel.cycles/webdirt): webdirt bindings, replaced by webaudio package
+- any `@strudel.cycles/*` packages have been renamed to `@strudel/*` since version 0.10.0.
 
 ## Tools
 

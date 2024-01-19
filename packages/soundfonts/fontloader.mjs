@@ -1,5 +1,12 @@
-import { noteToMidi, freqToMidi, getSoundIndex } from '@strudel.cycles/core';
-import { getAudioContext, registerSound, getParamADSR, getADSRValues } from '@strudel.cycles/webaudio';
+import { noteToMidi, freqToMidi, getSoundIndex } from '@strudel/core';
+import {
+  getAudioContext,
+  registerSound,
+  getParamADSR,
+  getADSRValues,
+  getPitchEnvelope,
+  getVibratoOscillator,
+} from '@strudel/webaudio';
 import gm from './gm.mjs';
 
 let loadCache = {};
@@ -149,10 +156,16 @@ export function registerSoundfonts() {
         getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3, time, holdEnd, 'linear');
         let envEnd = holdEnd + release + 0.01;
 
+        // vibrato
+        let vibratoOscillator = getVibratoOscillator(bufferSource.detune, value, time);
+        // pitch envelope
+        getPitchEnvelope(bufferSource.detune, value, time, holdEnd);
+
         bufferSource.stop(envEnd);
         const stop = (releaseTime) => {};
         bufferSource.onended = () => {
           bufferSource.disconnect();
+          vibratoOscillator?.stop();
           node.disconnect();
           onended();
         };

@@ -1,8 +1,8 @@
 import escodegen from 'escodegen';
 import { parse } from 'acorn';
 import { walk } from 'estree-walker';
-import { isNoteWithOctave } from '@strudel.cycles/core';
-import { getLeafLocations } from '@strudel.cycles/mini';
+import { isNoteWithOctave } from '@strudel/core';
+import { getLeafLocations } from '@strudel/mini';
 
 export function transpiler(input, options = {}) {
   const { wrapAsync = false, addReturn = true, emitMiniLocations = true, emitWidgets = true } = options;

@@ -12,7 +12,7 @@ import {
   lineNumbers,
   drawSelection,
 } from '@codemirror/view';
-import { Pattern, Drawer, repl, cleanupDraw } from '@strudel.cycles/core';
+import { Pattern, Drawer, repl, cleanupDraw } from '@strudel/core';
 import { isAutoCompletionEnabled } from './autocomplete.mjs';
 import { isTooltipEnabled } from './tooltip.mjs';
 import { flash, isFlashEnabled } from './flash.mjs';

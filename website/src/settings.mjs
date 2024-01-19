@@ -1,6 +1,7 @@
 import { persistentMap } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
-import { register } from '@strudel.cycles/core';
+import { register } from '@strudel/core';
+
 
 export const defaultAudioDeviceName = 'System Standard';
 

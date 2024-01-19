@@ -1,4 +1,4 @@
-# @strudel.cycles/tauri
+# @strudel/tauri
 
 Rust source files for building native desktop apps using Tauri
 

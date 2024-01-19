@@ -1,6 +1,6 @@
 import { midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext } from './superdough.mjs';
-import { gainNode, getADSRValues, getParamADSR } from './helpers.mjs';
+import { gainNode, getADSRValues, getParamADSR, getPitchEnvelope, getVibratoOscillator } from './helpers.mjs';
 import { getNoiseMix, getNoiseOscillator } from './noise.mjs';
 
 const mod = (freq, range = 1, type = 'sine') => {
@@ -105,15 +105,11 @@ export function waveformN(partials, type) {
 }
 
 // expects one of waveforms as s
-export function getOscillator(
-  s,
-  t,
-  {
+export function getOscillator(s, t, value) {
+  let {
     n: partials,
     note,
     freq,
-    vib = 0,
-    vibmod = 0.5,
     noise = 0,
     // fm
     fmh: fmHarmonicity = 1,
@@ -126,8 +122,7 @@ export function getOscillator(
     fmvelocity: fmVelocity,
     fmwave: fmWaveform = 'sine',
     duration,
-  },
-) {
+  } = value;
   let ac = getAudioContext();
   let o;
   // If no partials are given, use stock waveforms
@@ -184,17 +179,10 @@ export function getOscillator(
   }
 
   // Additional oscillator for vibrato effect
-  let vibratoOscillator;
-  if (vib > 0) {
-    vibratoOscillator = getAudioContext().createOscillator();
-    vibratoOscillator.frequency.value = vib;
-    const gain = getAudioContext().createGain();
-    // Vibmod is the amount of vibrato, in semitones
-    gain.gain.value = vibmod * 100;
-    vibratoOscillator.connect(gain);
-    gain.connect(o.detune);
-    vibratoOscillator.start(t);
-  }
+  let vibratoOscillator = getVibratoOscillator(o.detune, value, t);
+
+  // pitch envelope
+  getPitchEnvelope(o.detune, value, t, t + duration);
 
   let noiseMix;
   if (noise) {

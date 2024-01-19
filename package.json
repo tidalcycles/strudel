@@ -1,5 +1,5 @@
 {
-  "name": "@strudel.cycles/monorepo",
+  "name": "@strudel/monorepo",
   "version": "0.5.0",
   "private": true,
   "description": "Port of tidalcycles to javascript",
@@ -45,12 +45,12 @@
   },
   "homepage": "https://strudel.cc",
   "dependencies": {
-    "@strudel.cycles/core": "workspace:*",
-    "@strudel.cycles/mini": "workspace:*",
-    "@strudel.cycles/tonal": "workspace:*",
-    "@strudel.cycles/transpiler": "workspace:*",
-    "@strudel.cycles/webaudio": "workspace:*",
-    "@strudel.cycles/xen": "workspace:*"
+    "@strudel/core": "workspace:*",
+    "@strudel/mini": "workspace:*",
+    "@strudel/tonal": "workspace:*",
+    "@strudel/transpiler": "workspace:*",
+    "@strudel/webaudio": "workspace:*",
+    "@strudel/xen": "workspace:*"
   },
   "devDependencies": {
     "dependency-tree": "^10.0.9",

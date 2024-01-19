@@ -97,7 +97,7 @@ const generic_params = [
    */
   ['postgain'],
   /**
-   * Like {@link gain}, but linear.
+   * Like `gain`, but linear.
    *
    * @name amp
    * @param {number | Pattern} amount gain.
@@ -856,7 +856,7 @@ const generic_params = [
    */
   ['detune', 'det'],
   /**
-   * Set dryness of reverb. See {@link room} and {@link size} for more information about reverb.
+   * Set dryness of reverb. See `room` and `size` for more information about reverb.
    *
    * @name dry
    * @param {number | Pattern} dry 0 = wet, 1 = dry
@@ -868,7 +868,7 @@ const generic_params = [
   ['dry'],
   // TODO: does not seem to do anything
   /*
-   * Used when using {@link begin}/{@link end} or {@link chop}/{@link striate} and friends, to change the fade out time of the 'grain' envelope.
+   * Used when using `begin`/`end` or `chop`/`striate` and friends, to change the fade out time of the 'grain' envelope.
    *
    * @name fadeTime
    * @param {number | Pattern} time between 0 and 1
@@ -891,6 +891,82 @@ const generic_params = [
    *
    */
   ['freq'],
+  // pitch envelope
+  /**
+   * Attack time of pitch envelope.
+   *
+   * @name pattack
+   * @synonyms patt
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("<c eb g bb>").pattack("<0 .1 .25 .5>")
+   *
+   */
+  ['pattack', 'patt'],
+  /**
+   * Decay time of pitch envelope.
+   *
+   * @name pdecay
+   * @synonyms pdec
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("<c eb g bb>").pdecay("<0 .1 .25 .5>")
+   *
+   */
+  ['pdecay', 'pdec'],
+  // TODO: how to use psustain?!
+  ['psustain', 'psus'],
+  /**
+   * Release time of pitch envelope
+   *
+   * @name prelease
+   * @synonyms prel
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("<c eb g bb> ~")
+   * .release(.5) // to hear the pitch release
+   * .prelease("<0 .1 .25 .5>")
+   *
+   */
+  ['prelease', 'prel'],
+  /**
+   * Amount of pitch envelope. Negative values will flip the envelope.
+   * If you don't set other pitch envelope controls, `pattack:.2` will be the default.
+   *
+   * @name penv
+   * @param {number | Pattern} semitones change in semitones
+   * @example
+   * note("c")
+   * .penv("<12 7 1 .5 0 -1 -7 -12>")
+   *
+   */
+  ['penv'],
+  /**
+   * Curve of envelope. Defaults to linear. exponential is good for kicks
+   *
+   * @name pcurve
+   * @param {number | Pattern} type 0 = linear, 1 = exponential
+   * @example
+   * note("g1*2")
+   * .s("sine").pdec(.5)
+   * .penv(32)
+   * .pcurve("<0 1>")
+   *
+   */
+  ['pcurve'],
+  /**
+   * Sets the range anchor of the envelope:
+   * - anchor 0: range = [note, note + penv]
+   * - anchor 1: range = [note - penv, note]
+   * If you don't set an anchor, the value will default to the psustain value.
+   *
+   * @name panchor
+   * @param {number | Pattern} anchor anchor offset
+   * @example
+   * note("c").penv(12).panchor("<0 .5 1 .5>")
+   *
+   */
+  ['panchor'],
   // TODO: https://tidalcycles.org/docs/configuration/MIDIOSC/control-voltage/#gate
   ['gate', 'gat'],
   // ['hatgrain'],
@@ -1115,7 +1191,7 @@ const generic_params = [
    */
   [['ir', 'i'], 'iresponse'],
   /**
-   * Sets the room size of the reverb, see {@link room}.
+   * Sets the room size of the reverb, see `room`.
    * When this property is changed, the reverb will be recaculated, so only change this sparsely..
    *
    * @name roomsize
@@ -1173,7 +1249,7 @@ const generic_params = [
    */
   ['speed'],
   /**
-   * Used in conjunction with {@link speed}, accepts values of "r" (rate, default behavior), "c" (cycles), or "s" (seconds). Using `unit "c"` means `speed` will be interpreted in units of cycles, e.g. `speed "1"` means samples will be stretched to fill a cycle. Using `unit "s"` means the playback speed will be adjusted so that the duration is the number of seconds specified by `speed`.
+   * Used in conjunction with `speed`, accepts values of "r" (rate, default behavior), "c" (cycles), or "s" (seconds). Using `unit "c"` means `speed` will be interpreted in units of cycles, e.g. `speed "1"` means samples will be stretched to fill a cycle. Using `unit "s"` means the playback speed will be adjusted so that the duration is the number of seconds specified by `speed`.
    *
    * @name unit
    * @param {number | string | Pattern} unit see description above
@@ -1209,7 +1285,7 @@ const generic_params = [
    * Formant filter to make things sound like vowels.
    *
    * @name vowel
-   * @param {string | Pattern} vowel You can use a e i o u.
+   * @param {string | Pattern} vowel You can use a e i o u ae aa oe ue y uh un en an on, corresponding to [a] [e] [i] [o] [u] [æ] [ɑ] [ø] [y] [ɯ] [ʌ] [œ̃] [ɛ̃] [ɑ̃] [ɔ̃]. Aliases: aa = å = ɑ, oe = ø = ö, y = ı, ae = æ.
    * @example
    * note("c2 <eb2 <g2 g1>>").s('sawtooth')
    * .vowel("<a e i <o u>>")

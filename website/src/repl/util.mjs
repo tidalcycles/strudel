@@ -1,6 +1,6 @@
-import { controls, evalScope, hash2code, logger } from '@strudel.cycles/core';
+import { controls, evalScope, hash2code, logger } from '@strudel/core';
 import { settingPatterns, defaultAudioDeviceName } from '../settings.mjs';
-import { getAudioContext, initializeAudioOutput, setDefaultAudioContext } from '@strudel.cycles/webaudio';
+import { getAudioContext, initializeAudioOutput, setDefaultAudioContext } from '@strudel/webaudio';
 
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
@@ -61,16 +61,16 @@ export function getRandomTune() {
 
 export function loadModules() {
   let modules = [
-    import('@strudel.cycles/core'),
-    import('@strudel.cycles/tonal'),
-    import('@strudel.cycles/mini'),
-    import('@strudel.cycles/xen'),
-    import('@strudel.cycles/webaudio'),
+    import('@strudel/core'),
+    import('@strudel/tonal'),
+    import('@strudel/mini'),
+    import('@strudel/xen'),
+    import('@strudel/webaudio'),
     import('@strudel/codemirror'),
     import('@strudel/hydra'),
-    import('@strudel.cycles/serial'),
-    import('@strudel.cycles/soundfonts'),
-    import('@strudel.cycles/csound'),
+    import('@strudel/serial'),
+    import('@strudel/soundfonts'),
+    import('@strudel/csound'),
   ];
   if (isTauri()) {
     modules = modules.concat([
@@ -79,7 +79,7 @@ export function loadModules() {
       import('@strudel/desktopbridge/oscbridge.mjs'),
     ]);
   } else {
-    modules = modules.concat([import('@strudel.cycles/midi'), import('@strudel.cycles/osc')]);
+    modules = modules.concat([import('@strudel/midi'), import('@strudel/osc')]);
   }
 
   return evalScope(
