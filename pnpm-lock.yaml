@@ -482,8 +482,8 @@ importers:
         specifier: ^4.22.0
         version: 4.22.0
       '@astro-community/astro-embed-youtube':
-        specifier: ^0.4.3
-        version: 0.4.3(astro@4.0.8)
+        specifier: ^0.4.4
+        version: 0.4.4(astro@4.0.8)
       '@astrojs/mdx':
         specifier: ^2.0.3
         version: 2.0.3(astro@4.0.8)
@@ -806,8 +806,8 @@ packages:
       leven: 3.1.0
     dev: true
 
-  /@astro-community/astro-embed-youtube@0.4.3(astro@4.0.8):
-    resolution: {integrity: sha512-zXtPmR9yxrTo6cuLhH8v+r62bsXbsLJgsU2FiZalPr4bXJxAUQEIlG46S/qK0AEXi9uNShKqy4+zBaJ98xTVEg==}
+  /@astro-community/astro-embed-youtube@0.4.4(astro@4.0.8):
+    resolution: {integrity: sha512-fYlycLrJFNnibZ9VHPSJO766kO2IgqYQU4mBd4iaDMaicL0gGX9cVZ80QdnpzGrI6w0XOJOY7prx86eWEVBy8w==}
     peerDependencies:
       astro: ^2.0.0 || ^3.0.0-beta || ^4.0.0-beta
     dependencies:
