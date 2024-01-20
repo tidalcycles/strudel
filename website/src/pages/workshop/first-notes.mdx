@@ -175,11 +175,11 @@ Try adding more notes inside the brackets and notice how it does **not** get fas
 
 **Play one sequence per cycle**
 
-{/* <[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2 */}
+{/* <[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4> */}
 
 <MiniRepl
   client:visible
-  tune={`note("<[36 48]*4 [34 46]*4 [41 53]*4 [39 51]*4>/2")
+  tune={`note("<[36 48]*4 [34 46]*4 [41 53]*4 [39 51]*4>")
 .sound("gm_acoustic_bass")`}
   punchcard
 />
@@ -197,7 +197,7 @@ This is also useful for unpitched sounds:
 
 <MiniRepl
   client:visible
-  tune={`sound("bd*2, ~ <sd cp>, [~ hh]*2")
+  tune={`sound("bd*4, [~ <sd cp>]*2, [~ hh]*4")
 .bank("RolandTR909")`}
   punchcard
 />
@@ -209,7 +209,7 @@ Finding the right notes can be difficult.. Scales are here to help:
 <MiniRepl
   client:visible
   tune={`n("0 2 4 <[6,8] [7,9]>")
-.scale("C:minor").sound("piano")`}
+.scale("C:minor").sound("piano").cpm(60)`}
   punchcard
 />
 
@@ -236,7 +236,7 @@ Just like anything, we can automate the scale with a pattern:
   client:visible
   tune={`n("<0 -3>, 2 4 <[6,8] [7,9]>")
 .scale("<C:major D:mixolydian>/4")
-.sound("piano")`}
+.sound("piano").cpm(60)`}
   punchcard
 />
 
@@ -269,7 +269,7 @@ Try changing that number!
   client:visible
   tune={`n("<[4@2 4] [5@2 5] [6@2 6] [5@2 5]>*2")
 .scale("<C2:mixolydian F2:mixolydian>/4")
-.sound("gm_acoustic_bass")`}
+.sound("gm_acoustic_bass").cpm(60)`}
   punchcard
 />
 
@@ -283,7 +283,7 @@ This is also sometimes called triplet swing. You'll often find it in blues and j
 
 **Replicate**
 
-<MiniRepl client:visible tune={`note("c!2 [eb,<g a bb a>]").sound("piano")`} punchcard />
+<MiniRepl client:visible tune={`note("c!2 [eb,<g a bb a>]").sound("piano").cpm(60)`} punchcard />
 
 <Box>
 
@@ -300,7 +300,7 @@ Let's recap what we've learned in this chapter:
 | Concept   | Syntax | Example                                                  |
 | --------- | ------ | -------------------------------------------------------- |
 | Slow down | \/     | <MiniRepl client:visible tune={`note("[c a f e]/2")`} /> |
-| Alternate | \<\>   | <MiniRepl client:visible tune={`note("c <e g>")`} />     |
+| Alternate | \<\>   | <MiniRepl client:visible tune={`note("c a f <e g>")`} />     |
 | Elongate  | @      | <MiniRepl client:visible tune={`note("c@3 e")`} />       |
 | Replicate | !      | <MiniRepl client:visible tune={`note("c!3 e")`} />       |
 
@@ -318,7 +318,7 @@ New functions:
 
 <MiniRepl
   client:visible
-  tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+  tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>")
 .sound("gm_synth_bass_1")
 .lpf(800) // <-- we'll learn about this soon`}
 />
@@ -332,7 +332,7 @@ New functions:
 [~ 0] 1 [0 1] [~ 1]
 [~ 0] 3 [0 3] [~ 3]
 [~ 0] 2 [0 2] [~ 2]
->*2\`).scale("C4:minor")
+>*4\`).scale("C4:minor")
 .sound("gm_synth_strings_1")`}
 />
 
@@ -340,7 +340,7 @@ New functions:
 
 <MiniRepl
   client:visible
-  tune={`sound("bd*2, ~ <sd cp>, [~ hh]*2")
+  tune={`sound("bd*4, [~ <sd cp>]*2, [~ hh]*4")
 .bank("RolandTR909")`}
 />
 
@@ -355,16 +355,16 @@ It's called `stack` 😙
 <MiniRepl
   client:visible
   tune={`stack(
-  note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+  note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>")
   .sound("gm_synth_bass_1").lpf(800),
   n(\`<
   [~ 0] 2 [0 2] [~ 2]
   [~ 0] 1 [0 1] [~ 1]
   [~ 0] 3 [0 3] [~ 3]
   [~ 0] 2 [0 2] [~ 2]
-  >*2\`).scale("C4:minor")
+  >*4\`).scale("C4:minor")
   .sound("gm_synth_strings_1"),
-  sound("bd*2, ~ <sd cp>, [~ hh]*2")
+  sound("bd*4, [~ <sd cp>]*2, [~ hh]*4")
   .bank("RolandTR909")
 )`}
 />
