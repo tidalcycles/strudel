@@ -16,6 +16,11 @@ export const collectionName = {
   featured: 'Featured',
 };
 
+export const patternFilterName = {
+  community: 'community',
+  user: 'user',
+};
+
 export let $viewingPatternData = persistentAtom(
   'viewingPatternData',
   {

@@ -1,6 +1,7 @@
 import { persistentMap } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel/core';
+import { patternFilterName } from './user_pattern_utils.mjs';
 
 export const defaultAudioDeviceName = 'System Standard';
 
@@ -20,6 +21,7 @@ export const defaultSettings = {
   latestCode: '',
   isZen: false,
   soundsFilter: 'all',
+  patternFilter: patternFilterName.community,
   panelPosition: 'right',
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
