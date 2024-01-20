@@ -1787,7 +1787,7 @@ export const apply = register('apply', function (func, pat) {
  */
 // TODO - global clock
 export const cpm = register('cpm', function (cpm, pat) {
-  return pat._fast(cpm / 60);
+  return pat._fast(cpm / 60 / 0.5);
 });
 
 /**
@@ -2288,7 +2288,7 @@ export const striate = register('striate', function (n, pat) {
  * s("rhodes").loopAt(4)
  */
 // TODO - global cps clock
-const _loopAt = function (factor, pat, cps = 1) {
+const _loopAt = function (factor, pat, cps = 0.5) {
   return pat
     .speed((1 / factor) * cps)
     .unit('c')
