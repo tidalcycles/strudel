@@ -21,7 +21,9 @@ function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
 
   return (
     <>{`${pattern.id}: ${
-      meta.title ?? pattern.hash ?? new Date(pattern.created_at).toLocaleDateString() ?? 'unnamed'
+      meta.title ?? pattern.hash ?? pattern.created_at != null
+        ? new Date(pattern.created_at).toLocaleDateString()
+        : 'unnamed'
     } by ${Array.isArray(meta.by) ? meta.by.join(',') : 'Anonymous'}`}</>
   );
 }
