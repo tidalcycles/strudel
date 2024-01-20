@@ -61,12 +61,62 @@ export function repl({
     scheduler.setPattern(pattern, autostart);
   };
   setTime(() => scheduler.now()); // TODO: refactor?
+
+  const stop = () => scheduler.stop();
+  const start = () => scheduler.start();
+  const pause = () => scheduler.pause();
+  const toggle = () => scheduler.toggle();
+  const setCps = (cps) => scheduler.setCps(cps);
+  const setCpm = (cpm) => scheduler.setCps(cpm / 60);
+
+  const injectPatternMethods = () => {
+    Pattern.prototype.p = function (id) {
+      pPatterns[id] = this;
+      return this;
+    };
+    Pattern.prototype.q = function (id) {
+      return silence;
+    };
+
+    const all = function (transform) {
+      allTransform = transform;
+      return silence;
+    };
+    try {
+      for (let i = 1; i < 10; ++i) {
+        Object.defineProperty(Pattern.prototype, `d${i}`, {
+          get() {
+            return this.p(i);
+          },
+        });
+        Object.defineProperty(Pattern.prototype, `p${i}`, {
+          get() {
+            return this.p(i);
+          },
+        });
+        Pattern.prototype[`q${i}`] = silence;
+      }
+    } catch (err) {
+      // already defined..
+    }
+
+    evalScope({
+      all,
+      hush,
+      setCps,
+      setcps: setCps,
+      setCpm,
+      setcpm: setCpm,
+    });
+  };
+
   const evaluate = async (code, autostart = true, shouldHush = true) => {
     if (!code) {
       throw new Error('no code to evaluate');
     }
     try {
       updateState({ code, pending: true });
+      injectPatternMethods();
       await beforeEval?.({ code });
       shouldHush && hush();
       let { pattern, meta } = await _evaluate(code, transpiler);
@@ -100,51 +150,6 @@ export function repl({
       onEvalError?.(err);
     }
   };
-  const stop = () => scheduler.stop();
-  const start = () => scheduler.start();
-  const pause = () => scheduler.pause();
-  const toggle = () => scheduler.toggle();
-  const setCps = (cps) => scheduler.setCps(cps);
-  const setCpm = (cpm) => scheduler.setCps(cpm / 60);
-
-  Pattern.prototype.p = function (id) {
-    pPatterns[id] = this;
-    return this;
-  };
-  Pattern.prototype.q = function (id) {
-    return silence;
-  };
-
-  const all = function (transform) {
-    allTransform = transform;
-    return silence;
-  };
-  try {
-    for (let i = 1; i < 10; ++i) {
-      Object.defineProperty(Pattern.prototype, `d${i}`, {
-        get() {
-          return this.p(i);
-        },
-      });
-      Object.defineProperty(Pattern.prototype, `p${i}`, {
-        get() {
-          return this.p(i);
-        },
-      });
-      Pattern.prototype[`q${i}`] = silence;
-    }
-  } catch (err) {
-    // already defined..
-  }
-
-  evalScope({
-    all,
-    hush,
-    setCps,
-    setcps: setCps,
-    setCpm,
-    setcpm: setCpm,
-  });
   const setCode = (code) => updateState({ code });
   return { scheduler, evaluate, start, stop, pause, setCps, setPattern, setCode, toggle, state };
 }
