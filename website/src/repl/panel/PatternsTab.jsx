@@ -98,8 +98,6 @@ export function PatternsTab({ context }) {
     context.handleUpdate(patternData, reset);
   };
   const viewingPatternID = viewingPatternData?.id;
-  const viewingIDIsValid = userPattern.isValidID(viewingPatternID);
-  const isUserPattern = userPatterns[viewingPatternID] != null;
 
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-2 pb-4">
