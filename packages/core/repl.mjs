@@ -107,11 +107,6 @@ export function repl({
   const setCps = (cps) => scheduler.setCps(cps);
   const setCpm = (cpm) => scheduler.setCps(cpm / 60);
 
-  // the following functions use the cps value, which is why they are defined here..
-  const loopAt = register('loopAt', (cycles, pat) => {
-    return pat.loopAtCps(cycles, scheduler.cps);
-  });
-
   Pattern.prototype.p = function (id) {
     pPatterns[id] = this;
     return this;
@@ -143,7 +138,6 @@ export function repl({
   }
 
   evalScope({
-    loopAt,
     all,
     hush,
     setCps,

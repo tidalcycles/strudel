@@ -2359,15 +2359,10 @@ export const splice = register(
   false, // turns off auto-patternification
 );
 
-// this function will be redefined in repl.mjs to use the correct cps value.
-// It is still here to work in cases where repl.mjs is not used
-
 export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
-  return _loopAt(factor, pat, 1);
+  return new Pattern((state) => _loopAt(factor, pat, state.controls._cps).query(state));
 });
 
-// the fit function will be redefined in repl.mjs to use the correct cps value.
-// It is still here to work in cases where repl.mjs is not used
 /**
  * Makes the sample fit its event duration. Good for rhythmical loops like drum breaks.
  * Similar to `loopAt`.
