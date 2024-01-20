@@ -128,7 +128,7 @@ const generic_params = [
    * @name fmh
    * @param {number | Pattern} harmonicity
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm(4)
    * .fmh("<1 2 1.5 1.61>")
    * .scope()
@@ -143,7 +143,7 @@ const generic_params = [
    * @param {number | Pattern} brightness modulation index
    * @synonyms fmi
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm("<0 1 2 8 32>")
    * .scope()
    *
@@ -156,7 +156,7 @@ const generic_params = [
    * @name fmenv
    * @param {number | Pattern} type lin | exp
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm(4)
    * .fmdecay(.2)
    * .fmsustain(0)
@@ -171,7 +171,7 @@ const generic_params = [
    * @name fmattack
    * @param {number | Pattern} time attack time
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm(4)
    * .fmattack("<0 .05 .1 .2>")
    * .scope()
@@ -184,7 +184,7 @@ const generic_params = [
    * @name fmdecay
    * @param {number | Pattern} time decay time
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm(4)
    * .fmdecay("<.01 .05 .1 .2>")
    * .fmsustain(.4)
@@ -198,7 +198,7 @@ const generic_params = [
    * @name fmsustain
    * @param {number | Pattern} level sustain level
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm(4)
    * .fmdecay(.1)
    * .fmsustain("<1 .75 .5 0>")
@@ -726,11 +726,11 @@ const generic_params = [
    * @synonyms vibrato, v
    * @param {number | Pattern} frequency of the vibrato in hertz
    * @example
-   * note("a")
+   * note("a e")
    * .vib("<.5 1 2 4 8 16>")
    * @example
    * // change the modulation depth with ":"
-   * note("a")
+   * note("a e")
    * .vib("<.5 1 2 4 8 16>:12")
    */
   [['vib', 'vibmod'], 'vibrato', 'v'],
@@ -750,11 +750,11 @@ const generic_params = [
    * @synonyms vmod
    * @param {number | Pattern} depth of vibrato (in semitones)
    * @example
-   * note("a").vib(4)
+   * note("a e").vib(4)
    * .vibmod("<.25 .5 1 2 12>")
    * @example
    * // change the vibrato frequency with ":"
-   * note("a")
+   * note("a e")
    * .vibmod("<.25 .5 1 2 12>:8")
    */
   [['vibmod', 'vib'], 'vmod'],
