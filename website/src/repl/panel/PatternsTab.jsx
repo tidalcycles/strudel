@@ -153,12 +153,6 @@ export function PatternsTab({ context }) {
                 }}
               />
             </div>
-            {/* {viewingIDIsValid && (
-              <div className="flex items-center mb-2 space-x-2 overflow-auto">
-                <h1 className="text-xl">{`${viewingPatternID}`}</h1>
-              </div>
-            )} */}
-
             <PatternButtons
               onClick={(id) => updateCodeWindow({ ...userPatterns[id], collection: userPattern.collection }, false)}
               patterns={userPatterns}
