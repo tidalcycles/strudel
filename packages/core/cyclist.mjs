@@ -41,7 +41,7 @@ export class Cyclist {
           this.lastEnd = end;
 
           // query the pattern for events
-          const haps = this.pattern.queryArc(begin, end);
+          const haps = this.pattern.queryArc(begin, end, { _cps: this.cps });
 
           const tickdeadline = phase - time; // time left until the phase is a whole number
           this.lastTick = time + tickdeadline;
