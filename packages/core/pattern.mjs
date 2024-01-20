@@ -342,7 +342,7 @@ export class Pattern {
    */
   queryArc(begin, end, controls = {}) {
     try {
-      return this.query(new State(new TimeSpan(begin, end, controls)));
+      return this.query(new State(new TimeSpan(begin, end), controls));
     } catch (err) {
       logger(`[query]: ${err.message}`, 'error');
       return [];
