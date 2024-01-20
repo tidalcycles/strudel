@@ -427,7 +427,7 @@ export class Pattern {
    * @noAutocomplete
    */
   withHaps(func) {
-    return new Pattern((state) => func(this.query(state)));
+    return new Pattern((state) => func(this.query(state), state));
   }
 
   /**
@@ -2377,12 +2377,14 @@ export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (facto
  * s("rhodes/4").fit()
  */
 export const fit = register('fit', (pat) =>
-  pat.withHap((hap) =>
-    hap.withValue((v) => ({
-      ...v,
-      speed: 1 / hap.whole.duration,
-      unit: 'c',
-    })),
+  pat.withHaps((haps, state) =>
+    haps.map((hap) =>
+      hap.withValue((v) => ({
+        ...v,
+        speed: (state.controls._cps || 1) / hap.whole.duration,
+        unit: 'c',
+      })),
+    ),
   ),
 );
 

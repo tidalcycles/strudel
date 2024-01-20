@@ -142,19 +142,8 @@ export function repl({
     // already defined..
   }
 
-  const fit = register('fit', (pat) =>
-    pat.withHap((hap) =>
-      hap.withValue((v) => ({
-        ...v,
-        speed: scheduler.cps / hap.whole.duration, // overwrite speed completely?
-        unit: 'c',
-      })),
-    ),
-  );
-
   evalScope({
     loopAt,
-    fit,
     all,
     hush,
     setCps,
