@@ -10,6 +10,7 @@ import {
 import { useMemo } from 'react';
 import { getMetadata } from '../../metadata_parser';
 import { useExamplePatterns } from '../useExamplePatterns';
+import { parseJSON } from '../util.mjs';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -42,7 +43,7 @@ function PatternButton({ showOutline, onClick, pattern, showHiglight }) {
 
 function PatternButtons({ patterns, activePattern, onClick, started }) {
   const viewingPatternStore = useViewingPatternData();
-  const viewingPatternData = JSON.parse(viewingPatternStore);
+  const viewingPatternData = parseJSON(viewingPatternStore);
   const viewingPatternID = viewingPatternData.id;
   return (
     <div className="font-mono text-sm">
@@ -76,7 +77,7 @@ function ActionButton({ children, onClick, label, labelIsHidden }) {
 export function PatternsTab({ context }) {
   const activePattern = useActivePattern();
   const viewingPatternStore = useViewingPatternData();
-  const viewingPatternData = JSON.parse(viewingPatternStore);
+  const viewingPatternData = parseJSON(viewingPatternStore);
 
   const { userPatterns } = useSettings();
   const examplePatterns = useExamplePatterns();
@@ -164,7 +165,7 @@ export function PatternsTab({ context }) {
             <h2 className="text-xl mb-2">{collection}</h2>
             <div className="font-mono text-sm">
               <PatternButtons
-                onClick={(id) => updateCodeWindow({ ...patterns[id], collection }, true)}
+                onClick={(id) => updateCodeWindow({ ...patterns[id], collection }, false)}
                 started={context.started}
                 patterns={patterns}
                 activePattern={activePattern}

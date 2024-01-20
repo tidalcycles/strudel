@@ -52,6 +52,15 @@ export async function initCode() {
   }
 }
 
+export const parseJSON = (json) => {
+  json = json != null && json.length ? json : '{}';
+  try {
+    return JSON.parse(json);
+  } catch {
+    return '{}';
+  }
+};
+
 export function getRandomTune() {
   const allTunes = Object.entries(stockPatterns);
   const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];

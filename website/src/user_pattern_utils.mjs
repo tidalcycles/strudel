@@ -4,7 +4,7 @@ import { useStore } from '@nanostores/react';
 import { logger } from '@strudel/core';
 import { nanoid } from 'nanoid';
 import { settingsMap } from './settings.mjs';
-import { supabase } from './repl/util.mjs';
+import { parseJSON, supabase } from './repl/util.mjs';
 
 export let $publicPatterns = atom([]);
 export let $featuredPatterns = atom([]);
@@ -28,7 +28,7 @@ export let $viewingPatternData = persistentAtom(
 );
 
 export const getViewingPatternData = () => {
-  return JSON.parse($viewingPatternData.get());
+  return parseJSON($viewingPatternData.get());
 };
 export const useViewingPatternData = () => {
   return useStore($viewingPatternData);
@@ -81,7 +81,7 @@ const defaultCode = '';
 export const userPattern = {
   collection: collectionName.user,
   getAll() {
-    const patterns = JSON.parse(settingsMap.get().userPatterns);
+    const patterns = parseJSON(settingsMap.get().userPatterns);
     return patterns ?? {};
   },
   getPatternData(id) {
@@ -160,7 +160,7 @@ export async function importPatterns(fileList) {
       const content = await file.text();
       if (file.type === 'application/json') {
         const userPatterns = userPattern.getAll();
-        setUserPatterns({ ...userPatterns, ...JSON.parse(content) });
+        setUserPatterns({ ...userPatterns, ...parseJSON(content) });
       } else if (file.type === 'text/plain') {
         const id = file.name.replace(/\.[^/.]+$/, '');
         userPattern.update(id, { code: content });
