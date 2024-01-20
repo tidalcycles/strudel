@@ -150,7 +150,7 @@ Pitch envelopes can breathe life into static sounds:
   .s("gm_electric_guitar_jazz")
   .penv("<.5 0 7 -2>*2").vib("4:.1")
   .phaser(2).delay(.25).room(.3)
-  .size(4).fast(.75)`}
+  .size(4).fast(1.5)`}
 />
 
 You also create some lovely chiptune-style sounds:
@@ -163,7 +163,7 @@ You also create some lovely chiptune-style sounds:
 .voicing().add(note("<0 1>/8"))
 .dec(.1).room(.2)
 .segment("<4 [2 8]>")
-.penv("<0 <2 -2>>").patt(.02)`}
+.penv("<0 <2 -2>>").patt(.02).fast(2)`}
 />
 
 Let's break down all pitch envelope controls:

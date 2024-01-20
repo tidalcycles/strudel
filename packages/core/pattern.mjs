@@ -1993,7 +1993,7 @@ export const palindrome = register('palindrome', function (pat) {
  * @name juxBy
  * @synonyms juxby
  * @example
- * s("lt ht mt ht hh").juxBy("<0 .5 1>/2", rev)
+ * s("bd lt [~ ht] mt cp ~ bd hh").juxBy("<0 .5 1>/2", rev)
  */
 export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func, pat) {
   by /= 2;
@@ -2012,7 +2012,11 @@ export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func,
 /**
  * The jux function creates strange stereo effects, by applying a function to a pattern, but only in the right-hand channel.
  * @example
- * s("lt ht mt ht hh").jux(rev)
+ * s("bd lt [~ ht] mt cp ~ bd hh").jux(rev)
+ * @example
+ * s("bd lt [~ ht] mt cp ~ bd hh").jux(press)
+ * @example
+ * s("bd lt [~ ht] mt cp ~ bd hh").jux(iter(4))
  */
 export const jux = register('jux', function (func, pat) {
   return pat._juxBy(1, func, pat);
