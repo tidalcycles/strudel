@@ -340,7 +340,7 @@ export class Pattern {
    * silence
    * @noAutocomplete
    */
-  queryArc(begin, end, controls={}) {
+  queryArc(begin, end, controls = {}) {
     try {
       return this.query(new State(new TimeSpan(begin, end, controls)));
     } catch (err) {
@@ -2345,13 +2345,15 @@ export const splice = register(
       // TODO - default cps to 0.5
       const cps = state.controls._cps || 1;
       const haps = sliced.query(state);
-      return haps.map((hap) => hap.withValue((v) => ({
-        ...{
-          speed: (cps / v._slices / hap.whole.duration) * (v.speed || 1),
-          unit: 'c',
-        },
-        ...v,
-      })));
+      return haps.map((hap) =>
+        hap.withValue((v) => ({
+          ...{
+            speed: (cps / v._slices / hap.whole.duration) * (v.speed || 1),
+            unit: 'c',
+          },
+          ...v,
+        })),
+      );
     });
   },
   false, // turns off auto-patternification
