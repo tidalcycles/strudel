@@ -171,7 +171,7 @@ Similar to the whole sequence, the content of a sub-sequence will be squished to
 
 **Multiplication: Speeeeeeeeed things up**
 
-<MiniRepl client:visible tune={`sound("bd hh*16 rim hh*8")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd hh*32 rim hh*16")`} punchcard />
 
 <Box>
 
@@ -257,7 +257,8 @@ The Mini-Notation is usually used inside some function. These are the functions 
 
 **Basic rock beat**
 
-<MiniRepl client:visible tune={`sound("bd sd, hh*4").bank("RolandTR505").cpm(100/2)`} punchcard />
+<MiniRepl client:visible tune={`sound("[bd sd]*2, hh*8").bank("RolandTR505")
+.cpm(100/4)`} punchcard />
 
 **Classic house**
 
@@ -279,7 +280,7 @@ We Will Rock you
 <MiniRepl
   client:visible
   tune={`sound("bd sd, ~ ~ ~ hh ~ hh ~ ~, ~ perc ~ perc:1*2")
-  .bank("RolandCompurhythm1000").cpm(60)`}
+  .bank("RolandCompurhythm1000").cpm(120/2)`}
   punchcard
 />
 
