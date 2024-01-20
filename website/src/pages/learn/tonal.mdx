@@ -14,6 +14,19 @@ These functions use [tonaljs](https://github.com/tonaljs/tonal) to provide helpe
 
 <JsDoc client:idle name="voicing" h={0} />
 
+Here's an example of how you can play chords and a bassline:
+
+<MiniRepl
+  client:idle
+  tune={`chord("<C^7 A7b13 Dm7 G7>*2")
+  .dict('ireal').layer(
+  x=>x.struct("[~ x]*2").voicing()
+  ,
+  x=>n("0*4").set(x).mode("root:g2").voicing()
+  .s('sawtooth').cutoff("800:4:2")
+)`}
+/>
+
 ### scale(name)
 
 <JsDoc client:idle name="scale" h={0} />
@@ -22,13 +35,13 @@ These functions use [tonaljs](https://github.com/tonaljs/tonal) to provide helpe
 
 Transposes all notes to the given number of semitones:
 
-<MiniRepl client:only="react" tune={`"c2 c3".fast(2).transpose("<0 -2 5 3>".slow(2)).note()`} />
+<MiniRepl client:only="react" tune={`"[c2 c3]*4".transpose("<0 -2 5 3>").note()`} />
 
 This method gets really exciting when we use it with a pattern as above.
 
 Instead of numbers, scientific interval notation can be used as well:
 
-<MiniRepl client:only="react" tune={`"c2 c3".fast(2).transpose("<1P -2M 4P 3m>".slow(2)).note()`} />
+<MiniRepl client:only="react" tune={`"[c2 c3]*4".transpose("<1P -2M 4P 3m>").note()`} />
 
 ### scaleTranspose(steps)
 
@@ -36,9 +49,9 @@ Transposes notes inside the scale by the number of steps:
 
 <MiniRepl
   client:idle
-  tune={`"-8 [2,4,6]"
+  tune={`"[-8 [2,4,6]]*2"
 .scale('C4 bebop major')
-.scaleTranspose("<0 -1 -2 -3 -4 -5 -6 -4>")
+.scaleTranspose("<0 -1 -2 -3 -4 -5 -6 -4>*2")
 .note()`}
 />
 
@@ -46,22 +59,28 @@ Transposes notes inside the scale by the number of steps:
 
 Turns chord symbols into voicings, using the smoothest voice leading possible:
 
-<MiniRepl client:only="react" tune={`stack("<C^7 A7 Dm7 G7>".voicings('lefthand'), "<C3 A2 D3 G2>").note()`} />
+<MiniRepl
+  client:only="react"
+  tune={`stack(
+  "<C^7 A7 Dm7 G7>".voicings('lefthand'), 
+  "<C3 A2 D3 G2>"
+).note()`}
+/>
+
+Note: This function might be removed, as `voicing` (without s) is a newer implementation.
 
 ### rootNotes(octave = 2)
 
 Turns chord symbols into root notes of chords in given octave.
 
-<MiniRepl client:only="react" tune={`"<C^7 A7b13 Dm7 G7>".rootNotes(3).note()`} />
+<MiniRepl client:only="react" tune={`"<C^7 A7b13 Dm7 G7>*2".rootNotes(3).note()`} />
 
 Together with layer, struct and voicings, this can be used to create a basic backing track:
 
 <MiniRepl
   client:idle
-  tune={`"<C^7 A7b13 Dm7 G7>".layer(
-  x => x.voicings('lefthand').struct("~ x").note(),
+  tune={`"<C^7 A7b13 Dm7 G7>*2".layer(
+  x => x.voicings('lefthand').struct("[~ x]*2").note(),
   x => x.rootNotes(2).note().s('sawtooth').cutoff(800)
 )`}
 />
-
-So far, we've stayed within the browser. [MIDI and OSC](/learn/input-output/) are ways to break out of it.
