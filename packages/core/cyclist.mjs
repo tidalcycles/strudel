@@ -10,7 +10,7 @@ import { logger } from './logger.mjs';
 export class Cyclist {
   constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
     this.started = false;
-    this.cps = 1;
+    this.cps = 0.5;
     this.num_ticks_since_cps_change = 0;
     this.lastTick = 0; // absolute time when last tick (clock callback) happened
     this.lastBegin = 0; // query begin of last tick
@@ -96,7 +96,7 @@ export class Cyclist {
       this.start();
     }
   }
-  setCps(cps = 1) {
+  setCps(cps = 0.5) {
     if (this.cps === cps) {
       return;
     }
