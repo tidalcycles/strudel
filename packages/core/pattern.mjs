@@ -697,7 +697,7 @@ export class Pattern {
    * @synonyms apply
    * @returns Pattern
    * @example
-   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
+   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*8"
    *   .layer(x=>x.add("0,2"))
    *   .scale('C minor').note()
    */
@@ -711,7 +711,7 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
+   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*8"
    *   .superimpose(x=>x.add(2))
    *   .scale('C minor').note()
    */
@@ -2028,7 +2028,7 @@ export const jux = register('jux', function (func, pat) {
  * @example
  * "<0 [2 4]>"
  * .echoWith(4, 1/8, (p,n) => p.add(n*2))
- * .scale('C minor').note().clip(.2)
+ * .scale("C:minor").note()
  */
 export const { echoWith, echowith, stutWith, stutwith } = register(
   ['echoWith', 'echowith', 'stutWith', 'stutwith'],
