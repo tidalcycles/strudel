@@ -340,9 +340,9 @@ export class Pattern {
    * silence
    * @noAutocomplete
    */
-  queryArc(begin, end) {
+  queryArc(begin, end, controls={}) {
     try {
-      return this.query(new State(new TimeSpan(begin, end)));
+      return this.query(new State(new TimeSpan(begin, end, controls)));
     } catch (err) {
       logger(`[query]: ${err.message}`, 'error');
       return [];
@@ -2341,14 +2341,17 @@ export const splice = register(
   'splice',
   function (npat, ipat, opat) {
     const sliced = slice(npat, ipat, opat);
-    return sliced.withHap(function (hap) {
-      return hap.withValue((v) => ({
+    return new Pattern((state) => {
+      // TODO - default cps to 0.5
+      const cps = state.controls._cps || 1;
+      const haps = sliced.query(state);
+      return haps.map((hap) => hap.withValue((v) => ({
         ...{
-          speed: (1 / v._slices / hap.whole.duration) * (v.speed || 1),
+          speed: (cps / v._slices / hap.whole.duration) * (v.speed || 1),
           unit: 'c',
         },
         ...v,
-      }));
+      })));
     });
   },
   false, // turns off auto-patternification
