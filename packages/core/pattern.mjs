@@ -858,7 +858,7 @@ Pattern.prototype.arpWith = function (func) {
  * Selects indices in in stacked notes.
  * @example
  * note("<[c,eb,g]!2 [c,f,ab] [d,f,ab]>")
- * .arp("0 [0,2] 1 [0,2]").slow(2)
+ * .arp("0 [0,2] 1 [0,2]")
  * */
 Pattern.prototype.arp = function (pat) {
   return this.arpWith((haps) => pat.fmap((i) => haps[i % haps.length]));
@@ -1049,9 +1049,9 @@ function _composeOp(a, b, func) {
    * Applies the given structure to the pattern:
    *
    * @example
-   * note("c3,eb3,g3")
+   * note("c,eb,g")
    *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
-   *   .slow(4)
+   *   .slow(2)
    */
   Pattern.prototype.struct = function (...args) {
     return this.keepif.out(...args);
@@ -1063,7 +1063,7 @@ function _composeOp(a, b, func) {
    * Returns silence when mask is 0 or "~"
    *
    * @example
-   * note("c [eb,g] d [eb,g]").mask("<1 [0 1]>").slow(2)
+   * note("c [eb,g] d [eb,g]").mask("<1 [0 1]>")
    */
   Pattern.prototype.mask = function (...args) {
     return this.keepif.in(...args);
@@ -1075,7 +1075,7 @@ function _composeOp(a, b, func) {
    * Resets the pattern to the start of the cycle for each onset of the reset pattern.
    *
    * @example
-   * s("<bd lt> sd, hh*4").reset("<x@3 x(3,8)>")
+   * s("[<bd lt> sd]*2, hh*8").reset("<x@3 x(5,8)>")
    */
   Pattern.prototype.reset = function (...args) {
     return this.keepif.trig(...args);
@@ -1088,7 +1088,7 @@ function _composeOp(a, b, func) {
    * While reset will only reset the current cycle, restart will start from cycle 0.
    *
    * @example
-   * s("<bd lt> sd, hh*4").restart("<x@3 x(3,8)>")
+   * s("[<bd lt> sd]*2, hh*8").restart("<x@3 x(5,8)>")
    */
   Pattern.prototype.restart = function (...args) {
     return this.keepif.trigzero(...args);
@@ -1886,7 +1886,7 @@ export const { invert, inv } = register(['invert', 'inv'], function (pat) {
  * @param {function} func
  * @returns Pattern
  * @example
- * "c3 eb3 g3".when("<0 1>/2", x=>x.sub(5)).note()
+ * "c3 eb3 g3".when("<0 1>/2", x=>x.sub("5")).note()
  */
 export const when = register('when', function (on, func, pat) {
   return on ? func(pat) : pat;
@@ -2125,7 +2125,8 @@ const { repeatCycles } = register('repeatCycles', _repeatCycles);
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note()
+ * "0 1 2 3".chunk(4, x=>x.add(7))
+ * .scale("A:minor").note()
  */
 const _chunk = function (n, func, pat, back = false, fast = false) {
   const binary = Array(n - 1).fill(false);
@@ -2150,7 +2151,8 @@ const { chunk, slowchunk, slowChunk } = register(['chunk', 'slowchunk', 'slowChu
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note()
+ * "0 1 2 3".chunkBack(4, x=>x.add(7))
+ * .scale("A:minor").note()
  */
 export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], function (n, func, pat) {
   return _chunk(n, func, pat, true);
@@ -2164,10 +2166,11 @@ export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], fun
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "<0 8> 1 2 3 4 5 6 7".fastChunk(4, x => x.color('red')).slow(4).scale("C2:major").note()
-  .s("folkharp")
+ * "<0 8> 1 2 3 4 5 6 7"
+ * .fastChunk(4, x => x.color('red')).slow(2)
+ * .scale("C2:major").note()
  */
-const { fastchunk, fastChunk } = register(['fastchunk', 'fastChunk'], function (n, func, pat) {
+export const { fastchunk, fastChunk } = register(['fastchunk', 'fastChunk'], function (n, func, pat) {
   return _chunk(n, func, pat, false, true);
 });
 
