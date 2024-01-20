@@ -100,67 +100,65 @@ export function PatternsTab({ context }) {
   const viewingPatternID = viewingPatternData?.id;
 
   return (
-    <div className="px-4 w-full dark:text-white text-stone-900 space-y-2 pb-4">
+    <div className="px-4 w-full dark:text-white text-stone-900 space-y-2 pb-4 flex flex-col overflow-hidden max-h-full">
       <ButtonGroup
         value={patternFilter}
         onChange={(value) => settingsMap.setKey('patternFilter', value)}
         items={patternFilterName}
       ></ButtonGroup>
-      <section>
+      <div className="pr-4 space-x-4 border-b border-foreground mb-2 flex max-w-full items-center h-16 overflow-x-auto">
+        <ActionButton
+          label="new"
+          onClick={() => {
+            const { data } = userPattern.createAndAddToDB();
+            updateCodeWindow(data);
+          }}
+        />
+        <ActionButton
+          label="duplicate"
+          onClick={() => {
+            const { data } = userPattern.duplicate(viewingPatternData);
+            updateCodeWindow(data);
+          }}
+        />
+        <ActionButton
+          label="delete"
+          onClick={() => {
+            const { data } = userPattern.delete(viewingPatternID);
+            updateCodeWindow({ ...data, collection: userPattern.collection });
+          }}
+        />
+        <label className="hover:opacity-50 cursor-pointer">
+          <input
+            style={{ display: 'none' }}
+            type="file"
+            multiple
+            accept="text/plain,application/json"
+            onChange={(e) => importPatterns(e.target.files)}
+          />
+          import
+        </label>
+        <ActionButton label="export" onClick={exportPatterns} />
+
+        <ActionButton
+          label="delete-all"
+          onClick={() => {
+            const { data } = userPattern.clearAll();
+            updateCodeWindow(data);
+          }}
+        />
+      </div>
+
+      <section className="flex overflow-y-scroll max-h-full flex-col">
         {patternFilter === patternFilterName.user && (
-          <div>
-            <div className="pr-4 space-x-4 border-b border-foreground mb-2 flex overflow-auto max-w-full items-center">
-              <ActionButton
-                label="new"
-                onClick={() => {
-                  const { data } = userPattern.createAndAddToDB();
-                  updateCodeWindow(data);
-                }}
-              />
-              <ActionButton
-                label="duplicate"
-                onClick={() => {
-                  const { data } = userPattern.duplicate(viewingPatternData);
-                  updateCodeWindow(data);
-                }}
-              />
-              <ActionButton
-                label="delete"
-                onClick={() => {
-                  const { data } = userPattern.delete(viewingPatternID);
-                  updateCodeWindow({ ...data, collection: userPattern.collection });
-                }}
-              />
-              <label className="hover:opacity-50 cursor-pointer">
-                <input
-                  style={{ display: 'none' }}
-                  type="file"
-                  multiple
-                  accept="text/plain,application/json"
-                  onChange={(e) => importPatterns(e.target.files)}
-                />
-                import
-              </label>
-              <ActionButton label="export" onClick={exportPatterns} />
-
-              <ActionButton
-                label="delete all"
-                onClick={() => {
-                  const { data } = userPattern.clearAll();
-                  updateCodeWindow(data);
-                }}
-              />
-            </div>
-            <PatternButtons
-              onClick={(id) => updateCodeWindow({ ...userPatterns[id], collection: userPattern.collection }, false)}
-              patterns={userPatterns}
-              started={context.started}
-              activePattern={activePattern}
-              viewingPatternID={viewingPatternID}
-            />
-          </div>
+          <PatternButtons
+            onClick={(id) => updateCodeWindow({ ...userPatterns[id], collection: userPattern.collection }, false)}
+            patterns={userPatterns}
+            started={context.started}
+            activePattern={activePattern}
+            viewingPatternID={viewingPatternID}
+          />
         )}
-
         {patternFilter !== patternFilterName.user &&
           Array.from(collections.keys()).map((collection) => {
             const patterns = collections.get(collection);
