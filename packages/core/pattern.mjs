@@ -2251,7 +2251,7 @@ export const legato = register('legato', function (value, pat) {
  * s("rhodes")
  *  .chop(4)
  *  .rev() // reverse order of chops
- *  .loopAt(4) // fit sample into 4 cycles
+ *  .loopAt(2) // fit sample into 2 cycles
  *
  */
 export const chop = register('chop', function (n, pat) {
@@ -2269,7 +2269,7 @@ export const chop = register('chop', function (n, pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("numbers:0 numbers:1 numbers:2").striate(6).slow(6)
+ * s("numbers:0 numbers:1 numbers:2").striate(6).slow(3)
  */
 export const striate = register('striate', function (n, pat) {
   const slices = Array.from({ length: n }, (x, i) => i);
@@ -2285,7 +2285,7 @@ export const striate = register('striate', function (n, pat) {
  * @returns Pattern
  * @example
  * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
- * s("rhodes").loopAt(4)
+ * s("rhodes").loopAt(2)
  */
 // TODO - global cps clock
 const _loopAt = function (factor, pat, cps = 0.5) {
@@ -2303,10 +2303,10 @@ const _loopAt = function (factor, pat, cps = 0.5) {
  * @returns Pattern
  * @example
  * await samples('github:tidalcycles/Dirt-Samples/master')
- * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(1.5)
+ * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(0.75)
  * @example
  * await samples('github:tidalcycles/Dirt-Samples/master')
- * s("breaks125/2").fit().slice([0,.25,.5,.75], "0 1 1 <2 3>")
+ * s("breaks125").fit().slice([0,.25,.5,.75], "0 1 1 <2 3>")
  */
 
 export const slice = register(
@@ -2334,7 +2334,6 @@ export const slice = register(
  * await samples('github:tidalcycles/Dirt-Samples/master')
  * s("breaks165")
  * .splice(8,  "0 1 [2 3 0]@2 3 0@2 7")
- * .hurry(0.65)
  */
 
 export const splice = register(
@@ -2369,7 +2368,7 @@ export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (facto
  * @name fit
  * @example
  * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
- * s("rhodes/4").fit()
+ * s("rhodes/2").fit()
  */
 export const fit = register('fit', (pat) =>
   pat.withHap((hap) =>

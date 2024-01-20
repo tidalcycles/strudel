@@ -293,7 +293,7 @@ const generic_params = [
    * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
    * @example
    * samples({ rave: 'rave/AREUREADY.wav' }, 'github:tidalcycles/Dirt-Samples/master/')
-   * s("rave").begin("<0 .25 .5 .75>")
+   * s("rave").begin("<0 .25 .5 .75>").fast(2)
    *
    */
   ['begin'],
@@ -304,7 +304,7 @@ const generic_params = [
    * @name end
    * @param {number | Pattern} length 1 = whole sample, .5 = half sample, .25 = quarter sample etc..
    * @example
-   * s("bd*2,oh*4").end("<.1 .2 .5 1>")
+   * s("bd*2,oh*4").end("<.1 .2 .5 1>").fast(2)
    *
    */
   ['end'],
@@ -463,7 +463,7 @@ const generic_params = [
    * @name cut
    * @param {number | Pattern} group cut group number
    * @example
-   * s("rd*4").cut(1)
+   * s("[oh hh]*4").cut(1)
    *
    */
   ['cut'],
@@ -1242,7 +1242,7 @@ const generic_params = [
    * @name speed
    * @param {number | Pattern} speed -inf to inf, negative numbers play the sample backwards.
    * @example
-   * s("bd").speed("<1 2 4 1 -2 -4>")
+   * s("bd*6").speed("1 2 4 1 -2 -4")
    * @example
    * speed("1 1.5*2 [2 1.1]").s("piano").clip(1)
    *
