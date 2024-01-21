@@ -1031,10 +1031,10 @@ describe('Pattern', () => {
       sameFirst(
         s('break').splice(4, sequence(0, 1, 2, 3)),
         sequence(
-          { begin: 0, end: 0.25, s: 'break', _slices: 4, unit: 'c', speed: 0.5 },
-          { begin: 0.25, end: 0.5, s: 'break', _slices: 4, unit: 'c', speed: 0.5 },
-          { begin: 0.5, end: 0.75, s: 'break', _slices: 4, unit: 'c', speed: 0.5 },
-          { begin: 0.75, end: 1, s: 'break', _slices: 4, unit: 'c', speed: 0.5 },
+          { begin: 0, end: 0.25, s: 'break', _slices: 4, unit: 'c', speed: 1 },
+          { begin: 0.25, end: 0.5, s: 'break', _slices: 4, unit: 'c', speed: 1 },
+          { begin: 0.5, end: 0.75, s: 'break', _slices: 4, unit: 'c', speed: 1 },
+          { begin: 0.75, end: 1, s: 'break', _slices: 4, unit: 'c', speed: 1 },
         ),
       );
     });

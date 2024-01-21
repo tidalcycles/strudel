@@ -314,7 +314,7 @@ stack(
 )
   .fast(2/3)
   .pianoroll()`;
-
+/* 
 export const bridgeIsOver = `// "Bridge is over"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos, bassline by BDP - The Bridge Is Over
@@ -333,7 +333,7 @@ stack(
   s("mad").slow(2)
 ).cpm(78).slow(4)
   .pianoroll()
-`;
+`; */
 
 export const goodTimes = `// "Good times"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
@@ -708,6 +708,8 @@ stack(
 export const dinofunk = `// "Dinofunk"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
+
+setcps(1)
 
 samples({bass:'https://cdn.freesound.org/previews/614/614637_2434927-hq.mp3',
 dino:{b4:'https://cdn.freesound.org/previews/316/316403_5123851-hq.mp3'}})
