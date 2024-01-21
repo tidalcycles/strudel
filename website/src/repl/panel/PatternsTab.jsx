@@ -99,6 +99,8 @@ export function PatternsTab({ context }) {
   };
   const viewingPatternID = viewingPatternData?.id;
 
+  const autoResetPatternOnChange = !window.location.pathname.includes('oodles');
+
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-2 pb-4 flex flex-col overflow-hidden max-h-full">
       <ButtonGroup
@@ -156,7 +158,9 @@ export function PatternsTab({ context }) {
       <section className="flex overflow-y-scroll max-h-full flex-col">
         {patternFilter === patternFilterName.user && (
           <PatternButtons
-            onClick={(id) => updateCodeWindow({ ...userPatterns[id], collection: userPattern.collection }, false)}
+            onClick={(id) =>
+              updateCodeWindow({ ...userPatterns[id], collection: userPattern.collection }, autoResetPatternOnChange)
+            }
             patterns={userPatterns}
             started={context.started}
             activePattern={activePattern}
@@ -171,7 +175,7 @@ export function PatternsTab({ context }) {
                 <h2 className="text-xl mb-2">{collection}</h2>
                 <div className="font-mono text-sm">
                   <PatternButtons
-                    onClick={(id) => updateCodeWindow({ ...patterns[id], collection }, false)}
+                    onClick={(id) => updateCodeWindow({ ...patterns[id], collection }, autoResetPatternOnChange)}
                     started={context.started}
                     patterns={patterns}
                     activePattern={activePattern}

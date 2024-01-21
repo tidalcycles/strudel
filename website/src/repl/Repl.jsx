@@ -164,11 +164,12 @@ export function Repl({ embedded = false }) {
   };
 
   const handleUpdate = async (patternData, reset = false) => {
-    if (reset) {
-      await resetEditor();
-    }
     setViewingPatternData(patternData);
     editorRef.current.setCode(patternData.code);
+    if (reset) {
+      await resetEditor();
+      handleEvaluate();
+    }
   };
 
   const handleEvaluate = () => {
