@@ -27,6 +27,7 @@ export function MiniRepl({
   punchcardLabels = true,
   claviature,
   claviatureLabels,
+  maxHeight,
 }) {
   const code = tunes ? tunes[0] : tune;
   const id = useMemo(() => s4(), []);
@@ -154,7 +155,7 @@ export function MiniRepl({
           )}
         </div>
       )}
-      <div className="overflow-auto relative p-1">
+      <div className="overflow-auto relative p-1" style={maxHeight ? { maxHeight: `${maxHeight}px` } : {}}>
         <div
           ref={(el) => {
             if (!editorRef.current) {
