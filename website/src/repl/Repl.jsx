@@ -12,14 +12,15 @@ import { defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { settingsMap, useSettings } from '../settings.mjs';
 import {
-  initUserCode,
   setActivePattern,
   setLatestCode,
-  settingsMap,
-  updateUserCode,
-  useSettings,
-} from '../settings.mjs';
+  createPatternID,
+  userPattern,
+  getViewingPatternData,
+  setViewingPatternData,
+} from '../user_pattern_utils.mjs';
 import { Header } from './Header';
 import Loader from './Loader';
 import { Panel } from './panel/Panel';
@@ -30,7 +31,6 @@ import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
 
 const { code: randomTune, name } = getRandomTune();
-
 const { latestCode } = settingsMap.get();
 
 let modulesLoading, presets, drawContext, clearCanvas, isIframe;
@@ -46,7 +46,6 @@ if (typeof window !== 'undefined') {
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || isIframe;
   const { panelPosition, isZen } = useSettings();
-
   const init = useCallback(() => {
     const drawTime = [-2, 2];
     const drawContext = getDrawContext();
@@ -71,11 +70,28 @@ export function Repl({ embedded = false }) {
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
-      afterEval: ({ code }) => {
-        updateUserCode(code);
-        // setPending(false);
+      afterEval: (all) => {
+        const { code } = all;
         setLatestCode(code);
         window.location.hash = '#' + code2hash(code);
+        const viewingPatternData = getViewingPatternData();
+        const data = { ...viewingPatternData, code };
+        let id = data.id;
+        const isExamplePattern = viewingPatternData.collection !== userPattern.collection;
+
+        if (isExamplePattern) {
+          const codeHasChanged = code !== viewingPatternData.code;
+          if (codeHasChanged) {
+            // fork example
+            const newPattern = userPattern.duplicate(data);
+            id = newPattern.id;
+            setViewingPatternData(newPattern.data);
+          }
+        } else {
+          id = userPattern.isValidID(id) ? id : createPatternID();
+          setViewingPatternData(userPattern.update(id, data).data);
+        }
+        setActivePattern(id);
       },
       bgFill: false,
     });
@@ -86,7 +102,6 @@ export function Repl({ embedded = false }) {
       let msg;
       if (decoded) {
         editor.setCode(decoded);
-        initUserCode(decoded);
         msg = `I have loaded the code from the URL.`;
       } else if (latestCode) {
         editor.setCode(latestCode);
@@ -96,7 +111,6 @@ export function Repl({ embedded = false }) {
         msg = `A random code snippet named "${name}" has been loaded!`;
       }
       logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
-      // setPending(false);
     });
 
     editorRef.current = editor;
@@ -138,29 +152,37 @@ export function Repl({ embedded = false }) {
   // UI Actions
   //
 
-  const handleTogglePlay = async () => editorRef.current?.toggle();
-  const handleUpdate = async (newCode, reset = false) => {
-    if (reset) {
-      clearCanvas();
-      resetLoadedSounds();
-      editorRef.current.repl.setCps(1);
-      await prebake(); // declare default samples
-    }
-    if (newCode) {
-      editorRef.current.setCode(newCode);
-      editorRef.current.repl.evaluate(newCode);
-    } else if (isDirty) {
-      editorRef.current.evaluate();
-    }
+  const handleTogglePlay = async () => {
+    editorRef.current?.toggle();
   };
-  const handleShuffle = async () => {
-    // window.postMessage('strudel-shuffle');
-    const { code, name } = getRandomTune();
-    logger(`[repl] ✨ loading random tune "${name}"`);
-    setActivePattern(name);
+
+  const resetEditor = async () => {
     clearCanvas();
     resetLoadedSounds();
     editorRef.current.repl.setCps(1);
+    await prebake(); // declare default samples
+  };
+
+  const handleUpdate = async (patternData, reset = false) => {
+    setViewingPatternData(patternData);
+    editorRef.current.setCode(patternData.code);
+    if (reset) {
+      await resetEditor();
+      handleEvaluate();
+    }
+  };
+
+  const handleEvaluate = () => {
+    editorRef.current.evaluate();
+  };
+  const handleShuffle = async () => {
+    const patternData = getRandomTune();
+    const code = patternData.code;
+    logger(`[repl] ✨ loading random tune "${patternData.id}"`);
+    setActivePattern(patternData.id);
+    setViewingPatternData(patternData);
+    clearCanvas();
+    resetLoadedSounds();
     await prebake(); // declare default samples
     editorRef.current.setCode(code);
     editorRef.current.repl.evaluate(code);
@@ -177,6 +199,7 @@ export function Repl({ embedded = false }) {
     handleUpdate,
     handleShuffle,
     handleShare,
+    handleEvaluate,
   };
 
   return (

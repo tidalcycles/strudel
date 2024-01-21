@@ -61,12 +61,63 @@ export function repl({
     scheduler.setPattern(pattern, autostart);
   };
   setTime(() => scheduler.now()); // TODO: refactor?
+
+  const stop = () => scheduler.stop();
+  const start = () => scheduler.start();
+  const pause = () => scheduler.pause();
+  const toggle = () => scheduler.toggle();
+  const setCps = (cps) => scheduler.setCps(cps);
+  const setCpm = (cpm) => scheduler.setCps(cpm / 60);
+  const all = function (transform) {
+    allTransform = transform;
+    return silence;
+  };
+
+  // set pattern methods that use this repl via closure
+  const injectPatternMethods = () => {
+    Pattern.prototype.p = function (id) {
+      pPatterns[id] = this;
+      return this;
+    };
+    Pattern.prototype.q = function (id) {
+      return silence;
+    };
+    try {
+      for (let i = 1; i < 10; ++i) {
+        Object.defineProperty(Pattern.prototype, `d${i}`, {
+          get() {
+            return this.p(i);
+          },
+          configurable: true,
+        });
+        Object.defineProperty(Pattern.prototype, `p${i}`, {
+          get() {
+            return this.p(i);
+          },
+          configurable: true,
+        });
+        Pattern.prototype[`q${i}`] = silence;
+      }
+    } catch (err) {
+      console.warn('injectPatternMethods: error:', err);
+    }
+    evalScope({
+      all,
+      hush,
+      setCps,
+      setcps: setCps,
+      setCpm,
+      setcpm: setCpm,
+    });
+  };
+
   const evaluate = async (code, autostart = true, shouldHush = true) => {
     if (!code) {
       throw new Error('no code to evaluate');
     }
     try {
       updateState({ code, pending: true });
+      injectPatternMethods();
       await beforeEval?.({ code });
       shouldHush && hush();
       let { pattern, meta } = await _evaluate(code, transpiler);
@@ -94,74 +145,11 @@ export function repl({
       afterEval?.({ code, pattern, meta });
       return pattern;
     } catch (err) {
-      // console.warn(`[repl] eval error: ${err.message}`);
       logger(`[eval] error: ${err.message}`, 'error');
       updateState({ evalError: err, pending: false });
       onEvalError?.(err);
     }
   };
-  const stop = () => scheduler.stop();
-  const start = () => scheduler.start();
-  const pause = () => scheduler.pause();
-  const toggle = () => scheduler.toggle();
-  const setCps = (cps) => scheduler.setCps(cps);
-  const setCpm = (cpm) => scheduler.setCps(cpm / 60);
-
-  // the following functions use the cps value, which is why they are defined here..
-  const loopAt = register('loopAt', (cycles, pat) => {
-    return pat.loopAtCps(cycles, scheduler.cps);
-  });
-
-  Pattern.prototype.p = function (id) {
-    pPatterns[id] = this;
-    return this;
-  };
-  Pattern.prototype.q = function (id) {
-    return silence;
-  };
-
-  const all = function (transform) {
-    allTransform = transform;
-    return silence;
-  };
-  try {
-    for (let i = 1; i < 10; ++i) {
-      Object.defineProperty(Pattern.prototype, `d${i}`, {
-        get() {
-          return this.p(i);
-        },
-      });
-      Object.defineProperty(Pattern.prototype, `p${i}`, {
-        get() {
-          return this.p(i);
-        },
-      });
-      Pattern.prototype[`q${i}`] = silence;
-    }
-  } catch (err) {
-    // already defined..
-  }
-
-  const fit = register('fit', (pat) =>
-    pat.withHap((hap) =>
-      hap.withValue((v) => ({
-        ...v,
-        speed: scheduler.cps / hap.whole.duration, // overwrite speed completely?
-        unit: 'c',
-      })),
-    ),
-  );
-
-  evalScope({
-    loopAt,
-    fit,
-    all,
-    hush,
-    setCps,
-    setcps: setCps,
-    setCpm,
-    setcpm: setCpm,
-  });
   const setCode = (code) => updateState({ code });
   return { scheduler, evaluate, start, stop, pause, setCps, setPattern, setCode, toggle, state };
 }

@@ -340,9 +340,9 @@ export class Pattern {
    * silence
    * @noAutocomplete
    */
-  queryArc(begin, end) {
+  queryArc(begin, end, controls = {}) {
     try {
-      return this.query(new State(new TimeSpan(begin, end)));
+      return this.query(new State(new TimeSpan(begin, end), controls));
     } catch (err) {
       logger(`[query]: ${err.message}`, 'error');
       return [];
@@ -427,7 +427,7 @@ export class Pattern {
    * @noAutocomplete
    */
   withHaps(func) {
-    return new Pattern((state) => func(this.query(state)));
+    return new Pattern((state) => func(this.query(state), state));
   }
 
   /**
@@ -2360,28 +2360,28 @@ export const splice = register(
   'splice',
   function (npat, ipat, opat) {
     const sliced = slice(npat, ipat, opat);
-    return sliced.withHap(function (hap) {
-      return hap.withValue((v) => ({
-        ...{
-          speed: (1 / v._slices / hap.whole.duration) * (v.speed || 1),
-          unit: 'c',
-        },
-        ...v,
-      }));
+    return new Pattern((state) => {
+      // TODO - default cps to 0.5
+      const cps = state.controls._cps || 1;
+      const haps = sliced.query(state);
+      return haps.map((hap) =>
+        hap.withValue((v) => ({
+          ...{
+            speed: (cps / v._slices / hap.whole.duration) * (v.speed || 1),
+            unit: 'c',
+          },
+          ...v,
+        })),
+      );
     });
   },
   false, // turns off auto-patternification
 );
 
-// this function will be redefined in repl.mjs to use the correct cps value.
-// It is still here to work in cases where repl.mjs is not used
-
 export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
-  return _loopAt(factor, pat, 1);
+  return new Pattern((state) => _loopAt(factor, pat, state.controls._cps).query(state));
 });
 
-// the fit function will be redefined in repl.mjs to use the correct cps value.
-// It is still here to work in cases where repl.mjs is not used
 /**
  * Makes the sample fit its event duration. Good for rhythmical loops like drum breaks.
  * Similar to `loopAt`.
@@ -2391,12 +2391,14 @@ export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (facto
  * s("rhodes/2").fit()
  */
 export const fit = register('fit', (pat) =>
-  pat.withHap((hap) =>
-    hap.withValue((v) => ({
-      ...v,
-      speed: 1 / hap.whole.duration,
-      unit: 'c',
-    })),
+  pat.withHaps((haps, state) =>
+    haps.map((hap) =>
+      hap.withValue((v) => ({
+        ...v,
+        speed: (state.controls._cps || 1) / hap.whole.duration,
+        unit: 'c',
+      })),
+    ),
   ),
 );
 
