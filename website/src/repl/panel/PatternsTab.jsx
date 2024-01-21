@@ -19,13 +19,13 @@ function classNames(...classes) {
 
 export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
   const meta = useMemo(() => getMetadata(pattern.code), [pattern]);
+
   let title = meta.title;
   if (title == null) {
     const date = new Date(pattern.created_at);
-    if (isNaN(date)) {
-      return;
+    if (!isNaN(date)) {
+      title = date.toLocaleDateString();
     }
-    title = date.toLocaleDateString();
   }
   if (title == null) {
     title = pattern.hash;
@@ -33,7 +33,6 @@ export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
   if (title == null) {
     title = 'unnamed';
   }
-
   return <>{`${pattern.id}: ${title} by ${Array.isArray(meta.by) ? meta.by.join(',') : 'Anonymous'}`}</>;
 }
 
@@ -91,6 +90,7 @@ export function PatternsTab({ context }) {
   const viewingPatternData = parseJSON(viewingPatternStore);
 
   const { userPatterns, patternFilter } = useSettings();
+
   const examplePatterns = useExamplePatterns();
   const collections = examplePatterns.collections;
 
