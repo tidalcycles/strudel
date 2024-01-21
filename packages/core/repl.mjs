@@ -88,16 +88,18 @@ export function repl({
           get() {
             return this.p(i);
           },
+          configurable: true,
         });
         Object.defineProperty(Pattern.prototype, `p${i}`, {
           get() {
             return this.p(i);
           },
+          configurable: true,
         });
         Pattern.prototype[`q${i}`] = silence;
       }
     } catch (err) {
-      // already defined..
+      console.warn('injectPatternMethods: error:', err);
     }
 
     evalScope({
