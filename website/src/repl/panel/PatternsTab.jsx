@@ -99,7 +99,7 @@ export function PatternsTab({ context }) {
   };
   const viewingPatternID = viewingPatternData?.id;
 
-  const autoResetPatternOnChange = !window.location.pathname.includes('oodles');
+  const autoResetPatternOnChange = !window.parent?.location.pathname.includes('oodles');
 
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-2 pb-4 flex flex-col overflow-hidden max-h-full">
