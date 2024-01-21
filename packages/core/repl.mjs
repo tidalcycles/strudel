@@ -145,7 +145,6 @@ export function repl({
       afterEval?.({ code, pattern, meta });
       return pattern;
     } catch (err) {
-      // console.warn(`[repl] eval error: ${err.message}`);
       logger(`[eval] error: ${err.message}`, 'error');
       updateState({ evalError: err, pending: false });
       onEvalError?.(err);
