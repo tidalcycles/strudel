@@ -6,6 +6,7 @@ import { PatternLabel } from '@src/repl/panel/PatternsTab';
 function PatternList({ patterns }) {
   return (
     <div className="space-y-4">
+      {/* <MiniRepl tunes={patterns.map((pat) => pat.code.trim())} /> */}
       {patterns.map((pat) => (
         <div key={pat.id}>
           <div className="flex justify-between not-prose pb-2">
@@ -15,8 +16,7 @@ function PatternList({ patterns }) {
               </a>
             </h2>
           </div>
-          {/* <MiniRepl tune={pat.code.trim()} /> */}
-          {/* <pre>{JSON.stringify(pat)}</pre> */}
+          <MiniRepl tune={pat.code.trim()} maxHeight={300} />
         </div>
       ))}
     </div>
