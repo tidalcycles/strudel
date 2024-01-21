@@ -727,8 +727,8 @@ export class Pattern {
    * @name stack
    * @memberof Pattern
    * @example
-   * s("hh*2").stack(
-   *   note("c2(3,8)")
+   * s("hh*4").stack(
+   *   note("c4(5,8)")
    * )
    */
   stack(...pats) {
@@ -745,8 +745,8 @@ export class Pattern {
    * @memberof Pattern
    * @synonyms sequence, fastcat
    * @example
-   * s("hh*2").seq(
-   *   note("c2(3,8)")
+   * s("hh*4").seq(
+   *   note("c4(5,8)")
    * )
    */
   seq(...pats) {
@@ -759,8 +759,8 @@ export class Pattern {
    * @memberof Pattern
    * @synonyms slowcat
    * @example
-   * s("hh*2").cat(
-   *   note("c2(3,8)")
+   * s("hh*4").cat(
+   *   note("c4(5,8)")
    * )
    */
   cat(...pats) {
@@ -1178,7 +1178,8 @@ export function reify(thing) {
  * @return {Pattern}
  * @synonyms polyrhythm, pr
  * @example
- * stack("g3", "b3", ["e4", "d4"]).note() // "g3,b3,[e4,d4]".note()
+ * stack("g3", "b3", ["e4", "d4"]).note()
+ * // "g3,b3,[e4,d4]".note()
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
@@ -1237,7 +1238,8 @@ export function slowcatPrime(...pats) {
  * @synonyms slowcat
  * @return {Pattern}
  * @example
- * cat("e5", "b4", ["d5", "c5"]).note() // "<e5 b4 [d5 c5]>".note()
+ * cat("e5", "b4", ["d5", "c5"]).note()
+ * // "<e5 b4 [d5 c5]>".note()
  *
  */
 export function cat(...pats) {
@@ -1247,7 +1249,8 @@ export function cat(...pats) {
 /** Like `seq`, but each step has a length, relative to the whole.
  * @return {Pattern}
  * @example
- * timeCat([3,"e3"],[1, "g3"]).note() // "e3@3 g3".note()
+ * timeCat([3,"e3"],[1, "g3"]).note()
+ * // "e3@3 g3".note()
  */
 export function timeCat(...timepats) {
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -1267,7 +1270,10 @@ export function timeCat(...timepats) {
  *
  * @return {Pattern}
  * @example
- * arrange([4, "<c a f e>(3,8)"],[2, "<g a>(5,8)"]).note()
+ * arrange(
+ *   [4, "<c a f e>(3,8)"],
+ *   [2, "<g a>(5,8)"]
+ * ).note()
  */
 export function arrange(...sections) {
   const total = sections.reduce((sum, [cycles]) => sum + cycles, 0);
@@ -1287,7 +1293,8 @@ export function sequence(...pats) {
 /** Like **cat**, but the items are crammed into one cycle.
  * @synonyms fastcat, sequence
  * @example
- * seq("e5", "b4", ["d5", "c5"]).note() // "e5 b4 [d5 c5]".note()
+ * seq("e5", "b4", ["d5", "c5"]).note()
+ * // "e5 b4 [d5 c5]".note()
  *
  */
 export function seq(...pats) {
@@ -1313,9 +1320,9 @@ function _sequenceCount(x) {
  * @param  {number} steps how many items are placed in one cycle
  * @param  {any[]} sequences one or more arrays of Patterns / values
  * @example
- * polymeterSteps(2, ["c", "d", "e", "f", "g", "f", "e", "d"])
- * .note().stack(s("bd")) // 1 cycle = 1 bd = 2 notes
- * // note("{c d e f g f e d}%2").stack(s("bd"))
+ * polymeterSteps(4, ["c", "d", "e"])
+ * .note().stack(s("bd"))
+ * // note("{c d e}%4").stack(s("bd"))
  */
 export function polymeterSteps(steps, ...args) {
   const seqs = args.map((a) => _sequenceCount(a));
