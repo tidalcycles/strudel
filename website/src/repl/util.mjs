@@ -34,7 +34,7 @@ export async function initCode() {
       return hash2code(codeParam);
     } else if (hash) {
       return supabase
-        .from('code')
+        .from('code_v1')
         .select('code')
         .eq('hash', hash)
         .then(({ data, error }) => {
@@ -111,7 +111,7 @@ export async function shareCode(codeToShare) {
   // generate uuid in the browser
   const hash = nanoid(12);
   const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
-  const { error } = await supabase.from('code').insert([{ code: codeToShare, hash, ['public']: isPublic }]);
+  const { error } = await supabase.from('code_v1').insert([{ code: codeToShare, hash, ['public']: isPublic }]);
   if (!error) {
     lastShared = codeToShare;
     // copy shareUrl to clipboard
