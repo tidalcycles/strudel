@@ -55,8 +55,6 @@ function PatternButtons({ patterns, activePattern, onClick, started }) {
   const viewingPatternStore = useViewingPatternData();
   const viewingPatternData = parseJSON(viewingPatternStore);
   const viewingPatternID = viewingPatternData.id;
-
-  console.log({ patterns });
   return (
     <div className="font-mono text-sm">
       {Object.values(patterns)
