@@ -27,9 +27,11 @@ export const isaw2 = isaw.toBipolar();
  *
  * @return {Pattern}
  * @example
- * "c3 [eb3,g3] g2 [g3,bb3]".note().clip(saw.slow(4))
+ * note("<c3 [eb3,g3] g2 [g3,bb3]>*8")
+ * .clip(saw.slow(2))
  * @example
- * saw.range(0,8).segment(8).scale('C major').slow(4).note()
+ * n(saw.range(0,8).segment(8))
+ * .scale('C major')
  *
  */
 export const saw = signal((t) => t % 1);
@@ -42,7 +44,8 @@ export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
  *
  * @return {Pattern}
  * @example
- * sine.segment(16).range(0,15).slow(2).scale('C minor').note()
+ * n(sine.segment(16).range(0,15))
+ * .scale("C:minor")
  *
  */
 export const sine = sine2.fromBipolar();
@@ -52,7 +55,8 @@ export const sine = sine2.fromBipolar();
  *
  * @return {Pattern}
  * @example
- * stack(sine,cosine).segment(16).range(0,15).slow(2).scale('C minor').note()
+ * n(stack(sine,cosine).segment(16).range(0,15))
+ * .scale("C:minor")
  *
  */
 export const cosine = sine._early(Fraction(1).div(4));
@@ -63,7 +67,7 @@ export const cosine2 = sine2._early(Fraction(1).div(4));
  *
  * @return {Pattern}
  * @example
- * square.segment(2).range(0,7).scale('C minor').note()
+ * n(square.segment(4).range(0,7)).scale("C:minor")
  *
  */
 export const square = signal((t) => Math.floor((t * 2) % 2));
@@ -74,7 +78,7 @@ export const square2 = square.toBipolar();
  *
  * @return {Pattern}
  * @example
- * tri.segment(8).range(0,7).scale('C minor').note()
+ * n(tri.segment(8).range(0,7)).scale("C:minor")
  *
  */
 export const tri = fastcat(isaw, saw);
@@ -129,7 +133,7 @@ export const run = (n) => saw.range(0, n).floor().segment(n);
  * @name rand
  * @example
  * // randomly change the cutoff
- * s("bd sd,hh*4").cutoff(rand.range(500,2000))
+ * s("bd*4,hh*8").cutoff(rand.range(500,8000))
  *
  */
 export const rand = signal(timeToRand);
@@ -151,7 +155,7 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
  * @param {number} n max value (exclusive)
  * @example
  * // randomly select scale notes from 0 - 7 (= C to C)
- * irand(8).struct("x(3,8)").scale('C minor').note()
+ * n(irand(8)).struct("x x*2 x x*3").scale("C:minor")
  *
  */
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
@@ -360,9 +364,9 @@ Pattern.prototype.choose2 = function (...xs) {
  * Picks one of the elements at random each cycle.
  * @returns {Pattern}
  * @example
- * chooseCycles("bd", "hh", "sd").s().fast(4)
+ * chooseCycles("bd", "hh", "sd").s().fast(8)
  * @example
- * "bd | hh | sd".s().fast(4)
+ * s("bd | hh | sd").fast(8)
  */
 export const chooseCycles = (...xs) => chooseInWith(rand.segment(1), xs);
 
@@ -405,7 +409,7 @@ export const perlinWith = (pat) => {
  * @name perlin
  * @example
  * // randomly change the cutoff
- * s("bd sd,hh*4").cutoff(perlin.range(500,2000))
+ * s("bd*4,hh*8").cutoff(perlin.range(500,8000))
  *
  */
 export const perlin = perlinWith(time.fmap((v) => Number(v)));
@@ -479,7 +483,7 @@ export const undegrade = register('undegrade', (pat) => pat._undegradeBy(0.5));
  * @param {function} function - the transformation to apply
  * @returns Pattern
  * @example
- * s("hh(3,8)").sometimesBy(.4, x=>x.speed("0.5"))
+ * s("hh*8").sometimesBy(.4, x=>x.speed("0.5"))
  */
 
 export const sometimesBy = register('sometimesBy', function (patx, func, pat) {
@@ -497,7 +501,7 @@ export const sometimesBy = register('sometimesBy', function (patx, func, pat) {
  * @param {function} function - the transformation to apply
  * @returns Pattern
  * @example
- * s("hh*4").sometimes(x=>x.speed("0.5"))
+ * s("hh*8").sometimes(x=>x.speed("0.5"))
  */
 export const sometimes = register('sometimes', function (func, pat) {
   return pat._sometimesBy(0.5, func);
@@ -514,7 +518,7 @@ export const sometimes = register('sometimes', function (func, pat) {
  * @param {function} function - the transformation to apply
  * @returns Pattern
  * @example
- * s("hh(3,8)").someCyclesBy(.3, x=>x.speed("0.5"))
+ * s("bd,hh*8").someCyclesBy(.3, x=>x.speed("0.5"))
  */
 
 export const someCyclesBy = register('someCyclesBy', function (patx, func, pat) {
@@ -536,7 +540,7 @@ export const someCyclesBy = register('someCyclesBy', function (patx, func, pat) 
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("hh(3,8)").someCycles(x=>x.speed("0.5"))
+ * s("bd,hh*8").someCycles(x=>x.speed("0.5"))
  */
 export const someCycles = register('someCycles', function (func, pat) {
   return pat._someCyclesBy(0.5, func);
