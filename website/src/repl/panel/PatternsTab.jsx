@@ -21,14 +21,14 @@ export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
   const meta = useMemo(() => getMetadata(pattern.code), [pattern]);
   let title = meta.title;
   if (title == null) {
-    title == pattern.hash;
-  }
-  if (title == null) {
     const date = new Date(pattern.created_at);
     if (isNaN(date)) {
       return;
     }
     title = date.toLocaleDateString();
+  }
+  if (title == null) {
+    title = pattern.hash;
   }
   if (title == null) {
     title = 'unnamed';
