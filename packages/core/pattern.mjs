@@ -1864,7 +1864,7 @@ export const linger = register('linger', function (t, pat) {
  * Samples the pattern at a rate of n events per cycle. Useful for turning a continuous pattern into a discrete one.
  * @param {number} segments number of segments per cycle
  * @example
- * note(saw.range(0,12).segment(24)).add(40)
+ * note(saw.range(40,52).segment(24))
  */
 export const segment = register('segment', function (rate, pat) {
   return pat.struct(pure(true)._fast(rate));
@@ -1927,7 +1927,7 @@ export const brak = register('brak', function (pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * note("c3 d3 e3 g3").rev()
+ * note("c d e g").rev()
  */
 export const rev = register('rev', function (pat) {
   const query = function (state) {
@@ -2188,6 +2188,8 @@ export const bypass = register('bypass', function (on, pat) {
  * Loops the pattern inside at `offset` for `cycles`.
  * @param {number} offset start point of loop in cycles
  * @param {number} cycles loop length in cycles
+ * @example
+ * note("<c d e f>").ribbon(1, 2).fast(2)
  * @example
  * // Looping a portion of randomness
  * note(irand(8).segment(4).scale('C3 minor')).ribbon(1337, 2)

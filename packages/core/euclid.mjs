@@ -148,7 +148,7 @@ export const { euclidrot, euclidRot } = register(['euclidrot', 'euclidRot'], fun
  * @param {number} pulses the number of onsets / beats
  * @param {number} steps the number of steps to fill
  * @example
- * n("g2").decay(.1).sustain(.3).euclidLegato(3,8)
+ * note("c3").euclidLegato(3,8)
  */
 
 const _euclidLegato = function (pulses, steps, rotation, pat) {
