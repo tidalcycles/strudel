@@ -61,7 +61,7 @@ A sample can be looped and chopped like this:
 <MiniRepl
   client:visible
   tune={`await samples('github:yaxu/clean-breaks/main')
-s("amen/8").fit().chop(16)`}
+s("amen/4").fit().chop(32)`}
   punchcard
 />
 
@@ -72,7 +72,7 @@ Let's add randmized doubling + reversing:
 <MiniRepl
   client:visible
   tune={`await samples('github:yaxu/clean-breaks/main')
-s("amen/8").fit().chop(16).cut(1)
+s("amen/4").fit().chop(16).cut(1)
 .sometimesBy(.5, ply(2))
 .sometimesBy(.25, mul(speed(-1)))`}
   punchcard
@@ -83,8 +83,8 @@ If we want to specify the order of samples, we can replace `chop` with `slice`:
 <MiniRepl
   client:visible
   tune={`await samples('github:yaxu/clean-breaks/main')
-s("amen/8").fit()
-  .slice(8, "<0 1 2 3 4*2 5 6 [6 7]>")
+s("amen/4").fit()
+  .slice(8, "<0 1 2 3 4*2 5 6 [6 7]>*2")
   .cut(1).rarely(ply(2))`}
   punchcard
 />
@@ -95,7 +95,7 @@ If we use `splice` instead of `slice`, the speed adjusts to the duration of the 
   client:visible
   tune={`await samples('github:yaxu/clean-breaks/main')
 s("amen")
-  .splice(8, "<0 1 2 3 4*2 5 6 [6 7]>")
+  .splice(8, "<0 1 2 3 4*2 5 6 [6 7]>*2")
   .cut(1).rarely(ply(2))`}
   punchcard
 />
