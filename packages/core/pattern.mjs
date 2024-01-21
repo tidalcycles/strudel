@@ -929,14 +929,14 @@ function _composeOp(a, b, func) {
      * @memberof Pattern
      * @example
      * // Here, the triad 0, 2, 4 is shifted by different amounts
-     * "0 2 4".add("<0 3 4 0>").scale('C major').note()
+     * n("0 2 4".add("<0 3 4 0>")).scale("C:major")
      * // Without add, the equivalent would be:
-     * // "<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>".scale('C major').note()
+     * // n("<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>").scale("C:major")
      * @example
      * // You can also use add with notes:
-     * "c3 e3 g3".add("<0 5 7 0>").note()
+     * note("c3 e3 g3".add("<0 5 7 0>"))
      * // Behind the scenes, the notes are converted to midi numbers:
-     * // "48 52 55".add("<0 5 7 0>").note()
+     * // note("48 52 55".add("<0 5 7 0>"))
      */
     add: [numeralArgs((a, b) => a + b)], // support string concatenation
     /**
@@ -945,7 +945,7 @@ function _composeOp(a, b, func) {
      * @name sub
      * @memberof Pattern
      * @example
-     * "0 2 4".sub("<0 1 2 3>").scale('C4 minor').note()
+     * n("0 2 4".sub("<0 1 2 3>")).scale("C4:minor")
      * // See add for more information.
      */
     sub: [numeralArgs((a, b) => a - b)],
@@ -955,7 +955,7 @@ function _composeOp(a, b, func) {
      * @name mul
      * @memberof Pattern
      * @example
-     * "1 1.5 [1.66, <2 2.33>]".mul(150).freq()
+     * "<1 1.5 [1.66, <2 2.33>]>*4".mul(150).freq()
      */
     mul: [numeralArgs((a, b) => a * b)],
     /**
@@ -1463,7 +1463,7 @@ export function register(name, func, patternify = true) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "0.5 1.5 2.5".round().scale('C major').note()
+ * n("0.5 1.5 2.5".round()).scale("C:major")
  */
 export const round = register('round', function (pat) {
   return pat.asNumber().fmap((v) => Math.round(v));
@@ -1477,7 +1477,7 @@ export const round = register('round', function (pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "42 42.1 42.5 43".floor().note()
+ * note("42 42.1 42.5 43".floor())
  */
 export const floor = register('floor', function (pat) {
   return pat.asNumber().fmap((v) => Math.floor(v));
@@ -1491,7 +1491,7 @@ export const floor = register('floor', function (pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "42 42.1 42.5 43".ceil().note()
+ * note("42 42.1 42.5 43".ceil())
  */
 export const ceil = register('ceil', function (pat) {
   return pat.asNumber().fmap((v) => Math.ceil(v));
@@ -1524,7 +1524,8 @@ export const fromBipolar = register('fromBipolar', function (pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4))
+ * s("[bd sd]*2,hh*8")
+ * .cutoff(sine.range(500,4000))
  */
 export const range = register('range', function (min, max, pat) {
   return pat.mul(max - min).add(min);
@@ -1538,7 +1539,8 @@ export const range = register('range', function (min, max, pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("bd sd,hh*4").cutoff(sine.rangex(500,2000).slow(4))
+ * s("[bd sd]*2,hh*8")
+ * .cutoff(sine.rangex(500,4000))
  */
 export const rangex = register('rangex', function (min, max, pat) {
   return pat._range(Math.log(min), Math.log(max)).fmap(Math.exp);
@@ -1551,7 +1553,8 @@ export const rangex = register('rangex', function (min, max, pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("bd sd,hh*4").cutoff(sine2.range2(500,2000).slow(4))
+ * s("[bd sd]*2,hh*8")
+ * .cutoff(sine2.range2(500,4000))
  */
 export const range2 = register('range2', function (min, max, pat) {
   return pat.fromBipolar()._range(min, max);
@@ -1564,7 +1567,8 @@ export const range2 = register('range2', function (min, max, pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * ratio("1, 5:4, 3:2").mul(110).freq().s("piano").slow(2)
+ * ratio("1, 5:4, 3:2").mul(110)
+ * .freq().s("piano")
  */
 export const ratio = register('ratio', (pat) =>
   pat.fmap((v) => {
