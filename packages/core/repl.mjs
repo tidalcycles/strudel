@@ -68,18 +68,18 @@ export function repl({
   const toggle = () => scheduler.toggle();
   const setCps = (cps) => scheduler.setCps(cps);
   const setCpm = (cpm) => scheduler.setCps(cpm / 60);
+  const all = function (transform) {
+    allTransform = transform;
+    return silence;
+  };
 
+  // set pattern methods that use this repl via closure
   const injectPatternMethods = () => {
     Pattern.prototype.p = function (id) {
       pPatterns[id] = this;
       return this;
     };
     Pattern.prototype.q = function (id) {
-      return silence;
-    };
-
-    const all = function (transform) {
-      allTransform = transform;
       return silence;
     };
     try {
@@ -101,7 +101,6 @@ export function repl({
     } catch (err) {
       console.warn('injectPatternMethods: error:', err);
     }
-
     evalScope({
       all,
       hush,
