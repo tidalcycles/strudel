@@ -1671,7 +1671,7 @@ export const ply = register('ply', function (factor, pat) {
  * @param {number | Pattern} factor speed up factor
  * @returns Pattern
  * @example
- * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
+ * s("bd hh sd hh").fast(2) // s("[bd hh sd hh]*2")
  */
 export const { fast, density } = register(['fast', 'density'], function (factor, pat) {
   if (factor === 0) {
@@ -1700,7 +1700,7 @@ export const hurry = register('hurry', function (r, pat) {
  * @param {number | Pattern} factor slow down factor
  * @returns Pattern
  * @example
- * s("<bd sd> hh").slow(2) // s("[<bd sd> hh]/2")
+ * s("bd hh sd hh").slow(2) // s("[bd hh sd hh]/2")
  */
 export const { slow, sparsity } = register(['slow', 'sparsity'], function (factor, pat) {
   if (factor === 0) {
