@@ -102,6 +102,7 @@ Here's an example that shows off filter envelopes:
 <MiniRepl
   client:visible
   tune={`// "acidic tooth" @by eddyflux
+setcps(1)
 stack(
   note("[<g1 f1>/8](<3 5>,8)")
   .clip(perlin.range(.15,1.5))
@@ -172,7 +173,7 @@ The `slider` is the first of a family of functions that render UI widgets inline
 
 <MiniRepl
   client:visible
-  tune={`note("c eb g bb")
+  tune={`note("<c eb g bb>*8")
   .s("sawtooth").lpenv(2).lpq(8)
   .lpf(slider(500, 100, 2000, 1))`}
 />
@@ -189,7 +190,7 @@ Strudel now supports most chord symbols:
 
 <MiniRepl
   client:visible
-  tune={`chord("<C^9 C7b9 Fm9 Db^7>/4")
+  tune={`chord("<C^9 C7b9 Fm9 Db^7>/2")
   .dict('ireal').voicing()
   .s("sawtooth")
   .lpf(400).lpa(.5).lpenv(4)
