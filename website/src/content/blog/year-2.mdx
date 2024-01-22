@@ -6,8 +6,6 @@ tags: ['meta']
 author: froos
 ---
 
-import { YouTube } from '@astro-community/astro-embed-youtube';
-import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 
 Strudel is now 2 years old! This was the first commit to the strudel repo:
@@ -67,8 +65,8 @@ In my opinion, the reasons why people seem to choose strudel for teaching are:
 - in-code and behind-code visualizations help learners to understand what the system is doing
 - the interactive documentation
 - the simple javascript syntax, which is very similar to [hydra](https://hydra.ojack.xyz)
-- tidal's intuitive mini notation + its deep pattern engine is also interesting for the most advanced users
-- strudel might also be a "gateway drug" for tidal, which is probably the most used live coding language
+- tidal's mini notation for playful expression of rhythms (based on the [Bol Processor](https://bolprocessor.org/)'s polymetric expressions)
+- its range of functions for transforming patterns for those getting deeper into exploring strange rhythms
 
 ## Performances
 
@@ -129,6 +127,16 @@ stack(
 )
 `}
 />
+
+### Import Sounds
+
+In the "sounds" tab, you can now press "import sounds" to select sounds from your local disk, allowing you
+to use your own samples without the need to upload them! Keep in mind that if you share a pattern that uses local samples that the samples will fail to load on other people's machines..
+
+### Community Bakery / Patterns Tab
+
+You can now share your patterns publicly to the [Community Bakery](/bakery/), via the "Share" button!
+The Community Patterns are also listed in the new "patterns", where you can also save your own patterns locally!
 
 ### Quality of Life Improvements
 
@@ -253,3 +261,10 @@ Let's end the recap with some naked numbers:
 - 20 open PRs (+18), 515 closed (+292)
 - 32 contributors (+17)
 - 12 releases (+4)
+
+## Thank you 💗
+
+A big thanks to everyone contributing to this project in one way or another,
+be it by writing code, fixing typos, asking questions or making sounds!
+I am very grateful for how all of this came together and I'm looking forward to year 3!
+If you have some spare cash to support the tidal project, we'd be happy if you can [insert some coins here](https://opencollective.com/tidalcycles).
