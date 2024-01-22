@@ -262,6 +262,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"release-1.0.0-geburtstagskuchen.mdx": {
+	id: "release-1.0.0-geburtstagskuchen.mdx";
+  slug: "release-100-geburtstagskuchen";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "year-2.mdx": {
 	id: "year-2.mdx";
   slug: "year-2";
