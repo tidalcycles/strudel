@@ -44,11 +44,11 @@ export const setViewingPatternData = (data) => {
 };
 
 export function loadPublicPatterns() {
-  return supabase.from('code').select().eq('public', true).limit(20).order('id', { ascending: false });
+  return supabase.from('code_v1').select().eq('public', true).limit(20).order('id', { ascending: false });
 }
 
 export function loadFeaturedPatterns() {
-  return supabase.from('code').select().eq('featured', true).limit(20).order('id', { ascending: false });
+  return supabase.from('code_v1').select().eq('featured', true).limit(20).order('id', { ascending: false });
 }
 
 export async function loadDBPatterns() {

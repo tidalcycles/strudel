@@ -476,6 +476,12 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(@vitest/ui@1.1.0)
 
+  tools/dbpatch:
+    dependencies:
+      csv:
+        specifier: ^6.3.6
+        version: 6.3.6
+
   website:
     dependencies:
       '@algolia/client-search':
@@ -6221,6 +6227,28 @@ packages:
 
   /csstype@3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
+    dev: false
+
+  /csv-generate@4.3.1:
+    resolution: {integrity: sha512-7YeeJq+44/I/O5N2sr2qBMcHZXhpfe38eh7DOFxyMtYO+Pir7kIfgFkW5MPksqKqqR6+/wX7UGoZm1Ot11151w==}
+    dev: false
+
+  /csv-parse@5.5.3:
+    resolution: {integrity: sha512-v0KW6C0qlZzoGjk6u5tLmVfyZxNgPGXZsWTXshpAgKVGmGXzaVWGdlCFxNx5iuzcXT/oJN1HHM9DZKwtAtYa+A==}
+    dev: false
+
+  /csv-stringify@6.4.5:
+    resolution: {integrity: sha512-SPu1Vnh8U5EnzpNOi1NDBL5jU5Rx7DVHr15DNg9LXDTAbQlAVAmEbVt16wZvEW9Fu9Qt4Ji8kmeCJ2B1+4rFTQ==}
+    dev: false
+
+  /csv@6.3.6:
+    resolution: {integrity: sha512-jsEsX2HhGp7xiwrJu5srQavKsh+HUJcCi78Ar3m4jlmFKRoTkkMy7ZZPP+LnQChmaztW+uj44oyfMb59daAs/Q==}
+    engines: {node: '>= 0.1.90'}
+    dependencies:
+      csv-generate: 4.3.1
+      csv-parse: 5.5.3
+      csv-stringify: 6.4.5
+      stream-transform: 3.3.0
     dev: false
 
   /dargs@7.0.0:
@@ -12473,6 +12501,10 @@ packages:
       debug: 2.6.9
     transitivePeerDependencies:
       - supports-color
+
+  /stream-transform@3.3.0:
+    resolution: {integrity: sha512-pG1NeDdmErNYKtvTpFayrEueAmL0xVU5wd22V7InGnatl4Ocq3HY7dcXIKj629kXvYQvglCC7CeDIGAlx1RNGA==}
+    dev: false
 
   /stream-via@1.0.4:
     resolution: {integrity: sha512-DBp0lSvX5G9KGRDTkR/R+a29H+Wk2xItOF+MpZLLNDWbEV9tGPnqLPxHEYjmiz8xGtJHRIqmI+hCjmNzqoA4nQ==}

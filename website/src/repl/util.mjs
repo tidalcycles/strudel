@@ -9,8 +9,7 @@ import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { writeText } from '@tauri-apps/api/clipboard';
 import { createContext } from 'react';
-import { stockPatterns } from './useExamplePatterns';
-import { loadDBPatterns } from '@src/user_pattern_utils.mjs';
+import { $featuredPatterns, loadDBPatterns } from '@src/user_pattern_utils.mjs';
 
 // Create a single supabase client for interacting with your database
 export const supabase = createClient(
@@ -18,8 +17,9 @@ export const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpZHhkc3hwaGxoempuem1pZnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTYyMzA1NTYsImV4cCI6MTk3MTgwNjU1Nn0.bqlw7802fsWRnqU5BLYtmXk_k-D1VFmbkHMywWc15NM',
 );
 
+let dbLoaded;
 if (typeof window !== 'undefined') {
-  loadDBPatterns();
+  dbLoaded = loadDBPatterns();
 }
 
 export async function initCode() {
@@ -34,7 +34,7 @@ export async function initCode() {
       return hash2code(codeParam);
     } else if (hash) {
       return supabase
-        .from('code')
+        .from('code_v1')
         .select('code')
         .eq('hash', hash)
         .then(({ data, error }) => {
@@ -61,10 +61,11 @@ export const parseJSON = (json) => {
   }
 };
 
-export function getRandomTune() {
-  const allTunes = Object.entries(stockPatterns);
+export async function getRandomTune() {
+  await dbLoaded;
+  const featuredTunes = Object.entries($featuredPatterns.get());
   const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
-  const [id, data] = randomItem(allTunes);
+  const [_, data] = randomItem(featuredTunes);
   return data;
 }
 
@@ -111,7 +112,7 @@ export async function shareCode(codeToShare) {
   // generate uuid in the browser
   const hash = nanoid(12);
   const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
-  const { error } = await supabase.from('code').insert([{ code: codeToShare, hash, ['public']: isPublic }]);
+  const { error } = await supabase.from('code_v1').insert([{ code: codeToShare, hash, ['public']: isPublic }]);
   if (!error) {
     lastShared = codeToShare;
     // copy shareUrl to clipboard

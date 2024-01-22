@@ -101,9 +101,13 @@ export function repl({
     } catch (err) {
       console.warn('injectPatternMethods: error:', err);
     }
+    const cpm = register('cpm', function (cpm, pat) {
+      return pat._fast(cpm / 60 / scheduler.cps);
+    });
     evalScope({
       all,
       hush,
+      cpm,
       setCps,
       setcps: setCps,
       setCpm,
