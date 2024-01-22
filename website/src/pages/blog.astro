@@ -8,7 +8,7 @@ import PageContent from '../components/PageContent/PageContent.astro';
 import RightSidebar from '../components/RightSidebar/RightSidebar.astro';
 import { getCollection } from 'astro:content';
 import { compareDesc } from 'date-fns';
-
+import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 const currentPage = Astro.url.pathname;
 
 const posts = (await getCollection('blog')).sort((a, b) => compareDesc(a.data.date, b.data.date));
