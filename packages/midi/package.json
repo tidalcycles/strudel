@@ -1,6 +1,6 @@
 {
   "name": "@strudel/midi",
-  "version": "0.11.0",
+  "version": "1.0.0",
   "description": "Midi API for strudel",
   "main": "index.mjs",
   "publishConfig": {
