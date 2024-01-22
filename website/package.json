@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@algolia/client-search": "^4.22.0",
-    "@astro-community/astro-embed-youtube": "^0.4.3",
+    "@astro-community/astro-embed-youtube": "^0.4.4",
     "@astrojs/mdx": "^2.0.3",
     "@astrojs/react": "^3.0.9",
     "@astrojs/rss": "^4.0.2",
