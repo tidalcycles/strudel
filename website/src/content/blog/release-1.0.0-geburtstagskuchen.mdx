@@ -1,0 +1,238 @@
+---
+title: 'Release Notes v1.0.0'
+description: ''
+date: '2024-01-22'
+tags: ['meta']
+author: froos
+---
+
+import BlogVideo from '../../components/BlogVideo.astro';
+
+These are the release notes for Strudel 1.0.0 aka "Geburtstagskuchen"
+
+This release marks the 2 year anniversary of the project, the first commit was on the 22nd January 2022 by Alex McLean.
+
+If you generally need a heads up on what happened to Strudel in the last year, read the [2023 recap](/blog/#year-2)
+
+import { Youtube } from '@src/components/Youtube';
+
+<Youtube client:only="react" id="ByPFmSBqQk0" />
+
+A lot has happened since then, and also since the last release 16 weeks ago.
+
+Let me write up some of the highlights:
+
+## Breaking Change
+
+This version changes the default cps value from 1 to 0.5 to give patterns a little bit more time by default.
+If you find your existing patterns to be suddenly half the speed, just add a `setcps(1)` to the top and it should sound as it did before!
+
+- make 0.5hz cps the default by @yaxu in https://github.com/tidalcycles/strudel/pull/931
+
+## New Domain
+
+Strudel is now available under [strudel.cc](https://strudel.cc/). The old domain still works but you might not get the most recent version.
+
+- replace strudel.tidalcycles.org with strudel.cc by @felixroos in https://github.com/tidalcycles/strudel/pull/768
+
+## Strudel on Mastodon
+
+Strudel now has a mastodon presence: https://social.toplap.org/@strudel
+
+## New Audio Engine Features
+
+superdough, the audio engine of strudel has gotten some new features:
+
+- Create phaser effect by @daslyfe in https://github.com/tidalcycles/strudel/pull/798
+- Multichannel audio by @daslyfe in https://github.com/tidalcycles/strudel/pull/820
+- Audio device selection by @daslyfe in https://github.com/tidalcycles/strudel/pull/854
+- Better convolution reverb by generating impulse responses by @Bubobubobubobubo and @felixroos in https://github.com/tidalcycles/strudel/pull/718
+- Add 'white', 'pink' and 'brown' oscillators + refactor synth by @Bubobubobubobubo and @felixroos in https://github.com/tidalcycles/strudel/pull/713
+- New noise type: "crackle" by @Bubobubobubobubo in https://github.com/tidalcycles/strudel/pull/806
+- Add support for using samples as impulse response buffers for the reverb by @vasilymilovidov in https://github.com/tidalcycles/strudel/pull/717
+- Compressor by @felixroos in https://github.com/tidalcycles/strudel/pull/729
+- Adding vibrato to Superdough sampler by @Bubobubobubobubo and @felixroos in https://github.com/tidalcycles/strudel/pull/706
+- Further Envelope improvements by @daslyfe in https://github.com/tidalcycles/strudel/pull/868
+- Add more vowel qualities for the vowels function by @fnordomat in https://github.com/tidalcycles/strudel/pull/907
+- pitch envelope by @felixroos in https://github.com/tidalcycles/strudel/pull/913
+
+## Slider Controls
+
+The new `slider` function inlines a draggable slider element into the code, bridging the gap between code and GUI.
+
+- widgets by @felixroos in https://github.com/tidalcycles/strudel/pull/714
+- Slider afterthoughts by @felixroos in https://github.com/tidalcycles/strudel/pull/723
+- add xfade by @felixroos in https://github.com/tidalcycles/strudel/pull/780
+
+## Improved MIDI integration
+
+Pattern params [can now be controlled with cc messages](https://www.youtube.com/watch?v=e2-Sv_jjDQk) + you can now send a MIDI clock to sync your DAW with strudel.
+
+- Midi in by @felixroos in https://github.com/tidalcycles/strudel/pull/699
+- add midi clock support by @felixroos in https://github.com/tidalcycles/strudel/pull/710
+
+## hydra
+
+[hydra](https://hydra.ojack.xyz), the live coding video synth [can now be used directly inside the strudel REPL](https://strudel.cc/learn/hydra/).
+
+- Hydra integration by @felixroos in https://github.com/tidalcycles/strudel/pull/759
+- add options param to initHydra by @kasparsj in https://github.com/tidalcycles/strudel/pull/808
+- Hydra fixes and improvements by @atfornes in https://github.com/tidalcycles/strudel/pull/818
+
+## Vanilla REPL
+
+The codemirror editor and the repl abstraction have been refactored from react to vanilla JS!
+This should give some performance improvements and less dependency / maintenance burden:
+
+- Vanilla repl 2 by @felixroos in https://github.com/tidalcycles/strudel/pull/863
+- Vanilla repl 3 by @felixroos in https://github.com/tidalcycles/strudel/pull/865
+- more work on vanilla repl: repl web component + package + MicroRepl by @felixroos in https://github.com/tidalcycles/strudel/pull/866
+- main repl vanillification by @felixroos in https://github.com/tidalcycles/strudel/pull/873
+- final vanillification by @felixroos in https://github.com/tidalcycles/strudel/pull/876
+
+## Doc Changes
+
+Plenty of things have been added to the docs, including a [showcase of what people have been done with strudel](https://strudel.cc/intro/showcase/) and the new [Community Bakery](/bakery/)!
+
+<details>
+<summary>show PRs</summary>
+
+- Showcase by @felixroos in https://github.com/tidalcycles/strudel/pull/885
+- Recipes by @felixroos in https://github.com/tidalcycles/strudel/pull/742
+- Document striate function by @ilesinge in https://github.com/tidalcycles/strudel/pull/766
+- Document adsr function by @ilesinge in https://github.com/tidalcycles/strudel/pull/767
+- Add function params in reference tab by @ilesinge in https://github.com/tidalcycles/strudel/pull/785
+- Update first-sounds.mdx by @bwagner in https://github.com/tidalcycles/strudel/pull/794
+- Update recap.mdx by @bwagner in https://github.com/tidalcycles/strudel/pull/797
+- Update pattern-effects.mdx by @bwagner in https://github.com/tidalcycles/strudel/pull/796
+- Update first-effects.mdx by @bwagner in https://github.com/tidalcycles/strudel/pull/795
+- Document pianoroll by @ilesinge in https://github.com/tidalcycles/strudel/pull/784
+- Add doc for euclidLegatoRot, wordfall and slider by @ilesinge in https://github.com/tidalcycles/strudel/pull/801
+- Improve documentation for synonym functions by @ilesinge in https://github.com/tidalcycles/strudel/pull/800
+- Add and style algolia search by @ilesinge in https://github.com/tidalcycles/strudel/pull/827
+- Fix a typo by @drewgbarnes in https://github.com/tidalcycles/strudel/pull/830
+- add mastodon link by @felixroos in https://github.com/tidalcycles/strudel/pull/884
+- adds a blog by @felixroos in https://github.com/tidalcycles/strudel/pull/911
+- community bakery by @felixroos in https://github.com/tidalcycles/strudel/pull/923
+- Blog improvements by @felixroos in https://github.com/tidalcycles/strudel/pull/919
+- 2 years blog post by @felixroos in https://github.com/tidalcycles/strudel/pull/929
+
+</details>
+
+## Other Features
+
+<details>
+<summary>There is a lot more</summary>
+
+- mini notation: international alphabets support by @ilesinge in https://github.com/tidalcycles/strudel/pull/751
+- Add shabda shortcut by @ilesinge in https://github.com/tidalcycles/strudel/pull/740
+- add play function by @felixroos in https://github.com/tidalcycles/strudel/pull/758 (superseded by next)
+- tidal style d1 ... d9 functions + more by @felixroos in https://github.com/tidalcycles/strudel/pull/805
+- add vscode bindings by @Dsm0 in https://github.com/tidalcycles/strudel/pull/773
+- Implement optional hover tooltip with function documentation by @ilesinge in https://github.com/tidalcycles/strudel/pull/783
+- samples loading shortcuts: by @felixroos in https://github.com/tidalcycles/strudel/pull/788
+- add option to disable active line highlighting in Code Settings by @kasparsj in https://github.com/tidalcycles/strudel/pull/804
+- Color hsl by @felixroos in https://github.com/tidalcycles/strudel/pull/815
+- Patterns tab + Refactor Panel by @felixroos in https://github.com/tidalcycles/strudel/pull/769
+- patterns tab: import patterns + style by @felixroos in https://github.com/tidalcycles/strudel/pull/852
+- Export patterns + ui tweaks by @felixroos in https://github.com/tidalcycles/strudel/pull/855
+- Pattern organization by @felixroos in https://github.com/tidalcycles/strudel/pull/858
+- Sound Import from local file system by @daslyfe in https://github.com/tidalcycles/strudel/pull/839
+- bugfix: suspend and close exisiting audio context when changing interface by @daslyfe in https://github.com/tidalcycles/strudel/pull/882
+- add root mode for voicings by @felixroos in https://github.com/tidalcycles/strudel/pull/887
+- scales can now be anchored by @felixroos in https://github.com/tidalcycles/strudel/pull/888
+- add dough function for raw dsp by @felixroos in https://github.com/tidalcycles/strudel/pull/707 (experimental)
+- support mininotation '..' range operator, fixes #715 by @yaxu in https://github.com/tidalcycles/strudel/pull/716
+- Add pick and squeeze functions by @daslyfe in https://github.com/tidalcycles/strudel/pull/771
+- support , in < > by @felixroos in https://github.com/tidalcycles/strudel/pull/886
+- public sharing by @felixroos in https://github.com/tidalcycles/strudel/pull/910
+- pick, pickmod, inhabit, inhabitmod by @yaxu in https://github.com/tidalcycles/strudel/pull/921
+- Mini-notation additions towards tidal compatibility by @yaxu in https://github.com/tidalcycles/strudel/pull/926
+- add pickF and pickmodF by @geikha in https://github.com/tidalcycles/strudel/pull/924
+- Make splice cps-aware by @yaxu in https://github.com/tidalcycles/strudel/pull/932
+- Refactor cps functions by @felixroos in https://github.com/tidalcycles/strudel/pull/933
+- Add useful pattern selection behavior for performing. by @daslyfe in https://github.com/tidalcycles/strudel/pull/897
+
+</details>
+
+## Other Fixes
+
+<details>
+<summary>show</summary>
+
+- fix: finally repair envelopes by @felixroos in https://github.com/tidalcycles/strudel/pull/861
+- fix: reverb regenerate loophole by @felixroos in https://github.com/tidalcycles/strudel/pull/726
+- fix: reverb roomsize not required by @felixroos in https://github.com/tidalcycles/strudel/pull/731
+- fix: reverb sampleRate by @felixroos in https://github.com/tidalcycles/strudel/pull/732
+- consume n with scale by @felixroos in https://github.com/tidalcycles/strudel/pull/727
+- fix: hashes in urls by @felixroos in https://github.com/tidalcycles/strudel/pull/728
+- [Bug Fix] chooseWith: prevent pattern from stopping audio when selection is >= 1 or < 0 by @daslyfe in https://github.com/tidalcycles/strudel/pull/741
+- Fix addivite synthesis phases by @felixroos in https://github.com/tidalcycles/strudel/pull/762
+- fix: scale offset by @felixroos in https://github.com/tidalcycles/strudel/pull/764
+- fix zen mode logo overlap by @felixroos in https://github.com/tidalcycles/strudel/pull/760
+- fix: share copy to clipboard + alert by @felixroos in https://github.com/tidalcycles/strudel/pull/774
+- fix: style issues by @felixroos in https://github.com/tidalcycles/strudel/pull/781
+- Fix scope pos + document by @felixroos in https://github.com/tidalcycles/strudel/pull/786
+- don't use anchor links for reference by @felixroos in https://github.com/tidalcycles/strudel/pull/791
+- remove unwanted cm6 outline for strudelTheme by @kasparsj in https://github.com/tidalcycles/strudel/pull/802
+- FIXES: palindrome abc -> abccba by @bwagner in https://github.com/tidalcycles/strudel/pull/831
+- Bug Fix #119: Clock drift by @daslyfe in https://github.com/tidalcycles/strudel/pull/874
+- bugfix: sound select indexes out of bounds by @daslyfe in https://github.com/tidalcycles/strudel/pull/871
+- Error tolerance by @felixroos in https://github.com/tidalcycles/strudel/pull/880
+- fix: make sure n is never undefined before nanFallback by @felixroos in https://github.com/tidalcycles/strudel/pull/881
+- fix: invisible selection on vim + emacs mode by @felixroos in https://github.com/tidalcycles/strudel/pull/889
+- fix: autocomplete / tooltip code example bug by @felixroos in https://github.com/tidalcycles/strudel/pull/898
+- Fix examples page, piano() and a few workshop imgs by @shiyouganai in https://github.com/tidalcycles/strudel/pull/848
+- fix: trailing slash confusion by @felixroos in https://github.com/tidalcycles/strudel/pull/743
+- fix: try different trailing slash behavior by @felixroos in https://github.com/tidalcycles/strudel/pull/744
+- Fix krill build command in README by @ilesinge in https://github.com/tidalcycles/strudel/pull/748
+- Fix for #1. Enables named instruments for csoundm. by @gogins in https://github.com/tidalcycles/strudel/pull/662
+- fix: missing hash for links starting with / by @felixroos in https://github.com/tidalcycles/strudel/pull/845
+- fix: swatch png src by @felixroos in https://github.com/tidalcycles/strudel/pull/846
+- Fix edge case with rehype-urls and trailing slashes in image file paths by @shiyouganai in https://github.com/tidalcycles/strudel/pull/849
+- fix: multiple repls by @felixroos in https://github.com/tidalcycles/strudel/pull/813
+- Fix chunk, add fastChunk and repeatCycles by @yaxu in https://github.com/tidalcycles/strudel/pull/712
+- Update tauri.yml workflow file by @vasilymilovidov in https://github.com/tidalcycles/strudel/pull/705
+- vite-vanilla-repl readme fix by @felixroos in https://github.com/tidalcycles/strudel/pull/737
+- completely revert config mess by @felixroos in https://github.com/tidalcycles/strudel/pull/745
+- hopefully fix trainling slashes bug by @felixroos in https://github.com/tidalcycles/strudel/pull/753
+- Update vite pwa by @felixroos in https://github.com/tidalcycles/strudel/pull/772
+- Update to Astro 3 by @felixroos in https://github.com/tidalcycles/strudel/pull/775
+- support multiple named serial connections, change default baudrate by @yaxu in https://github.com/tidalcycles/strudel/pull/551
+- CHANGES: github action checkout v2 -> v4 by @bwagner in https://github.com/tidalcycles/strudel/pull/837
+- CHANGES: pin pnpm to version 8.3.1 by @bwagner in https://github.com/tidalcycles/strudel/pull/834
+- CHANGES: github action pnpm version from 7 to 8.3.1 by @bwagner in https://github.com/tidalcycles/strudel/pull/835
+- ADDS: JetBrains IDE files and directories to .gitignore by @bwagner in https://github.com/tidalcycles/strudel/pull/840
+- Prevent 404 on Algolia crawls by @ilesinge in https://github.com/tidalcycles/strudel/pull/838
+- Add in fixes from my fork to slashocalypse branch by @shiyouganai in https://github.com/tidalcycles/strudel/pull/843
+- improve slashing + base href behavior by @felixroos in https://github.com/tidalcycles/strudel/pull/842
+- CHANGES: pnpm 8.1.3 to 8.11.0 by @bwagner in https://github.com/tidalcycles/strudel/pull/850
+- add missing trailing slashes by @felixroos in https://github.com/tidalcycles/strudel/pull/860
+- move all examples to separate examples folder by @felixroos in https://github.com/tidalcycles/strudel/pull/878
+- Dependency update by @felixroos in https://github.com/tidalcycles/strudel/pull/879
+- Update Vite version so hot reload works properly with newest pnpm version by @daslyfe in https://github.com/tidalcycles/strudel/pull/892
+- prevent vite from complaining about additional exports in jsx files by @daslyfe in https://github.com/tidalcycles/strudel/pull/891
+- fix some build warnings by @felixroos in https://github.com/tidalcycles/strudel/pull/902
+- Remove hideHeader for better mobile UI and consistency by @rjulian in https://github.com/tidalcycles/strudel/pull/894
+- Fix: swatch/[name].png.js static path by @oscarbyrne in https://github.com/tidalcycles/strudel/pull/916
+- rename @strudel.cycles/_ packages to @strudel/_ by @felixroos in https://github.com/tidalcycles/strudel/pull/917
+- `pick` now accepts lookup tables, with alternate cycle squeezing behaviour as new `inhabit` function by @yaxu in https://github.com/tidalcycles/strudel/pull/918
+- Revert "`pick` now accepts lookup tables, with alternate cycle squeezing behaviour as new `inhabit` function" by @yaxu in https://github.com/tidalcycles/strudel/pull/920
+- Fix pattern tab not showing patterns without created date by @daslyfe in https://github.com/tidalcycles/strudel/pull/934
+
+</details>
+
+## New Contributors
+
+- @ilesinge made their first contribution in https://github.com/tidalcycles/strudel/pull/748
+- @Dsm0 made their first contribution in https://github.com/tidalcycles/strudel/pull/773
+- @kasparsj made their first contribution in https://github.com/tidalcycles/strudel/pull/802
+- @atfornes made their first contribution in https://github.com/tidalcycles/strudel/pull/818
+- @drewgbarnes made their first contribution in https://github.com/tidalcycles/strudel/pull/830
+- @shiyouganai made their first contribution in https://github.com/tidalcycles/strudel/pull/843
+- @rjulian made their first contribution in https://github.com/tidalcycles/strudel/pull/894
+- @fnordomat made their first contribution in https://github.com/tidalcycles/strudel/pull/907
+- @oscarbyrne made their first contribution in https://github.com/tidalcycles/strudel/pull/916
+- @geikha made their first contribution in https://github.com/tidalcycles/strudel/pull/924
+
+**Full Changelog**: https://github.com/tidalcycles/strudel/compare/v0.9.0...v1.0.0
