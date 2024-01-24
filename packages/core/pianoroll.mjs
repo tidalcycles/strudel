@@ -160,8 +160,13 @@ export function pianoroll({
     maxMidi = max;
     valueExtent = maxMidi - minMidi + 1;
   }
-  // foldValues = values.sort((a, b) => a - b);
-  foldValues = values.sort((a, b) => String(a).localeCompare(String(b)));
+  foldValues = values.sort((a, b) =>
+    typeof a === 'number' && typeof b === 'number'
+      ? a - b
+      : typeof a === 'number'
+        ? 1
+        : String(a).localeCompare(String(b)),
+  );
   barThickness = fold ? valueAxis / foldValues.length : valueAxis / valueExtent;
   ctx.fillStyle = background;
   ctx.globalAlpha = 1; // reset!
