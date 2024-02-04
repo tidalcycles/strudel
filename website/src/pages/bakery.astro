@@ -1,0 +1,60 @@
+---
+import HeadCommon from '../components/HeadCommon.astro';
+import Header from '../components/Header/Header.astro';
+import LeftSidebar from '../components/LeftSidebar/LeftSidebar.astro';
+import PageContent from '../components/PageContent/PageContent.astro';
+import { getCollection } from 'astro:content';
+import { compareDesc } from 'date-fns';
+import { Oven as CommunityOven } from '../components/Oven/Oven.jsx';
+import RightSidebar from '../components/RightSidebar/RightSidebar.astro';
+
+const currentPage = Astro.url.pathname;
+
+const posts = (await getCollection('blog')).sort((a, b) => compareDesc(a.data.date, b.data.date));
+---
+
+<html dir={'ltr'} lang={'en'} class="initial dark">
+  <head>
+    <HeadCommon />
+    <title>🌀 Strudel Community Bakery</title>
+  </head>
+
+  <body class="h-app-height text-gray-50 bg-background">
+    <div class="w-full h-full space-y-4 flex flex-col">
+      <header class="max-w-full fixed top-0 w-full z-[100]">
+        <Header currentPage={currentPage} />
+      </header>
+      <main class="relative pt-16">
+        <div class="h-full top-0 overflow-auto min-w-[300px] flex xl:justify-center pr-4 pl-4 md:pl-[300px] xl:pl-0">
+          <aside title="Site Navigation" class="w-[300px] px-6 left-0 hidden md:block fixed h-full">
+            <LeftSidebar currentPage={currentPage} />
+          </aside>
+          <PageContent>
+            <h1>Community Bakery</h1>
+            <p>
+              This page contains all the strudel patterns baked by the community. Add your own by clicking the "Share"
+              button in the REPL. Have fun, and please share some of what you create with the community.
+            </p>
+            <CommunityOven client:only />
+          </PageContent>
+          <aside class="fixed right-0 h-full overflow-auto pr-4 pl-0 pb-16 hidden xl:block" title="Table of Contents">
+            <RightSidebar
+              headings={[
+                {
+                  depth: 1,
+                  slug: 'featured',
+                  text: 'Featured',
+                },
+                {
+                  depth: 1,
+                  slug: 'latest',
+                  text: 'Last Creations',
+                },
+              ]}
+            />
+          </aside>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

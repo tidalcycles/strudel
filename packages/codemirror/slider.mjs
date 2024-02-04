@@ -1,4 +1,4 @@
-import { ref, pure } from '@strudel.cycles/core';
+import { ref, pure } from '@strudel/core';
 import { WidgetType, ViewPlugin, Decoration } from '@codemirror/view';
 import { StateEffect, StateField } from '@codemirror/state';
 

@@ -1,10 +1,10 @@
 import { createCanvas } from 'canvas';
-import { pianoroll } from '@strudel.cycles/core';
-import { evaluate } from '@strudel.cycles/transpiler';
+import { pianoroll } from '@strudel/core';
+import { evaluate } from '@strudel/transpiler';
 import '../../../../test/runtime.mjs';
-import { getMyPatterns } from './list.json';
+import { getMyPatterns } from '../../my_patterns';
 
-export async function get({ params, request }) {
+export async function GET({ params, request }) {
   const patterns = await getMyPatterns();
   const { name } = params;
   const tune = patterns[name];
@@ -14,10 +14,7 @@ export async function get({ params, request }) {
   const ctx = canvas.getContext('2d');
   pianoroll({ time: 4, haps, ctx, playhead: 1, fold: 1, background: 'transparent', playheadColor: 'transparent' });
   const buffer = canvas.toBuffer('image/png');
-  return {
-    body: buffer,
-    encoding: 'binary',
-  };
+  return new Response(buffer);
 }
 export async function getStaticPaths() {
   const patterns = await getMyPatterns();

@@ -1,6 +1,6 @@
 import { createCanvas } from 'canvas';
-import { pianoroll } from '@strudel.cycles/core';
-import { evaluate } from '@strudel.cycles/transpiler';
+import { pianoroll } from '@strudel/core';
+import { evaluate } from '@strudel/transpiler';
 import '../../../../test/runtime.mjs';
 import * as tunes from '../../repl/tunes.mjs';
 

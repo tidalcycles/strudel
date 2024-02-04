@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+type Props = { post: CollectionEntry<'blog'> };
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+import { format } from 'date-fns';
+---
+
+<article
+  class="prose max-w-none prose-headings:font-sans prose-headings:font-black prose-headings:text-slate-900 dark:prose-headings:text-gray-200 dark:text-gray-400 dark:prose-strong:text-gray-400 dark:prose-code:text-slate-400 dark:prose-a:text-gray-300 prose-a:text-slate-900 prose-blockquote:text-slate-800 dark:prose-blockquote:text-slate-400 border-b-4 border-lineHighlight pt-4"
+>
+  <div class="pb-2">
+    <div class="md:flex justify-between">
+      <h1 class="mb-4">{post.data.title}</h1>
+      <span id={post.slug} class="-mt-16"></span>
+    </div>
+    <p class="italic p-0 m-0">
+      <time datetime={post.data.date.toISOString()}>
+        {format(post.data.date, 'MMMM yyyy')} by {post.data.author}
+      </time>
+    </p>
+  </div>
+  <div>
+    <Content />
+  </div>
+</article>

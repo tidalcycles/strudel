@@ -26,7 +26,7 @@ export class Pattern {
   /**
    * Create a pattern. As an end user, you will most likely not create a Pattern directly.
    *
-   * @param {function} query - The function that maps a {@link State} to an array of {@link Hap}.
+   * @param {function} query - The function that maps a `State` to an array of `Hap`.
    * @noAutocomplete
    */
   constructor(query) {
@@ -39,7 +39,7 @@ export class Pattern {
 
   /**
    * Returns a new pattern, with the function applied to the value of
-   * each hap. It has the alias {@link Pattern#fmap}.
+   * each hap. It has the alias `fmap`.
    * @synonyms fmap
    * @param {Function} func to to apply to the value
    * @returns Pattern
@@ -51,7 +51,7 @@ export class Pattern {
   }
 
   /**
-   * see {@link Pattern#withValue}
+   * see `withValue`
    * @noAutocomplete
    */
   fmap(func) {
@@ -115,7 +115,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#appBoth}, but the `whole` timespan is not the intersection,
+   * As with `appBoth`, but the `whole` timespan is not the intersection,
    * but the timespan from the function of patterns that this method is called
    * on. In practice, this means that the pattern structure, including onsets,
    * are preserved from the pattern of functions (often referred to as the left
@@ -148,7 +148,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#appLeft}, but `whole` timespans are instead taken from the
+   * As with `appLeft`, but `whole` timespans are instead taken from the
    * pattern of values, i.e. structure is preserved from the right hand/outer
    * pattern.
    * @param {Pattern} pat_val
@@ -340,9 +340,9 @@ export class Pattern {
    * silence
    * @noAutocomplete
    */
-  queryArc(begin, end) {
+  queryArc(begin, end, controls = {}) {
     try {
-      return this.query(new State(new TimeSpan(begin, end)));
+      return this.query(new State(new TimeSpan(begin, end), controls));
     } catch (err) {
       logger(`[query]: ${err.message}`, 'error');
       return [];
@@ -387,7 +387,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#withQuerySpan}, but the function is applied to both the
+   * As with `withQuerySpan`, but the function is applied to both the
    * begin and end time of the query timespan.
    * @param {Function} func the function to apply
    * @returns Pattern
@@ -398,7 +398,7 @@ export class Pattern {
   }
 
   /**
-   * Similar to {@link Pattern#withQuerySpan}, but the function is applied to the timespans
+   * Similar to `withQuerySpan`, but the function is applied to the timespans
    * of all haps returned by pattern queries (both `part` timespans, and where
    * present, `whole` timespans).
    * @param {Function} func
@@ -410,7 +410,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#withHapSpan}, but the function is applied to both the
+   * As with `withHapSpan`, but the function is applied to both the
    * begin and end time of the hap timespans.
    * @param {Function} func the function to apply
    * @returns Pattern
@@ -427,11 +427,11 @@ export class Pattern {
    * @noAutocomplete
    */
   withHaps(func) {
-    return new Pattern((state) => func(this.query(state)));
+    return new Pattern((state) => func(this.query(state), state));
   }
 
   /**
-   * As with {@link Pattern#withHaps}, but applies the function to every hap, rather than every list of haps.
+   * As with `withHaps`, but applies the function to every hap, rather than every list of haps.
    * @param {Function} func
    * @returns Pattern
    * @noAutocomplete
@@ -499,7 +499,7 @@ export class Pattern {
   }
 
   /**
-   * As with {@link Pattern#filterHaps}, but the function is applied to values
+   * As with `filterHaps`, but the function is applied to values
    * inside haps.
    * @param {Function} value_test
    * @returns Pattern
@@ -621,7 +621,7 @@ export class Pattern {
   }
 
   /**
-   * More human-readable version of the {@link Pattern#firstCycleValues} accessor.
+   * More human-readable version of the `firstCycleValues` accessor.
    * @noAutocomplete
    */
   get showFirstCycle() {
@@ -691,13 +691,13 @@ export class Pattern {
   // Methods without corresponding toplevel functions
 
   /**
-   * Layers the result of the given function(s). Like {@link Pattern.superimpose}, but without the original pattern:
+   * Layers the result of the given function(s). Like `superimpose`, but without the original pattern:
    * @name layer
    * @memberof Pattern
    * @synonyms apply
    * @returns Pattern
    * @example
-   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
+   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*8"
    *   .layer(x=>x.add("0,2"))
    *   .scale('C minor').note()
    */
@@ -711,7 +711,7 @@ export class Pattern {
    * @memberof Pattern
    * @returns Pattern
    * @example
-   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*4"
+   * "<0 2 4 6 ~ 4 ~ 2 0!3 ~!5>*8"
    *   .superimpose(x=>x.add(2))
    *   .scale('C minor').note()
    */
@@ -727,8 +727,8 @@ export class Pattern {
    * @name stack
    * @memberof Pattern
    * @example
-   * s("hh*2").stack(
-   *   note("c2(3,8)")
+   * s("hh*4").stack(
+   *   note("c4(5,8)")
    * )
    */
   stack(...pats) {
@@ -745,8 +745,8 @@ export class Pattern {
    * @memberof Pattern
    * @synonyms sequence, fastcat
    * @example
-   * s("hh*2").seq(
-   *   note("c2(3,8)")
+   * s("hh*4").seq(
+   *   note("c4(5,8)")
    * )
    */
   seq(...pats) {
@@ -759,8 +759,8 @@ export class Pattern {
    * @memberof Pattern
    * @synonyms slowcat
    * @example
-   * s("hh*2").cat(
-   *   note("c2(3,8)")
+   * s("hh*4").cat(
+   *   note("c4(5,8)")
    * )
    */
   cat(...pats) {
@@ -858,7 +858,7 @@ Pattern.prototype.arpWith = function (func) {
  * Selects indices in in stacked notes.
  * @example
  * note("<[c,eb,g]!2 [c,f,ab] [d,f,ab]>")
- * .arp("0 [0,2] 1 [0,2]").slow(2)
+ * .arp("0 [0,2] 1 [0,2]")
  * */
 Pattern.prototype.arp = function (pat) {
   return this.arpWith((haps) => pat.fmap((i) => haps[i % haps.length]));
@@ -929,14 +929,14 @@ function _composeOp(a, b, func) {
      * @memberof Pattern
      * @example
      * // Here, the triad 0, 2, 4 is shifted by different amounts
-     * "0 2 4".add("<0 3 4 0>").scale('C major').note()
+     * n("0 2 4".add("<0 3 4 0>")).scale("C:major")
      * // Without add, the equivalent would be:
-     * // "<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>".scale('C major').note()
+     * // n("<[0 2 4] [3 5 7] [4 6 8] [0 2 4]>").scale("C:major")
      * @example
      * // You can also use add with notes:
-     * "c3 e3 g3".add("<0 5 7 0>").note()
+     * note("c3 e3 g3".add("<0 5 7 0>"))
      * // Behind the scenes, the notes are converted to midi numbers:
-     * // "48 52 55".add("<0 5 7 0>").note()
+     * // note("48 52 55".add("<0 5 7 0>"))
      */
     add: [numeralArgs((a, b) => a + b)], // support string concatenation
     /**
@@ -945,7 +945,7 @@ function _composeOp(a, b, func) {
      * @name sub
      * @memberof Pattern
      * @example
-     * "0 2 4".sub("<0 1 2 3>").scale('C4 minor').note()
+     * n("0 2 4".sub("<0 1 2 3>")).scale("C4:minor")
      * // See add for more information.
      */
     sub: [numeralArgs((a, b) => a - b)],
@@ -955,7 +955,7 @@ function _composeOp(a, b, func) {
      * @name mul
      * @memberof Pattern
      * @example
-     * "1 1.5 [1.66, <2 2.33>]".mul(150).freq()
+     * "<1 1.5 [1.66, <2 2.33>]>*4".mul(150).freq()
      */
     mul: [numeralArgs((a, b) => a * b)],
     /**
@@ -1049,9 +1049,9 @@ function _composeOp(a, b, func) {
    * Applies the given structure to the pattern:
    *
    * @example
-   * note("c3,eb3,g3")
+   * note("c,eb,g")
    *   .struct("x ~ x ~ ~ x ~ x ~ ~ ~ x ~ x ~ ~")
-   *   .slow(4)
+   *   .slow(2)
    */
   Pattern.prototype.struct = function (...args) {
     return this.keepif.out(...args);
@@ -1063,7 +1063,7 @@ function _composeOp(a, b, func) {
    * Returns silence when mask is 0 or "~"
    *
    * @example
-   * note("c [eb,g] d [eb,g]").mask("<1 [0 1]>").slow(2)
+   * note("c [eb,g] d [eb,g]").mask("<1 [0 1]>")
    */
   Pattern.prototype.mask = function (...args) {
     return this.keepif.in(...args);
@@ -1075,7 +1075,7 @@ function _composeOp(a, b, func) {
    * Resets the pattern to the start of the cycle for each onset of the reset pattern.
    *
    * @example
-   * s("<bd lt> sd, hh*4").reset("<x@3 x(3,8)>")
+   * s("[<bd lt> sd]*2, hh*8").reset("<x@3 x(5,8)>")
    */
   Pattern.prototype.reset = function (...args) {
     return this.keepif.trig(...args);
@@ -1088,7 +1088,7 @@ function _composeOp(a, b, func) {
    * While reset will only reset the current cycle, restart will start from cycle 0.
    *
    * @example
-   * s("<bd lt> sd, hh*4").restart("<x@3 x(3,8)>")
+   * s("[<bd lt> sd]*2, hh*8").restart("<x@3 x(5,8)>")
    */
   Pattern.prototype.restart = function (...args) {
     return this.keepif.trigzero(...args);
@@ -1154,8 +1154,8 @@ export function isPattern(thing) {
   /* if (!thing instanceof Pattern) {
     console.warn(
       `Found Pattern that fails "instanceof Pattern" check.
-      This may happen if you are using multiple versions of @strudel.cycles/core. 
-      Please check by running "npm ls @strudel.cycles/core".`,
+      This may happen if you are using multiple versions of @strudel/core.
+      Please check by running "npm ls @strudel/core".`,
     );
     console.log(thing);
   } */
@@ -1178,7 +1178,8 @@ export function reify(thing) {
  * @return {Pattern}
  * @synonyms polyrhythm, pr
  * @example
- * stack("g3", "b3", ["e4", "d4"]).note() // "g3,b3,[e4,d4]".note()
+ * stack("g3", "b3", ["e4", "d4"]).note()
+ * // "g3,b3,[e4,d4]".note()
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
@@ -1189,7 +1190,7 @@ export function stack(...pats) {
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle:
  *
- * synonyms: {@link cat}
+ * synonyms: `cat`
  *
  * @return {Pattern}
  * @example
@@ -1237,17 +1238,19 @@ export function slowcatPrime(...pats) {
  * @synonyms slowcat
  * @return {Pattern}
  * @example
- * cat("e5", "b4", ["d5", "c5"]).note() // "<e5 b4 [d5 c5]>".note()
+ * cat("e5", "b4", ["d5", "c5"]).note()
+ * // "<e5 b4 [d5 c5]>".note()
  *
  */
 export function cat(...pats) {
   return slowcat(...pats);
 }
 
-/** Like {@link Pattern.seq}, but each step has a length, relative to the whole.
+/** Like `seq`, but each step has a length, relative to the whole.
  * @return {Pattern}
  * @example
- * timeCat([3,"e3"],[1, "g3"]).note() // "e3@3 g3".note()
+ * timeCat([3,"e3"],[1, "g3"]).note()
+ * // "e3@3 g3".note()
  */
 export function timeCat(...timepats) {
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -1267,7 +1270,10 @@ export function timeCat(...timepats) {
  *
  * @return {Pattern}
  * @example
- * arrange([4, "<c a f e>(3,8)"],[2, "<g a>(5,8)"]).note()
+ * arrange(
+ *   [4, "<c a f e>(3,8)"],
+ *   [2, "<g a>(5,8)"]
+ * ).note()
  */
 export function arrange(...sections) {
   const total = sections.reduce((sum, [cycles]) => sum + cycles, 0);
@@ -1279,7 +1285,7 @@ export function fastcat(...pats) {
   return slowcat(...pats)._fast(pats.length);
 }
 
-/** See {@link fastcat} */
+/** See `fastcat` */
 export function sequence(...pats) {
   return fastcat(...pats);
 }
@@ -1287,7 +1293,8 @@ export function sequence(...pats) {
 /** Like **cat**, but the items are crammed into one cycle.
  * @synonyms fastcat, sequence
  * @example
- * seq("e5", "b4", ["d5", "c5"]).note() // "e5 b4 [d5 c5]".note()
+ * seq("e5", "b4", ["d5", "c5"]).note()
+ * // "e5 b4 [d5 c5]".note()
  *
  */
 export function seq(...pats) {
@@ -1313,9 +1320,9 @@ function _sequenceCount(x) {
  * @param  {number} steps how many items are placed in one cycle
  * @param  {any[]} sequences one or more arrays of Patterns / values
  * @example
- * polymeterSteps(2, ["c", "d", "e", "f", "g", "f", "e", "d"])
- * .note().stack(s("bd")) // 1 cycle = 1 bd = 2 notes
- * // note("{c d e f g f e d}%2").stack(s("bd"))
+ * polymeterSteps(4, ["c", "d", "e"])
+ * .note().stack(s("bd"))
+ * // note("{c d e}%4").stack(s("bd"))
  */
 export function polymeterSteps(steps, ...args) {
   const seqs = args.map((a) => _sequenceCount(a));
@@ -1463,7 +1470,7 @@ export function register(name, func, patternify = true) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "0.5 1.5 2.5".round().scale('C major').note()
+ * n("0.5 1.5 2.5".round()).scale("C:major")
  */
 export const round = register('round', function (pat) {
   return pat.asNumber().fmap((v) => Math.round(v));
@@ -1477,7 +1484,7 @@ export const round = register('round', function (pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "42 42.1 42.5 43".floor().note()
+ * note("42 42.1 42.5 43".floor())
  */
 export const floor = register('floor', function (pat) {
   return pat.asNumber().fmap((v) => Math.floor(v));
@@ -1491,7 +1498,7 @@ export const floor = register('floor', function (pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "42 42.1 42.5 43".ceil().note()
+ * note("42 42.1 42.5 43".ceil())
  */
 export const ceil = register('ceil', function (pat) {
   return pat.asNumber().fmap((v) => Math.ceil(v));
@@ -1524,7 +1531,8 @@ export const fromBipolar = register('fromBipolar', function (pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("bd sd,hh*4").cutoff(sine.range(500,2000).slow(4))
+ * s("[bd sd]*2,hh*8")
+ * .cutoff(sine.range(500,4000))
  */
 export const range = register('range', function (min, max, pat) {
   return pat.mul(max - min).add(min);
@@ -1538,7 +1546,8 @@ export const range = register('range', function (min, max, pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("bd sd,hh*4").cutoff(sine.rangex(500,2000).slow(4))
+ * s("[bd sd]*2,hh*8")
+ * .cutoff(sine.rangex(500,4000))
  */
 export const rangex = register('rangex', function (min, max, pat) {
   return pat._range(Math.log(min), Math.log(max)).fmap(Math.exp);
@@ -1551,7 +1560,8 @@ export const rangex = register('rangex', function (min, max, pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("bd sd,hh*4").cutoff(sine2.range2(500,2000).slow(4))
+ * s("[bd sd]*2,hh*8")
+ * .cutoff(sine2.range2(500,4000))
  */
 export const range2 = register('range2', function (min, max, pat) {
   return pat.fromBipolar()._range(min, max);
@@ -1564,7 +1574,8 @@ export const range2 = register('range2', function (min, max, pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * ratio("1, 5:4, 3:2").mul(110).freq().s("piano").slow(2)
+ * ratio("1, 5:4, 3:2").mul(110)
+ * .freq().s("piano")
  */
 export const ratio = register('ratio', (pat) =>
   pat.fmap((v) => {
@@ -1636,7 +1647,7 @@ export const { fastGap, fastgap } = register(['fastGap', 'fastgap'], function (f
 });
 
 /**
- * Similar to compress, but doesn't leave gaps, and the 'focus' can be bigger than a cycle
+ * Similar to `compress`, but doesn't leave gaps, and the 'focus' can be bigger than a cycle
  * @example
  * s("bd hh sd hh").focus(1/4, 3/4)
  */
@@ -1667,7 +1678,7 @@ export const ply = register('ply', function (factor, pat) {
  * @param {number | Pattern} factor speed up factor
  * @returns Pattern
  * @example
- * s("<bd sd> hh").fast(2) // s("[<bd sd> hh]*2")
+ * s("bd hh sd hh").fast(2) // s("[bd hh sd hh]*2")
  */
 export const { fast, density } = register(['fast', 'density'], function (factor, pat) {
   if (factor === 0) {
@@ -1696,7 +1707,7 @@ export const hurry = register('hurry', function (r, pat) {
  * @param {number | Pattern} factor slow down factor
  * @returns Pattern
  * @example
- * s("<bd sd> hh").slow(2) // s("[<bd sd> hh]/2")
+ * s("bd hh sd hh").slow(2) // s("[bd hh sd hh]/2")
  */
 export const { slow, sparsity } = register(['slow', 'sparsity'], function (factor, pat) {
   if (factor === 0) {
@@ -1753,7 +1764,7 @@ export const lastOf = register('lastOf', function (n, func, pat) {
  */
 
 /**
- * An alias for {@link firstOf}
+ * An alias for `firstOf`
  * @name every
  * @memberof Pattern
  * @param {number} n how many cycles
@@ -1785,9 +1796,9 @@ export const apply = register('apply', function (func, pat) {
  * @example
  * s("<bd sd>,hh*2").cpm(90) // = 90 bpm
  */
-// TODO - global clock
+// this is redefined in repl.mjs, using the current cps as divisor
 export const cpm = register('cpm', function (cpm, pat) {
-  return pat._fast(cpm / 60);
+  return pat._fast(cpm / 60 / 1);
 });
 
 /**
@@ -1860,7 +1871,7 @@ export const linger = register('linger', function (t, pat) {
  * Samples the pattern at a rate of n events per cycle. Useful for turning a continuous pattern into a discrete one.
  * @param {number} segments number of segments per cycle
  * @example
- * note(saw.range(0,12).segment(24)).add(40)
+ * note(saw.range(40,52).segment(24))
  */
 export const segment = register('segment', function (rate, pat) {
   return pat.struct(pure(true)._fast(rate));
@@ -1886,7 +1897,7 @@ export const { invert, inv } = register(['invert', 'inv'], function (pat) {
  * @param {function} func
  * @returns Pattern
  * @example
- * "c3 eb3 g3".when("<0 1>/2", x=>x.sub(5)).note()
+ * "c3 eb3 g3".when("<0 1>/2", x=>x.sub("5")).note()
  */
 export const when = register('when', function (on, func, pat) {
   return on ? func(pat) : pat;
@@ -1923,7 +1934,7 @@ export const brak = register('brak', function (pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * note("c3 d3 e3 g3").rev()
+ * note("c d e g").rev()
  */
 export const rev = register('rev', function (pat) {
   const query = function (state) {
@@ -1993,7 +2004,7 @@ export const palindrome = register('palindrome', function (pat) {
  * @name juxBy
  * @synonyms juxby
  * @example
- * s("lt ht mt ht hh").juxBy("<0 .5 1>/2", rev)
+ * s("bd lt [~ ht] mt cp ~ bd hh").juxBy("<0 .5 1>/2", rev)
  */
 export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func, pat) {
   by /= 2;
@@ -2012,7 +2023,11 @@ export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func,
 /**
  * The jux function creates strange stereo effects, by applying a function to a pattern, but only in the right-hand channel.
  * @example
- * s("lt ht mt ht hh").jux(rev)
+ * s("bd lt [~ ht] mt cp ~ bd hh").jux(rev)
+ * @example
+ * s("bd lt [~ ht] mt cp ~ bd hh").jux(press)
+ * @example
+ * s("bd lt [~ ht] mt cp ~ bd hh").jux(iter(4))
  */
 export const jux = register('jux', function (func, pat) {
   return pat._juxBy(1, func, pat);
@@ -2028,7 +2043,7 @@ export const jux = register('jux', function (func, pat) {
  * @example
  * "<0 [2 4]>"
  * .echoWith(4, 1/8, (p,n) => p.add(n*2))
- * .scale('C minor').note().clip(.2)
+ * .scale("C:minor").note()
  */
 export const { echoWith, echowith, stutWith, stutwith } = register(
   ['echoWith', 'echowith', 'stutWith', 'stutwith'],
@@ -2121,7 +2136,8 @@ const { repeatCycles } = register('repeatCycles', _repeatCycles);
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "0 1 2 3".chunk(4, x=>x.add(7)).scale('A minor').note()
+ * "0 1 2 3".chunk(4, x=>x.add(7))
+ * .scale("A:minor").note()
  */
 const _chunk = function (n, func, pat, back = false, fast = false) {
   const binary = Array(n - 1).fill(false);
@@ -2146,7 +2162,8 @@ const { chunk, slowchunk, slowChunk } = register(['chunk', 'slowchunk', 'slowChu
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "0 1 2 3".chunkBack(4, x=>x.add(7)).scale('A minor').note()
+ * "0 1 2 3".chunkBack(4, x=>x.add(7))
+ * .scale("A:minor").note()
  */
 export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], function (n, func, pat) {
   return _chunk(n, func, pat, true);
@@ -2160,10 +2177,11 @@ export const { chunkBack, chunkback } = register(['chunkBack', 'chunkback'], fun
  * @memberof Pattern
  * @returns Pattern
  * @example
- * "<0 8> 1 2 3 4 5 6 7".fastChunk(4, x => x.color('red')).slow(4).scale("C2:major").note()
-  .s("folkharp")
+ * "<0 8> 1 2 3 4 5 6 7"
+ * .fastChunk(4, x => x.color('red')).slow(2)
+ * .scale("C2:major").note()
  */
-const { fastchunk, fastChunk } = register(['fastchunk', 'fastChunk'], function (n, func, pat) {
+export const { fastchunk, fastChunk } = register(['fastchunk', 'fastChunk'], function (n, func, pat) {
   return _chunk(n, func, pat, false, true);
 });
 
@@ -2177,6 +2195,8 @@ export const bypass = register('bypass', function (on, pat) {
  * Loops the pattern inside at `offset` for `cycles`.
  * @param {number} offset start point of loop in cycles
  * @param {number} cycles loop length in cycles
+ * @example
+ * note("<c d e f>").ribbon(1, 2).fast(2)
  * @example
  * // Looping a portion of randomness
  * note(irand(8).segment(4).scale('C3 minor')).ribbon(1337, 2)
@@ -2251,7 +2271,7 @@ export const legato = register('legato', function (value, pat) {
  * s("rhodes")
  *  .chop(4)
  *  .rev() // reverse order of chops
- *  .loopAt(4) // fit sample into 4 cycles
+ *  .loopAt(2) // fit sample into 2 cycles
  *
  */
 export const chop = register('chop', function (n, pat) {
@@ -2269,7 +2289,7 @@ export const chop = register('chop', function (n, pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("numbers:0 numbers:1 numbers:2").striate(6).slow(6)
+ * s("numbers:0 numbers:1 numbers:2").striate(6).slow(3)
  */
 export const striate = register('striate', function (n, pat) {
   const slices = Array.from({ length: n }, (x, i) => i);
@@ -2285,10 +2305,10 @@ export const striate = register('striate', function (n, pat) {
  * @returns Pattern
  * @example
  * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
- * s("rhodes").loopAt(4)
+ * s("rhodes").loopAt(2)
  */
 // TODO - global cps clock
-const _loopAt = function (factor, pat, cps = 1) {
+const _loopAt = function (factor, pat, cps = 0.5) {
   return pat
     .speed((1 / factor) * cps)
     .unit('c')
@@ -2303,10 +2323,10 @@ const _loopAt = function (factor, pat, cps = 1) {
  * @returns Pattern
  * @example
  * await samples('github:tidalcycles/Dirt-Samples/master')
- * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(1.5)
+ * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(0.75)
  * @example
  * await samples('github:tidalcycles/Dirt-Samples/master')
- * s("breaks125/2").fit().slice([0,.25,.5,.75], "0 1 1 <2 3>")
+ * s("breaks125").fit().slice([0,.25,.5,.75], "0 1 1 <2 3>")
  */
 
 export const slice = register(
@@ -2334,50 +2354,51 @@ export const slice = register(
  * await samples('github:tidalcycles/Dirt-Samples/master')
  * s("breaks165")
  * .splice(8,  "0 1 [2 3 0]@2 3 0@2 7")
- * .hurry(0.65)
  */
 
 export const splice = register(
   'splice',
   function (npat, ipat, opat) {
     const sliced = slice(npat, ipat, opat);
-    return sliced.withHap(function (hap) {
-      return hap.withValue((v) => ({
-        ...{
-          speed: (1 / v._slices / hap.whole.duration) * (v.speed || 1),
-          unit: 'c',
-        },
-        ...v,
-      }));
+    return new Pattern((state) => {
+      // TODO - default cps to 0.5
+      const cps = state.controls._cps || 1;
+      const haps = sliced.query(state);
+      return haps.map((hap) =>
+        hap.withValue((v) => ({
+          ...{
+            speed: (cps / v._slices / hap.whole.duration) * (v.speed || 1),
+            unit: 'c',
+          },
+          ...v,
+        })),
+      );
     });
   },
   false, // turns off auto-patternification
 );
 
-// this function will be redefined in repl.mjs to use the correct cps value.
-// It is still here to work in cases where repl.mjs is not used
-
 export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
-  return _loopAt(factor, pat, 1);
+  return new Pattern((state) => _loopAt(factor, pat, state.controls._cps).query(state));
 });
 
-// the fit function will be redefined in repl.mjs to use the correct cps value.
-// It is still here to work in cases where repl.mjs is not used
 /**
  * Makes the sample fit its event duration. Good for rhythmical loops like drum breaks.
- * Similar to loopAt.
+ * Similar to `loopAt`.
  * @name fit
  * @example
  * samples({ rhodes: 'https://cdn.freesound.org/previews/132/132051_316502-lq.mp3' })
- * s("rhodes/4").fit()
+ * s("rhodes/2").fit()
  */
 export const fit = register('fit', (pat) =>
-  pat.withHap((hap) =>
-    hap.withValue((v) => ({
-      ...v,
-      speed: 1 / hap.whole.duration,
-      unit: 'c',
-    })),
+  pat.withHaps((haps, state) =>
+    haps.map((hap) =>
+      hap.withValue((v) => ({
+        ...v,
+        speed: (state.controls._cps || 1) / hap.whole.duration,
+        unit: 'c',
+      })),
+    ),
   ),
 );
 

@@ -19,7 +19,7 @@ export function Header({ context }) {
     isDirty,
     activeCode,
     handleTogglePlay,
-    handleUpdate,
+    handleEvaluate,
     handleShuffle,
     handleShare,
   } = context;
@@ -85,7 +85,7 @@ export function Header({ context }) {
             )}
           </button>
           <button
-            onClick={() => handleUpdate()}
+            onClick={handleEvaluate}
             title="update"
             className={cx(
               'flex items-center space-x-1',

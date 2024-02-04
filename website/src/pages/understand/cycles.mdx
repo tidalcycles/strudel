@@ -15,20 +15,20 @@ Strudel's mother language, TidalCycles, even has it in its name.
 ## Cycles and BPM
 
 In most music software, the unit BPM (beats per minute) is used to set the tempo.
-Strudel expresses tempo as CPS (cycles per second), with a default of 1CPS:
+Strudel expresses tempo as CPS (cycles per second), with a default of 0.5 CPS:
 
 <MiniRepl client:visible tune={`s("bd")`} />
 
-Here we can hear the 1CPS in action: The kick repeats once per second like a clock.
-We could say 1CPS = 1BPS (beats per second) = 60BPM. Let's add another kick:
+Here we can hear the 0.5CPS in action: The kick repeats once every two seconds.
+Let's make it 4 kicks:
 
-<MiniRepl client:visible tune={`s("bd bd")`} />
+<MiniRepl client:visible tune={`s("bd bd bd bd")`} />
 
-Now we have 2 kicks per second, but the whole pattern still plays at 1CPS.
+Now we have 4 kicks per cycle, but the whole pattern still plays at 0.5CPS.
 In terms of BPM, most musicians would tell you this is playing at 120bpm.
 What about this one:
 
-<MiniRepl client:visible tune={`s("bd hh")`} />
+<MiniRepl client:visible tune={`s("bd hh bd hh")`} />
 
 Because the second sound is now a hihat, the tempo feels slower again.
 This brings us to an important realization:
@@ -103,7 +103,7 @@ To get a time signature, just change the number of elements per bar. Here is a r
 
 or with 5:
 
-<MiniRepl client:visible tune={`s("<bd hh hh bd hh hh bd rim bd hh>*5")`} />
+<MiniRepl client:visible tune={`s("bd hh hh bd hh hh bd rim bd hh")`} />
 
 We could also write multiple bars with different time signatures:
 

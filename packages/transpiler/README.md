@@ -1,4 +1,4 @@
-# @strudel.cycles/transpiler
+# @strudel/transpiler
 
 This package contains a JS code transpiler with the following features:
 
@@ -9,14 +9,14 @@ This package contains a JS code transpiler with the following features:
 ## Install
 
 ```sh
-npm i @strudel.cycles/transpiler
+npm i @strudel/transpiler
 ```
 
 ## Use
 
 ```js
-import { transpiler } from '@strudel.cycles/core';
-import { evaluate } from '@strudel.cycles/core';
+import { transpiler } from '@strudel/core';
+import { evaluate } from '@strudel/core';
 
 transpiler('note("c3 [e3,g3]")', { wrapAsync: false, addReturn: false, simpleLocs: true });
 /* mini('c3 [e3,g3]').withMiniLocation(7,17) */

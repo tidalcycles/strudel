@@ -10,7 +10,7 @@ const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width" />
 <meta name="generator" content={Astro.generator} />
-
+<link rel="alternate" type="application/rss+xml" title={`RSS Feed for strudel.cc`} href="/rss.xml" />
 <link rel="icon" type="image/svg+xml" href={`${baseNoTrailing}/favicon.ico`} />
 
 <meta
@@ -24,7 +24,7 @@ const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL
 <base href={BASE_URL} />
 
 <!-- Scrollable a11y code helper -->
-<script src{`${baseNoTrailing}/make-scrollable-code-focusable.js`} is:inline></script>
+<script {`${baseNoTrailing}/make-scrollable-code-focusable.js`} is:inline></script>
 
 <script src="/src/pwa.ts"></script>
 <!-- this does not work for some reason: -->

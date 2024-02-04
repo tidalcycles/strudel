@@ -4,7 +4,7 @@ layout: ../../../layouts/MainLayout.astro
 ---
 
 import { MiniRepl } from '@src/docs/MiniRepl';
-import { midi2note } from '@strudel.cycles/core/';
+import { midi2note } from '@strudel/core/';
 import Box from '@components/Box.astro';
 import QA from '@components/QA';
 
@@ -17,7 +17,6 @@ Jetzt schauen wir uns an wie man mit Tönen mit der `note` Funktion spielt.
 **Töne mit Zahlen**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("48 52 55 59").sound("piano")`}
   claviature
@@ -39,7 +38,6 @@ Versuch auch mal Kommazahlen, z.B. 55.5 (beachte die englische Schreibweise von 
 **Töne mit Buchstaben**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("c e g b").sound("piano")`}
   claviature
@@ -57,7 +55,6 @@ Findest du Melodien die auch gleichzeitig ein Wort sind? Tipp: ☕ 🙈 🧚
 **Vorzeichen**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("db eb gb ab bb").sound("piano")`}
   claviature
@@ -67,7 +64,6 @@ Findest du Melodien die auch gleichzeitig ein Wort sind? Tipp: ☕ 🙈 🧚
 />
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("c# d# f# g# a#").sound("piano")`}
   claviature
@@ -79,7 +75,6 @@ Findest du Melodien die auch gleichzeitig ein Wort sind? Tipp: ☕ 🙈 🧚
 **Andere Oktaven**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("c2 e3 g4 b5").sound("piano")`}
   claviature
@@ -105,7 +100,7 @@ Später sehen wir auch noch ein paar Tricks die es uns erleichtern Töne zu spie
 
 Genau wie bei geräuschhaften Sounds können wir den Klang unserer Töne mit `sound` verändern:
 
-<MiniRepl hideHeader client:visible tune={`note("36 43, 52 59 62 64").sound("piano")`} />
+<MiniRepl client:visible tune={`note("36 43, 52 59 62 64").sound("piano")`} />
 
 <Box>
 
@@ -126,7 +121,6 @@ Probier ein paar sounds aus:
 **Zwischen Sounds hin und her wechseln**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("48 67 63 [62, 58]")
 .sound("piano gm_electric_guitar_muted")`}
@@ -135,7 +129,6 @@ Probier ein paar sounds aus:
 **Gleichzeitige Sounds**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("48 67 63 [62, 58]")
 .sound("piano, gm_electric_guitar_muted")`}
@@ -155,7 +148,7 @@ Wir schauen uns später noch mehr Möglichkeiten an wie man patterns kombiniert.
 
 {/* [c2 bb1 f2 eb2] */}
 
-<MiniRepl hideHeader client:visible tune={`note("[36 34 41 39]/4").sound("gm_acoustic_bass")`} punchcard />
+<MiniRepl client:visible tune={`note("[36 34 41 39]/4").sound("gm_acoustic_bass")`} punchcard />
 
 <Box>
 
@@ -171,7 +164,7 @@ Wenn eine Sequenz unabhängig von ihrem Inhalt immer gleich schnell bleiben soll
 
 **Eins pro Cycle per \< \>**
 
-<MiniRepl hideHeader client:visible tune={`note("<36 34 41 39>").sound("gm_acoustic_bass")`} punchcard />
+<MiniRepl client:visible tune={`note("<36 34 41 39>").sound("gm_acoustic_bass")`} punchcard />
 
 <Box>
 
@@ -190,7 +183,6 @@ usw..
 **Eine Sequenz pro Cycle**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("<[36 48] [34 46] [41 53] [39 51]>")
 .sound("gm_acoustic_bass")`}
@@ -200,7 +192,6 @@ usw..
 oder auch...
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("<[36 48]*4 [34 46]*4 [41 53]*4 [39 51]*4>/2")
 .sound("gm_acoustic_bass")`}
@@ -212,7 +203,6 @@ oder auch...
 Ähnlich wie Unter-Sequenzen, kann auch `<...>` innerhalb einer Sequenz verwendet werden:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("60 <63 62 65 63>")
 .sound("gm_xylophone")`}
@@ -222,7 +212,6 @@ oder auch...
 Das ist auch praktisch für atonale Sounds:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`sound("bd*2, ~ <sd cp>, [~ hh]*2")
 .bank("RolandTR909")`}
@@ -235,7 +224,6 @@ Es kann mühsam sein die richtigen Noten zu finden wenn man alle zur Verfügung 
 Mit Skalen ist das einfacher:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`n("0 2 4 <[6,8] [7,9]>")
 .scale("C:minor").sound("piano")`}
@@ -262,7 +250,6 @@ Probier verschiedene Skalen:
 Wie alle Funktionen können auch Skalen mit einem Pattern automatisiert werden:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`n("<0 -3>, 2 4 <[6,8] [7,9]>")
 .scale("<C:major D:mixolydian>/4")
@@ -283,7 +270,7 @@ Nimm dir Zeit um herauszufinden welche Skalen du magst.
 
 **Verlängern mit @**
 
-<MiniRepl hideHeader client:visible tune={`note("c@3 eb").sound("gm_acoustic_bass")`} punchcard />
+<MiniRepl client:visible tune={`note("c@3 eb").sound("gm_acoustic_bass")`} punchcard />
 
 <Box>
 
@@ -296,7 +283,6 @@ Spiel mit der Länge!
 **Unter-Sequenzen verlängern**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`n("<[4@2 4] [5@2 5] [6@2 6] [5@2 5]>*2")
 .scale("<C2:mixolydian F2:mixolydian>/4")
@@ -314,7 +300,7 @@ Das nennt man auch manchmal `triolen swing`. Es ist ein typischer Rhythmus im Bl
 
 **Wiederholen**
 
-<MiniRepl hideHeader client:visible tune={`note("c!2 [eb,<g a bb a>]").sound("piano")`} punchcard />
+<MiniRepl client:visible tune={`note("c!2 [eb,<g a bb a>]").sound("piano")`} punchcard />
 
 <Box>
 
@@ -328,27 +314,26 @@ Was ist der Unterschied?
 
 Das haben wir in diesem Kapitel gelernt:
 
-| Concept      | Syntax | Example                                                             |
-| ------------ | ------ | ------------------------------------------------------------------- |
-| Verlangsamen | \/     | <MiniRepl hideHeader client:visible tune={`note("[c a f e]/2")`} /> |
-| Alternativen | \<\>   | <MiniRepl hideHeader client:visible tune={`note("c <e g>")`} />     |
-| Verlängern   | @      | <MiniRepl hideHeader client:visible tune={`note("c@3 e")`} />       |
-| Wiederholen  | !      | <MiniRepl hideHeader client:visible tune={`note("c!3 e")`} />       |
+| Concept      | Syntax | Example                                                  |
+| ------------ | ------ | -------------------------------------------------------- |
+| Verlangsamen | \/     | <MiniRepl client:visible tune={`note("[c a f e]/2")`} /> |
+| Alternativen | \<\>   | <MiniRepl client:visible tune={`note("c <e g>")`} />     |
+| Verlängern   | @      | <MiniRepl client:visible tune={`note("c@3 e")`} />       |
+| Wiederholen  | !      | <MiniRepl client:visible tune={`note("c!3 e")`} />       |
 
 Neue Funktionen:
 
-| Name  | Description                             | Example                                                                                      |
-| ----- | --------------------------------------- | -------------------------------------------------------------------------------------------- |
-| note  | Tonhöhe als Buchstabe oder Zahl         | <MiniRepl hideHeader client:visible tune={`note("b g e c").sound("piano")`} />               |
-| scale | Interpretiert `n` als Skalenstufe       | <MiniRepl hideHeader client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
-| stack | Spiele mehrere Patterns parallel (s.u.) | <MiniRepl hideHeader client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
+| Name  | Description                             | Example                                                                           |
+| ----- | --------------------------------------- | --------------------------------------------------------------------------------- |
+| note  | Tonhöhe als Buchstabe oder Zahl         | <MiniRepl client:visible tune={`note("b g e c").sound("piano")`} />               |
+| scale | Interpretiert `n` als Skalenstufe       | <MiniRepl client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
+| stack | Spiele mehrere Patterns parallel (s.u.) | <MiniRepl client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
 
 ## Beispiele
 
 **Bassline**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
 .sound("gm_synth_bass_1")
@@ -358,7 +343,6 @@ Neue Funktionen:
 **Melodie**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`n(\`<
 [~ 0] 2 [0 2] [~ 2]
@@ -372,7 +356,6 @@ Neue Funktionen:
 **Drums**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`sound("bd*2, ~ <sd cp>, [~ hh]*2")
 .bank("RolandTR909")`}
@@ -387,7 +370,6 @@ Das geht mit `stack` 😙
 </Box>
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`stack(
   note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")

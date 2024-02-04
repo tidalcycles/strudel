@@ -10,7 +10,7 @@ import { logger } from './logger.mjs';
 export class Cyclist {
   constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
     this.started = false;
-    this.cps = 1;
+    this.cps = 0.5;
     this.num_ticks_since_cps_change = 0;
     this.lastTick = 0; // absolute time when last tick (clock callback) happened
     this.lastBegin = 0; // query begin of last tick
@@ -43,7 +43,7 @@ export class Cyclist {
           this.lastEnd = end;
 
           // query the pattern for events
-          const haps = this.pattern.queryArc(begin, end);
+          const haps = this.pattern.queryArc(begin, end, { _cps: this.cps });
 
           const tickdeadline = phase - time; // time left until the phase is a whole number
 
@@ -99,7 +99,7 @@ export class Cyclist {
       this.start();
     }
   }
-  setCps(cps = 1) {
+  setCps(cps = 0.5) {
     if (this.cps === cps) {
       return;
     }

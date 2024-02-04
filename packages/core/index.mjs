@@ -31,12 +31,12 @@ export { default as drawLine } from './drawLine.mjs';
 // below won't work with runtime.mjs (json import fails)
 /* import * as p from './package.json';
 export const version = p.version; */
-logger('🌀 @strudel.cycles/core loaded 🌀');
+logger('🌀 @strudel/core loaded 🌀');
 if (globalThis._strudelLoaded) {
   console.warn(
-    `@strudel.cycles/core was loaded more than once...
+    `@strudel/core was loaded more than once...
 This might happen when you have multiple versions of strudel installed. 
-Please check with "npm ls @strudel.cycles/core".`,
+Please check with "npm ls @strudel/core".`,
   );
 }
 globalThis._strudelLoaded = true;

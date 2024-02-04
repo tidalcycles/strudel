@@ -1,5 +1,5 @@
 import { Invoke } from './utils.mjs';
-import { Pattern, noteToMidi } from '@strudel.cycles/core';
+import { Pattern, noteToMidi } from '@strudel/core';
 
 const ON_MESSAGE = 0x90;
 const OFF_MESSAGE = 0x80;

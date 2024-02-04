@@ -1,5 +1,5 @@
-import { Pattern, getPlayableNoteValue, noteToMidi } from '@strudel.cycles/core';
-import { getAudioContext, registerSound } from '@strudel.cycles/webaudio';
+import { Pattern, getPlayableNoteValue, noteToMidi } from '@strudel/core';
+import { getAudioContext, registerSound } from '@strudel/webaudio';
 import { loadSoundfont as _loadSoundfont, startPresetNote } from 'sfumato';
 
 Pattern.prototype.soundfont = function (sf, n = 0) {

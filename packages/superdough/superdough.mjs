@@ -280,26 +280,26 @@ export const superdough = async (value, deadline, hapDuration) => {
     // low pass
     cutoff,
     lpenv,
-    lpattack = 0.01,
-    lpdecay = 0.01,
-    lpsustain = 1,
-    lprelease = 0.01,
+    lpattack,
+    lpdecay,
+    lpsustain,
+    lprelease,
     resonance = 1,
     // high pass
     hpenv,
     hcutoff,
-    hpattack = 0.01,
-    hpdecay = 0.01,
-    hpsustain = 1,
-    hprelease = 0.01,
+    hpattack,
+    hpdecay,
+    hpsustain,
+    hprelease,
     hresonance = 1,
     // band pass
     bpenv,
     bandf,
-    bpattack = 0.01,
-    bpdecay = 0.01,
-    bpsustain = 1,
-    bprelease = 0.01,
+    bpattack,
+    bpdecay,
+    bpsustain,
+    bprelease,
     bandq = 1,
     channels = [1, 2],
     //phaser
@@ -333,6 +333,7 @@ export const superdough = async (value, deadline, hapDuration) => {
     compressorAttack,
     compressorRelease,
   } = value;
+
   gain = nanFallback(gain, 1);
 
   //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior

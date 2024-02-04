@@ -5,8 +5,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as _WebMidi from 'webmidi';
-import { Pattern, isPattern, logger, ref } from '@strudel.cycles/core';
-import { noteToMidi } from '@strudel.cycles/core';
+import { Pattern, isPattern, logger, ref } from '@strudel/core';
+import { noteToMidi } from '@strudel/core';
 import { Note } from 'webmidi';
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;

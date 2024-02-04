@@ -1,6 +1,6 @@
-import { registerSound, onTriggerSample } from '@strudel.cycles/webaudio';
+import { registerSound, onTriggerSample } from '@strudel/webaudio';
 import { isAudioFile } from './files.mjs';
-import { logger } from '@strudel.cycles/core';
+import { logger } from '@strudel/core';
 
 //utilites for writing and reading to the indexdb
 
