@@ -79,7 +79,7 @@ const processMessage = (message) => {
   }
 };
 
-onconnect = function (e) {
+this.onconnect = function (e) {
   // the incoming port
   const port = e.ports[0];
   allPorts.push(port);
