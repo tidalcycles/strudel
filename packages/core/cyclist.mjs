@@ -18,7 +18,7 @@ export class Cyclist {
     this.latency = 0.1; // fixed trigger time offset
     this.cycle = 0;
 
-    this.worker = new SharedWorker(new URL('./clockworker.mjs', import.meta.url));
+    this.worker = new SharedWorker(new URL('./clockworker.js', import.meta.url));
     this.worker.port.start();
     let worker_time_dif = 0; // time difference between audio context clock and worker clock
     let weight = 0; // the amount of weight that is applied to the current average when averaging a new time dif
