@@ -20,6 +20,8 @@ export class Cyclist {
 
     this.worker = new SharedWorker(new URL('./clockworker.js', import.meta.url));
     this.worker.port.start();
+
+    this.channel = new BroadcastChannel('strudeltick');
     let worker_time_dif = 0; // time difference between audio context clock and worker clock
     let weight = 0; // the amount of weight that is applied to the current average when averaging a new time dif
     const maxWeight = 400;
@@ -52,6 +54,7 @@ export class Cyclist {
     const tickCallback = (payload) => {
       const workertime = payload.time;
       const time = this.getTime();
+
       const { duration, phase, num_ticks_since_cps_change, num_cycles_at_cps_change, cps } = payload;
       setTimeReference(time, workertime);
       this.cps = cps;
@@ -90,7 +93,7 @@ export class Cyclist {
     };
 
     // receive messages from worker clock and process them
-    this.worker.port.addEventListener('message', (message) => {
+    this.channel.onmessage = (message) => {
       if (!this.started) {
         return;
       }
@@ -101,7 +104,7 @@ export class Cyclist {
           tickCallback(payload);
         }
       }
-    });
+    };
   }
   sendMessage(type, payload) {
     this.worker.port.postMessage({ type, payload });

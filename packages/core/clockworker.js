@@ -2,16 +2,16 @@ function getTime(precision) {
   const seconds = performance.now() / 1000;
   return Math.round(seconds * precision) / precision;
 }
-const allPorts = [];
+
+let numPorts = 0;
 let num_cycles_at_cps_change = 0;
 let num_ticks_since_cps_change = 0;
 let cps = 0.5;
 const duration = 0.1;
+const channel = new BroadcastChannel('strudeltick');
 
 const sendMessage = (type, payload) => {
-  allPorts.forEach((port) => {
-    port.postMessage({ type, payload });
-  });
+  channel.postMessage({ type, payload });
 };
 
 const sendTick = ({ phase, duration, time }) => {
@@ -36,9 +36,10 @@ const startClock = () => {
   clock.start();
   started = true;
 };
-const stopClock = () => {
+const stopClock = async () => {
+  console.log(numPorts);
   //dont stop the clock if mutliple instances are using it...
-  if (!started || numClientsConnected() > 1) {
+  if (!started || numPorts !== 1) {
     return;
   }
   clock.stop();
@@ -51,7 +52,6 @@ const setCycle = (cycle) => {
   num_cycles_at_cps_change = cycle;
 };
 
-const numClientsConnected = () => allPorts.length;
 const processMessage = (message) => {
   const { type, payload } = message;
 
@@ -79,10 +79,10 @@ const processMessage = (message) => {
   }
 };
 
-this.onconnect = function (e) {
+self.onconnect = function (e) {
   // the incoming port
   const port = e.ports[0];
-  allPorts.push(port);
+  numPorts = numPorts + 1;
   port.addEventListener('message', function (e) {
     processMessage(e.data);
   });
