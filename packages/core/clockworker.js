@@ -37,7 +37,6 @@ const startClock = () => {
   started = true;
 };
 const stopClock = async () => {
-  console.log(numPorts);
   //dont stop the clock if mutliple instances are using it...
   if (!started || numPorts !== 1) {
     return;
@@ -79,7 +78,7 @@ const processMessage = (message) => {
   }
 };
 
-self.onconnect = function (e) {
+this.onconnect = function (e) {
   // the incoming port
   const port = e.ports[0];
   numPorts = numPorts + 1;
