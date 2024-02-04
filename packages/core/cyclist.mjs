@@ -227,15 +227,17 @@ const processMessage = (message) => {
   }
 };
 
-self.onconnect = function (e) {
-  // the incoming port
-  const port = e.ports[0];
-  allPorts.push(port);
-  port.addEventListener('message', function (e) {
-    processMessage(e.data);
-  });
-  port.start(); // Required when using addEventListener. Otherwise called implicitly by onmessage setter.
-};
+if (typeof self !== 'undefined') {
+  self.onconnect = function (e) {
+    // the incoming port
+    const port = e.ports[0];
+    allPorts.push(port);
+    port.addEventListener('message', function (e) {
+      processMessage(e.data);
+    });
+    port.start(); // Required when using addEventListener. Otherwise called implicitly by onmessage setter.
+  };
+}
 
 function createClock(
   callback, // called slightly before each cycle
