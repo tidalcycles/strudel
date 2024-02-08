@@ -4,7 +4,7 @@
   "description": "Strudel REPL as a Web Component",
   "main": "index.mjs",
   "publishConfig": {
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "build": "vite build",

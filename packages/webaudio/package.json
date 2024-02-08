@@ -8,7 +8,7 @@
     "example": "examples"
   },
   "publishConfig": {
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "example": "npx parcel examples/repl.html",

@@ -5,7 +5,7 @@
   "main": "serial.mjs",
   "type": "module",
   "publishConfig": {
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "build": "vite build",

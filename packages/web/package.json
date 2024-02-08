@@ -4,7 +4,7 @@
   "description": "Easy to setup, opiniated bundle of Strudel for the browser.",
   "main": "web.mjs",
   "publishConfig": {
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "build": "vite build",

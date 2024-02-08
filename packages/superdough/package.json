@@ -6,7 +6,7 @@
   "type": "module",
   "publishConfig": {
     "main": "dist/index.cjs",
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "directories": {
     "example": "examples"

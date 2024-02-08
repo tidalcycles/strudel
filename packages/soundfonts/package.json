@@ -4,7 +4,7 @@
   "description": "Soundsfont support for strudel",
   "main": "index.mjs",
   "publishConfig": {
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "build": "vite build",

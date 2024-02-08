@@ -5,7 +5,7 @@
   "main": "hydra.mjs",
   "type": "module",
   "publishConfig": {
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "server": "node server.js",

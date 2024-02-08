@@ -4,7 +4,7 @@
   "description": "Codemirror Extensions for Strudel",
   "main": "index.mjs",
   "publishConfig": {
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "build": "vite build",
