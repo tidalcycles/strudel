@@ -1,12 +1,11 @@
 {
   "name": "@strudel/mini",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Mini notation for strudel",
   "main": "index.mjs",
   "type": "module",
   "publishConfig": {
-    "main": "dist/index.js",
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "test": "vitest run",
