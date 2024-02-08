@@ -1,4 +1,7 @@
-function getTime(precision) {
+importScripts('./zyklus.js');
+
+function getTime() {
+  const precision = 10 ** 4;
   const seconds = performance.now() / 1000;
   return Math.round(seconds * precision) / precision;
 }
@@ -14,7 +17,7 @@ const sendMessage = (type, payload) => {
   channel.postMessage({ type, payload });
 };
 
-const sendTick = ({ phase, duration, time }) => {
+const sendTick = (phase, duration, tick, time) => {
   sendMessage('tick', {
     phase,
     duration,
@@ -26,7 +29,7 @@ const sendTick = ({ phase, duration, time }) => {
   num_ticks_since_cps_change++;
 };
 
-const clock = createClock(sendTick, duration);
+const clock = this.createClock(getTime, sendTick, duration);
 let started = false;
 
 const startClock = () => {
@@ -88,41 +91,41 @@ this.onconnect = function (e) {
   port.start(); // Required when using addEventListener. Otherwise called implicitly by onmessage setter.
 };
 
-function createClock(
-  callback, // called slightly before each cycle
-  duration,
-) {
-  const interval = 0.1;
-  const overlap = interval / 2;
-  const precision = 10 ** 4; // used to round phase
-  const minLatency = 0.01;
-  let phase = 0; // next callback time
+// function createClock(
+//   callback, // called slightly before each cycle
+//   duration,
+// ) {
+//   const interval = 0.1;
+//   const overlap = interval / 2;
+//   const precision = 10 ** 4; // used to round phase
+//   const minLatency = 0.01;
+//   let phase = 0; // next callback time
 
-  const onTick = () => {
-    const t = getTime(precision);
-    const lookahead = t + interval + overlap; // the time window for this tick
-    if (phase === 0) {
-      phase = t + minLatency;
-    }
-    // callback as long as we're inside the lookahead
-    while (phase < lookahead) {
-      phase = Math.round(phase * precision) / precision;
-      phase >= t && callback({ phase, duration, time: t });
-      phase < t && console.log('TOO LATE', phase); // what if latency is added from outside?
-      phase += duration; // increment phase by duration
-    }
-  };
-  let intervalID;
-  const start = () => {
-    clear(); // just in case start was called more than once
-    onTick();
-    intervalID = setInterval(onTick, interval * 1000);
-  };
-  const clear = () => intervalID !== undefined && clearInterval(intervalID);
-  const stop = () => {
-    phase = 0;
-    clear();
-  };
+//   const onTick = () => {
+//     const t = getTime(precision);
+//     const lookahead = t + interval + overlap; // the time window for this tick
+//     if (phase === 0) {
+//       phase = t + minLatency;
+//     }
+//     // callback as long as we're inside the lookahead
+//     while (phase < lookahead) {
+//       phase = Math.round(phase * precision) / precision;
+//       phase >= t && callback({ phase, duration, time: t });
+//       phase < t && console.log('TOO LATE', phase); // what if latency is added from outside?
+//       phase += duration; // increment phase by duration
+//     }
+//   };
+//   let intervalID;
+//   const start = () => {
+//     clear(); // just in case start was called more than once
+//     onTick();
+//     intervalID = setInterval(onTick, interval * 1000);
+//   };
+//   const clear = () => intervalID !== undefined && clearInterval(intervalID);
+//   const stop = () => {
+//     phase = 0;
+//     clear();
+//   };
 
-  return { start, stop };
-}
+//   return { start, stop };
+// }
