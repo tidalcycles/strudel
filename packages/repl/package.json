@@ -1,6 +1,6 @@
 {
   "name": "@strudel/repl",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Strudel REPL as a Web Component",
   "main": "index.mjs",
   "publishConfig": {

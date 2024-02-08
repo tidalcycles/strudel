@@ -1,6 +1,6 @@
 {
   "name": "@strudel/csound",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "csound bindings for strudel",
   "main": "index.mjs",
   "type": "module",
