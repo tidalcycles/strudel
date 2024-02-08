@@ -8,7 +8,6 @@
     "example": "examples"
   },
   "publishConfig": {
-    "main": "dist/index.js",
     "module": "dist/index.mjs"
   },
   "scripts": {

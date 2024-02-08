@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Transpiler for strudel user code. Converts syntactically correct but semantically meaningless JS into evaluatable strudel code.",
   "main": "index.mjs",
+  "type": "module",
   "publishConfig": {
-    "main": "dist/index.js",
     "module": "dist/index.mjs"
   },
   "scripts": {

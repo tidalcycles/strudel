@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Webserial API for strudel",
   "main": "serial.mjs",
+  "type": "module",
   "publishConfig": {
-    "main": "dist/index.js",
     "module": "dist/index.mjs"
   },
   "scripts": {

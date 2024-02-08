@@ -4,7 +4,6 @@
   "description": "Easy to setup, opiniated bundle of Strudel for the browser.",
   "main": "web.mjs",
   "publishConfig": {
-    "main": "dist/index.js",
     "module": "dist/index.mjs"
   },
   "scripts": {

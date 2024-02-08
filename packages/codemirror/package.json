@@ -4,7 +4,6 @@
   "description": "Codemirror Extensions for Strudel",
   "main": "index.mjs",
   "publishConfig": {
-    "main": "dist/index.js",
     "module": "dist/index.mjs"
   },
   "scripts": {

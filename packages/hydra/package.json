@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Hydra integration for strudel",
   "main": "hydra.mjs",
+  "type": "module",
   "publishConfig": {
-    "main": "dist/index.js",
     "module": "dist/index.mjs"
   },
   "scripts": {

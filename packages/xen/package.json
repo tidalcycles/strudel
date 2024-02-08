@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Xenharmonic API for strudel",
   "main": "index.mjs",
+  "type": "module",
   "publishConfig": {
-    "main": "dist/index.js",
     "module": "dist/index.mjs"
   },
   "scripts": {

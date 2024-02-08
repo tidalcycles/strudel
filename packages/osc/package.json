@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "OSC messaging for strudel",
   "main": "osc.mjs",
+  "type": "module",
   "publishConfig": {
-    "main": "dist/index.js",
     "module": "dist/index.mjs"
   },
   "scripts": {
