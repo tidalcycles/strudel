@@ -4,18 +4,10 @@ OSC output for strudel patterns! Currently only tested with super collider / sup
 
 ## Usage
 
-OSC will only work if you run the REPL locally + the OSC server besides it:
-
-From the project root:
+Make sure you've [set up strudel locally](https://github.com/tidalcycles/strudel/blob/main/CONTRIBUTING.md#project-setup). Then run:
 
 ```js
-npm run repl
-```
-
-and in a seperate shell:
-
-```js
-npm run osc
+pnpm osc
 ```
 
 This should give you
@@ -26,7 +18,7 @@ osc server running on port 57121
 websocket server running on port 8080
 ```
 
-Now open Supercollider (with the super dirt startup file)
+Now open Supercollider (with the super dirt startup file) or run `sclang`.
 
 Now open the REPL and type:
 
