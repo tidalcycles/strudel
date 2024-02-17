@@ -680,7 +680,7 @@ export class Pattern {
     const otherPat = reify(other);
     return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).trigzeroJoin();
   }
-
+  
   //////////////////////////////////////////////////////////////////////
   // End-user methods.
   // Those beginning with an underscore (_) are 'patternified',
@@ -702,7 +702,7 @@ export class Pattern {
    *   .scale('C minor').note()
    */
   layer(...funcs) {
-    return stack(...funcs.map((func) => func(this)));
+    return oldstack(...funcs.map((func) => func(this)));
   }
 
   /**
@@ -1096,7 +1096,36 @@ function _composeOp(a, b, func) {
   Pattern.prototype.restartAll = function (...args) {
     return this.keep.trigzero(...args);
   };
-})();
+  /**
+   * Silences the stacked notes that do not match the requested stacking index
+   * Side effect: it pops one element from the stacking context
+   * 
+   * @example
+   * note("[c,e,g] [d,f,a]").solo("<0 [1,2]>")
+   */
+  Pattern.prototype.solo = function (...args) {   
+    return this.withHap((h)=>new Hap(h.whole, h.part, h.context.stacking===undefined?0:h.context.stacking[0],
+      { ...h.context, tempvalue: h.value, 
+        stacking: h.context.stacking===undefined||h.context.stacking.length==1?undefined:h.context.stacking.slice(1) }))
+      .eq(args).filterValues((val) => val)
+      .withHap((h)=>new Hap(h.whole, h.part, h.context.tempvalue, h.context))
+    };
+  /**
+   * Silences the stacked notes that match the requested stacking index
+   * Warning: that doesnt work correctly with stacked args
+   * (the example used in solo() doesn't work properly using mute)
+   * 
+   * @example
+   * note("[c,e,g] [d,f,a]").mute("<0 1 2>")
+   */
+  Pattern.prototype.mute = function (...args) {
+    return this.withHap((h)=>new Hap(h.whole, h.part, h.context.stacking===undefined?0:h.context.stacking[0],
+      { ...h.context, tempvalue: h.value, 
+        stacking: h.context.stacking===undefined||h.context.stacking.length==1?undefined:h.context.stacking.slice(1) }))
+      .ne(args).filterValues((val) => val)
+      .withHap((h)=>new Hap(h.whole, h.part, h.context.tempvalue, h.context))
+    };
+  })();
 
 // aliases
 export const polyrhythm = stack;
@@ -1183,6 +1212,16 @@ export function reify(thing) {
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
+  //console.trace();
+  pats = pats.map((pat,index) => (Array.isArray(pat) ? sequence(...pat) : reify(pat))
+  .withContext((context) => ({ ...context, stacking: context.stacking === undefined ? [index] : [index].concat(context.stacking) }))
+  );
+  const query = (state) => flatten(pats.map((pat) => pat.query(state)));
+  return new Pattern(query);
+}
+/* the old stack function, still used because it's convenient to obtain certain effects without altering the stacking context */
+export function oldstack(...pats) {
+  // Array test here is to avoid infinite recursions..
   pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
   const query = (state) => flatten(pats.map((pat) => pat.query(state)));
   return new Pattern(query);
@@ -1261,7 +1300,7 @@ export function timeCat(...timepats) {
     pats.push(reify(pat)._compress(begin.div(total), end.div(total)));
     begin = end;
   }
-  return stack(...pats);
+  return oldstack(...pats);
 }
 
 /**
@@ -1343,7 +1382,7 @@ export function polymeterSteps(steps, ...args) {
       pats.push(seq[0]._fast(Fraction(steps).div(Fraction(seq[1]))));
     }
   }
-  return stack(...pats);
+  return oldstack(...pats);
 }
 
 /**
@@ -1914,7 +1953,7 @@ export const when = register('when', function (on, func, pat) {
  * "c3 eb3 g3".off(1/8, x=>x.add(7)).note()
  */
 export const off = register('off', function (time_pat, func, pat) {
-  return stack(pat, func(pat.late(time_pat)));
+  return oldstack(pat, func(pat.late(time_pat)));
 });
 
 /**
@@ -2017,7 +2056,7 @@ export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func,
   const left = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) - by }));
   const right = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by }));
 
-  return stack(left, func(right));
+  return oldstack(left, func(right));
 });
 
 /**
@@ -2048,7 +2087,7 @@ export const jux = register('jux', function (func, pat) {
 export const { echoWith, echowith, stutWith, stutwith } = register(
   ['echoWith', 'echowith', 'stutWith', 'stutwith'],
   function (times, time, func, pat) {
-    return stack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
+    return oldstack(...listRange(0, times - 1).map((i) => func(pat.late(Fraction(time).mul(i)), i)));
   },
 );
 
@@ -2443,7 +2482,7 @@ export let xfade = (a, pos, b) => {
   b = reify(b);
   let gaina = pos.fmap((v) => ({ gain: fadeGain(v) }));
   let gainb = pos.fmap((v) => ({ gain: fadeGain(1 - v) }));
-  return stack(a.mul(gaina), b.mul(gainb));
+  return oldstack(a.mul(gaina), b.mul(gainb));
 };
 
 // the prototype version is actually flipped so left/right makes sense

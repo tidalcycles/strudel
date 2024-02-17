@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Hap } from './hap.mjs';
-import { Pattern, fastcat, reify, silence, stack, register } from './pattern.mjs';
+import { Pattern, fastcat, reify, silence, oldstack, register } from './pattern.mjs';
 import Fraction from './fraction.mjs';
 import { id, _mod, clamp, objectMap } from './util.mjs';
 
@@ -258,7 +258,7 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
  * s("a@2 [a b] a".inhabit({a: "bd(3,8)", b: "sd sd"})).slow(4)
  */
 export const inhabit = register('inhabit', function (lookup, pat) {
-  return _pick(lookup, pat, true).squeezeJoin();
+  return _pick(lookup, pat, false).squeezeJoin();
 });
 
 /** * The same as `inhabit`, but if you pick a number greater than the size of the list,
@@ -269,9 +269,32 @@ export const inhabit = register('inhabit', function (lookup, pat) {
  * @param {*} xs
  * @returns {Pattern}
  */
+export const inhabitmod = register('inhabitmod', function (lookup, pat) {
+  return _pick(lookup, pat, true).squeezeJoin();
+});
 
-export const inhabitmod = register('inhabit', function (lookup, pat) {
-  return _pick(lookup, pat, false).squeezeJoin();
+/**
+/** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
+ * Similar to `pick`, but restart() is invoked everytime a new index is triggered.
+ * In case of stacked indexes, the solo(0) function is feed into restart() to avoid duplications
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickr = register('pickr', function (lookup, pat) {
+  return _pick(lookup.map((x)=>x.restart(pat.solo(0).fmap(v=>v+1))), pat, false).innerJoin();
+});
+
+/** * The same as `pickr`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * For example, if you pick the fifth pattern of a list of three, you'll get the
+ * second one.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickrmod = register('pickrmod', function (lookup, pat) {
+  return _pick(lookup.map((x)=>x.restart(pat.solo(0).fmap(v=>v+1))), pat, true).innerJoin();
 });
 
 /**
@@ -488,7 +511,7 @@ export const undegrade = register('undegrade', (pat) => pat._undegradeBy(0.5));
 
 export const sometimesBy = register('sometimesBy', function (patx, func, pat) {
   return reify(patx)
-    .fmap((x) => stack(pat._degradeBy(x), func(pat._undegradeBy(1 - x))))
+    .fmap((x) => oldstack(pat._degradeBy(x), func(pat._undegradeBy(1 - x))))
     .innerJoin();
 });
 
@@ -524,7 +547,7 @@ export const sometimes = register('sometimes', function (func, pat) {
 export const someCyclesBy = register('someCyclesBy', function (patx, func, pat) {
   return reify(patx)
     .fmap((x) =>
-      stack(
+      oldstack(
         pat._degradeByWith(rand._segment(1), x),
         func(pat._degradeByWith(rand.fmap((r) => 1 - r)._segment(1), 1 - x)),
       ),

@@ -3,7 +3,7 @@ import { evaluate as _evaluate } from './evaluate.mjs';
 import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
 import { evalScope } from './evaluate.mjs';
-import { register, Pattern, isPattern, silence, stack } from './pattern.mjs';
+import { register, Pattern, isPattern, silence, oldstack } from './pattern.mjs';
 
 export function repl({
   interval,
@@ -126,7 +126,7 @@ export function repl({
       shouldHush && hush();
       let { pattern, meta } = await _evaluate(code, transpiler);
       if (Object.keys(pPatterns).length) {
-        pattern = stack(...Object.values(pPatterns));
+        pattern = oldstack(...Object.values(pPatterns));
       }
       if (allTransform) {
         pattern = allTransform(pattern);

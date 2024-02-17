@@ -93,7 +93,7 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
       }
       if (alignment === 'polymeter_slowcat') {
         const aligned = children.map((child) => child._slow(strudel.Fraction(child.__weight ?? 1)));
-        return strudel.stack(...aligned);
+        return strudel.oldstack(...aligned);
       }
       if (alignment === 'polymeter') {
         // polymeter
@@ -102,7 +102,7 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
           : strudel.pure(strudel.Fraction(children.length > 0 ? children[0].__weight : 1));
 
         const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.__weight || 1))));
-        return strudel.stack(...aligned);
+        return strudel.oldstack(...aligned);
       }
       if (alignment === 'rand') {
         return strudel.chooseInWith(strudel.rand.early(randOffset * ast.arguments_.seed).segment(1), children);
