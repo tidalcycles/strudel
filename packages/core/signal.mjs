@@ -253,7 +253,7 @@ export const pickRestart = register('pickRestart', function (lookup, pat) {
   return _pick(lookup, pat, false).trigzeroJoin();
 });
 
-/** * The same as `pickr`, but if you pick a number greater than the size of the list,
+/** * The same as `pickRestart`, but if you pick a number greater than the size of the list,
  * it wraps around, rather than sticking at the maximum value.
  * @param {Pattern} pat
  * @param {*} xs
@@ -272,7 +272,7 @@ export const pickReset = register('pickReset', function (lookup, pat) {
   return _pick(lookup, pat, false).trigJoin();
 });
 
-/** * The same as `pickr`, but if you pick a number greater than the size of the list,
+/** * The same as `pickReset`, but if you pick a number greater than the size of the list,
  * it wraps around, rather than sticking at the maximum value.
  * @param {Pattern} pat
  * @param {*} xs
