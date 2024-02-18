@@ -244,9 +244,7 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
   return pat.apply(pickmod(lookup, funcs));
 });
 
-/**
-/** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
- * Similar to `pick`, but restart() is invoked everytime a new index is triggered.
+/** * Similar to `pick`, but restart() is invoked everytime a new index is triggered.
  * In case of stacked indexes, collect() function is used to avoid multiple restarting triggers
  * @param {Pattern} pat
  * @param {*} xs
