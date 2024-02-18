@@ -160,7 +160,7 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
  */
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
-const _pick = function (lookup, pat, modulo = true) {
+const _pick = function (lookup, pat, modulo = true, restart = false) {
   const array = Array.isArray(lookup);
   const len = Object.keys(lookup).length;
 
@@ -174,7 +174,7 @@ const _pick = function (lookup, pat, modulo = true) {
     if (array) {
       key = modulo ? Math.round(key) % len : clamp(Math.round(key), 0, lookup.length - 1);
     }
-    return lookup[key];
+    return restart ? lookup[key].restart(pat.collect().fmap((v) => v + 1)) : lookup[key];
   });
 };
 
@@ -251,11 +251,7 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
  * @returns {Pattern}
  */
 export const pickr = register('pickr', function (lookup, pat) {
-  return _pick(
-    lookup.map((x) => x.restart(pat.collect().fmap((v) => v + 1))),
-    pat,
-    false,
-  ).innerJoin();
+  return _pick(lookup, pat, false, true).innerJoin();
 });
 
 /** * The same as `pickr`, but if you pick a number greater than the size of the list,
@@ -267,11 +263,7 @@ export const pickr = register('pickr', function (lookup, pat) {
  * @returns {Pattern}
  */
 export const pickrmod = register('pickrmod', function (lookup, pat) {
-  return _pick(
-    lookup.map((x) => x.restart(pat.collect().fmap((v) => v + 1))),
-    pat,
-    true,
-  ).innerJoin();
+  return _pick(lookup, pat, true, true).innerJoin();
 });
 
 /**
