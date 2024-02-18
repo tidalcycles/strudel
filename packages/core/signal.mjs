@@ -246,6 +246,30 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
 
 /**
 /** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
+ * Similar to `pick`, but restart() is invoked everytime a new index is triggered.
+ * In case of stacked indexes, collect() function is used to avoid multiple restarting triggers
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickr = register('pickr', function (lookup, pat) {
+  return _pick(lookup.map((x)=>x.restart(pat.collect().fmap(v=>v+1))), pat, false).innerJoin();
+});
+
+/** * The same as `pickr`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * For example, if you pick the fifth pattern of a list of three, you'll get the
+ * second one.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickrmod = register('pickrmod', function (lookup, pat) {
+  return _pick(lookup.map((x)=>x.restart(pat.collect().fmap(v=>v+1))), pat, true).innerJoin();
+});
+
+/**
+/** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
  * Similar to `pick`, but cycles are squeezed into the target ('inhabited') pattern.
  * @param {Pattern} pat
  * @param {*} xs
@@ -258,7 +282,7 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
  * s("a@2 [a b] a".inhabit({a: "bd(3,8)", b: "sd sd"})).slow(4)
  */
 export const inhabit = register('inhabit', function (lookup, pat) {
-  return _pick(lookup, pat, true).squeezeJoin();
+  return _pick(lookup, pat, false).squeezeJoin();
 });
 
 /** * The same as `inhabit`, but if you pick a number greater than the size of the list,
@@ -270,8 +294,8 @@ export const inhabit = register('inhabit', function (lookup, pat) {
  * @returns {Pattern}
  */
 
-export const inhabitmod = register('inhabit', function (lookup, pat) {
-  return _pick(lookup, pat, false).squeezeJoin();
+export const inhabitmod = register('inhabitmod', function (lookup, pat) {
+  return _pick(lookup, pat, true).squeezeJoin();
 });
 
 /**
