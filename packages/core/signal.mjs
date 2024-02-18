@@ -253,7 +253,11 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
  * @returns {Pattern}
  */
 export const pickr = register('pickr', function (lookup, pat) {
-  return _pick(lookup.map((x)=>x.restart(pat.collect().fmap(v=>v+1))), pat, false).innerJoin();
+  return _pick(
+    lookup.map((x) => x.restart(pat.collect().fmap((v) => v + 1))),
+    pat,
+    false,
+  ).innerJoin();
 });
 
 /** * The same as `pickr`, but if you pick a number greater than the size of the list,
@@ -265,7 +269,11 @@ export const pickr = register('pickr', function (lookup, pat) {
  * @returns {Pattern}
  */
 export const pickrmod = register('pickrmod', function (lookup, pat) {
-  return _pick(lookup.map((x)=>x.restart(pat.collect().fmap(v=>v+1))), pat, true).innerJoin();
+  return _pick(
+    lookup.map((x) => x.restart(pat.collect().fmap((v) => v + 1))),
+    pat,
+    true,
+  ).innerJoin();
 });
 
 /**
