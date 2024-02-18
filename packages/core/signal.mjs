@@ -249,20 +249,37 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
  * @param {*} xs
  * @returns {Pattern}
  */
-export const pickr = register('pickr', function (lookup, pat) {
+export const pickRestart = register('pickRestart', function (lookup, pat) {
   return _pick(lookup, pat, false).trigzeroJoin();
 });
 
 /** * The same as `pickr`, but if you pick a number greater than the size of the list,
  * it wraps around, rather than sticking at the maximum value.
- * For example, if you pick the fifth pattern of a list of three, you'll get the
- * second one.
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
  */
-export const pickrmod = register('pickrmod', function (lookup, pat) {
+export const pickmodRestart = register('pickmodRestart', function (lookup, pat) {
   return _pick(lookup, pat, true).trigzeroJoin();
+});
+
+/** * Similar to `pick`, but the choosen pattern is reset when its index is triggered.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickReset = register('pickReset', function (lookup, pat) {
+  return _pick(lookup, pat, false).trigJoin();
+});
+
+/** * The same as `pickr`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickmodReset = register('pickmodReset', function (lookup, pat) {
+  return _pick(lookup, pat, true).trigJoin();
 });
 
 /**
