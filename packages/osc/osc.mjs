@@ -8,6 +8,7 @@ import OSC from 'osc-js';
 
 import { logger, parseNumeral, Pattern } from '@strudel/core';
 
+let subs = {};
 let connection; // Promise<OSC>
 function connect() {
   if (!connection) {
@@ -25,6 +26,13 @@ function connect() {
         console.log('[osc] disconnected');
         reject('OSC connection closed');
       });
+      osc.on('*', (msg) => {
+        Object.entries(subs).forEach(([route, callback]) => {
+          if (msg.address.startsWith(route)) {
+            callback(msg.args, msg);
+          }
+        });
+      });
       osc.on('error', (err) => reject(err));
     }).catch((err) => {
       connection = undefined;
@@ -32,6 +40,24 @@ function connect() {
     });
   }
   return connection;
+}
+
+export const connectOSC = connect;
+export async function sendOSC(...msg) {
+  const osc = await connect();
+  const t = Date.now();
+  const message = new OSC.Message(...msg);
+  const bundle = new OSC.Bundle([message], t);
+  bundle.timestamp(t); // workaround for https://github.com/adzialocha/osc-js/issues/60
+  osc.send(bundle);
+}
+
+export function subOSC(route, callback) {
+  subs[route] = callback;
+}
+
+export function unsubOSC(route) {
+  delete subs[route];
 }
 
 /**
