@@ -160,7 +160,7 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
  */
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
-const _pick = function (lookup, pat, modulo = true, restart = false) {
+const _pick = function (lookup, pat, modulo = true) {
   const array = Array.isArray(lookup);
   const len = Object.keys(lookup).length;
 
@@ -174,7 +174,7 @@ const _pick = function (lookup, pat, modulo = true, restart = false) {
     if (array) {
       key = modulo ? Math.round(key) % len : clamp(Math.round(key), 0, lookup.length - 1);
     }
-    return restart ? lookup[key].restart(pat.collect().fmap((v) => v + 1)) : lookup[key];
+    return lookup[key];
   });
 };
 
@@ -244,14 +244,13 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
   return pat.apply(pickmod(lookup, funcs));
 });
 
-/** * Similar to `pick`, but restart() is invoked everytime a new index is triggered.
- * In case of stacked indexes, collect() function is used to avoid multiple restarting triggers
+/** * Similar to `pick`, but the choosen pattern is restarted when its index is triggered.
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
  */
 export const pickr = register('pickr', function (lookup, pat) {
-  return _pick(lookup, pat, false, true).innerJoin();
+  return _pick(lookup, pat, false).trigzeroJoin();
 });
 
 /** * The same as `pickr`, but if you pick a number greater than the size of the list,
@@ -263,7 +262,7 @@ export const pickr = register('pickr', function (lookup, pat) {
  * @returns {Pattern}
  */
 export const pickrmod = register('pickrmod', function (lookup, pat) {
-  return _pick(lookup, pat, true, true).innerJoin();
+  return _pick(lookup, pat, true).trigzeroJoin();
 });
 
 /**
