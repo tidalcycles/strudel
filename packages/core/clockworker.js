@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 importScripts('./zyklus.js');
 
 function getTime() {
