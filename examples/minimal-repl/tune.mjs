@@ -1,4 +1,4 @@
-export default `await samples('github:tidalcycles/Dirt-Samples/master')
+export default `samples('github:tidalcycles/dirt-samples')
 
 stack(
   // amen

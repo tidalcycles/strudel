@@ -292,7 +292,7 @@ const generic_params = [
    * @name begin
    * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
    * @example
-   * samples({ rave: 'rave/AREUREADY.wav' }, 'github:tidalcycles/Dirt-Samples/master/')
+   * samples({ rave: 'rave/AREUREADY.wav' }, 'github:tidalcycles/dirt-samples')
    * s("rave").begin("<0 .25 .5 .75>").fast(2)
    *
    */

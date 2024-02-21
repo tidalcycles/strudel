@@ -142,7 +142,7 @@ function getSamplesPrefixHandler(url) {
 /**
  * Loads a collection of samples to use with `s`
  * @example
- * samples('github:tidalcycles/Dirt-Samples/master');
+ * samples('github:tidalcycles/dirt-samples');
  * s("[bd ~]*2, [~ hh]*2, ~ sd")
  * @example
  * samples({
