@@ -99,6 +99,27 @@ export const getLoadedBuffer = (url) => {
   return bufferCache[url];
 };
 
+function resolveSpecialPaths(base) {
+  if (base.startsWith('bubo:')) {
+    const [_, repo] = base.split(':');
+    base = `github:Bubobubobubobubo/dough-${repo}`;
+  }
+  return base;
+}
+
+function githubPath(base, subpath = '') {
+  if (!base.startsWith('github:')) {
+    throw new Error('expected "github:" at the start of pseudoUrl');
+  }
+  let [_, path] = base.split('github:');
+  path = path.endsWith('/') ? path.slice(0, -1) : path;
+  if (path.split('/').length === 2) {
+    // assume main as default branch if none set
+    path += '/main';
+  }
+  return `https://raw.githubusercontent.com/${path}/${subpath}`;
+}
+
 export const processSampleMap = (sampleMap, fn, baseUrl = sampleMap._base || '') => {
   return Object.entries(sampleMap).forEach(([key, value]) => {
     if (typeof value === 'string') {
@@ -108,15 +129,19 @@ export const processSampleMap = (sampleMap, fn, baseUrl = sampleMap._base || '')
       throw new Error('wrong sample map format for ' + key);
     }
     baseUrl = value._base || baseUrl;
-    const replaceUrl = (v) => (baseUrl + v).replace('github:', 'https://raw.githubusercontent.com/');
+    baseUrl = resolveSpecialPaths(baseUrl);
+    if (baseUrl.startsWith('github:')) {
+      baseUrl = githubPath(baseUrl, '');
+    }
+    const fullUrl = (v) => baseUrl + v;
     if (Array.isArray(value)) {
       //return [key, value.map(replaceUrl)];
-      value = value.map(replaceUrl);
+      value = value.map(fullUrl);
     } else {
       // must be object
       value = Object.fromEntries(
         Object.entries(value).map(([note, samples]) => {
-          return [note, (typeof samples === 'string' ? [samples] : samples).map(replaceUrl)];
+          return [note, (typeof samples === 'string' ? [samples] : samples).map(fullUrl)];
         }),
       );
     }
@@ -165,18 +190,9 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
     if (handler) {
       return handler(sampleMap);
     }
-    if (sampleMap.startsWith('bubo:')) {
-      const [_, repo] = sampleMap.split(':');
-      sampleMap = `github:Bubobubobubobubo/dough-${repo}`;
-    }
+    sampleMap = resolveSpecialPaths(sampleMap);
     if (sampleMap.startsWith('github:')) {
-      let [_, path] = sampleMap.split('github:');
-      path = path.endsWith('/') ? path.slice(0, -1) : path;
-      if (path.split('/').length === 2) {
-        // assume main as default branch if none set
-        path += '/main';
-      }
-      sampleMap = `https://raw.githubusercontent.com/${path}/strudel.json`;
+      sampleMap = githubPath(sampleMap, 'strudel.json');
     }
     if (sampleMap.startsWith('shabda:')) {
       let [_, path] = sampleMap.split('shabda:');
