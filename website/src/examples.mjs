@@ -1,6 +1,6 @@
 export const examples = [
   `// "coastline" @by eddyflux
-await samples('github:eddyflux/crate')
+samples('github:eddyflux/crate')
 setcps(.75)
 let chords = chord("<Bbm9 Fm9>/4").dict('ireal')
 stack(
@@ -30,7 +30,7 @@ stack(
 .late("[0 .01]*4").late("[0 .01]*2").size(4)`,
   `// "broken cut 1" @by froos
 
-await samples('github:tidalcycles/Dirt-Samples/master')
+samples('github:tidalcycles/dirt-samples')
 samples({
   'slap': 'https://cdn.freesound.org/previews/495/495416_10350281-lq.mp3',
   'whirl': 'https://cdn.freesound.org/previews/495/495313_10350281-lq.mp3',

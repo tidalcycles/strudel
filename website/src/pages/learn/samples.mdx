@@ -143,7 +143,7 @@ Because GitHub is a popular place for uploading open source samples, it has its 
   bd: 'bd/BT0AADA.wav',
   sd: 'sd/rytm-01-classic.wav',
   hh: 'hh27/000_hh27closedhh.wav',
-}, 'github:tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/dirt-samples');
 s("bd sd bd sd,hh*16")`}
 />
 
@@ -174,7 +174,7 @@ It is also possible, to declare multiple files for one sound, using the array no
   bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
-}, 'github:tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/dirt-samples');
 s("bd:0 bd:1,~ <sd:0 sd:1> ~ sd:0,[hh:0 hh:1]*4")`}
 />
 
@@ -187,7 +187,7 @@ The sample number can also be set using `n`:
   bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
-}, 'github:tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/dirt-samples');
 s("bd bd,~ sd ~ sd,hh*8").n("<0 1>")`}
 />
 
@@ -231,7 +231,7 @@ For pitched sounds, you can use `note`, just like with synths:
   client:idle
   tune={`samples({
   'gtr': 'gtr/0001_cleanC.wav',
-}, 'github:tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/dirt-samples');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').gain(.5)`}
 />
 
@@ -242,7 +242,7 @@ If we want them to behave more like a synth, we can add `clip(1)`:
   client:idle
   tune={`samples({
   'gtr': 'gtr/0001_cleanC.wav',
-}, 'github:tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/dirt-samples');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').clip(1)
   .gain(.5)`}
 />
@@ -256,7 +256,7 @@ If we have 2 samples with different base pitches, we can make them in tune by sp
   tune={`samples({
   'gtr': 'gtr/0001_cleanC.wav',
   'moog': { 'g3': 'moog/005_Mighty%20Moog%20G3.wav' },
-}, 'github:tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/dirt-samples');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s("gtr,moog").clip(1)
   .gain(.5)`}
 />
@@ -272,7 +272,7 @@ We can also declare different samples for different regions of the keyboard:
     'g2': 'moog/004_Mighty%20Moog%20G2.wav',
     'g3': 'moog/005_Mighty%20Moog%20G3.wav',
     'g4': 'moog/006_Mighty%20Moog%20G4.wav',
-  }}, 'github:tidalcycles/Dirt-Samples/master/');
+  }}, 'github:tidalcycles/dirt-samples');
 note("g2!2 <bb2 c3>!2, <c4@3 [<eb4 bb3> g4 f4]>")
   .s('moog').clip(1)
   .gain(.5).cpm(60)`}
@@ -287,7 +287,7 @@ With it, you can enter any sample name(s) to query from [freesound.org](https://
 
 <MiniRepl
   client:idle
-  tune={`await samples('shabda:bass:4,hihat:4,rimshot:2')
+  tune={`samples('shabda:bass:4,hihat:4,rimshot:2')
 stack(
   n("0 1 2 3 0 1 2 3").s('bass'),
   n("0 1*2 2 3*2").s('hihat'),
@@ -300,8 +300,8 @@ Note that the language code and the gender parameters are optional and default t
 
 <MiniRepl
   client:idle
-  tune={`await samples('shabda/speech:the_drum,forever')
-await samples('shabda/speech/fr-FR/m:magnifique')
+  tune={`samples('shabda/speech:the_drum,forever')
+samples('shabda/speech/fr-FR/m:magnifique')
 stack(
   s("the_drum*2").chop(16).speed(rand.range(0.85,1.1)),
   s("forever magnifique").slow(4).late(0.125)
