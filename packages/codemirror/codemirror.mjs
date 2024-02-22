@@ -2,7 +2,7 @@ import { closeBrackets } from '@codemirror/autocomplete';
 // import { search, highlightSelectionMatches } from '@codemirror/search';
 import { history } from '@codemirror/commands';
 import { javascript } from '@codemirror/lang-javascript';
-import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
+import { defaultHighlightStyle, syntaxHighlighting, bracketMatching } from '@codemirror/language';
 import { Compartment, EditorState, Prec } from '@codemirror/state';
 import {
   EditorView,
@@ -24,6 +24,7 @@ import { persistentAtom } from '@nanostores/persistent';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
+  isBracketMatchingEnabled: (on) => (on ? bracketMatching() : []),
   isLineNumbersDisplayed: (on) => (on ? lineNumbers() : []),
   theme,
   isAutoCompletionEnabled,
@@ -37,6 +38,7 @@ const compartments = Object.fromEntries(Object.keys(extensions).map((key) => [ke
 
 export const defaultSettings = {
   keybindings: 'codemirror',
+  isBracketMatchingEnabled: false,
   isLineNumbersDisplayed: true,
   isActiveLineHighlighted: false,
   isAutoCompletionEnabled: false,
@@ -289,6 +291,9 @@ export class StrudelMirror {
   }
   setLineWrappingEnabled(enabled) {
     this.reconfigureExtension('isLineWrappingEnabled', enabled);
+  }
+  setBracketMatchingEnabled(enabled) {
+    this.reconfigureExtension('isBracketMatchingEnabled', enabled);
   }
   setLineNumbersDisplayed(enabled) {
     this.reconfigureExtension('isLineNumbersDisplayed', enabled);
