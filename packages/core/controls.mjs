@@ -87,7 +87,12 @@ const generic_params = [
    */
   ['gain'],
   /**
-   * Gain applied after all effects have been processed.
+   * Gain applied before effect sends (delay, reverb ...)
+   *
+   */
+  ['pregain'],
+  /**
+   * Gain applied after effect sends (delay, reverb ...)
    *
    * @name postgain
    * @example
