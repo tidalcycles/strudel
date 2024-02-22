@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-undef
-importScripts('./zyklus.js');
+importScripts('./neozyklus.js');
 
 function getTime() {
   const precision = 10 ** 4;
