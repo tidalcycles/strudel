@@ -24,7 +24,7 @@ export class NeoCyclist {
     this.channel = new BroadcastChannel('strudeltick');
     let worker_time_dif = 0; // time difference between audio context clock and worker clock
     let weight = 0; // the amount of weight that is applied to the current average when averaging a new time dif
-    const maxWeight = 400;
+    const maxWeight = 20;
     const precision = 10 ** 3; //round off time diff to prevent accumulating outliers
 
     // the clock of the worker and the audio context clock can drift apart over time
