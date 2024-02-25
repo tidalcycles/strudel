@@ -7,7 +7,7 @@ export const defaultAudioDeviceName = 'System Standard';
 export const defaultSettings = {
   activeFooter: 'intro',
   keybindings: 'codemirror',
-  isBracketMatchingEnabled: false,
+  isBracketMatchingEnabled: true,
   isLineNumbersDisplayed: true,
   isActiveLineHighlighted: true,
   isAutoCompletionEnabled: false,
