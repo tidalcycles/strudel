@@ -24,7 +24,7 @@ import { persistentAtom } from '@nanostores/persistent';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
-  isBracketMatchingEnabled: (on) => (on ? bracketMatching({brackets: "()[]{}<>"}) : []),
+  isBracketMatchingEnabled: (on) => (on ? bracketMatching({ brackets: '()[]{}<>' }) : []),
   isLineNumbersDisplayed: (on) => (on ? lineNumbers() : []),
   theme,
   isAutoCompletionEnabled,
