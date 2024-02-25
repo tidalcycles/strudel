@@ -10,9 +10,8 @@ https://rohandrape.net/?t=hmt
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern, timeCat, register, silence } from './pattern.mjs';
+import { timeCat, register, silence } from './pattern.mjs';
 import { rotate, flatten, splitAt, zipWith } from './util.mjs';
-import Fraction from './fraction.mjs';
 
 const left = function (n, x) {
   const [ons, offs] = n;
@@ -58,6 +57,7 @@ export const bjork = function (ons, steps) {
  *
  * @memberof Pattern
  * @name euclid
+ * @synonyms euc
  * @param {number} pulses the number of onsets / beats
  * @param {number} steps the number of steps to fill
  * @returns Pattern
@@ -70,6 +70,7 @@ export const bjork = function (ons, steps) {
  * Like `euclid`, but has an additional parameter for 'rotating' the resulting sequence.
  * @memberof Pattern
  * @name euclidRot
+ * @synonyms eucr
  * @param {number} pulses the number of onsets / beats
  * @param {number} steps the number of steps to fill
  * @param {number} rotation offset in steps
@@ -132,18 +133,22 @@ const _euclidRot = function (pulses, steps, rotation) {
   return b;
 };
 
-export const euclid = register('euclid', function (pulses, steps, pat) {
+export const euclid = register(['euclid', 'euc'], function (pulses, steps, pat) {
   return pat.struct(_euclidRot(pulses, steps, 0));
 });
 
-export const { euclidrot, euclidRot } = register(['euclidrot', 'euclidRot'], function (pulses, steps, rotation, pat) {
-  return pat.struct(_euclidRot(pulses, steps, rotation));
-});
+export const { euclidrot, euclidRot } = register(
+  ['euclidrot', 'euclidRot', 'eucr'],
+  function (pulses, steps, rotation, pat) {
+    return pat.struct(_euclidRot(pulses, steps, rotation));
+  },
+);
 
 /**
  * Similar to `euclid`, but each pulse is held until the next pulse,
  * so there will be no gaps.
  * @name euclidLegato
+ * @synonyms eucl
  * @memberof Pattern
  * @param {number} pulses the number of onsets / beats
  * @param {number} steps the number of steps to fill
@@ -164,7 +169,7 @@ const _euclidLegato = function (pulses, steps, rotation, pat) {
   return pat.struct(timeCat(...gapless));
 };
 
-export const euclidLegato = register(['euclidLegato'], function (pulses, steps, pat) {
+export const euclidLegato = register(['euclidLegato', 'eucl'], function (pulses, steps, pat) {
   return _euclidLegato(pulses, steps, 0, pat);
 });
 
@@ -173,6 +178,7 @@ export const euclidLegato = register(['euclidLegato'], function (pulses, steps, 
  * so there will be no gaps, and has an additional parameter for 'rotating'
  * the resulting sequence
  * @name euclidLegatoRot
+ * @synonyms euclr
  * @memberof Pattern
  * @param {number} pulses the number of onsets / beats
  * @param {number} steps the number of steps to fill
@@ -180,6 +186,6 @@ export const euclidLegato = register(['euclidLegato'], function (pulses, steps, 
  * @example
  * note("c3").euclidLegatoRot(3,5,2)
  */
-export const euclidLegatoRot = register(['euclidLegatoRot'], function (pulses, steps, rotation, pat) {
+export const euclidLegatoRot = register(['euclidLegatoRot', 'euclr'], function (pulses, steps, rotation, pat) {
   return _euclidLegato(pulses, steps, rotation, pat);
 });
