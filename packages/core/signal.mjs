@@ -244,6 +244,25 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
   return pat.apply(pickmod(lookup, funcs));
 });
 
+/** * Similar to `pick`, but it applies an outerJoin instead of an innerJoin.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickOuter = register('pickOuter', function (lookup, pat) {
+  return _pick(lookup, pat, false).outerJoin();
+});
+
+/** * The same as `pickRestart`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickmodOuter = register('pickmodOuter', function (lookup, pat) {
+  return _pick(lookup, pat, true).outerJoin();
+});
+
 /** * Similar to `pick`, but the choosen pattern is restarted when its index is triggered.
  * @param {Pattern} pat
  * @param {*} xs
