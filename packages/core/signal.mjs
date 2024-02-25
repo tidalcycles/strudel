@@ -253,7 +253,7 @@ export const pickOuter = register('pickOuter', function (lookup, pat) {
   return _pick(lookup, pat, false).outerJoin();
 });
 
-/** * The same as `pickRestart`, but if you pick a number greater than the size of the list,
+/** * The same as `pickOuter`, but if you pick a number greater than the size of the list,
  * it wraps around, rather than sticking at the maximum value.
  * @param {Pattern} pat
  * @param {*} xs
