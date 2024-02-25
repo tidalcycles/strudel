@@ -60,7 +60,7 @@ A sample can be looped and chopped like this:
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:yaxu/clean-breaks/main')
+  tune={`samples('github:yaxu/clean-breaks')
 s("amen/4").fit().chop(32)`}
   punchcard
 />
@@ -71,7 +71,7 @@ Let's add randmized doubling + reversing:
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:yaxu/clean-breaks/main')
+  tune={`samples('github:yaxu/clean-breaks')
 s("amen/4").fit().chop(16).cut(1)
 .sometimesBy(.5, ply("2"))
 .sometimesBy(.25, mul(speed("-1")))`}
@@ -82,7 +82,7 @@ If we want to specify the order of samples, we can replace `chop` with `slice`:
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:yaxu/clean-breaks/main')
+  tune={`samples('github:yaxu/clean-breaks')
 s("amen/4").fit()
   .slice(8, "<0 1 2 3 4*2 5 6 [6 7]>*2")
   .cut(1).rarely(ply("2"))`}
@@ -93,7 +93,7 @@ If we use `splice` instead of `slice`, the speed adjusts to the duration of the 
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:yaxu/clean-breaks/main')
+  tune={`samples('github:yaxu/clean-breaks')
 s("amen")
   .splice(8, "<0 1 2 3 4*2 5 6 [6 7]>*2")
   .cut(1).rarely(ply("2"))`}
@@ -213,7 +213,7 @@ Using `run` with `n`, we can rush through a sample bank:
 
 <MiniRepl
   client:visible
-  tune={`await samples('bubo:fox')
+  tune={`samples('bubo:fox')
 n(run(8)).s("ftabla")`}
   punchcard
 />
@@ -224,7 +224,7 @@ In this case, I hear the beginning at the third sample, which can be accounted f
 
 <MiniRepl
   client:visible
-  tune={`await samples('bubo:fox')
+  tune={`samples('bubo:fox')
 n(run(8)).s("ftabla").early(2/8)`}
 />
 
@@ -232,7 +232,7 @@ Let's add some randomness:
 
 <MiniRepl
   client:visible
-  tune={`await samples('bubo:fox')
+  tune={`samples('bubo:fox')
 n(run(8)).s("ftabla").early(2/8)
 .sometimes(mul(speed("1.5")))`}
 />
@@ -299,7 +299,7 @@ To simplify loading wavetables, any sample that starts with `wt_` will be looped
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:bubobubobubobubo/dough-waveforms/main')
+  tune={`samples('github:bubobubobubobubo/dough-waveforms')
 note("c eb g bb").s("wt_dbass").clip(2)`}
 />
 
@@ -307,7 +307,7 @@ Running through different wavetables can also give interesting variations:
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:bubobubobubobubo/dough-waveforms/main')
+  tune={`samples('github:bubobubobubobubo/dough-waveforms')
 note("c2*8").s("wt_dbass").n(run(8))`}
 />
 
@@ -315,7 +315,7 @@ note("c2*8").s("wt_dbass").n(run(8))`}
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:bubobubobubobubo/dough-waveforms/main')
+  tune={`samples('github:bubobubobubobubo/dough-waveforms')
 note("c2*8").s("wt_dbass").n(run(8))
 .lpf(perlin.range(200,2000).slow(8))
 .lpenv(-3).lpa(.1).room(.5)`}

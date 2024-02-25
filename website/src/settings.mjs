@@ -7,6 +7,7 @@ export const defaultAudioDeviceName = 'System Standard';
 export const defaultSettings = {
   activeFooter: 'intro',
   keybindings: 'codemirror',
+  isBracketMatchingEnabled: true,
   isLineNumbersDisplayed: true,
   isActiveLineHighlighted: true,
   isAutoCompletionEnabled: false,
@@ -40,6 +41,7 @@ export function useSettings() {
   return {
     ...state,
     isZen: [true, 'true'].includes(state.isZen) ? true : false,
+    isBracketMatchingEnabled: [true, 'true'].includes(state.isBracketMatchingEnabled) ? true : false,
     isLineNumbersDisplayed: [true, 'true'].includes(state.isLineNumbersDisplayed) ? true : false,
     isActiveLineHighlighted: [true, 'true'].includes(state.isActiveLineHighlighted) ? true : false,
     isAutoCompletionEnabled: [true, 'true'].includes(state.isAutoCompletionEnabled) ? true : false,

@@ -1,10 +1,11 @@
 {
   "name": "@strudel/web",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Easy to setup, opiniated bundle of Strudel for the browser.",
-  "main": "web.mjs",
+  "module": "web.mjs",
   "publishConfig": {
-    "main": "dist/index.mjs"
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
   },
   "scripts": {
     "build": "vite build",
@@ -36,7 +37,8 @@
     "@strudel/mini": "workspace:*",
     "@strudel/tonal": "workspace:*",
     "@strudel/transpiler": "workspace:*",
-    "@strudel/webaudio": "workspace:*"
+    "@strudel/webaudio": "workspace:*",
+    "@rollup/plugin-replace": "^5.0.5"
   },
   "devDependencies": {
     "vite": "^5.0.10"

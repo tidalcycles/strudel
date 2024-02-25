@@ -77,6 +77,7 @@ export function SettingsTab({ started }) {
   const {
     theme,
     keybindings,
+    isBracketMatchingEnabled,
     isLineNumbersDisplayed,
     isPatternHighlightingEnabled,
     isActiveLineHighlighted,
@@ -137,6 +138,11 @@ export function SettingsTab({ started }) {
         ></ButtonGroup>
       </FormItem>
       <FormItem label="Code Settings">
+        <Checkbox
+          label="Enable bracket matching"
+          onChange={(cbEvent) => settingsMap.setKey('isBracketMatchingEnabled', cbEvent.target.checked)}
+          value={isBracketMatchingEnabled}
+        />
         <Checkbox
           label="Display line numbers"
           onChange={(cbEvent) => settingsMap.setKey('isLineNumbersDisplayed', cbEvent.target.checked)}

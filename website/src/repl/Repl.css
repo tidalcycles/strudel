@@ -64,3 +64,8 @@
 #code .cm-focused {
   outline: none;
 }
+
+#code .cm-matchingBracket {
+  text-decoration: underline 0.18rem;
+  text-underline-offset: 0.22rem;
+}
