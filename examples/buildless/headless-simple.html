@@ -5,6 +5,6 @@
   import { initStrudel } from 'https://cdn.skypack.dev/@strudel/web@0.8.2';
 
   initStrudel();
-  document.getElementById('play').addEventListener('click', () => strudel.evaluate('note("c a f e").jux(rev)'));
+  document.getElementById('play').addEventListener('click', () => evaluate('note("c a f e").jux(rev)'));
   document.getElementById('play').addEventListener('stop', () => hush());
 </script>
