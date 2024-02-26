@@ -1,0 +1,114 @@
+---
+title: 'Release Notes v0.9.0'
+description: ''
+date: '2023-09-17'
+tags: ['meta']
+author: froos
+---
+
+import BlogVideo from '../../components/BlogVideo.astro';
+
+These are the release notes for Strudel 0.9.0 aka "Bananenbrot"!
+
+The last release was over 11 weeks ago, so a lot of things have happened!
+
+Let me write up some of the highlights:
+
+## Improved Synth Engine
+
+The synth engine has gotten a lot of love + a name: [superdough](https://www.npmjs.com/package/superdough) encapsulates the web audio based synth / sampler / fx engine into a reusable package, which is already used by [Topos](https://topos.raphaelforment.fr/).
+Main new features include:
+
+- [filter envelopes](https://strudel.tidalcycles.org/learn/effects#filter-envelope)
+- [FM Synthesis](https://strudel.tidalcycles.org/learn/synths#fm-synthesis)
+- [looping samples](https://strudel.tidalcycles.org/learn/samples#loop), allowing [wavetable synthesis](https://strudel.tidalcycles.org/?I9myTNQoKKaP)
+- [vibrato](https://strudel.tidalcycles.org/learn/synths#vibrato)
+- an integration of [ZZFX](https://strudel.tidalcycles.org/learn/synths#zzfx)
+
+<BlogVideo src="https://github.com/tidalcycles/strudel/assets/12023032/652e7042-f296-496b-95cd-b2a4987fe238" />
+
+Related PRs:
+
+- superdough: encapsulates web audio output by @felixroos in https://github.com/tidalcycles/strudel/pull/664
+- basic fm by @felixroos in https://github.com/tidalcycles/strudel/pull/669
+- Wave Selection and Global Envelope on the FM Synth Modulator by @Bubobubobubobubo in https://github.com/tidalcycles/strudel/pull/683
+- control osc partial count with n by @felixroos in https://github.com/tidalcycles/strudel/pull/674
+- ZZFX Synth support by @Bubobubobubobubo in https://github.com/tidalcycles/strudel/pull/684
+- Adding filter envelopes and filter order selection by @Bubobubobubobubo in https://github.com/tidalcycles/strudel/pull/692
+- Adding loop points and thus wavetable synthesis by @Bubobubobubobubo in https://github.com/tidalcycles/strudel/pull/698
+- Adding vibrato to base oscillators by @Bubobubobubobubo in https://github.com/tidalcycles/strudel/pull/693
+
+## Desktop App Improvements
+
+Thanks to @daslyfe and @vasilymilovidov , the desktop app now has its own rust based MIDI and OSC integrations,
+which do not depend on browser APIs!
+
+You can see superdough, superdirt via OSC + hardware synths via MIDI all together playing in harmony in this [awesome video](https://www.youtube.com/watch?v=lxQgBeLQBgk). These are the related PRs:
+
+- Create Midi Integration for Tauri Desktop app by @daslyfe in https://github.com/tidalcycles/strudel/pull/685
+- add sleep timer + improve message iterating by @daslyfe in https://github.com/tidalcycles/strudel/pull/688
+- fix MIDI CC messages by @vasilymilovidov in https://github.com/tidalcycles/strudel/pull/690
+- Direct OSC Support in Tauri by @daslyfe in https://github.com/tidalcycles/strudel/pull/694
+- Add logging from tauri by @daslyfe in https://github.com/tidalcycles/strudel/pull/697
+- fix osc bundle timestamp glitches caused by drifting clock by @daslyfe in https://github.com/tidalcycles/strudel/pull/666
+- Midi time fixes by @daslyfe in https://github.com/tidalcycles/strudel/pull/668
+- [Bug Fix] Account for numeral notation when converting to midi by @daslyfe in https://github.com/tidalcycles/strudel/pull/656
+- [Bug Fix] Midi: Don't treat note 0 as false by @daslyfe in https://github.com/tidalcycles/strudel/pull/657
+
+## Visuals
+
+- 2 new FFT based vizualisations have now landed: [scope and fscope](https://github.com/tidalcycles/strudel/pull/677) (featured in the video at the top).
+- pianoroll has new options, see [PR](https://github.com/tidalcycles/strudel/pull/679)
+
+Related PRs:
+
+- Scope by @felixroos in https://github.com/tidalcycles/strudel/pull/677 ([demo](https://strudel.tidalcycles.org/?hXVQF-KxMI8p))
+- Pianoroll improvements by @felixroos in https://github.com/tidalcycles/strudel/pull/679 ([demo](https://strudel.tidalcycles.org/?aPMKqXGVMgSM))
+
+## Voicings
+
+There is now a new way to play chord voicings + a huge selection of chord voicings available. Find out more in these PRs:
+
+- stateless voicings + tonleiter lib by @felixroos in https://github.com/tidalcycles/strudel/pull/647 ([demo](https://strudel.tidalcycles.org/?FoILM0Hs9y9f))
+- ireal voicings by @felixroos in https://github.com/tidalcycles/strudel/pull/653 ([demo](https://strudel.tidalcycles.org/?bv_TjY9hOC28))
+
+## Adaptive Highlighting
+
+Thanks to @mindofmatthew , the highlighting will adapt to edits instantly! Related PRs:
+
+- More work on highlight IDs by @mindofmatthew in https://github.com/tidalcycles/strudel/pull/636
+- Adaptive Highlighting by @felixroos in https://github.com/tidalcycles/strudel/pull/634
+
+## UI Changes
+
+- teletext theme + fonts by @felixroos in https://github.com/tidalcycles/strudel/pull/681 (featured in video at the top)
+- togglable panel position by @felixroos in https://github.com/tidalcycles/strudel/pull/667
+
+## Other New Features
+
+- slice: list mode by @felixroos in https://github.com/tidalcycles/strudel/pull/645 ([demo](https://strudel.tidalcycles.org/?bAYIqz5NLjRr))
+- add emoji support by @felixroos in https://github.com/tidalcycles/strudel/pull/680 ([demo](https://strudel.tidalcycles.org/?a6FgLz475gN9))
+
+## Articles
+
+- Understand pitch by @felixroos in https://github.com/tidalcycles/strudel/pull/652
+
+## Other Fixes & Enhancements
+
+- fix: out of range error by @felixroos in https://github.com/tidalcycles/strudel/pull/630
+- fix: update canvas size on window resize by @felixroos in https://github.com/tidalcycles/strudel/pull/631
+- FIXES: TODO in rotateChroma by @bwagner in https://github.com/tidalcycles/strudel/pull/650
+- snapshot tests: sort haps by part by @felixroos in https://github.com/tidalcycles/strudel/pull/637
+- Delete old packages by @felixroos in https://github.com/tidalcycles/strudel/pull/639
+- update vitest by @felixroos in https://github.com/tidalcycles/strudel/pull/651
+- fix: welcome message for latestCode by @felixroos in https://github.com/tidalcycles/strudel/pull/659
+- fix: always run previous trigger by @felixroos in https://github.com/tidalcycles/strudel/pull/660
+
+## New Contributors
+
+- @daslyfe made their first contribution in https://github.com/tidalcycles/strudel/pull/656
+- @Bubobubobubobubo made their first contribution in https://github.com/tidalcycles/strudel/pull/683
+
+**Full Changelog**: https://github.com/tidalcycles/strudel/compare/v0.8.0...v0.9.0
+
+A big thanks to all the contributors!

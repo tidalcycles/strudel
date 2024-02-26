@@ -1,8 +1,7 @@
-import escodegen from 'escodegen';
+import { getLeafLocations } from '@strudel/mini';
 import { parse } from 'acorn';
+import escodegen from 'escodegen';
 import { walk } from 'estree-walker';
-import { isNoteWithOctave } from '@strudel.cycles/core';
-import { getLeafLocations } from '@strudel.cycles/mini';
 
 export function transpiler(input, options = {}) {
   const { wrapAsync = false, addReturn = true, emitMiniLocations = true, emitWidgets = true } = options;
@@ -46,6 +45,9 @@ export function transpiler(input, options = {}) {
             step: node.arguments[3]?.value,
           });
         return this.replace(widgetWithLocation(node));
+      }
+      if (isBareSamplesCall(node, parent)) {
+        return this.replace(withAwait(node));
       }
     },
     leave(node, parent, prop, index) {},
@@ -118,4 +120,15 @@ function widgetWithLocation(node) {
   });
   node.callee.name = 'sliderWithID';
   return node;
+}
+
+function isBareSamplesCall(node, parent) {
+  return node.type === 'CallExpression' && node.callee.name === 'samples' && parent.type !== 'AwaitExpression';
+}
+
+function withAwait(node) {
+  return {
+    type: 'AwaitExpression',
+    argument: node,
+  };
 }

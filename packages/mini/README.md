@@ -1,17 +1,17 @@
-# @strudel.cycles/mini
+# @strudel/mini
 
 This package contains the mini notation parser and pattern generator.
 
 ## Install
 
 ```sh
-npm i @strudel.cycles/mini --save
+npm i @strudel/mini --save
 ```
 
 ## Example
 
 ```js
-import { mini } from '@strudel.cycles/mini';
+import { mini } from '@strudel/mini';
 
 const pattern = mini('a [b c*2]');
 
@@ -28,7 +28,7 @@ yields:
 (7/8 -> 1/1, 7/8 -> 1/1, c)
 ```
 
-[Play with @strudel.cycles/mini codesandbox](https://codesandbox.io/s/strudel-mini-example-oe9wcu?file=/src/index.js)
+[Play with @strudel/mini codesandbox](https://codesandbox.io/s/strudel-mini-example-oe9wcu?file=/src/index.js)
 
 ## Mini Notation API
 

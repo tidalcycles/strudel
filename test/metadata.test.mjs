@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getMetadata } from '../website/src/pages/metadata_parser';
+import { getMetadata } from '../website/src/metadata_parser';
 
 describe.concurrent('Metadata parser', () => {
   it('loads a tag from inline comment', async () => {

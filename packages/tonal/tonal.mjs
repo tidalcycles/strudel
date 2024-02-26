@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Note, Interval, Scale } from '@tonaljs/tonal';
-import { register, _mod, silence, logger, pure, isNote } from '@strudel.cycles/core';
+import { register, _mod, silence, logger, pure, isNote } from '@strudel/core';
 import { stepInNamedScale } from './tonleiter.mjs';
 
 const octavesInterval = (octaves) => (octaves <= 0 ? -1 : 1) + octaves * 7 + 'P';
@@ -157,9 +157,9 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
  * .scale("C:<major minor>/2")
  * .s("piano")
  * @example
- * n(rand.range(0,12).segment(8).round())
+ * n(rand.range(0,12).segment(8))
  * .scale("C:ritusen")
- * .s("folkharp")
+ * .s("piano")
  */
 
 export const scale = register('scale', function (scale, pat) {

@@ -5,8 +5,8 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as _WebMidi from 'webmidi';
-import { Pattern, isPattern, logger, ref } from '@strudel.cycles/core';
-import { noteToMidi } from '@strudel.cycles/core';
+import { Pattern, isPattern, logger, ref } from '@strudel/core';
+import { noteToMidi } from '@strudel/core';
 import { Note } from 'webmidi';
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
@@ -129,7 +129,7 @@ Pattern.prototype.midi = function (output) {
     const velocity = hap.context?.velocity ?? 0.9; // TODO: refactor velocity
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
-    const duration = Math.floor(hap.duration.valueOf() * 1000 - 10);
+    const duration = Math.floor((hap.duration.valueOf() / cps) * 1000 - 10);
     if (note != null) {
       const midiNumber = typeof note === 'number' ? note : noteToMidi(note);
       const midiNote = new Note(midiNumber, { attack: velocity, duration });
@@ -167,10 +167,16 @@ let listeners = {};
 const refs = {};
 
 export async function midin(input) {
+  if (isPattern(input)) {
+    throw new Error(
+      `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
+        WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
+      }')`,
+    );
+  }
   const initial = await enableWebMidi(); // only returns on first init
   const device = getDevice(input, WebMidi.inputs);
-
-  if (initial) {
+  if (initial || WebMidi.enabled) {
     const otherInputs = WebMidi.inputs.filter((o) => o.name !== device.name);
     logger(
       `Midi enabled! Using "${device.name}". ${

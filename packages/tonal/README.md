@@ -1,18 +1,18 @@
-# @strudel.cycles/tonal
+# @strudel/tonal
 
 This package adds tonal / harmonic functions to strudel Patterns.
 
 ## Install
 
 ```sh
-npm i @strudel.cycles/tonal --save
+npm i @strudel/tonal --save
 ```
 
 ## Example
 
 ```js
-import { sequence } from '@strudel.cycles/core';
-import '@strudel.cycles/tonal';
+import { sequence } from '@strudel/core';
+import '@strudel/tonal';
 
 const pattern = sequence(0, [1, 2]).scale('C major');
 
@@ -27,7 +27,7 @@ yields:
 (3/4 -> 1/1, 3/4 -> 1/1, E3)
 ```
 
-[play with @strudel.cycles/tonal codesandbox](https://codesandbox.io/s/strudel-tonal-example-rgc5if?file=/src/index.js)
+[play with @strudel/tonal codesandbox](https://codesandbox.io/s/strudel-tonal-example-rgc5if?file=/src/index.js)
 
 ## Tonal API
 

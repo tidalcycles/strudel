@@ -8,7 +8,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'index.mjs'),
-      formats: ['es', 'cjs'],
+      formats: ['es'],
       fileName: (ext) => ({ es: 'index.mjs', cjs: 'index.cjs' })[ext],
     },
     rollupOptions: {

@@ -1,6 +1,6 @@
-import { controls, repl, evalScope } from '@strudel.cycles/core';
-import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel.cycles/webaudio';
-import { transpiler } from '@strudel.cycles/transpiler';
+import { controls, repl, evalScope } from '@strudel/core';
+import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
+import { transpiler } from '@strudel/transpiler';
 import tune from './tune.mjs';
 
 const ctx = getAudioContext();
@@ -10,10 +10,10 @@ initAudioOnFirstClick();
 
 evalScope(
   controls,
-  import('@strudel.cycles/core'),
-  import('@strudel.cycles/mini'),
-  import('@strudel.cycles/webaudio'),
-  import('@strudel.cycles/tonal'),
+  import('@strudel/core'),
+  import('@strudel/mini'),
+  import('@strudel/webaudio'),
+  import('@strudel/tonal'),
 );
 
 const { evaluate } = repl({

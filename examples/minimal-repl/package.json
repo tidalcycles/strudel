@@ -13,10 +13,10 @@
     "vite": "^5.0.10"
   },
   "dependencies": {
-    "@strudel.cycles/core": "workspace:*",
-    "@strudel.cycles/mini": "workspace:*",
-    "@strudel.cycles/transpiler": "workspace:*",
-    "@strudel.cycles/webaudio": "workspace:*",
-    "@strudel.cycles/tonal": "workspace:*"
+    "@strudel/core": "workspace:*",
+    "@strudel/mini": "workspace:*",
+    "@strudel/transpiler": "workspace:*",
+    "@strudel/webaudio": "workspace:*",
+    "@strudel/tonal": "workspace:*"
   }
 }

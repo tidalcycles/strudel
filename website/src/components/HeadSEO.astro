@@ -1,5 +1,5 @@
 ---
-import { SITE, OPEN_GRAPH, Frontmatter } from '../config';
+import { SITE, OPEN_GRAPH, type Frontmatter } from '../config';
 
 export interface Props {
   frontmatter: Frontmatter;
@@ -25,11 +25,3 @@ const imageAlt = frontmatter.image?.alt ?? OPEN_GRAPH.image.alt;
 <meta property="og:image:alt" content={imageAlt} />
 <meta name="description" property="og:description" content={frontmatter.description ?? SITE.description} />
 <meta property="og:site_name" content={SITE.title} />
-
-<!-- Twitter Tags -->
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:site" content={OPEN_GRAPH.twitter} />
-<meta name="twitter:title" content={formattedContentTitle} />
-<meta name="twitter:description" content={frontmatter.description ?? SITE.description} />
-<meta name="twitter:image" content={canonicalImageSrc} />
-<meta name="twitter:image:alt" content={imageAlt} />

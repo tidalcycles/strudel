@@ -1,5 +1,5 @@
 import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon';
-import { logger } from '@strudel.cycles/core';
+import { logger } from '@strudel/core';
 import useEvent from '@src/useEvent.mjs';
 import cx from '@src/cx.mjs';
 import { nanoid } from 'nanoid';

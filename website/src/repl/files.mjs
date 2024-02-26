@@ -5,7 +5,7 @@ import {
   onTriggerSample,
   getAudioContext,
   loadBuffer,
-} from '@strudel.cycles/webaudio';
+} from '@strudel/webaudio';
 
 let TAURI;
 if (typeof window !== 'undefined') {

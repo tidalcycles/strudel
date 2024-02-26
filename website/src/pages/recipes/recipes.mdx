@@ -60,8 +60,8 @@ A sample can be looped and chopped like this:
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:yaxu/clean-breaks/main')
-s("amen/8").fit().chop(16)`}
+  tune={`samples('github:yaxu/clean-breaks')
+s("amen/4").fit().chop(32)`}
   punchcard
 />
 
@@ -71,10 +71,10 @@ Let's add randmized doubling + reversing:
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:yaxu/clean-breaks/main')
-s("amen/8").fit().chop(16).cut(1)
-.sometimesBy(.5, ply(2))
-.sometimesBy(.25, mul(speed(-1)))`}
+  tune={`samples('github:yaxu/clean-breaks')
+s("amen/4").fit().chop(16).cut(1)
+.sometimesBy(.5, ply("2"))
+.sometimesBy(.25, mul(speed("-1")))`}
   punchcard
 />
 
@@ -82,10 +82,10 @@ If we want to specify the order of samples, we can replace `chop` with `slice`:
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:yaxu/clean-breaks/main')
-s("amen/8").fit()
-  .slice(8, "<0 1 2 3 4*2 5 6 [6 7]>")
-  .cut(1).rarely(ply(2))`}
+  tune={`samples('github:yaxu/clean-breaks')
+s("amen/4").fit()
+  .slice(8, "<0 1 2 3 4*2 5 6 [6 7]>*2")
+  .cut(1).rarely(ply("2"))`}
   punchcard
 />
 
@@ -93,10 +93,10 @@ If we use `splice` instead of `slice`, the speed adjusts to the duration of the 
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:yaxu/clean-breaks/main')
+  tune={`samples('github:yaxu/clean-breaks')
 s("amen")
-  .splice(8, "<0 1 2 3 4*2 5 6 [6 7]>")
-  .cut(1).rarely(ply(2))`}
+  .splice(8, "<0 1 2 3 4*2 5 6 [6 7]>*2")
+  .cut(1).rarely(ply("2"))`}
   punchcard
 />
 
@@ -104,25 +104,37 @@ Note that we don't need `fit`, because `splice` will do that by itself.
 
 ## Filter Envelopes
 
-A minimal filter envelope looks like this:
+Using `lpenv`, we can make the filter move:
 
 <MiniRepl
   client:visible
   tune={`note("g1 bb1 <c2 eb2> d2")
   .s("sawtooth")
-  .lpf(400).lpa(.2).lpenv(4)
+  .lpf(400).lpenv(4)
   .scope()`}
 />
 
-We can flip the envelope by setting `lpenv` negative + add some resonance `lpq`:
+The type of envelope depends on the methods you're setting. Let's set `lpa`:
 
 <MiniRepl
   client:visible
   tune={`note("g1 bb1 <c2 eb2> d2")
   .s("sawtooth").lpq(8)
-  .lpf(400).lpa(.2).lpenv(-4)
+  .lpf(400).lpa(.2).lpenv(4)
   .scope()`}
 />
+
+Now the filter is attacking, rather than decaying as before (decay is the default). We can also do both
+
+<MiniRepl
+  client:visible
+  tune={`note("g1 bb1 <c2 eb2> d2")
+  .s("sawtooth").lpq(8)
+  .lpf(400).lpa(.1).lpd(.1).lpenv(4)
+  .scope()`}
+/>
+
+You can play around with `lpa` | `lpd` | `lps` | `lpd` to see what the filter envelope will do.
 
 ## Layering Sounds
 
@@ -183,7 +195,7 @@ A polyrhythm is when 2 different tempos happen at the same time.
 
 This is a polymeter:
 
-<MiniRepl client:visible tune={`s("<bd rim>,<hh hh oh>").fast(2)`} punchcard />
+<MiniRepl client:visible tune={`s("<bd rim, hh hh oh>*4")`} punchcard />
 
 A polymeter is when 2 different bar lengths play at the same tempo.
 
@@ -201,8 +213,8 @@ Using `run` with `n`, we can rush through a sample bank:
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:Bubobubobubobubo/Dough-Fox/main')
-  n(run(8)).s("ftabla")`}
+  tune={`samples('bubo:fox')
+n(run(8)).s("ftabla")`}
   punchcard
 />
 
@@ -212,17 +224,17 @@ In this case, I hear the beginning at the third sample, which can be accounted f
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:Bubobubobubobubo/Dough-Fox/main')
-  n(run(8)).s("ftabla").early(2/8)`}
+  tune={`samples('bubo:fox')
+n(run(8)).s("ftabla").early(2/8)`}
 />
 
 Let's add some randomness:
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:Bubobubobubobubo/Dough-Fox/main')
+  tune={`samples('bubo:fox')
 n(run(8)).s("ftabla").early(2/8)
-.sometimes(mul(speed(1.5)))`}
+.sometimes(mul(speed("1.5")))`}
 />
 
 ## Tape Warble
@@ -231,7 +243,7 @@ We can emulate a pitch warbling effect like this:
 
 <MiniRepl
   client:visible
-  tune={`note("c4 bb f eb")
+  tune={`note("<c4 bb f eb>*8")
 .add(note(perlin.range(0,.5))) // <------ warble
 .clip(2).s("gm_electric_guitar_clean")`}
 />
@@ -243,7 +255,7 @@ There are a number of ways to change the sound duration. Using clip:
 <MiniRepl
   client:visible
   tune={`note("f ab bb c")
-.clip("<2 1 .5 .25>/2")`}
+.clip("<2 1 .5 .25>")`}
 />
 
 The value of clip is relative to the duration of each event.
@@ -252,19 +264,17 @@ We can also create overlaps using release:
 <MiniRepl
   client:visible
   tune={`note("f ab bb c")
-.release("<2 1 .5 .002>/2")`}
+.release("<2 1 .5 .25>")`}
 />
 
 This will smoothly fade out each sound for the given number of seconds.
-We could also make the notes shorter with decay / sustain:
+We could also make the notes shorter by using a decay envelope:
 
 <MiniRepl
   client:visible
   tune={`note("f ab bb c")
-.decay("<.2 .1 .02>/2").sustain(0)`}
+.decay("<2 1 .5 .25>")`}
 />
-
-For now, there is a limitation where decay values that exceed the event duration may cause little cracks, so use higher numbers with caution..
 
 When using samples, we also have `.end` to cut relative to the sample length:
 
@@ -274,9 +284,9 @@ Compare that to clip:
 
 <MiniRepl client:visible tune={`s("oh*4").clip("<1 .5 .25 .1>")`} />
 
-or decay / sustain
+or decay:
 
-<MiniRepl client:visible tune={`s("oh*4").decay("<.2 .12 .06 .01>").sustain(0)`} />
+<MiniRepl client:visible tune={`s("oh*4").decay("<1 .5 .25 .1>")`} />
 
 ## Wavetable Synthesis
 
@@ -289,7 +299,7 @@ To simplify loading wavetables, any sample that starts with `wt_` will be looped
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:bubobubobubobubo/dough-waveforms/main')
+  tune={`samples('github:bubobubobubobubo/dough-waveforms')
 note("c eb g bb").s("wt_dbass").clip(2)`}
 />
 
@@ -297,7 +307,7 @@ Running through different wavetables can also give interesting variations:
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:bubobubobubobubo/dough-waveforms/main')
+  tune={`samples('github:bubobubobubobubo/dough-waveforms')
 note("c2*8").s("wt_dbass").n(run(8))`}
 />
 
@@ -305,7 +315,7 @@ note("c2*8").s("wt_dbass").n(run(8))`}
 
 <MiniRepl
   client:visible
-  tune={`await samples('github:bubobubobubobubo/dough-waveforms/main')
+  tune={`samples('github:bubobubobubobubo/dough-waveforms')
 note("c2*8").s("wt_dbass").n(run(8))
 .lpf(perlin.range(200,2000).slow(8))
 .lpenv(-3).lpa(.1).room(.5)`}

@@ -1,5 +1,5 @@
-import { getFrequency, logger, register } from '@strudel.cycles/core';
-import { getAudioContext } from '@strudel.cycles/webaudio';
+import { getFrequency, logger, register } from '@strudel/core';
+import { getAudioContext } from '@strudel/webaudio';
 import csd from './project.csd?raw';
 // import livecodeOrc from './livecode.orc?raw';
 import presetsOrc from './presets.orc?raw';

@@ -1,8 +1,8 @@
 {
   "name": "@strudel/repl",
-  "version": "0.9.4",
+  "version": "1.0.2",
   "description": "Strudel REPL as a Web Component",
-  "main": "index.mjs",
+  "module": "index.mjs",
   "publishConfig": {
     "main": "dist/index.js",
     "module": "dist/index.mjs"
@@ -33,15 +33,15 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "workspace:*",
-    "@strudel.cycles/midi": "workspace:*",
-    "@strudel.cycles/mini": "workspace:*",
-    "@strudel.cycles/soundfonts": "workspace:*",
-    "@strudel.cycles/tonal": "workspace:*",
-    "@strudel.cycles/transpiler": "workspace:*",
-    "@strudel.cycles/webaudio": "workspace:*",
     "@strudel/codemirror": "workspace:*",
-    "@strudel/hydra": "workspace:*"
+    "@strudel/core": "workspace:*",
+    "@strudel/hydra": "workspace:*",
+    "@strudel/midi": "workspace:*",
+    "@strudel/mini": "workspace:*",
+    "@strudel/soundfonts": "workspace:*",
+    "@strudel/tonal": "workspace:*",
+    "@strudel/transpiler": "workspace:*",
+    "@strudel/webaudio": "workspace:*"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^5.0.5",

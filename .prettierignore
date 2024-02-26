@@ -11,3 +11,4 @@ pnpm-lock.yaml
 pnpm-workspace.yaml
 **/dev-dist
 superdough-wasm
+website/.astro

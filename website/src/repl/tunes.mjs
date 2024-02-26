@@ -314,7 +314,7 @@ stack(
 )
   .fast(2/3)
   .pianoroll()`;
-
+/* 
 export const bridgeIsOver = `// "Bridge is over"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos, bassline by BDP - The Bridge Is Over
@@ -333,7 +333,7 @@ stack(
   s("mad").slow(2)
 ).cpm(78).slow(4)
   .pianoroll()
-`;
+`; */
 
 export const goodTimes = `// "Good times"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
@@ -527,7 +527,7 @@ export const meltingsubmarine = `// "Melting submarine"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
-await samples('github:tidalcycles/Dirt-Samples/master/')
+samples('github:tidalcycles/dirt-samples')
 stack(
   s("bd:5,[~ <sd:1!3 sd:1(3,4,3)>],hh27(3,4,1)") // drums
   .speed(perlin.range(.7,.9)) // random sample speed variation
@@ -574,7 +574,7 @@ samples({
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
   perc: ['perc/002_perc2.wav'],
-}, 'github:tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/dirt-samples');
 
 chord("<C^7 Am7 Dm7 G7>*2").dict('lefthand').anchor("G4").voicing()
   .stack(n("0@6 [<1 2> <2 0> 1]@2").scale('C5 major'))
@@ -608,7 +608,7 @@ samples({
 bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav','bd/BT0A0DA.wav','bd/BT0A0D3.wav','bd/BT0A0D0.wav','bd/BT0A0A7.wav'],
 sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
 hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
-}, 'github:tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/dirt-samples');
 
 note("<8(3,8) <7 7*2> [4 5@3] 8>".sub(1) // sub 1 -> 1-indexed
 .layer(
@@ -709,6 +709,8 @@ export const dinofunk = `// "Dinofunk"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
+setcps(1)
+
 samples({bass:'https://cdn.freesound.org/previews/614/614637_2434927-hq.mp3',
 dino:{b4:'https://cdn.freesound.org/previews/316/316403_5123851-hq.mp3'}})
 setVoicingRange('lefthand', ['c3','a4'])
@@ -795,7 +797,7 @@ export const amensister = `// "Amensister"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
-await samples('github:tidalcycles/Dirt-Samples/master')
+samples('github:tidalcycles/dirt-samples')
 
 stack(
   // amen
@@ -904,7 +906,7 @@ export const arpoon = `// "Arpoon"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
-await samples('github:tidalcycles/Dirt-Samples/master')
+samples('github:tidalcycles/dirt-samples')
 
 n("[0,3] 2 [1,3] 2".fast(3).lastOf(4, fast(2))).clip(2)
   .offset("<<1 2> 2 1 1>")

@@ -18,7 +18,7 @@ Strudel allows loading samples in the form of audio files of various formats (wa
 
 By default, strudel comes with a built-in "sample map", providing a solid base to play with.
 
-<MiniRepl client:idle tune={`s("bd sd,hh*8, misc/2")`} />
+<MiniRepl client:idle tune={`s("bd sd [~ bd] sd,hh*16, misc")`} />
 
 Here, we are using the `s` function to play back different default samples (`bd`, `sd`, `hh` and `misc`) to get a drum beat.
 
@@ -59,15 +59,15 @@ If we open the `sounds` tab and then `drum machines`, we can see that the drum s
 
 We _could_ use them like this:
 
-<MiniRepl client:idle tune={`s("RolandTR808_bd RolandTR808_sd,RolandTR808_hh*8")`} />
+<MiniRepl client:idle tune={`s("RolandTR808_bd RolandTR808_sd,RolandTR808_hh*16")`} />
 
 ... but thats obviously a bit much to write. Using the `bank` function, we can shorten this to:
 
-<MiniRepl client:idle tune={`s("bd sd,hh*8").bank("RolandTR808")`} />
+<MiniRepl client:idle tune={`s("bd sd bd sd,hh*16").bank("RolandTR808")`} />
 
 You could even pattern the bank to switch between different drum machines:
 
-<MiniRepl client:idle tune={`s("bd sd,hh*8").bank("<RolandTR808 RolandTR909>")`} />
+<MiniRepl client:idle tune={`s("bd sd bd sd,hh*16").bank("RolandTR808 RolandTR909")`} />
 
 Behind the scenes, `bank` will just prepend the drum machine name to the sample name with `_` to get the full name.
 This of course only works because the name after `_` (`bd`, `sd` etc..) is standardized.
@@ -79,17 +79,21 @@ If we open the `sounds` tab again, followed by tab `drum machines`, there is als
 For example `RolandTR909_hh(4)` means there are 4 samples of a TR909 hihat available.
 By default, `s` will play the first sample, but we can select the other ones using `n`, starting from 0:
 
-<MiniRepl client:idle tune={`s("hh*4").bank("RolandTR909").n("<0 1 2 3>")`} />
+<MiniRepl client:idle tune={`s("hh*8").bank("RolandTR909").n("0 1 2 3")`} />
 
 Numbers that are too high will just wrap around to the beginning
 
-<MiniRepl client:idle tune={`s("hh*4").bank("RolandTR909").n("<0 1 2 3 4 5 6 7>")`} />
+<MiniRepl client:idle tune={`s("hh*8").bank("RolandTR909").n("0 1 2 3 4 5 6 7")`} />
 
 Here, 0-3 will play the same sounds as 4-7, because `RolandTR909_hh` only has 4 sounds.
 
 Selecting sounds also works inside the mini notation, using "`:`" like this:
 
-<MiniRepl client:idle tune={`s("bd:1 bd:2,hh:0 hh:1 hh:2 hh:3").bank("RolandTR909")`} />
+<MiniRepl
+  client:idle
+  tune={`s("bd*4,hh:0 hh:1 hh:2 hh:3 hh:4 hh:5 hh:6 hh:7")
+.bank("RolandTR909")`}
+/>
 
 # Loading Custom Samples
 
@@ -103,7 +107,7 @@ In this example we create a map using sounds from the default sample map:
   sd: 'sd/rytm-01-classic.wav',
   hh: 'hh27/000_hh27closedhh.wav',
 }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
-s("bd sd,hh*8")`}
+s("bd sd bd sd,hh*16")`}
 />
 
 When you load your own samples, you can choose the names that you will then refer to in your pattern string inside the `s` function.
@@ -116,7 +120,7 @@ Compare with this example which uses the same samples, but with different names.
   snaredrum: 'sd/rytm-01-classic.wav',
   hihat: 'hh27/000_hh27closedhh.wav',
 }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
-s("bassdrum snaredrum, hihat*8")`}
+s("bassdrum snaredrum bassdrum snaredrum, hihat*16")`}
 />
 
 Here we have changed the "map" to include longer sample names.
@@ -139,8 +143,8 @@ Because GitHub is a popular place for uploading open source samples, it has its 
   bd: 'bd/BT0AADA.wav',
   sd: 'sd/rytm-01-classic.wav',
   hh: 'hh27/000_hh27closedhh.wav',
-}, 'github:tidalcycles/Dirt-Samples/master/');
-s("bd sd,hh*8")`}
+}, 'github:tidalcycles/dirt-samples');
+s("bd sd bd sd,hh*16")`}
 />
 
 The format is `github:user/repo/branch/`.
@@ -157,7 +161,7 @@ We can see there are some guitar samples inside the `/samples` folder, so let's 
   g3: 'samples/guitar/guitar_3.wav',
   g4: 'samples/guitar/guitar_4.wav'
 }, 'github:jarmitage/jarmitage.github.io/master/');
-s("[g0 g1 g2 g3 g4]/5")`}
+s("<g0 g1 g2 g3 g4>/2")`}
 />
 
 ## Multiple Samples per Sound
@@ -170,8 +174,8 @@ It is also possible, to declare multiple files for one sound, using the array no
   bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
-}, 'github:tidalcycles/Dirt-Samples/master/');
-s("<bd:0 bd:1>,~ <sd:0 sd:1>,[hh:0 hh:1]*2")`}
+}, 'github:tidalcycles/dirt-samples');
+s("bd:0 bd:1,~ <sd:0 sd:1> ~ sd:0,[hh:0 hh:1]*4")`}
 />
 
 The `:0` `:1` etc. are the indices of the array.
@@ -183,8 +187,8 @@ The sample number can also be set using `n`:
   bd: ['bd/BT0AADA.wav','bd/BT0AAD0.wav'],
   sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
   hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
-}, 'github:tidalcycles/Dirt-Samples/master/');
-s("bd,~ sd,hh*4").n("<0 1>")`}
+}, 'github:tidalcycles/dirt-samples');
+s("bd bd,~ sd ~ sd,hh*8").n("<0 1>")`}
 />
 
 In that case, we might load our guitar sample map a different way:
@@ -200,7 +204,7 @@ In that case, we might load our guitar sample map a different way:
     'samples/guitar/guitar_4.wav'
   ]
 }, 'github:jarmitage/jarmitage.github.io/master/');
-s("[guitar:0 guitar:1 guitar:2 guitar:3 guitar:4]/5")`}
+s("<guitar:0 guitar:1 guitar:2 guitar:3 guitar:4>*2")`}
 />
 
 And as above, we can choose the sample number using `n` for even more flexibility:
@@ -216,7 +220,7 @@ And as above, we can choose the sample number using `n` for even more flexibilit
     'samples/guitar/guitar_4.wav'
   ]
 }, 'github:jarmitage/jarmitage.github.io/master/');
-n("<0 1 2 3 4>").s("guitar")`}
+n("<0 1 2 3 4>*2").s("guitar")`}
 />
 
 ## Pitched Sounds
@@ -227,7 +231,7 @@ For pitched sounds, you can use `note`, just like with synths:
   client:idle
   tune={`samples({
   'gtr': 'gtr/0001_cleanC.wav',
-}, 'github:tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/dirt-samples');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').gain(.5)`}
 />
 
@@ -238,7 +242,7 @@ If we want them to behave more like a synth, we can add `clip(1)`:
   client:idle
   tune={`samples({
   'gtr': 'gtr/0001_cleanC.wav',
-}, 'github:tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/dirt-samples');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s('gtr').clip(1)
   .gain(.5)`}
 />
@@ -252,7 +256,7 @@ If we have 2 samples with different base pitches, we can make them in tune by sp
   tune={`samples({
   'gtr': 'gtr/0001_cleanC.wav',
   'moog': { 'g3': 'moog/005_Mighty%20Moog%20G3.wav' },
-}, 'github:tidalcycles/Dirt-Samples/master/');
+}, 'github:tidalcycles/dirt-samples');
 note("g3 [bb3 c4] <g4 f4 eb4 f3>@2").s("gtr,moog").clip(1)
   .gain(.5)`}
 />
@@ -268,10 +272,10 @@ We can also declare different samples for different regions of the keyboard:
     'g2': 'moog/004_Mighty%20Moog%20G2.wav',
     'g3': 'moog/005_Mighty%20Moog%20G3.wav',
     'g4': 'moog/006_Mighty%20Moog%20G4.wav',
-  }}, 'github:tidalcycles/Dirt-Samples/master/');
+  }}, 'github:tidalcycles/dirt-samples');
 note("g2!2 <bb2 c3>!2, <c4@3 [<eb4 bb3> g4 f4]>")
   .s('moog').clip(1)
-  .gain(.5)`}
+  .gain(.5).cpm(60)`}
 />
 
 The sampler will always pick the closest matching sample for the current note!
@@ -283,11 +287,11 @@ With it, you can enter any sample name(s) to query from [freesound.org](https://
 
 <MiniRepl
   client:idle
-  tune={`await samples('shabda:bass:4,hihat:4,rimshot:2')
+  tune={`samples('shabda:bass:4,hihat:4,rimshot:2')
 stack(
-  n("0 1 2 3").s('bass').slow(2),
+  n("0 1 2 3 0 1 2 3").s('bass'),
   n("0 1*2 2 3*2").s('hihat'),
-  n("~ 0 ~ 1").s('rimshot')
+  n("~ 0 ~ 1 ~ 0 0 1").s('rimshot')
 ).clip(1)`}
 />
 
@@ -296,11 +300,11 @@ Note that the language code and the gender parameters are optional and default t
 
 <MiniRepl
   client:idle
-  tune={`await samples('shabda/speech:the_drum,forever')
-await samples('shabda/speech/fr-FR/m:magnifique')
+  tune={`samples('shabda/speech:the_drum,forever')
+samples('shabda/speech/fr-FR/m:magnifique')
 stack(
-  s("the_drum").chop(16).speed(rand.range(0.85,1.1)),
-  s("forever magnifique").slow(8).late(0.25)
+  s("the_drum*2").chop(16).speed(rand.range(0.85,1.1)),
+  s("forever magnifique").slow(4).late(0.125)
 )`}
 />
 

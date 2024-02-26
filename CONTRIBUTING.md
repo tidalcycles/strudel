@@ -114,7 +114,7 @@ You can run the same check with `pnpm check`
 ## Package Workflow
 
 The project is split into multiple [packages](https://github.com/tidalcycles/strudel/tree/main/packages) with independent versioning.
-When you run `pnpm i` on the root folder, [pnpm workspaces](https://pnpm.io/workspaces) will install all dependencies of all subpackages. This will allow any js file to import `@strudel.cycles/<package-name>` to get the local version,
+When you run `pnpm i` on the root folder, [pnpm workspaces](https://pnpm.io/workspaces) will install all dependencies of all subpackages. This will allow any js file to import `@strudel/<package-name>` to get the local version,
 allowing to develop multiple packages at the same time.
 
 ## Package Publishing

@@ -1,11 +1,11 @@
 {
-  "name": "@strudel.cycles/transpiler",
-  "version": "0.9.0",
+  "name": "@strudel/transpiler",
+  "version": "1.0.1",
   "description": "Transpiler for strudel user code. Converts syntactically correct but semantically meaningless JS into evaluatable strudel code.",
   "main": "index.mjs",
+  "type": "module",
   "publishConfig": {
-    "main": "dist/index.js",
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "build": "vite build",
@@ -30,8 +30,8 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "workspace:*",
-    "@strudel.cycles/mini": "workspace:*",
+    "@strudel/core": "workspace:*",
+    "@strudel/mini": "workspace:*",
     "acorn": "^8.11.3",
     "escodegen": "^2.1.0",
     "estree-walker": "^3.0.1"

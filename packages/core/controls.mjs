@@ -40,7 +40,7 @@ const generic_params = [
    * @name n
    * @param {number | Pattern} value sample index starting from 0
    * @example
-   * s("bd sd,hh*3").n("<0 1>")
+   * s("bd sd [~ bd] sd,hh*6").n("<0 1>")
    */
   // also see https://github.com/tidalcycles/strudel/pull/63
   ['n'],
@@ -82,7 +82,7 @@ const generic_params = [
    * @name gain
    * @param {number | Pattern} amount gain.
    * @example
-   * s("hh*8").gain(".4!2 1 .4!2 1 .4 1")
+   * s("hh*8").gain(".4!2 1 .4!2 1 .4 1").fast(2)
    *
    */
   ['gain'],
@@ -91,13 +91,13 @@ const generic_params = [
    *
    * @name postgain
    * @example
-   * s("bd sd,hh*4")
+   * s("bd sd [~ bd] sd,hh*8")
    * .compressor("-20:20:10:.002:.02").postgain(1.5)
    *
    */
   ['postgain'],
   /**
-   * Like {@link gain}, but linear.
+   * Like `gain`, but linear.
    *
    * @name amp
    * @param {number | Pattern} amount gain.
@@ -114,7 +114,7 @@ const generic_params = [
    * @param {number | Pattern} attack time in seconds.
    * @synonyms att
    * @example
-   * note("c3 e3").attack("<0 .1 .5>")
+   * note("c3 e3 f3 g3").attack("<0 .1 .5>")
    *
    */
   ['attack', 'att'],
@@ -128,7 +128,7 @@ const generic_params = [
    * @name fmh
    * @param {number | Pattern} harmonicity
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm(4)
    * .fmh("<1 2 1.5 1.61>")
    * .scope()
@@ -143,7 +143,7 @@ const generic_params = [
    * @param {number | Pattern} brightness modulation index
    * @synonyms fmi
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm("<0 1 2 8 32>")
    * .scope()
    *
@@ -156,7 +156,7 @@ const generic_params = [
    * @name fmenv
    * @param {number | Pattern} type lin | exp
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm(4)
    * .fmdecay(.2)
    * .fmsustain(0)
@@ -171,7 +171,7 @@ const generic_params = [
    * @name fmattack
    * @param {number | Pattern} time attack time
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm(4)
    * .fmattack("<0 .05 .1 .2>")
    * .scope()
@@ -184,7 +184,7 @@ const generic_params = [
    * @name fmdecay
    * @param {number | Pattern} time decay time
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm(4)
    * .fmdecay("<.01 .05 .1 .2>")
    * .fmsustain(.4)
@@ -198,7 +198,7 @@ const generic_params = [
    * @name fmsustain
    * @param {number | Pattern} level sustain level
    * @example
-   * note("c e g b")
+   * note("c e g b g e")
    * .fm(4)
    * .fmdecay(.1)
    * .fmsustain("<1 .75 .5 0>")
@@ -216,7 +216,7 @@ const generic_params = [
    * @name bank
    * @param {string | Pattern} bank the name of the bank
    * @example
-   * s("bd sd").bank('RolandTR909') // = s("RolandTR909_bd RolandTR909_sd")
+   * s("bd sd [~ bd] sd").bank('RolandTR909') // = s("RolandTR909_bd RolandTR909_sd")
    *
    */
   ['bank'],
@@ -231,10 +231,10 @@ const generic_params = [
    * @name decay
    * @param {number | Pattern} time decay time in seconds
    * @example
-   * note("c3 e3").decay("<.1 .2 .3 .4>").sustain(0)
+   * note("c3 e3 f3 g3").decay("<.1 .2 .3 .4>").sustain(0)
    *
    */
-  ['decay'],
+  ['decay', 'dec'],
   /**
    * Amplitude envelope sustain level: The level which is reached after attack / decay, being sustained until the offset.
    *
@@ -242,7 +242,7 @@ const generic_params = [
    * @param {number | Pattern} gain sustain level between 0 and 1
    * @synonyms sus
    * @example
-   * note("c3 e3").decay(.2).sustain("<0 .1 .4 .6 1>")
+   * note("c3 e3 f3 g3").decay(.2).sustain("<0 .1 .4 .6 1>")
    *
    */
   ['sustain', 'sus'],
@@ -267,10 +267,10 @@ const generic_params = [
    * @param {number | Pattern} frequency center frequency
    * @synonyms bandf, bp
    * @example
-   * s("bd sd,hh*3").bpf("<1000 2000 4000 8000>")
+   * s("bd sd [~ bd] sd,hh*6").bpf("<1000 2000 4000 8000>")
    *
    */
-  [['bandf', 'bandq'], 'bpf', 'bp'],
+  [['bandf', 'bandq', 'bpenv'], 'bpf', 'bp'],
   // TODO: in tidal, it seems to be normalized
   /**
    * Sets the **b**and-**p**ass **q**-factor (resonance).
@@ -279,7 +279,7 @@ const generic_params = [
    * @param {number | Pattern} q q factor
    * @synonyms bandq
    * @example
-   * s("bd sd").bpf(500).bpq("<0 1 2 3>")
+   * s("bd sd [~ bd] sd").bpf(500).bpq("<0 1 2 3>")
    *
    */
   // currently an alias of 'bandq' https://github.com/tidalcycles/strudel/issues/496
@@ -292,8 +292,8 @@ const generic_params = [
    * @name begin
    * @param {number | Pattern} amount between 0 and 1, where 1 is the length of the sample
    * @example
-   * samples({ rave: 'rave/AREUREADY.wav' }, 'github:tidalcycles/Dirt-Samples/master/')
-   * s("rave").begin("<0 .25 .5 .75>")
+   * samples({ rave: 'rave/AREUREADY.wav' }, 'github:tidalcycles/dirt-samples')
+   * s("rave").begin("<0 .25 .5 .75>").fast(2)
    *
    */
   ['begin'],
@@ -304,7 +304,7 @@ const generic_params = [
    * @name end
    * @param {number | Pattern} length 1 = whole sample, .5 = half sample, .25 = quarter sample etc..
    * @example
-   * s("bd*2,oh*4").end("<.1 .2 .5 1>")
+   * s("bd*2,oh*4").end("<.1 .2 .5 1>").fast(2)
    *
    */
   ['end'],
@@ -376,7 +376,7 @@ const generic_params = [
    * @name coarse
    * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.
    * @example
-   * s("bd sd,hh*4").coarse("<1 4 8 16 32>")
+   * s("bd sd [~ bd] sd,hh*8").coarse("<1 4 8 16 32>")
    *
    */
   ['coarse'],
@@ -463,7 +463,7 @@ const generic_params = [
    * @name cut
    * @param {number | Pattern} group cut group number
    * @example
-   * s("rd*4").cut(1)
+   * s("[oh hh]*4").cut(1)
    *
    */
   ['cut'],
@@ -476,12 +476,12 @@ const generic_params = [
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @synonyms cutoff, ctf, lp
    * @example
-   * s("bd sd,hh*3").lpf("<4000 2000 1000 500 200 100>")
+   * s("bd sd [~ bd] sd,hh*6").lpf("<4000 2000 1000 500 200 100>")
    * @example
-   * s("bd*8").lpf("1000:0 1000:10 1000:20 1000:30")
+   * s("bd*16").lpf("1000:0 1000:10 1000:20 1000:30")
    *
    */
-  [['cutoff', 'resonance'], 'ctf', 'lpf', 'lp'],
+  [['cutoff', 'resonance', 'lpenv'], 'ctf', 'lpf', 'lp'],
 
   /**
    * Sets the lowpass filter envelope modulation depth.
@@ -489,7 +489,7 @@ const generic_params = [
    * @param {number | Pattern} modulation depth of the lowpass filter envelope between 0 and _n_
    * @synonyms lpe
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .lpf(500)
    * .lpa(.5)
@@ -502,7 +502,7 @@ const generic_params = [
    * @param {number | Pattern} modulation depth of the highpass filter envelope between 0 and _n_
    * @synonyms hpe
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .hpf(500)
    * .hpa(.5)
@@ -515,7 +515,7 @@ const generic_params = [
    * @param {number | Pattern} modulation depth of the bandpass filter envelope between 0 and _n_
    * @synonyms bpe
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .bpf(500)
    * .bpa(.5)
@@ -528,7 +528,7 @@ const generic_params = [
    * @param {number | Pattern} attack time of the filter envelope
    * @synonyms lpa
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .lpf(500)
    * .lpa("<.5 .25 .1 .01>/4")
@@ -541,7 +541,7 @@ const generic_params = [
    * @param {number | Pattern} attack time of the highpass filter envelope
    * @synonyms hpa
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .hpf(500)
    * .hpa("<.5 .25 .1 .01>/4")
@@ -554,7 +554,7 @@ const generic_params = [
    * @param {number | Pattern} attack time of the bandpass filter envelope
    * @synonyms bpa
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .bpf(500)
    * .bpa("<.5 .25 .1 .01>/4")
@@ -567,7 +567,7 @@ const generic_params = [
    * @param {number | Pattern} decay time of the filter envelope
    * @synonyms lpd
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .lpf(500)
    * .lpd("<.5 .25 .1 0>/4")
@@ -581,7 +581,7 @@ const generic_params = [
    * @param {number | Pattern} decay time of the highpass filter envelope
    * @synonyms hpd
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .hpf(500)
    * .hpd("<.5 .25 .1 0>/4")
@@ -595,7 +595,7 @@ const generic_params = [
    * @param {number | Pattern} decay time of the bandpass filter envelope
    * @synonyms bpd
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .bpf(500)
    * .bpd("<.5 .25 .1 0>/4")
@@ -609,7 +609,7 @@ const generic_params = [
    * @param {number | Pattern} sustain amplitude of the lowpass filter envelope
    * @synonyms lps
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .lpf(500)
    * .lpd(.5)
@@ -623,7 +623,7 @@ const generic_params = [
    * @param {number | Pattern} sustain amplitude of the highpass filter envelope
    * @synonyms hps
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .hpf(500)
    * .hpd(.5)
@@ -637,7 +637,7 @@ const generic_params = [
    * @param {number | Pattern} sustain amplitude of the bandpass filter envelope
    * @synonyms bps
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .bpf(500)
    * .bpd(.5)
@@ -651,7 +651,7 @@ const generic_params = [
    * @param {number | Pattern} release time of the filter envelope
    * @synonyms lpr
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .clip(.5)
    * .lpf(500)
@@ -666,7 +666,7 @@ const generic_params = [
    * @param {number | Pattern} release time of the highpass filter envelope
    * @synonyms hpr
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .clip(.5)
    * .hpf(500)
@@ -681,7 +681,7 @@ const generic_params = [
    * @param {number | Pattern} release time of the bandpass filter envelope
    * @synonyms bpr
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .clip(.5)
    * .bpf(500)
@@ -695,11 +695,11 @@ const generic_params = [
    * @name ftype
    * @param {number | Pattern} type 12db (default) or 24db
    * @example
-   * note("<c2 e2 f2 g2>")
+   * note("c2 e2 f2 g2")
    * .sound('sawtooth')
    * .lpf(500)
    * .bpenv(4)
-   * .ftype("<12db 24db>")
+   * .ftype("12db 24db")
    */
   ['ftype'],
   ['fanchor'],
@@ -712,9 +712,9 @@ const generic_params = [
    * @param {number | Pattern} frequency audible between 0 and 20000
    * @synonyms hp, hcutoff
    * @example
-   * s("bd sd,hh*4").hpf("<4000 2000 1000 500 200 100>")
+   * s("bd sd [~ bd] sd,hh*8").hpf("<4000 2000 1000 500 200 100>")
    * @example
-   * s("bd sd,hh*4").hpf("<2000 2000:25>")
+   * s("bd sd [~ bd] sd,hh*8").hpf("<2000 2000:25>")
    *
    */
   // currently an alias of 'hcutoff' https://github.com/tidalcycles/strudel/issues/496
@@ -726,11 +726,11 @@ const generic_params = [
    * @synonyms vibrato, v
    * @param {number | Pattern} frequency of the vibrato in hertz
    * @example
-   * note("a")
+   * note("a e")
    * .vib("<.5 1 2 4 8 16>")
    * @example
    * // change the modulation depth with ":"
-   * note("a")
+   * note("a e")
    * .vib("<.5 1 2 4 8 16>:12")
    */
   [['vib', 'vibmod'], 'vibrato', 'v'],
@@ -750,15 +750,15 @@ const generic_params = [
    * @synonyms vmod
    * @param {number | Pattern} depth of vibrato (in semitones)
    * @example
-   * note("a").vib(4)
+   * note("a e").vib(4)
    * .vibmod("<.25 .5 1 2 12>")
    * @example
    * // change the vibrato frequency with ":"
-   * note("a")
+   * note("a e")
    * .vibmod("<.25 .5 1 2 12>:8")
    */
   [['vibmod', 'vib'], 'vmod'],
-  [['hcutoff', 'hresonance'], 'hpf', 'hp'],
+  [['hcutoff', 'hresonance', 'hpenv'], 'hpf', 'hp'],
   /**
    * Controls the **h**igh-**p**ass **q**-value.
    *
@@ -766,7 +766,7 @@ const generic_params = [
    * @param {number | Pattern} q resonance factor between 0 and 50
    * @synonyms hresonance
    * @example
-   * s("bd sd,hh*4").hpf(2000).hpq("<0 10 20 30>")
+   * s("bd sd [~ bd] sd,hh*8").hpf(2000).hpq("<0 10 20 30>")
    *
    */
   ['hresonance', 'hpq'],
@@ -777,7 +777,7 @@ const generic_params = [
    * @param {number | Pattern} q resonance factor between 0 and 50
    * @synonyms resonance
    * @example
-   * s("bd sd,hh*4").lpf(2000).lpq("<0 10 20 30>")
+   * s("bd sd [~ bd] sd,hh*8").lpf(2000).lpq("<0 10 20 30>")
    *
    */
   // currently an alias of 'resonance' https://github.com/tidalcycles/strudel/issues/496
@@ -804,7 +804,7 @@ const generic_params = [
    * @name delay
    * @param {number | Pattern} level between 0 and 1
    * @example
-   * s("bd").delay("<0 .25 .5 1>")
+   * s("bd bd").delay("<0 .25 .5 1>")
    * @example
    * s("bd bd").delay("0.65:0.25:0.9 0.65:0.125:0.7")
    *
@@ -818,7 +818,7 @@ const generic_params = [
    * @param {number | Pattern} feedback between 0 and 1
    * @synonyms delayfb, dfb
    * @example
-   * s("bd").delay(.25).delayfeedback("<.25 .5 .75 1>").slow(2)
+   * s("bd").delay(.25).delayfeedback("<.25 .5 .75 1>")
    *
    */
   ['delayfeedback', 'delayfb', 'dfb'],
@@ -829,7 +829,7 @@ const generic_params = [
    * @param {number | Pattern} seconds between 0 and Infinity
    * @synonyms delayt, dt
    * @example
-   * s("bd").delay(.25).delaytime("<.125 .25 .5 1>").slow(2)
+   * s("bd bd").delay(.25).delaytime("<.125 .25 .5 1>")
    *
    */
   ['delaytime', 'delayt', 'dt'],
@@ -856,7 +856,7 @@ const generic_params = [
    */
   ['detune', 'det'],
   /**
-   * Set dryness of reverb. See {@link room} and {@link size} for more information about reverb.
+   * Set dryness of reverb. See `room` and `size` for more information about reverb.
    *
    * @name dry
    * @param {number | Pattern} dry 0 = wet, 1 = dry
@@ -868,7 +868,7 @@ const generic_params = [
   ['dry'],
   // TODO: does not seem to do anything
   /*
-   * Used when using {@link begin}/{@link end} or {@link chop}/{@link striate} and friends, to change the fade out time of the 'grain' envelope.
+   * Used when using `begin`/`end` or `chop`/`striate` and friends, to change the fade out time of the 'grain' envelope.
    *
    * @name fadeTime
    * @param {number | Pattern} time between 0 and 1
@@ -891,6 +891,82 @@ const generic_params = [
    *
    */
   ['freq'],
+  // pitch envelope
+  /**
+   * Attack time of pitch envelope.
+   *
+   * @name pattack
+   * @synonyms patt
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("c eb g bb").pattack("0 .1 .25 .5").slow(2)
+   *
+   */
+  ['pattack', 'patt'],
+  /**
+   * Decay time of pitch envelope.
+   *
+   * @name pdecay
+   * @synonyms pdec
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("<c eb g bb>").pdecay("<0 .1 .25 .5>")
+   *
+   */
+  ['pdecay', 'pdec'],
+  // TODO: how to use psustain?!
+  ['psustain', 'psus'],
+  /**
+   * Release time of pitch envelope
+   *
+   * @name prelease
+   * @synonyms prel
+   * @param {number | Pattern} time time in seconds
+   * @example
+   * note("<c eb g bb> ~")
+   * .release(.5) // to hear the pitch release
+   * .prelease("<0 .1 .25 .5>")
+   *
+   */
+  ['prelease', 'prel'],
+  /**
+   * Amount of pitch envelope. Negative values will flip the envelope.
+   * If you don't set other pitch envelope controls, `pattack:.2` will be the default.
+   *
+   * @name penv
+   * @param {number | Pattern} semitones change in semitones
+   * @example
+   * note("c")
+   * .penv("<12 7 1 .5 0 -1 -7 -12>")
+   *
+   */
+  ['penv'],
+  /**
+   * Curve of envelope. Defaults to linear. exponential is good for kicks
+   *
+   * @name pcurve
+   * @param {number | Pattern} type 0 = linear, 1 = exponential
+   * @example
+   * note("g1*4")
+   * .s("sine").pdec(.5)
+   * .penv(32)
+   * .pcurve("<0 1>")
+   *
+   */
+  ['pcurve'],
+  /**
+   * Sets the range anchor of the envelope:
+   * - anchor 0: range = [note, note + penv]
+   * - anchor 1: range = [note - penv, note]
+   * If you don't set an anchor, the value will default to the psustain value.
+   *
+   * @name panchor
+   * @param {number | Pattern} anchor anchor offset
+   * @example
+   * note("c c4").penv(12).panchor("<0 .5 1 .5>")
+   *
+   */
+  ['panchor'],
   // TODO: https://tidalcycles.org/docs/configuration/MIDIOSC/control-voltage/#gate
   ['gate', 'gat'],
   // ['hatgrain'],
@@ -986,8 +1062,8 @@ const generic_params = [
    * @param {number | Pattern} number
    * @example
    * stack(
-   *   s("hh*3").delay(.5).delaytime(.25).orbit(1),
-   *   s("~ sd").delay(.5).delaytime(.125).orbit(2)
+   *   s("hh*6").delay(.5).delaytime(.25).orbit(1),
+   *   s("~ sd ~ sd").delay(.5).delaytime(.125).orbit(2)
    * )
    */
   ['orbit'],
@@ -1000,6 +1076,8 @@ const generic_params = [
    * @param {number | Pattern} pan between 0 and 1, from left to right (assuming stereo), once round a circle (assuming multichannel)
    * @example
    * s("[bd hh]*2").pan("<.5 1 .5 0>")
+   * @example
+   * s("bd rim sd rim bd ~ cp rim").pan(sine.slow(2))
    *
    */
   ['pan'],
@@ -1057,9 +1135,9 @@ const generic_params = [
    * @name room
    * @param {number | Pattern} level between 0 and 1
    * @example
-   * s("bd sd").room("<0 .2 .4 .6 .8 1>")
+   * s("bd sd [~ bd] sd").room("<0 .2 .4 .6 .8 1>")
    * @example
-   * s("bd sd").room("<0.9:1 0.9:4>")
+   * s("bd sd [~ bd] sd").room("<0.9:1 0.9:4>")
    *
    */
   [['room', 'size']],
@@ -1071,9 +1149,9 @@ const generic_params = [
    * @synonyms rlp
    * @param {number} frequency between 0 and 20000hz
    * @example
-   * s("bd sd").room(0.5).rlp(10000)
+   * s("bd sd [~ bd] sd").room(0.5).rlp(10000)
    * @example
-   * s("bd sd").room(0.5).rlp(5000)
+   * s("bd sd [~ bd] sd").room(0.5).rlp(5000)
    */
   ['roomlp', 'rlp'],
   /**
@@ -1084,9 +1162,9 @@ const generic_params = [
    * @synonyms rdim
    * @param {number} frequency between 0 and 20000hz
    * @example
-   * s("bd sd").room(0.5).rlp(10000).rdim(8000)
+   * s("bd sd [~ bd] sd").room(0.5).rlp(10000).rdim(8000)
    * @example
-   * s("bd sd").room(0.5).rlp(5000).rdim(400)
+   * s("bd sd [~ bd] sd").room(0.5).rlp(5000).rdim(400)
    *
    */
   ['roomdim', 'rdim'],
@@ -1098,9 +1176,9 @@ const generic_params = [
    * @synonyms rfade
    * @param {number} seconds for the reverb to fade
    * @example
-   * s("bd sd").room(0.5).rlp(10000).rfade(0.5)
+   * s("bd sd [~ bd] sd").room(0.5).rlp(10000).rfade(0.5)
    * @example
-   * s("bd sd").room(0.5).rlp(5000).rfade(4)
+   * s("bd sd [~ bd] sd").room(0.5).rlp(5000).rfade(4)
    *
    */
   ['roomfade', 'rfade'],
@@ -1110,25 +1188,25 @@ const generic_params = [
    * @param {string | Pattern} sample to use as an impulse response
    * @synonyms ir
    * @example
-   * s("bd sd").room(.8).ir("<shaker_large:0 shaker_large:2>")
+   * s("bd sd [~ bd] sd").room(.8).ir("<shaker_large:0 shaker_large:2>")
    *
    */
   [['ir', 'i'], 'iresponse'],
   /**
-   * Sets the room size of the reverb, see {@link room}.
+   * Sets the room size of the reverb, see `room`.
    * When this property is changed, the reverb will be recaculated, so only change this sparsely..
    *
    * @name roomsize
    * @param {number | Pattern} size between 0 and 10
    * @synonyms rsize, sz, size
    * @example
-   * s("bd sd").room(.8).rsize(1)
+   * s("bd sd [~ bd] sd").room(.8).rsize(1)
    * @example
-   * s("bd sd").room(.8).rsize(4)
+   * s("bd sd [~ bd] sd").room(.8).rsize(4)
    *
    */
   // TODO: find out why :
-  // s("bd sd").room(.8).roomsize("<0 .2 .4 .6 .8 [1,0]>").osc()
+  // s("bd sd [~ bd] sd").room(.8).roomsize("<0 .2 .4 .6 .8 [1,0]>").osc()
   // .. does not work. Is it because room is only one effect?
   ['roomsize', 'size', 'sz', 'rsize'],
   // ['sagogo'],
@@ -1141,7 +1219,7 @@ const generic_params = [
    * @name shape
    * @param {number | Pattern} distortion between 0 and 1
    * @example
-   * s("bd sd,hh*4").shape("<0 .2 .4 .6 .8>")
+   * s("bd sd [~ bd] sd,hh*8").shape("<0 .2 .4 .6 .8>")
    *
    */
   ['shape'],
@@ -1151,7 +1229,7 @@ const generic_params = [
    *
    * @name compressor
    * @example
-   * s("bd sd,hh*4")
+   * s("bd sd [~ bd] sd,hh*8")
    * .compressor("-20:20:10:.002:.02")
    *
    */
@@ -1166,14 +1244,14 @@ const generic_params = [
    * @name speed
    * @param {number | Pattern} speed -inf to inf, negative numbers play the sample backwards.
    * @example
-   * s("bd").speed("<1 2 4 1 -2 -4>")
+   * s("bd*6").speed("1 2 4 1 -2 -4")
    * @example
    * speed("1 1.5*2 [2 1.1]").s("piano").clip(1)
    *
    */
   ['speed'],
   /**
-   * Used in conjunction with {@link speed}, accepts values of "r" (rate, default behavior), "c" (cycles), or "s" (seconds). Using `unit "c"` means `speed` will be interpreted in units of cycles, e.g. `speed "1"` means samples will be stretched to fill a cycle. Using `unit "s"` means the playback speed will be adjusted so that the duration is the number of seconds specified by `speed`.
+   * Used in conjunction with `speed`, accepts values of "r" (rate, default behavior), "c" (cycles), or "s" (seconds). Using `unit "c"` means `speed` will be interpreted in units of cycles, e.g. `speed "1"` means samples will be stretched to fill a cycle. Using `unit "s"` means the playback speed will be adjusted so that the duration is the number of seconds specified by `speed`.
    *
    * @name unit
    * @param {number | string | Pattern} unit see description above
@@ -1209,10 +1287,12 @@ const generic_params = [
    * Formant filter to make things sound like vowels.
    *
    * @name vowel
-   * @param {string | Pattern} vowel You can use a e i o u.
+   * @param {string | Pattern} vowel You can use a e i o u ae aa oe ue y uh un en an on, corresponding to [a] [e] [i] [o] [u] [æ] [ɑ] [ø] [y] [ɯ] [ʌ] [œ̃] [ɛ̃] [ɑ̃] [ɔ̃]. Aliases: aa = å = ɑ, oe = ø = ö, y = ı, ae = æ.
    * @example
-   * note("c2 <eb2 <g2 g1>>").s('sawtooth')
+   * note("[c2 <eb2 <g2 g1>>]*2").s('sawtooth')
    * .vowel("<a e i <o u>>")
+   * @example
+   * s("bd sd mt ht bd [~ cp] ht lt").vowel("[a|e|i|o|u]")
    *
    */
   ['vowel'],
@@ -1387,17 +1467,27 @@ controls.createParams = (...names) =>
  * @param {number | Pattern} gain sustain level (0 to 1)
  * @param {number | Pattern} time release time in seconds
  * @example
- * note("<c3 bb2 f3 eb3>").sound("sawtooth").lpf(600).adsr(".1:.1:.5:.2")
+ * note("[c3 bb2 f3 eb3]*2").sound("sawtooth").lpf(600).adsr(".1:.1:.5:.2")
  */
 controls.adsr = register('adsr', (adsr, pat) => {
   adsr = !Array.isArray(adsr) ? [adsr] : adsr;
   const [attack, decay, sustain, release] = adsr;
   return pat.set({ attack, decay, sustain, release });
 });
-controls.ds = register('ds', (ds, pat) => {
-  ds = !Array.isArray(ds) ? [ds] : ds;
-  const [decay, sustain] = ds;
+controls.ad = register('ad', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [attack, decay = attack] = t;
+  return pat.attack(attack).decay(decay);
+});
+controls.ds = register('ds', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [decay, sustain = 0] = t;
   return pat.set({ decay, sustain });
+});
+controls.ds = register('ar', (t, pat) => {
+  t = !Array.isArray(t) ? [t] : t;
+  const [attack, release = attack] = t;
+  return pat.set({ attack, release });
 });
 
 export default controls;
