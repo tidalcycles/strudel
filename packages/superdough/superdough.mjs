@@ -253,6 +253,11 @@ function effectSend(input, effect, wet) {
   return send;
 }
 
+export function resetGlobalEffects() {
+  delays = {};
+  reverbs = {};
+}
+
 export const superdough = async (value, deadline, hapDuration) => {
   const ac = getAudioContext();
   if (typeof value !== 'object') {

@@ -7,7 +7,13 @@ This program is free software: you can redistribute it and/or modify it under th
 import { code2hash, getDrawContext, logger, silence } from '@strudel/core';
 import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel/transpiler';
-import { getAudioContext, initAudioOnFirstClick, webaudioOutput } from '@strudel/webaudio';
+import {
+  getAudioContext,
+  initAudioOnFirstClick,
+  webaudioOutput,
+  resetGlobalEffects,
+  resetLoadedSounds,
+} from '@strudel/webaudio';
 import { defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
@@ -157,6 +163,7 @@ export function Repl({ embedded = false }) {
   };
 
   const resetEditor = async () => {
+    resetGlobalEffects();
     clearCanvas();
     resetLoadedSounds();
     editorRef.current.repl.setCps(0.5);
@@ -183,6 +190,7 @@ export function Repl({ embedded = false }) {
     setViewingPatternData(patternData);
     clearCanvas();
     resetLoadedSounds();
+    resetGlobalEffects();
     await prebake(); // declare default samples
     editorRef.current.setCode(code);
     editorRef.current.repl.evaluate(code);
