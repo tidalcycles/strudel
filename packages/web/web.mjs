@@ -5,7 +5,7 @@ export * from '@strudel/transpiler';
 export * from '@strudel/mini';
 export * from '@strudel/tonal';
 export * from '@strudel/webaudio';
-import { Pattern, evalScope, controls } from '@strudel/core';
+import { Pattern, evalScope } from '@strudel/core';
 import { initAudioOnFirstClick, registerSynthSounds, webaudioScheduler } from '@strudel/webaudio';
 // import { registerSoundfonts } from '@strudel/soundfonts';
 import { evaluate as _evaluate } from '@strudel/transpiler';
@@ -15,7 +15,6 @@ import { miniAllStrings } from '@strudel/mini';
 export async function defaultPrebake() {
   const loadModules = evalScope(
     evalScope,
-    controls,
     import('@strudel/core'),
     import('@strudel/mini'),
     import('@strudel/tonal'),

@@ -1,6 +1,6 @@
 import { StrudelMirror } from '@strudel/codemirror';
 import { funk42 } from './tunes';
-import { drawPianoroll, evalScope, controls } from '@strudel/core';
+import { drawPianoroll, evalScope } from '@strudel/core';
 import './style.css';
 import { initAudioOnFirstClick } from '@strudel/webaudio';
 import { transpiler } from '@strudel/transpiler';
@@ -25,7 +25,6 @@ const editor = new StrudelMirror({
   prebake: async () => {
     initAudioOnFirstClick(); // needed to make the browser happy (don't await this here..)
     const loadModules = evalScope(
-      controls,
       import('@strudel/core'),
       import('@strudel/mini'),
       import('@strudel/tonal'),

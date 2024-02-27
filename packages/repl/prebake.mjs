@@ -1,4 +1,4 @@
-import { controls, noteToMidi, valueToMidi, Pattern, evalScope } from '@strudel/core';
+import { noteToMidi, valueToMidi, Pattern, evalScope } from '@strudel/core';
 import { registerSynthSounds, registerZZFXSounds, samples } from '@strudel/webaudio';
 import * as core from '@strudel/core';
 
@@ -17,7 +17,6 @@ export async function prebake() {
     // import('@strudel/serial'),
     // import('@strudel/csound'),
     // import('@strudel/osc'),
-    controls, // sadly, this cannot be exported from core directly (yet)
   );
   // load samples
   const ds = 'https://raw.githubusercontent.com/felixroos/dough-samples/main/';

@@ -51,9 +51,8 @@ import {
 
 import { steady } from '../signal.mjs';
 
-import controls from '../controls.mjs';
+import { n, s } from '../controls.mjs';
 
-const { n, s } = controls;
 const st = (begin, end) => new State(ts(begin, end));
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
 const hap = (whole, part, value, context = {}) => new Hap(whole, part, value, context);

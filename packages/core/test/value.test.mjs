@@ -6,8 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { describe, it, expect } from 'vitest';
 import { map, valued, mul } from '../value.mjs';
-import controls from '../controls.mjs';
-const { n } = controls;
+import { n } from '../controls.mjs';
 
 describe('Value', () => {
   it('unionWith', () => {
