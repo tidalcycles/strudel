@@ -1364,7 +1364,6 @@ const generic_params = [
   ['ring'],
   ['ringf'],
   ['ringdf'],
-  ['distort'],
   ['freeze'],
   ['xsdelay'],
   ['tsdelay'],
