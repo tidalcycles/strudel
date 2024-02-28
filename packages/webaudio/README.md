@@ -12,9 +12,8 @@ npm i @strudel/webaudio --save
 ## Example
 
 ```js
-import { repl, controls } from "@strudel/core";
+import { repl, note } from "@strudel/core";
 import { initAudioOnFirstClick, getAudioContext, webaudioOutput } from "@strudel/webaudio";
-const { note } = controls;
 
 initAudioOnFirstClick();
 const ctx = getAudioContext();

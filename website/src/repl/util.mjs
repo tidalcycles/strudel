@@ -1,4 +1,4 @@
-import { controls, evalScope, hash2code, logger } from '@strudel/core';
+import { evalScope, hash2code, logger } from '@strudel/core';
 import { settingPatterns, defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioContext, initializeAudioOutput, setDefaultAudioContext } from '@strudel/webaudio';
 
@@ -92,11 +92,7 @@ export function loadModules() {
     modules = modules.concat([import('@strudel/midi'), import('@strudel/osc')]);
   }
 
-  return evalScope(
-    controls, // sadly, this cannot be exported from core direclty
-    settingPatterns,
-    ...modules,
-  );
+  return evalScope(settingPatterns, ...modules);
 }
 
 let lastShared;

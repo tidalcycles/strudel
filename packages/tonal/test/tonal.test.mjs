@@ -7,10 +7,9 @@ This program is free software: you can redistribute it and/or modify it under th
 // import { strict as assert } from 'assert';
 
 import '../tonal.mjs'; // need to import this to add prototypes
-import { pure, controls, seq } from '@strudel/core';
+import { pure, n, seq } from '@strudel/core';
 import { describe, it, expect } from 'vitest';
 import { mini } from '../../mini/mini.mjs';
-const { n } = controls;
 
 describe('tonal', () => {
   it('Should run tonal functions ', () => {
