@@ -3521,48 +3521,6 @@ exports[`runs examples > example "layer" example index 0 1`] = `
 ]
 `;
 
-exports[`runs examples > example "legato" example index 0 1`] = `
-[
-  "[ 0/1 → 1/32 | c4 ]",
-  "[ 1/4 → 9/32 | eb4 ]",
-  "[ 1/2 → 17/32 | g4 ]",
-  "[ 3/4 → 25/32 | bb4 ]",
-  "[ 1/1 → 17/16 | c4 ]",
-  "[ 5/4 → 21/16 | eb4 ]",
-  "[ 3/2 → 25/16 | g4 ]",
-  "[ 7/4 → 29/16 | bb4 ]",
-  "[ 2/1 → 17/8 | c4 ]",
-  "[ 9/4 → 19/8 | eb4 ]",
-  "[ 5/2 → 21/8 | g4 ]",
-  "[ 11/4 → 23/8 | bb4 ]",
-  "[ 3/1 → 51/16 | c4 ]",
-  "[ 13/4 → 55/16 | eb4 ]",
-  "[ 7/2 → 59/16 | g4 ]",
-  "[ 15/4 → 63/16 | bb4 ]",
-]
-`;
-
-exports[`runs examples > example "legato" example index 0 2`] = `
-[
-  "[ 0/1 → 1/16 | note:c3 ]",
-  "[ 1/4 → 5/16 | note:eb3 ]",
-  "[ 1/2 → 9/16 | note:g3 ]",
-  "[ 3/4 → 13/16 | note:c4 ]",
-  "[ 1/1 → 9/8 | note:c3 ]",
-  "[ 5/4 → 11/8 | note:eb3 ]",
-  "[ 3/2 → 13/8 | note:g3 ]",
-  "[ 7/4 → 15/8 | note:c4 ]",
-  "[ 2/1 → 9/4 | note:c3 ]",
-  "[ 9/4 → 5/2 | note:eb3 ]",
-  "[ 5/2 → 11/4 | note:g3 ]",
-  "[ 11/4 → 3/1 | note:c4 ]",
-  "[ 3/1 → 7/2 | note:c3 ]",
-  "[ 13/4 → 15/4 | note:eb3 ]",
-  "[ 7/2 → 4/1 | note:g3 ]",
-  "[ 15/4 → 17/4 | note:c4 ]",
-]
-`;
-
 exports[`runs examples > example "leslie" example index 0 1`] = `
 [
   "[ 0/1 → 1/1 | n:0 s:supersquare leslie:0 ]",
