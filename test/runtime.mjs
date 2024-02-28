@@ -7,7 +7,6 @@ import { evaluate } from '@strudel/transpiler';
 import { evalScope } from '@strudel/core';
 import * as strudel from '@strudel/core';
 import * as webaudio from '@strudel/webaudio';
-import controls from '@strudel/core/controls.mjs';
 // import gist from '@strudel/core/gist.js';
 import { mini, m } from '@strudel/mini/mini.mjs';
 // import * as voicingHelpers from '@strudel/tonal/voicings.mjs';
@@ -21,7 +20,6 @@ import '@strudel/xen/xen.mjs';
 // import '@strudel/osc/osc.mjs';
 // import '@strudel/webaudio/webaudio.mjs';
 // import '@strudel/serial/serial.mjs';
-// import controls from '@strudel/core/controls.mjs';
 import '../website/src/repl/piano';
 
 class MockedNode {
@@ -153,10 +151,9 @@ evalScope(
   strudel,
   toneHelpersMocked,
   uiHelpersMocked,
-  controls,
   webaudio,
   tonalHelpers,
-  /* controls,
+  /*
   toneHelpers,
   voicingHelpers,
   drawHelpers,

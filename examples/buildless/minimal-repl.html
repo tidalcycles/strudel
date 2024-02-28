@@ -16,6 +16,7 @@
     </div>
     <div id="output"></div>
     <script type="module">
+      // TODO: refactor to use newer version without controls import
       import { controls, repl, evalScope } from 'https://cdn.skypack.dev/@strudel/core@0.11.0';
       import { mini } from 'https://cdn.skypack.dev/@strudel/mini@0.11.0';
       import { transpiler } from 'https://cdn.skypack.dev/@strudel/transpiler@0.11.0';
@@ -52,8 +53,8 @@
       });
 
       function getTune() {
-        return `await samples('github:tidalcycles/Dirt-Samples/master')
-
+        return `samples('github:tidalcycles/dirt-samples')
+setcps(1);
 stack(
   // amen
   n("0 1 2 3 4 5 6 7")

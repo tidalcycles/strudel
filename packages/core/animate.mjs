@@ -1,6 +1,4 @@
-import { Pattern, getDrawContext, silence, register, pure } from './index.mjs';
-import controls from './controls.mjs'; // do not import from index.mjs as it breaks for some reason..
-const { createParams } = controls;
+import { Pattern, getDrawContext, silence, register, pure, createParams } from './index.mjs';
 
 let clearColor = '#22222210';
 

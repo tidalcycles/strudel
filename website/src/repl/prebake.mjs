@@ -115,13 +115,12 @@ export async function prebake() {
           'numbers/8.wav',
         ],
       },
-      'github:tidalcycles/Dirt-Samples/master/',
+      'github:tidalcycles/dirt-samples',
       {
         prebake: true,
       },
     ),
   ]);
-  // await samples('github:tidalcycles/Dirt-Samples/master');
 }
 
 const maxPan = noteToMidi('C8');

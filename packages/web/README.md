@@ -43,7 +43,7 @@ By default, no external samples are loaded, but you can add them like this:
 
 ```js
 initStrudel({
-  prebake: () => samples('github:tidalcycles/Dirt-Samples/master'),
+  prebake: () => samples('github:tidalcycles/dirt-samples'),
 });
 
 document.getElementById('play').addEventListener('click', 

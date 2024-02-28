@@ -19,7 +19,7 @@ import { superdough, samples, initAudioOnFirstClick, registerSynthSounds } from 
 
 const init = Promise.all([
   initAudioOnFirstClick(),
-  samples('github:tidalcycles/Dirt-Samples/master'),
+  samples('github:tidalcycles/dirt-samples'),
   registerSynthSounds(),
 ]);
 
@@ -148,7 +148,7 @@ The json file is expected to have the same format as described above.
 Because it is common to use github for samples, there is a short way to load a sample map from github:
 
 ```js
-samples('github:tidalcycles/Dirt-Samples/master')
+samples('github:tidalcycles/dirt-samples')
 ```
 
 The format is `github:<user>/<repo>/<branch>`.

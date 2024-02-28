@@ -2322,10 +2322,10 @@ const _loopAt = function (factor, pat, cps = 0.5) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- * await samples('github:tidalcycles/Dirt-Samples/master')
+ * samples('github:tidalcycles/dirt-samples')
  * s("breaks165").slice(8, "0 1 <2 2*2> 3 [4 0] 5 6 7".every(3, rev)).slow(0.75)
  * @example
- * await samples('github:tidalcycles/Dirt-Samples/master')
+ * samples('github:tidalcycles/dirt-samples')
  * s("breaks125").fit().slice([0,.25,.5,.75], "0 1 1 <2 3>")
  */
 
@@ -2351,7 +2351,7 @@ export const slice = register(
  * Works the same as slice, but changes the playback speed of each slice to match the duration of its step.
  * @name splice
  * @example
- * await samples('github:tidalcycles/Dirt-Samples/master')
+ * samples('github:tidalcycles/dirt-samples')
  * s("breaks165")
  * .splice(8,  "0 1 [2 3 0]@2 3 0@2 7")
  */

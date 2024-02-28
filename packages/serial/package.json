@@ -1,11 +1,11 @@
 {
   "name": "@strudel/serial",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Webserial API for strudel",
   "main": "serial.mjs",
+  "type": "module",
   "publishConfig": {
-    "main": "dist/index.js",
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "build": "vite build",

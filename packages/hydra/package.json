@@ -1,11 +1,11 @@
 {
   "name": "@strudel/hydra",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hydra integration for strudel",
   "main": "hydra.mjs",
+  "type": "module",
   "publishConfig": {
-    "main": "dist/index.js",
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "server": "node server.js",

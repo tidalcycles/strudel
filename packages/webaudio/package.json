@@ -1,6 +1,6 @@
 {
   "name": "@strudel/webaudio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Web Audio helpers for Strudel",
   "main": "index.mjs",
   "type": "module",
@@ -8,8 +8,7 @@
     "example": "examples"
   },
   "publishConfig": {
-    "main": "dist/index.js",
-    "module": "dist/index.mjs"
+    "main": "dist/index.mjs"
   },
   "scripts": {
     "example": "npx parcel examples/repl.html",

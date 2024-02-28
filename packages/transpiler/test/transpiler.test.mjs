@@ -23,6 +23,9 @@ describe('transpiler', () => {
   it('supports top level await', () => {
     expect(transpiler("await samples('xxx');", simple).output).toEqual("await samples('xxx');");
   });
+  it('adds await to bare samples call', () => {
+    expect(transpiler("samples('xxx');", simple).output).toEqual("await samples('xxx');");
+  });
   /*   it('parses dynamic imports', () => {
     expect(
       transpiler("const { default: foo } = await import('https://bar.com/foo.js');", {
