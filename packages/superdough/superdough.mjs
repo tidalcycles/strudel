@@ -452,7 +452,8 @@ export const superdough = async (value, deadline, hapDuration) => {
   // effects
   coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
-  shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
+  const shapeInput = Array.isArray(shape) ? { shape: shape[0], postgain: shape[1] } : { shape };
+  shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', shapeInput));
 
   compressorThreshold !== undefined &&
     chain.push(
