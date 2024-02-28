@@ -29,7 +29,7 @@ class CoarseProcessor extends AudioWorkletProcessor {
 
   process(inputs, outputs, parameters) {
     let coarse = parameters.coarse[0] ?? 0;
-    coarse = Math.min(128, Math.max(1, Math.round(coarse * 128)));
+    coarse = Math.max(1, coarse);
     return processSample(inputs, outputs, (block, n, inChannel, outChannel) => {
       const value = n % coarse === 0 ? block : outChannel[n - 1];
       return value;
@@ -49,10 +49,8 @@ class CrushProcessor extends AudioWorkletProcessor {
   }
 
   process(inputs, outputs, parameters) {
-    const bitMax = 16;
-    const bitMin = 1;
     let crush = parameters.crush[0] ?? 8;
-    crush = Math.max(bitMin, bitMax - crush * bitMax);
+    crush = Math.max(1, crush);
 
     return processSample(inputs, outputs, (block) => {
       const x = Math.pow(2, crush - 1);
@@ -75,9 +73,9 @@ class ShapeProcessor extends AudioWorkletProcessor {
   }
 
   process(inputs, outputs, parameters) {
-    let shape_param = parameters.shape[0];
+    let shape = parameters.shape[0];
     const postgain = Math.max(0.001, Math.min(1, parameters.postgain[0]));
-    const shape = shape_param * 100;
+    shape = Math.expm1(shape);
     return processSample(inputs, outputs, (block) => {
       const val = ((1 + shape) * block) / (1 + shape * Math.abs(block));
       return val * postgain;

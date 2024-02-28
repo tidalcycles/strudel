@@ -355,7 +355,6 @@ const generic_params = [
    * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
    *
    */
-  ['crush'],
   // TODO: currently duplicated with "native" legato
   // TODO: superdirt legato will do more: https://youtu.be/dQPmE1WaD1k?t=419
   /**
@@ -370,16 +369,14 @@ const generic_params = [
    */
   // ['legato'],
   // ['clhatdecay'],
-
+  ['crush'],
   /**
-   * fake-resampling for lowering the sample rate. Caution: This effect seems to only work in chromium based browsers
+   * fake-resampling for lowering the sample rate
    *
    * @name coarse
-   * @param {number | Pattern} factor number between 0 and 1
+   * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.
    * @example
-   * s("bd sd [~ bd] sd,hh*8").coarse("<0 .1 .2  .8>")
-   * @example
-   * s("bd(5, 8),hh*8").coarse(saw.fast(3)),
+   * s("bd sd [~ bd] sd,hh*8").coarse("<1 4 8 16 32>")
    *
    */
   ['coarse'],
@@ -1219,14 +1216,14 @@ const generic_params = [
   /**
    * Wave shaping distortion. CAUTION: it might get loud
    * second option in optional array syntax (ex: ".9:.5") applies a postgain to the output
-   * most useful shape values are usually between 0 and 1 (depending on source gain), however there is no limit
+   * most useful shape values are usually between 0 and 10 (depending on source gain)
    *
    * @name shape
    * @param {number | Pattern} distortion between 0 and 1
    * @example
-   * s("bd sd [~ bd] sd,hh*8").shape("<0 .1 .5 10:.5>")
+   * s("bd sd [~ bd] sd,hh*8").shape("<0 2 3 10:.5>")
    * @example
-   * note("d1!8").s("sine").penv(36).pdecay(.12).decay(.2).shape("100:.4")
+   * note("d1!8").s("sine").penv(36).pdecay(.12).decay(.23).shape("8:.4")
    *
    */
   ['shape'],
