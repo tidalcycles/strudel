@@ -75,7 +75,8 @@ class ShapeProcessor extends AudioWorkletProcessor {
   process(inputs, outputs, parameters) {
     let shape = parameters.shape[0];
     const postgain = Math.max(0.001, Math.min(1, parameters.postgain[0]));
-    shape = Math.expm1(shape * 5);
+    shape = shape < 1 ? shape : 1.0 - 4e-10;
+    shape = (2.0 * shape) / (1.0 - shape);
     return processSample(inputs, outputs, (block) => {
       const val = ((1 + shape) * block) / (1 + shape * Math.abs(block));
       return val * postgain;
@@ -84,3 +85,28 @@ class ShapeProcessor extends AudioWorkletProcessor {
 }
 
 registerProcessor('shape-processor', ShapeProcessor);
+
+class DistortProcessor extends AudioWorkletProcessor {
+  static get parameterDescriptors() {
+    return [
+      { name: 'distort', defaultValue: 0 },
+      { name: 'postgain', defaultValue: 1 },
+    ];
+  }
+
+  constructor() {
+    super();
+  }
+
+  process(inputs, outputs, parameters) {
+    let shape = parameters.distort[0];
+    const postgain = Math.max(0.001, Math.min(1, parameters.postgain[0]));
+    shape = Math.expm1(shape);
+    return processSample(inputs, outputs, (block) => {
+      const val = ((1 + shape) * block) / (1 + shape * Math.abs(block));
+      return val * postgain;
+    });
+  }
+}
+
+registerProcessor('distort-processor', DistortProcessor);

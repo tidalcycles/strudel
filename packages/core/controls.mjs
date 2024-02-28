@@ -1214,19 +1214,31 @@ const generic_params = [
   // ['sclaves'],
   // ['scrash'],
   /**
-   * Wave shaping distortion. CAUTION: it might get loud
+   * (Deprecated) Wave shaping distortion. WARNING: can suddenly get unpredictably loud.
+   * Please use distort instead, which has a more predictable response curve
    * second option in optional array syntax (ex: ".9:.5") applies a postgain to the output
-   * most useful shape values are usually between 0 and 10 (depending on source gain)
    *
    * @name shape
    * @param {number | Pattern} distortion between 0 and 1
    * @example
-   * s("bd sd [~ bd] sd,hh*8").shape("<0 2 3 10:.5>")
-   * @example
-   * note("d1!8").s("sine").penv(36).pdecay(.12).decay(.23).shape("8:.4")
+   * s("bd sd [~ bd] sd,hh*8").shape("<0 .2 .3 .95:.5>")
    *
    */
   ['shape'],
+
+  /**
+   * Wave shaping distortion. CAUTION: it can get loud.
+   * Second option in optional array syntax (ex: ".9:.5") applies a postgain to the output.
+   * Most useful values are usually between 0 and 10 (depending on source gain). If you are feeling adventurous, you can turn it up to 11 and beyond ;)
+   * @name distort
+   * @param {number | Pattern} distortion
+   * @example
+   * s("bd sd [~ bd] sd,hh*8").distort("<0 2 3 10:.5>")
+   * @example
+   * note("d1!8").s("sine").penv(36).pdecay(.12).decay(.23).distort("8:.4")
+   *
+   */
+  ['distort', 'dist'],
   /**
    * Dynamics Compressor. The params are `compressor("threshold:ratio:knee:attack:release")`
    * More info [here](https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode?retiredLocale=de#instance_properties)
