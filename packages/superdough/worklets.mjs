@@ -75,7 +75,7 @@ class ShapeProcessor extends AudioWorkletProcessor {
   process(inputs, outputs, parameters) {
     let shape = parameters.shape[0];
     const postgain = Math.max(0.001, Math.min(1, parameters.postgain[0]));
-    shape = Math.expm1(shape);
+    shape = Math.expm1(shape * 5);
     return processSample(inputs, outputs, (block) => {
       const val = ((1 + shape) * block) / (1 + shape * Math.abs(block));
       return val * postgain;
