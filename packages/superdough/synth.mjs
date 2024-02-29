@@ -27,7 +27,7 @@ const noises = ['pink', 'white', 'brown', 'crackle'];
 export function registerSynthSounds() {
   registerSound('bet', (t, value, onended) => {
     const ac = getAudioContext();
-    let { note, freq } = value;
+    let { note, freq, duration, cps } = value;
     note = note || 36;
     if (typeof note === 'string') {
       note = noteToMidi(note); // e.g. c3 => 48
@@ -40,19 +40,12 @@ export function registerSynthSounds() {
     // set frequency
     freq = Number(freq);
 
-    const node = getWorklet(ac, 'better-oscillator', { frequency: freq });
-    const o = ac.createOscillator();
-    o.start(t);
-    o.onended = () => {
-      console.log('here');
-      o.disconnect();
-      node.disconnect();
-    };
+    const node = getWorklet(ac, 'better-oscillator', { frequency: freq, start: t, end: t + duration * cps });
 
     return {
       node,
       stop: (time) => {
-        o.stop(time);
+        // o.stop(time);
       },
       triggerRelease: (time) => {
         // envGain?.stop(time);
