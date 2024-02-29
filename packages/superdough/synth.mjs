@@ -1,5 +1,5 @@
 import { midiToFreq, noteToMidi } from './util.mjs';
-import { registerSound, getAudioContext } from './superdough.mjs';
+import { registerSound, getAudioContext, getWorklet } from './superdough.mjs';
 import { gainNode, getADSRValues, getParamADSR, getPitchEnvelope, getVibratoOscillator } from './helpers.mjs';
 import { getNoiseMix, getNoiseOscillator } from './noise.mjs';
 
@@ -25,6 +25,32 @@ const waveforms = ['sine', 'square', 'triangle', 'sawtooth'];
 const noises = ['pink', 'white', 'brown', 'crackle'];
 
 export function registerSynthSounds() {
+  registerSound('bet', (t, value, onended) => {
+    const ac = getAudioContext();
+    let { note, freq } = value;
+    note = note || 36;
+    if (typeof note === 'string') {
+      note = noteToMidi(note); // e.g. c3 => 48
+    }
+    // get frequency
+    if (!freq && typeof note === 'number') {
+      freq = midiToFreq(note); // + 48);
+    }
+
+    // set frequency
+    freq = Number(freq);
+
+    const node = getWorklet(ac, 'better-oscillator', { frequency: freq });
+
+    return {
+      node,
+      stop: (time) => {},
+      triggerRelease: (time) => {
+        // envGain?.stop(time);
+      },
+    };
+  });
+
   [...waveforms, ...noises].forEach((s) => {
     registerSound(
       s,

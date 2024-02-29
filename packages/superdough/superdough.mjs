@@ -50,7 +50,7 @@ function loadWorklets() {
   return workletsLoading;
 }
 
-function getWorklet(ac, processor, params) {
+export function getWorklet(ac, processor, params) {
   const node = new AudioWorkletNode(ac, processor);
   Object.entries(params).forEach(([key, value]) => {
     node.parameters.get(key).value = value;

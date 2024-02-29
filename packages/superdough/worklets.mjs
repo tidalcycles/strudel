@@ -110,3 +110,112 @@ class DistortProcessor extends AudioWorkletProcessor {
 }
 
 registerProcessor('distort-processor', DistortProcessor);
+
+// class SupersawProcessor extends AudioWorkletProcessor {
+//   static get parameterDescriptors() {
+//     return [
+//       { name: 'distort', defaultValue: 0 },
+//       { name: 'postgain', defaultValue: 1 },
+//     ];
+//   }
+
+//   constructor() {
+//     super();
+//   }
+
+//   process(inputs, outputs, parameters) {
+//     const output = outputs[0];
+//     let saw = (x, t) => ((x * t % 1) - 0.5) * 2
+
+//   }
+// }
+
+// registerProcessor('supersaw-processor', SupersawProcessor);
+
+const saw = (v) => v - Math.floor(v);
+
+class BetterOscillatorProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.phase = 0;
+    this.sync_phase = 0;
+    this.prev_sync_phase = 0;
+  }
+  static get parameterDescriptors() {
+    return [
+      {
+        name: 'phase',
+        defaultValue: 0,
+        max: 1,
+        min: 0,
+      },
+      {
+        name: 'duty',
+        defaultValue: 0.5,
+        min: 0,
+        max: 1,
+      },
+      {
+        name: 'frequency',
+        defaultValue: 440,
+        min: Number.EPSILON,
+      },
+      {
+        name: 'wave',
+        defaultValue: 3,
+        min: 0,
+        max: 3,
+      },
+      {
+        name: 'sync',
+        defaultValue: 0,
+        min: 0,
+      },
+    ];
+  }
+  process(input, outputs, params) {
+    for (let z = 0; z < outputs.length; z++) {
+      const out = outputs[z][0];
+      const outlen = out.length;
+      const freq = params.frequency.length === 1;
+      const phase = params.phase.length === 1;
+      const wave = params.wave.length === 1;
+      const duty = params.duty.length === 1;
+      const sync = params.sync.length === 1;
+
+      let back = 0;
+      for (let x = 0; x < outlen; x++) {
+        this.sync_phase = this.prev_sync_phase % (params.sync[sync ? 0 : x] / sampleRate);
+        if (params.sync[sync ? 0 : x] !== 0 && this.prev_sync_phase >= params.sync[sync ? 0 : x] / sampleRate) {
+          this.phase = 0;
+          back = x;
+        }
+        this.prev_sync_phase = this.sync_phase;
+        const main = (params.frequency[freq ? 0 : x] * (x - back)) / sampleRate;
+        // noise
+        if (params.wave[wave ? 0 : x] >= 4) {
+          out[x] = Math.random() * 2 - 1;
+        } else if (params.wave[wave ? 0 : x] >= 3) {
+          // sine wave made using bulit-in Math.sin
+          out[x] = Math.sin((main + this.phase + params.phase[phase ? 0 : x]) * 2 * Math.PI);
+          // sawtooth wave using linear piecewise floor
+        } else if (params.wave[wave ? 0 : x] >= 2) {
+          out[x] = 2 * saw(main + this.phase + params.phase[phase ? 0 : x]) - 1;
+          // pulse wave using difference of phase shifted saws and variable DC threshold
+        } else if (params.wave[wave ? 0 : x] >= 1) {
+          const temp = main + this.phase + params.phase[phase ? 0 : x];
+          out[x] = saw(temp) - saw(temp + params.duty[duty ? 0 : x]) > 0 ? 1 : -1;
+          // triangle wave using absolute value of amplitude shifted sawtooth wave
+        } else if (params.wave[wave ? 0 : x] >= 0) {
+          out[x] = 4 * Math.abs(saw(main + this.phase + params.phase[phase ? 0 : x]) - 1 / 2) - 1;
+        }
+        this.prev_sync_phase += 1 / sampleRate;
+      }
+      this.phase += (params.frequency[freq ? 0 : outlen - 1] * outlen) / sampleRate;
+      this.phase %= sampleRate;
+      return true;
+    }
+  }
+}
+
+registerProcessor('better-oscillator', BetterOscillatorProcessor);
