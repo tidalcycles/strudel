@@ -896,16 +896,15 @@ addToPrototype('weaveWith', function (t, ...funcs) {
 //////////////////////////////////////////////////////////////////////
 // compose matrix functions
 
-// TODO - adopt value.mjs fully..
+function _nonArrayObject(x) {
+  return !Array.isArray(x) && typeof x === 'object';
+}
 function _composeOp(a, b, func) {
-  function _nonFunctionObject(x) {
-    return x instanceof Object && !(x instanceof Function);
-  }
-  if (_nonFunctionObject(a) || _nonFunctionObject(b)) {
-    if (!_nonFunctionObject(a)) {
+  if (_nonArrayObject(a) || _nonArrayObject(b)) {
+    if (!_nonArrayObject(a)) {
       a = { value: a };
     }
-    if (!_nonFunctionObject(b)) {
+    if (!_nonArrayObject(b)) {
       b = { value: b };
     }
     return unionWithObj(a, b, func);
