@@ -178,7 +178,7 @@ export const scale = register('scale', function (scale, pat) {
     pat
       .fmap((value) => {
         const isObject = typeof value === 'object';
-        let step = isObject ? value.n : value;
+        let step = isObject ? (value.n === undefined ? value.value : value.n) : value;
         if (isObject) {
           delete value.n; // remove n so it won't cause trouble
         }
@@ -198,7 +198,7 @@ export const scale = register('scale', function (scale, pat) {
           } else {
             note = scaleStep(asNumber, scale);
           }
-          value = pure(isObject ? { ...value, note } : note);
+          value = pure(isObject ? ( value.value === undefined ? { ...value, note } : {...value, value:note, note} ) : note);
         } catch (err) {
           logger(`[tonal] ${err.message}`, 'error');
           value = silence;

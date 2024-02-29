@@ -9,7 +9,7 @@ import { Pattern, register, sequence } from './pattern.mjs';
 export function createParam(names) {
   const name = Array.isArray(names) ? names[0] : names;
 
-  var withVal;
+  var withVal, withVal0pats;
   if (Array.isArray(names)) {
     withVal = (xs) => {
       if (Array.isArray(xs)) {
@@ -24,15 +24,60 @@ export function createParam(names) {
         return { [name]: xs };
       }
     };
+    withVal0pats = (xs) => {
+      if (Array.isArray(xs)) {
+        const result = {};
+        xs.forEach((x, i) => {
+          if (i < names.length) {
+            result[names[i]] = x;
+          }
+        });
+        return result;
+      }
+      if (typeof xs === 'object') {
+        const result = { ...xs };
+
+        if (xs.value === undefined) {
+          for (let i = 0; i < names.length; i++) {
+            if (xs[i] !== undefined) {
+              result[names[i]] = xs[i];
+              delete result[i];
+            }
+          }
+        } else {
+          result[names[0]] = xs.value;
+          delete result.value;
+        }
+        return result;
+      }
+      return { [name]: xs };
+    };
   } else {
     withVal = (x) => ({ [name]: x });
+    withVal0pats = (x) => {
+      if (Array.isArray(x)) {
+        return { [name]: x[0] };
+      }
+      if (typeof x === 'object') {
+        if (x.value === undefined) {
+          let o = { ...x, [name]: x[0] };
+          delete o[0];
+          return o;
+        } else {
+          let o = { ...x, [name]: x.value };
+          delete o.value;
+          return o;
+        }
+      }
+      return { [name]: x };
+    };
   }
 
   const func = (...pats) => sequence(...pats).withValue(withVal);
 
   const setter = function (...pats) {
     if (!pats.length) {
-      return this.fmap(withVal);
+      return this.fmap(withVal0pats);
     }
     return this.set(func(...pats));
   };
