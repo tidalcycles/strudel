@@ -304,6 +304,8 @@ export const pickmodReset = register('pickmodReset', function (lookup, pat) {
 /**
 /** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
  * Similar to `pick`, but cycles are squeezed into the target ('inhabited') pattern.
+ * @name inhabit
+ * @synonyms pickSqueeze
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
@@ -322,6 +324,8 @@ export const { inhabit, pickSqueeze } = register(['inhabit', 'pickSqueeze'], fun
  * it wraps around, rather than sticking at the maximum value.
  * For example, if you pick the fifth pattern of a list of three, you'll get the
  * second one.
+ * @name inhabitmod
+ * @synonyms pickmodSqueeze
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
