@@ -2001,6 +2001,27 @@ exports[`runs examples > example "dry" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "duration" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:c s:piano duration:0.5 ]",
+  "[ 1/4 → 1/2 | note:a s:piano duration:0.5 ]",
+  "[ 1/2 → 3/4 | note:f s:piano duration:0.5 ]",
+  "[ 3/4 → 1/1 | note:e s:piano duration:0.5 ]",
+  "[ 1/1 → 5/4 | note:c s:piano duration:1 ]",
+  "[ 5/4 → 3/2 | note:a s:piano duration:1 ]",
+  "[ 3/2 → 7/4 | note:f s:piano duration:1 ]",
+  "[ 7/4 → 2/1 | note:e s:piano duration:1 ]",
+  "[ 2/1 → 9/4 | note:c s:piano duration:2 ]",
+  "[ 9/4 → 5/2 | note:a s:piano duration:2 ]",
+  "[ 5/2 → 11/4 | note:f s:piano duration:2 ]",
+  "[ 11/4 → 3/1 | note:e s:piano duration:2 ]",
+  "[ 3/1 → 13/4 | note:c s:piano duration:0.5 ]",
+  "[ 13/4 → 7/2 | note:a s:piano duration:0.5 ]",
+  "[ 7/2 → 15/4 | note:f s:piano duration:0.5 ]",
+  "[ 15/4 → 4/1 | note:e s:piano duration:0.5 ]",
+]
+`;
+
 exports[`runs examples > example "early" example index 0 1`] = `
 [
   "[ -1/10 ⇜ (0/1 → 2/5) | s:hh ]",
