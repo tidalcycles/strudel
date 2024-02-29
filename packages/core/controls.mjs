@@ -7,26 +7,32 @@ This program is free software: you can redistribute it and/or modify it under th
 import { Pattern, register, sequence } from './pattern.mjs';
 
 export function createParam(names) {
-  const name = Array.isArray(names) ? names[0] : names;
+  let isMulti = Array.isArray(names);
+  names = !isMulti ? [names] : names;
+  const name = names[0];
 
-  var withVal;
-  if (Array.isArray(names)) {
-    withVal = (xs) => {
-      if (Array.isArray(xs)) {
-        const result = {};
-        xs.forEach((x, i) => {
-          if (i < names.length) {
-            result[names[i]] = x;
-          }
-        });
-        return result;
-      } else {
-        return { [name]: xs };
-      }
-    };
-  } else {
-    withVal = (x) => ({ [name]: x });
-  }
+  const withVal = (xs) => {
+    let bag;
+    // check if we have an object with an unnamed control (.value)
+    if (typeof xs === 'object' && xs.value !== undefined) {
+      bag = xs; // grab props that are already there
+      xs = xs.value; // grab the unnamed control for this one
+      delete bag.value;
+    }
+    if (isMulti && Array.isArray(xs)) {
+      const result = bag || {};
+      xs.forEach((x, i) => {
+        if (i < names.length) {
+          result[names[i]] = x;
+        }
+      });
+      return result;
+    } else if (bag) {
+      return { ...bag, [name]: xs };
+    } else {
+      return { [name]: xs };
+    }
+  };
 
   const func = (...pats) => sequence(...pats).withValue(withVal);
 
