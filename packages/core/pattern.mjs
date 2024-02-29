@@ -2203,12 +2203,6 @@ export const bypass = register('bypass', function (on, pat) {
  */
 export const ribbon = register('ribbon', (offset, cycles, pat) => pat.early(offset).restart(pure(1).slow(cycles)));
 
-// sets absolute duration of haps
-// TODO - fix
-export const duration = register('duration', function (value, pat) {
-  return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
-});
-
 export const hsla = register('hsla', (h, s, l, a, pat) => {
   return pat.color(`hsla(${h}turn,${s * 100}%,${l * 100}%,${a})`);
 });
@@ -2239,21 +2233,6 @@ export const { color, colour } = register(['color', 'colour'], function (color, 
  */
 export const velocity = register('velocity', function (velocity, pat) {
   return pat.withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
-});
-
-/**
- *
- * Multiplies the hap duration with the given factor.
- * With samples, `clip` might be a better function to use ([more info](https://github.com/tidalcycles/strudel/pull/598))
- * @name legato
- * @memberof Pattern
- * @example
- * note("c3 eb3 g3 c4").legato("<.25 .5 1 2>")
- */
-// TODO - fix
-export const legato = register('legato', function (value, pat) {
-  value = Fraction(value);
-  return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(span.end.sub(span.begin).mul(value))));
 });
 
 //////////////////////////////////////////////////////////////////////

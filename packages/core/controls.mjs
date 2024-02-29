@@ -400,19 +400,6 @@ export const { loopEnd, loope } = registerControl('loopEnd', 'loope');
  * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
  *
  */
-// TODO: currently duplicated with "native" legato
-// TODO: superdirt legato will do more: https://youtu.be/dQPmE1WaD1k?t=419
-/**
- * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.
- *
- * @name legato
- * @param {number | Pattern} duration between 0 and 1, where 1 is the length of the whole hap time
- * @noAutocomplete
- * @example
- * "c4 eb4 g4 bb4".legato("<0.125 .25 .5 .75 1 2 4>")
- *
- */
-// ['legato'],
 // ['clhatdecay'],
 export const { crush } = registerControl('crush');
 /**
@@ -1389,8 +1376,6 @@ export const { waveloss } = registerControl('waveloss');
  *
  */
 export const { density } = registerControl('density');
-// TODO: midi effects?
-export const { dur } = registerControl('dur');
 // ['modwheel'],
 export const { expression } = registerControl('expression');
 export const { sustainpedal } = registerControl('sustainpedal');
@@ -1455,16 +1440,27 @@ export const { val } = registerControl('val');
 export const { cps } = registerControl('cps');
 /**
  * Multiplies the duration with the given number. Also cuts samples off at the end if they exceed the duration.
- * In tidal, this would be done with legato, [which has a complicated history in strudel](https://github.com/tidalcycles/strudel/issues/111).
- * For now, if you're coming from tidal, just think clip = legato.
  *
  * @name clip
+ * @synonyms legato
  * @param {number | Pattern} factor >= 0
  * @example
  * note("c a f e").s("piano").clip("<.5 1 2>")
  *
  */
-export const { clip } = registerControl('clip');
+export const { clip, legato } = registerControl('clip', 'legato');
+
+/**
+ * Sets the duration of the event in cycles. Similar to clip / legato, it also cuts samples off at the end if they exceed the duration.
+ *
+ * @name duration
+ * @synonyms dur
+ * @param {number | Pattern} seconds >= 0
+ * @example
+ * note("c a f e").s("piano").dur("<.5 1 2>")
+ *
+ */
+export const { duration, dur } = registerControl('duration', 'dur');
 
 // ZZFX
 export const { zrand } = registerControl('zrand');
