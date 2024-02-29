@@ -11,8 +11,10 @@ export function createParam(names) {
 
   var withVal, withVal0pats;
   if (Array.isArray(names)) {
+    //------------------------------------// CASE .room(something)
     withVal = (xs) => {
       if (Array.isArray(xs)) {
+        //--------------------------------// .room("1:2")
         const result = {};
         xs.forEach((x, i) => {
           if (i < names.length) {
@@ -21,11 +23,14 @@ export function createParam(names) {
         });
         return result;
       } else {
+        //----------------------------------// .room("1")
         return { [name]: xs };
       }
     };
+    //------------------------------------// CASE something.room()
     withVal0pats = (xs) => {
       if (Array.isArray(xs)) {
+        //--------------------------------// "1:2".room()
         const result = {};
         xs.forEach((x, i) => {
           if (i < names.length) {
@@ -36,8 +41,8 @@ export function createParam(names) {
       }
       if (typeof xs === 'object') {
         const result = { ...xs };
-
         if (xs.value === undefined) {
+          //------------------------------// "1:2".pan(0).room()
           for (let i = 0; i < names.length; i++) {
             if (xs[i] !== undefined) {
               result[names[i]] = xs[i];
@@ -45,30 +50,38 @@ export function createParam(names) {
             }
           }
         } else {
+          //------------------------------// "1".pan(0).room()
           result[names[0]] = xs.value;
           delete result.value;
         }
         return result;
       }
+      //----------------------------------// "1".room()
       return { [name]: xs };
     };
   } else {
+    // -----------------------------------// CASE .channels(something)
     withVal = (x) => ({ [name]: x });
+    // -----------------------------------// CASE something.channels()
     withVal0pats = (x) => {
-      if (Array.isArray(x)) {
-        return { [name]: x[0] };
-      }
-      if (typeof x === 'object') {
+      if (typeof x === 'object' && !Array.isArray(x)) {
+        const result = { ...x };
         if (x.value === undefined) {
-          let o = { ...x, [name]: x[0] };
-          delete o[0];
-          return o;
+          //------------------------------// "1:2".pan(0).channels()
+          const arr = Array();
+          for (let i = 0; x[i] !== undefined; i++) {
+            arr.push(x[i]);
+            delete result[i];
+          }
+          result[[name]] = arr;
         } else {
-          let o = { ...x, [name]: x.value };
-          delete o.value;
-          return o;
+          //------------------------------// "1".pan(0).channels()
+          result[[name]] = x.value;
+          delete result.value;
         }
+        return result;
       }
+      //----------------------------------// "1:2".channels()
       return { [name]: x };
     };
   }
