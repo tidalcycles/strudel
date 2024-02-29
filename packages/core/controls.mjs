@@ -1287,7 +1287,7 @@ export const { roomsize, size, sz, rsize } = registerControl('roomsize', 'size',
  * s("bd sd [~ bd] sd,hh*8").shape("<0 .2 .4 .6 .8>")
  *
  */
-export const { shape } = registerControl('shape');
+export const { shape } = registerControl(['shape', 'shapevol']);
 /**
  * Wave shaping distortion. CAUTION: it can get loud.
  * Second option in optional array syntax (ex: ".9:.5") applies a postgain to the output.
@@ -1302,7 +1302,7 @@ export const { shape } = registerControl('shape');
  * note("d1!8").s("sine").penv(36).pdecay(.12).decay(.23).distort("8:.4")
  *
  */
-export const { distort, dist } = registerControl('distort', 'dist');
+export const { distort, dist } = registerControl(['distort', 'distortvol'], 'dist');
 /**
  * Dynamics Compressor. The params are `compressor("threshold:ratio:knee:attack:release")`
  * More info [here](https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode?retiredLocale=de#instance_properties)
