@@ -1,5 +1,4 @@
-import { colorMap } from '@strudel/core/color.mjs';
-import React from 'react';
+import { colorMap } from '@strudel/canvas';
 
 const Colors = () => {
   return (

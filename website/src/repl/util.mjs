@@ -72,6 +72,7 @@ export async function getRandomTune() {
 export function loadModules() {
   let modules = [
     import('@strudel/core'),
+    import('@strudel/canvas'),
     import('@strudel/tonal'),
     import('@strudel/mini'),
     import('@strudel/xen'),

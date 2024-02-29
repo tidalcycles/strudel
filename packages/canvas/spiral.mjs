@@ -1,4 +1,4 @@
-import { Pattern } from './index.mjs';
+import { Pattern } from '@strudel/core';
 
 // polar coords -> xy
 function fromPolar(angle, radius, cx, cy) {

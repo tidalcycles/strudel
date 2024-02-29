@@ -35,6 +35,7 @@
   "dependencies": {
     "@strudel/codemirror": "workspace:*",
     "@strudel/core": "workspace:*",
+    "@strudel/canvas": "workspace:*",
     "@strudel/hydra": "workspace:*",
     "@strudel/midi": "workspace:*",
     "@strudel/mini": "workspace:*",

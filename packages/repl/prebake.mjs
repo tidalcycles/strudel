@@ -6,6 +6,7 @@ export async function prebake() {
   const modulesLoading = evalScope(
     // import('@strudel/core'),
     core,
+    import('@strudel/canvas'),
     import('@strudel/mini'),
     import('@strudel/tonal'),
     import('@strudel/webaudio'),
