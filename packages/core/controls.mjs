@@ -1376,8 +1376,6 @@ export const { waveloss } = registerControl('waveloss');
  *
  */
 export const { density } = registerControl('density');
-// TODO: midi effects?
-export const { dur } = registerControl('dur');
 // ['modwheel'],
 export const { expression } = registerControl('expression');
 export const { sustainpedal } = registerControl('sustainpedal');
@@ -1451,6 +1449,18 @@ export const { cps } = registerControl('cps');
  *
  */
 export const { clip, legato } = registerControl('clip', 'legato');
+
+/**
+ * Sets the duration of the event in cycles. Similar to clip / legato, it also cuts samples off at the end if they exceed the duration.
+ *
+ * @name duration
+ * @synonyms dur
+ * @param {number | Pattern} seconds >= 0
+ * @example
+ * note("c a f e").s("piano").dur("<.5 1 2>")
+ *
+ */
+export const { duration, dur } = registerControl('duration', 'dur');
 
 // ZZFX
 export const { zrand } = registerControl('zrand');

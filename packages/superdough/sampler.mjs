@@ -251,7 +251,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     nudge = 0, // TODO: is this in seconds?
     cut,
     loop,
-    clip = undefined, // if 1, samples will be cut off when the hap ends
+    clip = undefined, // if set, samples will be cut off when the hap ends
     n = 0,
     note,
     speed = 1, // sample playback speed
@@ -306,7 +306,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   bufferSource.start(time, offset);
   const envGain = ac.createGain();
   const node = bufferSource.connect(envGain);
-  if (clip == null && loop == null && value.release == null) {
+  if (duration == null && clip == null && loop == null && value.release == null) {
     const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
     duration = (end - begin) * bufferDuration;
   }

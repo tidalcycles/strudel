@@ -15,7 +15,6 @@ const hap2value = (hap) => {
   return { ...hap.value, velocity: hap.context.velocity };
 };
 
-// TODO: bind logger
 export const webaudioOutputTrigger = (t, hap, ct, cps) => superdough(hap2value(hap), t - ct, hap.duration / cps, cps);
 export const webaudioOutput = (hap, deadline, hapDuration) => superdough(hap2value(hap), deadline, hapDuration);
 

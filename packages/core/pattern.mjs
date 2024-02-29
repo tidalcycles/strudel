@@ -2203,12 +2203,6 @@ export const bypass = register('bypass', function (on, pat) {
  */
 export const ribbon = register('ribbon', (offset, cycles, pat) => pat.early(offset).restart(pure(1).slow(cycles)));
 
-// sets absolute duration of haps
-// TODO - fix
-export const duration = register('duration', function (value, pat) {
-  return pat.withHapSpan((span) => new TimeSpan(span.begin, span.begin.add(value)));
-});
-
 export const hsla = register('hsla', (h, s, l, a, pat) => {
   return pat.color(`hsla(${h}turn,${s * 100}%,${l * 100}%,${a})`);
 });
