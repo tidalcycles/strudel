@@ -306,7 +306,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   bufferSource.start(time, offset);
   const envGain = ac.createGain();
   const node = bufferSource.connect(envGain);
-  if (duration == null && clip == null && loop == null && value.release == null) {
+  if (clip == null && loop == null && value.release == null) {
     const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
     duration = (end - begin) * bufferDuration;
   }
