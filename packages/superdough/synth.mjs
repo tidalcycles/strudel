@@ -41,10 +41,19 @@ export function registerSynthSounds() {
     freq = Number(freq);
 
     const node = getWorklet(ac, 'better-oscillator', { frequency: freq });
+    const o = ac.createOscillator();
+    o.start(t);
+    o.onended = () => {
+      console.log('here');
+      o.disconnect();
+      node.disconnect();
+    };
 
     return {
       node,
-      stop: (time) => {},
+      stop: (time) => {
+        o.stop(time);
+      },
       triggerRelease: (time) => {
         // envGain?.stop(time);
       },
