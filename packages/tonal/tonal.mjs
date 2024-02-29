@@ -198,7 +198,9 @@ export const scale = register('scale', function (scale, pat) {
           } else {
             note = scaleStep(asNumber, scale);
           }
-          value = pure(isObject ? ( value.value === undefined ? { ...value, note } : {...value, value:note, note} ) : note);
+          value = pure(
+            isObject ? (value.value === undefined ? { ...value, note } : { ...value, value: note, note }) : note,
+          );
         } catch (err) {
           logger(`[tonal] ${err.message}`, 'error');
           value = silence;
