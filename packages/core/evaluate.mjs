@@ -22,6 +22,7 @@ export const evalScope = async (...args) => {
       globalThis[name] = value;
     });
   });
+  return modules;
 };
 
 function safeEval(str, options = {}) {

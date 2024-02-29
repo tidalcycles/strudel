@@ -48,6 +48,14 @@ if (typeof window !== 'undefined') {
   isIframe = window.location !== window.parent.location;
 }
 
+async function getModule(name) {
+  if (!modulesLoading) {
+    return;
+  }
+  const modules = await modulesLoading;
+  return modules.find((m) => m.packageName === name);
+}
+
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || isIframe;
   const { panelPosition, isZen } = useSettings();
@@ -163,6 +171,7 @@ export function Repl({ embedded = false }) {
   };
 
   const resetEditor = async () => {
+    (await getModule('@strudel/tonal'))?.resetVoicings();
     resetGlobalEffects();
     clearCanvas();
     resetLoadedSounds();
@@ -188,10 +197,7 @@ export function Repl({ embedded = false }) {
     logger(`[repl] ✨ loading random tune "${patternData.id}"`);
     setActivePattern(patternData.id);
     setViewingPatternData(patternData);
-    clearCanvas();
-    resetLoadedSounds();
-    resetGlobalEffects();
-    await prebake(); // declare default samples
+    await resetEditor();
     editorRef.current.setCode(code);
     editorRef.current.repl.evaluate(code);
   };
