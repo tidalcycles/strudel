@@ -249,17 +249,17 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
  * @param {*} xs
  * @returns {Pattern}
  */
-export const pickOuter = register('pickOuter', function (lookup, pat) {
+export const pickOut = register('pickOut', function (lookup, pat) {
   return _pick(lookup, pat, false).outerJoin();
 });
 
-/** * The same as `pickOuter`, but if you pick a number greater than the size of the list,
+/** * The same as `pickOut`, but if you pick a number greater than the size of the list,
  * it wraps around, rather than sticking at the maximum value.
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
  */
-export const pickmodOuter = register('pickmodOuter', function (lookup, pat) {
+export const pickmodOut = register('pickmodOut', function (lookup, pat) {
   return _pick(lookup, pat, true).outerJoin();
 });
 
@@ -314,7 +314,7 @@ export const pickmodReset = register('pickmodReset', function (lookup, pat) {
  * @example
  * s("a@2 [a b] a".inhabit({a: "bd(3,8)", b: "sd sd"})).slow(4)
  */
-export const inhabit = register('inhabit', function (lookup, pat) {
+export const { inhabit, pickSqueeze } = register(['inhabit', 'pickSqueeze'], function (lookup, pat) {
   return _pick(lookup, pat, false).squeezeJoin();
 });
 
@@ -327,7 +327,7 @@ export const inhabit = register('inhabit', function (lookup, pat) {
  * @returns {Pattern}
  */
 
-export const inhabitmod = register('inhabitmod', function (lookup, pat) {
+export const { inhabitmod, pickmodSqueeze } = register(['inhabitmod', 'pickmodSqueeze'], function (lookup, pat) {
   return _pick(lookup, pat, true).squeezeJoin();
 });
 
