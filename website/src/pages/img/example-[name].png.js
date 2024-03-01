@@ -1,5 +1,5 @@
 import { createCanvas } from 'canvas';
-import { pianoroll } from '@strudel/core';
+import { pianoroll } from '@strudel/canvas';
 import { evaluate } from '@strudel/transpiler';
 import '../../../../test/runtime.mjs';
 import * as tunes from '../../repl/tunes.mjs';
