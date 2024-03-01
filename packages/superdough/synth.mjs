@@ -25,9 +25,9 @@ const waveforms = ['sine', 'square', 'triangle', 'sawtooth'];
 const noises = ['pink', 'white', 'brown', 'crackle'];
 
 export function registerSynthSounds() {
-  registerSound('bet', (t, value, onended) => {
+  registerSound('bet', (begin, value, onended) => {
     const ac = getAudioContext();
-    let { note, freq, duration, cps } = value;
+    let { note, freq, duration } = value;
     note = note || 36;
     if (typeof note === 'string') {
       note = noteToMidi(note); // e.g. c3 => 48
@@ -40,7 +40,21 @@ export function registerSynthSounds() {
     // set frequency
     freq = Number(freq);
 
-    const node = getWorklet(ac, 'better-oscillator', { frequency: freq, start: t, end: t + duration * cps });
+    const [attack, decay, sustain, release] = getADSRValues(
+      [value.attack, value.decay, value.sustain, value.release],
+      'linear',
+      [0.001, 0.05, 0.6, 0.01],
+    );
+
+    const holdend = begin + duration;
+    const end = holdend + release + 0.01;
+
+    let node = getWorklet(ac, 'better-oscillator', { frequency: freq, begin, end });
+
+    const envGain = gainNode(1);
+    node = node.connect(envGain);
+
+    getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, begin, holdend, 'exponential');
 
     return {
       node,

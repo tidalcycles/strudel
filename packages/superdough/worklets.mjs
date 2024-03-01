@@ -144,11 +144,26 @@ class BetterOscillatorProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
     return [
       {
+        name: 'begin',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+
+      {
+        name: 'end',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+
+      {
         name: 'phase',
         defaultValue: 0,
         max: 1,
         min: 0,
       },
+
       {
         name: 'duty',
         defaultValue: 0.5,
@@ -174,6 +189,13 @@ class BetterOscillatorProcessor extends AudioWorkletProcessor {
     ];
   }
   process(input, outputs, params) {
+    if (currentTime <= params.begin[0]) {
+      return true;
+    }
+    if (currentTime >= params.end[0]) {
+      return false;
+    }
+
     for (let z = 0; z < outputs.length; z++) {
       const out = outputs[z][0];
       const outlen = out.length;
