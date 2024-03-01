@@ -126,6 +126,16 @@ export const { note } = registerControl(['note', 'n']);
  */
 export const { accelerate } = registerControl('accelerate');
 /**
+ *
+ * Sets the velocity from 0 to 1. Is multiplied together with gain.
+ * @name velocity
+ * @example
+ * s("hh*8")
+ * .gain(".4!2 1 .4!2 1 .4 1")
+ * .velocity(".4 1")
+ */
+export const { velocity } = registerControl('velocity');
+/**
  * Controls the gain by an exponential amount.
  *
  * @name gain
@@ -1163,11 +1173,9 @@ export const { rate } = registerControl('rate');
 export const { slide } = registerControl('slide');
 // TODO: detune? https://tidalcycles.org/docs/patternlib/tutorials/synthesizers/#supersquare
 export const { semitone } = registerControl('semitone');
-// TODO: dedup with synth param, see https://tidalcycles.org/docs/reference/synthesizers/#superpiano
-// ['velocity'],
+
 // TODO: synth param
 export const { voice } = registerControl('voice');
-
 // voicings // https://github.com/tidalcycles/strudel/issues/506
 // chord to voice, like C Eb Fm7 G7. the symbols can be defined via addVoicings
 export const { chord } = registerControl('chord');

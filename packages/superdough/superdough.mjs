@@ -344,7 +344,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
   channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 
-  gain *= velocity; // legacy fix for velocity
+  gain *= velocity; // velocity currently only multiplies with gain. it might do other things in the future
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
   const onended = () => {
     toDisconnect.forEach((n) => n?.disconnect());
