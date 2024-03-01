@@ -133,6 +133,38 @@ registerProcessor('distort-processor', DistortProcessor);
 // registerProcessor('supersaw-processor', SupersawProcessor);
 
 const saw = (v) => v - Math.floor(v);
+const twoPI = Math.PI * 2;
+const polyBlep = (t, dt) => {
+  // 0 <= t < 1
+  if (t < dt) {
+    t /= dt;
+    // 2 * (t - t^2/2 - 0.5)
+    return t + t - t * t - 1;
+  }
+
+  // -1 < t < 0
+  else if (t > 1 - dt) {
+    t = (t - 1) / dt;
+    // 2 * (t^2/2 + t + 0.5)
+    return t * t + t + t + 1;
+  }
+
+  // 0 otherwise
+  else {
+    return 0;
+  }
+};
+
+const polySaw = (t, dt) => {
+  // Correct phase, so it would be in line with sin(2.*M_PI * t)
+  t += 0.5;
+  if (t >= 1) t -= 1;
+
+  const naive_saw = 2 * t - 1;
+  return naive_saw - polyBlep(t, dt);
+};
+
+const saw2 = (x, t) => (((x * t) % 1) - 0.5) * 2;
 
 class BetterOscillatorProcessor extends AudioWorkletProcessor {
   constructor() {
@@ -195,48 +227,77 @@ class BetterOscillatorProcessor extends AudioWorkletProcessor {
     if (currentTime >= params.end[0]) {
       return false;
     }
+    const frequency = params.frequency[0];
+    const dt = frequency / sampleRate;
+    const output = outputs[0];
 
-    for (let z = 0; z < outputs.length; z++) {
-      const out = outputs[z][0];
-      const outlen = out.length;
-      const freq = params.frequency.length === 1;
-      const phase = params.phase.length === 1;
-      const wave = params.wave.length === 1;
-      const duty = params.duty.length === 1;
-      const sync = params.sync.length === 1;
+    for (let i = 0; i < output[0].length; i++) {
+      const blep = polyBlep(this.phase, frequency / sampleRate);
+      console.log(blep);
+      const out = saw2(frequency, this.phase / sampleRate);
+      // const out = polySaw(this.phase, frequency / sampleRate);
 
-      let back = 0;
-      for (let x = 0; x < outlen; x++) {
-        this.sync_phase = this.prev_sync_phase % (params.sync[sync ? 0 : x] / sampleRate);
-        if (params.sync[sync ? 0 : x] !== 0 && this.prev_sync_phase >= params.sync[sync ? 0 : x] / sampleRate) {
-          this.phase = 0;
-          back = x;
-        }
-        this.prev_sync_phase = this.sync_phase;
-        const main = (params.frequency[freq ? 0 : x] * (x - back)) / sampleRate;
-        // noise
-        if (params.wave[wave ? 0 : x] >= 4) {
-          out[x] = Math.random() * 2 - 1;
-        } else if (params.wave[wave ? 0 : x] >= 3) {
-          // sine wave made using bulit-in Math.sin
-          out[x] = Math.sin((main + this.phase + params.phase[phase ? 0 : x]) * 2 * Math.PI);
-          // sawtooth wave using linear piecewise floor
-        } else if (params.wave[wave ? 0 : x] >= 2) {
-          out[x] = 2 * saw(main + this.phase + params.phase[phase ? 0 : x]) - 1;
-          // pulse wave using difference of phase shifted saws and variable DC threshold
-        } else if (params.wave[wave ? 0 : x] >= 1) {
-          const temp = main + this.phase + params.phase[phase ? 0 : x];
-          out[x] = saw(temp) - saw(temp + params.duty[duty ? 0 : x]) > 0 ? 1 : -1;
-          // triangle wave using absolute value of amplitude shifted sawtooth wave
-        } else if (params.wave[wave ? 0 : x] >= 0) {
-          out[x] = 4 * Math.abs(saw(main + this.phase + params.phase[phase ? 0 : x]) - 1 / 2) - 1;
-        }
-        this.prev_sync_phase += 1 / sampleRate;
-      }
-      this.phase += (params.frequency[freq ? 0 : outlen - 1] * outlen) / sampleRate;
-      this.phase %= sampleRate;
-      return true;
+      output.forEach((channel) => {
+        channel[i] = out;
+      });
+      this.phase++;
     }
+
+    // for (let i = 0; i < outlen; x++) {
+    //   const val  = saw2(frequency, this.phase)
+    //   // out[x] = 2 * saw(dt + this.phase) - 1;
+    //   // out[x] = polySaw(this.phase, dt);
+    // }
+    // this.phase = this.phase + dt * outlen;
+
+    // this.phase %= sampleRate;
+
+    return true;
+
+    // for (let z = 0; z < outputs.length; z++) {
+    //   const out = outputs[z][0];
+    //   const outlen = out.length;
+    //   const freq = params.frequency.length === 1;
+    //   const phase = params.phase.length === 1;
+    //   const wave = params.wave.length === 1;
+    //   const duty = params.duty.length === 1;
+    //   const sync = params.sync.length === 1;
+
+    //   let back = 0;
+    //   for (let x = 0; x < outlen; x++) {
+    //     this.sync_phase = this.prev_sync_phase % (params.sync[sync ? 0 : x] / sampleRate);
+    //     if (params.sync[sync ? 0 : x] !== 0 && this.prev_sync_phase >= params.sync[sync ? 0 : x] / sampleRate) {
+    //       this.phase = 0;
+    //       back = x;
+    //     }
+    //     this.prev_sync_phase = this.sync_phase;
+    //     const main = (params.frequency[freq ? 0 : x] * (x - back)) / sampleRate;
+    //     // noise
+    //     if (params.wave[wave ? 0 : x] >= 4) {
+    //       out[x] = Math.random() * 2 - 1;
+    //     } else if (params.wave[wave ? 0 : x] >= 3) {
+    //       // sine wave made using bulit-in Math.sin
+    //       out[x] = Math.sin((main + this.phase + params.phase[phase ? 0 : x]) * 2 * Math.PI);
+    //       // sawtooth wave using linear piecewise floor
+    //     } else if (params.wave[wave ? 0 : x] >= 2) {
+    //       // out[x] = polySaw(this.phase, main);
+    //       const dt = main + params.phase[phase ? 0 : x];
+    //       out[x] = 2 * saw(this.phase + dt) - 1;
+    //       console.log(polyBlep(this.phase, dt));
+    //       // pulse wave using difference of phase shifted saws and variable DC threshold
+    //     } else if (params.wave[wave ? 0 : x] >= 1) {
+    //       const temp = main + this.phase + params.phase[phase ? 0 : x];
+    //       out[x] = saw(temp) - saw(temp + params.duty[duty ? 0 : x]) > 0 ? 1 : -1;
+    //       // triangle wave using absolute value of amplitude shifted sawtooth wave
+    //     } else if (params.wave[wave ? 0 : x] >= 0) {
+    //       out[x] = 4 * Math.abs(saw(main + this.phase + params.phase[phase ? 0 : x]) - 1 / 2) - 1;
+    //     }
+    //     this.prev_sync_phase += 1 / sampleRate;
+    //   }
+    //   this.phase += (params.frequency[freq ? 0 : outlen - 1] * outlen) / sampleRate;
+    //   this.phase %= sampleRate;
+    //   return true;
+    // }
   }
 }
 
