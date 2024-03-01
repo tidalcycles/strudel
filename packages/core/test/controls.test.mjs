@@ -25,4 +25,8 @@ describe('controls', () => {
       { s: 'sd', n: 4, gain: 0.5 },
     ]);
   });
+  it('should support nested controls', () => {
+    expect(s(mini('bd').pan(1)).firstCycleValues).toEqual([{ s: 'bd', pan: 1 }]);
+    expect(s(mini('bd:1').pan(1)).firstCycleValues).toEqual([{ s: 'bd', n: 1, pan: 1 }]);
+  });
 });
