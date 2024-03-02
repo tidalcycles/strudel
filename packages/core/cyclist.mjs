@@ -51,7 +51,7 @@ export class Cyclist {
               const deadline = (hap.whole.begin - begin) / this.cps + tickdeadline + latency;
               const duration = hap.duration / this.cps;
               onTrigger?.(hap, deadline, duration, this.cps);
-              if(hap.value.cps!==undefined) 
+              if(hap.value.cps!==undefined && this.cps!=hap.value.cps) 
               {
                 this.cps = hap.value.cps;
                 this.num_ticks_since_cps_change = 0;
