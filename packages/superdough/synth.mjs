@@ -52,7 +52,20 @@ export function registerSynthSounds() {
         const holdend = begin + duration;
         const end = holdend + release + 0.01;
 
-        let node = getWorklet(ac, 'better-oscillator', { frequency: freq, wave: i, begin, end });
+        let node = getWorklet(
+          ac,
+          'better-oscillator',
+          {
+            frequency: freq,
+            wave: i,
+            begin,
+            end,
+          },
+          {
+            outputChannelCount: [2],
+            // numberOfOutputs: 1,
+          },
+        );
 
         const envGain = gainNode(1);
         node = node.connect(envGain);
@@ -69,7 +82,7 @@ export function registerSynthSounds() {
           },
         };
       },
-      { type: 'synth', prebake: true },
+      // { prebake: true },
     );
   });
 

@@ -148,7 +148,8 @@ class BetterOscillatorProcessor extends AudioWorkletProcessor {
     this.phase = [];
     this.sync_phase = 0;
     this.prev_sync_phase = 0;
-    this.adj = [];
+    this.freq = [];
+    this.balance = [];
   }
   static get parameterDescriptors() {
     return [
@@ -209,23 +210,31 @@ class BetterOscillatorProcessor extends AudioWorkletProcessor {
     const output = outputs[0];
     const numSaws = 7;
     const detune = 0.5;
-    const spread = 0.5;
+    const spread = 0.6;
 
     for (let n = 0; n < numSaws; n++) {
-      this.adj[n] = 0;
-
+      let adj = 0;
+      const isOdd = n % 2 === 1;
       if (n > 0) {
-        this.adj[n] = n % 2 === 1 ? n * detune : -((n - 1) * detune);
+        adj = isOdd ? n * detune : -((n - 1) * detune);
       }
+      this.freq[n] = frequency + adj * 0.01 * frequency;
+      // if (isOdd) {
+      //   this.balance[n][0] =
+      // }
+      this.balance[n] = isOdd ? 1 - spread : spread;
     }
 
     for (let i = 0; i < output[0].length; i++) {
-      let out = 0;
+      let outL = 0;
+      let outR = 0;
       for (let n = 0; n < numSaws; n++) {
-        const freq = frequency + this.adj[n];
-        const dt = freq / sampleRate;
+        const dt = this.freq[n] / sampleRate;
+        const osc = polySaw(this.phase[n], this.freq[n] / sampleRate);
+        outL = outL + osc * (1 - this.balance[n]);
+        outR = outR + osc * this.balance[n];
 
-        out = out + polySaw(this.phase[n], freq / sampleRate);
+        // out = out + polySaw(this.phase[n], this.freq[n] / sampleRate);
 
         this.phase[n] = this.phase[n] ?? Math.random();
 
@@ -235,7 +244,16 @@ class BetterOscillatorProcessor extends AudioWorkletProcessor {
           this.phase[n] = this.phase[n] - 1;
         }
       }
-      output[0][i] = out;
+
+      output[0][i] = outL;
+      output[1][i] = outR;
+      // for (let c = 0; c < output.length; c++) {
+      //   let modifier = c === 0 ? 1 - spread : spread;
+      //   output[c][i] = out * modifier;
+      // }
+      // for (let c = 0; c < outputs.length; c++) {
+      //   outputs[c][0][i] = out;
+      // }
     }
     return true;
 
