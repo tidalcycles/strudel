@@ -145,9 +145,10 @@ const polySaw = (t, dt) => {
 class BetterOscillatorProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
-    this.phase = 0;
+    this.phase = [];
     this.sync_phase = 0;
     this.prev_sync_phase = 0;
+    this.adj = [];
   }
   static get parameterDescriptors() {
     return [
@@ -204,18 +205,37 @@ class BetterOscillatorProcessor extends AudioWorkletProcessor {
       return false;
     }
     const frequency = params.frequency[0];
-    const dt = frequency / sampleRate;
+
     const output = outputs[0];
+    const numSaws = 7;
+    const detune = 0.5;
+    const spread = 0.5;
+
+    for (let n = 0; n < numSaws; n++) {
+      this.adj[n] = 0;
+
+      if (n > 0) {
+        this.adj[n] = n % 2 === 1 ? n * detune : -((n - 1) * detune);
+      }
+    }
 
     for (let i = 0; i < output[0].length; i++) {
-      const out = polySaw(this.phase, frequency / sampleRate);
-      output[0][i] = out;
+      let out = 0;
+      for (let n = 0; n < numSaws; n++) {
+        const freq = frequency + this.adj[n];
+        const dt = freq / sampleRate;
 
-      this.phase += dt;
+        out = out + polySaw(this.phase[n], freq / sampleRate);
 
-      if (this.phase > 1.0) {
-        this.phase = this.phase - 1;
+        this.phase[n] = this.phase[n] ?? Math.random();
+
+        this.phase[n] += dt;
+
+        if (this.phase[n] > 1.0) {
+          this.phase[n] = this.phase[n] - 1;
+        }
       }
+      output[0][i] = out;
     }
     return true;
 
