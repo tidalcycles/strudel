@@ -155,6 +155,25 @@ const polyBlep = (t, dt) => {
   }
 };
 
+const inc = () => {
+  t += freqInSecondsPerSample;
+  t -= bitwiseOrZero(t);
+};
+
+const square_number = (x) => {
+  return x * x;
+};
+
+const blep = (t, dt) => {
+  if (t < dt) {
+    return -square_number(t / dt - 1);
+  } else if (t > 1 - dt) {
+    return square_number((t - 1) / dt + 1);
+  } else {
+    return 0;
+  }
+};
+
 const polySaw = (t, dt) => {
   // Correct phase, so it would be in line with sin(2.*M_PI * t)
   t += 0.5;
@@ -162,6 +181,7 @@ const polySaw = (t, dt) => {
 
   const naive_saw = 2 * t - 1;
   return naive_saw - polyBlep(t, dt);
+  // return naive_saw;
 };
 
 const saw2 = (x, t) => (((x * t) % 1) - 0.5) * 2;
@@ -232,15 +252,17 @@ class BetterOscillatorProcessor extends AudioWorkletProcessor {
     const output = outputs[0];
 
     for (let i = 0; i < output[0].length; i++) {
-      const blep = polyBlep(this.phase, frequency / sampleRate);
-      console.log(blep);
-      const out = saw2(frequency, this.phase / sampleRate);
-      // const out = polySaw(this.phase, frequency / sampleRate);
+      // const blep = polyBlep(this.phase, frequency / sampleRate);
+      // console.log(blep);
+      // const out = saw2(frequency, this.phase / sampleRate);
+      const out = polySaw(this.phase, frequency / sampleRate);
+      output[0][i] = out;
 
-      output.forEach((channel) => {
-        channel[i] = out;
-      });
-      this.phase++;
+      this.phase += dt;
+
+      if (this.phase > 1.0) {
+        this.phase = this.phase - 1;
+      }
     }
 
     // for (let i = 0; i < outlen; x++) {
