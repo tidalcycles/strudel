@@ -6,26 +6,27 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { Pattern, getTime, State, TimeSpan } from '@strudel/core';
 
-export const getDrawContext = (id = 'test-canvas') => {
+export const getDrawContext = (id = 'test-canvas', options) => {
+  let { contextType = '2d', pixelated = false, pixelRatio = window.devicePixelRatio } = options || {};
   let canvas = document.querySelector('#' + id);
   if (!canvas) {
-    const scale = window.devicePixelRatio || 1;
     canvas = document.createElement('canvas');
     canvas.id = id;
-    canvas.width = window.innerWidth * scale;
-    canvas.height = window.innerHeight * scale;
+    canvas.width = window.innerWidth * pixelRatio;
+    canvas.height = window.innerHeight * pixelRatio;
     canvas.style = 'pointer-events:none;width:100%;height:100%;position:fixed;top:0;left:0';
+    pixelated && (canvas.style.imageRendering = 'pixelated');
     document.body.prepend(canvas);
     let timeout;
     window.addEventListener('resize', () => {
       timeout && clearTimeout(timeout);
       timeout = setTimeout(() => {
-        canvas.width = window.innerWidth * scale;
-        canvas.height = window.innerHeight * scale;
+        canvas.width = window.innerWidth * pixelRatio;
+        canvas.height = window.innerHeight * pixelRatio;
       }, 200);
     });
   }
-  return canvas.getContext('2d');
+  return canvas.getContext(contextType);
 };
 
 Pattern.prototype.draw = function (callback, { from, to, onQuery } = {}) {
