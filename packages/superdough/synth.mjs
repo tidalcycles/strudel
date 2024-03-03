@@ -57,7 +57,6 @@ export function registerSynthSounds() {
           'better-oscillator',
           {
             frequency: freq,
-            wave: i,
             begin,
             end,
           },
