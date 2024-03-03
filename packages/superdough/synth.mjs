@@ -26,47 +26,51 @@ const noises = ['pink', 'white', 'brown', 'crackle'];
 
 export function registerSynthSounds() {
   [...waveforms].forEach((s, i) => {
-    registerSound(s, (begin, value, onended) => {
-      const ac = getAudioContext();
-      let { note, freq, duration } = value;
-      note = note || 36;
-      if (typeof note === 'string') {
-        note = noteToMidi(note); // e.g. c3 => 48
-      }
-      // get frequency
-      if (!freq && typeof note === 'number') {
-        freq = midiToFreq(note); // + 48);
-      }
+    registerSound(
+      s,
+      (begin, value, onended) => {
+        const ac = getAudioContext();
+        let { note, freq, duration } = value;
+        note = note || 36;
+        if (typeof note === 'string') {
+          note = noteToMidi(note); // e.g. c3 => 48
+        }
+        // get frequency
+        if (!freq && typeof note === 'number') {
+          freq = midiToFreq(note); // + 48);
+        }
 
-      // set frequency
-      freq = Number(freq);
+        // set frequency
+        freq = Number(freq);
 
-      const [attack, decay, sustain, release] = getADSRValues(
-        [value.attack, value.decay, value.sustain, value.release],
-        'linear',
-        [0.001, 0.05, 0.6, 0.01],
-      );
+        const [attack, decay, sustain, release] = getADSRValues(
+          [value.attack, value.decay, value.sustain, value.release],
+          'linear',
+          [0.001, 0.05, 0.6, 0.01],
+        );
 
-      const holdend = begin + duration;
-      const end = holdend + release + 0.01;
+        const holdend = begin + duration;
+        const end = holdend + release + 0.01;
 
-      let node = getWorklet(ac, 'better-oscillator', { frequency: freq, wave: i, begin, end });
+        let node = getWorklet(ac, 'better-oscillator', { frequency: freq, wave: i, begin, end });
 
-      const envGain = gainNode(1);
-      node = node.connect(envGain);
+        const envGain = gainNode(1);
+        node = node.connect(envGain);
 
-      getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3, begin, holdend, 'linear');
+        getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3, begin, holdend, 'linear');
 
-      return {
-        node,
-        stop: (time) => {
-          // o.stop(time);
-        },
-        triggerRelease: (time) => {
-          // envGain?.stop(time);
-        },
-      };
-    });
+        return {
+          node,
+          stop: (time) => {
+            // o.stop(time);
+          },
+          triggerRelease: (time) => {
+            // envGain?.stop(time);
+          },
+        };
+      },
+      { type: 'synth', prebake: true },
+    );
   });
 
   [...noises].forEach((s) => {
