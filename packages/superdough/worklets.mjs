@@ -111,19 +111,20 @@ class DistortProcessor extends AudioWorkletProcessor {
 
 registerProcessor('distort-processor', DistortProcessor);
 
-const polyBlep = (t, dt) => {
-  // 0 <= t < 1
-  if (t < dt) {
-    t /= dt;
-    // 2 * (t - t^2/2 - 0.5)
-    return t + t - t * t - 1;
+// removes frequencies above nyquist to prevent aliasing
+const polyBlep = (phase, dt) => {
+  // 0 <= phase < 1
+  if (phase < dt) {
+    phase /= dt;
+    // 2 * (phase - phase^2/2 - 0.5)
+    return phase + phase - phase * phase - 1;
   }
 
-  // -1 < t < 0
-  else if (t > 1 - dt) {
-    t = (t - 1) / dt;
-    // 2 * (t^2/2 + t + 0.5)
-    return t * t + t + t + 1;
+  // -1 < phase < 0
+  else if (phase > 1 - dt) {
+    phase = (phase - 1) / dt;
+    // 2 * (phase^2/2 + phase + 0.5)
+    return phase * phase + phase + phase + 1;
   }
 
   // 0 otherwise
@@ -132,12 +133,12 @@ const polyBlep = (t, dt) => {
   }
 };
 
-const saw = (t, dt) => {
-  // Correct phase, so it would be in line with sin(2.*M_PI * t)
-  t += 0.5;
-  if (t >= 1) t -= 1;
-  const osc = 2 * t - 1;
-  return osc - polyBlep(t, dt);
+const saw = (phase, dt) => {
+  // Correct phase, so it would be in line with sin(2.*M_PI * phase)
+  phase += 0.5;
+  if (phase >= 1) phase -= 1;
+  const v = 2 * phase - 1;
+  return v - polyBlep(phase, dt);
 };
 
 class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
@@ -178,9 +179,10 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
     const frequency = params.frequency[0];
 
     const output = outputs[0];
-    const numSaws = 7;
-    const detune = 0.5;
-    const spread = 0.6;
+    const numSaws = 6;
+    const detune = 0.1;
+    let spread = 0.6;
+    spread = spread * 0.5 + 0.5;
 
     for (let n = 0; n < numSaws; n++) {
       let adj = 0;
@@ -193,12 +195,12 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
       const dt = freq / sampleRate;
 
       for (let i = 0; i < output[0].length; i++) {
-        const osc = saw(this.phase[n], dt);
-
-        output[0][i] = output[0][i] + osc * (1 - balance);
-        output[1][i] = output[1][i] + osc * balance;
-
         this.phase[n] = this.phase[n] ?? Math.random();
+        const v = saw(this.phase[n], dt);
+
+        output[0][i] = output[0][i] + v * (1 - balance);
+        output[1][i] = output[1][i] + v * balance;
+
         this.phase[n] += dt;
 
         if (this.phase[n] > 1.0) {

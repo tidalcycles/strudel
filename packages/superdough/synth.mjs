@@ -67,7 +67,7 @@ export function registerSynthSounds() {
       const envGain = gainNode(1);
       node = node.connect(envGain);
 
-      getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3, begin, holdend, 'linear');
+      getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.1, begin, holdend, 'linear');
 
       return {
         node,
