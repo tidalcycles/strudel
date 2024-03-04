@@ -518,6 +518,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   // toDisconnect = all the node that should be disconnected in onended callback
   // this is crucial for performance
   toDisconnect = chain.concat([delaySend, reverbSend, analyserSend]);
+  return { mute: (dt) => post.gain.linearRampToValueAtTime(0, ac.currentTime + dt) };
 };
 
 export const superdoughTrigger = (t, hap, ct, cps) => superdough(hap, t - ct, hap.duration / cps, cps);
