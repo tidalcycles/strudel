@@ -1245,13 +1245,25 @@ export function cat(...pats) {
   return slowcat(...pats);
 }
 
-/** Like `seq`, but each step has a length, relative to the whole.
+/** Sequences patterns like `seq`, but each pattern has a length, relative to the whole. 
+ * This length can either be provided as a [length, pattern] pair, or inferred from 
+ * mininotation as the number of toplevel steps. The latter only works if the mininotation
+ * hasn't first been modified by another function.
  * @return {Pattern}
  * @example
  * timeCat([3,"e3"],[1, "g3"]).note()
- * // "e3@3 g3".note()
+ * // the same as "e3@3 g3".note()
+ * @example
+ * timeCat("bd sd cp","hh hh").sound()
+ * // the same as "bd sd cp hh hh".sound()
  */
 export function timeCat(...timepats) {
+  // Weights are either provided in [weight, pattern] pairs, or as '__weight' 
+  // elements added to pattern objects or provided from unadulterated mininotation 
+  // patterns.
+  const findWeight = x => Array.isArray(x) ? x : [x.__weight ?? 1, x];
+  timepats = timepats.map(findWeight);
+
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
   let begin = Fraction(0);
   const pats = [];
@@ -1637,9 +1649,9 @@ export const { fastGap, fastgap } = register(['fastGap', 'fastgap'], function (f
     const newWhole = !hap.whole
       ? undefined
       : new TimeSpan(
-          newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
-          newPart.end.add(hap.whole.end.sub(end).div(factor)),
-        );
+        newPart.begin.sub(begin.sub(hap.whole.begin).div(factor)),
+        newPart.end.add(hap.whole.end.sub(end).div(factor)),
+      );
     return new Hap(newWhole, newPart, hap.value, hap.context);
   };
   return pat.withQuerySpanMaybe(qf).withHap(ef).splitQueries();
