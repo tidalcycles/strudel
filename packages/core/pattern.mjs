@@ -1142,7 +1142,9 @@ export function pure(value) {
   function query(state) {
     return state.span.spanCycles.map((subspan) => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value));
   }
-  return new Pattern(query);
+  const result = new Pattern(query);
+  result.__pure = value;
+  return result;
 }
 
 export function isPattern(thing) {
