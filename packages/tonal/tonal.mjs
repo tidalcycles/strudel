@@ -180,11 +180,14 @@ export const scale = register('scale', function (scale, pat) {
         const isObject = typeof value === 'object';
         let step = isObject ? value.n : value;
         if (isObject) {
+          value = { ...value };
           delete value.n; // remove n so it won't cause trouble
         }
         if (isNote(step)) {
-          // legacy..
-          return pure(step);
+          if (isObject) {
+            value.note = step;
+            return pure(value);
+          } else return pure(step); // legacy
         }
         const asNumber = Number(step);
         if (isNaN(asNumber)) {
@@ -198,12 +201,14 @@ export const scale = register('scale', function (scale, pat) {
           } else {
             note = scaleStep(asNumber, scale);
           }
-          value = pure(isObject ? { ...value, note } : note);
+          if (isObject) {
+            value.note = note;
+            return pure(value);
+          } else return pure(note); // legacy
         } catch (err) {
           logger(`[tonal] ${err.message}`, 'error');
-          value = silence;
+          return silence;
         }
-        return value;
       })
       .outerJoin()
       // legacy:
