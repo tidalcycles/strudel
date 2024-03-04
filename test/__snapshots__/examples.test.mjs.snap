@@ -6999,6 +6999,31 @@ exports[`runs examples > example "timeCat" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "timeCat" example index 1 1`] = `
+[
+  "[ 0/1 → 1/5 | s:bd ]",
+  "[ 1/5 → 2/5 | s:sd ]",
+  "[ 2/5 → 3/5 | s:cp ]",
+  "[ 3/5 → 4/5 | s:hh ]",
+  "[ 4/5 → 1/1 | s:hh ]",
+  "[ 1/1 → 6/5 | s:bd ]",
+  "[ 6/5 → 7/5 | s:sd ]",
+  "[ 7/5 → 8/5 | s:cp ]",
+  "[ 8/5 → 9/5 | s:hh ]",
+  "[ 9/5 → 2/1 | s:hh ]",
+  "[ 2/1 → 11/5 | s:bd ]",
+  "[ 11/5 → 12/5 | s:sd ]",
+  "[ 12/5 → 13/5 | s:cp ]",
+  "[ 13/5 → 14/5 | s:hh ]",
+  "[ 14/5 → 3/1 | s:hh ]",
+  "[ 3/1 → 16/5 | s:bd ]",
+  "[ 16/5 → 17/5 | s:sd ]",
+  "[ 17/5 → 18/5 | s:cp ]",
+  "[ 18/5 → 19/5 | s:hh ]",
+  "[ 19/5 → 4/1 | s:hh ]",
+]
+`;
+
 exports[`runs examples > example "transpose" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:C2 ]",
