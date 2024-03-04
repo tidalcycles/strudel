@@ -1269,7 +1269,10 @@ export const { roomsize, size, sz, rsize } = registerControl('roomsize', 'size',
 // ['sclaves'],
 // ['scrash'],
 /**
- * Wave shaping distortion. CAUTION: it might get loud
+ * (Deprecated) Wave shaping distortion. WARNING: can suddenly get unpredictably loud.
+ * Please use distort instead, which has a more predictable response curve
+ * second option in optional array syntax (ex: ".9:.5") applies a postgain to the output
+ *
  *
  * @name shape
  * @param {number | Pattern} distortion between 0 and 1
@@ -1277,7 +1280,22 @@ export const { roomsize, size, sz, rsize } = registerControl('roomsize', 'size',
  * s("bd sd [~ bd] sd,hh*8").shape("<0 .2 .4 .6 .8>")
  *
  */
-export const { shape } = registerControl('shape');
+export const { shape } = registerControl(['shape', 'shapevol']);
+/**
+ * Wave shaping distortion. CAUTION: it can get loud.
+ * Second option in optional array syntax (ex: ".9:.5") applies a postgain to the output.
+ * Most useful values are usually between 0 and 10 (depending on source gain). If you are feeling adventurous, you can turn it up to 11 and beyond ;)
+ *
+ * @name distort
+ * @synonyms dist
+ * @param {number | Pattern} distortion
+ * @example
+ * s("bd sd [~ bd] sd,hh*8").distort("<0 2 3 10:.5>")
+ * @example
+ * note("d1!8").s("sine").penv(36).pdecay(.12).decay(.23).distort("8:.4")
+ *
+ */
+export const { distort, dist } = registerControl(['distort', 'distortvol'], 'dist');
 /**
  * Dynamics Compressor. The params are `compressor("threshold:ratio:knee:attack:release")`
  * More info [here](https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode?retiredLocale=de#instance_properties)
@@ -1411,7 +1429,6 @@ export const { octersubsub } = registerControl('octersubsub');
 export const { ring } = registerControl('ring');
 export const { ringf } = registerControl('ringf');
 export const { ringdf } = registerControl('ringdf');
-export const { distort } = registerControl('distort');
 export const { freeze } = registerControl('freeze');
 export const { xsdelay } = registerControl('xsdelay');
 export const { tsdelay } = registerControl('tsdelay');
