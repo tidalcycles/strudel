@@ -15,7 +15,7 @@ export function createParam(names) {
     let bag;
     // check if we have an object with an unnamed control (.value)
     if (typeof xs === 'object' && xs.value !== undefined) {
-      bag = xs; // grab props that are already there
+      bag = { ...xs}; // grab props that are already there
       xs = xs.value; // grab the unnamed control for this one
       delete bag.value;
     }
@@ -28,7 +28,8 @@ export function createParam(names) {
       });
       return result;
     } else if (bag) {
-      return { ...bag, [name]: xs };
+      bag[name] = xs;
+      return bag;
     } else {
       return { [name]: xs };
     }
