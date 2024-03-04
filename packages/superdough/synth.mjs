@@ -25,11 +25,51 @@ const waveforms = ['triangle', 'square', 'sawtooth', 'sine'];
 const noises = ['pink', 'white', 'brown', 'crackle'];
 
 export function registerSynthSounds() {
+  [...waveforms].forEach((s) => {
+    registerSound(
+      s,
+      (t, value, onended) => {
+        const [attack, decay, sustain, release] = getADSRValues(
+          [value.attack, value.decay, value.sustain, value.release],
+          'linear',
+          [0.001, 0.05, 0.6, 0.01],
+        );
+
+        let sound;
+        sound = getOscillator(s, t, value);
+        let { node: o, stop, triggerRelease } = sound;
+
+        // turn down
+        const g = gainNode(0.3);
+
+        const { duration } = value;
+
+        o.onended = () => {
+          o.disconnect();
+          g.disconnect();
+          onended();
+        };
+
+        const envGain = gainNode(1);
+        let node = o.connect(g).connect(envGain);
+        const holdEnd = t + duration;
+        getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, t, holdEnd, 'linear');
+        const envEnd = holdEnd + release + 0.01;
+        triggerRelease?.(envEnd);
+        stop(envEnd);
+        return {
+          node,
+          stop: (releaseTime) => {},
+        };
+      },
+      { type: 'synth', prebake: true },
+    );
+  });
   registerSound(
     'supersaw',
     (begin, value, onended) => {
       const ac = getAudioContext();
-      let { note, freq, duration } = value;
+      let { note, freq, duration, n = 2 } = value;
       note = note || 36;
       if (typeof note === 'string') {
         note = noteToMidi(note); // e.g. c3 => 48
@@ -58,7 +98,9 @@ export function registerSynthSounds() {
           frequency: freq,
           begin,
           end,
-          detune: 0,
+          detune: Math.min(200, Math.max(0, n * 0.1)),
+          // voices: n,
+          // spread: 0,
         },
         {
           outputChannelCount: [2],
@@ -68,7 +110,7 @@ export function registerSynthSounds() {
       const envGain = gainNode(1);
       node = node.connect(envGain);
 
-      getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.1, begin, holdend, 'linear');
+      getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3, begin, holdend, 'linear');
 
       return {
         node,

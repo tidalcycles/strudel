@@ -170,7 +170,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
 
       {
         name: 'spread',
-        defaultValue: 0.6,
+        defaultValue: 0.4,
         min: 0,
         max: 1,
       },
@@ -202,6 +202,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
     const detune = params.detune[0];
     let spread = params.spread[0];
     spread = spread * 0.5 + 0.5;
+    const gainAdjustment = Math.max(0.75, 1 - (voices - 1) * 0.05);
 
     for (let n = 0; n < voices; n++) {
       let adj = 0;
@@ -217,8 +218,8 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
         this.phase[n] = this.phase[n] ?? Math.random();
         const v = saw(this.phase[n], dt);
 
-        output[0][i] = output[0][i] + v * (1 - balance);
-        output[1][i] = output[1][i] + v * balance;
+        output[0][i] = (output[0][i] + v * (1 - balance)) * gainAdjustment;
+        output[1][i] = (output[1][i] + v * balance) * gainAdjustment;
 
         this.phase[n] += dt;
 
