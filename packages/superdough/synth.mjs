@@ -25,65 +25,59 @@ const waveforms = ['triangle', 'square', 'sawtooth', 'sine'];
 const noises = ['pink', 'white', 'brown', 'crackle'];
 
 export function registerSynthSounds() {
-  [...waveforms].forEach((s, i) => {
-    registerSound(
-      s,
-      (begin, value, onended) => {
-        const ac = getAudioContext();
-        let { note, freq, duration } = value;
-        note = note || 36;
-        if (typeof note === 'string') {
-          note = noteToMidi(note); // e.g. c3 => 48
-        }
-        // get frequency
-        if (!freq && typeof note === 'number') {
-          freq = midiToFreq(note); // + 48);
-        }
+  registerSound(
+    'supersaw',
+    (begin, value, onended) => {
+      const ac = getAudioContext();
+      let { note, freq, duration } = value;
+      note = note || 36;
+      if (typeof note === 'string') {
+        note = noteToMidi(note); // e.g. c3 => 48
+      }
+      // get frequency
+      if (!freq && typeof note === 'number') {
+        freq = midiToFreq(note); // + 48);
+      }
 
-        // set frequency
-        freq = Number(freq);
+      // set frequency
+      freq = Number(freq);
 
-        const [attack, decay, sustain, release] = getADSRValues(
-          [value.attack, value.decay, value.sustain, value.release],
-          'linear',
-          [0.001, 0.05, 0.6, 0.01],
-        );
+      const [attack, decay, sustain, release] = getADSRValues(
+        [value.attack, value.decay, value.sustain, value.release],
+        'linear',
+        [0.001, 0.05, 0.6, 0.01],
+      );
 
-        const holdend = begin + duration;
-        const end = holdend + release + 0.01;
+      const holdend = begin + duration;
+      const end = holdend + release + 0.01;
 
-        let node = getWorklet(
-          ac,
-          'better-oscillator',
-          {
-            frequency: freq,
-            begin,
-            end,
-          },
-          {
-            outputChannelCount: [2],
-            // numberOfOutputs: 1,
-          },
-        );
+      let node = getWorklet(
+        ac,
+        'supersaw-oscillator',
+        {
+          frequency: freq,
+          begin,
+          end,
+        },
+        {
+          outputChannelCount: [2],
+        },
+      );
 
-        const envGain = gainNode(1);
-        node = node.connect(envGain);
+      const envGain = gainNode(1);
+      node = node.connect(envGain);
 
-        getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3, begin, holdend, 'linear');
+      getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3, begin, holdend, 'linear');
 
-        return {
-          node,
-          stop: (time) => {
-            // o.stop(time);
-          },
-          triggerRelease: (time) => {
-            // envGain?.stop(time);
-          },
-        };
-      },
-      // { prebake: true },
-    );
-  });
+      return {
+        node,
+        stop: (time) => {
+          // o.stop(time);
+        },
+      };
+    },
+    { prebake: true, type: 'synth' },
+  );
 
   [...noises].forEach((s) => {
     registerSound(

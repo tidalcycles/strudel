@@ -132,24 +132,18 @@ const polyBlep = (t, dt) => {
   }
 };
 
-const polySaw = (t, dt) => {
+const saw = (t, dt) => {
   // Correct phase, so it would be in line with sin(2.*M_PI * t)
   t += 0.5;
   if (t >= 1) t -= 1;
-
-  const naive_saw = 2 * t - 1;
-  return naive_saw - polyBlep(t, dt);
-  // return naive_saw;
+  const osc = 2 * t - 1;
+  return osc - polyBlep(t, dt);
 };
 
-class BetterOscillatorProcessor extends AudioWorkletProcessor {
+class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
     this.phase = [];
-    this.sync_phase = 0;
-    this.prev_sync_phase = 0;
-    this.freq = [];
-    this.balance = [];
   }
   static get parameterDescriptors() {
     return [
@@ -194,22 +188,16 @@ class BetterOscillatorProcessor extends AudioWorkletProcessor {
       if (n > 0) {
         adj = isOdd ? n * detune : -((n - 1) * detune);
       }
-      this.freq[n] = frequency + adj * 0.01 * frequency;
-      this.balance[n] = isOdd ? 1 - spread : spread;
+      const freq = frequency + adj * 0.01 * frequency;
+      const balance = isOdd ? 1 - spread : spread;
+      const dt = freq / sampleRate;
 
-      // for (let i = 0; i < output[0].length; i++) {
+      for (let i = 0; i < output[0].length; i++) {
+        const osc = saw(this.phase[n], dt);
 
-      // }
-    }
+        output[0][i] = output[0][i] + osc * (1 - balance);
+        output[1][i] = output[1][i] + osc * balance;
 
-    for (let i = 0; i < output[0].length; i++) {
-      let outL = 0;
-      let outR = 0;
-      for (let n = 0; n < numSaws; n++) {
-        const dt = this.freq[n] / sampleRate;
-        const osc = polySaw(this.phase[n], this.freq[n] / sampleRate);
-        outL = outL + osc * (1 - this.balance[n]);
-        outR = outR + osc * this.balance[n];
         this.phase[n] = this.phase[n] ?? Math.random();
         this.phase[n] += dt;
 
@@ -217,12 +205,9 @@ class BetterOscillatorProcessor extends AudioWorkletProcessor {
           this.phase[n] = this.phase[n] - 1;
         }
       }
-
-      output[0][i] = outL;
-      output[1][i] = outR;
     }
     return true;
   }
 }
 
-registerProcessor('better-oscillator', BetterOscillatorProcessor);
+registerProcessor('supersaw-oscillator', SuperSawOscillatorProcessor);
