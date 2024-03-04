@@ -111,7 +111,7 @@ class DistortProcessor extends AudioWorkletProcessor {
 
 registerProcessor('distort-processor', DistortProcessor);
 
-// removes frequencies above nyquist to prevent aliasing
+// adjust waveshape to remove frequencies above nyquist to prevent aliasing
 const polyBlep = (phase, dt) => {
   // 0 <= phase < 1
   if (phase < dt) {
@@ -167,6 +167,25 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
         defaultValue: 440,
         min: Number.EPSILON,
       },
+
+      {
+        name: 'spread',
+        defaultValue: 0.6,
+        min: 0,
+        max: 1,
+      },
+      {
+        name: 'detune',
+        defaultValue: 0.2,
+        min: 0,
+      },
+
+      {
+        name: 'voices',
+        defaultValue: 6,
+        min: 1,
+        max: 10,
+      },
     ];
   }
   process(input, outputs, params) {
@@ -179,12 +198,12 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
     const frequency = params.frequency[0];
 
     const output = outputs[0];
-    const numSaws = 6;
-    const detune = 0.1;
-    let spread = 0.6;
+    const voices = params.voices[0];
+    const detune = params.detune[0];
+    let spread = params.spread[0];
     spread = spread * 0.5 + 0.5;
 
-    for (let n = 0; n < numSaws; n++) {
+    for (let n = 0; n < voices; n++) {
       let adj = 0;
       const isOdd = n % 2 === 1;
       if (n > 0) {

@@ -58,6 +58,7 @@ export function registerSynthSounds() {
           frequency: freq,
           begin,
           end,
+          detune: 0,
         },
         {
           outputChannelCount: [2],
