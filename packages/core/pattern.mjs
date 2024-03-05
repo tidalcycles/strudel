@@ -457,7 +457,11 @@ export class Pattern {
    * @noAutocomplete
    */
   withContext(func) {
-    return this.withHap((hap) => hap.setContext(func(hap.context)));
+    const result = this.withHap((hap) => hap.setContext(func(hap.context)));
+    if (this.__pure !== undefined) {
+      result.__pure = this.__pure;
+    }
+    return result;
   }
 
   /**
@@ -1200,7 +1204,11 @@ export function stack(...pats) {
  */
 export function slowcat(...pats) {
   // Array test here is to avoid infinite recursions..
-  pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
+  pats = pats.map((pat) => (Array.isArray(pat) ? fastcat(...pat) : reify(pat)));
+
+  if (pats.length == 1) {
+    return pats[0];
+  }
 
   const query = function (state) {
     const span = state.span;
@@ -1266,6 +1274,10 @@ export function timeCat(...timepats) {
   const findWeight = (x) => (Array.isArray(x) ? x : [x.__weight ?? 1, x]);
   timepats = timepats.map(findWeight);
 
+  if (timepats.length == 1) {
+    return reify(timepats[0][1]);
+  }
+
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
   let begin = Fraction(0);
   const pats = [];
@@ -1295,7 +1307,11 @@ export function arrange(...sections) {
 }
 
 export function fastcat(...pats) {
-  return slowcat(...pats)._fast(pats.length);
+  let result = slowcat(...pats);  
+  if (pats.length > 1) {
+    result = result._fast(pats.length);
+  }
+  return result;
 }
 
 /** See `fastcat` */
