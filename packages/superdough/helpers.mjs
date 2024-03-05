@@ -219,7 +219,7 @@ export function applyFM(param, value, begin) {
   if (fmModulationIndex) {
     const ac = getAudioContext();
     const envGain = ac.createGain();
-    const { node: modulator } = fm(param, fmHarmonicity, fmModulationIndex, fmWaveform);
+    const { node: modulator, stop } = fm(param, fmHarmonicity, fmModulationIndex, fmWaveform);
     if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
       // no envelope by default
       modulator.connect(param);
