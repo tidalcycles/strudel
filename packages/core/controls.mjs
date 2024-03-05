@@ -7,26 +7,32 @@ This program is free software: you can redistribute it and/or modify it under th
 import { Pattern, register, sequence } from './pattern.mjs';
 
 export function createParam(names) {
-  const name = Array.isArray(names) ? names[0] : names;
+  let isMulti = Array.isArray(names);
+  names = !isMulti ? [names] : names;
+  const name = names[0];
 
-  var withVal;
-  if (Array.isArray(names)) {
-    withVal = (xs) => {
-      if (Array.isArray(xs)) {
-        const result = {};
-        xs.forEach((x, i) => {
-          if (i < names.length) {
-            result[names[i]] = x;
-          }
-        });
-        return result;
-      } else {
-        return { [name]: xs };
-      }
-    };
-  } else {
-    withVal = (x) => ({ [name]: x });
-  }
+  const withVal = (xs) => {
+    let bag;
+    // check if we have an object with an unnamed control (.value)
+    if (typeof xs === 'object' && xs.value !== undefined) {
+      bag = xs; // grab props that are already there
+      xs = xs.value; // grab the unnamed control for this one
+      delete bag.value;
+    }
+    if (isMulti && Array.isArray(xs)) {
+      const result = bag || {};
+      xs.forEach((x, i) => {
+        if (i < names.length) {
+          result[names[i]] = x;
+        }
+      });
+      return result;
+    } else if (bag) {
+      return { ...bag, [name]: xs };
+    } else {
+      return { [name]: xs };
+    }
+  };
 
   const func = (...pats) => sequence(...pats).withValue(withVal);
 
@@ -400,19 +406,6 @@ export const { loopEnd, loope } = registerControl('loopEnd', 'loope');
  * s("<bd sd>,hh*3").fast(2).crush("<16 8 7 6 5 4 3 2>")
  *
  */
-// TODO: currently duplicated with "native" legato
-// TODO: superdirt legato will do more: https://youtu.be/dQPmE1WaD1k?t=419
-/**
- * a pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.
- *
- * @name legato
- * @param {number | Pattern} duration between 0 and 1, where 1 is the length of the whole hap time
- * @noAutocomplete
- * @example
- * "c4 eb4 g4 bb4".legato("<0.125 .25 .5 .75 1 2 4>")
- *
- */
-// ['legato'],
 // ['clhatdecay'],
 export const { crush } = registerControl('crush');
 /**
@@ -1307,7 +1300,7 @@ export const { roomsize, size, sz, rsize } = registerControl('roomsize', 'size',
  * s("bd sd [~ bd] sd,hh*8").shape("<0 .2 .4 .6 .8>")
  *
  */
-export const { shape } = registerControl('shape');
+export const { shape } = registerControl(['shape', 'shapevol']);
 /**
  * Wave shaping distortion. CAUTION: it can get loud.
  * Second option in optional array syntax (ex: ".9:.5") applies a postgain to the output.
@@ -1322,7 +1315,7 @@ export const { shape } = registerControl('shape');
  * note("d1!8").s("sine").penv(36).pdecay(.12).decay(.23).distort("8:.4")
  *
  */
-export const { distort, dist } = registerControl('distort', 'dist');
+export const { distort, dist } = registerControl(['distort', 'distortvol'], 'dist');
 /**
  * Dynamics Compressor. The params are `compressor("threshold:ratio:knee:attack:release")`
  * More info [here](https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode?retiredLocale=de#instance_properties)
@@ -1427,8 +1420,6 @@ export const { waveloss } = registerControl('waveloss');
  *
  */
 export const { density } = registerControl('density');
-// TODO: midi effects?
-export const { dur } = registerControl('dur');
 // ['modwheel'],
 export const { expression } = registerControl('expression');
 export const { sustainpedal } = registerControl('sustainpedal');
@@ -1492,16 +1483,27 @@ export const { val } = registerControl('val');
 export const { cps } = registerControl('cps');
 /**
  * Multiplies the duration with the given number. Also cuts samples off at the end if they exceed the duration.
- * In tidal, this would be done with legato, [which has a complicated history in strudel](https://github.com/tidalcycles/strudel/issues/111).
- * For now, if you're coming from tidal, just think clip = legato.
  *
  * @name clip
+ * @synonyms legato
  * @param {number | Pattern} factor >= 0
  * @example
  * note("c a f e").s("piano").clip("<.5 1 2>")
  *
  */
-export const { clip } = registerControl('clip');
+export const { clip, legato } = registerControl('clip', 'legato');
+
+/**
+ * Sets the duration of the event in cycles. Similar to clip / legato, it also cuts samples off at the end if they exceed the duration.
+ *
+ * @name duration
+ * @synonyms dur
+ * @param {number | Pattern} seconds >= 0
+ * @example
+ * note("c a f e").s("piano").dur("<.5 1 2>")
+ *
+ */
+export const { duration, dur } = registerControl('duration', 'dur');
 
 // ZZFX
 export const { zrand } = registerControl('zrand');

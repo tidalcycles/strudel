@@ -251,7 +251,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     nudge = 0, // TODO: is this in seconds?
     cut,
     loop,
-    clip = undefined, // if 1, samples will be cut off when the hap ends
+    clip = undefined, // if set, samples will be cut off when the hap ends
     n = 0,
     note,
     speed = 1, // sample playback speed

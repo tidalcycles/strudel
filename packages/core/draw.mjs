@@ -134,7 +134,7 @@ export class Drawer {
         this.lastFrame = phase;
         this.visibleHaps = (this.visibleHaps || [])
           // filter out haps that are too far in the past (think left edge of screen for pianoroll)
-          .filter((h) => h.whole?.end >= phase - lookbehind - lookahead)
+          .filter((h) => h.endClipped >= phase - lookbehind - lookahead)
           // add new haps with onset (think right edge bars scrolling in)
           .concat(haps.filter((h) => h.hasOnset()));
         const time = phase - lookahead;

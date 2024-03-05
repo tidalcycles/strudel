@@ -244,9 +244,68 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
   return pat.apply(pickmod(lookup, funcs));
 });
 
+/** * Similar to `pick`, but it applies an outerJoin instead of an innerJoin.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickOut = register('pickOut', function (lookup, pat) {
+  return _pick(lookup, pat, false).outerJoin();
+});
+
+/** * The same as `pickOut`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickmodOut = register('pickmodOut', function (lookup, pat) {
+  return _pick(lookup, pat, true).outerJoin();
+});
+
+/** * Similar to `pick`, but the choosen pattern is restarted when its index is triggered.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickRestart = register('pickRestart', function (lookup, pat) {
+  return _pick(lookup, pat, false).trigzeroJoin();
+});
+
+/** * The same as `pickRestart`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickmodRestart = register('pickmodRestart', function (lookup, pat) {
+  return _pick(lookup, pat, true).trigzeroJoin();
+});
+
+/** * Similar to `pick`, but the choosen pattern is reset when its index is triggered.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickReset = register('pickReset', function (lookup, pat) {
+  return _pick(lookup, pat, false).trigJoin();
+});
+
+/** * The same as `pickReset`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickmodReset = register('pickmodReset', function (lookup, pat) {
+  return _pick(lookup, pat, true).trigJoin();
+});
+
 /**
 /** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
  * Similar to `pick`, but cycles are squeezed into the target ('inhabited') pattern.
+ * @name inhabit
+ * @synonyms pickSqueeze
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
@@ -257,21 +316,23 @@ export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
  * @example
  * s("a@2 [a b] a".inhabit({a: "bd(3,8)", b: "sd sd"})).slow(4)
  */
-export const inhabit = register('inhabit', function (lookup, pat) {
-  return _pick(lookup, pat, true).squeezeJoin();
+export const { inhabit, pickSqueeze } = register(['inhabit', 'pickSqueeze'], function (lookup, pat) {
+  return _pick(lookup, pat, false).squeezeJoin();
 });
 
 /** * The same as `inhabit`, but if you pick a number greater than the size of the list,
  * it wraps around, rather than sticking at the maximum value.
  * For example, if you pick the fifth pattern of a list of three, you'll get the
  * second one.
+ * @name inhabitmod
+ * @synonyms pickmodSqueeze
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
  */
 
-export const inhabitmod = register('inhabit', function (lookup, pat) {
-  return _pick(lookup, pat, false).squeezeJoin();
+export const { inhabitmod, pickmodSqueeze } = register(['inhabitmod', 'pickmodSqueeze'], function (lookup, pat) {
+  return _pick(lookup, pat, true).squeezeJoin();
 });
 
 /**
