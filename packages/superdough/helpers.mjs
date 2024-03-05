@@ -186,3 +186,61 @@ export function getVibratoOscillator(param, value, t) {
     return vibratoOscillator;
   }
 }
+const mod = (freq, range = 1, type = 'sine') => {
+  const ctx = getAudioContext();
+  const osc = ctx.createOscillator();
+  osc.type = type;
+  osc.frequency.value = freq;
+  osc.start();
+  const g = new GainNode(ctx, { gain: range });
+  osc.connect(g); // -range, range
+  return { node: g, stop: (t) => osc.stop(t) };
+};
+const fm = (frequencyparam, harmonicityRatio, modulationIndex, wave = 'sine') => {
+  const carrfreq = frequencyparam.value;
+  const modfreq = carrfreq * harmonicityRatio;
+  const modgain = modfreq * modulationIndex;
+  return mod(modfreq, modgain, wave);
+};
+export function applyFM(param, value) {
+  const {
+    fmh: fmHarmonicity = 1,
+    fmi: fmModulationIndex,
+    fmenv: fmEnvelopeType = 'exp',
+    fmattack: fmAttack,
+    fmdecay: fmDecay,
+    fmsustain: fmSustain,
+    fmrelease: fmRelease,
+    fmvelocity: fmVelocity,
+    fmwave: fmWaveform = 'sine',
+    duration,
+    begin,
+  } = value;
+
+  const ac = getAudioContext();
+  if (fmModulationIndex) {
+    const envGain = ac.createGain();
+    const { node: modulator } = fm(param, fmHarmonicity, fmModulationIndex, fmWaveform);
+    if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
+      // no envelope by default
+      modulator.connect(param.frequency);
+    } else {
+      const [attack, decay, sustain, release] = getADSRValues([fmAttack, fmDecay, fmSustain, fmRelease]);
+      const holdEnd = begin + duration;
+      getParamADSR(
+        envGain.gain,
+        attack,
+        decay,
+        sustain,
+        release,
+        0,
+        1,
+        begin,
+        holdEnd,
+        fmEnvelopeType === 'exp' ? 'exponential' : 'linear',
+      );
+      modulator.connect(envGain);
+      envGain.connect(param);
+    }
+  }
+}

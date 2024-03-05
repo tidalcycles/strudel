@@ -169,14 +169,19 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
       },
 
       {
-        name: 'spread',
+        name: 'panspread',
         defaultValue: 0.4,
         min: 0,
         max: 1,
       },
       {
-        name: 'detune',
+        name: 'freqspread',
         defaultValue: 0.2,
+        min: 0,
+      },
+      {
+        name: 'detune',
+        defaultValue: 0,
         min: 0,
       },
 
@@ -194,23 +199,25 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
     if (currentTime >= params.end[0]) {
       return false;
     }
-    const frequency = params.frequency[0];
+    let frequency = params.frequency[0];
+    //apply detune in cents
+    frequency = frequency * Math.pow(2, params.detune[0] / 1200);
 
     const output = outputs[0];
     const voices = params.voices[0];
-    const detune = params.detune[0];
-    let spread = params.spread[0];
-    spread = spread * 0.5 + 0.5;
+    const freqspread = params.freqspread[0];
+    let panspread = params.panspread[0];
+    panspread = panspread * 0.5 + 0.5;
     const gainAdjustment = 1;
 
     for (let n = 0; n < voices; n++) {
       let adj = 0;
       const isOdd = n % 2 === 1;
       if (n > 0) {
-        adj = isOdd ? n * detune : -((n - 1) * detune);
+        adj = isOdd ? n * freqspread : -((n - 1) * freqspread);
       }
       const freq = Math.min(16744, Math.max(1, frequency + adj * 0.01 * frequency));
-      const balance = isOdd ? 1 - spread : spread;
+      const balance = isOdd ? 1 - panspread : panspread;
       const dt = freq / sampleRate;
 
       for (let i = 0; i < output[0].length; i++) {
