@@ -202,7 +202,7 @@ const fm = (frequencyparam, harmonicityRatio, modulationIndex, wave = 'sine') =>
   const modgain = modfreq * modulationIndex;
   return mod(modfreq, modgain, wave);
 };
-export function applyFM(param, value) {
+export function applyFM(param, value, begin) {
   const {
     fmh: fmHarmonicity = 1,
     fmi: fmModulationIndex,
@@ -214,16 +214,15 @@ export function applyFM(param, value) {
     fmvelocity: fmVelocity,
     fmwave: fmWaveform = 'sine',
     duration,
-    begin,
   } = value;
 
-  const ac = getAudioContext();
   if (fmModulationIndex) {
+    const ac = getAudioContext();
     const envGain = ac.createGain();
     const { node: modulator } = fm(param, fmHarmonicity, fmModulationIndex, fmWaveform);
     if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
       // no envelope by default
-      modulator.connect(param.frequency);
+      modulator.connect(param);
     } else {
       const [attack, decay, sustain, release] = getADSRValues([fmAttack, fmDecay, fmSustain, fmRelease]);
       const holdEnd = begin + duration;

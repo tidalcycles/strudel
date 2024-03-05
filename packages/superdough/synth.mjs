@@ -3,24 +3,6 @@ import { registerSound, getAudioContext, getWorklet } from './superdough.mjs';
 import { applyFM, gainNode, getADSRValues, getParamADSR, getPitchEnvelope, getVibratoOscillator } from './helpers.mjs';
 import { getNoiseMix, getNoiseOscillator } from './noise.mjs';
 
-const mod = (freq, range = 1, type = 'sine') => {
-  const ctx = getAudioContext();
-  const osc = ctx.createOscillator();
-  osc.type = type;
-  osc.frequency.value = freq;
-  osc.start();
-  const g = new GainNode(ctx, { gain: range });
-  osc.connect(g); // -range, range
-  return { node: g, stop: (t) => osc.stop(t) };
-};
-
-const fm = (osc, harmonicityRatio, modulationIndex, wave = 'sine') => {
-  const carrfreq = osc.frequency.value;
-  const modfreq = carrfreq * harmonicityRatio;
-  const modgain = modfreq * modulationIndex;
-  return mod(modfreq, modgain, wave);
-};
-
 const getFrequencyFromValue = (value) => {
   let { note, freq } = value;
   note = note || 36;
@@ -37,59 +19,6 @@ const getFrequencyFromValue = (value) => {
 
 const waveforms = ['triangle', 'square', 'sawtooth', 'sine'];
 const noises = ['pink', 'white', 'brown', 'crackle'];
-
-const applyModulators = (node, value) => {
-  let {
-    n: partials,
-    note,
-    freq,
-    noise = 0,
-    // fm
-    fmh: fmHarmonicity = 1,
-    fmi: fmModulationIndex,
-    fmenv: fmEnvelopeType = 'exp',
-    fmattack: fmAttack,
-    fmdecay: fmDecay,
-    fmsustain: fmSustain,
-    fmrelease: fmRelease,
-    fmvelocity: fmVelocity,
-    fmwave: fmWaveform = 'sine',
-    duration,
-    begin: t,
-  } = value;
-
-  const ac = getAudioContext();
-  if (fmModulationIndex) {
-    let envGain = ac.createGain();
-    const { node: modulator, stop } = fm(node, fmHarmonicity, fmModulationIndex, fmWaveform);
-    if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
-      // no envelope by default
-      modulator.connect(node.frequency);
-    } else {
-      const [attack, decay, sustain, release] = getADSRValues([fmAttack, fmDecay, fmSustain, fmRelease]);
-      const holdEnd = t + duration;
-      getParamADSR(
-        envGain.gain,
-        attack,
-        decay,
-        sustain,
-        release,
-        0,
-        1,
-        t,
-        holdEnd,
-        fmEnvelopeType === 'exp' ? 'exponential' : 'linear',
-      );
-      modulator.connect(envGain);
-      envGain.connect(node.frequency);
-    }
-  }
-
-  getVibratoOscillator(node.detune, value, t);
-  getPitchEnvelope(node.detune, value, t, t + duration);
-
-  return node;
-};
 
 export function registerSynthSounds() {
   [...waveforms].forEach((s) => {
@@ -166,7 +95,7 @@ export function registerSynthSounds() {
       // console.log(node.parameters.get('frequency'));
       getPitchEnvelope(node.parameters.get('detune'), value, begin, holdend);
       getVibratoOscillator(node.parameters.get('detune'), value, begin);
-      // applyFM(node.parameters.get('frequency'));
+      applyFM(node.parameters.get('frequency'), value, begin);
       const envGain = gainNode(1);
       node = node.connect(envGain);
 
@@ -260,24 +189,7 @@ export function waveformN(partials, type) {
 
 // expects one of waveforms as s
 export function getOscillator(s, t, value) {
-  let {
-    n: partials,
-    note,
-    freq,
-    noise = 0,
-    // fm
-    fmh: fmHarmonicity = 1,
-    fmi: fmModulationIndex,
-    fmenv: fmEnvelopeType = 'exp',
-    fmattack: fmAttack,
-    fmdecay: fmDecay,
-    fmsustain: fmSustain,
-    fmrelease: fmRelease,
-    fmvelocity: fmVelocity,
-    fmwave: fmWaveform = 'sine',
-    duration,
-  } = value;
-  let ac = getAudioContext();
+  let { n: partials, duration, noise = 0 } = value;
   let o;
   // If no partials are given, use stock waveforms
   if (!partials || s === 'sine') {
@@ -288,55 +200,15 @@ export function getOscillator(s, t, value) {
   else {
     o = waveformN(partials, s);
   }
-
-  // get frequency from note...
-  note = note || 36;
-  if (typeof note === 'string') {
-    note = noteToMidi(note); // e.g. c3 => 48
-  }
-  // get frequency
-  if (!freq && typeof note === 'number') {
-    freq = midiToFreq(note); // + 48);
-  }
-
   // set frequency
-  o.frequency.value = Number(freq);
+  o.frequency.value = getFrequencyFromValue(value);
   o.start(t);
 
-  // FM
-  let stopFm;
-  let envGain = ac.createGain();
-  if (fmModulationIndex) {
-    const { node: modulator, stop } = fm(o, fmHarmonicity, fmModulationIndex, fmWaveform);
-    if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
-      // no envelope by default
-      modulator.connect(o.frequency);
-    } else {
-      const [attack, decay, sustain, release] = getADSRValues([fmAttack, fmDecay, fmSustain, fmRelease]);
-      const holdEnd = t + duration;
-      getParamADSR(
-        envGain.gain,
-        attack,
-        decay,
-        sustain,
-        release,
-        0,
-        1,
-        t,
-        holdEnd,
-        fmEnvelopeType === 'exp' ? 'exponential' : 'linear',
-      );
-      modulator.connect(envGain);
-      envGain.connect(o.frequency);
-    }
-    stopFm = stop;
-  }
-
-  // Additional oscillator for vibrato effect
   let vibratoOscillator = getVibratoOscillator(o.detune, value, t);
 
   // pitch envelope
   getPitchEnvelope(o.detune, value, t, t + duration);
+  applyFM(o.frequency, value, t);
 
   let noiseMix;
   if (noise) {
@@ -348,7 +220,7 @@ export function getOscillator(s, t, value) {
     stop: (time) => {
       vibratoOscillator?.stop(time);
       noiseMix?.stop(time);
-      stopFm?.(time);
+      // stopFm?.(time);
       o.stop(time);
     },
     triggerRelease: (time) => {

@@ -112,6 +112,7 @@ class DistortProcessor extends AudioWorkletProcessor {
 registerProcessor('distort-processor', DistortProcessor);
 
 // adjust waveshape to remove frequencies above nyquist to prevent aliasing
+// referenced from https://www.kvraudio.com/forum/viewtopic.php?t=375517
 const polyBlep = (phase, dt) => {
   // 0 <= phase < 1
   if (phase < dt) {
