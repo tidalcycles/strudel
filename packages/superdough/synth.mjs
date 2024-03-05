@@ -1,4 +1,4 @@
-import { midiToFreq, noteToMidi } from './util.mjs';
+import { clamp, midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext, getWorklet } from './superdough.mjs';
 import { gainNode, getADSRValues, getParamADSR, getPitchEnvelope, getVibratoOscillator } from './helpers.mjs';
 import { getNoiseMix, getNoiseOscillator } from './noise.mjs';
@@ -24,6 +24,20 @@ const fm = (osc, harmonicityRatio, modulationIndex, wave = 'sine') => {
 const waveforms = ['triangle', 'square', 'sawtooth', 'sine'];
 const noises = ['pink', 'white', 'brown', 'crackle'];
 
+const getFrequencyFromValue = (value) => {
+  let { note, freq } = value;
+  note = note || 36;
+  if (typeof note === 'string') {
+    note = noteToMidi(note); // e.g. c3 => 48
+  }
+  // get frequency
+  if (!freq && typeof note === 'number') {
+    freq = midiToFreq(note); // + 48);
+  }
+
+  return Number(freq);
+};
+
 export function registerSynthSounds() {
   [...waveforms].forEach((s) => {
     registerSound(
@@ -35,8 +49,7 @@ export function registerSynthSounds() {
           [0.001, 0.05, 0.6, 0.01],
         );
 
-        let sound;
-        sound = getOscillator(s, t, value);
+        let sound = getOscillator(s, t, value);
         let { node: o, stop, triggerRelease } = sound;
 
         // turn down
@@ -69,18 +82,9 @@ export function registerSynthSounds() {
     'supersaw',
     (begin, value, onended) => {
       const ac = getAudioContext();
-      let { note, freq, duration, n = 2 } = value;
-      note = note || 36;
-      if (typeof note === 'string') {
-        note = noteToMidi(note); // e.g. c3 => 48
-      }
-      // get frequency
-      if (!freq && typeof note === 'number') {
-        freq = midiToFreq(note); // + 48);
-      }
-
-      // set frequency
-      freq = Number(freq);
+      let { duration, n, unison = 6, spread = 0.3, detune } = value;
+      detune = detune ?? n ?? 2;
+      const frequency = getFrequencyFromValue(value);
 
       const [attack, decay, sustain, release] = getADSRValues(
         [value.attack, value.decay, value.sustain, value.release],
@@ -95,12 +99,12 @@ export function registerSynthSounds() {
         ac,
         'supersaw-oscillator',
         {
-          frequency: freq,
+          frequency,
           begin,
           end,
-          detune: Math.min(200, Math.max(0, n * 0.1)),
-          // voices: n,
-          // spread: 0,
+          detune: detune * 0.1,
+          voices: clamp(unison, 0, 100),
+          spread: clamp(spread, 0, 1),
         },
         {
           outputChannelCount: [2],

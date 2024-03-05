@@ -184,7 +184,6 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
         name: 'voices',
         defaultValue: 6,
         min: 1,
-        max: 10,
       },
     ];
   }
@@ -202,7 +201,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
     const detune = params.detune[0];
     let spread = params.spread[0];
     spread = spread * 0.5 + 0.5;
-    const gainAdjustment = Math.max(0.75, 1 - (voices - 1) * 0.05);
+    const gainAdjustment = 1;
 
     for (let n = 0; n < voices; n++) {
       let adj = 0;
@@ -210,7 +209,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
       if (n > 0) {
         adj = isOdd ? n * detune : -((n - 1) * detune);
       }
-      const freq = frequency + adj * 0.01 * frequency;
+      const freq = Math.min(16744, Math.max(1, frequency + adj * 0.01 * frequency));
       const balance = isOdd ? 1 - spread : spread;
       const dt = freq / sampleRate;
 
