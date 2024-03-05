@@ -215,11 +215,16 @@ export function applyFM(param, value, begin) {
     fmwave: fmWaveform = 'sine',
     duration,
   } = value;
+  let modulator;
+  let stop = () => {};
 
   if (fmModulationIndex) {
     const ac = getAudioContext();
     const envGain = ac.createGain();
-    const { node: modulator, stop } = fm(param, fmHarmonicity, fmModulationIndex, fmWaveform);
+    const fmmod = fm(param, fmHarmonicity, fmModulationIndex, fmWaveform);
+
+    modulator = fmmod.node;
+    stop = fmmod.stop;
     if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
       // no envelope by default
       modulator.connect(param);
@@ -242,4 +247,5 @@ export function applyFM(param, value, begin) {
       envGain.connect(param);
     }
   }
+  return { stop };
 }

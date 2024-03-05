@@ -208,7 +208,7 @@ export function getOscillator(s, t, value) {
 
   // pitch envelope
   getPitchEnvelope(o.detune, value, t, t + duration);
-  applyFM(o.frequency, value, t);
+  const fmModulator = applyFM(o.frequency, value, t);
 
   let noiseMix;
   if (noise) {
@@ -218,9 +218,9 @@ export function getOscillator(s, t, value) {
   return {
     node: noiseMix?.node || o,
     stop: (time) => {
+      fmModulator.stop(time);
       vibratoOscillator?.stop(time);
       noiseMix?.stop(time);
-      // stopFm?.(time);
       o.stop(time);
     },
     triggerRelease: (time) => {
