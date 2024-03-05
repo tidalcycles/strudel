@@ -178,13 +178,15 @@ export const scale = register('scale', function (scale, pat) {
     pat
       .fmap((value) => {
         const isObject = typeof value === 'object';
-        let step = isObject ? value.n : value;
+        const undefinedN = value.n === undefined;
+        let step = isObject ? (undefinedN ? value.value : value.n) : value;
         if (isObject) {
           value = { ...value };
           delete value.n; // remove n so it won't cause trouble
         }
-        if (isNote(step)) {
+        if (isNote(step) && undefinedN) {
           if (isObject) {
+            if (value.value !== undefined) value.value = step; // transforms the original value
             value.note = step;
             return pure(value);
           } else return pure(step); // legacy
@@ -202,6 +204,7 @@ export const scale = register('scale', function (scale, pat) {
             note = scaleStep(asNumber, scale);
           }
           if (isObject) {
+            if (value.value !== undefined && undefinedN) value.value = note; // transforms the original value
             value.note = note;
             return pure(value);
           } else return pure(note); // legacy
