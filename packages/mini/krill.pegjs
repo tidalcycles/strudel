@@ -100,15 +100,14 @@ comma = ws "," ws
 pipe = ws "|" ws
 dot = ws "." ws
 quote = '"' / "'"
-semicolon = ws ";" ws
 
 // ------------------ steps and cycles ---------------------------
 
 // single step definition (e.g bd)
 step_char "a letter, a number, \"-\", \"#\", \".\", \"^\", \"_\"" = 
-  unicode_letter / [0-9~.] / "-" / "#" / "." / "^" / "_"
+  unicode_letter / [0-9~] / "-" / "#" / "." / "^" / "_"
 
-step = ws chars:step_char+ ws !{ const s = chars.join(""); return (s === "_") } { return new AtomStub(chars.join("")) }
+step = ws chars:step_char+ ws !{ const s = chars.join(""); return (s === ".") || (s === "_") } { return new AtomStub(chars.join("")) }
 
 // define a sub cycle e.g. [1 2, 3 [4]]
 sub_cycle = ws  "[" ws s:stack_or_choose ws "]" ws { return s }
@@ -179,12 +178,12 @@ choose_tail = tail:(pipe @sequence)+
   { return { alignment: 'rand', list: tail, seed: seed++ }; }
 
 // a foot separates subsequences, as an alternative to wrapping them in []
-semicolon_tail = tail:(semicolon @sequence)+
+dot_tail = tail:(dot @sequence)+
   { return { alignment: 'feet', list: tail, seed: seed++ }; }
 
 // if the stack contains only one element, we don't create a stack but return the
 // underlying element
-stack_or_choose = head:sequence tail:(stack_tail / choose_tail / semicolon_tail)?
+stack_or_choose = head:sequence tail:(stack_tail / choose_tail / dot_tail)?
   { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment, tail.seed); } else { return head; } }
 
 polymeter_stack = head:sequence tail:stack_tail?

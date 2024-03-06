@@ -125,7 +125,7 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
       return enter(ast.source_);
     }
     case 'atom': {
-      if (ast.source_ === '~' || ast.source_ === '.') {
+      if (ast.source_ === '~' || ast.source_ === '-') {
         return strudel.silence;
       }
       if (!ast.location_) {
