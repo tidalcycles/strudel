@@ -230,7 +230,6 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
     const freqspread = params.freqspread[0];
     let panspread = params.panspread[0];
     panspread = panspread * 0.5 + 0.5;
-    const gainAdjustment = 1;
 
     for (let n = 0; n < voices; n++) {
       let adj = 0;
@@ -247,8 +246,8 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
         this.phase[n] = this.phase[n] ?? Math.random();
         const v = saw(this.phase[n], dt);
 
-        output[0][i] = (output[0][i] + v * (1 - balance)) * gainAdjustment;
-        output[1][i] = (output[1][i] + v * balance) * gainAdjustment;
+        output[0][i] = output[0][i] + v * (1 - balance);
+        output[1][i] = output[1][i] + v * balance;
 
         this.phase[n] += dt;
 

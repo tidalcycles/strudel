@@ -76,6 +76,7 @@ export function registerSynthSounds() {
 
       const holdend = begin + duration;
       const end = holdend + release + 0.01;
+      const voices = clamp(unison, 1, 100);
 
       let node = getWorklet(
         ac,
@@ -85,13 +86,14 @@ export function registerSynthSounds() {
           begin,
           end,
           freqspread: detune * 0.1,
-          voices: clamp(unison, 0, 100),
+          voices,
           panspread: clamp(spread, 0, 1),
         },
         {
           outputChannelCount: [2],
         },
       );
+      const gainAdjustment = 1 / Math.sqrt(voices);
       // console.log(node.parameters.get('frequency'));
       getPitchEnvelope(node.parameters.get('detune'), value, begin, holdend);
       getVibratoOscillator(node.parameters.get('detune'), value, begin);
@@ -99,7 +101,7 @@ export function registerSynthSounds() {
       const envGain = gainNode(1);
       node = node.connect(envGain);
 
-      getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3, begin, holdend, 'linear');
+      getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3 * gainAdjustment, begin, holdend, 'linear');
 
       return {
         node,
