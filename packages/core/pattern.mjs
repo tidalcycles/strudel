@@ -1134,6 +1134,7 @@ Pattern.prototype.factories = {
  * silence // "~"
  */
 export const silence = new Pattern(() => []);
+silence.__weight = 0;
 
 /** A discrete value that repeats once per cycle.
  *
