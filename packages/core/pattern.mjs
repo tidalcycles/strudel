@@ -1148,6 +1148,7 @@ export function pure(value) {
   }
   const result = new Pattern(query);
   result.__pure = value;
+  result.__weight = 1;
   return result;
 }
 
@@ -1311,8 +1312,41 @@ export function fastcat(...pats) {
   if (pats.length > 1) {
     result = result._fast(pats.length);
   }
+  result.__weight = pats.length;
   return result;
 }
+
+export function beatCat(...groups) {
+  groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
+  const weights = groups.map((a) => a.map((elem) => elem.__weight ?? 1));
+  const cycles = lcm(...groups.map((x) => x.length));
+  let result = [];
+  for (let cycle = 0; cycle < cycles; ++cycle) {
+    result.push(...groups.map((x) => (x.length == 0 ? silence : x[cycle % x.length])));
+  }
+  result = result.filter((x) => x.__weight > 0);
+  const weight = result.reduce((a, b) => a.add(b.__weight), Fraction(0));
+  result = timeCat(...result);
+  result.__weight = weight;
+  console.log('weight: ', weight);
+  return result;
+}
+
+// function beatCat(...groups) {
+//   groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
+//   const weights = groups.map((a) => a.map((elem) => elem.__weight ?? 1));
+
+//   groups = groups.map(slowcat)
+
+//   const arrayFn = function (...args) {
+//     args = args.map((arg, i) => [arg, groups[i]])
+//     return timeCat(...args);
+//   };
+//   const mapFn = curry(arrayFn, null, weights.length);
+//   const [left, ...right] = weights;
+//   console.log('left', right)
+//   return right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
+// }
 
 /** See `fastcat` */
 export function sequence(...pats) {
