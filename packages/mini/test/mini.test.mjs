@@ -117,6 +117,9 @@ describe('mini', () => {
     checkEuclid([11, 24], 'x ~ ~ x ~ x ~ x ~ x ~ x ~ ~ x ~ x ~ x ~ x ~ x ~');
     checkEuclid([13, 24], 'x ~ x x ~ x ~ x ~ x ~ x ~ x x ~ x ~ x ~ x ~ x ~');
   });
+  it('supports the - alias for ~', () => {
+    expect(minS('a - b [- c]')).toEqual(minS('a ~ b [~ c]'));
+  });
   it('supports the ? operator', () => {
     expect(
       mini('a?')
