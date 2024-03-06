@@ -228,8 +228,11 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
     const output = outputs[0];
     const voices = params.voices[0];
     const freqspread = params.freqspread[0];
-    let panspread = params.panspread[0];
-    panspread = panspread * 0.5 + 0.5;
+    let panspread = params.panspread[0] * 0.5 + 0.5;
+    const gain = [Math.sqrt(1 - panspread), Math.sqrt(panspread)];
+    const revGain = [Math.sqrt(panspread), Math.sqrt(1 - panspread)];
+
+    // panspread = panspread * 0.5 + 0.5;
 
     for (let n = 0; n < voices; n++) {
       let adj = 0;
@@ -238,7 +241,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
         adj = isOdd ? n * freqspread : -((n - 1) * freqspread);
       }
       const freq = Math.min(16744, Math.max(1, frequency + adj * 0.01 * frequency));
-      const balance = isOdd ? 1 - panspread : panspread;
+      const g = isOdd ? gain : revGain;
       // eslint-disable-next-line no-undef
       const dt = freq / sampleRate;
 
@@ -246,8 +249,8 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
         this.phase[n] = this.phase[n] ?? Math.random();
         const v = saw(this.phase[n], dt);
 
-        output[0][i] = output[0][i] + v * (1 - balance);
-        output[1][i] = output[1][i] + v * balance;
+        output[0][i] = output[0][i] + v * g[0];
+        output[1][i] = output[1][i] + v * g[1];
 
         this.phase[n] += dt;
 
