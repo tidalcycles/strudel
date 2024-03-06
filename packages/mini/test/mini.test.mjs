@@ -117,8 +117,8 @@ describe('mini', () => {
     checkEuclid([11, 24], 'x ~ ~ x ~ x ~ x ~ x ~ x ~ ~ x ~ x ~ x ~ x ~ x ~');
     checkEuclid([13, 24], 'x ~ x x ~ x ~ x ~ x ~ x ~ x x ~ x ~ x ~ x ~ x ~');
   });
-  it('supports the - alias for ~', () => {
-    expect(minS('a - b [- c]')).toEqual(minS('a ~ b [~ c]'));
+  it('supports the . alias for ~', () => {
+    expect(minS('a . b [. c]')).toEqual(minS('a ~ b [~ c]'));
   });
   it('supports the ? operator', () => {
     expect(
@@ -197,9 +197,9 @@ describe('mini', () => {
   it('supports patterned ranges', () => {
     expect(minS('[<0 1> .. <2 4>]*2')).toEqual(minS('[0 1 2] [1 2 3 4]'));
   });
-  it('supports the . operator', () => {
-    expect(minS('a . b c')).toEqual(minS('a [b c]'));
-    expect(minS('a . b c . [d e f . g h]')).toEqual(minS('a [b c] [[d e f] [g h]]'));
+  it('supports the ; operator', () => {
+    expect(minS('a ; b c')).toEqual(minS('a [b c]'));
+    expect(minS('a ; b c ; [d e f ; g h]')).toEqual(minS('a [b c] [[d e f] [g h]]'));
   });
   it('supports the _ operator', () => {
     expect(minS('a _ b _ _')).toEqual(minS('a@2 b@3'));
