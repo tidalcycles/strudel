@@ -1,7 +1,7 @@
 {
-  "name": "@strudel/canvas",
+  "name": "@strudel/draw",
   "version": "1.0.1",
-  "description": "Helpers for drawing with the Canvas API and Strudel",
+  "description": "Helpers for drawing with Strudel",
   "main": "index.mjs",
   "type": "module",
   "publishConfig": {

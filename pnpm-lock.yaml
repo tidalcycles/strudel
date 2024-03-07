@@ -140,16 +140,6 @@ importers:
         specifier: ^5.0.10
         version: 5.0.10
 
-  packages/canvas:
-    dependencies:
-      '@strudel/core':
-        specifier: workspace:*
-        version: link:../core
-    devDependencies:
-      vite:
-        specifier: ^5.0.10
-        version: 5.0.11(@types/node@20.10.6)
-
   packages/codemirror:
     dependencies:
       '@codemirror/autocomplete':
@@ -188,12 +178,12 @@ importers:
       '@replit/codemirror-vscode-keymap':
         specifier: ^6.0.2
         version: 6.0.2(@codemirror/autocomplete@6.11.1)(@codemirror/commands@6.3.3)(@codemirror/language@6.10.0)(@codemirror/lint@6.4.2)(@codemirror/search@6.5.5)(@codemirror/state@6.4.0)(@codemirror/view@6.23.0)
-      '@strudel/canvas':
-        specifier: workspace:*
-        version: link:../canvas
       '@strudel/core':
         specifier: workspace:*
         version: link:../core
+      '@strudel/draw':
+        specifier: workspace:*
+        version: link:../draw
       '@uiw/codemirror-themes':
         specifier: ^4.21.21
         version: 4.21.21(@codemirror/language@6.10.0)(@codemirror/state@6.4.0)(@codemirror/view@6.23.0)
@@ -246,16 +236,26 @@ importers:
         specifier: ^1.5.3
         version: 1.5.3
 
+  packages/draw:
+    dependencies:
+      '@strudel/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      vite:
+        specifier: ^5.0.10
+        version: 5.0.11(@types/node@20.10.6)
+
   packages/embed: {}
 
   packages/hydra:
     dependencies:
-      '@strudel/canvas':
-        specifier: workspace:*
-        version: link:../canvas
       '@strudel/core':
         specifier: workspace:*
         version: link:../core
+      '@strudel/draw':
+        specifier: workspace:*
+        version: link:../draw
       hydra-synth:
         specifier: ^1.3.29
         version: 1.3.29
@@ -317,15 +317,15 @@ importers:
 
   packages/repl:
     dependencies:
-      '@strudel/canvas':
-        specifier: workspace:*
-        version: link:../canvas
       '@strudel/codemirror':
         specifier: workspace:*
         version: link:../codemirror
       '@strudel/core':
         specifier: workspace:*
         version: link:../core
+      '@strudel/draw':
+        specifier: workspace:*
+        version: link:../draw
       '@strudel/hydra':
         specifier: workspace:*
         version: link:../hydra
@@ -474,12 +474,12 @@ importers:
 
   packages/webaudio:
     dependencies:
-      '@strudel/canvas':
-        specifier: workspace:*
-        version: link:../canvas
       '@strudel/core':
         specifier: workspace:*
         version: link:../core
+      '@strudel/draw':
+        specifier: workspace:*
+        version: link:../draw
       superdough:
         specifier: workspace:*
         version: link:../superdough
@@ -545,9 +545,6 @@ importers:
       '@nanostores/react':
         specifier: ^0.7.1
         version: 0.7.1(nanostores@0.9.5)(react@18.2.0)
-      '@strudel/canvas':
-        specifier: workspace:*
-        version: link:../packages/canvas
       '@strudel/codemirror':
         specifier: workspace:*
         version: link:../packages/codemirror
@@ -560,6 +557,9 @@ importers:
       '@strudel/desktopbridge':
         specifier: workspace:*
         version: link:../packages/desktopbridge
+      '@strudel/draw':
+        specifier: workspace:*
+        version: link:../packages/draw
       '@strudel/hydra':
         specifier: workspace:*
         version: link:../packages/hydra

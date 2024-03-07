@@ -34,7 +34,7 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@strudel/core": "workspace:*",
-    "@strudel/canvas": "workspace:*",
+    "@strudel/draw": "workspace:*",
     "superdough": "workspace:*"
   },
   "devDependencies": {

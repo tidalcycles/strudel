@@ -1,4 +1,4 @@
-import { getDrawContext } from '@strudel/canvas';
+import { getDrawContext } from '@strudel/draw';
 
 let latestOptions;
 

@@ -1,5 +1,5 @@
 import { createCanvas } from 'canvas';
-import { pianoroll } from '@strudel/canvas';
+import { pianoroll } from '@strudel/draw';
 import { evaluate } from '@strudel/transpiler';
 import '../../../../test/runtime.mjs';
 import { getMyPatterns } from '../../my_patterns';

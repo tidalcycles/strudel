@@ -1,5 +1,5 @@
 import { Pattern, clamp } from '@strudel/core';
-import { getDrawContext } from '@strudel/canvas';
+import { getDrawContext } from '../draw/index.mjs';
 import { analyser, getAnalyzerData } from 'superdough';
 
 export function drawTimeScope(

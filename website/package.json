@@ -26,7 +26,7 @@
     "@nanostores/react": "^0.7.1",
     "@strudel/codemirror": "workspace:*",
     "@strudel/core": "workspace:*",
-    "@strudel/canvas": "workspace:*",
+    "@strudel/draw": "workspace:*",
     "@strudel/csound": "workspace:*",
     "@strudel/desktopbridge": "workspace:*",
     "@strudel/hydra": "workspace:*",

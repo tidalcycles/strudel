@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { code2hash, logger, silence } from '@strudel/core';
-import { getDrawContext } from '@strudel/canvas';
+import { getDrawContext } from '@strudel/draw';
 import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel/transpiler';
 import {

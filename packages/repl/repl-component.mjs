@@ -1,5 +1,5 @@
 import { silence } from '@strudel/core';
-import { getDrawContext } from '@strudel/canvas';
+import { getDrawContext } from '@strudel/draw';
 import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput } from '@strudel/webaudio';
 import { StrudelMirror, codemirrorSettings } from '@strudel/codemirror';

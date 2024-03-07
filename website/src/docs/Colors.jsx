@@ -1,4 +1,4 @@
-import { colorMap } from '@strudel/canvas';
+import { colorMap } from '@strudel/draw';
 
 const Colors = () => {
   return (

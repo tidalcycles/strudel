@@ -13,7 +13,7 @@ import {
   drawSelection,
 } from '@codemirror/view';
 import { Pattern, repl } from '@strudel/core';
-import { Drawer, cleanupDraw } from '@strudel/canvas';
+import { Drawer, cleanupDraw } from '@strudel/draw';
 import { isAutoCompletionEnabled } from './autocomplete.mjs';
 import { isTooltipEnabled } from './tooltip.mjs';
 import { flash, isFlashEnabled } from './flash.mjs';
