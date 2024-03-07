@@ -15,6 +15,7 @@
     "repl": "npm run prestart && cd website && npm run dev",
     "start": "npm run prestart && cd website && npm run dev",
     "dev": "npm run prestart && cd website && npm run dev",
+    "watch": "pnpm prestart && pnpm --parallel --filter {./website/**}... --filter \"@strudel/website\" watch",
     "build": "npm run prebuild && cd website && npm run build",
     "preview": "cd website && npm run preview",
     "osc": "cd packages/osc && npm run server",

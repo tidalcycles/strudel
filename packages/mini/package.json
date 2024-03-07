@@ -11,6 +11,7 @@
     "test": "vitest run",
     "build:parser": "peggy -o krill-parser.js --format es ./krill.pegjs",
     "build": "vite build",
+    "watch": "vite build --watch",
     "prepublishOnly": "npm run build"
   },
   "repository": {
