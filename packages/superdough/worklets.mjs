@@ -235,12 +235,14 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
     for (let n = 0; n < voices; n++) {
       let adj = 0;
       const isOdd = (n & 1) == 1;
+      //adjust the detune amount for each voice
       if (n > 0) {
         adj = isOdd ? n * freqspread : -((n - 1) * freqspread);
       }
       const freq = Math.min(16744, Math.max(1, frequency + adj * 0.01 * frequency));
       let gainL = gain1;
       let gainR = gain2;
+      // invert right and left gain
       if (isOdd) {
         gainL = gain2;
         gainR = gain1;
