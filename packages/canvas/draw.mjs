@@ -64,7 +64,7 @@ Pattern.prototype.draw = function (callback, { from, to, onQuery } = {}) {
 
 // this is a more generic helper to get a rendering callback for the currently active haps
 // TODO: this misses events that are prolonged with clip or duration (would need state)
-Pattern.prototype.onFrame = function (fn) {
+Pattern.prototype.onFrame = function (fn, offset = 0) {
   if (typeof window === 'undefined') {
     return this;
   }
@@ -72,7 +72,7 @@ Pattern.prototype.onFrame = function (fn) {
     cancelAnimationFrame(window.strudelAnimation);
   }
   const animate = () => {
-    const t = getTime();
+    const t = getTime() + offset;
     const haps = this.queryArc(t, t);
     fn(haps, t, this);
     window.strudelAnimation = requestAnimationFrame(animate);
