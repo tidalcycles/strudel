@@ -124,13 +124,11 @@ export class Drawer {
         const lookahead = this.drawTime[1];
         // calculate current frame time (think right side of screen for pianoroll)
         const phase = this.scheduler.now() + lookahead;
-
         // first frame just captures the phase
         if (this.lastFrame === null) {
           this.lastFrame = phase;
           return;
         }
-
         // query haps from last frame till now. take last 100ms max
         const haps = this.scheduler.pattern.queryArc(Math.max(this.lastFrame, phase - 1 / 10), phase);
         this.lastFrame = phase;
@@ -155,7 +153,6 @@ export class Drawer {
       return;
     }
     // TODO: scheduler.now() seems to move even when it's stopped, this hints at a bug...
-
     t = t ?? scheduler.now();
     this.scheduler = scheduler;
     let [_, lookahead] = this.drawTime;
