@@ -1,4 +1,5 @@
 import { NeoCyclist } from './neocyclist.mjs';
+import { Cyclist } from './cyclist.mjs';
 import { evaluate as _evaluate } from './evaluate.mjs';
 import { logger } from './logger.mjs';
 import { setTime } from './time.mjs';
@@ -15,6 +16,7 @@ export function repl({
   onToggle,
   editPattern,
   onUpdateState,
+  sync = false,
 }) {
   const state = {
     schedulerError: undefined,
@@ -35,14 +37,16 @@ export function repl({
     onUpdateState?.(state);
   };
 
-  const scheduler = new NeoCyclist({
+  const schedulerOptions = {
     onTrigger: getTrigger({ defaultOutput, getTime }),
     getTime,
     onToggle: (started) => {
       updateState({ started });
       onToggle?.(started);
     },
-  });
+  };
+
+  const scheduler = sync ? new NeoCyclist(schedulerOptions) : new Cyclist(schedulerOptions);
   let pPatterns = {};
   let allTransform;
 
