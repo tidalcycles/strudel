@@ -4,9 +4,6 @@
   "description": "Claviature component for Strudel",
   "main": "dist/index.mjs",
   "type": "module",
-  "publishConfig": {
-    "main": "dist/index.mjs"
-  },
   "scripts": {
     "build": "vite build",
     "watch": "vite build --watch",
