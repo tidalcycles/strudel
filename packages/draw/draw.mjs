@@ -1,31 +1,32 @@
 /*
 draw.mjs - <short description TODO>
-Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/draw.mjs>
+Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/canvas/draw.mjs>
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern, getTime, State, TimeSpan } from './index.mjs';
+import { Pattern, getTime, State, TimeSpan } from '@strudel/core';
 
-export const getDrawContext = (id = 'test-canvas') => {
+export const getDrawContext = (id = 'test-canvas', options) => {
+  let { contextType = '2d', pixelated = false, pixelRatio = window.devicePixelRatio } = options || {};
   let canvas = document.querySelector('#' + id);
   if (!canvas) {
-    const scale = 2; // 2 = crisp on retina screens
     canvas = document.createElement('canvas');
     canvas.id = id;
-    canvas.width = window.innerWidth * scale;
-    canvas.height = window.innerHeight * scale;
+    canvas.width = window.innerWidth * pixelRatio;
+    canvas.height = window.innerHeight * pixelRatio;
     canvas.style = 'pointer-events:none;width:100%;height:100%;position:fixed;top:0;left:0';
+    pixelated && (canvas.style.imageRendering = 'pixelated');
     document.body.prepend(canvas);
     let timeout;
     window.addEventListener('resize', () => {
       timeout && clearTimeout(timeout);
       timeout = setTimeout(() => {
-        canvas.width = window.innerWidth * scale;
-        canvas.height = window.innerHeight * scale;
+        canvas.width = window.innerWidth * pixelRatio;
+        canvas.height = window.innerHeight * pixelRatio;
       }, 200);
     });
   }
-  return canvas.getContext('2d');
+  return canvas.getContext(contextType);
 };
 
 Pattern.prototype.draw = function (callback, { from, to, onQuery } = {}) {
@@ -55,6 +56,25 @@ Pattern.prototype.draw = function (callback, { from, to, onQuery } = {}) {
       }
     }
     callback(ctx, events, t, time);
+    window.strudelAnimation = requestAnimationFrame(animate);
+  };
+  requestAnimationFrame(animate);
+  return this;
+};
+
+// this is a more generic helper to get a rendering callback for the currently active haps
+// TODO: this misses events that are prolonged with clip or duration (would need state)
+Pattern.prototype.onFrame = function (fn, offset = 0) {
+  if (typeof window === 'undefined') {
+    return this;
+  }
+  if (window.strudelAnimation) {
+    cancelAnimationFrame(window.strudelAnimation);
+  }
+  const animate = () => {
+    const t = getTime() + offset;
+    const haps = this.queryArc(t, t);
+    fn(haps, t, this);
     window.strudelAnimation = requestAnimationFrame(animate);
   };
   requestAnimationFrame(animate);
@@ -134,7 +154,7 @@ export class Drawer {
         this.lastFrame = phase;
         this.visibleHaps = (this.visibleHaps || [])
           // filter out haps that are too far in the past (think left edge of screen for pianoroll)
-          .filter((h) => h.whole?.end >= phase - lookbehind - lookahead)
+          .filter((h) => h.endClipped >= phase - lookbehind - lookahead)
           // add new haps with onset (think right edge bars scrolling in)
           .concat(haps.filter((h) => h.hasOnset()));
         const time = phase - lookahead;

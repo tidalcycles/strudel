@@ -103,6 +103,8 @@ export const transpose = register('transpose', function (intervalOrSemitones, pa
       const semitones = typeof interval === 'string' ? Interval.semitones(interval) || 0 : interval;
       return hap.withValue(() => hap.value + semitones);
     }
+    if (typeof hap.value === 'object')
+      return hap.withValue(() => ({ ...hap.value, note: Note.simplify(Note.transpose(hap.value.note, interval)) }));
     // TODO: move simplify to player to preserve enharmonics
     // tone.js doesn't understand multiple sharps flats e.g. F##3 has to be turned into G3
     return hap.withValue(() => Note.simplify(Note.transpose(hap.value, interval)));
@@ -133,6 +135,11 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
     if (!hap.context.scale) {
       throw new Error('can only use scaleTranspose after .scale');
     }
+    if (typeof hap.value === 'object')
+      return hap.withValue(() => ({
+        ...hap.value,
+        note: scaleOffset(hap.context.scale, Number(offset), hap.value.note),
+      }));
     if (typeof hap.value !== 'string') {
       throw new Error('can only use scaleTranspose with notes');
     }
