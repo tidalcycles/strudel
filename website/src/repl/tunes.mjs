@@ -239,8 +239,10 @@ export const wavyKalimba = `// "Wavy kalimba"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
 
+setcps(1)
+
 samples({
-  'kalimba': { c5:'https://freesound.org/data/previews/536/536549_11935698-lq.mp3' }
+  'kalimba': { c5:'https://cdn.freesound.org/previews/536/536549_11935698-lq.mp3' }
 })
 const scales = "<C:major C:mixolydian F:lydian [F:minor Db:major]>"
 
@@ -271,19 +273,18 @@ export const festivalOfFingers = `// "Festival of fingers"
 
 const chords = "<Cm7 Fm7 G7 F#7>";
 stack(
-  chord(chords).dict('lefthand').voicing().struct("x(3,8,-1)")
-  .velocity(.5).off(1/7,x=>x.add(note(12)).velocity(.2)),
-  
+  chord(chords).dict('lefthand').voicing()
+  .struct("x(3,8,-1)")
+  .gain(.5).off(1/7,x=>x.add(note(12)).mul(gain(.2))),
   chords.rootNotes(2).struct("x(4,8,-2)").note(),
-  
   chords.rootNotes(4)
   .scale(cat('C minor','F dorian','G dorian','F# mixolydian'))
   .struct("x(3,8,-2)".fast(2))
-  .scaleTranspose("0 4 0 6".early(".125 .5")).layer(scaleTranspose("0,<2 [4,6] [5,7]>/4"))
+  .scaleTranspose("0 4 0 6".early(".125 .5"))
+  .layer(scaleTranspose("0,<2 [4,6] [5,7]>/4"))
   .note()
-  
 ).slow(2)
- .velocity(sine.struct("x*8").add(3/5).mul(2/5).fast(8))
+ .mul(gain(sine.struct("x*8").add(3/5).mul(2/5).fast(8)))
  .piano()`;
 
 // iter, echo, echoWith
@@ -302,14 +303,14 @@ stack(
   "[c2 a1 bb1 ~] ~"
   .echo(2, 1/16, 1)
   .slow(2)
-  .layer(h)
   .note().s('square')
+  .layer(h)
   .clip(.4)
   .cutoff(400).decay(.12).sustain(0)
   ,
   "[g2,[c3 eb3]]".iter(4)
-  .echoWith(4, 1/8, (x,n)=>x.transpose(n*12).velocity(Math.pow(.4,n)))
-  .layer(h).note()
+  .echoWith(4, 1/8, (x,n)=>x.transpose(n*12).gain(Math.pow(.4,n)))
+  .note().layer(h)
   .clip(.1)
 )
   .fast(2/3)
@@ -349,11 +350,11 @@ stack(
   .n().scale(scale),
   n("<0 4>(5,8,-1)").scale(scale).sub(note(12))
 )
-  .velocity(".6 .7".fast(4))
+  .gain(".6 .7".fast(4))
   .add(note(4))
   .piano()
   .clip(2)
-  .velocity(.8)
+  .mul(gain(.8))
   .slow(2)
   .pianoroll()`;
 
@@ -410,16 +411,16 @@ export const randomBells = `// "Random bells"
 // @by Felix Roos
 
 samples({
-  bell: { c6: 'https://freesound.org/data/previews/411/411089_5121236-lq.mp3' },
-  bass: { d2: 'https://freesound.org/data/previews/608/608286_13074022-lq.mp3' }
+  bell: { c6: 'https://cdn.freesound.org/previews/411/411089_5121236-lq.mp3' },
+  bass: { d2: 'https://cdn.freesound.org/previews/608/608286_13074022-lq.mp3' }
 })
 
 stack(
   // bells
-  "0".euclidLegato(3,8)
+  n("0").euclidLegato(3,8)
   .echo(3, 1/16, .5)
-  .add(rand.range(0,12))
-  .scale("D:minor:pentatonic").note()
+  .add(n(rand.range(0,12)))
+  .scale("D:minor:pentatonic")
   .velocity(rand.range(.5,1))
   .s('bell').gain(.6).delay(.2).delaytime(1/3).delayfeedback(.8),
   // bass
@@ -462,7 +463,7 @@ samples({
   hh: '561/561241_12517458-lq.mp3',
   hh2:'44/44944_236326-lq.mp3',
   hh3: '44/44944_236326-lq.mp3',
-}, 'https://freesound.org/data/previews/')
+}, 'https://cdn.freesound.org/previews/')
 
 stack(
   "-7 0 -7 7".struct("x(5,8,1)").fast(2).sub(7)
@@ -473,10 +474,9 @@ stack(
   .apply(filter1)
   .lpa(.1).lpenv(2).ftype('24db')
   ,
-  "~@3 [<2 3>,<4 5>]"
+  n("~@3 [<2 3>,<4 5>]")
   .echo(4,1/16,.7)
   .scale(scales)
-  .note()
   .s('square').gain(.7)
   .attack(0.01).decay(0.1).sustain(0)
   .apply(filter1),
@@ -484,12 +484,11 @@ stack(
   .superimpose(sub("5"))
   .fast(1).euclidLegato(3,8)
   .mask("<1 0@7>")
-  .fast(2)
+  .fast(2).n()
   .echo(32, 1/8, .8)
   .scale(scales)
-  .note()
   .s("sawtooth")
-  .gain(sine.range(.1,.4).slow(8))
+  .mul(gain(sine.range(.1,.4).slow(8)))
   .attack(.001).decay(.2).sustain(0)
   .apply(filter2)
 ).stack(
@@ -498,12 +497,13 @@ stack(
     "~ sn",
     "[~ hh3]*2"
   ).s().fast(2).gain(.7)
-).slow(2)
-// strudel disable-highlighting`;
+).slow(2)`;
 
 export const festivalOfFingers3 = `// "Festival of fingers 3"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
+
+setcps(1)
 
 n("[-7*3],0,2,6,[8 7]")
   .echoWith(
@@ -514,7 +514,7 @@ n("[-7*3],0,2,6,[8 7]")
       .gain(1/(i+1)) // reduce gain
       .clip(1/(i+1))
     )
-  .velocity(perlin.range(.5,.9).slow(8))
+  .mul(gain(perlin.range(.5,.9).slow(8)))
   .stack(n("[22 25]*3")
          .clip(sine.range(.5,2).slow(8))
          .gain(sine.range(.4,.8).slow(5))
@@ -610,15 +610,17 @@ sd: ['sd/rytm-01-classic.wav','sd/rytm-00-hard.wav'],
 hh: ['hh27/000_hh27closedhh.wav','hh/000_hh3closedhh.wav'],
 }, 'github:tidalcycles/dirt-samples');
 
-note("<8(3,8) <7 7*2> [4 5@3] 8>".sub(1) // sub 1 -> 1-indexed
+setcps(1)
+
+"<8(3,8) <7 7*2> [4 5@3] 8>".sub(1) // sub 1 -> 1-indexed
 .layer(
 x=>x,
 x=>x.add(7).color('steelblue')
 .off(1/8,x=>x.add("2,4").off(1/8,x=>x.add(5).echo(4,.125,.5)))
 .slow(2),
-).scale('A1 minor'))
+).n().scale('A1 minor')
 .s("flbass").n(0)
-.gain(.3)
+.mul(gain(.3))
 .cutoff(sine.slow(7).range(200,4000))
 .resonance(10)
 //.hcutoff(400)

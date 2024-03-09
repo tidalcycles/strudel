@@ -187,7 +187,8 @@ export function pianoroll({
     color = isActive ? active : inactive;
     ctx.fillStyle = fillCurrent ? color : 'transparent';
     ctx.strokeStyle = color;
-    ctx.globalAlpha = event.context.velocity ?? event.value?.gain ?? 1;
+    const { velocity = 1, gain = 1 } = event.value || {};
+    ctx.globalAlpha = velocity * gain;
     const timeProgress = (event.whole.begin - (flipTime ? to : from)) / timeExtent;
     const timePx = scale(timeProgress, ...timeRange);
     let durationPx = scale(event.duration / timeExtent, 0, timeAxis);
