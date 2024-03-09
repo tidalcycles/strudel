@@ -1,15 +1,6 @@
-import { getDrawContext } from '@strudel/core';
+import { getDrawContext } from '@strudel/draw';
 
 let latestOptions;
-
-function appendCanvas(c) {
-  const { canvas: testCanvas } = getDrawContext();
-  c.canvas.id = 'hydra-canvas';
-  c.canvas.style.position = 'fixed';
-  c.canvas.style.top = '0px';
-  testCanvas.after(c.canvas);
-  return testCanvas;
-}
 
 export async function initHydra(options = {}) {
   // reset if options have changed since last init
@@ -19,12 +10,19 @@ export async function initHydra(options = {}) {
   latestOptions = options;
   //load and init hydra
   if (!document.getElementById('hydra-canvas')) {
-    console.log('reinit..');
     const {
       src = 'https://unpkg.com/hydra-synth',
       feedStrudel = false,
+      contextType = 'webgl',
+      pixelRatio = 1,
+      pixelated = true,
       ...hydraConfig
-    } = { detectAudio: false, ...options };
+    } = {
+      detectAudio: false,
+      ...options,
+    };
+    const { canvas } = getDrawContext('hydra-canvas', { contextType, pixelRatio, pixelated });
+    hydraConfig.canvas = canvas;
 
     await import(/* @vite-ignore */ src);
     const hydra = new Hydra(hydraConfig);
@@ -33,7 +31,6 @@ export async function initHydra(options = {}) {
       canvas.style.display = 'none';
       hydra.synth.s0.init({ src: canvas });
     }
-    appendCanvas(hydra);
   }
 }
 
