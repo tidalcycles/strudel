@@ -4,7 +4,8 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { code2hash, getDrawContext, logger, silence } from '@strudel/core';
+import { code2hash, logger, silence } from '@strudel/core';
+import { getDrawContext } from '@strudel/draw';
 import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel/transpiler';
 import {
@@ -17,6 +18,7 @@ import {
 import { defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
+import { clearHydra } from '@strudel/hydra';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { settingsMap, useSettings } from '../settings.mjs';
 import {
@@ -74,6 +76,11 @@ export function Repl({ embedded = false }) {
       prebake: async () => Promise.all([modulesLoading, presets]),
       onUpdateState: (state) => {
         setReplState({ ...state });
+      },
+      onToggle: (playing) => {
+        if (!playing) {
+          clearHydra();
+        }
       },
       afterEval: (all) => {
         const { code } = all;
@@ -165,6 +172,7 @@ export function Repl({ embedded = false }) {
   const resetEditor = async () => {
     resetGlobalEffects();
     clearCanvas();
+    clearHydra();
     resetLoadedSounds();
     editorRef.current.repl.setCps(0.5);
     await prebake(); // declare default samples
@@ -189,6 +197,7 @@ export function Repl({ embedded = false }) {
     setActivePattern(patternData.id);
     setViewingPatternData(patternData);
     clearCanvas();
+    clearHydra();
     resetLoadedSounds();
     resetGlobalEffects();
     await prebake(); // declare default samples

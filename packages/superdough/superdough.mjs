@@ -316,6 +316,9 @@ export const superdough = async (value, deadline, hapDuration) => {
     coarse,
     crush,
     shape,
+    shapevol = 1,
+    distort,
+    distortvol = 1,
     pan,
     vowel,
     delay = 0,
@@ -457,7 +460,8 @@ export const superdough = async (value, deadline, hapDuration) => {
   // effects
   coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
-  shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
+  shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape, postgain: shapevol }));
+  distort !== undefined && chain.push(getWorklet(ac, 'distort-processor', { distort, postgain: distortvol }));
 
   compressorThreshold !== undefined &&
     chain.push(
