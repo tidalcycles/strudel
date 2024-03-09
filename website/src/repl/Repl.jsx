@@ -18,6 +18,7 @@ import {
 import { defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
+import { clearHydra } from '@strudel/hydra';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { settingsMap, useSettings } from '../settings.mjs';
 import {
@@ -75,6 +76,11 @@ export function Repl({ embedded = false }) {
       prebake: async () => Promise.all([modulesLoading, presets]),
       onUpdateState: (state) => {
         setReplState({ ...state });
+      },
+      onToggle: (playing) => {
+        if (!playing) {
+          clearHydra();
+        }
       },
       afterEval: (all) => {
         const { code } = all;
@@ -166,6 +172,7 @@ export function Repl({ embedded = false }) {
   const resetEditor = async () => {
     resetGlobalEffects();
     clearCanvas();
+    clearHydra();
     resetLoadedSounds();
     editorRef.current.repl.setCps(0.5);
     await prebake(); // declare default samples
@@ -190,6 +197,7 @@ export function Repl({ embedded = false }) {
     setActivePattern(patternData.id);
     setViewingPatternData(patternData);
     clearCanvas();
+    clearHydra();
     resetLoadedSounds();
     resetGlobalEffects();
     await prebake(); // declare default samples

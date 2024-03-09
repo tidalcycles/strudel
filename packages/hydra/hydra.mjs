@@ -1,6 +1,8 @@
 import { getDrawContext } from '@strudel/draw';
+import { controls } from '@strudel/core';
 
 let latestOptions;
+let hydra;
 
 export async function initHydra(options = {}) {
   // reset if options have changed since last init
@@ -25,13 +27,23 @@ export async function initHydra(options = {}) {
     hydraConfig.canvas = canvas;
 
     await import(/* @vite-ignore */ src);
-    const hydra = new Hydra(hydraConfig);
+    hydra = new Hydra(hydraConfig);
     if (feedStrudel) {
       const { canvas } = getDrawContext();
       canvas.style.display = 'none';
       hydra.synth.s0.init({ src: canvas });
     }
   }
+}
+
+export function clearHydra() {
+  if (hydra) {
+    hydra.hush();
+  }
+  globalThis.s0?.clear();
+  document.getElementById('hydra-canvas')?.remove();
+  globalThis.speed = controls.speed;
+  globalThis.shape = controls.shape;
 }
 
 export const H = (p) => () => p.queryArc(getTime(), getTime())[0].value;
