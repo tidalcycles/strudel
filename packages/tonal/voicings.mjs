@@ -82,7 +82,7 @@ export const voicingRegistry = {
 
 let defaultDict = 'ireal';
 export const setDefaultVoicings = (dict) => (defaultDict = dict);
-// e.g. setDefaultVoicings('legacy');
+// e.g. typeof setDefaultVoicings !== 'undefined' && setDefaultVoicings('legacy');
 
 export const setVoicingRange = (name, range) => addVoicings(name, voicingRegistry[name].dictionary, range);
 
