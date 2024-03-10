@@ -17,6 +17,7 @@ export class NeoCyclist {
     this.onToggle = onToggle;
     this.latency = 0.1; // fixed trigger time offset
     this.cycle = 0;
+    this.id = Math.round(Date.now() * Math.random());
 
     this.worker = new SharedWorker(new URL('./clockworker.js', import.meta.url));
     this.worker.port.start();
@@ -107,7 +108,7 @@ export class NeoCyclist {
     };
   }
   sendMessage(type, payload) {
-    this.worker.port.postMessage({ type, payload });
+    this.worker.port.postMessage({ type, payload, id: this.id });
   }
 
   now() {
