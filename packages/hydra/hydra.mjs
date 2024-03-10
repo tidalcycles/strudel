@@ -7,7 +7,7 @@ let hydra;
 export async function initHydra(options = {}) {
   // reset if options have changed since last init
   if (latestOptions && JSON.stringify(latestOptions) !== JSON.stringify(options)) {
-    document.getElementById('hydra-canvas').remove();
+    document.getElementById('hydra-canvas')?.remove();
   }
   latestOptions = options;
   //load and init hydra
