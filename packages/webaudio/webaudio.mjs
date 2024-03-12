@@ -12,7 +12,7 @@ setLogger(logger);
 
 const hap2value = (hap) => {
   hap.ensureObjectValue();
-  return { ...hap.value, velocity: hap.context.velocity };
+  return hap.value;
 };
 
 export const webaudioOutputTrigger = (t, hap, ct, cps) => superdough(hap2value(hap), t - ct, hap.duration / cps, cps);

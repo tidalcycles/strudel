@@ -7,9 +7,9 @@ const CC_MESSAGE = 0xb0;
 
 Pattern.prototype.midi = function (output) {
   return this.onTrigger((time, hap, currentTime, cps) => {
-    const { note, nrpnn, nrpv, ccn, ccv } = hap.value;
+    let { note, nrpnn, nrpv, ccn, ccv, velocity = 0.9, gain = 1 } = hap.value;
     const offset = (time - currentTime) * 1000;
-    const velocity = Math.floor((hap.context?.velocity ?? 0.9) * 100); // TODO: refactor velocity
+    velocity = Math.floor(gain * velocity * 100);
     const duration = Math.floor((hap.duration.valueOf() / cps) * 1000 - 10);
     const roundedOffset = Math.round(offset);
     const midichan = (hap.value.midichan ?? 1) - 1;

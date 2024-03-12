@@ -77,8 +77,13 @@ export const voicingRegistry = {
   lefthand: { dictionary: lefthand, range: ['F3', 'A4'], mode: 'below', anchor: 'a4' },
   triads: { dictionary: triads, mode: 'below', anchor: 'a4' },
   guidetones: { dictionary: guidetones, mode: 'above', anchor: 'a4' },
-  default: { dictionary: defaultDictionary, mode: 'below', anchor: 'a4' },
+  legacy: { dictionary: defaultDictionary, mode: 'below', anchor: 'a4' },
 };
+
+let defaultDict = 'ireal';
+export const setDefaultVoicings = (dict) => (defaultDict = dict);
+// e.g. typeof setDefaultVoicings !== 'undefined' && setDefaultVoicings('legacy');
+
 export const setVoicingRange = (name, range) => addVoicings(name, voicingRegistry[name].dictionary, range);
 
 /**
@@ -193,7 +198,7 @@ export const voicing = register('voicing', function (pat) {
     .fmap((value) => {
       // destructure voicing controls out
       value = typeof value === 'string' ? { chord: value } : value;
-      let { dictionary = 'default', chord, anchor, offset, mode, n, octaves, ...rest } = value;
+      let { dictionary = defaultDict, chord, anchor, offset, mode, n, octaves, ...rest } = value;
       dictionary =
         typeof dictionary === 'string' ? voicingRegistry[dictionary] : { dictionary, mode: 'below', anchor: 'c5' };
       try {
@@ -234,3 +239,8 @@ Object.keys(simple).forEach((symbol) => {
 
 registerVoicings('ireal', simple);
 registerVoicings('ireal-ext', complex);
+
+export function resetVoicings() {
+  lastVoicing = undefined;
+  setDefaultVoicings('ireal');
+}
