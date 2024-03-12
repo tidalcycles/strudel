@@ -210,7 +210,7 @@ export function Repl({ embedded = false }) {
     editorRef.current.repl.evaluate(code);
   };
 
-  const handleShare = async () => shareCode(activeCode);
+  const handleShare = async () => shareCode(replState.code);
   const context = {
     embedded,
     started,
