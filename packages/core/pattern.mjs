@@ -29,9 +29,10 @@ export class Pattern {
    * @param {function} query - The function that maps a `State` to an array of `Hap`.
    * @noAutocomplete
    */
-  constructor(query) {
+  constructor(query, weight = undefined) {
     this.query = query;
     this._Pattern = true; // this property is used to detect if a pattern that fails instanceof Pattern is an instance of another Pattern
+    this.__weight = weight; // in terms of number of beats per cycle
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -1133,8 +1134,10 @@ Pattern.prototype.factories = {
  * @example
  * silence // "~"
  */
-export const silence = new Pattern(() => []);
-silence.__weight = 0;
+export const silence = new Pattern(() => [], 1);
+
+/* Like silence, but with a 'weight' (relative duration) of 0 */
+export const nothing = new Pattern(() => [], 0);
 
 /** A discrete value that repeats once per cycle.
  *
@@ -1147,9 +1150,8 @@ export function pure(value) {
   function query(state) {
     return state.span.spanCycles.map((subspan) => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value));
   }
-  const result = new Pattern(query);
+  const result = new Pattern(query, 1);
   result.__pure = value;
-  result.__weight = 1;
   return result;
 }
 
@@ -1319,7 +1321,9 @@ export function fastcat(...pats) {
 
 export function beatCat(...groups) {
   groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
+
   const weights = groups.map((a) => a.map((elem) => elem.__weight ?? 1));
+
   const cycles = lcm(...groups.map((x) => x.length));
   let result = [];
   for (let cycle = 0; cycle < cycles; ++cycle) {
@@ -1329,25 +1333,8 @@ export function beatCat(...groups) {
   const weight = result.reduce((a, b) => a.add(b.__weight), Fraction(0));
   result = timeCat(...result);
   result.__weight = weight;
-  console.log('weight: ', weight);
   return result;
 }
-
-// function beatCat(...groups) {
-//   groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
-//   const weights = groups.map((a) => a.map((elem) => elem.__weight ?? 1));
-
-//   groups = groups.map(slowcat)
-
-//   const arrayFn = function (...args) {
-//     args = args.map((arg, i) => [arg, groups[i]])
-//     return timeCat(...args);
-//   };
-//   const mapFn = curry(arrayFn, null, weights.length);
-//   const [left, ...right] = weights;
-//   console.log('left', right)
-//   return right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
-// }
 
 /** See `fastcat` */
 export function sequence(...pats) {
