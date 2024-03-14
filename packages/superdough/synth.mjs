@@ -94,7 +94,6 @@ export function registerSynthSounds() {
         },
       );
       const gainAdjustment = 1 / Math.sqrt(voices);
-      // console.log(node.parameters.get('frequency'));
       getPitchEnvelope(node.parameters.get('detune'), value, begin, holdend);
       getVibratoOscillator(node.parameters.get('detune'), value, begin);
       applyFM(node.parameters.get('frequency'), value, begin);
