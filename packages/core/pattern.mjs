@@ -10,7 +10,18 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
 
-import { compose, removeUndefineds, flatten, id, listRange, curry, _mod, numeralArgs, parseNumeral } from './util.mjs';
+import {
+  compose,
+  removeUndefineds,
+  flatten,
+  id,
+  listRange,
+  curry,
+  _mod,
+  numeralArgs,
+  parseNumeral,
+  lcm,
+} from './util.mjs';
 import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
 
