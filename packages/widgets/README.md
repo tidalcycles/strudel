@@ -19,9 +19,9 @@ Here is an example that uses all available options:
 
 ```js
 chord("<Em9 A7 D^7@2>").voicing().piano()
+.color('cyan')
 .claviature({
   range: ['C1', 'C6'], // rendered note range
-  color: 'yellow', // highlighting color
   palette: ['cyan', 'magenta'],
   stroke: 'black',
   scaleX: 1, scaleY: 1,
@@ -29,5 +29,3 @@ chord("<Em9 A7 D^7@2>").voicing().piano()
   lowerHeight: 50
 })
 ```
-
-Note: The `Pattern.claviature` method uses the `colorization` option internally, so don't override that and use the `color` option for changing the highlighting color.

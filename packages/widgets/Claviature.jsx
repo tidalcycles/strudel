@@ -37,14 +37,14 @@ registerWidget('claviature', 'strudel-claviature');
 
 Pattern.prototype.claviature = function (id, options = {}) {
   return this.onFrame((haps) => {
-    const keys = haps.map((h) => h.value.note);
+    const colorize = haps.map((h) => ({ keys: [h.value.note], color: h.context?.color || 'steelblue' }));
     let el = document.getElementById(id);
     el?.setAttribute(
       'options',
       JSON.stringify({
         ...options,
         range: options.range || ['A2', 'C6'],
-        colorize: [{ keys: keys, color: options.color || 'steelblue' }],
+        colorize,
       }),
     );
   });
