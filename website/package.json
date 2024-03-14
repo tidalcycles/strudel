@@ -25,7 +25,7 @@
     "@heroicons/react": "^2.1.1",
     "@nanostores/persistent": "^0.9.1",
     "@nanostores/react": "^0.7.1",
-    "@strudel/claviature": "workspace:*",
+    "@strudel/widgets": "workspace:*",
     "@strudel/codemirror": "workspace:*",
     "@strudel/core": "workspace:*",
     "@strudel/draw": "workspace:*",

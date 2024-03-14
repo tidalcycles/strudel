@@ -2,6 +2,8 @@ import { For } from 'solid-js';
 import { customElement } from 'solid-element';
 import { getClaviature } from 'claviature';
 import { Dynamic } from 'solid-js/web';
+import { Pattern } from '@strudel/core';
+import { registerWidget } from '@strudel/transpiler';
 
 let defaultOptions = {
   range: ['A1', 'C6'],
@@ -30,3 +32,20 @@ customElement('strudel-claviature', { options: JSON.stringify(defaultOptions) },
     </div>
   );
 });
+
+registerWidget('claviature', 'strudel-claviature');
+
+Pattern.prototype.claviature = function (id, options = {}) {
+  return this.onFrame((haps) => {
+    const keys = haps.map((h) => h.value.note);
+    let el = document.getElementById(id);
+    el?.setAttribute(
+      'options',
+      JSON.stringify({
+        ...options,
+        range: options.range || ['A2', 'C6'],
+        colorize: [{ keys: keys, color: options.color || 'steelblue' }],
+      }),
+    );
+  });
+};

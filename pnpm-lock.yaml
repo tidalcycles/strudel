@@ -140,31 +140,6 @@ importers:
         specifier: ^5.0.10
         version: 5.0.10
 
-  packages/claviature:
-    dependencies:
-      '@strudel/core':
-        specifier: workspace:*
-        version: link:../core
-      '@strudel/transpiler':
-        specifier: workspace:*
-        version: link:../transpiler
-      claviature:
-        specifier: ^0.1.0
-        version: 0.1.0
-      solid-element:
-        specifier: ^1.8.0
-        version: 1.8.0(solid-js@1.8.15)
-      solid-js:
-        specifier: ^1.8.15
-        version: 1.8.15
-      vite-plugin-solid:
-        specifier: ^2.10.1
-        version: 2.10.1(solid-js@1.8.15)(vite@5.0.11)
-    devDependencies:
-      vite:
-        specifier: ^5.0.10
-        version: 5.0.11(@types/node@20.10.6)
-
   packages/codemirror:
     dependencies:
       '@codemirror/autocomplete':
@@ -513,6 +488,31 @@ importers:
         specifier: ^5.0.10
         version: 5.0.10
 
+  packages/widgets:
+    dependencies:
+      '@strudel/core':
+        specifier: workspace:*
+        version: link:../core
+      '@strudel/transpiler':
+        specifier: workspace:*
+        version: link:../transpiler
+      claviature:
+        specifier: ^0.1.0
+        version: 0.1.0
+      solid-element:
+        specifier: ^1.8.0
+        version: 1.8.0(solid-js@1.8.15)
+      solid-js:
+        specifier: ^1.8.15
+        version: 1.8.15
+      vite-plugin-solid:
+        specifier: ^2.10.1
+        version: 2.10.1(solid-js@1.8.15)(vite@5.0.11)
+    devDependencies:
+      vite:
+        specifier: ^5.0.10
+        version: 5.0.11(@types/node@20.10.6)
+
   packages/xen:
     dependencies:
       '@strudel/core':
@@ -570,9 +570,6 @@ importers:
       '@nanostores/react':
         specifier: ^0.7.1
         version: 0.7.1(nanostores@0.9.5)(react@18.2.0)
-      '@strudel/claviature':
-        specifier: workspace:*
-        version: link:../packages/claviature
       '@strudel/codemirror':
         specifier: workspace:*
         version: link:../packages/codemirror
@@ -618,6 +615,9 @@ importers:
       '@strudel/webaudio':
         specifier: workspace:*
         version: link:../packages/webaudio
+      '@strudel/widgets':
+        specifier: workspace:*
+        version: link:../packages/widgets
       '@strudel/xen':
         specifier: workspace:*
         version: link:../packages/xen
@@ -854,7 +854,7 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       '@jridgewell/gen-mapping': 0.1.1
-      '@jridgewell/trace-mapping': 0.3.17
+      '@jridgewell/trace-mapping': 0.3.20
 
   /@apideck/better-ajv-errors@0.3.6(ajv@8.12.0):
     resolution: {integrity: sha512-P+ZygBLZtkp0qqOAJJVX4oX/sFo5JR3eBWwwuqHHhK0GIgQOKWrAfiAaWX0aArHkRWHMuggFEgAZNxVPwPZYaA==}
@@ -3096,7 +3096,6 @@ packages:
   /@jridgewell/resolve-uri@3.1.1:
     resolution: {integrity: sha512-dSYZh7HhCDtCKm4QakX0xFpsRDqjjtZf/kjI/v3T3Nwt5r8/qz/M19F9ySyOqU94SXBmeG9ttTul+YnR4LOxFA==}
     engines: {node: '>=6.0.0'}
-    dev: true
 
   /@jridgewell/set-array@1.1.2:
     resolution: {integrity: sha512-xnkseuNADM0gt2bs+BvhO0p78Mk762YnZdsuzFV018NoG1Sj1SCQvpSqa7XUaTam5vAGasABV9qXASMKnFMwMw==}
@@ -3126,7 +3125,6 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
-    dev: true
 
   /@jsdoc/salty@0.2.3:
     resolution: {integrity: sha512-bbtCxCkxcnWhi50I+4Lj6mdz9w3pOXOgEQrID8TCZ/DF51fW7M9GCQW2y45SpBDdHd1Eirm1X/Cf6CkAAe8HPg==}

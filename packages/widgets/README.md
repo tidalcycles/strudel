@@ -1,6 +1,10 @@
-# @strudel/claviature
+# @strudel/widgets
 
-adds a `Patter.claviature` method that renders a [claviature](https://www.npmjs.com/package/claviature).
+adds UI widgets to codemirror
+
+## claviature
+
+`Patter.claviature` renders a [claviature](https://www.npmjs.com/package/claviature).
 
 example usage:
 

@@ -1,7 +1,7 @@
 {
-  "name": "@strudel/claviature",
+  "name": "@strudel/widgets",
   "version": "1.0.1",
-  "description": "Claviature component for Strudel",
+  "description": "Widget web components for Strudel",
   "main": "dist/index.mjs",
   "type": "module",
   "scripts": {
