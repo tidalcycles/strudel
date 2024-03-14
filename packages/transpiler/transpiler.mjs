@@ -34,7 +34,7 @@ export function transpiler(input, options = {}) {
         emitMiniLocations && collectMiniLocations(value, node);
         return this.replace(miniWithLocation(value, node));
       }
-      if (isWidgetFunction(node)) {
+      if (isSliderFunction(node)) {
         emitWidgets &&
           widgets.push({
             from: node.arguments[0].start,
@@ -43,6 +43,16 @@ export function transpiler(input, options = {}) {
             min: node.arguments[1]?.value ?? 0,
             max: node.arguments[2]?.value ?? 1,
             step: node.arguments[3]?.value,
+            type: 'slider',
+          });
+        return this.replace(sliderWithLocation(node));
+      }
+      if (isUIFunction(node)) {
+        emitWidgets &&
+          widgets.push({
+            from: node.arguments[0].start,
+            to: node.end,
+            type: node.arguments[0].value,
           });
         return this.replace(widgetWithLocation(node));
       }
@@ -105,11 +115,15 @@ function miniWithLocation(value, node) {
 
 // these functions are connected to @strudel/codemirror -> slider.mjs
 // maybe someday there will be pluggable transpiler functions, then move this there
-function isWidgetFunction(node) {
+function isSliderFunction(node) {
   return node.type === 'CallExpression' && node.callee.name === 'slider';
 }
 
-function widgetWithLocation(node) {
+function isUIFunction(node) {
+  return node.type === 'CallExpression' && node.callee.property?.name === 'ui';
+}
+
+function sliderWithLocation(node) {
   const id = 'slider_' + node.arguments[0].start; // use loc of first arg for id
   // add loc as identifier to first argument
   // the sliderWithID function is assumed to be sliderWithID(id, value, min?, max?)
@@ -119,6 +133,18 @@ function widgetWithLocation(node) {
     raw: id,
   });
   node.callee.name = 'sliderWithID';
+  return node;
+}
+
+function widgetWithLocation(node) {
+  const id = 'ui_' + node.arguments[0].start; // use loc of first arg for id
+  // add loc as identifier to first argument
+  // the sliderWithID function is assumed to be sliderWithID(id, value, min?, max?)
+  node.arguments.unshift({
+    type: 'Literal',
+    value: id,
+    raw: id,
+  });
   return node;
 }
 
