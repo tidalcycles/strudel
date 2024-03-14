@@ -1,27 +1,7 @@
 import { StateEffect, StateField } from '@codemirror/state';
 import { Decoration, EditorView, WidgetType } from '@codemirror/view';
-import { Pattern } from '@strudel/core';
 
-const getWidgetID = (from) => `ui_${from}`;
-
-Pattern.prototype.ui = function (id, value) {
-  // TODO: make this work with any web component
-  return this.onFrame((haps) => {
-    let el = document.getElementById(id);
-    if (el) {
-      let options = {};
-      const keys = haps.map((h) => h.value.note);
-      el.setAttribute(
-        'options',
-        JSON.stringify({
-          ...options,
-          range: options.range || ['A2', 'C6'],
-          colorize: [{ keys: keys, color: options.color || 'steelblue' }],
-        }),
-      );
-    }
-  });
-};
+const getWidgetID = (from) => `widget_${from}`;
 
 export const addWidget = StateEffect.define({
   map: ({ from, to }, change) => {
@@ -33,10 +13,10 @@ export const updateWidgets = (view, widgets) => {
   view.dispatch({ effects: addWidget.of(widgets) });
 };
 
-function getWidgets(widgetConfigs, view) {
-  return widgetConfigs.map(({ from, to }) => {
+function getWidgets(widgetConfigs) {
+  return widgetConfigs.map(({ to, type }) => {
     return Decoration.widget({
-      widget: new BlockWidget(view, from),
+      widget: new BlockWidget(to, type),
       side: 0,
       block: true,
     }).range(to);
@@ -69,20 +49,19 @@ const widgetField = StateField.define(
 );
 
 export class BlockWidget extends WidgetType {
-  constructor(view, from) {
+  constructor(col, type) {
     super();
-    this.view = view;
-    this.from = from;
+    this.col = col;
+    this.type = type;
   }
   eq() {
     return true;
   }
   toDOM() {
-    const id = getWidgetID(this.from); // matches id generated in transpiler
+    const id = getWidgetID(this.col); // matches id generated in transpiler
     let el = document.getElementById(id);
     if (!el) {
-      // TODO: make this work with any web component
-      el = document.createElement('strudel-claviature');
+      el = document.createElement(this.type);
       el.id = id;
     }
     return el;

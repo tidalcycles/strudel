@@ -1,18 +1,14 @@
 export * from './Claviature.jsx';
 import { Pattern } from '@strudel/core';
+import { registerWidget } from '@strudel/transpiler';
 
-Pattern.prototype.claviature = function (options = {}) {
-  if (!window.claviature) {
-    window.claviature = document.createElement('strudel-claviature');
-    window.claviature.style.position = 'absolute';
-    window.claviature.style.bottom = 0;
-    window.claviature.style.left = 0;
-    document.body.append(window.claviature);
-  }
+registerWidget('claviature', 'strudel-claviature');
+
+Pattern.prototype.claviature = function (id, options = {}) {
   return this.onFrame((haps) => {
     const keys = haps.map((h) => h.value.note);
-    // console.log('keys',keys);
-    window.claviature.setAttribute(
+    let el = document.getElementById(id);
+    el?.setAttribute(
       'options',
       JSON.stringify({
         ...options,

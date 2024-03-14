@@ -28,6 +28,7 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@strudel/core": "workspace:*",
+    "@strudel/transpiler": "workspace:*",
     "claviature": "^0.1.0",
     "solid-element": "^1.8.0",
     "solid-js": "^1.8.15",

@@ -145,6 +145,9 @@ importers:
       '@strudel/core':
         specifier: workspace:*
         version: link:../core
+      '@strudel/transpiler':
+        specifier: workspace:*
+        version: link:../transpiler
       claviature:
         specifier: ^0.1.0
         version: 0.1.0

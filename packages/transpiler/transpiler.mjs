@@ -3,6 +3,18 @@ import { parse } from 'acorn';
 import escodegen from 'escodegen';
 import { walk } from 'estree-walker';
 
+let widgetComponents = {};
+// this function allows registering a pattern method name and component name
+// e.g. register('claviature', 'strudel-claviature')
+// .. will map the Pattern method 'claviature' to the web component 'strudel-claviature'
+// the transpiler will turn .claviature(...args) into .claviature(id, ...args)
+// the widgetPlugin of @strudel/codemirror will automatically create an instance of 'strudel-claviature'
+// .. so you only have to implement the actual .claviature method (or what you've called it..)
+
+export function registerWidget(name, tagName) {
+  widgetComponents[name] = tagName;
+}
+
 export function transpiler(input, options = {}) {
   const { wrapAsync = false, addReturn = true, emitMiniLocations = true, emitWidgets = true } = options;
 
@@ -47,12 +59,11 @@ export function transpiler(input, options = {}) {
           });
         return this.replace(sliderWithLocation(node));
       }
-      if (isUIFunction(node)) {
+      if (isWidgetMethod(node)) {
         emitWidgets &&
           widgets.push({
-            from: node.arguments[0].start,
             to: node.end,
-            type: node.arguments[0].value,
+            type: widgetComponents[node.callee.property.name],
           });
         return this.replace(widgetWithLocation(node));
       }
@@ -119,8 +130,8 @@ function isSliderFunction(node) {
   return node.type === 'CallExpression' && node.callee.name === 'slider';
 }
 
-function isUIFunction(node) {
-  return node.type === 'CallExpression' && node.callee.property?.name === 'ui';
+function isWidgetMethod(node) {
+  return node.type === 'CallExpression' && Object.keys(widgetComponents).includes(node.callee.property?.name);
 }
 
 function sliderWithLocation(node) {
@@ -137,7 +148,7 @@ function sliderWithLocation(node) {
 }
 
 function widgetWithLocation(node) {
-  const id = 'ui_' + node.arguments[0].start; // use loc of first arg for id
+  const id = 'widget_' + node.end;
   // add loc as identifier to first argument
   // the sliderWithID function is assumed to be sliderWithID(id, value, min?, max?)
   node.arguments.unshift({
