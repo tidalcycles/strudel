@@ -1480,14 +1480,17 @@ export function register(name, func, patternify = true) {
       if (arity === 1) {
         return func(pat);
       }
-      const [left, ...right] = args.slice(0, -1);
+
+      const firstArgs = args.slice(0, -1);
+
+      if (firstArgs.every((arg) => arg.__pure != undefined)) {
+        const pureArgs = firstArgs.map((arg) => arg.__pure);
+        return func(...pureArgs, pat);
+      }
+
+      const [left, ...right] = firstArgs;
+
       let mapFn = (...args) => {
-        // make sure to call func with the correct argument count
-        // args.length is expected to be <= arity-1
-        // so we set undefined args explicitly undefined
-        Array(arity - 1)
-          .fill()
-          .map((_, i) => args[i] ?? undefined);
         return func(...args, pat);
       };
       mapFn = curry(mapFn, null, arity - 1);
@@ -1751,7 +1754,9 @@ export const { fast, density } = register(['fast', 'density'], function (factor,
   }
   factor = Fraction(factor);
   const fastQuery = pat.withQueryTime((t) => t.mul(factor));
-  return fastQuery.withHapTime((t) => t.div(factor));
+  const result = fastQuery.withHapTime((t) => t.div(factor));
+  result.__weight = pat.__weight == undefined ? undefined : factor.mul(pat.__weight);
+  return result;
 });
 
 /**
