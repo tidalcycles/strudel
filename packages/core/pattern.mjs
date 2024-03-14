@@ -1288,9 +1288,10 @@ export function timeCat(...timepats) {
   // patterns.
   const findWeight = (x) => (Array.isArray(x) ? x : [x.__weight ?? 1, x]);
   timepats = timepats.map(findWeight);
-
   if (timepats.length == 1) {
-    return reify(timepats[0][1]);
+    const result = reify(timepats[0][1]);
+    result.__weight = timepats[0][0];
+    return result;
   }
 
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -1301,7 +1302,9 @@ export function timeCat(...timepats) {
     pats.push(reify(pat)._compress(begin.div(total), end.div(total)));
     begin = end;
   }
-  return stack(...pats);
+  const result = stack(...pats);
+  result.__weight = total;
+  return result;
 }
 
 /**
