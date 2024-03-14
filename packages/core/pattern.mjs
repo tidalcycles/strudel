@@ -1328,8 +1328,8 @@ export function fastcat(...pats) {
   let result = slowcat(...pats);
   if (pats.length > 1) {
     result = result._fast(pats.length);
+    result.__weight = pats.length;
   }
-  result.__weight = pats.length;
   return result;
 }
 
