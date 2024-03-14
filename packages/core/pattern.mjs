@@ -2115,7 +2115,7 @@ export const { echoWith, echowith, stutWith, stutwith } = register(
  * s("bd sd").echo(3, 1/6, .8)
  */
 export const echo = register('echo', function (times, time, feedback, pat) {
-  return pat._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+  return pat._echoWith(times, time, (pat, i) => pat.gain(Math.pow(feedback, i)));
 });
 
 /**
@@ -2128,7 +2128,7 @@ export const echo = register('echo', function (times, time, feedback, pat) {
  * s("bd sd").stut(3, .8, 1/6)
  */
 export const stut = register('stut', function (times, feedback, time, pat) {
-  return pat._echoWith(times, time, (pat, i) => pat.velocity(Math.pow(feedback, i)));
+  return pat._echoWith(times, time, (pat, i) => pat.gain(Math.pow(feedback, i)));
 });
 
 /**
@@ -2271,19 +2271,6 @@ export const hsl = register('hsl', (h, s, l, pat) => {
 // TODO: move this to controls https://github.com/tidalcycles/strudel/issues/288
 export const { color, colour } = register(['color', 'colour'], function (color, pat) {
   return pat.withContext((context) => ({ ...context, color }));
-});
-
-/**
- *
- * Sets the velocity from 0 to 1. Is multiplied together with gain.
- * @name velocity
- * @example
- * s("hh*8")
- * .gain(".4!2 1 .4!2 1 .4 1")
- * .velocity(".4 1")
- */
-export const velocity = register('velocity', function (velocity, pat) {
-  return pat.withContext((context) => ({ ...context, velocity: (context.velocity || 1) * velocity }));
 });
 
 //////////////////////////////////////////////////////////////////////

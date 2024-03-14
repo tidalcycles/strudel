@@ -45,6 +45,7 @@
     "@replit/codemirror-vim": "^6.1.0",
     "@replit/codemirror-vscode-keymap": "^6.0.2",
     "@strudel/core": "workspace:*",
+    "@strudel/draw": "workspace:*",
     "@uiw/codemirror-themes": "^4.21.21",
     "@uiw/codemirror-themes-all": "^4.21.21",
     "nanostores": "^0.9.5"

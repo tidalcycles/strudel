@@ -65,7 +65,7 @@ superdough({ s: 'bd', delay: 0.5 }, 0, 1);
   - `bandf`: band pass filter cutoff
   - `bandq`: band pass  filter resonance
   - `crush`: amplitude bit crusher using given number of bits
-  - `shape`: distortion effect from 0 (none) to 1 (full). might get loud!
+  - `distort`: distortion effect. might get loud!
   - `pan`: stereo panning from 0 (left) to 1 (right)
   - `phaser`: sets the speed of the modulation
   - `phaserdepth`: the amount the signal is affected by the phaser effect.

@@ -125,8 +125,9 @@ Pattern.prototype.midi = function (output) {
     const timeOffsetString = `+${offset}`;
 
     // destructure value
-    const { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd } = hap.value;
-    const velocity = hap.context?.velocity ?? 0.9; // TODO: refactor velocity
+    let { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd, gain = 1, velocity = 0.9 } = hap.value;
+
+    velocity = gain * velocity;
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
     const duration = Math.floor((hap.duration.valueOf() / cps) * 1000 - 10);
