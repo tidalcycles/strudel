@@ -29,14 +29,14 @@ export const getDrawContext = (id = 'test-canvas', options) => {
   return canvas.getContext(contextType);
 };
 
-Pattern.prototype.draw = function (callback, { from, to, onQuery } = {}) {
+Pattern.prototype.draw = function (callback, { from, to, onQuery, ctx } = {}) {
   if (typeof window === 'undefined') {
     return this;
   }
   if (window.strudelAnimation) {
     cancelAnimationFrame(window.strudelAnimation);
   }
-  const ctx = getDrawContext();
+  ctx = ctx || getDrawContext();
   let cycle,
     events = [];
   const animate = (time) => {

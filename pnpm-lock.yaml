@@ -493,6 +493,9 @@ importers:
       '@strudel/core':
         specifier: workspace:*
         version: link:../core
+      '@strudel/draw':
+        specifier: workspace:*
+        version: link:../draw
       '@strudel/transpiler':
         specifier: workspace:*
         version: link:../transpiler

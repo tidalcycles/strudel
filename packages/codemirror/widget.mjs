@@ -14,13 +14,18 @@ export const updateWidgets = (view, widgets) => {
 };
 
 function getWidgets(widgetConfigs) {
-  return widgetConfigs.map(({ to, type }) => {
-    return Decoration.widget({
-      widget: new BlockWidget(to, type),
-      side: 0,
-      block: true,
-    }).range(to);
-  });
+  return (
+    widgetConfigs
+      // codemirror throws an error if we don't sort
+      .sort((a, b) => a.to - b.to)
+      .map(({ to, type }) => {
+        return Decoration.widget({
+          widget: new BlockWidget(to, type),
+          side: 0,
+          block: true,
+        }).range(to);
+      })
+  );
 }
 
 const widgetField = StateField.define(

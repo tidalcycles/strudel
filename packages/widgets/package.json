@@ -29,6 +29,7 @@
   "dependencies": {
     "@strudel/core": "workspace:*",
     "@strudel/transpiler": "workspace:*",
+    "@strudel/draw": "workspace:*",
     "claviature": "^0.1.0",
     "solid-element": "^1.8.0",
     "solid-js": "^1.8.15",

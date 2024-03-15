@@ -17,19 +17,17 @@ customElement('strudel-claviature', { options: JSON.stringify(defaultOptions) },
     return c;
   };
   return (
-    <div>
-      <svg {...svg().attributes}>
-        <For each={svg().children}>
-          {(el) => {
-            return (
-              <Dynamic component={el.name} {...el.attributes}>
-                {el.value}
-              </Dynamic>
-            );
-          }}
-        </For>
-      </svg>
-    </div>
+    <svg {...svg().attributes}>
+      <For each={svg().children}>
+        {(el) => {
+          return (
+            <Dynamic component={el.name} {...el.attributes}>
+              {el.value}
+            </Dynamic>
+          );
+        }}
+      </For>
+    </svg>
   );
 });
 
