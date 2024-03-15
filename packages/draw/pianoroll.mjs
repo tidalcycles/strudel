@@ -18,7 +18,13 @@ const getValue = (e) => {
   }
   note = note ?? n;
   if (typeof note === 'string') {
-    return noteToMidi(note);
+    try {
+      // TODO: n(run(32)).scale("D:minor") fails when trying to query negative time..
+      return noteToMidi(note);
+    } catch (err) {
+      // console.warn(`error converting note to midi: ${err}`); // this spams to crazy
+      return 0;
+    }
   }
   if (typeof note === 'number') {
     return note;
