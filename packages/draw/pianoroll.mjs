@@ -30,7 +30,7 @@ const getValue = (e) => {
 };
 
 Pattern.prototype.pianoroll = function (options = {}) {
-  let { cycles = 4, playhead = 0.5, overscan = 1, hideNegative = false, ctx } = options;
+  let { cycles = 4, playhead = 0.5, overscan = 1, hideNegative = false, ctx, id } = options;
 
   let from = -cycles * playhead;
   let to = cycles * (1 - playhead);
@@ -50,6 +50,7 @@ Pattern.prototype.pianoroll = function (options = {}) {
       from: from - overscan,
       to: to + overscan,
       ctx,
+      id,
     },
   );
   return this;

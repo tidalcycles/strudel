@@ -29,12 +29,13 @@ export const getDrawContext = (id = 'test-canvas', options) => {
   return canvas.getContext(contextType);
 };
 
-Pattern.prototype.draw = function (callback, { from, to, onQuery, ctx } = {}) {
+let animationFrames = {};
+Pattern.prototype.draw = function (callback, { id = 'std', from, to, onQuery, ctx } = {}) {
   if (typeof window === 'undefined') {
     return this;
   }
-  if (window.strudelAnimation) {
-    cancelAnimationFrame(window.strudelAnimation);
+  if (animationFrames[id]) {
+    cancelAnimationFrame(animationFrames[id]);
   }
   ctx = ctx || getDrawContext();
   let cycle,
@@ -56,7 +57,7 @@ Pattern.prototype.draw = function (callback, { from, to, onQuery, ctx } = {}) {
       }
     }
     callback(ctx, events, t, time);
-    window.strudelAnimation = requestAnimationFrame(animate);
+    animationFrames[id] = requestAnimationFrame(animate);
   };
   requestAnimationFrame(animate);
   return this;
@@ -64,18 +65,18 @@ Pattern.prototype.draw = function (callback, { from, to, onQuery, ctx } = {}) {
 
 // this is a more generic helper to get a rendering callback for the currently active haps
 // TODO: this misses events that are prolonged with clip or duration (would need state)
-Pattern.prototype.onFrame = function (fn, offset = 0) {
+Pattern.prototype.onFrame = function (id, fn, offset = 0) {
   if (typeof window === 'undefined') {
     return this;
   }
-  if (window.strudelAnimation) {
-    cancelAnimationFrame(window.strudelAnimation);
+  if (animationFrames[id]) {
+    cancelAnimationFrame(animationFrames[id]);
   }
   const animate = () => {
     const t = getTime() + offset;
     const haps = this.queryArc(t, t);
     fn(haps, t, this);
-    window.strudelAnimation = requestAnimationFrame(animate);
+    animationFrames[id] = requestAnimationFrame(animate);
   };
   requestAnimationFrame(animate);
   return this;
@@ -84,9 +85,7 @@ Pattern.prototype.onFrame = function (fn, offset = 0) {
 export const cleanupDraw = (clearScreen = true) => {
   const ctx = getDrawContext();
   clearScreen && ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.width);
-  if (window.strudelAnimation) {
-    cancelAnimationFrame(window.strudelAnimation);
-  }
+  Object.values(animationFrames).forEach((id) => cancelAnimationFrame(id));
   if (window.strudelScheduler) {
     clearInterval(window.strudelScheduler);
   }
