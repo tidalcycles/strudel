@@ -1,13 +1,11 @@
-// will move to https://github.com/felixroos/zyklus
-// TODO: started flag
-
-function createClock(
+// used to consistently schedule events, for use in a service worker - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/clockworker.mjs>
+this.createClock = (
   getTime,
   callback, // called slightly before each cycle
   duration = 0.05, // duration of each cycle
   interval = 0.1, // interval between callbacks
   overlap = 0.1, // overlap between callbacks
-) {
+) => {
   let tick = 0; // counts callbacks
   let phase = 0; // next callback time
   let precision = 10 ** 4; // used to round phase
@@ -45,5 +43,4 @@ function createClock(
   const getPhase = () => phase;
   // setCallback
   return { setDuration, start, stop, pause, duration, interval, getPhase, minLatency };
-}
-export default createClock;
+};
