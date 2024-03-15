@@ -1,7 +1,7 @@
 import { registerWidget, setWidget } from '@strudel/codemirror';
 
-function getCanvasWidget(id, options) {
-  const { width = 300, height = 100, pixelRatio = window.devicePixelRatio } = options || {};
+function getCanvasWidget(id, options = {}) {
+  const { width = 500, height = 60, pixelRatio = window.devicePixelRatio } = options;
   let canvas = document.getElementById(id) || document.createElement('canvas');
   canvas.width = width * pixelRatio;
   canvas.height = height * pixelRatio;
@@ -11,12 +11,13 @@ function getCanvasWidget(id, options) {
   return canvas;
 }
 
-registerWidget('roll', (id, options = { fold: 1 }, pat) => {
+registerWidget('roll', (id, options = {}, pat) => {
   const ctx = getCanvasWidget(id, options).getContext('2d');
-  return pat.pianoroll({ ...options, ctx, id });
+  return pat.pianoroll({ fold: 1, ...options, ctx, id });
 });
 
 registerWidget('twist', (id, options = {}, pat) => {
+  options = { width: 200, height: 200, size: 36, ...options };
   const ctx = getCanvasWidget(id, options).getContext('2d');
-  return pat.spiral({ ...options, ctx, size: 50, id });
+  return pat.spiral({ ...options, ctx, id });
 });

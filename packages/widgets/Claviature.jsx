@@ -3,12 +3,9 @@ import { customElement } from 'solid-element';
 import { getClaviature } from 'claviature';
 import { Dynamic } from 'solid-js/web';
 import { registerWidget } from '@strudel/codemirror';
+import { getSolidWidget } from './solid.mjs';
 
-let defaultOptions = {
-  range: ['A1', 'C6'],
-};
-
-customElement('strudel-claviature', { options: JSON.stringify(defaultOptions) }, (props, { element }) => {
+customElement('strudel-claviature', { options: '{}' }, (props, { element }) => {
   let svg = () => {
     let c = getClaviature({
       options: JSON.parse(props.options),
@@ -31,11 +28,12 @@ customElement('strudel-claviature', { options: JSON.stringify(defaultOptions) },
 });
 
 registerWidget('claviature', (id, options = {}, pat) => {
-  const el = document.getElementById(id) || document.createElement('strudel-claviature');
-  setWidget(id, el);
+  options = { range: ['A0', 'C6'], scaleY: 1, scaleY: 0.5, scaleX: 0.5, ...options };
+  const height = (options.upperHeight + options.lowerHeight) * options.scaleY;
+  const el = getSolidWidget('strudel-claviature', id, { ...options, height });
   return pat.onFrame(id, (haps) => {
     const colorize = haps.map((h) => ({ keys: [h.value.note], color: h.context?.color || 'steelblue' }));
-    el?.setAttribute(
+    el.setAttribute(
       'options',
       JSON.stringify({
         ...options,
