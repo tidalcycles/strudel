@@ -43,6 +43,11 @@ export class Pattern {
     this.__weight = Fraction(weight);
   }
 
+  setWeight(weight) {
+    this.weight = weight;
+    return this;
+  }
+
   //////////////////////////////////////////////////////////////////////
   // Haskell-style functor, applicative and monadic operations
 
@@ -1213,7 +1218,9 @@ export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
   pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
   const query = (state) => flatten(pats.map((pat) => pat.query(state)));
-  return new Pattern(query);
+  const result = new Pattern(query);
+  result.weight = lcm(...pats.map((pat) => pat.weight));
+  return result;
 }
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle:
@@ -1511,7 +1518,7 @@ export const func = curry((a, b) => reify(b).func(a));
  * @noAutocomplete
  *
  */
-export function register(name, func, patternify = true) {
+export function register(name, func, patternify = true, preserveWeight = false) {
   if (Array.isArray(name)) {
     const result = {};
     for (const name_item of name) {
@@ -1526,29 +1533,39 @@ export function register(name, func, patternify = true) {
     pfunc = function (...args) {
       args = args.map(reify);
       const pat = args[args.length - 1];
+      let result;
+
       if (arity === 1) {
-        return func(pat);
+        result = func(pat);
+      } else {
+        const firstArgs = args.slice(0, -1);
+
+        if (firstArgs.every((arg) => arg.__pure != undefined)) {
+          const pureArgs = firstArgs.map((arg) => arg.__pure);
+          result = func(...pureArgs, pat);
+        } else {
+          const [left, ...right] = firstArgs;
+
+          let mapFn = (...args) => {
+            return func(...args, pat);
+          };
+          mapFn = curry(mapFn, null, arity - 1);
+          result = right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
+        }
       }
-
-      const firstArgs = args.slice(0, -1);
-
-      if (firstArgs.every((arg) => arg.__pure != undefined)) {
-        const pureArgs = firstArgs.map((arg) => arg.__pure);
-        return func(...pureArgs, pat);
+      if (preserveWeight) {
+        result.weight = pat.weight;
       }
-
-      const [left, ...right] = firstArgs;
-
-      let mapFn = (...args) => {
-        return func(...args, pat);
-      };
-      mapFn = curry(mapFn, null, arity - 1);
-      return right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
+      return result;
     };
   } else {
     pfunc = function (...args) {
       args = args.map(reify);
-      return func(...args);
+      const result = func(...args);
+      if (preserveWeight) {
+        result.weight = args[args.length - 1].weight;
+      }
+      return result;
     };
   }
 
@@ -1783,7 +1800,9 @@ export const { focusSpan, focusspan } = register(['focusSpan', 'focusspan'], fun
  * s("bd ~ sd cp").ply("<1 2 3>")
  */
 export const ply = register('ply', function (factor, pat) {
-  return pat.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
+  const result = pat.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
+  result.weight = pat.weight.mul(factor);
+  return result;
 });
 
 /**
@@ -1930,10 +1949,15 @@ export const cpm = register('cpm', function (cpm, pat) {
  * @example
  * "bd ~".stack("hh ~".early(.1)).s()
  */
-export const early = register('early', function (offset, pat) {
-  offset = Fraction(offset);
-  return pat.withQueryTime((t) => t.add(offset)).withHapTime((t) => t.sub(offset));
-});
+export const early = register(
+  'early',
+  function (offset, pat) {
+    offset = Fraction(offset);
+    return pat.withQueryTime((t) => t.add(offset)).withHapTime((t) => t.sub(offset));
+  },
+  true,
+  true,
+);
 
 /**
  * Nudge a pattern to start later in time. Equivalent of Tidal's ~> operator
@@ -1945,10 +1969,15 @@ export const early = register('early', function (offset, pat) {
  * @example
  * "bd ~".stack("hh ~".late(.1)).s()
  */
-export const late = register('late', function (offset, pat) {
-  offset = Fraction(offset);
-  return pat._early(Fraction(0).sub(offset));
-});
+export const late = register(
+  'late',
+  function (offset, pat) {
+    offset = Fraction(offset);
+    return pat._early(Fraction(0).sub(offset));
+  },
+  true,
+  true,
+);
 
 /**
  * Plays a portion of a pattern, specified by the beginning and end of a time span. The new resulting pattern is played over the time period of the original pattern:
@@ -2055,24 +2084,29 @@ export const brak = register('brak', function (pat) {
  * @example
  * note("c d e g").rev()
  */
-export const rev = register('rev', function (pat) {
-  const query = function (state) {
-    const span = state.span;
-    const cycle = span.begin.sam();
-    const next_cycle = span.begin.nextSam();
-    const reflect = function (to_reflect) {
-      const reflected = to_reflect.withTime((time) => cycle.add(next_cycle.sub(time)));
-      // [reflected.begin, reflected.end] = [reflected.end, reflected.begin] -- didn't work
-      const tmp = reflected.begin;
-      reflected.begin = reflected.end;
-      reflected.end = tmp;
-      return reflected;
+export const rev = register(
+  'rev',
+  function (pat) {
+    const query = function (state) {
+      const span = state.span;
+      const cycle = span.begin.sam();
+      const next_cycle = span.begin.nextSam();
+      const reflect = function (to_reflect) {
+        const reflected = to_reflect.withTime((time) => cycle.add(next_cycle.sub(time)));
+        // [reflected.begin, reflected.end] = [reflected.end, reflected.begin] -- didn't work
+        const tmp = reflected.begin;
+        reflected.begin = reflected.end;
+        reflected.end = tmp;
+        return reflected;
+      };
+      const haps = pat.query(state.setSpan(reflect(span)));
+      return haps.map((hap) => hap.withSpan(reflect));
     };
-    const haps = pat.query(state.setSpan(reflect(span)));
-    return haps.map((hap) => hap.withSpan(reflect));
-  };
-  return new Pattern(query).splitQueries();
-});
+    return new Pattern(query).splitQueries();
+  },
+  false,
+  true,
+);
 
 /** Like press, but allows you to specify the amount by which each
  * event is shifted. pressBy(0.5) is the same as press, while
@@ -2217,9 +2251,14 @@ const _iter = function (times, pat, back = false) {
   );
 };
 
-export const iter = register('iter', function (times, pat) {
-  return _iter(times, pat, false);
-});
+export const iter = register(
+  'iter',
+  function (times, pat) {
+    return _iter(times, pat, false);
+  },
+  true,
+  true,
+);
 
 /**
  * Like `iter`, but plays the subdivisions in reverse order. Known as iter' in tidalcycles
