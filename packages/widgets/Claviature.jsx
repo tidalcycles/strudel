@@ -28,7 +28,7 @@ customElement('strudel-claviature', { options: '{}' }, (props, { element }) => {
 });
 
 registerWidget('claviature', (id, options = {}, pat) => {
-  options = { range: ['A0', 'C6'], scaleY: 1, scaleY: 0.5, scaleX: 0.5, ...options };
+  options = { range: ['A0', 'C8'], scaleY: 1, scaleY: 0.5, scaleX: 0.5, ...options };
   const height = (options.upperHeight + options.lowerHeight) * options.scaleY;
   const el = getSolidWidget('strudel-claviature', id, { ...options, height });
   return pat.onFrame(id, (haps) => {
