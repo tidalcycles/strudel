@@ -161,10 +161,21 @@ const saw = (phase, dt) => {
   return v - polyBlep(phase, dt);
 };
 
+function lerp(a, b, n) {
+  return n * (b - a) + a;
+}
+
+function getUnisonDetune(unison, detune, voiceIndex) {
+  if (unison < 2) {
+    return 0;
+  }
+  return lerp(-detune, detune, voiceIndex / (unison - 1));
+}
 class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
     this.phase = [];
+    this.logged = 0;
   }
   static get parameterDescriptors() {
     return [
@@ -207,7 +218,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
 
       {
         name: 'voices',
-        defaultValue: 6,
+        defaultValue: 5,
         min: 1,
       },
     ];
@@ -233,13 +244,13 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
     const gain2 = Math.sqrt(panspread);
 
     for (let n = 0; n < voices; n++) {
-      let adj = 0;
       const isOdd = (n & 1) == 1;
-      //adjust the detune amount for each voice
-      if (n > 0) {
-        adj = isOdd ? n * freqspread : -((n - 1) * freqspread);
+
+      if (this.logged < 10) {
+        this.logged += 1;
       }
-      const freq = Math.min(16744, Math.max(1, frequency + adj * 0.01 * frequency));
+      //applies unison "spread" detune in semitones
+      const freq = frequency * Math.pow(2, getUnisonDetune(voices, freqspread, n) / 1.2);
       let gainL = gain1;
       let gainR = gain2;
       // invert right and left gain

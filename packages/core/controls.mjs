@@ -890,7 +890,7 @@ export const { lock } = registerControl('lock');
  * @param {number | Pattern} amount
  * @synonyms det
  * @example
- * note("d f a a# a d3").fast(2).s("supersaw").detune("<.4 1 3 200>")
+ * note("d f a a# a d3").fast(2).s("supersaw").detune("<.1 .2 .5 24.1>")
  *
  */
 export const { detune, det } = registerControl('detune', 'det');
