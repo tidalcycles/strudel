@@ -5,23 +5,12 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import TimeSpan from './timespan.mjs';
-import Fraction from './fraction.mjs';
+import Fraction, { lcm } from './fraction.mjs';
 import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
 
-import {
-  compose,
-  removeUndefineds,
-  flatten,
-  id,
-  listRange,
-  curry,
-  _mod,
-  numeralArgs,
-  parseNumeral,
-  lcm,
-} from './util.mjs';
+import { compose, removeUndefineds, flatten, id, listRange, curry, _mod, numeralArgs, parseNumeral } from './util.mjs';
 import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
 
@@ -136,6 +125,7 @@ export class Pattern {
       return span_a.intersection_e(span_b);
     };
     const result = pat_func.appWhole(whole_func, pat_val);
+    console.log('ah');
     result.weight = lcm(pat_val.weight, pat_func.weight);
     return result;
   }
@@ -1360,9 +1350,8 @@ export function fastcat(...pats) {
 export function beatCat(...groups) {
   groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
 
-  const weights = groups.map((a) => a.map((elem) => elem.weight));
+  const cycles = lcm(...groups.map((x) => Fraction(x.length)));
 
-  const cycles = lcm(...groups.map((x) => x.length));
   let result = [];
   for (let cycle = 0; cycle < cycles; ++cycle) {
     result.push(...groups.map((x) => (x.length == 0 ? silence : x[cycle % x.length])));

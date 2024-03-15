@@ -5523,6 +5523,27 @@ exports[`runs examples > example "rev" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "reweight" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | s:bd ]",
+  "[ 1/4 → 1/2 | s:sd ]",
+  "[ 1/2 → 3/4 | s:cp ]",
+  "[ 3/4 → 1/1 | s:bd ]",
+  "[ 1/1 → 5/4 | s:sd ]",
+  "[ 5/4 → 3/2 | s:cp ]",
+  "[ 3/2 → 7/4 | s:bd ]",
+  "[ 7/4 → 2/1 | s:sd ]",
+  "[ 2/1 → 9/4 | s:cp ]",
+  "[ 9/4 → 5/2 | s:bd ]",
+  "[ 5/2 → 11/4 | s:sd ]",
+  "[ 11/4 → 3/1 | s:cp ]",
+  "[ 3/1 → 13/4 | s:bd ]",
+  "[ 13/4 → 7/2 | s:sd ]",
+  "[ 7/2 → 15/4 | s:cp ]",
+  "[ 15/4 → 4/1 | s:bd ]",
+]
+`;
+
 exports[`runs examples > example "ribbon" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | note:d ]",

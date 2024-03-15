@@ -83,6 +83,10 @@ export const gcd = (...fractions) => {
   return fractions.reduce((gcd, fraction) => gcd.gcd(fraction), fraction(1));
 };
 
+export const lcm = (...fractions) => {
+  return fractions.reduce((lcm, fraction) => lcm.lcm(fraction), fraction(1));
+};
+
 fraction._original = Fraction;
 
 export default fraction;
