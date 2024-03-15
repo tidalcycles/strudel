@@ -67,7 +67,9 @@ export class Pattern {
    * "0 1 2".withValue(v => v + 10).log()
    */
   withValue(func) {
-    return new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
+    const result = new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
+    result.weight = this.weight;
+    return result;
   }
 
   /**
@@ -124,6 +126,8 @@ export class Pattern {
    * @returns Pattern
    */
   appBoth(pat_val) {
+    const pat_func = this;
+
     // Tidal's <*>
     const whole_func = function (span_a, span_b) {
       if (span_a == undefined || span_b == undefined) {
@@ -131,7 +135,9 @@ export class Pattern {
       }
       return span_a.intersection_e(span_b);
     };
-    return this.appWhole(whole_func, pat_val);
+    const result = pat_func.appWhole(whole_func, pat_val);
+    result.weight = lcm(pat_val.weight, pat_func.weight);
+    return result;
   }
 
   /**
@@ -164,7 +170,9 @@ export class Pattern {
       }
       return haps;
     };
-    return new Pattern(query);
+    const result = new Pattern(query);
+    result.weight = this.weight;
+    return result;
   }
 
   /**
@@ -195,7 +203,9 @@ export class Pattern {
       }
       return haps;
     };
-    return new Pattern(query);
+    const result = new Pattern(query);
+    result.weight = pat_val.weight;
+    return result;
   }
 
   bindWhole(choose_whole, func) {
@@ -1340,6 +1350,13 @@ export function fastcat(...pats) {
   return result;
 }
 
+/**
+ * Concatenates patterns beatwise, similar to `timeCat`, but if an argument is a list, the whole pattern will be repeated for each element in the list.
+ *
+ * @return {Pattern}
+ * @example
+ * beatCat(["bd cp", "mt"], "bd").sound()
+ */
 export function beatCat(...groups) {
   groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
 
@@ -1386,6 +1403,12 @@ function _sequenceCount(x) {
   return [reify(x), 1];
 }
 
+/**
+ * Speeds a pattern up or down, to fit to the given metrical 'weight'.
+ * @example
+ * s("bd sd cp").reweight(4)
+ * // The same as s("{bd sd cp}%4")
+ */
 export const reweight = register('reweight', function (targetWeight, pat) {
   return pat.fast(Fraction(targetWeight).div(pat.weight));
 });
