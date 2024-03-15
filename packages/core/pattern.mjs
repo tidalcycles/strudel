@@ -46,6 +46,14 @@ export class Pattern {
     this.__weight = weight; // in terms of number of beats per cycle
   }
 
+  get weight() {
+    return this.__weight ?? Fraction(1);
+  }
+
+  set weight(weight) {
+    this.__weight = Fraction(weight);
+  }
+
   //////////////////////////////////////////////////////////////////////
   // Haskell-style functor, applicative and monadic operations
 
@@ -1283,14 +1291,13 @@ export function cat(...pats) {
  * // the same as "bd sd cp hh hh".sound()
  */
 export function timeCat(...timepats) {
-  // Weights are either provided in [weight, pattern] pairs, or as '__weight'
-  // elements added to pattern objects or provided from unadulterated mininotation
-  // patterns.
-  const findWeight = (x) => (Array.isArray(x) ? x : [x.__weight ?? 1, x]);
+  // Weights may either be provided explicitly in [weight, pattern] pairs, or
+  // where possible, inferred from the pattern.
+  const findWeight = (x) => (Array.isArray(x) ? x : [x.weight, x]);
   timepats = timepats.map(findWeight);
   if (timepats.length == 1) {
     const result = reify(timepats[0][1]);
-    result.__weight = timepats[0][0];
+    result.weight = timepats[0][0];
     return result;
   }
 
@@ -1303,7 +1310,7 @@ export function timeCat(...timepats) {
     begin = end;
   }
   const result = stack(...pats);
-  result.__weight = total;
+  result.weight = total;
   return result;
 }
 
@@ -1328,7 +1335,7 @@ export function fastcat(...pats) {
   let result = slowcat(...pats);
   if (pats.length > 1) {
     result = result._fast(pats.length);
-    result.__weight = pats.length;
+    result.weight = pats.length;
   }
   return result;
 }
@@ -1336,17 +1343,17 @@ export function fastcat(...pats) {
 export function beatCat(...groups) {
   groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
 
-  const weights = groups.map((a) => a.map((elem) => elem.__weight ?? 1));
+  const weights = groups.map((a) => a.map((elem) => elem.weight));
 
   const cycles = lcm(...groups.map((x) => x.length));
   let result = [];
   for (let cycle = 0; cycle < cycles; ++cycle) {
     result.push(...groups.map((x) => (x.length == 0 ? silence : x[cycle % x.length])));
   }
-  result = result.filter((x) => x.__weight > 0);
-  const weight = result.reduce((a, b) => a.add(b.__weight), Fraction(0));
+  result = result.filter((x) => x.weight > 0);
+  const weight = result.reduce((a, b) => a.add(b.weight), Fraction(0));
   result = timeCat(...result);
-  result.__weight = weight;
+  result.weight = weight;
   return result;
 }
 
@@ -1378,18 +1385,12 @@ function _sequenceCount(x) {
   }
   return [reify(x), 1];
 }
-/**
- * Aligns one or more given sequences to the given number of steps per cycle.
- *
- * @name polymeterSteps
- * @param  {number} steps how many items are placed in one cycle
- * @param  {any[]} sequences one or more arrays of Patterns / values
- * @example
- * polymeterSteps(4, ["c", "d", "e"])
- * .note().stack(s("bd"))
- * // note("{c d e}%4").stack(s("bd"))
- */
-export function polymeterSteps(steps, ...args) {
+
+export const reweight = register('reweight', function (targetWeight, pat) {
+  return pat.fast(Fraction(targetWeight).div(pat.weight));
+});
+
+export function _polymeterListSteps(steps, ...args) {
   const seqs = args.map((a) => _sequenceCount(a));
   if (seqs.length == 0) {
     return silence;
@@ -1412,15 +1413,51 @@ export function polymeterSteps(steps, ...args) {
 }
 
 /**
- * Combines the given lists of patterns with the same pulse. This will create so called polymeters when different sized sequences are used.
+ * Aligns one or more given patterns to the given number of steps per cycle.
+ * This relies on patterns having coherent number of steps per cycle,
+ *
+ * @name polymeterSteps
+ * @param  {number} steps how many items are placed in one cycle
+ * @param  {any[]} patterns one or more patterns
+ * @example
+ * // the same as "{c d, e f g}%4"
+ * polymeterSteps(4, "c d", "e f g")
+ */
+export function polymeterSteps(steps, ...args) {
+  if (args.length == 0) {
+    return silence;
+  }
+  if (Array.isArray(args[0])) {
+    // Support old behaviour
+    return _polymeterListSteps(steps, ...args);
+  }
+
+  return polymeter(...args).reweight(steps);
+}
+
+/**
+ * Combines the given lists of patterns with the same pulse, creating polymeters when different sized sequences are used.
  * @synonyms pm
  * @example
- * polymeter(["c", "eb", "g"], ["c2", "g2"]).note()
- * // "{c eb g, c2 g2}".note()
+ * // The same as "{c eb g, c2 g2}"
+ * polymeter("c eb g", "c2 g2")
  *
  */
 export function polymeter(...args) {
-  return polymeterSteps(0, ...args);
+  if (Array.isArray(args[0])) {
+    // Support old behaviour
+    return _polymeterListSteps(0, ...args);
+  }
+
+  if (args.length == 0) {
+    return silence;
+  }
+  const weight = args[0].weight;
+  const [head, ...tail] = args;
+
+  const result = stack(head, ...tail.map((pat) => pat._slow(pat.weight.div(weight))));
+  result.weight = weight;
+  return result;
 }
 
 export const mask = curry((a, b) => reify(b).mask(a));
@@ -1755,7 +1792,7 @@ export const { fast, density } = register(['fast', 'density'], function (factor,
   factor = Fraction(factor);
   const fastQuery = pat.withQueryTime((t) => t.mul(factor));
   const result = fastQuery.withHapTime((t) => t.div(factor));
-  result.__weight = pat.__weight == undefined ? undefined : factor.mul(pat.__weight);
+  result.weight = factor.mul(pat.weight);
   return result;
 });
 
