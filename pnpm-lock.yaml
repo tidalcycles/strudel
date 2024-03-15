@@ -184,6 +184,9 @@ importers:
       '@strudel/draw':
         specifier: workspace:*
         version: link:../draw
+      '@strudel/transpiler':
+        specifier: workspace:*
+        version: link:../transpiler
       '@uiw/codemirror-themes':
         specifier: ^4.21.21
         version: 4.21.21(@codemirror/language@6.10.0)(@codemirror/state@6.4.0)(@codemirror/view@6.23.0)

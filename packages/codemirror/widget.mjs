@@ -1,5 +1,7 @@
 import { StateEffect, StateField } from '@codemirror/state';
 import { Decoration, EditorView, WidgetType } from '@codemirror/view';
+import { registerWidgetType } from '@strudel/transpiler';
+import { Pattern } from '@strudel/core';
 
 const getWidgetID = (from) => `widget_${from}`;
 
@@ -79,3 +81,15 @@ export class BlockWidget extends WidgetType {
 }
 
 export const widgetPlugin = [widgetField];
+
+// widget implementer API to create a new widget type
+export function registerWidget(type, fn) {
+  registerWidgetType(type);
+  if (fn) {
+    Pattern.prototype[type] = function (id, options = { fold: 1 }) {
+      // fn is expected to create a dom element and call setWidget(id, el);
+      // fn should also return the pattern
+      return fn(id, options, this);
+    };
+  }
+}

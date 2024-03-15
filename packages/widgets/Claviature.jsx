@@ -2,7 +2,7 @@ import { For } from 'solid-js';
 import { customElement } from 'solid-element';
 import { getClaviature } from 'claviature';
 import { Dynamic } from 'solid-js/web';
-import { registerWidget } from './registry.mjs';
+import { registerWidget } from '@strudel/codemirror';
 
 let defaultOptions = {
   range: ['A1', 'C6'],
