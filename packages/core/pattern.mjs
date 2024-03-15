@@ -2006,14 +2006,19 @@ export const { zoomArc, zoomarc } = register(['zoomArc', 'zoomarc'], function (a
  * @example
  * s("lt ht mt cp, [hh oh]*2").linger("<1 .5 .25 .125>")
  */
-export const linger = register('linger', function (t, pat) {
-  if (t == 0) {
-    return silence;
-  } else if (t < 0) {
-    return pat._zoom(t.add(1), 1)._slow(t);
-  }
-  return pat._zoom(0, t)._slow(t);
-});
+export const linger = register(
+  'linger',
+  function (t, pat) {
+    if (t == 0) {
+      return silence;
+    } else if (t < 0) {
+      return pat._zoom(t.add(1), 1)._slow(t);
+    }
+    return pat._zoom(0, t)._slow(t);
+  },
+  true,
+  true,
+);
 
 /**
  * Samples the pattern at a rate of n events per cycle. Useful for turning a continuous pattern into a discrete one.
@@ -2022,7 +2027,7 @@ export const linger = register('linger', function (t, pat) {
  * note(saw.range(40,52).segment(24))
  */
 export const segment = register('segment', function (rate, pat) {
-  return pat.struct(pure(true)._fast(rate));
+  return pat.struct(pure(true)._fast(rate)).setWeight(rate);
 });
 
 /**
@@ -2032,10 +2037,15 @@ export const segment = register('segment', function (rate, pat) {
  * @example
  * s("bd").struct("1 0 0 1 0 0 1 0".lastOf(4, invert))
  */
-export const { invert, inv } = register(['invert', 'inv'], function (pat) {
-  // Swap true/false in a binary pattern
-  return pat.fmap((x) => !x);
-});
+export const { invert, inv } = register(
+  ['invert', 'inv'],
+  function (pat) {
+    // Swap true/false in a binary pattern
+    return pat.fmap((x) => !x);
+  },
+  true,
+  true,
+);
 
 /**
  * Applies the given function whenever the given pattern is in a true state.
@@ -2148,9 +2158,14 @@ Pattern.prototype.hush = function () {
  * @example
  * note("c d e g").palindrome()
  */
-export const palindrome = register('palindrome', function (pat) {
-  return pat.lastOf(2, rev);
-});
+export const palindrome = register(
+  'palindrome',
+  function (pat) {
+    return pat.lastOf(2, rev);
+  },
+  true,
+  true,
+);
 
 /**
  * Jux with adjustable stereo width. 0 = mono, 1 = full stereo.
@@ -2269,9 +2284,14 @@ export const iter = register(
  * @example
  * note("0 1 2 3".scale('A minor')).iterBack(4)
  */
-export const { iterBack, iterback } = register(['iterBack', 'iterback'], function (times, pat) {
-  return _iter(times, pat, true);
-});
+export const { iterBack, iterback } = register(
+  ['iterBack', 'iterback'],
+  function (times, pat) {
+    return _iter(times, pat, true);
+  },
+  true,
+  true,
+);
 
 /**
  * Repeats each cycle the given number of times.
@@ -2281,11 +2301,14 @@ export const { iterBack, iterback } = register(['iterBack', 'iterback'], functio
  * @example
  * note(irand(12).add(34)).segment(4).repeatCycles(2).s("gm_acoustic_guitar_nylon")
  */
-const _repeatCycles = function (n, pat) {
-  return slowcat(...Array(n).fill(pat));
-};
-
-const { repeatCycles } = register('repeatCycles', _repeatCycles);
+export const { repeatCycles } = register(
+  'repeatCycles',
+  function (n, pat) {
+    return slowcat(...Array(n).fill(pat));
+  },
+  true,
+  true,
+);
 
 /**
  * Divides a pattern into a given number of parts, then cycles through those parts in turn, applying the given function to each part in turn (one part per cycle).
@@ -2309,7 +2332,7 @@ const _chunk = function (n, func, pat, back = false, fast = false) {
   return pat.when(binary_pat, func);
 };
 
-const { chunk, slowchunk, slowChunk } = register(['chunk', 'slowchunk', 'slowChunk'], function (n, func, pat) {
+export const { chunk, slowchunk, slowChunk } = register(['chunk', 'slowchunk', 'slowChunk'], function (n, func, pat) {
   return _chunk(n, func, pat, false, false);
 });
 
@@ -2344,10 +2367,15 @@ export const { fastchunk, fastChunk } = register(['fastchunk', 'fastChunk'], fun
 });
 
 // TODO - redefine elsewhere in terms of mask
-export const bypass = register('bypass', function (on, pat) {
-  on = Boolean(parseInt(on));
-  return on ? silence : pat;
-});
+export const bypass = register(
+  'bypass',
+  function (on, pat) {
+    on = Boolean(parseInt(on));
+    return on ? silence : pat;
+  },
+  true,
+  true,
+);
 
 /**
  * Loops the pattern inside at `offset` for `cycles`.
@@ -2404,7 +2432,7 @@ export const chop = register('chop', function (n, pat) {
   const func = function (o) {
     return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
   };
-  return pat.squeezeBind(func);
+  return pat.squeezeBind(func).setWeight(pat.weight.mul(n));
 });
 
 /**
@@ -2456,17 +2484,19 @@ const _loopAt = function (factor, pat, cps = 0.5) {
 export const slice = register(
   'slice',
   function (npat, ipat, opat) {
-    return npat.innerBind((n) =>
-      ipat.outerBind((i) =>
-        opat.outerBind((o) => {
-          // If it's not an object, assume it's a string and make it a 's' control parameter
-          o = o instanceof Object ? o : { s: o };
-          const begin = Array.isArray(n) ? n[i] : i / n;
-          const end = Array.isArray(n) ? n[i + 1] : (i + 1) / n;
-          return pure({ begin, end, _slices: n, ...o });
-        }),
-      ),
-    );
+    return npat
+      .innerBind((n) =>
+        ipat.outerBind((i) =>
+          opat.outerBind((o) => {
+            // If it's not an object, assume it's a string and make it a 's' control parameter
+            o = o instanceof Object ? o : { s: o };
+            const begin = Array.isArray(n) ? n[i] : i / n;
+            const end = Array.isArray(n) ? n[i + 1] : (i + 1) / n;
+            return pure({ begin, end, _slices: n, ...o });
+          }),
+        ),
+      )
+      .setWeight(ipat.weight);
   },
   false, // turns off auto-patternification
 );
@@ -2497,7 +2527,7 @@ export const splice = register(
           ...v,
         })),
       );
-    });
+    }).setWeight(ipat.weight);
   },
   false, // turns off auto-patternification
 );
