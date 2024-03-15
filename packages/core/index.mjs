@@ -22,10 +22,6 @@ export * from './repl.mjs';
 export * from './cyclist.mjs';
 export * from './logger.mjs';
 export * from './time.mjs';
-export * from './draw.mjs';
-export * from './animate.mjs';
-export * from './pianoroll.mjs';
-export * from './spiral.mjs';
 export * from './ui.mjs';
 export { default as drawLine } from './drawLine.mjs';
 // below won't work with runtime.mjs (json import fails)
