@@ -604,7 +604,7 @@ describe('Pattern', () => {
     });
   });
   describe('polymeter()', () => {
-    it('Can layer up cycles, stepwise', () => {
+    it('Can layer up cycles, stepwise, with lists', () => {
       expect(polymeterSteps(3, ['d', 'e']).firstCycle()).toStrictEqual(
         fastcat(pure('d'), pure('e'), pure('d')).firstCycle(),
       );
@@ -612,6 +612,9 @@ describe('Pattern', () => {
       expect(polymeter(['a', 'b', 'c'], ['d', 'e']).fast(2).firstCycle()).toStrictEqual(
         stack(sequence('a', 'b', 'c', 'a', 'b', 'c'), sequence('d', 'e', 'd', 'e', 'd', 'e')).firstCycle(),
       );
+    });
+    it('Can layer up cycles, stepwise, with weighted patterns', () => {
+      sameFirst(polymeterSteps(3, sequence('a', 'b')).fast(2), sequence('a', 'b', 'a', 'b', 'a', 'b'));
     });
   });
 
