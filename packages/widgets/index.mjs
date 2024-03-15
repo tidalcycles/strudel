@@ -1,3 +1,3 @@
 export * from './Claviature.jsx';
-export * from './Pianoroll.jsx';
-export * from './Canvas.jsx';
+export * from './canvas.mjs';
+export * from './registry.mjs';

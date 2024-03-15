@@ -490,6 +490,9 @@ importers:
 
   packages/widgets:
     dependencies:
+      '@strudel/codemirror':
+        specifier: workspace:*
+        version: link:../codemirror
       '@strudel/core':
         specifier: workspace:*
         version: link:../core

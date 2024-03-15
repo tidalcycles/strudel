@@ -3,16 +3,9 @@ import { parse } from 'acorn';
 import escodegen from 'escodegen';
 import { walk } from 'estree-walker';
 
-let widgetComponents = {};
-// this function allows registering a pattern method name and component name
-// e.g. register('claviature', 'strudel-claviature')
-// .. will map the Pattern method 'claviature' to the web component 'strudel-claviature'
-// the transpiler will turn .claviature(...args) into .claviature(id, ...args)
-// the widgetPlugin of @strudel/codemirror will automatically create an instance of 'strudel-claviature'
-// .. so you only have to implement the actual .claviature method (or what you've called it..)
-
-export function registerWidget(name, tagName) {
-  widgetComponents[name] = tagName;
+let widgetMethods = [];
+export function registerWidgetType(type) {
+  widgetMethods.push(type);
 }
 
 export function transpiler(input, options = {}) {
@@ -63,7 +56,7 @@ export function transpiler(input, options = {}) {
         emitWidgets &&
           widgets.push({
             to: node.end,
-            type: widgetComponents[node.callee.property.name],
+            type: node.callee.property.name,
           });
         return this.replace(widgetWithLocation(node));
       }
@@ -131,7 +124,7 @@ function isSliderFunction(node) {
 }
 
 function isWidgetMethod(node) {
-  return node.type === 'CallExpression' && Object.keys(widgetComponents).includes(node.callee.property?.name);
+  return node.type === 'CallExpression' && widgetMethods.includes(node.callee.property?.name);
 }
 
 function sliderWithLocation(node) {

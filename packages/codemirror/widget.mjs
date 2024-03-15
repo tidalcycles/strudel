@@ -53,6 +53,12 @@ const widgetField = StateField.define(
   },
 );
 
+const widgetElements = {};
+export function setWidget(id, el) {
+  widgetElements[id] = el;
+  el.id = id;
+}
+
 export class BlockWidget extends WidgetType {
   constructor(col, type) {
     super();
@@ -64,11 +70,7 @@ export class BlockWidget extends WidgetType {
   }
   toDOM() {
     const id = getWidgetID(this.col); // matches id generated in transpiler
-    let el = document.getElementById(id);
-    if (!el) {
-      el = document.createElement(this.type);
-      el.id = id;
-    }
+    const el = widgetElements[id];
     return el;
   }
   ignoreEvent(e) {
