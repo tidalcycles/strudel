@@ -91,10 +91,13 @@ function clearScreen(smear = 0, smearRGB = `0,0,0`, ctx = getDrawContext()) {
  */
 Pattern.prototype.fscope = function (config = {}) {
   let id = config.id ?? 1;
-  return this.analyze(id).draw(() => {
-    clearScreen(config.smear, '0,0,0', config.ctx);
-    analysers[id] && drawFrequencyScope(analysers[id], config);
-  });
+  return this.analyze(id).draw(
+    () => {
+      clearScreen(config.smear, '0,0,0', config.ctx);
+      analysers[id] && drawFrequencyScope(analysers[id], config);
+    },
+    { id },
+  );
 };
 
 /**
@@ -113,10 +116,13 @@ Pattern.prototype.fscope = function (config = {}) {
  */
 Pattern.prototype.tscope = function (config = {}) {
   let id = config.id ?? 1;
-  return this.analyze(id).draw(() => {
-    clearScreen(config.smear, '0,0,0', config.ctx);
-    analysers[id] && drawTimeScope(analysers[id], config);
-  });
+  return this.analyze(id).draw(
+    () => {
+      clearScreen(config.smear, '0,0,0', config.ctx);
+      analysers[id] && drawTimeScope(analysers[id], config);
+    },
+    { id },
+  );
 };
 
 Pattern.prototype.scope = Pattern.prototype.tscope;

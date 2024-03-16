@@ -30,13 +30,20 @@ export const getDrawContext = (id = 'test-canvas', options) => {
 };
 
 let animationFrames = {};
+function stopAnimationFrame(id) {
+  if (animationFrames[id] !== undefined) {
+    cancelAnimationFrame(animationFrames[id]);
+    delete animationFrames[id];
+  }
+}
+function stopAllAnimations() {
+  Object.keys(animationFrames).forEach((id) => stopAnimationFrame(id));
+}
 Pattern.prototype.draw = function (callback, { id = 'std', from, to, onQuery, ctx } = {}) {
   if (typeof window === 'undefined') {
     return this;
   }
-  if (animationFrames[id]) {
-    cancelAnimationFrame(animationFrames[id]);
-  }
+  stopAnimationFrame(id);
   ctx = ctx || getDrawContext();
   let cycle,
     events = [];
@@ -69,9 +76,7 @@ Pattern.prototype.onFrame = function (id, fn, offset = 0) {
   if (typeof window === 'undefined') {
     return this;
   }
-  if (animationFrames[id]) {
-    cancelAnimationFrame(animationFrames[id]);
-  }
+  stopAnimationFrame(id);
   const animate = () => {
     const t = getTime() + offset;
     const haps = this.queryArc(t, t);
@@ -85,7 +90,7 @@ Pattern.prototype.onFrame = function (id, fn, offset = 0) {
 export const cleanupDraw = (clearScreen = true) => {
   const ctx = getDrawContext();
   clearScreen && ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.width);
-  Object.values(animationFrames).forEach((id) => cancelAnimationFrame(id));
+  stopAllAnimations();
   if (window.strudelScheduler) {
     clearInterval(window.strudelScheduler);
   }
