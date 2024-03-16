@@ -130,7 +130,6 @@ export class Pattern {
       return span_a.intersection_e(span_b);
     };
     const result = pat_func.appWhole(whole_func, pat_val);
-    console.log('ah');
     result.weight = lcm(pat_val.weight, pat_func.weight);
     return result;
   }
@@ -1153,15 +1152,24 @@ Pattern.prototype.factories = {
 // Elemental patterns
 
 /**
+ * Does absolutely nothing, with a given metrical 'weight'
+ * @name gap
+ * @param  {number} weight
+ * @example
+ * gap(3) // "~@3"
+ */
+export const gap = (weight) => new Pattern(() => [], Fraction(weight));
+
+/**
  * Does absolutely nothing..
  * @name silence
  * @example
  * silence // "~"
  */
-export const silence = new Pattern(() => [], 1);
+export const silence = gap(1);
 
 /* Like silence, but with a 'weight' (relative duration) of 0 */
-export const nothing = new Pattern(() => [], 0);
+export const nothing = gap(0);
 
 /** A discrete value that repeats once per cycle.
  *
@@ -1221,6 +1229,47 @@ export function stack(...pats) {
   const result = new Pattern(query);
   result.weight = lcm(...pats.map((pat) => pat.weight));
   return result;
+}
+
+function _stackWith(func, pats) {
+  pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
+  if (pats.length === 0) {
+    return silence;
+  }
+  if (pats.length === 1) {
+    return pats[0];
+  }
+  const [left, ...right] = pats.map((pat) => pat.weight);
+  const weight = left.maximum(...right);
+  return stack(...func(weight, pats));
+}
+
+export function stackLeft(...pats) {
+  return _stackWith(
+    (weight, pats) => pats.map((pat) => (pat.weight.eq(weight) ? pat : timeCat(pat, gap(weight.sub(pat.weight))))),
+    pats,
+  );
+}
+
+export function stackRight(...pats) {
+  return _stackWith(
+    (weight, pats) => pats.map((pat) => (pat.weight.eq(weight) ? pat : timeCat(gap(weight.sub(pat.weight)), pat))),
+    pats,
+  );
+}
+
+export function stackCentre(...pats) {
+  return _stackWith(
+    (weight, pats) =>
+      pats.map((pat) => {
+        if (pat.weight.eq(weight)) {
+          return pat;
+        }
+        const g = gap(weight.sub(pat.weight).div(2));
+        return timeCat(g, pat, g);
+      }),
+    pats,
+  );
 }
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle:
@@ -2183,9 +2232,9 @@ export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func,
     return dflt;
   };
   const left = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) - by }));
-  const right = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by }));
+  const right = func(pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by })));
 
-  return stack(left, func(right));
+  return stack(left, right).setWeight(lcm(left.weight, right.weight));
 });
 
 /**

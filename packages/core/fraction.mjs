@@ -51,6 +51,11 @@ Fraction.prototype.max = function (other) {
   return this.gt(other) ? this : other;
 };
 
+Fraction.prototype.maximum = function (...others) {
+  others = others.map((x) => new Fraction(x));
+  return others.reduce((max, other) => other.max(max), this);
+};
+
 Fraction.prototype.min = function (other) {
   return this.lt(other) ? this : other;
 };
