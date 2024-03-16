@@ -329,6 +329,7 @@ export class StrudelMirror {
     this.editor.dispatch({ changes });
   }
   clear() {
+    this.stop();
     this.onStartRepl && document.removeEventListener('start-repl', this.onStartRepl);
   }
 }
