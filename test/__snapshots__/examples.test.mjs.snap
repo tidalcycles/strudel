@@ -2843,6 +2843,8 @@ exports[`runs examples > example "gain" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "gap" example index 0 1`] = `[]`;
+
 exports[`runs examples > example "hpattack" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:c2 s:sawtooth hcutoff:500 hpattack:0.5 hpenv:4 ]",

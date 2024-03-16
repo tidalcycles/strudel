@@ -1272,6 +1272,23 @@ export function stackCentre(...pats) {
   );
 }
 
+export function stackBy(by, ...pats) {
+  const [left, ...right] = pats.map((pat) => pat.weight);
+  const weight = left.maximum(...right);
+  const lookup = {
+    centre: stackCentre,
+    left: stackLeft,
+    right: stackRight,
+    expand: stack,
+    beat: (...args) => polymeterSteps(weight, ...args),
+  };
+  return by
+    .inhabit(lookup)
+    .fmap((func) => func(...pats))
+    .innerJoin()
+    .setWeight(weight);
+}
+
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle:
  *
  * synonyms: `cat`
