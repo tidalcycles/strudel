@@ -215,35 +215,34 @@ function getReverb(orbit, duration, fade, lp, dim, ir) {
   return reverbs[orbit];
 }
 
-export let analyser, analyserData /* s = {} */;
+export let analysers = {},
+  analysersData = {};
 
-export function getAnalyser(/* orbit,  */ fftSize = 2048) {
-  if (!analyser /*s [orbit] */) {
+export function getAnalyserById(id, fftSize = 1024) {
+  if (!analysers[id]) {
     const analyserNode = getAudioContext().createAnalyser();
     analyserNode.fftSize = fftSize;
     // getDestination().connect(analyserNode);
-    analyser /* s[orbit] */ = analyserNode;
-    //analyserData = new Uint8Array(analyser.frequencyBinCount);
-    analyserData = new Float32Array(analyser.frequencyBinCount);
+    analysers[id] = analyserNode;
+    analysersData[id] = new Float32Array(analysers[id].frequencyBinCount);
   }
-  if (analyser /* s[orbit] */.fftSize !== fftSize) {
-    analyser /* s[orbit] */.fftSize = fftSize;
-    //analyserData = new Uint8Array(analyser.frequencyBinCount);
-    analyserData = new Float32Array(analyser.frequencyBinCount);
+  if (analysers[id].fftSize !== fftSize) {
+    analysers[id].fftSize = fftSize;
+    analysersData[id] = new Float32Array(analysers[id].frequencyBinCount);
   }
-  return analyser /* s[orbit] */;
+  return analysers[id];
 }
 
-export function getAnalyzerData(type = 'time') {
+export function getAnalyzerData(type = 'time', id = 1) {
   const getter = {
-    time: () => analyser?.getFloatTimeDomainData(analyserData),
-    frequency: () => analyser?.getFloatFrequencyData(analyserData),
+    time: () => analysers[id]?.getFloatTimeDomainData(analysersData[id]),
+    frequency: () => analyser[id]?.getFloatFrequencyData(analysersData[id]),
   }[type];
   if (!getter) {
     throw new Error(`getAnalyzerData: ${type} not supported. use one of ${Object.keys(getter).join(', ')}`);
   }
   getter();
-  return analyserData;
+  return analysersData[id];
 }
 
 function effectSend(input, effect, wet) {
@@ -256,6 +255,8 @@ function effectSend(input, effect, wet) {
 export function resetGlobalEffects() {
   delays = {};
   reverbs = {};
+  analysers = {};
+  analysersData = {};
 }
 
 export const superdough = async (value, deadline, hapDuration) => {
@@ -512,8 +513,8 @@ export const superdough = async (value, deadline, hapDuration) => {
   // analyser
   let analyserSend;
   if (analyze) {
-    const analyserNode = getAnalyser(/* orbit,  */ 2 ** (fft + 5));
-    analyserSend = effectSend(post, analyserNode, analyze);
+    const analyserNode = getAnalyserById(analyze, 2 ** (fft + 5));
+    analyserSend = effectSend(post, analyserNode, 1);
   }
 
   // connect chain elements together

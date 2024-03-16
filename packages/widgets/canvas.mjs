@@ -21,3 +21,9 @@ registerWidget('twist', (id, options = {}, pat) => {
   const ctx = getCanvasWidget(id, options).getContext('2d');
   return pat.spiral({ ...options, ctx, id });
 });
+
+registerWidget('osci', (id, options = {}, pat) => {
+  options = { width: 500, height: 60, pos: 0.5, scale: 1, ...options };
+  const ctx = getCanvasWidget(id, options).getContext('2d');
+  return pat.scope({ ...options, ctx, id });
+});
