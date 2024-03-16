@@ -1,6 +1,6 @@
 import { Pattern, clamp } from '@strudel/core';
 import { getDrawContext } from '../draw/index.mjs';
-import { getAnalyzerData } from 'superdough';
+import { analysers, getAnalyzerData } from 'superdough';
 
 export function drawTimeScope(
   analyser,
@@ -93,7 +93,7 @@ Pattern.prototype.fscope = function (config = {}) {
   let id = config.id ?? 1;
   return this.analyze(id).draw(() => {
     clearScreen(config.smear, '0,0,0', config.ctx);
-    analysers[id] && drawFrequencyScope(analyser, config);
+    analysers[id] && drawFrequencyScope(analysers[id], config);
   });
 };
 

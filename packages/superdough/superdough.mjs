@@ -236,7 +236,7 @@ export function getAnalyserById(id, fftSize = 1024) {
 export function getAnalyzerData(type = 'time', id = 1) {
   const getter = {
     time: () => analysers[id]?.getFloatTimeDomainData(analysersData[id]),
-    frequency: () => analyser[id]?.getFloatFrequencyData(analysersData[id]),
+    frequency: () => analysers[id]?.getFloatFrequencyData(analysersData[id]),
   }[type];
   if (!getter) {
     throw new Error(`getAnalyzerData: ${type} not supported. use one of ${Object.keys(getter).join(', ')}`);
