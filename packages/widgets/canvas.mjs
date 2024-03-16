@@ -25,5 +25,11 @@ registerWidget('twist', (id, options = {}, pat) => {
 registerWidget('osci', (id, options = {}, pat) => {
   options = { width: 500, height: 60, pos: 0.5, scale: 1, ...options };
   const ctx = getCanvasWidget(id, options).getContext('2d');
+  // TODO: find way to clear previous analysers to avoid memory leak
+  // .scope passes id to Pattern.analyze, which is picked up by superdough
+  // .. which calls getAnalyserById(analyze), creating a new analyzer (+buffer) for that key
+  // the id here is the col number where the osci function ends (as passed by the transpiler)
+  // effectively, this means for each evaluation of .osci on a unique col, a new analyser will be created
+  // the problem is that the old ones will never get deleted.. this might pile up some memory
   return pat.scope({ ...options, ctx, id });
 });

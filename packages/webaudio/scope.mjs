@@ -15,13 +15,23 @@ export function drawTimeScope(
     id = 1,
   } = {},
 ) {
-  const dataArray = getAnalyzerData('time', id);
-
   ctx.lineWidth = thickness;
   ctx.strokeStyle = color;
+  let canvas = ctx.canvas;
+
+  if (!analyser) {
+    // if analyser is undefined, draw straight line
+    // it may be undefined when no sound has been played yet
+    ctx.beginPath();
+    let y = pos * canvas.height;
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+    return;
+  }
+  const dataArray = getAnalyzerData('time', id);
 
   ctx.beginPath();
-  let canvas = ctx.canvas;
 
   const bufferSize = analyser.frequencyBinCount;
   let triggerIndex = align
@@ -49,6 +59,14 @@ export function drawFrequencyScope(
   analyser,
   { color = 'white', scale = 0.25, pos = 0.75, lean = 0.5, min = -150, max = 0, ctx = getDrawContext(), id = 1 } = {},
 ) {
+  if (!analyser) {
+    ctx.beginPath();
+    let y = pos * canvas.height;
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+    return;
+  }
   const dataArray = getAnalyzerData('frequency', id);
   const canvas = ctx.canvas;
 
@@ -119,7 +137,7 @@ Pattern.prototype.tscope = function (config = {}) {
   return this.analyze(id).draw(
     () => {
       clearScreen(config.smear, '0,0,0', config.ctx);
-      analysers[id] && drawTimeScope(analysers[id], config);
+      drawTimeScope(analysers[id], config);
     },
     { id },
   );
