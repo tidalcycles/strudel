@@ -15,6 +15,7 @@ export default createTheme({
     gutterForeground: '#8a919966',
   },
   styles: [
+    { tag: t.labelName, color: '#89ddff' },
     { tag: t.keyword, color: '#c792ea' },
     { tag: t.operator, color: '#89ddff' },
     { tag: t.special(t.variableName), color: '#eeffff' },
