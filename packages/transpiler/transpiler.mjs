@@ -140,6 +140,8 @@ function isLabelStatement(node) {
   return node.type === 'LabeledStatement';
 }
 
+// converts label expressions to p calls: "x: y" to "y.p('x')"
+// see https://github.com/tidalcycles/strudel/issues/990
 function labelToP(node) {
   return {
     type: 'ExpressionStatement',
