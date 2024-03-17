@@ -154,9 +154,6 @@ const polyBlep = (phase, dt) => {
 };
 
 const saw = (phase, dt) => {
-  // Correct phase, so it would be in line with sin(2.*M_PI * phase)
-  phase += 0.5;
-  if (phase >= 1) phase -= 1;
   const v = 2 * phase - 1;
   return v - polyBlep(phase, dt);
 };
