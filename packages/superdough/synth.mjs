@@ -1,6 +1,14 @@
 import { clamp, midiToFreq, noteToMidi } from './util.mjs';
 import { registerSound, getAudioContext, getWorklet } from './superdough.mjs';
-import { applyFM, gainNode, getADSRValues, getParamADSR, getPitchEnvelope, getVibratoOscillator } from './helpers.mjs';
+import {
+  applyFM,
+  gainNode,
+  getADSRValues,
+  getParamADSR,
+  getPitchEnvelope,
+  getVibratoOscillator,
+  webAudioTimeout,
+} from './helpers.mjs';
 import { getNoiseMix, getNoiseOscillator } from './noise.mjs';
 
 const getFrequencyFromValue = (value) => {
@@ -78,7 +86,7 @@ export function registerSynthSounds() {
       const end = holdend + release + 0.01;
       const voices = clamp(unison, 1, 100);
 
-      let node = getWorklet(
+      let o = getWorklet(
         ac,
         'supersaw-oscillator',
         {
@@ -93,20 +101,32 @@ export function registerSynthSounds() {
           outputChannelCount: [2],
         },
       );
-      const gainAdjustment = 1 / Math.sqrt(voices);
-      getPitchEnvelope(node.parameters.get('detune'), value, begin, holdend);
-      getVibratoOscillator(node.parameters.get('detune'), value, begin);
-      applyFM(node.parameters.get('frequency'), value, begin);
-      const envGain = gainNode(1);
-      node = node.connect(envGain);
 
-      getParamADSR(node.gain, attack, decay, sustain, release, 0, 0.3 * gainAdjustment, begin, holdend, 'linear');
+      const gainAdjustment = 1 / Math.sqrt(voices);
+      getPitchEnvelope(o.parameters.get('detune'), value, begin, holdend);
+      const vibratoOscillator = getVibratoOscillator(o.parameters.get('detune'), value, begin);
+      const fm = applyFM(o.parameters.get('frequency'), value, begin);
+      let envGain = gainNode(1);
+      envGain = o.connect(envGain);
+
+      webAudioTimeout(
+        ac,
+        () => {
+          o.disconnect();
+          envGain.disconnect();
+          onended();
+          fm?.stop();
+          vibratoOscillator?.stop();
+        },
+        begin,
+        holdend,
+      );
+
+      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 0.3 * gainAdjustment, begin, holdend, 'linear');
 
       return {
-        node,
-        stop: (time) => {
-          // o.stop(time);
-        },
+        node: envGain,
+        stop: (time) => {},
       };
     },
     { prebake: true, type: 'synth' },

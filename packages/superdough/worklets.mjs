@@ -175,7 +175,6 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
     this.phase = [];
-    this.logged = 0;
   }
   static get parameterDescriptors() {
     return [
@@ -230,6 +229,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
     }
     // eslint-disable-next-line no-undef
     if (currentTime >= params.end[0]) {
+      // this.port.postMessage({ type: 'onended' });
       return false;
     }
     let frequency = params.frequency[0];
@@ -246,9 +246,6 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
     for (let n = 0; n < voices; n++) {
       const isOdd = (n & 1) == 1;
 
-      if (this.logged < 10) {
-        this.logged += 1;
-      }
       //applies unison "spread" detune in semitones
       const freq = frequency * Math.pow(2, getUnisonDetune(voices, freqspread, n) / 1.2);
       let gainL = gain1;

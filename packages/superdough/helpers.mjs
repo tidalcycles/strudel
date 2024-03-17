@@ -186,6 +186,16 @@ export function getVibratoOscillator(param, value, t) {
     return vibratoOscillator;
   }
 }
+// ConstantSource inherits AudioScheduledSourceNode, which has scheduling abilities
+// a bit of a hack, but it works very well :)
+export function webAudioTimeout(audioContext, onComplete, startTime, stopTime) {
+  const constantNode = audioContext.createConstantSource();
+  constantNode.start(startTime);
+  constantNode.stop(stopTime);
+  constantNode.onended = () => {
+    onComplete();
+  };
+}
 const mod = (freq, range = 1, type = 'sine') => {
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
