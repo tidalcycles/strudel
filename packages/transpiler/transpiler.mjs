@@ -9,7 +9,7 @@ export function transpiler(input, options = {}) {
   let ast = parse(input, {
     ecmaVersion: 2022,
     allowAwaitOutsideFunction: true,
-    locations: true,
+    locations: false,
   });
 
   let miniLocations = [];
@@ -48,6 +48,9 @@ export function transpiler(input, options = {}) {
       }
       if (isBareSamplesCall(node, parent)) {
         return this.replace(withAwait(node));
+      }
+      if (isLabelStatement(node)) {
+        return this.replace(labelToP(node));
       }
     },
     leave(node, parent, prop, index) {},
@@ -130,5 +133,33 @@ function withAwait(node) {
   return {
     type: 'AwaitExpression',
     argument: node,
+  };
+}
+
+function isLabelStatement(node) {
+  return node.type === 'LabeledStatement';
+}
+
+function labelToP(node) {
+  return {
+    type: 'ExpressionStatement',
+    expression: {
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: node.body.expression,
+        property: {
+          type: 'Identifier',
+          name: 'p',
+        },
+      },
+      arguments: [
+        {
+          type: 'Literal',
+          value: node.label.name,
+          raw: `'${node.label.name}'`,
+        },
+      ],
+    },
   };
 }
