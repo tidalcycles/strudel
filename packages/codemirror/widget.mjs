@@ -1,9 +1,7 @@
 import { StateEffect, StateField } from '@codemirror/state';
 import { Decoration, EditorView, WidgetType } from '@codemirror/view';
-import { registerWidgetType } from '@strudel/transpiler';
+import { getWidgetID, registerWidgetType } from '@strudel/transpiler';
 import { Pattern } from '@strudel/core';
-
-const getWidgetID = (from) => `widget_${from}`;
 
 export const addWidget = StateEffect.define({
   map: ({ from, to }, change) => {
@@ -20,12 +18,12 @@ function getWidgets(widgetConfigs) {
     widgetConfigs
       // codemirror throws an error if we don't sort
       .sort((a, b) => a.to - b.to)
-      .map(({ to, type }) => {
+      .map((widgetConfig) => {
         return Decoration.widget({
-          widget: new BlockWidget(to, type),
+          widget: new BlockWidget(widgetConfig),
           side: 0,
           block: true,
-        }).range(to);
+        }).range(widgetConfig.to);
       })
   );
 }
@@ -62,16 +60,15 @@ export function setWidget(id, el) {
 }
 
 export class BlockWidget extends WidgetType {
-  constructor(col, type) {
+  constructor(widgetConfig) {
     super();
-    this.col = col;
-    this.type = type;
+    this.widgetConfig = widgetConfig;
   }
   eq() {
     return true;
   }
   toDOM() {
-    const id = getWidgetID(this.col); // matches id generated in transpiler
+    const id = getWidgetID(this.widgetConfig);
     const el = widgetElements[id];
     return el;
   }

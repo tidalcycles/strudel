@@ -53,12 +53,13 @@ export function transpiler(input, options = {}) {
         return this.replace(sliderWithLocation(node));
       }
       if (isWidgetMethod(node)) {
-        emitWidgets &&
-          widgets.push({
-            to: node.end,
-            type: node.callee.property.name,
-          });
-        return this.replace(widgetWithLocation(node));
+        const widgetConfig = {
+          to: node.end,
+          index: widgets.length,
+          type: node.callee.property.name,
+        };
+        emitWidgets && widgets.push(widgetConfig);
+        return this.replace(widgetWithLocation(node, widgetConfig));
       }
       if (isBareSamplesCall(node, parent)) {
         return this.replace(withAwait(node));
@@ -140,8 +141,17 @@ function sliderWithLocation(node) {
   return node;
 }
 
-function widgetWithLocation(node) {
-  const id = 'widget_' + node.end;
+export function getWidgetID(widgetConfig) {
+  // the widget id is used as id for the dom element + as key for eventual resources
+  // for example, for each scope widget, a new analyser + buffer (large) is created
+  // that means, if we use the index index of line position as id, less garbage is generated
+  // return `widget_${widgetConfig.to}`; // more gargabe
+  //return `widget_${widgetConfig.index}_${widgetConfig.to}`; // also more garbage
+  return `widget_${widgetConfig.index}`; // less garbage
+}
+
+function widgetWithLocation(node, widgetConfig) {
+  const id = getWidgetID(widgetConfig);
   // add loc as identifier to first argument
   // the sliderWithID function is assumed to be sliderWithID(id, value, min?, max?)
   node.arguments.unshift({

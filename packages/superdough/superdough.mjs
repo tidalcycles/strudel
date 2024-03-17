@@ -220,6 +220,7 @@ export let analysers = {},
 
 export function getAnalyserById(id, fftSize = 1024) {
   if (!analysers[id]) {
+    // make sure this doesn't happen too often as it piles up garbage
     const analyserNode = getAudioContext().createAnalyser();
     analyserNode.fftSize = fftSize;
     // getDestination().connect(analyserNode);
