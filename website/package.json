@@ -5,7 +5,6 @@
   "private": true,
   "scripts": {
     "dev": "astro dev --host 0.0.0.0",
-    "watch": "astro dev --host 0.0.0.0",
     "start": "astro dev",
     "check": "astro check && tsc",
     "build": "astro build",
@@ -25,7 +24,6 @@
     "@heroicons/react": "^2.1.1",
     "@nanostores/persistent": "^0.9.1",
     "@nanostores/react": "^0.7.1",
-    "@strudel/widgets": "workspace:*",
     "@strudel/codemirror": "workspace:*",
     "@strudel/core": "workspace:*",
     "@strudel/draw": "workspace:*",

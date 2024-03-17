@@ -82,7 +82,6 @@ export function loadModules() {
     import('@strudel/serial'),
     import('@strudel/soundfonts'),
     import('@strudel/csound'),
-    import('@strudel/widgets'),
   ];
   if (isTauri()) {
     modules = modules.concat([
