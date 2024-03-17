@@ -119,7 +119,7 @@ export function registerSynthSounds() {
           vibratoOscillator?.stop();
         },
         begin,
-        holdend,
+        end,
       );
 
       getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 0.3 * gainAdjustment, begin, holdend, 'linear');
