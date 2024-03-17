@@ -18,6 +18,7 @@ export default createTheme({
   theme: 'dark',
   settings,
   styles: [
+    { tag: t.labelName, color: 'white' },
     { tag: t.keyword, color: 'white' },
     { tag: t.operator, color: 'white' },
     { tag: t.special(t.variableName), color: 'white' },

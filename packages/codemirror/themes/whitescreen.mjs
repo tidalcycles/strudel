@@ -16,6 +16,7 @@ export default createTheme({
   theme: 'light',
   settings,
   styles: [
+    { tag: t.labelName, color: 'black' },
     { tag: t.keyword, color: 'black' },
     { tag: t.operator, color: 'black' },
     { tag: t.special(t.variableName), color: 'black' },
