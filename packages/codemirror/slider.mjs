@@ -2,25 +2,8 @@ import { ref, pure } from '@strudel/core';
 import { WidgetType, ViewPlugin, Decoration } from '@codemirror/view';
 import { StateEffect } from '@codemirror/state';
 
-export const setSliderWidgets = StateEffect.define();
-
-export const updateSliderWidgets = (view, widgets) => {
-  view.dispatch({ effects: setSliderWidgets.of(widgets) });
-};
-
 export let sliderValues = {};
 const getSliderID = (from) => `slider_${from}`;
-
-function getSliders(widgetConfigs, view) {
-  return widgetConfigs
-    .filter((w) => w.type === 'slider')
-    .map(({ from, to, value, min, max, step }) => {
-      return Decoration.widget({
-        widget: new SliderWidget(value, min, max, from, to, step, view),
-        side: 0,
-      }).range(from /* , to */);
-    });
-}
 
 export class SliderWidget extends WidgetType {
   constructor(value, min, max, from, to, step, view) {
@@ -75,6 +58,23 @@ export class SliderWidget extends WidgetType {
   ignoreEvent(e) {
     return true;
   }
+}
+
+export const setSliderWidgets = StateEffect.define();
+
+export const updateSliderWidgets = (view, widgets) => {
+  view.dispatch({ effects: setSliderWidgets.of(widgets) });
+};
+
+function getSliders(widgetConfigs, view) {
+  return widgetConfigs
+    .filter((w) => w.type === 'slider')
+    .map(({ from, to, value, min, max, step }) => {
+      return Decoration.widget({
+        widget: new SliderWidget(value, min, max, from, to, step, view),
+        side: 0,
+      }).range(from /* , to */);
+    });
 }
 
 export const sliderPlugin = ViewPlugin.fromClass(
