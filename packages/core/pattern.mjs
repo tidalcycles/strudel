@@ -510,10 +510,15 @@ export class Pattern {
       start,
       end,
     };
-    return this.withContext((context) => {
+    const result = this.withContext((context) => {
       const locations = (context.locations || []).concat([location]);
       return { ...context, locations };
     });
+    if (this.__pure) {
+      result.__pure = this.__pure;
+      result.__pure_loc = location;
+    }
+    return result;
   }
 
   /**
@@ -1608,7 +1613,12 @@ export function register(name, func, patternify = true, preserveWeight = false) 
 
         if (firstArgs.every((arg) => arg.__pure != undefined)) {
           const pureArgs = firstArgs.map((arg) => arg.__pure);
+          const pureLocs = firstArgs.filter((arg) => arg.__pure_loc).map((arg) => arg.__pure_loc);
           result = func(...pureArgs, pat);
+          result = result.withContext((context) => {
+            const locations = (context.locations || []).concat(pureLocs);
+            return { ...context, locations };
+          });
         } else {
           const [left, ...right] = firstArgs;
 
