@@ -451,7 +451,9 @@ export class Pattern {
    * @noAutocomplete
    */
   withHaps(func) {
-    return new Pattern((state) => func(this.query(state), state));
+    const result = new Pattern((state) => func(this.query(state), state));
+    result.weight = this.weight;
+    return result;
   }
 
   /**
@@ -484,6 +486,7 @@ export class Pattern {
     const result = this.withHap((hap) => hap.setContext(func(hap.context)));
     if (this.__pure !== undefined) {
       result.__pure = this.__pure;
+      result.__pure_loc = this.__pure_loc;
     }
     return result;
   }
