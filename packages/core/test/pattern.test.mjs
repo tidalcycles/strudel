@@ -604,7 +604,7 @@ describe('Pattern', () => {
     });
   });
   describe('polymeter()', () => {
-    it('Can layer up cycles, stepwise', () => {
+    it('Can layer up cycles, stepwise, with lists', () => {
       expect(polymeterSteps(3, ['d', 'e']).firstCycle()).toStrictEqual(
         fastcat(pure('d'), pure('e'), pure('d')).firstCycle(),
       );
@@ -612,6 +612,9 @@ describe('Pattern', () => {
       expect(polymeter(['a', 'b', 'c'], ['d', 'e']).fast(2).firstCycle()).toStrictEqual(
         stack(sequence('a', 'b', 'c', 'a', 'b', 'c'), sequence('d', 'e', 'd', 'e', 'd', 'e')).firstCycle(),
       );
+    });
+    it('Can layer up cycles, stepwise, with weighted patterns', () => {
+      sameFirst(polymeterSteps(3, sequence('a', 'b')).fast(2), sequence('a', 'b', 'a', 'b', 'a', 'b'));
     });
   });
 
@@ -1113,6 +1116,25 @@ describe('Pattern', () => {
           sequence(0, 1, 2, 3).pickmod([sequence(1, 2, 3, 4), sequence(10, 20, 30, 40)]),
           sequence(1, 20, 3, 40),
         ),
+      );
+    });
+  });
+  describe('weight', () => {
+    it('Is correctly preserved/calculated through transformations', () => {
+      expect(sequence(0, 1, 2, 3).linger(4).weight).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).iter(4).weight).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).fast(4).weight).toStrictEqual(Fraction(16));
+      expect(sequence(0, 1, 2, 3).hurry(4).weight).toStrictEqual(Fraction(16));
+      expect(sequence(0, 1, 2, 3).rev().weight).toStrictEqual(Fraction(4));
+      expect(sequence(1).segment(10).weight).toStrictEqual(Fraction(10));
+      expect(sequence(1, 0, 1).invert().weight).toStrictEqual(Fraction(3));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).chop(4).weight).toStrictEqual(Fraction(8));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).striate(4).weight).toStrictEqual(Fraction(8));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).slice(4, sequence(0, 1, 2, 3)).weight).toStrictEqual(
+        Fraction(4),
+      );
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).splice(4, sequence(0, 1, 2, 3)).weight).toStrictEqual(
+        Fraction(4),
       );
     });
   });

@@ -92,16 +92,16 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
         return strudel.stack(...children);
       }
       if (alignment === 'polymeter_slowcat') {
-        const aligned = children.map((child) => child._slow(strudel.Fraction(child.__weight ?? 1)));
+        const aligned = children.map((child) => child._slow(child.weight));
         return strudel.stack(...aligned);
       }
       if (alignment === 'polymeter') {
         // polymeter
         const stepsPerCycle = ast.arguments_.stepsPerCycle
           ? enter(ast.arguments_.stepsPerCycle).fmap((x) => strudel.Fraction(x))
-          : strudel.pure(strudel.Fraction(children.length > 0 ? children[0].__weight : 1));
+          : strudel.pure(strudel.Fraction(children.length > 0 ? children[0].weight : 1));
 
-        const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.__weight || 1))));
+        const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.weight))));
         return strudel.stack(...aligned);
       }
       if (alignment === 'rand') {
@@ -112,13 +112,18 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
       }
       const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
       if (weightedChildren) {
-        const weightSum = ast.source_.reduce((sum, child) => sum + (child.options_?.weight || 1), 0);
-        const pat = strudel.timeCat(...ast.source_.map((child, i) => [child.options_?.weight || 1, children[i]]));
-        pat.__weight = weightSum;
+        const weightSum = ast.source_.reduce(
+          (sum, child) => sum.add(child.options_?.weight || strudel.Fraction(1)),
+          strudel.Fraction(0),
+        );
+        const pat = strudel.timeCat(
+          ...ast.source_.map((child, i) => [child.options_?.weight || strudel.Fraction(1), children[i]]),
+        );
+        pat.weight = weightSum;
         return pat;
       }
       const pat = strudel.sequence(...children);
-      pat.__weight = children.length;
+      pat.weight = children.length;
       return pat;
     }
     case 'element': {

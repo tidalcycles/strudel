@@ -72,6 +72,7 @@ export function Repl({ embedded = false }) {
       });
     };
     const editor = new StrudelMirror({
+      sync: false,
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       transpiler,
