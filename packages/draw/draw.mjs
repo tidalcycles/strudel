@@ -96,9 +96,8 @@ export const cleanupDraw = (clearScreen = true) => {
   }
 };
 
-Pattern.prototype.onPaint = function (onPaint) {
-  // this is evil! TODO: add pattern.context
-  this.context = { onPaint };
+Pattern.prototype.onPaint = function () {
+  console.warn('[draw] onPaint was not overloaded. Some drawings might not work');
   return this;
 };
 

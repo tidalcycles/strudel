@@ -141,7 +141,6 @@ export class StrudelMirror {
     this.painters = [];
     this.drawTime = drawTime;
     this.onDraw = onDraw;
-    const self = this;
     this.id = id || s4();
 
     this.drawer = new Drawer((haps, time) => {
@@ -149,13 +148,6 @@ export class StrudelMirror {
       this.highlight(currentFrame, time);
       this.onDraw?.(haps, time, currentFrame, this.painters);
     }, drawTime);
-
-    // this approach does not work with multiple repls on screen
-    // TODO: refactor onPaint usages + find fix, maybe remove painters here?
-    Pattern.prototype.onPaint = function (onPaint) {
-      self.painters.push(onPaint);
-      return this;
-    };
 
     this.prebaked = prebake();
     autodraw && this.drawFirstFrame();
@@ -182,6 +174,14 @@ export class StrudelMirror {
       beforeEval: async () => {
         cleanupDraw();
         this.painters = [];
+        const self = this;
+        // this is similar to repl.mjs > injectPatternMethods
+        // maybe there is a solution without prototype hacking, but hey, it works
+        // we need to do this befor every eval to make sure it works with multiple StrudelMirror's side by side
+        Pattern.prototype.onPaint = function (onPaint) {
+          self.painters.push(onPaint);
+          return this;
+        };
         await this.prebaked;
         await replOptions?.beforeEval?.();
       },
