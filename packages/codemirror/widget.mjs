@@ -109,6 +109,11 @@ registerWidget('_pianoroll', (id, options = {}, pat) => {
   return pat.pianoroll({ fold: 1, ...options, ctx, id });
 });
 
+registerWidget('_punchcard', (id, options = {}, pat) => {
+  const ctx = getCanvasWidget(id, options).getContext('2d');
+  return pat.punchcard({ fold: 1, ...options, ctx, id });
+});
+
 /* registerWidget('_spiral', (id, options = {}, pat) => {
   options = { width: 200, height: 200, size: 36, ...options };
   const ctx = getCanvasWidget(id, options).getContext('2d');
