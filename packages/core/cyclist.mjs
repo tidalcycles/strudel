@@ -1,5 +1,5 @@
 /*
-cyclist.mjs - <short description TODO>
+cyclist.mjs - event scheduler for a single strudel instance. for multi-instance scheduler, see - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/neocyclist.mjs>
 Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/cyclist.mjs>
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
@@ -16,7 +16,7 @@ export class Cyclist {
     this.lastBegin = 0; // query begin of last tick
     this.lastEnd = 0; // query end of last tick
     this.getTime = getTime; // get absolute time
-    this.num_cycles_since_last_cps_change = 0;
+    this.num_cycles_at_cps_change = 0;
     this.onToggle = onToggle;
     this.latency = latency; // fixed trigger time offset
     this.clock = createClock(
@@ -27,7 +27,7 @@ export class Cyclist {
           this.origin = phase;
         }
         if (this.num_ticks_since_cps_change === 0) {
-          this.num_cycles_since_last_cps_change = this.lastEnd;
+          this.num_cycles_at_cps_change = this.lastEnd;
         }
         this.num_ticks_since_cps_change++;
         try {
@@ -37,7 +37,7 @@ export class Cyclist {
 
           //convert ticks to cycles, so you can query the pattern for events
           const eventLength = duration * this.cps;
-          const end = this.num_cycles_since_last_cps_change + this.num_ticks_since_cps_change * eventLength;
+          const end = this.num_cycles_at_cps_change + this.num_ticks_since_cps_change * eventLength;
           this.lastEnd = end;
 
           // query the pattern for events
@@ -76,7 +76,7 @@ export class Cyclist {
   }
   start() {
     this.num_ticks_since_cps_change = 0;
-    this.num_cycles_since_last_cps_change = 0;
+    this.num_cycles_at_cps_change = 0;
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }

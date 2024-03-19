@@ -51,6 +51,11 @@ Fraction.prototype.max = function (other) {
   return this.gt(other) ? this : other;
 };
 
+Fraction.prototype.maximum = function (...others) {
+  others = others.map((x) => new Fraction(x));
+  return others.reduce((max, other) => other.max(max), this);
+};
+
 Fraction.prototype.min = function (other) {
   return this.lt(other) ? this : other;
 };
@@ -81,6 +86,10 @@ const fraction = (n) => {
 
 export const gcd = (...fractions) => {
   return fractions.reduce((gcd, fraction) => gcd.gcd(fraction), fraction(1));
+};
+
+export const lcm = (...fractions) => {
+  return fractions.reduce((lcm, fraction) => lcm.lcm(fraction), fraction(1));
 };
 
 fraction._original = Fraction;

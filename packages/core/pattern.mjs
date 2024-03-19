@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import TimeSpan from './timespan.mjs';
-import Fraction from './fraction.mjs';
+import Fraction, { lcm } from './fraction.mjs';
 import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
@@ -29,9 +29,23 @@ export class Pattern {
    * @param {function} query - The function that maps a `State` to an array of `Hap`.
    * @noAutocomplete
    */
-  constructor(query) {
+  constructor(query, weight = undefined) {
     this.query = query;
     this._Pattern = true; // this property is used to detect if a pattern that fails instanceof Pattern is an instance of another Pattern
+    this.__weight = weight; // in terms of number of beats per cycle
+  }
+
+  get weight() {
+    return this.__weight ?? Fraction(1);
+  }
+
+  set weight(weight) {
+    this.__weight = Fraction(weight);
+  }
+
+  setWeight(weight) {
+    this.weight = weight;
+    return this;
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -47,7 +61,9 @@ export class Pattern {
    * "0 1 2".withValue(v => v + 10).log()
    */
   withValue(func) {
-    return new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
+    const result = new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
+    result.weight = this.weight;
+    return result;
   }
 
   /**
@@ -104,6 +120,8 @@ export class Pattern {
    * @returns Pattern
    */
   appBoth(pat_val) {
+    const pat_func = this;
+
     // Tidal's <*>
     const whole_func = function (span_a, span_b) {
       if (span_a == undefined || span_b == undefined) {
@@ -111,7 +129,9 @@ export class Pattern {
       }
       return span_a.intersection_e(span_b);
     };
-    return this.appWhole(whole_func, pat_val);
+    const result = pat_func.appWhole(whole_func, pat_val);
+    result.weight = lcm(pat_val.weight, pat_func.weight);
+    return result;
   }
 
   /**
@@ -144,7 +164,9 @@ export class Pattern {
       }
       return haps;
     };
-    return new Pattern(query);
+    const result = new Pattern(query);
+    result.weight = this.weight;
+    return result;
   }
 
   /**
@@ -175,7 +197,9 @@ export class Pattern {
       }
       return haps;
     };
-    return new Pattern(query);
+    const result = new Pattern(query);
+    result.weight = pat_val.weight;
+    return result;
   }
 
   bindWhole(choose_whole, func) {
@@ -427,7 +451,9 @@ export class Pattern {
    * @noAutocomplete
    */
   withHaps(func) {
-    return new Pattern((state) => func(this.query(state), state));
+    const result = new Pattern((state) => func(this.query(state), state));
+    result.weight = this.weight;
+    return result;
   }
 
   /**
@@ -457,7 +483,12 @@ export class Pattern {
    * @noAutocomplete
    */
   withContext(func) {
-    return this.withHap((hap) => hap.setContext(func(hap.context)));
+    const result = this.withHap((hap) => hap.setContext(func(hap.context)));
+    if (this.__pure !== undefined) {
+      result.__pure = this.__pure;
+      result.__pure_loc = this.__pure_loc;
+    }
+    return result;
   }
 
   /**
@@ -482,10 +513,15 @@ export class Pattern {
       start,
       end,
     };
-    return this.withContext((context) => {
+    const result = this.withContext((context) => {
       const locations = (context.locations || []).concat([location]);
       return { ...context, locations };
     });
+    if (this.__pure) {
+      result.__pure = this.__pure;
+      result.__pure_loc = location;
+    }
+    return result;
   }
 
   /**
@@ -1124,12 +1160,24 @@ Pattern.prototype.factories = {
 // Elemental patterns
 
 /**
+ * Does absolutely nothing, with a given metrical 'weight'
+ * @name gap
+ * @param  {number} weight
+ * @example
+ * gap(3) // "~@3"
+ */
+export const gap = (weight) => new Pattern(() => [], Fraction(weight));
+
+/**
  * Does absolutely nothing..
  * @name silence
  * @example
  * silence // "~"
  */
-export const silence = new Pattern(() => []);
+export const silence = gap(1);
+
+/* Like silence, but with a 'weight' (relative duration) of 0 */
+export const nothing = gap(0);
 
 /** A discrete value that repeats once per cycle.
  *
@@ -1142,7 +1190,9 @@ export function pure(value) {
   function query(state) {
     return state.span.spanCycles.map((subspan) => new Hap(Fraction(subspan.begin).wholeCycle(), subspan, value));
   }
-  return new Pattern(query);
+  const result = new Pattern(query, 1);
+  result.__pure = value;
+  return result;
 }
 
 export function isPattern(thing) {
@@ -1184,7 +1234,67 @@ export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
   pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
   const query = (state) => flatten(pats.map((pat) => pat.query(state)));
-  return new Pattern(query);
+  const result = new Pattern(query);
+  result.weight = lcm(...pats.map((pat) => pat.weight));
+  return result;
+}
+
+function _stackWith(func, pats) {
+  pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
+  if (pats.length === 0) {
+    return silence;
+  }
+  if (pats.length === 1) {
+    return pats[0];
+  }
+  const [left, ...right] = pats.map((pat) => pat.weight);
+  const weight = left.maximum(...right);
+  return stack(...func(weight, pats));
+}
+
+export function stackLeft(...pats) {
+  return _stackWith(
+    (weight, pats) => pats.map((pat) => (pat.weight.eq(weight) ? pat : timeCat(pat, gap(weight.sub(pat.weight))))),
+    pats,
+  );
+}
+
+export function stackRight(...pats) {
+  return _stackWith(
+    (weight, pats) => pats.map((pat) => (pat.weight.eq(weight) ? pat : timeCat(gap(weight.sub(pat.weight)), pat))),
+    pats,
+  );
+}
+
+export function stackCentre(...pats) {
+  return _stackWith(
+    (weight, pats) =>
+      pats.map((pat) => {
+        if (pat.weight.eq(weight)) {
+          return pat;
+        }
+        const g = gap(weight.sub(pat.weight).div(2));
+        return timeCat(g, pat, g);
+      }),
+    pats,
+  );
+}
+
+export function stackBy(by, ...pats) {
+  const [left, ...right] = pats.map((pat) => pat.weight);
+  const weight = left.maximum(...right);
+  const lookup = {
+    centre: stackCentre,
+    left: stackLeft,
+    right: stackRight,
+    expand: stack,
+    beat: (...args) => polymeterSteps(weight, ...args),
+  };
+  return by
+    .inhabit(lookup)
+    .fmap((func) => func(...pats))
+    .innerJoin()
+    .setWeight(weight);
 }
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle:
@@ -1198,7 +1308,11 @@ export function stack(...pats) {
  */
 export function slowcat(...pats) {
   // Array test here is to avoid infinite recursions..
-  pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
+  pats = pats.map((pat) => (Array.isArray(pat) ? fastcat(...pat) : reify(pat)));
+
+  if (pats.length == 1) {
+    return pats[0];
+  }
 
   const query = function (state) {
     const span = state.span;
@@ -1245,13 +1359,29 @@ export function cat(...pats) {
   return slowcat(...pats);
 }
 
-/** Like `seq`, but each step has a length, relative to the whole.
+/** Sequences patterns like `seq`, but each pattern has a length, relative to the whole.
+ * This length can either be provided as a [length, pattern] pair, or inferred from
+ * mininotation as the number of toplevel steps. The latter only works if the mininotation
+ * hasn't first been modified by another function.
  * @return {Pattern}
  * @example
  * timeCat([3,"e3"],[1, "g3"]).note()
- * // "e3@3 g3".note()
+ * // the same as "e3@3 g3".note()
+ * @example
+ * timeCat("bd sd cp","hh hh").sound()
+ * // the same as "bd sd cp hh hh".sound()
  */
 export function timeCat(...timepats) {
+  // Weights may either be provided explicitly in [weight, pattern] pairs, or
+  // where possible, inferred from the pattern.
+  const findWeight = (x) => (Array.isArray(x) ? x : [x.weight, x]);
+  timepats = timepats.map(findWeight);
+  if (timepats.length == 1) {
+    const result = reify(timepats[0][1]);
+    result.weight = timepats[0][0];
+    return result;
+  }
+
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
   let begin = Fraction(0);
   const pats = [];
@@ -1260,7 +1390,9 @@ export function timeCat(...timepats) {
     pats.push(reify(pat)._compress(begin.div(total), end.div(total)));
     begin = end;
   }
-  return stack(...pats);
+  const result = stack(...pats);
+  result.weight = total;
+  return result;
 }
 
 /**
@@ -1281,7 +1413,35 @@ export function arrange(...sections) {
 }
 
 export function fastcat(...pats) {
-  return slowcat(...pats)._fast(pats.length);
+  let result = slowcat(...pats);
+  if (pats.length > 1) {
+    result = result._fast(pats.length);
+    result.weight = pats.length;
+  }
+  return result;
+}
+
+/**
+ * Concatenates patterns beatwise, similar to `timeCat`, but if an argument is a list, the whole pattern will be repeated for each element in the list.
+ *
+ * @return {Pattern}
+ * @example
+ * beatCat(["bd cp", "mt"], "bd").sound()
+ */
+export function beatCat(...groups) {
+  groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
+
+  const cycles = lcm(...groups.map((x) => Fraction(x.length)));
+
+  let result = [];
+  for (let cycle = 0; cycle < cycles; ++cycle) {
+    result.push(...groups.map((x) => (x.length == 0 ? silence : x[cycle % x.length])));
+  }
+  result = result.filter((x) => x.weight > 0);
+  const weight = result.reduce((a, b) => a.add(b.weight), Fraction(0));
+  result = timeCat(...result);
+  result.weight = weight;
+  return result;
 }
 
 /** See `fastcat` */
@@ -1312,18 +1472,18 @@ function _sequenceCount(x) {
   }
   return [reify(x), 1];
 }
+
 /**
- * Aligns one or more given sequences to the given number of steps per cycle.
- *
- * @name polymeterSteps
- * @param  {number} steps how many items are placed in one cycle
- * @param  {any[]} sequences one or more arrays of Patterns / values
+ * Speeds a pattern up or down, to fit to the given metrical 'weight'.
  * @example
- * polymeterSteps(4, ["c", "d", "e"])
- * .note().stack(s("bd"))
- * // note("{c d e}%4").stack(s("bd"))
+ * s("bd sd cp").reweight(4)
+ * // The same as s("{bd sd cp}%4")
  */
-export function polymeterSteps(steps, ...args) {
+export const reweight = register('reweight', function (targetWeight, pat) {
+  return pat.fast(Fraction(targetWeight).div(pat.weight));
+});
+
+export function _polymeterListSteps(steps, ...args) {
   const seqs = args.map((a) => _sequenceCount(a));
   if (seqs.length == 0) {
     return silence;
@@ -1346,15 +1506,51 @@ export function polymeterSteps(steps, ...args) {
 }
 
 /**
- * Combines the given lists of patterns with the same pulse. This will create so called polymeters when different sized sequences are used.
+ * Aligns one or more given patterns to the given number of steps per cycle.
+ * This relies on patterns having coherent number of steps per cycle,
+ *
+ * @name polymeterSteps
+ * @param  {number} steps how many items are placed in one cycle
+ * @param  {any[]} patterns one or more patterns
+ * @example
+ * // the same as "{c d, e f g}%4"
+ * polymeterSteps(4, "c d", "e f g")
+ */
+export function polymeterSteps(steps, ...args) {
+  if (args.length == 0) {
+    return silence;
+  }
+  if (Array.isArray(args[0])) {
+    // Support old behaviour
+    return _polymeterListSteps(steps, ...args);
+  }
+
+  return polymeter(...args).reweight(steps);
+}
+
+/**
+ * Combines the given lists of patterns with the same pulse, creating polymeters when different sized sequences are used.
  * @synonyms pm
  * @example
- * polymeter(["c", "eb", "g"], ["c2", "g2"]).note()
- * // "{c eb g, c2 g2}".note()
+ * // The same as "{c eb g, c2 g2}"
+ * polymeter("c eb g", "c2 g2")
  *
  */
 export function polymeter(...args) {
-  return polymeterSteps(0, ...args);
+  if (Array.isArray(args[0])) {
+    // Support old behaviour
+    return _polymeterListSteps(0, ...args);
+  }
+
+  if (args.length == 0) {
+    return silence;
+  }
+  const weight = args[0].weight;
+  const [head, ...tail] = args;
+
+  const result = stack(head, ...tail.map((pat) => pat._slow(pat.weight.div(weight))));
+  result.weight = weight;
+  return result;
 }
 
 export const mask = curry((a, b) => reify(b).mask(a));
@@ -1396,7 +1592,7 @@ export const func = curry((a, b) => reify(b).func(a));
  * @noAutocomplete
  *
  */
-export function register(name, func, patternify = true) {
+export function register(name, func, patternify = true, preserveWeight = false) {
   if (Array.isArray(name)) {
     const result = {};
     for (const name_item of name) {
@@ -1411,26 +1607,44 @@ export function register(name, func, patternify = true) {
     pfunc = function (...args) {
       args = args.map(reify);
       const pat = args[args.length - 1];
+      let result;
+
       if (arity === 1) {
-        return func(pat);
+        result = func(pat);
+      } else {
+        const firstArgs = args.slice(0, -1);
+
+        if (firstArgs.every((arg) => arg.__pure != undefined)) {
+          const pureArgs = firstArgs.map((arg) => arg.__pure);
+          const pureLocs = firstArgs.filter((arg) => arg.__pure_loc).map((arg) => arg.__pure_loc);
+          result = func(...pureArgs, pat);
+          result = result.withContext((context) => {
+            const locations = (context.locations || []).concat(pureLocs);
+            return { ...context, locations };
+          });
+        } else {
+          const [left, ...right] = firstArgs;
+
+          let mapFn = (...args) => {
+            return func(...args, pat);
+          };
+          mapFn = curry(mapFn, null, arity - 1);
+          result = right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
+        }
       }
-      const [left, ...right] = args.slice(0, -1);
-      let mapFn = (...args) => {
-        // make sure to call func with the correct argument count
-        // args.length is expected to be <= arity-1
-        // so we set undefined args explicitly undefined
-        Array(arity - 1)
-          .fill()
-          .map((_, i) => args[i] ?? undefined);
-        return func(...args, pat);
-      };
-      mapFn = curry(mapFn, null, arity - 1);
-      return right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
+      if (preserveWeight) {
+        result.weight = pat.weight;
+      }
+      return result;
     };
   } else {
     pfunc = function (...args) {
       args = args.map(reify);
-      return func(...args);
+      const result = func(...args);
+      if (preserveWeight) {
+        result.weight = args[args.length - 1].weight;
+      }
+      return result;
     };
   }
 
@@ -1665,7 +1879,9 @@ export const { focusSpan, focusspan } = register(['focusSpan', 'focusspan'], fun
  * s("bd ~ sd cp").ply("<1 2 3>")
  */
 export const ply = register('ply', function (factor, pat) {
-  return pat.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
+  const result = pat.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
+  result.weight = pat.weight.mul(factor);
+  return result;
 });
 
 /**
@@ -1685,7 +1901,9 @@ export const { fast, density } = register(['fast', 'density'], function (factor,
   }
   factor = Fraction(factor);
   const fastQuery = pat.withQueryTime((t) => t.mul(factor));
-  return fastQuery.withHapTime((t) => t.div(factor));
+  const result = fastQuery.withHapTime((t) => t.div(factor));
+  result.weight = factor.mul(pat.weight);
+  return result;
 });
 
 /**
@@ -1810,10 +2028,15 @@ export const cpm = register('cpm', function (cpm, pat) {
  * @example
  * "bd ~".stack("hh ~".early(.1)).s()
  */
-export const early = register('early', function (offset, pat) {
-  offset = Fraction(offset);
-  return pat.withQueryTime((t) => t.add(offset)).withHapTime((t) => t.sub(offset));
-});
+export const early = register(
+  'early',
+  function (offset, pat) {
+    offset = Fraction(offset);
+    return pat.withQueryTime((t) => t.add(offset)).withHapTime((t) => t.sub(offset));
+  },
+  true,
+  true,
+);
 
 /**
  * Nudge a pattern to start later in time. Equivalent of Tidal's ~> operator
@@ -1825,10 +2048,15 @@ export const early = register('early', function (offset, pat) {
  * @example
  * "bd ~".stack("hh ~".late(.1)).s()
  */
-export const late = register('late', function (offset, pat) {
-  offset = Fraction(offset);
-  return pat._early(Fraction(0).sub(offset));
-});
+export const late = register(
+  'late',
+  function (offset, pat) {
+    offset = Fraction(offset);
+    return pat._early(Fraction(0).sub(offset));
+  },
+  true,
+  true,
+);
 
 /**
  * Plays a portion of a pattern, specified by the beginning and end of a time span. The new resulting pattern is played over the time period of the original pattern:
@@ -1857,14 +2085,19 @@ export const { zoomArc, zoomarc } = register(['zoomArc', 'zoomarc'], function (a
  * @example
  * s("lt ht mt cp, [hh oh]*2").linger("<1 .5 .25 .125>")
  */
-export const linger = register('linger', function (t, pat) {
-  if (t == 0) {
-    return silence;
-  } else if (t < 0) {
-    return pat._zoom(t.add(1), 1)._slow(t);
-  }
-  return pat._zoom(0, t)._slow(t);
-});
+export const linger = register(
+  'linger',
+  function (t, pat) {
+    if (t == 0) {
+      return silence;
+    } else if (t < 0) {
+      return pat._zoom(t.add(1), 1)._slow(t);
+    }
+    return pat._zoom(0, t)._slow(t);
+  },
+  true,
+  true,
+);
 
 /**
  * Samples the pattern at a rate of n events per cycle. Useful for turning a continuous pattern into a discrete one.
@@ -1873,7 +2106,7 @@ export const linger = register('linger', function (t, pat) {
  * note(saw.range(40,52).segment(24))
  */
 export const segment = register('segment', function (rate, pat) {
-  return pat.struct(pure(true)._fast(rate));
+  return pat.struct(pure(true)._fast(rate)).setWeight(rate);
 });
 
 /**
@@ -1883,10 +2116,15 @@ export const segment = register('segment', function (rate, pat) {
  * @example
  * s("bd").struct("1 0 0 1 0 0 1 0".lastOf(4, invert))
  */
-export const { invert, inv } = register(['invert', 'inv'], function (pat) {
-  // Swap true/false in a binary pattern
-  return pat.fmap((x) => !x);
-});
+export const { invert, inv } = register(
+  ['invert', 'inv'],
+  function (pat) {
+    // Swap true/false in a binary pattern
+    return pat.fmap((x) => !x);
+  },
+  true,
+  true,
+);
 
 /**
  * Applies the given function whenever the given pattern is in a true state.
@@ -1935,24 +2173,29 @@ export const brak = register('brak', function (pat) {
  * @example
  * note("c d e g").rev()
  */
-export const rev = register('rev', function (pat) {
-  const query = function (state) {
-    const span = state.span;
-    const cycle = span.begin.sam();
-    const next_cycle = span.begin.nextSam();
-    const reflect = function (to_reflect) {
-      const reflected = to_reflect.withTime((time) => cycle.add(next_cycle.sub(time)));
-      // [reflected.begin, reflected.end] = [reflected.end, reflected.begin] -- didn't work
-      const tmp = reflected.begin;
-      reflected.begin = reflected.end;
-      reflected.end = tmp;
-      return reflected;
+export const rev = register(
+  'rev',
+  function (pat) {
+    const query = function (state) {
+      const span = state.span;
+      const cycle = span.begin.sam();
+      const next_cycle = span.begin.nextSam();
+      const reflect = function (to_reflect) {
+        const reflected = to_reflect.withTime((time) => cycle.add(next_cycle.sub(time)));
+        // [reflected.begin, reflected.end] = [reflected.end, reflected.begin] -- didn't work
+        const tmp = reflected.begin;
+        reflected.begin = reflected.end;
+        reflected.end = tmp;
+        return reflected;
+      };
+      const haps = pat.query(state.setSpan(reflect(span)));
+      return haps.map((hap) => hap.withSpan(reflect));
     };
-    const haps = pat.query(state.setSpan(reflect(span)));
-    return haps.map((hap) => hap.withSpan(reflect));
-  };
-  return new Pattern(query).splitQueries();
-});
+    return new Pattern(query).splitQueries();
+  },
+  false,
+  true,
+);
 
 /** Like press, but allows you to specify the amount by which each
  * event is shifted. pressBy(0.5) is the same as press, while
@@ -1994,9 +2237,14 @@ Pattern.prototype.hush = function () {
  * @example
  * note("c d e g").palindrome()
  */
-export const palindrome = register('palindrome', function (pat) {
-  return pat.lastOf(2, rev);
-});
+export const palindrome = register(
+  'palindrome',
+  function (pat) {
+    return pat.lastOf(2, rev);
+  },
+  true,
+  true,
+);
 
 /**
  * Jux with adjustable stereo width. 0 = mono, 1 = full stereo.
@@ -2014,9 +2262,9 @@ export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func,
     return dflt;
   };
   const left = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) - by }));
-  const right = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by }));
+  const right = func(pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by })));
 
-  return stack(left, func(right));
+  return stack(left, right).setWeight(lcm(left.weight, right.weight));
 });
 
 /**
@@ -2097,9 +2345,14 @@ const _iter = function (times, pat, back = false) {
   );
 };
 
-export const iter = register('iter', function (times, pat) {
-  return _iter(times, pat, false);
-});
+export const iter = register(
+  'iter',
+  function (times, pat) {
+    return _iter(times, pat, false);
+  },
+  true,
+  true,
+);
 
 /**
  * Like `iter`, but plays the subdivisions in reverse order. Known as iter' in tidalcycles
@@ -2110,9 +2363,14 @@ export const iter = register('iter', function (times, pat) {
  * @example
  * note("0 1 2 3".scale('A minor')).iterBack(4)
  */
-export const { iterBack, iterback } = register(['iterBack', 'iterback'], function (times, pat) {
-  return _iter(times, pat, true);
-});
+export const { iterBack, iterback } = register(
+  ['iterBack', 'iterback'],
+  function (times, pat) {
+    return _iter(times, pat, true);
+  },
+  true,
+  true,
+);
 
 /**
  * Repeats each cycle the given number of times.
@@ -2122,11 +2380,14 @@ export const { iterBack, iterback } = register(['iterBack', 'iterback'], functio
  * @example
  * note(irand(12).add(34)).segment(4).repeatCycles(2).s("gm_acoustic_guitar_nylon")
  */
-const _repeatCycles = function (n, pat) {
-  return slowcat(...Array(n).fill(pat));
-};
-
-const { repeatCycles } = register('repeatCycles', _repeatCycles);
+export const { repeatCycles } = register(
+  'repeatCycles',
+  function (n, pat) {
+    return slowcat(...Array(n).fill(pat));
+  },
+  true,
+  true,
+);
 
 /**
  * Divides a pattern into a given number of parts, then cycles through those parts in turn, applying the given function to each part in turn (one part per cycle).
@@ -2150,7 +2411,7 @@ const _chunk = function (n, func, pat, back = false, fast = false) {
   return pat.when(binary_pat, func);
 };
 
-const { chunk, slowchunk, slowChunk } = register(['chunk', 'slowchunk', 'slowChunk'], function (n, func, pat) {
+export const { chunk, slowchunk, slowChunk } = register(['chunk', 'slowchunk', 'slowChunk'], function (n, func, pat) {
   return _chunk(n, func, pat, false, false);
 });
 
@@ -2185,10 +2446,15 @@ export const { fastchunk, fastChunk } = register(['fastchunk', 'fastChunk'], fun
 });
 
 // TODO - redefine elsewhere in terms of mask
-export const bypass = register('bypass', function (on, pat) {
-  on = Boolean(parseInt(on));
-  return on ? silence : pat;
-});
+export const bypass = register(
+  'bypass',
+  function (on, pat) {
+    on = Boolean(parseInt(on));
+    return on ? silence : pat;
+  },
+  true,
+  true,
+);
 
 /**
  * Loops the pattern inside at `offset` for `cycles`.
@@ -2245,7 +2511,7 @@ export const chop = register('chop', function (n, pat) {
   const func = function (o) {
     return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
   };
-  return pat.squeezeBind(func);
+  return pat.squeezeBind(func).setWeight(pat.weight.mul(n));
 });
 
 /**
@@ -2297,17 +2563,19 @@ const _loopAt = function (factor, pat, cps = 0.5) {
 export const slice = register(
   'slice',
   function (npat, ipat, opat) {
-    return npat.innerBind((n) =>
-      ipat.outerBind((i) =>
-        opat.outerBind((o) => {
-          // If it's not an object, assume it's a string and make it a 's' control parameter
-          o = o instanceof Object ? o : { s: o };
-          const begin = Array.isArray(n) ? n[i] : i / n;
-          const end = Array.isArray(n) ? n[i + 1] : (i + 1) / n;
-          return pure({ begin, end, _slices: n, ...o });
-        }),
-      ),
-    );
+    return npat
+      .innerBind((n) =>
+        ipat.outerBind((i) =>
+          opat.outerBind((o) => {
+            // If it's not an object, assume it's a string and make it a 's' control parameter
+            o = o instanceof Object ? o : { s: o };
+            const begin = Array.isArray(n) ? n[i] : i / n;
+            const end = Array.isArray(n) ? n[i + 1] : (i + 1) / n;
+            return pure({ begin, end, _slices: n, ...o });
+          }),
+        ),
+      )
+      .setWeight(ipat.weight);
   },
   false, // turns off auto-patternification
 );
@@ -2338,7 +2606,7 @@ export const splice = register(
           ...v,
         })),
       );
-    });
+    }).setWeight(ipat.weight);
   },
   false, // turns off auto-patternification
 );

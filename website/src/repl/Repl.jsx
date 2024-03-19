@@ -72,6 +72,7 @@ export function Repl({ embedded = false }) {
       });
     };
     const editor = new StrudelMirror({
+      sync: false,
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       transpiler,
@@ -210,7 +211,7 @@ export function Repl({ embedded = false }) {
     editorRef.current.repl.evaluate(code);
   };
 
-  const handleShare = async () => shareCode(activeCode);
+  const handleShare = async () => shareCode(replState.code);
   const context = {
     embedded,
     started,

@@ -20,7 +20,8 @@ import { flash, isFlashEnabled } from './flash.mjs';
 import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
 import { keybindings } from './keybindings.mjs';
 import { initTheme, activateTheme, theme } from './themes.mjs';
-import { updateWidgets, sliderPlugin } from './slider.mjs';
+import { sliderPlugin, updateSliderWidgets } from './slider.mjs';
+import { widgetPlugin, updateWidgets } from './widget.mjs';
 import { persistentAtom } from '@nanostores/persistent';
 
 const extensions = {
@@ -72,6 +73,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
       ...initialSettings,
       javascript(),
       sliderPlugin,
+      widgetPlugin,
       // indentOnInput(), // works without. already brought with javascript extension?
       // bracketMatching(), // does not do anything
       closeBrackets(),
@@ -187,7 +189,10 @@ export class StrudelMirror {
         // remember for when highlighting is toggled on
         this.miniLocations = options.meta?.miniLocations;
         this.widgets = options.meta?.widgets;
-        updateWidgets(this.editor, this.widgets);
+        const sliders = this.widgets.filter((w) => w.type === 'slider');
+        updateSliderWidgets(this.editor, sliders);
+        const widgets = this.widgets.filter((w) => w.type !== 'slider');
+        updateWidgets(this.editor, widgets);
         updateMiniLocations(this.editor, this.miniLocations);
         replOptions?.afterEval?.(options);
         this.adjustDrawTime();
