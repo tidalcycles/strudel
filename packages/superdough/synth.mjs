@@ -85,7 +85,7 @@ export function registerSynthSounds() {
       const holdend = begin + duration;
       const end = holdend + release + 0.01;
       const voices = clamp(unison, 1, 100);
-
+      let panspread = voices > 1 ? clamp(spread, 0, 1) : 0;
       let o = getWorklet(
         ac,
         'supersaw-oscillator',
@@ -95,7 +95,7 @@ export function registerSynthSounds() {
           end,
           freqspread: detune * 0.1,
           voices,
-          panspread: clamp(spread, 0, 1),
+          panspread,
         },
         {
           outputChannelCount: [2],
