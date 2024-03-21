@@ -272,6 +272,7 @@ export const superdough = async (value, t, hapDuration) => {
   // duration is passed as value too..
   value.duration = hapDuration;
   // calculate absolute time
+  t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
   // destructure
   let {
     s = 'triangle',
