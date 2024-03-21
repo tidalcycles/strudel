@@ -17,40 +17,38 @@ export class Cyclist {
     this.lastEnd = 0; // query end of last tick
     this.getTime = getTime; // get absolute time
     this.num_cycles_at_cps_change = 0;
+    this.seconds_at_cps_change; // clock phase when cps was changed
     this.onToggle = onToggle;
     this.latency = latency; // fixed trigger time offset
     this.clock = createClock(
       getTime,
       // called slightly before each cycle
-      (phase, duration, tick) => {
-        if (tick === 0) {
-          this.origin = phase;
-        }
+      (phase, duration) => {
         if (this.num_ticks_since_cps_change === 0) {
           this.num_cycles_at_cps_change = this.lastEnd;
+          this.seconds_at_cps_change = phase;
         }
         this.num_ticks_since_cps_change++;
+        const seconds_since_cps_change = this.num_ticks_since_cps_change * duration;
+        const num_cycles_since_cps_change = seconds_since_cps_change * this.cps;
+
         try {
-          const time = getTime();
           const begin = this.lastEnd;
           this.lastBegin = begin;
-
-          //convert ticks to cycles, so you can query the pattern for events
-          const eventLength = duration * this.cps;
-          const end = this.num_cycles_at_cps_change + this.num_ticks_since_cps_change * eventLength;
+          const end = this.num_cycles_at_cps_change + num_cycles_since_cps_change;
           this.lastEnd = end;
 
           // query the pattern for events
           const haps = this.pattern.queryArc(begin, end, { _cps: this.cps });
 
-          const tickdeadline = phase - time; // time left until the phase is a whole number
-          this.lastTick = time + tickdeadline;
+          this.lastTick = phase;
 
           haps.forEach((hap) => {
-            if (hap.part.begin.equals(hap.whole.begin)) {
-              const deadline = (hap.whole.begin - begin) / this.cps + tickdeadline + latency;
+            if (hap.hasOnset()) {
+              const deadline =
+                (hap.whole.begin - this.num_cycles_at_cps_change) / this.cps + this.seconds_at_cps_change + latency;
               const duration = hap.duration / this.cps;
-              onTrigger?.(hap, deadline, duration, this.cps);
+              onTrigger?.(hap, '=' + deadline, duration, this.cps);
             }
           });
         } catch (e) {
