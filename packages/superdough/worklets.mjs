@@ -166,7 +166,7 @@ function getUnisonDetune(unison, detune, voiceIndex) {
   if (unison < 2) {
     return 0;
   }
-  return lerp(-detune, detune, voiceIndex / (unison - 1));
+  return lerp(-detune * 0.5, detune * 0.5, voiceIndex / (unison - 1));
 }
 class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
   constructor() {
