@@ -16,7 +16,7 @@ export function repl({
   onToggle,
   editPattern,
   onUpdateState,
-  sync = false,
+  sync = true,
 }) {
   const state = {
     schedulerError: undefined,

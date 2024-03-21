@@ -244,7 +244,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
       const isOdd = (n & 1) == 1;
 
       //applies unison "spread" detune in semitones
-      const freq = frequency * Math.pow(2, getUnisonDetune(voices, freqspread, n) / 1.2);
+      const freq = frequency * Math.pow(2, getUnisonDetune(voices, freqspread, n) / 12);
       let gainL = gain1;
       let gainR = gain2;
       // invert right and left gain

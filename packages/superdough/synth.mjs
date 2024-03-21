@@ -93,7 +93,7 @@ export function registerSynthSounds() {
           frequency,
           begin,
           end,
-          freqspread: detune * 0.1,
+          freqspread: detune,
           voices,
           panspread,
         },
