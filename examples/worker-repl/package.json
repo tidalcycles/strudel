@@ -11,5 +11,8 @@
   "devDependencies": {
     "vite": "^5.2.0"
   },
-  "dependencies": {"superdough":"workspace:*"}
+  "dependencies": {
+    "superdough": "workspace:*",
+    "worker-timers": "^7.1.4"
+  }
 }
