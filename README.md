@@ -21,7 +21,9 @@ pnpm dev
 
 ## Using Strudel In Your Project
 
-Read more about how to use Strudel in your Project [here](https://strudel.cc/technical-manual/project-start).
+This project is organized into many [packages](./packages), which are also available on [npm](https://www.npmjs.com/search?q=%40strudel).
+
+Read more about how to use these in your own project [here](https://strudel.cc/technical-manual/project-start).
 
 ## Contributing
 
