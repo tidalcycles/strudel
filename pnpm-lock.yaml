@@ -452,9 +452,6 @@ importers:
 
   packages/web:
     dependencies:
-      '@rollup/plugin-replace':
-        specifier: ^5.0.5
-        version: 5.0.5
       '@strudel/core':
         specifier: workspace:*
         version: link:../core
@@ -471,6 +468,9 @@ importers:
         specifier: workspace:*
         version: link:../webaudio
     devDependencies:
+      '@rollup/plugin-replace':
+        specifier: ^5.0.5
+        version: 5.0.5
       vite:
         specifier: ^5.0.10
         version: 5.0.10
@@ -563,6 +563,9 @@ importers:
       '@strudel/draw':
         specifier: workspace:*
         version: link:../packages/draw
+      '@strudel/embed':
+        specifier: workspace:*
+        version: link:../packages/embed
       '@strudel/hydra':
         specifier: workspace:*
         version: link:../packages/hydra
@@ -3742,6 +3745,7 @@ packages:
     dependencies:
       '@rollup/pluginutils': 5.1.0
       magic-string: 0.30.5
+    dev: true
 
   /@rollup/pluginutils@3.1.0(rollup@2.79.1):
     resolution: {integrity: sha512-GksZ6pr6TpIjHm8h9lSQ8pi8BE9VeubNT0OMJ3B5uZJ8pz73NPiqOtCog/x2/QzM1ENChPKxMDhiQuRHsqc+lg==}
@@ -3767,6 +3771,7 @@ packages:
       '@types/estree': 1.0.0
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    dev: true
 
   /@rollup/rollup-android-arm-eabi@4.9.2:
     resolution: {integrity: sha512-RKzxFxBHq9ysZ83fn8Iduv3A283K7zPPYuhL/z9CQuyFrjwpErJx0h4aeb/bnJ+q29GRLgJpY66ceQ/Wcsn3wA==}
@@ -7168,6 +7173,7 @@ packages:
 
   /estree-walker@2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
+    dev: true
 
   /estree-walker@3.0.3:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
