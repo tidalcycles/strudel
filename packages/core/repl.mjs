@@ -17,6 +17,8 @@ export function repl({
   editPattern,
   onUpdateState,
   sync = false,
+  setInterval,
+  clearInterval,
 }) {
   const state = {
     schedulerError: undefined,
@@ -44,6 +46,8 @@ export function repl({
       updateState({ started });
       onToggle?.(started);
     },
+    setInterval,
+    clearInterval,
   };
 
   // NeoCyclist uses a shared worker to communicate between instances, which is not supported on mobile chrome

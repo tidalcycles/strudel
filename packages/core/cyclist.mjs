@@ -8,7 +8,7 @@ import createClock from './zyklus.mjs';
 import { logger } from './logger.mjs';
 
 export class Cyclist {
-  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
+  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1, setInterval, clearInterval }) {
     this.started = false;
     this.cps = 0.5;
     this.num_ticks_since_cps_change = 0;
@@ -57,6 +57,10 @@ export class Cyclist {
         }
       },
       interval, // duration of each cycle
+      0.1,
+      0.1,
+      setInterval,
+      clearInterval,
     );
   }
   now() {
