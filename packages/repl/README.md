@@ -91,4 +91,6 @@ or
 </script>
 ```
 
-The `.editor` property on the `strudel-editor` web component gives you the instance of [StrudelMirror]() that runs the REPL.
+The `.editor` property on the `strudel-editor` web component gives you the instance of [StrudelMirror](https://github.com/tidalcycles/strudel/blob/a46bd9b36ea7d31c9f1d3fca484297c7da86893f/packages/codemirror/codemirror.mjs#L124) that runs the REPL.
+
+For example, you could use `setCode` to change the code from the outside, `start` / `stop` to toggle playback or `evaluate` to evaluate the code.
