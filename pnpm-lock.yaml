@@ -563,9 +563,6 @@ importers:
       '@strudel/draw':
         specifier: workspace:*
         version: link:../packages/draw
-      '@strudel/embed':
-        specifier: workspace:*
-        version: link:../packages/embed
       '@strudel/hydra':
         specifier: workspace:*
         version: link:../packages/hydra
@@ -578,9 +575,6 @@ importers:
       '@strudel/osc':
         specifier: workspace:*
         version: link:../packages/osc
-      '@strudel/repl':
-        specifier: workspace:*
-        version: link:../packages/repl
       '@strudel/serial':
         specifier: workspace:*
         version: link:../packages/serial

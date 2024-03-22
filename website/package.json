@@ -33,8 +33,6 @@
     "@strudel/midi": "workspace:*",
     "@strudel/mini": "workspace:*",
     "@strudel/osc": "workspace:*",
-    "@strudel/repl": "workspace:*",
-    "@strudel/embed": "workspace:*",
     "@strudel/serial": "workspace:*",
     "@strudel/soundfonts": "workspace:*",
     "@strudel/tonal": "workspace:*",
