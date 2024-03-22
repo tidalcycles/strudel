@@ -37,10 +37,10 @@
     "@strudel/mini": "workspace:*",
     "@strudel/tonal": "workspace:*",
     "@strudel/transpiler": "workspace:*",
-    "@strudel/webaudio": "workspace:*",
-    "@rollup/plugin-replace": "^5.0.5"
+    "@strudel/webaudio": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^5.0.10"
+    "vite": "^5.0.10",
+    "@rollup/plugin-replace": "^5.0.5"
   }
 }

@@ -7,19 +7,16 @@ This package provides an easy to use bundle of multiple strudel packages for the
 Save this code as a `.html` file and double click it:
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
+<script src="https://unpkg.com/@strudel/web@1.0.3"></script>
 <button id="play">play</button>
 <button id="stop">stop</button>
-<script type="module">
-  import { initStrudel } from 'https://cdn.skypack.dev/@strudel/web@0.8.2';
-
+<script>
   initStrudel();
-  document.getElementById('play').addEventListener('click', () => note('<c a f e>(3,8)').play());
+  document.getElementById('play').addEventListener('click', () => note('<c a f e>(3,8)').jux(rev).play());
   document.getElementById('stop').addEventListener('click', () => hush());
 </script>
 ```
-
-With the help of [skypack](https://www.skypack.dev/), you don't need a bundler nor a server.
 
 As soon as you call `initStrudel()`, all strudel functions are made available.
 In this case, we are using the `note` function to create a pattern.
