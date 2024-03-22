@@ -1532,6 +1532,14 @@ export const { zdelay } = registerControl('zdelay');
 export const { tremolo } = registerControl('tremolo');
 export const { zzfx } = registerControl('zzfx');
 
+/**
+ * Sets the color of the hap in visualizations like pianoroll or highlighting.
+ * @name color
+ * @synonyms colour
+ * @param {string} color Hexadecimal or CSS color name
+ */
+export const { color, colour } = registerControl(['color', 'colour']);
+
 // TODO: slice / splice https://www.youtube.com/watch?v=hKhPdO0RKDQ&list=PL2lW1zNIIwj3bDkh-Y3LUGDuRcoUigoDs&index=13
 
 export let createParams = (...names) =>
