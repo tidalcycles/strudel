@@ -5,7 +5,6 @@ import { getPunchcardPainter } from '@strudel/draw';
 import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
 import { StrudelMirror } from '@strudel/codemirror';
-// import { prebake } from '@strudel/repl';
 import { prebake } from '../repl/prebake.mjs';
 import { loadModules } from '../repl/util.mjs';
 import Claviature from '@components/Claviature';

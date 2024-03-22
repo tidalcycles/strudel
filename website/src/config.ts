@@ -102,9 +102,10 @@ export const SIDEBAR: Sidebar = {
       { text: 'Strudel vs Tidal', link: 'learn/strudel-vs-tidal' },
     ],
     Development: [
+      { text: 'Strudel in your Project', link: 'technical-manual/project-start' },
+      { text: 'Packages', link: 'technical-manual/packages' },
       { text: 'REPL', link: 'technical-manual/repl' },
       { text: 'Sounds', link: 'technical-manual/sounds' },
-      { text: 'Packages', link: 'technical-manual/packages' },
       { text: 'Docs', link: 'technical-manual/docs' },
       { text: 'Testing', link: 'technical-manual/testing' },
       // { text: 'Internals', link: 'technical-manual/internals' },

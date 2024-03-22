@@ -895,17 +895,37 @@ export const { delaytime, delayt, dt } = registerControl('delaytime', 'delayt', 
  */
 export const { lock } = registerControl('lock');
 /**
- * Set detune of oscillators. Works only with some synths, see <a target="_blank" href="https://tidalcycles.org/docs/patternlib/tutorials/synthesizers">tidal doc</a>
+ * Set detune for stacked voices of supported oscillators
  *
  * @name detune
- * @param {number | Pattern} amount between 0 and 1
+ * @param {number | Pattern} amount
  * @synonyms det
- * @superdirtOnly
  * @example
- * n("0 3 7").s('superzow').octave(3).detune("<0 .25 .5 1 2>").osc()
+ * note("d f a a# a d3").fast(2).s("supersaw").detune("<.1 .2 .5 24.1>")
  *
  */
 export const { detune, det } = registerControl('detune', 'det');
+/**
+ * Set number of stacked voices for supported oscillators
+ *
+ * @name unison
+ * @param {number | Pattern} numvoices
+ * @example
+ * note("d f a a# a d3").fast(2).s("supersaw").unison("<1 2 7>")
+ *
+ */
+export const { unison } = registerControl('unison');
+
+/**
+ * Set the stereo pan spread for supported oscillators
+ *
+ * @name spread
+ * @param {number | Pattern} spread between 0 and 1
+ * @example
+ * note("d f a a# a d3").fast(2).s("supersaw").spread("<0 .3 1>")
+ *
+ */
+export const { spread } = registerControl('spread');
 /**
  * Set dryness of reverb. See `room` and `size` for more information about reverb.
  *

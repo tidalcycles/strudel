@@ -447,58 +447,6 @@ note(
   .room(.5)
   .lpa(.125).lpenv(-2).v("8:.125").fanchor(.25)`;
 
-export const hyperpop = `// "Hyperpop"
-// @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
-// @by Felix Roos
-
-const lfo = cosine.slow(15);
-const lfo2 = sine.slow(16);
-const filter1 = x=>x.cutoff(lfo2.range(300,3000));
-const filter2 = x=>x.hcutoff(lfo.range(1000,6000)).cutoff(4000)
-const scales = cat('D3 major', 'G3 major').slow(8)
-
-samples({
-  bd: '344/344757_1676145-lq.mp3',
-  sn: '387/387186_7255534-lq.mp3',
-  hh: '561/561241_12517458-lq.mp3',
-  hh2:'44/44944_236326-lq.mp3',
-  hh3: '44/44944_236326-lq.mp3',
-}, 'https://cdn.freesound.org/previews/')
-
-stack(
-  "-7 0 -7 7".struct("x(5,8,1)").fast(2).sub(7)
-  .scale(scales)
-  .note()
-  .s("sawtooth,square")
-  .gain(.3).attack(0.01).decay(0.1).sustain(.5)
-  .apply(filter1)
-  .lpa(.1).lpenv(2).ftype('24db')
-  ,
-  n("~@3 [<2 3>,<4 5>]")
-  .echo(4,1/16,.7)
-  .scale(scales)
-  .s('square').gain(.7)
-  .attack(0.01).decay(0.1).sustain(0)
-  .apply(filter1),
-  "6 4 2".add(14)
-  .superimpose(sub("5"))
-  .fast(1).euclidLegato(3,8)
-  .mask("<1 0@7>")
-  .fast(2).n()
-  .echo(32, 1/8, .8)
-  .scale(scales)
-  .s("sawtooth")
-  .mul(gain(sine.range(.1,.4).slow(8)))
-  .attack(.001).decay(.2).sustain(0)
-  .apply(filter2)
-).stack(
-  stack(
-    "bd <~@7 [~ bd]>".fast(2),
-    "~ sn",
-    "[~ hh3]*2"
-  ).s().fast(2).gain(.7)
-).slow(2)`;
-
 export const festivalOfFingers3 = `// "Festival of fingers 3"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos

@@ -19,7 +19,7 @@ export async function prebake() {
     // => getting "window is not defined", as soon as "@strudel/soundfonts" is imported statically
     // seems to be a problem with soundfont2
     import('@strudel/soundfonts').then(({ registerSoundfonts }) => registerSoundfonts()),
-    samples(`${baseNoTrailing}/piano.json`, `${baseNoTrailing}/piano/`, { prebake: true }),
+    samples(`${baseNoTrailing}/piano.json`, undefined, { prebake: true }),
     // https://github.com/sgossner/VCSL/
     // https://api.github.com/repositories/126427031/contents/
     // LICENSE: CC0 general-purpose
@@ -28,7 +28,7 @@ export async function prebake() {
       prebake: true,
       tag: 'drum-machines',
     }),
-    samples(`${baseNoTrailing}/EmuSP12.json`, `${baseNoTrailing}/EmuSP12/`, { prebake: true, tag: 'drum-machines' }),
+    samples(`${baseNoTrailing}/EmuSP12.json`, undefined, { prebake: true, tag: 'drum-machines' }),
     samples(
       {
         casio: ['casio/high.wav', 'casio/low.wav', 'casio/noise.wav'],
