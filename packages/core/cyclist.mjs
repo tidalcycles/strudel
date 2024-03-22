@@ -23,7 +23,7 @@ export class Cyclist {
     this.clock = createClock(
       getTime,
       // called slightly before each cycle
-      (phase, duration) => {
+      (phase, duration, _, t) => {
         if (this.num_ticks_since_cps_change === 0) {
           this.num_cycles_at_cps_change = this.lastEnd;
           this.seconds_at_cps_change = phase;
@@ -45,10 +45,13 @@ export class Cyclist {
 
           haps.forEach((hap) => {
             if (hap.hasOnset()) {
-              const deadline =
+              const targetTime =
                 (hap.whole.begin - this.num_cycles_at_cps_change) / this.cps + this.seconds_at_cps_change + latency;
               const duration = hap.duration / this.cps;
-              onTrigger?.(hap, '=' + deadline, duration, this.cps);
+              // the following line is dumb and only here for backwards compatibility
+              // see https://github.com/tidalcycles/strudel/pull/1004
+              const deadline = targetTime - phase;
+              onTrigger?.(hap, deadline, duration, this.cps, targetTime);
             }
           });
         } catch (e) {

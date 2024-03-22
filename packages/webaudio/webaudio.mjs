@@ -16,7 +16,9 @@ const hap2value = (hap) => {
 };
 
 export const webaudioOutputTrigger = (t, hap, ct, cps) => superdough(hap2value(hap), t - ct, hap.duration / cps, cps);
-export const webaudioOutput = (hap, deadline, hapDuration) => superdough(hap2value(hap), deadline, hapDuration);
+// uses more precise, absolute t if available, see https://github.com/tidalcycles/strudel/pull/1004
+export const webaudioOutput = (hap, deadline, hapDuration, cps, t) =>
+  superdough(hap2value(hap), t ? `=${t}` : deadline, hapDuration);
 
 Pattern.prototype.webaudio = function () {
   return this.onTrigger(webaudioOutputTrigger);
