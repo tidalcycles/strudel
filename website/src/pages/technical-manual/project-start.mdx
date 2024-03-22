@@ -38,7 +38,7 @@ To make sure your code is not lost, you can also use the long url:
 
 That long URL can just be copy pasted from the URL bar when you're on the strudel website. It always reflects the latest evaluation of your code.
 
-### Inside an iframe via `@strudel/embed`
+### @strudel/embed
 
 To simplify the process of emebdding via an iframe, you can use the package `@strudel/embed`:
 
@@ -73,11 +73,11 @@ n("<0 1 2 3 4>*8").scale('G4 minor')
 .lpf(perlin.range(200,20000).slow(4))`}>
 </strudel-repl>
 
-For alternative ways to load this package, see [@strudel/embed README](https://github.com/tidalcycles/strudel/tree/main/packages/embed#strudelembed).
+For alternative ways to load this package, see the [@strudel/embed README](https://github.com/tidalcycles/strudel/tree/main/packages/embed#strudelembed).
 
-### Without an iframe via `@strudel/repl`
+### @strudel/repl
 
-Loading strudel directly in your site looks similar to the iframe variant:
+Loading strudel directly in your site, without an iframe, looks similar to the iframe variant:
 
 ```html
 <script src="https://unpkg.com/@strudel/repl@latest"></script>
@@ -120,3 +120,32 @@ The upside of using the repl without an iframe is that you can pin the strudel v
 ```
 
 This will guarantee your pattern wont break due to changes to the strudel project in the future.
+
+For more info on this package, see the [@strudel/repl README](https://github.com/tidalcycles/strudel/tree/main/packages/repl#strudelrepl).
+
+## With your own UI
+
+The above approach assumes you want to use the builtin [codemirror](https://codemirror.net/) editor.
+If you'd rather use your own UI, you can use the `@strudel/web` package:
+
+```html
+<!doctype html>
+<script src="https://unpkg.com/@strudel/web@1.0.3"></script>
+<button id="play">play</button>
+<button id="stop">stop</button>
+<script>
+  initStrudel();
+  document.getElementById('play').addEventListener('click', () => note('<c a f e>(3,8)').jux(rev).play());
+  document.getElementById('stop').addEventListener('click', () => hush());
+</script>
+```
+
+For more info on this package, see the [@strudel/web README](https://github.com/tidalcycles/strudel/tree/main/packages/web#strudelweb).
+
+## Via npm
+
+[All the packages and many more are available on npm under the @strudel namespace](https://www.npmjs.com/search?q=%40strudel).
+There are actually many more packages you can use to have fine grained control over what you use and what not.
+To use these packages, you have to use a bundler that supports es modules, like [vite](https://vitejs.dev/).
+
+To find out more about the purpose of each package, see [Packages](/technical-manual/packages)
