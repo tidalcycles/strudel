@@ -2476,17 +2476,6 @@ export const hsl = register('hsl', (h, s, l, pat) => {
   return pat.color(`hsl(${h}turn,${s * 100}%,${l * 100}%)`);
 });
 
-/**
- * Sets the color of the hap in visualizations like pianoroll or highlighting.
- * @name color
- * @synonyms colour
- * @param {string} color Hexadecimal or CSS color name
- */
-// TODO: move this to controls https://github.com/tidalcycles/strudel/issues/288
-export const { color, colour } = register(['color', 'colour'], function (color, pat) {
-  return pat.withContext((context) => ({ ...context, color }));
-});
-
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of
 // objects
