@@ -33,6 +33,9 @@ importers:
       '@vitest/ui':
         specifier: ^1.1.0
         version: 1.1.0(vitest@1.1.0)
+      acorn:
+        specifier: ^8.11.3
+        version: 8.11.3
       dependency-tree:
         specifier: ^10.0.9
         version: 10.0.9
