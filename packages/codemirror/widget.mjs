@@ -106,17 +106,23 @@ function getCanvasWidget(id, options = {}) {
 
 registerWidget('_pianoroll', (id, options = {}, pat) => {
   const ctx = getCanvasWidget(id, options).getContext('2d');
-  return pat.pianoroll({ fold: 1, ...options, ctx, id });
+  return pat.id(id).pianoroll({ fold: 1, ...options, ctx, id });
 });
 
-/* registerWidget('_spiral', (id, options = {}, pat) => {
-  options = { width: 200, height: 200, size: 36, ...options };
+registerWidget('_punchcard', (id, options = {}, pat) => {
   const ctx = getCanvasWidget(id, options).getContext('2d');
-  return pat.spiral({ ...options, ctx, id });
-}); */
+  return pat.id(id).punchcard({ fold: 1, ...options, ctx, id });
+});
+
+registerWidget('_spiral', (id, options = {}, pat) => {
+  let _size = options.size || 275;
+  options = { width: _size, height: _size, ...options, size: _size / 5 };
+  const ctx = getCanvasWidget(id, options).getContext('2d');
+  return pat.id(id).spiral({ ...options, ctx, id });
+});
 
 registerWidget('_scope', (id, options = {}, pat) => {
   options = { width: 500, height: 60, pos: 0.5, scale: 1, ...options };
   const ctx = getCanvasWidget(id, options).getContext('2d');
-  return pat.scope({ ...options, ctx, id });
+  return pat.id(id).scope({ ...options, ctx, id });
 });

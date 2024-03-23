@@ -2476,6 +2476,16 @@ export const hsl = register('hsl', (h, s, l, pat) => {
   return pat.color(`hsl(${h}turn,${s * 100}%,${l * 100}%)`);
 });
 
+/**
+ * Sets the id of the hap in, for filtering in the future.
+ * @name id
+ * @noAutocomplete
+ * @param {string} id anything unique
+ */
+Pattern.prototype.id = function (id) {
+  return this.withContext((ctx) => ({ ...ctx, id }));
+};
+
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of
 // objects

@@ -129,11 +129,16 @@ export function pianoroll({
   colorizeInactive = 1,
   fontFamily,
   ctx,
+  id,
 } = {}) {
   const w = ctx.canvas.width;
   const h = ctx.canvas.height;
   let from = -cycles * playhead;
   let to = cycles * (1 - playhead);
+
+  if (id) {
+    haps = haps.filter((hap) => hap.context.id === id);
+  }
 
   if (timeframeProp) {
     console.warn('timeframe is deprecated! use from/to instead');
