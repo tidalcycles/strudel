@@ -54,7 +54,6 @@ export class NeoCyclist {
       const time = this.getTime();
 
       let {
-        cycle,
         phase,
         num_cycles_at_cps_change,
         cps,
