@@ -50,13 +50,13 @@ function spiralSegment(options) {
 }
 
 function drawSpiral(options) {
-  const {
+  let {
     stretch = 1,
     size = 80,
     thickness = size / 2,
     cap = 'butt', // round butt squar,
     inset = 3, // start angl,
-    playheadColor = '#ffffff90',
+    playheadColor = '#ffffff',
     playheadLength = 0.02,
     playheadThickness = thickness,
     padding = 0,
@@ -69,7 +69,12 @@ function drawSpiral(options) {
     time,
     haps,
     drawTime,
+    id,
   } = options;
+
+  if (id) {
+    haps = haps.filter((hap) => hap.context.id === id);
+  }
 
   const [w, h] = [ctx.canvas.width, ctx.canvas.height];
   ctx.clearRect(0, 0, w * 2, h * 2);

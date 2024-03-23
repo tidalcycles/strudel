@@ -2487,6 +2487,15 @@ export const { color, colour } = register(['color', 'colour'], function (color, 
   return pat.withContext((context) => ({ ...context, color }));
 });
 
+/**
+ * Sets the id of the hap in, for filtering in the future.
+ * @name id
+ * @noAutocomplete
+ * @param {string} id anything unique
+ */
+Pattern.prototype.id = function (id) {
+  return this.withContext((ctx) => ({ ...ctx, id }));
+};
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of
 // objects
