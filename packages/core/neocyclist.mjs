@@ -21,7 +21,6 @@ export class NeoCyclist {
     this.worker_time_dif;
     this.worker = new SharedWorker(new URL('./clockworker.js', import.meta.url));
     this.worker.port.start();
-    this.time_dif;
 
     this.channel = new BroadcastChannel('strudeltick');
     let weight = 0; // the amount of weight that is applied to the current average when averaging a new time dif
@@ -135,7 +134,6 @@ export class NeoCyclist {
   }
   stop() {
     this.worker_time_dif = null;
-    this.time_dif = null;
     logger('[cyclist] stop');
     this.setStarted(false);
   }
