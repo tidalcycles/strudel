@@ -186,18 +186,35 @@ export const scale = register('scale', function (scale, pat) {
           // legacy..
           return pure(step);
         }
-        const asNumber = Number(step);
+        let asNumber = Number(step);
+        let semitones = 0;
         if (isNaN(asNumber)) {
-          logger(`[tonal] invalid scale step "${step}", expected number`, 'error');
-          return silence;
+          step = String(step);
+          if (!/^[-+]?\d+(#*|b*){1}$/.test(step)) {
+            logger(
+              `[tonal] invalid scale step "${step}", expected number or integer with optional # b suffixes`,
+              'error',
+            );
+            return silence;
+          }
+          const isharp = step.indexOf('#');
+          if (isharp >= 0) {
+            asNumber = Number(step.substring(0, isharp));
+            semitones = step.length - isharp;
+          } else {
+            const iflat = step.indexOf('b');
+            asNumber = Number(step.substring(0, iflat));
+            semitones = iflat - step.length;
+          }
         }
         try {
           let note;
-          if (value.anchor) {
+          if (isObject && value.anchor) {
             note = stepInNamedScale(asNumber, scale, value.anchor);
           } else {
             note = scaleStep(asNumber, scale);
           }
+          if (semitones != 0) note = Note.transpose(note, Interval.fromSemitones(semitones));
           value = pure(isObject ? { ...value, note } : note);
         } catch (err) {
           logger(`[tonal] ${err.message}`, 'error');

@@ -1,10 +1,10 @@
 <!doctype html>
+<script src="https://unpkg.com/@strudel/web@1.0.3"></script>
 <button id="a">A</button>
 <button id="b">B</button>
 <button id="c">C</button>
 <button id="stop">stop</button>
-<script type="module">
-  import { initStrudel } from 'https://cdn.skypack.dev/@strudel/web@0.8.2';
+<script>
   initStrudel({
     prebake: () => samples('github:tidalcycles/dirt-samples'),
   });

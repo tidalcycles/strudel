@@ -110,7 +110,7 @@ export function repl({
     const cpm = register('cpm', function (cpm, pat) {
       return pat._fast(cpm / 60 / scheduler.cps);
     });
-    evalScope({
+    return evalScope({
       all,
       hush,
       cpm,
@@ -127,7 +127,7 @@ export function repl({
     }
     try {
       updateState({ code, pending: true });
-      injectPatternMethods();
+      await injectPatternMethods();
       await beforeEval?.({ code });
       shouldHush && hush();
       let { pattern, meta } = await _evaluate(code, transpiler);
