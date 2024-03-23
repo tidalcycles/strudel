@@ -12,6 +12,7 @@ function getTime() {
 
 let num_cycles_at_cps_change = 0;
 let num_ticks_since_cps_change = 0;
+let num_seconds_at_cps_change = 0;
 let cps = 0.5;
 // {id: {started: boolean}}
 const clients = new Map();
@@ -22,14 +23,36 @@ const sendMessage = (type, payload) => {
   channel.postMessage({ type, payload });
 };
 
+//phase, num_cycles_at_cps_change, cps, seconds_at_cps_change
+
 const sendTick = (phase, duration, tick, time) => {
+  const num_seconds_since_cps_change = num_ticks_since_cps_change * duration;
+
+  const tickdeadline = phase - time;
+  const lastTick = time + tickdeadline;
+  const num_cycles_since_cps_change = num_seconds_since_cps_change * cps;
+
+  const begin = num_cycles_at_cps_change + num_cycles_since_cps_change;
+  const secondsSinceLastTick = time - lastTick - duration;
+
+  const eventLength = duration * cps;
+  const end = begin + eventLength;
+
+  const cycle = begin + secondsSinceLastTick * cps;
+
   sendMessage('tick', {
     phase,
-    duration,
     time,
+    begin,
+    end,
     cps,
+    tickdeadline,
     num_cycles_at_cps_change,
+    num_seconds_at_cps_change,
+    duration,
     num_ticks_since_cps_change,
+    num_seconds_since_cps_change,
+    cycle,
   });
   num_ticks_since_cps_change++;
 };
@@ -71,7 +94,9 @@ const processMessage = (message) => {
   switch (type) {
     case 'cpschange': {
       if (payload.cps !== cps) {
-        num_cycles_at_cps_change = num_cycles_at_cps_change + num_ticks_since_cps_change * duration * cps;
+        const num_seconds_since_cps_change = num_ticks_since_cps_change * duration;
+        num_cycles_at_cps_change = num_cycles_at_cps_change + num_seconds_since_cps_change * cps;
+        num_seconds_at_cps_change = num_seconds_at_cps_change + num_seconds_since_cps_change;
         cps = payload.cps;
         num_ticks_since_cps_change = 0;
       }
@@ -97,7 +122,6 @@ this.onconnect = function (e) {
   const port = e.ports[0];
 
   port.addEventListener('message', function (e) {
-    console.log(e.data);
     processMessage(e.data);
   });
   port.start(); // Required when using addEventListener. Otherwise called implicitly by onmessage setter.
