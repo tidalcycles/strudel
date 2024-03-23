@@ -18,13 +18,12 @@ export class NeoCyclist {
     this.latency = 0.1; // fixed trigger time offset
     this.cycle = 0;
     this.id = Math.round(Date.now() * Math.random());
-
+    this.worker_time_dif;
     this.worker = new SharedWorker(new URL('./clockworker.js', import.meta.url));
     this.worker.port.start();
     this.time_dif;
 
     this.channel = new BroadcastChannel('strudeltick');
-    let worker_time_dif = 0; // time difference between audio context clock and worker clock
     let weight = 0; // the amount of weight that is applied to the current average when averaging a new time dif
     const maxWeight = 20;
     const precision = 10 ** 3; //round off time diff to prevent accumulating outliers
@@ -33,24 +32,25 @@ export class NeoCyclist {
     // aditionally, the message time of the worker pinging the callback to process haps can be inconsistent.
     // we need to keep a rolling weighted average of the time difference between the worker clock and audio context clock
     // in order to schedule events consistently.
-    const setTimeReference = (time, workertime) => {
-      const time_dif = workertime - time;
-      if (worker_time_dif === 0) {
-        worker_time_dif = time_dif;
+    const setTimeReference = (num_seconds_at_cps_change, num_seconds_since_cps_change, tickdeadline) => {
+      const time_dif = getTime() - (num_seconds_at_cps_change + num_seconds_since_cps_change) + tickdeadline;
+      if (this.worker_time_dif == null) {
+        this.worker_time_dif = time_dif;
       } else {
         const w = 1; //weight of new time diff;
-        const new_dif = Math.round(((worker_time_dif * weight + time_dif * w) / (weight + w)) * precision) / precision;
+        const new_dif =
+          Math.round(((this.worker_time_dif * weight + time_dif * w) / (weight + w)) * precision) / precision;
 
-        if (new_dif != worker_time_dif) {
+        if (new_dif != this.worker_time_dif) {
           // reset the weight so the clock recovers faster from an audio context freeze/dropout if it happens
           weight = 4;
         }
-        worker_time_dif = new_dif;
+        this.worker_time_dif = new_dif;
       }
+      weight = Math.min(weight + 1, maxWeight);
     };
 
     const tickCallback = (payload) => {
-      const workertime = payload.time;
       const time = this.getTime();
 
       let {
@@ -65,30 +65,13 @@ export class NeoCyclist {
         end,
         tickdeadline,
       } = payload;
-      // const tickdeadline = phase - payload.time;
-      const lastTick = time + tickdeadline;
-      const secondsSinceLastTick = time - lastTick - duration;
-      // console.log(phase - payload.time);
-      // console.log({ num_seconds_since_cps_change });
-      if (this.time_dif == null) {
-        this.time_dif = getTime() - num_seconds_since_cps_change + tickdeadline;
-      }
-      setTimeReference(time, workertime);
       this.cps = cps;
 
-      //calculate begin and end
-      // const eventLength = duration * cps;
+      setTimeReference(num_seconds_at_cps_change, num_seconds_since_cps_change, tickdeadline);
 
-      // const num_cycles_since_cps_change = num_seconds_since_cps_change * this.cps;
-      // const begin = num_cycles_at_cps_change + num_cycles_since_cps_change;
-
-      // const end = begin + eventLength;
-
-      //calculate current cycle
-
+      const lastTick = time + tickdeadline;
+      const secondsSinceLastTick = time - lastTick - duration;
       this.cycle = begin + secondsSinceLastTick * cps;
-      //set the weight of average time diff and processs haps
-      weight = Math.min(weight + 1, maxWeight);
 
       processHaps(begin, end, phase, num_cycles_at_cps_change, num_seconds_at_cps_change);
       this.time_at_last_tick_message = this.getTime();
@@ -107,7 +90,7 @@ export class NeoCyclist {
             (hap.whole.begin - num_cycles_at_cps_change) / this.cps +
             seconds_at_cps_change +
             this.latency +
-            this.time_dif;
+            this.worker_time_dif;
           const duration = hap.duration / this.cps;
           onTrigger?.(hap, 0, duration, this.cps, targetTime);
         }
@@ -152,6 +135,7 @@ export class NeoCyclist {
     this.setStarted(true);
   }
   stop() {
+    this.worker_time_dif = null;
     this.time_dif = null;
     logger('[cyclist] stop');
     this.setStarted(false);
