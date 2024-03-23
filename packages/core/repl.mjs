@@ -17,6 +17,8 @@ export function repl({
   editPattern,
   onUpdateState,
   sync = false,
+  setInterval,
+  clearInterval,
 }) {
   const state = {
     schedulerError: undefined,
@@ -44,6 +46,8 @@ export function repl({
       updateState({ started });
       onToggle?.(started);
     },
+    setInterval,
+    clearInterval,
   };
 
   // NeoCyclist uses a shared worker to communicate between instances, which is not supported on mobile chrome
@@ -162,14 +166,15 @@ export function repl({
 
 export const getTrigger =
   ({ getTime, defaultOutput }) =>
-  async (hap, deadline, duration, cps) => {
+  async (hap, deadline, duration, cps, t) => {
+    // TODO: get rid of deadline after https://github.com/tidalcycles/strudel/pull/1004
     try {
       if (!hap.context.onTrigger || !hap.context.dominantTrigger) {
-        await defaultOutput(hap, deadline, duration, cps);
+        await defaultOutput(hap, deadline, duration, cps, t);
       }
       if (hap.context.onTrigger) {
         // call signature of output / onTrigger is different...
-        await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps);
+        await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps, t);
       }
     } catch (err) {
       logger(`[cyclist] error: ${err.message}`, 'error');

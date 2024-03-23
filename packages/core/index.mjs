@@ -7,8 +7,9 @@ This program is free software: you can redistribute it and/or modify it under th
 import * as controls from './controls.mjs'; // legacy
 export * from './euclid.mjs';
 import Fraction from './fraction.mjs';
+import createClock from './zyklus.mjs';
 import { logger } from './logger.mjs';
-export { Fraction, controls };
+export { Fraction, controls, createClock };
 export * from './controls.mjs';
 export * from './hap.mjs';
 export * from './pattern.mjs';
