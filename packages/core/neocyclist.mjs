@@ -50,32 +50,27 @@ export class NeoCyclist {
     };
 
     const tickCallback = (payload) => {
-      const time = this.getTime();
-
-      let {
-        phase,
+      const {
         num_cycles_at_cps_change,
         cps,
         num_seconds_at_cps_change,
-        duration,
         num_seconds_since_cps_change,
         begin,
         end,
         tickdeadline,
+        cycle,
       } = payload;
       this.cps = cps;
+      this.cycle = cycle;
 
       setTimeReference(num_seconds_at_cps_change, num_seconds_since_cps_change, tickdeadline);
 
-      const lastTick = time + tickdeadline;
-      const secondsSinceLastTick = time - lastTick - duration;
-      this.cycle = begin + secondsSinceLastTick * cps;
+      processHaps(begin, end, num_cycles_at_cps_change, num_seconds_at_cps_change);
 
-      processHaps(begin, end, phase, num_cycles_at_cps_change, num_seconds_at_cps_change);
       this.time_at_last_tick_message = this.getTime();
     };
 
-    const processHaps = (begin, end, phase, num_cycles_at_cps_change, seconds_at_cps_change) => {
+    const processHaps = (begin, end, num_cycles_at_cps_change, seconds_at_cps_change) => {
       if (this.started === false) {
         return;
       }

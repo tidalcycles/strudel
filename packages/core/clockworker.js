@@ -22,8 +22,6 @@ const sendMessage = (type, payload) => {
   channel.postMessage({ type, payload });
 };
 
-//phase, num_cycles_at_cps_change, cps, seconds_at_cps_change
-
 const sendTick = (phase, duration, tick, time) => {
   const num_seconds_since_cps_change = num_ticks_since_cps_change * duration;
 
@@ -40,16 +38,12 @@ const sendTick = (phase, duration, tick, time) => {
   const cycle = begin + secondsSinceLastTick * cps;
 
   sendMessage('tick', {
-    phase,
-    time,
     begin,
     end,
     cps,
     tickdeadline,
     num_cycles_at_cps_change,
     num_seconds_at_cps_change,
-    duration,
-    num_ticks_since_cps_change,
     num_seconds_since_cps_change,
     cycle,
   });
