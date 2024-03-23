@@ -115,7 +115,8 @@ registerWidget('_punchcard', (id, options = {}, pat) => {
 });
 
 registerWidget('_spiral', (id, options = {}, pat) => {
-  options = { width: 200, height: 200, size: 36, ...options };
+  let _size = options.size || 275;
+  options = { width: _size, height: _size, ...options, size: _size / 5 };
   const ctx = getCanvasWidget(id, options).getContext('2d');
   return pat.id(id).spiral({ ...options, ctx, id });
 });
