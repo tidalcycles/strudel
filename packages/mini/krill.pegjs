@@ -19,10 +19,10 @@ This program is free software: you can redistribute it and/or modify it under th
     this.location_ = location();
   }
 
-  var PatternStub = function(source, alignment, seed)
+  var PatternStub = function(source, alignment, seed, tactus)
   {
     this.type_ = "pattern";
-    this.arguments_ = { alignment: alignment };
+    this.arguments_ = { alignment: alignment, tactus: tactus };
     if (seed !== undefined) {
       this.arguments_.seed = seed;
     }
@@ -165,8 +165,8 @@ slice_with_ops = s:slice ops:slice_op*
   }
 
 // a sequence is a combination of one or more successive slices (as an array)
-sequence = s:(slice_with_ops)+
-  { return new PatternStub(s, 'fastcat'); }
+sequence = tactus:"*"? s:(slice_with_ops)+
+  { return new PatternStub(s, 'fastcat', undefined, !!tactus); }
 
 // a stack is a series of vertically aligned sequence, separated by a comma
 stack_tail = tail:(comma @sequence)+
@@ -184,7 +184,7 @@ dot_tail = tail:(dot @sequence)+
 // if the stack contains only one element, we don't create a stack but return the
 // underlying element
 stack_or_choose = head:sequence tail:(stack_tail / choose_tail / dot_tail)?
-  { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment, tail.seed); } else { return head; } }
+  {if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment, tail.seed); } else { return head; } }
 
 polymeter_stack = head:sequence tail:stack_tail?
   { return new PatternStub(tail ? [head, ...tail.list] : [head], 'polymeter'); }

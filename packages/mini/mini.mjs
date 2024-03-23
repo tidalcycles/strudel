@@ -6,6 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import * as krill from './krill-parser.js';
 import * as strudel from '@strudel/core';
+import Fraction, { lcm } from '@strudel/core/fraction.mjs';
 
 const randOffset = 0.0003;
 
@@ -88,42 +89,55 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
       resolveReplications(ast);
       const children = ast.source_.map((child) => enter(child)).map(applyOptions(ast, enter));
       const alignment = ast.arguments_.alignment;
-      if (alignment === 'stack') {
-        return strudel.stack(...children);
-      }
-      if (alignment === 'polymeter_slowcat') {
-        const aligned = children.map((child) => child._slow(child.weight));
-        return strudel.stack(...aligned);
-      }
-      if (alignment === 'polymeter') {
-        // polymeter
-        const stepsPerCycle = ast.arguments_.stepsPerCycle
-          ? enter(ast.arguments_.stepsPerCycle).fmap((x) => strudel.Fraction(x))
-          : strudel.pure(strudel.Fraction(children.length > 0 ? children[0].weight : 1));
+      const with_tactus = children.filter((child) => child.__tactus_weight);
+      let pat;
+      switch (alignment) {
+        case 'stack':
+          pat = strudel.stack(...children);
+          if (with_tactus.length >= 1) {
+            pat.__tactus_weight = lcm(...with_tactus.map((x) => Fraction(x.__tactus_weight)));
+          }
+          break;
+        case 'polymeter_slowcat':
+          pat = strudel.stack(...children.map((child) => child._slow(child.weight)));
+          break;
+        case 'polymeter':
+          // polymeter
+          const stepsPerCycle = ast.arguments_.stepsPerCycle
+            ? enter(ast.arguments_.stepsPerCycle).fmap((x) => strudel.Fraction(x))
+            : strudel.pure(strudel.Fraction(children.length > 0 ? children[0].weight : 1));
 
-        const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.weight))));
-        return strudel.stack(...aligned);
+          const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.weight))));
+          pat = strudel.stack(...aligned);
+          break;
+        case 'rand':
+          pat = strudel.chooseInWith(strudel.rand.early(randOffset * ast.arguments_.seed).segment(1), children);
+          if (with_tactus.length >= 1) {
+            pat.__tactus_weight = lcm(...with_tactus.map((x) => Fraction(x.__tactus_weight)));
+          }
+          break;
+        case 'feet':
+          pat = strudel.fastcat(...children);
+          break;
+        default:
+          const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
+          if (weightedChildren) {
+            const weightSum = ast.source_.reduce(
+              (sum, child) => sum.add(child.options_?.weight || strudel.Fraction(1)),
+              strudel.Fraction(0),
+            );
+            pat = strudel.timeCat(
+              ...ast.source_.map((child, i) => [child.options_?.weight || strudel.Fraction(1), children[i]]),
+            );
+            pat.weight = weightSum;
+          } else {
+            pat = strudel.sequence(...children);
+            pat.weight = children.length;
+          }
+          if (ast.arguments_.tactus) {
+            pat.__tactus_weight = pat.weight;
+          }
       }
-      if (alignment === 'rand') {
-        return strudel.chooseInWith(strudel.rand.early(randOffset * ast.arguments_.seed).segment(1), children);
-      }
-      if (alignment === 'feet') {
-        return strudel.fastcat(...children);
-      }
-      const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
-      if (weightedChildren) {
-        const weightSum = ast.source_.reduce(
-          (sum, child) => sum.add(child.options_?.weight || strudel.Fraction(1)),
-          strudel.Fraction(0),
-        );
-        const pat = strudel.timeCat(
-          ...ast.source_.map((child, i) => [child.options_?.weight || strudel.Fraction(1), children[i]]),
-        );
-        pat.weight = weightSum;
-        return pat;
-      }
-      const pat = strudel.sequence(...children);
-      pat.weight = children.length;
       return pat;
     }
     case 'element': {
