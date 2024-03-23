@@ -194,7 +194,7 @@ export function pianoroll({
     if (hideInactive && !isActive) {
       return;
     }
-    let color = event.value?.color || event.context?.color;
+    let color = event.value?.color;
     active = color || active;
     inactive = colorizeInactive ? color || inactive : inactive;
     color = isActive ? active : inactive;

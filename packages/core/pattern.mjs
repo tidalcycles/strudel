@@ -2477,17 +2477,6 @@ export const hsl = register('hsl', (h, s, l, pat) => {
 });
 
 /**
- * Sets the color of the hap in visualizations like pianoroll or highlighting.
- * @name color
- * @synonyms colour
- * @param {string} color Hexadecimal or CSS color name
- */
-// TODO: move this to controls https://github.com/tidalcycles/strudel/issues/288
-export const { color, colour } = register(['color', 'colour'], function (color, pat) {
-  return pat.withContext((context) => ({ ...context, color }));
-});
-
-/**
  * Sets the id of the hap in, for filtering in the future.
  * @name id
  * @noAutocomplete
@@ -2496,6 +2485,7 @@ export const { color, colour } = register(['color', 'colour'], function (color, 
 Pattern.prototype.id = function (id) {
   return this.withContext((ctx) => ({ ...ctx, id }));
 };
+
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of
 // objects
