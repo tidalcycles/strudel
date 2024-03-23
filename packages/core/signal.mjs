@@ -269,7 +269,7 @@ export const pickmodOut = register('pickmodOut', function (lookup, pat) {
  * @returns {Pattern}
  */
 export const pickRestart = register('pickRestart', function (lookup, pat) {
-  return _pick(lookup, pat, false).trigzeroJoin();
+  return _pick(lookup, pat, false).restartJoin();
 });
 
 /** * The same as `pickRestart`, but if you pick a number greater than the size of the list,
@@ -279,7 +279,7 @@ export const pickRestart = register('pickRestart', function (lookup, pat) {
  * @returns {Pattern}
  */
 export const pickmodRestart = register('pickmodRestart', function (lookup, pat) {
-  return _pick(lookup, pat, true).trigzeroJoin();
+  return _pick(lookup, pat, true).restartJoin();
 });
 
 /** * Similar to `pick`, but the choosen pattern is reset when its index is triggered.
@@ -288,7 +288,7 @@ export const pickmodRestart = register('pickmodRestart', function (lookup, pat) 
  * @returns {Pattern}
  */
 export const pickReset = register('pickReset', function (lookup, pat) {
-  return _pick(lookup, pat, false).trigJoin();
+  return _pick(lookup, pat, false).resetJoin();
 });
 
 /** * The same as `pickReset`, but if you pick a number greater than the size of the list,
@@ -298,7 +298,7 @@ export const pickReset = register('pickReset', function (lookup, pat) {
  * @returns {Pattern}
  */
 export const pickmodReset = register('pickmodReset', function (lookup, pat) {
-  return _pick(lookup, pat, true).trigJoin();
+  return _pick(lookup, pat, true).resetJoin();
 });
 
 /**
