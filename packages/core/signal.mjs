@@ -146,7 +146,7 @@ export const _brandBy = (p) => rand.fmap((x) => x < p);
 
 /**
  * A continuous pattern of 0 or 1 (binary random), with a probability for the value being 1
- * 
+ *
  * @name brandBy
  * @param {number} probability - a number between 0 and 1
  * @example
@@ -156,7 +156,7 @@ export const brandBy = (pPat) => reify(pPat).fmap(_brandBy).innerJoin();
 
 /**
  * A continuous pattern of 0 or 1 (binary random)
- * 
+ *
  * @name brand
  * @example
  * s("hh*10").pan(brand)
