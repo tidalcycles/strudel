@@ -380,6 +380,7 @@
     "bjork",
     "euclidrot"
   ],
+  "/packages/core/zyklus.mjs": [],
   "/packages/core/signal.mjs": [
     "steady",
     "signal",
@@ -392,18 +393,14 @@
     "tri2",
     "time",
     "_brandBy",
-    "brandBy",
-    "brand",
     "_irand",
     "pickSqueeze",
     "pickmodSqueeze",
     "__chooseWith",
     "randcat",
-    "wchoose",
-    "wchooseCycles",
+    "wrandcat",
     "perlinWith",
-    "degradeByWith",
-    "undegrade"
+    "degradeByWith"
   ],
   "/packages/core/speak.mjs": [
     "speak"
@@ -415,7 +412,6 @@
   "/packages/core/neocyclist.mjs": [
     "NeoCyclist"
   ],
-  "/packages/core/zyklus.mjs": [],
   "/packages/core/cyclist.mjs": [
     "Cyclist"
   ],
