@@ -576,7 +576,7 @@ export const undegradeBy = register('undegradeBy', function (x, pat) {
  * Inverse of `degrade`: Randomly removes 50% of events from the pattern. Shorthand for `.undegradeBy(0.5)`
  * Events that would be removed by degrade are let through by undegrade and vice versa (see second example).
  *
- * @name degrade
+ * @name undegrade
  * @memberof Pattern
  * @returns Pattern
  * @example
