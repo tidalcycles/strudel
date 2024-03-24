@@ -90,6 +90,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Time Modifiers', link: 'learn/time-modifiers' },
       { text: 'Control Parameters', link: 'functions/value-modifiers' },
       { text: 'Signals', link: 'learn/signals' },
+      { text: 'Random Modifiers', link: 'learn/random-modifiers' },
       { text: 'Conditional Modifiers', link: 'learn/conditional-modifiers' },
       { text: 'Accumulation', link: 'learn/accumulation' },
       { text: 'Tonal Functions', link: 'learn/tonal' },
