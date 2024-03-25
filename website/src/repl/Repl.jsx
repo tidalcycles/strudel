@@ -37,6 +37,7 @@ import { prebake } from './prebake.mjs';
 import { getRandomTune, initCode, loadModules, shareCode, ReplContext } from './util.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
+import { setInterval, clearInterval } from 'worker-timers';
 
 const { latestCode } = settingsMap.get();
 
@@ -72,9 +73,11 @@ export function Repl({ embedded = false }) {
       });
     };
     const editor = new StrudelMirror({
-      sync: false,
+      sync: true,
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
+      setInterval,
+      clearInterval,
       transpiler,
       autodraw: false,
       root: containerRef.current,

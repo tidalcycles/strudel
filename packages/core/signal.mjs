@@ -143,7 +143,24 @@ export const rand = signal(timeToRand);
 export const rand2 = rand.toBipolar();
 
 export const _brandBy = (p) => rand.fmap((x) => x < p);
+
+/**
+ * A continuous pattern of 0 or 1 (binary random), with a probability for the value being 1
+ *
+ * @name brandBy
+ * @param {number} probability - a number between 0 and 1
+ * @example
+ * s("hh*10").pan(brandBy(0.2))
+ */
 export const brandBy = (pPat) => reify(pPat).fmap(_brandBy).innerJoin();
+
+/**
+ * A continuous pattern of 0 or 1 (binary random)
+ *
+ * @name brand
+ * @example
+ * s("hh*10").pan(brand)
+ */
 export const brand = _brandBy(0.5);
 
 export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
@@ -269,7 +286,7 @@ export const pickmodOut = register('pickmodOut', function (lookup, pat) {
  * @returns {Pattern}
  */
 export const pickRestart = register('pickRestart', function (lookup, pat) {
-  return _pick(lookup, pat, false).trigzeroJoin();
+  return _pick(lookup, pat, false).restartJoin();
 });
 
 /** * The same as `pickRestart`, but if you pick a number greater than the size of the list,
@@ -279,7 +296,7 @@ export const pickRestart = register('pickRestart', function (lookup, pat) {
  * @returns {Pattern}
  */
 export const pickmodRestart = register('pickmodRestart', function (lookup, pat) {
-  return _pick(lookup, pat, true).trigzeroJoin();
+  return _pick(lookup, pat, true).restartJoin();
 });
 
 /** * Similar to `pick`, but the choosen pattern is reset when its index is triggered.
@@ -288,7 +305,7 @@ export const pickmodRestart = register('pickmodRestart', function (lookup, pat) 
  * @returns {Pattern}
  */
 export const pickReset = register('pickReset', function (lookup, pat) {
-  return _pick(lookup, pat, false).trigJoin();
+  return _pick(lookup, pat, false).resetJoin();
 });
 
 /** * The same as `pickReset`, but if you pick a number greater than the size of the list,
@@ -298,7 +315,7 @@ export const pickReset = register('pickReset', function (lookup, pat) {
  * @returns {Pattern}
  */
 export const pickmodReset = register('pickmodReset', function (lookup, pat) {
-  return _pick(lookup, pat, true).trigJoin();
+  return _pick(lookup, pat, true).resetJoin();
 });
 
 /**
@@ -397,6 +414,8 @@ export const chooseInWith = (pat, xs) => {
  * Chooses randomly from the given list of elements.
  * @param  {...any} xs values / patterns to choose from.
  * @returns {Pattern} - a continuous pattern.
+ * @example
+ * note("c2 g2!2 d2 f1").s(choose("sine", "triangle", "bd:6"))
  */
 export const choose = (...xs) => chooseWith(rand, xs);
 
@@ -423,6 +442,7 @@ Pattern.prototype.choose2 = function (...xs) {
 
 /**
  * Picks one of the elements at random each cycle.
+ * @synonyms randcat
  * @returns {Pattern}
  * @example
  * chooseCycles("bd", "hh", "sd").s().fast(8)
@@ -451,9 +471,25 @@ const _wchooseWith = function (pat, ...pairs) {
 
 const wchooseWith = (...args) => _wchooseWith(...args).outerJoin();
 
+/**
+ * Chooses randomly from the given list of elements by giving a probability to each element
+ * @param {...any} pairs arrays of value and weight
+ * @returns {Pattern} - a continuous pattern.
+ * @example
+ * note("c2 g2!2 d2 f1").s(wchoose(["sine",10], ["triangle",1], ["bd:6",1]))
+ */
 export const wchoose = (...pairs) => wchooseWith(rand, ...pairs);
 
+/**
+ * Picks one of the elements at random each cycle by giving a probability to each element
+ * @synonyms wrandcat
+ * @returns {Pattern}
+ * @example
+ * wchooseCycles(["bd",10], ["hh",1], ["sd",1]).s().fast(8)
+ */
 export const wchooseCycles = (...pairs) => _wchooseWith(rand, ...pairs).innerJoin();
+
+export const wrandcat = wchooseCycles;
 
 // this function expects pat to be a pattern of floats...
 export const perlinWith = (pat) => {
@@ -523,6 +559,11 @@ export const degrade = register('degrade', (pat) => pat._degradeBy(0.5));
  * @returns Pattern
  * @example
  * s("hh*8").undegradeBy(0.2)
+ * @example
+ * s("hh*10").layer(
+ *   x => x.degradeBy(0.2).pan(0),
+ *   x => x.undegradeBy(0.8).pan(1)
+ * )
  */
 export const undegradeBy = register('undegradeBy', function (x, pat) {
   return pat._degradeByWith(
@@ -531,6 +572,21 @@ export const undegradeBy = register('undegradeBy', function (x, pat) {
   );
 });
 
+/**
+ * Inverse of `degrade`: Randomly removes 50% of events from the pattern. Shorthand for `.undegradeBy(0.5)`
+ * Events that would be removed by degrade are let through by undegrade and vice versa (see second example).
+ *
+ * @name undegrade
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * s("hh*8").undegrade()
+ * @example
+ * s("hh*10").layer(
+ *   x => x.degrade().pan(0),
+ *   x => x.undegrade().pan(1)
+ * )
+ */
 export const undegrade = register('undegrade', (pat) => pat._undegradeBy(0.5));
 
 /**

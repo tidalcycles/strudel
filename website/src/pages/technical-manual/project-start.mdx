@@ -1,0 +1,129 @@
+---
+title: Using Strudel in your Project
+layout: ../../layouts/MainLayout.astro
+---
+
+# Using Strudel in your Project
+
+This Guide shows you the different ways to get started with using Strudel in your own project.
+
+## Embedding the Strudel REPL
+
+There are 3 quick ways to embed strudel in your website:
+
+1. Embed the strudel website as an iframe directly
+2. Embed the strudel website as an iframe using `@strudel/embed`
+3. Embed the REPL directly using `@strudel/repl`
+
+### Inside an iframe
+
+Using an iframe is the most easy way to embed a studel tune.
+You can embed any pattern of your choice via an iframe and the URL of the pattern of your choice:
+
+```html
+<iframe src="https://strudel.cc/?xwWRfuCE8TAR" width="600" height="300"></iframe>
+```
+
+The URL can be obtained by pressing `share` in the REPL.
+Note that these share links depend on a database, which is not guaranteed to live forever.
+To make sure your code is not lost, you can also use the long url:
+
+```html
+<iframe
+  src="https://strudel.cc/#c2V0Y3BzKDEpCm4oIjwwIDEgMiAzIDQ%2BKjgiKS5zY2FsZSgnRzQgbWlub3InKQoucygiZ21fbGVhZF82X3ZvaWNlIikKLmNsaXAoc2luZS5yYW5nZSguMiwuOCkuc2xvdyg4KSkKLmp1eChyZXYpCi5yb29tKDIpCi5zb21ldGltZXMoYWRkKG5vdGUoIjEyIikpKQoubHBmKHBlcmxpbi5yYW5nZSgyMDAsMjAwMDApLnNsb3coNCkp"
+  width="600"
+  height="300"
+></iframe>
+```
+
+That long URL can just be copy pasted from the URL bar when you're on the strudel website. It always reflects the latest evaluation of your code.
+
+### @strudel/embed
+
+To simplify the process of emebdding via an iframe, you can use the package `@strudel/embed`:
+
+```html
+<script src="https://unpkg.com/@strudel/embed@latest"></script>
+<strudel-repl>
+  <!--
+setcps(1)
+n("<0 1 2 3 4>*8").scale('G4 minor')
+.s("gm_lead_6_voice")
+.clip(sine.range(.2,.8).slow(8))
+.jux(rev)
+.room(2)
+.sometimes(add(note("12")))
+.lpf(perlin.range(200,20000).slow(4))
+-->
+</strudel-repl>
+```
+
+This will load the strudel website in an iframe, using the code provided within the HTML comments `<!-- -->`.
+The HTML comments are needed to make sure the browser won't interpret it as HTML.
+
+For alternative ways to load this package, see the [@strudel/embed README](https://github.com/tidalcycles/strudel/tree/main/packages/embed#strudelembed).
+
+### @strudel/repl
+
+Loading strudel directly in your site, without an iframe, looks similar to the iframe variant:
+
+```html
+<script src="https://unpkg.com/@strudel/repl@latest"></script>
+<strudel-editor>
+  <!--
+setcps(1)
+n("<0 1 2 3 4>*8").scale('G4 minor')
+.s("gm_lead_6_voice")
+.clip(sine.range(.2,.8).slow(8))
+.jux(rev)
+.room(2)
+.sometimes(add(note("12")))
+.lpf(perlin.range(200,20000).slow(4))
+-->
+</strudel-editor>
+```
+
+Here, we're loading `@strudel/repl` instead of `@strudel/embed`, and the component is called `strudel-editor` instead of `strudel-repl`.
+Yes the naming is a bit confusing..
+
+The upside of using the repl without an iframe is that you can pin the strudel version you're using:
+
+```html
+<script src="https://unpkg.com/@strudel/repl@1.0.2"></script>
+<strudel-editor>
+  <!--
+...  
+-->
+</strudel-editor>
+```
+
+This will guarantee your pattern wont break due to changes to the strudel project in the future.
+
+For more info on this package, see the [@strudel/repl README](https://github.com/tidalcycles/strudel/tree/main/packages/repl#strudelrepl).
+
+## With your own UI
+
+The above approach assumes you want to use the builtin [codemirror](https://codemirror.net/) editor.
+If you'd rather use your own UI, you can use the `@strudel/web` package:
+
+```html
+<!doctype html>
+<script src="https://unpkg.com/@strudel/web@1.0.3"></script>
+<button id="play">play</button>
+<button id="stop">stop</button>
+<script>
+  initStrudel();
+  document.getElementById('play').addEventListener('click', () => note('<c a f e>(3,8)').jux(rev).play());
+  document.getElementById('stop').addEventListener('click', () => hush());
+</script>
+```
+
+For more info on this package, see the [@strudel/web README](https://github.com/tidalcycles/strudel/tree/main/packages/web#strudelweb).
+
+## Via npm
+
+[All the packages and many more are available on npm under the @strudel namespace](https://www.npmjs.com/search?q=%40strudel).
+There are actually many more packages you can use to have fine grained control over what you use and what not.
+To use these packages, you have to use a bundler that supports es modules, like [vite](https://vitejs.dev/).
+
+To find out more about the purpose of each package, see [Packages](/technical-manual/packages)

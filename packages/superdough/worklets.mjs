@@ -129,3 +129,148 @@ class DistortProcessor extends AudioWorkletProcessor {
   }
 }
 registerProcessor('distort-processor', DistortProcessor);
+
+// adjust waveshape to remove frequencies above nyquist to prevent aliasing
+// referenced from https://www.kvraudio.com/forum/viewtopic.php?t=375517
+const polyBlep = (phase, dt) => {
+  // 0 <= phase < 1
+  if (phase < dt) {
+    phase /= dt;
+    // 2 * (phase - phase^2/2 - 0.5)
+    return phase + phase - phase * phase - 1;
+  }
+
+  // -1 < phase < 0
+  else if (phase > 1 - dt) {
+    phase = (phase - 1) / dt;
+    // 2 * (phase^2/2 + phase + 0.5)
+    return phase * phase + phase + phase + 1;
+  }
+
+  // 0 otherwise
+  else {
+    return 0;
+  }
+};
+
+const saw = (phase, dt) => {
+  const v = 2 * phase - 1;
+  return v - polyBlep(phase, dt);
+};
+
+function lerp(a, b, n) {
+  return n * (b - a) + a;
+}
+
+function getUnisonDetune(unison, detune, voiceIndex) {
+  if (unison < 2) {
+    return 0;
+  }
+  return lerp(-detune * 0.5, detune * 0.5, voiceIndex / (unison - 1));
+}
+class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.phase = [];
+  }
+  static get parameterDescriptors() {
+    return [
+      {
+        name: 'begin',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+
+      {
+        name: 'end',
+        defaultValue: 0,
+        max: Number.POSITIVE_INFINITY,
+        min: 0,
+      },
+
+      {
+        name: 'frequency',
+        defaultValue: 440,
+        min: Number.EPSILON,
+      },
+
+      {
+        name: 'panspread',
+        defaultValue: 0.4,
+        min: 0,
+        max: 1,
+      },
+      {
+        name: 'freqspread',
+        defaultValue: 0.2,
+        min: 0,
+      },
+      {
+        name: 'detune',
+        defaultValue: 0,
+        min: 0,
+      },
+
+      {
+        name: 'voices',
+        defaultValue: 5,
+        min: 1,
+      },
+    ];
+  }
+  process(input, outputs, params) {
+    // eslint-disable-next-line no-undef
+    if (currentTime <= params.begin[0]) {
+      return true;
+    }
+    // eslint-disable-next-line no-undef
+    if (currentTime >= params.end[0]) {
+      // this.port.postMessage({ type: 'onended' });
+      return false;
+    }
+    let frequency = params.frequency[0];
+    //apply detune in cents
+    frequency = frequency * Math.pow(2, params.detune[0] / 1200);
+
+    const output = outputs[0];
+    const voices = params.voices[0];
+    const freqspread = params.freqspread[0];
+    const panspread = params.panspread[0] * 0.5 + 0.5;
+    const gain1 = Math.sqrt(1 - panspread);
+    const gain2 = Math.sqrt(panspread);
+
+    for (let n = 0; n < voices; n++) {
+      const isOdd = (n & 1) == 1;
+
+      //applies unison "spread" detune in semitones
+      const freq = frequency * Math.pow(2, getUnisonDetune(voices, freqspread, n) / 12);
+      let gainL = gain1;
+      let gainR = gain2;
+      // invert right and left gain
+      if (isOdd) {
+        gainL = gain2;
+        gainR = gain1;
+      }
+      // eslint-disable-next-line no-undef
+      const dt = freq / sampleRate;
+
+      for (let i = 0; i < output[0].length; i++) {
+        this.phase[n] = this.phase[n] ?? Math.random();
+        const v = saw(this.phase[n], dt);
+
+        output[0][i] = output[0][i] + v * gainL;
+        output[1][i] = output[1][i] + v * gainR;
+
+        this.phase[n] += dt;
+
+        if (this.phase[n] > 1.0) {
+          this.phase[n] = this.phase[n] - 1;
+        }
+      }
+    }
+    return true;
+  }
+}
+
+registerProcessor('supersaw-oscillator', SuperSawOscillatorProcessor);

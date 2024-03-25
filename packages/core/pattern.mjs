@@ -262,7 +262,7 @@ export class Pattern {
   }
 
   // Flatterns patterns of patterns, by retriggering/resetting inner patterns at onsets of outer pattern haps
-  trigJoin(cycleZero = false) {
+  resetJoin(restart = false) {
     const pat_of_pats = this;
     return new Pattern((state) => {
       return (
@@ -273,9 +273,9 @@ export class Pattern {
           .map((outer_hap) => {
             return (
               outer_hap.value
-                // trig = align the inner pattern cycle start to outer pattern haps
-                // Trigzero = align the inner pattern cycle zero to outer pattern haps
-                .late(cycleZero ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
+                // reset = align the inner pattern cycle start to outer pattern haps
+                // restart = align the inner pattern cycle zero to outer pattern haps
+                .late(restart ? outer_hap.whole.begin : outer_hap.whole.begin.cyclePos())
                 .query(state)
                 .map((inner_hap) =>
                   new Hap(
@@ -294,8 +294,8 @@ export class Pattern {
     });
   }
 
-  trigzeroJoin() {
-    return this.trigJoin(true);
+  restartJoin() {
+    return this.resetJoin(true);
   }
 
   // Like the other joins above, joins a pattern of patterns of values, into a flatter
@@ -708,13 +708,13 @@ export class Pattern {
     const otherPat = reify(other);
     return otherPat.fmap((a) => thisPat.fmap((b) => func(b)(a))).squeezeJoin();
   }
-  _opTrig(other, func) {
+  _opReset(other, func) {
     const otherPat = reify(other);
-    return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).trigJoin();
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).resetJoin();
   }
-  _opTrigzero(other, func) {
+  _opRestart(other, func) {
     const otherPat = reify(other);
-    return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).trigzeroJoin();
+    return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).restartJoin();
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -1024,7 +1024,7 @@ function _composeOp(a, b, func) {
     func: [(a, b) => b(a)],
   };
 
-  const hows = ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Trig', 'Trigzero'];
+  const hows = ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Reset', 'Restart'];
 
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
@@ -1113,10 +1113,10 @@ function _composeOp(a, b, func) {
    * s("[<bd lt> sd]*2, hh*8").reset("<x@3 x(5,8)>")
    */
   Pattern.prototype.reset = function (...args) {
-    return this.keepif.trig(...args);
+    return this.keepif.reset(...args);
   };
   Pattern.prototype.resetAll = function (...args) {
-    return this.keep.trig(...args);
+    return this.keep.reset(...args);
   };
   /**
    * Restarts the pattern for each onset of the restart pattern.
@@ -1126,10 +1126,10 @@ function _composeOp(a, b, func) {
    * s("[<bd lt> sd]*2, hh*8").restart("<x@3 x(5,8)>")
    */
   Pattern.prototype.restart = function (...args) {
-    return this.keepif.trigzero(...args);
+    return this.keepif.restart(...args);
   };
   Pattern.prototype.restartAll = function (...args) {
-    return this.keep.trigzero(...args);
+    return this.keep.restart(...args);
   };
 })();
 
@@ -2477,15 +2477,14 @@ export const hsl = register('hsl', (h, s, l, pat) => {
 });
 
 /**
- * Sets the color of the hap in visualizations like pianoroll or highlighting.
- * @name color
- * @synonyms colour
- * @param {string} color Hexadecimal or CSS color name
+ * Sets the id of the hap in, for filtering in the future.
+ * @name id
+ * @noAutocomplete
+ * @param {string} id anything unique
  */
-// TODO: move this to controls https://github.com/tidalcycles/strudel/issues/288
-export const { color, colour } = register(['color', 'colour'], function (color, pat) {
-  return pat.withContext((context) => ({ ...context, color }));
-});
+Pattern.prototype.id = function (id) {
+  return this.withContext((ctx) => ({ ...ctx, id }));
+};
 
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of

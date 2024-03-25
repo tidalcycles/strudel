@@ -106,8 +106,7 @@ stack(
   [B3@2 D4] [A3@2 [G3 A3]] [B3@2 D4] [A3]
   [B3@2 D4] [A4@2 G4] D5@2 
   [D5@2 [C5 B4]] [[C5 B4] G4@2] [C5@2 [B4 A4]] [[B4 A4] E4@2]
-  [D5@2 [C5 B4]] [[C5 B4] G4 C5] [G5] [~ ~ B3]\`
-  .color('#9C7C38'),
+  [D5@2 [C5 B4]] [[C5 B4] G4 C5] [G5] [~ ~ B3]\`,
   // bass
   \`[[C2 G2] E3@2] [[C2 G2] F#3@2] [[C2 G2] E3@2] [[C2 G2] F#3@2]
   [[B1 D3] G3@2] [[Bb1 Db3] G3@2] [[A1 C3] G3@2] [[D2 C3] F#3@2]
@@ -115,7 +114,6 @@ stack(
   [[B1 D3] G3@2] [[Bb1 Db3] G3@2] [[A1 C3] G3@2] [[D2 C3] F#3@2]
   [[F2 C3] E3@2] [[E2 B2] D3@2] [[D2 A2] C3@2] [[C2 G2] B2@2]
   [[F2 C3] E3@2] [[E2 B2] D3@2] [[Eb2 Bb2] Db3@2] [[D2 A2] C3 [F3,G2]]\`
-  .color('#4C4646')
 ).transpose(12).slow(48)
   .superimpose(x=>x.add(0.06)) // add slightly detuned voice
   .note()
@@ -447,58 +445,6 @@ note(
   .room(.5)
   .lpa(.125).lpenv(-2).v("8:.125").fanchor(.25)`;
 
-export const hyperpop = `// "Hyperpop"
-// @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
-// @by Felix Roos
-
-const lfo = cosine.slow(15);
-const lfo2 = sine.slow(16);
-const filter1 = x=>x.cutoff(lfo2.range(300,3000));
-const filter2 = x=>x.hcutoff(lfo.range(1000,6000)).cutoff(4000)
-const scales = cat('D3 major', 'G3 major').slow(8)
-
-samples({
-  bd: '344/344757_1676145-lq.mp3',
-  sn: '387/387186_7255534-lq.mp3',
-  hh: '561/561241_12517458-lq.mp3',
-  hh2:'44/44944_236326-lq.mp3',
-  hh3: '44/44944_236326-lq.mp3',
-}, 'https://cdn.freesound.org/previews/')
-
-stack(
-  "-7 0 -7 7".struct("x(5,8,1)").fast(2).sub(7)
-  .scale(scales)
-  .note()
-  .s("sawtooth,square")
-  .gain(.3).attack(0.01).decay(0.1).sustain(.5)
-  .apply(filter1)
-  .lpa(.1).lpenv(2).ftype('24db')
-  ,
-  n("~@3 [<2 3>,<4 5>]")
-  .echo(4,1/16,.7)
-  .scale(scales)
-  .s('square').gain(.7)
-  .attack(0.01).decay(0.1).sustain(0)
-  .apply(filter1),
-  "6 4 2".add(14)
-  .superimpose(sub("5"))
-  .fast(1).euclidLegato(3,8)
-  .mask("<1 0@7>")
-  .fast(2).n()
-  .echo(32, 1/8, .8)
-  .scale(scales)
-  .s("sawtooth")
-  .mul(gain(sine.range(.1,.4).slow(8)))
-  .attack(.001).decay(.2).sustain(0)
-  .apply(filter2)
-).stack(
-  stack(
-    "bd <~@7 [~ bd]>".fast(2),
-    "~ sn",
-    "[~ hh3]*2"
-  ).s().fast(2).gain(.7)
-).slow(2)`;
-
 export const festivalOfFingers3 = `// "Festival of fingers 3"
 // @license CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
 // @by Felix Roos
@@ -615,7 +561,7 @@ setcps(1)
 "<8(3,8) <7 7*2> [4 5@3] 8>".sub(1) // sub 1 -> 1-indexed
 .layer(
 x=>x,
-x=>x.add(7).color('steelblue')
+x=>x.add(7)
 .off(1/8,x=>x.add("2,4").off(1/8,x=>x.add(5).echo(4,.125,.5)))
 .slow(2),
 ).n().scale('A1 minor')

@@ -19,7 +19,7 @@ function spiralSegment(options) {
     cy = 100,
     rotate = 0,
     thickness = margin / 2,
-    color = '#0000ff30',
+    color = 'steelblue',
     cap = 'round',
     stretch = 1,
     fromOpacity = 1,
@@ -50,18 +50,18 @@ function spiralSegment(options) {
 }
 
 function drawSpiral(options) {
-  const {
+  let {
     stretch = 1,
     size = 80,
     thickness = size / 2,
     cap = 'butt', // round butt squar,
     inset = 3, // start angl,
-    playheadColor = '#ffffff90',
+    playheadColor = '#ffffff',
     playheadLength = 0.02,
     playheadThickness = thickness,
     padding = 0,
     steady = 1,
-    inactiveColor = '#ffffff20',
+    inactiveColor = '#ffffff50',
     colorizeInactive = 0,
     fade = true,
     // logSpiral = true,
@@ -69,7 +69,12 @@ function drawSpiral(options) {
     time,
     haps,
     drawTime,
+    id,
   } = options;
+
+  if (id) {
+    haps = haps.filter((hap) => hap.context.id === id);
+  }
 
   const [w, h] = [ctx.canvas.width, ctx.canvas.height];
   ctx.clearRect(0, 0, w * 2, h * 2);
@@ -97,7 +102,7 @@ function drawSpiral(options) {
     const isActive = hap.whole.begin <= time && hap.endClipped > time;
     const from = hap.whole.begin - time + inset;
     const to = hap.endClipped - time + inset - padding;
-    const { color } = hap.context;
+    const color = hap.value?.color;
     const opacity = fade ? 1 - Math.abs((hap.whole.begin - time) / min) : 1;
     spiralSegment({
       ctx,

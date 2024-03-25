@@ -50,8 +50,8 @@ function loadWorklets() {
   return workletsLoading;
 }
 
-function getWorklet(ac, processor, params) {
-  const node = new AudioWorkletNode(ac, processor);
+export function getWorklet(ac, processor, params, config) {
+  const node = new AudioWorkletNode(ac, processor, config);
   Object.entries(params).forEach(([key, value]) => {
     node.parameters.get(key).value = value;
   });
@@ -260,7 +260,7 @@ export function resetGlobalEffects() {
   analysersData = {};
 }
 
-export const superdough = async (value, deadline, hapDuration) => {
+export const superdough = async (value, t, hapDuration) => {
   const ac = getAudioContext();
   if (typeof value !== 'object') {
     throw new Error(
@@ -272,7 +272,7 @@ export const superdough = async (value, deadline, hapDuration) => {
   // duration is passed as value too..
   value.duration = hapDuration;
   // calculate absolute time
-  let t = ac.currentTime + deadline;
+  t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
   // destructure
   let {
     s = 'triangle',

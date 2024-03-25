@@ -222,7 +222,6 @@ export const testCycles = {
   randomBells: 24,
   waa: 16,
   waar: 16,
-  hyperpop: 10,
   festivalOfFingers3: 16,
 };
 

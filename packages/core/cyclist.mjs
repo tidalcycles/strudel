@@ -8,7 +8,7 @@ import createClock from './zyklus.mjs';
 import { logger } from './logger.mjs';
 
 export class Cyclist {
-  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1 }) {
+  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1, setInterval, clearInterval }) {
     this.started = false;
     this.cps = 0.5;
     this.num_ticks_since_cps_change = 0;
@@ -17,44 +17,41 @@ export class Cyclist {
     this.lastEnd = 0; // query end of last tick
     this.getTime = getTime; // get absolute time
     this.num_cycles_at_cps_change = 0;
+    this.seconds_at_cps_change; // clock phase when cps was changed
     this.onToggle = onToggle;
     this.latency = latency; // fixed trigger time offset
     this.clock = createClock(
       getTime,
       // called slightly before each cycle
-      (phase, duration, tick) => {
-        if (tick === 0) {
-          this.origin = phase;
-        }
+      (phase, duration, _, t) => {
         if (this.num_ticks_since_cps_change === 0) {
           this.num_cycles_at_cps_change = this.lastEnd;
+          this.seconds_at_cps_change = phase;
         }
         this.num_ticks_since_cps_change++;
+        const seconds_since_cps_change = this.num_ticks_since_cps_change * duration;
+        const num_cycles_since_cps_change = seconds_since_cps_change * this.cps;
+
         try {
-          const time = getTime();
           const begin = this.lastEnd;
           this.lastBegin = begin;
-
-          //convert ticks to cycles, so you can query the pattern for events
-          const eventLength = duration * this.cps;
-          const end = this.num_cycles_at_cps_change + this.num_ticks_since_cps_change * eventLength;
+          const end = this.num_cycles_at_cps_change + num_cycles_since_cps_change;
           this.lastEnd = end;
 
           // query the pattern for events
           const haps = this.pattern.queryArc(begin, end, { _cps: this.cps });
 
-          const tickdeadline = phase - time; // time left until the phase is a whole number
-          this.lastTick = time + tickdeadline;
+          this.lastTick = phase;
 
           haps.forEach((hap) => {
-            if (hap.part.begin.equals(hap.whole.begin)) {
-              const deadline = (hap.whole.begin - begin) / this.cps + tickdeadline + latency;
+            if (hap.hasOnset()) {
+              const targetTime =
+                (hap.whole.begin - this.num_cycles_at_cps_change) / this.cps + this.seconds_at_cps_change + latency;
               const duration = hap.duration / this.cps;
-              onTrigger?.(hap, deadline, duration, this.cps);
-              if (hap.value.cps !== undefined && this.cps != hap.value.cps) {
-                this.cps = hap.value.cps;
-                this.num_ticks_since_cps_change = 0;
-              }
+              // the following line is dumb and only here for backwards compatibility
+              // see https://github.com/tidalcycles/strudel/pull/1004
+              const deadline = targetTime - phase;
+              onTrigger?.(hap, deadline, duration, this.cps, targetTime);
             }
           });
         } catch (e) {
@@ -63,6 +60,10 @@ export class Cyclist {
         }
       },
       interval, // duration of each cycle
+      0.1,
+      0.1,
+      setInterval,
+      clearInterval,
     );
   }
   now() {
