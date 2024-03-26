@@ -308,11 +308,11 @@ function peg$parse(input, options) {
     }
     return result;
   };
-  var peg$f17 = function(s) { return new PatternStub(s, 'fastcat'); };
+  var peg$f17 = function(tactus, s) { return new PatternStub(s, 'fastcat', undefined, !!tactus); };
   var peg$f18 = function(tail) { return { alignment: 'stack', list: tail }; };
   var peg$f19 = function(tail) { return { alignment: 'rand', list: tail, seed: seed++ }; };
   var peg$f20 = function(tail) { return { alignment: 'feet', list: tail, seed: seed++ }; };
-  var peg$f21 = function(head, tail) { if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment, tail.seed); } else { return head; } };
+  var peg$f21 = function(head, tail) {if (tail && tail.list.length > 0) { return new PatternStub([head, ...tail.list], tail.alignment, tail.seed); } else { return head; } };
   var peg$f22 = function(head, tail) { return new PatternStub(tail ? [head, ...tail.list] : [head], 'polymeter'); };
   var peg$f23 = function(sc) { return sc; };
   var peg$f24 = function(s) { return { name: "struct", args: { mini:s }}};
@@ -1477,24 +1477,36 @@ function peg$parse(input, options) {
   }
 
   function peg$parsesequence() {
-    var s0, s1, s2;
+    var s0, s1, s2, s3;
 
     s0 = peg$currPos;
-    s1 = [];
-    s2 = peg$parseslice_with_ops();
-    if (s2 !== peg$FAILED) {
-      while (s2 !== peg$FAILED) {
-        s1.push(s2);
-        s2 = peg$parseslice_with_ops();
-      }
+    if (input.charCodeAt(peg$currPos) === 42) {
+      s1 = peg$c23;
+      peg$currPos++;
     } else {
       s1 = peg$FAILED;
+      if (peg$silentFails === 0) { peg$fail(peg$e31); }
     }
-    if (s1 !== peg$FAILED) {
+    if (s1 === peg$FAILED) {
+      s1 = null;
+    }
+    s2 = [];
+    s3 = peg$parseslice_with_ops();
+    if (s3 !== peg$FAILED) {
+      while (s3 !== peg$FAILED) {
+        s2.push(s3);
+        s3 = peg$parseslice_with_ops();
+      }
+    } else {
+      s2 = peg$FAILED;
+    }
+    if (s2 !== peg$FAILED) {
       peg$savedPos = s0;
-      s1 = peg$f17(s1);
+      s0 = peg$f17(s1, s2);
+    } else {
+      peg$currPos = s0;
+      s0 = peg$FAILED;
     }
-    s0 = s1;
 
     return s0;
   }
@@ -2476,10 +2488,10 @@ function peg$parse(input, options) {
     this.location_ = location();
   }
 
-  var PatternStub = function(source, alignment, seed)
+  var PatternStub = function(source, alignment, seed, tactus)
   {
     this.type_ = "pattern";
-    this.arguments_ = { alignment: alignment };
+    this.arguments_ = { alignment: alignment, tactus: tactus };
     if (seed !== undefined) {
       this.arguments_.seed = seed;
     }

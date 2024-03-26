@@ -89,31 +89,37 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
       resolveReplications(ast);
       const children = ast.source_.map((child) => enter(child)).map(applyOptions(ast, enter));
       const alignment = ast.arguments_.alignment;
-      const with_tactus = children.filter((child) => child.__tactus_weight);
+      const explicit_tactus = children.some((x) => x.__tactus_source);
+      const with_tactus = children.filter((child) =>
+        explicit_tactus ? child.__tactus_source && child.tactus : child.tactus,
+      );
       let pat;
       switch (alignment) {
         case 'stack':
           pat = strudel.stack(...children);
-          if (with_tactus.length >= 1) {
-            pat.__tactus_weight = lcm(...with_tactus.map((x) => Fraction(x.__tactus_weight)));
+          if (with_tactus.length) {
+            pat.tactus = lcm(...with_tactus.map((x) => Fraction(x.tactus)));
           }
           break;
         case 'polymeter_slowcat':
-          pat = strudel.stack(...children.map((child) => child._slow(child.weight)));
+          pat = strudel.stack(...children.map((child) => child._slow(child.__weight)));
+          if (with_tactus.length) {
+            pat.tactus = lcm(...with_tactus.map((x) => Fraction(x.tactus)));
+          }
           break;
         case 'polymeter':
           // polymeter
           const stepsPerCycle = ast.arguments_.stepsPerCycle
             ? enter(ast.arguments_.stepsPerCycle).fmap((x) => strudel.Fraction(x))
-            : strudel.pure(strudel.Fraction(children.length > 0 ? children[0].weight : 1));
+            : strudel.pure(strudel.Fraction(children.length > 0 ? children[0].__weight : 1));
 
-          const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.weight))));
+          const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.__weight))));
           pat = strudel.stack(...aligned);
           break;
         case 'rand':
           pat = strudel.chooseInWith(strudel.rand.early(randOffset * ast.arguments_.seed).segment(1), children);
-          if (with_tactus.length >= 1) {
-            pat.__tactus_weight = lcm(...with_tactus.map((x) => Fraction(x.__tactus_weight)));
+          if (with_tactus.length) {
+            pat.tactus = lcm(...with_tactus.map((x) => Fraction(x.tactus)));
           }
           break;
         case 'feet':
@@ -129,13 +135,17 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
             pat = strudel.timeCat(
               ...ast.source_.map((child, i) => [child.options_?.weight || strudel.Fraction(1), children[i]]),
             );
-            pat.weight = weightSum;
+            pat.__weight = weightSum; // for polymeter
+            pat.tactus = weightSum;
+            if (with_tactus.length) {
+              pat.tactus = pat.tactus.mul(lcm(...with_tactus.map((x) => Fraction(x.tactus))));
+            }
           } else {
             pat = strudel.sequence(...children);
-            pat.weight = children.length;
+            pat.tactus = children.length;
           }
           if (ast.arguments_.tactus) {
-            pat.__tactus_weight = pat.weight;
+            pat.__tactus_source = true;
           }
       }
       return pat;
