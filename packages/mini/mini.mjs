@@ -95,19 +95,21 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
       );
       let pat;
       switch (alignment) {
-        case 'stack':
+        case 'stack': {
           pat = strudel.stack(...children);
           if (with_tactus.length) {
             pat.tactus = lcm(...with_tactus.map((x) => Fraction(x.tactus)));
           }
           break;
-        case 'polymeter_slowcat':
+        }
+        case 'polymeter_slowcat': {
           pat = strudel.stack(...children.map((child) => child._slow(child.__weight)));
           if (with_tactus.length) {
             pat.tactus = lcm(...with_tactus.map((x) => Fraction(x.tactus)));
           }
           break;
-        case 'polymeter':
+        }
+        case 'polymeter': {
           // polymeter
           const stepsPerCycle = ast.arguments_.stepsPerCycle
             ? enter(ast.arguments_.stepsPerCycle).fmap((x) => strudel.Fraction(x))
@@ -116,16 +118,19 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
           const aligned = children.map((child) => child.fast(stepsPerCycle.fmap((x) => x.div(child.__weight))));
           pat = strudel.stack(...aligned);
           break;
-        case 'rand':
+        }
+        case 'rand': {
           pat = strudel.chooseInWith(strudel.rand.early(randOffset * ast.arguments_.seed).segment(1), children);
           if (with_tactus.length) {
             pat.tactus = lcm(...with_tactus.map((x) => Fraction(x.tactus)));
           }
           break;
-        case 'feet':
+        }
+        case 'feet': {
           pat = strudel.fastcat(...children);
           break;
-        default:
+        }
+        default: {
           const weightedChildren = ast.source_.some((child) => !!child.options_?.weight);
           if (weightedChildren) {
             const weightSum = ast.source_.reduce(
@@ -147,10 +152,12 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
           if (ast.arguments_.tactus) {
             pat.__tactus_source = true;
           }
+        }
       }
       return pat;
     }
     case 'element': {
+      1;
       return enter(ast.source_);
     }
     case 'atom': {
