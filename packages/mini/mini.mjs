@@ -180,7 +180,7 @@ export const getLeafLocation = (code, leaf, globalOffset = 0) => {
 };
 
 // takes quoted mini string, returns ast
-export const mini2ast = (code, start, userCode) => {
+export const mini2ast = (code, start = 0, userCode = code) => {
   try {
     return krill.parse(code);
   } catch (error) {
