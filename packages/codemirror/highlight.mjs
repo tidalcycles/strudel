@@ -92,7 +92,7 @@ const miniLocationHighlights = EditorView.decorations.compute([miniLocations, vi
 
     if (haps.has(id)) {
       const hap = haps.get(id);
-      const color = hap.context.color ?? 'var(--foreground)';
+      const color = hap.value?.color ?? 'var(--foreground)';
       // Get explicit channels for color values
       /* 
       const swatch = document.createElement('div');

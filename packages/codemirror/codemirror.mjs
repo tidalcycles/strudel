@@ -20,7 +20,8 @@ import { flash, isFlashEnabled } from './flash.mjs';
 import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
 import { keybindings } from './keybindings.mjs';
 import { initTheme, activateTheme, theme } from './themes.mjs';
-import { updateWidgets, sliderPlugin } from './slider.mjs';
+import { sliderPlugin, updateSliderWidgets } from './slider.mjs';
+import { widgetPlugin, updateWidgets } from './widget.mjs';
 import { persistentAtom } from '@nanostores/persistent';
 
 const extensions = {
@@ -72,6 +73,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
       ...initialSettings,
       javascript(),
       sliderPlugin,
+      widgetPlugin,
       // indentOnInput(), // works without. already brought with javascript extension?
       // bracketMatching(), // does not do anything
       closeBrackets(),
@@ -139,7 +141,6 @@ export class StrudelMirror {
     this.painters = [];
     this.drawTime = drawTime;
     this.onDraw = onDraw;
-    const self = this;
     this.id = id || s4();
 
     this.drawer = new Drawer((haps, time) => {
@@ -147,13 +148,6 @@ export class StrudelMirror {
       this.highlight(currentFrame, time);
       this.onDraw?.(haps, time, currentFrame, this.painters);
     }, drawTime);
-
-    // this approach does not work with multiple repls on screen
-    // TODO: refactor onPaint usages + find fix, maybe remove painters here?
-    Pattern.prototype.onPaint = function (onPaint) {
-      self.painters.push(onPaint);
-      return this;
-    };
 
     this.prebaked = prebake();
     autodraw && this.drawFirstFrame();
@@ -180,6 +174,14 @@ export class StrudelMirror {
       beforeEval: async () => {
         cleanupDraw();
         this.painters = [];
+        const self = this;
+        // this is similar to repl.mjs > injectPatternMethods
+        // maybe there is a solution without prototype hacking, but hey, it works
+        // we need to do this befor every eval to make sure it works with multiple StrudelMirror's side by side
+        Pattern.prototype.onPaint = function (onPaint) {
+          self.painters.push(onPaint);
+          return this;
+        };
         await this.prebaked;
         await replOptions?.beforeEval?.();
       },
@@ -187,7 +189,10 @@ export class StrudelMirror {
         // remember for when highlighting is toggled on
         this.miniLocations = options.meta?.miniLocations;
         this.widgets = options.meta?.widgets;
-        updateWidgets(this.editor, this.widgets);
+        const sliders = this.widgets.filter((w) => w.type === 'slider');
+        updateSliderWidgets(this.editor, sliders);
+        const widgets = this.widgets.filter((w) => w.type !== 'slider');
+        updateWidgets(this.editor, widgets);
         updateMiniLocations(this.editor, this.miniLocations);
         replOptions?.afterEval?.(options);
         this.adjustDrawTime();
