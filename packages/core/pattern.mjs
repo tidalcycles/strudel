@@ -452,7 +452,7 @@ export class Pattern {
    */
   withHaps(func) {
     const result = new Pattern((state) => func(this.query(state), state));
-    result.weight = this.weight;
+    result.tactus = this.tactus;
     return result;
   }
 
