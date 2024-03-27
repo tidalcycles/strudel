@@ -89,10 +89,7 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
       resolveReplications(ast);
       const children = ast.source_.map((child) => enter(child)).map(applyOptions(ast, enter));
       const alignment = ast.arguments_.alignment;
-      const explicit_tactus = children.some((x) => x.__tactus_source);
-      const with_tactus = children.filter((child) =>
-        explicit_tactus ? child.__tactus_source && child.tactus : child.tactus,
-      );
+      const with_tactus = children.filter((child) => child.__tactus_source);
       let pat;
       switch (alignment) {
         case 'stack': {
@@ -153,6 +150,9 @@ export function patternifyAST(ast, code, onEnter, offset = 0) {
             pat.__tactus_source = true;
           }
         }
+      }
+      if (with_tactus.length) {
+        pat.__tactus_source = true;
       }
       return pat;
     }

@@ -6,6 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { getLeafLocation, getLeafLocations, mini, mini2ast } from '../mini.mjs';
 import '@strudel/core/euclid.mjs';
+import { Fraction } from '@strudel/core/index.mjs';
 import { describe, expect, it } from 'vitest';
 
 describe('mini', () => {
@@ -206,6 +207,15 @@ describe('mini', () => {
   });
   it('_ and @ are almost interchangeable', () => {
     expect(minS('a @ b @ @')).toEqual(minS('a _2 b _3'));
+  });
+  it('supports ^ tactus marking', () => {
+    expect(mini('a [^b c]').tactus).toEqual(Fraction(4));
+    expect(mini('[a b c] [d [e f]]').tactus).toEqual(Fraction(2));
+    expect(mini('^[a b c] [d [e f]]').tactus).toEqual(Fraction(2));
+    expect(mini('[a b c] [d [^e f]]').tactus).toEqual(Fraction(8));
+    expect(mini('[a b c] [^d [e f]]').tactus).toEqual(Fraction(4));
+    expect(mini('[^a b c] [^d [e f]]').tactus).toEqual(Fraction(12));
+    expect(mini('[^a b c] [d [^e f]]').tactus).toEqual(Fraction(24));
   });
 });
 
