@@ -165,7 +165,7 @@ slice_with_ops = s:slice ops:slice_op*
   }
 
 // a sequence is a combination of one or more successive slices (as an array)
-sequence = tactus:'*'? s:(slice_with_ops)+
+sequence = tactus:'^'? s:(slice_with_ops)+
   { return new PatternStub(s, 'fastcat', undefined, !!tactus); }
 
 // a stack is a series of vertically aligned sequence, separated by a comma
