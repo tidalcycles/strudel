@@ -542,7 +542,7 @@ export class Pattern {
    * @noAutocomplete
    */
   filterValues(value_test) {
-    return new Pattern((state) => this.query(state).filter((hap) => value_test(hap.value)));
+    return new Pattern((state) => this.query(state).filter((hap) => value_test(hap.value))).setTactus(this.tactus);
   }
 
   /**
