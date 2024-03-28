@@ -49,6 +49,24 @@ export class Hap {
     return this.whole.begin.add(this.duration);
   }
 
+  isActive(currentTime) {
+    return this.whole.begin <= currentTime && this.endClipped > currentTime;
+  }
+
+  isInPast(currentTime) {
+    return currentTime > this.endClipped;
+  }
+  isInNearPast(margin, currentTime) {
+    return currentTime - margin <= this.endClipped;
+  }
+
+  isInFuture(currentTime) {
+    return currentTime < this.whole.begin;
+  }
+  isInNearFuture(margin, currentTime) {
+    return currentTime < this.whole.begin && currentTime > this.whole.begin - margin;
+  }
+
   wholeOrPart() {
     return this.whole ? this.whole : this.part;
   }
