@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Pattern, noteToMidi, freqToMidi } from '@strudel/core';
-import { getTheme } from './draw.mjs';
+import { getTheme, getDrawContext } from './draw.mjs';
 
 const scale = (normalized, min, max) => normalized * (max - min) + min;
 const getValue = (e) => {
