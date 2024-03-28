@@ -126,3 +126,8 @@ registerWidget('_scope', (id, options = {}, pat) => {
   const ctx = getCanvasWidget(id, options).getContext('2d');
   return pat.tag(id).scope({ ...options, ctx, id });
 });
+
+registerWidget('_claviature', (id, options = {}, pat) => {
+  const ctx = getCanvasWidget(id, options).getContext('2d');
+  return pat.tag(id).claviature({ ...options, ctx, id });
+});
