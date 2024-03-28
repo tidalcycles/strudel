@@ -50,7 +50,7 @@ export class Hap {
   }
 
   isActive(currentTime) {
-    return this.whole.begin <= currentTime && this.endClipped > currentTime;
+    return this.whole.begin <= currentTime && this.endClipped >= currentTime;
   }
 
   isInPast(currentTime) {

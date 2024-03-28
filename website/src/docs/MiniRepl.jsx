@@ -39,16 +39,6 @@ export function MiniRepl({
 
   const init = useCallback(({ code, shouldDraw }) => {
     const drawContext = shouldDraw ? document.querySelector('#' + canvasId)?.getContext('2d') : null;
-    let onDraw;
-    if (shouldDraw) {
-      onDraw = (haps, time, frame, painters) => {
-        painters.length && drawContext?.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
-        painters?.forEach((painter) => {
-          // ctx time haps drawTime paintOptions
-          painter(drawContext, time, haps, drawTime, { clear: false });
-        });
-      };
-    }
 
     const editor = new StrudelMirror({
       id,
@@ -60,7 +50,7 @@ export function MiniRepl({
       initialCode: '// LOADING',
       pattern: silence,
       drawTime,
-      onDraw,
+      drawContext,
       editPattern: (pat, id) => {
         if (onTrigger) {
           pat = pat.onTrigger(onTrigger, false);

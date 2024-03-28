@@ -277,8 +277,8 @@ export function getDrawOptions(drawTime, options = {}) {
 
 export const getPunchcardPainter =
   (options = {}) =>
-  (ctx, time, haps, drawTime, paintOptions = {}) =>
-    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { ...paintOptions, ...options }) });
+  (ctx, time, haps, drawTime) =>
+    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, options) });
 
 Pattern.prototype.punchcard = function (options) {
   return this.onPaint(getPunchcardPainter(options));
