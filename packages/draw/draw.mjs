@@ -71,16 +71,33 @@ Pattern.prototype.draw = function (callback, { id = 'std', from, to, onQuery, ct
 };
 
 // this is a more generic helper to get a rendering callback for the currently active haps
-// TODO: this misses events that are prolonged with clip or duration (would need state)
-Pattern.prototype.onFrame = function (id, fn, offset = 0) {
+// maybe this could also use Drawer internally? might need to support setting a custom pattern in Drawer
+let memory = {};
+Pattern.prototype.onFrame = function (fn, options) {
   if (typeof window === 'undefined') {
     return this;
   }
+  let { id = 1, lookbehind = 0, lookahead = 0 } = options;
+  let __t = Math.max(getTime(), 0);
   stopAnimationFrame(id);
+  lookbehind = Math.abs(lookbehind);
+  // init memory, clear future haps of old pattern
+  memory[id] = (memory[id] || []).filter((h) => !h.isInFuture(__t));
+  let newFuture = this.queryArc(__t, __t + lookahead).filter((h) => h.hasOnset());
+  memory[id] = memory[id].concat(newFuture);
+
+  let last;
   const animate = () => {
-    const t = getTime() + offset;
-    const haps = this.queryArc(t, t);
-    fn(haps, t, this);
+    const _t = getTime();
+    const t = _t + lookahead;
+    // filter out haps that are too far in the past
+    memory[id] = memory[id].filter((h) => h.isInNearPast(lookbehind, _t));
+    // begin where we left off in last frame, but max -0.1s (inactive tab throttles to 1fps)
+    let begin = Math.max(last || t, t - 1 / 10);
+    const haps = this.queryArc(begin, t).filter((h) => h.hasOnset());
+    memory[id] = memory[id].concat(haps);
+    last = t; // makes sure no haps are missed
+    fn(memory[id], _t, t, this);
     animationFrames[id] = requestAnimationFrame(animate);
   };
   requestAnimationFrame(animate);
