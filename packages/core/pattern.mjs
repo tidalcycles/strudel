@@ -2474,13 +2474,13 @@ export const hsl = register('hsl', (h, s, l, pat) => {
 });
 
 /**
- * Sets the id of the hap in, for filtering in the future.
- * @name id
+ * Tags each Hap with an identifier. Good for filtering. The function populates Hap.context.tags (Array).
+ * @name tag
  * @noAutocomplete
- * @param {string} id anything unique
+ * @param {string} tag anything unique
  */
-Pattern.prototype.id = function (id) {
-  return this.withContext((ctx) => ({ ...ctx, id }));
+Pattern.prototype.tag = function (tag) {
+  return this.withContext((ctx) => ({ ...ctx, tags: (ctx.tags || []).concat([tag]) }));
 };
 
 //////////////////////////////////////////////////////////////////////

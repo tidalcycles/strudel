@@ -67,6 +67,9 @@ export class Cyclist {
     );
   }
   now() {
+    if (!this.started) {
+      return 0;
+    }
     const secondsSinceLastTick = this.getTime() - this.lastTick - this.clock.duration;
     return this.lastBegin + secondsSinceLastTick * this.cps; // + this.clock.minLatency;
   }

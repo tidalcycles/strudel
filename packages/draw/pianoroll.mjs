@@ -5,6 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Pattern, noteToMidi, freqToMidi } from '@strudel/core';
+import { getTheme, getDrawContext } from './draw.mjs';
 
 const scale = (normalized, min, max) => normalized * (max - min) + min;
 const getValue = (e) => {
@@ -36,26 +37,23 @@ const getValue = (e) => {
 };
 
 Pattern.prototype.pianoroll = function (options = {}) {
-  let { cycles = 4, playhead = 0.5, overscan = 1, hideNegative = false, ctx, id } = options;
+  let { cycles = 4, playhead = 0.5, overscan = 0, hideNegative = false, ctx = getDrawContext(), id = 1 } = options;
 
   let from = -cycles * playhead;
   let to = cycles * (1 - playhead);
-
+  const inFrame = (hap, t) => (!hideNegative || hap.whole.begin >= 0) && hap.isWithinTime(t + from, t + to);
   this.draw(
-    (ctx, haps, t) => {
-      const inFrame = (event) =>
-        (!hideNegative || event.whole.begin >= 0) && event.whole.begin <= t + to && event.endClipped >= t + from;
+    (haps, time) => {
       pianoroll({
         ...options,
-        time: t,
+        time,
         ctx,
-        haps: haps.filter(inFrame),
+        haps: haps.filter((hap) => inFrame(hap, time)),
       });
     },
     {
-      from: from - overscan,
-      to: to + overscan,
-      ctx,
+      lookbehind: from - overscan,
+      lookahead: to + overscan,
       id,
     },
   );
@@ -106,11 +104,8 @@ export function pianoroll({
   flipTime = 0,
   flipValues = 0,
   hideNegative = false,
-  // inactive = '#C9E597',
-  // inactive = '#FFCA28',
-  inactive = '#7491D2',
-  active = '#FFCA28',
-  // background = '#2A3236',
+  inactive = getTheme().foreground,
+  active = getTheme().foreground,
   background = 'transparent',
   smear = 0,
   playheadColor = 'white',
@@ -137,7 +132,7 @@ export function pianoroll({
   let to = cycles * (1 - playhead);
 
   if (id) {
-    haps = haps.filter((hap) => hap.context.id === id);
+    haps = haps.filter((hap) => hap.hasTag(id));
   }
 
   if (timeframeProp) {
@@ -277,8 +272,8 @@ export function getDrawOptions(drawTime, options = {}) {
 
 export const getPunchcardPainter =
   (options = {}) =>
-  (ctx, time, haps, drawTime, paintOptions = {}) =>
-    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, { ...paintOptions, ...options }) });
+  (ctx, time, haps, drawTime) =>
+    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, options) });
 
 Pattern.prototype.punchcard = function (options) {
   return this.onPaint(getPunchcardPainter(options));
