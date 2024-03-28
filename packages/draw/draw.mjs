@@ -39,41 +39,9 @@ function stopAnimationFrame(id) {
 function stopAllAnimations() {
   Object.keys(animationFrames).forEach((id) => stopAnimationFrame(id));
 }
-Pattern.prototype.draw = function (callback, { id = 'std', from, to, onQuery, ctx } = {}) {
-  if (typeof window === 'undefined') {
-    return this;
-  }
-  stopAnimationFrame(id);
-  ctx = ctx || getDrawContext();
-  let cycle,
-    events = [];
-  const animate = (time) => {
-    const t = getTime();
-    if (from !== undefined && to !== undefined) {
-      const currentCycle = Math.floor(t);
-      if (cycle !== currentCycle) {
-        cycle = currentCycle;
-        const begin = currentCycle + from;
-        const end = currentCycle + to;
-        setTimeout(() => {
-          events = this.query(new State(new TimeSpan(begin, end)))
-            .filter(Boolean)
-            .filter((event) => event.part.begin.equals(event.whole.begin));
-          onQuery?.(events);
-        }, 0);
-      }
-    }
-    callback(ctx, events, t, time);
-    animationFrames[id] = requestAnimationFrame(animate);
-  };
-  requestAnimationFrame(animate);
-  return this;
-};
 
-// this is a more generic helper to get a rendering callback for the currently active haps
-// maybe this could also use Drawer internally? might need to support setting a custom pattern in Drawer
 let memory = {};
-Pattern.prototype.onFrame = function (fn, options) {
+Pattern.prototype.draw = function (fn, options) {
   if (typeof window === 'undefined') {
     return this;
   }

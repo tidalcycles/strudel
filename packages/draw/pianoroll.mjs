@@ -36,26 +36,23 @@ const getValue = (e) => {
 };
 
 Pattern.prototype.pianoroll = function (options = {}) {
-  let { cycles = 4, playhead = 0.5, overscan = 1, hideNegative = false, ctx, id } = options;
+  let { cycles = 4, playhead = 0.5, overscan = 0, hideNegative = false, ctx = getDrawContext(), id = 1 } = options;
 
   let from = -cycles * playhead;
   let to = cycles * (1 - playhead);
-
+  const inFrame = (hap, t) => (!hideNegative || hap.whole.begin >= 0) && hap.isWithinTime(t + from, t + to);
   this.draw(
-    (ctx, haps, t) => {
-      const inFrame = (event) =>
-        (!hideNegative || event.whole.begin >= 0) && event.whole.begin <= t + to && event.endClipped >= t + from;
+    (haps, time) => {
       pianoroll({
         ...options,
-        time: t,
+        time,
         ctx,
-        haps: haps.filter(inFrame),
+        haps: haps.filter((hap) => inFrame(hap, time)),
       });
     },
     {
-      from: from - overscan,
-      to: to + overscan,
-      ctx,
+      lookbehind: from - overscan,
+      lookahead: to + overscan,
       id,
     },
   );
