@@ -13,7 +13,7 @@ export const defaultSettings = {
   isAutoCompletionEnabled: false,
   isTooltipEnabled: false,
   isFlashEnabled: true,
-  isSyncEnabled: true,
+  isSyncEnabled: false,
   isLineWrappingEnabled: false,
   isPatternHighlightingEnabled: true,
   theme: 'strudelTheme',
