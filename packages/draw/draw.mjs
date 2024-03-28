@@ -68,7 +68,7 @@ Pattern.prototype.draw = function (fn, options) {
     fn(memory[id], _t, t, this);
     animationFrames[id] = requestAnimationFrame(animate);
   };
-  requestAnimationFrame(animate);
+  animationFrames[id] = requestAnimationFrame(animate);
   return this;
 };
 
@@ -182,4 +182,19 @@ export class Drawer {
       this.framer.stop();
     }
   }
+}
+
+export function getComputedPropertyValue(name) {
+  if (typeof window === 'undefined') {
+    return '#fff';
+  }
+  return getComputedStyle(document.documentElement).getPropertyValue(name);
+}
+
+let theme = {};
+export function getTheme() {
+  return theme;
+}
+export function setTheme(_theme) {
+  theme = _theme;
 }

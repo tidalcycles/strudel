@@ -5,6 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Pattern, noteToMidi, freqToMidi } from '@strudel/core';
+import { getTheme } from './draw.mjs';
 
 const scale = (normalized, min, max) => normalized * (max - min) + min;
 const getValue = (e) => {
@@ -103,11 +104,8 @@ export function pianoroll({
   flipTime = 0,
   flipValues = 0,
   hideNegative = false,
-  // inactive = '#C9E597',
-  // inactive = '#FFCA28',
-  inactive = '#7491D2',
-  active = '#FFCA28',
-  // background = '#2A3236',
+  inactive = getTheme().foreground,
+  active = getTheme().foreground,
   background = 'transparent',
   smear = 0,
   playheadColor = 'white',
