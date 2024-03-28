@@ -66,6 +66,9 @@ export class Hap {
   isInNearFuture(margin, currentTime) {
     return currentTime < this.whole.begin && currentTime > this.whole.begin - margin;
   }
+  isWithinTime(min, max) {
+    return this.whole.begin <= max && this.endClipped >= min;
+  }
 
   wholeOrPart() {
     return this.whole ? this.whole : this.part;
