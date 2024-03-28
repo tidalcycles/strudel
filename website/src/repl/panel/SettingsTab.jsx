@@ -88,6 +88,7 @@ export function SettingsTab({ started }) {
     isAutoCompletionEnabled,
     isTooltipEnabled,
     isFlashEnabled,
+    isSyncEnabled,
     isLineWrappingEnabled,
     fontSize,
     fontFamily,
@@ -181,6 +182,16 @@ export function SettingsTab({ started }) {
           label="Enable flashing on evaluation"
           onChange={(cbEvent) => settingsMap.setKey('isFlashEnabled', cbEvent.target.checked)}
           value={isFlashEnabled}
+        />
+        <Checkbox
+          label="Sync across Browser Tabs / Windows"
+          onChange={(cbEvent) => {
+            if (confirm('Changing this setting requires the window to reload itself. OK?')) {
+              settingsMap.setKey('isSyncEnabled', cbEvent.target.checked);
+              window.location.reload();
+            }
+          }}
+          value={isSyncEnabled}
         />
       </FormItem>
       <FormItem label="Zen Mode">Try clicking the logo in the top left!</FormItem>
