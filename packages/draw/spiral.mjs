@@ -73,7 +73,7 @@ function drawSpiral(options) {
   } = options;
 
   if (id) {
-    haps = haps.filter((hap) => hap.context.id === id);
+    haps = haps.filter((hap) => hap.hasTag(id));
   }
 
   const [w, h] = [ctx.canvas.width, ctx.canvas.height];

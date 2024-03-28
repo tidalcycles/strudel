@@ -91,6 +91,10 @@ export class Hap {
     return this.whole != undefined && this.whole.begin.equals(this.part.begin);
   }
 
+  hasTag(tag) {
+    return this.context.tags?.includes(tag);
+  }
+
   resolveState(state) {
     if (this.stateful && this.hasOnset()) {
       console.log('stateful');

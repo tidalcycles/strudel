@@ -134,7 +134,7 @@ export function pianoroll({
   let to = cycles * (1 - playhead);
 
   if (id) {
-    haps = haps.filter((hap) => hap.context.id === id);
+    haps = haps.filter((hap) => hap.hasTag(id));
   }
 
   if (timeframeProp) {
