@@ -81,6 +81,7 @@ export function SettingsTab({ started }) {
   const {
     theme,
     keybindings,
+    isBracketClosingEnabled,
     isBracketMatchingEnabled,
     isLineNumbersDisplayed,
     isPatternHighlightingEnabled,
@@ -147,6 +148,11 @@ export function SettingsTab({ started }) {
           label="Enable bracket matching"
           onChange={(cbEvent) => settingsMap.setKey('isBracketMatchingEnabled', cbEvent.target.checked)}
           value={isBracketMatchingEnabled}
+        />
+        <Checkbox
+          label="Auto close brackets"
+          onChange={(cbEvent) => settingsMap.setKey('isBracketClosingEnabled', cbEvent.target.checked)}
+          value={isBracketClosingEnabled}
         />
         <Checkbox
           label="Display line numbers"
