@@ -954,31 +954,6 @@ exports[`runs examples > example "bank" example index 0 1`] = `
 ]
 `;
 
-exports[`runs examples > example "beatCat" example index 0 1`] = `
-[
-  "[ 0/1 → 1/5 | s:bd ]",
-  "[ 1/5 → 2/5 | s:cp ]",
-  "[ 2/5 → 3/5 | s:bd ]",
-  "[ 3/5 → 4/5 | s:mt ]",
-  "[ 4/5 → 1/1 | s:bd ]",
-  "[ 1/1 → 6/5 | s:bd ]",
-  "[ 6/5 → 7/5 | s:cp ]",
-  "[ 7/5 → 8/5 | s:bd ]",
-  "[ 8/5 → 9/5 | s:mt ]",
-  "[ 9/5 → 2/1 | s:bd ]",
-  "[ 2/1 → 11/5 | s:bd ]",
-  "[ 11/5 → 12/5 | s:cp ]",
-  "[ 12/5 → 13/5 | s:bd ]",
-  "[ 13/5 → 14/5 | s:mt ]",
-  "[ 14/5 → 3/1 | s:bd ]",
-  "[ 3/1 → 16/5 | s:bd ]",
-  "[ 16/5 → 17/5 | s:cp ]",
-  "[ 17/5 → 18/5 | s:bd ]",
-  "[ 18/5 → 19/5 | s:mt ]",
-  "[ 19/5 → 4/1 | s:bd ]",
-]
-`;
-
 exports[`runs examples > example "begin" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | s:rave begin:0 ]",
@@ -5672,27 +5647,6 @@ exports[`runs examples > example "rev" example index 0 1`] = `
 ]
 `;
 
-exports[`runs examples > example "reweight" example index 0 1`] = `
-[
-  "[ 0/1 → 1/4 | s:bd ]",
-  "[ 1/4 → 1/2 | s:sd ]",
-  "[ 1/2 → 3/4 | s:cp ]",
-  "[ 3/4 → 1/1 | s:bd ]",
-  "[ 1/1 → 5/4 | s:sd ]",
-  "[ 5/4 → 3/2 | s:cp ]",
-  "[ 3/2 → 7/4 | s:bd ]",
-  "[ 7/4 → 2/1 | s:sd ]",
-  "[ 2/1 → 9/4 | s:cp ]",
-  "[ 9/4 → 5/2 | s:bd ]",
-  "[ 5/2 → 11/4 | s:sd ]",
-  "[ 11/4 → 3/1 | s:cp ]",
-  "[ 3/1 → 13/4 | s:bd ]",
-  "[ 13/4 → 7/2 | s:sd ]",
-  "[ 7/2 → 15/4 | s:cp ]",
-  "[ 15/4 → 4/1 | s:bd ]",
-]
-`;
-
 exports[`runs examples > example "ribbon" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | note:d ]",
@@ -7133,6 +7087,31 @@ exports[`runs examples > example "stack" example index 0 2`] = `
 ]
 `;
 
+exports[`runs examples > example "stepcat" example index 0 1`] = `
+[
+  "[ 0/1 → 1/5 | s:bd ]",
+  "[ 1/5 → 2/5 | s:cp ]",
+  "[ 2/5 → 3/5 | s:bd ]",
+  "[ 3/5 → 4/5 | s:mt ]",
+  "[ 4/5 → 1/1 | s:bd ]",
+  "[ 1/1 → 6/5 | s:bd ]",
+  "[ 6/5 → 7/5 | s:cp ]",
+  "[ 7/5 → 8/5 | s:bd ]",
+  "[ 8/5 → 9/5 | s:mt ]",
+  "[ 9/5 → 2/1 | s:bd ]",
+  "[ 2/1 → 11/5 | s:bd ]",
+  "[ 11/5 → 12/5 | s:cp ]",
+  "[ 12/5 → 13/5 | s:bd ]",
+  "[ 13/5 → 14/5 | s:mt ]",
+  "[ 14/5 → 3/1 | s:bd ]",
+  "[ 3/1 → 16/5 | s:bd ]",
+  "[ 16/5 → 17/5 | s:cp ]",
+  "[ 17/5 → 18/5 | s:bd ]",
+  "[ 18/5 → 19/5 | s:mt ]",
+  "[ 19/5 → 4/1 | s:bd ]",
+]
+`;
+
 exports[`runs examples > example "striate" example index 0 1`] = `
 [
   "[ 0/1 → 1/6 | s:numbers n:0 begin:0 end:0.16666666666666666 ]",
@@ -7319,7 +7298,7 @@ exports[`runs examples > example "sustain" example index 0 1`] = `
 ]
 `;
 
-exports[`runs examples > example "timeCat" example index 0 1`] = `
+exports[`runs examples > example "timecat" example index 0 1`] = `
 [
   "[ 0/1 → 3/4 | note:e3 ]",
   "[ 3/4 → 1/1 | note:g3 ]",
@@ -7332,7 +7311,7 @@ exports[`runs examples > example "timeCat" example index 0 1`] = `
 ]
 `;
 
-exports[`runs examples > example "timeCat" example index 1 1`] = `
+exports[`runs examples > example "timecat" example index 1 1`] = `
 [
   "[ 0/1 → 1/5 | s:bd ]",
   "[ 1/5 → 2/5 | s:sd ]",
