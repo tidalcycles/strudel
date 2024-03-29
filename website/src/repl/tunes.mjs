@@ -361,8 +361,8 @@ export const echoPiano = `// "Echo piano"
 // @by Felix Roos
 
 n("<0 2 [4 6](3,4,2) 3*2>").color('salmon')
-.off(1/4, x=>x.add(2).color('green'))
-.off(1/2, x=>x.add(6).color('steelblue'))
+.off(1/4, x=>x.add(n(2)).color('green'))
+.off(1/2, x=>x.add(n(6)).color('steelblue'))
 .scale('D minor')
 .echo(4, 1/8, .5)
 .clip(.5)
