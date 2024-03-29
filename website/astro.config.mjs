@@ -69,7 +69,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,wav,mp3,ogg}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,wav,mp3,ogg,ttf,woff2,TTF,otf}'],
         runtimeCaching: [
           {
             urlPattern: ({ url }) =>
