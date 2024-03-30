@@ -21,8 +21,19 @@ async function getFilesInDirectory(directory) {
   for (const dirent of dirents) {
     const fullPath = join(directory, dirent.name);
     if (dirent.isDirectory()) {
-      const subFiles = await getFilesInDirectory(fullPath);
-      files = files.concat(subFiles);
+      if (dirent.name.startsWith('.')) {
+        console.warn(`ignore hidden folder: ${fullPath}`);
+        continue;
+      }
+      try {
+        const subFiles = (await getFilesInDirectory(fullPath)).filter((f) =>
+          ['wav', 'mp3', 'ogg'].includes(f.split('.').slice(-1)[0].toLowerCase()),
+        );
+        files = files.concat(subFiles);
+        console.log(`${dirent.name} (${subFiles.length})`);
+      } catch (err) {
+        console.warn(`skipped due to error: ${fullPath}`);
+      }
     } else {
       files.push(fullPath);
     }
@@ -34,15 +45,13 @@ async function getBanks(directory) {
   // const directory = resolve(__dirname, '.');
   let files = await getFilesInDirectory(directory);
   let banks = {};
-  files = files
-    .filter((f) => ['wav', 'mp3', 'ogg'].includes(f.split('.').slice(-1)[0].toLowerCase()))
-    .map((url) => {
-      const [bank] = url.split('/').slice(-2);
-      banks[bank] = banks[bank] || [];
-      url = url.replace(directory, '');
-      banks[bank].push(url);
-      return url;
-    });
+  files = files.map((url) => {
+    const [bank] = url.split('/').slice(-2);
+    banks[bank] = banks[bank] || [];
+    url = url.replace(directory, '');
+    banks[bank].push(url);
+    return url;
+  });
   banks._base = `http://localhost:5432`;
   return { banks, files };
 }
