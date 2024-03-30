@@ -7,6 +7,7 @@ import http from 'http';
 import { join } from 'path';
 import os from 'os';
 
+// eslint-disable-next-line
 const LOG = !!process.env.LOG || false;
 
 console.log(
