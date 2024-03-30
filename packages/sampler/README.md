@@ -13,3 +13,10 @@ You can now load the samples via:
 ```js
 samples('http://localhost:5432')
 ```
+
+## Options
+
+```sh
+LOG=1 npx @strudel/sampler # adds logging
+PORT=5555 npx @strudel/sampler # changes port
+```
