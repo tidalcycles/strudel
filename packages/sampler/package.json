@@ -1,0 +1,19 @@
+{
+  "name": "@strudel/sampler",
+  "version": "0.0.5",
+  "description": "",
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bin": "./sample-server.mjs",
+  "type": "module",
+  "dependencies": {
+    "cowsay": "^1.6.0"
+  }
+}
