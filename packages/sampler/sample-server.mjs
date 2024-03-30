@@ -71,6 +71,7 @@ const server = http.createServer(async (req, res) => {
   readStream.pipe(res);
 });
 
+// eslint-disable-next-line
 const PORT = process.env.PORT || 5432;
 const IP_ADDRESS = '0.0.0.0';
 let IP;
@@ -86,6 +87,7 @@ Object.keys(networkInterfaces).forEach((key) => {
 
 if (!IP) {
   console.error("Unable to determine server's IP address.");
+  // eslint-disable-next-line
   process.exit(1);
 }
 
