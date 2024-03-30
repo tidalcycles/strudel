@@ -14,9 +14,9 @@
     "snapshot": "npm run pretest && vitest run -u --silent",
     "repl": "npm run prestart && cd website && npm run dev",
     "start": "npm run prestart && cd website && npm run dev",
-    "dev": "npm run prestart && cd website && npm run dev",
+    "dev": "npm run prestart && cd website && npm run dev & npm run sampler",
     "build": "npm run prebuild && cd website && npm run build",
-    "preview": "cd website && npm run preview",
+    "preview": "cd website && npm run preview & npm run sampler",
     "osc": "cd packages/osc && npm run server",
     "jsdoc": "jsdoc packages/ -c jsdoc/jsdoc.config.json",
     "jsdoc-json": "jsdoc packages/ --template ./node_modules/jsdoc-json --destination doc.json -c jsdoc/jsdoc.config.json",
@@ -25,6 +25,7 @@
     "format-check": "prettier --check .",
     "report-undocumented": "npm run jsdoc-json && node jsdoc/undocumented.mjs > undocumented.json",
     "check": "npm run format-check && npm run lint && npm run test",
+    "sampler": "cd samples && node ../packages/sampler/sample-server.mjs",
     "iclc": "cd paper && pandoc --template=pandoc/iclc.html --citeproc  --number-sections iclc2023.md -o iclc2023.html && pandoc --template=pandoc/iclc.latex --citeproc --number-sections iclc2023.md -o iclc2023.pdf"
   },
   "repository": {
