@@ -68,12 +68,13 @@ const server = http.createServer(async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     return res.end(JSON.stringify(banks));
   }
-  if (!files.includes(req.url)) {
+  let subpath = decodeURIComponent(req.url);
+  if (!files.includes(subpath)) {
     res.statusCode = 404;
     res.end('File not found');
     return;
   }
-  const filePath = join(directory, req.url);
+  const filePath = join(directory, subpath);
   const readStream = createReadStream(filePath);
   readStream.on('error', (err) => {
     res.statusCode = 500;
