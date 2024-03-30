@@ -8,11 +8,13 @@ export const defaultSettings = {
   activeFooter: 'intro',
   keybindings: 'codemirror',
   isBracketMatchingEnabled: true,
+  isBracketClosingEnabled: true,
   isLineNumbersDisplayed: true,
   isActiveLineHighlighted: true,
   isAutoCompletionEnabled: false,
   isTooltipEnabled: false,
   isFlashEnabled: true,
+  isSyncEnabled: false,
   isLineWrappingEnabled: false,
   isPatternHighlightingEnabled: true,
   theme: 'strudelTheme',
@@ -29,6 +31,8 @@ export const defaultSettings = {
 
 export const settingsMap = persistentMap('strudel-settings', defaultSettings);
 
+const parseBoolean = (booleanlike) => ([true, 'true'].includes(booleanlike) ? true : false);
+
 export function useSettings() {
   const state = useStore(settingsMap);
 
@@ -40,15 +44,17 @@ export function useSettings() {
   });
   return {
     ...state,
-    isZen: [true, 'true'].includes(state.isZen) ? true : false,
-    isBracketMatchingEnabled: [true, 'true'].includes(state.isBracketMatchingEnabled) ? true : false,
-    isLineNumbersDisplayed: [true, 'true'].includes(state.isLineNumbersDisplayed) ? true : false,
-    isActiveLineHighlighted: [true, 'true'].includes(state.isActiveLineHighlighted) ? true : false,
-    isAutoCompletionEnabled: [true, 'true'].includes(state.isAutoCompletionEnabled) ? true : false,
-    isPatternHighlightingEnabled: [true, 'true'].includes(state.isPatternHighlightingEnabled) ? true : false,
-    isTooltipEnabled: [true, 'true'].includes(state.isTooltipEnabled) ? true : false,
-    isLineWrappingEnabled: [true, 'true'].includes(state.isLineWrappingEnabled) ? true : false,
-    isFlashEnabled: [true, 'true'].includes(state.isFlashEnabled) ? true : false,
+    isZen: parseBoolean(state.isZen),
+    isBracketMatchingEnabled: parseBoolean(state.isBracketMatchingEnabled),
+    isBracketClosingEnabled: parseBoolean(state.isBracketClosingEnabled),
+    isLineNumbersDisplayed: parseBoolean(state.isLineNumbersDisplayed),
+    isActiveLineHighlighted: parseBoolean(state.isActiveLineHighlighted),
+    isAutoCompletionEnabled: parseBoolean(state.isAutoCompletionEnabled),
+    isPatternHighlightingEnabled: parseBoolean(state.isPatternHighlightingEnabled),
+    isTooltipEnabled: parseBoolean(state.isTooltipEnabled),
+    isLineWrappingEnabled: parseBoolean(state.isLineWrappingEnabled),
+    isFlashEnabled: parseBoolean(state.isFlashEnabled),
+    isSyncEnabled: parseBoolean(state.isSyncEnabled),
     fontSize: Number(state.fontSize),
     panelPosition: state.activeFooter !== '' ? state.panelPosition : 'bottom', // <-- keep this 'bottom' where it is!
     userPatterns: userPatterns,

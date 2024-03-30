@@ -27,6 +27,7 @@ import { persistentAtom } from '@nanostores/persistent';
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
   isBracketMatchingEnabled: (on) => (on ? bracketMatching({ brackets: '()[]{}<>' }) : []),
+  isBracketClosingEnabled: (on) => (on ? closeBrackets() : []),
   isLineNumbersDisplayed: (on) => (on ? lineNumbers() : []),
   theme,
   isAutoCompletionEnabled,
@@ -41,6 +42,7 @@ const compartments = Object.fromEntries(Object.keys(extensions).map((key) => [ke
 export const defaultSettings = {
   keybindings: 'codemirror',
   isBracketMatchingEnabled: false,
+  isBracketClosingEnabled: true,
   isLineNumbersDisplayed: true,
   isActiveLineHighlighted: false,
   isAutoCompletionEnabled: false,
@@ -76,7 +78,6 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
       widgetPlugin,
       // indentOnInput(), // works without. already brought with javascript extension?
       // bracketMatching(), // does not do anything
-      closeBrackets(),
       syntaxHighlighting(defaultHighlightStyle),
       history(),
       EditorView.updateListener.of((v) => onChange(v)),
@@ -308,6 +309,9 @@ export class StrudelMirror {
   }
   setLineNumbersDisplayed(enabled) {
     this.reconfigureExtension('isLineNumbersDisplayed', enabled);
+  }
+  setBracketClosingEnabled(enabled) {
+    this.reconfigureExtension('isBracketClosingEnabled', enabled);
   }
   setTheme(theme) {
     this.reconfigureExtension('theme', theme);

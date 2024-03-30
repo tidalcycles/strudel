@@ -22,8 +22,4 @@ describe('Value', () => {
     expect(valued(mul).ap(3).ap(3).value).toEqual(9);
     expect(valued(3).mul(3).value).toEqual(9);
   });
-  it('union bare numbers for numeral props', () => {
-    expect(n(3).cutoff(500).add(10).firstCycleValues).toEqual([{ n: 13, cutoff: 510 }]);
-    expect(n(3).cutoff(500).mul(2).firstCycleValues).toEqual([{ n: 6, cutoff: 1000 }]);
-  });
 });

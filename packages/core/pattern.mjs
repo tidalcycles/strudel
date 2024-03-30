@@ -542,7 +542,7 @@ export class Pattern {
    * @noAutocomplete
    */
   filterValues(value_test) {
-    return new Pattern((state) => this.query(state).filter((hap) => value_test(hap.value)));
+    return new Pattern((state) => this.query(state).filter((hap) => value_test(hap.value))).setTactus(this.tactus);
   }
 
   /**
@@ -1147,7 +1147,7 @@ Pattern.prototype.factories = {
   slowcat,
   fastcat,
   cat,
-  timeCat,
+  timecat,
   sequence,
   seq,
   polymeter,
@@ -1254,14 +1254,14 @@ function _stackWith(func, pats) {
 
 export function stackLeft(...pats) {
   return _stackWith(
-    (tactus, pats) => pats.map((pat) => (pat.tactus.eq(tactus) ? pat : timeCat(pat, gap(tactus.sub(pat.tactus))))),
+    (tactus, pats) => pats.map((pat) => (pat.tactus.eq(tactus) ? pat : timecat(pat, gap(tactus.sub(pat.tactus))))),
     pats,
   );
 }
 
 export function stackRight(...pats) {
   return _stackWith(
-    (tactus, pats) => pats.map((pat) => (pat.tactus.eq(tactus) ? pat : timeCat(gap(tactus.sub(pat.tactus)), pat))),
+    (tactus, pats) => pats.map((pat) => (pat.tactus.eq(tactus) ? pat : timecat(gap(tactus.sub(pat.tactus)), pat))),
     pats,
   );
 }
@@ -1274,7 +1274,7 @@ export function stackCentre(...pats) {
           return pat;
         }
         const g = gap(tactus.sub(pat.tactus).div(2));
-        return timeCat(g, pat, g);
+        return timecat(g, pat, g);
       }),
     pats,
   );
@@ -1364,13 +1364,13 @@ export function cat(...pats) {
  * the pattern's 'tactus', generally inferred by the mininotation.
  * @return {Pattern}
  * @example
- * timeCat([3,"e3"],[1, "g3"]).note()
+ * timecat([3,"e3"],[1, "g3"]).note()
  * // the same as "e3@3 g3".note()
  * @example
- * timeCat("bd sd cp","hh hh").sound()
+ * timecat("bd sd cp","hh hh").sound()
  * // the same as "bd sd cp hh hh".sound()
  */
-export function timeCat(...timepats) {
+export function timecat(...timepats) {
   const findtactus = (x) => (Array.isArray(x) ? x : [x.tactus, x]);
   timepats = timepats.map(findtactus);
   if (timepats.length == 1) {
@@ -1392,6 +1392,9 @@ export function timeCat(...timepats) {
   return result;
 }
 
+/** Deprecated alias for `timecat` */
+export const timeCat = timecat;
+
 /**
  * Allows to arrange multiple patterns together over multiple cycles.
  * Takes a variable number of arrays with two elements specifying the number of cycles and the pattern to use.
@@ -1406,7 +1409,7 @@ export function timeCat(...timepats) {
 export function arrange(...sections) {
   const total = sections.reduce((sum, [cycles]) => sum + cycles, 0);
   sections = sections.map(([cycles, section]) => [cycles, section.fast(cycles)]);
-  return timeCat(...sections).slow(total);
+  return timecat(...sections).slow(total);
 }
 
 export function fastcat(...pats) {
@@ -1418,14 +1421,20 @@ export function fastcat(...pats) {
   return result;
 }
 
+/** See `fastcat` */
+export function sequence(...pats) {
+  return fastcat(...pats);
+}
+
 /**
- * Concatenates patterns beatwise, similar to `timeCat`, but if an argument is a list, the whole pattern will be repeated for each element in the list.
+ * Concatenates patterns stepwise, according to their 'tactus'.
+ * Similar to `timecat`, but if an argument is a list, the whole pattern will be repeated for each element in the list.
  *
  * @return {Pattern}
  * @example
- * beatCat(["bd cp", "mt"], "bd").sound()
+ * stepcat(["bd cp", "mt"], "bd").sound()
  */
-export function beatCat(...groups) {
+export function stepcat(...groups) {
   groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
 
   const cycles = lcm(...groups.map((x) => Fraction(x.length)));
@@ -1436,14 +1445,9 @@ export function beatCat(...groups) {
   }
   result = result.filter((x) => x.tactus > 0);
   const tactus = result.reduce((a, b) => a.add(b.tactus), Fraction(0));
-  result = timeCat(...result);
+  result = timecat(...result);
   result.tactus = tactus;
   return result;
-}
-
-/** See `fastcat` */
-export function sequence(...pats) {
-  return fastcat(...pats);
 }
 
 /** Like **cat**, but the items are crammed into one cycle.

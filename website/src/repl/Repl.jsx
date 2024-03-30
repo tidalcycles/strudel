@@ -61,12 +61,12 @@ async function getModule(name) {
 
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || isIframe;
-  const { panelPosition, isZen } = useSettings();
+  const { panelPosition, isZen, isSyncEnabled } = useSettings();
   const init = useCallback(() => {
     const drawTime = [-2, 2];
     const drawContext = getDrawContext();
     const editor = new StrudelMirror({
-      sync: false,
+      sync: isSyncEnabled,
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       setInterval,
