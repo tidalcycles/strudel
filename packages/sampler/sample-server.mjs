@@ -5,6 +5,7 @@ import { createReadStream } from 'fs';
 import { readdir } from 'fs/promises';
 import http from 'http';
 import { join } from 'path';
+import os from 'os';
 
 console.log(
   cowsay.say({
@@ -70,7 +71,27 @@ const server = http.createServer(async (req, res) => {
   readStream.pipe(res);
 });
 
-const port = 5432;
-server.listen(port, () => {
-  console.log(`@strudel/sampler is running on http://localhost:${port}`);
+const PORT = process.env.PORT || 5432;
+const IP_ADDRESS = '0.0.0.0';
+let IP;
+const networkInterfaces = os.networkInterfaces();
+
+Object.keys(networkInterfaces).forEach((key) => {
+  networkInterfaces[key].forEach((networkInterface) => {
+    if (networkInterface.family === 'IPv4' && !networkInterface.internal) {
+      IP = networkInterface.address;
+    }
+  });
+});
+
+if (!IP) {
+  console.error("Unable to determine server's IP address.");
+  process.exit(1);
+}
+
+server.listen(PORT, IP_ADDRESS, () => {
+  console.log(`@strudel/sampler is running on 
+  http://localhost:${PORT}
+  http://${IP}:${PORT}
+`);
 });
