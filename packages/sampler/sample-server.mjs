@@ -7,6 +7,8 @@ import http from 'http';
 import { join } from 'path';
 import os from 'os';
 
+const LOG = !!process.env.LOG || false;
+
 console.log(
   cowsay.say({
     text: 'welcome to @strudel/sampler',
@@ -22,7 +24,7 @@ async function getFilesInDirectory(directory) {
     const fullPath = join(directory, dirent.name);
     if (dirent.isDirectory()) {
       if (dirent.name.startsWith('.')) {
-        console.warn(`ignore hidden folder: ${fullPath}`);
+        LOG && console.warn(`ignore hidden folder: ${fullPath}`);
         continue;
       }
       try {
@@ -30,9 +32,9 @@ async function getFilesInDirectory(directory) {
           ['wav', 'mp3', 'ogg'].includes(f.split('.').slice(-1)[0].toLowerCase()),
         );
         files = files.concat(subFiles);
-        console.log(`${dirent.name} (${subFiles.length})`);
+        LOG && console.log(`${dirent.name} (${subFiles.length})`);
       } catch (err) {
-        console.warn(`skipped due to error: ${fullPath}`);
+        LOG && console.warn(`skipped due to error: ${fullPath}`);
       }
     } else {
       files.push(fullPath);
