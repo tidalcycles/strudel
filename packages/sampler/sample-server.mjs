@@ -48,6 +48,7 @@ async function getBanks(directory) {
 
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  // eslint-disable-next-line
   const directory = process.cwd();
   const { banks, files } = await getBanks(directory);
   if (req.url === '/') {
