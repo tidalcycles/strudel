@@ -127,3 +127,6 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # END JetBrains -> BEGIN JetBrains
+
+samples/*
+!samples/README.md
