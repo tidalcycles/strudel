@@ -47,10 +47,10 @@ async function getBanks(directory) {
   return { banks, files };
 }
 
+const directory = process.cwd();
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   // eslint-disable-next-line
-  const directory = process.cwd();
   const { banks, files } = await getBanks(directory);
   if (req.url === '/') {
     res.setHeader('Content-Type', 'application/json');
@@ -92,8 +92,13 @@ if (!IP) {
 }
 
 server.listen(PORT, IP_ADDRESS, () => {
-  console.log(`@strudel/sampler is running on 
-  http://localhost:${PORT}
-  http://${IP}:${PORT}
+  console.log(`@strudel/sampler is now serving audio files from:
+ ${directory}
+ 
+To use them in the Strudel REPL, run:
+ samples('http://localhost:${PORT}')
+
+Or on a machine in the same network:
+ samples('http://${IP}:${PORT}')
 `);
 });
