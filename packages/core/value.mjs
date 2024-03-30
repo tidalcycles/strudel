@@ -10,7 +10,7 @@ import { logger } from './logger.mjs';
 export function unionWithObj(a, b, func) {
   if (b?.value !== undefined && Object.keys(b).length === 1) {
     // https://github.com/tidalcycles/strudel/issues/1026
-    logger(`[warn]: dangerous arithmetic`);
+    logger(`[warn]: Can't do arithmetic on control pattern.`);
     return a;
   }
   const common = Object.keys(a).filter((k) => Object.keys(b).includes(k));
