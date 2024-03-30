@@ -42,7 +42,7 @@ async function getBanks(directory) {
       banks[bank].push(url);
       return url;
     });
-  banks._base = `http:localhost:5432`;
+  banks._base = `http://localhost:5432`;
   return { banks, files };
 }
 
