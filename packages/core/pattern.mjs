@@ -1328,7 +1328,8 @@ export function slowcat(...pats) {
     const offset = span.begin.floor().sub(span.begin.div(pats.length).floor());
     return pat.withHapTime((t) => t.add(offset)).query(state.setSpan(span.withTime((t) => t.sub(offset))));
   };
-  return new Pattern(query).splitQueries();
+  const tactus = lcm(...pats.map((x) => x.tactus));
+  return new Pattern(query).splitQueries().setTactus(tactus);
 }
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle. Unlike slowcat, this version will skip cycles.
@@ -1358,42 +1359,6 @@ export function slowcatPrime(...pats) {
 export function cat(...pats) {
   return slowcat(...pats);
 }
-
-/** Sequences patterns like `seq`, but each pattern has a length, relative to the whole.
- * This length can either be provided as a [length, pattern] pair, or inferred from
- * the pattern's 'tactus', generally inferred by the mininotation.
- * @return {Pattern}
- * @example
- * timecat([3,"e3"],[1, "g3"]).note()
- * // the same as "e3@3 g3".note()
- * @example
- * timecat("bd sd cp","hh hh").sound()
- * // the same as "bd sd cp hh hh".sound()
- */
-export function timecat(...timepats) {
-  const findtactus = (x) => (Array.isArray(x) ? x : [x.tactus, x]);
-  timepats = timepats.map(findtactus);
-  if (timepats.length == 1) {
-    const result = reify(timepats[0][1]);
-    result.tactus = timepats[0][0];
-    return result;
-  }
-
-  const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
-  let begin = Fraction(0);
-  const pats = [];
-  for (const [time, pat] of timepats) {
-    const end = begin.add(time);
-    pats.push(reify(pat)._compress(begin.div(total), end.div(total)));
-    begin = end;
-  }
-  const result = stack(...pats);
-  result.tactus = total;
-  return result;
-}
-
-/** Deprecated alias for `timecat` */
-export const timeCat = timecat;
 
 /**
  * Allows to arrange multiple patterns together over multiple cycles.
@@ -1426,30 +1391,6 @@ export function sequence(...pats) {
   return fastcat(...pats);
 }
 
-/**
- * Concatenates patterns stepwise, according to their 'tactus'.
- * Similar to `timecat`, but if an argument is a list, the whole pattern will be repeated for each element in the list.
- *
- * @return {Pattern}
- * @example
- * stepcat(["bd cp", "mt"], "bd").sound()
- */
-export function stepcat(...groups) {
-  groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
-
-  const cycles = lcm(...groups.map((x) => Fraction(x.length)));
-
-  let result = [];
-  for (let cycle = 0; cycle < cycles; ++cycle) {
-    result.push(...groups.map((x) => (x.length == 0 ? silence : x[cycle % x.length])));
-  }
-  result = result.filter((x) => x.tactus > 0);
-  const tactus = result.reduce((a, b) => a.add(b.tactus), Fraction(0));
-  result = timecat(...result);
-  result.tactus = tactus;
-  return result;
-}
-
 /** Like **cat**, but the items are crammed into one cycle.
  * @synonyms fastcat, sequence
  * @example
@@ -1472,86 +1413,6 @@ function _sequenceCount(x) {
     return [fastcat(...x.map((a) => _sequenceCount(a)[0])), x.length];
   }
   return [reify(x), 1];
-}
-
-/**
- * Speeds a pattern up or down, to fit to the given metrical 'tactus'.
- * @example
- * s("bd sd cp").toTactus(4)
- * // The same as s("{bd sd cp}%4")
- */
-export const toTactus = register('toTactus', function (targetTactus, pat) {
-  return pat.fast(Fraction(targetTactus).div(pat.tactus));
-});
-
-export function _polymeterListSteps(steps, ...args) {
-  const seqs = args.map((a) => _sequenceCount(a));
-  if (seqs.length == 0) {
-    return silence;
-  }
-  if (steps == 0) {
-    steps = seqs[0][1];
-  }
-  const pats = [];
-  for (const seq of seqs) {
-    if (seq[1] == 0) {
-      continue;
-    }
-    if (steps == seq[1]) {
-      pats.push(seq[0]);
-    } else {
-      pats.push(seq[0]._fast(Fraction(steps).div(Fraction(seq[1]))));
-    }
-  }
-  return stack(...pats);
-}
-
-/**
- * Aligns one or more given patterns to the given number of steps per cycle.
- * This relies on patterns having coherent number of steps per cycle,
- *
- * @name polymeterSteps
- * @param  {number} steps how many items are placed in one cycle
- * @param  {any[]} patterns one or more patterns
- * @example
- * // the same as "{c d, e f g}%4"
- * polymeterSteps(4, "c d", "e f g")
- */
-export function polymeterSteps(steps, ...args) {
-  if (args.length == 0) {
-    return silence;
-  }
-  if (Array.isArray(args[0])) {
-    // Support old behaviour
-    return _polymeterListSteps(steps, ...args);
-  }
-
-  return polymeter(...args).toTactus(steps);
-}
-
-/**
- * Combines the given lists of patterns with the same pulse, creating polymeters when different sized sequences are used.
- * @synonyms pm
- * @example
- * // The same as "{c eb g, c2 g2}"
- * polymeter("c eb g", "c2 g2")
- *
- */
-export function polymeter(...args) {
-  if (Array.isArray(args[0])) {
-    // Support old behaviour
-    return _polymeterListSteps(0, ...args);
-  }
-
-  if (args.length == 0) {
-    return silence;
-  }
-  const tactus = args[0].tactus;
-  const [head, ...tail] = args;
-
-  const result = stack(head, ...tail.map((pat) => pat._slow(pat.tactus.div(tactus))));
-  result.tactus = tactus;
-  return result;
 }
 
 export const mask = curry((a, b) => reify(b).mask(a));
@@ -1635,6 +1496,7 @@ export function register(name, func, patternify = true, preserveTactus = false) 
       }
       if (preserveTactus) {
         result.tactus = pat.tactus;
+        result.list = pat.list;
       }
       return result;
     };
@@ -2070,10 +1932,12 @@ export const zoom = register('zoom', function (s, e, pat) {
   e = Fraction(e);
   s = Fraction(s);
   const d = e.sub(s);
+  const tactus = pat.tactus.mul(d);
   return pat
     .withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
     .withHapSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
-    .splitQueries();
+    .splitQueries()
+    .setTactus(tactus);
 });
 
 export const { zoomArc, zoomarc } = register(['zoomArc', 'zoomarc'], function (a, pat) {
@@ -2486,6 +2350,190 @@ export const hsl = register('hsl', (h, s, l, pat) => {
 Pattern.prototype.tag = function (tag) {
   return this.withContext((ctx) => ({ ...ctx, tags: (ctx.tags || []).concat([tag]) }));
 };
+
+//////////////////////////////////////////////////////////////////////
+// Tactus-related functions, i.e. ones that do stepwise
+// transformations
+
+/**
+ * Speeds a pattern up or down, to fit to the given metrical 'tactus'.
+ * @example
+ * s("bd sd cp").toTactus(4)
+ * // The same as s("{bd sd cp}%4")
+ */
+export const toTactus = register('toTactus', function (targetTactus, pat) {
+  return pat.fast(Fraction(targetTactus).div(pat.tactus));
+});
+
+export function _polymeterListSteps(steps, ...args) {
+  const seqs = args.map((a) => _sequenceCount(a));
+  if (seqs.length == 0) {
+    return silence;
+  }
+  if (steps == 0) {
+    steps = seqs[0][1];
+  }
+  const pats = [];
+  for (const seq of seqs) {
+    if (seq[1] == 0) {
+      continue;
+    }
+    if (steps == seq[1]) {
+      pats.push(seq[0]);
+    } else {
+      pats.push(seq[0]._fast(Fraction(steps).div(Fraction(seq[1]))));
+    }
+  }
+  return stack(...pats);
+}
+
+/**
+ * Aligns one or more given patterns to the given number of steps per cycle.
+ * This relies on patterns having coherent number of steps per cycle,
+ *
+ * @name polymeterSteps
+ * @param  {number} steps how many items are placed in one cycle
+ * @param  {any[]} patterns one or more patterns
+ * @example
+ * // the same as "{c d, e f g}%4"
+ * polymeterSteps(4, "c d", "e f g")
+ */
+export function polymeterSteps(steps, ...args) {
+  if (args.length == 0) {
+    return silence;
+  }
+  if (Array.isArray(args[0])) {
+    // Support old behaviour
+    return _polymeterListSteps(steps, ...args);
+  }
+
+  return polymeter(...args).toTactus(steps);
+}
+
+/**
+ * Combines the given lists of patterns with the same pulse, creating polymeters when different sized sequences are used.
+ * @synonyms pm
+ * @example
+ * // The same as "{c eb g, c2 g2}"
+ * polymeter("c eb g", "c2 g2")
+ *
+ */
+export function polymeter(...args) {
+  if (Array.isArray(args[0])) {
+    // Support old behaviour
+    return _polymeterListSteps(0, ...args);
+  }
+
+  if (args.length == 0) {
+    return silence;
+  }
+  const tactus = args[0].tactus;
+  const [head, ...tail] = args;
+
+  const result = stack(head, ...tail.map((pat) => pat._slow(pat.tactus.div(tactus))));
+  result.tactus = tactus;
+  return result;
+}
+
+/** Sequences patterns like `seq`, but each pattern has a length, relative to the whole.
+ * This length can either be provided as a [length, pattern] pair, or inferred from
+ * the pattern's 'tactus', generally inferred by the mininotation.
+ * @return {Pattern}
+ * @example
+ * timecat([3,"e3"],[1, "g3"]).note()
+ * // the same as "e3@3 g3".note()
+ * @example
+ * timecat("bd sd cp","hh hh").sound()
+ * // the same as "bd sd cp hh hh".sound()
+ */
+export function timecat(...timepats) {
+  const findtactus = (x) => (Array.isArray(x) ? x : [x.tactus, x]);
+  timepats = timepats.map(findtactus);
+  if (timepats.length == 1) {
+    const result = reify(timepats[0][1]);
+    result.tactus = timepats[0][0];
+    return result;
+  }
+
+  const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
+  let begin = Fraction(0);
+  const pats = [];
+  for (const [time, pat] of timepats) {
+    const end = begin.add(time);
+    pats.push(reify(pat)._compress(begin.div(total), end.div(total)));
+    begin = end;
+  }
+  const result = stack(...pats);
+  result.tactus = total;
+  return result;
+}
+
+/** Deprecated alias for `timecat` */
+export const timeCat = timecat;
+
+/**
+ * Concatenates patterns stepwise, according to their 'tactus'.
+ * Similar to `timecat`, but if an argument is a list, the whole pattern will be repeated for each element in the list.
+ *
+ * @return {Pattern}
+ * @example
+ * stepcat(["bd cp", "mt"], "bd").sound()
+ */
+export function stepcat(...groups) {
+  groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
+
+  const cycles = lcm(...groups.map((x) => Fraction(x.length)));
+
+  let result = [];
+  for (let cycle = 0; cycle < cycles; ++cycle) {
+    result.push(...groups.map((x) => (x.length == 0 ? silence : x[cycle % x.length])));
+  }
+  result = result.filter((x) => x.tactus > 0);
+  const tactus = result.reduce((a, b) => a.add(b.tactus), Fraction(0));
+  result = timecat(...result);
+  result.tactus = tactus;
+  return result;
+}
+
+export const wane = register('wane', function (i, pat) {
+  const fromFront = i < -1;
+  i = Math.abs(i);
+  if (pat.tactus <= i) {
+    return nothing;
+  }
+  const frac = Fraction(i).div(pat.tactus);
+  return fromFront ? pat.zoom(frac, Fraction(1)) : pat.zoom(Fraction(0), Fraction(1).sub(frac));
+});
+
+export const wax = register('wax', function (i, pat) {
+  return pat._wane(0 - i);
+});
+
+export const taper = register('taper', function (amount, times, pat) {
+  // repetitions not including the whole pat
+  times = times - 1;
+
+  if (times === 0) {
+    return pat;
+  }
+
+  const list = [];
+  const reverse = amount < 0;
+  amount = Fraction(Math.abs(amount));
+  const start = pat.tactus.sub(amount.mul(Fraction(times))).max(Fraction(0));
+
+  for (let i = 0; i < times; ++i) {
+    list.push(pat.zoom(0, start.add(amount.mul(Fraction(i))).div(pat.tactus)));
+  }
+  list.push(pat);
+  if (reverse) {
+    list.reverse();
+  }
+  const result = timecat(...list);
+  result.tactus = list.reduce((a, b) => a.add(b.tactus), Fraction(0));
+  result.list = list;
+  return result;
+});
 
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of
