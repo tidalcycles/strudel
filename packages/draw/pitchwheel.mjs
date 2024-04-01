@@ -15,20 +15,20 @@ const freq2angle = (freq, root) => {
 };
 
 export function pitchwheel({
-  time,
   haps,
   ctx,
   id,
-  connectdots = 0,
-  centerlines = 1,
   hapcircles = 1,
   circle = 0,
   edo = 12,
   root = c,
-  thickness = 4,
-  hapRadius = 4,
+  thickness = 3,
+  hapRadius = 6,
+  mode = 'flake',
   margin = 10,
 } = {}) {
+  const connectdots = mode === 'polygon';
+  const centerlines = mode === 'flake';
   const w = ctx.canvas.width;
   const h = ctx.canvas.height;
   ctx.clearRect(0, 0, w, h);
@@ -55,15 +55,17 @@ export function pitchwheel({
 
   if (edo) {
     Array.from({ length: edo }, (_, i) => {
-      ctx.beginPath();
       const angle = freq2angle(root * Math.pow(2, i / edo), root);
       const [x, y] = circlePos(centerX, centerY, radius, angle);
+      ctx.beginPath();
       ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
-      ctx.stroke();
+      ctx.fill();
     });
+    ctx.stroke();
   }
 
   let shape = [];
+  ctx.lineWidth = hapRadius;
   haps.forEach((hap) => {
     let freq;
     try {
@@ -74,11 +76,12 @@ export function pitchwheel({
     const angle = freq2angle(freq, root);
     const [x, y] = circlePos(centerX, centerY, radius, angle);
     const hapColor = hap.value.color || color;
-    shape.push([x, y]);
     ctx.strokeStyle = hapColor;
     ctx.fillStyle = hapColor;
     const { velocity = 1, gain = 1 } = hap.value || {};
-    ctx.globalAlpha = velocity * gain;
+    const alpha = velocity * gain;
+    ctx.globalAlpha = alpha;
+    shape.push([x, y, angle, hapColor, alpha]);
     ctx.beginPath();
     if (hapcircles) {
       ctx.moveTo(x + hapRadius, y);
@@ -94,10 +97,13 @@ export function pitchwheel({
 
   ctx.strokeStyle = color;
   ctx.globalAlpha = 1;
-  if (shape.length && connectdots) {
+  if (connectdots && shape.length) {
+    shape = shape.sort((a, b) => a[2] - b[2]);
     ctx.beginPath();
     ctx.moveTo(shape[0][0], shape[0][1]);
-    shape.forEach(([x, y]) => {
+    shape.forEach(([x, y, _, color, alpha]) => {
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = alpha;
       ctx.lineTo(x, y);
     });
     ctx.lineTo(shape[0][0], shape[0][1]);
@@ -109,7 +115,7 @@ export function pitchwheel({
 
 Pattern.prototype.pitchwheel = function (options = {}) {
   let { ctx = getDrawContext(), id = 1 } = options;
-  this.onPaint((_, time, haps) =>
+  return this.tag(id).onPaint((_, time, haps) =>
     pitchwheel({
       ...options,
       time,
@@ -118,5 +124,4 @@ Pattern.prototype.pitchwheel = function (options = {}) {
       id,
     }),
   );
-  return this;
 };
