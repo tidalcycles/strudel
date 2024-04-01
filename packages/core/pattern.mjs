@@ -2487,6 +2487,37 @@ Pattern.prototype.tag = function (tag) {
   return this.withContext((ctx) => ({ ...ctx, tags: (ctx.tags || []).concat([tag]) }));
 };
 
+/**
+ * Filters haps using the given function
+ * @name filter
+ * @param {Function} test function to test Hap
+ * @example
+ * s("hh!7 oh").filter(hap => hap.value.s==='hh')
+ */
+export const filter = register('filter', (test, pat) => pat.withHaps((haps) => haps.filter(test)));
+
+/**
+ * Filters haps by their begin time
+ * @name filterWhen
+ * @noAutocomplete
+ * @param {Function} test function to test Hap.whole.begin
+ */
+export const filterWhen = register('filterWhen', (test, pat) => pat.filter((h) => test(h.whole.begin)));
+
+/**
+ * Use within to apply a function to only a part of a pattern.
+ * @name within
+ * @param {number} start start within cycle (0 - 1)
+ * @param {number} end end within cycle (0 - 1). Must be > start
+ * @param {Function} func function to be applied to the sub-pattern
+ */
+export const within = register('within', (a, b, fn, pat) =>
+  stack(
+    fn(pat.filterWhen((t) => t.cyclePos() >= a && t.cyclePos() <= b)),
+    pat.filterWhen((t) => t.cyclePos() < a || t.cyclePos() > b),
+  ),
+);
+
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of
 // objects
