@@ -65,7 +65,12 @@ export function pitchwheel({
 
   let shape = [];
   haps.forEach((hap) => {
-    const freq = getFrequency(hap);
+    let freq;
+    try {
+      freq = getFrequency(hap);
+    } catch (err) {
+      return;
+    }
     const angle = freq2angle(freq, root);
     const [x, y] = circlePos(centerX, centerY, radius, angle);
     const hapColor = hap.value.color || color;
