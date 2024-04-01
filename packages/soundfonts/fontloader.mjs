@@ -1,3 +1,4 @@
+import { persistentMap } from '@nanostores/persistent';
 import { noteToMidi, freqToMidi, getSoundIndex } from '@strudel/core';
 import {
   getAudioContext,
@@ -9,6 +10,20 @@ import {
 } from '@strudel/webaudio';
 import gm from './gm.mjs';
 
+export const defaultFontloaderConfig = {
+  soundfontUrl: 'https://felixroos.github.io/webaudiofontdata/sound'
+}
+
+export const fontloaderConfigMap = persistentMap('strudel-config-fontloader', defaultFontloaderConfig);
+
+export function setSoundfontUrl(obj) {
+  fontloaderConfigMap.setKey('soundfontUrl', JSON.stringify(obj));
+}
+
+export function getSoundfontUrl() {
+  return JSON.parse(fontloaderConfigMap.get().soundfontUrl);
+}
+
 let loadCache = {};
 async function loadFont(name) {
   if (loadCache[name]) {
@@ -16,7 +31,7 @@ async function loadFont(name) {
   }
   const load = async () => {
     // TODO: make soundfont source configurable
-    const url = `https://felixroos.github.io/webaudiofontdata/sound/${name}.js`;
+    const url = `${getSoundfontUrl()}/${name}.js`;
     const preset = await fetch(url).then((res) => res.text());
     let [_, data] = preset.split('={');
     return eval('{' + data);
