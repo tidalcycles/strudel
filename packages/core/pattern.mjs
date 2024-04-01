@@ -63,6 +63,7 @@ export class Pattern {
   withValue(func) {
     const result = new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
     result.tactus = this.tactus;
+    result.list = this.list;
     return result;
   }
 
@@ -166,6 +167,7 @@ export class Pattern {
     };
     const result = new Pattern(query);
     result.tactus = this.tactus;
+    result.list = this.list;
     return result;
   }
 
@@ -453,6 +455,7 @@ export class Pattern {
   withHaps(func) {
     const result = new Pattern((state) => func(this.query(state), state));
     result.tactus = this.tactus;
+    result.list = this.list;
     return result;
   }
 
@@ -1506,6 +1509,7 @@ export function register(name, func, patternify = true, preserveTactus = false) 
       const result = func(...args);
       if (preserveTactus) {
         result.tactus = args[args.length - 1].tactus;
+        result.list = args[args.length - 1].list;
       }
       return result;
     };
@@ -1931,6 +1935,9 @@ export const late = register(
 export const zoom = register('zoom', function (s, e, pat) {
   e = Fraction(e);
   s = Fraction(s);
+  if (s.gte(e)) {
+    return nothing;
+  }
   const d = e.sub(s);
   const tactus = pat.tactus.mul(d);
   return pat
@@ -2459,6 +2466,9 @@ export function timecat(...timepats) {
   let begin = Fraction(0);
   const pats = [];
   for (const [time, pat] of timepats) {
+    if (Fraction(time).eq(0)) {
+      continue;
+    }
     const end = begin.add(time);
     pats.push(reify(pat)._compress(begin.div(total), end.div(total)));
     begin = end;
