@@ -1,4 +1,4 @@
-import { Pattern, midiToFreq } from '@strudel/core';
+import { Pattern, midiToFreq, getFrequency } from '@strudel/core';
 import { getTheme, getDrawContext } from './draw.mjs';
 
 const c = midiToFreq(36);
@@ -21,19 +21,20 @@ export function pitchwheel({
   id,
   connectdots = 0,
   centerlines = 1,
+  hapcircles = 1,
   circle = 0,
   edo = 12,
   root = c,
+  thickness = 4,
+  hapRadius = 4,
+  margin = 10,
 } = {}) {
   const w = ctx.canvas.width;
   const h = ctx.canvas.height;
   ctx.clearRect(0, 0, w, h);
   const color = getTheme().foreground;
-  const hapRadius = 10;
-  const margin = 10;
 
   const size = Math.min(w, h);
-  const thickness = 4;
   const radius = size / 2 - thickness / 2 - hapRadius - margin;
   const centerX = w / 2;
   const centerY = h / 2;
@@ -74,9 +75,11 @@ export function pitchwheel({
     const { velocity = 1, gain = 1 } = hap.value || {};
     ctx.globalAlpha = velocity * gain;
     ctx.beginPath();
-    ctx.moveTo(x + hapRadius, y);
-    ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
-    ctx.fill();
+    if (hapcircles) {
+      ctx.moveTo(x + hapRadius, y);
+      ctx.arc(x, y, hapRadius, 0, 2 * Math.PI);
+      ctx.fill();
+    }
     if (centerlines) {
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(x, y);
