@@ -1,16 +1,24 @@
 <!doctype html>
-<script src="https://unpkg.com/@strudel/web@1.0.3"></script>
-<button id="a">A</button>
-<button id="b">B</button>
-<button id="c">C</button>
-<button id="stop">stop</button>
-<script>
-  initStrudel({
-    prebake: () => samples('github:tidalcycles/dirt-samples'),
-  });
-  const click = (id, action) => document.getElementById(id).addEventListener('click', action);
-  click('a', () => evaluate(`s('bd,jvbass(3,8)').jux(rev)`));
-  click('b', () => s('bd*2,hh(3,4),jvbass(5,8,1)').jux(rev).play());
-  click('c', () => s('bd*2,hh(3,4),jvbass:[0 4](5,8,1)').jux(rev).stack(s('~ sd')).play());
-  click('stop', () => hush());
-</script>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <!-- <script src="../../packages/web/dist/index.js"></script> -->
+    <script src="https://unpkg.com/@strudel/web@1.0.3"></script>
+    <button id="a">A</button>
+    <button id="b">B</button>
+    <button id="c">C</button>
+    <button id="stop">stop</button>
+    <script>
+      initStrudel({
+        prebake: () => samples('github:tidalcycles/dirt-samples'),
+      });
+      const click = (id, action) => document.getElementById(id).addEventListener('click', action);
+      click('a', () => evaluate(`s('bd,jvbass(3,8)').jux(rev)`));
+      click('b', () => s('bd*2,hh(3,4),jvbass(5,8,1)').jux(rev).play());
+      click('c', () => s('bd*2,hh(3,4),jvbass:[0 4](5,8,1)').jux(rev).stack(s('~ sd')).play());
+      click('stop', () => hush());
+    </script>
+  </body>
+</html>
