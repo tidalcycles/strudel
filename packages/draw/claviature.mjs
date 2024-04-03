@@ -58,7 +58,7 @@ const parseNote = (note) => (typeof note === 'number' ? note : toMidi(note));
 export function claviature(haps, options) {
   const {
     ctx = getDrawContext(),
-    range = ['A1', 'C6'],
+    range = ['C1', 'D3'],
     scaleX = 1,
     scaleY = 1,
     palette = [getTheme().foreground, getTheme().background],
@@ -69,7 +69,10 @@ export function claviature(haps, options) {
     lowerHeight = 45,
   } = options || {};
   const offset = parseNote(range[0]);
-  const colorize = haps.map((hap) => ({ keys: [hap.value.note], color: hap.value.color || getTheme().selection }));
+  const colorizedMidi = haps.map((hap) => ({
+    keys: [parseNote(hap.value.note)],
+    color: hap.value.color || getTheme().selection,
+  }));
   /* const to = parseNote(range[1]);
   const totalKeys = to - offset + 1; */
   /* const width = totalKeys * topWidth + topWidth + strokeWidth * 2;
@@ -83,17 +86,13 @@ export function claviature(haps, options) {
 
   const cDiff = 12 - (offset % 12);
   const cOffset = whiteX(cDiff + offset);
-  const blackOffset = cOffset - cDiff * topWidth;
+  const blackOffset = cOffset;
 
-  const blackX = (index) => (index - offset) * topWidth + blackOffset;
+  const blackX = (midi) => (midi - offset) * topWidth + blackOffset;
 
-  const colorizedMidi = colorize.map((c) => ({
-    ...c,
-    keys: c.keys.map((key) => parseNote(key)),
-  }));
   const getColor = (midi) => colorizedMidi.find(({ keys }) => keys.includes(midi))?.color;
   ctx.clearRect(0, 0, ctx.canvas.width * 2, ctx.canvas.height * 2);
-  ctx.strokeStyle = stroke;
+  ctx.strokeStyle = 'white';
   ctx.strokeWidth = strokeWidth;
   white.forEach((midi) => {
     ctx.fillStyle = getColor(midi) ?? palette[1];

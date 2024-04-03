@@ -128,6 +128,7 @@ registerWidget('_scope', (id, options = {}, pat) => {
 });
 
 registerWidget('_claviature', (id, options = {}, pat) => {
+  options = { height: 75, width: 640, ...options };
   const ctx = getCanvasWidget(id, options).getContext('2d');
   return pat.tag(id).claviature({ ...options, ctx, id });
 });
