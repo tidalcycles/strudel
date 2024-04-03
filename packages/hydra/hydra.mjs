@@ -1,5 +1,5 @@
 import { getDrawContext } from '@strudel/draw';
-import { controls, getTime } from '@strudel/core';
+import { controls, getTime, reify } from '@strudel/core';
 
 let latestOptions;
 let hydra;
