@@ -47,4 +47,4 @@ export function clearHydra() {
   globalThis.shape = controls.shape;
 }
 
-export const H = (p) => () => p.queryArc(getTime(), getTime())[0].value;
+export const H = (p) => () => reify(p).queryArc(getTime(), getTime())[0].value;
