@@ -2364,6 +2364,10 @@ Pattern.prototype.tag = function (tag) {
  * // The same as s("{bd sd cp}%4")
  */
 export const toTactus = register('toTactus', function (targetTactus, pat) {
+  if (pat.tactus.eq(0)) {
+    // avoid divide by zero..
+    return nothing;
+  }
   return pat.fast(Fraction(targetTactus).div(pat.tactus));
 });
 
@@ -2500,18 +2504,37 @@ export function stepcat(...groups) {
   return result;
 }
 
-export const wane = register('wane', function (i, pat) {
-  const fromFront = i < -1;
-  i = Math.abs(i);
-  if (pat.tactus <= i) {
+export const wax = register('wax', function (i, pat) {
+  if (pat.tactus.lte(0)) {
     return nothing;
   }
-  const frac = Fraction(i).div(pat.tactus);
-  return fromFront ? pat.zoom(frac, Fraction(1)) : pat.zoom(Fraction(0), Fraction(1).sub(frac));
+  i = Fraction(i);
+  if (i.eq(0)) {
+    return nothing;
+  }
+  const flip = i < 0;
+  if (flip) {
+    i = i.abs();
+  }
+  const frac = i.div(pat.tactus);
+  if (frac.lte(0)) {
+    return nothing;
+  }
+  if (frac.gte(1)) {
+    return pat;
+  }
+  if (flip) {
+    return pat.zoom(Fraction(1).sub(frac), 1);
+  }
+  return pat.zoom(0, frac);
 });
 
-export const wax = register('wax', function (i, pat) {
-  return pat._wane(0 - i);
+export const wane = register('wane', function (i, pat) {
+  i = Fraction(i);
+  if (i.lt(0)) {
+    return pat.wax(Fraction(0).sub(pat.tactus.add(i)));
+  }
+  return pat.wax(pat.tactus.sub(i));
 });
 
 Pattern.prototype.taperlist = function (amount, times) {
@@ -2523,7 +2546,7 @@ Pattern.prototype.taperlist = function (amount, times) {
   }
 
   const list = [];
-  const reverse = amount < 0;
+  const reverse = amount > 0;
   amount = Fraction(Math.abs(amount));
   const start = pat.tactus.sub(amount.mul(Fraction(times))).max(Fraction(0));
 
