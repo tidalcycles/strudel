@@ -63,7 +63,6 @@ export class Pattern {
   withValue(func) {
     const result = new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
     result.tactus = this.tactus;
-    result.list = this.list;
     return result;
   }
 
@@ -167,7 +166,6 @@ export class Pattern {
     };
     const result = new Pattern(query);
     result.tactus = this.tactus;
-    result.list = this.list;
     return result;
   }
 
@@ -455,7 +453,6 @@ export class Pattern {
   withHaps(func) {
     const result = new Pattern((state) => func(this.query(state), state));
     result.tactus = this.tactus;
-    result.list = this.list;
     return result;
   }
 
@@ -1499,7 +1496,6 @@ export function register(name, func, patternify = true, preserveTactus = false) 
       }
       if (preserveTactus) {
         result.tactus = pat.tactus;
-        result.list = pat.list;
       }
       return result;
     };
@@ -1509,7 +1505,6 @@ export function register(name, func, patternify = true, preserveTactus = false) 
       const result = func(...args);
       if (preserveTactus) {
         result.tactus = args[args.length - 1].tactus;
-        result.list = args[args.length - 1].list;
       }
       return result;
     };
@@ -2519,8 +2514,8 @@ export const wax = register('wax', function (i, pat) {
   return pat._wane(0 - i);
 });
 
-export const taper = register('taper', function (amount, times, pat) {
-  // repetitions not including the whole pat
+Pattern.prototype.taperlist = function (amount, times) {
+  const pat = this;
   times = times - 1;
 
   if (times === 0) {
@@ -2539,9 +2534,14 @@ export const taper = register('taper', function (amount, times, pat) {
   if (reverse) {
     list.reverse();
   }
+  return list;
+};
+export const taperlist = (amount, times, pat) => pat.taperlist(amount, times);
+
+export const taper = register('taper', function (amount, times, pat) {
+  const list = pat.taperlist(amount, times);
   const result = timecat(...list);
   result.tactus = list.reduce((a, b) => a.add(b.tactus), Fraction(0));
-  result.list = list;
   return result;
 });
 
