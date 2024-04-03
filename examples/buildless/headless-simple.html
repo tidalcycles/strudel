@@ -2,16 +2,29 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-  </head>
-  <body>
     <!-- <script src="../../packages/web/dist/index.js"></script> -->
     <script src="https://unpkg.com/@strudel/web@1.0.3"></script>
-
+  </head>
+  <body style="background: #222">
     <button id="play">play</button>
     <button id="stop">stop</button>
     <script>
       strudel.initStrudel();
-      document.getElementById('play').addEventListener('click', () => evaluate('note("c a f e").jux(rev)'));
+      document.getElementById('play').addEventListener('click', () =>
+        evaluate(`
+//@title washover @by Switch Angel 
+//@social https://www.instagram.com/_switch_angel/
+
+n("{0 1 3 5 2 }%16")
+  .add(n(tri.range(0, 6).slow(3)))
+  .scale("C4:pentatonic")
+  .sound("sawtooth").att(saw.range(0, 0.05).fast(6))
+  .release(3).pan(rand).decay(rand.range(0.1, 0.3))
+  .lpf(tri.range(200, 8000).slow(5)).lpq(0)
+  .gain(.4).vib(1).vibmod(.1)
+  .scope({pos:.5})
+`),
+      );
       document.getElementById('stop').addEventListener('click', () => strudel.hush());
     </script>
   </body>
