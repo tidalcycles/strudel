@@ -5,7 +5,7 @@ export * from '@strudel/transpiler';
 export * from '@strudel/mini';
 export * from '@strudel/tonal';
 export * from '@strudel/webaudio';
-import { Pattern, evalScope } from '@strudel/core';
+import { Pattern, evalScope, setTime } from '@strudel/core';
 import { initAudioOnFirstClick, registerSynthSounds, webaudioScheduler } from '@strudel/webaudio';
 // import { registerSoundfonts } from '@strudel/soundfonts';
 import { evaluate as _evaluate } from '@strudel/transpiler';
@@ -33,11 +33,14 @@ export function initStrudel(options = {}) {
   miniAllStrings();
   const { prebake, ...schedulerOptions } = options;
 
+  scheduler = webaudioScheduler(schedulerOptions);
   initDone = (async () => {
     await defaultPrebake();
     await prebake?.();
+    return scheduler;
   })();
-  scheduler = webaudioScheduler(schedulerOptions);
+  setTime(() => scheduler.now());
+  return initDone;
 }
 
 window.initStrudel = initStrudel;
