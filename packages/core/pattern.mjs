@@ -2504,7 +2504,7 @@ export function stepcat(...groups) {
   return result;
 }
 
-export const wax = register('wax', function (i, pat) {
+export const stepwax = register('stepwax', function (i, pat) {
   if (pat.tactus.lte(0)) {
     return nothing;
   }
@@ -2529,12 +2529,12 @@ export const wax = register('wax', function (i, pat) {
   return pat.zoom(0, frac);
 });
 
-export const wane = register('wane', function (i, pat) {
+export const stepwane = register('stepwane', function (i, pat) {
   i = Fraction(i);
   if (i.lt(0)) {
-    return pat.wax(Fraction(0).sub(pat.tactus.add(i)));
+    return pat.stepwax(Fraction(0).sub(pat.tactus.add(i)));
   }
-  return pat.wax(pat.tactus.sub(i));
+  return pat.stepwax(pat.tactus.sub(i));
 });
 
 Pattern.prototype.taperlist = function (amount, times) {
@@ -2561,12 +2561,26 @@ Pattern.prototype.taperlist = function (amount, times) {
 };
 export const taperlist = (amount, times, pat) => pat.taperlist(amount, times);
 
-export const taper = register('taper', function (amount, times, pat) {
+export const steptaper = register('steptaper', function (amount, times, pat) {
   const list = pat.taperlist(amount, times);
   const result = timecat(...list);
   result.tactus = list.reduce((a, b) => a.add(b.tactus), Fraction(0));
   return result;
 });
+
+Pattern.prototype.stepthread = function (...many) {
+  return stepcat(
+    ...[].concat(
+      ...many.map((x, i) => [...many.slice(0, many.length - i), this, ...many.slice(many.length - i)]),
+      this,
+      ...many,
+    ),
+  );
+};
+
+export const stepthread = function (pat, ...many) {
+  return pat.stepthread(...many);
+};
 
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of
