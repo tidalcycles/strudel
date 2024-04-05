@@ -26,8 +26,7 @@ function createClock(
     // callback as long as we're inside the lookahead
     while (phase < lookahead) {
       phase = round ? Math.round(phase * precision) / precision : phase;
-      phase >= t && callback(phase, duration, tick, t);
-      phase < t && console.log('TOO LATE', phase); // what if latency is added from outside?
+      callback(phase, duration, tick, t); // callback has to skip / handle phase < t!
       phase += duration; // increment phase by duration
       tick++;
     }
