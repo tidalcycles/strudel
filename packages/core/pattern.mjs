@@ -2358,7 +2358,7 @@ Pattern.prototype.tag = function (tag) {
 // transformations
 
 /**
- * Speeds a pattern up or down, to fit to the given metrical 'tactus'.
+ * *EXPERIMENTAL* - Speeds a pattern up or down, to fit to the given metrical 'tactus'.
  * @example
  * s("bd sd cp").toTactus(4)
  * // The same as s("{bd sd cp}%4")
@@ -2417,7 +2417,7 @@ export function polymeterSteps(steps, ...args) {
 }
 
 /**
- * Combines the given lists of patterns with the same pulse, creating polymeters when different sized sequences are used.
+ * *EXPERIMENTAL* - Combines the given lists of patterns with the same pulse, creating polymeters when different sized sequences are used.
  * @synonyms pm
  * @example
  * // The same as "{c eb g, c2 g2}"
@@ -2481,7 +2481,7 @@ export function timecat(...timepats) {
 export const timeCat = timecat;
 
 /**
- * Concatenates patterns stepwise, according to their 'tactus'.
+ * *EXPERIMENTAL* - Concatenates patterns stepwise, according to their 'tactus'.
  * Similar to `timecat`, but if an argument is a list, the whole pattern will be repeated for each element in the list.
  *
  * @return {Pattern}
@@ -2504,6 +2504,9 @@ export function stepcat(...groups) {
   return result;
 }
 
+/**
+ * *EXPERIMENTAL* - Retains the given number of steps in a pattern (and dropping the rest), according to its 'tactus'.
+ */
 export const stepwax = register('stepwax', function (i, pat) {
   if (pat.tactus.lte(0)) {
     return nothing;
@@ -2529,6 +2532,9 @@ export const stepwax = register('stepwax', function (i, pat) {
   return pat.zoom(0, frac);
 });
 
+/**
+ * *EXPERIMENTAL* - Removes the given number of steps from a pattern, according to its 'tactus'.
+ */
 export const stepwane = register('stepwane', function (i, pat) {
   i = Fraction(i);
   if (i.lt(0)) {
@@ -2537,6 +2543,9 @@ export const stepwane = register('stepwane', function (i, pat) {
   return pat.stepwax(pat.tactus.sub(i));
 });
 
+/**
+ * *EXPERIMENTAL*
+ */
 Pattern.prototype.taperlist = function (amount, times) {
   const pat = this;
   times = times - 1;
@@ -2561,6 +2570,9 @@ Pattern.prototype.taperlist = function (amount, times) {
 };
 export const taperlist = (amount, times, pat) => pat.taperlist(amount, times);
 
+/**
+ * *EXPERIMENTAL*
+ */
 export const steptaper = register('steptaper', function (amount, times, pat) {
   const list = pat.taperlist(amount, times);
   const result = timecat(...list);
@@ -2568,7 +2580,10 @@ export const steptaper = register('steptaper', function (amount, times, pat) {
   return result;
 });
 
-Pattern.prototype.stepthread = function (...many) {
+/**
+ * *EXPERIMENTAL*
+ */
+Pattern.prototype.steptour = function (...many) {
   return stepcat(
     ...[].concat(
       ...many.map((x, i) => [...many.slice(0, many.length - i), this, ...many.slice(many.length - i)]),
@@ -2578,8 +2593,8 @@ Pattern.prototype.stepthread = function (...many) {
   );
 };
 
-export const stepthread = function (pat, ...many) {
-  return pat.stepthread(...many);
+export const steptour = function (pat, ...many) {
+  return pat.steptour(...many);
 };
 
 //////////////////////////////////////////////////////////////////////
