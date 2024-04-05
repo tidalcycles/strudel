@@ -274,7 +274,7 @@ export const superdough = async (value, t, hapDuration) => {
   // calculate absolute time
   t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
   if (t < ac.currentTime) {
-    console.log(
+    console.warn(
       `[superdough]: cannot schedule sounds in the past (target: ${t.toFixed(2)}, now: ${ac.currentTime.toFixed(2)})`,
     );
     return;
