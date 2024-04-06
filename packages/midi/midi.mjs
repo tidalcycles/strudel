@@ -120,7 +120,7 @@ Pattern.prototype.midi = function (output) {
     const device = getDevice(output, WebMidi.outputs);
     hap.ensureObjectValue();
     //magic number to get audio engine to line up, can probably be calculated somehow
-    const latency = 0.03;
+    const latency = 0.034;
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
     const timeOffsetString = `+${(targetTime - currentTime + latency) * 1000}`;
 

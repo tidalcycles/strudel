@@ -9,7 +9,7 @@ Pattern.prototype.midi = function (output) {
   return this.onTrigger((time_deprecate, hap, currentTime, cps, targetTime) => {
     let { note, nrpnn, nrpv, ccn, ccv, velocity = 0.9, gain = 1 } = hap.value;
     //magic number to get audio engine to line up, can probably be calculated somehow
-    const latency = 0.03;
+    const latency = 0.034;
     const offset = (targetTime - currentTime + latency) * 1000;
     velocity = Math.floor(gain * velocity * 100);
     const duration = Math.floor((hap.duration.valueOf() / cps) * 1000 - 10);
