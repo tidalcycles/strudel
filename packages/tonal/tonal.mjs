@@ -96,18 +96,37 @@ function scaleOffset(scale, offset, note) {
 
 export const transpose = register('transpose', function (intervalOrSemitones, pat) {
   return pat.withHap((hap) => {
-    const interval = !isNaN(Number(intervalOrSemitones))
-      ? Interval.fromSemitones(intervalOrSemitones /*  as number */)
-      : String(intervalOrSemitones);
-    if (typeof hap.value === 'number') {
-      const semitones = typeof interval === 'string' ? Interval.semitones(interval) || 0 : interval;
-      return hap.withValue(() => hap.value + semitones);
+    const note = hap.value.note ?? hap.value;
+    if (typeof note === 'number') {
+      // note is a number, so just add the number semitones of the interval
+      let semitones;
+      if (typeof intervalOrSemitones === 'number') {
+        semitones = intervalOrSemitones;
+      } else if (typeof intervalOrSemitones === 'string') {
+        semitones = Interval.semitones(intervalOrSemitones) || 0;
+      }
+      const targetNote = note + semitones;
+      if (typeof hap.value === 'object') {
+        return hap.withValue(() => ({ ...hap.value, note: targetNote }));
+      }
+      return hap.withValue(() => targetNote);
     }
-    if (typeof hap.value === 'object')
-      return hap.withValue(() => ({ ...hap.value, note: Note.simplify(Note.transpose(hap.value.note, interval)) }));
+    if (typeof note !== 'string' || !isNote(note)) {
+      logger(`[tonal] transpose: not a note "${note}"`, 'warning');
+      return hap;
+    }
+    // note is a string, so we might be able to preserve harmonics if interval is a string as well
+    const interval = !isNaN(Number(intervalOrSemitones))
+      ? Interval.fromSemitones(intervalOrSemitones)
+      : String(intervalOrSemitones);
     // TODO: move simplify to player to preserve enharmonics
     // tone.js doesn't understand multiple sharps flats e.g. F##3 has to be turned into G3
-    return hap.withValue(() => Note.simplify(Note.transpose(hap.value, interval)));
+    // TODO: check if this is still relevant..
+    const targetNote = Note.simplify(Note.transpose(note, interval));
+    if (typeof hap.value === 'object') {
+      return hap.withValue(() => ({ ...hap.value, note: targetNote }));
+    }
+    return hap.withValue(() => targetNote);
   });
 });
 
