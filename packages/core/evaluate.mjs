@@ -34,6 +34,7 @@ function safeEval(str, options = {}) {
     str = `(async ()=>${str})()`;
   }
   const body = `"use strict";return (${str})`;
+  console.log(body);
   return Function(body)();
 }
 
@@ -48,5 +49,6 @@ export const evaluate = async (code, transpiler) => {
   // if no transpiler is given, we expect a single instruction (!wrapExpression)
   const options = { wrapExpression: !!transpiler };
   let evaluated = await safeEval(code, options);
+  console.log(evaluated);
   return { mode: 'javascript', pattern: evaluated, meta };
 };

@@ -59,18 +59,19 @@ export class NeoCyclist {
         end,
         tickdeadline,
         cycle,
+        phase,
       } = payload;
       this.cps = cps;
       this.cycle = cycle;
 
       setTimeReference(num_seconds_at_cps_change, num_seconds_since_cps_change, tickdeadline);
 
-      processHaps(begin, end, num_cycles_at_cps_change, num_seconds_at_cps_change);
+      processHaps(begin, end, num_cycles_at_cps_change, num_seconds_at_cps_change, phase);
 
       this.time_at_last_tick_message = this.getTime();
     };
 
-    const processHaps = (begin, end, num_cycles_at_cps_change, seconds_at_cps_change) => {
+    const processHaps = (begin, end, num_cycles_at_cps_change, seconds_at_cps_change, phase) => {
       if (this.started === false) {
         return;
       }
@@ -85,7 +86,8 @@ export class NeoCyclist {
             this.latency +
             this.worker_time_dif;
           const duration = hap.duration / this.cps;
-          onTrigger?.(hap, 0, duration, this.cps, targetTime);
+          const deadline = targetTime - phase;
+          onTrigger?.(hap, deadline, duration, this.cps, targetTime);
         }
       });
     };
