@@ -156,6 +156,7 @@ export function repl({
       return pattern;
     } catch (err) {
       logger(`[eval] error: ${err.message}`, 'error');
+      console.error(err);
       updateState({ evalError: err, pending: false });
       onEvalError?.(err);
     }

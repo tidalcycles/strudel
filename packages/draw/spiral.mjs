@@ -1,4 +1,5 @@
 import { Pattern } from '@strudel/core';
+import { getTheme } from './draw.mjs';
 
 // polar coords -> xy
 function fromPolar(angle, radius, cx, cy) {
@@ -19,7 +20,7 @@ function spiralSegment(options) {
     cy = 100,
     rotate = 0,
     thickness = margin / 2,
-    color = 'steelblue',
+    color = getTheme().foreground,
     cap = 'round',
     stretch = 1,
     fromOpacity = 1,
@@ -61,7 +62,8 @@ function drawSpiral(options) {
     playheadThickness = thickness,
     padding = 0,
     steady = 1,
-    inactiveColor = '#ffffff50',
+    activeColor = getTheme().foreground,
+    inactiveColor = getTheme().gutterForeground,
     colorizeInactive = 0,
     fade = true,
     // logSpiral = true,
@@ -73,7 +75,7 @@ function drawSpiral(options) {
   } = options;
 
   if (id) {
-    haps = haps.filter((hap) => hap.context.id === id);
+    haps = haps.filter((hap) => hap.hasTag(id));
   }
 
   const [w, h] = [ctx.canvas.width, ctx.canvas.height];
@@ -102,7 +104,8 @@ function drawSpiral(options) {
     const isActive = hap.whole.begin <= time && hap.endClipped > time;
     const from = hap.whole.begin - time + inset;
     const to = hap.endClipped - time + inset - padding;
-    const color = hap.value?.color;
+    const hapColor = hap.value?.color || activeColor;
+    const color = colorizeInactive || isActive ? hapColor : inactiveColor;
     const opacity = fade ? 1 - Math.abs((hap.whole.begin - time) / min) : 1;
     spiralSegment({
       ctx,
@@ -110,7 +113,7 @@ function drawSpiral(options) {
       from,
       to,
       rotate,
-      color: colorizeInactive || isActive ? color : inactiveColor,
+      color,
       fromOpacity: opacity,
       toOpacity: opacity,
     });

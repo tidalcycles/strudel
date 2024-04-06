@@ -37,6 +37,7 @@ import whitescreen, { settings as whitescreenSettings } from './themes/whitescre
 import teletext, { settings as teletextSettings } from './themes/teletext';
 import algoboy, { settings as algoboySettings } from './themes/algoboy';
 import terminal, { settings as terminalSettings } from './themes/terminal';
+import { setTheme } from '@strudel/draw';
 
 export const themes = {
   strudelTheme,
@@ -513,6 +514,7 @@ export function activateTheme(name) {
         .map(([key, value]) => `--${key}: ${value} !important;`)
         .join('\n')}
     }`;
+  setTheme(themeSettings);
   // tailwind dark mode
   if (themeSettings.light) {
     document.documentElement.classList.remove('dark');

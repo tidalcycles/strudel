@@ -1119,21 +1119,21 @@ describe('Pattern', () => {
       );
     });
   });
-  describe('weight', () => {
+  describe('tactus', () => {
     it('Is correctly preserved/calculated through transformations', () => {
-      expect(sequence(0, 1, 2, 3).linger(4).weight).toStrictEqual(Fraction(4));
-      expect(sequence(0, 1, 2, 3).iter(4).weight).toStrictEqual(Fraction(4));
-      expect(sequence(0, 1, 2, 3).fast(4).weight).toStrictEqual(Fraction(16));
-      expect(sequence(0, 1, 2, 3).hurry(4).weight).toStrictEqual(Fraction(16));
-      expect(sequence(0, 1, 2, 3).rev().weight).toStrictEqual(Fraction(4));
-      expect(sequence(1).segment(10).weight).toStrictEqual(Fraction(10));
-      expect(sequence(1, 0, 1).invert().weight).toStrictEqual(Fraction(3));
-      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).chop(4).weight).toStrictEqual(Fraction(8));
-      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).striate(4).weight).toStrictEqual(Fraction(8));
-      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).slice(4, sequence(0, 1, 2, 3)).weight).toStrictEqual(
+      expect(sequence(0, 1, 2, 3).linger(4).tactus).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).iter(4).tactus).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).fast(4).tactus).toStrictEqual(Fraction(16));
+      expect(sequence(0, 1, 2, 3).hurry(4).tactus).toStrictEqual(Fraction(16));
+      expect(sequence(0, 1, 2, 3).rev().tactus).toStrictEqual(Fraction(4));
+      expect(sequence(1).segment(10).tactus).toStrictEqual(Fraction(10));
+      expect(sequence(1, 0, 1).invert().tactus).toStrictEqual(Fraction(3));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).chop(4).tactus).toStrictEqual(Fraction(8));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).striate(4).tactus).toStrictEqual(Fraction(8));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).slice(4, sequence(0, 1, 2, 3)).tactus).toStrictEqual(
         Fraction(4),
       );
-      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).splice(4, sequence(0, 1, 2, 3)).weight).toStrictEqual(
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).splice(4, sequence(0, 1, 2, 3)).tactus).toStrictEqual(
         Fraction(4),
       );
     });

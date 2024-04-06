@@ -61,19 +61,12 @@ async function getModule(name) {
 
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || isIframe;
-  const { panelPosition, isZen } = useSettings();
+  const { panelPosition, isZen, isSyncEnabled } = useSettings();
   const init = useCallback(() => {
     const drawTime = [-2, 2];
     const drawContext = getDrawContext();
-    const onDraw = (haps, time, frame, painters) => {
-      painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
-      painters?.forEach((painter) => {
-        // ctx time haps drawTime paintOptions
-        painter(drawContext, time, haps, drawTime, { clear: false });
-      });
-    };
     const editor = new StrudelMirror({
-      sync: true,
+      sync: isSyncEnabled,
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       setInterval,
@@ -84,7 +77,7 @@ export function Repl({ embedded = false }) {
       initialCode: '// LOADING',
       pattern: silence,
       drawTime,
-      onDraw,
+      drawContext,
       prebake: async () => Promise.all([modulesLoading, presets]),
       onUpdateState: (state) => {
         setReplState({ ...state });

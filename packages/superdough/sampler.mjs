@@ -194,6 +194,9 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
     if (sampleMap.startsWith('github:')) {
       sampleMap = githubPath(sampleMap, 'strudel.json');
     }
+    if (sampleMap.startsWith('local:')) {
+      sampleMap = `http://localhost:5432`;
+    }
     if (sampleMap.startsWith('shabda:')) {
       let [_, path] = sampleMap.split('shabda:');
       sampleMap = `https://shabda.ndre.gr/${path}.json?strudel=1`;
