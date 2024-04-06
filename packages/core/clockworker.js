@@ -46,7 +46,6 @@ const sendTick = (phase, duration, tick, time) => {
     num_seconds_at_cps_change,
     num_seconds_since_cps_change,
     cycle,
-    phase,
   });
   num_ticks_since_cps_change++;
 };

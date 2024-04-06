@@ -12,6 +12,7 @@ export class NeoCyclist {
     this.cps = 0.5;
     this.lastTick = 0; // absolute time when last tick (clock callback) happened
     this.getTime = getTime; // get absolute time
+    this.time_at_last_tick_message = 0;
 
     this.num_cycles_at_cps_change = 0;
     this.onToggle = onToggle;
@@ -59,19 +60,18 @@ export class NeoCyclist {
         end,
         tickdeadline,
         cycle,
-        phase,
       } = payload;
       this.cps = cps;
       this.cycle = cycle;
 
       setTimeReference(num_seconds_at_cps_change, num_seconds_since_cps_change, tickdeadline);
 
-      processHaps(begin, end, num_cycles_at_cps_change, num_seconds_at_cps_change, phase);
+      processHaps(begin, end, num_cycles_at_cps_change, num_seconds_at_cps_change);
 
       this.time_at_last_tick_message = this.getTime();
     };
 
-    const processHaps = (begin, end, num_cycles_at_cps_change, seconds_at_cps_change, phase) => {
+    const processHaps = (begin, end, num_cycles_at_cps_change, seconds_at_cps_change) => {
       if (this.started === false) {
         return;
       }
@@ -86,8 +86,7 @@ export class NeoCyclist {
             this.latency +
             this.worker_time_dif;
           const duration = hap.duration / this.cps;
-          const deadline = targetTime - phase;
-          onTrigger?.(hap, deadline, duration, this.cps, targetTime);
+          onTrigger?.(hap, 0, duration, this.cps, targetTime);
         }
       });
     };

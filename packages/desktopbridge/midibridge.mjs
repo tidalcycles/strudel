@@ -6,7 +6,7 @@ const OFF_MESSAGE = 0x80;
 const CC_MESSAGE = 0xb0;
 
 Pattern.prototype.midi = function (output) {
-  return this.onTrigger((time, hap, currentTime, cps, targetTime) => {
+  return this.onTrigger((time_deprecate, hap, currentTime, cps, targetTime) => {
     let { note, nrpnn, nrpv, ccn, ccv, velocity = 0.9, gain = 1 } = hap.value;
     //magic number to get audio engine to line up, can probably be calculated somehow
     const latency = 0.03;
