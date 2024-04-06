@@ -1,5 +1,5 @@
 import { Pattern, clamp } from '@strudel/core';
-import { getDrawContext } from '../draw/index.mjs';
+import { getDrawContext, getTheme } from '@strudel/draw';
 import { analysers, getAnalyzerData } from 'superdough';
 
 export function drawTimeScope(
@@ -132,10 +132,13 @@ Pattern.prototype.fscope = function (config = {}) {
  * @example
  * s("sawtooth").scope()
  */
+let latestColor = {};
 Pattern.prototype.tscope = function (config = {}) {
   let id = config.id ?? 1;
   return this.analyze(id).draw(
-    () => {
+    (haps) => {
+      config.color = haps[0]?.value?.color || getTheme().foreground;
+      latestColor[id] = config.color;
       clearScreen(config.smear, '0,0,0', config.ctx);
       drawTimeScope(analysers[id], config);
     },

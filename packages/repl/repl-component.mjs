@@ -41,17 +41,8 @@ if (typeof HTMLElement !== 'undefined') {
         initialCode: '// LOADING',
         pattern: silence,
         drawTime,
-        onDraw: (haps, time, frame, painters) => {
-          painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
-          painters?.forEach((painter) => {
-            // ctx time haps drawTime paintOptions
-            painter(drawContext, time, haps, drawTime, { clear: false });
-          });
-        },
+        drawContext,
         prebake,
-        afterEval: ({ code }) => {
-          // window.location.hash = '#' + code2hash(code);
-        },
         onUpdateState: (state) => {
           const event = new CustomEvent('update', {
             detail: state,

@@ -27,6 +27,7 @@ import { persistentAtom } from '@nanostores/persistent';
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
   isBracketMatchingEnabled: (on) => (on ? bracketMatching({ brackets: '()[]{}<>' }) : []),
+  isBracketClosingEnabled: (on) => (on ? closeBrackets() : []),
   isLineNumbersDisplayed: (on) => (on ? lineNumbers() : []),
   theme,
   isAutoCompletionEnabled,
@@ -41,6 +42,7 @@ const compartments = Object.fromEntries(Object.keys(extensions).map((key) => [ke
 export const defaultSettings = {
   keybindings: 'codemirror',
   isBracketMatchingEnabled: false,
+  isBracketClosingEnabled: true,
   isLineNumbersDisplayed: true,
   isActiveLineHighlighted: false,
   isAutoCompletionEnabled: false,
@@ -76,7 +78,6 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
       widgetPlugin,
       // indentOnInput(), // works without. already brought with javascript extension?
       // bracketMatching(), // does not do anything
-      closeBrackets(),
       syntaxHighlighting(defaultHighlightStyle),
       history(),
       EditorView.updateListener.of((v) => onChange(v)),
@@ -128,6 +129,7 @@ export class StrudelMirror {
       id,
       initialCode = '',
       onDraw,
+      drawContext,
       drawTime = [0, 0],
       autodraw,
       prebake,
@@ -140,13 +142,14 @@ export class StrudelMirror {
     this.widgets = [];
     this.painters = [];
     this.drawTime = drawTime;
-    this.onDraw = onDraw;
+    this.drawContext = drawContext;
+    this.onDraw = onDraw || this.draw;
     this.id = id || s4();
 
     this.drawer = new Drawer((haps, time) => {
-      const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.endClipped);
+      const currentFrame = haps.filter((hap) => hap.isActive(time));
       this.highlight(currentFrame, time);
-      this.onDraw?.(haps, time, currentFrame, this.painters);
+      this.onDraw(haps, time, this.painters);
     }, drawTime);
 
     this.prebaked = prebake();
@@ -236,6 +239,9 @@ export class StrudelMirror {
     // when no painters are set, [0,0] is enough (just highlighting)
     this.drawer.setDrawTime(this.painters.length ? this.drawTime : [0, 0]);
   }
+  draw(haps, time) {
+    this.painters?.forEach((painter) => painter(this.drawContext, time, haps, this.drawTime));
+  }
   async drawFirstFrame() {
     if (!this.onDraw) {
       return;
@@ -246,7 +252,7 @@ export class StrudelMirror {
       await this.repl.evaluate(this.code, false);
       this.drawer.invalidate(this.repl.scheduler, -0.001);
       // draw at -0.001 to avoid haps at 0 to be visualized as active
-      this.onDraw?.(this.drawer.visibleHaps, -0.001, [], this.painters);
+      this.onDraw?.(this.drawer.visibleHaps, -0.001, this.painters);
     } catch (err) {
       console.warn('first frame could not be painted');
     }
@@ -303,6 +309,9 @@ export class StrudelMirror {
   }
   setLineNumbersDisplayed(enabled) {
     this.reconfigureExtension('isLineNumbersDisplayed', enabled);
+  }
+  setBracketClosingEnabled(enabled) {
+    this.reconfigureExtension('isBracketClosingEnabled', enabled);
   }
   setTheme(theme) {
     this.reconfigureExtension('theme', theme);

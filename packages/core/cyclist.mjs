@@ -37,11 +37,16 @@ export class Cyclist {
           this.lastBegin = begin;
           const end = this.num_cycles_at_cps_change + num_cycles_since_cps_change;
           this.lastEnd = end;
+          this.lastTick = phase;
+
+          if (phase < t) {
+            // avoid querying haps that are in the past anyway
+            console.log(`skip query: too late`);
+            return;
+          }
 
           // query the pattern for events
           const haps = this.pattern.queryArc(begin, end, { _cps: this.cps });
-
-          this.lastTick = phase;
 
           haps.forEach((hap) => {
             if (hap.hasOnset()) {
@@ -67,6 +72,9 @@ export class Cyclist {
     );
   }
   now() {
+    if (!this.started) {
+      return 0;
+    }
     const secondsSinceLastTick = this.getTime() - this.lastTick - this.clock.duration;
     return this.lastBegin + secondsSinceLastTick * this.cps; // + this.clock.minLatency;
   }

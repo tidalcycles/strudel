@@ -53,10 +53,12 @@ export function transpiler(input, options = {}) {
         return this.replace(sliderWithLocation(node));
       }
       if (isWidgetMethod(node)) {
+        const type = node.callee.property.name;
+        const index = widgets.filter((w) => w.type === type).length;
         const widgetConfig = {
           to: node.end,
-          index: widgets.length,
-          type: node.callee.property.name,
+          index,
+          type,
         };
         emitWidgets && widgets.push(widgetConfig);
         return this.replace(widgetWithLocation(node, widgetConfig));

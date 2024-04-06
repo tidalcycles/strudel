@@ -5,14 +5,13 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { curry } from './util.mjs';
+import { logger } from './logger.mjs';
 
 export function unionWithObj(a, b, func) {
-  if (typeof b?.value === 'number') {
-    // https://github.com/tidalcycles/strudel/issues/262
-    const numKeys = Object.keys(a).filter((k) => typeof a[k] === 'number');
-    const numerals = Object.fromEntries(numKeys.map((k) => [k, b.value]));
-    b = Object.assign(b, numerals);
-    delete b.value;
+  if (b?.value !== undefined && Object.keys(b).length === 1) {
+    // https://github.com/tidalcycles/strudel/issues/1026
+    logger(`[warn]: Can't do arithmetic on control pattern.`);
+    return a;
   }
   const common = Object.keys(a).filter((k) => Object.keys(b).includes(k));
   return Object.assign({}, a, b, Object.fromEntries(common.map((k) => [k, func(a[k], b[k])])));

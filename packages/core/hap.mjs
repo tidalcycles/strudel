@@ -49,6 +49,27 @@ export class Hap {
     return this.whole.begin.add(this.duration);
   }
 
+  isActive(currentTime) {
+    return this.whole.begin <= currentTime && this.endClipped >= currentTime;
+  }
+
+  isInPast(currentTime) {
+    return currentTime > this.endClipped;
+  }
+  isInNearPast(margin, currentTime) {
+    return currentTime - margin <= this.endClipped;
+  }
+
+  isInFuture(currentTime) {
+    return currentTime < this.whole.begin;
+  }
+  isInNearFuture(margin, currentTime) {
+    return currentTime < this.whole.begin && currentTime > this.whole.begin - margin;
+  }
+  isWithinTime(min, max) {
+    return this.whole.begin <= max && this.endClipped >= min;
+  }
+
   wholeOrPart() {
     return this.whole ? this.whole : this.part;
   }
@@ -68,6 +89,10 @@ export class Hap {
     // Test whether the hap contains the onset, i.e that
     // the beginning of the part is the same as that of the whole timespan."""
     return this.whole != undefined && this.whole.begin.equals(this.part.begin);
+  }
+
+  hasTag(tag) {
+    return this.context.tags?.includes(tag);
   }
 
   resolveState(state) {

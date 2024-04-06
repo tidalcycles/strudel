@@ -15,6 +15,18 @@
   src: url('/fonts/galactico/Galactico-Basic.otf');
 }
 @font-face {
+  font-family: 'JetBrains';
+  src: url('/fonts/JetBrains/JetBrainsMono.woff2');
+}
+@font-face {
+  font-family: 'Monocraft';
+  src: url('/fonts/Monocraft/Monocraft.ttf');
+}
+@font-face {
+  font-family: 'Hack';
+  src: url('/fonts/Hack/Hack-Regular.ttf');
+}
+@font-face {
   font-family: 'we-come-in-peace';
   src: url('/fonts/we-come-in-peace/we-come-in-peace-bb.regular.ttf');
 }
