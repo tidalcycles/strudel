@@ -112,17 +112,17 @@ Pattern.prototype.midi = function (output) {
       logger(`Midi device disconnected! Available: ${getMidiDeviceNamesString(outputs)}`),
   });
 
-  return this.onTrigger((time, hap, currentTime, cps) => {
+  return this.onTrigger((time_deprecate, hap, currentTime, cps, targetTime) => {
     if (!WebMidi.enabled) {
       console.log('not enabled');
       return;
     }
     const device = getDevice(output, WebMidi.outputs);
     hap.ensureObjectValue();
-
-    const offset = (time - currentTime) * 1000;
+    //magic number to get audio engine to line up, can probably be calculated somehow
+    const latency = 0.034;
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
-    const timeOffsetString = `+${offset}`;
+    const timeOffsetString = `+${(targetTime - currentTime + latency) * 1000}`;
 
     // destructure value
     let { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd, gain = 1, velocity = 0.9 } = hap.value;
@@ -130,7 +130,7 @@ Pattern.prototype.midi = function (output) {
     velocity = gain * velocity;
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
-    const duration = Math.floor((hap.duration.valueOf() / cps) * 1000 - 10);
+    const duration = (hap.duration.valueOf() / cps) * 1000 - 10;
     if (note != null) {
       const midiNumber = typeof note === 'number' ? note : noteToMidi(note);
       const midiNote = new Note(midiNumber, { attack: velocity, duration });
