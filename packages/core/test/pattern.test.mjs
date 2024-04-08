@@ -1138,4 +1138,28 @@ describe('Pattern', () => {
       );
     });
   });
+  describe('steptaper', () => {
+    it('can taper', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).steptaper(1, 5), sequence(0, 1, 2, 3, 4, 0, 1, 2, 3, 0, 1, 2, 0, 1, 0)));
+    });
+    it('can taper backwards', () => {
+      expect(
+        sameFirst(sequence(0, 1, 2, 3, 4).steptaper(-1, 5), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)),
+      );
+    });
+  });
+  describe('wax and wane, left', () => {
+    it('can wax from the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).stepwax(2), sequence(0, 1)));
+    });
+    it('can wane to the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).stepwane(2), sequence(0, 1, 2)));
+    });
+    it('can wax from the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).stepwax(-2), sequence(3, 4)));
+    });
+    it('can wane to the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).stepwane(-2), sequence(2, 3, 4)));
+    });
+  });
 });
