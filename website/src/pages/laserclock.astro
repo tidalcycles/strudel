@@ -5,17 +5,19 @@
     import { laserclock } from '../laserclock.mjs';
     import { evaluate } from '@strudel/transpiler';
     import { evalScope } from '@strudel/core';
-    import { superdough, setDefaultAudioContext, registerSynthSounds } from '@strudel/webaudio';
+    import { superdough, getAudioContext, registerSynthSounds, initAudioOnFirstClick } from '@strudel/webaudio';
     const init = async () => {
+      initAudioOnFirstClick();
       await evalScope(import('@strudel/core'), import('@strudel/mini'), import('@strudel/tonal'));
     };
     init().then(async () => {
+      const ctx = getAudioContext();
       let { pattern } = await evaluate('chord("<Dm7 G7 C^7 A7b9>(3,8)").jux(rev).voicing()');
       let last;
       let minLatency = 0.1;
-      const { start, stop, ready } = laserclock({
-        onTick: async (data) => {
-          await ready;
+      const { start, stop } = laserclock({
+        audioContext: ctx,
+        onTick: (data) => {
           const { currentTime } = data;
           if (last) {
             const haps = pattern.queryArc(last, currentTime).filter((h) => h.hasOnset());
@@ -27,7 +29,6 @@
           last = currentTime;
         },
       } as any);
-      ready.then(({ audioContext }) => setDefaultAudioContext(audioContext));
       registerSynthSounds();
 
       document.getElementById('playButton')?.addEventListener('click', () => start());
