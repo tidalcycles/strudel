@@ -1,5 +1,5 @@
 export const laserclock = ({ onTick, audioContext }) => {
-  const ready = new Promise(async (resolve) => {
+  const ready = new Promise((resolve) => {
     const workletCode = `class LaserClock extends AudioWorkletProcessor {
   constructor() {
     super();
@@ -36,11 +36,12 @@ export const laserclock = ({ onTick, audioContext }) => {
 }
 registerProcessor("laserclock-processor", LaserClock);`;
     const dataURL = `data:text/javascript;base64,${btoa(workletCode)}`;
-    await audioContext.audioWorklet.addModule(dataURL);
-    const clock = new AudioWorkletNode(audioContext, 'laserclock-processor');
-    clock.port.onmessage = (e) => onTick(e.data);
-    clock.connect(audioContext.destination);
-    resolve({ audioContext, clock, start, stop });
+    audioContext.audioWorklet.addModule(dataURL).then(() => {
+      const clock = new AudioWorkletNode(audioContext, 'laserclock-processor');
+      clock.port.onmessage = (e) => onTick(e.data);
+      clock.connect(audioContext.destination);
+      resolve({ audioContext, clock, start, stop });
+    });
   });
   const start = () => ready.then(({ clock }) => clock.port.postMessage('start'));
   const stop = () => ready.then(({ clock }) => clock.port.postMessage('stop'));
