@@ -1,0 +1,37 @@
+<body>
+  <button id="playButton">play</button>
+  <button id="stopButton">stop</button>
+  <script>
+    import { laserclock } from '../laserclock.mjs';
+    import { evaluate } from '@strudel/transpiler';
+    import { evalScope } from '@strudel/core';
+    import { superdough, setDefaultAudioContext, registerSynthSounds } from '@strudel/webaudio';
+    const init = async () => {
+      await evalScope(import('@strudel/core'), import('@strudel/mini'), import('@strudel/tonal'));
+    };
+    init().then(async () => {
+      let { pattern } = await evaluate('chord("<Dm7 G7 C^7 A7b9>(3,8)").jux(rev).voicing()');
+      let last;
+      let minLatency = 0.1;
+      const { start, stop, ready } = laserclock({
+        onTick: async (data) => {
+          await ready;
+          const { currentTime } = data;
+          if (last) {
+            const haps = pattern.queryArc(last, currentTime).filter((h) => h.hasOnset());
+            haps.forEach((hap) => {
+              const start = hap.whole.begin + minLatency;
+              superdough(hap.value, `=${start}`, hap.duration);
+            });
+          }
+          last = currentTime;
+        },
+      } as any);
+      ready.then(({ audioContext }) => setDefaultAudioContext(audioContext));
+      registerSynthSounds();
+
+      document.getElementById('playButton')?.addEventListener('click', () => start());
+      document.getElementById('stopButton')?.addEventListener('click', () => stop());
+    });
+  </script>
+</body>
