@@ -177,7 +177,7 @@ export async function midin(input) {
   }
   const initial = await enableWebMidi(); // only returns on first init
   const device = getDevice(input, WebMidi.inputs);
-  if (initial || WebMidi.enabled) {
+  if (initial) {
     const otherInputs = WebMidi.inputs.filter((o) => o.name !== device.name);
     logger(
       `Midi enabled! Using "${device.name}". ${
