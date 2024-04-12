@@ -147,35 +147,43 @@ We will see more ways to combine patterns later..
 
 **Divide sequences with `/` to slow them down**
 
-{/* [c2 bb1 f2 eb2] */}
-
 <MiniRepl client:visible tune={`note("[36 34 41 39]/4").sound("gm_acoustic_bass")`} punchcard />
 
 <Box>
 
-The `/4` plays the sequence in brackets over 4 cycles (=4s).
+The `/4` plays the sequence in brackets over 4 cycles (=8s).
 
-So each of the 4 notes is 1s long.
+So each of the 4 notes is 2s long.
 
 Try adding more notes inside the brackets and notice how it gets faster.
 
 </Box>
 
-Because it is so common to just play one thing per cycle, you can..
+**Play one per cycle with `< ... >`**
 
-**Play one per cycle with \< \>**
+In the last section, we learned that `< ... >` (angle brackets) can be used to play only one thing per cycle,
+which is useful for longer melodies too:
 
 <MiniRepl client:visible tune={`note("<36 34 41 39>").sound("gm_acoustic_bass")`} punchcard />
 
 <Box>
 
-Try adding more notes inside the brackets and notice how it does **not** get faster.
+Try adding more notes inside the brackets and notice how the tempo stays the same.
+
+The angle brackets are actually just a shortcut:
+
+`<a b c>` = `[a b c]/3`
+
+`<a b c d>` = `[a b c d]/4`
+
+...
 
 </Box>
 
 **Play one sequence per cycle**
 
-{/* <[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4> */}
+We can combine the 2 types of brackets in all sorts of different ways.
+Here is an example of a repetitive bassline:
 
 <MiniRepl
   client:visible

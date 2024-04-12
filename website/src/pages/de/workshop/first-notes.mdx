@@ -146,15 +146,13 @@ Wir schauen uns später noch mehr Möglichkeiten an wie man patterns kombiniert.
 
 **Sequenzen verlangsamen mit `/`**
 
-{/* [c2 bb1 f2 eb2] */}
-
 <MiniRepl client:visible tune={`note("[36 34 41 39]/4").sound("gm_acoustic_bass")`} punchcard />
 
 <Box>
 
-Das `/4` spielt die Sequenz 4 mal so langsam, also insgesamt 4 cycles = 4s.
+Das `/4` spielt die Sequenz 4 mal so langsam, also insgesamt 4 cycles = 8s.
 
-Jede Note ist nun also 1s lang.
+Jede Note ist nun also 2s lang.
 
 Schreib noch mehr Töne in die Klammern und achte darauf dass es schneller wird.
 
@@ -163,6 +161,9 @@ Schreib noch mehr Töne in die Klammern und achte darauf dass es schneller wird.
 Wenn eine Sequenz unabhängig von ihrem Inhalt immer gleich schnell bleiben soll, gibt es noch eine andere Art Klammern:
 
 **Eins pro Cycle per \< \>**
+
+Im letzten Kapitel haben wir schon gelernt dass `< ... >` (angle brackets) nur ein Element pro Cycle spielt.
+Das ist für Melodien auch sehr nützlich:
 
 <MiniRepl client:visible tune={`note("<36 34 41 39>").sound("gm_acoustic_bass")`} punchcard />
 
