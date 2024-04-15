@@ -1,12 +1,13 @@
 import { defaultSettings, settingsMap, useSettings } from '../../settings.mjs';
 import { themes } from '@strudel/codemirror';
+import { isUdels } from '../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 
-function Checkbox({ label, value, onChange }) {
+function Checkbox({ label, value, onChange, disabled = false }) {
   return (
     <label>
-      <input type="checkbox" checked={value} onChange={onChange} />
+      <input disabled={disabled} type="checkbox" checked={value} onChange={onChange} />
       {' ' + label}
     </label>
   );
@@ -96,7 +97,7 @@ export function SettingsTab({ started }) {
     panelPosition,
     audioDeviceName,
   } = useSettings();
-
+  const shouldAlwaysSync = isUdels();
   return (
     <div className="text-foreground p-4 space-y-4">
       {AudioContext.prototype.setSinkId != null && (
@@ -197,6 +198,7 @@ export function SettingsTab({ started }) {
               window.location.reload();
             }
           }}
+          disabled={shouldAlwaysSync}
           value={isSyncEnabled}
         />
       </FormItem>

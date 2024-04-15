@@ -34,7 +34,7 @@ import Loader from './Loader';
 import { Panel } from './panel/Panel';
 import { useStore } from '@nanostores/react';
 import { prebake } from './prebake.mjs';
-import { getRandomTune, initCode, loadModules, shareCode, ReplContext } from './util.mjs';
+import { getRandomTune, initCode, loadModules, shareCode, ReplContext, isUdels } from './util.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
 import { setInterval, clearInterval } from 'worker-timers';
@@ -221,6 +221,7 @@ export function Repl({ embedded = false }) {
     handleEvaluate,
   };
 
+  const showPanel = !isEmbedded || isUdels();
   return (
     <ReplContext.Provider value={context}>
       <div className={cx('h-full flex flex-col relative')}>
@@ -246,12 +247,12 @@ export function Repl({ embedded = false }) {
               }
             }}
           ></section>
-          {panelPosition === 'right' && !isEmbedded && <Panel context={context} />}
+          {panelPosition === 'right' && showPanel && <Panel context={context} />}
         </div>
         {error && (
           <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>
         )}
-        {panelPosition === 'bottom' && !isEmbedded && <Panel context={context} />}
+        {panelPosition === 'bottom' && showPanel && <Panel context={context} />}
       </div>
     </ReplContext.Provider>
   );

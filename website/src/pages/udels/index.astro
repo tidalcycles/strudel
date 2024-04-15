@@ -1,0 +1,12 @@
+---
+import { Udels } from '../../components/Udels/Udels.jsx';
+
+
+const { BASE_URL } = import.meta.env;
+const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
+---
+
+
+<body class="m-0">
+  <Udels client:only="react" />
+</body>

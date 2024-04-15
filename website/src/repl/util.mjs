@@ -132,6 +132,10 @@ export async function shareCode(codeToShare) {
 
 export const ReplContext = createContext(null);
 
+export const isUdels = () => {
+  return window.parent?.location.pathname.includes('udels');
+};
+
 export const getAudioDevices = async () => {
   await navigator.mediaDevices.getUserMedia({ audio: true });
   let mediaDevices = await navigator.mediaDevices.enumerateDevices();
