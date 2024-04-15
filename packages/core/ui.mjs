@@ -4,19 +4,6 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { getTime } from './time.mjs';
-
-function frame(callback) {
-  if (window.strudelAnimation) {
-    cancelAnimationFrame(window.strudelAnimation);
-  }
-  const animate = (animationTime) => {
-    callback(animationTime, getTime());
-    window.strudelAnimation = requestAnimationFrame(animate);
-  };
-  requestAnimationFrame(animate);
-}
-
 export const backgroundImage = function (src, animateOptions = {}) {
   const container = document.getElementById('code');
   const bg = 'background-image:url(' + src + ');background-size:contain;';
@@ -35,11 +22,6 @@ export const backgroundImage = function (src, animateOptions = {}) {
   if (funcOptions.length === 0) {
     return;
   }
-  frame((_, t) =>
-    funcOptions.forEach(([option, value]) => {
-      handleOption(option, value(t));
-    }),
-  );
 };
 
 export const cleanupUi = () => {

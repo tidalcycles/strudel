@@ -1,16 +1,18 @@
 import { Invoke } from './utils.mjs';
-import { Pattern, noteToMidi } from '@strudel.cycles/core';
+import { Pattern, noteToMidi } from '@strudel/core';
 
 const ON_MESSAGE = 0x90;
 const OFF_MESSAGE = 0x80;
 const CC_MESSAGE = 0xb0;
 
 Pattern.prototype.midi = function (output) {
-  return this.onTrigger((time, hap, currentTime) => {
-    const { note, nrpnn, nrpv, ccn, ccv } = hap.value;
-    const offset = (time - currentTime) * 1000;
-    const velocity = Math.floor((hap.context?.velocity ?? 0.9) * 100); // TODO: refactor velocity
-    const duration = Math.floor(hap.duration.valueOf() * 1000 - 10);
+  return this.onTrigger((time_deprecate, hap, currentTime, cps, targetTime) => {
+    let { note, nrpnn, nrpv, ccn, ccv, velocity = 0.9, gain = 1 } = hap.value;
+    //magic number to get audio engine to line up, can probably be calculated somehow
+    const latency = 0.034;
+    const offset = (targetTime - currentTime + latency) * 1000;
+    velocity = Math.floor(gain * velocity * 100);
+    const duration = Math.floor((hap.duration.valueOf() / cps) * 1000 - 10);
     const roundedOffset = Math.round(offset);
     const midichan = (hap.value.midichan ?? 1) - 1;
     const requestedport = output ?? 'IAC';

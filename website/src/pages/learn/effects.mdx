@@ -138,6 +138,60 @@ There is one filter envelope for each filter type and thus one set of envelope f
 
 <JsDoc client:idle name="lpenv" h={0} />
 
+# Pitch Envelope
+
+You can also control the pitch with envelopes!
+Pitch envelopes can breathe life into static sounds:
+
+<MiniRepl
+  client:idle
+  tune={`n("<-4,0 5 2 1>*<2!3 4>")
+  .scale("<C F>/8:pentatonic")
+  .s("gm_electric_guitar_jazz")
+  .penv("<.5 0 7 -2>*2").vib("4:.1")
+  .phaser(2).delay(.25).room(.3)
+  .size(4).fast(1.5)`}
+/>
+
+You also create some lovely chiptune-style sounds:
+
+<MiniRepl
+  client:idle
+  tune={`n(run("<4 8>/16")).jux(rev)
+.chord("<C^7 <Db^7 Fm7>>")
+.dict('ireal')
+.voicing().add(note("<0 1>/8"))
+.dec(.1).room(.2)
+.segment("<4 [2 8]>")
+.penv("<0 <2 -2>>").patt(.02).fast(2)`}
+/>
+
+Let's break down all pitch envelope controls:
+
+## pattack
+
+<JsDoc client:idle name="pattack" h={0} />
+
+## pdecay
+
+<JsDoc client:idle name="pdecay" h={0} />
+
+## prelease
+
+<JsDoc client:idle name="prelease" h={0} />
+
+## penv
+
+<JsDoc client:idle name="penv" h={0} />
+
+## pcurve
+
+<JsDoc client:idle name="pcurve" h={0} />
+
+## panchor
+
+<JsDoc client:idle name="panchor" h={0} />
+
 # Dynamics
 
 ## gain
@@ -184,9 +238,9 @@ There is one filter envelope for each filter type and thus one set of envelope f
 
 <JsDoc client:idle name="crush" h={0} />
 
-## shape
+## distort
 
-<JsDoc client:idle name="shape" h={0} />
+<JsDoc client:idle name="distort" h={0} />
 
 # Global Effects
 

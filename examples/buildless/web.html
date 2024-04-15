@@ -1,0 +1,8 @@
+<script src="https://unpkg.com/@strudel/web@1.0.3"></script>
+<button id="play">PLAY</button>
+<script>
+  initStrudel({
+    prebake: () => samples('github:tidalcycles/dirt-samples'),
+  });
+  document.getElementById('play').addEventListener('click', () => s('bd sd').play());
+</script>

@@ -6,8 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { describe, it, expect } from 'vitest';
 import { map, valued, mul } from '../value.mjs';
-import controls from '../controls.mjs';
-const { n } = controls;
+import { n } from '../controls.mjs';
 
 describe('Value', () => {
   it('unionWith', () => {
@@ -22,9 +21,5 @@ describe('Value', () => {
     expect(valued(3).map(mul).ap(3).value).toEqual(9);
     expect(valued(mul).ap(3).ap(3).value).toEqual(9);
     expect(valued(3).mul(3).value).toEqual(9);
-  });
-  it('union bare numbers for numeral props', () => {
-    expect(n(3).cutoff(500).add(10).firstCycleValues).toEqual([{ n: 13, cutoff: 510 }]);
-    expect(n(3).cutoff(500).mul(2).firstCycleValues).toEqual([{ n: 6, cutoff: 1000 }]);
   });
 });

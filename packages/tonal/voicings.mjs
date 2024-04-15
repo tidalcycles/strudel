@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { stack, register, silence, logger } from '@strudel.cycles/core';
+import { stack, register, silence, logger } from '@strudel/core';
 import { renderVoicing } from './tonleiter.mjs';
 import _voicings from 'chord-voicings';
 import { complex, simple } from './ireal.mjs';
@@ -77,8 +77,13 @@ export const voicingRegistry = {
   lefthand: { dictionary: lefthand, range: ['F3', 'A4'], mode: 'below', anchor: 'a4' },
   triads: { dictionary: triads, mode: 'below', anchor: 'a4' },
   guidetones: { dictionary: guidetones, mode: 'above', anchor: 'a4' },
-  default: { dictionary: defaultDictionary, mode: 'below', anchor: 'a4' },
+  legacy: { dictionary: defaultDictionary, mode: 'below', anchor: 'a4' },
 };
+
+let defaultDict = 'ireal';
+export const setDefaultVoicings = (dict) => (defaultDict = dict);
+// e.g. typeof setDefaultVoicings !== 'undefined' && setDefaultVoicings('legacy');
+
 export const setVoicingRange = (name, range) => addVoicings(name, voicingRegistry[name].dictionary, range);
 
 /**
@@ -193,7 +198,7 @@ export const voicing = register('voicing', function (pat) {
     .fmap((value) => {
       // destructure voicing controls out
       value = typeof value === 'string' ? { chord: value } : value;
-      let { dictionary = 'default', chord, anchor, offset, mode, n, octaves, ...rest } = value;
+      let { dictionary = defaultDict, chord, anchor, offset, mode, n, octaves, ...rest } = value;
       dictionary =
         typeof dictionary === 'string' ? voicingRegistry[dictionary] : { dictionary, mode: 'below', anchor: 'c5' };
       try {
@@ -230,7 +235,17 @@ Object.keys(simple).forEach((symbol) => {
     let alias = symbol.replace('^', 'M');
     voicingAlias(symbol, alias, [complex, simple]);
   }
+  // add aliases for "+" === "aug"
+  if (symbol.includes('+')) {
+    let alias = symbol.replace('+', 'aug');
+    voicingAlias(symbol, alias, [complex, simple]);
+  }
 });
 
 registerVoicings('ireal', simple);
 registerVoicings('ireal-ext', complex);
+
+export function resetVoicings() {
+  lastVoicing = undefined;
+  setDefaultVoicings('ireal');
+}

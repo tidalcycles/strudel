@@ -1,31 +1,138 @@
-import { midiToFreq, noteToMidi } from './util.mjs';
-import { registerSound, getAudioContext } from './superdough.mjs';
-import { gainNode, getADSRValues, getParamADSR } from './helpers.mjs';
+import { clamp, midiToFreq, noteToMidi } from './util.mjs';
+import { registerSound, getAudioContext, getWorklet } from './superdough.mjs';
+import {
+  applyFM,
+  gainNode,
+  getADSRValues,
+  getParamADSR,
+  getPitchEnvelope,
+  getVibratoOscillator,
+  webAudioTimeout,
+} from './helpers.mjs';
 import { getNoiseMix, getNoiseOscillator } from './noise.mjs';
 
-const mod = (freq, range = 1, type = 'sine') => {
-  const ctx = getAudioContext();
-  const osc = ctx.createOscillator();
-  osc.type = type;
-  osc.frequency.value = freq;
-  osc.start();
-  const g = new GainNode(ctx, { gain: range });
-  osc.connect(g); // -range, range
-  return { node: g, stop: (t) => osc.stop(t) };
+const getFrequencyFromValue = (value) => {
+  let { note, freq } = value;
+  note = note || 36;
+  if (typeof note === 'string') {
+    note = noteToMidi(note); // e.g. c3 => 48
+  }
+  // get frequency
+  if (!freq && typeof note === 'number') {
+    freq = midiToFreq(note); // + 48);
+  }
+
+  return Number(freq);
 };
 
-const fm = (osc, harmonicityRatio, modulationIndex, wave = 'sine') => {
-  const carrfreq = osc.frequency.value;
-  const modfreq = carrfreq * harmonicityRatio;
-  const modgain = modfreq * modulationIndex;
-  return mod(modfreq, modgain, wave);
-};
-
-const waveforms = ['sine', 'square', 'triangle', 'sawtooth'];
+const waveforms = ['triangle', 'square', 'sawtooth', 'sine'];
 const noises = ['pink', 'white', 'brown', 'crackle'];
 
 export function registerSynthSounds() {
-  [...waveforms, ...noises].forEach((s) => {
+  [...waveforms].forEach((s) => {
+    registerSound(
+      s,
+      (t, value, onended) => {
+        const [attack, decay, sustain, release] = getADSRValues(
+          [value.attack, value.decay, value.sustain, value.release],
+          'linear',
+          [0.001, 0.05, 0.6, 0.01],
+        );
+
+        let sound = getOscillator(s, t, value);
+        let { node: o, stop, triggerRelease } = sound;
+
+        // turn down
+        const g = gainNode(0.3);
+
+        const { duration } = value;
+
+        o.onended = () => {
+          o.disconnect();
+          g.disconnect();
+          onended();
+        };
+
+        const envGain = gainNode(1);
+        let node = o.connect(g).connect(envGain);
+        const holdEnd = t + duration;
+        getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, t, holdEnd, 'linear');
+        const envEnd = holdEnd + release + 0.01;
+        triggerRelease?.(envEnd);
+        stop(envEnd);
+        return {
+          node,
+          stop: (releaseTime) => {},
+        };
+      },
+      { type: 'synth', prebake: true },
+    );
+  });
+  registerSound(
+    'supersaw',
+    (begin, value, onended) => {
+      const ac = getAudioContext();
+      let { duration, n, unison = 5, spread = 0.6, detune } = value;
+      detune = detune ?? n ?? 0.18;
+      const frequency = getFrequencyFromValue(value);
+
+      const [attack, decay, sustain, release] = getADSRValues(
+        [value.attack, value.decay, value.sustain, value.release],
+        'linear',
+        [0.001, 0.05, 0.6, 0.01],
+      );
+
+      const holdend = begin + duration;
+      const end = holdend + release + 0.01;
+      const voices = clamp(unison, 1, 100);
+      let panspread = voices > 1 ? clamp(spread, 0, 1) : 0;
+      let o = getWorklet(
+        ac,
+        'supersaw-oscillator',
+        {
+          frequency,
+          begin,
+          end,
+          freqspread: detune,
+          voices,
+          panspread,
+        },
+        {
+          outputChannelCount: [2],
+        },
+      );
+
+      const gainAdjustment = 1 / Math.sqrt(voices);
+      getPitchEnvelope(o.parameters.get('detune'), value, begin, holdend);
+      const vibratoOscillator = getVibratoOscillator(o.parameters.get('detune'), value, begin);
+      const fm = applyFM(o.parameters.get('frequency'), value, begin);
+      let envGain = gainNode(1);
+      envGain = o.connect(envGain);
+
+      webAudioTimeout(
+        ac,
+        () => {
+          o.disconnect();
+          envGain.disconnect();
+          onended();
+          fm?.stop();
+          vibratoOscillator?.stop();
+        },
+        begin,
+        end,
+      );
+
+      getParamADSR(envGain.gain, attack, decay, sustain, release, 0, 0.3 * gainAdjustment, begin, holdend, 'linear');
+
+      return {
+        node: envGain,
+        stop: (time) => {},
+      };
+    },
+    { prebake: true, type: 'synth' },
+  );
+
+  [...noises].forEach((s) => {
     registerSound(
       s,
       (t, value, onended) => {
@@ -36,12 +143,9 @@ export function registerSynthSounds() {
         );
 
         let sound;
-        if (waveforms.includes(s)) {
-          sound = getOscillator(s, t, value);
-        } else {
-          let { density } = value;
-          sound = getNoiseOscillator(s, t, density);
-        }
+
+        let { density } = value;
+        sound = getNoiseOscillator(s, t, density);
 
         let { node: o, stop, triggerRelease } = sound;
 
@@ -105,30 +209,8 @@ export function waveformN(partials, type) {
 }
 
 // expects one of waveforms as s
-export function getOscillator(
-  s,
-  t,
-  {
-    n: partials,
-    note,
-    freq,
-    vib = 0,
-    vibmod = 0.5,
-    noise = 0,
-    // fm
-    fmh: fmHarmonicity = 1,
-    fmi: fmModulationIndex,
-    fmenv: fmEnvelopeType = 'exp',
-    fmattack: fmAttack,
-    fmdecay: fmDecay,
-    fmsustain: fmSustain,
-    fmrelease: fmRelease,
-    fmvelocity: fmVelocity,
-    fmwave: fmWaveform = 'sine',
-    duration,
-  },
-) {
-  let ac = getAudioContext();
+export function getOscillator(s, t, value) {
+  let { n: partials, duration, noise = 0 } = value;
   let o;
   // If no partials are given, use stock waveforms
   if (!partials || s === 'sine') {
@@ -139,62 +221,15 @@ export function getOscillator(
   else {
     o = waveformN(partials, s);
   }
-
-  // get frequency from note...
-  note = note || 36;
-  if (typeof note === 'string') {
-    note = noteToMidi(note); // e.g. c3 => 48
-  }
-  // get frequency
-  if (!freq && typeof note === 'number') {
-    freq = midiToFreq(note); // + 48);
-  }
-
   // set frequency
-  o.frequency.value = Number(freq);
+  o.frequency.value = getFrequencyFromValue(value);
   o.start(t);
 
-  // FM
-  let stopFm;
-  let envGain = ac.createGain();
-  if (fmModulationIndex) {
-    const { node: modulator, stop } = fm(o, fmHarmonicity, fmModulationIndex, fmWaveform);
-    if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
-      // no envelope by default
-      modulator.connect(o.frequency);
-    } else {
-      const [attack, decay, sustain, release] = getADSRValues([fmAttack, fmDecay, fmSustain, fmRelease]);
-      const holdEnd = t + duration;
-      getParamADSR(
-        envGain.gain,
-        attack,
-        decay,
-        sustain,
-        release,
-        0,
-        1,
-        t,
-        holdEnd,
-        fmEnvelopeType === 'exp' ? 'exponential' : 'linear',
-      );
-      modulator.connect(envGain);
-      envGain.connect(o.frequency);
-    }
-    stopFm = stop;
-  }
+  let vibratoOscillator = getVibratoOscillator(o.detune, value, t);
 
-  // Additional oscillator for vibrato effect
-  let vibratoOscillator;
-  if (vib > 0) {
-    vibratoOscillator = getAudioContext().createOscillator();
-    vibratoOscillator.frequency.value = vib;
-    const gain = getAudioContext().createGain();
-    // Vibmod is the amount of vibrato, in semitones
-    gain.gain.value = vibmod * 100;
-    vibratoOscillator.connect(gain);
-    gain.connect(o.detune);
-    vibratoOscillator.start(t);
-  }
+  // pitch envelope
+  getPitchEnvelope(o.detune, value, t, t + duration);
+  const fmModulator = applyFM(o.frequency, value, t);
 
   let noiseMix;
   if (noise) {
@@ -204,9 +239,9 @@ export function getOscillator(
   return {
     node: noiseMix?.node || o,
     stop: (time) => {
+      fmModulator.stop(time);
       vibratoOscillator?.stop(time);
       noiseMix?.stop(time);
-      stopFm?.(time);
       o.stop(time);
     },
     triggerRelease: (time) => {

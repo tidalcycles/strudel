@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import { Hap } from './hap.mjs';
 import { Pattern, fastcat, reify, silence, stack, register } from './pattern.mjs';
 import Fraction from './fraction.mjs';
-import { id, _mod, clamp } from './util.mjs';
+import { id, _mod, clamp, objectMap } from './util.mjs';
 
 export function steady(value) {
   // A continuous value
@@ -27,9 +27,11 @@ export const isaw2 = isaw.toBipolar();
  *
  * @return {Pattern}
  * @example
- * "c3 [eb3,g3] g2 [g3,bb3]".note().clip(saw.slow(4))
+ * note("<c3 [eb3,g3] g2 [g3,bb3]>*8")
+ * .clip(saw.slow(2))
  * @example
- * saw.range(0,8).segment(8).scale('C major').slow(4).note()
+ * n(saw.range(0,8).segment(8))
+ * .scale('C major')
  *
  */
 export const saw = signal((t) => t % 1);
@@ -42,7 +44,8 @@ export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
  *
  * @return {Pattern}
  * @example
- * sine.segment(16).range(0,15).slow(2).scale('C minor').note()
+ * n(sine.segment(16).range(0,15))
+ * .scale("C:minor")
  *
  */
 export const sine = sine2.fromBipolar();
@@ -52,7 +55,8 @@ export const sine = sine2.fromBipolar();
  *
  * @return {Pattern}
  * @example
- * stack(sine,cosine).segment(16).range(0,15).slow(2).scale('C minor').note()
+ * n(stack(sine,cosine).segment(16).range(0,15))
+ * .scale("C:minor")
  *
  */
 export const cosine = sine._early(Fraction(1).div(4));
@@ -63,7 +67,7 @@ export const cosine2 = sine2._early(Fraction(1).div(4));
  *
  * @return {Pattern}
  * @example
- * square.segment(2).range(0,7).scale('C minor').note()
+ * n(square.segment(4).range(0,7)).scale("C:minor")
  *
  */
 export const square = signal((t) => Math.floor((t * 2) % 2));
@@ -74,7 +78,7 @@ export const square2 = square.toBipolar();
  *
  * @return {Pattern}
  * @example
- * tri.segment(8).range(0,7).scale('C minor').note()
+ * n(tri.segment(8).range(0,7)).scale("C:minor")
  *
  */
 export const tri = fastcat(isaw, saw);
@@ -118,8 +122,8 @@ const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
 /**
  * A discrete pattern of numbers from 0 to n-1
  * @example
- * run(4).scale('C4 major').note()
- * // "0 1 2 3".scale('C4 major').note()
+ * n(run(4)).scale("C4:pentatonic")
+ * // n("0 1 2 3").scale("C4:pentatonic")
  */
 export const run = (n) => saw.range(0, n).floor().segment(n);
 
@@ -129,7 +133,7 @@ export const run = (n) => saw.range(0, n).floor().segment(n);
  * @name rand
  * @example
  * // randomly change the cutoff
- * s("bd sd,hh*4").cutoff(rand.range(500,2000))
+ * s("bd*4,hh*8").cutoff(rand.range(500,8000))
  *
  */
 export const rand = signal(timeToRand);
@@ -139,7 +143,24 @@ export const rand = signal(timeToRand);
 export const rand2 = rand.toBipolar();
 
 export const _brandBy = (p) => rand.fmap((x) => x < p);
+
+/**
+ * A continuous pattern of 0 or 1 (binary random), with a probability for the value being 1
+ *
+ * @name brandBy
+ * @param {number} probability - a number between 0 and 1
+ * @example
+ * s("hh*10").pan(brandBy(0.2))
+ */
 export const brandBy = (pPat) => reify(pPat).fmap(_brandBy).innerJoin();
+
+/**
+ * A continuous pattern of 0 or 1 (binary random)
+ *
+ * @name brand
+ * @example
+ * s("hh*10").pan(brand)
+ */
 export const brand = _brandBy(0.5);
 
 export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
@@ -151,36 +172,188 @@ export const _irand = (i) => rand.fmap((x) => Math.trunc(x * i));
  * @param {number} n max value (exclusive)
  * @example
  * // randomly select scale notes from 0 - 7 (= C to C)
- * irand(8).struct("x(3,8)").scale('C minor').note()
+ * n(irand(8)).struct("x x*2 x x*3").scale("C:minor")
  *
  */
 export const irand = (ipat) => reify(ipat).fmap(_irand).innerJoin();
 
-/**
- * pick from the list of values (or patterns of values) via the index using the given
- * pattern of integers
+const _pick = function (lookup, pat, modulo = true) {
+  const array = Array.isArray(lookup);
+  const len = Object.keys(lookup).length;
+
+  lookup = objectMap(lookup, reify);
+
+  if (len === 0) {
+    return silence;
+  }
+  return pat.fmap((i) => {
+    let key = i;
+    if (array) {
+      key = modulo ? Math.round(key) % len : clamp(Math.round(key), 0, lookup.length - 1);
+    }
+    return lookup[key];
+  });
+};
+
+/** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
+ * Similar to `inhabit`, but maintains the structure of the original patterns.
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
  * @example
- * note(pick("<0 1 [2!2] 3>", ["g a", "e f", "f g f g" , "g a c d"]))
+ * note("<0 1 2!2 3>".pick(["g a", "e f", "f g f g" , "g c d"]))
+ * @example
+ * sound("<0 1 [2,0]>".pick(["bd sd", "cp cp", "hh hh"]))
+ * @example
+ * sound("<0!2 [0,1] 1>".pick(["bd(3,8)", "sd sd"]))
+ * @example
+ * s("<a!2 [a,b] b>".pick({a: "bd(3,8)", b: "sd sd"}))
  */
 
-export const pick = (pat, xs) => {
-  xs = xs.map(reify);
-  if (xs.length == 0) {
-    return silence;
+export const pick = function (lookup, pat) {
+  // backward compatibility - the args used to be flipped
+  if (Array.isArray(pat)) {
+    [pat, lookup] = [lookup, pat];
   }
-  return pat
-    .fmap((i) => {
-      const key = clamp(Math.round(i), 0, xs.length - 1);
-      return xs[key];
-    })
-    .innerJoin();
+  return __pick(lookup, pat);
 };
 
+const __pick = register('pick', function (lookup, pat) {
+  return _pick(lookup, pat, false).innerJoin();
+});
+
+/** * The same as `pick`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * For example, if you pick the fifth pattern of a list of three, you'll get the
+ * second one.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+
+export const pickmod = register('pickmod', function (lookup, pat) {
+  return _pick(lookup, pat, true).innerJoin();
+});
+
+/** * pickF lets you use a pattern of numbers to pick which function to apply to another pattern.
+ * @param {Pattern} pat
+ * @param {Pattern} lookup a pattern of indices
+ * @param {function[]} funcs the array of functions from which to pull
+ * @returns {Pattern}
+ * @example
+ * s("bd [rim hh]").pickF("<0 1 2>", [rev,jux(rev),fast(2)])
+ * @example
+ * note("<c2 d2>(3,8)").s("square")
+ *     .pickF("<0 2> 1", [jux(rev),fast(2),x=>x.lpf(800)])
+ */
+export const pickF = register('pickF', function (lookup, funcs, pat) {
+  return pat.apply(pick(lookup, funcs));
+});
+
+/** * The same as `pickF`, but if you pick a number greater than the size of the functions list,
+ * it wraps around, rather than sticking at the maximum value.
+ * @param {Pattern} pat
+ * @param {Pattern} lookup a pattern of indices
+ * @param {function[]} funcs the array of functions from which to pull
+ * @returns {Pattern}
+ */
+export const pickmodF = register('pickmodF', function (lookup, funcs, pat) {
+  return pat.apply(pickmod(lookup, funcs));
+});
+
+/** * Similar to `pick`, but it applies an outerJoin instead of an innerJoin.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickOut = register('pickOut', function (lookup, pat) {
+  return _pick(lookup, pat, false).outerJoin();
+});
+
+/** * The same as `pickOut`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickmodOut = register('pickmodOut', function (lookup, pat) {
+  return _pick(lookup, pat, true).outerJoin();
+});
+
+/** * Similar to `pick`, but the choosen pattern is restarted when its index is triggered.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickRestart = register('pickRestart', function (lookup, pat) {
+  return _pick(lookup, pat, false).restartJoin();
+});
+
+/** * The same as `pickRestart`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickmodRestart = register('pickmodRestart', function (lookup, pat) {
+  return _pick(lookup, pat, true).restartJoin();
+});
+
+/** * Similar to `pick`, but the choosen pattern is reset when its index is triggered.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickReset = register('pickReset', function (lookup, pat) {
+  return _pick(lookup, pat, false).resetJoin();
+});
+
+/** * The same as `pickReset`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+export const pickmodReset = register('pickmodReset', function (lookup, pat) {
+  return _pick(lookup, pat, true).resetJoin();
+});
+
 /**
- * pick from the list of values (or patterns of values) via the index using the given
+/** * Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
+ * Similar to `pick`, but cycles are squeezed into the target ('inhabited') pattern.
+ * @name inhabit
+ * @synonyms pickSqueeze
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ * @example
+ * "<a b [a,b]>".inhabit({a: s("bd(3,8)"),
+                          b: s("cp sd")
+                         })
+ * @example
+ * s("a@2 [a b] a".inhabit({a: "bd(3,8)", b: "sd sd"})).slow(4)
+ */
+export const { inhabit, pickSqueeze } = register(['inhabit', 'pickSqueeze'], function (lookup, pat) {
+  return _pick(lookup, pat, false).squeezeJoin();
+});
+
+/** * The same as `inhabit`, but if you pick a number greater than the size of the list,
+ * it wraps around, rather than sticking at the maximum value.
+ * For example, if you pick the fifth pattern of a list of three, you'll get the
+ * second one.
+ * @name inhabitmod
+ * @synonyms pickmodSqueeze
+ * @param {Pattern} pat
+ * @param {*} xs
+ * @returns {Pattern}
+ */
+
+export const { inhabitmod, pickmodSqueeze } = register(['inhabitmod', 'pickmodSqueeze'], function (lookup, pat) {
+  return _pick(lookup, pat, true).squeezeJoin();
+});
+
+/**
+ * Pick from the list of values (or patterns of values) via the index using the given
  * pattern of integers. The selected pattern will be compressed to fit the duration of the selecting event
  * @param {Pattern} pat
  * @param {*} xs
@@ -241,6 +414,8 @@ export const chooseInWith = (pat, xs) => {
  * Chooses randomly from the given list of elements.
  * @param  {...any} xs values / patterns to choose from.
  * @returns {Pattern} - a continuous pattern.
+ * @example
+ * note("c2 g2!2 d2 f1").s(choose("sine", "triangle", "bd:6"))
  */
 export const choose = (...xs) => chooseWith(rand, xs);
 
@@ -267,11 +442,12 @@ Pattern.prototype.choose2 = function (...xs) {
 
 /**
  * Picks one of the elements at random each cycle.
+ * @synonyms randcat
  * @returns {Pattern}
  * @example
- * chooseCycles("bd", "hh", "sd").s().fast(4)
+ * chooseCycles("bd", "hh", "sd").s().fast(8)
  * @example
- * "bd | hh | sd".s().fast(4)
+ * s("bd | hh | sd").fast(8)
  */
 export const chooseCycles = (...xs) => chooseInWith(rand.segment(1), xs);
 
@@ -295,9 +471,25 @@ const _wchooseWith = function (pat, ...pairs) {
 
 const wchooseWith = (...args) => _wchooseWith(...args).outerJoin();
 
+/**
+ * Chooses randomly from the given list of elements by giving a probability to each element
+ * @param {...any} pairs arrays of value and weight
+ * @returns {Pattern} - a continuous pattern.
+ * @example
+ * note("c2 g2!2 d2 f1").s(wchoose(["sine",10], ["triangle",1], ["bd:6",1]))
+ */
 export const wchoose = (...pairs) => wchooseWith(rand, ...pairs);
 
+/**
+ * Picks one of the elements at random each cycle by giving a probability to each element
+ * @synonyms wrandcat
+ * @returns {Pattern}
+ * @example
+ * wchooseCycles(["bd",10], ["hh",1], ["sd",1]).s().fast(8)
+ */
 export const wchooseCycles = (...pairs) => _wchooseWith(rand, ...pairs).innerJoin();
+
+export const wrandcat = wchooseCycles;
 
 // this function expects pat to be a pattern of floats...
 export const perlinWith = (pat) => {
@@ -314,7 +506,7 @@ export const perlinWith = (pat) => {
  * @name perlin
  * @example
  * // randomly change the cutoff
- * s("bd sd,hh*4").cutoff(perlin.range(500,2000))
+ * s("bd*4,hh*8").cutoff(perlin.range(500,8000))
  *
  */
 export const perlin = perlinWith(time.fmap((v) => Number(v)));
@@ -356,7 +548,7 @@ export const degradeBy = register('degradeBy', function (x, pat) {
 export const degrade = register('degrade', (pat) => pat._degradeBy(0.5));
 
 /**
- * Inverse of {@link Pattern#degradeBy}: Randomly removes events from the pattern by a given amount.
+ * Inverse of `degradeBy`: Randomly removes events from the pattern by a given amount.
  * 0 = 100% chance of removal
  * 1 = 0% chance of removal
  * Events that would be removed by degradeBy are let through by undegradeBy and vice versa (see second example).
@@ -367,6 +559,11 @@ export const degrade = register('degrade', (pat) => pat._degradeBy(0.5));
  * @returns Pattern
  * @example
  * s("hh*8").undegradeBy(0.2)
+ * @example
+ * s("hh*10").layer(
+ *   x => x.degradeBy(0.2).pan(0),
+ *   x => x.undegradeBy(0.8).pan(1)
+ * )
  */
 export const undegradeBy = register('undegradeBy', function (x, pat) {
   return pat._degradeByWith(
@@ -375,12 +572,27 @@ export const undegradeBy = register('undegradeBy', function (x, pat) {
   );
 });
 
+/**
+ * Inverse of `degrade`: Randomly removes 50% of events from the pattern. Shorthand for `.undegradeBy(0.5)`
+ * Events that would be removed by degrade are let through by undegrade and vice versa (see second example).
+ *
+ * @name undegrade
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * s("hh*8").undegrade()
+ * @example
+ * s("hh*10").layer(
+ *   x => x.degrade().pan(0),
+ *   x => x.undegrade().pan(1)
+ * )
+ */
 export const undegrade = register('undegrade', (pat) => pat._undegradeBy(0.5));
 
 /**
  *
  * Randomly applies the given function by the given probability.
- * Similar to {@link Pattern#someCyclesBy}
+ * Similar to `someCyclesBy`
  *
  * @name sometimesBy
  * @memberof Pattern
@@ -388,7 +600,7 @@ export const undegrade = register('undegrade', (pat) => pat._undegradeBy(0.5));
  * @param {function} function - the transformation to apply
  * @returns Pattern
  * @example
- * s("hh(3,8)").sometimesBy(.4, x=>x.speed("0.5"))
+ * s("hh*8").sometimesBy(.4, x=>x.speed("0.5"))
  */
 
 export const sometimesBy = register('sometimesBy', function (patx, func, pat) {
@@ -406,7 +618,7 @@ export const sometimesBy = register('sometimesBy', function (patx, func, pat) {
  * @param {function} function - the transformation to apply
  * @returns Pattern
  * @example
- * s("hh*4").sometimes(x=>x.speed("0.5"))
+ * s("hh*8").sometimes(x=>x.speed("0.5"))
  */
 export const sometimes = register('sometimes', function (func, pat) {
   return pat._sometimesBy(0.5, func);
@@ -415,7 +627,7 @@ export const sometimes = register('sometimes', function (func, pat) {
 /**
  *
  * Randomly applies the given function by the given probability on a cycle by cycle basis.
- * Similar to {@link Pattern#sometimesBy}
+ * Similar to `sometimesBy`
  *
  * @name someCyclesBy
  * @memberof Pattern
@@ -423,7 +635,7 @@ export const sometimes = register('sometimes', function (func, pat) {
  * @param {function} function - the transformation to apply
  * @returns Pattern
  * @example
- * s("hh(3,8)").someCyclesBy(.3, x=>x.speed("0.5"))
+ * s("bd,hh*8").someCyclesBy(.3, x=>x.speed("0.5"))
  */
 
 export const someCyclesBy = register('someCyclesBy', function (patx, func, pat) {
@@ -445,7 +657,7 @@ export const someCyclesBy = register('someCyclesBy', function (patx, func, pat) 
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("hh(3,8)").someCycles(x=>x.speed("0.5"))
+ * s("bd,hh*8").someCycles(x=>x.speed("0.5"))
  */
 export const someCycles = register('someCycles', function (func, pat) {
   return pat._someCyclesBy(0.5, func);

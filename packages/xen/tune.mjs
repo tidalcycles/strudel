@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import Tune from './tunejs.js';
-import { register } from '@strudel.cycles/core';
+import { register } from '@strudel/core';
 
 export const tune = register('tune', (scale, pat) => {
   const tune = new Tune();

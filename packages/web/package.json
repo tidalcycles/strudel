@@ -1,8 +1,8 @@
 {
   "name": "@strudel/web",
-  "version": "0.9.0",
+  "version": "1.0.3",
   "description": "Easy to setup, opiniated bundle of Strudel for the browser.",
-  "main": "web.mjs",
+  "module": "web.mjs",
   "publishConfig": {
     "main": "dist/index.js",
     "module": "dist/index.mjs"
@@ -33,13 +33,14 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel.cycles/core": "workspace:*",
-    "@strudel.cycles/mini": "workspace:*",
-    "@strudel.cycles/tonal": "workspace:*",
-    "@strudel.cycles/transpiler": "workspace:*",
-    "@strudel.cycles/webaudio": "workspace:*"
+    "@strudel/core": "workspace:*",
+    "@strudel/mini": "workspace:*",
+    "@strudel/tonal": "workspace:*",
+    "@strudel/transpiler": "workspace:*",
+    "@strudel/webaudio": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^5.0.10"
+    "vite": "^5.0.10",
+    "@rollup/plugin-replace": "^5.0.5"
   }
 }

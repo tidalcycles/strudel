@@ -1,25 +1,24 @@
-export * from '@strudel.cycles/core';
-export * from '@strudel.cycles/webaudio';
-//export * from '@strudel.cycles/soundfonts';
-export * from '@strudel.cycles/transpiler';
-export * from '@strudel.cycles/mini';
-export * from '@strudel.cycles/tonal';
-export * from '@strudel.cycles/webaudio';
-import { Pattern, evalScope, controls } from '@strudel.cycles/core';
-import { initAudioOnFirstClick, registerSynthSounds, webaudioScheduler } from '@strudel.cycles/webaudio';
-// import { registerSoundfonts } from '@strudel.cycles/soundfonts';
-import { evaluate as _evaluate } from '@strudel.cycles/transpiler';
-import { miniAllStrings } from '@strudel.cycles/mini';
+export * from '@strudel/core';
+export * from '@strudel/webaudio';
+//export * from '@strudel/soundfonts';
+export * from '@strudel/transpiler';
+export * from '@strudel/mini';
+export * from '@strudel/tonal';
+export * from '@strudel/webaudio';
+import { Pattern, evalScope } from '@strudel/core';
+import { initAudioOnFirstClick, registerSynthSounds, webaudioScheduler } from '@strudel/webaudio';
+// import { registerSoundfonts } from '@strudel/soundfonts';
+import { evaluate as _evaluate } from '@strudel/transpiler';
+import { miniAllStrings } from '@strudel/mini';
 
 // init logic
 export async function defaultPrebake() {
   const loadModules = evalScope(
     evalScope,
-    controls,
-    import('@strudel.cycles/core'),
-    import('@strudel.cycles/mini'),
-    import('@strudel.cycles/tonal'),
-    import('@strudel.cycles/webaudio'),
+    import('@strudel/core'),
+    import('@strudel/mini'),
+    import('@strudel/tonal'),
+    import('@strudel/webaudio'),
     { hush, evaluate },
   );
   await Promise.all([loadModules, registerSynthSounds() /* , registerSoundfonts() */]);

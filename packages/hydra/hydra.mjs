@@ -1,40 +1,49 @@
-import { getDrawContext } from '@strudel.cycles/core';
+import { getDrawContext } from '@strudel/draw';
+import { controls } from '@strudel/core';
 
 let latestOptions;
-
-function appendCanvas(c) {
-  const { canvas: testCanvas } = getDrawContext();
-  c.canvas.id = 'hydra-canvas';
-  c.canvas.style.position = 'fixed';
-  c.canvas.style.top = '0px';
-  testCanvas.after(c.canvas);
-  return testCanvas;
-}
+let hydra;
 
 export async function initHydra(options = {}) {
   // reset if options have changed since last init
   if (latestOptions && JSON.stringify(latestOptions) !== JSON.stringify(options)) {
-    document.getElementById('hydra-canvas').remove();
+    document.getElementById('hydra-canvas')?.remove();
   }
   latestOptions = options;
   //load and init hydra
   if (!document.getElementById('hydra-canvas')) {
-    console.log('reinit..');
     const {
       src = 'https://unpkg.com/hydra-synth',
       feedStrudel = false,
+      contextType = 'webgl',
+      pixelRatio = 1,
+      pixelated = true,
       ...hydraConfig
-    } = { detectAudio: false, ...options };
+    } = {
+      detectAudio: false,
+      ...options,
+    };
+    const { canvas } = getDrawContext('hydra-canvas', { contextType, pixelRatio, pixelated });
+    hydraConfig.canvas = canvas;
 
     await import(/* @vite-ignore */ src);
-    const hydra = new Hydra(hydraConfig);
+    hydra = new Hydra(hydraConfig);
     if (feedStrudel) {
       const { canvas } = getDrawContext();
       canvas.style.display = 'none';
       hydra.synth.s0.init({ src: canvas });
     }
-    appendCanvas(hydra);
   }
+}
+
+export function clearHydra() {
+  if (hydra) {
+    hydra.hush();
+  }
+  globalThis.s0?.clear();
+  document.getElementById('hydra-canvas')?.remove();
+  globalThis.speed = controls.speed;
+  globalThis.shape = controls.shape;
 }
 
 export const H = (p) => () => p.queryArc(getTime(), getTime())[0].value;

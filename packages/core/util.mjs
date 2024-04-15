@@ -316,3 +316,30 @@ export function hash2code(hash) {
   return base64ToUnicode(decodeURIComponent(hash));
   //return atob(decodeURIComponent(codeParam || ''));
 }
+
+export function objectMap(obj, fn) {
+  if (Array.isArray(obj)) {
+    return obj.map(fn);
+  }
+  return Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]));
+}
+
+// Floating point versions, see Fraction for rational versions
+// // greatest common divisor
+// export const gcd = function (x, y, ...z) {
+//   if (!y && z.length > 0) {
+//     return gcd(x, ...z);
+//   }
+//   if (!y) {
+//     return x;
+//   }
+//   return gcd(y, x % y, ...z);
+// };
+
+// // lowest common multiple
+// export const lcm = function (x, y, ...z) {
+//   if (z.length == 0) {
+//     return (x * y) / gcd(x, y);
+//   }
+//   return lcm((x * y) / gcd(x, y), ...z);
+// };

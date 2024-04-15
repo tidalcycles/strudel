@@ -1,4 +1,4 @@
-# @strudel.cycles/osc
+# @strudel/osc
 
 OSC output for strudel patterns! Currently only tested with super collider / super dirt.
 

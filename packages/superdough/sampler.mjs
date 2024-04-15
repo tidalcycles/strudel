@@ -1,6 +1,6 @@
 import { noteToMidi, valueToMidi, getSoundIndex } from './util.mjs';
 import { getAudioContext, registerSound } from './index.mjs';
-import { getADSRValues, getParamADSR } from './helpers.mjs';
+import { getADSRValues, getParamADSR, getPitchEnvelope, getVibratoOscillator } from './helpers.mjs';
 import { logger } from './logger.mjs';
 
 const bufferCache = {}; // string: Promise<ArrayBuffer>
@@ -99,6 +99,27 @@ export const getLoadedBuffer = (url) => {
   return bufferCache[url];
 };
 
+function resolveSpecialPaths(base) {
+  if (base.startsWith('bubo:')) {
+    const [_, repo] = base.split(':');
+    base = `github:Bubobubobubobubo/dough-${repo}`;
+  }
+  return base;
+}
+
+function githubPath(base, subpath = '') {
+  if (!base.startsWith('github:')) {
+    throw new Error('expected "github:" at the start of pseudoUrl');
+  }
+  let [_, path] = base.split('github:');
+  path = path.endsWith('/') ? path.slice(0, -1) : path;
+  if (path.split('/').length === 2) {
+    // assume main as default branch if none set
+    path += '/main';
+  }
+  return `https://raw.githubusercontent.com/${path}/${subpath}`;
+}
+
 export const processSampleMap = (sampleMap, fn, baseUrl = sampleMap._base || '') => {
   return Object.entries(sampleMap).forEach(([key, value]) => {
     if (typeof value === 'string') {
@@ -108,15 +129,19 @@ export const processSampleMap = (sampleMap, fn, baseUrl = sampleMap._base || '')
       throw new Error('wrong sample map format for ' + key);
     }
     baseUrl = value._base || baseUrl;
-    const replaceUrl = (v) => (baseUrl + v).replace('github:', 'https://raw.githubusercontent.com/');
+    baseUrl = resolveSpecialPaths(baseUrl);
+    if (baseUrl.startsWith('github:')) {
+      baseUrl = githubPath(baseUrl, '');
+    }
+    const fullUrl = (v) => baseUrl + v;
     if (Array.isArray(value)) {
       //return [key, value.map(replaceUrl)];
-      value = value.map(replaceUrl);
+      value = value.map(fullUrl);
     } else {
       // must be object
       value = Object.fromEntries(
         Object.entries(value).map(([note, samples]) => {
-          return [note, (typeof samples === 'string' ? [samples] : samples).map(replaceUrl)];
+          return [note, (typeof samples === 'string' ? [samples] : samples).map(fullUrl)];
         }),
       );
     }
@@ -142,7 +167,7 @@ function getSamplesPrefixHandler(url) {
 /**
  * Loads a collection of samples to use with `s`
  * @example
- * samples('github:tidalcycles/Dirt-Samples/master');
+ * samples('github:tidalcycles/dirt-samples');
  * s("[bd ~]*2, [~ hh]*2, ~ sd")
  * @example
  * samples({
@@ -165,18 +190,12 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
     if (handler) {
       return handler(sampleMap);
     }
-    if (sampleMap.startsWith('bubo:')) {
-      const [_, repo] = sampleMap.split(':');
-      sampleMap = `github:Bubobubobubobubo/dough-${repo}`;
-    }
+    sampleMap = resolveSpecialPaths(sampleMap);
     if (sampleMap.startsWith('github:')) {
-      let [_, path] = sampleMap.split('github:');
-      path = path.endsWith('/') ? path.slice(0, -1) : path;
-      if (path.split('/').length === 2) {
-        // assume main as default branch if none set
-        path += '/main';
-      }
-      sampleMap = `https://raw.githubusercontent.com/${path}/strudel.json`;
+      sampleMap = githubPath(sampleMap, 'strudel.json');
+    }
+    if (sampleMap.startsWith('local:')) {
+      sampleMap = `http://localhost:5432`;
     }
     if (sampleMap.startsWith('shabda:')) {
       let [_, path] = sampleMap.split('shabda:');
@@ -235,7 +254,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     nudge = 0, // TODO: is this in seconds?
     cut,
     loop,
-    clip = undefined, // if 1, samples will be cut off when the hap ends
+    clip = undefined, // if set, samples will be cut off when the hap ends
     n = 0,
     note,
     speed = 1, // sample playback speed
@@ -244,8 +263,6 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     loopEnd = 1,
     end = 1,
     duration,
-    vib,
-    vibmod = 0.5,
   } = value;
   // load sample
   if (speed === 0) {
@@ -263,17 +280,7 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   const bufferSource = await getSampleBufferSource(s, n, note, speed, freq, bank, resolveUrl);
 
   // vibrato
-  let vibratoOscillator;
-  if (vib > 0) {
-    vibratoOscillator = getAudioContext().createOscillator();
-    vibratoOscillator.frequency.value = vib;
-    const gain = getAudioContext().createGain();
-    // Vibmod is the amount of vibrato, in semitones
-    gain.gain.value = vibmod * 100;
-    vibratoOscillator.connect(gain);
-    gain.connect(bufferSource.detune);
-    vibratoOscillator.start(0);
-  }
+  let vibratoOscillator = getVibratoOscillator(bufferSource.detune, value, t);
 
   // asny stuff above took too long?
   if (ac.currentTime > t) {
@@ -309,6 +316,9 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   let holdEnd = t + duration;
 
   getParamADSR(node.gain, attack, decay, sustain, release, 0, 1, t, holdEnd, 'linear');
+
+  // pitch envelope
+  getPitchEnvelope(bufferSource.detune, value, t, holdEnd);
 
   const out = ac.createGain(); // we need a separate gain for the cutgroups because firefox...
   node.connect(out);

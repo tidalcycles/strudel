@@ -1,11 +1,11 @@
 import { StrudelMirror } from '@strudel/codemirror';
 import { funk42 } from './tunes';
-import { drawPianoroll, evalScope, controls } from '@strudel.cycles/core';
+import { drawPianoroll, evalScope } from '@strudel/core';
 import './style.css';
-import { initAudioOnFirstClick } from '@strudel.cycles/webaudio';
-import { transpiler } from '@strudel.cycles/transpiler';
-import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel.cycles/webaudio';
-import { registerSoundfonts } from '@strudel.cycles/soundfonts';
+import { initAudioOnFirstClick } from '@strudel/webaudio';
+import { transpiler } from '@strudel/transpiler';
+import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/webaudio';
+import { registerSoundfonts } from '@strudel/soundfonts';
 
 // init canvas
 const canvas = document.getElementById('roll');
@@ -25,11 +25,10 @@ const editor = new StrudelMirror({
   prebake: async () => {
     initAudioOnFirstClick(); // needed to make the browser happy (don't await this here..)
     const loadModules = evalScope(
-      controls,
-      import('@strudel.cycles/core'),
-      import('@strudel.cycles/mini'),
-      import('@strudel.cycles/tonal'),
-      import('@strudel.cycles/webaudio'),
+      import('@strudel/core'),
+      import('@strudel/mini'),
+      import('@strudel/tonal'),
+      import('@strudel/webaudio'),
     );
     await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
   },

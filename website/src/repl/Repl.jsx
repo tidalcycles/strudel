@@ -4,22 +4,31 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { code2hash, getDrawContext, logger, silence } from '@strudel.cycles/core';
+import { code2hash, logger, silence } from '@strudel/core';
+import { getDrawContext } from '@strudel/draw';
 import cx from '@src/cx.mjs';
-import { transpiler } from '@strudel.cycles/transpiler';
-import { getAudioContext, initAudioOnFirstClick, webaudioOutput } from '@strudel.cycles/webaudio';
+import { transpiler } from '@strudel/transpiler';
+import {
+  getAudioContext,
+  initAudioOnFirstClick,
+  webaudioOutput,
+  resetGlobalEffects,
+  resetLoadedSounds,
+} from '@strudel/webaudio';
 import { defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
+import { clearHydra } from '@strudel/hydra';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { settingsMap, useSettings } from '../settings.mjs';
 import {
-  initUserCode,
   setActivePattern,
   setLatestCode,
-  settingsMap,
-  updateUserCode,
-  useSettings,
-} from '../settings.mjs';
+  createPatternID,
+  userPattern,
+  getViewingPatternData,
+  setViewingPatternData,
+} from '../user_pattern_utils.mjs';
 import { Header } from './Header';
 import Loader from './Loader';
 import { Panel } from './panel/Panel';
@@ -28,8 +37,7 @@ import { prebake } from './prebake.mjs';
 import { getRandomTune, initCode, loadModules, shareCode, ReplContext } from './util.mjs';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
-
-const { code: randomTune, name } = getRandomTune();
+import { setInterval, clearInterval } from 'worker-timers';
 
 const { latestCode } = settingsMap.get();
 
@@ -43,60 +51,84 @@ if (typeof window !== 'undefined') {
   isIframe = window.location !== window.parent.location;
 }
 
+async function getModule(name) {
+  if (!modulesLoading) {
+    return;
+  }
+  const modules = await modulesLoading;
+  return modules.find((m) => m.packageName === name);
+}
+
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || isIframe;
-  const { panelPosition, isZen } = useSettings();
-
+  const { panelPosition, isZen, isSyncEnabled } = useSettings();
   const init = useCallback(() => {
     const drawTime = [-2, 2];
     const drawContext = getDrawContext();
-    const onDraw = (haps, time, frame, painters) => {
-      painters.length && drawContext.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
-      painters?.forEach((painter) => {
-        // ctx time haps drawTime paintOptions
-        painter(drawContext, time, haps, drawTime, { clear: false });
-      });
-    };
     const editor = new StrudelMirror({
+      sync: isSyncEnabled,
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
+      setInterval,
+      clearInterval,
       transpiler,
       autodraw: false,
       root: containerRef.current,
       initialCode: '// LOADING',
       pattern: silence,
       drawTime,
-      onDraw,
+      drawContext,
       prebake: async () => Promise.all([modulesLoading, presets]),
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
-      afterEval: ({ code }) => {
-        updateUserCode(code);
-        // setPending(false);
+      onToggle: (playing) => {
+        if (!playing) {
+          clearHydra();
+        }
+      },
+      afterEval: (all) => {
+        const { code } = all;
         setLatestCode(code);
         window.location.hash = '#' + code2hash(code);
+        const viewingPatternData = getViewingPatternData();
+        const data = { ...viewingPatternData, code };
+        let id = data.id;
+        const isExamplePattern = viewingPatternData.collection !== userPattern.collection;
+
+        if (isExamplePattern) {
+          const codeHasChanged = code !== viewingPatternData.code;
+          if (codeHasChanged) {
+            // fork example
+            const newPattern = userPattern.duplicate(data);
+            id = newPattern.id;
+            setViewingPatternData(newPattern.data);
+          }
+        } else {
+          id = userPattern.isValidID(id) ? id : createPatternID();
+          setViewingPatternData(userPattern.update(id, data).data);
+        }
+        setActivePattern(id);
       },
       bgFill: false,
     });
 
     // init settings
 
-    initCode().then((decoded) => {
+    initCode().then(async (decoded) => {
       let msg;
       if (decoded) {
         editor.setCode(decoded);
-        initUserCode(decoded);
         msg = `I have loaded the code from the URL.`;
       } else if (latestCode) {
         editor.setCode(latestCode);
         msg = `Your last session has been loaded!`;
       } else {
+        const { code: randomTune, name } = await getRandomTune();
         editor.setCode(randomTune);
         msg = `A random code snippet named "${name}" has been loaded!`;
       }
       logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
-      // setPending(false);
     });
 
     editorRef.current = editor;
@@ -138,35 +170,44 @@ export function Repl({ embedded = false }) {
   // UI Actions
   //
 
-  const handleTogglePlay = async () => editorRef.current?.toggle();
-  const handleUpdate = async (newCode, reset = false) => {
+  const handleTogglePlay = async () => {
+    editorRef.current?.toggle();
+  };
+
+  const resetEditor = async () => {
+    (await getModule('@strudel/tonal'))?.resetVoicings();
+    resetGlobalEffects();
+    clearCanvas();
+    clearHydra();
+    resetLoadedSounds();
+    editorRef.current.repl.setCps(0.5);
+    await prebake(); // declare default samples
+  };
+
+  const handleUpdate = async (patternData, reset = false) => {
+    setViewingPatternData(patternData);
+    editorRef.current.setCode(patternData.code);
     if (reset) {
-      clearCanvas();
-      resetLoadedSounds();
-      editorRef.current.repl.setCps(1);
-      await prebake(); // declare default samples
-    }
-    if (newCode) {
-      editorRef.current.setCode(newCode);
-      editorRef.current.repl.evaluate(newCode);
-    } else if (isDirty) {
-      editorRef.current.evaluate();
+      await resetEditor();
+      handleEvaluate();
     }
   };
+
+  const handleEvaluate = () => {
+    editorRef.current.evaluate();
+  };
   const handleShuffle = async () => {
-    // window.postMessage('strudel-shuffle');
-    const { code, name } = getRandomTune();
-    logger(`[repl] ✨ loading random tune "${name}"`);
-    setActivePattern(name);
-    clearCanvas();
-    resetLoadedSounds();
-    editorRef.current.repl.setCps(1);
-    await prebake(); // declare default samples
+    const patternData = await getRandomTune();
+    const code = patternData.code;
+    logger(`[repl] ✨ loading random tune "${patternData.id}"`);
+    setActivePattern(patternData.id);
+    setViewingPatternData(patternData);
+    await resetEditor();
     editorRef.current.setCode(code);
     editorRef.current.repl.evaluate(code);
   };
 
-  const handleShare = async () => shareCode(activeCode);
+  const handleShare = async () => shareCode(replState.code);
   const context = {
     embedded,
     started,
@@ -177,6 +218,7 @@ export function Repl({ embedded = false }) {
     handleUpdate,
     handleShuffle,
     handleShare,
+    handleEvaluate,
   };
 
   const showPanel = !isEmbedded || window.parent?.location?.pathname?.includes('oodles');

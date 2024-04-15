@@ -31,10 +31,10 @@ export const getParamADSR = (
   decay = nanFallback(decay);
   sustain = nanFallback(sustain);
   release = nanFallback(release);
-
   const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
   if (curve === 'exponential') {
-    min = Math.max(0.0001, min);
+    min = min === 0 ? 0.001 : min;
+    max = max === 0 ? 0.001 : max;
   }
   const range = max - min;
   const peak = max;
@@ -42,12 +42,17 @@ export const getParamADSR = (
   const duration = end - begin;
 
   const envValAtTime = (time) => {
+    let val;
     if (attack > time) {
       let slope = getSlope(min, peak, 0, attack);
-      return time * slope + (min > peak ? min : 0);
+      val = time * slope + (min > peak ? min : 0);
     } else {
-      return (time - attack) * getSlope(peak, sustainVal, 0, decay) + peak;
+      val = (time - attack) * getSlope(peak, sustainVal, 0, decay) + peak;
     }
+    if (curve === 'exponential') {
+      val = val || 0.001;
+    }
+    return val;
   };
 
   param.setValueAtTime(min, begin);
@@ -143,4 +148,114 @@ export function drywet(dry, wet, wetAmount = 0) {
   dry_gain.connect(mix);
   wet_gain.connect(mix);
   return mix;
+}
+
+let curves = ['linear', 'exponential'];
+export function getPitchEnvelope(param, value, t, holdEnd) {
+  // envelope is active when any of these values is set
+  const hasEnvelope = value.pattack ?? value.pdecay ?? value.psustain ?? value.prelease ?? value.penv;
+  if (!hasEnvelope) {
+    return;
+  }
+  const penv = nanFallback(value.penv, 1, true);
+  const curve = curves[value.pcurve ?? 0];
+  let [pattack, pdecay, psustain, prelease] = getADSRValues(
+    [value.pattack, value.pdecay, value.psustain, value.prelease],
+    curve,
+    [0.2, 0.001, 1, 0.001],
+  );
+  let panchor = value.panchor ?? psustain;
+  const cents = penv * 100; // penv is in semitones
+  const min = 0 - cents * panchor;
+  const max = cents - cents * panchor;
+  getParamADSR(param, pattack, pdecay, psustain, prelease, min, max, t, holdEnd, curve);
+}
+
+export function getVibratoOscillator(param, value, t) {
+  const { vibmod = 0.5, vib } = value;
+  let vibratoOscillator;
+  if (vib > 0) {
+    vibratoOscillator = getAudioContext().createOscillator();
+    vibratoOscillator.frequency.value = vib;
+    const gain = getAudioContext().createGain();
+    // Vibmod is the amount of vibrato, in semitones
+    gain.gain.value = vibmod * 100;
+    vibratoOscillator.connect(gain);
+    gain.connect(param);
+    vibratoOscillator.start(t);
+    return vibratoOscillator;
+  }
+}
+// ConstantSource inherits AudioScheduledSourceNode, which has scheduling abilities
+// a bit of a hack, but it works very well :)
+export function webAudioTimeout(audioContext, onComplete, startTime, stopTime) {
+  const constantNode = audioContext.createConstantSource();
+  constantNode.start(startTime);
+  constantNode.stop(stopTime);
+  constantNode.onended = () => {
+    onComplete();
+  };
+}
+const mod = (freq, range = 1, type = 'sine') => {
+  const ctx = getAudioContext();
+  const osc = ctx.createOscillator();
+  osc.type = type;
+  osc.frequency.value = freq;
+  osc.start();
+  const g = new GainNode(ctx, { gain: range });
+  osc.connect(g); // -range, range
+  return { node: g, stop: (t) => osc.stop(t) };
+};
+const fm = (frequencyparam, harmonicityRatio, modulationIndex, wave = 'sine') => {
+  const carrfreq = frequencyparam.value;
+  const modfreq = carrfreq * harmonicityRatio;
+  const modgain = modfreq * modulationIndex;
+  return mod(modfreq, modgain, wave);
+};
+export function applyFM(param, value, begin) {
+  const {
+    fmh: fmHarmonicity = 1,
+    fmi: fmModulationIndex,
+    fmenv: fmEnvelopeType = 'exp',
+    fmattack: fmAttack,
+    fmdecay: fmDecay,
+    fmsustain: fmSustain,
+    fmrelease: fmRelease,
+    fmvelocity: fmVelocity,
+    fmwave: fmWaveform = 'sine',
+    duration,
+  } = value;
+  let modulator;
+  let stop = () => {};
+
+  if (fmModulationIndex) {
+    const ac = getAudioContext();
+    const envGain = ac.createGain();
+    const fmmod = fm(param, fmHarmonicity, fmModulationIndex, fmWaveform);
+
+    modulator = fmmod.node;
+    stop = fmmod.stop;
+    if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
+      // no envelope by default
+      modulator.connect(param);
+    } else {
+      const [attack, decay, sustain, release] = getADSRValues([fmAttack, fmDecay, fmSustain, fmRelease]);
+      const holdEnd = begin + duration;
+      getParamADSR(
+        envGain.gain,
+        attack,
+        decay,
+        sustain,
+        release,
+        0,
+        1,
+        begin,
+        holdEnd,
+        fmEnvelopeType === 'exp' ? 'exponential' : 'linear',
+      );
+      modulator.connect(envGain);
+      envGain.connect(param);
+    }
+  }
+  return { stop };
 }

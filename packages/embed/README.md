@@ -1,33 +1,64 @@
-# @strudel.cycles/embed
+# @strudel/embed
 
 This package contains a embeddable web component for the Strudel REPL.
 
-## Usage
+## Usage via Script Tag
 
-Either install with `npm i @strudel.cycles/embed` or just use a cdn to import the script:
+Use this code in any HTML file:
 
 ```html
-<script src="https://unpkg.com/@strudel.cycles/embed@latest"></script>
+<script src="https://unpkg.com/@strudel/embed@latest"></script>
 <strudel-repl>
   <!--
-note(`[[e5 [b4 c5] d5 [c5 b4]]
-[a4 [a4 c5] e5 [d5 c5]]
-[b4 [~ c5] d5 e5]
-[c5 a4 a4 ~]
-[[~ d5] [~ f5] a5 [g5 f5]]
-[e5 [~ c5] e5 [d5 c5]]
-[b4 [b4 c5] d5 e5]
-[c5 a4 a4 ~]],
-[[e2 e3]*4]
-[[a2 a3]*4]
-[[g#2 g#3]*2 [e2 e3]*2]
-[a2 a3 a2 a3 a2 a3 b1 c2]
-[[d2 d3]*4]
-[[c2 c3]*4]
-[[b1 b2]*2 [e2 e3]*2]
-[[a1 a2]*4]`).slow(16)
-      -->
+setcps(1)
+n("<0 1 2 3 4>*8").scale('G4 minor')
+.s("gm_lead_6_voice")
+.clip(sine.range(.2,.8).slow(8))
+.jux(rev)
+.room(2)
+.sometimes(add(note("12")))
+.lpf(perlin.range(200,20000).slow(4))
+-->
 </strudel-repl>
 ```
 
-Note that the Code is placed inside HTML comments to prevent the browser from treating it as HTML.
+This will load the strudel website in an iframe, using the code provided within the HTML comments `<!-- -->`.
+The HTML comments are needed to make sure the browser won't interpret it as HTML.
+
+Alternatively you can create a REPL from JavaScript like this:
+
+```html
+<script src="https://unpkg.com/@strudel/embed@1.0.2"></script>
+<div id="strudel"></div>
+<script>
+  let editor = document.createElement('strudel-repl');
+  editor.setAttribute(
+    'code',
+    `setcps(1)
+n("<0 1 2 3 4>*8").scale('G4 minor')
+.s("gm_lead_6_voice")
+.clip(sine.range(.2,.8).slow(8))
+.jux(rev)
+.room(2)
+.sometimes(add(note("12")))
+.lpf(perlin.range(200,20000).slow(4))`,
+  );
+  document.getElementById('strudel').append(editor);
+</script>
+```
+
+When you're using JSX, you could also use the `code` attribute in your markup:
+
+```html
+<script src="https://unpkg.com/@strudel/embed@1.0.2"></script>
+<strudel-repl code={`
+setcps(1)
+n("<0 1 2 3 4>*8").scale('G4 minor')
+.s("gm_lead_6_voice")
+.clip(sine.range(.2,.8).slow(8))
+.jux(rev)
+.room(2)
+.sometimes(add(note("12")))
+.lpf(perlin.range(200,20000).slow(4))
+`}></strudel-repl>
+```

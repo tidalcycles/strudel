@@ -1,5 +1,5 @@
-import { getFrequency, logger, register } from '@strudel.cycles/core';
-import { getAudioContext } from '@strudel.cycles/webaudio';
+import { getFrequency, logger, register } from '@strudel/core';
+import { getAudioContext } from '@strudel/webaudio';
 import csd from './project.csd?raw';
 // import livecodeOrc from './livecode.orc?raw';
 import presetsOrc from './presets.orc?raw';
@@ -152,12 +152,14 @@ export const csoundm = register('csoundm', (instrument, pat) => {
     const p2 = tidal_time - getAudioContext().currentTime;
     const p3 = hap.duration.valueOf() + 0;
     const frequency = getFrequency(hap);
+    let { gain = 1, velocity = 0.9 } = hap.value;
+    velocity = gain * velocity;
     // Translate frequency to MIDI key number _without_ rounding.
     const C4 = 261.62558;
     let octave = Math.log(frequency / C4) / Math.log(2.0) + 8.0;
     const p4 = octave * 12.0 - 36.0;
     // We prefer floating point precision, but over the MIDI range [0, 127].
-    const p5 = 127 * (hap.context?.velocity ?? 0.9);
+    const p5 = 127 * velocity;
     // The Strudel controls as a string.
     const p6 = Object.entries({ ...hap.value, frequency })
       .flat()

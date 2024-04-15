@@ -1,12 +1,12 @@
 <!doctype html>
+<script src="https://unpkg.com/@strudel/web@1.0.3"></script>
 <button id="a">A</button>
 <button id="b">B</button>
 <button id="c">C</button>
 <button id="stop">stop</button>
-<script type="module">
-  import { initStrudel } from 'https://cdn.skypack.dev/@strudel/web@0.8.2';
+<script>
   initStrudel({
-    prebake: () => samples('github:tidalcycles/Dirt-Samples/master'),
+    prebake: () => samples('github:tidalcycles/dirt-samples'),
   });
   const click = (id, action) => document.getElementById(id).addEventListener('click', action);
   click('a', () => evaluate(`s('bd,jvbass(3,8)').jux(rev)`));

@@ -1,18 +1,37 @@
-import { Pattern, getDrawContext, clamp } from '@strudel.cycles/core';
-import { analyser, getAnalyzerData } from 'superdough';
+import { Pattern, clamp } from '@strudel/core';
+import { getDrawContext, getTheme } from '@strudel/draw';
+import { analysers, getAnalyzerData } from 'superdough';
 
 export function drawTimeScope(
   analyser,
-  { align = true, color = 'white', thickness = 3, scale = 0.25, pos = 0.75, trigger = 0 } = {},
+  {
+    align = true,
+    color = 'white',
+    thickness = 3,
+    scale = 0.25,
+    pos = 0.75,
+    trigger = 0,
+    ctx = getDrawContext(),
+    id = 1,
+  } = {},
 ) {
-  const ctx = getDrawContext();
-  const dataArray = getAnalyzerData('time');
-
   ctx.lineWidth = thickness;
   ctx.strokeStyle = color;
+  let canvas = ctx.canvas;
+
+  if (!analyser) {
+    // if analyser is undefined, draw straight line
+    // it may be undefined when no sound has been played yet
+    ctx.beginPath();
+    let y = pos * canvas.height;
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+    return;
+  }
+  const dataArray = getAnalyzerData('time', id);
 
   ctx.beginPath();
-  let canvas = ctx.canvas;
 
   const bufferSize = analyser.frequencyBinCount;
   let triggerIndex = align
@@ -38,10 +57,17 @@ export function drawTimeScope(
 
 export function drawFrequencyScope(
   analyser,
-  { color = 'white', scale = 0.25, pos = 0.75, lean = 0.5, min = -150, max = 0 } = {},
+  { color = 'white', scale = 0.25, pos = 0.75, lean = 0.5, min = -150, max = 0, ctx = getDrawContext(), id = 1 } = {},
 ) {
-  const dataArray = getAnalyzerData('frequency');
-  const ctx = getDrawContext();
+  if (!analyser) {
+    ctx.beginPath();
+    let y = pos * canvas.height;
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+    return;
+  }
+  const dataArray = getAnalyzerData('frequency', id);
   const canvas = ctx.canvas;
 
   ctx.fillStyle = color;
@@ -60,8 +86,7 @@ export function drawFrequencyScope(
   }
 }
 
-function clearScreen(smear = 0, smearRGB = `0,0,0`) {
-  const ctx = getDrawContext();
+function clearScreen(smear = 0, smearRGB = `0,0,0`, ctx = getDrawContext()) {
   if (!smear) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   } else {
@@ -83,10 +108,14 @@ function clearScreen(smear = 0, smearRGB = `0,0,0`) {
  * s("sawtooth").fscope()
  */
 Pattern.prototype.fscope = function (config = {}) {
-  return this.analyze(1).draw(() => {
-    clearScreen(config.smear);
-    analyser && drawFrequencyScope(analyser, config);
-  });
+  let id = config.id ?? 1;
+  return this.analyze(id).draw(
+    () => {
+      clearScreen(config.smear, '0,0,0', config.ctx);
+      analysers[id] && drawFrequencyScope(analysers[id], config);
+    },
+    { id },
+  );
 };
 
 /**
@@ -103,11 +132,18 @@ Pattern.prototype.fscope = function (config = {}) {
  * @example
  * s("sawtooth").scope()
  */
+let latestColor = {};
 Pattern.prototype.tscope = function (config = {}) {
-  return this.analyze(1).draw(() => {
-    clearScreen(config.smear);
-    analyser && drawTimeScope(analyser, config);
-  });
+  let id = config.id ?? 1;
+  return this.analyze(id).draw(
+    (haps) => {
+      config.color = haps[0]?.value?.color || getTheme().foreground;
+      latestColor[id] = config.color;
+      clearScreen(config.smear, '0,0,0', config.ctx);
+      drawTimeScope(analysers[id], config);
+    },
+    { id },
+  );
 };
 
 Pattern.prototype.scope = Pattern.prototype.tscope;

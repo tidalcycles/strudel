@@ -1,5 +1,5 @@
 {
-  "name": "@strudel.cycles/monorepo",
+  "name": "@strudel/monorepo",
   "version": "0.5.0",
   "private": true,
   "description": "Port of tidalcycles to javascript",
@@ -25,6 +25,7 @@
     "format-check": "prettier --check .",
     "report-undocumented": "npm run jsdoc-json && node jsdoc/undocumented.mjs > undocumented.json",
     "check": "npm run format-check && npm run lint && npm run test",
+    "sampler": "cd samples && node ../packages/sampler/sample-server.mjs",
     "iclc": "cd paper && pandoc --template=pandoc/iclc.html --citeproc  --number-sections iclc2023.md -o iclc2023.html && pandoc --template=pandoc/iclc.latex --citeproc --number-sections iclc2023.md -o iclc2023.pdf"
   },
   "repository": {
@@ -45,18 +46,18 @@
   },
   "homepage": "https://strudel.cc",
   "dependencies": {
-    "@strudel.cycles/core": "workspace:*",
-    "@strudel.cycles/mini": "workspace:*",
-    "@strudel.cycles/tonal": "workspace:*",
-    "@strudel.cycles/transpiler": "workspace:*",
-    "@strudel.cycles/webaudio": "workspace:*",
-    "@strudel.cycles/xen": "workspace:*"
+    "@strudel/core": "workspace:*",
+    "@strudel/mini": "workspace:*",
+    "@strudel/tonal": "workspace:*",
+    "@strudel/transpiler": "workspace:*",
+    "@strudel/webaudio": "workspace:*",
+    "@strudel/xen": "workspace:*"
   },
   "devDependencies": {
-    "dependency-tree": "^10.0.9",
     "@tauri-apps/cli": "^1.5.9",
     "@vitest/ui": "^1.1.0",
-    "canvas": "^2.11.2",
+    "acorn": "^8.11.3",
+    "dependency-tree": "^10.0.9",
     "eslint": "^8.56.0",
     "eslint-plugin-import": "^2.29.1",
     "events": "^3.3.0",

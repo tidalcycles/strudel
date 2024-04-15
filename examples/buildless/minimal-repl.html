@@ -16,38 +16,45 @@
     </div>
     <div id="output"></div>
     <script type="module">
-      import { controls, repl, evalScope } from 'https://cdn.skypack.dev/@strudel.cycles/core@0.6.8';
-      import { mini } from 'https://cdn.skypack.dev/@strudel.cycles/mini@0.6.0';
-      import { transpiler } from 'https://cdn.skypack.dev/@strudel.cycles/transpiler@0.6.0';
+      // TODO: refactor to use newer version without controls import
+      import { controls, repl, evalScope } from 'https://cdn.skypack.dev/@strudel/core@0.11.0';
+      import { mini } from 'https://cdn.skypack.dev/@strudel/mini@0.11.0';
+      import { transpiler } from 'https://cdn.skypack.dev/@strudel/transpiler@0.11.0';
       import {
         getAudioContext,
         webaudioOutput,
         initAudioOnFirstClick,
-      } from 'https://cdn.skypack.dev/@strudel.cycles/webaudio@0.6.0';
+        registerSynthSounds,
+      } from 'https://cdn.skypack.dev/@strudel/webaudio@0.11.0';
 
-      initAudioOnFirstClick();
       const ctx = getAudioContext();
       const input = document.getElementById('text');
       input.innerHTML = getTune();
 
-      evalScope(
+      const loadModules = evalScope(
         controls,
-        import('https://cdn.skypack.dev/@strudel.cycles/core@0.6.8'),
-        import('https://cdn.skypack.dev/@strudel.cycles/mini@0.6.0'),
-        import('https://cdn.skypack.dev/@strudel.cycles/tonal@0.6.0'),
-        import('https://cdn.skypack.dev/@strudel.cycles/webaudio@0.6.0'),
+        import('https://cdn.skypack.dev/@strudel/core@0.11.0'),
+        import('https://cdn.skypack.dev/@strudel/mini@0.11.0'),
+        import('https://cdn.skypack.dev/@strudel/tonal@0.11.0'),
+        import('https://cdn.skypack.dev/@strudel/webaudio@0.11.0'),
       );
+
+      const initAudio = Promise.all([initAudioOnFirstClick(), registerSynthSounds()]);
 
       const { evaluate } = repl({
         defaultOutput: webaudioOutput,
         getTime: () => ctx.currentTime,
         transpiler,
       });
-      document.getElementById('start').addEventListener('click', () => evaluate(input.value));
+      document.getElementById('start').addEventListener('click', async () => {
+        await loadModules;
+        await initAudio;
+        evaluate(input.value);
+      });
 
       function getTune() {
-        return `await samples('github:tidalcycles/Dirt-Samples/master')
-
+        return `samples('github:tidalcycles/dirt-samples')
+setcps(1);
 stack(
   // amen
   n("0 1 2 3 4 5 6 7")

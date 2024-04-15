@@ -1,4 +1,4 @@
-import { isNote, isNoteWithOctave, _mod, noteToMidi, tokenizeNote } from '@strudel.cycles/core';
+import { isNote, isNoteWithOctave, _mod, noteToMidi, tokenizeNote } from '@strudel/core';
 import { Interval, Scale } from '@tonaljs/tonal';
 
 // https://codesandbox.io/s/stateless-voicings-g2tmz0?file=/src/lib.js:0-2515

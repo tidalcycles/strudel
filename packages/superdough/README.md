@@ -19,7 +19,7 @@ import { superdough, samples, initAudioOnFirstClick, registerSynthSounds } from 
 
 const init = Promise.all([
   initAudioOnFirstClick(),
-  samples('github:tidalcycles/Dirt-Samples/master'),
+  samples('github:tidalcycles/dirt-samples'),
   registerSynthSounds(),
 ]);
 
@@ -65,7 +65,7 @@ superdough({ s: 'bd', delay: 0.5 }, 0, 1);
   - `bandf`: band pass filter cutoff
   - `bandq`: band pass  filter resonance
   - `crush`: amplitude bit crusher using given number of bits
-  - `shape`: distortion effect from 0 (none) to 1 (full). might get loud!
+  - `distort`: distortion effect. might get loud!
   - `pan`: stereo panning from 0 (left) to 1 (right)
   - `phaser`: sets the speed of the modulation
   - `phaserdepth`: the amount the signal is affected by the phaser effect.
@@ -148,7 +148,7 @@ The json file is expected to have the same format as described above.
 Because it is common to use github for samples, there is a short way to load a sample map from github:
 
 ```js
-samples('github:tidalcycles/Dirt-Samples/master')
+samples('github:tidalcycles/dirt-samples')
 ```
 
 The format is `github:<user>/<repo>/<branch>`.

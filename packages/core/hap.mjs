@@ -3,6 +3,7 @@ hap.mjs - <short description TODO>
 Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/hap.mjs>
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+import Fraction from './fraction.mjs';
 
 export class Hap {
   /*
@@ -32,11 +33,41 @@ export class Hap {
   }
 
   get duration() {
-    return this.whole.end.sub(this.whole.begin).mul(typeof this.value?.clip === 'number' ? this.value?.clip : 1);
+    let duration;
+    if (typeof this.value?.duration === 'number') {
+      duration = Fraction(this.value.duration);
+    } else {
+      duration = this.whole.end.sub(this.whole.begin);
+    }
+    if (typeof this.value?.clip === 'number') {
+      return duration.mul(this.value.clip);
+    }
+    return duration;
   }
 
   get endClipped() {
     return this.whole.begin.add(this.duration);
+  }
+
+  isActive(currentTime) {
+    return this.whole.begin <= currentTime && this.endClipped >= currentTime;
+  }
+
+  isInPast(currentTime) {
+    return currentTime > this.endClipped;
+  }
+  isInNearPast(margin, currentTime) {
+    return currentTime - margin <= this.endClipped;
+  }
+
+  isInFuture(currentTime) {
+    return currentTime < this.whole.begin;
+  }
+  isInNearFuture(margin, currentTime) {
+    return currentTime < this.whole.begin && currentTime > this.whole.begin - margin;
+  }
+  isWithinTime(min, max) {
+    return this.whole.begin <= max && this.endClipped >= min;
   }
 
   wholeOrPart() {
@@ -58,6 +89,10 @@ export class Hap {
     // Test whether the hap contains the onset, i.e that
     // the beginning of the part is the same as that of the whole timespan."""
     return this.whole != undefined && this.whole.begin.equals(this.part.begin);
+  }
+
+  hasTag(tag) {
+    return this.context.tags?.includes(tag);
   }
 
   resolveState(state) {

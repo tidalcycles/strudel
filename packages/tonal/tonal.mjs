@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Note, Interval, Scale } from '@tonaljs/tonal';
-import { register, _mod, silence, logger, pure, isNote } from '@strudel.cycles/core';
+import { register, _mod, silence, logger, pure, isNote } from '@strudel/core';
 import { stepInNamedScale } from './tonleiter.mjs';
 
 const octavesInterval = (octaves) => (octaves <= 0 ? -1 : 1) + octaves * 7 + 'P';
@@ -96,16 +96,37 @@ function scaleOffset(scale, offset, note) {
 
 export const transpose = register('transpose', function (intervalOrSemitones, pat) {
   return pat.withHap((hap) => {
-    const interval = !isNaN(Number(intervalOrSemitones))
-      ? Interval.fromSemitones(intervalOrSemitones /*  as number */)
-      : String(intervalOrSemitones);
-    if (typeof hap.value === 'number') {
-      const semitones = typeof interval === 'string' ? Interval.semitones(interval) || 0 : interval;
-      return hap.withValue(() => hap.value + semitones);
+    const note = hap.value.note ?? hap.value;
+    if (typeof note === 'number') {
+      // note is a number, so just add the number semitones of the interval
+      let semitones;
+      if (typeof intervalOrSemitones === 'number') {
+        semitones = intervalOrSemitones;
+      } else if (typeof intervalOrSemitones === 'string') {
+        semitones = Interval.semitones(intervalOrSemitones) || 0;
+      }
+      const targetNote = note + semitones;
+      if (typeof hap.value === 'object') {
+        return hap.withValue(() => ({ ...hap.value, note: targetNote }));
+      }
+      return hap.withValue(() => targetNote);
     }
+    if (typeof note !== 'string' || !isNote(note)) {
+      logger(`[tonal] transpose: not a note "${note}"`, 'warning');
+      return hap;
+    }
+    // note is a string, so we might be able to preserve harmonics if interval is a string as well
+    const interval = !isNaN(Number(intervalOrSemitones))
+      ? Interval.fromSemitones(intervalOrSemitones)
+      : String(intervalOrSemitones);
     // TODO: move simplify to player to preserve enharmonics
     // tone.js doesn't understand multiple sharps flats e.g. F##3 has to be turned into G3
-    return hap.withValue(() => Note.simplify(Note.transpose(hap.value, interval)));
+    // TODO: check if this is still relevant..
+    const targetNote = Note.simplify(Note.transpose(note, interval));
+    if (typeof hap.value === 'object') {
+      return hap.withValue(() => ({ ...hap.value, note: targetNote }));
+    }
+    return hap.withValue(() => targetNote);
   });
 });
 
@@ -133,6 +154,11 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
     if (!hap.context.scale) {
       throw new Error('can only use scaleTranspose after .scale');
     }
+    if (typeof hap.value === 'object')
+      return hap.withValue(() => ({
+        ...hap.value,
+        note: scaleOffset(hap.context.scale, Number(offset), hap.value.note),
+      }));
     if (typeof hap.value !== 'string') {
       throw new Error('can only use scaleTranspose with notes');
     }
@@ -157,9 +183,9 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
  * .scale("C:<major minor>/2")
  * .s("piano")
  * @example
- * n(rand.range(0,12).segment(8).round())
+ * n(rand.range(0,12).segment(8))
  * .scale("C:ritusen")
- * .s("folkharp")
+ * .s("piano")
  */
 
 export const scale = register('scale', function (scale, pat) {
@@ -179,18 +205,35 @@ export const scale = register('scale', function (scale, pat) {
           // legacy..
           return pure(step);
         }
-        const asNumber = Number(step);
+        let asNumber = Number(step);
+        let semitones = 0;
         if (isNaN(asNumber)) {
-          logger(`[tonal] invalid scale step "${step}", expected number`, 'error');
-          return silence;
+          step = String(step);
+          if (!/^[-+]?\d+(#*|b*){1}$/.test(step)) {
+            logger(
+              `[tonal] invalid scale step "${step}", expected number or integer with optional # b suffixes`,
+              'error',
+            );
+            return silence;
+          }
+          const isharp = step.indexOf('#');
+          if (isharp >= 0) {
+            asNumber = Number(step.substring(0, isharp));
+            semitones = step.length - isharp;
+          } else {
+            const iflat = step.indexOf('b');
+            asNumber = Number(step.substring(0, iflat));
+            semitones = iflat - step.length;
+          }
         }
         try {
           let note;
-          if (value.anchor) {
+          if (isObject && value.anchor) {
             note = stepInNamedScale(asNumber, scale, value.anchor);
           } else {
             note = scaleStep(asNumber, scale);
           }
+          if (semitones != 0) note = Note.transpose(note, Interval.fromSemitones(semitones));
           value = pure(isObject ? { ...value, note } : note);
         } catch (err) {
           logger(`[tonal] ${err.message}`, 'error');
