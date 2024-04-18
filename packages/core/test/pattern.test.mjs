@@ -21,8 +21,8 @@ import {
   cat,
   sequence,
   palindrome,
-  polymeter,
-  polymeterSteps,
+  s_polymeter,
+  s_polymeterSteps,
   polyrhythm,
   silence,
   fast,
@@ -603,18 +603,18 @@ describe('Pattern', () => {
       );
     });
   });
-  describe('polymeter()', () => {
+  describe('s_polymeter()', () => {
     it('Can layer up cycles, stepwise, with lists', () => {
-      expect(polymeterSteps(3, ['d', 'e']).firstCycle()).toStrictEqual(
+      expect(s_polymeterSteps(3, ['d', 'e']).firstCycle()).toStrictEqual(
         fastcat(pure('d'), pure('e'), pure('d')).firstCycle(),
       );
 
-      expect(polymeter(['a', 'b', 'c'], ['d', 'e']).fast(2).firstCycle()).toStrictEqual(
+      expect(s_polymeter(['a', 'b', 'c'], ['d', 'e']).fast(2).firstCycle()).toStrictEqual(
         stack(sequence('a', 'b', 'c', 'a', 'b', 'c'), sequence('d', 'e', 'd', 'e', 'd', 'e')).firstCycle(),
       );
     });
     it('Can layer up cycles, stepwise, with weighted patterns', () => {
-      sameFirst(polymeterSteps(3, sequence('a', 'b')).fast(2), sequence('a', 'b', 'a', 'b', 'a', 'b'));
+      sameFirst(s_polymeterSteps(3, sequence('a', 'b')).fast(2), sequence('a', 'b', 'a', 'b', 'a', 'b'));
     });
   });
 
@@ -1138,28 +1138,26 @@ describe('Pattern', () => {
       );
     });
   });
-  describe('steptaper', () => {
+  describe('s_taper', () => {
     it('can taper', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).steptaper(1, 5), sequence(0, 1, 2, 3, 4, 0, 1, 2, 3, 0, 1, 2, 0, 1, 0)));
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_taper(1, 5), sequence(0, 1, 2, 3, 4, 0, 1, 2, 3, 0, 1, 2, 0, 1, 0)));
     });
     it('can taper backwards', () => {
-      expect(
-        sameFirst(sequence(0, 1, 2, 3, 4).steptaper(-1, 5), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)),
-      );
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_taper(-1, 5), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)));
     });
   });
-  describe('wax and wane, left', () => {
-    it('can wax from the left', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).stepwax(2), sequence(0, 1)));
+  describe('s_add and s_sub, left', () => {
+    it('can add from the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_add(2), sequence(0, 1)));
     });
-    it('can wane to the left', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).stepwane(2), sequence(0, 1, 2)));
+    it('can sub to the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_sub(2), sequence(0, 1, 2)));
     });
-    it('can wax from the right', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).stepwax(-2), sequence(3, 4)));
+    it('can add from the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_add(-2), sequence(3, 4)));
     });
-    it('can wane to the right', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).stepwane(-2), sequence(2, 3, 4)));
+    it('can sub to the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_sub(-2), sequence(2, 3, 4)));
     });
   });
 });
