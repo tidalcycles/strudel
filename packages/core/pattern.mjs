@@ -1288,7 +1288,7 @@ export function stackBy(by, ...pats) {
     left: stackLeft,
     right: stackRight,
     expand: stack,
-    repeat: (...args) => polymeterSteps(tactus, ...args),
+    repeat: (...args) => s_polymeterSteps(tactus, ...args),
   };
   return by
     .inhabit(lookup)
