@@ -10,7 +10,7 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
 
-import { compose, removeUndefineds, flatten, id, listRange, curry, _mod, numeralArgs, parseNumeral } from './util.mjs';
+import { uniqsort, removeUndefineds, flatten, id, listRange, curry, _mod, numeralArgs, parseNumeral } from './util.mjs';
 import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
 
@@ -2356,6 +2356,49 @@ Pattern.prototype.tag = function (tag) {
 //////////////////////////////////////////////////////////////////////
 // Tactus-related functions, i.e. ones that do stepwise
 // transformations
+
+// stepJoin :: Pattern (Pattern a) -> Pattern a
+// stepJoin pp = Pattern q first_t Nothing
+//   where q st@(State a c) = query (timecat $ retime $ slices $ query (rotL (sam $ start a) pp) (st {arc = Arc 0 1})) st
+//         first_t :: Maybe Rational
+//         first_t = tactus $ timecat $ retime $ slices $ queryArc pp (Arc 0 1)
+//         retime :: [(Time, Pattern a)] -> [(Time, Pattern a)]
+//         retime xs = map (\(dur, pat) -> adjust dur pat) xs
+//           where occupied_perc = sum $ map fst $ filter (isJust . tactus . snd) xs
+//                 occupied_tactus = sum $ catMaybes $ map (tactus . snd) xs
+//                 total_tactus = occupied_tactus / occupied_perc
+//                 adjust dur pat@(Pattern {tactus = Just t}) = (t, pat)
+//                 adjust dur pat = (dur*total_tactus, pat)
+//         -- break up events at all start/end points, into groups, including empty ones.
+//         slices :: [Event (Pattern a)] -> [(Time, Pattern a)]
+//         slices evs = map (\s -> ((snd s - fst s), stack $ map value $ fit s evs)) $ pairs $ sort $ nubOrd $ 0:1:concatMap (\ev -> start (part ev):stop (part ev):[]) evs
+//         -- list of slices of events within the given range
+//         fit :: (Rational, Rational) -> [Event (Pattern a)] -> [Event (Pattern a)]
+//         fit (b,e) evs = catMaybes $ map (match (b,e)) evs
+//         -- slice of event within the given range
+//         match :: (Rational, Rational) -> Event (Pattern a) -> Maybe (Event (Pattern a))
+//         match (b,e) ev = do a <- subArc (Arc b e) $ part ev
+//                             return ev {part = a}
+
+function _slices(haps) {
+  const breakpoints = flatten(haps.map((hap) => [hap.part.begin, hap.part.end]));
+  // Set used to make list unique
+  const slicespans = pairs(uniqsort([Fraction(0), Fraction(1), ...breakpoints]));
+  slicespans.map((s) => [s[1].sub([0]), stack(_fitslice(s, haps).map(value))]);
+}
+
+function _fitslice(span, haps) {
+  return removeUndefineds(haps.map((hap) => _match(span, hap)));
+}
+
+// slice event if it's within the given timespan
+function _match(span, hap_p) {
+  const subspan = span.intersection(ev_p.part);
+  if (subspan == undefined) {
+    return undefined;
+  }
+  return new Hap(ev_p.whole, subspan, ev_p.value, ev_p.context);
+}
 
 /**
  * *EXPERIMENTAL* - Speeds a pattern up or down, to fit to the given number of steps per cycle (aka tactus).
