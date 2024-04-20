@@ -486,8 +486,10 @@ export const wchoose = (...pairs) => wchooseWith(rand, ...pairs);
  * @returns {Pattern}
  * @example
  * wchooseCycles(["bd",10], ["hh",1], ["sd",1]).s().fast(8)
+ * @example
+ * wchooseCycles(["bd bd bd",5], ["hh hh hh",3], ["sd sd sd",1]).fast(4).s()
  */
-export const wchooseCycles = (...pairs) => _wchooseWith(rand, ...pairs).innerJoin();
+export const wchooseCycles = (...pairs) => _wchooseWith(rand.segment(1), ...pairs).innerJoin();
 
 export const wrandcat = wchooseCycles;
 
