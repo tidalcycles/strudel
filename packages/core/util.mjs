@@ -301,7 +301,7 @@ export const sol2note = (n, notation = 'letters') => {
 export function uniq(a) {
   var seen = {};
   return a.filter(function (item) {
-    return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+    return seen.hasOwn(item) ? false : (seen[item] = true);
   });
 }
 
