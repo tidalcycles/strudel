@@ -61,6 +61,11 @@ export const valueToMidi = (value, fallbackValue) => {
   return fallbackValue;
 };
 
+// used to schedule external event like midi and osc out
+export const getEventOffsetMs = (targetTimeSeconds, currentTimeSeconds) => {
+  return (targetTimeSeconds - currentTimeSeconds) * 1000;
+};
+
 /**
  * @deprecated does not appear to be referenced or invoked anywhere in the codebase
  * @noAutocomplete
