@@ -62,8 +62,8 @@ export const valueToMidi = (value, fallbackValue) => {
 };
 
 // used to schedule external event like midi and osc out
-export const getEventOffsetMs = (targetTime, currentTime) => {
-  return (targetTime - currentTime) * 1000;
+export const getEventOffsetMs = (targetTimeSeconds, currentTimeSeconds) => {
+  return (targetTimeSeconds - currentTimeSeconds) * 1000;
 };
 
 /**

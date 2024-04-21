@@ -122,8 +122,7 @@ Pattern.prototype.midi = function (output) {
     //magic number to get audio engine to line up, can probably be calculated somehow
     const latencyMs = 34;
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
-    const timeOffsetString = `${getEventOffsetMs(targetTime, currentTime) + latencyMs}`;
-
+    const timeOffsetString = `+${getEventOffsetMs(targetTime, currentTime) + latencyMs}`;
     // destructure value
     let { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd, gain = 1, velocity = 0.9 } = hap.value;
 
