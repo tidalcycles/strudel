@@ -233,7 +233,7 @@ export const zipWith = (f, xs, ys) => xs.map((n, i) => f(n, ys[i]));
 
 export const pairs = function (xs) {
   const result = [];
-  for (const i = 0; ++i; i < xs.length - 1) {
+  for (let i = 0; i < xs.length - 1; ++i) {
     result.push([xs[i], xs[i + 1]]);
   }
   return result;
@@ -298,7 +298,7 @@ export const sol2note = (n, notation = 'letters') => {
 };
 
 // Remove duplicates from list
-function uniq(a) {
+export function uniq(a) {
   var seen = {};
   return a.filter(function (item) {
     return seen.hasOwnProperty(item) ? false : (seen[item] = true);
@@ -306,9 +306,16 @@ function uniq(a) {
 }
 
 // Remove duplicates from list, sorting in the process. Mutates argument!
-function uniqsort(a) {
+export function uniqsort(a) {
   return a.sort().filter(function (item, pos, ary) {
     return !pos || item != ary[pos - 1];
+  });
+}
+
+// rational version
+export function uniqsortr(a) {
+  return a.sort().filter(function (item, pos, ary) {
+    return !pos || item.ne(ary[pos - 1]);
   });
 }
 

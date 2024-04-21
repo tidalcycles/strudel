@@ -10,7 +10,17 @@ import Hap from './hap.mjs';
 import State from './state.mjs';
 import { unionWithObj } from './value.mjs';
 
-import { uniqsort, removeUndefineds, flatten, id, listRange, curry, _mod, numeralArgs, parseNumeral } from './util.mjs';
+import {
+  uniqsortr,
+  removeUndefineds,
+  flatten,
+  id,
+  listRange,
+  curry,
+  _mod,
+  numeralArgs,
+  parseNumeral,
+} from './util.mjs';
 import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
 
@@ -46,6 +56,10 @@ export class Pattern {
   setTactus(tactus) {
     this.tactus = tactus;
     return this;
+  }
+
+  withTactus(f) {
+    return new Pattern(this.query, this.tactus === undefined ? undefined : f(this.tactus));
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -1454,7 +1468,7 @@ export const func = curry((a, b) => reify(b).func(a));
  * @noAutocomplete
  *
  */
-export function register(name, func, patternify = true, preserveTactus = false) {
+export function register(name, func, patternify = true, preserveTactus = false, join = (x) => x.innerJoin()) {
   if (Array.isArray(name)) {
     const result = {};
     for (const name_item of name) {
@@ -1491,7 +1505,7 @@ export function register(name, func, patternify = true, preserveTactus = false) 
             return func(...args, pat);
           };
           mapFn = curry(mapFn, null, arity - 1);
-          result = right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)).innerJoin();
+          result = join(right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)));
         }
       }
       if (preserveTactus) {
@@ -1533,6 +1547,11 @@ export function register(name, func, patternify = true, preserveTactus = false) 
   // toplevel functions get curried as well as patternified
   // because pfunc uses spread args, we need to state the arity explicitly!
   return curry(pfunc, null, arity);
+}
+
+// Like register, but defaults to stepJoin
+function stepRegister(name, func, patternify = true, preserveTactus = false, join = (x) => x.stepJoin()) {
+  return register(name, func, patternify, preserveTactus, join);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2357,47 +2376,53 @@ Pattern.prototype.tag = function (tag) {
 // Tactus-related functions, i.e. ones that do stepwise
 // transformations
 
-// stepJoin :: Pattern (Pattern a) -> Pattern a
-// stepJoin pp = Pattern q first_t Nothing
-//   where q st@(State a c) = query (timecat $ retime $ slices $ query (rotL (sam $ start a) pp) (st {arc = Arc 0 1})) st
-//         first_t :: Maybe Rational
-//         first_t = tactus $ timecat $ retime $ slices $ queryArc pp (Arc 0 1)
-//         retime :: [(Time, Pattern a)] -> [(Time, Pattern a)]
-//         retime xs = map (\(dur, pat) -> adjust dur pat) xs
-//           where occupied_perc = sum $ map fst $ filter (isJust . tactus . snd) xs
-//                 occupied_tactus = sum $ catMaybes $ map (tactus . snd) xs
-//                 total_tactus = occupied_tactus / occupied_perc
-//                 adjust dur pat@(Pattern {tactus = Just t}) = (t, pat)
-//                 adjust dur pat = (dur*total_tactus, pat)
-//         -- break up events at all start/end points, into groups, including empty ones.
-//         slices :: [Event (Pattern a)] -> [(Time, Pattern a)]
-//         slices evs = map (\s -> ((snd s - fst s), stack $ map value $ fit s evs)) $ pairs $ sort $ nubOrd $ 0:1:concatMap (\ev -> start (part ev):stop (part ev):[]) evs
-//         -- list of slices of events within the given range
-//         fit :: (Rational, Rational) -> [Event (Pattern a)] -> [Event (Pattern a)]
-//         fit (b,e) evs = catMaybes $ map (match (b,e)) evs
-//         -- slice of event within the given range
-//         match :: (Rational, Rational) -> Event (Pattern a) -> Maybe (Event (Pattern a))
-//         match (b,e) ev = do a <- subArc (Arc b e) $ part ev
-//                             return ev {part = a}
+Pattern.prototype.stepJoin = function () {
+  const pp = this;
+  const first_t = s_cat(..._retime(_slices(pp.queryArc(0, 1)))).tactus;
+  const q = function (state) {
+    const shifted = pp.early(state.span.begin.sam());
+    const haps = shifted.query(state.setSpan(new TimeSpan(Fraction(0), Fraction(1))));
+    const pat = s_cat(..._retime(_slices(haps)));
+    return pat.query(state);
+  };
+  return new Pattern(q, first_t);
+};
 
-function _slices(haps) {
-  const breakpoints = flatten(haps.map((hap) => [hap.part.begin, hap.part.end]));
-  // Set used to make list unique
-  const slicespans = pairs(uniqsort([Fraction(0), Fraction(1), ...breakpoints]));
-  slicespans.map((s) => [s[1].sub([0]), stack(_fitslice(s, haps).map(value))]);
+export function _retime(timedHaps) {
+  const occupied_perc = timedHaps.filter((t, pat) => pat.tactus != undefined).reduce((a, b) => a.add(b), Fraction(0));
+  const occupied_tactus = removeUndefineds(timedHaps.map((t, pat) => pat.tactus)).reduce(
+    (a, b) => a.add(b),
+    Fraction(0),
+  );
+  const total_tactus = occupied_perc.eq(0) ? 0 : occupied_tactus.div(occupied_perc);
+  function adjust(dur, pat) {
+    if (pat.tactus === undefined) {
+      return [dur.mul(total_tactus), pat];
+    }
+    return [pat.tactus, pat];
+  }
+  return timedHaps.map((x) => adjust(...x));
 }
 
-function _fitslice(span, haps) {
+export function _slices(haps) {
+  // slices evs = map (\s -> ((snd s - fst s), stack $ map value $ fit s evs))
+  // $ pairs $ sort $ nubOrd $ 0:1:concatMap (\ev -> start (part ev):stop (part ev):[]) evs
+  const breakpoints = flatten(haps.map((hap) => [hap.part.begin, hap.part.end]));
+  const unique = uniqsortr([Fraction(0), Fraction(1), ...breakpoints]);
+  const slicespans = pairs(unique);
+  return slicespans.map((s) => [s[1].sub(s[0]), stack(..._fitslice(new TimeSpan(...s), haps).map((x) => x.value))]);
+}
+
+export function _fitslice(span, haps) {
   return removeUndefineds(haps.map((hap) => _match(span, hap)));
 }
 
-// slice event if it's within the given timespan
-function _match(span, hap_p) {
-  const subspan = span.intersection(ev_p.part);
+export function _match(span, hap_p) {
+  const subspan = span.intersection(hap_p.part);
   if (subspan == undefined) {
     return undefined;
   }
-  return new Hap(ev_p.whole, subspan, ev_p.value, ev_p.context);
+  return new Hap(hap_p.whole, subspan, hap_p.value, hap_p.context);
 }
 
 /**
@@ -2551,7 +2576,7 @@ export function s_alt(...groups) {
 /**
  * *EXPERIMENTAL* - Retains the given number of steps in a pattern (and dropping the rest), according to its 'tactus'.
  */
-export const s_add = register('s_add', function (i, pat) {
+export const s_add = stepRegister('s_add', function (i, pat) {
   if (pat.tactus.lte(0)) {
     return nothing;
   }
@@ -2579,12 +2604,20 @@ export const s_add = register('s_add', function (i, pat) {
 /**
  * *EXPERIMENTAL* - Removes the given number of steps from a pattern, according to its 'tactus'.
  */
-export const s_sub = register('s_sub', function (i, pat) {
+export const s_sub = stepRegister('s_sub', function (i, pat) {
   i = Fraction(i);
   if (i.lt(0)) {
     return pat.s_add(Fraction(0).sub(pat.tactus.add(i)));
   }
   return pat.s_add(pat.tactus.sub(i));
+});
+
+export const s_expand = stepRegister('s_expand', function (factor, pat) {
+  return pat.withTactus((t) => t.mul(Fraction(factor)));
+});
+
+export const s_contract = stepRegister('s_contract', function (factor, pat) {
+  return pat.withTactus((t) => t.div(Fraction(factor)));
 });
 
 /**
@@ -2617,12 +2650,18 @@ export const s_taperlist = (amount, times, pat) => pat.s_taperlist(amount, times
 /**
  * *EXPERIMENTAL*
  */
-export const s_taper = register('s_taper', function (amount, times, pat) {
-  const list = pat.s_taperlist(amount, times);
-  const result = s_cat(...list);
-  result.tactus = list.reduce((a, b) => a.add(b.tactus), Fraction(0));
-  return result;
-});
+export const s_taper = register(
+  's_taper',
+  function (amount, times, pat) {
+    const list = pat.s_taperlist(amount, times);
+    const result = s_cat(...list);
+    result.tactus = list.reduce((a, b) => a.add(b.tactus), Fraction(0));
+    return result;
+  },
+  true,
+  false,
+  (x) => x.stepJoin(),
+);
 
 /**
  * *EXPERIMENTAL*
