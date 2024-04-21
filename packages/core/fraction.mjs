@@ -47,6 +47,10 @@ Fraction.prototype.eq = function (other) {
   return this.compare(other) == 0;
 };
 
+Fraction.prototype.ne = function (other) {
+  return this.compare(other) != 0;
+};
+
 Fraction.prototype.max = function (other) {
   return this.gt(other) ? this : other;
 };

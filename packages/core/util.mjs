@@ -231,6 +231,14 @@ export const splitAt = function (index, value) {
 
 export const zipWith = (f, xs, ys) => xs.map((n, i) => f(n, ys[i]));
 
+export const pairs = function (xs) {
+  const result = [];
+  for (let i = 0; i < xs.length - 1; ++i) {
+    result.push([xs[i], xs[i + 1]]);
+  }
+  return result;
+};
+
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 /* solmization, not used yet */
@@ -288,6 +296,28 @@ export const sol2note = (n, notation = 'letters') => {
   const oct = Math.floor(n / 12) - 1;
   return note + oct;
 };
+
+// Remove duplicates from list
+export function uniq(a) {
+  var seen = {};
+  return a.filter(function (item) {
+    return seen.hasOwn(item) ? false : (seen[item] = true);
+  });
+}
+
+// Remove duplicates from list, sorting in the process. Mutates argument!
+export function uniqsort(a) {
+  return a.sort().filter(function (item, pos, ary) {
+    return !pos || item != ary[pos - 1];
+  });
+}
+
+// rational version
+export function uniqsortr(a) {
+  return a.sort().filter(function (item, pos, ary) {
+    return !pos || item.ne(ary[pos - 1]);
+  });
+}
 
 // code hashing helpers
 
