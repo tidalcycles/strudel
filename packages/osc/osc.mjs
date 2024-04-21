@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import OSC from 'osc-js';
 
-import { logger, parseNumeral, Pattern } from '@strudel/core';
+import { logger, parseNumeral, Pattern, getEventOffsetMs } from '@strudel/core';
 
 let connection; // Promise<OSC>
 function connect() {
@@ -44,7 +44,7 @@ function connect() {
  * @returns Pattern
  */
 Pattern.prototype.osc = function () {
-  return this.onTrigger(async (time, hap, currentTime, cps = 1) => {
+  return this.onTrigger(async (time, hap, currentTime, cps = 1, targetTime) => {
     hap.ensureObjectValue();
     const osc = await connect();
     const cycle = hap.wholeOrPart().begin.valueOf();
@@ -56,7 +56,8 @@ Pattern.prototype.osc = function () {
     const keyvals = Object.entries(controls).flat();
     // time should be audio time of onset
     // currentTime should be current time of audio context (slightly before time)
-    const offset = (time - currentTime) * 1000;
+    const offset = getEventOffsetMs(targetTime, currentTime);
+
     // timestamp in milliseconds used to trigger the osc bundle at a precise moment
     const ts = Math.floor(Date.now() + offset);
     const message = new OSC.Message('/dirt/play', ...keyvals);
