@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as _WebMidi from 'webmidi';
-import { Pattern, isPattern, logger, ref } from '@strudel/core';
+import { Pattern, getEventOffsetMs, isPattern, logger, ref } from '@strudel/core';
 import { noteToMidi } from '@strudel/core';
 import { Note } from 'webmidi';
 // if you use WebMidi from outside of this package, make sure to import that instance:
@@ -120,10 +120,9 @@ Pattern.prototype.midi = function (output) {
     const device = getDevice(output, WebMidi.outputs);
     hap.ensureObjectValue();
     //magic number to get audio engine to line up, can probably be calculated somehow
-    const latency = 0.034;
+    const latencyMs = 34;
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
-    const timeOffsetString = `+${(targetTime - currentTime + latency) * 1000}`;
-
+    const timeOffsetString = `+${getEventOffsetMs(targetTime, currentTime) + latencyMs}`;
     // destructure value
     let { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd, gain = 1, velocity = 0.9 } = hap.value;
 

@@ -257,12 +257,12 @@ export class Pattern {
   }
 
   outerBind(func) {
-    return this.bindWhole((a) => a, func);
+    return this.bindWhole((a) => a, func).setTactus(this.tactus);
   }
 
   outerJoin() {
     // Flattens a pattern of patterns into a pattern, where wholes are
-    // taken from inner haps.
+    // taken from outer haps.
     return this.outerBind(id);
   }
 
@@ -1997,6 +1997,24 @@ export const segment = register('segment', function (rate, pat) {
 });
 
 /**
+ * The function `swingBy x n` breaks each cycle into `n` slices, and then delays events in the second half of each slice by the amount `x`, which is relative to the size of the (half) slice. So if `x` is 0 it does nothing, `0.5` delays for half the note duration, and 1 will wrap around to doing nothing again. The end result is a shuffle or swing-like rhythm
+ * @param {number} subdivision
+ * @param {number} offset
+ * @example
+ * s("hh*8").swingBy(1/3, 4)
+ */
+export const swingBy = register('swingBy', (swing, n, pat) => pat.inside(n, late(seq(0, swing / 2))));
+
+/**
+ * Shorthand for swingBy with 1/3:
+ * @param {number} subdivision
+ * @example
+ * s("hh*8").swing(4)
+ * // s("hh*8").swingBy(1/3, 4)
+ */
+export const swing = register('swing', (n, pat) => pat.swingBy(1 / 3, n));
+
+/**
  * Swaps 1s and 0s in a binary pattern.
  * @name invert
  * @synonyms inv
@@ -2411,7 +2429,10 @@ export function _slices(haps) {
   const breakpoints = flatten(haps.map((hap) => [hap.part.begin, hap.part.end]));
   const unique = uniqsortr([Fraction(0), Fraction(1), ...breakpoints]);
   const slicespans = pairs(unique);
-  return slicespans.map((s) => [s[1].sub(s[0]), stack(..._fitslice(new TimeSpan(...s), haps).map((x) => x.value))]);
+  return slicespans.map((s) => [
+    s[1].sub(s[0]),
+    stack(..._fitslice(new TimeSpan(...s), haps).map((x) => x.value.withHap((h) => h.setContext(h.combineContext(x))))),
+  ]);
 }
 
 export function _fitslice(span, haps) {
