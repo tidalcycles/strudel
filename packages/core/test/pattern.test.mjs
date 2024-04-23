@@ -1146,7 +1146,7 @@ describe('Pattern', () => {
       expect(sameFirst(sequence(0, 1, 2, 3, 4).s_taper(-1, 5), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)));
     });
   });
-  describe('s_add and s_sub, left', () => {
+  describe('s_add and s_sub', () => {
     it('can add from the left', () => {
       expect(sameFirst(sequence(0, 1, 2, 3, 4).s_add(2), sequence(0, 1)));
     });
@@ -1158,6 +1158,15 @@ describe('Pattern', () => {
     });
     it('can sub to the right', () => {
       expect(sameFirst(sequence(0, 1, 2, 3, 4).s_sub(-2), sequence(2, 3, 4)));
+    });
+    it('can subtract nothing', () => {
+      expect(sameFirst(pure('a').s_sub(0), pure('a')));
+    });
+    it('can subtract nothing, repeatedly', () => {
+      expect(sameFirst(pure('a').s_sub(0, 0), fastcat('a', 'a')));
+      for (var i = 0; i < 100; ++i) {
+        expect(sameFirst(pure('a').s_sub(...Array(i).fill(0)), fastcat(...Array(i).fill('a'))));
+      }
     });
   });
 });
