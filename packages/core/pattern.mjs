@@ -257,12 +257,12 @@ export class Pattern {
   }
 
   outerBind(func) {
-    return this.bindWhole((a) => a, func);
+    return this.bindWhole((a) => a, func).setTactus(this.tactus);
   }
 
   outerJoin() {
     // Flattens a pattern of patterns into a pattern, where wholes are
-    // taken from inner haps.
+    // taken from outer haps.
     return this.outerBind(id);
   }
 
