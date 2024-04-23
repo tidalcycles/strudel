@@ -43,7 +43,7 @@ export class Pattern {
   constructor(query, tactus = undefined) {
     this.query = query;
     this._Pattern = true; // this property is used to detect if a pattern that fails instanceof Pattern is an instance of another Pattern
-    this.__tactus = tactus; // in terms of number of beats per cycle
+    this.__tactus = Fraction(tactus); // in terms of number of steps per cycle
   }
 
   get tactus() {
