@@ -257,12 +257,12 @@ export class Pattern {
   }
 
   outerBind(func) {
-    return this.bindWhole((a) => a, func);
+    return this.bindWhole((a) => a, func).setTactus(this.tactus);
   }
 
   outerJoin() {
     // Flattens a pattern of patterns into a pattern, where wholes are
-    // taken from inner haps.
+    // taken from outer haps.
     return this.outerBind(id);
   }
 
@@ -2429,7 +2429,10 @@ export function _slices(haps) {
   const breakpoints = flatten(haps.map((hap) => [hap.part.begin, hap.part.end]));
   const unique = uniqsortr([Fraction(0), Fraction(1), ...breakpoints]);
   const slicespans = pairs(unique);
-  return slicespans.map((s) => [s[1].sub(s[0]), stack(..._fitslice(new TimeSpan(...s), haps).map((x) => x.value))]);
+  return slicespans.map((s) => [
+    s[1].sub(s[0]),
+    stack(..._fitslice(new TimeSpan(...s), haps).map((x) => x.value.withHap((h) => h.setContext(h.combineContext(x))))),
+  ]);
 }
 
 export function _fitslice(span, haps) {
