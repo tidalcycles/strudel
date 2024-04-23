@@ -314,9 +314,11 @@ export function uniqsort(a) {
 
 // rational version
 export function uniqsortr(a) {
-  return a.sort().filter(function (item, pos, ary) {
-    return !pos || item.ne(ary[pos - 1]);
-  });
+  return a
+    .sort((x, y) => x.compare(y))
+    .filter(function (item, pos, ary) {
+      return !pos || item.ne(ary[pos - 1]);
+    });
 }
 
 // code hashing helpers
