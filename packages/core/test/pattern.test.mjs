@@ -47,6 +47,10 @@ import {
   time,
   run,
   pick,
+  stackLeft,
+  stackRight,
+  stackCentre,
+  s_cat,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -1136,6 +1140,41 @@ describe('Pattern', () => {
       expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).splice(4, sequence(0, 1, 2, 3)).tactus).toStrictEqual(
         Fraction(4),
       );
+      expect(sequence({ n: 0 }, { n: 1 }, { n: 2 }).chop(4).tactus).toStrictEqual(Fraction(12));
+      expect(
+        pure((x) => x + 1)
+          .setTactus(3)
+          .appBoth(pure(1).setTactus(2)).tactus,
+      ).toStrictEqual(Fraction(6));
+      expect(
+        pure((x) => x + 1)
+          .setTactus(undefined)
+          .appBoth(pure(1).setTactus(2)).tactus,
+      ).toStrictEqual(Fraction(2));
+      expect(
+        pure((x) => x + 1)
+          .setTactus(3)
+          .appBoth(pure(1).setTactus(undefined)).tactus,
+      ).toStrictEqual(Fraction(3));
+      expect(stack(fastcat(0, 1, 2), fastcat(3, 4)).tactus).toStrictEqual(Fraction(6));
+      expect(stack(fastcat(0, 1, 2), fastcat(3, 4).setTactus(undefined)).tactus).toStrictEqual(Fraction(3));
+      expect(stackLeft(fastcat(0, 1, 2, 3), fastcat(3, 4)).tactus).toStrictEqual(Fraction(4));
+      expect(stackRight(fastcat(0, 1, 2), fastcat(3, 4)).tactus).toStrictEqual(Fraction(3));
+      // maybe this should double when they are either all even or all odd
+      expect(stackCentre(fastcat(0, 1, 2), fastcat(3, 4)).tactus).toStrictEqual(Fraction(3));
+      expect(fastcat(0, 1).ply(3).tactus).toStrictEqual(Fraction(6));
+      expect(fastcat(0, 1).setTactus(undefined).ply(3).tactus).toStrictEqual(undefined);
+      expect(fastcat(0, 1).fast(3).tactus).toStrictEqual(Fraction(6));
+      expect(fastcat(0, 1).setTactus(undefined).fast(3).tactus).toStrictEqual(undefined);
+    });
+  });
+  describe('s_cat', () => {
+    it('can cat', () => {
+      expect(sameFirst(s_cat(fastcat(0, 1, 2, 3), fastcat(4, 5)), fastcat(0, 1, 2, 3, 4, 5)));
+      expect(sameFirst(s_cat(pure(1), pure(2), pure(3)), fastcat(1, 2, 3)));
+    });
+    it('calculates undefined tactuses as the average', () => {
+      expect(sameFirst(s_cat(pure(1), pure(2), pure(3).setTactus(undefined)), fastcat(1, 2, 3)));
     });
   });
   describe('s_taper', () => {
