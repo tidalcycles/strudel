@@ -42,16 +42,16 @@ export class Pattern {
    */
   constructor(query, tactus = undefined) {
     this.query = query;
-    this._Pattern = true; // this property is used to detect if a pattern that fails instanceof Pattern is an instance of another Pattern
-    this.__tactus = Fraction(tactus); // in terms of number of steps per cycle
+    this._Pattern = true; // this property is used to detectinstance of another Pattern
+    this.tactus = tactus; // in terms of number of steps per cycle
   }
 
   get tactus() {
-    return this.__tactus ?? Fraction(1);
+    return this.__tactus;
   }
 
   set tactus(tactus) {
-    this.__tactus = Fraction(tactus);
+    this.__tactus = tactus === undefined ? undefined : Fraction(tactus);
   }
 
   setTactus(tactus) {
@@ -61,6 +61,10 @@ export class Pattern {
 
   withTactus(f) {
     return new Pattern(this.query, this.tactus === undefined ? undefined : f(this.tactus));
+  }
+
+  get hasTactus() {
+    return this.tactus !== undefined;
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -1181,7 +1185,7 @@ export const pm = s_polymeter;
  * @example
  * gap(3) // "~@3"
  */
-export const gap = (tactus) => new Pattern(() => [], Fraction(tactus));
+export const gap = (tactus) => new Pattern(() => [], tactus);
 
 /**
  * Does absolutely nothing..
@@ -1762,7 +1766,7 @@ export const { focusSpan, focusspan } = register(['focusSpan', 'focusspan'], fun
  */
 export const ply = register('ply', function (factor, pat) {
   const result = pat.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
-  result.tactus = pat.tactus.mul(factor);
+  result.tactus = Fraction(factor).mulmaybe(pat.tactus);
   return result;
 });
 
@@ -1784,7 +1788,7 @@ export const { fast, density } = register(['fast', 'density'], function (factor,
   factor = Fraction(factor);
   const fastQuery = pat.withQueryTime((t) => t.mul(factor));
   const result = fastQuery.withHapTime((t) => t.div(factor));
-  result.tactus = factor.mul(pat.tactus);
+  result.tactus = factor.mulmaybe(pat.tactus);
   return result;
 });
 
@@ -1954,7 +1958,7 @@ export const zoom = register('zoom', function (s, e, pat) {
     return nothing;
   }
   const d = e.sub(s);
-  const tactus = pat.tactus.mul(d);
+  const tactus = pat.tactus.mulmaybe(d);
   return pat
     .withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
     .withHapSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
@@ -2408,15 +2412,15 @@ Pattern.prototype.stepJoin = function () {
 };
 
 export function _retime(timedHaps) {
-  const occupied_perc = timedHaps.filter((t, pat) => pat.tactus != undefined).reduce((a, b) => a.add(b), Fraction(0));
+  const occupied_perc = timedHaps.filter((t, pat) => pat.hasTactus).reduce((a, b) => a.add(b), Fraction(0));
   const occupied_tactus = removeUndefineds(timedHaps.map((t, pat) => pat.tactus)).reduce(
     (a, b) => a.add(b),
     Fraction(0),
   );
-  const total_tactus = occupied_perc.eq(0) ? 0 : occupied_tactus.div(occupied_perc);
+  const total_tactus = occupied_perc.eq(0) ? undefined : occupied_tactus.div(occupied_perc);
   function adjust(dur, pat) {
     if (pat.tactus === undefined) {
-      return [dur.mul(total_tactus), pat];
+      return [dur.mulmaybe(total_tactus), pat];
     }
     return [pat.tactus, pat];
   }
@@ -2454,7 +2458,10 @@ export function _match(span, hap_p) {
  * // The same as s("{bd sd cp}%4")
  */
 export const steps = register('steps', function (targetTactus, pat) {
-  if (pat.tactus.eq(0)) {
+  if (pat.tactus === undefined) {
+    return pat;
+  }
+  if (pat.tactus.eq(Fraction(0))) {
     // avoid divide by zero..
     return nothing;
   }
@@ -2520,10 +2527,16 @@ export function s_polymeter(...args) {
     return _polymeterListSteps(0, ...args);
   }
 
+  // TODO currently ignoring arguments without tactus...
+  args = args.filter((arg) => arg.hasTactus);
+
   if (args.length == 0) {
     return silence;
   }
   const tactus = args[0].tactus;
+  if (tactus.eq(Fraction(0))) {
+    return nothing;
+  }
   const [head, ...tail] = args;
 
   const result = stack(head, ...tail.map((pat) => pat._slow(pat.tactus.div(tactus))));
@@ -2543,8 +2556,26 @@ export function s_polymeter(...args) {
  * // the same as "bd sd cp hh hh".sound()
  */
 export function s_cat(...timepats) {
+  if (timepats.length === 0) {
+    return nothing;
+  }
   const findtactus = (x) => (Array.isArray(x) ? x : [x.tactus, x]);
   timepats = timepats.map(findtactus);
+  if (timepats.find((x) => x[0] === undefined)) {
+    const times = timepats.map((a) => a[0]).filter((x) => x !== undefined);
+    if (times.length === 0) {
+      return fastcat(...timepats.map((x) => x[1]));
+    }
+    if (times.length === timepats.length) {
+      return nothing;
+    }
+    const avg = times.reduce((a, b) => a.add(b), Fraction(0)).div(times.length);
+    for (let timepat of timepats) {
+      if (timepat[0] === undefined) {
+        timepat[0] = avg;
+      }
+    }
+  }
   if (timepats.length == 1) {
     const result = reify(timepats[0][1]);
     result.tactus = timepats[0][0];
@@ -2588,7 +2619,7 @@ export function s_alt(...groups) {
   for (let cycle = 0; cycle < cycles; ++cycle) {
     result.push(...groups.map((x) => (x.length == 0 ? silence : x[cycle % x.length])));
   }
-  result = result.filter((x) => x.tactus > 0);
+  result = result.filter((x) => x.hasTactus && x.tactus > 0);
   const tactus = result.reduce((a, b) => a.add(b.tactus), Fraction(0));
   result = s_cat(...result);
   result.tactus = tactus;
@@ -2599,6 +2630,9 @@ export function s_alt(...groups) {
  * *EXPERIMENTAL* - Retains the given number of steps in a pattern (and dropping the rest), according to its 'tactus'.
  */
 export const s_add = stepRegister('s_add', function (i, pat) {
+  if (!pat.hasTactus) {
+    return nothing;
+  }
   if (pat.tactus.lte(0)) {
     return nothing;
   }
@@ -2627,6 +2661,10 @@ export const s_add = stepRegister('s_add', function (i, pat) {
  * *EXPERIMENTAL* - Removes the given number of steps from a pattern, according to its 'tactus'.
  */
 export const s_sub = stepRegister('s_sub', function (i, pat) {
+  if (!pat.hasTactus) {
+    return nothing;
+  }
+
   i = Fraction(i);
   if (i.lt(0)) {
     return pat.s_add(Fraction(0).sub(pat.tactus.add(i)));
@@ -2647,10 +2685,15 @@ export const s_contract = stepRegister('s_contract', function (factor, pat) {
  */
 Pattern.prototype.s_taperlist = function (amount, times) {
   const pat = this;
+
+  if (!pat.hasTactus) {
+    return [pat];
+  }
+
   times = times - 1;
 
   if (times === 0) {
-    return pat;
+    return [pat];
   }
 
   const list = [];
@@ -2675,6 +2718,10 @@ export const s_taperlist = (amount, times, pat) => pat.s_taperlist(amount, times
 export const s_taper = register(
   's_taper',
   function (amount, times, pat) {
+    if (!pat.hasTactus) {
+      return nothing;
+    }
+
     const list = pat.s_taperlist(amount, times);
     const result = s_cat(...list);
     result.tactus = list.reduce((a, b) => a.add(b.tactus), Fraction(0));
@@ -2726,7 +2773,7 @@ export const chop = register('chop', function (n, pat) {
   const func = function (o) {
     return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
   };
-  return pat.squeezeBind(func).setTactus(pat.tactus.mul(n));
+  return pat.squeezeBind(func).setTactus(Fraction(n).mulmaybe(pat.tactus));
 });
 
 /**
