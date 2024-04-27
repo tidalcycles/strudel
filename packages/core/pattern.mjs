@@ -2770,8 +2770,16 @@ export const s_tour = function (pat, ...many) {
 export const chop = register('chop', function (n, pat) {
   const slices = Array.from({ length: n }, (x, i) => i);
   const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
+  const merge = function (a, b) {
+    if ('begin' in a && 'end' in a && a.begin !== undefined && a.end !== undefined) {
+      const d = a.end - a.begin;
+      b = { begin: a.begin + b.begin * d, end: a.begin + b.end * d };
+    }
+    // return a;
+    return Object.assign({}, a, b);
+  };
   const func = function (o) {
-    return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
+    return sequence(slice_objects.map((slice_o) => merge(o, slice_o)));
   };
   return pat.squeezeBind(func).setTactus(Fraction(n).mulmaybe(pat.tactus));
 });
