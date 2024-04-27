@@ -155,13 +155,15 @@ In the notation `x=>x.`, the `x` is the shifted pattern, which where modifying.
 
 </Box>
 
-off is also useful for sounds:
+off is also useful for modifying other sounds, and can even be nested:
 
 <MiniRepl
   client:visible
   tune={`s("bd sd [rim bd] sd,[~ hh]*4").bank("CasioRZ1")
-  .off(1/16, x=>x.speed(1.5).gain(.25))`}
+  .off(2/16, x=>x.speed(1.5).gain(.25)
+    .off(3/16, y=>y.vowel("<a e i o>*8")))`}
 />
+
 
 | name | description                    | example                                                                                     |
 | ---- | ------------------------------ | ------------------------------------------------------------------------------------------- |
