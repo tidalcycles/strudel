@@ -6,17 +6,17 @@ import { calculateTactus } from '../packages/core/index.mjs';
 const tuneKeys = Object.keys(tunes);
 
 describe('renders tunes', () => {
-  calculateTactus(true);
-  bench(`+tactus`, () => {
-    tuneKeys.forEach((key) => {
-      queryCode(tunes[key], testCycles[key] || 1);
+  tuneKeys.forEach((key) => {
+    describe(key, () => {
+      calculateTactus(true);
+      bench(`+tactus`, async () => {
+        await queryCode(tunes[key], testCycles[key] || 1);
+      });
+      calculateTactus(false);
+      bench(`-tactus`, async () => {
+        await queryCode(tunes[key], testCycles[key] || 1);
+      });
+      calculateTactus(true);
     });
   });
-  calculateTactus(false);
-  bench(`-tactus`, () => {
-    tuneKeys.forEach((key) => {
-      queryCode(tunes[key], testCycles[key] || 1);
-    });
-  });
-  calculateTactus(true);
 });
