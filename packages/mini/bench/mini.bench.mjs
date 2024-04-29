@@ -21,4 +21,5 @@ describe('mini', () => {
     },
     { time: 1000 },
   );
+  calculateTactus(true);
 });

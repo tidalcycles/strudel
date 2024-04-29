@@ -43,3 +43,4 @@ describe('stack', () => {
     { time: 1000 },
   );
 });
+calculateTactus(true);
