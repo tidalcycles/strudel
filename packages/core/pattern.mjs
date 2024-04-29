@@ -27,6 +27,12 @@ import { logger } from './logger.mjs';
 
 let stringParser;
 
+let __tactus = true;
+
+export const calculateTactus = function (x) {
+  __tactus = x ? true : false;
+};
+
 // parser is expected to turn a string into a pattern
 // if set, the reify function will parse all strings with it
 // intended to use with mini to automatically interpret all strings as mini notation
@@ -60,6 +66,9 @@ export class Pattern {
   }
 
   withTactus(f) {
+    if (!__tactus) {
+      return this;
+    }
     return new Pattern(this.query, this.tactus === undefined ? undefined : f(this.tactus));
   }
 
@@ -149,7 +158,9 @@ export class Pattern {
       return span_a.intersection_e(span_b);
     };
     const result = pat_func.appWhole(whole_func, pat_val);
-    result.tactus = lcm(pat_val.tactus, pat_func.tactus);
+    if (__tactus) {
+      result.tactus = lcm(pat_val.tactus, pat_func.tactus);
+    }
     return result;
   }
 
@@ -1254,7 +1265,9 @@ export function stack(...pats) {
   pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
   const query = (state) => flatten(pats.map((pat) => pat.query(state)));
   const result = new Pattern(query);
-  result.tactus = lcm(...pats.map((pat) => pat.tactus));
+  if (__tactus) {
+    result.tactus = lcm(...pats.map((pat) => pat.tactus));
+  }
   return result;
 }
 
@@ -1267,7 +1280,7 @@ function _stackWith(func, pats) {
     return pats[0];
   }
   const [left, ...right] = pats.map((pat) => pat.tactus);
-  const tactus = left.maximum(...right);
+  const tactus = __tactus ? left.maximum(...right) : undefined;
   return stack(...func(tactus, pats));
 }
 
@@ -1347,7 +1360,7 @@ export function slowcat(...pats) {
     const offset = span.begin.floor().sub(span.begin.div(pats.length).floor());
     return pat.withHapTime((t) => t.add(offset)).query(state.setSpan(span.withTime((t) => t.sub(offset))));
   };
-  const tactus = lcm(...pats.map((x) => x.tactus));
+  const tactus = __tactus ? lcm(...pats.map((x) => x.tactus)) : undefined;
   return new Pattern(query).splitQueries().setTactus(tactus);
 }
 
@@ -1766,7 +1779,9 @@ export const { focusSpan, focusspan } = register(['focusSpan', 'focusspan'], fun
  */
 export const ply = register('ply', function (factor, pat) {
   const result = pat.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
-  result.tactus = Fraction(factor).mulmaybe(pat.tactus);
+  if (__tactus) {
+    result.tactus = Fraction(factor).mulmaybe(pat.tactus);
+  }
   return result;
 });
 
@@ -1781,16 +1796,19 @@ export const ply = register('ply', function (factor, pat) {
  * @example
  * s("bd hh sd hh").fast(2) // s("[bd hh sd hh]*2")
  */
-export const { fast, density } = register(['fast', 'density'], function (factor, pat) {
-  if (factor === 0) {
-    return silence;
-  }
-  factor = Fraction(factor);
-  const fastQuery = pat.withQueryTime((t) => t.mul(factor));
-  const result = fastQuery.withHapTime((t) => t.div(factor));
-  result.tactus = factor.mulmaybe(pat.tactus);
-  return result;
-});
+export const { fast, density } = register(
+  ['fast', 'density'],
+  function (factor, pat) {
+    if (factor === 0) {
+      return silence;
+    }
+    factor = Fraction(factor);
+    const fastQuery = pat.withQueryTime((t) => t.mul(factor));
+    return fastQuery.withHapTime((t) => t.div(factor)).setTactus(pat.tactus);
+  },
+  true,
+  true,
+);
 
 /**
  * Both speeds up the pattern (like 'fast') and the sample playback (like 'speed').
@@ -1958,7 +1976,7 @@ export const zoom = register('zoom', function (s, e, pat) {
     return nothing;
   }
   const d = e.sub(s);
-  const tactus = pat.tactus.mulmaybe(d);
+  const tactus = __tactus ? pat.tactus.mulmaybe(d) : undefined;
   return pat
     .withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
     .withHapSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
@@ -2173,7 +2191,7 @@ export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func,
   const left = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) - by }));
   const right = func(pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by })));
 
-  return stack(left, right).setTactus(lcm(left.tactus, right.tactus));
+  return stack(left, right).setTactus(__tactus ? lcm(left.tactus, right.tactus) : undefined);
 });
 
 /**
@@ -2773,7 +2791,7 @@ export const chop = register('chop', function (n, pat) {
   const func = function (o) {
     return sequence(slice_objects.map((slice_o) => Object.assign({}, o, slice_o)));
   };
-  return pat.squeezeBind(func).setTactus(Fraction(n).mulmaybe(pat.tactus));
+  return pat.squeezeBind(func).setTactus(__tactus ? Fraction(n).mulmaybe(pat.tactus) : undefined);
 });
 
 /**
@@ -2788,7 +2806,10 @@ export const striate = register('striate', function (n, pat) {
   const slices = Array.from({ length: n }, (x, i) => i);
   const slice_objects = slices.map((i) => ({ begin: i / n, end: (i + 1) / n }));
   const slicePat = slowcat(...slice_objects);
-  return pat.set(slicePat)._fast(n);
+  return pat
+    .set(slicePat)
+    ._fast(n)
+    .setTactus(__tactus ? Fraction(n).mulmaybe(pat.tactus) : undefined);
 });
 
 /**
