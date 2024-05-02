@@ -2310,7 +2310,13 @@ export const { iterBack, iterback } = register(
 export const { repeatCycles } = register(
   'repeatCycles',
   function (n, pat) {
-    return slowcat(...Array(n).fill(pat));
+    return new Pattern(function (state) {
+      const cycle = state.span.begin.sam();
+      const source_cycle = cycle.div(n).sam();
+      const delta = cycle.sub(source_cycle);
+      state = state.withSpan((span) => span.withTime((spant) => spant.sub(delta)));
+      return pat.query(state).map((hap) => hap.withSpan((span) => span.withTime((spant) => spant.add(delta))));
+    }).splitQueries();
   },
   true,
   true,
