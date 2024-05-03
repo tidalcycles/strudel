@@ -307,9 +307,18 @@ importers:
       '@strudel/core':
         specifier: workspace:*
         version: link:../core
+      '@strudel/mini':
+        specifier: workspace:*
+        version: link:../mini
       '@strudel/osc':
         specifier: workspace:*
         version: link:../osc
+      '@strudel/tonal':
+        specifier: workspace:*
+        version: link:../tonal
+      '@strudel/transpiler':
+        specifier: workspace:*
+        version: link:../transpiler
       node-watch:
         specifier: ^0.7.4
         version: 0.7.4
