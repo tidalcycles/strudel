@@ -106,23 +106,21 @@ class GainModProcessor extends AudioWorkletProcessor {
   }
 
   process(inputs, outputs, parameters) {
-    const input = inputs[0];
-    const output = outputs[0];
-    const blockSize = 128;
-
-    let crush = parameters.crush[0] ?? 8;
-    crush = Math.max(1, crush);
-
-    if (input[0] == null || output[0] == null) {
-      return false;
-    }
-    for (let n = 0; n < blockSize; n++) {
-      for (let i = 0; i < input.length; i++) {
-        const x = Math.pow(2, crush - 1);
-        output[i][n] = Math.round(input[i][n] * x) / x;
-      }
-    }
-    return true;
+    // const input = inputs[0];
+    // const output = outputs[0];
+    // const blockSize = 128;
+    // let crush = parameters.crush[0] ?? 8;
+    // crush = Math.max(1, crush);
+    // if (input[0] == null || output[0] == null) {
+    //   return false;
+    // }
+    // for (let n = 0; n < blockSize; n++) {
+    //   for (let i = 0; i < input.length; i++) {
+    //     const x = Math.pow(2, crush - 1);
+    //     output[i][n] = Math.round(input[i][n] * x) / x;
+    //   }
+    // }
+    // return true;
   }
 }
 registerProcessor('gainmod-processor', GainModProcessor);
