@@ -1,5 +1,2 @@
-stack(
-  s("bd*2"),
-  s("jvbass(3,8)"),
-  n(run(8)).s("feel").jux(rev).lpf(800)
-).hush()
+freq("110 220 [330 440,550,660]")
+.attack(.1).gain(.4)

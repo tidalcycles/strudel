@@ -8,7 +8,8 @@
   },
   "main": "index.mjs",
   "scripts": {
-    "start": "node index.mjs"
+    "osc": "node osc-superdirt.mjs",
+    "waa": "node node-web-audio-api.mjs"
   },
   "keywords": [
     "tidalcycles",
@@ -25,11 +26,12 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@strudel/core": "workspace:*",
+    "@strudel/mini": "workspace:*",
     "@strudel/osc": "workspace:*",
     "@strudel/tonal": "workspace:*",
-    "@strudel/mini": "workspace:*",
     "@strudel/transpiler": "workspace:*",
     "node-watch": "^0.7.4",
+    "node-web-audio-api": "^0.20.0",
     "osc-js": "^2.4.0"
   }
 }

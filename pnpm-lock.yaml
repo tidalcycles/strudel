@@ -322,6 +322,9 @@ importers:
       node-watch:
         specifier: ^0.7.4
         version: 0.7.4
+      node-web-audio-api:
+        specifier: ^0.20.0
+        version: 0.20.0
       osc-js:
         specifier: ^2.4.0
         version: 2.4.0
@@ -3489,6 +3492,22 @@ packages:
     dependencies:
       nanostores: 0.9.5
       react: 18.2.0
+    dev: false
+
+  /@napi-rs/cli@2.18.2:
+    resolution: {integrity: sha512-IXQji3IF5eStxTHe/PxDSRjPrFymYAQ5FbIvqurxzxyWR8nJql9mtvmCP8y2g8tSoW5xhaToLQW0+mO3lUZq4w==}
+    engines: {node: '>= 10'}
+    hasBin: true
+    dev: false
+
+  /@napi-rs/triples@1.2.0:
+    resolution: {integrity: sha512-HAPjR3bnCsdXBsATpDIP5WCrw0JcACwhhrwIAQhiR46n+jm+a2F8kBsfseAuWtSyQ+H3Yebt2k43B5dy+04yMA==}
+    dev: false
+
+  /@node-rs/helper@1.6.0:
+    resolution: {integrity: sha512-2OTh/tokcLA1qom1zuCJm2gQzaZljCCbtX1YCrwRVd/toz7KxaDRFeLTAPwhs8m9hWgzrBn5rShRm6IaZofCPw==}
+    dependencies:
+      '@napi-rs/triples': 1.2.0
     dev: false
 
   /@nodelib/fs.scandir@2.1.5:
@@ -10746,6 +10765,15 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
+  /node-web-audio-api@0.20.0:
+    resolution: {integrity: sha512-DPsRSG3IsI8cLCdejpruir+XgSwUFFJBSfilrtoT+BU/uFcXv/eFyKkulnKIE2642j5b00z9aOHxTHbzdUvTtw==}
+    engines: {node: '>= 14'}
+    dependencies:
+      '@napi-rs/cli': 2.18.2
+      '@node-rs/helper': 1.6.0
+      webidl-conversions: 7.0.0
+    dev: false
+
   /nopt@7.1.0:
     resolution: {integrity: sha512-ZFPLe9Iu0tnx7oWhFxAo4s7QTn8+NNDDxYNaKLjE7Dp0tbakQ3M1QhQzsnzXHQBTUO3K9BmwaxnyO8Ayn2I95Q==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
@@ -14221,6 +14249,11 @@ packages:
   /webidl-conversions@4.0.2:
     resolution: {integrity: sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==}
     dev: true
+
+  /webidl-conversions@7.0.0:
+    resolution: {integrity: sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g==}
+    engines: {node: '>=12'}
+    dev: false
 
   /webmidi@3.1.8:
     resolution: {integrity: sha512-PCRic1iTpKxeheb888G0mDe6MBdz/u+s/xfdV6+1ZhZnS6dKtV9gMBth5cpmMip2Livv5lL+ep4/S9DCzHfumg==}
