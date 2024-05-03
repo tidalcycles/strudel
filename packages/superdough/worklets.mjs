@@ -1,6 +1,36 @@
 // coarse, crush, and shape processors adapted from dktr0's webdirt: https://github.com/dktr0/WebDirt/blob/5ce3d698362c54d6e1b68acc47eb2955ac62c793/dist/AudioWorklets.js
 // LICENSE GNU General Public License v3.0 see https://github.com/dktr0/WebDirt/blob/main/LICENSE
 
+const linearEnvelope = (startVal, EndVal, startTime, endTime, currentTime, hold = 0) => {
+  let min = 0.001;
+  currentTime = currentTime - hold;
+  if (startTime > currentTime) {
+    return 1;
+  }
+  if (currentTime > endTime) {
+    return min;
+  }
+  // change relative start time to 0 to prevent numeric overflow
+  currentTime = currentTime - startTime;
+  endTime = endTime - startTime;
+  startTime = 0;
+
+  let x1 = startTime;
+  let y1 = startVal;
+  let x2 = endTime;
+  let y2 = EndVal;
+
+  // Calculate the growth or decay rate (b)
+  let b = y1 / y2 / (x1 - x2);
+
+  // Calculate the initial value (a)
+  let a = y1 / (b * x1);
+
+  let x = currentTime;
+  //  calculate y for any x
+  return a * (b * x);
+};
+
 class CoarseProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
     return [{ name: 'coarse', defaultValue: 1 }];
@@ -61,6 +91,41 @@ class CrushProcessor extends AudioWorkletProcessor {
   }
 }
 registerProcessor('crush-processor', CrushProcessor);
+
+class GainModProcessor extends AudioWorkletProcessor {
+  static get parameterDescriptors() {
+    return [
+      { name: 'cps', defaultValue: 0.5 },
+      { name: 'speed', defaultValue: 0.5 },
+      { name: 'cycle', defaultValue: 0 },
+    ];
+  }
+
+  constructor() {
+    super();
+  }
+
+  process(inputs, outputs, parameters) {
+    const input = inputs[0];
+    const output = outputs[0];
+    const blockSize = 128;
+
+    let crush = parameters.crush[0] ?? 8;
+    crush = Math.max(1, crush);
+
+    if (input[0] == null || output[0] == null) {
+      return false;
+    }
+    for (let n = 0; n < blockSize; n++) {
+      for (let i = 0; i < input.length; i++) {
+        const x = Math.pow(2, crush - 1);
+        output[i][n] = Math.round(input[i][n] * x) / x;
+      }
+    }
+    return true;
+  }
+}
+registerProcessor('gainmod-processor', GainModProcessor);
 
 class ShapeProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {

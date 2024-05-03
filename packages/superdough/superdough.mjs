@@ -260,7 +260,8 @@ export function resetGlobalEffects() {
   analysersData = {};
 }
 
-export const superdough = async (value, t, hapDuration) => {
+export const superdough = async (value, t, hapDuration, cps, cycle) => {
+  console.log({ cps, cycle });
   const ac = getAudioContext();
   if (typeof value !== 'object') {
     throw new Error(
@@ -322,6 +323,7 @@ export const superdough = async (value, t, hapDuration) => {
     phasercenter,
     //
     coarse,
+    gainmod,
     crush,
     shape,
     shapevol = 1,
@@ -470,6 +472,7 @@ export const superdough = async (value, t, hapDuration) => {
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
   shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape, postgain: shapevol }));
   distort !== undefined && chain.push(getWorklet(ac, 'distort-processor', { distort, postgain: distortvol }));
+  gainmod !== undefined && chain.push(getWorklet(ac, 'gainmod-processor', { speed: gainmod, cps, cycle }));
 
   compressorThreshold !== undefined &&
     chain.push(

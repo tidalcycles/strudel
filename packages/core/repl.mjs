@@ -178,15 +178,15 @@ export function repl({
 
 export const getTrigger =
   ({ getTime, defaultOutput }) =>
-  async (hap, deadline, duration, cps, t) => {
+  async (hap, deadline, duration, cps, t, cycle = 0) => {
     // TODO: get rid of deadline after https://github.com/tidalcycles/strudel/pull/1004
     try {
       if (!hap.context.onTrigger || !hap.context.dominantTrigger) {
-        await defaultOutput(hap, deadline, duration, cps, t);
+        await defaultOutput(hap, deadline, duration, cps, t, cycle);
       }
       if (hap.context.onTrigger) {
         // call signature of output / onTrigger is different...
-        await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps, t);
+        await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps, t, cycle);
       }
     } catch (err) {
       logger(`[cyclist] error: ${err.message}`, 'error');

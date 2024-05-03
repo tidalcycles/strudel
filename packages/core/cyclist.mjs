@@ -56,7 +56,7 @@ export class Cyclist {
               // the following line is dumb and only here for backwards compatibility
               // see https://github.com/tidalcycles/strudel/pull/1004
               const deadline = targetTime - phase;
-              onTrigger?.(hap, deadline, duration, this.cps, targetTime);
+              onTrigger?.(hap, deadline, duration, this.cps, targetTime, end);
             }
           });
         } catch (e) {
