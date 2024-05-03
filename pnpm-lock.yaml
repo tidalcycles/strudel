@@ -302,6 +302,21 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(@vitest/ui@1.1.0)
 
+  packages/node:
+    dependencies:
+      '@strudel/core':
+        specifier: workspace:*
+        version: link:../core
+      '@strudel/osc':
+        specifier: workspace:*
+        version: link:../osc
+      node-watch:
+        specifier: ^0.7.4
+        version: 0.7.4
+      osc-js:
+        specifier: ^2.4.0
+        version: 2.4.0
+
   packages/osc:
     dependencies:
       '@strudel/core':
@@ -10716,6 +10731,11 @@ packages:
     dependencies:
       '@babel/parser': 7.23.6
     dev: true
+
+  /node-watch@0.7.4:
+    resolution: {integrity: sha512-RinNxoz4W1cep1b928fuFhvAQ5ag/+1UlMDV7rbyGthBIgsiEouS4kvRayvvboxii4m8eolKOIBo3OjDqbc+uQ==}
+    engines: {node: '>=6'}
+    dev: false
 
   /nopt@7.1.0:
     resolution: {integrity: sha512-ZFPLe9Iu0tnx7oWhFxAo4s7QTn8+NNDDxYNaKLjE7Dp0tbakQ3M1QhQzsnzXHQBTUO3K9BmwaxnyO8Ayn2I95Q==}
