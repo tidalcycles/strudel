@@ -91,6 +91,14 @@ class CrushProcessor extends AudioWorkletProcessor {
   }
 }
 registerProcessor('crush-processor', CrushProcessor);
+const sine = (phase, dt) => {
+  return Math.sin(Math.PI * 2 * phase);
+
+  // return Math.sin(phase);
+};
+const getModulator = (frequency, values, ct) => {
+  Math.sin();
+};
 
 class GainModProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
@@ -103,23 +111,44 @@ class GainModProcessor extends AudioWorkletProcessor {
 
   constructor() {
     super();
+    this.phase;
+    this.inc = 0;
+  }
+
+  incrementPhase(dt) {
+    this.phase += dt;
+    if (this.phase > 1.0) {
+      this.phase = this.phase - 1;
+    }
   }
 
   process(inputs, outputs, parameters) {
-    // const input = inputs[0];
-    // const output = outputs[0];
-    // const blockSize = 128;
+    const speed = parameters['speed'][0];
+    const cps = parameters['cps'][0];
+    const cycle = parameters['cycle'][0];
+    const frequency = speed * cps;
+    if (this.phase == null) {
+      this.phase = (cycle * cps * frequency) % 1;
+    }
+
+    const input = inputs[0];
+    const output = outputs[0];
+    const blockSize = 128;
     // let crush = parameters.crush[0] ?? 8;
     // crush = Math.max(1, crush);
     // if (input[0] == null || output[0] == null) {
     //   return false;
     // }
-    // for (let n = 0; n < blockSize; n++) {
-    //   for (let i = 0; i < input.length; i++) {
-    //     const x = Math.pow(2, crush - 1);
-    //     output[i][n] = Math.round(input[i][n] * x) / x;
-    //   }
-    // }
+    const dt = frequency / sampleRate;
+    for (let n = 0; n < blockSize; n++) {
+      for (let i = 0; i < input.length; i++) {
+        const modval = sine(this.phase, dt);
+
+        output[i][n] = input[i][n] * modval;
+      }
+      this.incrementPhase(dt);
+      this.inc += 1;
+    }
     // return true;
   }
 }
