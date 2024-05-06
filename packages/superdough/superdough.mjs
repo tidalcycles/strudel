@@ -324,7 +324,7 @@ export const superdough = async (value, t, hapDuration, cps, cycle) => {
     phasercenter,
     //
     coarse,
-    gainmod,
+    am,
     crush,
     shape,
 
@@ -474,11 +474,12 @@ export const superdough = async (value, t, hapDuration, cps, cycle) => {
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
   shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape, postgain: shapevol }));
   distort !== undefined && chain.push(getWorklet(ac, 'distort-processor', { distort, postgain: distortvol }));
-  gainmod !== undefined &&
+  am !== undefined &&
     chain.push(
-      getWorklet(ac, 'gainmod-processor', {
-        speed: gainmod,
-        // depth: amdepth, shape: amshape,
+      getWorklet(ac, 'am-processor', {
+        speed: am,
+        depth: amdepth,
+        // shape: amshape,
 
         cps,
         cycle,

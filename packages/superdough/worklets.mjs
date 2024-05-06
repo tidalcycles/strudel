@@ -128,14 +128,14 @@ class CrushProcessor extends AudioWorkletProcessor {
 }
 registerProcessor('crush-processor', CrushProcessor);
 
-class GainModProcessor extends AudioWorkletProcessor {
+class AMProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
     return [
       { name: 'cps', defaultValue: 0.5 },
       { name: 'speed', defaultValue: 0.5 },
       { name: 'cycle', defaultValue: 0 },
       // { name: 'shape', defaultValue: 'tri' },
-      // { name: 'depth', defaultValue: 1 },
+      { name: 'depth', defaultValue: 1 },
     ];
   }
 
@@ -155,6 +155,7 @@ class GainModProcessor extends AudioWorkletProcessor {
     const speed = parameters['speed'][0];
     const cps = parameters['cps'][0];
     const cycle = parameters['cycle'][0];
+    const depth = clamp(parameters['depth'][0], 0, 1);
 
     const blockSize = 128;
     const frequency = speed * cps;
@@ -169,7 +170,7 @@ class GainModProcessor extends AudioWorkletProcessor {
     const dt = frequency / sampleRate;
     for (let n = 0; n < blockSize; n++) {
       for (let i = 0; i < input.length; i++) {
-        const modval = waveshapes.tri(this.phase, 0.99);
+        const modval = waveshapes.tri(this.phase, 0.99) * depth + (1 - depth);
 
         output[i][n] = input[i][n] * modval;
       }
@@ -178,7 +179,7 @@ class GainModProcessor extends AudioWorkletProcessor {
     return true;
   }
 }
-registerProcessor('gainmod-processor', GainModProcessor);
+registerProcessor('am-processor', AMProcessor);
 
 class ShapeProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {

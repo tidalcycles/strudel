@@ -431,16 +431,37 @@ export const { crush } = registerControl('crush');
 export const { coarse } = registerControl('coarse');
 
 /**
- * modulate the output gain of a sound with a continuous wave
+ * modulate the amplitude of a sound with a continuous waveform
  *
- * @name gainmod
- * @param {number | Pattern} factor 1 for original 2 for half, 3 for a third and so on.
+ * @name am
+ * @param {number | Pattern} speed modulation speed in cycles
  * @example
- * s("triangle").gainmod("2:1:0")
+ * s("triangle").am("2").amshape("<tri saw ramp square>").amdepth(.5)
  *
  */
-export const { gainmod } = registerControl('gainmod');
+export const { am } = registerControl(['am', 'amdepth', 'amshape']);
 
+/**
+ * depth of amplitude modulation
+ *
+ * @name amdepth
+ * @param {number | Pattern} depth
+ * @example
+ * s("triangle").am(1).amdepth("1")
+ *
+ */
+export const { amdepth } = registerControl('amdepth');
+
+/**
+ * shape of amplitude modulation
+ *
+ * @name amshape
+ * @param {number | Pattern} shape tri | square | sine | saw | ramp
+ * @example
+ * note("{f g c d}%16").am(4).amshape("ramp").s("sawtooth")
+ *
+ */
+export const { amshape } = registerControl('amshape');
 /**
  * Allows you to set the output channels on the interface
  *
