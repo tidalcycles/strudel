@@ -1,34 +1,70 @@
 // coarse, crush, and shape processors adapted from dktr0's webdirt: https://github.com/dktr0/WebDirt/blob/5ce3d698362c54d6e1b68acc47eb2955ac62c793/dist/AudioWorklets.js
 // LICENSE GNU General Public License v3.0 see https://github.com/dktr0/WebDirt/blob/main/LICENSE
 
-const linearEnvelope = (startVal, EndVal, startTime, endTime, currentTime, hold = 0) => {
-  let min = 0.001;
-  currentTime = currentTime - hold;
-  if (startTime > currentTime) {
-    return 1;
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+// adjust waveshape to remove frequencies above nyquist to prevent aliasing
+// referenced from https://www.kvraudio.com/forum/viewtopic.php?t=375517
+function polyBlep(phase, dt) {
+  // 0 <= phase < 1
+  if (phase < dt) {
+    phase /= dt;
+    // 2 * (phase - phase^2/2 - 0.5)
+    return phase + phase - phase * phase - 1;
   }
-  if (currentTime > endTime) {
-    return min;
+
+  // -1 < phase < 0
+  else if (phase > 1 - dt) {
+    phase = (phase - 1) / dt;
+    // 2 * (phase^2/2 + phase + 0.5)
+    return phase * phase + phase + phase + 1;
   }
-  // change relative start time to 0 to prevent numeric overflow
-  currentTime = currentTime - startTime;
-  endTime = endTime - startTime;
-  startTime = 0;
 
-  let x1 = startTime;
-  let y1 = startVal;
-  let x2 = endTime;
-  let y2 = EndVal;
+  // 0 otherwise
+  else {
+    return 0;
+  }
+}
 
-  // Calculate the growth or decay rate (b)
-  let b = y1 / y2 / (x1 - x2);
+const waveshapes = {
+  sine(phase) {
+    return Math.sin(Math.PI * 2 * phase);
+  },
+  custom(phase, values = [0, 1]) {
+    const numParts = values.length - 1;
+    const currPart = Math.floor(phase * numParts);
 
-  // Calculate the initial value (a)
-  let a = y1 / (b * x1);
-
-  let x = currentTime;
-  //  calculate y for any x
-  return a * (b * x);
+    const partLength = 1 / numParts;
+    const startVal = clamp(values[currPart], 0, 1);
+    const endVal = clamp(values[currPart + 1], 0, 1);
+    const y2 = endVal;
+    const y1 = startVal;
+    const x1 = 0;
+    const x2 = partLength;
+    const slope = (y2 - y1) / (x2 - x1);
+    return slope * (phase - partLength * currPart) + startVal;
+  },
+  sawblep(phase, dt) {
+    const v = 2 * phase - 1;
+    return v - polyBlep(phase, dt);
+  },
+  ramp(phase) {
+    return phase;
+  },
+  saw(phase) {
+    return 1 - phase;
+  },
+  tri(phase, skew = 0.5) {
+    if (phase >= skew) {
+      return 1 - ((phase / (1 - skew)) % 1);
+    }
+    return (phase / skew) % 1;
+  },
+  square(phase, skew = 0.5) {
+    if (phase >= skew) {
+      return 1;
+    }
+    return 0;
+  },
 };
 
 class CoarseProcessor extends AudioWorkletProcessor {
@@ -91,14 +127,6 @@ class CrushProcessor extends AudioWorkletProcessor {
   }
 }
 registerProcessor('crush-processor', CrushProcessor);
-const sine = (phase, dt) => {
-  return Math.sin(Math.PI * 2 * phase);
-
-  // return Math.sin(phase);
-};
-const getModulator = (frequency, values, ct) => {
-  Math.sin();
-};
 
 class GainModProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
@@ -106,13 +134,14 @@ class GainModProcessor extends AudioWorkletProcessor {
       { name: 'cps', defaultValue: 0.5 },
       { name: 'speed', defaultValue: 0.5 },
       { name: 'cycle', defaultValue: 0 },
+      // { name: 'shape', defaultValue: 'tri' },
+      // { name: 'depth', defaultValue: 1 },
     ];
   }
 
   constructor() {
     super();
     this.phase;
-    this.inc = 0;
   }
 
   incrementPhase(dt) {
@@ -126,30 +155,27 @@ class GainModProcessor extends AudioWorkletProcessor {
     const speed = parameters['speed'][0];
     const cps = parameters['cps'][0];
     const cycle = parameters['cycle'][0];
+
+    const blockSize = 128;
     const frequency = speed * cps;
     if (this.phase == null) {
-      this.phase = (cycle * cps * frequency) % 1;
+      const secondsPassed = cycle / cps;
+      this.phase = Math.max(0, (secondsPassed * frequency) % 1);
     }
 
     const input = inputs[0];
     const output = outputs[0];
-    const blockSize = 128;
-    // let crush = parameters.crush[0] ?? 8;
-    // crush = Math.max(1, crush);
-    // if (input[0] == null || output[0] == null) {
-    //   return false;
-    // }
+
     const dt = frequency / sampleRate;
     for (let n = 0; n < blockSize; n++) {
       for (let i = 0; i < input.length; i++) {
-        const modval = sine(this.phase, dt);
+        const modval = waveshapes.tri(this.phase, 0.99);
 
         output[i][n] = input[i][n] * modval;
       }
       this.incrementPhase(dt);
-      this.inc += 1;
     }
-    // return true;
+    return true;
   }
 }
 registerProcessor('gainmod-processor', GainModProcessor);
@@ -221,34 +247,6 @@ class DistortProcessor extends AudioWorkletProcessor {
   }
 }
 registerProcessor('distort-processor', DistortProcessor);
-
-// adjust waveshape to remove frequencies above nyquist to prevent aliasing
-// referenced from https://www.kvraudio.com/forum/viewtopic.php?t=375517
-const polyBlep = (phase, dt) => {
-  // 0 <= phase < 1
-  if (phase < dt) {
-    phase /= dt;
-    // 2 * (phase - phase^2/2 - 0.5)
-    return phase + phase - phase * phase - 1;
-  }
-
-  // -1 < phase < 0
-  else if (phase > 1 - dt) {
-    phase = (phase - 1) / dt;
-    // 2 * (phase^2/2 + phase + 0.5)
-    return phase * phase + phase + phase + 1;
-  }
-
-  // 0 otherwise
-  else {
-    return 0;
-  }
-};
-
-const saw = (phase, dt) => {
-  const v = 2 * phase - 1;
-  return v - polyBlep(phase, dt);
-};
 
 function lerp(a, b, n) {
   return n * (b - a) + a;
@@ -349,7 +347,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
 
       for (let i = 0; i < output[0].length; i++) {
         this.phase[n] = this.phase[n] ?? Math.random();
-        const v = saw(this.phase[n], dt);
+        const v = waveshapes.sawblep(this.phase[n], dt);
 
         output[0][i] = output[0][i] + v * gainL;
         output[1][i] = output[1][i] + v * gainR;
