@@ -1,5 +1,5 @@
 import { atom } from 'nanostores';
-import { persistentAtom, setPersistentEngine } from '@nanostores/persistent';
+import { persistentAtom, setPersistentEngine, windowPersistentEvents } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { logger } from '@strudel/core';
 import { nanoid } from 'nanoid';
@@ -22,7 +22,10 @@ export const patternFilterName = {
 };
 
 if (typeof sessionStorage !== 'undefined') {
-  setPersistentEngine(sessionStorage);
+  // NB: this switches storageEngine of all persistent atoms
+  // ideally we would switch the engine per atom
+  // (like in this abandoned pr: https://github.com/nanostores/persistent/pull/30)
+  setPersistentEngine(sessionStorage, windowPersistentEvents);
 }
 
 export let $viewingPatternData = persistentAtom(
