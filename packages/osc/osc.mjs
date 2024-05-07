@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import OSC from 'osc-js';
 
-import {logger, parseNumeral, Pattern, getEventOffsetMs, isNote, noteToMidi} from '@strudel/core';
+import { logger, parseNumeral, Pattern, getEventOffsetMs, isNote, noteToMidi } from '@strudel/core';
 
 let connection; // Promise<OSC>
 function connect() {
@@ -55,8 +55,7 @@ Pattern.prototype.osc = function () {
     if (controls.note) {
       if (isNote(controls.note)) {
         controls.midinote = noteToMidi(controls.note, controls.octave || 3);
-      }
-      else {
+      } else {
         controls.note = parseNumeral(controls.note);
       }
     }
