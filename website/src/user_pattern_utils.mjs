@@ -1,5 +1,5 @@
 import { atom } from 'nanostores';
-import { persistentAtom } from '@nanostores/persistent';
+import { persistentAtom, setPersistentEngine } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { logger } from '@strudel/core';
 import { nanoid } from 'nanoid';
@@ -20,6 +20,10 @@ export const patternFilterName = {
   community: 'community',
   user: 'user',
 };
+
+if (typeof sessionStorage !== 'undefined') {
+  setPersistentEngine(sessionStorage);
+}
 
 export let $viewingPatternData = persistentAtom(
   'viewingPatternData',
