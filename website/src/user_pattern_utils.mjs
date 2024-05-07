@@ -1,4 +1,4 @@
-import { atom, onMount } from 'nanostores';
+import { atom } from 'nanostores';
 import { persistentAtom } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { logger } from '@strudel/core';
