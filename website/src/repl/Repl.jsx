@@ -38,7 +38,6 @@ import { getRandomTune, initCode, loadModules, shareCode, ReplContext } from './
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
 import { setInterval, clearInterval } from 'worker-timers';
-import { getMetadata } from '../metadata_parser';
 
 const { latestCode } = settingsMap.get();
 
@@ -114,25 +113,25 @@ export function Repl({ embedded = false }) {
       bgFill: false,
     });
 
-    editorRef.current = editor;
-
     // init settings
 
     initCode().then(async (decoded) => {
       let msg;
       if (decoded) {
-        setCode(decoded);
+        editor.setCode(decoded);
         msg = `I have loaded the code from the URL.`;
       } else if (latestCode) {
-        setCode(latestCode);
+        editor.setCode(latestCode);
         msg = `Your last session has been loaded!`;
       } else {
         const { code: randomTune, name } = await getRandomTune();
-        setCode(randomTune);
+        editor.setCode(randomTune);
         msg = `A random code snippet named "${name}" has been loaded!`;
       }
       logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
     });
+
+    editorRef.current = editor;
   }, []);
 
   const [replState, setReplState] = useState({});
@@ -171,14 +170,6 @@ export function Repl({ embedded = false }) {
   // UI Actions
   //
 
-  const setCode = (code) => {
-    editorRef.current.setCode(code);
-    if (code) {
-      const meta = getMetadata(code);
-      document.title = (meta.title ? `${meta.title} - ` : '') + 'Strudel REPL';
-    }
-  };
-
   const handleTogglePlay = async () => {
     editorRef.current?.toggle();
   };
@@ -195,10 +186,10 @@ export function Repl({ embedded = false }) {
 
   const handleUpdate = async (patternData, reset = false) => {
     setViewingPatternData(patternData);
-    setCode(patternData.code);
+    editorRef.current.setCode(patternData.code);
     if (reset) {
       await resetEditor();
-      patternData.code && handleEvaluate();
+      handleEvaluate();
     }
   };
 
@@ -212,8 +203,8 @@ export function Repl({ embedded = false }) {
     setActivePattern(patternData.id);
     setViewingPatternData(patternData);
     await resetEditor();
-    setCode(code);
-    code && editorRef.current.repl.evaluate(code);
+    editorRef.current.setCode(code);
+    editorRef.current.repl.evaluate(code);
   };
 
   const handleShare = async () => shareCode(replState.code);
