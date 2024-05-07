@@ -177,7 +177,7 @@ export function Repl({ embedded = false }) {
   const setDocumentTitle = (code) => {
     const meta = getMetadata(code);
     document.title = (meta.title ? `${meta.title} - ` : '') + 'Strudel REPL';
-  }
+  };
 
   const handleTogglePlay = async () => {
     editorRef.current?.toggle();
