@@ -199,7 +199,7 @@ export const scale = register(
       pat
         .fmap((value) => {
           const isObject = typeof value === 'object';
-          let step = isObject ? (value.note ?? value.n) : value;
+          let step = isObject ? value.note ?? value.n : value;
           if (isNote(step)) {
             // legacy..
             return pure(step);
