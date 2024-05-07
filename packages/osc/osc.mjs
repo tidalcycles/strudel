@@ -54,6 +54,7 @@ Pattern.prototype.osc = function () {
     controls.n && (controls.n = parseNumeral(controls.n));
     controls.note && (controls.note = parseNumeral(controls.note));
     controls.bank && (controls.s = controls.bank + controls.s);
+    controls.roomsize && (controls.size = parseNumeral(controls.roomsize));
     const keyvals = Object.entries(controls).flat();
     // time should be audio time of onset
     // currentTime should be current time of audio context (slightly before time)
