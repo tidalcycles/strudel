@@ -30,11 +30,26 @@ describe('tonal', () => {
         .firstCycleValues.map((h) => h.note),
     ).toEqual(['C3', 'D3', 'E3']);
   });
+  it('scale with n and note values', () => {
+    expect(
+        n(0, 1, 2)
+            .note(3, 4, 5)
+            .scale('C major')
+            .firstCycleValues.map((h) => h.note),
+    ).toEqual(['F3', 'G3', 'A3']);
+  });
   it('scale with colon', () => {
     expect(
       n(0, 1, 2)
         .scale('C:major')
         .firstCycleValues.map((h) => h.note),
+    ).toEqual(['C3', 'D3', 'E3']);
+  });
+  it('scale without tonic', () => {
+    expect(
+        n(0, 1, 2)
+            .scale('major')
+            .firstCycleValues.map((h) => h.note),
     ).toEqual(['C3', 'D3', 'E3']);
   });
   it('scale with mininotation colon', () => {
