@@ -1,5 +1,5 @@
-import {atom, onMount} from 'nanostores';
-import { persistentAtom, windowPersistentEvents } from '@nanostores/persistent';
+import { atom, onMount } from 'nanostores';
+import { persistentAtom } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { logger } from '@strudel/core';
 import { nanoid } from 'nanoid';
@@ -24,52 +24,24 @@ export const patternFilterName = {
 export let sessionAtom = persistentAtom;
 
 if (typeof sessionStorage !== 'undefined') {
-  const identity = a => a;
-  const eventsEngine = windowPersistentEvents;
+  const identity = (a) => a;
   sessionAtom = (name, initial = undefined, opts = {}) => {
-    let encode = opts.encode || identity
-    let decode = opts.decode || identity
+    let encode = opts.encode || identity;
+    let decode = opts.decode || identity;
+    if (opts.listen) console.error('sessionAtom does not support "listen" option');
 
-    let store = atom(initial)
+    let store = atom(sessionStorage[name] ? decode(sessionStorage[name]) : initial);
 
-    let set = store.set
-    store.set = newValue => {
+    store.listen((newValue) => {
       if (typeof newValue === 'undefined') {
-        delete sessionStorage[name]
+        delete sessionStorage[name];
       } else {
-        sessionStorage[name] = encode(newValue)
+        sessionStorage[name] = encode(newValue);
       }
-      set(newValue)
-    }
+    });
 
-    function listener(e) {
-      if (e.key === name) {
-        if (e.newValue === null) {
-          set(undefined)
-        } else {
-          set(decode(e.newValue))
-        }
-      } else if (!sessionStorage[name]) {
-        set(undefined)
-      }
-    }
-
-    function restore() {
-      store.set(sessionStorage[name] ? decode(sessionStorage[name]) : initial)
-    }
-
-    onMount(store, () => {
-      restore()
-      if (opts.listen !== false) {
-        eventsEngine.addEventListener(name, listener, restore)
-        return () => {
-          eventsEngine.removeEventListener(name, listener, restore)
-        }
-      }
-    })
-
-    return store
-  }
+    return store;
+  };
 }
 
 export let $viewingPatternData = sessionAtom(
