@@ -30,7 +30,7 @@ if (typeof sessionStorage !== 'undefined') {
     let decode = opts.decode || identity;
     if (opts.listen) console.error('sessionAtom does not support "listen" option');
 
-    let store = atom(sessionStorage[name] ? decode(sessionStorage[name]) : initial);
+    let store = atom(typeof sessionStorage[name] !== 'undefined' ? decode(sessionStorage[name]) : initial);
 
     store.listen((newValue) => {
       if (typeof newValue === 'undefined') {
