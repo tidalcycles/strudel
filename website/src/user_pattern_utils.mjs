@@ -21,39 +21,25 @@ export const patternFilterName = {
   user: 'user',
 };
 
-export let sessionAtom = persistentAtom;
+const sessionAtom = (name, initial = undefined) => {
+  const storage = typeof sessionStorage !== 'undefined' ? sessionStorage : {};
+  const store = atom(typeof storage[name] !== 'undefined' ? storage[name] : initial);
+  store.listen((newValue) => {
+    if (typeof newValue === 'undefined') {
+      delete storage[name];
+    } else {
+      storage[name] = newValue;
+    }
+  });
+  return store;
+};
 
-if (typeof sessionStorage !== 'undefined') {
-  const identity = (a) => a;
-  sessionAtom = (name, initial = undefined, opts = {}) => {
-    let encode = opts.encode || identity;
-    let decode = opts.decode || identity;
-    if (opts.listen) console.error('sessionAtom does not support "listen" option');
-
-    let store = atom(typeof sessionStorage[name] !== 'undefined' ? decode(sessionStorage[name]) : initial);
-
-    store.listen((newValue) => {
-      if (typeof newValue === 'undefined') {
-        delete sessionStorage[name];
-      } else {
-        sessionStorage[name] = encode(newValue);
-      }
-    });
-
-    return store;
-  };
-}
-
-export let $viewingPatternData = sessionAtom(
-  'viewingPatternData',
-  {
-    id: '',
-    code: '',
-    collection: collectionName.user,
-    created_at: Date.now(),
-  },
-  { listen: false },
-);
+export let $viewingPatternData = sessionAtom('viewingPatternData', {
+  id: '',
+  code: '',
+  collection: collectionName.user,
+  created_at: Date.now(),
+});
 
 export const getViewingPatternData = () => {
   return parseJSON($viewingPatternData.get());
@@ -91,7 +77,7 @@ export async function loadDBPatterns() {
 }
 
 // reason: https://github.com/tidalcycles/strudel/issues/857
-const $activePattern = sessionAtom('activePattern', '', { listen: false });
+const $activePattern = sessionAtom('activePattern', '');
 
 export function setActivePattern(key) {
   $activePattern.set(key);
