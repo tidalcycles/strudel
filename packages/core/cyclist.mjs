@@ -34,6 +34,8 @@ export class Cyclist {
 
         try {
           const begin = this.lastEnd;
+          const cycle = this.now();
+
           this.lastBegin = begin;
           const end = this.num_cycles_at_cps_change + num_cycles_since_cps_change;
           this.lastEnd = end;
@@ -56,7 +58,7 @@ export class Cyclist {
               // the following line is dumb and only here for backwards compatibility
               // see https://github.com/tidalcycles/strudel/pull/1004
               const deadline = targetTime - phase;
-              onTrigger?.(hap, deadline, duration, this.cps, targetTime, end);
+              onTrigger?.(hap, deadline, duration, this.cps, targetTime, cycle);
             }
           });
         } catch (e) {

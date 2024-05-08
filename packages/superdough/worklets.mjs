@@ -2,6 +2,7 @@
 // LICENSE GNU General Public License v3.0 see https://github.com/dktr0/WebDirt/blob/main/LICENSE
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+const blockSize = 128;
 // adjust waveshape to remove frequencies above nyquist to prevent aliasing
 // referenced from https://www.kvraudio.com/forum/viewtopic.php?t=375517
 function polyBlep(phase, dt) {
@@ -67,6 +68,64 @@ const waveshapes = {
   },
 };
 
+class AMProcessor extends AudioWorkletProcessor {
+  static get parameterDescriptors() {
+    return [
+      { name: 'cps', defaultValue: 0.5 },
+      { name: 'speed', defaultValue: 0.5 },
+      { name: 'cycle', defaultValue: 0 },
+      // { name: 'shape', defaultValue: 'tri' },
+      { name: 'depth', defaultValue: 1 },
+    ];
+  }
+
+  constructor() {
+    super();
+    this.phase;
+    this.started = false;
+  }
+
+  incrementPhase(dt) {
+    this.phase += dt;
+    if (this.phase > 1.0) {
+      this.phase = this.phase - 1;
+    }
+  }
+
+  process(inputs, outputs, parameters) {
+    const input = inputs[0];
+    const output = outputs[0];
+    const hasInput = !(input[0] === undefined);
+    if (this.started && !hasInput) {
+      return false;
+    }
+    this.started = hasInput;
+
+    const speed = parameters['speed'][0];
+    const cps = parameters['cps'][0];
+    const cycle = parameters['cycle'][0];
+    const depth = clamp(parameters['depth'][0], 0, 1);
+    const blockSize = 128;
+    const frequency = speed * cps;
+    if (this.phase == null) {
+      const secondsPassed = cycle / cps;
+      this.phase = Math.max(0, (secondsPassed * frequency) % 1);
+    }
+
+    const dt = frequency / sampleRate;
+    for (let n = 0; n < blockSize; n++) {
+      for (let i = 0; i < input.length; i++) {
+        const modval = waveshapes.tri(this.phase, 0.99) * depth + (1 - depth);
+
+        output[i][n] = input[i][n] * modval;
+      }
+      this.incrementPhase(dt);
+    }
+    return true;
+  }
+}
+registerProcessor('am-processor', AMProcessor);
+
 class CoarseProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
     return [{ name: 'coarse', defaultValue: 1 }];
@@ -74,19 +133,21 @@ class CoarseProcessor extends AudioWorkletProcessor {
 
   constructor() {
     super();
+    this.started = false;
   }
 
   process(inputs, outputs, parameters) {
     const input = inputs[0];
     const output = outputs[0];
-    const blockSize = 128;
+
+    const hasInput = !(input[0] === undefined);
+    if (this.started && !hasInput) {
+      return false;
+    }
+    this.started = hasInput;
 
     let coarse = parameters.coarse[0] ?? 0;
     coarse = Math.max(1, coarse);
-
-    if (input[0] == null || output[0] == null) {
-      return false;
-    }
     for (let n = 0; n < blockSize; n++) {
       for (let i = 0; i < input.length; i++) {
         output[i][n] = n % coarse === 0 ? input[i][n] : output[i][n - 1];
@@ -104,19 +165,22 @@ class CrushProcessor extends AudioWorkletProcessor {
 
   constructor() {
     super();
+    this.started = false;
   }
 
   process(inputs, outputs, parameters) {
     const input = inputs[0];
     const output = outputs[0];
-    const blockSize = 128;
+
+    const hasInput = !(input[0] === undefined);
+    if (this.started && !hasInput) {
+      return false;
+    }
+    this.started = hasInput;
 
     let crush = parameters.crush[0] ?? 8;
     crush = Math.max(1, crush);
 
-    if (input[0] == null || output[0] == null) {
-      return false;
-    }
     for (let n = 0; n < blockSize; n++) {
       for (let i = 0; i < input.length; i++) {
         const x = Math.pow(2, crush - 1);
@@ -128,59 +192,6 @@ class CrushProcessor extends AudioWorkletProcessor {
 }
 registerProcessor('crush-processor', CrushProcessor);
 
-class AMProcessor extends AudioWorkletProcessor {
-  static get parameterDescriptors() {
-    return [
-      { name: 'cps', defaultValue: 0.5 },
-      { name: 'speed', defaultValue: 0.5 },
-      { name: 'cycle', defaultValue: 0 },
-      // { name: 'shape', defaultValue: 'tri' },
-      { name: 'depth', defaultValue: 1 },
-    ];
-  }
-
-  constructor() {
-    super();
-    this.phase;
-  }
-
-  incrementPhase(dt) {
-    this.phase += dt;
-    if (this.phase > 1.0) {
-      this.phase = this.phase - 1;
-    }
-  }
-
-  process(inputs, outputs, parameters) {
-    const speed = parameters['speed'][0];
-    const cps = parameters['cps'][0];
-    const cycle = parameters['cycle'][0];
-    const depth = clamp(parameters['depth'][0], 0, 1);
-
-    const blockSize = 128;
-    const frequency = speed * cps;
-    if (this.phase == null) {
-      const secondsPassed = cycle / cps;
-      this.phase = Math.max(0, (secondsPassed * frequency) % 1);
-    }
-
-    const input = inputs[0];
-    const output = outputs[0];
-
-    const dt = frequency / sampleRate;
-    for (let n = 0; n < blockSize; n++) {
-      for (let i = 0; i < input.length; i++) {
-        const modval = waveshapes.tri(this.phase, 0.99) * depth + (1 - depth);
-
-        output[i][n] = input[i][n] * modval;
-      }
-      this.incrementPhase(dt);
-    }
-    return true;
-  }
-}
-registerProcessor('am-processor', AMProcessor);
-
 class ShapeProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
     return [
@@ -191,21 +202,24 @@ class ShapeProcessor extends AudioWorkletProcessor {
 
   constructor() {
     super();
+    this.started = false;
   }
 
   process(inputs, outputs, parameters) {
     const input = inputs[0];
     const output = outputs[0];
-    const blockSize = 128;
+
+    const hasInput = !(input[0] === undefined);
+    if (this.started && !hasInput) {
+      return false;
+    }
+    this.started = hasInput;
 
     let shape = parameters.shape[0];
     shape = shape < 1 ? shape : 1.0 - 4e-10;
     shape = (2.0 * shape) / (1.0 - shape);
     const postgain = Math.max(0.001, Math.min(1, parameters.postgain[0]));
 
-    if (input[0] == null || output[0] == null) {
-      return false;
-    }
     for (let n = 0; n < blockSize; n++) {
       for (let i = 0; i < input.length; i++) {
         output[i][n] = (((1 + shape) * input[i][n]) / (1 + shape * Math.abs(input[i][n]))) * postgain;
@@ -226,19 +240,22 @@ class DistortProcessor extends AudioWorkletProcessor {
 
   constructor() {
     super();
+    this.started = false;
   }
 
   process(inputs, outputs, parameters) {
     const input = inputs[0];
     const output = outputs[0];
-    const blockSize = 128;
+
+    const hasInput = !(input[0] === undefined);
+    if (this.started && !hasInput) {
+      return false;
+    }
+    this.started = hasInput;
 
     const shape = Math.expm1(parameters.distort[0]);
     const postgain = Math.max(0.001, Math.min(1, parameters.postgain[0]));
 
-    if (input[0] == null || output[0] == null) {
-      return false;
-    }
     for (let n = 0; n < blockSize; n++) {
       for (let i = 0; i < input.length; i++) {
         output[i][n] = (((1 + shape) * input[i][n]) / (1 + shape * Math.abs(input[i][n]))) * postgain;
@@ -249,6 +266,7 @@ class DistortProcessor extends AudioWorkletProcessor {
 }
 registerProcessor('distort-processor', DistortProcessor);
 
+// SUPERSAW
 function lerp(a, b, n) {
   return n * (b - a) + a;
 }
