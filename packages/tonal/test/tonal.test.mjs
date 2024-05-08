@@ -36,7 +36,11 @@ describe('tonal', () => {
         .note(3, 4, 0)
         .scale('C major')
         .firstCycleValues.map((h) => [h.n, h.note]),
-    ).toEqual([[0, 'F3'], [1, 'G3'], [2, 'C3']]);
+    ).toEqual([
+      [0, 'F3'],
+      [1, 'G3'],
+      [2, 'C3'],
+    ]);
   });
   it('scale with colon', () => {
     expect(
