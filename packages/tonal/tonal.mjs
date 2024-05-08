@@ -201,7 +201,7 @@ export const scale = register(
           const isObject = typeof value === 'object';
           let step = value;
           if (isObject) {
-            if (value.note) {
+            if (typeof value.note !== 'undefined') {
               step = value.note;
             } else {
               step = value.n;
