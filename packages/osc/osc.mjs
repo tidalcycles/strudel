@@ -52,7 +52,7 @@ Pattern.prototype.osc = function () {
     const controls = Object.assign({}, { cps, cycle, delta }, hap.value);
     // make sure n and note are numbers
     controls.n && (controls.n = parseNumeral(controls.n));
-    if (controls.note) {
+    if (typeof controls.note !== 'undefined') {
       if (isNote(controls.note)) {
         controls.midinote = noteToMidi(controls.note, controls.octave || 3);
       } else {
