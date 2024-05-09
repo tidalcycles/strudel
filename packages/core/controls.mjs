@@ -439,7 +439,7 @@ export const { coarse } = registerControl('coarse');
  * s("triangle").am("2").amshape("<tri saw ramp square>").amdepth(.5)
  *
  */
-export const { am } = registerControl(['am', 'amdepth', 'amshape']);
+export const { am } = registerControl(['am', 'amdepth', 'amskew', 'amphase']);
 
 /**
  * depth of amplitude modulation
@@ -451,6 +451,27 @@ export const { am } = registerControl(['am', 'amdepth', 'amshape']);
  *
  */
 export const { amdepth } = registerControl('amdepth');
+/**
+ * alter the shape of the modulation waveform
+ *
+ * @name amskew
+ * @param {number | Pattern} amount between 0 & 1, the shape of the waveform
+ * @example
+ * note("{f a c e}%16").am(4).amskew("<.5 0 1>")
+ *
+ */
+export const { amskew } = registerControl('amskew');
+
+/**
+ * alter the phase of the modulation waveform
+ *
+ * @name amphase
+ * @param {number | Pattern} offset the offset in cycles of the modulation
+ * @example
+ * note("{f a c e}%16").am(4).amphase("<0 .25 .66>")
+ *
+ */
+export const { amphase } = registerControl('amskew');
 
 /**
  * shape of amplitude modulation

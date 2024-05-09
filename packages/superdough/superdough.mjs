@@ -281,8 +281,10 @@ export const superdough = async (value, t, hapDuration, cps, cycle) => {
   }
   // destructure
   let {
+    am,
     amdepth = 1,
-    amshape = 'tri',
+    amskew = 0.5,
+    amphase = 0,
     s = 'triangle',
     bank,
     source,
@@ -324,7 +326,7 @@ export const superdough = async (value, t, hapDuration, cps, cycle) => {
     phasercenter,
     //
     coarse,
-    am,
+
     crush,
     shape,
 
@@ -479,6 +481,8 @@ export const superdough = async (value, t, hapDuration, cps, cycle) => {
       getWorklet(ac, 'am-processor', {
         speed: am,
         depth: amdepth,
+        skew: amskew,
+        phaseoffset: amphase,
         // shape: amshape,
 
         cps,

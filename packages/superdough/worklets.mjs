@@ -1,7 +1,7 @@
 // coarse, crush, and shape processors adapted from dktr0's webdirt: https://github.com/dktr0/WebDirt/blob/5ce3d698362c54d6e1b68acc47eb2955ac62c793/dist/AudioWorklets.js
 // LICENSE GNU General Public License v3.0 see https://github.com/dktr0/WebDirt/blob/main/LICENSE
-
-const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+import { clamp, _mod } from './util.mjs';
+// const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 const blockSize = 128;
 // adjust waveshape to remove frequencies above nyquist to prevent aliasing
 // referenced from https://www.kvraudio.com/forum/viewtopic.php?t=375517
@@ -55,16 +55,17 @@ const waveshapes = {
     return 1 - phase;
   },
   tri(phase, skew = 0.5) {
+    const x = 1 - skew;
     if (phase >= skew) {
-      return 1 - ((phase / (1 - skew)) % 1);
+      return 1 / x - phase / x;
     }
-    return (phase / skew) % 1;
+    return phase / skew;
   },
   square(phase, skew = 0.5) {
     if (phase >= skew) {
-      return 1;
+      return 0;
     }
-    return 0;
+    return 1;
   },
 };
 
@@ -74,8 +75,9 @@ class AMProcessor extends AudioWorkletProcessor {
       { name: 'cps', defaultValue: 0.5 },
       { name: 'speed', defaultValue: 0.5 },
       { name: 'cycle', defaultValue: 0 },
-      // { name: 'shape', defaultValue: 'tri' },
+      { name: 'skew', defaultValue: 0.5 },
       { name: 'depth', defaultValue: 1 },
+      { name: 'phaseoffset', defaultValue: 0 },
     ];
   }
 
@@ -104,18 +106,20 @@ class AMProcessor extends AudioWorkletProcessor {
     const speed = parameters['speed'][0];
     const cps = parameters['cps'][0];
     const cycle = parameters['cycle'][0];
-    const depth = clamp(parameters['depth'][0], 0, 1);
+    const depth = parameters['depth'][0];
+    const skew = parameters['skew'][0];
+    const phaseoffset = parameters['phaseoffset'][0];
     const blockSize = 128;
     const frequency = speed * cps;
     if (this.phase == null) {
       const secondsPassed = cycle / cps;
-      this.phase = Math.max(0, (secondsPassed * frequency) % 1);
+      this.phase = _mod(secondsPassed * frequency + phaseoffset, 1);
     }
 
     const dt = frequency / sampleRate;
     for (let n = 0; n < blockSize; n++) {
       for (let i = 0; i < input.length; i++) {
-        const modval = waveshapes.tri(this.phase, 0.99) * depth + (1 - depth);
+        const modval = clamp(waveshapes.tri(this.phase, skew) * depth + (1 - depth), 0, 1);
 
         output[i][n] = input[i][n] * modval;
       }
