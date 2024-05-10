@@ -130,7 +130,6 @@ class AMProcessor extends AudioWorkletProcessor {
 }
 registerProcessor('am-processor', AMProcessor);
 
-const blockSize = 128;
 class CoarseProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
     return [{ name: 'coarse', defaultValue: 1 }];
