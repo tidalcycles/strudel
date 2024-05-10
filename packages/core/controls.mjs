@@ -471,7 +471,7 @@ export const { amskew } = registerControl('amskew');
  * note("{f a c e}%16").am(4).amphase("<0 .25 .66>")
  *
  */
-export const { amphase } = registerControl('amskew');
+export const { amphase } = registerControl('amphase');
 
 /**
  * shape of amplitude modulation

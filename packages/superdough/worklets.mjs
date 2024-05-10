@@ -109,7 +109,7 @@ class AMProcessor extends AudioWorkletProcessor {
     const depth = parameters['depth'][0];
     const skew = parameters['skew'][0];
     const phaseoffset = parameters['phaseoffset'][0];
-    const blockSize = 128;
+
     const frequency = speed * cps;
     if (this.phase == null) {
       const secondsPassed = cycle / cps;
