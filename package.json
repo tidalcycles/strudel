@@ -11,6 +11,7 @@
     "test": "npm run pretest && vitest run --version",
     "test-ui": "npm run pretest && vitest --ui",
     "test-coverage": "npm run pretest && vitest --coverage",
+    "bench": "npm run pretest && vitest bench",
     "snapshot": "npm run pretest && vitest run -u --silent",
     "repl": "npm run prestart && cd website && npm run dev",
     "start": "npm run prestart && cd website && npm run dev",

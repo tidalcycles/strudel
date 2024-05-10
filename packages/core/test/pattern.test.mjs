@@ -51,6 +51,7 @@ import {
   stackRight,
   stackCentre,
   s_cat,
+  calculateTactus,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -1127,8 +1128,8 @@ describe('Pattern', () => {
     it('Is correctly preserved/calculated through transformations', () => {
       expect(sequence(0, 1, 2, 3).linger(4).tactus).toStrictEqual(Fraction(4));
       expect(sequence(0, 1, 2, 3).iter(4).tactus).toStrictEqual(Fraction(4));
-      expect(sequence(0, 1, 2, 3).fast(4).tactus).toStrictEqual(Fraction(16));
-      expect(sequence(0, 1, 2, 3).hurry(4).tactus).toStrictEqual(Fraction(16));
+      expect(sequence(0, 1, 2, 3).fast(4).tactus).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).hurry(4).tactus).toStrictEqual(Fraction(4));
       expect(sequence(0, 1, 2, 3).rev().tactus).toStrictEqual(Fraction(4));
       expect(sequence(1).segment(10).tactus).toStrictEqual(Fraction(10));
       expect(sequence(1, 0, 1).invert().tactus).toStrictEqual(Fraction(3));
@@ -1164,7 +1165,7 @@ describe('Pattern', () => {
       expect(stackCentre(fastcat(0, 1, 2), fastcat(3, 4)).tactus).toStrictEqual(Fraction(3));
       expect(fastcat(0, 1).ply(3).tactus).toStrictEqual(Fraction(6));
       expect(fastcat(0, 1).setTactus(undefined).ply(3).tactus).toStrictEqual(undefined);
-      expect(fastcat(0, 1).fast(3).tactus).toStrictEqual(Fraction(6));
+      expect(fastcat(0, 1).fast(3).tactus).toStrictEqual(Fraction(2));
       expect(fastcat(0, 1).setTactus(undefined).fast(3).tactus).toStrictEqual(undefined);
     });
   });

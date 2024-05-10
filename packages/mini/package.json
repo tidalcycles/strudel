@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "vitest run",
+    "bench": "vitest bench",
     "build:parser": "peggy -o krill-parser.js --format es ./krill.pegjs",
     "build": "vite build",
     "prepublishOnly": "npm run build"

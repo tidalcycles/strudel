@@ -23,7 +23,7 @@ export const csound = register('csound', (instrument, pat) => {
   instrument = instrument || 'triangle';
   init(); // not async to support csound inside other patterns + to be able to call pattern methods after it
   // TODO: find a alternative way to wait for csound to load (to wait with first time playback)
-  return pat.onTrigger((time, hap) => {
+  return pat.onTrigger((time_deprecate, hap, currentTime, _cps, targetTime) => {
     if (!_csound) {
       logger('[csound] not loaded yet', 'warning');
       return;
@@ -38,9 +38,11 @@ export const csound = register('csound', (instrument, pat) => {
       .join('/');
     // TODO: find out how to send a precise ctx based time
     // http://www.csounds.com/manual/html/i.html
+    const timeOffset = targetTime - currentTime; // latency ?
+    //const timeOffset = time_deprecate - getAudioContext().currentTime
     const params = [
       `"${instrument}"`, // p1: instrument name
-      time - getAudioContext().currentTime, //.toFixed(precision), // p2: starting time in arbitrary unit called beats
+      timeOffset, // p2: starting time in arbitrary unit called beats
       hap.duration + 0, // p3: duration in beats
       // instrument specific params:
       freq, //.toFixed(precision), // p4: frequency
