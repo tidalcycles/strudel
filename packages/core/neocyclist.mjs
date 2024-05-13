@@ -10,11 +10,8 @@ export class NeoCyclist {
   constructor({ onTrigger, onToggle, getTime }) {
     this.started = false;
     this.cps = 0.5;
-    this.lastTick = 0; // absolute time when last tick (clock callback) happened
     this.getTime = getTime; // get absolute time
     this.time_at_last_tick_message = 0;
-
-    this.num_cycles_at_cps_change = 0;
     this.onToggle = onToggle;
     this.latency = 0.1; // fixed trigger time offset
     this.cycle = 0;

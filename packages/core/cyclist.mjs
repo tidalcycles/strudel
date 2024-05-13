@@ -8,7 +8,7 @@ import createClock from './zyklus.mjs';
 import { logger } from './logger.mjs';
 
 export class Cyclist {
-  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1, setInterval, clearInterval }) {
+  constructor({ interval = 0.05, onTrigger, onToggle, onError, getTime, latency = 0.1, setInterval, clearInterval }) {
     this.started = false;
     this.cps = 0.5;
     this.num_ticks_since_cps_change = 0;
@@ -35,14 +35,11 @@ export class Cyclist {
         try {
           const begin = this.lastEnd;
 
-          this.lastBegin = begin;
           const end = this.num_cycles_at_cps_change + num_cycles_since_cps_change;
-
-          this.lastEnd = end;
-
-          this.lastTick = phase;
-
-          const cycle = this.now();
+          let cycle = this.now();
+          //magic number that fixes cycle calcuation, cycle is probably not being calculated correctly
+          const modifier = this.cps * -interval;
+          cycle = cycle + modifier;
 
           if (phase < t) {
             // avoid querying haps that are in the past anyway
@@ -60,10 +57,14 @@ export class Cyclist {
               const duration = hap.duration / this.cps;
               // the following line is dumb and only here for backwards compatibility
               // see https://github.com/tidalcycles/strudel/pull/1004
+
               const deadline = targetTime - phase;
               onTrigger?.(hap, deadline, duration, this.cps, targetTime, cycle);
             }
           });
+          this.lastBegin = begin;
+          this.lastEnd = end;
+          this.lastTick = phase;
         } catch (e) {
           logger(`[cyclist] error: ${e.message}`);
           onError?.(e);
