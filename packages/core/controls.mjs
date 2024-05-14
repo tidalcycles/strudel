@@ -434,12 +434,13 @@ export const { coarse } = registerControl('coarse');
  * modulate the amplitude of a sound with a continuous waveform
  *
  * @name am
+ * @synonyms tremelo
  * @param {number | Pattern} speed modulation speed in cycles
  * @example
  * s("triangle").am("2").amshape("<tri saw ramp square>").amdepth(.5)
  *
  */
-export const { am } = registerControl(['am', 'amdepth', 'amskew', 'amphase']);
+export const { am, tremolo } = registerControl(['am', 'amdepth', 'amskew', 'amphase'], 'tremolo');
 
 /**
  * depth of amplitude modulation
@@ -1582,7 +1583,6 @@ export const { zmod } = registerControl('zmod');
 // like crush but scaled differently
 export const { zcrush } = registerControl('zcrush');
 export const { zdelay } = registerControl('zdelay');
-export const { tremolo } = registerControl('tremolo');
 export const { zzfx } = registerControl('zzfx');
 
 /**
