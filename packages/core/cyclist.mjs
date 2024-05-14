@@ -36,11 +36,13 @@ export class Cyclist {
           const begin = this.lastEnd;
 
           const end = this.num_cycles_at_cps_change + num_cycles_since_cps_change;
-          let cycle = this.now();
+          let cycle2 = this.now();
           //magic number that fixes cycle calcuation, cycle is probably not being calculated correctly
           const modifier = this.cps * -interval;
-          cycle = cycle + modifier;
-
+          cycle2 = cycle2 + modifier;
+          // let cycle = begin + (phase - t) * this.cps;
+          // cycle = begin t
+          // console.log({ phase, t, cycle2 });
           if (phase < t) {
             // avoid querying haps that are in the past anyway
             console.log(`skip query: too late`);
@@ -49,7 +51,9 @@ export class Cyclist {
 
           // query the pattern for events
           const haps = this.pattern.queryArc(begin, end, { _cps: this.cps });
-
+          let mod2 = t - phase - this.latency;
+          mod2 = mod2 * this.cps;
+          console.log(this.clock.duration);
           haps.forEach((hap) => {
             if (hap.hasOnset()) {
               const targetTime =
@@ -59,9 +63,14 @@ export class Cyclist {
               // see https://github.com/tidalcycles/strudel/pull/1004
 
               const deadline = targetTime - phase;
+              // console.log();
+              let cycle = hap.whole.begin.valueOf() + mod2;
+
+              // console.log({ cycle, cycle2, mod2 });
               onTrigger?.(hap, deadline, duration, this.cps, targetTime, cycle);
             }
           });
+
           this.lastBegin = begin;
           this.lastEnd = end;
           this.lastTick = phase;
