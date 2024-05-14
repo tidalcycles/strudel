@@ -38,17 +38,15 @@ export class Cyclist {
         const eventLength = duration * this.cps;
         const end = begin + eventLength;
         this.cycle = begin + secondsSinceLastTick * this.cps;
-        const num_seconds_at_cps_change = this.num_cycles_at_cps_change / this.cps;
-        const time_dif = time - (num_seconds_at_cps_change + num_seconds_since_cps_change) + tickdeadline;
 
         //account for latency and tick duration when using cycle calculations for audio downstream
         const cycle_gap = (this.latency - duration) * this.cps;
-        const haps = this.pattern.queryArc(begin, end, { _cps: this.cps });
 
+        const haps = this.pattern.queryArc(begin, end, { _cps: this.cps });
         haps.forEach((hap) => {
           if (hap.hasOnset()) {
             let targetTime = (hap.whole.begin - this.num_cycles_at_cps_change) / this.cps;
-            targetTime = targetTime + num_seconds_at_cps_change + this.latency + time_dif;
+            targetTime = targetTime + this.latency + tickdeadline + time - num_seconds_since_cps_change;
             const duration = hap.duration / this.cps;
             onTrigger?.(hap, tickdeadline, duration, this.cps, targetTime, this.cycle - cycle_gap);
           }
