@@ -115,12 +115,11 @@ class AMProcessor extends AudioWorkletProcessor {
       const secondsPassed = cycle / cps;
       this.phase = _mod(secondsPassed * frequency + phaseoffset, 1);
     }
-
+    // eslint-disable-next-line no-undef
     const dt = frequency / sampleRate;
     for (let n = 0; n < blockSize; n++) {
       for (let i = 0; i < input.length; i++) {
         const modval = clamp(waveshapes.tri(this.phase, skew) * depth + (1 - depth), 0, 1);
-
         output[i][n] = input[i][n] * modval;
       }
       this.incrementPhase(dt);
