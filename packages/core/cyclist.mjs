@@ -11,60 +11,53 @@ export class Cyclist {
   constructor({ interval = 0.05, onTrigger, onToggle, onError, getTime, latency = 0.1, setInterval, clearInterval }) {
     this.started = false;
     this.cps = 0.5;
-    this.num_ticks_since_cps_change = 0;
-    this.lastTick = 0; // absolute time when last tick (clock callback) happened
-    this.lastBegin = 0; // query begin of last tick
-    this.lastEnd = 0; // query end of last tick
+    this.time_at_last_tick_message = 0;
+    this.cycle = 0;
     this.getTime = getTime; // get absolute time
     this.num_cycles_at_cps_change = 0;
     this.seconds_at_cps_change; // clock phase when cps was changed
+    this.num_ticks_since_cps_change = 0;
     this.onToggle = onToggle;
     this.latency = latency; // fixed trigger time offset
+
+    this.interval = interval;
+
     this.clock = createClock(
       getTime,
       // called slightly before each cycle
-      (phase, duration, _, t) => {
-        if (this.num_ticks_since_cps_change === 0) {
-          this.num_cycles_at_cps_change = this.lastEnd;
-          this.seconds_at_cps_change = phase;
-        }
-        this.num_ticks_since_cps_change++;
-        const seconds_since_cps_change = this.num_ticks_since_cps_change * duration;
-        const num_cycles_since_cps_change = seconds_since_cps_change * this.cps;
+      (phase, duration, _, time) => {
+        const num_seconds_since_cps_change = this.num_ticks_since_cps_change * duration;
+        const tickdeadline = phase - time;
+        const lastTick = time + tickdeadline;
+        const num_cycles_since_cps_change = num_seconds_since_cps_change * this.cps;
+        const begin = this.num_cycles_at_cps_change + num_cycles_since_cps_change;
+        const secondsSinceLastTick = time - lastTick - duration;
+        const eventLength = duration * this.cps;
+        const end = begin + eventLength;
+        this.cycle = begin + secondsSinceLastTick * this.cps;
+        const num_seconds_at_cps_change = this.num_cycles_at_cps_change / this.cps;
+        const time_dif = time - (num_seconds_at_cps_change + num_seconds_since_cps_change) + tickdeadline;
 
-        try {
-          const begin = this.lastEnd;
-          const end = this.num_cycles_at_cps_change + num_cycles_since_cps_change;
-          if (phase < t) {
-            // avoid querying haps that are in the past anyway
-            console.log(`skip query: too late`);
-            return;
+        if (this.started === false) {
+          return;
+        }
+
+        const haps = this.pattern.queryArc(begin, end, { _cps: this.cps });
+
+        //account for latency and tick duration when using cycle calculations for audio downstream
+        const cycle_gap = (this.latency - duration) * this.cps;
+
+        haps.forEach((hap) => {
+          if (hap.hasOnset()) {
+            let targetTime = (hap.whole.begin - this.num_cycles_at_cps_change) / this.cps;
+            targetTime = targetTime + num_seconds_at_cps_change + this.latency + time_dif;
+            const duration = hap.duration / this.cps;
+            onTrigger?.(hap, tickdeadline, duration, this.cps, targetTime, this.cycle - cycle_gap);
           }
+        });
 
-          // query the pattern for events
-          const haps = this.pattern.queryArc(begin, end, { _cps: this.cps });
-          const cycle_gap = (t - phase - this.latency) * this.cps;
-
-          haps.forEach((hap) => {
-            if (hap.hasOnset()) {
-              const targetTime =
-                (hap.whole.begin - this.num_cycles_at_cps_change) / this.cps + this.seconds_at_cps_change + latency;
-              const duration = hap.duration / this.cps;
-              const cycle = hap.whole.begin.valueOf() + cycle_gap;
-              // the following line is dumb and only here for backwards compatibility
-              // see https://github.com/tidalcycles/strudel/pull/1004
-              const _deadline = targetTime - phase;
-              onTrigger?.(hap, _deadline, duration, this.cps, targetTime, cycle);
-            }
-          });
-
-          this.lastBegin = begin;
-          this.lastEnd = end;
-          this.lastTick = phase;
-        } catch (e) {
-          logger(`[cyclist] error: ${e.message}`);
-          onError?.(e);
-        }
+        this.time_at_last_tick_message = this.getTime();
+        this.num_ticks_since_cps_change++;
       },
       interval, // duration of each cycle
       0.1,
@@ -77,16 +70,24 @@ export class Cyclist {
     if (!this.started) {
       return 0;
     }
-    const secondsSinceLastTick = this.getTime() - this.lastTick - this.clock.duration;
-    return this.lastBegin + secondsSinceLastTick * this.cps; // + this.clock.minLatency;
+    const gap = (this.getTime() - this.time_at_last_tick_message) * this.cps;
+    return this.cycle + gap;
   }
+
+  setCycle = (cycle) => {
+    this.num_ticks_since_cps_change = 0;
+    this.num_cycles_at_cps_change = cycle;
+  };
   setStarted(v) {
     this.started = v;
+
+    this.setCycle(0);
     this.onToggle?.(v);
   }
   start() {
     this.num_ticks_since_cps_change = 0;
     this.num_cycles_at_cps_change = 0;
+
     if (!this.pattern) {
       throw new Error('Scheduler: no pattern set! call .setPattern first.');
     }
@@ -115,6 +116,8 @@ export class Cyclist {
     if (this.cps === cps) {
       return;
     }
+    const num_seconds_since_cps_change = this.num_ticks_since_cps_change * this.interval;
+    this.num_cycles_at_cps_change = this.num_cycles_at_cps_change + num_seconds_since_cps_change * cps;
     this.cps = cps;
     this.num_ticks_since_cps_change = 0;
   }
