@@ -26,7 +26,6 @@ function runInfix(left, symbol, right, ops) {
     case '$':
       return left(right);
     case '&':
-      console.log('right', right);
       return right(left);
     case '.':
       return (x) => left(right(x));
