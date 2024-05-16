@@ -251,34 +251,6 @@ importers:
 
   packages/embed: {}
 
-  packages/haskell:
-    dependencies:
-      '@hpcc-js/wasm':
-        specifier: ^2.15.3
-        version: 2.16.2
-      '@strudel/web':
-        specifier: workspace:*
-        version: link:../web
-      jgf-dot:
-        specifier: ^1.1.1
-        version: 1.1.1
-      tree-sitter-haskell:
-        specifier: ^0.21.0
-        version: 0.21.0(tree-sitter@0.21.1)
-      web-tree-sitter:
-        specifier: ^0.22.6
-        version: 0.22.6
-    devDependencies:
-      tree-sitter:
-        specifier: ^0.21.1
-        version: 0.21.1
-      tree-sitter-cli:
-        specifier: ^0.20.8
-        version: 0.20.8
-      vite:
-        specifier: ^5.0.8
-        version: 5.2.2(@types/node@20.10.6)
-
   packages/hydra:
     dependencies:
       '@strudel/core':
@@ -436,6 +408,34 @@ importers:
       vite:
         specifier: ^5.0.10
         version: 5.0.10
+
+  packages/tidal:
+    dependencies:
+      '@hpcc-js/wasm':
+        specifier: ^2.15.3
+        version: 2.16.2
+      '@strudel/web':
+        specifier: workspace:*
+        version: link:../web
+      jgf-dot:
+        specifier: ^1.1.1
+        version: 1.1.1
+      tree-sitter-haskell:
+        specifier: ^0.21.0
+        version: 0.21.0(tree-sitter@0.21.1)
+      web-tree-sitter:
+        specifier: ^0.22.6
+        version: 0.22.6
+    devDependencies:
+      tree-sitter:
+        specifier: ^0.21.1
+        version: 0.21.1
+      tree-sitter-cli:
+        specifier: ^0.20.8
+        version: 0.20.8
+      vite:
+        specifier: ^5.0.8
+        version: 5.2.2(@types/node@20.10.6)
 
   packages/tonal:
     dependencies:
