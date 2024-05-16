@@ -256,22 +256,25 @@ importers:
       '@hpcc-js/wasm':
         specifier: ^2.15.3
         version: 2.16.2
+      '@strudel/web':
+        specifier: workspace:*
+        version: link:../web
       jgf-dot:
         specifier: ^1.1.1
         version: 1.1.1
+      tree-sitter-haskell:
+        specifier: ^0.21.0
+        version: 0.21.0(tree-sitter@0.21.1)
       web-tree-sitter:
-        specifier: ^0.20.8
-        version: 0.20.8
+        specifier: ^0.22.6
+        version: 0.22.6
     devDependencies:
       tree-sitter:
-        specifier: ^0.20.6
-        version: 0.20.6
+        specifier: ^0.21.1
+        version: 0.21.1
       tree-sitter-cli:
         specifier: ^0.20.8
         version: 0.20.8
-      tree-sitter-javascript:
-        specifier: ^0.20.1
-        version: 0.20.4
       vite:
         specifier: ^5.0.8
         version: 5.2.2(@types/node@20.10.6)
@@ -10660,10 +10663,6 @@ packages:
       thenify-all: 1.6.0
     dev: false
 
-  /nan@2.19.0:
-    resolution: {integrity: sha512-nO1xXxfh/RWNxfd/XPfbIfFk5vgLsAxUR9y5O0cHMJu/AW9U95JLXqthYHjEp+8gQ5p96K9jUp8nbVOxCdRbtw==}
-    dev: true
-
   /nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -10719,6 +10718,10 @@ packages:
       semver: 7.5.4
     dev: true
 
+  /node-addon-api@8.0.0:
+    resolution: {integrity: sha512-ipO7rsHEBqa9STO5C5T10fj732ml+5kLN1cAG8/jdHd56ldQeGj3Q7+scUS+VHK/qy1zLEwC4wMK5+yM0btPvw==}
+    engines: {node: ^18 || ^20 || >= 21}
+
   /node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
@@ -10761,6 +10764,10 @@ packages:
     resolution: {integrity: sha512-yqkmYrMbK1wPrfz7mgeYvA4tBperLg9FQ4S3Sau3nSAkpOA0x0zC8nQ1siBwozy1f4SE8vq2n1WKv99r+PCa1Q==}
     engines: {node: '>= 0.6.0'}
     dev: false
+
+  /node-gyp-build@4.8.1:
+    resolution: {integrity: sha512-OSs33Z9yWr148JZcbZd5WiAXhh/n9z8TxQcdMhIOlpN9AhWpLfvVFO73+m77bBABQMaY9XSvIa+qk0jlI7Gcaw==}
+    hasBin: true
 
   /node-gyp@10.0.1:
     resolution: {integrity: sha512-gg3/bHehQfZivQVfqIyy8wTdSymF9yTyP4CJifK73imyNMU8AIGQE2pUa7dNWfmMeG9cDVF2eehiRMv0LC1iAg==}
@@ -13497,20 +13504,27 @@ packages:
     requiresBuild: true
     dev: true
 
-  /tree-sitter-javascript@0.20.4:
-    resolution: {integrity: sha512-7IUgGkZQROI7MmX2ErKhE3YP4+rM2qwBy5JeukE7fJQMEYP9nHpxvuQpa+eOX+hE1im2pWVc1yDCfVKKCBtxww==}
+  /tree-sitter-haskell@0.21.0(tree-sitter@0.21.1):
+    resolution: {integrity: sha512-b2RLegPHuYPh7nJ3YKWgkWnFYxmYlQDE8TDJuNH+iuNuBcCMYyaA9JlJlMHfCvf7DmJNPtqqbO9Kh9NXEmbatQ==}
     requiresBuild: true
+    peerDependencies:
+      tree-sitter: ^0.21.0
+      tree_sitter: '*'
+    peerDependenciesMeta:
+      tree_sitter:
+        optional: true
     dependencies:
-      nan: 2.19.0
-    dev: true
+      node-addon-api: 8.0.0
+      node-gyp-build: 4.8.1
+      tree-sitter: 0.21.1
+    dev: false
 
-  /tree-sitter@0.20.6:
-    resolution: {integrity: sha512-GxJodajVpfgb3UREzzIbtA1hyRnTxVbWVXrbC6sk4xTMH5ERMBJk9HJNq4c8jOJeUaIOmLcwg+t6mez/PDvGqg==}
+  /tree-sitter@0.21.1:
+    resolution: {integrity: sha512-7dxoA6kYvtgWw80265MyqJlkRl4yawIjO7S5MigytjELkX43fV2WsAXzsNfO7sBpPPCF5Gp0+XzHk0DwLCq3xQ==}
     requiresBuild: true
     dependencies:
-      nan: 2.19.0
-      prebuild-install: 7.1.1
-    dev: true
+      node-addon-api: 8.0.0
+      node-gyp-build: 4.8.1
 
   /trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
@@ -14306,8 +14320,8 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
-  /web-tree-sitter@0.20.8:
-    resolution: {integrity: sha512-weOVgZ3aAARgdnb220GqYuh7+rZU0Ka9k9yfKtGAzEYMa6GgiCzW9JjQRJyCJakvibQW+dfjJdihjInKuuCAUQ==}
+  /web-tree-sitter@0.22.6:
+    resolution: {integrity: sha512-hS87TH71Zd6mGAmYCvlgxeGDjqd9GTeqXNqTT+u0Gs51uIozNIaaq/kUAbV/Zf56jb2ZOyG8BxZs2GG9wbLi6Q==}
     dev: false
 
   /webidl-conversions@3.0.1:

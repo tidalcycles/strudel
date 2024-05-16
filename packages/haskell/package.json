@@ -1,24 +1,42 @@
 {
-  "name": "haskell",
+  "name": "@strudel/tidal",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "postinstall": "cp node_modules/web-tree-sitter/tree-sitter.wasm public",
-    "parse": "tree-sitter parse -D ./test.hs"
+    "postinstall": "cp node_modules/web-tree-sitter/tree-sitter.wasm public && npm run build:parser",
+    "build:parser": "tree-sitter build-wasm node_modules/tree-sitter-haskell && mv tree-sitter-haskell.wasm public"
   },
-  "devDependencies": {
-    "tree-sitter": "^0.20.6",
-    "tree-sitter-cli": "^0.20.8",
-    "tree-sitter-javascript": "^0.20.1",
-    "vite": "^5.0.8"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
   },
+  "keywords": [
+    "titdalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@hpcc-js/wasm": "^2.15.3",
     "jgf-dot": "^1.1.1",
-    "web-tree-sitter": "^0.20.8"
+    "web-tree-sitter": "^0.22.6",
+    "tree-sitter-haskell": "^0.21.0",
+    "@strudel/web": "workspace:*"
+  },
+  "devDependencies": {
+    "tree-sitter": "^0.21.1",
+    "tree-sitter-cli": "^0.20.8",
+    "vite": "^5.0.8"
   }
 }
