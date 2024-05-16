@@ -251,31 +251,6 @@ importers:
 
   packages/embed: {}
 
-  packages/haskell:
-    dependencies:
-      '@hpcc-js/wasm':
-        specifier: ^2.15.3
-        version: 2.15.3
-      jgf-dot:
-        specifier: ^1.1.1
-        version: 1.1.1
-      web-tree-sitter:
-        specifier: ^0.20.8
-        version: 0.20.8
-    devDependencies:
-      tree-sitter:
-        specifier: ^0.20.6
-        version: 0.20.6
-      tree-sitter-cli:
-        specifier: ^0.20.8
-        version: 0.20.8
-      tree-sitter-javascript:
-        specifier: ^0.20.1
-        version: 0.20.1
-      vite:
-        specifier: ^5.0.8
-        version: 5.0.10
-
   packages/hydra:
     dependencies:
       '@strudel/core':
@@ -8228,33 +8203,6 @@ packages:
   /graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
-  /graphlib-dot@0.6.4:
-    resolution: {integrity: sha512-rdhDTu0mBlloTpFMfkQq+e3y4yL22OqP5MhQbkw6QUURqa+4YLgv3XZy2fA64wdEcJNZ+waI76URemVgdFtzng==}
-    dependencies:
-      graphlib: 2.1.8
-      lodash: 4.17.21
-    dev: false
-
-  /graphlib-json-graph@1.0.0:
-    resolution: {integrity: sha512-sJsFuthZnSL5knaDDZhDx8fg1Zy5t/7ZqVHiytoeSzezGhMoSFD3T3K5YQakKFEyXtYjOzbnvsyr2qo+6/qq/Q==}
-    dependencies:
-      graphlib: 1.0.7
-      par: 0.3.0
-      prop: 0.1.1
-    dev: false
-
-  /graphlib@1.0.7:
-    resolution: {integrity: sha512-jNb7RbqTIRyZRmcVCxGefOlGWjNdbjcT2tFj36zhnRa8yhAlOvydh9nBixfLQIqSU+DwCx47tg3ysw8NIYhpsA==}
-    dependencies:
-      lodash: 3.10.1
-    dev: false
-
-  /graphlib@2.1.8:
-    resolution: {integrity: sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==}
-    dependencies:
-      lodash: 4.17.21
-    dev: false
-
   /gray-matter@4.0.3:
     resolution: {integrity: sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==}
     engines: {node: '>=6.0'}
@@ -9610,12 +9558,9 @@ packages:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
     dev: true
 
-  /lodash@3.10.1:
-    resolution: {integrity: sha512-9mDDwqVIma6OZX79ZlDACZl8sBm0TEnkf99zV3iMA4GzkIT/9hiqP5mY0HoT1iNLCrKc/R1HByV+yJfRWVJryQ==}
-    dev: false
-
   /lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+    dev: true
 
   /log-symbols@4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
@@ -11321,11 +11266,6 @@ packages:
       - supports-color
     dev: true
 
-  /par@0.3.0:
-    resolution: {integrity: sha512-6V910zFAoHnxjX6ILkwbQcpIkD3KI2gBAPfCtZQNaJTvTxgIoKXSwDQIE3ty0zbOGdBXHRnl6rd66a5jj12pfw==}
-    engines: {node: '>=0.6'}
-    dev: false
-
   /parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
@@ -11661,21 +11601,12 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.2.0
 
-  /postcss@8.4.32:
-    resolution: {integrity: sha512-D/kj5JNu6oo2EIy+XL/26JEDTlIbB8hw85G8StOE6L74RQAVVP5rej6wxCNqyMbR4RkPfqvezVbPw81Ngd6Kcw==}
-    engines: {node: ^10 || ^12 || >=14}
-    dependencies:
-      nanoid: 3.3.7
-      picocolors: 1.0.0
-      source-map-js: 1.0.2
-    dev: true
-
   /prebuild-install@7.1.1:
     resolution: {integrity: sha512-jAXscXWMcCK8GgCoHOfIr0ODh5ai8mj63L2nWrjuAgXE6tDyYGnx4/8o/rCgU+B4JSyZBKbeZqzhtwtC3ovxjw==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      detect-libc: 2.0.2
+      detect-libc: 2.0.1
       expand-template: 2.0.3
       github-from-package: 0.0.0
       minimist: 1.2.7
@@ -11804,12 +11735,6 @@ packages:
     dependencies:
       read: 2.1.0
     dev: true
-
-  /prop@0.1.1:
-    resolution: {integrity: sha512-hf5DdgiPkcoVxBfuSknP918U0lDC+7lArIjIB2U4Gh79p1Xtc0JP6W5DW3c0wC0x9/A6CsAISh3202I1GlMgkw==}
-    dependencies:
-      dotty: 0.0.1
-    dev: false
 
   /property-information@6.2.0:
     resolution: {integrity: sha512-kma4U7AFCTwpqq5twzC1YVIDXSqg6qQK6JN0smOw8fgRy1OkMi0CYSzFmsy6dnqSenamAtj0CyXMUJ1Mf6oROg==}
@@ -14261,10 +14186,6 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
-  /web-tree-sitter@0.20.8:
-    resolution: {integrity: sha512-weOVgZ3aAARgdnb220GqYuh7+rZU0Ka9k9yfKtGAzEYMa6GgiCzW9JjQRJyCJakvibQW+dfjJdihjInKuuCAUQ==}
-    dev: false
-
   /webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
 
@@ -14737,19 +14658,6 @@ packages:
       y18n: 5.0.8
       yargs-parser: 21.1.1
     dev: true
-
-  /yargs@17.7.2:
-    resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
-    engines: {node: '>=12'}
-    dependencies:
-      cliui: 8.0.1
-      escalade: 3.1.1
-      get-caller-file: 2.0.5
-      require-directory: 2.1.1
-      string-width: 4.2.3
-      y18n: 5.0.8
-      yargs-parser: 21.1.1
-    dev: false
 
   /yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
