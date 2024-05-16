@@ -70,7 +70,7 @@ export const getSampleBuffer = async (hapValue, samples, resolveUrl) => {
 // creates playback ready AudioBufferSourceNode from hapValue
 export const getSampleBufferSource = async (hapValue, samples, resolveUrl) => {
   let { buffer, playbackRate } = await getSampleBuffer(hapValue, samples, resolveUrl);
-  if (speed < 0) {
+  if (hapValue.speed < 0) {
     // should this be cached?
     buffer = reverseBuffer(buffer);
   }
@@ -85,7 +85,7 @@ export const getSampleBufferSource = async (hapValue, samples, resolveUrl) => {
   // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
   // the midway point through a 10-second audio buffer is still 5."
   const offset = begin * bufferSource.buffer.duration;
-  // sound names starting with wt_ are looped automatically (wt = wavetable)
+
   const loop = s.startsWith('wt_') ? 1 : hapValue.loop;
   if (loop) {
     bufferSource.loop = true;
