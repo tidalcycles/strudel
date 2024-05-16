@@ -1,0 +1,196 @@
+---
+title: Understanding Chod Voicings
+layout: ../../layouts/MainLayout.astro
+---
+
+import { MiniRepl } from '../../docs/MiniRepl';
+import { PitchSlider } from '../../components/PitchSlider';
+import Box from '@components/Box.astro';
+
+# Understanding Chords and Voicings
+
+Let's dig deeper into how chords and voicings work.
+I'll try to keep theory jargon to a minimum, so hopefully this is approachable for anyone interested.
+
+## What is a chord
+
+Playing more than one note at a time is generally called a chord. Here's an example:
+
+<MiniRepl client:visible tune={`note("<[c3,eb3,g3] [f3,a3,c4]>").room(.5)`} />
+
+Here's the same with midi numbers:
+
+<MiniRepl client:visible tune={`note("<[48,51,55] [53,57,60]>").room(.5)`} />
+
+Here, we have two 3-note chords played in a loop.
+You could already stop here and write chords in this style, which is totally fine and gives you control over individual notes.
+One downside is that it can be difficult to find good sounding chords and maybe you're yearning for a way to organize chords in some other way..
+
+## Labeling Chords
+
+Chords are typically given different labels depending on the relationship of the notes within.
+In the number example above, we have `48,51,55` and `53,57,60`.
+
+To analyze the relationship of those notes, they are typically compared to some `root`, which is often the lowest note.
+In our case, the `roots` would be `48` (= `c3`) and `53` (= `f3`).
+We can express the same chords relative to those `roots` like this:
+
+<MiniRepl client:visible tune={`note("<[0,3,7] [0,4,7]>".add("<48 53>")).room(.5)`} />
+
+Now within each chord, each number represents the distance from the root.
+A distance between pitches is typically called `interval`, but let's stick to distance for now.
+
+Now we can see that our 2 chords are actually quite similar, as the only difference is the middle note (and the root of course).
+They are part of a group of chords called `triads` which are chords with 3 notes.
+
+### Triads
+
+These 4 shapes are the most common types of `triads` you will encounter:
+
+| shape | label      |
+| ----- | ---------- |
+| 0,3,6 | diminished |
+| 0,3,7 | minor      |
+| 0,4,7 | major      |
+| 0,4,8 | augmented  |
+
+Here they are in succession:
+
+<MiniRepl
+  client:visible
+  tune={`note("<[0,3,6] [0,3,7] [0,4,7] [0,4,8]>".add("60"))
+.room(.5)._pitchwheel()`}
+/>
+
+Many types of music often only use minor and major chords, so we already have the knowledge to accompany songs. Here's one:
+
+<MiniRepl
+  client:visible
+  tune={`
+note(\`<
+[0,3,7] [0,4,7] [0,4,7] [0,4,7]
+[0,3,7] [0,4,7] [0,3,7] [0,4,7]
+>\`.add(\`<
+a c d f
+a e a e
+>\`)).room(.5)`}
+/>
+
+These are the chords for "The house of the rising sun" by The Animals.
+So far it doesn't sound too exiting but at least it's recognizable..
+
+## Voicings
+
+A `voicing` is one of many ways a certain chord shape could be played.
+The term comes from choral music, where chords can be sung in different ways by changing which voice sings which note.
+For example we could add 12 to one or more notes in the chord:
+
+<MiniRepl
+  client:visible
+  tune={`note("<[0,3,7] [12,3,7] [12,15,7] [12,15,19]>".add("48"))
+.room(.5)`}
+/>
+
+Notes that are 12 steps apart (= 1 `octave`) are considered to be equal in a harmonic sense, which is why they get the same note letter.
+Here's the same example with note letterns:
+
+<MiniRepl
+  client:visible
+  tune={`note("<[c3,eb3,g3] [c4,eb3,g3] [c4,eb4,g3] [c4,eb4,g4]>")
+.room(.5)`}
+/>
+
+This type of voicings are also called `inversions`. There are many other ways we could `voice` this minor chord:
+
+<MiniRepl
+  client:visible
+  tune={`note("<[0,3,7,12] [0,15,24] [0,3,12]>".add("48"))
+.room(.5)`}
+/>
+
+Here we are changing the flavour of the chord slightly by
+
+1. doubling notes 12 steps higher,
+2. using very wide distances
+3. omitting notes
+
+## Voice Leading
+
+Let's revisit "The House of the Rising Sun", this time using our newly acquired voicing techniques:
+
+<MiniRepl
+  client:visible
+  tune={`note(\`<
+[0,3,7] [7,12,16] [0,7,16] [4,7,12]
+[0,3,7] [4,7,12] [0,3,7] [4,7,12]
+>\`.add(\`<
+a c d f
+a e a e
+>\`)).room(.5)`}
+  punchcard
+/>
+
+These voicings make the chords sound more connected and less jumpy, compared to the version without voicings.
+The way chords interact is also called voice leading, reminiscent of how a choir voice would move through a sequence of chords.
+
+For example, try singing the top voice in the above example. Then try the same on the example without voice leading. Which one's easier?
+
+Naturally, there are many ways a progression of chords could be voiced and there is no clear right or wrong.
+
+## Chord Symbols
+
+Musicians playing chord-based music often rely on a so called lead sheet, which is a simplified notation of a music piece.
+The chords in those lead sheets are notated with symbols that allow a piece to be notated in a very concise manner.
+A common way to write the chords "The House of the Rising Sun" would be:
+
+```
+Am | C | D  | F
+Am | E | Am | E
+```
+
+Here, each symbol consists of the `root` of the chord and optionally an `m` to signal it's a minor chord (just the root note means it's major).
+We could mirror that notation in strudel using the `pick` function:
+
+<MiniRepl
+  client:visible
+  tune={`"<Am C D F Am E Am E>"
+  .pick({
+    Am: "57,60,64",
+    C: "55,60,64",
+    D: "50,57,66",
+    F: "57,60,65",
+    E: "56,59,64",
+  })
+  .note().room(.5)`}
+  punchcard
+/>
+
+## The voicing function
+
+Coming up with good sounding voicings that connect well can be a difficult and time consuming process.
+The `chord` and `voicing` functions can be used to automate that:
+
+<MiniRepl client:visible tune={`chord("<Am C D F Am E Am E>").voicing().room(.5)`} punchcard />
+
+Here we're also using chord symbols but the voicings will be automatically generated with smooth voice leading.
+
+## Voicing Dictionaries
+
+The voicing function internally uses so called `voicing dictionaries`, which can also be customized:
+
+<MiniRepl
+  client:visible
+  tune={`addVoicings('house', {
+  '': ['7 12 16', '0 7 16', '4 7 12'],
+  'm': ['0 3 7']
+})
+chord("<Am C D F Am E Am E>")
+  .dict('house').anchor(66)
+  .voicing().room(.5)`}
+  punchcard
+/>
+
+In a `voicing dictionary`, each chord symbol is assigned one or more voicings.
+The `voicing` function then picks the voicing that is closest to the `anchor` (defaults to `c5`).
+
+The handy thing about this approach is that a `voicing dictionary` can be used to play any chord progression with automated voice leading!
