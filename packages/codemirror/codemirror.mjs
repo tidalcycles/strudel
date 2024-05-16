@@ -2,21 +2,32 @@ import { closeBrackets } from '@codemirror/autocomplete';
 // import { search, highlightSelectionMatches } from '@codemirror/search';
 import { history } from '@codemirror/commands';
 import { javascript } from '@codemirror/lang-javascript';
-import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
+import { defaultHighlightStyle, syntaxHighlighting, bracketMatching } from '@codemirror/language';
 import { Compartment, EditorState, Prec } from '@codemirror/state';
-import { EditorView, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view';
-import { Pattern, Drawer, repl, cleanupDraw } from '@strudel.cycles/core';
+import {
+  EditorView,
+  highlightActiveLineGutter,
+  highlightActiveLine,
+  keymap,
+  lineNumbers,
+  drawSelection,
+} from '@codemirror/view';
+import { Pattern, repl } from '@strudel/core';
+import { Drawer, cleanupDraw } from '@strudel/draw';
 import { isAutoCompletionEnabled } from './autocomplete.mjs';
 import { isTooltipEnabled } from './tooltip.mjs';
 import { flash, isFlashEnabled } from './flash.mjs';
 import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
 import { keybindings } from './keybindings.mjs';
 import { initTheme, activateTheme, theme } from './themes.mjs';
-import { updateWidgets, sliderPlugin } from './slider.mjs';
+import { sliderPlugin, updateSliderWidgets } from './slider.mjs';
+import { widgetPlugin, updateWidgets } from './widget.mjs';
 import { persistentAtom } from '@nanostores/persistent';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
+  isBracketMatchingEnabled: (on) => (on ? bracketMatching({ brackets: '()[]{}<>' }) : []),
+  isBracketClosingEnabled: (on) => (on ? closeBrackets() : []),
   isLineNumbersDisplayed: (on) => (on ? lineNumbers() : []),
   theme,
   isAutoCompletionEnabled,
@@ -30,6 +41,8 @@ const compartments = Object.fromEntries(Object.keys(extensions).map((key) => [ke
 
 export const defaultSettings = {
   keybindings: 'codemirror',
+  isBracketMatchingEnabled: false,
+  isBracketClosingEnabled: true,
   isLineNumbersDisplayed: true,
   isActiveLineHighlighted: false,
   isAutoCompletionEnabled: false,
@@ -62,12 +75,13 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
       ...initialSettings,
       javascript(),
       sliderPlugin,
+      widgetPlugin,
       // indentOnInput(), // works without. already brought with javascript extension?
       // bracketMatching(), // does not do anything
-      closeBrackets(),
       syntaxHighlighting(defaultHighlightStyle),
       history(),
       EditorView.updateListener.of((v) => onChange(v)),
+      drawSelection({ cursorBlinkRate: 0 }),
       Prec.highest(
         keymap.of([
           {
@@ -115,6 +129,7 @@ export class StrudelMirror {
       id,
       initialCode = '',
       onDraw,
+      drawContext,
       drawTime = [0, 0],
       autodraw,
       prebake,
@@ -127,22 +142,15 @@ export class StrudelMirror {
     this.widgets = [];
     this.painters = [];
     this.drawTime = drawTime;
-    this.onDraw = onDraw;
-    const self = this;
+    this.drawContext = drawContext;
+    this.onDraw = onDraw || this.draw;
     this.id = id || s4();
 
     this.drawer = new Drawer((haps, time) => {
-      const currentFrame = haps.filter((hap) => time >= hap.whole.begin && time <= hap.endClipped);
+      const currentFrame = haps.filter((hap) => hap.isActive(time));
       this.highlight(currentFrame, time);
-      this.onDraw?.(haps, time, currentFrame, this.painters);
+      this.onDraw(haps, time, this.painters);
     }, drawTime);
-
-    // this approach does not work with multiple repls on screen
-    // TODO: refactor onPaint usages + find fix, maybe remove painters here?
-    Pattern.prototype.onPaint = function (onPaint) {
-      self.painters.push(onPaint);
-      return this;
-    };
 
     this.prebaked = prebake();
     autodraw && this.drawFirstFrame();
@@ -169,6 +177,14 @@ export class StrudelMirror {
       beforeEval: async () => {
         cleanupDraw();
         this.painters = [];
+        const self = this;
+        // this is similar to repl.mjs > injectPatternMethods
+        // maybe there is a solution without prototype hacking, but hey, it works
+        // we need to do this befor every eval to make sure it works with multiple StrudelMirror's side by side
+        Pattern.prototype.onPaint = function (onPaint) {
+          self.painters.push(onPaint);
+          return this;
+        };
         await this.prebaked;
         await replOptions?.beforeEval?.();
       },
@@ -176,7 +192,10 @@ export class StrudelMirror {
         // remember for when highlighting is toggled on
         this.miniLocations = options.meta?.miniLocations;
         this.widgets = options.meta?.widgets;
-        updateWidgets(this.editor, this.widgets);
+        const sliders = this.widgets.filter((w) => w.type === 'slider');
+        updateSliderWidgets(this.editor, sliders);
+        const widgets = this.widgets.filter((w) => w.type !== 'slider');
+        updateWidgets(this.editor, widgets);
         updateMiniLocations(this.editor, this.miniLocations);
         replOptions?.afterEval?.(options);
         this.adjustDrawTime();
@@ -220,6 +239,9 @@ export class StrudelMirror {
     // when no painters are set, [0,0] is enough (just highlighting)
     this.drawer.setDrawTime(this.painters.length ? this.drawTime : [0, 0]);
   }
+  draw(haps, time) {
+    this.painters?.forEach((painter) => painter(this.drawContext, time, haps, this.drawTime));
+  }
   async drawFirstFrame() {
     if (!this.onDraw) {
       return;
@@ -230,7 +252,7 @@ export class StrudelMirror {
       await this.repl.evaluate(this.code, false);
       this.drawer.invalidate(this.repl.scheduler, -0.001);
       // draw at -0.001 to avoid haps at 0 to be visualized as active
-      this.onDraw?.(this.drawer.visibleHaps, -0.001, [], this.painters);
+      this.onDraw?.(this.drawer.visibleHaps, -0.001, this.painters);
     } catch (err) {
       console.warn('first frame could not be painted');
     }
@@ -282,8 +304,14 @@ export class StrudelMirror {
   setLineWrappingEnabled(enabled) {
     this.reconfigureExtension('isLineWrappingEnabled', enabled);
   }
+  setBracketMatchingEnabled(enabled) {
+    this.reconfigureExtension('isBracketMatchingEnabled', enabled);
+  }
   setLineNumbersDisplayed(enabled) {
     this.reconfigureExtension('isLineNumbersDisplayed', enabled);
+  }
+  setBracketClosingEnabled(enabled) {
+    this.reconfigureExtension('isBracketClosingEnabled', enabled);
   }
   setTheme(theme) {
     this.reconfigureExtension('theme', theme);

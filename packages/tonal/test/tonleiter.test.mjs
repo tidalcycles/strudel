@@ -18,6 +18,9 @@ import {
   midi2note,
   renderVoicing,
   scaleStep,
+  stepInNamedScale,
+  nearestNumberIndex,
+  note2midi,
 } from '../tonleiter.mjs';
 
 describe('tonleiter', () => {
@@ -148,5 +151,35 @@ describe('tonleiter', () => {
     ]);
     // expect(voiceBelow('G4', 'Cm7', voicingDictionary)).toEqual(['Bb3', 'D4', 'Eb4', 'G4']);
     // TODO: test with offset
+  });
+  test('nearestNumber', () => {
+    expect(nearestNumberIndex(0, [0, 2, 4, 5])).toEqual(0);
+    expect(nearestNumberIndex(1, [0, 2, 4, 5])).toEqual(0);
+    expect(nearestNumberIndex(1, [0, 2, 4, 5], true)).toEqual(1);
+    expect(nearestNumberIndex(2, [0, 2, 4, 5])).toEqual(1);
+    expect(nearestNumberIndex(2, [0, 2, 4, 5]), true).toEqual(1);
+    expect(nearestNumberIndex(3, [0, 2, 4, 5])).toEqual(1);
+    expect(nearestNumberIndex(3, [0, 2, 4, 5], true)).toEqual(2);
+    expect(nearestNumberIndex(4, [0, 2, 4, 5])).toEqual(2);
+  });
+  test('stepInNamedScale', () => {
+    expect(stepInNamedScale(1, 'D major')).toEqual(note2midi('E3'));
+    expect(stepInNamedScale(2, 'E major')).toEqual(note2midi('G#3'));
+    expect(stepInNamedScale(0, 'D major', 'E3')).toEqual(note2midi('E3'));
+    expect(stepInNamedScale(0, 'D major', 'E4')).toEqual(note2midi('E4'));
+    expect(stepInNamedScale(0, 'D major', 'Eb4')).toEqual(note2midi('D4'));
+    expect(stepInNamedScale(0, 'D major', 'F4')).toEqual(note2midi('E4'));
+    expect(stepInNamedScale(0, 'D major', 'F#4')).toEqual(note2midi('F#4'));
+    expect(stepInNamedScale(0, 'D major', 'G4')).toEqual(note2midi('G4'));
+
+    expect(stepInNamedScale(0, 'F major', 'F4')).toEqual(note2midi('F4'));
+    expect(stepInNamedScale(0, 'F major', 'G4')).toEqual(note2midi('G4'));
+    expect(stepInNamedScale(0, 'F major', 'A4')).toEqual(note2midi('A4'));
+    expect(stepInNamedScale(0, 'F major', 'Bb4')).toEqual(note2midi('Bb4'));
+    expect(stepInNamedScale(0, 'F major', 'C4')).toEqual(note2midi('C4'));
+
+    expect(stepInNamedScale(1, 'F major', 'C4')).toEqual(note2midi('D4'));
+    expect(stepInNamedScale(1, 'F major', 'C3')).toEqual(note2midi('D3'));
+    expect(stepInNamedScale(1, 'F minor', 'D4')).toEqual(note2midi('Eb4'));
   });
 });

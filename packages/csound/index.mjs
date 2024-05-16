@@ -1,5 +1,5 @@
-import { getFrequency, logger, register } from '@strudel.cycles/core';
-import { getAudioContext } from '@strudel.cycles/webaudio';
+import { getFrequency, logger, register } from '@strudel/core';
+import { getAudioContext } from '@strudel/webaudio';
 import csd from './project.csd?raw';
 // import livecodeOrc from './livecode.orc?raw';
 import presetsOrc from './presets.orc?raw';
@@ -23,7 +23,7 @@ export const csound = register('csound', (instrument, pat) => {
   instrument = instrument || 'triangle';
   init(); // not async to support csound inside other patterns + to be able to call pattern methods after it
   // TODO: find a alternative way to wait for csound to load (to wait with first time playback)
-  return pat.onTrigger((time, hap) => {
+  return pat.onTrigger((time_deprecate, hap, currentTime, _cps, targetTime) => {
     if (!_csound) {
       logger('[csound] not loaded yet', 'warning');
       return;
@@ -38,9 +38,11 @@ export const csound = register('csound', (instrument, pat) => {
       .join('/');
     // TODO: find out how to send a precise ctx based time
     // http://www.csounds.com/manual/html/i.html
+    const timeOffset = targetTime - currentTime; // latency ?
+    //const timeOffset = time_deprecate - getAudioContext().currentTime
     const params = [
       `"${instrument}"`, // p1: instrument name
-      time - getAudioContext().currentTime, //.toFixed(precision), // p2: starting time in arbitrary unit called beats
+      timeOffset, // p2: starting time in arbitrary unit called beats
       hap.duration + 0, // p3: duration in beats
       // instrument specific params:
       freq, //.toFixed(precision), // p4: frequency
@@ -152,12 +154,14 @@ export const csoundm = register('csoundm', (instrument, pat) => {
     const p2 = tidal_time - getAudioContext().currentTime;
     const p3 = hap.duration.valueOf() + 0;
     const frequency = getFrequency(hap);
+    let { gain = 1, velocity = 0.9 } = hap.value;
+    velocity = gain * velocity;
     // Translate frequency to MIDI key number _without_ rounding.
     const C4 = 261.62558;
     let octave = Math.log(frequency / C4) / Math.log(2.0) + 8.0;
     const p4 = octave * 12.0 - 36.0;
     // We prefer floating point precision, but over the MIDI range [0, 127].
-    const p5 = 127 * (hap.context?.velocity ?? 0.9);
+    const p5 = 127 * velocity;
     // The Strudel controls as a string.
     const p6 = Object.entries({ ...hap.value, frequency })
       .flat()

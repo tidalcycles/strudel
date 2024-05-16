@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -15,7 +15,7 @@
     <script type="module">
       import { initStrudel } from '@strudel/web';
       initStrudel({
-        prebake: () => samples('github:tidalcycles/Dirt-Samples/master'),
+        prebake: () => samples('github:tidalcycles/dirt-samples'),
       });
 
       const click = (id, action) => document.getElementById(id).addEventListener('click', action);

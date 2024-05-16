@@ -1,5 +1,5 @@
 {
-  "name": "@strudel.cycles/monorepo",
+  "name": "@strudel/monorepo",
   "version": "0.5.0",
   "private": true,
   "description": "Port of tidalcycles to javascript",
@@ -11,6 +11,7 @@
     "test": "npm run pretest && vitest run --version",
     "test-ui": "npm run pretest && vitest --ui",
     "test-coverage": "npm run pretest && vitest --coverage",
+    "bench": "npm run pretest && vitest bench",
     "snapshot": "npm run pretest && vitest run -u --silent",
     "repl": "npm run prestart && cd website && npm run dev",
     "start": "npm run prestart && cd website && npm run dev",
@@ -25,6 +26,7 @@
     "format-check": "prettier --check .",
     "report-undocumented": "npm run jsdoc-json && node jsdoc/undocumented.mjs > undocumented.json",
     "check": "npm run format-check && npm run lint && npm run test",
+    "sampler": "cd samples && node ../packages/sampler/sample-server.mjs",
     "iclc": "cd paper && pandoc --template=pandoc/iclc.html --citeproc  --number-sections iclc2023.md -o iclc2023.html && pandoc --template=pandoc/iclc.latex --citeproc --number-sections iclc2023.md -o iclc2023.pdf"
   },
   "repository": {
@@ -45,28 +47,27 @@
   },
   "homepage": "https://strudel.cc",
   "dependencies": {
-    "@strudel.cycles/core": "workspace:*",
-    "@strudel.cycles/mini": "workspace:*",
-    "@strudel.cycles/tonal": "workspace:*",
-    "@strudel.cycles/transpiler": "workspace:*",
-    "@strudel.cycles/webaudio": "workspace:*",
-    "@strudel.cycles/xen": "workspace:*",
-    "acorn": "^8.8.1",
-    "dependency-tree": "^9.0.0"
+    "@strudel/core": "workspace:*",
+    "@strudel/mini": "workspace:*",
+    "@strudel/tonal": "workspace:*",
+    "@strudel/transpiler": "workspace:*",
+    "@strudel/webaudio": "workspace:*",
+    "@strudel/xen": "workspace:*"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.4.0",
-    "@vitest/ui": "^0.28.0",
-    "canvas": "^2.11.2",
-    "eslint": "^8.39.0",
-    "eslint-plugin-import": "^2.27.5",
+    "@tauri-apps/cli": "^1.5.9",
+    "@vitest/ui": "^1.1.0",
+    "acorn": "^8.11.3",
+    "dependency-tree": "^10.0.9",
+    "eslint": "^8.56.0",
+    "eslint-plugin-import": "^2.29.1",
     "events": "^3.3.0",
     "jsdoc": "^4.0.2",
     "jsdoc-json": "^2.0.2",
     "jsdoc-to-markdown": "^8.0.0",
-    "lerna": "^6.6.1",
-    "prettier": "^2.8.8",
-    "rollup-plugin-visualizer": "^5.8.1",
-    "vitest": "^0.33.0"
+    "lerna": "^8.0.1",
+    "prettier": "^3.1.1",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "vitest": "^1.1.0"
   }
 }

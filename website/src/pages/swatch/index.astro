@@ -1,5 +1,5 @@
 ---
-import { getMyPatterns } from './list.json';
+import { getMyPatterns } from '../../my_patterns.js';
 
 import { Content } from '../../../../my-patterns/README.md';
 import HeadCommon from '../../components/HeadCommon.astro';
@@ -25,15 +25,15 @@ const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL
     {
       Object.entries(myPatterns).map(([name, tune]) => (
         <a
-          class="rounded-md bg-slate-900 hover:bg-slate-700 cursor-pointer relative"
+          class="rounded-md bg-slate-900 hover:bg-slate-700 cursor-pointer relative block w-full h-[160px]"
           href={`${baseNoTrailing}/#${btoa(tune as string)}`}
         >
           <div class="absolute w-full h-full flex justify-center items-center">
             <span class="bg-slate-800 p-2 rounded-md text-white">{name}</span>
           </div>
-          <img src={`${baseNoTrailing}/swatch/${name}.png`} />
         </a>
       ))
     }
   </div>
 </body>
+../../list.json

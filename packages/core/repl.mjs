@@ -1,3 +1,4 @@
+import { NeoCyclist } from './neocyclist.mjs';
 import { Cyclist } from './cyclist.mjs';
 import { evaluate as _evaluate } from './evaluate.mjs';
 import { logger } from './logger.mjs';
@@ -6,9 +7,7 @@ import { evalScope } from './evaluate.mjs';
 import { register, Pattern, isPattern, silence, stack } from './pattern.mjs';
 
 export function repl({
-  interval,
   defaultOutput,
-  onSchedulerError,
   onEvalError,
   beforeEval,
   afterEval,
@@ -17,6 +16,9 @@ export function repl({
   onToggle,
   editPattern,
   onUpdateState,
+  sync = false,
+  setInterval,
+  clearInterval,
 }) {
   const state = {
     schedulerError: undefined,
@@ -37,21 +39,27 @@ export function repl({
     onUpdateState?.(state);
   };
 
-  const scheduler = new Cyclist({
-    interval,
+  const schedulerOptions = {
     onTrigger: getTrigger({ defaultOutput, getTime }),
-    onError: onSchedulerError,
     getTime,
     onToggle: (started) => {
       updateState({ started });
       onToggle?.(started);
     },
-  });
+    setInterval,
+    clearInterval,
+  };
+
+  // NeoCyclist uses a shared worker to communicate between instances, which is not supported on mobile chrome
+  const scheduler =
+    sync && typeof SharedWorker != 'undefined' ? new NeoCyclist(schedulerOptions) : new Cyclist(schedulerOptions);
   let pPatterns = {};
+  let anonymousIndex = 0;
   let allTransform;
 
   const hush = function () {
     pPatterns = {};
+    anonymousIndex = 0;
     allTransform = undefined;
     return silence;
   };
@@ -61,12 +69,76 @@ export function repl({
     scheduler.setPattern(pattern, autostart);
   };
   setTime(() => scheduler.now()); // TODO: refactor?
+
+  const stop = () => scheduler.stop();
+  const start = () => scheduler.start();
+  const pause = () => scheduler.pause();
+  const toggle = () => scheduler.toggle();
+  const setCps = (cps) => scheduler.setCps(cps);
+  const setCpm = (cpm) => scheduler.setCps(cpm / 60);
+  const all = function (transform) {
+    allTransform = transform;
+    return silence;
+  };
+
+  // set pattern methods that use this repl via closure
+  const injectPatternMethods = () => {
+    Pattern.prototype.p = function (id) {
+      if (id.startsWith('_') || id.endsWith('_')) {
+        // allows muting a pattern x with x_ or _x
+        return silence;
+      }
+      if (id === '$') {
+        // allows adding anonymous patterns with $:
+        id = `$${anonymousIndex}`;
+        anonymousIndex++;
+      }
+      pPatterns[id] = this;
+      return this;
+    };
+    Pattern.prototype.q = function (id) {
+      return silence;
+    };
+    try {
+      for (let i = 1; i < 10; ++i) {
+        Object.defineProperty(Pattern.prototype, `d${i}`, {
+          get() {
+            return this.p(i);
+          },
+          configurable: true,
+        });
+        Object.defineProperty(Pattern.prototype, `p${i}`, {
+          get() {
+            return this.p(i);
+          },
+          configurable: true,
+        });
+        Pattern.prototype[`q${i}`] = silence;
+      }
+    } catch (err) {
+      console.warn('injectPatternMethods: error:', err);
+    }
+    const cpm = register('cpm', function (cpm, pat) {
+      return pat._fast(cpm / 60 / scheduler.cps);
+    });
+    return evalScope({
+      all,
+      hush,
+      cpm,
+      setCps,
+      setcps: setCps,
+      setCpm,
+      setcpm: setCpm,
+    });
+  };
+
   const evaluate = async (code, autostart = true, shouldHush = true) => {
     if (!code) {
       throw new Error('no code to evaluate');
     }
     try {
       updateState({ code, pending: true });
+      await injectPatternMethods();
       await beforeEval?.({ code });
       shouldHush && hush();
       let { pattern, meta } = await _evaluate(code, transpiler);
@@ -94,88 +166,27 @@ export function repl({
       afterEval?.({ code, pattern, meta });
       return pattern;
     } catch (err) {
-      // console.warn(`[repl] eval error: ${err.message}`);
       logger(`[eval] error: ${err.message}`, 'error');
+      console.error(err);
       updateState({ evalError: err, pending: false });
       onEvalError?.(err);
     }
   };
-  const stop = () => scheduler.stop();
-  const start = () => scheduler.start();
-  const pause = () => scheduler.pause();
-  const toggle = () => scheduler.toggle();
-  const setCps = (cps) => scheduler.setCps(cps);
-  const setCpm = (cpm) => scheduler.setCps(cpm / 60);
-
-  // the following functions use the cps value, which is why they are defined here..
-  const loopAt = register('loopAt', (cycles, pat) => {
-    return pat.loopAtCps(cycles, scheduler.cps);
-  });
-
-  Pattern.prototype.p = function (id) {
-    pPatterns[id] = this;
-    return this;
-  };
-  Pattern.prototype.q = function (id) {
-    return silence;
-  };
-
-  const all = function (transform) {
-    allTransform = transform;
-    return silence;
-  };
-  try {
-    for (let i = 1; i < 10; ++i) {
-      Object.defineProperty(Pattern.prototype, `d${i}`, {
-        get() {
-          return this.p(i);
-        },
-      });
-      Object.defineProperty(Pattern.prototype, `p${i}`, {
-        get() {
-          return this.p(i);
-        },
-      });
-      Pattern.prototype[`q${i}`] = silence;
-    }
-  } catch (err) {
-    // already defined..
-  }
-
-  const fit = register('fit', (pat) =>
-    pat.withHap((hap) =>
-      hap.withValue((v) => ({
-        ...v,
-        speed: scheduler.cps / hap.whole.duration, // overwrite speed completely?
-        unit: 'c',
-      })),
-    ),
-  );
-
-  evalScope({
-    loopAt,
-    fit,
-    all,
-    hush,
-    setCps,
-    setcps: setCps,
-    setCpm,
-    setcpm: setCpm,
-  });
   const setCode = (code) => updateState({ code });
   return { scheduler, evaluate, start, stop, pause, setCps, setPattern, setCode, toggle, state };
 }
 
 export const getTrigger =
   ({ getTime, defaultOutput }) =>
-  async (hap, deadline, duration, cps) => {
+  async (hap, deadline, duration, cps, t) => {
+    // TODO: get rid of deadline after https://github.com/tidalcycles/strudel/pull/1004
     try {
       if (!hap.context.onTrigger || !hap.context.dominantTrigger) {
-        await defaultOutput(hap, deadline, duration, cps);
+        await defaultOutput(hap, deadline, duration, cps, t);
       }
       if (hap.context.onTrigger) {
         // call signature of output / onTrigger is different...
-        await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps);
+        await hap.context.onTrigger(getTime() + deadline, hap, getTime(), cps, t);
       }
     } catch (err) {
       logger(`[cyclist] error: ${err.message}`, 'error');

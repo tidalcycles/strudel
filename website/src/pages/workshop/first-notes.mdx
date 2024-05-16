@@ -4,7 +4,7 @@ layout: ../../layouts/MainLayout.astro
 ---
 
 import { MiniRepl } from '@src/docs/MiniRepl';
-import { midi2note } from '@strudel.cycles/core/';
+import { midi2note } from '@strudel/core';
 import Box from '@components/Box.astro';
 import QA from '@components/QA';
 
@@ -17,7 +17,6 @@ Let's look at how we can play notes
 **play notes with numbers**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("48 52 55 59").sound("piano")`}
   claviature
@@ -39,7 +38,6 @@ Try decimal numbers, like 55.5
 **play notes with letters**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("c e g b").sound("piano")`}
   claviature
@@ -57,7 +55,6 @@ Can you find melodies that are actual words? Hint: ☕ 😉 ⚪
 **add flats or sharps to play the black keys**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("db eb gb ab bb").sound("piano")`}
   claviature
@@ -67,7 +64,6 @@ Can you find melodies that are actual words? Hint: ☕ 😉 ⚪
 />
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("c# d# f# g# a#").sound("piano")`}
   claviature
@@ -79,7 +75,6 @@ Can you find melodies that are actual words? Hint: ☕ 😉 ⚪
 **play notes with letters in different octaves**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("c2 e3 g4 b5").sound("piano")`}
   claviature
@@ -104,7 +99,7 @@ We will also look at ways to make it easier to play the right notes later.
 
 Just like with unpitched sounds, we can change the sound of our notes with `sound`:
 
-<MiniRepl hideHeader client:visible tune={`note("36 43, 52 59 62 64").sound("piano")`} />
+<MiniRepl client:visible tune={`note("36 43, 52 59 62 64").sound("piano")`} />
 
 {/* c2 g2, e3 b3 d4 e4 */}
 
@@ -127,7 +122,6 @@ Try out different sounds:
 **switch between sounds**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("48 67 63 [62, 58]")
 .sound("piano gm_electric_guitar_muted")`}
@@ -136,7 +130,6 @@ Try out different sounds:
 **stack multiple sounds**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("48 67 63 [62, 58]")
 .sound("piano, gm_electric_guitar_muted")`}
@@ -154,40 +147,47 @@ We will see more ways to combine patterns later..
 
 **Divide sequences with `/` to slow them down**
 
-{/* [c2 bb1 f2 eb2] */}
-
-<MiniRepl hideHeader client:visible tune={`note("[36 34 41 39]/4").sound("gm_acoustic_bass")`} punchcard />
+<MiniRepl client:visible tune={`note("[36 34 41 39]/4").sound("gm_acoustic_bass")`} punchcard />
 
 <Box>
 
-The `/4` plays the sequence in brackets over 4 cycles (=4s).
+The `/4` plays the sequence in brackets over 4 cycles (=8s).
 
-So each of the 4 notes is 1s long.
+So each of the 4 notes is 2s long.
 
 Try adding more notes inside the brackets and notice how it gets faster.
 
 </Box>
 
-Because it is so common to just play one thing per cycle, you can..
+**Play one per cycle with `< ... >`**
 
-**Play one per cycle with \< \>**
+In the last section, we learned that `< ... >` (angle brackets) can be used to play only one thing per cycle,
+which is useful for longer melodies too:
 
-<MiniRepl hideHeader client:visible tune={`note("<36 34 41 39>").sound("gm_acoustic_bass")`} punchcard />
+<MiniRepl client:visible tune={`note("<36 34 41 39>").sound("gm_acoustic_bass")`} punchcard />
 
 <Box>
 
-Try adding more notes inside the brackets and notice how it does **not** get faster.
+Try adding more notes inside the brackets and notice how the tempo stays the same.
+
+The angle brackets are actually just a shortcut:
+
+`<a b c>` = `[a b c]/3`
+
+`<a b c d>` = `[a b c d]/4`
+
+...
 
 </Box>
 
 **Play one sequence per cycle**
 
-{/* <[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2 */}
+We can combine the 2 types of brackets in all sorts of different ways.
+Here is an example of a repetitive bassline:
 
 <MiniRepl
-  hideHeader
   client:visible
-  tune={`note("<[36 48]*4 [34 46]*4 [41 53]*4 [39 51]*4>/2")
+  tune={`note("<[36 48]*4 [34 46]*4 [41 53]*4 [39 51]*4>")
 .sound("gm_acoustic_bass")`}
   punchcard
 />
@@ -195,7 +195,6 @@ Try adding more notes inside the brackets and notice how it does **not** get fas
 **Alternate between multiple things**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`note("60 <63 62 65 63>")
 .sound("gm_xylophone")`}
@@ -205,9 +204,8 @@ Try adding more notes inside the brackets and notice how it does **not** get fas
 This is also useful for unpitched sounds:
 
 <MiniRepl
-  hideHeader
   client:visible
-  tune={`sound("bd*2, ~ <sd cp>, [~ hh]*2")
+  tune={`sound("bd*4, [~ <sd cp>]*2, [~ hh]*4")
 .bank("RolandTR909")`}
   punchcard
 />
@@ -217,10 +215,9 @@ This is also useful for unpitched sounds:
 Finding the right notes can be difficult.. Scales are here to help:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`n("0 2 4 <[6,8] [7,9]>")
-.scale("C:minor").sound("piano")`}
+.scale("C:minor").sound("piano").cpm(60)`}
   punchcard
 />
 
@@ -244,11 +241,10 @@ Try out different scales:
 Just like anything, we can automate the scale with a pattern:
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`n("<0 -3>, 2 4 <[6,8] [7,9]>")
 .scale("<C:major D:mixolydian>/4")
-.sound("piano")`}
+.sound("piano").cpm(60)`}
   punchcard
 />
 
@@ -265,7 +261,7 @@ Take your time and you'll find scales you like!
 
 **Elongate with @**
 
-<MiniRepl hideHeader client:visible tune={`note("c@3 eb").sound("gm_acoustic_bass")`} punchcard />
+<MiniRepl client:visible tune={`note("c@3 eb").sound("gm_acoustic_bass")`} punchcard />
 
 <Box>
 
@@ -278,11 +274,10 @@ Try changing that number!
 **Elongate within sub-sequences**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`n("<[4@2 4] [5@2 5] [6@2 6] [5@2 5]>*2")
 .scale("<C2:mixolydian F2:mixolydian>/4")
-.sound("gm_acoustic_bass")`}
+.sound("gm_acoustic_bass").cpm(60)`}
   punchcard
 />
 
@@ -296,7 +291,7 @@ This is also sometimes called triplet swing. You'll often find it in blues and j
 
 **Replicate**
 
-<MiniRepl hideHeader client:visible tune={`note("c!2 [eb,<g a bb a>]").sound("piano")`} punchcard />
+<MiniRepl client:visible tune={`note("c!2 [eb,<g a bb a>]").sound("piano").cpm(60)`} punchcard />
 
 <Box>
 
@@ -310,29 +305,28 @@ What's the difference?
 
 Let's recap what we've learned in this chapter:
 
-| Concept   | Syntax | Example                                                             |
-| --------- | ------ | ------------------------------------------------------------------- |
-| Slow down | \/     | <MiniRepl hideHeader client:visible tune={`note("[c a f e]/2")`} /> |
-| Alternate | \<\>   | <MiniRepl hideHeader client:visible tune={`note("c <e g>")`} />     |
-| Elongate  | @      | <MiniRepl hideHeader client:visible tune={`note("c@3 e")`} />       |
-| Replicate | !      | <MiniRepl hideHeader client:visible tune={`note("c!3 e")`} />       |
+| Concept   | Syntax | Example                                                  |
+| --------- | ------ | -------------------------------------------------------- |
+| Slow down | \/     | <MiniRepl client:visible tune={`note("[c a f e]/2")`} /> |
+| Alternate | \<\>   | <MiniRepl client:visible tune={`note("c a f <e g>")`} /> |
+| Elongate  | @      | <MiniRepl client:visible tune={`note("c@3 e")`} />       |
+| Replicate | !      | <MiniRepl client:visible tune={`note("c!3 e")`} />       |
 
 New functions:
 
-| Name  | Description                         | Example                                                                                      |
-| ----- | ----------------------------------- | -------------------------------------------------------------------------------------------- |
-| note  | set pitch as number or letter       | <MiniRepl hideHeader client:visible tune={`note("b g e c").sound("piano")`} />               |
-| scale | interpret `n` as scale degree       | <MiniRepl hideHeader client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
-| stack | play patterns in parallel (read on) | <MiniRepl hideHeader client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
+| Name  | Description                         | Example                                                                           |
+| ----- | ----------------------------------- | --------------------------------------------------------------------------------- |
+| note  | set pitch as number or letter       | <MiniRepl client:visible tune={`note("b g e c").sound("piano")`} />               |
+| scale | interpret `n` as scale degree       | <MiniRepl client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
+| stack | play patterns in parallel (read on) | <MiniRepl client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
 
 ## Examples
 
 **Classy Bassline**
 
 <MiniRepl
-  hideHeader
   client:visible
-  tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+  tune={`note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>")
 .sound("gm_synth_bass_1")
 .lpf(800) // <-- we'll learn about this soon`}
 />
@@ -340,23 +334,21 @@ New functions:
 **Classy Melody**
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`n(\`<
 [~ 0] 2 [0 2] [~ 2]
 [~ 0] 1 [0 1] [~ 1]
 [~ 0] 3 [0 3] [~ 3]
 [~ 0] 2 [0 2] [~ 2]
->*2\`).scale("C4:minor")
+>*4\`).scale("C4:minor")
 .sound("gm_synth_strings_1")`}
 />
 
 **Classy Drums**
 
 <MiniRepl
-  hideHeader
   client:visible
-  tune={`sound("bd*2, ~ <sd cp>, [~ hh]*2")
+  tune={`sound("bd*4, [~ <sd cp>]*2, [~ hh]*4")
 .bank("RolandTR909")`}
 />
 
@@ -369,19 +361,18 @@ It's called `stack` 😙
 </Box>
 
 <MiniRepl
-  hideHeader
   client:visible
   tune={`stack(
-  note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>/2")
+  note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>")
   .sound("gm_synth_bass_1").lpf(800),
   n(\`<
   [~ 0] 2 [0 2] [~ 2]
   [~ 0] 1 [0 1] [~ 1]
   [~ 0] 3 [0 3] [~ 3]
   [~ 0] 2 [0 2] [~ 2]
-  >*2\`).scale("C4:minor")
+  >*4\`).scale("C4:minor")
   .sound("gm_synth_strings_1"),
-  sound("bd*2, ~ <sd cp>, [~ hh]*2")
+  sound("bd*4, [~ <sd cp>]*2, [~ hh]*4")
   .bank("RolandTR909")
 )`}
 />

@@ -54,10 +54,17 @@ export const valueToMidi = (value, fallbackValue) => {
   return fallbackValue;
 };
 
-export function nanFallback(value, fallback) {
+export function nanFallback(value, fallback = 0, silent) {
   if (isNaN(Number(value))) {
-    logger(`"${value}" is not a number, falling back to ${fallback}`, 'warning');
+    !silent && logger(`"${value}" is not a number, falling back to ${fallback}`, 'warning');
     return fallback;
   }
   return value;
 }
+// modulo that works with negative numbers e.g. _mod(-1, 3) = 2. Works on numbers (rather than patterns of numbers, as @mod@ from pattern.mjs does)
+export const _mod = (n, m) => ((n % m) + m) % m;
+
+// round to nearest int, negative numbers will output a subtracted index
+export const getSoundIndex = (n, numSounds) => {
+  return _mod(Math.round(nanFallback(n, 0)), numSounds);
+};

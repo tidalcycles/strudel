@@ -7,10 +7,9 @@ This program is free software: you can redistribute it and/or modify it under th
 // import { strict as assert } from 'assert';
 
 import '../tonal.mjs'; // need to import this to add prototypes
-import { pure, controls, seq } from '@strudel.cycles/core';
+import { pure, n, seq, note } from '@strudel/core';
 import { describe, it, expect } from 'vitest';
 import { mini } from '../../mini/mini.mjs';
-const { n } = controls;
 
 describe('tonal', () => {
   it('Should run tonal functions ', () => {
@@ -44,5 +43,37 @@ describe('tonal', () => {
         .scale(mini('C:major'))
         .firstCycleValues.map((h) => h.note),
     ).toEqual(['C3', 'D3', 'E3']);
+  });
+  it('transposes note numbers with interval numbers', () => {
+    expect(
+      note(40, 40, 40)
+        .transpose(0, 1, 2)
+        .firstCycleValues.map((h) => h.note),
+    ).toEqual([40, 41, 42]);
+    expect(seq(40, 40, 40).transpose(0, 1, 2).firstCycleValues).toEqual([40, 41, 42]);
+  });
+  it('transposes note numbers with interval strings', () => {
+    expect(
+      note(40, 40, 40)
+        .transpose('1P', '2M', '3m')
+        .firstCycleValues.map((h) => h.note),
+    ).toEqual([40, 42, 43]);
+    expect(seq(40, 40, 40).transpose('1P', '2M', '3m').firstCycleValues).toEqual([40, 42, 43]);
+  });
+  it('transposes note strings with interval numbers', () => {
+    expect(
+      note('c', 'c', 'c')
+        .transpose(0, 1, 2)
+        .firstCycleValues.map((h) => h.note),
+    ).toEqual(['C', 'Db', 'D']);
+    expect(seq('c', 'c', 'c').transpose(0, 1, 2).firstCycleValues).toEqual(['C', 'Db', 'D']);
+  });
+  it('transposes note strings with interval strings', () => {
+    expect(
+      note('c', 'c', 'c')
+        .transpose('1P', '2M', '3m')
+        .firstCycleValues.map((h) => h.note),
+    ).toEqual(['C', 'D', 'Eb']);
+    expect(seq('c', 'c', 'c').transpose('1P', '2M', '3m').firstCycleValues).toEqual(['C', 'D', 'Eb']);
   });
 });

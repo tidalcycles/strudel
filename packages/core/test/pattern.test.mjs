@@ -21,8 +21,8 @@ import {
   cat,
   sequence,
   palindrome,
-  polymeter,
-  polymeterSteps,
+  s_polymeter,
+  s_polymeterSteps,
   polyrhythm,
   silence,
   fast,
@@ -46,13 +46,18 @@ import {
   rev,
   time,
   run,
+  pick,
+  stackLeft,
+  stackRight,
+  stackCentre,
+  s_cat,
+  calculateTactus,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
 
-import controls from '../controls.mjs';
+import { n, s } from '../controls.mjs';
 
-const { n, s } = controls;
 const st = (begin, end) => new State(ts(begin, end));
 const ts = (begin, end) => new TimeSpan(Fraction(begin), Fraction(end));
 const hap = (whole, part, value, context = {}) => new Hap(whole, part, value, context);
@@ -181,15 +186,19 @@ describe('Pattern', () => {
         new Hap(ts(1 / 2, 2 / 3), ts(1 / 2, 2 / 3), 7),
       ]);
     });
-    it('can Trig() structure', () => {
+    it('can Reset() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).add.trig(20, 30).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .add.reset(20, 30)
+          .early(2),
         sequence(26, 27, 36, 37),
       );
     });
-    it('can Trigzero() structure', () => {
+    it('can Restart() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).add.trigzero(20, 30).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .add.restart(20, 30)
+          .early(2),
         sequence(21, 22, 31, 32),
       );
     });
@@ -229,15 +238,19 @@ describe('Pattern', () => {
         new Hap(ts(1 / 2, 2 / 3), ts(1 / 2, 2 / 3), 2),
       ]);
     });
-    it('can Trig() structure', () => {
+    it('can Reset() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keep.trig(20, 30).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .keep.reset(20, 30)
+          .early(2),
         sequence(6, 7, 6, 7),
       );
     });
-    it('can Trigzero() structure', () => {
+    it('can Restart() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keep.trigzero(20, 30).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .keep.restart(20, 30)
+          .early(2),
         sequence(1, 2, 1, 2),
       );
     });
@@ -271,15 +284,19 @@ describe('Pattern', () => {
         new Hap(ts(1 / 2, 2 / 3), ts(1 / 2, 2 / 3), 2),
       ]);
     });
-    it('can Trig() structure', () => {
+    it('can Reset() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepif.trig(false, true).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .keepif.reset(false, true)
+          .early(2),
         sequence(silence, silence, 6, 7),
       );
     });
-    it('can Trigzero() structure', () => {
+    it('can Restart() structure', () => {
       sameFirst(
-        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10).keepif.trigzero(false, true).early(2),
+        slowcat(sequence(1, 2, 3, 4), 5, sequence(6, 7, 8, 9), 10)
+          .keepif.restart(false, true)
+          .early(2),
         sequence(silence, silence, 1, 2),
       );
     });
@@ -591,15 +608,18 @@ describe('Pattern', () => {
       );
     });
   });
-  describe('polymeter()', () => {
-    it('Can layer up cycles, stepwise', () => {
-      expect(polymeterSteps(3, ['d', 'e']).firstCycle()).toStrictEqual(
+  describe('s_polymeter()', () => {
+    it('Can layer up cycles, stepwise, with lists', () => {
+      expect(s_polymeterSteps(3, ['d', 'e']).firstCycle()).toStrictEqual(
         fastcat(pure('d'), pure('e'), pure('d')).firstCycle(),
       );
 
-      expect(polymeter(['a', 'b', 'c'], ['d', 'e']).fast(2).firstCycle()).toStrictEqual(
+      expect(s_polymeter(['a', 'b', 'c'], ['d', 'e']).fast(2).firstCycle()).toStrictEqual(
         stack(sequence('a', 'b', 'c', 'a', 'b', 'c'), sequence('d', 'e', 'd', 'e', 'd', 'e')).firstCycle(),
       );
+    });
+    it('Can layer up cycles, stepwise, with weighted patterns', () => {
+      sameFirst(s_polymeterSteps(3, sequence('a', 'b')).fast(2), sequence('a', 'b', 'a', 'b', 'a', 'b'));
     });
   });
 
@@ -651,7 +671,11 @@ describe('Pattern', () => {
   });
   describe('struct()', () => {
     it('Can restructure a discrete pattern', () => {
-      expect(sequence('a', 'b').struct(sequence(true, true, true)).firstCycle()).toStrictEqual([
+      expect(
+        sequence('a', 'b')
+          .struct(sequence(true, true, true))
+          .firstCycle(),
+      ).toStrictEqual([
         hap(ts(0, third), ts(0, third), 'a'),
         hap(ts(third, twothirds), ts(third, 0.5), 'a'),
         hap(ts(third, twothirds), ts(0.5, twothirds), 'b'),
@@ -682,7 +706,11 @@ describe('Pattern', () => {
   });
   describe('mask()', () => {
     it('Can fragment a pattern', () => {
-      expect(sequence('a', 'b').mask(sequence(true, true, true)).firstCycle()).toStrictEqual([
+      expect(
+        sequence('a', 'b')
+          .mask(sequence(true, true, true))
+          .firstCycle(),
+      ).toStrictEqual([
         hap(ts(0, 0.5), ts(0, third), 'a'),
         hap(ts(0, 0.5), ts(third, 0.5), 'a'),
         hap(ts(0.5, 1), ts(0.5, twothirds), 'b'),
@@ -951,9 +979,11 @@ describe('Pattern', () => {
       expect(stack(pure('a').mask(1, 0), pure('a').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(1);
     });
     it('Doesnt merge two overlapping haps', () => {
-      expect(stack(pure('a').mask(1, 1, 0), pure('a').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(
-        2,
-      );
+      expect(
+        stack(pure('a').mask(1, 1, 0), pure('a').mask(0, 1))
+          .defragmentHaps()
+          .firstCycle().length,
+      ).toStrictEqual(2);
     });
     it('Doesnt merge two touching haps with different values', () => {
       expect(stack(pure('a').mask(1, 0), pure('b').mask(0, 1)).defragmentHaps().firstCycle().length).toStrictEqual(2);
@@ -1033,6 +1063,150 @@ describe('Pattern', () => {
   describe('repeatCycles', () => {
     it('Repeats each cycle of the source pattern the given number of times', () => {
       expect(slowcat(0, 1).repeatCycles(2).fast(6).firstCycleValues).toStrictEqual([0, 0, 1, 1, 0, 0]);
+    });
+  });
+  describe('inhabit', () => {
+    it('Can pattern named patterns', () => {
+      expect(
+        sameFirst(
+          sequence('a', 'b', stack('a', 'b')).inhabit({ a: sequence(1, 2), b: sequence(10, 20, 30) }),
+          sequence([1, 2], [10, 20, 30], stack([1, 2], [10, 20, 30])),
+        ),
+      );
+    });
+    it('Can pattern indexed patterns', () => {
+      expect(
+        sameFirst(
+          sequence('0', '1', stack('0', '1')).inhabit([sequence(1, 2), sequence(10, 20, 30)]),
+          sequence([1, 2], [10, 20, 30], stack([1, 2], [10, 20, 30])),
+        ),
+      );
+    });
+  });
+  describe('pick', () => {
+    it('Can pattern named patterns', () => {
+      expect(
+        sameFirst(
+          sequence('a', 'b', 'a', stack('a', 'b')).pick({ a: sequence(1, 2, 3, 4), b: sequence(10, 20, 30, 40) }),
+          sequence(1, 20, 3, stack(4, 40)),
+        ),
+      );
+    });
+    it('Can pattern indexed patterns', () => {
+      expect(
+        sameFirst(
+          sequence(0, 1, 0, stack(0, 1)).pick([sequence(1, 2, 3, 4), sequence(10, 20, 30, 40)]),
+          sequence(1, 20, 3, stack(4, 40)),
+        ),
+      );
+    });
+    it('Clamps indexes', () => {
+      expect(
+        sameFirst(sequence(0, 1, 2, 3).pick([sequence(1, 2, 3, 4), sequence(10, 20, 30, 40)]), sequence(1, 20, 30, 40)),
+      );
+    });
+    it('Is backwards compatible', () => {
+      expect(
+        sameFirst(
+          pick([sequence('a', 'b'), sequence('c', 'd')], sequence(0, 1)),
+          pick(sequence(0, 1), [sequence('a', 'b'), sequence('c', 'd')]),
+        ),
+      );
+    });
+  });
+  describe('pickmod', () => {
+    it('Wraps indexes', () => {
+      expect(
+        sameFirst(
+          sequence(0, 1, 2, 3).pickmod([sequence(1, 2, 3, 4), sequence(10, 20, 30, 40)]),
+          sequence(1, 20, 3, 40),
+        ),
+      );
+    });
+  });
+  describe('tactus', () => {
+    it('Is correctly preserved/calculated through transformations', () => {
+      expect(sequence(0, 1, 2, 3).linger(4).tactus).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).iter(4).tactus).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).fast(4).tactus).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).hurry(4).tactus).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).rev().tactus).toStrictEqual(Fraction(4));
+      expect(sequence(1).segment(10).tactus).toStrictEqual(Fraction(10));
+      expect(sequence(1, 0, 1).invert().tactus).toStrictEqual(Fraction(3));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).chop(4).tactus).toStrictEqual(Fraction(8));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).striate(4).tactus).toStrictEqual(Fraction(8));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).slice(4, sequence(0, 1, 2, 3)).tactus).toStrictEqual(
+        Fraction(4),
+      );
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).splice(4, sequence(0, 1, 2, 3)).tactus).toStrictEqual(
+        Fraction(4),
+      );
+      expect(sequence({ n: 0 }, { n: 1 }, { n: 2 }).chop(4).tactus).toStrictEqual(Fraction(12));
+      expect(
+        pure((x) => x + 1)
+          .setTactus(3)
+          .appBoth(pure(1).setTactus(2)).tactus,
+      ).toStrictEqual(Fraction(6));
+      expect(
+        pure((x) => x + 1)
+          .setTactus(undefined)
+          .appBoth(pure(1).setTactus(2)).tactus,
+      ).toStrictEqual(Fraction(2));
+      expect(
+        pure((x) => x + 1)
+          .setTactus(3)
+          .appBoth(pure(1).setTactus(undefined)).tactus,
+      ).toStrictEqual(Fraction(3));
+      expect(stack(fastcat(0, 1, 2), fastcat(3, 4)).tactus).toStrictEqual(Fraction(6));
+      expect(stack(fastcat(0, 1, 2), fastcat(3, 4).setTactus(undefined)).tactus).toStrictEqual(Fraction(3));
+      expect(stackLeft(fastcat(0, 1, 2, 3), fastcat(3, 4)).tactus).toStrictEqual(Fraction(4));
+      expect(stackRight(fastcat(0, 1, 2), fastcat(3, 4)).tactus).toStrictEqual(Fraction(3));
+      // maybe this should double when they are either all even or all odd
+      expect(stackCentre(fastcat(0, 1, 2), fastcat(3, 4)).tactus).toStrictEqual(Fraction(3));
+      expect(fastcat(0, 1).ply(3).tactus).toStrictEqual(Fraction(6));
+      expect(fastcat(0, 1).setTactus(undefined).ply(3).tactus).toStrictEqual(undefined);
+      expect(fastcat(0, 1).fast(3).tactus).toStrictEqual(Fraction(2));
+      expect(fastcat(0, 1).setTactus(undefined).fast(3).tactus).toStrictEqual(undefined);
+    });
+  });
+  describe('s_cat', () => {
+    it('can cat', () => {
+      expect(sameFirst(s_cat(fastcat(0, 1, 2, 3), fastcat(4, 5)), fastcat(0, 1, 2, 3, 4, 5)));
+      expect(sameFirst(s_cat(pure(1), pure(2), pure(3)), fastcat(1, 2, 3)));
+    });
+    it('calculates undefined tactuses as the average', () => {
+      expect(sameFirst(s_cat(pure(1), pure(2), pure(3).setTactus(undefined)), fastcat(1, 2, 3)));
+    });
+  });
+  describe('s_taper', () => {
+    it('can taper', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_taper(1, 5), sequence(0, 1, 2, 3, 4, 0, 1, 2, 3, 0, 1, 2, 0, 1, 0)));
+    });
+    it('can taper backwards', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_taper(-1, 5), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)));
+    });
+  });
+  describe('s_add and s_sub', () => {
+    it('can add from the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_add(2), sequence(0, 1)));
+    });
+    it('can sub to the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_sub(2), sequence(0, 1, 2)));
+    });
+    it('can add from the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_add(-2), sequence(3, 4)));
+    });
+    it('can sub to the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_sub(-2), sequence(2, 3, 4)));
+    });
+    it('can subtract nothing', () => {
+      expect(sameFirst(pure('a').s_sub(0), pure('a')));
+    });
+    it('can subtract nothing, repeatedly', () => {
+      expect(sameFirst(pure('a').s_sub(0, 0), fastcat('a', 'a')));
+      for (var i = 0; i < 100; ++i) {
+        expect(sameFirst(pure('a').s_sub(...Array(i).fill(0)), fastcat(...Array(i).fill('a'))));
+      }
     });
   });
 });

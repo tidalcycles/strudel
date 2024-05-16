@@ -1,4 +1,4 @@
-import { Pattern, noteToMidi, valueToMidi } from '@strudel.cycles/core';
+import { Pattern, noteToMidi, valueToMidi } from '@strudel/core';
 
 const maxPan = noteToMidi('C8');
 const panwidth = (pan, width) => pan * width + (1 - width) / 2;

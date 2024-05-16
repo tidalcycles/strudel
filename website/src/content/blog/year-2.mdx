@@ -1,0 +1,269 @@
+---
+title: '2 Years of Strudel'
+description: ''
+date: '2024-01-22'
+tags: ['meta']
+author: froos
+---
+
+Strudel is now 2 years old! This was the first commit to the strudel repo:
+
+```log
+commit 38b5a0d5cdf28685b2b5e18d460772b70246207b
+Author: Alex McLean <alex@slab.org>
+Date:   Sat Jan 22 20:24:36 2022 +0000
+
+Initial commit
+```
+
+I have already written these 2 posts about the first year of strudel:
+
+- [Introducing Strudel](https://loophole-letters.vercel.app/strudel)
+- [1 Year of Strudel](https://loophole-letters.vercel.app/strudel1year)
+
+To continue that tradition, let me recap what happened around Strudel in 2023, at least what I have noticed:
+
+## ICLC 2023
+
+I presented strudel at the [International Conference on Live Coding (ICLC)](https://iclc.toplap.org/2023/), which took place in April in Utrecht.
+Here is the (pretty technical) video of my presentation:
+
+import { Youtube } from '@src/components/Youtube';
+
+<Youtube client:only="react" id="ZzDSW08IAdU" params="start=2805" />
+
+For the conference, I wrote a paper with Alex McLean, called [Strudel: Live Coding Patterns on the Web](https://zenodo.org/records/7842142).
+For me personally, this was my first major contact with the live coding scene and it was a very memorable experience!
+
+## Workshops and Courses
+
+A lot of workshops have been using strudel in the last year, from many parts of the world:
+[Iceland](http://www.raflost.is/live-coding-for-beginners/), [UK](https://gutlevel.co.uk/whatson/patternclub8),
+[Japan](https://yoppa.org/kanazawa23), [France](https://www.stereolux.org/agenda/workshop-de-decouverte-de-la-musique-algorithmique-avec-strudel-avec-camille-amet) and the [US](https://www.nycresistor.com/2023/09/25/making-music-with-code-9-30-2023/) (probably more I've missed).
+I've also given workshops in [Switzerland](https://basel.codes/2023/index.html) and [Germany](https://www.cityofmediaarts.de/de/events/strudel-live-coding-workshop/), where we even had real strudel, thanks to [TOPLAP Karlsruhe](https://toplap-ka.de/)!
+
+![strudel workshop space](/img/workshop-space.png)
+
+Additionally, there is now a [Creative Coding](https://www.chalmers.se/en/collaborate-with-us/activities-for-schools/creative-coding/) course at Chalmers in Sweden, consisting of "a 10-week series of workshops [...] for younger girls to have fun and experiment with code and music".
+I was very delighted to see this video of the girls having fun with Strudel:
+
+<Youtube client:only="react" id="4zgHeNpG4wU" />
+
+The course was also encompassed by a study on female empowerement through Creative Coding, read more in [Jasmina Maric's paper "Singing Code"](https://www.academia.edu/106106710/Singing_Code).
+
+Another bigger installment was the [(Algo|Afro) Futures programme](https://algo-afro-futures.lurk.org/) led by Antonio Roberts, which is "a mentoring programme for early career Black artists who want to explore creative coding and live coding".
+For the final concert they recorded this amazing live stream:
+
+<Youtube client:only="react" id="zUoZvkZ3J7Q" params="start=842" />
+
+I am so happy to see that the project I've co-created has had such an impact already, making live coding workshops more easy and accessible.
+In my opinion, the reasons why people seem to choose strudel for teaching are:
+
+- it does not require an installation, so it even runs on your phone / tablet or a chromebook
+- in-code and behind-code visualizations help learners to understand what the system is doing
+- the interactive documentation
+- the simple javascript syntax, which is very similar to [hydra](https://hydra.ojack.xyz)
+- tidal's mini notation for playful expression of rhythms (based on the [Bol Processor](https://bolprocessor.org/)'s polymetric expressions)
+- its range of functions for transforming patterns for those getting deeper into exploring strange rhythms
+
+## Performances
+
+![strudel performance](/img/strudel-live-coding-mars-college.jpg)
+
+People are starting to use Strudel for performances, many of which can be watched in the new [Showcase](/intro/showcase/)!
+The above photo comes from the [Mars College Department of Future Music](https://mars.college/gallery/live_coding/)
+
+## New Features
+
+Let's talk about some of the major features that landed since last year.
+
+### Audio Engine Improved
+
+The audio engine has gotten a lot of attention! Once integrated into Strudel itself, the engine has been pulled out and named [superdough](https://www.npmjs.com/package/superdough),
+the name being based on [SuperDirt](https://github.com/musikinformatik/SuperDirt), which is the audio engine of Tidal.
+Superdough is now also used by [topos](https://topos.live/), a creation of [Raphaël Forment](https://github.com/Bubobubobubobubo/), who helped me implement a bunch of new features.
+Lately, [Jade Rowland](https://github.com/daslyfe) has also developed many synthesis features into superdough! Here is a non-exhaustive list of new features:
+
+- [filter envelopes](https://strudel.cc/learn/effects/#filter-envelope) + [24db filter option](https://strudel.cc/learn/effects/#ftype)
+- [pitch envelopes](https://strudel.cc/learn/effects/#pitch-envelope)
+- [fm synthesis](https://strudel.cc/learn/synths/#fm-synthesis)
+- [wavetable synthesis](https://strudel.cc/recipes/recipes/#wavetable-synthesis)
+- [phaser](https://strudel.cc/learn/effects/#phaser)
+- [vibrato](https://strudel.cc/learn/synths/#vibrato)
+- [noise](https://strudel.cc/learn/synths/#noise)
+- [an integration of the zzfx synth](https://strudel.cc/learn/synths/#zzfx)
+- [compressor](https://strudel.cc/learn/effects/#compressor)
+- multichannel audio / audio device selection
+
+import { MiniRepl } from '@src/docs/MiniRepl';
+
+Here's an example that shows off filter envelopes:
+
+<MiniRepl
+  client:visible
+  tune={`// "acidic tooth" @by eddyflux
+setcps(1)
+stack(
+  note("[<g1 f1>/8](<3 5>,8)")
+  .clip(perlin.range(.15,1.5))
+  .release(.1)
+  .s("sawtooth")
+  .lpf(sine.range(400,800).slow(16))
+  .lpq(cosine.range(6,14).slow(3))
+  .lpenv(sine.mul(4).slow(4))
+  .lpd(.2).lpa(.02)
+  .ftype('24db')
+  .rarely(add(note(12)))
+  .room(.2).shape(.3).postgain(.5)
+  .superimpose(x=>x.add(note(12)).delay(.5).bpf(1000))
+  .gain("[.2 1@3]*2") // fake sidechain
+  ,
+  stack(
+    s("bd*2").mask("<0@4 1@16>"),
+    s("hh*8").gain(saw.mul(saw.fast(2))).clip(sine)
+    .mask("<0@8 1@16>")
+  ).bank('RolandTR909')
+)
+`}
+/>
+
+### Import Sounds
+
+In the "sounds" tab, you can now press "import sounds" to select sounds from your local disk, allowing you
+to use your own samples without the need to upload them! Keep in mind that if you share a pattern that uses local samples that the samples will fail to load on other people's machines..
+
+### Community Bakery / Patterns Tab
+
+You can now share your patterns publicly to the [Community Bakery](/bakery/), via the "Share" button!
+The Community Patterns are also listed in the new "patterns", where you can also save your own patterns locally!
+
+### Quality of Life Improvements
+
+You can now change the theme and font of the editor:
+
+![strudel themes](/img/strudel-themes.png)
+
+You can now enable autocompletion in the settings:
+
+![autocomplete](/img/autocomplete.png)
+
+If you enable tooltips, you will get the same info by hovering the mouse over functions while holding the ctrl key!
+
+Another handy thing is that Strudel now has offline support! Even samples will work once you have played them once. [More info](/learn/pwa/)
+
+### New Visualizations
+
+There is now a new `.spiral()` visualization that renders events in a spiral, elevating the cyclical nature of time (+ swirl also means Strudel in german).
+
+![strudel alien ui](/img/strudel-alien-live-coding.png)
+
+Ah yes and you see one of the less readable fonts in this screenshot too :)
+
+The `.scope()` function renders you an oscilloscope:
+
+![scope](/img/strudel-scope.png)
+
+The pianoroll also got some more options, including the ability to set labels:
+
+![scope](/img/strudel-monkeys.png)
+
+### Sliders
+
+The `slider` is the first of a family of functions that render UI widgets inline:
+
+<MiniRepl
+  client:visible
+  tune={`note("<c eb g bb>*8")
+  .s("sawtooth").lpenv(2).lpq(8)
+  .lpf(slider(500, 100, 2000, 1))`}
+/>
+
+Sliders are especially useful for gradual changes like fading things in and out by hand,
+which is not very practical with just code. The fact that the slider is inside the code and also changes the code itself,
+makes it feel connected to the rest of the system + doesn't distract or obstruct from the code.
+Other widgets will come for sure.
+
+### More Voicings
+
+One of my personal goals that got me involved with live coding in the first place is to be able to generate good sounding chord voicings on the fly.
+Strudel now supports most chord symbols:
+
+<MiniRepl
+  client:visible
+  tune={`chord("<C^9 C7b9 Fm9 Db^7>/2")
+  .dict('ireal').voicing()
+  .s("sawtooth")
+  .lpf(400).lpa(.5).lpenv(4)
+  .phaser(4).room(.5)`}
+/>
+
+So far, this is only [documented briefly](https://strudel.cc/learn/tonal/#voicing), a more in-depth guide will follow!
+
+### Multiplayer / Collaborative Coding
+
+The collaborative live coding editor [flok](https://flok.cc) had strudel support early on, thanks to [Damián Silvani](https://github.com/munshkr).
+Later, I've added [support for multiple strudel instances](https://github.com/munshkr/flok/pull/181), which was merged to the official version [just a few days ago](https://social.toplap.org/@munshkr/111748783047032711).
+This photo shows a flok jam I did with my workshop participants in basel:
+
+![collaborative coding](/img/strudel-collaborative-coding.png)
+
+The cool thing about flok is that you can jam with people on the other side of the planet!
+Here is a recording of the first session we organized over the discord server:
+
+<Youtube client:only="react" id="p0J7XrT9JEs" params="start=2634" />
+
+### Better MIDI integration
+
+The midi integration has gotten a few new features:
+
+- [clock out](https://github.com/tidalcycles/strudel/pull/710) to sync your midi devices / DAW to the strudel clock (better doc coming soon)
+- [cc output](https://strudel.cc/learn/input-output/#ccn--ccv) to send cc values to your gear
+- [cc input](https://github.com/tidalcycles/strudel/pull/699) to control strudel via MIDI (better doc coming soon)
+
+Here is a little demo of me fiddling with a midi controller, changing a piano pattern:
+
+<Youtube client:only="react" id="e2-Sv_jjDQk" />
+
+### Experimental Features
+
+- You can now run [hydra inside strudel](https://strudel.cc/learn/hydra/) + you can even run strudel in [hydra](https://hydra.ojack.xyz), thanks to [Olivia Jack](https://ojack.xyz/) and [Ámbar Tenorio Fornés](https://atenor.io/)! Read more [here](https://alpaca.pubpub.org/pub/b7hwrjfk/release/2?readingCollection=1def0192)
+- There is now a [VSCode Plugin](https://marketplace.visualstudio.com/items?itemName=roipoussiere.tidal-strudel) thanks to [roipoussiere](https://github.com/roipoussiere)! It allows you run patterns from a `.strudel` file inside VSCode.
+- Strudel can now be downloaded as a desktop app, thanks to [vasilymilovidov](https://github.com/vasilymilovidov) who has wrapped the REPL with [tauri](https://tauri.app/). You can download it [on the releases page](https://github.com/tidalcycles/strudel/releases) (scroll down to Assets). The performance is not optimal on MacOS and Linux, which is why it is still considered experimental
+
+## Stats
+
+Let's end the recap with some naked numbers:
+
+### Releases
+
+- 0.0.2 Schwindlig
+- 0.1.0 Stürmisch
+- 0.0.3 Maelstrom - state of last strudel post
+- 0.0.4 Gischt
+- 0.3.0 Donauwelle
+- 0.4.0 Brandung
+- 0.5.0 Wirbel
+- 0.6.0 Zimtschnecke - state after 1 year
+- 0.7.0 Zuckerguss
+- 0.8.0 Himbeermuffin
+- 0.9.0 Bananenbrot
+- 0.10.0 Kuchenboden
+- 0.11.0 Kuchengabel
+- 1.0.0 Geburtstagskuchen - now!
+
+### Repo Stats
+
+- 3399 commits (+1521)
+- 427 stars (+243)
+- 90 forks (+45)
+- 163 open issues (+110), 186 closed (+100)
+- 20 open PRs (+18), 515 closed (+292)
+- 32 contributors (+17)
+- 12 releases (+4)
+
+## Thank you 💗
+
+A big thanks to everyone contributing to this project in one way or another,
+be it by writing code, fixing typos, asking questions or making sounds!
+I am very grateful for how all of this came together and I'm looking forward to year 3!
+If you have some spare cash to support the tidal project, we'd be happy if you can [insert some coins here](https://opencollective.com/tidalcycles).

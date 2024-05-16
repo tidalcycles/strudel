@@ -1,5 +1,5 @@
 import { getAudioContext } from './superdough.mjs';
-import { clamp } from './util.mjs';
+import { clamp, nanFallback } from './util.mjs';
 
 export function gainNode(value) {
   const node = getAudioContext().createGain();
@@ -7,78 +7,73 @@ export function gainNode(value) {
   return node;
 }
 
-// alternative to getADSR returning the gain node and a stop handle to trigger the release anytime in the future
-export const getEnvelope = (attack, decay, sustain, release, velocity, begin) => {
-  const gainNode = getAudioContext().createGain();
-  let phase = begin;
-  gainNode.gain.setValueAtTime(0, begin);
-  phase += attack;
-  gainNode.gain.linearRampToValueAtTime(velocity, phase); // attack
-  phase += decay;
-  let sustainLevel = sustain * velocity;
-  gainNode.gain.linearRampToValueAtTime(sustainLevel, phase); // decay / sustain
-  // sustain end
-  return {
-    node: gainNode,
-    stop: (t) => {
-      // to make sure the release won't begin before sustain is reached
-      phase = Math.max(t, phase);
-      // see https://github.com/tidalcycles/strudel/issues/522
-      gainNode.gain.setValueAtTime(sustainLevel, phase);
-      phase += release;
-      gainNode.gain.linearRampToValueAtTime(0, phase); // release
-      return phase;
-    },
-  };
-};
-
-export const getExpEnvelope = (attack, decay, sustain, release, velocity, begin) => {
-  sustain = Math.max(0.001, sustain);
-  velocity = Math.max(0.001, velocity);
-  const gainNode = getAudioContext().createGain();
-  gainNode.gain.setValueAtTime(0.0001, begin);
-  gainNode.gain.exponentialRampToValueAtTime(velocity, begin + attack);
-  gainNode.gain.exponentialRampToValueAtTime(sustain * velocity, begin + attack + decay);
-  return {
-    node: gainNode,
-    stop: (t) => {
-      // similar to getEnvelope, this will glitch if sustain level has not been reached
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, t + release);
-    },
-  };
-};
-
-export const getADSR = (attack, decay, sustain, release, velocity, begin, end) => {
-  const gainNode = getAudioContext().createGain();
-  gainNode.gain.setValueAtTime(0, begin);
-  gainNode.gain.linearRampToValueAtTime(velocity, begin + attack); // attack
-  gainNode.gain.linearRampToValueAtTime(sustain * velocity, begin + attack + decay); // sustain start
-  gainNode.gain.setValueAtTime(sustain * velocity, end); // sustain end
-  gainNode.gain.linearRampToValueAtTime(0, end + release); // release
-  // for some reason, using exponential ramping creates little cracklings
-  /* let t = begin;
-  gainNode.gain.setValueAtTime(0, t);
-  gainNode.gain.exponentialRampToValueAtTime(velocity, (t += attack));
-  const sustainGain = Math.max(sustain * velocity, 0.001);
-  gainNode.gain.exponentialRampToValueAtTime(sustainGain, (t += decay));
-  if (end - begin < attack + decay) {
-    gainNode.gain.cancelAndHoldAtTime(end);
-  } else {
-    gainNode.gain.setValueAtTime(sustainGain, end);
+const getSlope = (y1, y2, x1, x2) => {
+  const denom = x2 - x1;
+  if (denom === 0) {
+    return 0;
   }
-  gainNode.gain.exponentialRampToValueAtTime(0.001, end + release); // release */
-  return gainNode;
+  return (y2 - y1) / (x2 - x1);
 };
-
-export const getParamADSR = (param, attack, decay, sustain, release, min, max, begin, end) => {
+export const getParamADSR = (
+  param,
+  attack,
+  decay,
+  sustain,
+  release,
+  min,
+  max,
+  begin,
+  end,
+  //exponential works better for frequency modulations (such as filter cutoff) due to human ear perception
+  curve = 'exponential',
+) => {
+  attack = nanFallback(attack);
+  decay = nanFallback(decay);
+  sustain = nanFallback(sustain);
+  release = nanFallback(release);
+  const ramp = curve === 'exponential' ? 'exponentialRampToValueAtTime' : 'linearRampToValueAtTime';
+  if (curve === 'exponential') {
+    min = min === 0 ? 0.001 : min;
+    max = max === 0 ? 0.001 : max;
+  }
   const range = max - min;
-  const peak = min + range;
-  const sustainLevel = min + sustain * range;
+  const peak = max;
+  const sustainVal = min + sustain * range;
+  const duration = end - begin;
+
+  const envValAtTime = (time) => {
+    let val;
+    if (attack > time) {
+      let slope = getSlope(min, peak, 0, attack);
+      val = time * slope + (min > peak ? min : 0);
+    } else {
+      val = (time - attack) * getSlope(peak, sustainVal, 0, decay) + peak;
+    }
+    if (curve === 'exponential') {
+      val = val || 0.001;
+    }
+    return val;
+  };
+
   param.setValueAtTime(min, begin);
-  param.linearRampToValueAtTime(peak, begin + attack);
-  param.linearRampToValueAtTime(sustainLevel, begin + attack + decay);
-  param.setValueAtTime(sustainLevel, end);
-  param.linearRampToValueAtTime(min, end + Math.max(release, 0.1));
+  if (attack > duration) {
+    //attack
+    param[ramp](envValAtTime(duration), end);
+  } else if (attack + decay > duration) {
+    //attack
+    param[ramp](envValAtTime(attack), begin + attack);
+    //decay
+    param[ramp](envValAtTime(duration), end);
+  } else {
+    //attack
+    param[ramp](envValAtTime(attack), begin + attack);
+    //decay
+    param[ramp](envValAtTime(attack + decay), begin + attack + decay);
+    //sustain
+    param.setValueAtTime(sustainVal, end);
+  }
+  //release
+  param[ramp](min, end + release);
 };
 
 export function getCompressor(ac, threshold, ratio, knee, attack, release) {
@@ -92,38 +87,44 @@ export function getCompressor(ac, threshold, ratio, knee, attack, release) {
   return new DynamicsCompressorNode(ac, options);
 }
 
-export function createFilter(
-  context,
-  type,
-  frequency,
-  Q,
-  attack,
-  decay,
-  sustain,
-  release,
-  fenv,
-  start,
-  end,
-  fanchor = 0.5,
-) {
+// changes the default values of the envelope based on what parameters the user has defined
+// so it behaves more like you would expect/familiar as other synthesis tools
+// ex: sound(val).decay(val) will behave as a decay only envelope. sound(val).attack(val).decay(val) will behave like an "ad" env, etc.
+
+export const getADSRValues = (params, curve = 'linear', defaultValues) => {
+  const envmin = curve === 'exponential' ? 0.001 : 0.001;
+  const releaseMin = 0.01;
+  const envmax = 1;
+  const [a, d, s, r] = params;
+  if (a == null && d == null && s == null && r == null) {
+    return defaultValues ?? [envmin, envmin, envmax, releaseMin];
+  }
+  const sustain = s != null ? s : (a != null && d == null) || (a == null && d == null) ? envmax : envmin;
+  return [Math.max(a ?? 0, envmin), Math.max(d ?? 0, envmin), Math.min(sustain, envmax), Math.max(r ?? 0, releaseMin)];
+};
+
+export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor) {
+  const curve = 'exponential';
+  const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], curve, [0.005, 0.14, 0, 0.1]);
   const filter = context.createBiquadFilter();
+
   filter.type = type;
   filter.Q.value = Q;
   filter.frequency.value = frequency;
-
+  // envelope is active when any of these values is set
+  const hasEnvelope = att ?? dec ?? sus ?? rel ?? fenv;
   // Apply ADSR to filter frequency
-  if (!isNaN(fenv) && fenv !== 0) {
-    const offset = fenv * fanchor;
-
-    const min = clamp(2 ** -offset * frequency, 0, 20000);
-    const max = clamp(2 ** (fenv - offset) * frequency, 0, 20000);
-
-    // console.log('min', min, 'max', max);
-
-    getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end);
+  if (hasEnvelope !== undefined) {
+    fenv = nanFallback(fenv, 1, true);
+    fanchor = nanFallback(fanchor, 0, true);
+    const fenvAbs = Math.abs(fenv);
+    const offset = fenvAbs * fanchor;
+    let min = clamp(2 ** -offset * frequency, 0, 20000);
+    let max = clamp(2 ** (fenvAbs - offset) * frequency, 0, 20000);
+    if (fenv < 0) [min, max] = [max, min];
+    getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end, curve);
     return filter;
   }
-
   return filter;
 }
 
@@ -147,4 +148,114 @@ export function drywet(dry, wet, wetAmount = 0) {
   dry_gain.connect(mix);
   wet_gain.connect(mix);
   return mix;
+}
+
+let curves = ['linear', 'exponential'];
+export function getPitchEnvelope(param, value, t, holdEnd) {
+  // envelope is active when any of these values is set
+  const hasEnvelope = value.pattack ?? value.pdecay ?? value.psustain ?? value.prelease ?? value.penv;
+  if (!hasEnvelope) {
+    return;
+  }
+  const penv = nanFallback(value.penv, 1, true);
+  const curve = curves[value.pcurve ?? 0];
+  let [pattack, pdecay, psustain, prelease] = getADSRValues(
+    [value.pattack, value.pdecay, value.psustain, value.prelease],
+    curve,
+    [0.2, 0.001, 1, 0.001],
+  );
+  let panchor = value.panchor ?? psustain;
+  const cents = penv * 100; // penv is in semitones
+  const min = 0 - cents * panchor;
+  const max = cents - cents * panchor;
+  getParamADSR(param, pattack, pdecay, psustain, prelease, min, max, t, holdEnd, curve);
+}
+
+export function getVibratoOscillator(param, value, t) {
+  const { vibmod = 0.5, vib } = value;
+  let vibratoOscillator;
+  if (vib > 0) {
+    vibratoOscillator = getAudioContext().createOscillator();
+    vibratoOscillator.frequency.value = vib;
+    const gain = getAudioContext().createGain();
+    // Vibmod is the amount of vibrato, in semitones
+    gain.gain.value = vibmod * 100;
+    vibratoOscillator.connect(gain);
+    gain.connect(param);
+    vibratoOscillator.start(t);
+    return vibratoOscillator;
+  }
+}
+// ConstantSource inherits AudioScheduledSourceNode, which has scheduling abilities
+// a bit of a hack, but it works very well :)
+export function webAudioTimeout(audioContext, onComplete, startTime, stopTime) {
+  const constantNode = audioContext.createConstantSource();
+  constantNode.start(startTime);
+  constantNode.stop(stopTime);
+  constantNode.onended = () => {
+    onComplete();
+  };
+}
+const mod = (freq, range = 1, type = 'sine') => {
+  const ctx = getAudioContext();
+  const osc = ctx.createOscillator();
+  osc.type = type;
+  osc.frequency.value = freq;
+  osc.start();
+  const g = new GainNode(ctx, { gain: range });
+  osc.connect(g); // -range, range
+  return { node: g, stop: (t) => osc.stop(t) };
+};
+const fm = (frequencyparam, harmonicityRatio, modulationIndex, wave = 'sine') => {
+  const carrfreq = frequencyparam.value;
+  const modfreq = carrfreq * harmonicityRatio;
+  const modgain = modfreq * modulationIndex;
+  return mod(modfreq, modgain, wave);
+};
+export function applyFM(param, value, begin) {
+  const {
+    fmh: fmHarmonicity = 1,
+    fmi: fmModulationIndex,
+    fmenv: fmEnvelopeType = 'exp',
+    fmattack: fmAttack,
+    fmdecay: fmDecay,
+    fmsustain: fmSustain,
+    fmrelease: fmRelease,
+    fmvelocity: fmVelocity,
+    fmwave: fmWaveform = 'sine',
+    duration,
+  } = value;
+  let modulator;
+  let stop = () => {};
+
+  if (fmModulationIndex) {
+    const ac = getAudioContext();
+    const envGain = ac.createGain();
+    const fmmod = fm(param, fmHarmonicity, fmModulationIndex, fmWaveform);
+
+    modulator = fmmod.node;
+    stop = fmmod.stop;
+    if (![fmAttack, fmDecay, fmSustain, fmRelease, fmVelocity].find((v) => v !== undefined)) {
+      // no envelope by default
+      modulator.connect(param);
+    } else {
+      const [attack, decay, sustain, release] = getADSRValues([fmAttack, fmDecay, fmSustain, fmRelease]);
+      const holdEnd = begin + duration;
+      getParamADSR(
+        envGain.gain,
+        attack,
+        decay,
+        sustain,
+        release,
+        0,
+        1,
+        begin,
+        holdEnd,
+        fmEnvelopeType === 'exp' ? 'exponential' : 'linear',
+      );
+      modulator.connect(envGain);
+      envGain.connect(param);
+    }
+  }
+  return { stop };
 }

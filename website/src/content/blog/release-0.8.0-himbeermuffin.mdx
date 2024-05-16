@@ -1,0 +1,130 @@
+---
+title: 'Release Notes v0.8.0'
+description: ''
+date: '2023-06-30'
+tags: ['meta']
+author: froos
+---
+
+import BlogVideo from '../../components/BlogVideo.astro';
+
+These are the release notes for Strudel 0.8.0 aka "Himbeermuffin"!
+
+[Go to Tidal Club Forum for this Release](https://club.tidalcycles.org/t/strudel-0-8-0-released/4769)
+
+Let me write up some of the highlights:
+
+## Desktop App
+
+Besides the REPL (https://strudel.tidalcycles.org/), Strudel is now also distributed as a Desktop App via https://tauri.app/! Thanks to [vasilymilovidov](https://github.com/vasilymilovidov)!
+
+- [Linux: Debian based](https://github.com/tidalcycles/strudel/releases/download/v0.8.0/strudel_0.1.0_amd64.deb)
+- [Linux: AppImage](https://github.com/tidalcycles/strudel/releases/download/v0.8.0/strudel_0.1.0_amd64.AppImage)
+- [MacOS](https://github.com/tidalcycles/strudel/releases/download/v0.8.0/Strudel_0.1.0_x64.dmg)
+- [Windows .exe](https://github.com/tidalcycles/strudel/releases/download/v0.8.0/Strudel_0.1.0_x64-setup.exe)
+- [Windows .msi](https://github.com/tidalcycles/strudel/releases/download/v0.8.0/Strudel_0.1.0_x64_en-US.msi)
+
+edit: the desktop app performance on linux is currently not that great.. the web REPL runs much smoother (using firefox or chromium)
+
+The desktop App has the same features as the webapp, with the additional ability to load samples from disk. It is currently not documented yet, but you can do something like
+
+```js
+samples('~/music/xxx');
+
+s('my_sound');
+```
+
+You have to start with `~/music/`, followed by an arbitrary folder path that is expected to be present in the systems [audio directory](https://tauri.app/v1/api/js/path/#audiodir).
+When you first run it, the app will create a strudel.json file in that directory to map out the available samples.
+
+I would be very happy to collect some feedback on how it works across different platforms & systems!
+
+## Spiral Visualization
+
+Also still undocumented, but you can now visualize patterns as a spiral via `.spiral()`:
+
+<BlogVideo src="https://github.com/tidalcycles/strudel/assets/12023032/05bc2dba-b304-4298-9465-a1a6fafe5ded" />
+
+This is especially nice because strudel is not only the name of a dessert but also the german word for vortex! The spiral is very fitting to visualize cycles because you can align cycles vertically, while surfing along an infinite twisted timeline.
+
+## More settings
+
+In the settings tab, you can now toggle:
+
+- line numbers
+- auto-complete
+- line wrapping
+
+Thanks to [roipoussiere](https://github.com/roipoussiere)!
+
+## More
+
+Scroll down to see the full list of Changes!
+
+A big thanks to all the contributors!
+
+## Package Versions
+
+- @strudel.cycles/core: 0.8.2
+- @strudel.cycles/mini: 0.8.2
+- @strudel.cycles/transpiler: 0.8.2
+- @strudel.cycles/webaudio: 0.8.2
+- @strudel.cycles/soundfonts: 0.8.2
+- @strudel.cycles/react: 0.8.0
+- @strudel.cycles/midi: 0.8.0
+- @strudel.cycles/osc: 0.8.0
+- @strudel.cycles/csound: 0.8.0
+- @strudel.cycles/serial: 0.8.0
+- @strudel.cycles/tonal: 0.8.2
+- @strudel.cycles/xen: 0.8.0
+- @strudel/codemirror: 0.8.4
+- @strudel/web: 0.8.3
+
+## What's Changed
+
+- fix period key for dvorak + remove duplicated code by @felixroos in https://github.com/tidalcycles/strudel/pull/537
+- improve initial loading + wait before eval by @felixroos in https://github.com/tidalcycles/strudel/pull/538
+- do not reset cps before eval #517 by @felixroos in https://github.com/tidalcycles/strudel/pull/539
+- feat: add loader bar to animate loading state by @felixroos in https://github.com/tidalcycles/strudel/pull/542
+- add firacode font by @felixroos in https://github.com/tidalcycles/strudel/pull/544
+- fix: allow whitespace at the end of a mini pattern by @felixroos in https://github.com/tidalcycles/strudel/pull/547
+- fix: reset time on stop by @felixroos in https://github.com/tidalcycles/strudel/pull/548
+- fix: load soundfonts in prebake by @felixroos in https://github.com/tidalcycles/strudel/pull/550
+- fix: colorable highlighting by @felixroos in https://github.com/tidalcycles/strudel/pull/553
+- fix: make soundfonts import dynamic by @felixroos in https://github.com/tidalcycles/strudel/pull/556
+- add basic triads and guidetone voicings by @felixroos in https://github.com/tidalcycles/strudel/pull/557
+- Patchday by @felixroos in https://github.com/tidalcycles/strudel/pull/559
+- Vanilla JS Refactoring by @felixroos in https://github.com/tidalcycles/strudel/pull/563
+- repl: add option to display line numbers by @roipoussiere in https://github.com/tidalcycles/strudel/pull/582
+- learn/tonal: fix typo in "scaleTran[s]pose" by @srenatus in https://github.com/tidalcycles/strudel/pull/585
+- Music metadata by @roipoussiere in https://github.com/tidalcycles/strudel/pull/580
+- New Workshop by @felixroos in https://github.com/tidalcycles/strudel/pull/587
+- Fix option dot by @felixroos in https://github.com/tidalcycles/strudel/pull/596
+- fix: allow f for flat notes like tidal by @felixroos in https://github.com/tidalcycles/strudel/pull/593
+- fix: division by zero by @felixroos in https://github.com/tidalcycles/strudel/pull/591
+- Solmization added by @dariacotocu in https://github.com/tidalcycles/strudel/pull/570
+- improve cursor by @felixroos in https://github.com/tidalcycles/strudel/pull/597
+- enable auto-completion by @roipoussiere in https://github.com/tidalcycles/strudel/pull/588
+- add ratio function by @felixroos in https://github.com/tidalcycles/strudel/pull/602
+- editor: enable line wrapping by @roipoussiere in https://github.com/tidalcycles/strudel/pull/581
+- tonal fixes by @felixroos in https://github.com/tidalcycles/strudel/pull/607
+- fix: flatten scale lists by @felixroos in https://github.com/tidalcycles/strudel/pull/605
+- clip now works like legato in tidal by @felixroos in https://github.com/tidalcycles/strudel/pull/598
+- fix: doc links by @felixroos in https://github.com/tidalcycles/strudel/pull/612
+- tauri desktop app by @vasilymilovidov in https://github.com/tidalcycles/strudel/pull/613
+- add spiral viz by @felixroos in https://github.com/tidalcycles/strudel/pull/614
+- patterning ui settings by @felixroos in https://github.com/tidalcycles/strudel/pull/606
+- Fix typo on packages.mdx by @paikwiki in https://github.com/tidalcycles/strudel/pull/520
+- cps dependent functions by @felixroos in https://github.com/tidalcycles/strudel/pull/620
+- desktop: play samples from disk by @felixroos in https://github.com/tidalcycles/strudel/pull/621
+- fix: midi clock drift by @felixroos in https://github.com/tidalcycles/strudel/pull/627
+
+## New Contributors
+
+- @roipoussiere made their first contribution in https://github.com/tidalcycles/strudel/pull/582
+- @srenatus made their first contribution in https://github.com/tidalcycles/strudel/pull/585
+- @dariacotocu made their first contribution in https://github.com/tidalcycles/strudel/pull/570
+- @vasilymilovidov made their first contribution in https://github.com/tidalcycles/strudel/pull/613
+- @paikwiki made their first contribution in https://github.com/tidalcycles/strudel/pull/520
+
+**Full Changelog**: https://github.com/tidalcycles/strudel/compare/v0.7.0...v0.8.0

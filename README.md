@@ -2,37 +2,28 @@
 
 [![Strudel test status](https://github.com/tidalcycles/strudel/actions/workflows/test.yml/badge.svg)](https://github.com/tidalcycles/strudel/actions)
 
-An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using web technologies. This software is slowly stabilising, but please continue to tread carefully.
+An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using web technologies. This software is a bit more stable now, but please continue to tread carefully.
 
 - Try it here: <https://strudel.cc>
 - Docs: <https://strudel.cc/learn>
 - Technical Blog Post: <https://loophole-letters.vercel.app/strudel>
 - 1 Year of Strudel Blog Post: <https://loophole-letters.vercel.app/strudel1year>
+- 2 Years of Strudel Blog Post: <https://strudel.cc/blog/#year-2>
 
 ## Running Locally
 
 After cloning the project, you can run the REPL locally:
 
 ```bash
-pnpm run setup
-pnpm run repl
+pnpm i
+pnpm dev
 ```
 
 ## Using Strudel In Your Project
 
-There are multiple npm packages you can use to use strudel, or only parts of it, in your project:
+This project is organized into many [packages](./packages), which are also available on [npm](https://www.npmjs.com/search?q=%40strudel).
 
-- [`core`](./packages/core/): tidal pattern engine
-- [`mini`](./packages/mini): mini notation parser + core binding
-- [`transpiler`](./packages/transpiler): user code transpiler
-- [`webaudio`](./packages/webaudio): webaudio output
-- [`osc`](./packages/osc): bindings to communicate via OSC
-- [`midi`](./packages/midi): webmidi bindings
-- [`serial`](./packages/serial): webserial bindings
-- [`tonal`](./packages/tonal): tonal functions
-- ... [and there are more](./packages/)
-
-Click on the package names to find out more about each one.
+Read more about how to use these in your own project [here](https://strudel.cc/technical-manual/project-start).
 
 ## Contributing
 

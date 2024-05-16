@@ -69,7 +69,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,wav,mp3,ogg}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,wav,mp3,ogg,ttf,woff2,TTF,otf}'],
         runtimeCaching: [
           {
             urlPattern: ({ url }) =>
@@ -97,7 +97,7 @@ export default defineConfig({
         enabled: false,
       },
       manifest: {
-        includeAssets: ['favicon.ico', 'icons/apple-icon-180.png', 'favicon.svg'],
+        includeAssets: ['favicon.ico', 'icons/apple-icon-180.png'],
         name: 'Strudel REPL',
         short_name: 'Strudel',
         description:
@@ -137,7 +137,7 @@ export default defineConfig({
   vite: {
     ssr: {
       // Example: Force a broken package to skip SSR processing, if needed
-      external: ['fraction.js'], // https://github.com/infusion/Fraction.js/issues/51
+      // external: ['fraction.js'], // https://github.com/infusion/Fraction.js/issues/51
     },
   },
 });

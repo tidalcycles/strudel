@@ -1,23 +1,25 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Icon } from './Icon';
-import { silence, getPunchcardPainter, noteToMidi } from '@strudel.cycles/core';
-import { transpiler } from '@strudel.cycles/transpiler';
-import { getAudioContext, webaudioOutput } from '@strudel.cycles/webaudio';
+import { silence, noteToMidi, _mod } from '@strudel/core';
+import { getPunchcardPainter } from '@strudel/draw';
+import { transpiler } from '@strudel/transpiler';
+import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
 import { StrudelMirror } from '@strudel/codemirror';
-// import { prebake } from '@strudel/repl';
 import { prebake } from '../repl/prebake.mjs';
 import { loadModules } from '../repl/util.mjs';
 import Claviature from '@components/Claviature';
 import useClient from '@src/useClient.mjs';
 
-let prebaked, modulesLoading;
+let prebaked, modulesLoading, audioLoading;
 if (typeof window !== 'undefined') {
   prebaked = prebake();
   modulesLoading = loadModules();
+  audioLoading = initAudioOnFirstClick();
 }
 
 export function MiniRepl({
-  tune: code,
+  tune,
+  tunes,
   hideHeader = false,
   canvasHeight = 100,
   onTrigger,
@@ -25,7 +27,9 @@ export function MiniRepl({
   punchcardLabels = true,
   claviature,
   claviatureLabels,
+  maxHeight,
 }) {
+  const code = tunes ? tunes[0] : tune;
   const id = useMemo(() => s4(), []);
   const canvasId = useMemo(() => `canvas-${id}`, [id]);
   const shouldDraw = !!punchcard || !!claviature;
@@ -35,16 +39,6 @@ export function MiniRepl({
 
   const init = useCallback(({ code, shouldDraw }) => {
     const drawContext = shouldDraw ? document.querySelector('#' + canvasId)?.getContext('2d') : null;
-    let onDraw;
-    if (shouldDraw) {
-      onDraw = (haps, time, frame, painters) => {
-        painters.length && drawContext?.clearRect(0, 0, drawContext.canvas.width * 2, drawContext.canvas.height * 2);
-        painters?.forEach((painter) => {
-          // ctx time haps drawTime paintOptions
-          painter(drawContext, time, haps, drawTime, { clear: false });
-        });
-      };
-    }
 
     const editor = new StrudelMirror({
       id,
@@ -56,7 +50,7 @@ export function MiniRepl({
       initialCode: '// LOADING',
       pattern: silence,
       drawTime,
-      onDraw,
+      drawContext,
       editPattern: (pat, id) => {
         if (onTrigger) {
           pat = pat.onTrigger(onTrigger, false);
@@ -75,7 +69,7 @@ export function MiniRepl({
         }
         return pat;
       },
-      prebake: async () => Promise.all([modulesLoading, prebaked]),
+      prebake: async () => Promise.all([modulesLoading, prebaked, audioLoading]),
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
@@ -90,6 +84,14 @@ export function MiniRepl({
   const editorRef = useRef();
   const containerRef = useRef();
   const client = useClient();
+
+  const [tuneIndex, setTuneIndex] = useState(0);
+  const changeTune = (index) => {
+    index = _mod(index, tunes.length);
+    setTuneIndex(index);
+    editorRef.current?.setCode(tunes[index]);
+    editorRef.current?.evaluate();
+  };
 
   if (!client) {
     return <pre>{code}</pre>;
@@ -119,9 +121,31 @@ export function MiniRepl({
               <Icon type="refresh" />
             </button>
           </div>
+          {tunes && (
+            <div className="flex">
+              <button
+                className={
+                  'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background'
+                }
+                onClick={() => changeTune(tuneIndex - 1)}
+              >
+                <div className="rotate-180">
+                  <Icon type="skip" />
+                </div>
+              </button>
+              <button
+                className={
+                  'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background'
+                }
+                onClick={() => changeTune(tuneIndex + 1)}
+              >
+                <Icon type="skip" />
+              </button>
+            </div>
+          )}
         </div>
       )}
-      <div className="overflow-auto relative p-1">
+      <div className="overflow-auto relative p-1" style={maxHeight ? { maxHeight: `${maxHeight}px` } : {}}>
         <div
           ref={(el) => {
             if (!editorRef.current) {

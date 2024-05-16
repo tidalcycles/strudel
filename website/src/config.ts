@@ -54,8 +54,14 @@ export const SIDEBAR: Sidebar = {
     ],
   },
   en: {
+    Presentation: [
+      { text: 'What is Strudel?', link: 'workshop/getting-started' },
+      { text: 'Showcase', link: 'intro/showcase' },
+      { text: 'Blog', link: 'blog' },
+      { text: 'Community Bakery', link: 'bakery' },
+    ],
     Workshop: [
-      { text: 'Getting Started', link: 'workshop/getting-started' },
+      // { text: 'Getting Started', link: 'workshop/getting-started' },
       { text: 'First Sounds', link: 'workshop/first-sounds' },
       { text: 'First Notes', link: 'workshop/first-notes' },
       { text: 'First Effects', link: 'workshop/first-effects' },
@@ -84,6 +90,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Time Modifiers', link: 'learn/time-modifiers' },
       { text: 'Control Parameters', link: 'functions/value-modifiers' },
       { text: 'Signals', link: 'learn/signals' },
+      { text: 'Random Modifiers', link: 'learn/random-modifiers' },
       { text: 'Conditional Modifiers', link: 'learn/conditional-modifiers' },
       { text: 'Accumulation', link: 'learn/accumulation' },
       { text: 'Tonal Functions', link: 'learn/tonal' },
@@ -96,9 +103,10 @@ export const SIDEBAR: Sidebar = {
       { text: 'Strudel vs Tidal', link: 'learn/strudel-vs-tidal' },
     ],
     Development: [
+      { text: 'Strudel in your Project', link: 'technical-manual/project-start' },
+      { text: 'Packages', link: 'technical-manual/packages' },
       { text: 'REPL', link: 'technical-manual/repl' },
       { text: 'Sounds', link: 'technical-manual/sounds' },
-      { text: 'Packages', link: 'technical-manual/packages' },
       { text: 'Docs', link: 'technical-manual/docs' },
       { text: 'Testing', link: 'technical-manual/testing' },
       // { text: 'Internals', link: 'technical-manual/internals' },

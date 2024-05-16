@@ -3,6 +3,12 @@ import jsdoc from '../../doc.json';
 import { autocompletion } from '@codemirror/autocomplete';
 import { h } from './html';
 
+function plaintext(str) {
+  const div = document.createElement('div');
+  div.innerText = str;
+  return div.innerHTML;
+}
+
 const getDocLabel = (doc) => doc.name || doc.longname;
 const getInnerText = (html) => {
   var div = document.createElement('div');
@@ -21,7 +27,7 @@ ${doc.description}
   )}
 </ul>
 <div>
-  ${doc.examples?.map((example) => `<div><pre>${example}</pre></div>`)}
+  ${doc.examples?.map((example) => `<div><pre>${plaintext(example)}</pre></div>`)}
 </div>
 </div>`[0];
   /*

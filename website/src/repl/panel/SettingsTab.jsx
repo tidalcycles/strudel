@@ -1,6 +1,7 @@
 import { defaultSettings, settingsMap, useSettings } from '../../settings.mjs';
 import { themes } from '@strudel/codemirror';
 import { ButtonGroup } from './Forms.jsx';
+import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 
 function Checkbox({ label, value, onChange }) {
   return (
@@ -61,35 +62,52 @@ function FormItem({ label, children }) {
 const themeOptions = Object.fromEntries(Object.keys(themes).map((k) => [k, k]));
 const fontFamilyOptions = {
   monospace: 'monospace',
-  BigBlueTerminal: 'BigBlueTerminal',
-  x3270: 'x3270',
-  PressStart: 'PressStart2P',
-  galactico: 'galactico',
-  'we-come-in-peace': 'we-come-in-peace',
+  Courier: 'Courier',
+  JetBrains: 'JetBrains',
+  Hack: 'Hack',
   FiraCode: 'FiraCode',
   'FiraCode-SemiBold': 'FiraCode SemiBold',
   teletext: 'teletext',
   mode7: 'mode7',
+  BigBlueTerminal: 'BigBlueTerminal',
+  x3270: 'x3270',
+  Monocraft: 'Monocraft',
+  PressStart: 'PressStart2P',
+  'we-come-in-peace': 'we-come-in-peace',
+  galactico: 'galactico',
 };
 
-export function SettingsTab() {
+export function SettingsTab({ started }) {
   const {
     theme,
     keybindings,
+    isBracketClosingEnabled,
+    isBracketMatchingEnabled,
     isLineNumbersDisplayed,
     isPatternHighlightingEnabled,
     isActiveLineHighlighted,
     isAutoCompletionEnabled,
     isTooltipEnabled,
     isFlashEnabled,
+    isSyncEnabled,
     isLineWrappingEnabled,
     fontSize,
     fontFamily,
     panelPosition,
+    audioDeviceName,
   } = useSettings();
 
   return (
     <div className="text-foreground p-4 space-y-4">
+      {AudioContext.prototype.setSinkId != null && (
+        <FormItem label="Audio Output Device">
+          <AudioDeviceSelector
+            isDisabled={started}
+            audioDeviceName={audioDeviceName}
+            onChange={(audioDeviceName) => settingsMap.setKey('audioDeviceName', audioDeviceName)}
+          />
+        </FormItem>
+      )}
       <FormItem label="Theme">
         <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>
@@ -127,6 +145,16 @@ export function SettingsTab() {
       </FormItem>
       <FormItem label="Code Settings">
         <Checkbox
+          label="Enable bracket matching"
+          onChange={(cbEvent) => settingsMap.setKey('isBracketMatchingEnabled', cbEvent.target.checked)}
+          value={isBracketMatchingEnabled}
+        />
+        <Checkbox
+          label="Auto close brackets"
+          onChange={(cbEvent) => settingsMap.setKey('isBracketClosingEnabled', cbEvent.target.checked)}
+          value={isBracketClosingEnabled}
+        />
+        <Checkbox
           label="Display line numbers"
           onChange={(cbEvent) => settingsMap.setKey('isLineNumbersDisplayed', cbEvent.target.checked)}
           value={isLineNumbersDisplayed}
@@ -160,6 +188,16 @@ export function SettingsTab() {
           label="Enable flashing on evaluation"
           onChange={(cbEvent) => settingsMap.setKey('isFlashEnabled', cbEvent.target.checked)}
           value={isFlashEnabled}
+        />
+        <Checkbox
+          label="Sync across Browser Tabs / Windows"
+          onChange={(cbEvent) => {
+            if (confirm('Changing this setting requires the window to reload itself. OK?')) {
+              settingsMap.setKey('isSyncEnabled', cbEvent.target.checked);
+              window.location.reload();
+            }
+          }}
+          value={isSyncEnabled}
         />
       </FormItem>
       <FormItem label="Zen Mode">Try clicking the logo in the top left!</FormItem>

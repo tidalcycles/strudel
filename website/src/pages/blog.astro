@@ -1,0 +1,61 @@
+---
+import BlogPost from '../components/BlogPost.astro';
+import HeadCommon from '../components/HeadCommon.astro';
+import HeadSEO from '../components/HeadSEO.astro';
+import Header from '../components/Header/Header.astro';
+import LeftSidebar from '../components/LeftSidebar/LeftSidebar.astro';
+import PageContent from '../components/PageContent/PageContent.astro';
+import RightSidebar from '../components/RightSidebar/RightSidebar.astro';
+import { getCollection } from 'astro:content';
+import { compareDesc } from 'date-fns';
+import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
+const currentPage = Astro.url.pathname;
+
+const posts = (await getCollection('blog')).sort((a, b) => compareDesc(a.data.date, b.data.date));
+---
+
+<html dir={'ltr'} lang={'en'} class="initial dark">
+  <head>
+    <HeadCommon />
+    <!-- <HeadSEO frontmatter={frontmatter} canonicalUrl={canonicalURL} /> -->
+    <title>🌀 Strudel Blog</title>
+  </head>
+
+  <body class="h-app-height text-gray-50 bg-background">
+    <div class="w-full h-full space-y-4 flex flex-col">
+      <header class="max-w-full fixed top-0 w-full z-[100]">
+        <Header currentPage={currentPage} />
+      </header>
+      <main class="relative pt-16">
+        <div class="h-full top-0 overflow-auto min-w-[300px] flex xl:justify-center pr-4 pl-4 md:pl-[300px] xl:pl-0">
+          <aside title="Site Navigation" class="w-[300px] px-6 left-0 hidden md:block fixed h-full">
+            <LeftSidebar currentPage={currentPage} />
+          </aside>
+          <PageContent>
+            <div class="border-b-4 border-lineHighlight py-4">
+              <h1>Strudel Blog</h1>
+              <p>
+                Welcome to the Strudel Blog, where we will keep you updated with the latest changes and things happening
+                in the strudelsphere. You can subscribe to this blog using <a target="_blank" href="/rss.xml"
+                  >this rss link</a
+                >
+              </p>
+            </div>
+            <div class="space-y-8">
+              {posts.map((post) => <BlogPost post={post} />)}
+            </div>
+          </PageContent>
+          <aside class="fixed right-0 h-full overflow-auto pr-4 pl-0 pb-16 hidden xl:block" title="Table of Contents">
+            <RightSidebar
+              headings={posts.map((post) => ({
+                depth: 1,
+                slug: post.slug,
+                text: post.data.title,
+              }))}
+            />
+          </aside>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

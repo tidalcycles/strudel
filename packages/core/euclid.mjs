@@ -41,11 +41,17 @@ const _bjork = function (n, x) {
 };
 
 export const bjork = function (ons, steps) {
+  const inverted = ons < 0;
+  ons = Math.abs(ons);
   const offs = steps - ons;
   const x = Array(ons).fill([1]);
   const y = Array(offs).fill([0]);
   const result = _bjork([ons, offs], [x, y]);
-  return flatten(result[1][0]).concat(flatten(result[1][1]));
+  const p = flatten(result[1][0]).concat(flatten(result[1][1]));
+  if (inverted) {
+    return p.map((x) => (x === 0 ? 1 : 0));
+  }
+  return p;
 };
 
 /**
@@ -148,7 +154,7 @@ export const { euclidrot, euclidRot } = register(['euclidrot', 'euclidRot'], fun
  * @param {number} pulses the number of onsets / beats
  * @param {number} steps the number of steps to fill
  * @example
- * n("g2").decay(.1).sustain(.3).euclidLegato(3,8)
+ * note("c3").euclidLegato(3,8)
  */
 
 const _euclidLegato = function (pulses, steps, rotation, pat) {

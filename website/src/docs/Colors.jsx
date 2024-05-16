@@ -1,5 +1,4 @@
-import { colorMap } from '@strudel.cycles/core/color.mjs';
-import React from 'react';
+import { colorMap } from '@strudel/draw';
 
 const Colors = () => {
   return (

@@ -3,25 +3,23 @@
 // it might require mocking more stuff when tunes added that use other functions
 
 // import * as tunes from './tunes.mjs';
-import { evaluate } from '@strudel.cycles/transpiler';
-import { evalScope } from '@strudel.cycles/core';
-import * as strudel from '@strudel.cycles/core';
-import * as webaudio from '@strudel.cycles/webaudio';
-import controls from '@strudel.cycles/core/controls.mjs';
-// import gist from '@strudel.cycles/core/gist.js';
-import { mini, m } from '@strudel.cycles/mini/mini.mjs';
-// import * as voicingHelpers from '@strudel.cycles/tonal/voicings.mjs';
-// import euclid from '@strudel.cycles/core/euclid.mjs';
-// import '@strudel.cycles/midi/midi.mjs';
-import * as tonalHelpers from '@strudel.cycles/tonal';
-import '@strudel.cycles/xen/xen.mjs';
-// import '@strudel.cycles/xen/tune.mjs';
-// import '@strudel.cycles/core/euclid.mjs';
-// import '@strudel.cycles/core/speak.mjs'; // window is not defined
-// import '@strudel.cycles/osc/osc.mjs';
-// import '@strudel.cycles/webaudio/webaudio.mjs';
-// import '@strudel.cycles/serial/serial.mjs';
-// import controls from '@strudel.cycles/core/controls.mjs';
+import { evaluate } from '@strudel/transpiler';
+import { evalScope } from '@strudel/core';
+import * as strudel from '@strudel/core';
+import * as webaudio from '@strudel/webaudio';
+// import gist from '@strudel/core/gist.js';
+import { mini, m } from '@strudel/mini/mini.mjs';
+// import * as voicingHelpers from '@strudel/tonal/voicings.mjs';
+// import euclid from '@strudel/core/euclid.mjs';
+// import '@strudel/midi/midi.mjs';
+import * as tonalHelpers from '@strudel/tonal';
+import '@strudel/xen/xen.mjs';
+// import '@strudel/xen/tune.mjs';
+// import '@strudel/core/euclid.mjs';
+// import '@strudel/core/speak.mjs'; // window is not defined
+// import '@strudel/osc/osc.mjs';
+// import '@strudel/webaudio/webaudio.mjs';
+// import '@strudel/serial/serial.mjs';
 import '../website/src/repl/piano';
 
 class MockedNode {
@@ -153,10 +151,9 @@ evalScope(
   strudel,
   toneHelpersMocked,
   uiHelpersMocked,
-  controls,
   webaudio,
   tonalHelpers,
-  /* controls,
+  /*
   toneHelpers,
   voicingHelpers,
   drawHelpers,
@@ -175,6 +172,7 @@ evalScope(
     loadCSound,
     loadCsound,
     loadcsound,
+    setcps: id,
     Clock: {}, // whatever
     // Tone,
   },
@@ -224,7 +222,6 @@ export const testCycles = {
   randomBells: 24,
   waa: 16,
   waar: 16,
-  hyperpop: 10,
   festivalOfFingers3: 16,
 };
 

@@ -28,11 +28,14 @@ export const resetLoadedSounds = () => soundMap.set({});
 
 let audioContext;
 
+export const setDefaultAudioContext = () => {
+  audioContext = new AudioContext();
+  return audioContext;
+};
+
 export const getAudioContext = () => {
   if (!audioContext) {
-    audioContext = new AudioContext();
-    const maxChannelCount = audioContext.destination.maxChannelCount;
-    audioContext.destination.channelCount = maxChannelCount;
+    return setDefaultAudioContext();
   }
   return audioContext;
 };
@@ -47,8 +50,8 @@ function loadWorklets() {
   return workletsLoading;
 }
 
-function getWorklet(ac, processor, params) {
-  const node = new AudioWorkletNode(ac, processor);
+export function getWorklet(ac, processor, params, config) {
+  const node = new AudioWorkletNode(ac, processor, config);
   Object.entries(params).forEach(([key, value]) => {
     node.parameters.get(key).value = value;
   });
@@ -84,15 +87,22 @@ let delays = {};
 const maxfeedback = 0.98;
 
 let channelMerger, destinationGain;
+//update the output channel configuration to match user's audio device
+export function initializeAudioOutput() {
+  const audioContext = getAudioContext();
+  const maxChannelCount = audioContext.destination.maxChannelCount;
+  audioContext.destination.channelCount = maxChannelCount;
+  channelMerger = new ChannelMergerNode(audioContext, { numberOfInputs: audioContext.destination.channelCount });
+  destinationGain = new GainNode(audioContext);
+  channelMerger.connect(destinationGain);
+  destinationGain.connect(audioContext.destination);
+}
 
 // input: AudioNode, channels: ?Array<int>
 export const connectToDestination = (input, channels = [0, 1]) => {
   const ctx = getAudioContext();
   if (channelMerger == null) {
-    channelMerger = new ChannelMergerNode(ctx, { numberOfInputs: ctx.destination.channelCount });
-    destinationGain = new GainNode(ctx);
-    channelMerger.connect(destinationGain);
-    destinationGain.connect(ctx.destination);
+    initializeAudioOutput();
   }
   //This upmix can be removed if correct channel counts are set throughout the app,
   // and then strudel could theoretically support surround sound audio files
@@ -114,6 +124,7 @@ export const panic = () => {
   }
   destinationGain.gain.linearRampToValueAtTime(0, getAudioContext().currentTime + 0.01);
   destinationGain = null;
+  channelMerger == null;
 };
 
 function getDelay(orbit, delaytime, delayfeedback, t) {
@@ -204,35 +215,35 @@ function getReverb(orbit, duration, fade, lp, dim, ir) {
   return reverbs[orbit];
 }
 
-export let analyser, analyserData /* s = {} */;
+export let analysers = {},
+  analysersData = {};
 
-export function getAnalyser(/* orbit,  */ fftSize = 2048) {
-  if (!analyser /*s [orbit] */) {
+export function getAnalyserById(id, fftSize = 1024) {
+  if (!analysers[id]) {
+    // make sure this doesn't happen too often as it piles up garbage
     const analyserNode = getAudioContext().createAnalyser();
     analyserNode.fftSize = fftSize;
     // getDestination().connect(analyserNode);
-    analyser /* s[orbit] */ = analyserNode;
-    //analyserData = new Uint8Array(analyser.frequencyBinCount);
-    analyserData = new Float32Array(analyser.frequencyBinCount);
+    analysers[id] = analyserNode;
+    analysersData[id] = new Float32Array(analysers[id].frequencyBinCount);
   }
-  if (analyser /* s[orbit] */.fftSize !== fftSize) {
-    analyser /* s[orbit] */.fftSize = fftSize;
-    //analyserData = new Uint8Array(analyser.frequencyBinCount);
-    analyserData = new Float32Array(analyser.frequencyBinCount);
+  if (analysers[id].fftSize !== fftSize) {
+    analysers[id].fftSize = fftSize;
+    analysersData[id] = new Float32Array(analysers[id].frequencyBinCount);
   }
-  return analyser /* s[orbit] */;
+  return analysers[id];
 }
 
-export function getAnalyzerData(type = 'time') {
+export function getAnalyzerData(type = 'time', id = 1) {
   const getter = {
-    time: () => analyser?.getFloatTimeDomainData(analyserData),
-    frequency: () => analyser?.getFloatFrequencyData(analyserData),
+    time: () => analysers[id]?.getFloatTimeDomainData(analysersData[id]),
+    frequency: () => analysers[id]?.getFloatFrequencyData(analysersData[id]),
   }[type];
   if (!getter) {
     throw new Error(`getAnalyzerData: ${type} not supported. use one of ${Object.keys(getter).join(', ')}`);
   }
   getter();
-  return analyserData;
+  return analysersData[id];
 }
 
 function effectSend(input, effect, wet) {
@@ -242,7 +253,14 @@ function effectSend(input, effect, wet) {
   return send;
 }
 
-export const superdough = async (value, deadline, hapDuration) => {
+export function resetGlobalEffects() {
+  delays = {};
+  reverbs = {};
+  analysers = {};
+  analysersData = {};
+}
+
+export const superdough = async (value, t, hapDuration) => {
   const ac = getAudioContext();
   if (typeof value !== 'object') {
     throw new Error(
@@ -254,7 +272,13 @@ export const superdough = async (value, deadline, hapDuration) => {
   // duration is passed as value too..
   value.duration = hapDuration;
   // calculate absolute time
-  let t = ac.currentTime + deadline;
+  t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
+  if (t < ac.currentTime) {
+    console.warn(
+      `[superdough]: cannot schedule sounds in the past (target: ${t.toFixed(2)}, now: ${ac.currentTime.toFixed(2)})`,
+    );
+    return;
+  }
   // destructure
   let {
     s = 'triangle',
@@ -269,26 +293,26 @@ export const superdough = async (value, deadline, hapDuration) => {
     // low pass
     cutoff,
     lpenv,
-    lpattack = 0.01,
-    lpdecay = 0.01,
-    lpsustain = 1,
-    lprelease = 0.01,
+    lpattack,
+    lpdecay,
+    lpsustain,
+    lprelease,
     resonance = 1,
     // high pass
     hpenv,
     hcutoff,
-    hpattack = 0.01,
-    hpdecay = 0.01,
-    hpsustain = 1,
-    hprelease = 0.01,
+    hpattack,
+    hpdecay,
+    hpsustain,
+    hprelease,
     hresonance = 1,
     // band pass
     bpenv,
     bandf,
-    bpattack = 0.01,
-    bpdecay = 0.01,
-    bpsustain = 1,
-    bprelease = 0.01,
+    bpattack,
+    bpdecay,
+    bpsustain,
+    bprelease,
     bandq = 1,
     channels = [1, 2],
     //phaser
@@ -300,6 +324,9 @@ export const superdough = async (value, deadline, hapDuration) => {
     coarse,
     crush,
     shape,
+    shapevol = 1,
+    distort,
+    distortvol = 1,
     pan,
     vowel,
     delay = 0,
@@ -322,12 +349,13 @@ export const superdough = async (value, deadline, hapDuration) => {
     compressorAttack,
     compressorRelease,
   } = value;
+
   gain = nanFallback(gain, 1);
 
   //music programs/audio gear usually increments inputs/outputs from 1, so imitate that behavior
   channels = (Array.isArray(channels) ? channels : [channels]).map((ch) => ch - 1);
 
-  gain *= velocity; // legacy fix for velocity
+  gain *= velocity; // velocity currently only multiplies with gain. it might do other things in the future
   let toDisconnect = []; // audio nodes that will be disconnected when the source has ended
   const onended = () => {
     toDisconnect.forEach((n) => n?.disconnect());
@@ -440,7 +468,8 @@ export const superdough = async (value, deadline, hapDuration) => {
   // effects
   coarse !== undefined && chain.push(getWorklet(ac, 'coarse-processor', { coarse }));
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
-  shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape }));
+  shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape, postgain: shapevol }));
+  distort !== undefined && chain.push(getWorklet(ac, 'distort-processor', { distort, postgain: distortvol }));
 
   compressorThreshold !== undefined &&
     chain.push(
@@ -491,8 +520,8 @@ export const superdough = async (value, deadline, hapDuration) => {
   // analyser
   let analyserSend;
   if (analyze) {
-    const analyserNode = getAnalyser(/* orbit,  */ 2 ** (fft + 5));
-    analyserSend = effectSend(post, analyserNode, analyze);
+    const analyserNode = getAnalyserById(analyze, 2 ** (fft + 5));
+    analyserSend = effectSend(post, analyserNode, 1);
   }
 
   // connect chain elements together

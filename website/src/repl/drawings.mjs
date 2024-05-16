@@ -24,7 +24,9 @@ angle(saw)
 `;
 
 // https://strudel.cc/?C31_NrcMfZEO
-export const spiralflower = `const {innerWidth:ww,innerHeight:wh} = window;
+export const spiralflower = `let {innerWidth:ww,innerHeight:wh} = window;
+ww*=window.devicePixelRatio;
+wh*=window.devicePixelRatio;
 const ctx = getDrawContext()
 const piDiv180 = Math.PI / 180;
 function fromPolar(angle, radius, cx, cy) {
