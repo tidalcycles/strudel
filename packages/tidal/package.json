@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "pnpm copy-wasm && vite build",
     "preview": "vite preview",
-    "prepare": "cp node_modules/hs2js/dist/tree-sitter.wasm public && cp node_modules/hs2js/dist/tree-sitter-haskell.wasm public"
+    "copy-wasm": "cp node_modules/hs2js/dist/tree-sitter.wasm public && cp node_modules/hs2js/dist/tree-sitter-haskell.wasm public"
   },
   "repository": {
     "type": "git",
