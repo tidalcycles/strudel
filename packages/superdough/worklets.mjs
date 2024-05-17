@@ -124,13 +124,13 @@ class LadderProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
     this.started = false;
-    this.p0 = 0;
-    this.p1 = 0;
-    this.p2 = 0;
-    this.p3 = 0;
-    this.p32 = 0;
-    this.p33 = 0;
-    this.p34 = 0;
+    this.p0 = [0, 0];
+    this.p1 = [0, 0];
+    this.p2 = [0, 0];
+    this.p3 = [0, 0];
+    this.p32 = [0, 0];
+    this.p33 = [0, 0];
+    this.p34 = [0, 0];
   }
 
   process(inputs, outputs, parameters) {
@@ -141,6 +141,7 @@ class LadderProcessor extends AudioWorkletProcessor {
     if (this.started && !hasInput) {
       return false;
     }
+
     this.started = hasInput;
 
     const resonance = parameters.q[0];
@@ -154,16 +155,16 @@ class LadderProcessor extends AudioWorkletProcessor {
 
     for (let n = 0; n < blockSize; n++) {
       for (let i = 0; i < input.length; i++) {
-        const out = this.p3 * 0.360891 + this.p32 * 0.41729 + this.p33 * 0.177896 + this.p34 * 0.0439725;
+        const out = this.p3[i] * 0.360891 + this.p32[i] * 0.41729 + this.p33[i] * 0.177896 + this.p34[i] * 0.0439725;
 
-        this.p34 = this.p33;
-        this.p33 = this.p32;
-        this.p32 = this.p3;
+        this.p34[i] = this.p33[i];
+        this.p33[i] = this.p32[i];
+        this.p32[i] = this.p3[i];
 
-        this.p0 += (fast_tanh(input[i][n] * drive - k * out) - fast_tanh(this.p0)) * cutoff;
-        this.p1 += (fast_tanh(this.p0) - fast_tanh(this.p1)) * cutoff;
-        this.p2 += (fast_tanh(this.p1) - fast_tanh(this.p2)) * cutoff;
-        this.p3 += (fast_tanh(this.p2) - fast_tanh(this.p3)) * cutoff;
+        this.p0[i] += (fast_tanh(input[i][n] * drive - k * out) - fast_tanh(this.p0[i])) * cutoff;
+        this.p1[i] += (fast_tanh(this.p0[i]) - fast_tanh(this.p1[i])) * cutoff;
+        this.p2[i] += (fast_tanh(this.p1[i]) - fast_tanh(this.p2[i])) * cutoff;
+        this.p3[i] += (fast_tanh(this.p2[i]) - fast_tanh(this.p3[i])) * cutoff;
 
         output[i][n] = out * makeupgain;
       }
