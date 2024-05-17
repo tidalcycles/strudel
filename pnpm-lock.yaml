@@ -437,6 +437,9 @@ importers:
 
   packages/tidal:
     dependencies:
+      '@strudel/core':
+        specifier: workspace:*
+        version: link:../core
       hs2js:
         specifier: workspace:*
         version: link:../hs2js
