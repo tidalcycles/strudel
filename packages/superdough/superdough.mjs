@@ -471,6 +471,8 @@ export const superdough = async (value, t, hapDuration) => {
   shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape, postgain: shapevol }));
   distort !== undefined && chain.push(getWorklet(ac, 'distort-processor', { distort, postgain: distortvol }));
 
+  chain.push(getWorklet(ac, 'ladder-processor', { cutoff: 500, q: 1 }));
+
   compressorThreshold !== undefined &&
     chain.push(
       getCompressor(ac, compressorThreshold, compressorRatio, compressorKnee, compressorAttack, compressorRelease),

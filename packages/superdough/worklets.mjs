@@ -106,6 +106,70 @@ class ShapeProcessor extends AudioWorkletProcessor {
 }
 registerProcessor('shape-processor', ShapeProcessor);
 
+function fast_tanh(x) {
+  const x2 = x * x;
+  return (x * (27.0 + x2)) / (27.0 + 9.0 * x2);
+}
+const _PI = 3.14159265359;
+
+class LadderProcessor extends AudioWorkletProcessor {
+  static get parameterDescriptors() {
+    return [
+      { name: 'cutoff', defaultValue: 500 },
+      { name: 'q', defaultValue: 1 },
+    ];
+  }
+
+  constructor() {
+    super();
+    this.started = false;
+    this.p0 = 0;
+    this.p1 = 0;
+    this.p2 = 0;
+    this.p3 = 0;
+    this.p32 = 0;
+    this.p33 = 0;
+    this.p34 = 0;
+  }
+
+  process(inputs, outputs, parameters) {
+    const input = inputs[0];
+    const output = outputs[0];
+
+    const hasInput = !(input[0] === undefined);
+    if (this.started && !hasInput) {
+      return false;
+    }
+    this.started = hasInput;
+
+    const resonance = parameters.q[0];
+    let cutoff = parameters.cutoff[0];
+    cutoff = (cutoff * 2 * _PI) / sampleRate;
+    cutoff = cutoff > 1 ? 1 : cutoff;
+
+    const k = resonance * 4;
+
+    for (let n = 0; n < blockSize; n++) {
+      for (let i = 0; i < input.length; i++) {
+        const out = this.p3 * 0.360891 + this.p32 * 0.41729 + this.p33 * 0.177896 + this.p34 * 0.0439725;
+
+        this.p34 = this.p33;
+        this.p33 = this.p32;
+        this.p32 = this.p3;
+
+        this.p0 += (fast_tanh(input[i][n] - k * out) - fast_tanh(this.p0)) * cutoff;
+        this.p1 += (fast_tanh(this.p0) - fast_tanh(this.p1)) * cutoff;
+        this.p2 += (fast_tanh(this.p1) - fast_tanh(this.p2)) * cutoff;
+        this.p3 += (fast_tanh(this.p2) - fast_tanh(this.p3)) * cutoff;
+
+        output[i][n] = out;
+      }
+    }
+    return true;
+  }
+}
+registerProcessor('ladder-processor', LadderProcessor);
+
 class DistortProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
     return [
