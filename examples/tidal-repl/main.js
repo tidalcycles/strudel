@@ -1,9 +1,11 @@
-import { run, parse } from 'hs2js';
+import { run, parse, loadParser } from 'hs2js';
 import { initStrudel, reify, late, samples, stack } from '@strudel/web';
 
 initStrudel({
   prebake: () => samples('github:tidalcycles/dirt-samples'),
 });
+
+const ready = loadParser();
 
 const textarea = document.getElementById('code');
 if (window.location.hash) {
@@ -50,8 +52,9 @@ const ops = getInfixOperators();
 
 async function update() {
   let result, tree;
+  await ready;
   try {
-    tree = await parse(textarea.value);
+    tree = parse(textarea.value);
   } catch (err) {
     console.warn('parse error');
     console.error(err);

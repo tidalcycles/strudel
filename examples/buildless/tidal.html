@@ -8,12 +8,13 @@
   <body style="margin: 0; padding: 0">
     <textarea id="code" style="width: 100%; height: 200px"></textarea>
     <pre id="result"></pre>
-    <script src="https://unpkg.com/hs2js@latest"></script>
-    <script src="https://unpkg.com/@strudel/web@latest"></script>
+    <script src="https://unpkg.com/hs2js@0.0.8"></script>
+    <script src="https://unpkg.com/@strudel/web@1.0.3"></script>
     <script>
       const { initStrudel } = strudel;
-      const { run, parse, setBase } = hs2js;
+      const { run, parse, setBase, loadParser } = hs2js;
       setBase('https://unpkg.com/hs2js@0.0.4/dist/');
+      const ready = loadParser();
       initStrudel({
         prebake: () => samples('github:tidalcycles/dirt-samples'),
       });
@@ -63,8 +64,9 @@
 
       async function update() {
         let result, tree;
+        await ready;
         try {
-          tree = await parse(textarea.value);
+          tree = parse(textarea.value);
         } catch (err) {
           console.warn('parse error');
           console.error(err);
