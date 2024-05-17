@@ -49,10 +49,10 @@ export const registerSamplesFromDB = (config = userSamplesDBConfig, onComplete =
         });
 
       sounds.forEach((soundPaths, key) => {
-        const value = Array.from(soundPaths);
-        registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
+        const bank = Array.from(soundPaths);
+        registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, bank), {
           type: 'sample',
-          samples: value,
+          samples: bank,
           baseUrl: undefined,
           prebake: false,
           tag: undefined,

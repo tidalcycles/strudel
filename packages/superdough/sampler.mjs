@@ -24,28 +24,28 @@ function humanFileSize(bytes, si) {
 
 // deduces relevant info for sample loading from hap.value and sample definition
 // it encapsulates the core sampler logic into a pure and synchronous function
-// hapValue: Hap.value, samples: sample definition for sound "s" (values in strudel.json format)
-export function getSampleInfo(hapValue, samples) {
+// hapValue: Hap.value, bank: sample bank definition for sound "s" (values in strudel.json format)
+export function getSampleInfo(hapValue, bank) {
   const { s, n = 0, speed = 1.0 } = hapValue;
   let midi = valueToMidi(hapValue, 36);
   let transpose = midi - 36; // C3 is middle C;
   let sampleUrl;
   let index = 0;
-  if (Array.isArray(samples)) {
-    index = getSoundIndex(n, samples.length);
-    sampleUrl = samples[index];
+  if (Array.isArray(bank)) {
+    index = getSoundIndex(n, bank.length);
+    sampleUrl = bank[index];
   } else {
     const midiDiff = (noteA) => noteToMidi(noteA) - midi;
     // object format will expect keys as notes
-    const closest = Object.keys(samples)
+    const closest = Object.keys(bank)
       .filter((k) => !k.startsWith('_'))
       .reduce(
         (closest, key, j) => (!closest || Math.abs(midiDiff(key)) < Math.abs(midiDiff(closest)) ? key : closest),
         null,
       );
     transpose = -midiDiff(closest); // semitones to repitch
-    index = getSoundIndex(n, samples[closest].length);
-    sampleUrl = samples[closest][index];
+    index = getSoundIndex(n, bank[closest].length);
+    sampleUrl = bank[closest][index];
   }
   const label = `${s}:${index}`;
   let playbackRate = Math.abs(speed) * Math.pow(2, transpose / 12);
@@ -53,8 +53,8 @@ export function getSampleInfo(hapValue, samples) {
 }
 
 // takes hapValue and returns buffer + playbackRate.
-export const getSampleBuffer = async (hapValue, samples, resolveUrl) => {
-  let { sampleUrl, label, playbackRate } = getSampleInfo(hapValue, samples);
+export const getSampleBuffer = async (hapValue, bank, resolveUrl) => {
+  let { sampleUrl, label, playbackRate } = getSampleInfo(hapValue, bank);
   if (resolveUrl) {
     sampleUrl = await resolveUrl(sampleUrl);
   }
@@ -68,8 +68,8 @@ export const getSampleBuffer = async (hapValue, samples, resolveUrl) => {
 };
 
 // creates playback ready AudioBufferSourceNode from hapValue
-export const getSampleBufferSource = async (hapValue, samples, resolveUrl) => {
-  let { buffer, playbackRate } = await getSampleBuffer(hapValue, samples, resolveUrl);
+export const getSampleBufferSource = async (hapValue, bank, resolveUrl) => {
+  let { buffer, playbackRate } = await getSampleBuffer(hapValue, bank, resolveUrl);
   if (hapValue.speed < 0) {
     // should this be cached?
     buffer = reverseBuffer(buffer);
@@ -264,10 +264,10 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
   const { prebake, tag } = options;
   processSampleMap(
     sampleMap,
-    (key, value) =>
-      registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
+    (key, bank) =>
+      registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, bank), {
         type: 'sample',
-        samples: value,
+        samples: bank,
         baseUrl,
         prebake,
         tag,
@@ -278,7 +278,7 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
 
 const cutGroups = [];
 
-export async function onTriggerSample(t, value, onended, samples, resolveUrl) {
+export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   let {
     s,
     nudge = 0, // TODO: is this in seconds?
@@ -300,7 +300,7 @@ export async function onTriggerSample(t, value, onended, samples, resolveUrl) {
   // destructure adsr here, because the default should be different for synths and samples
   let [attack, decay, sustain, release] = getADSRValues([value.attack, value.decay, value.sustain, value.release]);
 
-  const { bufferSource, sliceDuration, offset } = await getSampleBufferSource(value, samples, resolveUrl);
+  const { bufferSource, sliceDuration, offset } = await getSampleBufferSource(value, bank, resolveUrl);
 
   // asny stuff above took too long?
   if (ac.currentTime > t) {
