@@ -395,6 +395,8 @@ export const superdough = async (value, t, hapDuration) => {
   chain.push(gainNode(gain));
 
   if (cutoff !== undefined) {
+    // chain.push(getWorklet(ac, 'ladder-processor', { frequency: cutoff, q: resonance, drive: 1 }));
+
     let lp = () =>
       createFilter(
         ac,
@@ -409,6 +411,7 @@ export const superdough = async (value, t, hapDuration) => {
         t,
         t + hapDuration,
         fanchor,
+        ftype,
       );
     chain.push(lp());
     if (ftype === '24db') {
@@ -470,8 +473,6 @@ export const superdough = async (value, t, hapDuration) => {
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
   shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape, postgain: shapevol }));
   distort !== undefined && chain.push(getWorklet(ac, 'distort-processor', { distort, postgain: distortvol }));
-
-  chain.push(getWorklet(ac, 'ladder-processor', { cutoff: 500, q: 1 }));
 
   compressorThreshold !== undefined &&
     chain.push(

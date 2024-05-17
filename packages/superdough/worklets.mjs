@@ -115,8 +115,9 @@ const _PI = 3.14159265359;
 class LadderProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
     return [
-      { name: 'cutoff', defaultValue: 500 },
+      { name: 'frequency', defaultValue: 500 },
       { name: 'q', defaultValue: 1 },
+      { name: 'drive', defaultValue: 1 },
     ];
   }
 
@@ -143,11 +144,13 @@ class LadderProcessor extends AudioWorkletProcessor {
     this.started = hasInput;
 
     const resonance = parameters.q[0];
-    let cutoff = parameters.cutoff[0];
+    const drive = parameters.drive[0] * 2;
+    let cutoff = parameters.frequency[0];
     cutoff = (cutoff * 2 * _PI) / sampleRate;
     cutoff = cutoff > 1 ? 1 : cutoff;
 
     const k = resonance * 4;
+    const makeupgain = 1 / drive;
 
     for (let n = 0; n < blockSize; n++) {
       for (let i = 0; i < input.length; i++) {
@@ -157,12 +160,12 @@ class LadderProcessor extends AudioWorkletProcessor {
         this.p33 = this.p32;
         this.p32 = this.p3;
 
-        this.p0 += (fast_tanh(input[i][n] - k * out) - fast_tanh(this.p0)) * cutoff;
+        this.p0 += (fast_tanh(input[i][n] * drive - k * out) - fast_tanh(this.p0)) * cutoff;
         this.p1 += (fast_tanh(this.p0) - fast_tanh(this.p1)) * cutoff;
         this.p2 += (fast_tanh(this.p1) - fast_tanh(this.p2)) * cutoff;
         this.p3 += (fast_tanh(this.p2) - fast_tanh(this.p3)) * cutoff;
 
-        output[i][n] = out;
+        output[i][n] = out * makeupgain;
       }
     }
     return true;

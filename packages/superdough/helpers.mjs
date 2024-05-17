@@ -103,14 +103,22 @@ export const getADSRValues = (params, curve = 'linear', defaultValues) => {
   return [Math.max(a ?? 0, envmin), Math.max(d ?? 0, envmin), Math.min(sustain, envmax), Math.max(r ?? 0, releaseMin)];
 };
 
-export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor) {
+export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor, model) {
   const curve = 'exponential';
   const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], curve, [0.005, 0.14, 0, 0.1]);
-  const filter = context.createBiquadFilter();
+  let filter;
+  let frequencyParam;
+  if (model === 'ladder') {
+    filter = getWorklet(context, 'ladder-processor', { frequency, q: Q, drive: 1 });
+    frequencyParam = filter.parameters.get('frequency');
+  } else {
+    filter = context.createBiquadFilter();
+    filter.type = type;
+    filter.Q.value = Q;
+    filter.frequency.value = frequency;
+    frequencyParam = filter.frequency;
+  }
 
-  filter.type = type;
-  filter.Q.value = Q;
-  filter.frequency.value = frequency;
   // envelope is active when any of these values is set
   const hasEnvelope = att ?? dec ?? sus ?? rel ?? fenv;
   // Apply ADSR to filter frequency
@@ -122,7 +130,7 @@ export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fe
     let min = clamp(2 ** -offset * frequency, 0, 20000);
     let max = clamp(2 ** (fenvAbs - offset) * frequency, 0, 20000);
     if (fenv < 0) [min, max] = [max, min];
-    getParamADSR(filter.frequency, attack, decay, sustain, release, min, max, start, end, curve);
+    getParamADSR(frequencyParam, attack, decay, sustain, release, min, max, start, end, curve);
     return filter;
   }
   return filter;
