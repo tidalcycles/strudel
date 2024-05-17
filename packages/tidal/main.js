@@ -1,6 +1,5 @@
-import { run } from './hs2js.mjs';
+import { run, parse } from 'hs2js';
 import { renderGraph } from './graph.mjs';
-import { parse } from './parser.mjs';
 import { initStrudel, reify, late, samples, stack } from '@strudel/web';
 initStrudel({
   prebake: () => samples('github:tidalcycles/dirt-samples'),

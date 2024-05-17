@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "postinstall": "cp node_modules/web-tree-sitter/tree-sitter.wasm public && npm run build:parser",
-    "build:parser": "tree-sitter build-wasm node_modules/tree-sitter-haskell && mv tree-sitter-haskell.wasm public"
+    "postinstall": "cp node_modules/hs2js/dist/tree-sitter.wasm public && cp node_modules/hs2js/dist/tree-sitter-haskell.wasm public"
   },
   "repository": {
     "type": "git",
@@ -30,13 +29,10 @@
   "dependencies": {
     "@hpcc-js/wasm": "^2.15.3",
     "jgf-dot": "^1.1.1",
-    "web-tree-sitter": "^0.22.6",
-    "tree-sitter-haskell": "^0.21.0",
-    "@strudel/web": "workspace:*"
+    "@strudel/web": "workspace:*",
+    "hs2js": "workspace:*"
   },
   "devDependencies": {
-    "tree-sitter": "^0.21.1",
-    "tree-sitter-cli": "^0.20.8",
     "vite": "^5.0.8"
   }
 }

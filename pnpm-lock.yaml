@@ -251,6 +251,19 @@ importers:
 
   packages/embed: {}
 
+  packages/hs2js:
+    dependencies:
+      web-tree-sitter:
+        specifier: ^0.20.8
+        version: 0.20.8
+    devDependencies:
+      tree-sitter-haskell:
+        specifier: ^0.21.0
+        version: 0.21.0(tree-sitter@0.21.1)
+      vite:
+        specifier: ^5.0.10
+        version: 5.2.2(@types/node@20.10.6)
+
   packages/hydra:
     dependencies:
       '@strudel/core':
@@ -417,22 +430,13 @@ importers:
       '@strudel/web':
         specifier: workspace:*
         version: link:../web
+      hs2js:
+        specifier: workspace:*
+        version: link:../hs2js
       jgf-dot:
         specifier: ^1.1.1
         version: 1.1.1
-      tree-sitter-haskell:
-        specifier: ^0.21.0
-        version: 0.21.0(tree-sitter@0.21.1)
-      web-tree-sitter:
-        specifier: ^0.22.6
-        version: 0.22.6
     devDependencies:
-      tree-sitter:
-        specifier: ^0.21.1
-        version: 0.21.1
-      tree-sitter-cli:
-        specifier: ^0.20.8
-        version: 0.20.8
       vite:
         specifier: ^5.0.8
         version: 5.2.2(@types/node@20.10.6)
@@ -10730,6 +10734,7 @@ packages:
   /node-addon-api@8.0.0:
     resolution: {integrity: sha512-ipO7rsHEBqa9STO5C5T10fj732ml+5kLN1cAG8/jdHd56ldQeGj3Q7+scUS+VHK/qy1zLEwC4wMK5+yM0btPvw==}
     engines: {node: ^18 || ^20 || >= 21}
+    dev: true
 
   /node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
@@ -10777,6 +10782,7 @@ packages:
   /node-gyp-build@4.8.1:
     resolution: {integrity: sha512-OSs33Z9yWr148JZcbZd5WiAXhh/n9z8TxQcdMhIOlpN9AhWpLfvVFO73+m77bBABQMaY9XSvIa+qk0jlI7Gcaw==}
     hasBin: true
+    dev: true
 
   /node-gyp@10.0.1:
     resolution: {integrity: sha512-gg3/bHehQfZivQVfqIyy8wTdSymF9yTyP4CJifK73imyNMU8AIGQE2pUa7dNWfmMeG9cDVF2eehiRMv0LC1iAg==}
@@ -13507,12 +13513,6 @@ packages:
       punycode: 2.3.1
     dev: true
 
-  /tree-sitter-cli@0.20.8:
-    resolution: {integrity: sha512-XjTcS3wdTy/2cc/ptMLc/WRyOLECRYcMTrSWyhZnj1oGSOWbHLTklgsgRICU3cPfb0vy+oZCC33M43u6R1HSCA==}
-    hasBin: true
-    requiresBuild: true
-    dev: true
-
   /tree-sitter-haskell@0.21.0(tree-sitter@0.21.1):
     resolution: {integrity: sha512-b2RLegPHuYPh7nJ3YKWgkWnFYxmYlQDE8TDJuNH+iuNuBcCMYyaA9JlJlMHfCvf7DmJNPtqqbO9Kh9NXEmbatQ==}
     requiresBuild: true
@@ -13526,7 +13526,7 @@ packages:
       node-addon-api: 8.0.0
       node-gyp-build: 4.8.1
       tree-sitter: 0.21.1
-    dev: false
+    dev: true
 
   /tree-sitter@0.21.1:
     resolution: {integrity: sha512-7dxoA6kYvtgWw80265MyqJlkRl4yawIjO7S5MigytjELkX43fV2WsAXzsNfO7sBpPPCF5Gp0+XzHk0DwLCq3xQ==}
@@ -13534,6 +13534,7 @@ packages:
     dependencies:
       node-addon-api: 8.0.0
       node-gyp-build: 4.8.1
+    dev: true
 
   /trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
@@ -14331,10 +14332,6 @@ packages:
 
   /web-tree-sitter@0.20.8:
     resolution: {integrity: sha512-weOVgZ3aAARgdnb220GqYuh7+rZU0Ka9k9yfKtGAzEYMa6GgiCzW9JjQRJyCJakvibQW+dfjJdihjInKuuCAUQ==}
-    dev: false
-
-  /web-tree-sitter@0.22.6:
-    resolution: {integrity: sha512-hS87TH71Zd6mGAmYCvlgxeGDjqd9GTeqXNqTT+u0Gs51uIozNIaaq/kUAbV/Zf56jb2ZOyG8BxZs2GG9wbLi6Q==}
     dev: false
 
   /webidl-conversions@3.0.1:
