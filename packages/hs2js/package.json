@@ -1,6 +1,6 @@
 {
   "name": "hs2js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Experimental Haskell in JavaScript interpreter",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
