@@ -52,6 +52,9 @@ function curry(patterns, body, scope, ops) {
 export function run(node, scope, ops = {}) {
   let runInScope = (node, scp = scope) => run(node, scp, ops);
   //console.log("node", node.type, node.text);
+  if (ops[node.type]) {
+    return ops[node.type](node);
+  }
   switch (node.type) {
     case 'ERROR':
       throw new Error(`invalid syntax: "${node.text}"`);
