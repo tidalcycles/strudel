@@ -1,5 +1,5 @@
 import { reify } from '@strudel/core';
-import { loadParser, run, parse } from 'hs2js';
+import { loadParser, evaluate } from 'hs2js';
 
 function getInfixOperators() {
   let operators = {
@@ -30,6 +30,7 @@ function getInfixOperators() {
   ops['<$>'] = (l, r) => reify(r).fmap(l).outerJoin(); // is this right?
   ops['string'] = (node) => {
     const str = node.text.slice(1, -1);
+    console.log('string node', node);
     return m(str, 1);
   };
   return ops;
@@ -47,10 +48,6 @@ export async function initTidal() {
   window.d7 = (pat) => pat.p('d7');
   window.d8 = (pat) => pat.p('d8');
   window.d9 = (pat) => pat.p('d9');
-  window.minicurry = (str) => (loc) => {
-    console.log('minicurry', str, loc);
-    return m(str, loc);
-  };
   return loadParser();
 }
 
@@ -58,50 +55,5 @@ export function tidal(code) {
   if (Array.isArray(code)) {
     code = code.join('');
   }
-  let ast = parse(code).rootNode;
-  // ast = transpile(ast);
-  console.log('ast', ast);
-  return run(ast, window, ops);
-}
-
-function edit(ast, options) {
-  if (!ast || ast.skip) {
-    return ast;
-  }
-  const { enter, leave } = options;
-  ast = enter?.(ast);
-  if (!ast.skip && ast.children) {
-    const children = ast.children.map((child) => edit(child, options));
-    ast = { type: ast.type, text: ast.text, children };
-  }
-  leave?.(ast);
-  return ast;
-}
-
-function transpile(ast) {
-  return edit(ast, {
-    enter: (node) => {
-      if (node.type === 'literal' && node.children[0].type === 'string') {
-        return miniWithLocation(node.text, 1);
-      }
-      return node;
-    },
-  });
-}
-
-function miniWithLocation(string, loc) {
-  return {
-    type: 'apply',
-    children: [
-      {
-        type: 'apply',
-        skip: true,
-        children: [
-          { type: 'variable', text: 'minicurry', children: [] },
-          { type: 'string', text: string, children: [] },
-        ],
-      },
-      { type: 'float', text: loc + '', children: [] },
-    ],
-  };
+  return evaluate(code, window, ops);
 }
