@@ -1,0 +1,8 @@
+<script src="https://unpkg.com/hs2js@0.0.3"></script>
+<script>
+  hs2js.setBase('https://unpkg.com/hs2js@0.0.3/dist/');
+  document.addEventListener('click', async () => {
+    window.log = (s) => console.log(s);
+    await hs2js.evaluate('log "hello from haskell!"');
+  });
+</script>

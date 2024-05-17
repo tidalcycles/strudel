@@ -657,6 +657,9 @@ importers:
       date-fns:
         specifier: ^3.2.0
         version: 3.2.0
+      hs2js:
+        specifier: ^0.0.2
+        version: 0.0.2
       nanoid:
         specifier: ^5.0.4
         version: 5.0.4
@@ -8543,6 +8546,12 @@ packages:
       lru-cache: 10.1.0
     dev: true
 
+  /hs2js@0.0.2:
+    resolution: {integrity: sha512-ABgqMkNP3aTDm+zi8nmyEKkqIeL74T921cDb9fVbqozDnHE9SzvED995aNJqZt+wY+1roTcN29zgsg3RWVSmBw==}
+    dependencies:
+      web-tree-sitter: 0.20.8
+    dev: false
+
   /html-escaper@3.0.3:
     resolution: {integrity: sha512-RuMffC89BOWQoY0WKGpIhn5gX3iI54O6nRA0yC124NYVtzjmFWBIiFd8M0x+ZdX0P9R4lADg1mgP8C7PxGOWuQ==}
 
@@ -14319,6 +14328,10 @@ packages:
     resolution: {integrity: sha512-e0MO3wdXWKrLbL0DgGnUV7WHVuw9OUvL4hjgnPkIeEvESk74gAITi5G606JtZPp39cd8HA9VQzCIvA49LpPN5Q==}
     engines: {node: '>= 8'}
     dev: true
+
+  /web-tree-sitter@0.20.8:
+    resolution: {integrity: sha512-weOVgZ3aAARgdnb220GqYuh7+rZU0Ka9k9yfKtGAzEYMa6GgiCzW9JjQRJyCJakvibQW+dfjJdihjInKuuCAUQ==}
+    dev: false
 
   /web-tree-sitter@0.22.6:
     resolution: {integrity: sha512-hS87TH71Zd6mGAmYCvlgxeGDjqd9GTeqXNqTT+u0Gs51uIozNIaaq/kUAbV/Zf56jb2ZOyG8BxZs2GG9wbLi6Q==}
