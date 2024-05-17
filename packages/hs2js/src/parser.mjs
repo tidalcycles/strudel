@@ -5,15 +5,18 @@ export function setBase(path) {
   base = path;
 }
 
+let isReady = false,
+  parser;
 async function _loadParser() {
   await Parser.init({
     locateFile(scriptName, scriptDirectory) {
       return `${base}${scriptName}`;
     },
   });
-  const parser = new Parser();
+  parser = new Parser();
   const Lang = await Parser.Language.load(`${base}tree-sitter-haskell.wasm`);
   parser.setLanguage(Lang);
+  isReady = true;
   return parser;
 }
 
@@ -25,8 +28,10 @@ export function loadParser() {
   return parserLoaded;
 }
 
-export async function parse(code) {
-  const parser = await loadParser();
+export function parse(code) {
+  if (!isReady) {
+    throw new Error('hs2js not ready. await loadParser before calling evaluate or parse functions');
+  }
   // for some reason, the parser doesn't like new lines..
   return parser.parse(code.replaceAll('\n\n', '~~~~').replaceAll('\n', '').replaceAll('~~~~', '\n'));
 }

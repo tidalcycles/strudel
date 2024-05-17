@@ -2,8 +2,12 @@
   "name": "hs2js",
   "version": "0.0.7",
   "description": "Experimental Haskell in JavaScript interpreter",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "src/index.mjs",
+  "type": "module",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
   "scripts": {
     "build-wasm": "tree-sitter build-wasm node_modules/tree-sitter-haskell && mv tree-sitter-haskell.wasm ./dist/ && cp node_modules/web-tree-sitter/tree-sitter.wasm ./dist/",
     "build": "vite build && npm run build-wasm",

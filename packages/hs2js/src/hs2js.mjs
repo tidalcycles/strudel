@@ -127,7 +127,7 @@ export function run(node, scope, ops = {}) {
   }
 }
 
-export async function evaluate(haskellCode, scope = globalThis, ops) {
-  const ast = await parse(haskellCode);
+export function evaluate(haskellCode, scope = globalThis, ops) {
+  const ast = parse(haskellCode);
   return run(ast.rootNode, scope, ops);
 }
