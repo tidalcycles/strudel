@@ -27,8 +27,6 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@hpcc-js/wasm": "^2.15.3",
-    "jgf-dot": "^1.1.1",
     "@strudel/web": "workspace:*",
     "hs2js": "workspace:*"
   },

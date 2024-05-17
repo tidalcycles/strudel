@@ -1,11 +1,8 @@
 import { run, parse } from 'hs2js';
-import { renderGraph } from './graph.mjs';
 import { initStrudel, reify, late, samples, stack } from '@strudel/web';
 initStrudel({
   prebake: () => samples('github:tidalcycles/dirt-samples'),
 });
-
-const graphContainer = document.getElementById('graph');
 
 const textarea = document.getElementById('code');
 if (window.location.hash) {
@@ -60,12 +57,6 @@ async function update() {
   }
   console.log('parsed tree');
   console.log(tree.rootNode.toString());
-  try {
-    renderGraph(tree, graphContainer);
-  } catch (err) {
-    console.warn('could not render graph');
-    console.error(err);
-  }
   try {
     let patterns = {};
     window.p = (name, pattern) => {
