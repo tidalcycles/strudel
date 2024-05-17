@@ -33,5 +33,5 @@ export function parse(code) {
     throw new Error('hs2js not ready. await loadParser before calling evaluate or parse functions');
   }
   // for some reason, the parser doesn't like new lines..
-  return parser.parse(code.replaceAll('\n\n', '~~~~').replaceAll('\n', '').replaceAll('~~~~', '\n'));
+  return parser.parse(code.replaceAll('\n\n', '~~~~').replaceAll('\n', ' ').replaceAll('~~~~', ' \n'));
 }
