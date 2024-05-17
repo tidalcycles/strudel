@@ -1,4 +1,4 @@
-import { reify } from '@strudel/core';
+import { reify, m } from '@strudel/core';
 import { loadParser, evaluate } from 'hs2js';
 
 function getInfixOperators() {
