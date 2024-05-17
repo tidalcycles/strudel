@@ -28,11 +28,6 @@ function getInfixOperators() {
   ops['~>'] = (l, r) => reify(l).late(reify(r));
   ops['<~'] = (l, r) => reify(l).early(reify(r));
   ops['<$>'] = (l, r) => reify(r).fmap(l).outerJoin(); // is this right?
-  ops['string'] = (node) => {
-    const str = node.text.slice(1, -1);
-    console.log('string node', node);
-    return m(str, 1);
-  };
   return ops;
 }
 const ops = getInfixOperators();
@@ -51,9 +46,30 @@ export async function initTidal() {
   return loadParser();
 }
 
-export function tidal(code) {
+// offset is expected to be passed in from transpiler
+/* 
+1. acorn parses JS to find location of tidal call
+2. haskell-tree-sitter calls "string" function with node (including location)
+3. m function sets locations for individual mini notation atom
+
+so the location for a mini notation atom is:
+
+js offset + hs offset + atom offset
+*/
+export function tidal(code, offset = 0) {
   if (Array.isArray(code)) {
     code = code.join('');
   }
-  return evaluate(code, window, ops);
+  return evaluate(code, window, {
+    ...ops,
+    string: (node) => {
+      // parses strings as mini notation and passes location
+      const str = node.text.slice(1, -1);
+      const col = node.startIndex + offset;
+      // problem: node.startIndex is wrong because hs2js parser removes newlines
+      // for some reason, the parser doesn't like newlines
+      // this means highlighting only works in the first line for now
+      return m(str, col);
+    },
+  });
 }

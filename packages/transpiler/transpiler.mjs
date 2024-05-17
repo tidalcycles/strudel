@@ -26,6 +26,16 @@ export function transpiler(input, options = {}) {
 
   walk(ast, {
     enter(node, parent /* , prop, index */) {
+      if (isTidalTeplateLiteral(node)) {
+        const raw = node.quasi.quasis[0].value.raw;
+        const offset = node.quasi.start + 1;
+        if (emitMiniLocations) {
+          const stringLocs = collectHaskellMiniLocations(raw, offset);
+          miniLocations = miniLocations.concat(stringLocs);
+        }
+        this.skip();
+        return this.replace(tidalWithLocation(raw, offset));
+      }
       if (isBackTickString(node, parent)) {
         const { quasis } = node;
         const { raw } = quasis[0].value;
@@ -205,5 +215,48 @@ function labelToP(node) {
         },
       ],
     },
+  };
+}
+
+// tidal highlighting
+// this feels kind of stupid, when we also know the location inside the string op (tidal.mjs)
+// but maybe it's the only way
+
+function isTidalTeplateLiteral(node) {
+  return node.type === 'TaggedTemplateExpression' && node.tag.name === 'tidal';
+}
+
+function collectHaskellMiniLocations(haskellCode, offset) {
+  const stringLocations = haskellCode.split('').reduce((acc, char, i) => {
+    if (char !== '"') {
+      return acc;
+    }
+    if (!acc.length || acc[acc.length - 1].length > 1) {
+      acc.push([i + 1]);
+    } else {
+      acc[acc.length - 1].push(i);
+    }
+    return acc;
+  }, []);
+  return stringLocations
+    .map(([start, end]) => {
+      const miniString = haskellCode.slice(start, end);
+      return getLeafLocations(`"${miniString}"`, offset + start - 1);
+    })
+    .flat();
+}
+
+function tidalWithLocation(value, offset) {
+  return {
+    type: 'CallExpression',
+    callee: {
+      type: 'Identifier',
+      name: 'tidal',
+    },
+    arguments: [
+      { type: 'Literal', value },
+      { type: 'Literal', value: offset },
+    ],
+    optional: false,
   };
 }
