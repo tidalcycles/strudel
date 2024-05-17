@@ -10,6 +10,7 @@ export default function ImportSoundsButton({ onComplete }) {
       return;
     }
     setIsUploading(true);
+
     await uploadSamplesToDB(userSamplesDBConfig, fileUploadRef.current.files).then(() => {
       registerSamplesFromDB(userSamplesDBConfig, () => {
         onComplete();
@@ -32,7 +33,7 @@ export default function ImportSoundsButton({ onComplete }) {
         directory=""
         webkitdirectory=""
         multiple
-        accept="audio/*"
+        accept="audio/*, .wav, .mp3, .m4a, .flac"
         onChange={() => {
           onChange();
         }}
