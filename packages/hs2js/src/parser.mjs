@@ -1,6 +1,6 @@
-import Parser from "web-tree-sitter";
+import Parser from 'web-tree-sitter';
 
-let base = "/";
+let base = '/';
 export function setBase(path) {
   base = path;
 }
@@ -28,10 +28,5 @@ export function loadParser() {
 export async function parse(code) {
   const parser = await loadParser();
   // for some reason, the parser doesn't like new lines..
-  return parser.parse(
-    code
-      .replaceAll("\n\n", "~~~~")
-      .replaceAll("\n", "")
-      .replaceAll("~~~~", "\n")
-  );
+  return parser.parse(code.replaceAll('\n\n', '~~~~').replaceAll('\n', '').replaceAll('~~~~', '\n'));
 }

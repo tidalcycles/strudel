@@ -22,4 +22,4 @@ vite.config.js
 reverbGen.mjs
 hydra.mjs
 jsdoc-synonyms.js
-packages/tidal/hs2js.mjs
+packages/hs2js/src/hs2js.mjs
