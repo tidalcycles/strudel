@@ -15,10 +15,11 @@ You can load the library directly from a script tag via unpkg:
 <button id="hello">hello</button>
 <script>
   hs2js.setBase('https://unpkg.com/hs2js@0.0.3/dist/');
-  hs2js.loadParser();
-  document.getElementById('hello').addEventListener('click', () => {
-    hs2js.evaluate('alert "hello from haskell!"');
-  });
+  hs2js.loadParser().then(()=>{
+    document.getElementById('hello').addEventListener('click', () => {
+      hs2js.evaluate('alert "hello from haskell!"');
+    });
+  })
 </script>
 ```
 
@@ -66,11 +67,11 @@ Example:
 
 ```js
 // simple
-hs2js.evaluate(`2 + 2`).then(console.log) // log 4
+hs2js.evaluate(`2 + 2`) // = 4
 // passing variables via scope:
-hs2js.evaluate(`a + b`, { a: 1, b: 2 }).then(console.log); // logs 3
+hs2js.evaluate(`a + b`, { a: 1, b: 2 }) // = 3
 // custom operator
-hs2js.evaluate(`2 |* 3`, {}, { '|*': (l, r) => l * r }).then(console.log); // logs 6
+hs2js.evaluate(`2 |* 3`, {}, { '|*': (l, r) => l * r }) // = 6
 ```
 
 ### parse
@@ -80,7 +81,8 @@ hs2js.evaluate(`2 |* 3`, {}, { '|*': (l, r) => l * r }).then(console.log); // lo
 Example:
 
 ```js
-hs2js.parse(`2 + 2`).then(ast=>console.log(ast.toString()))
+const ast = hs2js.parse(`2 + 2`)
+console.log(ast.toString())
 // (haskell declarations: (declarations (top_splice (apply function: (variable) argument: (literal (integer))))))
 ```
 
@@ -95,21 +97,18 @@ Evaluates `rootNode` of haskell AST (used by evaluate internally).
 Example:
 
 ```js
-async function main() {
-  const ast = await hs2js.parse(`2 + 3`);
-  const res = hs2js.run(ast.rootNode);
-  console.log(res);
-}
-main(); // logs 5
+const ast = hs2js.parse(`2 + 3`);
+const res = hs2js.run(ast.rootNode);
+console.log(res); // = 5
 ```
 
 ### loadParser
 
 Loads and caches the parser by fetching `tree-sitter.wasm` and `tree-sitter-haskell.wasm`.
-This function is called internally by `parse` but calling it yourself might make the parser be ready faster, depending on your application.
+Make sure to call and await this function before calling `parse` or `evaluate`.
 
 ```js
-hs2js.loadParser().then(() => console.log('parser loaded'))
+hs2js.loadParser().then(() => hs2js.evaluate('alert "ready"'))
 ```
 
 ### setBase
