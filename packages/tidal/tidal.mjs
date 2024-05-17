@@ -1,4 +1,5 @@
 import { reify } from '@strudel/core';
+import { miniAllStrings } from '@strudel/mini';
 import { evaluate, loadParser } from 'hs2js';
 
 function getInfixOperators() {
@@ -33,9 +34,23 @@ function getInfixOperators() {
 const ops = getInfixOperators();
 
 export async function initTidal() {
+  miniAllStrings(); // TODO: get rid of this and implement custom string parser in hs2js
+  // TODO: implement this in regular land
+  window.d1 = (pat) => pat.p('d1');
+  window.d2 = (pat) => pat.p('d2');
+  window.d3 = (pat) => pat.p('d3');
+  window.d4 = (pat) => pat.p('d4');
+  window.d5 = (pat) => pat.p('d5');
+  window.d6 = (pat) => pat.p('d6');
+  window.d7 = (pat) => pat.p('d7');
+  window.d8 = (pat) => pat.p('d8');
+  window.d9 = (pat) => pat.p('d9');
   return loadParser();
 }
 
 export function tidal(code) {
+  if (Array.isArray(code)) {
+    code = code.join('');
+  }
   return evaluate(code, window, ops);
 }
