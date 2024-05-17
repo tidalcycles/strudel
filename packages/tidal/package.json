@@ -19,7 +19,8 @@
   "homepage": "https://github.com/tidalcycles/strudel/tree/main/packages/hs2js",
   "dependencies": {
     "hs2js": "workspace:*",
-    "@strudel/core": "workspace:*"
+    "@strudel/core": "workspace:*",
+    "@strudel/mini": "workspace:*"
   },
   "devDependencies": {
     "vite": "^5.0.10"

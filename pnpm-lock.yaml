@@ -440,6 +440,9 @@ importers:
       '@strudel/core':
         specifier: workspace:*
         version: link:../core
+      '@strudel/mini':
+        specifier: workspace:*
+        version: link:../mini
       hs2js:
         specifier: workspace:*
         version: link:../hs2js
