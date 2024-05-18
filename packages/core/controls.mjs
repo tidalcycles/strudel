@@ -757,10 +757,10 @@ export const { bprelease, bpr } = registerControl('bprelease', 'bpr');
  * @name ftype
  * @param {number | Pattern} type 12db (default) or 24db
  * @example
- * note("c2 e2 f2 g2")
+ * note("c f g g a c d4").fast(2)
  * .sound('sawtooth')
- * .lpf(500)
- * .bpenv(4)
+ * .lpf(200).fanchor(0)
+ * .lpenv(3).lpq(1)
  * .ftype("<ladder 12db 24db>")
  */
 export const { ftype } = registerControl('ftype');
