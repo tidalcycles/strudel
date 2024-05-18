@@ -14,6 +14,15 @@ const getSlope = (y1, y2, x1, x2) => {
   }
   return (y2 - y1) / (x2 - x1);
 };
+
+export function getWorklet(ac, processor, params, config) {
+  const node = new AudioWorkletNode(ac, processor, config);
+  Object.entries(params).forEach(([key, value]) => {
+    node.parameters.get(key).value = value;
+  });
+  return node;
+}
+
 export const getParamADSR = (
   param,
   attack,

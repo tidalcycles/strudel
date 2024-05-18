@@ -146,7 +146,9 @@ class LadderProcessor extends AudioWorkletProcessor {
 
     const resonance = parameters.q[0];
     const drive = clamp(Math.exp(parameters.drive[0]), 0.1, 2000);
+
     let cutoff = parameters.frequency[0];
+    // eslint-disable-next-line no-undef
     cutoff = (cutoff * 2 * _PI) / sampleRate;
     cutoff = cutoff > 1 ? 1 : cutoff;
 

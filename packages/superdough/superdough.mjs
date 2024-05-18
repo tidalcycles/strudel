@@ -9,7 +9,7 @@ import './reverb.mjs';
 import './vowel.mjs';
 import { clamp, nanFallback } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
-import { createFilter, gainNode, getCompressor } from './helpers.mjs';
+import { createFilter, gainNode, getCompressor, getWorklet } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
@@ -48,14 +48,6 @@ function loadWorklets() {
   }
   workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
   return workletsLoading;
-}
-
-export function getWorklet(ac, processor, params, config) {
-  const node = new AudioWorkletNode(ac, processor, config);
-  Object.entries(params).forEach(([key, value]) => {
-    node.parameters.get(key).value = value;
-  });
-  return node;
 }
 
 // this function should be called on first user interaction (to avoid console warning)
