@@ -103,13 +103,13 @@ export const getADSRValues = (params, curve = 'linear', defaultValues) => {
   return [Math.max(a ?? 0, envmin), Math.max(d ?? 0, envmin), Math.min(sustain, envmax), Math.max(r ?? 0, releaseMin)];
 };
 
-export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor, model) {
+export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor, model, drive) {
   const curve = 'exponential';
   const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], curve, [0.005, 0.14, 0, 0.1]);
   let filter;
   let frequencyParam;
   if (model === 'ladder') {
-    filter = getWorklet(context, 'ladder-processor', { frequency, q: Q, drive: 1 });
+    filter = getWorklet(context, 'ladder-processor', { frequency, q: Q, drive });
     frequencyParam = filter.parameters.get('frequency');
   } else {
     filter = context.createBiquadFilter();

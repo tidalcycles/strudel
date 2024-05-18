@@ -290,6 +290,7 @@ export const superdough = async (value, t, hapDuration) => {
     // filters
     ftype = '12db',
     fanchor = 0.5,
+    drive = 0.69,
     // low pass
     cutoff,
     lpenv,
@@ -297,7 +298,7 @@ export const superdough = async (value, t, hapDuration) => {
     lpdecay,
     lpsustain,
     lprelease,
-    resonance = 1,
+    resonance = 0.5,
     // high pass
     hpenv,
     hcutoff,
@@ -412,6 +413,7 @@ export const superdough = async (value, t, hapDuration) => {
         t + hapDuration,
         fanchor,
         ftype,
+        drive,
       );
     chain.push(lp());
     if (ftype === '24db') {

@@ -431,6 +431,17 @@ export const { crush } = registerControl('crush');
 export const { coarse } = registerControl('coarse');
 
 /**
+ * filter overdrive for supported filter types
+ *
+ * @name drive
+ * @param {number | Pattern} amount
+ * @example
+ * note("{f g g c d a a#}%16".sub(17)).s("supersaw").lpenv(8).lpf(150).lpq(.8).ftype('ladder').drive("<.5 4>")
+ *
+ */
+export const { drive } = registerControl('drive');
+
+/**
  * Allows you to set the output channels on the interface
  *
  * @name channels
@@ -750,7 +761,7 @@ export const { bprelease, bpr } = registerControl('bprelease', 'bpr');
  * .sound('sawtooth')
  * .lpf(500)
  * .bpenv(4)
- * .ftype("12db 24db")
+ * .ftype("<ladder 12db 24db>")
  */
 export const { ftype } = registerControl('ftype');
 export const { fanchor } = registerControl('fanchor');
