@@ -227,18 +227,19 @@ function isTidalTeplateLiteral(node) {
 }
 
 function collectHaskellMiniLocations(haskellCode, offset) {
-  const stringLocations = haskellCode.split('').reduce((acc, char, i) => {
-    if (char !== '"') {
+  return haskellCode
+    .split('')
+    .reduce((acc, char, i) => {
+      if (char !== '"') {
+        return acc;
+      }
+      if (!acc.length || acc[acc.length - 1].length > 1) {
+        acc.push([i + 1]);
+      } else {
+        acc[acc.length - 1].push(i);
+      }
       return acc;
-    }
-    if (!acc.length || acc[acc.length - 1].length > 1) {
-      acc.push([i + 1]);
-    } else {
-      acc[acc.length - 1].push(i);
-    }
-    return acc;
-  }, []);
-  return stringLocations
+    }, [])
     .map(([start, end]) => {
       const miniString = haskellCode.slice(start, end);
       return getLeafLocations(`"${miniString}"`, offset + start - 1);
