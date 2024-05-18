@@ -30,7 +30,7 @@ async function getFilesInDirectory(directory) {
       }
       try {
         const subFiles = (await getFilesInDirectory(fullPath)).filter((f) =>
-          ['wav', 'mp3', 'ogg', 'aif'].includes(f.split('.').slice(-1)[0].toLowerCase()),
+          ['wav', 'mp3', 'ogg'].includes(f.split('.').slice(-1)[0].toLowerCase()),
         );
         files = files.concat(subFiles);
         LOG && console.log(`${dirent.name} (${subFiles.length})`);
