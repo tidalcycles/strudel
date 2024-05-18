@@ -67,9 +67,6 @@ export function tidal(code, offset = 0) {
       // parses strings as mini notation and passes location
       const str = node.text.slice(1, -1);
       const col = node.startIndex + offset;
-      // problem: node.startIndex is wrong because hs2js parser removes newlines
-      // for some reason, the parser doesn't like newlines
-      // this means highlighting only works in the first line for now
       return m(str, col);
     },
   });
