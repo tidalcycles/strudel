@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felixroos/hs2js.git"
+    "url": "git+https://github.com/tidalcycles/strudel.git"
   },
   "keywords": [
     "haskell",
@@ -26,7 +26,7 @@
   "bugs": {
     "url": "https://github.com/tidalcycles/strudel/issues"
   },
-  "homepage": "https://github.com/tidalcycles/strudel/tree/main/packages/hs2js",
+  "homepage": "https://github.com/tidalcycles/strudel",
   "dependencies": {
     "web-tree-sitter": "^0.20.8"
   },
