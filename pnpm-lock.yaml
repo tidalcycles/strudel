@@ -675,7 +675,7 @@ importers:
         specifier: ^3.2.0
         version: 3.2.0
       hs2js:
-        specifier: workspace:*
+        specifier: 0.0.9
         version: link:../packages/hs2js
       nanoid:
         specifier: ^5.0.4
