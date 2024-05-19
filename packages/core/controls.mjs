@@ -753,7 +753,7 @@ export const { hprelease, hpr } = registerControl('hprelease', 'hpr');
  */
 export const { bprelease, bpr } = registerControl('bprelease', 'bpr');
 /**
- * Sets the filter type. The 24db filter is more aggressive. More types might be added in the future.
+ * Sets the filter type. The ladder filter is more aggressive. More types might be added in the future.
  * @name ftype
  * @param {number | Pattern} type 12db (0), ladder (1), or 24db (2)
  * @example
