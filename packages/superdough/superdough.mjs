@@ -178,10 +178,14 @@ function getPhaser(orbit, t, speed = 1, depth = 0.5, centerFrequency = 1000, swe
   return filterChain[filterChain.length - 1];
 }
 
+function getFilterType(ftype) {
+  ftype = ftype ?? 0;
+  const filterTypes = ['12db', 'ladder', '24db'];
+  return typeof ftype === 'number' ? filterTypes[Math.floor(_mod(ftype, filterTypes.length))] : ftype;
+}
+
 let reverbs = {};
-
 let hasChanged = (now, before) => now !== undefined && now !== before;
-
 function getReverb(orbit, duration, fade, lp, dim, ir) {
   // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
@@ -251,11 +255,6 @@ export function resetGlobalEffects() {
   analysers = {};
   analysersData = {};
 }
-const getFilterType = (ftype) => {
-  ftype = ftype ?? 0;
-  const filterTypes = ['12db', 'ladder', '24db'];
-  return typeof ftype === 'number' ? filterTypes[_mod(ftype, filterTypes.length)] : ftype;
-};
 
 export const superdough = async (value, t, hapDuration) => {
   const ac = getAudioContext();
