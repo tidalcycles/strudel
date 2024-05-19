@@ -51,7 +51,7 @@
     "astro": "^4.0.8",
     "claviature": "^0.1.0",
     "date-fns": "^3.2.0",
-    "hs2js": "0.0.9",
+    "hs2js": "0.0.8",
     "nanoid": "^5.0.4",
     "nanostores": "^0.9.5",
     "react": "^18.2.0",
