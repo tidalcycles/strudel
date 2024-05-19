@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
-import { clamp, nanFallback } from './util.mjs';
+import { clamp, nanFallback, _mod } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
 import { createFilter, gainNode, getCompressor, getWorklet } from './helpers.mjs';
 import { map } from 'nanostores';
@@ -251,6 +251,11 @@ export function resetGlobalEffects() {
   analysers = {};
   analysersData = {};
 }
+const getFilterType = (ftype) => {
+  ftype = ftype ?? 0;
+  const filterTypes = ['12db', 'ladder', '24db'];
+  return typeof ftype === 'number' ? filterTypes[_mod(ftype, filterTypes.length)] : ftype;
+};
 
 export const superdough = async (value, t, hapDuration) => {
   const ac = getAudioContext();
@@ -280,7 +285,7 @@ export const superdough = async (value, t, hapDuration) => {
     postgain = 1,
     density = 0.03,
     // filters
-    ftype = '12db',
+
     fanchor = 0.5,
     drive = 0.69,
     // low pass
@@ -387,9 +392,9 @@ export const superdough = async (value, t, hapDuration) => {
   // gain stage
   chain.push(gainNode(gain));
 
+  //filter
+  const ftype = getFilterType(value.ftype);
   if (cutoff !== undefined) {
-    // chain.push(getWorklet(ac, 'ladder-processor', { frequency: cutoff, q: resonance, drive: 1 }));
-
     let lp = () =>
       createFilter(
         ac,
