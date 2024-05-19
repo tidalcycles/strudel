@@ -757,6 +757,8 @@ export const { bprelease, bpr } = registerControl('bprelease', 'bpr');
  * @name ftype
  * @param {number | Pattern} type 12db (0), ladder (1), or 24db (2)
  * @example
+ * note("{f g g c d a a#}%8").s("sawtooth").lpenv(4).lpf(500).ftype("<0 1 2>").lpq(1)
+ * @example
  * note("c f g g a c d4").fast(2)
  * .sound('sawtooth')
  * .lpf(200).fanchor(0)
