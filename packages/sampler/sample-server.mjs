@@ -48,8 +48,9 @@ async function getBanks(directory) {
   // const directory = resolve(__dirname, '.');
   let files = await getFilesInDirectory(directory);
   let banks = {};
+  let separator = process.platform === 'win32' ? '\\' : '/';
   files = files.map((url) => {
-    const [bank] = url.split('/').slice(-2);
+    const [bank] = url.split(separator).slice(-2);
     banks[bank] = banks[bank] || [];
     url = url.replace(directory, '');
     banks[bank].push(url);
