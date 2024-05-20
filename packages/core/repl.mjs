@@ -54,10 +54,12 @@ export function repl({
   const scheduler =
     sync && typeof SharedWorker != 'undefined' ? new NeoCyclist(schedulerOptions) : new Cyclist(schedulerOptions);
   let pPatterns = {};
+  let anonymousIndex = 0;
   let allTransform;
 
   const hush = function () {
     pPatterns = {};
+    anonymousIndex = 0;
     allTransform = undefined;
     return silence;
   };
@@ -82,6 +84,15 @@ export function repl({
   // set pattern methods that use this repl via closure
   const injectPatternMethods = () => {
     Pattern.prototype.p = function (id) {
+      if (id.startsWith('_') || id.endsWith('_')) {
+        // allows muting a pattern x with x_ or _x
+        return silence;
+      }
+      if (id === '$') {
+        // allows adding anonymous patterns with $:
+        id = `$${anonymousIndex}`;
+        anonymousIndex++;
+      }
       pPatterns[id] = this;
       return this;
     };
@@ -156,6 +167,7 @@ export function repl({
       return pattern;
     } catch (err) {
       logger(`[eval] error: ${err.message}`, 'error');
+      console.error(err);
       updateState({ evalError: err, pending: false });
       onEvalError?.(err);
     }

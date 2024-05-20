@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "vitest run",
+    "bench": "vitest bench",
     "build": "vite build",
     "prepublishOnly": "pnpm build"
   },

@@ -140,6 +140,19 @@ importers:
         specifier: ^5.0.10
         version: 5.0.10
 
+  examples/tidal-repl:
+    dependencies:
+      '@strudel/web':
+        specifier: workspace:*
+        version: link:../../packages/web
+      hs2js:
+        specifier: workspace:*
+        version: link:../../packages/hs2js
+    devDependencies:
+      vite:
+        specifier: ^5.0.8
+        version: 5.2.2(@types/node@20.10.6)
+
   packages/codemirror:
     dependencies:
       '@codemirror/autocomplete':
@@ -250,6 +263,19 @@ importers:
         version: 5.0.11
 
   packages/embed: {}
+
+  packages/hs2js:
+    dependencies:
+      web-tree-sitter:
+        specifier: ^0.20.8
+        version: 0.20.8
+    devDependencies:
+      tree-sitter-haskell:
+        specifier: ^0.21.0
+        version: 0.21.0(tree-sitter@0.21.1)
+      vite:
+        specifier: ^5.0.10
+        version: 5.2.2(@types/node@20.10.6)
 
   packages/hydra:
     dependencies:
@@ -408,6 +434,22 @@ importers:
       vite:
         specifier: ^5.0.10
         version: 5.0.10
+
+  packages/tidal:
+    dependencies:
+      '@strudel/core':
+        specifier: workspace:*
+        version: link:../core
+      '@strudel/mini':
+        specifier: workspace:*
+        version: link:../mini
+      hs2js:
+        specifier: workspace:*
+        version: link:../hs2js
+    devDependencies:
+      vite:
+        specifier: ^5.0.10
+        version: 5.2.2(@types/node@20.10.6)
 
   packages/tonal:
     dependencies:
@@ -587,6 +629,9 @@ importers:
       '@strudel/soundfonts':
         specifier: workspace:*
         version: link:../packages/soundfonts
+      '@strudel/tidal':
+        specifier: workspace:*
+        version: link:../packages/tidal
       '@strudel/tonal':
         specifier: workspace:*
         version: link:../packages/tonal
@@ -629,6 +674,9 @@ importers:
       date-fns:
         specifier: ^3.2.0
         version: 3.2.0
+      hs2js:
+        specifier: 0.0.8
+        version: 0.0.8
       nanoid:
         specifier: ^5.0.4
         version: 5.0.4
@@ -8474,6 +8522,12 @@ packages:
       lru-cache: 10.1.0
     dev: true
 
+  /hs2js@0.0.8:
+    resolution: {integrity: sha512-wFSenhY2MB1ACuwaJq0QyDk6yZiYwha/yOgAa2scsLvqEJTdHY2KXhsy8uZw+G2oVxQGyXs0OPf5gXN7HkP9mA==}
+    dependencies:
+      web-tree-sitter: 0.20.8
+    dev: false
+
   /html-escaper@3.0.3:
     resolution: {integrity: sha512-RuMffC89BOWQoY0WKGpIhn5gX3iI54O6nRA0yC124NYVtzjmFWBIiFd8M0x+ZdX0P9R4lADg1mgP8C7PxGOWuQ==}
 
@@ -10637,6 +10691,11 @@ packages:
       semver: 7.5.4
     dev: true
 
+  /node-addon-api@8.0.0:
+    resolution: {integrity: sha512-ipO7rsHEBqa9STO5C5T10fj732ml+5kLN1cAG8/jdHd56ldQeGj3Q7+scUS+VHK/qy1zLEwC4wMK5+yM0btPvw==}
+    engines: {node: ^18 || ^20 || >= 21}
+    dev: true
+
   /node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
@@ -10679,6 +10738,11 @@ packages:
     resolution: {integrity: sha512-yqkmYrMbK1wPrfz7mgeYvA4tBperLg9FQ4S3Sau3nSAkpOA0x0zC8nQ1siBwozy1f4SE8vq2n1WKv99r+PCa1Q==}
     engines: {node: '>= 0.6.0'}
     dev: false
+
+  /node-gyp-build@4.8.1:
+    resolution: {integrity: sha512-OSs33Z9yWr148JZcbZd5WiAXhh/n9z8TxQcdMhIOlpN9AhWpLfvVFO73+m77bBABQMaY9XSvIa+qk0jlI7Gcaw==}
+    hasBin: true
+    dev: true
 
   /node-gyp@10.0.1:
     resolution: {integrity: sha512-gg3/bHehQfZivQVfqIyy8wTdSymF9yTyP4CJifK73imyNMU8AIGQE2pUa7dNWfmMeG9cDVF2eehiRMv0LC1iAg==}
@@ -13392,6 +13456,29 @@ packages:
       punycode: 2.3.1
     dev: true
 
+  /tree-sitter-haskell@0.21.0(tree-sitter@0.21.1):
+    resolution: {integrity: sha512-b2RLegPHuYPh7nJ3YKWgkWnFYxmYlQDE8TDJuNH+iuNuBcCMYyaA9JlJlMHfCvf7DmJNPtqqbO9Kh9NXEmbatQ==}
+    requiresBuild: true
+    peerDependencies:
+      tree-sitter: ^0.21.0
+      tree_sitter: '*'
+    peerDependenciesMeta:
+      tree_sitter:
+        optional: true
+    dependencies:
+      node-addon-api: 8.0.0
+      node-gyp-build: 4.8.1
+      tree-sitter: 0.21.1
+    dev: true
+
+  /tree-sitter@0.21.1:
+    resolution: {integrity: sha512-7dxoA6kYvtgWw80265MyqJlkRl4yawIjO7S5MigytjELkX43fV2WsAXzsNfO7sBpPPCF5Gp0+XzHk0DwLCq3xQ==}
+    requiresBuild: true
+    dependencies:
+      node-addon-api: 8.0.0
+      node-gyp-build: 4.8.1
+    dev: true
+
   /trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
 
@@ -14185,6 +14272,10 @@ packages:
     resolution: {integrity: sha512-e0MO3wdXWKrLbL0DgGnUV7WHVuw9OUvL4hjgnPkIeEvESk74gAITi5G606JtZPp39cd8HA9VQzCIvA49LpPN5Q==}
     engines: {node: '>= 8'}
     dev: true
+
+  /web-tree-sitter@0.20.8:
+    resolution: {integrity: sha512-weOVgZ3aAARgdnb220GqYuh7+rZU0Ka9k9yfKtGAzEYMa6GgiCzW9JjQRJyCJakvibQW+dfjJdihjInKuuCAUQ==}
+    dev: false
 
   /webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
