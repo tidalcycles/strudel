@@ -47,7 +47,7 @@ export function createParam(names) {
   return func;
 }
 
-function registerControl(names, ...aliases) {
+export function registerControl(names, ...aliases) {
   const name = Array.isArray(names) ? names[0] : names;
   let bag = {};
   bag[name] = createParam(names);
