@@ -13,6 +13,7 @@ import { createFilter, gainNode, getCompressor } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
+import { velocity } from '../core/controls.mjs';
 
 export const soundMap = map();
 
@@ -24,10 +25,37 @@ export function getSound(s) {
   return soundMap.get()[s];
 }
 
-const defaults = new Map([['fanchor', 0]]);
+const defaults = new Map([
+  ['s', 'triangle'],
+  ['gain', 0.8],
+  ['postgain', 1],
+  ['density', '.03'],
+  ['ftype', '12db'],
+  ['fanchor', 0],
+  ['resonance', 1],
+  ['hresonance', 1],
+  ['bandq', 1],
+  ['channels', [1, 2]],
+  ['phaserdepth', 0.75],
+  ['shapevol', 1],
+  ['distortvol', 1],
+  ['delay', 0],
+  ['delayfeedback', 0.5],
+  ['delaytime', 0.25],
+  ['orbit', 1],
+  ['i', 1],
+  ['velocity', 1],
+  ['fft', 8],
+]);
 
 export function setDefault(key, value) {
   defaults.set(key, value);
+}
+
+export function setDefaults(defaultsobj) {
+  Object.keys(defaultsobj).forEach((key) => {
+    setDefault(key, defaultsobj[key]);
+  });
 }
 
 export const resetLoadedSounds = () => soundMap.set({});
@@ -287,14 +315,14 @@ export const superdough = async (value, t, hapDuration) => {
   }
   // destructure
   let {
-    s = 'triangle',
+    s = defaults.get('s'),
     bank,
     source,
-    gain = 0.8,
-    postgain = 1,
-    density = 0.03,
+    gain = defaults.get('gain'),
+    postgain = defaults.get('postgain'),
+    density = defaults.get('density'),
     // filters
-    ftype = '12db',
+    ftype = defaults.get('ftype'),
     fanchor = defaults.get('fanchor'),
     // low pass
     cutoff,
@@ -303,7 +331,7 @@ export const superdough = async (value, t, hapDuration) => {
     lpdecay,
     lpsustain,
     lprelease,
-    resonance = 1,
+    resonance = defaults.get('resonance'),
     // high pass
     hpenv,
     hcutoff,
@@ -311,7 +339,7 @@ export const superdough = async (value, t, hapDuration) => {
     hpdecay,
     hpsustain,
     hprelease,
-    hresonance = 1,
+    hresonance = defaults.get('hresonance'),
     // band pass
     bpenv,
     bandf,
@@ -319,36 +347,36 @@ export const superdough = async (value, t, hapDuration) => {
     bpdecay,
     bpsustain,
     bprelease,
-    bandq = 1,
-    channels = [1, 2],
+    bandq = defaults.get('bandq'),
+    channels = defaults.get('channels'),
     //phaser
     phaser,
-    phaserdepth = 0.75,
+    phaserdepth = defaults.get('phaserdepth'),
     phasersweep,
     phasercenter,
     //
     coarse,
     crush,
     shape,
-    shapevol = 1,
+    shapevol = defaults.get('shapevol'),
     distort,
-    distortvol = 1,
+    distortvol = defaults.get('distortvol'),
     pan,
     vowel,
-    delay = 0,
-    delayfeedback = 0.5,
-    delaytime = 0.25,
-    orbit = 1,
+    delay = defaults.get('delay'),
+    delayfeedback = defaults.get('delayfeedback'),
+    delaytime = defaults.get('delaytime'),
+    orbit = defaults.get('orbit'),
     room,
     roomfade,
     roomlp,
     roomdim,
     roomsize,
     ir,
-    i = 0,
-    velocity = 1,
+    i = defaults.get('i'),
+    velocity = defaults.get('velocity'),
     analyze, // analyser wet
-    fft = 8, // fftSize 0 - 10
+    fft = defaults.get('fft'), // fftSize 0 - 10
     compressor: compressorThreshold,
     compressorRatio,
     compressorKnee,
