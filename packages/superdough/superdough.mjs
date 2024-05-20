@@ -24,6 +24,12 @@ export function getSound(s) {
   return soundMap.get()[s];
 }
 
+const defaults = new Map([['fanchor', 0]]);
+
+export function setDefault(key, value) {
+  defaults.set(key, value);
+}
+
 export const resetLoadedSounds = () => soundMap.set({});
 
 let audioContext;
@@ -289,7 +295,7 @@ export const superdough = async (value, t, hapDuration) => {
     density = 0.03,
     // filters
     ftype = '12db',
-    fanchor = 0,
+    fanchor = defaults.get('fanchor'),
     // low pass
     cutoff,
     lpenv,

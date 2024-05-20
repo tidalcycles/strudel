@@ -753,6 +753,15 @@ export const { bprelease, bpr } = registerControl('bprelease', 'bpr');
  * .ftype("12db 24db")
  */
 export const { ftype } = registerControl('ftype');
+
+/**
+ * controls the center of the filter envelope. 0 is unipolar positive, .5 is bipolar, 1 is unipolar negative
+ * @name fanchor
+ * @param {number | Pattern} center 0 to 1
+ * @example
+ * note("{f g g c d a a#}%8").s("sawtooth").lpf("{1000}%2")
+ * .lpenv(8).fanchor("<0 .5 1>")
+ */
 export const { fanchor } = registerControl('fanchor');
 /**
  * Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
