@@ -191,7 +191,16 @@ export function getComputedPropertyValue(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name);
 }
 
-let theme = {};
+let theme = {
+  background: '#222',
+  foreground: '#75baff',
+  caret: '#ffcc00',
+  selection: 'rgba(128, 203, 196, 0.5)',
+  selectionMatch: '#036dd626',
+  lineHighlight: '#00000050',
+  gutterBackground: 'transparent',
+  gutterForeground: '#8a919966',
+};
 export function getTheme() {
   return theme;
 }
