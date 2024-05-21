@@ -40,8 +40,10 @@ export const registerSamplesFromDB = (config = userSamplesDBConfig, onComplete =
           if (!isAudioFile(title)) {
             return;
           }
-          const splitRelativePath = soundFile.id?.split('/');
-          const parentDirectory = splitRelativePath[splitRelativePath.length - 2];
+          const splitRelativePath = soundFile.id.split('/');
+          const parentDirectory =
+            //fallback to file name before period and seperator if no parent directory
+            splitRelativePath[splitRelativePath.length - 2] ?? soundFile.id.split(/\W+/)[0] ?? 'user';
           const soundPath = soundFile.blob;
           const soundPaths = sounds.get(parentDirectory) ?? new Set();
           soundPaths.add(soundPath);
@@ -114,6 +116,7 @@ const processFilesForIDB = async (files) => {
     Array.from(files)
       .map(async (s) => {
         const title = s.name;
+
         if (!isAudioFile(title)) {
           return;
         }
@@ -121,12 +124,14 @@ const processFilesForIDB = async (files) => {
         const sUrl = URL.createObjectURL(s);
         //fetch the sound and turn it into a buffer array
         const buf = await fetch(sUrl).then((res) => res.arrayBuffer());
-        //create a url blob containing all of the buffer data
+        //create a url base64 containing all of the buffer data
         const base64 = await bufferToDataUrl(buf);
+        const path = s.webkitRelativePath;
+        const id = path?.length ? path : title;
         return {
           title,
           blob: base64,
-          id: s.webkitRelativePath,
+          id,
         };
       })
       .filter(Boolean),
