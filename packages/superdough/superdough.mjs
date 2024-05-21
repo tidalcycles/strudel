@@ -302,7 +302,7 @@ export const superdough = async (value, t, hapDuration) => {
     hpdecay,
     hpsustain,
     hprelease,
-    hresonance = 1,
+    hresonance = 0.5,
     // band pass
     bpenv,
     bandf,
