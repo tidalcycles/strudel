@@ -4,7 +4,7 @@ import cowsay from 'cowsay';
 import { createReadStream } from 'fs';
 import { readdir } from 'fs/promises';
 import http from 'http';
-import { join } from 'path';
+import { join, sep } from 'path';
 import os from 'os';
 
 // eslint-disable-next-line
@@ -45,16 +45,16 @@ async function getFilesInDirectory(directory) {
 }
 
 async function getBanks(directory) {
-  // const directory = resolve(__dirname, '.');
   let files = await getFilesInDirectory(directory);
   let banks = {};
-  let separator = process.platform === 'win32' ? '\\' : '/';
-  files = files.map((url) => {
-    const [bank] = url.split(separator).slice(-2);
+  directory = directory.split(sep).join('/');
+  files = files.map((path) => path.split(sep).join('/'));
+  files = files.map((path) => {
+    const [bank] = path.split('/').slice(-2);
     banks[bank] = banks[bank] || [];
-    url = url.replace(directory, '');
-    banks[bank].push(url);
-    return url;
+    const relativeUrl = path.replace(directory, '');
+    banks[bank].push(relativeUrl);
+    return relativeUrl;
   });
   banks._base = `http://localhost:5432`;
   return { banks, files };
@@ -75,7 +75,7 @@ const server = http.createServer(async (req, res) => {
     res.end('File not found');
     return;
   }
-  const filePath = join(directory, subpath);
+  const filePath = join(directory, subpath.split('/').join(sep));
   const readStream = createReadStream(filePath);
   readStream.on('error', (err) => {
     res.statusCode = 500;
