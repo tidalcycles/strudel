@@ -48,8 +48,8 @@ async function getBanks(directory) {
   let files = await getFilesInDirectory(directory);
   let banks = {};
   directory = directory.split(sep).join('/');
-  files = files.map((path) => path.split(sep).join('/'));
   files = files.map((path) => {
+    path = path.split(sep).join('/');
     const [bank] = path.split('/').slice(-2);
     banks[bank] = banks[bank] || [];
     const relativeUrl = path.replace(directory, '');
