@@ -1,6 +1,6 @@
 // coarse, crush, and shape processors adapted from dktr0's webdirt: https://github.com/dktr0/WebDirt/blob/5ce3d698362c54d6e1b68acc47eb2955ac62c793/dist/AudioWorklets.js
 // LICENSE GNU General Public License v3.0 see https://github.com/dktr0/WebDirt/blob/main/LICENSE
-
+import { clamp } from './util.mjs';
 const blockSize = 128;
 class CoarseProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
@@ -105,6 +105,77 @@ class ShapeProcessor extends AudioWorkletProcessor {
   }
 }
 registerProcessor('shape-processor', ShapeProcessor);
+
+function fast_tanh(x) {
+  const x2 = x * x;
+  return (x * (27.0 + x2)) / (27.0 + 9.0 * x2);
+}
+const _PI = 3.14159265359;
+//adapted from https://github.com/TheBouteillacBear/webaudioworklet-wasm?tab=MIT-1-ov-file
+class LadderProcessor extends AudioWorkletProcessor {
+  static get parameterDescriptors() {
+    return [
+      { name: 'frequency', defaultValue: 500 },
+      { name: 'q', defaultValue: 1 },
+      { name: 'drive', defaultValue: 0.69 },
+    ];
+  }
+
+  constructor() {
+    super();
+    this.started = false;
+    this.p0 = [0, 0];
+    this.p1 = [0, 0];
+    this.p2 = [0, 0];
+    this.p3 = [0, 0];
+    this.p32 = [0, 0];
+    this.p33 = [0, 0];
+    this.p34 = [0, 0];
+  }
+
+  process(inputs, outputs, parameters) {
+    const input = inputs[0];
+    const output = outputs[0];
+
+    const hasInput = !(input[0] === undefined);
+    if (this.started && !hasInput) {
+      return false;
+    }
+
+    this.started = hasInput;
+
+    const resonance = parameters.q[0];
+    const drive = clamp(Math.exp(parameters.drive[0]), 0.1, 2000);
+
+    let cutoff = parameters.frequency[0];
+    // eslint-disable-next-line no-undef
+    cutoff = (cutoff * 2 * _PI) / sampleRate;
+    cutoff = cutoff > 1 ? 1 : cutoff;
+
+    const k = Math.min(8, resonance * 0.4);
+    //               drive makeup  * resonance volume loss makeup
+    let makeupgain = (1 / drive) * Math.min(1.75, 1 + k);
+
+    for (let n = 0; n < blockSize; n++) {
+      for (let i = 0; i < input.length; i++) {
+        const out = this.p3[i] * 0.360891 + this.p32[i] * 0.41729 + this.p33[i] * 0.177896 + this.p34[i] * 0.0439725;
+
+        this.p34[i] = this.p33[i];
+        this.p33[i] = this.p32[i];
+        this.p32[i] = this.p3[i];
+
+        this.p0[i] += (fast_tanh(input[i][n] * drive - k * out) - fast_tanh(this.p0[i])) * cutoff;
+        this.p1[i] += (fast_tanh(this.p0[i]) - fast_tanh(this.p1[i])) * cutoff;
+        this.p2[i] += (fast_tanh(this.p1[i]) - fast_tanh(this.p2[i])) * cutoff;
+        this.p3[i] += (fast_tanh(this.p2[i]) - fast_tanh(this.p3[i])) * cutoff;
+
+        output[i][n] = out * makeupgain;
+      }
+    }
+    return true;
+  }
+}
+registerProcessor('ladder-processor', LadderProcessor);
 
 class DistortProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
