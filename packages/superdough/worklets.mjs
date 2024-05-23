@@ -36,7 +36,6 @@ const waveshapes = {
   },
   sine(phase) {
     return Math.sin(Math.PI * 2 * phase) * 0.5 + 0.5;
-    // return Math.sin(Math.PI * 2 * phase);
   },
   ramp(phase) {
     return phase;
