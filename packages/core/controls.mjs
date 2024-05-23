@@ -431,6 +431,60 @@ export const { crush } = registerControl('crush');
 export const { coarse } = registerControl('coarse');
 
 /**
+ * modulate the amplitude of a sound with a continuous waveform
+ *
+ * @name am
+ * @synonyms tremelo
+ * @param {number | Pattern} speed modulation speed in cycles
+ * @example
+ * s("triangle").am("2").amshape("<tri saw ramp square>").amdepth(.5)
+ *
+ */
+export const { am, tremolo } = registerControl(['am', 'amdepth', 'amskew', 'amphase'], 'tremolo');
+
+/**
+ * depth of amplitude modulation
+ *
+ * @name amdepth
+ * @param {number | Pattern} depth
+ * @example
+ * s("triangle").am(1).amdepth("1")
+ *
+ */
+export const { amdepth } = registerControl('amdepth');
+/**
+ * alter the shape of the modulation waveform
+ *
+ * @name amskew
+ * @param {number | Pattern} amount between 0 & 1, the shape of the waveform
+ * @example
+ * note("{f a c e}%16").am(4).amskew("<.5 0 1>")
+ *
+ */
+export const { amskew } = registerControl('amskew');
+
+/**
+ * alter the phase of the modulation waveform
+ *
+ * @name amphase
+ * @param {number | Pattern} offset the offset in cycles of the modulation
+ * @example
+ * note("{f a c e}%16").am(4).amphase("<0 .25 .66>")
+ *
+ */
+export const { amphase } = registerControl('amphase');
+
+/**
+ * shape of amplitude modulation
+ *
+ * @name amshape
+ * @param {number | Pattern} shape tri | square | sine | saw | ramp
+ * @example
+ * note("{f g c d}%16").am(4).amshape("ramp").s("sawtooth")
+ *
+ */
+export const { amshape } = registerControl('amshape');
+/**
  * Allows you to set the output channels on the interface
  *
  * @name channels
@@ -1529,7 +1583,6 @@ export const { zmod } = registerControl('zmod');
 // like crush but scaled differently
 export const { zcrush } = registerControl('zcrush');
 export const { zdelay } = registerControl('zdelay');
-export const { tremolo } = registerControl('tremolo');
 export const { zzfx } = registerControl('zzfx');
 
 /**

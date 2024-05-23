@@ -260,7 +260,7 @@ export function resetGlobalEffects() {
   analysersData = {};
 }
 
-export const superdough = async (value, t, hapDuration) => {
+export const superdough = async (value, t, hapDuration, cps, cycle) => {
   const ac = getAudioContext();
   if (typeof value !== 'object') {
     throw new Error(
@@ -281,6 +281,10 @@ export const superdough = async (value, t, hapDuration) => {
   }
   // destructure
   let {
+    am,
+    amdepth = 1,
+    amskew = 0.5,
+    amphase = 0,
     s = 'triangle',
     bank,
     source,
@@ -322,8 +326,10 @@ export const superdough = async (value, t, hapDuration) => {
     phasercenter,
     //
     coarse,
+
     crush,
     shape,
+
     shapevol = 1,
     distort,
     distortvol = 1,
@@ -470,6 +476,19 @@ export const superdough = async (value, t, hapDuration) => {
   crush !== undefined && chain.push(getWorklet(ac, 'crush-processor', { crush }));
   shape !== undefined && chain.push(getWorklet(ac, 'shape-processor', { shape, postgain: shapevol }));
   distort !== undefined && chain.push(getWorklet(ac, 'distort-processor', { distort, postgain: distortvol }));
+  am !== undefined &&
+    chain.push(
+      getWorklet(ac, 'am-processor', {
+        speed: am,
+        depth: amdepth,
+        skew: amskew,
+        phaseoffset: amphase,
+        // shape: amshape,
+
+        cps,
+        cycle,
+      }),
+    );
 
   compressorThreshold !== undefined &&
     chain.push(
