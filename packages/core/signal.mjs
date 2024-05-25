@@ -86,7 +86,6 @@ export const tri2 = fastcat(isaw2, saw2);
 
 export const time = signal(id);
 
-
 /**
  *  The mouse's x or y position value ranges from 0 to 1.
  *
@@ -96,7 +95,8 @@ export const time = signal(id);
  * n(mousey.segment(4).range(0,7)).scale("C:minor")
  *
  */
-let _mouseY=0,_mouseX=0
+let _mouseY = 0,
+  _mouseX = 0;
 document.onmousemove = (e) => {
   _mouseY = e.clientY / document.body.clientHeight;
   _mouseX = e.clientX / document.body.clientWidth;
