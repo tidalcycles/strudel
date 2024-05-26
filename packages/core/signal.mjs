@@ -97,10 +97,12 @@ export const time = signal(id);
  */
 let _mouseY = 0,
   _mouseX = 0;
-document.onmousemove = (e) => {
-  _mouseY = e.clientY / document.body.clientHeight;
-  _mouseX = e.clientX / document.body.clientWidth;
-};
+if (typeof window !== 'undefined') {
+  document.onmousemove = (e) => {
+    _mouseY = e.clientY / document.body.clientHeight;
+    _mouseX = e.clientX / document.body.clientWidth;
+  };
+}
 
 export const mousey = signal(() => _mouseY);
 export const mousex = signal(() => _mouseX);
