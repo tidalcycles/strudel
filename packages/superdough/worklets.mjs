@@ -1,139 +1,7 @@
 // coarse, crush, and shape processors adapted from dktr0's webdirt: https://github.com/dktr0/WebDirt/blob/5ce3d698362c54d6e1b68acc47eb2955ac62c793/dist/AudioWorklets.js
 // LICENSE GNU General Public License v3.0 see https://github.com/dktr0/WebDirt/blob/main/LICENSE
-import { clamp, _mod } from './util.mjs';
-// const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+import { clamp } from './util.mjs';
 const blockSize = 128;
-// adjust waveshape to remove frequencies above nyquist to prevent aliasing
-// referenced from https://www.kvraudio.com/forum/viewtopic.php?t=375517
-function polyBlep(phase, dt) {
-  // 0 <= phase < 1
-  if (phase < dt) {
-    phase /= dt;
-    // 2 * (phase - phase^2/2 - 0.5)
-    return phase + phase - phase * phase - 1;
-  }
-
-  // -1 < phase < 0
-  else if (phase > 1 - dt) {
-    phase = (phase - 1) / dt;
-    // 2 * (phase^2/2 + phase + 0.5)
-    return phase * phase + phase + phase + 1;
-  }
-
-  // 0 otherwise
-  else {
-    return 0;
-  }
-}
-
-const waveshapes = {
-  tri(phase, skew = 0.5) {
-    const x = 1 - skew;
-    if (phase >= skew) {
-      return 1 / x - phase / x;
-    }
-    return phase / skew;
-  },
-  sine(phase) {
-    return Math.sin(Math.PI * 2 * phase) * 0.5 + 0.5;
-  },
-  ramp(phase) {
-    return phase;
-  },
-  saw(phase) {
-    return 1 - phase;
-  },
-
-  square(phase, skew = 0.5) {
-    if (phase >= skew) {
-      return 0;
-    }
-    return 1;
-  },
-  custom(phase, values = [0, 1]) {
-    const numParts = values.length - 1;
-    const currPart = Math.floor(phase * numParts);
-
-    const partLength = 1 / numParts;
-    const startVal = clamp(values[currPart], 0, 1);
-    const endVal = clamp(values[currPart + 1], 0, 1);
-    const y2 = endVal;
-    const y1 = startVal;
-    const x1 = 0;
-    const x2 = partLength;
-    const slope = (y2 - y1) / (x2 - x1);
-    return slope * (phase - partLength * currPart) + startVal;
-  },
-  sawblep(phase, dt) {
-    const v = 2 * phase - 1;
-    return v - polyBlep(phase, dt);
-  },
-};
-
-const waveShapeNames = Object.keys(waveshapes);
-class LFOProcessor extends AudioWorkletProcessor {
-  static get parameterDescriptors() {
-    return [
-      { name: 'time', defaultValue: 0 },
-      { name: 'end', defaultValue: 0 },
-      { name: 'frequency', defaultValue: 0.5 },
-      { name: 'skew', defaultValue: 0.5 },
-      { name: 'depth', defaultValue: 1 },
-      { name: 'phaseoffset', defaultValue: 0 },
-      { name: 'shape', defaultValue: 0 },
-      { name: 'dcoffset', defaultValue: 0 },
-    ];
-  }
-
-  constructor() {
-    super();
-    this.phase;
-  }
-
-  incrementPhase(dt) {
-    this.phase += dt;
-    if (this.phase > 1.0) {
-      this.phase = this.phase - 1;
-    }
-  }
-
-  process(inputs, outputs, parameters) {
-    // eslint-disable-next-line no-undef
-    if (currentTime >= parameters.end[0]) {
-      return false;
-    }
-
-    const output = outputs[0];
-    const frequency = parameters['frequency'][0];
-
-    const time = parameters['time'][0];
-    const depth = parameters['depth'][0];
-    const skew = parameters['skew'][0];
-    const phaseoffset = parameters['phaseoffset'][0];
-
-    const dcoffset = parameters['dcoffset'][0];
-    const shape = waveShapeNames[parameters['shape'][0]];
-
-    const blockSize = output[0].length ?? 0;
-
-    if (this.phase == null) {
-      this.phase = _mod(time * frequency + phaseoffset, 1);
-    }
-    // eslint-disable-next-line no-undef
-    const dt = frequency / sampleRate;
-    for (let n = 0; n < blockSize; n++) {
-      for (let i = 0; i < output.length; i++) {
-        const modval = (waveshapes[shape](this.phase, skew) + dcoffset) * depth;
-        output[i][n] = modval;
-      }
-      this.incrementPhase(dt);
-    }
-
-    return true;
-  }
-}
-registerProcessor('lfo-processor', LFOProcessor);
-
 class CoarseProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
     return [{ name: 'coarse', defaultValue: 1 }];
@@ -345,7 +213,34 @@ class DistortProcessor extends AudioWorkletProcessor {
 }
 registerProcessor('distort-processor', DistortProcessor);
 
-// SUPERSAW
+// adjust waveshape to remove frequencies above nyquist to prevent aliasing
+// referenced from https://www.kvraudio.com/forum/viewtopic.php?t=375517
+const polyBlep = (phase, dt) => {
+  // 0 <= phase < 1
+  if (phase < dt) {
+    phase /= dt;
+    // 2 * (phase - phase^2/2 - 0.5)
+    return phase + phase - phase * phase - 1;
+  }
+
+  // -1 < phase < 0
+  else if (phase > 1 - dt) {
+    phase = (phase - 1) / dt;
+    // 2 * (phase^2/2 + phase + 0.5)
+    return phase * phase + phase + phase + 1;
+  }
+
+  // 0 otherwise
+  else {
+    return 0;
+  }
+};
+
+const saw = (phase, dt) => {
+  const v = 2 * phase - 1;
+  return v - polyBlep(phase, dt);
+};
+
 function lerp(a, b, n) {
   return n * (b - a) + a;
 }
@@ -445,7 +340,7 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
 
       for (let i = 0; i < output[0].length; i++) {
         this.phase[n] = this.phase[n] ?? Math.random();
-        const v = waveshapes.sawblep(this.phase[n], dt);
+        const v = saw(this.phase[n], dt);
 
         output[0][i] = output[0][i] + v * gainL;
         output[1][i] = output[1][i] + v * gainR;
