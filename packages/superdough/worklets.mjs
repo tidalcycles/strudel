@@ -1,7 +1,9 @@
 // coarse, crush, and shape processors adapted from dktr0's webdirt: https://github.com/dktr0/WebDirt/blob/5ce3d698362c54d6e1b68acc47eb2955ac62c793/dist/AudioWorklets.js
 // LICENSE GNU General Public License v3.0 see https://github.com/dktr0/WebDirt/blob/main/LICENSE
-import { clamp, _mod } from './util.mjs';
-// const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+// TOFIX: THIS FILE DOES NOT SUPPORT IMPORTS ON DEPOLYMENT
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+const _mod = (n, m) => ((n % m) + m) % m;
+
 const blockSize = 128;
 // adjust waveshape to remove frequencies above nyquist to prevent aliasing
 // referenced from https://www.kvraudio.com/forum/viewtopic.php?t=375517
