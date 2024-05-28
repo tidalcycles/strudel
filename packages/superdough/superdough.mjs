@@ -13,7 +13,6 @@ import { createFilter, gainNode, getCompressor, getWorklet } from './helpers.mjs
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
-import { velocity } from '../core/controls.mjs';
 
 export const soundMap = map();
 
@@ -25,37 +24,50 @@ export function getSound(s) {
   return soundMap.get()[s];
 }
 
-const defaults = new Map([
-  ['s', 'triangle'],
-  ['gain', 0.8],
-  ['postgain', 1],
-  ['density', '.03'],
-  ['ftype', '12db'],
-  ['fanchor', 0],
-  ['resonance', 1],
-  ['hresonance', 1],
-  ['bandq', 1],
-  ['channels', [1, 2]],
-  ['phaserdepth', 0.75],
-  ['shapevol', 1],
-  ['distortvol', 1],
-  ['delay', 0],
-  ['delayfeedback', 0.5],
-  ['delaytime', 0.25],
-  ['orbit', 1],
-  ['i', 1],
-  ['velocity', 1],
-  ['fft', 8],
-]);
+const defaultDefaultValues = {
+  s: 'triangle',
+  gain: 0.8,
+  postgain: 1,
+  density: '.03',
+  ftype: '12db',
+  fanchor: 0,
+  resonance: 1,
+  hresonance: 1,
+  bandq: 1,
+  channels: [1, 2],
+  phaserdepth: 0.75,
+  shapevol: 1,
+  distortvol: 1,
+  delay: 0,
+  delayfeedback: 0.5,
+  delaytime: 0.25,
+  orbit: 1,
+  i: 1,
+  velocity: 1,
+  fft: 8,
+};
 
-export function setDefault(key, value) {
-  defaults.set(key, value);
+let defaultControls = new Map(Object.entries(defaultDefaultValues));
+
+export function setDefaultValue(key, value) {
+  defaultControls.set(key, value);
 }
-
-export function setDefaults(defaultsobj) {
+export function getDefaultValue(key) {
+  return defaultControls.get(key);
+}
+export function setDefaultValues(defaultsobj) {
   Object.keys(defaultsobj).forEach((key) => {
-    setDefault(key, defaultsobj[key]);
+    setDefaultValue(key, defaultsobj[key]);
   });
+}
+export function resetDefaultValues() {
+  defaultControls = new Map(Object.entries(defaultDefaultValues));
+}
+export function setVersionDefaults(version) {
+  resetDefaultValues();
+  if (version === '1.0') {
+    setDefaultValue('fanchor', 0.5);
+  }
 }
 
 export const resetLoadedSounds = () => soundMap.set({});
@@ -310,14 +322,14 @@ export const superdough = async (value, t, hapDuration) => {
   }
   // destructure
   let {
-    s = defaults.get('s'),
+    s = getDefaultValue('s'),
     bank,
     source,
-    gain = defaults.get('gain'),
-    postgain = defaults.get('postgain'),
-    density = defaults.get('density'),
+    gain = getDefaultValue('gain'),
+    postgain = getDefaultValue('postgain'),
+    density = getDefaultValue('density'),
     // filters
-    fanchor = defaults.get('fanchor'),
+    fanchor = getDefaultValue('fanchor'),
     drive = 0.69,
     // low pass
     cutoff,
@@ -326,7 +338,7 @@ export const superdough = async (value, t, hapDuration) => {
     lpdecay,
     lpsustain,
     lprelease,
-    resonance = defaults.get('resonance'),
+    resonance = getDefaultValue('resonance'),
     // high pass
     hpenv,
     hcutoff,
@@ -334,7 +346,7 @@ export const superdough = async (value, t, hapDuration) => {
     hpdecay,
     hpsustain,
     hprelease,
-    hresonance = defaults.get('hresonance'),
+    hresonance = getDefaultValue('hresonance'),
     // band pass
     bpenv,
     bandf,
@@ -342,36 +354,36 @@ export const superdough = async (value, t, hapDuration) => {
     bpdecay,
     bpsustain,
     bprelease,
-    bandq = defaults.get('bandq'),
-    channels = defaults.get('channels'),
+    bandq = getDefaultValue('bandq'),
+    channels = getDefaultValue('channels'),
     //phaser
     phaser,
-    phaserdepth = defaults.get('phaserdepth'),
+    phaserdepth = getDefaultValue('phaserdepth'),
     phasersweep,
     phasercenter,
     //
     coarse,
     crush,
     shape,
-    shapevol = defaults.get('shapevol'),
+    shapevol = getDefaultValue('shapevol'),
     distort,
-    distortvol = defaults.get('distortvol'),
+    distortvol = getDefaultValue('distortvol'),
     pan,
     vowel,
-    delay = defaults.get('delay'),
-    delayfeedback = defaults.get('delayfeedback'),
-    delaytime = defaults.get('delaytime'),
-    orbit = defaults.get('orbit'),
+    delay = getDefaultValue('delay'),
+    delayfeedback = getDefaultValue('delayfeedback'),
+    delaytime = getDefaultValue('delaytime'),
+    orbit = getDefaultValue('orbit'),
     room,
     roomfade,
     roomlp,
     roomdim,
     roomsize,
     ir,
-    i = defaults.get('i'),
-    velocity = defaults.get('velocity'),
+    i = getDefaultValue('i'),
+    velocity = getDefaultValue('velocity'),
     analyze, // analyser wet
-    fft = defaults.get('fft'), // fftSize 0 - 10
+    fft = getDefaultValue('fft'), // fftSize 0 - 10
     compressor: compressorThreshold,
     compressorRatio,
     compressorKnee,
