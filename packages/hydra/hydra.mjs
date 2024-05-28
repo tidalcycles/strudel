@@ -1,5 +1,5 @@
 import { getDrawContext } from '@strudel/draw';
-import { controls } from '@strudel/core';
+import { controls, getTime, reify } from '@strudel/core';
 
 let latestOptions;
 let hydra;
@@ -27,6 +27,7 @@ export async function initHydra(options = {}) {
     hydraConfig.canvas = canvas;
 
     await import(/* @vite-ignore */ src);
+    /* eslint-disable-next-line */
     hydra = new Hydra(hydraConfig);
     if (feedStrudel) {
       const { canvas } = getDrawContext();
@@ -46,4 +47,4 @@ export function clearHydra() {
   globalThis.shape = controls.shape;
 }
 
-export const H = (p) => () => p.queryArc(getTime(), getTime())[0].value;
+export const H = (p) => () => reify(p).queryArc(getTime(), getTime())[0].value;

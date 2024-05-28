@@ -7,9 +7,9 @@ This program is free software: you can redistribute it and/or modify it under th
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
-import { clamp, nanFallback } from './util.mjs';
+import { clamp, nanFallback, _mod } from './util.mjs';
 import workletsUrl from './worklets.mjs?url';
-import { createFilter, gainNode, getCompressor } from './helpers.mjs';
+import { createFilter, gainNode, getCompressor, getWorklet } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
@@ -82,14 +82,6 @@ function loadWorklets() {
   }
   workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
   return workletsLoading;
-}
-
-export function getWorklet(ac, processor, params, config) {
-  const node = new AudioWorkletNode(ac, processor, config);
-  Object.entries(params).forEach(([key, value]) => {
-    node.parameters.get(key).value = value;
-  });
-  return node;
 }
 
 // this function should be called on first user interaction (to avoid console warning)
@@ -178,26 +170,25 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
   return delays[orbit];
 }
 
-// each orbit will have its own lfo
-const phaserLFOs = {};
-function getPhaser(orbit, t, speed = 1, depth = 0.5, centerFrequency = 1000, sweep = 2000) {
+function getPhaser(time, end, frequency = 1, depth = 0.5, centerFrequency = 1000, sweep = 2000) {
   //gain
   const ac = getAudioContext();
   const lfoGain = ac.createGain();
-  lfoGain.gain.value = sweep;
+  lfoGain.gain.value = sweep * 2;
+  // centerFrequency = centerFrequency * 2;
+  // sweep = sweep * 1.5;
 
-  //LFO
-  if (phaserLFOs[orbit] == null) {
-    phaserLFOs[orbit] = ac.createOscillator();
-    phaserLFOs[orbit].frequency.value = speed;
-    phaserLFOs[orbit].type = 'sine';
-    phaserLFOs[orbit].start();
-  }
-
-  phaserLFOs[orbit].connect(lfoGain);
-  if (phaserLFOs[orbit].frequency.value != speed) {
-    phaserLFOs[orbit].frequency.setValueAtTime(speed, t);
-  }
+  const lfo = getWorklet(ac, 'lfo-processor', {
+    frequency,
+    depth: 1,
+    skew: 0,
+    phaseoffset: 0,
+    time,
+    end,
+    shape: 1,
+    dcoffset: -0.5,
+  });
+  lfo.connect(lfoGain);
 
   //filters
   const numStages = 2; //num of filters in series
@@ -220,10 +211,14 @@ function getPhaser(orbit, t, speed = 1, depth = 0.5, centerFrequency = 1000, swe
   return filterChain[filterChain.length - 1];
 }
 
+function getFilterType(ftype) {
+  ftype = ftype ?? 0;
+  const filterTypes = ['12db', 'ladder', '24db'];
+  return typeof ftype === 'number' ? filterTypes[Math.floor(_mod(ftype, filterTypes.length))] : ftype;
+}
+
 let reverbs = {};
-
 let hasChanged = (now, before) => now !== undefined && now !== before;
-
 function getReverb(orbit, duration, fade, lp, dim, ir) {
   // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
@@ -322,8 +317,8 @@ export const superdough = async (value, t, hapDuration) => {
     postgain = defaults.get('postgain'),
     density = defaults.get('density'),
     // filters
-    ftype = defaults.get('ftype'),
     fanchor = defaults.get('fanchor'),
+    drive = 0.69,
     // low pass
     cutoff,
     lpenv,
@@ -428,6 +423,8 @@ export const superdough = async (value, t, hapDuration) => {
   // gain stage
   chain.push(gainNode(gain));
 
+  //filter
+  const ftype = getFilterType(value.ftype);
   if (cutoff !== undefined) {
     let lp = () =>
       createFilter(
@@ -443,6 +440,8 @@ export const superdough = async (value, t, hapDuration) => {
         t,
         t + hapDuration,
         fanchor,
+        ftype,
+        drive,
       );
     chain.push(lp());
     if (ftype === '24db') {
@@ -518,7 +517,7 @@ export const superdough = async (value, t, hapDuration) => {
   }
   // phaser
   if (phaser !== undefined && phaserdepth > 0) {
-    const phaserFX = getPhaser(orbit, t, phaser, phaserdepth, phasercenter, phasersweep);
+    const phaserFX = getPhaser(t, t + hapDuration, phaser, phaserdepth, phasercenter, phasersweep);
     chain.push(phaserFX);
   }
 

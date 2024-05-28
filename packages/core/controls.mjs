@@ -431,6 +431,17 @@ export const { crush } = registerControl('crush');
 export const { coarse } = registerControl('coarse');
 
 /**
+ * filter overdrive for supported filter types
+ *
+ * @name drive
+ * @param {number | Pattern} amount
+ * @example
+ * note("{f g g c d a a#}%16".sub(17)).s("supersaw").lpenv(8).lpf(150).lpq(.8).ftype('ladder').drive("<.5 4>")
+ *
+ */
+export const { drive } = registerControl('drive');
+
+/**
  * Allows you to set the output channels on the interface
  *
  * @name channels
@@ -742,15 +753,17 @@ export const { hprelease, hpr } = registerControl('hprelease', 'hpr');
  */
 export const { bprelease, bpr } = registerControl('bprelease', 'bpr');
 /**
- * Sets the filter type. The 24db filter is more aggressive. More types might be added in the future.
+ * Sets the filter type. The ladder filter is more aggressive. More types might be added in the future.
  * @name ftype
- * @param {number | Pattern} type 12db (default) or 24db
+ * @param {number | Pattern} type 12db (0), ladder (1), or 24db (2)
  * @example
- * note("c2 e2 f2 g2")
+ * note("{f g g c d a a#}%8").s("sawtooth").lpenv(4).lpf(500).ftype("<0 1 2>").lpq(1)
+ * @example
+ * note("c f g g a c d4").fast(2)
  * .sound('sawtooth')
- * .lpf(500)
- * .bpenv(4)
- * .ftype("12db 24db")
+ * .lpf(200).fanchor(0)
+ * .lpenv(3).lpq(1)
+ * .ftype("<ladder 12db 24db>")
  */
 export const { ftype } = registerControl('ftype');
 
