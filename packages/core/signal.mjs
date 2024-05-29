@@ -87,25 +87,36 @@ export const tri2 = fastcat(isaw2, saw2);
 export const time = signal(id);
 
 /**
- *  The mouse's x or y position value ranges from 0 to 1.
- *
+ *  The mouse's x position value ranges from 0 to 1.
+ * @name mousex
  * @return {Pattern}
  * @example
  * n(mousex.segment(4).range(0,7)).scale("C:minor")
- * n(mousey.segment(4).range(0,7)).scale("C:minor")
+ *
+ */
+
+/**
+ *  The mouse's y position value ranges from 0 to 1.
+ * @name mousey
+ * @return {Pattern}
+ * @example
+ * n(mousex.segment(4).range(0,7)).scale("C:minor")
  *
  */
 let _mouseY = 0,
   _mouseX = 0;
 if (typeof window !== 'undefined') {
-  document.onmousemove = (e) => {
+  //document.onmousemove = (e) => {
+  document.addEventListener('mousemove', (e) => {
     _mouseY = e.clientY / document.body.clientHeight;
     _mouseX = e.clientX / document.body.clientWidth;
-  };
+  });
 }
 
 export const mousey = signal(() => _mouseY);
+export const mouseY = signal(() => _mouseY);
 export const mousex = signal(() => _mouseX);
+export const mouseX = signal(() => _mouseX);
 
 // random signals
 
