@@ -78,6 +78,9 @@ importers:
       '@strudel/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@strudel/draw':
+        specifier: workspace:*
+        version: link:../../packages/draw
       '@strudel/mini':
         specifier: workspace:*
         version: link:../../packages/mini
