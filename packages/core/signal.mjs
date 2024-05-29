@@ -100,7 +100,7 @@ export const time = signal(id);
  * @name mousey
  * @return {Pattern}
  * @example
- * n(mousex.segment(4).range(0,7)).scale("C:minor")
+ * n(mousey.segment(4).range(0,7)).scale("C:minor")
  *
  */
 let _mouseY = 0,
