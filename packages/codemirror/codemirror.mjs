@@ -356,7 +356,6 @@ export class StrudelMirror {
     this.setCode(this.code + code);
     this.setCursorLocation(cursor);
   }
-  
 }
 
 function parseBooleans(value) {
