@@ -42,7 +42,7 @@ export const getAudioContext = () => {
   return audioContext;
 };
 
-export async function loadWorklets() {
+async function loadWorklets() {
   return await getAudioContext().audioWorklet.addModule(workletsUrl);
 }
 
