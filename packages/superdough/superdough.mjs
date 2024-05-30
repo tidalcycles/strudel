@@ -27,6 +27,7 @@ export function getSound(s) {
 export const resetLoadedSounds = () => soundMap.set({});
 
 let audioContext;
+export const isAudioInitialized = () => audioContext != null;
 
 export const setDefaultAudioContext = () => {
   audioContext = new AudioContext();
@@ -37,17 +38,12 @@ export const getAudioContext = () => {
   if (!audioContext) {
     return setDefaultAudioContext();
   }
+
   return audioContext;
 };
 
-let workletsLoading;
-
-function loadWorklets() {
-  if (workletsLoading) {
-    return workletsLoading;
-  }
-  workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
-  return workletsLoading;
+export async function loadWorklets() {
+  return await getAudioContext().audioWorklet.addModule(workletsUrl);
 }
 
 // this function should be called on first user interaction (to avoid console warning)
@@ -56,11 +52,15 @@ export async function initAudio(options = {}) {
   if (typeof window !== 'undefined') {
     await getAudioContext().resume();
     if (!disableWorklets) {
-      await loadWorklets().catch((err) => {
-        console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
-      });
+      await loadWorklets()
+        .catch((err) => {
+          console.warn('could not load AudioWorklet effects', err);
+        })
+        .finally(() => {
+          logger('audio worklets loaded');
+        });
     } else {
-      console.log('disableWorklets: AudioWorklet effects coarse, crush and shape are skipped!');
+      logger('disableWorklets: AudioWorklet effects skipped!');
     }
   }
 }
