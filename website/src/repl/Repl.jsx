@@ -15,6 +15,7 @@ import {
   resetGlobalEffects,
   resetLoadedSounds,
   isAudioInitialized,
+  initAudioOnFirstClick,
 } from '@strudel/webaudio';
 import { defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice } from './util.mjs';
@@ -43,8 +44,10 @@ import { getMetadata } from '../metadata_parser';
 
 const { latestCode } = settingsMap.get();
 
-let modulesLoading, presets, drawContext, clearCanvas, isIframe;
+let modulesLoading, presets, drawContext, clearCanvas, isIframe, audioReady;
+
 if (typeof window !== 'undefined') {
+  audioReady = initAudioOnFirstClick();
   modulesLoading = loadModules();
   presets = prebake();
   drawContext = getDrawContext();
@@ -83,16 +86,12 @@ export function Repl({ embedded = false }) {
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
-      onToggle: async (playing) => {
+      onToggle: (playing) => {
         if (!playing) {
           clearHydra();
         }
       },
-      beforeEval: async () => {
-        if (!isAudioInitialized()) {
-          await initAudio();
-        }
-      },
+      beforeEval: () => audioReady,
       afterEval: (all) => {
         const { code } = all;
         setLatestCode(code);

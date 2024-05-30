@@ -64,15 +64,18 @@ export async function initAudio(options = {}) {
     }
   }
 }
-
+let audioReady = false;
 export async function initAudioOnFirstClick(options) {
-  return new Promise((resolve) => {
-    document.addEventListener('click', async function listener() {
-      await initAudio(options);
-      resolve();
-      document.removeEventListener('click', listener);
+  if (!audioReady) {
+    audioReady = new Promise((resolve) => {
+      document.addEventListener('click', async function listener() {
+        await initAudio(options);
+        resolve();
+        document.removeEventListener('click', listener);
+      });
     });
-  });
+  }
+  return audioReady;
 }
 
 let delays = {};
