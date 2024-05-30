@@ -10,11 +10,9 @@ import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel/transpiler';
 import {
   getAudioContext,
-  initAudio,
   webaudioOutput,
   resetGlobalEffects,
   resetLoadedSounds,
-  isAudioInitialized,
   initAudioOnFirstClick,
 } from '@strudel/webaudio';
 import { defaultAudioDeviceName } from '../settings.mjs';
