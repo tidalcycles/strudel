@@ -114,6 +114,7 @@ export function Repl({ embedded = false }) {
       },
       bgFill: false,
     });
+    window.strudelMirror = editor;
 
     // init settings
 
