@@ -83,42 +83,49 @@ export const getAudioContext = () => {
   if (!audioContext) {
     return setDefaultAudioContext();
   }
+
   return audioContext;
 };
 
 let workletsLoading;
-
 function loadWorklets() {
-  if (workletsLoading) {
-    return workletsLoading;
+  if (!workletsLoading) {
+    workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
   }
-  workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
   return workletsLoading;
 }
 
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
   const { disableWorklets = false } = options;
-  if (typeof window !== 'undefined') {
-    await getAudioContext().resume();
-    if (!disableWorklets) {
-      await loadWorklets().catch((err) => {
-        console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
-      });
-    } else {
-      console.log('disableWorklets: AudioWorklet effects coarse, crush and shape are skipped!');
-    }
+  if (typeof window === 'undefined') {
+    return;
   }
+  await getAudioContext().resume();
+  if (disableWorklets) {
+    logger('[superdough]: AudioWorklets disabled with disableWorklets');
+    return;
+  }
+  try {
+    await loadWorklets();
+    logger('[superdough] AudioWorklets loaded');
+  } catch (err) {
+    console.warn('could not load AudioWorklet effects', err);
+  }
+  logger('[superdough] ready');
 }
-
+let audioReady;
 export async function initAudioOnFirstClick(options) {
-  return new Promise((resolve) => {
-    document.addEventListener('click', async function listener() {
-      await initAudio(options);
-      resolve();
-      document.removeEventListener('click', listener);
+  if (!audioReady) {
+    audioReady = new Promise((resolve) => {
+      document.addEventListener('click', async function listener() {
+        document.removeEventListener('click', listener);
+        await initAudio(options);
+        resolve();
+      });
     });
-  });
+  }
+  return audioReady;
 }
 
 let delays = {};
