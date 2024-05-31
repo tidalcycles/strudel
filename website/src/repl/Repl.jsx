@@ -10,10 +10,10 @@ import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel/transpiler';
 import {
   getAudioContext,
-  initAudioOnFirstClick,
   webaudioOutput,
   resetGlobalEffects,
   resetLoadedSounds,
+  initAudioOnFirstClick,
 } from '@strudel/webaudio';
 import { defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice } from './util.mjs';
@@ -42,9 +42,10 @@ import { getMetadata } from '../metadata_parser';
 
 const { latestCode } = settingsMap.get();
 
-let modulesLoading, presets, drawContext, clearCanvas, isIframe;
+let modulesLoading, presets, drawContext, clearCanvas, isIframe, audioReady;
+
 if (typeof window !== 'undefined') {
-  initAudioOnFirstClick();
+  audioReady = initAudioOnFirstClick();
   modulesLoading = loadModules();
   presets = prebake();
   drawContext = getDrawContext();
@@ -88,6 +89,7 @@ export function Repl({ embedded = false }) {
           clearHydra();
         }
       },
+      beforeEval: () => audioReady,
       afterEval: (all) => {
         const { code } = all;
         setLatestCode(code);
