@@ -553,7 +553,7 @@ export const { cutoff, ctf, lpf, lp } = registerControl(['cutoff', 'resonance', 
  * @example
  * note("c2 e2 f2 g2")
  * .sound('sawtooth')
- * .lpf(500)
+ * .lpf(300)
  * .lpa(.5)
  * .lpenv("<4 2 1 0 -1 -2 -4>/4")
  */
@@ -592,7 +592,7 @@ export const { bpenv, bpe } = registerControl('bpenv', 'bpe');
  * @example
  * note("c2 e2 f2 g2")
  * .sound('sawtooth')
- * .lpf(500)
+ * .lpf(300)
  * .lpa("<.5 .25 .1 .01>/4")
  * .lpenv(4)
  */
@@ -631,9 +631,8 @@ export const { bpattack, bpa } = registerControl('bpattack', 'bpa');
  * @example
  * note("c2 e2 f2 g2")
  * .sound('sawtooth')
- * .lpf(500)
+ * .lpf(300)
  * .lpd("<.5 .25 .1 0>/4")
- * .lps(0.2)
  * .lpenv(4)
  */
 export const { lpdecay, lpd } = registerControl('lpdecay', 'lpd');
@@ -673,7 +672,7 @@ export const { bpdecay, bpd } = registerControl('bpdecay', 'bpd');
  * @example
  * note("c2 e2 f2 g2")
  * .sound('sawtooth')
- * .lpf(500)
+ * .lpf(300)
  * .lpd(.5)
  * .lps("<0 .25 .5 1>/4")
  * .lpenv(4)
@@ -716,7 +715,7 @@ export const { bpsustain, bps } = registerControl('bpsustain', 'bps');
  * note("c2 e2 f2 g2")
  * .sound('sawtooth')
  * .clip(.5)
- * .lpf(500)
+ * .lpf(300)
  * .lpenv(4)
  * .lpr("<.5 .25 .1 0>/4")
  * .release(.5)
