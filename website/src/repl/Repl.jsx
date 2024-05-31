@@ -16,7 +16,7 @@ import {
   initAudioOnFirstClick,
 } from '@strudel/webaudio';
 import { defaultAudioDeviceName } from '../settings.mjs';
-import { getAudioDevices, setAudioDevice } from './util.mjs';
+import { getAudioDevices, setAudioDevice, setVersionDefaultsFrom } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { clearHydra } from '@strudel/hydra';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -96,13 +96,7 @@ export function Repl({ embedded = false }) {
         window.location.hash = '#' + code2hash(code);
         setDocumentTitle(code);
         const viewingPatternData = getViewingPatternData();
-        try {
-          const metadata = getMetadata(code);
-          setVersionDefaults(metadata.version);
-        } catch (err) {
-          console.error('Error parsing metadata..');
-          console.error(err);
-        }
+        setVersionDefaultsFrom(code);
         const data = { ...viewingPatternData, code };
         let id = data.id;
         const isExamplePattern = viewingPatternData.collection !== userPattern.collection;

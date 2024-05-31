@@ -6,15 +6,15 @@ import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
 import { StrudelMirror } from '@strudel/codemirror';
 import { prebake } from '../repl/prebake.mjs';
-import { loadModules } from '../repl/util.mjs';
+import { loadModules, setVersionDefaultsFrom } from '../repl/util.mjs';
 import Claviature from '@components/Claviature';
 import useClient from '@src/useClient.mjs';
 
-let prebaked, modulesLoading, audioLoading;
+let prebaked, modulesLoading, audioReady;
 if (typeof window !== 'undefined') {
   prebaked = prebake();
   modulesLoading = loadModules();
-  audioLoading = initAudioOnFirstClick();
+  audioReady = initAudioOnFirstClick();
 }
 
 export function MiniRepl({
@@ -69,10 +69,12 @@ export function MiniRepl({
         }
         return pat;
       },
-      prebake: async () => Promise.all([modulesLoading, prebaked, audioLoading]),
+      prebake: async () => Promise.all([modulesLoading, prebaked]),
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
+      beforeEval: () => audioReady, // not doing this in prebake to make sure viz is drawn
+      afterEval: ({ code }) => setVersionDefaultsFrom(code),
     });
     // init settings
     editor.setCode(code);
