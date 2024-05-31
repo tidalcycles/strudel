@@ -30,6 +30,7 @@ stack(
 )
 .late("[0 .01]*4").late("[0 .01]*2").size(4)`,
   `// "broken cut 1" @by froos
+// @version 1.0
 
 samples('github:tidalcycles/dirt-samples')
 samples({
@@ -57,6 +58,7 @@ note("[c2 ~](3,8)*2,eb,g,bb,d").s("sawtooth")
     s("<whirl attack>?").delay(".8:.1:.8").room(2).slow(8).cut(2),
   ).reset("<x@30 [x*[8 [8 [16 32]]]]@2>".late(2))`,
   `// "acidic tooth" @by eddyflux
+// @version 1.0
   setcps(1)
   stack(
     note("[<g1 f1>/8](<3 5>,8)")
