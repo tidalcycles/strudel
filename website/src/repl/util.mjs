@@ -1,6 +1,7 @@
 import { evalScope, hash2code, logger } from '@strudel/core';
 import { settingPatterns, defaultAudioDeviceName } from '../settings.mjs';
-import { getAudioContext, initializeAudioOutput, setDefaultAudioContext } from '@strudel/webaudio';
+import { getAudioContext, initializeAudioOutput, setDefaultAudioContext, setVersionDefaults } from '@strudel/webaudio';
+import { getMetadata } from '../metadata_parser';
 
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';

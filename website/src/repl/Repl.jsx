@@ -16,7 +16,7 @@ import {
   initAudioOnFirstClick,
 } from '@strudel/webaudio';
 import { defaultAudioDeviceName } from '../settings.mjs';
-import { getAudioDevices, setAudioDevice } from './util.mjs';
+import { getAudioDevices, setAudioDevice, setVersionDefaultsFrom } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { clearHydra } from '@strudel/hydra';
 import { useCallback, useEffect, useRef, useState } from 'react';
