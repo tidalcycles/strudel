@@ -12,7 +12,7 @@ export const userSamplesDBConfig = {
 };
 
 // deletes all of the databases, useful for debugging
-const clearIDB = () => {
+function clearIDB() {
   window.indexedDB
     .databases()
     .then((r) => {
@@ -21,12 +21,30 @@ const clearIDB = () => {
     .then(() => {
       alert('All data cleared.');
     });
-};
+}
 
 // queries the DB, and registers the sounds so they can be played
-export const registerSamplesFromDB = (config = userSamplesDBConfig, onComplete = () => {}) => {
+export function registerSamplesFromDB(config = userSamplesDBConfig, onComplete = () => {}) {
   openDB(config, (objectStore) => {
+    // const keys = objectStore.getAllKeys();
+
+    // keys.onsuccess = (e) => {
+    //   console.log(e);
+    //   const result = e.target.result[0];
+    //   console.log(result);
+
+    //   const q = objectStore.get(result);
+    //   q.onerror = (e) => console.error(e.target.error);
+    //   q.onsuccess = (e) => console.log(e);
+    // };
+
     let query = objectStore.getAll();
+    query.onerror = (e) => {
+      logger('User Samples failed to load ', 'error');
+      onComplete();
+      console.error(e?.target?.error);
+    };
+
     query.onsuccess = (event) => {
       const soundFiles = event.target.result;
       if (!soundFiles?.length) {
@@ -64,7 +82,7 @@ export const registerSamplesFromDB = (config = userSamplesDBConfig, onComplete =
       onComplete();
     };
   });
-};
+}
 // creates a blob from a buffer that can be read
 async function bufferToDataUrl(buf) {
   return new Promise((resolve) => {
@@ -77,7 +95,7 @@ async function bufferToDataUrl(buf) {
   });
 }
 //open db and initialize it if necessary
-const openDB = (config, onOpened) => {
+function openDB(config, onOpened) {
   const { dbName, version, table, columns } = config;
   if (typeof window === 'undefined') {
     return;
@@ -102,16 +120,15 @@ const openDB = (config, onOpened) => {
 
   dbOpen.onsuccess = () => {
     const db = dbOpen.result;
-
-    const // lock store for writing
-      writeTransaction = db.transaction([table], 'readwrite'),
-      // get object store
-      objectStore = writeTransaction.objectStore(table);
+    // lock store for writing
+    const writeTransaction = db.transaction([table], 'readwrite');
+    // get object store
+    const objectStore = writeTransaction.objectStore(table);
     onOpened(objectStore, db);
   };
-};
+}
 
-const processFilesForIDB = async (files) => {
+async function processFilesForIDB(files) {
   return await Promise.all(
     Array.from(files)
       .map(async (s) => {
@@ -139,9 +156,9 @@ const processFilesForIDB = async (files) => {
     logger('Something went wrong while processing uploaded files', 'error');
     console.error(error);
   });
-};
+}
 
-export const uploadSamplesToDB = async (config, files) => {
+export async function uploadSamplesToDB(config, files) {
   await processFilesForIDB(files).then((files) => {
     const onOpened = (objectStore, _db) => {
       files.forEach((file) => {
@@ -153,4 +170,4 @@ export const uploadSamplesToDB = async (config, files) => {
     };
     openDB(config, onOpened);
   });
-};
+}
