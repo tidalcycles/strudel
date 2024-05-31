@@ -52,22 +52,23 @@ function loadWorklets() {
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
   const { disableWorklets = false } = options;
-  if (typeof window !== 'undefined') {
+  if (typeof window === 'undefined') {
     return;
   }
   await getAudioContext().resume();
   if (disableWorklets) {
-    logger('disableWorklets: AudioWorklet effects skipped!');
+    logger('[superdough]: AudioWorklets disabled with disableWorklets');
     return;
   }
   try {
     await loadWorklets();
-    logger('audio worklets loaded');
+    logger('[superdough] AudioWorklets loaded');
   } catch (err) {
     console.warn('could not load AudioWorklet effects', err);
   }
+  logger('[superdough] ready');
 }
-let audioReady = false;
+let audioReady;
 export async function initAudioOnFirstClick(options) {
   if (!audioReady) {
     audioReady = new Promise((resolve) => {
