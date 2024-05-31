@@ -94,6 +94,13 @@ export function Repl({ embedded = false }) {
         window.location.hash = '#' + code2hash(code);
         setDocumentTitle(code);
         const viewingPatternData = getViewingPatternData();
+        try {
+          const metadata = getMetadata(code);
+          setVersionDefaults(metadata.version);
+        } catch (err) {
+          console.error('Error parsing metadata..');
+          console.error(err);
+        }
         const data = { ...viewingPatternData, code };
         let id = data.id;
         const isExamplePattern = viewingPatternData.collection !== userPattern.collection;
