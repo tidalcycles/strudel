@@ -72,9 +72,9 @@ export async function initAudioOnFirstClick(options) {
   if (!audioReady) {
     audioReady = new Promise((resolve) => {
       document.addEventListener('click', async function listener() {
+        document.removeEventListener('click', listener);
         await initAudio(options);
         resolve();
-        document.removeEventListener('click', listener);
       });
     });
   }
