@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
+import { useStlte, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Icon } from './Icon';
 import { silence, noteToMidi, _mod } from '@strudel/core';
 import { getPunchcardPainter } from '@strudel/draw';
@@ -73,6 +73,9 @@ export function MiniRepl({
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
+      afterEval:() => {
+        
+      }
     });
     // init settings
     editor.setCode(code);

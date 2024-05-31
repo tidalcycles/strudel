@@ -164,3 +164,13 @@ export const setAudioDevice = async (id) => {
   }
   initializeAudioOutput();
 };
+
+export function setVersionDefaultsFrom(code) {
+  try {
+    const metadata = getMetadata(code);
+    setVersionDefaults(metadata.version);
+  } catch (err) {
+    console.error('Error parsing metadata..');
+    console.error(err);
+  }
+}

@@ -1,5 +1,6 @@
 export const examples = [
   `// "coastline" @by eddyflux
+// @version 1.0
 samples('github:eddyflux/crate')
 setcps(.75)
 let chords = chord("<Bbm9 Fm9>/4").dict('ireal')
@@ -18,7 +19,7 @@ stack(
   n("<0!3 1*2>").set(chords).mode("root:g2")
   .voicing().s("gm_acoustic_bass"),
   chords.n("[0 <4 3 <2 5>>*2](<3 5>,8)")
-  .set(x).anchor("D5").voicing()
+  .anchor("D5").voicing()
   .segment(4).clip(rand.range(.4,.8))
   .room(.75).shape(.3).delay(.25)
   .fm(sine.range(3,8).slow(8))
