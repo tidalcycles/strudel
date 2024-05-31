@@ -41,8 +41,12 @@ export const getAudioContext = () => {
   return audioContext;
 };
 
-async function loadWorklets() {
-  return await getAudioContext().audioWorklet.addModule(workletsUrl);
+let workletsLoading;
+function loadWorklets() {
+  if (!workletsLoading) {
+    workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
+  }
+  return workletsLoading;
 }
 
 // this function should be called on first user interaction (to avoid console warning)
