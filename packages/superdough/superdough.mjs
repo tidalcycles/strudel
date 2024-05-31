@@ -53,18 +53,18 @@ function loadWorklets() {
 export async function initAudio(options = {}) {
   const { disableWorklets = false } = options;
   if (typeof window !== 'undefined') {
-    await getAudioContext().resume();
-    if (!disableWorklets) {
-      await loadWorklets()
-        .catch((err) => {
-          console.warn('could not load AudioWorklet effects', err);
-        })
-        .finally(() => {
-          logger('audio worklets loaded');
-        });
-    } else {
-      logger('disableWorklets: AudioWorklet effects skipped!');
-    }
+    return;
+  }
+  await getAudioContext().resume();
+  if (disableWorklets) {
+    logger('disableWorklets: AudioWorklet effects skipped!');
+    return;
+  }
+  try {
+    await loadWorklets();
+    logger('audio worklets loaded');
+  } catch (err) {
+    console.warn('could not load AudioWorklet effects', err);
   }
 }
 let audioReady = false;
