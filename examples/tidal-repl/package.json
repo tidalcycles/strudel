@@ -1,5 +1,5 @@
 {
-  "name": "@strudel/tidal",
+  "name": "tidal-repl",
   "private": true,
   "version": "0.0.1",
   "type": "module",
