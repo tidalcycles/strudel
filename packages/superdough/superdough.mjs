@@ -410,6 +410,7 @@ export const superdough = async (value, t, hapDuration) => {
   };
   if (bank && s) {
     s = `${bank}_${s}`;
+    value.s = s;
   }
 
   // get source AudioNode

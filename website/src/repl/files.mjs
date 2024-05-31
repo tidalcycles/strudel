@@ -23,10 +23,10 @@ async function hasStrudelJson(subpath) {
 async function loadStrudelJson(subpath) {
   const contents = await readTextFile(subpath + '/strudel.json', { dir });
   const sampleMap = JSON.parse(contents);
-  processSampleMap(sampleMap, (key, value) => {
-    registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value, fileResolver(subpath)), {
+  processSampleMap(sampleMap, (key, bank) => {
+    registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, bank, fileResolver(subpath)), {
       type: 'sample',
-      samples: value,
+      samples: bank,
       fileSystem: true,
       tag: 'local',
     });

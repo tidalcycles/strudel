@@ -22,16 +22,13 @@ function humanFileSize(bytes, si) {
   return bytes.toFixed(1) + ' ' + units[u];
 }
 
-export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resolveUrl) => {
-  let transpose = 0;
-  if (freq !== undefined && note !== undefined) {
-    logger('[sampler] hap has note and freq. ignoring note', 'warning');
-  }
-  let midi = valueToMidi({ freq, note }, 36);
-  transpose = midi - 36; // C3 is middle C
-
-  const ac = getAudioContext();
-
+// deduces relevant info for sample loading from hap.value and sample definition
+// it encapsulates the core sampler logic into a pure and synchronous function
+// hapValue: Hap.value, bank: sample bank definition for sound "s" (values in strudel.json format)
+export function getSampleInfo(hapValue, bank) {
+  const { s, n = 0, speed = 1.0 } = hapValue;
+  let midi = valueToMidi(hapValue, 36);
+  let transpose = midi - 36; // C3 is middle C;
   let sampleUrl;
   let index = 0;
   if (Array.isArray(bank)) {
@@ -50,19 +47,54 @@ export const getSampleBufferSource = async (s, n, note, speed, freq, bank, resol
     index = getSoundIndex(n, bank[closest].length);
     sampleUrl = bank[closest][index];
   }
+  const label = `${s}:${index}`;
+  let playbackRate = Math.abs(speed) * Math.pow(2, transpose / 12);
+  return { transpose, sampleUrl, index, midi, label, playbackRate };
+}
+
+// takes hapValue and returns buffer + playbackRate.
+export const getSampleBuffer = async (hapValue, bank, resolveUrl) => {
+  let { sampleUrl, label, playbackRate } = getSampleInfo(hapValue, bank);
   if (resolveUrl) {
     sampleUrl = await resolveUrl(sampleUrl);
   }
-  let buffer = await loadBuffer(sampleUrl, ac, s, index);
-  if (speed < 0) {
+  const ac = getAudioContext();
+  const buffer = await loadBuffer(sampleUrl, ac, label);
+
+  if (hapValue.unit === 'c') {
+    playbackRate = playbackRate * buffer.duration;
+  }
+  return { buffer, playbackRate };
+};
+
+// creates playback ready AudioBufferSourceNode from hapValue
+export const getSampleBufferSource = async (hapValue, bank, resolveUrl) => {
+  let { buffer, playbackRate } = await getSampleBuffer(hapValue, bank, resolveUrl);
+  if (hapValue.speed < 0) {
     // should this be cached?
     buffer = reverseBuffer(buffer);
   }
+  const ac = getAudioContext();
   const bufferSource = ac.createBufferSource();
   bufferSource.buffer = buffer;
-  const playbackRate = 1.0 * Math.pow(2, transpose / 12);
   bufferSource.playbackRate.value = playbackRate;
-  return bufferSource;
+
+  const { s, loopBegin = 0, loopEnd = 1, begin = 0, end = 1 } = hapValue;
+
+  // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
+  // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
+  // the midway point through a 10-second audio buffer is still 5."
+  const offset = begin * bufferSource.buffer.duration;
+
+  const loop = s.startsWith('wt_') ? 1 : hapValue.loop;
+  if (loop) {
+    bufferSource.loop = true;
+    bufferSource.loopStart = loopBegin * bufferSource.buffer.duration - offset;
+    bufferSource.loopEnd = loopEnd * bufferSource.buffer.duration - offset;
+  }
+  const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
+  const sliceDuration = (end - begin) * bufferDuration;
+  return { bufferSource, offset, bufferDuration, sliceDuration };
 };
 
 export const loadBuffer = (url, ac, s, n = 0) => {
@@ -232,10 +264,10 @@ export const samples = async (sampleMap, baseUrl = sampleMap._base || '', option
   const { prebake, tag } = options;
   processSampleMap(
     sampleMap,
-    (key, value) =>
-      registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
+    (key, bank) =>
+      registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, bank), {
         type: 'sample',
-        samples: value,
+        samples: bank,
         baseUrl,
         prebake,
         tag,
@@ -249,38 +281,26 @@ const cutGroups = [];
 export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
   let {
     s,
-    freq,
-    unit,
     nudge = 0, // TODO: is this in seconds?
     cut,
     loop,
     clip = undefined, // if set, samples will be cut off when the hap ends
     n = 0,
-    note,
     speed = 1, // sample playback speed
-    loopBegin = 0,
-    begin = 0,
-    loopEnd = 1,
-    end = 1,
     duration,
   } = value;
+
   // load sample
   if (speed === 0) {
     // no playback
     return;
   }
-  loop = s.startsWith('wt_') ? 1 : value.loop;
   const ac = getAudioContext();
+
   // destructure adsr here, because the default should be different for synths and samples
-
   let [attack, decay, sustain, release] = getADSRValues([value.attack, value.decay, value.sustain, value.release]);
-  //const soundfont = getSoundfontKey(s);
-  const time = t + nudge;
 
-  const bufferSource = await getSampleBufferSource(s, n, note, speed, freq, bank, resolveUrl);
-
-  // vibrato
-  let vibratoOscillator = getVibratoOscillator(bufferSource.detune, value, t);
+  const { bufferSource, sliceDuration, offset } = await getSampleBufferSource(value, bank, resolveUrl);
 
   // asny stuff above took too long?
   if (ac.currentTime > t) {
@@ -292,26 +312,19 @@ export async function onTriggerSample(t, value, onended, bank, resolveUrl) {
     logger(`[sampler] could not load "${s}:${n}"`, 'error');
     return;
   }
-  bufferSource.playbackRate.value = Math.abs(speed) * bufferSource.playbackRate.value;
-  if (unit === 'c') {
-    // are there other units?
-    bufferSource.playbackRate.value = bufferSource.playbackRate.value * bufferSource.buffer.duration * 1; //cps;
-  }
-  // "The computation of the offset into the sound is performed using the sound buffer's natural sample rate,
-  // rather than the current playback rate, so even if the sound is playing at twice its normal speed,
-  // the midway point through a 10-second audio buffer is still 5."
-  const offset = begin * bufferSource.buffer.duration;
-  if (loop) {
-    bufferSource.loop = true;
-    bufferSource.loopStart = loopBegin * bufferSource.buffer.duration - offset;
-    bufferSource.loopEnd = loopEnd * bufferSource.buffer.duration - offset;
-  }
+
+  // vibrato
+  let vibratoOscillator = getVibratoOscillator(bufferSource.detune, value, t);
+
+  const time = t + nudge;
   bufferSource.start(time, offset);
+
   const envGain = ac.createGain();
   const node = bufferSource.connect(envGain);
+
+  // if none of these controls is set, the duration of the sound will be set to the duration of the sample slice
   if (clip == null && loop == null && value.release == null) {
-    const bufferDuration = bufferSource.buffer.duration / bufferSource.playbackRate.value;
-    duration = (end - begin) * bufferDuration;
+    duration = sliceDuration;
   }
   let holdEnd = t + duration;
 
