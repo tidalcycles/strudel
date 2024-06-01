@@ -34,7 +34,7 @@ export function MiniRepl({
   const canvasId = useMemo(() => `canvas-${id}`, [id]);
   const shouldDraw = !!punchcard || !!claviature;
   const shouldShowCanvas = !!punchcard;
-  const drawTime = punchcard ? [0, 4] : [0, 0];
+  const drawTime = punchcard ? [0, 4] : [-2, 2];
   const [activeNotes, setActiveNotes] = useState([]);
 
   const init = useCallback(({ code, shouldDraw }) => {

@@ -19,6 +19,7 @@ export function repl({
   sync = false,
   setInterval,
   clearInterval,
+  id,
 }) {
   const state = {
     schedulerError: undefined,
@@ -30,6 +31,10 @@ export function repl({
     widgets: [],
     pending: false,
     started: false,
+  };
+
+  const transpilerOptions = {
+    id,
   };
 
   const updateState = (update) => {
@@ -139,9 +144,10 @@ export function repl({
     try {
       updateState({ code, pending: true });
       await injectPatternMethods();
+      setTime(() => scheduler.now()); // TODO: refactor?
       await beforeEval?.({ code });
       shouldHush && hush();
-      let { pattern, meta } = await _evaluate(code, transpiler);
+      let { pattern, meta } = await _evaluate(code, transpiler, transpilerOptions);
       if (Object.keys(pPatterns).length) {
         pattern = stack(...Object.values(pPatterns));
       }

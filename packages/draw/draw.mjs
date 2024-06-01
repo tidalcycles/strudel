@@ -36,8 +36,8 @@ function stopAnimationFrame(id) {
     delete animationFrames[id];
   }
 }
-function stopAllAnimations() {
-  Object.keys(animationFrames).forEach((id) => stopAnimationFrame(id));
+function stopAllAnimations(replID) {
+  Object.keys(animationFrames).forEach((id) => (!replID || id.startsWith(replID)) && stopAnimationFrame(id));
 }
 
 let memory = {};
@@ -72,13 +72,10 @@ Pattern.prototype.draw = function (fn, options) {
   return this;
 };
 
-export const cleanupDraw = (clearScreen = true) => {
+export const cleanupDraw = (clearScreen = true, id) => {
   const ctx = getDrawContext();
   clearScreen && ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.width);
-  stopAllAnimations();
-  if (window.strudelScheduler) {
-    clearInterval(window.strudelScheduler);
-  }
+  stopAllAnimations(id);
 };
 
 Pattern.prototype.onPaint = function () {

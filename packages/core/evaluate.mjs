@@ -37,11 +37,11 @@ function safeEval(str, options = {}) {
   return Function(body)();
 }
 
-export const evaluate = async (code, transpiler) => {
+export const evaluate = async (code, transpiler, transpilerOptions) => {
   let meta = {};
   if (transpiler) {
     // transform syntactically correct js code to semantically usable code
-    const transpiled = transpiler(code);
+    const transpiled = transpiler(code, transpilerOptions);
     code = transpiled.output;
     meta = transpiled;
   }

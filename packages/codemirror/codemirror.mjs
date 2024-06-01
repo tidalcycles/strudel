@@ -154,9 +154,9 @@ export class StrudelMirror {
 
     this.prebaked = prebake();
     autodraw && this.drawFirstFrame();
-
     this.repl = repl({
       ...replOptions,
+      id,
       onToggle: (started) => {
         replOptions?.onToggle?.(started);
         if (started) {
@@ -171,11 +171,11 @@ export class StrudelMirror {
         } else {
           this.drawer.stop();
           updateMiniLocations(this.editor, []);
-          cleanupDraw(false);
+          cleanupDraw(false, id);
         }
       },
       beforeEval: async () => {
-        cleanupDraw();
+        cleanupDraw(true, id);
         this.painters = [];
         const self = this;
         // this is similar to repl.mjs > injectPatternMethods

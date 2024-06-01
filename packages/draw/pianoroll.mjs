@@ -266,7 +266,7 @@ export function getDrawOptions(drawTime, options = {}) {
   let [lookbehind, lookahead] = drawTime;
   lookbehind = Math.abs(lookbehind);
   const cycles = lookahead + lookbehind;
-  const playhead = lookbehind / cycles;
+  const playhead = cycles !== 0 ? lookbehind / cycles : 0;
   return { fold: 1, ...options, cycles, playhead };
 }
 
