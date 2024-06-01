@@ -176,7 +176,6 @@ async function processFilesForIDB(files) {
 export async function uploadSamplesToDB(config, files) {
   logger('procesing user samples...');
   await processFilesForIDB(files).then((files) => {
-    console.log(files);
     logger('user samples processed... opening db');
     const onOpened = (objectStore, _db) => {
       logger('index db opened... writing files to db');
