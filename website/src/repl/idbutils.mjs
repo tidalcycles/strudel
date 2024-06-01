@@ -64,7 +64,7 @@ export function registerSamplesFromDB(config = userSamplesDBConfig, onComplete =
             //fallback to file name before period and seperator if no parent directory
             splitRelativePath[splitRelativePath.length - 2] ?? soundFile.id.split(/\W+/)[0] ?? 'user';
 
-          const soundPath = bufferToDataUrl(soundFile.buf);
+          const soundPath = blobToDataUrl(soundFile.blob);
 
           // const soundPath = soundFile.blob;
           const soundPaths = sounds.get(parentDirectory) ?? new Set();
@@ -164,16 +164,16 @@ async function processFilesForIDB(files) {
         const sUrl = URL.createObjectURL(s);
         //fetch the sound and turn it into a buffer array
         return fetch(sUrl).then((res) => {
-          return res.arrayBuffer().then((buf) => {
+          return res.blob().then((blob) => {
             const path = s.webkitRelativePath;
             let id = path?.length ? path : title;
-            if (id == null || title == null || buf == null) {
+            if (id == null || title == null || blob == null) {
               return;
             }
             return {
               title,
-              buf,
-              // blob: base64,
+              // buf,
+              blob,
               id,
             };
           });
