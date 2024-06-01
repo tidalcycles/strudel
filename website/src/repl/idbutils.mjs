@@ -65,21 +65,26 @@ export function registerSamplesFromDB(config = userSamplesDBConfig, onComplete =
               sounds.set(parentDirectory, soundPaths);
             });
           }),
-      ).then(() => {
-        sounds.forEach((soundPaths, key) => {
-          const value = Array.from(soundPaths);
-          registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
-            type: 'sample',
-            samples: value,
-            baseUrl: undefined,
-            prebake: false,
-            tag: undefined,
+      )
+        .then(() => {
+          sounds.forEach((soundPaths, key) => {
+            const value = Array.from(soundPaths);
+            registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
+              type: 'sample',
+              samples: value,
+              baseUrl: undefined,
+              prebake: false,
+              tag: undefined,
+            });
           });
-        });
 
-        logger('imported sounds registered!', 'success');
-        onComplete();
-      });
+          logger('imported sounds registered!', 'success');
+          onComplete();
+        })
+        .catch((error) => {
+          logger('Something went wrong while registering saved samples from the index db', 'error');
+          console.error(error);
+        });
     };
   });
 }
