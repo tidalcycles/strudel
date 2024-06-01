@@ -56,19 +56,24 @@ export function registerSamplesFromDB(config = userSamplesDBConfig, onComplete =
 
             // Files used to be uploaded as base64 strings, After Jan 1 2025 this check can be safely deleted
             if (typeof blob === 'string') {
-              return blob;
+              const soundPaths = sounds.get(parentDirectory) ?? new Set();
+              soundPaths.add(blob);
+              sounds.set(parentDirectory, soundPaths);
+              return;
             }
 
             return blobToDataUrl(blob).then((soundPath) => {
               const soundPaths = sounds.get(parentDirectory) ?? new Set();
               soundPaths.add(soundPath);
               sounds.set(parentDirectory, soundPaths);
+              return;
             });
           }),
       )
         .then(() => {
           sounds.forEach((soundPaths, key) => {
             const value = Array.from(soundPaths);
+
             registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
               type: 'sample',
               samples: value,
