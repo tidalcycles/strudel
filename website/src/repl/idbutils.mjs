@@ -50,32 +50,39 @@ export function registerSamplesFromDB(config = userSamplesDBConfig, onComplete =
       if (!soundFiles?.length) {
         return;
       }
+      console.log(soundFiles);
       const sounds = new Map();
       [...soundFiles]
         .sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' }))
-        .forEach((soundFile) => {
+        .forEach((soundFile, i) => {
           const title = soundFile.title;
           if (!isAudioFile(title)) {
             return;
           }
           const splitRelativePath = soundFile.id.split('/');
-          const parentDirectory =
+          let parentDirectory =
             //fallback to file name before period and seperator if no parent directory
             splitRelativePath[splitRelativePath.length - 2] ?? soundFile.id.split(/\W+/)[0] ?? 'user';
-          const soundPath = soundFile.blob;
+
+          const soundPath = bufferToDataUrl(soundFile.buf);
+
+          // const soundPath = soundFile.blob;
           const soundPaths = sounds.get(parentDirectory) ?? new Set();
           soundPaths.add(soundPath);
           sounds.set(parentDirectory, soundPaths);
         });
 
       sounds.forEach((soundPaths, key) => {
-        const value = Array.from(soundPaths);
-        registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
-          type: 'sample',
-          samples: value,
-          baseUrl: undefined,
-          prebake: false,
-          tag: undefined,
+        const paths = Array.from(soundPaths);
+        Promise.all(paths).then((value) => {
+          // console.log({ value });
+          registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
+            type: 'sample',
+            samples: value,
+            baseUrl: undefined,
+            prebake: false,
+            tag: undefined,
+          });
         });
       });
       logger('imported sounds registered!', 'success');
@@ -94,6 +101,21 @@ async function bufferToDataUrl(buf) {
     reader.readAsDataURL(blob);
   });
 }
+
+function bufferToBlob(buf) {
+  return new Blob([buf], { type: 'application/octet-binary' });
+}
+
+async function blobToDataUrl(blob) {
+  return new Promise((resolve) => {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      resolve(event.target.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+}
+
 //open db and initialize it if necessary
 function openDB(config, onOpened) {
   const { dbName, version, table, columns } = config;
@@ -126,12 +148,13 @@ function openDB(config, onOpened) {
     const objectStore = writeTransaction.objectStore(table);
     onOpened(objectStore, db);
   };
+  return dbOpen;
 }
 
 async function processFilesForIDB(files) {
-  return await Promise.all(
+  return Promise.all(
     Array.from(files)
-      .map(async (s) => {
+      .map((s) => {
         const title = s.name;
 
         if (!isAudioFile(title)) {
@@ -140,16 +163,24 @@ async function processFilesForIDB(files) {
         //create obscured url to file system that can be fetched
         const sUrl = URL.createObjectURL(s);
         //fetch the sound and turn it into a buffer array
-        const buf = await fetch(sUrl).then((res) => res.arrayBuffer());
+        return fetch(sUrl).then((res) => {
+          return res.arrayBuffer().then((buf) => {
+            const path = s.webkitRelativePath;
+            let id = path?.length ? path : title;
+            if (id == null || title == null || buf == null) {
+              return;
+            }
+            return {
+              title,
+              buf,
+              // blob: base64,
+              id,
+            };
+          });
+        });
+
         //create a url base64 containing all of the buffer data
-        const base64 = await bufferToDataUrl(buf);
-        const path = s.webkitRelativePath;
-        const id = path?.length ? path : title;
-        return {
-          title,
-          blob: base64,
-          id,
-        };
+        // const base64 = await bufferToDataUrl(buf);
       })
       .filter(Boolean),
   ).catch((error) => {
@@ -159,14 +190,19 @@ async function processFilesForIDB(files) {
 }
 
 export async function uploadSamplesToDB(config, files) {
+  logger('procesing user samples...');
   await processFilesForIDB(files).then((files) => {
+    console.log(files);
+    logger('user samples processed... opening db');
     const onOpened = (objectStore, _db) => {
+      logger('index db opened... writing files to db');
       files.forEach((file) => {
         if (file == null) {
           return;
         }
         objectStore.put(file);
       });
+      logger('user samples written successfully');
     };
     openDB(config, onOpened);
   });
