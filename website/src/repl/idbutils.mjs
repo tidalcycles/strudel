@@ -26,19 +26,7 @@ function clearIDB() {
 // queries the DB, and registers the sounds so they can be played
 export function registerSamplesFromDB(config = userSamplesDBConfig, onComplete = () => {}) {
   openDB(config, (objectStore) => {
-    // const keys = objectStore.getAllKeys();
-
-    // keys.onsuccess = (e) => {
-    //   console.log(e);
-    //   const result = e.target.result[0];
-    //   console.log(result);
-
-    //   const q = objectStore.get(result);
-    //   q.onerror = (e) => console.error(e.target.error);
-    //   q.onsuccess = (e) => console.log(e);
-    // };
-
-    let query = objectStore.getAll();
+    const query = objectStore.getAll();
     query.onerror = (e) => {
       logger('User Samples failed to load ', 'error');
       onComplete();
@@ -50,32 +38,36 @@ export function registerSamplesFromDB(config = userSamplesDBConfig, onComplete =
       if (!soundFiles?.length) {
         return;
       }
-      console.log(soundFiles);
       const sounds = new Map();
-      [...soundFiles]
-        .sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' }))
-        .forEach((soundFile, i) => {
-          const title = soundFile.title;
-          if (!isAudioFile(title)) {
-            return;
-          }
-          const splitRelativePath = soundFile.id.split('/');
-          let parentDirectory =
-            //fallback to file name before period and seperator if no parent directory
-            splitRelativePath[splitRelativePath.length - 2] ?? soundFile.id.split(/\W+/)[0] ?? 'user';
 
-          const soundPath = blobToDataUrl(soundFile.blob);
+      Promise.all(
+        [...soundFiles]
+          .sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' }))
+          .map((soundFile, i) => {
+            const title = soundFile.title;
+            if (!isAudioFile(title)) {
+              return;
+            }
+            const splitRelativePath = soundFile.id.split('/');
+            let parentDirectory =
+              //fallback to file name before period and seperator if no parent directory
+              splitRelativePath[splitRelativePath.length - 2] ?? soundFile.id.split(/\W+/)[0] ?? 'user';
+            const blob = soundFile.blob;
 
-          // const soundPath = soundFile.blob;
-          const soundPaths = sounds.get(parentDirectory) ?? new Set();
-          soundPaths.add(soundPath);
-          sounds.set(parentDirectory, soundPaths);
-        });
+            // Files used to be uploaded as base64 strings, After Jan 1 2025 this check can be safely deleted
+            if (typeof blob === 'string') {
+              return blob;
+            }
 
-      sounds.forEach((soundPaths, key) => {
-        const paths = Array.from(soundPaths);
-        Promise.all(paths).then((value) => {
-          // console.log({ value });
+            return blobToDataUrl(blob).then((soundPath) => {
+              const soundPaths = sounds.get(parentDirectory) ?? new Set();
+              soundPaths.add(soundPath);
+              sounds.set(parentDirectory, soundPaths);
+            });
+          }),
+      ).then(() => {
+        sounds.forEach((soundPaths, key) => {
+          const value = Array.from(soundPaths);
           registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
             type: 'sample',
             samples: value,
@@ -84,26 +76,12 @@ export function registerSamplesFromDB(config = userSamplesDBConfig, onComplete =
             tag: undefined,
           });
         });
-      });
-      logger('imported sounds registered!', 'success');
-      onComplete();
-    };
-  });
-}
-// creates a blob from a buffer that can be read
-async function bufferToDataUrl(buf) {
-  return new Promise((resolve) => {
-    var blob = new Blob([buf], { type: 'application/octet-binary' });
-    var reader = new FileReader();
-    reader.onload = function (event) {
-      resolve(event.target.result);
-    };
-    reader.readAsDataURL(blob);
-  });
-}
 
-function bufferToBlob(buf) {
-  return new Blob([buf], { type: 'application/octet-binary' });
+        logger('imported sounds registered!', 'success');
+        onComplete();
+      });
+    };
+  });
 }
 
 async function blobToDataUrl(blob) {
@@ -172,15 +150,11 @@ async function processFilesForIDB(files) {
             }
             return {
               title,
-              // buf,
               blob,
               id,
             };
           });
         });
-
-        //create a url base64 containing all of the buffer data
-        // const base64 = await bufferToDataUrl(buf);
       })
       .filter(Boolean),
   ).catch((error) => {

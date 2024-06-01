@@ -99,7 +99,7 @@ export const connectToDestination = (input, channels = [0, 1]) => {
   //This upmix can be removed if correct channel counts are set throughout the app,
   // and then strudel could theoretically support surround sound audio files
   const stereoMix = new StereoPannerNode(ctx);
-  input.connect(stereoMix);
+  input?.connect(stereoMix);
 
   const splitter = new ChannelSplitterNode(ctx, {
     numberOfOutputs: stereoMix.channelCount,
