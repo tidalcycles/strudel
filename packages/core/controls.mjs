@@ -191,7 +191,7 @@ export const { attack, att } = registerControl('attack', 'att');
  * note("c e g b g e")
  * .fm(4)
  * .fmh("<1 2 1.5 1.61>")
- * .scope()
+ * ._scope()
  *
  */
 export const { fmh } = registerControl(['fmh', 'fmi'], 'fmh');
@@ -205,7 +205,7 @@ export const { fmh } = registerControl(['fmh', 'fmi'], 'fmh');
  * @example
  * note("c e g b g e")
  * .fm("<0 1 2 8 32>")
- * .scope()
+ * ._scope()
  *
  */
 export const { fmi, fm } = registerControl(['fmi', 'fmh'], 'fm');
@@ -221,7 +221,7 @@ export const { fmi, fm } = registerControl(['fmi', 'fmh'], 'fm');
  * .fmdecay(.2)
  * .fmsustain(0)
  * .fmenv("<exp lin>")
- * .scope()
+ * ._scope()
  *
  */
 export const { fmenv } = registerControl('fmenv');
@@ -234,7 +234,7 @@ export const { fmenv } = registerControl('fmenv');
  * note("c e g b g e")
  * .fm(4)
  * .fmattack("<0 .05 .1 .2>")
- * .scope()
+ * ._scope()
  *
  */
 export const { fmattack } = registerControl('fmattack');
@@ -248,7 +248,7 @@ export const { fmattack } = registerControl('fmattack');
  * .fm(4)
  * .fmdecay("<.01 .05 .1 .2>")
  * .fmsustain(.4)
- * .scope()
+ * ._scope()
  *
  */
 export const { fmdecay } = registerControl('fmdecay');
@@ -262,7 +262,7 @@ export const { fmdecay } = registerControl('fmdecay');
  * .fm(4)
  * .fmdecay(.1)
  * .fmsustain("<1 .75 .5 0>")
- * .scope()
+ * ._scope()
  *
  */
 export const { fmsustain } = registerControl('fmsustain');
@@ -800,10 +800,12 @@ export const { fanchor } = registerControl('fanchor');
  * @example
  * note("a e")
  * .vib("<.5 1 2 4 8 16>")
+ * ._scope()
  * @example
  * // change the modulation depth with ":"
  * note("a e")
  * .vib("<.5 1 2 4 8 16>:12")
+ * ._scope()
  */
 export const { vib, vibrato, v } = registerControl(['vib', 'vibmod'], 'vibrato', 'v');
 /**
@@ -824,10 +826,12 @@ export const { noise } = registerControl('noise');
  * @example
  * note("a e").vib(4)
  * .vibmod("<.25 .5 1 2 12>")
+ * ._scope()
  * @example
  * // change the vibrato frequency with ":"
  * note("a e")
  * .vibmod("<.25 .5 1 2 12>:8")
+ * ._scope()
  */
 export const { vibmod, vmod } = registerControl(['vibmod', 'vib'], 'vmod');
 export const { hcutoff, hpf, hp } = registerControl(['hcutoff', 'hresonance', 'hpenv'], 'hpf', 'hp');

@@ -122,6 +122,10 @@ strudel.Pattern.prototype.midi = function () {
   return this;
 };
 
+strudel.Pattern.prototype._scope = function () {
+  return this;
+};
+
 const uiHelpersMocked = {
   backgroundImage: id,
 };
