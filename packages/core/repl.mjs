@@ -74,6 +74,7 @@ export function repl({
   const setPattern = async (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
     await scheduler.setPattern(pattern, autostart);
+    return pattern;
   };
   setTime(() => scheduler.now()); // TODO: refactor?
 
@@ -161,7 +162,7 @@ export function repl({
         throw new Error(message + (typeof evaluated === 'function' ? ', did you forget to call a function?' : '.'));
       }
       logger(`[eval] code updated`);
-      await setPattern(pattern, autostart);
+      pattern = await setPattern(pattern, autostart);
       updateState({
         miniLocations: meta?.miniLocations || [],
         widgets: meta?.widgets || [],
