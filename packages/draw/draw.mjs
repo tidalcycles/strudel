@@ -74,13 +74,23 @@ Pattern.prototype.draw = function (fn, options) {
 
 export const cleanupDraw = (clearScreen = true, id) => {
   const ctx = getDrawContext();
-  clearScreen && ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.width);
+  clearScreen && ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   stopAllAnimations(id);
 };
 
-Pattern.prototype.onPaint = function () {
-  console.warn('[draw] onPaint was not overloaded. Some drawings might not work');
-  return this;
+Pattern.prototype.onPaint = function (painter) {
+  return this.withState((state) => {
+    if (!state.controls.painters) {
+      state.controls.painters = [];
+    }
+    state.controls.painters.push(painter);
+  });
+};
+
+Pattern.prototype.getPainters = function () {
+  let painters = [];
+  this.queryArc(0, 0, { painters });
+  return painters;
 };
 
 // const round = (x) => Math.round(x * 1000) / 1000;
@@ -119,6 +129,7 @@ export class Drawer {
     this.visibleHaps = [];
     this.lastFrame = null;
     this.drawTime = drawTime;
+    this.painters = [];
     this.framer = new Framer(
       () => {
         if (!this.scheduler) {
@@ -143,7 +154,7 @@ export class Drawer {
           // add new haps with onset (think right edge bars scrolling in)
           .concat(haps.filter((h) => h.hasOnset()));
         const time = phase - lookahead;
-        onDraw(this.visibleHaps, time, this);
+        onDraw(this.visibleHaps, time, this, this.painters);
       },
       (err) => {
         console.warn('draw error', err);
@@ -161,11 +172,13 @@ export class Drawer {
     t = t ?? scheduler.now();
     this.scheduler = scheduler;
     let [_, lookahead] = this.drawTime;
+    // +0.1 = workaround for weird holes in query..
     const [begin, end] = [Math.max(t, 0), t + lookahead + 0.1];
     // remove all future haps
     this.visibleHaps = this.visibleHaps.filter((h) => h.whole.begin < t);
+    this.painters = []; // will get populated by .onPaint calls attached to the pattern
     // query future haps
-    const futureHaps = scheduler.pattern.queryArc(begin, end); // +0.1 = workaround for weird holes in query..
+    const futureHaps = scheduler.pattern.queryArc(begin, end, { painters: this.painters });
     // append future haps
     this.visibleHaps = this.visibleHaps.concat(futureHaps);
   }

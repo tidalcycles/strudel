@@ -94,6 +94,14 @@ export class Pattern {
     return result;
   }
 
+  // runs func on query state
+  withState(func) {
+    return this.withHaps((haps, state) => {
+      func(state);
+      return haps;
+    });
+  }
+
   /**
    * see `withValue`
    * @noAutocomplete
