@@ -33,7 +33,7 @@ export default function ImportSoundsButton({ onComplete }) {
         directory=""
         webkitdirectory=""
         multiple
-        accept="audio/*, .wav, .mp3, .m4a, .flac"
+        accept="audio/*, .wav, .mp3, .m4a, .flac, .aac, .ogg"
         onChange={() => {
           onChange();
         }}
