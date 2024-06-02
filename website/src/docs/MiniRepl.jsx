@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Icon } from './Icon';
 import { silence, noteToMidi, _mod } from '@strudel/core';
-import { getPunchcardPainter } from '@strudel/draw';
+import { getDrawContext, getPunchcardPainter } from '@strudel/draw';
 import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
 import { StrudelMirror } from '@strudel/codemirror';
@@ -28,24 +28,25 @@ export function MiniRepl({
   claviature,
   claviatureLabels,
   maxHeight,
+  autodraw,
 }) {
   const code = tunes ? tunes[0] : tune;
   const id = useMemo(() => s4(), []);
   const canvasId = useMemo(() => `canvas-${id}`, [id]);
-  const shouldDraw = !!punchcard || !!claviature;
+  autodraw = !!punchcard || !!claviature || !!autodraw;
   const shouldShowCanvas = !!punchcard;
   const drawTime = punchcard ? [0, 4] : [-2, 2];
   const [activeNotes, setActiveNotes] = useState([]);
 
-  const init = useCallback(({ code, shouldDraw }) => {
-    const drawContext = shouldDraw ? document.querySelector('#' + canvasId)?.getContext('2d') : null;
+  const init = useCallback(({ code, autodraw }) => {
+    const drawContext = canvasId ? document.querySelector('#' + canvasId)?.getContext('2d') : getDrawContext();
 
     const editor = new StrudelMirror({
       id,
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       transpiler,
-      autodraw: !!shouldDraw,
+      autodraw,
       root: containerRef.current,
       initialCode: '// LOADING',
       pattern: silence,
@@ -73,7 +74,7 @@ export function MiniRepl({
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
-      beforeEval: () => audioReady, // not doing this in prebake to make sure viz is drawn
+      beforeStart: () => audioReady,
       afterEval: ({ code }) => setVersionDefaultsFrom(code),
     });
     // init settings
@@ -152,7 +153,7 @@ export function MiniRepl({
           ref={(el) => {
             if (!editorRef.current) {
               containerRef.current = el;
-              init({ code, shouldDraw });
+              init({ code, autodraw });
             }
           }}
         ></div>
