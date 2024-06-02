@@ -29,13 +29,17 @@ export function MiniRepl({
   claviatureLabels,
   maxHeight,
   autodraw,
+  drawTime,
 }) {
   const code = tunes ? tunes[0] : tune;
   const id = useMemo(() => s4(), []);
   const canvasId = useMemo(() => `canvas-${id}`, [id]);
   autodraw = !!punchcard || !!claviature || !!autodraw;
   const shouldShowCanvas = !!punchcard;
-  const drawTime = punchcard ? [0, 4] : [-2, 2];
+  drawTime = drawTime ?? punchcard ? [0, 4] : [-2, 2];
+  if (claviature) {
+    drawTime = [0, 0];
+  }
   const [activeNotes, setActiveNotes] = useState([]);
 
   const init = useCallback(({ code, autodraw }) => {
@@ -57,7 +61,7 @@ export function MiniRepl({
           pat = pat.onTrigger(onTrigger, false);
         }
         if (claviature) {
-          editor?.painters.push((ctx, time, haps, drawTime) => {
+          pat = pat.onPaint((ctx, time, haps, drawTime) => {
             const active = haps
               .map((hap) => hap.value.note)
               .filter(Boolean)
@@ -66,7 +70,7 @@ export function MiniRepl({
           });
         }
         if (punchcard) {
-          editor?.painters.push(getPunchcardPainter({ labels: !!punchcardLabels }));
+          pat = pat.punchcard({ labels: !!punchcardLabels });
         }
         return pat;
       },
