@@ -140,16 +140,15 @@ export class StrudelMirror {
     this.root = root;
     this.miniLocations = [];
     this.widgets = [];
-    this.painters = [];
     this.drawTime = drawTime;
     this.drawContext = drawContext;
     this.onDraw = onDraw || this.draw;
     this.id = id || s4();
 
-    this.drawer = new Drawer((haps, time) => {
+    this.drawer = new Drawer((haps, time, _, painters) => {
       const currentFrame = haps.filter((hap) => hap.isActive(time));
       this.highlight(currentFrame, time);
-      this.onDraw(haps, time, this.painters);
+      this.onDraw(haps, time, painters);
     }, drawTime);
 
     this.prebaked = prebake();
@@ -160,7 +159,6 @@ export class StrudelMirror {
       onToggle: (started) => {
         replOptions?.onToggle?.(started);
         if (started) {
-          this.adjustDrawTime();
           this.drawer.start(this.repl.scheduler);
           // stop other repls when this one is started
           document.dispatchEvent(
@@ -171,20 +169,11 @@ export class StrudelMirror {
         } else {
           this.drawer.stop();
           updateMiniLocations(this.editor, []);
-          cleanupDraw(false, id);
+          cleanupDraw(true, id);
         }
       },
       beforeEval: async () => {
         cleanupDraw(true, id);
-        this.painters = [];
-        const self = this;
-        // this is similar to repl.mjs > injectPatternMethods
-        // maybe there is a solution without prototype hacking, but hey, it works
-        // we need to do this befor every eval to make sure it works with multiple StrudelMirror's side by side
-        Pattern.prototype.onPaint = function (onPaint) {
-          self.painters.push(onPaint);
-          return this;
-        };
         await this.prebaked;
         await replOptions?.beforeEval?.();
       },
@@ -198,8 +187,11 @@ export class StrudelMirror {
         updateWidgets(this.editor, widgets);
         updateMiniLocations(this.editor, this.miniLocations);
         replOptions?.afterEval?.(options);
-        this.adjustDrawTime();
-        this.drawer.invalidate();
+        // if no painters are set (.onPaint was not called), then we only need the present moment (for highlighting)
+        const drawTime = options.pattern.getPainters().length ? this.drawTime : [0, 0];
+        this.drawer.setDrawTime(drawTime);
+        // invalidate drawer after we've set the appropriate drawTime
+        this.drawer.invalidate(this.repl.scheduler);
       },
     });
     this.editor = initEditor({
@@ -234,13 +226,8 @@ export class StrudelMirror {
     };
     document.addEventListener('start-repl', this.onStartRepl);
   }
-  // adjusts draw time depending on if there are painters
-  adjustDrawTime() {
-    // when no painters are set, [0,0] is enough (just highlighting)
-    this.drawer.setDrawTime(this.painters.length ? this.drawTime : [0, 0]);
-  }
-  draw(haps, time) {
-    this.painters?.forEach((painter) => painter(this.drawContext, time, haps, this.drawTime));
+  draw(haps, time, painters) {
+    painters?.forEach((painter) => painter(this.drawContext, time, haps, this.drawTime));
   }
   async drawFirstFrame() {
     if (!this.onDraw) {
@@ -252,7 +239,7 @@ export class StrudelMirror {
       await this.repl.evaluate(this.code, false);
       this.drawer.invalidate(this.repl.scheduler, -0.001);
       // draw at -0.001 to avoid haps at 0 to be visualized as active
-      this.onDraw?.(this.drawer.visibleHaps, -0.001, this.painters);
+      this.onDraw?.(this.drawer.visibleHaps, -0.001, this.drawer.painters);
     } catch (err) {
       console.warn('first frame could not be painted');
     }
