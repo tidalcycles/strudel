@@ -2531,7 +2531,7 @@ export function _polymeterListSteps(steps, ...args) {
  * @param  {any[]} patterns one or more patterns
  * @example
  * // the same as "{c d, e f g}%4"
- * s_polymeterSteps(4, "c d", "e f g")
+ * s_polymeterSteps(4, "c d", "e f g").note()
  */
 export function s_polymeterSteps(steps, ...args) {
   if (args.length == 0) {
@@ -2549,8 +2549,8 @@ export function s_polymeterSteps(steps, ...args) {
  * *EXPERIMENTAL* - Combines the given lists of patterns with the same pulse, creating polymeters when different sized sequences are used.
  * @synonyms pm
  * @example
- * // The same as "{c eb g, c2 g2}"
- * s_polymeter("c eb g", "c2 g2")
+ * // The same as note("{c eb g, c2 g2}")
+ * s_polymeter("c eb g", "c2 g2").note()
  *
  */
 export function s_polymeter(...args) {
@@ -2579,6 +2579,8 @@ export function s_polymeter(...args) {
 /** Sequences patterns like `seq`, but each pattern has a length, relative to the whole.
  * This length can either be provided as a [length, pattern] pair, or inferred from
  * the pattern's 'tactus', generally inferred by the mininotation. Has the alias `timecat`.
+ * @name s_cat
+ * @synonyms timeCat, timecat
  * @return {Pattern}
  * @example
  * s_cat([3,"e3"],[1, "g3"]).note()
