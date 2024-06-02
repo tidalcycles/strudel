@@ -10,6 +10,7 @@ export function repl({
   defaultOutput,
   onEvalError,
   beforeEval,
+  beforeStart,
   afterEval,
   getTime,
   transpiler,
@@ -53,6 +54,7 @@ export function repl({
     },
     setInterval,
     clearInterval,
+    beforeStart,
   };
 
   // NeoCyclist uses a shared worker to communicate between instances, which is not supported on mobile chrome
@@ -69,9 +71,9 @@ export function repl({
     return silence;
   };
 
-  const setPattern = (pattern, autostart = true) => {
+  const setPattern = async (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
-    scheduler.setPattern(pattern, autostart);
+    await scheduler.setPattern(pattern, autostart);
   };
   setTime(() => scheduler.now()); // TODO: refactor?
 
@@ -159,7 +161,7 @@ export function repl({
         throw new Error(message + (typeof evaluated === 'function' ? ', did you forget to call a function?' : '.'));
       }
       logger(`[eval] code updated`);
-      setPattern(pattern, autostart);
+      await setPattern(pattern, autostart);
       updateState({
         miniLocations: meta?.miniLocations || [],
         widgets: meta?.widgets || [],
