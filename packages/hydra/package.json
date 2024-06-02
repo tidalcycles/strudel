@@ -1,6 +1,6 @@
 {
   "name": "@strudel/hydra",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Hydra integration for strudel",
   "main": "hydra.mjs",
   "type": "module",

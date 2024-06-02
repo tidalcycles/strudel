@@ -10,13 +10,13 @@ import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel/transpiler';
 import {
   getAudioContext,
-  initAudioOnFirstClick,
   webaudioOutput,
   resetGlobalEffects,
   resetLoadedSounds,
+  initAudioOnFirstClick,
 } from '@strudel/webaudio';
 import { defaultAudioDeviceName } from '../settings.mjs';
-import { getAudioDevices, setAudioDevice } from './util.mjs';
+import { getAudioDevices, setAudioDevice, setVersionDefaultsFrom } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { clearHydra } from '@strudel/hydra';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -38,12 +38,14 @@ import { getRandomTune, initCode, loadModules, shareCode, ReplContext } from './
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
 import { setInterval, clearInterval } from 'worker-timers';
+import { getMetadata } from '../metadata_parser';
 
 const { latestCode } = settingsMap.get();
 
-let modulesLoading, presets, drawContext, clearCanvas, isIframe;
+let modulesLoading, presets, drawContext, clearCanvas, isIframe, audioReady;
+
 if (typeof window !== 'undefined') {
-  initAudioOnFirstClick();
+  audioReady = initAudioOnFirstClick();
   modulesLoading = loadModules();
   presets = prebake();
   drawContext = getDrawContext();
@@ -87,11 +89,14 @@ export function Repl({ embedded = false }) {
           clearHydra();
         }
       },
+      beforeEval: () => audioReady,
       afterEval: (all) => {
         const { code } = all;
         setLatestCode(code);
         window.location.hash = '#' + code2hash(code);
+        setDocumentTitle(code);
         const viewingPatternData = getViewingPatternData();
+        setVersionDefaultsFrom(code);
         const data = { ...viewingPatternData, code };
         let id = data.id;
         const isExamplePattern = viewingPatternData.collection !== userPattern.collection;
@@ -112,22 +117,25 @@ export function Repl({ embedded = false }) {
       },
       bgFill: false,
     });
+    window.strudelMirror = editor;
 
     // init settings
 
     initCode().then(async (decoded) => {
-      let msg;
+      let code, msg;
       if (decoded) {
-        editor.setCode(decoded);
+        code = decoded;
         msg = `I have loaded the code from the URL.`;
       } else if (latestCode) {
-        editor.setCode(latestCode);
+        code = latestCode;
         msg = `Your last session has been loaded!`;
       } else {
         const { code: randomTune, name } = await getRandomTune();
-        editor.setCode(randomTune);
+        code = randomTune;
         msg = `A random code snippet named "${name}" has been loaded!`;
       }
+      editor.setCode(code);
+      setDocumentTitle(code);
       logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
     });
 
@@ -169,6 +177,11 @@ export function Repl({ embedded = false }) {
   //
   // UI Actions
   //
+
+  const setDocumentTitle = (code) => {
+    const meta = getMetadata(code);
+    document.title = (meta.title ? `${meta.title} - ` : '') + 'Strudel REPL';
+  };
 
   const handleTogglePlay = async () => {
     editorRef.current?.toggle();

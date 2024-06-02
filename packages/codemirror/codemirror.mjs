@@ -345,6 +345,17 @@ export class StrudelMirror {
   clear() {
     this.onStartRepl && document.removeEventListener('start-repl', this.onStartRepl);
   }
+  getCursorLocation() {
+    return this.editor.state.selection.main.head;
+  }
+  setCursorLocation(col) {
+    return this.editor.dispatch({ selection: { anchor: col } });
+  }
+  appendCode(code) {
+    const cursor = this.getCursorLocation();
+    this.setCode(this.code + code);
+    this.setCursorLocation(cursor);
+  }
 }
 
 function parseBooleans(value) {

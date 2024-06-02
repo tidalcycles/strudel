@@ -1,6 +1,6 @@
 {
   "name": "@strudel/serial",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Webserial API for strudel",
   "main": "serial.mjs",
   "type": "module",

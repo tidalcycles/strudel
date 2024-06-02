@@ -108,7 +108,7 @@ export function pianoroll({
   active = getTheme().foreground,
   background = 'transparent',
   smear = 0,
-  playheadColor = 'white',
+  playheadColor = getTheme().foreground,
   minMidi = 10,
   maxMidi = 90,
   autorange = 0,

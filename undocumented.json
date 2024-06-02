@@ -649,7 +649,7 @@
   "/packages/webaudio/webaudio.mjs": [
     "webaudioOutputTrigger",
     "webaudioOutput",
-    "webaudioScheduler"
+    "webaudioRepl"
   ],
   "/packages/webaudio/scope.mjs": [
     "drawTimeScope",

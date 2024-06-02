@@ -1,0 +1,28 @@
+{
+  "name": "@strudel/tidal",
+  "version": "0.1.0",
+  "description": "Experimental Tidal Code interpreter",
+  "module": "tidal.mjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/felixroos/hs2js.git"
+  },
+  "keywords": [
+    "haskell",
+    "javascript"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel/tree/main/packages/hs2js",
+  "dependencies": {
+    "@strudel/core": "workspace:*",
+    "@strudel/mini": "workspace:*",
+    "hs2js": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^5.0.10"
+  }
+}

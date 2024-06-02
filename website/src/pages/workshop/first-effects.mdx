@@ -205,7 +205,7 @@ note("[~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]]*2")
 sound("<bd rim>").bank("RolandTR707").delay(.5),
 n("<4 [3@3 4] [<2 0> ~@16] ~>")
 .scale("D4:minor").sound("gm_accordion:2")
-room(2).gain(.5)
+.room(2).gain(.5)
 )`}
 />
 
@@ -262,7 +262,7 @@ By the way, inside Mini-Notation, `fast` is `*` and `slow` is `/`.
 
 <MiniRepl client:visible tune={`sound("[bd*4,~ rim ~ cp]*<1 [2 4]>")`} />
 
-## automation with signals
+## modulation with signals
 
 Instead of changing values stepwise, we can also control them with signals:
 
@@ -290,7 +290,7 @@ What happens if you flip the range values?
 
 </Box>
 
-We can change the automation speed with slow / fast:
+We can change the modulation speed with slow / fast:
 
 <MiniRepl
   client:visible
@@ -301,7 +301,7 @@ We can change the automation speed with slow / fast:
 
 <Box>
 
-The whole automation will now take 8 cycles to repeat.
+The whole modulation will now take 8 cycles to repeat.
 
 </Box>
 

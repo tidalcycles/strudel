@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import * as strudel from '@strudel/core';
 import { superdough, getAudioContext, setLogger, doughTrigger } from 'superdough';
-const { Pattern, logger } = strudel;
+const { Pattern, logger, repl } = strudel;
 
 setLogger(logger);
 
@@ -24,17 +24,13 @@ Pattern.prototype.webaudio = function () {
   return this.onTrigger(webaudioOutputTrigger);
 };
 
-export function webaudioScheduler(options = {}) {
+export function webaudioRepl(options = {}) {
   options = {
     getTime: () => getAudioContext().currentTime,
     defaultOutput: webaudioOutput,
     ...options,
   };
-  const { defaultOutput, getTime } = options;
-  return new strudel.Cyclist({
-    ...options,
-    onTrigger: strudel.getTrigger({ defaultOutput, getTime }),
-  });
+  return repl(options);
 }
 
 Pattern.prototype.dough = function () {
