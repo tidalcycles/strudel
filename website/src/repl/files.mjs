@@ -76,7 +76,7 @@ export const walkFileTree = (node, fn) => {
 };
 
 export const isAudioFile = (filename) =>
-  ['wav', 'mp3', 'flac', 'ogg', 'm4a'].includes(filename.split('.').slice(-1)[0]);
+  ['wav', 'mp3', 'flac', 'ogg', 'm4a', 'aac'].includes(filename.split('.').slice(-1)[0]);
 
 function uint8ArrayToDataURL(uint8Array) {
   const blob = new Blob([uint8Array], { type: 'audio/*' });
