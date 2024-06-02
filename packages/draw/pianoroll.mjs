@@ -67,6 +67,7 @@ Pattern.prototype.pianoroll = function (options = {}) {
  * Displays a midi-style piano roll
  *
  * @name pianoroll
+ * @synonyms punchcard
  * @param {Object} options Object containing all the optional following parameters as key value pairs:
  * @param {integer} cycles number of cycles to be displayed at the same time - defaults to 4
  * @param {number} playhead location of the active notes on the time axis - 0 to 1, defaults to 0.5
@@ -94,7 +95,11 @@ Pattern.prototype.pianoroll = function (options = {}) {
  * @param {boolean} autorange automatically calculate the minMidi and maxMidi parameters - 0 by default
  *
  * @example
- * note("C2 A2 G2").euclid(5,8).s('piano').clip(1).color('salmon').pianoroll({vertical:1, labels:1})
+ * note("c2 a2 eb2")
+ * .euclid(5,8)
+ * .s('sawtooth')
+ * .lpenv(4).lpf(300)
+ * ._pianoroll({ labels: 1 })
  */
 export function pianoroll({
   time,
@@ -113,7 +118,7 @@ export function pianoroll({
   maxMidi = 90,
   autorange = 0,
   timeframe: timeframeProp,
-  fold = 0,
+  fold = 1,
   vertical = 0,
   labels = false,
   fill = 1,

@@ -34,9 +34,9 @@ export function MiniRepl({
 }) {
   const code = tunes ? tunes[0] : tune;
   const id = useMemo(() => s4(), []);
-  const canvasId = useMemo(() => `canvas-${id}`, [id]);
-  autodraw = !!punchcard || !!claviature || !!autodraw;
   const shouldShowCanvas = !!punchcard;
+  const canvasId = shouldShowCanvas ? useMemo(() => `canvas-${id}`, [id]) : null;
+  autodraw = !!punchcard || !!claviature || !!autodraw;
   drawTime = drawTime ?? punchcard ? [0, 4] : [-2, 2];
   if (claviature) {
     drawTime = [0, 0];

@@ -392,7 +392,7 @@ export const { loop } = registerControl('loop');
  * @synonyms loopb
  * @example
  * s("space").loop(1)
- * .loopBegin("<0 .125 .25>").scope()
+ * .loopBegin("<0 .125 .25>")._scope()
  */
 export const { loopBegin, loopb } = registerControl('loopBegin', 'loopb');
 /**
@@ -405,7 +405,7 @@ export const { loopBegin, loopb } = registerControl('loopBegin', 'loopb');
  * @synonyms loope
  * @example
  * s("space").loop(1)
- * .loopEnd("<1 .75 .5 .25>").scope()
+ * .loopEnd("<1 .75 .5 .25>")._scope()
  */
 export const { loopEnd, loope } = registerControl('loopEnd', 'loope');
 /**
