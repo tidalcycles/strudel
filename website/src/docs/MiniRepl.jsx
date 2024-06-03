@@ -81,7 +81,7 @@ export function MiniRepl({
       },
       onToggle: (playing) => {
         if (!playing) {
-          clearHydra();
+          // clearHydra(); // TBD: doesn't work with multiple MiniRepl's on a page
         }
       },
       beforeStart: () => audioReady,
