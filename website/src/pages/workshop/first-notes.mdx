@@ -314,12 +314,11 @@ Let's recap what we've learned in this chapter:
 
 New functions:
 
-| Name  | Description                         | Example                                                                           |
-| ----- | ----------------------------------- | --------------------------------------------------------------------------------- |
-| note  | set pitch as number or letter       | <MiniRepl client:visible tune={`note("b g e c").sound("piano")`} />               |
-| scale | interpret `n` as scale degree       | <MiniRepl client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
-| stack | play patterns in parallel (read on) | <MiniRepl client:visible tune={`stack(s("bd sd"),note("c eb g"))`} />             |
-| $:    | play patterns in parallel           | <MiniRepl client:visible tune={'$: s("bd sd")\n$: note("c eb g")'} />             |
+| Name  | Description                   | Example                                                                           |
+| ----- | ----------------------------- | --------------------------------------------------------------------------------- |
+| note  | set pitch as number or letter | <MiniRepl client:visible tune={`note("b g e c").sound("piano")`} />               |
+| scale | interpret `n` as scale degree | <MiniRepl client:visible tune={`n("6 4 2 0").scale("C:minor").sound("piano")`} /> |
+| $:    | play patterns in parallel     | <MiniRepl client:visible tune={'$: s("bd sd")\n$: note("c eb g")'} />             |
 
 ## Examples
 
@@ -357,28 +356,13 @@ New functions:
 
 <Box>
 
-It's called `stack` 😙
+You can use `$:` 😙
 
 </Box>
 
-<MiniRepl
-  client:visible
-  tune={`stack(
-  note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>")
-  .sound("gm_synth_bass_1").lpf(800),
-  n(\`<
-  [~ 0] 2 [0 2] [~ 2]
-  [~ 0] 1 [0 1] [~ 1]
-  [~ 0] 3 [0 3] [~ 3]
-  [~ 0] 2 [0 2] [~ 2]
-  >*4\`).scale("C4:minor")
-  .sound("gm_synth_strings_1"),
-  sound("bd*4, [~ <sd cp>]*2, [~ hh]*4")
-  .bank("RolandTR909")
-)`}
-/>
+## Playing multiple patterns
 
-Since Strudel 1.1.0, there is another, simpler way to write multiple patterns in parallel. Just write `$:` before every part:
+If you want to play multiple patterns at the same time, make sure to write `$:` before each:
 
 <MiniRepl
   client:visible
