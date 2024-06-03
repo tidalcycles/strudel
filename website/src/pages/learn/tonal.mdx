@@ -55,20 +55,6 @@ Transposes notes inside the scale by the number of steps:
 .note()`}
 />
 
-### voicings(range?)
-
-Turns chord symbols into voicings, using the smoothest voice leading possible:
-
-<MiniRepl
-  client:only="react"
-  tune={`stack(
-  "<C^7 A7 Dm7 G7>".voicings('lefthand'), 
-  "<C3 A2 D3 G2>"
-).note()`}
-/>
-
-Note: This function might be removed, as `voicing` (without s) is a newer implementation.
-
 ### rootNotes(octave = 2)
 
 Turns chord symbols into root notes of chords in given octave.

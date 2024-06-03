@@ -25,20 +25,16 @@ This is the same as:
 
 <MiniRepl
   client:visible
-  tune={`stack(
-  n("0 1 [4 3] 2 0 2 [~ 3] 4").sound("jazz").pan(0),
-  n("0 1 [4 3] 2 0 2 [~ 3] 4").sound("jazz").pan(1).rev()
-)`}
+  tune={`$: n("0 1 [4 3] 2 0 2 [~ 3] 4").sound("jazz").pan(0)
+$: n("0 1 [4 3] 2 0 2 [~ 3] 4").sound("jazz").pan(1).rev()`}
 />
 
 Let's visualize what happens here:
 
 <MiniRepl
   client:visible
-  tune={`stack(
-  n("0 1 [4 3] 2 0 2 [~ 3] 4").sound("jazz").pan(0).color("cyan"),
-  n("0 1 [4 3] 2 0 2 [~ 3] 4").sound("jazz").pan(1).color("magenta").rev()
-)`}
+  tune={`$: n("0 1 [4 3] 2 0 2 [~ 3] 4").sound("jazz").pan(0).color("cyan")
+$: n("0 1 [4 3] 2 0 2 [~ 3] 4").sound("jazz").pan(1).color("magenta").rev()`}
   punchcard
 />
 
@@ -56,11 +52,9 @@ This is like doing
 
 <MiniRepl
   client:visible
-  tune={`stack(
-  note("c2, eb3 g3 [bb3 c4]").s("piano").slow(0.5).color('cyan'),
-  note("c2, eb3 g3 [bb3 c4]").s("piano").slow(1).color('magenta'),
-  note("c2, eb3 g3 [bb3 c4]").s("piano").slow(1.5).color('yellow')
-)`}
+  tune={`$: note("c2, eb3 g3 [bb3 c4]").s("piano").slow(0.5).color('cyan')
+$: note("c2, eb3 g3 [bb3 c4]").s("piano").slow(1).color('magenta')
+$: note("c2, eb3 g3 [bb3 c4]").s("piano").slow(1.5).color('yellow')`}
   punchcard
 />
 
@@ -110,17 +104,17 @@ We can add as often as we like:
 
 <MiniRepl
   client:visible
-  tune={`stack(
-  n("0 [2 4] <3 5> [~ <4 1>]".add("<0 [0,2,4]>"))
+  tune={`$: n("0 [2 4] <3 5> [~ <4 1>]".add("<0 [0,2,4]>"))
   .scale("C5:minor")
   .sound("gm_xylophone")
-  .room(.4).delay(.125),
-  note("c2 [eb3,g3]".add("<0 <1 -1>>"))
+  .room(.4).delay(.125)
+
+$: note("c2 [eb3,g3]".add("<0 <1 -1>>"))
   .adsr("[.1 0]:.2:[1 0]")
   .sound("gm_acoustic_bass")
-  .room(.5),
-  n("0 1 [2 3] 2").sound("jazz").jux(rev)
-)`}
+  .room(.5)
+
+$: n("0 1 [2 3] 2").sound("jazz").jux(rev)`}
 />
 
 **ply**
@@ -165,7 +159,7 @@ off is also useful for modifying other sounds, and can even be nested:
   client:visible
   tune={`s("bd sd [rim bd] sd,[~ hh]*4").bank("CasioRZ1")
   .off(2/16, x=>x.speed(1.5).gain(.25)
-    .off(3/16, y=>y.vowel("<a e i o>*8")))`}
+  .off(3/16, y=>y.vowel("<a e i o>*8")))`}
 />
 
 | name | description                    | example                                                                                     |
