@@ -60,11 +60,10 @@ We will learn how to automate with waves later...
 
 <MiniRepl
   client:visible
-  tune={`stack(
-  sound("hh*16").gain("[.25 1]*4"),
-  sound("bd*4,[~ sd:1]*2")
-) `}
-  punchcard
+  tune={`$: sound("hh*16").gain("[.25 1]*4")
+
+$: sound("bd*4,[~ sd:1]*2")`}
+punchcard
 />
 
 <Box>
@@ -76,30 +75,20 @@ Rhythm is all about dynamics!
 
 </Box>
 
-**stacks within stacks**
-
 Let's combine all of the above into a little tune:
 
 <MiniRepl
   client:visible
-  tune={`stack(
-stack(
-sound("hh*8").gain("[.25 1]*4"),
-sound("bd*4,[~ sd:1]*2")
-),
-note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>")
-.sound("sawtooth").lpf("200 1000 200 1000"),
-note("<[c3,g3,e4] [bb2,f3,d4] [a2,f3,c4] [bb2,g3,eb4]>")
-.sound("sawtooth").vowel("<a e i o>")
-)`}
+  tune={`$: sound("hh*8").gain("[.25 1]*4")
+
+$: sound("bd*4,[~ sd:1]*2")
+
+$: note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>")
+.sound("sawtooth").lpf("200 1000 200 1000")
+
+$: note("<[c3,g3,e4] [bb2,f3,d4] [a2,f3,c4] [bb2,g3,eb4]>")
+.sound("sawtooth").vowel("<a e i o>")`}
 />
-
-<Box>
-
-Try to identify the individual parts of the stacks, pay attention to where the commas are.
-The 3 parts (drums, bassline, chords) are exactly as earlier, just stacked together, separated by comma.
-
-</Box>
 
 **shape the sound with an adsr envelope**
 
@@ -151,11 +140,10 @@ Can you guess what they do?
 
 <MiniRepl
   client:visible
-  tune={`stack(
-note("[~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]]*2")
-.sound("gm_electric_guitar_muted"),
-sound("bd rim").bank("RolandTR707")
-).delay(".5")`}
+  tune={`$: note("[~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]]*2")
+  .sound("gm_electric_guitar_muted").delay(.5)
+
+$: sound("bd rim").bank("RolandTR707").delay(".5")`}
 />
 
 <Box>
@@ -199,31 +187,32 @@ Add a delay too!
 
 <MiniRepl
   client:visible
-  tune={`stack(
-note("[~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]]*2")
-.sound("gm_electric_guitar_muted").delay(.5),
-sound("bd rim").bank("RolandTR707").delay(.5),
-n("<4 [3@3 4] [<2 0> ~@16] ~>")
+  tune={`$: note("[~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]]*2")
+.sound("gm_electric_guitar_muted").delay(.5)
+
+$: sound("bd rim").bank("RolandTR707").delay(.5)
+
+$: n("<4 [3@3 4] [<2 0> ~@16] ~>")
 .scale("D4:minor").sound("gm_accordion:2")
-.room(2).gain(.5)
-)`}
+.room(2).gain(.5)`}
 />
 
 Let's add a bass to make this complete:
 
 <MiniRepl
   client:visible
-  tune={`stack(
-note("[~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]]*2")
-.sound("gm_electric_guitar_muted").delay(.5),
-sound("bd rim").bank("RolandTR707").delay(.5),
-n("<4 [3@3 4] [<2 0> ~@16] ~>")
+  tune={`$: note("[~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]]*2")
+.sound("gm_electric_guitar_muted").delay(.5)
+
+$: sound("bd rim").bank("RolandTR707").delay(.5)
+
+$: n("<4 [3@3 4] [<2 0> ~@16] ~>")
 .scale("D4:minor").sound("gm_accordion:2")
-.room(2).gain(.4),
-n("[0 [~ 0] 4 [3 2] [0 ~] [0 ~] <0 2> ~]/2")
+.room(2).gain(.4)
+
+$: n("[0 [~ 0] 4 [3 2] [0 ~] [0 ~] <0 2> ~]/2")
 .scale("D2:minor")
-.sound("sawtooth,triangle").lpf(800)
-)`}
+.sound("sawtooth,triangle").lpf(800)`}
 />
 
 <Box>

@@ -191,6 +191,7 @@ evalScope(
   },
 );
 
+// TBD: use transpiler to support labeled statements
 export const queryCode = async (code, cycles = 1) => {
   const { pattern } = await evaluate(code);
   const haps = pattern.sortHapsByPart().queryArc(0, cycles);
