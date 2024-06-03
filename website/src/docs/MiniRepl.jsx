@@ -1,7 +1,8 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Icon } from './Icon';
 import { silence, noteToMidi, _mod } from '@strudel/core';
-import { getPunchcardPainter } from '@strudel/draw';
+import { clearHydra } from '@strudel/hydra';
+import { getDrawContext, getPunchcardPainter } from '@strudel/draw';
 import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
 import { StrudelMirror } from '@strudel/codemirror';
@@ -28,24 +29,29 @@ export function MiniRepl({
   claviature,
   claviatureLabels,
   maxHeight,
+  autodraw,
+  drawTime,
 }) {
   const code = tunes ? tunes[0] : tune;
   const id = useMemo(() => s4(), []);
-  const canvasId = useMemo(() => `canvas-${id}`, [id]);
-  const shouldDraw = !!punchcard || !!claviature;
   const shouldShowCanvas = !!punchcard;
-  const drawTime = punchcard ? [0, 4] : [0, 0];
+  const canvasId = shouldShowCanvas ? useMemo(() => `canvas-${id}`, [id]) : null;
+  autodraw = !!punchcard || !!claviature || !!autodraw;
+  drawTime = drawTime ?? punchcard ? [0, 4] : [-2, 2];
+  if (claviature) {
+    drawTime = [0, 0];
+  }
   const [activeNotes, setActiveNotes] = useState([]);
 
-  const init = useCallback(({ code, shouldDraw }) => {
-    const drawContext = shouldDraw ? document.querySelector('#' + canvasId)?.getContext('2d') : null;
+  const init = useCallback(({ code, autodraw }) => {
+    const drawContext = canvasId ? document.querySelector('#' + canvasId)?.getContext('2d') : getDrawContext();
 
     const editor = new StrudelMirror({
       id,
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       transpiler,
-      autodraw: !!shouldDraw,
+      autodraw,
       root: containerRef.current,
       initialCode: '// LOADING',
       pattern: silence,
@@ -56,7 +62,7 @@ export function MiniRepl({
           pat = pat.onTrigger(onTrigger, false);
         }
         if (claviature) {
-          editor?.painters.push((ctx, time, haps, drawTime) => {
+          pat = pat.onPaint((ctx, time, haps, drawTime) => {
             const active = haps
               .map((hap) => hap.value.note)
               .filter(Boolean)
@@ -65,7 +71,7 @@ export function MiniRepl({
           });
         }
         if (punchcard) {
-          editor?.painters.push(getPunchcardPainter({ labels: !!punchcardLabels }));
+          pat = pat.punchcard({ labels: !!punchcardLabels });
         }
         return pat;
       },
@@ -73,7 +79,12 @@ export function MiniRepl({
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
-      beforeEval: () => audioReady, // not doing this in prebake to make sure viz is drawn
+      onToggle: (playing) => {
+        if (!playing) {
+          clearHydra();
+        }
+      },
+      beforeStart: () => audioReady,
       afterEval: ({ code }) => setVersionDefaultsFrom(code),
     });
     // init settings
@@ -152,7 +163,7 @@ export function MiniRepl({
           ref={(el) => {
             if (!editorRef.current) {
               containerRef.current = el;
-              init({ code, shouldDraw });
+              init({ code, autodraw });
             }
           }}
         ></div>

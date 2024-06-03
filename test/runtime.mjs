@@ -122,6 +122,19 @@ strudel.Pattern.prototype.midi = function () {
   return this;
 };
 
+strudel.Pattern.prototype._scope = function () {
+  return this;
+};
+strudel.Pattern.prototype._spiral = function () {
+  return this;
+};
+strudel.Pattern.prototype._pitchwheel = function () {
+  return this;
+};
+strudel.Pattern.prototype._pianoroll = function () {
+  return this;
+};
+
 const uiHelpersMocked = {
   backgroundImage: id,
 };

@@ -69,6 +69,7 @@ export function transpiler(input, options = {}) {
           to: node.end,
           index,
           type,
+          id: options.id,
         };
         emitWidgets && widgets.push(widgetConfig);
         return this.replace(widgetWithLocation(node, widgetConfig));
@@ -162,7 +163,7 @@ export function getWidgetID(widgetConfig) {
   // that means, if we use the index index of line position as id, less garbage is generated
   // return `widget_${widgetConfig.to}`; // more gargabe
   //return `widget_${widgetConfig.index}_${widgetConfig.to}`; // also more garbage
-  return `widget_${widgetConfig.type}_${widgetConfig.index}`; // less garbage
+  return `${widgetConfig.id || ''}_widget_${widgetConfig.type}_${widgetConfig.index}`; // less garbage
 }
 
 function widgetWithLocation(node, widgetConfig) {

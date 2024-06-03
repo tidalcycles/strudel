@@ -12,7 +12,7 @@ export const settings = {
   gutterBackground: 'transparent',
   gutterForeground: '#0f380f',
   light: true,
-  customStyle: '.cm-line { line-height: 1 }',
+  // customStyle: '.cm-line { line-height: 1 }',
 };
 export default createTheme({
   theme: 'light',

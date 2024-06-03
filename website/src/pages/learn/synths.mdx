@@ -18,7 +18,7 @@ The basic waveforms are `sine`, `sawtooth`, `square` and `triangle`, which can b
   client:idle
   tune={`note("c2 <eb2 <g2 g1>>".fast(2))
 .sound("<sawtooth square triangle sine>")
-.scope()`}
+._scope()`}
 />
 
 If you don't set a `sound` but a `note` the default value for `sound` is `triangle`!
@@ -28,23 +28,23 @@ If you don't set a `sound` but a `note` the default value for `sound` is `triang
 You can also use noise as a source by setting the waveform to: `white`, `pink` or `brown`. These are different
 flavours of noise, here written from hard to soft.
 
-<MiniRepl client:idle tune={`sound("<white pink brown>").scope()`} />
+<MiniRepl client:idle tune={`sound("<white pink brown>")._scope()`} />
 
 Here's a more musical example of how to use noise for hihats:
 
 <MiniRepl
   client:idle
   tune={`sound("bd*2,<white pink brown>*8")
-.decay(.04).sustain(0).scope()`}
+.decay(.04).sustain(0)._scope()`}
 />
 
 Some amount of pink noise can also be added to any oscillator by using the `noise` paremeter:
 
-<MiniRepl client:idle tune={`note("c3").noise("<0.1 0.25 0.5>").scope()`} />
+<MiniRepl client:idle tune={`note("c3").noise("<0.1 0.25 0.5>")._scope()`} />
 
 You can also use the `crackle` type to play some subtle noise crackles. You can control noise amount by using the `density` parameter:
 
-<MiniRepl client:idle tune={`s("crackle*4").density("<0.01 0.04 0.2 0.5>".slow(2)).scope()`} />
+<MiniRepl client:idle tune={`s("crackle*4").density("<0.01 0.04 0.2 0.5>".slow(2))._scope()`} />
 
 ### Additive Synthesis
 
@@ -55,7 +55,7 @@ To tame the harsh sound of the basic waveforms, we can set the `n` control to li
   tune={`note("c2 <eb2 <g2 g1>>".fast(2))
 .sound("sawtooth")
 .n("<32 16 8 4>")
-.scope()`}
+._scope()`}
 />
 
 When the `n` control is used on a basic waveform, it defines the number of harmonic partials the sound is getting.
@@ -65,7 +65,7 @@ You can also set `n` directly in mini notation with `sound`:
   client:idle
   tune={`note("c2 <eb2 <g2 g1>>".fast(2))
 .sound("sawtooth:<32 16 8 4>")
-.scope()`}
+._scope()`}
 />
 
 Note for tidal users: `n` in tidal is synonymous to `note` for synths only.
@@ -119,13 +119,14 @@ Any sample preceded by the `wt_` prefix will be loaded as a wavetable. This mean
 
 <MiniRepl
   client:idle
-  tune={`samples('github:Bubobubobubobubo/Dough-Waveforms/main/');
-
+  tune={`samples('bubo:waveforms');
 note("<[g3,b3,e4]!2 [a3,c3,e4] [b3,d3,f#4]>")
 .n("<1 2 3 4 5 6 7 8 9 10>/2").room(0.5).size(0.9)
 .s('wt_flute').velocity(0.25).often(n => n.ply(2))
 .release(0.125).decay("<0.1 0.25 0.3 0.4>").sustain(0)
-.cutoff(2000).scope({}).cutoff("<1000 2000 4000>").fast(4)`}
+.cutoff(2000).cutoff("<1000 2000 4000>").fast(4)
+._scope()
+`}
 />
 
 ## ZZFX
@@ -159,7 +160,7 @@ It has 20 parameters in total, here is a snippet that uses all:
   .tremolo(0) // 0-1 lfo volume modulation amount
   //.duration(.2) // overwrite strudel event duration
   //.gain(1) // change volume
-  .scope() // vizualise waveform (not zzfx related)
+  ._scope() // vizualise waveform (not zzfx related)
 `}
 />
 

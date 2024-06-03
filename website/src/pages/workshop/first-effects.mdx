@@ -154,7 +154,7 @@ Can you guess what they do?
   tune={`stack(
 note("[~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]]*2")
 .sound("gm_electric_guitar_muted"),
-sound("<bd rim>").bank("RolandTR707")
+sound("bd rim").bank("RolandTR707")
 ).delay(".5")`}
 />
 
@@ -202,7 +202,7 @@ Add a delay too!
   tune={`stack(
 note("[~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]]*2")
 .sound("gm_electric_guitar_muted").delay(.5),
-sound("<bd rim>").bank("RolandTR707").delay(.5),
+sound("bd rim").bank("RolandTR707").delay(.5),
 n("<4 [3@3 4] [<2 0> ~@16] ~>")
 .scale("D4:minor").sound("gm_accordion:2")
 .room(2).gain(.5)
@@ -216,7 +216,7 @@ Let's add a bass to make this complete:
   tune={`stack(
 note("[~ [<[d3,a3,f4]!2 [d3,bb3,g4]!2> ~]]*2")
 .sound("gm_electric_guitar_muted").delay(.5),
-sound("<bd rim>").bank("RolandTR707").delay(.5),
+sound("bd rim").bank("RolandTR707").delay(.5),
 n("<4 [3@3 4] [<2 0> ~@16] ~>")
 .scale("D4:minor").sound("gm_accordion:2")
 .room(2).gain(.4),
@@ -266,7 +266,7 @@ By the way, inside Mini-Notation, `fast` is `*` and `slow` is `/`.
 
 Instead of changing values stepwise, we can also control them with signals:
 
-<MiniRepl client:visible tune={`sound("hh*32").gain(sine)`} punchcard punchcardLabels={false} />
+<MiniRepl client:visible tune={`sound("hh*16").gain(sine)`} punchcard punchcardLabels={false} />
 
 <Box>
 
