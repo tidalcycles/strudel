@@ -1163,8 +1163,10 @@ export const { octave } = registerControl('octave');
  * @name orbit
  * @param {number | Pattern} number
  * @example
- * $: s("hh*6").delay(.5).delaytime(.25).orbit(1)
- * $: s("~ sd ~ sd").delay(.5).delaytime(.125).orbit(2)
+ * stack(
+ *   s("hh*6").delay(.5).delaytime(.25).orbit(1),
+ *   s("~ sd ~ sd").delay(.5).delaytime(.125).orbit(2)
+ * )
  */
 export const { orbit } = registerControl('orbit');
 // TODO: what is this? not found in tidal doc Answer: gain is limited to maximum of 2. This allows you to go over that
