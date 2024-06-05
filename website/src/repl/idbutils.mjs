@@ -142,29 +142,22 @@ function openDB(config, onOpened) {
 async function processFilesForIDB(files) {
   return Promise.all(
     Array.from(files)
-      .map((s) => {
-        const title = s.name;
+      .map((file) => {
+        const title = file.name;
 
         if (!isAudioFile(title)) {
           return;
         }
-        //create obscured url to file system that can be fetched
-        const sUrl = URL.createObjectURL(s);
-        //fetch the sound and turn it into a buffer array
-        return fetch(sUrl).then((res) => {
-          return res.blob().then((blob) => {
-            const path = s.webkitRelativePath;
-            let id = path?.length ? path : title;
-            if (id == null || title == null || blob == null) {
-              return;
-            }
-            return {
-              title,
-              blob,
-              id,
-            };
-          });
-        });
+        const path = file.webkitRelativePath;
+        let id = path?.length ? path : title;
+        if (id == null || title == null || file == null) {
+          return;
+        }
+        return {
+          title,
+          blob: file,
+          id,
+        };
       })
       .filter(Boolean),
   ).catch((error) => {
