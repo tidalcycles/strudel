@@ -480,6 +480,7 @@ class RecordingProcessor extends AudioWorkletProcessor {
   }
   process(inputs, outputs) {
     // noop if scheduled recording begin hasn't been reached
+    // eslint-disable-next-line no-undef
     if (currentTime < this.begin) {
       return true;
     }
