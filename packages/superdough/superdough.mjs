@@ -95,6 +95,7 @@ function loadWorklets() {
   return workletsLoading;
 }
 
+let stream;
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
   const { disableWorklets = false } = options;
@@ -112,6 +113,7 @@ export async function initAudio(options = {}) {
   } catch (err) {
     console.warn('could not load AudioWorklet effects', err);
   }
+  stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
   logger('[superdough] ready');
 }
 let audioReady;
@@ -308,6 +310,48 @@ export function resetGlobalEffects() {
   analysersData = {};
 }
 
+/* async  */ function record(name, begin, hapDuration) {
+  registerSound(
+    name,
+    () => {
+      console.log('trigger recording before its ready...', getAudioContext().currentTime);
+    },
+    {},
+  );
+  const ac = getAudioContext();
+  try {
+    const inputNode = ac.createMediaStreamSource(stream);
+    const samples = Math.round(hapDuration * ac.sampleRate);
+    const options = { samples, begin, end: begin + hapDuration };
+    const recorder = getWorklet(ac, 'recording-processor', {});
+    recorder.port.postMessage(options);
+    inputNode.connect(recorder);
+    /* return  */ new Promise((resolve) => {
+      recorder.port.onmessage = async (e) => {
+        const audioBuffer = ac.createBuffer(1, samples, ac.sampleRate);
+        audioBuffer.getChannelData(0).set(e.data.buffer);
+        const url = `rec:${name}`;
+        bufferCache[url] = audioBuffer;
+        loadCache[url] = audioBuffer;
+        const value = [url];
+        console.log('register recording', getAudioContext().currentTime);
+        registerSound(name, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value), {
+          type: 'sample',
+          samples: value,
+          baseUrl: undefined,
+          prebake: false,
+          tag: undefined,
+        });
+        resolve(name);
+      };
+    });
+    return recorder;
+  } catch (err) {
+    console.log('err', err);
+    reject(err);
+  }
+}
+
 export const superdough = async (value, t, hapDuration) => {
   const ac = getAudioContext();
   if (typeof value !== 'object') {
@@ -330,6 +374,7 @@ export const superdough = async (value, t, hapDuration) => {
   // destructure
   let {
     s = getDefaultValue('s'),
+    rec,
     bank,
     source,
     gain = getDefaultValue('gain'),
@@ -411,11 +456,19 @@ export const superdough = async (value, t, hapDuration) => {
   if (bank && s) {
     s = `${bank}_${s}`;
   }
+  if (rec && getSound(rec)) {
+    s = rec;
+    value.s = rec;
+  }
 
   // get source AudioNode
   let sourceNode;
   if (source) {
     sourceNode = source(t, value, hapDuration);
+  } else if (rec && !getSound(rec)) {
+    console.log('record', rec);
+    const recorder = record(rec, t, hapDuration);
+    sourceNode = recorder;
   } else if (getSound(s)) {
     const { onTrigger } = getSound(s);
     const soundHandle = await onTrigger(t, value, onended);

@@ -464,3 +464,47 @@ class SuperSawOscillatorProcessor extends AudioWorkletProcessor {
 }
 
 registerProcessor('supersaw-oscillator', SuperSawOscillatorProcessor);
+
+class RecordingProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.done = false;
+    this.head = 0;
+    this.nudge = 0.1;
+    this.port.onmessage = (e) => {
+      this.begin = e.data.begin + this.nudge;
+
+      this.samples = e.data.samples;
+      this.buffer = new Float32Array(this.samples);
+    };
+  }
+  process(inputs, outputs) {
+    // noop if scheduled recording begin hasn't been reached
+    if (currentTime < this.begin) {
+      return true;
+    }
+    if (!this.buffer) {
+      console.log('buffer not ready..');
+      return true;
+    }
+    // stop when the buffer is full
+    if (!this.done && this.head >= this.samples) {
+      this.done = true;
+      this.port.postMessage({ buffer: this.buffer });
+      return false;
+    }
+
+    // so far only 1 channel
+    const input = inputs[0];
+    // const output = outputs[0];
+    for (let i = 0; i < input[0].length; i++) {
+      this.buffer[this.head] = input[0][i] * 0.25;
+      /* output[0][i] = input[0][i];
+      output[1][i] = input[0][i]; */
+      this.head++;
+    }
+    return true;
+  }
+}
+
+registerProcessor('recording-processor', RecordingProcessor);

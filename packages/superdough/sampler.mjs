@@ -3,8 +3,8 @@ import { getAudioContext, registerSound } from './index.mjs';
 import { getADSRValues, getParamADSR, getPitchEnvelope, getVibratoOscillator } from './helpers.mjs';
 import { logger } from './logger.mjs';
 
-const bufferCache = {}; // string: Promise<ArrayBuffer>
-const loadCache = {}; // string: Promise<ArrayBuffer>
+export const bufferCache = {}; // string: Promise<ArrayBuffer>
+export const loadCache = {}; // string: Promise<ArrayBuffer>
 
 export const getCachedBuffer = (url) => bufferCache[url];
 
