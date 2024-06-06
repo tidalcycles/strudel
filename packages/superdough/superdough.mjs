@@ -12,7 +12,7 @@ import workletsUrl from './worklets.mjs?url';
 import { createFilter, gainNode, getCompressor, getWorklet } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
-import { loadBuffer } from './sampler.mjs';
+import { loadBuffer, bufferCache, loadCache, onTriggerSample } from './sampler.mjs';
 
 export const soundMap = map();
 
@@ -348,7 +348,7 @@ export function resetGlobalEffects() {
     return recorder;
   } catch (err) {
     console.log('err', err);
-    reject(err);
+    // reject(err);
   }
 }
 
