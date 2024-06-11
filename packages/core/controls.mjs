@@ -1383,6 +1383,19 @@ export const { compressorRelease } = registerControl('compressorRelease');
  *
  */
 export const { speed } = registerControl('speed');
+
+/**
+ * Changes the speed of sample playback, i.e. a cheap way of changing pitch.
+ *
+ * @name stretch
+ * @param {number | Pattern} factor -inf to inf, negative numbers play the sample backwards.
+ * @example
+ * s("bd*6").speed("1 2 4 1 -2 -4")
+ * @example
+ * speed("1 1.5*2 [2 1.1]").s("piano").clip(1)
+ *
+ */
+export const { stretch } = registerControl('stretch');
 /**
  * Used in conjunction with `speed`, accepts values of "r" (rate, default behavior), "c" (cycles), or "s" (seconds). Using `unit "c"` means `speed` will be interpreted in units of cycles, e.g. `speed "1"` means samples will be stretched to fill a cycle. Using `unit "s"` means the playback speed will be adjusted so that the duration is the number of seconds specified by `speed`.
  *
@@ -1393,6 +1406,8 @@ export const { speed } = registerControl('speed');
  * @superdirtOnly
  *
  */
+
+
 export const { unit } = registerControl('unit');
 /**
  * Made by Calum Gunn. Reminiscent of some weird mixture of filter, ring-modulator and pitch-shifter. The SuperCollider manual defines Squiz as:

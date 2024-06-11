@@ -1,12 +1,13 @@
 "use strict";
 
+// sourced from https://github.com/olvb/phaze/tree/master?tab=readme-ov-file
 const WEBAUDIO_BLOCK_SIZE = 128;
 
 /** Overlap-Add Node */
 class OLAProcessor extends AudioWorkletProcessor {
     constructor(options) {
         super(options);
-
+        this.started = false;
         this.nbInputs = options.numberOfInputs;
         this.nbOutputs = options.numberOfOutputs;
 
@@ -157,6 +158,12 @@ class OLAProcessor extends AudioWorkletProcessor {
     }
 
     process(inputs, outputs, params) {
+        const input = inputs[0];
+        const hasInput = !(input[0] === undefined);
+        if (this.started && !hasInput) {
+          return false;
+        }
+        this.started = hasInput;
         this.reallocateChannelsIfNeeded(inputs, outputs);
 
         this.readInputs(inputs);

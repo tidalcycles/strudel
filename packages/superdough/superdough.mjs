@@ -371,6 +371,7 @@ export const superdough = async (value, t, hapDuration) => {
     //
     coarse,
     crush,
+    stretch,
     shape,
     shapevol = getDefaultValue('shapevol'),
     distort,
@@ -438,6 +439,8 @@ export const superdough = async (value, t, hapDuration) => {
   }
   const chain = []; // audio nodes that will be connected to each other sequentially
   chain.push(sourceNode);
+  stretch !== undefined && chain.push(getWorklet(ac, 'phase-vocoder-processor', { pitchFactor: stretch }));
+
 
   // gain stage
   chain.push(gainNode(gain));

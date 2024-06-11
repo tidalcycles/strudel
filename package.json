@@ -62,6 +62,7 @@
     "eslint": "^8.56.0",
     "eslint-plugin-import": "^2.29.1",
     "events": "^3.3.0",
+    "fft-js": "^0.0.12",
     "jsdoc": "^4.0.2",
     "jsdoc-json": "^2.0.2",
     "jsdoc-to-markdown": "^8.0.0",

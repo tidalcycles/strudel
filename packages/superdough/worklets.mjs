@@ -2,8 +2,8 @@
 // LICENSE GNU General Public License v3.0 see https://github.com/dktr0/WebDirt/blob/main/LICENSE
 // TOFIX: THIS FILE DOES NOT SUPPORT IMPORTS ON DEPOLYMENT
 
-import OLAProcessor from './ola-processor.js';
-import FFT from 'fft.js';
+import OLAProcessor from "./ola-processor"
+import FFT from './fft.js'; 
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 const _mod = (n, m) => ((n % m) + m) % m;
@@ -471,6 +471,8 @@ registerProcessor('supersaw-oscillator', SuperSawOscillatorProcessor);
 
 
 
+
+
 const BUFFERED_BLOCK_SIZE = 2048;
 
 function genHannWindow(length) {
@@ -499,7 +501,6 @@ class PhaseVocoderProcessor extends OLAProcessor {
         this.timeCursor = 0;
 
         this.hannWindow = genHannWindow(this.blockSize);
-
         // prepare FFT and pre-allocate buffers
         this.fft = new FFT(this.fftSize);
         this.freqComplexBuffer = this.fft.createComplexArray();
@@ -642,3 +643,7 @@ class PhaseVocoderProcessor extends OLAProcessor {
 }
 
 registerProcessor("phase-vocoder-processor", PhaseVocoderProcessor);
+
+
+
+
