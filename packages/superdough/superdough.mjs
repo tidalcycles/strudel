@@ -8,7 +8,7 @@ import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
 import { clamp, nanFallback, _mod } from './util.mjs';
-import workletsUrl from './worklets.mjs?url';
+import workletsUrl from './worklets.mjs?worker&url';
 import { createFilter, gainNode, getCompressor, getWorklet } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
@@ -309,6 +309,13 @@ export function resetGlobalEffects() {
 }
 
 export const superdough = async (value, t, hapDuration) => {
+  t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
+  let { stretch } = value;
+  if (stretch != null) {
+    //account for phase vocoder latency
+    const latency = 0.04;
+    t = t - latency;
+  }
   const ac = getAudioContext();
   if (typeof value !== 'object') {
     throw new Error(
@@ -320,7 +327,7 @@ export const superdough = async (value, t, hapDuration) => {
   // duration is passed as value too..
   value.duration = hapDuration;
   // calculate absolute time
-  t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
+
   if (t < ac.currentTime) {
     console.warn(
       `[superdough]: cannot schedule sounds in the past (target: ${t.toFixed(2)}, now: ${ac.currentTime.toFixed(2)})`,
@@ -371,7 +378,6 @@ export const superdough = async (value, t, hapDuration) => {
     //
     coarse,
     crush,
-    stretch,
     shape,
     shapevol = getDefaultValue('shapevol'),
     distort,
@@ -440,7 +446,6 @@ export const superdough = async (value, t, hapDuration) => {
   const chain = []; // audio nodes that will be connected to each other sequentially
   chain.push(sourceNode);
   stretch !== undefined && chain.push(getWorklet(ac, 'phase-vocoder-processor', { pitchFactor: stretch }));
-
 
   // gain stage
   chain.push(gainNode(gain));
@@ -587,4 +592,6 @@ export const superdough = async (value, t, hapDuration) => {
   toDisconnect = chain.concat([delaySend, reverbSend, analyserSend]);
 };
 
-export const superdoughTrigger = (t, hap, ct, cps) => superdough(hap, t - ct, hap.duration / cps, cps);
+export const superdoughTrigger = (t, hap, ct, cps) => {
+  superdough(hap, t - ct, hap.duration / cps, cps);
+};

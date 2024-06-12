@@ -35,7 +35,6 @@
     "vite": "^5.0.10"
   },
   "dependencies": {
-    "fft.js": "^4.0.4",
     "nanostores": "^0.9.5"
   }
 }

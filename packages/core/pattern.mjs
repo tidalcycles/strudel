@@ -21,6 +21,7 @@ import {
   numeralArgs,
   parseNumeral,
   pairs,
+  clamp,
 } from './util.mjs';
 import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
@@ -1969,6 +1970,7 @@ export const late = register(
   true,
   true,
 );
+
 
 /**
  * Plays a portion of a pattern, specified by the beginning and end of a time span. The new resulting pattern is played over the time period of the original pattern:

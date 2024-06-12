@@ -1390,9 +1390,7 @@ export const { speed } = registerControl('speed');
  * @name stretch
  * @param {number | Pattern} factor -inf to inf, negative numbers play the sample backwards.
  * @example
- * s("bd*6").speed("1 2 4 1 -2 -4")
- * @example
- * speed("1 1.5*2 [2 1.1]").s("piano").clip(1)
+ * s("gm_flute").stretch("1 2 .5")
  *
  */
 export const { stretch } = registerControl('stretch');
@@ -1406,7 +1404,6 @@ export const { stretch } = registerControl('stretch');
  * @superdirtOnly
  *
  */
-
 
 export const { unit } = registerControl('unit');
 /**

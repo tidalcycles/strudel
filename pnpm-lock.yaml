@@ -48,9 +48,6 @@ importers:
       events:
         specifier: ^3.3.0
         version: 3.3.0
-      fft-js:
-        specifier: ^0.0.12
-        version: 0.0.12
       jsdoc:
         specifier: ^4.0.2
         version: 4.0.2
@@ -433,9 +430,6 @@ importers:
 
   packages/superdough:
     dependencies:
-      fft.js:
-        specifier: ^4.0.4
-        version: 4.0.4
       nanostores:
         specifier: ^0.9.5
         version: 0.9.5
@@ -7699,18 +7693,6 @@ packages:
   /fflate@0.8.1:
     resolution: {integrity: sha512-/exOvEuc+/iaUm105QIiOt4LpBdMTWsXxqR0HDF35vx3fmaKzw7354gTilCh5rkzEt8WYyG//ku3h3nRmd7CHQ==}
     dev: true
-
-  /fft-js@0.0.12:
-    resolution: {integrity: sha512-nLOa0/SYYnN2NPcLrI81UNSPxyg3q0sGiltfe9G1okg0nxs5CqAwtmaqPQdGcOryeGURaCoQx8Y4AUkhGTh7IQ==}
-    engines: {node: '>=0.12.0'}
-    dependencies:
-      bit-twiddle: 1.0.2
-      commander: 2.7.1
-    dev: true
-
-  /fft.js@4.0.4:
-    resolution: {integrity: sha512-f9c00hphOgeQTlDyavwTtu6RiK8AIFjD6+jvXkNkpeQ7rirK3uFWVpalkoS4LAwbdX7mfZ8aoBfFVQX1Re/8aw==}
-    dev: false
 
   /fftjs@0.0.4:
     resolution: {integrity: sha512-nIWxQyth1LVD6NH8a+YZUv+McjzbOY6dMe4wv6Pq5cGfP+c8Rd1T8Dsd50DCWlNgzSqA3y9lOkpD6dZD3qHa1A==}
