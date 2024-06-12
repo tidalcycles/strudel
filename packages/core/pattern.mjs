@@ -21,7 +21,6 @@ import {
   numeralArgs,
   parseNumeral,
   pairs,
-  clamp,
 } from './util.mjs';
 import drawLine from './drawLine.mjs';
 import { logger } from './logger.mjs';
