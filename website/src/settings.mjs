@@ -1,7 +1,7 @@
 import { persistentMap } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel/core';
-import { isUdels } from './repl/util.mjs';
+import { isUdels, } from './repl/util.mjs';
 
 export const defaultAudioDeviceName = 'System Standard';
 
@@ -25,7 +25,7 @@ export const defaultSettings = {
   isZen: false,
   soundsFilter: 'all',
   patternFilter: 'community',
-  panelPosition: 'right',
+  panelPosition:  'right',
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
 };
@@ -61,7 +61,7 @@ export function useSettings() {
     isFlashEnabled: parseBoolean(state.isFlashEnabled),
     isSyncEnabled: isUdels() ? true : parseBoolean(state.isSyncEnabled),
     fontSize: Number(state.fontSize),
-    panelPosition: state.activeFooter !== '' ? state.panelPosition : 'bottom', // <-- keep this 'bottom' where it is!
+    panelPosition: state.activeFooter !== '' && !isUdels() ? state.panelPosition : 'bottom', // <-- keep this 'bottom' where it is!
     userPatterns: userPatterns,
   };
 }

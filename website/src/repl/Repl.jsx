@@ -39,6 +39,7 @@ import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import './Repl.css';
 import { setInterval, clearInterval } from 'worker-timers';
 import { getMetadata } from '../metadata_parser';
+import UdelsEditor from '@components/Udels/UdelsEditor';
 
 const { latestCode } = settingsMap.get();
 
@@ -234,7 +235,14 @@ export function Repl({ embedded = false }) {
     handleEvaluate,
   };
 
-  const showPanel = !isEmbedded || isUdels();
+  if (isUdels()) {
+    return (
+      <UdelsEditor context={context} error={error} init={init} editorRef={editorRef} containerRef={containerRef} />
+    );
+  }
+
+  const showPanel = !isEmbedded;
+
   return (
     <ReplContext.Provider value={context}>
       <div className={cx('h-full flex flex-col relative')}>

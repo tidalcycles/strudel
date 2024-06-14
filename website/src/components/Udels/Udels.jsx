@@ -2,6 +2,7 @@ import { code2hash } from '@strudel/core';
 
 import { UdelFrame } from './UdelFrame';
 import { useState } from 'react';
+import UdelsHeader from './UdelsHeader';
 
 function NumberInput({ value, onChange, label = '', min, max }) {
   const [localState, setLocalState] = useState(value);
@@ -68,7 +69,6 @@ export function Udels() {
   return (
     <div
       style={{
-        backgroundColor: 'teal',
         margin: 0,
         display: 'flex',
         flex: 1,
@@ -77,7 +77,8 @@ export function Udels() {
         flexDirection: 'column',
       }}
     >
-      <div
+      <UdelsHeader numWindows={numWindows} setNumWindows={numWindowsOnChange} />
+      {/* <div
         style={{
           height: 40,
           width: '100',
@@ -87,7 +88,7 @@ export function Udels() {
         }}
       >
         <NumberInput min={1} max={8} value={numWindows} onChange={numWindowsOnChange} />
-      </div>
+      </div> */}
       <div
         style={{
           display: 'flex',
