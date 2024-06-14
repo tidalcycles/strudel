@@ -2,8 +2,9 @@ import { useRef } from 'react';
 
 export function UdelFrame({ onEvaluate, hash, instance }) {
   const ref = useRef();
-
+ console.info('frame')
   window.addEventListener('message', (message) => {
+    console.info(message, 'message')
     const childWindow = ref?.current?.contentWindow;
     if (message == null || message.source !== childWindow) {
       return; // Skip message in this event listener

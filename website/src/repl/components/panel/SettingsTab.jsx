@@ -1,6 +1,6 @@
-import { defaultSettings, settingsMap, useSettings } from '../../settings.mjs';
+import { defaultSettings, settingsMap, useSettings } from '../../../settings.mjs';
 import { themes } from '@strudel/codemirror';
-import { isUdels } from '../util.mjs';
+import { isUdels } from '../../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 

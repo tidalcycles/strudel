@@ -5,13 +5,13 @@ import {
   useActivePattern,
   useViewingPatternData,
   userPattern,
-} from '../../user_pattern_utils.mjs';
+} from '../../../user_pattern_utils.mjs';
 import { useMemo } from 'react';
-import { getMetadata } from '../../metadata_parser';
-import { useExamplePatterns } from '../useExamplePatterns';
-import { parseJSON, isUdels } from '../util.mjs';
+import { getMetadata } from '../../../metadata_parser.js';
+import { useExamplePatterns } from '../../useExamplePatterns.jsx';
+import { parseJSON, isUdels } from '../../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
-import { settingsMap, useSettings } from '../../settings.mjs';
+import { settingsMap, useSettings } from '../../../settings.mjs';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
