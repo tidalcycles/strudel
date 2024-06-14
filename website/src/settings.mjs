@@ -29,9 +29,13 @@ export const defaultSettings = {
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
 };
-const search = new URLSearchParams(window.location.search);
+
+let search = null;
+if (typeof window !== 'undefined') {
+ search = new URLSearchParams(window.location.search);
+}
 // if running multiple instance in one window, it will use the settings for that instance. else default to normal
-const instance = parseInt(search.get('instance') ?? '0');
+const instance = parseInt(search?.get('instance') ?? '0');
 const settings_key = `strudel-settings${instance > 0 ? instance : ''}`;
 
 export const settingsMap = persistentMap(settings_key, defaultSettings);
