@@ -27,6 +27,12 @@ const applyOptions = (parent, enter) => (pat, i) => {
           pat = strudel.reify(pat)[type](enter(amount));
           break;
         }
+        case 'replicate': {
+          const { amount } = op.arguments_;
+          pat = strudel.reify(pat);
+          pat = pat._repeatCycles(amount)._fast(amount);
+          break;
+        }
         case 'bjorklund': {
           if (op.arguments_.rotation) {
             pat = pat.euclidRot(enter(op.arguments_.pulse), enter(op.arguments_.step), enter(op.arguments_.rotation));
@@ -67,26 +73,13 @@ const applyOptions = (parent, enter) => (pat, i) => {
   return pat;
 };
 
-function resolveReplications(ast) {
-  ast.source_ = strudel.flatten(
-    ast.source_.map((child) => {
-      const { reps } = child.options_ || {};
-      if (!reps) {
-        return [child];
-      }
-      delete child.options_.reps;
-      return Array(reps).fill(child);
-    }),
-  );
-}
-
 // expects ast from mini2ast + quoted mini string + optional callback when a node is entered
 export function patternifyAST(ast, code, onEnter, offset = 0) {
   onEnter?.(ast);
   const enter = (node) => patternifyAST(node, code, onEnter, offset);
   switch (ast.type_) {
     case 'pattern': {
-      resolveReplications(ast);
+      // resolveReplications(ast);
       const children = ast.source_.map((child) => enter(child)).map(applyOptions(ast, enter));
       const alignment = ast.arguments_.alignment;
       const with_tactus = children.filter((child) => child.__tactus_source);

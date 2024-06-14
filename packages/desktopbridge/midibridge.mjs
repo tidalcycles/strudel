@@ -1,5 +1,5 @@
 import { Invoke } from './utils.mjs';
-import { Pattern, noteToMidi } from '@strudel/core';
+import { Pattern, getEventOffsetMs, noteToMidi } from '@strudel/core';
 
 const ON_MESSAGE = 0x90;
 const OFF_MESSAGE = 0x80;
@@ -9,8 +9,8 @@ Pattern.prototype.midi = function (output) {
   return this.onTrigger((time_deprecate, hap, currentTime, cps, targetTime) => {
     let { note, nrpnn, nrpv, ccn, ccv, velocity = 0.9, gain = 1 } = hap.value;
     //magic number to get audio engine to line up, can probably be calculated somehow
-    const latency = 0.034;
-    const offset = (targetTime - currentTime + latency) * 1000;
+    const latencyMs = 34;
+    const offset = getEventOffsetMs(targetTime, currentTime) + latencyMs;
     velocity = Math.floor(gain * velocity * 100);
     const duration = Math.floor((hap.duration.valueOf() / cps) * 1000 - 10);
     const roundedOffset = Math.round(offset);

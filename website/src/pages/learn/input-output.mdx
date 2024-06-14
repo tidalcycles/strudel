@@ -20,11 +20,7 @@ Strudel also supports midi via [webmidi](https://npmjs.com/package/webmidi).
 Either connect a midi device or use the IAC Driver (Mac) or Midi Through Port (Linux) for internal midi messages.
 If no outputName is given, it uses the first midi output it finds.
 
-<MiniRepl
-  client:idle
-  tune={`stack("<C^7 A7 Dm7 G7>".voicings('lefthand'), "<C3 A2 D3 G2>").note()
-  .midi()`}
-/>
+<MiniRepl client:idle tune={`chord("<C^7 A7 Dm7 G7>").voicing().midi()`} />
 
 In the console, you will see a log of the available MIDI devices as soon as you run the code, e.g. `Midi connected! Using "Midi Through Port-0".`
 
@@ -45,10 +41,8 @@ But you can also control cc messages separately like this:
 
 <MiniRepl
   client:idle
-  tune={`stack(
-  note("c a f e"),
-  ccv(sine.segment(16).slow(4)).ccn(74)
-).midi()`}
+  tune={`$: note("c a f e").midi()
+$: ccv(sine.segment(16).slow(4)).ccn(74).midi()`}
 />
 
 # SuperDirt API

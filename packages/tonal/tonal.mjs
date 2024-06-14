@@ -188,61 +188,66 @@ export const scaleTranspose = register('scaleTranspose', function (offset /* : n
  * .s("piano")
  */
 
-export const scale = register('scale', function (scale, pat) {
-  // Supports ':' list syntax in mininotation
-  if (Array.isArray(scale)) {
-    scale = scale.flat().join(' ');
-  }
-  return (
-    pat
-      .fmap((value) => {
-        const isObject = typeof value === 'object';
-        let step = isObject ? value.n : value;
-        if (isObject) {
-          delete value.n; // remove n so it won't cause trouble
-        }
-        if (isNote(step)) {
-          // legacy..
-          return pure(step);
-        }
-        let asNumber = Number(step);
-        let semitones = 0;
-        if (isNaN(asNumber)) {
-          step = String(step);
-          if (!/^[-+]?\d+(#*|b*){1}$/.test(step)) {
-            logger(
-              `[tonal] invalid scale step "${step}", expected number or integer with optional # b suffixes`,
-              'error',
-            );
-            return silence;
+export const scale = register(
+  'scale',
+  function (scale, pat) {
+    // Supports ':' list syntax in mininotation
+    if (Array.isArray(scale)) {
+      scale = scale.flat().join(' ');
+    }
+    return (
+      pat
+        .fmap((value) => {
+          const isObject = typeof value === 'object';
+          let step = isObject ? value.n : value;
+          if (isObject) {
+            delete value.n; // remove n so it won't cause trouble
           }
-          const isharp = step.indexOf('#');
-          if (isharp >= 0) {
-            asNumber = Number(step.substring(0, isharp));
-            semitones = step.length - isharp;
-          } else {
-            const iflat = step.indexOf('b');
-            asNumber = Number(step.substring(0, iflat));
-            semitones = iflat - step.length;
+          if (isNote(step)) {
+            // legacy..
+            return pure(step);
           }
-        }
-        try {
-          let note;
-          if (isObject && value.anchor) {
-            note = stepInNamedScale(asNumber, scale, value.anchor);
-          } else {
-            note = scaleStep(asNumber, scale);
+          let asNumber = Number(step);
+          let semitones = 0;
+          if (isNaN(asNumber)) {
+            step = String(step);
+            if (!/^[-+]?\d+(#*|b*){1}$/.test(step)) {
+              logger(
+                `[tonal] invalid scale step "${step}", expected number or integer with optional # b suffixes`,
+                'error',
+              );
+              return silence;
+            }
+            const isharp = step.indexOf('#');
+            if (isharp >= 0) {
+              asNumber = Number(step.substring(0, isharp));
+              semitones = step.length - isharp;
+            } else {
+              const iflat = step.indexOf('b');
+              asNumber = Number(step.substring(0, iflat));
+              semitones = iflat - step.length;
+            }
           }
-          if (semitones != 0) note = Note.transpose(note, Interval.fromSemitones(semitones));
-          value = pure(isObject ? { ...value, note } : note);
-        } catch (err) {
-          logger(`[tonal] ${err.message}`, 'error');
-          value = silence;
-        }
-        return value;
-      })
-      .outerJoin()
-      // legacy:
-      .withHap((hap) => hap.setContext({ ...hap.context, scale }))
-  );
-});
+          try {
+            let note;
+            if (isObject && value.anchor) {
+              note = stepInNamedScale(asNumber, scale, value.anchor);
+            } else {
+              note = scaleStep(asNumber, scale);
+            }
+            if (semitones != 0) note = Note.transpose(note, Interval.fromSemitones(semitones));
+            value = pure(isObject ? { ...value, note } : note);
+          } catch (err) {
+            logger(`[tonal] ${err.message}`, 'error');
+            value = silence;
+          }
+          return value;
+        })
+        .outerJoin()
+        // legacy:
+        .withHap((hap) => hap.setContext({ ...hap.context, scale }))
+    );
+  },
+  true,
+  true, // preserve tactus
+);

@@ -8,8 +8,19 @@ import createClock from './zyklus.mjs';
 import { logger } from './logger.mjs';
 
 export class Cyclist {
-  constructor({ interval, onTrigger, onToggle, onError, getTime, latency = 0.1, setInterval, clearInterval }) {
+  constructor({
+    interval,
+    onTrigger,
+    onToggle,
+    onError,
+    getTime,
+    latency = 0.1,
+    setInterval,
+    clearInterval,
+    beforeStart,
+  }) {
     this.started = false;
+    this.beforeStart = beforeStart;
     this.cps = 0.5;
     this.num_ticks_since_cps_change = 0;
     this.lastTick = 0; // absolute time when last tick (clock callback) happened
@@ -82,7 +93,8 @@ export class Cyclist {
     this.started = v;
     this.onToggle?.(v);
   }
-  start() {
+  async start() {
+    await this.beforeStart?.();
     this.num_ticks_since_cps_change = 0;
     this.num_cycles_at_cps_change = 0;
     if (!this.pattern) {
@@ -103,10 +115,10 @@ export class Cyclist {
     this.lastEnd = 0;
     this.setStarted(false);
   }
-  setPattern(pat, autostart = false) {
+  async setPattern(pat, autostart = false) {
     this.pattern = pat;
     if (autostart && !this.started) {
-      this.start();
+      await this.start();
     }
   }
   setCps(cps = 0.5) {

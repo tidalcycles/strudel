@@ -1,6 +1,7 @@
 import { evalScope, hash2code, logger } from '@strudel/core';
 import { settingPatterns, defaultAudioDeviceName } from '../settings.mjs';
-import { getAudioContext, initializeAudioOutput, setDefaultAudioContext } from '@strudel/webaudio';
+import { getAudioContext, initializeAudioOutput, setDefaultAudioContext, setVersionDefaults } from '@strudel/webaudio';
+import { getMetadata } from '../metadata_parser';
 
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
@@ -26,13 +27,13 @@ export async function initCode() {
   // load code from url hash (either short hash from database or decode long hash)
   try {
     const initialUrl = window.location.href;
-    const hash = initialUrl.split('?')[1]?.split('#')?.[0];
+    const hash = initialUrl.split('?')[1]?.split('#')?.[0]?.split('&')[0];
     const codeParam = window.location.href.split('#')[1] || '';
-    // looking like https://strudel.cc/?J01s5i1J0200 (fixed hash length)
     if (codeParam) {
       // looking like https://strudel.cc/#ImMzIGUzIg%3D%3D (hash length depends on code length)
       return hash2code(codeParam);
     } else if (hash) {
+      // looking like https://strudel.cc/?J01s5i1J0200 (fixed hash length)
       return supabase
         .from('code_v1')
         .select('code')
@@ -82,6 +83,7 @@ export function loadModules() {
     import('@strudel/serial'),
     import('@strudel/soundfonts'),
     import('@strudel/csound'),
+    import('@strudel/tidal'),
   ];
   if (isTauri()) {
     modules = modules.concat([
@@ -167,3 +169,13 @@ export const setAudioDevice = async (id) => {
   }
   initializeAudioOutput();
 };
+
+export function setVersionDefaultsFrom(code) {
+  try {
+    const metadata = getMetadata(code);
+    setVersionDefaults(metadata.version);
+  } catch (err) {
+    console.error('Error parsing metadata..');
+    console.error(err);
+  }
+}

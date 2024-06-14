@@ -6,6 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import Fraction from 'fraction.js';
 import { TimeSpan } from './timespan.mjs';
+import { removeUndefineds } from './util.mjs';
 
 // Returns the start of the cycle.
 Fraction.prototype.sam = function () {
@@ -47,6 +48,10 @@ Fraction.prototype.eq = function (other) {
   return this.compare(other) == 0;
 };
 
+Fraction.prototype.ne = function (other) {
+  return this.compare(other) != 0;
+};
+
 Fraction.prototype.max = function (other) {
   return this.gt(other) ? this : other;
 };
@@ -58,6 +63,22 @@ Fraction.prototype.maximum = function (...others) {
 
 Fraction.prototype.min = function (other) {
   return this.lt(other) ? this : other;
+};
+
+Fraction.prototype.mulmaybe = function (other) {
+  return other !== undefined ? this.mul(other) : undefined;
+};
+
+Fraction.prototype.divmaybe = function (other) {
+  return other !== undefined ? this.div(other) : undefined;
+};
+
+Fraction.prototype.addmaybe = function (other) {
+  return other !== undefined ? this.add(other) : undefined;
+};
+
+Fraction.prototype.submaybe = function (other) {
+  return other !== undefined ? this.sub(other) : undefined;
 };
 
 Fraction.prototype.show = function (/* excludeWhole = false */) {
@@ -85,11 +106,24 @@ const fraction = (n) => {
 };
 
 export const gcd = (...fractions) => {
+  fractions = removeUndefineds(fractions);
+  if (fractions.length === 0) {
+    return undefined;
+  }
+
   return fractions.reduce((gcd, fraction) => gcd.gcd(fraction), fraction(1));
 };
 
 export const lcm = (...fractions) => {
-  return fractions.reduce((lcm, fraction) => lcm.lcm(fraction), fraction(1));
+  fractions = removeUndefineds(fractions);
+  if (fractions.length === 0) {
+    return undefined;
+  }
+
+  return fractions.reduce(
+    (lcm, fraction) => (lcm === undefined || fraction === undefined ? undefined : lcm.lcm(fraction)),
+    fraction(1),
+  );
 };
 
 fraction._original = Fraction;

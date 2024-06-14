@@ -17,3 +17,6 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+public/tree-sitter.wasm
+public/tree-sitter-haskell.wasm

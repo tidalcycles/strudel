@@ -10,6 +10,7 @@ export function repl({
   defaultOutput,
   onEvalError,
   beforeEval,
+  beforeStart,
   afterEval,
   getTime,
   transpiler,
@@ -19,6 +20,7 @@ export function repl({
   sync = false,
   setInterval,
   clearInterval,
+  id,
 }) {
   const state = {
     schedulerError: undefined,
@@ -30,6 +32,10 @@ export function repl({
     widgets: [],
     pending: false,
     started: false,
+  };
+
+  const transpilerOptions = {
+    id,
   };
 
   const updateState = (update) => {
@@ -48,23 +54,27 @@ export function repl({
     },
     setInterval,
     clearInterval,
+    beforeStart,
   };
 
   // NeoCyclist uses a shared worker to communicate between instances, which is not supported on mobile chrome
   const scheduler =
     sync && typeof SharedWorker != 'undefined' ? new NeoCyclist(schedulerOptions) : new Cyclist(schedulerOptions);
   let pPatterns = {};
+  let anonymousIndex = 0;
   let allTransform;
 
   const hush = function () {
     pPatterns = {};
+    anonymousIndex = 0;
     allTransform = undefined;
     return silence;
   };
 
-  const setPattern = (pattern, autostart = true) => {
+  const setPattern = async (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
-    scheduler.setPattern(pattern, autostart);
+    await scheduler.setPattern(pattern, autostart);
+    return pattern;
   };
   setTime(() => scheduler.now()); // TODO: refactor?
 
@@ -82,6 +92,15 @@ export function repl({
   // set pattern methods that use this repl via closure
   const injectPatternMethods = () => {
     Pattern.prototype.p = function (id) {
+      if (id.startsWith('_') || id.endsWith('_')) {
+        // allows muting a pattern x with x_ or _x
+        return silence;
+      }
+      if (id === '$') {
+        // allows adding anonymous patterns with $:
+        id = `$${anonymousIndex}`;
+        anonymousIndex++;
+      }
       pPatterns[id] = this;
       return this;
     };
@@ -128,9 +147,10 @@ export function repl({
     try {
       updateState({ code, pending: true });
       await injectPatternMethods();
+      setTime(() => scheduler.now()); // TODO: refactor?
       await beforeEval?.({ code });
       shouldHush && hush();
-      let { pattern, meta } = await _evaluate(code, transpiler);
+      let { pattern, meta } = await _evaluate(code, transpiler, transpilerOptions);
       if (Object.keys(pPatterns).length) {
         pattern = stack(...Object.values(pPatterns));
       }
@@ -142,7 +162,7 @@ export function repl({
         throw new Error(message + (typeof evaluated === 'function' ? ', did you forget to call a function?' : '.'));
       }
       logger(`[eval] code updated`);
-      setPattern(pattern, autostart);
+      pattern = await setPattern(pattern, autostart);
       updateState({
         miniLocations: meta?.miniLocations || [],
         widgets: meta?.widgets || [],

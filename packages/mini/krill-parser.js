@@ -295,7 +295,14 @@ function peg$parse(input, options) {
   var peg$f6 = function(a) { return a };
   var peg$f7 = function(s) { s.arguments_.alignment = 'polymeter_slowcat'; return s; };
   var peg$f8 = function(a) { return x => x.options_['weight'] = (x.options_['weight'] ?? 1) + (a ?? 2) - 1 };
-  var peg$f9 = function(a) { return x => x.options_['reps'] = (x.options_['reps'] ?? 1) + (a ?? 2) - 1 };
+  var peg$f9 = function(a) { return x => {// A bit fiddly, to support both x!4 and x!!! as equivalent..
+                 const reps = (x.options_['reps'] ?? 1) + (a ?? 2) - 1;
+                 x.options_['reps'] = reps;
+                 x.options_['ops'] = x.options_['ops'].filter(x => x.type_ !== "replicate");
+                 x.options_['ops'].push({ type_: "replicate", arguments_ :{ amount:reps }});
+                 x.options_['weight'] = reps;
+                }
+  };
   var peg$f10 = function(p, s, r) { return x => x.options_['ops'].push({ type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r }}) };
   var peg$f11 = function(a) { return x => x.options_['ops'].push({ type_: "stretch", arguments_ :{ amount:a, type: 'slow' }}) };
   var peg$f12 = function(a) { return x => x.options_['ops'].push({ type_: "stretch", arguments_ :{ amount:a, type: 'fast' }}) };

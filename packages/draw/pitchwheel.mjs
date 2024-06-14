@@ -113,6 +113,23 @@ export function pitchwheel({
   return;
 }
 
+/**
+ * Renders a pitch circle to visualize frequencies within one octave
+ * @name pitchwheel
+ * @param {number} hapcircles
+ * @param {number} circle
+ * @param {number} edo
+ * @param {string} root
+ * @param {number} thickness
+ * @param {number} hapRadius
+ * @param {string} mode
+ * @param {number} margin
+ * @example
+ * n("0 .. 12").scale("C:chromatic")
+ * .s("sawtooth")
+ * .lpf(500)
+ * ._pitchwheel()
+ */
 Pattern.prototype.pitchwheel = function (options = {}) {
   let { ctx = getDrawContext(), id = 1 } = options;
   return this.tag(id).onPaint((_, time, haps) =>

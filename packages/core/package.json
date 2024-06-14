@@ -1,6 +1,6 @@
 {
   "name": "@strudel/core",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Port of Tidal Cycles to JavaScript",
   "main": "index.mjs",
   "type": "module",
@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "vitest run",
+    "bench": "vitest bench",
     "build": "vite build",
     "prepublishOnly": "pnpm build"
   },

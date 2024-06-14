@@ -93,7 +93,7 @@ These letter combinations stand for different parts of a drum set:
 - `mt` = **m**iddle tom
 - `ht` = **h**igh tom
 - `rd` = **r**i**d**e cymbal
-- `rd` = **cr**ash cymbal
+- `cr` = **cr**ash cymbal
 
 Try out different drum sounds!
 
@@ -268,13 +268,14 @@ This is shorter and more readable than:
 ## Recap
 
 Now we've learned the basics of the so called Mini-Notation, the rhythm language of Tidal.
-This is what we've leared so far:
+This is what we've learned so far:
 
 | Concept           | Syntax   | Example                                                                 |
 | ----------------- | -------- | ----------------------------------------------------------------------- |
 | Sequence          | space    | <MiniRepl client:visible tune={`sound("bd bd sd hh")`} />               |
 | Sample Number     | :x       | <MiniRepl client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />       |
 | Rests             | - or ~   | <MiniRepl client:visible tune={`sound("metal - jazz jazz:1")`} />       |
+| Alternate         | \<\>     | <MiniRepl client:visible tune={`sound("<bd hh rim oh bd rim>")`} />     |
 | Sub-Sequences     | \[\]     | <MiniRepl client:visible tune={`sound("bd wind [metal jazz] hh")`} />   |
 | Sub-Sub-Sequences | \[\[\]\] | <MiniRepl client:visible tune={`sound("bd [metal [jazz [sd cp]]]")`} /> |
 | Speed up          | \*       | <MiniRepl client:visible tune={`sound("bd sd*2 cp*3")`} />              |

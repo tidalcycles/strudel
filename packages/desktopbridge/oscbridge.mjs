@@ -1,8 +1,8 @@
-import { parseNumeral, Pattern } from '@strudel/core';
+import { parseNumeral, Pattern, getEventOffsetMs } from '@strudel/core';
 import { Invoke } from './utils.mjs';
 
 Pattern.prototype.osc = function () {
-  return this.onTrigger(async (time, hap, currentTime, cps = 1) => {
+  return this.onTrigger(async (time, hap, currentTime, cps = 1, targetTime) => {
     hap.ensureObjectValue();
     const cycle = hap.wholeOrPart().begin.valueOf();
     const delta = hap.duration.valueOf();
@@ -13,7 +13,7 @@ Pattern.prototype.osc = function () {
 
     const params = [];
 
-    const timestamp = Math.round(Date.now() + (time - currentTime) * 1000);
+    const timestamp = Math.round(Date.now() + getEventOffsetMs(targetTime, currentTime));
 
     Object.keys(controls).forEach((key) => {
       const val = controls[key];

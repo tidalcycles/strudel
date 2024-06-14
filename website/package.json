@@ -9,7 +9,8 @@
     "check": "astro check && tsc",
     "build": "astro build",
     "preview": "astro preview --port 3009 --host 0.0.0.0",
-    "astro": "astro"
+    "astro": "astro",
+    "postinstall": "cp node_modules/hs2js/dist/tree-sitter.wasm public && cp node_modules/hs2js/dist/tree-sitter-haskell.wasm public"
   },
   "dependencies": {
     "@algolia/client-search": "^4.22.0",
@@ -39,6 +40,7 @@
     "@strudel/transpiler": "workspace:*",
     "@strudel/webaudio": "workspace:*",
     "@strudel/xen": "workspace:*",
+    "@strudel/tidal": "workspace:*",
     "@supabase/supabase-js": "^2.39.1",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.10",
@@ -49,6 +51,7 @@
     "astro": "^4.0.8",
     "claviature": "^0.1.0",
     "date-fns": "^3.2.0",
+    "hs2js": "0.0.8",
     "nanoid": "^5.0.4",
     "nanostores": "^0.9.5",
     "react": "^18.2.0",
