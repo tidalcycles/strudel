@@ -4,7 +4,6 @@ import { UdelFrame } from './UdelFrame';
 import { useState } from 'react';
 import UdelsHeader from './UdelsHeader';
 
-
 const defaultHash = 'c3RhY2soCiAgCik%3D';
 
 const getHashesFromUrl = () => {
@@ -31,7 +30,7 @@ export function Udels() {
   const onEvaluate = (key, code) => {
     const hashes = getHashesFromUrl();
     hashes[key] = code2hash(code);
-  
+
     updateURLHashes(hashes);
   };
   //   useEffect(() => {

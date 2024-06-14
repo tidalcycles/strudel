@@ -7,7 +7,6 @@ import BigPlayButton from '@src/repl/components/BigPlayButton';
 import UserFacingErrorMessage from '@src/repl/components/UserFacingErrorMessage';
 import { Header } from './Header';
 
-
 // type Props = {
 //  context: replcontext,
 //  containerRef:  React.MutableRefObject<HTMLElement | null>,
@@ -23,7 +22,7 @@ export default function ReplEditor(Props) {
   const showPanel = !isEmbedded;
   return (
     <ReplContext.Provider value={context}>
-      <div className='h-full flex flex-col relative'>
+      <div className="h-full flex flex-col relative">
         <Loader active={pending} />
         <Header context={context} />
         {isEmbedded && <BigPlayButton started={started} handleTogglePlay={handleTogglePlay} />}

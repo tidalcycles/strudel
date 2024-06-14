@@ -1,7 +1,7 @@
 import { persistentMap } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel/core';
-import { isUdels, } from './repl/util.mjs';
+import { isUdels } from './repl/util.mjs';
 
 export const defaultAudioDeviceName = 'System Standard';
 
@@ -25,14 +25,14 @@ export const defaultSettings = {
   isZen: false,
   soundsFilter: 'all',
   patternFilter: 'community',
-  panelPosition:  'right',
+  panelPosition: 'right',
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
 };
 
 let search = null;
 if (typeof window !== 'undefined') {
- search = new URLSearchParams(window.location.search);
+  search = new URLSearchParams(window.location.search);
 }
 // if running multiple instance in one window, it will use the settings for that instance. else default to normal
 const instance = parseInt(search?.get('instance') ?? '0');

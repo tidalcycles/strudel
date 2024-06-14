@@ -1,12 +1,10 @@
-
-
 // type Props = {
 //   containerRef:  React.MutableRefObject<HTMLElement | null>,
 //   editorRef:  React.MutableRefObject<HTMLElement | null>,
 //   init: () => void
 // }
 export function Code(Props) {
-const {editorRef, containerRef, init} = Props;
+  const { editorRef, containerRef, init } = Props;
 
   return (
     <section
