@@ -119,10 +119,10 @@ export const lcm = (...fractions) => {
   if (fractions.length === 0) {
     return undefined;
   }
-
+  const x = fractions.pop();
   return fractions.reduce(
     (lcm, fraction) => (lcm === undefined || fraction === undefined ? undefined : lcm.lcm(fraction)),
-    fraction(1),
+    x,
   );
 };
 
