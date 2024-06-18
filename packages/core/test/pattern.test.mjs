@@ -1227,4 +1227,22 @@ describe('Pattern', () => {
       );
     });
   });
+  describe('stepJoin', () => {
+    it('can join a pattern with a tactus of 2', () => {
+      expect(
+        sameFirst(
+          sequence(pure(pure('a')), pure(pure('b').setTactus(2))).stepJoin(),
+          s_cat(pure('a'), pure('b').setTactus(2)),
+        ),
+      );
+    });
+    it('can join a pattern with a tactus of 0.5', () => {
+      expect(
+        sameFirst(
+          sequence(pure(pure('a')), pure(pure('b').setTactus(0.5))).stepJoin(),
+          s_cat(pure('a'), pure('b').setTactus(0.5)),
+        ),
+      );
+    });
+  });
 });
