@@ -33,9 +33,6 @@ export function Udels() {
 
     updateURLHashes(hashes);
   };
-  //   useEffect(() => {
-  //     prebake();
-  //   }, []);
 
   return (
     <div
@@ -70,7 +67,6 @@ export function Udels() {
           );
         })}
       </div>
-      {/* <Panel /> */}
     </div>
   );
 }
