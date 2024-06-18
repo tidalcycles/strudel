@@ -1209,4 +1209,22 @@ describe('Pattern', () => {
       }
     });
   });
+  describe('s_expand', () => {
+    it('can expand four things in half', () => {
+      expect(
+        sameFirst(
+          sequence(0, 1, 2, 3).s_expand(1, 0.5),
+          s_cat(sequence(0, 1, 2, 3), sequence(0, 1, 2, 3).s_expand(0.5)),
+        ),
+      );
+    });
+    it('can expand five things in half', () => {
+      expect(
+        sameFirst(
+          sequence(0, 1, 2, 3, 4).s_expand(1, 0.5),
+          s_cat(sequence(0, 1, 2, 3, 4), sequence(0, 1, 2, 3, 4).s_expand(0.5)),
+        ),
+      );
+    });
+  });
 });
