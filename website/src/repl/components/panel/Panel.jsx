@@ -4,7 +4,7 @@ import useEvent from '@src/useEvent.mjs';
 import cx from '@src/cx.mjs';
 import { nanoid } from 'nanoid';
 import { useCallback, useLayoutEffect, useEffect, useRef, useState } from 'react';
-import { setActiveFooter, useSettings } from '../../settings.mjs';
+import { setActiveFooter, useSettings } from '../../../settings.mjs';
 import { ConsoleTab } from './ConsoleTab';
 import { FilesTab } from './FilesTab';
 import { Reference } from './Reference';

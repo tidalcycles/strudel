@@ -2,7 +2,7 @@ import useEvent from '@src/useEvent.mjs';
 import { useStore } from '@nanostores/react';
 import { getAudioContext, soundMap, connectToDestination } from '@strudel/webaudio';
 import React, { useMemo, useRef } from 'react';
-import { settingsMap, useSettings } from '../../settings.mjs';
+import { settingsMap, useSettings } from '../../../settings.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import ImportSoundsButton from './ImportSoundsButton.jsx';
 

@@ -39,6 +39,10 @@ function safeEval(str, options = {}) {
 
 export const evaluate = async (code, transpiler, transpilerOptions) => {
   let meta = {};
+  //post to iframe parent (like Udels) if it exists...
+  if (typeof window !== 'undefined') {
+    window.parent?.postMessage(code);
+  }
   if (transpiler) {
     // transform syntactically correct js code to semantically usable code
     const transpiled = transpiler(code, transpilerOptions);
