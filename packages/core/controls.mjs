@@ -73,6 +73,8 @@ export function registerControl(names, ...aliases) {
  */
 export const { s, sound } = registerControl(['s', 'n', 'gain'], 'sound');
 
+export const { rec } = registerControl(['rec', 'n']);
+
 /**
  * Define a custom webaudio node to use as a sound source.
  *
