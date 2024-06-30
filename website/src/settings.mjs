@@ -28,8 +28,11 @@ export const defaultSettings = {
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
 };
-
-export const settingsMap = persistentMap('strudel-settings', defaultSettings);
+// support unique settings for different instances
+const search = new URLSearchParams(window.location.search);
+const instance = parseInt(search.get('instance') ?? '0');
+const settings_key = `strudel-settings${instance > 0 ? instance : ''}`;
+export const settingsMap = persistentMap(settings_key, defaultSettings);
 
 const parseBoolean = (booleanlike) => ([true, 'true'].includes(booleanlike) ? true : false);
 

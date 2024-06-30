@@ -234,6 +234,8 @@ export function Repl({ embedded = false }) {
     handleEvaluate,
   };
 
+  const showPanel = !isEmbedded || window.parent?.location?.pathname?.includes('oodles');
+
   return (
     <ReplContext.Provider value={context}>
       <div className={cx('h-full flex flex-col relative')}>
@@ -259,12 +261,12 @@ export function Repl({ embedded = false }) {
               }
             }}
           ></section>
-          {panelPosition === 'right' && !isEmbedded && <Panel context={context} />}
+          {panelPosition === 'right' && showPanel && <Panel context={context} />}
         </div>
         {error && (
           <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>
         )}
-        {panelPosition === 'bottom' && !isEmbedded && <Panel context={context} />}
+        {panelPosition === 'bottom' && showPanel && <Panel context={context} />}
       </div>
     </ReplContext.Provider>
   );

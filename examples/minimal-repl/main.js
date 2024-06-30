@@ -18,6 +18,5 @@ const { evaluate } = repl({
 });
 document.getElementById('start').addEventListener('click', () => {
   ctx.resume();
-  console.log('eval', input.value);
   evaluate(input.value);
 });
