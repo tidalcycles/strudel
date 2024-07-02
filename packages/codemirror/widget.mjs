@@ -133,3 +133,8 @@ registerWidget('_pitchwheel', (id, options = {}, pat) => {
   const ctx = getCanvasWidget(id, options).getContext('2d');
   return pat.pitchwheel({ ...options, ctx, id });
 });
+
+registerWidget('_cyclecounter', (id, options = {}, pat) => {
+  const ctx = getCanvasWidget(id, options).getContext('2d');
+  return pat.cyclecounter({ ...options, ctx, id });
+});
