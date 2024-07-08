@@ -78,13 +78,24 @@ Strudel kommt von Haus aus mit einer breiten Auswahl an Drum Sounds:
 
 <Box>
 
-Diese 2-Buchstaben Kombinationen stehen für verschiedene Teile eines Schlagzeugs:
+Diese Kombinationen von Buchstaben stehen für verschiedene Teile eines Schlagzeugs:
+
+<img src="/img/drumset.png" />
+
+<a class="text-right text-xs" href="https://de.wikipedia.org/wiki/Schlagzeug#/media/Datei:Drum_set.svg" target="_blank">
+  original von Pbroks13
+</a>
 
 - `bd` = **b**ass **d**rum - Basstrommel
 - `sd` = **s**nare **d**rum - Schnarrtrommel
 - `rim` = **rim**shot - Rahmenschlag
 - `hh` = **h**i**h**at - Hallo Hut
 - `oh` = **o**pen **h**ihat - Offener Hallo Hut
+- `lt` = **l**ow tom
+- `mt` = **m**iddle tom
+- `ht` = **h**igh tom
+- `rd` = **r**i**d**e cymbal
+- `rd` = **cr**ash cymbal
 
 Probier verschiedene Sounds aus!
 
@@ -131,34 +142,58 @@ Versuch noch mehr Sounds hinzuzfügen!
 
 <MiniRepl client:visible tune={`sound("bd bd hh bd rim bd hh bd")`} punchcard />
 
-Der Inhalt einer Sequence wird in einen sogenannten Cycle (=Zyklus) zusammengequetscht.
+Der Inhalt einer Sequence wird in einen sogenannten Cycle (=Zyklus) zusammengequetscht. Ein Cycle ist standardmäßig 2 Sekunden lang.
+
+**Eins pro Cycle mit `< .. >`**
+
+Hier ist die gleiche Sequence, aber dieses mal umgeben von `< .. >` (angle brackets):
+
+<MiniRepl client:visible tune={`sound("<bd bd hh bd rim bd hh bd>")`} punchcard />
+
+Jetzt spielt nur ein Sound pro Cycle. Mit diesen Klammern bleibt das Tempo immer gleich, ganz egal wieviele Elemente enhalten sind!
+
+Das ist jetzt aber etwas langsam, machen wir es schneller mit `*`:
+
+<MiniRepl client:visible tune={`sound("<bd bd hh bd rim bd hh bd>*8")`} punchcard />
+
+Die `*8` macht die ganze Sequenz 8 mal so schnell.
+
+<Box>
+
+Warte mal, ist das jetzt nicht das gleiche Ergebnis wie ohne `< ... >*8`? Wofür ist das dann gut?
+
+Korrekt, der echte Vorteil dieser Schreibweise zeigt sich wenn du Elemente entfernst oder hinzufügst. Versuch es mal!
+
+Ändere auch mal die Zahl am Ende um das Tempo zu verändern.
+
+</Box>
 
 **Tempo ändern mit `cpm`**
 
-<MiniRepl client:visible tune={`sound("bd bd hh bd rim bd hh bd").cpm(40)`} punchcard />
+<MiniRepl client:visible tune={`sound("<bd hh rim hh>*8").cpm(90/4)`} punchcard />
 
 <Box>
 
 cpm = **c**ycles per **m**inute = Cycles pro Minute
 
-Das Tempo ist standardmäßig auf 60cpm eingestellt, also 1 Cycle pro Sekunde.
+Das Tempo is standardmäßig is 30 Cycles pro Minute = 120/4 = 1 Cycle alle 2 Sekunden
 
-`cpm` ist angelehnt an `bpm` (=beats per minute).
+In taditioneller Musik-Terminologie könnte man sagen, das Pattern oben besteht aus 8tel Noten auf 90bpm im 4/4 Takt.
+
+Kein Sorge wenn dir diese Begriffe nichts sagen, das ist nicht notwendig um mit Strudel Musik zu machen.
 
 </Box>
 
 Wir werden später noch mehr Möglichkeiten kennen lernen das Tempo zu verändern.
 
-**Pausen mit '~'**
+**Pausen mit '-' oder '~'**
 
-<MiniRepl client:visible tune={`sound("bd hh ~ rim")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd hh - rim")`} punchcard />
 
 <Box>
 
-Tilde tippen:
-
-- Windows / Linux: `Alt Gr` + `~`
-- Mac: `option` + `N`
+Du siehst wahrscheinlich auch Patterns von anderen Leuten mit '~' als Pausensymbol.
+Besonders für deutsche Tastaturen ist `-` eine Alternative zum schwer tippbaren `~`.
 
 </Box>
 
@@ -219,7 +254,7 @@ Du kannst so tief verschachteln wie du willst!
 
 Du kannst so viele Kommas benutzen wie du möchtest:
 
-<MiniRepl client:visible tune={`sound("hh hh hh, bd bd, ~ casio")`} punchcard />
+<MiniRepl client:visible tune={`sound("hh hh hh, bd bd, - casio")`} punchcard />
 
 Kommas können auch in Unter-Sequenzen verwendet werden:
 
@@ -237,9 +272,9 @@ Es kommt öfter vor, dass man die gleiche Idee auf verschiedene Arten ausdrücke
 
 <MiniRepl
   client:visible
-  tune={`sound(\`bd*2, ~ cp, 
-~ ~ ~ oh, hh*4,
-[~ casio]*2\`)`}
+  tune={`sound(\`bd*2, - cp, 
+- - - oh, hh*4,
+[- casio]*2\`)`}
   punchcard
 />
 
@@ -269,7 +304,7 @@ Das haben wir bisher gelernt:
 | --------------------- | ----------- | --------------------------------------------------------------------- |
 | Sequenz               | Leerzeichen | <MiniRepl client:visible tune={`sound("bd bd sd hh")`} />             |
 | Sound Nummer          | :x          | <MiniRepl client:visible tune={`sound("hh:0 hh:1 hh:2 hh:3")`} />     |
-| Pausen                | ~           | <MiniRepl client:visible tune={`sound("metal ~ jazz jazz:1")`} />     |
+| Pausen                | -           | <MiniRepl client:visible tune={`sound("metal - jazz jazz:1")`} />     |
 | Unter-Sequenzen       | \[\]        | <MiniRepl client:visible tune={`sound("bd wind [metal jazz] hh")`} /> |
 | Unter-Unter-Sequenzen | \[\[\]\]    | <MiniRepl client:visible tune={`sound("bd [metal [jazz sd]]")`} />    |
 | Schneller             | \*          | <MiniRepl client:visible tune={`sound("bd sd*2 cp*3")`} />            |
@@ -293,7 +328,7 @@ Die folgenden Funktionen haben wir bereits gesehen:
 
 **Klassischer House**
 
-<MiniRepl client:visible tune={`sound("bd*2, ~ cp, [~ hh]*2").bank("RolandTR909")`} punchcard />
+<MiniRepl client:visible tune={`sound("bd*2, - cp, [- hh]*2").bank("RolandTR909")`} punchcard />
 
 <Box>
 
@@ -310,7 +345,7 @@ We Will Rock you
 
 <MiniRepl
   client:visible
-  tune={`sound("bd sd, ~ ~ ~ hh ~ hh ~ ~, ~ perc ~ perc:1*2")
+  tune={`sound("bd sd, - - - hh - hh - -, - perc - perc:1*2")
 .bank("RolandCompurhythm1000")`}
   punchcard
 />
@@ -320,10 +355,10 @@ We Will Rock you
 <MiniRepl
   client:visible
   tune={`sound(\`
-[~  ~  oh ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ],
-[hh hh ~  ~ ] [hh ~  hh ~ ] [hh ~  hh ~ ] [hh ~  hh ~ ],
-[~  ~  ~  ~ ] [cp ~  ~  ~ ] [~  ~  ~  ~ ] [cp ~  ~  ~ ],
-[bd ~  ~  ~ ] [~  ~  ~  bd] [~  ~  bd ~ ] [~  ~  ~  bd]
+[-  -  oh - ] [-  -  -  - ] [-  -  -  - ] [-  -  -  - ],
+[hh hh -  - ] [hh -  hh - ] [hh -  hh - ] [hh -  hh - ],
+[-  -  -  - ] [cp -  -  - ] [-  -  -  - ] [cp -  -  - ],
+[bd -  -  - ] [-  -  -  bd] [-  -  bd - ] [-  -  -  bd]
 \`).cpm(90/4)`}
   punchcard
 />
@@ -333,10 +368,10 @@ We Will Rock you
 <MiniRepl
   client:visible
   tune={`sound(\`
-[~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  ~  ~ ] [~  ~  oh:1 ~ ],
-[hh hh hh hh] [hh hh hh hh] [hh hh hh hh] [hh hh ~  ~ ],
-[~  ~  ~  ~ ] [cp ~  ~  ~ ] [~  ~  ~  ~ ] [~  cp ~  ~ ],
-[bd bd ~  ~ ] [~  ~  bd ~ ] [bd bd ~ bd ] [~  ~  ~  ~ ]
+[-  -  -  - ] [-  -  -  - ] [-  -  -  - ] [-  -  oh:1 - ],
+[hh hh hh hh] [hh hh hh hh] [hh hh hh hh] [hh hh -  - ],
+[-  -  -  - ] [cp -  -  - ] [-  -  -  - ] [-  cp -  - ],
+[bd bd -  - ] [-  -  bd - ] [bd bd - bd ] [-  -  -  - ]
 \`).bank("RolandTR808").cpm(88/4)`}
   punchcard
 />
@@ -346,9 +381,9 @@ We Will Rock you
 <MiniRepl
   client:visible
   tune={`s(\`jazz*2, 
-insect [crow metal] ~ ~, 
-~ space:4 ~ space:1,
-~ wind\`)
+insect [crow metal] - -, 
+- space:4 - space:1,
+- wind\`)
 .cpm(100/2)`}
   punchcard
 />

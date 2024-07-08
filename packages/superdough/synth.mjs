@@ -1,5 +1,5 @@
 import { clamp, midiToFreq, noteToMidi } from './util.mjs';
-import { registerSound, getAudioContext, getWorklet } from './superdough.mjs';
+import { registerSound, getAudioContext } from './superdough.mjs';
 import {
   applyFM,
   gainNode,
@@ -8,6 +8,7 @@ import {
   getPitchEnvelope,
   getVibratoOscillator,
   webAudioTimeout,
+  getWorklet,
 } from './helpers.mjs';
 import { getNoiseMix, getNoiseOscillator } from './noise.mjs';
 

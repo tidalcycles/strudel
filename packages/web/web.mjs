@@ -5,10 +5,10 @@ export * from '@strudel/transpiler';
 export * from '@strudel/mini';
 export * from '@strudel/tonal';
 export * from '@strudel/webaudio';
-import { Pattern, evalScope } from '@strudel/core';
-import { initAudioOnFirstClick, registerSynthSounds, webaudioScheduler } from '@strudel/webaudio';
+import { Pattern, evalScope, setTime } from '@strudel/core';
+import { initAudioOnFirstClick, registerSynthSounds, webaudioRepl } from '@strudel/webaudio';
 // import { registerSoundfonts } from '@strudel/soundfonts';
-import { evaluate as _evaluate } from '@strudel/transpiler';
+import { evaluate as _evaluate, transpiler } from '@strudel/transpiler';
 import { miniAllStrings } from '@strudel/mini';
 
 // init logic
@@ -27,39 +27,40 @@ export async function defaultPrebake() {
 // when this function finishes, everything is initialized
 let initDone;
 
-let scheduler;
+let repl;
 export function initStrudel(options = {}) {
   initAudioOnFirstClick();
-  miniAllStrings();
-  const { prebake, ...schedulerOptions } = options;
-
+  options.miniAllStrings !== false && miniAllStrings();
+  const { prebake, ...replOptions } = options;
+  repl = webaudioRepl({ ...replOptions, transpiler });
   initDone = (async () => {
     await defaultPrebake();
     await prebake?.();
+    return repl;
   })();
-  scheduler = webaudioScheduler(schedulerOptions);
+  setTime(() => repl.scheduler.now());
+  return initDone;
 }
 
 window.initStrudel = initStrudel;
 
 // this method will play the pattern on the default scheduler
 Pattern.prototype.play = function () {
-  if (!scheduler) {
-    throw new Error('.play: no scheduler found. Have you called init?');
+  if (!repl) {
+    throw new Error('.play: no repl found. Have you called initStrudel?');
   }
   initDone.then(() => {
-    scheduler.setPattern(this, true);
+    repl.setPattern(this, true);
   });
   return this;
 };
 
 // stop playback
 export function hush() {
-  scheduler.stop();
+  repl.stop();
 }
 
 // evaluate and play the given code using the transpiler
 export async function evaluate(code, autoplay = true) {
-  const { pattern } = await _evaluate(code);
-  autoplay && pattern.play();
+  return repl.evaluate(code, autoplay);
 }

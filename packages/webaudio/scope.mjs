@@ -130,7 +130,7 @@ Pattern.prototype.fscope = function (config = {}) {
  * @param {number} pos y-position relative to screen height. 0 = top, 1 = bottom of screen
  * @param {number} trigger amplitude value that is used to align the scope. defaults to 0.
  * @example
- * s("sawtooth").scope()
+ * s("sawtooth")._scope()
  */
 let latestColor = {};
 Pattern.prototype.tscope = function (config = {}) {

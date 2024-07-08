@@ -235,6 +235,11 @@ Object.keys(simple).forEach((symbol) => {
     let alias = symbol.replace('^', 'M');
     voicingAlias(symbol, alias, [complex, simple]);
   }
+  // add aliases for "+" === "aug"
+  if (symbol.includes('+')) {
+    let alias = symbol.replace('+', 'aug');
+    voicingAlias(symbol, alias, [complex, simple]);
+  }
 });
 
 registerVoicings('ireal', simple);

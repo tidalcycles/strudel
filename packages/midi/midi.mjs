@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import * as _WebMidi from 'webmidi';
-import { Pattern, isPattern, logger, ref } from '@strudel/core';
+import { Pattern, getEventOffsetMs, isPattern, logger, ref } from '@strudel/core';
 import { noteToMidi } from '@strudel/core';
 import { Note } from 'webmidi';
 // if you use WebMidi from outside of this package, make sure to import that instance:
@@ -112,25 +112,24 @@ Pattern.prototype.midi = function (output) {
       logger(`Midi device disconnected! Available: ${getMidiDeviceNamesString(outputs)}`),
   });
 
-  return this.onTrigger((time, hap, currentTime, cps) => {
+  return this.onTrigger((time_deprecate, hap, currentTime, cps, targetTime) => {
     if (!WebMidi.enabled) {
       console.log('not enabled');
       return;
     }
     const device = getDevice(output, WebMidi.outputs);
     hap.ensureObjectValue();
-
-    const offset = (time - currentTime) * 1000;
+    //magic number to get audio engine to line up, can probably be calculated somehow
+    const latencyMs = 34;
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
-    const timeOffsetString = `+${offset}`;
-
+    const timeOffsetString = `+${getEventOffsetMs(targetTime, currentTime) + latencyMs}`;
     // destructure value
     let { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd, gain = 1, velocity = 0.9 } = hap.value;
 
     velocity = gain * velocity;
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
-    const duration = Math.floor((hap.duration.valueOf() / cps) * 1000 - 10);
+    const duration = (hap.duration.valueOf() / cps) * 1000 - 10;
     if (note != null) {
       const midiNumber = typeof note === 'number' ? note : noteToMidi(note);
       const midiNote = new Note(midiNumber, { attack: velocity, duration });
@@ -177,7 +176,7 @@ export async function midin(input) {
   }
   const initial = await enableWebMidi(); // only returns on first init
   const device = getDevice(input, WebMidi.inputs);
-  if (initial || WebMidi.enabled) {
+  if (initial) {
     const otherInputs = WebMidi.inputs.filter((o) => o.name !== device.name);
     logger(
       `Midi enabled! Using "${device.name}". ${

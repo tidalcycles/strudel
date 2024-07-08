@@ -132,3 +132,10 @@ registerWidget('_claviature', (id, options = {}, pat) => {
   const ctx = getCanvasWidget(id, options).getContext('2d');
   return pat.tag(id).claviature({ ...options, ctx, id });
 });
+
+registerWidget('_pitchwheel', (id, options = {}, pat) => {
+  let _size = options.size || 200;
+  options = { width: _size, height: _size, ...options, size: _size / 5 };
+  const ctx = getCanvasWidget(id, options).getContext('2d');
+  return pat.pitchwheel({ ...options, ctx, id });
+});

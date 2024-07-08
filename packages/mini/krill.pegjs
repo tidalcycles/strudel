@@ -135,7 +135,14 @@ op_weight = ws ("@" / "_") a:number?
   { return x => x.options_['weight'] = (x.options_['weight'] ?? 1) + (a ?? 2) - 1 }
   
 op_replicate = ws "!" a:number?
-  { return x => x.options_['reps'] = (x.options_['reps'] ?? 1) + (a ?? 2) - 1 }
+  { return x => {// A bit fiddly, to support both x!4 and x!!! as equivalent..
+                 const reps = (x.options_['reps'] ?? 1) + (a ?? 2) - 1;
+                 x.options_['reps'] = reps;
+                 x.options_['ops'] = x.options_['ops'].filter(x => x.type_ !== "replicate");
+                 x.options_['ops'].push({ type_: "replicate", arguments_ :{ amount:reps }});
+                 x.options_['weight'] = reps;
+                }
+  }
 
 op_bjorklund = "(" ws p:slice_with_ops ws comma ws s:slice_with_ops ws comma? ws r:slice_with_ops? ws ")"
   { return x => x.options_['ops'].push({ type_: "bjorklund", arguments_ :{ pulse: p, step:s, rotation:r }}) }
