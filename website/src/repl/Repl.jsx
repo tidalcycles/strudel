@@ -90,6 +90,9 @@ export function Repl({ embedded = false }) {
       beforeEval: () => audioReady,
       afterEval: (all) => {
         const { code } = all;
+        //post to iframe parent (like Udels) if it exists...
+        window.parent?.postMessage(code);
+
         setLatestCode(code);
         window.location.hash = '#' + code2hash(code);
         setDocumentTitle(code);
