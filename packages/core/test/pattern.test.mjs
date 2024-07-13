@@ -937,6 +937,9 @@ describe('Pattern', () => {
           .firstCycle(),
       );
     });
+    it('Can chop chops', () => {
+      expect(pure({ s: 'bev' }).chop(2).chop(2).firstCycle()).toStrictEqual(pure({ s: 'bev' }).chop(4).firstCycle());
+    });
   });
   describe('range', () => {
     it('Can be patterned', () => {
@@ -1207,6 +1210,42 @@ describe('Pattern', () => {
       for (var i = 0; i < 100; ++i) {
         expect(sameFirst(pure('a').s_sub(...Array(i).fill(0)), fastcat(...Array(i).fill('a'))));
       }
+    });
+  });
+  describe('s_expand', () => {
+    it('can expand four things in half', () => {
+      expect(
+        sameFirst(
+          sequence(0, 1, 2, 3).s_expand(1, 0.5),
+          s_cat(sequence(0, 1, 2, 3), sequence(0, 1, 2, 3).s_expand(0.5)),
+        ),
+      );
+    });
+    it('can expand five things in half', () => {
+      expect(
+        sameFirst(
+          sequence(0, 1, 2, 3, 4).s_expand(1, 0.5),
+          s_cat(sequence(0, 1, 2, 3, 4), sequence(0, 1, 2, 3, 4).s_expand(0.5)),
+        ),
+      );
+    });
+  });
+  describe('stepJoin', () => {
+    it('can join a pattern with a tactus of 2', () => {
+      expect(
+        sameFirst(
+          sequence(pure(pure('a')), pure(pure('b').setTactus(2))).stepJoin(),
+          s_cat(pure('a'), pure('b').setTactus(2)),
+        ),
+      );
+    });
+    it('can join a pattern with a tactus of 0.5', () => {
+      expect(
+        sameFirst(
+          sequence(pure(pure('a')), pure(pure('b').setTactus(0.5))).stepJoin(),
+          s_cat(pure('a'), pure('b').setTactus(0.5)),
+        ),
+      );
     });
   });
 });
