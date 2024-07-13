@@ -1730,6 +1730,72 @@ export const { compressSpan, compressspan } = register(['compressSpan', 'compres
 });
 
 /**
+ * fills in the gap between consecutive notes
+ *
+ * @name legato
+ * @memberof Pattern
+ * @param {Pattern | number | array} legato relative note length
+ * @returns Pattern
+ * @example
+ * s("sawtooth").euclid(11,16).legato("<1 .5>")._pianoroll()
+ * @example
+ * // second array parameter is "lookahead" which is the number of cycles in the future to query for the next event
+ * s("supersaw").euclid(7,16).legato("1:<1 .15>")._pianoroll()
+ */
+export const legato = register('legato', function (legato, pat) {
+  let multiplier = legato;
+  let lookahead = 1;
+  if (Array.isArray(legato)) {
+    multiplier = legato[0] ?? 1;
+    lookahead = legato[1] ?? lookahead;
+  }
+
+  let spanEnd;
+  return pat
+    .withQuerySpan((span) => {
+      spanEnd = span.end;
+      return span.withEnd((e) => {
+        return e.add(lookahead);
+      });
+    })
+    .withHaps((haps) => {
+      const newHaps = [];
+      haps
+        .sort((a, b) => {
+          return a.part.begin.sub(b.part.begin).valueOf();
+        })
+        .forEach((hap, i) => {
+          const nextHap = haps[i + 1];
+          const partbegin = hap.part.begin;
+          let partend = hap.part.end;
+          const wholebegin = hap.whole.begin;
+          // filter out haps that were not part of the original span
+          if (wholebegin.gte(spanEnd)) {
+            return;
+          }
+          let wholeend = hap.whole.end;
+          if (nextHap != null) {
+            partend = nextHap.part.begin;
+            wholeend = nextHap.whole.begin;
+          }
+
+          let wholeduration = wholeend.sub(wholebegin).mul(multiplier);
+          let partduration = partend.sub(partbegin).mul(multiplier);
+
+          partend = partbegin.add(partduration);
+          wholeend = wholebegin.add(wholeduration);
+
+          const newPart = new TimeSpan(partbegin, partend);
+          const newWhole = new TimeSpan(wholebegin, wholeend);
+
+          newHaps.push(new Hap(newWhole, newPart, hap.value, hap.context));
+        });
+      return newHaps;
+    });
+});
+
+
+/**
  * speeds up a pattern like fast, but rather than it playing multiple times as fast would it instead leaves a gap in the remaining space of the cycle. For example, the following will play the sound pattern "bd sn" only once but compressed into the first half of the cycle, i.e. twice as fast.
  * @name fastGap
  * @synonyms fastgap

@@ -1525,7 +1525,7 @@ export const { cps } = registerControl('cps');
  * note("c a f e").s("piano").clip("<.5 1 2>")
  *
  */
-export const { clip, legato } = registerControl('clip', 'legato');
+export const { clip } = registerControl('clip');
 
 /**
  * Sets the duration of the event in cycles. Similar to clip / legato, it also cuts samples off at the end if they exceed the duration.
