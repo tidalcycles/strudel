@@ -1563,7 +1563,7 @@ export function register(name, func, patternify = true, preserveTactus = false, 
     Pattern.prototype['_' + name] = function (...args) {
       const result = func(...args, this);
       if (preserveTactus) {
-        result.setTactus(this.tactus)
+        result.setTactus(this.tactus);
       }
       return result;
     };
@@ -2609,7 +2609,7 @@ export function s_cat(...timepats) {
   }
   if (timepats.length == 1) {
     const result = reify(timepats[0][1]);
-    return result.withTactus(_ => timepats[0][0]);
+    return result.withTactus((_) => timepats[0][0]);
   }
 
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -2705,7 +2705,6 @@ export const s_sub = stepRegister('s_sub', function (i, pat) {
 export const s_cycles = stepRegister('s_extend', function (factor, pat) {
   return pat.fast(factor).s_expand(factor);
 });
-
 
 export const s_expand = stepRegister('s_expand', function (factor, pat) {
   return pat.withTactus((t) => t.mul(Fraction(factor)));
