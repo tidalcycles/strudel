@@ -39,7 +39,6 @@ const applyOptions = (parent, enter) => (pat, i) => {
           } else {
             pat = pat.euclid(enter(op.arguments_.pulse), enter(op.arguments_.step));
           }
-          console.log(op.arguments_.step);
           break;
         }
         case 'degradeBy': {
