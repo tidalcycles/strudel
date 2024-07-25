@@ -250,7 +250,7 @@ export function Repl({ embedded = false }) {
         )}
         <div className="grow flex relative overflow-hidden">
           <section
-            className={'text-gray-100 cursor-text pb-0 overflow-auto grow' + (isZen ? ' px-10' : '')}
+            className={'text-gray-100 cursor-text pb-0 overflow-auto grow'}
             id="code"
             ref={(el) => {
               containerRef.current = el;
