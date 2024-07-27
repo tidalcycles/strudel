@@ -2929,7 +2929,8 @@ export const splice = register(
 );
 
 export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
-  return new Pattern((state) => _loopAt(factor, pat, state.controls._cps).query(state));
+  const tactus = pat.tactus ? pat.tactus.div(factor) : undefined;
+  return new Pattern((state) => _loopAt(factor, pat, state.controls._cps).query(state), tactus);
 });
 
 /**
