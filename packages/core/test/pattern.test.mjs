@@ -937,6 +937,9 @@ describe('Pattern', () => {
           .firstCycle(),
       );
     });
+    it('Can chop chops', () => {
+      expect(pure({ s: 'bev' }).chop(2).chop(2).firstCycle()).toStrictEqual(pure({ s: 'bev' }).chop(4).firstCycle());
+    });
   });
   describe('range', () => {
     it('Can be patterned', () => {

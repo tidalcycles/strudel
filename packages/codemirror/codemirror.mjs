@@ -1,4 +1,5 @@
 import { closeBrackets } from '@codemirror/autocomplete';
+export { toggleComment, toggleBlockComment, toggleLineComment, toggleBlockCommentByLine } from '@codemirror/commands';
 // import { search, highlightSelectionMatches } from '@codemirror/search';
 import { history } from '@codemirror/commands';
 import { javascript } from '@codemirror/lang-javascript';
