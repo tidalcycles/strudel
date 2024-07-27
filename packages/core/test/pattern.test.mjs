@@ -1245,4 +1245,9 @@ describe('Pattern', () => {
       );
     });
   });
+  describe('loopAt', () => {
+    it('maintains tactus', () => {
+      expect(s('bev').chop(8).loopAt(2).tactus).toStrictEqual(Fraction(4));
+    });
+  });
 });
