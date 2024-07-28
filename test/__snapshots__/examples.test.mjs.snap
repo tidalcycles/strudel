@@ -7486,6 +7486,23 @@ exports[`runs examples > example "steps" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "stretch" example index 0 1`] = `
+[
+  "[ (0/1 → 1/3) ⇝ 1/1 | s:gm_flute stretch:1 ]",
+  "[ 0/1 ⇜ (1/3 → 2/3) ⇝ 1/1 | s:gm_flute stretch:2 ]",
+  "[ 0/1 ⇜ (2/3 → 1/1) | s:gm_flute stretch:0.5 ]",
+  "[ (1/1 → 4/3) ⇝ 2/1 | s:gm_flute stretch:1 ]",
+  "[ 1/1 ⇜ (4/3 → 5/3) ⇝ 2/1 | s:gm_flute stretch:2 ]",
+  "[ 1/1 ⇜ (5/3 → 2/1) | s:gm_flute stretch:0.5 ]",
+  "[ (2/1 → 7/3) ⇝ 3/1 | s:gm_flute stretch:1 ]",
+  "[ 2/1 ⇜ (7/3 → 8/3) ⇝ 3/1 | s:gm_flute stretch:2 ]",
+  "[ 2/1 ⇜ (8/3 → 3/1) | s:gm_flute stretch:0.5 ]",
+  "[ (3/1 → 10/3) ⇝ 4/1 | s:gm_flute stretch:1 ]",
+  "[ 3/1 ⇜ (10/3 → 11/3) ⇝ 4/1 | s:gm_flute stretch:2 ]",
+  "[ 3/1 ⇜ (11/3 → 4/1) | s:gm_flute stretch:0.5 ]",
+]
+`;
+
 exports[`runs examples > example "striate" example index 0 1`] = `
 [
   "[ 0/1 → 1/6 | s:numbers n:0 begin:0 end:0.16666666666666666 ]",
