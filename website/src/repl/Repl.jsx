@@ -6,7 +6,6 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import { code2hash, logger, silence } from '@strudel/core';
 import { getDrawContext } from '@strudel/draw';
-import cx from '@src/cx.mjs';
 import { transpiler } from '@strudel/transpiler';
 import {
   getAudioContext,
@@ -29,16 +28,15 @@ import {
   getViewingPatternData,
   setViewingPatternData,
 } from '../user_pattern_utils.mjs';
-import { Header } from './Header';
-import Loader from './Loader';
-import { Panel } from './panel/Panel';
 import { useStore } from '@nanostores/react';
 import { prebake } from './prebake.mjs';
-import { getRandomTune, initCode, loadModules, shareCode, ReplContext } from './util.mjs';
-import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
+import { getRandomTune, initCode, loadModules, shareCode, ReplContext, isUdels } from './util.mjs';
 import './Repl.css';
 import { setInterval, clearInterval } from 'worker-timers';
 import { getMetadata } from '../metadata_parser';
+import UdelsEditor from '@components/Udels/UdelsEditor';
+
+import ReplEditor from './components/ReplEditor';
 
 const { latestCode } = settingsMap.get();
 
@@ -92,6 +90,9 @@ export function Repl({ embedded = false }) {
       beforeEval: () => audioReady,
       afterEval: (all) => {
         const { code } = all;
+        //post to iframe parent (like Udels) if it exists...
+        window.parent?.postMessage(code);
+
         setLatestCode(code);
         window.location.hash = '#' + code2hash(code);
         setDocumentTitle(code);
@@ -234,38 +235,21 @@ export function Repl({ embedded = false }) {
     handleEvaluate,
   };
 
+  if (isUdels()) {
+    return (
+      <UdelsEditor context={context} error={error} init={init} editorRef={editorRef} containerRef={containerRef} />
+    );
+  }
+
   return (
-    <ReplContext.Provider value={context}>
-      <div className={cx('h-full flex flex-col relative')}>
-        <Loader active={pending} />
-        <Header context={context} />
-        {isEmbedded && !started && (
-          <button
-            onClick={() => handleTogglePlay()}
-            className="text-white text-2xl fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-[1000] m-auto p-4 bg-black rounded-md flex items-center space-x-2"
-          >
-            <PlayCircleIcon className="w-6 h-6" />
-            <span>play</span>
-          </button>
-        )}
-        <div className="grow flex relative overflow-hidden">
-          <section
-            className={'text-gray-100 cursor-text pb-0 overflow-auto grow' + (isZen ? ' px-10' : '')}
-            id="code"
-            ref={(el) => {
-              containerRef.current = el;
-              if (!editorRef.current) {
-                init();
-              }
-            }}
-          ></section>
-          {panelPosition === 'right' && !isEmbedded && <Panel context={context} />}
-        </div>
-        {error && (
-          <div className="text-red-500 p-4 bg-lineHighlight animate-pulse">{error.message || 'Unknown Error :-/'}</div>
-        )}
-        {panelPosition === 'bottom' && !isEmbedded && <Panel context={context} />}
-      </div>
-    </ReplContext.Provider>
+    <ReplEditor
+      panelPosition={panelPosition}
+      isEmbedded={isEmbedded}
+      context={context}
+      error={error}
+      init={init}
+      editorRef={editorRef}
+      containerRef={containerRef}
+    />
   );
 }

@@ -1423,6 +1423,9 @@ export function fastcat(...pats) {
     result = result._fast(pats.length);
     result.tactus = pats.length;
   }
+  if (pats.length == 1 && pats[0].__tactus_source) {
+    pats.tactus = pats[0].tactus;
+  }
   return result;
 }
 
@@ -1566,7 +1569,11 @@ export function register(name, func, patternify = true, preserveTactus = false, 
     // There are patternified args, so lets make an unpatternified
     // version, prefixed by '_'
     Pattern.prototype['_' + name] = function (...args) {
-      return func(...args, this);
+      const result = func(...args, this);
+      if (preserveTactus) {
+        result.setTactus(this.tactus);
+      }
+      return result;
     };
   }
 
@@ -2612,8 +2619,7 @@ export function s_cat(...timepats) {
   }
   if (timepats.length == 1) {
     const result = reify(timepats[0][1]);
-    result.tactus = timepats[0][0];
-    return result;
+    return result.withTactus((_) => timepats[0][0]);
   }
 
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -2704,6 +2710,10 @@ export const s_sub = stepRegister('s_sub', function (i, pat) {
     return pat.s_add(Fraction(0).sub(pat.tactus.add(i)));
   }
   return pat.s_add(pat.tactus.sub(i));
+});
+
+export const s_cycles = stepRegister('s_extend', function (factor, pat) {
+  return pat.fast(factor).s_expand(factor);
 });
 
 export const s_expand = stepRegister('s_expand', function (factor, pat) {
@@ -2919,7 +2929,8 @@ export const splice = register(
 );
 
 export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
-  return new Pattern((state) => _loopAt(factor, pat, state.controls._cps).query(state));
+  const tactus = pat.tactus ? pat.tactus.div(factor) : undefined;
+  return new Pattern((state) => _loopAt(factor, pat, state.controls._cps).query(state), tactus);
 });
 
 /**
