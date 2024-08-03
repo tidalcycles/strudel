@@ -326,6 +326,13 @@ export const pickRestart = register('pickRestart', function (lookup, pat) {
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
+ * @example
+ * p1: "<a b c d>".pickRestart({
+    a: n("0 1 2 3"),
+    b: n("4 5 6 7"),
+    c: n("8 9 10 11"),
+    d: n("12 13 14 15")
+  }).scale("C:major").s("piano")
  */
 export const pickmodRestart = register('pickmodRestart', function (lookup, pat) {
   return _pick(lookup, pat, true).restartJoin();
