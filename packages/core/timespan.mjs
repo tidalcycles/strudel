@@ -61,6 +61,10 @@ export class TimeSpan {
     // Applies given function to the end time of the timespan"""
     return new TimeSpan(this.begin, func_time(this.end));
   }
+  withBegin(func_time) {
+    // Applies given function to the end time of the timespan"""
+    return new TimeSpan(func_time(this.begin), this.end);
+  }
 
   withCycle(func_time) {
     // Like withTime, but time is relative to relative to the cycle (i.e. the

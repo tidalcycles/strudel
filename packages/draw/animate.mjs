@@ -53,7 +53,7 @@ Pattern.prototype.animate = function ({ callback, sync = false, smear = 0.5 } = 
   return silence;
 };
 
-export const { x, y, w, h, angle, r, fill, smear } = createParams('x', 'y', 'w', 'h', 'angle', 'r', 'fill', 'smear');
+export const { x, y, w, h, angle, r, fill, smear } = createParams('x', 'y', 'w', 'h', 'angle', 'r', 'smear');
 
 export const rescale = register('rescale', function (f, pat) {
   return pat.mul(x(f).w(f).y(f).h(f));

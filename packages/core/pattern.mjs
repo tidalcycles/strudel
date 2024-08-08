@@ -1732,17 +1732,17 @@ export const { compressSpan, compressspan } = register(['compressSpan', 'compres
 /**
  * fills in the gap between consecutive notes
  *
- * @name legato
+ * @name fill
  * @memberof Pattern
- * @param {Pattern | number | array} legato relative note length
+ * @param {Pattern | number | array} fill relative note length
  * @returns Pattern
  * @example
- * s("sawtooth").euclid(11,16).legato("<1 .5>")._pianoroll()
+ * s("sawtooth").euclid(11,16).fill("<1 .5>")._pianoroll()
  * @example
  * // second array parameter is "lookahead" which is the number of cycles in the future to query for the next event
- * s("supersaw").euclid(7,16).legato("1:<1 .15>")._pianoroll()
+ * s("supersaw").euclid(7,16).fill("1:<1 .15>")._pianoroll()
  */
-export const legato = register('legato', function (legato, pat) {
+export const fill = register('fill', function (legato, pat) {
   let multiplier = legato;
   let lookahead = 1;
   if (Array.isArray(legato)) {
@@ -1751,12 +1751,16 @@ export const legato = register('legato', function (legato, pat) {
   }
 
   let spanEnd;
+  let spanBegin; 
   return pat
     .withQuerySpan((span) => {
       spanEnd = span.end;
+      spanBegin = span.begin;
+      
       return span.withEnd((e) => {
         return e.add(lookahead);
-      });
+      })
+      // .withBegin(e => e.sub(lookahead));
     })
     .withHaps((haps) => {
       const newHaps = [];
@@ -1770,7 +1774,7 @@ export const legato = register('legato', function (legato, pat) {
           let partend = hap.part.end;
           const wholebegin = hap.whole.begin;
           // filter out haps that were not part of the original span
-          if (wholebegin.gte(spanEnd)) {
+          if (wholebegin.gte(spanEnd) || wholebegin.lt(spanBegin)) {
             return;
           }
           let wholeend = hap.whole.end;
