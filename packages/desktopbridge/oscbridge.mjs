@@ -1,6 +1,7 @@
 import { parseNumeral, Pattern, getEventOffsetMs } from '@strudel/core';
 import { Invoke } from './utils.mjs';
 
+let offsetTime;
 Pattern.prototype.osc = function () {
   return this.onTrigger(async (time, hap, currentTime, cps = 1, targetTime) => {
     hap.ensureObjectValue();
@@ -12,9 +13,17 @@ Pattern.prototype.osc = function () {
     controls.note && (controls.note = parseNumeral(controls.note));
 
     const params = [];
+    // console.log(time, currentTime)
+    const unixTimeSecs = Date.now() / 1000;
 
-    const timestamp = Math.round(Date.now() + getEventOffsetMs(targetTime, currentTime));
-
+    if (offsetTime == null) {
+      const unixTimeSecs = Date.now() / 1000;
+      offsetTime = unixTimeSecs - currentTime;
+    }
+    const timestamp = offsetTime + targetTime
+    // const timestamp =  unixTimeSecs + (targetTime - currentTime)
+    
+   console.log(offsetTime)
     Object.keys(controls).forEach((key) => {
       const val = controls[key];
       const value = typeof val === 'number' ? val.toString() : val;
@@ -29,15 +38,23 @@ Pattern.prototype.osc = function () {
       });
     });
 
-    const messagesfromjs = [];
-    if (params.length) {
-      messagesfromjs.push({ target: '/dirt/play', timestamp, params });
+  
+    if (params.length === 0) {
+      return
     }
+    const message = { target: '/dirt/play', timestamp, params };
+    setTimeout(() => {
+      Invoke('sendosc', { messagesfromjs: [message] });
+    });
+    // const messagesfromjs = [];
+    // if (params.length) {
+    //   messagesfromjs.push({ target: '/dirt/play', timestamp, params });
+    // }
 
-    if (messagesfromjs.length) {
-      setTimeout(() => {
-        Invoke('sendosc', { messagesfromjs });
-      });
-    }
+    // if (messagesfromjs.length) {
+    //   setTimeout(() => {
+    //     Invoke('sendosc', { messagesfromjs });
+    //   });
+    // }
   });
 };
