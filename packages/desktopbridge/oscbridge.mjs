@@ -2,10 +2,10 @@ import { parseNumeral, Pattern, getEventOffsetMs } from '@strudel/core';
 import { Invoke } from './utils.mjs';
 
 let offsetTime;
-let weight = 1;
 let timeAtPrevOffsetSample;
 let rollingOffsetTime;
-
+let prevOffsetTimes = []
+const averageArray = arr => arr.reduce((a, b) => a + b) / arr.length;
 
 // let prevTime = 0;
 Pattern.prototype.osc = function () {
@@ -19,27 +19,27 @@ Pattern.prototype.osc = function () {
     controls.note && (controls.note = parseNumeral(controls.note));
 
     const params = [];
-    // console.log(time, currentTime)
-  
+
+
     const unixTimeSecs = Date.now() / 1000;
     const newOffsetTime = unixTimeSecs - currentTime;
-
-    if (unixTimeSecs - timeAtPrevOffsetSample > 2) {
-      timeAtPrevOffsetSample = unixTimeSecs;
-      rollingOffsetTime = newOffsetTime;
+    prevOffsetTimes.push(newOffsetTime)
+    if (prevOffsetTimes.length > 8) {
+      prevOffsetTimes.shift()
+    }
+    // every two seconds, the average of the previous 8 offset times is calculated
+    if ( unixTimeSecs - timeAtPrevOffsetSample > 2 || rollingOffsetTime == null) {
+      timeAtPrevOffsetSample = unixTimeSecs
+      rollingOffsetTime = averageArray(prevOffsetTimes);
     }
 
-
-    //account for the js clock freezing or resetting for some reason
+    //account for the js clock freezing or resets set the new offset
     if (offsetTime == null  || Math.abs(rollingOffsetTime - offsetTime) > .1
     ) {
-     offsetTime = newOffsetTime;
+     offsetTime = rollingOffsetTime;
     }
-    // prevTime = currentTime;
     const timestamp = offsetTime + targetTime
-    // const timestamp =  unixTimeSecs + (targetTime - currentTime)
     
-   console.log(offsetTime)
     Object.keys(controls).forEach((key) => {
       const val = controls[key];
       const value = typeof val === 'number' ? val.toString() : val;
@@ -62,15 +62,6 @@ Pattern.prototype.osc = function () {
     setTimeout(() => {
       Invoke('sendosc', { messagesfromjs: [message] });
     });
-    // const messagesfromjs = [];
-    // if (params.length) {
-    //   messagesfromjs.push({ target: '/dirt/play', timestamp, params });
-    // }
 
-    // if (messagesfromjs.length) {
-    //   setTimeout(() => {
-    //     Invoke('sendosc', { messagesfromjs });
-    //   });
-    // }
   });
 };
