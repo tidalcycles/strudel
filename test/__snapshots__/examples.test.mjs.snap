@@ -5234,6 +5234,25 @@ exports[`runs examples > example "pickF" example index 1 1`] = `
 ]
 `;
 
+exports[`runs examples > example "pickmodRestart" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:C3 s:piano ]",
+  "[ 1/4 → 1/2 | note:D3 s:piano ]",
+  "[ 1/2 → 3/4 | note:E3 s:piano ]",
+  "[ 3/4 → 1/1 | note:C3 s:piano ]",
+  "[ 1/1 → 5/4 | note:C3 s:piano ]",
+  "[ 5/4 → 3/2 | note:D3 s:piano ]",
+  "[ 3/2 → 7/4 | note:E3 s:piano ]",
+  "[ 7/4 → 2/1 | note:C3 s:piano ]",
+  "[ 2/1 → 9/4 | note:E3 s:piano ]",
+  "[ 9/4 → 5/2 | note:F3 s:piano ]",
+  "[ 5/2 → 11/4 | note:G3 s:piano ]",
+  "[ 3/1 → 13/4 | note:E3 s:piano ]",
+  "[ 13/4 → 7/2 | note:F3 s:piano ]",
+  "[ 7/2 → 15/4 | note:G3 s:piano ]",
+]
+`;
+
 exports[`runs examples > example "pitchwheel" example index 0 1`] = `
 [
   "[ 0/1 → 1/13 | note:C3 s:sawtooth cutoff:500 ]",
