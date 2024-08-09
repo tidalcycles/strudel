@@ -2,6 +2,12 @@ import { parseNumeral, Pattern, getEventOffsetMs } from '@strudel/core';
 import { Invoke } from './utils.mjs';
 
 let offsetTime;
+let weight = 1;
+let timeAtPrevOffsetSample;
+let rollingOffsetTime;
+
+
+// let prevTime = 0;
 Pattern.prototype.osc = function () {
   return this.onTrigger(async (time, hap, currentTime, cps = 1, targetTime) => {
     hap.ensureObjectValue();
@@ -14,12 +20,22 @@ Pattern.prototype.osc = function () {
 
     const params = [];
     // console.log(time, currentTime)
+  
     const unixTimeSecs = Date.now() / 1000;
+    const newOffsetTime = unixTimeSecs - currentTime;
 
-    if (offsetTime == null) {
-      const unixTimeSecs = Date.now() / 1000;
-      offsetTime = unixTimeSecs - currentTime;
+    if (unixTimeSecs - timeAtPrevOffsetSample > 2) {
+      timeAtPrevOffsetSample = unixTimeSecs;
+      rollingOffsetTime = newOffsetTime;
     }
+
+
+    //account for the js clock freezing or resetting for some reason
+    if (offsetTime == null  || Math.abs(rollingOffsetTime - offsetTime) > .1
+    ) {
+     offsetTime = newOffsetTime;
+    }
+    // prevTime = currentTime;
     const timestamp = offsetTime + targetTime
     // const timestamp =  unixTimeSecs + (targetTime - currentTime)
     
