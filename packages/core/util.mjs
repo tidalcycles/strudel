@@ -91,6 +91,9 @@ export const midi2note = (n) => {
 // modulo that works with negative numbers e.g. _mod(-1, 3) = 2. Works on numbers (rather than patterns of numbers, as @mod@ from pattern.mjs does)
 export const _mod = (n, m) => ((n % m) + m) % m;
 
+// average numbers in an array
+export const averageArray = (arr) => arr.reduce((a, b) => a + b) / arr.length;
+
 export function nanFallback(value, fallback = 0) {
   if (isNaN(Number(value))) {
     logger(`"${value}" is not a number, falling back to ${fallback}`, 'warning');
