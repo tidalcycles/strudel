@@ -6,7 +6,7 @@ use std::net::UdpSocket;
 use serde::Deserialize;
 use std::sync::Arc;
 use std::thread::sleep;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::time::{Duration};
 use tokio::sync::{mpsc, Mutex};
 
 use crate::loggerbridge::Logger;

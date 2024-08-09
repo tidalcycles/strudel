@@ -1,13 +1,10 @@
-import { parseNumeral, Pattern, getEventOffsetMs } from '@strudel/core';
+import { parseNumeral, Pattern, averageArray } from '@strudel/core';
 import { Invoke } from './utils.mjs';
 
 let offsetTime;
 let timeAtPrevOffsetSample;
-let rollingOffsetTime;
-let prevOffsetTimes = []
-const averageArray = arr => arr.reduce((a, b) => a + b) / arr.length;
+let prevOffsetTimes = [];
 
-// let prevTime = 0;
 Pattern.prototype.osc = function () {
   return this.onTrigger(async (time, hap, currentTime, cps = 1, targetTime) => {
     hap.ensureObjectValue();
@@ -20,26 +17,28 @@ Pattern.prototype.osc = function () {
 
     const params = [];
 
-
     const unixTimeSecs = Date.now() / 1000;
     const newOffsetTime = unixTimeSecs - currentTime;
-    prevOffsetTimes.push(newOffsetTime)
-    if (prevOffsetTimes.length > 8) {
-      prevOffsetTimes.shift()
+    if (offsetTime == null) {
+      offsetTime = newOffsetTime;
     }
-    // every two seconds, the average of the previous 8 offset times is calculated
-    if ( unixTimeSecs - timeAtPrevOffsetSample > 2 || rollingOffsetTime == null) {
-      timeAtPrevOffsetSample = unixTimeSecs
-      rollingOffsetTime = averageArray(prevOffsetTimes);
+    prevOffsetTimes.push(newOffsetTime);
+    if (prevOffsetTimes.length > 8) {
+      prevOffsetTimes.shift();
+    }
+    // every two seconds, the average of the previous 8 offset times is calculated and used as a stable reference
+    // for calculating the timestamp that will be sent to the backend
+    if (timeAtPrevOffsetSample == null || unixTimeSecs - timeAtPrevOffsetSample > 2) {
+      timeAtPrevOffsetSample = unixTimeSecs;
+      const rollingOffsetTime = averageArray(prevOffsetTimes);
+      //account for the js clock freezing or resets set the new offset
+      if (Math.abs(rollingOffsetTime - offsetTime) > 0.01) {
+        offsetTime = rollingOffsetTime;
+      }
     }
 
-    //account for the js clock freezing or resets set the new offset
-    if (offsetTime == null  || Math.abs(rollingOffsetTime - offsetTime) > .1
-    ) {
-     offsetTime = rollingOffsetTime;
-    }
-    const timestamp = offsetTime + targetTime
-    
+    const timestamp = offsetTime + targetTime;
+
     Object.keys(controls).forEach((key) => {
       const val = controls[key];
       const value = typeof val === 'number' ? val.toString() : val;
@@ -54,14 +53,12 @@ Pattern.prototype.osc = function () {
       });
     });
 
-  
     if (params.length === 0) {
-      return
+      return;
     }
     const message = { target: '/dirt/play', timestamp, params };
     setTimeout(() => {
       Invoke('sendosc', { messagesfromjs: [message] });
     });
-
   });
 };
