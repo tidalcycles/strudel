@@ -9,6 +9,10 @@ import '@strudel/core/euclid.mjs';
 import { Fraction } from '@strudel/core/index.mjs';
 import { describe, expect, it } from 'vitest';
 
+const sameFirst = (a, b) => {
+  return expect(a.sortHapsByPart().firstCycle()).toStrictEqual(b.sortHapsByPart().firstCycle());
+};
+
 describe('mini', () => {
   const minV = (v) => mini(v).sortHapsByPart().firstCycleValues;
   const minS = (v) => mini(v).sortHapsByPart().showFirstCycle;
@@ -218,6 +222,9 @@ describe('mini', () => {
     expect(mini('[^a b c] [^d [e f]]').tactus).toEqual(Fraction(12));
     expect(mini('[^a b c] [d [^e f]]').tactus).toEqual(Fraction(24));
     expect(mini('[^a b c d e]').tactus).toEqual(Fraction(5));
+  });
+  it('Can repeat expansions', () => {
+    sameFirst(mini('a@2!2 b'), mini('a@2 a@2 b'));
   });
 });
 
