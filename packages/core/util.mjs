@@ -364,6 +364,46 @@ export function objectMap(obj, fn) {
   return Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]));
 }
 
+
+// utility for averaging two clocks together to account for drift
+export class ClockCollator {
+  constructor({getTargetClockTime = () => Date.now() / 1000, weight = 16, offsetDelta = .005, checkAfterTime = 2}) {
+    this.offsetTime;
+    this.timeAtPrevOffsetSample;
+    this.prevOffsetTimes = [];
+    this.getTargetClockTime = getTargetClockTime
+    this.weight = weight;
+    this.offsetDelta = offsetDelta
+    this.checkAfterTime = checkAfterTime
+  }
+
+  calculateTimestamp(currentTime, targetTime) {
+    const targetClockTime = this.getTargetClockTime();
+    // const unixTimeSecs = Date.now() / 1000;
+    const newOffsetTime = targetClockTime - currentTime;
+    if (this.offsetTime == null) {
+      this.offsetTime = newOffsetTime;
+    }
+    this.prevOffsetTimes.push(newOffsetTime);
+    if (this.prevOffsetTimes.length > this.weight) {
+      this.prevOffsetTimes.shift();
+    }
+    // after X time has passed, the average of the previous weight offset times is calculated and used as a stable reference
+    // for calculating the timestamp
+    if (this.timeAtPrevOffsetSample == null || targetClockTime - this.timeAtPrevOffsetSample > this.checkAfterTime) {
+      this.timeAtPrevOffsetSample = targetClockTime;
+      const rollingOffsetTime = averageArray(this.prevOffsetTimes);
+      //when the clock offsets surpass the delta, set the new reference time
+      if (Math.abs(rollingOffsetTime - this.offsetTime) > this.offsetDelta) {
+        this.offsetTime = rollingOffsetTime;
+      }
+    }
+  
+    const timestamp = this.offsetTime + targetTime;
+    return timestamp;
+  }
+}
+
 // Floating point versions, see Fraction for rational versions
 // // greatest common divisor
 // export const gcd = function (x, y, ...z) {

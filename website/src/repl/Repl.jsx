@@ -14,7 +14,7 @@ import {
   resetLoadedSounds,
   initAudioOnFirstClick,
 } from '@strudel/webaudio';
-import { superdirtOutput } from '@strudel/desktopbridge/oscbridge.mjs';
+import { superdirtOutput } from '@strudel/osc/superdirtoutput';
 import { audioEngineTargets, defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice, setVersionDefaultsFrom } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
