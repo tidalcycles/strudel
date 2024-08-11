@@ -97,7 +97,7 @@ export function loadModules() {
 
   return evalScope(settingPatterns, ...modules);
 }
-// confirm dialog is a promise in Tauri and possibly other browsers... normalize it to be a promise everywhere
+// confirm dialog is a promise in webkit and a boolean in other browsers... normalize it to be a promise everywhere
 export function confirmDialog(msg) {
   const confirmed = confirm(msg);
   if (confirmed instanceof Promise) {

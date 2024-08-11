@@ -113,7 +113,14 @@ export function SettingsTab({ started }) {
           <AudioDeviceSelector
             isDisabled={started}
             audioDeviceName={audioDeviceName}
-            onChange={(audioDeviceName) => settingsMap.setKey('audioDeviceName', audioDeviceName)}
+            onChange={(audioDeviceName) => {
+              confirmDialog(RELOAD_MSG).then((r) => {
+                if (r == true) {
+                  settingsMap.setKey('audioDeviceName', audioDeviceName);
+                  return window.location.reload();
+                }
+              });
+            }}
           />
         </FormItem>
       )}
