@@ -5,6 +5,11 @@ import { isUdels } from './repl/util.mjs';
 
 export const defaultAudioDeviceName = 'System Standard';
 
+export const audioEngineTargets = {
+  webaudio: 'webaudio',
+  superdirt: 'superdirt',
+};
+
 export const defaultSettings = {
   activeFooter: 'intro',
   keybindings: 'codemirror',
@@ -28,6 +33,7 @@ export const defaultSettings = {
   panelPosition: 'right',
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
+  audioEngineTarget: audioEngineTargets.webaudio //webaudio | superdirt
 };
 
 let search = null;

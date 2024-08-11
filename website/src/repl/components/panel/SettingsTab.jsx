@@ -3,6 +3,8 @@ import { themes } from '@strudel/codemirror';
 import { isUdels } from '../../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
+import { AudioEngineTargetSelector } from './AudioEngineTargetSelector.jsx';
+import { isTauri } from '@src/tauri.mjs';
 
 function Checkbox({ label, value, onChange, disabled = false }) {
   return (
@@ -78,6 +80,20 @@ const fontFamilyOptions = {
   galactico: 'galactico',
 };
 
+const RELOAD_MSG = 'Changing this setting requires the window to reload itself. OK?';
+
+function confirmDialog(msg) {
+  // confirm dialog is a promise in Tauri and possibly other browsers... normalize it to be a promise everywhere
+  return new Promise(function (resolve, reject) {
+    let confirmed = confirm(msg);
+    if (confirmed instanceof Promise) {
+      confirmed.then((r) => (r ? resolve(true) : reject(false)));
+    } else {
+      return confirmed ? resolve(true) : reject(false);
+    }
+  });
+}
+
 export function SettingsTab({ started }) {
   const {
     theme,
@@ -96,16 +112,34 @@ export function SettingsTab({ started }) {
     fontFamily,
     panelPosition,
     audioDeviceName,
+    audioEngineTarget,
   } = useSettings();
   const shouldAlwaysSync = isUdels();
+  const inDesktopApp = isTauri();
+  const canChangeAudioDevice = AudioContext.prototype.setSinkId != null;
   return (
     <div className="text-foreground p-4 space-y-4">
-      {AudioContext.prototype.setSinkId != null && (
+      {canChangeAudioDevice && (
         <FormItem label="Audio Output Device">
           <AudioDeviceSelector
             isDisabled={started}
             audioDeviceName={audioDeviceName}
             onChange={(audioDeviceName) => settingsMap.setKey('audioDeviceName', audioDeviceName)}
+          />
+        </FormItem>
+      )}
+      {inDesktopApp && (
+        <FormItem label="Audio Engine Target">
+          <AudioEngineTargetSelector
+            target={audioEngineTarget}
+            onChange={(target) => {
+              confirmDialog(RELOAD_MSG).then((r) => {
+                if (r == true) {
+                  settingsMap.setKey('audioEngineTarget', target);
+                  return window.location.reload();
+                }
+              });
+            }}
           />
         </FormItem>
       )}
@@ -193,10 +227,13 @@ export function SettingsTab({ started }) {
         <Checkbox
           label="Sync across Browser Tabs / Windows"
           onChange={(cbEvent) => {
-            if (confirm('Changing this setting requires the window to reload itself. OK?')) {
-              settingsMap.setKey('isSyncEnabled', cbEvent.target.checked);
-              window.location.reload();
-            }
+            const newVal = cbEvent.target.checked;
+            confirmDialog(RELOAD_MSG).then((r) => {
+              if (r) {
+                settingsMap.setKey('isSyncEnabled', newVal);
+                window.location.reload();
+              }
+            });
           }}
           disabled={shouldAlwaysSync}
           value={isSyncEnabled}

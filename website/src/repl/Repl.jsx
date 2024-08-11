@@ -14,7 +14,8 @@ import {
   resetLoadedSounds,
   initAudioOnFirstClick,
 } from '@strudel/webaudio';
-import { defaultAudioDeviceName } from '../settings.mjs';
+import { superdirtOutput } from '@strudel/desktopbridge/oscbridge.mjs';
+import { audioEngineTargets, defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice, setVersionDefaultsFrom } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { clearHydra } from '@strudel/hydra';
@@ -61,13 +62,14 @@ async function getModule(name) {
 
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || isIframe;
-  const { panelPosition, isZen, isSyncEnabled } = useSettings();
+  const { panelPosition, isZen, isSyncEnabled, audioEngineTarget } = useSettings();
+  const defaultOutput = audioEngineTarget === audioEngineTargets.superdirt ? superdirtOutput : webaudioOutput;
   const init = useCallback(() => {
     const drawTime = [-2, 2];
     const drawContext = getDrawContext();
     const editor = new StrudelMirror({
       sync: isSyncEnabled,
-      defaultOutput: webaudioOutput,
+      defaultOutput,
       getTime: () => getAudioContext().currentTime,
       setInterval,
       clearInterval,
