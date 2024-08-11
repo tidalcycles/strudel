@@ -8,5 +8,5 @@ const trigger = isTauri() ? oscTriggerTauri : oscTrigger;
 export const superdirtOutput = (hap, deadline, hapDuration, cps, targetTime) => {
   const ctx = getAudioContext();
   const currentTime = ctx.currentTime;
-  return trigger(null, hap, currentTime, cps, targetTime)
+  return trigger(null, hap, currentTime, cps, targetTime);
 };

@@ -2,7 +2,7 @@ import { parseNumeral, Pattern, ClockCollator } from '@strudel/core';
 
 import { Invoke } from './utils.mjs';
 
-const collator = new ClockCollator({})
+const collator = new ClockCollator({});
 
 export async function oscTriggerTauri(t_deprecate, hap, currentTime, cps = 1, targetTime) {
   hap.ensureObjectValue();
@@ -15,7 +15,7 @@ export async function oscTriggerTauri(t_deprecate, hap, currentTime, cps = 1, ta
 
   const params = [];
 
-  const timestamp = collator.calculateTimestamp(currentTime, targetTime)
+  const timestamp = collator.calculateTimestamp(currentTime, targetTime);
 
   Object.keys(controls).forEach((key) => {
     const val = controls[key];

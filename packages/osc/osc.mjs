@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import OSC from 'osc-js';
 
-import { logger, parseNumeral, Pattern, getEventOffsetMs, isNote, noteToMidi, ClockCollator } from '@strudel/core';
+import { logger, parseNumeral, Pattern, isNote, noteToMidi, ClockCollator } from '@strudel/core';
 
 let connection; // Promise<OSC>
 function connect() {
@@ -34,9 +34,9 @@ function connect() {
   return connection;
 }
 
-const collator = new ClockCollator({})
+const collator = new ClockCollator({});
 
-export async function oscTrigger(t_deprecate, hap, currentTime, cps = 1, targetTime) { 
+export async function oscTrigger(t_deprecate, hap, currentTime, cps = 1, targetTime) {
   hap.ensureObjectValue();
   const osc = await connect();
   const cycle = hap.wholeOrPart().begin.valueOf();
@@ -54,7 +54,7 @@ export async function oscTrigger(t_deprecate, hap, currentTime, cps = 1, targetT
   controls.bank && (controls.s = controls.bank + controls.s);
   controls.roomsize && (controls.size = parseNumeral(controls.roomsize));
   const keyvals = Object.entries(controls).flat();
-  const ts = Math.round(collator.calculateTimestamp(currentTime, targetTime) * 1000)
+  const ts = Math.round(collator.calculateTimestamp(currentTime, targetTime) * 1000);
 
   const message = new OSC.Message('/dirt/play', ...keyvals);
   const bundle = new OSC.Bundle([message], ts);

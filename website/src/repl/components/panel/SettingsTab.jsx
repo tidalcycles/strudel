@@ -122,7 +122,7 @@ export function SettingsTab({ started }) {
           />
         </FormItem>
       )}
-      {(
+      {
         <FormItem label="Audio Engine Target">
           <AudioEngineTargetSelector
             target={audioEngineTarget}
@@ -136,7 +136,7 @@ export function SettingsTab({ started }) {
             }}
           />
         </FormItem>
-      )}
+      }
       <FormItem label="Theme">
         <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>
@@ -242,7 +242,7 @@ export function SettingsTab({ started }) {
               if (r) {
                 settingsMap.set(defaultSettings);
               }
-            })
+            });
           }}
         >
           restore default settings

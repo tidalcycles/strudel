@@ -364,17 +364,16 @@ export function objectMap(obj, fn) {
   return Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]));
 }
 
-
 // utility for averaging two clocks together to account for drift
 export class ClockCollator {
-  constructor({getTargetClockTime = () => Date.now() / 1000, weight = 16, offsetDelta = .005, checkAfterTime = 2}) {
+  constructor({ getTargetClockTime = () => Date.now() / 1000, weight = 16, offsetDelta = 0.005, checkAfterTime = 2 }) {
     this.offsetTime;
     this.timeAtPrevOffsetSample;
     this.prevOffsetTimes = [];
-    this.getTargetClockTime = getTargetClockTime
+    this.getTargetClockTime = getTargetClockTime;
     this.weight = weight;
-    this.offsetDelta = offsetDelta
-    this.checkAfterTime = checkAfterTime
+    this.offsetDelta = offsetDelta;
+    this.checkAfterTime = checkAfterTime;
   }
 
   calculateTimestamp(currentTime, targetTime) {
@@ -398,7 +397,7 @@ export class ClockCollator {
         this.offsetTime = rollingOffsetTime;
       }
     }
-  
+
     const timestamp = this.offsetTime + targetTime;
     return timestamp;
   }

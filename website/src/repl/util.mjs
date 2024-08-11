@@ -102,10 +102,10 @@ export function confirmDialog(msg) {
   const confirmed = confirm(msg);
   if (confirmed instanceof Promise) {
     return confirmed;
-  } 
+  }
   return new Promise((resolve) => {
-    resolve(confirmed)
-  })
+    resolve(confirmed);
+  });
 }
 
 let lastShared;
@@ -116,7 +116,9 @@ export async function shareCode(codeToShare) {
     return;
   }
 
-  confirmDialog('Do you want your pattern to be public? If no, press cancel and you will get just a private link.').then(async (isPublic) => {
+  confirmDialog(
+    'Do you want your pattern to be public? If no, press cancel and you will get just a private link.',
+  ).then(async (isPublic) => {
     const hash = nanoid(12);
     const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
     const { error } = await supabase.from('code_v1').insert([{ code: codeToShare, hash, ['public']: isPublic }]);
@@ -138,9 +140,7 @@ export async function shareCode(codeToShare) {
       // alert(message);
       logger(message);
     }
-   
-  })
-
+  });
 }
 
 export const ReplContext = createContext(null);
