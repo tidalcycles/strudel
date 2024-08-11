@@ -5,7 +5,6 @@ import { ButtonGroup } from './Forms.jsx';
 import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 import { AudioEngineTargetSelector } from './AudioEngineTargetSelector.jsx';
 import { confirmDialog } from '../../util.mjs';
-import { isTauri } from '@src/tauri.mjs';
 
 function Checkbox({ label, value, onChange, disabled = false }) {
   return (
@@ -104,7 +103,6 @@ export function SettingsTab({ started }) {
     audioEngineTarget,
   } = useSettings();
   const shouldAlwaysSync = isUdels();
-  const inDesktopApp = isTauri();
   const canChangeAudioDevice = AudioContext.prototype.setSinkId != null;
   return (
     <div className="text-foreground p-4 space-y-4">
@@ -124,7 +122,7 @@ export function SettingsTab({ started }) {
           />
         </FormItem>
       )}
-      {inDesktopApp && (
+      {(
         <FormItem label="Audio Engine Target">
           <AudioEngineTargetSelector
             target={audioEngineTarget}
