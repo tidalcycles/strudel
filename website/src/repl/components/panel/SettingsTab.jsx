@@ -4,6 +4,7 @@ import { isUdels } from '../../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 import { AudioEngineTargetSelector } from './AudioEngineTargetSelector.jsx';
+import { confirmDialog } from '../../util.mjs';
 import { isTauri } from '@src/tauri.mjs';
 
 function Checkbox({ label, value, onChange, disabled = false }) {
@@ -81,18 +82,6 @@ const fontFamilyOptions = {
 };
 
 const RELOAD_MSG = 'Changing this setting requires the window to reload itself. OK?';
-
-function confirmDialog(msg) {
-  // confirm dialog is a promise in Tauri and possibly other browsers... normalize it to be a promise everywhere
-  return new Promise(function (resolve, reject) {
-    let confirmed = confirm(msg);
-    if (confirmed instanceof Promise) {
-      confirmed.then((r) => (r ? resolve(true) : reject(false)));
-    } else {
-      return confirmed ? resolve(true) : reject(false);
-    }
-  });
-}
 
 export function SettingsTab({ started }) {
   const {
@@ -244,9 +233,11 @@ export function SettingsTab({ started }) {
         <button
           className="bg-background p-2 max-w-[300px] rounded-md hover:opacity-50"
           onClick={() => {
-            if (confirm('Sure?')) {
-              settingsMap.set(defaultSettings);
-            }
+            confirmDialog('Sure?').then((r) => {
+              if (r) {
+                settingsMap.set(defaultSettings);
+              }
+            })
           }}
         >
           restore default settings
