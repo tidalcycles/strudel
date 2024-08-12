@@ -134,9 +134,17 @@ export async function shareCode(codeToShare) {
 
 export const ReplContext = createContext(null);
 
+function isCrossOriginFrame() {
+  try {
+    return (!window.top.location.hostname);
+  } catch (e) {
+    return true;
+  }
+}
+
+
 export const isUdels = () => {
-  const isIframe = window.location !== window.parent.location;
-  if (isIframe) {
+  if (isCrossOriginFrame()) {
     return false;
   }
   return window.parent?.location?.pathname.includes('udels');
