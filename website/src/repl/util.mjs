@@ -135,7 +135,11 @@ export async function shareCode(codeToShare) {
 export const ReplContext = createContext(null);
 
 export const isUdels = () => {
-  return window.parent?.location.pathname.includes('udels');
+  const isIframe = window.location !== window.parent.location;
+  if (isIframe) {
+    return false;
+  }
+  return window.parent?.location?.pathname.includes('udels');
 };
 
 export const getAudioDevices = async () => {
