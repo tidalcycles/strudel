@@ -137,7 +137,7 @@ export const ReplContext = createContext(null);
 export const isUdels = () => {
   const isIframe = window.location !== window.parent.location;
   if (isIframe) {
-    return false
+    return false;
   }
   return window.parent?.location?.pathname.includes('udels');
 };
