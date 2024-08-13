@@ -30,13 +30,12 @@ import {
 } from '../user_pattern_utils.mjs';
 import { useStore } from '@nanostores/react';
 import { prebake } from './prebake.mjs';
-import { getRandomTune, initCode, loadModules, shareCode, } from './util.mjs';
+import { getRandomTune, initCode, loadModules, shareCode } from './util.mjs';
 import './Repl.css';
 import { setInterval, clearInterval } from 'worker-timers';
 import { getMetadata } from '../metadata_parser';
 
 const { latestCode } = settingsMap.get();
-
 let modulesLoading, presets, drawContext, clearCanvas, audioReady;
 
 if (typeof window !== 'undefined') {
@@ -116,7 +115,6 @@ export function useReplContext() {
     window.strudelMirror = editor;
 
     // init settings
-
     initCode().then(async (decoded) => {
       let code, msg;
       if (decoded) {

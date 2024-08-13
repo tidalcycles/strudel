@@ -5,9 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { isIframe, isUdels } from './util.mjs';
-
 import UdelsEditor from '@components/Udels/UdelsEditor';
-
 import ReplEditor from './components/ReplEditor';
 import EmbeddedReplEditor from './components/EmbeddedReplEditor';
 import { useReplContext } from './useReplContext';
