@@ -143,10 +143,20 @@ export async function shareCode(codeToShare) {
   });
 }
 
-export const ReplContext = createContext(null);
+export const isIframe = () => window.location !== window.parent.location;
+function isCrossOriginFrame() {
+  try {
+    return !window.top.location.hostname;
+  } catch (e) {
+    return true;
+  }
+}
 
 export const isUdels = () => {
-  return window.parent?.location.pathname.includes('udels');
+  if (isCrossOriginFrame()) {
+    return false;
+  }
+  return window.top?.location?.pathname.includes('udels');
 };
 
 export const getAudioDevices = async () => {
