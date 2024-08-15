@@ -6,23 +6,14 @@ import SparklesIcon from '@heroicons/react/20/solid/SparklesIcon';
 import StopCircleIcon from '@heroicons/react/20/solid/StopCircleIcon';
 import cx from '@src/cx.mjs';
 import { useSettings, setIsZen } from '../../settings.mjs';
-// import { ReplContext } from './Repl';
 import '../Repl.css';
+
 const { BASE_URL } = import.meta.env;
 const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 
-export function Header({ context }) {
-  const {
-    embedded,
-    started,
-    pending,
-    isDirty,
-    activeCode,
-    handleTogglePlay,
-    handleEvaluate,
-    handleShuffle,
-    handleShare,
-  } = context;
+export function Header({ context, embedded = false }) {
+  const { started, pending, isDirty, activeCode, handleTogglePlay, handleEvaluate, handleShuffle, handleShare } =
+    context;
   const isEmbedded = typeof window !== 'undefined' && (embedded || window.location !== window.parent.location);
   const { isZen } = useSettings();
 
