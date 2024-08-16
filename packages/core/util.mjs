@@ -412,6 +412,11 @@ export class ClockCollator {
   }
 }
 
+
+export function getPerformanceTimeSeconds() {
+  return performance.now() / 1000
+}
+
 // Floating point versions, see Fraction for rational versions
 // // greatest common divisor
 // export const gcd = function (x, y, ...z) {
