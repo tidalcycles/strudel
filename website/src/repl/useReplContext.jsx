@@ -14,7 +14,6 @@ import {
   resetLoadedSounds,
   initAudioOnFirstClick,
 } from '@strudel/webaudio';
-import { defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice, setVersionDefaultsFrom } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { clearHydra } from '@strudel/hydra';
@@ -28,6 +27,8 @@ import {
   getViewingPatternData,
   setViewingPatternData,
 } from '../user_pattern_utils.mjs';
+import { superdirtOutput } from '@strudel/osc/superdirtoutput';
+import { audioEngineTargets, defaultAudioDeviceName } from '../settings.mjs';
 import { useStore } from '@nanostores/react';
 import { prebake } from './prebake.mjs';
 import { getRandomTune, initCode, loadModules, shareCode } from './util.mjs';
@@ -55,13 +56,15 @@ async function getModule(name) {
 }
 
 export function useReplContext() {
-  const { isSyncEnabled } = useSettings();
+  const { panelPosition, isZen, isSyncEnabled, audioEngineTarget } = useSettings();
+  const defaultOutput = audioEngineTarget === audioEngineTargets.superdirt ? superdirtOutput : webaudioOutput;
+
   const init = useCallback(() => {
     const drawTime = [-2, 2];
     const drawContext = getDrawContext();
     const editor = new StrudelMirror({
       sync: isSyncEnabled,
-      defaultOutput: webaudioOutput,
+      defaultOutput,
       getTime: () => getAudioContext().currentTime,
       setInterval,
       clearInterval,

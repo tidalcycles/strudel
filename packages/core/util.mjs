@@ -366,7 +366,7 @@ export function objectMap(obj, fn) {
 
 // utility for averaging two clocks together to account for drift
 export class ClockCollator {
-  constructor({ getTargetClockTime = () => Date.now() / 1000, weight = 16, offsetDelta = 0.005, checkAfterTime = 2 }) {
+  constructor({ getTargetClockTime = () => Date.now() / 1000, weight = 16, offsetDelta = 0.005, checkAfterTime = 2, resetAfterTime = 8 }) {
     this.offsetTime;
     this.timeAtPrevOffsetSample;
     this.prevOffsetTimes = [];
@@ -374,12 +374,18 @@ export class ClockCollator {
     this.weight = weight;
     this.offsetDelta = offsetDelta;
     this.checkAfterTime = checkAfterTime;
+    this.resetAfterTime = resetAfterTime
   }
 
   calculateTimestamp(currentTime, targetTime) {
     const targetClockTime = this.getTargetClockTime();
-    // const unixTimeSecs = Date.now() / 1000;
+    const diffBetweenTimeSamples = targetClockTime - this.timeAtPrevOffsetSample;
     const newOffsetTime = targetClockTime - currentTime;
+    // recalcuate the diff from scratch if the clock has been paused for some time.
+    if (diffBetweenTimeSamples > this.resetAfterTime) {
+      this.prevOffsetTimes = []
+    }
+    
     if (this.offsetTime == null) {
       this.offsetTime = newOffsetTime;
     }
@@ -387,9 +393,12 @@ export class ClockCollator {
     if (this.prevOffsetTimes.length > this.weight) {
       this.prevOffsetTimes.shift();
     }
+    
     // after X time has passed, the average of the previous weight offset times is calculated and used as a stable reference
     // for calculating the timestamp
-    if (this.timeAtPrevOffsetSample == null || targetClockTime - this.timeAtPrevOffsetSample > this.checkAfterTime) {
+    if (this.timeAtPrevOffsetSample == null || diffBetweenTimeSamples > this.checkAfterTime) {
+      
+
       this.timeAtPrevOffsetSample = targetClockTime;
       const rollingOffsetTime = averageArray(this.prevOffsetTimes);
       //when the clock offsets surpass the delta, set the new reference time

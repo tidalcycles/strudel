@@ -2,14 +2,11 @@ import { evalScope, hash2code, logger } from '@strudel/core';
 import { settingPatterns, defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioContext, initializeAudioOutput, setDefaultAudioContext, setVersionDefaults } from '@strudel/webaudio';
 import { getMetadata } from '../metadata_parser';
-
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
-
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { writeText } from '@tauri-apps/api/clipboard';
-import { createContext } from 'react';
 import { $featuredPatterns, loadDBPatterns } from '@src/user_pattern_utils.mjs';
 
 // Create a single supabase client for interacting with your database
