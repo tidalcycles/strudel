@@ -390,8 +390,7 @@ export class ClockCollator {
       this.timeAtPrevOffsetSample = null;
     };
   }
-
-  calculateTimestamp(currentTime, targetTime) {
+  calculateOffset(currentTime) {
     const targetClockTime = this.getTargetClockTime();
     const diffBetweenTimeSamples = targetClockTime - this.timeAtPrevOffsetSample;
     const newOffsetTime = targetClockTime - currentTime;
@@ -419,8 +418,11 @@ export class ClockCollator {
       }
     }
 
-    const timestamp = this.offsetTime + targetTime;
-    return timestamp;
+    return this.offsetTime;
+  }
+
+  calculateTimestamp(currentTime, targetTime) {
+    return this.calculateOffset(currentTime) + targetTime 
   }
 }
 

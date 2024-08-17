@@ -16,7 +16,7 @@ export class NeoCyclist {
     this.time_at_last_tick_message = 0;
     // the clock of the worker and the audio context clock can drift apart over time
     // aditionally, the message time of the worker pinging the callback to process haps can be inconsistent.
-    // we need to keep a rolling weighted average of the time difference between the worker clock and audio context clock
+    // we need to keep a rolling average of the time difference between the worker clock and audio context clock
     // in order to schedule events consistently.
     this.collator = new ClockCollator({ getTargetClockTime: getTime });
     this.onToggle = onToggle;
@@ -30,8 +30,9 @@ export class NeoCyclist {
       const { cps, begin, end, cycle, time } = payload;
       this.cps = cps;
       this.cycle = cycle;
-      processHaps(begin, end, time);
-      this.time_at_last_tick_message = this.getTime();
+      const currentTime = this.collator.calculateOffset(time) + time;
+      processHaps(begin, end, currentTime);
+      this.time_at_last_tick_message = currentTime;
     };
 
     const processHaps = (begin, end, currentTime) => {
@@ -43,8 +44,7 @@ export class NeoCyclist {
       haps.forEach((hap) => {
         if (hap.hasOnset()) {
           const timeUntilTrigger = cycleToSeconds(hap.whole.begin - this.cycle, this.cps);
-          const target = timeUntilTrigger + currentTime;
-          const targetTime = this.collator.calculateTimestamp(currentTime, target) + this.latency;
+          const targetTime =  timeUntilTrigger + currentTime + this.latency
           const duration = cycleToSeconds(hap.duration, this.cps);
           onTrigger?.(hap, 0, duration, this.cps, targetTime);
         }
