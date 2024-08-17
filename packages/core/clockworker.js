@@ -5,8 +5,9 @@
 
 function getTime() {
   const precision = 10 ** 4;
-  const seconds = performance.now() / 1000;
-  return Math.round(seconds * precision) / precision;
+  const seconds = performance.now() * .001;
+  return seconds
+  // return Math.round(seconds * precision) / precision;
 }
 
 let num_cycles_at_cps_change = 0;
@@ -41,10 +42,8 @@ const sendTick = (phase, duration, tick, time) => {
     begin,
     end,
     cps,
-    tickdeadline,
+    time:  num_seconds_at_cps_change + num_seconds_since_cps_change + tickdeadline,
     num_cycles_at_cps_change,
-    num_seconds_at_cps_change,
-    num_seconds_since_cps_change,
     cycle,
   });
   num_ticks_since_cps_change++;
