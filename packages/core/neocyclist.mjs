@@ -27,29 +27,25 @@ export class NeoCyclist {
     this.worker.port.start();
     this.channel = new BroadcastChannel('strudeltick');
     const tickCallback = (payload) => {
-      const { num_cycles_at_cps_change, cps, begin, end, cycle, time } = payload;
+      const { cps, begin, end, cycle, time } = payload;
       this.cps = cps;
       this.cycle = cycle;
-      const currentTime = cycleToSeconds(num_cycles_at_cps_change + this.cycle, this.cps)
-      console.log(time, currentTime, this.cycle)
-      processHaps(begin, end, currentTime, num_cycles_at_cps_change);
+      processHaps(begin, end, time);
       this.time_at_last_tick_message = this.getTime();
-
     };
- 
-    const processHaps = (begin, end, currentTime, num_cycles_at_cps_change) => {
+
+    const processHaps = (begin, end, currentTime) => {
       if (this.started === false) {
         return;
       }
 
       const haps = this.pattern.queryArc(begin, end, { _cps: this.cps });
-
       haps.forEach((hap) => {
         if (hap.hasOnset()) {
-         const target = cycleToSeconds(hap.whole.begin - num_cycles_at_cps_change, this.cps)
-          // const target = (hap.whole.begin - num_cycles_at_cps_change) / this.cps;
+          const timeUntilTrigger = cycleToSeconds(hap.whole.begin - this.cycle, this.cps);
+          const target = timeUntilTrigger + currentTime;
           const targetTime = this.collator.calculateTimestamp(currentTime, target) + this.latency;
-          const duration = cycleToSeconds(hap.duration, this.cps)
+          const duration = cycleToSeconds(hap.duration, this.cps);
           onTrigger?.(hap, 0, duration, this.cps, targetTime);
         }
       });
@@ -94,7 +90,7 @@ export class NeoCyclist {
   }
   stop() {
     logger('[cyclist] stop');
-    this.collator.reset()
+    this.collator.reset();
     this.setStarted(false);
   }
   setPattern(pat, autostart = false) {

@@ -4,7 +4,7 @@
 // import createClock from './zyklus.mjs';
 
 function getTime() {
-  const precision = 10 ** 4;
+
   const seconds = performance.now() * .001;
   return seconds
   // return Math.round(seconds * precision) / precision;
@@ -25,25 +25,20 @@ const sendMessage = (type, payload) => {
 
 const sendTick = (phase, duration, tick, time) => {
   const num_seconds_since_cps_change = num_ticks_since_cps_change * duration;
-
   const tickdeadline = phase - time;
   const lastTick = time + tickdeadline;
   const num_cycles_since_cps_change = num_seconds_since_cps_change * cps;
-
   const begin = num_cycles_at_cps_change + num_cycles_since_cps_change;
   const secondsSinceLastTick = time - lastTick - duration;
-
   const eventLength = duration * cps;
   const end = begin + eventLength;
-
   const cycle = begin + secondsSinceLastTick * cps;
 
   sendMessage('tick', {
     begin,
     end,
     cps,
-    time:  num_seconds_at_cps_change + num_seconds_since_cps_change + tickdeadline,
-    num_cycles_at_cps_change,
+    time,
     cycle,
   });
   num_ticks_since_cps_change++;
