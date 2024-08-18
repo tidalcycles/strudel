@@ -34,7 +34,6 @@ function connect() {
   return connection;
 }
 
-// const collator = new ClockCollator({getTargetClockTime: () => (performance.now() + performance.timeOrigin) / 1000});
 const collator = new ClockCollator({});
 
 export async function oscTrigger(t_deprecate, hap, currentTime, cps = 1, targetTime) {

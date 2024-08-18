@@ -122,21 +122,19 @@ export function SettingsTab({ started }) {
           />
         </FormItem>
       )}
-      {
-        <FormItem label="Audio Engine Target">
-          <AudioEngineTargetSelector
-            target={audioEngineTarget}
-            onChange={(target) => {
-              confirmDialog(RELOAD_MSG).then((r) => {
-                if (r == true) {
-                  settingsMap.setKey('audioEngineTarget', target);
-                  return window.location.reload();
-                }
-              });
-            }}
-          />
-        </FormItem>
-      }
+      <FormItem label="Audio Engine Target">
+        <AudioEngineTargetSelector
+          target={audioEngineTarget}
+          onChange={(target) => {
+            confirmDialog(RELOAD_MSG).then((r) => {
+              if (r == true) {
+                settingsMap.setKey('audioEngineTarget', target);
+                return window.location.reload();
+              }
+            });
+          }}
+        />
+      </FormItem>
       <FormItem label="Theme">
         <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>
