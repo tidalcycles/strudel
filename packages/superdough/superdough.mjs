@@ -143,6 +143,14 @@ export function initializeAudioOutput() {
   destinationGain.connect(audioContext.destination);
 }
 
+export function setGlobalGain(gain) {
+  if (destinationGain == null) {
+    initializeAudioOutput();
+  }
+
+  destinationGain.gain.value = gain;
+}
+
 // input: AudioNode, channels: ?Array<int>
 export const connectToDestination = (input, channels = [0, 1]) => {
   const ctx = getAudioContext();

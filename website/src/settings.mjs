@@ -28,6 +28,7 @@ export const defaultSettings = {
   panelPosition: 'right',
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
+  audioVolume: 50
 };
 
 let search = null;

@@ -1,6 +1,6 @@
 import { defaultSettings, settingsMap, useSettings } from '../../../settings.mjs';
 import { themes } from '@strudel/codemirror';
-import { isUdels } from '../../util.mjs';
+import { isUdels, setGlobalAudioVolume } from '../../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 
@@ -42,7 +42,7 @@ function NumberSlider({ value, onChange, step = 1, ...rest }) {
       />
       <input
         type="number"
-        value={value}
+        value={Math.floor(value)}
         step={step}
         className="w-16 bg-background rounded-md"
         onChange={(e) => onChange(Number(e.target.value))}
@@ -96,6 +96,7 @@ export function SettingsTab({ started }) {
     fontFamily,
     panelPosition,
     audioDeviceName,
+    audioVolume,
   } = useSettings();
   const shouldAlwaysSync = isUdels();
   return (
@@ -109,6 +110,18 @@ export function SettingsTab({ started }) {
           />
         </FormItem>
       )}
+      <FormItem label="Audio Volume">
+        <NumberSlider
+          value={audioVolume}
+          onChange={(audioVolume) => {
+            settingsMap.setKey('audioVolume', audioVolume);
+            setGlobalAudioVolume(audioVolume);
+          }}
+          min={0}
+          max={100}
+          step={.1}
+        />
+      </FormItem>
       <FormItem label="Theme">
         <SelectInput options={themeOptions} value={theme} onChange={(theme) => settingsMap.setKey('theme', theme)} />
       </FormItem>
