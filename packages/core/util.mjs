@@ -415,7 +415,6 @@ export class ClockCollator {
       //when the clock offsets surpass the delta, set the new reference time
       if (Math.abs(rollingOffsetTime - this.offsetTime) > this.offsetDelta) {
         this.offsetTime = rollingOffsetTime;
-       
       }
     }
 
@@ -423,7 +422,7 @@ export class ClockCollator {
   }
 
   calculateTimestamp(currentTime, targetTime) {
-    return this.calculateOffset(currentTime) + targetTime 
+    return this.calculateOffset(currentTime) + targetTime;
   }
 }
 

@@ -4,9 +4,8 @@
 // import createClock from './zyklus.mjs';
 
 function getTime() {
-
-  const seconds = performance.now() * .001;
-  return seconds
+  const seconds = performance.now() * 0.001;
+  return seconds;
   // return Math.round(seconds * precision) / precision;
 }
 

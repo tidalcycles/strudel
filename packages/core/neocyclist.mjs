@@ -44,7 +44,7 @@ export class NeoCyclist {
       haps.forEach((hap) => {
         if (hap.hasOnset()) {
           const timeUntilTrigger = cycleToSeconds(hap.whole.begin - this.cycle, this.cps);
-          const targetTime =  timeUntilTrigger + currentTime + this.latency
+          const targetTime = timeUntilTrigger + currentTime + this.latency;
           const duration = cycleToSeconds(hap.duration, this.cps);
           onTrigger?.(hap, 0, duration, this.cps, targetTime);
         }
