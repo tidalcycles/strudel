@@ -129,13 +129,13 @@ const xorwise = (x) => {
 // stretch 300 cycles over the range of [0,2**29 == 536870912) then apply the xorshift algorithm
 const _frac = (x) => x - Math.trunc(x);
 
-export const timeToIntSeed = (x) => xorwise(Math.trunc(_frac(x / 300) * 536870912));
+const timeToIntSeed = (x) => xorwise(Math.trunc(_frac(x / 300) * 536870912));
 
-export const intSeedToRand = (x) => (x % 536870912) / 536870912;
+const intSeedToRand = (x) => (x % 536870912) / 536870912;
 
-export const timeToRand = (x) => Math.abs(intSeedToRand(timeToIntSeed(x)));
+const timeToRand = (x) => Math.abs(intSeedToRand(timeToIntSeed(x)));
 
-export const timeToRandsPrime = (seed, n) => {
+const timeToRandsPrime = (seed, n) => {
   const result = [];
   // eslint-disable-next-line
   for (let i = 0; i < n; ++i) {
@@ -145,7 +145,7 @@ export const timeToRandsPrime = (seed, n) => {
   return result;
 };
 
-export const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
+const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
 
 /**
  *
