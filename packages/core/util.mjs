@@ -363,6 +363,68 @@ export function objectMap(obj, fn) {
   }
   return Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]));
 }
+export function cycleToSeconds(cycle, cps) {
+  return cycle / cps;
+}
+
+// utility for averaging two clocks together to account for drift
+export class ClockCollator {
+  constructor({
+    getTargetClockTime = () => Date.now() * 0.001,
+    weight = 16,
+    offsetDelta = 0.005,
+    checkAfterTime = 2,
+    resetAfterTime = 8,
+  }) {
+    this.offsetTime;
+    this.timeAtPrevOffsetSample;
+    this.prevOffsetTimes = [];
+    this.getTargetClockTime = getTargetClockTime;
+    this.weight = weight;
+    this.offsetDelta = offsetDelta;
+    this.checkAfterTime = checkAfterTime;
+    this.resetAfterTime = resetAfterTime;
+    this.reset = () => {
+      this.prevOffsetTimes = [];
+      this.offsetTime = null;
+      this.timeAtPrevOffsetSample = null;
+    };
+  }
+  calculateOffset(currentTime) {
+    const targetClockTime = this.getTargetClockTime();
+    const diffBetweenTimeSamples = targetClockTime - this.timeAtPrevOffsetSample;
+    const newOffsetTime = targetClockTime - currentTime;
+    // recalcuate the diff from scratch if the clock has been paused for some time.
+    if (diffBetweenTimeSamples > this.resetAfterTime) {
+      this.reset();
+    }
+
+    if (this.offsetTime == null) {
+      this.offsetTime = newOffsetTime;
+    }
+    this.prevOffsetTimes.push(newOffsetTime);
+    if (this.prevOffsetTimes.length > this.weight) {
+      this.prevOffsetTimes.shift();
+    }
+
+    // after X time has passed, the average of the previous weight offset times is calculated and used as a stable reference
+    // for calculating the timestamp
+    if (this.timeAtPrevOffsetSample == null || diffBetweenTimeSamples > this.checkAfterTime) {
+      this.timeAtPrevOffsetSample = targetClockTime;
+      const rollingOffsetTime = averageArray(this.prevOffsetTimes);
+      //when the clock offsets surpass the delta, set the new reference time
+      if (Math.abs(rollingOffsetTime - this.offsetTime) > this.offsetDelta) {
+        this.offsetTime = rollingOffsetTime;
+      }
+    }
+
+    return this.offsetTime;
+  }
+
+  calculateTimestamp(currentTime, targetTime) {
+    return this.calculateOffset(currentTime) + targetTime;
+  }
+}
 
 // Floating point versions, see Fraction for rational versions
 // // greatest common divisor
