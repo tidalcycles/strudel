@@ -386,6 +386,15 @@ export class Pattern {
     return this.fmap(func).squeezeJoin();
   }
 
+  isoJoin = function () {
+    const pp = this;
+    return pp.fmap((p) => p.s_extend(pp.tactus.div(p.tactus))).outerJoin();
+  };
+
+  isoBind(func) {
+    return this.fmap(func).isoJoin();
+  }
+
   //////////////////////////////////////////////////////////////////////
   // Utility methods mainly for internal use
 
@@ -2447,6 +2456,12 @@ Pattern.prototype.stepJoin = function () {
     const pat = s_cat(..._retime(_slices(haps)));
     return pat.query(state);
   };
+  return new Pattern(q, first_t);
+};
+
+Pattern.prototype.isoJoin = function () {
+  const pp = this;
+  pp.fmap();
   return new Pattern(q, first_t);
 };
 
