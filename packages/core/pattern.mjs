@@ -386,13 +386,13 @@ export class Pattern {
     return this.fmap(func).squeezeJoin();
   }
 
-  isoJoin = function () {
+  polyJoin = function () {
     const pp = this;
     return pp.fmap((p) => p.s_extend(pp.tactus.div(p.tactus))).outerJoin();
   };
 
-  isoBind(func) {
-    return this.fmap(func).isoJoin();
+  polyBind(func) {
+    return this.fmap(func).polyJoin();
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -763,6 +763,10 @@ export class Pattern {
     const otherPat = reify(other);
     return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).restartJoin();
   }
+  _opPoly(other, func) {
+    const otherPat = reify(other);
+    return this.fmap((b) => otherPat.fmap((a) => func(a)(b))).polyJoin();
+  }
 
   //////////////////////////////////////////////////////////////////////
   // End-user methods.
@@ -1071,7 +1075,7 @@ function _composeOp(a, b, func) {
     func: [(a, b) => b(a)],
   };
 
-  const hows = ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Reset', 'Restart'];
+  const hows = ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Reset', 'Restart', 'Poly'];
 
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
@@ -2456,12 +2460,6 @@ Pattern.prototype.stepJoin = function () {
     const pat = s_cat(..._retime(_slices(haps)));
     return pat.query(state);
   };
-  return new Pattern(q, first_t);
-};
-
-Pattern.prototype.isoJoin = function () {
-  const pp = this;
-  pp.fmap();
   return new Pattern(q, first_t);
 };
 
