@@ -2960,10 +2960,11 @@ export const fit = register('fit', (pat) =>
       hap.withValue((v) => {
         const slicedur = ('end' in v ? v.end : 1) - ('begin' in v ? v.begin : 0);
         return {
-        ...v,
-        speed: ((state.controls._cps || 1) / hap.whole.duration) * slicedur,
-        unit: 'c',
-      }}),
+          ...v,
+          speed: ((state.controls._cps || 1) / hap.whole.duration) * slicedur,
+          unit: 'c',
+        };
+      }),
     ),
   ),
 );
