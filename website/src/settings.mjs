@@ -7,7 +7,7 @@ export const defaultAudioDeviceName = 'System Standard';
 
 export const audioEngineTargets = {
   webaudio: 'webaudio',
-  superdirt: 'superdirt',
+  osc: 'osc',
 };
 
 export const defaultSettings = {
@@ -33,7 +33,7 @@ export const defaultSettings = {
   panelPosition: 'right',
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
-  audioEngineTarget: audioEngineTargets.webaudio, //webaudio | superdirt
+  audioEngineTarget: audioEngineTargets.webaudio, 
 };
 
 let search = null;

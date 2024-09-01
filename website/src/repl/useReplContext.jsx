@@ -57,7 +57,7 @@ async function getModule(name) {
 
 export function useReplContext() {
   const { isSyncEnabled, audioEngineTarget } = useSettings();
-  const shouldUseWebaudio = audioEngineTarget !== audioEngineTargets.superdirt;
+  const shouldUseWebaudio = audioEngineTarget !== audioEngineTargets.osc;
   const defaultOutput = shouldUseWebaudio ? webaudioOutput : superdirtOutput;
   const getTime = shouldUseWebaudio ? getAudioContextCurrentTime : getPerformanceTimeSeconds;
 

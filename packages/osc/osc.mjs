@@ -34,11 +34,8 @@ function connect() {
   return connection;
 }
 
-const collator = new ClockCollator({});
-
-export async function oscTrigger(t_deprecate, hap, currentTime, cps = 1, targetTime) {
+export function parseControlsFromHap(hap, cps) {
   hap.ensureObjectValue();
-  const osc = await connect();
   const cycle = hap.wholeOrPart().begin.valueOf();
   const delta = hap.duration.valueOf();
   const controls = Object.assign({}, { cps, cycle, delta }, hap.value);
@@ -53,9 +50,19 @@ export async function oscTrigger(t_deprecate, hap, currentTime, cps = 1, targetT
   }
   controls.bank && (controls.s = controls.bank + controls.s);
   controls.roomsize && (controls.size = parseNumeral(controls.roomsize));
-  const keyvals = Object.entries(controls).flat();
-  const ts = Math.round(collator.calculateTimestamp(currentTime, targetTime) * 1000);
+  const channels = controls.channels;
+  channels != undefined && (controls.channels = JSON.stringify(channels));
+  return controls;
+}
 
+const collator = new ClockCollator({});
+
+export async function oscTrigger(t_deprecate, hap, currentTime, cps = 1, targetTime) {
+  const osc = await connect();
+  const controls = parseControlsFromHap(hap, cps);
+  const keyvals = Object.entries(controls).flat();
+  
+  const ts = Math.round(collator.calculateTimestamp(currentTime, targetTime) * 1000);
   const message = new OSC.Message('/dirt/play', ...keyvals);
   const bundle = new OSC.Bundle([message], ts);
   bundle.timestamp(ts); // workaround for https://github.com/adzialocha/osc-js/issues/60
