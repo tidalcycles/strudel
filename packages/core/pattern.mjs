@@ -2957,11 +2957,14 @@ export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (facto
 export const fit = register('fit', (pat) =>
   pat.withHaps((haps, state) =>
     haps.map((hap) =>
-      hap.withValue((v) => ({
-        ...v,
-        speed: (state.controls._cps || 1) / hap.whole.duration,
-        unit: 'c',
-      })),
+      hap.withValue((v) => {
+        const slicedur = ('end' in v ? v.end : 1) - ('begin' in v ? v.begin : 0);
+        return {
+          ...v,
+          speed: ((state.controls._cps || 1) / hap.whole.duration) * slicedur,
+          unit: 'c',
+        };
+      }),
     ),
   ),
 );
