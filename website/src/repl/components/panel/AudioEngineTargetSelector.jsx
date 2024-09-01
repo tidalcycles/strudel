@@ -12,11 +12,16 @@ export function AudioEngineTargetSelector({ target, onChange, isDisabled }) {
     [audioEngineTargets.osc, audioEngineTargets.osc],
   ]);
   return (
-    <div className=' flex flex-col gap-1'>
+    <div className=" flex flex-col gap-1">
       <SelectInput isDisabled={isDisabled} options={options} value={target} onChange={onTargetChange} />
       {target === audioEngineTargets.osc && (
         <div>
-         <p className='text-sm italic'>⚠ All events routed to OSC, audio is silenced! See <a className='text-blue-500' href="https://strudel.cc/learn/input-output/">Docs</a></p> 
+          <p className="text-sm italic">
+            ⚠ All events routed to OSC, audio is silenced! See{' '}
+            <a className="text-blue-500" href="https://strudel.cc/learn/input-output/">
+              Docs
+            </a>
+          </p>
         </div>
       )}
     </div>

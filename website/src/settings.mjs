@@ -33,7 +33,7 @@ export const defaultSettings = {
   panelPosition: 'right',
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
-  audioEngineTarget: audioEngineTargets.webaudio, 
+  audioEngineTarget: audioEngineTargets.webaudio,
 };
 
 let search = null;
