@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import OSC from 'osc-js';
 
-import { logger, parseNumeral, Pattern, getEventOffsetMs, isNote, noteToMidi } from '@strudel/core';
+import { logger, parseNumeral, Pattern, isNote, noteToMidi, ClockCollator } from '@strudel/core';
 
 let connection; // Promise<OSC>
 function connect() {
@@ -34,6 +34,41 @@ function connect() {
   return connection;
 }
 
+export function parseControlsFromHap(hap, cps) {
+  hap.ensureObjectValue();
+  const cycle = hap.wholeOrPart().begin.valueOf();
+  const delta = hap.duration.valueOf();
+  const controls = Object.assign({}, { cps, cycle, delta }, hap.value);
+  // make sure n and note are numbers
+  controls.n && (controls.n = parseNumeral(controls.n));
+  if (typeof controls.note !== 'undefined') {
+    if (isNote(controls.note)) {
+      controls.midinote = noteToMidi(controls.note, controls.octave || 3);
+    } else {
+      controls.note = parseNumeral(controls.note);
+    }
+  }
+  controls.bank && (controls.s = controls.bank + controls.s);
+  controls.roomsize && (controls.size = parseNumeral(controls.roomsize));
+  const channels = controls.channels;
+  channels != undefined && (controls.channels = JSON.stringify(channels));
+  return controls;
+}
+
+const collator = new ClockCollator({});
+
+export async function oscTrigger(t_deprecate, hap, currentTime, cps = 1, targetTime) {
+  const osc = await connect();
+  const controls = parseControlsFromHap(hap, cps);
+  const keyvals = Object.entries(controls).flat();
+
+  const ts = Math.round(collator.calculateTimestamp(currentTime, targetTime) * 1000);
+  const message = new OSC.Message('/dirt/play', ...keyvals);
+  const bundle = new OSC.Bundle([message], ts);
+  bundle.timestamp(ts); // workaround for https://github.com/adzialocha/osc-js/issues/60
+  osc.send(bundle);
+}
+
 /**
  *
  * Sends each hap as an OSC message, which can be picked up by SuperCollider or any other OSC-enabled software.
@@ -44,33 +79,5 @@ function connect() {
  * @returns Pattern
  */
 Pattern.prototype.osc = function () {
-  return this.onTrigger(async (time, hap, currentTime, cps = 1, targetTime) => {
-    hap.ensureObjectValue();
-    const osc = await connect();
-    const cycle = hap.wholeOrPart().begin.valueOf();
-    const delta = hap.duration.valueOf();
-    const controls = Object.assign({}, { cps, cycle, delta }, hap.value);
-    // make sure n and note are numbers
-    controls.n && (controls.n = parseNumeral(controls.n));
-    if (typeof controls.note !== 'undefined') {
-      if (isNote(controls.note)) {
-        controls.midinote = noteToMidi(controls.note, controls.octave || 3);
-      } else {
-        controls.note = parseNumeral(controls.note);
-      }
-    }
-    controls.bank && (controls.s = controls.bank + controls.s);
-    controls.roomsize && (controls.size = parseNumeral(controls.roomsize));
-    const keyvals = Object.entries(controls).flat();
-    // time should be audio time of onset
-    // currentTime should be current time of audio context (slightly before time)
-    const offset = getEventOffsetMs(targetTime, currentTime);
-
-    // timestamp in milliseconds used to trigger the osc bundle at a precise moment
-    const ts = Math.floor(Date.now() + offset);
-    const message = new OSC.Message('/dirt/play', ...keyvals);
-    const bundle = new OSC.Bundle([message], ts);
-    bundle.timestamp(ts); // workaround for https://github.com/adzialocha/osc-js/issues/60
-    osc.send(bundle);
-  });
+  return this.onTrigger(oscTrigger);
 };

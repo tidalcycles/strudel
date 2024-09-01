@@ -4,17 +4,16 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { code2hash, logger, silence } from '@strudel/core';
+import { code2hash, getPerformanceTimeSeconds, logger, silence } from '@strudel/core';
 import { getDrawContext } from '@strudel/draw';
 import { transpiler } from '@strudel/transpiler';
 import {
-  getAudioContext,
+  getAudioContextCurrentTime,
   webaudioOutput,
   resetGlobalEffects,
   resetLoadedSounds,
   initAudioOnFirstClick,
 } from '@strudel/webaudio';
-import { defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioDevices, setAudioDevice, setVersionDefaultsFrom } from './util.mjs';
 import { StrudelMirror, defaultSettings } from '@strudel/codemirror';
 import { clearHydra } from '@strudel/hydra';
@@ -28,6 +27,8 @@ import {
   getViewingPatternData,
   setViewingPatternData,
 } from '../user_pattern_utils.mjs';
+import { superdirtOutput } from '@strudel/osc/superdirtoutput';
+import { audioEngineTargets, defaultAudioDeviceName } from '../settings.mjs';
 import { useStore } from '@nanostores/react';
 import { prebake } from './prebake.mjs';
 import { getRandomTune, initCode, loadModules, shareCode } from './util.mjs';
@@ -55,14 +56,18 @@ async function getModule(name) {
 }
 
 export function useReplContext() {
-  const { isSyncEnabled } = useSettings();
+  const { isSyncEnabled, audioEngineTarget } = useSettings();
+  const shouldUseWebaudio = audioEngineTarget !== audioEngineTargets.osc;
+  const defaultOutput = shouldUseWebaudio ? webaudioOutput : superdirtOutput;
+  const getTime = shouldUseWebaudio ? getAudioContextCurrentTime : getPerformanceTimeSeconds;
+
   const init = useCallback(() => {
     const drawTime = [-2, 2];
     const drawContext = getDrawContext();
     const editor = new StrudelMirror({
       sync: isSyncEnabled,
-      defaultOutput: webaudioOutput,
-      getTime: () => getAudioContext().currentTime,
+      defaultOutput,
+      getTime,
       setInterval,
       clearInterval,
       transpiler,

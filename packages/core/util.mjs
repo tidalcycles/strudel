@@ -370,7 +370,7 @@ export function cycleToSeconds(cycle, cps) {
 // utility for averaging two clocks together to account for drift
 export class ClockCollator {
   constructor({
-    getTargetClockTime = () => Date.now() * 0.001,
+    getTargetClockTime = getUnixTimeSeconds,
     weight = 16,
     offsetDelta = 0.005,
     checkAfterTime = 2,
@@ -424,6 +424,14 @@ export class ClockCollator {
   calculateTimestamp(currentTime, targetTime) {
     return this.calculateOffset(currentTime) + targetTime;
   }
+}
+
+export function getPerformanceTimeSeconds() {
+  return performance.now() * 0.001;
+}
+
+function getUnixTimeSeconds() {
+  return Date.now() * 0.001;
 }
 
 // Floating point versions, see Fraction for rational versions

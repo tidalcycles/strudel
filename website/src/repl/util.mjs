@@ -2,14 +2,11 @@ import { evalScope, hash2code, logger } from '@strudel/core';
 import { settingPatterns, defaultAudioDeviceName } from '../settings.mjs';
 import { getAudioContext, initializeAudioOutput, setDefaultAudioContext, setVersionDefaults } from '@strudel/webaudio';
 import { getMetadata } from '../metadata_parser';
-
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
-
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { writeText } from '@tauri-apps/api/clipboard';
-import { createContext } from 'react';
 import { $featuredPatterns, loadDBPatterns } from '@src/user_pattern_utils.mjs';
 
 // Create a single supabase client for interacting with your database
@@ -97,6 +94,16 @@ export function loadModules() {
 
   return evalScope(settingPatterns, ...modules);
 }
+// confirm dialog is a promise in webkit and a boolean in other browsers... normalize it to be a promise everywhere
+export function confirmDialog(msg) {
+  const confirmed = confirm(msg);
+  if (confirmed instanceof Promise) {
+    return confirmed;
+  }
+  return new Promise((resolve) => {
+    resolve(confirmed);
+  });
+}
 
 let lastShared;
 export async function shareCode(codeToShare) {
@@ -105,31 +112,32 @@ export async function shareCode(codeToShare) {
     logger(`Link already generated!`, 'error');
     return;
   }
-  const isPublic = confirm(
+
+  confirmDialog(
     'Do you want your pattern to be public? If no, press cancel and you will get just a private link.',
-  );
-  // generate uuid in the browser
-  const hash = nanoid(12);
-  const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
-  const { error } = await supabase.from('code_v1').insert([{ code: codeToShare, hash, ['public']: isPublic }]);
-  if (!error) {
-    lastShared = codeToShare;
-    // copy shareUrl to clipboard
-    if (isTauri()) {
-      await writeText(shareUrl);
+  ).then(async (isPublic) => {
+    const hash = nanoid(12);
+    const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
+    const { error } = await supabase.from('code_v1').insert([{ code: codeToShare, hash, ['public']: isPublic }]);
+    if (!error) {
+      lastShared = codeToShare;
+      // copy shareUrl to clipboard
+      if (isTauri()) {
+        await writeText(shareUrl);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+      }
+      const message = `Link copied to clipboard: ${shareUrl}`;
+      alert(message);
+      // alert(message);
+      logger(message, 'highlight');
     } else {
-      await navigator.clipboard.writeText(shareUrl);
+      console.log('error', error);
+      const message = `Error: ${error.message}`;
+      // alert(message);
+      logger(message);
     }
-    const message = `Link copied to clipboard: ${shareUrl}`;
-    alert(message);
-    // alert(message);
-    logger(message, 'highlight');
-  } else {
-    console.log('error', error);
-    const message = `Error: ${error.message}`;
-    // alert(message);
-    logger(message);
-  }
+  });
 }
 
 export const isIframe = () => window.location !== window.parent.location;

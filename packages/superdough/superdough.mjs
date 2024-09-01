@@ -87,6 +87,10 @@ export const getAudioContext = () => {
   return audioContext;
 };
 
+export function getAudioContextCurrentTime() {
+  return getAudioContext().currentTime;
+}
+
 let workletsLoading;
 function loadWorklets() {
   if (!workletsLoading) {
