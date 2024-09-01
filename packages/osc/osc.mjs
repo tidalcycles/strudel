@@ -50,6 +50,9 @@ export function parseControlsFromHap(hap, cps) {
   }
   controls.bank && (controls.s = controls.bank + controls.s);
   controls.roomsize && (controls.size = parseNumeral(controls.roomsize));
+  // speed adjustment for CPS is handled on the DSP side in superdirt and pattern side in Strudel,
+  // so we need to undo the adjustment before sending the message to superdirt.
+  controls.unit === 'c' && controls.speed != null && (controls.speed = controls.speed / cps);
   const channels = controls.channels;
   channels != undefined && (controls.channels = JSON.stringify(channels));
   return controls;
