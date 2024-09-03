@@ -386,6 +386,15 @@ export class Pattern {
     return this.fmap(func).squeezeJoin();
   }
 
+  polyJoin = function () {
+    const pp = this;
+    return pp.fmap((p) => p.s_extend(pp.tactus.div(p.tactus))).outerJoin();
+  };
+
+  polyBind(func) {
+    return this.fmap(func).polyJoin();
+  }
+
   //////////////////////////////////////////////////////////////////////
   // Utility methods mainly for internal use
 
@@ -754,6 +763,10 @@ export class Pattern {
     const otherPat = reify(other);
     return otherPat.fmap((b) => this.fmap((a) => func(a)(b))).restartJoin();
   }
+  _opPoly(other, func) {
+    const otherPat = reify(other);
+    return this.fmap((b) => otherPat.fmap((a) => func(a)(b))).polyJoin();
+  }
 
   //////////////////////////////////////////////////////////////////////
   // End-user methods.
@@ -1062,7 +1075,7 @@ function _composeOp(a, b, func) {
     func: [(a, b) => b(a)],
   };
 
-  const hows = ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Reset', 'Restart'];
+  const hows = ['In', 'Out', 'Mix', 'Squeeze', 'SqueezeOut', 'Reset', 'Restart', 'Poly'];
 
   // generate methods to do what and how
   for (const [what, [op, preprocess]] of Object.entries(composers)) {
@@ -2944,11 +2957,14 @@ export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (facto
 export const fit = register('fit', (pat) =>
   pat.withHaps((haps, state) =>
     haps.map((hap) =>
-      hap.withValue((v) => ({
-        ...v,
-        speed: (state.controls._cps || 1) / hap.whole.duration,
-        unit: 'c',
-      })),
+      hap.withValue((v) => {
+        const slicedur = ('end' in v ? v.end : 1) - ('begin' in v ? v.begin : 0);
+        return {
+          ...v,
+          speed: ((state.controls._cps || 1) / hap.whole.duration) * slicedur,
+          unit: 'c',
+        };
+      }),
     ),
   ),
 );
