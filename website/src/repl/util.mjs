@@ -1,6 +1,12 @@
 import { evalScope, hash2code, logger } from '@strudel/core';
 import { settingPatterns, defaultAudioDeviceName } from '../settings.mjs';
-import { getAudioContext, initializeAudioOutput, setDefaultAudioContext, setGlobalGain, setVersionDefaults } from '@strudel/webaudio';
+import {
+  getAudioContext,
+  initializeAudioOutput,
+  setDefaultAudioContext,
+  setGlobalGain,
+  setVersionDefaults,
+} from '@strudel/webaudio';
 import { getMetadata } from '../metadata_parser';
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
@@ -193,7 +199,7 @@ export const setGlobalAudioVolume = (volume) => {
   // Pow is used to also adjust the volume to a logarithmic scale (as perceived by us humans)
   const gain = Math.pow(volume / 100, 2);
   setGlobalGain(gain);
-}
+};
 
 export function setVersionDefaultsFrom(code) {
   try {
