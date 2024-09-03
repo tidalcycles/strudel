@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { audioEngineTargets, defaultSettings, settingsMap, useSettings } from '../../../settings.mjs';
 import { themes } from '@strudel/codemirror';
 import { isUdels, setGlobalAudioVolume } from '../../util.mjs';
@@ -32,6 +33,16 @@ function SelectInput({ value, options, onChange }) {
 }
 
 function NumberSlider({ value, onChange, step = 1, ...rest }) {
+  const fractionalDigits = useMemo(() => {
+    const stepStr = step.toString();
+    const decimalPointIdx = stepStr.indexOf('.');
+    if (decimalPointIdx < 0) {
+      return 0;
+    }
+
+    return stepStr.slice(decimalPointIdx + 1).length;
+  }, [step]);
+
   return (
     <div className="flex space-x-2 gap-1">
       <input
@@ -44,7 +55,7 @@ function NumberSlider({ value, onChange, step = 1, ...rest }) {
       />
       <input
         type="number"
-        value={Math.floor(value)}
+        value={Number(value).toFixed(fractionalDigits)}
         step={step}
         className="w-16 bg-background rounded-md"
         onChange={(e) => onChange(Number(e.target.value))}
