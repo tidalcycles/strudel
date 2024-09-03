@@ -194,10 +194,16 @@ export const setAudioDevice = async (id) => {
   initializeAudioOutput();
 };
 
+const NATURAL_LOG_10 = Math.log(1000);
+const LOW_VOLUME_CONSTANT = Math.exp(0.1 * NATURAL_LOG_10);
 export const setGlobalAudioVolume = (volume) => {
-  // Adjust user visible volume to a gain value in the range [0, 1]
-  // Pow is used to also adjust the volume to a logarithmic scale (as perceived by us humans)
-  const gain = Math.pow(volume / 100, 2);
+  // Gain is calculated to adjust the volume to a logarithmic scale to match how us humans perceive loudness.
+  // Formula is taken from https://www.dr-lex.be/info-stuff/volumecontrols.html
+  volume /= 100; // [0, 1]
+
+  let gain = volume >= 0.1 ? 0.001 * Math.exp(NATURAL_LOG_10 * volume) : volume * 10 * 0.001 * LOW_VOLUME_CONSTANT;
+  gain = Math.max(0, Math.min(gain, 1)); // just in case
+
   setGlobalGain(gain);
 };
 
