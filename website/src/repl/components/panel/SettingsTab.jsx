@@ -1,4 +1,4 @@
-import { defaultSettings, settingsMap, useSettings } from '../../../settings.mjs';
+import { audioEngineTargets, defaultSettings, settingsMap, useSettings } from '../../../settings.mjs';
 import { themes } from '@strudel/codemirror';
 import { isUdels, setGlobalAudioVolume } from '../../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
@@ -137,6 +137,9 @@ export function SettingsTab({ started }) {
         />
       </FormItem>
       <FormItem label="Audio Volume">
+        {audioEngineTarget === audioEngineTargets.osc && (
+          <span class="text-sm italic">Has no effect when Audio Engine Target is OSC</span>
+        )}
         <NumberSlider
           value={audioVolume}
           onChange={(audioVolume) => {
@@ -146,6 +149,7 @@ export function SettingsTab({ started }) {
           min={0}
           max={100}
           step={0.1}
+          disabled={audioEngineTarget === audioEngineTargets.osc}
         />
       </FormItem>
       <FormItem label="Theme">
