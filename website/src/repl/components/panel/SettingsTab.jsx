@@ -32,7 +32,7 @@ function SelectInput({ value, options, onChange }) {
   );
 }
 
-function NumberSlider({ value, onChange, step = 1, ...rest }) {
+function NumberSlider({ value, onChange, min, max, step = 1, ...rest }) {
   const fractionalDigits = useMemo(() => {
     const stepStr = step.toString();
     const decimalPointIdx = stepStr.indexOf('.');
@@ -43,22 +43,36 @@ function NumberSlider({ value, onChange, step = 1, ...rest }) {
     return stepStr.slice(decimalPointIdx + 1).length;
   }, [step]);
 
+  const textInputCharWidth = useMemo(() => {
+    const maxValueWholePartLength = Math.floor(max).toString().length;
+    return maxValueWholePartLength + '.'.length + fractionalDigits;
+  }, [max, fractionalDigits]);
+
   return (
     <div className="flex space-x-2 gap-1">
       <input
         className="p-2 grow"
         type="range"
         value={value}
+        min={min}
+        max={max}
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
         {...rest}
       />
       <input
         type="number"
+        style={{
+          // approximate text size + some leeway for the default padding + some space between the browser's up/down arrows and the input's value
+          width: `calc(${textInputCharWidth}ch + 2 * 0.75rem + 1rem)`,
+        }}
         value={Number(value).toFixed(fractionalDigits)}
+        min={min}
+        max={max}
         step={step}
-        className="w-16 bg-background rounded-md"
+        className="bg-background rounded-md"
         onChange={(e) => onChange(Number(e.target.value))}
+        {...rest}
       />
     </div>
   );
