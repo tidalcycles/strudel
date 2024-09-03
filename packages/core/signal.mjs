@@ -138,7 +138,7 @@ const timeToRand = (x) => Math.abs(intSeedToRand(timeToIntSeed(x)));
 const timeToRandsPrime = (seed, n) => {
   const result = [];
   // eslint-disable-next-line
-  for (let i = 0; i < n; ++n) {
+  for (let i = 0; i < n; ++i) {
     result.push(intSeedToRand(seed));
     seed = xorwise(seed);
   }
@@ -158,6 +158,50 @@ const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
  * // n("0 1 2 3").scale("C4:pentatonic")
  */
 export const run = (n) => saw.range(0, n).floor().segment(n);
+
+export const randrun = (n) => {
+  return signal((t) => {
+    // Without adding 0.5, the first cycle is always 0,1,2,3,...
+    const rands = timeToRands(t.floor().add(0.5), n);
+    const nums = rands
+      .map((n, i) => [n, i])
+      .sort((a, b) => a[0] > b[0] - a[0] < b[0])
+      .map((x) => x[1]);
+    const i = t.cyclePos().mul(n).floor() % n;
+    return nums[i];
+  })._segment(n);
+};
+
+const _rearrangeWith = (ipat, n, pat) => {
+  const pats = [...Array(n).keys()].map((i) => pat.zoom(Fraction(i).div(n), Fraction(i + 1).div(n)));
+  return ipat.fmap((i) => pats[i].repeatCycles(n)._fast(n)).innerJoin();
+};
+
+/**
+ * @name shuffle
+ * Slices a pattern into the given number of parts, then plays those parts in random order.
+ * Each part will be played exactly once per cycle.
+ * @example
+ * note("c d e f").sound("piano").shuffle(4)
+ * @example
+ * note("c d e f".shuffle(4), "g").sound("piano")
+ */
+export const shuffle = register('shuffle', (n, pat) => {
+  return _rearrangeWith(randrun(n), n, pat);
+});
+
+/**
+ * @name scramble
+ * Slices a pattern into the given number of parts, then plays those parts at random. Similar to `shuffle`,
+ * but parts might be played more than once, or not at all, per cycle.
+ * @example
+ * note("c d e f").sound("piano").scramble(4)
+ * @example
+ * note("c d e f".scramble(4), "g").sound("piano")
+ */
+export const scramble = register('scramble', (n, pat) => {
+  return _rearrangeWith(_irand(n)._segment(n), n, pat);
+});
 
 /**
  * A continuous pattern of random numbers, between 0 and 1.
