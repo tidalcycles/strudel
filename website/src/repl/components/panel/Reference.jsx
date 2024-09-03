@@ -12,20 +12,16 @@ const getInnerText = (html) => {
 };
 
 export function Reference() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   const visibleFunctions = useMemo(() => {
-    return availableFunctions
-      .filter((entry) => {
-        if (!search) {
-          return true;
-        }
+    return availableFunctions.filter((entry) => {
+      if (!search) {
+        return true;
+      }
 
-        return (
-          entry.name.includes(search) ||
-          (entry.synonyms?.some((s) => s.includes(search)) ?? false)
-        );
-      });
+      return entry.name.includes(search) || (entry.synonyms?.some((s) => s.includes(search)) ?? false);
+    });
   }, [search]);
 
   return (
