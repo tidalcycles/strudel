@@ -167,10 +167,7 @@ export function SettingsTab({ started }) {
         )}
         <NumberSlider
           value={audioVolume}
-          onChange={(audioVolume) => {
-            settingsMap.setKey('audioVolume', audioVolume);
-            setGlobalAudioVolume(audioVolume);
-          }}
+          onChange={(audioVolume) => settingsMap.setKey('audioVolume', audioVolume)}
           min={0}
           max={100}
           step={0.1}

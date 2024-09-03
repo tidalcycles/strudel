@@ -159,11 +159,10 @@ export function useReplContext() {
     editorRef.current?.updateSettings(editorSettings);
   }, [_settings]);
 
-  // on first load...
+  // on first load, set stored audio device if possible
   useEffect(() => {
-    const { audioDeviceName, audioVolume } = _settings;
+    const { audioDeviceName } = _settings;
 
-    // set stored audio device if possible
     if (audioDeviceName !== defaultAudioDeviceName) {
       getAudioDevices().then((devices) => {
         const deviceID = devices.get(audioDeviceName);
@@ -173,10 +172,10 @@ export function useReplContext() {
         setAudioDevice(deviceID);
       });
     }
-
-    // set stored audio volume
-    setGlobalAudioVolume(audioVolume);
   }, []);
+
+  // set stored audio volume
+  useEffect(() => setGlobalAudioVolume(_settings.audioVolume), [_settings.audioVolume]);
 
   //
   // UI Actions
