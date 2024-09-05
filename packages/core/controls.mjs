@@ -454,6 +454,9 @@ export const { drive } = registerControl('drive');
  */
 export const { channels, ch } = registerControl('channels', 'ch');
 
+// superdirt only
+export const { phaserrate, phasr } = registerControl('phaserrate', 'phasr');
+
 /**
  * Phaser audio effect that approximates popular guitar pedals.
  *
@@ -465,7 +468,7 @@ export const { channels, ch } = registerControl('channels', 'ch');
  * .phaser("<1 2 4 8>")
  *
  */
-export const { phaserrate, ph, phaser } = registerControl(['phaserrate', 'phaserdepth', 'phasercenter', 'phasersweep'], 'ph', 'phaser');
+export const { phaser, ph } = registerControl(['phaser', 'phaserdepth', 'phasercenter', 'phasersweep'], 'ph');
 
 /**
  * The frequency sweep range of the lfo for the phaser effect. Defaults to 2000

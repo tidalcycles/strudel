@@ -64,6 +64,7 @@ export async function oscTrigger(t_deprecate, hap, currentTime, cps = 1, targetT
   const osc = await connect();
   const controls = parseControlsFromHap(hap, cps);
   const keyvals = Object.entries(controls).flat();
+
   const ts = Math.round(collator.calculateTimestamp(currentTime, targetTime) * 1000);
   const message = new OSC.Message('/dirt/play', ...keyvals);
   const bundle = new OSC.Bundle([message], ts);
