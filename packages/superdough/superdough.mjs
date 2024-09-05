@@ -375,7 +375,7 @@ export const superdough = async (value, t, hapDuration) => {
     bandq = getDefaultValue('bandq'),
     channels = getDefaultValue('channels'),
     //phaser
-    phaser,
+    phaserrate: phaser,
     phaserdepth = getDefaultValue('phaserdepth'),
     phasersweep,
     phasercenter,
