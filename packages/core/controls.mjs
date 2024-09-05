@@ -465,7 +465,11 @@ export const { channels, ch } = registerControl('channels', 'ch');
  * .phaser("<1 2 4 8>")
  *
  */
-export const { phaserrate, ph, phaser } = registerControl(['phaserrate', 'phaserdepth', 'phasercenter', 'phasersweep'], 'ph', 'phaser');
+export const { phaserrate, ph, phaser } = registerControl(
+  ['phaserrate', 'phaserdepth', 'phasercenter', 'phasersweep'],
+  'ph',
+  'phaser',
+);
 
 /**
  * The frequency sweep range of the lfo for the phaser effect. Defaults to 2000
