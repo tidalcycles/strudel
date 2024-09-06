@@ -74,6 +74,49 @@ export function registerControl(names, ...aliases) {
 export const { s, sound } = registerControl(['s', 'n', 'gain'], 'sound');
 
 /**
+ * generic macro param for a sound synth
+ *
+ * @name z1
+ * @synonyms z
+ * @param {number | Pattern}
+ * @example
+ * n(run(8)).scale("D:pentatonic").s("supersaw").x(".01 .75").release(0.5)
+ *
+ */
+export const { z1, z } = registerControl(['z1', 'z2', 'z3', 'z4'], 'z');
+
+/**
+ * generic macro param for a sound synth
+ *
+ * @name z2
+ * @param {number | Pattern}
+ * @example
+ * n(run(8)).scale("D:pentatonic").s("supersaw").x2("2 .7").release(0.5)
+ *
+ */
+export const { z2 } = registerControl('z2');
+
+/**
+ * generic macro param for a sound synth
+ *
+ * @name z3
+ * @param {number | Pattern}
+ * @example
+ * n(run(8)).scale("D:pentatonic").s("supersaw").x3(".1 .75").release(0.5)
+ *
+ */
+export const { z4 } = registerControl('z3');
+
+/**
+ * generic macro param for a sound synth
+ *
+ * @name x4
+ * @param {number | Pattern}
+ *
+ */
+export const { x4 } = registerControl('z4');
+
+/**
  * Define a custom webaudio node to use as a sound source.
  *
  * @name source
