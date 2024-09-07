@@ -105,16 +105,16 @@ export const { z2 } = registerControl('z2');
  * n(run(8)).scale("D:pentatonic").s("supersaw").x3(".1 .75").release(0.5)
  *
  */
-export const { z4 } = registerControl('z3');
+export const { z3 } = registerControl('z3');
 
 /**
  * generic macro param for a sound synth
  *
- * @name x4
+ * @name z4
  * @param {number | Pattern}
  *
  */
-export const { x4 } = registerControl('z4');
+export const { z4 } = registerControl('z4');
 
 /**
  * Define a custom webaudio node to use as a sound source.
