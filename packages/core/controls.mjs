@@ -80,7 +80,7 @@ export const { s, sound } = registerControl(['s', 'n', 'gain'], 'sound');
  * @synonyms z
  * @param {number | Pattern}
  * @example
- * n(run(8)).scale("D:pentatonic").s("supersaw").x(".01 .75").release(0.5)
+ * n(run(8)).scale("D:pentatonic").s("supersaw").z(".01 .75").release(0.5)
  *
  */
 export const { z1, z } = registerControl(['z1', 'z2', 'z3', 'z4'], 'z');
@@ -91,7 +91,7 @@ export const { z1, z } = registerControl(['z1', 'z2', 'z3', 'z4'], 'z');
  * @name z2
  * @param {number | Pattern}
  * @example
- * n(run(8)).scale("D:pentatonic").s("supersaw").x2("2 .7").release(0.5)
+ * n(run(8)).scale("D:pentatonic").s("supersaw").z2("2 .7").release(0.5)
  *
  */
 export const { z2 } = registerControl('z2');
@@ -102,7 +102,7 @@ export const { z2 } = registerControl('z2');
  * @name z3
  * @param {number | Pattern}
  * @example
- * n(run(8)).scale("D:pentatonic").s("supersaw").x3(".1 .75").release(0.5)
+ * n(run(8)).scale("D:pentatonic").s("supersaw").z3(".1 .75").release(0.5)
  *
  */
 export const { z3 } = registerControl('z3');
