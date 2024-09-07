@@ -1430,6 +1430,36 @@ export function arrange(...sections) {
   return s_cat(...sections).slow(total);
 }
 
+/**
+ * Similarly to `arrange`, allows you to arrange multiple patterns together over multiple cycles.
+ * Unlike `arrange`, you specify a start and stop time for each pattern rather than duration, which
+ * means that patterns can overlap.
+ * @return {Pattern}
+ * @example
+seqPLoop([0, 2, "bd(3,8)"],
+         [1, 3, "cp(3,8)"]
+        )
+  .sound()
+ */
+export function seqPLoop(...parts) {
+  let total = Fraction(0);
+  const pats = [];
+  for (let part of parts) {
+    if (part.length == 2) {
+      part.unshift(total);
+    }
+    total = part[1];
+  }
+
+  return stack(
+    ...parts.map(([start, stop, pat]) =>
+      pure(reify(pat)).compress(Fraction(start).div(total), Fraction(stop).div(total)),
+    ),
+  )
+    .slow(total)
+    .innerJoin(); // or resetJoin or restartJoin ??
+}
+
 export function fastcat(...pats) {
   let result = slowcat(...pats);
   if (pats.length > 1) {
