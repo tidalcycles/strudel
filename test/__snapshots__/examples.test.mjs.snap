@@ -6850,6 +6850,26 @@ exports[`runs examples > example "seq" example index 0 2`] = `
 ]
 `;
 
+exports[`runs examples > example "seqPLoop" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | s:bd ]",
+  "[ 3/8 → 1/2 | s:bd ]",
+  "[ 3/4 → 7/8 | s:bd ]",
+  "[ 1/1 → 9/8 | s:bd ]",
+  "[ 1/1 → 9/8 | s:cp ]",
+  "[ 11/8 → 3/2 | s:bd ]",
+  "[ 11/8 → 3/2 | s:cp ]",
+  "[ 7/4 → 15/8 | s:bd ]",
+  "[ 7/4 → 15/8 | s:cp ]",
+  "[ 2/1 → 17/8 | s:cp ]",
+  "[ 19/8 → 5/2 | s:cp ]",
+  "[ 11/4 → 23/8 | s:cp ]",
+  "[ 3/1 → 25/8 | s:bd ]",
+  "[ 27/8 → 7/2 | s:bd ]",
+  "[ 15/4 → 31/8 | s:bd ]",
+]
+`;
+
 exports[`runs examples > example "shape" example index 0 1`] = `
 [
   "[ 0/1 → 1/8 | s:hh shape:0 ]",
