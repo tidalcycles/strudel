@@ -130,19 +130,13 @@ npx lerna version --no-private
 # publish all packages inside /packages using pnpm! don't use lerna to publish!!
 pnpm --filter "./packages/**" publish --dry-run
 
-# the last command was only a dry-run, make sure everything looks ok, if yes, run the same command without flag
+# the last command was only a dry-run. if everything looks ok, run this:
+
+pnpm --filter "./packages/**" publish --access public
 ```
 
 To manually publish a single package, increase the version in the `package.json`, then run `pnpm publish`.
 Important: Always publish with `pnpm`, as `npm` does not support overriding main files in `publishConfig`, which is done in all the packages.
-
-### New Packages
-
-To add a new package, you have to publish it manually the first time, using:
-
-```sh
-cd packages/<package-name> && pnpm publish --access public
-```
 
 ## Have Fun
 

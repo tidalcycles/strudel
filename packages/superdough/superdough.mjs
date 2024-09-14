@@ -7,9 +7,9 @@ This program is free software: you can redistribute it and/or modify it under th
 import './feedbackdelay.mjs';
 import './reverb.mjs';
 import './vowel.mjs';
-import { clamp, nanFallback } from './util.mjs';
-import workletsUrl from './worklets.mjs?url';
-import { createFilter, gainNode, getCompressor } from './helpers.mjs';
+import { clamp, nanFallback, _mod } from './util.mjs';
+import workletsUrl from './worklets.mjs?worker&url';
+import { createFilter, gainNode, getCompressor, getWorklet } from './helpers.mjs';
 import { map } from 'nanostores';
 import { logger } from './logger.mjs';
 import { loadBuffer } from './sampler.mjs';
@@ -22,6 +22,52 @@ export function registerSound(key, onTrigger, data = {}) {
 
 export function getSound(s) {
   return soundMap.get()[s];
+}
+
+const defaultDefaultValues = {
+  s: 'triangle',
+  gain: 0.8,
+  postgain: 1,
+  density: '.03',
+  ftype: '12db',
+  fanchor: 0,
+  resonance: 1,
+  hresonance: 1,
+  bandq: 1,
+  channels: [1, 2],
+  phaserdepth: 0.75,
+  shapevol: 1,
+  distortvol: 1,
+  delay: 0,
+  delayfeedback: 0.5,
+  delaytime: 0.25,
+  orbit: 1,
+  i: 1,
+  velocity: 1,
+  fft: 8,
+};
+
+let defaultControls = new Map(Object.entries(defaultDefaultValues));
+
+export function setDefaultValue(key, value) {
+  defaultControls.set(key, value);
+}
+export function getDefaultValue(key) {
+  return defaultControls.get(key);
+}
+export function setDefaultValues(defaultsobj) {
+  Object.keys(defaultsobj).forEach((key) => {
+    setDefaultValue(key, defaultsobj[key]);
+  });
+}
+export function resetDefaultValues() {
+  defaultControls = new Map(Object.entries(defaultDefaultValues));
+}
+export function setVersionDefaults(version) {
+  resetDefaultValues();
+  if (version === '1.0') {
+    setDefaultValue('fanchor', 0.5);
+  }
 }
 
 export const resetLoadedSounds = () => soundMap.set({});
@@ -37,50 +83,53 @@ export const getAudioContext = () => {
   if (!audioContext) {
     return setDefaultAudioContext();
   }
+
   return audioContext;
 };
 
-let workletsLoading;
-
-function loadWorklets() {
-  if (workletsLoading) {
-    return workletsLoading;
-  }
-  workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
-  return workletsLoading;
+export function getAudioContextCurrentTime() {
+  return getAudioContext().currentTime;
 }
 
-export function getWorklet(ac, processor, params, config) {
-  const node = new AudioWorkletNode(ac, processor, config);
-  Object.entries(params).forEach(([key, value]) => {
-    node.parameters.get(key).value = value;
-  });
-  return node;
+let workletsLoading;
+function loadWorklets() {
+  if (!workletsLoading) {
+    workletsLoading = getAudioContext().audioWorklet.addModule(workletsUrl);
+  }
+  return workletsLoading;
 }
 
 // this function should be called on first user interaction (to avoid console warning)
 export async function initAudio(options = {}) {
   const { disableWorklets = false } = options;
-  if (typeof window !== 'undefined') {
-    await getAudioContext().resume();
-    if (!disableWorklets) {
-      await loadWorklets().catch((err) => {
-        console.warn('could not load AudioWorklet effects coarse, crush and shape', err);
-      });
-    } else {
-      console.log('disableWorklets: AudioWorklet effects coarse, crush and shape are skipped!');
-    }
+  if (typeof window === 'undefined') {
+    return;
   }
+  await getAudioContext().resume();
+  if (disableWorklets) {
+    logger('[superdough]: AudioWorklets disabled with disableWorklets');
+    return;
+  }
+  try {
+    await loadWorklets();
+    logger('[superdough] AudioWorklets loaded');
+  } catch (err) {
+    console.warn('could not load AudioWorklet effects', err);
+  }
+  logger('[superdough] ready');
 }
-
+let audioReady;
 export async function initAudioOnFirstClick(options) {
-  return new Promise((resolve) => {
-    document.addEventListener('click', async function listener() {
-      await initAudio(options);
-      resolve();
-      document.removeEventListener('click', listener);
+  if (!audioReady) {
+    audioReady = new Promise((resolve) => {
+      document.addEventListener('click', async function listener() {
+        document.removeEventListener('click', listener);
+        await initAudio(options);
+        resolve();
+      });
     });
-  });
+  }
+  return audioReady;
 }
 
 let delays = {};
@@ -144,26 +193,25 @@ function getDelay(orbit, delaytime, delayfeedback, t) {
   return delays[orbit];
 }
 
-// each orbit will have its own lfo
-const phaserLFOs = {};
-function getPhaser(orbit, t, speed = 1, depth = 0.5, centerFrequency = 1000, sweep = 2000) {
+function getPhaser(time, end, frequency = 1, depth = 0.5, centerFrequency = 1000, sweep = 2000) {
   //gain
   const ac = getAudioContext();
   const lfoGain = ac.createGain();
-  lfoGain.gain.value = sweep;
+  lfoGain.gain.value = sweep * 2;
+  // centerFrequency = centerFrequency * 2;
+  // sweep = sweep * 1.5;
 
-  //LFO
-  if (phaserLFOs[orbit] == null) {
-    phaserLFOs[orbit] = ac.createOscillator();
-    phaserLFOs[orbit].frequency.value = speed;
-    phaserLFOs[orbit].type = 'sine';
-    phaserLFOs[orbit].start();
-  }
-
-  phaserLFOs[orbit].connect(lfoGain);
-  if (phaserLFOs[orbit].frequency.value != speed) {
-    phaserLFOs[orbit].frequency.setValueAtTime(speed, t);
-  }
+  const lfo = getWorklet(ac, 'lfo-processor', {
+    frequency,
+    depth: 1,
+    skew: 0,
+    phaseoffset: 0,
+    time,
+    end,
+    shape: 1,
+    dcoffset: -0.5,
+  });
+  lfo.connect(lfoGain);
 
   //filters
   const numStages = 2; //num of filters in series
@@ -186,10 +234,14 @@ function getPhaser(orbit, t, speed = 1, depth = 0.5, centerFrequency = 1000, swe
   return filterChain[filterChain.length - 1];
 }
 
+function getFilterType(ftype) {
+  ftype = ftype ?? 0;
+  const filterTypes = ['12db', 'ladder', '24db'];
+  return typeof ftype === 'number' ? filterTypes[Math.floor(_mod(ftype, filterTypes.length))] : ftype;
+}
+
 let reverbs = {};
-
 let hasChanged = (now, before) => now !== undefined && now !== before;
-
 function getReverb(orbit, duration, fade, lp, dim, ir) {
   // If no reverb has been created for a given orbit, create one
   if (!reverbs[orbit]) {
@@ -261,6 +313,13 @@ export function resetGlobalEffects() {
 }
 
 export const superdough = async (value, t, hapDuration) => {
+  t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
+  let { stretch } = value;
+  if (stretch != null) {
+    //account for phase vocoder latency
+    const latency = 0.04;
+    t = t - latency;
+  }
   const ac = getAudioContext();
   if (typeof value !== 'object') {
     throw new Error(
@@ -272,7 +331,7 @@ export const superdough = async (value, t, hapDuration) => {
   // duration is passed as value too..
   value.duration = hapDuration;
   // calculate absolute time
-  t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
+
   if (t < ac.currentTime) {
     console.warn(
       `[superdough]: cannot schedule sounds in the past (target: ${t.toFixed(2)}, now: ${ac.currentTime.toFixed(2)})`,
@@ -281,15 +340,15 @@ export const superdough = async (value, t, hapDuration) => {
   }
   // destructure
   let {
-    s = 'triangle',
+    s = getDefaultValue('s'),
     bank,
     source,
-    gain = 0.8,
-    postgain = 1,
-    density = 0.03,
+    gain = getDefaultValue('gain'),
+    postgain = getDefaultValue('postgain'),
+    density = getDefaultValue('density'),
     // filters
-    ftype = '12db',
-    fanchor = 0.5,
+    fanchor = getDefaultValue('fanchor'),
+    drive = 0.69,
     // low pass
     cutoff,
     lpenv,
@@ -297,7 +356,7 @@ export const superdough = async (value, t, hapDuration) => {
     lpdecay,
     lpsustain,
     lprelease,
-    resonance = 1,
+    resonance = getDefaultValue('resonance'),
     // high pass
     hpenv,
     hcutoff,
@@ -305,7 +364,7 @@ export const superdough = async (value, t, hapDuration) => {
     hpdecay,
     hpsustain,
     hprelease,
-    hresonance = 1,
+    hresonance = getDefaultValue('hresonance'),
     // band pass
     bpenv,
     bandf,
@@ -313,36 +372,36 @@ export const superdough = async (value, t, hapDuration) => {
     bpdecay,
     bpsustain,
     bprelease,
-    bandq = 1,
-    channels = [1, 2],
+    bandq = getDefaultValue('bandq'),
+    channels = getDefaultValue('channels'),
     //phaser
-    phaser,
-    phaserdepth = 0.75,
+    phaserrate: phaser,
+    phaserdepth = getDefaultValue('phaserdepth'),
     phasersweep,
     phasercenter,
     //
     coarse,
     crush,
     shape,
-    shapevol = 1,
+    shapevol = getDefaultValue('shapevol'),
     distort,
-    distortvol = 1,
+    distortvol = getDefaultValue('distortvol'),
     pan,
     vowel,
-    delay = 0,
-    delayfeedback = 0.5,
-    delaytime = 0.25,
-    orbit = 1,
+    delay = getDefaultValue('delay'),
+    delayfeedback = getDefaultValue('delayfeedback'),
+    delaytime = getDefaultValue('delaytime'),
+    orbit = getDefaultValue('orbit'),
     room,
     roomfade,
     roomlp,
     roomdim,
     roomsize,
     ir,
-    i = 0,
-    velocity = 1,
+    i = getDefaultValue('i'),
+    velocity = getDefaultValue('velocity'),
     analyze, // analyser wet
-    fft = 8, // fftSize 0 - 10
+    fft = getDefaultValue('fft'), // fftSize 0 - 10
     compressor: compressorThreshold,
     compressorRatio,
     compressorKnee,
@@ -391,10 +450,13 @@ export const superdough = async (value, t, hapDuration) => {
   }
   const chain = []; // audio nodes that will be connected to each other sequentially
   chain.push(sourceNode);
+  stretch !== undefined && chain.push(getWorklet(ac, 'phase-vocoder-processor', { pitchFactor: stretch }));
 
   // gain stage
   chain.push(gainNode(gain));
 
+  //filter
+  const ftype = getFilterType(value.ftype);
   if (cutoff !== undefined) {
     let lp = () =>
       createFilter(
@@ -410,6 +472,8 @@ export const superdough = async (value, t, hapDuration) => {
         t,
         t + hapDuration,
         fanchor,
+        ftype,
+        drive,
       );
     chain.push(lp());
     if (ftype === '24db') {
@@ -485,7 +549,7 @@ export const superdough = async (value, t, hapDuration) => {
   }
   // phaser
   if (phaser !== undefined && phaserdepth > 0) {
-    const phaserFX = getPhaser(orbit, t, phaser, phaserdepth, phasercenter, phasersweep);
+    const phaserFX = getPhaser(t, t + hapDuration, phaser, phaserdepth, phasercenter, phasersweep);
     chain.push(phaserFX);
   }
 
@@ -533,4 +597,6 @@ export const superdough = async (value, t, hapDuration) => {
   toDisconnect = chain.concat([delaySend, reverbSend, analyserSend]);
 };
 
-export const superdoughTrigger = (t, hap, ct, cps) => superdough(hap, t - ct, hap.duration / cps, cps);
+export const superdoughTrigger = (t, hap, ct, cps) => {
+  superdough(hap, t - ct, hap.duration / cps, cps);
+};

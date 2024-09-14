@@ -14,7 +14,7 @@ const applyOptions = (parent, enter) => (pat, i) => {
   const ast = parent.source_[i];
   const options = ast.options_;
   const ops = options?.ops;
-
+  const tactus_source = pat.__tactus_source;
   if (ops) {
     for (const op of ops) {
       switch (op.type_) {
@@ -69,7 +69,7 @@ const applyOptions = (parent, enter) => (pat, i) => {
       }
     }
   }
-
+  pat.__tactus_source = pat.__tactus_source || tactus_source;
   return pat;
 };
 

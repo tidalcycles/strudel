@@ -122,6 +122,19 @@ strudel.Pattern.prototype.midi = function () {
   return this;
 };
 
+strudel.Pattern.prototype._scope = function () {
+  return this;
+};
+strudel.Pattern.prototype._spiral = function () {
+  return this;
+};
+strudel.Pattern.prototype._pitchwheel = function () {
+  return this;
+};
+strudel.Pattern.prototype._pianoroll = function () {
+  return this;
+};
+
 const uiHelpersMocked = {
   backgroundImage: id,
 };
@@ -178,6 +191,7 @@ evalScope(
   },
 );
 
+// TBD: use transpiler to support labeled statements
 export const queryCode = async (code, cycles = 1) => {
   const { pattern } = await evaluate(code);
   const haps = pattern.sortHapsByPart().queryArc(0, cycles);

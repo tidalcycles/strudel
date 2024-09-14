@@ -94,7 +94,7 @@ Each filter can receive an additional filter envelope controlling the cutoff val
   client:idle
   tune={`note("[c eb g <f bb>](3,8,<0 1>)".sub(12))
   .s("<sawtooth>/64")
-  .lpf(sine.range(500,3000).slow(16))
+  .lpf(sine.range(300,2000).slow(16))
   .lpa(0.005)
   .lpd(perlin.range(.02,.2))
   .lps(perlin.range(0,.5).slow(3))
@@ -106,7 +106,7 @@ Each filter can receive an additional filter envelope controlling the cutoff val
   .juxBy(.5,rev)
   .sometimes(add(note(12)))
   .stack(s("bd*2").bank('RolandTR909'))
-  .gain(.5)`}
+  .gain(.5).fast(2)`}
 />
 
 There is one filter envelope for each filter type and thus one set of envelope filter parameters preceded either by `lp`, `hp` or `bp`:

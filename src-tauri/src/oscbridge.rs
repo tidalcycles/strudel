@@ -6,13 +6,13 @@ use std::net::UdpSocket;
 use serde::Deserialize;
 use std::sync::Arc;
 use std::thread::sleep;
-use std::time::Duration;
+use std::time::{Duration};
 use tokio::sync::{mpsc, Mutex};
 
 use crate::loggerbridge::Logger;
 pub struct OscMsg {
     pub msg_buf: Vec<u8>,
-    pub timestamp: u64,
+    pub timestamp: f64,
 }
 
 pub struct AsyncInputTransmit {
@@ -106,7 +106,7 @@ pub struct Param {
 #[derive(Deserialize)]
 pub struct MessageFromJS {
     params: Vec<Param>,
-    timestamp: u64,
+    timestamp: f64,
     target: String,
 }
 // Called from JS
@@ -127,9 +127,11 @@ pub async fn sendosc(
                 args.push(OscType::String(p.value));
             }
         }
+        // let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
 
+        let time_delay = Duration::from_secs_f64(m.timestamp);
         let duration_since_epoch =
-            Duration::from_millis(m.timestamp) + Duration::new(UNIX_OFFSET, 0);
+        time_delay + Duration::new(UNIX_OFFSET, 0);
 
         let seconds = u32::try_from(duration_since_epoch.as_secs())
             .map_err(|_| "bit conversion failed for osc message timetag")?;

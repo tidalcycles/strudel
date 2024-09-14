@@ -86,6 +86,38 @@ export const tri2 = fastcat(isaw2, saw2);
 
 export const time = signal(id);
 
+/**
+ *  The mouse's x position value ranges from 0 to 1.
+ * @name mousex
+ * @return {Pattern}
+ * @example
+ * n(mousex.segment(4).range(0,7)).scale("C:minor")
+ *
+ */
+
+/**
+ *  The mouse's y position value ranges from 0 to 1.
+ * @name mousey
+ * @return {Pattern}
+ * @example
+ * n(mousey.segment(4).range(0,7)).scale("C:minor")
+ *
+ */
+let _mouseY = 0,
+  _mouseX = 0;
+if (typeof window !== 'undefined') {
+  //document.onmousemove = (e) => {
+  document.addEventListener('mousemove', (e) => {
+    _mouseY = e.clientY / document.body.clientHeight;
+    _mouseX = e.clientX / document.body.clientWidth;
+  });
+}
+
+export const mousey = signal(() => _mouseY);
+export const mouseY = signal(() => _mouseY);
+export const mousex = signal(() => _mouseX);
+export const mouseX = signal(() => _mouseX);
+
 // random signals
 
 const xorwise = (x) => {
@@ -106,7 +138,7 @@ const timeToRand = (x) => Math.abs(intSeedToRand(timeToIntSeed(x)));
 const timeToRandsPrime = (seed, n) => {
   const result = [];
   // eslint-disable-next-line
-  for (let i = 0; i < n; ++n) {
+  for (let i = 0; i < n; ++i) {
     result.push(intSeedToRand(seed));
     seed = xorwise(seed);
   }
@@ -126,6 +158,50 @@ const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
  * // n("0 1 2 3").scale("C4:pentatonic")
  */
 export const run = (n) => saw.range(0, n).floor().segment(n);
+
+export const randrun = (n) => {
+  return signal((t) => {
+    // Without adding 0.5, the first cycle is always 0,1,2,3,...
+    const rands = timeToRands(t.floor().add(0.5), n);
+    const nums = rands
+      .map((n, i) => [n, i])
+      .sort((a, b) => a[0] > b[0] - a[0] < b[0])
+      .map((x) => x[1]);
+    const i = t.cyclePos().mul(n).floor() % n;
+    return nums[i];
+  })._segment(n);
+};
+
+const _rearrangeWith = (ipat, n, pat) => {
+  const pats = [...Array(n).keys()].map((i) => pat.zoom(Fraction(i).div(n), Fraction(i + 1).div(n)));
+  return ipat.fmap((i) => pats[i].repeatCycles(n)._fast(n)).innerJoin();
+};
+
+/**
+ * @name shuffle
+ * Slices a pattern into the given number of parts, then plays those parts in random order.
+ * Each part will be played exactly once per cycle.
+ * @example
+ * note("c d e f").sound("piano").shuffle(4)
+ * @example
+ * note("c d e f".shuffle(4), "g").sound("piano")
+ */
+export const shuffle = register('shuffle', (n, pat) => {
+  return _rearrangeWith(randrun(n), n, pat);
+});
+
+/**
+ * @name scramble
+ * Slices a pattern into the given number of parts, then plays those parts at random. Similar to `shuffle`,
+ * but parts might be played more than once, or not at all, per cycle.
+ * @example
+ * note("c d e f").sound("piano").scramble(4)
+ * @example
+ * note("c d e f".scramble(4), "g").sound("piano")
+ */
+export const scramble = register('scramble', (n, pat) => {
+  return _rearrangeWith(_irand(n)._segment(n), n, pat);
+});
 
 /**
  * A continuous pattern of random numbers, between 0 and 1.
@@ -294,6 +370,13 @@ export const pickRestart = register('pickRestart', function (lookup, pat) {
  * @param {Pattern} pat
  * @param {*} xs
  * @returns {Pattern}
+ * @example
+ * "<a@2 b@2 c@2 d@2>".pickRestart({
+      a: n("0 1 2 0"),
+      b: n("2 3 4 ~"),
+      c: n("[4 5] [4 3] 2 0"),
+      d: n("0 -3 0 ~")
+    }).scale("C:major").s("piano")
  */
 export const pickmodRestart = register('pickmodRestart', function (lookup, pat) {
   return _pick(lookup, pat, true).restartJoin();

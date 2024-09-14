@@ -2,7 +2,7 @@ import useEvent from '@src/useEvent.mjs';
 import { useStore } from '@nanostores/react';
 import { getAudioContext, soundMap, connectToDestination } from '@strudel/webaudio';
 import React, { useMemo, useRef } from 'react';
-import { settingsMap, useSettings } from '../../settings.mjs';
+import { settingsMap, useSettings } from '../../../settings.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import ImportSoundsButton from './ImportSoundsButton.jsx';
 
@@ -13,7 +13,9 @@ export function SoundsTab() {
   const sounds = useStore(soundMap);
   const { soundsFilter } = useSettings();
   const soundEntries = useMemo(() => {
-    let filtered = Object.entries(sounds).filter(([key]) => !key.startsWith('_'));
+    let filtered = Object.entries(sounds)
+      .filter(([key]) => !key.startsWith('_'))
+      .sort((a, b) => a[0].localeCompare(b[0]));
     if (!sounds) {
       return [];
     }
@@ -43,7 +45,7 @@ export function SoundsTab() {
   });
   return (
     <div id="sounds-tab" className="px-4 flex flex-col w-full h-full dark:text-white text-stone-900">
-      <div className="pb-2 flex shrink-0 overflow-auto">
+      <div className="pb-2 flex shrink-0 flex-wrap">
         <ButtonGroup
           value={soundsFilter}
           onChange={(value) => settingsMap.setKey('soundsFilter', value)}
