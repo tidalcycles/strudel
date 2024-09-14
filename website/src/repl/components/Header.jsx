@@ -43,7 +43,7 @@ export function Header({ context, embedded = false }) {
           )}
         >
           <div
-            className={cx('mt-[1px]', started && 'animate-spin', 'cursor-pointer')}
+            className={cx('mt-[1px]', started && 'animate-spin', 'cursor-pointer', isZen && 'fixed top-2 right-4')}
             onClick={() => {
               if (!isEmbedded) {
                 setIsZen(!isZen);
