@@ -2047,6 +2047,34 @@ export const { zoomArc, zoomarc } = register(['zoomArc', 'zoomarc'], function (a
 });
 
 /**
+ * Splits a pattern into the given number of slices, and plays them according to a pattern of slice numbers.
+ * Similar to `slice`, but slices up patterns rather than sound samples.
+ * @param {number} number of slices
+ * @param {number} slices to play
+ * @example
+ * note("0 1 2 3 4 5 6 7".scale('c:mixolydian'))
+ *.bite(4, "3 2 1 0")
+ * @example
+ * sound("bd - bd bd*2, - sd:6 - sd:5 sd:1 - [- sd:2] -, hh [- cp:7]")
+  .bank("RolandTR909").speed(1.2)
+  .bite(4, "0 0 [1 2] <3 2> 0 0 [2 1] 3")
+ */
+export const bite = register(
+  'bite',
+  (npat, ipat, pat) => {
+    return ipat
+      .fmap((i) => (n) => {
+        const a = Fraction(i).div(n).mod(1);
+        const b = a.add(Fraction(1).div(n));
+        return pat.zoom(a, b);
+      })
+      .appLeft(npat)
+      .squeezeJoin();
+  },
+  false,
+);
+
+/**
  * Selects the given fraction of the pattern and repeats that part to fill the remainder of the cycle.
  * @param {number} fraction fraction to select
  * @example
