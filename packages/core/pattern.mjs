@@ -2059,7 +2059,7 @@ export const { zoomArc, zoomarc } = register(['zoomArc', 'zoomarc'], function (a
   .bank("RolandTR909").speed(1.2)
   .bite(4, "0 0 [1 2] <3 2> 0 0 [2 1] 3")
  */
-register(
+export const bite = register(
   'bite',
   (npat, ipat, pat) => {
     return ipat
