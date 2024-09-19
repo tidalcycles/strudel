@@ -2047,8 +2047,10 @@ export const { zoomArc, zoomarc } = register(['zoomArc', 'zoomarc'], function (a
 });
 
 /**
- * Selects the given fraction of the pattern and repeats that part to fill the remainder of the cycle.
- * @param {number} fraction fraction to select
+ * Splits a pattern into the given number of slices, and plays them according to a pattern of slice numbers.
+ * Similar to `slice`, but slices up patterns rather than sound samples.
+ * @param {number} number of slices
+ * @param {number} slices to play
  * @example
  * note("0 1 2 3 4 5 6 7".scale('c:mixolydian'))
  *.bite(4, "3 2 1 0")
