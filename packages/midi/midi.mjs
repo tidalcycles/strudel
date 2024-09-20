@@ -169,13 +169,18 @@ const refs = {};
 export async function midin(input) {
   if (isPattern(input)) {
     throw new Error(
-      `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
+      `midin: does not accept Pattern as input. Make sure to pass device name with single quotes. Example: midin('${
         WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
       }')`,
     );
   }
   const initial = await enableWebMidi(); // only returns on first init
   const device = getDevice(input, WebMidi.inputs);
+  if (!device) {
+    throw new Error(
+      `midiin: device "${input}" not found.. connected devices: ${getMidiDeviceNamesString(WebMidi.inputs)}`,
+    );
+  }
   if (initial) {
     const otherInputs = WebMidi.inputs.filter((o) => o.name !== device.name);
     logger(
