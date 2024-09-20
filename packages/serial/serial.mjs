@@ -105,7 +105,7 @@ Pattern.prototype.serial = function (br = 115200, sendcrc = false, singlecharids
       } else {
         message = hap.value;
       }
-      const offset = ((targetTime - currentTime) + latency) * 1000;
+      const offset = (targetTime - currentTime + latency) * 1000;
 
       window.setTimeout(function () {
         writeMessagers[name](message, chk);
