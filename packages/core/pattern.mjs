@@ -839,17 +839,6 @@ export class Pattern {
   seq(...pats) {
     return sequence(this, ...pats);
   }
-
-  /**
-   * Appends the given pattern(s) to the next cycle.
-   * @name cat
-   * @memberof Pattern
-   * @synonyms slowcat
-   * @example
-   * s("hh*4").cat(
-   *   note("c4(5,8)")
-   * )
-   */
   cat(...pats) {
     return cat(this, ...pats);
   }
