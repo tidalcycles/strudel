@@ -1388,6 +1388,29 @@ exports[`runs examples > example "cat" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "cat" example index 1 1`] = `
+[
+  "[ 0/1 → 1/4 | s:hh ]",
+  "[ 1/4 → 1/2 | s:hh ]",
+  "[ 1/2 → 3/4 | s:hh ]",
+  "[ 3/4 → 1/1 | s:hh ]",
+  "[ 1/1 → 9/8 | note:c4 ]",
+  "[ 5/4 → 11/8 | note:c4 ]",
+  "[ 11/8 → 3/2 | note:c4 ]",
+  "[ 13/8 → 7/4 | note:c4 ]",
+  "[ 7/4 → 15/8 | note:c4 ]",
+  "[ 2/1 → 9/4 | s:hh ]",
+  "[ 9/4 → 5/2 | s:hh ]",
+  "[ 5/2 → 11/4 | s:hh ]",
+  "[ 11/4 → 3/1 | s:hh ]",
+  "[ 3/1 → 25/8 | note:c4 ]",
+  "[ 13/4 → 27/8 | note:c4 ]",
+  "[ 27/8 → 7/2 | note:c4 ]",
+  "[ 29/8 → 15/4 | note:c4 ]",
+  "[ 15/4 → 31/8 | note:c4 ]",
+]
+`;
+
 exports[`runs examples > example "ceil" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:42 ]",

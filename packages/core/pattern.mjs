@@ -1396,7 +1396,11 @@ export function slowcatPrime(...pats) {
  * @example
  * cat("e5", "b4", ["d5", "c5"]).note()
  * // "<e5 b4 [d5 c5]>".note()
- *
+ * @example
+ * // You can also use cat as a chained function like this:
+ * s("hh*4").cat(
+ *    note("c4(5,8)")
+ * )
  */
 export function cat(...pats) {
   return slowcat(...pats);
