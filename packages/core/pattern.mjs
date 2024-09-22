@@ -809,15 +809,6 @@ export class Pattern {
   //////////////////////////////////////////////////////////////////////
   // Multi-pattern functions
 
-  /**
-   * Stacks the given pattern(s) to the current pattern.
-   * @name stack
-   * @memberof Pattern
-   * @example
-   * s("hh*4").stack(
-   *   note("c4(5,8)")
-   * )
-   */
   stack(...pats) {
     return stack(this, ...pats);
   }
@@ -1254,11 +1245,18 @@ export function reify(thing) {
 
 /** The given items are played at the same time at the same length.
  *
+ * @name stack
  * @return {Pattern}
  * @synonyms polyrhythm, pr
  * @example
  * stack("g3", "b3", ["e4", "d4"]).note()
  * // "g3,b3,[e4,d4]".note()
+ *
+ * @example
+ * // As a chained function:
+ * s("hh*4").stack(
+ *   note("c4(5,8)")
+ * )
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
@@ -1380,14 +1378,16 @@ export function slowcatPrime(...pats) {
 
 /** The given items are con**cat**enated, where each one takes one cycle.
  *
+ * @name cat
  * @param {...any} items - The items to concatenate
  * @synonyms slowcat
  * @return {Pattern}
  * @example
  * cat("e5", "b4", ["d5", "c5"]).note()
  * // "<e5 b4 [d5 c5]>".note()
+ *
  * @example
- * // You can also use cat as a chained function like this:
+ * // As a chained function:
  * s("hh*4").cat(
  *    note("c4(5,8)")
  * )
@@ -1468,7 +1468,8 @@ export function sequence(...pats) {
  * seq("e5", "b4", ["d5", "c5"]).note()
  * // "e5 b4 [d5 c5]".note()
  *
- * // Or as a chained function:
+ * @example
+ * // As a chained function:
  * s("hh*4").seq(
  *   note("c4(5,8)")
  * )
