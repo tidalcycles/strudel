@@ -826,16 +826,6 @@ export class Pattern {
     return sequence(this, ...pats);
   }
 
-  /**
-   * Appends the given pattern(s) to the current pattern.
-   * @name seq
-   * @memberof Pattern
-   * @synonyms sequence, fastcat
-   * @example
-   * s("hh*4").seq(
-   *   note("c4(5,8)")
-   * )
-   */
   seq(...pats) {
     return sequence(this, ...pats);
   }
@@ -1471,12 +1461,19 @@ export function sequence(...pats) {
 }
 
 /** Like **cat**, but the items are crammed into one cycle.
- * @synonyms fastcat, sequence
+ * @name seq
+ * @memberof Pattern
+ * @synonyms sequence, fastcat
  * @example
  * seq("e5", "b4", ["d5", "c5"]).note()
  * // "e5 b4 [d5 c5]".note()
  *
+ * // Or as a chained function:
+ * s("hh*4").seq(
+ *   note("c4(5,8)")
+ * )
  */
+
 export function seq(...pats) {
   return fastcat(...pats);
 }
