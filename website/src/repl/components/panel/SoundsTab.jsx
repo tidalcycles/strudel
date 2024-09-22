@@ -21,7 +21,8 @@ export function SoundsTab() {
 
     let filtered = Object.entries(sounds)
       .filter(([key]) => !key.startsWith('_'))
-      .sort((a, b) => a[0].localeCompare(b[0]));
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .filter(([name]) => name.toLowerCase().includes(search.toLowerCase()));
 
     if (soundsFilter === 'user') {
       filtered = filtered.filter(([key, { data }]) => !data.prebake);
@@ -32,12 +33,6 @@ export function SoundsTab() {
     } else if (soundsFilter === 'synths') {
       filtered = filtered.filter(([_, { data }]) => ['synth', 'soundfont'].includes(data.type));
     }
-
-    // Apply search filter
-    if (search) {
-      filtered = filtered.filter(([name]) => name.toLowerCase().includes(search.toLowerCase()));
-    }
-
     return filtered;
   }, [sounds, soundsFilter, search]);
 
