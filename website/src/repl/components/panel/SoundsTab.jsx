@@ -25,15 +25,19 @@ export function SoundsTab() {
       .filter(([name]) => name.toLowerCase().includes(search.toLowerCase()));
 
     if (soundsFilter === 'user') {
-      filtered = filtered.filter(([key, { data }]) => !data.prebake);
-    } else if (soundsFilter === 'drums') {
-      filtered = filtered.filter(([_, { data }]) => data.type === 'sample' && data.tag === 'drum-machines');
-    } else if (soundsFilter === 'samples') {
-      filtered = filtered.filter(([_, { data }]) => data.type === 'sample' && data.tag !== 'drum-machines');
-    } else if (soundsFilter === 'synths') {
-      filtered = filtered.filter(([_, { data }]) => ['synth', 'soundfont'].includes(data.type));
+      return filtered.filter(([_, { data }]) => !data.prebake);
+    }
+    if (soundsFilter === 'drums') {
+      return filtered.filter(([_, { data }]) => data.type === 'sample' && data.tag === 'drum-machines');
+    }
+    if (soundsFilter === 'samples') {
+      return filtered.filter(([_, { data }]) => data.type === 'sample' && data.tag !== 'drum-machines');
+    }
+    if (soundsFilter === 'synths') {
+      return filtered.filter(([_, { data }]) => ['synth', 'soundfont'].includes(data.type));
     }
     return filtered;
+
   }, [sounds, soundsFilter, search]);
 
   // holds mutable ref to current triggered sound
