@@ -37,7 +37,6 @@ export function SoundsTab() {
       return filtered.filter(([_, { data }]) => ['synth', 'soundfont'].includes(data.type));
     }
     return filtered;
-
   }, [sounds, soundsFilter, search]);
 
   // holds mutable ref to current triggered sound
