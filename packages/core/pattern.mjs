@@ -809,15 +809,6 @@ export class Pattern {
   //////////////////////////////////////////////////////////////////////
   // Multi-pattern functions
 
-  /**
-   * Stacks the given pattern(s) to the current pattern.
-   * @name stack
-   * @memberof Pattern
-   * @example
-   * s("hh*4").stack(
-   *   note("c4(5,8)")
-   * )
-   */
   stack(...pats) {
     return stack(this, ...pats);
   }
@@ -826,30 +817,9 @@ export class Pattern {
     return sequence(this, ...pats);
   }
 
-  /**
-   * Appends the given pattern(s) to the current pattern.
-   * @name seq
-   * @memberof Pattern
-   * @synonyms sequence, fastcat
-   * @example
-   * s("hh*4").seq(
-   *   note("c4(5,8)")
-   * )
-   */
   seq(...pats) {
     return sequence(this, ...pats);
   }
-
-  /**
-   * Appends the given pattern(s) to the next cycle.
-   * @name cat
-   * @memberof Pattern
-   * @synonyms slowcat
-   * @example
-   * s("hh*4").cat(
-   *   note("c4(5,8)")
-   * )
-   */
   cat(...pats) {
     return cat(this, ...pats);
   }
@@ -1280,6 +1250,12 @@ export function reify(thing) {
  * @example
  * stack("g3", "b3", ["e4", "d4"]).note()
  * // "g3,b3,[e4,d4]".note()
+ *
+ * @example
+ * // As a chained function:
+ * s("hh*4").stack(
+ *   note("c4(5,8)")
+ * )
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
@@ -1408,6 +1384,11 @@ export function slowcatPrime(...pats) {
  * cat("e5", "b4", ["d5", "c5"]).note()
  * // "<e5 b4 [d5 c5]>".note()
  *
+ * @example
+ * // As a chained function:
+ * s("hh*4").cat(
+ *    note("c4(5,8)")
+ * )
  */
 export function cat(...pats) {
   return slowcat(...pats);
@@ -1478,12 +1459,18 @@ export function sequence(...pats) {
 }
 
 /** Like **cat**, but the items are crammed into one cycle.
- * @synonyms fastcat, sequence
+ * @synonyms sequence, fastcat
  * @example
  * seq("e5", "b4", ["d5", "c5"]).note()
  * // "e5 b4 [d5 c5]".note()
  *
+ * @example
+ * // As a chained function:
+ * s("hh*4").seq(
+ *   note("c4(5,8)")
+ * )
  */
+
 export function seq(...pats) {
   return fastcat(...pats);
 }
