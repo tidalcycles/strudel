@@ -1245,7 +1245,6 @@ export function reify(thing) {
 
 /** The given items are played at the same time at the same length.
  *
- * @name stack
  * @return {Pattern}
  * @synonyms polyrhythm, pr
  * @example
@@ -1378,7 +1377,6 @@ export function slowcatPrime(...pats) {
 
 /** The given items are con**cat**enated, where each one takes one cycle.
  *
- * @name cat
  * @param {...any} items - The items to concatenate
  * @synonyms slowcat
  * @return {Pattern}
@@ -1461,8 +1459,6 @@ export function sequence(...pats) {
 }
 
 /** Like **cat**, but the items are crammed into one cycle.
- * @name seq
- * @memberof Pattern
  * @synonyms sequence, fastcat
  * @example
  * seq("e5", "b4", ["d5", "c5"]).note()
