@@ -29,7 +29,8 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
-    "@strudel/core": "workspace:*"
+    "@strudel/core": "workspace:*",
+    "picogl": "^0.17.9"
   },
   "devDependencies": {
     "vite": "^5.0.10"
