@@ -1,6 +1,12 @@
 import { evalScope, hash2code, logger } from '@strudel/core';
 import { settingPatterns, defaultAudioDeviceName } from '../settings.mjs';
-import { getAudioContext, initializeAudioOutput, setDefaultAudioContext, setVersionDefaults } from '@strudel/webaudio';
+import {
+  getAudioContext,
+  initializeAudioOutput,
+  setDefaultAudioContext,
+  setGlobalGain,
+  setVersionDefaults,
+} from '@strudel/webaudio';
 import { getMetadata } from '../metadata_parser';
 import { isTauri } from '../tauri.mjs';
 import './Repl.css';
@@ -186,6 +192,19 @@ export const setAudioDevice = async (id) => {
     }
   }
   initializeAudioOutput();
+};
+
+const NATURAL_LOG_10 = Math.log(1000);
+const LOW_VOLUME_CONSTANT = Math.exp(0.1 * NATURAL_LOG_10);
+export const setGlobalAudioVolume = (volume) => {
+  // Gain is calculated to adjust the volume to a logarithmic scale to match how us humans perceive loudness.
+  // Formula is taken from https://www.dr-lex.be/info-stuff/volumecontrols.html
+  volume /= 100; // [0, 1]
+
+  let gain = volume >= 0.1 ? 0.001 * Math.exp(NATURAL_LOG_10 * volume) : volume * 10 * 0.001 * LOW_VOLUME_CONSTANT;
+  gain = Math.max(0, Math.min(gain, 1)); // just in case
+
+  setGlobalGain(gain);
 };
 
 export function setVersionDefaultsFrom(code) {

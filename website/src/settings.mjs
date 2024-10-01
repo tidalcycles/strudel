@@ -34,6 +34,7 @@ export const defaultSettings = {
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
   audioEngineTarget: audioEngineTargets.webaudio,
+  audioVolume: 50,
 };
 
 let search = null;

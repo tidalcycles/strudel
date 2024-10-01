@@ -1,6 +1,7 @@
-import { defaultSettings, settingsMap, useSettings } from '../../../settings.mjs';
+import { useMemo } from 'react';
+import { audioEngineTargets, defaultSettings, settingsMap, useSettings } from '../../../settings.mjs';
 import { themes } from '@strudel/codemirror';
-import { isUdels } from '../../util.mjs';
+import { isUdels, setGlobalAudioVolume } from '../../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
 import { AudioEngineTargetSelector } from './AudioEngineTargetSelector.jsx';
@@ -31,23 +32,47 @@ function SelectInput({ value, options, onChange }) {
   );
 }
 
-function NumberSlider({ value, onChange, step = 1, ...rest }) {
+function NumberSlider({ value, onChange, min, max, step = 1, ...rest }) {
+  const fractionalDigits = useMemo(() => {
+    const stepStr = step.toString();
+    const decimalPointIdx = stepStr.indexOf('.');
+    if (decimalPointIdx < 0) {
+      return 0;
+    }
+
+    return stepStr.slice(decimalPointIdx + 1).length;
+  }, [step]);
+
+  const textInputCharWidth = useMemo(() => {
+    const maxValueWholePartLength = Math.floor(max).toString().length;
+    return maxValueWholePartLength + '.'.length + fractionalDigits;
+  }, [max, fractionalDigits]);
+
   return (
     <div className="flex space-x-2 gap-1">
       <input
         className="p-2 grow"
         type="range"
         value={value}
+        min={min}
+        max={max}
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
         {...rest}
       />
       <input
         type="number"
-        value={value}
+        style={{
+          // approximate text size + some leeway for the default padding + some space between the browser's up/down arrows and the input's value
+          width: `calc(${textInputCharWidth}ch + 2 * 0.75rem + 1rem)`,
+        }}
+        value={Number(value).toFixed(fractionalDigits)}
+        min={min}
+        max={max}
         step={step}
-        className="w-16 bg-background rounded-md"
+        className="bg-background rounded-md"
         onChange={(e) => onChange(Number(e.target.value))}
+        {...rest}
       />
     </div>
   );
@@ -101,6 +126,7 @@ export function SettingsTab({ started }) {
     panelPosition,
     audioDeviceName,
     audioEngineTarget,
+    audioVolume,
   } = useSettings();
   const shouldAlwaysSync = isUdels();
   const canChangeAudioDevice = AudioContext.prototype.setSinkId != null;
@@ -133,6 +159,19 @@ export function SettingsTab({ started }) {
               }
             });
           }}
+        />
+      </FormItem>
+      <FormItem label="Audio Volume">
+        {audioEngineTarget === audioEngineTargets.osc && (
+          <span class="text-sm italic">Has no effect when Audio Engine Target is OSC</span>
+        )}
+        <NumberSlider
+          value={audioVolume}
+          onChange={(audioVolume) => settingsMap.setKey('audioVolume', audioVolume)}
+          min={0}
+          max={100}
+          step={0.1}
+          disabled={audioEngineTarget === audioEngineTargets.osc}
         />
       </FormItem>
       <FormItem label="Theme">
