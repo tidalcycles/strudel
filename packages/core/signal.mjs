@@ -171,8 +171,8 @@ export const run = (n) => saw.range(0, n).floor().segment(n);
 export const binaryN = (n, nBits = 16) => {
   nBits = reify(nBits);
   // Shift and mask, putting msb on the right-side
-  const i = run(nBits).mul(-1).add(nBits.sub(1));
-  return reify(n).segment(nBits).brshift(i).band(pure(1));
+  const bitPos = run(nBits).mul(-1).add(nBits.sub(1));
+  return reify(n).segment(nBits).brshift(bitPos).band(pure(1));
 };
 
 export const randrun = (n) => {
