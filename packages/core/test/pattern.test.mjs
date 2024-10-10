@@ -46,6 +46,7 @@ import {
   rev,
   time,
   run,
+  binary,
   pick,
   stackLeft,
   stackRight,
@@ -956,6 +957,18 @@ describe('Pattern', () => {
   describe('run', () => {
     it('Can run', () => {
       expect(run(4).firstCycle()).toStrictEqual(sequence(0, 1, 2, 3).firstCycle());
+    });
+  });
+  describe('binary', () => {
+    it('Can make a binary pattern from a decimal', () => {
+      expect(binary(55532).firstCycle()).toStrictEqual(
+        sequence(1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0).firstCycle(),
+      );
+    });
+    it('Can make a binary pattern from a numerical pattern', () => {
+      expect(binary(pure(0x1337)).firstCycle()).toStrictEqual(
+        sequence(0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1).firstCycle(),
+      );
     });
   });
   describe('ribbon', () => {
