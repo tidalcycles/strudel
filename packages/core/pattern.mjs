@@ -1023,6 +1023,7 @@ function _composeOp(a, b, func) {
     div: [numeralArgs((a, b) => a / b)],
     mod: [numeralArgs(_mod)],
     pow: [numeralArgs(Math.pow)],
+    log2: [numeralArgs(Math.log2)],
     band: [numeralArgs((a, b) => a & b)],
     bor: [numeralArgs((a, b) => a | b)],
     bxor: [numeralArgs((a, b) => a ^ b)],

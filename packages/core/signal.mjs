@@ -160,6 +160,19 @@ const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
 export const run = (n) => saw.range(0, n).floor().segment(n);
 
 /**
+ * @name binary
+ * Creates a discrete pattern using binary representation.
+ * @param {number} n - input number to convert to binary
+ * @example
+ * "hh".s().struct(binary(5))
+ * // "hh".s().struct("1 0 1")
+ */
+export const binary = (n) => {
+  const nBits = reify(n).log2(0).floor().add(1);
+  return binaryN(n, nBits)
+};
+
+/**
  * @name binaryN
  * Creates a discrete pattern using binary representation.
  * @param {number} n - input number to convert to binary
