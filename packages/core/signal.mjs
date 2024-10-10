@@ -162,8 +162,8 @@ export const run = (n) => saw.range(0, n).floor().segment(n);
 /**
  * A discrete binary pattern using a decimal/hex number as input
  * @example
- * "c a f e".struct(binary(0xA5B5)).note().piano()
- * // "c a f e".struct("0 1 0 1 0 1 0 1 1 0 1 0 1").note().piano()
+ * "hh".s().struct(binary(55532))
+ * // "hh".s().struct("1 1 0 1 1 0 0 0 1 1 1 0 1 1 0 0")
  */
 export const binary = (n) => {
   const binLen = 16;
