@@ -159,6 +159,17 @@ const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
  */
 export const run = (n) => saw.range(0, n).floor().segment(n);
 
+/**
+ * A discrete binary pattern using a decimal/hex number as input
+ * @example
+ * "c a f e".struct(binary(0xA5B5)).note().piano()
+ * // "c a f e".struct("0 1 0 1 0 1 0 1 1 0 1 0 1").note().piano()
+ */
+export const binary = (n) => {
+  const binLen = 16;
+  return reify(n).segment(binLen).brshift(run(binLen)).band(pure(1));
+};
+
 export const randrun = (n) => {
   return signal((t) => {
     // Without adding 0.5, the first cycle is always 0,1,2,3,...
