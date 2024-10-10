@@ -160,16 +160,19 @@ const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
 export const run = (n) => saw.range(0, n).floor().segment(n);
 
 /**
- * A discrete binary pattern using a decimal/hex number as input
+ * @name binaryN
+ * Creates a discrete pattern using binary representation.
+ * @param {number} n - input number to convert to binary
+ * @param {number} nBits - pattern length, defaults to 16
  * @example
- * "hh".s().struct(binary(55532))
+ * "hh".s().struct(binaryN(55532, 16))
  * // "hh".s().struct("1 1 0 1 1 0 0 0 1 1 1 0 1 1 0 0")
  */
-export const binary = (n) => {
-  const binLen = 16;
-  // Shift right and mask, with msb at the end/right-side
-  const i = run(binLen).mul(-1).add(binLen - 1)
-  return reify(n).segment(binLen).brshift(i).band(pure(1));
+export const binaryN = (n, nBits = 16) => {
+  nBits = reify(nBits);
+  // Shift and mask, putting msb on the right-side
+  const i = run(nBits).mul(-1).add(nBits.sub(1));
+  return reify(n).segment(nBits).brshift(i).band(pure(1));
 };
 
 export const randrun = (n) => {

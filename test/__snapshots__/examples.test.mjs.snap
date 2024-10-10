@@ -967,7 +967,8 @@ exports[`runs examples > example "begin" example index 0 1`] = `
 ]
 `;
 
-exports[`runs examples > example "binary" example index 0 1`] = `
+exports[`runs examples > example "binaryN
+Creates a discrete pattern using binary representation." example index 0 1`] = `
 [
   "[ 0/1 → 1/16 | s:hh ]",
   "[ 1/16 → 1/8 | s:hh ]",
