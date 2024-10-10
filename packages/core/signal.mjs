@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Hap } from './hap.mjs';
-import { Pattern, fastcat, reify, silence, stack, register } from './pattern.mjs';
+import { Pattern, fastcat, pure, register, reify, silence, stack } from './pattern.mjs';
 import Fraction from './fraction.mjs';
 import { id, _mod } from './util.mjs';
 
@@ -167,7 +167,9 @@ export const run = (n) => saw.range(0, n).floor().segment(n);
  */
 export const binary = (n) => {
   const binLen = 16;
-  return reify(n).segment(binLen).brshift(run(binLen)).band(pure(1));
+  // Shift right and mask, with msb at the end/right-side
+  const i = run(binLen).mul(-1).add(binLen - 1)
+  return reify(n).segment(binLen).brshift(i).band(pure(1));
 };
 
 export const randrun = (n) => {
