@@ -809,15 +809,6 @@ export class Pattern {
   //////////////////////////////////////////////////////////////////////
   // Multi-pattern functions
 
-  /**
-   * Stacks the given pattern(s) to the current pattern.
-   * @name stack
-   * @memberof Pattern
-   * @example
-   * s("hh*4").stack(
-   *   note("c4(5,8)")
-   * )
-   */
   stack(...pats) {
     return stack(this, ...pats);
   }
@@ -826,30 +817,9 @@ export class Pattern {
     return sequence(this, ...pats);
   }
 
-  /**
-   * Appends the given pattern(s) to the current pattern.
-   * @name seq
-   * @memberof Pattern
-   * @synonyms sequence, fastcat
-   * @example
-   * s("hh*4").seq(
-   *   note("c4(5,8)")
-   * )
-   */
   seq(...pats) {
     return sequence(this, ...pats);
   }
-
-  /**
-   * Appends the given pattern(s) to the next cycle.
-   * @name cat
-   * @memberof Pattern
-   * @synonyms slowcat
-   * @example
-   * s("hh*4").cat(
-   *   note("c4(5,8)")
-   * )
-   */
   cat(...pats) {
     return cat(this, ...pats);
   }
@@ -1280,6 +1250,12 @@ export function reify(thing) {
  * @example
  * stack("g3", "b3", ["e4", "d4"]).note()
  * // "g3,b3,[e4,d4]".note()
+ *
+ * @example
+ * // As a chained function:
+ * s("hh*4").stack(
+ *   note("c4(5,8)")
+ * )
  */
 export function stack(...pats) {
   // Array test here is to avoid infinite recursions..
@@ -1408,6 +1384,11 @@ export function slowcatPrime(...pats) {
  * cat("e5", "b4", ["d5", "c5"]).note()
  * // "<e5 b4 [d5 c5]>".note()
  *
+ * @example
+ * // As a chained function:
+ * s("hh*4").cat(
+ *    note("c4(5,8)")
+ * )
  */
 export function cat(...pats) {
   return slowcat(...pats);
@@ -1430,6 +1411,36 @@ export function arrange(...sections) {
   return s_cat(...sections).slow(total);
 }
 
+/**
+ * Similarly to `arrange`, allows you to arrange multiple patterns together over multiple cycles.
+ * Unlike `arrange`, you specify a start and stop time for each pattern rather than duration, which
+ * means that patterns can overlap.
+ * @return {Pattern}
+ * @example
+seqPLoop([0, 2, "bd(3,8)"],
+         [1, 3, "cp(3,8)"]
+        )
+  .sound()
+ */
+export function seqPLoop(...parts) {
+  let total = Fraction(0);
+  const pats = [];
+  for (let part of parts) {
+    if (part.length == 2) {
+      part.unshift(total);
+    }
+    total = part[1];
+  }
+
+  return stack(
+    ...parts.map(([start, stop, pat]) =>
+      pure(reify(pat)).compress(Fraction(start).div(total), Fraction(stop).div(total)),
+    ),
+  )
+    .slow(total)
+    .innerJoin(); // or resetJoin or restartJoin ??
+}
+
 export function fastcat(...pats) {
   let result = slowcat(...pats);
   if (pats.length > 1) {
@@ -1448,12 +1459,18 @@ export function sequence(...pats) {
 }
 
 /** Like **cat**, but the items are crammed into one cycle.
- * @synonyms fastcat, sequence
+ * @synonyms sequence, fastcat
  * @example
  * seq("e5", "b4", ["d5", "c5"]).note()
  * // "e5 b4 [d5 c5]".note()
  *
+ * @example
+ * // As a chained function:
+ * s("hh*4").seq(
+ *   note("c4(5,8)")
+ * )
  */
+
 export function seq(...pats) {
   return fastcat(...pats);
 }
@@ -2017,6 +2034,34 @@ export const { zoomArc, zoomarc } = register(['zoomArc', 'zoomarc'], function (a
 });
 
 /**
+ * Splits a pattern into the given number of slices, and plays them according to a pattern of slice numbers.
+ * Similar to `slice`, but slices up patterns rather than sound samples.
+ * @param {number} number of slices
+ * @param {number} slices to play
+ * @example
+ * note("0 1 2 3 4 5 6 7".scale('c:mixolydian'))
+ *.bite(4, "3 2 1 0")
+ * @example
+ * sound("bd - bd bd*2, - sd:6 - sd:5 sd:1 - [- sd:2] -, hh [- cp:7]")
+  .bank("RolandTR909").speed(1.2)
+  .bite(4, "0 0 [1 2] <3 2> 0 0 [2 1] 3")
+ */
+export const bite = register(
+  'bite',
+  (npat, ipat, pat) => {
+    return ipat
+      .fmap((i) => (n) => {
+        const a = Fraction(i).div(n).mod(1);
+        const b = a.add(Fraction(1).div(n));
+        return pat.zoom(a, b);
+      })
+      .appLeft(npat)
+      .squeezeJoin();
+  },
+  false,
+);
+
+/**
  * Selects the given fraction of the pattern and repeats that part to fill the remainder of the cycle.
  * @param {number} fraction fraction to select
  * @example
@@ -2446,6 +2491,37 @@ export const hsl = register('hsl', (h, s, l, pat) => {
 Pattern.prototype.tag = function (tag) {
   return this.withContext((ctx) => ({ ...ctx, tags: (ctx.tags || []).concat([tag]) }));
 };
+
+/**
+ * Filters haps using the given function
+ * @name filter
+ * @param {Function} test function to test Hap
+ * @example
+ * s("hh!7 oh").filter(hap => hap.value.s==='hh')
+ */
+export const filter = register('filter', (test, pat) => pat.withHaps((haps) => haps.filter(test)));
+
+/**
+ * Filters haps by their begin time
+ * @name filterWhen
+ * @noAutocomplete
+ * @param {Function} test function to test Hap.whole.begin
+ */
+export const filterWhen = register('filterWhen', (test, pat) => pat.filter((h) => test(h.whole.begin)));
+
+/**
+ * Use within to apply a function to only a part of a pattern.
+ * @name within
+ * @param {number} start start within cycle (0 - 1)
+ * @param {number} end end within cycle (0 - 1). Must be > start
+ * @param {Function} func function to be applied to the sub-pattern
+ */
+export const within = register('within', (a, b, fn, pat) =>
+  stack(
+    fn(pat.filterWhen((t) => t.cyclePos() >= a && t.cyclePos() <= b)),
+    pat.filterWhen((t) => t.cyclePos() < a || t.cyclePos() > b),
+  ),
+);
 
 //////////////////////////////////////////////////////////////////////
 // Tactus-related functions, i.e. ones that do stepwise

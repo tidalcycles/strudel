@@ -120,6 +120,7 @@ export function MiniRepl({
                 'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background',
                 started ? 'animate-pulse' : '',
               )}
+              aria-label={started ? 'stop' : 'play'}
               onClick={() => editorRef.current?.toggle()}
             >
               <Icon type={started ? 'stop' : 'play'} />
@@ -129,6 +130,7 @@ export function MiniRepl({
                 'w-16 flex items-center justify-center p-1 text-foreground border-lineHighlight bg-lineHighlight',
                 isDirty ? 'text-foreground hover:bg-background cursor-pointer' : 'opacity-50 cursor-not-allowed',
               )}
+              aria-label="update"
               onClick={() => editorRef.current?.evaluate()}
             >
               <Icon type="refresh" />
@@ -140,6 +142,7 @@ export function MiniRepl({
                 className={
                   'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background'
                 }
+                aria-label="previous example"
                 onClick={() => changeTune(tuneIndex - 1)}
               >
                 <div className="rotate-180">
@@ -150,6 +153,7 @@ export function MiniRepl({
                 className={
                   'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background'
                 }
+                aria-label="next example"
                 onClick={() => changeTune(tuneIndex + 1)}
               >
                 <Icon type="skip" />

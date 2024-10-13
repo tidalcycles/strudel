@@ -1,5 +1,7 @@
+import { useMemo, useState } from 'react';
+
 import jsdocJson from '../../../../../doc.json';
-const visibleFunctions = jsdocJson.docs
+const availableFunctions = jsdocJson.docs
   .filter(({ name, description }) => name && !name.startsWith('_') && !!description)
   .sort((a, b) => /* a.meta.filename.localeCompare(b.meta.filename) +  */ a.name.localeCompare(b.name));
 
@@ -10,9 +12,29 @@ const getInnerText = (html) => {
 };
 
 export function Reference() {
+  const [search, setSearch] = useState('');
+
+  const visibleFunctions = useMemo(() => {
+    return availableFunctions.filter((entry) => {
+      if (!search) {
+        return true;
+      }
+
+      return entry.name.includes(search) || (entry.synonyms?.some((s) => s.includes(search)) ?? false);
+    });
+  }, [search]);
+
   return (
     <div className="flex h-full w-full pt-2 text-foreground overflow-hidden">
       <div className="w-42 flex-none h-full overflow-y-auto overflow-x-hidden pr-4">
+        <div class="w-full ml-2 mb-2 top-0 sticky">
+          <input
+            className="w-full p-1 bg-background rounded-md"
+            placeholder="Search"
+            value={search}
+            onInput={(event) => setSearch(event.target.value)}
+          />
+        </div>
         {visibleFunctions.map((entry, i) => (
           <a
             key={i}
