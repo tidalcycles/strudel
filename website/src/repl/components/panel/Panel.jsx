@@ -46,7 +46,10 @@ export function VerticalPanel({ context }) {
     <PanelNav
       onMouseEnter={(x) => setIsHovered(true)}
       onMouseLeave={(x) => setIsHovered(false)}
-      className={cx('hover:w-[600px]', pinned ? `w-[600px]` : 'w-8')}
+      className={cx(
+        'lg:hover:min-w-[600px] lg:hover:max-w-[600px] hover:min-w-[300px] hover:max-w-[300px] ',
+        pinned ? `lg:min-w-[600px] min-w-[300px] lg:max-w-[600px] min-max-[300px]` : 'min-w-8',
+      )}
     >
       <div className={cx('group-hover:flex flex-col h-full', pinned ? 'flex' : 'hidden')}>
         <div className="flex justify-between w-full ">
@@ -54,7 +57,7 @@ export function VerticalPanel({ context }) {
           <PinButton pinned={pinned} setPinned={setPanelPinned} />
         </div>
 
-        <div className="overflow-auto">
+        <div className="overflow-auto h-full">
           <PanelContent context={context} tab={tab} />
         </div>
       </div>
