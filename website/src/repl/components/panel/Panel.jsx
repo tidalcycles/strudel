@@ -26,7 +26,7 @@ export function HorizontalPanel({ context }) {
         pinned ? `min-h-[360px] max-h-[360px]` : 'min-h-10 max-h-10',
       )}
     >
-      <div className="flex h-full overflow-auto">
+      <div className="flex h-full overflow-auto ">
         <PanelContent context={context} tab={tab} />
       </div>
 
