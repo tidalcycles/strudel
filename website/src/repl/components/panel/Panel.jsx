@@ -3,7 +3,7 @@ import useEvent from '@src/useEvent.mjs';
 import cx from '@src/cx.mjs';
 import { nanoid } from 'nanoid';
 import { useCallback, useState } from 'react';
-import { setActiveFooter as setTab, useSettings } from '../../../settings.mjs';
+import { setPanelPinned, setActiveFooter as setTab, useSettings } from '../../../settings.mjs';
 import { ConsoleTab } from './ConsoleTab';
 import { FilesTab } from './FilesTab';
 import { Reference } from './Reference';
@@ -16,50 +16,56 @@ import { ChevronLeftIcon } from '@heroicons/react/16/solid';
 const TAURI = typeof window !== 'undefined' && window.__TAURI__;
 
 export function HorizontalPanel({ context }) {
-  const [pinned, setPinned] = useState(true);
   const settings = useSettings();
-  const tab = settings.activeFooter;
+  const { isPanelPinned: pinned, activeFooter: tab } = settings;
+  const [isHovered, setIsHovered] = useState(false);
+  const showContent = isHovered || pinned;
+
   return (
     <PanelNav
+      onMouseEnter={(x) => setIsHovered(true)}
+      onMouseLeave={(x) => setIsHovered(false)}
       className={cx(
-        'hover:max-h-[360px] hover:min-h-[360px] flex flex-col overflow-hidden ',
-        pinned ? `min-h-[360px] max-h-[360px]` : 'min-h-8 max-h-8',
+        'hover:max-h-[360px] hover:min-h-[360px] justify-between flex flex-col',
+        pinned ? `min-h-[360px] max-h-[360px]` : 'min-h-10 max-h-10',
       )}
     >
-    
-      <div className={cx('group-hover:flex flex-col h-full overflow-auto', pinned ? 'flex' : 'hidden')}>
-        <PanelContent context={context} tab={tab} />
-      </div>
-      <div className="flex justify-between min-h-8 max-h-8">
+      {showContent && (
+        <div className="flex h-full overflow-auto">
+          <PanelContent context={context} tab={tab} />
+        </div>
+      )}
+      <div className="flex justify-between min-h-10 max-h-10 pr-2 items-center">
         <Tabs setTab={setTab} tab={tab} pinned={pinned} />
-        <PinButton pinned={pinned} setPinned={setPinned} />
+        <PinButton pinned={pinned} setPinned={setPanelPinned} />
       </div>
     </PanelNav>
   );
 }
 
 export function VerticalPanel({ context }) {
-  const [pinned, setPinned] = useState(true);
   const settings = useSettings();
-  const tab = settings.activeFooter;
+  const { isPanelPinned: pinned, activeFooter: tab } = settings;
+  const [isHovered, setIsHovered] = useState(false);
+  const showContent = isHovered || pinned;
+
   return (
     <PanelNav
-      className={cx(
-        'hover:min-w-[600px] hover:max-w-[600px]',
-        pinned ? `min-w-[600px] max-w-[600px]` : ' min-w-8 max-w-8',
-      )}
+      onMouseEnter={(x) => setIsHovered(true)}
+      onMouseLeave={(x) => setIsHovered(false)}
+      className={cx('hover:w-[600px]', pinned ? `w-[600px]` : 'w-8')}
     >
       <div className={cx('group-hover:flex flex-col h-full', pinned ? 'flex' : 'hidden')}>
-        <div className="flex justify-between">
+        <div className="flex justify-between w-full ">
           <Tabs setTab={setTab} tab={tab} pinned={pinned} />
-          <PinButton pinned={pinned} setPinned={setPinned} />
+          <PinButton pinned={pinned} setPinned={setPanelPinned} />
         </div>
-
-        <div className="overflow-auto">
-          <PanelContent context={context} tab={tab} />
-        </div>
+        {showContent && (
+          <div className="overflow-auto">
+            <PanelContent context={context} tab={tab} />
+          </div>
+        )}
       </div>
-
       <div className={cx(pinned ? 'hidden' : 'flex flex-col items-center justify-center  h-full group-hover:hidden ')}>
         <ChevronLeftIcon className="text-foreground opacity-50 w-6 h-6" />
       </div>
@@ -71,17 +77,21 @@ const tabNames = {
   welcome: 'intro',
   patterns: 'patterns',
   sounds: 'sounds',
-  console: 'console',
   reference: 'reference',
+  console: 'console',
   settings: 'settings',
 };
 if (TAURI) {
   tabNames.files = 'files';
 }
 
-function PanelNav({ children, className }) {
+function PanelNav({ children, className, ...props }) {
   return (
-    <nav aria-label="Settings Menu" className={cx('bg-lineHighlight group transition-all', className)}>
+    <nav
+      aria-label="Settings Menu"
+      className={cx('bg-lineHighlight group transition-all overflow-x-auto', className)}
+      {...props}
+    >
       {children}
     </nav>
   );
@@ -159,7 +169,7 @@ function PinButton({ pinned, setPinned }) {
     <button
       onClick={() => setPinned(!pinned)}
       className={cx(
-        'text-foreground w-8 h-8 items-center justify-center p-1.5 group-hover:flex',
+        'text-foreground max-h-8 min-h-8 max-w-8 min-w-8 items-center justify-center p-1.5 group-hover:flex',
         pinned ? 'flex' : 'hidden',
       )}
       aria-label="Pin Settings Menu"
@@ -168,6 +178,7 @@ function PinButton({ pinned, setPinned }) {
         stroke="currentColor"
         fill={'currentColor'}
         strokeWidth="0"
+        className="w-full h-full"
         opacity={pinned ? 1 : '.3'}
         viewBox="0 0 16 16"
         xmlns="http://www.w3.org/2000/svg"

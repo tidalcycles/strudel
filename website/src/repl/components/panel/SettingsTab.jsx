@@ -105,7 +105,7 @@ export function SettingsTab({ started }) {
   const shouldAlwaysSync = isUdels();
   const canChangeAudioDevice = AudioContext.prototype.setSinkId != null;
   return (
-    <div className="text-foreground p-4 space-y-4">
+    <div className="text-foreground p-4 space-y-4 w-full">
       {canChangeAudioDevice && (
         <FormItem label="Audio Output Device">
           <AudioDeviceSelector

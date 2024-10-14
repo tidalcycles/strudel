@@ -77,7 +77,7 @@ function PatternButtons({ patterns, activePattern, onClick, started }) {
 
 function ActionButton({ children, onClick, label, labelIsHidden }) {
   return (
-    <button className="hover:opacity-50" onClick={onClick} title={label}>
+    <button className="hover:opacity-50 text-nowrap" onClick={onClick} title={label}>
       {labelIsHidden !== true && label}
       {children}
     </button>
@@ -155,7 +155,7 @@ export function PatternsTab({ context }) {
         </div>
       )}
 
-      <section className="flex overflow-y-scroll max-h-full flex-col pb-4">
+      <section className="flex overflow-y-scroll max-h-full flex-col">
         {patternFilter === patternFilterName.user && (
           <PatternButtons
             onClick={(id) =>

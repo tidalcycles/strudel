@@ -30,7 +30,8 @@ export const defaultSettings = {
   isZen: false,
   soundsFilter: 'all',
   patternFilter: 'community',
-  panelPosition: 'right',
+  panelPosition: 'bottom',
+  isPanelPinned: true,
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
   audioEngineTarget: audioEngineTargets.webaudio,
@@ -60,6 +61,7 @@ export function useSettings() {
   return {
     ...state,
     isZen: parseBoolean(state.isZen),
+    isPanelPinned: parseBoolean(state.isPanelPinned),
     isBracketMatchingEnabled: parseBoolean(state.isBracketMatchingEnabled),
     isBracketClosingEnabled: parseBoolean(state.isBracketClosingEnabled),
     isLineNumbersDisplayed: parseBoolean(state.isLineNumbersDisplayed),
@@ -77,6 +79,7 @@ export function useSettings() {
 }
 
 export const setActiveFooter = (tab) => settingsMap.setKey('activeFooter', tab);
+export const setPanelPinned = (isPinned) => settingsMap.setKey('isPanelPinned', isPinned);
 
 export const setIsZen = (active) => settingsMap.setKey('isZen', !!active);
 
