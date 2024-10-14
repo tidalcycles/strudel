@@ -47,8 +47,8 @@ export function VerticalPanel({ context }) {
       onMouseEnter={(x) => setIsHovered(true)}
       onMouseLeave={(x) => setIsHovered(false)}
       className={cx(
-        'lg:hover:min-w-[600px] lg:hover:max-w-[600px] hover:min-w-[300px] hover:max-w-[300px] ',
-        pinned ? `lg:min-w-[600px] min-w-[300px] lg:max-w-[600px] max-w-[300px]` : 'min-w-8',
+        'hover:min-w-[min(600px,80vw)] hover:max-w-[min(600px,80vw)]',
+        pinned ? `min-w-[min(600px,80vw)] max-w-[min(600px,80vw)]` : 'min-w-8',
       )}
     >
       <div className={cx('group-hover:flex flex-col h-full', pinned ? 'flex' : 'hidden')}>
