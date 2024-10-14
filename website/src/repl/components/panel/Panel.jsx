@@ -18,23 +18,18 @@ const TAURI = typeof window !== 'undefined' && window.__TAURI__;
 export function HorizontalPanel({ context }) {
   const settings = useSettings();
   const { isPanelPinned: pinned, activeFooter: tab } = settings;
-  const [isHovered, setIsHovered] = useState(false);
-  const showContent = isHovered || pinned;
 
   return (
     <PanelNav
-      onMouseEnter={(x) => setIsHovered(true)}
-      onMouseLeave={(x) => setIsHovered(false)}
       className={cx(
         'hover:max-h-[360px] hover:min-h-[360px] justify-between flex flex-col',
         pinned ? `min-h-[360px] max-h-[360px]` : 'min-h-10 max-h-10',
       )}
     >
-      {showContent && (
-        <div className="flex h-full overflow-auto">
-          <PanelContent context={context} tab={tab} />
-        </div>
-      )}
+      <div className="flex h-full overflow-auto">
+        <PanelContent context={context} tab={tab} />
+      </div>
+
       <div className="flex justify-between min-h-10 max-h-10 pr-2 items-center">
         <Tabs setTab={setTab} tab={tab} pinned={pinned} />
         <PinButton pinned={pinned} setPinned={setPanelPinned} />
@@ -46,8 +41,6 @@ export function HorizontalPanel({ context }) {
 export function VerticalPanel({ context }) {
   const settings = useSettings();
   const { isPanelPinned: pinned, activeFooter: tab } = settings;
-  const [isHovered, setIsHovered] = useState(false);
-  const showContent = isHovered || pinned;
 
   return (
     <PanelNav
@@ -60,11 +53,10 @@ export function VerticalPanel({ context }) {
           <Tabs setTab={setTab} tab={tab} pinned={pinned} />
           <PinButton pinned={pinned} setPinned={setPanelPinned} />
         </div>
-        {showContent && (
-          <div className="overflow-auto">
-            <PanelContent context={context} tab={tab} />
-          </div>
-        )}
+
+        <div className="overflow-auto">
+          <PanelContent context={context} tab={tab} />
+        </div>
       </div>
       <div className={cx(pinned ? 'hidden' : 'flex flex-col items-center justify-center  h-full group-hover:hidden ')}>
         <ChevronLeftIcon className="text-foreground opacity-50 w-6 h-6" />
