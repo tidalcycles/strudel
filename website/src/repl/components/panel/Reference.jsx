@@ -51,8 +51,11 @@ export function Reference() {
           ))}
         </div>
       </div>
-      <div className="break-normal flex-grow flex-col overflow-y-auto overflow-x-hidden   px-2 flex relative" id="reference-container">
-           <div className='prose dark:prose-invert min-w-full px-1 '>
+      <div
+        className="break-normal flex-grow flex-col overflow-y-auto overflow-x-hidden   px-2 flex relative"
+        id="reference-container"
+      >
+        <div className="prose dark:prose-invert min-w-full px-1 ">
           <h2>API Reference</h2>
           <p>
             This is the long list functions you can use! Remember that you don't need to remember all of those and that
@@ -80,7 +83,7 @@ export function Reference() {
               ))}
             </section>
           ))}
-      </div>
+        </div>
       </div>
     </div>
   );

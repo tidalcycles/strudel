@@ -73,8 +73,8 @@ export function registerSynthSounds() {
     'supersaw',
     (begin, value, onended) => {
       const ac = getAudioContext();
-      const {z1, z2, z3} = value;
-      let { duration, n, unison = z2 ?? 5, spread = z3 ?? 0.6, detune, } = value;
+      const { z1, z2, z3 } = value;
+      let { duration, n, unison = z2 ?? 5, spread = z3 ?? 0.6, detune } = value;
       detune = detune ?? n ?? z1 ?? 0.18;
       const frequency = getFrequencyFromValue(value);
 

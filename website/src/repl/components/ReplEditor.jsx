@@ -15,7 +15,6 @@ export default function ReplEditor(Props) {
   const settings = useSettings();
   const { panelPosition } = settings;
 
-
   return (
     <div className="h-full flex flex-col relative">
       <Loader active={pending} />

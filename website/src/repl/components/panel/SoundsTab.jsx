@@ -53,13 +53,12 @@ export function SoundsTab() {
 
   return (
     <div id="sounds-tab" className="px-4 flex flex-col w-full h-full dark:text-white text-stone-900">
-    
-    <input
-          className="w-full p-1 bg-background rounded-md pb-2"
-          placeholder="Search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <input
+        className="w-full p-1 bg-background rounded-md pb-2"
+        placeholder="Search"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
       <div className="pb-2 flex shrink-0 flex-wrap">
         <ButtonGroup
@@ -74,7 +73,7 @@ export function SoundsTab() {
         ></ButtonGroup>
         <ImportSoundsButton onComplete={() => settingsMap.setKey('soundsFilter', 'user')} />
       </div>
-     
+
       <div className="min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal pb-2">
         {soundEntries.map(([name, { data, onTrigger }]) => {
           return (

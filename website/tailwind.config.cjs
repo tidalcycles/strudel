@@ -34,7 +34,7 @@ module.exports = {
       },
       spacing: {
         'app-height': 'var(--app-height)',
-        'app-width': 'var(--app-width)'
+        'app-width': 'var(--app-width)',
       },
       typography(theme) {
         return {
