@@ -102,7 +102,7 @@ export function PatternsTab({ context }) {
   const autoResetPatternOnChange = !isUdels();
 
   return (
-    <div className="px-4 w-full dark:text-white text-stone-900 space-y-2 pb-4 flex flex-col overflow-hidden max-h-full">
+    <div className="px-4 w-full dark:text-white text-stone-900 space-y-2  flex flex-col overflow-hidden max-h-full">
       <ButtonGroup
         value={patternFilter}
         onChange={(value) => settingsMap.setKey('patternFilter', value)}
@@ -155,7 +155,7 @@ export function PatternsTab({ context }) {
         </div>
       )}
 
-      <section className="flex overflow-y-scroll max-h-full flex-col">
+      <section className="flex overflow-y-scroll max-h-full flex-col pb-4">
         {patternFilter === patternFilterName.user && (
           <PatternButtons
             onClick={(id) =>

@@ -74,7 +74,7 @@ export function SoundsTab() {
         ></ButtonGroup>
         <ImportSoundsButton onComplete={() => settingsMap.setKey('soundsFilter', 'user')} />
       </div>
-      <div className="min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal">
+      <div className="min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal pb-4">
         {soundEntries.map(([name, { data, onTrigger }]) => {
           return (
             <span
