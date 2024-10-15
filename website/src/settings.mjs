@@ -30,7 +30,7 @@ export const defaultSettings = {
   isZen: false,
   soundsFilter: 'all',
   patternFilter: 'community',
-  panelPosition: 'bottom',
+  panelPosition: window.innerWidth > 1000 ? 'right' : 'bottom',
   isPanelPinned: true,
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,

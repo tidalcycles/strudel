@@ -44,8 +44,6 @@ export function VerticalPanel({ context }) {
 
   return (
     <PanelNav
-      onMouseEnter={(x) => setIsHovered(true)}
-      onMouseLeave={(x) => setIsHovered(false)}
       className={cx(
         'hover:min-w-[min(600px,80vw)] hover:max-w-[min(600px,80vw)]',
         pinned ? `min-w-[min(600px,80vw)] max-w-[min(600px,80vw)]` : 'min-w-8',
