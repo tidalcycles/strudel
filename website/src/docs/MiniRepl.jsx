@@ -37,7 +37,7 @@ export function MiniRepl({
   const shouldShowCanvas = !!punchcard;
   const canvasId = shouldShowCanvas ? useMemo(() => `canvas-${id}`, [id]) : null;
   autodraw = !!punchcard || !!claviature || !!autodraw;
-  drawTime = drawTime ?? punchcard ? [0, 4] : [-2, 2];
+  drawTime = (drawTime ?? punchcard) ? [0, 4] : [-2, 2];
   if (claviature) {
     drawTime = [0, 0];
   }
