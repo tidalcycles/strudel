@@ -36,6 +36,6 @@
   "gitHead": "0e26d4e741500f5bae35b023608f062a794905c2",
   "devDependencies": {
     "vite": "^5.0.10",
-    "vitest": "^1.1.0"
+    "vitest": "^2.1.3"
   }
 }
