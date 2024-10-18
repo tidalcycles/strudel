@@ -181,7 +181,7 @@ async function reloadShaderInstanceCode(instance, code) {
     instance.program.delete()
     instance.program = program
     instance.uniforms = setupUniforms(instance.uniforms, program)
-    instance.draw = instance.app.createDrawCall(program, instance.arrays)
+    instance.drawFrame = instance.app.createDrawCall(program, instance.arrays)
   })
 }
 
