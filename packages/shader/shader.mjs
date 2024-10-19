@@ -59,7 +59,7 @@ const decayModulation = (decay) => {
 
 // Set an uniform value (from a pattern).
 export function setUniform(instanceName, name, value, position) {
-  const instance = _instances[instanceName || 'default'];
+  const instance = _instances[instanceName];
   if (!instance) {
     logger('[shader] not loaded yet', 'warning');
     return;
@@ -104,7 +104,8 @@ function setupUniforms(uniforms, program) {
       const uname = name.replace('[0]', '');
       const count = uniform.count | 0;
       if (!uniforms[uname] || uniforms[uname].count != count) {
-        // TODO: keep the previous value when the count change...
+        // TODO: keep the previous values when the count change:
+        // if the count decreased, then drop the excess, else append new values
         uniforms[uname] = {
           name,
           count,
@@ -174,6 +175,7 @@ async function initializeShaderInstance(name, code) {
         updateUniforms(instance.drawFrame, elapsed, instance.uniforms);
 
         instance.drawFrame.draw();
+        // After sometime, if no update happened, stop the animation loop
         if (instance.age++ < 100) requestAnimationFrame(instance.update);
         else instance.drawing = false;
       };
