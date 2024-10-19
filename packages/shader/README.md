@@ -6,11 +6,11 @@ Helpers for drawing shader.
 
 Here are the things that needs to be implemented:
 
-- [ ] Shader source error reporting
+- [ ] Shader compilation error reporting, e.g. to show the line number
 - [ ] Shader import from url, like shadertoy or git
-- [ ] Display attribution
-- [ ] Compilation error reporting, e.g. to show the line number
-- [ ] Multiple instance and custom canvas position
-- [ ] Multiple program, to be swapped like a pattern
+- [ ] Display shader author attribution, e.g. to respect CC-BY
+- [ ] Handle WebGL context lost by restoring the objects.
+- [ ] Multiple instances and custom canvas positions
+- [ ] Multiple programs, to be swapped like a pattern
 - [ ] Texture inputs
 - [ ] Buffer inputs, e.g. to generate a texture
