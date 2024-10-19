@@ -8343,6 +8343,37 @@ exports[`runs examples > example "undegradeBy" example index 1 1`] = `
 ]
 `;
 
+exports[`runs examples > example "uniform" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | s:bd ]",
+  "[ 1/1 → 2/1 | s:bd ]",
+  "[ 2/1 → 3/1 | s:bd ]",
+  "[ 3/1 → 4/1 | s:bd ]",
+]
+`;
+
+exports[`runs examples > example "uniform" example index 1 1`] = `
+[
+  "[ 0/1 → 1/1 | s:bd ]",
+  "[ 1/1 → 2/1 | s:bd ]",
+  "[ 2/1 → 3/1 | s:bd ]",
+  "[ 3/1 → 4/1 | s:bd ]",
+]
+`;
+
+exports[`runs examples > example "uniform" example index 2 1`] = `
+[
+  "[ 0/1 → 1/2 | note:c3 ]",
+  "[ 1/2 → 1/1 | note:e3 ]",
+  "[ 1/1 → 3/2 | note:c3 ]",
+  "[ 3/2 → 2/1 | note:e3 ]",
+  "[ 2/1 → 5/2 | note:c3 ]",
+  "[ 5/2 → 3/1 | note:e3 ]",
+  "[ 3/1 → 7/2 | note:c3 ]",
+  "[ 7/2 → 4/1 | note:e3 ]",
+]
+`;
+
 exports[`runs examples > example "unison" example index 0 1`] = `
 [
   "[ 0/1 → 1/12 | note:d s:supersaw unison:1 ]",
