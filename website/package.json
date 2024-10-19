@@ -35,6 +35,7 @@
     "@strudel/mini": "workspace:*",
     "@strudel/osc": "workspace:*",
     "@strudel/serial": "workspace:*",
+    "@strudel/shader": "workspace:*",
     "@strudel/soundfonts": "workspace:*",
     "@strudel/tonal": "workspace:*",
     "@strudel/transpiler": "workspace:*",
