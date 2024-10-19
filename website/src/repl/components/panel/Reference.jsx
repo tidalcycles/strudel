@@ -25,32 +25,37 @@ export function Reference() {
   }, [search]);
 
   return (
-    <div className="flex h-full w-full pt-2 text-foreground overflow-hidden">
-      <div className="w-42 flex-none h-full overflow-y-auto overflow-x-hidden pr-4">
-        <div class="w-full ml-2 mb-2 top-0 sticky">
+    <div className="flex h-full w-full p-2 text-foreground overflow-hidden">
+      <div className="h-full  flex flex-col gap-2 w-1/3 max-w-72 ">
+        <div class="w-full flex">
           <input
-            className="w-full p-1 bg-background rounded-md"
+            className="w-full p-1 bg-background rounded-md border-none"
             placeholder="Search"
             value={search}
             onInput={(event) => setSearch(event.target.value)}
           />
         </div>
-        {visibleFunctions.map((entry, i) => (
-          <a
-            key={i}
-            className="cursor-pointer block hover:bg-lineHighlight py-1 px-4"
-            onClick={() => {
-              const el = document.getElementById(`doc-${i}`);
-              const container = document.getElementById('reference-container');
-              container.scrollTo(0, el.offsetTop);
-            }}
-          >
-            {entry.name} {/* <span className="text-gray-600">{entry.meta.filename}</span> */}
-          </a>
-        ))}
+        <div className="flex flex-col h-full overflow-y-auto  gap-1.5 bg-background bg-opacity-50  rounded-md">
+          {visibleFunctions.map((entry, i) => (
+            <a
+              key={i}
+              className="cursor-pointer flex-none hover:bg-lineHighlight overflow-x-hidden  px-1 text-ellipsis"
+              onClick={() => {
+                const el = document.getElementById(`doc-${i}`);
+                const container = document.getElementById('reference-container');
+                container.scrollTo(0, el.offsetTop);
+              }}
+            >
+              {entry.name} {/* <span className="text-gray-600">{entry.meta.filename}</span> */}
+            </a>
+          ))}
+        </div>
       </div>
-      <div className="break-normal w-full h-full overflow-auto pl-4 flex relative" id="reference-container">
-        <div className="prose dark:prose-invert max-w-full pr-4">
+      <div
+        className="break-normal flex-grow flex-col overflow-y-auto overflow-x-hidden   px-2 flex relative"
+        id="reference-container"
+      >
+        <div className="prose dark:prose-invert min-w-full px-1 ">
           <h2>API Reference</h2>
           <p>
             This is the long list functions you can use! Remember that you don't need to remember all of those and that

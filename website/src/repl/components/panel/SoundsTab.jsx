@@ -1,7 +1,7 @@
 import useEvent from '@src/useEvent.mjs';
 import { useStore } from '@nanostores/react';
 import { getAudioContext, soundMap, connectToDestination } from '@strudel/webaudio';
-import React, { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { settingsMap, useSettings } from '../../../settings.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import ImportSoundsButton from './ImportSoundsButton.jsx';
@@ -53,14 +53,13 @@ export function SoundsTab() {
 
   return (
     <div id="sounds-tab" className="px-4 flex flex-col w-full h-full dark:text-white text-stone-900">
-      <div className="w-full ml-2 mb-2 top-0 sticky">
-        <input
-          className="w-full p-1 bg-background rounded-md"
-          placeholder="Search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
+      <input
+        className="w-full p-1 bg-background rounded-md pb-2"
+        placeholder="Search"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
       <div className="pb-2 flex shrink-0 flex-wrap">
         <ButtonGroup
           value={soundsFilter}
@@ -74,7 +73,8 @@ export function SoundsTab() {
         ></ButtonGroup>
         <ImportSoundsButton onComplete={() => settingsMap.setKey('soundsFilter', 'user')} />
       </div>
-      <div className="min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal">
+
+      <div className="min-h-0 max-h-full grow overflow-auto font-mono text-sm break-normal pb-2">
         {soundEntries.map(([name, { data, onTrigger }]) => {
           return (
             <span
