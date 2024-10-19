@@ -22,39 +22,37 @@ import { setUniform } from './shader.mjs';
  * note("c3 e3").uniform("iMorph:pitch")
  */
 function parseUniformTarget(name) {
-  if (typeof name === 'string')
-    return {name, mapping: 'single', position: 0}
+  if (typeof name === 'string') return { name, mapping: 'single', position: 0 };
   else if (name.length == 2) {
-    const mapping = typeof name[1] === 'string' ? name[1] : 'single'
-    const position = typeof name[1] === 'string' ? null : name[1]
+    const mapping = typeof name[1] === 'string' ? name[1] : 'single';
+    const position = typeof name[1] === 'string' ? null : name[1];
     return {
       name: name[0],
       mapping,
-      position
-    }
+      position,
+    };
   }
 }
 
 // Keep track of the pitches value per uniform
-let _pitches = {}
+let _pitches = {};
 export const uniform = register('uniform', (target, pat) => {
   // TODO: support multiple shader instance
-  const instance = "default"
+  const instance = 'default';
 
   // Decode the uniform defintion
-  const uniformTarget = parseUniformTarget(target)
+  const uniformTarget = parseUniformTarget(target);
 
   // Get the pitches
-  if (!_pitches[uniformTarget.name])
-    _pitches[uniformTarget.name] = {_count: 0}
-  const pitches = _pitches[uniformTarget.name]
+  if (!_pitches[uniformTarget.name]) _pitches[uniformTarget.name] = { _count: 0 };
+  const pitches = _pitches[uniformTarget.name];
 
   return pat.onTrigger((time_deprecate, hap, currentTime, cps, targetTime) => {
     // TODO: figure out how to get the desired value, e.g. is this pattern for pan, gain, velocity, ...
-    const value = hap.value ? (hap.value.gain || 1.0) : 1.0;
+    const value = hap.value ? hap.value.gain || 1.0 : 1.0;
 
     // Get the uniform mapping position
-    let position = null
+    let position = null;
     if (uniformTarget.mapping == 'pitch') {
       // Assign one position per pitch
       const note = hap.value.note || hap.value.s;
@@ -62,20 +60,19 @@ export const uniform = register('uniform', (target, pat) => {
         // Assign new value, the first note gets 0, then 1, then 2, ...
         pitches[note] = Object.keys(pitches).length;
       }
-      position = pitches[note]
+      position = pitches[note];
     } else if (uniformTarget.mapping == 'seq') {
-      console.log("HERE", pitches)
+      console.log('HERE', pitches);
       // Assign a new position per event
-      position = pitches._count++
+      position = pitches._count++;
     } else if (uniformTarget.mapping == 'single') {
       // Assign a fixed position
-      position = uniformTarget.position
+      position = uniformTarget.position;
     } else {
-      console.error('Unknown uniform target', uniformTarget)
+      console.error('Unknown uniform target', uniformTarget);
     }
 
     // Update the uniform
-    if (position !== null)
-      setUniform(instance, uniformTarget.name, value, position);
+    if (position !== null) setUniform(instance, uniformTarget.name, value, position);
   }, false);
 });
