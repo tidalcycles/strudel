@@ -5,7 +5,7 @@ const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL
 
 export function WelcomeTab({ context }) {
   return (
-    <div className="prose dark:prose-invert max-w-[600px] pt-2 font-sans pb-8 px-4">
+    <div className="prose dark:prose-invert min-w-full pt-2 font-sans pb-8 px-4 ">
       <h3>
         <span className={cx('animate-spin inline-block select-none')}>🌀</span> welcome
       </h3>

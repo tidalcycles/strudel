@@ -1,10 +1,9 @@
-import XMarkIcon from '@heroicons/react/20/solid/XMarkIcon';
 import { logger } from '@strudel/core';
 import useEvent from '@src/useEvent.mjs';
 import cx from '@src/cx.mjs';
 import { nanoid } from 'nanoid';
-import { useCallback, useLayoutEffect, useEffect, useRef, useState } from 'react';
-import { setActiveFooter, useSettings } from '../../../settings.mjs';
+import { useCallback, useState } from 'react';
+import { setPanelPinned, setActiveFooter as setTab, useSettings } from '../../../settings.mjs';
 import { ConsoleTab } from './ConsoleTab';
 import { FilesTab } from './FilesTab';
 import { Reference } from './Reference';
@@ -12,33 +11,87 @@ import { SettingsTab } from './SettingsTab';
 import { SoundsTab } from './SoundsTab';
 import { WelcomeTab } from './WelcomeTab';
 import { PatternsTab } from './PatternsTab';
-import useClient from '@src/useClient.mjs';
-
-// https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
-export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+import { ChevronLeftIcon } from '@heroicons/react/16/solid';
 
 const TAURI = typeof window !== 'undefined' && window.__TAURI__;
 
-export function Panel({ context }) {
-  const footerContent = useRef();
+export function HorizontalPanel({ context }) {
+  const settings = useSettings();
+  const { isPanelPinned: pinned, activeFooter: tab } = settings;
+
+  return (
+    <PanelNav
+      className={cx(
+        'hover:max-h-[360px] hover:min-h-[360px] justify-between flex flex-col',
+        pinned ? `min-h-[360px] max-h-[360px]` : 'min-h-10 max-h-10',
+      )}
+    >
+      <div className="flex h-full overflow-auto ">
+        <PanelContent context={context} tab={tab} />
+      </div>
+
+      <div className="flex justify-between min-h-10 max-h-10 pr-2 items-center">
+        <Tabs setTab={setTab} tab={tab} pinned={pinned} />
+        <PinButton pinned={pinned} setPinned={setPanelPinned} />
+      </div>
+    </PanelNav>
+  );
+}
+
+export function VerticalPanel({ context }) {
+  const settings = useSettings();
+  const { isPanelPinned: pinned, activeFooter: tab } = settings;
+
+  return (
+    <PanelNav
+      className={cx(
+        'hover:min-w-[min(600px,80vw)] hover:max-w-[min(600px,80vw)]',
+        pinned ? `min-w-[min(600px,80vw)] max-w-[min(600px,80vw)]` : 'min-w-8',
+      )}
+    >
+      <div className={cx('group-hover:flex flex-col h-full', pinned ? 'flex' : 'hidden')}>
+        <div className="flex justify-between w-full ">
+          <Tabs setTab={setTab} tab={tab} pinned={pinned} />
+          <PinButton pinned={pinned} setPinned={setPanelPinned} />
+        </div>
+
+        <div className="overflow-auto h-full">
+          <PanelContent context={context} tab={tab} />
+        </div>
+      </div>
+      <div className={cx(pinned ? 'hidden' : 'flex flex-col items-center justify-center  h-full group-hover:hidden ')}>
+        <ChevronLeftIcon className="text-foreground opacity-50 w-6 h-6" />
+      </div>
+    </PanelNav>
+  );
+}
+
+const tabNames = {
+  welcome: 'intro',
+  patterns: 'patterns',
+  sounds: 'sounds',
+  reference: 'reference',
+  console: 'console',
+  settings: 'settings',
+};
+if (TAURI) {
+  tabNames.files = 'files';
+}
+
+function PanelNav({ children, className, ...props }) {
+  return (
+    <nav
+      aria-label="Settings Menu"
+      className={cx('bg-lineHighlight group transition-all overflow-x-auto', className)}
+      {...props}
+    >
+      {children}
+    </nav>
+  );
+}
+
+function PanelContent({ context, tab }) {
   const [log, setLog] = useState([]);
-  const { activeFooter, isZen, panelPosition } = useSettings();
-
-  useIsomorphicLayoutEffect(() => {
-    if (footerContent.current && activeFooter === 'console') {
-      // scroll log box to bottom when log changes
-      footerContent.current.scrollTop = footerContent.current?.scrollHeight;
-    }
-  }, [log, activeFooter]);
-  useIsomorphicLayoutEffect(() => {
-    if (!footerContent.current) {
-    } else if (activeFooter === 'console') {
-      footerContent.current.scrollTop = footerContent.current?.scrollHeight;
-    } else {
-      footerContent.current.scrollTop = 0;
-    }
-  }, [activeFooter]);
-
   useLogger(
     useCallback((e) => {
       const { message, type, data } = e.detail;
@@ -60,66 +113,72 @@ export function Panel({ context }) {
     }, []),
   );
 
-  const PanelTab = ({ children, name, label }) => (
+  switch (tab) {
+    case tabNames.patterns:
+      return <PatternsTab context={context} />;
+    case tabNames.console:
+      return <ConsoleTab log={log} />;
+    case tabNames.sounds:
+      return <SoundsTab />;
+    case tabNames.reference:
+      return <Reference />;
+    case tabNames.settings:
+      return <SettingsTab started={context.started} />;
+    case tabNames.files:
+      return <FilesTab />;
+    default:
+      return <WelcomeTab context={context} />;
+  }
+}
+
+function PanelTab({ label, isSelected, onClick }) {
+  return (
     <>
       <div
-        onClick={() => setActiveFooter(name)}
+        onClick={onClick}
         className={cx(
           'h-8 px-2 text-foreground cursor-pointer hover:opacity-50 flex items-center space-x-1 border-b',
-          activeFooter === name ? 'border-foreground' : 'border-transparent',
+          isSelected ? 'border-foreground' : 'border-transparent',
         )}
       >
-        {label || name}
+        {label}
       </div>
-      {activeFooter === name && <>{children}</>}
     </>
   );
-  const client = useClient();
-  if (isZen) {
-    return null;
-  }
-
-  const isActive = activeFooter !== '';
-
-  let positions = {
-    right: cx('max-w-full flex-grow-0 flex-none overflow-hidden', isActive ? 'w-[600px] h-full' : 'absolute right-0'),
-    bottom: cx('relative', isActive ? 'h-[360px] min-h-[360px]' : ''),
-  };
-  if (!client) {
-    return null;
-  }
+}
+function Tabs({ setTab, tab }) {
   return (
-    <nav className={cx('bg-lineHighlight z-[10] flex flex-col', positions[panelPosition])}>
-      <div className="flex justify-between px-2">
-        <div className={cx('flex select-none max-w-full overflow-auto', activeFooter && 'pb-2')}>
-          <PanelTab name="intro" label="welcome" />
-          <PanelTab name="patterns" />
-          <PanelTab name="sounds" />
-          <PanelTab name="console" />
-          <PanelTab name="reference" />
-          <PanelTab name="settings" />
-          {TAURI && <PanelTab name="files" />}
-        </div>
-        {activeFooter !== '' && (
-          <button onClick={() => setActiveFooter('')} className="text-foreground px-2" aria-label="Close Panel">
-            <XMarkIcon className="w-5 h-5" />
-          </button>
-        )}
-      </div>
-      {activeFooter !== '' && (
-        <div className="relative overflow-hidden">
-          <div className="text-white overflow-auto h-full max-w-full" ref={footerContent}>
-            {activeFooter === 'intro' && <WelcomeTab context={context} />}
-            {activeFooter === 'patterns' && <PatternsTab context={context} />}
-            {activeFooter === 'console' && <ConsoleTab log={log} />}
-            {activeFooter === 'sounds' && <SoundsTab />}
-            {activeFooter === 'reference' && <Reference />}
-            {activeFooter === 'settings' && <SettingsTab started={context.started} />}
-            {activeFooter === 'files' && <FilesTab />}
-          </div>
-        </div>
+    <div className={cx('flex select-none max-w-full overflow-auto pb-2')}>
+      {Object.keys(tabNames).map((key) => {
+        const val = tabNames[key];
+        return <PanelTab key={key} isSelected={tab === val} label={key} onClick={() => setTab(val)} />;
+      })}
+    </div>
+  );
+}
+
+function PinButton({ pinned, setPinned }) {
+  return (
+    <button
+      onClick={() => setPinned(!pinned)}
+      className={cx(
+        'text-foreground max-h-8 min-h-8 max-w-8 min-w-8 items-center justify-center p-1.5 group-hover:flex',
+        pinned ? 'flex' : 'hidden',
       )}
-    </nav>
+      aria-label="Pin Settings Menu"
+    >
+      <svg
+        stroke="currentColor"
+        fill={'currentColor'}
+        strokeWidth="0"
+        className="w-full h-full"
+        opacity={pinned ? 1 : '.3'}
+        viewBox="0 0 16 16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a6 6 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707s.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a6 6 0 0 1 1.013.16l3.134-3.133a3 3 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146"></path>
+      </svg>
+    </button>
   );
 }
 
