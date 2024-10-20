@@ -4,122 +4,94 @@ Copyright (C) 2024 Strudel contributors
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { register, logger } from '@strudel/core';
+import { Pattern, reify, register, logger } from '@strudel/core';
 import { setUniform } from './shader.mjs';
 
-// Parse a destination from the mini notation, e.g. `name` or `name:attr:value`
-export function parseUniformDest(dest) {
-  let result = {};
-  if (typeof dest === 'string') result.name = dest;
-  else if (dest.length >= 2) {
-    result.name = dest[0];
-    // Parse the attr:value pairs
-    for (let i = 1; i < dest.length; i += 2) {
-      const k = dest[i];
-      const v = dest[i + 1];
-      const isNum = typeof v === 'number';
-      if (k == 'index' && isNum) result.position = v;
-      else if (k == 'index' && v == 'random') result.position = Math.floor(Math.random() * 1024);
-      else if (k == 'index' && v == 'seq') result.position = null;
-      else if (k == 'gain' && isNum) result.gain = v;
-      else if (k == 'slow' && isNum) result.slow = v;
-      else throw 'Bad uniform param ' + k + ':' + v;
-    }
-  }
-  return result;
-}
-
-// Keep track of the last uniforms' array position
-let _uniforms = {};
-function getNextPosition(name, value) {
-  // Initialize uniform state
-  if (!_uniforms[name]) _uniforms[name] = { _count: 0 };
-  const uniform = _uniforms[name];
-
-  // Set a new position when the value changes
-  if (uniform._last != value) {
-    uniform._last = value;
-    uniform._count++;
-  }
-  return uniform._count;
-}
-
 /**
- * Update a shader. The destination name consist of
- *
- * - the uniform name
- * - optional 'index' to set array position, either a number or an assignment mode ('seq' or 'random')
- * - optional 'gain' to adjust the value: 0 to silence, 2 to double
- * - optional 'slow' to adjust the change speed: 1 for instant, 50 for slow changes, default to 10
+ * Update a shader.
  *
  * @name uniform
  * @example
  * pan(sine.uniform("iColor"))
  * @example
- * gain("<.5 .3>".uniform("rotations:index:seq"))
- */
-export const uniform = register('uniform', (target, pat) => {
-  // TODO: support multiple shader instance
-  const instance = 'default';
-
-  // Decode the uniform target defintion
-  const uniformDest = parseUniformDest(target);
-  // Set the first value by default
-  if (uniformDest.position === undefined) uniformDest.position = 0;
-
-  return pat.withValue((v) => {
-    // TODO: figure out why this is called repeatedly when changing values. For example, on first call, the last value is passed.
-    if (typeof v === 'number') {
-      const position = uniformDest.position === null ? getNextPosition(uniformDest.name, v) : uniformDest.position;
-      const value = v * (uniformDest.gain || 1);
-      setUniform(instance, uniformDest.name, value, false, position, uniformDest.slow || 10);
-    } else {
-      console.error('Uniform applied to a non number pattern');
-    }
-    return v;
-  });
-});
-
-function getNotePosition(name, value) {
-  // Initialize uniform state
-  if (!_uniforms[name]) _uniforms[name] = {};
-  const uniform = _uniforms[name];
-
-  const note = value.note || value.n || value.sound || value.s;
-  if (uniform[note] === undefined) {
-    // Assign new value, the first note gets 0, then 1, then 2, ...
-    uniform[note] = Object.keys(uniform).length;
-  }
-  return uniform[note];
-}
-
-/**
- * Update a shader with note-on event. See the 'uniform' doc.
- *
- * @name uniformTrigger
+ * gain("<.5 .3>".uniform("rotations:seq"))
  * @example
- * s("bd sd").uniformTrigger("iColors:gain:2"))
+ * s("bd sd").uniform({onTrigger: true, dest: "moveFWD"})
  */
-export const uniformTrigger = register('uniformTrigger', (target, pat) => {
-  // TODO: support multiple shader instance
-  const instance = 'default';
+export const uniform = register('uniform', (options, pat) => {
+  // The shader instance name
+  const instance = options.instance || 'default';
 
-  // Decode the uniform target defintion
-  const uniformDest = parseUniformDest(target);
+  // Are the uniform updated on trigger
+  const onTrigger = options.onTrigger || false;
 
-  return pat.onTrigger((time_deprecate, hap, currentTime, cps, targetTime) => {
-    const position =
-      uniformDest.position === undefined
-        ? // Set the position based on the note by default
-          getNotePosition(uniformDest.name, hap.value)
-        : uniformDest.position === null
-          ? // The index is set to `seq`
-            getNextPosition(uniformDest.name, currentTime)
-          : uniformDest.position;
+  const setCtx = (uniformParam) => (ctx) => ({
+    uniformParam,
+    onTrigger: () => {},
+    dominantTrigger: true,
+    ...ctx,
+  });
 
-    const value = (hap.value.gain || 1) * (uniformDest.gain || 1);
+  const pitches = { _count: 0 };
+  const getPosition = (value, dest) => {
+    if (typeof dest === 'number') return dest;
+    else if (dest == 'seq') return pitches._count++;
+    else if (dest == 'random') return Math.floor(Math.random() * 1024);
+    else if (onTrigger) {
+      const note = value.note || value.n || value.sound || value.s;
+      if (pitches[note] === undefined) {
+        // Assign new value, the first note gets 0, then 1, then 2, ...
+        pitches[note] = Object.keys(pitches).length - 1;
+      }
+      return pitches[note];
+    } else {
+      throw 'Invalid position' + dest;
+    }
+  };
+  const getUniformPosition = (value, dest) => {
+    if (typeof dest === 'string') {
+      return [dest, 0];
+    } else {
+      return [dest[0], getPosition(value, dest[1])];
+    }
+  };
 
-    // Update the uniform
-    setUniform(instance, uniformDest.name, value, true, position, uniformDest.slow || 10);
-  }, false);
+  const optionsPats = [];
+  if (Array.isArray(options) || typeof options === 'string')
+    optionsPats.push(reify(options).withContext(setCtx('dest')));
+  else {
+    if (options.dest) optionsPats.push(reify(options.dest).withContext(setCtx('dest')));
+    if (options.gain) optionsPats.push(reify(options.gain).withContext(setCtx('gain')));
+    if (options.slow) optionsPats.push(reify(options.slow).withContext(setCtx('slow')));
+  }
+  return stack(pat, ...optionsPats).withHaps((haps) => {
+    let dest;
+    let gain = 1;
+    let slow = 10;
+    let source;
+    haps.forEach((hap) => {
+      if (hap.context.uniformParam == 'dest') {
+        dest = hap.value;
+      } else if (hap.context.uniformParam == 'gain') {
+        gain = hap.value;
+      } else if (hap.context.uniformParam == 'slow') {
+        slow = hap.value;
+      } else {
+        source = hap;
+      }
+    });
+    if (dest && source) {
+      if (onTrigger) {
+        source.context.onTrigger = (_, hap) => {
+          const [uniform, position] = getUniformPosition(hap.value, dest);
+          setUniform(instance, uniform, (hap.value.gain || 1) * gain, true, position, slow);
+        };
+        source.context.dominantTrigger = false;
+      } else {
+        const [uniform, position] = getUniformPosition(source.value, dest);
+        setUniform(instance, uniform, source.value * gain, false, position, slow);
+      }
+    }
+    return haps;
+  });
 });
