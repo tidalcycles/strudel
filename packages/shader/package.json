@@ -8,6 +8,7 @@
     "main": "dist/index.mjs"
   },
   "scripts": {
+    "test": "vitest run",
     "build": "vite build",
     "prepublishOnly": "npm run build"
   },
@@ -34,6 +35,7 @@
     "picogl": "^0.17.9"
   },
   "devDependencies": {
-    "vite": "^5.0.10"
+    "vite": "^5.0.10",
+    "vitest": "^2.1.3"
   }
 }

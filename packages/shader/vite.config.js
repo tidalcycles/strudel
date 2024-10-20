@@ -5,6 +5,9 @@ import { resolve } from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [],
+  test: {
+    setupFiles: './testSetup.mjs',
+  },
   build: {
     lib: {
       entry: resolve(__dirname, 'index.mjs'),

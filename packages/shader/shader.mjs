@@ -34,50 +34,47 @@ void main(void) {
 `;
 }
 
-// Modulation helpers.
-const hardModulation = () => {
-  let val = 0;
-  return {
-    get: () => val,
-    set: (v) => {
-      val = v;
-    },
-  };
-};
+// Modulation helpers to smooth the values.
+class UniformValue {
+  constructor() {
+    this.value = 0;
+    this.desired = 0;
+    this.slow = 10;
+  }
 
-const decayModulation = (decay) => {
-  let val = 0;
-  let desired = 0;
-  return {
-    get: (ts) => {
-      val += (desired - val) / decay;
-      return val;
-    },
-    set: (v) => {
-      desired = val + v;
-    },
-  };
-};
+  get(elapsed) {
+    // Adjust the value according to the rate of change
+    const offset = (this.desired - this.value) / (this.slow * Math.min(1, elapsed * 60));
+    // Ignore small changes
+    if (Math.abs(offset) > 1e-3) this.value += offset;
+    return this.value;
+  }
+}
 
 // Set an uniform value (from a pattern).
-export function setUniform(instanceName, name, value, position) {
+export function setUniform(instanceName, name, value, incr, position, slow) {
   const instance = _instances[instanceName];
   if (!instance) {
     logger('[shader] not loaded yet', 'warning');
     return;
   }
 
-  // console.log("setUniform: ", name, value, position)
+  // console.log('setUniform: ', name, value, position, slow);
   const uniform = instance.uniforms[name];
   if (uniform) {
+    let uniformValue;
     if (uniform.count == 0) {
       // This is a single value
-      uniform.mod.set(value);
+      uniformValue = uniform.value;
     } else {
       // This is an array
-      const idx = position % uniform.mod.length;
-      uniform.mod[idx].set(value);
+      const idx = position % uniform.value.length;
+      uniformValue = uniform.value[idx];
     }
+    uniformValue.slow = slow;
+    // TODO: handle direct assignment, this is incrementing by default
+    if (incr) uniformValue.desired += value;
+    else uniformValue.desired = value;
   } else {
     logger('[shader] unknown uniform: ' + name);
   }
@@ -92,11 +89,10 @@ export function setUniform(instanceName, name, value, position) {
 // Update the uniforms for a given drawFrame call.
 function updateUniforms(drawFrame, elapsed, uniforms) {
   Object.values(uniforms).forEach((uniform) => {
-    const value =
-      uniform.count == 0 ? uniform.mod.get(elapsed) : uniform.value.map((_, i) => uniform.mod[i].get(elapsed));
+    const value = uniform.count == 0 ? uniform.value.get(elapsed) : uniform.value.map((v) => v.get(elapsed));
 
-    // console.log("updateUniforms:", uniform.name, value)
     // Send the value to the GPU
+    // console.log('updateUniforms:', uniform.name, value);
     drawFrame.uniform(uniform.name, value);
   });
 }
@@ -114,8 +110,7 @@ function setupUniforms(uniforms, program) {
         uniforms[uname] = {
           name,
           count,
-          value: count == 0 ? 0 : new Float32Array(count),
-          mod: count == 0 ? decayModulation(50) : new Array(count).fill().map(() => decayModulation(50)),
+          value: count == 0 ? new UniformValue() : new Array(count).fill().map(() => new UniformValue()),
         };
       }
     }
@@ -169,7 +164,7 @@ async function initializeShaderInstance(name, code) {
       instance.age = 0;
       instance.update = () => {
         const now = performance.now() / 1000;
-        const elapsed = now - prev;
+        const elapsed = instance.age == 0 ? 1 / 60 : now - prev;
         prev = now;
         // console.log("drawing!")
         app.clear();
