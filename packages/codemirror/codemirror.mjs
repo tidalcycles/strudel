@@ -99,10 +99,8 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
           },
           {
             key: 'Alt-.',
-            run: (_, e) => {
-              e.preventDefault();
-              onStop?.();
-            },
+            preventDefault: true,
+            run: () => onStop?.(),
           },
           /* {
           key: 'Ctrl-Shift-.',
