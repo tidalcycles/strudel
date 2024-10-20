@@ -106,12 +106,16 @@ export const uniformTrigger = register('uniformTrigger', (target, pat) => {
 
   // Decode the uniform target defintion
   const uniformDest = parseUniformDest(target);
-  // Assign pitch position by default
-  if (uniformDest.position === undefined) uniformDest.position = null;
 
   return pat.onTrigger((time_deprecate, hap, currentTime, cps, targetTime) => {
     const position =
-      uniformDest.position === null ? getNotePosition(uniformDest.name, hap.value) : uniformDest.position;
+      uniformDest.position === undefined
+        ? // Set the position based on the note by default
+          getNotePosition(uniformDest.name, hap.value)
+        : uniformDest.position === null
+          ? // The index is set to `seq`
+            getNextPosition(uniformDest.name, currentTime)
+          : uniformDest.position;
 
     const value = (hap.value.gain || 1) * (uniformDest.gain || 1);
 
