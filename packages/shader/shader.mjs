@@ -24,6 +24,8 @@ out vec4 oColor;
 uniform float iTime;
 uniform vec2 iResolution;
 
+#define STRUDEL 1
+
 ${code}
 
 void main(void) {
@@ -65,6 +67,7 @@ export function setUniform(instanceName, name, value, position) {
     return;
   }
 
+  // console.log("setUniform: ", name, value, position)
   const uniform = instance.uniforms[name];
   if (uniform) {
     if (uniform.count == 0) {
@@ -91,6 +94,8 @@ function updateUniforms(drawFrame, elapsed, uniforms) {
   Object.values(uniforms).forEach((uniform) => {
     const value =
       uniform.count == 0 ? uniform.mod.get(elapsed) : uniform.value.map((_, i) => uniform.mod[i].get(elapsed));
+
+    // console.log("updateUniforms:", uniform.name, value)
     // Send the value to the GPU
     drawFrame.uniform(uniform.name, value);
   });
@@ -138,9 +143,7 @@ function setupCanvas(name) {
 async function initializeShaderInstance(name, code) {
   // Setup PicoGL app
   const ctx = setupCanvas(name);
-  console.log(ctx);
   const app = PicoGL.createApp(ctx);
-  app.resize(400, 300);
 
   // Setup buffers
   const resolution = new Float32Array([ctx.canvas.width, ctx.canvas.height]);
