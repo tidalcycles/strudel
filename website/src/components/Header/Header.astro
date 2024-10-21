@@ -26,15 +26,16 @@ const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL
   title="Top Navigation"
 >
   <div class="flex overflow-visible items-center grow" style="overflow:visible">
-    <a href={`${baseNoTrailing}/`} class="flex items-center text-2xl space-x-2">
+    <div class="flex items-center text-2xl space-x-2">
       <h1 class="font-bold flex space-x-2 items-baseline text-xl">
         <span>🌀</span>
-        <div class="flex space-x-1 items-baseline">
+        <div class="flex space-x-2 items-baseline">
           <span class="">strudel</span>
           <span class="text-sm">DOCS</span>
+          <a href={`${baseNoTrailing}/`} class="text-sm opacity-25">REPL</a>
         </div>
       </h1>
-    </a>
+    </div>
   </div>
   {/* KNOWN_LANGUAGE_CODES.length > 1 && <LanguageSelect lang={lang} client:idle /> */}
   <div class="search-item h-10">

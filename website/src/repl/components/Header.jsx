@@ -15,24 +15,19 @@ export function Header({ context, embedded = false }) {
   const { started, pending, isDirty, activeCode, handleTogglePlay, handleEvaluate, handleShuffle, handleShare } =
     context;
   const isEmbedded = typeof window !== 'undefined' && (embedded || window.location !== window.parent.location);
-  const { isZen } = useSettings();
+  const { isZen, isButtonRowHidden, isCSSAnimationDisabled } = useSettings();
 
   return (
     <header
       id="header"
       className={cx(
-        'flex-none text-black  z-[100] text-lg select-none',
+        'flex-none text-black  z-[100] text-lg select-none h-14',
         !isZen && !isEmbedded && 'bg-lineHighlight',
         isZen ? 'h-12 w-8 fixed top-0 left-0' : 'sticky top-0 w-full py-1 justify-between',
         isEmbedded ? 'flex' : 'md:flex',
       )}
     >
       <div className="px-4 flex space-x-2 md:pt-0 select-none">
-        {/*             <img
-    src={logo}
-    className={cx('Tidal-logo', isEmbedded ? 'w-8 h-8' : 'w-10 h-10', started && 'animate-pulse')} // 'bg-[#ffffff80] rounded-full'
-    alt="logo"
-  /> */}
         <h1
           onClick={() => {
             if (isEmbedded) window.open(window.location.href.replace('embed', ''));
@@ -43,7 +38,12 @@ export function Header({ context, embedded = false }) {
           )}
         >
           <div
-            className={cx('mt-[1px]', started && 'animate-spin', 'cursor-pointer', isZen && 'fixed top-2 right-4')}
+            className={cx(
+              'mt-[1px]',
+              started && !isCSSAnimationDisabled && 'animate-spin',
+              'cursor-pointer',
+              isZen && 'fixed top-2 right-4',
+            )}
             onClick={() => {
               if (!isEmbedded) {
                 setIsZen(!isZen);
@@ -53,18 +53,28 @@ export function Header({ context, embedded = false }) {
             🌀
           </div>
           {!isZen && (
-            <div className={cx(started && 'animate-pulse')}>
-              <span className="">strudel</span> <span className="text-sm">REPL</span>
+            <div className={cx(started && !isCSSAnimationDisabled && 'animate-pulse', 'space-x-2')}>
+              <span className="">strudel</span>
+              <span className="text-sm">REPL</span>
+              {!isEmbedded && (
+                <a href={`${baseNoTrailing}/learn`} className="text-sm opacity-25">
+                  DOCS
+                </a>
+              )}
             </div>
           )}
         </h1>
       </div>
-      {!isZen && (
+      {!isZen && !isButtonRowHidden && (
         <div className="flex max-w-full overflow-auto text-foreground">
           <button
             onClick={handleTogglePlay}
             title={started ? 'stop' : 'play'}
-            className={cx(!isEmbedded ? 'p-2' : 'px-2', 'hover:opacity-50', !started && 'animate-pulse')}
+            className={cx(
+              !isEmbedded ? 'p-2' : 'px-2',
+              'hover:opacity-50',
+              !started && !isCSSAnimationDisabled && 'animate-pulse',
+            )}
           >
             {!pending ? (
               <span className={cx('flex items-center space-x-1', isEmbedded ? '' : 'w-16')}>
