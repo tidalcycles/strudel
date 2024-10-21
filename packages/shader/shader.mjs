@@ -44,7 +44,7 @@ class UniformValue {
 
   get(elapsed) {
     // Adjust the value according to the rate of change
-    const offset = (this.desired - this.value) / (this.slow * Math.min(1, elapsed * 60));
+    const offset = (this.desired - this.value) / (this.slow * Math.max(1, elapsed * 60));
     // Ignore small changes
     if (Math.abs(offset) > 1e-3) this.value += offset;
     return this.value;
@@ -72,7 +72,6 @@ export function setUniform(instanceName, name, value, incr, position, slow) {
       uniformValue = uniform.value[idx];
     }
     uniformValue.slow = slow;
-    // TODO: handle direct assignment, this is incrementing by default
     if (incr) uniformValue.desired += value;
     else uniformValue.desired = value;
   } else {
