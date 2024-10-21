@@ -38,6 +38,8 @@ export const defaultSettings = {
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
   audioEngineTarget: audioEngineTargets.webaudio,
+  isButtonRowHidden: false,
+  isCSSAnimationDisabled: false,
 };
 
 let search = null;
@@ -70,6 +72,8 @@ export function useSettings() {
     isActiveLineHighlighted: parseBoolean(state.isActiveLineHighlighted),
     isAutoCompletionEnabled: parseBoolean(state.isAutoCompletionEnabled),
     isPatternHighlightingEnabled: parseBoolean(state.isPatternHighlightingEnabled),
+    isButtonRowHidden: parseBoolean(state.isButtonRowHidden),
+    isCSSAnimationDisabled: parseBoolean(state.isCSSAnimationDisabled),
     isTooltipEnabled: parseBoolean(state.isTooltipEnabled),
     isLineWrappingEnabled: parseBoolean(state.isLineWrappingEnabled),
     isFlashEnabled: parseBoolean(state.isFlashEnabled),

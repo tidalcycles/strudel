@@ -94,6 +94,8 @@ export function SettingsTab({ started }) {
     isAutoCompletionEnabled,
     isTooltipEnabled,
     isFlashEnabled,
+    isButtonRowHidden,
+    isCSSAnimationDisabled,
     isSyncEnabled,
     isLineWrappingEnabled,
     fontSize,
@@ -196,7 +198,7 @@ export function SettingsTab({ started }) {
           value={togglePanelTrigger == 'hover'}
         /> */}
       </FormItem>
-      <FormItem label="Code Settings">
+      <FormItem label="More Settings">
         <Checkbox
           label="Enable bracket matching"
           onChange={(cbEvent) => settingsMap.setKey('isBracketMatchingEnabled', cbEvent.target.checked)}
@@ -255,6 +257,16 @@ export function SettingsTab({ started }) {
           }}
           disabled={shouldAlwaysSync}
           value={isSyncEnabled}
+        />
+        <Checkbox
+          label="Hide top buttons"
+          onChange={(cbEvent) => settingsMap.setKey('isButtonRowHidden', cbEvent.target.checked)}
+          value={isButtonRowHidden}
+        />
+        <Checkbox
+          label="Disable CSS Animations"
+          onChange={(cbEvent) => settingsMap.setKey('isCSSAnimationDisabled', cbEvent.target.checked)}
+          value={isCSSAnimationDisabled}
         />
       </FormItem>
       <FormItem label="Zen Mode">Try clicking the logo in the top left!</FormItem>
