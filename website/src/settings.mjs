@@ -10,8 +10,6 @@ export const audioEngineTargets = {
   osc: 'osc',
 };
 
-
-
 export const defaultSettings = {
   activeFooter: 'intro',
   keybindings: 'codemirror',
