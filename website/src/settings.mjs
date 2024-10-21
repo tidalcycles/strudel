@@ -30,8 +30,11 @@ export const defaultSettings = {
   isZen: false,
   soundsFilter: 'all',
   patternFilter: 'community',
-  panelPosition: window.innerWidth > 1000 ? 'right' : 'bottom',
-  isPanelPinned: true,
+  // panelPosition: window.innerWidth > 1000 ? 'right' : 'bottom', //FIX: does not work on astro
+  panelPosition: 'right',
+  isPanelPinned: false,
+  isPanelOpen: true,
+  togglePanelTrigger: 'click', //click | hover
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
   audioEngineTarget: audioEngineTargets.webaudio,
@@ -61,7 +64,6 @@ export function useSettings() {
   return {
     ...state,
     isZen: parseBoolean(state.isZen),
-    isPanelPinned: parseBoolean(state.isPanelPinned),
     isBracketMatchingEnabled: parseBoolean(state.isBracketMatchingEnabled),
     isBracketClosingEnabled: parseBoolean(state.isBracketClosingEnabled),
     isLineNumbersDisplayed: parseBoolean(state.isLineNumbersDisplayed),
@@ -74,12 +76,15 @@ export function useSettings() {
     isSyncEnabled: isUdels() ? true : parseBoolean(state.isSyncEnabled),
     fontSize: Number(state.fontSize),
     panelPosition: state.activeFooter !== '' && !isUdels() ? state.panelPosition : 'bottom', // <-- keep this 'bottom' where it is!
+    isPanelPinned: parseBoolean(state.isPanelPinned),
+    isPanelOpen: parseBoolean(state.isPanelOpen),
     userPatterns: userPatterns,
   };
 }
 
 export const setActiveFooter = (tab) => settingsMap.setKey('activeFooter', tab);
-export const setPanelPinned = (isPinned) => settingsMap.setKey('isPanelPinned', isPinned);
+export const setPanelPinned = (bool) => settingsMap.setKey('isPanelPinned', bool);
+export const setIsPanelOpened = (bool) => settingsMap.setKey('isPanelOpen', bool);
 
 export const setIsZen = (active) => settingsMap.setKey('isZen', !!active);
 
