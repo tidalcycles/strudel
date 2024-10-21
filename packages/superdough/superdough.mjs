@@ -87,6 +87,10 @@ export const getAudioContext = () => {
   return audioContext;
 };
 
+export function getAudioContextCurrentTime() {
+  return getAudioContext().currentTime;
+}
+
 let workletsLoading;
 function loadWorklets() {
   if (!workletsLoading) {
@@ -371,7 +375,7 @@ export const superdough = async (value, t, hapDuration) => {
     bandq = getDefaultValue('bandq'),
     channels = getDefaultValue('channels'),
     //phaser
-    phaser,
+    phaserrate: phaser,
     phaserdepth = getDefaultValue('phaserdepth'),
     phasersweep,
     phasercenter,
@@ -417,6 +421,7 @@ export const superdough = async (value, t, hapDuration) => {
   };
   if (bank && s) {
     s = `${bank}_${s}`;
+    value.s = s;
   }
 
   // get source AudioNode

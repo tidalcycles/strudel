@@ -1,30 +1,25 @@
 import Loader from '@src/repl/components/Loader';
-import { HorizontalPanel, VerticalPanel } from '@src/repl/components/panel/Panel';
 import { Code } from '@src/repl/components/Code';
+import BigPlayButton from '@src/repl/components/BigPlayButton';
 import UserFacingErrorMessage from '@src/repl/components/UserFacingErrorMessage';
 import { Header } from './Header';
-import { useSettings } from '@src/settings.mjs';
 
 // type Props = {
 //  context: replcontext,
 // }
 
-export default function ReplEditor(Props) {
+export default function EmbeddedReplEditor(Props) {
   const { context } = Props;
-  const { containerRef, editorRef, error, init, pending } = context;
-  const settings = useSettings();
-  const { panelPosition } = settings;
-
+  const { pending, started, handleTogglePlay, containerRef, editorRef, error, init } = context;
   return (
     <div className="h-full flex flex-col relative">
       <Loader active={pending} />
-      <Header context={context} />
+      <Header context={context} embedded={true} />
+      <BigPlayButton started={started} handleTogglePlay={handleTogglePlay} />
       <div className="grow flex relative overflow-hidden">
         <Code containerRef={containerRef} editorRef={editorRef} init={init} />
-        {panelPosition === 'right' && <VerticalPanel context={context} />}
       </div>
       <UserFacingErrorMessage error={error} />
-      {panelPosition === 'bottom' && <HorizontalPanel context={context} />}
     </div>
   );
 }

@@ -5,6 +5,11 @@ import { isUdels } from './repl/util.mjs';
 
 export const defaultAudioDeviceName = 'System Standard';
 
+export const audioEngineTargets = {
+  webaudio: 'webaudio',
+  osc: 'osc',
+};
+
 export const defaultSettings = {
   activeFooter: 'intro',
   keybindings: 'codemirror',
@@ -25,9 +30,11 @@ export const defaultSettings = {
   isZen: false,
   soundsFilter: 'all',
   patternFilter: 'community',
-  panelPosition: 'right',
+  panelPosition: window.innerWidth > 1000 ? 'right' : 'bottom',
+  isPanelPinned: true,
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
+  audioEngineTarget: audioEngineTargets.webaudio,
 };
 
 let search = null;
@@ -54,6 +61,7 @@ export function useSettings() {
   return {
     ...state,
     isZen: parseBoolean(state.isZen),
+    isPanelPinned: parseBoolean(state.isPanelPinned),
     isBracketMatchingEnabled: parseBoolean(state.isBracketMatchingEnabled),
     isBracketClosingEnabled: parseBoolean(state.isBracketClosingEnabled),
     isLineNumbersDisplayed: parseBoolean(state.isLineNumbersDisplayed),
@@ -71,6 +79,7 @@ export function useSettings() {
 }
 
 export const setActiveFooter = (tab) => settingsMap.setKey('activeFooter', tab);
+export const setPanelPinned = (isPinned) => settingsMap.setKey('isPanelPinned', isPinned);
 
 export const setIsZen = (active) => settingsMap.setKey('isZen', !!active);
 

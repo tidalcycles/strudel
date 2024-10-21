@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Icon } from './Icon';
 import { silence, noteToMidi, _mod } from '@strudel/core';
-import { clearHydra } from '@strudel/hydra';
 import { getDrawContext, getPunchcardPainter } from '@strudel/draw';
 import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
@@ -37,7 +36,7 @@ export function MiniRepl({
   const shouldShowCanvas = !!punchcard;
   const canvasId = shouldShowCanvas ? useMemo(() => `canvas-${id}`, [id]) : null;
   autodraw = !!punchcard || !!claviature || !!autodraw;
-  drawTime = drawTime ?? punchcard ? [0, 4] : [-2, 2];
+  drawTime = (drawTime ?? punchcard) ? [0, 4] : [-2, 2];
   if (claviature) {
     drawTime = [0, 0];
   }
@@ -120,6 +119,7 @@ export function MiniRepl({
                 'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background',
                 started ? 'animate-pulse' : '',
               )}
+              aria-label={started ? 'stop' : 'play'}
               onClick={() => editorRef.current?.toggle()}
             >
               <Icon type={started ? 'stop' : 'play'} />
@@ -129,6 +129,7 @@ export function MiniRepl({
                 'w-16 flex items-center justify-center p-1 text-foreground border-lineHighlight bg-lineHighlight',
                 isDirty ? 'text-foreground hover:bg-background cursor-pointer' : 'opacity-50 cursor-not-allowed',
               )}
+              aria-label="update"
               onClick={() => editorRef.current?.evaluate()}
             >
               <Icon type="refresh" />
@@ -140,6 +141,7 @@ export function MiniRepl({
                 className={
                   'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background'
                 }
+                aria-label="previous example"
                 onClick={() => changeTune(tuneIndex - 1)}
               >
                 <div className="rotate-180">
@@ -150,6 +152,7 @@ export function MiniRepl({
                 className={
                   'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background'
                 }
+                aria-label="next example"
                 onClick={() => changeTune(tuneIndex + 1)}
               >
                 <Icon type="skip" />

@@ -1,10 +1,9 @@
 import { atom } from 'nanostores';
-import { persistentAtom } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { logger } from '@strudel/core';
 import { nanoid } from 'nanoid';
 import { settingsMap } from './settings.mjs';
-import { parseJSON, supabase } from './repl/util.mjs';
+import { confirmDialog, parseJSON, supabase } from './repl/util.mjs';
 
 export let $publicPatterns = atom([]);
 export let $featuredPatterns = atom([]);
@@ -131,17 +130,19 @@ export const userPattern = {
     return this.update(newPattern.id, { ...newPattern.data, code: data.code });
   },
   clearAll() {
-    if (!confirm(`This will delete all your patterns. Are you really sure?`)) {
-      return;
-    }
-    const viewingPatternData = getViewingPatternData();
-    setUserPatterns({});
+    confirmDialog(`This will delete all your patterns. Are you really sure?`).then((r) => {
+      if (r == false) {
+        return;
+      }
+      const viewingPatternData = getViewingPatternData();
+      setUserPatterns({});
 
-    if (viewingPatternData.collection !== this.collection) {
-      return { id: viewingPatternData.id, data: viewingPatternData };
-    }
-    setActivePattern(null);
-    return this.create();
+      if (viewingPatternData.collection !== this.collection) {
+        return { id: viewingPatternData.id, data: viewingPatternData };
+      }
+      setActivePattern(null);
+      return this.create();
+    });
   },
   delete(id) {
     const userPatterns = this.getAll();

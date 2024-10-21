@@ -2,8 +2,8 @@ import cx from '@src/cx.mjs';
 
 export function ConsoleTab({ log }) {
   return (
-    <div id="console-tab" className="break-all px-4 dark:text-white text-stone-900 text-sm">
-      <pre>{`███████╗████████╗██████╗ ██╗   ██╗██████╗ ███████╗██╗     
+    <div id="console-tab" className="break-all px-4 dark:text-white text-stone-900 text-sm py-2">
+      <pre aria-hidden="true">{`███████╗████████╗██████╗ ██╗   ██╗██████╗ ███████╗██╗     
 ██╔════╝╚══██╔══╝██╔══██╗██║   ██║██╔══██╗██╔════╝██║     
 ███████╗   ██║   ██████╔╝██║   ██║██║  ██║█████╗  ██║     
 ╚════██║   ██║   ██╔══██╗██║   ██║██║  ██║██╔══╝  ██║     
