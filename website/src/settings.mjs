@@ -10,6 +10,8 @@ export const audioEngineTargets = {
   osc: 'osc',
 };
 
+
+
 export const defaultSettings = {
   activeFooter: 'intro',
   keybindings: 'codemirror',
@@ -30,7 +32,8 @@ export const defaultSettings = {
   isZen: false,
   soundsFilter: 'all',
   patternFilter: 'community',
-  panelPosition: window.innerWidth > 1000 ? 'right' : 'bottom',
+  // panelPosition: window.innerWidth > 1000 ? 'right' : 'bottom', //FIX: does not work on astro
+  panelPosition: 'right',
   isPanelPinned: false,
   isPanelOpen: true,
   togglePanelTrigger: 'click', //click | hover
@@ -78,7 +81,6 @@ export function useSettings() {
     isPanelPinned: parseBoolean(state.isPanelPinned),
     isPanelOpen: parseBoolean(state.isPanelOpen),
     userPatterns: userPatterns,
-   
   };
 }
 
