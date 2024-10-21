@@ -56,9 +56,11 @@ export function Header({ context, embedded = false }) {
             <div className={cx(started && !isCSSAnimationDisabled && 'animate-pulse', 'space-x-2')}>
               <span className="">strudel</span>
               <span className="text-sm">REPL</span>
-              <a href={`${baseNoTrailing}/learn`} className="text-sm opacity-25">
-                DOCS
-              </a>
+              {!isEmbedded && (
+                <a href={`${baseNoTrailing}/learn`} className="text-sm opacity-25">
+                  DOCS
+                </a>
+              )}
             </div>
           )}
         </h1>
