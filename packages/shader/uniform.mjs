@@ -19,7 +19,7 @@ import { setUniform } from './shader.mjs';
  * @param {string} name: the uniform name and optional position.
  * @param {number} gain: the value multiplier - defaults to 1.
  * @param {number} slow: the value change rate, set to 1 for instant update - defaults to 10.
- * @param {boolean} onTrigger: update the uniform only when the pattern trigger. In that case, the uniform position is mapped to the event note/sound when it is not explicity set.
+ * @param {boolean} onTrigger: update the uniform only when the pattern trigger. In that case, the uniform position is mapped to the event note/sound when it is not explicity set. onTrigger is automatically set when the pattern value is not a number.
  *
  * @example
  * pan(sine.uniform("iColor"))
@@ -28,7 +28,7 @@ import { setUniform } from './shader.mjs';
  * @example
  * dist("<.5 .3>".uniform("rotations:seq"))
  * @example
- * s("bd sd").uniform({name: 'rotations', gain: 0.2, slow: "<5 20>", onTrigger: true})
+ * s("bd sd").uniform({name: 'rotations', gain: 0.2, slow: "<5 20>"})
  */
 export const uniform = register('uniform', (options, pat) => {
   // The shader instance name
@@ -105,7 +105,7 @@ export const uniform = register('uniform', (options, pat) => {
     });
 
     if (dest && source) {
-      if (onTrigger) {
+      if (typeof source.value !== 'number' || onTrigger) {
         // Set the uniform when the source trigger
         source.context.onTrigger = (_, hap) => {
           const [uniform, position] = getUniformPosition(hap.value, dest);
