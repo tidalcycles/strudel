@@ -20,14 +20,22 @@ export function HorizontalPanel({ context }) {
   const { isPanelOpen, activeFooter: tab } = settings;
 
   return (
-    <PanelNav settings={settings} className={cx(isPanelOpen ? `min-h-[360px] max-h-[360px]` : 'min-h-12 max-h-12', 'overflow-hidden flex flex-col')}>
-      {isPanelOpen && <div className="flex h-full overflow-auto ">
-        <PanelContent context={context} tab={tab} />
-      </div>}
+    <PanelNav
+      settings={settings}
+      className={cx(isPanelOpen ? `min-h-[360px] max-h-[360px]` : 'min-h-12 max-h-12', 'overflow-hidden flex flex-col')}
+    >
+      {isPanelOpen && (
+        <div className="flex h-full overflow-auto pr-10 ">
+          <PanelContent context={context} tab={tab} />
+        </div>
+      )}
 
-      <div className="flex justify-between min-h-12 max-h-12 pr-2 items-center">
-        <Tabs setTab={setTab} tab={tab} />
+      <div className="absolute right-4 pt-4">
         <PanelActionButton settings={settings} />
+      </div>
+
+      <div className="flex  justify-between min-h-12 max-h-12 grid-cols-2 items-center">
+        <Tabs setTab={setTab} tab={tab} />
       </div>
     </PanelNav>
   );
@@ -88,7 +96,7 @@ function PanelNav({ children, className, settings, ...props }) {
     <nav
       onClick={() => {
         if (!settings.isPanelOpen) {
-          setIsPanelOpened(true)
+          setIsPanelOpened(true);
         }
       }}
       onMouseEnter={() => {
@@ -166,9 +174,9 @@ function PanelTab({ label, isSelected, onClick }) {
     </>
   );
 }
-function Tabs({ setTab, tab }) {
+function Tabs({ setTab, tab, className }) {
   return (
-    <div className={cx('flex select-none max-w-full overflow-auto pb-2')}>
+    <div className={cx('flex select-none max-w-full overflow-auto pb-2', className)}>
       {Object.keys(tabNames).map((key) => {
         const val = tabNames[key];
         return <PanelTab key={key} isSelected={tab === val} label={key} onClick={() => setTab(val)} />;
@@ -180,9 +188,10 @@ function Tabs({ setTab, tab }) {
 function PanelActionButton({ settings }) {
   const { togglePanelTrigger, isPanelPinned, isPanelOpen } = settings;
   const isHoverBehavior = togglePanelTrigger === 'hover';
-  if (!isPanelOpen && !isPanelPinned) {
+  if (!isPanelOpen) {
     return;
   }
+
   if (isHoverBehavior) {
     return <PinButton pinned={isPanelPinned} />;
   }
