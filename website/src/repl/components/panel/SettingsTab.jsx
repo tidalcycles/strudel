@@ -101,6 +101,7 @@ export function SettingsTab({ started }) {
     panelPosition,
     audioDeviceName,
     audioEngineTarget,
+    togglePanelTrigger,
   } = useSettings();
   const shouldAlwaysSync = isUdels();
   const canChangeAudioDevice = AudioContext.prototype.setSinkId != null;
@@ -169,6 +170,31 @@ export function SettingsTab({ started }) {
           onChange={(value) => settingsMap.setKey('panelPosition', value)}
           items={{ bottom: 'Bottom', right: 'Right' }}
         ></ButtonGroup>
+      </FormItem>
+      <FormItem label="Open Panel on:                       ">
+        <ButtonGroup
+          value={togglePanelTrigger}
+          onChange={(value) => settingsMap.setKey('togglePanelTrigger', value)}
+          items={{ click: 'Click', hover: 'Hover' }}
+        ></ButtonGroup>
+        {/* <Checkbox
+          label="Click"
+          onChange={(cbEvent) => {
+            if (cbEvent.target.checked) {
+              settingsMap.setKey('togglePanelTrigger', 'click');
+            }
+          }}
+          value={togglePanelTrigger != 'hover'}
+        />
+        <Checkbox
+          label="Hover"
+          onChange={(cbEvent) => {
+            if (cbEvent.target.checked) {
+              settingsMap.setKey('togglePanelTrigger', 'hover');
+            }
+          }}
+          value={togglePanelTrigger == 'hover'}
+        /> */}
       </FormItem>
       <FormItem label="Code Settings">
         <Checkbox

@@ -52,9 +52,9 @@ export function SoundsTab() {
   });
 
   return (
-    <div id="sounds-tab" className="px-4 flex flex-col w-full h-full dark:text-white text-stone-900">
+    <div id="sounds-tab" className="px-4 flex flex-col w-full h-full  dark:text-white text-stone-900">
       <input
-        className="w-full p-1 bg-background rounded-md pb-2"
+        className="w-full p-1 bg-background rounded-md my-2"
         placeholder="Search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
