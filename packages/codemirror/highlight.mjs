@@ -93,6 +93,7 @@ const miniLocationHighlights = EditorView.decorations.compute([miniLocations, vi
     if (haps.has(id)) {
       const hap = haps.get(id);
       const color = hap.value?.color ?? 'var(--foreground)';
+      const style = hap.value?.markcss || `outline: solid 2px ${color}`;
       // Get explicit channels for color values
       /* 
       const swatch = document.createElement('div');
@@ -114,7 +115,7 @@ const miniLocationHighlights = EditorView.decorations.compute([miniLocations, vi
         to,
         Decoration.mark({
           // attributes: { style: `outline: solid 2px rgba(${channels.join(', ')})` },
-          attributes: { style: `outline: solid 2px ${color}` },
+          attributes: { style },
         }),
       );
     }

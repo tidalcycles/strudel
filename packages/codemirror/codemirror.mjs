@@ -13,7 +13,7 @@ import {
   lineNumbers,
   drawSelection,
 } from '@codemirror/view';
-import { Pattern, repl } from '@strudel/core';
+import { repl, registerControl } from '@strudel/core';
 import { Drawer, cleanupDraw } from '@strudel/draw';
 import { isAutoCompletionEnabled } from './autocomplete.mjs';
 import { isTooltipEnabled } from './tooltip.mjs';
@@ -354,3 +354,12 @@ function s4() {
     .toString(16)
     .substring(1);
 }
+
+/**
+ * Overrides the css of highlighted events. Make sure to use single quotes!
+ * @name markcss
+ * @example
+ * note("c a f e")
+ * .markcss('text-decoration:underline')
+ */
+export const markcss = registerControl('markcss');
