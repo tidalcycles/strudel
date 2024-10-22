@@ -115,7 +115,6 @@ function PanelNav({ children, className, settings, ...props }) {
 }
 
 function PanelContent({ context, tab }) {
-
   switch (tab) {
     case tabNames.patterns:
       return <PatternsTab context={context} />;
@@ -211,4 +210,3 @@ function CloseButton({ onClick }) {
     </button>
   );
 }
-
