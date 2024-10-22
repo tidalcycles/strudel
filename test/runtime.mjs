@@ -134,6 +134,9 @@ strudel.Pattern.prototype._pitchwheel = function () {
 strudel.Pattern.prototype._pianoroll = function () {
   return this;
 };
+strudel.Pattern.prototype.markcss = function () {
+  return this;
+};
 
 const uiHelpersMocked = {
   backgroundImage: id,
