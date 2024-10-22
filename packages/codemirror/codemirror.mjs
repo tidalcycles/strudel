@@ -355,4 +355,11 @@ function s4() {
     .substring(1);
 }
 
+/**
+ * Overrides the css of highlighted events. Make sure to use single quotes!
+ * @name markcss
+ * @example
+ * note("c a f e")
+ * .markcss('text-decoration:underline')
+ */
 export const markcss = registerControl('markcss');
