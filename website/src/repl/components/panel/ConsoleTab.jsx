@@ -3,9 +3,11 @@ import useEvent from '@src/useEvent.mjs';
 import cx from '@src/cx.mjs';
 import { nanoid } from 'nanoid';
 import { useCallback, useState } from 'react';
+import { useSettings } from '../../../settings.mjs';
 
 export function ConsoleTab() {
   const [log, setLog] = useState([]);
+  const { fontFamily, fontSize } = useSettings();
   useLogger(
     useCallback((e) => {
       const { message, type, data } = e.detail;
@@ -27,19 +29,14 @@ export function ConsoleTab() {
     }, []),
   );
   return (
-    <div id="console-tab" className="break-all px-4 dark:text-white text-stone-900 text-sm py-2 space-y-1">
-      {!log.length && (
-        <pre aria-hidden="true">{`███████╗████████╗██████╗ ██╗   ██╗██████╗ ███████╗██╗     
-██╔════╝╚══██╔══╝██╔══██╗██║   ██║██╔══██╗██╔════╝██║     
-███████╗   ██║   ██████╔╝██║   ██║██║  ██║█████╗  ██║     
-╚════██║   ██║   ██╔══██╗██║   ██║██║  ██║██╔══╝  ██║     
-███████║   ██║   ██║  ██║╚██████╔╝██████╔╝███████╗███████╗
-╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝`}</pre>
-      )}
+    <div
+      id="console-tab"
+      className="break-all px-4 dark:text-white text-stone-900 text-sm py-2 space-y-1"
+      style={{ fontFamily, fontSize }}
+    >
       {log.map((l, i) => {
         const message = linkify(l.message);
         const color = l.data?.hap?.value?.color;
-        console.log('color', color);
         return (
           <div
             key={l.id}
