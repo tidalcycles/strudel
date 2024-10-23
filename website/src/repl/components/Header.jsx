@@ -90,8 +90,6 @@ export function Header({ context, embedded = false }) {
               !isDirty || !activeCode ? 'opacity-50' : 'hover:opacity-50',
             )}
           >
-            {/*             <CommandLineIcon className="w-6 h-6" /> */}
-            {/* <ArrowPathIcon className="w-6 h-6" /> */}
             {!isEmbedded && <span>update</span>}
           </button>
           {!isEmbedded && (
@@ -100,7 +98,6 @@ export function Header({ context, embedded = false }) {
               className="hover:opacity-50 p-2 flex items-center space-x-1"
               onClick={handleShuffle}
             >
-              {/* <SparklesIcon className="w-6 h-6" /> */}
               <span> shuffle</span>
             </button>
           )}
@@ -113,7 +110,6 @@ export function Header({ context, embedded = false }) {
               )}
               onClick={handleShare}
             >
-              {/* <LinkIcon className="w-6 h-6" /> */}
               <span>share</span>
             </button>
           )}
@@ -123,7 +119,6 @@ export function Header({ context, embedded = false }) {
               href={`${baseNoTrailing}/workshop/getting-started/`}
               className={cx('hover:opacity-50 flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
             >
-              {/* <AcademicCapIcon className="w-6 h-6" /> */}
               <span>learn</span>
             </a>
           )}
