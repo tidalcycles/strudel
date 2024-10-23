@@ -1,7 +1,3 @@
-/* import AcademicCapIcon from '@heroicons/react/20/solid/AcademicCapIcon';
-import ArrowPathIcon from '@heroicons/react/20/solid/ArrowPathIcon';
-import LinkIcon from '@heroicons/react/20/solid/LinkIcon';
-import SparklesIcon from '@heroicons/react/20/solid/SparklesIcon'; */
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
 import StopCircleIcon from '@heroicons/react/20/solid/StopCircleIcon';
 import cx from '@src/cx.mjs';
