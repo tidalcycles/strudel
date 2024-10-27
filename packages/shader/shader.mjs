@@ -4,6 +4,64 @@ Copyright (C) 2024 Strudel contributors
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/*
+/// Here is a feature demo
+// Setup a shader
+let truchetFTW = await fetch('https://raw.githubusercontent.com/TristanCacqueray/shaders/refs/heads/main/shaders/Truchet%20%2B%20Kaleidoscope%20FTW.glsl').then((res) => res.text())
+// This shader provides the following uniforms:
+// uniform float icolor;
+// uniform float moveFWD;
+// uniform float rotations[4];
+// uniform float modulations[6];
+
+// Start the instance and binds the uniforms
+let {uniforms} = await loadShader(truchetFTW)
+
+setcpm(96)
+
+// A smoothing function that is called for each frame
+let smooth = (desired, speed) => (value) => value + ((desired - value) / speed)
+
+// Each kick updates a different rotation value.
+let rotationIndex = 0
+$: s("bd").bank("RolandTR808")
+   .gain(2).dist("<1 .7 .7 .7>")
+   .mask("<1@30 0@2>")
+   .onTrigger(() => uniforms.rotations.set(
+     cur => smooth(cur + 1, 20), rotationIndex++),
+     false)
+
+// Each hat increase the icolor value.
+$: sound("hh*4").bank("RolandTR808")
+   .room(.3).gain(".25 .3 .4")
+   .mask("<0@8 1@32>")
+   .onTrigger(() => uniforms.icolor.incr(0.1), false)
+
+// The snare smoothly increase the moveFWD value
+$: s("cp/8").bank("RolandTR808")
+   .hpf(500).hpa(.8).hpenv("<-3 -2 -3 -2 -1>/8")
+   .room(0.5).roomsize(7).rlp(5000).gain(.2)
+   .onTrigger(() => uniforms.moveFWD.set(cur => smooth(cur + 1, 30)), false)
+
+// Each piano note updates a different modulations value
+let pianoPitches = {}
+$: note("<C D G A Bb D C A G D Bb A>*[2,2.02]")
+  .clip(1.1)
+  .transpose("<-12 -24 -12 0>/8")
+  // .sound("sawtooth")
+  .sound("triangle")
+  .cutoff(perlin.slow(5).range(20,1200))
+  .room(.8).roomsize(.6)
+  .gain(.4)
+  .onTrigger((_, hap) => {
+    const n = hap.value.note
+    // assign unique array position for each new notes
+    if (!pianoPitches[n]) pianoPitches[n] = Object.keys(pianoPitches).length + 1
+    const idx = pianoPitches[n]
+    uniforms.modulations.set(cur => smooth(cur + .5, 55), idx)
+  }, false)
+*/
+
 import { PicoGL } from 'picogl';
 import { logger } from '@strudel/core';
 
@@ -51,10 +109,11 @@ class UniformValue {
     this.draw();
   }
 
+  // The value can be a function that will be called for each rendering frame
   set(value, pos = 0) {
     const idx = pos % this.value.length;
     if (typeof value === 'function') {
-      this.frameModifier[idx] = value;
+      this.frameModifier[idx] = value(this.value[idx]);
     } else {
       this.value[idx] = value;
       this.frameModifier[idx] = null;
@@ -127,11 +186,16 @@ function setupUniforms(instance, resetDraw = false) {
 // Update the uniforms for a given drawFrame call.
 function updateUniforms(drawFrame, elapsed, uniforms) {
   Object.values(uniforms).forEach((uniform) => {
-    const value = uniform._frameUpdate(elapsed);
+    try {
+      const value = uniform._frameUpdate(elapsed);
 
-    // Send the value to the GPU
-    // console.log('updateUniforms:', uniform.name, value);
-    drawFrame.uniform(uniform.name, value);
+      // Send the value to the GPU
+      // console.log('updateUniforms:', uniform.name, value);
+      drawFrame.uniform(uniform.name, value);
+    } catch (err) {
+      console.warn('uniform error');
+      console.error(err);
+    }
   });
 }
 
@@ -207,6 +271,7 @@ async function reloadShaderInstanceCode(instance, code) {
     instance.program.delete();
     instance.program = program;
     instance.drawFrame = instance.app.createDrawCall(program, instance.arrays);
+    instance.code = code;
     setupUniforms(instance, true);
   });
 }
