@@ -8343,36 +8343,6 @@ exports[`runs examples > example "undegradeBy" example index 1 1`] = `
 ]
 `;
 
-exports[`runs examples > example "uniform" example index 0 1`] = `
-[
-  "[ ~show() {
-    return this.begin.show() + ' → ' + this.end.show();
-  } | pan:0.4999999999999998 ]",
-]
-`;
-
-exports[`runs examples > example "uniform" example index 1 1`] = `
-[
-  "[ 0/1 → 1/1 | gain:0.5 ]",
-  "[ 1/1 → 2/1 | gain:0.3 ]",
-  "[ 2/1 → 3/1 | gain:0.5 ]",
-  "[ 3/1 → 4/1 | gain:0.3 ]",
-]
-`;
-
-exports[`runs examples > example "uniform" example index 2 1`] = `
-[
-  "[ 0/1 → 1/2 | s:bd ]",
-  "[ 1/2 → 1/1 | s:sd ]",
-  "[ 1/1 → 3/2 | s:bd ]",
-  "[ 3/2 → 2/1 | s:sd ]",
-  "[ 2/1 → 5/2 | s:bd ]",
-  "[ 5/2 → 3/1 | s:sd ]",
-  "[ 3/1 → 7/2 | s:bd ]",
-  "[ 7/2 → 4/1 | s:sd ]",
-]
-`;
-
 exports[`runs examples > example "unison" example index 0 1`] = `
 [
   "[ 0/1 → 1/12 | note:d s:supersaw unison:1 ]",

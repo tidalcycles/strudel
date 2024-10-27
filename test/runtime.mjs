@@ -77,9 +77,6 @@ const toneHelpersMocked = {
 strudel.Pattern.prototype.osc = function () {
   return this;
 };
-strudel.Pattern.prototype.uniform = function () {
-  return this;
-};
 strudel.Pattern.prototype.csound = function () {
   return this;
 };

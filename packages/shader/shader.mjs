@@ -34,88 +34,105 @@ void main(void) {
 `;
 }
 
-// Modulation helpers to smooth the values.
+// Helper class to handle uniform updates
 class UniformValue {
-  constructor() {
-    this.value = 0;
-    this.desired = 0;
-    this.slow = 10;
+  constructor(name, count, draw) {
+    this.name = name;
+    this.draw = draw;
+    this.isArray = count > 0;
+    this.value = new Array(Math.max(1, count)).fill(0);
+    this.frameModifier = new Array(Math.max(1, count)).fill(null);
   }
 
-  get(elapsed) {
-    // Adjust the value according to the rate of change
-    const offset = (this.desired - this.value) / (this.slow * Math.max(1, elapsed * 60));
-    // Ignore small changes
-    if (Math.abs(offset) > 1e-3) this.value += offset;
-    return this.value;
+  incr(value, pos = 0) {
+    const idx = pos % this.value.length;
+    this.value[idx] += value;
+    this.frameModifier[idx] = null;
+    this.draw();
+  }
+
+  set(value, pos = 0) {
+    const idx = pos % this.value.length;
+    if (typeof value === 'function') {
+      this.frameModifier[idx] = value;
+    } else {
+      this.value[idx] = value;
+      this.frameModifier[idx] = null;
+    }
+    this.draw();
+  }
+
+  get(pos = 0) {
+    return this.value[pos % this.value.length];
+  }
+
+  _frameUpdate(elapsed) {
+    this.value = this.value.map((value, idx) =>
+      this.frameModifier[idx] ? this.frameModifier[idx](value, elapsed) : value,
+    );
+    return this.isArray ? this.value : this.value[0];
+  }
+
+  _resize(count) {
+    if (count != this.count) {
+      this.isArray = count > 0;
+      count = Math.max(1, count);
+      resizeArray(this.value, count, 0);
+      resizeArray(this.frameModifier, count, null);
+    }
   }
 }
 
-// Set an uniform value (from a pattern).
-export function setUniform(instanceName, name, value, incr, position, slow) {
-  const instance = _instances[instanceName];
-  if (!instance) {
-    logger('[shader] not loaded yet', 'warning');
-    return;
-  }
+// Shrink or extend an array
+function resizeArray(arr, size, defval) {
+  if (arr.length > size) arr.length = size;
+  else arr.push(...new Array(size - arr.length).fill(defval));
+}
 
-  // console.log('setUniform: ', name, value, position, slow);
-  const uniform = instance.uniforms[name];
-  if (uniform) {
-    let uniformValue;
-    if (uniform.count == 0) {
-      // This is a single value
-      uniformValue = uniform.value;
-    } else {
-      // This is an array
-      const idx = position % uniform.value.length;
-      uniformValue = uniform.value[idx];
+// Get the size of an uniform
+function uniformSize(funcName) {
+  if (funcName == 'uniform3fv') return 3;
+  else if (funcName == 'uniform4fv') return 4;
+  return 1;
+}
+
+// Setup the instance's uniform after shader compilation.
+function setupUniforms(instance, resetDraw = false) {
+  const newUniforms = new Set();
+  const draw = () => {
+    // Start the drawing loop
+    instance.age = 0;
+    if (!instance.drawing) {
+      instance.drawing = requestAnimationFrame(instance.update);
     }
-    uniformValue.slow = slow;
-    if (incr) uniformValue.desired += value;
-    else uniformValue.desired = value;
-  } else {
-    logger('[shader] unknown uniform: ' + name);
-  }
+  };
+  Object.entries(instance.program.uniforms).forEach(([name, uniform]) => {
+    if (name != 'iTime' && name != 'iResolution') {
+      // remove array suffix
+      const uname = name.replace('[0]', '');
+      newUniforms.add(uname);
+      const count = (uniform.count | 0) * uniformSize(uniform.glFuncName);
+      if (!instance.uniforms[uname]) instance.uniforms[uname] = new UniformValue(name, count, draw);
+      else instance.uniforms[uname]._resize(count);
+      if (resetDraw) instance.uniforms[uname].draw = draw;
+    }
+  });
 
-  // Ensure the instance is drawn
-  instance.age = 0;
-  if (!instance.drawing) {
-    instance.drawing = requestAnimationFrame(instance.update);
-  }
+  // Remove deleted uniforms
+  Object.keys(instance.uniforms).forEach((name) => {
+    if (!newUniforms.has(name)) delete instance.uniforms[name];
+  });
 }
 
 // Update the uniforms for a given drawFrame call.
 function updateUniforms(drawFrame, elapsed, uniforms) {
   Object.values(uniforms).forEach((uniform) => {
-    const value = uniform.count == 0 ? uniform.value.get(elapsed) : uniform.value.map((v) => v.get(elapsed));
+    const value = uniform._frameUpdate(elapsed);
 
     // Send the value to the GPU
     // console.log('updateUniforms:', uniform.name, value);
     drawFrame.uniform(uniform.name, value);
   });
-}
-
-// Setup the instance's uniform after shader compilation.
-function setupUniforms(uniforms, program) {
-  Object.entries(program.uniforms).forEach(([name, uniform]) => {
-    if (name != 'iTime' && name != 'iResolution') {
-      // remove array suffix
-      const uname = name.replace('[0]', '');
-      const count = uniform.count | 0;
-      if (!uniforms[uname] || uniforms[uname].count != count) {
-        // TODO: keep the previous values when the count change:
-        // if the count decreased, then drop the excess, else append new values
-        uniforms[uname] = {
-          name,
-          count,
-          value: count == 0 ? new UniformValue() : new Array(count).fill().map(() => new UniformValue()),
-        };
-      }
-    }
-  });
-  // TODO: remove previous uniform that are no longer used...
-  return uniforms;
 }
 
 // Setup the canvas and return the WebGL context.
@@ -156,8 +173,8 @@ async function initializeShaderInstance(name, code) {
     .createPrograms([vertexShader, code])
     .then(([program]) => {
       const drawFrame = app.createDrawCall(program, arrays);
-      const instance = { app, code, program, arrays, drawFrame, uniforms: setupUniforms({}, program) };
-
+      const instance = { app, code, program, arrays, drawFrame, uniforms: {} };
+      setupUniforms(instance);
       // Render frame logic
       let prev = performance.now() / 1000;
       instance.age = 0;
@@ -189,8 +206,8 @@ async function reloadShaderInstanceCode(instance, code) {
   return instance.app.createPrograms([vertexShader, code]).then(([program]) => {
     instance.program.delete();
     instance.program = program;
-    instance.uniforms = setupUniforms(instance.uniforms, program);
     instance.drawFrame = instance.app.createDrawCall(program, instance.arrays);
+    setupUniforms(instance, true);
   });
 }
 
@@ -207,4 +224,5 @@ export async function loadShader(code = '', name = 'default') {
     await reloadShaderInstanceCode(_instances[name], code);
     logger('[shader] reloaded');
   }
+  return _instances[name];
 }
