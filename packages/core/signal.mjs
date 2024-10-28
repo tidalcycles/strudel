@@ -391,8 +391,11 @@ export const perlinWith = (pat) => {
  */
 export const perlin = perlinWith(time.fmap((v) => Number(v)));
 
-export const degradeByWith = register('degradeByWith', (withPat, x, pat) =>
-  pat.fmap((a) => (_) => a).appLeft(withPat.filterValues((v) => v > x)),
+export const degradeByWith = register(
+  'degradeByWith',
+  (withPat, x, pat) => pat.fmap((a) => (_) => a).appLeft(withPat.filterValues((v) => v > x)),
+  true,
+  true,
 );
 
 /**
@@ -409,9 +412,14 @@ export const degradeByWith = register('degradeByWith', (withPat, x, pat) =>
  * @example
  * s("[hh?0.2]*8")
  */
-export const degradeBy = register('degradeBy', function (x, pat) {
-  return pat._degradeByWith(rand, x);
-});
+export const degradeBy = register(
+  'degradeBy',
+  function (x, pat) {
+    return pat._degradeByWith(rand, x);
+  },
+  true,
+  true,
+);
 
 /**
  *
@@ -425,7 +433,7 @@ export const degradeBy = register('degradeBy', function (x, pat) {
  * @example
  * s("[hh?]*8")
  */
-export const degrade = register('degrade', (pat) => pat._degradeBy(0.5));
+export const degrade = register('degrade', (pat) => pat._degradeBy(0.5), true, true);
 
 /**
  * Inverse of `degradeBy`: Randomly removes events from the pattern by a given amount.
@@ -445,12 +453,17 @@ export const degrade = register('degrade', (pat) => pat._degradeBy(0.5));
  *   x => x.undegradeBy(0.8).pan(1)
  * )
  */
-export const undegradeBy = register('undegradeBy', function (x, pat) {
-  return pat._degradeByWith(
-    rand.fmap((r) => 1 - r),
-    x,
-  );
-});
+export const undegradeBy = register(
+  'undegradeBy',
+  function (x, pat) {
+    return pat._degradeByWith(
+      rand.fmap((r) => 1 - r),
+      x,
+    );
+  },
+  true,
+  true,
+);
 
 /**
  * Inverse of `degrade`: Randomly removes 50% of events from the pattern. Shorthand for `.undegradeBy(0.5)`
@@ -467,7 +480,7 @@ export const undegradeBy = register('undegradeBy', function (x, pat) {
  *   x => x.undegrade().pan(1)
  * )
  */
-export const undegrade = register('undegrade', (pat) => pat._undegradeBy(0.5));
+export const undegrade = register('undegrade', (pat) => pat._undegradeBy(0.5), true, true);
 
 /**
  *
