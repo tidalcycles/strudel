@@ -2593,7 +2593,7 @@ export const steps = register('steps', function (targetTactus, pat) {
     // avoid divide by zero..
     return nothing;
   }
-  return pat.fast(Fraction(targetTactus).div(pat.tactus));
+  return pat._fast(Fraction(targetTactus).div(pat.tactus)).setTactus(targetTactus);
 });
 
 export function _polymeterListSteps(steps, ...args) {
@@ -2801,7 +2801,7 @@ export const s_sub = stepRegister('s_sub', function (i, pat) {
   return pat.s_add(pat.tactus.sub(i));
 });
 
-export const s_cycles = stepRegister('s_extend', function (factor, pat) {
+export const s_extend = stepRegister('s_extend', function (factor, pat) {
   return pat.fast(factor).s_expand(factor);
 });
 
@@ -2880,6 +2880,13 @@ Pattern.prototype.s_tour = function (...many) {
 
 export const s_tour = function (pat, ...many) {
   return pat.s_tour(...many);
+};
+
+const s_zip = function (...pats) {
+  pats = pats.filter((pat) => pat.hasTactus);
+  const zipped = slowcat(...pats.map((pat) => pat._slow(pat.tactus)));
+  // Should maybe use lcm or gcd for tactus?
+  return zipped._fast(pats[0].tactus).setTactus(pats[0].tactus);
 };
 
 //////////////////////////////////////////////////////////////////////
