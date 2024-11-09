@@ -89,11 +89,10 @@ if (typeof window !== 'undefined') {
   });
 }
 
-Pattern.prototype.midi = function (output) {
+Pattern.prototype.midi = function (output, mapping) {
   if (isPattern(output)) {
     throw new Error(
-      `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
-        WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
+      `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
       }')`,
     );
   }
@@ -103,8 +102,7 @@ Pattern.prototype.midi = function (output) {
       const device = getDevice(output, outputs);
       const otherOutputs = outputs.filter((o) => o.name !== device.name);
       logger(
-        `Midi enabled! Using "${device.name}". ${
-          otherOutputs?.length ? `Also available: ${getMidiDeviceNamesString(otherOutputs)}` : ''
+        `Midi enabled! Using "${device.name}". ${otherOutputs?.length ? `Also available: ${getMidiDeviceNamesString(otherOutputs)}` : ''
         }`,
       );
     },
@@ -137,6 +135,23 @@ Pattern.prototype.midi = function (output) {
         time: timeOffsetString,
       });
     }
+
+    // Handle mapped parameters if mapping exists
+    if (mapping && mapping.parameters) {
+      Object.entries(hap.value).forEach(([param, value]) => {
+        const mappedParam = mapping.parameters[param];
+        if (mappedParam && typeof value === 'number') {
+          const scaled = Math.round(value * 127);
+          device.sendControlChange(
+            mappedParam.cc,
+            scaled,
+            mappedParam.channel || midichan,
+            { time: timeOffsetString }
+          );
+        }
+      });
+    }
+
     if (ccv !== undefined && ccn !== undefined) {
       if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
         throw new Error('expected ccv to be a number between 0 and 1');
@@ -169,8 +184,7 @@ const refs = {};
 export async function midin(input) {
   if (isPattern(input)) {
     throw new Error(
-      `midin: does not accept Pattern as input. Make sure to pass device name with single quotes. Example: midin('${
-        WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
+      `midin: does not accept Pattern as input. Make sure to pass device name with single quotes. Example: midin('${WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
       }')`,
     );
   }
@@ -184,8 +198,7 @@ export async function midin(input) {
   if (initial) {
     const otherInputs = WebMidi.inputs.filter((o) => o.name !== device.name);
     logger(
-      `Midi enabled! Using "${device.name}". ${
-        otherInputs?.length ? `Also available: ${getMidiDeviceNamesString(otherInputs)}` : ''
+      `Midi enabled! Using "${device.name}". ${otherInputs?.length ? `Also available: ${getMidiDeviceNamesString(otherInputs)}` : ''
       }`,
     );
     refs[input] = {};
