@@ -89,17 +89,27 @@ if (typeof window !== 'undefined') {
   });
 }
 
-Pattern.prototype.midi = function (output, mapping) {
+Pattern.prototype.midi = function(output) {
   if (isPattern(output)) {
     throw new Error(
       `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
       }')`,
     );
   }
+  let portName = output;
+  let isController = false;
+  let mapping = {};
+
+  if (typeof output === 'object') {
+    const { port, controller = false, ...remainingProps } = output;
+    portName = port;
+    isController = controller;
+    mapping = remainingProps;
+  }
 
   enableWebMidi({
     onEnabled: ({ outputs }) => {
-      const device = getDevice(output, outputs);
+      const device = getDevice(portName, outputs);
       const otherOutputs = outputs.filter((o) => o.name !== device.name);
       logger(
         `Midi enabled! Using "${device.name}". ${otherOutputs?.length ? `Also available: ${getMidiDeviceNamesString(otherOutputs)}` : ''
@@ -115,7 +125,7 @@ Pattern.prototype.midi = function (output, mapping) {
       console.log('not enabled');
       return;
     }
-    const device = getDevice(output, WebMidi.outputs);
+    const device = getDevice(portName, WebMidi.outputs);
     hap.ensureObjectValue();
     //magic number to get audio engine to line up, can probably be calculated somehow
     const latencyMs = 34;
@@ -128,7 +138,7 @@ Pattern.prototype.midi = function (output, mapping) {
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
     const duration = (hap.duration.valueOf() / cps) * 1000 - 10;
-    if (note != null) {
+    if (note != null && !isController) {
       const midiNumber = typeof note === 'number' ? note : noteToMidi(note);
       const midiNote = new Note(midiNumber, { attack: velocity, duration });
       device.playNote(midiNote, midichan, {
@@ -137,9 +147,9 @@ Pattern.prototype.midi = function (output, mapping) {
     }
 
     // Handle mapped parameters if mapping exists
-    if (mapping && mapping.parameters) {
+    if (mapping) {
       Object.entries(hap.value).forEach(([param, value]) => {
-        const mappedParam = mapping.parameters[param];
+        const mappedParam = mapping[param];
         if (mappedParam && typeof value === 'number') {
           const scaled = Math.round(value * 127);
           device.sendControlChange(
