@@ -89,10 +89,11 @@ if (typeof window !== 'undefined') {
   });
 }
 
-Pattern.prototype.midi = function(output) {
+Pattern.prototype.midi = function (output) {
   if (isPattern(output)) {
     throw new Error(
-      `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
+      `.midi does not accept Pattern input. Make sure to pass device name with single quotes. Example: .midi('${
+        WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
       }')`,
     );
   }
@@ -112,7 +113,8 @@ Pattern.prototype.midi = function(output) {
       const device = getDevice(portName, outputs);
       const otherOutputs = outputs.filter((o) => o.name !== device.name);
       logger(
-        `Midi enabled! Using "${device.name}". ${otherOutputs?.length ? `Also available: ${getMidiDeviceNamesString(otherOutputs)}` : ''
+        `Midi enabled! Using "${device.name}". ${
+          otherOutputs?.length ? `Also available: ${getMidiDeviceNamesString(otherOutputs)}` : ''
         }`,
       );
     },
@@ -148,16 +150,20 @@ Pattern.prototype.midi = function(output) {
 
     // Handle mapped parameters if mapping exists
     if (mapping) {
-      Object.entries(hap.value).forEach(([param, value]) => {
-        const mappedParam = mapping[param];
-        if (mappedParam && typeof value === 'number') {
-          const scaled = Math.round(value * 127);
-          device.sendControlChange(
-            mappedParam.cc,
-            scaled,
-            mappedParam.channel || midichan,
-            { time: timeOffsetString }
-          );
+      Object.entries(mapping).forEach(([name, paramSpec]) => {
+        if (name in hap.value && typeof hap.value[name] === 'number') {
+          const value = hap.value[name];
+
+          // ccnLsb will only exist if this is a high-resolution CC message
+          const [ccnMsb, ccnLsb] = Array.isArray(paramSpec.cc) ? paramSpec.cc : [paramSpec.cc];
+
+          const ccvMsb = ccnLsb === undefined ? Math.round(value * 127) : Math.round(value * 16383) >> 7;
+          device.sendControlChange(ccnMsb, ccvMsb, paramSpec.channel || midichan, { time: timeOffsetString });
+
+          if (ccnLsb !== undefined) {
+            const ccvLsb = Math.round(value * 16383) & 0b1111111;
+            device.sendControlChange(ccnLsb, ccvLsb, paramSpec.channel || midichan, { time: timeOffsetString });
+          }
         }
       });
     }
@@ -194,7 +200,8 @@ const refs = {};
 export async function midin(input) {
   if (isPattern(input)) {
     throw new Error(
-      `midin: does not accept Pattern as input. Make sure to pass device name with single quotes. Example: midin('${WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
+      `midin: does not accept Pattern as input. Make sure to pass device name with single quotes. Example: midin('${
+        WebMidi.outputs?.[0]?.name || 'IAC Driver Bus 1'
       }')`,
     );
   }
@@ -208,7 +215,8 @@ export async function midin(input) {
   if (initial) {
     const otherInputs = WebMidi.inputs.filter((o) => o.name !== device.name);
     logger(
-      `Midi enabled! Using "${device.name}". ${otherInputs?.length ? `Also available: ${getMidiDeviceNamesString(otherInputs)}` : ''
+      `Midi enabled! Using "${device.name}". ${
+        otherInputs?.length ? `Also available: ${getMidiDeviceNamesString(otherInputs)}` : ''
       }`,
     );
     refs[input] = {};
