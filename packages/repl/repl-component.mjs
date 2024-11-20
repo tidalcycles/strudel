@@ -51,8 +51,8 @@ if (typeof HTMLElement !== 'undefined') {
           });
           this.dispatchEvent(event);
         },
-       solo: this.solo,
-       sync: this.sync,
+        solo: this.solo,
+        sync: this.sync,
       });
       // init settings
       this.editor.updateSettings(this.settings);
