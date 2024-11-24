@@ -24,6 +24,10 @@ import { initTheme, activateTheme, theme } from './themes.mjs';
 import { sliderPlugin, updateSliderWidgets } from './slider.mjs';
 import { widgetPlugin, updateWidgets } from './widget.mjs';
 import { persistentAtom } from '@nanostores/persistent';
+import * as prettier from 'prettier/standalone';
+import typescriptPlugin from 'prettier/plugins/typescript';
+import estreePlugin from "prettier/plugins/estree";
+import { EditorSelection } from '@codemirror/state';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
@@ -102,6 +106,43 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
             preventDefault: true,
             run: () => onStop?.(),
           },
+          {
+            key: 'Ctrl-\\',
+            preventDefault: true,
+            run: async (editorView) => {
+              const currentState = editorView.state.doc.toString();
+
+              // Prettier insists on consistent quotes, but in Strudel double quotes are interpreted
+              // as patterns and single quotes are for everything else, so a consistent setting won't work.
+              // It's a great formatter though, so as a workaround it works to put "// prettier-ignore" comments
+              // before the single quoted stuff to preserve it, but this is a pain to make users to, so an extra
+              // hack is to take the preformatted code, insert these comments behind the scenes, format, then
+              // remove them before setting the editor state.
+              const preFormat = currentState.split('\n').map(
+                line => line.match(/\'.*\'/) != null ? "// prettier-ignore\n" + line : line
+              ).join('\n');  
+              console.log(preFormat);
+              const formattedState = (await prettier.format(
+                preFormat,
+                {
+                  parser: 'typescript',
+                  plugins: [typescriptPlugin, estreePlugin],
+                  semi: false,
+                }
+              ))
+              .replace(/.*\/\/ prettier-ignore.*\n/g, '');
+
+              editorView.dispatch({
+                changes: { from: 0, to: editorView.state.doc.length, insert: formattedState},
+                selection: EditorSelection.single(
+                  // keep cursor close to the original position, but also keep it within the bounds
+                  // of the formatted document
+                  Math.min(editorView.state.selection.main.to, formattedState.length)
+                ),
+                scrollIntoView: true
+              });
+            }
+          }
           /* {
           key: 'Ctrl-Shift-.',
           run: () => (onPanic ? onPanic() : onStop?.()),
