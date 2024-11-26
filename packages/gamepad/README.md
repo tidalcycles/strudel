@@ -54,8 +54,8 @@ const pattern = sequence([
 ```javascript
 // Use button values to control amplitude
 $: sequence([
-  note("bd").gain(pad.X),    // X button controls gain
-  note("[hh oh]").gain(pad.tglY),    // Y button toggles gain
+  s("bd").gain(pad.X),    // X button controls gain
+  s("[hh oh]").gain(pad.tglY),    // Y button toggles gain
 ]);
 
 // Use analog stick for continuous control
