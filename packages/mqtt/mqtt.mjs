@@ -22,14 +22,14 @@ function onMessageArrived(message) {
 }
 
 function onFailure(err) {
-  console.error('Connection failed: ', err.errorMessage);
+  console.error('Connection failed: ', err);
 }
 
 Pattern.prototype.mqtt = function (
   username = undefined,
   password = undefined,
   topic = undefined,
-  host = 'ws://10.0.0.122:8083/',
+  host = 'wss://localhost:8883/',
   client = 'strudel',
   latency = 0,
 ) {
@@ -48,7 +48,7 @@ Pattern.prototype.mqtt = function (
     cx = new Paho.Client(host, client);
     cx.onConnectionLost = onConnectionLost;
     cx.onMessageArrived = onMessageArrived;
-
+    console.log('host', host, 'user', username, 'pass', password);
     cx.connect({
       onSuccess: onConnect,
       onFailure: onFailure,
