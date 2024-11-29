@@ -50,6 +50,7 @@ export function transpiler(input, options = {}) {
         return this.replace(miniWithLocation(value, node));
       }
       if (isSliderFunction(node)) {
+        //console.log(node.arguments)
         emitWidgets &&
           widgets.push({
             from: node.arguments[0].start,
@@ -58,6 +59,7 @@ export function transpiler(input, options = {}) {
             min: node.arguments[1]?.value ?? 0,
             max: node.arguments[2]?.value ?? 1,
             step: node.arguments[3]?.value,
+            config: node.arguments[4]?.value,
             type: 'slider',
           });
         return this.replace(sliderWithLocation(node));

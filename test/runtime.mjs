@@ -13,6 +13,7 @@ import { mini, m } from '@strudel/mini/mini.mjs';
 // import euclid from '@strudel/core/euclid.mjs';
 // import '@strudel/midi/midi.mjs';
 import * as tonalHelpers from '@strudel/tonal';
+import * as motionHelpers from '../packages/motion/index.mjs';
 import '@strudel/xen/xen.mjs';
 // import '@strudel/xen/tune.mjs';
 // import '@strudel/core/euclid.mjs';
@@ -21,6 +22,9 @@ import '@strudel/xen/xen.mjs';
 // import '@strudel/webaudio/webaudio.mjs';
 // import '@strudel/serial/serial.mjs';
 import '../website/src/repl/piano';
+//import * as motionHelpers from '../packages/motion/index.mjs';
+//import * as geolocationHelpers from '../packages/geolocation/index.mjs';
+import * as gamepadHelpers from '../packages/gamepad/index.mjs';
 
 class MockedNode {
   chain() {
@@ -169,6 +173,8 @@ evalScope(
   uiHelpersMocked,
   webaudio,
   tonalHelpers,
+  motionHelpers,
+  gamepadHelpers,
   /*
   toneHelpers,
   voicingHelpers,

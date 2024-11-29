@@ -81,6 +81,8 @@ export function loadModules() {
     import('@strudel/soundfonts'),
     import('@strudel/csound'),
     import('@strudel/tidal'),
+    import('@strudel/motion'),
+    import('@strudel/gamepad'),
   ];
   if (isTauri()) {
     modules = modules.concat([

@@ -186,6 +186,7 @@ export class StrudelMirror {
         this.widgets = options.meta?.widgets;
         const sliders = this.widgets.filter((w) => w.type === 'slider');
         updateSliderWidgets(this.editor, sliders);
+        console.log('sliders', sliders);
         const widgets = this.widgets.filter((w) => w.type !== 'slider');
         updateWidgets(this.editor, widgets);
         updateMiniLocations(this.editor, this.miniLocations);
