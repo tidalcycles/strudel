@@ -18,7 +18,7 @@ function onConnectionLost(responseObject) {
 
 // Handle received messages
 function onMessageArrived(message) {
-  console.log('mqtt message arrived: ', message.payloadString);
+  console.log('incoming mqtt message: ', message.payloadString); // prettier-ignore
 }
 
 function onFailure(err) {
@@ -30,14 +30,16 @@ Pattern.prototype.mqtt = function (
   password = undefined,
   topic = undefined,
   host = 'wss://localhost:8883/',
-  client = 'strudel',
+  client = undefined,
   latency = 0,
 ) {
   const key = host + '-' + client;
   let connected = false;
-
+  if (!client) {
+    client = 'strudel-' + String(Math.floor(Math.random() * 1000000));
+  }
   function onConnect() {
-    console.log('Connected to broker');
+    console.log('Connected to mqtt broker');
     connected = true;
   }
 
@@ -48,19 +50,21 @@ Pattern.prototype.mqtt = function (
     cx = new Paho.Client(host, client);
     cx.onConnectionLost = onConnectionLost;
     cx.onMessageArrived = onMessageArrived;
-    console.log('host', host, 'user', username, 'pass', password);
-    cx.connect({
+    const props = {
       onSuccess: onConnect,
       onFailure: onFailure,
-      userName: username,
-      password: password,
       useSSL: true,
-    });
+    };
+
+    if (username) {
+      props.userName = username;
+      props.password = password;
+    }
+    cx.connect(props);
   }
   return this.withHap((hap) => {
     const onTrigger = (t_deprecate, hap, currentTime, cps, targetTime) => {
       if (!connected) {
-        console.log('not connected');
         return;
       }
       let message = '';

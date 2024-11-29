@@ -1,5 +1,5 @@
 ---
-title: MIDI & OSC
+title: MIDI, OSC & MQTT
 layout: ../../layouts/MainLayout.astro
 ---
 
@@ -86,3 +86,67 @@ Please refer to [Tidal Docs](https://tidalcycles.org/) for more info.
 <br />
 
 But can we use Strudel [offline](/learn/pwa)?
+
+# MQTT
+
+MQTT is a lightweight network protocol, designed for 'internet of things' devices. For use with strudel, you will
+need access to an MQTT server known as a 'broker' configured to accept secure 'websocket' connections. You could
+run one yourself (e.g. by running [mosquitto](https://mosquitto.org/)), although getting an SSL certificate that
+your web browser will trust might be a bit tricky for those without systems administration experience.
+Alternatively, you can use [a public broker](https://www.hivemq.com/mqtt/public-mqtt-broker/).
+
+## Usage
+
+The following example shows how to send a pattern to an MQTT broker:
+
+<MiniRepl
+  client:only="react"
+  tune={`"hello world"
+    .mqtt(undefined, // username (undefined for open/public servers)
+          undefined, // password 
+          '/strudel-pattern', // mqtt 'topic' 
+          'wss://mqtt.eclipseprojects.io:443/mqtt', // MQTT server address
+          'mystrudel', // MQTT client id - randomly generated if not supplied
+          0 // latency / delay before sending messages (0 = no delay)
+         )`}
+
+/>
+
+Other software can then receive the messages. For example using the [mosquitto](https://mosquitto.org/) commandline client tools:
+
+```
+> mosquitto_sub  -h mqtt.eclipseprojects.io -p 1883  -t "/strudel-pattern"
+hello
+world
+hello
+world
+...
+```
+
+Control patterns will be encoded as JSON, for example:
+
+<MiniRepl
+  client:only="react"
+  tune={`sound("sax(3,8)").speed("2 3")
+  .mqtt(undefined, // username (undefined for open/public servers)
+        undefined, // password
+        '/strudel-pattern', // mqtt 'topic'
+        'wss://mqtt.eclipseprojects.io:443/mqtt', // MQTT server address
+        'mystrudel', // MQTT client id - randomly generated if not supplied
+        0 // latency / delay before sending messages (0 = no delay)
+       )`}
+/>
+
+Will send messages like the following:
+
+```
+{"s":"sax","speed":2}
+{"s":"sax","speed":2}
+{"s":"sax","speed":3}
+{"s":"sax","speed":2}
+...
+```
+
+Libraries for receiving MQTT are available for many programming languages.
+
+Strudel does not yet support receiving messages over MQTT.
