@@ -133,6 +133,7 @@ export class StrudelMirror {
       autodraw,
       prebake,
       bgFill = true,
+      solo = true,
       ...replOptions
     } = options;
     this.code = initialCode;
@@ -143,6 +144,7 @@ export class StrudelMirror {
     this.drawContext = drawContext;
     this.onDraw = onDraw || this.draw;
     this.id = id || s4();
+    this.solo = solo;
 
     this.drawer = new Drawer((haps, time, _, painters) => {
       const currentFrame = haps.filter((hap) => hap.isActive(time));
@@ -159,12 +161,14 @@ export class StrudelMirror {
         replOptions?.onToggle?.(started);
         if (started) {
           this.drawer.start(this.repl.scheduler);
-          // stop other repls when this one is started
-          document.dispatchEvent(
-            new CustomEvent('start-repl', {
-              detail: this.id,
-            }),
-          );
+          if (this.solo) {
+            // stop other repls when this one is started
+            document.dispatchEvent(
+              new CustomEvent('start-repl', {
+                detail: this.id,
+              }),
+            );
+          }
         } else {
           this.drawer.stop();
           updateMiniLocations(this.editor, []);
@@ -219,7 +223,7 @@ export class StrudelMirror {
 
     // stop this repl when another repl is started
     this.onStartRepl = (e) => {
-      if (e.detail !== this.id) {
+      if (this.solo && e.detail !== this.id) {
         this.stop();
       }
     };

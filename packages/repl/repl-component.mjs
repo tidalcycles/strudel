@@ -10,6 +10,8 @@ if (typeof HTMLElement !== 'undefined') {
     static observedAttributes = ['code'];
     settings = codemirrorSettings.get();
     editor = null;
+    sync = false;
+    solo = true;
     constructor() {
       super();
     }
@@ -49,6 +51,8 @@ if (typeof HTMLElement !== 'undefined') {
           });
           this.dispatchEvent(event);
         },
+        solo: this.solo,
+        sync: this.sync,
       });
       // init settings
       this.editor.updateSettings(this.settings);
