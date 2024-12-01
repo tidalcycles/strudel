@@ -26,7 +26,7 @@ export const getDrawContext = (id = 'test-canvas', options) => {
       }, 200);
     });
   }
-  return canvas.getContext(contextType);
+  return canvas.getContext(contextType, { willReadFrequently: true });
 };
 
 let animationFrames = {};
