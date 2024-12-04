@@ -26,7 +26,7 @@ import { widgetPlugin, updateWidgets } from './widget.mjs';
 import { persistentAtom } from '@nanostores/persistent';
 import * as prettier from 'prettier/standalone';
 import typescriptPlugin from 'prettier/plugins/typescript';
-import estreePlugin from "prettier/plugins/estree";
+import estreePlugin from 'prettier/plugins/estree';
 import { EditorSelection } from '@codemirror/state';
 
 const extensions = {
@@ -118,31 +118,30 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
               // before the single quoted stuff to preserve it, but this is a pain to make users to, so an extra
               // hack is to take the preformatted code, insert these comments behind the scenes, format, then
               // remove them before setting the editor state.
-              const preFormat = currentState.split('\n').map(
-                line => line.match(/\'.*\'/) != null ? "// prettier-ignore\n" + line : line
-              ).join('\n');  
+              const preFormat = currentState
+                .split('\n')
+                .map((line) => (line.match(/\'.*\'/) != null ? '// prettier-ignore\n' + line : line))
+                .join('\n');
               console.log(preFormat);
-              const formattedState = (await prettier.format(
-                preFormat,
-                {
+              const formattedState = (
+                await prettier.format(preFormat, {
                   parser: 'typescript',
                   plugins: [typescriptPlugin, estreePlugin],
                   semi: false,
-                }
-              ))
-              .replace(/.*\/\/ prettier-ignore.*\n/g, '');
+                })
+              ).replace(/.*\/\/ prettier-ignore.*\n/g, '');
 
               editorView.dispatch({
-                changes: { from: 0, to: editorView.state.doc.length, insert: formattedState},
+                changes: { from: 0, to: editorView.state.doc.length, insert: formattedState },
                 selection: EditorSelection.single(
                   // keep cursor close to the original position, but also keep it within the bounds
                   // of the formatted document
-                  Math.min(editorView.state.selection.main.to, formattedState.length)
+                  Math.min(editorView.state.selection.main.to, formattedState.length),
                 ),
-                scrollIntoView: true
+                scrollIntoView: true,
               });
-            }
-          }
+            },
+          },
           /* {
           key: 'Ctrl-Shift-.',
           run: () => (onPanic ? onPanic() : onStop?.()),
