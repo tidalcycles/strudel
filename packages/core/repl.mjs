@@ -84,6 +84,7 @@ export function repl({
   const toggle = () => scheduler.toggle();
   const setCps = (cps) => scheduler.setCps(cps);
   const setCpm = (cpm) => scheduler.setCps(cpm / 60);
+  const setLoop = (start, length) => scheduler.setLoop(start, length);
   const all = function (transform) {
     allTransform = transform;
     return silence;
@@ -137,6 +138,8 @@ export function repl({
       setcps: setCps,
       setCpm,
       setcpm: setCpm,
+      setLoop,
+      setloop: setLoop,
     });
   };
 
