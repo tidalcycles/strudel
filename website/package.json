@@ -34,6 +34,7 @@
     "@strudel/midi": "workspace:*",
     "@strudel/mini": "workspace:*",
     "@strudel/motion": "workspace:*",
+    "@strudel/mqtt": "workspace:*",
     "@strudel/osc": "workspace:*",
     "@strudel/serial": "workspace:*",
     "@strudel/soundfonts": "workspace:*",
