@@ -315,7 +315,12 @@ export const orientationX = orientationBeta;
 export const orientationY = orientationGamma;
 export const orientationZ = orientationAlpha;
 
-// Short aliases for X,Y,Z
+// Short aliases for A,B,G,X,Y,Z
+
+export const oriA = orientationAlpha;
+export const oriB = orientationBeta;
+export const oriG = orientationGamma;
+
 export const oriX = orientationX;
 export const oriY = orientationY;
 export const oriZ = orientationZ;
