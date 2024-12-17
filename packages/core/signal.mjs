@@ -161,7 +161,7 @@ export const run = (n) => saw.range(0, n).floor().segment(n);
 
 /**
  * @name binary
- * Creates a discrete pattern using binary representation.
+ * Creates a pattern from a binary number.
  * @param {number} n - input number to convert to binary
  * @example
  * "hh".s().struct(binary(5))
@@ -174,7 +174,7 @@ export const binary = (n) => {
 
 /**
  * @name binaryN
- * Creates a discrete pattern using binary representation.
+ * Creates a pattern from a binary number, padded to n bits long.
  * @param {number} n - input number to convert to binary
  * @param {number} nBits - pattern length, defaults to 16
  * @example
