@@ -152,9 +152,12 @@ export function repl({
       shouldHush && hush();
       let { pattern, meta } = await _evaluate(code, transpiler, transpilerOptions);
       if (Object.keys(pPatterns).length) {
-        pattern = stack(...Object.values(pPatterns));
-      }
-      if (allTransform) {
+        let patterns = Object.values(pPatterns);
+        if (allTransform) {
+          patterns = patterns.map(allTransform);
+        }
+        pattern = stack(...patterns);
+      } else if (allTransform) {
         pattern = allTransform(pattern);
       }
       if (!isPattern(pattern)) {

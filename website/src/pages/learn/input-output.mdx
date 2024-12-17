@@ -1,19 +1,20 @@
 ---
-title: MIDI & OSC
+title: MIDI, OSC & MQTT
 layout: ../../layouts/MainLayout.astro
 ---
 
 import { MiniRepl } from '../../docs/MiniRepl';
 import { JsDoc } from '../../docs/JsDoc';
 
-# MIDI and OSC
+# MIDI, OSC and MQTT
 
-The default audio output of Strudel uses the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API).
-It is also possible to use Strudel with MIDI and OSC / [SuperDirt](https://github.com/musikinformatik/SuperDirt/) instead.
+Normally, Strudel is used to pattern sound, using its own '[web audio](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)'-based synthesiser called [SuperDough](https://github.com/tidalcycles/strudel/tree/main/packages/superdough).
 
-# MIDI API
+It is also possible to pattern other things with Strudel, such as software and hardware synthesisers with MIDI, other software using Open Sound Control/OSC (including the [SuperDirt](https://github.com/musikinformatik/SuperDirt/) synthesiser commonly used with Strudel's sibling [TidalCycles](https://tidalcycles.org/)), or the MQTT 'internet of things' protocol.
 
-Strudel also supports midi via [webmidi](https://npmjs.com/package/webmidi).
+# MIDI
+
+Strudel supports MIDI without any additional software (thanks to [webmidi](https://npmjs.com/package/webmidi)), just by adding methods to your pattern:
 
 ## midi(outputName?)
 
@@ -45,20 +46,22 @@ But you can also control cc messages separately like this:
 $: ccv(sine.segment(16).slow(4)).ccn(74).midi()`}
 />
 
-# OSC/SuperDirt API
+# OSC/SuperDirt/StrudelDirt
 
-In mainline tidal, the actual sound is generated via [SuperDirt](https://github.com/musikinformatik/SuperDirt/), which runs inside SuperCollider.
-Strudel also supports using [SuperDirt](https://github.com/musikinformatik/SuperDirt/) as a backend, although it requires some developer tooling to run.
+In TidalCycles, sound is usually generated using [SuperDirt](https://github.com/musikinformatik/SuperDirt/), which runs inside SuperCollider. Strudel also supports using SuperDirt, although it requires installing some additional software.
+
+There is also [StrudelDirt](https://github.com/daslyfe/StrudelDirt) which is SuperDirt with some optimisations for working with Strudel. (A longer term aim is to merge these optimisations back into mainline SuperDirt)
 
 ## Prequisites
 
-Getting [SuperDirt](https://github.com/musikinformatik/SuperDirt/) to work with Strudel, you need to
+To get SuperDirt to work with Strudel, you need to
 
 1. install SuperCollider + sc3 plugins, see [Tidal Docs](https://tidalcycles.org/docs/) (Install Tidal) for more info.
-2. install [node.js](https://nodejs.org/en/)
-3. download [Strudel Repo](https://github.com/tidalcycles/strudel/) (or git clone, if you have git installed)
-4. run `pnpm i` in the strudel directory
-5. run `pnpm run osc` to start the osc server, which forwards OSC messages from Strudel REPL to SuperCollider
+2. install SuperDirt, or the [StrudelDirt](https://github.com/daslyfe/StrudelDirt) fork which is optimised for use with Strudel
+3. install [node.js](https://nodejs.org/en/)
+4. download [Strudel Repo](https://github.com/tidalcycles/strudel/) (or git clone, if you have git installed)
+5. run `pnpm i` in the strudel directory
+6. run `pnpm run osc` to start the osc server, which forwards OSC messages from Strudel REPL to SuperCollider
 
 Now you're all set!
 
@@ -86,3 +89,67 @@ Please refer to [Tidal Docs](https://tidalcycles.org/) for more info.
 <br />
 
 But can we use Strudel [offline](/learn/pwa)?
+
+# MQTT
+
+MQTT is a lightweight network protocol, designed for 'internet of things' devices. For use with strudel, you will
+need access to an MQTT server known as a 'broker' configured to accept secure 'websocket' connections. You could
+run one yourself (e.g. by running [mosquitto](https://mosquitto.org/)), although getting an SSL certificate that
+your web browser will trust might be a bit tricky for those without systems administration experience.
+Alternatively, you can use [a public broker](https://www.hivemq.com/mqtt/public-mqtt-broker/).
+
+Strudel does not yet support receiving messages over MQTT, only sending them.
+
+## Usage
+
+The following example shows how to send a pattern to an MQTT broker:
+
+<MiniRepl
+  client:only="react"
+  tune={`"hello world"
+    .mqtt(undefined, // username (undefined for open/public servers)
+          undefined, // password 
+          '/strudel-pattern', // mqtt 'topic' 
+          'wss://mqtt.eclipseprojects.io:443/mqtt', // MQTT server address
+          'mystrudel', // MQTT client id - randomly generated if not supplied
+          0 // latency / delay before sending messages (0 = no delay)
+         )`}
+
+/>
+
+Other software can then receive the messages. For example using the [mosquitto](https://mosquitto.org/) commandline client tools:
+
+```
+> mosquitto_sub  -h mqtt.eclipseprojects.io -p 1883  -t "/strudel-pattern"
+hello
+world
+hello
+world
+...
+```
+
+Control patterns will be encoded as JSON, for example:
+
+<MiniRepl
+  client:only="react"
+  tune={`sound("sax(3,8)").speed("2 3")
+  .mqtt(undefined, // username (undefined for open/public servers)
+        undefined, // password
+        '/strudel-pattern', // mqtt 'topic'
+        'wss://mqtt.eclipseprojects.io:443/mqtt', // MQTT server address
+        'mystrudel', // MQTT client id - randomly generated if not supplied
+        0 // latency / delay before sending messages (0 = no delay)
+       )`}
+/>
+
+Will send messages like the following:
+
+```
+{"s":"sax","speed":2}
+{"s":"sax","speed":2}
+{"s":"sax","speed":3}
+{"s":"sax","speed":2}
+...
+```
+
+Libraries for receiving MQTT are available for many programming languages.
