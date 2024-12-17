@@ -169,7 +169,7 @@ export const run = (n) => saw.range(0, n).floor().segment(n);
  */
 export const binary = (n) => {
   const nBits = reify(n).log2(0).floor().add(1);
-  return binaryN(n, nBits)
+  return binaryN(n, nBits);
 };
 
 /**
