@@ -33,6 +33,7 @@
     "@strudel/hydra": "workspace:*",
     "@strudel/midi": "workspace:*",
     "@strudel/mini": "workspace:*",
+    "@strudel/mqtt": "workspace:*",
     "@strudel/osc": "workspace:*",
     "@strudel/serial": "workspace:*",
     "@strudel/soundfonts": "workspace:*",

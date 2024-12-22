@@ -68,6 +68,10 @@ export class Cyclist {
               // see https://github.com/tidalcycles/strudel/pull/1004
               const deadline = targetTime - phase;
               onTrigger?.(hap, deadline, duration, this.cps, targetTime);
+              if (hap.value.cps !== undefined && this.cps != hap.value.cps) {
+                this.cps = hap.value.cps;
+                this.num_ticks_since_cps_change = 0;
+              }
             }
           });
         } catch (e) {
