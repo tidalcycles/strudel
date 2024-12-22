@@ -7,7 +7,7 @@ This program is free software: you can redistribute it and/or modify it under th
 /*
 /// Here is a feature demo
 // Setup a shader
-let truchetFTW = await fetch('https://raw.githubusercontent.com/TristanCacqueray/shaders/refs/heads/main/shaders/Truchet%20%2B%20Kaleidoscope%20FTW.glsl').then((res) => res.text())
+let truchetFTW = fetch('https://raw.githubusercontent.com/TristanCacqueray/shaders/refs/heads/main/shaders/Truchet%20%2B%20Kaleidoscope%20FTW.glsl').then((res) => res.text())
 // This shader provides the following uniforms:
 // uniform float icolor;
 // uniform float moveFWD;
@@ -62,7 +62,6 @@ $: note("<C D G A Bb D C A G D Bb A>*[2,2.02]")
   }, false)
 */
 
-import { PicoGL } from 'picogl';
 import { logger } from '@strudel/core';
 
 // The standard fullscreen vertex shader.
@@ -94,14 +93,13 @@ void main(void) {
 
 // Helper class to handle uniform updates
 class UniformValue {
-  constructor(name, count, draw) {
-    this.name = name;
+  constructor(count, draw) {
     this.draw = draw;
-    this.isArray = count > 0;
-    this.value = new Array(Math.max(1, count)).fill(0);
-    this.frameModifier = new Array(Math.max(1, count)).fill(null);
+    this.value = new Array(count).fill(0);
+    this.frameModifier = new Array(count).fill(null);
   }
 
+  // Helper to perform a simple increment
   incr(value, pos = 0) {
     const idx = pos % this.value.length;
     this.value[idx] += value;
@@ -125,16 +123,17 @@ class UniformValue {
     return this.value[pos % this.value.length];
   }
 
+  // This function is called for every frame, allowing to run a smooth modifier
   _frameUpdate(elapsed) {
     this.value = this.value.map((value, idx) =>
       this.frameModifier[idx] ? this.frameModifier[idx](value, elapsed) : value,
     );
-    return this.isArray ? this.value : this.value[0];
+    return this.value;
   }
 
+  // When the shader is update, this function adjust the number of values, preserving the current one
   _resize(count) {
     if (count != this.count) {
-      this.isArray = count > 0;
       count = Math.max(1, count);
       resizeArray(this.value, count, 0);
       resizeArray(this.frameModifier, count, null);
@@ -148,15 +147,8 @@ function resizeArray(arr, size, defval) {
   else arr.push(...new Array(size - arr.length).fill(defval));
 }
 
-// Get the size of an uniform
-function uniformSize(funcName) {
-  if (funcName == 'uniform3fv') return 3;
-  else if (funcName == 'uniform4fv') return 4;
-  return 1;
-}
-
 // Setup the instance's uniform after shader compilation.
-function setupUniforms(instance, resetDraw = false) {
+function setupUniforms(instance) {
   const newUniforms = new Set();
   const draw = () => {
     // Start the drawing loop
@@ -165,17 +157,46 @@ function setupUniforms(instance, resetDraw = false) {
       instance.drawing = requestAnimationFrame(instance.update);
     }
   };
-  Object.entries(instance.program.uniforms).forEach(([name, uniform]) => {
-    if (name != 'iTime' && name != 'iResolution') {
-      // remove array suffix
-      const uname = name.replace('[0]', '');
-      newUniforms.add(uname);
-      const count = (uniform.count | 0) * uniformSize(uniform.glFuncName);
-      if (!instance.uniforms[uname]) instance.uniforms[uname] = new UniformValue(name, count, draw);
-      else instance.uniforms[uname]._resize(count);
-      if (resetDraw) instance.uniforms[uname].draw = draw;
+
+  // Collect every available uniforms
+  let gl = instance.gl;
+  const numUniforms = instance.gl.getProgramParameter(instance.program, gl.ACTIVE_UNIFORMS);
+  for (let i = 0; i < numUniforms; ++i) {
+    const inf = gl.getActiveUniform(instance.program, i);
+
+    // Arrays have a `[0]` suffix in their name, drop that
+    const name = inf.name.replace('[0]', '');
+
+    // Figure out how many values is this uniform, and how to update it.
+    let count = inf.size;
+    let updateFunc = 'uniform1fv';
+    switch (inf.type) {
+      case gl.FLOAT_VEC2:
+        count *= 2;
+        updateFunc = 'uniform2fv';
+        break;
+      case gl.FLOAT_VEC3:
+        count *= 3;
+        updateFunc = 'uniform3fv';
+        break;
+      case gl.FLOAT_VEC4:
+        count *= 4;
+        updateFunc = 'uniform4fv';
+        break;
     }
-  });
+
+    // This is a new uniform
+    if (!instance.uniforms[name]) instance.uniforms[name] = new UniformValue(count, draw);
+    // This is a known uniform, make sure it's size is correct
+    else instance.uniforms[name]._resize(count);
+
+    // Record it's location for the 'updateUniforms' below.
+    instance.uniforms[name].loc = gl.getUniformLocation(instance.program, inf.name);
+    instance.uniforms[name].updateFunc = updateFunc;
+
+    // Record the name so that unused uniform can be deleted below
+    newUniforms.add(name);
+  }
 
   // Remove deleted uniforms
   Object.keys(instance.uniforms).forEach((name) => {
@@ -184,14 +205,19 @@ function setupUniforms(instance, resetDraw = false) {
 }
 
 // Update the uniforms for a given drawFrame call.
-function updateUniforms(drawFrame, elapsed, uniforms) {
-  Object.values(uniforms).forEach((uniform) => {
+function updateUniforms(gl, now, elapsed, uniforms) {
+  Object.entries(uniforms).forEach(([name, uniform]) => {
     try {
-      const value = uniform._frameUpdate(elapsed);
-
-      // Send the value to the GPU
-      // console.log('updateUniforms:', uniform.name, value);
-      drawFrame.uniform(uniform.name, value);
+      if (name == 'iTime') {
+        gl.uniform1f(uniform.loc, now);
+      } else if (name == 'iResolution') {
+        gl.uniform2f(uniform.loc, gl.canvas.width, gl.canvas.height);
+      } else {
+        const value = uniform._frameUpdate(elapsed);
+        // Send the value to the GPU
+        // console.log('updateUniforms:', name, uniform.updateFunc, value);
+        gl[uniform.updateFunc](uniform.loc, value);
+      }
     } catch (err) {
       console.warn('uniform error');
       console.error(err);
@@ -214,79 +240,107 @@ function setupCanvas(name) {
   return canvas.getContext('webgl2');
 }
 
-// Setup the shader instance
-async function initializeShaderInstance(name, code) {
-  // Setup PicoGL app
-  const ctx = setupCanvas(name);
-  const app = PicoGL.createApp(ctx);
+function createProgram(gl, vertex, fragment) {
+  const compile = (type, source) => {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+    if (!success) {
+      const err = gl.getShaderInfoLog(shader);
+      gl.deleteShader(shader);
+      throw err;
+    }
+    return shader;
+  };
+  const program = gl.createProgram();
+  gl.attachShader(program, compile(gl.VERTEX_SHADER, vertex));
+  gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragment));
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    const err = gl.getProgramInfoLog(program);
+    gl.deleteProgram(program);
+    throw err;
+  }
+  gl.useProgram(program);
+  return program;
+}
 
-  // Setup buffers
-  const resolution = new Float32Array([ctx.canvas.width, ctx.canvas.height]);
+// Setup the shader instance
+function initializeShaderInstance(name, code) {
+  const gl = setupCanvas(name);
 
   // Two triangle to cover the whole canvas
-  const positionBuffer = app.createVertexBuffer(
-    PicoGL.FLOAT,
-    2,
-    new Float32Array([-1, -1, -1, 1, 1, 1, 1, 1, 1, -1, -1, -1]),
-  );
+  const mkPositionArray = () => {
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(buf, 2, gl.FLOAT, false, 0, 0);
+    return vao;
+  };
 
-  // Setup the arrays
-  const arrays = app.createVertexArray().vertexAttributeBuffer(0, positionBuffer);
+  try {
+    let array = mkPositionArray();
+    let program = createProgram(gl, vertexShader, code);
+    const instance = { gl, code, program, array, uniforms: {} };
+    setupUniforms(instance);
+    // Render frame logic
+    let prev = performance.now() / 1000;
+    instance.age = 0;
+    instance.update = () => {
+      const now = performance.now() / 1000;
+      const elapsed = instance.age == 0 ? 1 / 60 : now - prev;
+      prev = now;
+      // console.log('drawing!');
 
-  return app
-    .createPrograms([vertexShader, code])
-    .then(([program]) => {
-      const drawFrame = app.createDrawCall(program, arrays);
-      const instance = { app, code, program, arrays, drawFrame, uniforms: {} };
-      setupUniforms(instance);
-      // Render frame logic
-      let prev = performance.now() / 1000;
-      instance.age = 0;
-      instance.update = () => {
-        const now = performance.now() / 1000;
-        const elapsed = instance.age == 0 ? 1 / 60 : now - prev;
-        prev = now;
-        // console.log("drawing!")
-        app.clear();
-        instance.drawFrame.uniform('iResolution', resolution).uniform('iTime', now);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-        updateUniforms(instance.drawFrame, elapsed, instance.uniforms);
+      // Clear the canvas
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.bindVertexArray(array);
 
-        instance.drawFrame.draw();
-        // After sometime, if no update happened, stop the animation loop
-        if (instance.age++ < 100) requestAnimationFrame(instance.update);
-        else instance.drawing = false;
-      };
-      return instance;
-    })
-    .catch((err) => {
-      ctx.canvas.remove();
-      throw err;
-    });
+      // Send the uniform values to the GPU
+      updateUniforms(instance.gl, now, elapsed, instance.uniforms);
+
+      // Draw the quad
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+      // After sometime, if no update happened, stop the animation loop to save cpu cycles
+      if (instance.age++ < 100) requestAnimationFrame(instance.update);
+      else instance.drawing = false;
+    };
+    instance.update();
+    return instance;
+  } catch (err) {
+    gl.canvas.remove();
+    throw err;
+  }
 }
 
 // Update the instance program
-async function reloadShaderInstanceCode(instance, code) {
-  return instance.app.createPrograms([vertexShader, code]).then(([program]) => {
-    instance.program.delete();
-    instance.program = program;
-    instance.drawFrame = instance.app.createDrawCall(program, instance.arrays);
-    instance.code = code;
-    setupUniforms(instance, true);
-  });
+function reloadShaderInstanceCode(instance, code) {
+  const program = createProgram(instance.gl, vertexShader, code);
+  instance.gl.deleteProgram(instance.program);
+  instance.program = program;
+  instance.code = code;
+  setupUniforms(instance);
 }
 
 // Keep track of the running shader instances
 let _instances = {};
-export async function loadShader(code = '', name = 'default') {
+export function loadShader(code = '', name = 'default') {
   if (code) {
     code = mkFragmentShader(code);
   }
   if (!_instances[name]) {
-    _instances[name] = await initializeShaderInstance(name, code);
+    _instances[name] = initializeShaderInstance(name, code);
     logger('[shader] ready');
   } else if (_instances[name].code != code) {
-    await reloadShaderInstanceCode(_instances[name], code);
+    reloadShaderInstanceCode(_instances[name], code);
     logger('[shader] reloaded');
   }
   return _instances[name];
