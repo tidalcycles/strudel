@@ -92,7 +92,7 @@ export function repl({
   // set pattern methods that use this repl via closure
   const injectPatternMethods = () => {
     Pattern.prototype.p = function (id) {
-      if (id.startsWith('_') || id.endsWith('_')) {
+      if (typeof id === 'string' && (id.startsWith('_') || id.endsWith('_'))) {
         // allows muting a pattern x with x_ or _x
         return silence;
       }
