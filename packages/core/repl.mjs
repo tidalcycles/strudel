@@ -168,7 +168,7 @@ export function repl({
         pattern = allTransform(pattern);
       }
       if (togetherTransform) {
-        pattern = togetherTransform(pattern)
+        pattern = togetherTransform(pattern);
       }
       if (!isPattern(pattern)) {
         const message = `got "${typeof evaluated}" instead of pattern`;
