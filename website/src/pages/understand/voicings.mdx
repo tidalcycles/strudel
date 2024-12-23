@@ -9,7 +9,7 @@ import Box from '@components/Box.astro';
 
 # Understanding Chords and Voicings
 
-Let's dig deeper into how chords and voicings work.
+Let's dig deeper into how chords and voicings work in strudel.
 I'll try to keep theory jargon to a minimum, so hopefully this is approachable for anyone interested.
 
 ## What is a chord
@@ -194,3 +194,128 @@ In a `voicing dictionary`, each chord symbol is assigned one or more voicings.
 The `voicing` function then picks the voicing that is closest to the `anchor` (defaults to `c5`).
 
 The handy thing about this approach is that a `voicing dictionary` can be used to play any chord progression with automated voice leading!
+
+## The default dictionary
+
+When using the default dictionary, you can use these chord symbols:
+
+```
+2 5 6 7 9 11 13 69 add9
+o h sus ^ - ^7 -7 7sus
+h7 o7 ^9 ^13 ^7#11 ^9#11
+^7#5 -6 -69 -^7 -^9 -9
+-add9 -11 -7b5 h9 -b6 -#5
+7b9 7#9 7#11 7b5 7#5 9#11
+9b5 9#5 7b13 7#9#5 7#9b5
+7#9#11 7b9#11 7b9b5 7b9#5
+7b9#9 7b9b13 7alt 13#11
+13b9 13#9 7b9sus 7susadd3
+9sus 13sus 7b13sus
+aug M m M7 m7 M9 M13
+M7#11 M9#11 M7#5 m6 m69
+m^7 -M7 m^9 -M9 m9 madd9
+m11 m7b5 mb6 m#5 mM7 mM9
+```
+
+The available chords and the format is very much inspired by [ireal pro chords](https://technimo.helpshift.com/hc/en/3-ireal-pro/faq/88-chord-symbols-used-in-ireal-pro/).
+Some symbols are synonymous:
+
+- "-" is the same as "m", for example C-7 = Cm7
+- "^" is the same as "M", for example C^7 = CM7
+- "+" is the same as "aug"
+
+You can decide which one's you prefer. There is no international standard for these symbols.
+To get a full chord, the symbols have to be prefixed with a root pitch, e.g. D7#11 is the 7#11 chord relative to the pitch D.
+
+Here are all possible chords with root C:
+
+<MiniRepl
+  client:visible
+  tune={`chord(\`<
+C2 C5 C6 C7 C9 C11 C13 C69
+Cadd9 Co Ch Csus C^ C- C^7 
+C-7 C7sus Ch7 Co7 C^9 C^13 
+C^7#11 C^9#11 C^7#5 C-6 C-69 
+C-^7 C-^9 C-9 C-add9 C-11 
+C-7b5 Ch9 C-b6 C-#5 C7b9 
+C7#9 C7#11 C7b5 C7#5 C9#11 
+C9b5 C9#5 C7b13 C7#9#5 C7#9b5 
+C7#9#11 C7b9#11 C7b9b5 C7b9#5 
+C7b9#9 C7b9b13 C7alt C13#11 
+C13b9 C13#9 C7b9sus C7susadd3 
+C9sus C13sus C7b13sus C Caug 
+CM Cm CM7 Cm7 CM9 CM13 CM7#11 
+CM9#11 CM7#5 Cm6 Cm69 Cm^7 
+C-M7 Cm^9 C-M9 Cm9 Cmadd9 
+Cm11 Cm7b5 Cmb6 Cm#5
+>\`).voicing().room(.5)`}
+  punchcard
+/>
+
+Note that the default dictionary contains multiple ways (= `voicings`) to play each chord symbol.
+By default, the `voicing` function tries to minimize jumps.
+You can alter the picked voicings in various ways, which are now explained in further detail:
+
+## anchor
+
+The `anchor` is a note that is used to align the voicings to:
+
+<MiniRepl client:visible tune={`anchor("<c4 g4 c5 g5>").chord("C").voicing().room(.5)`} punchcard />
+
+By default, the anchor is the highest possible note the voicing can contain.
+When deciding which voicing of the dictionary to pick for a certain chord, the voicing with a top note closest to the anchor wins.
+
+Note that the anchors in the above example match up with the top notes in the pianoroll.
+Like `note`, anchor accepts either midi numbers or note names.
+
+## mode
+
+With `mode`, you can change the way the voicing relates to the `anchor`:
+
+<MiniRepl
+  client:visible
+  tune={`mode("<below above duck root>").chord("C").anchor("c5").voicing().room(.5)`}
+  punchcard
+/>
+
+The modes are:
+
+- `below`: the top note of the voicing is lower than or equal to the anchor (default)
+- `above`: the bottom note of the voicing is higher than or equal to the anchor
+- `duck`: the top note of the voicing is lower than the anchor
+- `root`: the bottom note of the voicing is always the root note closest to the anchor
+
+The `anchor` can also be set from within the `mode` function:
+
+<MiniRepl client:visible tune={`mode("<below above duck root>:c5").chord("C").voicing().room(.5)`} punchcard />
+
+## n
+
+The `n` control can be used with `voicing` to select individual notes:
+
+<MiniRepl
+  client:visible
+  tune={`n("0 3 1 2").chord("<C <Fm Db>>").voicing()
+.clip("4 3 2 1").room(.5)`}
+  punchcard
+/>
+
+## Example
+
+Here's an example of a Jazz Blues in F:
+
+<MiniRepl
+  client:visible
+  tune={`let chords = chord(\`<
+F7 Bb7 F7 [Cm7 F7]
+Bb7 Bo F7 [Am7 D7]
+Gm7 C7 [F7 D7] [Gm7 C7]
+>\`)
+$: n("7 8 [10 9] 8").set(chords).voicing().dec(.2)
+$: chords.struct("- x - x").voicing().room(.5)
+$: n("0 - 1 -").set(chords).mode("root:g2").voicing()
+`}
+  punchcard
+/>
+
+The chords are reused for melody, chords and bassline of the tune.
