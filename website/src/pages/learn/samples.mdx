@@ -268,11 +268,10 @@ With it, you can enter any sample name(s) to query from [freesound.org](https://
 <MiniRepl
   client:idle
   tune={`samples('shabda:bass:4,hihat:4,rimshot:2')
-stack(
-  n("0 1 2 3 0 1 2 3").s('bass'),
-  n("0 1*2 2 3*2").s('hihat'),
-  n("~ 0 ~ 1 ~ 0 0 1").s('rimshot')
-).clip(1)`}
+
+$: n("0 1 2 3 0 1 2 3").s('bass')
+$: n("0 1*2 2 3*2").s('hihat').clip(1)
+$: n("~ 0 ~ 1 ~ 0 0 1").s('rimshot')`}
 />
 
 You can also generate artificial voice samples with any text, in multiple languages.
@@ -282,10 +281,9 @@ Note that the language code and the gender parameters are optional and default t
   client:idle
   tune={`samples('shabda/speech:the_drum,forever')
 samples('shabda/speech/fr-FR/m:magnifique')
-stack(
-  s("the_drum*2").chop(16).speed(rand.range(0.85,1.1)),
-  s("forever magnifique").slow(4).late(0.125)
-)`}
+
+$: s("the_drum*2").chop(16).speed(rand.range(0.85,1.1))
+$: s("forever magnifique").slow(4).late(0.125)`}
 />
 
 # Sampler Effects

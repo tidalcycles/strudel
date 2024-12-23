@@ -72,7 +72,13 @@ document.getElementById('play').addEventListener('stop',
 There is a tiny difference between the [Strudel REPL](https://strudel.cc/) and `@strudel/web`.
 In the REPL you can use 'single quotes' for regular JS strings and "double quotes" for mini notation patterns.
 In `@strudel/web`, it does not matter which types of quotes you're using.
-There will probably be an escapte hatch for that in the future.
+
+This difference means that you cannot call pattern methods on raw strings, for example `"1 2 3".slow(2)`.
+To make it work you can either:
+
+1. Use the `evaluate` function, which behaves exactly like the Strudel REPL, interpreting double quoted strings as mini notation.
+2. wrap the string with `m`: `m("1 2 3").slow(2)`
+3. wrap the string in a control function: `n("1 2 3").slow(2)` depending on your context.
 
 ## More Examples
 

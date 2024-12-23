@@ -78,6 +78,7 @@ export const SIDEBAR: Sidebar = {
     More: [
       { text: 'Recipes', link: 'recipes/recipes' },
       { text: 'Mini-Notation', link: 'learn/mini-notation' },
+      { text: 'Visual Feedback', link: 'learn/visual-feedback' },
       { text: 'Offline', link: 'learn/pwa' },
       { text: 'Patterns', link: 'technical-manual/patterns' },
       { text: 'Music metadata', link: 'learn/metadata' },

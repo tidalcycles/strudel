@@ -1,0 +1,37 @@
+{
+  "name": "hs2js",
+  "version": "0.1.0",
+  "description": "Experimental Haskell in JavaScript interpreter",
+  "main": "src/index.mjs",
+  "type": "module",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.mjs"
+  },
+  "scripts": {
+    "build-wasm": "tree-sitter build-wasm node_modules/tree-sitter-haskell && mv tree-sitter-haskell.wasm ./dist/ && cp node_modules/web-tree-sitter/tree-sitter.wasm ./dist/",
+    "build": "vite build && npm run build-wasm",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "haskell",
+    "javascript"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel",
+  "dependencies": {
+    "web-tree-sitter": "^0.20.8"
+  },
+  "devDependencies": {
+    "tree-sitter-haskell": "^0.21.0",
+    "vite": "^5.0.10"
+  }
+}

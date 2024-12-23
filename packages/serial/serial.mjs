@@ -68,7 +68,7 @@ Pattern.prototype.serial = function (br = 115200, sendcrc = false, singlecharids
     if (!(name in writeMessagers)) {
       getWriter(name, br);
     }
-    const onTrigger = (time, hap, currentTime) => {
+    const onTrigger = (t_deprecate, hap, currentTime, cps, targetTime) => {
       var message = '';
       var chk = 0;
       if (typeof hap.value === 'object') {
@@ -105,7 +105,7 @@ Pattern.prototype.serial = function (br = 115200, sendcrc = false, singlecharids
       } else {
         message = hap.value;
       }
-      const offset = (time - currentTime + latency) * 1000;
+      const offset = (targetTime - currentTime + latency) * 1000;
 
       window.setTimeout(function () {
         writeMessagers[name](message, chk);

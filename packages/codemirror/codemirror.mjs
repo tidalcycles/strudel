@@ -1,4 +1,5 @@
 import { closeBrackets } from '@codemirror/autocomplete';
+export { toggleComment, toggleBlockComment, toggleLineComment, toggleBlockCommentByLine } from '@codemirror/commands';
 // import { search, highlightSelectionMatches } from '@codemirror/search';
 import { history } from '@codemirror/commands';
 import { javascript } from '@codemirror/lang-javascript';
@@ -12,7 +13,7 @@ import {
   lineNumbers,
   drawSelection,
 } from '@codemirror/view';
-import { Pattern, repl } from '@strudel/core';
+import { repl, registerControl } from '@strudel/core';
 import { Drawer, cleanupDraw } from '@strudel/draw';
 import { isAutoCompletionEnabled } from './autocomplete.mjs';
 import { isTooltipEnabled } from './tooltip.mjs';
@@ -98,10 +99,8 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
           },
           {
             key: 'Alt-.',
-            run: (_, e) => {
-              e.preventDefault();
-              onStop?.();
-            },
+            preventDefault: true,
+            run: () => onStop?.(),
           },
           /* {
           key: 'Ctrl-Shift-.',
@@ -134,57 +133,50 @@ export class StrudelMirror {
       autodraw,
       prebake,
       bgFill = true,
+      solo = true,
       ...replOptions
     } = options;
     this.code = initialCode;
     this.root = root;
     this.miniLocations = [];
     this.widgets = [];
-    this.painters = [];
     this.drawTime = drawTime;
     this.drawContext = drawContext;
     this.onDraw = onDraw || this.draw;
     this.id = id || s4();
+    this.solo = solo;
 
-    this.drawer = new Drawer((haps, time) => {
+    this.drawer = new Drawer((haps, time, _, painters) => {
       const currentFrame = haps.filter((hap) => hap.isActive(time));
       this.highlight(currentFrame, time);
-      this.onDraw(haps, time, this.painters);
+      this.onDraw(haps, time, painters);
     }, drawTime);
 
     this.prebaked = prebake();
     autodraw && this.drawFirstFrame();
-
     this.repl = repl({
       ...replOptions,
+      id,
       onToggle: (started) => {
         replOptions?.onToggle?.(started);
         if (started) {
-          this.adjustDrawTime();
           this.drawer.start(this.repl.scheduler);
-          // stop other repls when this one is started
-          document.dispatchEvent(
-            new CustomEvent('start-repl', {
-              detail: this.id,
-            }),
-          );
+          if (this.solo) {
+            // stop other repls when this one is started
+            document.dispatchEvent(
+              new CustomEvent('start-repl', {
+                detail: this.id,
+              }),
+            );
+          }
         } else {
           this.drawer.stop();
           updateMiniLocations(this.editor, []);
-          cleanupDraw(false);
+          cleanupDraw(true, id);
         }
       },
       beforeEval: async () => {
-        cleanupDraw();
-        this.painters = [];
-        const self = this;
-        // this is similar to repl.mjs > injectPatternMethods
-        // maybe there is a solution without prototype hacking, but hey, it works
-        // we need to do this befor every eval to make sure it works with multiple StrudelMirror's side by side
-        Pattern.prototype.onPaint = function (onPaint) {
-          self.painters.push(onPaint);
-          return this;
-        };
+        cleanupDraw(true, id);
         await this.prebaked;
         await replOptions?.beforeEval?.();
       },
@@ -198,8 +190,11 @@ export class StrudelMirror {
         updateWidgets(this.editor, widgets);
         updateMiniLocations(this.editor, this.miniLocations);
         replOptions?.afterEval?.(options);
-        this.adjustDrawTime();
-        this.drawer.invalidate();
+        // if no painters are set (.onPaint was not called), then we only need the present moment (for highlighting)
+        const drawTime = options.pattern.getPainters().length ? this.drawTime : [0, 0];
+        this.drawer.setDrawTime(drawTime);
+        // invalidate drawer after we've set the appropriate drawTime
+        this.drawer.invalidate(this.repl.scheduler);
       },
     });
     this.editor = initEditor({
@@ -228,19 +223,14 @@ export class StrudelMirror {
 
     // stop this repl when another repl is started
     this.onStartRepl = (e) => {
-      if (e.detail !== this.id) {
+      if (this.solo && e.detail !== this.id) {
         this.stop();
       }
     };
     document.addEventListener('start-repl', this.onStartRepl);
   }
-  // adjusts draw time depending on if there are painters
-  adjustDrawTime() {
-    // when no painters are set, [0,0] is enough (just highlighting)
-    this.drawer.setDrawTime(this.painters.length ? this.drawTime : [0, 0]);
-  }
-  draw(haps, time) {
-    this.painters?.forEach((painter) => painter(this.drawContext, time, haps, this.drawTime));
+  draw(haps, time, painters) {
+    painters?.forEach((painter) => painter(this.drawContext, time, haps, this.drawTime));
   }
   async drawFirstFrame() {
     if (!this.onDraw) {
@@ -252,7 +242,7 @@ export class StrudelMirror {
       await this.repl.evaluate(this.code, false);
       this.drawer.invalidate(this.repl.scheduler, -0.001);
       // draw at -0.001 to avoid haps at 0 to be visualized as active
-      this.onDraw?.(this.drawer.visibleHaps, -0.001, this.painters);
+      this.onDraw?.(this.drawer.visibleHaps, -0.001, this.drawer.painters);
     } catch (err) {
       console.warn('first frame could not be painted');
     }
@@ -345,6 +335,17 @@ export class StrudelMirror {
   clear() {
     this.onStartRepl && document.removeEventListener('start-repl', this.onStartRepl);
   }
+  getCursorLocation() {
+    return this.editor.state.selection.main.head;
+  }
+  setCursorLocation(col) {
+    return this.editor.dispatch({ selection: { anchor: col } });
+  }
+  appendCode(code) {
+    const cursor = this.getCursorLocation();
+    this.setCode(this.code + code);
+    this.setCursorLocation(cursor);
+  }
 }
 
 function parseBooleans(value) {
@@ -357,3 +358,12 @@ function s4() {
     .toString(16)
     .substring(1);
 }
+
+/**
+ * Overrides the css of highlighted events. Make sure to use single quotes!
+ * @name markcss
+ * @example
+ * note("c a f e")
+ * .markcss('text-decoration:underline')
+ */
+export const markcss = registerControl('markcss');

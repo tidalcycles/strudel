@@ -1,20 +1,20 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Icon } from './Icon';
 import { silence, noteToMidi, _mod } from '@strudel/core';
-import { getPunchcardPainter } from '@strudel/draw';
+import { getDrawContext, getPunchcardPainter } from '@strudel/draw';
 import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
 import { StrudelMirror } from '@strudel/codemirror';
 import { prebake } from '../repl/prebake.mjs';
-import { loadModules } from '../repl/util.mjs';
+import { loadModules, setVersionDefaultsFrom } from '../repl/util.mjs';
 import Claviature from '@components/Claviature';
 import useClient from '@src/useClient.mjs';
 
-let prebaked, modulesLoading, audioLoading;
+let prebaked, modulesLoading, audioReady;
 if (typeof window !== 'undefined') {
   prebaked = prebake();
   modulesLoading = loadModules();
-  audioLoading = initAudioOnFirstClick();
+  audioReady = initAudioOnFirstClick();
 }
 
 export function MiniRepl({
@@ -28,24 +28,29 @@ export function MiniRepl({
   claviature,
   claviatureLabels,
   maxHeight,
+  autodraw,
+  drawTime,
 }) {
   const code = tunes ? tunes[0] : tune;
   const id = useMemo(() => s4(), []);
-  const canvasId = useMemo(() => `canvas-${id}`, [id]);
-  const shouldDraw = !!punchcard || !!claviature;
   const shouldShowCanvas = !!punchcard;
-  const drawTime = punchcard ? [0, 4] : [0, 0];
+  const canvasId = shouldShowCanvas ? useMemo(() => `canvas-${id}`, [id]) : null;
+  autodraw = !!punchcard || !!claviature || !!autodraw;
+  drawTime = (drawTime ?? punchcard) ? [0, 4] : [-2, 2];
+  if (claviature) {
+    drawTime = [0, 0];
+  }
   const [activeNotes, setActiveNotes] = useState([]);
 
-  const init = useCallback(({ code, shouldDraw }) => {
-    const drawContext = shouldDraw ? document.querySelector('#' + canvasId)?.getContext('2d') : null;
+  const init = useCallback(({ code, autodraw }) => {
+    const drawContext = canvasId ? document.querySelector('#' + canvasId)?.getContext('2d') : getDrawContext();
 
     const editor = new StrudelMirror({
       id,
       defaultOutput: webaudioOutput,
       getTime: () => getAudioContext().currentTime,
       transpiler,
-      autodraw: !!shouldDraw,
+      autodraw,
       root: containerRef.current,
       initialCode: '// LOADING',
       pattern: silence,
@@ -56,7 +61,7 @@ export function MiniRepl({
           pat = pat.onTrigger(onTrigger, false);
         }
         if (claviature) {
-          editor?.painters.push((ctx, time, haps, drawTime) => {
+          pat = pat.onPaint((ctx, time, haps, drawTime) => {
             const active = haps
               .map((hap) => hap.value.note)
               .filter(Boolean)
@@ -65,14 +70,21 @@ export function MiniRepl({
           });
         }
         if (punchcard) {
-          editor?.painters.push(getPunchcardPainter({ labels: !!punchcardLabels }));
+          pat = pat.punchcard({ labels: !!punchcardLabels });
         }
         return pat;
       },
-      prebake: async () => Promise.all([modulesLoading, prebaked, audioLoading]),
+      prebake: async () => Promise.all([modulesLoading, prebaked]),
       onUpdateState: (state) => {
         setReplState({ ...state });
       },
+      onToggle: (playing) => {
+        if (!playing) {
+          // clearHydra(); // TBD: doesn't work with multiple MiniRepl's on a page
+        }
+      },
+      beforeStart: () => audioReady,
+      afterEval: ({ code }) => setVersionDefaultsFrom(code),
     });
     // init settings
     editor.setCode(code);
@@ -107,6 +119,7 @@ export function MiniRepl({
                 'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background',
                 started ? 'animate-pulse' : '',
               )}
+              aria-label={started ? 'stop' : 'play'}
               onClick={() => editorRef.current?.toggle()}
             >
               <Icon type={started ? 'stop' : 'play'} />
@@ -116,6 +129,7 @@ export function MiniRepl({
                 'w-16 flex items-center justify-center p-1 text-foreground border-lineHighlight bg-lineHighlight',
                 isDirty ? 'text-foreground hover:bg-background cursor-pointer' : 'opacity-50 cursor-not-allowed',
               )}
+              aria-label="update"
               onClick={() => editorRef.current?.evaluate()}
             >
               <Icon type="refresh" />
@@ -127,6 +141,7 @@ export function MiniRepl({
                 className={
                   'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background'
                 }
+                aria-label="previous example"
                 onClick={() => changeTune(tuneIndex - 1)}
               >
                 <div className="rotate-180">
@@ -137,6 +152,7 @@ export function MiniRepl({
                 className={
                   'cursor-pointer w-16 flex items-center justify-center p-1 border-r border-lineHighlight text-foreground bg-lineHighlight hover:bg-background'
                 }
+                aria-label="next example"
                 onClick={() => changeTune(tuneIndex + 1)}
               >
                 <Icon type="skip" />
@@ -150,7 +166,7 @@ export function MiniRepl({
           ref={(el) => {
             if (!editorRef.current) {
               containerRef.current = el;
-              init({ code, shouldDraw });
+              init({ code, autodraw });
             }
           }}
         ></div>

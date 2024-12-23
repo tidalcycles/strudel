@@ -23,10 +23,10 @@ async function hasStrudelJson(subpath) {
 async function loadStrudelJson(subpath) {
   const contents = await readTextFile(subpath + '/strudel.json', { dir });
   const sampleMap = JSON.parse(contents);
-  processSampleMap(sampleMap, (key, value) => {
-    registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, value, fileResolver(subpath)), {
+  processSampleMap(sampleMap, (key, bank) => {
+    registerSound(key, (t, hapValue, onended) => onTriggerSample(t, hapValue, onended, bank, fileResolver(subpath)), {
       type: 'sample',
-      samples: value,
+      samples: bank,
       fileSystem: true,
       tag: 'local',
     });
@@ -75,7 +75,8 @@ export const walkFileTree = (node, fn) => {
   }
 };
 
-export const isAudioFile = (filename) => ['wav', 'mp3'].includes(filename.split('.').slice(-1)[0]);
+export const isAudioFile = (filename) =>
+  ['wav', 'mp3', 'flac', 'ogg', 'm4a', 'aac'].includes(filename.split('.').slice(-1)[0]);
 
 function uint8ArrayToDataURL(uint8Array) {
   const blob = new Blob([uint8Array], { type: 'audio/*' });

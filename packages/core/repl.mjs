@@ -10,6 +10,7 @@ export function repl({
   defaultOutput,
   onEvalError,
   beforeEval,
+  beforeStart,
   afterEval,
   getTime,
   transpiler,
@@ -19,6 +20,7 @@ export function repl({
   sync = false,
   setInterval,
   clearInterval,
+  id,
 }) {
   const state = {
     schedulerError: undefined,
@@ -30,6 +32,10 @@ export function repl({
     widgets: [],
     pending: false,
     started: false,
+  };
+
+  const transpilerOptions = {
+    id,
   };
 
   const updateState = (update) => {
@@ -48,6 +54,7 @@ export function repl({
     },
     setInterval,
     clearInterval,
+    beforeStart,
   };
 
   // NeoCyclist uses a shared worker to communicate between instances, which is not supported on mobile chrome
@@ -64,9 +71,10 @@ export function repl({
     return silence;
   };
 
-  const setPattern = (pattern, autostart = true) => {
+  const setPattern = async (pattern, autostart = true) => {
     pattern = editPattern?.(pattern) || pattern;
-    scheduler.setPattern(pattern, autostart);
+    await scheduler.setPattern(pattern, autostart);
+    return pattern;
   };
   setTime(() => scheduler.now()); // TODO: refactor?
 
@@ -84,7 +92,7 @@ export function repl({
   // set pattern methods that use this repl via closure
   const injectPatternMethods = () => {
     Pattern.prototype.p = function (id) {
-      if (id.startsWith('_') || id.endsWith('_')) {
+      if (typeof id === 'string' && (id.startsWith('_') || id.endsWith('_'))) {
         // allows muting a pattern x with x_ or _x
         return silence;
       }
@@ -139,13 +147,17 @@ export function repl({
     try {
       updateState({ code, pending: true });
       await injectPatternMethods();
+      setTime(() => scheduler.now()); // TODO: refactor?
       await beforeEval?.({ code });
       shouldHush && hush();
-      let { pattern, meta } = await _evaluate(code, transpiler);
+      let { pattern, meta } = await _evaluate(code, transpiler, transpilerOptions);
       if (Object.keys(pPatterns).length) {
-        pattern = stack(...Object.values(pPatterns));
-      }
-      if (allTransform) {
+        let patterns = Object.values(pPatterns);
+        if (allTransform) {
+          patterns = patterns.map(allTransform);
+        }
+        pattern = stack(...patterns);
+      } else if (allTransform) {
         pattern = allTransform(pattern);
       }
       if (!isPattern(pattern)) {
@@ -153,7 +165,7 @@ export function repl({
         throw new Error(message + (typeof evaluated === 'function' ? ', did you forget to call a function?' : '.'));
       }
       logger(`[eval] code updated`);
-      setPattern(pattern, autostart);
+      pattern = await setPattern(pattern, autostart);
       updateState({
         miniLocations: meta?.miniLocations || [],
         widgets: meta?.widgets || [],

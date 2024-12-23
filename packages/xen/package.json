@@ -1,6 +1,6 @@
 {
   "name": "@strudel/xen",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Xenharmonic API for strudel",
   "main": "index.mjs",
   "type": "module",
@@ -34,6 +34,6 @@
   },
   "devDependencies": {
     "vite": "^5.0.10",
-    "vitest": "^1.1.0"
+    "vitest": "^2.1.3"
   }
 }

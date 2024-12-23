@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { loadFeaturedPatterns, loadPublicPatterns } from '@src/user_pattern_utils.mjs';
 import { MiniRepl } from '@src/docs/MiniRepl';
-import { PatternLabel } from '@src/repl/panel/PatternsTab';
+import { PatternLabel } from '@src/repl/components/panel/PatternsTab';
 
 function PatternList({ patterns }) {
   return (

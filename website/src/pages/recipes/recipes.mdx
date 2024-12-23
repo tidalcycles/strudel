@@ -308,7 +308,7 @@ Running through different wavetables can also give interesting variations:
 <MiniRepl
   client:visible
   tune={`samples('github:bubobubobubobubo/dough-waveforms')
-note("c2*8").s("wt_dbass").n(run(8))`}
+note("c2*8").s("wt_dbass").n(run(8)).fast(2)`}
 />
 
 ...adding a filter envelope + reverb:
@@ -317,6 +317,6 @@ note("c2*8").s("wt_dbass").n(run(8))`}
   client:visible
   tune={`samples('github:bubobubobubobubo/dough-waveforms')
 note("c2*8").s("wt_dbass").n(run(8))
-.lpf(perlin.range(200,2000).slow(8))
-.lpenv(-3).lpa(.1).room(.5)`}
+.lpf(perlin.range(100,1000).slow(8))
+.lpenv(-3).lpa(.1).room(.5).fast(2)`}
 />
