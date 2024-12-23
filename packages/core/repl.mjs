@@ -63,11 +63,13 @@ export function repl({
   let pPatterns = {};
   let anonymousIndex = 0;
   let allTransform;
+  let togetherTransform;
 
   const hush = function () {
     pPatterns = {};
     anonymousIndex = 0;
     allTransform = undefined;
+    togetherTransform = undefined;
     return silence;
   };
 
@@ -86,6 +88,10 @@ export function repl({
   const setCpm = (cpm) => scheduler.setCps(cpm / 60);
   const all = function (transform) {
     allTransform = transform;
+    return silence;
+  };
+  const together = function (transform) {
+    togetherTransform = transform;
     return silence;
   };
 
@@ -131,6 +137,7 @@ export function repl({
     });
     return evalScope({
       all,
+      together,
       hush,
       cpm,
       setCps,
@@ -159,6 +166,9 @@ export function repl({
         pattern = stack(...patterns);
       } else if (allTransform) {
         pattern = allTransform(pattern);
+      }
+      if (togetherTransform) {
+        pattern = togetherTransform(pattern)
       }
       if (!isPattern(pattern)) {
         const message = `got "${typeof evaluated}" instead of pattern`;
