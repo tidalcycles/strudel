@@ -63,11 +63,13 @@ export function repl({
   let pPatterns = {};
   let anonymousIndex = 0;
   let allTransform;
+  let eachTransform;
 
   const hush = function () {
     pPatterns = {};
     anonymousIndex = 0;
     allTransform = undefined;
+    eachTransform = undefined;
     return silence;
   };
 
@@ -86,6 +88,10 @@ export function repl({
   const setCpm = (cpm) => scheduler.setCps(cpm / 60);
   const all = function (transform) {
     allTransform = transform;
+    return silence;
+  };
+  const each = function (transform) {
+    eachTransform = transform;
     return silence;
   };
 
@@ -131,6 +137,7 @@ export function repl({
     });
     return evalScope({
       all,
+      each,
       hush,
       cpm,
       setCps,
@@ -153,11 +160,14 @@ export function repl({
       let { pattern, meta } = await _evaluate(code, transpiler, transpilerOptions);
       if (Object.keys(pPatterns).length) {
         let patterns = Object.values(pPatterns);
-        if (allTransform) {
-          patterns = patterns.map(allTransform);
+        if (eachTransform) {
+          patterns = patterns.map(eachTransform);
         }
         pattern = stack(...patterns);
-      } else if (allTransform) {
+      } else if (eachTransform) {
+        pattern = eachTransform(pattern);
+      }
+      if (allTransform) {
         pattern = allTransform(pattern);
       }
       if (!isPattern(pattern)) {
