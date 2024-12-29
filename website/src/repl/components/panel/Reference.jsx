@@ -58,8 +58,8 @@ export function Reference() {
         <div className="prose dark:prose-invert min-w-full px-1 ">
           <h2>API Reference</h2>
           <p>
-            This is the long list functions you can use! Remember that you don't need to remember all of those and that
-            you can already make music with a small set of functions!
+            This is the long list of functions you can use. Remember that you don't need to remember all of those and
+            that you can already make music with a small set of functions!
           </p>
           {visibleFunctions.map((entry, i) => (
             <section key={i}>
