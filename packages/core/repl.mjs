@@ -63,13 +63,13 @@ export function repl({
   let pPatterns = {};
   let anonymousIndex = 0;
   let allTransform;
-  let togetherTransform;
+  let eachTransform;
 
   const hush = function () {
     pPatterns = {};
     anonymousIndex = 0;
     allTransform = undefined;
-    togetherTransform = undefined;
+    eachTransform = undefined;
     return silence;
   };
 
@@ -90,8 +90,8 @@ export function repl({
     allTransform = transform;
     return silence;
   };
-  const together = function (transform) {
-    togetherTransform = transform;
+  const each = function (transform) {
+    eachTransform = transform;
     return silence;
   };
 
@@ -137,7 +137,7 @@ export function repl({
     });
     return evalScope({
       all,
-      together,
+      each,
       hush,
       cpm,
       setCps,
@@ -160,15 +160,15 @@ export function repl({
       let { pattern, meta } = await _evaluate(code, transpiler, transpilerOptions);
       if (Object.keys(pPatterns).length) {
         let patterns = Object.values(pPatterns);
-        if (allTransform) {
-          patterns = patterns.map(allTransform);
+        if (eachTransform) {
+          patterns = patterns.map(eachTransform);
         }
         pattern = stack(...patterns);
-      } else if (allTransform) {
-        pattern = allTransform(pattern);
+      } else if (eachTransform) {
+        pattern = eachTransform(pattern);
       }
-      if (togetherTransform) {
-        pattern = togetherTransform(pattern);
+      if (allTransform) {
+        pattern = allTransform(pattern);
       }
       if (!isPattern(pattern)) {
         const message = `got "${typeof evaluated}" instead of pattern`;
