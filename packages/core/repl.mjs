@@ -86,26 +86,32 @@ export function repl({
   const toggle = () => scheduler.toggle();
   const setCps = (cps) => scheduler.setCps(cps);
   const setCpm = (cpm) => scheduler.setCps(cpm / 60);
+
+  // TODO - not documented as jsdoc examples as the test framework doesn't simulate enough context for `each` and `all`..
+
   /** Applies a function to all the running patterns. Note that the patterns are groups together into a single `stack` before the function is applied. This is probably what you want, but see `each` for
    * a version that applies the function to each pattern separately.
-   * @example
+   * ```
    * $: sound("bd - cp sd")
    * $: sound("hh*8")
    * all(fast("<2 3>"))
-   * @example
+   * ```
+   * ```
    * $: sound("bd - cp sd")
    * $: sound("hh*8")
    * all(x => x.pianoroll())
+   * ```
    */
   const all = function (transform) {
     allTransform = transform;
     return silence;
   };
   /** Applies a function to each of the running patterns separately. This is intended for future use with upcoming 'stepwise' features. See `all` for a version that applies the function to all the patterns stacked together into a single pattern.
-   * @example
+   * ```
    * $: sound("bd - cp sd")
    * $: sound("hh*8")
    * each(fast("<2 3>"))
+   * ```
    */
   const each = function (transform) {
     eachTransform = transform;
