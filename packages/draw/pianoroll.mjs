@@ -37,8 +37,8 @@ const getValue = (e) => {
 };
 
 /**
- * Visualises a pattern as a scrolling 'pianoroll', displayed in the background of the editor. To have the pianoroll appear below
- * the pattern instead, prefix with `_`, as `_pianoroll()`.
+ * Visualises a pattern as a scrolling 'pianoroll', displayed in the background of the editor. To show a pianoroll for all running patterns, use `all(pianoroll)`. To have a pianoroll appear below
+ * a pattern instead, prefix with `_`, e.g.: `sound("bd sd")._pianoroll()`.
  *
  * @name pianoroll
  * @synonyms punchcard
