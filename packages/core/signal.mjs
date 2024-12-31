@@ -8,7 +8,7 @@ import { Hap } from './hap.mjs';
 import { Pattern, fastcat, reify, silence, stack, register } from './pattern.mjs';
 import Fraction from './fraction.mjs';
 
-import { id, getCurrentKeyboardState } from './util.mjs';
+import { id, isKeyDown } from './util.mjs';
 
 export function steady(value) {
   // A continuous value
@@ -644,23 +644,15 @@ export const always = register('always', function (func, pat) {
 /**
  *
  * Do something on a keypress, or array of keypresses
+ * key name reference: https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values
  *
- * @name onKey
+ * @name whenKey
  * @memberof Pattern
  * @returns Pattern
  * @example
- * s("bd(5,8)").onKey("Control:j", x => x.segment(16).color("red")).onKey("Control:i", x => x.fast(2).color("blue"))
+ * s("bd(5,8)").whenKey("Control:j", x => x.segment(16).color("red")).whenKey("Control:i", x => x.fast(2).color("blue"))
  */
 
-export const onKey = register('onKey', function (input, func, pat) {
-  if (Array.isArray(input) === false) {
-    input = [input];
-  }
-
-  const keyState = getCurrentKeyboardState();
-
-  const on = input.every((x) => {
-    return keyState[x];
-  });
-  return pat.when(on, func);
+export const whenKey = register('whenKey', function (input, func, pat) {
+  return pat.when(isKeyDown(input), func);
 });
