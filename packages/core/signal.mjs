@@ -7,7 +7,8 @@ This program is free software: you can redistribute it and/or modify it under th
 import { Hap } from './hap.mjs';
 import { Pattern, fastcat, reify, silence, stack, register } from './pattern.mjs';
 import Fraction from './fraction.mjs';
-import { id, _mod, clamp, objectMap } from './util.mjs';
+
+import { id, _mod, clamp, objectMap, getCurrentKeyboardState } from './util.mjs';
 
 export function steady(value) {
   // A continuous value
@@ -830,4 +831,28 @@ export const never = register('never', function (_, pat) {
  */
 export const always = register('always', function (func, pat) {
   return func(pat);
+});
+
+/**
+ *
+ * Do something on a keypress, or array of keypresses
+ *
+ * @name onKey
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ *  * s("bd(5,8)").onKey("Control:j", x => x.segment(16).color("red")).onKey("Control:i", x => x.fast(2).color("blue"))
+ */
+
+export const onKey = register('onKey', function (input, func, pat) {
+  if (Array.isArray(input) === false) {
+    input = [input];
+  }
+
+  const keyState = getCurrentKeyboardState();
+
+  const on = input.every((x) => {
+    return keyState[x];
+  });
+  return pat.when(on, func);
 });
