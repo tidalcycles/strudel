@@ -649,7 +649,7 @@ export const always = register('always', function (func, pat) {
  * @memberof Pattern
  * @returns Pattern
  * @example
- *  * s("bd(5,8)").onKey("Control:j", x => x.segment(16).color("red")).onKey("Control:i", x => x.fast(2).color("blue"))
+ * s("bd(5,8)").onKey("Control:j", x => x.segment(16).color("red")).onKey("Control:i", x => x.fast(2).color("blue"))
  */
 
 export const onKey = register('onKey', function (input, func, pat) {

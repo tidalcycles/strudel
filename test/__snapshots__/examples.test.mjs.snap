@@ -4902,6 +4902,8 @@ exports[`runs examples > example "often" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "onKey" example index 0 1`] = `[]`;
+
 exports[`runs examples > example "orbit" example index 0 1`] = `
 [
   "[ 0/1 → 1/6 | s:hh delay:0.5 delaytime:0.25 orbit:1 ]",

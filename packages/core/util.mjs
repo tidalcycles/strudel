@@ -438,6 +438,9 @@ let keyState;
 
 export function getCurrentKeyboardState() {
   if (keyState == null) {
+    if (typeof window === 'undefined') {
+      return;
+    }
     keyState = {};
     // Listen for the keydown event to mark the key as pressed
     window.addEventListener('keydown', (event) => {
