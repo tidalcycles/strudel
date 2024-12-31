@@ -1,0 +1,38 @@
+{
+  "name": "@strudel/mqtt",
+  "version": "1.1.0",
+  "description": "MQTT API for strudel",
+  "main": "mqtt.mjs",
+  "type": "module",
+  "publishConfig": {
+    "main": "dist/index.mjs"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "titdalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Alex McLean <alex@slab.org>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+    "@strudel/core": "workspace:*",
+    "paho-mqtt": "^1.1.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.10"
+  }
+}

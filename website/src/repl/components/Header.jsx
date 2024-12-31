@@ -1,8 +1,4 @@
-import AcademicCapIcon from '@heroicons/react/20/solid/AcademicCapIcon';
-import ArrowPathIcon from '@heroicons/react/20/solid/ArrowPathIcon';
-import LinkIcon from '@heroicons/react/20/solid/LinkIcon';
 import PlayCircleIcon from '@heroicons/react/20/solid/PlayCircleIcon';
-import SparklesIcon from '@heroicons/react/20/solid/SparklesIcon';
 import StopCircleIcon from '@heroicons/react/20/solid/StopCircleIcon';
 import cx from '@src/cx.mjs';
 import { useSettings, setIsZen } from '../../settings.mjs';
@@ -21,7 +17,7 @@ export function Header({ context, embedded = false }) {
     <header
       id="header"
       className={cx(
-        'flex-none text-black  z-[100] text-lg select-none h-14',
+        'flex-none text-black  z-[100] text-lg select-none h-20 md:h-14',
         !isZen && !isEmbedded && 'bg-lineHighlight',
         isZen ? 'h-12 w-8 fixed top-0 left-0' : 'sticky top-0 w-full py-1 justify-between',
         isEmbedded ? 'flex' : 'md:flex',
@@ -41,7 +37,7 @@ export function Header({ context, embedded = false }) {
             className={cx(
               'mt-[1px]',
               started && !isCSSAnimationDisabled && 'animate-spin',
-              'cursor-pointer',
+              'cursor-pointer text-blue-500',
               isZen && 'fixed top-2 right-4',
             )}
             onClick={() => {
@@ -50,14 +46,14 @@ export function Header({ context, embedded = false }) {
               }
             }}
           >
-            🌀
+            <span className="block rotate-90">꩜</span>
           </div>
           {!isZen && (
-            <div className={cx(started && !isCSSAnimationDisabled && 'animate-pulse', 'space-x-2')}>
+            <div className="space-x-2">
               <span className="">strudel</span>
-              <span className="text-sm">REPL</span>
-              {!isEmbedded && (
-                <a href={`${baseNoTrailing}/learn`} className="text-sm opacity-25">
+              <span className="text-sm font-medium">REPL</span>
+              {!isEmbedded && isButtonRowHidden && (
+                <a href={`${baseNoTrailing}/learn`} className="text-sm opacity-25 font-medium">
                   DOCS
                 </a>
               )}
@@ -66,7 +62,7 @@ export function Header({ context, embedded = false }) {
         </h1>
       </div>
       {!isZen && !isButtonRowHidden && (
-        <div className="flex max-w-full overflow-auto text-foreground">
+        <div className="flex max-w-full overflow-auto text-foreground px-1 md:px-2">
           <button
             onClick={handleTogglePlay}
             title={started ? 'stop' : 'play'}
@@ -77,7 +73,7 @@ export function Header({ context, embedded = false }) {
             )}
           >
             {!pending ? (
-              <span className={cx('flex items-center space-x-1', isEmbedded ? '' : 'w-16')}>
+              <span className={cx('flex items-center space-x-2')}>
                 {started ? <StopCircleIcon className="w-6 h-6" /> : <PlayCircleIcon className="w-6 h-6" />}
                 {!isEmbedded && <span>{started ? 'stop' : 'play'}</span>}
               </span>
@@ -94,8 +90,6 @@ export function Header({ context, embedded = false }) {
               !isDirty || !activeCode ? 'opacity-50' : 'hover:opacity-50',
             )}
           >
-            {/*             <CommandLineIcon className="w-6 h-6" /> */}
-            <ArrowPathIcon className="w-6 h-6" />
             {!isEmbedded && <span>update</span>}
           </button>
           {!isEmbedded && (
@@ -104,7 +98,6 @@ export function Header({ context, embedded = false }) {
               className="hover:opacity-50 p-2 flex items-center space-x-1"
               onClick={handleShuffle}
             >
-              <SparklesIcon className="w-6 h-6" />
               <span> shuffle</span>
             </button>
           )}
@@ -117,7 +110,6 @@ export function Header({ context, embedded = false }) {
               )}
               onClick={handleShare}
             >
-              <LinkIcon className="w-6 h-6" />
               <span>share</span>
             </button>
           )}
@@ -127,7 +119,6 @@ export function Header({ context, embedded = false }) {
               href={`${baseNoTrailing}/workshop/getting-started/`}
               className={cx('hover:opacity-50 flex items-center space-x-1', !isEmbedded ? 'p-2' : 'px-2')}
             >
-              <AcademicCapIcon className="w-6 h-6" />
               <span>learn</span>
             </a>
           )}

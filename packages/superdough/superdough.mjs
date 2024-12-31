@@ -270,11 +270,12 @@ function getReverb(orbit, duration, fade, lp, dim, ir) {
 export let analysers = {},
   analysersData = {};
 
-export function getAnalyserById(id, fftSize = 1024) {
+export function getAnalyserById(id, fftSize = 1024, smoothingTimeConstant = 0.5) {
   if (!analysers[id]) {
     // make sure this doesn't happen too often as it piles up garbage
     const analyserNode = getAudioContext().createAnalyser();
     analyserNode.fftSize = fftSize;
+    analyserNode.smoothingTimeConstant = smoothingTimeConstant;
     // getDestination().connect(analyserNode);
     analysers[id] = analyserNode;
     analysersData[id] = new Float32Array(analysers[id].frequencyBinCount);

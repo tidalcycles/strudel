@@ -6,9 +6,7 @@ const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL
 export function WelcomeTab({ context }) {
   return (
     <div className="prose dark:prose-invert min-w-full pt-2 font-sans pb-8 px-4 ">
-      <h3>
-        <span className={cx('animate-spin inline-block select-none')}>🌀</span> welcome
-      </h3>
+      <h3>꩜ welcome</h3>
       <p>
         You have found <span className="underline">strudel</span>, a new live coding platform to write dynamic music
         pieces in the browser! It is free and open-source and made for beginners and experts alike. To get started:
@@ -30,7 +28,7 @@ export function WelcomeTab({ context }) {
         </a>{' '}
         to ask any questions, give feedback or just say hello.
       </p>
-      <h3>about</h3>
+      <h3>꩜ about</h3>
       <p>
         strudel is a JavaScript version of{' '}
         <a href="https://tidalcycles.org/" target="_blank">

@@ -1,8 +1,4 @@
-import { logger } from '@strudel/core';
-import useEvent from '@src/useEvent.mjs';
 import cx from '@src/cx.mjs';
-import { nanoid } from 'nanoid';
-import { useCallback, useState } from 'react';
 import { setPanelPinned, setActiveFooter as setTab, setIsPanelOpened, useSettings } from '../../../settings.mjs';
 import { ConsoleTab } from './ConsoleTab';
 import { FilesTab } from './FilesTab';
@@ -119,33 +115,11 @@ function PanelNav({ children, className, settings, ...props }) {
 }
 
 function PanelContent({ context, tab }) {
-  const [log, setLog] = useState([]);
-  useLogger(
-    useCallback((e) => {
-      const { message, type, data } = e.detail;
-      setLog((l) => {
-        const lastLog = l.length ? l[l.length - 1] : undefined;
-        const id = nanoid(12);
-        // if (type === 'loaded-sample' && lastLog.type === 'load-sample' && lastLog.url === data.url) {
-        if (type === 'loaded-sample') {
-          // const loadIndex = l.length - 1;
-          const loadIndex = l.findIndex(({ data: { url }, type }) => type === 'load-sample' && url === data.url);
-          l[loadIndex] = { message, type, id, data };
-        } else if (lastLog && lastLog.message === message) {
-          l = l.slice(0, -1).concat([{ message, type, count: (lastLog.count ?? 1) + 1, id, data }]);
-        } else {
-          l = l.concat([{ message, type, id, data }]);
-        }
-        return l.slice(-20);
-      });
-    }, []),
-  );
-
   switch (tab) {
     case tabNames.patterns:
       return <PatternsTab context={context} />;
     case tabNames.console:
-      return <ConsoleTab log={log} />;
+      return <ConsoleTab />;
     case tabNames.sounds:
       return <SoundsTab />;
     case tabNames.reference:
@@ -235,8 +209,4 @@ function CloseButton({ onClick }) {
       <XMarkIcon />
     </button>
   );
-}
-
-function useLogger(onTrigger) {
-  useEvent(logger.key, onTrigger);
 }
