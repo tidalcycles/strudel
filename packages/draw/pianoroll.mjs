@@ -4,7 +4,7 @@ Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/st
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Pattern, noteToMidi, freqToMidi } from '@strudel/core';
+import { Pattern, noteToMidi, freqToMidi, isPattern } from '@strudel/core';
 import { getTheme, getDrawContext } from './draw.mjs';
 
 const scale = (normalized, min, max) => normalized * (max - min) + min;
@@ -36,35 +36,9 @@ const getValue = (e) => {
   return value;
 };
 
-Pattern.prototype.pianoroll = function (options = {}) {
-  let { cycles = 4, playhead = 0.5, overscan = 0, hideNegative = false, ctx = getDrawContext(), id = 1 } = options;
-
-  let from = -cycles * playhead;
-  let to = cycles * (1 - playhead);
-  const inFrame = (hap, t) => (!hideNegative || hap.whole.begin >= 0) && hap.isWithinTime(t + from, t + to);
-  this.draw(
-    (haps, time) => {
-      pianoroll({
-        ...options,
-        time,
-        ctx,
-        haps: haps.filter((hap) => inFrame(hap, time)),
-      });
-    },
-    {
-      lookbehind: from - overscan,
-      lookahead: to + overscan,
-      id,
-    },
-  );
-  return this;
-};
-
-// this function allows drawing a pianoroll without ties to Pattern.prototype
-// it will probably replace the above in the future
-
 /**
- * Displays a midi-style piano roll
+ * Visualises a pattern as a scrolling 'pianoroll', displayed in the background of the editor. To show a pianoroll for all running patterns, use `all(pianoroll)`. To have a pianoroll appear below
+ * a pattern instead, prefix with `_`, e.g.: `sound("bd sd")._pianoroll()`.
  *
  * @name pianoroll
  * @synonyms punchcard
@@ -93,15 +67,51 @@ Pattern.prototype.pianoroll = function (options = {}) {
  * @param {integer} minMidi minimum note value to display on the value axis - defaults to 10
  * @param {integer} maxMidi maximum note value to display on the value axis - defaults to 90
  * @param {boolean} autorange automatically calculate the minMidi and maxMidi parameters - 0 by default
- *
+ * @see _pianoroll
  * @example
  * note("c2 a2 eb2")
  * .euclid(5,8)
  * .s('sawtooth')
  * .lpenv(4).lpf(300)
- * ._pianoroll({ labels: 1 })
+ * .pianoroll({ labels: 1 })
  */
-export function pianoroll({
+
+Pattern.prototype.pianoroll = function (options = {}) {
+  let { cycles = 4, playhead = 0.5, overscan = 0, hideNegative = false, ctx = getDrawContext(), id = 1 } = options;
+
+  let from = -cycles * playhead;
+  let to = cycles * (1 - playhead);
+  const inFrame = (hap, t) => (!hideNegative || hap.whole.begin >= 0) && hap.isWithinTime(t + from, t + to);
+  this.draw(
+    (haps, time) => {
+      __pianoroll({
+        ...options,
+        time,
+        ctx,
+        haps: haps.filter((hap) => inFrame(hap, time)),
+      });
+    },
+    {
+      lookbehind: from - overscan,
+      lookahead: to + overscan,
+      id,
+    },
+  );
+  return this;
+};
+
+export function pianoroll(arg) {
+  if (isPattern(arg)) {
+    // Single argument as a pattern
+    // (to support `all(pianoroll)`)
+    return arg.pianoroll();
+  }
+  // Single argument with option - return function to get the pattern
+  // (to support `all(pianoroll(options))`)
+  return (pat) => pat.pianoroll(arg);
+}
+
+export function __pianoroll({
   time,
   haps,
   cycles = 4,
@@ -278,7 +288,7 @@ export function getDrawOptions(drawTime, options = {}) {
 export const getPunchcardPainter =
   (options = {}) =>
   (ctx, time, haps, drawTime) =>
-    pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, options) });
+    __pianoroll({ ctx, time, haps, ...getDrawOptions(drawTime, options) });
 
 Pattern.prototype.punchcard = function (options) {
   return this.onPaint(getPunchcardPainter(options));
@@ -302,5 +312,5 @@ Pattern.prototype.wordfall = function (options) {
 
 export function drawPianoroll(options) {
   const { drawTime, ...rest } = options;
-  pianoroll({ ...getDrawOptions(drawTime), ...rest });
+  __pianoroll({ ...getDrawOptions(drawTime), ...rest });
 }
