@@ -4065,6 +4065,8 @@ exports[`runs examples > example "juxBy" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "keyDown" example index 0 1`] = `[]`;
+
 exports[`runs examples > example "lastOf" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:c3 ]",
