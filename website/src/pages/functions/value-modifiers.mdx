@@ -82,18 +82,7 @@ To modify a parameter value, you can either:
 
   <MiniRepl client:only="react" tune={`note("50 60 70").room(.1).add(note("<0 1 2>")).log()`} />
 
-- Modify _all_ numeral params:
-
-  <MiniRepl client:only="react" tune={`note("50 60 70").room(.1).add("<0 1 2>").log()`} />
-
-Which of these 3 ways to use strongly depends on the context!
-Note that the order of chaining param functions also matters!
-In the last example, the `room` value would not have changed if it was applied later:
-
-<MiniRepl client:only="react" tune={`note("50 60 70").add("<0 1 2>").room(.1).log()`} />
-
-This shows how the execution of the chained functions goes from left to right.
-In this case, the `.add` will only modify what's on the left side.
+Remember the execution of the chained functions goes from left to right.
 
 # Operators
 
