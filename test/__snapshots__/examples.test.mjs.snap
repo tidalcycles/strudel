@@ -4065,6 +4065,8 @@ exports[`runs examples > example "juxBy" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "keyDown" example index 0 1`] = `[]`;
+
 exports[`runs examples > example "lastOf" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:c3 ]",
@@ -8831,6 +8833,8 @@ exports[`runs examples > example "when" example index 0 1`] = `
   "[ 11/3 → 4/1 | note:50 ]",
 ]
 `;
+
+exports[`runs examples > example "whenKey" example index 0 1`] = `[]`;
 
 exports[`runs examples > example "withValue" example index 0 1`] = `
 [
