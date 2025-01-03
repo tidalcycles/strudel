@@ -644,7 +644,7 @@ export const always = register('always', function (func, pat) {
 /**
  *
  * Do something on a keypress, or array of keypresses
- *  * {@link https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values|Key name reference}
+ * [Key name reference](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values)
  *
  * @name whenKey
  * @memberof Pattern
@@ -660,7 +660,7 @@ export const whenKey = register('whenKey', function (input, func, pat) {
 /**
  *
  * returns true when a key or array of keys is held
- * {@link https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values|Key name reference}
+ * [Key name reference](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values)
  *
  * @name keyDown
  * @memberof Pattern
