@@ -3101,7 +3101,6 @@ Pattern.prototype.xfade = function (pos, b) {
   return xfade(this, pos, b);
 };
 
-
 /**
  * creates a structure pattern from divisions of a cycle
  * especially useful for creating rhythms
@@ -3112,11 +3111,9 @@ Pattern.prototype.xfade = function (pos, b) {
  * @example
  * s("sd").os("4:12", 16)
  */
-export const {onSubCycle, onSub,  os} = register(['onSubCycle', 'onSub', 'os'], (times, div, pat) => {
+export const { onSubCycle, onSub, os } = register(['onSubCycle', 'onSub', 'os'], (times, div, pat) => {
   if (typeof times === 'number') {
-    times = [times]
+    times = [times];
   }
-  return stack(
-  ...times.map(t => pat.pressBy(_mod(t, div)/div).duration(1/div))
- )}
-)
+  return stack(...times.map((t) => pat.pressBy(_mod(t, div) / div).duration(1 / div)));
+});
