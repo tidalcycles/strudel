@@ -3104,14 +3104,13 @@ Pattern.prototype.xfade = function (pos, b) {
 /**
  * creates a structure pattern from divisions of a cycle
  * especially useful for creating rhythms
- * @name onSubCycle
- * @synonyms onSub, os
+ * @name beat
  * @example
- * s("bd").os("0:7:10", 16)
+ * s("bd").beat("0:7:10", 16)
  * @example
- * s("sd").os("4:12", 16)
+ * s("sd").beat("4:12", 16)
  */
-export const { onSubCycle, onSub, os } = register(['onSubCycle', 'onSub', 'os'], (times, div, pat) => {
+export const { beat } = register(['beat'], (times, div, pat) => {
   if (typeof times === 'number') {
     times = [times];
   }
