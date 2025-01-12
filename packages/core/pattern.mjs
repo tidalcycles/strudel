@@ -3100,3 +3100,19 @@ export let xfade = (a, pos, b) => {
 Pattern.prototype.xfade = function (pos, b) {
   return xfade(this, pos, b);
 };
+
+/**
+ * creates a structure pattern from divisions of a cycle
+ * especially useful for creating rhythms
+ * @name beat
+ * @example
+ * s("bd").beat("0:7:10", 16)
+ * @example
+ * s("sd").beat("4:12", 16)
+ */
+export const { beat } = register(['beat'], (times, div, pat) => {
+  if (typeof times === 'number') {
+    times = [times];
+  }
+  return stack(...times.map((t) => pat.pressBy(_mod(t, div) / div).duration(1 / div)));
+});
