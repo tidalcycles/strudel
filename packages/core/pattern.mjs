@@ -1505,31 +1505,54 @@ export const struct = curryProxified((a, b) => reify(b).struct(a));
 export const superimpose = curryProxified((a, b) => reify(b).superimpose(...a));
 
 // operators
-export const set = curryProxified((a, b) => reify(b).set(a));
-export const keep = curryProxified((a, b) => reify(b).keep(a));
-export const keepif = curryProxified((a, b) => reify(b).keepif(a));
-export const add = curryProxified((a, b) => reify(b).add(a));
-export const sub = curryProxified((a, b) => reify(b).sub(a));
-export const mul = curryProxified((a, b) => reify(b).mul(a));
-export const div = curryProxified((a, b) => reify(b).div(a));
-export const mod = curryProxified((a, b) => reify(b).mod(a));
-export const pow = curryProxified((a, b) => reify(b).pow(a));
-export const band = curryProxified((a, b) => reify(b).band(a));
-export const bor = curryProxified((a, b) => reify(b).bor(a));
-export const bxor = curryProxified((a, b) => reify(b).bxor(a));
-export const blshift = curryProxified((a, b) => reify(b).blshift(a));
-export const brshift = curryProxified((a, b) => reify(b).brshift(a));
-export const lt = curryProxified((a, b) => reify(b).lt(a));
-export const gt = curryProxified((a, b) => reify(b).gt(a));
-export const lte = curryProxified((a, b) => reify(b).lte(a));
-export const gte = curryProxified((a, b) => reify(b).gte(a));
-export const eq = curryProxified((a, b) => reify(b).eq(a));
-export const eqt = curryProxified((a, b) => reify(b).eqt(a));
-export const ne = curryProxified((a, b) => reify(b).ne(a));
-export const net = curryProxified((a, b) => reify(b).net(a));
-export const and = curryProxified((a, b) => reify(b).and(a));
-export const or = curryProxified((a, b) => reify(b).or(a));
-export const func = curryProxified((a, b) => reify(b).func(a));
+const opFunc = function (name) {
+  const handler = {
+    // magic to support things like set.n(3)
+    get: function (target, prop, receiver) {
+      if (prop in Pattern.prototype && '_Param' in Pattern.prototype[prop]) {
+        return (val) =>
+          proxify((pat) =>
+            target(
+              reify(val).fmap((x) => ({ [prop]: x })),
+              pat,
+            ),
+          );
+      }
+      return Reflect.get(target, prop);
+    },
+  };
+
+  const func = curryProxified((a, b) => reify(b)[name](a));
+  return new Proxy(func, handler);
+};
+
+export const set = opFunc('set');
+export const keep = opFunc('keep');
+export const keepif = opFunc('keepif');
+export const add = opFunc('add');
+export const sub = opFunc('sub');
+export const mul = opFunc('mul');
+export const div = opFunc('div');
+export const mod = opFunc('mod');
+export const pow = opFunc('pow');
+export const band = opFunc('band');
+export const bor = opFunc('bor');
+export const bxor = opFunc('bxor');
+export const blshift = opFunc('blshift');
+export const brshift = opFunc('brshift');
+export const lt = opFunc('lt');
+export const gt = opFunc('gt');
+export const lte = opFunc('lte');
+export const gte = opFunc('gte');
+export const eq = opFunc('eq');
+export const eqt = opFunc('eqt');
+export const ne = opFunc('ne');
+export const net = opFunc('net');
+export const and = opFunc('and');
+export const or = opFunc('or');
+export const func = opFunc('func');
+
+export const hitch = proxify((x) => x);
 
 /**
  * Registers a new pattern method. The method is added to the Pattern class + the standalone function is returned from register.

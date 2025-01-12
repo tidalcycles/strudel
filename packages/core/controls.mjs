@@ -43,6 +43,7 @@ export function createParam(names) {
     }
     return this.set(func(...pats));
   };
+  setter._Param = true;
   Pattern.prototype[name] = setter;
   return func;
 }
