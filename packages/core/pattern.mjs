@@ -1519,6 +1519,17 @@ export const and = curry((a, b) => reify(b).and(a));
 export const or = curry((a, b) => reify(b).or(a));
 export const func = curry((a, b) => reify(b).func(a));
 
+const proxify = (func) =>
+  new Proxy(func, {
+    get: function (target, prop, receiver) {
+      // chain pattern methods
+      if (prop in Pattern.prototype) {
+        return (...args) => new Proxy((pat) => target(pat)[prop](...args), handler);
+      }
+      return Reflect.get(target, prop);
+    },
+  });
+
 /**
  * Registers a new pattern method. The method is added to the Pattern class + the standalone function is returned from register.
  *
@@ -1550,6 +1561,7 @@ export function register(name, func, patternify = true, preserveTactus = false, 
         const firstArgs = args.slice(0, -1);
 
         if (firstArgs.every((arg) => arg.__pure != undefined)) {
+          // All the args are 'pure', so we can treat them as unpatterned
           const pureArgs = firstArgs.map((arg) => arg.__pure);
           const pureLocs = firstArgs.filter((arg) => arg.__pure_loc).map((arg) => arg.__pure_loc);
           result = func(...pureArgs, pat);
@@ -1563,7 +1575,7 @@ export function register(name, func, patternify = true, preserveTactus = false, 
           let mapFn = (...args) => {
             return func(...args, pat);
           };
-          mapFn = curry(mapFn, null, arity - 1);
+          mapFn = curry(mapFn, null, arity - 1, proxify);
           result = join(right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)));
         }
       }
@@ -1609,7 +1621,7 @@ export function register(name, func, patternify = true, preserveTactus = false, 
 
   // toplevel functions get curried as well as patternified
   // because pfunc uses spread args, we need to state the arity explicitly!
-  return curry(pfunc, null, arity);
+  return curry(pfunc, null, arity, proxify);
 }
 
 // Like register, but defaults to stepJoin

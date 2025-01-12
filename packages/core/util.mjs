@@ -169,14 +169,19 @@ export const constant = (a, b) => a;
 
 export const listRange = (min, max) => Array.from({ length: max - min + 1 }, (_, i) => i + min);
 
-export function curry(func, overload, arity = func.length) {
+export function curry(func, overload, arity = func.length, final) {
   const fn = function curried(...args) {
     if (args.length >= arity) {
       return func.apply(this, args);
     } else {
-      const partial = function (...args2) {
+      let partial = function (...args2) {
         return curried.apply(this, args.concat(args2));
       };
+      if (arity - 1 === args.length) {
+        // for method composition
+        partial = final(partial);
+      }
+      // TODO - is overload used any more?
       if (overload) {
         overload(partial, args);
       }
