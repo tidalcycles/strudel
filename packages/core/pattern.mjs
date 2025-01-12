@@ -1519,16 +1519,16 @@ export const and = curry((a, b) => reify(b).and(a));
 export const or = curry((a, b) => reify(b).or(a));
 export const func = curry((a, b) => reify(b).func(a));
 
-const proxify = (func) =>
-  new Proxy(func, {
-    get: function (target, prop, receiver) {
-      // chain pattern methods
-      if (prop in Pattern.prototype) {
-        return (...args) => new Proxy((pat) => target(pat)[prop](...args), handler);
-      }
-      return Reflect.get(target, prop);
-    },
-  });
+const _proxify_handler = {
+  get: function (target, prop, receiver) {
+    // chain pattern methods
+    if (prop in Pattern.prototype) {
+      return (...args) => new Proxy((pat) => target(pat)[prop](...args), _proxify_handler);
+    }
+    return Reflect.get(target, prop);
+  },
+};
+const proxify = (func) => new Proxy(func, _proxify_handler);
 
 /**
  * Registers a new pattern method. The method is added to the Pattern class + the standalone function is returned from register.
