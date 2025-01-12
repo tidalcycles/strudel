@@ -177,7 +177,7 @@ export function curry(func, overload, arity = func.length, final) {
       let partial = function (...args2) {
         return curried.apply(this, args.concat(args2));
       };
-      if (arity - 1 === args.length) {
+      if (final && arity - 1 === args.length) {
         // for method composition
         partial = final(partial);
       }
