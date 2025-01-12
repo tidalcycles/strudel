@@ -1,6 +1,6 @@
 import { describe, bench } from 'vitest';
 
-import { calculateTactus, sequence, stack } from '../index.mjs';
+import { calculateTactus, sequence, stack, fast, note } from '../index.mjs';
 
 const pat64 = sequence(...Array(64).keys());
 
@@ -44,3 +44,24 @@ describe('stack', () => {
   );
 });
 calculateTactus(true);
+
+describe('proxify', () => {
+  bench(
+    'proxied',
+    () => {
+      note(pat64).sound('folkharp').every(3, fast(2).speed(2).rev()).fast(16).queryArc(0, 3);
+    },
+    { time: 1000 },
+  );
+  bench(
+    'unproxied',
+    () => {
+      note(pat64)
+        .sound('folkharp')
+        .every(3, (x) => x.fast(2).speed(2).rev())
+        .fast(16)
+        .queryArc(0, 3);
+    },
+    { time: 1000 },
+  );
+});
