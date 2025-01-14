@@ -1,5 +1,5 @@
 /*
-controls.mjs - <short description TODO>
+controls.mjs - Registers audio controls for pattern manipulation and effects.
 Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/controls.mjs>
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
@@ -1513,6 +1513,8 @@ export const { midichan } = registerControl('midichan');
 export const { control } = registerControl('control');
 export const { ccn } = registerControl('ccn');
 export const { ccv } = registerControl('ccv');
+export const { pc } = registerControl('pc');
+export const { sysex } = registerControl('sysex');
 export const { polyTouch } = registerControl('polyTouch');
 export const { midibend } = registerControl('midibend');
 export const { miditouch } = registerControl('miditouch');
