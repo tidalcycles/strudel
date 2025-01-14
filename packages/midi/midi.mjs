@@ -134,7 +134,7 @@ Pattern.prototype.midi = function (output) {
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
     const timeOffsetString = `+${getEventOffsetMs(targetTime, currentTime) + latencyMs}`;
     // destructure value
-    let { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd, gain = 1, velocity = 0.9 } = hap.value;
+    let { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd, gain = 1, velocity = 0.9, pc, sysex } = hap.value;
 
     velocity = gain * velocity;
 
@@ -167,7 +167,25 @@ Pattern.prototype.midi = function (output) {
         }
       });
     }
+    // Handle program change
+    if (pc !== undefined) {
+      if (typeof pc !== 'number' || pc < 0 || pc > 127) {
+        throw new Error('expected pc (program change) to be a number between 0 and 127');
+      }
+      device.sendProgramChange(pc, midichan, { time: timeOffsetString });
+    }
+    // Handle sysex
+    if (sysex !== undefined) {
+      if (!Array.isArray(sysex)) {
+        throw new Error('expected sysex to be an array of numbers (0-255)');
+      }
+      if (!sysex.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
+        throw new Error('all sysex bytes must be integers between 0 and 255');
+      }
+      device.sendSysex(undefined, sysex, { time: timeOffsetString });
+    }
 
+    // Handle control change
     if (ccv !== undefined && ccn !== undefined) {
       if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
         throw new Error('expected ccv to be a number between 0 and 1');
