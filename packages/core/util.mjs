@@ -465,18 +465,7 @@ export function getCurrentKeyboardState() {
 
   return { ...keyState }; // Return a shallow copy of the key state object
 }
-//keyname: string | Array<string>
-//keyname reference: https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values
-export function isKeyDown(keyname) {
-  if (Array.isArray(keyname) === false) {
-    keyname = [keyname];
-  }
-  const keyState = getCurrentKeyboardState();
-  return keyname.every((x) => {
-    const keyName = keyAlias.get(x) ?? x;
-    return keyState[keyName];
-  });
-}
+
 
 // Floating point versions, see Fraction for rational versions
 // // greatest common divisor
