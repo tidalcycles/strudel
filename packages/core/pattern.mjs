@@ -1488,36 +1488,71 @@ function _sequenceCount(x) {
   return [reify(x), 1];
 }
 
-export const mask = curry((a, b) => reify(b).mask(a));
-export const struct = curry((a, b) => reify(b).struct(a));
-export const superimpose = curry((a, b) => reify(b).superimpose(...a));
+const _proxify_handler = {
+  get: function (target, prop, receiver) {
+    // chain pattern methods
+    if (prop in Pattern.prototype) {
+      return (...args) => new Proxy((pat) => target(pat)[prop](...args), _proxify_handler);
+    }
+    return Reflect.get(target, prop);
+  },
+};
+const proxify = (func) => new Proxy(func, _proxify_handler);
+const curryProxified = (func) => curry(func, null, func.length, proxify);
+
+export const mask = curryProxified((a, b) => reify(b).mask(a));
+export const struct = curryProxified((a, b) => reify(b).struct(a));
+export const superimpose = curryProxified((a, b) => reify(b).superimpose(...a));
 
 // operators
-export const set = curry((a, b) => reify(b).set(a));
-export const keep = curry((a, b) => reify(b).keep(a));
-export const keepif = curry((a, b) => reify(b).keepif(a));
-export const add = curry((a, b) => reify(b).add(a));
-export const sub = curry((a, b) => reify(b).sub(a));
-export const mul = curry((a, b) => reify(b).mul(a));
-export const div = curry((a, b) => reify(b).div(a));
-export const mod = curry((a, b) => reify(b).mod(a));
-export const pow = curry((a, b) => reify(b).pow(a));
-export const band = curry((a, b) => reify(b).band(a));
-export const bor = curry((a, b) => reify(b).bor(a));
-export const bxor = curry((a, b) => reify(b).bxor(a));
-export const blshift = curry((a, b) => reify(b).blshift(a));
-export const brshift = curry((a, b) => reify(b).brshift(a));
-export const lt = curry((a, b) => reify(b).lt(a));
-export const gt = curry((a, b) => reify(b).gt(a));
-export const lte = curry((a, b) => reify(b).lte(a));
-export const gte = curry((a, b) => reify(b).gte(a));
-export const eq = curry((a, b) => reify(b).eq(a));
-export const eqt = curry((a, b) => reify(b).eqt(a));
-export const ne = curry((a, b) => reify(b).ne(a));
-export const net = curry((a, b) => reify(b).net(a));
-export const and = curry((a, b) => reify(b).and(a));
-export const or = curry((a, b) => reify(b).or(a));
-export const func = curry((a, b) => reify(b).func(a));
+const opFunc = function (name) {
+  const handler = {
+    // magic to support things like set.n(3)
+    get: function (target, prop, receiver) {
+      if (prop in Pattern.prototype && '_Param' in Pattern.prototype[prop]) {
+        return (val) =>
+          proxify((pat) =>
+            target(
+              reify(val).fmap((x) => ({ [prop]: x })),
+              pat,
+            ),
+          );
+      }
+      return Reflect.get(target, prop);
+    },
+  };
+
+  const func = curryProxified((a, b) => reify(b)[name](a));
+  return new Proxy(func, handler);
+};
+
+export const set = opFunc('set');
+export const keep = opFunc('keep');
+export const keepif = opFunc('keepif');
+export const add = opFunc('add');
+export const sub = opFunc('sub');
+export const mul = opFunc('mul');
+export const div = opFunc('div');
+export const mod = opFunc('mod');
+export const pow = opFunc('pow');
+export const band = opFunc('band');
+export const bor = opFunc('bor');
+export const bxor = opFunc('bxor');
+export const blshift = opFunc('blshift');
+export const brshift = opFunc('brshift');
+export const lt = opFunc('lt');
+export const gt = opFunc('gt');
+export const lte = opFunc('lte');
+export const gte = opFunc('gte');
+export const eq = opFunc('eq');
+export const eqt = opFunc('eqt');
+export const ne = opFunc('ne');
+export const net = opFunc('net');
+export const and = opFunc('and');
+export const or = opFunc('or');
+export const func = opFunc('func');
+
+export const hitch = proxify((x) => x);
 
 /**
  * Registers a new pattern method. The method is added to the Pattern class + the standalone function is returned from register.
@@ -1550,6 +1585,7 @@ export function register(name, func, patternify = true, preserveTactus = false, 
         const firstArgs = args.slice(0, -1);
 
         if (firstArgs.every((arg) => arg.__pure != undefined)) {
+          // All the args are 'pure', so we can treat them as unpatterned
           const pureArgs = firstArgs.map((arg) => arg.__pure);
           const pureLocs = firstArgs.filter((arg) => arg.__pure_loc).map((arg) => arg.__pure_loc);
           result = func(...pureArgs, pat);
@@ -1563,7 +1599,7 @@ export function register(name, func, patternify = true, preserveTactus = false, 
           let mapFn = (...args) => {
             return func(...args, pat);
           };
-          mapFn = curry(mapFn, null, arity - 1);
+          mapFn = curry(mapFn, null, arity - 1, proxify);
           result = join(right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)));
         }
       }
@@ -1609,7 +1645,7 @@ export function register(name, func, patternify = true, preserveTactus = false, 
 
   // toplevel functions get curried as well as patternified
   // because pfunc uses spread args, we need to state the arity explicitly!
-  return curry(pfunc, null, arity);
+  return curry(pfunc, null, arity, proxify);
 }
 
 // Like register, but defaults to stepJoin
