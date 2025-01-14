@@ -1491,6 +1491,7 @@ function _sequenceCount(x) {
 export const mask = curry((a, b) => reify(b).mask(a));
 export const struct = curry((a, b) => reify(b).struct(a));
 export const superimpose = curry((a, b) => reify(b).superimpose(...a));
+export const withValue = curry((a, b) => reify(b).withValue(a));
 
 // operators
 export const set = curry((a, b) => reify(b).set(a));
