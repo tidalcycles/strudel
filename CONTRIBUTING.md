@@ -138,6 +138,18 @@ pnpm --filter "./packages/**" publish --access public
 To manually publish a single package, increase the version in the `package.json`, then run `pnpm publish`.
 Important: Always publish with `pnpm`, as `npm` does not support overriding main files in `publishConfig`, which is done in all the packages.
 
+
+## useful commands
+```sh
+#regenerate the test snapshots (ex: when updating or creating new pattern functions)
+pnpm snapshot 
+
+#start the OSC server
+pnpm run osc
+
+#build the standalone version
+pnpm tauri build
+```
 ## Have Fun
 
 Remember to have fun, and that this project is driven by the passion of volunteers!

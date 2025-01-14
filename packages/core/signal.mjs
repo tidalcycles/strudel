@@ -7,7 +7,8 @@ This program is free software: you can redistribute it and/or modify it under th
 import { Hap } from './hap.mjs';
 import { Pattern, fastcat, reify, silence, stack, register } from './pattern.mjs';
 import Fraction from './fraction.mjs';
-import { id, _mod } from './util.mjs';
+
+import { id, keyAlias, getCurrentKeyboardState } from './util.mjs';
 
 export function steady(value) {
   // A continuous value
@@ -638,4 +639,49 @@ export const never = register('never', function (_, pat) {
  */
 export const always = register('always', function (func, pat) {
   return func(pat);
+});
+
+//keyname: string | Array<string>
+//keyname reference: https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values
+export function _keyDown(keyname) {
+  if (Array.isArray(keyname) === false) {
+    keyname = [keyname];
+  }
+  const keyState = getCurrentKeyboardState();
+  return keyname.every((x) => {
+    const keyName = keyAlias.get(x) ?? x;
+    return keyState[keyName];
+  });
+}
+
+/**
+ *
+ * Do something on a keypress, or array of keypresses
+ * [Key name reference](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values)
+ *
+ * @name whenKey
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * s("bd(5,8)").whenKey("Control:j", x => x.segment(16).color("red")).whenKey("Control:i", x => x.fast(2).color("blue"))
+ */
+
+export const whenKey = register('whenKey', function (input, func, pat) {
+  return pat.when(_keyDown(input), func);
+});
+
+/**
+ *
+ * returns true when a key or array of keys is held
+ * [Key name reference](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values)
+ *
+ * @name keyDown
+ * @memberof Pattern
+ * @returns Pattern
+ * @example
+ * keyDown("Control:j").pick([s("bd(5,8)"), s("cp(3,8)")])
+ */
+
+export const keyDown = register('keyDown', function (pat) {
+  return pat.fmap(_keyDown);
 });
