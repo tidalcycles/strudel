@@ -151,18 +151,36 @@ Pattern.prototype.midi = function (output) {
     // Handle mapped parameters if mapping exists
     if (mapping) {
       Object.entries(mapping).forEach(([name, paramSpec]) => {
-        if (name in hap.value && typeof hap.value[name] === 'number') {
+        if (name in hap.value) {
           const value = hap.value[name];
 
-          // ccnLsb will only exist if this is a high-resolution CC message
-          const [ccnMsb, ccnLsb] = Array.isArray(paramSpec.cc) ? paramSpec.cc : [paramSpec.cc];
+          if (paramSpec.cc) {
+            if (typeof value !== 'number') {
+              throw new Error(`Expected ${name} to be a number for CC mapping`);
+            }
+            // ccnLsb will only exist if this is a high-resolution CC message
+            const [ccnMsb, ccnLsb] = Array.isArray(paramSpec.cc) ? paramSpec.cc : [paramSpec.cc];
 
-          const ccvMsb = ccnLsb === undefined ? Math.round(value * 127) : Math.round(value * 16383) >> 7;
-          device.sendControlChange(ccnMsb, ccvMsb, paramSpec.channel || midichan, { time: timeOffsetString });
+            const ccvMsb = ccnLsb === undefined ? Math.round(value * 127) : Math.round(value * 16383) >> 7;
+            device.sendControlChange(ccnMsb, ccvMsb, paramSpec.channel || midichan, { time: timeOffsetString });
 
-          if (ccnLsb !== undefined) {
-            const ccvLsb = Math.round(value * 16383) & 0b1111111;
-            device.sendControlChange(ccnLsb, ccvLsb, paramSpec.channel || midichan, { time: timeOffsetString });
+            if (ccnLsb !== undefined) {
+              const ccvLsb = Math.round(value * 16383) & 0b1111111;
+              device.sendControlChange(ccnLsb, ccvLsb, paramSpec.channel || midichan, { time: timeOffsetString });
+            }
+          } else if (paramSpec.pc !== undefined) {
+            if (typeof value !== 'number' || value < 0 || value > 127) {
+              throw new Error(`Expected ${name} to be a number between 0 and 127 for program change`);
+            }
+            device.sendProgramChange(value, paramSpec.channel || midichan, { time: timeOffsetString });
+          } else if (paramSpec.sysex) {
+            if (!Array.isArray(value)) {
+              throw new Error(`Expected ${name} to be an array of numbers (0-255) for sysex`);
+            }
+            if (!value.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
+              throw new Error(`All sysex bytes in ${name} must be integers between 0 and 255`);
+            }
+            device.sendSysex(undefined, value, { time: timeOffsetString });
           }
         }
       });
