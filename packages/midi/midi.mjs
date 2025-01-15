@@ -97,10 +97,20 @@ Pattern.prototype.midi = function (output) {
       }')`,
     );
   }
+  let portName = output;
+  let isController = false;
+  let mapping = {};
+
+  if (typeof output === 'object') {
+    const { port, controller = false, ...remainingProps } = output;
+    portName = port;
+    isController = controller;
+    mapping = remainingProps;
+  }
 
   enableWebMidi({
     onEnabled: ({ outputs }) => {
-      const device = getDevice(output, outputs);
+      const device = getDevice(portName, outputs);
       const otherOutputs = outputs.filter((o) => o.name !== device.name);
       logger(
         `Midi enabled! Using "${device.name}". ${
@@ -117,7 +127,7 @@ Pattern.prototype.midi = function (output) {
       console.log('not enabled');
       return;
     }
-    const device = getDevice(output, WebMidi.outputs);
+    const device = getDevice(portName, WebMidi.outputs);
     hap.ensureObjectValue();
     //magic number to get audio engine to line up, can probably be calculated somehow
     const latencyMs = 34;
@@ -130,13 +140,34 @@ Pattern.prototype.midi = function (output) {
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
     const duration = (hap.duration.valueOf() / cps) * 1000 - 10;
-    if (note != null) {
+    if (note != null && !isController) {
       const midiNumber = typeof note === 'number' ? note : noteToMidi(note);
       const midiNote = new Note(midiNumber, { attack: velocity, duration });
       device.playNote(midiNote, midichan, {
         time: timeOffsetString,
       });
     }
+
+    // Handle mapped parameters if mapping exists
+    if (mapping) {
+      Object.entries(mapping).forEach(([name, paramSpec]) => {
+        if (name in hap.value && typeof hap.value[name] === 'number') {
+          const value = hap.value[name];
+
+          // ccnLsb will only exist if this is a high-resolution CC message
+          const [ccnMsb, ccnLsb] = Array.isArray(paramSpec.cc) ? paramSpec.cc : [paramSpec.cc];
+
+          const ccvMsb = ccnLsb === undefined ? Math.round(value * 127) : Math.round(value * 16383) >> 7;
+          device.sendControlChange(ccnMsb, ccvMsb, paramSpec.channel || midichan, { time: timeOffsetString });
+
+          if (ccnLsb !== undefined) {
+            const ccvLsb = Math.round(value * 16383) & 0b1111111;
+            device.sendControlChange(ccnLsb, ccvLsb, paramSpec.channel || midichan, { time: timeOffsetString });
+          }
+        }
+      });
+    }
+
     if (ccv !== undefined && ccn !== undefined) {
       if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
         throw new Error('expected ccv to be a number between 0 and 1');
