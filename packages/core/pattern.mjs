@@ -1491,6 +1491,14 @@ function _sequenceCount(x) {
 export const mask = curry((a, b) => reify(b).mask(a));
 export const struct = curry((a, b) => reify(b).struct(a));
 export const superimpose = curry((a, b) => reify(b).superimpose(...a));
+export const withValue = curry((a, b) => reify(b).withValue(a));
+
+export const bind = curry((a, b) => reify(b).bind(a));
+export const innerBind = curry((a, b) => reify(b).innerBind(a));
+export const outerBind = curry((a, b) => reify(b).outerBind(a));
+export const squeezeBind = curry((a, b) => reify(b).squeezeBind(a));
+export const stepBind = curry((a, b) => reify(b).stepBind(a));
+export const polyBind = curry((a, b) => reify(b).polyBind(a));
 
 // operators
 export const set = curry((a, b) => reify(b).set(a));
@@ -2537,6 +2545,10 @@ Pattern.prototype.stepJoin = function () {
     return pat.query(state);
   };
   return new Pattern(q, first_t);
+};
+
+Pattern.prototype.stepBind = function (func) {
+  return this.fmap(func).stepJoin();
 };
 
 export function _retime(timedHaps) {
