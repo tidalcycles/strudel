@@ -52,6 +52,7 @@ import {
   stackCentre,
   s_cat,
   calculateTactus,
+  sometimes,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -1251,6 +1252,15 @@ describe('Pattern', () => {
   describe('loopAt', () => {
     it('maintains tactus', () => {
       expect(s('bev').chop(8).loopAt(2).tactus).toStrictEqual(Fraction(4));
+    });
+  });
+  describe('sometimes', () => {
+    it('works with constant functions', () => {
+      expect(
+        pure('a')
+          .sometimes((x) => pure('b'))
+          .fast(16).firstCycleValues.length,
+      ).toStrictEqual(16);
     });
   });
 });
