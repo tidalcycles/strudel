@@ -3122,12 +3122,15 @@ Pattern.prototype.xfade = function (pos, b) {
  * @example
  * s("sd").beat("4:12", 16)
  */
-const __beat = join => (t, div, pat) => {
+const __beat = (join) => (t, div, pat) => {
   t = Fraction(t).mod(div);
   div = Fraction(div);
   const b = t.div(div);
   const e = t.add(1).div(div);
-  return join(pat.fmap(x => pure(x)._compress(b,e)));
-}
+  return join(pat.fmap((x) => pure(x)._compress(b, e)));
+};
 
-export const {beat} = register(['beat'], __beat(x => x.innerJoin()));
+export const { beat } = register(
+  ['beat'],
+  __beat((x) => x.innerJoin()),
+);
