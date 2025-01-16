@@ -3118,4 +3118,4 @@ const __beat = join => (t, div, pat) => {
   return join(pat.fmap(x => pure(x)._compress(b,e)));
 }
 
-export const {beat, beatOut} = register(['beat', 'beatOut'], __beat(x => x.innerJoin()));
+export const {beat} = register(['beat'], __beat(x => x.innerJoin()));
