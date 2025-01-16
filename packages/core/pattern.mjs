@@ -3110,9 +3110,12 @@ Pattern.prototype.xfade = function (pos, b) {
  * @example
  * s("sd").beat("4:12", 16)
  */
-export const { beat } = register(['beat'], (times, div, pat) => {
-  if (typeof times === 'number') {
-    times = [times];
-  }
-  return stack(...times.map((t) => pat.pressBy(_mod(t, div) / div).duration(1 / div)));
-});
+const __beat = join => (t, div, pat) => {
+  t = Fraction(t).mod(div);
+  div = Fraction(div);
+  const b = t.div(div);
+  const e = t.add(1).div(div);
+  return join(pat.fmap(x => pure(x)._compress(b,e)));
+}
+
+export const {beat, beatOut} = register(['beat', 'beatOut'], __beat(x => x.innerJoin()));
