@@ -9,9 +9,13 @@ npm i @strudel/motion --save
 ```
 
 ## Setup SSL for Local Development
-`DeviceMotionEvent` only work over HTTPS, so you'll need to set up SSL for local development.
-install SSL plugin for Vite
-`pnpm install -D @vitejs/plugin-basic-ssl`
+`DeviceMotionEvent` only works with HTTPS, so you'll need to enable SSL for local development.
+Try installing an SSL plugin for Vite.
+
+```
+cd website
+pnpm install -D @vitejs/plugin-basic-ssl
+```
 
 add the basicSsl plugin to the defineConfig block in `strudel/website/astro.config.mjs`
 ```
@@ -27,7 +31,7 @@ vite: {
 },
 ```
 
-generate SSL cert if its necessary
+generate an SSL certificate to avoid security warnings.
 
 `openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout key.pem -out cert.pem`
 
