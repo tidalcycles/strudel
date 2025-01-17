@@ -5,7 +5,7 @@ This program is free software: you can redistribute it and/or modify it under th
 */
 
 import { Hap } from './hap.mjs';
-import { Pattern, fastcat, reify, silence, stack, register } from './pattern.mjs';
+import { Pattern, fastcat, pure, register, reify, silence, stack } from './pattern.mjs';
 import Fraction from './fraction.mjs';
 
 import { id, keyAlias, getCurrentKeyboardState } from './util.mjs';
@@ -159,6 +159,37 @@ const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
  * // n("0 1 2 3").scale("C4:pentatonic")
  */
 export const run = (n) => saw.range(0, n).floor().segment(n);
+
+/**
+ * Creates a pattern from a binary number.
+ *
+ * @name binary
+ * @param {number} n - input number to convert to binary
+ * @example
+ * "hh".s().struct(binary(5))
+ * // "hh".s().struct("1 0 1")
+ */
+export const binary = (n) => {
+  const nBits = reify(n).log2(0).floor().add(1);
+  return binaryN(n, nBits);
+};
+
+/**
+ * Creates a pattern from a binary number, padded to n bits long.
+ *
+ * @name binaryN
+ * @param {number} n - input number to convert to binary
+ * @param {number} nBits - pattern length, defaults to 16
+ * @example
+ * "hh".s().struct(binaryN(55532, 16))
+ * // "hh".s().struct("1 1 0 1 1 0 0 0 1 1 1 0 1 1 0 0")
+ */
+export const binaryN = (n, nBits = 16) => {
+  nBits = reify(nBits);
+  // Shift and mask, putting msb on the right-side
+  const bitPos = run(nBits).mul(-1).add(nBits.sub(1));
+  return reify(n).segment(nBits).brshift(bitPos).band(pure(1));
+};
 
 export const randrun = (n) => {
   return signal((t) => {
