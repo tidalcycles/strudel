@@ -954,6 +954,24 @@ exports[`runs examples > example "bank" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "beat" example index 0 1`] = `
+[
+  "[ 0/1 → 1/16 | s:bd ]",
+  "[ 1/1 → 17/16 | s:bd ]",
+  "[ 2/1 → 33/16 | s:bd ]",
+  "[ 3/1 → 49/16 | s:bd ]",
+]
+`;
+
+exports[`runs examples > example "beat" example index 1 1`] = `
+[
+  "[ 1/48 → 1/12 | s:sd ]",
+  "[ 49/48 → 13/12 | s:sd ]",
+  "[ 97/48 → 25/12 | s:sd ]",
+  "[ 145/48 → 37/12 | s:sd ]",
+]
+`;
+
 exports[`runs examples > example "begin" example index 0 1`] = `
 [
   "[ 0/1 → 1/2 | s:rave begin:0 ]",
@@ -964,6 +982,60 @@ exports[`runs examples > example "begin" example index 0 1`] = `
   "[ 5/2 → 3/1 | s:rave begin:0.25 ]",
   "[ 3/1 → 7/2 | s:rave begin:0.5 ]",
   "[ 7/2 → 4/1 | s:rave begin:0.75 ]",
+]
+`;
+
+exports[`runs examples > example "binary" example index 0 1`] = `
+[
+  "[ 0/1 → 1/3 | s:hh ]",
+  "[ 2/3 → 1/1 | s:hh ]",
+  "[ 1/1 → 4/3 | s:hh ]",
+  "[ 5/3 → 2/1 | s:hh ]",
+  "[ 2/1 → 7/3 | s:hh ]",
+  "[ 8/3 → 3/1 | s:hh ]",
+  "[ 3/1 → 10/3 | s:hh ]",
+  "[ 11/3 → 4/1 | s:hh ]",
+]
+`;
+
+exports[`runs examples > example "binaryN" example index 0 1`] = `
+[
+  "[ 0/1 → 1/16 | s:hh ]",
+  "[ 1/16 → 1/8 | s:hh ]",
+  "[ 3/16 → 1/4 | s:hh ]",
+  "[ 1/4 → 5/16 | s:hh ]",
+  "[ 1/2 → 9/16 | s:hh ]",
+  "[ 9/16 → 5/8 | s:hh ]",
+  "[ 5/8 → 11/16 | s:hh ]",
+  "[ 3/4 → 13/16 | s:hh ]",
+  "[ 13/16 → 7/8 | s:hh ]",
+  "[ 1/1 → 17/16 | s:hh ]",
+  "[ 17/16 → 9/8 | s:hh ]",
+  "[ 19/16 → 5/4 | s:hh ]",
+  "[ 5/4 → 21/16 | s:hh ]",
+  "[ 3/2 → 25/16 | s:hh ]",
+  "[ 25/16 → 13/8 | s:hh ]",
+  "[ 13/8 → 27/16 | s:hh ]",
+  "[ 7/4 → 29/16 | s:hh ]",
+  "[ 29/16 → 15/8 | s:hh ]",
+  "[ 2/1 → 33/16 | s:hh ]",
+  "[ 33/16 → 17/8 | s:hh ]",
+  "[ 35/16 → 9/4 | s:hh ]",
+  "[ 9/4 → 37/16 | s:hh ]",
+  "[ 5/2 → 41/16 | s:hh ]",
+  "[ 41/16 → 21/8 | s:hh ]",
+  "[ 21/8 → 43/16 | s:hh ]",
+  "[ 11/4 → 45/16 | s:hh ]",
+  "[ 45/16 → 23/8 | s:hh ]",
+  "[ 3/1 → 49/16 | s:hh ]",
+  "[ 49/16 → 25/8 | s:hh ]",
+  "[ 51/16 → 13/4 | s:hh ]",
+  "[ 13/4 → 53/16 | s:hh ]",
+  "[ 7/2 → 57/16 | s:hh ]",
+  "[ 57/16 → 29/8 | s:hh ]",
+  "[ 29/8 → 59/16 | s:hh ]",
+  "[ 15/4 → 61/16 | s:hh ]",
+  "[ 61/16 → 31/8 | s:hh ]",
 ]
 `;
 
@@ -4064,6 +4136,8 @@ exports[`runs examples > example "juxBy" example index 0 1`] = `
   "[ 31/8 → 4/1 | s:bd pan:0.75 ]",
 ]
 `;
+
+exports[`runs examples > example "keyDown" example index 0 1`] = `[]`;
 
 exports[`runs examples > example "lastOf" example index 0 1`] = `
 [
@@ -7508,6 +7582,75 @@ exports[`runs examples > example "sometimesBy" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "spectrum" example index 0 1`] = `
+[
+  "[ -5/24 ⇜ (0/1 → 1/8) | note:F4 s:sine decay:0.3 room:0.5 ]",
+  "[ -2/15 ⇜ (0/1 → 1/5) | note:A4 s:sine decay:0.3 room:0.5 ]",
+  "[ -1/120 ⇜ (0/1 → 1/5) ⇝ 13/40 | note:A5 s:sine decay:0.3 room:0.5 ]",
+  "[ 0/1 → 1/3 | note:D3 s:sine decay:0.3 room:0.5 ]",
+  "[ 1/8 → 11/24 | note:D4 s:sine decay:0.3 room:0.5 ]",
+  "[ -1/120 ⇜ (1/5 → 13/40) | note:A5 s:sine decay:0.3 room:0.5 ]",
+  "[ 1/5 → 8/15 | note:G4 s:sine decay:0.3 room:0.5 ]",
+  "[ 13/40 → 79/120 | note:G5 s:sine decay:0.3 room:0.5 ]",
+  "[ 1/3 → 2/3 | note:C4 s:sine decay:0.3 room:0.5 ]",
+  "[ 11/24 → 19/24 | note:C5 s:sine decay:0.3 room:0.5 ]",
+  "[ 8/15 → 13/15 | note:F5 s:sine decay:0.3 room:0.5 ]",
+  "[ 79/120 → 119/120 | note:F6 s:sine decay:0.3 room:0.5 ]",
+  "[ 2/3 → 1/1 | note:G3 s:sine decay:0.3 room:0.5 ]",
+  "[ (19/24 → 1/1) ⇝ 9/8 | note:G4 s:sine decay:0.3 room:0.5 ]",
+  "[ (13/15 → 1/1) ⇝ 6/5 | note:C5 s:sine decay:0.3 room:0.5 ]",
+  "[ (119/120 → 1/1) ⇝ 53/40 | note:C6 s:sine decay:0.3 room:0.5 ]",
+  "[ 19/24 ⇜ (1/1 → 9/8) | note:G4 s:sine decay:0.3 room:0.5 ]",
+  "[ 13/15 ⇜ (1/1 → 6/5) | note:C5 s:sine decay:0.3 room:0.5 ]",
+  "[ 119/120 ⇜ (1/1 → 6/5) ⇝ 53/40 | note:C6 s:sine decay:0.3 room:0.5 ]",
+  "[ 1/1 → 4/3 | note:F3 s:sine decay:0.3 room:0.5 ]",
+  "[ 9/8 → 35/24 | note:F4 s:sine decay:0.3 room:0.5 ]",
+  "[ 119/120 ⇜ (6/5 → 53/40) | note:C6 s:sine decay:0.3 room:0.5 ]",
+  "[ 6/5 → 23/15 | note:A4 s:sine decay:0.3 room:0.5 ]",
+  "[ 53/40 → 199/120 | note:A5 s:sine decay:0.3 room:0.5 ]",
+  "[ 4/3 → 5/3 | note:D3 s:sine decay:0.3 room:0.5 ]",
+  "[ 35/24 → 43/24 | note:D4 s:sine decay:0.3 room:0.5 ]",
+  "[ 23/15 → 28/15 | note:G4 s:sine decay:0.3 room:0.5 ]",
+  "[ 199/120 → 239/120 | note:G5 s:sine decay:0.3 room:0.5 ]",
+  "[ 5/3 → 2/1 | note:C4 s:sine decay:0.3 room:0.5 ]",
+  "[ (43/24 → 2/1) ⇝ 17/8 | note:C5 s:sine decay:0.3 room:0.5 ]",
+  "[ (28/15 → 2/1) ⇝ 11/5 | note:F5 s:sine decay:0.3 room:0.5 ]",
+  "[ (239/120 → 2/1) ⇝ 93/40 | note:F6 s:sine decay:0.3 room:0.5 ]",
+  "[ 43/24 ⇜ (2/1 → 17/8) | note:C5 s:sine decay:0.3 room:0.5 ]",
+  "[ 28/15 ⇜ (2/1 → 11/5) | note:F5 s:sine decay:0.3 room:0.5 ]",
+  "[ 239/120 ⇜ (2/1 → 11/5) ⇝ 93/40 | note:F6 s:sine decay:0.3 room:0.5 ]",
+  "[ 2/1 → 7/3 | note:A3 s:sine decay:0.3 room:0.5 ]",
+  "[ 17/8 → 59/24 | note:A4 s:sine decay:0.3 room:0.5 ]",
+  "[ 239/120 ⇜ (11/5 → 93/40) | note:F6 s:sine decay:0.3 room:0.5 ]",
+  "[ 11/5 → 38/15 | note:D5 s:sine decay:0.3 room:0.5 ]",
+  "[ 93/40 → 319/120 | note:D6 s:sine decay:0.3 room:0.5 ]",
+  "[ 7/3 → 8/3 | note:F3 s:sine decay:0.3 room:0.5 ]",
+  "[ 59/24 → 67/24 | note:F4 s:sine decay:0.3 room:0.5 ]",
+  "[ 38/15 → 43/15 | note:A4 s:sine decay:0.3 room:0.5 ]",
+  "[ 319/120 → 359/120 | note:A5 s:sine decay:0.3 room:0.5 ]",
+  "[ 8/3 → 3/1 | note:D3 s:sine decay:0.3 room:0.5 ]",
+  "[ (67/24 → 3/1) ⇝ 25/8 | note:D4 s:sine decay:0.3 room:0.5 ]",
+  "[ (43/15 → 3/1) ⇝ 16/5 | note:G4 s:sine decay:0.3 room:0.5 ]",
+  "[ (359/120 → 3/1) ⇝ 133/40 | note:G5 s:sine decay:0.3 room:0.5 ]",
+  "[ 67/24 ⇜ (3/1 → 25/8) | note:D4 s:sine decay:0.3 room:0.5 ]",
+  "[ 43/15 ⇜ (3/1 → 16/5) | note:G4 s:sine decay:0.3 room:0.5 ]",
+  "[ 359/120 ⇜ (3/1 → 16/5) ⇝ 133/40 | note:G5 s:sine decay:0.3 room:0.5 ]",
+  "[ 3/1 → 10/3 | note:C4 s:sine decay:0.3 room:0.5 ]",
+  "[ 25/8 → 83/24 | note:C5 s:sine decay:0.3 room:0.5 ]",
+  "[ 359/120 ⇜ (16/5 → 133/40) | note:G5 s:sine decay:0.3 room:0.5 ]",
+  "[ 16/5 → 53/15 | note:F5 s:sine decay:0.3 room:0.5 ]",
+  "[ 133/40 → 439/120 | note:F6 s:sine decay:0.3 room:0.5 ]",
+  "[ 10/3 → 11/3 | note:G3 s:sine decay:0.3 room:0.5 ]",
+  "[ 83/24 → 91/24 | note:G4 s:sine decay:0.3 room:0.5 ]",
+  "[ 53/15 → 58/15 | note:C5 s:sine decay:0.3 room:0.5 ]",
+  "[ 439/120 → 479/120 | note:C6 s:sine decay:0.3 room:0.5 ]",
+  "[ 11/3 → 4/1 | note:F3 s:sine decay:0.3 room:0.5 ]",
+  "[ (91/24 → 4/1) ⇝ 33/8 | note:F4 s:sine decay:0.3 room:0.5 ]",
+  "[ (58/15 → 4/1) ⇝ 21/5 | note:A4 s:sine decay:0.3 room:0.5 ]",
+  "[ (479/120 → 4/1) ⇝ 173/40 | note:A5 s:sine decay:0.3 room:0.5 ]",
+]
+`;
+
 exports[`runs examples > example "speed" example index 0 1`] = `
 [
   "[ 0/1 → 1/6 | s:bd speed:1 ]",
@@ -8762,6 +8905,8 @@ exports[`runs examples > example "when" example index 0 1`] = `
   "[ 11/3 → 4/1 | note:50 ]",
 ]
 `;
+
+exports[`runs examples > example "whenKey" example index 0 1`] = `[]`;
 
 exports[`runs examples > example "withValue" example index 0 1`] = `
 [

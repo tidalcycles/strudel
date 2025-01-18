@@ -46,12 +46,14 @@ import {
   rev,
   time,
   run,
+  binaryN,
   pick,
   stackLeft,
   stackRight,
   stackCentre,
   s_cat,
   calculateTactus,
+  sometimes,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -958,6 +960,18 @@ describe('Pattern', () => {
       expect(run(4).firstCycle()).toStrictEqual(sequence(0, 1, 2, 3).firstCycle());
     });
   });
+  describe('binaryN', () => {
+    it('Can make a binary pattern from a decimal', () => {
+      expect(binaryN(55532).firstCycle()).toStrictEqual(
+        sequence(1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0).firstCycle(),
+      );
+    });
+    it('Can make a binary pattern from patterned inputs', () => {
+      expect(binaryN(pure(0x1337), pure(14)).firstCycle()).toStrictEqual(
+        sequence(0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1).firstCycle(),
+      );
+    });
+  });
   describe('ribbon', () => {
     it('Can ribbon', () => {
       expect(cat(0, 1, 2, 3, 4, 5, 6, 7).ribbon(2, 4).fast(4).firstCycle()).toStrictEqual(
@@ -1251,6 +1265,15 @@ describe('Pattern', () => {
   describe('loopAt', () => {
     it('maintains tactus', () => {
       expect(s('bev').chop(8).loopAt(2).tactus).toStrictEqual(Fraction(4));
+    });
+  });
+  describe('sometimes', () => {
+    it('works with constant functions', () => {
+      expect(
+        pure('a')
+          .sometimes((x) => pure('b'))
+          .fast(16).firstCycleValues.length,
+      ).toStrictEqual(16);
     });
   });
 });

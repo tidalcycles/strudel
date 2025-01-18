@@ -434,6 +434,38 @@ function getUnixTimeSeconds() {
   return Date.now() * 0.001;
 }
 
+export const keyAlias = new Map([
+  ['control', 'Control'],
+  ['ctrl', 'Control'],
+  ['alt', 'Alt'],
+  ['shift', 'Shift'],
+  ['down', 'ArrowDown'],
+  ['up', 'ArrowUp'],
+  ['left', 'ArrowLeft'],
+  ['right', 'ArrowRight'],
+]);
+let keyState;
+
+export function getCurrentKeyboardState() {
+  if (keyState == null) {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    keyState = {};
+    // Listen for the keydown event to mark the key as pressed
+    window.addEventListener('keydown', (event) => {
+      keyState[event.key] = true; // Mark the key as pressed
+    });
+
+    // Listen for the keyup event to mark the key as released
+    window.addEventListener('keyup', (event) => {
+      keyState[event.key] = false; // Mark the key as released
+    });
+  }
+
+  return { ...keyState }; // Return a shallow copy of the key state object
+}
+
 // Floating point versions, see Fraction for rational versions
 // // greatest common divisor
 // export const gcd = function (x, y, ...z) {

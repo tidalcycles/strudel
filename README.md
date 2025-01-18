@@ -14,10 +14,16 @@ An experiment in making a [Tidal](https://github.com/tidalcycles/tidal/) using w
 
 After cloning the project, you can run the REPL locally:
 
-```bash
-pnpm i
-pnpm dev
-```
+1. Install [Node.js](https://nodejs.org/)
+2. Install [pnpm](https://pnpm.io/installation)
+3. Install dependencies by running the following command:
+   ```bash
+   pnpm i
+   ```
+4. Run the development server:
+   ```bash
+   pnpm dev
+   ```
 
 ## Using Strudel In Your Project
 
