@@ -112,11 +112,27 @@ export const getADSRValues = (params, curve = 'linear', defaultValues) => {
   return [Math.max(a ?? 0, envmin), Math.max(d ?? 0, envmin), Math.min(sustain, envmax), Math.max(r ?? 0, releaseMin)];
 };
 
-export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fenv, start, end, fanchor, model, drive, flfo) {
+export function createFilter(
+  context,
+  type,
+  frequency,
+  Q,
+  att,
+  dec,
+  sus,
+  rel,
+  fenv,
+  start,
+  end,
+  fanchor,
+  model,
+  drive,
+  flfo,
+) {
   const curve = 'exponential';
   const [attack, decay, sustain, release] = getADSRValues([att, dec, sus, rel], curve, [0.005, 0.14, 0, 0.1]);
   let filter;
-  let frequencyParam,detuneParam;
+  let frequencyParam, detuneParam;
   if (model === 'ladder') {
     filter = getWorklet(context, 'ladder-processor', { frequency, q: Q, drive });
     frequencyParam = filter.parameters.get('frequency');
@@ -126,7 +142,7 @@ export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fe
     filter.Q.value = Q;
     filter.frequency.value = frequency;
     frequencyParam = filter.frequency;
-    detuneParam = filter.detune
+    detuneParam = filter.detune;
   }
 
   // envelope is active when any of these values is set
@@ -142,10 +158,9 @@ export function createFilter(context, type, frequency, Q, att, dec, sus, rel, fe
     if (fenv < 0) [min, max] = [max, min];
     getParamADSR(frequencyParam, attack, decay, sustain, release, min, max, start, end, curve);
   }
-  const hasLFO = detuneParam&&flfo !== undefined;
+  const hasLFO = detuneParam && flfo !== undefined;
   if (hasLFO !== undefined) {
-    let lfo = getVibratoOscillator(detuneParam, {vib:flfo,vibmod:4}, start);
-
+    let lfo = getVibratoOscillator(detuneParam, { vib: flfo, vibmod: 4 }, start);
   }
   return filter;
 }
@@ -248,7 +263,7 @@ export function applyFM(param, value, begin) {
     duration,
   } = value;
   let modulator;
-  let stop = () => { };
+  let stop = () => {};
 
   if (fmModulationIndex) {
     const ac = getAudioContext();

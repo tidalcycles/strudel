@@ -558,7 +558,6 @@ export const { cutoff, ctf, lpf, lp } = registerControl(['cutoff', 'resonance', 
  */
 export const { lplfo } = registerControl('lplfo');
 
-
 /**
  * Sets the lowpass filter envelope modulation depth.
  * @name lpenv
