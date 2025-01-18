@@ -76,19 +76,17 @@ The exact sound that each program number maps to depends on your MIDI device's c
 ## sysex (System Exclusive Message)
 
 The `sysex` control sends MIDI System Exclusive (SysEx) messages to your MIDI device. 
-ysEx messages are device-specific commands that allow deeper control over synthesizer parameters. 
+sysEx messages are device-specific commands that allow deeper control over synthesizer parameters. 
 The value should be an array of numbers between 0-255 representing the SysEx data bytes.
 
 ```javascript
 // Send a simple SysEx message
-sysex([0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7]).midi()
-```
+let id = 0x43; //Yamaha
+//let id = "0x00:0x20:0x32"; //Behringer ID can be an array of numbers
 
-```javascript
-//Send SysEx while playing notes
-note("c3 e3 g3")
-  .sysex("<[0xF0,0x7E,0x7F,0x09,0x01,0xF7] [0xF0,0x7E,0x7F,0x09,0x02,0xF7]>")
-  .midi()
+let data = "0x79:0x09:0x11:0x0A:0x00:0x00"; // Set NSX-39 voice to say "Aa"
+
+note("c d e f e d c").sysex(id, data).midi();
 ```
 
 The exact format of SysEx messages depends on your MIDI device's specification. 

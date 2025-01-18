@@ -8,6 +8,7 @@ import * as _WebMidi from 'webmidi';
 import { Pattern, getEventOffsetMs, isPattern, logger, ref } from '@strudel/core';
 import { noteToMidi } from '@strudel/core';
 import { Note } from 'webmidi';
+
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
 
@@ -43,13 +44,16 @@ export function enableWebMidi(options = {}) {
       resolve(WebMidi);
       return;
     }
-    WebMidi.enable((err) => {
-      if (err) {
-        reject(err);
-      }
-      onReady?.(WebMidi);
-      resolve(WebMidi);
-    });
+    WebMidi.enable(
+      (err) => {
+        if (err) {
+          reject(err);
+        }
+        onReady?.(WebMidi);
+        resolve(WebMidi);
+      },
+      { sysex: true },
+    );
   });
 }
 
@@ -134,7 +138,20 @@ Pattern.prototype.midi = function (output) {
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
     const timeOffsetString = `+${getEventOffsetMs(targetTime, currentTime) + latencyMs}`;
     // destructure value
-    let { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd, gain = 1, velocity = 0.9, pc, sysex } = hap.value;
+    let {
+      note,
+      nrpnn,
+      nrpv,
+      ccn,
+      ccv,
+      midichan = 1,
+      midicmd,
+      gain = 1,
+      velocity = 0.9,
+      pc,
+      sysexid,
+      sysexdata,
+    } = hap.value;
 
     velocity = gain * velocity;
 
@@ -173,15 +190,18 @@ Pattern.prototype.midi = function (output) {
               throw new Error(`Expected ${name} to be a number between 0 and 127 for program change`);
             }
             device.sendProgramChange(value, paramSpec.channel || midichan, { time: timeOffsetString });
-          } else if (paramSpec.sysex) {
-            if (!Array.isArray(value)) {
-              throw new Error(`Expected ${name} to be an array of numbers (0-255) for sysex`);
-            }
-            if (!value.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
-              throw new Error(`All sysex bytes in ${name} must be integers between 0 and 255`);
-            }
-            device.sendSysex(undefined, value, { time: timeOffsetString });
           }
+          // ToDo: support sysex for mapped parameters
+          // } else if (paramSpec.sysex) {
+          //   if (!Array.isArray(value)) {
+          //     throw new Error(`Expected ${name} to be an array of numbers (0-255) for sysex`);
+          //   }
+          //   if (!value.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
+          //     throw new Error(`All sysex bytes in ${name} must be integers between 0 and 255`);
+          //   }
+          //   device.sendSysex(0x43, value, { time: timeOffsetString });
+          //   //device.sendSysex(0x43, [0x79, 0x09, 0x11, 0x0A, 0x00,0x02], { time: timeOffsetString });
+          // }
         }
       });
     }
@@ -193,14 +213,25 @@ Pattern.prototype.midi = function (output) {
       device.sendProgramChange(pc, midichan, { time: timeOffsetString });
     }
     // Handle sysex
-    if (sysex !== undefined) {
-      if (!Array.isArray(sysex)) {
+    if (sysexid !== undefined && sysexdata !== undefined) {
+      //console.log('sysex', sysexid, sysexdata);
+      if (Array.isArray(sysexid)) {
+        if (!sysexid.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
+          throw new Error('all sysexid bytes must be integers between 0 and 255');
+        }
+      } else if (!Number.isInteger(sysexid) || sysexid < 0 || sysexid > 255) {
+        throw new Error('A:sysexid must be an number between 0 and 255 or an array of such integers');
+      }
+
+      if (!Array.isArray(sysexdata)) {
         throw new Error('expected sysex to be an array of numbers (0-255)');
       }
-      if (!sysex.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
+      if (!sysexdata.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
         throw new Error('all sysex bytes must be integers between 0 and 255');
       }
-      device.sendSysex(undefined, sysex, { time: timeOffsetString });
+
+      device.sendSysex(sysexid, sysexdata, { time: timeOffsetString });
+      //device.sendSysex(0x43, [0x79, 0x09, 0x11, 0x0A, 0x00,0x1e], { time: timeOffsetString });
     }
 
     // Handle control change
