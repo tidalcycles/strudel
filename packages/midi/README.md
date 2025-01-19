@@ -42,6 +42,24 @@ In the console, you will see a log of the available MIDI devices as soon as you 
 
 Selects the MIDI channel to use. If not used, `.midi` will use channel 1 by default.
 
+### midicmd
+
+`midicmd` sends MIDI system real-time messages to control timing and transport on MIDI devices. 
+
+It supports the following commands:
+- `clock`/`midiClock` - Sends MIDI timing clock messages
+- `start` - Sends MIDI start message
+- `stop` - Sends MIDI stop message
+- `continue` - Sends MIDI continue message
+
+```javascript
+// You can control the clock with a pattern and ensure it starts in sync when the repl begins.
+// Note: It might act unexpectedly if MIDI isn't set up initially.
+stack(
+  midicmd("clock*24,<start stop>/2").midi('RHYTHM DESIGNER RD-6') //Trigger start and stop on Behringer RD-6 
+)
+```
+
 ### ccn && ccv
 
 - `ccn` sets the cc number. Depends on your synths midi mapping
@@ -62,7 +80,7 @@ $: ccv(sine.segment(16).slow(4)).ccn(74).midi()
 
 ### pc (Program Change)
 
-The `pc` control sends MIDI program change messages to switch between different presets/patches on your MIDI device. 
+`pc` control sends MIDI program change messages to switch between different presets/patches on your MIDI device. 
 Program change values should be numbers between 0 and 127.
 
 ```javascript
@@ -73,9 +91,9 @@ note("c3 e3 g3").pc("<0 1 2>").midi()
 Program change messages are useful for switching between different instrument sounds or presets during a performance. 
 The exact sound that each program number maps to depends on your MIDI device's configuration.
 
-## sysex (System Exclusive Message)
+## sysexid, sysexdata (System Exclusive Message)
 
-The `sysex` control sends MIDI System Exclusive (SysEx) messages to your MIDI device. 
+`sysexid` and `sysexdata` control sends MIDI System Exclusive (SysEx) messages to your MIDI device. 
 sysEx messages are device-specific commands that allow deeper control over synthesizer parameters. 
 The value should be an array of numbers between 0-255 representing the SysEx data bytes.
 
@@ -83,10 +101,9 @@ The value should be an array of numbers between 0-255 representing the SysEx dat
 // Send a simple SysEx message
 let id = 0x43; //Yamaha
 //let id = "0x00:0x20:0x32"; //Behringer ID can be an array of numbers
-
 let data = "0x79:0x09:0x11:0x0A:0x00:0x00"; // Set NSX-39 voice to say "Aa"
 
-note("c d e f e d c").sysex(id, data).midi();
+note("c d e f e d c").sysexid(id).sysexdata(data).midi();
 ```
 
 The exact format of SysEx messages depends on your MIDI device's specification. 

@@ -29,6 +29,24 @@ In the console, you will see a log of the available MIDI devices as soon as you 
 
 Selects the MIDI channel to use. If not used, `.midi` will use channel 1 by default.
 
+### midicmd
+
+`midicmd` sends MIDI system real-time messages to control timing and transport on MIDI devices. 
+
+It supports the following commands:
+- `clock`/`midiClock` - Sends MIDI timing clock messages
+- `start` - Sends MIDI start message
+- `stop` - Sends MIDI stop message
+- `continue` - Sends MIDI continue message
+
+```javascript
+// You can control the clock with a pattern and ensure it starts in sync when the repl begins.
+// Note: It might act unexpectedly if MIDI isn't set up initially.
+stack(
+  midicmd("clock*24,<start stop>/2").midi('RHYTHM DESIGNER RD-6') //Trigger start and stop on Behringer RD-6 
+)
+```
+
 ## ccn && ccv
 
 - `ccn` sets the cc number. Depends on your synths midi mapping
@@ -48,7 +66,7 @@ $: ccv(sine.segment(16).slow(4)).ccn(74).midi()`}
 
 ## pc (Program Change)
 
-The `pc` control sends MIDI program change messages to switch between different presets/patches on your MIDI device.
+`pc` sends MIDI program change messages to switch between different presets/patches on your MIDI device.
 Program change values should be numbers between 0 and 127.
 
 <MiniRepl client:idle tune={`// Switch between programs 0 and 1 every cycle
@@ -62,7 +80,7 @@ The exact sound that each program number maps to depends on your MIDI device's c
 
 ## sysex (System Exclusive Message)
 
-The `sysex` control sends MIDI System Exclusive (SysEx) messages to your MIDI device.
+`sysex` sends MIDI System Exclusive (SysEx) messages to your MIDI device.
 ysEx messages are device-specific commands that allow deeper control over synthesizer parameters.
 The value should be an array of numbers between 0-255 representing the SysEx data bytes.
 
