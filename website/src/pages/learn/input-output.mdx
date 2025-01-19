@@ -31,21 +31,24 @@ Selects the MIDI channel to use. If not used, `.midi` will use channel 1 by defa
 
 ### midicmd
 
-`midicmd` sends MIDI system real-time messages to control timing and transport on MIDI devices. 
+`midicmd` sends MIDI system real-time messages to control timing and transport on MIDI devices.
 
 It supports the following commands:
+
 - `clock`/`midiClock` - Sends MIDI timing clock messages
 - `start` - Sends MIDI start message
 - `stop` - Sends MIDI stop message
 - `continue` - Sends MIDI continue message
 
-```javascript
 // You can control the clock with a pattern and ensure it starts in sync when the repl begins.
 // Note: It might act unexpectedly if MIDI isn't set up initially.
-stack(
-  midicmd("clock*24,<start stop>/2").midi('RHYTHM DESIGNER RD-6') //Trigger start and stop on Behringer RD-6 
-)
-```
+
+<MiniRepl
+  client:idle
+  tune={`$:stack(
+  midicmd("clock*48,<start stop>/2").midi('IAC Driver')
+)`}
+/>
 
 ## ccn && ccv
 
@@ -157,8 +160,8 @@ The following example shows how to send a pattern to an MQTT broker:
   client:only="react"
   tune={`"hello world"
     .mqtt(undefined, // username (undefined for open/public servers)
-          undefined, // password 
-          '/strudel-pattern', // mqtt 'topic' 
+          undefined, // password
+          '/strudel-pattern', // mqtt 'topic'
           'wss://mqtt.eclipseprojects.io:443/mqtt', // MQTT server address
           'mystrudel', // MQTT client id - randomly generated if not supplied
           0 // latency / delay before sending messages (0 = no delay)
@@ -169,12 +172,14 @@ The following example shows how to send a pattern to an MQTT broker:
 Other software can then receive the messages. For example using the [mosquitto](https://mosquitto.org/) commandline client tools:
 
 ```
-> mosquitto_sub  -h mqtt.eclipseprojects.io -p 1883  -t "/strudel-pattern"
-hello
-world
-hello
-world
-...
+
+> mosquitto_sub -h mqtt.eclipseprojects.io -p 1883 -t "/strudel-pattern"
+> hello
+> world
+> hello
+> world
+> ...
+
 ```
 
 Control patterns will be encoded as JSON, for example:
@@ -194,11 +199,17 @@ Control patterns will be encoded as JSON, for example:
 Will send messages like the following:
 
 ```
+
 {"s":"sax","speed":2}
 {"s":"sax","speed":2}
 {"s":"sax","speed":3}
 {"s":"sax","speed":2}
 ...
+
 ```
 
 Libraries for receiving MQTT are available for many programming languages.
+
+```
+
+```

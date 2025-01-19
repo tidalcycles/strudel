@@ -56,7 +56,7 @@ It supports the following commands:
 // You can control the clock with a pattern and ensure it starts in sync when the repl begins.
 // Note: It might act unexpectedly if MIDI isn't set up initially.
 stack(
-  midicmd("clock*24,<start stop>/2").midi('RHYTHM DESIGNER RD-6') //Trigger start and stop on Behringer RD-6 
+  midicmd("clock*48,<start stop>/2").midi('IAC Driver') 
 )
 ```
 
