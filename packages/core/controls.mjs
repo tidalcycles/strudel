@@ -1513,7 +1513,6 @@ export const { midichan } = registerControl('midichan');
 export const { control } = registerControl('control');
 export const { ccn } = registerControl('ccn');
 export const { ccv } = registerControl('ccv');
-export const { pc } = registerControl('pc');
 export const { sysexid } = registerControl('sysexid');
 export const { sysexdata } = registerControl('sysexdata');
 export const { polyTouch } = registerControl('polyTouch');

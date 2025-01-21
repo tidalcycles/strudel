@@ -148,7 +148,7 @@ Pattern.prototype.midi = function (output) {
       midicmd,
       gain = 1,
       velocity = 0.9,
-      pc,
+      progNum,
       sysexid,
       sysexdata,
     } = hap.value;
@@ -206,11 +206,11 @@ Pattern.prototype.midi = function (output) {
       });
     }
     // Handle program change
-    if (pc !== undefined) {
-      if (typeof pc !== 'number' || pc < 0 || pc > 127) {
+    if (progNum !== undefined) {
+      if (typeof progNum !== 'number' || progNum < 0 || progNum > 127) {
         throw new Error('expected pc (program change) to be a number between 0 and 127');
       }
-      device.sendProgramChange(pc, midichan, { time: timeOffsetString });
+      device.sendProgramChange(progNum, midichan, { time: timeOffsetString });
     }
     // Handle sysex
     if (sysexid !== undefined && sysexdata !== undefined) {
@@ -245,6 +245,8 @@ Pattern.prototype.midi = function (output) {
       const scaled = Math.round(ccv * 127);
       device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
     }
+
+    // Handle midicmd
     if (hap.whole.begin + 0 === 0) {
       // we need to start here because we have the timing info
       device.sendStart({ time: timeOffsetString });
@@ -257,6 +259,14 @@ Pattern.prototype.midi = function (output) {
       device.sendStop({ time: timeOffsetString });
     } else if (['continue'].includes(midicmd)) {
       device.sendContinue({ time: timeOffsetString });
+    } else if (Array.isArray(midicmd)) {
+      if (midicmd[0] === 'progNum') {
+        if (typeof midicmd[1] !== 'number' || midicmd[1] < 0 || midicmd[1] > 127) {
+          throw new Error('expected pc (program change) to be a number between 0 and 127');
+        } else {
+          device.sendProgramChange(midicmd[1], midichan, { time: timeOffsetString });
+        }
+      }
     }
   });
 };
