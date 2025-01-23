@@ -153,6 +153,8 @@ Pattern.prototype.midi = function (output) {
       sysexdata,
     } = hap.value;
 
+    console.log('hap', hap.value);
+
     velocity = gain * velocity;
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
@@ -213,6 +215,21 @@ Pattern.prototype.midi = function (output) {
       device.sendProgramChange(progNum, midichan, { time: timeOffsetString });
     }
     // Handle sysex
+    // sysex data is consist of 2 arrays, first is sysexid, second is sysexdata
+    // sysexid is a manufacturer id it is either a number or an array of 3 numbers.
+    // list of manufacturer ids can be found here : https://midi.org/sysexidtable
+    // if sysexid is an array the first byte is 0x00
+
+    // if (sysex !== undefined) {
+    //   console.log('sysex', sysex);
+    //   if (Array.isArray(sysex)) {
+    //     if (Array.isArray(sysex[0])) {
+    //       //device.sendSysex(sysex[0], sysex[1], { time: timeOffsetString });
+    //     } else {
+    //       //device.sendSysex(sysex[0], sysex[1], { time: timeOffsetString });
+    //     }
+    //   }
+    // }
     if (sysexid !== undefined && sysexdata !== undefined) {
       //console.log('sysex', sysexid, sysexdata);
       if (Array.isArray(sysexid)) {

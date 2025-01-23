@@ -1616,3 +1616,10 @@ export const ar = register('ar', (t, pat) => {
   const [attack, release = attack] = t;
   return pat.set({ attack, release });
 });
+export const sysex = register('sysex', (args, pat) => {
+  if (!Array.isArray(args)) {
+    throw new Error('sysex expects an array of [id, data]');
+  }
+  const [id, data] = args;
+  return pat.sysexid(id).sysexdata(data);
+});
