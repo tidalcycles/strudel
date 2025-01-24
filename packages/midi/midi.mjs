@@ -153,6 +153,9 @@ Pattern.prototype.midi = function (output) {
       ccv,
       midichan = 1,
       midicmd,
+      midibend,
+      miditouch,
+      polyTouch, //??
       gain = 1,
       velocity = 0.9,
       progNum,
@@ -217,18 +220,7 @@ Pattern.prototype.midi = function (output) {
     // list of manufacturer ids can be found here : https://midi.org/sysexidtable
     // if sysexid is an array the first byte is 0x00
 
-    // if (sysex !== undefined) {
-    //   console.log('sysex', sysex);
-    //   if (Array.isArray(sysex)) {
-    //     if (Array.isArray(sysex[0])) {
-    //       //device.sendSysex(sysex[0], sysex[1], { time: timeOffsetString });
-    //     } else {
-    //       //device.sendSysex(sysex[0], sysex[1], { time: timeOffsetString });
-    //     }
-    //   }
-    // }
     if (sysexid !== undefined && sysexdata !== undefined) {
-      //console.log('sysex', sysexid, sysexdata);
       if (Array.isArray(sysexid)) {
         if (!sysexid.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
           throw new Error('all sysexid bytes must be integers between 0 and 255');
@@ -258,6 +250,35 @@ Pattern.prototype.midi = function (output) {
       }
       const scaled = Math.round(ccv * 127);
       device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
+    }
+
+    // Handle NRPN non-registered parameter number
+    if (nrpnn !== undefined && nrpv !== undefined) {
+      if (Array.isArray(nrpnn)) {
+        if (!nrpnn.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
+          throw new Error('all nrpnn bytes must be integers between 0 and 255');
+        }
+      } else if (!Number.isInteger(nrpv) || nrpv < 0 || nrpv > 255) {
+        throw new Error('A:sysexid must be an number between 0 and 255 or an array of such integers');
+      }
+
+      device.sendNRPN(nrpnn, nrpv, midichan, { time: timeOffsetString });
+    }
+
+    // Handle midibend
+    if (midibend !== undefined) {
+      if (typeof midibend !== 'number' || midibend < 1 || midibend > -1) {
+        throw new Error('expected midibend to be a number between 1 and -1');
+      }
+      device.sendPitchBend(midibend, midichan, { time: timeOffsetString });
+    }
+
+    // Handle miditouch
+    if (miditouch !== undefined) {
+      if (typeof miditouch !== 'number' || miditouch < 1 || miditouch > 0) {
+        throw new Error('expected miditouch to be a number between 1 and 0');
+      }
+      device.sendKeyAfterTouch(miditouch, midichan, { time: timeOffsetString });
     }
 
     // Handle midicmd

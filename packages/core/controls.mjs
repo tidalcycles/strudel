@@ -1652,16 +1652,31 @@ export const { ctlNum } = registerControl('ctlNum');
 // TODO: ctlVal?
 
 /**
+ * MIDI NRPN non-registered parameter number: Sends a MIDI NRPN non-registered parameter number message.
+ * @name nrpnn
+ * @param {number | Pattern} nrpnn MIDI NRPN non-registered parameter number (0-127)
+ * @example
+ * note("c4").nrpnn("1:8").nrpv("123").midichan(1).midi()
+ */
+export const { nrpnn } = registerControl('nrpnn');
+/**
+ * MIDI NRPN non-registered parameter value: Sends a MIDI NRPN non-registered parameter value message.
+ * @name nrpv
+ * @param {number | Pattern} nrpv MIDI NRPN non-registered parameter value (0-127)
+ * @example
+ * note("c4").nrpnn("1:8").nrpv("123").midichan(1).midi()
+ */
+export const { nrpv } = registerControl('nrpv');
+
+/**
  * MIDI program number: Sends a MIDI program change message.
  *
  * @name progNum
  * @param {number | Pattern} program MIDI program number (0-127)
+ * @example
+ * note("c4").progNum(10).midichan(1).midi()
  */
 export const { progNum } = registerControl('progNum');
-
-export const { polyTouch } = registerControl('polyTouch');
-export const { midibend } = registerControl('midibend');
-export const { miditouch } = registerControl('miditouch');
 
 /**
  * MIDI sysex: Sends a MIDI sysex message.
@@ -1694,3 +1709,24 @@ export const { sysexid } = registerControl('sysexid');
  * note("c4").sysexid("0x77").sysexdata("0x01:0x02:0x03:0x04").midichan(1).midi()
  */
 export const { sysexdata } = registerControl('sysexdata');
+
+
+/**
+ * MIDI pitch bend: Sends a MIDI pitch bend message.
+ * @name midibend
+ * @param {number | Pattern} midibend MIDI pitch bend (-1 - 1)
+ * @example
+ * note("c4").midibend(sine.slow(4).range(-0.4,0.4)).midi()
+ */ 
+export const { midibend } = registerControl('midibend');
+/**
+ * MIDI key after touch: Sends a MIDI key after touch message.
+ * @name miditouch
+ * @param {number | Pattern} miditouch MIDI key after touch (0-1)
+ * @example
+ * note("c4").miditouch(sine.slow(4).range(0,1)).midi()
+ */
+export const { miditouch } = registerControl('miditouch');
+
+// TODO: what is this?
+export const { polyTouch } = registerControl('polyTouch');
