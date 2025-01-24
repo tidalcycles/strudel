@@ -163,8 +163,6 @@ Pattern.prototype.midi = function (output) {
       sysexdata,
     } = hap.value;
 
-    console.log('hap', hap.value);
-
     velocity = gain * velocity;
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
@@ -267,18 +265,20 @@ Pattern.prototype.midi = function (output) {
 
     // Handle midibend
     if (midibend !== undefined) {
-      if (typeof midibend !== 'number' || midibend < 1 || midibend > -1) {
+      if (typeof midibend == 'number' || midibend < 1 || midibend > -1) {
+        device.sendPitchBend(midibend, midichan, { time: timeOffsetString });
+      }else{
         throw new Error('expected midibend to be a number between 1 and -1');
       }
-      device.sendPitchBend(midibend, midichan, { time: timeOffsetString });
     }
 
     // Handle miditouch
     if (miditouch !== undefined) {
-      if (typeof miditouch !== 'number' || miditouch < 1 || miditouch > 0) {
+      if (typeof miditouch == 'number' || miditouch < 1 || miditouch > 0) {
+        device.sendKeyAfterTouch(miditouch, midichan, { time: timeOffsetString });
+      }else{
         throw new Error('expected miditouch to be a number between 1 and 0');
       }
-      device.sendKeyAfterTouch(miditouch, midichan, { time: timeOffsetString });
     }
 
     // Handle midicmd

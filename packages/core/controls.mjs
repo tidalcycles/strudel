@@ -1710,14 +1710,13 @@ export const { sysexid } = registerControl('sysexid');
  */
 export const { sysexdata } = registerControl('sysexdata');
 
-
 /**
  * MIDI pitch bend: Sends a MIDI pitch bend message.
  * @name midibend
  * @param {number | Pattern} midibend MIDI pitch bend (-1 - 1)
  * @example
  * note("c4").midibend(sine.slow(4).range(-0.4,0.4)).midi()
- */ 
+ */
 export const { midibend } = registerControl('midibend');
 /**
  * MIDI key after touch: Sends a MIDI key after touch message.
