@@ -21,8 +21,8 @@ import {
   cat,
   sequence,
   palindrome,
-  s_polymeter,
-  s_polymeterSteps,
+  polymeter,
+  polymeterSteps,
   polyrhythm,
   silence,
   fast,
@@ -51,7 +51,7 @@ import {
   stackLeft,
   stackRight,
   stackCentre,
-  s_cat,
+  stepcat,
   calculateTactus,
   sometimes,
 } from '../index.mjs';
@@ -610,18 +610,18 @@ describe('Pattern', () => {
       );
     });
   });
-  describe('s_polymeter()', () => {
+  describe('polymeter()', () => {
     it('Can layer up cycles, stepwise, with lists', () => {
-      expect(s_polymeterSteps(3, ['d', 'e']).firstCycle()).toStrictEqual(
+      expect(polymeterSteps(3, ['d', 'e']).firstCycle()).toStrictEqual(
         fastcat(pure('d'), pure('e'), pure('d')).firstCycle(),
       );
 
-      expect(s_polymeter(['a', 'b', 'c'], ['d', 'e']).fast(2).firstCycle()).toStrictEqual(
+      expect(polymeter(['a', 'b', 'c'], ['d', 'e']).fast(2).firstCycle()).toStrictEqual(
         stack(sequence('a', 'b', 'c', 'a', 'b', 'c'), sequence('d', 'e', 'd', 'e', 'd', 'e')).firstCycle(),
       );
     });
     it('Can layer up cycles, stepwise, with weighted patterns', () => {
-      sameFirst(s_polymeterSteps(3, sequence('a', 'b')).fast(2), sequence('a', 'b', 'a', 'b', 'a', 'b'));
+      sameFirst(polymeterSteps(3, sequence('a', 'b')).fast(2), sequence('a', 'b', 'a', 'b', 'a', 'b'));
     });
   });
 
@@ -1186,60 +1186,57 @@ describe('Pattern', () => {
       expect(fastcat(0, 1).setTactus(undefined).fast(3).tactus).toStrictEqual(undefined);
     });
   });
-  describe('s_cat', () => {
+  describe('stepcat', () => {
     it('can cat', () => {
-      expect(sameFirst(s_cat(fastcat(0, 1, 2, 3), fastcat(4, 5)), fastcat(0, 1, 2, 3, 4, 5)));
-      expect(sameFirst(s_cat(pure(1), pure(2), pure(3)), fastcat(1, 2, 3)));
+      expect(sameFirst(stepcat(fastcat(0, 1, 2, 3), fastcat(4, 5)), fastcat(0, 1, 2, 3, 4, 5)));
+      expect(sameFirst(stepcat(pure(1), pure(2), pure(3)), fastcat(1, 2, 3)));
     });
     it('calculates undefined tactuses as the average', () => {
-      expect(sameFirst(s_cat(pure(1), pure(2), pure(3).setTactus(undefined)), fastcat(1, 2, 3)));
+      expect(sameFirst(stepcat(pure(1), pure(2), pure(3).setTactus(undefined)), fastcat(1, 2, 3)));
     });
   });
-  describe('s_taper', () => {
+  describe('taper', () => {
     it('can taper', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_taper(1, 5), sequence(0, 1, 2, 3, 4, 0, 1, 2, 3, 0, 1, 2, 0, 1, 0)));
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).taper(1, 5), sequence(0, 1, 2, 3, 4, 0, 1, 2, 3, 0, 1, 2, 0, 1, 0)));
     });
     it('can taper backwards', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_taper(-1, 5), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)));
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).taper(-1, 5), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)));
     });
   });
-  describe('s_add and s_sub', () => {
-    it('can add from the left', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_add(2), sequence(0, 1)));
+  describe('increase and decrease', () => {
+    it('can increase from the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).increase(2), sequence(0, 1)));
     });
-    it('can sub to the left', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_sub(2), sequence(0, 1, 2)));
+    it('can decrease to the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).decrease(2), sequence(0, 1, 2)));
     });
-    it('can add from the right', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_add(-2), sequence(3, 4)));
+    it('can increase from the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).increase(-2), sequence(3, 4)));
     });
-    it('can sub to the right', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_sub(-2), sequence(2, 3, 4)));
+    it('can decrease to the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).decrease(-2), sequence(2, 3, 4)));
     });
-    it('can subtract nothing', () => {
-      expect(sameFirst(pure('a').s_sub(0), pure('a')));
+    it('can decrease nothing', () => {
+      expect(sameFirst(pure('a').decrease(0), pure('a')));
     });
-    it('can subtract nothing, repeatedly', () => {
-      expect(sameFirst(pure('a').s_sub(0, 0), fastcat('a', 'a')));
+    it('can decrease nothing, repeatedly', () => {
+      expect(sameFirst(pure('a').decrease(0, 0), fastcat('a', 'a')));
       for (var i = 0; i < 100; ++i) {
-        expect(sameFirst(pure('a').s_sub(...Array(i).fill(0)), fastcat(...Array(i).fill('a'))));
+        expect(sameFirst(pure('a').decrease(...Array(i).fill(0)), fastcat(...Array(i).fill('a'))));
       }
     });
   });
-  describe('s_expand', () => {
+  describe('expand', () => {
     it('can expand four things in half', () => {
       expect(
-        sameFirst(
-          sequence(0, 1, 2, 3).s_expand(1, 0.5),
-          s_cat(sequence(0, 1, 2, 3), sequence(0, 1, 2, 3).s_expand(0.5)),
-        ),
+        sameFirst(sequence(0, 1, 2, 3).expand(1, 0.5), stepcat(sequence(0, 1, 2, 3), sequence(0, 1, 2, 3).expand(0.5))),
       );
     });
     it('can expand five things in half', () => {
       expect(
         sameFirst(
-          sequence(0, 1, 2, 3, 4).s_expand(1, 0.5),
-          s_cat(sequence(0, 1, 2, 3, 4), sequence(0, 1, 2, 3, 4).s_expand(0.5)),
+          sequence(0, 1, 2, 3, 4).expand(1, 0.5),
+          stepcat(sequence(0, 1, 2, 3, 4), sequence(0, 1, 2, 3, 4).expand(0.5)),
         ),
       );
     });
@@ -1249,7 +1246,7 @@ describe('Pattern', () => {
       expect(
         sameFirst(
           sequence(pure(pure('a')), pure(pure('b').setTactus(2))).stepJoin(),
-          s_cat(pure('a'), pure('b').setTactus(2)),
+          stepcat(pure('a'), pure('b').setTactus(2)),
         ),
       );
     });
@@ -1257,7 +1254,7 @@ describe('Pattern', () => {
       expect(
         sameFirst(
           sequence(pure(pure('a')), pure(pure('b').setTactus(0.5))).stepJoin(),
-          s_cat(pure('a'), pure('b').setTactus(0.5)),
+          stepcat(pure('a'), pure('b').setTactus(0.5)),
         ),
       );
     });
