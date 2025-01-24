@@ -50,10 +50,13 @@ It supports the following commands:
 )`}
 />
 
-## ccn && ccv
+## control, ccn && ccv
 
+- `control` sends MIDI control change messages to your MIDI device.
 - `ccn` sets the cc number. Depends on your synths midi mapping
 - `ccv` sets the cc value. normalized from 0 to 1.
+
+<MiniRepl client:idle tune={`note("c a f e").control([74, sine.slow(4)]).midi()`} />
 
 <MiniRepl client:idle tune={`note("c a f e").ccn(74).ccv(sine.slow(4)).midi()`} />
 
@@ -67,36 +70,47 @@ But you can also control cc messages separately like this:
 $: ccv(sine.segment(16).slow(4)).ccn(74).midi()`}
 />
 
-## pc (Program Change)
+## progNum (Program Change)
 
-`pc` sends MIDI program change messages to switch between different presets/patches on your MIDI device.
+`progNum` sends MIDI program change messages to switch between different presets/patches on your MIDI device.
 Program change values should be numbers between 0 and 127.
 
 <MiniRepl client:idle tune={`// Switch between programs 0 and 1 every cycle
-pc("<0 1>").midi()
+progNum("<0 1>").midi()
 
 // Play notes while changing programs
-note("c3 e3 g3").pc("<0 1 2>").midi()`} />
+note("c3 e3 g3").progNum("<0 1 2>").midi()`} />
 
 Program change messages are useful for switching between different instrument sounds or presets during a performance.
 The exact sound that each program number maps to depends on your MIDI device's configuration.
 
-## sysex (System Exclusive Message)
+## sysex, sysexid && sysexdata (System Exclusive Message)
 
 `sysex` sends MIDI System Exclusive (SysEx) messages to your MIDI device.
 ysEx messages are device-specific commands that allow deeper control over synthesizer parameters.
 The value should be an array of numbers between 0-255 representing the SysEx data bytes.
 
-<MiniRepl client:idle tune={`// Send a simple SysEx message
-sysex([0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7]).midi()
-
-// Send SysEx while playing notes
-note("c3 e3 g3")
-.sysex("<[0xF0,0x7E,0x7F,0x09,0x01,0xF7] [0xF0,0x7E,0x7F,0x09,0x02,0xF7]>")
-.midi()`} />
+<MiniRepl
+  client:idle
+  tune={`// Send a simple SysEx message
+let id = 0x43; //Yamaha
+//let id = "0x00:0x20:0x32"; //Behringer ID can be an array of numbers
+let data = "0x79:0x09:0x11:0x0A:0x00:0x00"; // Set NSX-39 voice to say "Aa"
+$: note("c d e f e d c").sysex(id, data).midi();
+$: note("c d e f e d c").sysexid(id).sysexdata(data).midi();`}
+/>
 
 The exact format of SysEx messages depends on your MIDI device's specification.
 Consult your device's MIDI implementation guide for details on supported SysEx messages.
+
+## midibend && miditouch
+
+`midibend` sets MIDI pitch bend (-1 - 1)
+`miditouch` sets MIDI key after touch (0-1)
+
+<MiniRepl client:idle tune={`note("c d e f e d c").midibend(sine.slow(4).range(-0.4,0.4)).midi()`} />
+
+<MiniRepl client:idle tune={`note("c d e f e d c").miditouch(sine.slow(4).range(0,1)).midi()`} />
 
 # OSC/SuperDirt/StrudelDirt
 
