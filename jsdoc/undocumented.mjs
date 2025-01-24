@@ -10,7 +10,7 @@ function getExports(code) {
   let ast;
   try {
     ast = parse(code, {
-      ecmaVersion: 11,
+      ecmaVersion: 'latest',
       sourceType: 'module',
     });
   } catch (err) {
