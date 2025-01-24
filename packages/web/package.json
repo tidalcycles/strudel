@@ -41,6 +41,6 @@
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^5.0.5",
-    "vite": "^5.0.10"
+    "vite": "^6.0.11"
   }
 }

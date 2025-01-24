@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "devDependencies": {
-    "vite": "^5.0.10"
+    "vite": "^6.0.11"
   },
   "dependencies": {
     "nanostores": "^0.9.5"

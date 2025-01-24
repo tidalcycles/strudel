@@ -36,6 +36,6 @@
   },
   "devDependencies": {
     "node-fetch": "^3.3.2",
-    "vite": "^5.0.10"
+    "vite": "^6.0.11"
   }
 }
