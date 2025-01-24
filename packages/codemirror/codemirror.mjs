@@ -24,6 +24,7 @@ import { initTheme, activateTheme, theme } from './themes.mjs';
 import { sliderPlugin, updateSliderWidgets } from './slider.mjs';
 import { widgetPlugin, updateWidgets } from './widget.mjs';
 import { persistentAtom } from '@nanostores/persistent';
+import { prettierPlugin } from './prettier.mjs';
 
 const extensions = {
   isLineWrappingEnabled: (on) => (on ? EditorView.lineWrapping : []),
@@ -77,6 +78,7 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
       javascript(),
       sliderPlugin,
       widgetPlugin,
+      prettierPlugin,
       // indentOnInput(), // works without. already brought with javascript extension?
       // bracketMatching(), // does not do anything
       syntaxHighlighting(defaultHighlightStyle),

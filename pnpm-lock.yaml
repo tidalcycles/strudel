@@ -212,6 +212,9 @@ importers:
       nanostores:
         specifier: ^0.9.5
         version: 0.9.5
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
     devDependencies:
       vite:
         specifier: ^5.0.10

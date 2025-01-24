@@ -49,7 +49,8 @@
     "@strudel/transpiler": "workspace:*",
     "@uiw/codemirror-themes": "^4.21.21",
     "@uiw/codemirror-themes-all": "^4.21.21",
-    "nanostores": "^0.9.5"
+    "nanostores": "^0.9.5",
+    "prettier": "^3.3.3"
   },
   "devDependencies": {
     "vite": "^5.0.10"
