@@ -1669,7 +1669,7 @@ export const { miditouch } = registerControl('miditouch');
  * @param {number | Pattern} id Sysex ID
  * @param {number | Pattern} data Sysex data
  * @example
- * note("c4").sysex("0x77, "0x01:0x02:0x03:0x04").midichan(1).midi()
+ * note("c4").sysex(["0x77", "0x01:0x02:0x03:0x04"]).midichan(1).midi()
  */
 export const sysex = register('sysex', (args, pat) => {
   if (!Array.isArray(args)) {

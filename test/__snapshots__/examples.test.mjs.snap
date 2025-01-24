@@ -4669,6 +4669,45 @@ exports[`runs examples > example "mask" example index 0 1`] = `
 ]
 `;
 
+exports[`runs examples > example "midi" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c4 midichan:1 ]",
+  "[ 1/1 → 2/1 | note:c4 midichan:1 ]",
+  "[ 2/1 → 3/1 | note:c4 midichan:1 ]",
+  "[ 3/1 → 4/1 | note:c4 midichan:1 ]",
+]
+`;
+
+exports[`runs examples > example "midichan" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c4 midichan:1 ]",
+  "[ 1/1 → 2/1 | note:c4 midichan:1 ]",
+  "[ 2/1 → 3/1 | note:c4 midichan:1 ]",
+  "[ 3/1 → 4/1 | note:c4 midichan:1 ]",
+]
+`;
+
+exports[`runs examples > example "midin" example index 0 1`] = `
+[
+  "[ 0/1 → 1/4 | note:c cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 1/4 → 1/2 | note:a cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 1/2 → 3/4 | note:f cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 3/4 → 1/1 | note:e cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 1/1 → 5/4 | note:c cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 5/4 → 3/2 | note:a cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 3/2 → 7/4 | note:f cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 7/4 → 2/1 | note:e cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 2/1 → 9/4 | note:c cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 9/4 → 5/2 | note:a cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 5/2 → 11/4 | note:f cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 11/4 → 3/1 | note:e cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 3/1 → 13/4 | note:c cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 13/4 → 7/2 | note:a cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 7/2 → 15/4 | note:f cutoff:0 resonance:0 s:sawtooth ]",
+  "[ 15/4 → 4/1 | note:e cutoff:0 resonance:0 s:sawtooth ]",
+]
+`;
+
 exports[`runs examples > example "mousex" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:C3 ]",
@@ -8282,6 +8321,33 @@ exports[`runs examples > example "swingBy" example index 0 1`] = `
   "[ 15/4 → 31/8 | s:hh ]",
   "[ 91/24 ⇜ (31/8 → 47/12) | s:hh ]",
   "[ (47/12 → 4/1) ⇝ 97/24 | s:hh ]",
+]
+`;
+
+exports[`runs examples > example "sysex" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
+  "[ 1/1 → 2/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
+  "[ 2/1 → 3/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
+  "[ 3/1 → 4/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
+]
+`;
+
+exports[`runs examples > example "sysexdata" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
+  "[ 1/1 → 2/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
+  "[ 2/1 → 3/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
+  "[ 3/1 → 4/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
+]
+`;
+
+exports[`runs examples > example "sysexid" example index 0 1`] = `
+[
+  "[ 0/1 → 1/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
+  "[ 1/1 → 2/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
+  "[ 2/1 → 3/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
+  "[ 3/1 → 4/1 | note:c4 sysexid:119 sysexdata:[1 2 3 4] midichan:1 ]",
 ]
 `;
 
