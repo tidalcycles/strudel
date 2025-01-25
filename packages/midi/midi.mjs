@@ -267,7 +267,7 @@ Pattern.prototype.midi = function (output) {
     if (midibend !== undefined) {
       if (typeof midibend == 'number' || midibend < 1 || midibend > -1) {
         device.sendPitchBend(midibend, midichan, { time: timeOffsetString });
-      }else{
+      } else {
         throw new Error('expected midibend to be a number between 1 and -1');
       }
     }
@@ -276,7 +276,7 @@ Pattern.prototype.midi = function (output) {
     if (miditouch !== undefined) {
       if (typeof miditouch == 'number' || miditouch < 1 || miditouch > 0) {
         device.sendKeyAfterTouch(miditouch, midichan, { time: timeOffsetString });
-      }else{
+      } else {
         throw new Error('expected miditouch to be a number between 1 and 0');
       }
     }
