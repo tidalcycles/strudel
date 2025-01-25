@@ -1540,7 +1540,7 @@ export function register(name, func, patternify = true, preserveTactus = false, 
   if (Array.isArray(name)) {
     const result = {};
     for (const name_item of name) {
-      result[name_item] = register(name_item, func, patternify);
+      result[name_item] = register(name_item, func, patternify, preserveTactus, join);
     }
     return result;
   }
