@@ -76,6 +76,8 @@ class ButtonSequenceDetector {
         ? targetSequence.toLowerCase().split('')
         : targetSequence.map((s) => s.toString().toLowerCase());
 
+    //console.log(this.sequence);
+
     // Get the last n inputs where n is the target sequence length
     const lastInputs = this.sequence.slice(-targetSequence.length).map((entry) => entry.input);
 
@@ -103,7 +105,6 @@ class GamepadHandler {
     this._axes = [0, 0, 0, 0];
     this._buttons = Array(16).fill(0);
     this.setupEventListeners();
-    this.startPolling();
   }
 
   setupEventListeners() {
@@ -122,20 +123,16 @@ class GamepadHandler {
     });
   }
 
-  startPolling() {
-    const poll = () => {
-      if (this._activeGamepad !== null) {
-        const gamepad = navigator.getGamepads()[this._activeGamepad];
-        if (gamepad) {
-          // Update axes (normalized to 0-1 range)
-          this._axes = gamepad.axes.map((axis) => (axis + 1) / 2);
-          // Update buttons
-          this._buttons = gamepad.buttons.map((button) => button.value);
-        }
+  poll() {
+    if (this._activeGamepad !== null) {
+      const gamepad = navigator.getGamepads()[this._activeGamepad];
+      if (gamepad) {
+        // Update axes (normalized to 0-1 range)
+        this._axes = gamepad.axes.map((axis) => (axis + 1) / 2);
+        // Update buttons
+        this._buttons = gamepad.buttons.map((button) => button.value);
       }
-      requestAnimationFrame(poll);
-    };
-    poll();
+    }
   }
 
   getAxes() {
@@ -146,25 +143,33 @@ class GamepadHandler {
   }
 }
 
-// Store gamepadValues globally
-export const gamepadValues = {};
+// Module-level state store for toggle states
+const gamepadStates = new Map();
 
-// Replace singleton with factory function
 export const gamepad = (index = 0) => {
   const handler = new GamepadHandler(index);
   const sequenceDetector = new ButtonSequenceDetector(2000);
 
-  // Initialize state for this gamepad if it doesn't exist
-  if (!gamepadValues[index]) {
-    gamepadValues[index] = Array(16).fill(0);
-  }
+  // Base signal that polls gamepad state and handles sequence detection
+  const baseSignal = signal((t) => {
+    handler.poll();
+    const axes = handler.getAxes();
+    const buttons = handler.getButtons();
 
-  // Create signals for this specific gamepad instance
+    // Add all button inputs to sequence detector
+    buttons.forEach((value, i) => {
+      sequenceDetector.addInput(i, value);
+    });
+
+    return { axes, buttons, t };
+  });
+
+  // Create axes patterns
   const axes = {
-    x1: signal(() => handler.getAxes()[0]),
-    y1: signal(() => handler.getAxes()[1]),
-    x2: signal(() => handler.getAxes()[2]),
-    y2: signal(() => handler.getAxes()[3]),
+    x1: baseSignal.fmap((state) => state.axes[0]),
+    y1: baseSignal.fmap((state) => state.axes[1]),
+    x2: baseSignal.fmap((state) => state.axes[2]),
+    y2: baseSignal.fmap((state) => state.axes[3]),
   };
 
   // Add bipolar versions
@@ -173,39 +178,48 @@ export const gamepad = (index = 0) => {
   axes.x2_2 = axes.x2.toBipolar();
   axes.y2_2 = axes.y2.toBipolar();
 
-  // Create button signals
+  // Create button patterns
   const buttons = Array(16)
     .fill(null)
     .map((_, i) => {
-      const btn = signal(() => {
-        const value = handler.getButtons()[i];
-        sequenceDetector.addInput(i, value);
-        return value;
-      });
-      let lastButtonState = 0;
-      const toggle = signal(() => {
-        const currentState = handler.getButtons()[i];
-        if (currentState === 1 && lastButtonState === 0) {
-          // Toggle the state
-          const newValue = gamepadValues[index][i] === 0 ? 1 : 0;
-          gamepadValues[index][i] = newValue;
-          // Broadcast the change
-          window.postMessage({
-            type: 'gamepad-toggle',
-            gamepadIndex: index,
-            buttonIndex: i,
-            value: newValue,
-          });
+      // Create unique key for this gamepad+button combination
+      const stateKey = `gamepad${index}_btn${i}`;
+
+      // Initialize toggle state if it doesn't exist
+      if (!gamepadStates.has(stateKey)) {
+        gamepadStates.set(stateKey, {
+          lastButtonState: 0,
+          toggleState: 0,
+        });
+      }
+
+      // Direct button value pattern (no longer needs to call addInput)
+      const btn = baseSignal.fmap((state) => state.buttons[i]);
+
+      // Button toggle pattern with persistent state
+      const toggle = baseSignal.fmap((state) => {
+        const currentState = state.buttons[i];
+        const buttonState = gamepadStates.get(stateKey);
+
+        if (currentState === 1 && buttonState.lastButtonState === 0) {
+          // Toggle the state on rising edge
+          buttonState.toggleState = buttonState.toggleState === 0 ? 1 : 0;
         }
-        lastButtonState = currentState;
-        return gamepadValues[index][i];
+
+        buttonState.lastButtonState = currentState;
+        return buttonState.toggleState;
       });
+
       return { value: btn, toggle };
     });
 
-  const checkSequence = (sequence) => {
-    return signal(() => sequenceDetector.checkSequence(sequence));
+  // Create sequence checker pattern
+  const btnSequence = (sequence) => {
+    return baseSignal.fmap(() => sequenceDetector.checkSequence(sequence));
   };
+  const checkSequence = btnSequence;
+  const btnSeq = btnSequence;
+  const btnseq = btnSeq;
 
   // Return an object with all controls
   return {
@@ -220,18 +234,13 @@ export const gamepad = (index = 0) => {
       ]),
     ),
     checkSequence,
+    btnSequence,
+    btnSeq,
+    btnseq,
+    raw: baseSignal,
   };
 };
 
-// Message-based state updates (add this at the bottom of the file)
-if (typeof window !== 'undefined') {
-  window.addEventListener('message', (e) => {
-    if (e.data.type === 'gamepad-toggle') {
-      const { gamepadIndex, buttonIndex, value } = e.data;
-      if (!gamepadValues[gamepadIndex]) {
-        gamepadValues[gamepadIndex] = Array(16).fill(0);
-      }
-      gamepadValues[gamepadIndex][buttonIndex] = value;
-    }
-  });
-}
+// Optional: Export for debugging or state management
+export const getGamepadStates = () => Object.fromEntries(gamepadStates);
+export const clearGamepadStates = () => gamepadStates.clear();
