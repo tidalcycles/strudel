@@ -47,8 +47,6 @@
     "@strudel/core": "workspace:*",
     "@strudel/draw": "workspace:*",
     "@strudel/transpiler": "workspace:*",
-    "@uiw/codemirror-themes": "^4.23.7",
-    "@uiw/codemirror-themes-all": "^4.23.7",
     "nanostores": "^0.11.3"
   },
   "devDependencies": {
