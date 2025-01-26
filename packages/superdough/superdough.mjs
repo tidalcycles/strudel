@@ -24,13 +24,25 @@ export function aliasBankMap(aliasMap) {
   const soundDictionary = soundMap.get();
   for (const key in soundDictionary) {
     const [bank, suffix] = key.split('_');
-    if (aliasMap[bank]) {
-      soundDictionary[`${aliasMap[bank]}_${suffix}`] = soundDictionary[key];
+    const aliasValue = aliasMap[bank];
+    if (aliasValue) {
+      if (typeof aliasValue === 'string') {
+        soundDictionary[`${aliasValue}_${suffix}`] = soundDictionary[key];
+      } else if (Array.isArray(aliasValue)) {
+        for (const alias of aliasValue) {
+          soundDictionary[`${alias}_${suffix}`] = soundDictionary[key];
+        }
+      }
     }
   }
   soundMap.set({ ...soundDictionary });
 }
 
+/**
+ * Register an alias for a bank of sounds. Optionally accepts a map of banks to aliases.
+ * @param {string} bank - The bank to alias
+ * @param {string} alias - The alias to use for the bank
+ */
 export function aliasBank(...args) {
   switch (args.length) {
     case 1:
