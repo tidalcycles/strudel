@@ -360,6 +360,12 @@ importers:
         specifier: ^5.0.10
         version: 5.4.9(@types/node@22.7.6)(terser@5.36.0)
 
+  packages/reference:
+    devDependencies:
+      vite:
+        specifier: ^5.0.10
+        version: 5.4.9(@types/node@22.7.6)(terser@5.36.0)
+
   packages/repl:
     dependencies:
       '@strudel/codemirror':
@@ -7759,7 +7765,6 @@ packages:
 
   workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
-    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
 
   workbox-navigation-preload@7.0.0:
     resolution: {integrity: sha512-juWCSrxo/fiMz3RsvDspeSLGmbgC0U9tKqcUPZBCf35s64wlaLXyn2KdHHXVQrb2cqF7I0Hc9siQalainmnXJA==}

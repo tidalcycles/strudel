@@ -3119,9 +3119,9 @@ Pattern.prototype.xfade = function (pos, b) {
  * especially useful for creating rhythms
  * @name beat
  * @example
- * s("bd").beat("0:7:10", 16)
+ * s("bd").beat("0,7,10", 16)
  * @example
- * s("sd").beat("4:12", 16)
+ * s("sd").beat("4,12", 16)
  */
 const __beat = (join) => (t, div, pat) => {
   t = Fraction(t).mod(div);
