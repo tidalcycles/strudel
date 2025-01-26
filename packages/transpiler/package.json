@@ -32,9 +32,9 @@
   "dependencies": {
     "@strudel/core": "workspace:*",
     "@strudel/mini": "workspace:*",
-    "acorn": "^8.11.3",
+    "acorn": "^8.14.0",
     "escodegen": "^2.1.0",
-    "estree-walker": "^3.0.1"
+    "estree-walker": "^3.0.3"
   },
   "devDependencies": {
     "vite": "^6.0.11",
