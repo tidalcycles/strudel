@@ -37,6 +37,8 @@ import whitescreen, { settings as whitescreenSettings } from './themes/whitescre
 import teletext, { settings as teletextSettings } from './themes/teletext';
 import algoboy, { settings as algoboySettings } from './themes/algoboy';
 import terminal, { settings as terminalSettings } from './themes/terminal';
+import abcdef, { settings as abcdefSettings } from './themes/abcdef';
+import androidstudio, { settings as androidstudioSettings } from './themes/androidstudio';
 import { setTheme } from '@strudel/draw';
 
 export const themes = {
@@ -47,9 +49,9 @@ export const themes = {
   teletext,
   algoboy,
   terminal,
-  /* abcdef,
+  abcdef,
   androidstudio,
-  atomone,
+  /*atomone,
   aura,
   bespin,
   darcula,
@@ -88,27 +90,9 @@ export const settings = {
   teletext: teletextSettings,
   algoboy: algoboySettings,
   terminal: terminalSettings,
-  /* abcdef: {
-    background: '#0f0f0f',
-    lineBackground: '#0f0f0f99',
-    foreground: '#defdef',
-    caret: '#00FF00',
-    selection: '#515151',
-    selectionMatch: '#515151',
-    gutterBackground: '#555',
-    gutterForeground: '#FFFFFF',
-    lineHighlight: '#314151',
-  },
-  androidstudio: {
-    background: '#282b2e',
-    lineBackground: '#282b2e99',
-    foreground: '#a9b7c6',
-    caret: '#00FF00',
-    selection: '#343739',
-    selectionMatch: '#343739',
-    lineHighlight: '#343739',
-  },
-  atomone: {
+  abcdef: abcdefSettings,
+  androidstudio: androidstudioSettings,
+  /*atomone: {
     background: '#272C35',
     lineBackground: '#272C3599',
     foreground: '#9d9b97',
