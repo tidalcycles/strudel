@@ -1,19 +1,24 @@
 import { tags as t } from '@lezer/highlight';
-import { createTheme } from '@uiw/codemirror-themes';
+import { createTheme } from './theme-helper.mjs';
+
+export const settings = {
+  background: '#222',
+  lineBackground: '#22222299',
+  foreground: '#fff',
+  // foreground: '#75baff',
+  caret: '#ffcc00',
+  selection: 'rgba(128, 203, 196, 0.5)',
+  selectionMatch: '#036dd626',
+  // lineHighlight: '#8a91991a', // original
+  lineHighlight: '#00000050',
+  gutterBackground: 'transparent',
+  // gutterForeground: '#8a919966',
+  gutterForeground: '#8a919966',
+};
+
 export default createTheme({
   theme: 'dark',
-  settings: {
-    background: '#222',
-    foreground: '#75baff', // whats that?
-    caret: '#ffcc00',
-    selection: 'rgba(128, 203, 196, 0.5)',
-    selectionMatch: '#036dd626',
-    // lineHighlight: '#8a91991a', // original
-    lineHighlight: '#00000050',
-    gutterBackground: 'transparent',
-    // gutterForeground: '#8a919966',
-    gutterForeground: '#8a919966',
-  },
+  settings,
   styles: [
     { tag: t.labelName, color: '#89ddff' },
     { tag: t.keyword, color: '#c792ea' },

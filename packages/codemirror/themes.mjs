@@ -1,4 +1,4 @@
-import {
+/* import {
   abcdef,
   androidstudio,
   atomone,
@@ -28,9 +28,9 @@ import {
   solarizedLight,
   tokyoNightDay,
   xcodeLight,
-} from '@uiw/codemirror-themes-all';
+} from '@uiw/codemirror-themes-all'; */
 
-import strudelTheme from './themes/strudel-theme';
+import strudelTheme, { settings as strudelThemeSettings } from './themes/strudel-theme';
 import bluescreen, { settings as bluescreenSettings } from './themes/bluescreen';
 import blackscreen, { settings as blackscreenSettings } from './themes/blackscreen';
 import whitescreen, { settings as whitescreenSettings } from './themes/whitescreen';
@@ -47,7 +47,7 @@ export const themes = {
   teletext,
   algoboy,
   terminal,
-  abcdef,
+  /* abcdef,
   androidstudio,
   atomone,
   aura,
@@ -75,33 +75,20 @@ export const themes = {
   noctisLilac,
   solarizedLight,
   tokyoNightDay,
-  xcodeLight,
+  xcodeLight, */
 };
 
 // lineBackground is background with 50% opacity, to make sure the selection below is visible
 
 export const settings = {
-  strudelTheme: {
-    background: '#222',
-    lineBackground: '#22222299',
-    foreground: '#fff',
-    // foreground: '#75baff',
-    caret: '#ffcc00',
-    selection: 'rgba(128, 203, 196, 0.5)',
-    selectionMatch: '#036dd626',
-    // lineHighlight: '#8a91991a', // original
-    lineHighlight: '#00000050',
-    gutterBackground: 'transparent',
-    // gutterForeground: '#8a919966',
-    gutterForeground: '#8a919966',
-  },
+  strudelTheme: strudelThemeSettings,
   bluescreen: bluescreenSettings,
   blackscreen: blackscreenSettings,
   whitescreen: whitescreenSettings,
   teletext: teletextSettings,
   algoboy: algoboySettings,
   terminal: terminalSettings,
-  abcdef: {
+  /* abcdef: {
     background: '#0f0f0f',
     lineBackground: '#0f0f0f99',
     foreground: '#defdef',
@@ -434,7 +421,7 @@ export const settings = {
     selection: '#727377',
     selectionMatch: '#727377',
     lineHighlight: '#2F3239',
-  },
+  }, */
 };
 
 function getColors(str) {

@@ -1,5 +1,5 @@
 import { tags as t } from '@lezer/highlight';
-import { createTheme } from '@uiw/codemirror-themes';
+import { createTheme } from './theme-helper.mjs';
 export const settings = {
   background: '#9bbc0f',
   foreground: '#0f380f', // whats that?

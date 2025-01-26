@@ -20,7 +20,7 @@ import { isTooltipEnabled } from './tooltip.mjs';
 import { flash, isFlashEnabled } from './flash.mjs';
 import { highlightMiniLocations, isPatternHighlightingEnabled, updateMiniLocations } from './highlight.mjs';
 import { keybindings } from './keybindings.mjs';
-import { initTheme, activateTheme, theme } from './themes-vanilla.mjs';
+import { initTheme, activateTheme, theme } from './themes.mjs';
 import { sliderPlugin, updateSliderWidgets } from './slider.mjs';
 import { widgetPlugin, updateWidgets } from './widget.mjs';
 import { persistentAtom } from '@nanostores/persistent';
