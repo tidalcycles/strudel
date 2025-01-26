@@ -21,15 +21,14 @@ export function registerSound(key, onTrigger, data = {}) {
 }
 
 export function aliasBank(alias, bank) {
-  const _soundMap = soundMap.get();
-  const soundsToAdd = {};
-  for (const soundName in _soundMap) {
-    const [soundPrefix, soundSuffix] = soundName.split('_');
-    if (soundPrefix == bank) {
-      soundsToAdd[`${alias}_${soundSuffix}`] = _soundMap[soundName];
-    }
+  const soundDictionary = soundMap.get();
+  for (const key in soundDictionary) {
+    if (key.startsWith(bank + '_')) continue;
+    const [, tail] = key.split('_');
+    const value = soundDictionary[key];
+    soundDictionary[`${alias}_${tail}`] = value;
   }
-  soundMap.set({ ..._soundMap, ...soundsToAdd });
+  soundMap.set(soundDictionary);
 }
 
 export function getSound(s) {
