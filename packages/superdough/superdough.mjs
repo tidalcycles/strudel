@@ -20,6 +20,18 @@ export function registerSound(key, onTrigger, data = {}) {
   soundMap.setKey(key, { onTrigger, data });
 }
 
+export function aliasBank(alias, bank) {
+  const _soundMap = soundMap.get();
+  const soundsToAdd = {};
+  for (const soundName in _soundMap) {
+    const [soundPrefix, soundSuffix] = soundName.split('_');
+    if (soundPrefix == bank) {
+      soundsToAdd[`${alias}_${soundSuffix}`] = _soundMap[soundName];
+    }
+  }
+  soundMap.set(soundsToAdd);
+}
+
 export function getSound(s) {
   return soundMap.get()[s];
 }
