@@ -1,7 +1,8 @@
 ---
+// @ts-ignore
 import { pwaInfo } from 'virtual:pwa-info';
-import '../styles/index.css';
 
+import '../styles/index.css';
 const { BASE_URL } = import.meta.env;
 const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 ---
