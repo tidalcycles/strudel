@@ -28,7 +28,7 @@ export function aliasBank(alias, bank) {
     const value = soundDictionary[key];
     soundDictionary[`${alias}_${tail}`] = value;
   }
-  soundMap.set(soundDictionary);
+  soundMap.set({ ...soundDictionary });
 }
 
 export function getSound(s) {
