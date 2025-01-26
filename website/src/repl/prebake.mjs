@@ -1,5 +1,5 @@
 import { Pattern, noteToMidi, valueToMidi } from '@strudel/core';
-import { registerSynthSounds, registerZZFXSounds, samples } from '@strudel/webaudio';
+import { aliasBank, registerSynthSounds, registerZZFXSounds, samples } from '@strudel/webaudio';
 import { registerSamplesFromDB } from './idbutils.mjs';
 import './piano.mjs';
 import './files.mjs';
@@ -121,6 +121,8 @@ export async function prebake() {
       },
     ),
   ]);
+
+  aliasBank(`${baseNoTrailing}/tidal-drum-machines-alias.json`);
 }
 
 const maxPan = noteToMidi('C8');
