@@ -20,15 +20,26 @@ export function registerSound(key, onTrigger, data = {}) {
   soundMap.setKey(key, { onTrigger, data });
 }
 
-export function aliasBank(alias, bank) {
+export function aliasBankMap(aliasMap) {
   const soundDictionary = soundMap.get();
   for (const key in soundDictionary) {
-    if (key.startsWith(bank + '_')) continue;
-    const [, tail] = key.split('_');
-    const value = soundDictionary[key];
-    soundDictionary[`${alias}_${tail}`] = value;
+    const [bank, suffix] = key.split('_');
+    if (aliasMap[bank]) {
+      soundDictionary[`${aliasMap[bank]}_${suffix}`] = soundDictionary[key];
+    }
   }
   soundMap.set({ ...soundDictionary });
+}
+
+export function aliasBank(...args) {
+  switch (args.length) {
+    case 1:
+      return aliasBankMap(args[0]);
+    case 2:
+      return aliasBankMap({ [args[0]]: args[1] });
+    default:
+      throw new Error('aliasMap expects 1 or 2 arguments, received ' + args.length);
+  }
 }
 
 export function getSound(s) {
