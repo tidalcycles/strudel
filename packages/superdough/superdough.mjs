@@ -29,7 +29,7 @@ export function aliasBank(alias, bank) {
       soundsToAdd[`${alias}_${soundSuffix}`] = _soundMap[soundName];
     }
   }
-  soundMap.set(soundsToAdd);
+  soundMap.set({ ..._soundMap, ...soundsToAdd });
 }
 
 export function getSound(s) {
