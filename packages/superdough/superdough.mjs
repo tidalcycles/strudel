@@ -20,7 +20,7 @@ export function registerSound(key, onTrigger, data = {}) {
   soundMap.setKey(key.toLowerCase(), { onTrigger, data });
 }
 
-export function aliasBankMap(aliasMap) {
+function aliasBankMap(aliasMap) {
   // Make all bank keys lower case for case insensitivity
   for (const key in aliasMap) {
     aliasMap[key.toLowerCase()] = aliasMap[key];
@@ -53,15 +53,27 @@ export function aliasBankMap(aliasMap) {
   soundMap.set({ ...soundDictionary });
 }
 
+async function aliasBankPath(path) {
+  const response = await fetch(path);
+  const aliasMap = await response.json();
+  aliasBankMap(aliasMap);
+}
+
 /**
- * Register an alias for a bank of sounds. Optionally accepts a map of banks to aliases.
+ * Register an alias for a bank of sounds.
+ * Optionally accepts a single argument map of bank aliases.
+ * Optionally accepts a single argument string of a path to a JSON file containing bank aliases.
  * @param {string} bank - The bank to alias
  * @param {string} alias - The alias to use for the bank
  */
-export function aliasBank(...args) {
+export async function aliasBank(...args) {
   switch (args.length) {
     case 1:
-      return aliasBankMap(args[0]);
+      if (typeof args[0] === 'string') {
+        return aliasBankPath(args[0]);
+      } else {
+        return aliasBankMap(args[0]);
+      }
     case 2:
       return aliasBankMap({ [args[0]]: args[1] });
     default:
