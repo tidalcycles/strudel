@@ -17,24 +17,39 @@ import { loadBuffer } from './sampler.mjs';
 export const soundMap = map();
 
 export function registerSound(key, onTrigger, data = {}) {
-  soundMap.setKey(key, { onTrigger, data });
+  soundMap.setKey(key.toLowerCase(), { onTrigger, data });
 }
 
 export function aliasBankMap(aliasMap) {
+  // Make all bank keys lower case for case insensitivity
+  for (const key in aliasMap) {
+    aliasMap[key.toLowerCase()] = aliasMap[key];
+  }
+
+  // Look through every sound...
   const soundDictionary = soundMap.get();
   for (const key in soundDictionary) {
+    // Check if the sound is part of a bank...
     const [bank, suffix] = key.split('_');
+    if (!suffix) continue;
+
+    // Check if the bank is aliased...
     const aliasValue = aliasMap[bank];
     if (aliasValue) {
       if (typeof aliasValue === 'string') {
-        soundDictionary[`${aliasValue}_${suffix}`] = soundDictionary[key];
+        // Alias a single alias
+        soundDictionary[`${aliasValue}_${suffix}`.toLowerCase()] = soundDictionary[key];
       } else if (Array.isArray(aliasValue)) {
+        // Alias multiple aliases
         for (const alias of aliasValue) {
-          soundDictionary[`${alias}_${suffix}`] = soundDictionary[key];
+          soundDictionary[`${alias}_${suffix}`.toLowerCase()] = soundDictionary[key];
         }
       }
     }
   }
+
+  // Update the sound map!
+  // We need to destructure here to trigger the update
   soundMap.set({ ...soundDictionary });
 }
 
@@ -55,7 +70,7 @@ export function aliasBank(...args) {
 }
 
 export function getSound(s) {
-  return soundMap.get()[s];
+  return soundMap.get()[s.toLowerCase()];
 }
 
 const defaultDefaultValues = {
