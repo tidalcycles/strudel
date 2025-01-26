@@ -8,7 +8,6 @@ import rehypeUrls from 'rehype-urls';
 
 import tailwind from '@astrojs/tailwind';
 import AstroPWA from '@vite-pwa/astro';
-// import { visualizer } from 'rollup-plugin-visualizer';
 
 const site = `https://strudel.cc/`; // root url without a path
 const base = '/'; // base path of the strudel site

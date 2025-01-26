@@ -72,9 +72,6 @@ importers:
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
-      rollup-plugin-visualizer:
-        specifier: ^5.14.0
-        version: 5.14.0(rollup@4.32.0)
       vitest:
         specifier: ^3.0.4
         version: 3.0.4(@types/debug@4.1.12)(@types/node@22.10.10)(@vitest/ui@3.0.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
@@ -411,9 +408,6 @@ importers:
       '@rollup/plugin-replace':
         specifier: ^6.0.2
         version: 6.0.2(rollup@4.32.0)
-      rollup-plugin-visualizer:
-        specifier: ^5.14.0
-        version: 5.14.0(rollup@4.32.0)
       vite:
         specifier: ^6.0.11
         version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
@@ -6577,19 +6571,6 @@ packages:
     deprecated: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
     peerDependencies:
       rollup: ^2.0.0
-
-  rollup-plugin-visualizer@5.14.0:
-    resolution: {integrity: sha512-VlDXneTDaKsHIw8yzJAFWtrzguoJ/LnQ+lMpoVfYJ3jJF4Ihe5oYLAqLklIK/35lgUY+1yEzCkHyZ1j4A5w5fA==}
-    engines: {node: '>=18'}
-    hasBin: true
-    peerDependencies:
-      rolldown: 1.x
-      rollup: 2.x || 3.x || 4.x
-    peerDependenciesMeta:
-      rolldown:
-        optional: true
-      rollup:
-        optional: true
 
   rollup@2.79.2:
     resolution: {integrity: sha512-fS6iqSPZDs3dr/y7Od6y5nha8dW1YnbgtsyotCVvoFGKbERG++CVRFv1meyGDE1SNItQA8BrnCw7ScdAhRJ3XQ==}
@@ -15171,15 +15152,6 @@ snapshots:
       rollup: 2.79.2
       serialize-javascript: 4.0.0
       terser: 5.37.0
-
-  rollup-plugin-visualizer@5.14.0(rollup@4.32.0):
-    dependencies:
-      open: 8.4.2
-      picomatch: 4.0.2
-      source-map: 0.7.4
-      yargs: 17.7.2
-    optionalDependencies:
-      rollup: 4.32.0
 
   rollup@2.79.2:
     optionalDependencies:

@@ -46,7 +46,6 @@
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^6.0.2",
-    "rollup-plugin-visualizer": "^5.14.0",
     "vite": "^6.0.11"
   }
 }

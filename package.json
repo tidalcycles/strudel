@@ -70,7 +70,6 @@
     "jsdoc-json": "^2.0.2",
     "lerna": "^8.1.9",
     "prettier": "^3.4.2",
-    "rollup-plugin-visualizer": "^5.14.0",
     "vitest": "^3.0.4"
   }
 }
