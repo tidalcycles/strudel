@@ -12,3 +12,4 @@ pnpm-workspace.yaml
 **/dev-dist
 website/.astro
 !tidal-drum-machines.json
+!tidal-drum-machines-alias.json
