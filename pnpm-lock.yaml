@@ -763,9 +763,6 @@ importers:
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
-      vite-plugin-pwa:
-        specifier: ^0.21.1
-        version: 0.21.1(vite@6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))(workbox-build@7.0.0(@types/babel__core@7.20.5))(workbox-window@7.3.0)
       workbox-window:
         specifier: ^7.3.0
         version: 7.3.0

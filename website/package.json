@@ -72,7 +72,6 @@
     "@vite-pwa/astro": "^0.5.0",
     "html-escaper": "^3.0.3",
     "sharp": "^0.33.5",
-    "vite-plugin-pwa": "^0.21.1",
     "workbox-window": "^7.3.0"
   }
 }
