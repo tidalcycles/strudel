@@ -21,6 +21,10 @@ import gruvboxDark, { settings as gruvboxDarkSettings } from './themes/gruvboxDa
 import gruvboxLight, { settings as gruvboxLightSettings } from './themes/gruvboxLight.mjs';
 import materialDark, { settings as materialDarkSettings } from './themes/materialDark.mjs';
 import materialLight, { settings as materialLightSettings } from './themes/materialLight.mjs';
+import nord, { settings as nordSettings } from './themes/nord.mjs';
+import okaidia, { settings as okaidiaSettings } from './themes/okaidia.mjs';
+import solarizedDark, { settings as solarizedDarkSettings } from './themes/solarizedDark.mjs';
+import solarizedLight, { settings as solarizedLightSettings } from './themes/solarizedLight.mjs';
 
 import { setTheme } from '@strudel/draw';
 
@@ -45,10 +49,10 @@ export const themes = {
   githubDark,
   gruvboxDark,
   materialDark,
-  /*nord,
+  nord,
   okaidia,
   solarizedDark,
-  sublime,
+  /*sublime,
   tokyoNight,
   tokyoNightStorm,
   vscodeDark,
@@ -56,11 +60,11 @@ export const themes = {
   /*bbedit,*/
   githubLight,
   gruvboxLight,
-  materialLight /*
-  noctisLilac,
+  materialLight,
+  //noctisLilac,
   solarizedLight,
-  tokyoNightDay,
-  xcodeLight, */,
+  //tokyoNightDay,
+  //xcodeLight,
 };
 
 // lineBackground is background with 50% opacity, to make sure the selection below is visible
@@ -115,53 +119,12 @@ export const settings = {
     gutterBackground: '#f2f1f8',
     gutterForeground: '#0c006b70',
     lineHighlight: '#e1def3',
-  },
-  nord: {
-    background: '#2e3440',
-    lineBackground: '#2e344099',
-    foreground: '#FFFFFF',
-    caret: '#FFFFFF',
-    selection: '#3b4252',
-    selectionMatch: '#e5e9f0',
-    gutterBackground: '#2e3440',
-    gutterForeground: '#4c566a',
-    gutterActiveForeground: '#d8dee9',
-    lineHighlight: '#4c566a',
-  },
-  okaidia: {
-    background: '#272822',
-    lineBackground: '#27282299',
-    foreground: '#FFFFFF',
-    caret: '#FFFFFF',
-    selection: '#49483E',
-    selectionMatch: '#49483E',
-    gutterBackground: '#272822',
-    gutterForeground: '#FFFFFF70',
-    lineHighlight: '#00000059',
-  },
-  solarizedLight: {
-    light: true,
-    background: '#fdf6e3',
-    lineBackground: '#fdf6e399',
-    foreground: '#657b83',
-    caret: '#586e75',
-    selection: '#dfd9c8',
-    selectionMatch: '#dfd9c8',
-    gutterBackground: '#00000010',
-    gutterForeground: '#657b83',
-    lineHighlight: '#dfd9c8',
-  },
-  solarizedDark: {
-    background: '#002b36',
-    lineBackground: '#002b3699',
-    foreground: '#93a1a1',
-    caret: '#839496',
-    selection: '#173541',
-    selectionMatch: '#aafe661a',
-    gutterBackground: '#00252f',
-    gutterForeground: '#839496',
-    lineHighlight: '#173541',
-  },
+  },*/
+  nord: nordSettings,
+  okaidia: okaidiaSettings,
+  solarizedLight: solarizedLightSettings,
+  solarizedDark: solarizedDarkSettings,
+  /*
   sublime: {
     background: '#303841',
     lineBackground: '#30384199',
