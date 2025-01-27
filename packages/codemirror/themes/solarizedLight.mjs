@@ -1,6 +1,8 @@
 import { tags as t } from '@lezer/highlight';
 import { createTheme } from './theme-helper.mjs';
 
+// this is slightly different from https://thememirror.net/solarized-light
+
 export const settings = {
   light: true,
   background: '#fdf6e3',

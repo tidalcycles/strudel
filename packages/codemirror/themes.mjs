@@ -28,8 +28,13 @@ import solarizedLight, { settings as solarizedLightSettings } from './themes/sol
 import sublime, { settings as sublimeSettings } from './themes/sublime.mjs';
 import tokyoNight, { settings as tokyoNightSettings } from './themes/tokyoNight.mjs';
 import tokyoNightStorm, { settings as tokyoNightStormSettings } from './themes/tokioNightStorm.mjs';
+import tokyoNightDay, { settings as tokyoNightDaySettings } from './themes/tokyoNightDay.mjs';
 import vscodeDark, { settings as vscodeDarkSettings } from './themes/vscodeDark.mjs';
 import vscodeLight, { settings as vscodeLightSettings } from './themes/vscodeLight.mjs';
+import xcodeDark, { settings as xcodeDarkSettings } from './themes/xcodeDark.mjs';
+import xcodeLight, { settings as xcodeLightSettings } from './themes/xcodeLight.mjs';
+import bbedit, { settings as bbeditSettings } from './themes/bbedit.mjs';
+import noctisLilac, { settings as noctisLilacSettings } from './themes/noctisLilac.mjs';
 
 import { setTheme } from '@strudel/draw';
 
@@ -40,14 +45,15 @@ export const themes = {
   whitescreen,
   teletext,
   algoboy,
-  terminal,
-  abcdef,
-  androidstudio,
   atomone,
   aura,
-  bespin,
   darcula,
   dracula,
+  // todo: optimize
+  terminal,
+  bespin,
+  abcdef,
+  androidstudio,
   duotoneDark,
   duotoneLight,
   eclipse,
@@ -61,19 +67,17 @@ export const themes = {
   tokyoNight,
   tokyoNightStorm,
   vscodeDark,
-  //xcodeDark,
-  //bbedit,
+  xcodeDark,
+  bbedit,
   githubLight,
   gruvboxLight,
   materialLight,
   vscodeLight,
-  //noctisLilac,
+  noctisLilac,
   solarizedLight,
-  //tokyoNightDay,
-  //xcodeLight,
+  tokyoNightDay,
+  xcodeLight,
 };
-
-// lineBackground is background with 50% opacity, to make sure the selection below is visible
 
 export const settings = {
   strudelTheme: strudelThemeSettings,
@@ -87,19 +91,7 @@ export const settings = {
   androidstudio: androidstudioSettings,
   atomone: atomOneSettings,
   aura: auraSettings,
-  /*bbedit: {
-    light: true,
-    background: '#FFFFFF',
-    lineBackground: '#FFFFFF99',
-    foreground: '#000000',
-    caret: '#FBAC52',
-    selection: '#FFD420',
-    selectionMatch: '#FFD420',
-    gutterBackground: '#f5f5f5',
-    gutterForeground: '#4D4D4C',
-    gutterBorder: 'transparent',
-    lineHighlight: '#00000012',
-  },*/
+  bbedit: bbeditSettings,
   bespin: bespinSettings,
   darcula: darculaSettings,
   dracula: draculaSettings,
@@ -112,18 +104,7 @@ export const settings = {
   gruvboxLight: gruvboxLightSettings,
   materialDark: materialDarkSettings,
   materialLight: materialLightSettings,
-  /*noctisLilac: {
-    light: true,
-    background: '#f2f1f8',
-    lineBackground: '#f2f1f899',
-    foreground: '#0c006b',
-    caret: '#5c49e9',
-    selection: '#d5d1f2',
-    selectionMatch: '#d5d1f2',
-    gutterBackground: '#f2f1f8',
-    gutterForeground: '#0c006b70',
-    lineHighlight: '#e1def3',
-  },*/
+  noctisLilac: noctisLilacSettings,
   nord: nordSettings,
   okaidia: okaidiaSettings,
   solarizedLight: solarizedLightSettings,
@@ -133,39 +114,9 @@ export const settings = {
   tokyoNightStorm: tokyoNightStormSettings,
   vscodeDark: vscodeDarkSettings,
   vscodeLight: vscodeLightSettings,
-  /*tokyoNightDay: {
-    light: true,
-    background: '#e1e2e7',
-    lineBackground: '#e1e2e799',
-    foreground: '#3760bf',
-    caret: '#3760bf',
-    selection: '#99a7df',
-    selectionMatch: '#99a7df',
-    gutterBackground: '#e1e2e7',
-    gutterForeground: '#3760bf',
-    gutterBorder: 'transparent',
-    lineHighlight: '#5f5faf11',
-  },
-  xcodeLight: {
-    light: true,
-    background: '#fff',
-    lineBackground: '#ffffff99',
-    foreground: '#3D3D3D',
-    selection: '#BBDFFF',
-    selectionMatch: '#BBDFFF',
-    gutterBackground: '#fff',
-    gutterForeground: '#AFAFAF',
-    lineHighlight: '#EDF4FF',
-  },
-  xcodeDark: {
-    background: '#292A30',
-    lineBackground: '#292A3099',
-    foreground: '#CECFD0',
-    caret: '#fff',
-    selection: '#727377',
-    selectionMatch: '#727377',
-    lineHighlight: '#2F3239',
-  }, */
+  xcodeLight: xcodeLightSettings,
+  xcodeDark: xcodeDarkSettings,
+  tokyoNightDay: tokyoNightDaySettings,
 };
 
 function getColors(str) {

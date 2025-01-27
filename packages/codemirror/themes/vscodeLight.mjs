@@ -1,6 +1,3 @@
-/**
- * https://github.com/uiwjs/react-codemirror/issues/409
- */
 import { tags as t } from '@lezer/highlight';
 import { createTheme } from './theme-helper.mjs';
 
