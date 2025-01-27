@@ -15,7 +15,7 @@ export const settings = {
   gutterBackground: '#1e1e1e',
   gutterForeground: '#838383',
   gutterActiveForeground: '#fff',
-}
+};
 
 export default createTheme({
   theme: 'dark',

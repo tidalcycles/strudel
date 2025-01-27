@@ -12,7 +12,7 @@ export const settings = {
   gutterBackground: '#00000010',
   gutterForeground: '#657b83',
   lineHighlight: '#dfd9c8',
-}
+};
 
 const c = {
   background: '#FDF6E3',
