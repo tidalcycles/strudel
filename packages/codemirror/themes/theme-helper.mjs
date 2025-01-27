@@ -3,7 +3,6 @@ import { syntaxHighlighting } from '@codemirror/language';
 import { HighlightStyle } from '@codemirror/language';
 
 export const createTheme = ({ theme, settings, styles }) => {
-  console.log('create', settings);
   const _theme = EditorView.theme(
     {
       '&': {

@@ -30,15 +30,20 @@
   xcodeLight,
 } from '@uiw/codemirror-themes-all'; */
 
-import strudelTheme, { settings as strudelThemeSettings } from './themes/strudel-theme';
-import bluescreen, { settings as bluescreenSettings } from './themes/bluescreen';
-import blackscreen, { settings as blackscreenSettings } from './themes/blackscreen';
-import whitescreen, { settings as whitescreenSettings } from './themes/whitescreen';
-import teletext, { settings as teletextSettings } from './themes/teletext';
-import algoboy, { settings as algoboySettings } from './themes/algoboy';
-import terminal, { settings as terminalSettings } from './themes/terminal';
-import abcdef, { settings as abcdefSettings } from './themes/abcdef';
-import androidstudio, { settings as androidstudioSettings } from './themes/androidstudio';
+import strudelTheme, { settings as strudelThemeSettings } from './themes/strudel-theme.mjs';
+import bluescreen, { settings as bluescreenSettings } from './themes/bluescreen.mjs';
+import blackscreen, { settings as blackscreenSettings } from './themes/blackscreen.mjs';
+import whitescreen, { settings as whitescreenSettings } from './themes/whitescreen.mjs';
+import teletext, { settings as teletextSettings } from './themes/teletext.mjs';
+import algoboy, { settings as algoboySettings } from './themes/algoboy.mjs';
+import terminal, { settings as terminalSettings } from './themes/terminal.mjs';
+import abcdef, { settings as abcdefSettings } from './themes/abcdef.mjs';
+import androidstudio, { settings as androidstudioSettings } from './themes/androidstudio.mjs';
+import atomone, { settings as atomOneSettings } from './themes/atomone.mjs';
+import aura, { settings as auraSettings } from './themes/aura.mjs';
+import bespin, { settings as bespinSettings } from './themes/bespin.mjs';
+import darcula, { settings as darculaSettings } from './themes/darcula.mjs';
+import dracula, { settings as draculaSettings } from './themes/dracula.mjs';
 import { setTheme } from '@strudel/draw';
 
 export const themes = {
@@ -51,12 +56,12 @@ export const themes = {
   terminal,
   abcdef,
   androidstudio,
-  /*atomone,
+  atomone,
   aura,
   bespin,
   darcula,
   dracula,
-  duotoneDark,
+  /*duotoneDark,
   eclipse,
   githubDark,
   gruvboxDark,
@@ -92,31 +97,9 @@ export const settings = {
   terminal: terminalSettings,
   abcdef: abcdefSettings,
   androidstudio: androidstudioSettings,
-  /*atomone: {
-    background: '#272C35',
-    lineBackground: '#272C3599',
-    foreground: '#9d9b97',
-    caret: '#797977',
-    selection: '#ffffff30',
-    selectionMatch: '#2B323D',
-    gutterBackground: '#272C35',
-    gutterForeground: '#465063',
-    gutterBorder: 'transparent',
-    lineHighlight: '#2B323D',
-  },
-  aura: {
-    background: '#21202e',
-    lineBackground: '#21202e99',
-    foreground: '#edecee',
-    caret: '#a277ff',
-    selection: '#3d375e7f',
-    selectionMatch: '#3d375e7f',
-    gutterBackground: '#21202e',
-    gutterForeground: '#edecee',
-    gutterBorder: 'transparent',
-    lineHighlight: '#a394f033',
-  },
-  bbedit: {
+  atomone: atomOneSettings,
+  aura: auraSettings,
+  /*bbedit: {
     light: true,
     background: '#FFFFFF',
     lineBackground: '#FFFFFF99',
@@ -128,42 +111,11 @@ export const settings = {
     gutterForeground: '#4D4D4C',
     gutterBorder: 'transparent',
     lineHighlight: '#00000012',
-  },
-  bespin: {
-    background: '#28211c',
-    lineBackground: '#28211c99',
-    foreground: '#9d9b97',
-    caret: '#797977',
-    selection: '#36312e',
-    selectionMatch: '#4f382b',
-    gutterBackground: '#28211c',
-    gutterForeground: '#666666',
-    lineHighlight: 'rgba(255, 255, 255, 0.1)',
-  },
-  darcula: {
-    background: '#2B2B2B',
-    lineBackground: '#2B2B2B99',
-    foreground: '#f8f8f2',
-    caret: '#FFFFFF',
-    selection: 'rgba(255, 255, 255, 0.1)',
-    selectionMatch: 'rgba(255, 255, 255, 0.2)',
-    gutterBackground: 'rgba(255, 255, 255, 0.1)',
-    gutterForeground: '#999',
-    gutterBorder: 'transparent',
-    lineHighlight: 'rgba(255, 255, 255, 0.1)',
-  },
-  dracula: {
-    background: '#282a36',
-    lineBackground: '#282a3699',
-    foreground: '#f8f8f2',
-    caret: '#f8f8f0',
-    selection: 'rgba(255, 255, 255, 0.1)',
-    selectionMatch: 'rgba(255, 255, 255, 0.2)',
-    gutterBackground: '#282a36',
-    gutterForeground: '#6D8A88',
-    gutterBorder: 'transparent',
-    lineHighlight: 'rgba(255, 255, 255, 0.1)',
-  },
+  },*/
+  bespin: bespinSettings,
+  darcula: darculaSettings,
+  dracula: draculaSettings,
+  /*
   duotoneLight: {
     light: true,
     background: '#faf8f5',
