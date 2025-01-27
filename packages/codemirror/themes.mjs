@@ -1,35 +1,3 @@
-/* import {
-  abcdef,
-  androidstudio,
-  atomone,
-  aura,
-  bespin,
-  darcula,
-  dracula,
-  duotoneDark,
-  eclipse,
-  githubDark,
-  gruvboxDark,
-  materialDark,
-  nord,
-  okaidia,
-  solarizedDark,
-  sublime,
-  tokyoNight,
-  tokyoNightStorm,
-  vscodeDark,
-  xcodeDark,
-  bbedit,
-  duotoneLight,
-  githubLight,
-  gruvboxLight,
-  materialLight,
-  noctisLilac,
-  solarizedLight,
-  tokyoNightDay,
-  xcodeLight,
-} from '@uiw/codemirror-themes-all'; */
-
 import strudelTheme, { settings as strudelThemeSettings } from './themes/strudel-theme.mjs';
 import bluescreen, { settings as bluescreenSettings } from './themes/bluescreen.mjs';
 import blackscreen, { settings as blackscreenSettings } from './themes/blackscreen.mjs';
@@ -49,6 +17,11 @@ import duotoneLight, { settings as duotoneLightSettings } from './themes/duotone
 import eclipse, { settings as eclipseSettings } from './themes/eclipse.mjs';
 import githubDark, { settings as githubDarkSettings } from './themes/githubDark.mjs';
 import githubLight, { settings as githubLightSettings } from './themes/githubLight.mjs';
+import gruvboxDark, { settings as gruvboxDarkSettings } from './themes/gruvboxDark.mjs';
+import gruvboxLight, { settings as gruvboxLightSettings } from './themes/gruvboxLight.mjs';
+import materialDark, { settings as materialDarkSettings } from './themes/materialDark.mjs';
+import materialLight, { settings as materialLightSettings } from './themes/materialLight.mjs';
+
 import { setTheme } from '@strudel/draw';
 
 export const themes = {
@@ -70,9 +43,9 @@ export const themes = {
   duotoneLight,
   eclipse,
   githubDark,
-  /*gruvboxDark,
+  gruvboxDark,
   materialDark,
-  nord,
+  /*nord,
   okaidia,
   solarizedDark,
   sublime,
@@ -81,9 +54,9 @@ export const themes = {
   vscodeDark,
   xcodeDark,*/
   /*bbedit,*/
-  githubLight /*
+  githubLight,
   gruvboxLight,
-  materialLight,
+  materialLight /*
   noctisLilac,
   solarizedLight,
   tokyoNightDay,
@@ -125,57 +98,13 @@ export const settings = {
   eclipse: eclipseSettings,
   githubLight: githubLightSettings,
   githubDark: githubDarkSettings,
-  /*
-  gruvboxDark: {
-    background: '#282828',
-    lineBackground: '#28282899',
-    foreground: '#ebdbb2',
-    caret: '#ebdbb2',
-    selection: '#bdae93',
-    selectionMatch: '#bdae93',
-    lineHighlight: '#3c3836',
-    gutterBackground: '#282828',
-    gutterForeground: '#7c6f64',
-  },
-  gruvboxLight: {
-    light: true,
-    background: '#fbf1c7',
-    lineBackground: '#fbf1c799',
-    foreground: '#3c3836',
-    caret: '#af3a03',
-    selection: '#ebdbb2',
-    selectionMatch: '#bdae93',
-    lineHighlight: '#ebdbb2',
-    gutterBackground: '#ebdbb2',
-    gutterForeground: '#665c54',
-    gutterBorder: 'transparent',
-  },
-  materialDark: {
-    background: '#2e3235',
-    lineBackground: '#2e323599',
-    foreground: '#bdbdbd',
-    caret: '#a0a4ae',
-    selection: '#d7d4f0',
-    selectionMatch: '#d7d4f0',
-    gutterBackground: '#2e3235',
-    gutterForeground: '#999',
-    gutterActiveForeground: '#4f5b66',
-    lineHighlight: '#545b61',
-  },
-  materialLight: {
-    light: true,
-    background: '#FAFAFA',
-    lineBackground: '#FAFAFA99',
-    foreground: '#90A4AE',
-    caret: '#272727',
-    selection: '#80CBC440',
-    selectionMatch: '#FAFAFA',
-    gutterBackground: '#FAFAFA',
-    gutterForeground: '#90A4AE',
-    gutterBorder: 'transparent',
-    lineHighlight: '#CCD7DA50',
-  },
-  noctisLilac: {
+
+  gruvboxDark: gruvboxDarkSettings,
+  gruvboxLight: gruvboxLightSettings,
+
+  materialDark: materialDarkSettings,
+  materialLight: materialLightSettings,
+  /*noctisLilac: {
     light: true,
     background: '#f2f1f8',
     lineBackground: '#f2f1f899',
