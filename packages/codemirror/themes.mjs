@@ -25,6 +25,11 @@ import nord, { settings as nordSettings } from './themes/nord.mjs';
 import okaidia, { settings as okaidiaSettings } from './themes/okaidia.mjs';
 import solarizedDark, { settings as solarizedDarkSettings } from './themes/solarizedDark.mjs';
 import solarizedLight, { settings as solarizedLightSettings } from './themes/solarizedLight.mjs';
+import sublime, { settings as sublimeSettings } from './themes/sublime.mjs';
+import tokyoNight, { settings as tokyoNightSettings } from './themes/tokyoNight.mjs';
+import tokyoNightStorm, { settings as tokyoNightStormSettings } from './themes/tokioNightStorm.mjs';
+import vscodeDark, { settings as vscodeDarkSettings } from './themes/vscodeDark.mjs';
+import vscodeLight, { settings as vscodeLightSettings } from './themes/vscodeLight.mjs';
 
 import { setTheme } from '@strudel/draw';
 
@@ -52,15 +57,16 @@ export const themes = {
   nord,
   okaidia,
   solarizedDark,
-  /*sublime,
+  sublime,
   tokyoNight,
   tokyoNightStorm,
   vscodeDark,
-  xcodeDark,*/
-  /*bbedit,*/
+  //xcodeDark,
+  //bbedit,
   githubLight,
   gruvboxLight,
   materialLight,
+  vscodeLight,
   //noctisLilac,
   solarizedLight,
   //tokyoNightDay,
@@ -102,10 +108,8 @@ export const settings = {
   eclipse: eclipseSettings,
   githubLight: githubLightSettings,
   githubDark: githubDarkSettings,
-
   gruvboxDark: gruvboxDarkSettings,
   gruvboxLight: gruvboxLightSettings,
-
   materialDark: materialDarkSettings,
   materialLight: materialLightSettings,
   /*noctisLilac: {
@@ -124,19 +128,12 @@ export const settings = {
   okaidia: okaidiaSettings,
   solarizedLight: solarizedLightSettings,
   solarizedDark: solarizedDarkSettings,
-  /*
-  sublime: {
-    background: '#303841',
-    lineBackground: '#30384199',
-    foreground: '#FFFFFF',
-    caret: '#FBAC52',
-    selection: '#4C5964',
-    selectionMatch: '#3A546E',
-    gutterBackground: '#303841',
-    gutterForeground: '#FFFFFF70',
-    lineHighlight: '#00000059',
-  },
-  tokyoNightDay: {
+  sublime: sublimeSettings,
+  tokyoNight: tokyoNightSettings,
+  tokyoNightStorm: tokyoNightStormSettings,
+  vscodeDark: vscodeDarkSettings,
+  vscodeLight: vscodeLightSettings,
+  /*tokyoNightDay: {
     light: true,
     background: '#e1e2e7',
     lineBackground: '#e1e2e799',
@@ -148,42 +145,6 @@ export const settings = {
     gutterForeground: '#3760bf',
     gutterBorder: 'transparent',
     lineHighlight: '#5f5faf11',
-  },
-  tokyoNightStorm: {
-    background: '#24283b',
-    lineBackground: '#24283b99',
-    foreground: '#7982a9',
-    caret: '#c0caf5',
-    selection: '#6f7bb630',
-    selectionMatch: '#1f2335',
-    gutterBackground: '#24283b',
-    gutterForeground: '#7982a9',
-    gutterBorder: 'transparent',
-    lineHighlight: '#292e42',
-  },
-  tokyoNight: {
-    background: '#1a1b26',
-    lineBackground: '#1a1b2699',
-    foreground: '#787c99',
-    caret: '#c0caf5',
-    selection: '#515c7e40',
-    selectionMatch: '#16161e',
-    gutterBackground: '#1a1b26',
-    gutterForeground: '#787c99',
-    gutterBorder: 'transparent',
-    lineHighlight: '#1e202e',
-  },
-  vscodeDark: {
-    background: '#1e1e1e',
-    lineBackground: '#1e1e1e99',
-    foreground: '#9cdcfe',
-    caret: '#c6c6c6',
-    selection: '#6199ff2f',
-    selectionMatch: '#72a1ff59',
-    lineHighlight: '#ffffff0f',
-    gutterBackground: '#1e1e1e',
-    gutterForeground: '#838383',
-    gutterActiveForeground: '#fff',
   },
   xcodeLight: {
     light: true,
