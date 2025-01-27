@@ -26,11 +26,14 @@ export default createTheme({
     caret: '#00FF00',
     selection: '#515151',
     selectionMatch: '#515151',
-    gutterBackground: '#555',
-    gutterForeground: '#FFFFFF',
+    // gutterBackground: '#555',
+    gutterBackground: 'transparent',
+    /* gutterForeground: '#FFFFFF', */
+    gutterForeground: '#7a7b7c',
     lineHighlight: '#0a6bcb3d',
   },
   styles: [
+    { tag: t.labelName, color: 'inherit' },
     { tag: t.keyword, color: 'darkgoldenrod', fontWeight: 'bold' },
     { tag: t.atom, color: '#77F' },
     { tag: t.comment, color: '#7a7b7c', fontStyle: 'italic' },

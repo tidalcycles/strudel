@@ -25,6 +25,7 @@ export default createTheme({
     lineHighlight: '#7f85891f',
   },
   styles: [
+    { tag: t.labelName, color: 'inherit' },
     { tag: [t.keyword, t.deleted, t.className], color: '#cc7832' },
     { tag: [t.number, t.literal, t.derefOperator], color: '#6897bb' },
     { tag: [t.link, t.variableName], color: '#629755' },
