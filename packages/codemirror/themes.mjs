@@ -44,6 +44,11 @@ import aura, { settings as auraSettings } from './themes/aura.mjs';
 import bespin, { settings as bespinSettings } from './themes/bespin.mjs';
 import darcula, { settings as darculaSettings } from './themes/darcula.mjs';
 import dracula, { settings as draculaSettings } from './themes/dracula.mjs';
+import duotoneDark, { settings as duotoneDarkSettings } from './themes/duotoneDark.mjs';
+import duotoneLight, { settings as duotoneLightSettings } from './themes/duotoneLight.mjs';
+import eclipse, { settings as eclipseSettings } from './themes/eclipse.mjs';
+import githubDark, { settings as githubDarkSettings } from './themes/githubDark.mjs';
+import githubLight, { settings as githubLightSettings } from './themes/githubLight.mjs';
 import { setTheme } from '@strudel/draw';
 
 export const themes = {
@@ -61,10 +66,11 @@ export const themes = {
   bespin,
   darcula,
   dracula,
-  /*duotoneDark,
+  duotoneDark,
+  duotoneLight,
   eclipse,
   githubDark,
-  gruvboxDark,
+  /*gruvboxDark,
   materialDark,
   nord,
   okaidia,
@@ -73,16 +79,15 @@ export const themes = {
   tokyoNight,
   tokyoNightStorm,
   vscodeDark,
-  xcodeDark,
-  bbedit,
-  duotoneLight,
-  githubLight,
+  xcodeDark,*/
+  /*bbedit,*/
+  githubLight /*
   gruvboxLight,
   materialLight,
   noctisLilac,
   solarizedLight,
   tokyoNightDay,
-  xcodeLight, */
+  xcodeLight, */,
 };
 
 // lineBackground is background with 50% opacity, to make sure the selection below is visible
@@ -115,62 +120,12 @@ export const settings = {
   bespin: bespinSettings,
   darcula: darculaSettings,
   dracula: draculaSettings,
+  duotoneLight: duotoneLightSettings,
+  duotoneDark: duotoneDarkSettings,
+  eclipse: eclipseSettings,
+  githubLight: githubLightSettings,
+  githubDark: githubDarkSettings,
   /*
-  duotoneLight: {
-    light: true,
-    background: '#faf8f5',
-    lineBackground: '#faf8f599',
-    foreground: '#b29762',
-    caret: '#93abdc',
-    selection: '#e3dcce',
-    selectionMatch: '#e3dcce',
-    gutterBackground: '#faf8f5',
-    gutterForeground: '#cdc4b1',
-    gutterBorder: 'transparent',
-    lineHighlight: '#EFEFEF',
-  },
-  duotoneDark: {
-    background: '#2a2734',
-    lineBackground: '#2a273499',
-    foreground: '#6c6783',
-    caret: '#ffad5c',
-    selection: 'rgba(255, 255, 255, 0.1)',
-    gutterBackground: '#2a2734',
-    gutterForeground: '#545167',
-    lineHighlight: '#36334280',
-  },
-  eclipse: {
-    light: true,
-    background: '#fff',
-    lineBackground: '#ffffff99',
-    foreground: '#000',
-    caret: '#FFFFFF',
-    selection: '#d7d4f0',
-    selectionMatch: '#d7d4f0',
-    gutterBackground: '#f7f7f7',
-    gutterForeground: '#999',
-    lineHighlight: '#e8f2ff',
-    gutterBorder: 'transparent',
-  },
-  githubLight: {
-    light: true,
-    background: '#fff',
-    lineBackground: '#ffffff99',
-    foreground: '#24292e',
-    selection: '#BBDFFF',
-    selectionMatch: '#BBDFFF',
-    gutterBackground: '#fff',
-    gutterForeground: '#6e7781',
-  },
-  githubDark: {
-    background: '#0d1117',
-    lineBackground: '#0d111799',
-    foreground: '#c9d1d9',
-    caret: '#c9d1d9',
-    selection: '#003d73',
-    selectionMatch: '#003d73',
-    lineHighlight: '#36334280',
-  },
   gruvboxDark: {
     background: '#282828',
     lineBackground: '#28282899',
