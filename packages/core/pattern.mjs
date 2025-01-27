@@ -2740,10 +2740,6 @@ export function stepcat(...timepats) {
   return result;
 }
 
-/** Aliases for `stepcat` */
-export const timecat = stepcat;
-export const timeCat = stepcat;
-
 /**
  * *EXPERIMENTAL* - Concatenates patterns stepwise, according to their 'tactus'.
  * Similar to `stepcat`, but if an argument is a list, the whole pattern will alternate between the elements in the list.
@@ -2814,15 +2810,15 @@ export const decrease = stepRegister('decrease', function (i, pat) {
   return pat.increase(pat.tactus.sub(i));
 });
 
-export const { repeat, s_extend } = stepRegister(['repeat', 's_extend'], function (factor, pat) {
+export const repeat = stepRegister('repeat', function (factor, pat) {
   return pat.fast(factor).expand(factor);
 });
 
-export const { expand, s_expand } = stepRegister(['expand', 's_expand'], function (factor, pat) {
+export const expand = stepRegister('expand', function (factor, pat) {
   return pat.withTactus((t) => t.mul(Fraction(factor)));
 });
 
-export const { contract, s_contract } = stepRegister(['contract', 's_contract'], function (factor, pat) {
+export const contract = stepRegister('contract', function (factor, pat) {
   return pat.withTactus((t) => t.div(Fraction(factor)));
 });
 
@@ -2861,8 +2857,8 @@ export const taperlist = (amount, times, pat) => pat.taperlist(amount, times);
 /**
  * *EXPERIMENTAL*
  */
-export const { taper, s_taper } = register(
-  ['taper', 's_taper'],
+export const taper = register(
+  'taper',
   function (amount, times, pat) {
     if (!pat.hasTactus) {
       return nothing;
@@ -2901,6 +2897,36 @@ const zip = function (...pats) {
   // Should maybe use lcm or gcd for tactus?
   return zipped._fast(pats[0].tactus).setTactus(pats[0].tactus);
 };
+
+/** Aliases for `stepcat` */
+export const timecat = stepcat;
+export const timeCat = stepcat;
+
+// Deprecated stepwise aliases
+export const s_cat = stepcat;
+export const s_alt = stepalt;
+export const s_polymeterSteps = polymeterSteps;
+Pattern.prototype.s_polymeterSteps = Pattern.prototype.polymeterSteps;
+export const s_polymeter = polymeter;
+Pattern.prototype.s_polymeter = Pattern.prototype.polymeter;
+export const s_taper = taper;
+Pattern.prototype.s_taper = Pattern.prototype.taper;
+export const s_taperlist = taperlist;
+Pattern.prototype.s_taperlist = Pattern.prototype.taperlist;
+export const s_add = increase;
+Pattern.prototype.s_add = Pattern.prototype.increase;
+export const s_sub = decrease;
+Pattern.prototype.s_sub = Pattern.prototype.decrease;
+export const s_expand = expand;
+Pattern.prototype.s_expand = Pattern.prototype.expand;
+export const s_extend = repeat;
+Pattern.prototype.s_extend = Pattern.prototype.repeat;
+export const s_contract = contract;
+Pattern.prototype.s_contract = Pattern.prototype.contract;
+export const s_tour = tour;
+Pattern.prototype.s_tour = Pattern.prototype.tour;
+export const s_zip = zip;
+Pattern.prototype.s_zip = Pattern.prototype.zip;
 
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of
