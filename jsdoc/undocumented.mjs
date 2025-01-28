@@ -49,9 +49,7 @@ function getExports(code) {
 }
 
 function isDocumented(name, docs) {
-  return docs.find(
-    (d) => d.name === name || d.tags?.find((t) => t.title === 'synonyms' && t.value.split(', ').includes(name)),
-  );
+  return docs.find((d) => d.name === name || d.synonyms?.includes(name));
 }
 
 async function getUndocumented(path, docs) {
