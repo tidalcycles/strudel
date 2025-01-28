@@ -115,7 +115,7 @@ export const settings = {
   vscodeDark: vscodeDarkSettings,
   vscodeLight: vscodeLightSettings,
   xcodeLight: xcodeLightSettings,
-  xcodeDark: xcodeDarkSettings,
+  //xcodeDark: xcodeDarkSettings,
   tokyoNightDay: tokyoNightDaySettings,
 };
 
