@@ -35,7 +35,7 @@ export default createTheme({
     { tag: t.keyword, color: '#fb4934' },
     { tag: [t.name, t.deleted, t.character, t.propertyName, t.macroName], color: '#8ec07c' },
     { tag: [t.variableName], color: '#83a598' },
-    { tag: [t.function(t.variableName)], color: '#b8bb26', fontStyle: 'bold' },
+    { tag: [t.function(t.variableName)], color: '#8ec07c', fontStyle: 'bold' },
     { tag: [t.labelName], color: '#ebdbb2' },
     { tag: [t.color, t.constant(t.name), t.standard(t.name)], color: '#d3869b' },
     { tag: [t.definition(t.name), t.separator], color: '#ebdbb2' },
@@ -43,7 +43,7 @@ export default createTheme({
     { tag: [t.annotation], color: '#fb4934d' },
     { tag: [t.number, t.changed, t.annotation, t.modifier, t.self, t.namespace], color: '#d3869b' },
     { tag: [t.typeName, t.className], color: '#fabd2f' },
-    { tag: [t.operator, t.operatorKeyword], color: '#fb4934' },
+    { tag: [t.operatorKeyword], color: '#fb4934' },
     {
       tag: [t.tagName],
       color: '#8ec07c',
