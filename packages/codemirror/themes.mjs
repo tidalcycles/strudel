@@ -22,7 +22,7 @@ import gruvboxLight, { settings as gruvboxLightSettings } from './themes/gruvbox
 import materialDark, { settings as materialDarkSettings } from './themes/materialDark.mjs';
 import materialLight, { settings as materialLightSettings } from './themes/materialLight.mjs';
 import nord, { settings as nordSettings } from './themes/nord.mjs';
-import okaidia, { settings as okaidiaSettings } from './themes/okaidia.mjs';
+import monokai, { settings as monokaiSettings } from './themes/monokai.mjs';
 import solarizedDark, { settings as solarizedDarkSettings } from './themes/solarizedDark.mjs';
 import solarizedLight, { settings as solarizedLightSettings } from './themes/solarizedLight.mjs';
 import sublime, { settings as sublimeSettings } from './themes/sublime.mjs';
@@ -50,18 +50,15 @@ export const themes = {
   darcula,
   dracula,
   // todo: optimize
-  terminal,
-  bespin,
-  abcdef,
+  // bespin,
+  //abcdef,
   androidstudio,
   duotoneDark,
-  duotoneLight,
-  eclipse,
   githubDark,
   gruvboxDark,
   materialDark,
   nord,
-  okaidia,
+  monokai,
   solarizedDark,
   sublime,
   tokyoNight,
@@ -69,6 +66,8 @@ export const themes = {
   vscodeDark,
   xcodeDark,
   bbedit,
+  //duotoneLight,
+  eclipse,
   githubLight,
   gruvboxLight,
   materialLight,
@@ -106,7 +105,7 @@ export const settings = {
   materialLight: materialLightSettings,
   noctisLilac: noctisLilacSettings,
   nord: nordSettings,
-  okaidia: okaidiaSettings,
+  monokai: monokaiSettings,
   solarizedLight: solarizedLightSettings,
   solarizedDark: solarizedDarkSettings,
   sublime: sublimeSettings,

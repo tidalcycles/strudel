@@ -26,6 +26,7 @@ export default createTheme({
     lineHighlight: '#00000059',
   },
   styles: [
+    { tag: t.labelName, color: '#A2A9B5' },
     { tag: [t.meta, t.comment], color: '#A2A9B5' },
     { tag: [t.attributeName, t.keyword], color: '#B78FBA' },
     { tag: t.function(t.variableName), color: '#5AB0B0' },
