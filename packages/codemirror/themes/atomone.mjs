@@ -10,7 +10,7 @@ import { createTheme } from './theme-helper.mjs';
 export const settings = {
   background: '#272C35',
   lineBackground: '#272C3599',
-  foreground: '#9d9b97',
+  foreground: 'hsl(220, 14%, 71%)',
   caret: '#797977',
   selection: '#ffffff30',
   selectionMatch: '#2B323D',
@@ -40,7 +40,7 @@ export default createTheme({
     },
     { tag: [t.tagName, t.heading], color: '#e06c75' },
     { tag: t.comment, color: '#54636D' },
-    { tag: [t.propertyName], color: 'hsl(220, 14%, 71%)' },
+    { tag: [t.variableName, t.propertyName, t.labelName], color: 'hsl(220, 14%, 71%)' },
     { tag: [t.attributeName, t.number], color: 'hsl( 29, 54%, 61%)' },
     { tag: t.className, color: 'hsl( 39, 67%, 69%)' },
     { tag: t.keyword, color: 'hsl(286, 60%, 67%)' },

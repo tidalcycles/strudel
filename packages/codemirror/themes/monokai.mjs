@@ -26,6 +26,7 @@ export default createTheme({
     lineHighlight: '#0000003b',
   },
   styles: [
+    { tag: t.labelName, color: '#bababa' },
     { tag: [t.comment, t.documentMeta], color: '#8292a2' },
     { tag: [t.number, t.bool, t.null, t.atom], color: '#ae81ff' },
     { tag: [t.attributeValue, t.className, t.name], color: '#e6db74' },
@@ -36,7 +37,7 @@ export default createTheme({
     { tag: [t.regexp, t.className, t.typeName, t.definition(t.typeName)], color: '#66d9ef' },
     {
       tag: [t.definition(t.variableName), t.definition(t.propertyName), t.function(t.variableName)],
-      color: '#fd971f',
+      color: '#a6e22e',
     },
     // { tag: t.keyword, color: '#f92672' },
     { tag: [t.keyword, t.definitionKeyword, t.modifier, t.tagName, t.angleBracket], color: '#f92672' },

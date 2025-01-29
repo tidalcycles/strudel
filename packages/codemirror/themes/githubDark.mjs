@@ -25,10 +25,12 @@ export default createTheme({
     lineHighlight: '#36334280',
   },
   styles: [
+    { tag: t.labelName, color: '#d2a8ff' },
     { tag: [t.standard(t.tagName), t.tagName], color: '#7ee787' },
     { tag: [t.comment, t.bracket], color: '#8b949e' },
     { tag: [t.className, t.propertyName], color: '#d2a8ff' },
-    { tag: [t.variableName, t.attributeName, t.number, t.operator], color: '#79c0ff' },
+    { tag: [t.variableName, t.attributeName], color: '#d2a8ff' },
+    { tag: [t.number, t.operator], color: '#79c0ff' },
     { tag: [t.keyword, t.typeName, t.typeOperator, t.typeName], color: '#ff7b72' },
     { tag: [t.string, t.meta, t.regexp], color: '#a5d6ff' },
     { tag: [t.name, t.quote], color: '#7ee787' },
