@@ -1,29 +1,29 @@
 {
-    "name": "@strudel/desktopbridge",
-    "version": "0.1.0",
-    "private": true,
-    "description": "tools/shims for communicating between the JS and Tauri (Rust) sides of the Studel desktop app",
-    "main": "index.mjs",
-    "type": "module",
-    "repository": {
-      "type": "git",
-      "url": "git+https://github.com/tidalcycles/strudel.git"
-    },
-    "keywords": [
-      "tidalcycles",
-      "strudel",
-      "pattern",
-      "livecoding",
-      "algorave"
-    ],
-    "author": "Jade Rowland <jaderowlanddev@gmail.com>",
-    "license": "AGPL-3.0-or-later",
-    "bugs": {
-      "url": "https://github.com/tidalcycles/strudel/issues"
-    },
-    "dependencies": {
-        "@strudel/core": "workspace:*",
-        "@tauri-apps/api": "^1.5.3"
-      },
-    "homepage": "https://github.com/tidalcycles/strudel#readme"
-  }
+  "name": "@strudel/desktopbridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "tools/shims for communicating between the JS and Tauri (Rust) sides of the Studel desktop app",
+  "main": "index.mjs",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Jade Rowland <jaderowlanddev@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "dependencies": {
+    "@strudel/core": "workspace:*",
+    "@tauri-apps/api": "^2.2.0"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme"
+}
