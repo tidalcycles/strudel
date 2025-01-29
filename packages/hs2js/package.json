@@ -28,10 +28,10 @@
   },
   "homepage": "https://github.com/tidalcycles/strudel",
   "dependencies": {
-    "web-tree-sitter": "^0.20.8"
+    "web-tree-sitter": "^0.24.7"
   },
   "devDependencies": {
-    "tree-sitter-haskell": "^0.21.0",
-    "vite": "^5.0.10"
+    "tree-sitter-haskell": "^0.23.1",
+    "vite": "^6.0.11"
   }
 }

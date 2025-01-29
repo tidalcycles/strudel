@@ -530,7 +530,7 @@ export const undegrade = register('undegrade', (pat) => pat._undegradeBy(0.5), t
 
 export const sometimesBy = register('sometimesBy', function (patx, func, pat) {
   return reify(patx)
-    .fmap((x) => stack(pat._degradeBy(x), func(pat)._undegradeBy(1 - x)))
+    .fmap((x) => stack(pat._degradeBy(x), func(pat._undegradeBy(1 - x))))
     .innerJoin();
 });
 

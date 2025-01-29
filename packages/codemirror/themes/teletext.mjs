@@ -1,5 +1,5 @@
 import { tags as t } from '@lezer/highlight';
-import { createTheme } from '@uiw/codemirror-themes';
+import { createTheme } from './theme-helper.mjs';
 
 let colorA = '#6edee4';
 //let colorB = 'magenta';

@@ -1,5 +1,5 @@
 import { tags as t } from '@lezer/highlight';
-import { createTheme } from '@uiw/codemirror-themes';
+import { createTheme } from './theme-helper.mjs';
 export const settings = {
   background: '#051DB5',
   lineBackground: '#051DB550',
