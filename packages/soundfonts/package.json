@@ -32,10 +32,10 @@
     "@strudel/core": "workspace:*",
     "@strudel/webaudio": "workspace:*",
     "sfumato": "^0.1.2",
-    "soundfont2": "^0.4.0"
+    "soundfont2": "^0.5.0"
   },
   "devDependencies": {
     "node-fetch": "^3.3.2",
-    "vite": "^5.0.10"
+    "vite": "^6.0.11"
   }
 }

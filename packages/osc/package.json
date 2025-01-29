@@ -37,10 +37,10 @@
   "homepage": "https://github.com/tidalcycles/strudel#readme",
   "dependencies": {
     "@strudel/core": "workspace:*",
-    "osc-js": "^2.4.0"
+    "osc-js": "^2.4.1"
   },
   "devDependencies": {
     "pkg": "^5.8.1",
-    "vite": "^5.0.10"
+    "vite": "^6.0.11"
   }
 }

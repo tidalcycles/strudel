@@ -14,5 +14,6 @@
   "rules": {
     "no-unused-vars": ["warn", { "destructuredArrayIgnorePattern": ".", "ignoreRestSiblings": false }],
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
-  }
+  },
+  "files": ["**/*.mjs", "**/*.js"]
 }

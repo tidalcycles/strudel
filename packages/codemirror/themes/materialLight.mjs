@@ -1,0 +1,52 @@
+import { tags as t } from '@lezer/highlight';
+import { createTheme } from './theme-helper.mjs';
+
+export const settings = {
+  light: true,
+  background: '#FAFAFA',
+  lineBackground: '#FAFAFA99',
+  foreground: '#90A4AE',
+  caret: '#272727',
+  selection: '#80CBC440',
+  selectionMatch: '#FAFAFA',
+  gutterBackground: '#FAFAFA',
+  gutterForeground: '#90A4AE',
+  gutterBorder: 'transparent',
+  lineHighlight: '#CCD7DA50',
+};
+export default createTheme({
+  theme: 'light',
+  settings: {
+    background: '#FAFAFA',
+    foreground: '#90A4AE',
+    caret: '#272727',
+    selection: '#80CBC440',
+    selectionMatch: '#80CBC440',
+    gutterBackground: '#FAFAFA',
+    gutterForeground: '#90A4AE',
+    gutterBorder: 'transparent',
+    lineHighlight: '#CCD7DA50',
+  },
+  styles: [
+    { tag: t.keyword, color: '#39ADB5' },
+    { tag: [t.name, t.deleted, t.character, t.macroName], color: '#90A4AE' },
+    { tag: [t.propertyName], color: '#6182B8' },
+    { tag: [t.processingInstruction, t.string, t.inserted, t.special(t.string)], color: '#91B859' },
+    { tag: [t.function(t.variableName), t.labelName], color: '#6182B8' },
+    { tag: [t.color, t.constant(t.name), t.standard(t.name)], color: '#39ADB5' },
+    { tag: [t.definition(t.name), t.separator], color: '#90A4AE' },
+    { tag: [t.className], color: '#E2931D' },
+    { tag: [t.number, t.changed, t.annotation, t.modifier, t.self, t.namespace], color: '#F76D47' },
+    { tag: [t.typeName], color: '#E2931D', fontStyle: '#E2931D' },
+    { tag: [t.operator, t.operatorKeyword], color: '#39ADB5' },
+    { tag: [t.url, t.escape, t.regexp, t.link], color: '#91B859' },
+    { tag: [t.meta, t.comment], color: '#90A4AE' },
+    { tag: t.strong, fontWeight: 'bold' },
+    { tag: t.emphasis, fontStyle: 'italic' },
+    { tag: t.link, textDecoration: 'underline' },
+    { tag: t.heading, fontWeight: 'bold', color: '#39ADB5' },
+    { tag: [t.atom, t.bool, t.special(t.variableName)], color: '#90A4AE' },
+    { tag: t.invalid, color: '#E5393570' },
+    { tag: t.strikethrough, textDecoration: 'line-through' },
+  ],
+});
