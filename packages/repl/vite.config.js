@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite';
-import { dependencies } from './package.json';
 import { resolve } from 'path';
-// import { visualizer } from 'rollup-plugin-visualizer';
 import replace from '@rollup/plugin-replace';
 
 // https://vitejs.dev/config/

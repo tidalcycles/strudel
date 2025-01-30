@@ -35,8 +35,8 @@
     "@strudel/core": "workspace:*"
   },
   "devDependencies": {
-    "peggy": "^3.0.2",
-    "vite": "^5.0.10",
-    "vitest": "^2.1.3"
+    "peggy": "^4.2.0",
+    "vite": "^6.0.11",
+    "vitest": "^3.0.4"
   }
 }

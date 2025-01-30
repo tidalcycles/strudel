@@ -37,6 +37,6 @@
     "@strudel/webaudio": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^5.0.10"
+    "vite": "^6.0.11"
   }
 }

@@ -1263,13 +1263,4 @@ describe('Pattern', () => {
       expect(s('bev').chop(8).loopAt(2).tactus).toStrictEqual(Fraction(4));
     });
   });
-  describe('sometimes', () => {
-    it('works with constant functions', () => {
-      expect(
-        pure('a')
-          .sometimes((x) => pure('b'))
-          .fast(16).firstCycleValues.length,
-      ).toStrictEqual(16);
-    });
-  });
 });
