@@ -1,6 +1,6 @@
 /*
 pattern.mjs - Core pattern representation for strudel
-Copyright (C) 2022 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/pattern.mjs>
+Copyright (C) 2025 Strudel contributors - see <https://github.com/tidalcycles/strudel/blob/main/packages/core/pattern.mjs>
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
@@ -29,7 +29,7 @@ let stringParser;
 
 let __tactus = true;
 
-export const calculateTactus = function (x) {
+export const calculateSteps = function (x) {
   __tactus = x ? true : false;
 };
 
@@ -2765,9 +2765,9 @@ export function stepalt(...groups) {
 }
 
 /**
- * *EXPERIMENTAL* - Retains the given number of steps in a pattern (and dropping the rest), according to its 'tactus'.
+ * *EXPERIMENTAL* - Take the given number of steps from a pattern (and dropping the rest), according to its 'tactus'.
  */
-export const increase = stepRegister('increase', function (i, pat) {
+export const take = stepRegister('take', function (i, pat) {
   if (!pat.hasTactus) {
     return nothing;
   }
@@ -2796,18 +2796,18 @@ export const increase = stepRegister('increase', function (i, pat) {
 });
 
 /**
- * *EXPERIMENTAL* - Removes the given number of steps from a pattern, according to its 'tactus'.
+ * *EXPERIMENTAL* - Drops the given number of steps from a pattern, according to its 'tactus'.
  */
-export const decrease = stepRegister('decrease', function (i, pat) {
+export const drop = stepRegister('drop', function (i, pat) {
   if (!pat.hasTactus) {
     return nothing;
   }
 
   i = Fraction(i);
   if (i.lt(0)) {
-    return pat.increase(Fraction(0).sub(pat.tactus.add(i)));
+    return pat.take(Fraction(0).sub(pat.tactus.add(i)));
   }
-  return pat.increase(pat.tactus.sub(i));
+  return pat.take(pat.tactus.sub(i));
 });
 
 export const repeat = stepRegister('repeat', function (factor, pat) {
@@ -2866,6 +2866,7 @@ export const taper = register(
 
     const list = pat.taperlist(amount, times);
     const result = stepcat(...list);
+    // TODO is this calculation needed?
     result.tactus = list.reduce((a, b) => a.add(b.tactus), Fraction(0));
     return result;
   },
@@ -2913,10 +2914,10 @@ export const s_taper = taper;
 Pattern.prototype.s_taper = Pattern.prototype.taper;
 export const s_taperlist = taperlist;
 Pattern.prototype.s_taperlist = Pattern.prototype.taperlist;
-export const s_add = increase;
-Pattern.prototype.s_add = Pattern.prototype.increase;
-export const s_sub = decrease;
-Pattern.prototype.s_sub = Pattern.prototype.decrease;
+export const s_add = take;
+Pattern.prototype.s_add = Pattern.prototype.take;
+export const s_sub = drop;
+Pattern.prototype.s_sub = Pattern.prototype.drop;
 export const s_expand = expand;
 Pattern.prototype.s_expand = Pattern.prototype.expand;
 export const s_extend = repeat;

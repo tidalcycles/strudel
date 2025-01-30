@@ -52,7 +52,6 @@ import {
   stackRight,
   stackCentre,
   stepcat,
-  calculateTactus,
   sometimes,
 } from '../index.mjs';
 
@@ -1203,26 +1202,26 @@ describe('Pattern', () => {
       expect(sameFirst(sequence(0, 1, 2, 3, 4).taper(-1, 5), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)));
     });
   });
-  describe('increase and decrease', () => {
-    it('can increase from the left', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).increase(2), sequence(0, 1)));
+  describe('take and drop', () => {
+    it('can take from the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).take(2), sequence(0, 1)));
     });
-    it('can decrease to the left', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).decrease(2), sequence(0, 1, 2)));
+    it('can drop from the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).drop(2), sequence(0, 1, 2)));
     });
-    it('can increase from the right', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).increase(-2), sequence(3, 4)));
+    it('can take from the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).take(-2), sequence(3, 4)));
     });
-    it('can decrease to the right', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).decrease(-2), sequence(2, 3, 4)));
+    it('can drop from the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).drop(-2), sequence(2, 3, 4)));
     });
-    it('can decrease nothing', () => {
-      expect(sameFirst(pure('a').decrease(0), pure('a')));
+    it('can drop nothing', () => {
+      expect(sameFirst(pure('a').drop(0), pure('a')));
     });
-    it('can decrease nothing, repeatedly', () => {
-      expect(sameFirst(pure('a').decrease(0, 0), fastcat('a', 'a')));
+    it('can drop nothing, repeatedly', () => {
+      expect(sameFirst(pure('a').drop(0, 0), fastcat('a', 'a')));
       for (var i = 0; i < 100; ++i) {
-        expect(sameFirst(pure('a').decrease(...Array(i).fill(0)), fastcat(...Array(i).fill('a'))));
+        expect(sameFirst(pure('a').drop(...Array(i).fill(0)), fastcat(...Array(i).fill('a'))));
       }
     });
   });
