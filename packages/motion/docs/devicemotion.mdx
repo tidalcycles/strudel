@@ -54,8 +54,8 @@ Here's a simple example that uses device motion to control a synthesizer:
   client:idle
   tune={`enableMotion()
 // Create a simple melody
-$:n("0 1 3 5").
-.scale("C major")
+$:n("0 1 3 5")
+.scale("C:major")
 // Use tilt (gravity) to control filter
 .lpf(gravityY.range(200, 2000)) // tilt forward/back for filter cutoff
 // Use rotation to control effects
