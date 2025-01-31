@@ -33,6 +33,6 @@
     "paho-mqtt": "^1.1.0"
   },
   "devDependencies": {
-    "vite": "^5.0.10"
+    "vite": "^6.0.11"
   }
 }

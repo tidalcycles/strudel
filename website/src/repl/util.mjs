@@ -6,7 +6,7 @@ import { isTauri } from '../tauri.mjs';
 import './Repl.css';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
-import { writeText } from '@tauri-apps/api/clipboard';
+import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { $featuredPatterns, loadDBPatterns } from '@src/user_pattern_utils.mjs';
 
 // Create a single supabase client for interacting with your database

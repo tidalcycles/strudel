@@ -23,6 +23,9 @@ function onMessageArrived(message) {
 
 function onFailure(err) {
   console.error('Connection failed: ', err);
+  if (typeof window !== 'undefined') {
+    document.cookie = 'mqtt_pass=';
+  }
 }
 
 Pattern.prototype.mqtt = function (
@@ -35,12 +38,17 @@ Pattern.prototype.mqtt = function (
 ) {
   const key = host + '-' + client;
   let connected = false;
+  let password_entered = false;
+
   if (!client) {
     client = 'strudel-' + String(Math.floor(Math.random() * 1000000));
   }
   function onConnect() {
     console.log('Connected to mqtt broker');
     connected = true;
+    if (password_entered) {
+      document.cookie = 'mqtt_pass=' + password;
+    }
   }
 
   let cx;
@@ -58,6 +66,17 @@ Pattern.prototype.mqtt = function (
 
     if (username) {
       props.userName = username;
+      if (typeof password === 'undefined' && typeof window !== 'undefined') {
+        const cookie = /mqtt_pass=(\w+)/.exec(window.document.cookie);
+        if (cookie) {
+          password = cookie[1];
+        }
+        if (typeof password === 'undefined') {
+          password = prompt('Please enter MQTT server password');
+          password_entered = true;
+        }
+      }
+
       props.password = password;
     }
     cx.connect(props);
