@@ -12,7 +12,7 @@ Initialize a gamepad by calling the gamepad() function with an optional index pa
   client:idle
   tune={`// Initialize gamepad (optional index parameter, defaults to 0)
 const gp = gamepad(0)
-note("c a f e").gain(gp.a)`}
+note("c a f e").mask(gp.a)`}
 />
 
 ## Available Controls
@@ -58,11 +58,11 @@ You can use button inputs to control different aspects of your music, such as ga
   tune={`const gp = gamepad(0)
   // Use button values to control amplitude
 $: stack(
-  s("[[hh hh] oh hh oh]/2").gain(gp.tglX).bank("RolandTR909"), // X btn for HH
-   s("cr*1").gain(gp.Y).bank("RolandTR909"), // LB btn for CR
-  s("bd").gain(gp.tglA).bank("RolandTR909"), // A btn for BD
-  s("[ht - - mt - - lt - ]/2").gain(gp.tglB).bank("RolandTR909"), // B btn for Toms
-  s("sd*4").gain(gp.RB).bank("RolandTR909"), // RB btn for SD
+  s("[[hh hh] oh hh oh]/2").mask(gp.tglX).bank("RolandTR909"), // X btn for HH
+   s("cr*1").mask(gp.Y).bank("RolandTR909"), // LB btn for CR
+  s("bd").mask(gp.tglA).bank("RolandTR909"), // A btn for BD
+  s("[ht - - mt - - lt - ]/2").mask(gp.tglB).bank("RolandTR909"), // B btn for Toms
+  s("sd*4").mask(gp.RB).bank("RolandTR909"), // RB btn for SD
 ).cpm(120)
 `}
 />
@@ -99,7 +99,7 @@ const KONAMI = 'uuddlrlrba' //Konami Code ↑↑↓↓←→←→BA
 
 // Check butto-n sequence (returns 1 while detected, 0 when not within last 1 second)
 $: s("free_hadouken -").slow(2)
-.gain(gp.btnSequence(HADOUKEN)).room(1).cpm(120)
+.mask(gp.btnSequence(HADOUKEN)).room(1).cpm(120)
 
 // hadouken.wav by Syna-Max
 //https://freesound.org/people/Syna-Max/sounds/67674/
