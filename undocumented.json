@@ -207,9 +207,7 @@
     "_polymeterListSteps",
     "s_extend",
     "s_expand",
-    "s_contract",
-    "loopat",
-    "loopatcps"
+    "s_contract"
   ],
   "/packages/core/controls.mjs": [
     "createParam",
@@ -334,18 +332,6 @@
   ],
   "/packages/core/zyklus.mjs": [],
   "/packages/core/signal.mjs": [
-    "steady",
-    "signal",
-    "isaw",
-    "isaw2",
-    "saw2",
-    "sine2",
-    "cosine2",
-    "square2",
-    "tri2",
-    "time",
-    "mouseY",
-    "mouseX",
     "randrun",
     "shuffle",
     "scramble",

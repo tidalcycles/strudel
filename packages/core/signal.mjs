@@ -10,23 +10,56 @@ import Fraction from './fraction.mjs';
 
 import { id, keyAlias, getCurrentKeyboardState } from './util.mjs';
 
+/**
+ * A `signal` consisting of a constant value. Similar to `pure`, except that function
+ * creates a pattern with one event per cycle, whereas this pattern doesn't have an intrinsic
+ * structure.
+ *
+ * @param {*} value The constant value of the resulting pattern
+ * @returns Pattern
+ */
 export function steady(value) {
   // A continuous value
   return new Pattern((state) => [new Hap(undefined, state.span, value)]);
 }
 
+/**
+ * Creates a "signal", an unstructured pattern consisting of a single value that changes
+ * over time.
+ *
+ *
+ * @param {*} func
+ * @returns Pattern
+ */
 export const signal = (func) => {
   const query = (state) => [new Hap(undefined, state.span, func(state.span.midpoint()))];
   return new Pattern(query);
 };
 
+/**
+ * An inverse sawtooth signal between 1 and 0.
+ *
+ * @type {Pattern}
+ * @example
+ * note("<c3 [eb3,g3] g2 [g3,bb3]>*8")
+ * .clip(isaw.slow(2))
+ * @example
+ * n(isaw.range(0,8).segment(8))
+ * .scale('C major')
+ */
 export const isaw = signal((t) => 1 - (t % 1));
+
+/**
+ * Variant of `isaw` that ranges between 1 and -1.
+ *
+ * @type {Pattern}
+ */
 export const isaw2 = isaw.toBipolar();
 
 /**
  *  A sawtooth signal between 0 and 1.
  *
- * @return {Pattern}
+ * @type {Pattern}
  * @example
  * note("<c3 [eb3,g3] g2 [g3,bb3]>*8")
  * .clip(saw.slow(2))
@@ -36,8 +69,19 @@ export const isaw2 = isaw.toBipolar();
  *
  */
 export const saw = signal((t) => t % 1);
+
+/**
+ * Variant of `saw` that ranges between -1 and 1.
+ *
+ * @type {Pattern}
+ */
 export const saw2 = saw.toBipolar();
 
+/**
+ * Variant of `sine` that ranges between -1 and 1.
+ *
+ * @type {Pattern}
+ */
 export const sine2 = signal((t) => Math.sin(Math.PI * 2 * t));
 
 /**
@@ -61,6 +105,12 @@ export const sine = sine2.fromBipolar();
  *
  */
 export const cosine = sine._early(Fraction(1).div(4));
+
+/**
+ * Variant of `cosine` that ranges between -1 and 1.
+ *
+ * @type {Pattern}
+ */
 export const cosine2 = sine2._early(Fraction(1).div(4));
 
 /**
@@ -72,6 +122,12 @@ export const cosine2 = sine2._early(Fraction(1).div(4));
  *
  */
 export const square = signal((t) => Math.floor((t * 2) % 2));
+
+/**
+ * Variant of `square` that ranges between -1 and 1.
+ *
+ * @type {Pattern}
+ */
 export const square2 = square.toBipolar();
 
 /**
@@ -83,13 +139,25 @@ export const square2 = square.toBipolar();
  *
  */
 export const tri = fastcat(isaw, saw);
+
+/**
+ * Variant of `tri` that ranges between -1 and 1.
+ *
+ * @type {Pattern}
+ */
 export const tri2 = fastcat(isaw2, saw2);
 
+/**
+ * The current cycle count as a signal.
+ *
+ * @type {Pattern}
+ */
 export const time = signal(id);
 
 /**
  *  The mouse's x position value ranges from 0 to 1.
  * @name mousex
+ * @synonyms mouseX
  * @return {Pattern}
  * @example
  * n(mousex.segment(4).range(0,7)).scale("C:minor")
@@ -99,6 +167,7 @@ export const time = signal(id);
 /**
  *  The mouse's y position value ranges from 0 to 1.
  * @name mousey
+ * @synonyms mouseY
  * @return {Pattern}
  * @example
  * n(mousey.segment(4).range(0,7)).scale("C:minor")
@@ -147,10 +216,6 @@ const timeToRandsPrime = (seed, n) => {
 };
 
 const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
-
-/**
- *
- */
 
 /**
  * A discrete pattern of numbers from 0 to n-1
