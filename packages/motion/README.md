@@ -8,33 +8,6 @@ This package adds device motion sensing functionality to strudel Patterns.
 npm i @strudel/motion --save
 ```
 
-## Setup SSL for Local Development
-`DeviceMotionEvent` only works with HTTPS, so you'll need to enable SSL for local development.
-Try installing an SSL plugin for Vite.
-
-```
-cd website
-pnpm install -D @vitejs/plugin-basic-ssl
-```
-
-add the basicSsl plugin to the defineConfig block in `strudel/website/astro.config.mjs`
-```
-vite: {
-  plugins: [basicSsl()],
-  server: {
-    host: '0.0.0.0', // Ensures it binds to all network interfaces
-    // https: { 
-    //   key: '../../key.pem', //
-    //   cert: '../../cert.pem',
-    // },
-  },
-},
-```
-
-generate an SSL certificate to avoid security warnings.
-
-`openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout key.pem -out cert.pem`
-
 ## Usage
 
 | Motion  | Long Names & Aliases | Description |
@@ -68,3 +41,32 @@ $:n("[0 1 3 1 5 4]/4")
   .attack(rotB.range(0,0.1))
   .sound("sawtooth").cpm(tempo)
 ```
+
+## Setup SSL for Local Development
+
+`DeviceMotionEvent` only works with HTTPS, so you'll need to enable SSL for local development.
+Try installing an SSL plugin for Vite.
+
+```sh
+cd website
+pnpm install -D @vitejs/plugin-basic-ssl
+```
+
+add the basicSsl plugin to the defineConfig block in `strudel/website/astro.config.mjs`
+
+```js
+vite: {
+  plugins: [basicSsl()],
+  server: {
+    host: '0.0.0.0', // Ensures it binds to all network interfaces
+    // https: { 
+    //   key: '../../key.pem', //
+    //   cert: '../../cert.pem',
+    // },
+  },
+},
+```
+
+generate an SSL certificate to avoid security warnings.
+
+`openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout key.pem -out cert.pem`
