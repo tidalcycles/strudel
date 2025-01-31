@@ -20,14 +20,14 @@ npm i @strudel/motion --save
 
 ## Example
 
-```
+```js
 enableMotion() //enable DeviceMotion 
 
-let tempo = 200
+setcpm(200/4)
 
 $_: accX.segment(16).gain().log()
 
-$:n("[0 1 3 1 5 4]/4")
+$:n("0 1 3 1 5 4")
   .scale("Bb:lydian")
   .sometimesBy(0.5,sub(note(12)))
   .lpf(gravityY.range(20,1000))
@@ -39,7 +39,7 @@ $:n("[0 1 3 1 5 4]/4")
   .delay(rotG.range(0,1))
   .decay(rotA.range(0,1))
   .attack(rotB.range(0,0.1))
-  .sound("sawtooth").cpm(tempo)
+  .sound("sawtooth")
 ```
 
 ## Setup SSL for Local Development
