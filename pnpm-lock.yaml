@@ -331,6 +331,16 @@ importers:
         specifier: ^3.0.4
         version: 3.0.4(@types/debug@4.1.12)(@types/node@22.10.10)(@vitest/ui@3.0.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
 
+  packages/motion:
+    dependencies:
+      '@strudel/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      vite:
+        specifier: ^6.0.11
+        version: 6.0.11(@types/node@22.10.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+
   packages/mqtt:
     dependencies:
       '@strudel/core':
@@ -639,6 +649,9 @@ importers:
       '@strudel/mini':
         specifier: workspace:*
         version: link:../packages/mini
+      '@strudel/motion':
+        specifier: workspace:*
+        version: link:../packages/motion
       '@strudel/mqtt':
         specifier: workspace:*
         version: link:../packages/mqtt
