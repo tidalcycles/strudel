@@ -2595,10 +2595,10 @@ export function _match(span, hap_p) {
 /**
  * *EXPERIMENTAL* - Speeds a pattern up or down, to fit to the given number of steps per cycle.
  * @example
- * s("bd sd cp").mesh(4)
+ * s("bd sd cp").pace(4)
  * // The same as s("{bd sd cp}%4") or s("<bd sd cp>*4")
  */
-export const mesh = register('mesh', function (targetTactus, pat) {
+export const pace = register('pace', function (targetTactus, pat) {
   if (pat.tactus === undefined) {
     return pat;
   }
@@ -2651,7 +2651,7 @@ export function polymeterSteps(steps, ...args) {
     return _polymeterListSteps(steps, ...args);
   }
 
-  return polymeter(...args).mesh(steps);
+  return polymeter(...args).pace(steps);
 }
 
 /**
@@ -2928,8 +2928,8 @@ export const s_tour = tour;
 Pattern.prototype.s_tour = Pattern.prototype.tour;
 export const s_zip = zip;
 Pattern.prototype.s_zip = Pattern.prototype.zip;
-export const steps = mesh;
-Pattern.prototype.steps = Pattern.prototype.mesh;
+export const steps = pace;
+Pattern.prototype.steps = Pattern.prototype.pace;
 
 //////////////////////////////////////////////////////////////////////
 // Control-related functions, i.e. ones that manipulate patterns of
