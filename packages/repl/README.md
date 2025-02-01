@@ -94,3 +94,15 @@ or
 The `.editor` property on the `strudel-editor` web component gives you the instance of [StrudelMirror](https://github.com/tidalcycles/strudel/blob/a46bd9b36ea7d31c9f1d3fca484297c7da86893f/packages/codemirror/codemirror.mjs#L124) that runs the REPL.
 
 For example, you could use `setCode` to change the code from the outside, `start` / `stop` to toggle playback or `evaluate` to evaluate the code.
+
+## Development: How to Test
+
+```sh
+cd packages/repl
+pnpm build
+cd ../.. # back to root folder
+# edit ./examples/buildless/web-component-no-iframe.html
+# use <script src="/packages/repl/dist/index.js"></script>
+pnpx serve # from root folder
+# go to http://localhost:3000/examples/buildless/web-component-no-iframe
+```
