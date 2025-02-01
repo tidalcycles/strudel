@@ -314,6 +314,7 @@ export function resetGlobalEffects() {
 }
 
 export const superdough = async (value, t, hapDuration) => {
+  const ac = getAudioContext();
   t = typeof t === 'string' && t.startsWith('=') ? Number(t.slice(1)) : ac.currentTime + t;
   let { stretch } = value;
   if (stretch != null) {
@@ -321,7 +322,6 @@ export const superdough = async (value, t, hapDuration) => {
     const latency = 0.04;
     t = t - latency;
   }
-  const ac = getAudioContext();
   if (typeof value !== 'object') {
     throw new Error(
       `expected hap.value to be an object, but got "${value}". Hint: append .note() or .s() to the end`,
