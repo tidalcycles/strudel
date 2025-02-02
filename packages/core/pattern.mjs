@@ -2593,10 +2593,12 @@ export function _match(span, hap_p) {
 }
 
 /**
- * *EXPERIMENTAL* - Speeds a pattern up or down, to fit to the given number of steps per cycle.
+ * *Experimental*
+ *
+ * Speeds a pattern up or down, to fit to the given number of steps per cycle.
  * @example
- * s("bd sd cp").pace(4)
- * // The same as s("{bd sd cp}%4") or s("<bd sd cp>*4")
+ * sound("bd sd cp").pace(4)
+ * // The same as sound("{bd sd cp}%4") or sound("<bd sd cp>*4")
  */
 export const pace = register('pace', function (targetTactus, pat) {
   if (pat.tactus === undefined) {
@@ -2632,8 +2634,9 @@ export function _polymeterListSteps(steps, ...args) {
 }
 
 /**
- * Aligns one or more given patterns to the given number of steps per cycle.
- * This relies on patterns having coherent number of steps per cycle,
+ * *Experimental*
+ *
+ * Aligns the steps of the patterns, to match the given number of steps per cycle, creating polymeters.
  *
  * @name polymeterSteps
  * @param  {number} steps how many items are placed in one cycle
@@ -2655,7 +2658,9 @@ export function polymeterSteps(steps, ...args) {
 }
 
 /**
- * *EXPERIMENTAL* - Combines the given lists of patterns with the same pulse, creating polymeters when different sized sequences are used.
+ * *Experimental*
+ *
+ * Aligns the steps of the patterns, to match the steps per cycle of the first pattern, creating polymeters. See `polymeterSteps` to set the target steps explicitly.
  * @synonyms pm
  * @example
  * // The same as note("{c eb g, c2 g2}")
@@ -2685,9 +2690,9 @@ export function polymeter(...args) {
   return result;
 }
 
-/** Sequences patterns like `seq`, but each pattern has a length, relative to the whole.
- * This length can either be provided as a [length, pattern] pair, or inferred from
- * the pattern's 'tactus', generally inferred by the mininotation. Has the alias `timecat`.
+/** 'Concatenates' patterns like `fastcat`, but proportional to a number of steps per cycle.
+ * The steps can either be inferred from the pattern, or provided as a [length, pattern] pair.
+ * Has the alias `timecat`.
  * @name stepcat
  * @synonyms timeCat, timecat
  * @return {Pattern}
@@ -2741,12 +2746,15 @@ export function stepcat(...timepats) {
 }
 
 /**
- * *EXPERIMENTAL* - Concatenates patterns stepwise, according to their 'tactus'.
+ * *Experimental*
+ *
+ * Concatenates patterns stepwise, according to an inferred 'steps per cycle'.
  * Similar to `stepcat`, but if an argument is a list, the whole pattern will alternate between the elements in the list.
  *
  * @return {Pattern}
  * @example
  * stepalt(["bd cp", "mt"], "bd").sound()
+ * // The same as "bd cp bd mt bd".sound()
  */
 export function stepalt(...groups) {
   groups = groups.map((a) => (Array.isArray(a) ? a.map(reify) : [reify(a)]));
@@ -2765,7 +2773,20 @@ export function stepalt(...groups) {
 }
 
 /**
- * *EXPERIMENTAL* - Take the given number of steps from a pattern (and dropping the rest), according to its 'tactus'.
+ * *Experimental*
+ *
+ * Takes the given number of steps from a pattern (dropping the rest).
+ * A positive number will take steps from the start of a pattern, and a negative number from the end.
+ * @return {Pattern}
+ * @example
+ * "bd cp ht mt".take("2").sound()
+ * // The same as "bd cp".sound()
+ * @example
+ * "bd cp ht mt".take("1 2 3").sound()
+ * // The same as "bd bd cp bd cp ht".sound()
+ * @example
+ * "bd cp ht mt".take("-1 -2 -3").sound()
+ * // The same as "mt ht mt cp ht mt".sound()
  */
 export const take = stepRegister('take', function (i, pat) {
   if (!pat.hasTactus) {
@@ -2796,7 +2817,23 @@ export const take = stepRegister('take', function (i, pat) {
 });
 
 /**
- * *EXPERIMENTAL* - Drops the given number of steps from a pattern, according to its 'tactus'.
+ * *Experimental*
+ *
+ * Drops the given number of steps from a pattern.
+ * A positive number will drop steps from the start of a pattern, and a negative number from the end.
+ * @return {Pattern}
+ * @example
+ * "bd cp ht mt".drop("1").sound()
+ * // The same as "cp ht mt".sound()
+ * @example
+ * "bd cp ht mt".drop("-1").sound()
+ * // The same as "bd cp ht".sound()
+ * @example
+ * "bd cp ht mt".drop("1 2 3").sound()
+ * // The same as "cp ht mt ht mt mt".sound()
+ * @example
+ * "bd cp ht mt".drop("-1 -2 -3").sound()
+ * // The same as "bd cp ht bd cp bd".sound()
  */
 export const drop = stepRegister('drop', function (i, pat) {
   if (!pat.hasTactus) {
@@ -2805,9 +2842,9 @@ export const drop = stepRegister('drop', function (i, pat) {
 
   i = Fraction(i);
   if (i.lt(0)) {
-    return pat.take(Fraction(0).sub(pat.tactus.add(i)));
+    return pat.take(pat.tactus.add(i));
   }
-  return pat.take(pat.tactus.sub(i));
+  return pat.take(Fraction(0).sub(pat.tactus.sub(i)));
 });
 
 export const repeat = stepRegister('repeat', function (factor, pat) {
@@ -2822,49 +2859,106 @@ export const contract = stepRegister('contract', function (factor, pat) {
   return pat.withTactus((t) => t.div(Fraction(factor)));
 });
 
-/**
- * *EXPERIMENTAL*
- */
-Pattern.prototype.taperlist = function (amount, times) {
+Pattern.prototype.shrinklist = function (amount) {
   const pat = this;
 
   if (!pat.hasTactus) {
     return [pat];
   }
 
-  times = times - 1;
+  let [amountv, times] = Array.isArray(amount) ? amount : [amount, pat.tactus];
+  amountv = Fraction(amountv);
 
-  if (times === 0) {
+  if (times === 0 || amountv === 0) {
     return [pat];
   }
 
-  const list = [];
-  const reverse = amount > 0;
-  amount = Fraction(Math.abs(amount));
-  const start = pat.tactus.sub(amount.mul(Fraction(times))).max(Fraction(0));
-
-  for (let i = 0; i < times; ++i) {
-    list.push(pat.zoom(0, start.add(amount.mul(Fraction(i))).div(pat.tactus)));
+  const fromstart = amountv > 0;
+  const ranges = [];
+  if (fromstart) {
+    const seg = Fraction(1).div(pat.tactus).mul(amountv);
+    for (let i = 0; i < times; ++i) {
+      const s = seg.mul(i);
+      if (s.gt(1)) {
+        break;
+      }
+      ranges.push([s, 1]);
+    }
+  } else {
+    amountv = Fraction(0).sub(amountv);
+    const seg = Fraction(1).div(pat.tactus).mul(amountv);
+    for (let i = 0; i < times; ++i) {
+      const e = Fraction(1).sub(seg.mul(i));
+      if (e.lt(0)) {
+        break;
+      }
+      ranges.push([Fraction(0), e]);
+    }
   }
-  list.push(pat);
-  if (reverse) {
-    list.reverse();
-  }
-  return list;
+  return ranges.map((x) => pat.zoom(...x));
 };
-export const taperlist = (amount, times, pat) => pat.taperlist(amount, times);
+
+export const shrinklist = (amount, pat) => pat.shrinklist(amount, times);
 
 /**
- * *EXPERIMENTAL*
+ * *Experimental*
+ *
+ * Progressively shrinks the pattern by 'n' steps until there's nothing left, or if a second value is given (using mininotation list syntax with `:`),
+ * that number of times.
+ * A positive number will progressively drop steps from the start of a pattern, and a negative number from the end.
+ * @return {Pattern}
+ * @example
+ * "bd cp ht mt".shrink("1").sound()
+ * // The same as "bd cp ht mt".drop("0 1 2 3").sound()
+ * @example
+ * "bd cp ht mt".shrink("-1").sound()
+ * // The same as "bd cp ht mt".drop("0 -1 -2 -3").sound()
+ * @example
+ * "bd cp ht mt".grow("1 -1").sound()
  */
-export const taper = register(
-  'taper',
-  function (amount, times, pat) {
+
+export const shrink = register(
+  'shrink',
+  function (amount, pat) {
     if (!pat.hasTactus) {
       return nothing;
     }
 
-    const list = pat.taperlist(amount, times);
+    const list = pat.shrinklist(amount);
+    const result = stepcat(...list);
+    // TODO is this calculation needed?
+    result.tactus = list.reduce((a, b) => a.add(b.tactus), Fraction(0));
+    return result;
+  },
+  true,
+  false,
+  (x) => x.stepJoin(),
+);
+
+/**
+ * *Experimental*
+ *
+ * Progressively grows the pattern by 'n' steps until the full pattern is played, or if a second value is given (using mininotation list syntax with `:`),
+ * that number of times.
+ * A positive number will progressively grow steps from the start of a pattern, and a negative number from the end.
+ * @return {Pattern}
+ * @example
+ * "bd cp ht mt".grow("1").sound()
+ * // The same as "bd cp ht mt".take("1 2 3 4")
+ * @example
+ * "bd cp ht mt".grow("-1").sound()
+ * // The same as "bd cp ht mt".take("-1 -2 -3 -4")
+ */
+
+export const grow = register(
+  'grow',
+  function (amount, pat) {
+    if (!pat.hasTactus) {
+      return nothing;
+    }
+
+    const list = pat.shrinklist(Fraction(0).sub(amount));
+    list.reverse();
     const result = stepcat(...list);
     // TODO is this calculation needed?
     result.tactus = list.reduce((a, b) => a.add(b.tactus), Fraction(0));
@@ -2910,10 +3004,10 @@ export const s_polymeterSteps = polymeterSteps;
 Pattern.prototype.s_polymeterSteps = Pattern.prototype.polymeterSteps;
 export const s_polymeter = polymeter;
 Pattern.prototype.s_polymeter = Pattern.prototype.polymeter;
-export const s_taper = taper;
-Pattern.prototype.s_taper = Pattern.prototype.taper;
-export const s_taperlist = taperlist;
-Pattern.prototype.s_taperlist = Pattern.prototype.taperlist;
+export const s_taper = shrink;
+Pattern.prototype.s_taper = Pattern.prototype.shrink;
+export const s_taperlist = shrinklist;
+Pattern.prototype.s_taperlist = Pattern.prototype.shrinklist;
 export const s_add = take;
 Pattern.prototype.s_add = Pattern.prototype.take;
 export const s_sub = drop;
