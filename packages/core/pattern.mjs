@@ -27,10 +27,10 @@ import { logger } from './logger.mjs';
 
 let stringParser;
 
-let __tactus = true;
+let __steps = true;
 
 export const calculateSteps = function (x) {
-  __tactus = x ? true : false;
+  __steps = x ? true : false;
 };
 
 // parser is expected to turn a string into a pattern
@@ -46,34 +46,34 @@ export class Pattern {
    * @param {function} query - The function that maps a `State` to an array of `Hap`.
    * @noAutocomplete
    */
-  constructor(query, tactus = undefined) {
+  constructor(query, steps = undefined) {
     this.query = query;
     this._Pattern = true; // this property is used to detectinstance of another Pattern
-    this.tactus = tactus; // in terms of number of steps per cycle
+    this._steps = steps; // in terms of number of steps per cycle
   }
 
-  get tactus() {
-    return this.__tactus;
+  get _steps() {
+    return this.__steps;
   }
 
-  set tactus(tactus) {
-    this.__tactus = tactus === undefined ? undefined : Fraction(tactus);
+  set _steps(steps) {
+    this.__steps = steps === undefined ? undefined : Fraction(steps);
   }
 
-  setTactus(tactus) {
-    this.tactus = tactus;
+  setSteps(steps) {
+    this._steps = steps;
     return this;
   }
 
-  withTactus(f) {
-    if (!__tactus) {
+  withSteps(f) {
+    if (!__steps) {
       return this;
     }
-    return new Pattern(this.query, this.tactus === undefined ? undefined : f(this.tactus));
+    return new Pattern(this.query, this._steps === undefined ? undefined : f(this._steps));
   }
 
-  get hasTactus() {
-    return this.tactus !== undefined;
+  get hasSteps() {
+    return this._steps !== undefined;
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ export class Pattern {
    */
   withValue(func) {
     const result = new Pattern((state) => this.query(state).map((hap) => hap.withValue(func)));
-    result.tactus = this.tactus;
+    result._steps = this._steps;
     return result;
   }
 
@@ -166,8 +166,8 @@ export class Pattern {
       return span_a.intersection_e(span_b);
     };
     const result = pat_func.appWhole(whole_func, pat_val);
-    if (__tactus) {
-      result.tactus = lcm(pat_val.tactus, pat_func.tactus);
+    if (__steps) {
+      result._steps = lcm(pat_val._steps, pat_func._steps);
     }
     return result;
   }
@@ -203,7 +203,7 @@ export class Pattern {
       return haps;
     };
     const result = new Pattern(query);
-    result.tactus = this.tactus;
+    result._steps = this._steps;
     return result;
   }
 
@@ -236,7 +236,7 @@ export class Pattern {
       return haps;
     };
     const result = new Pattern(query);
-    result.tactus = pat_val.tactus;
+    result._steps = pat_val._steps;
     return result;
   }
 
@@ -280,7 +280,7 @@ export class Pattern {
   }
 
   outerBind(func) {
-    return this.bindWhole((a) => a, func).setTactus(this.tactus);
+    return this.bindWhole((a) => a, func).setSteps(this._steps);
   }
 
   outerJoin() {
@@ -388,7 +388,7 @@ export class Pattern {
 
   polyJoin = function () {
     const pp = this;
-    return pp.fmap((p) => p.repeat(pp.tactus.div(p.tactus))).outerJoin();
+    return pp.fmap((p) => p.repeat(pp._steps.div(p._steps))).outerJoin();
   };
 
   polyBind(func) {
@@ -499,7 +499,7 @@ export class Pattern {
    */
   withHaps(func) {
     const result = new Pattern((state) => func(this.query(state), state));
-    result.tactus = this.tactus;
+    result._steps = this._steps;
     return result;
   }
 
@@ -589,7 +589,7 @@ export class Pattern {
    * @noAutocomplete
    */
   filterValues(value_test) {
-    return new Pattern((state) => this.query(state).filter((hap) => value_test(hap.value))).setTactus(this.tactus);
+    return new Pattern((state) => this.query(state).filter((hap) => value_test(hap.value))).setSteps(this._steps);
   }
 
   /**
@@ -1182,13 +1182,13 @@ export const pm = polymeter;
 // Elemental patterns
 
 /**
- * Does absolutely nothing, but with a given metrical 'tactus'
+ * Does absolutely nothing, but with a given metrical 'steps'
  * @name gap
- * @param  {number} tactus
+ * @param  {number} steps
  * @example
  * gap(3) // "~@3"
  */
-export const gap = (tactus) => new Pattern(() => [], tactus);
+export const gap = (steps) => new Pattern(() => [], steps);
 
 /**
  * Does absolutely nothing..
@@ -1198,7 +1198,7 @@ export const gap = (tactus) => new Pattern(() => [], tactus);
  */
 export const silence = gap(1);
 
-/* Like silence, but with a 'tactus' (relative duration) of 0 */
+/* Like silence, but with a 'steps' (relative duration) of 0 */
 export const nothing = gap(0);
 
 /** A discrete value that repeats once per cycle.
@@ -1263,8 +1263,8 @@ export function stack(...pats) {
   pats = pats.map((pat) => (Array.isArray(pat) ? sequence(...pat) : reify(pat)));
   const query = (state) => flatten(pats.map((pat) => pat.query(state)));
   const result = new Pattern(query);
-  if (__tactus) {
-    result.tactus = lcm(...pats.map((pat) => pat.tactus));
+  if (__steps) {
+    result._steps = lcm(...pats.map((pat) => pat._steps));
   }
   return result;
 }
@@ -1277,33 +1277,33 @@ function _stackWith(func, pats) {
   if (pats.length === 1) {
     return pats[0];
   }
-  const [left, ...right] = pats.map((pat) => pat.tactus);
-  const tactus = __tactus ? left.maximum(...right) : undefined;
-  return stack(...func(tactus, pats));
+  const [left, ...right] = pats.map((pat) => pat._steps);
+  const steps = __steps ? left.maximum(...right) : undefined;
+  return stack(...func(steps, pats));
 }
 
 export function stackLeft(...pats) {
   return _stackWith(
-    (tactus, pats) => pats.map((pat) => (pat.tactus.eq(tactus) ? pat : stepcat(pat, gap(tactus.sub(pat.tactus))))),
+    (steps, pats) => pats.map((pat) => (pat._steps.eq(steps) ? pat : stepcat(pat, gap(steps.sub(pat._steps))))),
     pats,
   );
 }
 
 export function stackRight(...pats) {
   return _stackWith(
-    (tactus, pats) => pats.map((pat) => (pat.tactus.eq(tactus) ? pat : stepcat(gap(tactus.sub(pat.tactus)), pat))),
+    (steps, pats) => pats.map((pat) => (pat._steps.eq(steps) ? pat : stepcat(gap(steps.sub(pat._steps)), pat))),
     pats,
   );
 }
 
 export function stackCentre(...pats) {
   return _stackWith(
-    (tactus, pats) =>
+    (steps, pats) =>
       pats.map((pat) => {
-        if (pat.tactus.eq(tactus)) {
+        if (pat._steps.eq(steps)) {
           return pat;
         }
-        const g = gap(tactus.sub(pat.tactus).div(2));
+        const g = gap(steps.sub(pat._steps).div(2));
         return stepcat(g, pat, g);
       }),
     pats,
@@ -1311,20 +1311,20 @@ export function stackCentre(...pats) {
 }
 
 export function stackBy(by, ...pats) {
-  const [left, ...right] = pats.map((pat) => pat.tactus);
-  const tactus = left.maximum(...right);
+  const [left, ...right] = pats.map((pat) => pat._steps);
+  const steps = left.maximum(...right);
   const lookup = {
     centre: stackCentre,
     left: stackLeft,
     right: stackRight,
     expand: stack,
-    repeat: (...args) => polymeterSteps(tactus, ...args),
+    repeat: (...args) => polymeterSteps(steps, ...args),
   };
   return by
     .inhabit(lookup)
     .fmap((func) => func(...pats))
     .innerJoin()
-    .setTactus(tactus);
+    .setSteps(steps);
 }
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle:
@@ -1358,8 +1358,8 @@ export function slowcat(...pats) {
     const offset = span.begin.floor().sub(span.begin.div(pats.length).floor());
     return pat.withHapTime((t) => t.add(offset)).query(state.setSpan(span.withTime((t) => t.sub(offset))));
   };
-  const tactus = __tactus ? lcm(...pats.map((x) => x.tactus)) : undefined;
-  return new Pattern(query).splitQueries().setTactus(tactus);
+  const steps = __steps ? lcm(...pats.map((x) => x._steps)) : undefined;
+  return new Pattern(query).splitQueries().setSteps(steps);
 }
 
 /** Concatenation: combines a list of patterns, switching between them successively, one per cycle. Unlike slowcat, this version will skip cycles.
@@ -1446,10 +1446,10 @@ export function fastcat(...pats) {
   let result = slowcat(...pats);
   if (pats.length > 1) {
     result = result._fast(pats.length);
-    result.tactus = pats.length;
+    result._steps = pats.length;
   }
-  if (pats.length == 1 && pats[0].__tactus_source) {
-    pats.tactus = pats[0].tactus;
+  if (pats.length == 1 && pats[0].__steps_source) {
+    pats._steps = pats[0]._steps;
   }
   return result;
 }
@@ -1536,11 +1536,11 @@ export const func = curry((a, b) => reify(b).func(a));
  * @noAutocomplete
  *
  */
-export function register(name, func, patternify = true, preserveTactus = false, join = (x) => x.innerJoin()) {
+export function register(name, func, patternify = true, preserveSteps = false, join = (x) => x.innerJoin()) {
   if (Array.isArray(name)) {
     const result = {};
     for (const name_item of name) {
-      result[name_item] = register(name_item, func, patternify, preserveTactus, join);
+      result[name_item] = register(name_item, func, patternify, preserveSteps, join);
     }
     return result;
   }
@@ -1576,8 +1576,8 @@ export function register(name, func, patternify = true, preserveTactus = false, 
           result = join(right.reduce((acc, p) => acc.appLeft(p), left.fmap(mapFn)));
         }
       }
-      if (preserveTactus) {
-        result.tactus = pat.tactus;
+      if (preserveSteps) {
+        result._steps = pat._steps;
       }
       return result;
     };
@@ -1585,8 +1585,8 @@ export function register(name, func, patternify = true, preserveTactus = false, 
     pfunc = function (...args) {
       args = args.map(reify);
       const result = func(...args);
-      if (preserveTactus) {
-        result.tactus = args[args.length - 1].tactus;
+      if (preserveSteps) {
+        result._steps = args[args.length - 1]._steps;
       }
       return result;
     };
@@ -1609,8 +1609,8 @@ export function register(name, func, patternify = true, preserveTactus = false, 
     // version, prefixed by '_'
     Pattern.prototype['_' + name] = function (...args) {
       const result = func(...args, this);
-      if (preserveTactus) {
-        result.setTactus(this.tactus);
+      if (preserveSteps) {
+        result.setSteps(this._steps);
       }
       return result;
     };
@@ -1622,8 +1622,8 @@ export function register(name, func, patternify = true, preserveTactus = false, 
 }
 
 // Like register, but defaults to stepJoin
-function stepRegister(name, func, patternify = true, preserveTactus = false, join = (x) => x.stepJoin()) {
-  return register(name, func, patternify, preserveTactus, join);
+function stepRegister(name, func, patternify = true, preserveSteps = false, join = (x) => x.stepJoin()) {
+  return register(name, func, patternify, preserveSteps, join);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1833,8 +1833,8 @@ export const { focusSpan, focusspan } = register(['focusSpan', 'focusspan'], fun
  */
 export const ply = register('ply', function (factor, pat) {
   const result = pat.fmap((x) => pure(x)._fast(factor)).squeezeJoin();
-  if (__tactus) {
-    result.tactus = Fraction(factor).mulmaybe(pat.tactus);
+  if (__steps) {
+    result._steps = Fraction(factor).mulmaybe(pat._steps);
   }
   return result;
 });
@@ -1858,7 +1858,7 @@ export const { fast, density } = register(
     }
     factor = Fraction(factor);
     const fastQuery = pat.withQueryTime((t) => t.mul(factor));
-    return fastQuery.withHapTime((t) => t.div(factor)).setTactus(pat.tactus);
+    return fastQuery.withHapTime((t) => t.div(factor)).setSteps(pat._steps);
   },
   true,
   true,
@@ -2030,12 +2030,12 @@ export const zoom = register('zoom', function (s, e, pat) {
     return nothing;
   }
   const d = e.sub(s);
-  const tactus = __tactus ? pat.tactus.mulmaybe(d) : undefined;
+  const steps = __steps ? pat._steps.mulmaybe(d) : undefined;
   return pat
     .withQuerySpan((span) => span.withCycle((t) => t.mul(d).add(s)))
     .withHapSpan((span) => span.withCycle((t) => t.sub(s).div(d)))
     .splitQueries()
-    .setTactus(tactus);
+    .setSteps(steps);
 });
 
 export const { zoomArc, zoomarc } = register(['zoomArc', 'zoomarc'], function (a, pat) {
@@ -2097,7 +2097,7 @@ export const linger = register(
  * note(saw.range(40,52).segment(24))
  */
 export const segment = register('segment', function (rate, pat) {
-  return pat.struct(pure(true)._fast(rate)).setTactus(rate);
+  return pat.struct(pure(true)._fast(rate)).setSteps(rate);
 });
 
 /**
@@ -2273,7 +2273,7 @@ export const { juxBy, juxby } = register(['juxBy', 'juxby'], function (by, func,
   const left = pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) - by }));
   const right = func(pat.withValue((val) => Object.assign({}, val, { pan: elem_or(val, 'pan', 0.5) + by })));
 
-  return stack(left, right).setTactus(__tactus ? lcm(left.tactus, right.tactus) : undefined);
+  return stack(left, right).setSteps(__steps ? lcm(left._steps, right._steps) : undefined);
 });
 
 /**
@@ -2533,12 +2533,11 @@ export const within = register('within', (a, b, fn, pat) =>
 );
 
 //////////////////////////////////////////////////////////////////////
-// Tactus-related functions, i.e. ones that do stepwise
-// transformations
+// Stepwise functions
 
 Pattern.prototype.stepJoin = function () {
   const pp = this;
-  const first_t = stepcat(..._retime(_slices(pp.queryArc(0, 1)))).tactus;
+  const first_t = stepcat(..._retime(_slices(pp.queryArc(0, 1))))._steps;
   const q = function (state) {
     const shifted = pp.early(state.span.begin.sam());
     const haps = shifted.query(state.setSpan(new TimeSpan(Fraction(0), Fraction(1))));
@@ -2553,17 +2552,17 @@ Pattern.prototype.stepBind = function (func) {
 };
 
 export function _retime(timedHaps) {
-  const occupied_perc = timedHaps.filter((t, pat) => pat.hasTactus).reduce((a, b) => a.add(b), Fraction(0));
-  const occupied_tactus = removeUndefineds(timedHaps.map((t, pat) => pat.tactus)).reduce(
+  const occupied_perc = timedHaps.filter((t, pat) => pat.hasSteps).reduce((a, b) => a.add(b), Fraction(0));
+  const occupied_steps = removeUndefineds(timedHaps.map((t, pat) => pat._steps)).reduce(
     (a, b) => a.add(b),
     Fraction(0),
   );
-  const total_tactus = occupied_perc.eq(0) ? undefined : occupied_tactus.div(occupied_perc);
+  const total_steps = occupied_perc.eq(0) ? undefined : occupied_steps.div(occupied_perc);
   function adjust(dur, pat) {
-    if (pat.tactus === undefined) {
-      return [dur.mulmaybe(total_tactus), pat];
+    if (pat._steps === undefined) {
+      return [dur.mulmaybe(total_steps), pat];
     }
-    return [pat.tactus, pat];
+    return [pat._steps, pat];
   }
   return timedHaps.map((x) => adjust(...x));
 }
@@ -2600,15 +2599,15 @@ export function _match(span, hap_p) {
  * sound("bd sd cp").pace(4)
  * // The same as sound("{bd sd cp}%4") or sound("<bd sd cp>*4")
  */
-export const pace = register('pace', function (targetTactus, pat) {
-  if (pat.tactus === undefined) {
+export const pace = register('pace', function (targetSteps, pat) {
+  if (pat._steps === undefined) {
     return pat;
   }
-  if (pat.tactus.eq(Fraction(0))) {
+  if (pat._steps.eq(Fraction(0))) {
     // avoid divide by zero..
     return nothing;
   }
-  return pat._fast(Fraction(targetTactus).div(pat.tactus)).setTactus(targetTactus);
+  return pat._fast(Fraction(targetSteps).div(pat._steps)).setSteps(targetSteps);
 });
 
 export function _polymeterListSteps(steps, ...args) {
@@ -2673,20 +2672,20 @@ export function polymeter(...args) {
     return _polymeterListSteps(0, ...args);
   }
 
-  // TODO currently ignoring arguments without tactus...
-  args = args.filter((arg) => arg.hasTactus);
+  // TODO currently ignoring arguments without steps...
+  args = args.filter((arg) => arg.hasSteps);
 
   if (args.length == 0) {
     return silence;
   }
-  const tactus = args[0].tactus;
-  if (tactus.eq(Fraction(0))) {
+  const steps = args[0]._steps;
+  if (steps.eq(Fraction(0))) {
     return nothing;
   }
   const [head, ...tail] = args;
 
-  const result = stack(head, ...tail.map((pat) => pat._slow(pat.tactus.div(tactus))));
-  result.tactus = tactus;
+  const result = stack(head, ...tail.map((pat) => pat._slow(pat._steps.div(steps))));
+  result._steps = steps;
   return result;
 }
 
@@ -2707,8 +2706,8 @@ export function stepcat(...timepats) {
   if (timepats.length === 0) {
     return nothing;
   }
-  const findtactus = (x) => (Array.isArray(x) ? x : [x.tactus, x]);
-  timepats = timepats.map(findtactus);
+  const findsteps = (x) => (Array.isArray(x) ? x : [x._steps, x]);
+  timepats = timepats.map(findsteps);
   if (timepats.find((x) => x[0] === undefined)) {
     const times = timepats.map((a) => a[0]).filter((x) => x !== undefined);
     if (times.length === 0) {
@@ -2726,7 +2725,7 @@ export function stepcat(...timepats) {
   }
   if (timepats.length == 1) {
     const result = reify(timepats[0][1]);
-    return result.withTactus((_) => timepats[0][0]);
+    return result.withSteps((_) => timepats[0][0]);
   }
 
   const total = timepats.map((a) => a[0]).reduce((a, b) => a.add(b), Fraction(0));
@@ -2741,7 +2740,7 @@ export function stepcat(...timepats) {
     begin = end;
   }
   const result = stack(...pats);
-  result.tactus = total;
+  result._steps = total;
   return result;
 }
 
@@ -2765,10 +2764,10 @@ export function stepalt(...groups) {
   for (let cycle = 0; cycle < cycles; ++cycle) {
     result.push(...groups.map((x) => (x.length == 0 ? silence : x[cycle % x.length])));
   }
-  result = result.filter((x) => x.hasTactus && x.tactus > 0);
-  const tactus = result.reduce((a, b) => a.add(b.tactus), Fraction(0));
+  result = result.filter((x) => x.hasSteps && x._steps > 0);
+  const steps = result.reduce((a, b) => a.add(b._steps), Fraction(0));
   result = stepcat(...result);
-  result.tactus = tactus;
+  result._steps = steps;
   return result;
 }
 
@@ -2789,10 +2788,10 @@ export function stepalt(...groups) {
  * // The same as "mt ht mt cp ht mt".sound()
  */
 export const take = stepRegister('take', function (i, pat) {
-  if (!pat.hasTactus) {
+  if (!pat.hasSteps) {
     return nothing;
   }
-  if (pat.tactus.lte(0)) {
+  if (pat._steps.lte(0)) {
     return nothing;
   }
   i = Fraction(i);
@@ -2803,7 +2802,7 @@ export const take = stepRegister('take', function (i, pat) {
   if (flip) {
     i = i.abs();
   }
-  const frac = i.div(pat.tactus);
+  const frac = i.div(pat._steps);
   if (frac.lte(0)) {
     return nothing;
   }
@@ -2836,15 +2835,15 @@ export const take = stepRegister('take', function (i, pat) {
  * // The same as "bd cp ht bd cp bd".sound()
  */
 export const drop = stepRegister('drop', function (i, pat) {
-  if (!pat.hasTactus) {
+  if (!pat.hasSteps) {
     return nothing;
   }
 
   i = Fraction(i);
   if (i.lt(0)) {
-    return pat.take(pat.tactus.add(i));
+    return pat.take(pat._steps.add(i));
   }
-  return pat.take(Fraction(0).sub(pat.tactus.sub(i)));
+  return pat.take(Fraction(0).sub(pat._steps.sub(i)));
 });
 
 export const repeat = stepRegister('repeat', function (factor, pat) {
@@ -2852,21 +2851,21 @@ export const repeat = stepRegister('repeat', function (factor, pat) {
 });
 
 export const expand = stepRegister('expand', function (factor, pat) {
-  return pat.withTactus((t) => t.mul(Fraction(factor)));
+  return pat.withSteps((t) => t.mul(Fraction(factor)));
 });
 
 export const contract = stepRegister('contract', function (factor, pat) {
-  return pat.withTactus((t) => t.div(Fraction(factor)));
+  return pat.withSteps((t) => t.div(Fraction(factor)));
 });
 
 Pattern.prototype.shrinklist = function (amount) {
   const pat = this;
 
-  if (!pat.hasTactus) {
+  if (!pat.hasSteps) {
     return [pat];
   }
 
-  let [amountv, times] = Array.isArray(amount) ? amount : [amount, pat.tactus];
+  let [amountv, times] = Array.isArray(amount) ? amount : [amount, pat._steps];
   amountv = Fraction(amountv);
 
   if (times === 0 || amountv === 0) {
@@ -2876,7 +2875,7 @@ Pattern.prototype.shrinklist = function (amount) {
   const fromstart = amountv > 0;
   const ranges = [];
   if (fromstart) {
-    const seg = Fraction(1).div(pat.tactus).mul(amountv);
+    const seg = Fraction(1).div(pat._steps).mul(amountv);
     for (let i = 0; i < times; ++i) {
       const s = seg.mul(i);
       if (s.gt(1)) {
@@ -2886,7 +2885,7 @@ Pattern.prototype.shrinklist = function (amount) {
     }
   } else {
     amountv = Fraction(0).sub(amountv);
-    const seg = Fraction(1).div(pat.tactus).mul(amountv);
+    const seg = Fraction(1).div(pat._steps).mul(amountv);
     for (let i = 0; i < times; ++i) {
       const e = Fraction(1).sub(seg.mul(i));
       if (e.lt(0)) {
@@ -2920,14 +2919,14 @@ export const shrinklist = (amount, pat) => pat.shrinklist(amount);
 export const shrink = register(
   'shrink',
   function (amount, pat) {
-    if (!pat.hasTactus) {
+    if (!pat.hasSteps) {
       return nothing;
     }
 
     const list = pat.shrinklist(amount);
     const result = stepcat(...list);
     // TODO is this calculation needed?
-    result.tactus = list.reduce((a, b) => a.add(b.tactus), Fraction(0));
+    result._steps = list.reduce((a, b) => a.add(b._steps), Fraction(0));
     return result;
   },
   true,
@@ -2953,7 +2952,7 @@ export const shrink = register(
 export const grow = register(
   'grow',
   function (amount, pat) {
-    if (!pat.hasTactus) {
+    if (!pat.hasSteps) {
       return nothing;
     }
 
@@ -2961,7 +2960,7 @@ export const grow = register(
     list.reverse();
     const result = stepcat(...list);
     // TODO is this calculation needed?
-    result.tactus = list.reduce((a, b) => a.add(b.tactus), Fraction(0));
+    result._steps = list.reduce((a, b) => a.add(b._steps), Fraction(0));
     return result;
   },
   true,
@@ -3009,10 +3008,10 @@ Pattern.prototype.tour = function (...many) {
    .pace(8)
  */
 export const zip = function (...pats) {
-  pats = pats.filter((pat) => pat.hasTactus);
-  const zipped = slowcat(...pats.map((pat) => pat._slow(pat.tactus)));
-  const tactus = lcm(...pats.map((x) => x.tactus));
-  return zipped._fast(tactus).setTactus(tactus);
+  pats = pats.filter((pat) => pat.hasSteps);
+  const zipped = slowcat(...pats.map((pat) => pat._slow(pat._steps)));
+  const steps = lcm(...pats.map((x) => x._steps));
+  return zipped._fast(steps).setSteps(steps);
 };
 
 /** Aliases for `stepcat` */
@@ -3079,7 +3078,7 @@ export const chop = register('chop', function (n, pat) {
   const func = function (o) {
     return sequence(slice_objects.map((slice_o) => merge(o, slice_o)));
   };
-  return pat.squeezeBind(func).setTactus(__tactus ? Fraction(n).mulmaybe(pat.tactus) : undefined);
+  return pat.squeezeBind(func).setSteps(__steps ? Fraction(n).mulmaybe(pat._steps) : undefined);
 });
 
 /**
@@ -3097,7 +3096,7 @@ export const striate = register('striate', function (n, pat) {
   return pat
     .set(slicePat)
     ._fast(n)
-    .setTactus(__tactus ? Fraction(n).mulmaybe(pat.tactus) : undefined);
+    .setSteps(__steps ? Fraction(n).mulmaybe(pat._steps) : undefined);
 });
 
 /**
@@ -3146,7 +3145,7 @@ export const slice = register(
           }),
         ),
       )
-      .setTactus(ipat.tactus);
+      .setSteps(ipat._steps);
   },
   false, // turns off auto-patternification
 );
@@ -3177,14 +3176,14 @@ export const splice = register(
           ...v,
         })),
       );
-    }).setTactus(ipat.tactus);
+    }).setSteps(ipat._steps);
   },
   false, // turns off auto-patternification
 );
 
 export const { loopAt, loopat } = register(['loopAt', 'loopat'], function (factor, pat) {
-  const tactus = pat.tactus ? pat.tactus.div(factor) : undefined;
-  return new Pattern((state) => _loopAt(factor, pat, state.controls._cps).query(state), tactus);
+  const steps = pat._steps ? pat._steps.div(factor) : undefined;
+  return new Pattern((state) => _loopAt(factor, pat, state.controls._cps).query(state), steps);
 });
 
 /**
