@@ -96,6 +96,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Conditional Modifiers', link: 'learn/conditional-modifiers' },
       { text: 'Accumulation', link: 'learn/accumulation' },
       { text: 'Tonal Functions', link: 'learn/tonal' },
+      { text: 'Stepwise Functions', link: 'learn/stepwise' },
     ],
     Understand: [
       { text: 'Coding syntax', link: 'learn/code' },
