@@ -94,7 +94,14 @@ export const midiMappings = new Map();
 
 // takes midimap and converts each control key to the main control name
 function unifyMapping(mapping) {
-  return Object.fromEntries(Object.entries(mapping).map(([key, mapping]) => [getControlName(key), mapping]));
+  return Object.fromEntries(
+    Object.entries(mapping).map(([key, mapping]) => {
+      if (typeof mapping === 'number') {
+        mapping = { ccn: mapping };
+      }
+      return [getControlName(key), mapping];
+    }),
+  );
 }
 // adds a midimap to the registry
 export function addMidimap(name, mapping) {
