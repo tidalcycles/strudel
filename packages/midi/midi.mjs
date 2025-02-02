@@ -107,10 +107,34 @@ function unifyMapping(mapping) {
 export function addMidimap(name, mapping) {
   midiMappings.set(name, unifyMapping(mapping));
 }
+
+function githubPath(base, subpath = '') {
+  if (!base.startsWith('github:')) {
+    throw new Error('expected "github:" at the start of pseudoUrl');
+  }
+  let [_, path] = base.split('github:');
+  path = path.endsWith('/') ? path.slice(0, -1) : path;
+  if (path.split('/').length === 2) {
+    // assume main as default branch if none set
+    path += '/main';
+  }
+  return `https://raw.githubusercontent.com/${path}/${subpath}`;
+}
+
+let loadCache = {};
 // adds multiple midimaps to the registry
-export function midimaps(map) {
+export async function midimaps(map) {
+  if (typeof map === 'string') {
+    if (map.startsWith('github:')) {
+      map = githubPath(map, 'midimap.json');
+    }
+    if (!loadCache[map]) {
+      loadCache[map] = fetch(map).then((res) => res.json());
+    }
+    map = await loadCache[map];
+  }
   if (typeof map === 'object') {
-    Object.entries(midiMappings).forEach(([name, mapping]) => addMidimap(name, mapping));
+    Object.entries(map).forEach(([name, mapping]) => addMidimap(name, mapping));
   }
 }
 
