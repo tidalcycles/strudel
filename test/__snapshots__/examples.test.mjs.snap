@@ -8746,6 +8746,47 @@ exports[`runs examples > example "take" example index 2 1`] = `
 ]
 `;
 
+exports[`runs examples > example "tour" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | note:e s:folkharp ]",
+  "[ 1/8 → 1/4 | note:f s:folkharp ]",
+  "[ 1/4 → 3/8 | note:e s:folkharp ]",
+  "[ 3/8 → 1/2 | note:f s:folkharp ]",
+  "[ 1/2 → 5/8 | note:g s:folkharp ]",
+  "[ 5/8 → 3/4 | note:g s:folkharp ]",
+  "[ 3/4 → 7/8 | note:f s:folkharp ]",
+  "[ 7/8 → 1/1 | note:e s:folkharp ]",
+  "[ 1/1 → 9/8 | note:c s:folkharp ]",
+  "[ 9/8 → 19/16 | note:c s:folkharp ]",
+  "[ 19/16 → 5/4 | note:g s:folkharp ]",
+  "[ 5/4 → 11/8 | note:e s:folkharp ]",
+  "[ 11/8 → 3/2 | note:f s:folkharp ]",
+  "[ 3/2 → 13/8 | note:e s:folkharp ]",
+  "[ 13/8 → 7/4 | note:f s:folkharp ]",
+  "[ 7/4 → 15/8 | note:g s:folkharp ]",
+  "[ 15/8 → 31/16 | note:c s:folkharp ]",
+  "[ 31/16 → 2/1 | note:g s:folkharp ]",
+  "[ 2/1 → 17/8 | note:g s:folkharp ]",
+  "[ 17/8 → 9/4 | note:f s:folkharp ]",
+  "[ 9/4 → 19/8 | note:e s:folkharp ]",
+  "[ 19/8 → 5/2 | note:c s:folkharp ]",
+  "[ 5/2 → 21/8 | note:e s:folkharp ]",
+  "[ 21/8 → 11/4 | note:f s:folkharp ]",
+  "[ 11/4 → 45/16 | note:c s:folkharp ]",
+  "[ 45/16 → 23/8 | note:g s:folkharp ]",
+  "[ 23/8 → 3/1 | note:e s:folkharp ]",
+  "[ 3/1 → 25/8 | note:f s:folkharp ]",
+  "[ 25/8 → 13/4 | note:g s:folkharp ]",
+  "[ 13/4 → 27/8 | note:g s:folkharp ]",
+  "[ 27/8 → 7/2 | note:f s:folkharp ]",
+  "[ 7/2 → 29/8 | note:e s:folkharp ]",
+  "[ 29/8 → 15/4 | note:c s:folkharp ]",
+  "[ 15/4 → 61/16 | note:c s:folkharp ]",
+  "[ 61/16 → 31/8 | note:g s:folkharp ]",
+  "[ 31/8 → 4/1 | note:e s:folkharp ]",
+]
+`;
+
 exports[`runs examples > example "transpose" example index 0 1`] = `
 [
   "[ 0/1 → 1/4 | note:C2 ]",
@@ -9428,6 +9469,45 @@ exports[`runs examples > example "xfade" example index 0 1`] = `
   "[ 29/8 → 15/4 | s:hh gain:1 ]",
   "[ 15/4 → 31/8 | s:hh gain:1 ]",
   "[ 31/8 → 4/1 | s:hh gain:1 ]",
+]
+`;
+
+exports[`runs examples > example "zip" example index 0 1`] = `
+[
+  "[ 0/1 → 1/8 | note:e s:folkharp ]",
+  "[ 1/8 → 1/4 | note:e s:folkharp ]",
+  "[ 1/4 → 3/8 | note:g s:folkharp ]",
+  "[ 3/8 → 1/2 | note:f s:folkharp ]",
+  "[ 1/2 → 5/8 | note:f s:folkharp ]",
+  "[ 5/8 → 11/16 | note:f s:folkharp ]",
+  "[ 11/16 → 3/4 | note:e s:folkharp ]",
+  "[ 3/4 → 7/8 | note:e s:folkharp ]",
+  "[ 7/8 → 1/1 | note:g s:folkharp ]",
+  "[ 1/1 → 9/8 | note:a s:folkharp ]",
+  "[ 9/8 → 5/4 | note:f s:folkharp ]",
+  "[ 5/4 → 11/8 | note:e s:folkharp ]",
+  "[ 11/8 → 3/2 | note:f4 s:folkharp ]",
+  "[ 3/2 → 13/8 | note:e s:folkharp ]",
+  "[ 13/8 → 7/4 | note:f s:folkharp ]",
+  "[ 7/4 → 15/8 | note:c s:folkharp ]",
+  "[ 15/8 → 2/1 | note:f s:folkharp ]",
+  "[ 2/1 → 17/8 | note:g s:folkharp ]",
+  "[ 17/8 → 9/4 | note:g s:folkharp ]",
+  "[ 9/4 → 19/8 | note:e s:folkharp ]",
+  "[ 19/8 → 5/2 | note:e s:folkharp ]",
+  "[ 5/2 → 41/16 | note:f s:folkharp ]",
+  "[ 41/16 → 21/8 | note:e s:folkharp ]",
+  "[ 21/8 → 11/4 | note:f s:folkharp ]",
+  "[ 11/4 → 23/8 | note:f s:folkharp ]",
+  "[ 23/8 → 3/1 | note:a s:folkharp ]",
+  "[ 3/1 → 25/8 | note:e s:folkharp ]",
+  "[ 25/8 → 13/4 | note:g s:folkharp ]",
+  "[ 13/4 → 27/8 | note:f4 s:folkharp ]",
+  "[ 27/8 → 7/2 | note:f s:folkharp ]",
+  "[ 7/2 → 29/8 | note:e s:folkharp ]",
+  "[ 29/8 → 15/4 | note:c s:folkharp ]",
+  "[ 15/4 → 31/8 | note:e s:folkharp ]",
+  "[ 31/8 → 4/1 | note:f s:folkharp ]",
 ]
 `;
 

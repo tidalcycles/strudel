@@ -2970,8 +2970,22 @@ export const grow = register(
 );
 
 /**
- * *EXPERIMENTAL*
+ * *Experimental*
+ * 
+ * Inserts a pattern into a list of patterns. On the first repetition it will be inserted at the end of the list, then moved backwards through the list 
+ * on successive repetitions. The patterns are added together stepwise, with all repetitions taking place over a single cycle. Using `pace` to set the 
+ * number of steps per cycle is therefore usually recommended.
+ * 
+ * @return {Pattern}
+ * @example
+ * "[c g]".tour("e f", "e f g", "g f e c").note()
+   .sound("folkharp")
+   .pace(8)
  */
+export const tour = function (pat, ...many) {
+  return pat.tour(...many);
+};
+
 Pattern.prototype.tour = function (...many) {
   return stepcat(
     ...[].concat(
@@ -2982,15 +2996,23 @@ Pattern.prototype.tour = function (...many) {
   );
 };
 
-export const tour = function (pat, ...many) {
-  return pat.tour(...many);
-};
-
-const zip = function (...pats) {
+/**
+ * *Experimental*
+ * 
+ * 'zips' together the steps of the provided patterns. This can create a long repetition, taking place over a single, dense cycle. 
+ * Using `pace` to set the number of steps per cycle is therefore usually recommended.
+ * 
+ * @returns {Pattern}
+ * @example
+ * zip("e f", "e f g", "g [f e] a f4 c").note()
+   .sound("folkharp")
+   .pace(8)
+ */
+export const zip = function (...pats) {
   pats = pats.filter((pat) => pat.hasTactus);
   const zipped = slowcat(...pats.map((pat) => pat._slow(pat.tactus)));
-  // Should maybe use lcm or gcd for tactus?
-  return zipped._fast(pats[0].tactus).setTactus(pats[0].tactus);
+  const tactus = lcm(...pats.map((x) => x.tactus));
+  return zipped._fast(tactus).setTactus(tactus);
 };
 
 /** Aliases for `stepcat` */
