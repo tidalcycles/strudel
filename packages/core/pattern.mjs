@@ -2822,17 +2822,13 @@ export const take = stepRegister('take', function (i, pat) {
  * A positive number will drop steps from the start of a pattern, and a negative number from the end.
  * @return {Pattern}
  * @example
- * "bd cp ht mt".drop("1").sound()
- * // The same as "cp ht mt".sound()
+ * "tha dhi thom nam".drop("1").sound().bank("mridangam")
  * @example
- * "bd cp ht mt".drop("-1").sound()
- * // The same as "bd cp ht".sound()
+ * "tha dhi thom nam".drop("-1").sound().bank("mridangam")
  * @example
- * "bd cp ht mt".drop("1 2 3").sound()
- * // The same as "cp ht mt ht mt mt".sound()
+ * "tha dhi thom nam".drop("0 1 2 3").sound().bank("mridangam")
  * @example
- * "bd cp ht mt".drop("-1 -2 -3").sound()
- * // The same as "bd cp ht bd cp bd".sound()
+ * "tha dhi thom nam".drop("0 -1 -2 -3").sound().bank("mridangam")
  */
 export const drop = stepRegister('drop', function (i, pat) {
   if (!pat.hasSteps) {
@@ -2846,14 +2842,40 @@ export const drop = stepRegister('drop', function (i, pat) {
   return pat.take(Fraction(0).sub(pat._steps.sub(i)));
 });
 
+/**
+ * *Experimental*
+ *
+ * `repeat` is similar to `fast` in that it 'speeds up' the pattern, but it also increases the step count
+ * accordingly. So `stepcat("a b".repeat(2), "c d")` would be the same as `"a b a b c d"`, whereas
+ * `stepcat("a b".fast(2), "c d")` would be the same as `"[a b] [a b] c d"`.
+ * @example
+ * stepcat(
+ *   sound("bd bd - cp").repeat(2),
+ *   sound("bd - sd -")
+ * ).pace(8)
+ */
 export const repeat = stepRegister('repeat', function (factor, pat) {
   return pat.fast(factor).expand(factor);
 });
 
+/**
+ * *Experimental*
+ *
+ * Expands the step size of the pattern by the given factor.
+ * @example
+ * sound("tha dhi thom nam").bank("mridangam").expand("3 2 1 1 2 3").pace(8)
+ */
 export const expand = stepRegister('expand', function (factor, pat) {
   return pat.withSteps((t) => t.mul(Fraction(factor)));
 });
 
+/**
+ * *Experimental*
+ *
+ * Contracts the step size of the pattern by the given factor. See also `expand`.
+ * @example
+ * sound("tha dhi thom nam").bank("mridangam").contract("3 2 1 1 2 3").pace(8)
+ */
 export const contract = stepRegister('contract', function (factor, pat) {
   return pat.withSteps((t) => t.div(Fraction(factor)));
 });
@@ -2907,13 +2929,17 @@ export const shrinklist = (amount, pat) => pat.shrinklist(amount);
  * A positive number will progressively drop steps from the start of a pattern, and a negative number from the end.
  * @return {Pattern}
  * @example
- * "bd cp ht mt".shrink("1").sound()
- * // The same as "bd cp ht mt".drop("0 1 2 3").sound()
+ * "tha dhi thom nam".shrink("1").sound()
+ * .bank("mridangam")
  * @example
- * "bd cp ht mt".shrink("-1").sound()
- * // The same as "bd cp ht mt".drop("0 -1 -2 -3").sound()
+ * "tha dhi thom nam".shrink("-1").sound()
+ * .bank("mridangam")
  * @example
- * "bd cp ht mt".grow("1 -1").sound()
+ * "tha dhi thom nam".shrink("1 -1").sound().bank("mridangam").pace(4)
+ * @example
+ * note("0 1 2 3 4 5 6 7".scale("C:ritusen")).sound("folkharp")
+   .shrink("1 -1").pace(8)
+
  */
 
 export const shrink = register(
@@ -2942,11 +2968,16 @@ export const shrink = register(
  * A positive number will progressively grow steps from the start of a pattern, and a negative number from the end.
  * @return {Pattern}
  * @example
- * "bd cp ht mt".grow("1").sound()
- * // The same as "bd cp ht mt".take("1 2 3 4")
+ * "tha dhi thom nam".grow("1").sound()
+ * .bank("mridangam")
  * @example
- * "bd cp ht mt".grow("-1").sound()
- * // The same as "bd cp ht mt".take("-1 -2 -3 -4")
+ * "tha dhi thom nam".grow("-1").sound()
+ * .bank("mridangam")
+ * @example
+ * "tha dhi thom nam".grow("1 -1").sound().bank("mridangam").pace(4)
+ * @example
+ * note("0 1 2 3 4 5 6 7".scale("C:ritusen")).sound("folkharp")
+   .grow("1 -1").pace(8)
  */
 
 export const grow = register(
