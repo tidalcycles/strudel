@@ -38,8 +38,7 @@ export async function prebake() {
     samples(`${ds}/Dirt-Samples.json`),
     samples(`${ds}/EmuSP12.json`),
     samples(`${ds}/vcsl.json`),
-    // samples(`${ds}/mridangam.json`),
-    samples(`https://raw.githubusercontent.com/yaxu/mrid/main/mridangam.json`),
+    samples(`${ds}/mridangam.json`),
   ]);
 
   aliasBank(`${ts}/tidal-drum-machines-alias.json`);

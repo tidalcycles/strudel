@@ -2845,7 +2845,7 @@ export const drop = stepRegister('drop', function (i, pat) {
 /**
  * *Experimental*
  *
- * `repeat` is similar to `fast` in it 'speeds up' the pattern, but it also increases the step count
+ * `repeat` is similar to `fast` in that it 'speeds up' the pattern, but it also increases the step count
  * accordingly. So `stepcat("a b".repeat(2), "c d")` would be the same as `"a b a b c d"`, whereas
  * `stepcat("a b".fast(2), "c d")` would be the same as `"[a b] [a b] c d"`.
  * @example
