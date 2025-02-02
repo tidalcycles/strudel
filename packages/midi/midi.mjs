@@ -117,15 +117,13 @@ function normalize(value = 0, min = 0, max = 1, exp = 1) {
   return Math.pow(normalized, exp);
 }
 function mapCC(mapping, value) {
-  const ccs = [];
-  const matches = Object.entries(value).filter(([key]) => !!mapping[getControlName(key)]);
-  matches.forEach((match) => {
-    const control = match[0];
-    const { ccn, min = 0, max = 1, exp = 1 } = mapping[control];
-    const ccv = normalize(value[control], min, max, exp);
-    ccs.push({ ccn, ccv });
-  });
-  return ccs;
+  return Object.keys(value)
+    .filter((key) => !!mapping[getControlName(key)])
+    .map((key) => {
+      const { ccn, min = 0, max = 1, exp = 1 } = mapping[key];
+      const ccv = normalize(value[key], min, max, exp);
+      return { ccn, ccv };
+    });
 }
 
 // sends a cc message to the given device on the given channel
