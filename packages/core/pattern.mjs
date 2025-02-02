@@ -2898,7 +2898,7 @@ Pattern.prototype.shrinklist = function (amount) {
   return ranges.map((x) => pat.zoom(...x));
 };
 
-export const shrinklist = (amount, pat) => pat.shrinklist(amount, times);
+export const shrinklist = (amount, pat) => pat.shrinklist(amount);
 
 /**
  * *Experimental*
