@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import * as _WebMidi from 'webmidi';
 import { Pattern, getEventOffsetMs, isPattern, logger, ref } from '@strudel/core';
-import { noteToMidi } from '@strudel/core';
+import { noteToMidi, getControlName } from '@strudel/core';
 import { Note } from 'webmidi';
 // if you use WebMidi from outside of this package, make sure to import that instance:
 export const { WebMidi } = _WebMidi;
@@ -89,6 +89,57 @@ if (typeof window !== 'undefined') {
   });
 }
 
+// registry for midi mappings, converting control names to cc messages
+export const midiMappings = new Map();
+
+// takes midimap and converts each control key to the main control name
+function unifyMapping(mapping) {
+  return Object.fromEntries(Object.entries(mapping).map(([key, mapping]) => [getControlName(key), mapping]));
+}
+// adds a midimap to the registry
+export function addMidimap(name, mapping) {
+  midiMappings.set(name, unifyMapping(mapping));
+}
+// adds multiple midimaps to the registry
+export function midimaps(map) {
+  if (typeof map === 'object') {
+    Object.entries(midiMappings).forEach(([name, mapping]) => addMidimap(name, mapping));
+  }
+}
+
+// normalizes the given value from the given range and exponent
+function normalize(value = 0, min = 0, max = 1, exp = 1) {
+  if (min === max) {
+    throw new Error('min and max cannot be the same value');
+  }
+  let normalized = (value - min) / (max - min);
+  normalized = Math.min(1, Math.max(0, normalized));
+  return Math.pow(normalized, exp);
+}
+function mapCC(mapping, value) {
+  const ccs = Array.isArray(value.cc) ? value.cc : [];
+  const matches = Object.entries(value).filter(([key]) => !!mapping[getControlName(key)]);
+  matches.forEach((match) => {
+    const control = match[0];
+    const { ccn, min = 0, max = 1, exp = 1 } = mapping[control];
+    const ccv = normalize(value[control], min, max, exp);
+    ccs.push({ ccn, ccv });
+  });
+  return ccs;
+}
+
+// sends a cc message to the given device on the given channel
+function sendCC(ccn, ccv, device, midichan, timeOffsetString) {
+  if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
+    throw new Error('expected ccv to be a number between 0 and 1');
+  }
+  if (!['string', 'number'].includes(typeof ccn)) {
+    throw new Error('expected ccn to be a number or a string');
+  }
+  const scaled = Math.round(ccv * 127);
+  device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
+}
+
 Pattern.prototype.midi = function (output) {
   if (isPattern(output)) {
     throw new Error(
@@ -124,9 +175,15 @@ Pattern.prototype.midi = function (output) {
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
     const timeOffsetString = `+${getEventOffsetMs(targetTime, currentTime) + latencyMs}`;
     // destructure value
-    let { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd, gain = 1, velocity = 0.9 } = hap.value;
+    let { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd, gain = 1, velocity = 0.9, midimap } = hap.value;
 
     velocity = gain * velocity;
+
+    // if midimap is set, send a cc messages from defined controls
+    if (!!midimap && midiMappings.has(midimap)) {
+      const ccs = mapCC(midiMappings.get(midimap), hap.value);
+      ccs.forEach(({ ccn, ccv }) => sendCC(ccn, ccv, device, midichan, timeOffsetString));
+    }
 
     // note off messages will often a few ms arrive late, try to prevent glitching by subtracting from the duration length
     const duration = (hap.duration.valueOf() / cps) * 1000 - 10;
@@ -138,14 +195,7 @@ Pattern.prototype.midi = function (output) {
       });
     }
     if (ccv !== undefined && ccn !== undefined) {
-      if (typeof ccv !== 'number' || ccv < 0 || ccv > 1) {
-        throw new Error('expected ccv to be a number between 0 and 1');
-      }
-      if (!['string', 'number'].includes(typeof ccn)) {
-        throw new Error('expected ccn to be a number or a string');
-      }
-      const scaled = Math.round(ccv * 127);
-      device.sendControlChange(ccn, scaled, midichan, { time: timeOffsetString });
+      sendCC(ccn, ccv, device, midichan, timeOffsetString);
     }
     if (hap.whole.begin + 0 === 0) {
       // we need to start here because we have the timing info
