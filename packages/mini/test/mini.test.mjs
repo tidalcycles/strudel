@@ -221,19 +221,6 @@ describe('mini', () => {
   });
 });
 
-describe('getLeafLocation', () => {
-  it('gets location of leaf nodes', () => {
-    const code = '"bd sd"';
-    const ast = mini2ast(code);
-
-    const bd = ast.source_[0].source_;
-    expect(getLeafLocation(code, bd)).toEqual([1, 3]);
-
-    const sd = ast.source_[1].source_;
-    expect(getLeafLocation(code, sd)).toEqual([4, 6]);
-  });
-});
-
 describe('getLeafLocations', () => {
   it('gets locations of leaf nodes', () => {
     expect(getLeafLocations('"bd sd"')).toEqual([
@@ -242,9 +229,9 @@ describe('getLeafLocations', () => {
     ]);
     expect(getLeafLocations('"bd*2 [sd cp]"')).toEqual([
       [1, 3], // bd columns
+      [4, 5], // "2" columns
       [7, 9], // sd columns
       [10, 12], // cp columns
-      [4, 5], // "2" columns
     ]);
     expect(getLeafLocations('"bd*<2 3>"')).toEqual([
       [1, 3], // bd columns
