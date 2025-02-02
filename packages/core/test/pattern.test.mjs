@@ -1194,12 +1194,20 @@ describe('Pattern', () => {
       expect(sameFirst(stepcat(pure(1), pure(2), pure(3).setTactus(undefined)), fastcat(1, 2, 3)));
     });
   });
-  describe('taper', () => {
-    it('can taper', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).taper(1, 5), sequence(0, 1, 2, 3, 4, 0, 1, 2, 3, 0, 1, 2, 0, 1, 0)));
+  describe('shrink', () => {
+    it('can shrink', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).shrink(1), sequence(0, 1, 2, 3, 4, 1, 2, 3, 4, 2, 3, 4, 3, 4, 4)));
     });
-    it('can taper backwards', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).taper(-1, 5), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)));
+    it('can shrink backwards', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).shrink(-1), sequence(0, 1, 2, 3, 4, 0, 1, 2, 3, 0, 1, 2, 0, 1, 0)));
+    });
+  });
+  describe('grow', () => {
+    it('can grow', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).grow(1), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)));
+    });
+    it('can grow backwards', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).grow(-1), sequence(4, 3, 4, 2, 3, 4, 1, 2, 3, 4, 0, 1, 2, 3, 4)));
     });
   });
   describe('take and drop', () => {
@@ -1207,13 +1215,13 @@ describe('Pattern', () => {
       expect(sameFirst(sequence(0, 1, 2, 3, 4).take(2), sequence(0, 1)));
     });
     it('can drop from the left', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).drop(2), sequence(0, 1, 2)));
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).drop(2), sequence(2, 3, 4)));
     });
     it('can take from the right', () => {
       expect(sameFirst(sequence(0, 1, 2, 3, 4).take(-2), sequence(3, 4)));
     });
     it('can drop from the right', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).drop(-2), sequence(2, 3, 4)));
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).drop(-2), sequence(0, 1, 2)));
     });
     it('can drop nothing', () => {
       expect(sameFirst(pure('a').drop(0), pure('a')));
