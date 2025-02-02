@@ -117,7 +117,7 @@ function normalize(value = 0, min = 0, max = 1, exp = 1) {
   return Math.pow(normalized, exp);
 }
 function mapCC(mapping, value) {
-  const ccs = Array.isArray(value.cc) ? value.cc : [];
+  const ccs = [];
   const matches = Object.entries(value).filter(([key]) => !!mapping[getControlName(key)]);
   matches.forEach((match) => {
     const control = match[0];
