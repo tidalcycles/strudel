@@ -2850,9 +2850,9 @@ export const drop = stepRegister('drop', function (i, pat) {
  * `stepcat("a b".fast(2), "c d")` would be the same as `"[a b] [a b] c d"`.
  * @example
  * stepcat(
- (   sound("bd bd - cp").repeat(2),
+ *   sound("bd bd - cp").repeat(2),
  *   sound("bd - sd -")
- * ).steps(8)
+ * ).pace(8)
  */
 export const repeat = stepRegister('repeat', function (factor, pat) {
   return pat.fast(factor).expand(factor);
@@ -2863,9 +2863,7 @@ export const repeat = stepRegister('repeat', function (factor, pat) {
  *
  * Expands the step size of the pattern by the given factor.
  * @example
- * $: sound("tha dhi thom nam").bank("mridangam")
-     .expand("3 2 1 1 2 3").steps(8)
- * $: sound("hh*4")
+ * sound("tha dhi thom nam").bank("mridangam").expand("3 2 1 1 2 3").pace(8)
  */
 export const expand = stepRegister('expand', function (factor, pat) {
   return pat.withSteps((t) => t.mul(Fraction(factor)));
@@ -2876,8 +2874,7 @@ export const expand = stepRegister('expand', function (factor, pat) {
  *
  * Contracts the step size of the pattern by the given factor. See also `expand`.
  * @example
- * $: sound("tha dhi thom nam").bank("mridangam")
- *   .contract("3 2 1 1 2 3").steps(8)
+ * sound("tha dhi thom nam").bank("mridangam").contract("3 2 1 1 2 3").pace(8)
  */
 export const contract = stepRegister('contract', function (factor, pat) {
   return pat.withSteps((t) => t.div(Fraction(factor)));
@@ -2941,7 +2938,7 @@ export const shrinklist = (amount, pat) => pat.shrinklist(amount);
  * "tha dhi thom nam".shrink("1 -1").sound().bank("mridangam").pace(4)
  * @example
  * note("0 1 2 3 4 5 6 7".scale("C:ritusen")).sound("folkharp")
-   .shrink("1 -1").steps(8)
+   .shrink("1 -1").pace(8)
 
  */
 
@@ -2980,7 +2977,7 @@ export const shrink = register(
  * "tha dhi thom nam".grow("1 -1").sound().bank("mridangam").pace(4)
  * @example
  * note("0 1 2 3 4 5 6 7".scale("C:ritusen")).sound("folkharp")
-   .grow("1 -1").steps(8)
+   .grow("1 -1").pace(8)
  */
 
 export const grow = register(
