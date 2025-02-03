@@ -117,13 +117,36 @@ function githubPath(base, subpath = '') {
   return `https://raw.githubusercontent.com/${path}/${subpath}`;
 }
 
-// configures the default midimap, which is used when no "midimap" port is set
+/**
+ * configures the default midimap, which is used when no "midimap" port is set
+ * @example
+ * defaultmidimap({ lpf: 74 })
+ * $: note("c a f e").midi();
+ * $: lpf(sine.slow(4).segment(16)).midi();
+ */
 export function defaultmidimap(mapping) {
   midicontrolMap.set('default', unifyMapping(mapping));
 }
 
 let loadCache = {};
-// adds multiple midimaps to the registry
+
+/**
+ * Adds midimaps to the registry. Inside each midimap, control names (e.g. lpf) are mapped to cc numbers.
+ * @example
+ * midimaps({ mymap: { lpf: 74 } })
+ * $: note("c a f e")
+ * .lpf(sine.slow(4))
+ * .midimap('mymap')
+ * .midi()
+ * @example
+ * midimaps({ mymap: {
+ *   lpf: { ccn: 74, min: 0, max: 20000, exp: 0.5 }
+ * }})
+ * $: note("c a f e")
+ * .lpf(sine.slow(2).range(400,2000))
+ * .midimap('mymap')
+ * .midi()
+ */
 export async function midimaps(map) {
   if (typeof map === 'string') {
     if (map.startsWith('github:')) {

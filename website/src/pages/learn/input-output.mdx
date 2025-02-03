@@ -46,6 +46,16 @@ But you can also control cc messages separately like this:
 $: ccv(sine.segment(16).slow(4)).ccn(74).midi()`}
 />
 
+Instead of setting `ccn` and `ccv` directly, you can also create mappings with `midimaps`:
+
+## midimaps
+
+<JsDoc client:idle name="midimaps" h={0} />
+
+## defaultmidimap
+
+<JsDoc client:idle name="defaultmidimap" h={0} />
+
 # OSC/SuperDirt/StrudelDirt
 
 In TidalCycles, sound is usually generated using [SuperDirt](https://github.com/musikinformatik/SuperDirt/), which runs inside SuperCollider. Strudel also supports using SuperDirt, although it requires installing some additional software.
