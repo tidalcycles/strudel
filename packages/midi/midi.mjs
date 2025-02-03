@@ -90,7 +90,7 @@ if (typeof window !== 'undefined') {
 }
 
 // registry for midi mappings, converting control names to cc messages
-export const midiMappings = new Map();
+export const midicontrolMap = new Map();
 
 // takes midimap and converts each control key to the main control name
 function unifyMapping(mapping) {
@@ -102,10 +102,6 @@ function unifyMapping(mapping) {
       return [getControlName(key), mapping];
     }),
   );
-}
-// adds a midimap to the registry
-export function addMidimap(name, mapping) {
-  midiMappings.set(name, unifyMapping(mapping));
 }
 
 function githubPath(base, subpath = '') {
@@ -121,6 +117,11 @@ function githubPath(base, subpath = '') {
   return `https://raw.githubusercontent.com/${path}/${subpath}`;
 }
 
+// configures the default midimap, which is used when no "midimap" port is set
+export function defaultmidimap(mapping) {
+  midicontrolMap.set('default', unifyMapping(mapping));
+}
+
 let loadCache = {};
 // adds multiple midimaps to the registry
 export async function midimaps(map) {
@@ -134,8 +135,32 @@ export async function midimaps(map) {
     map = await loadCache[map];
   }
   if (typeof map === 'object') {
-    Object.entries(map).forEach(([name, mapping]) => addMidimap(name, mapping));
+    Object.entries(map).forEach(([name, mapping]) => midicontrolMap.set(name, unifyMapping(mapping)));
   }
+}
+
+// registry for midi sounds, converting sound names to controls
+export const midisoundMap = new Map();
+// adds multiple midimaps to the registry
+export async function midisounds(map) {
+  if (typeof map === 'object') {
+    Object.entries(map).forEach(([name, mapping]) => midisoundMap.set(name, mapping));
+  }
+}
+
+function applyMidisounds(hapValue) {
+  const { s } = hapValue;
+  if (!midisoundMap.has(s)) {
+    return;
+  }
+  let controls = midisoundMap.get(hapValue.s);
+  if (Array.isArray(controls)) {
+    controls = controls[hapValue.n || 0];
+  }
+  if (typeof controls === 'string') {
+    controls = { note: controls };
+  }
+  Object.assign(hapValue, controls);
 }
 
 // normalizes the given value from the given range and exponent
@@ -197,20 +222,39 @@ Pattern.prototype.midi = function (output) {
       console.log('not enabled');
       return;
     }
-    const device = getDevice(output, WebMidi.outputs);
     hap.ensureObjectValue();
     //magic number to get audio engine to line up, can probably be calculated somehow
     const latencyMs = 34;
     // passing a string with a +num into the webmidi api adds an offset to the current time https://webmidijs.org/api/classes/Output
     const timeOffsetString = `+${getEventOffsetMs(targetTime, currentTime) + latencyMs}`;
+    // convert s to midisounds preset (if set)
+    applyMidisounds(hap.value);
+
     // destructure value
-    let { note, nrpnn, nrpv, ccn, ccv, midichan = 1, midicmd, gain = 1, velocity = 0.9, midimap } = hap.value;
+    let {
+      note,
+      ccn,
+      ccv,
+      midichan = 1,
+      midicmd,
+      gain = 1,
+      velocity = 0.9,
+      midimap = 'default',
+      midiport = output,
+    } = hap.value;
+
+    const device = getDevice(midiport, WebMidi.outputs);
+    if (!device) {
+      logger(
+        `[midi] midiport "${midiport}" not found! available: ${WebMidi.outputs.map((output) => `'${output.name}'`).join(', ')}`,
+      );
+      return;
+    }
 
     velocity = gain * velocity;
-
     // if midimap is set, send a cc messages from defined controls
-    if (!!midimap && midiMappings.has(midimap)) {
-      const ccs = mapCC(midiMappings.get(midimap), hap.value);
+    if (midicontrolMap.has(midimap)) {
+      const ccs = mapCC(midicontrolMap.get(midimap), hap.value);
       ccs.forEach(({ ccn, ccv }) => sendCC(ccn, ccv, device, midichan, timeOffsetString));
     }
 

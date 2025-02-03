@@ -1515,6 +1515,7 @@ export const { hbrick } = registerControl('hbrick');
 export const { lbrick } = registerControl('lbrick');
 export const { midichan } = registerControl('midichan');
 export const { midimap } = registerControl('midimap');
+export const { midiport } = registerControl('midiport');
 export const { control } = registerControl('control');
 export const { ccn } = registerControl('ccn');
 export const { ccv } = registerControl('ccv');
