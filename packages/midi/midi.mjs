@@ -133,7 +133,7 @@ let loadCache = {};
 /**
  * Adds midimaps to the registry. Inside each midimap, control names (e.g. lpf) are mapped to cc numbers.
  * @example
- * midimaps({ mymap: { lpf: 74 } })
+ * midimaps({ mymap: { lpf: 74 } })
  * $: note("c a f e")
  * .lpf(sine.slow(4))
  * .midimap('mymap')
