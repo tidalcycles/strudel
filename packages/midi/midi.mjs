@@ -164,7 +164,17 @@ export async function midimaps(map) {
 
 // registry for midi sounds, converting sound names to controls
 export const midisoundMap = new Map();
-// adds multiple midimaps to the registry
+
+/**
+ * Maps a sound name to a set of controls:
+ * @example
+ * midisounds({ bd: { note: 'c2' } })
+ * $: s("bd").midi()
+ * @example
+ * // notes can be set directly to simplify typical midi drum kit mappings
+ * midisounds({ bd: 'c2', rim: 'c#2' })
+ * $: s("bd rim").midi()
+ **/
 export async function midisounds(map) {
   if (typeof map === 'object') {
     Object.entries(map).forEach(([name, mapping]) => midisoundMap.set(name, mapping));
