@@ -1617,6 +1617,14 @@ export const ar = register('ar', (t, pat) => {
  */
 export const { midichan } = registerControl('midichan');
 
+/**
+ * MIDI command: Sends a MIDI command message.
+ *
+ * @name midicmd
+ * @param {number | Pattern} command MIDI command
+ * @example
+ * midicmd("clock*48,<start stop>/2").midi()
+ */
 export const { midicmd } = registerControl('midicmd');
 
 /**
