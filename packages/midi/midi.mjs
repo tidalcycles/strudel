@@ -311,6 +311,21 @@ Pattern.prototype.midi = function (output) {
           }
           device.sendControlChange(midicmd[0], midicmd[1], midichan, { time: timeOffsetString });
         }
+      } else if (midicmd[0] === 'sysex') {
+        if (midicmd.length === 3) {
+          const [_, id, data] = midicmd;
+          if (Array.isArray(id)) {
+            if (!id.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
+              throw new Error('all sysex id bytes must be integers between 0 and 255');
+            }
+          } else if (!Number.isInteger(id) || id < 0 || id > 255) {
+            throw new Error('sysex id must be a number between 0 and 255 or an array of such integers');
+          }
+          if (!Array.isArray(data) || !data.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255)) {
+            throw new Error('sysex data must be an array of integers between 0 and 255');
+          }
+          device.sendSysex(id, data, { time: timeOffsetString });
+        }
       }
     }
   });
