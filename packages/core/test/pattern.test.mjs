@@ -736,21 +736,15 @@ describe('Pattern', () => {
   describe('signal()', () => {
     it('Can make saw/saw2', () => {
       expect(saw.struct(true, true, true, true).firstCycle()).toStrictEqual(
-        sequence(1 / 8, 3 / 8, 5 / 8, 7 / 8).firstCycle(),
+        sequence(0, 1 / 4, 1 / 2, 3 / 4).firstCycle(),
       );
 
-      expect(saw2.struct(true, true, true, true).firstCycle()).toStrictEqual(
-        sequence(-3 / 4, -1 / 4, 1 / 4, 3 / 4).firstCycle(),
-      );
+      expect(saw2.struct(true, true, true, true).firstCycle()).toStrictEqual(sequence(-1, -0.5, 0, 0.5).firstCycle());
     });
     it('Can make isaw/isaw2', () => {
-      expect(isaw.struct(true, true, true, true).firstCycle()).toStrictEqual(
-        sequence(7 / 8, 5 / 8, 3 / 8, 1 / 8).firstCycle(),
-      );
+      expect(isaw.struct(true, true, true, true).firstCycle()).toStrictEqual(sequence(1, 0.75, 0.5, 0.25).firstCycle());
 
-      expect(isaw2.struct(true, true, true, true).firstCycle()).toStrictEqual(
-        sequence(3 / 4, 1 / 4, -1 / 4, -3 / 4).firstCycle(),
-      );
+      expect(isaw2.struct(true, true, true, true).firstCycle()).toStrictEqual(sequence(1, 0.5, 0, -0.5).firstCycle());
     });
   });
   describe('_setContext()', () => {
@@ -888,7 +882,7 @@ describe('Pattern', () => {
           .squeezeJoin()
           .queryArc(3, 4)
           .map((x) => x.value),
-      ).toStrictEqual([Fraction(3.5)]);
+      ).toStrictEqual([Fraction(3)]);
     });
   });
   describe('ply', () => {
