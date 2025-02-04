@@ -158,7 +158,7 @@ const timeToRands = (t, n) => timeToRandsPrime(timeToIntSeed(t), n);
  * n(run(4)).scale("C4:pentatonic")
  * // n("0 1 2 3").scale("C4:pentatonic")
  */
-export const run = (n) => saw.range(0, n).floor().segment(n);
+export const run = (n) => saw.range(0, n).round().segment(n);
 
 /**
  * Creates a pattern from a binary number.
