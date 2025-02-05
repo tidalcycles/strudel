@@ -75,6 +75,23 @@ stack(
 )
 ```
 
+`midicmd` also supports sending control change, program change and sysex messages.
+
+- `cc` - sends MIDI control change messages.
+- `progNum` - sends MIDI program change messages.
+- `sysex` - sends MIDI system exclusive messages.
+
+```javascript
+stack(
+  // "cc:ccn:ccv"
+  midicmd("cc:74:1").midi('IAC Driver'),
+  // "progNum:progNum"
+  midicmd("progNum:1").midi('IAC Driver'),
+  // "sysex:[sysexid]:[sysexdata]"
+  midicmd("sysex:[0x43]:[0x79:0x09:0x11:0x0A:0x00:0x00]").midi('IAC Driver')
+)
+```
+
 ### control, ccn && ccv
 
 `control` sends MIDI control change messages to your MIDI device.
