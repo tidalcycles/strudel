@@ -35,6 +35,7 @@ Pattern.prototype.mqtt = function (
   host = 'wss://localhost:8883/',
   client = undefined,
   latency = 0,
+  add_meta = true,
 ) {
   const key = host + '-' + client;
   let connected = false;
@@ -88,7 +89,12 @@ Pattern.prototype.mqtt = function (
       }
       let message = '';
       if (typeof hap.value === 'object') {
-        message = JSON.stringify(hap.value);
+        let value = hap.value;
+        if (add_meta) {
+          const duration = hap.duration.div(cps);
+          value = { ...value, duration: duration.valueOf(), cps: cps };
+        }
+        message = JSON.stringify(value);
       } else {
         message = hap.value;
       }
