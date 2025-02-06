@@ -275,7 +275,7 @@ Pattern.prototype.midi = function (output) {
     // Handle miditouch
     if (miditouch !== undefined) {
       if (typeof miditouch == 'number' || miditouch < 1 || miditouch > 0) {
-        device.sendKeyAfterTouch(miditouch, midichan, { time: timeOffsetString });
+        device.sendChannelAfterTouch(miditouch, midichan, { time: timeOffsetString });
       } else {
         throw new Error('expected miditouch to be a number between 1 and 0');
       }
