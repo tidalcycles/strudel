@@ -85,6 +85,9 @@ export const square2 = square.toBipolar();
 export const tri = fastcat(isaw, saw);
 export const tri2 = fastcat(isaw2, saw2);
 
+export const itri = fastcat(saw, isaw);
+export const itri2 = fastcat(saw2, isaw2);
+
 export const time = signal(id);
 
 /**
