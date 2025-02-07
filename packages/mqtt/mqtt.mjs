@@ -38,15 +38,10 @@ Pattern.prototype.mqtt = function (
   add_meta = true,
 ) {
   const key = host + '-' + client;
-  let connected = false;
   let password_entered = false;
 
-  if (!client) {
-    client = 'strudel-' + String(Math.floor(Math.random() * 1000000));
-  }
   function onConnect() {
     console.log('Connected to mqtt broker');
-    connected = true;
     if (password_entered) {
       document.cookie = 'mqtt_pass=' + password;
     }
@@ -56,6 +51,9 @@ Pattern.prototype.mqtt = function (
   if (connections[key]) {
     cx = connections[key];
   } else {
+    if (!client) {
+      client = 'strudel-' + String(Math.floor(Math.random() * 1000000));
+    }
     cx = new Paho.Client(host, client);
     connections[key] = cx;
     cx.onConnectionLost = onConnectionLost;
@@ -86,7 +84,7 @@ Pattern.prototype.mqtt = function (
   return this.withHap((hap) => {
     const onTrigger = (t_deprecate, hap, currentTime, cps, targetTime) => {
       let msg_topic = topic;
-      if (!connected) {
+      if (!cx || !cx.isConnected()) {
         return;
       }
       let message = '';
