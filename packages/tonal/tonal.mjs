@@ -249,5 +249,5 @@ export const scale = register(
     );
   },
   true,
-  true, // preserve tactus
+  true, // preserve step count
 );

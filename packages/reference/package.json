@@ -1,0 +1,39 @@
+{
+  "name": "@strudel/reference",
+  "version": "1.1.0",
+  "description": "Headless reference of all strudel functions",
+  "main": "index.mjs",
+  "type": "module",
+  "publishConfig": {
+    "main": "dist/index.mjs"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tidalcycles/strudel.git"
+  },
+  "keywords": [
+    "tidalcycles",
+    "strudel",
+    "pattern",
+    "livecoding",
+    "algorave"
+  ],
+  "author": "Felix Roos <flix91@gmail.com>",
+  "contributors": [
+    "Alex McLean <alex@slab.org>"
+  ],
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tidalcycles/strudel/issues"
+  },
+  "homepage": "https://github.com/tidalcycles/strudel#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "vite": "^6.0.11"
+  }
+}

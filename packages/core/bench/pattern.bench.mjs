@@ -4,7 +4,7 @@ import { calculateTactus, sequence, stack } from '../index.mjs';
 
 const pat64 = sequence(...Array(64).keys());
 
-describe('tactus', () => {
+describe('steps', () => {
   calculateTactus(true);
   bench(
     '+tactus',

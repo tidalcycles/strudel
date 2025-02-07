@@ -94,6 +94,8 @@ export function SettingsTab({ started }) {
     isAutoCompletionEnabled,
     isTooltipEnabled,
     isFlashEnabled,
+    isButtonRowHidden,
+    isCSSAnimationDisabled,
     isSyncEnabled,
     isLineWrappingEnabled,
     fontSize,
@@ -101,6 +103,7 @@ export function SettingsTab({ started }) {
     panelPosition,
     audioDeviceName,
     audioEngineTarget,
+    togglePanelTrigger,
   } = useSettings();
   const shouldAlwaysSync = isUdels();
   const canChangeAudioDevice = AudioContext.prototype.setSinkId != null;
@@ -170,7 +173,32 @@ export function SettingsTab({ started }) {
           items={{ bottom: 'Bottom', right: 'Right' }}
         ></ButtonGroup>
       </FormItem>
-      <FormItem label="Code Settings">
+      <FormItem label="Open Panel on:                       ">
+        <ButtonGroup
+          value={togglePanelTrigger}
+          onChange={(value) => settingsMap.setKey('togglePanelTrigger', value)}
+          items={{ click: 'Click', hover: 'Hover' }}
+        ></ButtonGroup>
+        {/* <Checkbox
+          label="Click"
+          onChange={(cbEvent) => {
+            if (cbEvent.target.checked) {
+              settingsMap.setKey('togglePanelTrigger', 'click');
+            }
+          }}
+          value={togglePanelTrigger != 'hover'}
+        />
+        <Checkbox
+          label="Hover"
+          onChange={(cbEvent) => {
+            if (cbEvent.target.checked) {
+              settingsMap.setKey('togglePanelTrigger', 'hover');
+            }
+          }}
+          value={togglePanelTrigger == 'hover'}
+        /> */}
+      </FormItem>
+      <FormItem label="More Settings">
         <Checkbox
           label="Enable bracket matching"
           onChange={(cbEvent) => settingsMap.setKey('isBracketMatchingEnabled', cbEvent.target.checked)}
@@ -229,6 +257,16 @@ export function SettingsTab({ started }) {
           }}
           disabled={shouldAlwaysSync}
           value={isSyncEnabled}
+        />
+        <Checkbox
+          label="Hide top buttons"
+          onChange={(cbEvent) => settingsMap.setKey('isButtonRowHidden', cbEvent.target.checked)}
+          value={isButtonRowHidden}
+        />
+        <Checkbox
+          label="Disable CSS Animations"
+          onChange={(cbEvent) => settingsMap.setKey('isCSSAnimationDisabled', cbEvent.target.checked)}
+          value={isCSSAnimationDisabled}
         />
       </FormItem>
       <FormItem label="Zen Mode">Try clicking the logo in the top left!</FormItem>

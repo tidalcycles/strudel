@@ -31,6 +31,6 @@
     "hs2js": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^5.0.8"
+    "vite": "^6.0.11"
   }
 }

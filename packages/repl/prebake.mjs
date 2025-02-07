@@ -1,5 +1,5 @@
 import { noteToMidi, valueToMidi, Pattern, evalScope } from '@strudel/core';
-import { registerSynthSounds, registerZZFXSounds, samples } from '@strudel/webaudio';
+import { aliasBank, registerSynthSounds, registerZZFXSounds, samples } from '@strudel/webaudio';
 import * as core from '@strudel/core';
 
 export async function prebake() {
@@ -21,6 +21,9 @@ export async function prebake() {
   );
   // load samples
   const ds = 'https://raw.githubusercontent.com/felixroos/dough-samples/main/';
+
+  // TODO: move this onto the strudel repo
+  const ts = 'https://raw.githubusercontent.com/todepond/samples/main/';
   await Promise.all([
     modulesLoading,
     registerSynthSounds(),
@@ -35,7 +38,10 @@ export async function prebake() {
     samples(`${ds}/Dirt-Samples.json`),
     samples(`${ds}/EmuSP12.json`),
     samples(`${ds}/vcsl.json`),
+    samples(`${ds}/mridangam.json`),
   ]);
+
+  aliasBank(`${ts}/tidal-drum-machines-alias.json`);
 }
 
 const maxPan = noteToMidi('C8');

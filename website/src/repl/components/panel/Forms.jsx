@@ -6,6 +6,7 @@ export function ButtonGroup({ value, onChange, items }) {
       {Object.entries(items).map(([key, label], i, arr) => (
         <button
           key={key}
+          id={key}
           onClick={() => onChange(key)}
           className={cx(
             'px-2 border-b h-8 whitespace-nowrap',

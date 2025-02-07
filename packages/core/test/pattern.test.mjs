@@ -21,8 +21,8 @@ import {
   cat,
   sequence,
   palindrome,
-  s_polymeter,
-  s_polymeterSteps,
+  polymeter,
+  polymeterSteps,
   polyrhythm,
   silence,
   fast,
@@ -46,12 +46,13 @@ import {
   rev,
   time,
   run,
+  binaryN,
   pick,
   stackLeft,
   stackRight,
   stackCentre,
-  s_cat,
-  calculateTactus,
+  stepcat,
+  sometimes,
 } from '../index.mjs';
 
 import { steady } from '../signal.mjs';
@@ -608,18 +609,18 @@ describe('Pattern', () => {
       );
     });
   });
-  describe('s_polymeter()', () => {
+  describe('polymeter()', () => {
     it('Can layer up cycles, stepwise, with lists', () => {
-      expect(s_polymeterSteps(3, ['d', 'e']).firstCycle()).toStrictEqual(
+      expect(polymeterSteps(3, ['d', 'e']).firstCycle()).toStrictEqual(
         fastcat(pure('d'), pure('e'), pure('d')).firstCycle(),
       );
 
-      expect(s_polymeter(['a', 'b', 'c'], ['d', 'e']).fast(2).firstCycle()).toStrictEqual(
+      expect(polymeter(['a', 'b', 'c'], ['d', 'e']).fast(2).firstCycle()).toStrictEqual(
         stack(sequence('a', 'b', 'c', 'a', 'b', 'c'), sequence('d', 'e', 'd', 'e', 'd', 'e')).firstCycle(),
       );
     });
     it('Can layer up cycles, stepwise, with weighted patterns', () => {
-      sameFirst(s_polymeterSteps(3, sequence('a', 'b')).fast(2), sequence('a', 'b', 'a', 'b', 'a', 'b'));
+      sameFirst(polymeterSteps(3, sequence('a', 'b')).fast(2), sequence('a', 'b', 'a', 'b', 'a', 'b'));
     });
   });
 
@@ -735,21 +736,15 @@ describe('Pattern', () => {
   describe('signal()', () => {
     it('Can make saw/saw2', () => {
       expect(saw.struct(true, true, true, true).firstCycle()).toStrictEqual(
-        sequence(1 / 8, 3 / 8, 5 / 8, 7 / 8).firstCycle(),
+        sequence(0, 1 / 4, 1 / 2, 3 / 4).firstCycle(),
       );
 
-      expect(saw2.struct(true, true, true, true).firstCycle()).toStrictEqual(
-        sequence(-3 / 4, -1 / 4, 1 / 4, 3 / 4).firstCycle(),
-      );
+      expect(saw2.struct(true, true, true, true).firstCycle()).toStrictEqual(sequence(-1, -0.5, 0, 0.5).firstCycle());
     });
     it('Can make isaw/isaw2', () => {
-      expect(isaw.struct(true, true, true, true).firstCycle()).toStrictEqual(
-        sequence(7 / 8, 5 / 8, 3 / 8, 1 / 8).firstCycle(),
-      );
+      expect(isaw.struct(true, true, true, true).firstCycle()).toStrictEqual(sequence(1, 0.75, 0.5, 0.25).firstCycle());
 
-      expect(isaw2.struct(true, true, true, true).firstCycle()).toStrictEqual(
-        sequence(3 / 4, 1 / 4, -1 / 4, -3 / 4).firstCycle(),
-      );
+      expect(isaw2.struct(true, true, true, true).firstCycle()).toStrictEqual(sequence(1, 0.5, 0, -0.5).firstCycle());
     });
   });
   describe('_setContext()', () => {
@@ -887,7 +882,7 @@ describe('Pattern', () => {
           .squeezeJoin()
           .queryArc(3, 4)
           .map((x) => x.value),
-      ).toStrictEqual([Fraction(3.5)]);
+      ).toStrictEqual([Fraction(3)]);
     });
   });
   describe('ply', () => {
@@ -956,6 +951,18 @@ describe('Pattern', () => {
   describe('run', () => {
     it('Can run', () => {
       expect(run(4).firstCycle()).toStrictEqual(sequence(0, 1, 2, 3).firstCycle());
+    });
+  });
+  describe('binaryN', () => {
+    it('Can make a binary pattern from a decimal', () => {
+      expect(binaryN(55532).firstCycle()).toStrictEqual(
+        sequence(1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0).firstCycle(),
+      );
+    });
+    it('Can make a binary pattern from patterned inputs', () => {
+      expect(binaryN(pure(0x1337), pure(14)).firstCycle()).toStrictEqual(
+        sequence(0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1).firstCycle(),
+      );
     });
   });
   describe('ribbon', () => {
@@ -1127,130 +1134,135 @@ describe('Pattern', () => {
       );
     });
   });
-  describe('tactus', () => {
+  describe('_steps', () => {
     it('Is correctly preserved/calculated through transformations', () => {
-      expect(sequence(0, 1, 2, 3).linger(4).tactus).toStrictEqual(Fraction(4));
-      expect(sequence(0, 1, 2, 3).iter(4).tactus).toStrictEqual(Fraction(4));
-      expect(sequence(0, 1, 2, 3).fast(4).tactus).toStrictEqual(Fraction(4));
-      expect(sequence(0, 1, 2, 3).hurry(4).tactus).toStrictEqual(Fraction(4));
-      expect(sequence(0, 1, 2, 3).rev().tactus).toStrictEqual(Fraction(4));
-      expect(sequence(1).segment(10).tactus).toStrictEqual(Fraction(10));
-      expect(sequence(1, 0, 1).invert().tactus).toStrictEqual(Fraction(3));
-      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).chop(4).tactus).toStrictEqual(Fraction(8));
-      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).striate(4).tactus).toStrictEqual(Fraction(8));
-      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).slice(4, sequence(0, 1, 2, 3)).tactus).toStrictEqual(
+      expect(sequence(0, 1, 2, 3).linger(4)._steps).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).iter(4)._steps).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).fast(4)._steps).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).hurry(4)._steps).toStrictEqual(Fraction(4));
+      expect(sequence(0, 1, 2, 3).rev()._steps).toStrictEqual(Fraction(4));
+      expect(sequence(1).segment(10)._steps).toStrictEqual(Fraction(10));
+      expect(sequence(1, 0, 1).invert()._steps).toStrictEqual(Fraction(3));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).chop(4)._steps).toStrictEqual(Fraction(8));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).striate(4)._steps).toStrictEqual(Fraction(8));
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).slice(4, sequence(0, 1, 2, 3))._steps).toStrictEqual(
         Fraction(4),
       );
-      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).splice(4, sequence(0, 1, 2, 3)).tactus).toStrictEqual(
+      expect(sequence({ s: 'bev' }, { s: 'amenbreak' }).splice(4, sequence(0, 1, 2, 3))._steps).toStrictEqual(
         Fraction(4),
       );
-      expect(sequence({ n: 0 }, { n: 1 }, { n: 2 }).chop(4).tactus).toStrictEqual(Fraction(12));
+      expect(sequence({ n: 0 }, { n: 1 }, { n: 2 }).chop(4)._steps).toStrictEqual(Fraction(12));
       expect(
         pure((x) => x + 1)
-          .setTactus(3)
-          .appBoth(pure(1).setTactus(2)).tactus,
+          .setSteps(3)
+          .appBoth(pure(1).setSteps(2))._steps,
       ).toStrictEqual(Fraction(6));
       expect(
         pure((x) => x + 1)
-          .setTactus(undefined)
-          .appBoth(pure(1).setTactus(2)).tactus,
+          .setSteps(undefined)
+          .appBoth(pure(1).setSteps(2))._steps,
       ).toStrictEqual(Fraction(2));
       expect(
         pure((x) => x + 1)
-          .setTactus(3)
-          .appBoth(pure(1).setTactus(undefined)).tactus,
+          .setSteps(3)
+          .appBoth(pure(1).setSteps(undefined))._steps,
       ).toStrictEqual(Fraction(3));
-      expect(stack(fastcat(0, 1, 2), fastcat(3, 4)).tactus).toStrictEqual(Fraction(6));
-      expect(stack(fastcat(0, 1, 2), fastcat(3, 4).setTactus(undefined)).tactus).toStrictEqual(Fraction(3));
-      expect(stackLeft(fastcat(0, 1, 2, 3), fastcat(3, 4)).tactus).toStrictEqual(Fraction(4));
-      expect(stackRight(fastcat(0, 1, 2), fastcat(3, 4)).tactus).toStrictEqual(Fraction(3));
+      expect(stack(fastcat(0, 1, 2), fastcat(3, 4))._steps).toStrictEqual(Fraction(6));
+      expect(stack(fastcat(0, 1, 2), fastcat(3, 4).setSteps(undefined))._steps).toStrictEqual(Fraction(3));
+      expect(stackLeft(fastcat(0, 1, 2, 3), fastcat(3, 4))._steps).toStrictEqual(Fraction(4));
+      expect(stackRight(fastcat(0, 1, 2), fastcat(3, 4))._steps).toStrictEqual(Fraction(3));
       // maybe this should double when they are either all even or all odd
-      expect(stackCentre(fastcat(0, 1, 2), fastcat(3, 4)).tactus).toStrictEqual(Fraction(3));
-      expect(fastcat(0, 1).ply(3).tactus).toStrictEqual(Fraction(6));
-      expect(fastcat(0, 1).setTactus(undefined).ply(3).tactus).toStrictEqual(undefined);
-      expect(fastcat(0, 1).fast(3).tactus).toStrictEqual(Fraction(2));
-      expect(fastcat(0, 1).setTactus(undefined).fast(3).tactus).toStrictEqual(undefined);
+      expect(stackCentre(fastcat(0, 1, 2), fastcat(3, 4))._steps).toStrictEqual(Fraction(3));
+      expect(fastcat(0, 1).ply(3)._steps).toStrictEqual(Fraction(6));
+      expect(fastcat(0, 1).setSteps(undefined).ply(3)._steps).toStrictEqual(undefined);
+      expect(fastcat(0, 1).fast(3)._steps).toStrictEqual(Fraction(2));
+      expect(fastcat(0, 1).setSteps(undefined).fast(3)._steps).toStrictEqual(undefined);
     });
   });
-  describe('s_cat', () => {
+  describe('stepcat', () => {
     it('can cat', () => {
-      expect(sameFirst(s_cat(fastcat(0, 1, 2, 3), fastcat(4, 5)), fastcat(0, 1, 2, 3, 4, 5)));
-      expect(sameFirst(s_cat(pure(1), pure(2), pure(3)), fastcat(1, 2, 3)));
+      expect(sameFirst(stepcat(fastcat(0, 1, 2, 3), fastcat(4, 5)), fastcat(0, 1, 2, 3, 4, 5)));
+      expect(sameFirst(stepcat(pure(1), pure(2), pure(3)), fastcat(1, 2, 3)));
     });
-    it('calculates undefined tactuses as the average', () => {
-      expect(sameFirst(s_cat(pure(1), pure(2), pure(3).setTactus(undefined)), fastcat(1, 2, 3)));
-    });
-  });
-  describe('s_taper', () => {
-    it('can taper', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_taper(1, 5), sequence(0, 1, 2, 3, 4, 0, 1, 2, 3, 0, 1, 2, 0, 1, 0)));
-    });
-    it('can taper backwards', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_taper(-1, 5), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)));
+    it('calculates undefined steps as the average', () => {
+      expect(sameFirst(stepcat(pure(1), pure(2), pure(3).setSteps(undefined)), fastcat(1, 2, 3)));
     });
   });
-  describe('s_add and s_sub', () => {
-    it('can add from the left', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_add(2), sequence(0, 1)));
+  describe('shrink', () => {
+    it('can shrink', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).shrink(1), sequence(0, 1, 2, 3, 4, 1, 2, 3, 4, 2, 3, 4, 3, 4, 4)));
     });
-    it('can sub to the left', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_sub(2), sequence(0, 1, 2)));
+    it('can shrink backwards', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).shrink(-1), sequence(0, 1, 2, 3, 4, 0, 1, 2, 3, 0, 1, 2, 0, 1, 0)));
     });
-    it('can add from the right', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_add(-2), sequence(3, 4)));
+  });
+  describe('grow', () => {
+    it('can grow', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).grow(1), sequence(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)));
     });
-    it('can sub to the right', () => {
-      expect(sameFirst(sequence(0, 1, 2, 3, 4).s_sub(-2), sequence(2, 3, 4)));
+    it('can grow backwards', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).grow(-1), sequence(4, 3, 4, 2, 3, 4, 1, 2, 3, 4, 0, 1, 2, 3, 4)));
     });
-    it('can subtract nothing', () => {
-      expect(sameFirst(pure('a').s_sub(0), pure('a')));
+  });
+  describe('take and drop', () => {
+    it('can take from the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).take(2), sequence(0, 1)));
     });
-    it('can subtract nothing, repeatedly', () => {
-      expect(sameFirst(pure('a').s_sub(0, 0), fastcat('a', 'a')));
+    it('can drop from the left', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).drop(2), sequence(2, 3, 4)));
+    });
+    it('can take from the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).take(-2), sequence(3, 4)));
+    });
+    it('can drop from the right', () => {
+      expect(sameFirst(sequence(0, 1, 2, 3, 4).drop(-2), sequence(0, 1, 2)));
+    });
+    it('can drop nothing', () => {
+      expect(sameFirst(pure('a').drop(0), pure('a')));
+    });
+    it('can drop nothing, repeatedly', () => {
+      expect(sameFirst(pure('a').drop(0, 0), fastcat('a', 'a')));
       for (var i = 0; i < 100; ++i) {
-        expect(sameFirst(pure('a').s_sub(...Array(i).fill(0)), fastcat(...Array(i).fill('a'))));
+        expect(sameFirst(pure('a').drop(...Array(i).fill(0)), fastcat(...Array(i).fill('a'))));
       }
     });
   });
-  describe('s_expand', () => {
+  describe('expand', () => {
     it('can expand four things in half', () => {
       expect(
-        sameFirst(
-          sequence(0, 1, 2, 3).s_expand(1, 0.5),
-          s_cat(sequence(0, 1, 2, 3), sequence(0, 1, 2, 3).s_expand(0.5)),
-        ),
+        sameFirst(sequence(0, 1, 2, 3).expand(1, 0.5), stepcat(sequence(0, 1, 2, 3), sequence(0, 1, 2, 3).expand(0.5))),
       );
     });
     it('can expand five things in half', () => {
       expect(
         sameFirst(
-          sequence(0, 1, 2, 3, 4).s_expand(1, 0.5),
-          s_cat(sequence(0, 1, 2, 3, 4), sequence(0, 1, 2, 3, 4).s_expand(0.5)),
+          sequence(0, 1, 2, 3, 4).expand(1, 0.5),
+          stepcat(sequence(0, 1, 2, 3, 4), sequence(0, 1, 2, 3, 4).expand(0.5)),
         ),
       );
     });
   });
   describe('stepJoin', () => {
-    it('can join a pattern with a tactus of 2', () => {
+    it('can join a pattern with steps of 2', () => {
       expect(
         sameFirst(
-          sequence(pure(pure('a')), pure(pure('b').setTactus(2))).stepJoin(),
-          s_cat(pure('a'), pure('b').setTactus(2)),
+          sequence(pure(pure('a')), pure(pure('b').setSteps(2))).stepJoin(),
+          stepcat(pure('a'), pure('b').setSteps(2)),
         ),
       );
     });
-    it('can join a pattern with a tactus of 0.5', () => {
+    it('can join a pattern with steps of 0.5', () => {
       expect(
         sameFirst(
-          sequence(pure(pure('a')), pure(pure('b').setTactus(0.5))).stepJoin(),
-          s_cat(pure('a'), pure('b').setTactus(0.5)),
+          sequence(pure(pure('a')), pure(pure('b').setSteps(0.5))).stepJoin(),
+          stepcat(pure('a'), pure('b').setSteps(0.5)),
         ),
       );
     });
   });
   describe('loopAt', () => {
-    it('maintains tactus', () => {
-      expect(s('bev').chop(8).loopAt(2).tactus).toStrictEqual(Fraction(4));
+    it('maintains steps', () => {
+      expect(s('bev').chop(8).loopAt(2)._steps).toStrictEqual(Fraction(4));
     });
   });
 });
