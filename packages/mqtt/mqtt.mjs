@@ -57,6 +57,7 @@ Pattern.prototype.mqtt = function (
     cx = connections[key];
   } else {
     cx = new Paho.Client(host, client);
+    connections[key] = cx;
     cx.onConnectionLost = onConnectionLost;
     cx.onMessageArrived = onMessageArrived;
     const props = {
