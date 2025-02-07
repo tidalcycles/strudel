@@ -84,12 +84,22 @@ Pattern.prototype.mqtt = function (
   }
   return this.withHap((hap) => {
     const onTrigger = (t_deprecate, hap, currentTime, cps, targetTime) => {
+      let msg_topic = topic;
       if (!connected) {
         return;
       }
       let message = '';
       if (typeof hap.value === 'object') {
         let value = hap.value;
+
+        // Try to take topic from pattern if it's not set
+        if (typeof msg_topic === 'undefined' && 'topic' in value) {
+          msg_topic = value.topic;
+          if (Array.isArray(msg_topic)) {
+            msg_topic = msg_topic.join('/');
+          }
+          msg_topic = '/' + msg_topic;
+        }
         if (add_meta) {
           const duration = hap.duration.div(cps);
           value = { ...value, duration: duration.valueOf(), cps: cps };
@@ -99,7 +109,7 @@ Pattern.prototype.mqtt = function (
         message = hap.value;
       }
       message = new Paho.Message(message);
-      message.destinationName = topic;
+      message.destinationName = msg_topic;
 
       const offset = (targetTime - currentTime + latency) * 1000;
 
