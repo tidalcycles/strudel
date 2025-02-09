@@ -55,8 +55,6 @@ import {
   sometimes,
 } from '../index.mjs';
 
-import { mini } from '@strudel/mini/index.mjs';
-
 import { steady } from '../signal.mjs';
 
 import { n, s } from '../controls.mjs';
@@ -1267,12 +1265,13 @@ describe('Pattern', () => {
       expect(s('bev').chop(8).loopAt(2)._steps).toStrictEqual(Fraction(4));
     });
   });
-  describe('bite', () => {
-    it('works with uneven patterns', () => {
-      sameFirst(
-        mini('<a b c d e> <1 2 3 4 5>').bite(2, mini('0 1@2'))._fast(5),
-        mini('<a b c d e><1 2 3 4 5>@2')._fast(5),
-      );
-    });
-  });
+  // TODO - test without mini..
+  // describe('bite', () => {
+  //   it('works with uneven patterns', () => {
+  //     sameFirst(
+  //       mini('<a b c d e> <1 2 3 4 5>').bite(2, mini('0 1@2'))._fast(5),
+  //       mini('<a b c d e><1 2 3 4 5>@2')._fast(5),
+  //     );
+  //   });
+  // });
 });
