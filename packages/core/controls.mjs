@@ -1514,8 +1514,6 @@ export const { binshift } = registerControl('binshift');
 export const { hbrick } = registerControl('hbrick');
 export const { lbrick } = registerControl('lbrick');
 
-
-
 export const { frameRate } = registerControl('frameRate');
 export const { frames } = registerControl('frames');
 export const { hours } = registerControl('hours');
