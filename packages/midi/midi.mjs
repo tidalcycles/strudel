@@ -6,7 +6,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 import * as _WebMidi from 'webmidi';
 import { Pattern, getEventOffsetMs, isPattern, logger, ref } from '@strudel/core';
-import { noteToMidi, getControlName } from '@strudel/core';
+import { noteToMidi, getControlName, registerControl } from '@strudel/core';
 import { Note } from 'webmidi';
 
 // if you use WebMidi from outside of this package, make sure to import that instance:
@@ -100,10 +100,23 @@ export const midicontrolMap = new Map();
 function unifyMapping(mapping) {
   return Object.fromEntries(
     Object.entries(mapping).map(([key, mapping]) => {
+      // Convert number to object with ccn property
       if (typeof mapping === 'number') {
         mapping = { ccn: mapping };
       }
-      return [getControlName(key), mapping];
+
+      const controlName = getControlName(key);
+
+      // Register the control in the midicontrolMap if it doesn't exist in
+      if (!midicontrolMap.has(controlName)) {
+        try {
+          registerControl(controlName);
+        } catch (err) {
+          logger.error(`Failed to register control '${controlName}': ${err.message}`);
+          throw err;
+        }
+      }
+      return [controlName, mapping];
     }),
   );
 }
