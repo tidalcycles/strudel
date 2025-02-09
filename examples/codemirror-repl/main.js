@@ -29,6 +29,7 @@ const editor = new StrudelMirror({
       import('@strudel/core'),
       import('@strudel/draw'),
       import('@strudel/mini'),
+      import('@strudel/shader'),
       import('@strudel/tonal'),
       import('@strudel/webaudio'),
     );
