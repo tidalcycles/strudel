@@ -1622,12 +1622,7 @@ export const ar = register('ar', (t, pat) => {
  */
 export const { midichan } = registerControl('midichan');
 
-/**
- * MIDI map: Sets the MIDI map for the event.
- *
- * @name midimap
- * @param {Object} map MIDI map
- */
+
 export const { midimap } = registerControl('midimap');
 
 /**

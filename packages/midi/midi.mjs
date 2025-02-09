@@ -178,6 +178,7 @@ function normalize(value = 0, min = 0, max = 1, exp = 1) {
   normalized = Math.min(1, Math.max(0, normalized));
   return Math.pow(normalized, exp);
 }
+
 function mapCC(mapping, value) {
   return Object.keys(value)
     .filter((key) => !!mapping[getControlName(key)])
